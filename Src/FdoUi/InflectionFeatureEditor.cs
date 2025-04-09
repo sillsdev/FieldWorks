@@ -39,6 +39,7 @@ namespace SIL.FieldWorks.FdoUi
 		InflectionFeaturePopupTreeManager m_InflectionFeatureTreeManager;
 		int m_selectedHvo = 0;
 		string m_selectedLabel;
+		bool m_notSure = false;
 		private int m_displayWs = 0;
 		public event EventHandler ControlActivated;
 		public event FwSelectionChangedEventHandler ValueChanged;
@@ -254,6 +255,7 @@ namespace SIL.FieldWorks.FdoUi
 			// Arrange to turn all relevant items blue.
 			// Remember which item was selected so we can later 'doit'.
 			var hvoNode = e.Node as HvoTreeNode;
+			m_notSure = hvoNode.Text == LexTextControls.ks_NotSure_;
 			if (hvoNode == null || hvoNode.Hvo == 0)
 			{
 				m_selectedHvo = 0;
@@ -361,6 +363,14 @@ namespace SIL.FieldWorks.FdoUi
 				}
 				var entry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(kvp.Key);
 				var sensesToChange = kvp.Value;
+				if (m_notSure)
+				{
+					foreach (var ls in sensesToChange)
+					{
+						ls.MorphoSyntaxAnalysisRA = null;
+					}
+					continue;
+				}
 				IMoStemMsa msmTarget = entry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>()
 					.FirstOrDefault(msm => MsaMatchesTarget(msm, fsTarget));
 
@@ -529,7 +539,7 @@ namespace SIL.FieldWorks.FdoUi
 				if (clsid == MoStemMsaTags.kClassId)
 				{
 					int pos = sda.get_ObjectProp(hvoMsa, MoStemMsaTags.kflidPartOfSpeech);
-					if (pos != 0 && possiblePOS.Contains(pos))
+					if (m_notSure || (pos != 0 && possiblePOS.Contains(pos)))
 					{
 						// Only show it as a change if it is different
 						int hvoFeature = sda.get_ObjectProp(hvoMsa, MoStemMsaTags.kflidMsFeatures);

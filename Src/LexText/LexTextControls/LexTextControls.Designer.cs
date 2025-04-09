@@ -19,10 +19,10 @@ namespace SIL.FieldWorks.LexText.Controls {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class LexTextControls {
+    public class LexTextControls {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SIL.FieldWorks.LexText.Controls.LexTextControls", typeof(LexTextControls).Assembly);
@@ -51,7 +51,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to &amp;Analysis Writing System.
         /// </summary>
-        internal static string ks_AnalysisWS {
+        public static string ks_AnalysisWS {
             get {
                 return ResourceManager.GetString("ks_AnalysisWS", resourceCulture);
             }
@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to &amp;Create.
         /// </summary>
-        internal static string ks_Create {
+        public static string ks_Create {
             get {
                 return ResourceManager.GetString("ks_Create", resourceCulture);
             }
@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to &amp;Create....
         /// </summary>
-        internal static string ks_Create_ {
+        public static string ks_Create_ {
             get {
                 return ResourceManager.GetString("ks_Create_", resourceCulture);
             }
@@ -90,7 +90,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to &amp;Define New....
         /// </summary>
-        internal static string ks_DefineNew_ {
+        public static string ks_DefineNew_ {
             get {
                 return ResourceManager.GetString("ks_DefineNew_", resourceCulture);
             }
@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to &lt;n/a&gt;.
         /// </summary>
-        internal static string ks_DontCare_ {
+        public static string ks_DontCare_ {
             get {
                 return ResourceManager.GetString("ks_DontCare_", resourceCulture);
             }
@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to &amp;Fills Slot:.
         /// </summary>
-        internal static string ks_FillsSlot {
+        public static string ks_FillsSlot {
             get {
                 return ResourceManager.GetString("ks_FillsSlot", resourceCulture);
             }
@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to &amp;Help....
         /// </summary>
-        internal static string ks_Help_ {
+        public static string ks_Help_ {
             get {
                 return ResourceManager.GetString("ks_Help_", resourceCulture);
             }
@@ -126,7 +126,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to &amp;Hide Info.
         /// </summary>
-        internal static string ks_HideInfo {
+        public static string ks_HideInfo {
             get {
                 return ResourceManager.GetString("ks_HideInfo", resourceCulture);
             }
@@ -135,7 +135,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to &lt;ignore&gt;.
         /// </summary>
-        internal static string ks_Ignore_ {
+        public static string ks_Ignore_ {
             get {
                 return ResourceManager.GetString("ks_Ignore_", resourceCulture);
             }
@@ -144,7 +144,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to &amp;Merge.
         /// </summary>
-        internal static string ks_Merge {
+        public static string ks_Merge {
             get {
                 return ResourceManager.GetString("ks_Merge", resourceCulture);
             }
@@ -153,7 +153,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to &lt;Not sure&gt;.
         /// </summary>
-        internal static string ks_NotSure_ {
+        public static string ks_NotSure_ {
             get {
                 return ResourceManager.GetString("ks_NotSure_", resourceCulture);
             }
@@ -162,7 +162,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to &amp;OK.
         /// </summary>
-        internal static string ks_OK {
+        public static string ks_OK {
             get {
                 return ResourceManager.GetString("ks_OK", resourceCulture);
             }
@@ -171,7 +171,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to &amp;Variant:.
         /// </summary>
-        internal static string ks_Variant {
+        public static string ks_Variant {
             get {
                 return ResourceManager.GetString("ks_Variant", resourceCulture);
             }
@@ -180,7 +180,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to &amp;Vernacular Writing System.
         /// </summary>
-        internal static string ks_VernacularWS {
+        public static string ks_VernacularWS {
             get {
                 return ResourceManager.GetString("ks_VernacularWS", resourceCulture);
             }
@@ -189,7 +189,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Writing System:.
         /// </summary>
-        internal static string ks_WritingSystem_ {
+        public static string ks_WritingSystem_ {
             get {
                 return ResourceManager.GetString("ks_WritingSystem_", resourceCulture);
             }
@@ -198,7 +198,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to 1 Entry to review: Detail shown for first Entry..
         /// </summary>
-        internal static string ks1Entry1Detailed {
+        public static string ks1Entry1Detailed {
             get {
                 return ResourceManager.GetString("ks1Entry1Detailed", resourceCulture);
             }
@@ -207,7 +207,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to 1 entry processed for import..
         /// </summary>
-        internal static string ks1EntryImported {
+        public static string ks1EntryImported {
             get {
                 return ResourceManager.GetString("ks1EntryImported", resourceCulture);
             }
@@ -216,7 +216,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to 1 Entry to review:.
         /// </summary>
-        internal static string ks1EntryToReview {
+        public static string ks1EntryToReview {
             get {
                 return ResourceManager.GetString("ks1EntryToReview", resourceCulture);
             }
@@ -225,7 +225,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to 1 Entry to review: Detail shown for first {0} Entries..
         /// </summary>
-        internal static string ks1EntryXDetailed {
+        public static string ks1EntryXDetailed {
             get {
                 return ResourceManager.GetString("ks1EntryXDetailed", resourceCulture);
             }
@@ -234,7 +234,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to 1 Error:.
         /// </summary>
-        internal static string ks1Error {
+        public static string ks1Error {
             get {
                 return ResourceManager.GetString("ks1Error", resourceCulture);
             }
@@ -243,7 +243,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to 1 Error: Detail shown for first error..
         /// </summary>
-        internal static string ks1Error1Detailed {
+        public static string ks1Error1Detailed {
             get {
                 return ResourceManager.GetString("ks1Error1Detailed", resourceCulture);
             }
@@ -252,7 +252,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to 1 error and 1 warning found in {0}.
         /// </summary>
-        internal static string ks1Error1WarningInX {
+        public static string ks1Error1WarningInX {
             get {
                 return ResourceManager.GetString("ks1Error1WarningInX", resourceCulture);
             }
@@ -261,7 +261,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to 1 error found in {0}.
         /// </summary>
-        internal static string ks1ErrorInX {
+        public static string ks1ErrorInX {
             get {
                 return ResourceManager.GetString("ks1ErrorInX", resourceCulture);
             }
@@ -270,7 +270,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to 1 Error: Detail shown for first {1} errors..
         /// </summary>
-        internal static string ks1ErrorXDetailed {
+        public static string ks1ErrorXDetailed {
             get {
                 return ResourceManager.GetString("ks1ErrorXDetailed", resourceCulture);
             }
@@ -279,7 +279,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to 1 error and {0} warnings found in {1}.
         /// </summary>
-        internal static string ks1ErrorXWarningsInY {
+        public static string ks1ErrorXWarningsInY {
             get {
                 return ResourceManager.GetString("ks1ErrorXWarningsInY", resourceCulture);
             }
@@ -288,7 +288,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to 1 Warning:.
         /// </summary>
-        internal static string ks1Warning {
+        public static string ks1Warning {
             get {
                 return ResourceManager.GetString("ks1Warning", resourceCulture);
             }
@@ -297,7 +297,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to 1 warning found in {0}.
         /// </summary>
-        internal static string ks1WarningInX {
+        public static string ks1WarningInX {
             get {
                 return ResourceManager.GetString("ks1WarningInX", resourceCulture);
             }
@@ -306,7 +306,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Add Allomorph....
         /// </summary>
-        internal static string ksAddAllomorph_ {
+        public static string ksAddAllomorph_ {
             get {
                 return ResourceManager.GetString("ksAddAllomorph_", resourceCulture);
             }
@@ -315,7 +315,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Add allomorph to similar entry.
         /// </summary>
-        internal static string ksAddAllomorphToSimilarEntry {
+        public static string ksAddAllomorphToSimilarEntry {
             get {
                 return ResourceManager.GetString("ksAddAllomorphToSimilarEntry", resourceCulture);
             }
@@ -324,7 +324,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Added Item.
         /// </summary>
-        internal static string ksAddedItem {
+        public static string ksAddedItem {
             get {
                 return ResourceManager.GetString("ksAddedItem", resourceCulture);
             }
@@ -333,7 +333,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} added to the {1} of {2}..
         /// </summary>
-        internal static string ksAddedToCombinedCollection {
+        public static string ksAddedToCombinedCollection {
             get {
                 return ResourceManager.GetString("ksAddedToCombinedCollection", resourceCulture);
             }
@@ -342,7 +342,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The inflection feature I need is not shown here.  Add inflection features to {0}..
         /// </summary>
-        internal static string ksAddFeaturesToX {
+        public static string ksAddFeaturesToX {
             get {
                 return ResourceManager.GetString("ksAddFeaturesToX", resourceCulture);
             }
@@ -351,7 +351,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Add language mapping.
         /// </summary>
-        internal static string ksAddLangMapping {
+        public static string ksAddLangMapping {
             get {
                 return ResourceManager.GetString("ksAddLangMapping", resourceCulture);
             }
@@ -360,7 +360,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to &amp;Add Variant.
         /// </summary>
-        internal static string ksAddVariant {
+        public static string ksAddVariant {
             get {
                 return ResourceManager.GetString("ksAddVariant", resourceCulture);
             }
@@ -369,7 +369,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Alternate Forms.
         /// </summary>
-        internal static string ksAlternateForms {
+        public static string ksAlternateForms {
             get {
                 return ResourceManager.GetString("ksAlternateForms", resourceCulture);
             }
@@ -378,7 +378,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following Anthropology Codes were added to the language project:.
         /// </summary>
-        internal static string ksAnthropologyCodesAdded {
+        public static string ksAnthropologyCodesAdded {
             get {
                 return ResourceManager.GetString("ksAnthropologyCodesAdded", resourceCulture);
             }
@@ -387,7 +387,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to &lt;Any&gt;.
         /// </summary>
-        internal static string ksAny {
+        public static string ksAny {
             get {
                 return ResourceManager.GetString("ksAny", resourceCulture);
             }
@@ -396,7 +396,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Would you like FieldWorks to remember the settings next time you try import?.
         /// </summary>
-        internal static string ksAskRememberImportSettings {
+        public static string ksAskRememberImportSettings {
             get {
                 return ResourceManager.GetString("ksAskRememberImportSettings", resourceCulture);
             }
@@ -405,7 +405,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Attaches to Categor&amp;y:.
         /// </summary>
-        internal static string ksAttachesToCategor_y {
+        public static string ksAttachesToCategor_y {
             get {
                 return ResourceManager.GetString("ksAttachesToCategor_y", resourceCulture);
             }
@@ -414,7 +414,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to  The FieldWorks import process automatically maintains this file. .
         /// </summary>
-        internal static string ksAutomaticallyMaintains {
+        public static string ksAutomaticallyMaintains {
             get {
                 return ResourceManager.GetString("ksAutomaticallyMaintains", resourceCulture);
             }
@@ -423,7 +423,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to 	• {0}{1}.
         /// </summary>
-        internal static string ksBullettedItem {
+        public static string ksBullettedItem {
             get {
                 return ResourceManager.GetString("ksBullettedItem", resourceCulture);
             }
@@ -432,7 +432,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to C&amp;hanges to Category:.
         /// </summary>
-        internal static string ksC_hangesToCategory {
+        public static string ksC_hangesToCategory {
             get {
                 return ResourceManager.GetString("ksC_hangesToCategory", resourceCulture);
             }
@@ -441,7 +441,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Cancel.
         /// </summary>
-        internal static string ksCancel {
+        public static string ksCancel {
             get {
                 return ResourceManager.GetString("ksCancel", resourceCulture);
             }
@@ -450,7 +450,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The generated report ({0}) could not be displayed for this reason: {1}{2}.
         /// </summary>
-        internal static string ksCannotDisplayReportX {
+        public static string ksCannotDisplayReportX {
             get {
                 return ResourceManager.GetString("ksCannotDisplayReportX", resourceCulture);
             }
@@ -459,7 +459,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Cannot find matching list item for &quot;{0}&quot; in \{1} field.
         /// </summary>
-        internal static string ksCannotFindMatchingListItem {
+        public static string ksCannotFindMatchingListItem {
             get {
                 return ResourceManager.GetString("ksCannotFindMatchingListItem", resourceCulture);
             }
@@ -468,7 +468,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Cannot find possibility list for \{0} field.
         /// </summary>
-        internal static string ksCannotFindPossibilityList {
+        public static string ksCannotFindPossibilityList {
             get {
                 return ResourceManager.GetString("ksCannotFindPossibilityList", resourceCulture);
             }
@@ -477,7 +477,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Unable to load the Phase 1 output file. {0}.
         /// </summary>
-        internal static string ksCannotLoadPhase1OutputX {
+        public static string ksCannotLoadPhase1OutputX {
             get {
                 return ResourceManager.GetString("ksCannotLoadPhase1OutputX", resourceCulture);
             }
@@ -486,7 +486,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Cannot make desired link for \{0} {1}.
         /// </summary>
-        internal static string ksCannotMakeDesiredLink {
+        public static string ksCannotMakeDesiredLink {
             get {
                 return ResourceManager.GetString("ksCannotMakeDesiredLink", resourceCulture);
             }
@@ -495,7 +495,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Cannot parse date/time value &quot;{0}&quot; for a \{1} field..
         /// </summary>
-        internal static string ksCannotParseDateTime {
+        public static string ksCannotParseDateTime {
             get {
                 return ResourceManager.GetString("ksCannotParseDateTime", resourceCulture);
             }
@@ -504,7 +504,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Cannot parse the feature string.
         /// </summary>
-        internal static string ksCannotParseFeature {
+        public static string ksCannotParseFeature {
             get {
                 return ResourceManager.GetString("ksCannotParseFeature", resourceCulture);
             }
@@ -513,7 +513,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Cannot parse generic date value &quot;{0}&quot; for a \{1} field..
         /// </summary>
-        internal static string ksCannotParseGenericDate {
+        public static string ksCannotParseGenericDate {
             get {
                 return ResourceManager.GetString("ksCannotParseGenericDate", resourceCulture);
             }
@@ -522,7 +522,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Cannot Save Settings.
         /// </summary>
-        internal static string ksCannotSaveSettings {
+        public static string ksCannotSaveSettings {
             get {
                 return ResourceManager.GetString("ksCannotSaveSettings", resourceCulture);
             }
@@ -532,7 +532,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         ///   Looks up a localized string similar to The program cannot perform this operation due to an internal problem.
         ///If you see this message again, exit the import wizard (saving your settings) and try again..
         /// </summary>
-        internal static string ksCannotSoTryAgain {
+        public static string ksCannotSoTryAgain {
             get {
                 return ResourceManager.GetString("ksCannotSoTryAgain", resourceCulture);
             }
@@ -541,7 +541,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Categor&amp;y:.
         /// </summary>
-        internal static string ksCategor_y {
+        public static string ksCategor_y {
             get {
                 return ResourceManager.GetString("ksCategor_y", resourceCulture);
             }
@@ -550,7 +550,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to category.
         /// </summary>
-        internal static string kscategory {
+        public static string kscategory {
             get {
                 return ResourceManager.GetString("kscategory", resourceCulture);
             }
@@ -559,7 +559,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Choices:.
         /// </summary>
-        internal static string ksChoices_ {
+        public static string ksChoices_ {
             get {
                 return ResourceManager.GetString("ksChoices_", resourceCulture);
             }
@@ -568,7 +568,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Choose Allomorph.
         /// </summary>
-        internal static string ksChooseAllomorph {
+        public static string ksChooseAllomorph {
             get {
                 return ResourceManager.GetString("ksChooseAllomorph", resourceCulture);
             }
@@ -577,7 +577,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Default Backup Folder.
         /// </summary>
-        internal static string ksChooseBackupFolder {
+        public static string ksChooseBackupFolder {
             get {
                 return ResourceManager.GetString("ksChooseBackupFolder", resourceCulture);
             }
@@ -586,7 +586,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Choose inflection features.
         /// </summary>
-        internal static string ksChooseInflFeats {
+        public static string ksChooseInflFeats {
             get {
                 return ResourceManager.GetString("ksChooseInflFeats", resourceCulture);
             }
@@ -595,7 +595,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Choose Lexical Entry or Sense.
         /// </summary>
-        internal static string ksChooseLexEntryOrSense {
+        public static string ksChooseLexEntryOrSense {
             get {
                 return ResourceManager.GetString("ksChooseLexEntryOrSense", resourceCulture);
             }
@@ -604,7 +604,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Choose Morpheme and Grammatical Info..
         /// </summary>
-        internal static string ksChooseMorphAndGramInfo {
+        public static string ksChooseMorphAndGramInfo {
             get {
                 return ResourceManager.GetString("ksChooseMorphAndGramInfo", resourceCulture);
             }
@@ -613,7 +613,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Choose phonological features.
         /// </summary>
-        internal static string ksChoosePhonFeats {
+        public static string ksChoosePhonFeats {
             get {
                 return ResourceManager.GetString("ksChoosePhonFeats", resourceCulture);
             }
@@ -622,7 +622,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Citation form.
         /// </summary>
-        internal static string ksCitationForm {
+        public static string ksCitationForm {
             get {
                 return ResourceManager.GetString("ksCitationForm", resourceCulture);
             }
@@ -631,7 +631,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to &lt;b&gt;Tip:&lt;/b&gt; click on the hyperlinks to view the entries in question..
         /// </summary>
-        internal static string ksClickOnHyperLinks {
+        public static string ksClickOnHyperLinks {
             get {
                 return ResourceManager.GetString("ksClickOnHyperLinks", resourceCulture);
             }
@@ -640,7 +640,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Click on the View Preview Results button to see the full list of results..
         /// </summary>
-        internal static string ksClickOnViewPreviewResults {
+        public static string ksClickOnViewPreviewResults {
             get {
                 return ResourceManager.GetString("ksClickOnViewPreviewResults", resourceCulture);
             }
@@ -649,7 +649,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The import process has made some assumptions and attempted to reorder information properly.  If you continue to import, these assumptions and actions will be applied.  To preview how the import process will rearrange fields in the affected entries {0}Click Here{1}..
         /// </summary>
-        internal static string ksClickToPreviewAssumptions {
+        public static string ksClickToPreviewAssumptions {
             get {
                 return ResourceManager.GetString("ksClickToPreviewAssumptions", resourceCulture);
             }
@@ -658,7 +658,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Combined Collections.
         /// </summary>
-        internal static string ksCombinedCollections {
+        public static string ksCombinedCollections {
             get {
                 return ResourceManager.GetString("ksCombinedCollections", resourceCulture);
             }
@@ -667,7 +667,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to To create a circumfix, every non-blank alternative of the Lexeme Form must have two morphemes separated by a space or period(s)..
         /// </summary>
-        internal static string ksCompleteCircumfix {
+        public static string ksCompleteCircumfix {
             get {
                 return ResourceManager.GetString("ksCompleteCircumfix", resourceCulture);
             }
@@ -676,7 +676,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to complex feature.
         /// </summary>
-        internal static string ksComplexFeature {
+        public static string ksComplexFeature {
             get {
                 return ResourceManager.GetString("ksComplexFeature", resourceCulture);
             }
@@ -685,7 +685,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Subentry/Complex Form Type :.
         /// </summary>
-        internal static string ksComplexFormType {
+        public static string ksComplexFormType {
             get {
                 return ResourceManager.GetString("ksComplexFormType", resourceCulture);
             }
@@ -694,7 +694,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following complex form types were added to the language project:.
         /// </summary>
-        internal static string ksComplexFormTypesAdded {
+        public static string ksComplexFormTypesAdded {
             get {
                 return ResourceManager.GetString("ksComplexFormTypesAdded", resourceCulture);
             }
@@ -703,7 +703,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following Conditions were added to the language project:.
         /// </summary>
-        internal static string ksConditionsAdded {
+        public static string ksConditionsAdded {
             get {
                 return ResourceManager.GetString("ksConditionsAdded", resourceCulture);
             }
@@ -712,7 +712,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Conflicting field.
         /// </summary>
-        internal static string ksConflictingField {
+        public static string ksConflictingField {
             get {
                 return ResourceManager.GetString("ksConflictingField", resourceCulture);
             }
@@ -721,7 +721,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following conflicts resulted in duplicated entries or senses:.
         /// </summary>
-        internal static string ksConflictsResultedInDup {
+        public static string ksConflictsResultedInDup {
             get {
                 return ResourceManager.GetString("ksConflictsResultedInDup", resourceCulture);
             }
@@ -730,7 +730,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Contains Data(%).
         /// </summary>
-        internal static string ksContainsData_ {
+        public static string ksContainsData_ {
             get {
                 return ResourceManager.GetString("ksContainsData_", resourceCulture);
             }
@@ -739,7 +739,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Minimum must be less than or equal to maximum.
         /// </summary>
-        internal static string ksContextOccurrenceDlgError {
+        public static string ksContextOccurrenceDlgError {
             get {
                 return ResourceManager.GetString("ksContextOccurrenceDlgError", resourceCulture);
             }
@@ -748,7 +748,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Not all validation errors prevent successful importing.  Do you want to continue with the LIFT import?.
         /// </summary>
-        internal static string ksContinueLiftImportQuestion {
+        public static string ksContinueLiftImportQuestion {
             get {
                 return ResourceManager.GetString("ksContinueLiftImportQuestion", resourceCulture);
             }
@@ -757,7 +757,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Conversion Error.
         /// </summary>
-        internal static string ksConversionError {
+        public static string ksConversionError {
             get {
                 return ResourceManager.GetString("ksConversionError", resourceCulture);
             }
@@ -766,7 +766,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Conversion problem: {0}.
         /// </summary>
-        internal static string ksConversionProblem {
+        public static string ksConversionProblem {
             get {
                 return ResourceManager.GetString("ksConversionProblem", resourceCulture);
             }
@@ -775,7 +775,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Conversion map error.
         /// </summary>
-        internal static string ksConvMapError {
+        public static string ksConvMapError {
             get {
                 return ResourceManager.GetString("ksConvMapError", resourceCulture);
             }
@@ -784,7 +784,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Create New Grammatical Info..
         /// </summary>
-        internal static string ksCreateNewGrammaticalInfo {
+        public static string ksCreateNewGrammaticalInfo {
             get {
                 return ResourceManager.GetString("ksCreateNewGrammaticalInfo", resourceCulture);
             }
@@ -793,7 +793,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Creating import log....
         /// </summary>
-        internal static string ksCreatingImportLog {
+        public static string ksCreatingImportLog {
             get {
                 return ResourceManager.GetString("ksCreatingImportLog", resourceCulture);
             }
@@ -802,7 +802,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following custom fields were added to the project:.
         /// </summary>
-        internal static string ksCustomFieldsAdded {
+        public static string ksCustomFieldsAdded {
             get {
                 return ResourceManager.GetString("ksCustomFieldsAdded", resourceCulture);
             }
@@ -811,7 +811,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Date/Time field import options.
         /// </summary>
-        internal static string ksDateTimeImportOptions {
+        public static string ksDateTimeImportOptions {
             get {
                 return ResourceManager.GetString("ksDateTimeImportOptions", resourceCulture);
             }
@@ -820,7 +820,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Deleting existing records....
         /// </summary>
-        internal static string ksDeletingExistingRecords {
+        public static string ksDeletingExistingRecords {
             get {
                 return ResourceManager.GetString("ksDeletingExistingRecords", resourceCulture);
             }
@@ -829,7 +829,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Deleting unwanted entries and senses.
         /// </summary>
-        internal static string ksDeletingUnwantedEntries {
+        public static string ksDeletingUnwantedEntries {
             get {
                 return ResourceManager.GetString("ksDeletingUnwantedEntries", resourceCulture);
             }
@@ -838,7 +838,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Derivational.
         /// </summary>
-        internal static string ksDerivational {
+        public static string ksDerivational {
             get {
                 return ResourceManager.GetString("ksDerivational", resourceCulture);
             }
@@ -847,7 +847,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following Dialect labels were added to the language project:.
         /// </summary>
-        internal static string ksDialectsAdded {
+        public static string ksDialectsAdded {
             get {
                 return ResourceManager.GetString("ksDialectsAdded", resourceCulture);
             }
@@ -856,7 +856,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Discarded field.
         /// </summary>
-        internal static string ksDiscardedField {
+        public static string ksDiscardedField {
             get {
                 return ResourceManager.GetString("ksDiscardedField", resourceCulture);
             }
@@ -865,7 +865,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following Domain Types were added to the language project:.
         /// </summary>
-        internal static string ksDomainTypesAdded {
+        public static string ksDomainTypesAdded {
             get {
                 return ResourceManager.GetString("ksDomainTypesAdded", resourceCulture);
             }
@@ -874,7 +874,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to  DO NOT EDIT THIS FILE!  YOU HAVE BEEN WARNED! .
         /// </summary>
-        internal static string ksDONOTEDIT {
+        public static string ksDONOTEDIT {
             get {
                 return ResourceManager.GetString("ksDONOTEDIT", resourceCulture);
             }
@@ -883,7 +883,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Exclude from Import.
         /// </summary>
-        internal static string ksDoNotImport {
+        public static string ksDoNotImport {
             get {
                 return ResourceManager.GetString("ksDoNotImport", resourceCulture);
             }
@@ -892,7 +892,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to A duplicate id value for a {0} was encountered: {1}.
         /// </summary>
-        internal static string ksDuplicateIdValue {
+        public static string ksDuplicateIdValue {
             get {
                 return ResourceManager.GetString("ksDuplicateIdValue", resourceCulture);
             }
@@ -901,7 +901,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Edit Grammatical Info..
         /// </summary>
-        internal static string ksEditGrammaticalInfo {
+        public static string ksEditGrammaticalInfo {
             get {
                 return ResourceManager.GetString("ksEditGrammaticalInfo", resourceCulture);
             }
@@ -910,7 +910,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Empty.
         /// </summary>
-        internal static string ksEmpty {
+        public static string ksEmpty {
             get {
                 return ResourceManager.GetString("ksEmpty", resourceCulture);
             }
@@ -919,7 +919,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to There was an encoding conversion problem with data in a \{0} field.
         /// </summary>
-        internal static string ksEncodingConversionProblem {
+        public static string ksEncodingConversionProblem {
             get {
                 return ResourceManager.GetString("ksEncodingConversionProblem", resourceCulture);
             }
@@ -928,7 +928,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The two entries have been merged..
         /// </summary>
-        internal static string ksEntriesHaveBeenMerged {
+        public static string ksEntriesHaveBeenMerged {
             get {
                 return ResourceManager.GetString("ksEntriesHaveBeenMerged", resourceCulture);
             }
@@ -937,7 +937,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} entries processed on import, adding {1} entries and {2} senses to the project, and deleting {3} entries..
         /// </summary>
-        internal static string ksEntriesImportCounts {
+        public static string ksEntriesImportCounts {
             get {
                 return ResourceManager.GetString("ksEntriesImportCounts", resourceCulture);
             }
@@ -946,7 +946,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Entry.
         /// </summary>
-        internal static string ksEntry {
+        public static string ksEntry {
             get {
                 return ResourceManager.GetString("ksEntry", resourceCulture);
             }
@@ -955,7 +955,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to A relation in the entry had an invalid reference value..
         /// </summary>
-        internal static string ksEntryInvalidRef {
+        public static string ksEntryInvalidRef {
             get {
                 return ResourceManager.GetString("ksEntryInvalidRef", resourceCulture);
             }
@@ -964,7 +964,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Entry &quot;{0}&quot; will be merged into the entry you select above,{1}resulting in one entry..
         /// </summary>
-        internal static string ksEntryXMergedIntoSel {
+        public static string ksEntryXMergedIntoSel {
             get {
                 return ResourceManager.GetString("ksEntryXMergedIntoSel", resourceCulture);
             }
@@ -973,7 +973,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Entry &quot;{0}&quot; will be merged into &quot;{1}&quot;,{2}resulting in one entry..
         /// </summary>
-        internal static string ksEntryXMergedIntoY {
+        public static string ksEntryXMergedIntoY {
             get {
                 return ResourceManager.GetString("ksEntryXMergedIntoY", resourceCulture);
             }
@@ -982,7 +982,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following Environments were added to the language project:.
         /// </summary>
-        internal static string ksEnvironmentsAdded {
+        public static string ksEnvironmentsAdded {
             get {
                 return ResourceManager.GetString("ksEnvironmentsAdded", resourceCulture);
             }
@@ -991,7 +991,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to ERROR.
         /// </summary>
-        internal static string ksERROR {
+        public static string ksERROR {
             get {
                 return ResourceManager.GetString("ksERROR", resourceCulture);
             }
@@ -1000,7 +1000,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Error Accessing Encoding Converters.
         /// </summary>
-        internal static string ksErrorAccessingEncodingConverters {
+        public static string ksErrorAccessingEncodingConverters {
             get {
                 return ResourceManager.GetString("ksErrorAccessingEncodingConverters", resourceCulture);
             }
@@ -1009,7 +1009,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Error caught trying to open the file: .
         /// </summary>
-        internal static string ksErrorCaughtTryingOpenFile {
+        public static string ksErrorCaughtTryingOpenFile {
             get {
                 return ResourceManager.GetString("ksErrorCaughtTryingOpenFile", resourceCulture);
             }
@@ -1018,7 +1018,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Error message.
         /// </summary>
-        internal static string ksErrorMessage {
+        public static string ksErrorMessage {
             get {
                 return ResourceManager.GetString("ksErrorMessage", resourceCulture);
             }
@@ -1027,7 +1027,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following errors were encountered during import:.
         /// </summary>
-        internal static string ksErrorsEncounteredHeader {
+        public static string ksErrorsEncounteredHeader {
             get {
                 return ResourceManager.GetString("ksErrorsEncounteredHeader", resourceCulture);
             }
@@ -1036,7 +1036,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Error Showing Report.
         /// </summary>
-        internal static string ksErrorShowingReport {
+        public static string ksErrorShowingReport {
             get {
                 return ResourceManager.GetString("ksErrorShowingReport", resourceCulture);
             }
@@ -1045,7 +1045,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following Exception &quot;Features&quot; were added to the language project:.
         /// </summary>
-        internal static string ksExceptionFeaturesAdded {
+        public static string ksExceptionFeaturesAdded {
             get {
                 return ResourceManager.GetString("ksExceptionFeaturesAdded", resourceCulture);
             }
@@ -1054,7 +1054,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to &lt;agree&gt;.
         /// </summary>
-        internal static string ksFeatConstrAgree {
+        public static string ksFeatConstrAgree {
             get {
                 return ResourceManager.GetString("ksFeatConstrAgree", resourceCulture);
             }
@@ -1063,7 +1063,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to &lt;disagree&gt;.
         /// </summary>
-        internal static string ksFeatConstrDisagree {
+        public static string ksFeatConstrDisagree {
             get {
                 return ResourceManager.GetString("ksFeatConstrDisagree", resourceCulture);
             }
@@ -1072,7 +1072,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Features for {0}:.
         /// </summary>
-        internal static string ksFeaturesForX {
+        public static string ksFeaturesForX {
             get {
                 return ResourceManager.GetString("ksFeaturesForX", resourceCulture);
             }
@@ -1081,7 +1081,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following Feature Types were added to the language project:.
         /// </summary>
-        internal static string ksFeatureTypesAdded {
+        public static string ksFeatureTypesAdded {
             get {
                 return ResourceManager.GetString("ksFeatureTypesAdded", resourceCulture);
             }
@@ -1090,7 +1090,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Field.
         /// </summary>
-        internal static string ksField {
+        public static string ksField {
             get {
                 return ResourceManager.GetString("ksField", resourceCulture);
             }
@@ -1099,7 +1099,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The given input file {0} is not a LIFT file.  Expect import to fail!.
         /// </summary>
-        internal static string ksFileNotALIFTFile {
+        public static string ksFileNotALIFTFile {
             get {
                 return ResourceManager.GetString("ksFileNotALIFTFile", resourceCulture);
             }
@@ -1108,7 +1108,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Please fill in the gloss..
         /// </summary>
-        internal static string ksFillInGloss {
+        public static string ksFillInGloss {
             get {
                 return ResourceManager.GetString("ksFillInGloss", resourceCulture);
             }
@@ -1117,7 +1117,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Please fill in the lexeme form..
         /// </summary>
-        internal static string ksFillInLexForm {
+        public static string ksFillInLexForm {
             get {
                 return ResourceManager.GetString("ksFillInLexForm", resourceCulture);
             }
@@ -1126,7 +1126,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Please fill in the title..
         /// </summary>
-        internal static string ksFillInTitle {
+        public static string ksFillInTitle {
             get {
                 return ResourceManager.GetString("ksFillInTitle", resourceCulture);
             }
@@ -1135,7 +1135,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Find entry to add allomorph.
         /// </summary>
-        internal static string ksFindEntryToAddAllomorph {
+        public static string ksFindEntryToAddAllomorph {
             get {
                 return ResourceManager.GetString("ksFindEntryToAddAllomorph", resourceCulture);
             }
@@ -1144,7 +1144,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Find Lexical Entry.
         /// </summary>
-        internal static string ksFindLexEntry {
+        public static string ksFindLexEntry {
             get {
                 return ResourceManager.GetString("ksFindLexEntry", resourceCulture);
             }
@@ -1153,7 +1153,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Find Record.
         /// </summary>
-        internal static string ksFindRecord {
+        public static string ksFindRecord {
             get {
                 return ResourceManager.GetString("ksFindRecord", resourceCulture);
             }
@@ -1162,7 +1162,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Find Variant.
         /// </summary>
-        internal static string ksFindVariant {
+        public static string ksFindVariant {
             get {
                 return ResourceManager.GetString("ksFindVariant", resourceCulture);
             }
@@ -1171,7 +1171,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Abbreviation (of text).
         /// </summary>
-        internal static string ksFldAbbreviation {
+        public static string ksFldAbbreviation {
             get {
                 return ResourceManager.GetString("ksFldAbbreviation", resourceCulture);
             }
@@ -1180,7 +1180,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Baseline.
         /// </summary>
-        internal static string ksFldBaseline {
+        public static string ksFldBaseline {
             get {
                 return ResourceManager.GetString("ksFldBaseline", resourceCulture);
             }
@@ -1189,7 +1189,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Comment (of text).
         /// </summary>
-        internal static string ksFldComment {
+        public static string ksFldComment {
             get {
                 return ResourceManager.GetString("ksFldComment", resourceCulture);
             }
@@ -1198,7 +1198,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Free Translation.
         /// </summary>
-        internal static string ksFldFreeTranslation {
+        public static string ksFldFreeTranslation {
             get {
                 return ResourceManager.GetString("ksFldFreeTranslation", resourceCulture);
             }
@@ -1207,7 +1207,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to New Text.
         /// </summary>
-        internal static string ksFldId {
+        public static string ksFldId {
             get {
                 return ResourceManager.GetString("ksFldId", resourceCulture);
             }
@@ -1216,7 +1216,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Don&apos;t Import.
         /// </summary>
-        internal static string ksFldIgnored {
+        public static string ksFldIgnored {
             get {
                 return ResourceManager.GetString("ksFldIgnored", resourceCulture);
             }
@@ -1225,7 +1225,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Literal Translation.
         /// </summary>
-        internal static string ksFldLiteralTranslation {
+        public static string ksFldLiteralTranslation {
             get {
                 return ResourceManager.GetString("ksFldLiteralTranslation", resourceCulture);
             }
@@ -1234,7 +1234,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Note.
         /// </summary>
-        internal static string ksFldNote {
+        public static string ksFldNote {
             get {
                 return ResourceManager.GetString("ksFldNote", resourceCulture);
             }
@@ -1243,7 +1243,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Paragraph Break.
         /// </summary>
-        internal static string ksFldParagraphBreak {
+        public static string ksFldParagraphBreak {
             get {
                 return ResourceManager.GetString("ksFldParagraphBreak", resourceCulture);
             }
@@ -1252,7 +1252,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Reference.
         /// </summary>
-        internal static string ksFldReference {
+        public static string ksFldReference {
             get {
                 return ResourceManager.GetString("ksFldReference", resourceCulture);
             }
@@ -1261,7 +1261,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Source (of text).
         /// </summary>
-        internal static string ksFldSource {
+        public static string ksFldSource {
             get {
                 return ResourceManager.GetString("ksFldSource", resourceCulture);
             }
@@ -1270,7 +1270,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Title (of text).
         /// </summary>
-        internal static string ksFldTitle {
+        public static string ksFldTitle {
             get {
                 return ResourceManager.GetString("ksFldTitle", resourceCulture);
             }
@@ -1279,7 +1279,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Wordform.
         /// </summary>
-        internal static string ksFldWordform {
+        public static string ksFldWordform {
             get {
                 return ResourceManager.GetString("ksFldWordform", resourceCulture);
             }
@@ -1288,7 +1288,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Word Gloss.
         /// </summary>
-        internal static string ksFldWordGloss {
+        public static string ksFldWordGloss {
             get {
                 return ResourceManager.GetString("ksFldWordGloss", resourceCulture);
             }
@@ -1297,7 +1297,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to General Date field import options.
         /// </summary>
-        internal static string ksGenDateImportOptions {
+        public static string ksGenDateImportOptions {
             get {
                 return ResourceManager.GetString("ksGenDateImportOptions", resourceCulture);
             }
@@ -1306,7 +1306,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Glosses.
         /// </summary>
-        internal static string ksGlosses {
+        public static string ksGlosses {
             get {
                 return ResourceManager.GetString("ksGlosses", resourceCulture);
             }
@@ -1315,7 +1315,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Go &amp;To:.
         /// </summary>
-        internal static string ksGo_To_ {
+        public static string ksGo_To_ {
             get {
                 return ResourceManager.GetString("ksGo_To_", resourceCulture);
             }
@@ -1324,7 +1324,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Hide Advanced.
         /// </summary>
-        internal static string ksHideAdvanced {
+        public static string ksHideAdvanced {
             get {
                 return ResourceManager.GetString("ksHideAdvanced", resourceCulture);
             }
@@ -1333,7 +1333,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to ignore.
         /// </summary>
-        internal static string ksIgnore {
+        public static string ksIgnore {
             get {
                 return ResourceManager.GetString("ksIgnore", resourceCulture);
             }
@@ -1342,7 +1342,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Import canceled by user.
         /// </summary>
-        internal static string ksImportCanceledByUser {
+        public static string ksImportCanceledByUser {
             get {
                 return ResourceManager.GetString("ksImportCanceledByUser", resourceCulture);
             }
@@ -1351,7 +1351,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Import Error.
         /// </summary>
-        internal static string ksImportError {
+        public static string ksImportError {
             get {
                 return ResourceManager.GetString("ksImportError", resourceCulture);
             }
@@ -1360,7 +1360,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Importing from {0}.
         /// </summary>
-        internal static string ksImportingFrom0 {
+        public static string ksImportingFrom0 {
             get {
                 return ResourceManager.GetString("ksImportingFrom0", resourceCulture);
             }
@@ -1369,7 +1369,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Importing new records....
         /// </summary>
-        internal static string ksImportingNewRecords {
+        public static string ksImportingNewRecords {
             get {
                 return ResourceManager.GetString("ksImportingNewRecords", resourceCulture);
             }
@@ -1378,7 +1378,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Importing {0} took {1}.{2} seconds.
         /// </summary>
-        internal static string ksImportingTookTime {
+        public static string ksImportingTookTime {
             get {
                 return ResourceManager.GetString("ksImportingTookTime", resourceCulture);
             }
@@ -1387,7 +1387,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Importing {0} entries from {1}.
         /// </summary>
-        internal static string ksImportingXEntriesFromY {
+        public static string ksImportingXEntriesFromY {
             get {
                 return ResourceManager.GetString("ksImportingXEntriesFromY", resourceCulture);
             }
@@ -1396,7 +1396,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Import Log for {0}.
         /// </summary>
-        internal static string ksImportLogFor0 {
+        public static string ksImportLogFor0 {
             get {
                 return ResourceManager.GetString("ksImportLogFor0", resourceCulture);
             }
@@ -1405,7 +1405,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Import Log for {0}.
         /// </summary>
-        internal static string ksImportLogForX {
+        public static string ksImportLogForX {
             get {
                 return ResourceManager.GetString("ksImportLogForX", resourceCulture);
             }
@@ -1414,7 +1414,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Import Preview Results for {0}.
         /// </summary>
-        internal static string ksImportPreviewResultsForX {
+        public static string ksImportPreviewResultsForX {
             get {
                 return ResourceManager.GetString("ksImportPreviewResultsForX", resourceCulture);
             }
@@ -1423,7 +1423,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Import Residue (Auto).
         /// </summary>
-        internal static string ksImportResidue_Auto {
+        public static string ksImportResidue_Auto {
             get {
                 return ResourceManager.GetString("ksImportResidue_Auto", resourceCulture);
             }
@@ -1432,7 +1432,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Incomplete Language step.
         /// </summary>
-        internal static string ksIncompleteLangStep {
+        public static string ksIncompleteLangStep {
             get {
                 return ResourceManager.GetString("ksIncompleteLangStep", resourceCulture);
             }
@@ -1441,7 +1441,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Inflectional.
         /// </summary>
-        internal static string ksInflectional {
+        public static string ksInflectional {
             get {
                 return ResourceManager.GetString("ksInflectional", resourceCulture);
             }
@@ -1450,7 +1450,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following Inflectional Affix Slots were added to the language project:.
         /// </summary>
-        internal static string ksInflectionalAffixSlotsAdded {
+        public static string ksInflectionalAffixSlotsAdded {
             get {
                 return ResourceManager.GetString("ksInflectionalAffixSlotsAdded", resourceCulture);
             }
@@ -1459,7 +1459,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following Inflection Classes were added to the language project:.
         /// </summary>
-        internal static string ksInflectionClassesAdded {
+        public static string ksInflectionClassesAdded {
             get {
                 return ResourceManager.GetString("ksInflectionClassesAdded", resourceCulture);
             }
@@ -1468,7 +1468,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to inflection feature.
         /// </summary>
-        internal static string ksInflectionFeature {
+        public static string ksInflectionFeature {
             get {
                 return ResourceManager.GetString("ksInflectionFeature", resourceCulture);
             }
@@ -1477,7 +1477,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Inflection Feature Description.
         /// </summary>
-        internal static string ksInflectionFeatureCatalogDescriptionLabel {
+        public static string ksInflectionFeatureCatalogDescriptionLabel {
             get {
                 return ResourceManager.GetString("ksInflectionFeatureCatalogDescriptionLabel", resourceCulture);
             }
@@ -1486,7 +1486,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Choose new inflection features from the following catalog. The inflection features you choose will be added to the list of Inflection features for this FieldWorks project..
         /// </summary>
-        internal static string ksInflectionFeatureCatalogPrompt {
+        public static string ksInflectionFeatureCatalogPrompt {
             get {
                 return ResourceManager.GetString("ksInflectionFeatureCatalogPrompt", resourceCulture);
             }
@@ -1495,7 +1495,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Add Inflection Features from Catalog.
         /// </summary>
-        internal static string ksInflectionFeatureCatalogTitle {
+        public static string ksInflectionFeatureCatalogTitle {
             get {
                 return ResourceManager.GetString("ksInflectionFeatureCatalogTitle", resourceCulture);
             }
@@ -1504,7 +1504,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Inflection Features Catalog.
         /// </summary>
-        internal static string ksInflectionFeatureCatalogTreeLabel {
+        public static string ksInflectionFeatureCatalogTreeLabel {
             get {
                 return ResourceManager.GetString("ksInflectionFeatureCatalogTreeLabel", resourceCulture);
             }
@@ -1513,7 +1513,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following Inflection Features were added to the language project:.
         /// </summary>
-        internal static string ksInflectionFeaturesAdded {
+        public static string ksInflectionFeaturesAdded {
             get {
                 return ResourceManager.GetString("ksInflectionFeaturesAdded", resourceCulture);
             }
@@ -1522,7 +1522,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Info:.
         /// </summary>
-        internal static string ksInfo_ {
+        public static string ksInfo_ {
             get {
                 return ResourceManager.GetString("ksInfo_", resourceCulture);
             }
@@ -1531,7 +1531,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The contents of the input file ({0}) have changed. It will now be re-loaded..
         /// </summary>
-        internal static string ksInputFileContentsChanged {
+        public static string ksInputFileContentsChanged {
             get {
                 return ResourceManager.GetString("ksInputFileContentsChanged", resourceCulture);
             }
@@ -1540,7 +1540,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Input File Contents Changed.
         /// </summary>
-        internal static string ksInputFileContentsChangedTitle {
+        public static string ksInputFileContentsChangedTitle {
             get {
                 return ResourceManager.GetString("ksInputFileContentsChangedTitle", resourceCulture);
             }
@@ -1549,7 +1549,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Internal Problem.
         /// </summary>
-        internal static string ksInternalProblem {
+        public static string ksInternalProblem {
             get {
                 return ResourceManager.GetString("ksInternalProblem", resourceCulture);
             }
@@ -1558,7 +1558,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following invalid data was imported:.
         /// </summary>
-        internal static string ksInvalidDataImported {
+        public static string ksInvalidDataImported {
             get {
                 return ResourceManager.GetString("ksInvalidDataImported", resourceCulture);
             }
@@ -1567,7 +1567,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Invalid field.
         /// </summary>
-        internal static string ksInvalidField {
+        public static string ksInvalidField {
             get {
                 return ResourceManager.GetString("ksInvalidField", resourceCulture);
             }
@@ -1576,7 +1576,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Invalid File.
         /// </summary>
-        internal static string ksInvalidFile {
+        public static string ksInvalidFile {
             get {
                 return ResourceManager.GetString("ksInvalidFile", resourceCulture);
             }
@@ -1585,7 +1585,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Invalid Form.
         /// </summary>
-        internal static string ksInvalidForm {
+        public static string ksInvalidForm {
             get {
                 return ResourceManager.GetString("ksInvalidForm", resourceCulture);
             }
@@ -1594,7 +1594,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The lexeme form does not match the morpheme type..
         /// </summary>
-        internal static string ksInvalidLexForm {
+        public static string ksInvalidLexForm {
             get {
                 return ResourceManager.GetString("ksInvalidLexForm", resourceCulture);
             }
@@ -1603,7 +1603,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The given input file {0}, produced by {1}, does not validate against the current LIFT standard.  Report this to the creators of that program as an export bug.  Import may fail..
         /// </summary>
-        internal static string ksInvalidLiftFile {
+        public static string ksInvalidLiftFile {
             get {
                 return ResourceManager.GetString("ksInvalidLiftFile", resourceCulture);
             }
@@ -1612,7 +1612,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The given input file {0}, produced by {1}, does not migrate into a valid LIFT file according to the current LIFT standard.  Report this to the creators of that program, as either an export or migration bug.  Import may fail..
         /// </summary>
-        internal static string ksInvalidMigratedLiftFile {
+        public static string ksInvalidMigratedLiftFile {
             get {
                 return ResourceManager.GetString("ksInvalidMigratedLiftFile", resourceCulture);
             }
@@ -1621,7 +1621,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Invalid Reference.
         /// </summary>
-        internal static string ksInvalidReference {
+        public static string ksInvalidReference {
             get {
                 return ResourceManager.GetString("ksInvalidReference", resourceCulture);
             }
@@ -1630,7 +1630,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following invalid relations were found in the imported file:.
         /// </summary>
-        internal static string ksInvalidRelationsHeader {
+        public static string ksInvalidRelationsHeader {
             get {
                 return ResourceManager.GetString("ksInvalidRelationsHeader", resourceCulture);
             }
@@ -1639,7 +1639,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The selected settings file ({0}) is not valid..
         /// </summary>
-        internal static string ksInvalidSettingsFileX {
+        public static string ksInvalidSettingsFileX {
             get {
                 return ResourceManager.GetString("ksInvalidSettingsFileX", resourceCulture);
             }
@@ -1648,7 +1648,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The selected settings save file ({0}) is not valid..
         /// </summary>
-        internal static string ksInvalidSettingsSaveFileX {
+        public static string ksInvalidSettingsSaveFileX {
             get {
                 return ResourceManager.GetString("ksInvalidSettingsSaveFileX", resourceCulture);
             }
@@ -1657,7 +1657,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Invalid value.
         /// </summary>
-        internal static string ksInvalidValue {
+        public static string ksInvalidValue {
             get {
                 return ResourceManager.GetString("ksInvalidValue", resourceCulture);
             }
@@ -1666,7 +1666,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Language Definition.
         /// </summary>
-        internal static string ksLanguageDefinition {
+        public static string ksLanguageDefinition {
             get {
                 return ResourceManager.GetString("ksLanguageDefinition", resourceCulture);
             }
@@ -1675,7 +1675,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following Languages were added to the language project:.
         /// </summary>
-        internal static string ksLanguagesAdded {
+        public static string ksLanguagesAdded {
             get {
                 return ResourceManager.GetString("ksLanguagesAdded", resourceCulture);
             }
@@ -1684,7 +1684,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Note: The left button is enabled when an entry{0}is selected in the list above..
         /// </summary>
-        internal static string ksLeftButtonEnabledWhen {
+        public static string ksLeftButtonEnabledWhen {
             get {
                 return ResourceManager.GetString("ksLeftButtonEnabledWhen", resourceCulture);
             }
@@ -1693,7 +1693,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Lexeme form.
         /// </summary>
-        internal static string ksLexemeForm {
+        public static string ksLexemeForm {
             get {
                 return ResourceManager.GetString("ksLexemeForm", resourceCulture);
             }
@@ -1702,7 +1702,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Lexical Entries.
         /// </summary>
-        internal static string ksLexicalEntries {
+        public static string ksLexicalEntries {
             get {
                 return ResourceManager.GetString("ksLexicalEntries", resourceCulture);
             }
@@ -1711,7 +1711,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following Lexical Reference Types were added to the language project:.
         /// </summary>
-        internal static string ksLexicalReferenceTypesAdded {
+        public static string ksLexicalReferenceTypesAdded {
             get {
                 return ResourceManager.GetString("ksLexicalReferenceTypesAdded", resourceCulture);
             }
@@ -1720,7 +1720,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Lexical Relation Type :.
         /// </summary>
-        internal static string ksLexicalRelationType {
+        public static string ksLexicalRelationType {
             get {
                 return ResourceManager.GetString("ksLexicalRelationType", resourceCulture);
             }
@@ -1729,7 +1729,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Something is wrong with the data in {0}. If it was a zip file exported from The Combine please contact us at flex_errors@sil.org.
         /// </summary>
-        internal static string ksLIFTCombineImportProblem {
+        public static string ksLIFTCombineImportProblem {
             get {
                 return ResourceManager.GetString("ksLIFTCombineImportProblem", resourceCulture);
             }
@@ -1741,7 +1741,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         ///
         ///A stack dump has been copied to the clipboard.  Please email it and your LIFT file to Flex_Errors@sil.org so that we can improve the program..
         /// </summary>
-        internal static string ksLIFTImportProblem {
+        public static string ksLIFTImportProblem {
             get {
                 return ResourceManager.GetString("ksLIFTImportProblem", resourceCulture);
             }
@@ -1750,7 +1750,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The {0} I need is not shown in the Catalog. Create a custom {1}..
         /// </summary>
-        internal static string ksLinkText {
+        public static string ksLinkText {
             get {
                 return ResourceManager.GetString("ksLinkText", resourceCulture);
             }
@@ -1759,7 +1759,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to List Reference field import options.
         /// </summary>
-        internal static string ksListRefImportOptions {
+        public static string ksListRefImportOptions {
             get {
                 return ResourceManager.GetString("ksListRefImportOptions", resourceCulture);
             }
@@ -1768,7 +1768,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Loading various lists for lookup during import....
         /// </summary>
-        internal static string ksLoadingVariousLists {
+        public static string ksLoadingVariousLists {
             get {
                 return ResourceManager.GetString("ksLoadingVariousLists", resourceCulture);
             }
@@ -1777,7 +1777,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following Locations were added to the language project:.
         /// </summary>
-        internal static string ksLocationsAdded {
+        public static string ksLocationsAdded {
             get {
                 return ResourceManager.GetString("ksLocationsAdded", resourceCulture);
             }
@@ -1786,7 +1786,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Log file problem (phase 5): {0}.
         /// </summary>
-        internal static string ksLogFileProblem5_X {
+        public static string ksLogFileProblem5_X {
             get {
                 return ResourceManager.GetString("ksLogFileProblem5_X", resourceCulture);
             }
@@ -1795,7 +1795,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The Map file was {0}.
         /// </summary>
-        internal static string ksMapFileWasX {
+        public static string ksMapFileWasX {
             get {
                 return ResourceManager.GetString("ksMapFileWasX", resourceCulture);
             }
@@ -1804,7 +1804,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The updated mapping file &lt;{0}&gt; has been saved..
         /// </summary>
-        internal static string ksMappingFileXUpdated {
+        public static string ksMappingFileXUpdated {
             get {
                 return ResourceManager.GetString("ksMappingFileXUpdated", resourceCulture);
             }
@@ -1813,7 +1813,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Marker.
         /// </summary>
-        internal static string ksMarker {
+        public static string ksMarker {
             get {
                 return ResourceManager.GetString("ksMarker", resourceCulture);
             }
@@ -1822,7 +1822,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following may indicate a bug in the import process..
         /// </summary>
-        internal static string ksMayBeBugInImport {
+        public static string ksMayBeBugInImport {
             get {
                 return ResourceManager.GetString("ksMayBeBugInImport", resourceCulture);
             }
@@ -1831,7 +1831,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Merge Entry.
         /// </summary>
-        internal static string ksMergeEntry {
+        public static string ksMergeEntry {
             get {
                 return ResourceManager.GetString("ksMergeEntry", resourceCulture);
             }
@@ -1840,7 +1840,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Merge Report.
         /// </summary>
-        internal static string ksMergeReport {
+        public static string ksMergeReport {
             get {
                 return ResourceManager.GetString("ksMergeReport", resourceCulture);
             }
@@ -1849,7 +1849,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to These messages came from importing into the anthropology data notebook.
         /// </summary>
-        internal static string ksMessagesFromAnthropologyImport {
+        public static string ksMessagesFromAnthropologyImport {
             get {
                 return ResourceManager.GetString("ksMessagesFromAnthropologyImport", resourceCulture);
             }
@@ -1858,7 +1858,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to These messages came from loading the processed data into the FieldWorks project..
         /// </summary>
-        internal static string ksMessagesFromLoading {
+        public static string ksMessagesFromLoading {
             get {
                 return ResourceManager.GetString("ksMessagesFromLoading", resourceCulture);
             }
@@ -1867,7 +1867,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to These messages came from the initial processing of the standard format file (&quot;Preview Import&quot;)..
         /// </summary>
-        internal static string ksMessagesFromPreview {
+        public static string ksMessagesFromPreview {
             get {
                 return ResourceManager.GetString("ksMessagesFromPreview", resourceCulture);
             }
@@ -1876,7 +1876,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Migrating from LIFT version {0} to version {1}.
         /// </summary>
-        internal static string ksMigratingLiftFile {
+        public static string ksMigratingLiftFile {
             get {
                 return ResourceManager.GetString("ksMigratingLiftFile", resourceCulture);
             }
@@ -1885,7 +1885,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The import process has detected some entries in which the field markers were not ordered as expected. (Refer to the list below to see which entries are affected.) The links will open Zedit in the original SFM file at the location of interest. It only works in Internet Explorer. To use it, when the page opens, at the bottom of the browser, it displays, &quot;Internet Explorer restricted this webpage from running scripts or ActiveX controls&quot;. Click &quot;Allow blocked content&quot;. After the first link is clicked, the foll [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string ksMisorderedMarkers {
+        public static string ksMisorderedMarkers {
             get {
                 return ResourceManager.GetString("ksMisorderedMarkers", resourceCulture);
             }
@@ -1894,7 +1894,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Missing information.
         /// </summary>
-        internal static string ksMissingInformation {
+        public static string ksMissingInformation {
             get {
                 return ResourceManager.GetString("ksMissingInformation", resourceCulture);
             }
@@ -1903,7 +1903,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Modify language mapping.
         /// </summary>
-        internal static string ksModifyLangMapping {
+        public static string ksModifyLangMapping {
             get {
                 return ResourceManager.GetString("ksModifyLangMapping", resourceCulture);
             }
@@ -1912,7 +1912,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Modify This Grammatical Info....
         /// </summary>
-        internal static string ksModifyThisGrammaticalInfo_ {
+        public static string ksModifyThisGrammaticalInfo_ {
             get {
                 return ResourceManager.GetString("ksModifyThisGrammaticalInfo_", resourceCulture);
             }
@@ -1921,7 +1921,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to More....
         /// </summary>
-        internal static string ksMore_ {
+        public static string ksMore_ {
             get {
                 return ResourceManager.GetString("ksMore_", resourceCulture);
             }
@@ -1930,7 +1930,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following Morph Types were added to the language project:.
         /// </summary>
-        internal static string ksMorphTypesAdded {
+        public static string ksMorphTypesAdded {
             get {
                 return ResourceManager.GetString("ksMorphTypesAdded", resourceCulture);
             }
@@ -1939,7 +1939,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Multilingual string field import options.
         /// </summary>
-        internal static string ksMultiStringImportOptions {
+        public static string ksMultiStringImportOptions {
             get {
                 return ResourceManager.GetString("ksMultiStringImportOptions", resourceCulture);
             }
@@ -1948,7 +1948,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Name.
         /// </summary>
-        internal static string ksName {
+        public static string ksName {
             get {
                 return ResourceManager.GetString("ksName", resourceCulture);
             }
@@ -1957,7 +1957,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to You must have at least one language to continue..
         /// </summary>
-        internal static string ksNeedALanguage {
+        public static string ksNeedALanguage {
             get {
                 return ResourceManager.GetString("ksNeedALanguage", resourceCulture);
             }
@@ -1966,7 +1966,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} New Anthropology List Items.
         /// </summary>
-        internal static string ksNewAnthropologyListItems {
+        public static string ksNewAnthropologyListItems {
             get {
                 return ResourceManager.GetString("ksNewAnthropologyListItems", resourceCulture);
             }
@@ -1975,7 +1975,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} New Confidence List Items.
         /// </summary>
-        internal static string ksNewConfidenceListItems {
+        public static string ksNewConfidenceListItems {
             get {
                 return ResourceManager.GetString("ksNewConfidenceListItems", resourceCulture);
             }
@@ -1984,7 +1984,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {{0}} New {0} List Items.
         /// </summary>
-        internal static string ksNewCustomListItems {
+        public static string ksNewCustomListItems {
             get {
                 return ResourceManager.GetString("ksNewCustomListItems", resourceCulture);
             }
@@ -1993,7 +1993,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to New duplicate.
         /// </summary>
-        internal static string ksNewDuplicate {
+        public static string ksNewDuplicate {
             get {
                 return ResourceManager.GetString("ksNewDuplicate", resourceCulture);
             }
@@ -2002,7 +2002,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to New Entry.
         /// </summary>
-        internal static string ksNewEntry {
+        public static string ksNewEntry {
             get {
                 return ResourceManager.GetString("ksNewEntry", resourceCulture);
             }
@@ -2011,7 +2011,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} New Location List Items.
         /// </summary>
-        internal static string ksNewLocationListItems {
+        public static string ksNewLocationListItems {
             get {
                 return ResourceManager.GetString("ksNewLocationListItems", resourceCulture);
             }
@@ -2020,7 +2020,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} New People List Items.
         /// </summary>
-        internal static string ksNewPeopleListItems {
+        public static string ksNewPeopleListItems {
             get {
                 return ResourceManager.GetString("ksNewPeopleListItems", resourceCulture);
             }
@@ -2029,7 +2029,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} New Phrase Tag List Items.
         /// </summary>
-        internal static string ksNewPhraseTagListItems {
+        public static string ksNewPhraseTagListItems {
             get {
                 return ResourceManager.GetString("ksNewPhraseTagListItems", resourceCulture);
             }
@@ -2038,7 +2038,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} New Record Type List Items.
         /// </summary>
-        internal static string ksNewRecordTypeListItems {
+        public static string ksNewRecordTypeListItems {
             get {
                 return ResourceManager.GetString("ksNewRecordTypeListItems", resourceCulture);
             }
@@ -2047,7 +2047,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} New Restriction List Items.
         /// </summary>
-        internal static string ksNewRestrictionListItems {
+        public static string ksNewRestrictionListItems {
             get {
                 return ResourceManager.GetString("ksNewRestrictionListItems", resourceCulture);
             }
@@ -2056,7 +2056,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} New Status List Items.
         /// </summary>
-        internal static string ksNewStatusListItems {
+        public static string ksNewStatusListItems {
             get {
                 return ResourceManager.GetString("ksNewStatusListItems", resourceCulture);
             }
@@ -2065,7 +2065,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} New Time of Day List Items.
         /// </summary>
-        internal static string ksNewTimeOfDayListItems {
+        public static string ksNewTimeOfDayListItems {
             get {
                 return ResourceManager.GetString("ksNewTimeOfDayListItems", resourceCulture);
             }
@@ -2074,7 +2074,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} New Weather List Items.
         /// </summary>
-        internal static string ksNewWeatherListItems {
+        public static string ksNewWeatherListItems {
             get {
                 return ResourceManager.GetString("ksNewWeatherListItems", resourceCulture);
             }
@@ -2083,7 +2083,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Sorry, but the assistant for derivational affixes has not been implemented yet..
         /// </summary>
-        internal static string ksNoAssistForDerivAffixes {
+        public static string ksNoAssistForDerivAffixes {
             get {
                 return ResourceManager.GetString("ksNoAssistForDerivAffixes", resourceCulture);
             }
@@ -2092,7 +2092,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to &lt;No Change&gt;.
         /// </summary>
-        internal static string ksNoChange {
+        public static string ksNoChange {
             get {
                 return ResourceManager.GetString("ksNoChange", resourceCulture);
             }
@@ -2102,7 +2102,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         ///   Looks up a localized string similar to {0}
         ///Sorry, in this browser, opening the file via hyperlink presents a security risk.  Please open the file manually using a text editor or a word processing application..
         /// </summary>
-        internal static string ksNoFileHyperlinkThisBrowser {
+        public static string ksNoFileHyperlinkThisBrowser {
             get {
                 return ResourceManager.GetString("ksNoFileHyperlinkThisBrowser", resourceCulture);
             }
@@ -2111,7 +2111,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} -(no line number in file).
         /// </summary>
-        internal static string ksNoLineNumberInFile {
+        public static string ksNoLineNumberInFile {
             get {
                 return ResourceManager.GetString("ksNoLineNumberInFile", resourceCulture);
             }
@@ -2120,7 +2120,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to None of the above.
         /// </summary>
-        internal static string ksNoneOfTheAbove {
+        public static string ksNoneOfTheAbove {
             get {
                 return ResourceManager.GetString("ksNoneOfTheAbove", resourceCulture);
             }
@@ -2129,7 +2129,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The LIFT ranges file had a conflicting value ({0} instead of {1}) for the {2} of the lexical relation {3}. The value in the LIFT file was ignored..
         /// </summary>
-        internal static string ksNonMatchingRelation {
+        public static string ksNonMatchingRelation {
             get {
                 return ResourceManager.GetString("ksNonMatchingRelation", resourceCulture);
             }
@@ -2138,7 +2138,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to No senses in entry.
         /// </summary>
-        internal static string ksNoSensesInEntry {
+        public static string ksNoSensesInEntry {
             get {
                 return ResourceManager.GetString("ksNoSensesInEntry", resourceCulture);
             }
@@ -2147,7 +2147,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to &lt;Not Applicable&gt;.
         /// </summary>
-        internal static string ksNotApplicable {
+        public static string ksNotApplicable {
             get {
                 return ResourceManager.GetString("ksNotApplicable", resourceCulture);
             }
@@ -2156,7 +2156,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Notice.
         /// </summary>
-        internal static string ksNotice {
+        public static string ksNotice {
             get {
                 return ResourceManager.GetString("ksNotice", resourceCulture);
             }
@@ -2165,7 +2165,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Not Sure.
         /// </summary>
-        internal static string ksNotSure {
+        public static string ksNotSure {
             get {
                 return ResourceManager.GetString("ksNotSure", resourceCulture);
             }
@@ -2174,7 +2174,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Occurrences.
         /// </summary>
-        internal static string ksOccurrences {
+        public static string ksOccurrences {
             get {
                 return ResourceManager.GetString("ksOccurrences", resourceCulture);
             }
@@ -2183,7 +2183,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} - On or before line {1}.
         /// </summary>
-        internal static string ksOnOrBeforeLine {
+        public static string ksOnOrBeforeLine {
             get {
                 return ResourceManager.GetString("ksOnOrBeforeLine", resourceCulture);
             }
@@ -2192,7 +2192,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Original.
         /// </summary>
-        internal static string ksOriginal {
+        public static string ksOriginal {
             get {
                 return ResourceManager.GetString("ksOriginal", resourceCulture);
             }
@@ -2201,7 +2201,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Original value.
         /// </summary>
-        internal static string ksOriginalValue {
+        public static string ksOriginalValue {
             get {
                 return ResourceManager.GetString("ksOriginalValue", resourceCulture);
             }
@@ -2210,7 +2210,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following Grammatical Categories were added to the language project:.
         /// </summary>
-        internal static string ksPartsOfSpeechAdded {
+        public static string ksPartsOfSpeechAdded {
             get {
                 return ResourceManager.GetString("ksPartsOfSpeechAdded", resourceCulture);
             }
@@ -2219,7 +2219,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following People were added to the language project:.
         /// </summary>
-        internal static string ksPeopleAdded {
+        public static string ksPeopleAdded {
             get {
                 return ResourceManager.GetString("ksPeopleAdded", resourceCulture);
             }
@@ -2228,7 +2228,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Phase 1 Error.
         /// </summary>
-        internal static string ksPhase1Error {
+        public static string ksPhase1Error {
             get {
                 return ResourceManager.GetString("ksPhase1Error", resourceCulture);
             }
@@ -2237,7 +2237,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Phase 1 of {0}: processing output of Preview.
         /// </summary>
-        internal static string ksPhase1ofX_Preview {
+        public static string ksPhase1ofX_Preview {
             get {
                 return ResourceManager.GetString("ksPhase1ofX_Preview", resourceCulture);
             }
@@ -2246,7 +2246,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Phase 2 of {0}: processing output of phase 1.
         /// </summary>
-        internal static string ksPhase2ofX {
+        public static string ksPhase2ofX {
             get {
                 return ResourceManager.GetString("ksPhase2ofX", resourceCulture);
             }
@@ -2255,7 +2255,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Phase 3 of {0}: processing output of phase 2.
         /// </summary>
-        internal static string ksPhase3ofX {
+        public static string ksPhase3ofX {
             get {
                 return ResourceManager.GetString("ksPhase3ofX", resourceCulture);
             }
@@ -2264,7 +2264,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Phase 4 of {0}: processing output of phase 3.
         /// </summary>
-        internal static string ksPhase4ofX {
+        public static string ksPhase4ofX {
             get {
                 return ResourceManager.GetString("ksPhase4ofX", resourceCulture);
             }
@@ -2273,7 +2273,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Phase 5 of 5: loading data into the lexicon.
         /// </summary>
-        internal static string ksPhase5of5_LoadingData {
+        public static string ksPhase5of5_LoadingData {
             get {
                 return ResourceManager.GetString("ksPhase5of5_LoadingData", resourceCulture);
             }
@@ -2282,7 +2282,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Phase file.
         /// </summary>
-        internal static string ksPhaseFile {
+        public static string ksPhaseFile {
             get {
                 return ResourceManager.GetString("ksPhaseFile", resourceCulture);
             }
@@ -2291,7 +2291,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to phonological feature.
         /// </summary>
-        internal static string ksPhonologicalFeature {
+        public static string ksPhonologicalFeature {
             get {
                 return ResourceManager.GetString("ksPhonologicalFeature", resourceCulture);
             }
@@ -2300,7 +2300,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Phonological Feature Description.
         /// </summary>
-        internal static string ksPhonologicalFeatureCatalogDescriptionLabel {
+        public static string ksPhonologicalFeatureCatalogDescriptionLabel {
             get {
                 return ResourceManager.GetString("ksPhonologicalFeatureCatalogDescriptionLabel", resourceCulture);
             }
@@ -2310,7 +2310,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         ///   Looks up a localized string similar to Choose the phonological features you want to add to this FieldWorks project.
         ///Each feature has two values (+ and -)..
         /// </summary>
-        internal static string ksPhonologicalFeatureCatalogPrompt {
+        public static string ksPhonologicalFeatureCatalogPrompt {
             get {
                 return ResourceManager.GetString("ksPhonologicalFeatureCatalogPrompt", resourceCulture);
             }
@@ -2319,7 +2319,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Add Phonological Features from Catalog.
         /// </summary>
-        internal static string ksPhonologicalFeatureCatalogTitle {
+        public static string ksPhonologicalFeatureCatalogTitle {
             get {
                 return ResourceManager.GetString("ksPhonologicalFeatureCatalogTitle", resourceCulture);
             }
@@ -2328,7 +2328,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Phonological Features Catalog.
         /// </summary>
-        internal static string ksPhonologicalFeatureCatalogTreeLabel {
+        public static string ksPhonologicalFeatureCatalogTreeLabel {
             get {
                 return ResourceManager.GetString("ksPhonologicalFeatureCatalogTreeLabel", resourceCulture);
             }
@@ -2337,7 +2337,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Phonological Features.
         /// </summary>
-        internal static string ksPhonologicalFeatures {
+        public static string ksPhonologicalFeatures {
             get {
                 return ResourceManager.GetString("ksPhonologicalFeatures", resourceCulture);
             }
@@ -2346,7 +2346,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The phonological feature I need is not shown here.  Add a new phonological feature..
         /// </summary>
-        internal static string ksPhonologicalFeaturesAdd {
+        public static string ksPhonologicalFeaturesAdd {
             get {
                 return ResourceManager.GetString("ksPhonologicalFeaturesAdd", resourceCulture);
             }
@@ -2355,7 +2355,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Possible Invalid File.
         /// </summary>
-        internal static string ksPossibleInvalidFile {
+        public static string ksPossibleInvalidFile {
             get {
                 return ResourceManager.GetString("ksPossibleInvalidFile", resourceCulture);
             }
@@ -2364,7 +2364,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Preview Import Summary.
         /// </summary>
-        internal static string ksPreviewImportSummary {
+        public static string ksPreviewImportSummary {
             get {
                 return ResourceManager.GetString("ksPreviewImportSummary", resourceCulture);
             }
@@ -2373,7 +2373,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to A problem was encountered trying to store this id for a {0}: {1}.
         /// </summary>
-        internal static string ksProblemId {
+        public static string ksProblemId {
             get {
                 return ResourceManager.GetString("ksProblemId", resourceCulture);
             }
@@ -2382,7 +2382,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Problem Importing.
         /// </summary>
-        internal static string ksProblemImporting {
+        public static string ksProblemImporting {
             get {
                 return ResourceManager.GetString("ksProblemImporting", resourceCulture);
             }
@@ -2391,7 +2391,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Problem importing from {0}: {1}.
         /// </summary>
-        internal static string ksProblemImportingFrom {
+        public static string ksProblemImportingFrom {
             get {
                 return ResourceManager.GetString("ksProblemImportingFrom", resourceCulture);
             }
@@ -2400,7 +2400,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Problem saving settings: {0}.
         /// </summary>
-        internal static string ksProblemSavingSettings {
+        public static string ksProblemSavingSettings {
             get {
                 return ResourceManager.GetString("ksProblemSavingSettings", resourceCulture);
             }
@@ -2409,7 +2409,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Processing {0} relation links between imported entries.
         /// </summary>
-        internal static string ksProcessingRelationLinks {
+        public static string ksProcessingRelationLinks {
             get {
                 return ResourceManager.GetString("ksProcessingRelationLinks", resourceCulture);
             }
@@ -2418,7 +2418,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following Publication Types were added to the language project:.
         /// </summary>
-        internal static string ksPublicationTypesAdded {
+        public static string ksPublicationTypesAdded {
             get {
                 return ResourceManager.GetString("ksPublicationTypesAdded", resourceCulture);
             }
@@ -2427,7 +2427,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} records created by import.
         /// </summary>
-        internal static string ksRecordsCreatedByImport {
+        public static string ksRecordsCreatedByImport {
             get {
                 return ResourceManager.GetString("ksRecordsCreatedByImport", resourceCulture);
             }
@@ -2436,7 +2436,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} records deleted and {1} records created by import.
         /// </summary>
-        internal static string ksRecordsDeletedAndCreated {
+        public static string ksRecordsDeletedAndCreated {
             get {
                 return ResourceManager.GetString("ksRecordsDeletedAndCreated", resourceCulture);
             }
@@ -2445,7 +2445,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Redo Add Variant.
         /// </summary>
-        internal static string ksRedoAddVariant {
+        public static string ksRedoAddVariant {
             get {
                 return ResourceManager.GetString("ksRedoAddVariant", resourceCulture);
             }
@@ -2454,7 +2454,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Redo Create Category.
         /// </summary>
-        internal static string ksRedoCreateCategory {
+        public static string ksRedoCreateCategory {
             get {
                 return ResourceManager.GetString("ksRedoCreateCategory", resourceCulture);
             }
@@ -2463,7 +2463,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Redo Create Entry.
         /// </summary>
-        internal static string ksRedoCreateEntry {
+        public static string ksRedoCreateEntry {
             get {
                 return ResourceManager.GetString("ksRedoCreateEntry", resourceCulture);
             }
@@ -2472,7 +2472,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Redo Create New Sense.
         /// </summary>
-        internal static string ksRedoCreateNewSense {
+        public static string ksRedoCreateNewSense {
             get {
                 return ResourceManager.GetString("ksRedoCreateNewSense", resourceCulture);
             }
@@ -2481,7 +2481,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Redo Create Record.
         /// </summary>
-        internal static string ksRedoCreateRecord {
+        public static string ksRedoCreateRecord {
             get {
                 return ResourceManager.GetString("ksRedoCreateRecord", resourceCulture);
             }
@@ -2490,7 +2490,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Redo Create Variant Entry.
         /// </summary>
-        internal static string ksRedoCreateVarEntry {
+        public static string ksRedoCreateVarEntry {
             get {
                 return ResourceManager.GetString("ksRedoCreateVarEntry", resourceCulture);
             }
@@ -2499,7 +2499,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Redo import translated grammatical categories.
         /// </summary>
-        internal static string ksRedoImportTranslateGrammaticalCategories {
+        public static string ksRedoImportTranslateGrammaticalCategories {
             get {
                 return ResourceManager.GetString("ksRedoImportTranslateGrammaticalCategories", resourceCulture);
             }
@@ -2508,7 +2508,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Redo Insert Category.
         /// </summary>
-        internal static string ksRedoInsertCategory {
+        public static string ksRedoInsertCategory {
             get {
                 return ResourceManager.GetString("ksRedoInsertCategory", resourceCulture);
             }
@@ -2517,7 +2517,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Redo Insert Inflection Feature.
         /// </summary>
-        internal static string ksRedoInsertInflectionFeature {
+        public static string ksRedoInsertInflectionFeature {
             get {
                 return ResourceManager.GetString("ksRedoInsertInflectionFeature", resourceCulture);
             }
@@ -2526,7 +2526,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Redo Insert Phonological Feature.
         /// </summary>
-        internal static string ksRedoInsertPhonologicalFeature {
+        public static string ksRedoInsertPhonologicalFeature {
             get {
                 return ResourceManager.GetString("ksRedoInsertPhonologicalFeature", resourceCulture);
             }
@@ -2535,7 +2535,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Redo Merge Entry.
         /// </summary>
-        internal static string ksRedoMergeEntry {
+        public static string ksRedoMergeEntry {
             get {
                 return ResourceManager.GetString("ksRedoMergeEntry", resourceCulture);
             }
@@ -2544,7 +2544,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Redo selection of Phonological Features.
         /// </summary>
-        internal static string ksRedoSelectionOfPhonologicalFeatures {
+        public static string ksRedoSelectionOfPhonologicalFeatures {
             get {
                 return ResourceManager.GetString("ksRedoSelectionOfPhonologicalFeatures", resourceCulture);
             }
@@ -2553,7 +2553,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Redo Set {0}.
         /// </summary>
-        internal static string ksRedoSetX {
+        public static string ksRedoSetX {
             get {
                 return ResourceManager.GetString("ksRedoSetX", resourceCulture);
             }
@@ -2562,7 +2562,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Reference Count.
         /// </summary>
-        internal static string ksReferenceCount {
+        public static string ksReferenceCount {
             get {
                 return ResourceManager.GetString("ksReferenceCount", resourceCulture);
             }
@@ -2571,7 +2571,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to References.
         /// </summary>
-        internal static string ksReferences {
+        public static string ksReferences {
             get {
                 return ResourceManager.GetString("ksReferences", resourceCulture);
             }
@@ -2580,7 +2580,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Relation Type.
         /// </summary>
-        internal static string ksRelationType {
+        public static string ksRelationType {
             get {
                 return ResourceManager.GetString("ksRelationType", resourceCulture);
             }
@@ -2589,7 +2589,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Blank.
         /// </summary>
-        internal static string ksRemoveThisFeature {
+        public static string ksRemoveThisFeature {
             get {
                 return ResourceManager.GetString("ksRemoveThisFeature", resourceCulture);
             }
@@ -2598,7 +2598,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Attempt to retrieve matching entries timed out. Try typing a longer string to match fewer items..
         /// </summary>
-        internal static string ksRetrievalTimedOut {
+        public static string ksRetrievalTimedOut {
             get {
                 return ResourceManager.GetString("ksRetrievalTimedOut", resourceCulture);
             }
@@ -2607,7 +2607,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Link field options.
         /// </summary>
-        internal static string ksRnLinkFieldOptions {
+        public static string ksRnLinkFieldOptions {
             get {
                 return ResourceManager.GetString("ksRnLinkFieldOptions", resourceCulture);
             }
@@ -2616,7 +2616,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to S&amp;how Info.
         /// </summary>
-        internal static string ksS_howInfo {
+        public static string ksS_howInfo {
             get {
                 return ResourceManager.GetString("ksS_howInfo", resourceCulture);
             }
@@ -2625,7 +2625,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Save settings?.
         /// </summary>
-        internal static string ksSaveSettings_ {
+        public static string ksSaveSettings_ {
             get {
                 return ResourceManager.GetString("ksSaveSettings_", resourceCulture);
             }
@@ -2634,7 +2634,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Select the Shoebox Anthropology Database file to import.
         /// </summary>
-        internal static string ksSelectAnthropologyStdFmtFile {
+        public static string ksSelectAnthropologyStdFmtFile {
             get {
                 return ResourceManager.GetString("ksSelectAnthropologyStdFmtFile", resourceCulture);
             }
@@ -2643,7 +2643,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The selected file ({0}) may not be a valid &apos;{1}&apos; file.{2}{2}Are you sure that you want to use it?.
         /// </summary>
-        internal static string ksSelectedFileXInvalidY {
+        public static string ksSelectedFileXInvalidY {
             get {
                 return ResourceManager.GetString("ksSelectedFileXInvalidY", resourceCulture);
             }
@@ -2652,7 +2652,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Select the Import Settings file to load.
         /// </summary>
-        internal static string ksSelectLoadImportSettingsFile {
+        public static string ksSelectLoadImportSettingsFile {
             get {
                 return ResourceManager.GetString("ksSelectLoadImportSettingsFile", resourceCulture);
             }
@@ -2661,7 +2661,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Select the Import Settings file to save.
         /// </summary>
-        internal static string ksSelectSaveImportSettingsFile {
+        public static string ksSelectSaveImportSettingsFile {
             get {
                 return ResourceManager.GetString("ksSelectSaveImportSettingsFile", resourceCulture);
             }
@@ -2670,7 +2670,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Select the Shoebox Project file to use.
         /// </summary>
-        internal static string ksSelectShoeboxProjectFile {
+        public static string ksSelectShoeboxProjectFile {
             get {
                 return ResourceManager.GetString("ksSelectShoeboxProjectFile", resourceCulture);
             }
@@ -2679,7 +2679,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Select the &apos;{0}&apos; file to use.
         /// </summary>
-        internal static string ksSelectXFile {
+        public static string ksSelectXFile {
             get {
                 return ResourceManager.GetString("ksSelectXFile", resourceCulture);
             }
@@ -2688,7 +2688,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following Semantic Domains were added to the language project:.
         /// </summary>
-        internal static string ksSemanticDomainsAdded {
+        public static string ksSemanticDomainsAdded {
             get {
                 return ResourceManager.GetString("ksSemanticDomainsAdded", resourceCulture);
             }
@@ -2697,7 +2697,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Sense.
         /// </summary>
-        internal static string ksSense {
+        public static string ksSense {
             get {
                 return ResourceManager.GetString("ksSense", resourceCulture);
             }
@@ -2706,7 +2706,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to A relation in a sense ({0}) had an invalid reference value..
         /// </summary>
-        internal static string ksSenseInvalidRef {
+        public static string ksSenseInvalidRef {
             get {
                 return ResourceManager.GetString("ksSenseInvalidRef", resourceCulture);
             }
@@ -2715,7 +2715,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following Sense Types were added to the language project:.
         /// </summary>
-        internal static string ksSenseTypesAdded {
+        public static string ksSenseTypesAdded {
             get {
                 return ResourceManager.GetString("ksSenseTypesAdded", resourceCulture);
             }
@@ -2724,7 +2724,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Setting {0} collection type relation links.
         /// </summary>
-        internal static string ksSettingCollectionRelationLinks {
+        public static string ksSettingCollectionRelationLinks {
             get {
                 return ResourceManager.GetString("ksSettingCollectionRelationLinks", resourceCulture);
             }
@@ -2733,7 +2733,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Setting entry modification times.
         /// </summary>
-        internal static string ksSettingEntryModificationTimes {
+        public static string ksSettingEntryModificationTimes {
             get {
                 return ResourceManager.GetString("ksSettingEntryModificationTimes", resourceCulture);
             }
@@ -2742,7 +2742,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Settings Saved.
         /// </summary>
-        internal static string ksSettingsSaved {
+        public static string ksSettingsSaved {
             get {
                 return ResourceManager.GetString("ksSettingsSaved", resourceCulture);
             }
@@ -2751,7 +2751,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The settings save file ({0}) must not be the same as the database file ({1})!.
         /// </summary>
-        internal static string ksSettingsSaveFileSameAsDatabaseFile {
+        public static string ksSettingsSaveFileSameAsDatabaseFile {
             get {
                 return ResourceManager.GetString("ksSettingsSaveFileSameAsDatabaseFile", resourceCulture);
             }
@@ -2760,7 +2760,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Setting {0} tree type relation links.
         /// </summary>
-        internal static string ksSettingTreeRelationLinks {
+        public static string ksSettingTreeRelationLinks {
             get {
                 return ResourceManager.GetString("ksSettingTreeRelationLinks", resourceCulture);
             }
@@ -2769,7 +2769,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Shoebox project.
         /// </summary>
-        internal static string ksShoeboxProject {
+        public static string ksShoeboxProject {
             get {
                 return ResourceManager.GetString("ksShoeboxProject", resourceCulture);
             }
@@ -2778,7 +2778,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Show Advanced.
         /// </summary>
-        internal static string ksShowAdvanced {
+        public static string ksShowAdvanced {
             get {
                 return ResourceManager.GetString("ksShowAdvanced", resourceCulture);
             }
@@ -2787,7 +2787,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Specify Different Grammatical Info....
         /// </summary>
-        internal static string ksSpecifyDifferentGrammaticalInfo_ {
+        public static string ksSpecifyDifferentGrammaticalInfo_ {
             get {
                 return ResourceManager.GetString("ksSpecifyDifferentGrammaticalInfo_", resourceCulture);
             }
@@ -2796,7 +2796,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Specify FieldWorks writing system.
         /// </summary>
-        internal static string ksSpecifyFwWs {
+        public static string ksSpecifyFwWs {
             get {
                 return ResourceManager.GetString("ksSpecifyFwWs", resourceCulture);
             }
@@ -2805,7 +2805,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Specify the FieldWorks writing system and encoding converter for this LinguaLinks language definition..
         /// </summary>
-        internal static string ksSpecifyFwWsDescription {
+        public static string ksSpecifyFwWsDescription {
             get {
                 return ResourceManager.GetString("ksSpecifyFwWsDescription", resourceCulture);
             }
@@ -2814,7 +2814,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Specify Grammatical Info....
         /// </summary>
-        internal static string ksSpecifyGrammaticalInfo_ {
+        public static string ksSpecifyGrammaticalInfo_ {
             get {
                 return ResourceManager.GetString("ksSpecifyGrammaticalInfo_", resourceCulture);
             }
@@ -2823,7 +2823,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to standard format.
         /// </summary>
-        internal static string ksStandardFormat {
+        public static string ksStandardFormat {
             get {
                 return ResourceManager.GetString("ksStandardFormat", resourceCulture);
             }
@@ -2832,7 +2832,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to ***.
         /// </summary>
-        internal static string ksStars {
+        public static string ksStars {
             get {
                 return ResourceManager.GetString("ksStars", resourceCulture);
             }
@@ -2841,7 +2841,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Statistics for standard format markers.
         /// </summary>
-        internal static string ksStatsForSFMarkers {
+        public static string ksStatsForSFMarkers {
             get {
                 return ResourceManager.GetString("ksStatsForSFMarkers", resourceCulture);
             }
@@ -2850,7 +2850,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following Status values were added to the language project:.
         /// </summary>
-        internal static string ksStatusValuesAdded {
+        public static string ksStatusValuesAdded {
             get {
                 return ResourceManager.GetString("ksStatusValuesAdded", resourceCulture);
             }
@@ -2859,7 +2859,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following Stem Names were added to the project:.
         /// </summary>
-        internal static string ksStemNamesAdded {
+        public static string ksStemNamesAdded {
             get {
                 return ResourceManager.GetString("ksStemNamesAdded", resourceCulture);
             }
@@ -2868,7 +2868,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Stored length.
         /// </summary>
-        internal static string ksStoredLength {
+        public static string ksStoredLength {
             get {
                 return ResourceManager.GetString("ksStoredLength", resourceCulture);
             }
@@ -2877,7 +2877,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Storing {0} lexical entry references for complex entries and variants.
         /// </summary>
-        internal static string ksStoringLexicalEntryReferences {
+        public static string ksStoringLexicalEntryReferences {
             get {
                 return ResourceManager.GetString("ksStoringLexicalEntryReferences", resourceCulture);
             }
@@ -2886,7 +2886,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to String field import options.
         /// </summary>
-        internal static string ksStringImportOptions {
+        public static string ksStringImportOptions {
             get {
                 return ResourceManager.GetString("ksStringImportOptions", resourceCulture);
             }
@@ -2895,7 +2895,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Text field import options.
         /// </summary>
-        internal static string ksTextImportOptions {
+        public static string ksTextImportOptions {
             get {
                 return ResourceManager.GetString("ksTextImportOptions", resourceCulture);
             }
@@ -2904,7 +2904,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Transformation problem: {0}.
         /// </summary>
-        internal static string ksTransformProblem_X {
+        public static string ksTransformProblem_X {
             get {
                 return ResourceManager.GetString("ksTransformProblem_X", resourceCulture);
             }
@@ -2913,7 +2913,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Transformation problem (phase 1): {0}.
         /// </summary>
-        internal static string ksTransformProblemPhase1_X {
+        public static string ksTransformProblemPhase1_X {
             get {
                 return ResourceManager.GetString("ksTransformProblemPhase1_X", resourceCulture);
             }
@@ -2922,7 +2922,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Transformation problem (phase 2): {0}.
         /// </summary>
-        internal static string ksTransformProblemPhase2_X {
+        public static string ksTransformProblemPhase2_X {
             get {
                 return ResourceManager.GetString("ksTransformProblemPhase2_X", resourceCulture);
             }
@@ -2931,7 +2931,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Transformation problem (phase 3): {0}.
         /// </summary>
-        internal static string ksTransformProblemPhase3_X {
+        public static string ksTransformProblemPhase3_X {
             get {
                 return ResourceManager.GetString("ksTransformProblemPhase3_X", resourceCulture);
             }
@@ -2940,7 +2940,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Transformation problem (phase 4): {0}.
         /// </summary>
-        internal static string ksTransformProblemPhase4_X {
+        public static string ksTransformProblemPhase4_X {
             get {
                 return ResourceManager.GetString("ksTransformProblemPhase4_X", resourceCulture);
             }
@@ -2949,7 +2949,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following Translation Types were added to the language project:.
         /// </summary>
-        internal static string ksTranslationTypesAdded {
+        public static string ksTranslationTypesAdded {
             get {
                 return ResourceManager.GetString("ksTranslationTypesAdded", resourceCulture);
             }
@@ -2958,7 +2958,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Truncated field.
         /// </summary>
-        internal static string ksTruncatedField {
+        public static string ksTruncatedField {
             get {
                 return ResourceManager.GetString("ksTruncatedField", resourceCulture);
             }
@@ -2967,7 +2967,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following data was truncated on import:.
         /// </summary>
-        internal static string ksTruncatedOnImport {
+        public static string ksTruncatedOnImport {
             get {
                 return ResourceManager.GetString("ksTruncatedOnImport", resourceCulture);
             }
@@ -2976,7 +2976,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Type.
         /// </summary>
-        internal static string ksType {
+        public static string ksType {
             get {
                 return ResourceManager.GetString("ksType", resourceCulture);
             }
@@ -2985,7 +2985,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to No definition available for this item..
         /// </summary>
-        internal static string ksUndefinedItem {
+        public static string ksUndefinedItem {
             get {
                 return ResourceManager.GetString("ksUndefinedItem", resourceCulture);
             }
@@ -2994,7 +2994,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The settings save file must be defined..
         /// </summary>
-        internal static string ksUndefinedSettingsSaveFile {
+        public static string ksUndefinedSettingsSaveFile {
             get {
                 return ResourceManager.GetString("ksUndefinedSettingsSaveFile", resourceCulture);
             }
@@ -3003,7 +3003,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Undo Add Variant.
         /// </summary>
-        internal static string ksUndoAddVariant {
+        public static string ksUndoAddVariant {
             get {
                 return ResourceManager.GetString("ksUndoAddVariant", resourceCulture);
             }
@@ -3012,7 +3012,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Undo Create Category.
         /// </summary>
-        internal static string ksUndoCreateCategory {
+        public static string ksUndoCreateCategory {
             get {
                 return ResourceManager.GetString("ksUndoCreateCategory", resourceCulture);
             }
@@ -3021,7 +3021,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Undo Create Entry.
         /// </summary>
-        internal static string ksUndoCreateEntry {
+        public static string ksUndoCreateEntry {
             get {
                 return ResourceManager.GetString("ksUndoCreateEntry", resourceCulture);
             }
@@ -3030,7 +3030,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Undo Create New Sense.
         /// </summary>
-        internal static string ksUndoCreateNewSense {
+        public static string ksUndoCreateNewSense {
             get {
                 return ResourceManager.GetString("ksUndoCreateNewSense", resourceCulture);
             }
@@ -3039,7 +3039,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Undo Create Record.
         /// </summary>
-        internal static string ksUndoCreateRecord {
+        public static string ksUndoCreateRecord {
             get {
                 return ResourceManager.GetString("ksUndoCreateRecord", resourceCulture);
             }
@@ -3048,7 +3048,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Undo Create Variant Entry.
         /// </summary>
-        internal static string ksUndoCreateVarEntry {
+        public static string ksUndoCreateVarEntry {
             get {
                 return ResourceManager.GetString("ksUndoCreateVarEntry", resourceCulture);
             }
@@ -3057,7 +3057,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Undo import translated grammatical categories.
         /// </summary>
-        internal static string ksUndoImportTranslateGrammaticalCategories {
+        public static string ksUndoImportTranslateGrammaticalCategories {
             get {
                 return ResourceManager.GetString("ksUndoImportTranslateGrammaticalCategories", resourceCulture);
             }
@@ -3066,7 +3066,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Undo Insert Category.
         /// </summary>
-        internal static string ksUndoInsertCategory {
+        public static string ksUndoInsertCategory {
             get {
                 return ResourceManager.GetString("ksUndoInsertCategory", resourceCulture);
             }
@@ -3075,7 +3075,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Undo Insert Inflection Feature.
         /// </summary>
-        internal static string ksUndoInsertInflectionFeature {
+        public static string ksUndoInsertInflectionFeature {
             get {
                 return ResourceManager.GetString("ksUndoInsertInflectionFeature", resourceCulture);
             }
@@ -3084,7 +3084,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Undo Insert Phonological Feature.
         /// </summary>
-        internal static string ksUndoInsertPhonologicalFeature {
+        public static string ksUndoInsertPhonologicalFeature {
             get {
                 return ResourceManager.GetString("ksUndoInsertPhonologicalFeature", resourceCulture);
             }
@@ -3093,7 +3093,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Undo Merge Entry.
         /// </summary>
-        internal static string ksUndoMergeEntry {
+        public static string ksUndoMergeEntry {
             get {
                 return ResourceManager.GetString("ksUndoMergeEntry", resourceCulture);
             }
@@ -3102,7 +3102,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Undo selection of Phonological Features.
         /// </summary>
-        internal static string ksUndoSelectionOfPhonologicalFeatures {
+        public static string ksUndoSelectionOfPhonologicalFeatures {
             get {
                 return ResourceManager.GetString("ksUndoSelectionOfPhonologicalFeatures", resourceCulture);
             }
@@ -3111,7 +3111,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Undo Set {0}.
         /// </summary>
-        internal static string ksUndoSetX {
+        public static string ksUndoSetX {
             get {
                 return ResourceManager.GetString("ksUndoSetX", resourceCulture);
             }
@@ -3120,7 +3120,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Unhandled Error.
         /// </summary>
-        internal static string ksUnhandledError {
+        public static string ksUnhandledError {
             get {
                 return ResourceManager.GetString("ksUnhandledError", resourceCulture);
             }
@@ -3129,7 +3129,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Unimplemented field.
         /// </summary>
-        internal static string ksUnimplementedField {
+        public static string ksUnimplementedField {
             get {
                 return ResourceManager.GetString("ksUnimplementedField", resourceCulture);
             }
@@ -3138,7 +3138,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Unknown.
         /// </summary>
-        internal static string ksUnknown {
+        public static string ksUnknown {
             get {
                 return ResourceManager.GetString("ksUnknown", resourceCulture);
             }
@@ -3147,7 +3147,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to unknown category.
         /// </summary>
-        internal static string ksUnknownCategory {
+        public static string ksUnknownCategory {
             get {
                 return ResourceManager.GetString("ksUnknownCategory", resourceCulture);
             }
@@ -3156,7 +3156,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following unknown morph-types were found in the imported file:.
         /// </summary>
-        internal static string ksUnknownMorphTypes {
+        public static string ksUnknownMorphTypes {
             get {
                 return ResourceManager.GetString("ksUnknownMorphTypes", resourceCulture);
             }
@@ -3165,7 +3165,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following Usage Types were added to the language project:.
         /// </summary>
-        internal static string ksUsageTypesAdded {
+        public static string ksUsageTypesAdded {
             get {
                 return ResourceManager.GetString("ksUsageTypesAdded", resourceCulture);
             }
@@ -3174,7 +3174,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Use Allomorph.
         /// </summary>
-        internal static string ksUseAllomorph {
+        public static string ksUseAllomorph {
             get {
                 return ResourceManager.GetString("ksUseAllomorph", resourceCulture);
             }
@@ -3183,7 +3183,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to &amp;Use Entry.
         /// </summary>
-        internal static string ksUseEntry {
+        public static string ksUseEntry {
             get {
                 return ResourceManager.GetString("ksUseEntry", resourceCulture);
             }
@@ -3192,7 +3192,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to You can add other language options by running the installer, using Modify, and choosing to install Language Packs. See Help for details..
         /// </summary>
-        internal static string ksUserInterfaceTooltip {
+        public static string ksUserInterfaceTooltip {
             get {
                 return ResourceManager.GetString("ksUserInterfaceTooltip", resourceCulture);
             }
@@ -3201,7 +3201,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Validating the input file.
         /// </summary>
-        internal static string ksValidatingInputFile {
+        public static string ksValidatingInputFile {
             get {
                 return ResourceManager.GetString("ksValidatingInputFile", resourceCulture);
             }
@@ -3210,7 +3210,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Variant not found?.
         /// </summary>
-        internal static string ksVariantNotFoundQuestion {
+        public static string ksVariantNotFoundQuestion {
             get {
                 return ResourceManager.GetString("ksVariantNotFoundQuestion", resourceCulture);
             }
@@ -3219,7 +3219,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Variant Type :.
         /// </summary>
-        internal static string ksVariantType {
+        public static string ksVariantType {
             get {
                 return ResourceManager.GetString("ksVariantType", resourceCulture);
             }
@@ -3228,7 +3228,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following variant types were added to the language project:.
         /// </summary>
-        internal static string ksVariantTypesAdded {
+        public static string ksVariantTypesAdded {
             get {
                 return ResourceManager.GetString("ksVariantTypesAdded", resourceCulture);
             }
@@ -3237,7 +3237,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Warning:.
         /// </summary>
-        internal static string ksWarning_ {
+        public static string ksWarning_ {
             get {
                 return ResourceManager.GetString("ksWarning_", resourceCulture);
             }
@@ -3246,7 +3246,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to 1) Examine the preview of how the affected entries will be changed and decide whether to continue the import or to abort it.  If you abort, you may want to go back to the original SFM file and reorder fields in the affected entries yourself.  You may also want to revise import settings such as mappings..
         /// </summary>
-        internal static string ksWhyExaminePreview {
+        public static string ksWhyExaminePreview {
             get {
                 return ResourceManager.GetString("ksWhyExaminePreview", resourceCulture);
             }
@@ -3255,7 +3255,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to 2) Continue the import process, then validate that the affected entries are ordered properly. You can do this by opening your project in Language Explorer and looking up each of the entries listed below. Check to see that fields each have the proper information..
         /// </summary>
-        internal static string ksWhyHowContinueImport {
+        public static string ksWhyHowContinueImport {
             get {
                 return ResourceManager.GetString("ksWhyHowContinueImport", resourceCulture);
             }
@@ -3264,7 +3264,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Writing accumulated residue.
         /// </summary>
-        internal static string ksWritingAccumulatedResidue {
+        public static string ksWritingAccumulatedResidue {
             get {
                 return ResourceManager.GetString("ksWritingAccumulatedResidue", resourceCulture);
             }
@@ -3273,7 +3273,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Writing system.
         /// </summary>
-        internal static string ksWritingSystem {
+        public static string ksWritingSystem {
             get {
                 return ResourceManager.GetString("ksWritingSystem", resourceCulture);
             }
@@ -3282,7 +3282,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to The following Writing Systems were added to the language project:.
         /// </summary>
-        internal static string ksWritingSystemsAdded {
+        public static string ksWritingSystemsAdded {
             get {
                 return ResourceManager.GetString("ksWritingSystemsAdded", resourceCulture);
             }
@@ -3291,7 +3291,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} (Ignored).
         /// </summary>
-        internal static string ksX_Ignored {
+        public static string ksX_Ignored {
             get {
                 return ResourceManager.GetString("ksX_Ignored", resourceCulture);
             }
@@ -3300,7 +3300,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} Entries to review: Detail shown for first Entry..
         /// </summary>
-        internal static string ksXEntries1Detailed {
+        public static string ksXEntries1Detailed {
             get {
                 return ResourceManager.GetString("ksXEntries1Detailed", resourceCulture);
             }
@@ -3309,7 +3309,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} entries processed for import..
         /// </summary>
-        internal static string ksXEntriesImported {
+        public static string ksXEntriesImported {
             get {
                 return ResourceManager.GetString("ksXEntriesImported", resourceCulture);
             }
@@ -3318,7 +3318,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} Entries to review:.
         /// </summary>
-        internal static string ksXEntriesToReview {
+        public static string ksXEntriesToReview {
             get {
                 return ResourceManager.GetString("ksXEntriesToReview", resourceCulture);
             }
@@ -3327,7 +3327,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} Entries to review: Detail shown for first {1} Entries..
         /// </summary>
-        internal static string ksXEntriesYDetailed {
+        public static string ksXEntriesYDetailed {
             get {
                 return ResourceManager.GetString("ksXEntriesYDetailed", resourceCulture);
             }
@@ -3336,7 +3336,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} Errors:.
         /// </summary>
-        internal static string ksXErrors {
+        public static string ksXErrors {
             get {
                 return ResourceManager.GetString("ksXErrors", resourceCulture);
             }
@@ -3345,7 +3345,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} Errors: Detail shown for first error..
         /// </summary>
-        internal static string ksXErrors1Detailed {
+        public static string ksXErrors1Detailed {
             get {
                 return ResourceManager.GetString("ksXErrors1Detailed", resourceCulture);
             }
@@ -3354,7 +3354,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} errors and 1 warning found in {1}.
         /// </summary>
-        internal static string ksXErrors1WarningInY {
+        public static string ksXErrors1WarningInY {
             get {
                 return ResourceManager.GetString("ksXErrors1WarningInY", resourceCulture);
             }
@@ -3363,7 +3363,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} errors found in {1}.
         /// </summary>
-        internal static string ksXErrorsInY {
+        public static string ksXErrorsInY {
             get {
                 return ResourceManager.GetString("ksXErrorsInY", resourceCulture);
             }
@@ -3372,7 +3372,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} Errors: Detail shown for first {1} errors..
         /// </summary>
-        internal static string ksXErrorsYDetailed {
+        public static string ksXErrorsYDetailed {
             get {
                 return ResourceManager.GetString("ksXErrorsYDetailed", resourceCulture);
             }
@@ -3381,7 +3381,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} errors and {1} warnings found in {2}.  .
         /// </summary>
-        internal static string ksXErrorsYWarningsInZ {
+        public static string ksXErrorsYWarningsInZ {
             get {
                 return ResourceManager.GetString("ksXErrorsYWarningsInZ", resourceCulture);
             }
@@ -3390,7 +3390,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} (in FieldWorks Project).
         /// </summary>
-        internal static string ksXInFwProject {
+        public static string ksXInFwProject {
             get {
                 return ResourceManager.GetString("ksXInFwProject", resourceCulture);
             }
@@ -3399,7 +3399,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} instances (with data).
         /// </summary>
-        internal static string ksXInstances {
+        public static string ksXInstances {
             get {
                 return ResourceManager.GetString("ksXInstances", resourceCulture);
             }
@@ -3408,7 +3408,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to XML parsing problem (phase 5): {0}  Check the Import Log for more details..
         /// </summary>
-        internal static string ksXmlParsingProblem5_X {
+        public static string ksXmlParsingProblem5_X {
             get {
                 return ResourceManager.GetString("ksXmlParsingProblem5_X", resourceCulture);
             }
@@ -3417,7 +3417,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to XML settings.
         /// </summary>
-        internal static string ksXmlSettings {
+        public static string ksXmlSettings {
             get {
                 return ResourceManager.GetString("ksXmlSettings", resourceCulture);
             }
@@ -3426,7 +3426,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} Warnings:.
         /// </summary>
-        internal static string ksXWarnings {
+        public static string ksXWarnings {
             get {
                 return ResourceManager.GetString("ksXWarnings", resourceCulture);
             }
@@ -3435,7 +3435,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to {0} warnings found in {1}.
         /// </summary>
-        internal static string ksXWarningsInY {
+        public static string ksXWarningsInY {
             get {
                 return ResourceManager.GetString("ksXWarningsInY", resourceCulture);
             }
@@ -3444,7 +3444,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to You must open a project before configuring plugins..
         /// </summary>
-        internal static string OpenAProjectBeforeConfiguringPlugins {
+        public static string OpenAProjectBeforeConfiguringPlugins {
             get {
                 return ResourceManager.GetString("OpenAProjectBeforeConfiguringPlugins", resourceCulture);
             }
@@ -3453,7 +3453,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to LIFT files|*.lift|XML files|*.xml|All files|*.*.
         /// </summary>
-        internal static string openFileDialog1_Filter {
+        public static string openFileDialog1_Filter {
             get {
                 return ResourceManager.GetString("openFileDialog1_Filter", resourceCulture);
             }
@@ -3462,7 +3462,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Open Lexicon Interchange FormaT File.
         /// </summary>
-        internal static string openFileDialog1_Title {
+        public static string openFileDialog1_Title {
             get {
                 return ResourceManager.GetString("openFileDialog1_Title", resourceCulture);
             }
@@ -3471,7 +3471,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to ZIP files|*.zip|All files|*.*.
         /// </summary>
-        internal static string openFileDialog1_Zip_Filter {
+        public static string openFileDialog1_Zip_Filter {
             get {
                 return ResourceManager.GetString("openFileDialog1_Zip_Filter", resourceCulture);
             }
@@ -3480,7 +3480,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Restart FieldWorks for these settings to take effect..
         /// </summary>
-        internal static string RestartToForSettingsToTakeEffect_Content {
+        public static string RestartToForSettingsToTakeEffect_Content {
             get {
                 return ResourceManager.GetString("RestartToForSettingsToTakeEffect_Content", resourceCulture);
             }
@@ -3489,7 +3489,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Restart required.
         /// </summary>
-        internal static string RestartToForSettingsToTakeEffect_Title {
+        public static string RestartToForSettingsToTakeEffect_Title {
             get {
                 return ResourceManager.GetString("RestartToForSettingsToTakeEffect_Title", resourceCulture);
             }
@@ -3498,7 +3498,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Alpha.
         /// </summary>
-        internal static string UpdatesAlpha {
+        public static string UpdatesAlpha {
             get {
                 return ResourceManager.GetString("UpdatesAlpha", resourceCulture);
             }
@@ -3507,7 +3507,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Alpha updates have bugs. Choose this channel only if your tech support person recommended it to you..
         /// </summary>
-        internal static string UpdatesAlphaDescription {
+        public static string UpdatesAlphaDescription {
             get {
                 return ResourceManager.GetString("UpdatesAlphaDescription", resourceCulture);
             }
@@ -3516,7 +3516,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Beta.
         /// </summary>
-        internal static string UpdatesBeta {
+        public static string UpdatesBeta {
             get {
                 return ResourceManager.GetString("UpdatesBeta", resourceCulture);
             }
@@ -3525,7 +3525,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Beta updates are recommended for users who want to try the latest features and don&apos;t mind a few minor bugs..
         /// </summary>
-        internal static string UpdatesBetaDescription {
+        public static string UpdatesBetaDescription {
             get {
                 return ResourceManager.GetString("UpdatesBetaDescription", resourceCulture);
             }
@@ -3534,7 +3534,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Stable (recommended).
         /// </summary>
-        internal static string UpdatesStable {
+        public static string UpdatesStable {
             get {
                 return ResourceManager.GetString("UpdatesStable", resourceCulture);
             }
@@ -3543,7 +3543,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         /// <summary>
         ///   Looks up a localized string similar to Stable updates are recommended for all users. If you&apos;re not sure which channel to choose, choose Stable..
         /// </summary>
-        internal static string UpdatesStableDescription {
+        public static string UpdatesStableDescription {
             get {
                 return ResourceManager.GetString("UpdatesStableDescription", resourceCulture);
             }
