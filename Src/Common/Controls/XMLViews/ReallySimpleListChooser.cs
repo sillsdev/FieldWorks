@@ -1843,7 +1843,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns></returns>
 		protected virtual LabelNode CreateLabelNode(ObjectLabel nol, bool displayUsage)
 		{
-			if (nol.Object.Owner.ToString() == "Publications")
+			if (nol?.Object?.Owner?.ToString() == "Publications")
 				return new PublicationLabelNode(nol, m_stylesheet, displayUsage);
 			return new LabelNode(nol, m_stylesheet, displayUsage);
 		}
