@@ -53,6 +53,8 @@ namespace SIL.FieldWorks.XWorks
 		internal const string LetterHeadingDisplayName = "Letter Heading";
 		internal const string LetterHeadingNodePath = ".letterHeading";
 		internal const string PictureAndCaptionTextframeDisplayName = "Pictures";
+		// Pictures have more than one possible nodepath, but the nodepath always ends with .pictures.
+		internal const string PictureAndCaptionNodePathTail = ".pictures";
 		internal const string EntryStyleContinue = "-Continue";
 
 		internal const string PageHeaderIdEven = "EvenPages";
@@ -337,22 +339,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			return exportStyle;
-		}
-
-		public static Style GenerateParagraphStyleFromPictureOptions()
-		{
-			// Creating a style for the paragraph that will contain the image and caption
-			var textBoxStyle = new Style() {
-				Type = StyleValues.Paragraph,
-				StyleId = PictureAndCaptionTextframeDisplayName,
-				StyleName = new StyleName() { Val = PictureAndCaptionTextframeDisplayName }
-			};
-
-			var parProps = new StyleParagraphProperties();
-			// The image and caption should always be centered within the textbox.
-			parProps.Justification = new Justification() { Val = JustificationValues.Center }; ;
-			textBoxStyle.Append(parProps);
-			return textBoxStyle;
 		}
 
 		/// <summary>

@@ -128,7 +128,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <returns>The uniqueDisplayName for the character style that is created.</returns>
 		private string AddStyle(string styleName, string displayNameBase, string nodePath,
-			string parentUniqueDisplayName, int wsId, bool pictureStyle, string sensesSubentriesUniqueDisplayName = null)
+			string parentUniqueDisplayName, int wsId, string sensesSubentriesUniqueDisplayName = null)
 		{
 			// Use a special name for a 'Headword' that is a '.subentries .headword' so that the
 			// '.subentries .headword' is not used as a guideword.
@@ -153,9 +153,12 @@ namespace SIL.FieldWorks.XWorks
 					characterStyles.Add(displayNameBase, stylesWithSameDisplayNameBase);
 				}
 
+				// We don't want to process a picture style or the normal style, as these are handled with global styles.
+				// Pictures have more than one possible nodepath but should always use the same style. Nodepath for a picture always ends with .pictures.
 				bool processParagraphStyle = ((nodePath != WordStylesGenerator.NormalCharNodePath) &&
-											  (wsId == WordStylesGenerator.DefaultStyle) &&
-											  WordStylesGenerator.IsParagraphStyle(styleName, _propertyTable));
+											(!nodePath.EndsWith(WordStylesGenerator.PictureAndCaptionNodePathTail)) &&
+											(wsId == WordStylesGenerator.DefaultStyle) &&
+											WordStylesGenerator.IsParagraphStyle(styleName, _propertyTable));
 
 				// Get a unique display name.
 				var cache = _propertyTable.GetValue<LcmCache>("cache");
@@ -243,10 +246,11 @@ namespace SIL.FieldWorks.XWorks
 				// When we are done creating styles and want to re-use styles, the defaults are what we want to
 				// try and use first.
 				if (wsId != WordStylesGenerator.DefaultStyle &&
-					nodePath != WordStylesGenerator.LetterHeadingNodePath)
+					nodePath != WordStylesGenerator.LetterHeadingNodePath &&
+					!nodePath.EndsWith(WordStylesGenerator.PictureAndCaptionNodePathTail))
 				{
 					AddStyle(styleName, displayNameBase, nodePath, parentUniqueDisplayName,
-						WordStylesGenerator.DefaultStyle, pictureStyle, sensesSubentriesUniqueDisplayName);
+						WordStylesGenerator.DefaultStyle, sensesSubentriesUniqueDisplayName);
 				}
 
 				// Additional handling for paragraph style.
@@ -254,14 +258,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					Style paraStyle = null;
 					BulletInfo? bulletInfo = null;
-					if (pictureStyle)
-					{
-						paraStyle = WordStylesGenerator.GenerateParagraphStyleFromPictureOptions();
-					}
-					else
-					{
-						paraStyle = WordStylesGenerator.GenerateParagraphStyleFromLcmStyleSheet(styleName, _propertyTable, out bulletInfo);
-					}
+					paraStyle = WordStylesGenerator.GenerateParagraphStyleFromLcmStyleSheet(styleName, _propertyTable, out bulletInfo);
 
 					if (paraStyle == null)
 					{
@@ -310,7 +307,6 @@ namespace SIL.FieldWorks.XWorks
 				var workingDisplayName = workingNode.DisplayLabel;
 				var workingStyleName = workingNode.Style;
 				nodePath += $".{CssGenerator.GetClassAttributeForConfig(workingNode)} ";
-				bool pictureStyle = workingNode.DictionaryNodeOptions is DictionaryNodePictureOptions;
 
 				// If this node is '.subentries' and the next node is '.mainentrysubentries',
 				// then we need to build the same set of rules twice for the child nodes, once
@@ -341,11 +337,11 @@ namespace SIL.FieldWorks.XWorks
 				{
 					sensesSubentriesNodePath += $".{CssGenerator.GetClassAttributeForConfig(workingNode)} ";
 					sensesSubentriesUniqueDisplayName = AddStyle(workingStyleName, workingDisplayName,
-						sensesSubentriesNodePath, parentSensesSubentryUniqueDisplayName, wsId, pictureStyle);
+						sensesSubentriesNodePath, parentSensesSubentryUniqueDisplayName, wsId);
 					parentSensesSubentryUniqueDisplayName = sensesSubentriesUniqueDisplayName;
 				}
 				uniqueDisplayName = AddStyle(workingStyleName, workingDisplayName,
-					nodePath, parentUniqueDisplayName, wsId, pictureStyle, sensesSubentriesUniqueDisplayName);
+					nodePath, parentUniqueDisplayName, wsId, sensesSubentriesUniqueDisplayName);
 				parentUniqueDisplayName = uniqueDisplayName;
 			}
 			return uniqueDisplayName;
@@ -359,7 +355,7 @@ namespace SIL.FieldWorks.XWorks
 			ConfigurableDictionaryNode node, string nodePathAdditions, int wsId)
 		{
 			string nodePath = CssGenerator.GetNodePath(node) + nodePathAdditions;
-			return AddStyle(styleName, displayName, nodePath, parentUniqueDisplayName, wsId, false);
+			return AddStyle(styleName, displayName, nodePath, parentUniqueDisplayName, wsId);
 		}
 
 		internal void AddGlobalCharacterStyles()
@@ -368,13 +364,13 @@ namespace SIL.FieldWorks.XWorks
 
 			// Add the Normal default character style.
 			AddStyle(WordStylesGenerator.NormalParagraphStyleName, WordStylesGenerator.NormalCharDisplayName,
-				WordStylesGenerator.NormalCharNodePath, null, WordStylesGenerator.DefaultStyle, false);
+				WordStylesGenerator.NormalCharNodePath, null, WordStylesGenerator.DefaultStyle);
 
 			// Add the Normal writing system styles.
 			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
 				AddStyle(WordStylesGenerator.NormalParagraphStyleName, WordStylesGenerator.NormalCharDisplayName,
-					WordStylesGenerator.NormalCharNodePath, null, aws.Handle, false);
+					WordStylesGenerator.NormalCharNodePath, null, aws.Handle);
 			}
 
 			// Set the redirects for the Normal styles so BasedOn values can initially be set to the correct values
@@ -394,7 +390,7 @@ namespace SIL.FieldWorks.XWorks
 			// Add the Letter Heading style.
 			var wsId = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
 			var letterHeadUniqueName = AddStyle(WordStylesGenerator.LetterHeadingStyleName, WordStylesGenerator.LetterHeadingDisplayName,
-				WordStylesGenerator.LetterHeadingNodePath, null, wsId, false);
+				WordStylesGenerator.LetterHeadingNodePath, null, wsId);
 			GetCharacterElement(letterHeadUniqueName).Used = true;
 		}
 
@@ -697,6 +693,26 @@ namespace SIL.FieldWorks.XWorks
 				headStyle, 1, WordStylesGenerator.LetterHeadingNodePath, bulletInfo);
 			AddParagraphElement(headElem);
 			headElem.Used = true;
+
+			// Picture & Caption Style
+			// Creating a style for the paragraph that will contain the image and caption
+			var pictureCaptionStyle = new Style()
+			{
+				Type = StyleValues.Paragraph,
+				StyleId = WordStylesGenerator.PictureAndCaptionTextframeDisplayName,
+				StyleName = new StyleName() { Val = WordStylesGenerator.PictureAndCaptionTextframeDisplayName }
+			};
+
+			var parProps = new StyleParagraphProperties();
+			// The image and caption should always be centered within the textbox.
+			parProps.Justification = new Justification() { Val = JustificationValues.Center }; ;
+			pictureCaptionStyle.Append(parProps);
+
+			var pictureCaptionElem = new ParagraphElement(
+				WordStylesGenerator.PictureAndCaptionTextframeDisplayName,
+				pictureCaptionStyle, 1, WordStylesGenerator.PictureAndCaptionNodePathTail, null);
+			AddParagraphElement(pictureCaptionElem);
+			pictureCaptionElem.Used = true;
 		}
 
 		/// <summary>
