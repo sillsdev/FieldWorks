@@ -53,8 +53,9 @@ namespace SIL.FieldWorks.XWorks
 		internal const string LetterHeadingDisplayName = "Letter Heading";
 		internal const string LetterHeadingNodePath = ".letterHeading";
 		internal const string PictureAndCaptionTextframeDisplayName = "Pictures";
-		// Pictures have more than one possible nodepath, but the nodepath always ends with .pictures.
-		internal const string PictureAndCaptionNodePathTail = ".pictures";
+		// We create a common nodepath name to use for the global pictures style,
+		// but note that pictures actually have multiple possible nodepaths that always end with ".pictures".
+		internal const string PictureAndCaptionNodePath = ".pictures";
 		internal const string EntryStyleContinue = "-Continue";
 
 		internal const string PageHeaderIdEven = "EvenPages";
