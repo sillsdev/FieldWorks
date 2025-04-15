@@ -42,6 +42,8 @@ namespace SIL.FieldWorks.XWorks
 		internal const string SubentriesHeadword = "Subheadword";
 
 		// Globals and default paragraph styles.
+		// Nodepaths declared here are common names to use for the global styles
+		// and don't necessarily match the actual paths of each node.
 		internal const string NormalParagraphStyleName = "Normal";
 		internal const string NormalParagraphDisplayName = "Normal";
 		internal const string NormalParagraphNodePath = ".normal";
@@ -53,8 +55,6 @@ namespace SIL.FieldWorks.XWorks
 		internal const string LetterHeadingDisplayName = "Letter Heading";
 		internal const string LetterHeadingNodePath = ".letterHeading";
 		internal const string PictureAndCaptionTextframeDisplayName = "Pictures";
-		// We create a common nodepath name to use for the global pictures style,
-		// but note that pictures actually have multiple possible nodepaths that always end with ".pictures".
 		internal const string PictureAndCaptionNodePath = ".pictures";
 		internal const string EntryStyleContinue = "-Continue";
 
