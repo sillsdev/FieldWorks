@@ -156,7 +156,7 @@ namespace SIL.FieldWorks.XWorks
 				// We don't want to process a picture style or the normal style, as these are handled with global styles.
 				// Pictures have more than one possible nodepath but should always use the same style. Nodepath for a picture always ends with .pictures.
 				bool processParagraphStyle = ((nodePath != WordStylesGenerator.NormalCharNodePath) &&
-											(!nodePath.EndsWith(WordStylesGenerator.PictureAndCaptionNodePathTail)) &&
+											(nodePath != WordStylesGenerator.PictureAndCaptionNodePath) &&
 											(wsId == WordStylesGenerator.DefaultStyle) &&
 											WordStylesGenerator.IsParagraphStyle(styleName, _propertyTable));
 
@@ -247,7 +247,7 @@ namespace SIL.FieldWorks.XWorks
 				// try and use first.
 				if (wsId != WordStylesGenerator.DefaultStyle &&
 					nodePath != WordStylesGenerator.LetterHeadingNodePath &&
-					!nodePath.EndsWith(WordStylesGenerator.PictureAndCaptionNodePathTail))
+					nodePath != WordStylesGenerator.PictureAndCaptionNodePath)
 				{
 					AddStyle(styleName, displayNameBase, nodePath, parentUniqueDisplayName,
 						WordStylesGenerator.DefaultStyle, sensesSubentriesUniqueDisplayName);
@@ -710,7 +710,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var pictureCaptionElem = new ParagraphElement(
 				WordStylesGenerator.PictureAndCaptionTextframeDisplayName,
-				pictureCaptionStyle, 1, WordStylesGenerator.PictureAndCaptionNodePathTail, null);
+				pictureCaptionStyle, 1, WordStylesGenerator.PictureAndCaptionNodePath, null);
 			AddParagraphElement(pictureCaptionElem);
 			pictureCaptionElem.Used = true;
 		}
