@@ -42,6 +42,8 @@ namespace SIL.FieldWorks.XWorks
 		internal const string SubentriesHeadword = "Subheadword";
 
 		// Globals and default paragraph styles.
+		// Nodepaths declared here are common names to use for the global styles
+		// and don't necessarily match the actual paths of each node.
 		internal const string NormalParagraphStyleName = "Normal";
 		internal const string NormalParagraphDisplayName = "Normal";
 		internal const string NormalParagraphNodePath = ".normal";
@@ -53,6 +55,7 @@ namespace SIL.FieldWorks.XWorks
 		internal const string LetterHeadingDisplayName = "Letter Heading";
 		internal const string LetterHeadingNodePath = ".letterHeading";
 		internal const string PictureAndCaptionTextframeDisplayName = "Pictures";
+		internal const string PictureAndCaptionNodePath = ".pictures";
 		internal const string EntryStyleContinue = "-Continue";
 
 		internal const string PageHeaderIdEven = "EvenPages";
@@ -337,22 +340,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			return exportStyle;
-		}
-
-		public static Style GenerateParagraphStyleFromPictureOptions()
-		{
-			// Creating a style for the paragraph that will contain the image and caption
-			var textBoxStyle = new Style() {
-				Type = StyleValues.Paragraph,
-				StyleId = PictureAndCaptionTextframeDisplayName,
-				StyleName = new StyleName() { Val = PictureAndCaptionTextframeDisplayName }
-			};
-
-			var parProps = new StyleParagraphProperties();
-			// The image and caption should always be centered within the textbox.
-			parProps.Justification = new Justification() { Val = JustificationValues.Center }; ;
-			textBoxStyle.Append(parProps);
-			return textBoxStyle;
 		}
 
 		/// <summary>
