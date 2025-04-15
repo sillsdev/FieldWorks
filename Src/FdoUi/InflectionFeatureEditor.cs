@@ -255,7 +255,7 @@ namespace SIL.FieldWorks.FdoUi
 			// Arrange to turn all relevant items blue.
 			// Remember which item was selected so we can later 'doit'.
 			var hvoNode = e.Node as HvoTreeNode;
-			m_notSure = hvoNode.Text == LexTextControls.ks_NotSure_;
+			m_notSure = (string)hvoNode.Tag == "NotSure";
 			if (hvoNode == null || hvoNode.Hvo == 0)
 			{
 				m_selectedHvo = 0;

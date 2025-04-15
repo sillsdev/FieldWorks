@@ -548,6 +548,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		protected TreeNode AddNotSureItem(PopupTree popupTree)
 		{
 			HvoTreeNode empty = new HvoTreeNode(TsStringUtils.MakeString(LexTextControls.ks_NotSure_, Cache.WritingSystemFactory.UserWs), kEmpty);
+			empty.Tag = "NotSure";
 			popupTree.Nodes.Add(empty);
 			m_kEmptyNode = empty;
 			return empty;
