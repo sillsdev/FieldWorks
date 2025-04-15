@@ -154,7 +154,6 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				// We don't want to process a picture style or the normal style, as these are handled with global styles.
-				// Pictures have more than one possible nodepath but should always use the same style. Nodepath for a picture always ends with .pictures.
 				bool processParagraphStyle = ((nodePath != WordStylesGenerator.NormalCharNodePath) &&
 											(nodePath != WordStylesGenerator.PictureAndCaptionNodePath) &&
 											(wsId == WordStylesGenerator.DefaultStyle) &&
