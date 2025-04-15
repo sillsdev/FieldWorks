@@ -1098,7 +1098,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var run = runs.First();
 				var runElem = GetElementFromRun(run);
-				wsId = runElem.WritingSystemId;
+				wsId = runElem?.WritingSystemId;
 			}
 
 			// Add Before text, if it is not going to be displayed in a paragraph.
