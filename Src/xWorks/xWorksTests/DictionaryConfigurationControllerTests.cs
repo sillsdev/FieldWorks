@@ -1837,14 +1837,14 @@ namespace SIL.FieldWorks.XWorks
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.That(treeNode, Is.Null, "Passing a totally invalid nodeId hash should not find a tree node");
 
-				dcc.SetStartingNode($"{headwordNode.GetHashCode()}");
+				dcc.SetStartingNode($"{headwordNode.GetNodeId()}");
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.That(treeNode, Is.Not.Null, "Passing the hash for headword should return a node.");
 				Assert.AreSame(headwordNode, treeNode.Tag, "The correct node should be identified by the hash");
 
 				// Starting here we need to Unset the controller's SelectedNode to keep from getting false positives
 				ClearSelectedNode(dcc);
-				dcc.SetStartingNode($"{translationNode.GetHashCode()}");
+				dcc.SetStartingNode($"{translationNode.GetNodeId()}");
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.That(treeNode, Is.Not.Null, "translation should find a TreeNode");
 				Assert.AreSame(translationNode, treeNode.Tag, "using the translationNode hash should find the right TreeNode");
@@ -1881,7 +1881,7 @@ namespace SIL.FieldWorks.XWorks
 				FieldDescription = "LexEntry", CSSClassNameOverride = "entry", Children = new List<ConfigurableDictionaryNode> { sensesNode }
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(DictionaryConfigurationModelTests.CreateSimpleSharingModel(entryNode, subSensesSharedItem));
-			var node = DictionaryConfigurationController.FindConfigNode(entryNode, $"{subsubsensesNode.GetHashCode()}", new List<ConfigurableDictionaryNode>());
+			var node = DictionaryConfigurationController.FindConfigNode(entryNode, $"{subsubsensesNode.GetNodeId()}", new List<ConfigurableDictionaryNode>());
 			Assert.AreSame(subsubsensesNode, node,
 				"Sense Numbers are configured on the node itself, not its ReferencedOrDirectChildren.{0}Expected: {1}{0}But got:  {2}", Environment.NewLine,
 				DictionaryConfigurationMigrator.BuildPathStringFromNode(subsubsensesNode), DictionaryConfigurationMigrator.BuildPathStringFromNode(node));
@@ -2509,14 +2509,14 @@ namespace SIL.FieldWorks.XWorks
 				dcc.CreateTreeOfTreeNodes(null, m_model.Parts);
 
 				//Test normal case first
-				dcc.SetStartingNode($"{glossNode.GetHashCode()}");
+				dcc.SetStartingNode($"{glossNode.GetNodeId()}");
 				var treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.That(treeNode, Is.Not.Null);
 				Assert.AreSame(glossNode, treeNode.Tag, "Passing the normal gloss hash should get the gloss node");
 
 				//SUT
 				ClearSelectedNode(dcc);
-				dcc.SetStartingNode($"{subGlossNode.GetHashCode()}");
+				dcc.SetStartingNode($"{subGlossNode.GetNodeId()}");
 				treeNode = dcc.View.TreeControl.Tree.SelectedNode;
 				Assert.That(treeNode, Is.Not.Null);
 				Assert.AreSame(subGlossNode, treeNode.Tag,

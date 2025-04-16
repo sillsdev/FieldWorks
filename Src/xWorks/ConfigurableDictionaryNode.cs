@@ -5,6 +5,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
+using System.Security.Cryptography;
+using System.Text;
 using System.Xml.Serialization;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Text.RegularExpressions;
@@ -338,6 +341,40 @@ namespace SIL.FieldWorks.XWorks
 
 			return clone;
 		}
+
+		/// <summary>
+		/// Get a unique identifier for this node based on its hierarchy, Label, LabelSuffix, and FieldDescription.
+		/// Since this will be added into the XHTML, it should be a valid attribute, and as compact as we can make it
+		/// </summary>
+		public string GetNodeId()
+		{
+			// Build a unique path for the node based on its hierarchy
+			var nodePath = new StringBuilder();
+			var currentNode = this;
+
+			while (currentNode != null)
+			{
+				// Append Label, LabelSuffix, and FieldDescription to the path (This represents a non-localized primary key for the node)
+				nodePath.Insert(0, $"{currentNode.Label ?? ""}_{currentNode.LabelSuffix ?? ""}_{currentNode.FieldDescription ?? ""}|");
+				currentNode = currentNode.Parent;
+			}
+
+			// Hash the nodePath using SHA256
+			using (var sha256 = SHA256.Create())
+			{
+				var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(nodePath.ToString()));
+
+				// Convert the first 8 bytes of the hash to a hexadecimal string
+				var sb = new StringBuilder(16); // 8 bytes * 2 characters per byte
+				for (int i = 0; i < 8; i++)
+				{
+					sb.Append(hashBytes[i].ToString("x2"));
+				}
+
+				return sb.ToString();
+			}
+		}
+
 
 		public override int GetHashCode()
 		{
