@@ -875,9 +875,6 @@ namespace SIL.FieldWorks.XWorks
 					}
 				);
 
-				/*// Text should wrap above and below the textbox
-				anchor.Append(new DrawingWP.WrapTopBottom());*/
-
 				// Need to add ID and name to the textbox drawing. Without them, the word document will be mis-formatted and unable to open.
 				// Use the name from the picture for the textbox.
 				inline.Append(new DrawingWP.DocProperties()
@@ -1703,7 +1700,7 @@ namespace SIL.FieldWorks.XWorks
 							// For subentries, however, the image is a descendant of a "Subentries" ConfigurableDictionaryNode.
 							// Thus, to know if we're dealing with an image and/or caption,
 							// we check if the node or its parent is a picture Node, or if the run contains a descendant that is a picture.
-							if (config.Label == WordStylesGenerator.PictureAndCaptionTextboxDisplayName || config.Parent?.Label == WordStylesGenerator.PictureAndCaptionTextboxDisplayName || containsDrawing)
+							if (config.Label == "Pictures" || config.Parent?.Label == "Pictures" || containsDrawing)
 							{
 								// Runs containing pictures or captions need to be in separate paragraphs
 								// from whatever precedes and follows them because they will be added into text boxes,
