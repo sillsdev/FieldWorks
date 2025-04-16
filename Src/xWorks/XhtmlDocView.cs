@@ -481,14 +481,14 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Guid topLevelGuid;
 			GeckoElement entryElement;
-			var classList = GetElementInfoFromGeckoElement(element, out topLevelGuid, out entryElement);
+			var nodeId = GetElementInfoFromGeckoElement(element, out topLevelGuid, out entryElement);
 			var localizedName = DictionaryConfigurationListener.GetDictionaryConfigurationType(propertyTable);
 			var label = string.Format(xWorksStrings.ksConfigure, localizedName);
 			s_contextMenu = new ContextMenuStrip();
 			var item = new DisposableToolStripMenuItem(label);
 			s_contextMenu.Items.Add(item);
 			item.Click += RunConfigureDialogAt;
-			item.Tag = new object[] { propertyTable, mediator, classList, topLevelGuid };
+			item.Tag = new object[] { propertyTable, mediator, nodeId, topLevelGuid };
 			if (e.CtrlKey) // show hidden menu item for tech support
 			{
 				item = new DisposableToolStripMenuItem(xWorksStrings.ksInspect);

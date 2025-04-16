@@ -236,7 +236,7 @@ namespace SIL.FieldWorks.XWorks
 			var elements = new List<GeckoElement>();
 			foreach (var span in parent.GetElementsByTagName("span"))
 			{
-				if (span.GetAttribute("nodeId") != null && span.GetAttribute("nodeId").Equals($"{selectedNode.GetHashCode()}"))
+				if (span.GetAttribute("nodeId") != null && span.GetAttribute("nodeId").Equals($"{selectedNode.GetNodeId()}"))
 				{
 					elements.Add(span);
 				}
