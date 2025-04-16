@@ -807,6 +807,10 @@ namespace SIL.FieldWorks.XWorks
 					uniqueGraphicId = s_styleCollection.GetAndIncrementPictureUniqueIdCount;
 					uniqueInnerDrawingId = s_styleCollection.GetAndIncrementPictureUniqueIdCount;
 					uniqueOuterDrawingId = s_styleCollection.GetAndIncrementPictureUniqueIdCount;
+
+					// If the outer style for the picture textbox has not been generated yet, generate it
+					if (!s_styleCollection.TryGetParagraphStyle(WordStylesGenerator.PictureTextboxOuterNodePath, out _))
+						WordStylesGenerator.GeneratePictureFrameOuterStyle(config, s_styleCollection);
 				}
 
 				WP.Paragraph newImagePar = new WP.Paragraph();
@@ -836,7 +840,6 @@ namespace SIL.FieldWorks.XWorks
 
 				WP.Paragraph textBoxPar = new WP.Paragraph();
 
-				WordStylesGenerator.GeneratePictureFrameOuterStyle(config, s_styleCollection);
 				WP.ParagraphProperties textBoxProps =
 					new WP.ParagraphProperties(new ParagraphStyleId() { Val = WordStylesGenerator.PictureTextboxOuterDisplayName });
 				textBoxPar.Append(textBoxProps);
@@ -1738,11 +1741,10 @@ namespace SIL.FieldWorks.XWorks
 							break;
 
 						case WP.Paragraph para:
-							// If we have a paragraph associated with a Pictures node, we are dealing with an image caption.
-							if (config.Label == WordStylesGenerator.PictureAndCaptionTextboxDisplayName ||
-								config.Parent?.Label == WordStylesGenerator.PictureAndCaptionTextboxDisplayName)
+							// If the paragraph has picture and caption style, we are dealing with an image caption.
+							if (para.ParagraphProperties?.ParagraphStyleId?.Val == WordStylesGenerator.PictureAndCaptionTextboxDisplayName)
 							{
-								// In this case, the paragraph is an image caption and belongs in the last textbox
+								// The image caption paragraph belongs with the image in the last textbox.
 								wordWriter.WordFragment.AppendCaptionParagraphToTextbox(frag, para);
 							}
 							else

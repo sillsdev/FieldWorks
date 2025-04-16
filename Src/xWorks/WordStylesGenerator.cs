@@ -54,9 +54,10 @@ namespace SIL.FieldWorks.XWorks
 		internal const string LetterHeadingStyleName = "Dictionary-LetterHeading";
 		internal const string LetterHeadingDisplayName = "Letter Heading";
 		internal const string LetterHeadingNodePath = ".letterHeading";
-		internal const string PictureAndCaptionTextframeDisplayName = "Picture And Caption";
+		internal const string PictureAndCaptionTextboxDisplayName = "Picture And Caption";
 		internal const string PictureAndCaptionNodePath = ".pictures";
 		internal const string PictureTextboxOuterDisplayName = "Pictureframe Textbox";
+		internal const string PictureTextboxOuterNodePath = ".pictureTextbox";
 		internal const string EntryStyleContinue = "-Continue";
 
 		internal const string PageHeaderIdEven = "EvenPages";
@@ -92,7 +93,7 @@ namespace SIL.FieldWorks.XWorks
 			return pageHeaderStyle;
 		}
 
-		internal static Style GeneratePictureFrameOuterStyle(ConfigurableDictionaryNode node, WordStyleCollection s_stylecollection)
+		internal static void GeneratePictureFrameOuterStyle(ConfigurableDictionaryNode node, WordStyleCollection s_stylecollection)
 		{
 			//string nodePath = CssGenerator.GetNodePath(node);
 			//ParagraphElement pictureFrameOuter;
@@ -125,15 +126,11 @@ namespace SIL.FieldWorks.XWorks
 			pictureFrameOuterStyle.StyleParagraphProperties.Append(new Justification() { Val = enumAlignVal },
 				new SpacingBetweenLines() { Before = "0", After = "0" });
 
-			//WordStyleCollection.makePictureOuterElement(pictureFrameOuterStyle);
-
-			/*var pictureOuterElem = new ParagraphElement(PictureTextboxOuterDisplayName,
+			var pictureOuterElem = new ParagraphElement(PictureTextboxOuterDisplayName,
 				pictureFrameOuterStyle, 1, PictureTextboxOuterNodePath, null);
 
-			WordStyleCollection.AddParagraphElement(pictureOuterElem);
-			pictureCaptionElem.Used = true;*/
-
-			return pictureFrameOuterStyle;
+			s_stylecollection.AddParagraphElement(pictureOuterElem);
+			pictureOuterElem.Used = true;
 		}
 
 		internal static bool IsParagraphStyle(string styleName, ReadOnlyPropertyTable propertyTable)
