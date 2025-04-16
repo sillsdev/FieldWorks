@@ -25,8 +25,8 @@ namespace SIL.FieldWorks.XWorks
 		internal const int DefaultStyle = -1;
 
 		// Global and default character styles.
-		internal const string RootCharacterDisplayName = "root";
-		internal const string RootCharacterNodePath = ".root";
+		internal const string NormalCharDisplayName = "Normal Font";
+		internal const string NormalCharNodePath = ".normalFont";
 		internal const string BeforeAfterBetweenStyleName = "Dictionary-Context";
 		internal const string SenseNumberStyleName = "Dictionary-SenseNumber";
 		internal const string SenseNumberDisplayName = "Sense Number";
@@ -42,6 +42,8 @@ namespace SIL.FieldWorks.XWorks
 		internal const string SubentriesHeadword = "Subheadword";
 
 		// Globals and default paragraph styles.
+		// Nodepaths declared here are common names to use for the global styles
+		// and don't necessarily match the actual paths of each node.
 		internal const string NormalParagraphStyleName = "Normal";
 		internal const string NormalParagraphDisplayName = "Normal";
 		internal const string NormalParagraphNodePath = ".normal";
@@ -53,6 +55,7 @@ namespace SIL.FieldWorks.XWorks
 		internal const string LetterHeadingDisplayName = "Letter Heading";
 		internal const string LetterHeadingNodePath = ".letterHeading";
 		internal const string PictureAndCaptionTextframeDisplayName = "Pictures";
+		internal const string PictureAndCaptionNodePath = ".pictures";
 		internal const string EntryStyleContinue = "-Continue";
 
 		internal const string PageHeaderIdEven = "EvenPages";
@@ -63,13 +66,14 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Generate the style that will be used for the header that goes on the top of
 		/// every page.  The header style will be similar to the provided  paragraph style, with the
-		/// addition of the tab stop. It will also include the run properties from the root style, because
+		/// addition of the tab stop. It will also include the run properties from the runPropStyle, because
 		/// the Word header does not apply run properties applied to the run. They need to be added to the
 		/// paragraph.
 		/// </summary>
 		/// <param name="style">The style to based the header style on.</param>
+		/// <param name="runPropStyle">The style to get the run properties from.</param>
 		/// <returns>The header style.</returns>
-		internal static Style GeneratePageHeaderStyle(Style style, Style rootStyle)
+		internal static Style GeneratePageHeaderStyle(Style style, Style runPropStyle)
 		{
 			Style pageHeaderStyle = (Style)style.CloneNode(true);
 			SetStyleName(pageHeaderStyle, PageHeaderStyleName);
@@ -81,7 +85,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// The Page Header paragraph needs the run properties directly added to it.
 			// Adding run properties to the runs in the page header do not seem to get applied.
-			var runProps = rootStyle.GetFirstChild<StyleRunProperties>();
+			var runProps = runPropStyle.GetFirstChild<StyleRunProperties>();
 			pageHeaderStyle.Append(runProps.CloneNode(true));
 
 			return pageHeaderStyle;
@@ -336,22 +340,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			return exportStyle;
-		}
-
-		public static Style GenerateParagraphStyleFromPictureOptions()
-		{
-			// Creating a style for the paragraph that will contain the image and caption
-			var textBoxStyle = new Style() {
-				Type = StyleValues.Paragraph,
-				StyleId = PictureAndCaptionTextframeDisplayName,
-				StyleName = new StyleName() { Val = PictureAndCaptionTextframeDisplayName }
-			};
-
-			var parProps = new ParagraphProperties();
-			// The image and caption should always be centered within the textbox.
-			parProps.Justification = new Justification() { Val = JustificationValues.Center }; ;
-			textBoxStyle.Append(parProps);
-			return textBoxStyle;
 		}
 
 		/// <summary>

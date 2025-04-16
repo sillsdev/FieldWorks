@@ -52,12 +52,12 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Returns a single list containing all the ParagraphElements.
 		/// </summary>
-		internal List<ParagraphElement> GetParagraphElements()
+		internal List<ParagraphElement> GetUsedParagraphElements()
 		{
 			// Get an enumerator to the flattened list of all StyleElements.
 			var enumerator = paragraphStyles.Values.SelectMany(x => x);
 			// Create a single list of all the StyleElements.
-			return enumerator.ToList();
+			return enumerator.Where(x => x.Used).ToList();
 		}
 
 		/// <summary>
@@ -128,7 +128,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <returns>The uniqueDisplayName for the character style that is created.</returns>
 		private string AddStyle(string styleName, string displayNameBase, string nodePath,
-			string parentUniqueDisplayName, int wsId, bool pictureStyle, string sensesSubentriesUniqueDisplayName = null)
+			string parentUniqueDisplayName, int wsId, string sensesSubentriesUniqueDisplayName = null)
 		{
 			// Use a special name for a 'Headword' that is a '.subentries .headword' so that the
 			// '.subentries .headword' is not used as a guideword.
@@ -153,9 +153,11 @@ namespace SIL.FieldWorks.XWorks
 					characterStyles.Add(displayNameBase, stylesWithSameDisplayNameBase);
 				}
 
-				bool processParagraphStyle = ((nodePath != WordStylesGenerator.RootCharacterNodePath) &&
-											  (wsId == WordStylesGenerator.DefaultStyle) &&
-											  WordStylesGenerator.IsParagraphStyle(styleName, _propertyTable));
+				// We don't want to process a picture style or the normal style, as these are handled with global styles.
+				bool processParagraphStyle = ((nodePath != WordStylesGenerator.NormalCharNodePath) &&
+											(nodePath != WordStylesGenerator.PictureAndCaptionNodePath) &&
+											(wsId == WordStylesGenerator.DefaultStyle) &&
+											WordStylesGenerator.IsParagraphStyle(styleName, _propertyTable));
 
 				// Get a unique display name.
 				var cache = _propertyTable.GetValue<LcmCache>("cache");
@@ -224,9 +226,9 @@ namespace SIL.FieldWorks.XWorks
 
 				// Update the BasedOn value.
 				CharacterElement basedOnElem = null;
-				if (nodePath != WordStylesGenerator.RootCharacterNodePath)
+				if (nodePath != WordStylesGenerator.NormalCharNodePath)
 				{
-					TryGetCharacterStyle(WordStylesGenerator.RootCharacterNodePath, wsId, out CharacterElement normalElem);
+					TryGetCharacterStyle(WordStylesGenerator.NormalCharNodePath, wsId, out CharacterElement normalElem);
 					basedOnElem = normalElem.Redirect ?? normalElem;
 					WordStylesGenerator.SetBasedOn(style, basedOnElem.UniqueDisplayName());
 				}
@@ -243,10 +245,11 @@ namespace SIL.FieldWorks.XWorks
 				// When we are done creating styles and want to re-use styles, the defaults are what we want to
 				// try and use first.
 				if (wsId != WordStylesGenerator.DefaultStyle &&
-					nodePath != WordStylesGenerator.LetterHeadingNodePath)
+					nodePath != WordStylesGenerator.LetterHeadingNodePath &&
+					nodePath != WordStylesGenerator.PictureAndCaptionNodePath)
 				{
 					AddStyle(styleName, displayNameBase, nodePath, parentUniqueDisplayName,
-						WordStylesGenerator.DefaultStyle, pictureStyle, sensesSubentriesUniqueDisplayName);
+						WordStylesGenerator.DefaultStyle, sensesSubentriesUniqueDisplayName);
 				}
 
 				// Additional handling for paragraph style.
@@ -254,14 +257,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					Style paraStyle = null;
 					BulletInfo? bulletInfo = null;
-					if (pictureStyle)
-					{
-						paraStyle = WordStylesGenerator.GenerateParagraphStyleFromPictureOptions();
-					}
-					else
-					{
-						paraStyle = WordStylesGenerator.GenerateParagraphStyleFromLcmStyleSheet(styleName, _propertyTable, out bulletInfo);
-					}
+					paraStyle = WordStylesGenerator.GenerateParagraphStyleFromLcmStyleSheet(styleName, _propertyTable, out bulletInfo);
 
 					if (paraStyle == null)
 					{
@@ -310,7 +306,6 @@ namespace SIL.FieldWorks.XWorks
 				var workingDisplayName = workingNode.DisplayLabel;
 				var workingStyleName = workingNode.Style;
 				nodePath += $".{CssGenerator.GetClassAttributeForConfig(workingNode)} ";
-				bool pictureStyle = workingNode.DictionaryNodeOptions is DictionaryNodePictureOptions;
 
 				// If this node is '.subentries' and the next node is '.mainentrysubentries',
 				// then we need to build the same set of rules twice for the child nodes, once
@@ -341,11 +336,11 @@ namespace SIL.FieldWorks.XWorks
 				{
 					sensesSubentriesNodePath += $".{CssGenerator.GetClassAttributeForConfig(workingNode)} ";
 					sensesSubentriesUniqueDisplayName = AddStyle(workingStyleName, workingDisplayName,
-						sensesSubentriesNodePath, parentSensesSubentryUniqueDisplayName, wsId, pictureStyle);
+						sensesSubentriesNodePath, parentSensesSubentryUniqueDisplayName, wsId);
 					parentSensesSubentryUniqueDisplayName = sensesSubentriesUniqueDisplayName;
 				}
 				uniqueDisplayName = AddStyle(workingStyleName, workingDisplayName,
-					nodePath, parentUniqueDisplayName, wsId, pictureStyle, sensesSubentriesUniqueDisplayName);
+					nodePath, parentUniqueDisplayName, wsId, sensesSubentriesUniqueDisplayName);
 				parentUniqueDisplayName = uniqueDisplayName;
 			}
 			return uniqueDisplayName;
@@ -359,7 +354,7 @@ namespace SIL.FieldWorks.XWorks
 			ConfigurableDictionaryNode node, string nodePathAdditions, int wsId)
 		{
 			string nodePath = CssGenerator.GetNodePath(node) + nodePathAdditions;
-			return AddStyle(styleName, displayName, nodePath, parentUniqueDisplayName, wsId, false);
+			return AddStyle(styleName, displayName, nodePath, parentUniqueDisplayName, wsId);
 		}
 
 		internal void AddGlobalCharacterStyles()
@@ -367,14 +362,14 @@ namespace SIL.FieldWorks.XWorks
 			var cache = _propertyTable.GetValue<LcmCache>("cache");
 
 			// Add the Normal default character style.
-			AddStyle(WordStylesGenerator.NormalParagraphStyleName, WordStylesGenerator.RootCharacterDisplayName,
-				WordStylesGenerator.RootCharacterNodePath, null, WordStylesGenerator.DefaultStyle, false);
+			AddStyle(WordStylesGenerator.NormalParagraphStyleName, WordStylesGenerator.NormalCharDisplayName,
+				WordStylesGenerator.NormalCharNodePath, null, WordStylesGenerator.DefaultStyle);
 
 			// Add the Normal writing system styles.
 			foreach (var aws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
-				AddStyle(WordStylesGenerator.NormalParagraphStyleName, WordStylesGenerator.RootCharacterDisplayName,
-					WordStylesGenerator.RootCharacterNodePath, null, aws.Handle, false);
+				AddStyle(WordStylesGenerator.NormalParagraphStyleName, WordStylesGenerator.NormalCharDisplayName,
+					WordStylesGenerator.NormalCharNodePath, null, aws.Handle);
 			}
 
 			// Set the redirects for the Normal styles so BasedOn values can initially be set to the correct values
@@ -382,7 +377,7 @@ namespace SIL.FieldWorks.XWorks
 			RedirectCharacterElements();
 
 			// Mark the normal styles as 'used' if they are not going to be redirected.
-			characterStyles.TryGetValue(WordStylesGenerator.RootCharacterDisplayName, out var elements);
+			characterStyles.TryGetValue(WordStylesGenerator.NormalCharDisplayName, out var elements);
 			foreach (var elem in elements)
 			{
 				if (elem.Redirect == null)
@@ -394,7 +389,7 @@ namespace SIL.FieldWorks.XWorks
 			// Add the Letter Heading style.
 			var wsId = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
 			var letterHeadUniqueName = AddStyle(WordStylesGenerator.LetterHeadingStyleName, WordStylesGenerator.LetterHeadingDisplayName,
-				WordStylesGenerator.LetterHeadingNodePath, null, wsId, false);
+				WordStylesGenerator.LetterHeadingNodePath, null, wsId);
 			GetCharacterElement(letterHeadUniqueName).Used = true;
 		}
 
@@ -407,7 +402,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			foreach (var kvPair in characterStyles)
 			{
-				string DisplayNameBase = kvPair.Key;
 				List<CharacterElement> stylesWithSameDisplayNameBase = kvPair.Value;
 
 				// First redirect all the default styles.
@@ -418,6 +412,12 @@ namespace SIL.FieldWorks.XWorks
 				// as any of the elements preceding it.
 				for (int currentElem = 1; currentElem < defaultElements.Count; currentElem++)
 				{
+					// Don't redirect a characterElement that is linked to a paragraphElement.
+					if (defaultElements[currentElem].LinkedParagraphElement != null)
+					{
+						continue;
+					}
+
 					// Iterate through the preceding elements to check if they have the same properties.
 					for (int precedingElem = 0; precedingElem < currentElem; precedingElem++)
 					{
@@ -426,6 +426,12 @@ namespace SIL.FieldWorks.XWorks
 						// have already checked.
 						if (defaultElements[precedingElem].Redirect == null)
 						{
+							// Don't redirect to a characterElement that is linked to a paragraphElement.
+							if (defaultElements[precedingElem].LinkedParagraphElement != null)
+							{
+								continue;
+							}
+
 							if (defaultElements[currentElem].Style.Descendants<StyleRunProperties>().First().OuterXml
 								.Equals(defaultElements[precedingElem].Style.Descendants<StyleRunProperties>().First().OuterXml))
 							{
@@ -450,7 +456,7 @@ namespace SIL.FieldWorks.XWorks
 					//
 					// There is no need to check the default styles if the style the current element is based on is not also
 					// re-directed to the default style.
-					if (nonDefaultElements[currentElem].NodePath == WordStylesGenerator.RootCharacterNodePath ||
+					if (nonDefaultElements[currentElem].NodePath == WordStylesGenerator.NormalCharNodePath ||
 						nonDefaultElements[currentElem].BasedOnElement.WritingSystemId == WordStylesGenerator.DefaultStyle)
 					{
 						foreach (var defaultElem in defaultElements)
@@ -460,6 +466,12 @@ namespace SIL.FieldWorks.XWorks
 							// have already checked.
 							if (defaultElem.Redirect == null)
 							{
+								// Don't redirect to a characterElement that is linked to a paragraphElement.
+								if (defaultElem.LinkedParagraphElement != null)
+								{
+									continue;
+								}
+
 								if (nonDefaultElements[currentElem].Style.Descendants<StyleRunProperties>().First().OuterXml
 									.Equals(defaultElem.Style.Descendants<StyleRunProperties>().First().OuterXml))
 								{
@@ -498,6 +510,77 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Redirect paragraph elements to other paragraph elements that have identical properties.
+		/// The results of the redirection will be used to reduce the number of styles created in Word.
+		/// </summary>
+		internal void RedirectParagraphElements()
+		{
+			// Iterate through the list of elements with different Display Name Bases.
+			foreach (var kvPair in paragraphStyles)
+			{
+				List<ParagraphElement> elements = kvPair.Value;
+
+				// Iterate through the elements, starting with the second, to see if it is the same
+				// as any of the elements preceding it.
+				for (int currentElem = 1; currentElem < elements.Count; currentElem++)
+				{
+					// Don't redirect an element that has BulletInfo.
+					// Continuation elements will not have their LinkedCharacterElement property set.  No need to check them
+					// for redirection. They will get redirected along with the associated normal paragraph element.
+					if ((elements[currentElem].BulletInfo != null) || (elements[currentElem].LinkedCharacterElement == null))
+					{
+						continue;
+					}
+
+					// Iterate through the preceding elements to check if they have the same properties.
+					for (int precedingElem = 0; precedingElem < currentElem; precedingElem++)
+					{
+						// Don't redirect to an element that has BulletInfo.
+						// Continuation elements will not have their LinkedCharacterElement property set.  No need to check them
+						// for redirection. They will get redirected along with the associated normal paragraph element.
+						if ((elements[precedingElem].BulletInfo != null) || (elements[precedingElem].LinkedCharacterElement == null))
+						{
+							continue;
+						}
+
+						// If the preceding element is already re-directed then there is no need to compare the current
+						// element to this preceding element, since it is the same as a preceding element that we would
+						// have already checked.
+						if (elements[precedingElem].Redirect == null)
+						{
+							// Paragraph properties must be the same to redirect.
+							var currentParaProps = elements[currentElem].Style.Descendants<StyleParagraphProperties>().FirstOrDefault();
+							var precedingParaProps = elements[precedingElem].Style.Descendants<StyleParagraphProperties>().FirstOrDefault();
+							if ((currentParaProps == null && precedingParaProps == null) ||
+								currentParaProps != null &&
+								precedingParaProps != null &&
+								currentParaProps.OuterXml.Equals(precedingParaProps.OuterXml))
+							{
+								// The linked character properties must be the same to redirect.
+								if (elements[currentElem].LinkedCharacterElement.Style.Descendants<StyleRunProperties>().First().OuterXml
+									.Equals(elements[precedingElem].LinkedCharacterElement.Style.Descendants<StyleRunProperties>().First().OuterXml))
+								{
+									// Properties are the same, redirect the later element to the earlier one.
+									elements[currentElem].Redirect = elements[precedingElem];
+									elements[currentElem].LinkedCharacterElement.Redirect = elements[precedingElem].LinkedCharacterElement;
+									if (elements[currentElem].ContinuationElement != null)
+									{
+										if (elements[precedingElem].ContinuationElement == null)
+										{
+											AddParagraphContinuationStyle(elements[precedingElem]);
+										}
+										elements[currentElem].ContinuationElement.Redirect = elements[precedingElem].ContinuationElement;
+									}
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		/// <summary>
 		/// Adds the paragraph style and the linked character style.
 		/// </summary>
 		/// <returns>>The unique display name that should be referenced in a Paragraph.</returns>
@@ -522,7 +605,7 @@ namespace SIL.FieldWorks.XWorks
 				WordStylesGenerator.SetStyleName(paraStyle, uniqueDisplayName);
 
 				// Update the BasedOn value.
-				if (charElem.NodePath != WordStylesGenerator.RootCharacterNodePath)
+				if (charElem.NodePath != WordStylesGenerator.NormalCharNodePath)
 				{
 					TryGetParagraphStyle(WordStylesGenerator.NormalParagraphNodePath, out ParagraphElement normalParaElem);
 					WordStylesGenerator.SetBasedOn(paraStyle, normalParaElem.UniqueDisplayName());
@@ -537,10 +620,6 @@ namespace SIL.FieldWorks.XWorks
 				charElem.LinkedParagraphElement = paraElem;
 				paraElem.Style.Append(new LinkedStyle() { Val = charElem.UniqueDisplayName() });
 				charElem.Style.Append(new LinkedStyle() { Val = paraElem.UniqueDisplayName() });
-
-				// Set the paragraph and character styles to used.
-				charElem.Used = true;
-				paraElem.Used = true;
 			}
 		}
 
@@ -562,7 +641,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Creates a paragraph continuation element.
 		/// </summary>
 		/// <param name="paraElem">The element used to build the continuation element.</param>
-		/// <returns></returns>
+		/// <returns>The continuation element.</returns>
 		internal ParagraphElement AddParagraphContinuationStyle(ParagraphElement paraElem)
 		{
 			lock (_collectionLock)
@@ -581,7 +660,6 @@ namespace SIL.FieldWorks.XWorks
 				WordStylesGenerator.SetStyleName(contElem.Style, uniqueDisplayName);
 				AddParagraphElement(contElem);
 				paraElem.ContinuationElement = contElem;
-				contElem.Used = true;
 				return contElem;
 			}
 		}
@@ -594,14 +672,16 @@ namespace SIL.FieldWorks.XWorks
 			var normElem = new ParagraphElement(WordStylesGenerator.NormalParagraphDisplayName,
 				normStyle, 1, WordStylesGenerator.NormalParagraphNodePath, bulletInfo);
 			AddParagraphElement(normElem);
+			normElem.Used = true;
 
 			// Page Header Style
-			TryGetCharacterStyle(WordStylesGenerator.RootCharacterNodePath, WordStylesGenerator.DefaultStyle, out CharacterElement rootElem);
-			var pageHeaderStyle = WordStylesGenerator.GeneratePageHeaderStyle(normStyle, rootElem.Style);
+			TryGetCharacterStyle(WordStylesGenerator.NormalCharNodePath, WordStylesGenerator.DefaultStyle, out CharacterElement normalCharElem);
+			var pageHeaderStyle = WordStylesGenerator.GeneratePageHeaderStyle(normStyle, normalCharElem.Style);
 			// Intentionally re-using the bulletInfo from Normal.
 			var pageHeaderElem = new ParagraphElement(WordStylesGenerator.PageHeaderDisplayName,
 				pageHeaderStyle, 1, WordStylesGenerator.PageHeaderNodePath, bulletInfo);
 			AddParagraphElement(pageHeaderElem);
+			pageHeaderElem.Used = true;
 
 			// Letter Header Style
 			var headStyle = WordStylesGenerator.GenerateParagraphStyleFromLcmStyleSheet(WordStylesGenerator.LetterHeadingStyleName,
@@ -611,6 +691,27 @@ namespace SIL.FieldWorks.XWorks
 			var headElem = new ParagraphElement(WordStylesGenerator.LetterHeadingDisplayName,
 				headStyle, 1, WordStylesGenerator.LetterHeadingNodePath, bulletInfo);
 			AddParagraphElement(headElem);
+			headElem.Used = true;
+
+			// Picture & Caption Style
+			// Creating a style for the paragraph that will contain the image and caption
+			var pictureCaptionStyle = new Style()
+			{
+				Type = StyleValues.Paragraph,
+				StyleId = WordStylesGenerator.PictureAndCaptionTextframeDisplayName,
+				StyleName = new StyleName() { Val = WordStylesGenerator.PictureAndCaptionTextframeDisplayName }
+			};
+
+			var parProps = new StyleParagraphProperties();
+			// The image and caption should always be centered within the textbox.
+			parProps.Justification = new Justification() { Val = JustificationValues.Center }; ;
+			pictureCaptionStyle.Append(parProps);
+
+			var pictureCaptionElem = new ParagraphElement(
+				WordStylesGenerator.PictureAndCaptionTextframeDisplayName,
+				pictureCaptionStyle, 1, WordStylesGenerator.PictureAndCaptionNodePath, null);
+			AddParagraphElement(pictureCaptionElem);
+			pictureCaptionElem.Used = true;
 		}
 
 		/// <summary>
@@ -685,6 +786,7 @@ namespace SIL.FieldWorks.XWorks
 		internal BulletInfo? BulletInfo { get; }
 		internal CharacterElement LinkedCharacterElement { get; set; }
 		internal ParagraphElement ContinuationElement { get; set; }
+		internal ParagraphElement Redirect { get; set; }
 
 		/// <summary>
 		/// Unique id for this style that can be used for all bullet list items, and

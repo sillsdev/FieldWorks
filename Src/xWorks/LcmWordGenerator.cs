@@ -116,11 +116,13 @@ namespace SIL.FieldWorks.XWorks
 				var propStyleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
 
 				s_styleCollection.RedirectCharacterElements();
+				s_styleCollection.RedirectParagraphElements();
 
 				foreach (var entry in entryContents)
 				{
 					if (!entry.Item2.IsNullOrEmpty())
 					{
+						// Change run references to redirected styles.
 						foreach (WP.Run run in ((DocFragment)entry.Item2).DocBody.Descendants<WP.Run>())
 						{
 							// Reset the run styles to any redirected styles and mark styles as being used.
@@ -140,6 +142,33 @@ namespace SIL.FieldWorks.XWorks
 
 							// Remove temporary data
 							run.ClearAllAttributes();
+						}
+
+						// Change paragraph references to redirected styles.
+						foreach (WP.Paragraph para in ((DocFragment)entry.Item2).DocBody.Descendants<WP.Paragraph>())
+						{
+							// Reset the paragraph styles to any redirected styles and mark styles as being used.
+							var paraElem = GetElementFromParagraph(para);
+							if (paraElem != null)
+							{
+								if (paraElem.Redirect != null)
+								{
+									SetUniqueDisplayName(para, paraElem.Redirect.UniqueDisplayName());
+									paraElem.Redirect.Used = true;
+									if (paraElem.LinkedCharacterElement != null)
+									{
+										paraElem.LinkedCharacterElement.Redirect.Used = true;
+									}
+								}
+								else
+								{
+									paraElem.Used = true;
+									if (paraElem.LinkedCharacterElement != null)
+									{
+										paraElem.LinkedCharacterElement.Used = true;
+									}
+								}
+							}
 						}
 
 						IFragment letterHeader = GenerateLetterHeaderIfNeeded(entry.Item1,
@@ -220,7 +249,7 @@ namespace SIL.FieldWorks.XWorks
 					Styles styleSheet = new Styles();
 
 					// Add generated styles into the stylesheet from the collections.
-					var paragraphElements = s_styleCollection.GetParagraphElements();
+					var paragraphElements = s_styleCollection.GetUsedParagraphElements();
 					foreach (var element in paragraphElements)
 					{
 						// Generate bullet and numbering data.
@@ -1075,28 +1104,28 @@ namespace SIL.FieldWorks.XWorks
 		}
 		public IFragment WriteProcessedObject(ConfigurableDictionaryNode config, bool isBlock, IFragment elementContent, string className)
 		{
-			var runs = ((DocFragment)elementContent)?.DocBody.OfType<WP.Run>();
+			return WriteProcessedElementContent(elementContent, config);
+		}
+		public IFragment WriteProcessedCollection(ConfigurableDictionaryNode config, bool isBlock, IFragment elementContent, string className)
+		{
+			return WriteProcessedElementContent(elementContent, config);
+		}
+
+		private IFragment WriteProcessedElementContent(IFragment elementContent, ConfigurableDictionaryNode config)
+		{
+			bool eachInAParagraph = config != null &&
+								  config.DictionaryNodeOptions is IParaOption &&
+								  ((IParaOption)(config.DictionaryNodeOptions)).DisplayEachInAParagraph;
+
 			// If there is only one run we can use it to get a writing system (needed for Before/After text).
+			var runs = ((DocFragment)elementContent)?.DocBody.OfType<WP.Run>();
 			int? wsId = null;
 			if (runs.Count() == 1)
 			{
 				var run = runs.First();
 				var runElem = GetElementFromRun(run);
-				wsId = runElem.WritingSystemId;
+				wsId = runElem?.WritingSystemId;
 			}
-
-			return WriteProcessedElementContent(elementContent, config, wsId);
-		}
-		public IFragment WriteProcessedCollection(ConfigurableDictionaryNode config, bool isBlock, IFragment elementContent, string className)
-		{
-			return WriteProcessedElementContent(elementContent, config, null);
-		}
-
-		private IFragment WriteProcessedElementContent(IFragment elementContent, ConfigurableDictionaryNode config, int? wsId)
-		{
-			bool eachInAParagraph = config != null &&
-								  config.DictionaryNodeOptions is IParaOption &&
-								  ((IParaOption)(config.DictionaryNodeOptions)).DisplayEachInAParagraph;
 
 			// Add Before text, if it is not going to be displayed in a paragraph.
 			if (!eachInAParagraph && !string.IsNullOrEmpty(config.Before))
@@ -2791,11 +2820,28 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Gets the unique display name out of a paragraph.
+		/// </summary>
+		/// <returns>The name, or null if the paragraph does not contain the information.</returns>
+		public static string GetUniqueDisplayName(Paragraph para)
+		{
+			return para?.ParagraphProperties?.ParagraphStyleId?.Val;
+		}
+
+		/// <summary>
 		/// Sets the unique display name in a run.
 		/// </summary>
 		public static void SetUniqueDisplayName(Run run, string newUniqueDisplayName)
 		{
 			run.RunProperties.RunStyle.Val = newUniqueDisplayName;
+		}
+
+		/// <summary>
+		/// Sets the unique display name in a paragraph.
+		/// </summary>
+		public static void SetUniqueDisplayName(Paragraph para, string newUniqueDisplayName)
+		{
+			para.ParagraphProperties.ParagraphStyleId.Val = newUniqueDisplayName;
 		}
 
 		/// <summary>
@@ -2810,6 +2856,22 @@ namespace SIL.FieldWorks.XWorks
 
 			CharacterElement elem = s_styleCollection.GetCharacterElement(uniqueDisplayName);
 			Debug.Assert(elem != null);  // I don't think we should ever not find a styleElement.
+
+			return elem;
+		}
+
+		/// <summary>
+		/// Get the element associated with a paragraph.
+		/// </summary>
+		/// <returns>The element, or null if the paragraph does not contain the information.</returns>
+		internal static ParagraphElement GetElementFromParagraph(Paragraph para)
+		{
+			string uniqueDisplayName = GetUniqueDisplayName(para);
+			if (uniqueDisplayName == null)
+				return null;
+
+			ParagraphElement elem = s_styleCollection.GetParagraphElement(uniqueDisplayName);
+			Debug.Assert(elem != null);  // I don't think we should ever not find a element.
 
 			return elem;
 		}
