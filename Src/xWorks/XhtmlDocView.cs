@@ -1075,7 +1075,16 @@ namespace SIL.FieldWorks.XWorks
 		private void SetActiveSelectedEntryOnView(GeckoWebBrowser browser)
 		{
 			if (Clerk.CurrentObject == null)
+			{
+				if (Clerk.Id == "AllReversalEntries" && m_updateContentLater)
+				{
+					// There are no entries, but we still need to clear the pane and update the title.
+					var currentConfig = m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty);
+					UpdateContent(currentConfig);
+					m_updateContentLater = false;
+				}
 				return;
+			}
 
 			if (Clerk.Id == "AllReversalEntries")
 			{

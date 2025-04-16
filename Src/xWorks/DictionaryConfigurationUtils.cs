@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016 SIL International
+// Copyright (c) 2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -59,7 +59,9 @@ namespace SIL.FieldWorks.XWorks
 					var configName = reader["name"];
 					if (configName == null)
 						throw new InvalidDataException(String.Format("{0} is an invalid configuration file", configFile));
-					configurations[configName] = configFile;
+					if (!configurations.Keys.Contains(configName))
+						// Use the first one if there is more than one to avoid picking en2 over en.
+						configurations[configName] = configFile;
 				}
 			}
 		}
