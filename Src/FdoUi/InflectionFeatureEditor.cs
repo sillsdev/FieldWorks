@@ -546,6 +546,16 @@ namespace SIL.FieldWorks.FdoUi
 						fEnable = hvoFeature != m_selectedHvo;
 					}
 				}
+				if (clsid == MoInflAffMsaTags.kClassId)
+				{
+					int pos = sda.get_ObjectProp(hvoMsa, MoInflAffMsaTags.kflidPartOfSpeech);
+					if (m_notSure || (pos != 0 && possiblePOS.Contains(pos)))
+					{
+						// Only show it as a change if it is different
+						int hvoFeature = sda.get_ObjectProp(hvoMsa, MoInflAffMsaTags.kflidInflFeats);
+						fEnable = hvoFeature != m_selectedHvo;
+					}
+				}
 			}
 			return fEnable;
 		}
