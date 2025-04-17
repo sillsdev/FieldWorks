@@ -1080,7 +1080,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					// There are no entries, but we still need to clear the pane and update the title.
 					var currentConfig = m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", string.Empty);
-					UpdateContent(currentConfig);
+					if (!string.IsNullOrEmpty(currentConfig))
+						UpdateContent(currentConfig);
 					m_updateContentLater = false;
 				}
 				return;

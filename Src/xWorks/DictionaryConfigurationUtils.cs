@@ -46,6 +46,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private static void AddOrOverrideConfiguration(IEnumerable<string> configFiles, IDictionary<string, string> configurations)
 		{
+			IList<string> configNames = new List<string>();
 			foreach (var configFile in configFiles)
 			{
 				using (var fileStream = new FileStream(configFile, FileMode.Open, FileAccess.Read))
@@ -59,9 +60,12 @@ namespace SIL.FieldWorks.XWorks
 					var configName = reader["name"];
 					if (configName == null)
 						throw new InvalidDataException(String.Format("{0} is an invalid configuration file", configFile));
-					if (!configurations.Keys.Contains(configName))
-						// Use the first one if there is more than one to avoid picking en2 over en.
-						configurations[configName] = configFile;
+					// Some projects have duplicate English configurations locally.  Ignore the duplicates. (cf. LT-22104).
+					if (configName == "English" && configNames.Contains(configName))
+						continue;
+					// If there is more than one configName, the last one overrides the earlier ones.
+					configurations[configName] = configFile;
+					configNames.Add(configName);
 				}
 			}
 		}
