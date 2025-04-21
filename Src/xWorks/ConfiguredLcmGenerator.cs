@@ -1942,7 +1942,8 @@ namespace SIL.FieldWorks.XWorks
 		private static IFragment GeneratePictureContent(ConfigurableDictionaryNode config, DictionaryPublicationDecorator publicationDecorator,
 			object item, GeneratorSettings settings)
 		{
-			if (item is ICmPicture cmPic && !File.Exists(cmPic.PictureFileRA?.AbsoluteInternalPath))
+
+			if (item is ICmPicture cmPic && !File.Exists(cmPic.PictureFileRA?.AbsoluteInternalPath.Normalize(NormalizationForm.FormC)))
 			{
 				Logger.WriteEvent($"Skipping generating picture because there is no file at {cmPic.PictureFileRA?.AbsoluteInternalPath ?? "all"}");
 				return settings.ContentGenerator.CreateFragment();
@@ -1951,7 +1952,6 @@ namespace SIL.FieldWorks.XWorks
 			var contentGenerator = settings.ContentGenerator;
 			using (var writer = contentGenerator.CreateWriter(bldr))
 			{
-
 				//Adding Thumbnail tag
 				foreach (var child in config.ReferencedOrDirectChildren)
 				{
