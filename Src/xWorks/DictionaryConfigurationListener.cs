@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,6 +18,7 @@ using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.XWorks.LexText;
 using SIL.LCModel.Core.WritingSystems;
 using XCore;
+using SIL.FieldWorks.FdoUi;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -305,7 +306,7 @@ namespace SIL.FieldWorks.XWorks
 				if (defaultPublication == "AllReversalIndexes")
 				{
 					// check in projectConfigDir for files whose name = default analysis ws
-					if (TryMatchingReversalConfigByWritingSystem(projectConfigDir, cache, out currentConfig))
+					if (TryMatchingReversalConfigByWritingSystem(propertyTable, projectConfigDir, cache, out currentConfig))
 					{
 						propertyTable.SetProperty(pubLayoutPropName, currentConfig, fUpdate);
 						return currentConfig;
@@ -329,10 +330,25 @@ namespace SIL.FieldWorks.XWorks
 			return currentConfig;
 		}
 
-		private static bool TryMatchingReversalConfigByWritingSystem(string projectConfigDir, LcmCache cache, out string currentConfig)
+		private static bool TryMatchingReversalConfigByWritingSystem(PropertyTable propertyTable, string projectConfigDir, LcmCache cache, out string currentConfig)
 		{
-			var wsId = cache.LangProject.DefaultAnalysisWritingSystem.Id;
 			var fileList = Directory.EnumerateFiles(projectConfigDir);
+			var riGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
+			if (riGuid != null)
+			{
+				// If the ReversalIndexGuid has been set, try using its writing system.
+				// This fixes LT-22104.
+				IReversalIndex ri = cache.ServiceLocator.GetObject(riGuid) as IReversalIndex;
+				var riWsId = ri?.WritingSystem;
+				var riFileName = fileList.FirstOrDefault(fname => Path.GetFileNameWithoutExtension(fname) == riWsId);
+				if (!string.IsNullOrEmpty(riFileName))
+				{
+					currentConfig = riFileName;
+					return true;
+				}
+			}
+			// Try using DefaultAnalysisWritingSystem.
+			var wsId = cache.LangProject.DefaultAnalysisWritingSystem.Id;
 			var fileName = fileList.FirstOrDefault(fname => Path.GetFileNameWithoutExtension(fname) == wsId);
 			currentConfig = fileName ?? string.Empty;
 			return !string.IsNullOrEmpty(currentConfig);

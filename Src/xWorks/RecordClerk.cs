@@ -950,7 +950,7 @@ namespace SIL.FieldWorks.XWorks
 			// jumps to the first instance of that object (LT-4691).
 			// Through deletion of Reversal Index entry it was possible to arrive here with
 			// no sorted objects. (LT-13391)
-			if (e.Index >= 0 && m_list.SortedObjects.Count > 0)
+			if (0 <= e.Index && e.Index < m_list.SortedObjects.Count)
 			{
 				int ourHvo = m_list.SortItemAt(e.Index).RootObjectHvo;
 				// if for some reason the index doesn't match the hvo, we'll jump to the Hvo.

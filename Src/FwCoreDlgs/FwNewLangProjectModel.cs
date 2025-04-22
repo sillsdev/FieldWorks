@@ -263,12 +263,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				var defaultAnalysis = WritingSystemContainer.CurrentAnalysisWritingSystems.First();
 				var defaultVernacular = WritingSystemContainer.CurrentVernacularWritingSystems.First();
+				var remainingAnalysisWss = WritingSystemContainer.AnalysisWritingSystems.Skip(1).ToList();
+				// Avoid duplicate "en" because of "en" below (see LT-22057).
+				remainingAnalysisWss.RemoveAll(ws => ws.LanguageTag == "en");
 				return LcmCache.CreateNewLangProj(progressDialog, ProjectName, FwDirectoryFinder.LcmDirectories,
 					threadHelper,
 					defaultAnalysis,
 					defaultVernacular,
 					"en",// TODO: replicate original
-					new HashSet<CoreWritingSystemDefinition>(WritingSystemContainer.AnalysisWritingSystems.Skip(1)),
+					new HashSet<CoreWritingSystemDefinition>(remainingAnalysisWss),
 					new HashSet<CoreWritingSystemDefinition>(WritingSystemContainer.VernacularWritingSystems.Skip(1)),
 					AnthroModel.AnthroFileName);
 			}

@@ -7,6 +7,7 @@ using System.Diagnostics;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using XCore;
+using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -151,11 +152,12 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		protected override void HandleMatchingSelectionChanged()
 		{
-			m_fwcbAllomorphs.Items.Clear();
-			m_fwcbAllomorphs.Text = String.Empty;
 			if (m_selObject == null)
 				return;
+
 			m_fwcbAllomorphs.SuspendLayout();
+			m_fwcbAllomorphs.Items.Clear();
+			m_fwcbAllomorphs.Text = String.Empty;
 			/* NB: We remove abstract MoForms, because the adhoc allo coprohibiton object wants them removed.
 			 * If any other client of this dlg comes along that wants them,
 			 * we will need to feed in a parameter that tells us whether to exclude them or not.
@@ -172,6 +174,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			if (m_fwcbAllomorphs.Items.Count > 0)
 				m_fwcbAllomorphs.SelectedItem = m_fwcbAllomorphs.Items[0];
+			else
+				m_selObject = null;
 			m_btnOK.Enabled = m_fwcbAllomorphs.Items.Count > 0;
 			m_fwcbAllomorphs.ResumeLayout();
 			// For a resizeable dialog, we don't want AdjustForStylesheet to really change its size,
@@ -179,6 +183,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			int oldHeight = Height;
 			m_fwcbAllomorphs.AdjustForStyleSheet(this, grplbl, m_propertyTable);
 			Height = oldHeight;
+		}
+
+		protected override void m_matchingObjectsBrowser_SelectionMade(object sender, FwObjectSelectionEventArgs e)
+		{
+			if (m_fwcbAllomorphs.Items.Count == 0)
+				return;
+
+			base.m_matchingObjectsBrowser_SelectionMade(sender, e);
 		}
 
 		#endregion	Other methods

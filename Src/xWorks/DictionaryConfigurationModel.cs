@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2016 SIL International
+// Copyright (c) 2014-2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -105,6 +105,9 @@ namespace SIL.FieldWorks.XWorks
 		[XmlElement("HomographConfiguration")]
 		public DictionaryHomographConfiguration HomographConfiguration { get; set; }
 
+		[XmlElement("Pictures")]
+		public PictureConfiguration Pictures { get; set; }
+
 		/// <summary>
 		/// Checks which folder this will be saved in to determine if it is a reversal
 		/// </summary>
@@ -182,7 +185,7 @@ namespace SIL.FieldWorks.XWorks
 			SharedItems = SharedItems ?? new List<ConfigurableDictionaryNode>();
 			if (cache == null)
 				return;
-			SpecifyParentsAndReferences(Parts, SharedItems);
+			SpecifyParentsAndReferences(Parts, this, SharedItems);
 			if (AllPublications)
 				Publications = DictionaryConfigurationController.GetAllPublications(cache);
 			else
@@ -199,6 +202,11 @@ namespace SIL.FieldWorks.XWorks
 					HomographConfiguration.HomographWritingSystem = string.Empty;
 					HomographConfiguration.CustomHomographNumbers = string.Empty;
 				}
+			}
+
+			if (Pictures == null)
+			{
+				Pictures = new PictureConfiguration();
 			}
 			// Handle any changes to the custom field definitions.  (See https://jira.sil.org/browse/LT-16430.)
 			// The "Merge" method handles both additions and deletions.
@@ -270,7 +278,7 @@ namespace SIL.FieldWorks.XWorks
 			if (Parts != null)
 			{
 				clone.Parts = Parts.Select(node => node.DeepCloneUnderParent(null, true)).ToList();
-				SpecifyParentsAndReferences(clone.Parts, clone.SharedItems);
+				SpecifyParentsAndReferences(clone.Parts, clone, clone.SharedItems);
 			}
 
 			// Clone Publications
@@ -279,13 +287,23 @@ namespace SIL.FieldWorks.XWorks
 				clone.Publications = new List<string>(Publications);
 			}
 
+			if (HomographConfiguration != null)
+			{
+				clone.HomographConfiguration = new DictionaryHomographConfiguration(HomographConfiguration);
+			}
+
+			if (Pictures != null)
+			{
+				clone.Pictures = new PictureConfiguration(Pictures);
+			}
+
 			return clone;
 		}
 
 		/// <summary>
 		/// Assign Parent and ReferencedNode properties to descendants of nodes.
 		/// </summary>
-		internal static void SpecifyParentsAndReferences(List<ConfigurableDictionaryNode> nodes, List<ConfigurableDictionaryNode> sharedItems = null)
+		internal static void SpecifyParentsAndReferences(List<ConfigurableDictionaryNode> nodes, DictionaryConfigurationModel model = null, List<ConfigurableDictionaryNode> sharedItems = null)
 		{
 			if (nodes == null)
 				throw new ArgumentNullException();
@@ -296,6 +314,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var node = rollingNodes[0];
 				rollingNodes.RemoveAt(0);
+				node.Model = model;
 				if (!string.IsNullOrEmpty(node.ReferenceItem))
 					DictionaryConfigurationController.LinkReferencedNode(sharedItems, node, node.ReferenceItem);
 				if (node.Children == null)
@@ -306,7 +325,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			if (sharedItems != null && !ReferenceEquals(nodes, sharedItems))
-				SpecifyParentsAndReferences(sharedItems, sharedItems);
+				SpecifyParentsAndReferences(sharedItems, model, sharedItems);
 		}
 
 		public override string ToString()
@@ -321,6 +340,21 @@ namespace SIL.FieldWorks.XWorks
 	public class DictionaryHomographConfiguration
 	{
 		public DictionaryHomographConfiguration() {}
+
+		public DictionaryHomographConfiguration(DictionaryHomographConfiguration other) : this()
+		{
+			if (other == null)
+				return;
+
+			ShowHwNumber = other.ShowHwNumber;
+			ShowHwNumInCrossRef = other.ShowHwNumInCrossRef;
+			ShowHwNumInReversalCrossRef = other.ShowHwNumInReversalCrossRef;
+			ShowSenseNumber = other.ShowSenseNumber;
+			ShowSenseNumberReversal = other.ShowSenseNumberReversal;
+			HomographNumberBefore = other.HomographNumberBefore;
+			HomographWritingSystem = other.HomographWritingSystem;
+			CustomHomographNumberList = other.CustomHomographNumberList != null ? new List<string>(other.CustomHomographNumberList) : null;
+		}
 
 		public DictionaryHomographConfiguration(HomographConfiguration config)
 		{

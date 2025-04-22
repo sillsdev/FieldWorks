@@ -35,7 +35,7 @@
 		<!-- Install overcrowdin, or update if already installed. -->
 		<Exec WorkingDirectory="$(fwrt)" Command="dotnet tool update -g overcrowdin || dotnet tool install -g overcrowdin"/>
 	</Target>
-	<Target Name="copyLocales"> <!-- Copy locales to alternate ws identifiers -->
+	<Target Name="copyLocales"  DependsOnTargets="VerifyLcmCloned"> <!-- Copy locales to alternate ws identifiers -->
 		<CopyLocale SourceL10n="$(L10nsDirectory)/ms" DestL10n="$(L10nsDirectory)/zlm" LcmDir="$(LcmSrcDir)" />
 	</Target>
 

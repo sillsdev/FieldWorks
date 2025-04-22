@@ -19,6 +19,7 @@
 				</xs:complexType>
 			</xs:element>
 			<xs:element name="HomographConfiguration" type="HomographConfigurationType" maxOccurs="1" minOccurs="0"/>
+			<xs:element name="Pictures" type="PicturesType" maxOccurs="1" minOccurs="0"/>
 		</xs:sequence>
 		<xs:attribute type="xs:string" name="name" use="required"/>
 		<xs:attribute type="xs:string" name="writingSystem" use="optional"/>
@@ -37,6 +38,11 @@
 	<xs:attribute type="xs:boolean" name="homographNumberBefore"/>
 	<xs:attribute type="xs:string" name="customHomographNumbers"/>
 	<xs:attribute type="xs:string" name="homographWritingSystem"/>
+</xs:complexType>
+<xs:complexType name="PicturesType">
+	<xs:attribute type="alignmentType" name="alignment"/>
+	<xs:attribute type="xs:float" name="width"/>
+	<xs:attribute type="xs:float" name="height"/>
 </xs:complexType>
 <xs:complexType name="SenseOptionsType">
 	<xs:attribute type="xs:string" name="numberStyle"/>
@@ -177,6 +183,7 @@
 	<xs:restriction base="xs:string">
 		<xs:enumeration value="right"/>
 		<xs:enumeration value="left"/>
+		<xs:enumeration value="center"/>
 		<xs:enumeration value="above"/>
 		<xs:enumeration value="below"/>
 	</xs:restriction>

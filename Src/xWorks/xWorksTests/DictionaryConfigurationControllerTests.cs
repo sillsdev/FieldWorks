@@ -2333,7 +2333,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var preextantSharedNode = new ConfigurableDictionaryNode { Label = "Sharedparent" };
 			var model = DictionaryConfigurationModelTests.CreateSimpleSharingModel(configNode, preextantSharedNode);
-			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems);
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, sharedItems: model.SharedItems);
 
 			// SUT
 			Assert.Throws<ArgumentException>(() => DictionaryConfigurationController.ShareNodeAsReference(model.SharedItems, configNode));
@@ -2351,7 +2351,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var preextantSharedNode = new ConfigurableDictionaryNode { CSSClassNameOverride = string.Format("shared{0}", m_field).ToLower() };
 			var model = DictionaryConfigurationModelTests.CreateSimpleSharingModel(configNode, preextantSharedNode);
-			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems);
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, sharedItems: model.SharedItems);
 
 			// SUT
 			Assert.Throws<ArgumentException>(() => DictionaryConfigurationController.ShareNodeAsReference(model.SharedItems, configNode));
@@ -2369,7 +2369,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var preextantSharedNode = new ConfigurableDictionaryNode { FieldDescription = m_field, Parent = new ConfigurableDictionaryNode() };
 			var model = DictionaryConfigurationModelTests.CreateSimpleSharingModel(configNode, preextantSharedNode);
-			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, model.SharedItems);
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, sharedItems: model.SharedItems);
 
 			// SUT
 			DictionaryConfigurationController.ShareNodeAsReference(model.SharedItems, configNode);

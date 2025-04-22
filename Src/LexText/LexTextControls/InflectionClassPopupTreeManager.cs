@@ -93,6 +93,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (match1 != null)
 					match = match1;
 			}
+			AddTimberLine(popupTree);
+			AddNotSureItem(popupTree);
 			return match;
 		}
 	}

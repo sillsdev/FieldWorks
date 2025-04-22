@@ -653,7 +653,11 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void WordformUpdatedEventHandler(object sender, WordformUpdatedEventArgs e)
 		{
-			if (e.CheckParser && m_checkParserResults != null && m_checkParserResults.ContainsKey(e.Wordform))
+			if (e.CheckParser && m_checkParserResults != null &&
+				(m_checkParserResults.ContainsKey(e.Wordform) ||
+				 // Only include an unanticipated wordform if it is the lowercase
+				 // version of an existing uppercase wordform.
+				 ParserResultsHasUppercase(e.Wordform)))
 			{
 				// Record the parse result.
 				m_checkParserResults[e.Wordform] = e.ParseResult;
@@ -673,6 +677,18 @@ namespace SIL.FieldWorks.LexText.Controls
 				ParserReportViewModel viewModel = AddParserReport(parserReport);
 				ShowParserReport(viewModel, m_mediator, m_cache);
 			}
+		}
+
+		private bool ParserResultsHasUppercase(IWfiWordform wordform)
+		{
+			string form = wordform.Form.BestVernacularAlternative.Text;
+			foreach (IWfiWordform key in m_checkParserResults.Keys)
+			{
+				string keyForm = key.Form.BestVernacularAlternative.Text;
+				if (keyForm.ToLower() == form)
+					return true;
+			}
+			return false;
 		}
 
 		/// <summary>

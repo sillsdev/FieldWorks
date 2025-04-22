@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.IText
 					object value;
 					if (values == null || !values.TryGetValue(complexFeat, out value))
 						value = null;
-					AddFeatures(node, complexFeat.TypeRA.FeaturesRS.Where(f => !features.Contains(f)), (IDictionary<IFsFeatDefn, object>) value);
+					AddFeatures(node, complexFeat.TypeRA.FeaturesRS.Where(f => f != feature), (IDictionary<IFsFeatDefn, object>)value);
 					parent.Nodes.Add(node);
 				}
 				else

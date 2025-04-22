@@ -1030,7 +1030,7 @@ namespace SIL.FieldWorks.IText
 		{
 			//If the RootStText is null we are either in a place that doesn't care about parser related updates
 			// or we are not yet completely displaying the text, so we should be fine, I hope? (LT-12493)
-			if (SuspendResettingAnalysisCache || RootStText == null)
+			if (SuspendResettingAnalysisCache || RootStText == null || RootStText.Cache == null)
 				return;
 
 			switch (tag)

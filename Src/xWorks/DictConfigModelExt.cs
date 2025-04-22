@@ -4,6 +4,7 @@
 
 using System;
 using System.Linq;
+using System.Security;
 using SIL.Reporting;
 using SIL.Windows.Forms.ClearShare;
 
@@ -38,7 +39,7 @@ namespace SIL.FieldWorks.XWorks
 			var copyright = string.IsNullOrEmpty(metadata.CopyrightNotice)
 				? string.Empty
 				: metadata.ShortCopyrightNotice;
-			return string.Join(", ", new[] { copyright, license }.Where(txt => !string.IsNullOrEmpty(txt)));
+			return SecurityElement.Escape(string.Join(", ", new[] { copyright, license }.Where(txt => !string.IsNullOrEmpty(txt))));
 		}
 
 		private static Metadata MetadataFromFile(this LCModel.ICmPicture picture)

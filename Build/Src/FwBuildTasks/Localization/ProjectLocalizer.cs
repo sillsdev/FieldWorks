@@ -314,6 +314,14 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 			{
 				using (var process = new Process())
 				{
+					DataReceivedEventHandler outputHandler = (sender, e) =>
+					{
+						if (e.Data == null)
+							// ReSharper disable once AccessToDisposedClosure - we wait for the process to exit before disposing the handle
+							outputWaitHandle.Set();
+						else
+							output = e.Data;
+					};
 					try
 					{
 						process.StartInfo.UseShellExecute = false;
@@ -322,14 +330,7 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 						process.StartInfo.Arguments = arguments;
 						if (workdir != null)
 							process.StartInfo.WorkingDirectory = workdir;
-						process.OutputDataReceived += (sender, e) =>
-						{
-							if (e.Data == null)
-								// ReSharper disable once AccessToDisposedClosure - we wait for the process to exit before disposing the handle
-								outputWaitHandle.Set();
-							else
-								output = e.Data;
-						};
+						process.OutputDataReceived += outputHandler;
 						process.Start();
 
 						process.BeginOutputReadLine();
@@ -337,9 +338,15 @@ namespace SIL.FieldWorks.Build.Tasks.Localization
 						stdOutput = output;
 						return process.ExitCode;
 					}
+					catch(Exception ex)
+					{
+						stdOutput = ex.Message;
+						return 1; // return a non-zero exit code to indicate failure
+					}
 					finally
 					{
 						outputWaitHandle.WaitOne(timeout);
+						process.OutputDataReceived -= outputHandler;
 					}
 				}
 			}

@@ -103,10 +103,19 @@ namespace SIL.FieldWorks.XWorks
 
 		internal static string DecryptPassword(string decryptMe)
 		{
-			if(!String.IsNullOrEmpty(decryptMe))
+			try
 			{
-				byte[] decryptedData = ProtectedData.Unprotect(Convert.FromBase64String(decryptMe), Encoding.Unicode.GetBytes(EntropyValue), DataProtectionScope.CurrentUser);
-				return Encoding.Unicode.GetString(decryptedData);
+				if(!String.IsNullOrEmpty(decryptMe))
+				{
+					byte[] decryptedData = ProtectedData.Unprotect(Convert.FromBase64String(decryptMe), Encoding.Unicode.GetBytes(EntropyValue), DataProtectionScope.CurrentUser);
+					return Encoding.Unicode.GetString(decryptedData);
+				}
+			}
+			catch (CryptographicException)
+			{
+				// This can happen a windows update or user account change invalidates the encryption
+				// We can no longer decrypt the password, so just act as if it was forgotten
+				return string.Empty;
 			}
 			return decryptMe;
 		}

@@ -1481,9 +1481,12 @@ namespace SIL.FieldWorks.IText
 			for (var i = 0; i < multiString.StringCount; i++)
 			{
 				int ws;
-				string text = multiString.GetStringFromIndex(i, out ws).Text;
-				if (text.Contains("[") && text.Contains("]"))
-					return true;
+				ITsString tssString = multiString.GetStringFromIndex(i, out ws);
+				if (tssString != null && tssString.Text != null)
+				{
+					if (tssString.Text.Contains("[") && tssString.Text.Contains("]"))
+						return true;
+				}
 			}
 			return false;
 		}

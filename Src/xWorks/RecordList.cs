@@ -1704,6 +1704,15 @@ namespace SIL.FieldWorks.XWorks
 				// we want to wait until after everything is finished reloading, however.
 				m_requestedLoadWhileSuppressed = true;
 			}
+			if (Clerk.Id == "interlinearTexts" && cvDel > 0)
+			{
+				string fieldName = Cache.MetaDataCacheAccessor.GetFieldNameOrNull(tag);
+				if (fieldName != null && fieldName == "InterlinearTexts")
+				{
+					// Wait for InterestingTextsList to be updated (cf. LT-22089).
+					m_requestedLoadWhileSuppressed = true;
+				}
+			}
 
 			// Try to catch things that don't obviously affect us, but will cause problems.
 			if (cvDel > 0 && CurrentIndex >= 0 && IsPropOwning(tag))
@@ -1872,10 +1881,10 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			if (SortedObjects.Count == 0)
-				return null;
+			if (0 <= index && index < SortedObjects.Count)
+				return SortedObjects[index] as IManyOnePathSortItem;
 			else
-			return SortedObjects[index] as IManyOnePathSortItem;
+				return null;
 		}
 
 		/// <summary>

@@ -706,7 +706,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Up,
 			Down
-		};
+		}
 
 		/// <summary>
 		/// Move a node among its siblings in the model, and cause the view to update accordingly.

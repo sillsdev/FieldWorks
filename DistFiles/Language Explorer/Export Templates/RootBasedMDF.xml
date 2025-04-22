@@ -96,6 +96,7 @@ Export using the Multi-Dictionary Formatter root-based standard. This includes s
 			<string simpleProperty="SenseNumber"/>
 		</element>
 		<objAtomic objProperty="MorphoSyntaxAnalysisRA"/>
+		<multilingualStringElement name="exm" simpleProperty="Exemplar"/>
 		<multilingualStringElement name="g" simpleProperty="Gloss"/>
 		<multilingualStringElement name="d" simpleProperty="Definition"/>
 		<refVector field="ReferringReversalIndexEntries" itemLabel="re" itemProperty="LongName" itemWsProp="WritingSystem"/>

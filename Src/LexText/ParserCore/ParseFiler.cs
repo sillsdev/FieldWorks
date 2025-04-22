@@ -8,7 +8,9 @@ using System.Diagnostics;
 using System.Linq;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using XCore;
 
@@ -122,7 +124,21 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public bool ProcessParse(IWfiWordform wordform, ParserPriority priority, ParseResult parseResult, bool checkParser = false)
 		{
 			lock (m_syncRoot)
-				m_workQueue.Enqueue(new WordformUpdateWork(wordform, priority, parseResult, checkParser));
+				m_workQueue.Enqueue(new WordformUpdateWork(wordform, null, priority, parseResult, checkParser));
+			m_idleQueue.Add(IdleQueuePriority.Low, UpdateWordforms);
+			return true;
+		}
+
+		///  <summary>
+		///  Process the parse result without a wordform.
+		///  </summary>
+		/// <param name="text">The text.</param>
+		/// <param name="priority">The priority.</param>
+		///  <param name="parseResult">The parse result.</param>
+		public bool ProcessParse(ITsString text, ParserPriority priority, ParseResult parseResult, bool checkParser = false)
+		{
+			lock (m_syncRoot)
+				m_workQueue.Enqueue(new WordformUpdateWork(null, text, priority, parseResult, checkParser));
 			m_idleQueue.Add(IdleQueuePriority.Low, UpdateWordforms);
 			return true;
 		}
@@ -153,6 +169,20 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				results = m_workQueue.ToArray();
 				m_workQueue.Clear();
 			}
+
+			// Update work.Wordform with its own NonUndoableUnitOfWorkHelper
+			// so that PropChanged will be triggered when it is updated below.
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
+			{
+				foreach (WordformUpdateWork work in results)
+				{
+					if (work.Wordform == null)
+					{
+						// We postponed creation of the lowercase wordform till we were inside a UnitOfWorkHelper.
+						work.Wordform = WfiWordformServices.FindOrCreateWordform(m_cache, work.Text);
+					}
+				}
+			});
 
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
@@ -290,14 +320,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private class WordformUpdateWork
 		{
-			private readonly IWfiWordform m_wordform;
+			private IWfiWordform m_wordform;
+			private readonly ITsString m_text;
 			private readonly ParserPriority m_priority;
 			private readonly ParseResult m_parseResult;
 			private readonly bool m_checkParser;
 
-			public WordformUpdateWork(IWfiWordform wordform, ParserPriority priority, ParseResult parseResult, bool checkParser)
+			public WordformUpdateWork(IWfiWordform wordform, ITsString text, ParserPriority priority, ParseResult parseResult, bool checkParser)
 			{
 				m_wordform = wordform;
+				m_text = text;
 				m_priority = priority;
 				m_parseResult = parseResult;
 				m_checkParser = checkParser;
@@ -306,6 +338,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			public IWfiWordform Wordform
 			{
 				get { return m_wordform; }
+				set { m_wordform = value; }
+			}
+
+			public ITsString Text
+			{
+				get { return m_text; }
 			}
 
 			public ParserPriority Priority
