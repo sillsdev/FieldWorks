@@ -37,6 +37,7 @@ jobs:
   debug_build_and_test:
     env:
       CROWDIN_API_KEY: ${{ secrets.FLEX_CROWDIN_API }}
+      LcmRootDir: ${{ github.workspace }}/Localizations/LCM
     name: Build Debug and run Tests
     runs-on: windows-latest
     steps:
