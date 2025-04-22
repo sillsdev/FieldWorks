@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016 SIL International
+// Copyright (c) 2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -46,6 +46,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private static void AddOrOverrideConfiguration(IEnumerable<string> configFiles, IDictionary<string, string> configurations)
 		{
+			IList<string> configNames = new List<string>();
 			foreach (var configFile in configFiles)
 			{
 				using (var fileStream = new FileStream(configFile, FileMode.Open, FileAccess.Read))
@@ -59,7 +60,12 @@ namespace SIL.FieldWorks.XWorks
 					var configName = reader["name"];
 					if (configName == null)
 						throw new InvalidDataException(String.Format("{0} is an invalid configuration file", configFile));
+					// Some projects have duplicate English configurations locally.  Ignore the duplicates. (cf. LT-22104).
+					if (configName == "English" && configNames.Contains(configName))
+						continue;
+					// If there is more than one configName, the last one overrides the earlier ones.
 					configurations[configName] = configFile;
+					configNames.Add(configName);
 				}
 			}
 		}
