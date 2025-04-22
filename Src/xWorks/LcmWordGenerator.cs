@@ -807,12 +807,11 @@ namespace SIL.FieldWorks.XWorks
 					uniqueGraphicId = s_styleCollection.GetAndIncrementPictureUniqueIdCount;
 					uniqueInnerDrawingId = s_styleCollection.GetAndIncrementPictureUniqueIdCount;
 					uniqueOuterDrawingId = s_styleCollection.GetAndIncrementPictureUniqueIdCount;
-				}
 
-				//Use the image alignment specified in FLEx for the textbox alignment, with right align as default
-				string alignment = "right";
-				if (config.DictionaryNodeOptions is DictionaryNodePictureOptions)
-					alignment = config.Model.Pictures.Alignment.ToString().ToLower();
+					// If the outer style for the picture textbox has not been generated yet, generate it
+					if (!s_styleCollection.TryGetParagraphStyle(WordStylesGenerator.PictureTextboxOuterNodePath, out _))
+						WordStylesGenerator.GeneratePictureFrameOuterStyle(config, s_styleCollection);
+				}
 
 				WP.Paragraph newImagePar = new WP.Paragraph();
 				newImagePar.Append(paragraphProps);
@@ -840,46 +839,24 @@ namespace SIL.FieldWorks.XWorks
 				Int64Value extentY = (Int64Value)Math.Ceiling((double)textBoxExtent.Cy + (48.0 * emusPerPoint));
 
 				WP.Paragraph textBoxPar = new WP.Paragraph();
+
+				WP.ParagraphProperties textBoxProps =
+					new WP.ParagraphProperties(new ParagraphStyleId() { Val = WordStylesGenerator.PictureTextboxOuterDisplayName });
+				textBoxPar.Append(textBoxProps);
+
 				Run textBoxRun = new Run();
 				Drawing textBoxDrawing = new Drawing();
 
-				DrawingWP.Anchor anchor = new DrawingWP.Anchor()
+				DrawingWP.Inline inline = new DrawingWP.Inline()
 				{
 					DistanceFromTop = (UInt32Value)0U,
 					DistanceFromBottom = (UInt32Value)0U,
 					DistanceFromLeft = (UInt32Value)0U,
-					DistanceFromRight = (UInt32Value)0U,
-					SimplePos = false,
-					RelativeHeight = (UInt32Value)0U,
-					BehindDoc = false,
-					Locked = false,
-					LayoutInCell = true,
-					AllowOverlap = false
+					DistanceFromRight = (UInt32Value)0U
 				};
-				anchor.Append(new DrawingWP.SimplePosition() { X = 0L, Y = 0L});
-
-				// image textbox is anchored horizontally wrt the column
-				anchor.Append(
-					new DrawingWP.HorizontalPosition(
-						new DrawingWP.HorizontalAlignment(alignment)
-					)
-					{
-						RelativeFrom = DrawingWP.HorizontalRelativePositionValues.Column
-					}
-				);
-
-				// image textbox is anchored vertically wrt the preceeding paragraph
-				anchor.Append(
-					new DrawingWP.VerticalPosition(
-						new DrawingWP.PositionOffset("0")
-					)
-					{
-						RelativeFrom = DrawingWP.VerticalRelativePositionValues.Paragraph
-					}
-				);
 
 				// This extent must also be declared in the anchor's shapeproperties element.
-				anchor.Append(
+				inline.Append(
 					new DrawingWP.Extent()
 					{
 						Cx = extentX,
@@ -888,7 +865,7 @@ namespace SIL.FieldWorks.XWorks
 				);
 
 				// We don't apply an effect to the textbox, so effect extent is 0
-				anchor.Append(
+				inline.Append(
 					new DrawingWP.EffectExtent()
 					{
 						LeftEdge = 0L,
@@ -898,22 +875,19 @@ namespace SIL.FieldWorks.XWorks
 					}
 				);
 
-				// Text should wrap above and below the textbox
-				anchor.Append(new DrawingWP.WrapTopBottom());
-
 				// Need to add ID and name to the textbox drawing. Without them, the word document will be mis-formatted and unable to open.
 				// Use the name from the picture for the textbox.
-				anchor.Append(new DrawingWP.DocProperties()
+				inline.Append(new DrawingWP.DocProperties()
 					{ Id = Convert.ToUInt32(uniqueOuterDrawingId), Name = graphicObjectProps.Name });
 
 				// Graphic frame drawing properties must be specified or the word document will be mis-formatted and unable to open.
-				anchor.Append(
+				inline.Append(
 					new DrawingWP.NonVisualGraphicFrameDrawingProperties(
 						new XmlDrawing.GraphicFrameLocks()//{ NoChangeAspect = true }
 						)
 				);
 
-				anchor.Append(
+				inline.Append(
 					new XmlDrawing.Graphic(
 
 						new XmlDrawing.GraphicData(
@@ -953,7 +927,7 @@ namespace SIL.FieldWorks.XWorks
 					)
 				);
 
-				textBoxDrawing.Append(anchor);
+				textBoxDrawing.Append(inline);
 				textBoxRun.Append(textBoxDrawing);
 				textBoxPar.Append(textBoxRun);
 				DocBody.AppendChild(textBoxPar);
@@ -1708,13 +1682,6 @@ namespace SIL.FieldWorks.XWorks
 
 				var elements = frag.DocBody.Elements().ToList();
 
-				// This variable will track whether or not we have already added an image from this piece to the Word doc.
-				// In the case that more than one image appears in the same piece
-				// (e.g. one entry with multiple senses and a picture for each sense),
-				// we need to add an empty paragraph between the images to prevent
-				// all the images and their captions from being merged into a single textframe by Word.
-				Boolean pieceHasImage = false;
-
 				foreach (OpenXmlElement elem in elements)
 				{
 					switch (elem)
@@ -1729,37 +1696,22 @@ namespace SIL.FieldWorks.XWorks
 							if (config.Label == "Pictures" || config.Parent?.Label == "Pictures" || containsDrawing)
 							{
 								// Runs containing pictures or captions need to be in separate paragraphs
-								// from whatever precedes and follows them because they will be added into textframes,
-								// while non-picture content should not be added to the textframes.
+								// from whatever precedes and follows them because they will be added into text boxes,
+								// while non-picture content should not be added to the text boxes.
 								wordWriter.ForceNewParagraph = true;
 
-								// Word automatically merges adjacent textframes with the same size specifications.
-								// If the run we are adding is an image (i.e. a Drawing object),
-								// and it is being added after another image run was previously added from the same piece,
-								// we need to append an empty paragraph between to maintain separate textframes.
-								//
-								// Checking for adjacent images and adding an empty paragraph between won't work,
-								// because each image run is followed by runs containing its caption,
-								// copyright & license, etc.
-								//
-								// But, a lexical entry corresponds to a single piece and all the images it contains
-								// are added sequentially at the end of the piece, after all of the senses.
-								// This means the order of runs w/in a piece is: headword run, sense1 run, sense2 run, ... ,
-								// [image1 run, caption1 run, copyright&license1 run], [image2 run, caption2 run, copyright&license2 run], ...
-								// We need empty paragraphs between the [] textframe chunks, which corresponds to adding an empty paragraph
-								// immediately before any image run other than the first image run in a piece.
 								if (containsDrawing)
 								{
 									// Create and add a new textbox containing the image
 									WP.ParagraphProperties paragraphProps =
-										new WP.ParagraphProperties(new ParagraphStyleId() { Val = WordStylesGenerator.PictureAndCaptionTextframeDisplayName });
+										new WP.ParagraphProperties(new ParagraphStyleId() { Val = WordStylesGenerator.PictureAndCaptionTextboxDisplayName });
 
 									wordWriter.WordFragment.AppendNewTextboxParagraph(frag, run, paragraphProps, config);
 								}
 								else
 								{
 									WP.ParagraphProperties paragraphProps =
-										new WP.ParagraphProperties(new ParagraphStyleId() { Val = WordStylesGenerator.PictureAndCaptionTextframeDisplayName });
+										new WP.ParagraphProperties(new ParagraphStyleId() { Val = WordStylesGenerator.PictureAndCaptionTextboxDisplayName });
 									wordWriter.WordFragment.AppendImageToTextbox(frag, run, paragraphProps);
 								}
 							}
@@ -1779,11 +1731,10 @@ namespace SIL.FieldWorks.XWorks
 							break;
 
 						case WP.Paragraph para:
-							// If we have a paragraph associated with a Pictures node, we are dealing with an image caption.
-							if (config.Label == WordStylesGenerator.PictureAndCaptionTextframeDisplayName ||
-								config.Parent?.Label == WordStylesGenerator.PictureAndCaptionTextframeDisplayName)
+							// If the paragraph has picture and caption style, we are dealing with an image caption.
+							if (para.ParagraphProperties?.ParagraphStyleId?.Val == WordStylesGenerator.PictureAndCaptionTextboxDisplayName)
 							{
-								// In this case, the paragraph is an image caption and belongs in the last textbox
+								// The image caption paragraph belongs with the image in the last textbox.
 								wordWriter.WordFragment.AppendCaptionParagraphToTextbox(frag, para);
 							}
 							else
@@ -1874,9 +1825,9 @@ namespace SIL.FieldWorks.XWorks
 			var docFrag = new DocFragment();
 			if (!captionContent.IsNullOrEmpty())
 			{
-				// Create a paragraph using the textframe style for captions.
+				// Create a paragraph using the text box style for captions.
 				WP.ParagraphProperties paragraphProps = new WP.ParagraphProperties(
-					new ParagraphStyleId() { Val = WordStylesGenerator.PictureAndCaptionTextframeDisplayName });
+					new ParagraphStyleId() { Val = WordStylesGenerator.PictureAndCaptionTextboxDisplayName });
 				WP.Paragraph captionPara = docFrag.DocBody.AppendChild(new WP.Paragraph(paragraphProps));
 
 				// Clone each caption run and append it to the caption paragraph.

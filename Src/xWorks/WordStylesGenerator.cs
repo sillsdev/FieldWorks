@@ -54,8 +54,10 @@ namespace SIL.FieldWorks.XWorks
 		internal const string LetterHeadingStyleName = "Dictionary-LetterHeading";
 		internal const string LetterHeadingDisplayName = "Letter Heading";
 		internal const string LetterHeadingNodePath = ".letterHeading";
-		internal const string PictureAndCaptionTextframeDisplayName = "Pictures";
+		internal const string PictureAndCaptionTextboxDisplayName = "Picture And Caption";
 		internal const string PictureAndCaptionNodePath = ".pictures";
+		internal const string PictureTextboxOuterDisplayName = "Pictureframe Textbox";
+		internal const string PictureTextboxOuterNodePath = ".pictureTextbox";
 		internal const string EntryStyleContinue = "-Continue";
 
 		internal const string PageHeaderIdEven = "EvenPages";
@@ -89,6 +91,40 @@ namespace SIL.FieldWorks.XWorks
 			pageHeaderStyle.Append(runProps.CloneNode(true));
 
 			return pageHeaderStyle;
+		}
+
+		internal static void GeneratePictureFrameOuterStyle(ConfigurableDictionaryNode node, WordStyleCollection s_stylecollection)
+		{
+			var pictureFrameOuterStyle = new Style();
+			pictureFrameOuterStyle.Type = StyleValues.Paragraph;
+			SetStyleName(pictureFrameOuterStyle, PictureTextboxOuterDisplayName);
+			SetBasedOn(pictureFrameOuterStyle, NormalParagraphDisplayName);
+
+			//Use the image alignment specified in FLEx for the textbox alignment, with right align as default
+			//For images, FLEX provides three options: center, left and right.
+			string alignment = "right";
+			JustificationValues enumAlignVal = JustificationValues.Right;
+
+			if (node.DictionaryNodeOptions is DictionaryNodePictureOptions)
+				alignment = node.Model.Pictures.Alignment.ToString().ToLower();
+			if (alignment == "left")
+				enumAlignVal = JustificationValues.Left;
+			if (alignment == "center")
+				enumAlignVal = JustificationValues.Center;
+
+			if (pictureFrameOuterStyle.StyleParagraphProperties == null)
+				pictureFrameOuterStyle.StyleParagraphProperties = new StyleParagraphProperties();
+
+			// Justification here will determine the horizontal location of the image textbox within its column.
+			// In FLEx, pictures have no added before/after paragraph spacing.
+			pictureFrameOuterStyle.StyleParagraphProperties.Append(new Justification() { Val = enumAlignVal },
+				new SpacingBetweenLines() { Before = "0", After = "0" });
+
+			var pictureOuterElem = new ParagraphElement(PictureTextboxOuterDisplayName,
+				pictureFrameOuterStyle, 1, PictureTextboxOuterNodePath, null);
+
+			s_stylecollection.AddParagraphElement(pictureOuterElem);
+			pictureOuterElem.Used = true;
 		}
 
 		internal static bool IsParagraphStyle(string styleName, ReadOnlyPropertyTable propertyTable)
