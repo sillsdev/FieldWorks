@@ -1682,13 +1682,6 @@ namespace SIL.FieldWorks.XWorks
 
 				var elements = frag.DocBody.Elements().ToList();
 
-				// This variable will track whether or not we have already added an image from this piece to the Word doc.
-				// In the case that more than one image appears in the same piece
-				// (e.g. one entry with multiple senses and a picture for each sense),
-				// we need to add an empty paragraph between the images to prevent
-				// all the images and their captions from being merged into a single textframe by Word.
-				Boolean pieceHasImage = false;
-
 				foreach (OpenXmlElement elem in elements)
 				{
 					switch (elem)
@@ -1832,7 +1825,7 @@ namespace SIL.FieldWorks.XWorks
 			var docFrag = new DocFragment();
 			if (!captionContent.IsNullOrEmpty())
 			{
-				// Create a paragraph using the textframe style for captions.
+				// Create a paragraph using the text box style for captions.
 				WP.ParagraphProperties paragraphProps = new WP.ParagraphProperties(
 					new ParagraphStyleId() { Val = WordStylesGenerator.PictureAndCaptionTextboxDisplayName });
 				WP.Paragraph captionPara = docFrag.DocBody.AppendChild(new WP.Paragraph(paragraphProps));

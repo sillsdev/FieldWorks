@@ -95,12 +95,6 @@ namespace SIL.FieldWorks.XWorks
 
 		internal static void GeneratePictureFrameOuterStyle(ConfigurableDictionaryNode node, WordStyleCollection s_stylecollection)
 		{
-			//string nodePath = CssGenerator.GetNodePath(node);
-			//ParagraphElement pictureFrameOuter;
-			/*//var pictureFrameOuterStyle =
-			if (!s_stylecollection.TryGetParagraphStyle(nodePath, out pictureFrameOuter))
-				s_stylecollection.AddParagraphStyle()*/
-
 			var pictureFrameOuterStyle = new Style();
 			pictureFrameOuterStyle.Type = StyleValues.Paragraph;
 			SetStyleName(pictureFrameOuterStyle, PictureTextboxOuterDisplayName);
