@@ -452,12 +452,12 @@ namespace SIL.FieldWorks.XWorks
 
 			// Before text 'BE2' is before sense number '2' for 'second gloss2.1'.
 			const string beforeFirstSubSense =
-				"<w:t xml:space=\"preserve\">BE2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Sense Number2[lang=en]\" /></w:rPr><w:t xml:space=\"preserve\">1</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Gloss[lang=en]\" /></w:rPr><w:t xml:space=\"preserve\">second gloss2.1</w:t>";
+				"<w:t xml:space=\"preserve\">BE2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Sense Number2[lang=en]\" /></w:rPr><w:t xml:space=\"preserve\">1</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Gloss2[lang=en]\" /></w:rPr><w:t xml:space=\"preserve\">second gloss2.1</w:t>";
 			Assert.True(outXml.Contains(beforeFirstSubSense));
 
 			// Between text 'TW2' is before sense number '2' for 'second gloss2.2'.
 			const string betweenSubSenses =
-				"<w:t xml:space=\"preserve\">TW2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Sense Number2[lang=en]\" /></w:rPr><w:t xml:space=\"preserve\">2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Gloss[lang=en]\" /></w:rPr><w:t xml:space=\"preserve\">second gloss2.2</w:t>";
+				"<w:t xml:space=\"preserve\">TW2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Sense Number2[lang=en]\" /></w:rPr><w:t xml:space=\"preserve\">2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Gloss2[lang=en]\" /></w:rPr><w:t xml:space=\"preserve\">second gloss2.2</w:t>";
 			Assert.True(outXml.Contains(betweenSubSenses));
 
 			// After text 'AF2' is after 'second gloss2.2'.

@@ -4535,13 +4535,13 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(firstEntry, mainEntryNode, DefaultDecorator, settings).ToString();
 
-			var goodTarget1 = "//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='ownertype_name']/span[text()='Part']/ancestor::span[1]/following-sibling::node()//span[@class='configtarget']/span[@class='gloss']/span[@lang='en' and text()='b2']";
+			var goodTarget1 = "//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='ownertype_name']/span[text()='Part']/ancestor::span[1]/following-sibling::node()//span[@class='configtarget']/span[@class='gloss-2']/span[@lang='en' and text()='b2']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(goodTarget1, 1);
-			var badTarget1 = "//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='ownertype_name']/span[text()='Part']/ancestor::span[1]/following-sibling::node()//span[@class='configtarget']/span[@class='gloss']/span[@lang='en' and text()='b1']";
+			var badTarget1 = "//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='ownertype_name']/span[text()='Part']/ancestor::span[1]/following-sibling::node()//span[@class='configtarget']/span[@class='gloss-2']/span[@lang='en' and text()='b1']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(badTarget1);
-			var goodTarget2 = "//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='ownertype_name']/span[text()='Whole']/ancestor::span[1]/following-sibling::node()//span[@class='configtarget']/span[@class='gloss']/span[@lang='en' and text()='b1']";
+			var goodTarget2 = "//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='ownertype_name']/span[text()='Whole']/ancestor::span[1]/following-sibling::node()//span[@class='configtarget']/span[@class='gloss-2']/span[@lang='en' and text()='b1']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(goodTarget2, 1);
-			var badTarget2 = "//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='ownertype_name']/span[text()='Whole']/ancestor::span[1]/following-sibling::node()//span[@class='configtarget']/span[@class='gloss']/span[@lang='en' and text()='b2']";
+			var badTarget2 = "//span[@class='lexsensereferences']/span[@class='lexsensereference']/span[@class='ownertype_name']/span[text()='Whole']/ancestor::span[1]/following-sibling::node()//span[@class='configtarget']/span[@class='gloss-2']/span[@lang='en' and text()='b2']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(badTarget2);
 		}
 
@@ -7108,11 +7108,11 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings).ToString();
 			const string fwdNameXpath =
-				"//span[@class='subentries']/span[@class='subentry subentry']/span[@class='subentries-3']/span[@class='subentry subentry']"
-				+ "/span[@class='complexformtypes']/span[@class='complexformtype']/span/span[@lang='en' and text()='{0}']";
+				"//span[@class='subentries']/span[@class='subentry subentry']/span[@class='subentries-2']/span[@class='subentry subentry']"
+				+ "/span[@class='complexformtypes-2']/span[@class='complexformtype']/span/span[@lang='en' and text()='{0}']";
 			const string revNameXpath =
-				"//span[@class='subentries']/span[@class='subentry subentry']/span[@class='subentries-3']/span[@class='subentry subentry']"
-				+ "/span[@class='complexformtypes']/span[@class='complexformtype']/span[@class='reverseabbr']/span[@lang='en' and text()='{0}']";
+				"//span[@class='subentries']/span[@class='subentry subentry']/span[@class='subentries-2']/span[@class='subentry subentry']"
+				+ "/span[@class='complexformtypes-2']/span[@class='complexformtype']/span[@class='reverseabbr-2']/span[@lang='en' and text()='{0}']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(string.Format(fwdNameXpath, complexRefAbbr));
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(string.Format(revNameXpath, complexRefRevAbbr), 1);
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(string.Format(revNameXpath, otherComplexRefRevAbbr),
@@ -9818,7 +9818,7 @@ namespace SIL.FieldWorks.XWorks
 			CreateInterestingLexEntry(Cache, "headwordB").MakeVariantOf(lexentry, (ILexEntryType)finalTypeInOptionsList);
 
 			// SUT1
-			var result = ConfiguredLcmGenerator.GenerateContentForFieldByReflection(lexentry, variantFormNode, null, DefaultSettings).ToString();
+			var result = ConfiguredLcmGenerator.GenerateContentForFieldByReflection(lexentry, CssGeneratorTests.NodeList(variantFormNode), null, DefaultSettings).ToString();
 
 			Assert.That(result.IndexOf("headwordA", StringComparison.InvariantCulture),
 				Is.LessThan(result.IndexOf("headwordB", StringComparison.InvariantCulture)), "variant forms not appearing in an order corresponding to their type sorting");
@@ -9827,7 +9827,7 @@ namespace SIL.FieldWorks.XWorks
 			((DictionaryNodeListOptions)variantFormNode.DictionaryNodeOptions).Options.Reverse();
 
 			// SUT2
-			result = ConfiguredLcmGenerator.GenerateContentForFieldByReflection(lexentry, variantFormNode, null, DefaultSettings).ToString();
+			result = ConfiguredLcmGenerator.GenerateContentForFieldByReflection(lexentry, CssGeneratorTests.NodeList(variantFormNode), null, DefaultSettings).ToString();
 
 			Assert.That(result.IndexOf("headwordB", StringComparison.InvariantCulture),
 				Is.LessThan(result.IndexOf("headwordA", StringComparison.InvariantCulture)), "variant forms not appearing in an order corresponding to their type sorting");
@@ -9878,7 +9878,7 @@ namespace SIL.FieldWorks.XWorks
 			CreateComplexForm(Cache, lexentry, CreateInterestingLexEntry(Cache, "headwordB"), true, finalTypeInOptionsListGuid);
 
 			// SUT1
-			var result = ConfiguredLcmGenerator.GenerateContentForFieldByReflection(lexentry, subentryNode, null, DefaultSettings).ToString();
+			var result = ConfiguredLcmGenerator.GenerateContentForFieldByReflection(lexentry, CssGeneratorTests.NodeList(subentryNode), null, DefaultSettings).ToString();
 
 			Assert.That(result.IndexOf("headwordA", StringComparison.InvariantCulture),
 				Is.LessThan(result.IndexOf("headwordB", StringComparison.InvariantCulture)), "Subentries should be sorted by Type");
@@ -9887,7 +9887,7 @@ namespace SIL.FieldWorks.XWorks
 			((DictionaryNodeListOptions)subentryNode.DictionaryNodeOptions).Options.Reverse();
 
 			// SUT2
-			result = ConfiguredLcmGenerator.GenerateContentForFieldByReflection(lexentry, subentryNode, null, DefaultSettings).ToString();
+			result = ConfiguredLcmGenerator.GenerateContentForFieldByReflection(lexentry, CssGeneratorTests.NodeList(subentryNode), null, DefaultSettings).ToString();
 
 			Assert.That(result.IndexOf("headwordB", StringComparison.InvariantCulture),
 				Is.LessThan(result.IndexOf("headwordA", StringComparison.InvariantCulture)), "Subentries should be sorted by Type");

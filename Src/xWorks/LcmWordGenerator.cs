@@ -1032,8 +1032,8 @@ namespace SIL.FieldWorks.XWorks
 		 * Content Generator Region
 		 */
 		#region ILcmContentGenerator functions to implement
-		public IFragment GenerateWsPrefixWithString(ConfigurableDictionaryNode node, ConfiguredLcmGenerator.GeneratorSettings settings,
-			bool displayAbbreviation, int wsId, IFragment content)
+		public IFragment GenerateWsPrefixWithString(List<ConfigurableDictionaryNode> nodeList,
+			ConfiguredLcmGenerator.GeneratorSettings settings, bool displayAbbreviation, int wsId, IFragment content)
 		{
 			if (displayAbbreviation)
 			{
@@ -1041,7 +1041,7 @@ namespace SIL.FieldWorks.XWorks
 				string uniqueDisplayName = null;
 				lock (_collectionLock)
 				{
-					string nodePath = CssGenerator.GetNodePath(node);
+					string nodePath = CssGenerator.GetNodePath(nodeList);
 					string wsAbbrevStyleName = WordStylesGenerator.WritingSystemStyleName;
 					string wsAbbrevNodePath = nodePath + wsAbbrevStyleName;
 
@@ -1056,7 +1056,7 @@ namespace SIL.FieldWorks.XWorks
 						Debug.Assert(existingStyle != null);
 						var lastNodeUniqueName = existingStyle.UniqueDisplayName();
 						uniqueDisplayName = s_styleCollection.AddSpecialCharacterStyle(wsAbbrevStyleName,
-							WordStylesGenerator.WritingSystemDisplayName, lastNodeUniqueName, node, wsAbbrevStyleName, wsId);
+							WordStylesGenerator.WritingSystemDisplayName, lastNodeUniqueName, wsAbbrevNodePath, wsId);
 					}
 				}
 
@@ -1102,19 +1102,21 @@ namespace SIL.FieldWorks.XWorks
 			// We are not planning to support audio and video content for Word Export.
 			return new DocFragment();
 		}
-		public IFragment WriteProcessedObject(ConfigurableDictionaryNode config, bool isBlock, IFragment elementContent, string className)
+		public IFragment WriteProcessedObject(List<ConfigurableDictionaryNode> nodeList,
+			bool isBlock, IFragment elementContent, string className)
 		{
-			return WriteProcessedElementContent(elementContent, config);
+			return WriteProcessedElementContent(nodeList, elementContent);
 		}
-		public IFragment WriteProcessedCollection(ConfigurableDictionaryNode config, bool isBlock, IFragment elementContent, string className)
+		public IFragment WriteProcessedCollection(List<ConfigurableDictionaryNode> nodeList,
+			bool isBlock, IFragment elementContent, string className)
 		{
-			return WriteProcessedElementContent(elementContent, config);
+			return WriteProcessedElementContent(nodeList, elementContent);
 		}
 
-		private IFragment WriteProcessedElementContent(IFragment elementContent, ConfigurableDictionaryNode config)
+		private IFragment WriteProcessedElementContent(List<ConfigurableDictionaryNode> nodeList, IFragment elementContent)
 		{
-			bool eachInAParagraph = config != null &&
-								  config.DictionaryNodeOptions is IParaOption &&
+			var config = nodeList.Last();
+			bool eachInAParagraph = config.DictionaryNodeOptions is IParaOption &&
 								  ((IParaOption)(config.DictionaryNodeOptions)).DisplayEachInAParagraph;
 
 			// If there is only one run we can use it to get a writing system (needed for Before/After text).
@@ -1130,34 +1132,35 @@ namespace SIL.FieldWorks.XWorks
 			// Add Before text, if it is not going to be displayed in a paragraph.
 			if (!eachInAParagraph && !string.IsNullOrEmpty(config.Before))
 			{
-				var beforeRun = wsId.HasValue ? CreateBeforeAfterBetweenRun(config, config.Before, wsId.Value) :
-					CreateDefaultBeforeAfterBetweenRun(config, config.Before);
+				var beforeRun = wsId.HasValue ? CreateBeforeAfterBetweenRun(nodeList, config.Before, wsId.Value) :
+					CreateDefaultBeforeAfterBetweenRun(nodeList, config.Before);
 				((DocFragment)elementContent).DocBody.PrependChild(beforeRun);
 			}
 
 			// Add After text, if it is not going to be displayed in a paragraph.
 			if (!eachInAParagraph && !string.IsNullOrEmpty(config.After))
 			{
-				var afterRun = wsId.HasValue ? CreateBeforeAfterBetweenRun(config, config.After, wsId.Value) :
-					CreateDefaultBeforeAfterBetweenRun(config, config.After);
+				var afterRun = wsId.HasValue ? CreateBeforeAfterBetweenRun(nodeList, config.After, wsId.Value) :
+					CreateDefaultBeforeAfterBetweenRun(nodeList, config.After);
 				((DocFragment)elementContent).DocBody.Append(afterRun);
 			}
 
 			// Add Bullet and Numbering Data to lists.
-			AddBulletAndNumberingData(elementContent, config, eachInAParagraph);
+			AddBulletAndNumberingData(elementContent, nodeList, eachInAParagraph);
 			return elementContent;
 		}
-		public IFragment GenerateGramInfoBeforeSensesContent(IFragment content, ConfigurableDictionaryNode config)
+		public IFragment GenerateGramInfoBeforeSensesContent(IFragment content, List<ConfigurableDictionaryNode> nodeList)
 		{
 			return content;
 		}
-		public IFragment GenerateGroupingNode(ConfigurableDictionaryNode config, object field, string className,  DictionaryPublicationDecorator publicationDecorator, ConfiguredLcmGenerator.GeneratorSettings settings,
-			Func<object, ConfigurableDictionaryNode, DictionaryPublicationDecorator, ConfiguredLcmGenerator.GeneratorSettings, IFragment> childContentGenerator)
+		public IFragment GenerateGroupingNode(List<ConfigurableDictionaryNode> nodeList, object field, string className,
+			DictionaryPublicationDecorator publicationDecorator, ConfiguredLcmGenerator.GeneratorSettings settings,
+			Func<object, List<ConfigurableDictionaryNode>, DictionaryPublicationDecorator, ConfiguredLcmGenerator.GeneratorSettings, IFragment> childContentGenerator)
 		{
 			var groupData = new DocFragment();
 			WP.Paragraph groupPara = null;
-			bool eachInAParagraph = config != null &&
-								  config.DictionaryNodeOptions is DictionaryNodeGroupingOptions &&
+			var config = nodeList.Last();
+			bool eachInAParagraph = config.DictionaryNodeOptions is DictionaryNodeGroupingOptions &&
 								  ((DictionaryNodeGroupingOptions)(config.DictionaryNodeOptions)).DisplayEachInAParagraph;
 			IFragment childContent = null;
 
@@ -1171,7 +1174,8 @@ namespace SIL.FieldWorks.XWorks
 			// Add the group data.
 			foreach (var child in config.ReferencedOrDirectChildren)
 			{
-				childContent = childContentGenerator(field, child, publicationDecorator, settings);
+				var childNodeList = ConfiguredLcmGenerator.BuildNodeList(nodeList, child);
+				childContent = childContentGenerator(field, childNodeList, publicationDecorator, settings);
 				if (eachInAParagraph)
 				{
 					var elements = ((DocFragment)childContent).DocBody.Elements().ToList();
@@ -1190,14 +1194,14 @@ namespace SIL.FieldWorks.XWorks
 			// Add Before text, if it is not going to be displayed in a paragraph.
 			if (!eachInAParagraph && !string.IsNullOrEmpty(config.Before))
 			{
-				var beforeRun = CreateDefaultBeforeAfterBetweenRun(config, config.Before);
+				var beforeRun = CreateDefaultBeforeAfterBetweenRun(nodeList, config.Before);
 				groupData.DocBody.PrependChild(beforeRun);
 			}
 
 			// Add After text, if it is not going to be displayed in a paragraph.
 			if (!eachInAParagraph && !string.IsNullOrEmpty(config.After))
 			{
-				var afterRun = CreateDefaultBeforeAfterBetweenRun(config, config.After);
+				var afterRun = CreateDefaultBeforeAfterBetweenRun(nodeList, config.After);
 				groupData.DocBody.Append(afterRun);
 			}
 
@@ -1207,7 +1211,7 @@ namespace SIL.FieldWorks.XWorks
 				// Add the group style.
 				if (!string.IsNullOrEmpty(config.Style))
 				{
-					ParagraphElement paraElem = s_styleCollection.AddParagraphStyle(config);
+					ParagraphElement paraElem = s_styleCollection.AddParagraphStyle(nodeList);
 					string uniqueDisplayName = paraElem.UniqueDisplayName();
 
 					WP.ParagraphProperties paragraphProps =
@@ -1220,55 +1224,12 @@ namespace SIL.FieldWorks.XWorks
 			return groupData;
 		}
 
-		/// <summary>
-		/// Iterate through the runs in the fragment when AddSenseData() is called. If any of the runs
-		/// are using a style that has the SensesSubentriesUniqueDisplayName property set, then we want
-		/// to change the run so that it uses the style built from the '.entry .senses .subentries' path
-		/// instead of the style that was built from the '.entry subentries' path.
-		///
-		/// The root problem that this method is solving, is that '.entry .senses .subentries' uses the child
-		/// nodes from '.entry .subentries'.  Since the properties of the child nodes are a combination of the
-		/// child node properties and all of its parent node properties, the cumulative properties can be
-		/// different for the two different node paths. While building the individual runs we do not know
-		/// where they are going to be used.  It is not until we get in AddSenseData() that
-		/// we have enough information to figure out which style should be used for the runs.
-		///
-		/// An additional complication is when we get in here for a style built on '.entry .subentries .senses'.
-		/// We only want to change to the style build from the '.entry .senses .subentries .senses' path
-		/// when we get in AddSenseDate() two times for the run. For this special case we set an attribute
-		/// on the run the first time we get in this method. The second time we get in here for the run,
-		/// change the unique name to what is stored in SensesSubentriesUniqueDisplayName.
-		/// </summary>
-		private void FixStylesForSensesSubentries(IFragment content)
+		public IFragment AddSenseData(List<ConfigurableDictionaryNode> nodeList,
+			ConfiguredLcmGenerator.GeneratorSettings settings, IFragment senseNumberSpan, Guid ownerGuid, IFragment senseContent, bool first)
 		{
-			foreach (WP.Run run in ((DocFragment)content).DocBody.Descendants<WP.Run>())
-			{
-				CharacterElement charElem = GetElementFromRun(run);
-				if (!string.IsNullOrEmpty(charElem.SensesSubentriesUniqueDisplayName))
-				{
-					// If this node is '.entry .subentries .senses' or one of it's children, then we need
-					// to get in here twice for a run before we want to change the name.  The first time in here
-					// we cannot distinguish if this should remain '.entry .subentries .senses' or be changed
-					// to '.entry .senses .subentries .senses'. If it needs to be changed we will get here
-					// a second time for the larger fragment that includes all children of '.entry .senses .subentries.'.
-					if (charElem.NodePath.StartsWith(".entry .subentries .senses") && !run.HasAttributes)
-					{
-						run.SetAttribute(new DocumentFormat.OpenXml.OpenXmlAttribute("EntrySubentriesSenses", null, "1"));
-						continue;
-					}
-
-					SetUniqueDisplayName(run, charElem.SensesSubentriesUniqueDisplayName);
-				}
-			}
-		}
-
-		public IFragment AddSenseData(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, IFragment senseNumberSpan, Guid ownerGuid, IFragment senseContent, bool first)
-		{
-			FixStylesForSensesSubentries(senseContent);
-			FixStylesForSensesSubentries(senseNumberSpan);
-
 			var senseData = new DocFragment();
 			WP.Paragraph newPara = null;
+			var config = nodeList.Last();
 			var senseNode = (DictionaryNodeSenseOptions)config?.DictionaryNodeOptions;
 			bool eachInAParagraph = false;
 			bool firstSenseInline = false;
@@ -1291,7 +1252,7 @@ namespace SIL.FieldWorks.XWorks
 				!eachInAParagraph &&
 				!string.IsNullOrEmpty(config.Between))
 			{
-				var betweenRun = CreateDefaultBeforeAfterBetweenRun(config, config.Between);
+				var betweenRun = CreateDefaultBeforeAfterBetweenRun(nodeList, config.Between);
 				senseData.DocBody.Append(betweenRun);
 			}
 
@@ -1313,7 +1274,7 @@ namespace SIL.FieldWorks.XWorks
 
 			if (inAPara)
 			{
-				SeparateIntoFirstLevelElements(senseData, newPara, senseContent as DocFragment, config);
+				SeparateIntoFirstLevelElements(senseData, newPara, senseContent as DocFragment, nodeList);
 			}
 			else
 			{
@@ -1323,13 +1284,14 @@ namespace SIL.FieldWorks.XWorks
 			return senseData;
 		}
 
-		public IFragment AddCollectionItem(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, bool isBlock, string collectionItemClass, IFragment content, bool first)
+		public IFragment AddCollectionItem(List<ConfigurableDictionaryNode> nodeList,
+			ConfiguredLcmGenerator.GeneratorSettings settings, bool isBlock, string collectionItemClass, IFragment content, bool first)
 		{
 			var collData = new DocFragment();
 			WP.Paragraph newPara = null;
 			bool eachInAParagraph = false;
-			if (config != null &&
-				config.DictionaryNodeOptions is IParaOption &&
+			var config = nodeList.Last();
+			if (config.DictionaryNodeOptions is IParaOption &&
 				((IParaOption)(config.DictionaryNodeOptions)).DisplayEachInAParagraph)
 			{
 				eachInAParagraph = true;
@@ -1339,17 +1301,16 @@ namespace SIL.FieldWorks.XWorks
 			// Add Between text, if it is not going to be displayed in a paragraph
 			// and it is not the first item in the collection.
 			if (!first &&
-				config != null &&
 				!eachInAParagraph &&
 				!string.IsNullOrEmpty(config.Between))
 			{
-				var betweenRun = CreateDefaultBeforeAfterBetweenRun(config, config.Between);
+				var betweenRun = CreateDefaultBeforeAfterBetweenRun(nodeList, config.Between);
 				((DocFragment)collData).DocBody.Append(betweenRun);
 			}
 
 			if (newPara != null)
 			{
-				SeparateIntoFirstLevelElements(collData, newPara, content as DocFragment, config);
+				SeparateIntoFirstLevelElements(collData, newPara, content as DocFragment, nodeList);
 			}
 			else
 			{
@@ -1358,7 +1319,8 @@ namespace SIL.FieldWorks.XWorks
 
 			return collData;
 		}
-		public IFragment AddProperty(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string className, bool isBlockProperty, string content, string writingSystem)
+		public IFragment AddProperty(List<ConfigurableDictionaryNode> nodeList,
+			ConfiguredLcmGenerator.GeneratorSettings settings, string className, bool isBlockProperty, string content, string writingSystem)
 		{
 			var propFrag = new DocFragment();
 			if (string.IsNullOrEmpty(content))
@@ -1369,23 +1331,24 @@ namespace SIL.FieldWorks.XWorks
 
 			// Create a run with the correct style.
 			var writer = CreateWriter(propFrag);
-			StartRun(writer, config, settings, writingSystem, true);
+			StartRun(writer, nodeList, settings, writingSystem, true);
 
 			// Add the content to the run.
 			AddToRunContent(writer, content);
 
+			var config = nodeList.Last();
 			var wsId = Cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(writingSystem);
 			// Add Before text.
 			if (!string.IsNullOrEmpty(config.Before))
 			{
-				var beforeRun = CreateBeforeAfterBetweenRun(config, config.Before, wsId);
+				var beforeRun = CreateBeforeAfterBetweenRun(nodeList, config.Before, wsId);
 				propFrag.DocBody.PrependChild(beforeRun);
 			}
 
 			// Add After text.
 			if (!string.IsNullOrEmpty(config.After))
 			{
-				var afterRun = CreateBeforeAfterBetweenRun(config, config.After, wsId);
+				var afterRun = CreateBeforeAfterBetweenRun(nodeList, config.After, wsId);
 				propFrag.DocBody.Append(afterRun);
 			}
 
@@ -1426,11 +1389,13 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Add a new run to the writers WordFragment DocBody.
 		/// </summary>
-		public void StartRun(IFragmentWriter writer, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string writingSystem, bool first)
+		public void StartRun(IFragmentWriter writer, List<ConfigurableDictionaryNode> nodeList,
+			ConfiguredLcmGenerator.GeneratorSettings settings, string writingSystem, bool first)
 		{
 			var run = new WP.Run();
 			var wsId = Cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(writingSystem);
-			string nodePath = CssGenerator.GetNodePath(config);
+			string nodePath = CssGenerator.GetNodePath(nodeList);
+
 			// The calls to 'TryGet' and 'Add' need to be in the same lock.
 			lock (_collectionLock)
 			{
@@ -1442,17 +1407,17 @@ namespace SIL.FieldWorks.XWorks
 				// If the style is not in the collection, then add it.
 				else
 				{
-					uniqueDisplayName = s_styleCollection.AddStyles(config, wsId);
+					uniqueDisplayName = s_styleCollection.AddStyles(nodeList, wsId);
 				}
 				run.Append(GenerateRunProperties(uniqueDisplayName));
 			}
 
 			// Add Between text, if it is not the first item.
+			var config = nodeList.Last();
 			if (!first &&
-				config != null &&
 				!string.IsNullOrEmpty(config.Between))
 			{
-				var betweenRun = CreateBeforeAfterBetweenRun(config, config.Between, wsId);
+				var betweenRun = CreateBeforeAfterBetweenRun(nodeList, config.Between, wsId);
 				((WordFragmentWriter)writer).WordFragment.DocBody.Append(betweenRun);
 			}
 
@@ -1472,11 +1437,12 @@ namespace SIL.FieldWorks.XWorks
 		/// This is needed to set the specific style for any field that allows the
 		/// default style to be overridden (Table Cell, Custom Field, Note...).
 		/// </summary>
-		public void SetRunStyle(IFragmentWriter writer, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propertyTable, string writingSystem, string runStyle, bool error)
+		public void SetRunStyle(IFragmentWriter writer, List<ConfigurableDictionaryNode> nodeList,
+			ReadOnlyPropertyTable propertyTable, string writingSystem, string runStyle, bool error)
 		{
 			if (!string.IsNullOrEmpty(runStyle))
 			{
-				OverrideStyle(((WordFragmentWriter)writer).WordFragment, config, runStyle, writingSystem);
+				OverrideStyle(((WordFragmentWriter)writer).WordFragment, nodeList, runStyle, writingSystem);
 			}
 		}
 		public void StartLink(IFragmentWriter writer, ConfigurableDictionaryNode config, Guid destination)
@@ -1671,7 +1637,7 @@ namespace SIL.FieldWorks.XWorks
 			wordWriter.CurrentTable = null;
 		}
 
-		public void StartEntry(IFragmentWriter writer, ConfigurableDictionaryNode node, ConfiguredLcmGenerator.GeneratorSettings settings, string className, Guid entryGuid, int index, RecordClerk clerk)
+		public void StartEntry(IFragmentWriter writer, List<ConfigurableDictionaryNode> nodeList, ConfiguredLcmGenerator.GeneratorSettings settings, string className, Guid entryGuid, int index, RecordClerk clerk)
 		{
 			// Each entry starts a new paragraph. The paragraph will end whenever a child needs its own paragraph or
 			// when a data type exists that cannot be in a paragraph (Tables or nested paragraphs).
@@ -1679,7 +1645,7 @@ namespace SIL.FieldWorks.XWorks
 			// needs to be added to the entry after the interruption.
 
 			// Create the style for the entry.
-			ParagraphElement paraElem = s_styleCollection.AddParagraphStyle(node);
+			ParagraphElement paraElem = s_styleCollection.AddParagraphStyle(nodeList);
 			string uniqueDisplayName = paraElem.UniqueDisplayName();
 
 			// Create a new paragraph for the entry.
@@ -1804,12 +1770,15 @@ namespace SIL.FieldWorks.XWorks
 		{
 			return;
 		}
-		public void AddCollection(IFragmentWriter writer, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, bool isBlockProperty, string className, IFragment content)
+		public void AddCollection(IFragmentWriter writer, List<ConfigurableDictionaryNode> nodeList,
+			ConfiguredLcmGenerator.GeneratorSettings settings, bool isBlockProperty, string className, IFragment content)
 		{
+			var config = nodeList.Last();
+
 			// Add Before text.
 			if (!string.IsNullOrEmpty(config.Before))
 			{
-				var beforeRun = CreateDefaultBeforeAfterBetweenRun(config, config.Before);
+				var beforeRun = CreateDefaultBeforeAfterBetweenRun(nodeList, config.Before);
 				((WordFragmentWriter)writer).WordFragment.DocBody.Append(beforeRun);
 			}
 
@@ -1821,7 +1790,7 @@ namespace SIL.FieldWorks.XWorks
 			// Add After text.
 			if (!string.IsNullOrEmpty(config.After))
 			{
-				var afterRun = CreateDefaultBeforeAfterBetweenRun(config, config.After);
+				var afterRun = CreateDefaultBeforeAfterBetweenRun(nodeList, config.After);
 				((WordFragmentWriter)writer).WordFragment.DocBody.Append(afterRun);
 			}
 		}
@@ -1887,9 +1856,11 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return docFrag;
 		}
-		public IFragment GenerateSenseNumber(ConfigurableDictionaryNode senseConfigNode, ConfiguredLcmGenerator.GeneratorSettings settings, string formattedSenseNumber, string senseNumberWs)
+		public IFragment GenerateSenseNumber(List<ConfigurableDictionaryNode> nodeList,
+			ConfiguredLcmGenerator.GeneratorSettings settings, string formattedSenseNumber, string senseNumberWs)
 		{
-			var senseOptions = (DictionaryNodeSenseOptions)senseConfigNode?.DictionaryNodeOptions;
+			var senseNode = nodeList.Last();
+			var senseOptions = (DictionaryNodeSenseOptions)senseNode?.DictionaryNodeOptions;
 			string afterNumber = null;
 			string beforeNumber = null;
 			string numberStyleName = WordStylesGenerator.SenseNumberStyleName;
@@ -1903,13 +1874,14 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 			var wsId = Cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(senseNumberWs);
+			string nodePath = CssGenerator.GetNodePath(nodeList);
 
 			// Add the style to the collection and get the unique name.
 			string uniqueDisplayName = null;
 			// The calls to 'TryGet' and 'Add' need to be in the same lock.
 			lock (_collectionLock)
 			{
-				string numberStyleNodePath = CssGenerator.GetNodePath(senseConfigNode) + numberStyleName;
+				string numberStyleNodePath = nodePath + numberStyleName;
 				if (s_styleCollection.TryGetCharacterStyle(numberStyleNodePath, wsId, out CharacterElement existingStyle))
 				{
 					uniqueDisplayName = existingStyle.Style.StyleId;
@@ -1917,9 +1889,9 @@ namespace SIL.FieldWorks.XWorks
 				// If the style is not in the collection, then add it.
 				else
 				{
-					var lastNodeUniqueName = s_styleCollection.AddStyles(senseConfigNode, wsId);
+					var lastNodeUniqueName = s_styleCollection.AddStyles(nodeList, wsId);
 					uniqueDisplayName = s_styleCollection.AddSpecialCharacterStyle(numberStyleName,
-						WordStylesGenerator.SenseNumberDisplayName, lastNodeUniqueName, senseConfigNode, numberStyleName, wsId);
+						WordStylesGenerator.SenseNumberDisplayName, lastNodeUniqueName, numberStyleNodePath, wsId);
 				}
 			}
 
@@ -1928,7 +1900,7 @@ namespace SIL.FieldWorks.XWorks
 			// Add characters before the number.
 			if (!string.IsNullOrEmpty(beforeNumber))
 			{
-				var beforeRun = CreateBeforeAfterBetweenRun(senseConfigNode, beforeNumber, wsId, numberStyleName);
+				var beforeRun = CreateBeforeAfterBetweenRun(nodeList, beforeNumber, wsId, numberStyleName);
 				senseNum.DocBody.AppendChild(beforeRun);
 			}
 
@@ -1942,31 +1914,33 @@ namespace SIL.FieldWorks.XWorks
 			// Add characters after the number.
 			if (!string.IsNullOrEmpty(afterNumber))
 			{
-				var afterRun = CreateBeforeAfterBetweenRun(senseConfigNode, afterNumber, wsId, numberStyleName);
+				var afterRun = CreateBeforeAfterBetweenRun(nodeList, afterNumber, wsId, numberStyleName);
 				senseNum.DocBody.AppendChild(afterRun);
 			}
 
 			return senseNum;
 		}
 
-		public IFragment AddLexReferences(ConfigurableDictionaryNode config, bool generateLexType, IFragment lexTypeContent, string className, IFragment referencesContent, bool typeBefore)
+		public IFragment AddLexReferences(List<ConfigurableDictionaryNode> nodeList, bool generateLexType,
+			IFragment lexTypeContent, string className, IFragment referencesContent, bool typeBefore)
 		{
 			var fragment = new DocFragment();
 			// Generate the factored ref types element (if before).
 			if (generateLexType && typeBefore)
 			{
-				fragment.Append(WriteProcessedObject(config, false, lexTypeContent, className));
+				fragment.Append(WriteProcessedObject(nodeList, false, lexTypeContent, className));
 			}
 			// Then add all the contents for the LexReferences (e.g. headwords)
 			fragment.Append(referencesContent);
 			// Generate the factored ref types element (if after).
 			if (generateLexType && !typeBefore)
 			{
-				fragment.Append(WriteProcessedObject(config, false, lexTypeContent, className));
+				fragment.Append(WriteProcessedObject(nodeList, false, lexTypeContent, className));
 			}
 
 			return fragment;
 		}
+
 		public void BeginCrossReference(IFragmentWriter writer, ConfigurableDictionaryNode senseConfigNode, bool isBlockProperty, string className)
 		{
 			return;
@@ -1976,35 +1950,38 @@ namespace SIL.FieldWorks.XWorks
 			return;
 		}
 
-		public void BetweenCrossReferenceType(IFragment content, ConfigurableDictionaryNode node, bool firstItem)
+		public void BetweenCrossReferenceType(IFragment content, List<ConfigurableDictionaryNode> nodeList, bool firstItem)
 		{
+			var node = nodeList.Last();
 			// Add Between text if it is not the first item in the collection.
 			if (!firstItem && !string.IsNullOrEmpty(node.Between))
 			{
-				var betweenRun = CreateDefaultBeforeAfterBetweenRun(node, node.Between);
+				var betweenRun = CreateDefaultBeforeAfterBetweenRun(nodeList, node.Between);
 				((DocFragment)content).DocBody.PrependChild(betweenRun);
 			}
 		}
 
-		public IFragment WriteProcessedSenses(ConfigurableDictionaryNode config, bool isBlock, IFragment senseContent, string className, IFragment sharedGramInfo)
+		public IFragment WriteProcessedSenses(List<ConfigurableDictionaryNode> nodeList,
+			bool isBlock, IFragment senseContent, string className, IFragment sharedGramInfo)
 		{
+			var config = nodeList.Last();
 			var senseOptions = config?.DictionaryNodeOptions as DictionaryNodeSenseOptions;
 			bool eachInAParagraph = senseOptions?.DisplayEachSenseInAParagraph ?? false;
 
 			// Add Before text for the senses if they were not displayed in separate paragraphs.
 			if (!eachInAParagraph && !string.IsNullOrEmpty(config.Before))
 			{
-				var beforeRun = CreateDefaultBeforeAfterBetweenRun(config, config.Before);
+				var beforeRun = CreateDefaultBeforeAfterBetweenRun(nodeList, config.Before);
 				((DocFragment)sharedGramInfo).DocBody.PrependChild(beforeRun);
 			}
 
-			AddBulletAndNumberingData(senseContent, config, eachInAParagraph);
+			AddBulletAndNumberingData(senseContent, nodeList, eachInAParagraph);
 			sharedGramInfo.Append(senseContent);
 
 			// Add After text for the senses if they were not displayed in separate paragraphs.
 			if (!eachInAParagraph && !string.IsNullOrEmpty(config.After))
 			{
-				var afterRun = CreateDefaultBeforeAfterBetweenRun(config, config.After);
+				var afterRun = CreateDefaultBeforeAfterBetweenRun(nodeList, config.After);
 				((DocFragment)sharedGramInfo).DocBody.Append(afterRun);
 			}
 
@@ -2043,11 +2020,12 @@ namespace SIL.FieldWorks.XWorks
 		/// the situations where a unique style name is generated, because the reference needs to use the
 		/// unique name.
 		/// </summary>
-		public string AddStyles(ConfigurableDictionaryNode node)
+		public string AddStyles(List<ConfigurableDictionaryNode> nodeList)
 		{
-			if(WordStylesGenerator.IsParagraphStyle(node.Style, _propertyTable))
+			var node = nodeList.Last();
+			if (WordStylesGenerator.IsParagraphStyle(node.Style, _propertyTable))
 			{
-				s_styleCollection.AddParagraphStyle(node);
+				s_styleCollection.AddParagraphStyle(nodeList);
 			}
 			return $".{CssGenerator.GetClassAttributeForConfig(node)}";
 		}
@@ -2298,10 +2276,10 @@ namespace SIL.FieldWorks.XWorks
 			return run;
 		}
 
-		internal WP.Run CreateDefaultBeforeAfterBetweenRun(ConfigurableDictionaryNode node, string text)
+		internal WP.Run CreateDefaultBeforeAfterBetweenRun(List<ConfigurableDictionaryNode> nodeList, string text)
 		{
 			int wsId = WordStylesGenerator.DefaultStyle;
-			return CreateBeforeAfterBetweenRun(node, text, wsId);
+			return CreateBeforeAfterBetweenRun(nodeList, text, wsId);
 		}
 
 		/// <summary>
@@ -2309,17 +2287,17 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="text">Text for the run.</param>
 		/// <returns>The BeforeAfterBetween run.</returns>
-		internal WP.Run CreateBeforeAfterBetweenRun(ConfigurableDictionaryNode node,
+		internal WP.Run CreateBeforeAfterBetweenRun(List<ConfigurableDictionaryNode> nodeList,
 			string text, int wsId, string nodePathAdditions = null)
 		{
+			string nodePath = CssGenerator.GetNodePath(nodeList);
+			string befAftBetStyleName = WordStylesGenerator.BeforeAfterBetweenStyleName;
+			string befAftBetNodePath = nodePath + nodePathAdditions + befAftBetStyleName;
+			string uniqueDisplayName = null;
 
 			// Get the unique display name to use in the run.
-			string uniqueDisplayName = null;
 			lock (_collectionLock)
 			{
-				string nodePath = CssGenerator.GetNodePath(node);
-				string befAftBetStyleName = WordStylesGenerator.BeforeAfterBetweenStyleName;
-				string befAftBetNodePath = nodePath + nodePathAdditions + befAftBetStyleName;
 				if (s_styleCollection.TryGetCharacterStyle(befAftBetNodePath, wsId, out CharacterElement existingBefAftBetStyle))
 				{
 					uniqueDisplayName = existingBefAftBetStyle.Style.StyleId;
@@ -2337,13 +2315,13 @@ namespace SIL.FieldWorks.XWorks
 					else
 					{
 						Debug.Assert(string.IsNullOrEmpty(nodePathAdditions)); // If there are additions then we are expecting an element with additions to already exist.
-						parentUniqueDisplayName = s_styleCollection.AddStyles(node, wsId);
+						parentUniqueDisplayName = s_styleCollection.AddStyles(nodeList, wsId);
 						parentElem = s_styleCollection.GetCharacterElement(parentUniqueDisplayName);
 					}
 
 					string displayNameBaseCombined = parentElem.DisplayNameBase + WordStylesGenerator.BeforeAfterBetween;
 					uniqueDisplayName = s_styleCollection.AddSpecialCharacterStyle(befAftBetStyleName,
-						displayNameBaseCombined, parentUniqueDisplayName, node, nodePathAdditions + befAftBetStyleName, wsId);
+						displayNameBaseCombined, parentUniqueDisplayName, befAftBetNodePath, wsId);
 				}
 			}
 
@@ -2375,7 +2353,8 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="frag">The fragment containing the run that should have its styles overidden.</param>
 		/// <param name="nodeStyleName">The FLEX style to apply to the runs in the fragment.</param>
-		private void OverrideStyle(IFragment frag, ConfigurableDictionaryNode node, string nodeStyleName, string wsString)
+		private void OverrideStyle(IFragment frag, List<ConfigurableDictionaryNode> nodeList,
+			string nodeStyleName, string wsString)
 		{
 			string sDefaultTextStyle = "Default Paragraph Characters";
 			if (string.IsNullOrEmpty(nodeStyleName) || nodeStyleName.StartsWith(sDefaultTextStyle))
@@ -2403,9 +2382,9 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				// The calls to 'TryGet' and 'Add' need to be in the same lock.
+				string nodePath = CssGenerator.GetNodePath(nodeList);
 				lock (_collectionLock)
 				{
-					string nodePath = CssGenerator.GetNodePath(node);
 					s_styleCollection.TryGetCharacterStyle(nodePath, wsId, out CharacterElement rootStyle);
 					Debug.Assert(rootStyle != null);
 					string rootNodeUniqueName = rootStyle.UniqueDisplayName();
@@ -2420,7 +2399,7 @@ namespace SIL.FieldWorks.XWorks
 						return;
 					}
 
-					string overrideNodePath = CssGenerator.GetNodePath(node) + nodeStyleName;
+					string overrideNodePath = nodePath + nodeStyleName;
 					if (s_styleCollection.TryGetCharacterStyle(overrideNodePath, wsId, out CharacterElement overrideStyle))
 					{
 						ResetRunProperties(run, overrideStyle.Style.StyleId);
@@ -2429,7 +2408,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						string overrideDisplayName = rootDisplayName + WordStylesGenerator.StyleSeparator + nodeStyleName;
 						string uniqueDisplayName = s_styleCollection.AddSpecialCharacterStyle(nodeStyleName,
-							overrideDisplayName, rootNodeUniqueName, node, nodeStyleName, wsId);
+							overrideDisplayName, rootNodeUniqueName, overrideNodePath, wsId);
 						ResetRunProperties(run, uniqueDisplayName);
 					}
 				}
@@ -2446,7 +2425,8 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="firstParagraph">The first paragraph that will be added to 'copyToFrag'. Content from contentToAdd will be added
 		/// to this paragraph until a un-nestable type is encountered.</param>
 		/// <param name="contentToAdd">The content to add either to the paragraph or at the same level as the paragraph.</param>
-		public void SeparateIntoFirstLevelElements(DocFragment copyToFrag, WP.Paragraph firstParagraph, DocFragment contentToAdd, ConfigurableDictionaryNode node)
+		public void SeparateIntoFirstLevelElements(DocFragment copyToFrag, WP.Paragraph firstParagraph, DocFragment contentToAdd,
+			List<ConfigurableDictionaryNode> nodeList)
 		{
 			bool continuationParagraph = false;
 			var workingParagraph = firstParagraph;
@@ -2460,7 +2440,7 @@ namespace SIL.FieldWorks.XWorks
 				if (elem is WP.Paragraph || elem is WP.Table || (elem is WP.Run && containsDrawing))
 				{
 					// End the current working paragraph and add it to the list.
-					if (EndParagraph(workingParagraph, node, continuationParagraph))
+					if (EndParagraph(workingParagraph, nodeList, continuationParagraph))
 					{
 						copyToFrag.DocBody.AppendChild(workingParagraph);
 					}
@@ -2480,7 +2460,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// If the working paragraph contains content then add it's style and add
 			// it to the return list.
-			if (EndParagraph(workingParagraph, node, continuationParagraph))
+			if (EndParagraph(workingParagraph, nodeList, continuationParagraph))
 			{
 				copyToFrag.DocBody.AppendChild(workingParagraph);
 			}
@@ -2491,14 +2471,15 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="continuationParagraph">True if this is a continuation paragraph.</param>
 		/// <returns>true if the paragraph contains content, false if it does not.</returns>
-		private bool EndParagraph(WP.Paragraph paragraph, ConfigurableDictionaryNode node, bool continuationParagraph)
+		private bool EndParagraph(WP.Paragraph paragraph, List<ConfigurableDictionaryNode> nodeList,
+			bool continuationParagraph)
 		{
 			if (paragraph != null && paragraph.HasChildren)
 			{
 				// Add the style.
-				if (!string.IsNullOrEmpty(node.Style))
+				if (!string.IsNullOrEmpty(nodeList.Last().Style))
 				{
-					ParagraphElement paraElem = s_styleCollection.AddParagraphStyle(node);
+					ParagraphElement paraElem = s_styleCollection.AddParagraphStyle(nodeList);
 					string uniqueDisplayName = paraElem.UniqueDisplayName();
 
 					// Add the continuation style.
@@ -2523,14 +2504,16 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="elementContent">The fragment containing the list of items.</param>
 		/// <param name="eachInAParagraph">true: The list items are in paragraphs, so add the bullet or numbering.
 		///                                false: The list items are not in paragraphs, don't add bullet or numbering.</param>
-		private void AddBulletAndNumberingData(IFragment elementContent, ConfigurableDictionaryNode node, bool eachInAParagraph)
+		private void AddBulletAndNumberingData(IFragment elementContent, List<ConfigurableDictionaryNode> nodeList,
+			bool eachInAParagraph)
 		{
+			var node = nodeList.Last();
 			if (node.StyleType == ConfigurableDictionaryNode.StyleTypes.Paragraph &&
 				!string.IsNullOrEmpty(node.Style) &&
 				eachInAParagraph)
 			{
 				// Get the StyleElement.
-				string nodePath = CssGenerator.GetNodePath(node);
+				string nodePath = CssGenerator.GetNodePath(nodeList);
 				if (s_styleCollection.TryGetParagraphStyle(nodePath, out ParagraphElement styleElem))
 				{
 					// This style uses bullet or numbering.
