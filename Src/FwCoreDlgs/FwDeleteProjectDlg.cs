@@ -171,7 +171,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			//
 			resources.ApplyResources(this.m_lstProjects, "m_lstProjects");
 			this.m_lstProjects.Name = "m_lstProjects";
-			this.m_lstProjects.SelectionMode = System.Windows.Forms.SelectionMode.MultiSimple;
+			this.m_lstProjects.SelectionMode = System.Windows.Forms.SelectionMode.MultiExtended;
 			m_helpProvider.SetShowHelp(this.m_lstProjects, ((bool)(resources.GetObject("m_lstProjects.ShowHelp"))));
 			this.m_lstProjects.Sorted = true;
 			this.m_lstProjects.SelectedIndexChanged += new System.EventHandler(this.m_lstProjects_SelectedIndexChanged);
