@@ -271,7 +271,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		// currently duplicated in FLExBridgeListener, to avoid an assembly dependency.
 		private bool IsVernacularSpellingEnabled()
 		{
-			return m_propertyTable.GetBoolProperty("UseVernSpellingDictionary", true);
+			return m_propertyTable.GetBoolProperty("UseVernSpellingDictionary", false);
 		}
 
 		private void RestartSpellChecking()

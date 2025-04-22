@@ -570,7 +570,7 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			if (settings != null && (settings.IsWebExport || settings.IsXhtmlExport))
 				return;
-			xw.WriteAttributeString("nodeId", $"{config.GetHashCode()}");
+			xw.WriteAttributeString("nodeId", $"{config.GetNodeId()}");
 		}
 
 		public IFragment GenerateAudioLinkContent(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string classname,

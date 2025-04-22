@@ -1105,9 +1105,9 @@ namespace SIL.FieldWorks.XWorks
 				m_propertyTable, "test.json", null, out int[] _);
 			var expectedResults = @"{""xhtmlTemplate"":""lexentry"",""guid"":""g" + testEntry.Guid + @""",""letterHead"": ""c"",""sortIndex"": 0,
 				""homographnumber"":""0"",""citationform"":[{""lang"":""fr"",""value"":""Citation""}],
-				""displayXhtml"":""<div class=\""lexentry\"" nodeId=\""" + mainEntryNode.GetHashCode() +
-				@"\"" id=\""g" + testEntry.Guid + @"\""><span class=\""homographnumber\"" nodeId=\""" + homographNum.GetHashCode() +
-				@"\"">0</span><span class=\""citationform\""><span nodeId=\""" + citationForm.GetHashCode() + @"\"" lang=\""fr\"">Citation</span></span></div>""}";
+				""displayXhtml"":""<div class=\""lexentry\"" nodeId=\""" + mainEntryNode.GetNodeId() +
+				@"\"" id=\""g" + testEntry.Guid + @"\""><span class=\""homographnumber\"" nodeId=\""" + homographNum.GetNodeId() +
+				@"\"">0</span><span class=\""citationform\""><span nodeId=\""" + citationForm.GetNodeId() + @"\"" lang=\""fr\"">Citation</span></span></div>""}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(results[0][0].ToString(Formatting.None), expected);
 		}
