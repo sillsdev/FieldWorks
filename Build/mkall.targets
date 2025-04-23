@@ -285,7 +285,7 @@
 		<ChorusNugetVersion>5.2.0-beta0003</ChorusNugetVersion>
 		<PalasoNugetVersion>15.0.0-beta0117</PalasoNugetVersion>
 		<ParatextNugetVersion>9.4.0.1-beta</ParatextNugetVersion>
-		<LcmNugetVersion>11.0.0-beta0111</LcmNugetVersion>
+		<LcmNugetVersion>11.0.0-beta0120</LcmNugetVersion>
 		<IcuNugetVersion>70.1.123</IcuNugetVersion>
 		<HermitCrabNugetVersion>3.4.2</HermitCrabNugetVersion>
 		<IPCFrameworkVersion>1.1.1-beta0001</IPCFrameworkVersion>
@@ -379,9 +379,7 @@
 		<IcuFiles Include="icuuc.lib"/>
 
 		<LcmOutputBaseFiles Include="ICSharpCode.SharpZipLib.dll" />
-		<LcmOutputBaseFiles Include="Hunspellx86.dll" Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'"/>
-		<LcmOutputBaseFiles Include="Hunspellx64.dll" Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'"/>
-		<LcmOutputBaseFiles Include="NHunspell.dll" Condition="'$(OS)'=='Windows_NT'" />
+		<LcmOutputBaseFiles Include="WeCantSpell.Hunspell.dll" />
 		<LcmOutputBaseFiles Include="CommonServiceLocator.dll" />
 		<LcmOutputBaseFiles Include="protobuf-net.dll" />
 		<LcmOutputBaseFiles Include="StructureMap.dll" />
@@ -491,8 +489,7 @@
 			<SILNugetPackages Include="SIL.LCModel.Tools"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="CommonServiceLocator"><Version>2.0.7</Version><Path>lib/net46/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="Mono.Unix" Condition="'$(OS)'!='Windows_NT'"><Version>7.1.0-final.1.21458.1</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
-			<SILNugetPackages Include="NHunspell.Patched"><Version>1.2.5554</Version><Path>lib/net/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
-			<SILNugetPackages Include="NHunspell.Patched"><Version>1.2.5554</Version><Path>runtimes/win7-$(Platform)/native/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="WeCantSpell.Hunspell"><Version>6.0.0</Version><Path>lib/netstandard2.0/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="protobuf-net"><Version>2.4.6</Version><Path>lib/net40/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="SharpZipLib"><Version>1.4.0</Version><Path>lib/netstandard2.0/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="structuremap.patched"><Version>4.7.3</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
