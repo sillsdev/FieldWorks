@@ -1961,6 +1961,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					fieldName, className, ownerClassName ?? "nullOwner", recomputeVirtual, slice));
 				if (InsertObjectIfPossible(newObjectClassId, ownerClassId, fieldName, slice, recomputeVirtual))
 					break;
+				if (IsDisposed)
+					break;
 			}
 		}
 
