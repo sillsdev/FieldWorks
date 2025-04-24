@@ -128,7 +128,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <returns>The uniqueDisplayName for the character style that is created.</returns>
 		private string AddStyle(string styleName, string displayNameBase, string nodePath,
-			string parentUniqueDisplayName, int wsId, string sensesSubentriesUniqueDisplayName = null)
+			string parentUniqueDisplayName, int wsId)
 		{
 			// Use a special name for a 'Headword' that is a '.subentries .headword' so that the
 			// '.subentries .headword' is not used as a guideword.
@@ -236,7 +236,7 @@ namespace SIL.FieldWorks.XWorks
 				// Add the character style element to the collection.
 				bool wsIsRtl = LcmWordGenerator.IsWritingSystemRightToLeft(cache, wsId);
 				var charElement = new CharacterElement(displayNameBase, style, uniqueNumber,
-					nodePath, wsId, wsIsRtl, basedOnElem, sensesSubentriesUniqueDisplayName);
+					nodePath, wsId, wsIsRtl, basedOnElem);
 				stylesWithSameDisplayNameBase.Add(charElement);
 				uniquePathToCharElement.Add(CharacterElement.GetUniquePath(nodePath, wsId), charElement);
 				uniqueNameToCharElement.Add(uniqueDisplayName, charElement);
@@ -248,8 +248,7 @@ namespace SIL.FieldWorks.XWorks
 					nodePath != WordStylesGenerator.LetterHeadingNodePath &&
 					nodePath != WordStylesGenerator.PictureAndCaptionNodePath)
 				{
-					AddStyle(styleName, displayNameBase, nodePath, parentUniqueDisplayName,
-						WordStylesGenerator.DefaultStyle, sensesSubentriesUniqueDisplayName);
+					AddStyle(styleName, displayNameBase, nodePath, parentUniqueDisplayName, WordStylesGenerator.DefaultStyle);
 				}
 
 				// Additional handling for paragraph style.
@@ -273,88 +272,39 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Adds all the necessary character and paragraph styles. This includes styles for all
-		/// nodes in the nodePath.
-		/// If a style for the nodePath is already in the collection then just return
-		/// the unique name.
+		/// nodes in the nodeList.
+		/// If a style for the last node in the nodeList is already in the collection then just return
+		/// its unique name.
 		/// </summary>
-		/// <param name="node">The node to build styles from.</param>
+		/// <param name="nodeList">List of nodes starting from the root.</param>
 		/// <param name="wsId">The writing system id associated with this style.</param>
-		/// <returns>The unique display name that should be referenced in a Run.</returns>
-		public string AddStyles(ConfigurableDictionaryNode node, int wsId)
+		/// <returns>The unique display name for the last node in the nodeList. (It should be referenced in a Run.)</returns>
+		public string AddStyles(List<ConfigurableDictionaryNode> nodeList, int wsId)
 		{
-			// Create a list of nodes for the path, from root to 'node'.
-			List<ConfigurableDictionaryNode> nodes = new List<ConfigurableDictionaryNode>();
-			var pathNode = node;
-			while (pathNode != null)
-			{
-				nodes.Add(pathNode);
-				pathNode = pathNode.Parent;
-			}
-			nodes.Reverse();
-
 			// Generate the unique name and style for each node (starting from the root node).
 			string uniqueDisplayName = "";
-			string sensesSubentriesUniqueDisplayName = "";
 			string parentUniqueDisplayName = null;
-			string parentSensesSubentryUniqueDisplayName = null;
 			string nodePath = null;
-			string sensesSubentriesNodePath = null;
-			bool buildSenseSubentryRules = false;
-			for (int ii = 0; ii < nodes.Count; ii++)
+			foreach (var node in nodeList)
 			{
-				var workingNode = nodes[ii];
-				var workingDisplayName = workingNode.DisplayLabel;
-				var workingStyleName = workingNode.Style;
-				nodePath += $".{CssGenerator.GetClassAttributeForConfig(workingNode)} ";
+				nodePath += $".{CssGenerator.GetClassAttributeForConfig(node)} ";
 
-				// If this node is '.subentries' and the next node is '.mainentrysubentries',
-				// then we need to build the same set of rules twice for the child nodes, once
-				// for ".entry .subentries" and once for ".entry .senses .subentries". We do
-				// this so that later, if AddSenseData() is called, we can switch to the style
-				// built on the '.entry .senses .subentries' path.
-				// We only need to build the two sets for the children. The node
-				// '.entry .senses .subentries' does NOT need a second set of rules. It's rules
-				// will get created through the normal execution of this method.
-				if (CssGenerator.GetClassAttributeForConfig(workingNode) == "subentries" && (ii + 1 < nodes.Count) &&
-					CssGenerator.GetClassAttributeForConfig(nodes[ii + 1]) == "mainentrysubentries")
-				{
-					// Build the styles for the '.entry .senses .subentries' path.
-					var mainEntryNode = nodes[ii - 1];
-					var sensesNode = mainEntryNode.Children.First(child => CssGenerator.GetClassAttributeForConfig(child) == "senses");
-					var sensesSubentriesNode = sensesNode.Children.First(child => CssGenerator.GetClassAttributeForConfig(child) == "subentries");
-					parentSensesSubentryUniqueDisplayName = AddStyles(sensesSubentriesNode, wsId);
-					sensesSubentriesNodePath = CssGenerator.GetNodePath(sensesSubentriesNode);
-				}
-
-				if (CssGenerator.GetClassAttributeForConfig(workingNode) == "mainentrysubentries")
-				{
-					buildSenseSubentryRules = true;
-					continue;
-				}
-
-				if (buildSenseSubentryRules)
-				{
-					sensesSubentriesNodePath += $".{CssGenerator.GetClassAttributeForConfig(workingNode)} ";
-					sensesSubentriesUniqueDisplayName = AddStyle(workingStyleName, workingDisplayName,
-						sensesSubentriesNodePath, parentSensesSubentryUniqueDisplayName, wsId);
-					parentSensesSubentryUniqueDisplayName = sensesSubentriesUniqueDisplayName;
-				}
-				uniqueDisplayName = AddStyle(workingStyleName, workingDisplayName,
-					nodePath, parentUniqueDisplayName, wsId, sensesSubentriesUniqueDisplayName);
+				uniqueDisplayName = AddStyle(node.Style, node.DisplayLabel,
+					nodePath, parentUniqueDisplayName, wsId);
 				parentUniqueDisplayName = uniqueDisplayName;
 			}
 			return uniqueDisplayName;
 		}
 
 		/// <summary>
-		/// Adds character styles that have additional data added to the nodePath.
+		/// Add a character style that has additional data added to the nodePath.
 		/// </summary>
+		/// <param name="specialNodePath">The node path for the node with all additions added to the end.</param>
 		/// <returns>The unique display name that should be referenced in a Run.</returns>
 		public string AddSpecialCharacterStyle(string styleName, string displayName, string parentUniqueDisplayName,
-			ConfigurableDictionaryNode node, string nodePathAdditions, int wsId)
+			string specialNodePath, int wsId)
 		{
-			string nodePath = CssGenerator.GetNodePath(node) + nodePathAdditions;
-			return AddStyle(styleName, displayName, nodePath, parentUniqueDisplayName, wsId);
+			return AddStyle(styleName, displayName, specialNodePath, parentUniqueDisplayName, wsId);
 		}
 
 		internal void AddGlobalCharacterStyles()
@@ -584,10 +534,10 @@ namespace SIL.FieldWorks.XWorks
 		/// Adds the paragraph style and the linked character style.
 		/// </summary>
 		/// <returns>>The unique display name that should be referenced in a Paragraph.</returns>
-		internal ParagraphElement AddParagraphStyle(ConfigurableDictionaryNode node)
+		internal ParagraphElement AddParagraphStyle(List<ConfigurableDictionaryNode> nodeList)
 		{
 			// Adding the styles for the DefaultStyle, will result in the paragraph style being added.
-			string charUniqueDispName = AddStyles(node, WordStylesGenerator.DefaultStyle);
+			string charUniqueDispName = AddStyles(nodeList, WordStylesGenerator.DefaultStyle);
 			var charElem = uniqueNameToCharElement[charUniqueDispName];
 			return charElem.LinkedParagraphElement;
 		}
@@ -755,17 +705,15 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="basedOnElem">The element this elements style is based on.</param>
 		/// <param name="sensesSubentriesUniqueDisplayName">The unique display name for the associated senses subentries element.</param>
 		internal CharacterElement(string displayNameBase, Style style, int uniqueNumber,
-			string nodePath, int wsId, bool wsIsRtl, CharacterElement basedOnElem, string sensesSubentriesUniqueDisplayName = null) :
+			string nodePath, int wsId, bool wsIsRtl, CharacterElement basedOnElem) :
 			base(displayNameBase, style, uniqueNumber, nodePath)
 		{
 			this.WritingSystemId = wsId;
 			this.WritingSystemIsRtl = wsIsRtl;
 			this.BasedOnElement = basedOnElem;
-			this.SensesSubentriesUniqueDisplayName = sensesSubentriesUniqueDisplayName;
 		}
 		internal int WritingSystemId { get; }
 		internal bool WritingSystemIsRtl { get; }
-		internal string SensesSubentriesUniqueDisplayName { get; set; }
 		internal CharacterElement Redirect { get; set; }
 		internal CharacterElement BasedOnElement { get; }
 		internal ParagraphElement LinkedParagraphElement { get; set; }
