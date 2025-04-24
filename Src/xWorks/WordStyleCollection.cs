@@ -573,18 +573,21 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void AddParagraphElement(ParagraphElement paraElem)
+		internal void AddParagraphElement(ParagraphElement paraElem)
 		{
-			// If this is the first style with this base, then add it to the Dictionary.
-			if (!paragraphStyles.TryGetValue(paraElem.DisplayNameBase, out List<ParagraphElement> paraStylesWithSameDisplayNameBase))
+			lock (_collectionLock)
 			{
-				paraStylesWithSameDisplayNameBase = new List<ParagraphElement>();
-				paragraphStyles.Add(paraElem.DisplayNameBase, paraStylesWithSameDisplayNameBase);
-			}
+				// If this is the first style with this base, then add it to the Dictionary.
+				if (!paragraphStyles.TryGetValue(paraElem.DisplayNameBase, out List<ParagraphElement> paraStylesWithSameDisplayNameBase))
+				{
+					paraStylesWithSameDisplayNameBase = new List<ParagraphElement>();
+					paragraphStyles.Add(paraElem.DisplayNameBase, paraStylesWithSameDisplayNameBase);
+				}
 
-			// Add the paragraph element to the collection.
-			paraStylesWithSameDisplayNameBase.Add(paraElem);
-			uniquePathToParaElement[paraElem.NodePath] = paraElem;
+				// Add the paragraph element to the collection.
+				paraStylesWithSameDisplayNameBase.Add(paraElem);
+				uniquePathToParaElement[paraElem.NodePath] = paraElem;
+			}
 		}
 
 		/// <summary>
@@ -648,17 +651,19 @@ namespace SIL.FieldWorks.XWorks
 			var pictureCaptionStyle = new Style()
 			{
 				Type = StyleValues.Paragraph,
-				StyleId = WordStylesGenerator.PictureAndCaptionTextframeDisplayName,
-				StyleName = new StyleName() { Val = WordStylesGenerator.PictureAndCaptionTextframeDisplayName }
+				StyleId = WordStylesGenerator.PictureAndCaptionTextboxDisplayName,
+				StyleName = new StyleName() { Val = WordStylesGenerator.PictureAndCaptionTextboxDisplayName }
 			};
 
 			var parProps = new StyleParagraphProperties();
 			// The image and caption should always be centered within the textbox.
-			parProps.Justification = new Justification() { Val = JustificationValues.Center }; ;
+			parProps.Justification = new Justification() { Val = JustificationValues.Center };
+			// In FLEx, pictures have no added before/after paragraph spacing.
+			parProps.Append(new SpacingBetweenLines() { Before = "0", After = "0" });
 			pictureCaptionStyle.Append(parProps);
 
 			var pictureCaptionElem = new ParagraphElement(
-				WordStylesGenerator.PictureAndCaptionTextframeDisplayName,
+				WordStylesGenerator.PictureAndCaptionTextboxDisplayName,
 				pictureCaptionStyle, 1, WordStylesGenerator.PictureAndCaptionNodePath, null);
 			AddParagraphElement(pictureCaptionElem);
 			pictureCaptionElem.Used = true;
