@@ -2273,6 +2273,21 @@ namespace SIL.FieldWorks.XWorks
 					string displayNameBaseCombined = parentElem.DisplayNameBase + WordStylesGenerator.BeforeAfterBetween;
 					uniqueDisplayName = s_styleCollection.AddSpecialCharacterStyle(befAftBetStyleName,
 						displayNameBaseCombined, parentUniqueDisplayName, befAftBetNodePath, wsId);
+
+					// For before/after/between content we want to use the right to left setting for the
+					// default vernacular writing system.
+					if (IsBidi)
+					{
+						CharacterElement elem = s_styleCollection.GetCharacterElement(uniqueDisplayName);
+						lock(_collectionLock)
+						{
+							if (!elem.WritingSystemIsRtl)
+							{
+								var defVernWsId = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
+								elem.WritingSystemIsRtl = LcmWordGenerator.IsWritingSystemRightToLeft(Cache, defVernWsId);
+							}
+						}
+					}
 				}
 			}
 
