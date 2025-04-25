@@ -241,16 +241,6 @@ namespace SIL.FieldWorks.XWorks
 				uniquePathToCharElement.Add(CharacterElement.GetUniquePath(nodePath, wsId), charElement);
 				uniqueNameToCharElement.Add(uniqueDisplayName, charElement);
 
-				// If the wsId is not the default and this is not the Letter Heading style, then add the default.
-				// When we are done creating styles and want to re-use styles, the defaults are what we want to
-				// try and use first.
-				if (wsId != WordStylesGenerator.DefaultStyle &&
-					nodePath != WordStylesGenerator.LetterHeadingNodePath &&
-					nodePath != WordStylesGenerator.PictureAndCaptionNodePath)
-				{
-					AddStyle(styleName, displayNameBase, nodePath, parentUniqueDisplayName, WordStylesGenerator.DefaultStyle);
-				}
-
 				// Additional handling for paragraph style.
 				if (processParagraphStyle)
 				{
@@ -345,7 +335,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary>
 		/// Redirect character elements to other character elements that have identical properties.
-		/// Limit the redirection to elements with the same wsId or the defaultId.
+		/// Limit the redirection to elements with the same wsId.
 		/// The results of the redirection will be used to reduce the number of styles created in Word.
 		/// </summary>
 		internal void RedirectCharacterElements()
@@ -372,7 +362,7 @@ namespace SIL.FieldWorks.XWorks
 					for (int precedingElem = 0; precedingElem < currentElem; precedingElem++)
 					{
 						// If the preceding element is already re-directed then there is no need to compare the current
-						// element to this preceding element, since it is the same as one of its preceding elements that we would
+						// element to this preceding element, since it is the same as a preceding element that we would
 						// have already checked.
 						if (defaultElements[precedingElem].Redirect == null)
 						{
@@ -393,65 +383,29 @@ namespace SIL.FieldWorks.XWorks
 					}
 				}
 
-				// Second redirect all the non-default styles. First try to redirect to a default style, second
-				// try to redirect to a non-default style with the same ws.
+				// Second redirect all the non-default styles to a non-default style with the same ws.
 				List<CharacterElement> nonDefaultElements = stylesWithSameDisplayNameBase.Where(elem =>
 					elem.WritingSystemId != WordStylesGenerator.DefaultStyle).ToList();
 
-				// Iterate through the non-default elements, to see if it is the same as any of the default elements
-				// or the same as any of the non-default elements with the same WS that proceed it.
+				// Iterate through the non-default elements, to see if it is the same as any of the
+				// non-default elements with the same WS that proceed it.
 				for (int currentElem = 0; currentElem < nonDefaultElements.Count; currentElem++)
 				{
-					// Check if the current element is the same as any of the default elements.
-					//
-					// There is no need to check the default styles if the style the current element is based on is not also
-					// re-directed to the default style.
-					if (nonDefaultElements[currentElem].NodePath == WordStylesGenerator.NormalCharNodePath ||
-						nonDefaultElements[currentElem].BasedOnElement.WritingSystemId == WordStylesGenerator.DefaultStyle)
+					// Iterate through the preceding elements to check if they have the same properties.
+					for (int precedingElem = 0; precedingElem < currentElem; precedingElem++)
 					{
-						foreach (var defaultElem in defaultElements)
+						// If the preceding element is already re-directed then there is no need to compare the current
+						// element to this preceding element, since it is the same as a preceding element that we would
+						// have already checked.
+						if (nonDefaultElements[precedingElem].Redirect == null)
 						{
-							// If the default element is already re-directed then there is no need to compare the current
-							// element to this default element, since it is the same as one of its preceding elements that we would
-							// have already checked.
-							if (defaultElem.Redirect == null)
+							if (nonDefaultElements[currentElem].WritingSystemId == nonDefaultElements[precedingElem].WritingSystemId &&
+								nonDefaultElements[currentElem].Style.Descendants<StyleRunProperties>().First().OuterXml
+								.Equals(nonDefaultElements[precedingElem].Style.Descendants<StyleRunProperties>().First().OuterXml))
 							{
-								// Don't redirect to a characterElement that is linked to a paragraphElement.
-								if (defaultElem.LinkedParagraphElement != null)
-								{
-									continue;
-								}
-
-								if (nonDefaultElements[currentElem].Style.Descendants<StyleRunProperties>().First().OuterXml
-									.Equals(defaultElem.Style.Descendants<StyleRunProperties>().First().OuterXml))
-								{
-									// Properties are the same, redirect to the default element.
-									nonDefaultElements[currentElem].Redirect = defaultElem;
-									break;
-								}
-							}
-						}
-					}
-
-					// Check if the current element is the same as any of the preceding elements with the same ws.
-					if (nonDefaultElements[currentElem].Redirect == null)
-					{
-						// Iterate through the preceding elements to check if they have the same properties.
-						for (int precedingElem = 0; precedingElem < currentElem; precedingElem++)
-						{
-							// If the preceding element is already re-directed then there is no need to compare the current
-							// element to this preceding element, since it is the same as a preceding element that we would
-							// have already checked.
-							if (nonDefaultElements[precedingElem].Redirect == null)
-							{
-								if (nonDefaultElements[currentElem].WritingSystemId == nonDefaultElements[precedingElem].WritingSystemId &&
-									nonDefaultElements[currentElem].Style.Descendants<StyleRunProperties>().First().OuterXml
-									.Equals(nonDefaultElements[precedingElem].Style.Descendants<StyleRunProperties>().First().OuterXml))
-								{
-									// Properties are the same, redirect the later element to the earlier one.
-									nonDefaultElements[currentElem].Redirect = nonDefaultElements[precedingElem];
-									break;
-								}
+								// Properties are the same, redirect the later element to the earlier one.
+								nonDefaultElements[currentElem].Redirect = nonDefaultElements[precedingElem];
+								break;
 							}
 						}
 					}
