@@ -832,11 +832,24 @@ namespace SIL.FieldWorks.XWorks
 
 				// Calculate the height and width in emus to use for the drawing containing the textbox.
 				// Drawing extent is specified in English Metric Units or EMUs, 914400 EMUs corresponds to one inch, and there are 72 points per inch.
-				const double emusPerPoint = 914400.0/72.0;
-				DrawingWP.Extent textBoxExtent = newImagePar.Descendants<DrawingWP.Extent>().FirstOrDefault();
+				const int emusPerInch = 914400;
+				const double emusPerPoint = emusPerInch / 72.0;
 
-				Int64Value extentX = (Int64Value)Math.Ceiling((double)textBoxExtent.Cx + (24.0 * emusPerPoint));
-				Int64Value extentY = (Int64Value)Math.Ceiling((double)textBoxExtent.Cy + (48.0 * emusPerPoint));
+				DrawingWP.Extent pictureExtent = newImagePar.Descendants<DrawingWP.Extent>().FirstOrDefault();
+
+				// The textbox will resize its height as needed to fit the caption, we set its initial height as the height of the picture plus a 48 point vertical buffer.
+				Int64Value textBoxExtentY = (Int64Value)Math.Ceiling((double)pictureExtent.Cy + (48.0 * emusPerPoint));
+
+				// The textbox's width does not resize and is fixed at the value of extentX.
+				// Note that not all pictures will have the same width since some pictures may have smaller width than the user-specified maximum width.
+				// We use the user-specifed max width as textbox width, rather than the actual picture width, so that all textboxes
+				// and therefore all captions will have equal width.
+
+				// Calculate the maximum image width from the configuration.
+				// If we cannot get the user-specified max width value, use the actual picture width:
+				var picOpts = config.DictionaryNodeOptions as DictionaryNodePictureOptions;
+				var maxWidth = config.Model.Pictures?.Width ?? (picOpts?.MaximumWidth ?? pictureExtent.Cx);
+				Int64Value textBoxExtentX = (Int64Value)Math.Ceiling(maxWidth * emusPerInch + (24.0 * emusPerPoint));
 
 				WP.Paragraph textBoxPar = new WP.Paragraph();
 
@@ -855,12 +868,12 @@ namespace SIL.FieldWorks.XWorks
 					DistanceFromRight = (UInt32Value)0U
 				};
 
-				// This extent must also be declared in the anchor's shapeproperties element.
+				// This extent must also be declared later in the textbox drawing's shapeproperties element.
 				inline.Append(
 					new DrawingWP.Extent()
 					{
-						Cx = extentX,
-						Cy = extentY
+						Cx = textBoxExtentX,
+						Cy = textBoxExtentY
 					}
 				);
 
@@ -899,8 +912,8 @@ namespace SIL.FieldWorks.XWorks
 								new DrawingShape.ShapeProperties(
 									new XmlDrawing.TransformGroup(
 										new XmlDrawing.Offset(){X=0, Y=0},
-											// Specify the extent here and in the anchor itself (see above)
-											new XmlDrawing.Extents(){Cx = extentX, Cy = extentY}
+											// Specify the extent here and in the inline object itself (see above)
+											new XmlDrawing.Extents(){Cx = textBoxExtentX, Cy = textBoxExtentY}
 									),
 									new XmlDrawing.PresetGeometry() { Preset = XmlDrawing.ShapeTypeValues.Rectangle }
 								) { BlackWhiteMode = XmlDrawing.BlackWhiteModeValues.Auto },
@@ -912,7 +925,8 @@ namespace SIL.FieldWorks.XWorks
 								),
 
 								new DrawingShape.TextBodyProperties(
-									// ShapeAutoFit allows the textbox to resize if its contents overflow
+									// ShapeAutoFit allows the textbox to resize vertically if its contents overflow.
+									// This ensures the caption will fit in the textbox.
 									new XmlDrawing.ShapeAutoFit()
 								)
 								{
@@ -2120,9 +2134,6 @@ namespace SIL.FieldWorks.XWorks
 			const int emusPerInch = 914400;
 			var widthEmus = (long)(widthInches * emusPerInch);
 			var heightEmus = (long)(heightInches * emusPerInch);
-
-			// We want a 4pt right/left margin--4pt is equal to 0.0553 inches in MS word.
-			float rlMarginInches = 0.0553F;
 
 			// Create and add a floating image with image wrap set to top/bottom
 			// Name for the image -- the name of the file after all containing folders and the file extension are removed.
