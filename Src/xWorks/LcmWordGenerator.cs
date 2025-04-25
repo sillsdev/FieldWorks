@@ -2279,13 +2279,10 @@ namespace SIL.FieldWorks.XWorks
 					if (IsBidi)
 					{
 						CharacterElement elem = s_styleCollection.GetCharacterElement(uniqueDisplayName);
-						lock(_collectionLock)
+						if (!elem.WritingSystemIsRtl)
 						{
-							if (!elem.WritingSystemIsRtl)
-							{
-								var defVernWsId = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
-								elem.WritingSystemIsRtl = LcmWordGenerator.IsWritingSystemRightToLeft(Cache, defVernWsId);
-							}
+							var defVernWsId = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
+							elem.WritingSystemIsRtl = LcmWordGenerator.IsWritingSystemRightToLeft(Cache, defVernWsId);
 						}
 					}
 				}
