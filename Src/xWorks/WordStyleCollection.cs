@@ -667,7 +667,7 @@ namespace SIL.FieldWorks.XWorks
 			this.BasedOnElement = basedOnElem;
 		}
 		internal int WritingSystemId { get; }
-		internal bool WritingSystemIsRtl { get; }
+		internal bool WritingSystemIsRtl { get; set; }
 		internal CharacterElement Redirect { get; set; }
 		internal CharacterElement BasedOnElement { get; }
 		internal ParagraphElement LinkedParagraphElement { get; set; }
