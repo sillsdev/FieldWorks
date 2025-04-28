@@ -284,7 +284,7 @@
 		</part>
 		<part ref="DescriptionAllA">
 		</part>
-		<part ref="ShowInGloss" label="Use Abbreviation as label"/>
+		<part ref="ShowInGloss" label="Display label"/>
 		<part ref="InflectionFeaturesValuesSection" expansion="expanded" label="Values" menu="mnuDataTree-ClosedFeature-Values" >
 			<indent>
 				<part ref="Values" expansion="expanded" menu="mnuDataTree-ClosedFeature-Values"/>
