@@ -472,6 +472,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					view.UpdateStatus(string.Format(xWorksStrings.ExportingReversalsToWebonary, selectedReversal), WebonaryStatusCondition.None);
 					var writingSystem = model.Reversals[selectedReversal].WritingSystem;
+					// Set the ReversalIndexPublicationLayout to the correct reversal so that sorting will find the right saved settings
+					m_propertyTable.SetProperty("ReversalIndexPublicationLayout", model.Reversals[selectedReversal].FilePath, false);
 					entries = m_exportService.ExportConfiguredReversalJson(
 						tempDirectoryForExport, writingSystem, out entryIds,
 						model.Reversals[selectedReversal]);
