@@ -3817,6 +3817,82 @@ namespace SIL.FieldWorks.XWorks
 				"//span[@class='minimallexreferences']/span[@class='minimallexreference']/span[@class='configtargets']/span[@class='configtarget']/span[@class='headword']/span[@lang='fr']/span[@lang='fr']/a[@href]", 4);
 		}
 
+		/// <summary>
+		/// This tests the fix for LT-22076
+		/// </summary>
+		[Test]
+		public void GenerateContentForEntry_PublicationExcludedReferencesSkipped()
+		{
+			var manEntry = CreateInterestingLexEntry(Cache, "homme", "man");
+			var womanEntry = CreateInterestingLexEntry(Cache, "femme", "woman");
+			var mainDict = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0];
+			var flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			var pubMain = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual, mainDict);
+
+			var antonyms = CreateLexRefType(Cache, LexRefTypeTags.MappingTypes.kmtEntryPair, "Antonym", "ant", null, null);
+			CreateLexReference(antonyms, new[] { manEntry, womanEntry });
+
+			var wholeparts = CreateLexRefType(Cache, LexRefTypeTags.MappingTypes.kmtEntryTree, "Part", "pt", "Whole", "wh");
+			CreateLexReference(wholeparts, new[] { manEntry, womanEntry });
+
+			var refHeadwordNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "HeadWord",
+				DictionaryNodeOptions =
+					GetWsOptionsForLanguages(new[] { "vernacular" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular)
+			};
+			var targetsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "ConfigTargets",
+				Between = ", ",
+				Children = new List<ConfigurableDictionaryNode> { refHeadwordNode }
+			};
+			var relNameNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwnerType",
+				SubField = "Name",
+				After = ": ",
+				DictionaryNodeOptions =
+					GetWsOptionsForLanguages(new[] { "analysis" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
+			};
+			var relAbbrNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "OwnerType",
+				SubField = "Abbreviation",
+				After = ": ",
+				DictionaryNodeOptions =
+					GetWsOptionsForLanguages(new[] { "analysis" }, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis)
+			};
+			var relationsNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "MinimalLexReferences",
+				CSSClassNameOverride = "lexrefs",
+				Between = "; ",
+				DictionaryNodeOptions = GetListOptionsForStrings(DictionaryNodeListOptions.ListIds.Sense, new[]
+					{
+							wholeparts.Guid + ":r",
+							antonyms.Guid.ToString(),
+							wholeparts.Guid + ":f"
+						}),
+				Children = new List<ConfigurableDictionaryNode> { relAbbrNode, relNameNode, targetsNode }
+			};
+			var mainEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				Children = new List<ConfigurableDictionaryNode> { relationsNode }
+			};
+			var xpathLexRef = "//div/span[@class='lexrefs']/span[@class='lexref']";
+			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			// create a DictionaryPublicationDecorator excluding woman
+			var manResult = ConfiguredLcmGenerator.GenerateContentForEntry(manEntry, mainEntryNode, pubMain, DefaultSettings).ToString();
+			AssertThatXmlIn.String(manResult).HasSpecifiedNumberOfMatchesForXpath(xpathLexRef, 2); // Both references to woman are preseint
+			womanEntry.DoNotPublishInRC.Add(mainDict); // Set woman to not publish in the main dictionary
+			pubMain.Refresh();
+			//SUT
+			manResult = ConfiguredLcmGenerator.GenerateContentForEntry(manEntry, mainEntryNode, pubMain, DefaultSettings).ToString();
+			Assert.That(string.IsNullOrEmpty(manResult), Is.True); // Since only reference content is selected nothing should remain
+		}
+
 		[Test]
 		public void GenerateContentForEntry_GeneratesCssForConfigTargetsInLexReferences()
 		{
