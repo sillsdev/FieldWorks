@@ -360,7 +360,7 @@
 		<part ref="DescriptionAllA">
 		</part>
 		<part ref="Type" label="Type" />
-		<part ref="ShowInGloss" label="Use Abbreviation as label"/>
+		<part ref="ShowInGloss" label="Display label"/>
 		<part ref="RightGlossSepAllA">
 		</part>
 	</layout>
