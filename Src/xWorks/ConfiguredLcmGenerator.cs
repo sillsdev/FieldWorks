@@ -461,7 +461,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// REVIEW: We have overloaded terms here, this is a C# class not a css class, consider a different name
 				var customFieldOwnerClassName = GetClassNameForCustomFieldParent(config, settings.Cache);
-				if (!GetPropValueForCustomField(field, config, cache, publicationDecorator, customFieldOwnerClassName, config.FieldDescription, ref propertyValue))
+				if (!GetPropValueForModelField(field, config, cache, publicationDecorator, config.FieldDescription, ref propertyValue, customFieldOwnerClassName))
 					return settings.ContentGenerator.CreateFragment();
 			}
 			else
@@ -486,13 +486,12 @@ namespace SIL.FieldWorks.XWorks
 #endif
 					return settings.ContentGenerator.CreateFragment();
 				}
-				// This code demonstrates using the cache metadata,
-				// an alternative form of reflection to get values that respect the decorator
+				// Use the cache metadata to retrieve the value in a way that respects the decorator, fall back to normal reflection
 				bool success = false;
-				if (field is ICmObject)
+				if (field is ICmObject || field is ISenseOrEntry)
 				{
-					success = GetPropValueForCustomField(field, config, cache, publicationDecorator,
-					((ICmObject)field).ClassName, PlainFieldName(property.Name), ref propertyValue);
+					success = GetPropValueForModelField(field, config, cache, publicationDecorator,
+						PlainFieldName(property.Name), ref propertyValue);
 				}
 
 				if (!success)
@@ -510,7 +509,7 @@ namespace SIL.FieldWorks.XWorks
 				if (config.IsCustomField)
 				{
 					// Get the custom field value (in SubField) using the property which came from the field object
-					if (!GetPropValueForCustomField(propertyValue, config, cache, publicationDecorator, ((ICmObject)propertyValue).ClassName,
+					if (!GetPropValueForModelField(propertyValue, config, cache, publicationDecorator,
 						config.SubField, ref propertyValue))
 					{
 						return settings.ContentGenerator.CreateFragment();
@@ -616,9 +615,29 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <returns>true if the custom field was valid and false otherwise</returns>
 		/// <remarks>propertyValue can be null if the custom field is valid but no value is stored for the owning object</remarks>
-		private static bool GetPropValueForCustomField(object fieldOwner, ConfigurableDictionaryNode config,
-			LcmCache cache, ISilDataAccess decorator, string customFieldOwnerClassName, string customFieldName, ref object propertyValue)
+		private static bool GetPropValueForModelField(object fieldOwner, ConfigurableDictionaryNode config,
+			LcmCache cache, ISilDataAccess decorator, string customFieldName, ref object propertyValue, string cfOwnerClassName = null)
 		{
+			var customFieldOwnerClassName = cfOwnerClassName;
+			ICmObject specificObject;
+			if (fieldOwner is ISenseOrEntry senseOrEntry)
+			{
+				// assign the customFieldOwnerClassName if it was not passed in
+				customFieldOwnerClassName = customFieldOwnerClassName ?? senseOrEntry.Item.ClassName;
+				specificObject = senseOrEntry.Item;
+			}
+			else if(fieldOwner is ICmObject owner)
+			{
+				specificObject = owner;
+				// assign the customFieldOwnerClassName if it was not passed in
+				customFieldOwnerClassName = customFieldOwnerClassName ?? specificObject.ClassName;
+				senseOrEntry = null;
+			}
+			else
+			{
+				// throw an argument exception if the field owner is not a valid type
+				throw new ArgumentException("The field owner is not a valid type", nameof(fieldOwner));
+			}
 			if (decorator == null)
 				decorator = cache.DomainDataByFlid;
 			int customFieldFlid = GetCustomFieldFlid(config, cache, customFieldOwnerClassName, customFieldName);
@@ -626,19 +645,13 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 
 			var customFieldType = cache.MetaDataCacheAccessor.GetFieldType(customFieldFlid);
-			ICmObject specificObject;
-			if (fieldOwner is ISenseOrEntry)
+			if (senseOrEntry != null)
 			{
-				specificObject = ((ISenseOrEntry)fieldOwner).Item;
-				if (!((IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor).GetFields(specificObject.ClassID,
+				if (!((IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor).GetFields(senseOrEntry.Item.ClassID,
 					true, (int)CellarPropertyTypeFilter.All).Contains(customFieldFlid))
 				{
 					return false;
 				}
-			}
-			else
-			{
-				specificObject = (ICmObject)fieldOwner;
 			}
 
 			switch (customFieldType)
@@ -649,7 +662,7 @@ namespace SIL.FieldWorks.XWorks
 				case (int)CellarPropertyType.ReferenceSequence:
 				case (int)CellarPropertyType.OwningSequence:
 					{
-						var sda = cache.MainCacheAccessor;
+						var sda = decorator;
 						// This method returns the hvo of the object pointed to
 						var chvo = sda.get_VecSize(specificObject.Hvo, customFieldFlid);
 						int[] contents;
@@ -1486,7 +1499,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else if (IsLexReferenceCollection(config))
 				{
-					GenerateContentForLexRefCollection(nodeList, collection.Cast<ILexReference>(), cmOwner, pubDecorator, settings, frag);
+					GenerateContentForLexRefCollection(nodeList, collection.Cast<ILexReference>().Where(r => pubDecorator == null || pubDecorator.IsPublishableLexRef(r.Hvo)), cmOwner, pubDecorator, settings, frag);
 				}
 				else
 				{
@@ -2048,6 +2061,23 @@ namespace SIL.FieldWorks.XWorks
 				// If a type field has been factored out and generated then skip generating it here
 				foreach (var child in config.ReferencedOrDirectChildren.Where(child => !ReferenceEquals(child, factoredTypeField)))
 				{
+					// Get the CmObject for the item
+					ICmObject cmObj;
+					if (item is ICmObject)
+					{
+						cmObj = (ICmObject)item;
+					}
+					else if (item is ISenseOrEntry)
+					{
+						cmObj = ((ISenseOrEntry)item).Item;
+					}
+					else
+					{
+						cmObj = null;
+					}
+					// Check if the object is excluded from publication before generating any content
+					if (cmObj != null && publicationDecorator != null && publicationDecorator.IsExcludedObject(cmObj))
+						continue;
 					var childNodeList = BuildNodeList(nodeList, child);
 					bldr.Append(GenerateContentForFieldByReflection(item, childNodeList, publicationDecorator, settings));
 				}

@@ -246,7 +246,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public override ITsMultiString get_MultiStringProp(int hvo, int tag)
 		{
-			if (tag == m_mlHeadwordFlid)
+			if (tag == m_mlHeadwordFlid || tag == m_headwordRefFlid)
 			{
 				return new PublicationAwareMultiStringAccessor(hvo, tag, this);
 			}
@@ -280,8 +280,8 @@ namespace SIL.FieldWorks.XWorks
 				return OwnerOutlineNameForWs(sense, ws, headwordVariant);
 			}
 
-			// In case it's one we somehow don't know about, we'll let the base method try to get the real HN.
-			return base.get_MultiStringAlt(hvo, tag, ws);
+			// If the headword was excluded, we need to return an empty string.
+			return TsStringUtils.MakeString(string.Empty, ws);
 		}
 
 		/// <summary>
