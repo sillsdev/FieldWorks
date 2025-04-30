@@ -1133,8 +1133,18 @@ namespace SIL.FieldWorks.XWorks
 				((DocFragment)elementContent).DocBody.Append(afterRun);
 			}
 
-			// Add Bullet and Numbering Data to lists.
-			AddBulletAndNumberingData(elementContent, nodeList, eachInAParagraph);
+			if (eachInAParagraph)
+			{
+				var paraContent = new DocFragment();
+				WP.Paragraph newPara = new WP.Paragraph();
+				SeparateIntoFirstLevelElements(paraContent, newPara, elementContent as DocFragment, nodeList);
+
+				// Add Bullet and Numbering Data to lists.
+				AddBulletAndNumberingData(paraContent, nodeList, eachInAParagraph);
+
+				return paraContent;
+			}
+
 			return elementContent;
 		}
 		public IFragment GenerateGramInfoBeforeSensesContent(IFragment content, List<ConfigurableDictionaryNode> nodeList)
