@@ -104,6 +104,8 @@
 		<ItemGroup>
 			<RemovedSinceLastBase Include="$(dir-outputBase)/Helps/WW-ConceptualIntro/ConceptualIntroduction.htm" />
 			<RemovedSinceLastBase Include="$(dir-outputBase)/Helps/ConceptualIntroFLEx.pdf" />
+			<RemovedSinceLastBase Include="$(dir-outputBase)/NHunspell.dll" />
+			<RemovedSinceLastBase Include="$(dir-outputBase)/Hunspellx64.dll" />
 		</ItemGroup>
 		<WriteLinesToFile File="%(RemovedSinceLastBase.FullPath)" Lines="" />
 	</Target>
