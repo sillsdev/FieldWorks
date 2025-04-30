@@ -369,25 +369,25 @@ namespace SIL.FieldWorks.XWorks
 			if (Publication != null)
 			{
 				foreach (var obj in Publication.ReferringObjects)
-			{
-				var entry = obj as ILexEntry;
+				{
+					var entry = obj as ILexEntry;
 					if (entry == null || entry.DoNotPublishInRC.Contains(Publication))
-				{
-					m_excludedItems.Add(obj.Hvo);
-					if (obj is ILexEntry)
-						foreach (var sense in ((ILexEntry)obj).SensesOS)
-							ExcludeSense(sense);
-					if (obj is ILexSense)
-						ExcludeSense((ILexSense)obj);
-				}
-				else
-				{
-					// It's an entry, and the only other option is that it refers in DoNotShowAsMainEntry
-					Debug.Assert(entry.DoNotShowMainEntryInRC.Contains(Publication));
-					m_excludeAsMainEntry.Add(entry.Hvo);
+					{
+						m_excludedItems.Add(obj.Hvo);
+						if (obj is ILexEntry)
+							foreach (var sense in ((ILexEntry)obj).SensesOS)
+								ExcludeSense(sense);
+						if (obj is ILexSense)
+							ExcludeSense((ILexSense)obj);
+					}
+					else
+					{
+						// It's an entry, and the only other option is that it refers in DoNotShowAsMainEntry
+						Debug.Assert(entry.DoNotShowMainEntryInRC.Contains(Publication));
+						m_excludeAsMainEntry.Add(entry.Hvo);
+					}
 				}
 			}
-		}
 		}
 
 		private void ExcludeSense(ILexSense sense)
@@ -557,14 +557,11 @@ namespace SIL.FieldWorks.XWorks
 
 		public override int get_VecSize(int hvo, int tag)
 		{
-			// Enhance JohnT: might be more efficient to call base if not a modified property?
 			return VecProp(hvo, tag).Length;
 		}
 
 		public override int get_VecItem(int hvo, int tag, int index)
 		{
-			// Enhance JohnT: might be more efficient to call base if not a modified property?
-			// Enhance JohnT: Sstop the enumeration filter when we get the one we need.
 			return VecProp(hvo, tag)[index];
 		}
 
