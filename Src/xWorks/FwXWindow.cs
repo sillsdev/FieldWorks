@@ -322,7 +322,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// The window has lost the focus.
 			// Save changes so that other applications can access them.
-			Cache.ServiceLocator.GetInstance<IUndoStackManager>().StopSaveTimer();
 			Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
 		}
 
