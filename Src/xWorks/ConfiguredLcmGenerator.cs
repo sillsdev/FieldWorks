@@ -805,7 +805,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary/>
 		/// <returns>Returns the flid of the custom field identified by the configuration nodes FieldDescription
 		/// in the class identified by <code>customFieldOwnerClassName</code></returns>
-		private static int GetCustomFieldFlid(ConfigurableDictionaryNode config, LcmCache cache,
+		internal static int GetCustomFieldFlid(ConfigurableDictionaryNode config, LcmCache cache,
 														  string customFieldOwnerClassName, string customFieldName = null)
 		{
 			var fieldName = customFieldName ?? config.FieldDescription;
@@ -828,7 +828,7 @@ namespace SIL.FieldWorks.XWorks
 		/// This method will return the string representing the class name for the parent
 		/// node of a configuration item representing a custom field.
 		/// </summary>
-		private static string GetClassNameForCustomFieldParent(ConfigurableDictionaryNode customFieldNode, LcmCache cache)
+		internal static string GetClassNameForCustomFieldParent(ConfigurableDictionaryNode customFieldNode, LcmCache cache)
 		{
 			// Use the type of the nearest ancestor that is not a grouping node
 			var parentNode = customFieldNode.Parent;

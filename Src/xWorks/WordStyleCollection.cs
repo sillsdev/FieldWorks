@@ -5,6 +5,7 @@
 using DocumentFormat.OpenXml.Wordprocessing;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
 using System.Collections.Generic;
 using System.Linq;
 using XCore;
@@ -274,14 +275,15 @@ namespace SIL.FieldWorks.XWorks
 			// Generate the unique name and style for each node (starting from the root node).
 			string uniqueDisplayName = "";
 			string parentUniqueDisplayName = null;
+			ConfigurableDictionaryNode parentNode = null;
 			string nodePath = null;
 			foreach (var node in nodeList)
 			{
 				nodePath += $".{CssGenerator.GetClassAttributeForConfig(node)} ";
-
-				uniqueDisplayName = AddStyle(node.Style, node.DisplayLabel,
-					nodePath, parentUniqueDisplayName, wsId);
+				string displayNameBase = GetDisplayNameBase(node, parentNode, parentUniqueDisplayName);
+				uniqueDisplayName = AddStyle(node.Style, displayNameBase, nodePath, parentUniqueDisplayName, wsId);
 				parentUniqueDisplayName = uniqueDisplayName;
+				parentNode = node;
 			}
 			return uniqueDisplayName;
 		}
@@ -621,6 +623,75 @@ namespace SIL.FieldWorks.XWorks
 				pictureCaptionStyle, 1, WordStylesGenerator.PictureAndCaptionNodePath, null);
 			AddParagraphElement(pictureCaptionElem);
 			pictureCaptionElem.Used = true;
+		}
+
+		/// <summary>
+		/// Get the DisplayNameBase. In most situations this is just the node.DisplayLabel.
+		/// The one situation that is different is list items.  For list items we modify
+		/// the DisplayNameBase so that it also includes the name of the list. This was done
+		/// to make it easier for users to identify where the list item is used.
+		/// </summary>
+		private string GetDisplayNameBase(ConfigurableDictionaryNode node, ConfigurableDictionaryNode parentNode,
+			string parentUniqueDisplayName)
+		{
+			string displayNameBase = node.DisplayLabel;
+			if (parentNode != null)
+			{
+				// Check for custom field lists.
+				bool parentIsCustomFieldPossibilityList = false;
+				if (parentNode.IsCustomField)
+				{
+					int fieldId = GetFieldIdForCustomField(parentNode);
+					if (fieldId != 0)
+					{
+						var cache = _propertyTable.GetValue<LcmCache>("cache");
+						var metaDataCache = (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor;
+						var listId = metaDataCache.GetFieldListRoot(fieldId);
+						if (listId != System.Guid.Empty)
+						{
+							parentIsCustomFieldPossibilityList = true;
+						}
+					}
+				}
+
+				// Modify the display name base for items on these lists.
+				var parentClassName = CssGenerator.GetClassAttributeForConfig(parentNode);
+				if (parentIsCustomFieldPossibilityList   ||
+					parentClassName == "semanticdomains" ||
+					parentClassName == "anthrocodes"     ||
+					parentClassName == "academicdomains" ||
+					parentClassName == "usages"          ||
+					parentClassName == "sensetype"       ||
+					parentClassName == "status"          ||
+					parentClassName == "dialectlabelsrs")
+				{
+					CharacterElement parentElem = GetCharacterElement(parentUniqueDisplayName);
+					displayNameBase = parentElem.DisplayNameBase + WordStylesGenerator.StyleSeparator + node.DisplayLabel;
+				}
+			}
+			return displayNameBase;
+		}
+
+		/// <summary>
+		/// Get the field id for a custom field node.
+		/// </summary>
+		/// <returns>The flid for a custom field. Returns zero if not a custom field
+		/// or if we failed to get a flid.</returns>
+		private int GetFieldIdForCustomField(ConfigurableDictionaryNode node)
+		{
+			try
+			{
+				var cache = _propertyTable.GetValue<LcmCache>("cache");
+				var parentClass = ConfiguredLcmGenerator.GetClassNameForCustomFieldParent(node, cache);
+				if (parentClass == null)
+					return 0;
+				var flid = ConfiguredLcmGenerator.GetCustomFieldFlid(node, cache, parentClass);
+				return flid;
+			}
+			catch (System.Exception)
+			{
+				return 0;
+			}
 		}
 
 		/// <summary>
