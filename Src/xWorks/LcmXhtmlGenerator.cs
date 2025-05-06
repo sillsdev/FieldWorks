@@ -1098,7 +1098,16 @@ namespace SIL.FieldWorks.XWorks
 				xw.WriteStartElement(isBlockProperty ? "div" : "span");
 				xw.WriteAttributeString("class", className);
 				WriteNodeId(xw, nodeList.Last(), settings);
+				if (writingSystem != null)
+				{
+					xw.WriteStartElement("span");
+					xw.WriteAttributeString("lang", writingSystem);
+				}
 				xw.WriteString(content);
+				if (writingSystem != null)
+				{
+					xw.WriteEndElement();
+				}
 				xw.WriteEndElement();
 				xw.Flush();
 				return fragment;
