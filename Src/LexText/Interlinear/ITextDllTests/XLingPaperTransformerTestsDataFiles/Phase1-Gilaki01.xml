@@ -1,0 +1,1655 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<document>
+  <interlinear-text guid="272ed0be-5ea4-43ce-8486-c5a2eb6ffa42">
+    <item type="title" lang="en">01 Greeting</item>
+    <item type="title-abbreviation" lang="en">01 Greeting</item>
+    <item type="source" lang="en">Giljanskij jazyk by Rastorgueva et al</item>
+    <item type="comment" lang="en"></item>
+    <paragraphs>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">1</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">səlam</item>
+                    <item type="gls" lang="en">hello</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">aleykum</item>
+                    <item type="gls" lang="en">to.you</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">!</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">Hello!</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">2</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">aleykum</item>
+                    <item type="gls" lang="en">to.you</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">səlam</item>
+                    <item type="gls" lang="en">hello</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">!</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">Hello!</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">3</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">ti</item>
+                    <item type="gls" lang="en">2sg.gen</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">ahvål</item>
+                    <item type="gls" lang="en">condition</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">čutor</item>
+                    <item type="gls" lang="en">how</item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">=ə</item>
+                    <item type="gls" lang="en">=be.prs.3sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">?</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">How are you? (lit. How is your condition?)</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">4</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">mi</item>
+                    <item type="gls" lang="en">1sg.gen</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">ahvål</item>
+                    <item type="gls" lang="en">condition</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">xob</item>
+                    <item type="gls" lang="en">good</item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">=ə</item>
+                    <item type="gls" lang="en">=be.prs.3sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">Fine. (lit. My condition is good.)</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">5</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">či</item>
+                    <item type="gls" lang="en">what</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">kun</item>
+                    <item type="gls" lang="en">do.prs</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-i</item>
+                    <item type="gls" lang="en">2sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">|</item>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">či</item>
+                    <item type="gls" lang="en">what</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">kår</item>
+                    <item type="gls" lang="en">work</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">kun</item>
+                    <item type="gls" lang="en">do.prs</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-i</item>
+                    <item type="gls" lang="en">2sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">?</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">What are you doing? How are you getting on?</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">6</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">bəd</item>
+                    <item type="gls" lang="en">bad</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">n-</item>
+                    <item type="gls" lang="en">neg</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">i</item>
+                    <item type="gls" lang="en">be.prs</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-yəm</item>
+                    <item type="gls" lang="en">1sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">I am not bad.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">7</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">šime</item>
+                    <item type="gls" lang="en">2pl.gen</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">zak</item>
+                    <item type="gls" lang="en">child</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-an</item>
+                    <item type="gls" lang="en">pl</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">či</item>
+                    <item type="gls" lang="en">what</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">kun</item>
+                    <item type="gls" lang="en">do.prs</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-idi</item>
+                    <item type="gls" lang="en">2/3pl</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">?</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">What are your children doing?</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">8</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">alhamdullå</item>
+                    <item type="gls" lang="en">praise.God</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">,</item>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">bəd</item>
+                    <item type="gls" lang="en">bad</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">n-</item>
+                    <item type="gls" lang="en">neg</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">i</item>
+                    <item type="gls" lang="en">be.prs</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-idi</item>
+                    <item type="gls" lang="en">2/3pl</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">,</item>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">dərs</item>
+                    <item type="gls" lang="en">lesson</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">xan</item>
+                    <item type="gls" lang="en">read.prs</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-idi</item>
+                    <item type="gls" lang="en">2/3pl</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">,</item>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">kår</item>
+                    <item type="gls" lang="en">work</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">kun</item>
+                    <item type="gls" lang="en">do.prs</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-idi</item>
+                    <item type="gls" lang="en">2/3pl</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">Praise God, they are not bad. They are studying and working.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">9</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">koya</item>
+                    <item type="gls" lang="en">where</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">šo</item>
+                    <item type="gls" lang="en">go.pst</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-on</item>
+                    <item type="gls" lang="en">inf</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">dər</item>
+                    <item type="gls" lang="en">have.aux</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-i</item>
+                    <item type="gls" lang="en">2sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">?</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">Where are you going?</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">10</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">šime</item>
+                    <item type="gls" lang="en">2pl.gen</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">xånə</item>
+                    <item type="gls" lang="en">house</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">biǰa</item>
+                    <item type="gls" lang="en">side</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">ita</item>
+                    <item type="gls" lang="en">one</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">məɣåzə</item>
+                    <item type="gls" lang="en">store</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">tåzə</item>
+                    <item type="gls" lang="en">recently</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="proclitic" guid="d7f713e2-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">va=</item>
+                    <item type="gls" lang="en">vpfx=</item>
+                  </morph>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">∅-</item>
+                    <item type="gls" lang="en">pfv</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">bost</item>
+                    <item type="gls" lang="en">become.pst</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-ə</item>
+                    <item type="gls" lang="en">3sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">,</item>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">uyə</item>
+                    <item type="gls" lang="en">there</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">šo</item>
+                    <item type="gls" lang="en">go.pst</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-on</item>
+                    <item type="gls" lang="en">inf</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">dər</item>
+                    <item type="gls" lang="en">have.aux</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-əm</item>
+                    <item type="gls" lang="en">1sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">A new store has opened near your house. I am going there.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">11</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">a</item>
+                    <item type="gls" lang="en">this</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">məɣåzə</item>
+                    <item type="gls" lang="en">store</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">či</item>
+                    <item type="gls" lang="en">what</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">məɣåzə</item>
+                    <item type="gls" lang="en">store</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">is</item>
+                    <item type="gls" lang="en">be.pst</item>
+                    <item type="glsAppend" lang="en">.***</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-ə</item>
+                    <item type="gls" lang="en">3sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">?</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">What sort of store is it? (lit. This store, what store is it?)</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">12</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">mən</item>
+                    <item type="gls" lang="en">1sg.nom</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">ni-</item>
+                    <item type="gls" lang="en">neg</item>
+                  </morph>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">∅-</item>
+                    <item type="gls" lang="en">pfv</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">d</item>
+                    <item type="gls" lang="en">see.pst</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-emə</item>
+                    <item type="gls" lang="en">1sg.pfv</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">,</item>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">g</item>
+                    <item type="gls" lang="en">say.prs</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-idi</item>
+                    <item type="gls" lang="en">2/3pl</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk">:</item>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">xob</item>
+                    <item type="gls" lang="en">good</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">məɣåzə</item>
+                    <item type="gls" lang="en">store</item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">=yə</item>
+                    <item type="gls" lang="en">=be.prs.3sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">,</item>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="phrase" guid="a23b6faa-1052-4f4d-984b-4b338bdaf95f">
+                    <item type="txt" lang="glk-Latn-x-rast">hamə či</item>
+                    <item type="gls" lang="en">everything</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">dar</item>
+                    <item type="gls" lang="en">have.prs</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-e</item>
+                    <item type="gls" lang="en">3sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">I have not seen it. They say: "It is a good store. It has everything."</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">13</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">xa</item>
+                    <item type="gls" lang="en">want.prs</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-yəm</item>
+                    <item type="gls" lang="en">1sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">bə-</item>
+                    <item type="gls" lang="en">sbjv</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">š</item>
+                    <item type="gls" lang="en">go.prs</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-əm</item>
+                    <item type="gls" lang="en">1sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">uyə</item>
+                    <item type="gls" lang="en">there</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">ipiče</item>
+                    <item type="gls" lang="en">a.bit</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">zak</item>
+                    <item type="gls" lang="en">child</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-an</item>
+                    <item type="gls" lang="en">pl</item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">=əre</item>
+                    <item type="gls" lang="en">=ben</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">čiz</item>
+                    <item type="gls" lang="en">thing</item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">=o</item>
+                    <item type="gls" lang="en">=and</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">miz</item>
+                    <item type="gls" lang="en">thing</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">bi-</item>
+                    <item type="gls" lang="en">sbjv</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">hin</item>
+                    <item type="gls" lang="en">buy.prs</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-əm</item>
+                    <item type="gls" lang="en">1sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">I want to go there and buy something for the children.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">14</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">heyf</item>
+                    <item type="gls" lang="en">pity</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">,</item>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">mən</item>
+                    <item type="gls" lang="en">1sg.nom</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">nə-</item>
+                    <item type="gls" lang="en">neg</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">tan</item>
+                    <item type="gls" lang="en">able.prs</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-əm</item>
+                    <item type="gls" lang="en">1sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">b-</item>
+                    <item type="gls" lang="en">sbjv</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">a</item>
+                    <item type="gls" lang="en">come.prs</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-yəm</item>
+                    <item type="gls" lang="en">1sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">,</item>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">ipiče</item>
+                    <item type="gls" lang="en">a.bit</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">kår</item>
+                    <item type="gls" lang="en">work</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">dar</item>
+                    <item type="gls" lang="en">have.prs</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-əm</item>
+                    <item type="gls" lang="en">1sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">,</item>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">vəillå</item>
+                    <item type="gls" lang="en">otherwise</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">ti</item>
+                    <item type="gls" lang="en">2sg.gen</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">amara</item>
+                    <item type="gls" lang="en">with</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">amo</item>
+                    <item type="gls" lang="en">come.pst</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-i</item>
+                    <item type="gls" lang="en">ipfv</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-m</item>
+                    <item type="gls" lang="en">1sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">It is a pity that I cannot come. I have a bit of work [to do], otherwise I would come with you.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">15</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">tu</item>
+                    <item type="gls" lang="en">2sg.nom</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">bu-</item>
+                    <item type="gls" lang="en">imp</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">gu</item>
+                    <item type="gls" lang="en">say.prs</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-∅</item>
+                    <item type="gls" lang="en">2sg.imp</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">bi-</item>
+                    <item type="gls" lang="en">sbjv</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">din</item>
+                    <item type="gls" lang="en">see.prs</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-əm</item>
+                    <item type="gls" lang="en">1sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">,</item>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">mi</item>
+                    <item type="gls" lang="en">1sg.gen</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">abǰi</item>
+                    <item type="gls" lang="en">mother</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">či</item>
+                    <item type="gls" lang="en">what</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">kun</item>
+                    <item type="gls" lang="en">do.prs</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-e</item>
+                    <item type="gls" lang="en">3sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">?</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">Can you tell me what my mother is doing?</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">16</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">məgər</item>
+                    <item type="gls" lang="en">q</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">tu</item>
+                    <item type="gls" lang="en">2sg.nom</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">n-</item>
+                    <item type="gls" lang="en">neg</item>
+                  </morph>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">∅-</item>
+                    <item type="gls" lang="en">sbjv</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">an</item>
+                    <item type="gls" lang="en">know.prs</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-i</item>
+                    <item type="gls" lang="en">2sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">,</item>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">mi</item>
+                    <item type="gls" lang="en">1sg.gen</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">mår</item>
+                    <item type="gls" lang="en">mother</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">nåxuš</item>
+                    <item type="gls" lang="en">unwell</item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">=ə</item>
+                    <item type="gls" lang="en">=be.prs.3sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">Do you not know that my mother is ill?</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">17</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">na</item>
+                    <item type="gls" lang="en">no</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">,</item>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">xudå</item>
+                    <item type="gls" lang="en">God</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">nu-</item>
+                    <item type="gls" lang="en">neg</item>
+                  </morph>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">∅-</item>
+                    <item type="gls" lang="en">sbjv</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">kun</item>
+                    <item type="gls" lang="en">do.prs</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-ə</item>
+                    <item type="gls" lang="en">3sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">No, God forbid.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">18</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">una</item>
+                    <item type="gls" lang="en">3sg.acc/dat.dist</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">či</item>
+                    <item type="gls" lang="en">what</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">bu-</item>
+                    <item type="gls" lang="en">pfv</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">bost</item>
+                    <item type="gls" lang="en">become.pst</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-ə</item>
+                    <item type="gls" lang="en">3sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">?</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">What has happened to her?</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">19</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">bale</item>
+                    <item type="gls" lang="en">yes</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">,</item>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">alan</item>
+                    <item type="gls" lang="en">presently</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">du</item>
+                    <item type="gls" lang="en">two</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">må</item>
+                    <item type="gls" lang="en">month</item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">=yə</item>
+                    <item type="gls" lang="en">=be.prs.3sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">ki</item>
+                    <item type="gls" lang="en">cmpl</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">nåxuš</item>
+                    <item type="gls" lang="en">unwell</item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">=ə</item>
+                    <item type="gls" lang="en">=be.prs.3sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">Yes, it is now two months that she is unwell.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">20</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">xaxur</item>
+                    <item type="gls" lang="en">sister</item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">=ǰan</item>
+                    <item type="gls" lang="en">=dear</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">,</item>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">tu</item>
+                    <item type="gls" lang="en">2sg.nom</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">mara</item>
+                    <item type="gls" lang="en">1sg.acc/dat</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">bə-</item>
+                    <item type="gls" lang="en">imp</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">baxš</item>
+                    <item type="gls" lang="en">forgive.prs</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-∅</item>
+                    <item type="gls" lang="en">2sg.imp</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">!</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">Dear sister, forgive me!</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">21</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">mən</item>
+                    <item type="gls" lang="en">1sg.nom</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">n-</item>
+                    <item type="gls" lang="en">neg</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">anəst</item>
+                    <item type="gls" lang="en">know.pst</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-i</item>
+                    <item type="gls" lang="en">ipfv</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-m</item>
+                    <item type="gls" lang="en">1sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk-Latn-x-rast">,</item>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">vəillå</item>
+                    <item type="gls" lang="en">otherwise</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">a</item>
+                    <item type="gls" lang="en">this</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">vəxt</item>
+                    <item type="gls" lang="en">time</item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">=ə</item>
+                    <item type="gls" lang="en">=ez</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">ɣədər</item>
+                    <item type="gls" lang="en">much</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">hizår</item>
+                    <item type="gls" lang="en">1000</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">vår</item>
+                    <item type="gls" lang="en">instance</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">b-</item>
+                    <item type="gls" lang="en">pfv</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">amo</item>
+                    <item type="gls" lang="en">come.pst</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-∅</item>
+                    <item type="gls" lang="en">pspt</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">bu</item>
+                    <item type="gls" lang="en">be.aux</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-m</item>
+                    <item type="gls" lang="en">1sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">I did not know, otherwise I should have come a thousand times.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">22</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">xudå</item>
+                    <item type="gls" lang="en">God</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">tara</item>
+                    <item type="gls" lang="en">2sg.acc/dat</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">amere</item>
+                    <item type="gls" lang="en">1pl.ben</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">bə-</item>
+                    <item type="gls" lang="en">sbjv</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">dar</item>
+                    <item type="gls" lang="en">keep.prs</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-ə</item>
+                    <item type="gls" lang="en">3sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">May God keep you for us.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">23</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">mən</item>
+                    <item type="gls" lang="en">1sg.nom</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">hamišə</item>
+                    <item type="gls" lang="en">always</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">g</item>
+                    <item type="gls" lang="en">say.prs</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">-əmə</item>
+                    <item type="gls" lang="en">1sg.fut</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk">:</item>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">mi</item>
+                    <item type="gls" lang="en">1sg.gen</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">zahra</item>
+                    <item type="gls" lang="en">Zahra</item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">=ǰan</item>
+                    <item type="gls" lang="en">=dear</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">xeyli</item>
+                    <item type="gls" lang="en">very</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">mehrəbån</item>
+                    <item type="gls" lang="en">kind</item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="glk-Latn-x-rast">=ə</item>
+                    <item type="gls" lang="en">=be.prs.3sg</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">I will always say, "My dear Zahra is very kind."</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">24</item>
+            <words>
+              <word>
+                <morphemes>
+                  <morph type="phrase" guid="a23b6faa-1052-4f4d-984b-4b338bdaf95f">
+                    <item type="txt" lang="glk-Latn-x-rast">xudå håfez</item>
+                    <item type="gls" lang="en">goodbye</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="glk">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">Goodbye.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+    </paragraphs>
+    <languages>
+      <language lang="en" font="Charis SIL" />
+      <language lang="glk-Latn-x-rast" font="Doulos SIL" vernacular="true" />
+      <language lang="glk" font="Lateef" vernacular="true" RightToLeft="true" />
+    </languages>
+  </interlinear-text>
+</document>

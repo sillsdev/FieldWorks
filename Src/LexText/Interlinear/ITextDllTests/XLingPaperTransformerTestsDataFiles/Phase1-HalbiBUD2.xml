@@ -1,0 +1,3432 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<document>
+  <interlinear-text guid="75f91265-7ace-4956-81dd-ee46e36f5bcc">
+    <item type="title" lang="en">BUD-2: About the həm</item>
+    <item type="source" lang="en">Halbi text tape 4b:192-327 circa 1968. Narrator: Budri. Researchers: Betsy Schuyler and Fran Woods.</item>
+    <item type="comment" lang="en">in vol 5. The text is mainly descriptive exposition though there are sections where the text becomes procedural (s6.6) or narrative (s19)</item>
+    <paragraphs>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">1</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">हम</item>
+                <item type="txt" lang="hlb-fonipa">həm</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">crisscrossed sticks</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">देतोर आए</item>
+                <item type="txt" lang="hlb-fonipa">detor ae</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">give</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">conj.inc</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">is.3s</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">The ceremony involving the criss-crossed sticks is to be doing.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">2</item>
+            <words>
+              <word>
+                <item type="punct" lang="hlb-fonipa">(</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">साँगलासोरतबे</item>
+                <item type="txt" lang="hlb-fonipa">sãɡlasotbe</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">tell</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">3p.pc</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">ab</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">काए</item>
+                <item type="txt" lang="hlb-fonipa">kae</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">EchoQn</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">prt</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.)</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">They have told (about this), haven't they? </item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">3</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">हम</item>
+                <item type="txt" lang="hlb-fonipa">həm</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">crisscrossed sticks</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">असन</item>
+                <item type="txt" lang="hlb-fonipa">əsən</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">like this</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">देओ</item>
+                <item type="txt" lang="hlb-fonipa">deo</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">spirit</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">बोनातोर</item>
+                <item type="txt" lang="hlb-fonipa">bonator</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">fix</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">conj.inc</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">होले</item>
+                <item type="txt" lang="hlb-fonipa">hole</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">become</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">cnsuf</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">The criss-crossed sticks ceremony (is to be performed) when the spirits need to be pacified.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">4.1</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">नानी</item>
+                <item type="txt" lang="hlb-fonipa">nani</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">small</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">नानी</item>
+                <item type="txt" lang="hlb-fonipa">nani</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">small</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">चीरवा</item>
+                <item type="txt" lang="hlb-fonipa">tʃirwa</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">kindling</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">दारू</item>
+                <item type="txt" lang="hlb-fonipa">daru</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">wood</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">नानी</item>
+                <item type="txt" lang="hlb-fonipa">nani</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">small</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">नानी</item>
+                <item type="txt" lang="hlb-fonipa">nani</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">small</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">दीदलीहीन</item>
+                <item type="txt" lang="hlb-fonipa">didlihin</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">this small size</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">दीदलीहीन</item>
+                <item type="txt" lang="hlb-fonipa">didlihin</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">this small size</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">चीरवा</item>
+                <item type="txt" lang="hlb-fonipa">tʃirwa</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">kindling</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">आरू</item>
+                <item type="txt" lang="hlb-fonipa">aru</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">and</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">conj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">हून</item>
+                <item type="txt" lang="hlb-fonipa">hun</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">that</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">dem</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">के</item>
+                <item type="txt" lang="hlb-fonipa">ke</item>
+                <morphemes>
+                  <morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+                    <item type="gls" lang="en">GOL</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">case</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">एदे</item>
+                <item type="txt" lang="hlb-fonipa">ede</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">excl of attention</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">excl</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">असन</item>
+                <item type="txt" lang="hlb-fonipa">əsən</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">like this</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">असन</item>
+                <item type="txt" lang="hlb-fonipa">əsən</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">like this</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">देऊआत</item>
+                <item type="txt" lang="hlb-fonipa">deuat</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">give</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">3p.f2</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">bitrans</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">आड़की बीड़की</item>
+                <item type="txt" lang="hlb-fonipa">aɽki biɽki</item>
+                <morphemes>
+                  <morph type="phrase" guid="a23b6faa-1052-4f4d-984b-4b338bdaf95f">
+                    <item type="gls" lang="en">criss-crossed</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">आऊर</item>
+                <item type="txt" lang="hlb-fonipa">aur</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">and</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">conj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">हून लगे</item>
+                <item type="txt" lang="hlb-fonipa">hun ləɡe</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">at that place</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">भोंगा</item>
+                <item type="txt" lang="hlb-fonipa">bʰõɡa</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">hole</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">रूआए</item>
+                <item type="txt" lang="hlb-fonipa">ruae</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">be</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">3s.f2</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">st</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">ईदलो</item>
+                <item type="txt" lang="hlb-fonipa">idlo</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">this size(lg)</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">असन</item>
+                <item type="txt" lang="hlb-fonipa">əsən</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">like this</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">Tiny tiny kindling, this tiny size of kindling and they will criss-cross them like this and there'll be a hole (in the centre) like this. (check trans!)</item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">4.2</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">नानी</item>
+                <item type="txt" lang="hlb-fonipa">nani</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">small</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">असन</item>
+                <item type="txt" lang="hlb-fonipa">əsən</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">like this</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">रूआए</item>
+                <item type="txt" lang="hlb-fonipa">ruae</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">be</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">3s.f2</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">st</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">It will be little like this.</item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">4.3</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">आऊर</item>
+                <item type="txt" lang="hlb-fonipa">aur</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">and</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">conj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">हून</item>
+                <item type="txt" lang="hlb-fonipa">hun</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">that</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">dem</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">थाने</item>
+                <item type="txt" lang="hlb-fonipa">tʰane</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">place</item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">=LOC</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">पासे</item>
+                <item type="txt" lang="hlb-fonipa">pase</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">later</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">डसाऊआत</item>
+                <item type="txt" lang="hlb-fonipa">ɖəsauat</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">burn</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">3p.f2</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">घीऊ</item>
+                <item type="txt" lang="hlb-fonipa">ɡʰiu</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">ghee</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">सँगे</item>
+                <item type="txt" lang="hlb-fonipa">sə̃ɡe</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">with</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">postp</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">And there they will burn (it) with ghee.</item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">4.4</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">पासे</item>
+                <item type="txt" lang="hlb-fonipa">pase</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">later</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">तीपाते रूआत</item>
+                <item type="txt" lang="hlb-fonipa">tipate ruat</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">drip</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">conj.inc</item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">be</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">3p.f2</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">हून</item>
+                <item type="txt" lang="hlb-fonipa">hun</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">that</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">dem</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">थाने</item>
+                <item type="txt" lang="hlb-fonipa">tʰane</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">place</item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">=LOC</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">Later they will be dripping (ghee on the fire) at that place.</item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">4.5</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">पासे</item>
+                <item type="txt" lang="hlb-fonipa">pase</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">later</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">फूल</item>
+                <item type="txt" lang="hlb-fonipa">pʰul</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">flower</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">पान</item>
+                <item type="txt" lang="hlb-fonipa">pan</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">leaf</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">के</item>
+                <item type="txt" lang="hlb-fonipa">ke</item>
+                <morphemes>
+                  <morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+                    <item type="gls" lang="en">GOL</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">case</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">पोकाऊआत</item>
+                <item type="txt" lang="hlb-fonipa">pokauat</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">throw out</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">3p.f2</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">हून</item>
+                <item type="txt" lang="hlb-fonipa">hun</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">that</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">dem</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">थाने</item>
+                <item type="txt" lang="hlb-fonipa">tʰane</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">place</item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">=LOC</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">Later they will throw flowers and leaves there (on the fire?).</item>
+            <item type="note" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">5</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">आऊर</item>
+                <item type="txt" lang="hlb-fonipa">aur</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">and</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">conj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">सीरहा</item>
+                <item type="txt" lang="hlb-fonipa">sirha</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">shaman</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">मन</item>
+                <item type="txt" lang="hlb-fonipa">mən</item>
+                <morphemes>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">=Pl</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">prt</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">होले</item>
+                <item type="txt" lang="hlb-fonipa">hole</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">become</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">cnsuf</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">ए काए तो</item>
+                <item type="txt" lang="hlb-fonipa">e kae to</item>
+                <morphemes>
+                  <morph type="phrase" guid="a23b6faa-1052-4f4d-984b-4b338bdaf95f">
+                    <item type="gls" lang="en">excl of hestitation</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">excl</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">“</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">पीटकूर</item>
+                <item type="txt" lang="hlb-fonipa">piʈkur</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">thorn</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">मारतोर आए</item>
+                <item type="txt" lang="hlb-fonipa">martor ae</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">hit</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">conj.inc</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">is.3s</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">”</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">बोलूआत</item>
+                <item type="txt" lang="hlb-fonipa">boluat</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">say</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">3p.f2</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">बाई</item>
+                <item type="txt" lang="hlb-fonipa">bai</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">Bai</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">voc</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">If there a shaman they will say, "the thorn is to be hit", Bai.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">6.1</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">आऊर</item>
+                <item type="txt" lang="hlb-fonipa">aur</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">and</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">conj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">हून</item>
+                <item type="txt" lang="hlb-fonipa">hun</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">that</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">dem</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">काटा</item>
+                <item type="txt" lang="hlb-fonipa">kaʈa</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">thorn</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">ने</item>
+                <item type="txt" lang="hlb-fonipa">ne</item>
+                <morphemes>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">=INSTR</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">case</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">काटा</item>
+                <item type="txt" lang="hlb-fonipa">kaʈa</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">thorn</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">ने</item>
+                <item type="txt" lang="hlb-fonipa">ne</item>
+                <morphemes>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">=INSTR</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">case</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">जानू</item>
+                <item type="txt" lang="hlb-fonipa">dʒanu</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">emphasis</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">prt</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">असन</item>
+                <item type="txt" lang="hlb-fonipa">əsən</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">like this</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">थाने</item>
+                <item type="txt" lang="hlb-fonipa">tʰane</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">place</item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">=LOC</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">मारूआत</item>
+                <item type="txt" lang="hlb-fonipa">maruat</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">hit</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">3p.f2</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">And with that thorn, with the thorn, they will hit it here (on the finger).</item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">6.2</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">लोहू</item>
+                <item type="txt" lang="hlb-fonipa">lohu</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">blood</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">फूटातले</item>
+                <item type="txt" lang="hlb-fonipa">pʰuʈatəle</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">ooze</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">caus</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">until</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">Until they make the blood ooze out.</item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">6.3</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">देओ</item>
+                <item type="txt" lang="hlb-fonipa">deo</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">spirit</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">The spirit.</item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">6.4</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">मारी हूआए</item>
+                <item type="txt" lang="hlb-fonipa">mari huae</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">hit</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">3s.f2</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">He will become hit.</item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">6.5</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">हून</item>
+                <item type="txt" lang="hlb-fonipa">hun</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">that</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">dem</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">के</item>
+                <item type="txt" lang="hlb-fonipa">ke</item>
+                <morphemes>
+                  <morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+                    <item type="gls" lang="en">GOL</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">case</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">लोहू</item>
+                <item type="txt" lang="hlb-fonipa">lohu</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">blood</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">के</item>
+                <item type="txt" lang="hlb-fonipa">ke</item>
+                <morphemes>
+                  <morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+                    <item type="gls" lang="en">GOL</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">case</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">जानू</item>
+                <item type="txt" lang="hlb-fonipa">dʒanu</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">emphasis</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">prt</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">असन</item>
+                <item type="txt" lang="hlb-fonipa">əsən</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">like this</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">करूआत</item>
+                <item type="txt" lang="hlb-fonipa">kəruat</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">do</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">3p.f2</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">आऊर</item>
+                <item type="txt" lang="hlb-fonipa">aur</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">and</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">conj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">हून</item>
+                <item type="txt" lang="hlb-fonipa">hun</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">that</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">dem</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">के</item>
+                <item type="txt" lang="hlb-fonipa">ke</item>
+                <morphemes>
+                  <morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+                    <item type="gls" lang="en">GOL</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">case</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">बोले</item>
+                <item type="txt" lang="hlb-fonipa">bole</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">also</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">काटा</item>
+                <item type="txt" lang="hlb-fonipa">kaʈa</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">thorn</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">चो</item>
+                <item type="txt" lang="hlb-fonipa">tʃo</item>
+                <morphemes>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">=poss</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">prt</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">बीती</item>
+                <item type="txt" lang="hlb-fonipa">biti</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">thing</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">clss</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">के</item>
+                <item type="txt" lang="hlb-fonipa">ke</item>
+                <morphemes>
+                  <morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+                    <item type="gls" lang="en">GOL</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">case</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">हून</item>
+                <item type="txt" lang="hlb-fonipa">hun</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">that</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">dem</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">हम</item>
+                <item type="txt" lang="hlb-fonipa">həm</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">crisscrossed sticks</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">ने</item>
+                <item type="txt" lang="hlb-fonipa">ne</item>
+                <morphemes>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">=LOC</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">postp</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">पोकाऊआत</item>
+                <item type="txt" lang="hlb-fonipa">pokauat</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">throw out</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">3p.f2</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">They will do like this with the blood and to it also, to the thorn's thing (the blood?) they will throw on the criss-crossed pile of sticks. </item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">6.6</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">हून</item>
+                <item type="txt" lang="hlb-fonipa">hun</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">that</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">dem</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">के</item>
+                <item type="txt" lang="hlb-fonipa">ke</item>
+                <morphemes>
+                  <morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+                    <item type="gls" lang="en">GOL</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">case</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">फेर</item>
+                <item type="txt" lang="hlb-fonipa">pʰer</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">again</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">एक</item>
+                <item type="txt" lang="hlb-fonipa">ek</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">one</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">num</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">रूपेआ</item>
+                <item type="txt" lang="hlb-fonipa">rupea</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">rupee</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">हो</item>
+                <item type="txt" lang="hlb-fonipa">ho</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">become</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">3s.opt</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">की</item>
+                <item type="txt" lang="hlb-fonipa">ki</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">or</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">conj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">आँट</item>
+                <item type="txt" lang="hlb-fonipa">ãʈ</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">eight</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">num</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">चार</item>
+                <item type="txt" lang="hlb-fonipa">tʃar</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">four</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">num</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">आना</item>
+                <item type="txt" lang="hlb-fonipa">ana</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">money unit</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">देतोर आए</item>
+                <item type="txt" lang="hlb-fonipa">detor ae</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">give</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">conj.inc</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">is.3s</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">To him, it may be a rupee or eight or four annas, it is to be giving.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">7</item>
+            <words>
+              <word>
+                <item type="punct" lang="hlb-fonipa">“</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">पीटकूर</item>
+                <item type="txt" lang="hlb-fonipa">piʈkur</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">thorn</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">मारनी</item>
+                <item type="txt" lang="hlb-fonipa">marni</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">hitting</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">”</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">बोलूआत</item>
+                <item type="txt" lang="hlb-fonipa">boluat</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">say</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">3p.f2</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">हून</item>
+                <item type="txt" lang="hlb-fonipa">hun</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">that</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">dem</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">के</item>
+                <item type="txt" lang="hlb-fonipa">ke</item>
+                <morphemes>
+                  <morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+                    <item type="gls" lang="en">GOL</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">case</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">They will call it the hitting of the thorn.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">8</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">ईत्‍ली</item>
+                <item type="txt" lang="hlb-fonipa">itli</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">this much</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">तो</item>
+                <item type="txt" lang="hlb-fonipa">to</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">thus</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">conj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">आए</item>
+                <item type="txt" lang="hlb-fonipa">ae</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">is.3s</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">eq</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">That's all.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">9</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">आऊर</item>
+                <item type="txt" lang="hlb-fonipa">aur</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">and</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">conj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">खूब</item>
+                <item type="txt" lang="hlb-fonipa">kʰub</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">many</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">देओ</item>
+                <item type="txt" lang="hlb-fonipa">deo</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">spirit</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">मोनातोर</item>
+                <item type="txt" lang="hlb-fonipa">monator</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">make</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">conj.inc</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">होले</item>
+                <item type="txt" lang="hlb-fonipa">hole</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">become</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">cnsuf</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">रोसीई पोतीई</item>
+                <item type="txt" lang="hlb-fonipa">rosii potii</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">leaf dish for worship</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">दस</item>
+                <item type="txt" lang="hlb-fonipa">dəs</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">ten</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">num</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">ठान</item>
+                <item type="txt" lang="hlb-fonipa">ʈʰan</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">thing</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">clss</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">पँदरा</item>
+                <item type="txt" lang="hlb-fonipa">pə̃dra</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">fifteen</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">num</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">ठान</item>
+                <item type="txt" lang="hlb-fonipa">ʈʰan</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">thing</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">clss</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">रोसीई</item>
+                <item type="txt" lang="hlb-fonipa">rosii</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">leaf dish for offerings</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">बोनातोर</item>
+                <item type="txt" lang="hlb-fonipa">bonator</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">fix</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">conj.inc</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">If one is to do a lot of spirit worship (then) ten or fifteen ceremonial leaf dishes are to be made. \nb trans? </item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">10.1</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">छए</item>
+                <item type="txt" lang="hlb-fonipa">tʃʰəe</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">six</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">num</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">ठान</item>
+                <item type="txt" lang="hlb-fonipa">ʈʰan</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">thing</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">clss</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">बोनातोर आए</item>
+                <item type="txt" lang="hlb-fonipa">bonator ae</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">make</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">conj.inc</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">is.3s</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">आऊर</item>
+                <item type="txt" lang="hlb-fonipa">aur</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">and</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">conj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">हून मन</item>
+                <item type="txt" lang="hlb-fonipa">hun mən</item>
+                <morphemes>
+                  <morph type="phrase" guid="a23b6faa-1052-4f4d-984b-4b338bdaf95f">
+                    <item type="gls" lang="en">they</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">ppron</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">ने</item>
+                <item type="txt" lang="hlb-fonipa">ne</item>
+                <morphemes>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">=LOC</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">postp</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">पोएसा</item>
+                <item type="txt" lang="hlb-fonipa">poesa</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">money</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">मन</item>
+                <item type="txt" lang="hlb-fonipa">mən</item>
+                <morphemes>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">=Pl</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">prt</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">देतोर आए</item>
+                <item type="txt" lang="hlb-fonipa">detor ae</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">give</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">conj.inc</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">is.3s</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">Six are to be made and in them money is the be put.</item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">10.2</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">आनाएक</item>
+                <item type="txt" lang="hlb-fonipa">anaek</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">one money unit</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">दूई</item>
+                <item type="txt" lang="hlb-fonipa">dui</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">two</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">num</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">आना</item>
+                <item type="txt" lang="hlb-fonipa">ana</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">money unit</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">तीन</item>
+                <item type="txt" lang="hlb-fonipa">tin</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">three</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">num</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">आना</item>
+                <item type="txt" lang="hlb-fonipa">ana</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">money unit</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">One anna, two annas, three annas.</item>
+            <item type="note" lang="en">Researcher: When to do? </item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">11</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">असनी</item>
+                <item type="txt" lang="hlb-fonipa">əsni</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">like this</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">emp</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">खूब</item>
+                <item type="txt" lang="hlb-fonipa">kʰub</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">much</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">जर मूँड</item>
+                <item type="txt" lang="hlb-fonipa">dʒər mũɖ</item>
+                <morphemes>
+                  <morph type="phrase" guid="a23b6faa-1052-4f4d-984b-4b338bdaf95f">
+                    <item type="gls" lang="en">fever headache</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">पोड़ले</item>
+                <item type="txt" lang="hlb-fonipa">poɽle</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">fall</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">cnsuf</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">It like this if one gets sick with feverish headaches.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">12</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">खूब</item>
+                <item type="txt" lang="hlb-fonipa">kʰub</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">much</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">बेमार</item>
+                <item type="txt" lang="hlb-fonipa">bemar</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">sickness</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">धरले</item>
+                <item type="txt" lang="hlb-fonipa">dʰərle</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">take hold</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">cnsuf</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">tr</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">तूमी</item>
+                <item type="txt" lang="hlb-fonipa">tumi</item>
+                <morphemes>
+                  <morph type="proclitic" guid="d7f713e2-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">you=</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">emp</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">ppron</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">असपतले</item>
+                <item type="txt" lang="hlb-fonipa">əspətale</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">hospital</item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">=LOC</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">जाऊअहास</item>
+                <item type="txt" lang="hlb-fonipa">dʒauəhas</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">go</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">2p.f2</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">If (you) get very sick you go to the hospital.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">13</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">आमी</item>
+                <item type="txt" lang="hlb-fonipa">ami</item>
+                <morphemes>
+                  <morph type="bound root" guid="d7f713e4-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">we</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">emp</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">ppron</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">खूब</item>
+                <item type="txt" lang="hlb-fonipa">kʰub</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">much</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">जर मूँड</item>
+                <item type="txt" lang="hlb-fonipa">dʒər mũɖ</item>
+                <morphemes>
+                  <morph type="phrase" guid="a23b6faa-1052-4f4d-984b-4b338bdaf95f">
+                    <item type="gls" lang="en">fever headache</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">धरले</item>
+                <item type="txt" lang="hlb-fonipa">dʰərle</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">take hold</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">cnsuf</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">tr</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">सीरहा</item>
+                <item type="txt" lang="hlb-fonipa">sirha</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">shaman</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">डगराऊआऊँ</item>
+                <item type="txt" lang="hlb-fonipa">ɖəɡrauaũ</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">search for</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">1p.f2</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">If we get sick we will look for a shaman.</item>
+            <item type="note" lang="en">"Feverish headache" is a generic term for sickness.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">14</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">आऊर</item>
+                <item type="txt" lang="hlb-fonipa">aur</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">and</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">conj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">हूता</item>
+                <item type="txt" lang="hlb-fonipa">huta</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">there</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">“</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">आ</item>
+                <item type="txt" lang="hlb-fonipa">a</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">exclam.</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">excl</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">जोड़ूआऊँबे</item>
+                <item type="txt" lang="hlb-fonipa">dʒoɽuaũbe</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">be joined</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">1p.f2</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">ab</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">हूता</item>
+                <item type="txt" lang="hlb-fonipa">huta</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">there</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">कटो</item>
+                <item type="txt" lang="hlb-fonipa">kəʈo</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">heal</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">3s.opt</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">नी</item>
+                <item type="txt" lang="hlb-fonipa">ni</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">not</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">neg</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">कटो</item>
+                <item type="txt" lang="hlb-fonipa">kəʈo</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">heal</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">3s.opt</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">बोले</item>
+                <item type="txt" lang="hlb-fonipa">bole</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">also</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">आऊर</item>
+                <item type="txt" lang="hlb-fonipa">aur</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">and</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">conj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">बोनाऊआऊँ</item>
+                <item type="txt" lang="hlb-fonipa">bonauaũ</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">fix</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">1p.f2</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">”.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">And there (we will say), "Ah, we will join there, let it heal (or) not heal we will make another (ceremony?)"</item>
+            <item type="note" lang="en">Translation unclear. </item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">15</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">पोकाहा</item>
+                <item type="txt" lang="hlb-fonipa">pokaha</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">for nothing</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">For nothing.</item>
+            <item type="note" lang="en">Researcher: Refers to empty promise, I think.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">16.1</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">सीरहा</item>
+                <item type="txt" lang="hlb-fonipa">sirha</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">shaman</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">मन</item>
+                <item type="txt" lang="hlb-fonipa">mən</item>
+                <morphemes>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">=Pl</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">prt</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">बोलूआत</item>
+                <item type="txt" lang="hlb-fonipa">boluat</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">say</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">3p.f2</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">The shaman will speak, </item>
+            <item type="note" lang="en">Does the first part of sentence belong to previous sentence? </item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">16.2</item>
+            <words>
+              <word>
+                <item type="punct" lang="hlb-fonipa">“</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">ईत्‍लो</item>
+                <item type="txt" lang="hlb-fonipa">itlo</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">this much</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">लागूआए</item>
+                <item type="txt" lang="hlb-fonipa">laɡuae</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">feel something</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">3s.f2</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">हूतलो</item>
+                <item type="txt" lang="hlb-fonipa">hutlo</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">that much</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">लागूआए</item>
+                <item type="txt" lang="hlb-fonipa">laɡuae</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">feel something</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">3s.f2</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">असन</item>
+                <item type="txt" lang="hlb-fonipa">əsən</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">like this</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">आए</item>
+                <item type="txt" lang="hlb-fonipa">ae</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">is.3s</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">eq</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb">,</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">ऊसन</item>
+                <item type="txt" lang="hlb-fonipa">usən</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">like that</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">आए</item>
+                <item type="txt" lang="hlb-fonipa">ae</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">is.3s</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">eq</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">”</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">बोलले</item>
+                <item type="txt" lang="hlb-fonipa">bolle</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">say</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">cnsuf</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">When said "it will cost this (or) it will cost that, it's like this (or) it's like that".</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">17</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">फेर</item>
+                <item type="txt" lang="hlb-fonipa">pʰer</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">again</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">जीऊ</item>
+                <item type="txt" lang="hlb-fonipa">dʒiu</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">life</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">चो</item>
+                <item type="txt" lang="hlb-fonipa">tʃo</item>
+                <morphemes>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">=poss</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">prt</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">डर</item>
+                <item type="txt" lang="hlb-fonipa">ɖər</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">fear</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">काजे</item>
+                <item type="txt" lang="hlb-fonipa">kadʒe</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">for</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">postp</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">काए</item>
+                <item type="txt" lang="hlb-fonipa">kae</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">or</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">conj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">करतोर आए</item>
+                <item type="txt" lang="hlb-fonipa">kərtor ae</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">do</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">conj.inc</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">is.3s</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">ने</item>
+                <item type="txt" lang="hlb-fonipa">ne</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">EchoQn</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">prt</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb">?</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">So, for fear of (one's) life what is to be done, isn't that so? </item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">18.1</item>
+            <words>
+              <word>
+                <item type="punct" lang="hlb-fonipa">“</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">जीऊ बाचो</item>
+                <item type="txt" lang="hlb-fonipa">dʒiu batʃo</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">life</item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">be left</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">3s.opt</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">”</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">बोलतोर आए</item>
+                <item type="txt" lang="hlb-fonipa">boltor ae</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">say</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">conj.inc</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">is.3s</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">आऊर</item>
+                <item type="txt" lang="hlb-fonipa">aur</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">and</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">conj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">फेर</item>
+                <item type="txt" lang="hlb-fonipa">pʰer</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">again</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">बोनातोर आए</item>
+                <item type="txt" lang="hlb-fonipa">bonator ae</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">make</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">conj.inc</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">is.3s</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">रोसीई</item>
+                <item type="txt" lang="hlb-fonipa">rosii</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">leaf dish for offerings</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">जोड़तोर आए</item>
+                <item type="txt" lang="hlb-fonipa">dʒoɽtor ae</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">be joined</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">conj.inc</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">is.3s</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">"Let life remain" is the be saying, and again (the spirits) are to be appeased and the leaf dish for worship is to be made.</item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">18.2</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">आऊर</item>
+                <item type="txt" lang="hlb-fonipa">aur</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">and</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">conj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">फेर</item>
+                <item type="txt" lang="hlb-fonipa">pʰer</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">again</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">देतोर आए</item>
+                <item type="txt" lang="hlb-fonipa">detor ae</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">give</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">conj.inc</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">is.3s</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">हून</item>
+                <item type="txt" lang="hlb-fonipa">hun</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">that</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">dem</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">सीरहा</item>
+                <item type="txt" lang="hlb-fonipa">sirha</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">shaman</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">के</item>
+                <item type="txt" lang="hlb-fonipa">ke</item>
+                <morphemes>
+                  <morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+                    <item type="gls" lang="en">GOL</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">case</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">And again one is to be giving to that shaman.</item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">18.3</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">ऊसनी</item>
+                <item type="txt" lang="hlb-fonipa">usni</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">like that</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">emp</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">तो</item>
+                <item type="txt" lang="hlb-fonipa">to</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">thus</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">conj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">करतोर आए</item>
+                <item type="txt" lang="hlb-fonipa">kərtor ae</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">do</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">conj.inc</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">is.3s</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">Just like that then is to be doing.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">19</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">ई</item>
+                <item type="txt" lang="hlb-fonipa">i</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">this very one </item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">dem</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">नोनी</item>
+                <item type="txt" lang="hlb-fonipa">noni</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">girl</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">सूकूनतूला</item>
+                <item type="txt" lang="hlb-fonipa">sukuntula</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">Sukuntula</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">pn</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">के</item>
+                <item type="txt" lang="hlb-fonipa">ke</item>
+                <morphemes>
+                  <morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+                    <item type="gls" lang="en">GOL</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">case</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">माए</item>
+                <item type="txt" lang="hlb-fonipa">mae dʰəni</item>
+                <morphemes>
+                  <morph type="phrase" guid="a23b6faa-1052-4f4d-984b-4b338bdaf95f">
+                    <item type="gls" lang="en">measles</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">एऊ रोहोत</item>
+                <item type="txt" lang="hlb-fonipa">eu rohot</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">come</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">conj.comp</item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">be</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">3s</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">हूदलदाएँ</item>
+                <item type="txt" lang="hlb-fonipa">hudəldaẽ</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">that</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">time</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">To this very little girl, Sukuntula, had come measles at that time.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">20.1</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">आऊर</item>
+                <item type="txt" lang="hlb-fonipa">aur</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">and</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">conj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">नी</item>
+                <item type="txt" lang="hlb-fonipa">ni</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">not</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">neg</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">चाँडाए</item>
+                <item type="txt" lang="hlb-fonipa">tʃʰãɖae</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">cause to heal</item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">come</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">खूबे</item>
+                <item type="txt" lang="hlb-fonipa">kʰube</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">much</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">emp</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">दीन</item>
+                <item type="txt" lang="hlb-fonipa">din</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">day</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">गूनके</item>
+                <item type="txt" lang="hlb-fonipa">ɡunke</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">therefore</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">conj</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">“</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">सेवा</item>
+                <item type="txt" lang="hlb-fonipa">sewa</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">worship</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">सेवा</item>
+                <item type="txt" lang="hlb-fonipa">sewa sasən</item>
+                <morphemes>
+                  <morph type="phrase" guid="a23b6faa-1052-4f4d-984b-4b338bdaf95f">
+                    <item type="gls" lang="en">worship</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">कर</item>
+                <item type="txt" lang="hlb-fonipa">kər</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">do</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">And it didn't heal for many days therefore "perform worship.</item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">20.2</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">तूचो</item>
+                <item type="txt" lang="hlb-fonipa">tutʃo</item>
+                <morphemes>
+                  <morph type="proclitic" guid="d7f713e2-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">you(s)=</item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">=poss</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">posspron</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">काए</item>
+                <item type="txt" lang="hlb-fonipa">kae</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">what</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">rel</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">टीकरी</item>
+                <item type="txt" lang="hlb-fonipa">ʈikri</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">god house</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">ने</item>
+                <item type="txt" lang="hlb-fonipa">ne</item>
+                <morphemes>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">=LOC</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">postp</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">बोजार बोजरी</item>
+                <item type="txt" lang="hlb-fonipa">bodʒar bodʒri</item>
+                <morphemes>
+                  <morph type="phrase" guid="a23b6faa-1052-4f4d-984b-4b338bdaf95f">
+                    <item type="gls" lang="en">ceremonial bazaar</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">cn</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">होतो बेरा</item>
+                <item type="txt" lang="hlb-fonipa">hoto bera</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">become</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">conj.inc</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">time</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">phrAdv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">गोटक</item>
+                <item type="txt" lang="hlb-fonipa">ɡoʈək</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">one</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">num</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">फल</item>
+                <item type="txt" lang="hlb-fonipa">pʰəl</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">coconut</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">देऊँदे</item>
+                <item type="txt" lang="hlb-fonipa">deũde</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">that</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">1p.f1</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">"</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">बोललो</item>
+                <item type="txt" lang="hlb-fonipa">bollo</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">say</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">ptc.3s.m</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">फेर</item>
+                <item type="txt" lang="hlb-fonipa">pʰer</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">again</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">एचो</item>
+                <item type="txt" lang="hlb-fonipa">etʃo</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">she</item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">=poss</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">posspron</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">बाबा</item>
+                <item type="txt" lang="hlb-fonipa">baba</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">father</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">In your god house, at the time of the ceremonial bazaar, we will give one coconut" he said, her father (that is).</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">21</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">फेर</item>
+                <item type="txt" lang="hlb-fonipa">pʰer</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">again</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">बोजार</item>
+                <item type="txt" lang="hlb-fonipa">bodʒar</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">bazaar</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">होली आले</item>
+                <item type="txt" lang="hlb-fonipa">holi ale</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">become</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">3s.nm.pc</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">when</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">ए थाने</item>
+                <item type="txt" lang="hlb-fonipa">e tʰane</item>
+                <morphemes>
+                  <morph type="phrase" guid="a23b6faa-1052-4f4d-984b-4b338bdaf95f">
+                    <item type="gls" lang="en">at this place</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">बोजार</item>
+                <item type="txt" lang="hlb-fonipa">bodʒar</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">bazaar</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">हूआएजे</item>
+                <item type="txt" lang="hlb-fonipa">huaedʒe</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">become</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">3s.f2</item>
+                  </morph>
+                  <morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+                    <item type="gls" lang="en">rel.mkr</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">होलीजे</item>
+                <item type="txt" lang="hlb-fonipa">holidʒe</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">become</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">3s.nm.pc</item>
+                  </morph>
+                  <morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+                    <item type="gls" lang="en">just as</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb">?</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">When a bazaar is held, at this place where the bazaar will be held, it just became (better). </item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">22.1</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">ऊसनी</item>
+                <item type="txt" lang="hlb-fonipa">usni</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">like that</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">emp</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">बोजार</item>
+                <item type="txt" lang="hlb-fonipa">bodʒar</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">bazaar</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">होली आले</item>
+                <item type="txt" lang="hlb-fonipa">holi ale</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">become</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">3s.nm.pc</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">when</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">फेर</item>
+                <item type="txt" lang="hlb-fonipa">pʰer</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">again</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">गोटक</item>
+                <item type="txt" lang="hlb-fonipa">ɡoʈək</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">one</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">num</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">नड़ेर</item>
+                <item type="txt" lang="hlb-fonipa">naɽer</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">coconut</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">के</item>
+                <item type="txt" lang="hlb-fonipa">ke</item>
+                <morphemes>
+                  <morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+                    <item type="gls" lang="en">GOL</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">case</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">घेनून</item>
+                <item type="txt" lang="hlb-fonipa">ɡʰenun</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">buy</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">conj.comp</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">भाती</item>
+                <item type="txt" lang="hlb-fonipa">bʰati</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">after</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">prt</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">नेऊन देतोर आए</item>
+                <item type="txt" lang="hlb-fonipa">neun detor ae</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">take</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">conj.comp</item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">ben</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">conj.inc</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">is.3s</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">When a bazaar was held, just like that again after having bought a coconut it is to be taken for giving.</item>
+          </phrase>
+          <phrase>
+            <item type="segnum" lang="en">22.2</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">हूता</item>
+                <item type="txt" lang="hlb-fonipa">huta</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">there</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">देतोर आए</item>
+                <item type="txt" lang="hlb-fonipa">detor ae</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">give</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">conj.inc</item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">is.3s</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">v</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">It is to be given there.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">23</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">ऊसनी</item>
+                <item type="txt" lang="hlb-fonipa">usni</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">like that</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">emp</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adv</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">तो</item>
+                <item type="txt" lang="hlb-fonipa">to</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">thus</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">conj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">आए</item>
+                <item type="txt" lang="hlb-fonipa">ae</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">is.3s</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">eq</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">मूरेआ</item>
+                <item type="txt" lang="hlb-fonipa">murea</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">Murea</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">मूरीन</item>
+                <item type="txt" lang="hlb-fonipa">murin</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">Murea(f)</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">चो</item>
+                <item type="txt" lang="hlb-fonipa">tʃo</item>
+                <morphemes>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">=poss</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">prt</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb-fonipa">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">It's just like that for the Mureas.</item>
+            <item type="note" lang="en">Change of topic.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">24</item>
+            <words>
+              <word>
+                <item type="txt" lang="hlb">ए</item>
+                <item type="txt" lang="hlb-fonipa">e</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">this</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">dem</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">नूँआँ</item>
+                <item type="txt" lang="hlb-fonipa">nũã</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">new</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">adj</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">फोटई</item>
+                <item type="txt" lang="hlb-fonipa">pʰoʈəi</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">cloth</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">n</item>
+              </word>
+              <word>
+                <item type="txt" lang="hlb">आए</item>
+                <item type="txt" lang="hlb-fonipa">ae</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="gls" lang="en">is.3s</item>
+                  </morph>
+                </morphemes>
+                <item type="pos" lang="en">eq</item>
+              </word>
+              <word>
+                <item type="punct" lang="hlb">?</item>
+              </word>
+            </words>
+            <item type="gls" lang="en">Is this a new cloth? </item>
+            <item type="note" lang="en">Researcher answers, no.</item>
+          </phrase>
+        </phrases>
+      </paragraph>
+    </paragraphs>
+    <languages>
+      <language lang="en" font="Charis SIL" />
+      <language lang="hlb" font="Arial Unicode MS" vernacular="true" />
+      <language lang="hlb-fonipa" font="Charis SIL" vernacular="true" />
+    </languages>
+  </interlinear-text>
+</document>
