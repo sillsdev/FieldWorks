@@ -1869,7 +1869,7 @@ namespace SIL.FieldWorks.XWorks
 			var content = GenerateContentForFieldByReflection(item, nodeList, publicationDecorator, settings);
 			if (content.IsNullOrEmpty())
 				return settings.ContentGenerator.CreateFragment();
-			return settings.ContentGenerator.GenerateGramInfoBeforeSensesContent(content, nodeList);
+			return settings.ContentGenerator.GenerateGramInfoBeforeSensesContent(content, nodeList, settings);
 		}
 
 		private static bool IsAllGramInfoTheSame(ConfigurableDictionaryNode config, IEnumerable<ILexSense> collection, bool isSubsense,
@@ -2188,7 +2188,7 @@ namespace SIL.FieldWorks.XWorks
 			var xBldr = settings.ContentGenerator.CreateFragment();
 			using (var xw = settings.ContentGenerator.CreateWriter(xBldr))
 			{
-				settings.ContentGenerator.BeginCrossReference(xw, config, IsBlockProperty(config), GetCollectionItemClassAttribute(config));
+				settings.ContentGenerator.BeginCrossReference(xw, config, settings, IsBlockProperty(config), GetCollectionItemClassAttribute(config));
 				var targetInfo = referenceList.FirstOrDefault();
 				if (targetInfo == null)
 					return settings.ContentGenerator.CreateFragment();

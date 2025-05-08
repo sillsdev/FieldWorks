@@ -16,7 +16,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using System.Web.UI.WebControls;
 using System.Xml;
@@ -635,7 +634,8 @@ namespace SIL.FieldWorks.XWorks
 			return new StringFragment();
 		}
 
-		public IFragment GenerateGramInfoBeforeSensesContent(IFragment content, List<ConfigurableDictionaryNode> nodeList)
+		public IFragment GenerateGramInfoBeforeSensesContent(IFragment content, List<ConfigurableDictionaryNode> nodeList,
+			ConfiguredLcmGenerator.GeneratorSettings settings)
 		{
 			var bldr = new StringBuilder();
 			var fragment = new StringFragment(bldr);
@@ -643,6 +643,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				xw.WriteStartElement("span");
 				xw.WriteAttributeString("class", "sharedgrammaticalinfo");
+				WriteNodeId(xw, nodeList.Last(), settings);
 				xw.WriteRaw(content.ToString());
 				xw.WriteEndElement();
 				xw.Flush();
@@ -921,12 +922,13 @@ namespace SIL.FieldWorks.XWorks
 			xw.WriteEndElement();
 		}
 
-		public void BeginObjectProperty(IFragmentWriter writer, ConfigurableDictionaryNode config, bool isBlockProperty,
-			string className)
+		public void BeginObjectProperty(IFragmentWriter writer, ConfigurableDictionaryNode config,
+			ConfiguredLcmGenerator.GeneratorSettings settings, bool isBlockProperty, string className)
 		{
 			var xw = ((XmlFragmentWriter)writer).Writer;
 			xw.WriteStartElement(isBlockProperty ? "div" : "span");
 			xw.WriteAttributeString("class", className);
+			WriteNodeId(xw, config, settings);
 		}
 
 		public void EndObject(IFragmentWriter writer)
@@ -1012,9 +1014,10 @@ namespace SIL.FieldWorks.XWorks
 			return fragment;
 		}
 
-		public void BeginCrossReference(IFragmentWriter writer, ConfigurableDictionaryNode config, bool isBlockProperty, string classAttribute)
+		public void BeginCrossReference(IFragmentWriter writer, ConfigurableDictionaryNode config,
+			ConfiguredLcmGenerator.GeneratorSettings settings, bool isBlockProperty, string classAttribute)
 		{
-			BeginObjectProperty(writer, config, isBlockProperty, classAttribute);
+			BeginObjectProperty(writer, config, settings, isBlockProperty, classAttribute);
 		}
 
 		public void EndCrossReference(IFragmentWriter writer)
