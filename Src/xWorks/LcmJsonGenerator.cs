@@ -105,7 +105,8 @@ namespace SIL.FieldWorks.XWorks
 			return fragment;
 		}
 
-		public IFragment GenerateGramInfoBeforeSensesContent(IFragment content, List<ConfigurableDictionaryNode> nodeList)
+		public IFragment GenerateGramInfoBeforeSensesContent(IFragment content, List<ConfigurableDictionaryNode> nodeList,
+			ConfiguredLcmGenerator.GeneratorSettings settings)
 		{
 			// The grammatical info is generated as a json property on 'senses'
 			return content;
@@ -317,7 +318,8 @@ namespace SIL.FieldWorks.XWorks
 			((JsonFragmentWriter)writer).EndArray();
 		}
 
-		public void BeginObjectProperty(IFragmentWriter writer, ConfigurableDictionaryNode config, bool isBlockProperty,
+		public void BeginObjectProperty(IFragmentWriter writer, ConfigurableDictionaryNode config,
+			ConfiguredLcmGenerator.GeneratorSettings settings, bool isBlockProperty,
 			string className)
 		{
 			((JsonFragmentWriter)writer).InsertPropertyName(className);
@@ -406,7 +408,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public void BeginCrossReference(IFragmentWriter writer, ConfigurableDictionaryNode config, bool isBlockProperty, string classAttribute)
+		public void BeginCrossReference(IFragmentWriter writer, ConfigurableDictionaryNode config,
+			ConfiguredLcmGenerator.GeneratorSettings settings, bool isBlockProperty, string classAttribute)
 		{
 			// In json the context is enough. We don't need the extra 'span' or 'div' with the item name
 			// If the consumer needs to match up (to use our css) they can assume the child is the collection singular
