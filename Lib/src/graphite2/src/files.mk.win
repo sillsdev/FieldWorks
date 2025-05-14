@@ -8,7 +8,6 @@ GR2_OBJECTS = \
     $(INT_DIR)\gr_segment.obj \
     $(INT_DIR)\gr_slot.obj \
     $(INT_DIR)\json.obj \
-    $(INT_DIR)\CachedFace.obj \
     $(INT_DIR)\CmapCache.obj \
     $(INT_DIR)\Code.obj \
     $(INT_DIR)\Collider.obj \
@@ -24,9 +23,6 @@ GR2_OBJECTS = \
     $(INT_DIR)\NameTable.obj \
     $(INT_DIR)\Pass.obj \
     $(INT_DIR)\Position.obj \
-    $(INT_DIR)\SegCache.obj \
-    $(INT_DIR)\SegCacheEntry.obj \
-    $(INT_DIR)\SegCacheStore.obj \
     $(INT_DIR)\Segment.obj \
     $(INT_DIR)\Silf.obj \
     $(INT_DIR)\Slot.obj \

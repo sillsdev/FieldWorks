@@ -15,8 +15,8 @@
 
     You should also have received a copy of the GNU Lesser General Public
     License along with this library in the file named "LICENSE".
-    If not, write to the Free Software Foundation, 51 Franklin Street, 
-    Suite 500, Boston, MA 02110-1335, USA or visit their web page on the 
+    If not, write to the Free Software Foundation, 51 Franklin Street,
+    Suite 500, Boston, MA 02110-1335, USA or visit their web page on the
     internet at http://www.fsf.org/licenses/lgpl.html.
 
 Alternatively, the contents of this file may be used under the terms of the
@@ -29,20 +29,20 @@ of the License or (at your option) any later version.
 
 using namespace graphite2;
 
-uint16 GlyphFace::getMetric(uint8 metric) const
+int32 GlyphFace::getMetric(uint8 metric) const
 {
     switch (metrics(metric))
     {
-        case kgmetLsb       : return static_cast<uint16>(m_bbox.bl.x);
-        case kgmetRsb       : return static_cast<uint16>(m_advance.x - m_bbox.tr.x);
-        case kgmetBbTop     : return static_cast<uint16>(m_bbox.tr.y);
-        case kgmetBbBottom  : return static_cast<uint16>(m_bbox.bl.y);
-        case kgmetBbLeft    : return static_cast<uint16>(m_bbox.bl.x);
-        case kgmetBbRight   : return static_cast<uint16>(m_bbox.tr.x);
-        case kgmetBbHeight  : return static_cast<uint16>(m_bbox.tr.y - m_bbox.bl.y);
-        case kgmetBbWidth   : return static_cast<uint16>(m_bbox.tr.x - m_bbox.bl.x);
-        case kgmetAdvWidth  : return static_cast<uint16>(m_advance.x);
-        case kgmetAdvHeight : return static_cast<uint16>(m_advance.y);
+        case kgmetLsb       : return int32(m_bbox.bl.x);
+        case kgmetRsb       : return int32(m_advance.x - m_bbox.tr.x);
+        case kgmetBbTop     : return int32(m_bbox.tr.y);
+        case kgmetBbBottom  : return int32(m_bbox.bl.y);
+        case kgmetBbLeft    : return int32(m_bbox.bl.x);
+        case kgmetBbRight   : return int32(m_bbox.tr.x);
+        case kgmetBbHeight  : return int32(m_bbox.tr.y - m_bbox.bl.y);
+        case kgmetBbWidth   : return int32(m_bbox.tr.x - m_bbox.bl.x);
+        case kgmetAdvWidth  : return int32(m_advance.x);
+        case kgmetAdvHeight : return int32(m_advance.y);
         default : return 0;
     }
 }
