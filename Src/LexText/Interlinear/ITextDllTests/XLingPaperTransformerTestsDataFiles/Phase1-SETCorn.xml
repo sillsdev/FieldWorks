@@ -1,0 +1,3463 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<document>
+  <interlinear-text guid="ad2040a0-a767-47b7-b603-512e3209a402">
+    <item type="title" lang="en">How corn is cultivated in the Pine Grove community</item>
+    <item type="title" lang="es">Cómo se siembra aquí en Santa María Ocotán</item>
+    <item type="title" lang="stp">Na jax jaꞋk tɨm ɨs yaꞋ dhi Juktɨr</item>
+    <item type="title" lang="stp-x-stp">Na jax jaꞋk tɨm ɨs yaꞋ dhi Juktɨr</item>
+    <item type="title-abbreviation" lang="es">Maíz</item>
+    <item type="source" lang="es">José Trinidad Solís de la Cruz; Cornelio Ramírez Solís</item>
+    <paragraphs>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">1</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">Na jax jaꞋk</item>
+                <item type="txt" lang="stp-x-ipa">nɑ.hɑʃ.hɑʔk</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">na</item>
+                    <item type="cf" lang="stp-x-stp">na</item>
+                    <item type="gls" lang="es">SBRD</item>
+                    <item type="gls" lang="en">SBRD</item>
+                    <item type="msa" lang="es">pron. </item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">jax</item>
+                    <item type="cf" lang="stp-x-stp">jax</item>
+                    <item type="hn" lang="en">2</item>
+                    <item type="gls" lang="es">cómo</item>
+                    <item type="gls" lang="en">how</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                  <morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+                    <item type="txt" lang="stp-x-stp">jaꞋk</item>
+                    <item type="cf" lang="stp-x-stp">jaꞋk</item>
+                    <item type="gls" lang="es">RUM</item>
+                    <item type="gls" lang="en">DIR</item>
+                    <item type="msa" lang="es">part. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">de qué manera</item>
+                <item type="gls" lang="en">in what way</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">tɨm</item>
+                <item type="txt" lang="stp-x-ipa">tɨm</item>
+                <morphemes>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">tɨ</item>
+                    <item type="cf" lang="stp-x-stp">tu</item>
+                    <item type="gls" lang="es">EXT</item>
+                    <item type="gls" lang="en">EXT</item>
+                    <item type="msa" lang="es">pref. verb. </item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">=m</item>
+                    <item type="cf" lang="stp-x-stp">=m</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">=3PLSUJ</item>
+                    <item type="gls" lang="en">=3PLSUB</item>
+                    <item type="msa" lang="es">clít. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">se</item>
+                <item type="gls" lang="en">they</item>
+                <item type="pos" lang="es">pref. verb.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">ɨs</item>
+                <item type="txt" lang="stp-x-ipa">ʔɨs</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">ɨsɨ</item>
+                    <item type="cf" lang="stp-x-stp">ɨsɨ</item>
+                    <item type="gls" lang="es">sembrar</item>
+                    <item type="gls" lang="en">plant</item>
+                    <item type="msa" lang="es">v. tr. </item>
+                  </morph>
+                  <morph type="suprafix" guid="d7f713de-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">~P~</item>
+                    <item type="cf" lang="stp-x-stp">~P~</item>
+                    <item type="gls" lang="es">PRES</item>
+                    <item type="gls" lang="en">PRES</item>
+                    <item type="msa" lang="es">v.:Any</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">siembra</item>
+                <item type="gls" lang="en"></item>
+                <item type="pos" lang="es">v. tr.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">yaꞋ</item>
+                <item type="txt" lang="stp-x-ipa">jɑʔ</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">ya+Ꞌ</item>
+                    <item type="cf" lang="stp-x-stp">ya+Ꞌ</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">aquí</item>
+                    <item type="gls" lang="en">here</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">aquí</item>
+                <item type="gls" lang="en">here</item>
+                <item type="pos" lang="es">adv.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">dhi</item>
+                <item type="txt" lang="stp-x-ipa">ʤi</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">dhi</item>
+                    <item type="cf" lang="stp-x-stp">dhi</item>
+                    <item type="gls" lang="es">DEM</item>
+                    <item type="gls" lang="en">Dem</item>
+                    <item type="msa" lang="es">adj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">este</item>
+                <item type="gls" lang="en">this</item>
+                <item type="pos" lang="es">adj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">Juktɨr</item>
+                <item type="txt" lang="stp-x-ipa">ˈhuk.tɨɾ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">juk</item>
+                    <item type="cf" lang="stp-x-stp">juk</item>
+                    <item type="gls" lang="es">pino</item>
+                    <item type="gls" lang="en">pine</item>
+                    <item type="msa" lang="es">s. </item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">tɨr</item>
+                    <item type="cf" lang="stp-x-stp">tɨr</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">en</item>
+                    <item type="gls" lang="en">in</item>
+                    <item type="msa" lang="es">posp. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">Lugar de Pinos</item>
+                <item type="gls" lang="en">Pine Grove</item>
+                <item type="pos" lang="es">adv.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">Cómo se siembra aquí en Santa María Ocotán</item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph />
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">3</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">Ba</item>
+                <item type="txt" lang="stp-x-ipa">βɑ</item>
+                <morphemes>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">ba</item>
+                    <item type="cf" lang="stp-x-stp">ba</item>
+                    <item type="gls" lang="es">RLZ</item>
+                    <item type="gls" lang="en">RLZ</item>
+                    <item type="msa" lang="es">pref. verb. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">ya</item>
+                <item type="gls" lang="en">already</item>
+                <item type="pos" lang="es">pref. verb.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">tum</item>
+                <item type="txt" lang="stp-x-ipa">tum</item>
+                <morphemes>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">tu</item>
+                    <item type="cf" lang="stp-x-stp">tu</item>
+                    <item type="gls" lang="es">EXT</item>
+                    <item type="gls" lang="en">EXT</item>
+                    <item type="msa" lang="es">pref. verb. </item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">=m</item>
+                    <item type="cf" lang="stp-x-stp">=m</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">=3PLSUJ</item>
+                    <item type="gls" lang="en">=3PLSUB</item>
+                    <item type="msa" lang="es">clít. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">se</item>
+                <item type="gls" lang="en">they</item>
+                <item type="pos" lang="es">pref. verb.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">moikdaꞋ</item>
+                <item type="txt" lang="stp-x-ipa">ˈmoik.dɑʔ</item>
+                <morphemes>
+                  <morph>
+                    <item type="txt" lang="stp-x-stp"></item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-aꞋ</item>
+                    <item type="cf" lang="stp-x-stp">-aꞋ</item>
+                    <item type="gls" lang="es">FUT</item>
+                    <item type="gls" lang="en">FUT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">barbechan</item>
+                <item type="gls" lang="en"></item>
+                <item type="pos" lang="es">v. intr.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">tutuur</item>
+                <item type="txt" lang="stp-x-ipa">tuˈtuːɾ</item>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">CV-</item>
+                    <item type="cf" lang="stp-x-stp">CV-</item>
+                    <item type="gls" lang="es">DISTR</item>
+                    <item type="gls" lang="en">DISTR</item>
+                    <item type="msa" lang="es">s/a/v&gt;s/a/v</item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">tuur</item>
+                    <item type="cf" lang="stp-x-stp">tuur</item>
+                    <item type="gls" lang="es">toro</item>
+                    <item type="gls" lang="en">bull</item>
+                    <item type="msa" lang="es">s. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">toros</item>
+                <item type="gls" lang="en">bulls</item>
+                <item type="pos" lang="es">s.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">kɨꞋn</item>
+                <item type="txt" lang="stp-x-ipa">kɨʔn</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">kɨꞋn</item>
+                    <item type="cf" lang="stp-x-stp">kɨꞋn</item>
+                    <item type="gls" lang="es">Instr</item>
+                    <item type="gls" lang="en">Instr</item>
+                    <item type="msa" lang="es">posp. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">con</item>
+                <item type="gls" lang="en">with</item>
+                <item type="pos" lang="es">posp.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">Primero preparamos la tierra</item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">4</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">noꞋt</item>
+                <item type="txt" lang="stp-x-ipa">noʔt</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">noꞋ</item>
+                    <item type="cf" lang="stp-x-stp">noꞋ</item>
+                    <item type="gls" lang="es">si</item>
+                    <item type="gls" lang="en">if</item>
+                    <item type="msa" lang="es">conj. </item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">=t</item>
+                    <item type="cf" lang="stp-x-stp">=t</item>
+                    <item type="gls" lang="es">=3SGPRET</item>
+                    <item type="gls" lang="en">=3SGPERF</item>
+                    <item type="msa" lang="es">clít. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">cuando</item>
+                <item type="gls" lang="en">when</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">ba</item>
+                <item type="txt" lang="stp-x-ipa">βɑ</item>
+                <morphemes>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">ba</item>
+                    <item type="cf" lang="stp-x-stp">ba</item>
+                    <item type="gls" lang="es">RLZ</item>
+                    <item type="gls" lang="en">RLZ</item>
+                    <item type="msa" lang="es">pref. verb. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">ya</item>
+                <item type="gls" lang="en">already</item>
+                <item type="pos" lang="es">pref. verb.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">duuꞋn</item>
+                <item type="txt" lang="stp-x-ipa">duːʔn</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">duudu</item>
+                    <item type="cf" lang="stp-x-stp">duudu</item>
+                    <item type="gls" lang="es">llover</item>
+                    <item type="gls" lang="en">rain</item>
+                    <item type="msa" lang="es">v. intr. </item>
+                  </morph>
+                  <morph type="suprafix" guid="d7f713de-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">~T~</item>
+                    <item type="cf" lang="stp-x-stp">~T~</item>
+                    <item type="gls" lang="es">PRET</item>
+                    <item type="gls" lang="en">PERF</item>
+                    <item type="msa" lang="es">v.:Any</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">llovió</item>
+                <item type="gls" lang="en"></item>
+                <item type="pos" lang="es">v. intr.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">gu</item>
+                <item type="txt" lang="stp-x-ipa">gu</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">gu</item>
+                    <item type="cf" lang="stp-x-stp">gu</item>
+                    <item type="gls" lang="es">ART</item>
+                    <item type="gls" lang="en">Art</item>
+                    <item type="msa" lang="es">adj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">la</item>
+                <item type="gls" lang="en">the</item>
+                <item type="pos" lang="es">adj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">kibaar</item>
+                <item type="txt" lang="stp-x-ipa">kiˈβɑːɾ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">kibaaro</item>
+                    <item type="cf" lang="stp-x-stp">kibaaro</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">ligeramente (lluvia)</item>
+                    <item type="gls" lang="en">lightly (rain)</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">lluvia ligera</item>
+                <item type="gls" lang="en">light rain</item>
+                <item type="pos" lang="es">s.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"> y luego cuando llueve ligeramente</item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">5</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">na baꞋ</item>
+                <item type="txt" lang="stp-x-ipa">nɑ βɑʔ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">na</item>
+                    <item type="cf" lang="stp-x-stp">na</item>
+                    <item type="gls" lang="es">SBRD</item>
+                    <item type="gls" lang="en">SBRD</item>
+                    <item type="msa" lang="es">pron. </item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">baꞋ</item>
+                    <item type="cf" lang="stp-x-stp">baꞋ</item>
+                    <item type="gls" lang="es">SEC</item>
+                    <item type="gls" lang="en">Seq</item>
+                    <item type="msa" lang="es">conj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">para que</item>
+                <item type="gls" lang="en">so that</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">cham</item>
+                <item type="txt" lang="stp-x-ipa">ʧɑm</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">cham</item>
+                    <item type="cf" lang="stp-x-stp">cham</item>
+                    <item type="gls" lang="es">NEG</item>
+                    <item type="gls" lang="en">Neg</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">Neg</item>
+                <item type="gls" lang="en">Neg</item>
+                <item type="pos" lang="es">adv.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">xijai</item>
+                <item type="txt" lang="stp-x-ipa">ʃihɑi</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">xijai</item>
+                    <item type="cf" lang="stp-x-stp">xijai</item>
+                    <item type="gls" lang="es">difícil</item>
+                    <item type="gls" lang="en">difficult</item>
+                    <item type="msa" lang="es">adj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">difícil</item>
+                <item type="gls" lang="en">difficult</item>
+                <item type="pos" lang="es">adj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">kaꞋ</item>
+                <item type="txt" lang="stp-x-ipa">kɑʔ</item>
+                <morphemes>
+                  <morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+                    <item type="txt" lang="stp-x-stp">ka+Ꞌ</item>
+                    <item type="cf" lang="stp-x-stp">ka+Ꞌ</item>
+                    <item type="hn" lang="en">2</item>
+                    <item type="gls" lang="es">EST:FUT</item>
+                    <item type="gls" lang="en">STA:FUT</item>
+                    <item type="msa" lang="es">part. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">estará</item>
+                <item type="gls" lang="en">will be</item>
+                <item type="pos" lang="es">clít.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">para que no sea difícil</item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">6</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">na</item>
+                <item type="txt" lang="stp-x-ipa">nɑ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">na</item>
+                    <item type="cf" lang="stp-x-stp">na</item>
+                    <item type="gls" lang="es"></item>
+                    <item type="gls" lang="en"></item>
+                    <item type="msa" lang="es">conj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">que</item>
+                <item type="gls" lang="en">that</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">tɨm</item>
+                <item type="txt" lang="stp-x-ipa">tɨm</item>
+                <morphemes>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">tɨ</item>
+                    <item type="cf" lang="stp-x-stp">tu</item>
+                    <item type="gls" lang="es">EXT</item>
+                    <item type="gls" lang="en">EXT</item>
+                    <item type="msa" lang="es">pref. verb. </item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">=m</item>
+                    <item type="cf" lang="stp-x-stp">=m</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">=3PLSUJ</item>
+                    <item type="gls" lang="en">=3PLSUB</item>
+                    <item type="msa" lang="es">clít. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">se</item>
+                <item type="gls" lang="en">they</item>
+                <item type="pos" lang="es">pref. verb.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">ɨꞋxiaꞋ</item>
+                <item type="txt" lang="stp-x-ipa">ˈʔɨʔ.ʃiɑʔ</item>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">CV-</item>
+                    <item type="cf" lang="stp-x-stp">CV-</item>
+                    <item type="gls" lang="es">DISTR</item>
+                    <item type="gls" lang="en">DISTR</item>
+                    <item type="msa" lang="es">s/a/v&gt;s/a/v</item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">ɨsɨ</item>
+                    <item type="cf" lang="stp-x-stp">ɨsɨ</item>
+                    <item type="gls" lang="es">sembrar</item>
+                    <item type="gls" lang="en">plant</item>
+                    <item type="msa" lang="es">v. tr. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-aꞋ</item>
+                    <item type="cf" lang="stp-x-stp">-aꞋ</item>
+                    <item type="gls" lang="es">FUT</item>
+                    <item type="gls" lang="en">FUT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">sembrarán</item>
+                <item type="gls" lang="en">will plant</item>
+                <item type="pos" lang="es">v. tr.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">bhaan</item>
+                <item type="txt" lang="stp-x-ipa">bɑːn</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">bhaan</item>
+                    <item type="cf" lang="stp-x-stp">bhaan</item>
+                    <item type="gls" lang="es">en</item>
+                    <item type="gls" lang="en">on</item>
+                    <item type="msa" lang="es">prep. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">en</item>
+                <item type="gls" lang="en">on</item>
+                <item type="pos" lang="es">posp.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">ɨꞋxiabhak</item>
+                <item type="txt" lang="stp-x-ipa">ˈʔɨʔ.ʃiɑ.bɑk</item>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">CV-</item>
+                    <item type="cf" lang="stp-x-stp">CV-</item>
+                    <item type="gls" lang="es">DISTR</item>
+                    <item type="gls" lang="en">DISTR</item>
+                    <item type="msa" lang="es">s/a/v&gt;s/a/v</item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">ɨsɨ</item>
+                    <item type="cf" lang="stp-x-stp">ɨsɨ</item>
+                    <item type="gls" lang="es">sembrar</item>
+                    <item type="gls" lang="en">plant</item>
+                    <item type="msa" lang="es">v. tr. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-aꞋ</item>
+                    <item type="cf" lang="stp-x-stp">-aꞋ</item>
+                    <item type="gls" lang="es">FUT</item>
+                    <item type="gls" lang="en">FUT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-bhak</item>
+                    <item type="cf" lang="stp-x-stp">-bhak</item>
+                    <item type="gls" lang="es">época</item>
+                    <item type="gls" lang="en">season</item>
+                    <item type="msa" lang="es">v.&gt;adv.</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">époco de siembra</item>
+                <item type="gls" lang="en">planting season</item>
+                <item type="pos" lang="es">adv.</item>
+              </word>
+              <word>
+                <item type="punct" lang="stp">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">para sembrar.</item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph />
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">8</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">Tootkom</item>
+                <item type="txt" lang="stp-x-ipa">ˈtoːt.kom</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">tootkomi</item>
+                    <item type="cf" lang="stp-x-stp">tootkomi</item>
+                    <item type="gls" lang="es">carrizo</item>
+                    <item type="gls" lang="en">reeds</item>
+                    <item type="msa" lang="es">s. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">carrizos</item>
+                <item type="gls" lang="en">reeds</item>
+                <item type="pos" lang="es">s.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">kɨꞋn</item>
+                <item type="txt" lang="stp-x-ipa">kɨʔn</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">kɨꞋn</item>
+                    <item type="cf" lang="stp-x-stp">kɨꞋn</item>
+                    <item type="gls" lang="es">Instr</item>
+                    <item type="gls" lang="en">Instr</item>
+                    <item type="msa" lang="es">posp. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">con</item>
+                <item type="gls" lang="en">with</item>
+                <item type="pos" lang="es">posp.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">jum</item>
+                <item type="txt" lang="stp-x-ipa">hum</item>
+                <morphemes>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">jum</item>
+                    <item type="cf" lang="stp-x-stp">jum</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">2SGCMPL</item>
+                    <item type="gls" lang="en">2SGOBJ</item>
+                    <item type="msa" lang="es">pref. verb. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">se</item>
+                <item type="gls" lang="en">they</item>
+                <item type="pos" lang="es">pref. verb.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">sɨssɨ</item>
+                <item type="txt" lang="stp-x-ipa">ˈsɨs.sɨ</item>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">CV-</item>
+                    <item type="cf" lang="stp-x-stp">CV-</item>
+                    <item type="gls" lang="es">DISTR</item>
+                    <item type="gls" lang="en">DISTR</item>
+                    <item type="msa" lang="es">s/a/v&gt;s/a/v</item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">sɨsɨ</item>
+                    <item type="cf" lang="stp-x-stp">sɨsɨ</item>
+                    <item type="gls" lang="es">picar</item>
+                    <item type="gls" lang="en">stab</item>
+                    <item type="msa" lang="es">v. tr. </item>
+                  </morph>
+                  <morph type="suprafix" guid="d7f713de-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">~P~</item>
+                    <item type="cf" lang="stp-x-stp">~P~</item>
+                    <item type="gls" lang="es">PRES</item>
+                    <item type="gls" lang="en">PRES</item>
+                    <item type="msa" lang="es">v.:Any</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">pican</item>
+                <item type="gls" lang="en"></item>
+                <item type="pos" lang="es">v. tr.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">am</item>
+                <item type="txt" lang="stp-x-ipa">ʔɑm</item>
+                <morphemes>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">a+m</item>
+                    <item type="cf" lang="stp-x-stp">a+m</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">AUX:3PLSUJ</item>
+                    <item type="gls" lang="en">AUX:3PLSUB</item>
+                    <item type="msa" lang="es">suf. verb. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">ellos</item>
+                <item type="gls" lang="en">they</item>
+                <item type="pos" lang="es">clít.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">gu</item>
+                <item type="txt" lang="stp-x-ipa">gu</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">gu</item>
+                    <item type="cf" lang="stp-x-stp">gu</item>
+                    <item type="gls" lang="es">ART</item>
+                    <item type="gls" lang="en">Art</item>
+                    <item type="msa" lang="es">adj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">los</item>
+                <item type="gls" lang="en">the</item>
+                <item type="pos" lang="es">adj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">tutuur</item>
+                <item type="txt" lang="stp-x-ipa">tuˈtuːɾ</item>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">CV-</item>
+                    <item type="cf" lang="stp-x-stp">CV-</item>
+                    <item type="gls" lang="es">DISTR</item>
+                    <item type="gls" lang="en">DISTR</item>
+                    <item type="msa" lang="es">s/a/v&gt;s/a/v</item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">tuur</item>
+                    <item type="cf" lang="stp-x-stp">tuur</item>
+                    <item type="gls" lang="es">toro</item>
+                    <item type="gls" lang="en">bull</item>
+                    <item type="msa" lang="es">s. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">toros</item>
+                <item type="gls" lang="en">bulls</item>
+                <item type="pos" lang="es">s.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">Usamos toros para sembrar, los picamos con un carrizo</item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">9</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">nam baꞋ</item>
+                <item type="txt" lang="stp-x-ipa">nɑm βɑʔ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">na</item>
+                    <item type="cf" lang="stp-x-stp">na</item>
+                    <item type="gls" lang="es">SBRD</item>
+                    <item type="gls" lang="en">SBRD</item>
+                    <item type="msa" lang="es">pron. </item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">=m</item>
+                    <item type="cf" lang="stp-x-stp">=m</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">=3PLSUJ</item>
+                    <item type="gls" lang="en">=3PLSUB</item>
+                    <item type="msa" lang="es">clít. </item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">baꞋ</item>
+                    <item type="cf" lang="stp-x-stp">baꞋ</item>
+                    <item type="gls" lang="es">SEC</item>
+                    <item type="gls" lang="en">Seq</item>
+                    <item type="msa" lang="es">conj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">para que ellos</item>
+                <item type="gls" lang="en">so that they</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">sɨlh</item>
+                <item type="txt" lang="stp-x-ipa">sɨɣɮ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">sɨlhi</item>
+                    <item type="cf" lang="stp-x-stp">sɨlhi</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">directo</item>
+                    <item type="gls" lang="en">straight</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">directamente</item>
+                <item type="gls" lang="en">directly</item>
+                <item type="pos" lang="es">adv.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">jiimdaꞋ</item>
+                <item type="txt" lang="stp-x-ipa">ˈhiːm.dɑʔ</item>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">CV-</item>
+                    <item type="cf" lang="stp-x-stp">CV-</item>
+                    <item type="gls" lang="es">DISTR</item>
+                    <item type="gls" lang="en">DISTR</item>
+                    <item type="msa" lang="es">s/a/v&gt;s/a/v</item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">jimɨ</item>
+                    <item type="cf" lang="stp-x-stp">jimɨ</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">ir-venir</item>
+                    <item type="gls" lang="en">go-come</item>
+                    <item type="msa" lang="es">v. intr. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-da</item>
+                    <item type="cf" lang="stp-x-stp">-da</item>
+                    <item type="gls" lang="es">CONT</item>
+                    <item type="gls" lang="en">CONT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-aꞋ</item>
+                    <item type="cf" lang="stp-x-stp">-aꞋ</item>
+                    <item type="gls" lang="es">FUT</item>
+                    <item type="gls" lang="en">FUT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">andan</item>
+                <item type="gls" lang="en">go along</item>
+                <item type="pos" lang="es">v. intr.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">para que sigan adelante</item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">10</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">na paiꞋ dhuuk</item>
+                <item type="txt" lang="stp-x-ipa">nɑ.pɑiʔˈʤuːk</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">na</item>
+                    <item type="cf" lang="stp-x-stp">na</item>
+                    <item type="gls" lang="es">SBRD</item>
+                    <item type="gls" lang="en">SBRD</item>
+                    <item type="msa" lang="es">pron. </item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">pa+iꞋ</item>
+                    <item type="cf" lang="stp-x-stp">pa+iꞋ</item>
+                    <item type="gls" lang="es">donde</item>
+                    <item type="gls" lang="en">where</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp"></item>
+                    <item type="cf" lang="stp-x-stp">dunɨ</item>
+                    <item type="hn" lang="en">2</item>
+                    <item type="gls" lang="es">hacer</item>
+                    <item type="gls" lang="en">make-do</item>
+                    <item type="msa" lang="es">v. tr. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-k</item>
+                    <item type="cf" lang="stp-x-stp">-k</item>
+                    <item type="gls" lang="es">PUNT</item>
+                    <item type="gls" lang="en">PUNT</item>
+                    <item type="msa" lang="es">suf. verb. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">cuando</item>
+                <item type="gls" lang="en">when</item>
+                <item type="pos" lang="es">adv.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">tum juantuꞋndaꞋ</item>
+                <item type="txt" lang="stp-x-ipa">tum ˈhuɑn.tuʔn.dɑʔ</item>
+                <morphemes>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">jum</item>
+                    <item type="cf" lang="stp-x-stp">jum</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">2SGCMPL</item>
+                    <item type="gls" lang="en">2SGOBJ</item>
+                    <item type="msa" lang="es">pref. verb. </item>
+                  </morph>
+                  <morph>
+                    <item type="txt" lang="stp-x-stp"></item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-tugɨ</item>
+                    <item type="cf" lang="stp-x-stp">-tugɨ</item>
+                    <item type="gls" lang="es">MOV</item>
+                    <item type="gls" lang="en">MOV</item>
+                    <item type="msa" lang="es">suf. verb. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-da</item>
+                    <item type="cf" lang="stp-x-stp">-da</item>
+                    <item type="gls" lang="es">CONT</item>
+                    <item type="gls" lang="en">CONT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                </morphemes>
+              </word>
+              <word>
+                <item type="punct" lang="stp">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">[cuando los ponemos a trabajar].</item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">11</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">Gu</item>
+                <item type="txt" lang="stp-x-ipa">gu</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">gu</item>
+                    <item type="cf" lang="stp-x-stp">gu</item>
+                    <item type="gls" lang="es">ART</item>
+                    <item type="gls" lang="en">Art</item>
+                    <item type="msa" lang="es">adj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">ART</item>
+                <item type="gls" lang="en">Art</item>
+                <item type="pos" lang="es">adj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">ɨsdam</item>
+                <item type="txt" lang="stp-x-ipa">ˈʔɨs.dɑm</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp"></item>
+                    <item type="cf" lang="stp-x-stp">ɨsɨ+dam</item>
+                    <item type="gls" lang="es">sembrador</item>
+                    <item type="gls" lang="en">planter</item>
+                    <item type="msa" lang="es">s. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">sembrador</item>
+                <item type="gls" lang="en"></item>
+                <item type="pos" lang="es">s.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">baꞋ</item>
+                <item type="txt" lang="stp-x-ipa">βɑʔ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">baꞋ</item>
+                    <item type="cf" lang="stp-x-stp">baꞋ</item>
+                    <item type="gls" lang="es">SEC</item>
+                    <item type="gls" lang="en">Seq</item>
+                    <item type="msa" lang="es">conj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">entonces</item>
+                <item type="gls" lang="en">then</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">gatuuk dɨr</item>
+                <item type="txt" lang="stp-x-ipa">gɑˈtuːk.dɨɾ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">gatuuk</item>
+                    <item type="cf" lang="stp-x-stp">gatuuk</item>
+                    <item type="gls" lang="es">después</item>
+                    <item type="gls" lang="en">after</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">dɨr</item>
+                    <item type="cf" lang="stp-x-stp">dɨr</item>
+                    <item type="gls" lang="es">de</item>
+                    <item type="gls" lang="en">from</item>
+                    <item type="msa" lang="es">posp. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">atrás</item>
+                <item type="gls" lang="en"></item>
+                <item type="pos" lang="es">adv.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">mu</item>
+                <item type="txt" lang="stp-x-ipa">mu</item>
+                <morphemes>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">mu</item>
+                    <item type="cf" lang="stp-x-stp">mu</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">ALLÁ</item>
+                    <item type="gls" lang="en">MOT:AWAY</item>
+                    <item type="msa" lang="es">pref. verb. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">hacia allá</item>
+                <item type="gls" lang="en">that way</item>
+                <item type="pos" lang="es">pref. verb.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">jimdat</item>
+                <item type="txt" lang="stp-x-ipa">ˈhim.dɑt</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">jimɨ</item>
+                    <item type="cf" lang="stp-x-stp">jimɨ</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">ir-venir</item>
+                    <item type="gls" lang="en">go-come</item>
+                    <item type="msa" lang="es">v. intr. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-da</item>
+                    <item type="cf" lang="stp-x-stp">-da</item>
+                    <item type="gls" lang="es">CONT</item>
+                    <item type="gls" lang="en">CONT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-t</item>
+                    <item type="cf" lang="stp-x-stp">-t</item>
+                    <item type="gls" lang="es">COPRET</item>
+                    <item type="gls" lang="en">PAS:IMPF</item>
+                    <item type="msa" lang="es">suf. verb. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">camiando</item>
+                <item type="gls" lang="en">walking</item>
+                <item type="pos" lang="es">v. intr.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">tɨ</item>
+                <item type="txt" lang="stp-x-ipa">tɨ</item>
+                <morphemes>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">tɨ</item>
+                    <item type="cf" lang="stp-x-stp">tu</item>
+                    <item type="gls" lang="es">EXT</item>
+                    <item type="gls" lang="en">EXT</item>
+                    <item type="msa" lang="es">pref. verb. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">extenso</item>
+                <item type="gls" lang="en">extent</item>
+                <item type="pos" lang="es">pref. verb.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">ɨxiidhaꞋ</item>
+                <item type="txt" lang="stp-x-ipa">ʔɨˈʃiː.ʤɑʔ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">ɨsɨ</item>
+                    <item type="cf" lang="stp-x-stp">ɨsɨ</item>
+                    <item type="gls" lang="es">sembrar</item>
+                    <item type="gls" lang="en">plant</item>
+                    <item type="msa" lang="es">v. tr. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-da</item>
+                    <item type="cf" lang="stp-x-stp">-da</item>
+                    <item type="gls" lang="es">CONT</item>
+                    <item type="gls" lang="en">CONT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-aꞋ</item>
+                    <item type="cf" lang="stp-x-stp">-aꞋ</item>
+                    <item type="gls" lang="es">FUT</item>
+                    <item type="gls" lang="en">FUT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">sembrando</item>
+                <item type="gls" lang="en">planting</item>
+                <item type="pos" lang="es">v. tr.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">gu</item>
+                <item type="txt" lang="stp-x-ipa">gu</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">gu</item>
+                    <item type="cf" lang="stp-x-stp">gu</item>
+                    <item type="gls" lang="es">ART</item>
+                    <item type="gls" lang="en">Art</item>
+                    <item type="msa" lang="es">adj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">el</item>
+                <item type="gls" lang="en">the</item>
+                <item type="pos" lang="es">adj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">juun</item>
+                <item type="txt" lang="stp-x-ipa">huːn</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">juunu</item>
+                    <item type="cf" lang="stp-x-stp">juunu</item>
+                    <item type="gls" lang="es">maíz</item>
+                    <item type="gls" lang="en">corn</item>
+                    <item type="msa" lang="es">s. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">maíz</item>
+                <item type="gls" lang="en">corn</item>
+                <item type="pos" lang="es">s.</item>
+              </word>
+              <word>
+                <item type="punct" lang="stp">,</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">gam</item>
+                <item type="txt" lang="stp-x-ipa">gɑm</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">gam</item>
+                    <item type="cf" lang="stp-x-stp">gam</item>
+                    <item type="gls" lang="es">CAL</item>
+                    <item type="gls" lang="en">Qual</item>
+                    <item type="msa" lang="es">conj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">más</item>
+                <item type="gls" lang="en">plus</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">bhab</item>
+                <item type="txt" lang="stp-x-ipa">bɑf</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">bhabi</item>
+                    <item type="cf" lang="stp-x-stp">bhabi</item>
+                    <item type="gls" lang="es">frijol</item>
+                    <item type="gls" lang="en">bean</item>
+                    <item type="msa" lang="es">s. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">frijol</item>
+                <item type="gls" lang="en">bean</item>
+                <item type="pos" lang="es">s.</item>
+              </word>
+              <word>
+                <item type="punct" lang="stp">,</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">gio</item>
+                <item type="txt" lang="stp-x-ipa">gio</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">gio</item>
+                    <item type="cf" lang="stp-x-stp">gio</item>
+                    <item type="gls" lang="es">y</item>
+                    <item type="gls" lang="en">and</item>
+                    <item type="msa" lang="es">conj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">y</item>
+                <item type="gls" lang="en">and</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">gam</item>
+                <item type="txt" lang="stp-x-ipa">gɑm</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">gam</item>
+                    <item type="cf" lang="stp-x-stp">gam</item>
+                    <item type="gls" lang="es">CAL</item>
+                    <item type="gls" lang="en">Qual</item>
+                    <item type="msa" lang="es">conj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">más</item>
+                <item type="gls" lang="en">plus</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">gu</item>
+                <item type="txt" lang="stp-x-ipa">gu</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">gu</item>
+                    <item type="cf" lang="stp-x-stp">gu</item>
+                    <item type="gls" lang="es">ART</item>
+                    <item type="gls" lang="en">Art</item>
+                    <item type="msa" lang="es">adj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">la</item>
+                <item type="gls" lang="en">the</item>
+                <item type="pos" lang="es">adj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">imai</item>
+                <item type="txt" lang="stp-x-ipa">ʔiˈmɑi</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">imai</item>
+                    <item type="cf" lang="stp-x-stp">imai</item>
+                    <item type="gls" lang="es">calabaza</item>
+                    <item type="gls" lang="en">yellow squash</item>
+                    <item type="msa" lang="es">s. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">calabaza</item>
+                <item type="gls" lang="en">yellow squash</item>
+                <item type="pos" lang="es">s.</item>
+              </word>
+              <word>
+                <item type="punct" lang="stp">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">Otra persona viene después y siembra el maíz, el frijol, la calabaza y el chilacayote.</item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph />
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">13</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">Na paiꞋ dhuuk</item>
+                <item type="txt" lang="stp-x-ipa">nɑ.pɑiʔˈʤuːk</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">na</item>
+                    <item type="cf" lang="stp-x-stp">na</item>
+                    <item type="gls" lang="es">SBRD</item>
+                    <item type="gls" lang="en">SBRD</item>
+                    <item type="msa" lang="es">pron. </item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">pa+iꞋ</item>
+                    <item type="cf" lang="stp-x-stp">pa+iꞋ</item>
+                    <item type="gls" lang="es">donde</item>
+                    <item type="gls" lang="en">where</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp"></item>
+                    <item type="cf" lang="stp-x-stp">dunɨ</item>
+                    <item type="hn" lang="en">2</item>
+                    <item type="gls" lang="es">hacer</item>
+                    <item type="gls" lang="en">make-do</item>
+                    <item type="msa" lang="es">v. tr. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-k</item>
+                    <item type="cf" lang="stp-x-stp">-k</item>
+                    <item type="gls" lang="es">PUNT</item>
+                    <item type="gls" lang="en">PUNT</item>
+                    <item type="msa" lang="es">suf. verb. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">cuando</item>
+                <item type="gls" lang="en">when</item>
+                <item type="pos" lang="es">adv.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">palhɨɨp</item>
+                <item type="txt" lang="stp-x-ipa">pɑˈɣɮɨːp</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">palhɨɨp</item>
+                    <item type="cf" lang="stp-x-stp">palhɨɨp</item>
+                    <item type="gls" lang="es">poquito</item>
+                    <item type="gls" lang="en">a little</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">poquito</item>
+                <item type="gls" lang="en">a.little</item>
+                <item type="pos" lang="es">adv.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">xi</item>
+                <item type="txt" lang="stp-x-ipa">ʃi</item>
+                <morphemes>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">xi</item>
+                    <item type="cf" lang="stp-x-stp">xi</item>
+                    <item type="gls" lang="es">IMP:INTN</item>
+                    <item type="gls" lang="en">IMP:INTN</item>
+                    <item type="msa" lang="es">pref. verb. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">con.intención</item>
+                <item type="gls" lang="en">intentionally</item>
+                <item type="pos" lang="es">pref. verb.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">gɨꞋlhiaꞋ</item>
+                <item type="txt" lang="stp-x-ipa">ˈgɨʔ.ɣɮiɑʔ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">gɨꞋrɨ</item>
+                    <item type="cf" lang="stp-x-stp">gɨꞋrɨ</item>
+                    <item type="gls" lang="es">crecer</item>
+                    <item type="gls" lang="en">grow</item>
+                    <item type="msa" lang="es">v. intr. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-aꞋ</item>
+                    <item type="cf" lang="stp-x-stp">-aꞋ</item>
+                    <item type="gls" lang="es">FUT</item>
+                    <item type="gls" lang="en">FUT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">crecerá</item>
+                <item type="gls" lang="en">will.grow.up</item>
+                <item type="pos" lang="es">v. intr.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">gu</item>
+                <item type="txt" lang="stp-x-ipa">gu</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">gu</item>
+                    <item type="cf" lang="stp-x-stp">gu</item>
+                    <item type="gls" lang="es">ART</item>
+                    <item type="gls" lang="en">Art</item>
+                    <item type="msa" lang="es">adj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">la</item>
+                <item type="gls" lang="en">the</item>
+                <item type="pos" lang="es">adj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">gaa</item>
+                <item type="txt" lang="stp-x-ipa">gɑː</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">gaa</item>
+                    <item type="cf" lang="stp-x-stp">gaa</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">milpa</item>
+                    <item type="gls" lang="en">cornfield</item>
+                    <item type="msa" lang="es">s. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">milpa</item>
+                <item type="gls" lang="en">cornfield</item>
+                <item type="pos" lang="es">s.</item>
+              </word>
+              <word>
+                <item type="punct" lang="stp">,</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">Cuando el maíz empieza a crecer,</item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">14</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">dai na</item>
+                <item type="txt" lang="stp-x-ipa">dɑi.nɑ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">dai</item>
+                    <item type="cf" lang="stp-x-stp">dai</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">solamente</item>
+                    <item type="gls" lang="en">only</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">na</item>
+                    <item type="cf" lang="stp-x-stp">na</item>
+                    <item type="gls" lang="es">SBRD</item>
+                    <item type="gls" lang="en">SBRD</item>
+                    <item type="msa" lang="es">pron. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">nada.más.que</item>
+                <item type="gls" lang="en">just.that</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">bam</item>
+                <item type="txt" lang="stp-x-ipa">βɑm</item>
+                <morphemes>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">ba</item>
+                    <item type="cf" lang="stp-x-stp">ba</item>
+                    <item type="gls" lang="es">RLZ</item>
+                    <item type="gls" lang="en">RLZ</item>
+                    <item type="msa" lang="es">pref. verb. </item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">=m</item>
+                    <item type="cf" lang="stp-x-stp">=m</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">=3PLSUJ</item>
+                    <item type="gls" lang="en">=3PLSUB</item>
+                    <item type="msa" lang="es">clít. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">ya.se</item>
+                <item type="gls" lang="en">now.they</item>
+                <item type="pos" lang="es">pref. verb.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">jimchudaꞋ</item>
+                <item type="txt" lang="stp-x-ipa">ˈhim.ʧu.dɑʔ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">jimɨ</item>
+                    <item type="cf" lang="stp-x-stp">jimɨ</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">ir-venir</item>
+                    <item type="gls" lang="en">go-come</item>
+                    <item type="msa" lang="es">v. intr. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-</item>
+                    <item type="cf" lang="stp-x-stp">-tugɨ</item>
+                    <item type="gls" lang="es">MOV</item>
+                    <item type="gls" lang="en">MOV</item>
+                    <item type="msa" lang="es">suf. verb. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-da</item>
+                    <item type="cf" lang="stp-x-stp">-da</item>
+                    <item type="gls" lang="es">CONT</item>
+                    <item type="gls" lang="en">CONT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-aꞋ</item>
+                    <item type="cf" lang="stp-x-stp">-aꞋ</item>
+                    <item type="gls" lang="es">FUT</item>
+                    <item type="gls" lang="en">FUT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">aran</item>
+                <item type="gls" lang="en">plow</item>
+                <item type="pos" lang="es">v. intr.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">jaraar</item>
+                <item type="txt" lang="stp-x-ipa">hɑˈɾɑːɾ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">jaraaru</item>
+                    <item type="cf" lang="stp-x-stp">jaraaru</item>
+                    <item type="gls" lang="es">arado</item>
+                    <item type="gls" lang="en">plow</item>
+                    <item type="msa" lang="es">s. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">arado</item>
+                <item type="gls" lang="en">plow</item>
+                <item type="pos" lang="es">s.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">kɨꞋn</item>
+                <item type="txt" lang="stp-x-ipa">kɨʔn</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">kɨꞋn</item>
+                    <item type="cf" lang="stp-x-stp">kɨꞋn</item>
+                    <item type="gls" lang="es">Instr</item>
+                    <item type="gls" lang="en">Instr</item>
+                    <item type="msa" lang="es">posp. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">con</item>
+                <item type="gls" lang="en">with</item>
+                <item type="pos" lang="es">posp.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">puiꞋ</item>
+                <item type="txt" lang="stp-x-ipa">puiʔ</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">pu+iꞋ</item>
+                    <item type="cf" lang="stp-x-stp">pu+iꞋ</item>
+                    <item type="gls" lang="es">así</item>
+                    <item type="gls" lang="en">thus</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">así</item>
+                <item type="gls" lang="en">thus</item>
+                <item type="pos" lang="es">adv.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">cham</item>
+                <item type="txt" lang="stp-x-ipa">ʧɑm</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">cham</item>
+                    <item type="cf" lang="stp-x-stp">cham</item>
+                    <item type="gls" lang="es">NEG</item>
+                    <item type="gls" lang="en">Neg</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">Neg</item>
+                <item type="gls" lang="en">Neg</item>
+                <item type="pos" lang="es">adv.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">naanak</item>
+                <item type="txt" lang="stp-x-ipa">ˈnɑː.nɑk</item>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">CVV-</item>
+                    <item type="cf" lang="stp-x-stp">CVV-</item>
+                    <item type="gls" lang="es">DISTR</item>
+                    <item type="gls" lang="en">DISTR</item>
+                    <item type="msa" lang="es">s/a/v&gt;s/a/v</item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">naaka</item>
+                    <item type="cf" lang="stp-x-stp">naaka</item>
+                    <item type="gls" lang="es">oreja</item>
+                    <item type="gls" lang="en">ear</item>
+                    <item type="msa" lang="es">s. pos. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">orejas</item>
+                <item type="gls" lang="en">ears</item>
+                <item type="pos" lang="es">s.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">kɨꞋn</item>
+                <item type="txt" lang="stp-x-ipa">kɨʔn</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">kɨꞋn</item>
+                    <item type="cf" lang="stp-x-stp">kɨꞋn</item>
+                    <item type="gls" lang="es">Instr</item>
+                    <item type="gls" lang="en">Instr</item>
+                    <item type="msa" lang="es">posp. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">con</item>
+                <item type="gls" lang="en">with</item>
+                <item type="pos" lang="es">posp.</item>
+              </word>
+              <word>
+                <item type="punct" lang="stp">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">aramos entre los circos [con una arado de orejas].</item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">15</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">MiꞋ dhɨr baꞋ</item>
+                <item type="txt" lang="stp-x-ipa">miʔ ʤɨɾ βɑʔ</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">mi+Ꞌ</item>
+                    <item type="cf" lang="stp-x-stp">mi+Ꞌ</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">allí (abajo)</item>
+                    <item type="gls" lang="en">there (low)</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp"></item>
+                    <item type="cf" lang="stp-x-stp">dɨr</item>
+                    <item type="gls" lang="es">de</item>
+                    <item type="gls" lang="en">from</item>
+                    <item type="msa" lang="es">posp. </item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">baꞋ</item>
+                    <item type="cf" lang="stp-x-stp">baꞋ</item>
+                    <item type="gls" lang="es">SEC</item>
+                    <item type="gls" lang="en">Seq</item>
+                    <item type="msa" lang="es">conj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">de allí</item>
+                <item type="gls" lang="en">from there</item>
+                <item type="pos" lang="es">adv.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">na</item>
+                <item type="txt" lang="stp-x-ipa">nɑ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">na</item>
+                    <item type="cf" lang="stp-x-stp">na</item>
+                    <item type="gls" lang="es"></item>
+                    <item type="gls" lang="en"></item>
+                    <item type="msa" lang="es">conj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">que</item>
+                <item type="gls" lang="en">that</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">gɇꞋgɇr</item>
+                <item type="txt" lang="stp-x-ipa">gɜʔ.gɜɾ</item>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">CV-</item>
+                    <item type="cf" lang="stp-x-stp">CV-</item>
+                    <item type="gls" lang="es">DISTR</item>
+                    <item type="gls" lang="en">DISTR</item>
+                    <item type="msa" lang="es">s/a/v&gt;s/a/v</item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">gɇꞋ</item>
+                    <item type="cf" lang="stp-x-stp">gɇꞋ</item>
+                    <item type="hn" lang="en">2</item>
+                    <item type="gls" lang="es"></item>
+                    <item type="gls" lang="en"></item>
+                    <item type="msa" lang="es">adj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">grandes</item>
+                <item type="gls" lang="en">big</item>
+                <item type="pos" lang="es">adj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">paꞋ</item>
+                <item type="txt" lang="stp-x-ipa">pɑʔ</item>
+                <morphemes>
+                  <morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+                    <item type="txt" lang="stp-x-stp">paꞋ</item>
+                    <item type="cf" lang="stp-x-stp">paꞋ</item>
+                    <item type="gls" lang="es">más o menos</item>
+                    <item type="gls" lang="en">more or less</item>
+                    <item type="msa" lang="es">part. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">más o menos</item>
+                <item type="gls" lang="en">more or less</item>
+                <item type="pos" lang="es">part.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">iam</item>
+                <item type="txt" lang="stp-x-ipa">ʔiɑm</item>
+                <morphemes>
+                  <morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+                    <item type="txt" lang="stp-x-stp">iam</item>
+                    <item type="cf" lang="stp-x-stp">iam</item>
+                    <item type="gls" lang="es">poco más</item>
+                    <item type="gls" lang="en">little more</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">poco más</item>
+                <item type="gls" lang="en">little more</item>
+                <item type="pos" lang="es">adv.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">na</item>
+                <item type="txt" lang="stp-x-ipa">nɑ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">na</item>
+                    <item type="cf" lang="stp-x-stp">na</item>
+                    <item type="gls" lang="es"></item>
+                    <item type="gls" lang="en"></item>
+                    <item type="msa" lang="es">conj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">que</item>
+                <item type="gls" lang="en">that</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">gɨꞋlhiaꞋ</item>
+                <item type="txt" lang="stp-x-ipa">ˈgɨʔ.ɣɮiɑʔ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">gɨꞋrɨ</item>
+                    <item type="cf" lang="stp-x-stp">gɨꞋrɨ</item>
+                    <item type="gls" lang="es">crecer</item>
+                    <item type="gls" lang="en">grow</item>
+                    <item type="msa" lang="es">v. intr. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-aꞋ</item>
+                    <item type="cf" lang="stp-x-stp">-aꞋ</item>
+                    <item type="gls" lang="es">FUT</item>
+                    <item type="gls" lang="en">FUT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">crecerá</item>
+                <item type="gls" lang="en">will grow</item>
+                <item type="pos" lang="es">v. intr.</item>
+              </word>
+              <word>
+                <item type="punct" lang="stp">,</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">Cuando está más grande,</item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">16</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">bam</item>
+                <item type="txt" lang="stp-x-ipa">βɑm</item>
+                <morphemes>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">ba</item>
+                    <item type="cf" lang="stp-x-stp">ba</item>
+                    <item type="gls" lang="es">RLZ</item>
+                    <item type="gls" lang="en">RLZ</item>
+                    <item type="msa" lang="es">pref. verb. </item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">=m</item>
+                    <item type="cf" lang="stp-x-stp">=m</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">=3PLSUJ</item>
+                    <item type="gls" lang="en">=3PLSUB</item>
+                    <item type="msa" lang="es">clít. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">ya.se</item>
+                <item type="gls" lang="en">now.they</item>
+                <item type="pos" lang="es">pref. verb.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">jimchudaꞋ</item>
+                <item type="txt" lang="stp-x-ipa">ˈhim.ʧu.dɑʔ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">jimɨ</item>
+                    <item type="cf" lang="stp-x-stp">jimɨ</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">ir-venir</item>
+                    <item type="gls" lang="en">go-come</item>
+                    <item type="msa" lang="es">v. intr. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-</item>
+                    <item type="cf" lang="stp-x-stp">-tugɨ</item>
+                    <item type="gls" lang="es">MOV</item>
+                    <item type="gls" lang="en">MOV</item>
+                    <item type="msa" lang="es">suf. verb. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-da</item>
+                    <item type="cf" lang="stp-x-stp">-da</item>
+                    <item type="gls" lang="es">CONT</item>
+                    <item type="gls" lang="en">CONT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-aꞋ</item>
+                    <item type="cf" lang="stp-x-stp">-aꞋ</item>
+                    <item type="gls" lang="es">FUT</item>
+                    <item type="gls" lang="en">FUT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">aran</item>
+                <item type="gls" lang="en">plow</item>
+                <item type="pos" lang="es">v. intr.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">naanak</item>
+                <item type="txt" lang="stp-x-ipa">ˈnɑː.nɑk</item>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">CVV-</item>
+                    <item type="cf" lang="stp-x-stp">CVV-</item>
+                    <item type="gls" lang="es">DISTR</item>
+                    <item type="gls" lang="en">DISTR</item>
+                    <item type="msa" lang="es">s/a/v&gt;s/a/v</item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">naaka</item>
+                    <item type="cf" lang="stp-x-stp">naaka</item>
+                    <item type="gls" lang="es">oreja</item>
+                    <item type="gls" lang="en">ear</item>
+                    <item type="msa" lang="es">s. pos. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">orejas</item>
+                <item type="gls" lang="en">ears</item>
+                <item type="pos" lang="es">s.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">kɨꞋn</item>
+                <item type="txt" lang="stp-x-ipa">kɨʔn</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">kɨꞋn</item>
+                    <item type="cf" lang="stp-x-stp">kɨꞋn</item>
+                    <item type="gls" lang="es">Instr</item>
+                    <item type="gls" lang="en">Instr</item>
+                    <item type="msa" lang="es">posp. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">con</item>
+                <item type="gls" lang="en">with</item>
+                <item type="pos" lang="es">posp.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">gu</item>
+                <item type="txt" lang="stp-x-ipa">gu</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">gu</item>
+                    <item type="cf" lang="stp-x-stp">gu</item>
+                    <item type="gls" lang="es">ART</item>
+                    <item type="gls" lang="en">Art</item>
+                    <item type="msa" lang="es">adj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">el</item>
+                <item type="gls" lang="en">the</item>
+                <item type="pos" lang="es">adj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">jaraar</item>
+                <item type="txt" lang="stp-x-ipa">hɑˈɾɑːɾ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">jaraaru</item>
+                    <item type="cf" lang="stp-x-stp">jaraaru</item>
+                    <item type="gls" lang="es">arado</item>
+                    <item type="gls" lang="en">plow</item>
+                    <item type="msa" lang="es">s. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">arado</item>
+                <item type="gls" lang="en">plow</item>
+              </word>
+            </words>
+            <item type="gls" lang="es">desyerbamos la milpa y aramos otra vez. Eso es todo lo que tenemos que hacer.</item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">17</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">na baꞋx</item>
+                <item type="txt" lang="stp-x-ipa">nɑ βɑʔʃ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">na</item>
+                    <item type="cf" lang="stp-x-stp">na</item>
+                    <item type="gls" lang="es">SBRD</item>
+                    <item type="gls" lang="en">SBRD</item>
+                    <item type="msa" lang="es">pron. </item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">baꞋ</item>
+                    <item type="cf" lang="stp-x-stp">baꞋ</item>
+                    <item type="gls" lang="es">SEC</item>
+                    <item type="gls" lang="en">Seq</item>
+                    <item type="msa" lang="es">conj. </item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">=</item>
+                    <item type="cf" lang="stp-x-stp">jix</item>
+                    <item type="gls" lang="es">=ATRIB</item>
+                    <item type="gls" lang="en">=ATTR</item>
+                    <item type="msa" lang="es">clít. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">para que sea</item>
+                <item type="gls" lang="en">so it will be</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">bhaiꞋm</item>
+                <item type="txt" lang="stp-x-ipa">bɑiʔm</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">bhaigɨ</item>
+                    <item type="cf" lang="stp-x-stp">bhaigɨ</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">bien</item>
+                    <item type="gls" lang="en">well</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">jum</item>
+                    <item type="cf" lang="stp-x-stp">jum</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">2SGCMPL</item>
+                    <item type="gls" lang="en">2SGOBJ</item>
+                    <item type="msa" lang="es">pref. verb. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">bien se</item>
+                <item type="gls" lang="en">good</item>
+                <item type="pos" lang="es">v. intr.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">duñiaꞋ</item>
+                <item type="txt" lang="stp-x-ipa">duˈɲiɑʔ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">dunɨ</item>
+                    <item type="cf" lang="stp-x-stp">dunɨ</item>
+                    <item type="hn" lang="en">2</item>
+                    <item type="gls" lang="es">hacer</item>
+                    <item type="gls" lang="en">make-do</item>
+                    <item type="msa" lang="es">v. tr. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-aꞋ</item>
+                    <item type="cf" lang="stp-x-stp">-aꞋ</item>
+                    <item type="gls" lang="es">FUT</item>
+                    <item type="gls" lang="en">FUT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">hará</item>
+                <item type="gls" lang="en">will do</item>
+                <item type="pos" lang="es">v. intr.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">gu</item>
+                <item type="txt" lang="stp-x-ipa">gu</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">gu</item>
+                    <item type="cf" lang="stp-x-stp">gu</item>
+                    <item type="gls" lang="es">ART</item>
+                    <item type="gls" lang="en">Art</item>
+                    <item type="msa" lang="es">adj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">el</item>
+                <item type="gls" lang="en">the</item>
+                <item type="pos" lang="es">adj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">juun</item>
+                <item type="txt" lang="stp-x-ipa">huːn</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">juunu</item>
+                    <item type="cf" lang="stp-x-stp">juunu</item>
+                    <item type="gls" lang="es">maíz</item>
+                    <item type="gls" lang="en">corn</item>
+                    <item type="msa" lang="es">s. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">maíz</item>
+                <item type="gls" lang="en">corn</item>
+                <item type="pos" lang="es">s.</item>
+              </word>
+              <word>
+                <item type="punct" lang="stp">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">18</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">Gio baꞋ</item>
+                <item type="txt" lang="stp-x-ipa">gio.βɑʔ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">gio</item>
+                    <item type="cf" lang="stp-x-stp">gio</item>
+                    <item type="gls" lang="es">y</item>
+                    <item type="gls" lang="en">and</item>
+                    <item type="msa" lang="es">conj. </item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">baꞋ</item>
+                    <item type="cf" lang="stp-x-stp">baꞋ</item>
+                    <item type="gls" lang="es">SEC</item>
+                    <item type="gls" lang="en">Seq</item>
+                    <item type="msa" lang="es">conj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">además</item>
+                <item type="gls" lang="en">in addition</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">na</item>
+                <item type="txt" lang="stp-x-ipa">nɑ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">na</item>
+                    <item type="cf" lang="stp-x-stp">na</item>
+                    <item type="gls" lang="es"></item>
+                    <item type="gls" lang="en"></item>
+                    <item type="msa" lang="es">conj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">que</item>
+                <item type="gls" lang="en">that</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">xim</item>
+                <item type="txt" lang="stp-x-ipa">ʃim</item>
+                <morphemes>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">xi</item>
+                    <item type="cf" lang="stp-x-stp">xi</item>
+                    <item type="gls" lang="es">IMP:INTN</item>
+                    <item type="gls" lang="en">IMP:INTN</item>
+                    <item type="msa" lang="es">pref. verb. </item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">=m</item>
+                    <item type="cf" lang="stp-x-stp">=m</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">=3PLSUJ</item>
+                    <item type="gls" lang="en">=3PLSUB</item>
+                    <item type="msa" lang="es">clít. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">Inten</item>
+                <item type="gls" lang="en">Inten</item>
+                <item type="pos" lang="es">pref. verb.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">bopñidhaꞋ</item>
+                <item type="txt" lang="stp-x-ipa">ˈβop.ɲi.ʤɑʔ</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">CV+boonɨ </item>
+                    <item type="cf" lang="stp-x-stp">CV+boonɨ </item>
+                    <item type="gls" lang="es">desyerbar</item>
+                    <item type="gls" lang="en">weed</item>
+                    <item type="msa" lang="es">v. tr. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-idha</item>
+                    <item type="cf" lang="stp-x-stp">-idha</item>
+                    <item type="gls" lang="es">APLIC</item>
+                    <item type="gls" lang="en">APPLIC</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-aꞋ</item>
+                    <item type="cf" lang="stp-x-stp">-aꞋ</item>
+                    <item type="gls" lang="es">FUT</item>
+                    <item type="gls" lang="en">FUT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">desyerba</item>
+                <item type="gls" lang="en">weed</item>
+                <item type="pos" lang="es">v. tr.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">19</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">na baꞋ</item>
+                <item type="txt" lang="stp-x-ipa">nɑ βɑʔ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">na</item>
+                    <item type="cf" lang="stp-x-stp">na</item>
+                    <item type="gls" lang="es">SBRD</item>
+                    <item type="gls" lang="en">SBRD</item>
+                    <item type="msa" lang="es">pron. </item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">baꞋ</item>
+                    <item type="cf" lang="stp-x-stp">baꞋ</item>
+                    <item type="gls" lang="es">SEC</item>
+                    <item type="gls" lang="en">Seq</item>
+                    <item type="msa" lang="es">conj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">para que</item>
+                <item type="gls" lang="en">so that</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">joidham</item>
+                <item type="txt" lang="stp-x-ipa">ˈhoi.ʤɑm</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">joidham</item>
+                    <item type="cf" lang="stp-x-stp">joidham</item>
+                    <item type="gls" lang="es">bien</item>
+                    <item type="gls" lang="en">well</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">bien</item>
+                <item type="gls" lang="en">well</item>
+                <item type="pos" lang="es">adv.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">iibhaiꞋñchaꞋ</item>
+                <item type="txt" lang="stp-x-ipa">ˈʔiː.bɑiʔɲ.ʧɑʔ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">iibhaidhaꞋ</item>
+                    <item type="cf" lang="stp-x-stp">iibhaidhaꞋ</item>
+                    <item type="hn" lang="en">2</item>
+                    <item type="gls" lang="es">fruto</item>
+                    <item type="gls" lang="en">fruit</item>
+                    <item type="msa" lang="es">s. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-</item>
+                    <item type="cf" lang="stp-x-stp">-ta</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">FABR</item>
+                    <item type="gls" lang="en">FAB</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-aꞋ</item>
+                    <item type="cf" lang="stp-x-stp">-aꞋ</item>
+                    <item type="gls" lang="es">FUT</item>
+                    <item type="gls" lang="en">FUT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">dará fruto</item>
+                <item type="gls" lang="en">will produce fruit</item>
+                <item type="pos" lang="es">s.</item>
+              </word>
+              <word>
+                <item type="punct" lang="stp">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph />
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">21</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">MiꞋ dhɨr baꞋ</item>
+                <item type="txt" lang="stp-x-ipa">miʔ ʤɨɾ βɑʔ</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">mi+Ꞌ</item>
+                    <item type="cf" lang="stp-x-stp">mi+Ꞌ</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">allí (abajo)</item>
+                    <item type="gls" lang="en">there (low)</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp"></item>
+                    <item type="cf" lang="stp-x-stp">dɨr</item>
+                    <item type="gls" lang="es">de</item>
+                    <item type="gls" lang="en">from</item>
+                    <item type="msa" lang="es">posp. </item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">baꞋ</item>
+                    <item type="cf" lang="stp-x-stp">baꞋ</item>
+                    <item type="gls" lang="es">SEC</item>
+                    <item type="gls" lang="en">Seq</item>
+                    <item type="msa" lang="es">conj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">de allí</item>
+                <item type="gls" lang="en">from there</item>
+                <item type="pos" lang="es">adv.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">na paiꞋ dhuuk</item>
+                <item type="txt" lang="stp-x-ipa">nɑ.pɑiʔˈʤuːk</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">na</item>
+                    <item type="cf" lang="stp-x-stp">na</item>
+                    <item type="gls" lang="es">SBRD</item>
+                    <item type="gls" lang="en">SBRD</item>
+                    <item type="msa" lang="es">pron. </item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">pa+iꞋ</item>
+                    <item type="cf" lang="stp-x-stp">pa+iꞋ</item>
+                    <item type="gls" lang="es">donde</item>
+                    <item type="gls" lang="en">where</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp"></item>
+                    <item type="cf" lang="stp-x-stp">dunɨ</item>
+                    <item type="hn" lang="en">2</item>
+                    <item type="gls" lang="es">hacer</item>
+                    <item type="gls" lang="en">make-do</item>
+                    <item type="msa" lang="es">v. tr. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-k</item>
+                    <item type="cf" lang="stp-x-stp">-k</item>
+                    <item type="gls" lang="es">PUNT</item>
+                    <item type="gls" lang="en">PUNT</item>
+                    <item type="msa" lang="es">suf. verb. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">cuando</item>
+                <item type="gls" lang="en">when</item>
+                <item type="pos" lang="es">adv.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">tu</item>
+                <item type="txt" lang="stp-x-ipa">tu</item>
+                <morphemes>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">tu</item>
+                    <item type="cf" lang="stp-x-stp">tu</item>
+                    <item type="gls" lang="es">EXT</item>
+                    <item type="gls" lang="en">EXT</item>
+                    <item type="msa" lang="es">pref. verb. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">extensión</item>
+                <item type="gls" lang="en">extension</item>
+                <item type="pos" lang="es">pref. verb.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">kaibhaꞋ</item>
+                <item type="txt" lang="stp-x-ipa">ˈkɑi.bɑʔ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">kaibha</item>
+                    <item type="cf" lang="stp-x-stp">kaibha</item>
+                    <item type="gls" lang="es">madurar maíz</item>
+                    <item type="gls" lang="en">ripen corn</item>
+                    <item type="msa" lang="es">v. intr. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-aꞋ</item>
+                    <item type="cf" lang="stp-x-stp">-aꞋ</item>
+                    <item type="gls" lang="es">FUT</item>
+                    <item type="gls" lang="en">FUT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">madurará</item>
+                <item type="gls" lang="en">will ripen</item>
+                <item type="pos" lang="es">v. intr.</item>
+              </word>
+              <word>
+                <item type="punct" lang="stp">,</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">22</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">dai na</item>
+                <item type="txt" lang="stp-x-ipa">dɑi.nɑ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">dai</item>
+                    <item type="cf" lang="stp-x-stp">dai</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">solamente</item>
+                    <item type="gls" lang="en">only</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">na</item>
+                    <item type="cf" lang="stp-x-stp">na</item>
+                    <item type="gls" lang="es">SBRD</item>
+                    <item type="gls" lang="en">SBRD</item>
+                    <item type="msa" lang="es">pron. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">nada.más.que</item>
+                <item type="gls" lang="en">just.that</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">maiꞋ</item>
+                <item type="txt" lang="stp-x-ipa">mɑiʔ</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">ma+iꞋ</item>
+                    <item type="cf" lang="stp-x-stp">ma+iꞋ</item>
+                    <item type="gls" lang="es">hacia allá</item>
+                    <item type="gls" lang="en">away</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">allá</item>
+                <item type="gls" lang="en">there</item>
+                <item type="pos" lang="es">adv.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">ba</item>
+                <item type="txt" lang="stp-x-ipa">βɑ</item>
+                <morphemes>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">ba</item>
+                    <item type="cf" lang="stp-x-stp">ba</item>
+                    <item type="gls" lang="es">RLZ</item>
+                    <item type="gls" lang="en">RLZ</item>
+                    <item type="msa" lang="es">pref. verb. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">ya</item>
+                <item type="gls" lang="en">already</item>
+                <item type="pos" lang="es">pref. verb.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">tum</item>
+                <item type="txt" lang="stp-x-ipa">tum</item>
+                <morphemes>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">tu</item>
+                    <item type="cf" lang="stp-x-stp">tu</item>
+                    <item type="gls" lang="es">EXT</item>
+                    <item type="gls" lang="en">EXT</item>
+                    <item type="msa" lang="es">pref. verb. </item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">=m</item>
+                    <item type="cf" lang="stp-x-stp">=m</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">=3PLSUJ</item>
+                    <item type="gls" lang="en">=3PLSUB</item>
+                    <item type="msa" lang="es">clít. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">se</item>
+                <item type="gls" lang="en">they</item>
+                <item type="pos" lang="es">pref. verb.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">buaꞋ</item>
+                <item type="txt" lang="stp-x-ipa">βuɑʔ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">bua</item>
+                    <item type="cf" lang="stp-x-stp">bua</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">aventar</item>
+                    <item type="gls" lang="en">throw</item>
+                    <item type="msa" lang="es">v. tr. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-aꞋ</item>
+                    <item type="cf" lang="stp-x-stp">-aꞋ</item>
+                    <item type="gls" lang="es">FUT</item>
+                    <item type="gls" lang="en">FUT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">depositarán</item>
+                <item type="gls" lang="en">will deposit</item>
+                <item type="pos" lang="es">v. tr.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">nɨiꞋkartam</item>
+                <item type="txt" lang="stp-x-ipa">ˈnɨiʔ.kɑɾ.tɑm</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">nɨꞋɨ+kar+tam</item>
+                    <item type="cf" lang="stp-x-stp">nɨꞋɨ+kar+tam</item>
+                    <item type="gls" lang="es">patio de bailar</item>
+                    <item type="gls" lang="en">dancing place</item>
+                    <item type="msa" lang="es">s. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">patio tradicional</item>
+                <item type="gls" lang="en">sacred dancing place</item>
+                <item type="pos" lang="es">s.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">23</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">na paiꞋ</item>
+                <item type="txt" lang="stp-x-ipa">pɑiʔ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">na</item>
+                    <item type="cf" lang="stp-x-stp">na</item>
+                    <item type="gls" lang="es">SBRD</item>
+                    <item type="gls" lang="en">SBRD</item>
+                    <item type="msa" lang="es">pron. </item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">pa+iꞋ</item>
+                    <item type="cf" lang="stp-x-stp">pa+iꞋ</item>
+                    <item type="gls" lang="es">donde</item>
+                    <item type="gls" lang="en">where</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">donde</item>
+                <item type="gls" lang="en">where</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">tɨm</item>
+                <item type="txt" lang="stp-x-ipa">tɨm</item>
+                <morphemes>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">tɨ</item>
+                    <item type="cf" lang="stp-x-stp">tu</item>
+                    <item type="gls" lang="es">EXT</item>
+                    <item type="gls" lang="en">EXT</item>
+                    <item type="msa" lang="es">pref. verb. </item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">=m</item>
+                    <item type="cf" lang="stp-x-stp">=m</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">=3PLSUJ</item>
+                    <item type="gls" lang="en">=3PLSUB</item>
+                    <item type="msa" lang="es">clít. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">se</item>
+                <item type="gls" lang="en">they</item>
+                <item type="pos" lang="es">pref. verb.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">nɨꞋ</item>
+                <item type="txt" lang="stp-x-ipa">nɨʔ</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp"></item>
+                    <item type="cf" lang="stp-x-stp">nɨꞋɨ</item>
+                    <item type="variantTypes" lang="es" />
+                    <item type="gls" lang="es">bailar</item>
+                    <item type="glsAppend" lang="es">.PRES</item>
+                    <item type="gls" lang="en">dance</item>
+                    <item type="glsAppend" lang="en">.PRES</item>
+                    <item type="msa" lang="es">v. intr. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">baila</item>
+                <item type="gls" lang="en">dance</item>
+                <item type="pos" lang="es">v. intr.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">gu</item>
+                <item type="txt" lang="stp-x-ipa">gu</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">gu</item>
+                    <item type="cf" lang="stp-x-stp">gu</item>
+                    <item type="gls" lang="es">ART</item>
+                    <item type="gls" lang="en">Art</item>
+                    <item type="msa" lang="es">adj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">el</item>
+                <item type="gls" lang="en">the</item>
+                <item type="pos" lang="es">adj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">xiotalh</item>
+                <item type="txt" lang="stp-x-ipa">ˈʃio.tɑɣɮ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">xiotalhi</item>
+                    <item type="cf" lang="stp-x-stp">xiotalhi</item>
+                    <item type="gls" lang="es">mitote</item>
+                    <item type="gls" lang="en">sacred dance</item>
+                    <item type="msa" lang="es">s. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">mitote</item>
+                <item type="gls" lang="en">sacred.dance</item>
+                <item type="pos" lang="es">s.</item>
+              </word>
+              <word>
+                <item type="punct" lang="stp">,</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">24</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">na baꞋ</item>
+                <item type="txt" lang="stp-x-ipa">nɑ βɑʔ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">na</item>
+                    <item type="cf" lang="stp-x-stp">na</item>
+                    <item type="gls" lang="es">SBRD</item>
+                    <item type="gls" lang="en">SBRD</item>
+                    <item type="msa" lang="es">pron. </item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">baꞋ</item>
+                    <item type="cf" lang="stp-x-stp">baꞋ</item>
+                    <item type="gls" lang="es">SEC</item>
+                    <item type="gls" lang="en">Seq</item>
+                    <item type="msa" lang="es">conj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">para que</item>
+                <item type="gls" lang="en">so that</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">bar</item>
+                <item type="txt" lang="stp-x-ipa">βɑɾ</item>
+                <morphemes>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">ba</item>
+                    <item type="cf" lang="stp-x-stp">ba</item>
+                    <item type="gls" lang="es">RLZ</item>
+                    <item type="gls" lang="en">RLZ</item>
+                    <item type="msa" lang="es">pref. verb. </item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">=</item>
+                    <item type="cf" lang="stp-x-stp">jir</item>
+                    <item type="gls" lang="es">=EXIS</item>
+                    <item type="gls" lang="en">=EXIS</item>
+                    <item type="msa" lang="es">clít. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">ya.son</item>
+                <item type="gls" lang="en">now.are</item>
+                <item type="pos" lang="es">pref. sust.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">jum kuaꞋdam</item>
+                <item type="txt" lang="stp-x-ipa">hum ˈkuɑʔ.dɑm</item>
+                <morphemes>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">jum</item>
+                    <item type="cf" lang="stp-x-stp">jum</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">2SGCMPL</item>
+                    <item type="gls" lang="en">2SGOBJ</item>
+                    <item type="msa" lang="es">pref. verb. </item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp"></item>
+                    <item type="cf" lang="stp-x-stp">jugɨ</item>
+                    <item type="hn" lang="en">2</item>
+                    <item type="gls" lang="es">comer</item>
+                    <item type="gls" lang="en">eat</item>
+                    <item type="msa" lang="es">v. tr. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-dam</item>
+                    <item type="cf" lang="stp-x-stp">-dam</item>
+                    <item type="gls" lang="es">INSTR:ANIM</item>
+                    <item type="gls" lang="en">INSTR:ANIM</item>
+                    <item type="msa" lang="es">suf. sust.</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">comestibles</item>
+                <item type="gls" lang="en">edible</item>
+                <item type="pos" lang="es">s.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">kaꞋ</item>
+                <item type="txt" lang="stp-x-ipa">kɑʔ</item>
+                <morphemes>
+                  <morph type="particle" guid="56db04bf-3d58-44cc-b292-4c8aa68538f4">
+                    <item type="txt" lang="stp-x-stp">ka+Ꞌ</item>
+                    <item type="cf" lang="stp-x-stp">ka+Ꞌ</item>
+                    <item type="hn" lang="en">2</item>
+                    <item type="gls" lang="es">EST:FUT</item>
+                    <item type="gls" lang="en">STA:FUT</item>
+                    <item type="msa" lang="es">part. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">serán</item>
+                <item type="gls" lang="en">will be</item>
+                <item type="pos" lang="es">clít.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">gu</item>
+                <item type="txt" lang="stp-x-ipa">gu</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">gu</item>
+                    <item type="cf" lang="stp-x-stp">gu</item>
+                    <item type="gls" lang="es">ART</item>
+                    <item type="gls" lang="en">Art</item>
+                    <item type="msa" lang="es">adj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">los</item>
+                <item type="gls" lang="en">the</item>
+                <item type="pos" lang="es">adj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">junbaaꞋ</item>
+                <item type="txt" lang="stp-x-ipa">hunˈβɑːʔ</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">jun+baaꞋ</item>
+                    <item type="cf" lang="stp-x-stp">jun+baaꞋ</item>
+                    <item type="gls" lang="es">elote</item>
+                    <item type="gls" lang="en">fresh corn</item>
+                    <item type="msa" lang="es">s. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">elotes</item>
+                <item type="gls" lang="en">fresh corn</item>
+                <item type="pos" lang="es">s.</item>
+              </word>
+              <word>
+                <item type="punct" lang="stp">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">25</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">Na guꞋx</item>
+                <item type="txt" lang="stp-x-ipa">ˌnɑˌguʔʃ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">na</item>
+                    <item type="cf" lang="stp-x-stp">na</item>
+                    <item type="gls" lang="es">SBRD</item>
+                    <item type="gls" lang="en">SBRD</item>
+                    <item type="msa" lang="es">pron. </item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">guꞋ</item>
+                    <item type="cf" lang="stp-x-stp">guꞋ</item>
+                    <item type="gls" lang="es">ADVER</item>
+                    <item type="gls" lang="en">Adv</item>
+                    <item type="msa" lang="es">conj. </item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">=</item>
+                    <item type="cf" lang="stp-x-stp">jix</item>
+                    <item type="gls" lang="es">=ATRIB</item>
+                    <item type="gls" lang="en">=ATTR</item>
+                    <item type="msa" lang="es">clít. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">porque es</item>
+                <item type="gls" lang="en">because it is</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">xidhuu</item>
+                <item type="txt" lang="stp-x-ipa">ʃiˈʤuː</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">xidhuu</item>
+                    <item type="cf" lang="stp-x-stp">xidhuu</item>
+                    <item type="gls" lang="es">prohibido</item>
+                    <item type="gls" lang="en">taboo</item>
+                    <item type="msa" lang="es">adj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">prohibido</item>
+                <item type="gls" lang="en">taboo</item>
+                <item type="pos" lang="es">adj.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">26</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">noꞋ</item>
+                <item type="txt" lang="stp-x-ipa">noʔ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">noꞋ</item>
+                    <item type="cf" lang="stp-x-stp">noꞋ</item>
+                    <item type="gls" lang="es">si</item>
+                    <item type="gls" lang="en">if</item>
+                    <item type="msa" lang="es">conj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">si</item>
+                <item type="gls" lang="en">if</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">chakui</item>
+                <item type="txt" lang="stp-x-ipa">ʧɑˈkui</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">chakui</item>
+                    <item type="cf" lang="stp-x-stp">chakui</item>
+                    <item type="gls" lang="es">todavía no</item>
+                    <item type="gls" lang="en">not yet</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">todavía.no</item>
+                <item type="gls" lang="en">not.yet</item>
+                <item type="pos" lang="es">adv.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">maiꞋ</item>
+                <item type="txt" lang="stp-x-ipa">mɑiʔ</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">ma+iꞋ</item>
+                    <item type="cf" lang="stp-x-stp">ma+iꞋ</item>
+                    <item type="gls" lang="es">hacia allá</item>
+                    <item type="gls" lang="en">away</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">allá</item>
+                <item type="gls" lang="en">there</item>
+                <item type="pos" lang="es">adv.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">buix</item>
+                <item type="txt" lang="stp-x-ipa">βuiʃ</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp"></item>
+                    <item type="cf" lang="stp-x-stp">dunɨ</item>
+                    <item type="hn" lang="en">2</item>
+                    <item type="gls" lang="es">hacer</item>
+                    <item type="gls" lang="en">make-do</item>
+                    <item type="msa" lang="es">v. tr. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-ix</item>
+                    <item type="cf" lang="stp-x-stp">-ix</item>
+                    <item type="gls" lang="es">RES</item>
+                    <item type="gls" lang="en">RES</item>
+                    <item type="msa" lang="es">v.&gt;adj.</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">llevadas</item>
+                <item type="gls" lang="en">taken</item>
+                <item type="pos" lang="es">v. tr.</item>
+              </word>
+              <word>
+                <item type="punct" lang="stp">,</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">27</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">sia ku</item>
+                <item type="txt" lang="stp-x-ipa">siɑ ku</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">sia</item>
+                    <item type="cf" lang="stp-x-stp">sia</item>
+                    <item type="gls" lang="es">CONCES</item>
+                    <item type="gls" lang="en">CONCES</item>
+                    <item type="msa" lang="es">conj. </item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">ku</item>
+                    <item type="cf" lang="stp-x-stp">ku</item>
+                    <item type="gls" lang="es">HAB</item>
+                    <item type="gls" lang="en">Enab</item>
+                    <item type="msa" lang="es">conj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">aunque</item>
+                <item type="gls" lang="en">even though</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">bax</item>
+                <item type="txt" lang="stp-x-ipa">βɑʃ</item>
+                <morphemes>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">ba</item>
+                    <item type="cf" lang="stp-x-stp">ba</item>
+                    <item type="gls" lang="es">RLZ</item>
+                    <item type="gls" lang="en">RLZ</item>
+                    <item type="msa" lang="es">pref. verb. </item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">=</item>
+                    <item type="cf" lang="stp-x-stp">jix</item>
+                    <item type="gls" lang="es">=ATRIB</item>
+                    <item type="gls" lang="en">=ATTR</item>
+                    <item type="msa" lang="es">clít. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">ya son</item>
+                <item type="gls" lang="en">now are</item>
+                <item type="pos" lang="es">v. est.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">kaiꞋm</item>
+                <item type="txt" lang="stp-x-ipa">kɑiʔm</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp"></item>
+                    <item type="cf" lang="stp-x-stp">kaibha</item>
+                    <item type="variantTypes" lang="es" />
+                    <item type="gls" lang="es">madurar maíz</item>
+                    <item type="glsAppend" lang="es">.PRET</item>
+                    <item type="gls" lang="en">ripen corn</item>
+                    <item type="glsAppend" lang="en">.PERF</item>
+                    <item type="msa" lang="es">v. intr. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">maduros</item>
+                <item type="gls" lang="en">ripe</item>
+                <item type="pos" lang="es">v. est.</item>
+              </word>
+              <word>
+                <item type="punct" lang="stp">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph />
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">29</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">BaꞋ</item>
+                <item type="txt" lang="stp-x-ipa">βɑʔ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">baꞋ</item>
+                    <item type="cf" lang="stp-x-stp">baꞋ</item>
+                    <item type="gls" lang="es">SEC</item>
+                    <item type="gls" lang="en">Seq</item>
+                    <item type="msa" lang="es">conj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">entonces</item>
+                <item type="gls" lang="en">so</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">na paiꞋ dhuuk</item>
+                <item type="txt" lang="stp-x-ipa">nɑ.pɑiʔˈʤuːk</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">na</item>
+                    <item type="cf" lang="stp-x-stp">na</item>
+                    <item type="gls" lang="es">SBRD</item>
+                    <item type="gls" lang="en">SBRD</item>
+                    <item type="msa" lang="es">pron. </item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">pa+iꞋ</item>
+                    <item type="cf" lang="stp-x-stp">pa+iꞋ</item>
+                    <item type="gls" lang="es">donde</item>
+                    <item type="gls" lang="en">where</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp"></item>
+                    <item type="cf" lang="stp-x-stp">dunɨ</item>
+                    <item type="hn" lang="en">2</item>
+                    <item type="gls" lang="es">hacer</item>
+                    <item type="gls" lang="en">make-do</item>
+                    <item type="msa" lang="es">v. tr. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-k</item>
+                    <item type="cf" lang="stp-x-stp">-k</item>
+                    <item type="gls" lang="es">PUNT</item>
+                    <item type="gls" lang="en">PUNT</item>
+                    <item type="msa" lang="es">suf. verb. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">cuando</item>
+                <item type="gls" lang="en">when</item>
+                <item type="pos" lang="es">adv.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">ba</item>
+                <item type="txt" lang="stp-x-ipa">βɑ</item>
+                <morphemes>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">ba</item>
+                    <item type="cf" lang="stp-x-stp">ba</item>
+                    <item type="gls" lang="es">RLZ</item>
+                    <item type="gls" lang="en">RLZ</item>
+                    <item type="msa" lang="es">pref. verb. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">ya</item>
+                <item type="gls" lang="en">already</item>
+                <item type="pos" lang="es">pref. verb.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">gakiaꞋ</item>
+                <item type="txt" lang="stp-x-ipa">gɑˈkiɑʔ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">gakɨ</item>
+                    <item type="cf" lang="stp-x-stp">gakɨ</item>
+                    <item type="gls" lang="es">secarse</item>
+                    <item type="gls" lang="en">dry out</item>
+                    <item type="msa" lang="es">v. intr. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-aꞋ</item>
+                    <item type="cf" lang="stp-x-stp">-aꞋ</item>
+                    <item type="gls" lang="es">FUT</item>
+                    <item type="gls" lang="en">FUT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">se secará</item>
+                <item type="gls" lang="en">will dry out</item>
+                <item type="pos" lang="es">v. intr.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">gu</item>
+                <item type="txt" lang="stp-x-ipa">gu</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">gu</item>
+                    <item type="cf" lang="stp-x-stp">gu</item>
+                    <item type="gls" lang="es">ART</item>
+                    <item type="gls" lang="en">Art</item>
+                    <item type="msa" lang="es">adj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">la</item>
+                <item type="gls" lang="en">the</item>
+                <item type="pos" lang="es">adj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">gaa</item>
+                <item type="txt" lang="stp-x-ipa">gɑː</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">gaa</item>
+                    <item type="cf" lang="stp-x-stp">gaa</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">milpa</item>
+                    <item type="gls" lang="en">cornfield</item>
+                    <item type="msa" lang="es">s. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">milpa</item>
+                <item type="gls" lang="en">cornfield</item>
+                <item type="pos" lang="es">s.</item>
+              </word>
+              <word>
+                <item type="punct" lang="stp">,</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">30</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">dai na</item>
+                <item type="txt" lang="stp-x-ipa">dɑi.nɑ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">dai</item>
+                    <item type="cf" lang="stp-x-stp">dai</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">solamente</item>
+                    <item type="gls" lang="en">only</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">na</item>
+                    <item type="cf" lang="stp-x-stp">na</item>
+                    <item type="gls" lang="es">SBRD</item>
+                    <item type="gls" lang="en">SBRD</item>
+                    <item type="msa" lang="es">pron. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">nada.más.que</item>
+                <item type="gls" lang="en">just.that</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">ba</item>
+                <item type="txt" lang="stp-x-ipa">βɑ</item>
+                <morphemes>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">ba</item>
+                    <item type="cf" lang="stp-x-stp">ba</item>
+                    <item type="gls" lang="es">RLZ</item>
+                    <item type="gls" lang="en">RLZ</item>
+                    <item type="msa" lang="es">pref. verb. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">ya</item>
+                <item type="gls" lang="en">already</item>
+                <item type="pos" lang="es">pref. verb.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">tum</item>
+                <item type="txt" lang="stp-x-ipa">tum</item>
+                <morphemes>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">tu</item>
+                    <item type="cf" lang="stp-x-stp">tu</item>
+                    <item type="gls" lang="es">EXT</item>
+                    <item type="gls" lang="en">EXT</item>
+                    <item type="msa" lang="es">pref. verb. </item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">=m</item>
+                    <item type="cf" lang="stp-x-stp">=m</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">=3PLSUJ</item>
+                    <item type="gls" lang="en">=3PLSUB</item>
+                    <item type="msa" lang="es">clít. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">se</item>
+                <item type="gls" lang="en">they</item>
+                <item type="pos" lang="es">pref. verb.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">oꞋraꞋ</item>
+                <item type="txt" lang="stp-x-ipa">ˈʔo.ɾɑʔ</item>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">CV-</item>
+                    <item type="cf" lang="stp-x-stp">CV-</item>
+                    <item type="gls" lang="es">DISTR</item>
+                    <item type="gls" lang="en">DISTR</item>
+                    <item type="msa" lang="es">s/a/v&gt;s/a/v</item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">oraa</item>
+                    <item type="cf" lang="stp-x-stp">oraa</item>
+                    <item type="gls" lang="es">pizcar</item>
+                    <item type="gls" lang="en">harvest corn</item>
+                    <item type="msa" lang="es">v. tr. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-aꞋ</item>
+                    <item type="cf" lang="stp-x-stp">-aꞋ</item>
+                    <item type="gls" lang="es">FUT</item>
+                    <item type="gls" lang="en">FUT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">pizcarán</item>
+                <item type="gls" lang="en">will pick corn</item>
+                <item type="pos" lang="es">v. tr.</item>
+              </word>
+              <word>
+                <item type="punct" lang="stp">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">31</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">MiꞋ dhɨr baꞋ</item>
+                <item type="txt" lang="stp-x-ipa">miʔ ʤɨɾ βɑʔ</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">mi+Ꞌ</item>
+                    <item type="cf" lang="stp-x-stp">mi+Ꞌ</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">allí (abajo)</item>
+                    <item type="gls" lang="en">there (low)</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp"></item>
+                    <item type="cf" lang="stp-x-stp">dɨr</item>
+                    <item type="gls" lang="es">de</item>
+                    <item type="gls" lang="en">from</item>
+                    <item type="msa" lang="es">posp. </item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">baꞋ</item>
+                    <item type="cf" lang="stp-x-stp">baꞋ</item>
+                    <item type="gls" lang="es">SEC</item>
+                    <item type="gls" lang="en">Seq</item>
+                    <item type="msa" lang="es">conj. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">de allí</item>
+                <item type="gls" lang="en">from there</item>
+                <item type="pos" lang="es">adv.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">dai na</item>
+                <item type="txt" lang="stp-x-ipa">dɑi.nɑ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">dai</item>
+                    <item type="cf" lang="stp-x-stp">dai</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">solamente</item>
+                    <item type="gls" lang="en">only</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">na</item>
+                    <item type="cf" lang="stp-x-stp">na</item>
+                    <item type="gls" lang="es">SBRD</item>
+                    <item type="gls" lang="en">SBRD</item>
+                    <item type="msa" lang="es">pron. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">nada.más.que</item>
+                <item type="gls" lang="en">just.that</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">bam</item>
+                <item type="txt" lang="stp-x-ipa">βɑm</item>
+                <morphemes>
+                  <morph type="clitic" guid="c2d140e5-7ca9-41f4-a69a-22fc7049dd2c">
+                    <item type="txt" lang="stp-x-stp">ba</item>
+                    <item type="cf" lang="stp-x-stp">ba</item>
+                    <item type="gls" lang="es">RLZ</item>
+                    <item type="gls" lang="en">RLZ</item>
+                    <item type="msa" lang="es">pref. verb. </item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">=m</item>
+                    <item type="cf" lang="stp-x-stp">=m</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">=3PLSUJ</item>
+                    <item type="gls" lang="en">=3PLSUB</item>
+                    <item type="msa" lang="es">clít. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">ya.se</item>
+                <item type="gls" lang="en">now.they</item>
+                <item type="pos" lang="es">pref. verb.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">ulhñaꞋ</item>
+                <item type="txt" lang="stp-x-ipa">ˈʔuɣɮ.ɲɑʔ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">ulhiiña</item>
+                    <item type="cf" lang="stp-x-stp">ulhiiña</item>
+                    <item type="gls" lang="es">guardar</item>
+                    <item type="gls" lang="en">store</item>
+                    <item type="msa" lang="es">v. tr. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-aꞋ</item>
+                    <item type="cf" lang="stp-x-stp">-aꞋ</item>
+                    <item type="gls" lang="es">FUT</item>
+                    <item type="gls" lang="en">FUT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">guardarán</item>
+                <item type="gls" lang="en">will store</item>
+                <item type="pos" lang="es">v. tr.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">32</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">jɨꞋk</item>
+                <item type="txt" lang="stp-x-ipa">hɨʔk</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">jɨꞋk</item>
+                    <item type="cf" lang="stp-x-stp">jɨꞋk</item>
+                    <item type="gls" lang="es">cuántos</item>
+                    <item type="gls" lang="en">how many</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">cuántos</item>
+                <item type="gls" lang="en">how many</item>
+                <item type="pos" lang="es">adv.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">nam</item>
+                <item type="txt" lang="stp-x-ipa">nɑm</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">na</item>
+                    <item type="cf" lang="stp-x-stp">na</item>
+                    <item type="gls" lang="es">SBRD</item>
+                    <item type="gls" lang="en">SBRD</item>
+                    <item type="msa" lang="es">pron. </item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">=m</item>
+                    <item type="cf" lang="stp-x-stp">=m</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">=3PLSUJ</item>
+                    <item type="gls" lang="en">=3PLSUB</item>
+                    <item type="msa" lang="es">clít. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">que.ellos</item>
+                <item type="gls" lang="en">that.they</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">oraaꞋ</item>
+                <item type="txt" lang="stp-x-ipa">ʔoˈɾɑːʔ</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">oraa</item>
+                    <item type="cf" lang="stp-x-stp">oraa</item>
+                    <item type="gls" lang="es">pizcar</item>
+                    <item type="gls" lang="en">harvest corn</item>
+                    <item type="msa" lang="es">v. tr. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-aꞋ</item>
+                    <item type="cf" lang="stp-x-stp">-aꞋ</item>
+                    <item type="gls" lang="es">FUT</item>
+                    <item type="gls" lang="en">FUT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">pizcarán</item>
+                <item type="gls" lang="en">will harvest corn</item>
+                <item type="pos" lang="es">v. tr.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph>
+        <phrases>
+          <phrase>
+            <item type="segnum" lang="en">33</item>
+            <words>
+              <word>
+                <item type="txt" lang="stp">aꞋlhiok</item>
+                <item type="txt" lang="stp-x-ipa">ˈʔɑʔ.ɣɮiok</item>
+                <morphemes>
+                  <morph type="prefix" guid="d7f713db-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">CV-</item>
+                    <item type="cf" lang="stp-x-stp">CV-</item>
+                    <item type="gls" lang="es">DISTR</item>
+                    <item type="gls" lang="en">DISTR</item>
+                    <item type="msa" lang="es">s/a/v&gt;s/a/v</item>
+                  </morph>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">alhio</item>
+                    <item type="cf" lang="stp-x-stp">alhio</item>
+                    <item type="gls" lang="es">un rato</item>
+                    <item type="gls" lang="en">for awhile</item>
+                    <item type="msa" lang="es">adv. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-k</item>
+                    <item type="cf" lang="stp-x-stp">-k</item>
+                    <item type="gls" lang="es">PUNT</item>
+                    <item type="gls" lang="en">PUNT</item>
+                    <item type="msa" lang="es">suf. verb. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">poco a poco</item>
+                <item type="gls" lang="en">little by little</item>
+                <item type="pos" lang="es">adv.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">baꞋm</item>
+                <item type="txt" lang="stp-x-ipa">βɑʔm</item>
+                <morphemes>
+                  <morph type="root" guid="d7f713e5-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">baꞋ</item>
+                    <item type="cf" lang="stp-x-stp">baꞋ</item>
+                    <item type="gls" lang="es">SEC</item>
+                    <item type="gls" lang="en">Seq</item>
+                    <item type="msa" lang="es">conj. </item>
+                  </morph>
+                  <morph type="enclitic" guid="d7f713e1-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">=m</item>
+                    <item type="cf" lang="stp-x-stp">=m</item>
+                    <item type="hn" lang="en">1</item>
+                    <item type="gls" lang="es">=3PLSUJ</item>
+                    <item type="gls" lang="en">=3PLSUB</item>
+                    <item type="msa" lang="es">clít. </item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">entonces se</item>
+                <item type="gls" lang="en">then they</item>
+                <item type="pos" lang="es">conj.</item>
+              </word>
+              <word>
+                <item type="txt" lang="stp">mataimaꞋndaꞋ</item>
+                <item type="txt" lang="stp-x-ipa">mɑˈtɑi.mɑʔn.dɑʔ</item>
+                <morphemes>
+                  <morph type="stem" guid="d7f713e8-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">matai+ma+da</item>
+                    <item type="cf" lang="stp-x-stp">matai+ma+da</item>
+                    <item type="gls" lang="es">hacer nixtamal</item>
+                    <item type="gls" lang="en">make corn dough</item>
+                    <item type="msa" lang="es">v. intr. </item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-da</item>
+                    <item type="cf" lang="stp-x-stp">-da</item>
+                    <item type="gls" lang="es">CONT</item>
+                    <item type="gls" lang="en">CONT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                  <morph type="suffix" guid="d7f713dd-e8cf-11d3-9764-00c04f186933">
+                    <item type="txt" lang="stp-x-stp">-aꞋ</item>
+                    <item type="cf" lang="stp-x-stp">-aꞋ</item>
+                    <item type="gls" lang="es">FUT</item>
+                    <item type="gls" lang="en">FUT</item>
+                    <item type="msa" lang="es">suf. verb.</item>
+                  </morph>
+                </morphemes>
+                <item type="gls" lang="es">harán nixtamal</item>
+                <item type="gls" lang="en">will make corn dough</item>
+                <item type="pos" lang="es">v. intr.</item>
+              </word>
+              <word>
+                <item type="punct" lang="stp">.</item>
+              </word>
+            </words>
+            <item type="gls" lang="es"></item>
+            <item type="gls" lang="en"></item>
+          </phrase>
+        </phrases>
+      </paragraph>
+      <paragraph />
+    </paragraphs>
+    <languages>
+      <language lang="en" font="Charis SIL" />
+      <language lang="es" font="Charis SIL" />
+      <language lang="stp" font="Charis SIL AmArea" />
+      <language lang="stp-x-stp" font="Charis SIL AmArea" vernacular="true" />
+      <language lang="stp-x-ipa" font="Charis SIL AmArea" vernacular="true" />
+    </languages>
+  </interlinear-text>
+</document>

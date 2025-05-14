@@ -322,6 +322,7 @@
     </Compile>
     <Compile Include="TextsTriStateTreeViewTests.cs" />
     <Compile Include="WordBreakGuesserTests.cs" />
+    <Compile Include="XLingPaperExporterTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FlexTextImport\FlexTextExportOutput.flextext" />

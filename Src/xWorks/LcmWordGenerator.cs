@@ -1147,7 +1147,8 @@ namespace SIL.FieldWorks.XWorks
 
 			return elementContent;
 		}
-		public IFragment GenerateGramInfoBeforeSensesContent(IFragment content, List<ConfigurableDictionaryNode> nodeList)
+		public IFragment GenerateGramInfoBeforeSensesContent(IFragment content, List<ConfigurableDictionaryNode> nodeList,
+			ConfiguredLcmGenerator.GeneratorSettings settings)
 		{
 			return content;
 		}
@@ -1770,7 +1771,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public void BeginObjectProperty(IFragmentWriter writer, ConfigurableDictionaryNode config, bool isBlockProperty, string getCollectionItemClassAttribute)
+		public void BeginObjectProperty(IFragmentWriter writer, ConfigurableDictionaryNode config,
+			ConfiguredLcmGenerator.GeneratorSettings settings, bool isBlockProperty, string getCollectionItemClassAttribute)
 		{
 			return;
 		}
@@ -1916,7 +1918,8 @@ namespace SIL.FieldWorks.XWorks
 			return fragment;
 		}
 
-		public void BeginCrossReference(IFragmentWriter writer, ConfigurableDictionaryNode senseConfigNode, bool isBlockProperty, string className)
+		public void BeginCrossReference(IFragmentWriter writer, ConfigurableDictionaryNode senseConfigNode,
+			ConfiguredLcmGenerator.GeneratorSettings settings, bool isBlockProperty, string className)
 		{
 			return;
 		}

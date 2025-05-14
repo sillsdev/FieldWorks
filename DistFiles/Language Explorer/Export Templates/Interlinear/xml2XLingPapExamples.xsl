@@ -94,6 +94,7 @@ phrase
 -->
 	<xsl:template match="phrase">
 		<xsl:param name="sScriptureType"/>
+		<xsl:param name="sThisTextId"/>
 		<xsl:variable name="sLevel">
 			<xsl:call-template name="OutputLevelContent">
 				<xsl:with-param name="sScriptureType" select="$sScriptureType"/>
