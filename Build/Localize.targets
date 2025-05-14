@@ -156,6 +156,11 @@
 			<XliffFiles Include="$(LocaleDir)/Lists/*.xlf"/>
 		</ItemGroup>
 		<XliffToLists XliffSourceFiles="@(XliffFiles)" OutputXml="$(OutputXml)"/>
+		<!-- To support varied windows locale options for Malay we copy ms to zlm, adjust the xml contents -->
+		<Message Text="Making zlm adjustments to the ms LocalizedLists copy" Condition="'$(Locale)'=='zlm'" />
+		<XmlPoke XmlInputPath="$(OutputXml)"
+			Query="//*[@ws='ms']/@ws"
+			Value="zlm" Condition="'$(Locale)'=='zlm'"/>
 		<Zip Source="$(OutputXml)" Destination="$(fwrt)/DistFiles/Templates"/>
 	</Target>
 
