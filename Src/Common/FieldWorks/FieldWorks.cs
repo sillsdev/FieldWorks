@@ -877,8 +877,9 @@ namespace SIL.FieldWorks
 					ws.DefaultCollation = new IcuRulesCollationDefinition("standard");
 					nullCollationWs.Append(ws.DisplayLabel + ",");
 				}
-				// Check HasValidRules here rather than in RecordSorter to avoid LT-21461 problem.
-				if (ws != null && ws.DefaultCollation != null && !HasValidRules(ws.DefaultCollation))
+				// Check for invalid collation here rather than in RecordSorter to avoid LT-21461 problem.
+				// This may also repair the previous if statement.
+				if (ws != null && ws.DefaultCollation != null && InvalidCollation(ws.DefaultCollation))
 				{
 					ws.DefaultCollation = new SystemCollationDefinition { LanguageTag = ws.LanguageTag };
 				}
@@ -896,10 +897,10 @@ namespace SIL.FieldWorks
 		/// An ICURulesCollationDefinition with empty rules was causing access violations in ICU. (LT-20268)
 		/// This method supports the band-aid fallback to SystemCollationDefinition.
 		/// </summary>
-		/// <returns>true if the CollationDefinition is a RulesCollationDefinition with valid non empty rules</returns>
-		private static bool HasValidRules(CollationDefinition cd)
+		/// <returns>true if the CollationDefinition is invalid or is a RulesCollationDefinition with empty rules</returns>
+		private static bool InvalidCollation(CollationDefinition cd)
 		{
-			return cd is RulesCollationDefinition ? !string.IsNullOrEmpty(((RulesCollationDefinition)cd).CollationRules) && cd.IsValid : true;
+			return !cd.IsValid || (cd is RulesCollationDefinition ? string.IsNullOrEmpty(((RulesCollationDefinition)cd).CollationRules) : false);
 		}
 
 
