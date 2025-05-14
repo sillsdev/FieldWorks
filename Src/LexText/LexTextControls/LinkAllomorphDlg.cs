@@ -136,6 +136,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			base.SetDlgInfo(cache, wp, mediator, propertyTable);
 			// This is needed to make the replacement MatchingEntriesBrowser visible:
 			Controls.SetChildIndex(m_matchingObjectsBrowser, 0);
+			m_matchingObjectsBrowser.FilterResult = FilterLexEntry;
 
 			m_fwcbAllomorphs.WritingSystemFactory = cache.WritingSystemFactory;
 			m_fwcbAllomorphs.WritingSystemCode = cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem.Handle;
@@ -149,6 +150,25 @@ namespace SIL.FieldWorks.LexText.Controls
 		#endregion	Construction and Destruction
 
 		#region	Other methods
+
+		/// <summary>
+		/// Filter hvo if all of its forms are abstract.
+		/// </summary>
+		private bool FilterLexEntry(int hvo)
+		{
+			ILexEntry entry = m_cache.ServiceLocator.GetObject(hvo) as ILexEntry;
+			if (entry == null)
+				return false;
+			var lf = entry.LexemeFormOA;
+			if (lf != null && !lf.IsAbstract)
+				return false;
+			foreach (var allo in entry.AlternateFormsOS)
+			{
+				if (!allo.IsAbstract)
+					return false;
+			}
+			return true;
+		}
 
 		protected override void HandleMatchingSelectionChanged()
 		{

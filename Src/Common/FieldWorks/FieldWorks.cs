@@ -877,6 +877,12 @@ namespace SIL.FieldWorks
 					ws.DefaultCollation = new IcuRulesCollationDefinition("standard");
 					nullCollationWs.Append(ws.DisplayLabel + ",");
 				}
+				// Check for invalid collation here rather than in RecordSorter to avoid LT-21461 problem.
+				// This may also repair the previous if statement.
+				if (ws != null && ws.DefaultCollation != null && InvalidCollation(ws.DefaultCollation))
+				{
+					ws.DefaultCollation = new SystemCollationDefinition { LanguageTag = ws.LanguageTag };
+				}
 			}
 			if (nullCollationWs.Length > 0)
 			{
@@ -886,6 +892,17 @@ namespace SIL.FieldWorks
 			}
 			cache.ServiceLocator.WritingSystemManager.Save();
 		}
+
+		/// <summary>
+		/// An ICURulesCollationDefinition with empty rules was causing access violations in ICU. (LT-20268)
+		/// This method supports the band-aid fallback to SystemCollationDefinition.
+		/// </summary>
+		/// <returns>true if the CollationDefinition is invalid or is a RulesCollationDefinition with empty rules</returns>
+		private static bool InvalidCollation(CollationDefinition cd)
+		{
+			return !cd.IsValid || (cd is RulesCollationDefinition ? string.IsNullOrEmpty(((RulesCollationDefinition)cd).CollationRules) : false);
+		}
+
 
 		/// <summary>
 		/// Ensure a valid folder for LangProject.LinkedFilesRootDir.  When moving projects
