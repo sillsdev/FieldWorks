@@ -2676,7 +2676,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var writingSystem = GetLanguageFromFirstOptionOrAnalysis(nodeList.Last().DictionaryNodeOptions as
 				DictionaryNodeWritingSystemOptions, settings.Cache);
-			var cssClassName = settings.StylesGenerator.AddStyles(nodeList).Trim('.');
+			var cssClassName = settings.StylesGenerator.AddStyles(nodeList, true).Trim('.');
 			return settings.ContentGenerator.AddProperty(nodeList, settings, cssClassName, false, simpleString, writingSystem);
 
 		}
@@ -3398,7 +3398,7 @@ namespace SIL.FieldWorks.XWorks
 	public interface ILcmStylesGenerator
 	{
 		void AddGlobalStyles(DictionaryConfigurationModel model, ReadOnlyPropertyTable propertyTable);
-		string AddStyles(List<ConfigurableDictionaryNode> nodeList);
+		string AddStyles(List<ConfigurableDictionaryNode> nodeList, bool addSpanBeforeAfter = false);
 		void Init(ReadOnlyPropertyTable propertyTable);
 	}
 
