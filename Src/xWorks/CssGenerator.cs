@@ -950,6 +950,8 @@ namespace SIL.FieldWorks.XWorks
 				if (configNode.FieldDescription == "PicturesOfSenses")
 					selectorBase += "> div:first-child";
 
+				// The addSpanBeforeAfter argument indicates whether we need to add a span to the before/after and skip the usual selector formatting.
+				// This is only needed in the case that we have a writing system unaware property that has had a writing system added via "GenerateContentForSimpleString".
 				if (addSpanBeforeAfter)
 				{
 					beforeRule = new StyleRule(dec) { Value = selectorBase + " span:before" };
@@ -969,6 +971,8 @@ namespace SIL.FieldWorks.XWorks
 				if (configNode.FieldDescription == "PicturesOfSenses")
 					selectorBase += "> div:last-child";
 
+				// The addSpanBeforeAfter argument indicates whether we need to add a span to the before/after and skip the usual selector formatting.
+				// This is only needed in the case that we have a writing system unaware property that has had a writing system added via "GenerateContentForSimpleString".
 				if (addSpanBeforeAfter)
 				{
 					afterRule = new StyleRule(dec) { Value = selectorBase + " span:after" };
