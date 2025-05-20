@@ -1998,7 +1998,7 @@ namespace SIL.FieldWorks.XWorks
 		/// the situations where a unique style name is generated, because the reference needs to use the
 		/// unique name.
 		/// </summary>
-		public string AddStyles(List<ConfigurableDictionaryNode> nodeList)
+		public string AddStyles(List<ConfigurableDictionaryNode> nodeList, bool addSpanBeforeAfter = false)
 		{
 			var node = nodeList.Last();
 			if (WordStylesGenerator.IsParagraphStyle(node.Style, _propertyTable))

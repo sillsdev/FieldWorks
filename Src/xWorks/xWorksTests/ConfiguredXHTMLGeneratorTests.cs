@@ -483,9 +483,15 @@ namespace SIL.FieldWorks.XWorks
 			XHTMLStringBuilder.Append(result);
 			XHTMLStringBuilder.AppendLine("</TESTWRAPPER>");
 
-			var entryWithHomograph = "/TESTWRAPPER/div[@class='lexentry']/span[@class='homographnumber' and text()='1']";
+			// Normally the propertyvalue for a headword with homograph number is IMultiStringAccessor.
+			// However, in the test setup the propertyvalue for homograph number is an int
+			// and therefore hits the int case of GenerateContentForValue in ConfiguredLcmGenerator,
+			// and is directed to "GenerateContentForSimpleString", which applies the first analysis WS.
+			// This creates an extra "/span[@lang='en' and text()=...]" at the end of the lexentry.
+			// We don't care if a WS is assigned, so we ignore this possible extra span and check only for the correct homograph number.
+			var entryWithHomograph = "/TESTWRAPPER/div[@class='lexentry']/span[@class='homographnumber' and text()=1] | /TESTWRAPPER/div[@class='lexentry']/span[@class='homographnumber']/*[text()=1]";
 			AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(entryWithHomograph, 1);
-			entryWithHomograph = "/TESTWRAPPER/div[@class='lexentry']/span[@class='homographnumber' and text()='2']";
+			entryWithHomograph = "/TESTWRAPPER/div[@class='lexentry']/span[@class='homographnumber' and text()=2] | /TESTWRAPPER/div[@class='lexentry']/span[@class='homographnumber']/*[text()=2]";
 			AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(entryWithHomograph, 1);
 		}
 
@@ -5504,7 +5510,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 			const string oneSenseWithPicture = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/img[@class='photo' and @id]";
-			const string oneSenseWithPictureCaption = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/div[@class='captionContent']/span[@class='creator' and text()='Jason Naylor']";
+			const string oneSenseWithPictureCaption = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/div[@class='captionContent']/span[@class='creator']/span[@lang='en' and text()='Jason Naylor']";
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithPicture, 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithPictureCaption, 1);
@@ -6488,7 +6494,7 @@ namespace SIL.FieldWorks.XWorks
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
-				var customDataPath = string.Format("/div[@class='lexentry']/span[@class='customdate' and text()='{0}']", customData.ToLongDateString());
+				var customDataPath = string.Format("/div[@class='lexentry']/span[@class='customdate']/span[@lang='en' and text()='{0}']", customData.ToLongDateString());
 				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
 			}
 		}
@@ -6518,7 +6524,7 @@ namespace SIL.FieldWorks.XWorks
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
-				var customDataPath = string.Format("/div[@class='lexentry']/span[@class='custominteger' and text()='{0}']", customData);
+				var customDataPath = string.Format("/div[@class='lexentry']/span[@class='custominteger']/span[@lang='en' and text()='{0}']", customData);
 				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
 			}
 		}
