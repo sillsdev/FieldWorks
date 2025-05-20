@@ -483,6 +483,12 @@ namespace SIL.FieldWorks.XWorks
 			XHTMLStringBuilder.Append(result);
 			XHTMLStringBuilder.AppendLine("</TESTWRAPPER>");
 
+			// Normally the propertyvalue for a headword with homograph number is IMultiStringAccessor.
+			// However, in the test setup the propertyvalue for homograph number is an int
+			// and therefore hits the int case of GenerateContentForValue in ConfiguredLcmGenerator,
+			// and is directed to "GenerateContentForSimpleString", which applies the first analysis WS.
+			// This creates an extra "/span[@lang='en' and text()=...]" at the end of the lexentry.
+			// We don't care if a WS is assigned, so we ignore this possible extra span and check only for the correct homograph number.
 			var entryWithHomograph = "/TESTWRAPPER/div[@class='lexentry']/span[@class='homographnumber' and text()=1] | /TESTWRAPPER/div[@class='lexentry']/span[@class='homographnumber']/*[text()=1]";
 			AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(entryWithHomograph, 1);
 			entryWithHomograph = "/TESTWRAPPER/div[@class='lexentry']/span[@class='homographnumber' and text()=2] | /TESTWRAPPER/div[@class='lexentry']/span[@class='homographnumber']/*[text()=2]";
