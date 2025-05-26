@@ -303,6 +303,12 @@
 		<string id="WhatDescription" txt="This utility removes all parser annotations from the system. Parser annotations used to be added by the parser when there was a problem parsing a word. "/>
 		<string id="RedoDescription" txt="You cannot use 'Undo' to cancel the effect of this utility."/>
 	  </group>
+	  <group id="RemoveUserAnalyses">
+		<string id="Label" txt="Remove User-approved analyses"/>
+		<string id="WhenDescription" txt="Run this utility when you want to remove all user-approved analyses.  This is useful if the parser changes how it analyses wordforms."/>
+		<string id="WhatDescription" txt="This utility removes all user approved analyses from the system. It does not remove analyses that are approved/disapproved of by the parser, however. "/>
+		<string id="RedoDescription" txt="You cannot use 'Undo' to cancel the effect of this utility. Therefore, you should back up your project before running this."/>
+	  </group>
 	  <group id="NaturalClassChooser">
 		<string id="kstidChooseNaturalClass" txt="Choose Natural Class"/>
 		<string id="kstidNaturalClassListing" txt="The following natural classes have been specified in the grammar area."/>
