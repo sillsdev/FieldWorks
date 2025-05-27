@@ -1117,6 +1117,43 @@ namespace SIL.FieldWorks.XWorks
 				wsId = runElem?.WritingSystemId;
 			}
 
+			// If we still don't have a writing system, then try getting it from the leaf node.
+			if (wsId == null)
+			{
+				if (nodeList.Last().DictionaryNodeOptions != null &&
+					nodeList.Last().DictionaryNodeOptions is DictionaryNodeWritingSystemOptions wsOptions)
+				{
+					// If only one ws options is enabled then use it.
+					var enabledWsOptions = wsOptions.Options.Where(opt => opt.IsEnabled);
+					if (enabledWsOptions.Count() == 1)
+					{
+						string enabledWsName = enabledWsOptions.First().Id;
+						string wsIdString = null;
+						var possiblyMagic = WritingSystemServices.GetMagicWsIdFromName(enabledWsName);
+						// If the writing system name isn't a magic name just use it.
+						if (possiblyMagic == 0)
+						{
+							wsIdString = enabledWsName;
+						}
+						// Else get the writing system name from the magic list.
+						else
+						{
+							var wsList = WritingSystemServices.GetWritingSystemList(Cache, possiblyMagic, false);
+							if (wsList.Count != 0)
+							{
+								wsIdString = wsList.First().Id;
+							}
+						}
+
+						if (!string.IsNullOrEmpty(wsIdString))
+						{
+							wsId = Cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr(wsIdString);
+							wsId = wsId == 0 ? null : wsId;
+						}
+					}
+				}
+			}
+
 			// Add Before text, if it is not going to be displayed in a paragraph.
 			if (!eachInAParagraph && !string.IsNullOrEmpty(config.Before))
 			{
