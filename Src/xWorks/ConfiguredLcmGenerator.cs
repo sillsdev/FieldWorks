@@ -346,7 +346,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// Second check if we are publishing minor entries.
-			//if (displayed && entryType != EntryType.mainEntry && !lexEntry.PublishAsMinorEntry)
 			if (displayed && !mainEntry && !lexEntry.PublishAsMinorEntry)
 			{
 				displayed = false;
@@ -361,6 +360,8 @@ namespace SIL.FieldWorks.XWorks
 				{
 					displayed = false;
 				}
+				// Note: A better name for ShowMainEntryIn() would probably be
+				// ShowAsHeadwordIn(), since it applies to both main and minor entries.
 				if (!lexEntry.ShowMainEntryIn.Contains(currentPubPoss))
 				{
 					displayed = false;
