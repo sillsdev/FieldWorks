@@ -88,7 +88,13 @@
 	 <command id="CmdDataTree-Delete-POS-AffixTemplate" label="Delete Affix Template" message="DataTreeDelete" icon="Delete">
 	  <parameters field="AffixTemplates" className="MoInflAffixTemplate"/>
 	</command>
-	<command id="CmdDataTree-Insert-POS-InflectionClass-Subclasses" label="Insert Inflection Class" message="DataTreeInsert">
+    <command id="CmdDataTree-MoveUp-POS-AffixTemplate" label="Move Affix Template Up" message="MoveUpObjectInSequence" icon="MoveUp">
+      <parameters field="AffixTemplates" className="MoInflAffixTemplate"/>
+    </command>
+    <command id="CmdDataTree-MoveDown-POS-AffixTemplate" label="Move Affix Template Down" message="MoveDownObjectInSequence" icon="MoveDown">
+      <parameters field="AffixTemplates" className="MoInflAffixTemplate"/>
+    </command>
+    <command id="CmdDataTree-Insert-POS-InflectionClass-Subclasses" label="Insert Inflection Class" message="DataTreeInsert">
 	  <parameters field="Subclasses" className="MoInflClass"/>
 	</command>
 	<command id="CmdDataTree-Insert-POS-InflectionClass" label="Insert Inflection Class" message="DataTreeInsert">
@@ -216,8 +222,10 @@
 	</menu>
 	 <menu id="mnuDataTree-POS-AffixTemplate">
 	  <item command="CmdDataTree-Delete-POS-AffixTemplate"/>
-	   <item command="CmdDataTree-Copy-POS-AffixTemplate"/>
-	   <!-- <item command="CmdDataTree-Help"/> -->
+      <item command="CmdDataTree-Copy-POS-AffixTemplate"/>
+      <item command="CmdDataTree-MoveUp-POS-AffixTemplate"/>
+      <item command="CmdDataTree-MoveDown-POS-AffixTemplate"/>
+      <!-- <item command="CmdDataTree-Help"/> -->
 	</menu>
 	<menu id="mnuDataTree-POS-InflectionClass-Subclasses">
 	  <item command="CmdDataTree-Insert-POS-InflectionClass-Subclasses"/>
