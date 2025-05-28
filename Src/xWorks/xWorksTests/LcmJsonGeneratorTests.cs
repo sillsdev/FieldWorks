@@ -507,7 +507,17 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode, mainPronunciationsNode, sensesNode, pictureNode, subentryNode, variantNode },
 				FieldDescription = "LexEntry"
 			};
-			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
+			var minorEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "minorentry",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant, Cache)
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode, minorEntryNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model);
 
 			//SUT
 			var output = ConfiguredLcmGenerator.GenerateContentForEntry(entryEntry, mainEntryNode, pubMain, DefaultSettings, 0).ToString();
@@ -577,7 +587,17 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { mainHeadwordNode, variantNodeTypeAfter },
 				FieldDescription = "LexEntry"
 			};
-			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNodeTypeAfter);
+			var minorEntryNode = new ConfigurableDictionaryNode
+			{
+				FieldDescription = "LexEntry",
+				CSSClassNameOverride = "minorentry",
+				DictionaryNodeOptions = ConfiguredXHTMLGeneratorTests.GetFullyEnabledListOptions(DictionaryNodeListOptions.ListIds.Variant, Cache)
+			};
+			var model = new DictionaryConfigurationModel
+			{
+				Parts = new List<ConfigurableDictionaryNode> { mainEntryNodeTypeAfter, minorEntryNode }
+			};
+			CssGeneratorTests.PopulateFieldsForTesting(model);
 
 			//SUT
 			var outputTypeAfter = ConfiguredLcmGenerator.GenerateContentForEntry(entryEntry, mainEntryNodeTypeAfter, pubMain, DefaultSettings, 0).ToString();
