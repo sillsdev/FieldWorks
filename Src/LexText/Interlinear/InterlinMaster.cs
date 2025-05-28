@@ -882,6 +882,15 @@ namespace SIL.FieldWorks.IText
 			SaveWorkInProgress();
 		}
 
+		public void OnRefreshInterlin(object argument)
+		{
+			// Reset data.
+			RootStText = null;
+			m_idcAnalyze.ResetAnalysisCache();
+			// Refresh the display.
+			Clerk.JumpToIndex(Clerk.CurrentIndex);
+		}
+
 		protected override void ShowRecord()
 		{
 			SaveWorkInProgress();

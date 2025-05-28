@@ -116,12 +116,16 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					if (humanEvals.Length > 0)
 					{
 						wordform.Checksum = 0;
-						analysis.MoveConcAnnotationsToWordform();
+						if (analysis.Cache != null)
+							analysis.MoveConcAnnotationsToWordform();
 					}
 
 					m_dlg.ProgressBar.PerformStep();
 				}
 			});
+
+			m_dlg.Mediator.SendMessage("RefreshInterlin", null);
+
 		}
 
 		#endregion IUtility implementation
