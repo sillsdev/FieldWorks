@@ -390,8 +390,10 @@ namespace SIL.FieldWorks.IText
 
 			Opinions uao = wa.GetAgentOpinion(wa.Cache.LangProject.DefaultUserAgent);
 			Opinions pao = wa.GetAgentOpinion(wa.Cache.LangProject.DefaultParserAgent);
-			AddOpinion(tsb, uao, (int)CmObjectUi.RGB(200, 255, 255));
-			AddOpinion(tsb, pao, (int)CmObjectUi.RGB(254, 240, 206));
+			AddOpinion(tsb, uao, InterlinVc.ApprovedGuessColor);
+			AddOpinion(tsb, pao, InterlinVc.MachineGuessColor);
+			tsb.Replace(tsb.Length, tsb.Length, " ", null);
+			tsb.SetProperties(tsb.Length - 1, tsb.Length, formTextProperties);
 
 			for (int i = start; i != lim; i += increment)
 			{

@@ -561,8 +561,6 @@ namespace SIL.FieldWorks.IText
 			{
 				bool humanApproved = GuessServices.IsHumanApproved(analysis);
 				bool parserApproved = GuessServices.IsParserApproved(analysis);
-				if (humanApproved && parserApproved)
-					return DoubleApprovedGuessColor;
 				if (humanApproved)
 					return ApprovedGuessColor;
 				if (parserApproved)
