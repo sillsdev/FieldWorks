@@ -872,16 +872,20 @@ namespace SIL.FieldWorks
 			StringBuilder nullCollationWs = new StringBuilder();
 			foreach (CoreWritingSystemDefinition ws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
-				if (ws != null && ws.DefaultCollation == null)
+				if (ws != null && (ws.DefaultCollation == null || !ws.DefaultCollation.Validate(out _)))
 				{
 					ws.DefaultCollation = new IcuRulesCollationDefinition("standard");
 					nullCollationWs.Append(ws.DisplayLabel + ",");
 				}
 				// Check for invalid collation here rather than in RecordSorter to avoid LT-21461 problem.
-				// This may also repair the previous if statement.
 				if (ws != null && ws.DefaultCollation != null && InvalidCollation(ws.DefaultCollation))
 				{
-					ws.DefaultCollation = new SystemCollationDefinition { LanguageTag = ws.LanguageTag };
+					CollationDefinition cd;
+					if (SystemCollator.ValidateLanguageTag(ws.LanguageTag, out _))
+						cd = new SystemCollationDefinition { LanguageTag = ws.LanguageTag };
+					else
+						cd = new IcuRulesCollationDefinition("standard");
+					ws.DefaultCollation = cd;
 				}
 			}
 			if (nullCollationWs.Length > 0)
