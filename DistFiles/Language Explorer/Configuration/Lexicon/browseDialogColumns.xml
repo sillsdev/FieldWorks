@@ -210,7 +210,7 @@
 	<column layout="ExampleTranslationType" label="Example Translation Types" multipara="true" visibility="dialog"
 		ghostListField="LexDb.AllExampleTranslationTargets"
 		field="CmTranslation.Type" bulkEdit="atomicFlatListItem" bulkDelete="false" list="LangProject.TranslationTags"/>
-	<column layout="StemNameForEntry" label="Stem Allomorph Label" visibility="dialog"/>
+	<column layout="StemNameForEntry" label="Stem Name" visibility="dialog"/>
 	<column layout="AllomorphStemNames" displayWs="best analysis" multipara="true" label="Stem Name (Allomorph)" sortmethod="MorphSortKey"
 	 ghostListField="LexDb.AllPossibleAllomorphs" visibility="dialog"/>
 	<!-- removed as per LT-9899
