@@ -692,9 +692,9 @@ ShowAnyFailure
 					<xsl:when test="contains(@test,'none') and ../../preceding-sibling::morph[1]/@type='nfx'">
 						<xsl:text>An interfix was found at the end of the word.  An interfix must be followed by a root or stem.</xsl:text>
 					</xsl:when>
-                    <xsl:otherwise>
-                        <xsl:value-of select="@test"/>
-                    </xsl:otherwise>
+					<xsl:otherwise>
+						<xsl:value-of select="@test"/>
+					</xsl:otherwise>
 				</xsl:choose>
 				<xsl:text>)</xsl:text>
 			</span>

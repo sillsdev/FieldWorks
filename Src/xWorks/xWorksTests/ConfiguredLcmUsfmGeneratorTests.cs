@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.XWorks
 	[TestFixture]
 	public class ConfiguredLcmUsfmGeneratorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase, IDisposable
 	{
-		private const string XPathToUSFMField = "/div[@class='lexentry-1']/span[@class='usfm-field-1']";
+		private const string XPathToUSFMField = "/div[@class='lexentry']/span[@class='usfm-field']";
 		private const string XPathToTitle = XPathToUSFMField + "/table/caption/span";
 		private const string XPathToRow = XPathToUSFMField + "/table/tbody/tr";
 		private const string XPathToCell = XPathToRow + "/td/span";

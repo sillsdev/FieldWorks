@@ -15,8 +15,8 @@
 
     You should also have received a copy of the GNU Lesser General Public
     License along with this library in the file named "LICENSE".
-    If not, write to the Free Software Foundation, 51 Franklin Street, 
-    Suite 500, Boston, MA 02110-1335, USA or visit their web page on the 
+    If not, write to the Free Software Foundation, 51 Franklin Street,
+    Suite 500, Boston, MA 02110-1335, USA or visit their web page on the
     internet at http://www.fsf.org/licenses/lgpl.html.
 
 Alternatively, the contents of this file may be used under the terms of the
@@ -37,7 +37,6 @@ namespace graphite2 {
 typedef gr_attrCode attrCode;
 
 class GlyphFace;
-class SegCacheEntry;
 class Segment;
 
 struct SlotJustify
@@ -97,7 +96,7 @@ public:
     void after(int ind) { m_after = ind; }
     bool isBase() const { return (!m_parent); }
     void update(int numSlots, int numCharInfo, Position &relpos);
-    Position finalise(const Segment* seg, const Font* font, Position & base, Rect & bbox, uint8 attrLevel, float & clusterMin, bool rtl, bool isFinal);
+    Position finalise(const Segment* seg, const Font* font, Position & base, Rect & bbox, uint8 attrLevel, float & clusterMin, bool rtl, bool isFinal, int depth = 0);
     bool isDeleted() const { return (m_flags & DELETED) ? true : false; }
     void markDeleted(bool state) { if (state) m_flags |= DELETED; else m_flags &= ~DELETED; }
     bool isCopied() const { return (m_flags & COPIED) ? true : false; }
@@ -128,10 +127,9 @@ public:
     void nextSibling(Slot *ap) { m_sibling = ap; }
     bool sibling(Slot *ap);
     bool removeChild(Slot *ap);
-    bool removeSibling(Slot *ap);
     int32 clusterMetric(const Segment* seg, uint8 metric, uint8 attrLevel, bool rtl);
     void positionShift(Position a) { m_position += a; }
-    void floodShift(Position adj);
+    void floodShift(Position adj, int depth = 0);
     float just() const { return m_just; }
     void just(float j) { m_just = j; }
     Slot *nextInCluster(const Slot *s) const;
@@ -145,12 +143,8 @@ private:
     unsigned short m_glyphid;        // glyph id
     uint16 m_realglyphid;
     uint32 m_original;      // charinfo that originated this slot (e.g. for feature values)
-	// REVIEW (Hasso) 2019.08: m_begin and m_end seem like they would be better names than m_before and m_after.
-	// Since m_before and m_after are the inclusive range of characters, and there is usually one character per slot,
-	// they are usually the same. Combining diacritics, strangely, are in their own separate slots. The only time I
-	// (Hasso) have seen two chars in one slot is Tamil vowel signs; perhaps Hebrew and Thai vowel points would do the same.
-    uint32 m_before;        // charinfo index of before association (the first index in the slot)
-    uint32 m_after;         // charinfo index of after association (the last index in the slot)
+    uint32 m_before;        // charinfo index of before association
+    uint32 m_after;         // charinfo index of after association
     uint32 m_index;         // slot index given to this slot during finalising
     Slot *m_parent;         // index to parent we are attached to
     Slot *m_child;          // index to first child slot that attaches to us
@@ -168,7 +162,6 @@ private:
     int16   *m_userAttr;    // pointer to user attributes
     SlotJustify *m_justs;   // pointer to justification parameters
 
-    friend class SegCacheEntry;
     friend class Segment;
 };
 

@@ -706,7 +706,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Up,
 			Down
-		};
+		}
 
 		/// <summary>
 		/// Move a node among its siblings in the model, and cause the view to update accordingly.
@@ -1601,7 +1601,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <remarks>LT-17213 Now 'internal static' so DictionaryConfigurationDlg can use it.</remarks>
 		internal static ConfigurableDictionaryNode FindConfigNode(ConfigurableDictionaryNode topNode, string nodeId, List<ConfigurableDictionaryNode> visited)
 		{
-			if (string.IsNullOrEmpty(nodeId) || $"{topNode.GetHashCode()}".Equals(nodeId))
+			if (string.IsNullOrEmpty(nodeId) || $"{topNode.GetNodeId()}".Equals(nodeId))
 			{
 				return topNode; // what we have already is the best we can find.
 			}

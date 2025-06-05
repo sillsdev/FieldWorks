@@ -773,6 +773,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						break;
 				}
 			}
+			WriteAllForms(w, "field", "type=\"exemplar\"", "form", sense.Exemplar);
 			WriteAllForms(w, null, null, "gloss", sense.Gloss);
 			WriteAllForms(w, "definition", null, "form", sense.Definition);
 			foreach (var publication in sense.DoNotPublishInRC)
@@ -1234,6 +1235,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			w.WriteLine("</field>");
 			w.WriteLine("<field tag=\"summary-definition\">");
 			w.WriteLine("<form lang=\"en\"><text>A summary definition (located at the entry level in the Entry pane) is a general definition summarizing all the senses of a primary entry. It has no theoretical value; its use is solely pragmatic.</text></form>");
+			w.WriteLine("</field>");
+			w.WriteLine("<field tag=\"exemplar\">");
+			w.WriteLine("<form lang=\"en\"><text>This field stores the exemplar form for the current sense.</text></form>");
 			w.WriteLine("</field>");
 			w.WriteLine("<field tag=\"scientific-name\">");
 			w.WriteLine("<form lang=\"en\"><text>This field stores the scientific name pertinent to the current sense.</text></form>");
@@ -1810,6 +1814,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			w.WriteLine("<range-element id=\"encyclopedic\">");
 			w.WriteLine("<label><form lang=\"en\"><text>encyclopedic</text></form></label>");
 			w.WriteLine("<description><form lang=\"en\"><text>This note gives encyclopedic information.</text></form></description>");
+			w.WriteLine("</range-element>");
+			w.WriteLine("<range-element id=\"exemplar\">");
+			w.WriteLine("<label><form lang=\"en\"><text>exemplar</text></form></label>");
+			w.WriteLine("<description><form lang=\"en\"><text>Gives the exemplar form of a sense</text></form></description>");
 			w.WriteLine("</range-element>");
 			w.WriteLine("<range-element id=\"general\">");
 			w.WriteLine("<label><form lang=\"en\"><text>general</text></form></label>");

@@ -1394,7 +1394,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		// currently duplicated in MorphologyListener, to avoid an assembly dependency.
 		private static bool IsVernacularSpellingEnabled(PropertyTable propertyTable)
 		{
-			return propertyTable.GetBoolProperty("UseVernSpellingDictionary", true);
+			return propertyTable.GetBoolProperty("UseVernSpellingDictionary", false);
 		}
 
 		private static bool CheckForExistingFileName(string projectFolder, string revisedFileName)

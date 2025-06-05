@@ -15,8 +15,8 @@
 
     You should also have received a copy of the GNU Lesser General Public
     License along with this library in the file named "LICENSE".
-    If not, write to the Free Software Foundation, 51 Franklin Street, 
-    Suite 500, Boston, MA 02110-1335, USA or visit their web page on the 
+    If not, write to the Free Software Foundation, 51 Franklin Street,
+    Suite 500, Boston, MA 02110-1335, USA or visit their web page on the
     internet at http://www.fsf.org/licenses/lgpl.html.
 
 Alternatively, the contents of this file may be used under the terms of the
@@ -40,13 +40,13 @@ Slot::Slot(int16 *user_attrs) :
     m_index(0), m_parent(NULL), m_child(NULL), m_sibling(NULL),
     m_position(0, 0), m_shift(0, 0), m_advance(0, 0),
     m_attach(0, 0), m_with(0, 0), m_just(0.),
-    m_flags(0), m_attLevel(0), m_bidiCls(-1), m_bidiLevel(0), 
+    m_flags(0), m_attLevel(0), m_bidiCls(-1), m_bidiLevel(0),
     m_userAttr(user_attrs), m_justs(NULL)
 {
 }
 
 // take care, this does not copy any of the GrSlot pointer fields
-void Slot::set(const Slot & orig, int charOffset, size_t numUserAttr, size_t justLevels, size_t numChars)
+void Slot::set(const Slot & orig, int charOffset, size_t sizeAttr, size_t justLevels, size_t numChars)
 {
     // leave m_next and m_prev unchanged
     m_glyphid = orig.m_glyphid;
@@ -57,7 +57,7 @@ void Slot::set(const Slot & orig, int charOffset, size_t numUserAttr, size_t jus
     else
         m_before = orig.m_before + charOffset;
     if (charOffset <= 0 && orig.m_after + charOffset >= numChars)
-        m_after = numChars - 1;
+        m_after = int(numChars) - 1;
     else
         m_after = orig.m_after + charOffset;
     m_parent = NULL;
@@ -73,7 +73,7 @@ void Slot::set(const Slot & orig, int charOffset, size_t numUserAttr, size_t jus
     m_bidiCls = orig.m_bidiCls;
     m_bidiLevel = orig.m_bidiLevel;
     if (m_userAttr && orig.m_userAttr)
-        memcpy(m_userAttr, orig.m_userAttr, numUserAttr * sizeof(*m_userAttr));
+        memcpy(m_userAttr, orig.m_userAttr, sizeAttr * sizeof(*m_userAttr));
     if (m_justs && orig.m_justs)
         memcpy(m_justs, orig.m_justs, SlotJustify::size_of(justLevels));
 }
@@ -85,10 +85,10 @@ void Slot::update(int /*numGrSlots*/, int numCharInfo, Position &relpos)
     m_position = m_position + relpos;
 }
 
-Position Slot::finalise(const Segment *seg, const Font *font, Position & base, Rect & bbox, uint8 attrLevel, float & clusterMin, bool rtl, bool isFinal)
+Position Slot::finalise(const Segment *seg, const Font *font, Position & base, Rect & bbox, uint8 attrLevel, float & clusterMin, bool rtl, bool isFinal, int depth)
 {
     SlotCollision *coll = NULL;
-    if (attrLevel && m_attLevel > attrLevel) return Position(0, 0);
+    if (depth > 100 || (attrLevel && m_attLevel > attrLevel)) return Position(0, 0);
     float scale = font ? font->scale() : 1.0f;
     Position shift(m_shift.x * (rtl * -2 + 1) + m_just, m_shift.y);
     float tAdvance = m_advance.x + m_just;
@@ -107,7 +107,7 @@ Position Slot::finalise(const Segment *seg, const Font *font, Position & base, R
             tAdvance = (m_advance.x - glyphFace->theAdvance().x + m_just) * scale + font->advance(glyph());
         else
             tAdvance *= scale;
-    }    
+    }
     Position res;
 
     m_position = base + shift;
@@ -133,16 +133,16 @@ Position Slot::finalise(const Segment *seg, const Font *font, Position & base, R
 
     if (m_child && m_child != this && m_child->attachedTo() == this)
     {
-        Position tRes = m_child->finalise(seg, font, m_position, bbox, attrLevel, clusterMin, rtl, isFinal);
+        Position tRes = m_child->finalise(seg, font, m_position, bbox, attrLevel, clusterMin, rtl, isFinal, depth + 1);
         if ((!m_parent || m_advance.x >= 0.5f) && tRes.x > res.x) res = tRes;
     }
 
     if (m_parent && m_sibling && m_sibling != this && m_sibling->attachedTo() == m_parent)
     {
-        Position tRes = m_sibling->finalise(seg, font, base, bbox, attrLevel, clusterMin, rtl, isFinal);
+        Position tRes = m_sibling->finalise(seg, font, base, bbox, attrLevel, clusterMin, rtl, isFinal, depth + 1);
         if (tRes.x > res.x) res = tRes;
     }
-    
+
     if (!m_parent && clusterMin < base.x)
     {
         Position adj = Position(m_position.x - clusterMin, 0.);
@@ -165,25 +165,25 @@ int32 Slot::clusterMetric(const Segment *seg, uint8 metric, uint8 attrLevel, boo
     switch (metrics(metric))
     {
     case kgmetLsb :
-        return static_cast<uint32>(bbox.bl.x);
+        return int32(bbox.bl.x);
     case kgmetRsb :
-        return static_cast<uint32>(res.x - bbox.tr.x);
+        return int32(res.x - bbox.tr.x);
     case kgmetBbTop :
-        return static_cast<uint32>(bbox.tr.y);
+        return int32(bbox.tr.y);
     case kgmetBbBottom :
-        return static_cast<uint32>(bbox.bl.y);
+        return int32(bbox.bl.y);
     case kgmetBbLeft :
-        return static_cast<uint32>(bbox.bl.x);
+        return int32(bbox.bl.x);
     case kgmetBbRight :
-        return static_cast<uint32>(bbox.tr.x);
+        return int32(bbox.tr.x);
     case kgmetBbWidth :
-        return static_cast<uint32>(bbox.tr.x - bbox.bl.x);
+        return int32(bbox.tr.x - bbox.bl.x);
     case kgmetBbHeight :
-        return static_cast<uint32>(bbox.tr.y - bbox.bl.y);
+        return int32(bbox.tr.y - bbox.bl.y);
     case kgmetAdvWidth :
-        return static_cast<uint32>(res.x);
+        return int32(res.x);
     case kgmetAdvHeight :
-        return static_cast<uint32>(res.y);
+        return int32(res.y);
     default :
         return 0;
     }
@@ -193,12 +193,7 @@ int32 Slot::clusterMetric(const Segment *seg, uint8 metric, uint8 attrLevel, boo
 
 int Slot::getAttr(const Segment *seg, attrCode ind, uint8 subindex) const
 {
-    if (ind == gr_slatUserDefnV1)
-    {
-        ind = gr_slatUserDefn;
-        subindex = 0;
-    }
-    else if (ind >= gr_slatJStretch && ind < gr_slatJStretch + 20 && ind != gr_slatJWidth)
+    if (ind >= gr_slatJStretch && ind < gr_slatJStretch + 20 && ind != gr_slatJWidth)
     {
         int indx = ind - gr_slatJStretch;
         return getJustify(seg, indx / 5, indx % 5);
@@ -229,30 +224,32 @@ int Slot::getAttr(const Segment *seg, attrCode ind, uint8 subindex) const
     case gr_slatMeasureSol: return -1; // err what's this?
     case gr_slatMeasureEol: return -1;
     case gr_slatJWidth:     return int(m_just);
-    case gr_slatUserDefn :  return m_userAttr[subindex];
+    case gr_slatUserDefnV1: subindex = 0; GR_FALLTHROUGH;
+      // no break
+    case gr_slatUserDefn :  return subindex < seg->numAttrs() ?  m_userAttr[subindex] : 0;
     case gr_slatSegSplit :  return seg->charinfo(m_original)->flags() & 3;
     case gr_slatBidiLevel:  return m_bidiLevel;
     case gr_slatColFlags :		{ SlotCollision *c = seg->collisionInfo(this); return c ? c->flags() : 0; }
-    case gr_slatColLimitblx :	SLOTGETCOLATTR(limit().bl.x)
-    case gr_slatColLimitbly :	SLOTGETCOLATTR(limit().bl.y)
-    case gr_slatColLimittrx :	SLOTGETCOLATTR(limit().tr.x)
-    case gr_slatColLimittry :	SLOTGETCOLATTR(limit().tr.y)
-    case gr_slatColShiftx :		SLOTGETCOLATTR(offset().x)
-    case gr_slatColShifty :		SLOTGETCOLATTR(offset().y)
-    case gr_slatColMargin :		SLOTGETCOLATTR(margin())
-    case gr_slatColMarginWt :	SLOTGETCOLATTR(marginWt())
-    case gr_slatColExclGlyph :	SLOTGETCOLATTR(exclGlyph())
-    case gr_slatColExclOffx :	SLOTGETCOLATTR(exclOffset().x)
-    case gr_slatColExclOffy :	SLOTGETCOLATTR(exclOffset().y)
-    case gr_slatSeqClass :		SLOTGETCOLATTR(seqClass())
-	case gr_slatSeqProxClass :	SLOTGETCOLATTR(seqProxClass())
-    case gr_slatSeqOrder :		SLOTGETCOLATTR(seqOrder())
-    case gr_slatSeqAboveXoff :	SLOTGETCOLATTR(seqAboveXoff())
-    case gr_slatSeqAboveWt :	SLOTGETCOLATTR(seqAboveWt())
-    case gr_slatSeqBelowXlim :	SLOTGETCOLATTR(seqBelowXlim())
-    case gr_slatSeqBelowWt :	SLOTGETCOLATTR(seqBelowWt())
-    case gr_slatSeqValignHt :	SLOTGETCOLATTR(seqValignHt())
-    case gr_slatSeqValignWt :	SLOTGETCOLATTR(seqValignWt())
+    case gr_slatColLimitblx:SLOTGETCOLATTR(limit().bl.x)
+    case gr_slatColLimitbly:SLOTGETCOLATTR(limit().bl.y)
+    case gr_slatColLimittrx:SLOTGETCOLATTR(limit().tr.x)
+    case gr_slatColLimittry:SLOTGETCOLATTR(limit().tr.y)
+    case gr_slatColShiftx :	SLOTGETCOLATTR(offset().x)
+    case gr_slatColShifty :	SLOTGETCOLATTR(offset().y)
+    case gr_slatColMargin :	SLOTGETCOLATTR(margin())
+    case gr_slatColMarginWt:SLOTGETCOLATTR(marginWt())
+    case gr_slatColExclGlyph:SLOTGETCOLATTR(exclGlyph())
+    case gr_slatColExclOffx:SLOTGETCOLATTR(exclOffset().x)
+    case gr_slatColExclOffy:SLOTGETCOLATTR(exclOffset().y)
+    case gr_slatSeqClass :	SLOTGETCOLATTR(seqClass())
+    case gr_slatSeqProxClass:SLOTGETCOLATTR(seqProxClass())
+    case gr_slatSeqOrder :	SLOTGETCOLATTR(seqOrder())
+    case gr_slatSeqAboveXoff:SLOTGETCOLATTR(seqAboveXoff())
+    case gr_slatSeqAboveWt: SLOTGETCOLATTR(seqAboveWt())
+    case gr_slatSeqBelowXlim:SLOTGETCOLATTR(seqBelowXlim())
+    case gr_slatSeqBelowWt:	SLOTGETCOLATTR(seqBelowWt())
+    case gr_slatSeqValignHt:SLOTGETCOLATTR(seqValignHt())
+    case gr_slatSeqValignWt:SLOTGETCOLATTR(seqValignWt())
     default : return 0;
     }
 }
@@ -274,6 +271,8 @@ void Slot::setAttr(Segment *seg, attrCode ind, uint8 subindex, int16 value, cons
     {
         ind = gr_slatUserDefn;
         subindex = 0;
+        if (seg->numAttrs() == 0)
+            return;
     }
     else if (ind >= gr_slatJStretch && ind < gr_slatJStretch + 20 && ind != gr_slatJWidth)
     {
@@ -291,9 +290,22 @@ void Slot::setAttr(Segment *seg, attrCode ind, uint8 subindex, int16 value, cons
         if (idx < map.size() && map[idx])
         {
             Slot *other = map[idx];
-            if (other == this || other == m_parent) break;
-            if (m_parent) m_parent->removeChild(this);
-            if (!other->isChildOf(this) && other->child(this))
+            if (other == this || other == m_parent || other->isCopied()) break;
+            if (m_parent) { m_parent->removeChild(this); attachTo(NULL); }
+            Slot *pOther = other;
+            int count = 0;
+            bool foundOther = false;
+            while (pOther)
+            {
+                ++count;
+                if (pOther == this) foundOther = true;
+                pOther = pOther->attachedTo();
+            }
+            for (pOther = m_child; pOther; pOther = pOther->m_child)
+                ++count;
+            for (pOther = m_sibling; pOther; pOther = pOther->m_sibling)
+                ++count;
+            if (count < 100 && !foundOther && other->child(this))
             {
                 attachTo(other);
                 if ((map.dir() != 0) ^ (idx > subindex))
@@ -417,31 +429,24 @@ bool Slot::sibling(Slot *ap)
 
 bool Slot::removeChild(Slot *ap)
 {
-    if (this == ap || !m_child) return false;
+    if (this == ap || !m_child || !ap) return false;
     else if (ap == m_child)
     {
         Slot *nSibling = m_child->nextSibling();
-        m_child->sibling(NULL);
+        m_child->nextSibling(NULL);
         m_child = nSibling;
         return true;
     }
-    else
-        return m_child->removeSibling(ap);
-    return true;
-}
-
-bool Slot::removeSibling(Slot *ap)
-{
-    if (this == ap || !m_sibling) return false;
-    else if (ap == m_sibling)
+    for (Slot *p = m_child; p; p = p->m_sibling)
     {
-        m_sibling = m_sibling->nextSibling();
-        ap->sibling(NULL);
-        return true;
+        if (p->m_sibling && p->m_sibling == ap)
+        {
+            p->m_sibling = p->m_sibling->m_sibling;
+            ap->nextSibling(NULL);
+            return true;
+        }
     }
-    else
-        return m_sibling->removeSibling(ap);
-    return true;
+    return false;
 }
 
 void Slot::setGlyph(Segment *seg, uint16 glyphid, const GlyphFace * theGlyph)
@@ -469,14 +474,20 @@ void Slot::setGlyph(Segment *seg, uint16 glyphid, const GlyphFace * theGlyph)
     }
     m_advance = Position(aGlyph->theAdvance().x, 0.);
     if (seg->silf()->aPassBits())
-        seg->mergePassBits(theGlyph->attrs()[seg->silf()->aPassBits()]);
+    {
+        seg->mergePassBits(uint8(theGlyph->attrs()[seg->silf()->aPassBits()]));
+        if (seg->silf()->numPasses() > 16)
+            seg->mergePassBits(theGlyph->attrs()[seg->silf()->aPassBits()+1] << 16);
+    }
 }
 
-void Slot::floodShift(Position adj)
+void Slot::floodShift(Position adj, int depth)
 {
+    if (depth > 100)
+        return;
     m_position += adj;
-    if (m_child) m_child->floodShift(adj);
-    if (m_sibling) m_sibling->floodShift(adj);
+    if (m_child) m_child->floodShift(adj, depth + 1);
+    if (m_sibling) m_sibling->floodShift(adj, depth + 1);
 }
 
 void SlotJustify::LoadSlot(const Slot *s, const Segment *seg)
@@ -501,7 +512,8 @@ Slot * Slot::nextInCluster(const Slot *s) const
         return s->nextSibling();
     while ((base = s->attachedTo()))
     {
-        if (base->firstChild() == s && base->nextSibling())
+        // if (base->firstChild() == s && base->nextSibling())
+        if (base->nextSibling())
             return base->nextSibling();
         s = base;
     }
@@ -510,10 +522,8 @@ Slot * Slot::nextInCluster(const Slot *s) const
 
 bool Slot::isChildOf(const Slot *base) const
 {
-    if (m_parent == base)
-        return true;
-    else if (!m_parent)
-        return false;
-    else
-        return m_parent->isChildOf(base);
+    for (Slot *p = m_parent; p; p = p->m_parent)
+        if (p == base)
+            return true;
+    return false;
 }

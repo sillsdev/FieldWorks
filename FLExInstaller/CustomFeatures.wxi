@@ -28,6 +28,7 @@
 		<Feature Id="Malay" Title="Malay" Description="Allows the software to have a Malay user interface." Display="expand" Level="1" AllowAdvertise="no">
 			<Condition Level="1">UserLanguageID = 1086</Condition>
 			<ComponentGroupRef Id="msLocalization" />
+			<ComponentGroupRef Id="zlmLocalization" />
 		</Feature>
 		<Feature Id="Arabic" Title="Arabic" Description="Allows the software to have an Arabic user interface." Display="expand" Level="1" AllowAdvertise="no">
 			<Condition Level="1">UserLanguageID = 1025</Condition>

@@ -6351,6 +6351,9 @@ namespace SIL.FieldWorks.LexText.Controls
 					case "scientific-name":
 						ls.ScientificName = StoreTsStringValue(m_fCreatingNewSense, ls.ScientificName, field.Content);
 						break;
+					case "exemplar":
+						MergeInMultiString(ls.Exemplar, LexSenseTags.kflidExemplar, field.Content, ls.Guid);
+						break;
 					default:
 						ProcessUnknownField(ls, sense, field,
 							"LexSense", "custom-sense-", LexSenseTags.kClassId);
@@ -6467,6 +6470,14 @@ namespace SIL.FieldWorks.LexText.Controls
 						if (StringsConflict(ls.ScientificName, GetFirstLiftTsString(field.Content)))
 						{
 							m_cdConflict = new ConflictingSense("Scientific Name", ls, this);
+							return true;
+						}
+						break;
+					case "exemplar":
+						AddNewWsToVernacular();
+						if (MultiTsStringsConflict(ls.Exemplar, field.Content))
+						{
+							m_cdConflict = new ConflictingSense("Exemplar", ls, this);
 							return true;
 						}
 						break;
