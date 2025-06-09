@@ -425,14 +425,6 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// Background color indicating a guess that has been approved by a human and the parser.
-		/// </summary>
-		public static int DoubleApprovedGuessColor
-		{
-			get { return (int)CmObjectUi.RGB(Color.LightGreen); }
-		}
-
-		/// <summary>
 		/// Background color indicating there are multiple possible human approved guesses
 		/// </summary>
 		public static int MultipleApprovedGuessColor
@@ -553,22 +545,6 @@ namespace SIL.FieldWorks.IText
 		{
 			SetGuessing(vwenv, ApprovedGuessColor);
 			UsingGuess = true;
-		}
-
-		private int GetGuessColor(int hvoDefault, ICmObject defaultObj)
-		{
-			if (defaultObj is IWfiAnalysis analysis)
-			{
-				bool humanApproved = GuessServices.IsHumanApproved(analysis);
-				bool parserApproved = GuessServices.IsParserApproved(analysis);
-				if (humanApproved)
-					return ApprovedGuessColor;
-				if (parserApproved)
-					return MachineGuessColor;
-			}
-			bool isHumanGuess = GuessCache.get_IntProp(hvoDefault, InterlinViewDataCache.OpinionAgentFlid) !=
-				(int)AnalysisGuessServices.OpinionAgent.Parser;
-			return isHumanGuess ? ApprovedGuessColor : MachineGuessColor;
 		}
 
 		public bool UsingGuess { get; set; }
@@ -1848,7 +1824,9 @@ namespace SIL.FieldWorks.IText
 						{
 							// Real analysis isn't what we're displaying, so morph breakdown
 							// is a guess. Is it a human-approved guess?
-							m_this.SetGuessing(m_vwenv, m_this.GetGuessColor(m_hvoDefault, m_defaultObj));
+							bool isHumanGuess = m_this.GuessCache.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid) !=
+																			(int) AnalysisGuessServices.OpinionAgent.Parser;
+							m_this.SetGuessing(m_vwenv, isHumanGuess ? ApprovedGuessColor : MachineGuessColor);
 							// Let the exporter know that this is a guessed analysis.
 							m_vwenv.set_StringProperty(ktagAnalysisStatus, "guess");
 						}
@@ -1890,7 +1868,9 @@ namespace SIL.FieldWorks.IText
 					{
 						// Real analysis isn't what we're displaying, so morph breakdown
 						// is a guess. Is it a human-approved guess?
-						m_this.SetGuessing(m_vwenv, m_this.GetGuessColor(m_hvoDefault, m_defaultObj));
+						bool isHumanGuess = m_this.GuessCache.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid) !=
+																		(int)AnalysisGuessServices.OpinionAgent.Parser;
+						m_this.SetGuessing(m_vwenv, isHumanGuess ? ApprovedGuessColor : MachineGuessColor);
 					}
 					var wa = (IWfiAnalysis) m_defaultObj;
 					if (wa.MeaningsOC.Count == 0)
@@ -1940,7 +1920,10 @@ namespace SIL.FieldWorks.IText
 					if (m_hvoDefault != m_hvoWordBundleAnalysis)
 					{
 						// Real analysis isn't what we're displaying, so POS is a guess.
-						m_this.SetGuessing(m_vwenv, m_this.GetGuessColor(m_hvoDefault, m_defaultObj));
+						bool isHumanApproved = m_this.GuessCache.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid)
+																			!= (int)AnalysisGuessServices.OpinionAgent.Parser;
+
+						m_this.SetGuessing(m_vwenv, isHumanApproved ? ApprovedGuessColor : MachineGuessColor);
 					}
 					m_this.AddAnalysisPos(m_vwenv, m_hvoDefault, m_hvoWordBundleAnalysis, choiceIndex);
 					break;
