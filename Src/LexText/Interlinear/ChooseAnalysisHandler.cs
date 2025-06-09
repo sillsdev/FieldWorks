@@ -388,12 +388,15 @@ namespace SIL.FieldWorks.IText
 				increment = -1;
 			}
 
-			Opinions uao = wa.GetAgentOpinion(wa.Cache.LangProject.DefaultUserAgent);
-			Opinions pao = wa.GetAgentOpinion(wa.Cache.LangProject.DefaultParserAgent);
-			AddOpinion(tsb, uao, InterlinVc.ApprovedGuessColor);
-			AddOpinion(tsb, pao, InterlinVc.MachineGuessColor);
-			tsb.Replace(tsb.Length, tsb.Length, " ", null);
-			tsb.SetProperties(tsb.Length - 1, tsb.Length, formTextProperties);
+			if (wa?.Cache?.LanguageProject != null)
+			{
+				Opinions uao = wa.GetAgentOpinion(wa.Cache.LangProject.DefaultUserAgent);
+				Opinions pao = wa.GetAgentOpinion(wa.Cache.LangProject.DefaultParserAgent);
+				AddOpinion(tsb, uao, InterlinVc.ApprovedGuessColor);
+				AddOpinion(tsb, pao, InterlinVc.MachineGuessColor);
+				tsb.Replace(tsb.Length, tsb.Length, " ", null);
+				tsb.SetProperties(tsb.Length - 1, tsb.Length, formTextProperties);
+			}
 
 			for (int i = start; i != lim; i += increment)
 			{
