@@ -863,6 +863,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 					try
 					{
+						// Preprocess deletions (For LT-22002).
+						foreach (string deleted in m_deletedStyleNames)
+						{
+							if (m_styleTable.ContainsKey(deleted))
+								m_styleTable.Remove(deleted);
+						}
+						if (m_deletedStyleNames.Contains(m_styleListHelper.SelectedStyleName))
+							m_deletedStyleNames.Remove(m_styleListHelper.SelectedStyleName);
+
 						// Check to make sure new styles are not going to result in duplicates
 						// in the database
 						m_styleSheet.CheckForDuplicates(m_styleTable);
@@ -1223,6 +1232,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			foreach (var kvp in m_renamedStyles)
 				replaceSpec[kvp.Value] = kvp.Key;
 			StringServices.ReplaceStyles(m_cache, replaceSpec);
+			// Don't process again.
+			m_deletedStyleNames.Clear();
+			m_renamedStyles.Clear();
 
 			m_changeType |= StyleChangeType.RenOrDel;
 		}
