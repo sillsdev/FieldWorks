@@ -660,6 +660,13 @@
 				</chooserInfo>
 			</slice>
 		</part>
+		<part id="MoStemMsa-Detail-ProdRestrictDisabled" type="Detail">
+			<slice field="ProdRestrict" label='Exception "Features"' editor="possVectorReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern">
+					<forecolor>GrayText</forecolor>
+				</deParams>
+			</slice>
+		</part>
 		<part id="MoStemMsa-Detail-PartOfSpeech" type="Detail">
 			<slice field="PartOfSpeech" label="Category" editor="atomicreferencepos" menu="mnuDataTree-Help">
 				<deParams ws="best analorvern"/>
@@ -2000,6 +2007,14 @@
 		</part>
 		<part id="MoBinaryCompoundRule-Detail-LeftMsa" type="Detail">
 			<obj field="LeftMsa" label="Left MSA" layout="LeftMsa"/>
+		</part>
+		<part id="MoBinaryCompoundRule-Detail-ProdRestrict" type="Detail">
+			<slice field="ProdRestrict" label='Exception "Features"' editor="possVectorReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text='The following exception "features" are available.'>
+					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
+				</chooserInfo>
+			</slice>
 		</part>
 		<part id="MoBinaryCompoundRule-Detail-RightMsa" type="Detail">
 			<obj field="RightMsa" label="Right MSA" layout="RightMsa"/>
