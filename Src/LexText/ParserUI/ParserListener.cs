@@ -125,23 +125,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		/// <summary>
-		/// Send the newly selected wordform on to the parser.
-		/// </summary>
-		public void OnPropertyChanged(string propertyName)
-		{
-			CheckDisposed();
-
-			if (m_parserConnection != null && propertyName == "ActiveClerkSelectedObject")
-			{
-				var wordform = m_propertyTable.GetValue<ICmObject>(propertyName) as IWfiWordform;
-				if (wordform != null)
-				{
-					UpdateWordform(wordform, ParserPriority.High);
-				}
-			}
-		}
-
 		#region IVwNotifyChange Members
 
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
