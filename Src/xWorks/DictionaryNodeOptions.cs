@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014 SIL International
+// Copyright (c) 2014 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -254,16 +254,6 @@ namespace SIL.FieldWorks.XWorks
 	/// <summary>Options for formatting Pictures</summary>
 	public class DictionaryNodePictureOptions : DictionaryNodeOptions
 	{
-		public enum AlignmentType
-		{
-			// Since Right=0, it is the default selected if nothing is specified in the xml
-			[XmlEnum("right")]
-			Right = 0,
-			[XmlEnum("left")]
-			Left
-			//todo: add options for above and below entry
-		}
-
 		[XmlAttribute(AttributeName = "minimumHeight")]
 		public float MinimumHeight { get; set; }
 
@@ -286,6 +276,17 @@ namespace SIL.FieldWorks.XWorks
 		{
 			return DeepCloneInto(new DictionaryNodePictureOptions());
 		}
+	}
+
+	public enum AlignmentType
+	{
+		// Since Right=0, it is the default selected if nothing is specified in the xml
+		[XmlEnum("right")]
+		Right = 0,
+		[XmlEnum("left")]
+		Left,
+		[XmlEnum("center")]
+		Center
 	}
 
 	/// <summary>Options for allowing the grouping of nodes which are not related in the model</summary>

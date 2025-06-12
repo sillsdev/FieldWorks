@@ -38,8 +38,8 @@ namespace SIL.FieldWorks.XWorks
 			Cache = cache;
 		}
 
-		public IFragment GenerateWsPrefixWithString(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings,
-			bool displayAbbreviation, int wsId, IFragment content)
+		public IFragment GenerateWsPrefixWithString(List<ConfigurableDictionaryNode> nodeList,
+			ConfiguredLcmGenerator.GeneratorSettings settings, bool displayAbbreviation, int wsId, IFragment content)
 		{
 			return content;
 		}
@@ -69,7 +69,8 @@ namespace SIL.FieldWorks.XWorks
 			return WriteProcessedObject(null, false, new StringFragment(videoObject.ToString()), "value");
 		}
 
-		public IFragment WriteProcessedObject(ConfigurableDictionaryNode config, bool isBlock, IFragment elementContent, string className)
+		public IFragment WriteProcessedObject(List<ConfigurableDictionaryNode> nodeList,
+			bool isBlock, IFragment elementContent, string className)
 		{
 			if (elementContent.ToString().StartsWith("{"))
 				return WriteProcessedContents(elementContent, className, string.Empty, ",");
@@ -78,7 +79,8 @@ namespace SIL.FieldWorks.XWorks
 			return WriteProcessedContents(elementContent, className, "{", "},");
 		}
 
-		public IFragment WriteProcessedCollection(ConfigurableDictionaryNode config, bool isBlock, IFragment elementContent, string className)
+		public IFragment WriteProcessedCollection(List<ConfigurableDictionaryNode> nodeList,
+			bool isBlock, IFragment elementContent, string className)
 		{
 			((StringFragment)elementContent).TrimEnd(',');
 			return WriteProcessedContents(elementContent, className, "[", "],");
@@ -103,28 +105,31 @@ namespace SIL.FieldWorks.XWorks
 			return fragment;
 		}
 
-		public IFragment GenerateGramInfoBeforeSensesContent(IFragment content, ConfigurableDictionaryNode config)
+		public IFragment GenerateGramInfoBeforeSensesContent(IFragment content, List<ConfigurableDictionaryNode> nodeList,
+			ConfiguredLcmGenerator.GeneratorSettings settings)
 		{
 			// The grammatical info is generated as a json property on 'senses'
 			return content;
 		}
 
-		public IFragment GenerateGroupingNode(ConfigurableDictionaryNode config, object field, string className, 
+		public IFragment GenerateGroupingNode(List<ConfigurableDictionaryNode> nodeList, object field, string className,
 			DictionaryPublicationDecorator publicationDecorator, ConfiguredLcmGenerator.GeneratorSettings settings,
-			Func<object, ConfigurableDictionaryNode, DictionaryPublicationDecorator, ConfiguredLcmGenerator.GeneratorSettings, IFragment> childContentGenerator)
+			Func<object, List<ConfigurableDictionaryNode>, DictionaryPublicationDecorator, ConfiguredLcmGenerator.GeneratorSettings, IFragment> childContentGenerator)
 		{
 			//TODO: Decide how to handle grouping nodes in the json api
 			return new StringFragment();
 		}
 
-		public IFragment AddCollectionItem(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, bool isBlock, string className, IFragment content, bool first)
+		public IFragment AddCollectionItem(List<ConfigurableDictionaryNode> nodeList,
+			ConfiguredLcmGenerator.GeneratorSettings settings, bool isBlock, string className, IFragment content, bool first)
 		{
 			var fragment = new StringFragment();
 			fragment.StrBuilder.Append(content.IsNullOrEmpty() ? string.Empty : $"{{{content}}},");
 			return fragment;
 		}
 
-		public IFragment AddProperty(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string className, bool isBlockProperty, string content, string writingSystem)
+		public IFragment AddProperty(List<ConfigurableDictionaryNode> nodeList,
+			ConfiguredLcmGenerator.GeneratorSettings settings, string className, bool isBlockProperty, string content, string writingSystem)
 		{
 			var fragment = new StringFragment($"\"{className}\": \"{content}\",");
 			return fragment;
@@ -161,7 +166,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 		}
 
-		public void StartRun(IFragmentWriter writer, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string writingSystem, bool first)
+		public void StartRun(IFragmentWriter writer, List<ConfigurableDictionaryNode> nodeList,
+			ConfiguredLcmGenerator.GeneratorSettings settings, string writingSystem, bool first)
 		{
 			var jsonWriter = (JsonFragmentWriter)writer;
 			jsonWriter.StartObject();
@@ -181,7 +187,8 @@ namespace SIL.FieldWorks.XWorks
 			m_runBuilder.Value.Clear();
 		}
 
-		public void SetRunStyle(IFragmentWriter writer, ConfigurableDictionaryNode config, ReadOnlyPropertyTable propertyTable, string writingSystem, string runStyle, bool error)
+		public void SetRunStyle(IFragmentWriter writer, List<ConfigurableDictionaryNode> nodeList,
+			ReadOnlyPropertyTable propertyTable, string writingSystem, string runStyle, bool error)
 		{
 			if (!string.IsNullOrEmpty(runStyle))
 			{
@@ -253,7 +260,7 @@ namespace SIL.FieldWorks.XWorks
 			// TODO: decide on a useful json representation for tables
 		}
 
-		public void StartEntry(IFragmentWriter xw, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string className, Guid entryGuid, int index, RecordClerk clerk)
+		public void StartEntry(IFragmentWriter xw, List<ConfigurableDictionaryNode> nodeList, ConfiguredLcmGenerator.GeneratorSettings settings, string className, Guid entryGuid, int index, RecordClerk clerk)
 		{
 			var jsonWriter = (JsonFragmentWriter)xw;
 			jsonWriter.StartObject();
@@ -292,11 +299,12 @@ namespace SIL.FieldWorks.XWorks
 			((JsonFragmentWriter)xw).EndObject();
 		}
 
-		public void AddCollection(IFragmentWriter writer, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, bool isBlockProperty, string className, IFragment content)
+		public void AddCollection(IFragmentWriter writer, List<ConfigurableDictionaryNode> nodeList,
+			ConfiguredLcmGenerator.GeneratorSettings settings, bool isBlockProperty, string className, IFragment content)
 		{
 			((JsonFragmentWriter)writer).InsertPropertyName(className);
 			BeginArray(writer);
-			WriteProcessedContents(writer, config, content);
+			WriteProcessedContents(writer, null, content);
 			EndArray(writer);
 		}
 
@@ -310,7 +318,8 @@ namespace SIL.FieldWorks.XWorks
 			((JsonFragmentWriter)writer).EndArray();
 		}
 
-		public void BeginObjectProperty(IFragmentWriter writer, ConfigurableDictionaryNode config, bool isBlockProperty,
+		public void BeginObjectProperty(IFragmentWriter writer, ConfigurableDictionaryNode config,
+			ConfiguredLcmGenerator.GeneratorSettings settings, bool isBlockProperty,
 			string className)
 		{
 			((JsonFragmentWriter)writer).InsertPropertyName(className);
@@ -322,7 +331,7 @@ namespace SIL.FieldWorks.XWorks
 			((JsonFragmentWriter)writer).EndObject();
 		}
 
-		public void WriteProcessedContents(IFragmentWriter writer, ConfigurableDictionaryNode config, IFragment contents)
+		public void WriteProcessedContents(IFragmentWriter writer, ConfigurableDictionaryNode _, IFragment contents)
 		{
 			if (!contents.IsNullOrEmpty())
 			{
@@ -358,13 +367,14 @@ namespace SIL.FieldWorks.XWorks
 			return new StringFragment(captionContent.ToString());
 		}
 
-		public IFragment GenerateSenseNumber(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string formattedSenseNumber, string wsId)
+		public IFragment GenerateSenseNumber(List<ConfigurableDictionaryNode> nodeList,
+			ConfiguredLcmGenerator.GeneratorSettings settings, string formattedSenseNumber, string wsId)
 		{
 			return new StringFragment(formattedSenseNumber);
 		}
 
-		public IFragment AddLexReferences(ConfigurableDictionaryNode config, bool generateLexType, IFragment lexTypeContent, string className,
-			IFragment referencesContent, bool typeBefore)
+		public IFragment AddLexReferences(List<ConfigurableDictionaryNode> nodeList, bool generateLexType,
+			IFragment lexTypeContent, string className, IFragment referencesContent, bool typeBefore)
 		{
 			var bldr = new StringBuilder();
 			var fragment = new StringFragment(bldr);
@@ -398,7 +408,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public void BeginCrossReference(IFragmentWriter writer, ConfigurableDictionaryNode config, bool isBlockProperty, string classAttribute)
+		public void BeginCrossReference(IFragmentWriter writer, ConfigurableDictionaryNode config,
+			ConfiguredLcmGenerator.GeneratorSettings settings, bool isBlockProperty, string classAttribute)
 		{
 			// In json the context is enough. We don't need the extra 'span' or 'div' with the item name
 			// If the consumer needs to match up (to use our css) they can assume the child is the collection singular
@@ -411,16 +422,17 @@ namespace SIL.FieldWorks.XWorks
 			((JsonFragmentWriter)writer).InsertRawJson(",");
 		}
 
-		public void BetweenCrossReferenceType(IFragment content, ConfigurableDictionaryNode node, bool firstItem)
+		public void BetweenCrossReferenceType(IFragment content, List<ConfigurableDictionaryNode> nodeList, bool firstItem)
 		{
 		}
 
 		/// <summary>
 		/// Generates data for all senses of an entry. For better processing of json add sharedGramInfo as a separate property object
 		/// </summary>
-		public IFragment WriteProcessedSenses(ConfigurableDictionaryNode config, bool isBlock, IFragment sensesContent, string classAttribute, IFragment sharedGramInfo)
+		public IFragment WriteProcessedSenses(List<ConfigurableDictionaryNode> nodeList,
+			bool isBlock, IFragment sensesContent, string classAttribute, IFragment sharedGramInfo)
 		{
-			return new StringFragment($"{sharedGramInfo.ToString()}{WriteProcessedCollection(config, isBlock, sensesContent, classAttribute)}");
+			return new StringFragment($"{sharedGramInfo.ToString()}{WriteProcessedCollection(nodeList, isBlock, sensesContent, classAttribute)}");
 		}
 
 		public IFragment AddAudioWsContent(string wsId, Guid linkTarget, IFragment fileContent)
@@ -435,7 +447,8 @@ namespace SIL.FieldWorks.XWorks
 			return new StringFragment($"\\u+0FFF\\u+0FFF\\u+0FFF{badStrBuilder}");
 		}
 
-		public IFragment AddSenseData(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, IFragment senseNumberSpan, Guid ownerGuid, IFragment senseContent, bool first)
+		public IFragment AddSenseData(List<ConfigurableDictionaryNode> nodeList,
+			ConfiguredLcmGenerator.GeneratorSettings settings, IFragment senseNumberSpan, Guid ownerGuid, IFragment senseContent, bool first)
 		{
 			var bldr = new StringBuilder();
 			var fragment = new StringFragment(bldr);

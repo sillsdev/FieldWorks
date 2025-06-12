@@ -15,8 +15,8 @@
 
     You should also have received a copy of the GNU Lesser General Public
     License along with this library in the file named "LICENSE".
-    If not, write to the Free Software Foundation, 51 Franklin Street, 
-    Suite 500, Boston, MA 02110-1335, USA or visit their web page on the 
+    If not, write to the Free Software Foundation, 51 Franklin Street,
+    Suite 500, Boston, MA 02110-1335, USA or visit their web page on the
     internet at http://www.fsf.org/licenses/lgpl.html.
 
 Alternatively, the contents of this file may be used under the terms of the
@@ -28,8 +28,8 @@ of the License or (at your option) any later version.
 // Author: Tim Eves
 
 // Build either this interpreter or the direct_machine implementation.
-// The call threaded interpreter is portable across compilers and 
-// architectures as well as being useful to debug (you can set breakpoints on 
+// The call threaded interpreter is portable across compilers and
+// architectures as well as being useful to debug (you can set breakpoints on
 // opcodes) but is slower that the direct threaded interpreter by a factor of 2
 
 #include <cassert>
@@ -72,6 +72,7 @@ struct regbank  {
     const instr * & ip;
     uint8           direction;
     int8            flags;
+    Machine::status_t & status;
 };
 
 typedef bool        (* ip_t)(registers);
@@ -88,6 +89,7 @@ namespace {
 #define mapb    reg.map_base
 #define flags   reg.flags
 #define dir     reg.direction
+#define status  reg.status
 
 #include "inc/opcodes.h"
 
@@ -113,9 +115,9 @@ Machine::stack_t  Machine::run(const instr   * program,
     const byte    * dp = data;
     stack_t       * sp = _stack + Machine::STACK_GUARD,
             * const sb = sp;
-    regbank         reg = {*map, map, _map, _map.begin()+_map.context(), ip, _map.dir(), 0};
+    regbank         reg = {*map, map, _map, _map.begin()+_map.context(), ip, _map.dir(), 0, _status};
 
-    // Run the program        
+    // Run the program
     while ((reinterpret_cast<ip_t>(*++ip))(dp, sp, sb, reg)) {}
     const stack_t ret = sp == _stack+STACK_GUARD+1 ? *sp-- : 0;
 
@@ -134,5 +136,3 @@ const opcode_t * Machine::getOpcodeTable() throw()
 {
     return opcode_table;
 }
-
-

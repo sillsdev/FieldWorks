@@ -14,7 +14,7 @@
 
 	<!-- Localize strings-en.xml, lists, and all resx files -->
 	<Target Name="localize" DependsOnTargets="localize-source;localize-binaries"/>
-	<Target Name="localize-source" DependsOnTargets="Initialize;downloadTranslatedFiles;copyLibL10ns;combineGOLDEtic;zipLocalizedLists;copyLocales;processLanguages-source" Condition="'$(DisableLocalization)'!='true'"/>
+	<Target Name="localize-source" DependsOnTargets="Initialize;downloadTranslatedFiles;copyLibL10ns;combineGOLDEtic;copyLocales;zipLocalizedLists;processLanguages-source" Condition="'$(DisableLocalization)'!='true'"/>
 	<Target Name="localize-binaries" DependsOnTargets="Initialize;processLanguages-binaries" Condition="'$(DisableLocalization)'!='true'"/>
 
 	<PropertyGroup>
@@ -35,7 +35,7 @@
 		<!-- Install overcrowdin, or update if already installed. -->
 		<Exec WorkingDirectory="$(fwrt)" Command="dotnet tool update -g overcrowdin || dotnet tool install -g overcrowdin"/>
 	</Target>
-	<Target Name="copyLocales"> <!-- Copy locales to alternate ws identifiers -->
+	<Target Name="copyLocales"  DependsOnTargets="VerifyLcmCloned"> <!-- Copy locales to alternate ws identifiers -->
 		<CopyLocale SourceL10n="$(L10nsDirectory)/ms" DestL10n="$(L10nsDirectory)/zlm" LcmDir="$(LcmSrcDir)" />
 	</Target>
 
@@ -156,6 +156,11 @@
 			<XliffFiles Include="$(LocaleDir)/Lists/*.xlf"/>
 		</ItemGroup>
 		<XliffToLists XliffSourceFiles="@(XliffFiles)" OutputXml="$(OutputXml)"/>
+		<!-- To support varied windows locale options for Malay we copy ms to zlm, adjust the xml contents -->
+		<Message Text="Making zlm adjustments to the ms LocalizedLists copy" Condition="'$(Locale)'=='zlm'" />
+		<XmlPoke XmlInputPath="$(OutputXml)"
+			Query="//*[@ws='ms']/@ws"
+			Value="zlm" Condition="'$(Locale)'=='zlm'"/>
 		<Zip Source="$(OutputXml)" Destination="$(fwrt)/DistFiles/Templates"/>
 	</Target>
 

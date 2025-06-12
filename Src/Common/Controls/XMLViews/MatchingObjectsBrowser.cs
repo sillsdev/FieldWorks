@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2014-2017 SIL International
+// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -138,6 +138,16 @@ namespace SIL.FieldWorks.Common.Controls
 				m_startingObject = value;
 			}
 		}
+
+		/// <summary>
+		/// Delegate for FilterResult.
+		/// </summary>
+		public delegate bool FilterResultDelegate(int hvo);
+
+		/// <summary>
+		/// Should we filter a result?
+		/// </summary>
+		public FilterResultDelegate FilterResult;
 
 		/// <summary>
 		/// Used by a Find dialog's SearchEngine to determine whether to search on a particular field or not
@@ -384,6 +394,8 @@ namespace SIL.FieldWorks.Common.Controls
 				hvos = results.Where(hvo => StartingObject == null || StartingObject.Hvo != hvo).ToArray();
 			}
 
+			if (FilterResult != null)
+				hvos = hvos.Where(hvo => !FilterResult(hvo)).ToArray();
 			int count = hvos.Length;
 			int prevIndex = m_bvMatches.SelectedIndex;
 			int prevHvo = prevIndex == -1 ? 0 : m_bvMatches.AllItems[prevIndex];

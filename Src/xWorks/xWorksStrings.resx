@@ -158,6 +158,15 @@ Are you SURE you want to delete the field {0}?</value>
   <data name="AlreadyFieldWithThisLabel" xml:space="preserve">
     <value>There are duplicate {0} fields named "{1}". Please choose a different name.</value>
   </data>
+  <data name="AlignmentLabelText" xml:space="preserve">
+    <value>Alignment:</value>
+  </data>
+  <data name="WidthLabelText" xml:space="preserve">
+    <value>Width (inches):</value>
+  </data>
+  <data name="DocumentPictureSettingsLabelText" xml:space="preserve">
+    <value>Document Picture Settings:</value>
+  </data>
   <data name="LabelAlreadyExists" xml:space="preserve">
     <value>Duplicate Custom Field Names</value>
   </data>
@@ -1282,5 +1291,11 @@ See USFM documentation for help.</value>
   </data>
   <data name="WebonaryLogViewer_Save_a_copy" xml:space="preserve">
     <value>Save a copy</value>
+  </data>
+  <data name="PictureOptionsView_MaxHeightLabel" xml:space="preserve">
+    <value>Max Height (inches):</value>
+  </data>
+  <data name="PictureOptionsView_MaxWidthLabel" xml:space="preserve">
+    <value>Max Width (inches):</value>
   </data>
 </root>

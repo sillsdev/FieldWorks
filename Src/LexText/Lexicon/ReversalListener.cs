@@ -417,7 +417,15 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			var layoutFinder = ((Sorter as GenRecordSorter)?.Comparer as StringFinderCompare)?.Finder as LayoutFinder;
 			if (layoutFinder?.Vc != null)
 			{
-				layoutFinder.Vc.OverrideWs = WritingSystemServices.CurrentReversalWsId;
+				var wsComparer = ((Sorter as GenRecordSorter)?.Comparer as StringFinderCompare)?.SubComparer as WritingSystemComparer;
+				if (wsComparer != null)
+				{
+					layoutFinder.Vc.OverrideWs = Cache.WritingSystemFactory.GetWsFromStr(wsComparer.WsId);
+				}
+				else
+				{
+					layoutFinder.Vc.OverrideWs = WritingSystemServices.CurrentReversalWsId;
+				}
 			}
 
 			try

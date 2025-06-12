@@ -39,6 +39,7 @@ namespace SIL.FieldWorks.FdoUi
 		InflectionFeaturePopupTreeManager m_InflectionFeatureTreeManager;
 		int m_selectedHvo = 0;
 		string m_selectedLabel;
+		bool m_notSure = false;
 		private int m_displayWs = 0;
 		public event EventHandler ControlActivated;
 		public event FwSelectionChangedEventHandler ValueChanged;
@@ -253,7 +254,9 @@ namespace SIL.FieldWorks.FdoUi
 			// Todo: user selected a part of speech.
 			// Arrange to turn all relevant items blue.
 			// Remember which item was selected so we can later 'doit'.
-			if (e.Node == null)
+			var hvoNode = e.Node as HvoTreeNode;
+			m_notSure = (string)hvoNode?.Tag == "NotSure";
+			if (hvoNode == null || hvoNode.Hvo == 0)
 			{
 				m_selectedHvo = 0;
 				m_selectedLabel = "";
@@ -280,7 +283,7 @@ namespace SIL.FieldWorks.FdoUi
 			// Tell the parent control that we may have changed the selected item so it can
 			// enable or disable the Apply and Preview buttons based on the selection.
 			if (ValueChanged != null)
-				ValueChanged(this, new FwObjectSelectionEventArgs(m_selectedHvo));
+				ValueChanged(this, new FwObjectSelectionEventArgs(m_selectedHvo, hvoNode != null ? 0 : -1));
 		}
 
 		/// <summary>
@@ -360,17 +363,17 @@ namespace SIL.FieldWorks.FdoUi
 				}
 				var entry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(kvp.Key);
 				var sensesToChange = kvp.Value;
-				IMoStemMsa msmTarget = null;
-				foreach (var msa in entry.MorphoSyntaxAnalysesOC)
+				if (m_notSure)
 				{
-					var msm = msa as IMoStemMsa;
-					if (msm != null && MsaMatchesTarget(msm, fsTarget))
+					foreach (var ls in sensesToChange)
 					{
-						// Can reuse this one!
-						msmTarget = msm;
-						break;
+						ls.MorphoSyntaxAnalysisRA = null;
 					}
+					continue;
 				}
+				IMoStemMsa msmTarget = entry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>()
+					.FirstOrDefault(msm => MsaMatchesTarget(msm, fsTarget));
+
 				if (msmTarget == null)
 				{
 					// See if we can reuse an existing MoStemMsa by changing it.
@@ -379,35 +382,20 @@ namespace SIL.FieldWorks.FdoUi
 					var senses = new HashSet<ILexSense>(entry.AllSenses.ToArray());
 					if (senses.Count != sensesToChange.Count)
 					{
-						foreach (var ls in senses)
-						{
-							if (!sensesToChange.Contains(ls))
-								otherSenses.Add(ls);
-						}
+						otherSenses = new HashSet<ILexSense>(senses.Where(ls => !sensesToChange.Contains(ls)));
 					}
-					foreach (var msa in entry.MorphoSyntaxAnalysesOC)
+
+					var msm = entry.MorphoSyntaxAnalysesOC
+						.OfType<IMoStemMsa>() // filter only IMoStemMsa
+						.FirstOrDefault(msa => !otherSenses.Any(ls => ls.MorphoSyntaxAnalysisRA == msa));
+
+					if (msm != null)
 					{
-						var msm = msa as IMoStemMsa;
-						if (msm == null)
-							continue;
-						bool fOk = true;
-						foreach (var ls in otherSenses)
-						{
-							if (ls.MorphoSyntaxAnalysisRA == msm)
-							{
-								fOk = false;
-								break;
-							}
-						}
-						if (fOk)
-						{
-							// Can reuse this one! Nothing we don't want to change uses it.
-							// Adjust its POS as well as its inflection feature, just to be sure.
-							// Ensure that we don't change the POS!  See LT-6835.
-							msmTarget = msm;
-							InitMsa(msmTarget, msm.PartOfSpeechRA.Hvo);
-							break;
-						}
+						// Can reuse this one! Nothing we don't want to change uses it.
+						// Adjust its POS as well as its inflection feature, just to be sure.
+						// Ensure that we don't change the POS!  See LT-6835.
+						msmTarget = msm;
+						InitMsa(msmTarget, msm.PartOfSpeechRA.Hvo);
 					}
 				}
 				if (msmTarget == null)
@@ -450,8 +438,13 @@ namespace SIL.FieldWorks.FdoUi
 
 		private void InitMsa(IMoStemMsa msmTarget, int hvoPos)
 		{
-			msmTarget.PartOfSpeechRA = m_cache.ServiceLocator.GetObject(hvoPos) as IPartOfSpeech;
-			var newFeatures = (IFsFeatStruc)m_cache.ServiceLocator.GetObject(m_selectedHvo);
+			msmTarget.PartOfSpeechRA = m_cache.ServiceLocator.GetObject(hvoPos) as IPartOfSpeech;//var newFeatures = (IFsFeatStruc)m_cache.ServiceLocator.GetObject(m_selectedHvo);
+			var newFeatures = m_selectedHvo == 0 ? null : (IFsFeatStruc)m_cache.ServiceLocator.GetObject(m_selectedHvo);
+			if (newFeatures == null)
+			{
+				msmTarget.MsFeaturesOA = null;
+				return;
+			}
 			msmTarget.CopyMsFeatures(newFeatures);
 		}
 
@@ -538,16 +531,28 @@ namespace SIL.FieldWorks.FdoUi
 		{
 			bool fEnable = false;
 			int hvoMsa = sda.get_ObjectProp(hvo, LexSenseTags.kflidMorphoSyntaxAnalysis);
+			if (hvo == 0)
+				return true;
 			if (hvoMsa != 0)
 			{
 				int clsid = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoMsa).ClassID;
 				if (clsid == MoStemMsaTags.kClassId)
 				{
 					int pos = sda.get_ObjectProp(hvoMsa, MoStemMsaTags.kflidPartOfSpeech);
-					if (pos != 0 && possiblePOS.Contains(pos))
+					if (m_notSure || (pos != 0 && possiblePOS.Contains(pos)))
 					{
 						// Only show it as a change if it is different
 						int hvoFeature = sda.get_ObjectProp(hvoMsa, MoStemMsaTags.kflidMsFeatures);
+						fEnable = hvoFeature != m_selectedHvo;
+					}
+				}
+				if (clsid == MoInflAffMsaTags.kClassId)
+				{
+					int pos = sda.get_ObjectProp(hvoMsa, MoInflAffMsaTags.kflidPartOfSpeech);
+					if (m_notSure || (pos != 0 && possiblePOS.Contains(pos)))
+					{
+						// Only show it as a change if it is different
+						int hvoFeature = sda.get_ObjectProp(hvoMsa, MoInflAffMsaTags.kflidInflFeats);
 						fEnable = hvoFeature != m_selectedHvo;
 					}
 				}

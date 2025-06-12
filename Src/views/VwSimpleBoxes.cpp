@@ -3159,7 +3159,7 @@ VwSeparatorBox::~VwSeparatorBox()
 {
 }
 
-//make a gray bar, 2 points wide and the current font height. Add one point on either side.
+// Make a vertical separator bar, 2 points wide and the current font height. Add one point on either side.
 void VwSeparatorBox::DoLayout(IVwGraphics* pvg, int dxAvailWidth, int dxpAvailOnLine, bool fSyncTops)
 {
 	int dxpInch;
@@ -3175,6 +3175,7 @@ void VwSeparatorBox::DoLayout(IVwGraphics* pvg, int dxAvailWidth, int dxpAvailOn
 	m_dysAscent += GapTop(dypInch);
 }
 
+// Draw the separator bar.
 void VwSeparatorBox::DrawForeground(IVwGraphics * pvg, Rect rcSrc, Rect rcDst)
 {
 #ifdef _DEBUG
@@ -3191,7 +3192,8 @@ void VwSeparatorBox::DrawForeground(IVwGraphics * pvg, Rect rcSrc, Rect rcDst)
 	left += inset;
 	right -= inset;
 #if defined(WIN32) || defined(WIN64)
-	CheckHr(pvg->put_BackColor(::GetSysColor(COLOR_3DFACE)));
+	// Set the color to use for the bar.
+	CheckHr(pvg->put_BackColor(kclrLightGray));
 #else //WIN32
 	// TODO-Linux: implement better.
 	// set to default grey RGB color
