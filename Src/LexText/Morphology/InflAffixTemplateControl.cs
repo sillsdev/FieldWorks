@@ -627,8 +627,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			chooser.TextParamHvo = m_template.Owner.Hvo;
 			chooser.Title = m_sSlotChooserTitle;
 			chooser.InstructionalText = m_sSlotChooserInstructionalText;
-			string sTopPOS;
-			var pos = GetHighestPOS(m_template.OwnerOfClass<IPartOfSpeech>(), out sTopPOS);
+			IPartOfSpeech pos = m_template.OwnerOfClass<IPartOfSpeech>();
+			string sTopPOS = pos.ShortName;
 			string sLabel = String.Format(m_sObligatorySlot, sTopPOS);
 			chooser.AddLink(sLabel, SimpleListChooser.LinkType.kSimpleLink,
 				new MakeInflAffixSlotChooserCommand(Cache, true, sLabel, pos.Hvo,
@@ -639,20 +639,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				m_mediator, m_propertyTable));
 			chooser.SetObjectAndFlid(pos.Hvo, MoInflAffixTemplateTags.kflidSlots);
 			return chooser;
-		}
-
-		private IPartOfSpeech GetHighestPOS(IPartOfSpeech pos, out string sTopPOS)
-		{
-			IPartOfSpeech result = null;
-			sTopPOS = MEStrings.ksQuestions;
-			ICmObject obj = pos;
-			while (obj.ClassID == PartOfSpeechTags.kClassId)
-			{
-				result = obj as IPartOfSpeech;
-				sTopPOS = obj.ShortName;
-				obj = obj.Owner;
-			}
-			return result;
 		}
 
 		private bool IsRTL()
