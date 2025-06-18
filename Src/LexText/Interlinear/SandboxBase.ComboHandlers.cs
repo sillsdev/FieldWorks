@@ -1125,7 +1125,7 @@ namespace SIL.FieldWorks.IText
 					return; // no real wordform, can't have analyses.
 				ITsStrBldr builder = TsStringUtils.MakeStrBldr();
 				ITsString space = TsStringUtils.MakeString(fBaseWordIsPhrase ? "  " : " ", m_wsVern);
-				var guess_services = new AnalysisGuessServices(m_caches.MainCache);
+				var guess_services = new AnalysisGuessServices(m_caches.MainCache, m_sandbox.InterlinDoc.GetMaster().GetParsingMode());
 				var sorted_analyses = guess_services.GetSortedAnalysisGuesses(wordform, m_wsVern);
 				foreach (IWfiAnalysis wa in sorted_analyses)
 				{
@@ -3201,7 +3201,7 @@ namespace SIL.FieldWorks.IText
 			{
 				IList<int> wsids = m_sandbox.m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss);
 
-				var guess_services = new AnalysisGuessServices(m_caches.MainCache);
+				var guess_services = new AnalysisGuessServices(m_caches.MainCache, m_sandbox.InterlinDoc.GetMaster().GetParsingMode());
 				var sorted_glosses = guess_services.GetSortedGlossGuesses(wa);
 				foreach (IWfiGloss gloss in sorted_glosses)
 				{
