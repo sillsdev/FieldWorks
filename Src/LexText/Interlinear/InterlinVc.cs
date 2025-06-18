@@ -421,7 +421,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		public static int ApprovedGuessColor
 		{
-			get { return (int)CmObjectUi.RGB(200, 255, 255); }
+			get { return (int)CmObjectUi.RGB(150, 255, 255); }
 		}
 
 		/// <summary>
@@ -437,7 +437,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		public static int MachineGuessColor
 		{
-			get { return (int)CmObjectUi.RGB(254, 240, 206); }
+			get { return (int)CmObjectUi.RGB(234, 220, 186); }
 		}
 
 		/// <summary/>
