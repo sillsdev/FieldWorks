@@ -13,12 +13,6 @@
     <stem>
       <failure>
         <content>In applying the compound rule "noun-adverb -&gt; intransitive verb, ic:2": The category (n) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-        <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-          <morph wordType="root">
-            <shortName>lik (to.eat): hinliksa</shortName>
-            <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-          </morph>
-        </stem>
       </failure>
       <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
         <morph wordType="root">
@@ -53,21 +47,9 @@
     <stem>
       <failure>
         <content>In applying the compound rule "adverb-noun --&gt; intransitive verb, ic:2": The category (adv) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-        <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-          <morph wordType="root">
-            <shortName>lik (to.eat): hinliksa</shortName>
-            <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-          </morph>
-        </stem>
       </failure>
       <failure>
         <content>In applying the compound rule "adverb-noun --&gt; intransitive verb, ic:2": The category (n) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
-        <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-          <morph wordType="root">
-            <shortName>ximu (slowly): ximu</shortName>
-            <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-          </morph>
-        </stem>
       </failure>
       <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
         <morph wordType="root">
@@ -102,21 +84,9 @@
     <stem>
       <failure>
         <content>In applying the compound rule "adj-noun with linker ": The category (adj) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-        <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-          <morph wordType="root">
-            <shortName>lik (to.eat): hinliksa</shortName>
-            <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-          </morph>
-        </stem>
       </failure>
       <failure>
         <content>In applying the compound rule "adj-noun with linker ": The category (n) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
-        <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-          <morph wordType="root">
-            <shortName>ximu (slowly): ximu</shortName>
-            <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-          </morph>
-        </stem>
       </failure>
       <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
         <morph wordType="root">
@@ -182,21 +152,9 @@
     <stem>
       <failure>
         <content>In applying the compound rule "noun-transitive verb ": The category (n) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-        <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-          <morph wordType="root">
-            <shortName>lik (to.eat): hinliksa</shortName>
-            <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-          </morph>
-        </stem>
       </failure>
       <failure>
         <content>In applying the compound rule "noun-transitive verb ": The category (trans) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
-        <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-          <morph wordType="root">
-            <shortName>ximu (slowly): ximu</shortName>
-            <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-          </morph>
-        </stem>
       </failure>
       <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
         <morph wordType="root">
@@ -231,21 +189,9 @@
     <stem>
       <failure>
         <content>In applying the compound rule "noun-Intransitive verb ": The category (n) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-        <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-          <morph wordType="root">
-            <shortName>lik (to.eat): hinliksa</shortName>
-            <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-          </morph>
-        </stem>
       </failure>
       <failure>
         <content>In applying the compound rule "noun-Intransitive verb ": The category (intrans) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
-        <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-          <morph wordType="root">
-            <shortName>ximu (slowly): ximu</shortName>
-            <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-          </morph>
-        </stem>
       </failure>
       <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
         <morph wordType="root">
@@ -342,12 +288,6 @@
     <stem>
       <failure>
         <content>In applying the compound rule "noun-adverb -&gt; intransitive verb, ic:2": The category (n) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-        <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-          <morph wordType="root">
-            <shortName>lik (to.eat): hinliksa</shortName>
-            <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-          </morph>
-        </stem>
       </failure>
       <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
         <morph wordType="root">
@@ -382,21 +322,9 @@
     <stem>
       <failure>
         <content>In applying the compound rule "adverb-noun --&gt; intransitive verb, ic:2": The category (adv) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-        <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-          <morph wordType="root">
-            <shortName>lik (to.eat): hinliksa</shortName>
-            <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-          </morph>
-        </stem>
       </failure>
       <failure>
         <content>In applying the compound rule "adverb-noun --&gt; intransitive verb, ic:2": The category (n) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
-        <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-          <morph wordType="root">
-            <shortName>ximu (slowly): ximu</shortName>
-            <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-          </morph>
-        </stem>
       </failure>
       <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
         <morph wordType="root">
@@ -431,21 +359,9 @@
     <stem>
       <failure>
         <content>In applying the compound rule "adj-noun with linker ": The category (adj) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-        <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-          <morph wordType="root">
-            <shortName>lik (to.eat): hinliksa</shortName>
-            <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-          </morph>
-        </stem>
       </failure>
       <failure>
         <content>In applying the compound rule "adj-noun with linker ": The category (n) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
-        <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-          <morph wordType="root">
-            <shortName>ximu (slowly): ximu</shortName>
-            <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-          </morph>
-        </stem>
       </failure>
       <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
         <morph wordType="root">
@@ -511,21 +427,9 @@
     <stem>
       <failure>
         <content>In applying the compound rule "noun-transitive verb ": The category (n) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-        <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-          <morph wordType="root">
-            <shortName>lik (to.eat): hinliksa</shortName>
-            <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-          </morph>
-        </stem>
       </failure>
       <failure>
         <content>In applying the compound rule "noun-transitive verb ": The category (trans) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
-        <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-          <morph wordType="root">
-            <shortName>ximu (slowly): ximu</shortName>
-            <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-          </morph>
-        </stem>
       </failure>
       <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
         <morph wordType="root">
@@ -560,21 +464,9 @@
     <stem>
       <failure>
         <content>In applying the compound rule "noun-Intransitive verb ": The category (n) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-        <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
-          <morph wordType="root">
-            <shortName>lik (to.eat): hinliksa</shortName>
-            <stemMsa cat="167" catAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+" />
-          </morph>
-        </stem>
       </failure>
       <failure>
         <content>In applying the compound rule "noun-Intransitive verb ": The category (intrans) of the right-hand member of the compound rule is incompatible with the category (adv) of the right-hand stem:</content>
-        <stem syncat="73" syncatAbbr="adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-          <morph wordType="root">
-            <shortName>ximu (slowly): ximu</shortName>
-            <stemMsa cat="73" catAbbr="adv" inflClass="0" requiresInfl="-" />
-          </morph>
-        </stem>
       </failure>
       <stem syncat="167" syncatAbbr="trans" inflClass="178" inflClassAbbr="2" requiresInfl="+">
         <morph wordType="root">

@@ -22,8 +22,9 @@ Preamble
    <xsl:key name="StemMsaID" match="MoStemMsa" use="@Id"/>
    <xsl:key name="StemNameID" match="MoStemName" use="@Id"/>
    <xsl:key name="ValueID" match="FsSymFeatVal" use="@Id"/>
-   <xsl:key name="MoStemAllomorph_id" match="MoStemAllomorph" use="@Id"/>
-   <!--
+	<xsl:key name="MoStemAllomorph_id" match="MoStemAllomorph" use="@Id"/>
+	<xsl:key name="ProdRestrictID" match="ProdRestrict/CmPossibility" use="@Id"/>
+	<!--
 	Global variables
 	-->
    <xsl:variable name="sDiscontiguousPhrase">
@@ -1187,6 +1188,8 @@ Ignore text template
 		 <xsl:call-template name="StemStemProductionsNamedTemplate"/>
 		 <xsl:call-template name="CompoundRuleNamedTemplates"/>
 		 <xsl:call-template name="TestCompatibleCategoriesNamedTemplate"/>
+		 <xsl:call-template name="TestCompatibleProdRestrictsNamedTemplate"/>
+		 <xsl:call-template name="TestCompatibleProdRestrictNamedTemplate"/>
 		 <xsl:call-template name="UninflectedStemProductionNamedTemplate"/>
 		 <xsl:call-template name="InflectionalTemplateNamedTemplates"/>
 		 <xsl:call-template name="CheckStemNamesNamedTemplates"/>
@@ -2049,7 +2052,99 @@ Ignore text template
 		 </xsl:element>
 	  </xsl:element>
    </xsl:template>
-   <xsl:template name="CompoundRuleNamedTemplates">
+	<xsl:template name="TestCompatibleProdRestrictsNamedTemplate">
+		<xsl:comment>
+			- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+			TestProdRestricts
+			Params: stemProdRestricts
+			memberProdRestricts
+			- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		</xsl:comment>
+		<xsl:element name="xsl:template">
+			<xsl:attribute name="name">TestCompatibleProdRestricts</xsl:attribute>
+			<xsl:element name="xsl:param">
+				<xsl:attribute name="name">stemProdRestricts</xsl:attribute>
+			</xsl:element>
+			<xsl:element name="xsl:param">
+				<xsl:attribute name="name">memberProdRestricts</xsl:attribute>
+			</xsl:element>
+			<xsl:element name="xsl:choose">
+				<xsl:element name="xsl:when">
+					<xsl:attribute name="test">$memberProdRestricts = ','</xsl:attribute>
+					<xsl:element name="xsl:value-of">
+						<xsl:attribute name="select">$sSuccess</xsl:attribute>
+					</xsl:element>
+				</xsl:element>
+				<xsl:element name="xsl:otherwise">
+					<xsl:element name="xsl:call-template">
+						<xsl:attribute name="name">TestCompatibleProdRestrict</xsl:attribute>
+						<xsl:element name="xsl:with-param">
+							<xsl:attribute name="name">sList</xsl:attribute>
+							<xsl:attribute name="select">$stemProdRestricts</xsl:attribute>
+						</xsl:element>
+						<xsl:element name="xsl:with-param">
+							<xsl:attribute name="name">memberProdRestricts</xsl:attribute>
+							<xsl:attribute name="select">$memberProdRestricts</xsl:attribute>
+						</xsl:element>
+					</xsl:element>
+				</xsl:element>
+			</xsl:element>
+		</xsl:element>
+	</xsl:template>
+	<xsl:template name="TestCompatibleProdRestrictNamedTemplate">
+		<xsl:comment>
+			- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+			TestProdRestrict
+			Params: sList
+			memberProdRestricts
+			- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		</xsl:comment>
+		<xsl:element name="xsl:template">
+			<xsl:attribute name="name">TestCompatibleProdRestrict</xsl:attribute>
+			<xsl:element name="xsl:param">
+				<xsl:attribute name="name">sList</xsl:attribute>
+			</xsl:element>
+			<xsl:element name="xsl:param">
+				<xsl:attribute name="name">memberProdRestricts</xsl:attribute>
+			</xsl:element>
+			<xsl:element name="xsl:if">
+				<xsl:attribute name="test">string-length($sList) &gt; 0</xsl:attribute>
+				<xsl:element name="xsl:variable">
+					<xsl:attribute name="name">sFirst</xsl:attribute>
+					<xsl:attribute name="select">substring-before(substring($sList,1),',')</xsl:attribute>
+				</xsl:element>
+				<xsl:element name="xsl:variable">
+					<xsl:attribute name="name">sRest</xsl:attribute>
+					<xsl:attribute name="select">substring-after(substring($sList,1),',')</xsl:attribute>
+				</xsl:element>
+				<xsl:element name="xsl:if">
+					<xsl:attribute name="test">string-length($sFirst) &gt; 0</xsl:attribute>
+					<xsl:element name="xsl:choose">
+						<xsl:element name="xsl:when">
+							<xsl:attribute name="test">contains($memberProdRestricts,$sFirst)</xsl:attribute>
+							<xsl:element name="xsl:value-of">
+								<xsl:attribute name="select">$sSuccess</xsl:attribute>
+							</xsl:element>
+						</xsl:element>
+						<xsl:element name="xsl:otherwise">
+							<xsl:element name="xsl:call-template">
+								<xsl:attribute name="name">TestCompatibleProdRestrict</xsl:attribute>
+								<xsl:element name="xsl:with-param">
+									<xsl:attribute name="name">sList</xsl:attribute>
+									<xsl:attribute name="select">$sRest</xsl:attribute>
+								</xsl:element>
+								<xsl:element name="xsl:with-param">
+									<xsl:attribute name="name">memberProdRestricts</xsl:attribute>
+									<xsl:attribute name="select">$memberProdRestricts</xsl:attribute>
+								</xsl:element>
+							</xsl:element>
+						</xsl:element>
+					</xsl:element>
+				</xsl:element>
+			</xsl:element>
+		</xsl:element>
+	</xsl:template>
+	<xsl:template name="CompoundRuleNamedTemplates">
 	  <xsl:if test="$compoundRules">
 		 <xsl:for-each select="$compounds">
 			<xsl:variable name="LeftMsa" select="key('StemMsaID',LeftMsa/@dst)"/>
@@ -2124,21 +2219,196 @@ Ignore text template
 					 <xsl:element name="xsl:choose">
 						<xsl:element name="xsl:when">
 						   <xsl:attribute name="test">$sLeftCategoriesAreCompatible = $sSuccess and $sRightCategoriesAreCompatible = $sSuccess</xsl:attribute>
-						   <xsl:element name="xsl:call-template">
-							  <xsl:attribute name="name">ApplyCompoundRule</xsl:attribute>
-							  <xsl:element name="xsl:with-param">
-								 <xsl:attribute name="name">LeftMember</xsl:attribute>
-								 <xsl:attribute name="select">$LeftMember</xsl:attribute>
-							  </xsl:element>
-							  <xsl:element name="xsl:with-param">
-								 <xsl:attribute name="name">RightMember</xsl:attribute>
-								 <xsl:attribute name="select">$RightMember</xsl:attribute>
-							  </xsl:element>
-							  <xsl:element name="xsl:with-param">
-								 <xsl:attribute name="name">sRuleHvo</xsl:attribute>
-								 <xsl:value-of select="@Id"/>
-							  </xsl:element>
-						   </xsl:element>
+							<xsl:element name="xsl:variable">
+								<xsl:attribute name="name">sLeftProdRestrictCompatible</xsl:attribute>
+								<xsl:element name="xsl:call-template">
+									<xsl:attribute name="name">TestCompatibleProdRestricts</xsl:attribute>
+									<xsl:element name="xsl:with-param">
+										<xsl:attribute name="name">stemProdRestricts</xsl:attribute>
+										<xsl:element name="xsl:text">,</xsl:element>
+										<xsl:element name="xsl:for-each">
+											<xsl:attribute name="select">productivityRestriction</xsl:attribute>
+											<xsl:element name="xsl:value-of">
+												<xsl:attribute name="select">@id</xsl:attribute>
+											</xsl:element>
+											<xsl:element name="xsl:text">,</xsl:element>
+										</xsl:element>
+									</xsl:element>
+									<xsl:element name="xsl:with-param">
+										<xsl:attribute name="name">memberProdRestricts</xsl:attribute>
+										<xsl:element name="xsl:text">,</xsl:element>
+										<xsl:for-each select="$LeftMsa/ProdRestrict">
+											<xsl:value-of select="@dst"/>
+											<xsl:element name="xsl:text">,</xsl:element>
+										</xsl:for-each>
+									</xsl:element>
+								</xsl:element>
+							</xsl:element>
+							<xsl:element name="xsl:variable">
+								<xsl:attribute name="name">sRightProdRestrictCompatible</xsl:attribute>
+								<xsl:element name="xsl:call-template">
+									<xsl:attribute name="name">TestCompatibleProdRestricts</xsl:attribute>
+									<xsl:element name="xsl:with-param">
+										<xsl:attribute name="name">stemProdRestricts</xsl:attribute>
+										<xsl:element name="xsl:text">,</xsl:element>
+										<xsl:element name="xsl:for-each">
+											<xsl:attribute name="select">following-sibling::stem/productivityRestriction</xsl:attribute>
+											<xsl:element name="xsl:value-of">
+												<xsl:attribute name="select">@id</xsl:attribute>
+											</xsl:element>
+											<xsl:element name="xsl:text">,</xsl:element>
+										</xsl:element>
+									</xsl:element>
+									<xsl:element name="xsl:with-param">
+										<xsl:attribute name="name">memberProdRestricts</xsl:attribute>
+										<xsl:element name="xsl:text">,</xsl:element>
+										<xsl:for-each select="$RightMsa/ProdRestrict">
+											<xsl:value-of select="@dst"/>
+											<xsl:element name="xsl:text">,</xsl:element>
+										</xsl:for-each>
+									</xsl:element>
+								</xsl:element>
+							</xsl:element>
+							<xsl:element name="xsl:choose">
+								<xsl:element name="xsl:when">
+									<xsl:attribute name="test">$sLeftProdRestrictCompatible = $sSuccess and $sRightProdRestrictCompatible = $sSuccess</xsl:attribute>
+									<xsl:element name="xsl:call-template">
+										<xsl:attribute name="name">ApplyCompoundRule</xsl:attribute>
+										<xsl:element name="xsl:with-param">
+											<xsl:attribute name="name">LeftMember</xsl:attribute>
+											<xsl:attribute name="select">$LeftMember</xsl:attribute>
+										</xsl:element>
+										<xsl:element name="xsl:with-param">
+											<xsl:attribute name="name">RightMember</xsl:attribute>
+											<xsl:attribute name="select">$RightMember</xsl:attribute>
+										</xsl:element>
+										<xsl:element name="xsl:with-param">
+											<xsl:attribute name="name">sRuleHvo</xsl:attribute>
+											<xsl:value-of select="@Id"/>
+										</xsl:element>
+									</xsl:element>
+								</xsl:element>
+								<xsl:element name="xsl:otherwise">
+									<xsl:element name="xsl:if">
+										<xsl:attribute name="test">$sLeftProdRestrictCompatible != $sSuccess</xsl:attribute>
+										<xsl:element name="xsl:call-template">
+											<xsl:attribute name="name">ReportCompoundRuleFailure</xsl:attribute>
+											<xsl:element name="xsl:with-param">
+												<xsl:attribute name="name">sPreface</xsl:attribute>
+												<xsl:text>In applying the compound rule "</xsl:text>
+												<xsl:value-of select="Name"/>
+												<xsl:text>": </xsl:text>
+											</xsl:element>
+											<xsl:element name="xsl:with-param">
+												<xsl:attribute name="name">sFirstItemComponent</xsl:attribute>
+												<xsl:element name="xsl:text">exception 'feature(s)'</xsl:element>
+											</xsl:element>
+											<xsl:element name="xsl:with-param">
+												<xsl:attribute name="name">sFirstItemComponentAbbr</xsl:attribute>
+												<xsl:element name="xsl:variable">
+													<xsl:attribute name="name">iCount</xsl:attribute>
+													<xsl:attribute name="select">count(productivityRestriction)</xsl:attribute>
+												</xsl:element>
+												<xsl:element name="xsl:for-each">
+													<xsl:attribute name="select">productivityRestriction</xsl:attribute>
+													<xsl:element name="xsl:value-of">
+														<xsl:attribute name="select">name</xsl:attribute>
+													</xsl:element>
+													<xsl:element name="xsl:if">
+														<xsl:attribute name="test">position() &lt; $iCount</xsl:attribute>
+														<xsl:element name="xsl:text">, </xsl:element>
+													</xsl:element>
+												</xsl:element>
+											</xsl:element>
+											<xsl:element name="xsl:with-param">
+												<xsl:attribute name="name">sFirstItemDescription</xsl:attribute>
+												<xsl:element name="xsl:text">left-hand stem</xsl:element>
+											</xsl:element>
+											<xsl:element name="xsl:with-param">
+												<xsl:attribute name="name">sFirstItemValue</xsl:attribute>
+												<xsl:attribute name="select">$LeftMember</xsl:attribute>
+											</xsl:element>
+											<xsl:element name="xsl:with-param">
+												<xsl:attribute name="name">sSecondItemComponent</xsl:attribute>
+												<xsl:element name="xsl:text">exception 'feature(s)'</xsl:element>
+											</xsl:element>
+											<xsl:element name="xsl:with-param">
+												<xsl:attribute name="name">sSecondItemComponentAbbr</xsl:attribute>
+												<xsl:variable name="iCount" select="count($LeftMsa/ProdRestrict)"/>
+												<xsl:for-each select="$LeftMsa/ProdRestrict">
+													<xsl:value-of select="key('ProdRestrictID',@dst)/Name"/>
+													<xsl:if test="position() &lt; $iCount">
+														<xsl:text>, </xsl:text>
+													</xsl:if>
+												</xsl:for-each>
+											</xsl:element>
+											<xsl:element name="xsl:with-param">
+												<xsl:attribute name="name">sSecondItemDescription</xsl:attribute>
+												<xsl:element name="xsl:text">left-hand member of the compound rule</xsl:element>
+											</xsl:element>
+										</xsl:element>
+									</xsl:element>
+									<xsl:element name="xsl:if">
+										<xsl:attribute name="test">$sRightProdRestrictCompatible != $sSuccess</xsl:attribute>
+										<xsl:element name="xsl:call-template">
+											<xsl:attribute name="name">ReportCompoundRuleFailure</xsl:attribute>
+											<xsl:element name="xsl:with-param">
+												<xsl:attribute name="name">sPreface</xsl:attribute>
+												<xsl:text>In applying the compound rule "</xsl:text>
+												<xsl:value-of select="Name"/>
+												<xsl:text>": </xsl:text>
+											</xsl:element>
+											<xsl:element name="xsl:with-param">
+												<xsl:attribute name="name">sFirstItemComponent</xsl:attribute>
+												<xsl:element name="xsl:text">exception 'feature(s)'</xsl:element>
+											</xsl:element>
+											<xsl:element name="xsl:with-param">
+												<xsl:attribute name="name">sFirstItemComponentAbbr</xsl:attribute>
+												<xsl:element name="xsl:variable">
+													<xsl:attribute name="name">iCount</xsl:attribute>
+													<xsl:attribute name="select">count(following-sibling::stem/productivityRestriction)</xsl:attribute>
+												</xsl:element>
+												<xsl:element name="xsl:for-each">
+													<xsl:attribute name="select">following-sibling::stem/productivityRestriction</xsl:attribute>
+													<xsl:element name="xsl:value-of">
+														<xsl:attribute name="select">name</xsl:attribute>
+													</xsl:element>
+													<xsl:element name="xsl:if">
+														<xsl:attribute name="test">position() &lt; $iCount</xsl:attribute>
+														<xsl:element name="xsl:text">, </xsl:element>
+													</xsl:element>
+												</xsl:element>
+											</xsl:element>
+											<xsl:element name="xsl:with-param">
+												<xsl:attribute name="name">sFirstItemDescription</xsl:attribute>
+												<xsl:element name="xsl:text">right-hand stem</xsl:element>
+											</xsl:element>
+											<xsl:element name="xsl:with-param">
+												<xsl:attribute name="name">sFirstItemValue</xsl:attribute>
+												<xsl:attribute name="select">$RightMember</xsl:attribute>
+											</xsl:element>
+											<xsl:element name="xsl:with-param">
+												<xsl:attribute name="name">sSecondItemComponent</xsl:attribute>
+												<xsl:element name="xsl:text">exception 'feature(s)'</xsl:element>
+											</xsl:element>
+											<xsl:element name="xsl:with-param">
+												<xsl:attribute name="name">sSecondItemComponentAbbr</xsl:attribute>
+												<xsl:variable name="iCount" select="count($RightMsa/ProdRestrict)"/>
+												<xsl:for-each select="$RightMsa/ProdRestrict">
+													<xsl:value-of select="key('ProdRestrictID',@dst)/Name"/>
+													<xsl:if test="position() &lt; $iCount">
+														<xsl:text>, </xsl:text>
+													</xsl:if>
+												</xsl:for-each>
+											</xsl:element>
+											<xsl:element name="xsl:with-param">
+												<xsl:attribute name="name">sSecondItemDescription</xsl:attribute>
+												<xsl:element name="xsl:text">right-hand member of the compound rule</xsl:element>
+											</xsl:element>
+										</xsl:element>
+									</xsl:element>
+								</xsl:element>
+							</xsl:element>
 						</xsl:element>
 						<xsl:element name="xsl:otherwise">
 						   <xsl:element name="xsl:if">
@@ -3135,7 +3405,6 @@ Ignore text template
 			   <wgd:value-of select="$sFirstItemDescription"/>
 			   <wgd:text>:</wgd:text>
 			</content>
-			<wgd:copy-of select="$sFirstItemValue"/>
 		 </wgd:element>
 	  </wgd:template>
    </xsl:template>
