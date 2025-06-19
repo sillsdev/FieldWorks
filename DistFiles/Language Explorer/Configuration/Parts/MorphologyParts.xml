@@ -661,10 +661,8 @@
 			</slice>
 		</part>
 		<part id="MoStemMsa-Detail-ProdRestrictDisabled" type="Detail">
-			<slice field="ProdRestrict" label='Exception "Features"' editor="possVectorReference" menu="mnuDataTree-Help">
-				<deParams ws="best analorvern">
-					<forecolor>GrayText</forecolor>
-				</deParams>
+			<slice field="ProdRestrict" label='Exception "Features"' textStyle="Disabled Text" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibVectorReferenceDisabledSlice" menu="mnuDataTree-Help">
+				<deParams displayProperty="LongName" ws="vernacular"/>
 			</slice>
 		</part>
 		<part id="MoStemMsa-Detail-PartOfSpeech" type="Detail">
