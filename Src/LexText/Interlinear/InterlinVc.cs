@@ -379,6 +379,8 @@ namespace SIL.FieldWorks.IText
 
 		public bool GetParsingMode()
 		{
+			if (RootSite?.GetMaster() == null)
+				return false;
 			return RootSite.GetMaster().GetParsingMode();
 		}
 
