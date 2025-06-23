@@ -135,7 +135,20 @@ namespace SIL.FieldWorks.IText
 					IParaFragment lastFragment = null;
 					var data = new ComplexConcParagraphData(m_featSys, para);
 					Match<ComplexConcParagraphData, ShapeNode> match = m_matcher.Match(data);
-					while (match.Success)
+					if (match.Success && match.Range.Start == null)
+					{
+						// We aren't interested in matching the empty string.
+						IEnumerable<Match<ComplexConcParagraphData, ShapeNode>> allMatches = m_matcher.AllMatches(data);
+						foreach (var m in allMatches)
+						{
+							if (m.Success && m.Range.Start != null)
+							{
+								match = m;
+								break;
+							}
+						}
+					}
+					while (match.Success && match.Range.Start != null)
 					{
 						if (match.Range.Start == match.Range.End
 							&& ((FeatureSymbol)match.Range.Start.Annotation.FeatureStruct

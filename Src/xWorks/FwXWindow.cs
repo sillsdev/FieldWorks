@@ -663,7 +663,7 @@ namespace SIL.FieldWorks.XWorks
 					Cache.ServiceLocator.GetInstance<IActionHandler>(), stUndo, stRedo))
 				using (new DataUpdateMonitor(this, "EditPaste"))
 				{
-					if (m_viewHelper.ActiveView.EditingHelper.PasteClipboard())
+					if (m_viewHelper.ActiveView.EditingHelper.PasteClipboard(Cache))
 						undoHelper.RollBack = false;
 				}
 				return true;
