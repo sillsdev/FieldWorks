@@ -725,7 +725,7 @@ namespace SIL.FieldWorks.IText
 			m_mediator = mediator;
 			// InitBase will do this, but we need it in place before calling SetInitialTabPage().
 			m_propertyTable = propertyTable;
-			SetParsingMode(GetParsingMode());
+			SetParsingMode(IsParsingMode());
 
 			// Making the tab control currently requires this first...
 			if (!fHideTitlePane)
@@ -1256,7 +1256,7 @@ namespace SIL.FieldWorks.IText
 		{
 			var cmd = (Command)commandObject;
 			bool value = cmd.GetParameter("value") == "true";
-			display.Checked = GetParsingMode() == value;
+			display.Checked = IsParsingMode() == value;
 			return true;
 		}
 
@@ -1286,7 +1286,7 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		public bool GetParsingMode()
+		public bool IsParsingMode()
 		{
 			return m_propertyTable.GetBoolProperty("ParsingMode", false, PropertyTable.SettingsGroup.LocalSettings);
 		}

@@ -373,15 +373,15 @@ namespace SIL.FieldWorks.IText
 			if (m_loader != null)
 			{
 				CheckDisposed();
-				m_loader.ResetGuessCache(GetParsingMode());
+				m_loader.ResetGuessCache(IsParsingMode());
 			}
 		}
 
-		public bool GetParsingMode()
+		internal bool IsParsingMode()
 		{
 			if (RootSite?.GetMaster() == null)
 				return false;
-			return RootSite.GetMaster().GetParsingMode();
+			return RootSite.GetMaster().IsParsingMode();
 		}
 
 		internal AnalysisGuessServices GuessServices
@@ -390,7 +390,7 @@ namespace SIL.FieldWorks.IText
 			{
 				if (m_loader != null && m_loader.GuessServices != null)
 					return m_loader.GuessServices;
-				return new AnalysisGuessServices(m_cache, GetParsingMode());
+				return new AnalysisGuessServices(m_cache, IsParsingMode());
 			}
 		}
 
@@ -551,7 +551,7 @@ namespace SIL.FieldWorks.IText
 		private int GetGuessColor(ICmObject obj)
 		{
 			IWfiAnalysis wa;
-			if (GetParsingMode())
+			if (IsParsingMode())
 			{
 				// Parser approval takes precedence over User approval.
 				wa = (obj is IWfiGloss) ? ((IWfiGloss)obj).Analysis : obj as IWfiAnalysis;
@@ -2305,7 +2305,7 @@ namespace SIL.FieldWorks.IText
 
 		internal virtual IParaDataLoader CreateParaLoader()
 		{
-			return new InterlinViewCacheLoader(new AnalysisGuessServices(m_cache, GetParsingMode()), GuessCache);
+			return new InterlinViewCacheLoader(new AnalysisGuessServices(m_cache, IsParsingMode()), GuessCache);
 		}
 
 		internal void RecordGuessIfNotKnown(AnalysisOccurrence selected)
