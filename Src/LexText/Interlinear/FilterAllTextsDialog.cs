@@ -139,7 +139,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		public IStText[] GetListOfIncludedTexts()
 		{
-			return m_treeTexts.GetCheckedTagData().OfType<IStText>().ToArray();
+			return m_treeTexts.GetCheckedTagData().OfType<IStText>().Distinct().ToArray();
 		}
 
 		#region Windows Form Designer generated code
