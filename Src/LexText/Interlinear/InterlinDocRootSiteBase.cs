@@ -1013,6 +1013,7 @@ namespace SIL.FieldWorks.IText
 				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 						InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(RootStText, true));
 				// Sync Guesses data before we redraw anything.
+				Vc.RootSite = this;
 				UpdateGuessData();
 			}
 			// FWR-191: we don't need to reconstruct the display if we didn't need to reload annotations

@@ -373,8 +373,15 @@ namespace SIL.FieldWorks.IText
 			if (m_loader != null)
 			{
 				CheckDisposed();
-				m_loader.ResetGuessCache();
+				m_loader.ResetGuessCache(IsParsingMode());
 			}
+		}
+
+		internal bool IsParsingMode()
+		{
+			if (RootSite?.GetMaster() == null)
+				return false;
+			return RootSite.GetMaster().IsParsingMode();
 		}
 
 		internal AnalysisGuessServices GuessServices
@@ -383,7 +390,7 @@ namespace SIL.FieldWorks.IText
 			{
 				if (m_loader != null && m_loader.GuessServices != null)
 					return m_loader.GuessServices;
-				return new AnalysisGuessServices(m_cache);
+				return new AnalysisGuessServices(m_cache, IsParsingMode());
 			}
 		}
 
@@ -541,10 +548,32 @@ namespace SIL.FieldWorks.IText
 			UsingGuess = true;
 		}
 
-		private void SetGuessing(IVwEnv vwenv)
+		private int GetGuessColor(ICmObject obj)
 		{
-			SetGuessing(vwenv, ApprovedGuessColor);
-			UsingGuess = true;
+			IWfiAnalysis wa;
+			if (IsParsingMode())
+			{
+				// Parser approval takes precedence over User approval.
+				wa = (obj is IWfiGloss) ? ((IWfiGloss)obj).Analysis : obj as IWfiAnalysis;
+				if (wa != null)
+				{
+					Opinions opinion = wa.GetAgentOpinion(wa.Cache.LangProject.DefaultParserAgent);
+					if (opinion == Opinions.approves)
+						return MachineGuessColor;
+				}
+				return ApprovedGuessColor;
+			}
+			// User approval takes precedence over Parser approval.
+			if (obj is IWfiGloss)
+				return ApprovedGuessColor;
+			wa = obj as IWfiAnalysis;
+			if (wa != null)
+			{
+				Opinions opinion = wa.GetAgentOpinion(wa.Cache.LangProject.DefaultUserAgent);
+				if (opinion == Opinions.approves)
+					return ApprovedGuessColor;
+			}
+			return MachineGuessColor;
 		}
 
 		public bool UsingGuess { get; set; }
@@ -1822,11 +1851,7 @@ namespace SIL.FieldWorks.IText
 						// Display the morpheme bundles.
 						if (m_hvoDefault != m_hvoWordBundleAnalysis)
 						{
-							// Real analysis isn't what we're displaying, so morph breakdown
-							// is a guess. Is it a human-approved guess?
-							bool isHumanGuess = m_this.GuessCache.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid) !=
-																			(int) AnalysisGuessServices.OpinionAgent.Parser;
-							m_this.SetGuessing(m_vwenv, isHumanGuess ? ApprovedGuessColor : MachineGuessColor);
+							m_this.SetGuessing(m_vwenv, m_this.GetGuessColor(m_defaultObj));
 							// Let the exporter know that this is a guessed analysis.
 							m_vwenv.set_StringProperty(ktagAnalysisStatus, "guess");
 						}
@@ -1842,7 +1867,7 @@ namespace SIL.FieldWorks.IText
 						if (m_hvoWordBundleAnalysis == m_hvoWordform)
 						{
 							// Real analysis is just word, one we're displaying is a default
-							m_this.SetGuessing(m_vwenv);
+							m_this.SetGuessing(m_vwenv, m_this.GetGuessColor(m_defaultObj));
 							// Let the exporter know that this is a guessed analysis.
 							m_vwenv.set_StringProperty(ktagAnalysisStatus, "guess");
 						}
@@ -1866,11 +1891,7 @@ namespace SIL.FieldWorks.IText
 				case WfiAnalysisTags.kClassId:
 					if (m_hvoDefault != m_hvoWordBundleAnalysis)
 					{
-						// Real analysis isn't what we're displaying, so morph breakdown
-						// is a guess. Is it a human-approved guess?
-						bool isHumanGuess = m_this.GuessCache.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid) !=
-																		(int)AnalysisGuessServices.OpinionAgent.Parser;
-						m_this.SetGuessing(m_vwenv, isHumanGuess ? ApprovedGuessColor : MachineGuessColor);
+						m_this.SetGuessing(m_vwenv, m_this.GetGuessColor(m_defaultObj));
 					}
 					var wa = (IWfiAnalysis) m_defaultObj;
 					if (wa.MeaningsOC.Count == 0)
@@ -1899,7 +1920,7 @@ namespace SIL.FieldWorks.IText
 					}
 					else
 					{
-						m_this.SetGuessing(m_vwenv);
+						m_this.SetGuessing(m_vwenv, m_this.GetGuessColor(m_defaultObj));
 						m_vwenv.AddObj(m_hvoDefault, m_this, kfragLineChoices + choiceIndex);
 					}
 					break;
@@ -1919,18 +1940,14 @@ namespace SIL.FieldWorks.IText
 				case WfiAnalysisTags.kClassId:
 					if (m_hvoDefault != m_hvoWordBundleAnalysis)
 					{
-						// Real analysis isn't what we're displaying, so POS is a guess.
-						bool isHumanApproved = m_this.GuessCache.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid)
-																			!= (int)AnalysisGuessServices.OpinionAgent.Parser;
-
-						m_this.SetGuessing(m_vwenv, isHumanApproved ? ApprovedGuessColor : MachineGuessColor);
+						m_this.SetGuessing(m_vwenv, m_this.GetGuessColor(m_defaultObj));
 					}
 					m_this.AddAnalysisPos(m_vwenv, m_hvoDefault, m_hvoWordBundleAnalysis, choiceIndex);
 					break;
 				case WfiGlossTags.kClassId:
 					m_hvoWfiAnalysis = m_defaultObj.Owner.Hvo;
 					if (m_hvoWordBundleAnalysis == m_hvoWordform) // then our analysis is a guess
-						m_this.SetGuessing(m_vwenv);
+						m_this.SetGuessing(m_vwenv, m_this.GetGuessColor(m_defaultObj));
 					m_vwenv.AddObj(m_hvoWfiAnalysis, m_this, kfragAnalysisCategoryChoices + choiceIndex);
 					break;
 				default:
@@ -2288,7 +2305,7 @@ namespace SIL.FieldWorks.IText
 
 		internal virtual IParaDataLoader CreateParaLoader()
 		{
-			return new InterlinViewCacheLoader(new AnalysisGuessServices(m_cache), GuessCache);
+			return new InterlinViewCacheLoader(new AnalysisGuessServices(m_cache, IsParsingMode()), GuessCache);
 		}
 
 		internal void RecordGuessIfNotKnown(AnalysisOccurrence selected)
@@ -2409,7 +2426,7 @@ namespace SIL.FieldWorks.IText
 	{
 		void LoadParaData(IStTxtPara para);
 		void LoadSegmentData(ISegment seg);
-		void ResetGuessCache();
+		void ResetGuessCache(bool parsingMode);
 		bool UpdatingOccurrence(IAnalysis oldAnalysis, IAnalysis newAnalysis);
 		void RecordGuessIfNotKnown(AnalysisOccurrence occurrence);
 		IAnalysis GetGuessForWordform(IWfiWordform wf, int ws);
@@ -2533,10 +2550,11 @@ namespace SIL.FieldWorks.IText
 		#region IParaDataLoader Members
 
 
-		public void ResetGuessCache()
+		public void ResetGuessCache(bool parsingMode)
 		{
 			// recreate the guess services, so they will use the latest FDO data.
 			GuessServices.ClearGuessData();
+			GuessServices.PrioritizeParser = parsingMode;
 			// clear the cache for the guesses, so it won't have any stale data.
 			m_guessCache.ClearPropFromCache(InterlinViewDataCache.AnalysisMostApprovedFlid);
 		}

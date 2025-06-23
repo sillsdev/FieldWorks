@@ -28,8 +28,14 @@
 		<command id="CmdChooseHCParser" label="Phonological Rule-based Parser (HermitCrab.NET)" message="ChooseParser">
 			<parameters parser="HC"/>
 		</command>
+        <command id="CmdParsingDevelopmentMode" label="Parsing Development" message="SetParsingMode">
+          <parameters value="true"/>
+        </command>
+        <command id="CmdTextAnalysisMode" label="Text Analysis" message="SetParsingMode">
+          <parameters value="false"/>
+        </command>
 
-		<!-- Texts Area commands-->
+        <!-- Texts Area commands-->
 		<command id="CmdInsertText" label="New _Text" message="InsertInterlinText" shortcut="Ctrl+T" icon="addNewText">
 			<parameters className="StText"/>
 		</command>
@@ -286,6 +292,10 @@
 				<item command="CmdChooseXAmpleParser"/>
 				<item command="CmdChooseHCParser"/>
 			</menu>
+          <menu id="ChooseModeMenu" label="Interlinear Mode">
+            <item command="CmdParsingDevelopmentMode"/>
+            <item command="CmdTextAnalysisMode"/>
+          </menu>
           <item command="CmdEditParserParameters"/>
 		</menu>
 		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menubar/*"/>
