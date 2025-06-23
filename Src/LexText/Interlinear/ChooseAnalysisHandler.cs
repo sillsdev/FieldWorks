@@ -282,7 +282,7 @@ namespace SIL.FieldWorks.IText
 			var wordform = m_owner.GetWordformOfAnalysis();
 
 			// Add the analyses, and recursively the other items.
-			var guess_services = new AnalysisGuessServices(m_cache);
+			var guess_services = new AnalysisGuessServices(m_cache, IsParsingMode());
 			var sorted_analyses = guess_services.GetSortedAnalysisGuesses(wordform, m_occurrence, false);
 			foreach (var wa in sorted_analyses)
 			{
@@ -311,7 +311,7 @@ namespace SIL.FieldWorks.IText
 		{
 			AddItem(wa,
 				MakeAnalysisStringRep(wa, m_cache, StyleSheet != null, (m_owner as SandboxBase).RawWordformWs), true);
-			var guess_services = new AnalysisGuessServices(m_cache);
+			var guess_services = new AnalysisGuessServices(m_cache, IsParsingMode());
 			var sorted_glosses = guess_services.GetSortedGlossGuesses(wa, m_occurrence);
 			foreach (var gloss in sorted_glosses)
 			{
@@ -321,6 +321,13 @@ namespace SIL.FieldWorks.IText
 			//add the "new word gloss" option
 
 			AddItem(wa, MakeSimpleString(ITextStrings.ksNewWordGloss), false, WfiGlossTags.kClassId);
+		}
+
+		private bool IsParsingMode()
+		{
+			if (Owner?.InterlinDoc?.GetMaster() == null)
+				return false;
+			return Owner.InterlinDoc.GetMaster().IsParsingMode();
 		}
 
 		protected ITsString MakeSimpleString(String str)

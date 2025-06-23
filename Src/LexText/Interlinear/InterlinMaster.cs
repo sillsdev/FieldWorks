@@ -55,6 +55,8 @@ namespace SIL.FieldWorks.IText
 
 		private string m_currentTool = "";
 
+		private string m_analyzeTabName = "";
+
 		public string CurrentTool
 		{
 			get { return m_currentTool; }
@@ -87,6 +89,8 @@ namespace SIL.FieldWorks.IText
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
+			// Save the Analyze tab name.
+			m_analyzeTabName = m_tpInterlinear.Text;
 		}
 
 		internal string BookmarkId
@@ -721,6 +725,7 @@ namespace SIL.FieldWorks.IText
 			m_mediator = mediator;
 			// InitBase will do this, but we need it in place before calling SetInitialTabPage().
 			m_propertyTable = propertyTable;
+			SetParsingMode(IsParsingMode());
 
 			// Making the tab control currently requires this first...
 			if (!fHideTitlePane)
@@ -1244,6 +1249,46 @@ namespace SIL.FieldWorks.IText
 				(CurrentInterlinearTabControl as InterlinDocChart).OnConfigureInterlinear(argument);
 
 			return true; // We handled this
+		}
+
+		public bool OnDisplaySetParsingMode(object commandObject,
+			ref UIItemDisplayProperties display)
+		{
+			var cmd = (Command)commandObject;
+			bool value = cmd.GetParameter("value") == "true";
+			display.Checked = IsParsingMode() == value;
+			return true;
+		}
+
+		public bool OnSetParsingMode(object argument)
+		{
+			var cmd = (Command)argument;
+			string value = cmd.GetParameter("value");
+			SetParsingMode(value == "true");
+			// Refresh the display.
+			RootStText = null;
+			m_idcAnalyze.ResetAnalysisCache();
+			Clerk.JumpToIndex(Clerk.CurrentIndex);
+			return true; // we handled this
+		}
+
+		public void SetParsingMode(bool value)
+		{
+			m_propertyTable.SetProperty("ParsingMode", value, PropertyTable.SettingsGroup.LocalSettings, false);
+			if (value)
+			{
+				m_tpInterlinear.Text = ITextStrings.ksParsingMode;
+			}
+			else
+			{
+				// Restore Analyze tab name.
+				m_tpInterlinear.Text = m_analyzeTabName;
+			}
+		}
+
+		public bool IsParsingMode()
+		{
+			return m_propertyTable.GetBoolProperty("ParsingMode", false, PropertyTable.SettingsGroup.LocalSettings);
 		}
 
 		/// <summary>
