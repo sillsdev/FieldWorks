@@ -28,10 +28,10 @@
 		<command id="CmdChooseHCParser" label="Phonological Rule-based Parser (HermitCrab.NET)" message="ChooseParser">
 			<parameters parser="HC"/>
 		</command>
-        <command id="CmdParsingDevelopmentMode" label="Parsing Development" message="SetParsingMode">
+        <command id="CmdParsingDevelopmentMode" label="Parsing Development" message="SetParsingDevMode">
           <parameters value="true"/>
         </command>
-        <command id="CmdTextAnalysisMode" label="Text Analysis" message="SetParsingMode">
+        <command id="CmdTextGlossingMode" label="Text Glossing" message="SetParsingDevMode">
           <parameters value="false"/>
         </command>
 
@@ -294,7 +294,7 @@
 			</menu>
           <menu id="ChooseModeMenu" label="Interlinear Mode">
             <item command="CmdParsingDevelopmentMode"/>
-            <item command="CmdTextAnalysisMode"/>
+            <item command="CmdTextGlossingMode"/>
           </menu>
           <item command="CmdEditParserParameters"/>
 		</menu>

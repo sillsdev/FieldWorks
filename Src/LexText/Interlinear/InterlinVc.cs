@@ -373,15 +373,15 @@ namespace SIL.FieldWorks.IText
 			if (m_loader != null)
 			{
 				CheckDisposed();
-				m_loader.ResetGuessCache(IsParsingMode());
+				m_loader.ResetGuessCache(IsParsingDevMode());
 			}
 		}
 
-		internal bool IsParsingMode()
+		internal bool IsParsingDevMode()
 		{
 			if (RootSite?.GetMaster() == null)
 				return false;
-			return RootSite.GetMaster().IsParsingMode();
+			return RootSite.GetMaster().IsParsingDevMode();
 		}
 
 		internal AnalysisGuessServices GuessServices
@@ -390,7 +390,7 @@ namespace SIL.FieldWorks.IText
 			{
 				if (m_loader != null && m_loader.GuessServices != null)
 					return m_loader.GuessServices;
-				return new AnalysisGuessServices(m_cache, IsParsingMode());
+				return new AnalysisGuessServices(m_cache, IsParsingDevMode());
 			}
 		}
 
@@ -551,7 +551,7 @@ namespace SIL.FieldWorks.IText
 		private int GetGuessColor(ICmObject obj)
 		{
 			IWfiAnalysis wa;
-			if (IsParsingMode())
+			if (IsParsingDevMode())
 			{
 				// Parser approval takes precedence over User approval.
 				wa = (obj is IWfiGloss) ? ((IWfiGloss)obj).Analysis : obj as IWfiAnalysis;
@@ -2305,7 +2305,7 @@ namespace SIL.FieldWorks.IText
 
 		internal virtual IParaDataLoader CreateParaLoader()
 		{
-			return new InterlinViewCacheLoader(new AnalysisGuessServices(m_cache, IsParsingMode()), GuessCache);
+			return new InterlinViewCacheLoader(new AnalysisGuessServices(m_cache, IsParsingDevMode()), GuessCache);
 		}
 
 		internal void RecordGuessIfNotKnown(AnalysisOccurrence selected)
@@ -2426,7 +2426,7 @@ namespace SIL.FieldWorks.IText
 	{
 		void LoadParaData(IStTxtPara para);
 		void LoadSegmentData(ISegment seg);
-		void ResetGuessCache(bool parsingMode);
+		void ResetGuessCache(bool parsingDevMode);
 		bool UpdatingOccurrence(IAnalysis oldAnalysis, IAnalysis newAnalysis);
 		void RecordGuessIfNotKnown(AnalysisOccurrence occurrence);
 		IAnalysis GetGuessForWordform(IWfiWordform wf, int ws);
@@ -2550,11 +2550,11 @@ namespace SIL.FieldWorks.IText
 		#region IParaDataLoader Members
 
 
-		public void ResetGuessCache(bool parsingMode)
+		public void ResetGuessCache(bool parsingDevMode)
 		{
 			// recreate the guess services, so they will use the latest FDO data.
 			GuessServices.ClearGuessData();
-			GuessServices.PrioritizeParser = parsingMode;
+			GuessServices.PrioritizeParser = parsingDevMode;
 			// clear the cache for the guesses, so it won't have any stale data.
 			m_guessCache.ClearPropFromCache(InterlinViewDataCache.AnalysisMostApprovedFlid);
 		}

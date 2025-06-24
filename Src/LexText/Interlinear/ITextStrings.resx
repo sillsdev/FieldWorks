@@ -989,8 +989,4 @@ Click "Cancel" to abort this import.</value>
   <data name="ComplexConcControl_ResultsMayBeIncomplete" xml:space="preserve">
     <value>Results may be incomplete.</value>
   </data>
-  <data name="ksParsingMode" xml:space="preserve">
-    <value>Parsing</value>
-    <comment>alternate name for Analyze tab</comment>
-  </data>
 </root>

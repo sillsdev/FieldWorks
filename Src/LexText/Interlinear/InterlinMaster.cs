@@ -55,8 +55,6 @@ namespace SIL.FieldWorks.IText
 
 		private string m_currentTool = "";
 
-		private string m_analyzeTabName = "";
-
 		public string CurrentTool
 		{
 			get { return m_currentTool; }
@@ -89,8 +87,6 @@ namespace SIL.FieldWorks.IText
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
-			// Save the Analyze tab name.
-			m_analyzeTabName = m_tpInterlinear.Text;
 		}
 
 		internal string BookmarkId
@@ -725,7 +721,7 @@ namespace SIL.FieldWorks.IText
 			m_mediator = mediator;
 			// InitBase will do this, but we need it in place before calling SetInitialTabPage().
 			m_propertyTable = propertyTable;
-			SetParsingMode(IsParsingMode());
+			SetParsingDevMode(IsParsingDevMode());
 
 			// Making the tab control currently requires this first...
 			if (!fHideTitlePane)
@@ -1251,20 +1247,21 @@ namespace SIL.FieldWorks.IText
 			return true; // We handled this
 		}
 
-		public bool OnDisplaySetParsingMode(object commandObject,
+		public bool OnDisplaySetParsingDevMode(object commandObject,
 			ref UIItemDisplayProperties display)
 		{
 			var cmd = (Command)commandObject;
 			bool value = cmd.GetParameter("value") == "true";
-			display.Checked = IsParsingMode() == value;
+			display.Checked = IsParsingDevMode() == value;
 			return true;
 		}
 
-		public bool OnSetParsingMode(object argument)
+		public bool OnSetParsingDevMode(object argument)
 		{
 			var cmd = (Command)argument;
 			string value = cmd.GetParameter("value");
-			SetParsingMode(value == "true");
+			SetParsingDevMode(value == "true");
+			Clerk.UpdateParsingDevStatusBarPanel();
 			// Refresh the display.
 			RootStText = null;
 			m_idcAnalyze.ResetAnalysisCache();
@@ -1272,23 +1269,14 @@ namespace SIL.FieldWorks.IText
 			return true; // we handled this
 		}
 
-		public void SetParsingMode(bool value)
+		public void SetParsingDevMode(bool value)
 		{
-			m_propertyTable.SetProperty("ParsingMode", value, PropertyTable.SettingsGroup.LocalSettings, false);
-			if (value)
-			{
-				m_tpInterlinear.Text = ITextStrings.ksParsingMode;
-			}
-			else
-			{
-				// Restore Analyze tab name.
-				m_tpInterlinear.Text = m_analyzeTabName;
-			}
+			m_propertyTable.SetProperty("ParsingDevMode", value, PropertyTable.SettingsGroup.LocalSettings, false);
 		}
 
-		public bool IsParsingMode()
+		public bool IsParsingDevMode()
 		{
-			return m_propertyTable.GetBoolProperty("ParsingMode", false, PropertyTable.SettingsGroup.LocalSettings);
+			return m_propertyTable.GetBoolProperty("ParsingDevMode", false, PropertyTable.SettingsGroup.LocalSettings);
 		}
 
 		/// <summary>

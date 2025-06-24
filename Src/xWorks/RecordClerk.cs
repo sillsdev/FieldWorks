@@ -609,6 +609,7 @@ namespace SIL.FieldWorks.XWorks
 			bool fRestoredFilter = TryRestoreFilter(m_clerkConfiguration, Cache);
 			UpdateFilterStatusBarPanel();
 			UpdateSortStatusBarPanel();
+			UpdateParsingDevStatusBarPanel();
 			return fRestoredSorter || fRestoredFilter;
 		}
 
@@ -2088,6 +2089,7 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			UpdateFilterStatusBarPanel();
 			UpdateSortStatusBarPanel();
+			UpdateParsingDevStatusBarPanel();
 		}
 
 		/// <summary>
@@ -2849,6 +2851,29 @@ namespace SIL.FieldWorks.XWorks
 		protected virtual string FilterStatusContents(bool listIsFiltered)
 		{
 			return listIsFiltered ? xWorksStrings.Filtered : "";
+		}
+
+		public void UpdateParsingDevStatusBarPanel()
+		{
+			if (!IsControllingTheRecordTreeBar)
+				return; // none of our business!
+			bool fIgnore = m_propertyTable.GetBoolProperty("IgnoreStatusPanel", false);
+			if (fIgnore)
+				return;
+
+			var b = m_propertyTable.GetValue<StatusBarTextBox>("ParsingDev");
+			if (b == null) //Other xworks apps may not have this panel
+				return;
+			if (!m_propertyTable.GetBoolProperty("ParsingDevMode", false, PropertyTable.SettingsGroup.LocalSettings))
+			{
+				b.BackBrush = System.Drawing.Brushes.Transparent;
+				b.TextForReal = "";
+			}
+			else
+			{
+				b.BackBrush = System.Drawing.Brushes.Tan;
+				b.TextForReal = xWorksStrings.ParsingDev;
+			}
 		}
 
 		private void UpdateSortStatusBarPanel()
