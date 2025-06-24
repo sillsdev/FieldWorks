@@ -1298,4 +1298,7 @@ See USFM documentation for help.</value>
   <data name="PictureOptionsView_MaxWidthLabel" xml:space="preserve">
     <value>Max Width (inches):</value>
   </data>
+  <data name="ParsingDev" xml:space="preserve">
+    <value>Parsing Dev</value>
+  </data>
 </root>

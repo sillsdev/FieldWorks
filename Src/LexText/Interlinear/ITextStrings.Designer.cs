@@ -1577,15 +1577,6 @@ namespace SIL.FieldWorks.IText {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Parsing.
-        /// </summary>
-        internal static string ksParsingMode {
-            get {
-                return ResourceManager.GetString("ksParsingMode", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Ph{0} {1}.
         /// </summary>
         internal static string ksPhaseButton {

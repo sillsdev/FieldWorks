@@ -876,6 +876,7 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 		<panel id="ProgressBar" width="Contents" minwidth="150" assemblyPath="FwControls.dll" class="SIL.FieldWorks.Common.Controls.StatusBarProgressPanel"/>
 		<panel id="Sort" width="Contents" minwidth="40" assemblyPath="FwControls.dll" class="SIL.FieldWorks.Common.Controls.StatusBarTextBox"/>
 		<panel id="Filter" width="Contents" minwidth="40" assemblyPath="FwControls.dll" class="SIL.FieldWorks.Common.Controls.StatusBarTextBox"/>
+        <panel id="ParsingDev" width="Contents" minwidth="40" assemblyPath="FwControls.dll" class="SIL.FieldWorks.Common.Controls.StatusBarTextBox"/>
 		<panel id="RecordNumber" width="Contents" minwidth="40"/>
 	</statusbar>
 	<!-- ********************************************************** -->
