@@ -18,6 +18,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
 
@@ -109,7 +110,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			var prodRestrictsGroup = new MprFeatureGroup { Name = "exceptionFeatures", MatchType = MprFeatureGroupMatchType.All };
 			foreach (ICmPossibility prodRestrict in m_cache.LanguageProject.MorphologicalDataOA.ProdRestrictOA.ReallyReallyAllPossibilities)
+			{
 				LoadMprFeature(prodRestrict, prodRestrictsGroup);
+
+			}
 			if (prodRestrictsGroup.MprFeatures.Count > 0)
 				m_language.MprFeatureGroups.Add(prodRestrictsGroup);
 
@@ -1538,12 +1542,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			var headRequiredFS = new FeatureStruct();
 			var nonheadRequiredFS = new FeatureStruct();
+			var headProdResticts = new MprFeatureSet();
+			var nonheadProdResticts = new MprFeatureSet();
 			if (compoundRule.HeadLast)
 			{
 				if (compoundRule.RightMsaOA.PartOfSpeechRA != null)
 					headRequiredFS.AddValue(m_posFeature, LoadAllPartsOfSpeech(compoundRule.RightMsaOA.PartOfSpeechRA));
 				if (compoundRule.LeftMsaOA.PartOfSpeechRA != null)
 					nonheadRequiredFS.AddValue(m_posFeature, LoadAllPartsOfSpeech(compoundRule.LeftMsaOA.PartOfSpeechRA));
+				if (compoundRule.RightMsaOA.ProdRestrictRC.Count > 0)
+					CreateProdRestricts(compoundRule.RightMsaOA.ProdRestrictRC, headProdResticts);
+				if (compoundRule.LeftMsaOA.ProdRestrictRC.Count > 0)
+					CreateProdRestricts(compoundRule.LeftMsaOA.ProdRestrictRC, nonheadProdResticts);
 			}
 			else
 			{
@@ -1551,6 +1561,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					nonheadRequiredFS.AddValue(m_posFeature, LoadAllPartsOfSpeech(compoundRule.RightMsaOA.PartOfSpeechRA));
 				if (compoundRule.LeftMsaOA.PartOfSpeechRA != null)
 					headRequiredFS.AddValue(m_posFeature, LoadAllPartsOfSpeech(compoundRule.LeftMsaOA.PartOfSpeechRA));
+				if (compoundRule.RightMsaOA.ProdRestrictRC.Count > 0)
+					CreateProdRestricts(compoundRule.RightMsaOA.ProdRestrictRC, nonheadProdResticts);
+				if (compoundRule.LeftMsaOA.ProdRestrictRC.Count > 0)
+					CreateProdRestricts(compoundRule.LeftMsaOA.ProdRestrictRC, headProdResticts);
 			}
 			headRequiredFS.Freeze();
 			nonheadRequiredFS.Freeze();
@@ -1570,6 +1584,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				Name = compoundRule.Name.BestAnalysisAlternative.Text,
 				HeadRequiredSyntacticFeatureStruct = headRequiredFS,
 				NonHeadRequiredSyntacticFeatureStruct = nonheadRequiredFS,
+				HeadProdRestrictionsMprFeatures = headProdResticts,
+				NonHeadProdRestrictionsMprFeatures = nonheadProdResticts,
 				OutSyntacticFeatureStruct = outFS,
 				Properties = { { HCParser.CRuleID, compoundRule.Hvo } }
 			};
@@ -1590,6 +1606,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return hcCompoundRule;
 		}
 
+		private void CreateProdRestricts(ILcmReferenceCollection<ICmPossibility> ruleProdRestricts, MprFeatureSet prodResticts)
+		{
+			foreach (var prodRstrict in ruleProdRestricts)
+			{
+				prodResticts.Add(m_mprFeatures[prodRstrict]);
+			}
+		}
+
 		private IEnumerable<CompoundingRule> LoadExoCompoundingRule(IMoExoCompound compoundRule)
 		{
 			var rightRequiredFS = new FeatureStruct();
@@ -1604,6 +1628,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (compoundRule.ToMsaOA.PartOfSpeechRA != null)
 				outFS.AddValue(m_posFeature, m_posFeature.PossibleSymbols["pos" + compoundRule.ToMsaOA.PartOfSpeechRA.Hvo]);
 			outFS.Freeze();
+			var headProdResticts = new MprFeatureSet();
+			var nonheadProdResticts = new MprFeatureSet();
+			if (compoundRule.RightMsaOA.ProdRestrictRC.Count > 0)
+				CreateProdRestricts(compoundRule.RightMsaOA.ProdRestrictRC, headProdResticts);
+			if (compoundRule.LeftMsaOA.ProdRestrictRC.Count > 0)
+				CreateProdRestricts(compoundRule.LeftMsaOA.ProdRestrictRC, nonheadProdResticts);
 
 			var headPattern = new Pattern<Word, ShapeNode>("head", AnyPlus());
 			headPattern.Freeze();
@@ -1615,6 +1645,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				Name = compoundRule.Name.BestAnalysisAlternative.Text,
 				HeadRequiredSyntacticFeatureStruct = rightRequiredFS,
 				NonHeadRequiredSyntacticFeatureStruct = leftRequiredFS,
+				HeadProdRestrictionsMprFeatures = headProdResticts,
+				NonHeadProdRestrictionsMprFeatures = nonheadProdResticts,
 				OutSyntacticFeatureStruct = outFS,
 				Properties = { { HCParser.CRuleID, compoundRule.Hvo } }
 			};
@@ -1640,6 +1672,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				Name = compoundRule.Name.BestAnalysisAlternative.Text,
 				HeadRequiredSyntacticFeatureStruct = leftRequiredFS,
 				NonHeadRequiredSyntacticFeatureStruct = rightRequiredFS,
+				HeadProdRestrictionsMprFeatures = nonheadProdResticts,
+				NonHeadProdRestrictionsMprFeatures = headProdResticts,
 				OutSyntacticFeatureStruct = outFS,
 				Properties = { { HCParser.CRuleID, compoundRule.Hvo } }
 			};
