@@ -744,9 +744,19 @@ namespace SIL.FieldWorks.XWorks
 						}
 						// Convert the contents to IEnumerable<T>
 						var objects = contents.Select(id => cache.LangProject.Services.GetObject(id));
-						var type = objects.FirstOrDefault()?.GetType() ?? typeof(object);
-						var castMethod = typeof(Enumerable).GetMethod("Cast").MakeGenericMethod(type);
-						propertyValue = castMethod.Invoke(null, new object[] { objects });
+						var firstObjType = objects.FirstOrDefault()?.GetType();
+						// check that each item in objects can be cast to firstObjType
+						if (firstObjType != null && objects.All(o => firstObjType.IsInstanceOfType(o)))
+						{
+							var castMethod = typeof(Enumerable).GetMethod("Cast").MakeGenericMethod(firstObjType);
+							propertyValue = castMethod.Invoke(null, new object[] { objects });
+						}
+						else
+						{
+							var castMethod = typeof(Enumerable).GetMethod("Cast").MakeGenericMethod(typeof(object));
+							propertyValue = castMethod.Invoke(null, new object[] { objects });
+
+						}
 						break;
 					}
 				case (int)CellarPropertyType.ReferenceAtomic:
@@ -1575,7 +1585,7 @@ namespace SIL.FieldWorks.XWorks
 				else
 				{
 					bool first = true;
-					foreach (var item in collection)
+					foreach (object item in collection)
 					{
 						frag.Append(GenerateCollectionItemContent(nodeList, pubDecorator, item, collectionOwner, settings, first));
 						first = false;

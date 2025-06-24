@@ -430,21 +430,33 @@ namespace SIL.FieldWorks.XWorks
 			return example;
 		}
 
-		private IMoForm AddAllomorphToEntry(ILexEntry entry)
+		private IMoForm AddAllomorphToEntry(ILexEntry entry, bool stem = true)
 		{
-			var morphFact = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>();
-			var morph = morphFact.Create();
-			entry.AlternateFormsOS.Add(morph);
-			morph.Form.set_String(m_wsFr, TsStringUtils.MakeString("Allomorph", m_wsFr));
-
-			// add environment to the allomorph
 			const int stringRepresentationFlid = 5097008;
 			var env = Cache.ServiceLocator.GetInstance<IPhEnvironmentFactory>().Create();
 			Cache.LangProject.PhonologicalDataOA.EnvironmentsOS.Add(env);
-			morph.PhoneEnvRC.Add(env);
 			Cache.MainCacheAccessor.SetString(env.Hvo, stringRepresentationFlid, TsStringUtils.MakeString("phoneyEnv", m_wsEn));
-
-			return morph;
+			if (stem)
+			{
+				var morphFact = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>();
+				var morph = morphFact.Create();
+				entry.AlternateFormsOS.Add(morph);
+				morph.Form.set_String(m_wsFr, TsStringUtils.MakeString("StemAllomorph", m_wsFr));
+				// add environment to the stem allomorph (PhoneEnvRC is not in the common base class between stem and affix allomorphs)
+				morph.PhoneEnvRC.Add(env);
+				return morph;
+			}
+			else
+			{
+				// if not stem, then it is an affix allomorph
+				var morphFact = Cache.ServiceLocator.GetInstance<IMoAffixAllomorphFactory>();
+				var morph = morphFact.Create();
+				entry.AlternateFormsOS.Add(morph);
+				morph.Form.set_String(m_wsFr, TsStringUtils.MakeString("AffixAllomorph", m_wsFr));
+				// add environment to the allomorph
+				morph.PhoneEnvRC.Add(env);
+				return morph;
+			}
 		}
 
 		internal static ICmPicture CreatePicture(LcmCache cache, bool exists = true, string caption = "caption", string ws = "en")
