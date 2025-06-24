@@ -3580,15 +3580,18 @@ namespace SIL.FieldWorks.XWorks
 
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			AddAllomorphToEntry(mainEntry);
+			AddAllomorphToEntry(mainEntry, false);
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings).ToString();
 			const string xPathThruAllomorph = "/div[@class='lexentry']/span[@class='alternateformsos']/span[@class='alternateformso']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
-				xPathThruAllomorph + "/span[@class='form']/span[@lang='fr' and text()='Allomorph']", 1);
+				xPathThruAllomorph + "/span[@class='form']/span[@lang='fr' and text()='StemAllomorph']", 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
+				xPathThruAllomorph + "/span[@class='form']/span[@lang='fr' and text()='AffixAllomorph']", 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xPathThruAllomorph +
-				"/span[@class='allomorphenvironments']/span[@class='allomorphenvironment']/span[@class='stringrepresentation']/span[@lang='en' and text()='phoneyEnv']", 1);
+				"/span[@class='allomorphenvironments']/span[@class='allomorphenvironment']/span[@class='stringrepresentation']/span[@lang='en' and text()='phoneyEnv']", 2);
 		}
 
 		[Test]
