@@ -18,6 +18,7 @@ using SIL.FieldWorks.FdoUi;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
+using Gecko.WebIDL;
 
 namespace SIL.FieldWorks.IText
 {
@@ -853,7 +854,6 @@ namespace SIL.FieldWorks.IText
 		/// <param name="vwenv"></param>
 		protected virtual void AddWordBundleInternal(int hvo, IVwEnv vwenv)
 		{
-			SetupAndOpenInnerPile(vwenv);
 			// we assume we're in the context of a segment with analyses here.
 			// we'll need this info down in DisplayAnalysisAndCloseInnerPile()
 			int hvoSeg;
@@ -861,7 +861,27 @@ namespace SIL.FieldWorks.IText
 			int index;
 			vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoSeg, out tagDummy, out index);
 			var analysisOccurrence = new AnalysisOccurrence(m_segRepository.GetObject(hvoSeg), index);
+			SetBorderColor(vwenv, analysisOccurrence);
+			SetupAndOpenInnerPile(vwenv);
 			DisplayAnalysisAndCloseInnerPile(vwenv, analysisOccurrence, true);
+		}
+		private void SetBorderColor(IVwEnv vwenv, AnalysisOccurrence analysisOccurrence)
+		{
+			var coRepository = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+			var wag = (IAnalysis)coRepository.GetObject(analysisOccurrence.Analysis.Hvo);
+			int width = 0;
+			int color = (int)ColorUtil.ConvertColorToBGR(Color.Black);
+			if (IsParsingDevMode() && wag.ClassID != WfiWordformTags.kClassId && !(wag is IPunctuationForm))
+			{
+				// Show how the analysis was approved by setting the border color.
+				width = 3000;
+				color = GetGuessColor(wag.Analysis);
+			}
+			vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTop, (int)FwTextPropVar.ktpvMilliPoint, width);
+			vwenv.set_IntProperty((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, width);
+			vwenv.set_IntProperty((int)FwTextPropType.ktptBorderLeading, (int)FwTextPropVar.ktpvMilliPoint, width);
+			vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTrailing, (int)FwTextPropVar.ktpvMilliPoint, width);
+			vwenv.set_IntProperty((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, color);
 		}
 
 		/// <summary>
