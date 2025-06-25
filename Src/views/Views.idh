@@ -3429,27 +3429,9 @@ Last reviewed:
 		[propget] HRESULT StringProperty(
 			[in] int sp,
 			[out, retval] BSTR * bstrValue);
-		// Get the LgCharRenderProps that this property store would produce for the
-		// specified pttp. The pttp should specify the writing system and ows that the properties
-		// are wanted for.
-		[propget] HRESULT ChrpFor(
-			[in] ITsTextProps * pttp,
-			[out, retval] LgCharRenderProps * pchrp);
-		// Set the style sheet that this property store will use to interpret
-		[propputref] HRESULT Stylesheet(
-			[in] IVwStylesheet * pvps);
-
-		// Set the writing system factory that this property store uses.
-		[propputref] HRESULT WritingSystemFactory(
-			[in] ILgWritingSystemFactory * pwsf);
 
 		// Get the property store that this one was derived from.
 		[propget] HRESULT ParentStore([out, retval]IVwPropertyStore ** ppvps);
-
-		// Gets an ${ITsTextProps} interface pointer on an ITsTextProps object whose properties are
-		// those currently in the store. In particular, if the current VwPropertyStore has just
-		// been created and not changed, the properties will be the system default properties.
-		[propget] HRESULT TextProps([out,retval] ITsTextProps ** ppttp);
 
 		// Get the actual, working value of some string-valued property.
 		[propget] HRESULT DerivedPropertiesForTtp(
