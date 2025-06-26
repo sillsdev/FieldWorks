@@ -1263,6 +1263,7 @@ namespace SIL.FieldWorks.IText
 			SetParsingDevMode(value == "true");
 			Clerk.UpdateParsingDevStatusBarPanel();
 			// Refresh the display.
+			SaveBookMark();
 			RootStText = null;
 			m_idcAnalyze.ResetAnalysisCache();
 			Clerk.JumpToIndex(Clerk.CurrentIndex);
