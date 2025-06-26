@@ -604,6 +604,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(0));
 
 			// now check for missing indexed class which is removed but with an logged error message
+			// LT-18767
 			// case 1: the form has the indexed class, but the environment does not
 			var env = allo.PhoneEnvRC.ElementAt(0);
 			allo.PhoneEnvRC.Remove(env);
