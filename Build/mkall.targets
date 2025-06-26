@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
 	<!-- Make all of FieldWorks. -->
-	<Target Name="mkall" DependsOnTargets="initLinux;initWindows;LinuxRegistry;allCpp;allCsharp;ensureTLBsUpToDate">
+	<Target Name="mkall" DependsOnTargets="initWindows;allCpp;allCsharp">
 		<Message Text="Finished mkall Target."/>
 		<CreateItem Condition="'$(action)'=='test'" Include="$(dir-outputBase)/*-nunit-output.xml">
 			<Output TaskParameter="Include" ItemName="NUnitReportFiles"/>
@@ -13,13 +13,11 @@
 		<CreateItem Include="$(dir-outputBase)/*.compmap">
 			<Output TaskParameter="Include" ItemName="CompMapFiles"/>
 		</CreateItem>
-		<CatenateFiles SourceFiles="@(CompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
 	</Target>
 	<Target Name="allCppNoTest" DependsOnTargets="DebugProcs;GenericLib;FwKernel;Views">
 		<CreateItem Include="$(dir-outputBase)/*.compmap">
 			<Output TaskParameter="Include" ItemName="CompMapFiles"/>
 		</CreateItem>
-		<CatenateFiles SourceFiles="@(CompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
 	</Target>
 
 	<ItemGroup>
@@ -32,18 +30,13 @@
 			Fragments="@(Fragments)" Platform="$(Platform)" MSBuildArchitecture="$(Platform)"/>
 	</Target>
 
-	<Target Name="DebugProcs" DependsOnTargets="initLinux;initWindows">
+	<Target Name="DebugProcs" DependsOnTargets="initWindows">
 		<Make Condition="'$(OS)'=='Windows_NT'"
 				Makefile="$(fwrt)\Src\DebugProcs\DebugProcs.mak"
 				Configuration="$(config-capital)"
 				BuildRoot="$(fwrt)"
 				BuildArch="'$(Platform)'"
 				WorkingDirectory="$(fwrt)\Src\DebugProcs"/>
-		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-				Makefile="$(fwrt)/Src/DebugProcs/Makefile"
-				Configuration="$(config-capital)" Target="$(make-target)"
-				BuildRoot="$(fwrt)"
-				WorkingDirectory="$(fwrt)/Src/DebugProcs"/>
 		<Message Text="Finished building DebugProcs."/>
 	</Target>
 
@@ -54,11 +47,6 @@
 				BuildRoot="$(fwrt)"
 				BuildArch="'$(Platform)'"
 				WorkingDirectory="$(fwrt)\Src\Generic"/>
-		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-				Makefile="$(fwrt)/Src/Generic/Makefile"
-				Configuration="$(config-capital)" Target="$(make-target)"
-				BuildRoot="$(fwrt)"
-				WorkingDirectory="$(fwrt)/Src/Generic"/>
 		<Message Text="Finished building GenericLib."/>
 	</Target>
 
@@ -69,11 +57,6 @@
 				BuildRoot="$(fwrt)"
 				BuildArch="'$(Platform)'"
 				WorkingDirectory="$(fwrt)\Bin"/>
-		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-				Makefile="$(fwrt)/Src/Generic/Test/Makefile"
-				Configuration="$(config-capital)" Target="$(make-target)"
-				BuildRoot="$(fwrt)"
-				WorkingDirectory="$(fwrt)/Src/Generic/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testGenericLib.exe"
 				DependentAssemblies="$(dir-outputBase)\FwKernel.X.manifest;$(dir-outputBase)\Views.X.manifest"
 				Condition="'$(OS)'=='Windows_NT'" Platform="$(Platform)" MSBuildArchitecture="$(Platform)"/>
@@ -89,7 +72,7 @@
 		<Message Text="Finished building testGenericLib and running tests." Condition="'$(action)'=='test'"/>
 	</Target>
 
-	<Target Name="FwKernel" DependsOnTargets="GenericLib;GenerateCellarConstants;AppCore;createCompMaps;CopyDlls">
+	<Target Name="FwKernel" DependsOnTargets="GenericLib;GenerateCellarConstants;AppCore;CopyDlls">
 		<Message Text="FwKernel make-target='$(make-target)'"/>
 		<Make Condition="'$(OS)'=='Windows_NT'"
 			Makefile="$(fwrt)\Src\Kernel\FwKernel.mak"
@@ -97,22 +80,12 @@
 			BuildRoot="$(fwrt)"
 			BuildArch="'$(Platform)'"
 			WorkingDirectory="$(fwrt)\Src\Kernel"/>
-		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-			Makefile="$(fwrt)/Src/Kernel/Makefile"
-			Configuration="$(config-capital)" Target="$(make-target)"
-			BuildRoot="$(fwrt)"
-			WorkingDirectory="$(fwrt)/Src/Kernel"/>
 		<RegFree Executable="$(dir-outputBase)\FwKernel.dll" Output="$(dir-outputBase)\FwKernel.X.manifest" Condition="'$(OS)'=='Windows_NT'" Platform="$(Platform)"  MSBuildArchitecture="$(Platform)"/>
 		<Message Text="Finished building FwKernel."/>
 	</Target>
 
 	<Target Name="AppCore" DependsOnTargets="DebugProcs;GenericLib">
 		<Message Text="AppCore make-target='$(make-target)'"/>
-		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-				Makefile="$(fwrt)/Src/AppCore/Makefile"
-				Configuration="$(config-capital)" Target="$(make-target)"
-				BuildRoot="$(fwrt)"
-				WorkingDirectory="$(fwrt)/Src/AppCore"/>
 		<Message Text="Finished building AppCore."/>
 	</Target>
 
@@ -123,11 +96,6 @@
 			BuildRoot="$(fwrt)"
 			BuildArch="'$(Platform)'"
 			WorkingDirectory="$(fwrt)\Src\views"/>
-		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-			Makefile="$(fwrt)/Src/views/Makefile"
-			Configuration="$(config-capital)" Target="$(make-target)"
-			BuildRoot="$(fwrt)"
-			WorkingDirectory="$(fwrt)/Src/views"/>
 		<RegFree Executable="$(dir-outputBase)\Views.dll" Output="$(dir-outputBase)\Views.X.manifest" Condition="'$(OS)'=='Windows_NT'" Platform="$(Platform)" MSBuildArchitecture="$(Platform)"/>
 		<Message Text="Finished building Views."/>
 	</Target>
@@ -139,11 +107,6 @@
 				BuildRoot="$(fwrt)"
 				BuildArch="'$(Platform)'"
 				WorkingDirectory="$(fwrt)\Bin"/>
-		<Make Condition="'$(OS)'=='Unix'" ToolPath="/usr/bin"
-				Makefile="$(fwrt)/Src/views/Test/Makefile"
-				Configuration="$(config-capital)" Target="$(make-target)"
-				BuildRoot="$(fwrt)"
-				WorkingDirectory="$(fwrt)/Src/views/Test" ContinueOnError="true"/>
 		<RegFree Executable="$(dir-outputBase)\testViews.exe"
 				DependentAssemblies="$(dir-outputBase)\FwKernel.X.manifest;$(dir-outputBase)\Views.X.manifest"
 				Condition="'$(OS)'=='Windows_NT'" Platform="$(Platform)" MSBuildArchitecture="$(Platform)"/>
@@ -152,7 +115,6 @@
 		<CreateItem Include="$(dir-outputBase)/*.compmap">
 			<Output TaskParameter="Include" ItemName="ViewsCompMapFiles"/>
 		</CreateItem>
-		<CatenateFiles SourceFiles="@(ViewsCompMapFiles)" TargetFile="$(dir-outputBase)/components.map" Condition="'$(OS)'=='Unix'"/>
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testViews"
 				FudgeFactor="$(timeoutFudgeFactor)"
@@ -220,7 +182,7 @@
 		<SetEnvVar Variable="ANAL_TYPE" Value="$(Original-ANAL_TYPE)" />
 	</Target>
 
-	<Target Name="remakefw-internal" DependsOnTargets="CleanAll;Initialize;CopyDlls;setRegistryValues;ensureTLBsUpToDate;GeneratePartsAndLayoutFiles;mkall"/>
+	<Target Name="remakefw-internal" DependsOnTargets="CleanAll;Initialize;CopyDlls;setRegistryValues;GeneratePartsAndLayoutFiles;mkall"/>
 
 	<Target Name="remakefw" DependsOnTargets="remakefw-internal">
 		<!-- If tests were run on a developer machine, fail to alert the developer of any failures -->
@@ -254,10 +216,9 @@
 		<ForceDelete Files="$(fwrt)/Build/FieldWorks.targets"/>
 	</Target>
 
-	<Target Name="CleanAll" DependsOnTargets="cleanWindows;cleanLinux">
+	<Target Name="CleanAll" DependsOnTargets="cleanWindows">
 		<!-- remove the Obj and Output directories -->
 		<ForceDelete Files="$(dir-fwobj);$(dir-fwoutput)" />
-		<ForceDelete Files="$(fwrt)/Output" Condition="'$(OS)'=='Unix'" />
 		<!-- remove other directories and files created during the build process -->
 		<ForceDelete Files="@(GeneratedFiles)" />
 		<!-- remove LCM files -->
@@ -273,7 +234,6 @@
 		</ItemGroup>
 		<ForceDelete Files="@(LcmFilesToDelete)" />
 		<ForceDelete Files="$(fwrt)/DistFiles/Icu$(IcuVersion)" />
-		<SetEnvVar Variable="LD_PRELOAD" Value="" Condition="'$(OS)'=='Unix'"/>
 		<Message Text="Finished deleting the output directories!" />
 	</Target>
 
@@ -292,16 +252,10 @@
 		<!-- bt393 is the master branch build of ExCss for Windows development. Update when appropriate. -->
 		<ExCssBuildType Condition="'$(OS)'=='Windows_NT'">bt393</ExCssBuildType>
 		<ExCss Condition="'$(OS)'=='Windows_NT'">ExCss</ExCss>
-		<!-- bt395 is the master branch build of ExCss for Linux development. Update when appropriate. -->
-		<ExCssBuildType Condition="'$(OS)'=='Unix'">bt395</ExCssBuildType>
-		<ExCss Condition="'$(OS)'=='Unix'">ExCSS</ExCss>
 		<ExCssBuildTag>.lastSuccessful</ExCssBuildTag>
 		<GeckoFxHtmlToPdfBuildType Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'">GeckofxHtmlToPdf_GeckofxHtmlToPdfGeckofx60Win32continuous</GeckoFxHtmlToPdfBuildType>
 		<GeckoFxHtmlToPdfBuildType Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'">GeckofxHtmlToPdf_Win64_continuous</GeckoFxHtmlToPdfBuildType>
-		<GeckoFxHtmlToPdfBuildType Condition="'$(OS)'=='Unix'">GeckofxHtmlToPdf_GeckofxHtmlToPdfXenial64Geckofx60continuous</GeckoFxHtmlToPdfBuildType>
 		<GeckoFxHtmlToPdfBuildTag>.lastSuccessful</GeckoFxHtmlToPdfBuildTag>
-		<!-- Windows/.Net and Linux/Mono use different extensions for debug information files. -->
-		<DebugInfo Condition="'$(OS)'=='Unix'">dll.mdb</DebugInfo>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
 		<DownloadsDir>$(fwrt)/Downloads</DownloadsDir>
 		<PackagesDir>$(fwrt)/packages</PackagesDir>
@@ -312,29 +266,22 @@
 		<PalasoFiles Include="SIL.Core.Desktop.dll"/>
 		<PalasoFiles Include="SIL.Lift.dll"/>
 		<PalasoFiles Include="SIL.Media.dll"/>
-		<PalasoFiles Include="SIL.Media.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<PalasoFiles Include="SIL.Scripture.dll"/>
-		<PalasoFiles Include="SIL.Scripture.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<PalasoFiles Include="SIL.Windows.Forms.dll"/>
 		<PalasoFiles Include="SIL.Windows.Forms.GeckoBrowserAdapter.dll"/>
 		<PalasoFiles Include="SIL.Archiving.dll"/>
-		<PalasoFiles Include="SIL.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<PalasoFiles Include="Keyman10Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<PalasoFiles Include="Keyman7Interop.dll" Condition="'$(OS)'=='Windows_NT'"/>
 		<PalasoFiles Include="KeymanLink.dll" Condition="'$(OS)'=='Windows_NT'"/>
-		<PalasoFiles Include="Mono.Unix.dll" Condition="'$(OS)'!='Windows_NT'" />
-		<PalasoFiles Include="Mono.Unix.dll.config" Condition="'$(OS)'!='Windows_NT'" />
 		<PalasoFiles Include="SIL.WritingSystems.dll"/>
 		<PalasoFiles Include="SIL.WritingSystems.Tests.dll"/>
 		<PalasoFiles Include="SIL.Windows.Forms.Archiving.dll"/>
-		<PalasoFiles Include="SIL.Windows.Forms.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<PalasoFiles Include="SIL.Windows.Forms.WritingSystems.dll"/>
 		<PalasoFiles Include="System.Drawing.Common.dll"/>
 		<PalasoFiles Include="System.Drawing.Common.pdb"/>
 		<PalasoFiles Include="System.Memory.dll"/>
 		<PalasoFiles Include="System.Resources.Extensions.dll"/>
 		<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.dll"/>
-		<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<PalasoFiles Include="SIL.Lexicon.dll"/>
 		<PalasoFiles Include="SIL.TestUtilities.dll"/>
 		<PalasoFiles Include="L10NSharp.dll"/>
@@ -342,7 +289,6 @@
 		<PalasoFiles Include="lib/win-x86/irrKlang.NET4.dll" Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'"/>
 		<PalasoFiles Include="lib/win-x64/irrKlang.NET4.dll" Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'"/>
 		<PalasoFiles Include="Enchant.Net.dll"/>
-		<PalasoFiles Include="Enchant.Net.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<PalasoFiles Include="NDesk.DBus.dll"/>
 		<PalasoFiles Include="NDesk.DBus.dll.config"/>
 		<PalasoFiles Include="TagLibSharp.dll"/>
@@ -365,7 +311,6 @@
 
 		<ChorusFiles Include="Autofac.dll"/>
 		<ChorusFiles Include="Chorus.exe"/>
-		<ChorusFiles Include="ChorusHub.exe" Condition="'$(OS)'=='Unix'"/>
 		<ChorusFiles Include="LibChorus.dll"/>
 		<ChorusFiles Include="Vulcan.Uczniowie.HelpProvider.dll"/>
 
@@ -488,7 +433,6 @@
 			<SILNugetPackages Include="SIL.LCModel.Tests"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="SIL.LCModel.Tools"><Version>$(LcmNugetVersion)</Version><Path>lib/net461/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="CommonServiceLocator"><Version>2.0.7</Version><Path>lib/net46/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
-			<SILNugetPackages Include="Mono.Unix" Condition="'$(OS)'!='Windows_NT'"><Version>7.1.0-final.1.21458.1</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="WeCantSpell.Hunspell"><Version>6.0.0</Version><Path>lib/netstandard2.0/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="protobuf-net"><Version>2.4.6</Version><Path>lib/net40/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="SharpZipLib"><Version>1.4.0</Version><Path>lib/netstandard2.0/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
@@ -532,7 +476,6 @@
 			<!-- Chorus and related packages -->
 			<SILNugetPackages Include="SIL.Chorus.LibChorus"><Version>$(ChorusNugetVersion)</Version><Path>lib/net461/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="SIL.Chorus.App"><Version>$(ChorusNugetVersion)</Version><Path>lib/net461/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
-			<SILNugetPackages Include="SIL.Chorus.ChorusHub"  Condition="'$(OS)'=='Unix'"><Version>$(ChorusNugetVersion)</Version><Path>lib/net461/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="Autofac"><Version>4.9.4</Version><Path>lib/net45/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="Vulcan.Uczniowie.HelpProvider"><Version>1.0.16</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<!-- HermitCrab and related packages -->
@@ -572,11 +515,6 @@
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<Copy SourceFiles="$(fwrt)/Lib/Common/Interop.ResourceDriver.dll" DestinationFolder="$(dir-outputBase)"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
-		<!-- Linux shared libraries -->
-		<Copy SourceFiles="$(fwrt)/DistFiles/libxample32.so" DestinationFolder="$(dir-outputBase)"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Unix'"/>
-		<Copy SourceFiles="$(fwrt)/DistFiles/libxample64.so" DestinationFolder="$(dir-outputBase)"
-				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Unix'"/>
 		<!-- Windows dynamically loaded libraries -->
 		<Copy SourceFiles="$(fwrt)/DistFiles/xample32.dll" DestinationFiles="$(dir-outputBase)/xample.dll"
 				SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'=='Windows_NT'  AND '$(arch)'!='x64'"/>
@@ -620,8 +558,6 @@
 
 		<!-- Copy the downloaded artifacts -->
 		<Copy SourceFiles="@(PalasoFiles -> '$(PalasoArtifactsDir)/%(Identity)')" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
-		<!-- Copy runtime support library for Mono.Unix -->
-		<Copy SourceFiles="$(DownloadsDir)/libMono.Unix.so" DestinationFolder="$(dir-outputBase)/runtimes/linux-x64" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" Condition="'$(OS)'!='Windows_NT'"/>
 		<Copy SourceFiles="@(ChorusFiles -> '$(ChorusArtifactsDir)/%(Identity)')" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
 		<Copy SourceFiles="@(DownloadedFiles)" DestinationFolder="$(dir-outputBase)" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 		<!-- Rename GeckofxHtmlToPdf.exe to FieldWorksPdfMaker so it its origin is clear in case a user needs to release it from antivirus quarantine -->
@@ -640,15 +576,11 @@
 			<Architecture Condition="'$(Platform)'=='x64'">64</Architecture>
 			<Architecture Condition="'$(Platform)'!='x64'">32</Architecture>
 			<GeckoDir Condition="'$(OS)'=='Windows_NT'">$(PackagesDir)/Geckofx60.$(Architecture).60.0.50</GeckoDir>
-			<GeckoDir Condition="'$(OS)'!='Windows_NT'">$(PackagesDir)/Geckofx60.$(Architecture).Linux.60.0.51</GeckoDir>
 			<OsDir Condition="'$(OS)'=='Windows_NT'">win</OsDir>
-			<OsDir Condition="'$(OS)'!='Windows_NT'">linux</OsDir>
 		</PropertyGroup>
 		<ItemGroup>
 			<NuGottenForBuildTasks Include="$(PackagesDir)/SIL.BuildTasks.2.6.0-beta0008/tools/SIL.BuildTasks.dll"/>
 			<NuGottenFiles Include="$(GeckoDir)/lib/net45/*.*" Condition="'$(OS)'=='Windows_NT'"/>
-			<NuGottenFiles Include="$(GeckoDir)/lib/net40/*.*" Condition="'$(OS)'!='Windows_NT'"/>
-			<NuGottenFiles Include="$(GeckoDir)/build/*.dll.config" Condition="'$(OS)'!='Windows_NT'"/>
 			<NuGottenFiles Include="$(GeckoDir)/content/**/*.*"/>
 			<NuGottenFiles Include="$(PackagesDir)/Analytics.3.6.0/lib/net461/Analytics.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/DocumentFormat.OpenXml.2.20.0/lib/net46/DocumentFormat.OpenXml.dll"/>
@@ -692,7 +624,7 @@
 			SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true"/>
 	</Target>
 
-	<Target Name="setRegistryValues" DependsOnTargets="initLinux;initWindows;setKeysInHKCU"/>
+	<Target Name="setRegistryValues" DependsOnTargets="initWindows;setKeysInHKCU"/>
 
 	<Target Name="setKeysInHKCU" Condition="'$(packaging)' != 'yes'">
 		<Message Text="Setting registry values for $(fwrt)."/>
@@ -717,14 +649,6 @@
 			Key="$(BUILDAGENT_HKCU)SOFTWARE/SIL/SilEncConverters40/DeveloperPluginDir"
 			Value="$(dir-outputBase)\EC\Plugins"
 			Condition="'$(OS)'=='Windows_NT'"/>
-		<WriteRegistry Hive="CurrentUser"
-			Key="$(BUILDAGENT_HKCU)SOFTWARE/SIL/SilEncConverters40/RootDir"
-			Value="$(installation_prefix)/lib/fieldworks"
-			Condition="'$(OS)'=='Unix'"/>
-		<WriteRegistry Hive="CurrentUser"
-			Key="$(BUILDAGENT_HKCU)SOFTWARE/SIL/SilEncConverters40/DeveloperPluginDir"
-			Value="$(installation_prefix)/lib/fieldworks/EC/Plugins"
-			Condition="'$(OS)'=='Unix'"/>
 
 		<MakeDir Directories="$(fwrt)/DistFiles/SIL/Repository"/>
 		<WriteRegistry Hive="CurrentUser"
