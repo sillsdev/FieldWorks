@@ -710,6 +710,11 @@ namespace SIL.FieldWorks.IText
 			//use the items under the word to determine what kind of thing to add to the segment
 			var cache = newSegment.Cache;
 			IAnalysis analysis = CreateWordAnalysisStack(cache, word);
+			if (analysis != null && word.morphemes?.analysisStatus == analysisStatusTypes.guess)
+			{
+				// Ignore morphological analysis if it was only a guess.
+				analysis = analysis.Wordform;
+			}
 
 			// Add to segment
 			if (analysis != null)
