@@ -13,5 +13,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		void InvalidRewriteRule(IPhRegularRule prule, string reason);
 		void InvalidStrata(string strata, string reason);
 		void OutOfScopeSlot(IMoInflAffixSlot slot, IMoInflAffixTemplate template, string reason);
+		void UnmatchedReduplicationIndexedClass(IMoForm form, string reason, string environment);
 	}
 }
