@@ -143,6 +143,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_morpher = null;
 
 			int delReapps = 0;
+			int maxStemCount = 2;
 			string loadErrorsFile = Path.Combine(m_outputDirectory, m_cache.ProjectId.Name + "HCLoadErrors.xml");
 			using (XmlWriter writer = XmlWriter.Create(loadErrorsFile))
 			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
@@ -153,12 +154,16 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				XElement parserParamsElem = XElement.Parse(m_cache.LanguageProject.MorphologicalDataOA.ParserParameters);
 				XElement delReappsElem = parserParamsElem.Elements("HC").Elements("DelReapps").FirstOrDefault();
 				XElement guessRootsElem = parserParamsElem.Elements("HC").Elements("GuessRoots").FirstOrDefault();
+				XElement maxRootsElem = parserParamsElem.Elements("HC").Elements("MaxRoots").FirstOrDefault();
 				if (delReappsElem != null)
 					delReapps = (int) delReappsElem;
 				if (guessRootsElem != null)
 					m_guessRoots = (bool) guessRootsElem;
+				if (maxRootsElem != null)
+					maxStemCount = Math.Max(2,int.Parse(maxRootsElem.Value));
 			}
 			m_morpher = new Morpher(m_traceManager, m_language) { DeletionReapplications = delReapps };
+			m_morpher.MaxStemCount = maxStemCount;
 		}
 
 		private XDocument ParseToXml(string form, bool tracing, IEnumerable<int> selectTraceMorphs)

@@ -173,6 +173,30 @@
   <data name="&gt;&gt;m_label2.ZOrder" xml:space="preserve">
 	<value>6</value>
   </data>
+  <data name="m_btnHCMaxCompoundRuleApps.Location" type="System.Drawing.Point, System.Drawing">
+      <value>347, 270</value>
+  </data>
+  <data name="m_btnHCMaxCompoundRuleApps.Size" type="System.Drawing.Size, System.Drawing">
+      <value>250, 30</value>
+  </data>
+  <data name="m_btnHCMaxCompoundRuleApps.TabIndex" type="System.Int32, mscorlib">
+      <value>10</value>
+  </data>
+  <data name="m_btnHCMaxCompoundRuleApps.Text" xml:space="preserve">
+      <value>Set max applications of HC Compound rules</value>
+  </data>
+  <data name="&gt;&gt;m_btnHCMaxCompoundRuleApps.Name" xml:space="preserve">
+      <value>m_btnHCMaxCompoundRuleApps</value>
+  </data>
+  <data name="&gt;&gt;m_btnHCMaxCompoundRuleApps.Type" xml:space="preserve">
+      <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnHCMaxCompoundRuleApps.Parent" xml:space="preserve">
+      <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnHCMaxCompoundRuleApps.ZOrder" xml:space="preserve">
+      <value>8</value>
+  </data>
   <data name="m_btnOk.Location" type="System.Drawing.Point, System.Drawing">
 	<value>347, 353</value>
   </data>

@@ -53,6 +53,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private Label m_label1;
 		private Label m_label2;
+		private Button m_btnHCMaxCompoundRuleApps;
 		private Button m_btnOk;
 		private Button m_btnCancel;
 		private Button m_btnHelp;
@@ -137,6 +138,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ParserParametersDlg));
 			this.m_label1 = new System.Windows.Forms.Label();
 			this.m_label2 = new System.Windows.Forms.Label();
+			this.m_btnHCMaxCompoundRuleApps = new System.Windows.Forms.Button();
 			this.m_btnOk = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_dataGrid1 = new System.Windows.Forms.DataGrid();
@@ -156,6 +158,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			//
 			resources.ApplyResources(this.m_label2, "m_label2");
 			this.m_label2.Name = "m_label2";
+			//
+			// btnHCMaxCompoundRuleApps
+			//
+			resources.ApplyResources(this.m_btnHCMaxCompoundRuleApps, "m_btnHCMaxCompoundRuleApps");
+			this.m_btnHCMaxCompoundRuleApps.Name = "m_btnHCMaxCompoundRuleApps";
+			this.m_btnHCMaxCompoundRuleApps.Click += new System.EventHandler(this.btnHCMaxCompoundRuleApps_Click);
 			//
 			// btnOK
 			//
@@ -206,6 +214,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.Controls.Add(this.m_btnHelp);
 			this.Controls.Add(this.m_dataGrid1);
 			this.Controls.Add(this.m_btnCancel);
+			this.Controls.Add(this.m_btnHCMaxCompoundRuleApps);
 			this.Controls.Add(this.m_btnOk);
 			this.Controls.Add(this.m_label2);
 			this.Controls.Add(this.m_label1);
@@ -233,6 +242,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			ValidateValues(newParserParamsElem);
 		}
 
+		private void btnHCMaxCompoundRuleApps_Click(object sender, EventArgs e)
+		{
+			MessageBox.Show("clicked!");
+		}
+
 		private void ValidateValues(XElement elem)
 		{
 			EnforceValidValue(elem, XAmple, MaxNulls, 0, 10, false);
@@ -244,6 +258,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			EnforceValidValue(elem, XAmple, MaxAnalysesToReturn, -1, 10000, true);
 
 			EnforceValidValue(elem, HC, DelReapps, 0, 10, false);
+			EnforceValidValue(elem, HC, MaxRoots, 2, 10, false);
 		}
 
 		private void EnforceValidValue(XElement elem, string parser, string item, int min, int max, bool useMinIfZero)
@@ -295,8 +310,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			PopulateDataGrid(m_dataGrid1, XAmple);
 			PopulateDataGrid(m_dataGrid2, HC);
 			m_dataGrid2.TableStyles[0].GridColumnStyles[2].Width = 130;
-			m_dataGrid2.TableStyles[0].GridColumnStyles[3].Width = 160;
-			m_dataGrid2.TableStyles[0].GridColumnStyles[5].Width = 400;
+			m_dataGrid2.TableStyles[0].GridColumnStyles[4].Width = 160;
+			m_dataGrid2.TableStyles[0].GridColumnStyles[6].Width = 400;
 		}
 
 		private void LoadParserData(DataSet dsParserParameters)
@@ -313,6 +328,8 @@ namespace SIL.FieldWorks.LexText.Controls
 				hcElem.Add(new XElement(DelReapps, 0));
 			if (hcElem.Element(NoDefaultCompounding) == null)
 				hcElem.Add(new XElement(NoDefaultCompounding, false));
+			if (hcElem.Element(MaxRoots) == null)
+				hcElem.Add(new XElement(MaxRoots, 2));
 			if (hcElem.Element(NotOnClitics) == null)
 				hcElem.Add(new XElement(NotOnClitics, true));
 			if (hcElem.Element(AcceptUnspecifiedGraphemes) == null)
@@ -369,6 +386,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			tblHC.Columns.Add(DelReapps, typeof(int));
 			tblHC.Columns.Add(NotOnClitics, typeof(bool));
 			tblHC.Columns.Add(NoDefaultCompounding, typeof(bool));
+			tblHC.Columns.Add(MaxRoots, typeof(int));
 			tblHC.Columns.Add(AcceptUnspecifiedGraphemes, typeof(bool));
 			tblHC.Columns.Add(GuessRoots, typeof(bool));
 			tblHC.Columns.Add(Strata, typeof(string));
