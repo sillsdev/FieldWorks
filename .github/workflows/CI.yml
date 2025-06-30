@@ -1,0 +1,85 @@
+name: Flex CI
+on:
+  push:
+    branches: ["release/**", "develop", "master", "feature/PubSub"]
+  pull_request:
+    branches: ["release/**", "develop", "master", "feature/PubSub"]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  debug_build_and_test:
+    env:
+      CROWDIN_API_KEY: ${{ secrets.FLEX_CROWDIN_API }}
+    name: Build Debug and run Tests
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Files
+        uses: actions/checkout@v4
+        id: checkout
+
+      - name: Download 461 targeting pack
+        uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9 # 1.6.0
+        id: downloadfile  # Remember to give an ID if you need the output filename
+        with:
+            url: "https://download.microsoft.com/download/F/1/D/F1DEB8DB-D277-4EF9-9F48-3A65D4D8F965/NDP461-DevPack-KB3105179-ENU.exe"
+            target: public/
+                
+      - name: Install targeting pack
+        shell: cmd
+        working-directory: public
+        run: NDP461-DevPack-KB3105179-ENU.exe /q
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: | 
+            2.1.x
+            3.1.x
+            5.0.x
+          
+      - name: Prepare for build
+        shell: cmd
+        working-directory: Build
+        run: build64.bat /t:WriteNonlocalDevelopmentPropertiesFile
+
+      - name: Build Debug and run tests
+        id: build_and_test
+        shell: powershell
+        run: |
+          cd Build
+          .\build64.bat /t:remakefw-jenkins /p:action=test /p:desktopNotAvailable=true ^| tee-object -FilePath build.log
+      
+      - name: Scan Debug Build Output
+        shell: powershell
+        working-directory: Build
+        run: |
+          $results = Select-String -Path "build.log" -Pattern "^\s*[1-9][0-9]* Error\(s\)"
+          if ($results) {
+              foreach ($result in $results) {
+                  Write-Host "Found errors in build.log $($result.LineNumber): $($result.Line)" -ForegroundColor red 
+              }
+              exit 1
+          } else {
+              Write-Host "No errors found" -ForegroundColor green 
+              exit 0
+          }
+
+      - name: Capture Test Results
+        shell: powershell
+        working-directory: Build
+        run: .\NUnitReport /a ^| tee-object -FilePath test-results.log
+
+      - name: Report Test Results
+        uses: sillsdev/fw-nunitreport-action@v2.0.0
+        with:
+          log-path: Build/test-results.log
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: Build/*.log

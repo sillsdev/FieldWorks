@@ -101,6 +101,7 @@ namespace SIL.FieldWorks.IText
 		internal const int ktagSegmentFree = -61;
 		internal const int ktagSegmentLit = -62;
 		internal const int ktagSegmentNote = -63;
+		internal const int ktagAnalysisStatus = -64;
 		// flids for paragraph annotation sequences.
 		internal int ktagSegmentForms;
 
@@ -143,7 +144,6 @@ namespace SIL.FieldWorks.IText
 		private InterlinLineChoices m_lineChoices;
 		protected IVwStylesheet m_stylesheet;
 		private IParaDataLoader m_loader;
-		private readonly HashSet<int> m_vernWss; // all vernacular writing systems
 		private readonly int m_selfFlid;
 
 		private int m_leftPadding;
@@ -171,7 +171,7 @@ namespace SIL.FieldWorks.IText
 			StTxtParaRepository = m_cache.ServiceLocator.GetInstance<IStTxtParaRepository>();
 			m_wsAnalysis = cache.DefaultAnalWs;
 			m_wsUi = cache.LanguageWritingSystemFactoryAccessor.UserWs;
-			Decorator = new InterlinViewDataCache(m_cache);
+			GuessCache = new InterlinViewDataCache(m_cache);
 			PreferredVernWs = cache.DefaultVernWs;
 			m_selfFlid = m_cache.MetaDataCacheAccessor.GetFieldId2(CmObjectTags.kClassId, "Self", false);
 			m_tssMissingAnalysis = TsStringUtils.MakeString(ITextStrings.ksStars, m_wsAnalysis);
@@ -183,8 +183,7 @@ namespace SIL.FieldWorks.IText
 			m_tssEmptyPara = TsStringUtils.MakeString(ITextStrings.ksEmptyPara, m_wsAnalysis);
 			m_tssSpace = TsStringUtils.MakeString(" ", m_wsAnalysis);
 			m_msaVc = new MoMorphSynAnalysisUi.MsaVc(m_cache);
-			m_vernWss = WritingSystemServices.GetAllWritingSystems(m_cache, "all vernacular",
-				null, 0, 0);
+
 			// This usually gets overridden, but ensures default behavior if not.
 			m_lineChoices = InterlinLineChoices.DefaultChoices(m_cache.LangProject,
 				WritingSystemServices.kwsVernInParagraph, WritingSystemServices.kwsAnal);
@@ -196,7 +195,7 @@ namespace SIL.FieldWorks.IText
 			LangProjectHvo = m_cache.LangProject.Hvo;
 		}
 
-		internal InterlinViewDataCache Decorator { get; set; }
+		internal InterlinViewDataCache GuessCache { get; set; }
 
 		private IStTxtParaRepository StTxtParaRepository { get; set; }
 
@@ -226,7 +225,8 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		internal bool CanBeAnalyzed(AnalysisOccurrence occurrence)
 		{
-			return !(occurrence.Analysis is IPunctuationForm) && m_vernWss.Contains(occurrence.BaselineWs);
+			return !(occurrence.Analysis is IPunctuationForm) &&
+				WritingSystemServices.GetAllWritingSystems(m_cache, "all vernacular", null, 0, 0).Contains(occurrence.BaselineWs);
 		}
 
 		internal IVwStylesheet StyleSheet
@@ -554,12 +554,12 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		/// <param name="analysis"></param>
 		/// <returns></returns>
-		internal int GetGuess(IAnalysis analysis)
+		internal int GetGuess(IAnalysis analysis, AnalysisOccurrence occurrence)
 		{
-			if (Decorator.get_IsPropInCache(analysis.Hvo, InterlinViewDataCache.AnalysisMostApprovedFlid,
+			if (GuessCache.get_IsPropInCache(occurrence, InterlinViewDataCache.AnalysisMostApprovedFlid,
 				(int)CellarPropertyType.ReferenceAtomic, 0))
 			{
-				var hvoResult = Decorator.get_ObjectProp(analysis.Hvo, InterlinViewDataCache.AnalysisMostApprovedFlid);
+				var hvoResult = GuessCache.get_ObjectProp(occurrence, InterlinViewDataCache.AnalysisMostApprovedFlid);
 				if(hvoResult != 0 && Cache.ServiceLocator.IsValidObjectId(hvoResult))
 					return hvoResult;  // may have been cleared by setting to zero, or the Decorator could have stale data
 			}
@@ -1356,9 +1356,10 @@ namespace SIL.FieldWorks.IText
 						{
 							vwenv.AddString(m_tssMissingVernacular);
 						}
-						else if (mf == null)
+						else if (mf == null || SandboxBase.IsLexicalPattern(mf.Form))
 						{
 							// If no morph, use the form of the morph bundle (and the entry is of course missing)
+							// If mf.Form is a lexical pattern then the form of the morph bundle is the guessed root.
 							var ws = GetRealWsOrBestWsForContext(wmb.Hvo, spec);
 							vwenv.AddStringAltMember(WfiMorphBundleTags.kflidForm, ws, this);
 						}
@@ -1397,6 +1398,11 @@ namespace SIL.FieldWorks.IText
 								{
 									flid = wmb.Cache.MetaDataCacheAccessor.GetFieldId2(WfiMorphBundleTags.kClassId,
 										"DefaultSense", false);
+									if (wmb.MorphRA != null &&
+										DisplayLexGlossWithInflType(vwenv, wmb.MorphRA.Owner as ILexEntry, wmb.DefaultSense, spec, wmb.InflTypeRA))
+									{
+										break;
+									}
 								}
 							}
 							else
@@ -1713,12 +1719,12 @@ namespace SIL.FieldWorks.IText
 				{
 				case WfiWordformTags.kClassId:
 					m_hvoWordform = wag.Wordform.Hvo;
-					m_hvoDefault = m_this.GetGuess(wag.Wordform);
+					m_hvoDefault = m_this.GetGuess(wag.Wordform, m_analysisOccurrence);
 					break;
 				case WfiAnalysisTags.kClassId:
 					m_hvoWordform = wag.Wordform.Hvo;
 					m_hvoWfiAnalysis = wag.Analysis.Hvo;
-					m_hvoDefault = m_this.GetGuess(wag.Analysis);
+					m_hvoDefault = m_this.GetGuess(wag.Analysis, m_analysisOccurrence);
 					break;
 				case WfiGlossTags.kClassId:
 					m_hvoWfiAnalysis = wag.Analysis.Hvo;
@@ -1818,9 +1824,11 @@ namespace SIL.FieldWorks.IText
 						{
 							// Real analysis isn't what we're displaying, so morph breakdown
 							// is a guess. Is it a human-approved guess?
-							bool isHumanGuess = m_this.Decorator.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid) !=
+							bool isHumanGuess = m_this.GuessCache.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid) !=
 																			(int) AnalysisGuessServices.OpinionAgent.Parser;
 							m_this.SetGuessing(m_vwenv, isHumanGuess ? ApprovedGuessColor : MachineGuessColor);
+							// Let the exporter know that this is a guessed analysis.
+							m_vwenv.set_StringProperty(ktagAnalysisStatus, "guess");
 						}
 						m_vwenv.AddObj(m_hvoDefault, m_this, kfragAnalysisMorphs);
 					}
@@ -1835,6 +1843,8 @@ namespace SIL.FieldWorks.IText
 						{
 							// Real analysis is just word, one we're displaying is a default
 							m_this.SetGuessing(m_vwenv);
+							// Let the exporter know that this is a guessed analysis.
+							m_vwenv.set_StringProperty(ktagAnalysisStatus, "guess");
 						}
 						m_vwenv.AddObj(m_hvoWfiAnalysis, m_this, kfragAnalysisMorphs);
 					}
@@ -1858,7 +1868,7 @@ namespace SIL.FieldWorks.IText
 					{
 						// Real analysis isn't what we're displaying, so morph breakdown
 						// is a guess. Is it a human-approved guess?
-						bool isHumanGuess = m_this.Decorator.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid) !=
+						bool isHumanGuess = m_this.GuessCache.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid) !=
 																		(int)AnalysisGuessServices.OpinionAgent.Parser;
 						m_this.SetGuessing(m_vwenv, isHumanGuess ? ApprovedGuessColor : MachineGuessColor);
 					}
@@ -1910,7 +1920,7 @@ namespace SIL.FieldWorks.IText
 					if (m_hvoDefault != m_hvoWordBundleAnalysis)
 					{
 						// Real analysis isn't what we're displaying, so POS is a guess.
-						bool isHumanApproved = m_this.Decorator.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid)
+						bool isHumanApproved = m_this.GuessCache.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid)
 																			!= (int)AnalysisGuessServices.OpinionAgent.Parser;
 
 						m_this.SetGuessing(m_vwenv, isHumanApproved ? ApprovedGuessColor : MachineGuessColor);
@@ -2278,7 +2288,7 @@ namespace SIL.FieldWorks.IText
 
 		internal virtual IParaDataLoader CreateParaLoader()
 		{
-			return new InterlinViewCacheLoader(new AnalysisGuessServices(m_cache), Decorator);
+			return new InterlinViewCacheLoader(new AnalysisGuessServices(m_cache), GuessCache);
 		}
 
 		internal void RecordGuessIfNotKnown(AnalysisOccurrence selected)
@@ -2404,23 +2414,24 @@ namespace SIL.FieldWorks.IText
 		void RecordGuessIfNotKnown(AnalysisOccurrence occurrence);
 		IAnalysis GetGuessForWordform(IWfiWordform wf, int ws);
 		AnalysisGuessServices GuessServices { get; }
+		InterlinViewDataCache GuessCache { get; }
 	}
 
 	public class InterlinViewCacheLoader : IParaDataLoader
 	{
-		private InterlinViewDataCache m_sdaDecorator;
+		private InterlinViewDataCache m_guessCache;
 		public InterlinViewCacheLoader(AnalysisGuessServices guessServices,
-			InterlinViewDataCache sdaDecorator)
+			InterlinViewDataCache guessCache)
 		{
 			GuessServices = guessServices;
-			m_sdaDecorator = sdaDecorator;
+			m_guessCache = guessCache;
 		}
 
 		/// <summary>
 		///
 		/// </summary>
 		public AnalysisGuessServices GuessServices { get; private set; }
-		protected InterlinViewDataCache Decorator { get { return m_sdaDecorator; }  }
+		public InterlinViewDataCache GuessCache { get { return m_guessCache; }  }
 
 		#region IParaDataLoader Members
 
@@ -2461,7 +2472,7 @@ namespace SIL.FieldWorks.IText
 
 		public void RecordGuessIfNotKnown(AnalysisOccurrence occurrence)
 		{
-			if (m_sdaDecorator.get_ObjectProp(occurrence.Analysis.Hvo, InterlinViewDataCache.AnalysisMostApprovedFlid) == 0)
+			if (m_guessCache.get_ObjectProp(occurrence, InterlinViewDataCache.AnalysisMostApprovedFlid) == 0)
 				RecordGuessIfAvailable(occurrence);
 		}
 
@@ -2485,17 +2496,16 @@ namespace SIL.FieldWorks.IText
 			// next get the best guess for wordform or analysis
 
 			IAnalysis wag = occurrence.Analysis;
-			IAnalysis wagGuess;
+			IAnalysis wagGuess = GuessServices.GetBestGuess(occurrence, false);
 			// now record the guess in the decorator.
-			// Todo JohnT: if occurrence.Indx is 0, record using DefaultStartSentenceFlid.
-			if (GuessServices.TryGetBestGuess(occurrence, out wagGuess))
+			if (!(wagGuess is NullWAG))
 			{
-				SetObjProp(wag.Hvo, InterlinViewDataCache.AnalysisMostApprovedFlid, wagGuess.Hvo);
+				SetObjProp(occurrence, InterlinViewDataCache.AnalysisMostApprovedFlid, wagGuess.Hvo);
 				SetInt(wagGuess.Analysis.Hvo, InterlinViewDataCache.OpinionAgentFlid, (int)GuessServices.GetOpinionAgent(wagGuess.Analysis));
 			}
 			else
 			{
-				SetObjProp(wag.Hvo, InterlinViewDataCache.AnalysisMostApprovedFlid, 0);
+				SetObjProp(occurrence, InterlinViewDataCache.AnalysisMostApprovedFlid, 0);
 			}
 		}
 
@@ -2504,15 +2514,9 @@ namespace SIL.FieldWorks.IText
 			return GuessServices.GetBestGuess(wf, ws);
 		}
 
-		/// <summary>
-		/// this is so we can subclass the loader to test whether values have actually changed.
-		/// </summary>
-		/// <param name="hvo"></param>
-		/// <param name="flid"></param>
-		/// <param name="objValue"></param>
-		protected virtual void SetObjProp(int hvo, int flid, int objValue)
+		protected virtual void SetObjProp(AnalysisOccurrence occurrence, int flid, int objValue)
 		{
-			m_sdaDecorator.SetObjProp(hvo, flid, objValue);
+			m_guessCache.SetObjProp(occurrence, flid, objValue);
 		}
 
 		/// <summary>
@@ -2523,7 +2527,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="n"></param>
 		protected virtual void SetInt(int hvo, int flid, int n)
 		{
-			m_sdaDecorator.SetInt(hvo, flid, n);
+			m_guessCache.SetInt(hvo, flid, n);
 		}
 
 		#region IParaDataLoader Members
@@ -2533,8 +2537,8 @@ namespace SIL.FieldWorks.IText
 		{
 			// recreate the guess services, so they will use the latest FDO data.
 			GuessServices.ClearGuessData();
-			// clear the Decorator cache for the guesses, so it won't have any stale data.
-			m_sdaDecorator.ClearPropFromCache(InterlinViewDataCache.AnalysisMostApprovedFlid);
+			// clear the cache for the guesses, so it won't have any stale data.
+			m_guessCache.ClearPropFromCache(InterlinViewDataCache.AnalysisMostApprovedFlid);
 		}
 
 		/// <summary>
@@ -2544,7 +2548,7 @@ namespace SIL.FieldWorks.IText
 		{
 			var result = GuessServices.UpdatingOccurrence(oldAnalysis, newAnalysis);
 			if (result)
-				m_sdaDecorator.ClearPropFromCache(InterlinViewDataCache.AnalysisMostApprovedFlid);
+				m_guessCache.ClearPropFromCache(InterlinViewDataCache.AnalysisMostApprovedFlid);
 			return result;
 		}
 
@@ -2558,11 +2562,12 @@ namespace SIL.FieldWorks.IText
 	internal class ParaDataUpdateTracker : InterlinViewCacheLoader
 	{
 		private HashSet<AnalysisOccurrence> m_annotationsChanged = new HashSet<AnalysisOccurrence>();
+		private HashSet<AnalysisOccurrence> m_annotationsUnchanged = new HashSet<AnalysisOccurrence>();
 		private AnalysisOccurrence m_currentAnnotation;
 		HashSet<int> m_analysesWithNewGuesses = new HashSet<int>();
 
-		public ParaDataUpdateTracker(AnalysisGuessServices guessServices, InterlinViewDataCache sdaDecorator) :
-			base(guessServices, sdaDecorator)
+		public ParaDataUpdateTracker(AnalysisGuessServices guessServices, InterlinViewDataCache guessCache) :
+			base(guessServices, guessCache)
 		{
 		}
 
@@ -2570,6 +2575,11 @@ namespace SIL.FieldWorks.IText
 		{
 			m_currentAnnotation = occurrence;
 			base.NoteCurrentAnnotation(occurrence);
+		}
+
+		public void NoteChangedAnalysis(int hvo)
+		{
+			m_analysesWithNewGuesses.Add(hvo);
 		}
 
 		private void MarkCurrentAnnotationAsChanged()
@@ -2585,32 +2595,41 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		internal IList<AnalysisOccurrence> ChangedAnnotations
 		{
-			get { return m_annotationsChanged.ToArray(); }
+			get
+			{
+				// Include occurrences that are unchanged but might add a yellow background.
+				foreach (var unchangedAnnotation in m_annotationsUnchanged)
+				{
+					if (m_analysesWithNewGuesses.Contains(unchangedAnnotation.Analysis.Hvo))
+					{
+						m_annotationsChanged.Add(unchangedAnnotation);
+					}
+				}
+				return m_annotationsChanged.ToArray();
+			}
 		}
 
-		protected override void SetObjProp(int hvo, int flid, int newObjValue)
+		protected override void SetObjProp(AnalysisOccurrence occurrence, int flid, int newObjValue)
 		{
-			int oldObjValue = Decorator.get_ObjectProp(hvo, flid);
+			int oldObjValue = GuessCache.get_ObjectProp(occurrence, flid);
 			if (oldObjValue != newObjValue)
 			{
-				base.SetObjProp(hvo, flid, newObjValue);
-				m_analysesWithNewGuesses.Add(hvo);
+				base.SetObjProp(occurrence, flid, newObjValue);
+				m_annotationsChanged.Add(occurrence);
+				m_analysesWithNewGuesses.Add(occurrence.Analysis.Hvo);
 				MarkCurrentAnnotationAsChanged();
-				return;
 			}
-			// If we find more than one occurrence of the same analysis, only the first time
-			// will its guess change. But all of them need to be updated! So any occurrence whose
-			// guess has changed needs to be marked as changed.
-			if (m_currentAnnotation != null && m_currentAnnotation.Analysis !=null
-				&& m_analysesWithNewGuesses.Contains(m_currentAnnotation.Analysis.Hvo))
+			else
 			{
-				MarkCurrentAnnotationAsChanged();
+				// We will want to redisplay these with a yellow background
+				// if the number of possibilities change.
+				m_annotationsUnchanged.Add(occurrence);
 			}
 		}
 
 		protected override void SetInt(int hvo, int flid, int newValue)
 		{
-			int oldValue = Decorator.get_IntProp(hvo, flid);
+			int oldValue = GuessCache.get_IntProp(hvo, flid);
 			if (oldValue != newValue)
 			{
 				base.SetInt(hvo, flid, newValue);
@@ -2619,4 +2638,5 @@ namespace SIL.FieldWorks.IText
 		}
 
 	}
+
 }

@@ -1570,14 +1570,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				case MoMorphTypeTags.kMorphDiscontiguousPhrase:
 				case MoMorphTypeTags.kMorphPhrase:
 					m_cbComplexFormType.Enabled = true;
-					// default to "Unspecified Complex Form" if found, else set to "0" for "phrase"
-					if (m_cbComplexFormType.SelectedIndex == m_idxNotComplex)
-					{
-						int unSpecCompFormIndex = m_cbComplexFormType.FindStringExact(UnSpecifiedComplex);
-						m_cbComplexFormType.SelectedIndex = unSpecCompFormIndex != -1
-							? unSpecCompFormIndex
-							: 0;
-					}
+					// Do not attempt to change index. Should default to "Not Applicable" - At request of LT-21666
 					break;
 				default:
 					m_cbComplexFormType.SelectedIndex = 0;

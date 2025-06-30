@@ -1,73 +1,65 @@
 // Copyright (c) 2009-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-//
-// File: InterlinViewDataCache.cs
-// Responsibility: pyle
-//
-// <remarks>
-// </remarks>
 
 using System;
 using System.Collections.Generic;
 using SIL.LCModel;
-using SIL.LCModel.Application;
+using SIL.LCModel.DomainServices;
 using HvoFlidKey=SIL.LCModel.HvoFlidKey;
 
 namespace SIL.FieldWorks.IText
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
-	///
+	/// A data cache for guesses
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class InterlinViewDataCache : DomainDataByFlidDecoratorBase
+	public class InterlinViewDataCache
 	{
 		private const int ktagMostApprovedAnalysis = -64; // arbitrary non-valid flid to use for storing Guesses
 		private const int ktagOpinionAgent = -66; // arbitrary non-valid flid to use for storing opinion agents
 
-		private readonly IDictionary<HvoFlidKey, int> m_guessCache = new Dictionary<HvoFlidKey, int>();
+		private readonly IDictionary<AnalysisOccurrence, int> m_guessCache = new Dictionary<AnalysisOccurrence, int>();
 		private readonly IDictionary<HvoFlidKey, int> m_humanApproved = new Dictionary<HvoFlidKey, int>();
 
-		public InterlinViewDataCache(LcmCache cache) : base(cache.DomainDataByFlid as ISilDataAccessManaged)
+		public InterlinViewDataCache(LcmCache cache)
 		{
 		}
 
-		public override bool get_IsPropInCache(int hvo, int tag, int cpt, int ws)
+		public bool get_IsPropInCache(AnalysisOccurrence occurrence, int tag, int cpt, int ws)
 		{
 			switch (tag)
 			{
 				default:
-					return base.get_IsPropInCache(hvo, tag, cpt, ws);
+					throw new ArgumentException(string.Format("Unhandled property id: {0}", tag.ToString()), nameof(tag));
 				case ktagMostApprovedAnalysis:
-					return m_guessCache.ContainsKey(new HvoFlidKey(hvo, tag));
-				case ktagOpinionAgent:
-					return m_humanApproved.ContainsKey(new HvoFlidKey(hvo, tag));
+					return m_guessCache.ContainsKey(occurrence);
 			}
 		}
 
-		public override int get_ObjectProp(int hvo, int tag)
+		public int get_ObjectProp(AnalysisOccurrence occurrence, int tag)
 		{
 			switch (tag)
 			{
 				default:
-					return base.get_ObjectProp(hvo, tag);
+					throw new ArgumentException(string.Format("Unhandled property id: {0}", tag.ToString()), nameof(tag));
 				case ktagMostApprovedAnalysis:
 					{
 						int result;
-						if (m_guessCache.TryGetValue(new HvoFlidKey(hvo, tag), out result))
+						if (m_guessCache.TryGetValue(occurrence, out result))
 							return result;
 						return 0; // no guess cached.
 					}
 			}
 		}
 
-		public override int get_IntProp(int hvo, int tag)
+		public int get_IntProp(int hvo, int tag)
 		{
 			switch (tag)
 			{
 				default:
-					return base.get_IntProp(hvo, tag);
+					throw new ArgumentException(string.Format("Unhandled property id: {0}", tag.ToString()), nameof(tag));
 				case ktagOpinionAgent:
 					{
 						int result;
@@ -78,30 +70,27 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		public override void SetObjProp(int hvo, int tag, int hvoObj)
+		public void SetObjProp(AnalysisOccurrence occurrence, int tag, int hvoObj)
 		{
 			switch (tag)
 			{
 				default:
-					base.SetObjProp(hvo, tag, hvoObj);
-					break;
+					throw new ArgumentException(string.Format("Unhandled property id: {0}", tag.ToString()), nameof(tag));
 				case ktagMostApprovedAnalysis:
-					var key = new HvoFlidKey(hvo, tag);
 					if (hvoObj == 0)
-						m_guessCache.Remove(key);
+						m_guessCache.Remove(occurrence);
 					else
-						m_guessCache[key] = hvoObj;
+						m_guessCache[occurrence] = hvoObj;
 					break;
 			}
 		}
 
-		public override void SetInt(int hvo, int tag, int n)
+		public void SetInt(int hvo, int tag, int n)
 		{
 			switch (tag)
 			{
 				default:
-					base.SetInt(hvo, tag, n);
-					break;
+					throw new ArgumentException(string.Format("Unhandled property id: {0}", tag.ToString()), nameof(tag));
 				case ktagOpinionAgent:
 					m_humanApproved[new HvoFlidKey(hvo, tag)] = n;
 					break;

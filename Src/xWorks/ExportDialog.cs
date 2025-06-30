@@ -27,6 +27,7 @@ using SIL.FieldWorks.Common.FXT;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.DomainImpl;
+using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
@@ -38,6 +39,7 @@ using SIL.Windows.Forms;
 using XCore;
 using PropertyTable = XCore.PropertyTable;
 using ReflectionHelper = SIL.LCModel.Utils.ReflectionHelper;
+using Newtonsoft.Json;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -83,7 +85,9 @@ namespace SIL.FieldWorks.XWorks
 			kftGrammarSketch,
 			kftClassifiedDict,
 			kftSemanticDomains,
-			kftWebonary
+			kftWebonary,
+			kftWordOpenXml,
+			kftPhonology
 		}
 		// ReSharper restore InconsistentNaming
 		protected internal struct FxtType
@@ -638,6 +642,7 @@ namespace SIL.FieldWorks.XWorks
 						case FxtTypes.kftWebonary:
 							ProcessWebonaryExport();
 							return;
+						case FxtTypes.kftWordOpenXml:
 						default:
 							using (var dlg = new SaveFileDialogAdapter())
 							{
@@ -680,7 +685,7 @@ namespace SIL.FieldWorks.XWorks
 					m_propertyTable.SetPropertyPersistence("ExportDlgShowInFolder", true);
 				}
 			}
-			}
+		}
 
 		private static void OpenExportFolder(string sDirectory, string sFileName)
 		{
@@ -838,39 +843,68 @@ namespace SIL.FieldWorks.XWorks
 								progressDlg.Restartable = true;
 								progressDlg.RunTask(true, ExportGrammarSketch, outPath, ft.m_sDataType, ft.m_sXsltFiles);
 								break;
-						}
-						TrackingHelper.TrackExport(m_areaOrig, exportType, ImportExportStep.Succeeded);
+							case FxtTypes.kftPhonology:
+								progressDlg.Minimum = 0;
+								progressDlg.Maximum = 1000;
+								progressDlg.AllowCancel = true;
+								progressDlg.Restartable = true;
+								progressDlg.RunTask(true, ExportPhonology, outPath, ft.m_sDataType, ft.m_sXsltFiles);
+								break;
+							case FxtTypes.kftWordOpenXml:
+								progressDlg.Minimum = 0;
+								progressDlg.Maximum = 1000;
+								progressDlg.AllowCancel = true;
+								progressDlg.Restartable = true;
+								progressDlg.RunTask(true, ExportWordOpenXml, outPath, ft.m_sDataType, ft.m_sXsltFiles);
+								break;
+
 					}
-					catch (WorkerThreadException e)
+					TrackingHelper.TrackExport(m_areaOrig, exportType, ImportExportStep.Succeeded);
+				}
+				catch (WorkerThreadException e)
+				{
+					TrackingHelper.TrackExport(m_areaOrig, exportType, ImportExportStep.Failed);
+					if (e.InnerException is CancelException)
 					{
-						TrackingHelper.TrackExport(m_areaOrig, exportType, ImportExportStep.Failed);
-						if (e.InnerException is CancelException)
-						{
-							MessageBox.Show(this, e.InnerException.Message);
-							m_ce = null;
-						}
-						else if (e.InnerException is LiftFormatException)
-						{
-							// Show the pretty yellow semi-crash dialog box, with instructions for the
-							// user to report the bug.
-						var app = m_propertyTable.GetValue<IApp>("App");
-							ErrorReporter.ReportException(new Exception(xWorksStrings.ksLiftExportBugReport, e.InnerException),
-							app.SettingsKey, m_propertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress, this, false);
-						}
-						else
-						{
-							string msg = xWorksStrings.ErrorExporting_ProbablyBug + Environment.NewLine + e.InnerException.Message;
-							MessageBox.Show(this, msg);
-						}
+						MessageBox.Show(this, e.InnerException.Message);
+						m_ce = null;
 					}
-					finally
+					else if (e.InnerException is LiftFormatException)
 					{
-						m_progressDlg = null;
-						m_dumper = null;
-						Close();
+						// Show the pretty yellow semi-crash dialog box, with instructions for the
+						// user to report the bug.
+					var app = m_propertyTable.GetValue<IApp>("App");
+						ErrorReporter.ReportException(new Exception(xWorksStrings.ksLiftExportBugReport, e.InnerException),
+						app.SettingsKey, m_propertyTable.GetValue<IFeedbackInfoProvider>("FeedbackInfoProvider").SupportEmailAddress, this, false);
+					}
+					else
+					{
+						string msg = xWorksStrings.ErrorExporting_ProbablyBug + Environment.NewLine + e.InnerException.Message;
+						MessageBox.Show(this, msg);
 					}
 				}
+				finally
+				{
+					m_progressDlg = null;
+					m_dumper = null;
+					Close();
+				}
 			}
+		}
+
+		private object ExportWordOpenXml(IThreadedProgress progress, object[] args)
+		{
+			if (args.Length < 1)
+				return null;
+			var filePath = (string)args[0];
+			var exportService = new DictionaryExportService(m_propertyTable, m_mediator);
+			exportService.ExportDictionaryForWord(filePath, null, progress);
+			foreach (var reversal in m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances())
+			{
+				exportService.ExportReversalForWord(filePath, reversal.WritingSystem);
+			}
+			return null;
+		}
 
 		private object ExportConfiguredXhtml(IThreadedProgress progress, object[] args)
 		{
@@ -892,11 +926,21 @@ namespace SIL.FieldWorks.XWorks
 		private object ExportGrammarSketch(IThreadedProgress progress, object[] args)
 		{
 			var outPath = (string)args[0];
-			var sDataType = (string) args[1];
-			var sXslts = (string) args[2];
+			var sDataType = (string)args[1];
+			var sXslts = (string)args[2];
 			m_progressDlg = progress;
 			var parameter = new Tuple<string, string, string>(sDataType, outPath, sXslts);
 			m_mediator.SendMessage("SaveAsWebpage", parameter);
+			m_progressDlg.Step(1000);
+			return null;
+		}
+
+		private object ExportPhonology(IThreadedProgress progress, object[] args)
+		{
+			var outPath = (string)args[0];
+			m_progressDlg = progress;
+			var phonologyServices = new PhonologyServices(m_cache);
+			phonologyServices.ExportPhonologyAsXml(outPath);
 			m_progressDlg.Step(1000);
 			return null;
 		}
@@ -1261,6 +1305,9 @@ namespace SIL.FieldWorks.XWorks
 				case "webonary":
 					ft.m_ft = FxtTypes.kftWebonary;
 					break;
+				case "wordOpenXml":
+					ft.m_ft = FxtTypes.kftWordOpenXml;
+					break;
 				case "LIFT":
 					ft.m_ft = FxtTypes.kftLift;
 					break;
@@ -1269,6 +1316,9 @@ namespace SIL.FieldWorks.XWorks
 					break;
 				case "semanticDomains":
 					ft.m_ft = FxtTypes.kftSemanticDomains;
+					break;
+				case "phonology":
+					ft.m_ft = FxtTypes.kftPhonology;
 					break;
 				default:
 					Debug.Fail("Invalid type attribute value for the template element");

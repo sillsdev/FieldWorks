@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -43,6 +43,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			Features,
 			Variable,
 			Index,
+			SetMappingFeatures,
+			SetMappingNaturalClass,
 			Column
 		};
 
@@ -70,6 +72,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 				case RuleInsertType.Index:
 					return MEStrings.ksRuleIndexOpt;
+
+				case RuleInsertType.SetMappingFeatures:
+					return MEStrings.ksSetFeaturesOpt;
+
+				case RuleInsertType.SetMappingNaturalClass:
+					return MEStrings.ksSetNaturalClassOpt;
 
 				case RuleInsertType.Column:
 					return MEStrings.ksRuleColOpt;
@@ -439,6 +447,18 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			throw new NotImplementedException();
 		}
 
+		public virtual void SetMappingFeatures(SelectionHelper sel)
+		{
+			throw new NotImplementedException();
+		}
+
+		public virtual void SetMappingNaturalClass(SelectionHelper sel)
+		{
+			throw new NotImplementedException();
+		}
+
+
+
 		/// <summary>
 		/// Inserts the variable (PhVariable).
 		/// </summary>
@@ -569,6 +589,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			var redo = string.Format(MEStrings.ksRuleRedoInsert, option);
 
 			SelectionHelper sel = SelectionHelper.Create(m_view);
+			if (sel == null)
+			{
+				// The selection can become invalid because of an undo (see LT-20588).
+				m_insertionControl.UpdateOptionsDisplay();
+				return;
+			}
 			int cellId = -1;
 			int cellIndex = -1;
 			switch (option.Type)
@@ -663,6 +689,15 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							cellId = InsertVariable(sel, out cellIndex);
 						});
 					break;
+
+				case RuleInsertType.SetMappingFeatures:
+					SetMappingFeatures(sel);
+					break;
+
+				case RuleInsertType.SetMappingNaturalClass:
+					SetMappingNaturalClass(sel);
+					break;
+
 			}
 
 			m_view.Select();

@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using System.Xml;
 using Microsoft.Win32;
@@ -39,6 +40,8 @@ using SIL.PlatformUtilities;
 using SIL.Reporting;
 using SIL.Utils;
 using XCore;
+using SIL.LCModel.Application.ApplicationServices;
+using NAudio.Utils;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -358,11 +361,11 @@ namespace SIL.FieldWorks.XWorks
 			// Here is the original order (along with a comment between them that seemed to imply this
 			// new order could be a problem, but no obvious ones have appeared in my testing.
 
-		   /*
-			* LoadUI(configFile);
-			* // Reload additional property settings that depend on knowing the database name.
-			* m_viewHelper = new ActiveViewHelper(this);
-			*/
+			/*
+			 * LoadUI(configFile);
+			 * // Reload additional property settings that depend on knowing the database name.
+			 * m_viewHelper = new ActiveViewHelper(this);
+			 */
 
 			m_viewHelper = new ActiveViewHelper(this);
 			LoadUI(configFile);
@@ -520,7 +523,7 @@ namespace SIL.FieldWorks.XWorks
 			m_fWindowIsCopy = (wndCopyFrom != null);
 			InitMediatorValues(cache);
 
-			if(iconStream != null)
+			if (iconStream != null)
 				Icon = new System.Drawing.Icon(iconStream);
 		}
 
@@ -966,8 +969,8 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		protected bool OnStartLogging(object args)
 		{
-					return true;
-			}
+			return true;
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -1096,7 +1099,7 @@ namespace SIL.FieldWorks.XWorks
 			var filesToArchive = m_app.FwManager.ArchiveProjectWithRamp(m_app, this);
 
 			// if there are no files to archive, return now.
-			if((filesToArchive == null) || (filesToArchive.Count == 0))
+			if ((filesToArchive == null) || (filesToArchive.Count == 0))
 				return true;
 
 			ReapRamp ramp = new ReapRamp();
@@ -1492,7 +1495,7 @@ namespace SIL.FieldWorks.XWorks
 			model.WritingSystemListUpdated += OnWritingSystemListChanged;
 			model.WritingSystemUpdated += OnWritingSystemUpdated;
 			using (var view = new FwWritingSystemSetupDlg(model,
-				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app))
+				m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider"), m_app, m_propertyTable))
 			{
 				view.ShowDialog(this);
 			}
@@ -1563,7 +1566,7 @@ namespace SIL.FieldWorks.XWorks
 				if (!fPrivate && m_app != null)
 				{
 					// currently implemented, this will cause this app to do a master refresh,
-					m_app.Synchronize(SyncMsg.ksyncUndoRedo);
+					m_app.Synchronize();
 				}
 				else
 				{
@@ -1832,7 +1835,7 @@ namespace SIL.FieldWorks.XWorks
 				// Need to refresh to reload the cache.  See LT-6265.
 				(m_app as FwXApp).OnMasterRefresh(null);
 			}
-			return false;	// refresh already called if needed
+			return false;   // refresh already called if needed
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1915,10 +1918,69 @@ namespace SIL.FieldWorks.XWorks
 		public override IxCoreColleague[] GetMessageTargets()
 		{
 			CheckDisposed();
-			if(m_app is IxCoreColleague)
+			if (m_app is IxCoreColleague)
 				return new IxCoreColleague[] { this, m_app as IxCoreColleague };
 			else
-				return new IxCoreColleague[]{this};
+				return new IxCoreColleague[] { this };
+		}
+
+		public bool OnDisplayImportPhonology(object parameters, ref UIItemDisplayProperties display)
+		{
+			// Set display here in case command == null or mediator == null.
+			display.Enabled = false;
+			display.Visible = false;
+			XCore.Command command = parameters as XCore.Command;
+			if (command == null)
+				return true;
+			Mediator mediator = Mediator;
+			if (mediator == null)
+				return true;
+			string area = PropTable.GetValue<string>("areaChoice");
+			display.Enabled = area == "grammar";
+			display.Visible = area == "grammar";
+			return true;
+		}
+
+		public bool OnImportPhonology(object commandObject)
+		{
+			string filename = null;
+			// ActiveForm can go null (see FWNX-731), so cache its value, and check whether
+			// we need to use 'this' instead (which might be a better idea anyway).
+			var form = ActiveForm;
+			if (form == null)
+				form = this;
+			Command command = (Command)commandObject;
+			string caption = command.ToolTip;
+			using (var dlg = new OpenFileDialogAdapter())
+			{
+				dlg.CheckFileExists = true;
+				dlg.RestoreDirectory = true;
+				dlg.Title = ResourceHelper.GetResourceString("kstidPhonologyXML");
+				dlg.ValidateNames = true;
+				dlg.Multiselect = false;
+				dlg.Filter = ResourceHelper.FileFilter(FileFilterType.PhonologyXML);
+				if (dlg.ShowDialog(form) != DialogResult.OK)
+					return true;
+				filename = dlg.FileName;
+			}
+			DialogResult result = MessageBox.Show(xWorksStrings.DeletePhonology, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+			if (result != DialogResult.Yes)
+				return true;
+
+			try
+			{
+				var phonologyServices = new PhonologyServices(Cache);
+				phonologyServices.DeletePhonology();
+				phonologyServices.ImportPhonologyFromXml(filename);
+				m_mediator.SendMessage("MasterRefresh", null);
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine("Error: " + ex.Message);
+				MessageBox.Show(ex.Message, caption);
+			}
+
+			return true;
 		}
 
 		/// <summary>
@@ -2207,23 +2269,6 @@ namespace SIL.FieldWorks.XWorks
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>
-		/// Returns the NormalStateDesktopBounds property from the persistence object.
-		/// </summary>
-		/// -----------------------------------------------------------------------------------
-		public Rectangle NormalStateDesktopBounds
-		{
-			get
-			{
-				CheckDisposed();
-
-				var loc = m_propertyTable.GetValue<Point>("windowLocation");
-				var size = m_propertyTable.GetValue("windowSize", /*hack*/new Size(400, 400));
-				return new Rectangle(loc, size);
-			}
-		}
-
-		/// -----------------------------------------------------------------------------------
-		/// <summary>
 		/// Create the client windows and add corresponding stuff to the sidebar, View menu,
 		/// etc.
 		/// </summary>
@@ -2249,57 +2294,17 @@ namespace SIL.FieldWorks.XWorks
 			Enabled = fEnable;
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Called just before a window synchronizes its views with DB changes (e.g. when an
-		/// undo or redo command is issued).
-		/// </summary>
-		/// <param name="sync">synchronization message</param>
-		/// ------------------------------------------------------------------------------------
-		public virtual void PreSynchronize(SyncMsg sync)
-		{
-			CheckDisposed();
-			// TODO: Implement it. This is copied from TE.
-		}
-
-		/// <summary>
-		/// If a property requests it, do a db sync.
-		/// </summary>
-		public virtual void OnIdle(object sender)
-		{
-			CheckDisposed();
-
-			/* Bad things happen, when this is done and the parser is running.
-			 * TODO: Figure out how they can co-exist.
-			if (PropertyTable.PropertyTable.GetBoolProperty("SyncOnIdle", false) && FwApp.App != null
-				&& FwApp.App.SyncGuid != Guid.Empty)
-			{
-				FwApp.App.SyncFromDb();
-			}
-			*/
-		}
-
-		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Called when a window synchronizes its views with DB changes (e.g. when an undo or
 		/// redo command is issued).
 		/// </summary>
-		/// <param name="sync">synchronization message</param>
-		/// <returns>True if the sync message was handled; false, indicating that the
-		/// application should refresh all windows. </returns>
-		/// ------------------------------------------------------------------------------------
-		public virtual bool Synchronize(SyncMsg sync)
+		public virtual void Synchronize()
 		{
 			CheckDisposed();
 
-			if (sync == SyncMsg.ksyncStyle)
-			{
-				// force our stylesheet to resync (LT-7382).
-				ResyncStylesheet();
-				ResyncRootboxStyles();
-				return true;
-			}
-			return false;
+			// force our stylesheet to resync (LT-7382).
+			ResyncStylesheet();
+			ResyncRootboxStyles();
 		}
 
 		/// ------------------------------------------------------------------------------------

@@ -1421,4 +1421,8 @@ FieldWorks ReadMe for help in this area.</value>
     <value>The writing systems {0} are missing the default collation. The standard icu collation will be used.</value>
     <comment>{0} is a list of one or more writing systems</comment>
   </data>
+  <data name="kstidPhonologyXML" xml:space="preserve">
+    <value>Phonology XML Files</value>
+    <comment>Used in the list of file types in file open/save dialogs</comment>
+  </data>
 </root>

@@ -55,6 +55,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	public class DataTree : UserControl, IVwNotifyChange, IxCoreColleague, IRefreshableRoot
 	{
 		/// <summary>
+		/// Part refs that don't represent actual data slices
+		/// </summary>
+		public static string[] SpecialPartRefs = { "ChangeHandler", "_CustomFieldPlaceholder" };
+
+		/// <summary>
 		/// Occurs when the current slice changes
 		/// </summary>
 		public event EventHandler CurrentSliceChanged;
@@ -149,6 +154,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		bool m_fDoNotRefresh = false;
 		bool m_fPostponedClearAllSlices = false;
 		// Set during ConstructSlices, to suppress certain behaviors not safe at this point.
+		bool m_postponePropChanged = true;
 		internal bool ConstructingSlices { get; private set; }
 
 		public List<Slice> Slices { get; private set; }
@@ -294,13 +300,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (m_currentSlice == null)
 				return; // Too early to do much;
 
-			// Depending on compile switch for SLICE_IS_SPLITCONTAINER,
-			// the sender will be both a Slice and a SplitContainer
-			// (Slice is a subclass of SplitContainer),
-			// or just a SplitContainer (SplitContainer is the only child Control of a Slice).
-			Slice movedSlice = sender is Slice ? (Slice) sender
+			var movedSlice = sender is Slice slice ? slice
 				// sender is also a SplitContainer.
-				: (Slice) ((SplitContainer) sender).Parent; // Have to move up one parent notch to get to teh Slice.
+				: (Slice) ((SplitContainer) sender).Parent; // Review: This branch is probably obsolete.
 			if (m_currentSlice != movedSlice)
 				return; // Too early to do much;
 
@@ -526,6 +528,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		}
 
+		public virtual bool OnPostponePropChanged(object commandObject)
+		{
+			if ((bool)commandObject == true)
+				m_postponePropChanged = true;
+			else
+				m_postponePropChanged = false;
+			return true;
+		}
+
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		{
 			CheckDisposed();
@@ -552,8 +563,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			//	return;
 			if (m_monitoredProps.Contains(Tuple.Create(hvo, tag)))
 			{
-				RefreshList(false);
-				OnFocusFirstPossibleSlice(null);
+				// If we call RefreshList now, it causes a crash in the invoker
+				// because some slice data structures that are being used by the invoker
+				// get disposed by RefreshList (LT-21980, LT-22011).  So we postpone calling
+				// RefreshList until the work is done.
+				if (m_postponePropChanged)
+				{
+					this.BeginInvoke(new Action(RefreshListAndFocus));
+				} else
+				{
+					RefreshListAndFocus();
+				}
 			}
 			// Note, in LinguaLinks import we don't have an action handler when we hit this.
 			else if (m_cache.DomainDataByFlid.GetActionHandler() != null && m_cache.DomainDataByFlid.GetActionHandler().IsUndoOrRedoInProgress)
@@ -577,6 +597,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// some FieldSlices (e.g. combo slices)may want to Update their display
 				// if its field changes during an Undo/Redo (cf. LT-4861).
 				RefreshList(hvo, tag);
+			}
+		}
+
+		private void RefreshListAndFocus()
+		{
+			if (!IsDisposed)
+			{
+				RefreshList(false);
+				OnFocusFirstPossibleSlice(null);
 			}
 		}
 
@@ -1191,7 +1220,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				DeepSuspendLayout();
 				// NB: The ArrayList created here can hold disparate objects, such as XmlNodes and ints.
 				if (m_root != null)
-					CreateSlicesFor(m_root, null, null, null, 0, 0, new ArrayList(20), new ObjSeqHashMap(), null);
+					CreateSlicesFor(m_root, null, null, null, 0, 0, new ArrayList(20), null);
 			}
 			finally
 			{
@@ -1531,7 +1560,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					RemoveSlice(slice);
 				}
 				previousSlices.ClearUnwantedPart(differentObject);
-				CreateSlicesFor(m_root, null, m_rootLayoutName, m_layoutChoiceField, 0, 0, new ArrayList(20), previousSlices, null);
+				CreateSlicesFor(m_root, null, m_rootLayoutName, m_layoutChoiceField, 0, 0, new ArrayList(20), null);
 				// Clear out any slices NOT reused. RemoveSlice both
 				// removes them from the DataTree's controls collection and disposes them.
 				foreach (Slice gonner in previousSlices.Values)
@@ -1726,7 +1755,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// updated insertPosition for next item after the ones inserted.
 		/// </returns>
 		public virtual int CreateSlicesFor(ICmObject obj, Slice parentSlice, string layoutName, string layoutChoiceField, int indent,
-			int insertPosition, ArrayList path, ObjSeqHashMap reuseMap, XmlNode unifyWith)
+			int insertPosition, ArrayList path, XmlNode unifyWith)
 		{
 			CheckDisposed();
 
@@ -1741,7 +1770,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// This assumes that the attributes don't need to be unified.
 				template2 = m_layoutInventory.GetUnified(template, unifyWith);
 			}
-			insertPosition = ApplyLayout(obj, parentSlice, template2, indent, insertPosition, path, reuseMap);
+			insertPosition = ApplyLayout(obj, parentSlice, template2, indent, insertPosition, path);
 			path.RemoveAt(path.Count - 1);
 			return insertPosition;
 		}
@@ -1845,31 +1874,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return mdc.GetClassId(stClassName);
 		}
 
-		/// <summary>
-		/// Look for a reusable slice that matches the current path. If found, remove from map and return;
-		/// otherwise, return null.
-		/// </summary>
-		private static Slice GetMatchingSlice(ArrayList path, ObjSeqHashMap reuseMap)
-		{
-			// Review JohnT(RandyR): I don't see how this can really work.
-			// The original path (the key) used to set this does not, (and cannot) change,
-			// but it is very common for slices to come and go, as they are inserted/deleted,
-			// or when the Show hidden control is changed.
-			// Those kinds of big changes will produce the input 'path' parm,
-			// which has little hope of matching that fixed orginal key, won't it.
-			// I can see how it would work when a simple F4 refresh is being done,
-			// since the count of slices should remain the same.
-
-			IList list = reuseMap[path];
-			if (list.Count > 0)
-			{
-				var slice = (Slice)list[0];
-				reuseMap.Remove(path, slice);
-				return slice;
-			}
-
-			return null;
-		}
 		public enum NodeTestResult
 		{
 			kntrSomething, // really something here we could expand
@@ -1892,11 +1896,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// updated insertPosition for next item after the ones inserted.
 		/// </returns>
 		public int ApplyLayout(ICmObject obj, Slice parentSlice, XmlNode template, int indent, int insertPosition,
-			ArrayList path, ObjSeqHashMap reuseMap)
+			ArrayList path)
 		{
 			CheckDisposed();
 			NodeTestResult ntr;
-			return ApplyLayout(obj, parentSlice, template, indent, insertPosition, path, reuseMap, false, out ntr);
+			return ApplyLayout(obj, parentSlice, template, indent, insertPosition, path, false, out ntr);
 		}
 
 		/// <summary>
@@ -1913,7 +1917,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="isTestOnly">if set to <c>true</c> [is test only].</param>
 		/// <param name="testResult">The test result.</param>
 		protected internal virtual int ApplyLayout(ICmObject obj, Slice parentSlice, XmlNode template, int indent, int insertPosition,
-			ArrayList path, ObjSeqHashMap reuseMap, bool isTestOnly, out NodeTestResult testResult)
+			ArrayList path, bool isTestOnly, out NodeTestResult testResult)
 		{
 			int insPos = insertPosition;
 			testResult = NodeTestResult.kntrNothing;
@@ -1944,7 +1948,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					continue;
 				}
 
-				testResult = ProcessPartRefNode(partRef, path, reuseMap, obj, parentSlice, indent, ref insPos, isTestOnly);
+				testResult = ProcessPartRefNode(partRef, path, obj, parentSlice, indent, ref insPos, isTestOnly);
 
 				if (isTestOnly)
 				{
@@ -1978,7 +1982,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			//		to show different parts of the class.
 			//			if(template.Name == "template")
 			//if (fGenerateCustomFields)
-			//	testResult = AddCustomFields(obj, template, indent, ref insPos, path, reuseMap,isTestOnly);
+			//	testResult = AddCustomFields(obj, template, indent, ref insPos, path,isTestOnly);
 
 			return insPos;
 		}
@@ -1996,7 +2000,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="insPos">The ins pos.</param>
 		/// <param name="isTestOnly">if set to <c>true</c> [is test only].</param>
 		/// <returns>NodeTestResult</returns>
-		private NodeTestResult ProcessPartRefNode(XmlNode partRef, ArrayList path, ObjSeqHashMap reuseMap,
+		private NodeTestResult ProcessPartRefNode(XmlNode partRef, ArrayList path,
 			ICmObject obj, Slice parentSlice, int indent, ref int insPos, bool isTestOnly)
 		{
 			NodeTestResult ntr = NodeTestResult.kntrNothing;
@@ -2010,7 +2014,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					XmlNode template = GetTemplateForObjLayout(obj, layoutName, layoutChoiceField);
 					path.Add(partRef);
 					path.Add(template);
-					insPos = ApplyLayout(obj, parentSlice, template, indent, insPos, path, reuseMap, isTestOnly, out ntr);
+					insPos = ApplyLayout(obj, parentSlice, template, indent, insPos, path, isTestOnly, out ntr);
 					path.RemoveAt(path.Count - 1);
 					path.RemoveAt(path.Count - 1);
 					break;
@@ -2065,7 +2069,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					// If you are wondering why we put the partref in the key, one reason is that it may be needed
 					// when expanding a collapsed slice.
 					path.Add(partRef);
-					ntr = ProcessPartChildren(part, path, reuseMap, obj, parentSlice, indent, ref insPos, isTestOnly,
+					ntr = ProcessPartChildren(part, path, obj, parentSlice, indent, ref insPos, isTestOnly,
 						parameter, visibility == "ifdata", partRef);
 					path.RemoveAt(path.Count - 1);
 					break;
@@ -2074,7 +2078,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		}
 
 		internal NodeTestResult ProcessPartChildren(XmlNode part, ArrayList path,
-			ObjSeqHashMap reuseMap, ICmObject obj, Slice parentSlice, int indent, ref int insPos, bool isTestOnly,
+			ICmObject obj, Slice parentSlice, int indent, ref int insPos, bool isTestOnly,
 			string parameter, bool fVisIfData, XmlNode caller)
 		{
 			CheckDisposed();
@@ -2083,7 +2087,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				if (node.GetType() == typeof(XmlComment))
 					continue;
-				NodeTestResult testResult = ProcessSubpartNode(node, path, reuseMap, obj, parentSlice,
+				NodeTestResult testResult = ProcessSubpartNode(node, path, obj, parentSlice,
 					indent, ref insPos, isTestOnly, parameter, fVisIfData, caller);
 				// If we're just looking to see if there would be any slices, and there was,
 				// then don't bother thinking about any more slices.
@@ -2198,7 +2202,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="fVisIfData">If true, show slice only if data present.</param>
 		/// <param name="caller">The caller.</param>
 		private NodeTestResult ProcessSubpartNode(XmlNode node, ArrayList path,
-			ObjSeqHashMap reuseMap, ICmObject obj, Slice parentSlice, int indent, ref int insertPosition,
+			ICmObject obj, Slice parentSlice, int indent, ref int insertPosition,
 			bool fTestOnly, string parameter, bool fVisIfData,
 		XmlNode caller)
 		{
@@ -2224,24 +2228,24 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					// Nothing to do for unrecognized element, such as deParams.
 
 					case "slice":
-						return AddSimpleNode(path, node, reuseMap, editor, flid, obj, parentSlice, indent,
+						return AddSimpleNode(path, node, editor, flid, obj, parentSlice, indent,
 							ref insertPosition, fTestOnly,
 						fVisIfData, caller);
 
 					case "seq":
-						return AddSeqNode(path, node, reuseMap, flid, obj, parentSlice, indent + Slice.ExtraIndent(node),
+						return AddSeqNode(path, node, flid, obj, parentSlice, indent + Slice.ExtraIndent(node),
 							ref insertPosition, fTestOnly, parameter,
 						fVisIfData, caller);
 
 					case "obj":
-						return AddAtomicNode(path, node, reuseMap, flid, obj, parentSlice, indent  + Slice.ExtraIndent(node),
+						return AddAtomicNode(path, node, flid, obj, parentSlice, indent  + Slice.ExtraIndent(node),
 							ref insertPosition, fTestOnly, parameter,
 						fVisIfData, caller);
 
 					case "if":
 						if (XmlVc.ConditionPasses(node, obj.Hvo, m_cache))
 						{
-							NodeTestResult ntr = ProcessPartChildren(node, path, reuseMap, obj, parentSlice,
+							NodeTestResult ntr = ProcessPartChildren(node, path, obj, parentSlice,
 								indent, ref insertPosition, fTestOnly, parameter, fVisIfData,
 								caller);
 							if (fTestOnly && ntr != NodeTestResult.kntrNothing)
@@ -2252,7 +2256,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					case "ifnot":
 						if (!XmlVc.ConditionPasses(node, obj.Hvo, m_cache))
 						{
-							NodeTestResult ntr = ProcessPartChildren(node, path, reuseMap, obj, parentSlice,
+							NodeTestResult ntr = ProcessPartChildren(node, path, obj, parentSlice,
 								indent, ref insertPosition, fTestOnly, parameter, fVisIfData,
 								caller);
 							if (fTestOnly && ntr != NodeTestResult.kntrNothing)
@@ -2268,7 +2272,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 								if (XmlVc.ConditionPasses(clause, obj.Hvo, m_cache))
 								{
 									NodeTestResult ntr = ProcessPartChildren(clause, path,
-										reuseMap, obj, parentSlice, indent, ref insertPosition, fTestOnly,
+										obj, parentSlice, indent, ref insertPosition, fTestOnly,
 										parameter, fVisIfData,
 									caller);
 									if (fTestOnly && ntr != NodeTestResult.kntrNothing)
@@ -2282,7 +2286,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							{
 								// enhance: verify last node?
 								NodeTestResult ntr = ProcessPartChildren(clause, path,
-									reuseMap, obj, parentSlice, indent, ref insertPosition, fTestOnly,
+									obj, parentSlice, indent, ref insertPosition, fTestOnly,
 									parameter, fVisIfData,
 								caller);
 								if (fTestOnly && ntr != NodeTestResult.kntrNothing)
@@ -2371,7 +2375,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return flid;
 		}
 
-		private NodeTestResult AddAtomicNode(ArrayList path, XmlNode node, ObjSeqHashMap reuseMap, int flid,
+		private NodeTestResult AddAtomicNode(ArrayList path, XmlNode node, int flid,
 			ICmObject obj, Slice parentSlice, int indent, ref int insertPosition, bool fTestOnly, string layoutName,
 			bool fVisIfData, XmlNode caller)
 		{
@@ -2395,7 +2399,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				string layoutOverride = XmlUtils.GetOptionalAttributeValue(node, "layout", layoutName);
 				string layoutChoiceField = XmlUtils.GetOptionalAttributeValue(node, "layoutChoiceField");
 				path.Add(innerObj.Hvo);
-				insertPosition = CreateSlicesFor(innerObj, parentSlice, layoutOverride, layoutChoiceField, indent, insertPosition, path, reuseMap, caller);
+				insertPosition = CreateSlicesFor(innerObj, parentSlice, layoutOverride, layoutChoiceField, indent, insertPosition, path, caller);
 				path.RemoveAt(path.Count - 1);
 			}
 			else
@@ -2403,14 +2407,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// No inner object...do we want a ghost slice?
 				if (XmlUtils.GetOptionalAttributeValue(node, "ghost") != null)
 				{
-					MakeGhostSlice(path, node, reuseMap, obj, parentSlice, flid, caller, indent, ref insertPosition);
+					MakeGhostSlice(path, node, obj, parentSlice, flid, caller, indent, ref insertPosition);
 				}
 			}
 			path.RemoveAt(path.Count - 1);
 			return NodeTestResult.kntrNothing;
 		}
 
-		internal void MakeGhostSlice(ArrayList path, XmlNode node, ObjSeqHashMap reuseMap, ICmObject obj, Slice parentSlice,
+		internal void MakeGhostSlice(ArrayList path, XmlNode node, ICmObject obj, Slice parentSlice,
 			int flidEmptyProp, XmlNode caller, int indent, ref int insertPosition)
 		{
 			// It's a really bad idea to add it to the path, since it kills
@@ -2418,48 +2422,36 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			//path.Add(node);
 			if (parentSlice != null)
 				Debug.Assert(!parentSlice.IsDisposed, "AddSimpleNode parameter 'parentSlice' is Disposed!");
-			Slice slice = GetMatchingSlice(path, reuseMap);
-			if (slice == null)
-			{
-				slice = new GhostStringSlice(obj, flidEmptyProp, node, m_cache);
-				// Set the label and abbreviation (in that order...abbr defaults to label if not given.
-				// Note that we don't have a "caller" here, so we pass 'node' as both arguments...
-				// means it gets searched twice if not found, but that's fairly harmless.
-				slice.Label = GetLabel(node, node, obj, "ghostLabel");
-				slice.Abbreviation = GetLabelAbbr(node, node, obj, slice.Label, "ghostAbbr");
+			var slice = new GhostStringSlice(obj, flidEmptyProp, node, m_cache);
+			// Set the label and abbreviation (in that order...abbr defaults to label if not given.
+			// Note that we don't have a "caller" here, so we pass 'node' as both arguments...
+			// means it gets searched twice if not found, but that's fairly harmless.
+			slice.Label = GetLabel(node, node, obj, "ghostLabel");
+			slice.Abbreviation = GetLabelAbbr(node, node, obj, slice.Label, "ghostAbbr");
 
-				// Install new item at appropriate position and level.
-				slice.Indent = indent;
-				slice.Object = obj;
-				slice.Cache = m_cache;
-				slice.Mediator = m_mediator;
-				// A ghost string slice with no property table is a good way to cause crashes, do our level best to find an appropriate one
-				slice.PropTable = parentSlice != null ? parentSlice.PropTable : Slices.Count > 0 ? Slices[0].PropTable : PropTable;
+			// Install new item at appropriate position and level.
+			slice.Indent = indent;
+			slice.Object = obj;
+			slice.Cache = m_cache;
+			slice.Mediator = m_mediator;
+			// A ghost string slice with no property table is a good way to cause crashes, do our level best to find an appropriate one
+			slice.PropTable = parentSlice != null ? parentSlice.PropTable : Slices.Count > 0 ? Slices[0].PropTable : PropTable;
 
-				// We need a copy since we continue to modify path, so make it as compact as possible.
-				slice.Key = path.ToArray();
-				slice.ConfigurationNode = node;
-				slice.CallerNode = caller;
+			// We need a copy since we continue to modify path, so make it as compact as possible.
+			slice.Key = path.ToArray();
+			slice.ConfigurationNode = node;
+			slice.CallerNode = caller;
 
-				// dubious...should the string slice really get the context menu for the object?
-				slice.ShowContextMenu += OnShowContextMenu;
+			// dubious...should the string slice really get the context menu for the object?
+			slice.ShowContextMenu += OnShowContextMenu;
 
-				slice.SmallImages = SmallImages;
-				SetNodeWeight(node, slice);
+			slice.SmallImages = SmallImages;
+			SetNodeWeight(node, slice);
 
-				slice.FinishInit();
-				InsertSliceAndRegisterWithContextHelp(insertPosition, slice);
-			}
-			else
-			{
-				EnsureValidIndexForReusedSlice(slice, insertPosition);
-			}
+			slice.FinishInit();
+			InsertSliceAndRegisterWithContextHelp(insertPosition, slice);
 			slice.ParentSlice = parentSlice;
 			insertPosition++;
-			// Since we didn't add it to the path,
-			// then there is nothign to do at this end either..
-			//slice.GenerateChildren(node, caller, obj, indent, ref insertPosition, path, reuseMap);
-			//path.RemoveAt(path.Count - 1);
 		}
 
 		/// <summary>
@@ -2509,7 +2501,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		private const int kInstantSliceMax = 20;
 
-		private NodeTestResult AddSeqNode(ArrayList path, XmlNode node, ObjSeqHashMap reuseMap, int flid,
+		private NodeTestResult AddSeqNode(ArrayList path, XmlNode node, int flid,
 			ICmObject obj, Slice parentSlice, int indent, ref int insertPosition, bool fTestOnly, string layoutName,
 			bool fVisIfData, XmlNode caller)
 		{
@@ -2535,7 +2527,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// Nothing in seq....do we want a ghost slice?
 				if (XmlUtils.GetOptionalAttributeValue(node, "ghost") != null)
 				{
-					MakeGhostSlice(path, node, reuseMap, obj, parentSlice, flid, caller, indent, ref insertPosition);
+					MakeGhostSlice(path, node, obj, parentSlice, flid, caller, indent, ref insertPosition);
 				}
 			}
 			else if (cobj < kInstantSliceMax ||	// This may be a little on the small side
@@ -2548,7 +2540,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					path.Add(hvo);
 					insertPosition = CreateSlicesFor(m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo),
-						parentSlice, layoutOverride, layoutChoiceField, indent, insertPosition, path, reuseMap, caller);
+						parentSlice, layoutOverride, layoutChoiceField, indent, insertPosition, path, caller);
 					path.RemoveAt(path.Count - 1);
 				}
 			}
@@ -2680,7 +2672,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <returns>
 		/// NodeTestResult, an enum showing if usable data is contained in the field
 		/// </returns>
-		private NodeTestResult AddSimpleNode(ArrayList path, XmlNode node, ObjSeqHashMap reuseMap, string editor,
+		private NodeTestResult AddSimpleNode(ArrayList path, XmlNode node, string editor,
 			int flid, ICmObject obj, Slice parentSlice, int indent, ref int insPos, bool fTestOnly, bool fVisIfData, XmlNode caller)
 		{
 			var realSda = m_cache.DomainDataByFlid;
@@ -2855,54 +2847,44 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return NodeTestResult.kntrSomething; // slices always produce something.
 
 			path.Add(node);
-			Slice slice = GetMatchingSlice(path, reuseMap);
+			var slice = SliceFactory.Create(m_cache, editor, flid, node, obj, PersistenceProvder, m_mediator, m_propertyTable, caller);
 			if (slice == null)
 			{
-				slice = SliceFactory.Create(m_cache, editor, flid, node, obj, PersistenceProvder, m_mediator, m_propertyTable, caller, reuseMap);
-				if (slice == null)
-				{
-					// One way this can happen in TestLangProj is with a part ref for a custom field that
-					// has been deleted.
-					return NodeTestResult.kntrNothing;
-				}
-				Debug.Assert(slice != null);
-				// Set the label and abbreviation (in that order...abbr defaults to label if not given
-				if (slice.Label == null)
-					slice.Label = GetLabel(caller, node, obj, "label");
-				slice.Abbreviation = GetLabelAbbr(caller, node, obj, slice.Label, "abbr");
-
-				// Install new item at appropriate position and level.
-				slice.Indent = indent;
-				slice.Object = obj;
-				slice.Cache = m_cache;
-				slice.PersistenceProvider = PersistenceProvder;
-
-				// We need a copy since we continue to modify path, so make it as compact as possible.
-				slice.Key = path.ToArray();
-				// old code just set mediator, nothing ever set m_configurationParams. Maybe the two are redundant and should merge?
-				slice.Init(m_mediator, m_propertyTable, null);
-				slice.ConfigurationNode = node;
-				slice.CallerNode = caller;
-				slice.OverrideBackColor(XmlUtils.GetOptionalAttributeValue(node, "backColor"));
-				slice.ShowContextMenu += OnShowContextMenu;
-				slice.SmallImages = SmallImages;
-				SetNodeWeight(node, slice);
-
-				slice.FinishInit();
-				// Now done in Slice.ctor
-				//slice.Visible = false; // don't show it until we position and size it.
-
-				InsertSliceAndRegisterWithContextHelp(insPos, slice);
+				// One way this can happen in TestLangProj is with a part ref for a custom field that
+				// has been deleted.
+				return NodeTestResult.kntrNothing;
 			}
-			else
-			{
-				// Now done in Slice.ctor
-				//slice.Visible = false; // Since some slices are invisible, all must be, or Show() will reorder them.
-				EnsureValidIndexForReusedSlice(slice, insPos);
-			}
+			Debug.Assert(slice != null);
+			// Set the label and abbreviation (in that order...abbr defaults to label if not given
+			if (slice.Label == null)
+				slice.Label = GetLabel(caller, node, obj, "label");
+			slice.Abbreviation = GetLabelAbbr(caller, node, obj, slice.Label, "abbr");
+
+			// Install new item at appropriate position and level.
+			slice.Indent = indent;
+			slice.Object = obj;
+			slice.Cache = m_cache;
+			slice.PersistenceProvider = PersistenceProvder;
+
+			// We need a copy since we continue to modify path, so make it as compact as possible.
+			slice.Key = path.ToArray();
+			// old code just set mediator, nothing ever set m_configurationParams. Maybe the two are redundant and should merge?
+			slice.Init(m_mediator, m_propertyTable, null);
+			slice.ConfigurationNode = node;
+			slice.CallerNode = caller;
+			slice.OverrideBackColor(XmlUtils.GetOptionalAttributeValue(node, "backColor"));
+			slice.ShowContextMenu += OnShowContextMenu;
+			slice.SmallImages = SmallImages;
+			SetNodeWeight(node, slice);
+
+			slice.FinishInit();
+			// Now done in Slice.ctor
+			//slice.Visible = false; // don't show it until we position and size it.
+
+			InsertSliceAndRegisterWithContextHelp(insPos, slice);
 			slice.ParentSlice = parentSlice;
 			insPos++;
-			slice.GenerateChildren(node, caller, obj, indent, ref insPos, path, reuseMap, true);
+			slice.GenerateChildren(node, caller, obj, indent, ref insPos, path, true);
 			path.RemoveAt(path.Count - 1);
 
 			return NodeTestResult.kntrNothing; // arbitrary what we return if not testing (see first line of method.)
@@ -3048,7 +3030,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="reuseMap">The reuse map.</param>
 		/// <returns></returns>
 		public int ApplyChildren(ICmObject obj, Slice parentSlice, XmlNode template, int indent, int insertPosition,
-			ArrayList path, ObjSeqHashMap reuseMap)
+			ArrayList path)
 		{
 			CheckDisposed();
 			int insertPos = insertPosition;
@@ -3056,7 +3038,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				if (node.Name == "ChangeRecordHandler")
 					continue;	// Handle only at the top level (at least for now).
-				insertPos = ApplyLayout(obj, parentSlice, node, indent, insertPos, path, reuseMap);
+				insertPos = ApplyLayout(obj, parentSlice, node, indent, insertPos, path);
 			}
 			return insertPos;
 		}
@@ -4613,7 +4595,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var objItem = ContainingDataTree.Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 			Point oldPos = ContainingDataTree.AutoScrollPosition;
 			ContainingDataTree.CreateSlicesFor(objItem, parentSlice, m_layoutName, m_layoutChoiceField, m_indent, index + 1, path,
-				new ObjSeqHashMap(), m_caller);
+				m_caller);
 			// If inserting slices somehow altered the scroll position, for example as the
 			// silly Panel tries to make the selected control visible, put it back!
 			if (containingTree.AutoScrollPosition != oldPos)

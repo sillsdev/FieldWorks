@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class DictionaryConfigurationMigrator
 	{
-		public const int VersionCurrent = 25;
+		public const int VersionCurrent = 26;
 		internal const string NodePathSeparator = " > ";
 		public const string RootFileName = "Root";
 		public const string HybridFileName = "Hybrid";

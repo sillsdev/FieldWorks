@@ -15,8 +15,8 @@
 
     You should also have received a copy of the GNU Lesser General Public
     License along with this library in the file named "LICENSE".
-    If not, write to the Free Software Foundation, 51 Franklin Street, 
-    Suite 500, Boston, MA 02110-1335, USA or visit their web page on the 
+    If not, write to the Free Software Foundation, 51 Franklin Street,
+    Suite 500, Boston, MA 02110-1335, USA or visit their web page on the
     internet at http://www.fsf.org/licenses/lgpl.html.
 
 Alternatively, the contents of this file may be used under the terms of the
@@ -30,18 +30,6 @@ of the License or (at your option) any later version.
 #include <cassert>
 #include <cstddef>
 #include <cstring>
-
-#include <iterator>
-
-#if ((defined GCC_VERSION && GCC_VERSION >= 302) || (defined __INTEL_COMPILER && __INTEL_COMPILER >= 800) || defined(__clang__))
-    #define expect(expr,value)    (__builtin_expect ((expr),(value)) )
-#else
-    #define expect(expr,value)    (expr)
-#endif
-
-#define likely(expr)     expect((expr) != 0, 1)
-#define unlikely(expr)   expect((expr) != 0, 0)
-
 
 namespace
 {
@@ -59,10 +47,13 @@ typedef uint32_t u32;
 typedef uint64_t u64;
 #endif
 
-ptrdiff_t const     MINMATCH  = 4;
+ptrdiff_t const     MINMATCH = 4,
+                    LASTLITERALS = 5,
+                    MINCODA  = LASTLITERALS+1,
+                    MINSRCSIZE = 13;
 
 template<int S>
-inline 
+inline
 void unaligned_copy(void * d, void const * s) {
   ::memcpy(d, s, S);
 }
@@ -73,10 +64,16 @@ size_t align(size_t p) {
 }
 
 inline
+u8 * safe_copy(u8 * d, u8 const * s, size_t n) {
+    while (n--) *d++ = *s++;
+    return d;
+}
+
+inline
 u8 * overrun_copy(u8 * d, u8 const * s, size_t n) {
     size_t const WS = sizeof(unsigned long);
     u8 const * e = s + n;
-    do 
+    do
     {
         unaligned_copy<WS>(d, s);
         d += WS;
@@ -84,7 +81,7 @@ u8 * overrun_copy(u8 * d, u8 const * s, size_t n) {
     }
     while (s < e);
     d-=(s-e);
-    
+
     return d;
 }
 
@@ -93,28 +90,15 @@ inline
 u8 * fast_copy(u8 * d, u8 const * s, size_t n) {
     size_t const WS = sizeof(unsigned long);
     size_t wn = n/WS;
-    while (wn--) 
+    while (wn--)
     {
         unaligned_copy<WS>(d, s);
         d += WS;
         s += WS;
     }
     n &= WS-1;
-    while (n--) {*d++ = *s++; }
-    
-    return d;
+    return safe_copy(d, s, n);
 }
 
-
-inline 
-u8 * copy(u8 * d, u8 const * s, size_t n) {
-    if (likely(d>s+sizeof(unsigned long)))
-        return overrun_copy(d,s,n);
-    else 
-        while (n--) *d++ = *s++;
-    return d;
-}
 
 } // end of anonymous namespace
-
-

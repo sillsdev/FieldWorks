@@ -400,7 +400,7 @@ namespace SIL.FieldWorks.FdoUi
 			switch (classId)
 			{
 				default:
-					return DefaultCreateNewUiObject(classId, hvoOwner, flid, insertionPosition, cache);
+					return DefaultCreateNewUiObject(mediator, classId, hvoOwner, flid, insertionPosition, cache);
 				case CmPossibilityTags.kClassId:
 					return CmPossibilityUi.CreateNewUiObject(propertyTable, classId, hvoOwner, flid, insertionPosition);
 				case PartOfSpeechTags.kClassId:
@@ -414,14 +414,23 @@ namespace SIL.FieldWorks.FdoUi
 			}
 		}
 
-		internal static CmObjectUi DefaultCreateNewUiObject(int classId, int hvoOwner, int flid, int insertionPosition, LcmCache cache)
+		internal static CmObjectUi DefaultCreateNewUiObject(Mediator mediator, int classId, int hvoOwner, int flid, int insertionPosition, LcmCache cache)
 		{
 			CmObjectUi newUiObj = null;
-			UndoableUnitOfWorkHelper.Do(FdoUiStrings.ksUndoInsert, FdoUiStrings.ksRedoInsert, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+			try
 			{
-				int newHvo = cache.DomainDataByFlid.MakeNewObject(classId, hvoOwner, flid, insertionPosition);
-				newUiObj = MakeUi(cache, newHvo, classId);
-			});
+				// Don't postpone PropChanged (cf. LT-22095).
+				mediator?.SendMessage("PostponePropChanged", false);
+				UndoableUnitOfWorkHelper.Do(FdoUiStrings.ksUndoInsert, FdoUiStrings.ksRedoInsert, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
+				{
+					int newHvo = cache.DomainDataByFlid.MakeNewObject(classId, hvoOwner, flid, insertionPosition);
+					newUiObj = MakeUi(cache, newHvo, classId);
+				});
+			}
+			finally
+			{
+				mediator?.SendMessage("PostponePropChanged", true);
+			}
 			return newUiObj;
 		}
 
@@ -1686,7 +1695,7 @@ namespace SIL.FieldWorks.FdoUi
 			var cache = propertyTable.GetValue<LcmCache>("cache");
 			if (CheckAndReportProblemAddingSubitem(cache, hvoOwner))
 				return null;
-			return DefaultCreateNewUiObject(classId, hvoOwner, flid, insertionPosition, cache);
+			return DefaultCreateNewUiObject(null, classId, hvoOwner, flid, insertionPosition, cache);
 		}
 
 		public override bool CanDelete(out string cannotDeleteMsg)

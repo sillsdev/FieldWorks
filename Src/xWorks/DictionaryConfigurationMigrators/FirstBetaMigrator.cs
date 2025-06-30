@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		internal void MigrateFrom83Alpha(ISimpleLogger logger, DictionaryConfigurationModel oldConfig, DictionaryConfigurationModel currentDefaultModel)
 		{
 			// it may be helpful to have parents and current custom fields in the oldConfig (currentDefaultModel already has them):
-			DictionaryConfigurationModel.SpecifyParentsAndReferences(oldConfig.Parts, oldConfig.SharedItems);
+			DictionaryConfigurationModel.SpecifyParentsAndReferences(oldConfig.Parts, sharedItems:oldConfig.SharedItems);
 			DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(oldConfig, Cache);
 			ChooseAppropriateComplexForms(oldConfig); // 13->14, but needed before rearranging and adding new nodes
 			ConflateMainEntriesIfNecessary(logger, oldConfig); // 12->13, but needed before rearranging and adding new nodes

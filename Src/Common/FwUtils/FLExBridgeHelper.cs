@@ -215,6 +215,35 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public static bool LaunchFieldworksBridge(string projectFolder, string userName, string command, string projectGuid,
 			int fwmodelVersionNumber, string liftModelVersionNumber, string writingSystemId, Action onNonBlockerCommandComplete,
 			out bool changesReceived, out string projectName)
+			{
+				return LaunchFieldworksBridge(projectFolder, userName, command, projectGuid, fwmodelVersionNumber, liftModelVersionNumber, writingSystemId, onNonBlockerCommandComplete,
+					out changesReceived, out projectName, null, null, null, null);
+			}
+
+		/// <summary>
+		/// Launches the FLExBridge application with the given commands and locks out the FLEx interface until the bridge
+		/// is closed.
+		/// </summary>
+		/// <param name="projectFolder">The entire FieldWorks project folder path.
+		/// Must include the project folder and project name with "fwdata" extension.
+		/// Empty is OK if not send_receive command.</param>
+		/// <param name="userName">the username to use in Chorus commits</param>
+		/// <param name="command">obtain, start, send_receive, view_notes</param>
+		/// <param name="projectGuid">Optional Lang Project guid, that is only used with the 'move_lift' command</param>
+		/// <param name="liftModelVersionNumber">Version of LIFT schema that is supported by FLEx.</param>
+		/// <param name="writingSystemId">The id of the first vernacular writing system</param>
+		/// <param name="fwmodelVersionNumber">Current FDO model version number</param>
+		/// <param name="onNonBlockerCommandComplete">Callback called when a non-blocker command has completed</param>
+		/// <param name="changesReceived">true if S/R made changes to the project.</param>
+		/// <param name="projectName">Name of the project to be opened after launch returns.</param>
+		/// <param name="projectUri">Full URI of the project, if known beforehand.</param>
+		/// <param name="name">The name of the project, if known beforehand.</param>
+		/// <param name="credentialsPassword">The authentication credentials which will allow access to the repo to clone, if known beforehand.</param>
+		/// <param name="repoIdentifier">The authentication credentials which will allow access to the repo to clone, if known beforehand.</param>
+		/// <returns>true if successful, false otherwise</returns>
+		public static bool LaunchFieldworksBridge(string projectFolder, string userName, string command, string projectGuid,
+			int fwmodelVersionNumber, string liftModelVersionNumber, string writingSystemId, Action onNonBlockerCommandComplete,
+			out bool changesReceived, out string projectName, Uri projectUri, string name, string credentialsPassword, string repoIdentifier)
 		{
 			_pipeID = string.Format(@"SendReceive{0}{1}", projectFolder, command);
 			_flexBridgeTerminated = false;
@@ -222,6 +251,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var args = "";
 			projectName = "";
 			_projectName = "";
+			string userCredentials = null;
+			if (projectUri != null)
+			{
+				var uriWithoutCredentials = projectUri.AbsoluteUri.Replace(projectUri.UserInfo + "@", "");
+				AddArg(ref args, "-uri", uriWithoutCredentials);
+				AddArg(ref args, "-project", name);
+				AddArg(ref args, "-user", userName);
+				AddArg(ref args, "-repositoryIdentifier", repoIdentifier);
+				userCredentials = string.Join(":", userName, credentialsPassword);
+			}
+
 			var userNameActual = userName;
 			if (string.IsNullOrEmpty(userName))
 				userNameActual = Environment.UserName; // default so we can always pass something.
@@ -279,13 +319,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (!host.Initialize<FLExBridgeService, IFLExBridgeService>("FLExBridgeEndpoint" + _pipeID, AlertFlex, CleanupHost))
 				return false;
 
-			LaunchFlexBridge(host, command, args, onNonBlockerCommandComplete, ref changesReceived, ref projectName);
+			LaunchFlexBridge(host, command, args, onNonBlockerCommandComplete, userCredentials, ref changesReceived, ref projectName);
 
 			return true;
 		}
 
 		private static void LaunchFlexBridge(IIPCHost host, string command, string args, Action onNonBlockerCommandComplete,
-			ref bool changesReceived, ref string projectName)
+			string userPass, ref bool changesReceived, ref string projectName)
 		{
 			string flexbridgeLauncher = FullFieldWorksBridgePath();
 			if (Platform.IsUnix)
@@ -298,8 +338,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 
 			// Launch the bridge process.
-			using (Process.Start(flexbridgeLauncher, args))
+			using (var process = new Process())
 			{
+				var startInfo = new ProcessStartInfo();
+				if (userPass != null) startInfo.EnvironmentVariables["CHORUS_CREDENTIALS"] = userPass;
+				startInfo.UseShellExecute = false;
+				startInfo.FileName = flexbridgeLauncher;
+				startInfo.Arguments = args;
+
+				process.StartInfo = startInfo;
+				process.Start();
 			}
 
 			var nonFlexBlockers = new HashSet<string>
@@ -380,7 +428,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 			extant += flag;
 			if (!string.IsNullOrEmpty(value))
 			{
-				bool hasWhitespace;
 				if (value.Any(Char.IsWhiteSpace))
 				{
 					extant += " \"" + value + "\"";

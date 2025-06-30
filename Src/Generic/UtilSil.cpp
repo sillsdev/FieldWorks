@@ -385,7 +385,7 @@ const Normalizer2* SilUtil::GetIcuNormalizer(UNormalizationMode mode)
 	}
 
 	if (!U_SUCCESS(uerr))
-		ThrowHr(E_FAIL);
+		ThrowInternalError(E_FAIL, "Failed to load normalizer. Check ICU_DATA environment variable.");
 
 	return norm;
 }

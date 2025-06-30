@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -185,5 +185,11 @@
   </data>
   <data name="ksUnknownNaturalClass" xml:space="preserve">
     <value>Unknown Natural Class!</value>
+  </data>
+  <data name="ksParsingX" xml:space="preserve">
+    <value>Parsing {0}</value>
+  </data>
+  <data name="ksMaxElementsInRule" xml:space="preserve">
+    <value>A rule can't have more than one element in its left-hand side or its right-hand side.</value>
   </data>
 </root>

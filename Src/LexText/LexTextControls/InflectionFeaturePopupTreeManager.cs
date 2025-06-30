@@ -63,6 +63,10 @@ namespace SIL.FieldWorks.LexText.Controls
 					TsStringUtils.MakeString(LexTextControls.ksChooseInflFeats, Cache.WritingSystemFactory.UserWs),
 					kMore));
 			}
+
+			AddTimberLine(popupTree);
+			AddNotSureItem(popupTree);
+
 			return match;
 		}
 

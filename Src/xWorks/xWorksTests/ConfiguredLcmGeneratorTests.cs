@@ -95,9 +95,9 @@ namespace SIL.FieldWorks.XWorks
 			var entry = factory.Create();
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, null);
 			//SUT
-			Assert.Throws(typeof(ArgumentNullException), () => ConfiguredLcmGenerator.GenerateXHTMLForEntry(null, mainEntryNode, null, settings));
-			Assert.Throws(typeof(ArgumentNullException), () => ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, (ConfigurableDictionaryNode)null, null, settings));
-			Assert.Throws(typeof(ArgumentNullException), () => ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, null));
+			Assert.Throws(typeof(ArgumentNullException), () => ConfiguredLcmGenerator.GenerateContentForEntry(null, mainEntryNode, null, settings));
+			Assert.Throws(typeof(ArgumentNullException), () => ConfiguredLcmGenerator.GenerateContentForEntry(entry, (ConfigurableDictionaryNode)null, null, settings));
+			Assert.Throws(typeof(ArgumentNullException), () => ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, null));
 		}
 
 		[Test]
@@ -108,11 +108,11 @@ namespace SIL.FieldWorks.XWorks
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, new ReadOnlyPropertyTable(m_propertyTable), false, false, null);
 			//SUT
 			//Test a blank main node description
-			Assert.That(() => ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings),
+			Assert.That(() => ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings),
 				Throws.InstanceOf<ArgumentException>().With.Message.Contains("Invalid configuration"));
 			//Test a configuration with a valid but incorrect type
 			mainEntryNode.FieldDescription = "LexSense";
-			Assert.That(() => ConfiguredLcmGenerator.GenerateXHTMLForEntry(entry, mainEntryNode, null, settings),
+			Assert.That(() => ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings),
 				Throws.InstanceOf<ArgumentException>().With.Message.Contains("doesn't configure this type"));
 		}
 

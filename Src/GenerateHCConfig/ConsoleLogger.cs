@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using SIL.LCModel;
 using SIL.FieldWorks.WordWorks.Parser;
@@ -102,6 +102,11 @@ namespace GenerateHCConfig
 		public void InvalidReduplicationForm(IMoForm form, string reason, IMoMorphSynAnalysis msa)
 		{
 			Console.WriteLine("The reduplication form \"{0}\" is invalid. Reason: {1}", form.Form.VernacularDefaultWritingSystem.Text, reason);
+		}
+
+		public void InvalidRewriteRule(IPhRegularRule rule, string reason)
+		{
+			Console.WriteLine("The rewrite rule \"{0}\" is invalid. Reason: {1}", rule.Name.BestAnalysisVernacularAlternative.Text, reason);
 		}
 	}
 }

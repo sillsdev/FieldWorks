@@ -6,7 +6,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>SIL.InstallValidator</RootNamespace>
     <AssemblyName>InstallValidatorTests</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileUpgradeFlags>
     </FileUpgradeFlags>
     <OldToolsVersion>3.5</OldToolsVersion>
@@ -68,6 +68,7 @@
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="netstandard" />
     <Reference Include="FwBuildTasks">
       <HintPath>..\..\..\Build\FwBuildTasks.dll</HintPath>
     </Reference>

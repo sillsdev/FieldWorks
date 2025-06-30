@@ -293,7 +293,12 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			get
 			{
-				return new Size(120, 200);
+				return new Size(300, 400);
+				// Previously, used (120, 200) for the default size.
+				// Width set to 120 lets the popuptree dropdown match the width of the box that it drops down from,
+				// but this doesn't allow enough space to view trees that contain several layers.
+				// Note that the popuptree window will resize itself to smaller dimensions if needed
+				// to remain on screen & will add scrollbars as needed to display all nodes.
 			}
 		}
 

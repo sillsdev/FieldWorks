@@ -345,6 +345,9 @@
 		<part id="LexEntry-Jt-Allomorph" type="jtview">
 			<seq field="AlternateForms" layout="Allomorph"/>
 		</part>
+		<part id="LexEntry-Jt-AllomorphStemNames" type="jtview">
+			<seq field="AlternateForms" layout="AllomorphStemNames"/>
+		</part>
 		<part id="LexEntry-Jt-IsAbstractFormForAllomorph" type="jtview">
 			<seq field="AlternateForms" layout="IsAbstractFormForAllomorph"/>
 		</part>
@@ -364,6 +367,9 @@
 			<obj field="LexemeForm" layout="InflectionClassForLexemeForm"/>
 			<seq field="AlternateForms" layout="InflectionClassForAffix"/>
 		</part>
+        <part id="LexEntry-Jt-RequiredFeaturesForLexemeForm" type="JtView">
+          <obj field="LexemeForm" layout="RequiredFeatures"/>
+        </part>
 		<part id="LexEntry-Jt-RequiredFeatures" type="JtView">
 			<seq field="AlternateForms" layout="RequiredFeatures"/>
 		</part>

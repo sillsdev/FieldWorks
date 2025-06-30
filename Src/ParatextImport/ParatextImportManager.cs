@@ -305,7 +305,7 @@ namespace ParatextImport
 			{
 				// Refresh all the views of all applications connected to the same DB. This
 				// will cause any needed Scripture data to be reloaded lazily.
-				m_app.Synchronize(SyncMsg.ksyncStyle);
+				m_app.Synchronize();
 			}
 			return firstImported;
 		}

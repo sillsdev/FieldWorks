@@ -41,6 +41,24 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		RecordClerk m_clerk;
 
+		private string m_currentTool = "";
+
+		public bool PreviousShowVScroll;
+
+		private void RefreshIfNecessary(object sender, LayoutEventArgs e)
+		{
+			bool showVScroll = ((SimpleRootSite)m_rootb?.Site)?.IsVScrollVisible ?? false;
+			Layout -= RefreshIfNecessary;
+			if (showVScroll != PreviousShowVScroll)
+				RootBox?.Reconstruct();
+		}
+
+		public string CurrentTool
+		{
+			get { return m_currentTool; }
+		}
+
+
 		public RawTextPane() : base(null)
 		{
 			BackColor = Color.FromKnownColor(KnownColor.Window);
@@ -158,6 +176,8 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+
+
 		internal int LastFoundAnnotationHvo
 		{
 			get
@@ -215,13 +235,15 @@ namespace SIL.FieldWorks.IText
 
 		protected override void  OnKeyPress(KeyPressEventArgs e)
 		{
-			if (e.KeyChar == (int) Keys.Escape)
+			// Might need to handle scrollbar visibility changes so add a handler to refresh if necessary.
+			if (e.KeyChar == (int)Keys.Escape)
 			{
 				TurnOffClickInvisibleSpace();
 			}
 			base.OnKeyPress(e);
 			Cursor.Current = Cursors.IBeam;
 		}
+
 
 		Cursor m_invisibleSpaceCursor;
 
@@ -294,6 +316,12 @@ namespace SIL.FieldWorks.IText
 			{
 				if (RootObject != null && m_rootb != null && m_rootb.Selection.IsValid)
 					wsBefore = SelectionHelper.GetWsOfEntireSelection(m_rootb.Selection);
+			}
+
+			if (name == "ActiveClerkSelectedObject")
+			{
+				Layout += RefreshIfNecessary;
+				PreviousShowVScroll = ((SimpleRootSite)m_rootb?.Site)?.IsVScrollVisible ?? false;
 			}
 
 			base.OnPropertyChanged(name);
@@ -472,8 +500,8 @@ namespace SIL.FieldWorks.IText
 		{
 			if (Parent == null && string.IsNullOrEmpty(levent.AffectedProperty))
 				return; // width is meaningless, no point in doing extra work
-			// In a tab page this panel occupies the whole thing, so layout is wasted until
-			// our size is adjusted to match.
+						// In a tab page this panel occupies the whole thing, so layout is wasted until
+						// our size is adjusted to match.
 			if (Parent is TabPage && (Parent.Width - Parent.Padding.Horizontal) != this.Width)
 				return;
 			base.OnLayout(levent);
@@ -496,15 +524,15 @@ namespace SIL.FieldWorks.IText
 
 			switch (dpt)
 			{
-			case VwDelProbType.kdptBsAtStartPara:
-			case VwDelProbType.kdptDelAtEndPara:
-			case VwDelProbType.kdptNone:
-				return VwDelProbResponse.kdprDone;
-			case VwDelProbType.kdptBsReadOnly:
-			case VwDelProbType.kdptComplexRange:
-			case VwDelProbType.kdptDelReadOnly:
-			case VwDelProbType.kdptReadOnly:
-				return VwDelProbResponse.kdprFail;
+				case VwDelProbType.kdptBsAtStartPara:
+				case VwDelProbType.kdptDelAtEndPara:
+				case VwDelProbType.kdptNone:
+					return VwDelProbResponse.kdprDone;
+				case VwDelProbType.kdptBsReadOnly:
+				case VwDelProbType.kdptComplexRange:
+				case VwDelProbType.kdptDelReadOnly:
+				case VwDelProbType.kdptReadOnly:
+					return VwDelProbResponse.kdprFail;
 			}
 			return VwDelProbResponse.kdprAbort;
 		}
@@ -634,7 +662,7 @@ namespace SIL.FieldWorks.IText
 					ihvoEnd,
 					null, // don't set any special text props for typing
 					true); // install it
-				// Don't steal the focus from another window.  See FWR-1795.
+						   // Don't steal the focus from another window.  See FWR-1795.
 				if (ParentForm == Form.ActiveForm)
 					Focus();
 				// Scroll this selection into View.
@@ -652,7 +680,21 @@ namespace SIL.FieldWorks.IText
 		public void SelectBookmark(IStTextBookmark bookmark)
 		{
 			CheckDisposed();
-			MakeTextSelectionAndScrollToView(bookmark.BeginCharOffset, bookmark.EndCharOffset, 0, bookmark.IndexOfParagraph);
+			if (CanFocus)
+				MakeTextSelectionAndScrollToView(bookmark.BeginCharOffset, bookmark.EndCharOffset, 0, bookmark.IndexOfParagraph);
+			else
+				VisibleChanged += RawTextPane_VisibleChanged;
+		}
+
+		private void RawTextPane_VisibleChanged(object sender, EventArgs e)
+		{
+			if (CanFocus)
+			{
+				var bookmark = InterlinMaster.m_bookmarks[new Tuple<string, Guid>(CurrentTool, RootObject.Guid)];
+				MakeTextSelectionAndScrollToView(bookmark.BeginCharOffset, bookmark.EndCharOffset, 0, bookmark.IndexOfParagraph);
+
+				VisibleChanged -= RawTextPane_VisibleChanged;
+			}
 		}
 
 		#endregion
@@ -891,6 +933,7 @@ namespace SIL.FieldWorks.IText
 			m_configurationParameters = configurationParameters;
 			m_clerk = ToolConfiguration.FindClerk(m_propertyTable, m_configurationParameters);
 			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
+			m_currentTool = configurationParameters.Attributes["clerk"].Value;
 		}
 	}
 
@@ -1008,12 +1051,12 @@ namespace SIL.FieldWorks.IText
 
 			// get para info
 			IStTxtPara para = Cache.ServiceLocator.GetInstance<IStTxtParaRepository>().GetObject(hvo);
-//			ITsTextProps props = StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs);
-//
-//			// set string info based on the para info
-//			ITsStrBldr bldr = (ITsStrBldr)tssVal.GetBldr();
-//			bldr.SetProperties(0, bldr.Length, props);
-//			tssVal = bldr.GetString();
+			//			ITsTextProps props = StyleUtils.CharStyleTextProps(null, Cache.DefaultVernWs);
+			//
+			//			// set string info based on the para info
+			//			ITsStrBldr bldr = (ITsStrBldr)tssVal.GetBldr();
+			//			bldr.SetProperties(0, bldr.Length, props);
+			//			tssVal = bldr.GetString();
 
 			// Add the text the user just typed to the paragraph - this destroys the selection
 			// because we replace the user prompt.

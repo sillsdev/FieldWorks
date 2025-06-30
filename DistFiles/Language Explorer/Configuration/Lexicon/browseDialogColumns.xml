@@ -175,6 +175,7 @@
 		</dynamicloaderinfo>
 	</column>
 			<!--bulkEdit="customCollection" field="MoAffixForm.InflectionClasses" list="" -->
+    <column layout="RequiredFeaturesForLexemeForm" multipara="true" label="Required Features" visibility="dialog"/>
 	<column layout="RequiredFeatures" multipara="true" label="Required Features (Allomorph)" visibility="dialog"/>
 	<column layout="HomographNumberForEntry" label="Homograph number" visibility="dialog" editable="true" sortType="integer" blankPossible="false" /><!-- editable requested by LT-4688 -->
 	<column layout="ComponentsBrowse" label="Components" multipara="true" editable="false" visibility="dialog" ws="$ws=vernacular" />
@@ -210,6 +211,8 @@
 		ghostListField="LexDb.AllExampleTranslationTargets"
 		field="CmTranslation.Type" bulkEdit="atomicFlatListItem" bulkDelete="false" list="LangProject.TranslationTags"/>
 	<column layout="StemNameForEntry" label="Stem Name" visibility="dialog"/>
+	<column layout="AllomorphStemNames" displayWs="best analysis" multipara="true" label="Stem Name (Allomorph)" sortmethod="MorphSortKey"
+	 ghostListField="LexDb.AllPossibleAllomorphs" visibility="dialog"/>
 	<!-- removed as per LT-9899
 	<column layout="InflectionClassForEntry" label="Inflection Classes (Entry)" visibility="dialog"/>
 	-->

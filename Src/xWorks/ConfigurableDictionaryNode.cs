@@ -1,10 +1,13 @@
-﻿// Copyright (c) 2014-2017 SIL International
+// Copyright (c) 2014-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
+using System.Security.Cryptography;
+using System.Text;
 using System.Xml.Serialization;
 using SIL.FieldWorks.Common.FwUtils;
 using System.Text.RegularExpressions;
@@ -28,6 +31,13 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		[XmlIgnore]
 		public StringTable StringTable { get; set; }
+
+		/// <summary>
+		/// This is the model that the configuration node is associated with, used for some
+		/// more global settings.
+		/// </summary>
+		[XmlIgnore]
+		public DictionaryConfigurationModel Model { get; set; }
 
 		/// <summary>
 		/// The non-editable portion of the label to display for this node
@@ -332,9 +342,44 @@ namespace SIL.FieldWorks.XWorks
 			return clone;
 		}
 
+		/// <summary>
+		/// Get a unique identifier for this node based on its hierarchy, Label, LabelSuffix, and FieldDescription.
+		/// Since this will be added into the XHTML, it should be a valid attribute, and as compact as we can make it
+		/// </summary>
+		public string GetNodeId()
+		{
+			// Build a unique path for the node based on its hierarchy
+			var nodePath = new StringBuilder();
+			var currentNode = this;
+
+			while (currentNode != null)
+			{
+				// Append Label, LabelSuffix, and FieldDescription to the path (This represents a non-localized primary key for the node)
+				nodePath.Insert(0, $"{currentNode.Label ?? ""}_{currentNode.LabelSuffix ?? ""}_{currentNode.FieldDescription ?? ""}|");
+				currentNode = currentNode.Parent;
+			}
+
+			// Hash the nodePath using SHA256
+			using (var sha256 = SHA256.Create())
+			{
+				var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(nodePath.ToString()));
+
+				// Convert the first 8 bytes of the hash to a hexadecimal string
+				var sb = new StringBuilder(16); // 8 bytes * 2 characters per byte
+				for (int i = 0; i < 8; i++)
+				{
+					sb.Append(hashBytes[i].ToString("x2"));
+				}
+
+				return sb.ToString();
+			}
+		}
+
+
 		public override int GetHashCode()
 		{
-			return Parent == null ? DisplayLabel.GetHashCode() : DisplayLabel.GetHashCode() ^ Parent.GetHashCode();
+			object hashingObject = DisplayLabel ?? FieldDescription;
+			return Parent == null ? hashingObject.GetHashCode() : hashingObject.GetHashCode() ^ Parent.GetHashCode();
 		}
 
 		public override bool Equals(object other)

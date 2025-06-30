@@ -853,7 +853,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			HandleMatchingSelectionChanged(e);
 		}
 
-		private void m_matchingObjectsBrowser_SelectionMade(object sender, FwObjectSelectionEventArgs e)
+		protected virtual void m_matchingObjectsBrowser_SelectionMade(object sender, FwObjectSelectionEventArgs e)
 		{
 			DialogResult = DialogResult.OK;
 			Close();

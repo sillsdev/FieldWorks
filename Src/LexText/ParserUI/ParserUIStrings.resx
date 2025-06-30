@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -156,13 +156,6 @@
     <value>Queue: ({0}/{1}/{2})</value>
     <comment>{0}, {1}, and {2} are numbers (or value of ksDash)</comment>
   </data>
-  <data name="ksUnknown" xml:space="preserve">
-    <value>Unknown</value>
-  </data>
-  <data name="ksUpdate" xml:space="preserve">
-    <value>Update</value>
-    <comment>related to ParserCoreStrings.ksUpdateX</comment>
-  </data>
   <data name="ksUndoEditingParserParameters" xml:space="preserve">
     <value>Undo Editing Parser Parameters</value>
   </data>
@@ -181,5 +174,177 @@
   </data>
   <data name="ksDidNotParse" xml:space="preserve">
     <value>Parse was not attempted because of errors in the lexical data</value>
+  </data>
+  <data name="ksDiffButton" xml:space="preserve">
+    <value>_Compare</value>
+  </data>
+  <data name="ksDiffButtonToolTip" xml:space="preserve">
+    <value>Show the difference between two selected reports (older report is subtracted from newer report) [Alt-C]</value>
+  </data>
+  <data name="ksDiffHeader" xml:space="preserve">
+    <value>Compare</value>
+  </data>
+  <data name="ksErrorMessage" xml:space="preserve">
+    <value>Error Message</value>
+  </data>
+  <data name="ksErrorMessageToolTip" xml:space="preserve">
+    <value>The error message reported by the parser</value>
+  </data>
+  <data name="ksMachineName" xml:space="preserve">
+    <value>Machine Name</value>
+  </data>
+  <data name="ksMachineNameToolTip" xml:space="preserve">
+    <value>The machine that the text was parsed on</value>
+  </data>
+  <data name="ksNumAnalyses" xml:space="preserve">
+    <value>Num Analyses</value>
+  </data>
+  <data name="ksNumAnalysesToolTip" xml:space="preserve">
+    <value>The number of analyses produced by the parser</value>
+  </data>
+  <data name="ksNumDisapprovedAnalyses" xml:space="preserve">
+    <value>Disapproved Analyses</value>
+  </data>
+  <data name="ksNumDisapprovedAnalysesToolTip" xml:space="preserve">
+    <value>The number of analyses produced by the parser that were disapproved by the user</value>
+  </data>
+  <data name="ksNumMissingAnalyses" xml:space="preserve">
+    <value>Failed Analyses</value>
+  </data>
+  <data name="ksNumMissingAnalysesToolTip" xml:space="preserve">
+    <value>The number of analyses approved by the user that the parser failed to produce</value>
+  </data>
+  <data name="ksNumNoOpinionAnalyses" xml:space="preserve">
+    <value>Unknown Analyses</value>
+  </data>
+  <data name="ksNumNoOpinionAnalysesToolTip" xml:space="preserve">
+    <value>The number of analyses produced by the parser that were neither approved nor disapproved by the user</value>
+  </data>
+  <data name="ksNumParseErrors" xml:space="preserve">
+    <value>Error Messages</value>
+  </data>
+  <data name="ksNumParseErrorsToolTip" xml:space="preserve">
+    <value>The number of error messages in the words parsed</value>
+  </data>
+  <data name="ksNumWordsParsed" xml:space="preserve">
+    <value>Words Parsed</value>
+  </data>
+  <data name="ksNumWordsParsedToolTip" xml:space="preserve">
+    <value>The number of distinct words parsed in the text</value>
+  </data>
+  <data name="ksNumZeroParses" xml:space="preserve">
+    <value>No Parses</value>
+  </data>
+  <data name="ksNumZeroParsesToolTip" xml:space="preserve">
+    <value>The number of words that got no parse</value>
+  </data>
+  <data name="ksParserTestReports" xml:space="preserve">
+    <value>Parser Test Reports</value>
+  </data>
+  <data name="ksParseTime" xml:space="preserve">
+    <value>Parse Time</value>
+  </data>
+  <data name="ksParseTimeToolTip" xml:space="preserve">
+    <value>The time it took to parse the word</value>
+  </data>
+  <data name="ksReparse" xml:space="preserve">
+    <value>Try A Word...</value>
+  </data>
+  <data name="ksReparseToolTip" xml:space="preserve">
+    <value>Parse this word using Try A Word</value>
+  </data>
+  <data name="ksShowAnalyses" xml:space="preserve">
+    <value>Show</value>
+  </data>
+  <data name="ksShowAnalysesToolTip" xml:space="preserve">
+    <value>Show the analyses of this word</value>
+  </data>
+  <data name="ksShowReport" xml:space="preserve">
+    <value>Show Report</value>
+  </data>
+  <data name="ksShowReportToolTip" xml:space="preserve">
+    <value>Show this test report</value>
+  </data>
+  <data name="ksText" xml:space="preserve">
+    <value>Text</value>
+  </data>
+  <data name="ksTextToolTip" xml:space="preserve">
+    <value>The text that was parsed</value>
+  </data>
+  <data name="ksTimestamp" xml:space="preserve">
+    <value>Timestamp</value>
+  </data>
+  <data name="ksTimestampToolTip" xml:space="preserve">
+    <value>When the text was parsed</value>
+  </data>
+  <data name="ksTotalAnalyses" xml:space="preserve">
+    <value>Num Analyses</value>
+  </data>
+  <data name="ksTotalAnalysesToolTip" xml:space="preserve">
+    <value>The total number of analyses in the words parsed</value>
+  </data>
+  <data name="ksTotalDisapprovedAnalyses" xml:space="preserve">
+    <value>Disapproved Analyses</value>
+  </data>
+  <data name="ksTotalDisapprovedAnalysesToolTip" xml:space="preserve">
+    <value>The total number of disapproved analyses in the words parsed</value>
+  </data>
+  <data name="ksTotalMissingAnalyses" xml:space="preserve">
+    <value>Failed Analyses</value>
+  </data>
+  <data name="ksTotalMissingAnalysesToolTip" xml:space="preserve">
+    <value>The total number of approved analyses that the parser failed to produce in the words parsed</value>
+  </data>
+  <data name="ksTotalNoOpinionAnalyses" xml:space="preserve">
+    <value>Unknown Analyses</value>
+  </data>
+  <data name="ksTotalNoOpinionAnalysesToolTip" xml:space="preserve">
+    <value>The total number of analyses that were neither approved not disapproved in the words parsed</value>
+  </data>
+  <data name="ksTotalParseTime" xml:space="preserve">
+    <value>Parse Time</value>
+  </data>
+  <data name="ksTotalParseTimeToolTip" xml:space="preserve">
+    <value>The total time it took to parse the words</value>
+  </data>
+  <data name="ksWord" xml:space="preserve">
+    <value>Word</value>
+  </data>
+  <data name="ksWordToolTip" xml:space="preserve">
+    <value>The word that was parsed</value>
+  </data>
+  <data name="ksDelete" xml:space="preserve">
+    <value>Delete {0} Reports</value>
+    <comment>Deleting parser reports {0} is the number selected</comment>
+  </data>
+  <data name="ksSelect" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="ksDeleteToolTip" xml:space="preserve">
+    <value>Delete the selected test reports from the disk</value>
+  </data>
+  <data name="ksGenre" xml:space="preserve">
+    <value>Genre</value>
+  </data>
+  <data name="ksXGenre" xml:space="preserve">
+    <value>{0} genre</value>
+  </data>
+  <data name="ksComment" xml:space="preserve">
+    <value>Comment</value>
+  </data>
+  <data name="ksCommentToolTip" xml:space="preserve">
+    <value>The comment provided by the user when the report was saved</value>
+  </data>
+  <data name="ksSaveReport" xml:space="preserve">
+    <value>Save Report</value>
+  </data>
+  <data name="ksSaveReportToolTip" xml:space="preserve">
+    <value>Save the report in the project</value>
+  </data>
+  <data name="ksEnterComment" xml:space="preserve">
+    <value>Please enter a comment for the parser report</value>
+  </data>
+  <data name="ksUnsavedParserReport" xml:space="preserve">
+    <value>(unsaved)</value>
   </data>
 </root>

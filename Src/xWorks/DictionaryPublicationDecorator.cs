@@ -244,54 +244,44 @@ namespace SIL.FieldWorks.XWorks
 			return Cache.GetOutlineNumber(sense, LexSenseTags.kflidSenses, false, true, this);
 		}
 
+		public override ITsMultiString get_MultiStringProp(int hvo, int tag)
+		{
+			if (tag == m_mlHeadwordFlid || tag == m_headwordRefFlid)
+			{
+				return new PublicationAwareMultiStringAccessor(hvo, tag, this);
+			}
+			return base.get_MultiStringProp(hvo, tag);
+		}
+
 		public override ITsString get_MultiStringAlt(int hvo, int tag, int ws)
 		{
-			if (tag == m_mlHeadwordFlid)
+			bool handleHeadwordTags = tag == m_mlHeadwordFlid || tag == m_headwordRefFlid || tag == m_headwordReversalFlid;
+			bool handleSenseTags = tag == m_mlOwnerOutlineFlid || tag == m_reversalNameFlid;
+
+			if (handleHeadwordTags)
 			{
 				int hn;
+				var headwordVariant = tag == m_mlHeadwordFlid ? HomographConfiguration.HeadwordVariant.Main :
+					tag == m_headwordRefFlid ? HomographConfiguration.HeadwordVariant.DictionaryCrossRef :
+					HomographConfiguration.HeadwordVariant.ReversalCrossRef;
 				if (m_homographNumbers.TryGetValue(hvo, out hn))
 				{
 					var entry = m_entryRepo.GetObject(hvo);
-					return StringServices.HeadWordForWsAndHn(entry, ws, hn, "",
-						HomographConfiguration.HeadwordVariant.Main);
+					return StringServices.HeadWordForWsAndHn(entry, ws, hn, "", headwordVariant);
 				}
-				// In case it's one we somehow don't know about, we'll let the base method try to get the real HN.
 			}
-			else if (tag == m_headwordRefFlid)
+			else if (handleSenseTags)
 			{
-				int hn;
-				if (m_homographNumbers.TryGetValue(hvo, out hn))
-				{
-					var entry = m_entryRepo.GetObject(hvo);
-					return StringServices.HeadWordForWsAndHn(entry, ws, hn, "",
-						HomographConfiguration.HeadwordVariant.DictionaryCrossRef);
-				}
-				// In case it's one we somehow don't know about, we'll let the base method try to get the real HN.
-			}
-			else if (tag == m_headwordReversalFlid)
-			{
-				int hn;
-				if (m_homographNumbers.TryGetValue(hvo, out hn))
-				{
-					var entry = m_entryRepo.GetObject(hvo);
-					return StringServices.HeadWordForWsAndHn(entry, ws, hn, "",
-						HomographConfiguration.HeadwordVariant.ReversalCrossRef);
-				}
-				// In case it's one we somehow don't know about, we'll let the base method try to get the real HN.
-			}
-			else if (tag == m_mlOwnerOutlineFlid)
-			{
+				var headwordVariant = tag == m_mlOwnerOutlineFlid ? HomographConfiguration.HeadwordVariant.DictionaryCrossRef :
+					HomographConfiguration.HeadwordVariant.ReversalCrossRef;
+
 				// This adapts the logic of LexSense.OwnerOutlineNameForWs
 				var sense = m_senseRepo.GetObject(hvo);
-				return OwnerOutlineNameForWs(sense, ws, HomographConfiguration.HeadwordVariant.DictionaryCrossRef);
+				return OwnerOutlineNameForWs(sense, ws, headwordVariant);
 			}
-			else if (tag == m_reversalNameFlid)
-			{
-				// This adapts the logic of LexSense.OwnerOutlineNameForWs
-				var sense = m_senseRepo.GetObject(hvo);
-				return OwnerOutlineNameForWs(sense, ws, HomographConfiguration.HeadwordVariant.ReversalCrossRef);
-			}
-			return base.get_MultiStringAlt(hvo, tag, ws);
+
+			// If the headword was excluded, we need to return an empty string.
+			return TsStringUtils.MakeString(string.Empty, ws);
 		}
 
 		/// <summary>
@@ -525,7 +515,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="hvoRef"></param>
 		/// <returns></returns>
-		private bool IsPublishableLexRef(int hvoRef)
+		internal bool IsPublishableLexRef(int hvoRef)
 		{
 			var publishableItems = VecProp(hvoRef, LexReferenceTags.kflidTargets);
 			int originalItemCount = BaseSda.get_VecSize(hvoRef, LexReferenceTags.kflidTargets);
@@ -567,14 +557,11 @@ namespace SIL.FieldWorks.XWorks
 
 		public override int get_VecSize(int hvo, int tag)
 		{
-			// Enhance JohnT: might be more efficient to call base if not a modified property?
 			return VecProp(hvo, tag).Length;
 		}
 
 		public override int get_VecItem(int hvo, int tag, int index)
 		{
-			// Enhance JohnT: might be more efficient to call base if not a modified property?
-			// Enhance JohnT: Sstop the enumeration filter when we get the one we need.
 			return VecProp(hvo, tag)[index];
 		}
 
@@ -614,6 +601,84 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 			// A reference is also not publishable if all of its PrimarySensesOrEntries are excluded
 			return entryRef.PrimarySensesOrEntries.Any(senseOrEntry => !m_excludedItems.Contains(senseOrEntry.Item.Hvo));
+		}
+
+		private class PublicationAwareMultiStringAccessor : IMultiAccessorBase
+		{
+			private readonly int m_hvo;
+			private readonly int m_tag;
+			private readonly DictionaryPublicationDecorator m_decorator;
+
+			public PublicationAwareMultiStringAccessor(int hvo, int tag, DictionaryPublicationDecorator decorator)
+			{
+				m_hvo = hvo;
+				m_tag = tag;
+				m_decorator = decorator;
+			}
+
+			public ITsString GetStringFromIndex(int iws, out int _ws)
+			{
+				throw new NotImplementedException();
+			}
+
+			public ITsString get_String(int ws)
+			{
+				return m_decorator.get_MultiStringAlt(m_hvo, m_tag, ws);
+			}
+
+			public void set_String(int ws, ITsString _tss)
+			{
+				throw new NotImplementedException();
+			}
+
+			public int StringCount { get; }
+			public void SetAnalysisDefaultWritingSystem(string val)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void SetVernacularDefaultWritingSystem(string val)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void SetUserWritingSystem(string val)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void set_String(int ws, string val)
+			{
+				throw new NotImplementedException();
+			}
+
+			public bool TryWs(int ws, out int actualWs)
+			{
+				throw new NotImplementedException();
+			}
+
+			public bool TryWs(int ws, out int actualWs, out ITsString tssActual)
+			{
+				throw new NotImplementedException();
+			}
+
+			public ITsString StringOrNull(int ws)
+			{
+				throw new NotImplementedException();
+			}
+
+			public int Flid { get; }
+			public ITsString NotFoundTss { get; }
+			public ITsString AnalysisDefaultWritingSystem { get; set; }
+			public ITsString VernacularDefaultWritingSystem { get; set; }
+			public string UiString { get; }
+			public ITsString UserDefaultWritingSystem { get; set; }
+			public ITsString RawUserDefaultWritingSystem { get; }
+			public ITsString BestAnalysisVernacularAlternative { get; }
+			public ITsString BestAnalysisAlternative { get; }
+			public ITsString BestVernacularAlternative { get; }
+			public ITsString BestVernacularAnalysisAlternative { get; }
+			public int[] AvailableWritingSystemIds { get; }
 		}
 	}
 }

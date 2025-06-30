@@ -612,7 +612,7 @@
     <value>User_Interface/Field_Descriptions/Grammar/Features_fields/description_field_feature_features.htm</value>
   </data>
   <data name="khtpField-FsClosedFeature-ShowInGloss" xml:space="preserve">
-    <value>User_Interface/Field_Descriptions/Grammar/Inflection_Features_fields/Show_Abbr_as_label_field_Features.htm</value>
+    <value>User_Interface/Field_Descriptions/Grammar/Inflection_Features_fields/Display_label_field_(Features).htm</value>
   </data>
   <data name="khtpField-FsComplexFeature-Type" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Grammar/Features_fields/Type_field_Features.htm</value>
@@ -2103,7 +2103,7 @@
     <value>User_Interface/Field_Descriptions/Grammar/Inflection_Features_fields/name_field_feature_features.htm</value>
   </data>
   <data name="khtpField-featuresAdvancedEdit-FsComplexFeature-ShowInGloss" xml:space="preserve">
-    <value>User_Interface/Field_Descriptions/Grammar/Inflection_Features_fields/Show_Abbr_as_label_field_Features.htm</value>
+    <value>User_Interface/Field_Descriptions/Grammar/Inflection_Features_fields/Display_label_field_(Features).htm</value>
   </data>
   <data name="khtpField-featuresAdvancedEdit-FsComplexFeature-SpecialNote" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Grammar/Inflection_Features_fields/Special_Note_field_Features.htm</value>

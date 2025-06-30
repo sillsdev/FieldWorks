@@ -25,8 +25,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	[TestFixture]
 	public class HCLoaderTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
-		private const string PrefixNull = "([StrRep:{\"&0\", \"*0\", \"^0\", \"∅\", \"Ø\"}, Type:boundary][StrRep:\"+\", Type:boundary])*";
-		private const string SuffixNull = "([StrRep:\"+\", Type:boundary][StrRep:{\"&0\", \"*0\", \"^0\", \"∅\", \"Ø\"}, Type:boundary])*";
+		private const string PrefixNull = "([StrRep:{\"&0\", \"*0\", \"^0\", \"∅\"}, Type:boundary][StrRep:\"+\", Type:boundary])*";
+		private const string SuffixNull = "([StrRep:\"+\", Type:boundary][StrRep:{\"&0\", \"*0\", \"^0\", \"∅\"}, Type:boundary])*";
 		private const string AnyPlus = PrefixNull + "ANY+" + SuffixNull;
 		private const string AnyStar = PrefixNull + "ANY*" + SuffixNull;
 		private const string VowelFS = "[cons:-, Type:segment, voc:+]";
@@ -41,7 +41,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			InvalidPhoneme,
 			DuplicateGrapheme,
 			InvalidEnvironment,
-			InvalidRedupForm
+			InvalidRedupForm,
+			InvalidRewriteRule
 		}
 
 		private class TestHCLoadErrorLogger : IHCLoadErrorLogger
@@ -81,6 +82,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			public void InvalidReduplicationForm(IMoForm form, string reason, IMoMorphSynAnalysis msa)
 			{
 				m_loadErrors.Add(Tuple.Create(LoadErrorType.InvalidRedupForm, (ICmObject) msa));
+			}
+
+			public void InvalidRewriteRule(IPhRegularRule rule, string reason)
+			{
+				m_loadErrors.Add(Tuple.Create(LoadErrorType.InvalidRedupForm, (ICmObject) rule));
 			}
 		}
 
@@ -956,7 +962,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcStemEntry.PrimaryAllomorph.AllomorphCoOccurrenceRules.Count, Is.EqualTo(1));
 			AllomorphCoOccurrenceRule coOccurRule = hcStemEntry.PrimaryAllomorph.AllomorphCoOccurrenceRules.First();
 			Assert.That(coOccurRule.Adjacency, Is.EqualTo(MorphCoOccurrenceAdjacency.SomewhereToRight));
-			Assert.That(coOccurRule.Key.Morpheme.ToString(), Is.EqualTo("sag"));
 			Assert.That(coOccurRule.Others.Select(a => a.Morpheme.ToString()), Is.EqualTo(new[] {"-ɯd"}));
 		}
 
@@ -977,7 +982,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcStemEntry.MorphemeCoOccurrenceRules.Count, Is.EqualTo(1));
 			MorphemeCoOccurrenceRule coOccurRule = hcStemEntry.MorphemeCoOccurrenceRules.First();
 			Assert.That(coOccurRule.Adjacency, Is.EqualTo(MorphCoOccurrenceAdjacency.AdjacentToRight));
-			Assert.That(coOccurRule.Key.ToString(), Is.EqualTo("sag"));
 			Assert.That(coOccurRule.Others.Select(a => a.ToString()), Is.EqualTo(new[] {"-ɯd"}));
 		}
 
@@ -988,9 +992,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Cache.LanguageProject.PhonologicalDataOA.PhonRulesOS.Add(prule);
 			prule.Name.SetAnalysisDefaultWritingSystem("prule");
 			prule.Direction = 2;
-			IPhSimpleContextSeg segCtxt = Cache.ServiceLocator.GetInstance<IPhSimpleContextSegFactory>().Create();
-			prule.StrucDescOS.Add(segCtxt);
-			segCtxt.FeatureStructureRA = GetPhoneme("a");
 			IPhSimpleContextNC ncCtxt = Cache.ServiceLocator.GetInstance<IPhSimpleContextNCFactory>().Create();
 			prule.StrucDescOS.Add(ncCtxt);
 			ncCtxt.FeatureStructureRA = m_vowel;
@@ -1021,7 +1022,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			Assert.That(hcPrule.Direction, Is.EqualTo(Machine.DataStructures.Direction.LeftToRight));
 			Assert.That(hcPrule.ApplicationMode, Is.EqualTo(RewriteApplicationMode.Simultaneous));
-			Assert.That(hcPrule.Lhs.ToString(), Is.EqualTo(m_lang.Strata[0].CharacterDefinitionTable["a"].FeatureStruct + VowelFS));
+			Assert.That(hcPrule.Lhs.ToString(), Is.EqualTo(VowelFS));
 
 			Assert.That(hcPrule.Subrules.Count, Is.EqualTo(1));
 			RewriteSubrule subrule = hcPrule.Subrules[0];
@@ -1266,16 +1267,22 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		[Test]
 		public void VariantStem()
 		{
-			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphStem, "sag", "gloss", new SandboxGenericMSA {MsaType = MsaType.kStem, MainPOS = m_verb});
+			ILexEntry entry = AddEntry(MoMorphTypeTags.kguidMorphStem, "sag", "gloss", new SandboxGenericMSA { MsaType = MsaType.kStem, MainPOS = m_verb });
 			ILexEntryInflType type = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypPluralVar);
 			type.GlossAppend.SetAnalysisDefaultWritingSystem(".pl");
 			type.InflFeatsOA = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
-			CreateFeatStruc(Cache.LanguageProject.MsFeatureSystemOA, m_inflType, type.InflFeatsOA, new FS {{"nounAgr", new FS {{"num", "pl"}}}});
+			CreateFeatStruc(Cache.LanguageProject.MsFeatureSystemOA, m_inflType, type.InflFeatsOA, new FS { { "nounAgr", new FS { { "num", "pl" } } } });
 			ILexEntryRef entryRef = entry.CreateVariantEntryAndBackRef(type, TsStringUtils.MakeString("sau", Cache.DefaultVernWs));
 			entryRef.VariantEntryTypesRS.Add(Cache.ServiceLocator.GetInstance<ILexEntryTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypFreeVar));
+
+			ILexEntryInflType type3 = Cache.ServiceLocator.GetInstance<ILexEntryInflTypeRepository>().GetObject(LexEntryTypeTags.kguidLexTypIrregInflectionVar);
+			type3.GlossAppend.SetAnalysisDefaultWritingSystem(".sg");
+			type3.InflFeatsOA = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
+			CreateFeatStruc(Cache.LanguageProject.MsFeatureSystemOA, m_inflType, type3.InflFeatsOA, new FS { { "nounAgr", new FS { { "num", "sg" } } } });
+			ILexEntryRef entryRef3 = entry.CreateVariantEntryAndBackRef(type3, TsStringUtils.MakeString("sai", Cache.DefaultVernWs));
 			LoadLanguage();
 
-			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(3));
+			Assert.That(m_lang.Strata[0].Entries.Count, Is.EqualTo(4));
 			LexEntry hcEntry = m_lang.Strata[0].Entries.ElementAt(0);
 			Assert.That(hcEntry.Gloss, Is.EqualTo("gloss"));
 			Assert.That(hcEntry.Allomorphs.Count, Is.EqualTo(1));
@@ -1286,7 +1293,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcEntry.Allomorphs.Count, Is.EqualTo(1));
 			Assert.That(hcEntry.PrimaryAllomorph.Segments.ToString(), Is.EqualTo("sau"));
 			Assert.That(hcEntry.SyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[nounAgr:[num:pl]], POS:V]"));
-			Assert.That(hcEntry.MprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"Plural Variant"}));
+			Assert.That(hcEntry.MprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] { "Plural Variant" }));
 
 			hcEntry = m_lang.Strata[0].Entries.ElementAt(2);
 			Assert.That(hcEntry.Gloss, Is.EqualTo("gloss"));
@@ -1294,6 +1301,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(hcEntry.PrimaryAllomorph.Segments.ToString(), Is.EqualTo("sau"));
 			Assert.That(hcEntry.SyntacticFeatureStruct.ToString(), Is.EqualTo("[POS:V]"));
 			Assert.That(hcEntry.MprFeatures, Is.Empty);
+
+			hcEntry = m_lang.Strata[0].Entries.ElementAt(3);
+			Assert.That(hcEntry.Gloss, Is.EqualTo("gloss.sg"));
+			Assert.That(hcEntry.Allomorphs.Count, Is.EqualTo(1));
+			Assert.That(hcEntry.PrimaryAllomorph.Segments.ToString(), Is.EqualTo("sai"));
+			Assert.That(hcEntry.SyntacticFeatureStruct.ToString(), Is.EqualTo("[Head:[nounAgr:[num:sg]], POS:V]"));
+			Assert.That(hcEntry.MprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] { "Irregular Inflectional Variant" }));
 		}
 
 		[Test]

@@ -4003,7 +4003,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					setUsed.Add(lsSub.Hvo);
 			}
 			// If we're keeping only the imported data, delete any unused subsense.
-			if (m_msImport == MergeStyle.MsKeepOnlyNew  || m_msImport == MergeStyle.MsTheCombine)
+			if (m_msImport == MergeStyle.MsKeepOnlyNew)
 			{
 				foreach (int hvo in ls.SensesOS.ToHvoArray())
 				{
@@ -4063,7 +4063,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					setUsed.Add(les.Hvo);
 			}
 			// If we're keeping only the imported data, delete any unused example.
-			if (m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
+			if (m_msImport == MergeStyle.MsKeepOnlyNew)
 			{
 				foreach (int hvo in ls.ExamplesOS.ToHvoArray())
 				{
@@ -4297,7 +4297,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					setUsed.Add(ct.Hvo);
 			}
 			// If we're keeping only the imported data, erase any unused existing data first.
-			if (m_msImport == MergeStyle.MsKeepOnlyNew || m_msImport == MergeStyle.MsTheCombine)
+			if (m_msImport == MergeStyle.MsKeepOnlyNew)
 			{
 				foreach (int hvo in les.TranslationsOC.ToHvoArray())
 				{
@@ -6351,6 +6351,9 @@ namespace SIL.FieldWorks.LexText.Controls
 					case "scientific-name":
 						ls.ScientificName = StoreTsStringValue(m_fCreatingNewSense, ls.ScientificName, field.Content);
 						break;
+					case "exemplar":
+						MergeInMultiString(ls.Exemplar, LexSenseTags.kflidExemplar, field.Content, ls.Guid);
+						break;
 					default:
 						ProcessUnknownField(ls, sense, field,
 							"LexSense", "custom-sense-", LexSenseTags.kClassId);
@@ -6467,6 +6470,14 @@ namespace SIL.FieldWorks.LexText.Controls
 						if (StringsConflict(ls.ScientificName, GetFirstLiftTsString(field.Content)))
 						{
 							m_cdConflict = new ConflictingSense("Scientific Name", ls, this);
+							return true;
+						}
+						break;
+					case "exemplar":
+						AddNewWsToVernacular();
+						if (MultiTsStringsConflict(ls.Exemplar, field.Content))
+						{
+							m_cdConflict = new ConflictingSense("Exemplar", ls, this);
 							return true;
 						}
 						break;

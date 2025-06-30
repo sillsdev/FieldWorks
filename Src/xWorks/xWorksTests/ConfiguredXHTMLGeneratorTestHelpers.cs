@@ -381,20 +381,25 @@ namespace SIL.FieldWorks.XWorks
 
 		private void AddSenseAndTwoSubsensesToEntry(ICmObject entryOrSense, string gloss)
 		{
-			var senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
+			AddSenseAndTwoSubsensesToEntry(entryOrSense, gloss, Cache, m_wsEn);
+		}
+
+		internal static void AddSenseAndTwoSubsensesToEntry(ICmObject entryOrSense, string gloss, LcmCache cache, int ws)
+		{
+			var senseFactory = cache.ServiceLocator.GetInstance<ILexSenseFactory>();
 			var sense = senseFactory.Create();
 			var entry = entryOrSense as ILexEntry;
 			if (entry != null)
 				entry.SensesOS.Add(sense);
 			else
 				((ILexSense)entryOrSense).SensesOS.Add(sense);
-			sense.Gloss.set_String(m_wsEn, TsStringUtils.MakeString(gloss, m_wsEn));
+			sense.Gloss.set_String(ws, TsStringUtils.MakeString(gloss, ws));
 			var subSensesOne = senseFactory.Create();
 			sense.SensesOS.Add(subSensesOne);
-			subSensesOne.Gloss.set_String(m_wsEn, TsStringUtils.MakeString(gloss + "2.1", m_wsEn));
+			subSensesOne.Gloss.set_String(ws, TsStringUtils.MakeString(gloss + "2.1", ws));
 			var subSensesTwo = senseFactory.Create();
 			sense.SensesOS.Add(subSensesTwo);
-			subSensesTwo.Gloss.set_String(m_wsEn, TsStringUtils.MakeString(gloss + "2.2", m_wsEn));
+			subSensesTwo.Gloss.set_String(ws, TsStringUtils.MakeString(gloss + "2.2", ws));
 		}
 
 		private void AddSingleSubSenseToSense(string gloss, ILexSense sense)
@@ -448,7 +453,7 @@ namespace SIL.FieldWorks.XWorks
 			if (caption != null)
 			{
 				var wsHandle = cache.WritingSystemFactory.GetWsFromStr(ws);
-				pic.Caption.set_String(wsHandle, TsStringUtils.MakeString("caption", wsHandle));
+				pic.Caption.set_String(wsHandle, TsStringUtils.MakeString(caption, wsHandle));
 			}
 			var file = cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
 			if (cache.LangProject.MediaOC.Any())

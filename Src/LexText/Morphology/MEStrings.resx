@@ -462,4 +462,10 @@
   <data name="ksChangeTo" xml:space="preserve">
     <value>Choose Value:</value>
   </data>
+  <data name="ksSetFeaturesOpt" xml:space="preserve">
+    <value>Set Phonological Features</value>
+  </data>
+  <data name="ksSetNaturalClassOpt" xml:space="preserve">
+    <value>Set Natural Class</value>
+  </data>
 </root>

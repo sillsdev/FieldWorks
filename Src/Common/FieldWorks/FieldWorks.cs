@@ -56,6 +56,7 @@ using SIL.WritingSystems;
 using XCore;
 using ConfigurationException = SIL.Reporting.ConfigurationException;
 using PropertyTable = XCore.PropertyTable;
+using Process = System.Diagnostics.Process;
 
 namespace SIL.FieldWorks
 {
@@ -128,6 +129,11 @@ namespace SIL.FieldWorks
 		[DllImport("kernel32.dll")]
 		public static extern IntPtr LoadLibrary(string fileName);
 
+		const int DpiAwarenessContextUnaware = -1;
+
+		[DllImport("User32.dll")]
+		private static extern bool SetProcessDpiAwarenessContext(int dpiFlag);
+
 		/// ----------------------------------------------------------------------------
 		/// <summary>
 		/// The main entry point for the FieldWorks executable.
@@ -137,6 +143,7 @@ namespace SIL.FieldWorks
 		[STAThread]
 		static int Main(string[] rgArgs)
 		{
+			SetProcessDpiAwarenessContext(DpiAwarenessContextUnaware);
 			Thread.CurrentThread.Name = "Main thread";
 			Logger.Init(FwUtils.ksSuiteName);
 
@@ -865,10 +872,20 @@ namespace SIL.FieldWorks
 			StringBuilder nullCollationWs = new StringBuilder();
 			foreach (CoreWritingSystemDefinition ws in cache.ServiceLocator.WritingSystems.AllWritingSystems)
 			{
-				if (ws != null && ws.DefaultCollation == null)
+				if (ws != null && (ws.DefaultCollation == null || !ws.DefaultCollation.Validate(out _)))
 				{
 					ws.DefaultCollation = new IcuRulesCollationDefinition("standard");
 					nullCollationWs.Append(ws.DisplayLabel + ",");
+				}
+				// Check for invalid collation here rather than in RecordSorter to avoid LT-21461 problem.
+				if (ws != null && ws.DefaultCollation != null && InvalidCollation(ws.DefaultCollation))
+				{
+					CollationDefinition cd;
+					if (SystemCollator.ValidateLanguageTag(ws.LanguageTag, out _))
+						cd = new SystemCollationDefinition { LanguageTag = ws.LanguageTag };
+					else
+						cd = new IcuRulesCollationDefinition("standard");
+					ws.DefaultCollation = cd;
 				}
 			}
 			if (nullCollationWs.Length > 0)
@@ -879,6 +896,17 @@ namespace SIL.FieldWorks
 			}
 			cache.ServiceLocator.WritingSystemManager.Save();
 		}
+
+		/// <summary>
+		/// An ICURulesCollationDefinition with empty rules was causing access violations in ICU. (LT-20268)
+		/// This method supports the band-aid fallback to SystemCollationDefinition.
+		/// </summary>
+		/// <returns>true if the CollationDefinition is invalid or is a RulesCollationDefinition with empty rules</returns>
+		private static bool InvalidCollation(CollationDefinition cd)
+		{
+			return !cd.IsValid || (cd is RulesCollationDefinition ? string.IsNullOrEmpty(((RulesCollationDefinition)cd).CollationRules) : false);
+		}
+
 
 		/// <summary>
 		/// Ensure a valid folder for LangProject.LinkedFilesRootDir.  When moving projects
@@ -1351,6 +1379,17 @@ namespace SIL.FieldWorks
 			StartupException projectOpenError;
 			if (TryCommandLineOption(projId, out projectOpenError))
 				return projId;
+
+			if (!string.IsNullOrEmpty(args.Password) && !string.IsNullOrEmpty(args.ProjectUri) && !string.IsNullOrEmpty(args.Username))
+			{
+				var projectFile = ObtainProjectMethod.ObtainProject(new Uri(args.ProjectUri), args.Database, args.Username, args.Password, args.RepoIdentifier, out _);
+				if (!string.IsNullOrEmpty(projectFile))
+				{
+					var projectName = Path.GetFileNameWithoutExtension(projectFile);
+					projId = new ProjectId(args.DatabaseType, projectName);
+					return projId;
+				}
+			}
 
 			// If this app hasn't been run before, ask user about opening sample DB.
 			var app = GetOrCreateApplication(args);
@@ -3610,8 +3649,8 @@ namespace SIL.FieldWorks
 				var versionObj = Assembly.LoadFrom(Path.Combine(fieldWorksFolder ?? string.Empty, "Chorus.exe")).GetName().Version;
 				var version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
 				// First create localization manager for Chorus with english
-				LocalizationManager.Create(TranslationMemory.XLiff, "en",
-					"Chorus", "Chorus", version, installedL10nBaseDir, userL10nBaseDir, null, "flex_localization@sil.org", "Chorus", "LibChorus");
+				LocalizationManager.Create("en",
+					"Chorus", "Chorus", version, installedL10nBaseDir, userL10nBaseDir, null, "flex_localization@sil.org", new [] { "Chorus", "LibChorus" });
 				// Now that we have one manager initialized check and see if the users UI language has
 				// localizations available
 				var uiCulture = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
@@ -3623,8 +3662,8 @@ namespace SIL.FieldWorks
 
 				versionObj = Assembly.GetAssembly(typeof(ErrorReport)).GetName().Version;
 				version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
-				LocalizationManager.Create(TranslationMemory.XLiff, LocalizationManager.UILanguageId, "Palaso", "Palaso", version, installedL10nBaseDir,
-					userL10nBaseDir, null, "flex_localization@sil.org", "SIL.Windows.Forms");
+				LocalizationManager.Create(LocalizationManager.UILanguageId, "Palaso", "Palaso", version, installedL10nBaseDir,
+					userL10nBaseDir, null, "flex_localization@sil.org", new [] { "SIL.Windows.Forms" });
 			}
 			catch (Exception e)
 			{

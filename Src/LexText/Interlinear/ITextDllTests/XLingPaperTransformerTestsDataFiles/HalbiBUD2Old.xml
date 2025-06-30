@@ -1,0 +1,3859 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE lingPaper PUBLIC   "-//XMLmind//DTD XLingPap//EN" "XLingPap.dtd">
+<lingPaper automaticallywrapinterlinears="yes">
+   <frontMatter>
+      <title>BUD-2: About the həm</title>
+      <author>Halbi text tape 4b:192-327 circa 1968. Narrator: Budri. Researchers: Betsy Schuyler and Fran Woods.</author>
+   </frontMatter>
+   <section1 id="s1">
+      <secTitle>First Section</secTitle>
+      <p/>
+   </section1>
+   <backMatter>
+      <appendix id="a1">
+         <secTitle>Interlinear text</secTitle>
+         <interlinear-text>
+            <textInfo>
+               <textTitle>BUD-2: About the həm</textTitle>
+               <shortTitle/>
+            </textInfo>
+    
+    
+    
+    
+      
+        
+          
+            <interlinear text="T-ID75f91265-1" textref="T-ID75f91265-1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">हम</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">देतोर आए.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">həm</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">detor ae</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">crisscrossed sticks</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">give-conj.inc-is.3s</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">The ceremony involving the criss-crossed sticks is to be doing.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID75f91265-2" textref="T-ID75f91265-2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">(साँगलासोरतबे</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">काए.)</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">sãɡlasotbe</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">kae</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">tell-3p.pc-ab</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">EchoQn</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">prt</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">They have told (about this), haven't they? </free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID75f91265-3" textref="T-ID75f91265-3">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">हम</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">असन</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">देओ</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">बोनातोर</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">होले.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">həm</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">əsən</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">deo</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">bonator</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">hole</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">crisscrossed sticks</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">like this</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">spirit</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">fix-conj.inc</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">become-cnsuf</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">The criss-crossed sticks ceremony (is to be performed) when the spirits need to be pacified.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID75f91265-4.1" textref="T-ID75f91265-4.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">नानी</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">नानी</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">चीरवा</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">दारू</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">नानी</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">नानी</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">दीदलीहीन</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">दीदलीहीन</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">चीरवा</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">आरू</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">हून</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">के</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">एदे</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">असन</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">असन</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">देऊआत</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">आड़की बीड़की</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">आऊर</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">हून लगे</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">भोंगा</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">रूआए</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">ईदलो</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">असन.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">nani</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">nani</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">tʃirwa</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">daru</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">nani</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">nani</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">didlihin</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">didlihin</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">tʃirwa</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">aru</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">hun</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ke</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ede</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">əsən</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">əsən</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">deuat</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">aɽki biɽki</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">aur</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">hun ləɡe</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">bʰõɡa</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ruae</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">idlo</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">əsən</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">small</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">small</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">kindling</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">wood</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">small</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">small</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">this small size</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">this small size</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">kindling</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">and</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">that</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">GOL</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">excl of attention</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">like this</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">like this</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">give-3p.f2</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">criss-crossed</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">and</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">at that place</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">hole</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">be-3s.f2</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">this size(lg)</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">like this</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">conj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">dem</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">case</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">excl</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">bitrans</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">conj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">st</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">Tiny tiny kindling, this tiny size of kindling and they will criss-cross them like this and there'll be a hole (in the centre) like this. (check trans!)</free>
+            </interlinear>
+          
+            <interlinear text="T-ID75f91265-4.2" textref="T-ID75f91265-4.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">नानी</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">असन</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">रूआए.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">nani</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">əsən</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ruae</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">small</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">like this</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">be-3s.f2</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">st</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">It will be little like this.</free>
+            </interlinear>
+          
+            <interlinear text="T-ID75f91265-4.3" textref="T-ID75f91265-4.3">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">आऊर</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">हून</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">थाने</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">पासे</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">डसाऊआत</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">घीऊ</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">सँगे.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">aur</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">hun</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">tʰane</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">pase</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ɖəsauat</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ɡʰiu</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">sə̃ɡe</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">and</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">that</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">place=LOC</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">later</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">burn-3p.f2</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">ghee</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">with</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">conj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">dem</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">postp</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">And there they will burn (it) with ghee.</free>
+            </interlinear>
+          
+            <interlinear text="T-ID75f91265-4.4" textref="T-ID75f91265-4.4">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">पासे</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">तीपाते रूआत</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">हून</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">थाने.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">pase</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">tipate ruat</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">hun</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">tʰane</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">later</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">drip-conj.inc-be-3p.f2</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">that</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">place=LOC</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">dem</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">Later they will be dripping (ghee on the fire) at that place.</free>
+            </interlinear>
+          
+            <interlinear text="T-ID75f91265-4.5" textref="T-ID75f91265-4.5">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">पासे</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">फूल</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">पान</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">के</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">पोकाऊआत</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">हून</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">थाने.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">pase</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">pʰul</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">pan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ke</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">pokauat</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">hun</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">tʰane</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">later</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">flower</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">leaf</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">GOL</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">throw out-3p.f2</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">that</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">place=LOC</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">case</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">dem</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">Later they will throw flowers and leaves there (on the fire?).<endnote id="n75f91265.1">
+                     <p/>
+                  </endnote>
+               </free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID75f91265-5" textref="T-ID75f91265-5">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">आऊर</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">सीरहा</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">मन</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">होले</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">ए काए तो</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">“पीटकूर</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">मारतोर आए”</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">बोलूआत</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">बाई.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">aur</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">sirha</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">mən</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">hole</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">e kae to</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">piʈkur</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">martor ae</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">boluat</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">bai</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">and</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">shaman</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">=Pl</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">become-cnsuf</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">excl of hestitation</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">thorn</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">hit-conj.inc-is.3s</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">say-3p.f2</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">Bai</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">conj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">prt</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">excl</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">voc</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">If there a shaman they will say, "the thorn is to be hit", Bai.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID75f91265-6.1" textref="T-ID75f91265-6.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">आऊर</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">हून</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">काटा</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">ने</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">काटा</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">ने</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">जानू</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">असन</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">थाने</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">मारूआत.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">aur</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">hun</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">kaʈa</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ne</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">kaʈa</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ne</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">dʒanu</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">əsən</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">tʰane</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">maruat</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">and</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">that</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">thorn</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">=INSTR</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">thorn</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">=INSTR</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">emphasis</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">like this</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">place=LOC</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">hit-3p.f2</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">conj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">dem</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">case</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">case</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">prt</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">And with that thorn, with the thorn, they will hit it here (on the finger).</free>
+            </interlinear>
+          
+            <interlinear text="T-ID75f91265-6.2" textref="T-ID75f91265-6.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">लोहू</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">फूटातले.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">lohu</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">pʰuʈatəle</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">blood</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">ooze-caus-until</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">Until they make the blood ooze out.</free>
+            </interlinear>
+          
+            <interlinear text="T-ID75f91265-6.3" textref="T-ID75f91265-6.3">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">देओ.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">deo</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">spirit</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">The spirit.</free>
+            </interlinear>
+          
+            <interlinear text="T-ID75f91265-6.4" textref="T-ID75f91265-6.4">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">मारी हूआए.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">mari huae</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">hit-3s.f2</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">He will become hit.</free>
+            </interlinear>
+          
+            <interlinear text="T-ID75f91265-6.5" textref="T-ID75f91265-6.5">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">हून</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">के</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">लोहू</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">के</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">जानू</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">असन</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">करूआत</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">आऊर</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">हून</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">के</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">बोले</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">काटा</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">चो</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">बीती</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">के</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">हून</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">हम</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">ने</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">पोकाऊआत.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">hun</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ke</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">lohu</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ke</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">dʒanu</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">əsən</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">kəruat</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">aur</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">hun</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ke</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">bole</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">kaʈa</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">tʃo</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">biti</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ke</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">hun</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">həm</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ne</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">pokauat</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">that</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">GOL</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">blood</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">GOL</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">emphasis</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">like this</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">do-3p.f2</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">and</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">that</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">GOL</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">also</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">thorn</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">=poss</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">thing</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">GOL</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">that</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">crisscrossed sticks</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">=LOC</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">throw out-3p.f2</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">dem</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">case</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">case</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">prt</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">conj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">dem</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">case</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">prt</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">clss</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">case</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">dem</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">postp</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">They will do like this with the blood and to it also, to the thorn's thing (the blood?) they will throw on the criss-crossed pile of sticks. </free>
+            </interlinear>
+          
+            <interlinear text="T-ID75f91265-6.6" textref="T-ID75f91265-6.6">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">हून</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">के</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">फेर</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">एक</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">रूपेआ</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">हो</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">की</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">आँट</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">चार</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">आना</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">देतोर आए.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">hun</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ke</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">pʰer</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ek</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">rupea</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ho</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ki</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ãʈ</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">tʃar</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ana</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">detor ae</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">that</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">GOL</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">again</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">one</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">rupee</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">become-3s.opt</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">or</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">eight</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">four</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">money unit</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">give-conj.inc-is.3s</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">dem</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">case</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">num</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">conj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">num</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">num</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">To him, it may be a rupee or eight or four annas, it is to be giving.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID75f91265-7" textref="T-ID75f91265-7">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">“पीटकूर</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">मारनी”</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">बोलूआत</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">हून</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">के.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">piʈkur</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">marni</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">boluat</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">hun</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ke</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">thorn</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">hitting</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">say-3p.f2</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">that</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">GOL</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">dem</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">case</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">They will call it the hitting of the thorn.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID75f91265-8" textref="T-ID75f91265-8">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">ईत्‍ली</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">तो</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">आए.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">itli</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">to</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ae</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">this much</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">thus</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">is.3s</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">conj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">eq</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">That's all.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID75f91265-9" textref="T-ID75f91265-9">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">आऊर</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">खूब</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">देओ</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">मोनातोर</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">होले</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">रोसीई पोतीई</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">दस</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">ठान</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">पँदरा</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">ठान</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">रोसीई</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">बोनातोर.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">aur</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">kʰub</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">deo</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">monator</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">hole</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">rosii potii</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">dəs</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ʈʰan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">pə̃dra</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ʈʰan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">rosii</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">bonator</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">and</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">many</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">spirit</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">make-conj.inc</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">become-cnsuf</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">leaf dish for worship</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">ten</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">thing</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">fifteen</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">thing</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">leaf dish for offerings</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">fix-conj.inc</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">conj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">num</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">clss</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">num</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">clss</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">If one is to do a lot of spirit worship (then) ten or fifteen ceremonial leaf dishes are to be made. \nb trans? </free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID75f91265-10.1" textref="T-ID75f91265-10.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">छए</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">ठान</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">बोनातोर आए</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">आऊर</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">हून मन</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">ने</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">पोएसा</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">मन</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">देतोर आए.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">tʃʰəe</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ʈʰan</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">bonator ae</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">aur</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">hun mən</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ne</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">poesa</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">mən</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">detor ae</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">six</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">thing</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">make-conj.inc-is.3s</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">and</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">they</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">=LOC</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">money</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">=Pl</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">give-conj.inc-is.3s</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">num</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">clss</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">conj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">ppron</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">postp</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">prt</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">Six are to be made and in them money is the be put.</free>
+            </interlinear>
+          
+            <interlinear text="T-ID75f91265-10.2" textref="T-ID75f91265-10.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">आनाएक</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">दूई</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">आना</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">तीन</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">आना.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">anaek</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">dui</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ana</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">tin</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ana</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">one money unit</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">two</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">money unit</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">three</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">money unit</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">num</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">num</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">One anna, two annas, three annas.<endnote id="n75f91265.2">
+                     <p>Researcher: When to do? </p>
+                  </endnote>
+               </free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID75f91265-11" textref="T-ID75f91265-11">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">असनी</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">खूब</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">जर मूँड</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">पोड़ले.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">əsni</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">kʰub</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">dʒər mũɖ</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">poɽle</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">like this-emp</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">much</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">fever headache</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">fall-cnsuf</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">It like this if one gets sick with feverish headaches.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID75f91265-12" textref="T-ID75f91265-12">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">खूब</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">बेमार</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">धरले</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">तूमी</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">असपतले</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">जाऊअहास.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">kʰub</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">bemar</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">dʰərle</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">tumi</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">əspətale</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">dʒauəhas</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">much</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">sickness</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">take hold-cnsuf</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">you=emp</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">hospital=LOC</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">go-2p.f2</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">tr</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">ppron</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">If (you) get very sick you go to the hospital.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID75f91265-13" textref="T-ID75f91265-13">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">आमी</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">खूब</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">जर मूँड</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">धरले</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">सीरहा</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">डगराऊआऊँ.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ami</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">kʰub</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">dʒər mũɖ</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">dʰərle</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">sirha</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ɖəɡrauaũ</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">we-emp</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">much</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">fever headache</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">take hold-cnsuf</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">shaman</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">search for-1p.f2</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">ppron</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">tr</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">If we get sick we will look for a shaman.<endnote id="n75f91265.3">
+                     <p>"Feverish headache" is a generic term for sickness.</p>
+                  </endnote>
+               </free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID75f91265-14" textref="T-ID75f91265-14">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">आऊर</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">हूता</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">“आ</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">जोड़ूआऊँबे</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">हूता</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">कटो</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">नी</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">कटो</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">बोले</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">आऊर</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">बोनाऊआऊँ”.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">aur</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">huta</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">a</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">dʒoɽuaũbe</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">huta</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">kəʈo</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ni</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">kəʈo</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">bole</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">aur</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">bonauaũ</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">and</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">there</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">exclam.</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">be joined-1p.f2-ab</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">there</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">heal-3s.opt</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">not</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">heal-3s.opt</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">also</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">and</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">fix-1p.f2</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">conj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">excl</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">neg</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">conj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">And there (we will say), "Ah, we will join there, let it heal (or) not heal we will make another (ceremony?)"<endnote id="n75f91265.4">
+                     <p>Translation unclear. </p>
+                  </endnote>
+               </free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID75f91265-15" textref="T-ID75f91265-15">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">पोकाहा.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">pokaha</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">for nothing</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">For nothing.<endnote id="n75f91265.5">
+                     <p>Researcher: Refers to empty promise, I think.</p>
+                  </endnote>
+               </free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID75f91265-16.1" textref="T-ID75f91265-16.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">सीरहा</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">मन</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">बोलूआत.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">sirha</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">mən</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">boluat</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">shaman</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">=Pl</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">say-3p.f2</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">prt</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">The shaman will speak, <endnote id="n75f91265.6">
+                     <p>Does the first part of sentence belong to previous sentence? </p>
+                  </endnote>
+               </free>
+            </interlinear>
+          
+            <interlinear text="T-ID75f91265-16.2" textref="T-ID75f91265-16.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">“ईत्‍लो</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">लागूआए</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">हूतलो</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">लागूआए</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">असन</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">आए,</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">ऊसन</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">आए”</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">बोलले.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">itlo</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">laɡuae</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">hutlo</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">laɡuae</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">əsən</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ae</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">usən</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ae</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">bolle</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">this much</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">feel something-3s.f2</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">that much</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">feel something-3s.f2</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">like this</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">is.3s</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">like that</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">is.3s</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">say-cnsuf</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">eq</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">eq</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">When said "it will cost this (or) it will cost that, it's like this (or) it's like that".</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID75f91265-17" textref="T-ID75f91265-17">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">फेर</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">जीऊ</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">चो</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">डर</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">काजे</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">काए</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">करतोर आए</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">ने?</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">pʰer</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">dʒiu</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">tʃo</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ɖər</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">kadʒe</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">kae</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">kərtor ae</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ne</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">again</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">life</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">=poss</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">fear</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">for</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">or</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">do-conj.inc-is.3s</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">EchoQn</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">prt</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">postp</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">conj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">prt</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">So, for fear of (one's) life what is to be done, isn't that so? </free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID75f91265-18.1" textref="T-ID75f91265-18.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">“जीऊ बाचो”</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">बोलतोर आए</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">आऊर</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">फेर</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">बोनातोर आए</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">रोसीई</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">जोड़तोर आए.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">dʒiu batʃo</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">boltor ae</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">aur</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">pʰer</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">bonator ae</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">rosii</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">dʒoɽtor ae</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">life-be left-3s.opt</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">say-conj.inc-is.3s</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">and</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">again</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">make-conj.inc-is.3s</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">leaf dish for offerings</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">be joined-conj.inc-is.3s</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">conj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">"Let life remain" is the be saying, and again (the spirits) are to be appeased and the leaf dish for worship is to be made.</free>
+            </interlinear>
+          
+            <interlinear text="T-ID75f91265-18.2" textref="T-ID75f91265-18.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">आऊर</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">फेर</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">देतोर आए</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">हून</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">सीरहा</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">के.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">aur</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">pʰer</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">detor ae</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">hun</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">sirha</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ke</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">and</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">again</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">give-conj.inc-is.3s</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">that</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">shaman</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">GOL</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">conj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">dem</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">case</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">And again one is to be giving to that shaman.</free>
+            </interlinear>
+          
+            <interlinear text="T-ID75f91265-18.3" textref="T-ID75f91265-18.3">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">ऊसनी</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">तो</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">करतोर आए.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">usni</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">to</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">kərtor ae</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">like that-emp</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">thus</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">do-conj.inc-is.3s</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">conj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">Just like that then is to be doing.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID75f91265-19" textref="T-ID75f91265-19">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">ई</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">नोनी</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">सूकूनतूला</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">के</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">माए</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">एऊ रोहोत</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">हूदलदाएँ.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">i</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">noni</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">sukuntula</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ke</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">mae dʰəni</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">eu rohot</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">hudəldaẽ</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">this very one</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">girl</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">Sukuntula</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">GOL</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">measles</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">come-conj.comp-be-3s</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">that-time</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">dem</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">pn</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">case</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">To this very little girl, Sukuntula, had come measles at that time.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID75f91265-20.1" textref="T-ID75f91265-20.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">आऊर</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">नी</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">चाँडाए</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">खूबे</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">दीन</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">गूनके</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">“सेवा</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">सेवा</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">कर.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">aur</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ni</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">tʃʰãɖae</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">kʰube</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">din</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ɡunke</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">sewa</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">sewa sasən</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">kər</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">and</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">not</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">cause to heal-come</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">much-emp</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">day</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">therefore</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">worship</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">worship</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">do</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">conj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">neg</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">conj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">And it didn't heal for many days therefore "perform worship.</free>
+            </interlinear>
+          
+            <interlinear text="T-ID75f91265-20.2" textref="T-ID75f91265-20.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">तूचो</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">काए</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">टीकरी</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">ने</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">बोजार बोजरी</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">होतो बेरा</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">गोटक</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">फल</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">देऊँदे"</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">बोललो</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">फेर</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">एचो</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">बाबा.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">tutʃo</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">kae</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ʈikri</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ne</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">bodʒar bodʒri</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">hoto bera</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ɡoʈək</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">pʰəl</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">deũde</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">bollo</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">pʰer</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">etʃo</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">baba</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">you(s)==poss</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">what</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">god house</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">=LOC</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">ceremonial bazaar</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">become-conj.inc-time</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">one</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">coconut</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">that-1p.f1</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">say-ptc.3s.m</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">again</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">she=poss</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">father</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">posspron</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">rel</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">postp</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">cn</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">phrAdv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">num</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">posspron</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">In your god house, at the time of the ceremonial bazaar, we will give one coconut" he said, her father (that is).</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID75f91265-21" textref="T-ID75f91265-21">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">फेर</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">बोजार</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">होली आले</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">ए थाने</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">बोजार</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">हूआएजे</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">होलीजे?</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">pʰer</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">bodʒar</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">holi ale</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">e tʰane</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">bodʒar</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">huaedʒe</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">holidʒe</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">again</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">bazaar</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">become-3s.nm.pc-when</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">at this place</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">bazaar</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">become-3s.f2-rel.mkr</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">become-3s.nm.pc-just as</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">When a bazaar is held, at this place where the bazaar will be held, it just became (better). </free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID75f91265-22.1" textref="T-ID75f91265-22.1">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">ऊसनी</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">बोजार</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">होली आले</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">फेर</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">गोटक</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">नड़ेर</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">के</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">घेनून</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">भाती</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">नेऊन देतोर आए.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">usni</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">bodʒar</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">holi ale</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">pʰer</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ɡoʈək</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">naɽer</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ke</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ɡʰenun</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">bʰati</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">neun detor ae</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">like that-emp</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">bazaar</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">become-3s.nm.pc-when</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">again</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">one</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">coconut</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">GOL</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">buy-conj.comp</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">after</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">take-conj.comp-ben-conj.inc-is.3s</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">num</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">case</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">prt</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">When a bazaar was held, just like that again after having bought a coconut it is to be taken for giving.</free>
+            </interlinear>
+          
+            <interlinear text="T-ID75f91265-22.2" textref="T-ID75f91265-22.2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">हूता</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">देतोर आए.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">huta</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">detor ae</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">there</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">give-conj.inc-is.3s</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">v</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">It is to be given there.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID75f91265-23" textref="T-ID75f91265-23">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">ऊसनी</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">तो</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">आए</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">मूरेआ</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">मूरीन</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">चो.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">usni</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">to</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ae</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">murea</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">murin</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">tʃo</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">like that-emp</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">thus</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">is.3s</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">Murea</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">Murea(f)</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">=poss</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adv</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">conj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">eq</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">prt</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">It's just like that for the Mureas.<endnote id="n75f91265.7">
+                     <p>Change of topic.</p>
+                  </endnote>
+               </free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-ID75f91265-24" textref="T-ID75f91265-24">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-baseline">ए</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">नूँआँ</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">फोटई</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-baseline">आए?</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">e</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">nũã</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">pʰoʈəi</langData>
+                     </wrd>
+                     <wrd>
+                        <langData lang="hlb-fonipa-baseline">ae</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">this</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">new</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">cloth</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-lexGloss">is.3s</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">dem</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adj</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">n</gloss>
+                     </wrd>
+                     <wrd>
+                        <gloss lang="en-wordCategory">eq</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">Is this a new cloth? <endnote id="n75f91265.8">
+                     <p>Researcher answers, no.</p>
+                  </endnote>
+               </free>
+            </interlinear>
+        
+      
+    
+    
+      
+      
+      
+    
+  
+         </interlinear-text>
+      </appendix>
+      <endnotes/>
+      <references/>
+   </backMatter>
+   <languages>
+      <language font-family="Charis SIL" id="en-free"/>
+      <language font-family="Charis SIL" id="en-note"/>
+      <language font-family="Charis SIL" id="en-wordCategory"/>
+      <language font-family="Charis SIL" id="en-lexGloss"/>
+      <language font-family="Arial Unicode MS" id="hlb-baseline"/>
+      <language font-family="Charis SIL" id="hlb-fonipa-baseline"/>
+   </languages>
+   <types>
+      <type id="tHomographNumber" font-size="65%" cssSpecial="vertical-align:sub" xsl-foSpecial="baseline-shift='sub'"/>
+      <type id="tLiteralTranslation"/>
+      <type id="tVariantTypes" font-family="Charis SIL"/>
+   </types>
+</lingPaper>

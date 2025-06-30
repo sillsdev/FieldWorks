@@ -602,6 +602,11 @@ namespace SIL.FieldWorks.IText
 					break;
 				case InterlinVc.kfragMorphBundle:
 					m_writer.WriteStartElement("morphemes");
+					StackItem top = this.PeekStack;
+					if (top != null && top.m_stringProps.ContainsKey(InterlinVc.ktagAnalysisStatus))
+					{
+						m_writer.WriteAttributeString("analysisStatus", top.m_stringProps[InterlinVc.ktagAnalysisStatus]);
+					}
 					break;
 				default:
 					break;

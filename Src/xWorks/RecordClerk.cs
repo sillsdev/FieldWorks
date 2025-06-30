@@ -522,7 +522,8 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (m_list.Filter == filter)
 				return false;
-			m_list.Filter = filter;
+			// Use OnChangeFilter so that column headers get updated (LT-21962).
+			OnChangeFilter(new FilterChangeEventArgs(filter, m_list.Filter));
 			m_list.TransferOwnership(filter as IDisposable);
 			return true;
 		}
@@ -949,7 +950,7 @@ namespace SIL.FieldWorks.XWorks
 			// jumps to the first instance of that object (LT-4691).
 			// Through deletion of Reversal Index entry it was possible to arrive here with
 			// no sorted objects. (LT-13391)
-			if (e.Index >= 0 && m_list.SortedObjects.Count > 0)
+			if (0 <= e.Index && e.Index < m_list.SortedObjects.Count)
 			{
 				int ourHvo = m_list.SortItemAt(e.Index).RootObjectHvo;
 				// if for some reason the index doesn't match the hvo, we'll jump to the Hvo.
@@ -1074,7 +1075,11 @@ namespace SIL.FieldWorks.XWorks
 					// target before complaining to the user about a filter being on.
 					var mdc = (IFwMetaDataCacheManaged)m_list.VirtualListPublisher.MetaDataCache;
 					int clidList = mdc.FieldExists(m_list.Flid) ? mdc.GetDstClsId(m_list.Flid) : -1;
-					int clidObj = m_list.Cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoTarget).ClassID;
+					ICmObjectRepository objRepository = m_list.Cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+					if (!objRepository.TryGetObject(hvoTarget, out ICmObject targetObject))
+						// The object was deleted (LT-22063).
+						return true;
+					int clidObj = targetObject.ClassID;
 
 					// If (int) clidList is -1, that means it was for a decorator property and the IsSameOrSubclassOf
 					// test won't be valid.
@@ -1186,7 +1191,7 @@ namespace SIL.FieldWorks.XWorks
 			string areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
 			if (areaChoice == "notebook")
 			{
-				if (AreCustomFieldsAProblem(new int[] { RnGenericRecTags.kClassId}))
+				if (AreCustomFieldsAProblem(new int[] { RnGenericRecTags.kClassId }))
 					return true;
 				using (var dlg = new NotebookExportDialog(m_mediator, m_propertyTable))
 				{

@@ -438,13 +438,13 @@ namespace SIL.FieldWorks.XWorks
 		{
 			try
 			{
+				var cache = m_propertyTable.GetValue<LcmCache>("cache");
 				//Debug.Assert(!(m_lnkActive is FwAppArgs), "Beware: This will not handle link requests for other databases/applications." +
 				//	" To handle other databases or applications, pass the FwAppArgs to the IFieldWorksManager.HandleLinkRequest method.");
 				if (m_lnkActive.ToolName == "default")
 				{
 					// Need some smarts here. The link creator was not sure what tool to use.
 					// The object may also be a child we don't know how to jump to directly.
-					var cache = m_propertyTable.GetValue<LcmCache>("cache");
 					ICmObject target;
 					if (!cache.ServiceLocator.ObjectRepository.TryGetObject(m_lnkActive.TargetGuid, out target))
 						return false; // or message?
@@ -500,6 +500,12 @@ namespace SIL.FieldWorks.XWorks
 					m_lnkActive = new FwLinkArgs(realTool, realTarget.Guid);
 					// Todo JohnT: need to do something special here if we c
 				}
+				// Return false if the link is to a different database
+				var databaseName = m_lnkActive.PropertyTableEntries.Where(p => p.name == "database").FirstOrDefault()?.value as string;
+				if (databaseName != null && databaseName != "this$" && databaseName != cache.LangProject.ShortName && m_fFollowingLink)
+				{
+					return false;
+				}
 				// It's important to do this AFTER we set the real tool name if it is "default". Otherwise, the code that
 				// handles the jump never realizes we have reached the desired tool (as indicated by the value of
 				// SuspendLoadingRecordUntilOnJumpToRecord) and we stop recording context history and various similar problems.
@@ -518,7 +524,6 @@ namespace SIL.FieldWorks.XWorks
 				// or more likely, when the HVO was set to -1.
 				if (m_lnkActive.TargetGuid != Guid.Empty)
 				{
-					LcmCache cache = m_propertyTable.GetValue<LcmCache>("cache");
 					ICmObject obj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(m_lnkActive.TargetGuid);
 					if (obj is IReversalIndexEntry && m_lnkActive.ToolName == "reversalToolEditComplete")
 					{

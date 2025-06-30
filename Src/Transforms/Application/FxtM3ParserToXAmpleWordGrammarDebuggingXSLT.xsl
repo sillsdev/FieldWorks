@@ -3415,7 +3415,6 @@ CreateInflectionalTemplateSlotTemplate
 				  </xsl:element>
 				  <xsl:element name="xsl:otherwise">
 					 <xsl:comment>Optional slot does not match: try next slot (if any) with this morph</xsl:comment>
-					 <wgd:if test="$morph">
 						<xsl:call-template name="CallNextAffixSlot">
 						   <xsl:with-param name="sType">
 							  <xsl:value-of select="$sType"/>
@@ -3425,7 +3424,6 @@ CreateInflectionalTemplateSlotTemplate
 							  <xsl:value-of select="$iTemplateId"/>
 						   </xsl:with-param>
 						</xsl:call-template>
-					 </wgd:if>
 				  </xsl:element>
 			   </xsl:element>
 			</xsl:otherwise>

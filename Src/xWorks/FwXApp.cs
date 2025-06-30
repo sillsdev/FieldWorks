@@ -56,18 +56,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public override bool Synchronize(SyncMsg sync)
-		{
-			CheckDisposed();
-
-			if (sync == SyncMsg.ksyncUndoRedo || sync == SyncMsg.ksyncFullRefresh)
-			{
-				OnMasterRefresh(null);
-				return true;
-			}
-			return base.Synchronize (sync);
-		}
-
 		/// <summary>
 		/// This is the one (and should be only) handler for the user Refresh command.
 		/// Refresh wants to first clean up the cache, then give things like Clerks a

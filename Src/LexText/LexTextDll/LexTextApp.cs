@@ -192,27 +192,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 			}
 		}
 
-		/// <summary>
-		/// This application processes DB sync records.
-		/// </summary>
-		public override Guid SyncGuid
-		{
-			get
-			{
-				CheckDisposed();
-				return AppGuid;
-			}
-		}
-
-		//public override string ProductName
-		//{
-		//    get
-		//    {
-		//        CheckDisposed();
-		//        return LexTextStrings.kstidApplicationName;
-		//    }
-		//}
-
 		public override string DefaultConfigurationPathname
 		{
 			get
@@ -713,7 +692,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			CheckDisposed();
 
 			string path = String.Format(FwDirectoryFinder.CodeDirectory +
-				"{0}Helps{0}WW-ConceptualIntro{0}ConceptualIntroduction.htm",
+				"{0}Helps{0}WW-ConceptualIntro{0}ConceptualIntroFLEx.pdf",
 				Path.DirectorySeparatorChar);
 
 			OpenDocument(path, (e) => {

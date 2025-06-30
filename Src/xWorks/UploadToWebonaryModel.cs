@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography;
@@ -29,7 +30,20 @@ namespace SIL.FieldWorks.XWorks
 
 		private string m_selectedConfiguration;
 
-		public string SiteName { get; set; }
+		private string m_siteName;
+
+		public string SiteName
+		{
+			get => m_siteName;
+			set
+			{
+				if (m_siteName != value)
+				{
+					m_siteName = value;
+					Log = new WebonaryUploadLog(LastUploadReport);
+				}
+			}
+		}
 
 		public string UserName { get; set; }
 
@@ -65,6 +79,10 @@ namespace SIL.FieldWorks.XWorks
 		public Dictionary<string, DictionaryConfigurationModel> Configurations { get; set; }
 		public Dictionary<string, DictionaryConfigurationModel> Reversals { get; set; }
 
+		public bool CanViewReport { get; set; }
+
+		public WebonaryUploadLog Log { get; set; }
+
 		private PropertyTable PropertyTable { get; set; }
 
 		public UploadToWebonaryModel(PropertyTable propertyTable)
@@ -85,10 +103,19 @@ namespace SIL.FieldWorks.XWorks
 
 		internal static string DecryptPassword(string decryptMe)
 		{
-			if(!String.IsNullOrEmpty(decryptMe))
+			try
 			{
-				byte[] decryptedData = ProtectedData.Unprotect(Convert.FromBase64String(decryptMe), Encoding.Unicode.GetBytes(EntropyValue), DataProtectionScope.CurrentUser);
-				return Encoding.Unicode.GetString(decryptedData);
+				if(!String.IsNullOrEmpty(decryptMe))
+				{
+					byte[] decryptedData = ProtectedData.Unprotect(Convert.FromBase64String(decryptMe), Encoding.Unicode.GetBytes(EntropyValue), DataProtectionScope.CurrentUser);
+					return Encoding.Unicode.GetString(decryptedData);
+				}
+			}
+			catch (CryptographicException)
+			{
+				// This can happen a windows update or user account change invalidates the encryption
+				// We can no longer decrypt the password, so just act as if it was forgotten
+				return string.Empty;
 			}
 			return decryptMe;
 		}
@@ -110,7 +137,13 @@ namespace SIL.FieldWorks.XWorks
 				SelectedConfiguration = PropertyTable.GetStringProperty(WebonaryConfiguration, null);
 				SelectedReversals = SplitReversalSettingString(PropertyTable.GetStringProperty(WebonaryReversals, null));
 			}
+
+			Log = new WebonaryUploadLog(LastUploadReport);
+			CanViewReport = File.Exists(LastUploadReport);
 		}
+
+		// The last upload report is stored in the temp directory, under a folder named for the site name
+		public string LastUploadReport => Path.Combine(Path.GetTempPath(), "webonary-export", SiteName ?? "no-site", "last-upload.log");
 
 		internal void SaveToSettings()
 		{

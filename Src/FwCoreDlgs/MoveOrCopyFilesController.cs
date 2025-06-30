@@ -110,7 +110,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				var promptAlreadyExists = string.Format(FwCoreDlgs.ksAlreadyExists, sNewFile);
 				if (batchMode)
 				{
-					promptAlreadyExists = string.Format(FwCoreDlgs.ksClickNoToLeave, promptAlreadyExists);
+					promptAlreadyExists = string.Format(FwCoreDlgs.ksClickNoToLeave, promptAlreadyExists, sFile);
 				}
 				if (MessageBox.Show(promptAlreadyExists, FwCoreDlgs.kstidWarning, MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.No)
 				{
