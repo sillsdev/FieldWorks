@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2025 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -16,6 +16,7 @@ using System.Xml;
 using System.Data;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -64,6 +65,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private DataSet m_dsParserParameters;
 
+		private ILcmOwningSequence<IMoCompoundRule> m_compoundRules;
 		#endregion Data members
 
 		private ParserParametersDlg()
@@ -244,7 +246,9 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void btnHCMaxCompoundRuleApps_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show("clicked!");
+			// create and show compound rule max apps dialog
+			var dlg = new HCMaxCompoundRulesDlg();
+			dlg.ShowDialog(this);
 		}
 
 		private void ValidateValues(XElement elem)
@@ -291,7 +295,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		public void SetDlgInfo(string title, string parserParameters)
+		public void SetDlgInfo(string title, string parserParameters, ILcmOwningSequence<IMoCompoundRule> compoundRules)
 		{
 			CheckDisposed();
 
@@ -312,6 +316,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_dataGrid2.TableStyles[0].GridColumnStyles[2].Width = 130;
 			m_dataGrid2.TableStyles[0].GridColumnStyles[4].Width = 160;
 			m_dataGrid2.TableStyles[0].GridColumnStyles[6].Width = 400;
+
+			m_compoundRules = compoundRules;
+			if (m_compoundRules?.Count > 0)
+				m_btnHCMaxCompoundRuleApps.Enabled = true;
+			else
+				m_btnHCMaxCompoundRuleApps.Enabled= false;
 		}
 
 		private void LoadParserData(DataSet dsParserParameters)

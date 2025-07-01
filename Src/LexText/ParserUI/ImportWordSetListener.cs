@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2017 SIL International
+// Copyright (c) 2005-2025 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -387,7 +387,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			using (var dlg = new ParserParametersDlg(m_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")))
 			{
 				IMoMorphData md = cache.LangProject.MorphologicalDataOA;
-				dlg.SetDlgInfo(ParserUIStrings.ksParserParameters, md.ParserParameters);
+				ILcmOwningSequence<IMoCompoundRule> compoundRules = md.CompoundRulesOS;
+				dlg.SetDlgInfo(ParserUIStrings.ksParserParameters, md.ParserParameters, compoundRules);
 				if (dlg.ShowDialog(m_propertyTable.GetValue<XWindow>("window")) == DialogResult.OK)
 				{
 					using (var helper = new UndoableUnitOfWorkHelper(
