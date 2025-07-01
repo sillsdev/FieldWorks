@@ -935,7 +935,7 @@ namespace SIL.FieldWorks.IText
 						// else, reuse the same analysisTree for setting a gloss alternative
 
 						analysisTree.Gloss.Form.set_String(wsNewGloss, wordGlossItem.Value);
-						if (word.morphemes?.analysisStatus == analysisStatusTypes.humanApproved)
+						if (word.morphemes?.analysisStatus != analysisStatusTypes.guess)
 						{
 							// Make sure this analysis is marked as user-approved (green check mark)
 							cache.LangProject.DefaultUserAgent.SetEvaluation(analysisTree.WfiAnalysis, Opinions.approves);
