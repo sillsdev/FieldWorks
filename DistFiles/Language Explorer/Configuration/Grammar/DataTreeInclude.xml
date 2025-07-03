@@ -109,10 +109,10 @@
 	<command id="CmdDataTree-Delete-POS-InflectionClass" label="Delete Inflection Class" message="DataTreeDelete" icon="Delete">
 	  <parameters field="InflectionClasses" className="MoInflClass"/>
 	</command>
-	<command id="CmdDataTree-Insert-POS-StemName" label="Insert Stem Name" message="DataTreeInsert">
+	<command id="CmdDataTree-Insert-POS-StemName" label="Insert Stem Allomorph Label" message="DataTreeInsert">
 	  <parameters field="StemNames" className="MoStemName"/>
 	</command>
-	<command id="CmdDataTree-Delete-POS-StemName" label="Delete Stem Name" message="DataTreeDelete" icon="Delete">
+	<command id="CmdDataTree-Delete-POS-StemName" label="Delete Stem Allomorph Label" message="DataTreeDelete" icon="Delete">
 	  <parameters field="StemNames" className="MoStemName"/>
 	</command>
 	<command id="CmdDataTree-Insert-MoStemName-Region" label="Insert Feature Set" message="DataTreeInsert">

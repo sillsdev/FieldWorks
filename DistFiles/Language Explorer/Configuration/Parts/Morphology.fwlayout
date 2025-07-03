@@ -171,9 +171,9 @@
 			</indent>
 		</part>
 
-		<part ref="StemNamesSection" expansion="expanded" label="Stem Names" menu="mnuDataTree-POS-StemNames" >
+		<part ref="StemNamesSection" expansion="expanded" label="Stem Allomorph Labels" menu="mnuDataTree-POS-StemNames" >
 			<indent>
-				<part ref="StemNames" expansion="expanded" label="Stem Names" menu="mnuDataTree-POS-StemNames"/>
+				<part ref="StemNames" expansion="expanded" label="Stem Allomoprh Labels" menu="mnuDataTree-POS-StemNames"/>
 			</indent>
 		</part>
 
@@ -205,7 +205,7 @@
 	</layout>
 
 	<layout class="MoStemName" type="detail" name="EditStemName">
-		<part ref="NameAllA" label="Stem Name" menu="mnuDataTree-POS-StemName"/>
+		<part ref="NameAllA" label="Stem Allomorph Label" menu="mnuDataTree-POS-StemName"/>
 		<part ref="AbbreviationAllA"/>
 		<part ref="DescriptionAllA"/>
 		<part ref="StemNameRegionsSection" expansion="expanded" label="Feature Sets" menu="mnuDataTree-MoStemName-Regions" >

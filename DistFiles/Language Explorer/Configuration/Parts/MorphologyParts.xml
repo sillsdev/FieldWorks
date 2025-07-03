@@ -181,10 +181,10 @@
 			</slice>
 		</part>
 		<part id="MoDerivAffMsa-Detail-FromStemName" type="Detail">
-			<slice field="FromStemName" label="From Stem Name" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+			<slice field="FromStemName" label="From Stem Allomorph Label" editor="defaultAtomicReference" menu="mnuDataTree-Help">
 				<deParams ws="best analorvern"/>
-				<chooserInfo flidTextParam="5031003" text="The following stem names are available for the category {0}.">
-					<chooserLink type="goto" label="Edit the Stem Names for {0}" tool="posEdit"/>
+				<chooserInfo flidTextParam="5031003" text="The following stem allomorph labels are available for the category {0}.">
+					<chooserLink type="goto" label="Edit the Stem Allomorph Labels for {0}" tool="posEdit"/>
 				</chooserInfo>
 			</slice>
 		</part>
@@ -448,19 +448,19 @@
 			<obj field="MorphType" layout="pubPostfix"/>
 		</part>
 		<part id="MoStemAllomorph-Detail-StemName" type="Detail">
-			<slice field="StemName" label="Stem Name" editor="defaultAtomicReference" menu="mnuDataTree-Help"
+			<slice field="StemName" label="Stem Allomorph Label" editor="defaultAtomicReference" menu="mnuDataTree-Help"
 				   helpTopicID="khtpField-lexiconEdit-AlternateFormsSection-MoStemAllomorph-StemName">
 				<deParams ws="best analorvern"/>
 				<chooserInfo text="The following stem names are available for the currently chosen categories.">
-					<chooserLink type="goto" label="Edit the Stem Names for categories" tool="posEdit"/>
+					<chooserLink type="goto" label="Edit the Stem Allomorph Labels for categories" tool="posEdit"/>
 				</chooserInfo>
 			</slice>
 		</part>
 		<part id="MoStemAllomorph-Detail-StemNameForLexemeForm" type="Detail">
-			<slice field="StemName" label="Stem Name" editor="defaultAtomicReference" menu="mnuDataTree-Help"  helpTopicID="khtpField-LexemeForm-StemName">
+			<slice field="StemName" label="Stem Allomorph Label" editor="defaultAtomicReference" menu="mnuDataTree-Help"  helpTopicID="khtpField-LexemeForm-StemName">
 				<deParams ws="best analorvern"/>
 				<chooserInfo text="The following stem names are available for the currently chosen categories.">
-					<chooserLink type="goto" label="Edit the Stem Names for categories" tool="posEdit"/>
+					<chooserLink type="goto" label="Edit the Stem Allomorph Labels for categories" tool="posEdit"/>
 				</chooserInfo>
 			</slice>
 		</part>
