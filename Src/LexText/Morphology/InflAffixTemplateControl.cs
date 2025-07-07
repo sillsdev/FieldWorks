@@ -20,6 +20,9 @@ using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.Utils;
 using XCore;
+using SIL.LCModel.DomainServices;
+using System.Security.Cryptography;
+using System.Xml.Linq;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -346,6 +349,44 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					});
 			m_rootb.Reconstruct();  // work around because <choice> is not smart enough to remember its dependencies
 			return true;	//we handled this.
+		}
+
+		public bool OnInflTemplateMoveUpInflAffixMsa(object cmd)
+		{
+			return MoveInflAffixMsa(true);
+		}
+		public bool OnInflTemplateMoveDownInflAffixMsa(object cmd)
+		{
+			return MoveInflAffixMsa(false);
+		}
+
+		private bool MoveInflAffixMsa(bool up)
+		{
+			CheckDisposed();
+
+			var inflMsa = m_obj as IMoInflAffMsa;
+			if (inflMsa == null)
+				return true; // play it safe
+			List<ICmObject> vals = m_slot.Affixes.ToList<ICmObject>();
+			int pos = vals.IndexOf(inflMsa);
+			if (up && pos == 0)
+				return true; // Cannot move up.
+			if (!up && pos == vals.Count - 1)
+				return true; // Cannot move down.
+			UndoableUnitOfWorkHelper.Do(MEStrings.ksUndoRemovingAffix, MEStrings.ksRedoRemovingAffix,
+				Cache.ActionHandlerAccessor,
+				() =>
+				{
+					vals.RemoveAt(pos);
+					if (up)
+						vals.Insert(pos - 1, inflMsa);
+					else
+						vals.Insert(pos + 1, inflMsa);
+					int flid = Cache.DomainDataByFlid.MetaDataCache.GetFieldId2(m_slot.ClassID, "Affixes", true);
+					VirtualOrderingServices.SetVO(m_slot, flid, vals);
+				});
+			m_rootb.Reconstruct();  // work around because <choice> is not smart enough to remember its dependencies
+			return true;    //we handled this.
 		}
 
 		private bool OtherInflAffixMsasExist(ILexEntry lex, IMoInflAffMsa inflMsa)
@@ -1167,6 +1208,21 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		internal ITsString MenuLabelForInflTemplateRemoveInflAffixMsa(string sLabel)
 		{
 			CheckDisposed();
+			if (m_obj.ClassID == MoInflAffMsaTags.kClassId)
+				return DetermineMsaContextMenuItemLabel(sLabel);
+			else
+				return null;
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="sLabel"></param>
+		/// <returns></returns>
+		internal ITsString MenuLabelForInflTemplateMoveInflAffixMsa(string sLabel, bool up, out bool fEnabled)
+		{
+			CheckDisposed();
+			fEnabled = true;
 			if (m_obj.ClassID == MoInflAffMsaTags.kClassId)
 				return DetermineMsaContextMenuItemLabel(sLabel);
 			else
