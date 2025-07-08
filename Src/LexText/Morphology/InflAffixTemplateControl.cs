@@ -21,8 +21,6 @@ using SIL.LCModel.Infrastructure;
 using SIL.Utils;
 using XCore;
 using SIL.LCModel.DomainServices;
-using System.Security.Cryptography;
-using System.Xml.Linq;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -367,16 +365,14 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			var inflMsa = m_obj as IMoInflAffMsa;
 			if (inflMsa == null)
 				return true; // play it safe
-			List<ICmObject> vals = m_slot.Affixes.ToList<ICmObject>();
-			int pos = vals.IndexOf(inflMsa);
-			if (up && pos == 0)
-				return true; // Cannot move up.
-			if (!up && pos == vals.Count - 1)
-				return true; // Cannot move down.
+			if (!MoveableMSA(inflMsa, up))
+				return true;
 			UndoableUnitOfWorkHelper.Do(MEStrings.ksUndoRemovingAffix, MEStrings.ksRedoRemovingAffix,
 				Cache.ActionHandlerAccessor,
 				() =>
 				{
+					List<ICmObject> vals = m_slot.Affixes.ToList<ICmObject>();
+					int pos = vals.IndexOf(inflMsa);
 					vals.RemoveAt(pos);
 					if (up)
 						vals.Insert(pos - 1, inflMsa);
@@ -1222,11 +1218,22 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		internal ITsString MenuLabelForInflTemplateMoveInflAffixMsa(string sLabel, bool up, out bool fEnabled)
 		{
 			CheckDisposed();
-			fEnabled = true;
+			fEnabled = MoveableMSA(m_obj as IMoInflAffMsa, up);
 			if (m_obj.ClassID == MoInflAffMsaTags.kClassId)
 				return DetermineMsaContextMenuItemLabel(sLabel);
 			else
 				return null;
+		}
+
+		internal bool MoveableMSA(IMoInflAffMsa msa, bool up)
+		{
+			List<ICmObject> vals = m_slot.Affixes.ToList<ICmObject>();
+			int pos = vals.IndexOf(msa);
+			if (up && pos == 0)
+				return false; // Cannot move up.
+			if (!up && pos == vals.Count - 1)
+				return false; // Cannot move down.
+			return true;
 		}
 
 		/// <summary>

@@ -39,10 +39,10 @@
 	<command id="CmdInflAffixTemplate-Remove-InflAffixMsa" label="Remove YYY from XXX" message="InflTemplateRemoveInflAffixMsa" icon="Remove">
 	  <parameters field="AffixCategory" className="MoInflAffMsa"/>
     </command>
-    <command id="CmdInflAffixTemplate-MoveUp-InflAffixMsa" label="Move YYY Slot Up" message="InflTemplateMoveUpInflAffixMsa" icon="MoveUp">
+    <command id="CmdInflAffixTemplate-MoveUp-InflAffixMsa" label="Move YYY Affix Up" message="InflTemplateMoveUpInflAffixMsa" icon="MoveUp">
       <parameters field="AffixCategory" className="MoInflAffMsa"/>
     </command>
-    <command id="CmdInflAffixTemplate-MoveDown-InflAffixMsa" label="Move YYY Slot Down" message="InflTemplateMoveDownInflAffixMsa"  icon="MoveDown">
+    <command id="CmdInflAffixTemplate-MoveDown-InflAffixMsa" label="Move YYY Affix Down" message="InflTemplateMoveDownInflAffixMsa"  icon="MoveDown">
       <parameters field="AffixCategory" className="MoInflAffMsa"/>
 <!-- this needs to be changed when the model changes -->
 	</command>
