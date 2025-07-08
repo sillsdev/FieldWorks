@@ -32,9 +32,6 @@ call %FWROOT%\bin\_setTstBuildError mkvw-tst
 call %FWROOT%\bin\mkdba-tst.bat %1 %2 %3 %4 %5 %6 %7 %8 %9
 call %FWROOT%\bin\_setTstBuildError mkdba-tst
 
-call %FWROOT%\bin\mkComFWDlgs-tst.bat %1 %2 %3 %4 %5 %6 %7 %8 %9
-call %FWROOT%\bin\_setTstBuildError mkComFWDlgs-tst
-
 call %FWROOT%\bin\mkDbSvcs-tst.bat %1 %2 %3 %4 %5 %6 %7 %8 %9
 call %FWROOT%\bin\_setTstBuildError mkDbSvcs-tst
 
