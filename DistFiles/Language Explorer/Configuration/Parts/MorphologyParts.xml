@@ -451,7 +451,7 @@
 			<slice field="StemName" label="Stem Allomorph Label" editor="defaultAtomicReference" menu="mnuDataTree-Help"
 				   helpTopicID="khtpField-lexiconEdit-AlternateFormsSection-MoStemAllomorph-StemName">
 				<deParams ws="best analorvern"/>
-				<chooserInfo text="The following stem names are available for the currently chosen categories.">
+				<chooserInfo text="The following stem allomorph labels are available for the currently chosen categories.">
 					<chooserLink type="goto" label="Edit the Stem Allomorph Labels for categories" tool="posEdit"/>
 				</chooserInfo>
 			</slice>
@@ -459,7 +459,7 @@
 		<part id="MoStemAllomorph-Detail-StemNameForLexemeForm" type="Detail">
 			<slice field="StemName" label="Stem Allomorph Label" editor="defaultAtomicReference" menu="mnuDataTree-Help"  helpTopicID="khtpField-LexemeForm-StemName">
 				<deParams ws="best analorvern"/>
-				<chooserInfo text="The following stem names are available for the currently chosen categories.">
+				<chooserInfo text="The following stem allomorph labels are available for the currently chosen categories.">
 					<chooserLink type="goto" label="Edit the Stem Allomorph Labels for categories" tool="posEdit"/>
 				</chooserInfo>
 			</slice>
