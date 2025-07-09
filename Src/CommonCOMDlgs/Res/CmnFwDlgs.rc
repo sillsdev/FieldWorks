@@ -77,7 +77,6 @@ END
 3 TEXTINCLUDE
 BEGIN
 	//"#include ""..\\..\\appcore\\Res\\AfApp.rc""\r\n"
-	"#include ""..\\..\\Widgets\\Res\\NetworkTreeView.rc""\r\n"
 	"#include ""..\\..\\Generic\\Generic.rc""\r\n"
 	"#if defined(_WIN32) || defined(_M_X64)\r\n"
 	"LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US\r\n"
@@ -289,7 +288,6 @@ END
 // Generated from the TEXTINCLUDE 3 resource.
 //
 //#include "..\..\appcore\Res\AfApp.rc"
-#include "..\..\Widgets\Res\NetworkTreeView.rc"
 #include "..\..\Generic\Generic.rc"
 #if defined(_WIN32) || defined(_M_X64)
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
