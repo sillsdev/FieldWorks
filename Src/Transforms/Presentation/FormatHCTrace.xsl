@@ -616,7 +616,7 @@ function Toggle(node, path, imgOffset)
 					<xsl:text>&#xa0;&#xa0;(Reason: This is a duplicate parse and has been pruned.)</xsl:text>
 				</span>
 			</xsl:when>
-			<xsl:when test="name() != 'WordSynthesisTrace' and $moreToShow != 'Y'">
+			<xsl:otherwise>
 				<xsl:for-each select="FailureReason">
 					<span style="unicode-bidi:embed">
 						<xsl:attribute name="style">
@@ -837,7 +837,7 @@ function Toggle(node, path, imgOffset)
 								<xsl:text>Further derivation is required after a non-final template.</xsl:text>
 							</xsl:when>
 							<xsl:when test="@type = 'noTemplatesApplied'">
-								<xsl:text>Applicable affix templates were found, but none were applied.</xsl:text>
+								<xsl:text>No affix templates succeeded during synthesis.</xsl:text>
 							</xsl:when>
 							<xsl:when test="@type = 'pos'">
 								<xsl:text>The parse's part of speech '</xsl:text>
@@ -859,7 +859,7 @@ function Toggle(node, path, imgOffset)
 						<xsl:text>)</xsl:text>
 					</span>
 				</xsl:for-each>
-			</xsl:when>
+			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
 	<!--
