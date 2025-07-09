@@ -9,16 +9,8 @@
 		<GenerateNUnitReports Condition="'$(action)'=='test'" ReportFiles="@(NUnitReportFiles)"/>
 	</Target>
 
-	<Target Name="allCpp" DependsOnTargets="DebugProcs;GenericLib;testGenericLib;FwKernel;Views;testViews">
-		<CreateItem Include="$(dir-outputBase)/*.compmap">
-			<Output TaskParameter="Include" ItemName="CompMapFiles"/>
-		</CreateItem>
-	</Target>
-	<Target Name="allCppNoTest" DependsOnTargets="DebugProcs;GenericLib;FwKernel;Views">
-		<CreateItem Include="$(dir-outputBase)/*.compmap">
-			<Output TaskParameter="Include" ItemName="CompMapFiles"/>
-		</CreateItem>
-	</Target>
+	<Target Name="allCpp" DependsOnTargets="DebugProcs;GenericLib;testGenericLib;FwKernel;Views;testViews"/>
+	<Target Name="allCppNoTest" DependsOnTargets="DebugProcs;GenericLib;FwKernel;Views"/>
 
 	<ItemGroup>
 		<Fragments Include="$(dir-fwdistfiles)/*.fragment.manifest"/>
@@ -112,9 +104,6 @@
 				Condition="'$(OS)'=='Windows_NT'" Platform="$(Platform)" MSBuildArchitecture="$(Platform)"/>
 		<Exec Command="mt.exe -outputresource:$(dir-outputBase)\testViews.exe -manifest $(dir-outputBase)\testViews.exe.manifest"
 				Condition="'$(OS)'=='Windows_NT'"/>
-		<CreateItem Include="$(dir-outputBase)/*.compmap">
-			<Output TaskParameter="Include" ItemName="ViewsCompMapFiles"/>
-		</CreateItem>
 		<Unitpp Condition="'$(action)'=='test'"
 				FixturePath="$(dir-outputBase)/testViews"
 				FudgeFactor="$(timeoutFudgeFactor)"
