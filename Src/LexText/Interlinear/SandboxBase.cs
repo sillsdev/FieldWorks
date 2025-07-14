@@ -1425,6 +1425,11 @@ namespace SIL.FieldWorks.IText
 							// improve performance. All the relevant data should already have
 							// been loaded while creating the main interlinear view.
 							LoadSecDataForEntry(entryReal, senseReal, hvoSbWord, cda, wsVern, hvoMbSec, fGuessing, sdaMain);
+							bool fDirty = Caches.DataAccess.IsDirty();
+							bool fApproved = !UsingGuess;
+							bool fHasApprovedWordGloss = HasWordGloss() && (fDirty || fApproved);
+							bool fHasApprovedWordCat = HasWordCat() && (fDirty || fApproved);
+							CopyLexEntryInfoToMonomorphemicWordGlossAndPos(!fHasApprovedWordGloss, !fHasApprovedWordCat);
 						}
 					}
 					if (bldrError.Length > 0)
@@ -1470,6 +1475,140 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 			return fGuessing != 0;
+		}
+
+		public virtual void CopyLexEntryInfoToMonomorphemicWordGlossAndPos(bool fCopyToWordGloss, bool fCopyToWordPos)
+		{
+			// conditionally set up the word gloss and POS to correspond to monomorphemic lex morph entry info.
+			SyncMonomorphemicGlossAndPos(fCopyToWordGloss, fCopyToWordPos);
+			// Forget we had an existing wordform; otherwise, the program considers
+			// all changes to be editing the wordform, and since it belongs to the
+			// old analysis, the old analysis gets resurrected.
+			m_hvoWordGloss = 0;
+		}
+
+		/// <summary>
+		/// Synchronize the word gloss and POS with the morpheme gloss and MSA info, to the extent possible.
+		/// Currently works FROM the morpheme TO the Word, but going the other way may be useful, too.
+		///
+		/// for the word gloss:
+		///		- if only one morpheme, copy sense gloss to word gloss
+		///		- if multiple morphemes, copy first stem gloss to word gloss, but only if word gloss is empty.
+		///	for the POS:
+		///		- if there is more than one stem and they have different parts of speech, do nothing.
+		///		- if there is more than one derivational affix (DA), do nothing.
+		///		- otherwise, if there is no DA, use the POS of the stem.
+		///		- if there is no stem, do nothing.
+		///		- if there is a DA, use its 'to' POS.
+		///			(currently we don't insist that the 'from' POS matches the stem)
+		/// </summary>
+		internal void SyncMonomorphemicGlossAndPos(bool fCopyToWordGloss, bool fCopyToWordPos)
+		{
+			if (!fCopyToWordGloss && !fCopyToWordPos)
+				return;
+
+			ISilDataAccess sda = m_caches.DataAccess;
+			int cmorphs = sda.get_VecSize(RootWordHvo, ktagSbWordMorphs);
+			int hvoSbRootSense = 0;
+			int hvoStemPos = 0; // ID in real database of part-of-speech of stem.
+			bool fGiveUpOnPOS = false;
+			int hvoDerivedPos = 0; // real ID of POS output of derivational MSA.
+			for (int imorph = 0; imorph < cmorphs; imorph++)
+			{
+				int hvoMorph = sda.get_VecItem(RootWordHvo, ktagSbWordMorphs, imorph);
+				int hvoSbSense = sda.get_ObjectProp(hvoMorph, ktagSbMorphGloss);
+				if (hvoSbSense == 0)
+					continue; // Can't sync from morph sense to word if we don't have  morph sense.
+				var sense = m_caches.RealObject(hvoSbSense) as ILexSense;
+				IMoMorphSynAnalysis msa = sense.MorphoSyntaxAnalysisRA;
+
+				//					ITsString prefix = sda.get_StringProp(hvoMorph, ktagSbMorphPrefix);
+				//					ITsString suffix = sda.get_StringProp(hvoMorph, ktagSbMorphPostfix);
+				//					bool fStem = prefix.Length == 0 && suffix.Length == 0;
+
+				bool fStem = msa is IMoStemMsa;
+
+				// If we have only one morpheme, treat it as the stem from which we will copy the gloss.
+				// otherwise, use the first stem we find, if any.
+				if ((fStem && hvoSbRootSense == 0) || cmorphs == 1)
+					hvoSbRootSense = hvoSbSense;
+
+				if (fStem)
+				{
+					int hvoPOS = (msa as IMoStemMsa).PartOfSpeechRA != null ? (msa as IMoStemMsa).PartOfSpeechRA.Hvo : 0;
+					if (hvoPOS != hvoStemPos && hvoStemPos != 0)
+					{
+						// found conflicting stems
+						fGiveUpOnPOS = true;
+					}
+					else
+						hvoStemPos = hvoPOS;
+				}
+				else if (msa is IMoDerivAffMsa)
+				{
+					if (hvoDerivedPos != 0)
+						fGiveUpOnPOS = true; // more than one DA
+					else
+						hvoDerivedPos = (msa as IMoDerivAffMsa).ToPartOfSpeechRA != null ? (msa as IMoDerivAffMsa).ToPartOfSpeechRA.Hvo : 0;
+				}
+			}
+
+			// If we found a sense to copy from, do it.  Replace the word gloss even there already is
+			// one, since users get confused/frustrated if we don't.  (See LT-6141.)  It's marked as a
+			// guess after all!
+			CopySenseToWordGloss(fCopyToWordGloss, hvoSbRootSense);
+
+			// If we didn't find a stem, we don't have enough information to find a POS.
+			if (hvoStemPos == 0)
+				fGiveUpOnPOS = true;
+
+			int hvoLexPos = 0;
+			if (!fGiveUpOnPOS)
+			{
+				if (hvoDerivedPos != 0)
+					hvoLexPos = hvoDerivedPos;
+				else
+					hvoLexPos = hvoStemPos;
+			}
+			CopyLexPosToWordPos(fCopyToWordPos, hvoLexPos);
+		}
+
+		protected virtual void CopySenseToWordGloss(bool fCopyWordGloss, int hvoSbRootSense)
+		{
+			if (hvoSbRootSense != 0 && fCopyWordGloss)
+			{
+				ISilDataAccess sda = m_caches.DataAccess;
+				m_caches.DataAccess.SetInt(RootWordHvo, ktagSbWordGlossGuess, 1);
+				int hvoRealSense = m_caches.RealHvo(hvoSbRootSense);
+				foreach (int wsId in m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidWordGloss))
+				{
+					// Update the guess, by copying the glosses of the SbNamedObj representing the sense
+					// to the word gloss property.
+					//ITsString tssGloss = sda.get_MultiStringAlt(hvoSbRootSense, ktagSbNamedObjName, wsId);
+					// No, it is safer to copy from the real sense. We may be displaying more WSS for the word than the sense.
+					ITsString tssGloss = m_caches.MainCache.MainCacheAccessor.get_MultiStringAlt(hvoRealSense, LexSenseTags.kflidGloss, wsId);
+					sda.SetMultiStringAlt(RootWordHvo, ktagSbWordGloss, wsId, tssGloss);
+					sda.PropChanged(null, (int)PropChangeType.kpctNotifyAll, RootWordHvo, ktagSbWordGloss,
+						wsId, 0, 0);
+				}
+			}
+		}
+		protected virtual int CopyLexPosToWordPos(bool fCopyToWordCat, int hvoMsaPos)
+		{
+			int hvoPos = 0;
+			if (fCopyToWordCat && hvoMsaPos != 0)
+			{
+				// got the one we want, in the real database. Make a corresponding sandbox one
+				// and install it as a guess
+				hvoPos = CreateSecondaryAndCopyStrings(InterlinLineChoices.kflidWordPos, hvoMsaPos,
+					CmPossibilityTags.kflidAbbreviation);
+				int hvoSbWordPos = m_caches.DataAccess.get_ObjectProp(RootWordHvo, ktagSbWordPos);
+				m_caches.DataAccess.SetObjProp(RootWordHvo, ktagSbWordPos, hvoPos);
+				m_caches.DataAccess.SetInt(hvoPos, ktagSbNamedObjGuess, 1);
+				m_caches.DataAccess.PropChanged(RootBox, (int)PropChangeType.kpctNotifyAll, RootWordHvo,
+					ktagSbWordPos, 0, 1, (hvoSbWordPos == 0 ? 0 : 1));
+			}
+			return hvoPos;
 		}
 
 		/// <summary>
