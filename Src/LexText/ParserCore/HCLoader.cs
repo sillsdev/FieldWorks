@@ -101,10 +101,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 			m_CompoundRuleLookup = new Dictionary<string, int>();
 			XElement cRulesEelem = parserParamsElem.Element("CompoundRules");
-			foreach (var cRule in cRulesEelem.Elements())
+			if (cRulesEelem != null)
 			{
-				int maxApps = Int32.Parse(cRule.Attribute("maxApps").Value);
-				m_CompoundRuleLookup[cRule.Attribute("guid").Value] = maxApps;
+				foreach (var cRule in cRulesEelem.Elements())
+				{
+					int maxApps = Int32.Parse(cRule.Attribute("maxApps").Value);
+					m_CompoundRuleLookup[cRule.Attribute("guid").Value] = maxApps;
+				}
 			}
 
 			m_entryName = new Dictionary<LexEntry, string>();
