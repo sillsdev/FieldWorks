@@ -1216,6 +1216,7 @@ namespace SIL.FieldWorks.IText
 				MorphemeBreaker mb = new MorphemeBreaker(m_caches, sMorphs, m_hvoSbWord,
 					m_wsVern, m_sandbox);
 				mb.Run();
+				m_sandbox.CopyLexEntryInfoToMonomorphemicWordGlossAndPos();
 				m_rootb.Reconstruct(); // Everything changed, more or less.
 				// We've changed properties that the morph manager cares about, but we don't want it
 				// to fire when we fix the selection.

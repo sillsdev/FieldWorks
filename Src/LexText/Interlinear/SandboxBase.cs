@@ -1425,11 +1425,7 @@ namespace SIL.FieldWorks.IText
 							// improve performance. All the relevant data should already have
 							// been loaded while creating the main interlinear view.
 							LoadSecDataForEntry(entryReal, senseReal, hvoSbWord, cda, wsVern, hvoMbSec, fGuessing, sdaMain);
-							bool fDirty = Caches.DataAccess.IsDirty();
-							bool fApproved = !UsingGuess;
-							bool fHasApprovedWordGloss = HasWordGloss() && (fDirty || fApproved);
-							bool fHasApprovedWordCat = HasWordCat() && (fDirty || fApproved);
-							CopyLexEntryInfoToMonomorphemicWordGlossAndPos(!fHasApprovedWordGloss, !fHasApprovedWordCat);
+							CopyLexEntryInfoToMonomorphemicWordGlossAndPos();
 						}
 					}
 					if (bldrError.Length > 0)
@@ -1477,10 +1473,14 @@ namespace SIL.FieldWorks.IText
 			return fGuessing != 0;
 		}
 
-		public virtual void CopyLexEntryInfoToMonomorphemicWordGlossAndPos(bool fCopyToWordGloss, bool fCopyToWordPos)
+		internal void CopyLexEntryInfoToMonomorphemicWordGlossAndPos()
 		{
+			bool fDirty = Caches.DataAccess.IsDirty();
+			bool fApproved = !UsingGuess;
+			bool fHasApprovedWordGloss = HasWordGloss() && (fDirty || fApproved);
+			bool fHasApprovedWordCat = HasWordCat() && (fDirty || fApproved);
 			// conditionally set up the word gloss and POS to correspond to monomorphemic lex morph entry info.
-			SyncMonomorphemicGlossAndPos(fCopyToWordGloss, fCopyToWordPos);
+			SyncMonomorphemicGlossAndPos(!fHasApprovedWordGloss, !fHasApprovedWordCat);
 			// Forget we had an existing wordform; otherwise, the program considers
 			// all changes to be editing the wordform, and since it belongs to the
 			// old analysis, the old analysis gets resurrected.
