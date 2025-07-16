@@ -79,9 +79,6 @@
 
   <Target Name="Setup" Condition="Exists('FwBuildTasks.dll')"><!-- cannot depend on GenerateVersionFiles, because that creates a file in Output/Common which CleanAll deletes -->
 	<!-- This is less pretty then I would like since xbuild doesn't support relational operators in conditions -->
-	<PropertyGroup Condition="'$(OS)'!='Windows_NT'">
-		<ToolsVersion>14.0</ToolsVersion>
-	</PropertyGroup>
 	<PropertyGroup Condition="'$(OS)'=='Windows_NT'">
 		<ToolsVersion>Current</ToolsVersion>
 	</PropertyGroup>
@@ -93,16 +90,10 @@
 	  <Output TaskParameter="Value" PropertyName="arch"/>
 	</CpuArchitecture>
 
-	<CreateProperty Condition="'$(OS)'!='Windows_NT'" Value="$(fwrt)/Obj_$(arch)">
-	  <Output TaskParameter="Value" PropertyName="dir-fwobj"/>
-	</CreateProperty>
 	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="$(fwrt)\Obj">
 	  <Output TaskParameter="Value" PropertyName="dir-fwobj"/>
 	</CreateProperty>
 
-	<CreateProperty Condition="'$(OS)'!='Windows_NT'" Value="$(fwrt)/Output_$(arch)">
-	  <Output TaskParameter="Value" PropertyName="dir-fwoutput"/>
-	</CreateProperty>
 	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="$(fwrt)\Output">
 	  <Output TaskParameter="Value" PropertyName="dir-fwoutput"/>
 	</CreateProperty>
@@ -127,9 +118,6 @@
 	  <Output TaskParameter="Value" PropertyName="dir-fwoutputlibBase"/>
 	</PathCombine>
 
-	<CreateProperty Condition="'$(OS)'!='Windows_NT'" Value="$(dir-fwoutputlib)/linux">
-	  <Output TaskParameter="Value" PropertyName="dir-fwoutputlibPlatform"/>
-	</CreateProperty>
 	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="$(dir-fwoutputlib)\windows">
 	  <Output TaskParameter="Value" PropertyName="dir-fwoutputlibPlatform"/>
 	</CreateProperty>
@@ -183,35 +171,20 @@
 	  <Output TaskParameter="Value" PropertyName="fwrt-parent"/>
 	</ParentDirectory>
 
-	<!-- where to find the COM library on Linux -->
-	<PathCombine Condition="'$(OS)'!='Windows_NT'" BasePath="$(fwrt-parent)" SubPath="COM">
-	  <Output TaskParameter="Value" PropertyName="com_dir"/>
-	</PathCombine>
 	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="">
 	  <Output TaskParameter="Value" PropertyName="com_dir"/>
 	</CreateProperty>
 
-	<!-- where to find the COM library on Linux -->
-	<PathCombine Condition="'$(OS)'!='Windows_NT'" BasePath="$(com_dir)" SubPath="build$(arch)/src/.libs">
-	  <Output TaskParameter="Value" PropertyName="com_lib"/>
-	</PathCombine>
 	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="">
 	  <Output TaskParameter="Value" PropertyName="com_lib"/>
 	</CreateProperty>
 
-	<!-- where to find the ICU library on Linux -->
-	<PathCombine Condition="'$(OS)'!='Windows_NT'" BasePath="$(fwrt)" SubPath="Lib/src/icu/install$(arch)/lib">
-	  <Output TaskParameter="Value" PropertyName="icu_lib"/>
-	</PathCombine>
 	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="">
 	  <Output TaskParameter="Value" PropertyName="icu_lib"/>
 	</CreateProperty>
 
 	<!-- Area of filesystem where FieldWorks and its dependencies are being installed. This
 	is /usr when installed from a .deb package, or /app when using flatpak. -->
-	<CreateProperty Condition="'$(OS)'!='Windows_NT'" Value="/usr">
-	  <Output TaskParameter="Value" PropertyName="installation_prefix"/>
-	</CreateProperty>
 	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="">
 	  <Output TaskParameter="Value" PropertyName="installation_prefix"/>
 	</CreateProperty>
@@ -241,19 +214,11 @@
 	</CreateProperty>
 
 	<!-- Set some environment variables needed by make (or nmake) -->
-	<SetEnvVar Variable="PATH" Value="$(dir-outputBase):$(icu_lib):$(fwrt)/Lib/src/icu/install$(arch)/bin:$(PATH)" Condition="'$(OS)'=='Unix'"/>
 	<SetEnvVar Variable="PATH" Value="$(dir-outputBase);$(PATH);$(dir-outputBase)/lib/$(Arch)" Condition="'$(OS)'=='Windows_NT'"/>
 	<SetEnvVar Variable="BUILD_TYPE" Value="$(build-type)"/>
 	<SetEnvVar Variable="BUILD_CONFIG" Value="$(config-capital)" />
 	<SetEnvVar Variable="BUILD_ROOT" Value="$(fwrt)" />
 	<SetEnvVar Variable="ICU_DATA" Value="$(fwrt)/DistFiles/Icu$(IcuVersion)" />
-
-	<!-- Set some environment variables needed on Linux. -->
-	<SetEnvVar Variable="LD_LIBRARY_PATH" Value="$(com_dir)/build$(arch)/src/.libs:$(com_dir)/build$(arch)/lib:$(icu_lib):$(dir-outputBase):$(LD_LIBRARY_PATH)" Condition="'$(OS)'=='Unix'"/>
-	<SetEnvVar Variable="MONO_PATH" Value="$(dir-fwdistfiles):$(dir-outputBase)" Condition="'$(OS)'=='Unix'"/>
-	<SetEnvVar Variable="MONO_REGISTRY_PATH" Value="$(dir-fwoutput)/registry" Condition="'$(OS)'=='Unix'"/>
-	<SetEnvVar Variable="COMPONENTS_MAP_PATH" Value="$(dir-outputBase)" Condition="'$(OS)'=='Unix'"/>
-	<SetEnvVar Variable="MONO_RUNTIME_EXECUTABLE_PATH" Value="$(MONO_PREFIX)/bin/mono" Condition="'$(OS)'=='Unix'"/>
 
 	<!-- Create the output directories if they don't already exist -->
 
@@ -272,20 +237,6 @@
 
   <Target Name="MakeDirs" DependsOnTargets="Setup;DeleteTestFiles" Condition="'$(action)'!='clean'">
 	<MakeDir Directories="$(dir-fwobj);$(dir-outputBase);$(dir-fwoutputCommon)"/>
-	<!-- extra directory (and symbolic links) needed for Linux -->
-	<MakeDir Directories="$(fwrt)/Output" Condition="!Exists('$(fwrt)/Output') And '$(OS)'=='Unix'"/>
-	<Exec Condition="!Exists('$(fwrt)/Output/$(config-capital)') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/$(config-capital) $(fwrt)/Output/$(config-capital)"/>
-	<Exec Condition="!Exists('$(fwrt)/Output/$(config-lower)') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/$(config-capital) $(fwrt)/Output/$(config-lower)"/>
-	<Exec Condition="!Exists('$(fwrt)/Output/Common') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/Common $(fwrt)/Output/Common"/>
-	<Exec Condition="!Exists('$(fwrt)/Output/common') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/Common $(fwrt)/Output/common"/>
-	<Exec Condition="!Exists('$(fwrt)/Output/XMI') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/XMI"/>
-	<Exec Condition="!Exists('$(fwrt)/Output/xmi') And '$(OS)'=='Unix'"
-	  Command="/bin/ln -T -sf $(dir-fwoutput)/XMI $(fwrt)/Output/xmi"/>
   </Target>
 
   <!-- Generate Src/CommonAssemblyInfo.cs from Src/CommonAssemblyInfoTemplate.cs and Src/MasterVersionInfo.txt -->
@@ -332,7 +283,6 @@
 	<action Condition="'$(action)'==''">build</action>
 	<!-- target is one of the targets in the build system. -->
 	<target Condition="'$(target)'==''">all</target>
-	<platform Condition="'$(platform)'=='' And '$(OS)'!='Windows_NT'">UNIX</platform>
 	<platform Condition="'$(platform)'=='' And '$(OS)'=='Windows_NT'">WIN32</platform>
 	<verbose Condition="'$(verbose)'==''">false</verbose>
 	<buildtlb Condition="'$(buildtlb)'==''">false</buildtlb>
