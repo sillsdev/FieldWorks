@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private ReadOnlyPropertyTable _propertyTable;
 		public static bool IsBidi { get; private set; }
-		private static DocFragment MasterFragment { get; set; }
+		private static MasterDocFragment MasterFragment { get; set; }
 
 		public LcmWordGenerator(LcmCache cache)
 		{
@@ -63,7 +63,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using (MemoryStream mem = new MemoryStream())
 			{
-				MasterFragment = new DocFragment(mem);
+				MasterFragment = new MasterDocFragment(mem);
 
 				var entryCount = entryHvos.Length;
 				var cssPath = System.IO.Path.ChangeExtension(filePath, "css");
@@ -346,37 +346,23 @@ namespace SIL.FieldWorks.XWorks
 			return DocFragment.GenerateLetterHeaderDocFragment(headerTextBuilder.ToString(), WordStylesGenerator.LetterHeadingDisplayName, firstHeader, wsString);
 		}
 
-		/*
-		 * DocFragment Region
-		 */
-		#region DocFragment class
-		public class DocFragment : IFragment
+		#region MasterDocFragment class
+		/// <summary>
+		/// The MasterDocFragment contains the data to write to a docx file. Regular
+		/// DocFragments that are used to build the MasterDocFragment do not need
+		/// this data.
+		/// </summary>
+		public class MasterDocFragment : DocFragment
 		{
 			internal MemoryStream MemStr { get; }
 			internal WordprocessingDocument DocFrag { get; }
 			internal MainDocumentPart mainDocPart { get; }
-			internal WP.Body DocBody { get; }
-
-			/// <summary>
-			/// Constructs a new memory stream and creates an empty doc fragment
-			/// that writes to that stream.
-			/// </summary>
-			public DocFragment()
-			{
-				MemStr = new MemoryStream();
-				DocFrag = WordprocessingDocument.Open(MemStr, true);
-
-				// Initialize the document and body.
-				mainDocPart = DocFrag.AddMainDocumentPart();
-				mainDocPart.Document = new WP.Document();
-				DocBody = mainDocPart.Document.AppendChild(new WP.Body());
-			}
 
 			/// <summary>
 			/// Initializes the memory stream from the argument and creates
-			/// an empty doc fragment that writes to that stream.
+			/// an empty master doc fragment that writes to that stream.
 			/// </summary>
-			public DocFragment(MemoryStream str)
+			public MasterDocFragment(MemoryStream str)
 			{
 				MemStr = str;
 				DocFrag = WordprocessingDocument.Open(str, true);
@@ -384,12 +370,31 @@ namespace SIL.FieldWorks.XWorks
 				// Initialize the document and body.
 				mainDocPart = DocFrag.AddMainDocumentPart();
 				mainDocPart.Document = new WP.Document();
-				DocBody = mainDocPart.Document.AppendChild(new WP.Body());
+				mainDocPart.Document.AppendChild(DocBody);
+			}
+
+		}
+		#endregion MasterDocFragment class
+
+		/*
+		 * DocFragment Region
+		 */
+		#region DocFragment class
+		public class DocFragment : IFragment
+		{
+			internal WP.Body DocBody { get; }
+
+			/// <summary>
+			/// Constructs an empty doc fragment that has a Body.
+			/// </summary>
+			public DocFragment()
+			{
+				DocBody = new WP.Body();
 			}
 
 			/// <summary>
-			/// Constructs a new memory stream and creates a non-empty doc fragment,
-			/// containing the given string, that writes to that stream.
+			/// Constructs a non-empty doc fragment that has a Body which
+			/// contains the given string.
 			/// </summary>
 			public DocFragment(string str) : this()
 			{
@@ -688,7 +693,7 @@ namespace SIL.FieldWorks.XWorks
 			public bool IsNullOrEmpty()
 			{
 				// A docbody with no children is an empty document.
-				if (MemStr == null || DocFrag == null || DocBody == null || !DocBody.HasChildren)
+				if (DocBody == null || !DocBody.HasChildren)
 				{
 					return true;
 				}
@@ -941,7 +946,6 @@ namespace SIL.FieldWorks.XWorks
 
 			public void Flush()
 			{
-				WordFragment.MemStr.Flush();
 			}
 
 			public void Insert(IFragment frag)
@@ -1775,12 +1779,6 @@ namespace SIL.FieldWorks.XWorks
 			// calculate the maximum image height from the configuration
 			var maxHeight = config.Model.Pictures?.Height ?? (picOpts?.MaximumHeight ?? 1.0f);
 			Drawing image = CreateImage(srcAttribute, partId, maxWidth, maxHeight);
-
-			if (imageFrag.DocFrag.MainDocumentPart is null || imageFrag.DocFrag.MainDocumentPart.Document.Body is null)
-			{
-				throw new ArgumentNullException("MainDocumentPart and/or Body is null.");
-			}
-
 			Run imgRun = new Run();
 			imgRun.AppendChild(image);
 
