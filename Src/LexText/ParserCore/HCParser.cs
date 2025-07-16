@@ -143,6 +143,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_morpher = null;
 
 			int delReapps = 0;
+			// For Hermit Crab, the maximum number of roots/stems allowed is between one and ten.
+			// The default is two in order to allow for compounding (which requires there be at least two roots/stems).
 			int maxStemCount = 2;
 			string loadErrorsFile = Path.Combine(m_outputDirectory, m_cache.ProjectId.Name + "HCLoadErrors.xml");
 			using (XmlWriter writer = XmlWriter.Create(loadErrorsFile))
