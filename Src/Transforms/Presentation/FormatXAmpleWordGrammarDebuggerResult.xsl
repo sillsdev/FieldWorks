@@ -408,7 +408,7 @@ ShowOtherInfo
 				  <xsl:if test="stemName != ''">
 					 <tr>
 						<td>
-						   <xsl:text>Stem name = </xsl:text>
+						   <xsl:text>stem allomorph label = </xsl:text>
 						   <xsl:value-of select="stemName"/>
 						</td>
 					 </tr>
