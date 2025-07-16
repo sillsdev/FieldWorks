@@ -27,9 +27,6 @@
   <UsingTask TaskName="WriteRegistry" AssemblyFile="FwBuildTasks.dll"/>
   <UsingTask TaskName="Zip" AssemblyFile="FwBuildTasks.dll" />
 
-  <UsingTask TaskName="WriteTextFile" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Unix'" />
-  <UsingTask TaskName="XslTransformation" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Unix'" />
-
   <UsingTask TaskName="CheckAdminPrivilege" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Windows_NT'"/>
   <!-- REVIEW (Hasso) 2022.11: replaceable by SIL.BuildTasks.MakeWixForDirTree? -->
   <UsingTask TaskName="WxsToWxi" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Windows_NT'" />

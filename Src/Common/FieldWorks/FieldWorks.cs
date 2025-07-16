@@ -3579,15 +3579,6 @@ namespace SIL.FieldWorks
 			ErrorReporter.AddProperty("MachineName", Environment.MachineName);
 			ErrorReporter.AddProperty("OSVersion", Environment.OSVersion.ToString());
 			ErrorReporter.AddProperty("OSRelease", ErrorReport.GetOperatingSystemLabel());
-			if (Platform.IsUnix)
-			{
-				var packageVersions = LinuxPackageUtils.FindInstalledPackages("fieldworks-applications*");
-				if (packageVersions.Count() > 0)
-				{
-					var packageVersion = packageVersions.First();
-					ErrorReporter.AddProperty("PackageVersion", string.Format("{0} {1}", packageVersion.Key, packageVersion.Value));
-				}
-			}
 			ulong mem = MiscUtils.GetPhysicalMemoryBytes() / 1048576;
 			ErrorReporter.AddProperty("PhysicalMemory", mem + " Mb");
 			var processArch = Environment.Is64BitProcess ? 64 : 32;
