@@ -58,23 +58,6 @@ namespace SIL.FieldWorks.Common.Controls.FileDialog
 		/// --------------------------------------------------------------------------------
 		public static void Reset()
 		{
-			if (Platform.IsWindows)
-				ResetWindows();
-			else
-				ResetLinux();
-		}
-
-		// NOTE: leave this as a separate method. Otherwise we need the gtk-sharp assemblies
-		// on Windows.
-		private static void ResetLinux()
-		{
-			SetOpenFileDialog<Linux.OpenFileDialogLinux>();
-			SetSaveFileDialog<Linux.SaveFileDialogLinux>();
-			SetFolderBrowserDialog<Linux.FolderBrowserDialogLinux>();
-		}
-
-		private static void ResetWindows()
-		{
 			SetOpenFileDialog<Windows.OpenFileDialogWindows>();
 			SetSaveFileDialog<Windows.SaveFileDialogWindows>();
 			SetFolderBrowserDialog<Windows.FolderBrowserDialogWindows>();
