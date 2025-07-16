@@ -162,7 +162,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				if (guessRootsElem != null)
 					m_guessRoots = (bool) guessRootsElem;
 				if (maxRootsElem != null)
-					maxStemCount = Math.Max(2,int.Parse(maxRootsElem.Value));
+					maxStemCount = Math.Max(1,int.Parse(maxRootsElem.Value));
 			}
 			m_morpher = new Morpher(m_traceManager, m_language) { DeletionReapplications = delReapps };
 			m_morpher.MaxStemCount = maxStemCount;
