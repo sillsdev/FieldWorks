@@ -1192,7 +1192,7 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
     <value>The following custom fields were added to the project:</value>
   </data>
   <data name="ksStemNamesAdded" xml:space="preserve">
-    <value>The following Stem Names were added to the project:</value>
+    <value>The following Stem Allomorph Labels were added to the project:</value>
   </data>
   <data name="ksCannotMakeDesiredLink" xml:space="preserve">
     <value>Cannot make desired link for \{0} {1}</value>
