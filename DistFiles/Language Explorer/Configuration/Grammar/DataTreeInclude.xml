@@ -76,6 +76,9 @@
 	<command id="CmdDataTree-Insert-POS-AffixSlot" label="Insert Affix Slot" message="DataTreeInsert">
 	  <parameters field="AffixSlots" className="MoInflAffixSlot"/>
 	</command>
+    <command id="CmdDataTree-Copy-POS-AffixSlot" label="Duplicate Affix Slot" message="DataTreeCopy">
+      <parameters field="AffixSlots" className="MoInflAffixSlot"/>
+    </command>
     <command id="CmdDataTree-Move-POS-AffixSlot" label="Move Affix Slot" message="DataTreeMove">
       <parameters field="AffixSlots" className="MoInflAffixSlot"/>
     </command>
@@ -219,6 +222,7 @@
 	  <!-- <item command="CmdDataTree-Help"/> -->
 	</menu>
 	<menu id="mnuDataTree-POS-AffixSlot">
+      <item command="CmdDataTree-Copy-POS-AffixSlot"/>
       <item command="CmdDataTree-Move-POS-AffixSlot"/>
       <item command="CmdDataTree-Delete-POS-AffixSlot"/>
       <!-- <item command="CmdDataTree-Help"/> -->
