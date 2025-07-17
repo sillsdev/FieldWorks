@@ -15,7 +15,7 @@
 		<command id="CmdTryAWord" label="_Try a Word..." icon="tryAWord" message="TryAWord"/>
 		<command id="CmdParseCurrentWord" label="Parse _Current Word" message="ParseCurrentWord"/>
 		<command id="CmdParseWordsInCurrentText" label="Parse Words in Te_xt" message="ParseWordsInCurrentText"/>
-		<command id="CmdClearSelectedWordParserAnalyses" label="Clear Current Parser _Analyses" message="ClearSelectedWordParserAnalyses"/>
+		<command id="CmdClearSelectedWordParserAnalyses" label="Clear Current Word's Parser _Analyses" message="ClearSelectedWordParserAnalyses"/>
 		<command id="CmdReInitializeParser" label="Re_load Grammar / Lexicon" message="ReInitParser" tooltip="Reloads data from the Grammar and Lexicon, so the parser uses your latest changes."/>
         <command id="CmdCheckParserOnCurrentText" label="On Current Text" message="CheckParserOnCurrentText" tooltip="Checks parser on currrent text and reports results."/>
         <command id="CmdCheckParserOnGenre" label="On Genre" message="CheckParserOnGenre" tooltip="Checks parser on texts in the selected genre and reports results."/>
@@ -28,8 +28,14 @@
 		<command id="CmdChooseHCParser" label="Phonological Rule-based Parser (HermitCrab.NET)" message="ChooseParser">
 			<parameters parser="HC"/>
 		</command>
+        <command id="CmdParsingDevelopmentMode" label="Parsing Development" message="SetParsingDevMode">
+          <parameters value="true"/>
+        </command>
+        <command id="CmdTextGlossingMode" label="Text Glossing" message="SetParsingDevMode">
+          <parameters value="false"/>
+        </command>
 
-		<!-- Texts Area commands-->
+        <!-- Texts Area commands-->
 		<command id="CmdInsertText" label="New _Text" message="InsertInterlinText" shortcut="Ctrl+T" icon="addNewText">
 			<parameters className="StText"/>
 		</command>
@@ -286,6 +292,10 @@
 				<item command="CmdChooseXAmpleParser"/>
 				<item command="CmdChooseHCParser"/>
 			</menu>
+          <menu id="ChooseModeMenu" label="Interlinear Mode">
+            <item command="CmdParsingDevelopmentMode"/>
+            <item command="CmdTextGlossingMode"/>
+          </menu>
           <item command="CmdEditParserParameters"/>
 		</menu>
 		<include path="Extensions/*/AreaConfigurationExtension.xml" query="root/menubar/*"/>

@@ -4386,7 +4386,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// This is used by DTMenuHandler.OnDataTreeCopy() whenever creating the copy causes the
 		/// data tree to be rebuilt.  See FWR-2123 for motivation.
 		/// </remarks>
-		public Slice FindMatchingSlices(ICmObject obj, object[] key, Type type, out Slice newCopy)
+		public Slice FindMatchingSlices(ICmObject obj, ICmObject newObj, object[] key, Type type, out Slice newCopy)
 		{
 			Slice sliceFound = null;
 			newCopy = null;
@@ -4399,7 +4399,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					if (slice.Object == obj)
 						sliceFound = slice;
 					else if (sliceFound != null && slice.Object != obj && slice.Object.ClassID == obj.ClassID)
-						newCopy = slice;
+					{
+						// Match newObj if given.
+						if (newObj == null || slice.Object == newObj)
+							newCopy = slice;
+					}
 					if (sliceFound != null && newCopy != null)
 						break;
 				}

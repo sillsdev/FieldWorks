@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2024 SIL International
+// Copyright (c) 2015-2024 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -113,7 +113,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 				// PrepareTemplatesForXAmpleFiles adds orderclass elements to MoInflAffixSlot elements
 				m_transformer.PrepareTemplatesForXAmpleFiles(model, template);
-
+				foreach (XElement element in model.Elements())
+					RemoveDottedCircles(element);
 				m_transformer.MakeAmpleFiles(model);
 				if (xampleAddonFileRoot != null)
 				{
@@ -135,6 +136,26 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				m_xample.LoadFiles(Path.Combine(m_dataDir, "Configuration", "Grammar"), Path.GetTempPath(), m_database);
 				m_forceUpdate = false;
 			}
+		}
+
+		private void RemoveDottedCircles(XElement element)
+		{
+			string dottedCircle = "\u25CC";
+			if (element.Elements().Count() == 0)
+			{
+				element.Value = RemoveDottedCircles(element.Value);
+			}
+			else
+			{
+				foreach (XElement subElement in element.Elements())
+					RemoveDottedCircles(subElement);
+			}
+		}
+
+		private string RemoveDottedCircles(string text)
+		{
+			string dottedCircle = "\u25CC";
+			return text?.Replace(dottedCircle, string.Empty);
 		}
 
 		public void Reset()

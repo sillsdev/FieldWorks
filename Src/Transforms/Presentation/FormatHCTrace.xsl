@@ -80,6 +80,11 @@ Main template
 					<xsl:text>.</xsl:text>
 				</h1>
 				<xsl:call-template name="ResultSection"/>
+				<h2>
+					<xsl:text>Parse time: </xsl:text>
+					<xsl:value-of select="@parseTime"/>
+					<xsl:text> seconds.</xsl:text>
+				</h2>
 				<xsl:if test="$prmShowTrace = 'true'">
 					<xsl:call-template name="TraceSection"/>
 				</xsl:if>
@@ -746,12 +751,12 @@ function Toggle(node, path, imgOffset)
 									</xsl:attribute>
 									<xsl:value-of select="Allomorph/LongName"/>
 								</span>
-								<xsl:text>' has a stem name of '</xsl:text>
+								<xsl:text>' has a stem allomorph label of '</xsl:text>
 								<xsl:value-of select="StemName"/>
-								<xsl:text>', therefore it requires some inflectional affixes with inflection features for that stem name, but there aren't any such inflectional affixes.</xsl:text>
+								<xsl:text>', therefore it requires some inflectional affixes with inflection features for that stem allomorph label, but there aren't any such inflectional affixes.</xsl:text>
 							</xsl:when>
 							<xsl:when test="@type = 'excludedStemName'">
-								<xsl:text>The parse contains inflectional features that match the stem name '</xsl:text>
+								<xsl:text>The parse contains inflectional features that match the stem allomorph label '</xsl:text>
 								<xsl:value-of select="StemName"/>
 								<xsl:text>', which was specified by another allomorph in the stem/root entry '</xsl:text>
 								<span>
@@ -810,7 +815,7 @@ function Toggle(node, path, imgOffset)
 								<xsl:text>.</xsl:text>
 							</xsl:when>
 							<xsl:when test="@type = 'fromStemName'">
-								<xsl:text>The stem/root does not have the stem name '</xsl:text>
+								<xsl:text>The stem/root does not have the stem allomorph label '</xsl:text>
 								<xsl:value-of select="StemName"/>
 								<xsl:text>'.</xsl:text>
 							</xsl:when>

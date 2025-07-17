@@ -127,7 +127,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			stylesheet.OverrideFontsForWritingSystems("FirstStyle", fontOverrides);
 
 			//check results
-			IVwPropertyStore vwps = VwPropertyStoreClass.Create();
+			VwPropertyStoreManaged vwps = new VwPropertyStoreManaged();
 			vwps.Stylesheet = stylesheet;
 			vwps.WritingSystemFactory = wsf;
 
@@ -190,7 +190,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			stylesheet.OverrideFontsForWritingSystems("FirstStyle", fontOverrides);
 
 			//check results
-			IVwPropertyStore vwps = VwPropertyStoreClass.Create();
+			VwPropertyStoreManaged vwps = new VwPropertyStoreManaged();
 			vwps.Stylesheet = stylesheet;
 			vwps.WritingSystemFactory = wsf;
 

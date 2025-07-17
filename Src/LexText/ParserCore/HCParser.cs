@@ -653,6 +653,32 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				m_xmlWriter.WriteElementString("Reason", reason);
 				m_xmlWriter.WriteEndElement();
 			}
+
+			public void InvalidStrata(string strata, string reason)
+			{
+				m_xmlWriter.WriteStartElement("LoadError");
+				m_xmlWriter.WriteAttributeString("type", "invalid-strata");
+				m_xmlWriter.WriteElementString("Reason", reason);
+				m_xmlWriter.WriteEndElement();
+			}
+
+			public void OutOfScopeSlot(IMoInflAffixSlot slot, IMoInflAffixTemplate template, string reason)
+			{
+				m_xmlWriter.WriteStartElement("LoadError");
+				m_xmlWriter.WriteAttributeString("type", "out-of-scope-slot");
+				m_xmlWriter.WriteElementString("Reason", reason);
+				m_xmlWriter.WriteEndElement();
+			}
+			public void UnmatchedReduplicationIndexedClass(IMoForm form, string reason, string pattern)
+			{
+				m_xmlWriter.WriteStartElement("LoadError");
+				m_xmlWriter.WriteAttributeString("type", "unmatched-redup-indexed-class");
+				m_xmlWriter.WriteElementString("Form", form.Form.VernacularDefaultWritingSystem.Text);
+				m_xmlWriter.WriteElementString("Pattern", pattern);
+				m_xmlWriter.WriteElementString("Reason", reason);
+				m_xmlWriter.WriteElementString("Hvo", form.Hvo.ToString(CultureInfo.InvariantCulture));
+				m_xmlWriter.WriteEndElement();
+			}
 		}
 	}
 }

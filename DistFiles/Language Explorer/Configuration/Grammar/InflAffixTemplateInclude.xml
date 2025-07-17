@@ -38,6 +38,12 @@
 	</command>
 	<command id="CmdInflAffixTemplate-Remove-InflAffixMsa" label="Remove YYY from XXX" message="InflTemplateRemoveInflAffixMsa" icon="Remove">
 	  <parameters field="AffixCategory" className="MoInflAffMsa"/>
+    </command>
+    <command id="CmdInflAffixTemplate-MoveUp-InflAffixMsa" label="Move YYY Affix Up" message="InflTemplateMoveUpInflAffixMsa" icon="MoveUp">
+      <parameters field="AffixCategory" className="MoInflAffMsa"/>
+    </command>
+    <command id="CmdInflAffixTemplate-MoveDown-InflAffixMsa" label="Move YYY Affix Down" message="InflTemplateMoveDownInflAffixMsa"  icon="MoveDown">
+      <parameters field="AffixCategory" className="MoInflAffMsa"/>
 <!-- this needs to be changed when the model changes -->
 	</command>
   </commands>
@@ -63,6 +69,8 @@
 	  <item command="CmdInflAffixTemplate-Toggle-Slot-Optionality"/>
 	  <item command="CmdInflAffixTemplate-Remove-Slot"/>
 	  <item command="CmdInflAffixTemplate-Remove-InflAffixMsa"/>
+      <item command="CmdInflAffixTemplate-MoveUp-InflAffixMsa"/>
+      <item command="CmdInflAffixTemplate-MoveDown-InflAffixMsa"/>
 	  <item command="CmdEntryJumpToDefault"/>
 	  <item command="CmdInflAffixTemplate-Help"/>
 	</menu>

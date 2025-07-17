@@ -721,6 +721,7 @@ namespace SIL.FieldWorks.IText
 			m_mediator = mediator;
 			// InitBase will do this, but we need it in place before calling SetInitialTabPage().
 			m_propertyTable = propertyTable;
+			SetParsingDevMode(IsParsingDevMode());
 
 			// Making the tab control currently requires this first...
 			if (!fHideTitlePane)
@@ -1253,6 +1254,39 @@ namespace SIL.FieldWorks.IText
 				(CurrentInterlinearTabControl as InterlinDocChart).OnConfigureInterlinear(argument);
 
 			return true; // We handled this
+		}
+
+		public bool OnDisplaySetParsingDevMode(object commandObject,
+			ref UIItemDisplayProperties display)
+		{
+			var cmd = (Command)commandObject;
+			bool value = cmd.GetParameter("value") == "true";
+			display.Checked = IsParsingDevMode() == value;
+			return true;
+		}
+
+		public bool OnSetParsingDevMode(object argument)
+		{
+			var cmd = (Command)argument;
+			string value = cmd.GetParameter("value");
+			SetParsingDevMode(value == "true");
+			Clerk.UpdateParsingDevStatusBarPanel();
+			// Refresh the display.
+			SaveBookMark();
+			RootStText = null;
+			m_idcAnalyze.ResetAnalysisCache();
+			Clerk.JumpToIndex(Clerk.CurrentIndex);
+			return true; // we handled this
+		}
+
+		public void SetParsingDevMode(bool value)
+		{
+			m_propertyTable.SetProperty("ParsingDevMode", value, PropertyTable.SettingsGroup.LocalSettings, false);
+		}
+
+		public bool IsParsingDevMode()
+		{
+			return m_propertyTable.GetBoolProperty("ParsingDevMode", false, PropertyTable.SettingsGroup.LocalSettings);
 		}
 
 		/// <summary>

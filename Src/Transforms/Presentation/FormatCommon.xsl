@@ -127,6 +127,21 @@
 										<xsl:text> </xsl:text>
 									</li>
 								</xsl:when>
+								<xsl:when test="@type = 'unmatched-redup-indexed-class'">
+									<li>
+										<xsl:text>The reduplication form "</xsl:text>
+										<xsl:value-of select="Form" />
+										<xsl:text>" is invalid. Reason: </xsl:text>
+										<xsl:value-of select="Reason" />
+										<xsl:text> </xsl:text>
+										<span style="cursor:pointer; text-decoration:underline">
+											<xsl:attribute name="id">
+												<xsl:value-of select="Hvo"/>
+											</xsl:attribute>
+											<xsl:text>(Click here to see the entry.)</xsl:text>
+										</span>
+									</li>
+								</xsl:when>
 								<xsl:otherwise>
 									<!-- Do not expect any others to happen, but just in case, we show them in all their HC glory -->
 									<li><xsl:value-of select="."/></li>

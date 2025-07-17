@@ -48,7 +48,7 @@
 	<string id="MoStemAllomorph" txt="Stem Form"/>
 	<string id="MoAffixAllomorph" txt="Affix Form"/>
 	<string id="MoStemMsa" txt="Stem Analysis"/>
-	<string id="MoStemName" txt="Stem Name"/>
+	<string id="MoStemName" txt="Stem Allomorph Label"/>
 	<string id="MoDerivAffMsa" txt="Derivational Affix Analysis"/>
 	<string id="MoInflAffMsa" txt="Inflectional Affix Analysis"/>
 	<string id="MoUnclassifiedAffixMsa" txt="'I'm not sure' Affix Analysis"/>
@@ -227,8 +227,8 @@
 	<string id="ChangeMorphTypeLoseRuleInflCls" txt="The affix process rule and inflection class will be lost! Do you still want to continue?"/>
 	<string id="ChangeMorphTypeLoseRule" txt="The affix process rule will be lost! Do you still want to continue?"/>
 	<string id="ChangeMorphTypeLoseGramInfo" txt="Some grammatical information will be lost! Do you still want to continue?"/>
-	<string id="ChangeMorphTypeLoseStemName" txt="The stem name will be lost! Do you still want to continue?"/>
-	<string id="ChangeMorphTypeLoseStemNameGramInfo" txt="The stem name and some grammatical information will be lost! Do you still want to continue?"/>
+	<string id="ChangeMorphTypeLoseStemName" txt="The stem allomorph label will be lost! Do you still want to continue?"/>
+	<string id="ChangeMorphTypeLoseStemNameGramInfo" txt="The stem allomorph label and some grammatical information will be lost! Do you still want to continue?"/>
 	<string id="ChangeLexemeMorphTypeCaption" txt="Warning!"/>
 	<string id="ChangeLexemeMorphTypeUndo" txt="Undo Change Morpheme Type"/>
 	<string id="ChangeLexemeMorphTypeRedo" txt="Redo Change Morpheme Type"/>
