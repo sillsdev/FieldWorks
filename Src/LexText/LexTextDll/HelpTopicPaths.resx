@@ -1534,13 +1534,13 @@
     <value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Description_field_Stem_Allomorph_Label.htm</value>
   </data>
   <data name="khtpField-MoStemName-Name" xml:space="preserve">
-    <value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Stem_Allomorph_Label_field.htm</value>
+    <value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Stem_Allomorph_Labels_field.htm</value>
   </data>
   <data name="khtpField-PartOfSpeech-StemNameRegionsSection" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Feature_Sets_field_Category_Edit.htm</value>
   </data>
   <data name="khtpField-PartOfSpeech-StemNamesSection" xml:space="preserve">
-    <value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Stem_Allomorph_Label_field.htm</value>
+    <value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Stem_Allomorph_Labels_field.htm</value>
   </data>
   <data name="khtpChoose-AnyAllNoneItems" xml:space="preserve">
     <value>Basic_Tasks/Filtering_data/Using_Choose_Items_dialog_box.htm</value>
