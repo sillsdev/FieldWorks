@@ -76,6 +76,9 @@
 	<command id="CmdDataTree-Insert-POS-AffixSlot" label="Insert Affix Slot" message="DataTreeInsert">
 	  <parameters field="AffixSlots" className="MoInflAffixSlot"/>
 	</command>
+    <command id="CmdDataTree-Copy-POS-AffixSlot" label="Duplicate Affix Slot" message="DataTreeCopy">
+      <parameters field="AffixSlots" className="MoInflAffixSlot"/>
+    </command>
     <command id="CmdDataTree-Move-POS-AffixSlot" label="Move Affix Slot" message="DataTreeMove">
       <parameters field="AffixSlots" className="MoInflAffixSlot"/>
     </command>
@@ -109,10 +112,10 @@
 	<command id="CmdDataTree-Delete-POS-InflectionClass" label="Delete Inflection Class" message="DataTreeDelete" icon="Delete">
 	  <parameters field="InflectionClasses" className="MoInflClass"/>
 	</command>
-	<command id="CmdDataTree-Insert-POS-StemName" label="Insert Stem Name" message="DataTreeInsert">
+	<command id="CmdDataTree-Insert-POS-StemName" label="Insert Stem Allomorph Label" message="DataTreeInsert">
 	  <parameters field="StemNames" className="MoStemName"/>
 	</command>
-	<command id="CmdDataTree-Delete-POS-StemName" label="Delete Stem Name" message="DataTreeDelete" icon="Delete">
+	<command id="CmdDataTree-Delete-POS-StemName" label="Delete Stem Allomorph Label" message="DataTreeDelete" icon="Delete">
 	  <parameters field="StemNames" className="MoStemName"/>
 	</command>
 	<command id="CmdDataTree-Insert-MoStemName-Region" label="Insert Feature Set" message="DataTreeInsert">
@@ -219,6 +222,7 @@
 	  <!-- <item command="CmdDataTree-Help"/> -->
 	</menu>
 	<menu id="mnuDataTree-POS-AffixSlot">
+      <item command="CmdDataTree-Copy-POS-AffixSlot"/>
       <item command="CmdDataTree-Move-POS-AffixSlot"/>
       <item command="CmdDataTree-Delete-POS-AffixSlot"/>
       <!-- <item command="CmdDataTree-Help"/> -->

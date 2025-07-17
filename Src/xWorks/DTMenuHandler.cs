@@ -69,6 +69,11 @@ namespace SIL.FieldWorks.XWorks
 		protected ICmObject m_moveObj;
 
 		/// <summary>
+		/// Object just created.
+		/// </summary>
+		protected ICmObject m_newObj;
+
+		/// <summary>
 		/// Part of Speech chooser.
 		/// </summary>
 		TreeCombo m_treeCombo;
@@ -458,7 +463,7 @@ namespace SIL.FieldWorks.XWorks
 			Logger.WriteEvent(String.Format("Inserting class {1} into field {0} of a {2}.",
 				field, className, ownerClassName ?? "nullOwner"));
 			current.HandleInsertCommand(field, className, ownerClassName,
-				command.GetParameter("recomputeVirtual", null));
+				command.GetParameter("recomputeVirtual", null), out m_newObj);
 
 			Logger.WriteEvent("Done Inserting.");
 			return true;	//we handled this.
@@ -475,6 +480,7 @@ namespace SIL.FieldWorks.XWorks
 			ICmObject obj = originalSlice.Object;
 			object[] key = originalSlice.Key;
 			Type type = originalSlice.GetType();
+			m_newObj = null;
 
 			if (OnDataTreeInsert(cmd))
 			{
@@ -495,7 +501,7 @@ namespace SIL.FieldWorks.XWorks
 				else
 				{
 					Slice newCopy;
-					Slice newOriginal = m_dataEntryForm.FindMatchingSlices(obj, key, type, out newCopy);
+					Slice newOriginal = m_dataEntryForm.FindMatchingSlices(obj, m_newObj, key, type, out newCopy);
 					if (newOriginal != null && newCopy != null)
 					{
 						newOriginal.HandleCopyCommand(newCopy, label);

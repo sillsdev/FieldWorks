@@ -1885,7 +1885,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			HandleInsertCommand(fieldName, className, null, null);
+			HandleInsertCommand(fieldName, className, null, null, out _);
 		}
 
 		/// <summary>
@@ -1915,9 +1915,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// this class (or a subclass), look for a containing object that is.</param>
 		/// <param name="recomputeVirtual">if non-null, this is a virtual property that should be updated for all
 		/// moved objects and their descendents of the specified class (string has form class.property)</param>
-		public virtual void HandleInsertCommand(string fieldName, string className, string ownerClassName, string recomputeVirtual)
+		public virtual void HandleInsertCommand(string fieldName, string className, string ownerClassName,
+			string recomputeVirtual, out ICmObject newObject)
 		{
 			CheckDisposed();
+
+			newObject = null;
 
 			int newObjectClassId = m_cache.DomainDataByFlid.MetaDataCache.GetClassId(className);
 			if (newObjectClassId == 0)
@@ -1938,7 +1941,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				Hide();
 			// First see whether THIS slice can do it. This helps us insert in the right position for things like
 			// subsenses.
-			if (InsertObjectIfPossible(newObjectClassId, ownerClassId, fieldName, this, recomputeVirtual))
+			if (InsertObjectIfPossible(newObjectClassId, ownerClassId, fieldName, this, recomputeVirtual, out newObject))
 				return;
 			// The previous call may have done the insert, but failed to recognize it due to disposing of the slice
 			// during a PropChanged operation.  See LT-9005.
@@ -1949,7 +1952,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			int index = IndexInContainer;
 			for (int i = index - 1; i >= 0; i--)
 			{
-				if (InsertObjectIfPossible(newObjectClassId, ownerClassId, fieldName, ContainingDataTree.Slices[i], recomputeVirtual))
+				if (InsertObjectIfPossible(newObjectClassId, ownerClassId, fieldName, ContainingDataTree.Slices[i], recomputeVirtual, out newObject))
 					return;
 			}
 
@@ -1959,7 +1962,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				Debug.WriteLine(String.Format("HandleInsertCommand({0}, {1}, {2}, {3}) -- slice = {4}",
 					fieldName, className, ownerClassName ?? "nullOwner", recomputeVirtual, slice));
-				if (InsertObjectIfPossible(newObjectClassId, ownerClassId, fieldName, slice, recomputeVirtual))
+				if (InsertObjectIfPossible(newObjectClassId, ownerClassId, fieldName, slice, recomputeVirtual, out newObject))
 					break;
 				if (IsDisposed)
 					break;
@@ -1971,8 +1974,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// not that it was actually inserted. It may, or may not, have been inserted in this case.
 		/// 'false' means no suitable place was found, so the calling code can try other locations.
 		/// </returns>
-		private bool InsertObjectIfPossible(int newObjectClassId, int ownerClassId, string fieldName, Slice slice, string recomputeVirtual)
+		private bool InsertObjectIfPossible(int newObjectClassId, int ownerClassId, string fieldName, Slice slice,
+			string recomputeVirtual, out ICmObject newObject)
 		{
+			newObject = null;
+
 			if ((ownerClassId > 0 && IsOrInheritsFrom((slice.Object.ClassID), ownerClassId)) // For adding senses using the simple edit mode, no matter where the cursor is.
 				|| slice.Object == Object
 				//|| slice.Object == ContainingDataTree.Root)
@@ -1996,7 +2002,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 				else
 				{
-					insertionPosition = slice.InsertObject(flid, newObjectClassId);
+					insertionPosition = slice.InsertObject(flid, newObjectClassId, out newObject);
 				}
 				if (insertionPosition < 0)
 					return insertionPosition == -2;		// -2 keeps dlg for adding subPOSes from firing for each slice when cancelled.
@@ -2065,9 +2071,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		/// <returns>-1 if unsuccessful -2 if unsuccessful and no further attempts should be made,
 		/// otherwise, index of new object (0 if collection)</returns>
-		int InsertObject(int flid, int newObjectClassId)
+		int InsertObject(int flid, int newObjectClassId, out ICmObject newObject)
 		{
 			CheckDisposed();
+
+			newObject = null;
 
 			bool fAbstract = m_cache.DomainDataByFlid.MetaDataCache.GetAbstract(newObjectClassId);
 			if (fAbstract)
@@ -2160,6 +2168,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					// calling CreateNewUiObject so that we could do a better job of picking the slice to focus
 					// after an insert which disposes 'this'. Or perhaps we could improve the refresh list process
 					// so that it more successfully restores the current item without disposing of all the slices.
+					newObject = uiObj?.Object;
 					if (IsDisposed)
 						return -1;
 					if (uiObj == null)
@@ -2676,7 +2685,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				string undoMsg = String.Format("Undo {0}", label);
 				string redoMsg = String.Format("Redo {0}", label);
 				UndoableUnitOfWorkHelper.Do(undoMsg, redoMsg, m_cache.ActionHandlerAccessor,
-					() => { ((ICloneableCmObject)origObj).SetCloneProperties(newObj); });
+					() => {
+						((ICloneableCmObject)origObj).SetCloneProperties(newObj);
+					});
 			}
 			else
 			{
