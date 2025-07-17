@@ -10,6 +10,7 @@
 *.designer.cs -whitespace
 *.fwdictconfig -whitespace
 *.ldml -whitespace
+*.py -whitespace
 *.patch -whitespace
 *.proj -whitespace
 *.ReSharper -whitespace
