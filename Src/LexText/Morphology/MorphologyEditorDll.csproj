@@ -384,6 +384,7 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="RuleFormulaVcBase.cs" />
+    <Compile Include="UserAnalysisRemover.cs" />
     <Compile Include="WordformGoDlg.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -41,9 +41,11 @@ namespace SIL.FieldWorks.XWorks
 		private LcmCache Cache { get; }
 		private static WordStyleCollection s_styleCollection = null;
 		private static readonly object _collectionLock = new object();
+		private static readonly object _masterFragmentLock = new object();
 
 		private ReadOnlyPropertyTable _propertyTable;
 		public static bool IsBidi { get; private set; }
+		private static MasterDocFragment MasterFragment { get; set; }
 
 		public LcmWordGenerator(LcmCache cache)
 		{
@@ -61,7 +63,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			using (MemoryStream mem = new MemoryStream())
 			{
-				DocFragment fragment = new DocFragment(mem);
+				MasterFragment = new MasterDocFragment(mem);
 
 				var entryCount = entryHvos.Length;
 				var cssPath = System.IO.Path.ChangeExtension(filePath, "css");
@@ -177,10 +179,10 @@ namespace SIL.FieldWorks.XWorks
 
 						// If needed, append letter header to the word doc
 						if (!letterHeader.IsNullOrEmpty())
-							fragment.Append(letterHeader);
+							MasterFragment.Append(letterHeader);
 
 						// Append the entry to the word doc
-						fragment.Append(entry.Item2);
+						MasterFragment.Append(entry.Item2);
 
 						if (string.IsNullOrEmpty(firstGuidewordStyle))
 						{
@@ -204,7 +206,7 @@ namespace SIL.FieldWorks.XWorks
 				// added as the last child element of the body.
 
 				//Adding the final section properties to the paragraph properties for the final paragraph.
-				WP.Paragraph docLastParagraph = fragment.GetLastParagraph();
+				WP.Paragraph docLastParagraph = MasterFragment.GetLastParagraph();
 				var lastParSectProps = new SectionProperties(
 					new HeaderReference() { Id = WordStylesGenerator.PageHeaderIdEven, Type = HeaderFooterValues.Even },
 					new HeaderReference() { Id = WordStylesGenerator.PageHeaderIdOdd, Type = HeaderFooterValues.Default },
@@ -234,18 +236,18 @@ namespace SIL.FieldWorks.XWorks
 					// Set the section to BiDi so the columns are displayed right to left.
 					lastChildSectProps.Append(new BiDi());
 				}
-				fragment.DocBody.Append(lastChildSectProps);
+				MasterFragment.DocBody.Append(lastChildSectProps);
 
 				if (progress != null)
 					progress.Message = xWorksStrings.ksGeneratingStyleInfo;
 
 				// Generate styles
-				StyleDefinitionsPart stylePart = fragment.mainDocPart.StyleDefinitionsPart;
-				NumberingDefinitionsPart numberingPart = fragment.mainDocPart.NumberingDefinitionsPart;
+				StyleDefinitionsPart stylePart = MasterFragment.mainDocPart.StyleDefinitionsPart;
+				NumberingDefinitionsPart numberingPart = MasterFragment.mainDocPart.NumberingDefinitionsPart;
 				if (stylePart == null)
 				{
 					// Initialize word doc's styles xml
-					stylePart = AddStylesPartToPackage(fragment.DocFrag);
+					stylePart = AddStylesPartToPackage(MasterFragment.DocFrag);
 					Styles styleSheet = new Styles();
 
 					// Add generated styles into the stylesheet from the collections.
@@ -258,7 +260,7 @@ namespace SIL.FieldWorks.XWorks
 							// Initialize word doc's numbering part one time.
 							if (numberingPart == null)
 							{
-								numberingPart = AddNumberingPartToPackage(fragment.DocFrag);
+								numberingPart = AddNumberingPartToPackage(MasterFragment.DocFrag);
 							}
 
 							GenerateBulletAndNumberingData(element, numberingPart);
@@ -276,18 +278,18 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				// Add the page headers.
-				var headerParts = fragment.mainDocPart.HeaderParts;
+				var headerParts = MasterFragment.mainDocPart.HeaderParts;
 				if (!headerParts.Any())
 				{
-					AddPageHeaderPartsToPackage(fragment.DocFrag, firstGuidewordStyle);
+					AddPageHeaderPartsToPackage(MasterFragment.DocFrag, firstGuidewordStyle);
 				}
 
 				// Add document settings
-				DocumentSettingsPart settingsPart = fragment.mainDocPart.DocumentSettingsPart;
+				DocumentSettingsPart settingsPart = MasterFragment.mainDocPart.DocumentSettingsPart;
 				if (settingsPart == null)
 				{
 					// Initialize word doc's settings part
-					settingsPart = AddDocSettingsPartToPackage(fragment.DocFrag);
+					settingsPart = AddDocSettingsPartToPackage(MasterFragment.DocFrag);
 
 					settingsPart.Settings = new WP.Settings(
 						new Compatibility(
@@ -317,7 +319,7 @@ namespace SIL.FieldWorks.XWorks
 					settingsPart.Settings.Save();
 				}
 
-				fragment.DocFrag.Dispose();
+				MasterFragment.DocFrag.Dispose();
 
 				// Create mode will overwrite any existing document at the given filePath;
 				// this is expected behavior that the user is warned about
@@ -344,37 +346,23 @@ namespace SIL.FieldWorks.XWorks
 			return DocFragment.GenerateLetterHeaderDocFragment(headerTextBuilder.ToString(), WordStylesGenerator.LetterHeadingDisplayName, firstHeader, wsString);
 		}
 
-		/*
-		 * DocFragment Region
-		 */
-		#region DocFragment class
-		public class DocFragment : IFragment
+		#region MasterDocFragment class
+		/// <summary>
+		/// The MasterDocFragment contains the data to write to a docx file. Regular
+		/// DocFragments that are used to build the MasterDocFragment do not need
+		/// this data.
+		/// </summary>
+		public class MasterDocFragment : DocFragment
 		{
 			internal MemoryStream MemStr { get; }
 			internal WordprocessingDocument DocFrag { get; }
 			internal MainDocumentPart mainDocPart { get; }
-			internal WP.Body DocBody { get; }
-
-			/// <summary>
-			/// Constructs a new memory stream and creates an empty doc fragment
-			/// that writes to that stream.
-			/// </summary>
-			public DocFragment()
-			{
-				MemStr = new MemoryStream();
-				DocFrag = WordprocessingDocument.Open(MemStr, true);
-
-				// Initialize the document and body.
-				mainDocPart = DocFrag.AddMainDocumentPart();
-				mainDocPart.Document = new WP.Document();
-				DocBody = mainDocPart.Document.AppendChild(new WP.Body());
-			}
 
 			/// <summary>
 			/// Initializes the memory stream from the argument and creates
-			/// an empty doc fragment that writes to that stream.
+			/// an empty master doc fragment that writes to that stream.
 			/// </summary>
-			public DocFragment(MemoryStream str)
+			public MasterDocFragment(MemoryStream str)
 			{
 				MemStr = str;
 				DocFrag = WordprocessingDocument.Open(str, true);
@@ -382,12 +370,31 @@ namespace SIL.FieldWorks.XWorks
 				// Initialize the document and body.
 				mainDocPart = DocFrag.AddMainDocumentPart();
 				mainDocPart.Document = new WP.Document();
-				DocBody = mainDocPart.Document.AppendChild(new WP.Body());
+				mainDocPart.Document.AppendChild(DocBody);
+			}
+
+		}
+		#endregion MasterDocFragment class
+
+		/*
+		 * DocFragment Region
+		 */
+		#region DocFragment class
+		public class DocFragment : IFragment
+		{
+			internal WP.Body DocBody { get; }
+
+			/// <summary>
+			/// Constructs an empty doc fragment that has a Body.
+			/// </summary>
+			public DocFragment()
+			{
+				DocBody = new WP.Body();
 			}
 
 			/// <summary>
-			/// Constructs a new memory stream and creates a non-empty doc fragment,
-			/// containing the given string, that writes to that stream.
+			/// Constructs a non-empty doc fragment that has a Body which
+			/// contains the given string.
 			/// </summary>
 			public DocFragment(string str) : this()
 			{
@@ -539,42 +546,30 @@ namespace SIL.FieldWorks.XWorks
 			{
 				foreach (OpenXmlElement elem in ((DocFragment)frag).DocBody.Elements().ToList())
 				{
-					if (elem.Descendants<DocumentFormat.OpenXml.Drawing.Blip>().Any())
-					{
-						// then need to append image in such a way that the relID is maintained
-						this.DocBody.AppendChild(CloneImageElement(frag, elem));
-						// wordWriter.WordFragment.AppendPhotoToParagraph(frag, elem, wordWriter.ForceNewParagraph);
-					}
-
 					// Append each element. It is necessary to deep clone the node to maintain its tree of document properties
 					// and to ensure its styles will be maintained in the copy.
-					else
-						this.DocBody.AppendChild(elem.CloneNode(true));
+					this.DocBody.AppendChild(elem.CloneNode(true));
 				}
 			}
 
 			/// <summary>
 			/// Append a table to the doc fragment.
 			/// </summary>
-			/// <param name="copyFromFrag">If the table contains pictures, then this is the fragment
-			///                            where we copy the picture data from.</param>
 			/// <param name="table">The table to append.</param>
-			public void AppendTable(IFragment copyFromFrag, WP.Table table)
+			public void AppendTable(WP.Table table)
 			{
 				// Deep clone the run b/c of its tree of properties and to maintain styles.
-				this.DocBody.AppendChild(CloneElement(copyFromFrag, table));
+				this.DocBody.AppendChild(CloneElement(table));
 			}
 
 			/// <summary>
 			/// Append a paragraph to the doc fragment.
 			/// </summary>
-			/// <param name="copyFromFrag">If the paragraph contains pictures, then this is the fragment
-			///                            where we copy the picture data from.</param>
 			/// <param name="para">The paragraph to append.</param>
-			public void AppendParagraph(IFragment copyFromFrag, WP.Paragraph para)
+			public void AppendParagraph(WP.Paragraph para)
 			{
 				// Deep clone the run b/c of its tree of properties and to maintain styles.
-				this.DocBody.AppendChild(CloneElement(copyFromFrag, para));
+				this.DocBody.AppendChild(CloneElement(para));
 			}
 
 
@@ -585,7 +580,7 @@ namespace SIL.FieldWorks.XWorks
 			/// </summary>
 			/// <param name="run">The run to append.</param>
 			/// <param name="forceNewParagraph">Even if a paragraph exists, force the creation of a new paragraph.</param>
-			public void AppendToParagraph(IFragment fragToCopy, Run run, bool forceNewParagraph)
+			public void AppendToParagraph(Run run, bool forceNewParagraph)
 			{
 				WP.Paragraph lastPar = null;
 
@@ -630,10 +625,10 @@ namespace SIL.FieldWorks.XWorks
 				}
 
 				// Deep clone the run b/c of its tree of properties and to maintain styles.
-				lastPar.AppendChild(CloneElement(fragToCopy, run));
+				lastPar.AppendChild(CloneElement(run));
 			}
 
-			public void AppendImageToTextbox(IFragment fragToCopy, Run run, WP.ParagraphProperties paragraphProps)
+			public void AppendImageToTextbox(Run run, WP.ParagraphProperties paragraphProps)
 			{
 				WP.TextBoxContent lastTextBox = GetLastTextBox();
 
@@ -644,77 +639,28 @@ namespace SIL.FieldWorks.XWorks
 				newImagePar.Append(paragraphProps);
 
 				// Deep clone the run b/c of its tree of properties and to maintain styles.
-				newImagePar.AppendChild(CloneElement(fragToCopy, run));
+				newImagePar.AppendChild(CloneElement(run));
 
 				lastTextBox.AppendChild(newImagePar);
 			}
 
-			public void AppendCaptionParagraphToTextbox(IFragment fragToCopy, WP.Paragraph para)
+			public void AppendCaptionParagraphToTextbox(WP.Paragraph para)
 			{
 				WP.TextBoxContent lastTextBox = GetLastTextBox();
 
 				if (lastTextBox == null)
 					return;
-				lastTextBox.AppendChild(CloneElement(fragToCopy, para));
+				lastTextBox.AppendChild(CloneElement(para));
 			}
 
 			/// <summary>
-			/// Does a deep clone of the element.  If there is picture data then that is cloned
-			/// from the copyFromFrag into 'this' frag.
+			/// Does a deep clone of the element.
 			/// </summary>
-			/// <param name="copyFromFrag">If the element contains pictures, then this is the fragment
-			///                            where we copy the picture data from.</param>
 			/// <param name="elem">Element to clone.</param>
 			/// <returns>The cloned element.</returns>
-			public OpenXmlElement CloneElement(IFragment copyFromFrag, OpenXmlElement elem)
+			public OpenXmlElement CloneElement(OpenXmlElement elem)
 			{
-				if (elem.Descendants<DocumentFormat.OpenXml.Drawing.Blip>().Any())
-				{
-					return CloneImageElement(copyFromFrag, elem);
-				}
 				return elem.CloneNode(true);
-			}
-
-			/// <summary>
-			/// Clones and returns a element containing an image.
-			/// </summary>
-			/// <param name="copyFromFrag">The fragment where we copy the picture data from.</param>
-			/// <param name="elem">Element to clone.</param>
-			/// <returns>The cloned element.</returns>
-			public OpenXmlElement CloneImageElement(IFragment copyFromFrag, OpenXmlElement elem)
-			{
-				var clonedElem = elem.CloneNode(true);
-				clonedElem.Descendants<DocumentFormat.OpenXml.Drawing.Blip>().ToList().ForEach(
-					blip =>
-					{
-						var newRelation =
-							CopyImage(DocFrag, blip.Embed, ((DocFragment)copyFromFrag).DocFrag);
-						// Update the relationship ID in the cloned blip element.
-						blip.Embed = newRelation;
-					});
-				clonedElem.Descendants<DocumentFormat.OpenXml.Vml.ImageData>().ToList().ForEach(
-					imageData =>
-					{
-						var newRelation = CopyImage(DocFrag, imageData.RelationshipId, ((DocFragment)copyFromFrag).DocFrag);
-						// Update the relationship ID in the cloned image data element.
-						imageData.RelationshipId = newRelation;
-					});
-				return clonedElem;
-			}
-
-			/// <summary>
-			/// Copies the image part of one document to another and returns the relationship ID of the copied image part.
-			/// </summary>
-			public static string CopyImage(WordprocessingDocument newDoc, string relId, WordprocessingDocument org)
-			{
-				if (org.MainDocumentPart == null || newDoc.MainDocumentPart == null)
-				{
-					throw new ArgumentNullException("MainDocumentPart is null.");
-				}
-				var p = org.MainDocumentPart.GetPartById(relId) as ImagePart;
-				var newPart = newDoc.MainDocumentPart.AddPart(p);
-				newPart.FeedData(p.GetStream());
-				return newDoc.MainDocumentPart.GetIdOfPart(newPart);
 			}
 
 			/// <summary>
@@ -747,7 +693,7 @@ namespace SIL.FieldWorks.XWorks
 			public bool IsNullOrEmpty()
 			{
 				// A docbody with no children is an empty document.
-				if (MemStr == null || DocFrag == null || DocBody == null || !DocBody.HasChildren)
+				if (DocBody == null || !DocBody.HasChildren)
 				{
 					return true;
 				}
@@ -791,7 +737,7 @@ namespace SIL.FieldWorks.XWorks
 				return newPar;
 			}
 
-			public void AppendNewTextboxParagraph(IFragment frag, Run run, WP.ParagraphProperties paragraphProps, ConfigurableDictionaryNode config)
+			public void AppendNewTextboxParagraph(Run run, WP.ParagraphProperties paragraphProps, ConfigurableDictionaryNode config)
 			{
 				int uniqueGraphicId;
 				int uniqueInnerDrawingId;
@@ -816,7 +762,7 @@ namespace SIL.FieldWorks.XWorks
 				WP.Paragraph newImagePar = new WP.Paragraph();
 				newImagePar.Append(paragraphProps);
 				// Deep clone the run b/c of its tree of properties and to maintain styles.
-				newImagePar.AppendChild(CloneElement(frag, run));
+				newImagePar.AppendChild(CloneElement(run));
 
 				// Get the properties of the inner drawing object in order to set its unique ID.
 				DrawingWP.DocProperties innerDrawingObjectProps =
@@ -1000,7 +946,6 @@ namespace SIL.FieldWorks.XWorks
 
 			public void Flush()
 			{
-				WordFragment.MemStr.Flush();
 			}
 
 			public void Insert(IFragment frag)
@@ -1218,7 +1163,7 @@ namespace SIL.FieldWorks.XWorks
 					foreach (OpenXmlElement elem in elements)
 					{
 						// Deep clone the run b/c of its tree of properties and to maintain styles.
-						groupPara.AppendChild(groupData.CloneElement(childContent, elem));
+						groupPara.AppendChild(groupData.CloneElement(elem));
 					}
 				}
 				else
@@ -1299,7 +1244,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					foreach (OpenXmlElement elem in ((DocFragment)senseNumberSpan).DocBody.Elements())
 					{
-						newPara.AppendChild(senseData.CloneElement(senseNumberSpan, elem));
+						newPara.AppendChild(senseData.CloneElement(elem));
 					}
 				}
 				else
@@ -1734,25 +1679,25 @@ namespace SIL.FieldWorks.XWorks
 									WP.ParagraphProperties paragraphProps =
 										new WP.ParagraphProperties(new ParagraphStyleId() { Val = WordStylesGenerator.PictureAndCaptionTextboxDisplayName });
 
-									wordWriter.WordFragment.AppendNewTextboxParagraph(frag, run, paragraphProps, config);
+									wordWriter.WordFragment.AppendNewTextboxParagraph(run, paragraphProps, config);
 								}
 								else
 								{
 									WP.ParagraphProperties paragraphProps =
 										new WP.ParagraphProperties(new ParagraphStyleId() { Val = WordStylesGenerator.PictureAndCaptionTextboxDisplayName });
-									wordWriter.WordFragment.AppendImageToTextbox(frag, run, paragraphProps);
+									wordWriter.WordFragment.AppendImageToTextbox(run, paragraphProps);
 								}
 							}
 							else
 							{
-								wordWriter.WordFragment.AppendToParagraph(frag, run, wordWriter.ForceNewParagraph);
+								wordWriter.WordFragment.AppendToParagraph(run, wordWriter.ForceNewParagraph);
 								wordWriter.ForceNewParagraph = false;
 							}
 
 							break;
 
 						case WP.Table table:
-							wordWriter.WordFragment.AppendTable(frag, table);
+							wordWriter.WordFragment.AppendTable(table);
 
 							// Start a new paragraph with the next run to maintain the correct position of the table.
 							wordWriter.ForceNewParagraph = true;
@@ -1763,10 +1708,10 @@ namespace SIL.FieldWorks.XWorks
 							if (para.ParagraphProperties?.ParagraphStyleId?.Val == WordStylesGenerator.PictureAndCaptionTextboxDisplayName)
 							{
 								// The image caption paragraph belongs with the image in the last textbox.
-								wordWriter.WordFragment.AppendCaptionParagraphToTextbox(frag, para);
+								wordWriter.WordFragment.AppendCaptionParagraphToTextbox(para);
 							}
 							else
-								wordWriter.WordFragment.AppendParagraph(frag, para);
+								wordWriter.WordFragment.AppendParagraph(para);
 
 							// Start a new paragraph with the next run so that it uses the correct style.
 							wordWriter.ForceNewParagraph = true;
@@ -1827,25 +1772,18 @@ namespace SIL.FieldWorks.XWorks
 		public IFragment AddImage(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string classAttribute, string srcAttribute, string pictureGuid)
 		{
 			DocFragment imageFrag = new DocFragment();
-			WordprocessingDocument wordDoc = imageFrag.DocFrag;
-			string partId = AddImagePartToPackage(wordDoc, srcAttribute);
+			string partId = AddImagePartToPackage(srcAttribute);
 			var picOpts = config.DictionaryNodeOptions as DictionaryNodePictureOptions;
 			// calculate the maximum image width from the configuration
 			var maxWidth = config.Model.Pictures?.Width ?? (picOpts?.MaximumWidth ?? 1.0f);
 			// calculate the maximum image height from the configuration
 			var maxHeight = config.Model.Pictures?.Height ?? (picOpts?.MaximumHeight ?? 1.0f);
-			Drawing image = CreateImage(wordDoc, srcAttribute, partId, maxWidth, maxHeight);
-
-			if (wordDoc.MainDocumentPart is null || wordDoc.MainDocumentPart.Document.Body is null)
-			{
-				throw new ArgumentNullException("MainDocumentPart and/or Body is null.");
-			}
-
+			Drawing image = CreateImage(srcAttribute, partId, maxWidth, maxHeight);
 			Run imgRun = new Run();
 			imgRun.AppendChild(image);
 
 			// Append the image to body, the image should be in a Run.
-			wordDoc.MainDocumentPart.Document.Body.AppendChild(imgRun);
+			imageFrag.DocBody.AppendChild(imgRun);
 			return imageFrag;
 		}
 		public IFragment AddImageCaption(ConfigurableDictionaryNode config, IFragment captionContent)
@@ -2126,20 +2064,29 @@ namespace SIL.FieldWorks.XWorks
 			part.Header.Save();
 		}
 
-		// Add an ImagePart to the document. Returns the part ID.
-		public static string AddImagePartToPackage(WordprocessingDocument doc, string imagePath, ImagePartType imageType = ImagePartType.Jpeg)
+		/// <summary>
+		/// Add an ImagePart to the MasterFragment. Adding the image directly to the master fragment has two
+		/// benefits:
+		/// 1. Avoids cloning the image every time the fragment is cloned.
+		/// 2. Avoids the need to update the part ID in the Drawing.blip.Embed every time the image is
+		/// cloned. Since the image is added directly to the MasterFragment the part ID doesn't change.
+		/// </summary>
+		/// <returns>The part ID.</returns>
+		public static string AddImagePartToPackage(string imagePath, ImagePartType imageType = ImagePartType.Jpeg)
 		{
-			MainDocumentPart mainPart = doc.MainDocumentPart;
-			ImagePart imagePart = mainPart.AddImagePart(imageType);
-			using (FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read))
+			lock (_masterFragmentLock)
 			{
-				imagePart.FeedData(stream);
+				MainDocumentPart mainPart = MasterFragment.DocFrag.MainDocumentPart;
+				ImagePart imagePart = mainPart.AddImagePart(imageType);
+				using (FileStream stream = new FileStream(imagePath, FileMode.Open, FileAccess.Read))
+				{
+					imagePart.FeedData(stream);
+				}
+				return mainPart.GetIdOfPart(imagePart);
 			}
-
-			return mainPart.GetIdOfPart(imagePart);
 		}
 
-		public static Drawing CreateImage(WordprocessingDocument doc, string filepath, string partId, double maxWidthInches, double maxHeightInches)
+		public static Drawing CreateImage(string filepath, string partId, double maxWidthInches, double maxHeightInches)
 		{
 			// Create a bitmap to store the image so we can track/preserve aspect ratio.
 			var img = new BitmapImage();
@@ -2470,7 +2417,7 @@ namespace SIL.FieldWorks.XWorks
 					}
 
 					// Add the un-nestable element.
-					copyToFrag.DocBody.AppendChild(copyToFrag.CloneElement(contentToAdd, elem));
+					copyToFrag.DocBody.AppendChild(copyToFrag.CloneElement(elem));
 
 					// Start a new working paragraph.
 					continuationParagraph = true;
@@ -2478,7 +2425,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				else
 				{
-					workingParagraph.AppendChild(copyToFrag.CloneElement(contentToAdd, elem));
+					workingParagraph.AppendChild(copyToFrag.CloneElement(elem));
 				}
 			}
 

@@ -5,16 +5,11 @@
 	<PropertyGroup>
 		<NuGetToolsPath>$(MSBuildThisFileDirectory)</NuGetToolsPath>
 		<PlatformPackagesConfig Condition="'$(OS)'=='Windows_NT'">$(NuGetToolsPath)nuget-windows/packages.config</PlatformPackagesConfig>
-		<PlatformPackagesConfig Condition="'$(OS)'!='Windows_NT'">$(NuGetToolsPath)nuget-linux/packages.config</PlatformPackagesConfig>
 		<CommonPackagesConfig>$(NuGetToolsPath)nuget-common/packages.config</CommonPackagesConfig>
 
 		<!-- NuGet command -->
 		<NuGetExePath>$(NuGetToolsPath)NuGet.exe</NuGetExePath>
 		<NuGetCommand Condition="'$(OS)' == 'Windows_NT'">"$(NuGetExePath)"</NuGetCommand>
-		<!--
-		NuGet has trouble when Ubuntu 16.04 pbuilder sets the home directory to /nonexistent. Set a HOME for NuGet to use.
-		-->
-		<NuGetCommand Condition=" '$(OS)' != 'Windows_NT' ">[ -d $HOME ] || export HOME=`mktemp -d --tmpdir nuget_home.XXXXX`; mono --runtime=v4.0.30319 $(NuGetExePath)</NuGetCommand>
 
 		<!-- Command to download packages -->
 		<RestoreCommandCommon>$(NuGetCommand) restore "$(CommonPackagesConfig)" -NonInteractive -PackagesDirectory "$(fwrt)/packages" -PackageSaveMode "nuspec;nupkg"</RestoreCommandCommon>
@@ -22,19 +17,9 @@
 	</PropertyGroup>
 
 	<Target Name="RestoreNuGetPackages" DependsOnTargets="CheckPrerequisites">
-		<!-- Download packages in packages-common.config. Then download packages in either packages-linux.config or packages-windows.config. -->
-
+		<!-- Download packages in packages-common.config. Then download packages in packages-windows.config. -->
 		<Exec Condition="'$(OS)' == 'Windows_NT'" Command="$(RestoreCommandCommon)"/>
 		<Exec Condition="'$(OS)' == 'Windows_NT'" Command="$(RestoreCommandPlatformSpecific)"/>
-
-		<!--
-		2017-03-17: Sometimes NuGet fails after downloading when running on a build node,
-		such as with message "Object reference not set to an instance of an object". Try
-		it more than once to reduce this random failure. Maybe upgrading NuGet will help
-		actually fix the problem.
-		-->
-		<Exec Condition="'$(OS)' != 'Windows_NT'" Command="$(RestoreCommandCommon) || (sleep 2m; $(RestoreCommandCommon)) || (sleep 2m; $(RestoreCommandCommon))"/>
-		<Exec Condition="'$(OS)' != 'Windows_NT'" Command="$(RestoreCommandPlatformSpecific) || (sleep 2m; $(RestoreCommandPlatformSpecific)) || (sleep 2m; $(RestoreCommandPlatformSpecific))"/>
 	</Target>
 
 	<PropertyGroup>
@@ -53,8 +38,6 @@
 	<Target Name="DownloadNuGet" Condition="!Exists('$(NuGetExePath)')">
 		<Message Text="Downloading NuGet.exe." />
 		<DownloadFile Address="$(NuGetUrl)" DownloadsDir="$(NuGetToolsPath)" Condition="'$(OS)' == 'Windows_NT'"/>
-		<!-- For some reason, System.Uri doesn't like Google Drive's URI scheme, so use wget or curl -->
-		<Exec Command="wget -O NuGet.exe $(NuGetUrl) || curl -o NuGet.exe -L $(NuGetUrl)" WorkingDirectory="$(NuGetToolsPath)" Condition="'$(OS)' != 'Windows_NT'" />
 	</Target>
 
 	<Target Name="CleanNuGet">

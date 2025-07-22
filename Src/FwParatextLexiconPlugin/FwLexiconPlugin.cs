@@ -48,32 +48,6 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		{
 			FwRegistryHelper.Initialize();
 
-			// setup necessary environment variables on Linux
-			if (Platform.IsUnix)
-			{
-				// update ICU_DATA to location of ICU data files
-				if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ICU_DATA")))
-				{
-					string codeIcuDataPath = Path.Combine(ParatextLexiconPluginDirectoryFinder.CodeDirectory, "Icu" + CustomIcu.Version);
-#if DEBUG
-					string icuDataPath = codeIcuDataPath;
-#else
-					string icuDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments), ".config/fieldworks/Icu" + CustomIcu.Version);
-					if (!Directory.Exists(icuDataPath))
-						icuDataPath = codeIcuDataPath;
-#endif
-					Environment.SetEnvironmentVariable("ICU_DATA", icuDataPath);
-				}
-				// update COMPONENTS_MAP_PATH to point to code directory so that COM objects can be loaded properly
-				if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("COMPONENTS_MAP_PATH")))
-				{
-					string compMapPath = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
-					Environment.SetEnvironmentVariable("COMPONENTS_MAP_PATH", compMapPath);
-				}
-				// update FW_ROOTCODE so that strings-en.txt file can be found
-				if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("FW_ROOTCODE")))
-					Environment.SetEnvironmentVariable("FW_ROOTCODE", ParatextLexiconPluginDirectoryFinder.CodeDirectory);
-			}
 			FwUtils.InitializeIcu();
 			if (!Sldr.IsInitialized)
 			{

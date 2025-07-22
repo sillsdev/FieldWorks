@@ -118,5 +118,10 @@ namespace GenerateHCConfig
 		{
 			Console.WriteLine(reason);
 		}
+
+		void IHCLoadErrorLogger.UnmatchedReduplicationIndexedClass(IMoForm form, string reason, string environment)
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
