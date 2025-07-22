@@ -270,6 +270,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="FileTimeToDateTimeConverter.cs" />
+    <Compile Include="HCMaxCompoundRulesDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="HCMaxCompoundRulesDlg.Designer.cs">
+      <DependentUpon>HCMaxCompoundRulesDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="HCTrace.cs" />
     <Compile Include="ImportWordSetDlg.cs">
       <SubType>Form</SubType>
@@ -278,6 +284,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ParserConnection.cs" />
+    <Compile Include="ParserParametersBase.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="ParserReportDialog.xaml.cs">
       <DependentUpon>ParserReportDialog.xaml</DependentUpon>
     </Compile>
@@ -318,6 +327,9 @@
     <Compile Include="XAmpleTrace.cs">
       <SubType>Code</SubType>
     </Compile>
+    <EmbeddedResource Include="HCMaxCompoundRulesDlg.resx">
+      <DependentUpon>HCMaxCompoundRulesDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ImportWordSetDlg.resx">
       <DependentUpon>ImportWordSetDlg.cs</DependentUpon>
       <SubType>Designer</SubType>
