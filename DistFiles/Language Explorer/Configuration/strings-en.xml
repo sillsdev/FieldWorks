@@ -48,7 +48,7 @@
 	<string id="MoStemAllomorph" txt="Stem Form"/>
 	<string id="MoAffixAllomorph" txt="Affix Form"/>
 	<string id="MoStemMsa" txt="Stem Analysis"/>
-	<string id="MoStemName" txt="Stem Name"/>
+	<string id="MoStemName" txt="Stem Allomorph Label"/>
 	<string id="MoDerivAffMsa" txt="Derivational Affix Analysis"/>
 	<string id="MoInflAffMsa" txt="Inflectional Affix Analysis"/>
 	<string id="MoUnclassifiedAffixMsa" txt="'I'm not sure' Affix Analysis"/>
@@ -227,8 +227,8 @@
 	<string id="ChangeMorphTypeLoseRuleInflCls" txt="The affix process rule and inflection class will be lost! Do you still want to continue?"/>
 	<string id="ChangeMorphTypeLoseRule" txt="The affix process rule will be lost! Do you still want to continue?"/>
 	<string id="ChangeMorphTypeLoseGramInfo" txt="Some grammatical information will be lost! Do you still want to continue?"/>
-	<string id="ChangeMorphTypeLoseStemName" txt="The stem name will be lost! Do you still want to continue?"/>
-	<string id="ChangeMorphTypeLoseStemNameGramInfo" txt="The stem name and some grammatical information will be lost! Do you still want to continue?"/>
+	<string id="ChangeMorphTypeLoseStemName" txt="The stem allomorph label will be lost! Do you still want to continue?"/>
+	<string id="ChangeMorphTypeLoseStemNameGramInfo" txt="The stem allomorph label and some grammatical information will be lost! Do you still want to continue?"/>
 	<string id="ChangeLexemeMorphTypeCaption" txt="Warning!"/>
 	<string id="ChangeLexemeMorphTypeUndo" txt="Undo Change Morpheme Type"/>
 	<string id="ChangeLexemeMorphTypeRedo" txt="Redo Change Morpheme Type"/>
@@ -302,6 +302,12 @@
 		<string id="WhenDescription" txt="Run this utility when trying to delete a wordform that has parser annotations."/>
 		<string id="WhatDescription" txt="This utility removes all parser annotations from the system. Parser annotations used to be added by the parser when there was a problem parsing a word. "/>
 		<string id="RedoDescription" txt="You cannot use 'Undo' to cancel the effect of this utility."/>
+	  </group>
+	  <group id="RemoveUserAnalyses">
+		<string id="Label" txt="Remove User-approved analyses"/>
+		<string id="WhenDescription" txt="Run this utility when you want to remove all user-approved analyses.  This is useful if the parser changes how it analyses wordforms."/>
+		<string id="WhatDescription" txt="This utility removes all user approved analyses from the system. It does not remove analyses that are approved/disapproved of by the parser, however. "/>
+		<string id="RedoDescription" txt="You cannot use 'Undo' to cancel the effect of this utility. Therefore, you should back up your project before running this."/>
 	  </group>
 	  <group id="NaturalClassChooser">
 		<string id="kstidChooseNaturalClass" txt="Choose Natural Class"/>

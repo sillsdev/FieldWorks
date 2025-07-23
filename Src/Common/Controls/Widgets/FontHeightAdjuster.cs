@@ -165,7 +165,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				}
 			}
 
-			IVwPropertyStore vwps = VwPropertyStoreClass.Create();
+			VwPropertyStoreManaged vwps = new VwPropertyStoreManaged();
 			vwps.Stylesheet = styleSheet;
 			vwps.WritingSystemFactory = writingSystemFactory;
 

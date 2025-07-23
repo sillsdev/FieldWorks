@@ -1536,7 +1536,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, hvoWs);
 			ITsTextProps ttp = ttpBldr.GetTextProps();
 
-			IVwPropertyStore vwps = VwPropertyStoreClass.Create();
+			VwPropertyStoreManaged vwps = new VwPropertyStoreManaged();
 			vwps.Stylesheet = styleSheet;
 			vwps.WritingSystemFactory = wsf;
 			LgCharRenderProps chrps = vwps.get_ChrpFor(ttp);

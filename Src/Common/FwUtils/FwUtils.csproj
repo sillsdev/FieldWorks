@@ -269,7 +269,6 @@
     <Compile Include="ITextToken.cs" />
     <Compile Include="LayoutKeyUtils.cs" />
     <Compile Include="MatchedPairs.cs" />
-    <Compile Include="LinuxPackageUtils.cs" />
     <Compile Include="MeasurementUtils.cs" />
     <Compile Include="Folders.cs" />
     <Compile Include="MergeSort.cs" />

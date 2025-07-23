@@ -883,6 +883,15 @@ namespace SIL.FieldWorks.IText
 			SaveWorkInProgress();
 		}
 
+		public void OnRefreshInterlin(object argument)
+		{
+			// Reset data.
+			RootStText = null;
+			m_idcAnalyze.ResetAnalysisCache();
+			// Refresh the display.
+			Clerk.JumpToIndex(Clerk.CurrentIndex);
+		}
+
 		protected override void ShowRecord()
 		{
 			SaveWorkInProgress();
@@ -1263,6 +1272,7 @@ namespace SIL.FieldWorks.IText
 			SetParsingDevMode(value == "true");
 			Clerk.UpdateParsingDevStatusBarPanel();
 			// Refresh the display.
+			SaveBookMark();
 			RootStText = null;
 			m_idcAnalyze.ResetAnalysisCache();
 			Clerk.JumpToIndex(Clerk.CurrentIndex);

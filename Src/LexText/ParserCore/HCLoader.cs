@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2023 SIL International
+// Copyright (c) 2015-2025 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -58,6 +58,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private readonly Dictionary<string, IPhNaturalClass> m_naturalClassLookup;
 		private readonly Dictionary<IPhNaturalClass, NaturalClass> m_naturalClasses;
 		private readonly Dictionary<IPhTerminalUnit, CharacterDefinition> m_charDefs;
+		private readonly Dictionary<string, int> m_CompoundRuleLookup;
 
 		private readonly bool m_noDefaultCompounding;
 		private readonly bool m_notOnClitics;
@@ -98,6 +99,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				m_strataString = (string)hcElem.Element("Strata");
 				m_strata = ParseStrataString(m_strataString);
 			}
+			m_CompoundRuleLookup = new Dictionary<string, int>();
+			XElement cRulesEelem = parserParamsElem.Element("CompoundRules");
+			if (cRulesEelem != null)
+			{
+				foreach (var cRule in cRulesEelem.Elements())
+				{
+					int maxApps = Int32.Parse(cRule.Attribute("maxApps").Value);
+					m_CompoundRuleLookup[cRule.Attribute("guid").Value] = maxApps;
+				}
+			}
+
 			m_entryName = new Dictionary<LexEntry, string>();
 
 			m_naturalClasses = new Dictionary<IPhNaturalClass, NaturalClass>();
@@ -1471,16 +1483,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						case MoMorphTypeTags.kMorphSuffixingInterfix:
 						case MoMorphTypeTags.kMorphEnclitic:
 							hcAllo.Lhs.Add(stemPattern);
-							hcAllo.Lhs.AddRange(LoadReduplicationPatterns(contexts.Item1));
+							var lhsPatterns = LoadReduplicationPatterns(contexts.Item1);
+							hcAllo.Lhs.AddRange(lhsPatterns);
 							var suffixNull = new Pattern<Word, ShapeNode>("suffixNull", SuffixNull());
 							suffixNull.Freeze();
 							hcAllo.Lhs.Add(suffixNull);
 
 							hcAllo.Rhs.Add(new CopyFromInput("stem"));
-							hcAllo.Rhs.AddRange(LoadReduplicationOutputActions(contexts.Item1));
+							hcAllo.Rhs.AddRange(LoadReduplicationOutputActions(contexts.Item1, lhsPatterns, allo));
 							hcAllo.Rhs.Add(new CopyFromInput("suffixNull"));
 							hcAllo.Rhs.Add(new InsertSegments(Segments("+")));
-							hcAllo.Rhs.AddRange(LoadReduplicationOutputActions(form));
+							hcAllo.Rhs.AddRange(LoadReduplicationOutputActions(form, lhsPatterns, allo));
 							break;
 
 						case MoMorphTypeTags.kMorphPrefix:
@@ -1489,13 +1502,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							var prefixNull = new Pattern<Word, ShapeNode>("prefixNull", PrefixNull());
 							prefixNull.Freeze();
 							hcAllo.Lhs.Add(prefixNull);
-							hcAllo.Lhs.AddRange(LoadReduplicationPatterns(contexts.Item2));
+							lhsPatterns = LoadReduplicationPatterns(contexts.Item2);
+							hcAllo.Lhs.AddRange(lhsPatterns);
 							hcAllo.Lhs.Add(stemPattern);
 
-							hcAllo.Rhs.AddRange(LoadReduplicationOutputActions(form));
+							hcAllo.Rhs.AddRange(LoadReduplicationOutputActions(form, lhsPatterns, allo));
 							hcAllo.Rhs.Add(new InsertSegments(Segments("+")));
 							hcAllo.Rhs.Add(new CopyFromInput("prefixNull"));
-							hcAllo.Rhs.AddRange(LoadReduplicationOutputActions(contexts.Item2));
+							hcAllo.Rhs.AddRange(LoadReduplicationOutputActions(contexts.Item2, lhsPatterns, allo));
 							hcAllo.Rhs.Add(new CopyFromInput("stem"));
 							break;
 					}
@@ -1611,13 +1625,38 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		private IEnumerable<MorphologicalOutputAction> LoadReduplicationOutputActions(string patternStr)
+		private IEnumerable<MorphologicalOutputAction> LoadReduplicationOutputActions(string patternStr, IEnumerable<Pattern<Word, ShapeNode>> patterns, IMoForm form)
 		{
 			foreach (string token in TokenizeContext(patternStr))
 			{
 				if (token.StartsWith("["))
 				{
-					yield return new CopyFromInput(XmlConvert.EncodeName(token.Substring(1, token.Length - 2).Trim()));
+					bool isValid = true;
+					if (token.Contains("^"))
+					{
+						// The ^ gets replaced by _x005E_ so we need to do it here to match in patterns
+						string indexedToken = token.Substring(1, token.Length - 2).Trim().Replace("^", "_x005E_");
+						isValid = patterns.Any(p => p.Name == indexedToken);
+						if (!isValid)
+						{
+							// add error message to logger
+							string envs = "";
+							var environments = form.AllomorphEnvironments;
+							if (environments != null)
+							{
+								StringBuilder sb = new StringBuilder();
+								foreach (IPhEnvironment env in environments)
+								{
+									sb.Append(env.ShortName);
+									sb.Append(" ");
+								}
+								envs = sb.ToString();
+							}
+							m_logger.UnmatchedReduplicationIndexedClass(form, "Ill-formed index:" + token, envs);
+						}
+					}
+					if (isValid)
+						yield return new CopyFromInput(XmlConvert.EncodeName(token.Substring(1, token.Length - 2).Trim()));
 				}
 				else
 				{
@@ -1834,6 +1873,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				OutSyntacticFeatureStruct = outFS,
 				Properties = { { HCParser.CRuleID, compoundRule.Hvo } }
 			};
+
+			int maxApps = 1;
+			if (m_CompoundRuleLookup.TryGetValue(compoundRule.Guid.ToString(), out maxApps))
+				hcCompoundRule.MaxApplicationCount = maxApps;
 
 			var subrule = new CompoundingSubrule();
 
