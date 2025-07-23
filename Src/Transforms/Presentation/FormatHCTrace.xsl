@@ -616,7 +616,7 @@ function Toggle(node, path, imgOffset)
 					<xsl:text>&#xa0;&#xa0;(Reason: This is a duplicate parse and has been pruned.)</xsl:text>
 				</span>
 			</xsl:when>
-			<xsl:when test="name() != 'WordSynthesisTrace' and $moreToShow != 'Y'">
+			<xsl:otherwise>
 				<xsl:for-each select="FailureReason">
 					<span style="unicode-bidi:embed">
 						<xsl:attribute name="style">
@@ -751,12 +751,12 @@ function Toggle(node, path, imgOffset)
 									</xsl:attribute>
 									<xsl:value-of select="Allomorph/LongName"/>
 								</span>
-								<xsl:text>' has a stem name of '</xsl:text>
+								<xsl:text>' has a stem allomorph label of '</xsl:text>
 								<xsl:value-of select="StemName"/>
-								<xsl:text>', therefore it requires some inflectional affixes with inflection features for that stem name, but there aren't any such inflectional affixes.</xsl:text>
+								<xsl:text>', therefore it requires some inflectional affixes with inflection features for that stem allomorph label, but there aren't any such inflectional affixes.</xsl:text>
 							</xsl:when>
 							<xsl:when test="@type = 'excludedStemName'">
-								<xsl:text>The parse contains inflectional features that match the stem name '</xsl:text>
+								<xsl:text>The parse contains inflectional features that match the stem allomorph label '</xsl:text>
 								<xsl:value-of select="StemName"/>
 								<xsl:text>', which was specified by another allomorph in the stem/root entry '</xsl:text>
 								<span>
@@ -815,7 +815,7 @@ function Toggle(node, path, imgOffset)
 								<xsl:text>.</xsl:text>
 							</xsl:when>
 							<xsl:when test="@type = 'fromStemName'">
-								<xsl:text>The stem/root does not have the stem name '</xsl:text>
+								<xsl:text>The stem/root does not have the stem allomorph label '</xsl:text>
 								<xsl:value-of select="StemName"/>
 								<xsl:text>'.</xsl:text>
 							</xsl:when>
@@ -837,7 +837,7 @@ function Toggle(node, path, imgOffset)
 								<xsl:text>Further derivation is required after a non-final template.</xsl:text>
 							</xsl:when>
 							<xsl:when test="@type = 'noTemplatesApplied'">
-								<xsl:text>Applicable affix templates were found, but none were applied.</xsl:text>
+								<xsl:text>No affix templates succeeded during synthesis.</xsl:text>
 							</xsl:when>
 							<xsl:when test="@type = 'pos'">
 								<xsl:text>The parse's part of speech '</xsl:text>
@@ -859,7 +859,7 @@ function Toggle(node, path, imgOffset)
 						<xsl:text>)</xsl:text>
 					</span>
 				</xsl:for-each>
-			</xsl:when>
+			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
 	<!--

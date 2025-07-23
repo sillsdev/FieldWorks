@@ -554,7 +554,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				var languagesToChange = new List<WSListItemModel>(WorkingList.Where(ws => ws.WorkingWs.LanguageName == _languageName));
 				languageSubtag = new LanguageSubtag(languageSubtag, info.DesiredName);
-				var oldDefaultScriptSubtag = IetfLanguageTag.GetScriptSubtag(languagesToChange[0].WorkingWs.Language.Code);
+				IetfLanguageTag.TryGetSubtags(languagesToChange[0].WorkingWs.Language.Code, out _, out var oldDefaultScriptSubtag, out _, out _);
 
 				foreach (var ws in languagesToChange)
 				{

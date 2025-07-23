@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2023 SIL International
+// Copyright (c) 2015-2025 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -58,6 +58,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private readonly Dictionary<string, IPhNaturalClass> m_naturalClassLookup;
 		private readonly Dictionary<IPhNaturalClass, NaturalClass> m_naturalClasses;
 		private readonly Dictionary<IPhTerminalUnit, CharacterDefinition> m_charDefs;
+		private readonly Dictionary<string, int> m_CompoundRuleLookup;
 
 		private readonly bool m_noDefaultCompounding;
 		private readonly bool m_notOnClitics;
@@ -98,6 +99,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				m_strataString = (string)hcElem.Element("Strata");
 				m_strata = ParseStrataString(m_strataString);
 			}
+			m_CompoundRuleLookup = new Dictionary<string, int>();
+			XElement cRulesEelem = parserParamsElem.Element("CompoundRules");
+			if (cRulesEelem != null)
+			{
+				foreach (var cRule in cRulesEelem.Elements())
+				{
+					int maxApps = Int32.Parse(cRule.Attribute("maxApps").Value);
+					m_CompoundRuleLookup[cRule.Attribute("guid").Value] = maxApps;
+				}
+			}
+
 			m_entryName = new Dictionary<LexEntry, string>();
 
 			m_naturalClasses = new Dictionary<IPhNaturalClass, NaturalClass>();
@@ -1861,6 +1873,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				OutSyntacticFeatureStruct = outFS,
 				Properties = { { HCParser.CRuleID, compoundRule.Hvo } }
 			};
+
+			int maxApps = 1;
+			if (m_CompoundRuleLookup.TryGetValue(compoundRule.Guid.ToString(), out maxApps))
+				hcCompoundRule.MaxApplicationCount = maxApps;
 
 			var subrule = new CompoundingSubrule();
 

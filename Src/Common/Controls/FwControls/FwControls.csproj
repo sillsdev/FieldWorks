@@ -534,10 +534,6 @@
     <Compile Include="FileDialog\Interfaces\IFolderBrowserDialog.cs" />
     <Compile Include="FileDialog\Interfaces\IOpenFileDialog.cs" />
     <Compile Include="FileDialog\Interfaces\ISaveFileDialog.cs" />
-    <Compile Include="FileDialog\Linux\FileDialogLinux.cs" />
-    <Compile Include="FileDialog\Linux\FolderBrowserDialogLinux.cs" />
-    <Compile Include="FileDialog\Linux\OpenFileDialogLinux.cs" />
-    <Compile Include="FileDialog\Linux\SaveFileDialogLinux.cs" />
     <Compile Include="FileDialog\Windows\FileDialogWindows.cs" />
     <Compile Include="FileDialog\Windows\FolderBrowserDialogWindows.cs" />
     <Compile Include="FileDialog\Windows\OpenFileDialogWindows.cs" />

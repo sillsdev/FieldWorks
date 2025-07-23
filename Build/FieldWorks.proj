@@ -21,7 +21,7 @@
   <Target Name="refreshTargets" DependsOnTargets="GenerateVersionFiles"/>
 
   <!-- dummy target to perform platform specific initialization -->
-  <Target Name="init" DependsOnTargets="initLinux;initWindows"/>
+  <Target Name="init" DependsOnTargets="initWindows"/>
 
   <Target Name="allCsharp">
 	<Message Text="Try building again, the FieldWorks.targets file should now exist."/>
@@ -30,7 +30,6 @@
   <!-- ********************************************************************************** -->
   <!-- Add individual project targets below this point. -->
 
-  <Import Project="Linux.targets"/>
   <Import Project="Windows.targets"/>
   <Import Project="FieldWorks.targets" Condition="Exists('FieldWorks.targets')"/>
   <Import Project="mkall.targets"/>
