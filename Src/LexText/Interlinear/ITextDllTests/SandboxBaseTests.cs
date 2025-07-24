@@ -100,7 +100,7 @@ namespace SIL.FieldWorks.IText
 				VerifySelection(sandbox, false, SandboxBase.ktagSbWordGloss, 0, -1);
 				// Next the icon on the word cat line.
 				sandbox.HandleTab(false);
-				VerifySelection(sandbox, true, SandboxBase.ktagWordPosIcon, 0, -1);
+				VerifySelection(sandbox, true, SandboxBase.ktagSbNamedObjName, SandboxBase.ktagSbWordPos, -1);
 				// Then we wrap around to the start icon on the word line.
 				sandbox.HandleTab(false);
 				VerifySelection(sandbox, true, SandboxBase.ktagAnalysisIcon, 0, -1);
@@ -117,7 +117,7 @@ namespace SIL.FieldWorks.IText
 				sandbox.HandleTab(true);
 				VerifySelection(sandbox, true, SandboxBase.ktagAnalysisIcon, 0, -1);
 				sandbox.HandleTab(true);
-				VerifySelection(sandbox, true, SandboxBase.ktagWordPosIcon, 0, -1);
+				VerifySelection(sandbox, true, SandboxBase.ktagSbNamedObjName, SandboxBase.ktagSbWordPos, -1);
 				sandbox.HandleTab(true);
 				VerifySelection(sandbox, false, SandboxBase.ktagSbWordGloss, 0, -1);
 				sandbox.HandleTab(true);
