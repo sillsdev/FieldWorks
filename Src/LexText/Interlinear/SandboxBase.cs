@@ -1210,8 +1210,7 @@ namespace SIL.FieldWorks.IText
 						//set the color before we fidle with our the wordform, it right for this purpose now.
 						if ((m_occurrenceSelected == null ||
 							m_occurrenceSelected.Analysis == null ||
-							(m_occurrenceSelected.Analysis.Analysis == null &&
-							m_occurrenceSelected.Analysis.Wordform != null)) &&
+							m_occurrenceSelected.Analysis.Wordform != null) &&
 							GetHasMultipleRelevantAnalyses(CurrentAnalysisTree.Wordform))
 						{
 							MultipleAnalysisColor = InterlinVc.MultipleApprovedGuessColor;
