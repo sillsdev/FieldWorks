@@ -129,7 +129,7 @@ namespace SIL.FieldWorks.IText
 			int color = (int)CmObjectUi.RGB(DefaultBackColor);
 			//if this sandbox is presenting a wordform with multiple possible analyses then set the
 			//bg color indicator
-			if (selected.Analysis.Analysis == null && selected.Analysis.Wordform != null &&
+			if (selected.Analysis.Wordform != null &&
 				SandboxBase.GetHasMultipleRelevantAnalyses(selected.Analysis.Wordform))
 			{
 				color = InterlinVc.MultipleApprovedGuessColor;

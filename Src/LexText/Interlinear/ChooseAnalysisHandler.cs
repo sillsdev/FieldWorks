@@ -478,22 +478,23 @@ namespace SIL.FieldWorks.IText
 		private static void AddOpinion(ITsStrBldr tsb, Opinions opinion, int backColor)
 		{
 			int foreColor = (int)CmObjectUi.RGB(Color.Black);
+			int width = 1;
 			if (opinion == Opinions.approves)
 				tsb.Replace(tsb.Length, tsb.Length, "\u2714", null); // bold check mark
 			else if (opinion == Opinions.noopinion)
 			{
-				// Use same foreground and background color to create a blank of the same width as a check mark.
-				tsb.Replace(tsb.Length, tsb.Length, "\u2714", null);
-				foreColor = backColor;
+				// Use two spaces to create a blank of about the same width as a check mark.
+				tsb.Replace(tsb.Length, tsb.Length, "  ", null);
+				width = 2;
 			}
 			else if (opinion == Opinions.disapproves)
 			{
 				tsb.Replace(tsb.Length, tsb.Length, "X", null);
 				foreColor = (int)CmObjectUi.RGB(Color.Red);
 			}
-			tsb.SetStrPropValue(tsb.Length - 1, tsb.Length, (int)FwTextPropType.ktptFontFamily, "Segoe UI Symbol");
-			tsb.SetIntPropValues(tsb.Length - 1, tsb.Length, (int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, foreColor);
-			tsb.SetIntPropValues(tsb.Length - 1, tsb.Length, (int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, backColor);
+			tsb.SetStrPropValue(tsb.Length - width, tsb.Length, (int)FwTextPropType.ktptFontFamily, "Segoe UI Symbol");
+			tsb.SetIntPropValues(tsb.Length - width, tsb.Length, (int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, foreColor);
+			tsb.SetIntPropValues(tsb.Length - width, tsb.Length, (int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, backColor);
 		}
 
 		/// <summary>

@@ -18,6 +18,7 @@ using SIL.FieldWorks.FdoUi;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
+using Gecko.WebIDL;
 
 namespace SIL.FieldWorks.IText
 {
@@ -853,7 +854,6 @@ namespace SIL.FieldWorks.IText
 		/// <param name="vwenv"></param>
 		protected virtual void AddWordBundleInternal(int hvo, IVwEnv vwenv)
 		{
-			SetupAndOpenInnerPile(vwenv);
 			// we assume we're in the context of a segment with analyses here.
 			// we'll need this info down in DisplayAnalysisAndCloseInnerPile()
 			int hvoSeg;
@@ -861,7 +861,27 @@ namespace SIL.FieldWorks.IText
 			int index;
 			vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoSeg, out tagDummy, out index);
 			var analysisOccurrence = new AnalysisOccurrence(m_segRepository.GetObject(hvoSeg), index);
+			SetBorderColor(vwenv, analysisOccurrence);
+			SetupAndOpenInnerPile(vwenv);
 			DisplayAnalysisAndCloseInnerPile(vwenv, analysisOccurrence, true);
+		}
+		private void SetBorderColor(IVwEnv vwenv, AnalysisOccurrence analysisOccurrence)
+		{
+			var coRepository = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+			var wag = (IAnalysis)coRepository.GetObject(analysisOccurrence.Analysis.Hvo);
+			int width = 0;
+			int color = (int)ColorUtil.ConvertColorToBGR(Color.Black);
+			if (IsParsingDevMode() && wag.ClassID != WfiWordformTags.kClassId && !(wag is IPunctuationForm))
+			{
+				// Show how the analysis was approved by setting the border color.
+				width = 3000;
+				color = GetGuessColor(wag.Analysis);
+			}
+			vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTop, (int)FwTextPropVar.ktpvMilliPoint, width);
+			vwenv.set_IntProperty((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, width);
+			vwenv.set_IntProperty((int)FwTextPropType.ktptBorderLeading, (int)FwTextPropVar.ktpvMilliPoint, width);
+			vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTrailing, (int)FwTextPropVar.ktpvMilliPoint, width);
+			vwenv.set_IntProperty((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, color);
 		}
 
 		/// <summary>
@@ -1896,6 +1916,14 @@ namespace SIL.FieldWorks.IText
 					var wa = (IWfiAnalysis) m_defaultObj;
 					if (wa.MeaningsOC.Count == 0)
 					{
+						ITsString rootGlossName = GetRootGlossName(wa);
+						if (m_hvoDefault != m_hvoWordBundleAnalysis && rootGlossName != null)
+						{
+							// Display our best guess for the gloss.
+							m_this.SetColor(m_vwenv, m_this.LabelRGBFor(choiceIndex));
+							m_vwenv.AddString(rootGlossName);
+							break;
+						}
 						// There's no gloss, display something indicating it is missing.
 						m_this.SetColor(m_vwenv, m_this.LabelRGBFor(choiceIndex));
 						m_vwenv.AddString(m_this.m_tssMissingAnalysis);
@@ -1929,6 +1957,35 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 
+			private ITsString GetRootGlossName(IWfiAnalysis wa)
+			{
+				// This is modeled after SandboxBase.SyncMonomorphemicGlossAndPos.
+				ITsString rootGloss = null;
+				foreach (IWfiMorphBundle morphBundle in wa.MorphBundlesOS)
+				{
+					// Get the sense for morphBundle.
+					ILexSense sense = morphBundle.SenseRA;
+					if (sense == null && morphBundle.MorphRA != null)
+					{
+						ILexEntry lexEntry = morphBundle.MorphRA.Owner as ILexEntry;
+						if (lexEntry != null && lexEntry.SensesOS.Count > 0)
+						{
+							sense = lexEntry.SensesOS[0];
+						}
+					}
+					if (sense?.Gloss?.BestAnalysisAlternative == null)
+						continue;
+					// Consider the sense's gloss.
+					IMoMorphSynAnalysis msa = sense.MorphoSyntaxAnalysisRA;
+					bool fStem = msa is IMoStemMsa;
+					// If we have only one morpheme, treat it as the stem from which we will copy the gloss.
+					// otherwise, use the first stem we find, if any.
+					if ((fStem && rootGloss == null) || wa.MorphBundlesOS.Count == 1)
+						rootGloss = sense.Gloss.BestAnalysisAlternative;
+				}
+				return rootGloss;
+			}
+
 			private void DisplayWordPOS(int choiceIndex)
 			{
 				switch(m_defaultObj.ClassID)
@@ -1941,6 +1998,19 @@ namespace SIL.FieldWorks.IText
 					if (m_hvoDefault != m_hvoWordBundleAnalysis)
 					{
 						m_this.SetGuessing(m_vwenv, m_this.GetGuessColor(m_defaultObj));
+						var wa = (IWfiAnalysis) m_defaultObj;
+						int hvoPos = wa.CategoryRA != null ? wa.CategoryRA.Hvo : 0;
+						if (hvoPos == 0)
+						{
+							ITsString rootPOSName = GetRootPOSName(wa);
+							if (rootPOSName != null)
+							{
+								// Display our best guess for the gloss.
+								m_this.SetColor(m_vwenv, m_this.LabelRGBFor(choiceIndex));
+								m_vwenv.AddString(rootPOSName);
+								break;
+							}
+						}
 					}
 					m_this.AddAnalysisPos(m_vwenv, m_hvoDefault, m_hvoWordBundleAnalysis, choiceIndex);
 					break;
@@ -1953,6 +2023,57 @@ namespace SIL.FieldWorks.IText
 				default:
 					throw new Exception("Invalid type found in Segment analysis");
 				}
+			}
+
+			private ITsString GetRootPOSName(IWfiAnalysis wa)
+			{
+				// This is modeled after SandboxBase.SyncMonomorphemicGlossAndPos.
+				IPartOfSpeech stemPOS = null;
+				IPartOfSpeech derivedPOS = null;
+				foreach (IWfiMorphBundle morphBundle in wa.MorphBundlesOS)
+				{
+					// Get the sense for morphBundle.
+					ILexSense sense = morphBundle.SenseRA;
+					if (sense == null && morphBundle.MorphRA != null)
+					{
+						if (morphBundle.MorphRA.Owner is ILexEntry lexEntry && lexEntry.SensesOS.Count > 0)
+						{
+							sense = lexEntry.SensesOS[0];
+						}
+					}
+					if (sense == null)
+						continue;
+					// Consider the sense's part of speech.
+					IMoMorphSynAnalysis msa = sense.MorphoSyntaxAnalysisRA;
+					bool fStem = msa is IMoStemMsa;
+					if (fStem)
+					{
+						IPartOfSpeech POS = (msa as IMoStemMsa).PartOfSpeechRA;
+						if (POS != stemPOS && stemPOS != null)
+						{
+							// found conflicting stems
+							return null;
+						}
+						else
+							stemPOS = POS;
+					}
+					else if (msa is IMoDerivAffMsa)
+					{
+						if (derivedPOS != null)
+							return null; // more than one DA
+						else
+							derivedPOS = (msa as IMoDerivAffMsa).ToPartOfSpeechRA;
+					}
+				}
+				if (stemPOS == null)
+					return null;
+
+				IPartOfSpeech lexPOS = derivedPOS ?? stemPOS;
+				if (lexPOS == null)
+					return null;
+				if (lexPOS.Abbreviation.BestAnalysisAlternative.Length > 0)
+					return lexPOS.Abbreviation.BestAnalysisAlternative;
+				return lexPOS.Name.BestAnalysisAlternative;
 			}
 		}
 
