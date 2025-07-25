@@ -77,9 +77,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		/// <summary></summary>
 		public static Slice Create(LcmCache cache, string editor, int flid, XmlNode node, ICmObject obj,
-			IPersistenceProvider persistenceProvider, Mediator mediator, PropertyTable propertyTable, XmlNode caller)
+			IPersistenceProvider persistenceProvider, Mediator mediator, PropertyTable propertyTable, XmlNode caller, ObjSeqHashMap reuseMap)
 		{
-			Slice slice = null;
+			Slice slice;
 			switch(editor)
 			{
 				case "multistring": // first, these are the most common slices.
@@ -109,17 +109,38 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					}
 				case "defaultvectorreference": // second most common.
 					{
-						slice = new ReferenceVectorSlice(cache, obj, flid);
+						var rvSlice = reuseMap.GetSliceToReuse("ReferenceVectorSlice") as ReferenceVectorSlice;
+						if (rvSlice == null)
+							slice = new ReferenceVectorSlice(cache, obj, flid);
+						else
+						{
+							slice = rvSlice;
+							rvSlice.Reuse(obj, flid);
+						}
 						break;
 					}
 				case "possvectorreference":
 					{
-						slice = new PossibilityReferenceVectorSlice(cache, obj, flid);
+						var prvSlice = reuseMap.GetSliceToReuse("PossibilityReferenceVectorSlice") as PossibilityReferenceVectorSlice;
+						if (prvSlice == null)
+							slice = new PossibilityReferenceVectorSlice(cache, obj, flid);
+						else
+						{
+							slice = prvSlice;
+							prvSlice.Reuse(obj, flid);
+						}
 						break;
 					}
 				case "semdomvectorreference":
 					{
-						slice = new SemanticDomainReferenceVectorSlice(cache, obj, flid);
+						var prvSlice = reuseMap.GetSliceToReuse("SemanticDomainReferenceVectorSlice") as SemanticDomainReferenceVectorSlice;
+						if (prvSlice == null)
+							slice = new SemanticDomainReferenceVectorSlice(cache, obj, flid);
+						else
+						{
+							slice = prvSlice;
+							prvSlice.Reuse(obj, flid);
+						}
 						break;
 					}
 				case "string":
@@ -325,7 +346,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					break;
 				case "defaultvectorreferencedisabled": // second most common.
 					{
-						slice = new ReferenceVectorDisabledSlice(cache, obj, flid);
+						ReferenceVectorDisabledSlice rvSlice = reuseMap.GetSliceToReuse("ReferenceVectorDisabledSlice") as ReferenceVectorDisabledSlice;
+						if (rvSlice == null)
+							slice = new ReferenceVectorDisabledSlice(cache, obj, flid);
+						else
+						{
+							slice = rvSlice;
+							rvSlice.Reuse(obj, flid);
+						}
 						break;
 					}
 				default:
@@ -333,12 +361,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					//Since the editor has not been implemented yet,
 					//is there a bitmap file that we can show for this editor?
 					//Such bitmaps belong in the distFiles xde directory
-					var fwCodeDir = FwDirectoryFinder.CodeDirectory;
-					var editorBitmapRelativePath = "xde/" + editor + ".bmp";
+					string fwCodeDir = FwDirectoryFinder.CodeDirectory;
+					string editorBitmapRelativePath = "xde/" + editor + ".bmp";
 					if(File.Exists(Path.Combine(fwCodeDir, editorBitmapRelativePath)))
 						slice = new ImageSlice(fwCodeDir, editorBitmapRelativePath);
 					else
-						slice = new MessageSlice(string.Format(DetailControlsStrings.ksBadEditorType, editor));
+						slice = new MessageSlice(String.Format(DetailControlsStrings.ksBadEditorType, editor));
 					break;
 				}
 			}
