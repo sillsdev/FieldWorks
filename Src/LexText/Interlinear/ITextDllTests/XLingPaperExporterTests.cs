@@ -31,11 +31,13 @@ namespace SIL.FieldWorks.IText
 			m_xmlTransform.Load(m_sTransformPath);
 		}
 
+		[TestCase("BruceCoxEmpty")]
 		[TestCase("Gilaki01")]
 		[TestCase("HalbiBUD2")]
 		[TestCase("HalbiCS3")]
 		[TestCase("HalbiST1")]
 		[TestCase("Jibiyal2Texts")]
+		[TestCase("Jibiyal3Text")]
 		[TestCase("nszEnglishWords")]
 		[TestCase("SETCorn")]
 		[TestCase("Urim2Kids")]

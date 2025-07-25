@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE lingPaper PUBLIC   "-//XMLmind//DTD XLingPap//EN" "XLingPap.dtd">
+<lingPaper automaticallywrapinterlinears="yes">
+   <frontMatter>
+      <title>Test</title>
+      <author>[Insert author's name here]</author>
+   </frontMatter>
+   <section1 id="s1">
+      <secTitle>First Section</secTitle>
+      <p/>
+   </section1>
+   <backMatter>
+      <appendix id="a1">
+         <secTitle>Interlinear text</secTitle>
+         <interlinear-text>
+            <textInfo>
+               <textTitle>Test</textTitle>
+               <shortTitle/>
+            </textInfo>
+    
+    
+      
+        
+          
+            <interlinear text="T-IDe8524ce9-1" textref="T-IDe8524ce9-1">
+               <lineGroup>
+                  <line/>
+               </lineGroup>
+               <free lang="en-free"/>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-IDe8524ce9-2" textref="T-IDe8524ce9-2">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="fr-baseline">To,bon.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="fr-morpheme">bon</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="fr-lexEntry">bon</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">good</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-gramInfo">adj</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordGloss">good</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adj</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">Well, good.</free>
+            </interlinear>
+        
+      
+      
+        
+          
+            <interlinear text="T-IDe8524ce9-3" textref="T-IDe8524ce9-3">
+               <lineGroup>
+                  <line>
+                     <wrd>
+                        <langData lang="fr-baseline">Tobon.</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="fr-morpheme">bon</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <langData lang="fr-lexEntry">bon</langData>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-lexGloss">good</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-gramInfo">adj</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordGloss">good</gloss>
+                     </wrd>
+                  </line>
+                  <line>
+                     <wrd>
+                        <gloss lang="en-wordCategory">adj</gloss>
+                     </wrd>
+                  </line>
+               </lineGroup>
+               <free lang="en-free">Good.</free>
+            </interlinear>
+        
+      
+      
+    
+    
+      
+      
+      
+    
+  
+         </interlinear-text>
+      </appendix>
+      <endnotes/>
+      <references/>
+   </backMatter>
+   <languages>
+      <language font-family="Times New Roman" id="en-free"/>
+      <language font-family="Times New Roman" id="en-wordCategory"/>
+      <language font-family="Times New Roman" id="en-wordGloss"/>
+      <language font-family="Times New Roman" id="en-lexGloss"/>
+      <language font-family="Times New Roman" id="en-gramInfo"/>
+      <language font-family="Charis SIL" id="ha-baseline"/>
+      <language font-family="Charis SIL" id="fr-baseline"/>
+      <language font-family="Charis SIL" id="fr-morpheme"/>
+      <language font-family="Charis SIL" id="fr-lexEntry"/>
+   </languages>
+   <types>
+      <type id="tHomographNumber" font-size="65%" cssSpecial="vertical-align:sub" xsl-foSpecial="baseline-shift='sub'"/>
+      <type id="tLiteralTranslation"/>
+      <type id="tVariantTypes" font-family="Times New Roman"/>
+   </types>
+</lingPaper>

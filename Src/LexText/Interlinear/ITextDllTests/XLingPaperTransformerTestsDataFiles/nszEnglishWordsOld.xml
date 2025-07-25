@@ -137,7 +137,7 @@
                <lineGroup>
                   <line>
                      <wrd>
-                        <langData lang="nlv-baseline">Begin;here:andthereYa</langData>
+                        <langData lang="nlv-baseline">Begin;here:andthere:Ya</langData>
                      </wrd>
                      <wrd>
                         <langData lang="nlv-baseline">miek</langData>
@@ -2015,7 +2015,7 @@
                <lineGroup>
                   <line>
                      <wrd>
-                        <langData lang="nlv-baseline">§Amo</langData>
+                        <langData lang="nlv-baseline">§¡Amo</langData>
                      </wrd>
                      <wrd>
                         <langData lang="nlv-baseline">ma</langData>
@@ -2096,7 +2096,7 @@
                <lineGroup>
                   <line>
                      <wrd>
-                        <langData lang="nlv-baseline">§Kenik</langData>
+                        <langData lang="nlv-baseline">§¿Kenik</langData>
                      </wrd>
                      <wrd>
                         <langData lang="nlv-baseline">kualtis</langData>
