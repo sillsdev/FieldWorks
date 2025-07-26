@@ -293,8 +293,8 @@
 				<item command="CmdChooseHCParser"/>
 			</menu>
           <menu id="ChooseModeMenu" label="Interlinear Mode">
-            <item command="CmdParsingDevelopmentMode"/>
             <item command="CmdTextGlossingMode"/>
+            <item command="CmdParsingDevelopmentMode"/>
           </menu>
           <item command="CmdEditParserParameters"/>
 		</menu>

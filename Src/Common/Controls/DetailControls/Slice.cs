@@ -1079,7 +1079,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		/// <summary></summary>
 		public virtual void GenerateChildren(XmlNode node, XmlNode caller, ICmObject obj, int indent,
-			ref int insPos, ArrayList path, bool fUsePersistentExpansion)
+			ref int insPos, ArrayList path, ObjSeqHashMap reuseMap, bool fUsePersistentExpansion)
 		{
 			CheckDisposed();
 
@@ -1101,14 +1101,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (indentNode != null)
 			{
 				// Similarly pretest for children of caller, to see whether anything is produced.
-				ContainingDataTree.ApplyLayout(obj, this, indentNode, indent + ExtraIndent(indentNode), insPos, path,
+				ContainingDataTree.ApplyLayout(obj, this, indentNode, indent + ExtraIndent(indentNode), insPos, path, reuseMap,
 					true, out ntr);
 				//fUseChildrenOfNode = false;
 			}
 			else
 			{
 				int insPosT = insPos; // don't modify the real one in this test call.
-				ntr = ContainingDataTree.ProcessPartChildren(node, path, obj, this, indent + ExtraIndent(node), ref insPosT,
+				ntr = ContainingDataTree.ProcessPartChildren(node, path, reuseMap, obj, this, indent + ExtraIndent(node), ref insPosT,
 					true, null, false, node);
 				//fUseChildrenOfNode = true;
 			}
@@ -1144,7 +1144,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					// Record the expansion state and generate the children.
 					Expansion = DataTree.TreeItemState.ktisExpanded;
-					CreateIndentedNodes(caller, obj, indent, ref insPos, path, node);
+					CreateIndentedNodes(caller, obj, indent, ref insPos, path, reuseMap, node);
 				}
 				else
 				{
@@ -1156,7 +1156,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		/// <summary></summary>
 		public virtual void CreateIndentedNodes(XmlNode caller, ICmObject obj, int indent, ref int insPos,
-			ArrayList path, XmlNode node)
+			ArrayList path, ObjSeqHashMap reuseMap, XmlNode node)
 		{
 			CheckDisposed();
 
@@ -1170,10 +1170,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				DataTree.NodeTestResult ntr;
 				insPos = ContainingDataTree.ApplyLayout(obj, this, indentNode, indent + ExtraIndent(indentNode),
-					insPos, path, false, out ntr);
+					insPos, path, reuseMap, false, out ntr);
 			}
 			else
-				ContainingDataTree.ProcessPartChildren(node, path, obj, this, indent + ExtraIndent(node), ref insPos,
+				ContainingDataTree.ProcessPartChildren(node, path, reuseMap, obj, this, indent + ExtraIndent(node), ref insPos,
 					false, parameter, false, caller);
 		}
 
@@ -1592,7 +1592,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				if (Key.Length > 1)
 					caller = Key[Key.Length - 2] as XmlNode;
 				int insPos = iSlice + 1;
-				CreateIndentedNodes(caller, m_obj, Indent, ref insPos, new ArrayList(Key), m_configurationNode);
+				CreateIndentedNodes(caller, m_obj, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), m_configurationNode);
 
 				Expansion = DataTree.TreeItemState.ktisExpanded;
 				if (m_propertyTable != null)
