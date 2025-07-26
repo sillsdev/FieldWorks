@@ -231,9 +231,16 @@
 			<part ref="PhoneEnv" label="Environments" visibility="ifData"/>
 		</part>
 
-		<part id="MoForm-Detail-IsAbstractBasic" type="Detail">
+      <!-- IsAbstract At Entry section -->
+      <part id="MoForm-Detail-IsAbstractBasic" type="Detail">
 			<slice field="IsAbstract" label="IsAbstract" editor="Checkbox"/>
 		</part>
+
+      <!-- IsAbstract in Allomorph section -->
+      <part id="MoForm-Detail-IsAbstract" type="Detail">
+        <slice field="IsAbstract" label="IsAbstract" editor="Checkbox"
+               helpTopicID="khtpField-lexiconEdit-AlternateFormsSection-IsAbstract"/>
+      </part>
 
 		<part id="MoForm-Detail-PhoneEnvBasic" type="Detail">
 			<slice field="PhoneEnv" label="Environments" editor="phoneEnvReference" menu="mnuDataTree-Environments-Insert" helpTopicID="khtpField-LexEntry-Environments">
