@@ -92,8 +92,8 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (app != null)
 					{
 						parent = app.ActiveMainWindow;
-				}
-				if (parent == null)
+					}
+					if (parent == null)
 					{
 						parent = m_propertyTable.GetValue<Form>("window");
 					}
@@ -106,7 +106,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_parent = parent;
 			m_list = list;
 			m_ws = ws;
-
+			if (m_treeCombo != null)
+			{
+				m_treeCombo.WritingSystemFactory = Cache.WritingSystemFactory;
+			}
 		}
 
 		/// <summary>
