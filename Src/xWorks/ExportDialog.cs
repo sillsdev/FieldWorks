@@ -40,6 +40,7 @@ using XCore;
 using PropertyTable = XCore.PropertyTable;
 using ReflectionHelper = SIL.LCModel.Utils.ReflectionHelper;
 using Newtonsoft.Json;
+using static SIL.FieldWorks.XWorks.DictionaryExportService;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -892,16 +893,90 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <summary>
+		/// When there is filtering applied to the entries, and the user is viewing reversals instead of the main
+		/// dictionary, then we need to get the list of entries while on the main thread. LT-21960
+		/// </summary>
+		private void GetDictionaryDecoratorAndEntries(out DictionaryPublicationDecorator pubDecorator, out int[] entriesToSave)
+		{
+			int[] entries = null;
+			DictionaryPublicationDecorator decorator = null;
+			if (btnExport.InvokeRequired)
+			{
+				btnExport.Invoke(() =>
+				{
+					using (ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_propertyTable, m_mediator))
+					{
+						decorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entries, DictionaryType);
+					}
+				});
+			}
+			else
+			{
+				using (ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_propertyTable, m_mediator))
+				{
+					decorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entries, DictionaryType);
+				}
+
+			}
+			entriesToSave = entries;
+			pubDecorator = decorator;
+		}
+
+		/// <summary>
+		/// When there is filtering applied to the entries, and the user is viewing the main dictionary
+		/// instead of a reversal, then we need to get the list of entries while on the main thread. LT-21960
+		/// </summary>
+		private void GetReversalDecoratorAndEntries(Guid reversalGuid, out DictionaryPublicationDecorator pubDecorator, out int[] entriesToSave)
+		{
+			int[] entries = null;
+			DictionaryPublicationDecorator decorator = null;
+			if (btnExport.InvokeRequired)
+			{
+				btnExport.Invoke(() =>
+				{
+					using (ClerkActivator.ActivateClerkMatchingExportType(ReversalType, m_propertyTable, m_mediator))
+					using (ReversalIndexActivator.ActivateReversalIndex(reversalGuid, m_propertyTable))
+					{
+						decorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entries, ReversalType);
+					}
+				});
+			}
+			else
+			{
+				using (ClerkActivator.ActivateClerkMatchingExportType(ReversalType, m_propertyTable, m_mediator))
+				using (ReversalIndexActivator.ActivateReversalIndex(reversalGuid, m_propertyTable))
+				{
+					decorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out entries, ReversalType);
+				}
+			}
+			entriesToSave = entries;
+			pubDecorator = decorator;
+		}
+
 		private object ExportWordOpenXml(IThreadedProgress progress, object[] args)
 		{
 			if (args.Length < 1)
 				return null;
 			var filePath = (string)args[0];
 			var exportService = new DictionaryExportService(m_propertyTable, m_mediator);
-			exportService.ExportDictionaryForWord(filePath, null, progress);
+
+			// Export the main dictionary.
+			GetDictionaryDecoratorAndEntries(out var pubDecorator, out var entriesToSave);
+			exportService.ExportDictionaryForWord(filePath, entriesToSave, pubDecorator, progress);
+
+			// Export all the reversals.
+			var revConfig = new DictionaryConfigurationModel(
+				DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "ReversalIndex"), m_cache);
 			foreach (var reversal in m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances())
 			{
-				exportService.ExportReversalForWord(filePath, reversal.WritingSystem);
+				GetReversalDecoratorAndEntries(reversal.Guid, out pubDecorator, out entriesToSave);
+
+				if (entriesToSave.Length > 0)
+				{
+					exportService.ExportReversalForWord(filePath, reversal.WritingSystem, entriesToSave,
+						pubDecorator, revConfig, progress);
+				}
 			}
 			return null;
 		}
@@ -911,13 +986,21 @@ namespace SIL.FieldWorks.XWorks
 			if(args.Length < 1)
 				return null;
 			var xhtmlPath = (string)args[0];
+			var exportService = new DictionaryExportService(m_propertyTable, m_mediator);
 			switch (m_rgFxtTypes[FxtIndex((string)m_exportItems[0].Tag)].m_ft)
 			{
 				case FxtTypes.kftConfigured:
-					new DictionaryExportService(m_propertyTable, m_mediator).ExportDictionaryContent(xhtmlPath, progress: progress);
+					GetDictionaryDecoratorAndEntries(out var pubDecorator, out var entriesToSave);
+					exportService.ExportDictionaryContent(xhtmlPath, pubDecorator, entriesToSave, progress);
 					break;
 				case FxtTypes.kftReversal:
-					new DictionaryExportService(m_propertyTable, m_mediator).ExportReversalContent(xhtmlPath, progress: progress);
+					var reversalGuidStr = m_propertyTable.GetStringProperty("ReversalIndexGuid", null);
+					if (!string.IsNullOrEmpty(reversalGuidStr))
+					{
+						var reversalGuid = new Guid(reversalGuidStr);
+						GetReversalDecoratorAndEntries(reversalGuid, out pubDecorator, out entriesToSave);
+						exportService.ExportReversalContent(xhtmlPath, pubDecorator, entriesToSave, progress);
+					}
 					break;
 			}
 			return null;
