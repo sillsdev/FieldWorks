@@ -1710,6 +1710,18 @@ namespace SIL.FieldWorks.IText
 			return tsb.GetString();
 		}
 
+		/// <summary>
+		/// Get the lex sense associated with the given morpheme.
+		/// </summary>
+		/// <param name="hvoSbMorph"></param>
+		/// <returns></returns>
+		private ILexSense GetMorphLexSense(int hvoSbMorph)
+		{
+			var sbHvo = m_caches.DataAccess.get_ObjectProp(hvoSbMorph, ktagSbMorphGloss);
+			var realObject = Caches.RealObject(sbHvo);
+			return realObject as ILexSense;
+		}
+
 		private void CopyStringsToSecondary(IList<int> writingSystems, ISilDataAccess sdaMain, int hvoMain,
 			int flidMain, IVwCacheDa cda, int hvoSec, int flidSec)
 		{
