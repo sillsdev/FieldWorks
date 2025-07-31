@@ -8,6 +8,7 @@ Build/LibraryDevelopment.properties
 Build/NuGet.exe
 Build/nunit.framework.dll
 Build/nunit.framework.xml
+Build/venv
 Build/*.config
 Build/*.dll
 Build/*.pdb

@@ -21,8 +21,8 @@ namespace SIL.FieldWorks.XWorks
 		private readonly Mediator m_mediator;
 		private readonly LcmCache m_cache;
 
-		private const string DictionaryType = "Dictionary";
-		private const string ReversalType = "Reversal Index";
+		internal const string DictionaryType = "Dictionary";
+		internal const string ReversalType = "Reversal Index";
 		private const int BatchSize = 50; // number of entries to send to Webonary in a single post
 
 		public DictionaryExportService(PropertyTable propertyTable, Mediator mediator)
@@ -77,70 +77,53 @@ namespace SIL.FieldWorks.XWorks
 			return entries.Length;
 		}
 
-		public void ExportDictionaryForWord(string filePath, DictionaryConfigurationModel configuration = null, IThreadedProgress progress = null)
+		public void ExportDictionaryForWord(string filePath, int[] entriesToSave, DictionaryPublicationDecorator pubDecorator,
+			IThreadedProgress progress)
 		{
-			using (ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_propertyTable, m_mediator))
-			{
-				configuration = configuration ?? new DictionaryConfigurationModel(DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "Dictionary"), m_cache);
-				var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out var entriesToSave, DictionaryType);
-				if (progress != null)
-				  progress.Maximum = entriesToSave.Length;
+			if (progress != null)
+			  progress.Maximum = entriesToSave.Length;
 
-				LcmWordGenerator.SavePublishedDocx(entriesToSave, publicationDecorator, int.MaxValue, configuration, m_propertyTable, filePath, progress);
-			}
+			var dictConfig = new DictionaryConfigurationModel(
+				DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "Dictionary"), m_cache);
+			LcmWordGenerator.SavePublishedDocx(entriesToSave, pubDecorator, int.MaxValue, dictConfig, m_propertyTable,
+				filePath, progress);
 		}
 
-		public void ExportReversalForWord(string filePath, string reversalWs, DictionaryConfigurationModel configuration = null, IThreadedProgress progress = null)
+		public void ExportReversalForWord(string filePath, string reversalWs, int[] entriesToSave,
+			DictionaryPublicationDecorator pubDecorator, DictionaryConfigurationModel revConfig, IThreadedProgress progress)
 		{
 			Guard.AgainstNullOrEmptyString(reversalWs, nameof(reversalWs));
-			using (ClerkActivator.ActivateClerkMatchingExportType(ReversalType, m_propertyTable, m_mediator))
-			using (ReversalIndexActivator.ActivateReversalIndex(reversalWs, m_propertyTable, m_cache))
-			{
-				configuration = configuration ?? new DictionaryConfigurationModel(
-					DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "ReversalIndex"), m_cache);
-				var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out var entriesToSave, ReversalType);
 
-				// Don't export empty reversals
-				if (entriesToSave.Length == 0)
-					return;
+			if (progress != null)
+			  progress.Maximum = entriesToSave.Length;
 
-				if (progress != null)
-				  progress.Maximum = entriesToSave.Length;
-
-				string reversalFilePath = filePath.Split(new string[] { ".docx"}, StringSplitOptions.None)[0] + "-reversal-" + reversalWs + ".docx";
-
-				LcmWordGenerator.SavePublishedDocx(entriesToSave, publicationDecorator, int.MaxValue, configuration, m_propertyTable, reversalFilePath, progress);
-			}
+			string reversalFilePath = filePath.Split(new string[] { ".docx"}, StringSplitOptions.None)[0] + "-reversal-" + reversalWs + ".docx";
+			LcmWordGenerator.SavePublishedDocx(entriesToSave, pubDecorator, int.MaxValue, revConfig, m_propertyTable,
+				reversalFilePath, progress);
 		}
 
-	  public void ExportDictionaryContent(string xhtmlPath, DictionaryConfigurationModel configuration = null, IThreadedProgress progress = null)
+		public void ExportDictionaryContent(string xhtmlPath, DictionaryPublicationDecorator pubDecorator, int[] entriesToSave,
+			IThreadedProgress progress)
 		{
-			using (ClerkActivator.ActivateClerkMatchingExportType(DictionaryType, m_propertyTable, m_mediator))
-			{
-				configuration = configuration ?? new DictionaryConfigurationModel(
-					DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "Dictionary"), m_cache);
-				ExportConfiguredXhtml(xhtmlPath, configuration, DictionaryType, progress);
-			}
-		}
-
-		public void ExportReversalContent(string xhtmlPath, string reversalWs = null, DictionaryConfigurationModel configuration = null,
-			IThreadedProgress progress = null)
-		{
-			using (ClerkActivator.ActivateClerkMatchingExportType(ReversalType, m_propertyTable, m_mediator))
-			using (ReversalIndexActivator.ActivateReversalIndex(reversalWs, m_propertyTable, m_cache))
-			{
-				configuration = configuration ?? new DictionaryConfigurationModel(
-					DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "ReversalIndex"), m_cache);
-				ExportConfiguredXhtml(xhtmlPath, configuration, ReversalType, progress);
-			}
-		}
-
-		private void ExportConfiguredXhtml(string xhtmlPath, DictionaryConfigurationModel configuration, string exportType, IThreadedProgress progress)
-		{
-			var publicationDecorator = ConfiguredLcmGenerator.GetPublicationDecoratorAndEntries(m_propertyTable, out var entriesToSave, exportType);
 			if (progress != null)
 				progress.Maximum = entriesToSave.Length;
-			LcmXhtmlGenerator.SavePublishedHtmlWithStyles(entriesToSave, publicationDecorator, int.MaxValue, configuration, m_propertyTable, xhtmlPath, progress, true);
+
+			var dictConfig = new DictionaryConfigurationModel(
+				DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "Dictionary"), m_cache);
+			LcmXhtmlGenerator.SavePublishedHtmlWithStyles(entriesToSave, pubDecorator, int.MaxValue, dictConfig,
+				m_propertyTable, xhtmlPath, progress, true);
+		}
+
+		public void ExportReversalContent(string xhtmlPath, DictionaryPublicationDecorator pubDecorator, int[] entriesToSave,
+			IThreadedProgress progress)
+		{
+			if (progress != null)
+				progress.Maximum = entriesToSave.Length;
+
+			var revConfig = new DictionaryConfigurationModel(
+				DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "ReversalIndex"), m_cache);
+			LcmXhtmlGenerator.SavePublishedHtmlWithStyles(entriesToSave, pubDecorator, int.MaxValue, revConfig,
+				m_propertyTable, xhtmlPath, progress, true);
 		}
 
 		public List<JArray> ExportConfiguredJson(string folderPath, DictionaryConfigurationModel configuration, out int[] entryIds)
@@ -168,7 +151,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private sealed class ClerkActivator : IDisposable
+		internal sealed class ClerkActivator : IDisposable
 		{
 			private static RecordClerk s_dictionaryClerk;
 			private static RecordClerk s_reversalIndexClerk;
@@ -250,7 +233,7 @@ namespace SIL.FieldWorks.XWorks
 				return id == clerk.Id;
 			}
 		}
-		private sealed class ReversalIndexActivator : IDisposable
+		internal sealed class ReversalIndexActivator : IDisposable
 		{
 			private readonly string m_sCurrentRevIdxGuid;
 			private readonly PropertyTable m_propertyTable;

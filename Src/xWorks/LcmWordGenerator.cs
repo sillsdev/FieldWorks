@@ -265,16 +265,15 @@ namespace SIL.FieldWorks.XWorks
 
 							GenerateBulletAndNumberingData(element, numberingPart);
 						}
-						styleSheet.AppendChild(element.Style.CloneNode(true));
+						styleSheet.AppendChild(element.Style);
 					}
 					var characterElements = s_styleCollection.GetUsedCharacterElements();
-					characterElements.ForEach(element => styleSheet.AppendChild(element.Style.CloneNode(true)));
+					characterElements.ForEach(element => styleSheet.AppendChild(element.Style));
 
 					// Clear the collection.
 					s_styleCollection.Clear();
 
-					// Clone styles from the stylesheet into the word doc's styles xml
-					stylePart.Styles = ((Styles)styleSheet.CloneNode(true));
+					stylePart.Styles = styleSheet;
 				}
 
 				// Add the page headers.

@@ -378,6 +378,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		#endregion // View Constructors
 
 		#region RootSite implementation
+		/// <summary>
+		/// This is a RootSiteControl that displays a non-multilingual string slice
+		/// Data entry should always default to the DefaultAnalWs writing system according to LT-22145
+		/// </summary>
 		class StringSliceView : RootSiteControl, INotifyControlInCurrentSlice
 		{
 			ICmObject m_obj;
@@ -420,6 +424,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					if (m_vc is StringSliceVc)
 						(m_vc as StringSliceVc).DefaultWs = value;
 				}
+			}
+
+			public override int WsPending
+			{
+				// Ignore requests to set pending writing system, this slice always deals with the DefaultAnalWs.
+				// ReSharper disable once ValueParameterNotUsed
+				set { }
+				get => Cache != null ? Cache.DefaultAnalWs : -1;
 			}
 			#region IDisposable override
 
