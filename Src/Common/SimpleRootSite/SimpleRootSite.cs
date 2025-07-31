@@ -1692,7 +1692,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// informtion away and reset the keyboard).
 		/// </remarks>
 		/// -----------------------------------------------------------------------------------
-		public int WsPending
+		public virtual int WsPending
 		{
 			get
 			{
