@@ -361,8 +361,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				CheckDisposed();
 				m_msaGroupBox.StemPOS = value;
+				// If the user changes the POS, then the inflection data may be invalid.
+				InflectionClass = null;
+				InflectionFeatures = null;
 			}
 		}
+
+		public IMoInflClass InflectionClass { get; set; }
+
+		public IFsFeatStruc InflectionFeatures { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -709,6 +716,58 @@ namespace SIL.FieldWorks.LexText.Controls
 				MessageBox.Show(e.StackTrace);
 			}
 		}
+
+		public void SetMsa(IMoMorphSynAnalysis msa)
+		{
+			if (msa == null)
+				return;
+			switch (msa)
+			{
+				case IMoStemMsa stemMsa:
+					POS = stemMsa.PartOfSpeechRA;
+					InflectionClass = stemMsa.InflectionClassRA;
+					InflectionFeatures = stemMsa.MsFeaturesOA;
+					break;
+				case IMoDerivStepMsa derivStepMsa:
+					POS = derivStepMsa.PartOfSpeechRA;
+					InflectionClass = derivStepMsa.InflectionClassRA;
+					InflectionFeatures = derivStepMsa.MsFeaturesOA;
+					break;
+				case IMoInflAffMsa affixMsa:
+					POS = affixMsa.PartOfSpeechRA;
+					break;
+			}
+		}
+
+		/// <summary>
+		/// Set the msa of the lex sense of lexEntry to the saved msa values.
+		/// This is useful when a lexical entry is created from a novel root guess.
+		/// </summary>
+		/// <param name="lexEntry"></param>
+		private void SetEntryMsa(ILexEntry lexEntry)
+		{
+			ILexSense lexSense = lexEntry.SensesOS[0];
+			IMoMorphSynAnalysis msa = lexSense.MorphoSyntaxAnalysisRA;
+			switch (msa)
+			{
+				// POS is handled by m_msaGroupBox.
+				case IMoStemMsa stemMsa:
+					if (InflectionClass != null)
+						stemMsa.InflectionClassRA = InflectionClass;
+					if (InflectionFeatures != null)
+						stemMsa.MsFeaturesOA = InflectionFeatures;
+					break;
+				case IMoDerivStepMsa derivStepMsa:
+					if (InflectionClass != null)
+						derivStepMsa.InflectionClassRA = InflectionClass;
+					if (InflectionFeatures != null)
+						derivStepMsa.MsFeaturesOA = InflectionFeatures;
+					break;
+				case IMoInflAffMsa affixMsa:
+					break;
+			}
+		}
+
 
 		private LabeledMultiStringControl ReplaceTextBoxWithMultiStringBox(FwTextBox tb, int wsType,
 			IVwStylesheet stylesheet)
@@ -1404,6 +1463,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					ler.ComplexEntryTypesRS.Add(m_complexType);
 				ler.RefType = LexEntryRefTags.krtComplexForm;
 			}
+			SetEntryMsa(newEntry);
 			return newEntry;
 		}
 

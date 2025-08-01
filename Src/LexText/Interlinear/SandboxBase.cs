@@ -1265,6 +1265,7 @@ namespace SIL.FieldWorks.IText
 				}
 				if (this.ShowMorphBundles)
 				{
+					bool hasMf = false;
 					var bldrError = new StringBuilder();
 					foreach (var mb in analysis.MorphBundlesOS)
 					{
@@ -1424,9 +1425,12 @@ namespace SIL.FieldWorks.IText
 							// improve performance. All the relevant data should already have
 							// been loaded while creating the main interlinear view.
 							LoadSecDataForEntry(entryReal, senseReal, hvoSbWord, cda, wsVern, hvoMbSec, fGuessing, sdaMain);
-							CopyLexEntryInfoToMonomorphemicWordGlossAndPos();
+							hasMf = true;
 						}
 					}
+					if (hasMf)
+						// Wait until all of the morphemes have been loaded (cf. LT-22235).
+						CopyLexEntryInfoToMonomorphemicWordGlossAndPos();
 					if (bldrError.Length > 0)
 					{
 						var msg = bldrError.ToString().Trim();
@@ -1704,6 +1708,18 @@ namespace SIL.FieldWorks.IText
 			tsb.ReplaceTsString(tsb.Length, tsb.Length,
 				sda.get_StringProp(hvoSbMorph, ktagSbMorphPostfix));
 			return tsb.GetString();
+		}
+
+		/// <summary>
+		/// Get the lex sense associated with the given morpheme.
+		/// </summary>
+		/// <param name="hvoSbMorph"></param>
+		/// <returns></returns>
+		private ILexSense GetMorphLexSense(int hvoSbMorph)
+		{
+			var sbHvo = m_caches.DataAccess.get_ObjectProp(hvoSbMorph, ktagSbMorphGloss);
+			var realObject = Caches.RealObject(sbHvo);
+			return realObject as ILexSense;
 		}
 
 		private void CopyStringsToSecondary(IList<int> writingSystems, ISilDataAccess sdaMain, int hvoMain,

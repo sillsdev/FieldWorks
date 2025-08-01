@@ -2117,6 +2117,9 @@ namespace SIL.FieldWorks.IText
 						foreach (ITsString tss in entryComponents.GlossAlternatives.Skip(1))
 							dlg.SetInitialGloss(TsStringUtils.GetWsAtOffset(tss, 0), tss);
 						dlg.ChangeUseSimilarToCreateAllomorph();
+						// Save msa of the lexeme, which may be a novel root guess.
+						ILexSense lexSense = m_sandbox.GetMorphLexSense(m_hvoMorph);
+						dlg.SetMsa(lexSense?.MorphoSyntaxAnalysisRA);
 
 						if (fCreateNow)
 						{
