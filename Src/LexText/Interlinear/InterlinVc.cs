@@ -2426,7 +2426,7 @@ namespace SIL.FieldWorks.IText
 
 		internal virtual IParaDataLoader CreateParaLoader()
 		{
-			return new InterlinViewCacheLoader(new AnalysisGuessServices(m_cache, IsParsingDevMode()), GuessCache);
+			return new InterlinViewCacheLoader(new AnalysisGuessServices(m_cache, IsParsingDevMode()), GuessCache, RootSite);
 		}
 
 		internal void RecordGuessIfNotKnown(AnalysisOccurrence selected)
@@ -2559,10 +2559,11 @@ namespace SIL.FieldWorks.IText
 	{
 		private InterlinViewDataCache m_guessCache;
 		public InterlinViewCacheLoader(AnalysisGuessServices guessServices,
-			InterlinViewDataCache guessCache)
+			InterlinViewDataCache guessCache, InterlinDocRootSiteBase rootSite)
 		{
 			GuessServices = guessServices;
 			m_guessCache = guessCache;
+			RootSite = rootSite;
 		}
 
 		/// <summary>
@@ -2570,6 +2571,8 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		public AnalysisGuessServices GuessServices { get; private set; }
 		public InterlinViewDataCache GuessCache { get { return m_guessCache; }  }
+
+		public InterlinDocRootSiteBase RootSite;
 
 		#region IParaDataLoader Members
 
@@ -2630,7 +2633,12 @@ namespace SIL.FieldWorks.IText
 
 			// we don't provide guesses for glosses
 			if (occurrence.Analysis is IWfiGloss)
+			{
+				if (IsParsingDevMode())
+					// Trigger redisplay.
+					SetObjProp(occurrence, InterlinViewDataCache.AnalysisMostApprovedFlid, 0);
 				return;
+			}
 			// next get the best guess for wordform or analysis
 
 			IAnalysis wag = occurrence.Analysis;
@@ -2645,6 +2653,13 @@ namespace SIL.FieldWorks.IText
 			{
 				SetObjProp(occurrence, InterlinViewDataCache.AnalysisMostApprovedFlid, 0);
 			}
+		}
+
+		internal bool IsParsingDevMode()
+		{
+			if (RootSite?.GetMaster() == null)
+				return false;
+			return RootSite.GetMaster().IsParsingDevMode();
 		}
 
 		public IAnalysis GetGuessForWordform(IWfiWordform wf, int ws)
@@ -2703,10 +2718,10 @@ namespace SIL.FieldWorks.IText
 		private HashSet<AnalysisOccurrence> m_annotationsChanged = new HashSet<AnalysisOccurrence>();
 		private HashSet<AnalysisOccurrence> m_annotationsUnchanged = new HashSet<AnalysisOccurrence>();
 		private AnalysisOccurrence m_currentAnnotation;
-		HashSet<int> m_analysesWithNewGuesses = new HashSet<int>();
+		HashSet<int> m_wordformsWithNewGuesses = new HashSet<int>();
 
-		public ParaDataUpdateTracker(AnalysisGuessServices guessServices, InterlinViewDataCache guessCache) :
-			base(guessServices, guessCache)
+		public ParaDataUpdateTracker(AnalysisGuessServices guessServices, InterlinViewDataCache guessCache, InterlinDocRootSiteBase rootSite) :
+			base(guessServices, guessCache, rootSite)
 		{
 		}
 
@@ -2716,9 +2731,9 @@ namespace SIL.FieldWorks.IText
 			base.NoteCurrentAnnotation(occurrence);
 		}
 
-		public void NoteChangedAnalysis(int hvo)
+		public void NoteChangedWordform(int hvo)
 		{
-			m_analysesWithNewGuesses.Add(hvo);
+			m_wordformsWithNewGuesses.Add(hvo);
 		}
 
 		private void MarkCurrentAnnotationAsChanged()
@@ -2739,7 +2754,7 @@ namespace SIL.FieldWorks.IText
 				// Include occurrences that are unchanged but might add a yellow background.
 				foreach (var unchangedAnnotation in m_annotationsUnchanged)
 				{
-					if (m_analysesWithNewGuesses.Contains(unchangedAnnotation.Analysis.Hvo))
+					if (m_wordformsWithNewGuesses.Contains(unchangedAnnotation.Analysis.Wordform.Hvo))
 					{
 						m_annotationsChanged.Add(unchangedAnnotation);
 					}
@@ -2755,7 +2770,7 @@ namespace SIL.FieldWorks.IText
 			{
 				base.SetObjProp(occurrence, flid, newObjValue);
 				m_annotationsChanged.Add(occurrence);
-				m_analysesWithNewGuesses.Add(occurrence.Analysis.Hvo);
+				m_wordformsWithNewGuesses.Add(occurrence.Analysis.Wordform.Hvo);
 				MarkCurrentAnnotationAsChanged();
 			}
 			else

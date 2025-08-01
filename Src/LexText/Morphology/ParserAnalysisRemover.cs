@@ -122,6 +122,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					m_dlg.ProgressBar.PerformStep();
 				}
 			});
+
+			// Interlin display may be affected.
+			m_dlg.Mediator.SendMessage("RefreshInterlin", null);
 		}
 
 		#endregion IUtility implementation
