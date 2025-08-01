@@ -215,10 +215,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private List<WSListItemModel> BuildWorkingList(ICollection<CoreWritingSystemDefinition> allForType, IList<CoreWritingSystemDefinition> currentForType)
 		{
 			var list = new List<WSListItemModel>();
-			// We prefer to display the current ones first, because that's what the code that orders them
-			// in the lexical data fields does. Usually this happens automatically, but there have
-			// been cases where the order is different in the two lists, even if they have the same items.
-			var wssInPreferredOrder = currentForType.Concat(allForType.Except(currentForType));
+			// Don't reorder the writing systems here even though the lexical data fields are reordered (cf. LT-22136).
+			var wssInPreferredOrder = allForType;
 			foreach (var ws in wssInPreferredOrder)
 			{
 				list.Add(new WSListItemModel(currentForType.Contains(ws), ws, new CoreWritingSystemDefinition(ws, true)));
