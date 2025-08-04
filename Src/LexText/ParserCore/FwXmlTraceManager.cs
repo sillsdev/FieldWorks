@@ -424,7 +424,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private static XElement CreateInflFeaturesElement(string name, FeatureStruct fs)
 		{
-			return new XElement(name, fs.Head().ToString().Replace(",", ""));
+			string feat = (fs.Head() == null) ? "" : fs.Head().ToString().Replace(",", "");
+			return new XElement(name, feat);
 		}
 
 		private static XElement CreateWordElement(string name, Word word, bool analysis, bool bracketed = false)

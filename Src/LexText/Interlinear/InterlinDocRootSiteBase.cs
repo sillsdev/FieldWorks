@@ -8,17 +8,17 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using SIL.FieldWorks.FwCoreDlgControls;
 using XCore;
-using SIL.LCModel.Core.Text;
 
 namespace SIL.FieldWorks.IText
 {
@@ -919,11 +919,11 @@ namespace SIL.FieldWorks.IText
 		private void UpdateGuesses(HashSet<IWfiWordform> wordforms, bool fUpdateDisplayWhereNeeded)
 		{
 			// now update the guesses for the paragraphs.
-			var pdut = new ParaDataUpdateTracker(Vc.GuessServices, Vc.GuessCache);
+			var pdut = new ParaDataUpdateTracker(Vc.GuessServices, Vc.GuessCache, this);
 			if (wordforms != null)
 				// The user may have changed the analyses for wordforms. (LT-21814)
 				foreach (var wordform in wordforms)
-					pdut.NoteChangedAnalysis(wordform.Hvo);
+					pdut.NoteChangedWordform(wordform.Hvo);
 			foreach (IStTxtPara para in RootStText.ParagraphsOS)
 				pdut.LoadAnalysisData(para, wordforms);
 			if (fUpdateDisplayWhereNeeded)
@@ -1013,6 +1013,7 @@ namespace SIL.FieldWorks.IText
 				NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 						InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(RootStText, true));
 				// Sync Guesses data before we redraw anything.
+				Vc.RootSite = this;
 				UpdateGuessData();
 			}
 			// FWR-191: we don't need to reconstruct the display if we didn't need to reload annotations
@@ -1037,37 +1038,38 @@ namespace SIL.FieldWorks.IText
 			{
 				case WfiAnalysisTags.kflidEvaluations:
 					IWfiAnalysis analysis = m_cache.ServiceLocator.GetInstance<IWfiAnalysisRepository>().GetObject(hvo);
-					if (analysis.HasWordform && RootStText.UniqueWordforms().Contains(analysis.Wordform))
-					{
-						m_wordformsToUpdate.Add(analysis.Wordform);
-						m_mediator.IdleQueue.Add(IdleQueuePriority.High, PostponedUpdateWordforms);
-					}
+					CheckUpdateWordform(analysis.Wordform);
 					break;
 				case WfiWordformTags.kflidAnalyses:
 					IWfiWordform wordform = m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetObject(hvo);
-					var uniqueWordforms = RootStText.UniqueWordforms();
-					if (uniqueWordforms.Contains(wordform))
+					CheckUpdateWordform(wordform);
+					break;
+			}
+		}
+
+		private void CheckUpdateWordform(IWfiWordform wordform)
+		{
+			var uniqueWordforms = RootStText.UniqueWordforms();
+			if (uniqueWordforms.Contains(wordform))
+			{
+				m_wordformsToUpdate.Add(wordform);
+				m_mediator.IdleQueue.Add(IdleQueuePriority.High, PostponedUpdateWordforms);
+			}
+			// Update uppercase versions of wordform.
+			// (When a lowercase wordform changes, it affects the best guess of its uppercase versions.)
+			var form = wordform.Form.VernacularDefaultWritingSystem;
+			var cf = new CaseFunctions(m_cache.ServiceLocator.WritingSystemManager.Get(form.get_WritingSystemAt(0)));
+			foreach (IWfiWordform ucWordform in uniqueWordforms)
+			{
+				var ucForm = ucWordform.Form.VernacularDefaultWritingSystem;
+				if (ucForm != form && ucForm != null && !string.IsNullOrEmpty(ucForm.Text))
+				{
+					if (cf.ToLower(ucForm.Text) == form.Text)
 					{
-						m_wordformsToUpdate.Add(wordform);
+						m_wordformsToUpdate.Add(ucWordform);
 						m_mediator.IdleQueue.Add(IdleQueuePriority.High, PostponedUpdateWordforms);
 					}
-					// Update uppercase versions of wordform.
-					// (When a lowercase wordform changes, it affects the best guess of its uppercase versions.)
-					var form = wordform.Form.VernacularDefaultWritingSystem;
-					var cf = new CaseFunctions(m_cache.ServiceLocator.WritingSystemManager.Get(form.get_WritingSystemAt(0)));
-					foreach (IWfiWordform ucWordform in uniqueWordforms)
-					{
-						var ucForm = ucWordform.Form.VernacularDefaultWritingSystem;
-						if (ucForm != form && ucForm != null && !string.IsNullOrEmpty(ucForm.Text))
-						{
-							if (cf.ToLower(ucForm.Text) == form.Text)
-							{
-								m_wordformsToUpdate.Add(ucWordform);
-								m_mediator.IdleQueue.Add(IdleQueuePriority.High, PostponedUpdateWordforms);
-							}
-						}
-					}
-					break;
+				}
 			}
 		}
 

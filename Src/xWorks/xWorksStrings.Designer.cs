@@ -2619,6 +2619,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Parsing Dev.
+        /// </summary>
+        internal static string ParsingDev {
+            get {
+                return ResourceManager.GetString("ParsingDev", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Max Height (inches):.
         /// </summary>
         internal static string PictureOptionsView_MaxHeightLabel {

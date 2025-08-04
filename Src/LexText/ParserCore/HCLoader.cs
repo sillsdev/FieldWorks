@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2023 SIL International
+// Copyright (c) 2015-2025 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,6 +6,7 @@ using SIL.Extensions;
 using SIL.LCModel;
 using SIL.LCModel.Core.Phonology;
 using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
 using SIL.Machine.Annotations;
 using SIL.Machine.FeatureModel;
 using SIL.Machine.Matching;
@@ -57,10 +58,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private readonly Dictionary<string, IPhNaturalClass> m_naturalClassLookup;
 		private readonly Dictionary<IPhNaturalClass, NaturalClass> m_naturalClasses;
 		private readonly Dictionary<IPhTerminalUnit, CharacterDefinition> m_charDefs;
+		private readonly Dictionary<string, int> m_CompoundRuleLookup;
 
 		private readonly bool m_noDefaultCompounding;
 		private readonly bool m_notOnClitics;
 		private readonly bool m_acceptUnspecifiedGraphemes;
+		private readonly string m_strataString;
+		private readonly IList<IList<string>> m_strata;
+		private readonly Dictionary<LexEntry, string> m_entryName;
 
 		private SimpleContext m_any;
 		private CharacterDefinition m_null;
@@ -76,7 +81,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_mprFeatures = new Dictionary<ICmObject, MprFeature>();
 
 			m_envValidator = new PhonEnvRecognizer(
-				m_cache.LangProject.PhonologicalDataOA.AllPhonemes().ToArray(),
+				RemoveDottedCircles(m_cache.LangProject.PhonologicalDataOA.AllPhonemes().ToArray()),
 				m_cache.LangProject.PhonologicalDataOA.AllNaturalClassAbbrs().ToArray());
 
 			m_naturalClassLookup = new Dictionary<string, IPhNaturalClass>();
@@ -88,9 +93,71 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_noDefaultCompounding = hcElem != null && ((bool?)hcElem.Element("NoDefaultCompounding") ?? false);
 			m_notOnClitics = hcElem == null || ((bool?)hcElem.Element("NotOnClitics") ?? true);
 			m_acceptUnspecifiedGraphemes = hcElem != null && ((bool?)hcElem.Element("AcceptUnspecifiedGraphemes") ?? false);
+			m_strata = new List<IList<string>>();
+			if (hcElem != null && hcElem.Element("Strata") != null)
+			{
+				m_strataString = (string)hcElem.Element("Strata");
+				m_strata = ParseStrataString(m_strataString);
+			}
+			m_CompoundRuleLookup = new Dictionary<string, int>();
+			XElement cRulesEelem = parserParamsElem.Element("CompoundRules");
+			if (cRulesEelem != null)
+			{
+				foreach (var cRule in cRulesEelem.Elements())
+				{
+					int maxApps = Int32.Parse(cRule.Attribute("maxApps").Value);
+					m_CompoundRuleLookup[cRule.Attribute("guid").Value] = maxApps;
+				}
+			}
+
+			m_entryName = new Dictionary<LexEntry, string>();
 
 			m_naturalClasses = new Dictionary<IPhNaturalClass, NaturalClass>();
 			m_charDefs = new Dictionary<IPhTerminalUnit, CharacterDefinition>();
+		}
+
+		private IList<IList<string>> ParseStrataString(string strataString)
+		{
+			// Tokenize strataString based on commas and parentheses.
+			string[] tokens = Regex.Split(strataString, @"([(,)])")
+									.Select(sValue => sValue.Trim())
+									.Where(s => !string.IsNullOrWhiteSpace(s))
+									.ToArray();
+			// Group rules into strata based on parentheses.
+			IList<IList<string>> strata = new List<IList<string>>();
+			bool parentheses = false;
+			foreach (string token in tokens)
+			{
+				if (token == "(")
+				{
+					parentheses = true;
+					strata.Add(new List<string>());
+				}
+				else if (token == ")")
+				{
+					parentheses = false;
+				}
+				else if (token != ",")
+				{
+					if (!parentheses)
+					{
+						strata.Add(new List<string>());
+					}
+					strata.Last().Add(token);
+				}
+			}
+			return strata;
+    }
+
+    private string[] RemoveDottedCircles(string[] phonemes)
+		{
+			return phonemes.Select(RemoveDottedCircles).ToArray();
+		}
+
+		private string RemoveDottedCircles(string text)
+		{
+			string dottedCircle = "\u25CC";
+			return text?.Replace(dottedCircle, string.Empty);
 		}
 
 		private void LoadLanguage()
@@ -156,10 +223,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 			}
 
-			m_morphophonemic = new Stratum(m_table) { Name = "Morphophonemic", MorphologicalRuleOrder = MorphologicalRuleOrder.Unordered };
+			m_morphophonemic = new Stratum(m_table) { Name = "Morphology", MorphologicalRuleOrder = MorphologicalRuleOrder.Unordered };
 			m_language.Strata.Add(m_morphophonemic);
 
-			m_clitic = new Stratum(m_table) { Name = "Clitic", MorphologicalRuleOrder = MorphologicalRuleOrder.Unordered };
+			m_clitic = new Stratum(m_table) { Name = "Clitics", MorphologicalRuleOrder = MorphologicalRuleOrder.Unordered };
 			m_language.Strata.Add(m_clitic);
 
 			m_language.Strata.Add(new Stratum(m_table) { Name = "Surface" });
@@ -281,6 +348,162 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				LoadMorphemeCoOccurrenceRules(morphAdhocProhib);
 			}
+
+			if (m_strata.Count > 0)
+			{
+				CreateStrata();
+			}
+		}
+
+		private void CreateStrata()
+		{
+			// Replace the default strata of m_morphophonemics and m_clitic with the user-defined strata.
+			// The phonological rules are stored in m_morphophonemics unless NotOnClitics is false.
+			Stratum cliticsStratum = null;
+			Stratum compoundRulesStratum = null;
+			Stratum morphologyStratum = null;
+			Stratum phonologyStratum = null;
+			Stratum templateStratum = null;
+			foreach (IList<string> stratumRules in m_strata)
+			{
+				if (stratumRules.Count == 0)
+				{
+					continue;
+				}
+				Stratum stratum = new Stratum(m_table) { Name = stratumRules[0], MorphologicalRuleOrder = MorphologicalRuleOrder.Unordered };
+				// m_clitic should always be last.
+				int cliticIndex = m_language.Strata.IndexOf(m_clitic);
+				m_language.Strata.Insert(cliticIndex, stratum);
+				foreach (string rule in stratumRules)
+				{
+					// Save predefined classes for later.
+					switch (rule)
+					{
+						case "Clitics":
+							cliticsStratum = stratum;
+							break;
+						case "CompoundRules":
+							compoundRulesStratum = stratum;
+							break;
+						case "Morphology":
+							morphologyStratum = stratum;
+							break;
+						case "Phonology":
+							phonologyStratum = stratum;
+							break;
+						case "Templates":
+							templateStratum = stratum;
+							break;
+						default:
+							{
+								// Move the given rule to stratum.
+								bool found = false;
+								if (MoveRule(rule, m_morphophonemic, stratum))
+									found = true;
+								if (MoveRule(rule, m_clitic, stratum))
+									found = true;
+								if (!found)
+									m_logger.InvalidStrata(m_strataString, "Unknown rule in Strata: " + rule + ".");
+								break;
+							}
+					}
+				}
+			}
+
+			// Process phonology before cliticsStratum and morphologyStratum.
+			if (phonologyStratum != null)
+			{
+				// Move remaining phonological rules to phonologyStratum.
+				phonologyStratum.PhonologicalRules.AddRange(m_morphophonemic.PhonologicalRules);
+				phonologyStratum.PhonologicalRules.AddRange(m_clitic.PhonologicalRules);
+				m_morphophonemic.PhonologicalRules.Clear();
+				m_clitic.PhonologicalRules.Clear();
+			}
+			else
+			{
+				// Move remaining phonological rules just before clitic stratum.
+				int cliticIndex = m_language.Strata.IndexOf(m_clitic);
+				if (cliticIndex > 1)
+				{
+					m_language.Strata[cliticIndex - 1].PhonologicalRules.AddRange(m_morphophonemic.PhonologicalRules);
+					m_morphophonemic.PhonologicalRules.Clear();
+				}
+			}
+			if (compoundRulesStratum != null)
+			{
+				// Move remaining compound rules to compoundRulesStratum.
+				foreach (IMorphologicalRule rule in m_morphophonemic.MorphologicalRules.ToList())
+				{
+					if (rule is CompoundingRule)
+					{
+						compoundRulesStratum.MorphologicalRules.Add(rule);
+						m_morphophonemic.MorphologicalRules.Remove(rule);
+					}
+				}
+			}
+			if (templateStratum != null)
+			{
+				// Move remaining templates to templateStratum.
+				templateStratum.AffixTemplates.AddRange(m_morphophonemic.AffixTemplates);
+				m_morphophonemic.AffixTemplates.Clear();
+			}
+			if (cliticsStratum != null)
+			{
+				// Replace m_clitic with cliticsStratum.
+				MoveRules(m_clitic, cliticsStratum);
+			}
+			// Process morphology last.
+			if (morphologyStratum != null)
+			{
+				MoveRules(m_morphophonemic, morphologyStratum);
+			}
+
+			// Remove empty strata.
+			foreach (Stratum stratum in m_language.Strata.ToList())
+			{
+				if (stratum.Entries.Count == 0 &&
+					stratum.AffixTemplates.Count == 0 &&
+					stratum.MorphologicalRules.Count == 0 &&
+					stratum.PhonologicalRules.Count == 0)
+				{
+					m_language.Strata.Remove(stratum);
+				}
+			}
+		}
+
+		void MoveRules(Stratum source, Stratum target)
+		{
+			target.AffixTemplates.AddRange(source.AffixTemplates);
+			target.Entries.AddRange(source.Entries);
+			target.MorphologicalRules.AddRange(source.MorphologicalRules);
+			target.PhonologicalRules.AddRange(source.PhonologicalRules);
+			m_language.Strata.Remove(source);
+		}
+
+		private bool MoveRule(string ruleName, Stratum source, Stratum target)
+		{
+			bool found = false;
+
+			found |= MoveMatchingItems(source.Entries, target.Entries, entry => m_entryName[entry] == ruleName);
+			found |= MoveMatchingItems(source.MorphologicalRules, target.MorphologicalRules, rule => rule.Name == ruleName);
+			found |= MoveMatchingItems(source.PhonologicalRules, target.PhonologicalRules, rule => rule.Name == ruleName);
+			found |= MoveMatchingItems(source.AffixTemplates, target.AffixTemplates, rule => rule.Name == ruleName);
+
+			return found;
+		}
+
+		private bool MoveMatchingItems<T>(ICollection<T> source, ICollection<T> target, Func<T, bool> filterFunction)
+		{
+			var itemsToMove = source.Where(filterFunction).ToList();
+			if (itemsToMove.Count == 0) return false;
+
+			foreach (var item in itemsToMove)
+			{
+				target.Add(item);
+				source.Remove(item);
+			}
+
+			return true;
 		}
 
 		private void LoadInflClassMprFeature(IMoInflClass inflClass, MprFeatureGroup inflClassesGroup)
@@ -315,7 +538,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (affixProcess != null)
 				return affixProcess.InputOS.Count > 1 || affixProcess.OutputOS.Count > 1;
 
-			string formStr = form.Form.VernacularDefaultWritingSystem.Text;
+			string formStr = RemoveDottedCircles(form.Form.VernacularDefaultWritingSystem.Text);
 			if (form.IsAbstract || string.IsNullOrEmpty(formStr))
 				return false;
 
@@ -357,7 +580,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			if (!(form is IMoStemAllomorph))
 				return false;
 
-			string formStr = form.Form.VernacularDefaultWritingSystem.Text;
+			string formStr = RemoveDottedCircles(form.Form.VernacularDefaultWritingSystem.Text);
 			if (form.IsAbstract || string.IsNullOrEmpty(formStr))
 				return false;
 
@@ -413,12 +636,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							if (mainEntry != null)
 							{
 								foreach (IMoStemMsa msa in mainEntry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>())
-									LoadLexEntryOfVariant(stratum, inflType, msa, allos);
+									LoadLexEntryOfVariant(stratum, inflType, msa, allos, entry.ShortName);
 							}
 							else
 							{
 								ILexSense sense = (ILexSense)component;
-								LoadLexEntryOfVariant(stratum, inflType, (IMoStemMsa)sense.MorphoSyntaxAnalysisRA, allos);
+								LoadLexEntryOfVariant(stratum, inflType, (IMoStemMsa)sense.MorphoSyntaxAnalysisRA, allos, entry.ShortName);
 							}
 						}
 					}
@@ -426,7 +649,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 
 			foreach (IMoStemMsa msa in entry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>())
-				LoadLexEntry(stratum, msa, allos);
+				LoadLexEntry(stratum, msa, allos, entry.ShortName);
 		}
 
 		private IEnumerable<ILexEntryInflType> GetInflTypes(ILexEntryRef lexEntryRef)
@@ -453,16 +676,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		private void AddEntry(Stratum stratum, LexEntry hcEntry, IMoMorphSynAnalysis msa)
+		private void AddEntry(Stratum stratum, LexEntry hcEntry, IMoMorphSynAnalysis msa, string name)
 		{
 			if (hcEntry.Allomorphs.Count > 0)
 			{
 				stratum.Entries.Add(hcEntry);
+				m_entryName[hcEntry] = name;
 				m_morphemes.GetOrCreate(msa, () => new List<Morpheme>()).Add(hcEntry);
 			}
 		}
 
-		private void LoadLexEntry(Stratum stratum, IMoStemMsa msa, IList<IMoStemAllomorph> allos)
+		private void LoadLexEntry(Stratum stratum, IMoStemMsa msa, IList<IMoStemAllomorph> allos, string name)
 		{
 			var hcEntry = new LexEntry();
 
@@ -501,10 +725,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 			}
 
-			AddEntry(stratum, hcEntry, msa);
+			AddEntry(stratum, hcEntry, msa, name);
 		}
 
-		private void LoadLexEntryOfVariant(Stratum stratum, ILexEntryInflType inflType, IMoStemMsa msa, IList<IMoStemAllomorph> allos)
+		private void LoadLexEntryOfVariant(Stratum stratum, ILexEntryInflType inflType, IMoStemMsa msa, IList<IMoStemAllomorph> allos, string name)
 		{
 			var hcEntry = new LexEntry();
 
@@ -577,12 +801,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				}
 			}
 
-			AddEntry(stratum, hcEntry, msa);
+			AddEntry(stratum, hcEntry, msa, name);
 		}
 
 		private RootAllomorph LoadRootAllomorph(IMoStemAllomorph allo, IMoMorphSynAnalysis msa)
 		{
-			string form = FormatForm(allo.Form.VernacularDefaultWritingSystem.Text);
+			string form = FormatForm(RemoveDottedCircles(allo.Form.VernacularDefaultWritingSystem.Text));
 			Shape shape = Segment(form);
 			var hcAllo = new RootAllomorph(new Segments(m_table, form, shape));
 
@@ -1080,9 +1304,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			pattern.Freeze();
 			hcAllo.Lhs.Add(pattern);
 
-			hcAllo.Rhs.Add(new InsertSegments(Segments(prefixAllo.Form.VernacularDefaultWritingSystem.Text.Trim() + "+")));
+			hcAllo.Rhs.Add(new InsertSegments(Segments(RemoveDottedCircles(prefixAllo.Form.VernacularDefaultWritingSystem.Text).Trim() + "+")));
 			hcAllo.Rhs.Add(new CopyFromInput("stem"));
-			hcAllo.Rhs.Add(new InsertSegments(Segments("+" + suffixAllo.Form.VernacularDefaultWritingSystem.Text.Trim())));
+			hcAllo.Rhs.Add(new InsertSegments(Segments("+" + RemoveDottedCircles(suffixAllo.Form.VernacularDefaultWritingSystem.Text).Trim())));
 
 			if (leftEnvPattern != null || rightEnvPattern != null)
 			{
@@ -1167,8 +1391,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							foreach (IPhTerminalUnit termUnit in insertPhones.ContentRS)
 							{
 								IPhCode code = termUnit.CodesOS[0];
-								string strRep = termUnit.ClassID == PhBdryMarkerTags.kClassId ? code.Representation.BestVernacularAlternative.Text
-									: code.Representation.VernacularDefaultWritingSystem.Text;
+								string strRep = termUnit.ClassID == PhBdryMarkerTags.kClassId
+									? RemoveDottedCircles(code.Representation.BestVernacularAlternative.Text)
+									: RemoveDottedCircles(code.Representation.VernacularDefaultWritingSystem.Text);
 								if (strRep != null)
 									strRep = strRep.Trim();
 								if (string.IsNullOrEmpty(strRep))
@@ -1214,7 +1439,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private AffixProcessAllomorph LoadFormAffixProcessAllomorph(IMoForm allo, IPhEnvironment env)
 		{
 			var hcAllo = new AffixProcessAllomorph();
-			string form = allo.Form.VernacularDefaultWritingSystem.Text.Trim();
+			string form = RemoveDottedCircles(allo.Form.VernacularDefaultWritingSystem.Text).Trim();
 			Tuple<string, string> contexts = SplitEnvironment(env);
 			if (form.Contains("["))
 			{
@@ -1261,16 +1486,17 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						case MoMorphTypeTags.kMorphSuffixingInterfix:
 						case MoMorphTypeTags.kMorphEnclitic:
 							hcAllo.Lhs.Add(stemPattern);
-							hcAllo.Lhs.AddRange(LoadReduplicationPatterns(contexts.Item1));
+							var lhsPatterns = LoadReduplicationPatterns(contexts.Item1);
+							hcAllo.Lhs.AddRange(lhsPatterns);
 							var suffixNull = new Pattern<Word, ShapeNode>("suffixNull", SuffixNull());
 							suffixNull.Freeze();
 							hcAllo.Lhs.Add(suffixNull);
 
 							hcAllo.Rhs.Add(new CopyFromInput("stem"));
-							hcAllo.Rhs.AddRange(LoadReduplicationOutputActions(contexts.Item1));
+							hcAllo.Rhs.AddRange(LoadReduplicationOutputActions(contexts.Item1, lhsPatterns, allo));
 							hcAllo.Rhs.Add(new CopyFromInput("suffixNull"));
 							hcAllo.Rhs.Add(new InsertSegments(Segments("+")));
-							hcAllo.Rhs.AddRange(LoadReduplicationOutputActions(form));
+							hcAllo.Rhs.AddRange(LoadReduplicationOutputActions(form, lhsPatterns, allo));
 							break;
 
 						case MoMorphTypeTags.kMorphPrefix:
@@ -1279,13 +1505,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							var prefixNull = new Pattern<Word, ShapeNode>("prefixNull", PrefixNull());
 							prefixNull.Freeze();
 							hcAllo.Lhs.Add(prefixNull);
-							hcAllo.Lhs.AddRange(LoadReduplicationPatterns(contexts.Item2));
+							lhsPatterns = LoadReduplicationPatterns(contexts.Item2);
+							hcAllo.Lhs.AddRange(lhsPatterns);
 							hcAllo.Lhs.Add(stemPattern);
 
-							hcAllo.Rhs.AddRange(LoadReduplicationOutputActions(form));
+							hcAllo.Rhs.AddRange(LoadReduplicationOutputActions(form, lhsPatterns, allo));
 							hcAllo.Rhs.Add(new InsertSegments(Segments("+")));
 							hcAllo.Rhs.Add(new CopyFromInput("prefixNull"));
-							hcAllo.Rhs.AddRange(LoadReduplicationOutputActions(contexts.Item2));
+							hcAllo.Rhs.AddRange(LoadReduplicationOutputActions(contexts.Item2, lhsPatterns, allo));
 							hcAllo.Rhs.Add(new CopyFromInput("stem"));
 							break;
 					}
@@ -1401,13 +1628,38 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 		}
 
-		private IEnumerable<MorphologicalOutputAction> LoadReduplicationOutputActions(string patternStr)
+		private IEnumerable<MorphologicalOutputAction> LoadReduplicationOutputActions(string patternStr, IEnumerable<Pattern<Word, ShapeNode>> patterns, IMoForm form)
 		{
 			foreach (string token in TokenizeContext(patternStr))
 			{
 				if (token.StartsWith("["))
 				{
-					yield return new CopyFromInput(XmlConvert.EncodeName(token.Substring(1, token.Length - 2).Trim()));
+					bool isValid = true;
+					if (token.Contains("^"))
+					{
+						// The ^ gets replaced by _x005E_ so we need to do it here to match in patterns
+						string indexedToken = token.Substring(1, token.Length - 2).Trim().Replace("^", "_x005E_");
+						isValid = patterns.Any(p => p.Name == indexedToken);
+						if (!isValid)
+						{
+							// add error message to logger
+							string envs = "";
+							var environments = form.AllomorphEnvironments;
+							if (environments != null)
+							{
+								StringBuilder sb = new StringBuilder();
+								foreach (IPhEnvironment env in environments)
+								{
+									sb.Append(env.ShortName);
+									sb.Append(" ");
+								}
+								envs = sb.ToString();
+							}
+							m_logger.UnmatchedReduplicationIndexedClass(form, "Ill-formed index:" + token, envs);
+						}
+					}
+					if (isValid)
+						yield return new CopyFromInput(XmlConvert.EncodeName(token.Substring(1, token.Length - 2).Trim()));
 				}
 				else
 				{
@@ -1432,6 +1684,19 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			foreach (IMoInflAffixSlot slot in slots)
 			{
+				if (TemplateSlotOutOfScope(slot, template))
+				{
+					IPartOfSpeech slotPOS = slot.Owner as IPartOfSpeech;
+					IPartOfSpeech templatePOS = template.Owner as IPartOfSpeech;
+					string slotPOSAbbr = slotPOS != null ? slotPOS.Abbreviation.BestAnalysisVernacularAlternative.Text : "***";
+					string templatePOSName = templatePOS != null ? templatePOS.Name.BestAnalysisVernacularAlternative.Text : "***";
+					string slotName = slotPOSAbbr + ":" + slot.Name.BestAnalysisVernacularAlternative.Text;
+					string templateName = template.Name.BestAnalysisVernacularAlternative.Text;
+					string reason = "The " + slotName + " in the " + templateName + " affix template under the " + templatePOSName
+						+ " category is not located in the " + templatePOSName + " category or above.  Please move the "
+						+ slotName + " slot so it is in the " + templatePOSName + " category or above.";
+					m_logger.OutOfScopeSlot(slot, template, reason);
+				}
 				IEnumerable<ILexEntryInflType> types = slot.ReferringObjects.OfType<ILexEntryInflType>();
 				var rules = new List<MorphemicMorphologicalRule>();
 				foreach (IMoInflAffMsa msa in slot.Affixes)
@@ -1465,6 +1730,40 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 
 			return hcTemplate;
+		}
+
+		/// <summary>
+		/// Determine if slot is out of scope of the template in stackHvo.
+		/// </summary>
+		private static bool TemplateSlotOutOfScope(IMoInflAffixSlot slot, IMoInflAffixTemplate template)
+		{
+			// If there is no slot or template, return false.
+			if (slot == null || template == null)
+				return false;
+			// Get the slot from the template with the same name as slot.
+			IPartOfSpeech partOfSpeech = template.Owner as IPartOfSpeech;
+			IMoInflAffixSlot inScopeSlot = GetPOSSlot(partOfSpeech, slot.Name.BestAnalysisVernacularAlternative.Text);
+			// If the slots are different, then slot is out of scope.
+			return slot != inScopeSlot;
+		}
+
+		/// <summary>
+		/// Get the slot named 'name' in the scope of partOfSpeech.
+		/// If there is more than one slot, return the first one.
+		/// </summary>
+		public static IMoInflAffixSlot GetPOSSlot(IPartOfSpeech partOfSpeech, string name)
+		{
+			while (partOfSpeech != null)
+			{
+				foreach (IMoInflAffixSlot slot in partOfSpeech.AllAffixSlots)
+				{
+					// NB: BestAnalysisVernacularAlternative always returns something.
+					if (slot.Name.BestAnalysisVernacularAlternative.Text == name)
+						return slot;
+				}
+				partOfSpeech = partOfSpeech.Owner as IPartOfSpeech;
+			}
+			return null;
 		}
 
 		private AffixProcessRule LoadNullAffixProcessRule(ILexEntryInflType type, IMoInflAffixTemplate template, IMoInflAffixSlot slot)
@@ -1589,6 +1888,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				OutSyntacticFeatureStruct = outFS,
 				Properties = { { HCParser.CRuleID, compoundRule.Hvo } }
 			};
+
+			int maxApps = 1;
+			if (m_CompoundRuleLookup.TryGetValue(compoundRule.Guid.ToString(), out maxApps))
+				hcCompoundRule.MaxApplicationCount = maxApps;
 
 			var subrule = new CompoundingSubrule();
 
@@ -2375,8 +2678,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				if (phoneme.FeaturesOA != null && phoneme.FeaturesOA.FeatureSpecsOC.Count > 0)
 					fs = LoadFeatureStruct(phoneme.FeaturesOA, m_language.PhonologicalFeatureSystem);
 
-				string[] reps = phoneme.CodesOS.Where(c => !string.IsNullOrEmpty(c.Representation.VernacularDefaultWritingSystem.Text))
-					.Select(c => c.Representation.VernacularDefaultWritingSystem.Text).ToArray();
+				string[] reps = phoneme.CodesOS
+					.Where(c => !string.IsNullOrEmpty(RemoveDottedCircles(c.Representation.VernacularDefaultWritingSystem.Text)))
+					.Select(c => RemoveDottedCircles(c.Representation.VernacularDefaultWritingSystem.Text)).ToArray();
 				if (reps.Length == 0)
 				{
 					// did not find a grapheme for this phoneme
@@ -2396,8 +2700,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			foreach (IPhBdryMarker bdry in phonemeSet.BoundaryMarkersOC.Where(bdry => bdry.Guid != LangProjectTags.kguidPhRuleWordBdry))
 			{
-				string[] reps = bdry.CodesOS.Where(c => !string.IsNullOrEmpty(c.Representation.BestVernacularAlternative.Text))
-					.Select(c => c.Representation.BestVernacularAlternative.Text).ToArray();
+				string[] reps = bdry.CodesOS
+					.Where(c => !string.IsNullOrEmpty(RemoveDottedCircles(c.Representation.BestVernacularAlternative.Text)))
+					.Select(c => RemoveDottedCircles(c.Representation.BestVernacularAlternative.Text)).ToArray();
 				if (reps.Length > 0)
 				{
 					CharacterDefinition cd = m_table.AddBoundary(reps);

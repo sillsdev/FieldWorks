@@ -8,6 +8,7 @@ Build/LibraryDevelopment.properties
 Build/NuGet.exe
 Build/nunit.framework.dll
 Build/nunit.framework.xml
+Build/venv
 Build/*.config
 Build/*.dll
 Build/*.pdb
@@ -70,8 +71,6 @@ _user.mak.lnx
 
 .dotest/
 .depend
-Lib/linux/Common/*.d
-Lib/linux/Common/*.raw
 [Oo]bj/
 Obj_i686/
 Obj_x86_64/
@@ -123,14 +122,9 @@ DistFiles/ReleaseData/
 # Exceptions
 !Lib/Windows/Debug
 !Lib/Windows/Release
-!Lib/linux/Debug
-!Lib/linux/Release
 
 Lib/debug/graphite2.lib
 Lib/release/graphite2.lib
-Lib/linux/libfieldworks-fdo.pc
-Lib/linux/Debug/libgraphite2.a
-Lib/linux/Release/libgraphite2.a
 
 Lib/icu*.lib
 DistFiles/Icu*/data

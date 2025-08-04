@@ -15,8 +15,8 @@
 
     You should also have received a copy of the GNU Lesser General Public
     License along with this library in the file named "LICENSE".
-    If not, write to the Free Software Foundation, 51 Franklin Street, 
-    Suite 500, Boston, MA 02110-1335, USA or visit their web page on the 
+    If not, write to the Free Software Foundation, 51 Franklin Street,
+    Suite 500, Boston, MA 02110-1335, USA or visit their web page on the
     internet at http://www.fsf.org/licenses/lgpl.html.
 
 Alternatively, the contents of this file may be used under the terms of the
@@ -46,7 +46,7 @@ namespace
     template<typename W>
     class _glat_iterator : public std::iterator<std::input_iterator_tag, std::pair<sparse::key_type, sparse::mapped_type> >
     {
-        unsigned short  key() const             { return be::peek<W>(_e) + _n; }
+        unsigned short  key() const             { return uint16(be::peek<W>(_e) + _n); }
         unsigned int    run() const             { return be::peek<W>(_e+sizeof(W)); }
         void            advance_entry()         { _n = 0; _e = _v; be::skip<W>(_v,2); }
     public:
@@ -84,7 +84,7 @@ const SlantBox SlantBox::empty = {0,0,0,0};
 class GlyphCache::Loader
 {
 public:
-    Loader(const Face & face, const bool dumb_font);    //return result indicates success. Do not use if failed.
+    Loader(const Face & face);    //return result indicates success. Do not use if failed.
 
     operator bool () const throw();
     unsigned short int units_per_em() const throw();
@@ -115,9 +115,11 @@ private:
 
 
 GlyphCache::GlyphCache(const Face & face, const uint32 face_options)
-: _glyph_loader(new Loader(face, bool(face_options & gr_face_dumbRendering))),
-  _glyphs(_glyph_loader && *_glyph_loader ? grzeroalloc<const GlyphFace *>(_glyph_loader->num_glyphs()) : 0),
-  _boxes(_glyph_loader && _glyph_loader->has_boxes() ? grzeroalloc<GlyphBox *>(_glyph_loader->num_glyphs()) : 0),
+: _glyph_loader(new Loader(face)),
+  _glyphs(_glyph_loader && *_glyph_loader && _glyph_loader->num_glyphs()
+        ? grzeroalloc<const GlyphFace *>(_glyph_loader->num_glyphs()) : 0),
+  _boxes(_glyph_loader && _glyph_loader->has_boxes() && _glyph_loader->num_glyphs()
+        ? grzeroalloc<GlyphBox *>(_glyph_loader->num_glyphs()) : 0),
   _num_glyphs(_glyphs ? _glyph_loader->num_glyphs() : 0),
   _num_attrs(_glyphs ? _glyph_loader->num_attrs() : 0),
   _upem(_glyphs ? _glyph_loader->units_per_em() : 0)
@@ -144,7 +146,7 @@ GlyphCache::GlyphCache(const Face & face, const uint32 face_options)
             _glyphs[0] = 0;
             delete [] glyphs;
         }
-        else if (numsubs > 0)
+        else if (numsubs > 0 && _boxes)
         {
             GlyphBox * boxes = (GlyphBox *)gralloc<char>(_num_glyphs * sizeof(GlyphBox) + numsubs * 8 * sizeof(float));
             GlyphBox * currbox = boxes;
@@ -162,6 +164,10 @@ GlyphCache::GlyphCache(const Face & face, const uint32 face_options)
         }
         delete _glyph_loader;
         _glyph_loader = 0;
+	// coverity[leaked_storage : FALSE] - calling read_glyph on index 0 saved
+	// glyphs as _glyphs[0]. Setting _glyph_loader to nullptr here flags that
+	// the dtor needs to call delete[] on _glyphs[0] to release what was allocated
+	// as glyphs
     }
 
     if (_glyphs && glyph(0) == 0)
@@ -208,7 +214,9 @@ GlyphCache::~GlyphCache()
 }
 
 const GlyphFace *GlyphCache::glyph(unsigned short glyphid) const      //result may be changed by subsequent call with a different glyphid
-{ 
+{
+    if (glyphid >= numGlyphs())
+        return _glyphs[0];
     const GlyphFace * & p = _glyphs[glyphid];
     if (p == 0 && _glyph_loader)
     {
@@ -235,7 +243,7 @@ const GlyphFace *GlyphCache::glyph(unsigned short glyphid) const      //result m
 
 
 
-GlyphCache::Loader::Loader(const Face & face, const bool dumb_font)
+GlyphCache::Loader::Loader(const Face & face)
 : _head(face, Tag::head),
   _hhea(face, Tag::hhea),
   _hmtx(face, Tag::hmtx),
@@ -253,7 +261,7 @@ GlyphCache::Loader::Loader(const Face & face, const bool dumb_font)
     const Face::Table maxp = Face::Table(face, Tag::maxp);
     if (!maxp) { _head = Face::Table(); return; }
 
-    _num_glyphs_graphics = TtfUtil::GlyphCount(maxp);
+    _num_glyphs_graphics = static_cast<unsigned short>(TtfUtil::GlyphCount(maxp));
     // This will fail if the number of glyphs is wildly out of range.
     if (_glyf && TtfUtil::LocaLookup(_num_glyphs_graphics-1, _loca, _loca.size(), _head) == size_t(-2))
     {
@@ -261,45 +269,49 @@ GlyphCache::Loader::Loader(const Face & face, const bool dumb_font)
         return;
     }
 
-    if (!dumb_font)
+    if ((m_pGlat = Face::Table(face, Tag::Glat, 0x00030000)) == NULL
+        || (m_pGloc = Face::Table(face, Tag::Gloc)) == NULL
+        || m_pGloc.size() < 8)
     {
-        if ((m_pGlat = Face::Table(face, Tag::Glat, 0x00030000)) == NULL
-            || (m_pGloc = Face::Table(face, Tag::Gloc)) == NULL
-            || m_pGloc.size() < 6)
-        {
-            _head = Face::Table();
-            return;
-        }
-        const byte    * p = m_pGloc;
-        int       version = be::read<uint32>(p);
-        const uint16    flags = be::read<uint16>(p);
-        _num_attrs = be::read<uint16>(p);
-        // We can accurately calculate the number of attributed glyphs by
-        //  subtracting the length of the attribids array (numAttribs long if present)
-        //  and dividing by either 2 or 4 depending on shor or lonf format
-        _long_fmt              = flags & 1;
-        int tmpnumgattrs       = (m_pGloc.size()
-                                   - (p - m_pGloc)
-                                   - sizeof(uint16)*(flags & 0x2 ? _num_attrs : 0))
-                                       / (_long_fmt ? sizeof(uint32) : sizeof(uint16)) - 1;
+        _head = Face::Table();
+        return;
+    }
+    const byte    * p = m_pGloc;
+    int       version = be::read<uint32>(p);
+    const uint16    flags = be::read<uint16>(p);
+    _num_attrs = be::read<uint16>(p);
+    // We can accurately calculate the number of attributed glyphs by
+    //  subtracting the length of the attribids array (numAttribs long if present)
+    //  and dividing by either 2 or 4 depending on shor or lonf format
+    _long_fmt              = flags & 1;
+    ptrdiff_t tmpnumgattrs       = (m_pGloc.size()
+                               - (p - m_pGloc)
+                               - sizeof(uint16)*(flags & 0x2 ? _num_attrs : 0))
+                                   / (_long_fmt ? sizeof(uint32) : sizeof(uint16)) - 1;
 
-        if (version >= 0x00020000 || tmpnumgattrs < 0 || tmpnumgattrs > 65535
-            || _num_attrs == 0 || _num_attrs > 0x3000  // is this hard limit appropriate?
-            || _num_glyphs_graphics > tmpnumgattrs)
-        {
-            _head = Face::Table();
-            return;
-        }
+    if (version >= 0x00020000 || tmpnumgattrs < 0 || tmpnumgattrs > 65535
+        || _num_attrs == 0 || _num_attrs > 0x3000  // is this hard limit appropriate?
+        || _num_glyphs_graphics > tmpnumgattrs
+        || m_pGlat.size() < 4)
+    {
+        _head = Face::Table();
+        return;
+    }
 
-        _num_glyphs_attributes = static_cast<unsigned short>(tmpnumgattrs);
-        p = m_pGlat;
-        version = be::read<uint32>(p);
-        if (version >= 0x00040000)       // reject Glat tables that are too new
-        {
-            _head = Face::Table();
-            return;
-        }
-        _has_boxes = (version == 0x00030000);
+    _num_glyphs_attributes = static_cast<unsigned short>(tmpnumgattrs);
+    p = m_pGlat;
+    version = be::read<uint32>(p);
+    if (version >= 0x00040000 || (version >= 0x00030000 && m_pGlat.size() < 8))       // reject Glat tables that are too new
+    {
+        _head = Face::Table();
+        return;
+    }
+    else if (version >= 0x00030000)
+    {
+        unsigned int glatflags = be::read<uint32>(p);
+        _has_boxes = glatflags & 1;
+        // delete this once the compiler is fixed
+        _has_boxes = true;
     }
 }
 
@@ -369,23 +381,29 @@ const GlyphFace * GlyphCache::Loader::read_glyph(unsigned short glyphid, GlyphFa
         be::skip<uint16>(gloc,2);
         if (_long_fmt)
         {
+            if (8 + glyphid * sizeof(uint32) > m_pGloc.size())
+                return 0;
             be::skip<uint32>(gloc, glyphid);
             glocs = be::read<uint32>(gloc);
             gloce = be::peek<uint32>(gloc);
         }
         else
         {
+            if (8 + glyphid * sizeof(uint16) > m_pGloc.size())
+                return 0;
             be::skip<uint16>(gloc, glyphid);
             glocs = be::read<uint16>(gloc);
             gloce = be::peek<uint16>(gloc);
         }
 
-        if (glocs >= m_pGlat.size() || gloce > m_pGlat.size())
+        if (glocs >= m_pGlat.size() - 1 || gloce > m_pGlat.size())
             return 0;
 
         const uint32 glat_version = be::peek<uint32>(m_pGlat);
-        if (glat_version == 0x00030000)
+        if (glat_version >= 0x00030000)
         {
+            if (glocs >= gloce)
+                return 0;
             const byte * p = m_pGlat + glocs;
             uint16 bmap = be::read<uint16>(p);
             int num = bit_set_count((uint32)bmap);
@@ -448,7 +466,7 @@ GlyphBox * GlyphCache::Loader::read_box(uint16 gid, GlyphBox *curr, const GlyphF
         gloce = be::peek<uint16>(gloc);
     }
 
-    if (glocs >= m_pGlat.size() || gloce > m_pGlat.size())
+    if (gloce > m_pGlat.size() || glocs + 6 >= gloce)
         return 0;
 
     const byte * p = m_pGlat + glocs;
@@ -461,13 +479,14 @@ GlyphBox * GlyphCache::Loader::read_box(uint16 gid, GlyphBox *curr, const GlyphF
     Rect diabound = readbox(diamax, p[0], p[2], p[1], p[3]);
     ::new (curr) GlyphBox(num, bmap, &diabound);
     be::skip<uint8>(p, 4);
+    if (glocs + 6 + num * 8 >= gloce)
+        return 0;
 
     for (int i = 0; i < num * 2; ++i)
     {
         Rect box = readbox((i & 1) ? diamax : bbox, p[0], p[2], p[1], p[3]);
         curr->addSubBox(i >> 1, i & 1, &box);
         be::skip<uint8>(p, 4);
-    } 
+    }
     return (GlyphBox *)((char *)(curr) + sizeof(GlyphBox) + 2 * num * sizeof(Rect));
 }
-

@@ -315,16 +315,7 @@ namespace SIL.FieldWorks.XWorks
 				m_propertyTable.SetProperty("App", app, true);
 				m_propertyTable.SetPropertyPersistence("App", false);
 			}
-			this.Deactivate += FwXWindow_Deactivate;
 		}
-
-		private void FwXWindow_Deactivate(object args, EventArgs e)
-		{
-			// The window has lost the focus.
-			// Save changes so that other applications can access them.
-			Cache.ServiceLocator.GetInstance<IUndoStackManager>().Save();
-		}
-
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -672,7 +663,7 @@ namespace SIL.FieldWorks.XWorks
 					Cache.ServiceLocator.GetInstance<IActionHandler>(), stUndo, stRedo))
 				using (new DataUpdateMonitor(this, "EditPaste"))
 				{
-					if (m_viewHelper.ActiveView.EditingHelper.PasteClipboard())
+					if (m_viewHelper.ActiveView.EditingHelper.PasteClipboard(Cache))
 						undoHelper.RollBack = false;
 				}
 				return true;

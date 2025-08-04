@@ -1617,13 +1617,13 @@ namespace SIL.FieldWorks.Common.Controls
 						}
 					case "if":
 						{
-							if (ConditionPasses(vwenv, frag, hvo, m_cache, m_sda, caller))
+							if (ConditionPasses(vwenv, frag, hvo, m_cache, m_sda, caller, m_stackHvo))
 								ProcessChildren(frag, vwenv, hvo, caller);
 							break;
 						}
 					case "ifnot":
 						{
-							if (!ConditionPasses(vwenv, frag, hvo, m_cache, m_sda, caller))
+							if (!ConditionPasses(vwenv, frag, hvo, m_cache, m_sda, caller, m_stackHvo))
 								ProcessChildren(frag, vwenv, hvo, caller);
 							break;
 						}
@@ -3270,8 +3270,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache">The cache.</param>
 		/// <param name="sda">The sda.</param>
 		/// <param name="caller">the 'part ref' node that invoked the current part. May be null if XML does not use it.</param>
+		/// <param name="stackHvo">The stack of hvos that have been recorded by savehvo.</param>
 		/// <returns></returns>
-		public static bool ConditionPasses(IVwEnv vwenv, XmlNode frag, int hvo, LcmCache cache, ISilDataAccess sda, XmlNode caller)
+		public static bool ConditionPasses(IVwEnv vwenv, XmlNode frag, int hvo, LcmCache cache,
+			ISilDataAccess sda, XmlNode caller, Stack<int> stackHvo = null)
 		{
 			GetActualTarget(frag, ref hvo, sda);	// modify the hvo if needed
 
@@ -3279,7 +3281,7 @@ namespace SIL.FieldWorks.Common.Controls
 				return false;
 			if (!LengthConditionsPass(vwenv, frag, hvo, sda))
 				return false;
-			if (!ValueEqualityConditionsPass(vwenv, frag, hvo, cache, sda, caller))
+			if (!ValueEqualityConditionsPass(vwenv, frag, hvo, cache, sda, caller, stackHvo))
 				return false;
 			if (!BidiConditionPasses(frag, cache))
 				return false;
@@ -3319,15 +3321,16 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache">The cache.</param>
 		/// <param name="sda">The sda.</param>
 		/// <param name="caller">The caller.</param>
+		/// <param name="stackHvo">The stack of hvos recorded by savehvo.</param>
 		/// <returns></returns>
 		static private bool ValueEqualityConditionsPass(IVwEnv vwenv, XmlNode frag, int hvo, LcmCache cache,
-			ISilDataAccess sda, XmlNode caller)
+			ISilDataAccess sda, XmlNode caller, Stack<int> stackHvo)
 		{
 			if (!StringEqualsConditionPasses(vwenv, frag, hvo, sda))
 				return false;
 			if (!StringAltEqualsConditionPasses(vwenv, frag, hvo, cache, sda, caller))
 				return false;
-			if (!BoolEqualsConditionPasses(vwenv, frag, hvo, sda))
+			if (!BoolEqualsConditionPasses(vwenv, frag, hvo, cache, sda, stackHvo))
 				return false;
 			if (!IntEqualsConditionPasses(vwenv, frag, hvo, sda))
 				return false;
@@ -3362,8 +3365,12 @@ namespace SIL.FieldWorks.Common.Controls
 			return sda.get_IntProp(hvo, flid);
 		}
 
-		static private bool GetBoolValueFromCache(IVwEnv vwenv, XmlNode frag, int hvo, ISilDataAccess sda)
+		static private bool GetBoolValueFromCache(IVwEnv vwenv, XmlNode frag, int hvo,
+			LcmCache cache, ISilDataAccess sda, Stack<int> stackHvo)
 		{
+			string funcName = XmlUtils.GetOptionalAttributeValue(frag, "func");
+			if (funcName != null)
+				return (bool)EvaluateFunction(funcName, hvo, stackHvo, cache);
 			int flid = GetFlidAndHvo(vwenv, frag, ref hvo, sda);
 			if (flid == -1 || hvo == 0)
 				return false; // This is rather arbitrary...objects missing, what should each test do?
@@ -3571,14 +3578,17 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="vwenv">The vwenv.</param>
 		/// <param name="frag">The frag.</param>
 		/// <param name="hvo">The hvo.</param>
+		/// <param name="cache">The cache.</param>
 		/// <param name="sda">The sda.</param>
+		/// <param name="stackHvo">The stack of hvos recorded by savehvo.</param>
 		/// <returns></returns>
-		static private bool BoolEqualsConditionPasses(IVwEnv vwenv, XmlNode frag, int hvo, ISilDataAccess sda)
+		private static bool BoolEqualsConditionPasses(IVwEnv vwenv, XmlNode frag, int hvo,
+			LcmCache cache, ISilDataAccess sda, Stack<int> stackHvo)
 		{
 			string boolValue = XmlUtils.GetOptionalAttributeValue(frag, "boolequals", "notFound");	// must be either 'true' or 'false'.
 			if (boolValue != "notFound")
 			{
-				return GetBoolValueFromCache(vwenv, frag, hvo, sda) == (boolValue == "true"?true:false);
+				return GetBoolValueFromCache(vwenv, frag, hvo, cache, sda, stackHvo) == (boolValue == "true"?true:false);
 			}
 			return true;
 		}
@@ -3836,6 +3846,58 @@ namespace SIL.FieldWorks.Common.Controls
 				return false;
 			}
 			return true;
+		}
+
+		private static object EvaluateFunction(string funcName, int hvo, Stack<int> stackHvo, LcmCache cache)
+		{
+			var obj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
+			if (funcName == "TemplateSlotOutOfScope")
+			{
+				IMoInflAffixSlot slot = obj as IMoInflAffixSlot;
+				IMoInflAffixTemplate template = null;
+				if (stackHvo != null && stackHvo.Count > 0)
+				{
+					int templateHvo = stackHvo.Peek();
+					var templateObj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(templateHvo);
+					template = templateObj as IMoInflAffixTemplate;
+				}
+				return TemplateSlotOutOfScope(slot, template);
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Determine if slot is out of scope of the template in stackHvo.
+		/// </summary>
+		private static bool TemplateSlotOutOfScope(IMoInflAffixSlot slot, IMoInflAffixTemplate template)
+		{
+			// If there is no slot or template, return false.
+			if (slot == null || template == null)
+				return false;
+			// Get the slot from the template with the same name as slot.
+			IPartOfSpeech partOfSpeech = template.Owner as IPartOfSpeech;
+			IMoInflAffixSlot inScopeSlot = GetPOSSlot(partOfSpeech, slot.Name.BestAnalysisVernacularAlternative.Text);
+			// If the slots are different, then slot is out of scope.
+			return slot != inScopeSlot;
+		}
+
+		/// <summary>
+		/// Get the slot named 'name' in the scope of partOfSpeech.
+		/// If there is more than one slot, return the first one.
+		/// </summary>
+		public static IMoInflAffixSlot GetPOSSlot(IPartOfSpeech partOfSpeech, string name)
+		{
+			while (partOfSpeech != null)
+			{
+				foreach (IMoInflAffixSlot slot in partOfSpeech.AllAffixSlots)
+				{
+					// NB: BestAnalysisVernacularAlternative always returns something.
+					if (slot.Name.BestAnalysisVernacularAlternative.Text == name)
+						return slot;
+				}
+				partOfSpeech = partOfSpeech.Owner as IPartOfSpeech;
+			}
+			return null;
 		}
 
 		/// ------------------------------------------------------------------------------------

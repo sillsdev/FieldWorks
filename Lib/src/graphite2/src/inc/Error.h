@@ -15,8 +15,8 @@
 
     You should also have received a copy of the GNU Lesser General Public
     License along with this library in the file named "LICENSE".
-    If not, write to the Free Software Foundation, 51 Franklin Street, 
-    Suite 500, Boston, MA 02110-1335, USA or visit their web page on the 
+    If not, write to the Free Software Foundation, 51 Franklin Street,
+    Suite 500, Boston, MA 02110-1335, USA or visit their web page on the
     internet at http://www.fsf.org/licenses/lgpl.html.
 
 Alternatively, the contents of this file may be used under the terms of the
@@ -115,6 +115,7 @@ enum errors {
     E_BADEMPTYPASS = 54,    // Can't have empty passes (no rules) except for collision passes
     E_BADSILFVERSION = 55,  // The Silf table has a bad version (probably too high)
     E_BADCOLLISIONPASS = 56,    // Collision flags set on a non positioning pass
+    E_BADNUMCOLUMNS = 57,   // Arbitrarily limit number of columns in fsm
 // Code errors
     E_CODEFAILURE = 60,     // Base code error. The following subcodes must align with Machine::Code::status_t in Code.h
     E_CODEALLOC = 61,       // Out of memory
@@ -131,4 +132,3 @@ enum errors {
 };
 
 }
-

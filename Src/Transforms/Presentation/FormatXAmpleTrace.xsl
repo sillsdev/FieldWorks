@@ -118,6 +118,11 @@ Main template
 					<xsl:text>.</xsl:text>
 				</h1>
 				<xsl:call-template name="ResultSection"/>
+				<h2>
+					<xsl:text>Parse time: </xsl:text>
+					<xsl:value-of select="@parseTime"/>
+					<xsl:text> milliseconds.</xsl:text>
+				</h2>
 				<xsl:call-template name="TraceSection"/>
 			</body>
 		</html>
@@ -295,9 +300,9 @@ OutputStemNameReason
 			</xsl:attribute>
 			<xsl:value-of select="$morph/shortName"/>
 		</span>
-		<xsl:text>' has a stem name of '</xsl:text>
+		<xsl:text>' has a stem allomorph label of '</xsl:text>
 		<xsl:value-of select="$morph/stemName"/>
-		<xsl:text>.'  Therefore it requires some inflectional affixes with inflection features for that stem name, but there weren't any such inflectional affixes.</xsl:text>
+		<xsl:text>.'  Therefore it requires some inflectional affixes with inflection features for that stem allomorph label, but there weren't any such inflectional affixes.</xsl:text>
 	</xsl:template>
 	<!--
 		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -316,9 +321,9 @@ OutputStemNameReason
 			</xsl:attribute>
 			<xsl:value-of select="$morph/shortName"/>
 		</span>
-		<xsl:text>' has a from stem name of '</xsl:text>
+		<xsl:text>' has a from stem allomorph label of '</xsl:text>
 		<xsl:value-of select="$morph/stemNameAffix"/>
-		<xsl:text>.'  Therefore it requires a stem that has benn marked for that stem name, but there was no such stem.</xsl:text>
+		<xsl:text>.'  Therefore it requires a stem that has benn marked for that stem allomorph label, but there was no such stem.</xsl:text>
 	</xsl:template>
 	<!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

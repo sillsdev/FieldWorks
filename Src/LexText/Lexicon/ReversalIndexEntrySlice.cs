@@ -650,7 +650,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				foreach (IReversalIndexEntry ide in m_sense.ReferringReversalIndexEntries)
 					entries.Add(ide);
 
-				foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems)
+				foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
 				{
 					IReversalIndex idx = null;
 					foreach (IReversalIndex idxInner in m_cache.LanguageProject.LexDbOA.ReversalIndexesOC)
@@ -662,7 +662,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						}
 					}
 					if (idx == null)
-						continue;	// User must explicitly request another IReversalIndex (LT-4480).
+						continue;   // User must explicitly request another IReversalIndex (LT-4480).
+
+					List<int> entryIds = new List<int>();
+					foreach (IReversalIndexEntry rie in idx.EntriesForSense(entries))
+						entryIds.Add(rie.Hvo);
+					if (entryIds.Count == 0 && !m_cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Contains(ws))
+						// Don't show empty entry if writing system is not enabled.
+						continue;
 
 					m_usedIndices.Add(idx);
 					// Cache the WS for the index.
@@ -679,9 +686,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					// As the user adds new entries, the dummy ID data member server will keep
 					// decrementing its count. The cache may end up with any number of IDs that
 					// are less than m_dummyEntryId.
-					List<int> entryIds = new List<int>();
-					foreach (IReversalIndexEntry rie in idx.EntriesForSense(entries))
-						entryIds.Add(rie.Hvo);
 					int wsHandle = m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(idx.WritingSystem);
 					// Cache a dummy string for each WS.
 					ITsString tssEmpty = TsStringUtils.EmptyString(wsHandle);

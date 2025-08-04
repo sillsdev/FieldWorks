@@ -56,6 +56,31 @@ static const int s_ctptWsStyleProps = (isizeof(s_rgtptWsStyleProps) / isizeof(in
 static OleStringLiteral g_pszDefaultFont(L"<default font>");
 
 //:>********************************************************************************************
+//:>	DllExports
+//:>********************************************************************************************
+extern "C" _declspec(dllexport) void* VwPropertyStore_Create() {
+	return (void*)NewObj VwPropertyStore();
+}
+
+extern "C" _declspec(dllexport) void VwPropertyStore_Delete(VwPropertyStore* t) {
+	delete t;
+}
+
+extern "C" _declspec(dllexport) void VwPropertyStore_Stylesheet(VwPropertyStore* t, IVwStylesheet* pss) {
+	t->putref_Stylesheet(pss);
+}
+
+extern "C" _declspec(dllexport) void VwPropertyStore_WritingSystemFactory(VwPropertyStore* t, ILgWritingSystemFactory* pwsf) {
+	t->putref_WritingSystemFactory(pwsf);
+}
+
+extern "C" _declspec(dllexport) LgCharRenderProps* VwPropertyStore_get_ChrpFor(VwPropertyStore* t, ITsTextProps* pttp) {
+	LgCharRenderProps* pchrp = NewObj LgCharRenderProps();
+	t->get_ChrpFor(pttp, pchrp);
+	return pchrp;
+}
+
+//:>********************************************************************************************
 //:>	Constructor/Destructor
 //:>********************************************************************************************
 

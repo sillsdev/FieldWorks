@@ -22,6 +22,7 @@ using SIL.PlatformUtilities;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
 using SIL.Windows.Forms.Keyboarding;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -1535,7 +1536,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, 0, hvoWs);
 			ITsTextProps ttp = ttpBldr.GetTextProps();
 
-			IVwPropertyStore vwps = VwPropertyStoreClass.Create();
+			VwPropertyStoreManaged vwps = new VwPropertyStoreManaged();
 			vwps.Stylesheet = styleSheet;
 			vwps.WritingSystemFactory = wsf;
 			LgCharRenderProps chrps = vwps.get_ChrpFor(ttp);
@@ -3427,6 +3428,18 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public virtual bool PasteClipboard()
 		{
+			return PasteClipboard(null);
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Paste data from the clipboard into the view. Caller is reponsible to make UOW.
+		/// </summary>
+		/// <param name="cache">The LcmCache.</param>
+		/// <returns>True if the paste succeeded, false otherwise</returns>
+		/// ------------------------------------------------------------------------------------
+		public virtual bool PasteClipboard(LcmCache cache)
+		{
 			CheckDisposed();
 			// Do nothing if command is not enabled. Needed for Ctrl-V keypress.
 			if (!CanPaste() || Callbacks == null || Callbacks.EditedRootBox == null ||
@@ -3450,7 +3463,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			ChangeStyleForPaste(vwsel, ref vttp);
 
 			ITsString tss = GetTextFromClipboard(vwsel, vwsel.CanFormatChar, vttp[0]);
-			return PasteCore(tss);
+			return PasteCore(tss, cache);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3458,15 +3471,17 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// Core logic for Paste command (without modifying the clipboard, to support testing).
 		/// </summary>
 		/// <param name="tss">The TsString to paste.</param>
+		/// <param name="cache">The LcmCache.</param>
 		/// <returns>True if that paste succeeded, false otherwise</returns>
 		/// ------------------------------------------------------------------------------------
-		public bool PasteCore(ITsString tss)
+		public bool PasteCore(ITsString tss, LcmCache cache)
 		{
 			IVwSelection vwsel = EditedRootBox.Selection;
 			try
 			{
 				if (tss != null)
 				{
+					tss = ReplaceExternalWritingSystems(tss, vwsel, cache);
 					// At this point, we may need to override internal formatting values
 					// for certain target rootsites. We do this with an event handler that the
 					// rootsite can register for its editing helper. (See LT-1445.)
@@ -3504,6 +3519,58 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			IVwRootSite rootSite = EditedRootBox.Site;
 			rootSite.ScrollSelectionIntoView(null, VwScrollSelOpts.kssoDefault);
+			return true;
+		}
+
+		private ITsString ReplaceExternalWritingSystems(ITsString tss, IVwSelection vwsel, LcmCache cache)
+		{
+			if (cache == null)
+				// Can't tell whether writing systems are external.
+				return tss;
+
+			// Check for external writing systems.
+			bool hasExternalWritingSystem = false;
+			for (int i = 0; i < tss.RunCount; i++)
+			{
+				int ws = tss.get_WritingSystem(i);
+				if (IsExternalWritingSystem(ws, cache))
+				{
+					hasExternalWritingSystem = true;
+					break;
+				}
+			}
+			if (!hasExternalWritingSystem)
+				return tss;
+
+			// Replace external writing systems with selection's writing system.
+			ITsString selTss;
+			vwsel.GetSelectionString(out selTss, string.Empty);
+			ITsStrBldr stringBldr = TsStringUtils.MakeStrBldr();
+			TsRunInfo runInfo;
+			for (int irun = 0; irun < tss.RunCount; irun++)
+			{
+				int ttv, ws;
+				ITsTextProps props = tss.FetchRunInfo(irun, out runInfo);
+				ws = props.GetIntPropValues((int)FwTextPropType.ktptWs, out ttv);
+				if (IsExternalWritingSystem(ws, cache))
+				{
+					ws = selTss.get_WritingSystemAt(0);
+					ITsPropsBldr propsBldr = props.GetBldr();
+					propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, ttv, ws);
+					props = propsBldr.GetTextProps();
+				}
+				stringBldr.Replace(runInfo.ichMin, runInfo.ichMin, tss.get_RunText(irun), props);
+			}
+			return stringBldr.GetString();
+		}
+
+		private bool IsExternalWritingSystem(int ws, LcmCache cache)
+		{
+			foreach (CoreWritingSystemDefinition writingSystem in cache.LanguageProject.AllWritingSystems)
+			{
+				if (writingSystem.Handle == ws)
+					return false;
+			}
 			return true;
 		}
 

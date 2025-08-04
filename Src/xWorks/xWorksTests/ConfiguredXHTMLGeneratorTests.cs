@@ -483,9 +483,15 @@ namespace SIL.FieldWorks.XWorks
 			XHTMLStringBuilder.Append(result);
 			XHTMLStringBuilder.AppendLine("</TESTWRAPPER>");
 
-			var entryWithHomograph = "/TESTWRAPPER/div[@class='lexentry']/span[@class='homographnumber' and text()='1']";
+			// Normally the propertyvalue for a headword with homograph number is IMultiStringAccessor.
+			// However, in the test setup the propertyvalue for homograph number is an int
+			// and therefore hits the int case of GenerateContentForValue in ConfiguredLcmGenerator,
+			// and is directed to "GenerateContentForSimpleString", which applies the first analysis WS.
+			// This creates an extra "/span[@lang='en' and text()=...]" at the end of the lexentry.
+			// We don't care if a WS is assigned, so we ignore this possible extra span and check only for the correct homograph number.
+			var entryWithHomograph = "/TESTWRAPPER/div[@class='lexentry']/span[@class='homographnumber' and text()=1] | /TESTWRAPPER/div[@class='lexentry']/span[@class='homographnumber']/*[text()=1]";
 			AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(entryWithHomograph, 1);
-			entryWithHomograph = "/TESTWRAPPER/div[@class='lexentry']/span[@class='homographnumber' and text()='2']";
+			entryWithHomograph = "/TESTWRAPPER/div[@class='lexentry']/span[@class='homographnumber' and text()=2] | /TESTWRAPPER/div[@class='lexentry']/span[@class='homographnumber']/*[text()=2]";
 			AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(entryWithHomograph, 1);
 		}
 
@@ -3574,15 +3580,18 @@ namespace SIL.FieldWorks.XWorks
 
 			var mainEntry = CreateInterestingLexEntry(Cache);
 			AddAllomorphToEntry(mainEntry);
+			AddAllomorphToEntry(mainEntry, false);
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(mainEntry, mainEntryNode, null, settings).ToString();
 			const string xPathThruAllomorph = "/div[@class='lexentry']/span[@class='alternateformsos']/span[@class='alternateformso']";
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
-				xPathThruAllomorph + "/span[@class='form']/span[@lang='fr' and text()='Allomorph']", 1);
+				xPathThruAllomorph + "/span[@class='form']/span[@lang='fr' and text()='StemAllomorph']", 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
+				xPathThruAllomorph + "/span[@class='form']/span[@lang='fr' and text()='AffixAllomorph']", 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(xPathThruAllomorph +
-				"/span[@class='allomorphenvironments']/span[@class='allomorphenvironment']/span[@class='stringrepresentation']/span[@lang='en' and text()='phoneyEnv']", 1);
+				"/span[@class='allomorphenvironments']/span[@class='allomorphenvironment']/span[@class='stringrepresentation']/span[@lang='en' and text()='phoneyEnv']", 2);
 		}
 
 		[Test]
@@ -5504,7 +5513,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
 			const string oneSenseWithPicture = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/img[@class='photo' and @id]";
-			const string oneSenseWithPictureCaption = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/div[@class='captionContent']/span[@class='creator' and text()='Jason Naylor']";
+			const string oneSenseWithPictureCaption = "/div[@class='lexentry']/span[@class='pictures']/div[@class='picture']/div[@class='captionContent']/span[@class='creator']/span[@lang='en' and text()='Jason Naylor']";
 			//This assert is dependent on the specific entry data created in CreateInterestingLexEntry
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithPicture, 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(oneSenseWithPictureCaption, 1);
@@ -6488,7 +6497,7 @@ namespace SIL.FieldWorks.XWorks
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
-				var customDataPath = string.Format("/div[@class='lexentry']/span[@class='customdate' and text()='{0}']", customData.ToLongDateString());
+				var customDataPath = string.Format("/div[@class='lexentry']/span[@class='customdate']/span[@lang='en' and text()='{0}']", customData.ToLongDateString());
 				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
 			}
 		}
@@ -6518,7 +6527,7 @@ namespace SIL.FieldWorks.XWorks
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 				//SUT
 				var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
-				var customDataPath = string.Format("/div[@class='lexentry']/span[@class='custominteger' and text()='{0}']", customData);
+				var customDataPath = string.Format("/div[@class='lexentry']/span[@class='custominteger']/span[@lang='en' and text()='{0}']", customData);
 				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(customDataPath, 1);
 			}
 		}
@@ -7412,19 +7421,23 @@ namespace SIL.FieldWorks.XWorks
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
+			mainEntryNode.Model.IsRootBased = true;
 			subentryRef.HideMinorEntry = 1;
 			const string withReference = "/div[@class='lexentry']/span[@class='subentries']/span[@class='subentry']/span[@class='headword']/span[@lang='fr']/span[@lang='fr']/a[@href]";
 			const string withoutReference = "/div[@class='lexentry']/span[@class='subentries']/span[@class='subentry']/span[@class='headword']/span[@lang='fr']/span[@lang='fr']";
 
-			// When hiding minor entries this should still generate the reference (if not publishing to Webonary).
+			// When hiding minor entries and NOT publishing to Webonary this should NOT generate the reference.
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null, false, false);
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings).ToString();
-			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withReference, 2);
+			var flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, pubEverything, settings).ToString();
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withReference, 0);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withoutReference, 2);
 
 			//SUT
 			// When hiding minor entries and publishing to Webonary this should NOT generate the reference.
 			settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null, false, true);
-			result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings).ToString();
+			result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, pubEverything, settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withReference, 0);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withoutReference, 2);
 		}
@@ -7681,19 +7694,23 @@ namespace SIL.FieldWorks.XWorks
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(model);
 
+			mainEntryNode.Model.IsRootBased = true;
 			variantEntryRef.HideMinorEntry = 1;
 			const string withReference = "/div[@class='lexentry']/span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@class='headword']/span[@lang='fr']/span[@lang='fr']/a[@href]";
 			const string withoutReference = "/div[@class='lexentry']/span[@class='variantformentrybackrefs']/span[@class='variantformentrybackref']/span[@class='headword']/span[@lang='fr']/span[@lang='fr']";
 
-			// When hiding minor entries this should still generate the reference (if not publishing to Webonary).
+			// When hiding minor entries and NOT publishing to Webonary this should NOT generate the reference.
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null, false, false);
-			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, model, null, settings).ToString();
-			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withReference, 2);
+			var flidVirtual = Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries;
+			var pubEverything = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual);
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, model, pubEverything, settings).ToString();
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withReference, 0);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withoutReference, 2);
 
 			//SUT
 			// When hiding minor entries and publishing to Webonary this should NOT generate the reference.
 			settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null, false, true);
-			result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, model, null, settings).ToString();
+			result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, model, pubEverything, settings).ToString();
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withReference, 0);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(withoutReference, 2);
 		}

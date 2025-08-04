@@ -250,6 +250,22 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
+		/// Get the ConfigurableDictionaryNode for the main entry.
+		/// </summary>
+		private static ConfigurableDictionaryNode MainEntryNode(DictionaryConfigurationModel configuration)
+		{
+			return configuration.Parts[0];
+		}
+
+		/// <summary>
+		/// Get the ConfigurableDictionaryNode for the minor entry.
+		/// </summary>
+		private static ConfigurableDictionaryNode MinorEntryNode(ICmObject entry, DictionaryConfigurationModel configuration)
+		{
+			return configuration.Parts.Skip(1).LastOrDefault(part => IsListItemSelectedForExport(part, entry));
+		}
+
+		/// <summary>
 		/// Generating the xhtml representation for the given ICmObject using the given configuration node to select which data to write out
 		/// If it is a Dictionary Main Entry or non-Dictionary entry, uses the first configuration node.
 		/// If it is a Minor Entry, first checks whether the entry should be published as a Minor Entry; then, generates XHTML for each applicable
@@ -259,7 +275,7 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, int index = -1)
 		{
 			if (IsMainEntry(entryObj, configuration))
-				return GenerateContentForMainEntry(entryObj, configuration.Parts[0], publicationDecorator, settings, index);
+				return GenerateContentForMainEntry(entryObj, MainEntryNode(configuration), publicationDecorator, settings, index);
 
 			var entry = (ILexEntry)entryObj;
 			return entry.PublishAsMinorEntry
@@ -279,7 +295,7 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings, int index)
 		{
 			// LT-15232: show minor entries using only the last applicable Minor Entry node (not more than once)
-			var applicablePart = configuration.Parts.Skip(1).LastOrDefault(part => IsListItemSelectedForExport(part, entry));
+			var applicablePart = MinorEntryNode(entry, configuration);
 			return applicablePart == null ? settings.ContentGenerator.CreateFragment() : GenerateContentForEntry(entry, applicablePart, publicationDecorator, settings, index);
 		}
 
@@ -298,6 +314,61 @@ namespace SIL.FieldWorks.XWorks
 				return false;
 			// Lexeme-Based and Hybrid configs consider Complex Forms to be Main Entries (Variants are still Minor Entries)
 			return lexEntry.EntryRefsOS.Any(ler => ler.RefType == LexEntryRefTags.krtComplexForm);
+		}
+
+		/// <summary>
+		/// Checks if a lexical entry is displayed.
+		/// </summary>
+		/// <returns>true if displayed.</returns>
+		private static bool EntryIsDisplayed(ILexEntry lexEntry, List<ConfigurableDictionaryNode> nodeList,
+			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
+		{
+			// If there is no publication decorator then we are generating a preview. For previews always
+			// treat a target as displayed.
+			if (publicationDecorator == null)
+			{
+				return true;
+			}
+
+			bool displayed = false;
+			DictionaryConfigurationModel configModel = nodeList.First().Model;
+			bool mainEntry = IsMainEntry(lexEntry, configModel);
+
+			// First determine if the dictionary configuration is set to display the entry type.
+			if (mainEntry)
+			{
+				displayed = MainEntryNode(configModel).IsEnabled;
+			}
+			else
+			{
+				var node = MinorEntryNode(lexEntry, configModel);
+				displayed = node != null && node.IsEnabled;
+			}
+
+			// Second check if we are publishing minor entries.
+			if (displayed && !mainEntry && !lexEntry.PublishAsMinorEntry)
+			{
+				displayed = false;
+			}
+
+			// Third check if the active Publication excludes it.
+			var currentPubPoss = publicationDecorator.Publication;
+			if (displayed && currentPubPoss != null &&
+				currentPubPoss.NameHierarchyString != xWorksStrings.AllEntriesPublication)
+			{
+				if (!lexEntry.PublishIn.Contains(currentPubPoss))
+				{
+					displayed = false;
+				}
+				// Note: A better name for ShowMainEntryIn() would probably be
+				// ShowAsHeadwordIn(), since it applies to both main and minor entries.
+				if (!lexEntry.ShowMainEntryIn.Contains(currentPubPoss))
+				{
+					displayed = false;
+				}
+			}
+
+			return displayed;
 		}
 
 		/// <summary>Generates content with the GeneratorSettings.ContentGenerator for an ICmObject for a specific ConfigurableDictionaryNode</summary>
@@ -585,7 +656,7 @@ namespace SIL.FieldWorks.XWorks
 					return settings.ContentGenerator.CreateFragment();
 			}
 
-			var bldr = GenerateContentForValue(field, propertyValue, nodeList, settings);
+			var bldr = GenerateContentForValue(field, propertyValue, nodeList, publicationDecorator, settings);
 			if (config.ReferencedOrDirectChildren != null)
 			{
 				foreach (var child in config.ReferencedOrDirectChildren)
@@ -673,9 +744,19 @@ namespace SIL.FieldWorks.XWorks
 						}
 						// Convert the contents to IEnumerable<T>
 						var objects = contents.Select(id => cache.LangProject.Services.GetObject(id));
-						var type = objects.FirstOrDefault()?.GetType() ?? typeof(object);
-						var castMethod = typeof(Enumerable).GetMethod("Cast").MakeGenericMethod(type);
-						propertyValue = castMethod.Invoke(null, new object[] { objects });
+						var firstObjType = objects.FirstOrDefault()?.GetType();
+						// check that each item in objects can be cast to firstObjType
+						if (firstObjType != null && objects.All(o => firstObjType.IsInstanceOfType(o)))
+						{
+							var castMethod = typeof(Enumerable).GetMethod("Cast").MakeGenericMethod(firstObjType);
+							propertyValue = castMethod.Invoke(null, new object[] { objects });
+						}
+						else
+						{
+							var castMethod = typeof(Enumerable).GetMethod("Cast").MakeGenericMethod(typeof(object));
+							propertyValue = castMethod.Invoke(null, new object[] { objects });
+
+						}
 						break;
 					}
 				case (int)CellarPropertyType.ReferenceAtomic:
@@ -1504,7 +1585,7 @@ namespace SIL.FieldWorks.XWorks
 				else
 				{
 					bool first = true;
-					foreach (var item in collection)
+					foreach (object item in collection)
 					{
 						frag.Append(GenerateCollectionItemContent(nodeList, pubDecorator, item, collectionOwner, settings, first));
 						first = false;
@@ -2549,7 +2630,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="config"></param>
 		/// <param name="settings"></param>
 		private static IFragment GenerateContentForValue(object field, object propertyValue, List<ConfigurableDictionaryNode> nodeList,
-			GeneratorSettings settings)
+			DictionaryPublicationDecorator publicationDecorator, GeneratorSettings settings)
 		{
 			// If we're working with a headword, either for this entry or another one (Variant or Complex Form, etc.), store that entry's GUID
 			// so we can generate a link to the main or minor entry for this headword.
@@ -2557,40 +2638,32 @@ namespace SIL.FieldWorks.XWorks
 			var config = nodeList.Last();
 			if (config.IsHeadWord)
 			{
-				if (field is ILexEntry)
+				ILexEntry lexEntry = null;
+				if (field is ILexEntry entry)
 				{
-					// For Complex Forms, don't generate the reference if we are not going to publish the entry to Webonary.
-					if (settings.IsWebExport &&
-						!((ILexEntry)field).PublishAsMinorEntry &&
-						((ILexEntry)field).EntryRefsOS.Count > 0)
-					{
-						guid = Guid.Empty;
-					}
-					else
-					{
-						guid = ((ILexEntry)field).Guid;
-					}
+					lexEntry = entry;
 				}
-				else if (field is ILexEntryRef)
+				else if (field is ILexEntryRef entryRef)
 				{
-					// For Variants, don't generate the reference if we are not going to publish the entry to Webonary.
-					if (settings.IsWebExport &&
-						!((ILexEntryRef)field).OwningEntry.PublishAsMinorEntry)
-					{
-						guid = Guid.Empty;
-					}
-					else
-					{
-						guid = ((ILexEntryRef)field).OwningEntry.Guid;
-					}
+					lexEntry = entryRef.OwningEntry;
 				}
-				else if (field is ISenseOrEntry)
-					guid = ((ISenseOrEntry)field).EntryGuid;
-				else if (field is ILexSense)
-					guid = ((ILexSense)field).OwnerOfClass(LexEntryTags.kClassId).Guid;
+				else if (field is ISenseOrEntry senseOrEntry)
+				{
+					lexEntry = senseOrEntry.Item is ILexEntry ? (ILexEntry)(senseOrEntry.Item) : ((ILexSense)(senseOrEntry.Item)).Entry;
+				}
+				else if (field is ILexSense sense)
+				{
+					lexEntry = sense.OwnerOfClass(LexEntryTags.kClassId) as ILexEntry;
+				}
 				else
 					Debug.WriteLine(String.Format("Need to find Entry Guid for {0}",
 						field == null ? DictionaryConfigurationMigrator.BuildPathStringFromNode(config) : field.GetType().Name));
+
+				// Check if the Lexical Entry is going to be displayed.
+				if (lexEntry != null && EntryIsDisplayed(lexEntry, nodeList, publicationDecorator, settings))
+				{
+					guid = lexEntry.Guid;
+				}
 			}
 
 			if (propertyValue is ITsString)
@@ -2676,7 +2749,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var writingSystem = GetLanguageFromFirstOptionOrAnalysis(nodeList.Last().DictionaryNodeOptions as
 				DictionaryNodeWritingSystemOptions, settings.Cache);
-			var cssClassName = settings.StylesGenerator.AddStyles(nodeList).Trim('.');
+			var cssClassName = settings.StylesGenerator.AddStyles(nodeList, true).Trim('.');
 			return settings.ContentGenerator.AddProperty(nodeList, settings, cssClassName, false, simpleString, writingSystem);
 
 		}
@@ -3398,7 +3471,7 @@ namespace SIL.FieldWorks.XWorks
 	public interface ILcmStylesGenerator
 	{
 		void AddGlobalStyles(DictionaryConfigurationModel model, ReadOnlyPropertyTable propertyTable);
-		string AddStyles(List<ConfigurableDictionaryNode> nodeList);
+		string AddStyles(List<ConfigurableDictionaryNode> nodeList, bool addSpanBeforeAfter = false);
 		void Init(ReadOnlyPropertyTable propertyTable);
 	}
 

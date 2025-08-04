@@ -87,8 +87,13 @@ namespace SIL.FieldWorks.XWorks
 		/// node.Parent's. Where it will differ is when a node has a reference node. Instead
 		/// of containing 'node.Parent' it follows the path from where the reference is made.
 		/// </param>
+		/// <param name="addSpanBeforeAfter">This bool defaults to false but is set to true when the
+		/// content of a given node is a simple string. In this case, a writing system span will be
+		/// added to the style in the xhtml, and the before and after styles need "span" added in order to inherit
+		/// the properties of that writing system span.
+		/// </param>
 		/// <returns>The unique node name for the last node in the list.</returns>
-		public string AddStyles(List<ConfigurableDictionaryNode> nodeList)
+		public string AddStyles(List<ConfigurableDictionaryNode> nodeList, bool addSpanBeforeAfter = false)
 		{
 			lock (_styleDictionary)
 			{
@@ -104,7 +109,7 @@ namespace SIL.FieldWorks.XWorks
 
 					if (!_styleDictionary.ContainsKey(uniqueNodeName))
 					{
-						var styleRules = GenerateCssFromConfigurationNode(workingNode, uniqueNodeName, _propertyTable).NonEmpty();
+						var styleRules = GenerateCssFromConfigurationNode(workingNode, uniqueNodeName, _propertyTable, addSpanBeforeAfter).NonEmpty();
 						styleRules = styleRules.Distinct().ToList(); // Remove duplicate rules.
 						AddUniquePathToStyleRules(styleRules, uniqueNodePath);
 						_styleDictionary[uniqueNodeName] = styleRules;
@@ -341,7 +346,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Generates css rules for a configuration node and adds them to the given stylesheet (recursive).
 		/// </summary>
-		private static List<StyleRule> GenerateCssFromConfigurationNode(ConfigurableDictionaryNode configNode, string baseSelection, ReadOnlyPropertyTable propertyTable)
+		private static List<StyleRule> GenerateCssFromConfigurationNode(ConfigurableDictionaryNode configNode, string baseSelection, ReadOnlyPropertyTable propertyTable, bool addSpanBeforeAfter = false)
 		{
 			var cache = propertyTable.GetValue<LcmCache>("cache");
 			switch (configNode.DictionaryNodeOptions)
@@ -375,7 +380,7 @@ namespace SIL.FieldWorks.XWorks
 					var rule = new StyleRule();
 
 					var selectors = GenerateSelectorsFromNode(configNode, ref baseSelection,
-						cache, propertyTable);
+						cache, propertyTable, addSpanBeforeAfter);
 
 					var wsOptions = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 					if (wsOptions != null)
@@ -828,7 +833,7 @@ namespace SIL.FieldWorks.XWorks
 		/// This method will generate before and after rules if the configuration node requires them. It also generates the selector for the node
 		/// </summary>
 		private static List<StyleRule> GenerateSelectorsFromNode(ConfigurableDictionaryNode configNode,
-			ref string baseSelection, LcmCache cache, ReadOnlyPropertyTable propertyTable)
+			ref string baseSelection, LcmCache cache, ReadOnlyPropertyTable propertyTable, bool addSpanBeforeAfter = false)
 		{
 			var rules = new List<StyleRule>();
 			var fwStyles = FontHeightAdjuster.StyleSheetFromPropertyTable(propertyTable);
@@ -937,25 +942,44 @@ namespace SIL.FieldWorks.XWorks
 			if (!string.IsNullOrEmpty(configNode.Before))
 			{
 				var dec = new StyleDeclaration();
+				StyleRule beforeRule;
 				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, SpecialCharacterHandling.MakeSafeCss(configNode.Before)) });
 				if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
 					dec.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, propertyTable));
 				var selectorBase = collectionSelector;
 				if (configNode.FieldDescription == "PicturesOfSenses")
 					selectorBase += "> div:first-child";
-				var beforeRule = new StyleRule(dec) { Value = GetBaseSelectionWithSelectors(selectorBase, ":before") };
+
+				// The addSpanBeforeAfter argument indicates whether we need to add a span to the before/after and skip the usual selector formatting.
+				// This is only needed in the case that we have a writing system unaware property that has had a writing system added via "GenerateContentForSimpleString".
+				if (addSpanBeforeAfter)
+				{
+					beforeRule = new StyleRule(dec) { Value = selectorBase + " span:before" };
+				}
+				else
+					beforeRule = new StyleRule(dec) { Value = GetBaseSelectionWithSelectors(selectorBase, ":before") };
 				rules.Add(beforeRule);
 			}
 			if(!string.IsNullOrEmpty(configNode.After))
 			{
 				var dec = new StyleDeclaration();
+				StyleRule afterRule;
 				dec.Add(new Property("content") { Term = new PrimitiveTerm(UnitType.String, SpecialCharacterHandling.MakeSafeCss(configNode.After)) });
 				if (fwStyles != null && fwStyles.Styles.Contains(BeforeAfterBetweenStyleName))
 					dec.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(BeforeAfterBetweenStyleName, cache.DefaultAnalWs, propertyTable));
 				var selectorBase = collectionSelector;
 				if (configNode.FieldDescription == "PicturesOfSenses")
 					selectorBase += "> div:last-child";
-				var afterRule = new StyleRule(dec) { Value = GetBaseSelectionWithSelectors(selectorBase, ":after") };
+
+				// The addSpanBeforeAfter argument indicates whether we need to add a span to the before/after and skip the usual selector formatting.
+				// This is only needed in the case that we have a writing system unaware property that has had a writing system added via "GenerateContentForSimpleString".
+				if (addSpanBeforeAfter)
+				{
+					afterRule = new StyleRule(dec) { Value = selectorBase + " span:after" };
+				}
+				else
+					afterRule = new StyleRule(dec) { Value = GetBaseSelectionWithSelectors(selectorBase, ":after") };
+
 				rules.Add(afterRule);
 			}
 			return rules;

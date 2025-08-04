@@ -986,4 +986,7 @@ Click "Cancel" to abort this import.</value>
   <data name="ksConcordanceExportTitle" xml:space="preserve">
     <value>Export Concordance Results</value>
   </data>
+  <data name="ComplexConcControl_ResultsMayBeIncomplete" xml:space="preserve">
+    <value>Results may be incomplete.</value>
+  </data>
 </root>

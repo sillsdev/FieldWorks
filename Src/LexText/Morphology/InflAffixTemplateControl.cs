@@ -20,6 +20,7 @@ using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.Utils;
 using XCore;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -348,6 +349,42 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return true;	//we handled this.
 		}
 
+		public bool OnInflTemplateMoveUpInflAffixMsa(object cmd)
+		{
+			return MoveInflAffixMsa(true);
+		}
+		public bool OnInflTemplateMoveDownInflAffixMsa(object cmd)
+		{
+			return MoveInflAffixMsa(false);
+		}
+
+		private bool MoveInflAffixMsa(bool up)
+		{
+			CheckDisposed();
+
+			var inflMsa = m_obj as IMoInflAffMsa;
+			if (inflMsa == null)
+				return true; // play it safe
+			if (!MoveableMSA(inflMsa, up))
+				return true;
+			UndoableUnitOfWorkHelper.Do(MEStrings.ksUndoRemovingAffix, MEStrings.ksRedoRemovingAffix,
+				Cache.ActionHandlerAccessor,
+				() =>
+				{
+					List<ICmObject> vals = m_slot.Affixes.ToList<ICmObject>();
+					int pos = vals.IndexOf(inflMsa);
+					vals.RemoveAt(pos);
+					if (up)
+						vals.Insert(pos - 1, inflMsa);
+					else
+						vals.Insert(pos + 1, inflMsa);
+					int flid = Cache.DomainDataByFlid.MetaDataCache.GetFieldId2(m_slot.ClassID, "Affixes", true);
+					VirtualOrderingServices.SetVO(m_slot, flid, vals);
+				});
+			m_rootb.Reconstruct();  // work around because <choice> is not smart enough to remember its dependencies
+			return true;    //we handled this.
+		}
+
 		private bool OtherInflAffixMsasExist(ILexEntry lex, IMoInflAffMsa inflMsa)
 		{
 			bool fOtherInflAffixMsasExist = false;  // assume we won't find an existing infl affix msa
@@ -627,8 +664,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			chooser.TextParamHvo = m_template.Owner.Hvo;
 			chooser.Title = m_sSlotChooserTitle;
 			chooser.InstructionalText = m_sSlotChooserInstructionalText;
-			string sTopPOS;
-			var pos = GetHighestPOS(m_template.OwnerOfClass<IPartOfSpeech>(), out sTopPOS);
+			IPartOfSpeech pos = m_template.OwnerOfClass<IPartOfSpeech>();
+			string sTopPOS = pos.ShortName;
 			string sLabel = String.Format(m_sObligatorySlot, sTopPOS);
 			chooser.AddLink(sLabel, SimpleListChooser.LinkType.kSimpleLink,
 				new MakeInflAffixSlotChooserCommand(Cache, true, sLabel, pos.Hvo,
@@ -639,20 +676,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				m_mediator, m_propertyTable));
 			chooser.SetObjectAndFlid(pos.Hvo, MoInflAffixTemplateTags.kflidSlots);
 			return chooser;
-		}
-
-		private IPartOfSpeech GetHighestPOS(IPartOfSpeech pos, out string sTopPOS)
-		{
-			IPartOfSpeech result = null;
-			sTopPOS = MEStrings.ksQuestions;
-			ICmObject obj = pos;
-			while (obj.ClassID == PartOfSpeechTags.kClassId)
-			{
-				result = obj as IPartOfSpeech;
-				sTopPOS = obj.ShortName;
-				obj = obj.Owner;
-			}
-			return result;
 		}
 
 		private bool IsRTL()
@@ -1185,6 +1208,34 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				return DetermineMsaContextMenuItemLabel(sLabel);
 			else
 				return null;
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="sLabel"></param>
+		/// <returns></returns>
+		internal ITsString MenuLabelForInflTemplateMoveInflAffixMsa(string sLabel, bool up, out bool fEnabled)
+		{
+			CheckDisposed();
+			fEnabled = MoveableMSA(m_obj as IMoInflAffMsa, up);
+			if (m_obj.ClassID == MoInflAffMsaTags.kClassId)
+				return DetermineMsaContextMenuItemLabel(sLabel);
+			else
+				return null;
+		}
+
+		internal bool MoveableMSA(IMoInflAffMsa msa, bool up)
+		{
+			if (m_slot == null)
+				return false;
+			List<ICmObject> vals = m_slot.Affixes.ToList<ICmObject>();
+			int pos = vals.IndexOf(msa);
+			if (up && pos == 0)
+				return false; // Cannot move up.
+			if (!up && pos == vals.Count - 1)
+				return false; // Cannot move down.
+			return true;
 		}
 
 		/// <summary>

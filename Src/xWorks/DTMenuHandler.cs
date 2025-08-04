@@ -10,12 +10,14 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.FieldWorks.LexText.Controls;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
@@ -26,6 +28,8 @@ using SIL.Reporting;
 using SIL.Utils;
 using XCore;
 using ConfigurationException = SIL.Utils.ConfigurationException;
+using System.Web.Caching;
+using SIL.Extensions;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -58,6 +62,23 @@ namespace SIL.FieldWorks.XWorks
 		/// COnfiguration information.
 		/// </summary>
 		protected XmlNode m_configuration;
+
+		/// <summary>
+		/// Object being moved.
+		/// </summary>
+		protected ICmObject m_moveObj;
+
+		/// <summary>
+		/// Object just created.
+		/// </summary>
+		protected ICmObject m_newObj;
+
+		/// <summary>
+		/// Part of Speech chooser.
+		/// </summary>
+		TreeCombo m_treeCombo;
+
+		POSPopupTreeManager m_POSPopupTreeManager;
 
 
 		/// <summary>
@@ -442,7 +463,7 @@ namespace SIL.FieldWorks.XWorks
 			Logger.WriteEvent(String.Format("Inserting class {1} into field {0} of a {2}.",
 				field, className, ownerClassName ?? "nullOwner"));
 			current.HandleInsertCommand(field, className, ownerClassName,
-				command.GetParameter("recomputeVirtual", null));
+				command.GetParameter("recomputeVirtual", null), out m_newObj);
 
 			Logger.WriteEvent("Done Inserting.");
 			return true;	//we handled this.
@@ -459,6 +480,7 @@ namespace SIL.FieldWorks.XWorks
 			ICmObject obj = originalSlice.Object;
 			object[] key = originalSlice.Key;
 			Type type = originalSlice.GetType();
+			m_newObj = null;
 
 			if (OnDataTreeInsert(cmd))
 			{
@@ -479,7 +501,7 @@ namespace SIL.FieldWorks.XWorks
 				else
 				{
 					Slice newCopy;
-					Slice newOriginal = m_dataEntryForm.FindMatchingSlices(obj, key, type, out newCopy);
+					Slice newOriginal = m_dataEntryForm.FindMatchingSlices(obj, m_newObj, key, type, out newCopy);
 					if (newOriginal != null && newCopy != null)
 					{
 						newOriginal.HandleCopyCommand(newCopy, label);
@@ -489,6 +511,134 @@ namespace SIL.FieldWorks.XWorks
 			}
 			return true;	//we handled this.
 		}
+
+		/// <summary>
+		/// This method is called when a user selects a Move operation in on a slice.
+		/// </summary>
+		/// <param name="cmd"></param>
+		/// <returns></returns>
+		public bool OnDataTreeMove(object cmd)
+		{
+			Slice currentSlice = m_dataEntryForm.CurrentSlice;
+			m_moveObj = currentSlice.Object;
+			if (m_moveObj is IMoInflAffixSlot slot)
+			{
+				ShowPartsOfSpeech(slot.Owner.Hvo);
+			}
+			if (m_moveObj is IMoInflAffixTemplate template)
+			{
+				ShowPartsOfSpeech(template.Owner.Hvo);
+			}
+			return true;
+		}
+
+		private void ShowPartsOfSpeech(int hvo)
+		{
+			// Create a TreeCombo for the POSPopupTreeManager.
+			m_treeCombo = new TreeCombo();
+			CoreWritingSystemDefinition defAnalWs = Cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem;
+			m_treeCombo.AdjustStringHeight = true;
+			// Setting width to match the default width used by popuptree
+			m_treeCombo.DropDownWidth = 300;
+			m_treeCombo.DroppedDown = false;
+			m_treeCombo.Name = "m_POSMenu";
+			m_treeCombo.SelectedNode = null;
+			m_treeCombo.StyleSheet = null;
+			// Add the TreeCombo to the current slice.
+			Slice currentSlice = m_dataEntryForm.CurrentSlice;
+			currentSlice.Control.Controls.Add(m_treeCombo);
+			// Create the POSPopupTreeManager for hvo.
+			// Pass in the TreeCombo.
+			m_POSPopupTreeManager = new POSPopupTreeManager(m_treeCombo, Cache,
+				Cache.LanguageProject.PartsOfSpeechOA,
+				defAnalWs.Handle, false, m_mediator, m_propertyTable,
+				m_propertyTable.GetValue<Form>("window"));
+			m_POSPopupTreeManager.NotSureIsAny = true;
+			m_POSPopupTreeManager.LoadPopupTree(hvo);
+			m_POSPopupTreeManager.AfterSelect += POSPopupTreeManager_AfterSelect;
+			// Show the POSPopupTreeManager.
+			m_treeCombo.DroppedDown = true;
+		}
+
+		private void POSPopupTreeManager_AfterSelect(object sender, System.Windows.Forms.TreeViewEventArgs e)
+		{
+			IPartOfSpeech selectedPOS = null;
+			m_POSPopupTreeManager.AfterSelect -= POSPopupTreeManager_AfterSelect;
+			// Remove m_treeCombo from currentSlice so it won't be disposed when the object is moved.
+			Slice currentSlice = m_dataEntryForm.CurrentSlice;
+			currentSlice.Control.Controls.Remove(m_treeCombo);
+			var repo = Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>();
+			if (e.Node is HvoTreeNode)
+				repo.TryGetObject((e.Node as HvoTreeNode).Hvo, out selectedPOS);
+			if (selectedPOS != null)
+			{
+				if (m_moveObj is IMoInflAffixSlot slot)
+				{
+					MoveSlot(slot, selectedPOS);
+				}
+				if (m_moveObj is IMoInflAffixTemplate template)
+				{
+					MoveTemplate(template, selectedPOS);
+				}
+			}
+		}
+
+		private void MoveSlot(IMoInflAffixSlot slot, IPartOfSpeech selectedPOS)
+		{
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Move Slot",
+									"Redo Move Slot", Cache.ActionHandlerAccessor, () =>
+									{
+										selectedPOS.AffixSlotsOC.Add(slot);
+										foreach (IMoInflAffMsa msa in slot.Affixes)
+										{
+											msa.PartOfSpeechRA = selectedPOS;
+										}
+									});
+		}
+		private void MoveTemplate(IMoInflAffixTemplate template, IPartOfSpeech selectedPOS)
+		{
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW("Undo Move Template",
+									"Redo Move Template", Cache.ActionHandlerAccessor, () =>
+									{
+										// Get the template POS before the template is moved.
+										IPartOfSpeech templatePOS = template.Owner as IPartOfSpeech;
+										// Move the template.
+										selectedPOS.AffixTemplatesOS.Add(template);
+										if (templatePOS.Owner == selectedPOS)
+										{
+											// Move template slots up, too.
+											IList<IMoInflAffixSlot> slots = template.PrefixSlotsRS.ToList();
+											slots.AddRange(template.SuffixSlotsRS.ToList());
+											foreach (IMoInflAffixSlot slot in slots)
+											{
+												IPartOfSpeech slotPOS = slot.Owner as IPartOfSpeech;
+												IPartOfSpeech slotPOSOwner = slotPOS.Owner as IPartOfSpeech;
+												// Move a slot if it is at the same level as the template
+												// and moving it couldn't cause a name conflict.
+												string slotName = slot.Name.BestAnalysisVernacularAlternative.Text;
+												if (slotPOS == templatePOS && GetPOSSlot(slotPOSOwner, slotName) == null)
+													MoveSlot(slot, selectedPOS);
+											}
+										}
+									});
+		}
+
+		public static IMoInflAffixSlot GetPOSSlot(IPartOfSpeech partOfSpeech, string name)
+		{
+			while (partOfSpeech != null)
+			{
+				foreach (IMoInflAffixSlot slot in partOfSpeech.AllAffixSlots)
+				{
+					// NB: BestAnalysisVernacularAlternative always returns something.
+					if (slot.Name.BestAnalysisVernacularAlternative.Text == name)
+						return slot;
+				}
+				partOfSpeech = partOfSpeech.Owner as IPartOfSpeech;
+			}
+			return null;
+		}
+
+
 
 		private bool SliceConfiguredForField(XmlNode node, string field)
 		{
