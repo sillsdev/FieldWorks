@@ -211,12 +211,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					foreach (ILexSense sense in entry.SensesOS)
 					{
 						var sHvo = sense.MorphoSyntaxAnalysisRA.Hvo.ToString();
-						var hvoMatch = "\\lx " + sHvo;
+						var hvoMatch = "\\lx " + sHvo + "\r";
 						if (!morphemePropertyMapper.ContainsKey(hvoMatch))
 						{
 							var replaceWith =
 								hvoMatch
-								+ "\r\n\\mp "
+								+ "\n\\mp "
 								+ prop.Name.AnalysisDefaultWritingSystem.Text
 								+ "\r\n";
 							morphemePropertyMapper.Add(hvoMatch, replaceWith);
