@@ -937,7 +937,7 @@ namespace SIL.FieldWorks.IText
 				{
 					if (fExactMatch)
 					{
-						if (CheckAnalysis(possibleAnalysis.Hvo, true))
+						if (CheckAnalysis(possibleAnalysis, true))
 							return possibleAnalysis;
 					}
 					else
@@ -945,7 +945,7 @@ namespace SIL.FieldWorks.IText
 						// If this possibility is Human evaluated, it must match exactly regardless
 						// of the input parameter to count as a match on the analysis.
 						bool fIsHumanApproved = SandboxBase.IsAnalysisHumanApproved(m_caches.MainCache, possibleAnalysis);
-						if (CheckAnalysis(possibleAnalysis.Hvo, fIsHumanApproved))
+						if (CheckAnalysis(possibleAnalysis, fIsHumanApproved))
 							return possibleAnalysis;
 					}
 				}
@@ -1012,15 +1012,16 @@ namespace SIL.FieldWorks.IText
 			/// Evaluate the given possible analysis to see whether it matches the current Sandbox data.
 			/// Review: This is not testing word gloss at all. Is this right?
 			/// </summary>
-			/// <param name="hvoPossibleAnalysis"></param>
+			/// <param name="possibleAnalysis"></param>
 			/// <param name="fExactMatch"></param>
 			/// <returns></returns>
-			private bool CheckAnalysis(int hvoPossibleAnalysis, bool fExactMatch)
+			private bool CheckAnalysis(IWfiAnalysis possibleAnalysis, bool fExactMatch)
 			{
 				// First, check that the analysis has the right word category.
+				int hvoPossibleAnalysis = possibleAnalysis.Hvo;
 				int hvoWordCat = m_sdaMain.get_ObjectProp(hvoPossibleAnalysis,
 					WfiAnalysisTags.kflidCategory);
-				bool fCheck = fExactMatch || hvoWordCat != 0;
+				bool fCheck = hvoWordCat != 0;
 				if (fCheck && m_hvoCategoryReal != hvoWordCat)
 				{
 					return false;
@@ -1082,6 +1083,14 @@ namespace SIL.FieldWorks.IText
 						if (hvoMorph != m_analysisMorphs[imorph])
 							return false;
 					}
+				}
+				if (fExactMatch && hvoWordCat == 0 && m_hvoCategoryReal != 0)
+				{
+					// possibleAnalysis matches except that its category is empty.
+					// Make the match exact by setting the category.
+					// This fixes LT-22237.
+					IPartOfSpeechRepository posRepository = m_caches.MainCache.ServiceLocator.GetInstance<IPartOfSpeechRepository>();
+					possibleAnalysis.CategoryRA = posRepository.GetObject(m_hvoCategoryReal);
 				}
 				return true;
 			}
