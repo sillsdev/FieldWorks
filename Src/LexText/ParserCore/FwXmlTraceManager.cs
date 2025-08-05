@@ -407,7 +407,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private static string ToBracketedString(IEnumerable<ShapeNode> nodes, CharacterDefinitionTable table)
 		{
-			// This should be in defined as Shape.ToBrackedString in HermitCrab.
+			// This should be in defined as Shape.ToBracketedString in HermitCrab.
 			StringBuilder stringBuilder = new StringBuilder();
 			foreach (ShapeNode node in nodes)
 			{
