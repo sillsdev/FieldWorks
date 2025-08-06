@@ -2044,6 +2044,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					path.RemoveAt(path.Count - 1);
 					break;
 
+				case "indent":
+					foreach (XmlNode node in partRef.ChildNodes)
+					{
+						ProcessPartRefNode(node, path, reuseMap, obj, parentSlice, indent + Slice.ExtraIndent(partRef), ref insPos, isTestOnly);
+					}
+					break;
+
 				case "part":
 					// If the previously selected slice doesn't display in this refresh, we try for the next
 					// visible slice instead.  So m_fSetCurrentSliceNew might still be set.  See LT-9010.
