@@ -248,7 +248,6 @@
 	  <!-- <item command="CmdDataTree-Help"/> -->
 	</menu>
 	<menu id="mnuDataTree-POS-InflectionClass">
-      <item command="CmdDataTree-Insert-POS-InflectionClass-Subclasses"/>
       <item command="CmdDataTree-Delete-POS-InflectionClass"/>
 	  <!-- <item command="CmdDataTree-Help"/> -->
 	</menu>
