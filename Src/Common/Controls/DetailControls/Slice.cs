@@ -2211,22 +2211,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							return insertionPosition;
 						// If we haven't found a slice...common now, because there's rarely a need to expand anything...
 						// and some slice was added, focus it.
-						bool focussed = false;
 						foreach (Slice slice in Parent.Controls)
 						{
 							if (!slices.Contains(slice))
 							{
 								slice.FocusSliceOrChild();
-								focussed = true;
 								break;
 							}
-						}
-						if (!focussed)
-						{
-							// The first Inflection Subclass is invisible because
-							// of visibility="ifdata" for Subclasses.
-							// We can't focus it, but at least we can show it.
-							m_mediator.BroadcastMessageUntilHandled("MasterRefresh", null);
 						}
 					}
 				}

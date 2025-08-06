@@ -458,7 +458,7 @@
 		<part ref="AbbreviationAllA"/>
 		<part ref="DescriptionAllA"/>
 		<indent indent="true">
-			<part ref="SubClassesSection" label="Subclasses" menu="mnuDataTree-POS-InflectionClass-Subclasses" visibility="ifdata">
+			<part ref="SubClassesSection" label="Subclasses" menu="mnuDataTree-POS-InflectionClass-Subclasses">
 				<indent>
 					<part ref="SubClasses" label="Subclasses"/>
 				</indent>
@@ -471,7 +471,7 @@
 		<part ref="AbbreviationAllA"/>
 		<part ref="DescriptionAllA"/>
 		<indent indent="true">
-			<part ref="SubClassesSection" label="Subclasses" menu="mnuDataTree-POS-InflectionClass-Subclasses" visibility="ifdata">
+			<part ref="SubClassesSection" label="Subclasses" menu="mnuDataTree-POS-InflectionClass-Subclasses">
 				<indent>
 					<part ref="SubClasses" label="Subclasses"/>
 				</indent>
