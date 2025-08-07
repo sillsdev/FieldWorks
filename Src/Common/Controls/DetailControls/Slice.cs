@@ -11,19 +11,20 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.LexText.Controls;
+using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 using SIL.Utils;
+using SIL.Xml;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -2849,13 +2850,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			foreach (object obj in Key)
 			{
 				var node = obj as XmlNode;
-				if (node == null || node.Name != "part" ||
-					XmlUtils.GetOptionalAttributeValue(node, "ref", null) == null)
+				if (node != null && node.Name == "part" &&
+					XmlUtils.GetOptionalAttributeValue(node, "ref", null) != null &&
+					XmlUtils.GetOptionalAttributeValue(node, "expansion", null) != "expanded")
 				{
-					continue;
+					fieldRef = node;
 				}
-
-				fieldRef = node;
 			}
 
 			return fieldRef;
