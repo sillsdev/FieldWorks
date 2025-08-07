@@ -682,10 +682,10 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Gets the value of the requested custom field associated with the fieldOwner object
+		/// Gets the value of the requested field associated with the fieldOwner object
 		/// </summary>
-		/// <returns>true if the custom field was valid and false otherwise</returns>
-		/// <remarks>propertyValue can be null if the custom field is valid but no value is stored for the owning object</remarks>
+		/// <returns>true if the field was valid and false otherwise</returns>
+		/// <remarks>propertyValue can be null if the field is valid but no value is stored for the owning object</remarks>
 		private static bool GetPropValueForModelField(object fieldOwner, ConfigurableDictionaryNode config,
 			LcmCache cache, ISilDataAccess decorator, string customFieldName, ref object propertyValue, string cfOwnerClassName = null)
 		{
@@ -693,15 +693,29 @@ namespace SIL.FieldWorks.XWorks
 			ICmObject specificObject;
 			if (fieldOwner is ISenseOrEntry senseOrEntry)
 			{
-				// assign the customFieldOwnerClassName if it was not passed in
-				customFieldOwnerClassName = customFieldOwnerClassName ?? senseOrEntry.Item.ClassName;
-				specificObject = senseOrEntry.Item;
+				// LexEntry
+				if (senseOrEntry.Item is ILexEntry)
+				{
+					specificObject = senseOrEntry.Item;
+				}
+				// LexSense
+				else
+				{
+					// Get the HeadWordRef from the LexEntry.
+					if (customFieldName == "HeadWordRef")
+					{
+						specificObject = ((ILexSense)(senseOrEntry.Item)).Entry;
+					}
+					// Get all other fields from the LexSense.
+					else
+					{
+						specificObject = senseOrEntry.Item;
+					}
+				}
 			}
 			else if(fieldOwner is ICmObject owner)
 			{
 				specificObject = owner;
-				// assign the customFieldOwnerClassName if it was not passed in
-				customFieldOwnerClassName = customFieldOwnerClassName ?? specificObject.ClassName;
 				senseOrEntry = null;
 			}
 			else
@@ -709,6 +723,10 @@ namespace SIL.FieldWorks.XWorks
 				// throw an argument exception if the field owner is not a valid type
 				throw new ArgumentException("The field owner is not a valid type", nameof(fieldOwner));
 			}
+
+			// assign the customFieldOwnerClassName if it was not passed in
+			customFieldOwnerClassName = customFieldOwnerClassName ?? specificObject.ClassName;
+
 			if (decorator == null)
 				decorator = cache.DomainDataByFlid;
 			int customFieldFlid = GetCustomFieldFlid(config, cache, customFieldOwnerClassName, customFieldName);
@@ -718,7 +736,7 @@ namespace SIL.FieldWorks.XWorks
 			var customFieldType = cache.MetaDataCacheAccessor.GetFieldType(customFieldFlid);
 			if (senseOrEntry != null)
 			{
-				if (!((IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor).GetFields(senseOrEntry.Item.ClassID,
+				if (!((IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor).GetFields(specificObject.ClassID,
 					true, (int)CellarPropertyTypeFilter.All).Contains(customFieldFlid))
 				{
 					return false;
