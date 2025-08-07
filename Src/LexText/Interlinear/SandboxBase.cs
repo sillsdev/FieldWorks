@@ -1211,7 +1211,7 @@ namespace SIL.FieldWorks.IText
 						if ((m_occurrenceSelected == null ||
 							m_occurrenceSelected.Analysis == null ||
 							m_occurrenceSelected.Analysis.Wordform != null) &&
-							GetHasMultipleRelevantAnalyses(CurrentAnalysisTree.Wordform))
+							GetHasMultipleRelevantAnalyses(CurrentAnalysisTree.Wordform, IsParsingDevMode()))
 						{
 							MultipleAnalysisColor = InterlinVc.MultipleApprovedGuessColor;
 						}
@@ -1633,10 +1633,12 @@ namespace SIL.FieldWorks.IText
 			return false;
 		}
 
-		public static bool GetHasMultipleRelevantAnalyses(IWfiWordform analysis)
+		public static bool GetHasMultipleRelevantAnalyses(IWfiWordform wordform, bool isParsingDevMode)
 		{
-			int humanCount = analysis.HumanApprovedAnalyses.Count();
-			int machineCount = analysis.HumanNoOpinionParses.Count();
+			if (isParsingDevMode)
+				return wordform.AnalysesOC.Count > 1;
+			int humanCount = wordform.HumanApprovedAnalyses.Count();
+			int machineCount = wordform.HumanNoOpinionParses.Count();
 			return humanCount + machineCount > 1;
 		}
 
@@ -1647,6 +1649,13 @@ namespace SIL.FieldWorks.IText
 			return (from ae in analysis.EvaluationsRC
 							  where ae.Approves &&  (ae.Owner as ICmAgent).Human
 							  select ae).FirstOrDefault() != null;
+		}
+
+		internal bool IsParsingDevMode()
+		{
+			if (InterlinDoc?.GetMaster() == null)
+				return false;
+			return InterlinDoc.GetMaster().IsParsingDevMode();
 		}
 
 		/// <summary>

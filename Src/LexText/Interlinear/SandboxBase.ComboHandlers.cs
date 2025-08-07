@@ -117,12 +117,8 @@ namespace SIL.FieldWorks.IText
 
 			internal bool IsParsingDevMode()
 			{
-				if (m_sandbox.InterlinDoc?.GetMaster() == null)
-					return false;
-				return m_sandbox.InterlinDoc.GetMaster().IsParsingDevMode();
+				return m_sandbox.IsParsingDevMode();
 			}
-
-
 
 			// only for testing
 			internal void SetSandboxForTesting(SandboxBase sandbox)
@@ -1032,8 +1028,8 @@ namespace SIL.FieldWorks.IText
 				{
 					Opinions o = wa.GetAgentOpinion(
 						m_caches.MainCache.LangProject.DefaultUserAgent);
-					if (o == Opinions.disapproves)
-						continue;	// skip any analysis the user has disapproved.
+					if (o == Opinions.disapproves && !IsParsingDevMode())
+						continue;	// skip any analysis the user has disapproved unless we are in parsing dev mode.
 					int cmorphs = wa.MorphBundlesOS.Count;
 					if (cmorphs == 0)
 						continue;
