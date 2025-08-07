@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<word>
+  <form>dagslurp</form>
+  <seq step="Try to build a Stem node on a root.">
+    <stem syncat="6604" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="-">
+      <morph type="root" wordType="root" morphname="4669" alloid="5163" category="W">
+        <props> RootPOS6604 ExcpFeat6658Plus</props>
+        <shortName>dag (dog): dag</shortName>
+        <alloform>dag</alloform>
+        <gloss>dog</gloss>
+        <citationForm>dag</citationForm>
+        <stemMsa cat="6604" catAbbr="n" inflClass="0" requiresInfl="-">
+          <productivityRestriction id="6658">
+            <name>Left-headed noun incorporation</name>
+          </productivityRestriction>
+        </stemMsa>
+      </morph>
+      <productivityRestriction id="6658">
+        <name>Left-headed noun incorporation</name>
+      </productivityRestriction>
+    </stem>
+    <stem syncat="5375" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="-">
+      <morph type="root" wordType="root" morphname="6578" alloid="2841" category="W">
+        <props> RootPOS5375 ExcpFeat2891Plus</props>
+        <shortName>slurp (drink): slurp</shortName>
+        <alloform>slurp</alloform>
+        <gloss>drink</gloss>
+        <citationForm>slurp</citationForm>
+        <stemMsa cat="5375" catAbbr="v" inflClass="0" requiresInfl="-">
+          <productivityRestriction id="2891">
+            <name>Verb OK with Adverb</name>
+          </productivityRestriction>
+        </stemMsa>
+      </morph>
+      <productivityRestriction id="2891">
+        <name>Verb OK with Adverb</name>
+      </productivityRestriction>
+    </stem>
+  </seq>
+  <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked).">
+    <stem syncat="6604" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="-">
+      <morph type="root" wordType="root" morphname="4669" alloid="5163" category="W">
+        <props> RootPOS6604 ExcpFeat6658Plus</props>
+        <shortName>dag (dog): dag</shortName>
+        <alloform>dag</alloform>
+        <gloss>dog</gloss>
+        <citationForm>dag</citationForm>
+        <stemMsa cat="6604" catAbbr="n" inflClass="0" requiresInfl="-">
+          <productivityRestriction id="6658">
+            <name>Left-headed noun incorporation</name>
+          </productivityRestriction>
+        </stemMsa>
+      </morph>
+      <productivityRestriction id="6658">
+        <name>Left-headed noun incorporation</name>
+      </productivityRestriction>
+    </stem>
+    <partial syncat="5375" syncatAbbr="v">
+      <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'v'.</failure>
+      <morph type="root" wordType="root" morphname="6578" alloid="2841" category="W">
+        <props> RootPOS5375 ExcpFeat2891Plus</props>
+        <shortName>slurp (drink): slurp</shortName>
+        <alloform>slurp</alloform>
+        <gloss>drink</gloss>
+        <citationForm>slurp</citationForm>
+        <stemMsa cat="5375" catAbbr="v" inflClass="0" requiresInfl="-">
+          <productivityRestriction id="2891">
+            <name>Verb OK with Adverb</name>
+          </productivityRestriction>
+        </stemMsa>
+      </morph>
+    </partial>
+  </seq>
+  <seq step="Try to build a Stem node on a root.">
+    <partial syncat="6604" syncatAbbr="n">
+      <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'n'.</failure>
+      <morph type="root" wordType="root" morphname="4669" alloid="5163" category="W">
+        <props> RootPOS6604 ExcpFeat6658Plus</props>
+        <shortName>dag (dog): dag</shortName>
+        <alloform>dag</alloform>
+        <gloss>dog</gloss>
+        <citationForm>dag</citationForm>
+        <stemMsa cat="6604" catAbbr="n" inflClass="0" requiresInfl="-">
+          <productivityRestriction id="6658">
+            <name>Left-headed noun incorporation</name>
+          </productivityRestriction>
+        </stemMsa>
+      </morph>
+    </partial>
+    <stem syncat="5375" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="-">
+      <morph type="root" wordType="root" morphname="6578" alloid="2841" category="W">
+        <props> RootPOS5375 ExcpFeat2891Plus</props>
+        <shortName>slurp (drink): slurp</shortName>
+        <alloform>slurp</alloform>
+        <gloss>drink</gloss>
+        <citationForm>slurp</citationForm>
+        <stemMsa cat="5375" catAbbr="v" inflClass="0" requiresInfl="-">
+          <productivityRestriction id="2891">
+            <name>Verb OK with Adverb</name>
+          </productivityRestriction>
+        </stemMsa>
+      </morph>
+      <productivityRestriction id="2891">
+        <name>Verb OK with Adverb</name>
+      </productivityRestriction>
+    </stem>
+  </seq>
+  <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked).">
+    <partial syncat="6604" syncatAbbr="n">
+      <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'n'.</failure>
+      <morph type="root" wordType="root" morphname="4669" alloid="5163" category="W">
+        <props> RootPOS6604 ExcpFeat6658Plus</props>
+        <shortName>dag (dog): dag</shortName>
+        <alloform>dag</alloform>
+        <gloss>dog</gloss>
+        <citationForm>dag</citationForm>
+        <stemMsa cat="6604" catAbbr="n" inflClass="0" requiresInfl="-">
+          <productivityRestriction id="6658">
+            <name>Left-headed noun incorporation</name>
+          </productivityRestriction>
+        </stemMsa>
+      </morph>
+    </partial>
+    <partial syncat="5375" syncatAbbr="v">
+      <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'v'.</failure>
+      <morph type="root" wordType="root" morphname="6578" alloid="2841" category="W">
+        <props> RootPOS5375 ExcpFeat2891Plus</props>
+        <shortName>slurp (drink): slurp</shortName>
+        <alloform>slurp</alloform>
+        <gloss>drink</gloss>
+        <citationForm>slurp</citationForm>
+        <stemMsa cat="5375" catAbbr="v" inflClass="0" requiresInfl="-">
+          <productivityRestriction id="2891">
+            <name>Verb OK with Adverb</name>
+          </productivityRestriction>
+        </stemMsa>
+      </morph>
+    </partial>
+  </seq>
+  <seq step="Try to build a Stem node on a root.">
+    <stem syncat="6604" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="-">
+      <morph type="root" wordType="root" morphname="4669" alloid="5163" category="W">
+        <props> RootPOS6604 ExcpFeat6658Plus</props>
+        <shortName>dag (dog): dag</shortName>
+        <alloform>dag</alloform>
+        <gloss>dog</gloss>
+        <citationForm>dag</citationForm>
+        <stemMsa cat="6604" catAbbr="n" inflClass="0" requiresInfl="-">
+          <productivityRestriction id="6658">
+            <name>Left-headed noun incorporation</name>
+          </productivityRestriction>
+        </stemMsa>
+      </morph>
+      <productivityRestriction id="6658">
+        <name>Left-headed noun incorporation</name>
+      </productivityRestriction>
+    </stem>
+    <stem syncat="5375" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="-">
+      <morph type="root" wordType="root" morphname="6578" alloid="2841" category="W">
+        <props> RootPOS5375 ExcpFeat2891Plus</props>
+        <shortName>slurp (drink): slurp</shortName>
+        <alloform>slurp</alloform>
+        <gloss>drink</gloss>
+        <citationForm>slurp</citationForm>
+        <stemMsa cat="5375" catAbbr="v" inflClass="0" requiresInfl="-">
+          <productivityRestriction id="2891">
+            <name>Verb OK with Adverb</name>
+          </productivityRestriction>
+        </stemMsa>
+      </morph>
+      <productivityRestriction id="2891">
+        <name>Verb OK with Adverb</name>
+      </productivityRestriction>
+    </stem>
+  </seq>
+  <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked).">
+    <partial syncat="6604" syncatAbbr="n">
+      <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'n'.</failure>
+      <morph type="root" wordType="root" morphname="4669" alloid="5163" category="W">
+        <props> RootPOS6604 ExcpFeat6658Plus</props>
+        <shortName>dag (dog): dag</shortName>
+        <alloform>dag</alloform>
+        <gloss>dog</gloss>
+        <citationForm>dag</citationForm>
+        <stemMsa cat="6604" catAbbr="n" inflClass="0" requiresInfl="-">
+          <productivityRestriction id="6658">
+            <name>Left-headed noun incorporation</name>
+          </productivityRestriction>
+        </stemMsa>
+      </morph>
+    </partial>
+    <stem syncat="5375" syncatAbbr="v" inflClass="0" inflClassAbbr="" requiresInfl="-">
+      <morph type="root" wordType="root" morphname="6578" alloid="2841" category="W">
+        <props> RootPOS5375 ExcpFeat2891Plus</props>
+        <shortName>slurp (drink): slurp</shortName>
+        <alloform>slurp</alloform>
+        <gloss>drink</gloss>
+        <citationForm>slurp</citationForm>
+        <stemMsa cat="5375" catAbbr="v" inflClass="0" requiresInfl="-">
+          <productivityRestriction id="2891">
+            <name>Verb OK with Adverb</name>
+          </productivityRestriction>
+        </stemMsa>
+      </morph>
+      <productivityRestriction id="2891">
+        <name>Verb OK with Adverb</name>
+      </productivityRestriction>
+    </stem>
+  </seq>
+  <seq step="Try to build a Stem node on a root.">
+    <stem syncat="6604" syncatAbbr="n" inflClass="0" inflClassAbbr="" requiresInfl="-">
+      <morph type="root" wordType="root" morphname="4669" alloid="5163" category="W">
+        <props> RootPOS6604 ExcpFeat6658Plus</props>
+        <shortName>dag (dog): dag</shortName>
+        <alloform>dag</alloform>
+        <gloss>dog</gloss>
+        <citationForm>dag</citationForm>
+        <stemMsa cat="6604" catAbbr="n" inflClass="0" requiresInfl="-">
+          <productivityRestriction id="6658">
+            <name>Left-headed noun incorporation</name>
+          </productivityRestriction>
+        </stemMsa>
+      </morph>
+      <productivityRestriction id="6658">
+        <name>Left-headed noun incorporation</name>
+      </productivityRestriction>
+    </stem>
+    <partial syncat="5375" syncatAbbr="v">
+      <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'v'.</failure>
+      <morph type="root" wordType="root" morphname="6578" alloid="2841" category="W">
+        <props> RootPOS5375 ExcpFeat2891Plus</props>
+        <shortName>slurp (drink): slurp</shortName>
+        <alloform>slurp</alloform>
+        <gloss>drink</gloss>
+        <citationForm>slurp</citationForm>
+        <stemMsa cat="5375" catAbbr="v" inflClass="0" requiresInfl="-">
+          <productivityRestriction id="2891">
+            <name>Verb OK with Adverb</name>
+          </productivityRestriction>
+        </stemMsa>
+      </morph>
+    </partial>
+  </seq>
+  <seq step="Try to build a Partial analysis node on a root where the category of the root is unknown (i.e. unmarked).">
+    <partial syncat="6604" syncatAbbr="n">
+      <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'n'.</failure>
+      <morph type="root" wordType="root" morphname="4669" alloid="5163" category="W">
+        <props> RootPOS6604 ExcpFeat6658Plus</props>
+        <shortName>dag (dog): dag</shortName>
+        <alloform>dag</alloform>
+        <gloss>dog</gloss>
+        <citationForm>dag</citationForm>
+        <stemMsa cat="6604" catAbbr="n" inflClass="0" requiresInfl="-">
+          <productivityRestriction id="6658">
+            <name>Left-headed noun incorporation</name>
+          </productivityRestriction>
+        </stemMsa>
+      </morph>
+    </partial>
+    <partial syncat="5375" syncatAbbr="v">
+      <failure>A root can only be a "Partial" when its category is unknown, but the category here is 'v'.</failure>
+      <morph type="root" wordType="root" morphname="6578" alloid="2841" category="W">
+        <props> RootPOS5375 ExcpFeat2891Plus</props>
+        <shortName>slurp (drink): slurp</shortName>
+        <alloform>slurp</alloform>
+        <gloss>drink</gloss>
+        <citationForm>slurp</citationForm>
+        <stemMsa cat="5375" catAbbr="v" inflClass="0" requiresInfl="-">
+          <productivityRestriction id="2891">
+            <name>Verb OK with Adverb</name>
+          </productivityRestriction>
+        </stemMsa>
+      </morph>
+    </partial>
+  </seq>
+</word>

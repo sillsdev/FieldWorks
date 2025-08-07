@@ -1023,6 +1023,8 @@ Main template
 						</p>
 						<xsl:variable name="idLeftMsaPOS" select="key('MsaID',LeftMsa/@dst)/@PartOfSpeech"/>
 						<xsl:variable name="idRightMsaPOS" select="key('MsaID',RightMsa/@dst)/@PartOfSpeech"/>
+						<xsl:variable name="leftMsaProdRestricts" select="key('MsaID',LeftMsa/@dst)/ProdRestrict"/>
+						<xsl:variable name="rightMsaProdRestricts" select="key('MsaID',RightMsa/@dst)/ProdRestrict"/>
 						<xsl:choose>
 							<xsl:when test="$idLeftMsaPOS!=0 and $idRightMsaPOS!=0">
 								<chart type="tLeftOffset">
@@ -1042,6 +1044,18 @@ Main template
 										<xsl:value-of select="key('POSID',$idRightMsaPOS)/Abbreviation"/>
 									</genericRef>
 								</chart>
+								<xsl:if test="$leftMsaProdRestricts">
+									<xsl:call-template name="OutputProdRestrictsOfCompoundRule">
+										<xsl:with-param name="sHead" select="'left'"/>
+										<xsl:with-param name="msaProdRestricts" select="$leftMsaProdRestricts"/>
+									</xsl:call-template>
+								</xsl:if>
+								<xsl:if test="$rightMsaProdRestricts">
+									<xsl:call-template name="OutputProdRestrictsOfCompoundRule">
+										<xsl:with-param name="sHead" select="'right'"/>
+										<xsl:with-param name="msaProdRestricts" select="$rightMsaProdRestricts"/>
+									</xsl:call-template>
+								</xsl:if>
 							</xsl:when>
 							<xsl:otherwise>
 								<xsl:if test="$idLeftMsaPOS=0">
@@ -1244,7 +1258,7 @@ Main template
 									</xsl:call-template>
 								</p>
 							</xsl:if>
-							<xsl:variable name="stems" select="$MorphoSyntaxAnalyses/MoStemMsa[ProdRestrict/@dst=$prodRest]"/>
+							<xsl:variable name="stems" select="$MorphoSyntaxAnalyses/MoStemMsa[ProdRestrict/@dst=$prodRest and key('LexEntryMsa', @Id)]"/>
 							<xsl:choose>
 								<xsl:when test="$stems">
 									<xsl:variable name="iCount" select="count($stems)"/>
@@ -5505,6 +5519,54 @@ OutputPOSAsNameWithRef
 				</xsl:for-each>
 			</xsl:otherwise>
 		</xsl:choose>
+	</xsl:template>
+	<!--
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		OutputProdRestrictsOfCompoundRule
+		display information for productivity restrictions in compound rules
+		Parameters: sHead = lft or roght head
+		msaProdRestricts = the set of productivity restrictions
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
+	<xsl:template name="OutputProdRestrictsOfCompoundRule">
+		<xsl:param name="sHead"/>
+		<xsl:param name="msaProdRestricts"/>
+		<p>
+			<xsl:text>The </xsl:text>
+			<xsl:value-of select="$sHead"/>
+			<xsl:text> stem must be marked with </xsl:text>
+			<xsl:variable name="iProdCount" select="count($msaProdRestricts)"/>
+			<xsl:choose>
+				<xsl:when test="$iProdCount &gt; 1">
+					<xsl:text>at least one of the following exception"features": </xsl:text>
+					<xsl:for-each select="$msaProdRestricts">
+						<xsl:text>'</xsl:text>
+						<genericRef gref="sProductivityRestriction{@dst}">
+							<xsl:value-of select="key('ExceptionFeaturesID', @dst)/Name"/>
+						</genericRef>
+						<xsl:text>'</xsl:text>
+						<xsl:choose>
+							<xsl:when test="position() &lt; $iProdCount - 1">
+								<xsl:text>, </xsl:text>
+							</xsl:when>
+							<xsl:when test="position() = $iProdCount -1">
+								<xsl:text> and </xsl:text>
+							</xsl:when>
+							<xsl:when test="position() = $iProdCount">
+								<xsl:text>.</xsl:text>
+							</xsl:when>
+						</xsl:choose>
+					</xsl:for-each>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:text>the '</xsl:text>
+					<genericRef gref="sProductivityRestriction{$msaProdRestricts/@dst}">
+						<xsl:value-of select="key('ExceptionFeaturesID', $msaProdRestricts/@dst)/Name"/>
+					</genericRef>
+					<xsl:text>' exception "feature."</xsl:text>
+				</xsl:otherwise>
+			</xsl:choose>
+		</p>
 	</xsl:template>
 	<!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

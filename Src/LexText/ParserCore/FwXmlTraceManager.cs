@@ -13,6 +13,8 @@ using SIL.Machine.FeatureModel;
 using SIL.Machine.Annotations;
 using System.Collections.Generic;
 using System.Text;
+using SIL.Machine.Rules;
+using SIL.Core.ClearShare;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -89,6 +91,40 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		public void MorphologicalRuleNotUnapplied(IMorphologicalRule rule, int subruleIndex, Word input)
 		{
+		}
+
+		public void CompoundingRuleNotUnapplied(IMorphologicalRule rule, int subruleIndex, Word input, FailureReason reason, object obj)
+		{
+			var trace = new XElement("CompoundingRuleAnalysisTrace",
+				CreateMorphologicalRuleElement(rule));
+			var crule = rule as CompoundingRule;
+			if (crule != null)
+			{
+				var stremProdRestricts = obj as MprFeatureSet;
+				if (stremProdRestricts != null)
+				{
+					trace.Add(new XElement("FailureReason", new XAttribute("type", "missingProdRestrict"),
+						new XElement("StemProdRestricts", stremProdRestricts.Select(f => new XElement("MprFeature", f))),
+						new XElement("RuleProdRestricts", crule.NonHeadProdRestrictionsMprFeatures.Select(f => new XElement("MprFeature", f)))));
+				}
+			}
+			trace.Add(new XElement("Output", "*None*"));
+			((XElement)input.CurrentTrace).Add(trace);
+		}
+
+		public void CompoundingRuleNotApplied(IMorphologicalRule rule, int subruleIndex, Word input, FailureReason reason, object failureObj)
+		{
+			var trace = new XElement("CompoundingRuleSynthesisTrace",
+				CreateMorphologicalRuleElement(rule));
+			var crule = rule as CompoundingRule;
+			if (crule != null)
+			{
+				trace.Add(new XElement("FailureReason", new XAttribute("type", "missingProdRestrict"),
+					new XElement("StemProdRestricts", input.MprFeatures.Select(f => new XElement("MprFeature", f))),
+					new XElement("RuleProdRestricts", crule.HeadProdRestrictionsMprFeatures.Select(f => new XElement("MprFeature", f)))));
+			}
+			trace.Add(new XElement("Output", "*None*"));
+			((XElement)input.CurrentTrace).Add(trace);
 		}
 
 		public void LexicalLookup(Stratum stratum, Word input)

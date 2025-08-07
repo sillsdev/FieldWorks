@@ -43,18 +43,22 @@
 	<layout class="MoStemMsa" type="detail" name="Category">
 		<part ref="Category"/>
 		<part ref="InflectionClass"/>
+		<part ref="ProdRestrict" visibility="ifdata"/>
 	</layout>
 	<layout class="MoStemMsa" type="detail" name="CategoryDisabled">
 		<part ref="CategoryDisabled"/>
 		<part ref="InflectionClassDisabled"/>
+		<part ref="ProdRestrictDisabled" visibility="ifdata"/>
 	</layout>
 	<layout class="MoStemMsa" type="detail" name="Result">
 		<part ref="Category"/>
 		<part ref="InflectionClass"/>
+		<part ref="ProdRestrict" visibility="ifdata"/>
 	</layout>
 	<layout class="MoStemMsa" type="detail" name="ResultDisabled">
 		<part ref="CategoryDisabled"/>
 		<part ref="InflectionClassDisabled"/>
+		<part ref="ProdRestrictDisabled" visibility="ifdata"/>
 	</layout>
 
 

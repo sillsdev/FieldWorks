@@ -944,6 +944,27 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(subrule.HeadLhs.Select(p => p.ToString()), Is.EqualTo(new[] {AnyPlus}));
 			Assert.That(subrule.NonHeadLhs.Select(p => p.ToString()), Is.EqualTo(new[] {AnyPlus}));
 			Assert.That(subrule.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] {"<nonhead>", "+", "<head>"}));
+
+			// test for exception "features"
+			compoundRule.LeftMsaOA.ProdRestrictRC.Add(AddExceptionFeature("Left prod restrict"));
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(1));
+			hcCompoundRule = (CompoundingRule)m_lang.Strata[0].MorphologicalRules[0];
+
+			Assert.That(hcCompoundRule.HeadProdRestrictionsMprFeatures.Count, Is.EqualTo(0));
+			Assert.That(hcCompoundRule.NonHeadProdRestrictionsMprFeatures.Count, Is.EqualTo(1));
+			Assert.That(hcCompoundRule.NonHeadProdRestrictionsMprFeatures.ElementAt(0).Name, Is.EqualTo("Left prod restrict"));
+
+			compoundRule.RightMsaOA.ProdRestrictRC.Add(AddExceptionFeature("Right prod restrict"));
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(1));
+			hcCompoundRule = (CompoundingRule)m_lang.Strata[0].MorphologicalRules[0];
+
+			Assert.That(hcCompoundRule.NonHeadProdRestrictionsMprFeatures.Count, Is.EqualTo(1));
+			Assert.That(hcCompoundRule.HeadProdRestrictionsMprFeatures.Count, Is.EqualTo(1));
+			Assert.That(hcCompoundRule.HeadProdRestrictionsMprFeatures.ElementAt(0).Name, Is.EqualTo("Right prod restrict"));
 		}
 
 		[Test]
@@ -984,6 +1005,28 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(subrule.NonHeadLhs.Select(p => p.ToString()), Is.EqualTo(new[] {AnyPlus}));
 			Assert.That(subrule.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] {"<head>", "+", "<nonhead>"}));
 			Assert.That(subrule.OutMprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"inflClass"}));
+
+			// test for exception "features"
+			compoundRule.LeftMsaOA.ProdRestrictRC.Add(AddExceptionFeature("Left prod restrict"));
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(2));
+			hcCompoundRule = (CompoundingRule)m_lang.Strata[0].MorphologicalRules[0];
+
+			Assert.That(hcCompoundRule.HeadProdRestrictionsMprFeatures.Count, Is.EqualTo(0));
+			Assert.That(hcCompoundRule.NonHeadProdRestrictionsMprFeatures.Count, Is.EqualTo(1));
+			Assert.That(hcCompoundRule.NonHeadProdRestrictionsMprFeatures.ElementAt(0).Name, Is.EqualTo("Left prod restrict"));
+
+			compoundRule.RightMsaOA.ProdRestrictRC.Add(AddExceptionFeature("Right prod restrict"));
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(2));
+			hcCompoundRule = (CompoundingRule)m_lang.Strata[0].MorphologicalRules[0];
+
+			Assert.That(hcCompoundRule.NonHeadProdRestrictionsMprFeatures.Count, Is.EqualTo(1));
+			Assert.That(hcCompoundRule.HeadProdRestrictionsMprFeatures.Count, Is.EqualTo(1));
+			Assert.That(hcCompoundRule.HeadProdRestrictionsMprFeatures.ElementAt(0).Name, Is.EqualTo("Right prod restrict"));
+
 		}
 
 		[Test]

@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<word>
+    <form>dagslurp</form>
+    <seq>
+        <morph type="root" wordType="root" morphname="4669" alloid="5163" category="W">
+            <props> RootPOS6604 ExcpFeat6658Plus</props>
+            <shortName>dag (dog): dag</shortName>
+            <alloform>dag</alloform>
+            <gloss>dog</gloss>
+            <citationForm>dag</citationForm>
+            <stemMsa cat="6604" catAbbr="n" inflClass="0" requiresInfl="-">
+                <productivityRestriction id="6658">
+                    <name>Left-headed noun incorporation</name>
+                </productivityRestriction>
+            </stemMsa>
+        </morph>
+        <morph type="root" wordType="root" morphname="6578" alloid="2841" category="W">
+            <props> RootPOS5375 ExcpFeat2891Plus</props>
+            <shortName>slurp (drink): slurp</shortName>
+            <alloform>slurp</alloform>
+            <gloss>drink</gloss>
+            <citationForm>slurp</citationForm>
+            <stemMsa cat="5375" catAbbr="v" inflClass="0" requiresInfl="-">
+                <productivityRestriction id="2891">
+                    <name>Verb OK with Adverb</name>
+                </productivityRestriction>
+            </stemMsa>
+        </morph>
+    </seq>
+</word>
