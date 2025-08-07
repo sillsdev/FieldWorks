@@ -24,7 +24,6 @@ using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 using SIL.Utils;
-using SIL.Xml;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
