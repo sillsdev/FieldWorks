@@ -11,16 +11,16 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.LexText.Controls;
+using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 using SIL.Utils;
@@ -2800,42 +2800,90 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private void MoveField(Direction dir)
 		{
 			CheckDisposed();
-			if (ContainingDataTree.ShowingAllFields)
+			XmlNode swapWith;
+			XmlNode fieldRef = MoveableFieldReferenceForSlice();
+
+			if (fieldRef == null)
 			{
-				XmlNode swapWith;
-				XmlNode fieldRef = FieldReferenceForSlice();
+				Debug.Fail("Could not identify field to move on slice.");
+				return;
+			}
 
-				if (fieldRef == null)
-				{
-					Debug.Fail("Could not identify field to move on slice.");
-					return;
-				}
+			if (dir == Direction.Up)
+			{
+				swapWith = PrevSliceSiblingPart(fieldRef);
+			}
+			else
+			{
+				swapWith = NextSliceSiblingPart(fieldRef);
+			}
 
+			var parent = fieldRef.ParentNode;
+			// Reorder in the parent node in the xml
+			if (parent != null)
+			{
+				parent.RemoveChild(fieldRef);
 				if (dir == Direction.Up)
+					parent.InsertBefore(fieldRef, swapWith);
+				else
+					parent.InsertAfter(fieldRef, swapWith);
+			}
+
+			// Persist in the parent part (might not be the immediate parent node)
+			Inventory.GetInventory("layouts", m_cache.ProjectId.Name)
+				.PersistOverrideElement(PartParent(fieldRef));
+			ContainingDataTree.RefreshList(true);
+		}
+
+		/// <summary>
+		/// Get the sibling for the current slice in the given dir.
+		/// </summary>
+		internal Slice GetSibling(Direction dir)
+		{
+			int islice = IndexInContainer;
+			int cslice = ContainingDataTree.Slices.Count;
+			int increment = (dir == Direction.Down ? 1 : -1);
+			int depth = GetMoveableDepth();
+			XmlNode fieldRef = MoveableFieldReferenceForSlice();
+			while (true)
+			{
+				islice += increment;
+				if (dir == Direction.Down)
 				{
-					swapWith = PrevPartSibling(fieldRef);
+					if (islice >= cslice) break;
 				}
 				else
 				{
-					swapWith = NextPartSibling(fieldRef);
+					if (islice < 0) break;
 				}
-
-				var parent = fieldRef.ParentNode;
-				// Reorder in the parent node in the xml
-				if (parent != null)
-				{
-					parent.RemoveChild(fieldRef);
-					if (dir == Direction.Up)
-						parent.InsertBefore(fieldRef, swapWith);
-					else
-						parent.InsertAfter(fieldRef, swapWith);
-				}
-
-				// Persist in the parent part (might not be the immediate parent node)
-				Inventory.GetInventory("layouts", m_cache.ProjectId.Name)
-					.PersistOverrideElement(PartParent(fieldRef));
-				ContainingDataTree.RefreshList(true);
+				var slice = ContainingDataTree.Slices[islice];
+				int sliceDepth = slice.GetMoveableDepth();
+				// Skip over our children.
+				if (sliceDepth > depth)
+					continue;
+				// Stop if we get past the children of our parent.
+				if (sliceDepth < depth)
+					break;
+				XmlNode sliceFieldRef = slice.MoveableFieldReferenceForSlice();
+				if (sliceFieldRef == fieldRef)
+					// Skip slices with the same fieldRef as self.
+					// This happens with nested headers.
+					continue;
+				return slice;
 			}
+			return null;
+		}
+
+		private int GetMoveableDepth()
+		{
+			int count = 0;
+			foreach (object obj in Key)
+			{
+				var node = obj as XmlNode;
+				if (IsMoveableNode(node))
+					count++;
+			}
+			return count;
 		}
 
 		/// <summary>
@@ -2854,11 +2902,76 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					continue;
 				}
-
 				fieldRef = node;
 			}
 
 			return fieldRef;
+		}
+
+		/// <summary>
+		/// Get the last moveable field reference for slice.
+		/// </summary>
+		private XmlNode MoveableFieldReferenceForSlice()
+		{
+			XmlNode fieldRef = null;
+			foreach (object obj in Key)
+			{
+				var node = obj as XmlNode;
+				if (IsMoveableNode(node))
+				{
+					fieldRef = node;
+				}
+			}
+
+			return fieldRef;
+		}
+
+		/// <summary>
+		/// Can this node be moved?
+		/// </summary>
+		private bool IsMoveableNode(XmlNode node)
+		{
+			if (!IsRefPartNode(node))
+				return false;
+			if (node.PreviousSibling != null)
+				// node has siblings, so it can be moved.
+				return true;
+			if (node.NextSibling == null)
+				// node has no siblings, so it can't be moved.
+				return false;
+			// This is the first node in a sequence.
+			// Does it represent itself (and so can be moved) or the sequence as a whole (and so can't be moved at this level)?
+			// Look at the reference part nodes above node to determine.
+			bool found = false;
+			string label = XmlUtils.GetOptionalAttributeValue(node, "label", null);
+			for (int i = Key.Length - 1; i >= 0; i--)
+			{
+				XmlNode keyNode = Key[i] as XmlNode;
+				if (!IsRefPartNode(keyNode)) continue;
+				if (keyNode == node)
+				{
+					found = true;
+					continue;
+				}
+				if (!found) continue;
+				// keyNode is a ref part node above node.
+				string keyNodeLabel = XmlUtils.GetOptionalAttributeValue(keyNode, "label", null);
+				if (keyNodeLabel != null)
+					// keyNode represents the sequence as a whole.
+					// So node represents itself and can be moved down.
+					return true;
+				if (keyNode.PreviousSibling != null || keyNode.NextSibling != null)
+					// node represents the sequence as a whole.
+					// So it does not represent itself and cannot be moved down.
+					return false;
+			}
+			return true;
+		}
+
+		private bool IsRefPartNode(XmlNode node)
+		{
+			return node != null && node.Name == "part"
+					&& XmlUtils.GetOptionalAttributeValue(node, "ref", null) != null;
 		}
 
 		protected void SetFieldVisibility(string visibility)
@@ -2976,13 +3089,47 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private bool CheckValidMove(UIItemDisplayProperties display, Direction dir)
 		{
-			XmlNode lastPartRef = FieldReferenceForSlice();
+			XmlNode lastPartRef = MoveableFieldReferenceForSlice();
 
 			if (lastPartRef == null)
 				return false;
 			return dir == Direction.Up
-				? PrevPartSibling(lastPartRef) != null
-				: NextPartSibling(lastPartRef) != null;
+				? PrevSliceSiblingPart(lastPartRef) != null
+				: NextSliceSiblingPart(lastPartRef) != null;
+		}
+
+		private XmlNode PrevSliceSiblingPart(XmlNode partRef)
+		{
+			Slice targetSlice = GetSibling(Direction.Up);
+			XmlNode targetNode = targetSlice?.MoveableFieldReferenceForSlice();
+			if (targetNode == null)
+				return null;
+
+			XmlNode prev = PrevPartSibling(partRef);
+			while (prev != null)
+			{
+				if (prev == targetNode)
+					return prev;
+				prev = PrevPartSibling(prev);
+			}
+			return null;
+		}
+
+		private XmlNode NextSliceSiblingPart(XmlNode partRef)
+		{
+			Slice targetSlice = GetSibling(Direction.Down);
+			XmlNode targetNode = targetSlice?.MoveableFieldReferenceForSlice();
+			if (targetNode == null)
+				return null;
+
+			XmlNode next = NextPartSibling(partRef);
+			while (next != null)
+			{
+				if (next == targetNode)
+					return next;
+				next = NextPartSibling(next);
+			}
+			return null;
 		}
 
 		private XmlNode PrevPartSibling(XmlNode partRef)
@@ -3024,7 +3171,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public bool OnDisplayMoveFieldUp(object args, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
-			display.Enabled = ContainingDataTree.ShowingAllFields && CheckValidMove(display, Direction.Up);
+			display.Enabled = CheckValidMove(display, Direction.Up);
 
 			return true;
 		}
@@ -3033,7 +3180,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public bool OnDisplayMoveFieldDown(object args, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
-			display.Enabled = ContainingDataTree.ShowingAllFields && CheckValidMove(display, Direction.Down);
+			display.Enabled = CheckValidMove(display, Direction.Down);
 			return true;
 		}
 
