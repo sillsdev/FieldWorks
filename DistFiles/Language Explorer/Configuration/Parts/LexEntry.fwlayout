@@ -4,7 +4,7 @@
   xsi:noNamespaceSchemaLocation='ViewsLayout.xsd'>
 	<layout class="LexEntry" type="detail" name="Normal">
 		<part ref="ChangeHandler"/>
-		<part label="Lexeme Form" ref="LexemeForm"/>
+		<part ref="LexemeForm"/>
 		<part label="Citation Form" ref="CitationFormAllV"/>
 		<part ref="DialectLabelsEntry" visibility="ifdata"/>
 		<part ref="ComplexFormEntries" visibility="always"/>

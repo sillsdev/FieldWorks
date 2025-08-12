@@ -2936,10 +2936,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (node.PreviousSibling != null)
 				// node has siblings, so it can be moved.
 				return true;
-			if (node.NextSibling == null)
-				// node has no siblings, so it can't be moved.
-				return false;
-			// This is the first node in a sequence.
+			// This is the first node in a (possibly singleton) sequence.
 			// Does it represent itself (and so can be moved) or the sequence as a whole (and so can't be moved at this level)?
 			// Look at the reference part nodes above node to determine.
 			bool found = false;
@@ -2958,11 +2955,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				string keyNodeLabel = XmlUtils.GetOptionalAttributeValue(keyNode, "label", null);
 				if (keyNodeLabel != null)
 					// keyNode represents the sequence as a whole.
-					// So node represents itself and can be moved down.
+					// So node represents itself and can be moved at this level.
+					// Example: node label="Category Info.", keyNodeLabel="Grammatical Info. Details".
 					return true;
 				if (keyNode.PreviousSibling != null || keyNode.NextSibling != null)
 					// node represents the sequence as a whole.
-					// So it does not represent itself and cannot be moved down.
+					// So it does not represent itself and cannot be moved at this level.
+					// Example with siblings: node label="Variant Type", keyNode ref="EntryRefs".
+					// Example without siblings: node label="Lexeme Form", keyNode ref="LexemeForm".
 					return false;
 			}
 			return true;
