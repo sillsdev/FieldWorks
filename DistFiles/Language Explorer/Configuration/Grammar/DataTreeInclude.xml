@@ -103,7 +103,7 @@
     <command id="CmdDataTree-MoveDown-POS-AffixTemplate" label="Move Affix Template Down" message="MoveDownObjectInSequence" icon="MoveDown">
       <parameters field="AffixTemplates" className="MoInflAffixTemplate"/>
     </command>
-    <command id="CmdDataTree-Insert-POS-InflectionClass-Subclasses" label="Insert Inflection Class" message="DataTreeInsert">
+    <command id="CmdDataTree-Insert-POS-InflectionClass-Subclasses" label="Insert Inflection Subclass" message="DataTreeInsert">
 	  <parameters field="Subclasses" className="MoInflClass"/>
 	</command>
 	<command id="CmdDataTree-Insert-POS-InflectionClass" label="Insert Inflection Class" message="DataTreeInsert">
@@ -248,7 +248,7 @@
 	  <!-- <item command="CmdDataTree-Help"/> -->
 	</menu>
 	<menu id="mnuDataTree-POS-InflectionClass">
-	  <item command="CmdDataTree-Delete-POS-InflectionClass"/>
+      <item command="CmdDataTree-Delete-POS-InflectionClass"/>
 	  <!-- <item command="CmdDataTree-Help"/> -->
 	</menu>
 	<menu id="mnuDataTree-POS-StemNames">
