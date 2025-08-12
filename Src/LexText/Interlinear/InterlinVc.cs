@@ -1832,7 +1832,7 @@ namespace SIL.FieldWorks.IText
 						if (word != null)
 						{
 							//test if there are multiple analyses that a user might choose from
-							if (SandboxBase.GetHasMultipleRelevantAnalyses(word))
+							if (SandboxBase.GetHasMultipleRelevantAnalyses(word, m_this.IsParsingDevMode()))
 							{
 								m_this.SetGuessing(m_vwenv, MultipleApprovedGuessColor); //There are multiple options, set the color
 							}

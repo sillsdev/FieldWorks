@@ -130,7 +130,7 @@ namespace SIL.FieldWorks.IText
 			//if this sandbox is presenting a wordform with multiple possible analyses then set the
 			//bg color indicator
 			if (selected.Analysis.Wordform != null &&
-				SandboxBase.GetHasMultipleRelevantAnalyses(selected.Analysis.Wordform))
+				SandboxBase.GetHasMultipleRelevantAnalyses(selected.Analysis.Wordform, IsParsingDevMode()))
 			{
 				color = InterlinVc.MultipleApprovedGuessColor;
 			}
@@ -152,6 +152,13 @@ namespace SIL.FieldWorks.IText
 			this.ResumeLayout();
 
 			SetSandboxSize();
+		}
+
+		internal bool IsParsingDevMode()
+		{
+			if (InterlinDoc?.GetMaster() == null)
+				return false;
+			return InterlinDoc.GetMaster().IsParsingDevMode();
 		}
 
 		internal virtual IAnalysisControlInternal CreateNewSandbox(AnalysisOccurrence selected)
