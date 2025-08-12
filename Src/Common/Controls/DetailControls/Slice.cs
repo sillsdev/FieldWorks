@@ -2940,7 +2940,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// Does it represent itself (and so can be moved) or the sequence as a whole (and so can't be moved at this level)?
 			// Look at the reference part nodes above node to determine.
 			bool found = false;
-			string label = XmlUtils.GetOptionalAttributeValue(node, "label", null);
 			for (int i = Key.Length - 1; i >= 0; i--)
 			{
 				XmlNode keyNode = Key[i] as XmlNode;
