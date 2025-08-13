@@ -457,27 +457,31 @@
 		</part>
 	</layout>
 
-   <layout class="MoInflClass" type="detail" name="SubClassesAllA">
-	  <part ref="NameAllA" label="Subclass Name" menu="mnuDataTree-POS-InflectionClass"/>
-	  <part ref="AbbreviationAllA"/>
-	  <part ref="DescriptionAllA"/>
-	  <part ref="SubClassesSection" label="Subclasses" menu="mnuDataTree-POS-InflectionClass-Subclasses">
-		 <indent indent="true">
-			<part ref="SubClasses" label="Subclasses"/>
-		 </indent>
-	  </part>
-   </layout>
+	<layout class="MoInflClass" type="detail" name="SubClassesAllA">
+		<part ref="NameAllA" label="Subclass Name" menu="mnuDataTree-POS-InflectionClass"/>
+		<part ref="AbbreviationAllA"/>
+		<part ref="DescriptionAllA"/>
+		<indent indent="true">
+			<part ref="SubClassesSection" label="Subclasses" menu="mnuDataTree-POS-InflectionClass-Subclasses">
+				<indent>
+					<part ref="SubClasses" label="Subclasses"/>
+				</indent>
+			</part>
+		</indent>
+	</layout>
 
-   <layout class="MoInflClass" type="detail" name="EditInflectionClass">
-	  <part ref="NameAllA" label="Inflection Class Name"  menu="mnuDataTree-POS-InflectionClass"/>
-	  <part ref="AbbreviationAllA"/>
-	  <part ref="DescriptionAllA"/>
-	  <part ref="SubClassesSection" label="Subclasses" menu="mnuDataTree-POS-InflectionClass-Subclasses">
-		  <indent indent="true">
-			 <part ref="SubClasses" label="Subclasses"/>
-		  </indent>
-	 </part>
-  </layout>
+	<layout class="MoInflClass" type="detail" name="EditInflectionClass">
+		<part ref="NameAllA" label="Inflection Class Name"  menu="mnuDataTree-POS-InflectionClass"/>
+		<part ref="AbbreviationAllA"/>
+		<part ref="DescriptionAllA"/>
+		<indent indent="true">
+			<part ref="SubClassesSection" label="Subclasses" menu="mnuDataTree-POS-InflectionClass-Subclasses">
+				<indent>
+					<part ref="SubClasses" label="Subclasses"/>
+				</indent>
+			</part>
+		</indent>
+	</layout>
    <layout class="MoInflClass" type="detail" name="SubClasses">
 	  <part ref="SubclassesAllA" label="Subclass" >
 		 </part>

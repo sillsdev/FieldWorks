@@ -443,11 +443,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private static string ToBracketedString(IEnumerable<ShapeNode> nodes, CharacterDefinitionTable table)
 		{
+			// This should be in defined as Shape.ToBracketedString in HermitCrab.
 			StringBuilder stringBuilder = new StringBuilder();
 			foreach (ShapeNode node in nodes)
 			{
 				string text = table.GetMatchingStrReps(node).FirstOrDefault();
-				if (text != null)
+				if (text != null && !IsDeleted(node))
 				{
 					if (text.Length > 1)
 						text = "(" + text + ")";
@@ -456,6 +457,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 
 			return stringBuilder.ToString();
+		}
+
+		private static bool IsDeleted(ShapeNode node)
+		{
+			// ShapeNode.IsDeleted is copied here since it is inaccessible from FieldWorks.
+			Annotation<ShapeNode> ann = node.Annotation;
+			if (ann.FeatureStruct.TryGetValue<SymbolicFeatureValue>(HCFeatureSystem.Deletion, out var value))
+			{
+				return (FeatureSymbol)value == HCFeatureSystem.Deleted;
+			}
+
+			return false;
 		}
 
 		private XElement CreateMorphemeElement(Morpheme morpheme)

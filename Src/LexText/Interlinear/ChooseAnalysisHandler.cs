@@ -288,8 +288,8 @@ namespace SIL.FieldWorks.IText
 			{
 				Opinions o = wa.GetAgentOpinion(
 					m_cache.LangProject.DefaultUserAgent);
-				// skip any analysis the user has disapproved.
-				if (o != Opinions.disapproves)
+				// skip any analysis the user has disapproved unless we are in parsing dev mode.
+				if (IsParsingDevMode() || o != Opinions.disapproves)
 				{
 					AddAnalysisItems(wa);
 					AddSeparatorLine();
