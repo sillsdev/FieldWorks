@@ -246,7 +246,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public override ITsMultiString get_MultiStringProp(int hvo, int tag)
 		{
-			if (tag == m_mlHeadwordFlid || tag == m_headwordRefFlid)
+			if (tag == m_mlHeadwordFlid || tag == m_headwordRefFlid || tag == m_mlOwnerOutlineFlid)
 			{
 				return new PublicationAwareMultiStringAccessor(hvo, tag, this);
 			}
