@@ -2937,8 +2937,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// node has siblings, so it can be moved.
 				return true;
 			// This is the first node in a (possibly singleton) sequence.
-			// Does it represent itself (and so can be moved) or the sequence as a whole (and so can't be moved at this level)?
-			// Look at the reference part nodes above node to determine.
+			// Sometimes the first node represents the sequence as a whole (e.g. "Variant Type").
+			// In this case, it is not moveable at this level, but where it is invoked (e.g. ref="EntryRefs").
+			// Other times, the sequence as a whole is represented by a header (e.g. "Category Info." is represented by "Grammatical Info. Details").
+			// In this case, the first node is moveable.
+			// We look at the reference part nodes above node to determine whether the node is moveable.
 			bool found = false;
 			for (int i = Key.Length - 1; i >= 0; i--)
 			{
@@ -2960,8 +2963,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				if (keyNode.PreviousSibling != null || keyNode.NextSibling != null)
 					// node represents the sequence as a whole.
 					// So it does not represent itself and cannot be moved at this level.
-					// Example with siblings: node label="Variant Type", keyNode ref="EntryRefs".
-					// Example without siblings: node label="Lexeme Form", keyNode ref="LexemeForm".
+					// Example: node label="Variant Type", keyNode ref="EntryRefs".
 					return false;
 			}
 			return true;
