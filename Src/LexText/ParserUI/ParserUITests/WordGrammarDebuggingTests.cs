@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2024 SIL International
+// Copyright (c) 2003-2025 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -302,6 +302,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			// Exocentric
 			ApplyTransform("niyaloximuraStep00.xml", "niyaloximuraStep01.xml");
 			ApplyTransform("niyaloximuraStep01.xml", "niyaloximuraStep02.xml");
+			// Compound rule with exception "features"
+			ApplyTransform("dagslurpStep00.xml", "dagslurpStep01.xml");
+			ApplyTransform("dagslurpStep01.xml", "dagslurpStep02.xml");
 			// Inflectional templates
 			ApplyTransform("biliStep00BadInflection.xml", "biliStep01BadInflection.xml");
 			// required prefix slot, optional prefix slot, stem, optional suffix slots
