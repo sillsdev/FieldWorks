@@ -107,8 +107,8 @@ Main template
 			<xsl:otherwise>
 				<xsl:variable name="analysisAffixes" select="$traceRoot/MorphologicalRuleAnalysisTrace[MorphologicalRule/@type = 'affix']"/>
 				<xsl:variable name="synthesisAffixes" select="$traceRoot/MorphologicalRuleSynthesisTrace[MorphologicalRule/@type = 'affix']"/>
-				<xsl:variable name="analysisCompoundRules" select="$traceRoot/MorphologicalRuleAnalysisTrace[MorphologicalRule/@type = 'compound']"/>
-				<xsl:variable name="synthesisCompoundRules" select="$traceRoot/MorphologicalRuleSynthesisTrace[MorphologicalRule/@type = 'compound']"/>
+				<xsl:variable name="analysisCompoundRules" select="$traceRoot/CompoundingRuleAnalysisTrace[MorphologicalRule/@type = 'compound'] | $traceRoot/MorphologicalRuleAnalysisTrace[MorphologicalRule/@type = 'compound']"/>
+				<xsl:variable name="synthesisCompoundRules" select="$traceRoot/CompoundingRuleSynthesisTrace[MorphologicalRule/@type = 'compound'] | $traceRoot/MorphologicalRuleSynthesisTrace[MorphologicalRule/@type = 'compound']"/>
 				<xsl:variable name="synthesizedWords" select="$traceRoot/LexLookupTrace/WordSynthesisTrace"/>
 				<xsl:variable name="parseCompleteTraces" select="$traceRoot/ParseCompleteTrace"/>
 				<xsl:variable name="parseNodes" select="$analysisAffixes | $synthesisAffixes | $analysisCompoundRules | $synthesisCompoundRules | $synthesizedWords | $parseCompleteTraces"/>
@@ -824,6 +824,11 @@ function Toggle(node, path, imgOffset)
 									<xsl:with-param name="reason" select="."/>
 								</xsl:call-template>
 							</xsl:when>
+							<xsl:when test="@type = 'missingProdRestrict'">
+								<xsl:call-template name="ShowCompoundingRuleFailure">
+									<xsl:with-param name="reason" select="."/>
+								</xsl:call-template>
+							</xsl:when>
 							<xsl:when test="@type = 'requiredInflType'">
 								<xsl:text>This null affix can only attach to an irregularly inflected form.</xsl:text>
 							</xsl:when>
@@ -1044,7 +1049,7 @@ ShowMorph
 						</xsl:choose>
 					</td>
 				</tr>
-				<xsl:if test="name()='MorphologicalRuleAnalysisTrace' or name()='MorphologicalRuleSynthesisTrace'">
+				<xsl:if test="name()='MorphologicalRuleAnalysisTrace' or name()='MorphologicalRuleSynthesisTrace' or name()='CompoundingRuleAnalysisTrace' or name()='CompoundingRuleSynthesisTrace'">
 					<xsl:if test="$curTemplate">
 						<tr>
 							<td>
@@ -1245,6 +1250,13 @@ ShowMorph
 		</table>
 	</xsl:template>
 
+	<!--
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		ShowMprFeatureFailure
+		Show why inflection classes or exception "features" failed
+		Parameters: reason
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
 	<xsl:template name="ShowMprFeatureFailure">
 		<xsl:param name="reason"/>
 		<xsl:variable name="featureTypeStr">
@@ -1287,6 +1299,56 @@ ShowMorph
 		<xsl:value-of select="$featureTypeStr"/>
 		<xsl:text>: </xsl:text>
 		<xsl:for-each select="$reason/ConstrainingMprFeatrues/MprFeature">
+			<xsl:value-of select="."/>
+			<xsl:call-template name="OutputListPunctuation">
+				<xsl:with-param name="sConjunction">
+					<xsl:choose>
+						<xsl:when test="$reason/MatchType = 'required'">
+							<xsl:text> and </xsl:text>
+						</xsl:when>
+						<xsl:when test="$reason/MatchType = 'excluded'">
+							<xsl:text> or </xsl:text>
+						</xsl:when>
+					</xsl:choose>
+				</xsl:with-param>
+				<xsl:with-param name="sFinalPunctuation" select="'.'"/>
+			</xsl:call-template>
+		</xsl:for-each>
+	</xsl:template>
+
+	<!--
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		ShowCompoundingRuleFailure
+		Show why a compounding rule failed due to exception "features"
+		Parameters: reason
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
+	<xsl:template name="ShowCompoundingRuleFailure">
+		<xsl:param name="reason"/>
+		<xsl:variable name="featureTypeStr" select="'exception features'"/>
+		<xsl:choose>
+			<xsl:when test="count($reason/StemProdRestricts/*) &gt; 0">
+				<xsl:text>The stem has the following </xsl:text>
+				<xsl:value-of select="$featureTypeStr"/>
+				<xsl:text>: </xsl:text>
+				<xsl:for-each select="$reason/StemProdRestricts">
+					<xsl:value-of select="."/>
+					<xsl:call-template name="OutputListPunctuation">
+						<xsl:with-param name="sConjunction" select="' and '"/>
+						<xsl:with-param name="sFinalPunctuation" select="','"/>
+					</xsl:call-template>
+				</xsl:for-each>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>The stem does not have any </xsl:text>
+				<xsl:value-of select="$featureTypeStr"/>
+				<xsl:text>,</xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
+		<xsl:text> but this rule only applies when the stem has at least one of the following </xsl:text>
+		<xsl:value-of select="$featureTypeStr"/>
+		<xsl:text>: </xsl:text>
+		<xsl:for-each select="$reason/RuleProdRestricts">
 			<xsl:value-of select="."/>
 			<xsl:call-template name="OutputListPunctuation">
 				<xsl:with-param name="sConjunction">
@@ -1355,8 +1417,8 @@ ShowMorph
 
 		<xsl:variable name="analysisAffixes" select="$traceRoot/MorphologicalRuleAnalysisTrace[MorphologicalRule/@type = 'affix']"/>
 		<xsl:variable name="synthesisAffixes" select="$traceRoot/MorphologicalRuleSynthesisTrace[MorphologicalRule/@type = 'affix']"/>
-		<xsl:variable name="analysisCompoundRules" select="$traceRoot/MorphologicalRuleAnalysisTrace[MorphologicalRule/@type = 'compound']"/>
-		<xsl:variable name="synthesisCompoundRules" select="$traceRoot/MorphologicalRuleSynthesisTrace[MorphologicalRule/@type = 'compound']"/>
+		<xsl:variable name="analysisCompoundRules" select="$traceRoot/CompoundingRuleAnalysisTrace[MorphologicalRule/@type = 'compound'] | $traceRoot/MorphologicalRuleAnalysisTrace[MorphologicalRule/@type = 'compound']"/>
+		<xsl:variable name="synthesisCompoundRules" select="$traceRoot/CompoundingRuleSynthesisTrace[MorphologicalRule/@type = 'compound'] | $traceRoot/MorphologicalRuleSynthesisTrace[MorphologicalRule/@type = 'compound']"/>
 		<xsl:variable name="synthesizedWords" select="$traceRoot/LexLookupTrace/WordSynthesisTrace"/>
 		<xsl:variable name="parseCompleteTraces" select="$traceRoot/ParseCompleteTrace"/>
 
