@@ -86,7 +86,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			if (m_fs != null)
 			{
-				m_rootb.SetRootObject(m_fs.Hvo, m_vc, (int)VcFrags.kfragName, m_rootb.Stylesheet);
+				m_rootb.SetRootObject(m_fs.Hvo, m_vc, (int)VcFrags.kfragShortName, m_rootb.Stylesheet);
 			}
 		}
 
