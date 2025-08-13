@@ -152,16 +152,6 @@
     <stem>
       <failure>
         <content>In applying the compound rule "noun-adverb -&gt; intransitive verb, ic:2": The category (N) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-        <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
-          <morph type="root" wordType="root">
-            <shortName>yiy (testing): wow</shortName>
-            <alloform>yiy</alloform>
-            <stemName id="45382">Present tense or 2nd Person</stemName>
-            <gloss>testing</gloss>
-            <citationForm>wow</citationForm>
-            <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
-          </morph>
-        </stem>
       </failure>
       <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
         <morph type="root" wordType="root">
@@ -233,28 +223,9 @@
     <stem>
       <failure>
         <content>In applying the compound rule "adverb-noun --&gt; intransitive verb, ic:2": The category (Adv) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-        <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
-          <morph type="root" wordType="root">
-            <shortName>yiy (testing): wow</shortName>
-            <alloform>yiy</alloform>
-            <stemName id="45382">Present tense or 2nd Person</stemName>
-            <gloss>testing</gloss>
-            <citationForm>wow</citationForm>
-            <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
-          </morph>
-        </stem>
       </failure>
       <failure>
         <content>In applying the compound rule "adverb-noun --&gt; intransitive verb, ic:2": The category (N) of the right-hand member of the compound rule is incompatible with the category (Adv) of the right-hand stem:</content>
-        <stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-          <morph type="root" wordType="root">
-            <shortName>ximu (slowly): ximu</shortName>
-            <alloform>ximu</alloform>
-            <gloss>slowly</gloss>
-            <citationForm>ximu</citationForm>
-            <stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
-          </morph>
-        </stem>
       </failure>
       <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
         <morph type="root" wordType="root">
@@ -326,28 +297,9 @@
     <stem>
       <failure>
         <content>In applying the compound rule "adj-noun with linker ": The category (adj) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-        <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
-          <morph type="root" wordType="root">
-            <shortName>yiy (testing): wow</shortName>
-            <alloform>yiy</alloform>
-            <stemName id="45382">Present tense or 2nd Person</stemName>
-            <gloss>testing</gloss>
-            <citationForm>wow</citationForm>
-            <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
-          </morph>
-        </stem>
       </failure>
       <failure>
         <content>In applying the compound rule "adj-noun with linker ": The category (N) of the right-hand member of the compound rule is incompatible with the category (Adv) of the right-hand stem:</content>
-        <stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-          <morph type="root" wordType="root">
-            <shortName>ximu (slowly): ximu</shortName>
-            <alloform>ximu</alloform>
-            <gloss>slowly</gloss>
-            <citationForm>ximu</citationForm>
-            <stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
-          </morph>
-        </stem>
       </failure>
       <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
         <morph type="root" wordType="root">
@@ -488,28 +440,9 @@
     <stem>
       <failure>
         <content>In applying the compound rule "noun-transitive verb ": The category (N) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-        <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
-          <morph type="root" wordType="root">
-            <shortName>yiy (testing): wow</shortName>
-            <alloform>yiy</alloform>
-            <stemName id="45382">Present tense or 2nd Person</stemName>
-            <gloss>testing</gloss>
-            <citationForm>wow</citationForm>
-            <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
-          </morph>
-        </stem>
       </failure>
       <failure>
         <content>In applying the compound rule "noun-transitive verb ": The category (trans) of the right-hand member of the compound rule is incompatible with the category (Adv) of the right-hand stem:</content>
-        <stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-          <morph type="root" wordType="root">
-            <shortName>ximu (slowly): ximu</shortName>
-            <alloform>ximu</alloform>
-            <gloss>slowly</gloss>
-            <citationForm>ximu</citationForm>
-            <stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
-          </morph>
-        </stem>
       </failure>
       <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
         <morph type="root" wordType="root">
@@ -581,28 +514,9 @@
     <stem>
       <failure>
         <content>In applying the compound rule "noun-Intransitive verb ": The category (N) of the left-hand member of the compound rule is incompatible with the category (trans) of the left-hand stem:</content>
-        <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
-          <morph type="root" wordType="root">
-            <shortName>yiy (testing): wow</shortName>
-            <alloform>yiy</alloform>
-            <stemName id="45382">Present tense or 2nd Person</stemName>
-            <gloss>testing</gloss>
-            <citationForm>wow</citationForm>
-            <stemMsa cat="168" catAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+" />
-          </morph>
-        </stem>
       </failure>
       <failure>
         <content>In applying the compound rule "noun-Intransitive verb ": The category (intrans) of the right-hand member of the compound rule is incompatible with the category (Adv) of the right-hand stem:</content>
-        <stem syncat="73" syncatAbbr="Adv" inflClass="0" inflClassAbbr="" requiresInfl="-">
-          <morph type="root" wordType="root">
-            <shortName>ximu (slowly): ximu</shortName>
-            <alloform>ximu</alloform>
-            <gloss>slowly</gloss>
-            <citationForm>ximu</citationForm>
-            <stemMsa cat="73" catAbbr="Adv" inflClass="0" requiresInfl="-" />
-          </morph>
-        </stem>
       </failure>
       <stem syncat="168" syncatAbbr="trans" inflClass="178" inflClassAbbr="1" requiresInfl="+">
         <morph type="root" wordType="root">

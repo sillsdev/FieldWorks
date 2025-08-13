@@ -579,7 +579,33 @@ rule {Stem via compound rule <xsl:value-of select="@Id"/>}
 		 <!-- Common to all compound rules -->
 		&lt;Stem_1 blocksInflection&gt; = - | This stem can now be inflected
 						  | constraints
-<xsl:for-each select="ToExceptionFeatures/FsFeatStruc/FsClosedValue | ToExceptionFeatures/FsFeatStruc/FsNegatedValue">
+<xsl:variable name="iLPR" select="count($LeftMsa/ProdRestrict)"/>
+		<xsl:for-each select="$LeftMsa/ProdRestrict">
+			<xsl:if test="position()=1">
+				<xsl:text>
+					&lt;Stem_2&gt; == </xsl:text>
+			</xsl:if>
+			<xsl:text> [exception:[</xsl:text>
+			<xsl:value-of select="@dst"/>
+			<xsl:text>:+]]</xsl:text>
+			<xsl:if test="position() &lt; $iLPR">
+				<xsl:text> /&#xa;</xsl:text>
+			</xsl:if>
+		</xsl:for-each>
+		<xsl:variable name="iRPR" select="count($RightMsa/ProdRestrict)"/>
+		<xsl:for-each select="$RightMsa/ProdRestrict">
+			<xsl:if test="position()=1">
+				<xsl:text>
+			&lt;Stem_3&gt; == </xsl:text>
+			</xsl:if>
+			<xsl:text> [exception:[</xsl:text>
+			<xsl:value-of select="@dst"/>
+			<xsl:text>:+]]</xsl:text>
+			<xsl:if test="position() &lt; $iRPR">
+				<xsl:text> /&#xa;</xsl:text>
+			</xsl:if>
+		</xsl:for-each>
+		<xsl:for-each select="ToExceptionFeatures/FsFeatStruc/FsClosedValue | ToExceptionFeatures/FsFeatStruc/FsNegatedValue">
 		&lt;Stem_1 exception <xsl:value-of select="@Feature"/>&gt;      &lt;= +
 	  </xsl:for-each>
 		 <xsl:variable name="leftFeatures" select="key('StemMsaID', LeftMsa/@dst)/ExceptionFeatures/FsFeatStruc"/>
