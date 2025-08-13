@@ -2893,7 +2893,7 @@
 			<slice editor="summary" layout="Edit" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true"/>
 		</part>
 		<part id="PhMetathesisRule-Detail-RuleFormula" type="detail">
-			<slice id="RuleFormula" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.MetaRuleFormulaSlice" menu="mnuDataTree-Help" helpTopicID="khtpField-PhMetathesisRule-RuleFormula"/>
+			<slice id="RuleFormula" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.MetaRuleFormulaSlice" menu="mnuDataTree-Help" helpTopicID="khtpChoose-Grammar-PhonFeats-MetaRuleFormulaControl"/>
 		</part>
 	</bin>
 
