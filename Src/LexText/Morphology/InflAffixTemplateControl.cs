@@ -1065,7 +1065,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						slot.Name.BestAnalysisAlternative.Text == null ||
 						slot.Name.BestAnalysisAlternative.Text.StartsWith(m_sUnnamedSlotName))
 					{
-						string sValue = m_sUnnamedSlotName;
+						int len = m_sUnnamedSlotName.Length;
+						string sValue = slot.Name.BestAnalysisAlternative.Text.Substring(len);
 						int i;
 						try
 						{
