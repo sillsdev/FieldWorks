@@ -2241,17 +2241,28 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			for (int islice = IndexInContainer + 1; islice < cslice; ++islice)
 			{
 				var slice = ContainingDataTree.Slices[islice];
+				// Stop if we get past the children of the current object.
+				if (!EmbeddedSlice(slice))
+					break;
 				if (slice.Object.Hvo == hvo)
 				{
 					if (slice.Expansion == DataTree.TreeItemState.ktisCollapsed)
 						slice.TreeNode.ToggleExpansion(islice);
 					return slice;
 				}
-				// Stop if we get past the children of the current object.
-				if (slice.Indent <= Indent)
-					break;
 			}
 			return null;
+		}
+
+		private bool EmbeddedSlice(Slice slice)
+		{
+			foreach (object obj in Key)
+			{
+				var node = obj as XmlNode;
+				if (IsRefPartNode(node) && !slice.Key.Contains(node))
+					return false;
+			}
+			return true;
 		}
 
 
