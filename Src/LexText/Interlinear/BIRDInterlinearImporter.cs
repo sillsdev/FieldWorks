@@ -719,6 +719,8 @@ namespace SIL.FieldWorks.IText
 
 		private static IAnalysis CreateWordAnalysisStack(LcmCache cache, Word word)
 		{
+			if (FindExistingAnalysisStack(cache, word, out var existingStack))
+				return existingStack;
 			if (word.Items == null || word.Items.Length <= 0) return null;
 			IAnalysis analysis = null;
 			var wsFact = cache.WritingSystemFactory;
@@ -847,6 +849,143 @@ namespace SIL.FieldWorks.IText
 			return analysis;
 		}
 
+		private static bool FindExistingAnalysisStack(LcmCache cache, Word word,
+			out IAnalysis analysis)
+		{
+			var wsFact = cache.WritingSystemFactory;
+			analysis = null;
+
+			// First, collect all expected forms and glosses from the Word
+			var expectedForms = new Dictionary<int, string>(); // wsHandle -> expected value
+			var expectedGlosses = new Dictionary<int, string>(); // wsHandle -> expected gloss
+			IWfiWordform candidateWordform = null;
+
+			foreach (var wordItem in word.Items)
+			{
+				if (wordItem.Value == null)
+					continue;
+
+				var ws = GetWsEngine(wsFact, wordItem.lang);
+				ITsString wordForm = null;
+
+				switch (wordItem.type)
+				{
+					case "txt":
+						wordForm = TsStringUtils.MakeString(wordItem.Value, ws.Handle);
+						expectedForms[ws.Handle] = wordItem.Value;
+
+						// Try to find a candidate wordform if we haven't found one yet
+						if (candidateWordform == null)
+						{
+							IWfiWordform wf;
+							if (cache.ServiceLocator.GetInstance<IWfiWordformRepository>()
+								.TryGetObject(wordForm, out wf))
+								candidateWordform = wf;
+						}
+
+						break;
+
+					case "punct":
+						wordForm = TsStringUtils.MakeString(wordItem.Value, ws.Handle);
+						expectedForms[ws.Handle] = wordItem.Value;
+
+						// For punctuation, we can return early since they don't have glosses
+						if (candidateWordform == null)
+						{
+							IPunctuationForm pf;
+							if (cache.ServiceLocator.GetInstance<IPunctuationFormRepository>()
+								.TryGetObject(wordForm, out pf))
+							{
+								analysis = pf;
+								return VerifyFormsMatch(pf, expectedForms);
+							}
+						}
+
+						break;
+
+					case "gls":
+						// Only consider human-approved glosses
+						if (wordItem.analysisStatusSpecified &&
+							wordItem.analysisStatus != analysisStatusTypes.humanApproved)
+							continue;
+
+						expectedGlosses[ws.Handle] = wordItem.Value;
+						break;
+				}
+			}
+
+			// If we didn't find any candidate wordform, return false
+			if (candidateWordform == null)
+				return false;
+
+			// Verify that all expected forms match the stored forms
+			if (!VerifyFormsMatch(candidateWordform, expectedForms))
+				return false;
+
+			// If no glosses are expected, the wordform itself is the match
+			if (expectedGlosses.Count == 0)
+			{
+				analysis = candidateWordform;
+				return true;
+			}
+
+			// Look for matching analysis with all expected glosses
+			foreach (var wfiAnalysis in candidateWordform.AnalysesOC)
+			foreach (var wfiGloss in wfiAnalysis.MeaningsOC)
+				if (VerifyGlossesMatch(wfiGloss, expectedGlosses))
+				{
+					// Check analysis status compatibility
+					if (word.morphemes?.analysisStatus == analysisStatusTypes.guess)
+						// If morphemes are marked as guess, return the wordform instead
+						analysis = candidateWordform;
+					else
+						analysis = wfiGloss;
+					return true;
+				}
+
+			// No matching analysis found with all expected glosses
+			return false;
+		}
+
+		// Helper method to verify that all expected forms match the stored forms
+		private static bool VerifyFormsMatch(IAnalysis analysis,
+			Dictionary<int, string> expectedForms)
+		{
+			foreach (var expectedForm in expectedForms)
+			{
+				var wsHandle = expectedForm.Key;
+				var expectedValue = expectedForm.Value;
+				ITsString storedForm = null;
+
+				if (analysis is IWfiWordform wf)
+					storedForm = wf.Form.get_String(wsHandle);
+				else if (analysis is IPunctuationForm pf)
+					storedForm = pf.GetForm(wsHandle);
+
+				if (storedForm == null || storedForm.Text != expectedValue)
+					return false; // Mismatch found
+			}
+
+			return true;
+		}
+
+		// Helper method to verify that all expected glosses match the stored glosses
+		private static bool VerifyGlossesMatch(IWfiGloss wfiGloss,
+			Dictionary<int, string> expectedGlosses)
+		{
+			foreach (var expectedGloss in expectedGlosses)
+			{
+				var wsHandle = expectedGloss.Key;
+				var expectedValue = expectedGloss.Value;
+
+				var storedGloss = wfiGloss.Form.get_String(wsHandle);
+				if (storedGloss == null || storedGloss.Text != expectedValue)
+					return false; // Mismatch found
+			}
+
+			return true;
+		}
+
 		/// <summary>
 		/// add any alternative forms (in alternative writing systems) to the wordform.
 		/// Overwrite any existing alternative form in a given alternative writing system.
@@ -893,7 +1032,7 @@ namespace SIL.FieldWorks.IText
 						dictMapLangToGloss.Add(wordGlossItem.lang, wordGlossItem.Value);
 						continue;
 					}
-					if (wordGlossItem.Value == gloss) continue;
+					if (wordGlossItem.Value.Equals(gloss)) continue;
 					fHasMultipleGlossesInSameLanguage = true;
 					break;
 				}
