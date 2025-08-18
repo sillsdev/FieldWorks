@@ -2864,15 +2864,15 @@ namespace SIL.FieldWorks.XWorks
 			var b = m_propertyTable.GetValue<StatusBarTextBox>("ParsingDev");
 			if (b == null) //Other xworks apps may not have this panel
 				return;
-			if (!m_propertyTable.GetBoolProperty("ParsingDevMode", false, PropertyTable.SettingsGroup.LocalSettings))
-			{
-				b.BackBrush = System.Drawing.Brushes.Transparent;
-				b.TextForReal = "";
-			}
-			else
+			if (Id == "interlinearTexts"  && m_propertyTable.GetBoolProperty("ParsingDevMode", false, PropertyTable.SettingsGroup.LocalSettings))
 			{
 				b.BackBrush = System.Drawing.Brushes.Tan;
 				b.TextForReal = xWorksStrings.ParsingDev;
+			}
+			else
+			{
+				b.BackBrush = System.Drawing.Brushes.Transparent;
+				b.TextForReal = "";
 			}
 		}
 
