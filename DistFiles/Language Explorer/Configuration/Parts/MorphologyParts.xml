@@ -2669,7 +2669,13 @@
 		<part id="PhNaturalClass-Detail-DescriptionAllA" type="Detail">
 			<slice field="Description" label="Description" editor="multistring" ws="all analysis"/>
 		</part>
-	</bin>
+        <!-- The following is a hack to keep the Phoneme/Features column from disappearing (LT-22171).
+             The Segments field is technically part of PhNCSegments, but the display code is expecting PhNaturalClass.
+        -->
+        <part id="PhNaturalClass-Jt-Segments" type="JtView">
+          <seq field="Segments" layout="shortname" />
+        </part>
+    </bin>
 	<bin class="PhNCSegments">
 		<part id="PhNCSegments-Detail-Segments" type="Detail">
 			<slice field="Segments" label="Phonemes" editor="defaultVectorReference">
