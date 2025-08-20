@@ -1895,6 +1895,18 @@ namespace SIL.FieldWorks.XWorks
 			get
 			{
 				CheckDisposed();
+				// Try getting the class from an item first
+				// since the items may be a subclass of the field class.
+				// This fixes LT-22171.
+				if (SortedObjects.Count > 0)
+				{
+					IManyOnePathSortItem item = SortedObjects[0] as IManyOnePathSortItem;
+					if (item != null)
+					{
+						ICmObject obj = m_cache.ServiceLocator.GetObject(item.KeyObject);
+						return obj.ClassID;
+					}
+				}
 				return VirtualListPublisher.MetaDataCache.GetDstClsId(m_flid);
 			}
 		}
