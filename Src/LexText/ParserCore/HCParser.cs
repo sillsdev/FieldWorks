@@ -29,6 +29,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private ParserModelChangeListener m_changeListener;
 		private bool m_forceUpdate;
 		private bool m_guessRoots;
+		private bool m_mergeAnalyses;
 
 		internal const string CRuleID = "ID";
 		internal const string FormID = "ID";
@@ -53,6 +54,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_changeListener = new ParserModelChangeListener(m_cache);
 			m_forceUpdate = true;
 			m_guessRoots = true;
+			m_mergeAnalyses = true;
 		}
 
 		#region IParser implementation
@@ -156,16 +158,20 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				XElement parserParamsElem = XElement.Parse(m_cache.LanguageProject.MorphologicalDataOA.ParserParameters);
 				XElement delReappsElem = parserParamsElem.Elements("HC").Elements("DelReapps").FirstOrDefault();
 				XElement guessRootsElem = parserParamsElem.Elements("HC").Elements("GuessRoots").FirstOrDefault();
+				XElement mergeAnalysesElem = parserParamsElem.Elements("HC").Elements("MergeAnalyses").FirstOrDefault();
 				XElement maxRootsElem = parserParamsElem.Elements("HC").Elements("MaxRoots").FirstOrDefault();
 				if (delReappsElem != null)
 					delReapps = (int) delReappsElem;
 				if (guessRootsElem != null)
 					m_guessRoots = (bool) guessRootsElem;
+				if (mergeAnalysesElem != null)
+					m_mergeAnalyses = (bool) mergeAnalysesElem;
 				if (maxRootsElem != null)
 					maxStemCount = int.Parse(maxRootsElem.Value);
 			}
 			m_morpher = new Morpher(m_traceManager, m_language) { DeletionReapplications = delReapps };
 			m_morpher.MaxStemCount = maxStemCount;
+			m_morpher.MergeEquivalentAnalyses = m_mergeAnalyses;
 		}
 
 		private XDocument ParseToXml(string form, bool tracing, IEnumerable<int> selectTraceMorphs)
