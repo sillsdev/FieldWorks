@@ -3,16 +3,17 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Windows.Forms;
 using System.Drawing;
-using SIL.LCModel;
+using System.Linq;
+using System.Windows.Forms;
 using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.FdoUi;
-using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.LCModel.Core.Text;
+using SIL.FieldWorks.FdoUi;
+using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 
 
 namespace SIL.FieldWorks.IText
@@ -311,9 +312,7 @@ namespace SIL.FieldWorks.IText
 		{
 			AddItem(wa,
 				MakeAnalysisStringRep(wa, m_cache, StyleSheet != null, (m_owner as SandboxBase).RawWordformWs), true);
-			var guess_services = new AnalysisGuessServices(m_cache);
-			var sorted_glosses = guess_services.GetSortedGlossGuesses(wa, m_occurrence);
-			foreach (var gloss in sorted_glosses)
+			foreach (var gloss in wa.MeaningsOC.ToList())
 			{
 				AddItem(gloss, MakeGlossStringRep(gloss, m_cache, StyleSheet != null), true);
 			}
