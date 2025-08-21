@@ -552,7 +552,7 @@
 \lx f77a1f4f-18b7-48e4-b1c1-cf54fe56ea94
 \g Adjectivizer
 \c W/W
-\o 1
+\o -1
 \wc derivPfx
 \a ul {9feb6014-cdb1-41a8-aabc-69fab81f4175}
 \eType infix
