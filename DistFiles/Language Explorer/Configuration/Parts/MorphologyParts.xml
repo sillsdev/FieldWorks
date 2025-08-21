@@ -741,7 +741,16 @@
 				</if>
 			</if>
 		</part>
-	</bin>
+        <!-- The following is a hack to keep Categories columns from disappearing (LT-22171).
+             These field are technically part of PartOfSpeech, but the display code is expecting CmPossibility.
+        -->
+        <part id="CmPossibility-Jt-inflClassesBest" type="jtview">
+          <seq field="InflectionClasses" layout="NameBest"/>
+        </part>
+        <part id="CmPossibility-Jt-defaultInflClassBest" type="jtview">
+          <obj field="DefaultInflectionClass" layout="NameBest"/>
+        </part>
+    </bin>
 	<bin class="MoMorphSynAnalysis">
 		<part id="MoMorphSynAnalysis-Detail-MainEdit" type="Detail">
 			<!-- Implements what should be the first thing shown for all MSA classes,
