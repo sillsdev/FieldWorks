@@ -32,6 +32,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		ICmObject m_obj;		// item clicked
 		IMoInflAffixSlot m_slot;		// slot to which chosen MSA belongs
 		IMoInflAffixTemplate m_template;
+		IMoInflAffixSlot m_newSlot;
+		int m_flid;
+		int m_ihvo;
 		string m_sStem;
 		string m_sSlotChooserTitle;
 		string m_sSlotChooserInstructionalText;
@@ -609,23 +612,39 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					{
 						HandleInsertAroundStem(fBefore, chosenSlot, out flid, out ihvo);
 					}
+					m_flid = flid;
+					m_ihvo = ihvo;
 					m_rootb.Reconstruct(); // Ensure that the table gets redrawn
-					if (chooser.LinkExecuted)
-					{
-						// Select the header of the newly added slot in case the user wants to edit it.
-						// See LT-8209.
-						SelLevInfo[] rgvsli = new SelLevInfo[1];
-						rgvsli[0].hvo = chosenSlot.Hvo;
-						rgvsli[0].ich = -1;
-						rgvsli[0].ihvo = ihvo;
-						rgvsli[0].tag = flid;
-						m_rootb.MakeTextSelInObj(0, 1, rgvsli, 0, null, true, true, true, false, true);
-					}
 #if CausesDebugAssertBecauseOnlyWorksOnStTexts
 					RefreshDisplay();
 #endif
 				}
 			}
+		}
+
+		public bool OnSelectNewSlot(object commandObject)
+		{
+			IMoInflAffixSlot newSlot = commandObject as IMoInflAffixSlot;
+			if (newSlot != null)
+			{
+				// Select the header of the newly added slot in case the user wants to edit it.
+				// See LT-8209.
+				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
+					Cache.ActionHandlerAccessor,
+					() =>
+					{
+						int defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
+						newSlot.Name.set_String(defAnalWs, TsStringUtils.MakeString(m_sNewSlotName, defAnalWs));
+					});
+				SelLevInfo[] rgvsli = new SelLevInfo[1];
+				rgvsli[0].hvo = newSlot.Hvo;
+				rgvsli[0].ich = -1;
+				rgvsli[0].ihvo = m_ihvo;
+				rgvsli[0].tag = m_flid;
+				this.FindParentSlice().TakeFocus();
+				m_rootb.MakeTextSelInObj(0, 1, rgvsli, 0, null, true, true, true, false, true);
+			}
+			return true;
 		}
 
 		private bool GetIsPrefixSlot(bool fBefore)
