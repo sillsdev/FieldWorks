@@ -1150,7 +1150,7 @@ DoDerivAffix
 		</xsl:call-template>
 		<xsl:text>
 \o </xsl:text>
-		<xsl:if test="contains($sTypes, 'prefix')">
+		<xsl:if test="contains($sTypes, 'prefix') or contains($sTypes, 'infix')">
 			<xsl:text>-</xsl:text>
 		</xsl:if>
 		<xsl:text>1</xsl:text>
