@@ -205,25 +205,25 @@ namespace SIL.FieldWorks.IText
 			WordGloss
 		}
 
-		public void ImportWordsFrag(Func<Stream> createWordsFragDocStream, ImportAnalysesLevel analysesLevel)
+		public void ImportWordsFrag(Func<Stream> createWordsFragDocStream, ImportAnalysesLevel analysesLevel, int mainWs)
 		{
 			using (var stream = createWordsFragDocStream.Invoke())
 			{
 				var serializer = new XmlSerializer(typeof(WordsFragDocument));
 				var wordsFragDoc = (WordsFragDocument)serializer.Deserialize(stream);
 				NormalizeWords(wordsFragDoc.Words);
-				ImportWordsFrag(wordsFragDoc.Words, analysesLevel);
+				ImportWordsFrag(wordsFragDoc.Words, analysesLevel, mainWs);
 			}
 		}
 
-		internal void ImportWordsFrag(Word[] words, ImportAnalysesLevel analysesLevel)
+		internal void ImportWordsFrag(Word[] words, ImportAnalysesLevel analysesLevel, int mainWs)
 		{
 			s_importOptions = new ImportInterlinearOptions {AnalysesLevel = analysesLevel};
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
 				foreach (var word in words)
 				{
-					CreateWordAnalysisStack(m_cache, word);
+					CreateWordformWithWfiAnalysis(m_cache, word, mainWs);
 				}
 			});
 		}

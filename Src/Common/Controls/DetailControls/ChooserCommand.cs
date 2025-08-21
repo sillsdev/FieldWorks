@@ -125,11 +125,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				() =>
 					{
 						pos.AffixSlotsOC.Add(slot);
-						string sNewSlotName = StringTable.Table.GetString("NewSlotName", "Linguistics/Morphology/TemplateTable");
-						int defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
-						slot.Name.set_String(defAnalWs, TsStringUtils.MakeString(sNewSlotName, defAnalWs));
 						slot.Optional = m_fOptional;
 					});
+			m_mediator.BroadcastMessage("SelectNewSlot", slot);
 			// Enhance JohnT: usually the newly created slot will also get inserted into a template.
 			// Ideally we would make both part of the same UOW. However the code is in two distinct DLLs (see MorphologyEditor.dll).
 			return ObjectLabel.CreateObjectLabel(m_cache, slot, "");
