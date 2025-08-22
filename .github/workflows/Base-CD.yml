@@ -1,0 +1,193 @@
+name: Base Installer
+on:
+  push:
+    branches: ["release/9.3", "feature/gha-cd"]
+  workflow_dispatch:
+    inputs:
+      fw_ref:
+        description: 'Commit-ish (branch, tag, SHA) to checkout for the main repository'
+        required: false
+        default: ''
+      helps_ref:
+        description: 'Commit-ish for helps repository'
+        required: false
+        default: 'develop'
+      installer_ref:
+        description: 'Commit-ish for PatchableInstaller repository'
+        required: false
+        default: 'master'
+      localizations_ref:
+        description: 'Commit-ish for localization repository'
+        required: false
+        default: 'develop'
+      lcm_ref:
+        description: 'Commit-ish for liblcm repository'
+        required: false
+        default: 'master'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  debug_build_and_test:
+    env:
+      CROWDIN_API_KEY: ${{ secrets.FLEX_CROWDIN_API }}
+      LcmRootDir: ${{ github.workspace }}/Localizations/LCM
+    name: Build Debug and run Tests
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Files
+        uses: actions/checkout@v4
+        id: checkout
+        with:
+          ref: ${{ github.event.inputs.fw_ref || github.ref }}
+          fetch-depth: 0
+      - name: Checkout Helps
+        uses: actions/checkout@v4
+        id: helps-checkout
+        with:
+          repository: 'https://github.com/sillsdev/FwHelps'
+          ref: ${{ github.event.inputs.helps_ref || 'develop' }}
+          fetch-depth: 0
+          path: 'DistFiles/Helps'
+      - name: Checkout PatchableInstaller
+        uses: actions/checkout@v4
+        id: installer-checkout
+        with:
+          repository: 'https://github.com/sillsdev/genericinstaller'
+          ref: ${{ github.event.inputs.installer_ref || 'master' }}
+          fetch-depth: 0
+          path: 'PatchableInstaller'
+      - name: Checkout Localizations
+        uses: actions/checkout@v4
+        id: loc-checkout
+        with:
+          repository: 'https://github.com/sillsdev/FwLocalizations'
+          ref: ${{ github.event.inputs.localizations_ref || 'develop' }}
+          fetch-depth: 0
+          path: 'Localizations'
+      - name: Checkout liblcm
+        uses: actions/checkout@v4
+        id: liblcm-checkout
+        with:
+          repository: 'https://github.com/sillsdev/liblcm'
+          ref: ${{ github.event.inputs.installer_ref || 'master' }}
+          fetch-depth: 0
+          path: 'Localizations/LCM'
+
+      - name: Download 461 targeting pack
+        uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9 # 1.6.0
+        id: downloadfile  # Remember to give an ID if you need the output filename
+        with:
+            url: "https://download.microsoft.com/download/F/1/D/F1DEB8DB-D277-4EF9-9F48-3A65D4D8F965/NDP461-DevPack-KB3105179-ENU.exe"
+            target: public/
+                
+      - name: Install targeting pack
+        shell: cmd
+        working-directory: public
+        run: NDP461-DevPack-KB3105179-ENU.exe /q
+
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: | 
+            2.1.x
+            3.1.x
+            5.0.x
+      - name: Install Overcrowdin
+        shell: cmd
+        run: |
+          dotnet tool update -g overcrowdin || dotnet tool install -g overcrowdin
+          overcrowdin exporttranslations -v        
+      - name: Prepare for build
+        shell: cmd
+        working-directory: Build
+        run: build64.bat /t:WriteNonlocalDevelopmentPropertiesFile
+
+      - name: Build Debug and run tests
+        id: build_installer
+        shell: powershell
+        run: |
+          cd Build
+          .\build64.bat /t:BuildBaseInstaller /property:config=release;action=test;desktopNotAvailable=true /v:d /bl ^| tee-object -FilePath build.log
+          cd ..
+          cd BuildDir
+          md5sum *.exe > md5.txt
+      
+      - name: Scan Debug Build Output
+        shell: powershell
+        working-directory: Build
+        run: |
+          $results = Select-String -Path "build.log" -Pattern "^\s*[1-9][0-9]* Error\(s\)"
+          if ($results) {
+              foreach ($result in $results) {
+                  Write-Host "Found errors in build.log $($result.LineNumber): $($result.Line)" -ForegroundColor red 
+              }
+              exit 1
+          } else {
+              Write-Host "No errors found" -ForegroundColor green 
+              exit 0
+          }
+
+      - name: Capture Test Results
+        shell: powershell
+        working-directory: Build
+        run: .\NUnitReport /a ^| tee-object -FilePath test-results.log
+
+      - name: Report Test Results
+        uses: sillsdev/fw-nunitreport-action@v2.0.0
+        with:
+          log-path: Build/test-results.log
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract burn engines
+        id: extract_engines
+        if: github.event_name != 'pull_request'
+        working-directory: BuildDir
+        shell: cmd
+        run: |
+          insignia -ib FieldWorks_Offline.exe -o offline-engine.exe
+          insignia -ib FieldWorks_Online.exe -o online-engine.exe
+
+      - name: Sign Engines
+        if: github.event_name != 'pull_request'
+        uses: sillsdev/codesign/trusted-signing-action@v3
+        with:
+          credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
+          files-folder: BuildDir
+          files-folder-filter: '*-engine.exe'
+          description:  'FieldWorks Installer'
+          description-url: 'https://software.sil.org/fieldworks/'
+        
+      - name: Reattach Engines
+        if: github.event_name != 'pull_request'
+        working-directory: BuildDir
+        shell: cmd
+        run: |
+          insignia -ab online-engine.exe FlexBridge_Online.exe -o FlexBridge_Online.exe
+          insignia -ab offline-engine.exe FlexBridge_Offline.exe -o FlexBridge_Offline.exe
+
+      - name: Sign Bundles
+        if: github.event_name != 'pull_request'
+        uses: sillsdev/codesign/trusted-signing-action@v3
+        with:
+          credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
+          files-folder: BuildDir
+          files-folder-filter: FieldWorks_*.exe
+          description:  'FieldWorks Installer'
+          description-url: 'https://software.sil.org/fieldworks/'
+                    
+      - name: Upload Signed Installers
+        uses: actions/upload-artifact@v4
+        if: github.event_name != 'pull_request'
+        with:
+          name: FieldWorks-Installers
+          path: BuildDir/FieldWorks_*.exe
+          if-no-files-found: warn
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: Build/*.log
+          path: Build/*.binlog
