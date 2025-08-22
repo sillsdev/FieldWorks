@@ -24,10 +24,6 @@ on:
         description: 'Commit-ish for liblcm repository'
         required: false
         default: 'master'
-      s3_copy:
-        description: 'Copy this build result to S3'
-        required: false
-        default: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -38,6 +34,7 @@ jobs:
     env:
       CROWDIN_API_KEY: ${{ secrets.FLEX_CROWDIN_API }}
       LcmRootDir: ${{ github.workspace }}/Localizations/LCM
+      FILESTOSIGNLATER: ./signExternally
     name: Build Debug and run Tests
     runs-on: windows-latest
     steps:
@@ -47,6 +44,7 @@ jobs:
         with:
           ref: ${{ github.event.inputs.fw_ref || github.ref }}
           fetch-depth: 0
+
       - name: Checkout Helps
         uses: actions/checkout@v4
         id: helps-checkout
@@ -55,6 +53,7 @@ jobs:
           ref: ${{ github.event.inputs.helps_ref || 'develop' }}
           fetch-depth: 0
           path: 'DistFiles/Helps'
+
       - name: Checkout PatchableInstaller
         uses: actions/checkout@v4
         id: installer-checkout
@@ -63,6 +62,7 @@ jobs:
           ref: ${{ github.event.inputs.installer_ref || 'master' }}
           fetch-depth: 0
           path: 'PatchableInstaller'
+
       - name: Checkout Localizations
         uses: actions/checkout@v4
         id: loc-checkout
@@ -86,7 +86,7 @@ jobs:
         with:
             url: "https://download.microsoft.com/download/F/1/D/F1DEB8DB-D277-4EF9-9F48-3A65D4D8F965/NDP461-DevPack-KB3105179-ENU.exe"
             target: public/
-                
+
       - name: Install targeting pack
         shell: cmd
         working-directory: public
@@ -96,13 +96,21 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: | 
-            2.1.x
             3.1.x
             5.0.x
+
       - name: Install Overcrowdin
         shell: cmd
         run: |
           dotnet tool update -g overcrowdin || dotnet tool install -g overcrowdin
+
+      - name: Downgrade Wix Toolset - remove when runner has 3.14.2
+        run: |
+          choco uninstall wixtoolset
+          choco install wixtoolset --version 3.11.2 --allow-downgrade --force
+          echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        if: github.event_name != 'pull_request'
+
       - name: Prepare for build
         shell: cmd
         working-directory: Build
@@ -113,11 +121,11 @@ jobs:
         shell: powershell
         run: |
           cd Build
-          .\build64.bat /t:BuildBaseInstaller /property:config=release;action=test;desktopNotAvailable=true /v:d /bl ^| tee-object -FilePath build.log
+          .\build64.bat /t:BuildBaseInstaller "/property:config=release;action=test;desktopNotAvailable=true" /v:d /bl ^| tee-object -FilePath build.log
           cd ..
           cd BuildDir
           md5sum *.exe > md5.txt
-      
+
       - name: Scan Debug Build Output
         shell: powershell
         working-directory: Build
@@ -133,30 +141,65 @@ jobs:
               exit 0
           }
 
-      - name: Capture Test Results
-        shell: powershell
-        working-directory: Build
-        run: .\NUnitReport /a ^| tee-object -FilePath test-results.log
-
-      - name: Report Test Results
-        uses: sillsdev/fw-nunitreport-action@v2.0.0
-        with:
-          log-path: Build/test-results.log
-          token: ${{ secrets.GITHUB_TOKEN }}
-          
-      - name: Copy to S3
-        if: ${{ github.event.inputs.s3_copy }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: us-east-1
-          S3_BUCKET: flex-updates
-          S3_KEY: base-build/artifact.tar.gz
+      - name: Find the versioned installer bundles
+        id: find_bundles
+        shell: pwsh
+        working-directory: BuildDir
         run: |
-          tar -czf artifact.tar.gz BuildDir
-          aws s3 cp artifact.tar.gz s3://$S3_BUCKET/$S3_KEY
-            
-      - uses: actions/upload-artifact@v4
+          Get-ChildItem -Path .
+          $offlineExe = Get-ChildItem -Path . -Filter "FieldWorks_*_Offline_x64.exe" | Select-Object -First 1
+          $onlineExe  = Get-ChildItem -Path . -Filter "FieldWorks_*_Online_x64.exe" | Select-Object -First 1
+          if (-not $offlineExe) { throw "FieldWorks_VERSION_Offline_x64.exe not found in BuildDir" }
+          if (-not $onlineExe)  { throw "FieldWorks_VERSION_Online_x64.exe not found in BuildDir" }
+          echo "offline_exe=$($offlineExe.FullName)" >> $env:GITHUB_OUTPUT
+          echo "online_exe=$($onlineExe.FullName)"  >> $env:GITHUB_OUTPUT
+
+      - name: Extract burn engines from bundles
+        shell: cmd
+        working-directory: BuildDir
+        run: |
+          insignia -ib "${{ steps.find_bundles.outputs.offline_exe }}" -o offline-engine.exe
+          insignia -ib "${{ steps.find_bundles.outputs.online_exe }}"  -o online-engine.exe
+
+      - name: Sign Engines
+        if: github.event_name != 'pull_request'
+        uses: sillsdev/codesign/trusted-signing-action@v3
+        with:
+          credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
+          files-folder: BuildDir
+          files-folder-filter: '*-engine.exe'
+          description:  'FieldWorks Installer'
+          description-url: 'https://software.sil.org/fieldworks/'
+
+      - name: Reattach Engines
+        if: github.event_name != 'pull_request'
+        working-directory: BuildDir
+        shell: cmd
+        run: |
+          insignia -ab online-engine.exe "${{ steps.find_bundles.outputs.offline_exe }}" -o "${{ steps.find_bundles.outputs.offline_exe }}"
+          insignia -ab offline-engine.exe "${{ steps.find_bundles.outputs.offline_exe }}" -o "${{ steps.find_bundles.outputs.offline_exe }}"
+
+      - name: Sign Bundles
+        if: github.event_name != 'pull_request'
+        uses: sillsdev/codesign/trusted-signing-action@v3
+        with:
+          credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
+          files-folder: BuildDir
+          files-folder-filter: FieldWorks_*.exe
+          description:  'FieldWorks Installer'
+          description-url: 'https://software.sil.org/fieldworks/'
+
+      - name: Upload Signed Installers
+        uses: actions/upload-artifact@v4
+        if: github.event_name != 'pull_request'
+        with:
+          name: FieldWorks-Installers
+          path: BuildDir/FieldWorks_*.exe
+          if-no-files-found: warn
+
+      - name: Upload Build Logs
+        uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: build-logs
           path: |
