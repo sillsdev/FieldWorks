@@ -104,6 +104,11 @@
 		<ItemGroup>
 			<RemovedSinceLastBase Include="$(dir-outputBase)/Helps/WW-ConceptualIntro/ConceptualIntroduction.htm" />
 			<RemovedSinceLastBase Include="$(dir-outputBase)/Helps/ConceptualIntroFLEx.pdf" />
+			<RemovedSinceLastBase Include="$(dir-outputBase)/Helps/WW-ConceptualIntro/CircumfixEntryUI.png" />
+			<RemovedSinceLastBase Include="$(dir-outputBase)/Helps/WW-ConceptualIntro/niktolava.png" />
+			<RemovedSinceLastBase Include="$(dir-outputBase)/Helps/WW-ConceptualIntro/nipahtolava.png" />
+			<RemovedSinceLastBase Include="$(dir-outputBase)/Helps/WW-ConceptualIntro/rikaykaamaanaykipaq.png" />
+			<RemovedSinceLastBase Include="$(dir-outputBase)/Helps/WW-ConceptualIntro/wasin-wasin.png" />
 			<RemovedSinceLastBase Include="$(dir-outputBase)/NHunspell.dll" />
 			<RemovedSinceLastBase Include="$(dir-outputBase)/Hunspellx64.dll" />
 		</ItemGroup>
