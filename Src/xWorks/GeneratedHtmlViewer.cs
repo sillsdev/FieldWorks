@@ -625,6 +625,11 @@ namespace SIL.FieldWorks.XWorks
 				argumentList.RemoveParam("prmGlossFontSize", "");
 				argumentList.AddParam("prmGlossFontSize", "", GetNormalStyleFontSize(wsContainer.DefaultAnalysisWritingSystem.Handle));
 			}
+			if (argumentList.GetParam("prmSDateTime", "") != null)
+			{
+				argumentList.RemoveParam("prmSDateTime", "");
+				argumentList.AddParam("prmSDateTime", "", DateTime.Now.ToString("dddd, MMM dd yyyy, hh:mm:ss"));
+			}
 
 			var xmlReaderSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
 			using (var writer = new StreamWriter(outputFile))
