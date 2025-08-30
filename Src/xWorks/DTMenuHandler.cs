@@ -575,6 +575,7 @@ namespace SIL.FieldWorks.XWorks
 				if (m_moveObj is IMoInflAffixSlot slot)
 				{
 					MoveSlot(slot, selectedPOS);
+					m_mediator.SendMessage("MasterRefresh", null);
 				}
 				if (m_moveObj is IMoInflAffixTemplate template)
 				{
