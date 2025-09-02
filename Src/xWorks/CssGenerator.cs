@@ -400,7 +400,9 @@ namespace SIL.FieldWorks.XWorks
 						//Generate the rules for the default font info
 						rule.Declarations.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(configNode.Style, DefaultStyle, configNode,
 							propertyTable));
-						selectors.AddRange(GenerateCssForWritingSystems(baseSelection + " span", configNode.Style, propertyTable));
+						// add span for the writing system if we aren't already working on one
+						baseSelection = baseSelection.EndsWith(" span") ? baseSelection : baseSelection + " span";
+						selectors.AddRange(GenerateCssForWritingSystems(baseSelection, configNode.Style, propertyTable));
 					}
 
 					return selectors;
