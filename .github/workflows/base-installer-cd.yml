@@ -1,7 +1,7 @@
 name: Base Installer
 on:
   push:
-    branches: ["release/9.3", "feature/gha-cd"]
+    branches: ["release/9.3"]
   workflow_dispatch:
     inputs:
       fw_ref:
