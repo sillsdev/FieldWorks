@@ -689,6 +689,7 @@ namespace SIL.FieldWorks.XWorks
 		private static List<StyleRule> GenerateCssFromWsOptions(ConfigurableDictionaryNode configNode, DictionaryNodeWritingSystemOptions wsOptions,
 													string baseSelection, ReadOnlyPropertyTable propertyTable)
 		{
+			var rules = new List<StyleRule>();
 			var cache = propertyTable.GetValue<LcmCache>("cache");
 			foreach(var ws in wsOptions.Options.Where(opt => opt.IsEnabled))
 			{
@@ -700,10 +701,10 @@ namespace SIL.FieldWorks.XWorks
 				if (!string.IsNullOrEmpty(configNode.Style))
 					wsRule.Declarations.Properties.AddRange(GenerateCssStyleFromLcmStyleSheet(configNode.Style, wsId, propertyTable));
 				if (!IsEmptyRule(wsRule))
-					return new List<StyleRule> {wsRule};
+					rules.Add(wsRule);
 			}
 
-			return new List<StyleRule>();
+			return rules;
 		}
 
 		private static List<StyleRule> GenerateCssForWritingSystemPrefix(ConfigurableDictionaryNode configNode, string baseSelection, ReadOnlyPropertyTable propertyTable)
