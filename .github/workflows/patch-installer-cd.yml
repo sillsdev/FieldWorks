@@ -1,4 +1,4 @@
-name: Base Installer
+name: Patch Installer
 on:
   push:
     branches: ["release/9.3", "feature/gha-cd"]
@@ -24,10 +24,13 @@ on:
         description: 'Commit-ish for liblcm repository'
         required: false
         default: 'master'
+      base_release:
+        description: 'The github release for the base build artifacts'
+        default: 'FieldWorks9.3.0'
       make_release:
         description: 'Should the build archive a release, false by default, should be set to true on a release build.'
         required: false
-        default: 'false'
+        default: 'true'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -35,17 +38,20 @@ concurrency:
 
 jobs:
   debug_build_and_test:
+    permissions:
+      contents: read
     env:
       CROWDIN_API_KEY: ${{ secrets.FLEX_CROWDIN_API }}
       LcmRootDir: ${{ github.workspace }}/Localizations/LCM
       FILESTOSIGNLATER: ./signExternally
+      GH_TOKEN: ${{ github.token }}
     name: Build Debug and run Tests
     runs-on: windows-latest
     steps:
       - name: Compute build number for archival
         id: build_number
         run: |
-          $lastJenkins = 1097  # The last base build from jenkins
+          $lastJenkins = 1976  # The last patch build from jenkins
           $githubRun = $env:GITHUB_RUN_NUMBER
           $combined = $lastJenkins + $githubRun
           echo "Last Jenkins build: $lastJenkins"
@@ -91,7 +97,7 @@ jobs:
         id: liblcm-checkout
         with:
           repository: 'sillsdev/liblcm'
-          ref: ${{ github.event.inputs.installer_ref || 'master' }}
+          ref: ${{ github.event.inputs.lcm_ref || 'master' }}
           fetch-depth: 0
           path: 'Localizations/LCM'
 
@@ -125,21 +131,73 @@ jobs:
           choco install wixtoolset --version 3.11.2 --allow-downgrade --force
           echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         if: github.event_name != 'pull_request'
+        
+      - name: Import Base Build Artifacts
+        shell: pwsh
+        run: |
+          $release = "${{ inputs.base_release || 'FieldWorks9.3.0' }}"
+          $repo    = "${{ github.repository }}"
 
+          Write-Host "Downloading artifacts for release $release from $repo"
+
+          # Download BuildDir.zip
+          gh release download $release --repo $repo --pattern "BuildDir.zip" --dir base-artifacts
+          if (-not (Test-Path "base-artifacts/BuildDir.zip")) {
+            throw "BuildDir.zip not found in release '$release'."
+          }
+
+          # Download ProcRunner.zip
+          gh release download $release --repo $repo --pattern "ProcRunner.zip" --dir base-artifacts
+          if (-not (Test-Path "base-artifacts/ProcRunner.zip")) {
+            throw "ProcRunner.zip not found in release '$release'."
+          }
+
+          # Expand BuildDir.zip into BuildDir
+          Expand-Archive -Path "base-artifacts/BuildDir.zip" -DestinationPath "BuildDir" -Force
+          Write-Host "Expanded BuildDir.zip -> ./BuildDir"
+
+          # Ensure ProcRunner target path exists
+          $procTarget = "PatchableInstaller/ProcRunner/ProcRunner/bin/Release/net48"
+          if (-not (Test-Path $procTarget)) {
+            New-Item -ItemType Directory -Path $procTarget -Force | Out-Null
+          }
+
+          # Expand ProcRunner.zip into the exact net48 folder
+          Expand-Archive -Path "base-artifacts/ProcRunner.zip" -DestinationPath $procTarget -Force
+          Write-Host "Expanded ProcRunner.zip -> $procTarget"
+
+      # Write out the properties file (a first build on a system requires a prompt response otherwise)
+      # and set an OS feature in the registry that will allow Wix v3 to use temporary files without error
       - name: Prepare for build
-        shell: cmd
         working-directory: Build
-        run: build64.bat /t:WriteNonlocalDevelopmentPropertiesFile
+        run: |
+          # Define paths and the key/value to set
+          $regPaths = @(
+              "HKLM:\SOFTWARE\Microsoft\.NETFramework\AppContext",
+              "HKLM:\SOFTWARE\WOW6432Node\Microsoft\.NETFramework\AppContext"
+          )
+          $valueName = "Switch.System.DisableTempFileCollectionDirectoryFeature"
+          $expectedValue = "true"
+          
+          foreach ($path in $regPaths) {
+              Write-Host "Adding or updating registry value in $path..."
+              if (-not (Test-Path $path)) {
+                New-Item -Path $path -Force | Out-Null
+              }
+              New-ItemProperty -Path $path -Name $valueName -Value $expectedValue -Type String -Force
+          }
+          
+          .\build64.bat /t:WriteNonlocalDevelopmentPropertiesFile
 
       - name: Build Debug and run tests
         id: build_installer
         shell: powershell
         run: |
+          Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\.NETFramework\AppContext"
           cd Build
-          .\build64.bat /t:BuildBaseInstaller "/property:config=release;action=test;desktopNotAvailable=true" /v:d /bl ^| tee-object -FilePath build.log
+          .\build64.bat /t:BuildPatchInstaller  "/property:config=release;action=test;desktopNotAvailable=true" /v:d /bl ^| tee-object -FilePath build.log
           cd ..
           cd BuildDir
-          md5sum *.exe > md5.txt
 
       - name: Scan Debug Build Output
         shell: powershell
@@ -155,93 +213,25 @@ jobs:
               Write-Host "No errors found" -ForegroundColor green 
               exit 0
           }
-
-      - name: Move installers to staging folder
-        id: stage_installers
+      - name: Find patch installer
+        id: find_patch
         shell: pwsh
         run: |
-            $staging = Join-Path $pwd "Installers"
-            if (-not (Test-Path $staging)) { New-Item -ItemType Directory -Path $staging | Out-Null }
+            $patch = Get-ChildItem -Path BuildDir -Filter "FieldWorks_*.msp" | Select-Object -First 1
+            if (-not $patch) { throw "Patch (.msp) file not found in BuildDir" }
 
-            $offlineExe = Get-ChildItem -Path BuildDir -Filter "FieldWorks_*_Offline_x64.exe" | Select-Object -First 1
-            $onlineExe  = Get-ChildItem -Path BuildDir -Filter "FieldWorks_*_Online_x64.exe"  | Select-Object -First 1
+            $patchPath = $patch.FullName
+            "patch_file=$patchPath" >> $env:GITHUB_OUTPUT
 
-            if (-not $offlineExe) { throw "FieldWorks_VERSION_Offline_x64.exe not found in BuildDir" }
-            if (-not $onlineExe)  { throw "FieldWorks_VERSION_Online_x64.exe not found in BuildDir" }
-
-            Move-Item -Path $offlineExe.FullName -Destination $staging
-            Move-Item -Path $onlineExe.FullName  -Destination $staging
-
-            $offlinePath = Join-Path $staging $offlineExe.Name
-            $onlinePath  = Join-Path $staging $onlineExe.Name
-
-            "offline_exe=$offlinePath" >> $env:GITHUB_OUTPUT
-            "online_exe=$onlinePath"   >> $env:GITHUB_OUTPUT
-
-      - name: Extract burn engines from bundles
-        shell: cmd
-        working-directory: Installers
-        run: |
-            insignia -ib "${{ steps.stage_installers.outputs.offline_exe }}" -o offline-engine.exe
-            insignia -ib "${{ steps.stage_installers.outputs.online_exe }}"  -o online-engine.exe
-
-      - name: Sign Engines
+      - name: Sign Patch
         if: github.event_name != 'pull_request'
         uses: sillsdev/codesign/trusted-signing-action@v3
         with:
             credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
-            files-folder: Installers
-            files-folder-filter: '*-engine.exe'
-            description:  'FieldWorks Installer'
+            files-folder: BuildDir
+            files-folder-filter: '*.msp'
+            description:  'FieldWorks Patch Installer'
             description-url: 'https://software.sil.org/fieldworks/'
-
-      - name: Reattach Engines
-        if: github.event_name != 'pull_request'
-        working-directory: Installers
-        shell: cmd
-        run: |
-            insignia -ab online-engine.exe "${{ steps.stage_installers.outputs.offline_exe }}" -o "${{ steps.stage_installers.outputs.offline_exe }}"
-            insignia -ab offline-engine.exe "${{ steps.stage_installers.outputs.online_exe }}" -o "${{ steps.stage_installers.outputs.online_exe }}"
-
-      - name: Sign Bundles
-        if: github.event_name != 'pull_request'
-        uses: sillsdev/codesign/trusted-signing-action@v3
-        with:
-            credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
-            files-folder: Installers
-            files-folder-filter: FieldWorks_*.exe
-            description:  'FieldWorks Installer'
-            description-url: 'https://software.sil.org/fieldworks/'
-
-      - name: Compress Build Artifacts
-        if: ${{ inputs.make_release == 'true' }}
-        run: |
-            [System.IO.Compression.ZipFile]::CreateFromDirectory(
-              "$pwd\BuildDir",
-              "$pwd\BuildDir.zip",
-              [System.IO.Compression.CompressionLevel]::Optimal,
-              $false
-            )
-            [System.IO.Compression.ZipFile]::CreateFromDirectory(
-              "$pwd\PatchableInstaller\ProcRunner\ProcRunner\bin\Release\net48",
-              "$pwd\ProcRunner.zip",
-              [System.IO.Compression.CompressionLevel]::Optimal,
-              $false
-            )
-
-      - name: Create Release and Upload artifacts
-        if: ${{ inputs.make_release == 'true' }}
-        uses: softprops/action-gh-release@v1
-        with:
-            tag_name: build-${{ env.RELEASE_BASE_BUILD_NUMBER }}
-            name: "FieldWorks Base Build #${{ env.RELEASE_BASE_BUILD_NUMBER }}"
-            draft: false
-            prerelease: true
-            files: |
-              ${{ github.workspace }}/BuildDir.zip
-              ${{ github.workspace }}/ProcRunner.zip
-              ${{ steps.stage_installers.outputs.offline_exe }}
-              ${{ steps.stage_installers.outputs.online_exe }}
 
       - name: Upload Build Logs
         uses: actions/upload-artifact@v4
@@ -252,3 +242,4 @@ jobs:
           path: |
             Build/*.log
             Build/*.binlog
+            BuildDir/*.msp
