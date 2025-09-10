@@ -149,7 +149,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						list.Name.BestAnalysisAlternative.Text
 						== customListName
 				);
-			BuildAllomorphPropertyMapper(allomorphHvoPropertyMapper, customList);
+			BuildAllomorphPropertyMapper(allomorphHvoPropertyMapper, customList, customListName);
 			BuildMorphemePropertyMapper(morphemePropertyMapper, customList);
 			// Add allomorph properties
 			var lexWithAlloProps = allomorphHvoPropertyMapper.Aggregate(
@@ -178,7 +178,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private static void BuildAllomorphPropertyMapper(
 			Dictionary<string, string> allomorphHvoPropertyMapper,
-			ICmPossibilityList customList)
+			ICmPossibilityList customList, string customListName)
 		{
 			foreach (var prop in customList.PossibilitiesOS)
 			{
@@ -193,10 +193,19 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						allomorphHvoPropertyMapper.Add(hvoMatch, replaceWith);
 					} else if (allomorphHvoPropertyMapper[hvoMatch] != replaceWith)
 					{
-						throw new ArgumentException("Conflicting allomorph properties for " + obj.Guid.ToString() + ": " + replaceWith + " and " + allomorphHvoPropertyMapper[hvoMatch]);
+						throw new ArgumentException("Conflicting " + customListName + " for " + LexEntryName(obj) + " (" + obj.Guid.ToString() + "): " + replaceWith + " and " + allomorphHvoPropertyMapper[hvoMatch]);
 					}
 				}
 			}
+		}
+
+		private static string LexEntryName(ICmObject obj)
+		{
+			if (obj.ClassName == "MoAffixAllomorph")
+			{
+				return ((IMoAffixAllomorph)obj).LongName;
+			}
+			return "***";
 		}
 
 		private static void BuildMorphemePropertyMapper(
