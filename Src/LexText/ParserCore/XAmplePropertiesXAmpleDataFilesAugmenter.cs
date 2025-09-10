@@ -186,12 +186,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				foreach (ICmObject obj in refObjs)
 				{
 					var sHvo = obj.Hvo.ToString();
-					if (!allomorphHvoPropertyMapper.ContainsKey(sHvo))
+					var hvoMatch = " {" + sHvo + "}";
+					var replaceWith = hvoMatch + " " + prop.Name.AnalysisDefaultWritingSystem.Text;
+					if (!allomorphHvoPropertyMapper.ContainsKey(hvoMatch))
 					{
-						var hvoMatch = " {" + sHvo + "}";
-						var replaceWith =
-							hvoMatch + " " + prop.Name.AnalysisDefaultWritingSystem.Text;
 						allomorphHvoPropertyMapper.Add(hvoMatch, replaceWith);
+					} else if (allomorphHvoPropertyMapper[hvoMatch] != replaceWith)
+					{
+						throw new ArgumentException("Conflicting allomorph properties for " + obj.Guid.ToString() + ": " + replaceWith + " and " + allomorphHvoPropertyMapper[hvoMatch]);
 					}
 				}
 			}
