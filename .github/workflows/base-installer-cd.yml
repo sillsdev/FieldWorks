@@ -1,7 +1,8 @@
 name: Base Installer
 on:
-  push:
-    branches: ["release/9.3", "feature/gha-cd"]
+  schedule:
+    # Runs every day at 02:30 UTC (which is 6:30pm PST / 7:30pm PDT)
+    - cron: "30 2 * * *"
   workflow_dispatch:
     inputs:
       fw_ref:
@@ -42,15 +43,13 @@ jobs:
     name: Build Debug and run Tests
     runs-on: windows-latest
     steps:
-      - name: Compute build number for archival
+      - name: Compute build number
         id: build_number
         run: |
           $lastJenkins = 1097  # The last base build from jenkins
           $githubRun = $env:GITHUB_RUN_NUMBER
           $combined = $lastJenkins + $githubRun
-          echo "Last Jenkins build: $lastJenkins"
-          echo "GitHub run number: $githubRun"
-          echo "Combined build number: $combined"
+          echo "Calculated build number: $combined"
           echo "RELEASE_BASE_BUILD_NUMBER=$combined" >> $env:GITHUB_ENV
 
       - name: Checkout Files
