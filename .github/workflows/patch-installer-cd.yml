@@ -1,7 +1,7 @@
 name: Patch Installer
 on:
   push:
-    branches: ["release/9.3", "feature/gha-cd"]
+    branches: ["release/9.3"]
   workflow_dispatch:
     inputs:
       fw_ref:
@@ -253,7 +253,9 @@ jobs:
           BASE_BUILD_NUMBER: ${{ inputs.base_build_number }}
           BUILD_VERSION_SEGMENT: ${{ env.BuildVersionSegment }}
         run: |
-          # --- Decide baseBuildNumber (_b###) ---
+          # The github action base-installer-cd will make releases with a tag build-[build number]
+          # manually created releases with Jenkins artifacts need to use existing tags so we need
+          # to specify the base build number when we launch patches against Jenkins releases
           if ($env:BASE_BUILD_NUMBER -and $env:BASE_BUILD_NUMBER.Trim() -ne "") {
             $baseBuildNumber = "_b$($env:BASE_BUILD_NUMBER)"
           } elseif ($env:BASE_RELEASE -and $env:BASE_RELEASE.Trim() -ne "") {
@@ -264,28 +266,19 @@ jobs:
           } else {
             throw "Must have a base_build_number nor a valid base_release to support automatic updating"
           }
-
-          # --- Locate patch file ---
           $patchPath = "${{ steps.find_patch.outputs.patch_file }}"
           if (-not (Test-Path $patchPath)) {
             throw "Patch file not found at $patchPath"
           }
-
           $patchFile = Split-Path $patchPath -Leaf
           $patchDir  = Split-Path $patchPath -Parent
-
-          # --- Insert baseBuildNumber before _x64.msp necessary for Automatic Update code Src\Common\FwUtils\FwUpdater.cs---
+          # Insert baseBuildNumber before _x64.msp necessary for Automatic Update code Src\Common\FwUtils\FwUpdater.cs
           if ($patchFile -notmatch '^(.*)(_x64\.msp)$') {
             throw "Unexpected patch filename format: $patchFile"
           }
           $patchWithBaseInName = "$($Matches[1])${baseBuildNumber}$($Matches[2])"
-
-          Write-Host "Renaming $patchFile -> $patchWithBaseInName"
-
-          # --- Upload to S3 ---
           $s3Key = "flex-updates/jobs/FieldWorks-Win-all-Release-Patch/$($env:BUILD_VERSION_SEGMENT)/$patchWithBaseInName"
           aws s3 cp $patchPath "s3://flex-updates/$s3Key"
-
           Write-Host "Uploaded to s3://flex-updates/$s3Key"
 
       - name: Upload Build Logs
@@ -297,4 +290,3 @@ jobs:
           path: |
             Build/*.log
             Build/*.binlog
-            BuildDir/*.msp
