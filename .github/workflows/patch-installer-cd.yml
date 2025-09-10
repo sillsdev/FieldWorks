@@ -24,11 +24,16 @@ on:
         description: 'Commit-ish for liblcm repository'
         required: false
         default: 'master'
+# default should be changed to the most recent base release for the release cycle
       base_release:
         description: 'The github release for the base build artifacts'
         default: 'FieldWorks9.3.0'
+      base_build_number:
+        description: 'The base build number (only for bootstrapping, should be removed after 9.3 is the stable)'
+        required: false
+        default: ''
       make_release:
-        description: 'Should the build archive a release, false by default, should be set to true on a release build.'
+        description: 'Should the release be pushed to s3 - use false for test builds'
         required: false
         default: 'true'
 
@@ -54,10 +59,8 @@ jobs:
           $lastJenkins = 1976  # The last patch build from jenkins
           $githubRun = $env:GITHUB_RUN_NUMBER
           $combined = $lastJenkins + $githubRun
-          echo "Last Jenkins build: $lastJenkins"
-          echo "GitHub run number: $githubRun"
-          echo "Combined build number: $combined"
-          echo "RELEASE_BASE_BUILD_NUMBER=$combined" >> $env:GITHUB_ENV
+          echo "Calculated build number: $combined"
+          echo "BuildVersionSegment=$combined" >> $env:GITHUB_ENV
 
       - name: Checkout Files
         uses: actions/checkout@v4
@@ -213,6 +216,7 @@ jobs:
               Write-Host "No errors found" -ForegroundColor green 
               exit 0
           }
+
       - name: Find patch installer
         id: find_patch
         shell: pwsh
@@ -232,6 +236,57 @@ jobs:
             files-folder-filter: '*.msp'
             description:  'FieldWorks Patch Installer'
             description-url: 'https://software.sil.org/fieldworks/'
+
+      - name: Configure AWS credentials
+        if: ${{ inputs.make_release == 'true' }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Upload Patch to S3
+        if: ${{ inputs.make_release == 'true' }}
+        shell: pwsh
+        env:
+          BASE_RELEASE: ${{ inputs.base_release }}
+          BASE_BUILD_NUMBER: ${{ inputs.base_build_number }}
+          BUILD_VERSION_SEGMENT: ${{ env.BuildVersionSegment }}
+        run: |
+          # --- Decide baseBuildNumber (_b###) ---
+          if ($env:BASE_BUILD_NUMBER -and $env:BASE_BUILD_NUMBER.Trim() -ne "") {
+            $baseBuildNumber = "_b$($env:BASE_BUILD_NUMBER)"
+          } elseif ($env:BASE_RELEASE -and $env:BASE_RELEASE.Trim() -ne "") {
+            if ($env:BASE_RELEASE -notmatch '^build-\d+$') {
+              throw "BASE_RELEASE must start with 'build-' (got '$env:BASE_RELEASE')"
+            }
+            $baseBuildNumber = "_b$($env:BASE_RELEASE -replace '^build-','')"
+          } else {
+            throw "Must have a base_build_number nor a valid base_release to support automatic updating"
+          }
+
+          # --- Locate patch file ---
+          $patchPath = "${{ steps.find_patch.outputs.patch_file }}"
+          if (-not (Test-Path $patchPath)) {
+            throw "Patch file not found at $patchPath"
+          }
+
+          $patchFile = Split-Path $patchPath -Leaf
+          $patchDir  = Split-Path $patchPath -Parent
+
+          # --- Insert baseBuildNumber before _x64.msp necessary for Automatic Update code Src\Common\FwUtils\FwUpdater.cs---
+          if ($patchFile -notmatch '^(.*)(_x64\.msp)$') {
+            throw "Unexpected patch filename format: $patchFile"
+          }
+          $patchWithBaseInName = "$($Matches[1])${baseBuildNumber}$($Matches[2])"
+
+          Write-Host "Renaming $patchFile -> $patchWithBaseInName"
+
+          # --- Upload to S3 ---
+          $s3Key = "flex-updates/jobs/FieldWorks-Win-all-Release-Patch/$($env:BUILD_VERSION_SEGMENT)/$patchWithBaseInName"
+          aws s3 cp $patchPath "s3://flex-updates/$s3Key"
+
+          Write-Host "Uploaded to s3://flex-updates/$s3Key"
 
       - name: Upload Build Logs
         uses: actions/upload-artifact@v4
