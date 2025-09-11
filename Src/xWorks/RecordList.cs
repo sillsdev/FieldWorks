@@ -3178,10 +3178,11 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="className"></param>
 		/// <returns>true if successful (the class is known)</returns>
-		public virtual bool CreateAndInsert(string className)
+		public virtual bool CreateAndInsert(string className, out ICmObject newObj)
 		{
 			CheckDisposed();
 
+			newObj = null;
 			ClassAndPropInfo cpi = GetMatchingClass(className);
 			Debug.Assert(cpi != null, "This object should not have been asked to insert an object of the class " + className + ".");
 			if (cpi != null)
@@ -3208,7 +3209,7 @@ namespace SIL.FieldWorks.XWorks
 				cpiPath = new List<ClassAndPropInfo>(new ClassAndPropInfo[] { cpi });
 #endif
 				var createAndInsertMethodObj = new CpiPathBasedCreateAndInsert(m_owningObject.Hvo, cpiPath, this);
-				var newObj = DoCreateAndInsert(createAndInsertMethodObj);
+				newObj = DoCreateAndInsert(createAndInsertMethodObj);
 				int hvoNew = newObj != null ? newObj.Hvo : 0;
 				return hvoNew != 0; // If we get zero, we couldn't do it for some reason.
 			}

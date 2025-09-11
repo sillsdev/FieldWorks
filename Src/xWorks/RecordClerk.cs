@@ -2540,7 +2540,7 @@ namespace SIL.FieldWorks.XWorks
 				UndoableUnitOfWorkHelper.Do(string.Format(xWorksStrings.ksUndoInsert, command.UndoRedoTextInsert),
 					string.Format(xWorksStrings.ksRedoInsert, command.UndoRedoTextInsert), Cache.ActionHandlerAccessor, () =>
 				{
-					result = m_list.CreateAndInsert(className);
+					result = m_list.CreateAndInsert(className, out _);
 				});
 			}
 			catch (ApplicationException ae)
@@ -2615,6 +2615,73 @@ namespace SIL.FieldWorks.XWorks
 
 			return result;
 		}
+
+		/// <summary>
+		/// see if it makes sense to provide the "duplicate XXX" command now
+		/// </summary>
+		/// <param name="commandObject"></param>
+		/// <param name="display"></param>
+		/// <returns></returns>
+		public virtual bool OnDisplayDuplicateSelectedItem(object commandObject, ref UIItemDisplayProperties display)
+		{
+			CheckDisposed();
+
+			string className = Cache.MetaDataCacheAccessor.GetClassName(m_list.ListItemsClass);
+			if (m_list.CurrentObject == null ||
+				!m_list.IsCurrentObjectValid() ||
+				!m_list.CanInsertClass(className) ||
+				!(m_list.CurrentObject is ICloneableCmObject))
+			{
+				display.Visible = display.Enabled = false;
+			} else
+			{
+				display.Text = string.Format(display.Text, GetTypeNameForUi(m_list.CurrentObject));
+			}
+
+			return true;
+		}
+
+
+		/// <summary>
+		/// Duplicate selected item in a non-possibilities list.
+		/// </summary>
+		public bool OnDuplicateSelectedItem(object argument)
+		{
+			CheckDisposed();
+
+			if (!Editable)
+				return false;
+
+			SaveOnChangeRecord();
+
+			var command = (Command)argument;
+			string className = Cache.MetaDataCacheAccessor.GetClassName(m_list.ListItemsClass);
+			bool result = false;
+			m_suppressSaveOnChangeRecord = true;
+
+			try
+			{
+				UndoableUnitOfWorkHelper.Do(string.Format(xWorksStrings.ksUndoDuplicate, className),
+											string.Format(xWorksStrings.ksRedoDuplicate, className),
+											Cache.ActionHandlerAccessor, () =>
+					{
+						result = m_list.CreateAndInsert(className, out ICmObject newObj);
+						((ICloneableCmObject)m_list.CurrentObject).SetCloneProperties(newObj);
+					});
+			}
+			catch (ApplicationException ae)
+			{
+				throw new ApplicationException("Could not duplicate the item requested by the command " + command.ConfigurationNode, ae);
+			}
+			finally
+			{
+				m_suppressSaveOnChangeRecord = false;
+			}
+
+			m_mediator.BroadcastMessage("FocusFirstPossibleSlice", null);
+			return result;
+		}
+
 
 		#endregion
 

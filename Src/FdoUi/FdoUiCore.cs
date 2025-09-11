@@ -1133,42 +1133,6 @@ namespace SIL.FieldWorks.FdoUi
 		}
 
 		/// <summary>
-		/// Hack to "remove" the duplicate menu from the popup menu.
-		/// </summary>
-		/// <param name="commandObject"></param>
-		/// <param name="display"></param>
-		/// <returns></returns>
-		public virtual bool OnDisplayDuplicateSelectedItem(object commandObject, ref UIItemDisplayProperties display)
-		{
-			CheckDisposed();
-
-			if (m_hostControl.GetType().Name == "Sandbox"
-				// Disable duplicating from inside "Try a Word" dialog.  See FWR-3212.
-				|| m_hostControl.GetType().Name == "TryAWordSandbox"
-				// Disable duplicating interior items from a WfiMorphBundle.  See LT-6217.
-				|| m_hostControl.GetType().Name == "OneAnalysisSandbox")
-			{
-				display.Visible = display.Enabled = false;
-			}
-			display.Text = string.Format(display.Text, DisplayNameOfClass);
-			return true;
-		}
-
-		public void OnDuplicateSelectedItem(object commandObject)
-		{
-			CheckDisposed();
-			m_command = commandObject as Command;
-
-			try
-			{
-			}
-			finally
-			{
-				m_command = null;
-			}
-		}
-
-		/// <summary>
 		/// Merge the underling objects. This method handles the confirm dialog, then delegates
 		/// the actual merge to ReallyMergeUnderlyingObject. If the flag is true, we merge
 		/// strings and owned atomic objects; otherwise, we don't change any that aren't null

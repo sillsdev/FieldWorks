@@ -49,11 +49,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return className == "ReversalIndexEntry";
 		}
 
-		public override bool CreateAndInsert(string className)
+		public override bool CreateAndInsert(string className, out ICmObject newObj)
 		{
 			if (className != "ReversalIndexEntry")
-				return base.CreateAndInsert(className);
+				return base.CreateAndInsert(className, out newObj);
 			m_newItem = m_cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>().Create();
+			newObj = m_newItem;
 			var ri = (IReversalIndex)m_owningObject;
 			ri.EntriesOC.Add(m_newItem);
 			var extensions = m_cache.ActionHandlerAccessor as IActionHandlerExtensions;
