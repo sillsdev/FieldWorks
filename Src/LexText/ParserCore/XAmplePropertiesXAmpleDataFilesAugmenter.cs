@@ -187,13 +187,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				{
 					var sHvo = obj.Hvo.ToString();
 					var hvoMatch = " {" + sHvo + "}";
-					var replaceWith = hvoMatch + " " + prop.Name.AnalysisDefaultWritingSystem.Text;
 					if (!allomorphHvoPropertyMapper.ContainsKey(hvoMatch))
 					{
+						var replaceWith = hvoMatch + " " + prop.Name.AnalysisDefaultWritingSystem.Text;
 						allomorphHvoPropertyMapper.Add(hvoMatch, replaceWith);
-					} else if (allomorphHvoPropertyMapper[hvoMatch] != replaceWith)
+					} else
 					{
-						throw new ArgumentException("Conflicting " + customListName + " for " + LexEntryName(obj) + " (" + obj.Guid.ToString() + "): " + replaceWith + " and " + allomorphHvoPropertyMapper[hvoMatch]);
+						// Append the new value to the existing value.
+						allomorphHvoPropertyMapper[hvoMatch] += " " + prop.Name.AnalysisDefaultWritingSystem.Text;
 					}
 				}
 			}
