@@ -1,7 +1,8 @@
 name: Base Installer
 on:
-  push:
-    branches: ["release/9.3"]
+  schedule:
+    # Runs every day at 02:30 UTC (which is 6:30pm PST / 7:30pm PDT)
+    - cron: "30 2 * * *"
   workflow_dispatch:
     inputs:
       fw_ref:
@@ -24,6 +25,10 @@ on:
         description: 'Commit-ish for liblcm repository'
         required: false
         default: 'master'
+      make_release:
+        description: 'Should the build archive a release, false by default, should be set to true on a release build.'
+        required: false
+        default: 'false'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -38,6 +43,15 @@ jobs:
     name: Build Debug and run Tests
     runs-on: windows-latest
     steps:
+      - name: Compute build number
+        id: build_number
+        run: |
+          $lastJenkins = 1097  # The last base build from jenkins
+          $githubRun = $env:GITHUB_RUN_NUMBER
+          $combined = $lastJenkins + $githubRun
+          echo "Calculated build number: $combined"
+          echo "RELEASE_BASE_BUILD_NUMBER=$combined" >> $env:GITHUB_ENV
+
       - name: Checkout Files
         uses: actions/checkout@v4
         id: checkout
@@ -141,66 +155,98 @@ jobs:
               exit 0
           }
 
-      - name: Find the versioned installer bundles
-        id: find_bundles
+      - name: Move installers to staging folder
+        id: stage_installers
         shell: pwsh
-        working-directory: BuildDir
         run: |
-          Get-ChildItem -Path .
-          $offlineExe = Get-ChildItem -Path . -Filter "FieldWorks_*_Offline_x64.exe" | Select-Object -First 1
-          $onlineExe  = Get-ChildItem -Path . -Filter "FieldWorks_*_Online_x64.exe" | Select-Object -First 1
-          if (-not $offlineExe) { throw "FieldWorks_VERSION_Offline_x64.exe not found in BuildDir" }
-          if (-not $onlineExe)  { throw "FieldWorks_VERSION_Online_x64.exe not found in BuildDir" }
-          echo "offline_exe=$($offlineExe.FullName)" >> $env:GITHUB_OUTPUT
-          echo "online_exe=$($onlineExe.FullName)"  >> $env:GITHUB_OUTPUT
+            $staging = Join-Path $pwd "Installers"
+            if (-not (Test-Path $staging)) { New-Item -ItemType Directory -Path $staging | Out-Null }
+
+            $offlineExe = Get-ChildItem -Path BuildDir -Filter "FieldWorks_*_Offline_x64.exe" | Select-Object -First 1
+            $onlineExe  = Get-ChildItem -Path BuildDir -Filter "FieldWorks_*_Online_x64.exe"  | Select-Object -First 1
+
+            if (-not $offlineExe) { throw "FieldWorks_VERSION_Offline_x64.exe not found in BuildDir" }
+            if (-not $onlineExe)  { throw "FieldWorks_VERSION_Online_x64.exe not found in BuildDir" }
+
+            Move-Item -Path $offlineExe.FullName -Destination $staging
+            Move-Item -Path $onlineExe.FullName  -Destination $staging
+
+            $offlinePath = Join-Path $staging $offlineExe.Name
+            $onlinePath  = Join-Path $staging $onlineExe.Name
+
+            "offline_exe=$offlinePath" >> $env:GITHUB_OUTPUT
+            "online_exe=$onlinePath"   >> $env:GITHUB_OUTPUT
 
       - name: Extract burn engines from bundles
         shell: cmd
-        working-directory: BuildDir
+        working-directory: Installers
         run: |
-          insignia -ib "${{ steps.find_bundles.outputs.offline_exe }}" -o offline-engine.exe
-          insignia -ib "${{ steps.find_bundles.outputs.online_exe }}"  -o online-engine.exe
+            insignia -ib "${{ steps.stage_installers.outputs.offline_exe }}" -o offline-engine.exe
+            insignia -ib "${{ steps.stage_installers.outputs.online_exe }}"  -o online-engine.exe
 
       - name: Sign Engines
         if: github.event_name != 'pull_request'
         uses: sillsdev/codesign/trusted-signing-action@v3
         with:
-          credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
-          files-folder: BuildDir
-          files-folder-filter: '*-engine.exe'
-          description:  'FieldWorks Installer'
-          description-url: 'https://software.sil.org/fieldworks/'
+            credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
+            files-folder: Installers
+            files-folder-filter: '*-engine.exe'
+            description:  'FieldWorks Installer'
+            description-url: 'https://software.sil.org/fieldworks/'
 
       - name: Reattach Engines
         if: github.event_name != 'pull_request'
-        working-directory: BuildDir
+        working-directory: Installers
         shell: cmd
         run: |
-          insignia -ab online-engine.exe "${{ steps.find_bundles.outputs.offline_exe }}" -o "${{ steps.find_bundles.outputs.offline_exe }}"
-          insignia -ab offline-engine.exe "${{ steps.find_bundles.outputs.offline_exe }}" -o "${{ steps.find_bundles.outputs.offline_exe }}"
+            insignia -ab online-engine.exe "${{ steps.stage_installers.outputs.offline_exe }}" -o "${{ steps.stage_installers.outputs.offline_exe }}"
+            insignia -ab offline-engine.exe "${{ steps.stage_installers.outputs.online_exe }}" -o "${{ steps.stage_installers.outputs.online_exe }}"
 
       - name: Sign Bundles
         if: github.event_name != 'pull_request'
         uses: sillsdev/codesign/trusted-signing-action@v3
         with:
-          credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
-          files-folder: BuildDir
-          files-folder-filter: FieldWorks_*.exe
-          description:  'FieldWorks Installer'
-          description-url: 'https://software.sil.org/fieldworks/'
+            credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
+            files-folder: Installers
+            files-folder-filter: FieldWorks_*.exe
+            description:  'FieldWorks Installer'
+            description-url: 'https://software.sil.org/fieldworks/'
 
-      - name: Upload Signed Installers
-        uses: actions/upload-artifact@v4
-        if: github.event_name != 'pull_request'
+      - name: Compress Build Artifacts
+        if: ${{ inputs.make_release == 'true' }}
+        run: |
+            [System.IO.Compression.ZipFile]::CreateFromDirectory(
+              "$pwd\BuildDir",
+              "$pwd\BuildDir.zip",
+              [System.IO.Compression.CompressionLevel]::Optimal,
+              $false
+            )
+            [System.IO.Compression.ZipFile]::CreateFromDirectory(
+              "$pwd\PatchableInstaller\ProcRunner\ProcRunner\bin\Release\net48",
+              "$pwd\ProcRunner.zip",
+              [System.IO.Compression.CompressionLevel]::Optimal,
+              $false
+            )
+
+      - name: Create Release and Upload artifacts
+        if: ${{ inputs.make_release == 'true' }}
+        uses: softprops/action-gh-release@v1
         with:
-          name: FieldWorks-Installers
-          path: BuildDir/FieldWorks_*.exe
-          if-no-files-found: warn
+            tag_name: build-${{ env.RELEASE_BASE_BUILD_NUMBER }}
+            name: "FieldWorks Base Build #${{ env.RELEASE_BASE_BUILD_NUMBER }}"
+            draft: false
+            prerelease: true
+            files: |
+              ${{ github.workspace }}/BuildDir.zip
+              ${{ github.workspace }}/ProcRunner.zip
+              ${{ steps.stage_installers.outputs.offline_exe }}
+              ${{ steps.stage_installers.outputs.online_exe }}
 
       - name: Upload Build Logs
         uses: actions/upload-artifact@v4
         if: always()
         with:
+          if-no-files-found: warn
           name: build-logs
           path: |
             Build/*.log

@@ -111,6 +111,9 @@
 			<RemovedSinceLastBase Include="$(dir-outputBase)/Helps/WW-ConceptualIntro/wasin-wasin.png" />
 			<RemovedSinceLastBase Include="$(dir-outputBase)/NHunspell.dll" />
 			<RemovedSinceLastBase Include="$(dir-outputBase)/Hunspellx64.dll" />
+			<!-- These two files were included in the jenkins build, but not present in a local build or gha -->
+			<RemovedSinceLastBase Include="$(dir-outputBase)/stdole.dll" />
+			<RemovedSinceLastBase Include="$(dir-outputBase)/System.Text.Encoding.CodePages.dll" />
 		</ItemGroup>
 		<WriteLinesToFile File="%(RemovedSinceLastBase.FullPath)" Lines="" />
 	</Target>
@@ -154,7 +157,8 @@
 			<OutputDirForConfig>$(fwrt)\Output\$(Configuration)</OutputDirForConfig>
 		</PropertyGroup>
 		<ItemGroup>
-			<DeveloperFiles Include="$(fwrt)\DistFiles\CommonLocalizations\.gitignore"/>
+			<DeveloperFiles Include="$(fwrt)\**\.gitignore"/>
+			<DeveloperFiles Include="$(fwrt)\**\*~"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\CommonLocalizations\README.md"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\DropTEC.exe"/>
 			<DeveloperFiles Include="$(fwrt)\DistFiles\Fonts\Raw\**\*"/>
@@ -480,7 +484,8 @@
 			<PatchArgs>"$(ApplicationName)" $(SafeApplicationName) $(BaseVersion) $(BuildVersion) "$(AppBuildMasterDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildMasterDir)/$(DataDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(Manufacturer)" $(SafeManufacturer) $(Arch)</PatchArgs>
 		</PropertyGroup>
 
-		<Exec WorkingDirectory="$(PatchDir)" Command="buildPatch.bat $(PatchArgs)"/>
+		<!-- Suppress ICE30 because we and Encoding Converters MM both install Geckofx, resulting in an ICE warning for double ref counting -->
+		<Exec WorkingDirectory="$(PatchDir)" Command="buildPatch.bat $(PatchArgs)" EnvironmentVariables="SuppressICE=-sice:ICE30" />
 
 		<ItemGroup>
 			<PatchFiles Include="$(PatchDir)/**/*.msp"/>
