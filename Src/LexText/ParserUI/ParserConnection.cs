@@ -153,6 +153,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				//store this for clients which just want to poll us, instead of wiring up to the event
 				m_activity = args.Task.Description;
+				if (args.Task.Phase == TaskReport.TaskPhase.Finished)
+					m_activity = "";
 				//keeps us from getting the notification at the end of the task.
 				if (args.Task.NotificationMessage != null && args.Task.Phase != TaskReport.TaskPhase.Finished)
 					m_notificationMessage = args.Task.NotificationMessage;
