@@ -239,7 +239,7 @@ jobs:
 
       - name: Configure AWS credentials
         # Use inputs if defined but default to true
-        if: {{ (inputs.make_release || 'true') == 'true' }}
+        if: ${{ (inputs.make_release || 'true') == 'true' }}
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -248,7 +248,7 @@ jobs:
 
       - name: Upload Patch to S3
         # Use inputs if defined but default to true
-        if: {{ (inputs.make_release || 'true') == 'true' }}
+        if: ${{ (inputs.make_release || 'true') == 'true' }}
         shell: pwsh
         env:
           BASE_RELEASE: ${{ inputs.base_release }}
