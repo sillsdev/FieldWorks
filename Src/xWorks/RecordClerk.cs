@@ -2629,7 +2629,7 @@ namespace SIL.FieldWorks.XWorks
 			string className = Cache.MetaDataCacheAccessor.GetClassName(m_list.ListItemsClass);
 			if (m_list.CurrentObject == null ||
 				!m_list.IsCurrentObjectValid() ||
-				!m_list.CanInsertClass(className) ||
+				!m_list.CanInsertClass(m_list.CurrentObject.ClassName) ||
 				!(m_list.CurrentObject is ICloneableCmObject))
 			{
 				display.Visible = display.Enabled = false;
@@ -2641,7 +2641,6 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
-
 		/// <summary>
 		/// Duplicate selected item in a non-possibilities list.
 		/// </summary>
@@ -2652,10 +2651,17 @@ namespace SIL.FieldWorks.XWorks
 			if (!Editable)
 				return false;
 
+			if (m_list.CurrentObject == null ||
+				!m_list.IsCurrentObjectValid() ||
+				!m_list.CanInsertClass(m_list.CurrentObject.ClassName) ||
+				!(m_list.CurrentObject is ICloneableCmObject))
+				return false;
+
 			SaveOnChangeRecord();
 
 			var command = (Command)argument;
-			string className = Cache.MetaDataCacheAccessor.GetClassName(m_list.ListItemsClass);
+			ICmObject selectedObject = m_list.CurrentObject;
+			string className = selectedObject.ClassName;
 			bool result = false;
 			m_suppressSaveOnChangeRecord = true;
 
@@ -2666,7 +2672,7 @@ namespace SIL.FieldWorks.XWorks
 											Cache.ActionHandlerAccessor, () =>
 					{
 						result = m_list.CreateAndInsert(className, out ICmObject newObj);
-						((ICloneableCmObject)m_list.CurrentObject).SetCloneProperties(newObj);
+						((ICloneableCmObject)selectedObject).SetCloneProperties(newObj);
 					});
 			}
 			catch (ApplicationException ae)
