@@ -212,6 +212,41 @@ jobs:
             description:  'FieldWorks Installer'
             description-url: 'https://software.sil.org/fieldworks/'
 
+      - name: Configure AWS credentials
+        if: ${{ inputs.make_release == 'true' }}
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Upload Installers to S3
+        if: ${{ inputs.make_release == 'true' }}
+        shell: pwsh
+        run: |
+          $offlineExe = "${{ steps.stage_installers.outputs.offline_exe }}"
+          $onlineExe = "${{ steps.stage_installers.outputs.online_exe }}"
+          
+          if (-not (Test-Path $offlineExe)) {
+            throw "Offline installer not found at $offlineExe"
+          }
+          if (-not (Test-Path $onlineExe)) {
+            throw "Online installer not found at $onlineExe"
+          }
+          
+          $offlineFile = Split-Path $offlineExe -Leaf
+          $onlineFile = Split-Path $onlineExe -Leaf
+          
+          $s3BasePath = "jobs/FieldWorks-Win-all-Release-Base/$($env:RELEASE_BASE_BUILD_NUMBER)"
+          $offlineS3Key = "$s3BasePath/$offlineFile"
+          $onlineS3Key = "$s3BasePath/$onlineFile"
+          
+          aws s3 cp $offlineExe "s3://flex-updates/$offlineS3Key"
+          Write-Host "Uploaded offline installer to s3://flex-updates/$offlineS3Key"
+          
+          aws s3 cp $onlineExe "s3://flex-updates/$onlineS3Key"
+          Write-Host "Uploaded online installer to s3://flex-updates/$onlineS3Key"
+
       - name: Compress Build Artifacts
         if: ${{ inputs.make_release == 'true' }}
         run: |
