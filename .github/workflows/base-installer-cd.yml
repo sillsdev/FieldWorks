@@ -199,8 +199,8 @@ jobs:
         working-directory: Installers
         shell: cmd
         run: |
-            insignia -ab online-engine.exe "${{ steps.stage_installers.outputs.offline_exe }}" -o "${{ steps.stage_installers.outputs.offline_exe }}"
-            insignia -ab offline-engine.exe "${{ steps.stage_installers.outputs.online_exe }}" -o "${{ steps.stage_installers.outputs.online_exe }}"
+            insignia -ab offline-engine.exe "${{ steps.stage_installers.outputs.offline_exe }}" -o "${{ steps.stage_installers.outputs.offline_exe }}"
+            insignia -ab online-engine.exe "${{ steps.stage_installers.outputs.online_exe }}" -o "${{ steps.stage_installers.outputs.online_exe }}"
 
       - name: Sign Bundles
         if: github.event_name != 'pull_request'
