@@ -119,9 +119,18 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			ReloadList();
 		}
 
-		protected override string PropertyTableId(string sorterOrFilter)
+		protected override string PropertyTableId(string sorterOrFilter, DictionaryConfigurationModel revConfig = null)
 		{
-			var reversalPub = m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", null);
+			string reversalPub = null;
+			if (revConfig != null)
+			{
+				reversalPub = revConfig.FilePath;
+			}
+			else
+			{
+				reversalPub = m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", null);
+			}
+
 			if (reversalPub == null)
 				return null; // there is no current Reversal Index; don't try to find Properties (sorter & filter) for a nonexistant Reversal Index
 			var reversalLang = reversalPub.Substring(reversalPub.IndexOf('-') + 1); // strip initial "publishReversal-"

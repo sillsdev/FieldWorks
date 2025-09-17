@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.XWorks
 			var doc = new XmlDocument();
 			doc.LoadXml(entryClerk);
 			var clerkNode = doc.SelectSingleNode("//tools/tool[@label='Reversal Indexes']//parameters[@area='lexicon']");
-			m_clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false);
+			m_clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false, false);
 			m_clerk.Init(m_mediator, m_propertyTable, clerkNode);
 			m_list = (AllReversalEntriesRecordListForTests)m_clerk.GetType().GetField("m_list", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(m_clerk);
 			m_list.ResetReloadCount();
@@ -148,7 +148,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			finally
 			{
-				m_list.OwningObject = owningObject;
+				m_list.SetOwningObject(owningObject, true);
 			}
 		}
 
@@ -271,7 +271,7 @@ namespace SIL.FieldWorks.XWorks
 		public override void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true) => m_fIsActiveInGui = true;
 
 		/// <returns>false: we didn't even try (w/o extra setup, trying crashes)</returns>
-		protected override bool TryRestoreSorter(XmlNode clerkConfiguration, LcmCache cache)
+		protected override bool TryRestoreSorter(XmlNode clerkConfiguration, LcmCache cache, DictionaryConfigurationModel dictConfig = null)
 		{
 			return false;
 		}

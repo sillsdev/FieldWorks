@@ -201,8 +201,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 				// Setup source browse view.
 				var toolNode = configurationParameters.SelectSingleNode("controls/control[@id='srcSentences']/parameters");
-				m_srcClerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, toolNode, true);
-				m_srcClerk.OwningObject = m_srcwfiWordform;
+				m_srcClerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, toolNode, true, true);
+				m_srcClerk.SetOwningObject(m_srcwfiWordform, true);
 				m_sourceSentences.Init(m_mediator, m_propertyTable, toolNode);
 				m_sourceSentences.CheckBoxChanged += sentences_CheckBoxChanged;
 				m_specialSda = m_sourceSentences.BrowseViewer.SpecialCache;

@@ -473,10 +473,10 @@ namespace SIL.FieldWorks.XWorks
 		/// Get the list of ReversalIndexEntries sorted and filtered the way the user has set it up.
 		/// The default is presumably sorted by the writing system collator on ShortName.
 		/// </summary>
-		private int[] GetSortedAndFilteredReversalEntries(int currentReversalIndexHvo, int virtualFlid)
+		public int[] GetSortedAndFilteredReversalEntries(int reversalIndexHvo, int virtualFlid)
 		{
 			// Get the list of ReversalIndexItem objects sorted and filtered as set by the reversal bulk edit.
-			var result = base.VecProp(currentReversalIndexHvo, virtualFlid);
+			var result = base.VecProp(reversalIndexHvo, virtualFlid);
 			// Is there ever any more filtering that we need to do?  It would be done here.
 			return result.Where(IsMainReversalEntry).Where(IsPublishableReversalEntry).ToArray();
 		}

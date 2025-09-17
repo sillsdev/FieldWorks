@@ -151,7 +151,7 @@ namespace SIL.FieldWorks.XWorks
 			return labelToFileDictionary;
 		}
 
-		private static List<DictionaryConfigurationModel> GetDictionaryConfigurationModels(LcmCache cache, string defaultPath, string projectPath)
+		public static List<DictionaryConfigurationModel> GetDictionaryConfigurationModels(LcmCache cache, string defaultPath, string projectPath)
 		{
 			var configurationPaths = ListDictionaryConfigurationChoices(defaultPath, projectPath);
 			var configurationModels = configurationPaths.Select(path => new DictionaryConfigurationModel(path, cache)).ToList();

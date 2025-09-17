@@ -58,8 +58,8 @@ namespace SIL.FieldWorks.XWorks
 			s_styleCollection = new WordStyleCollection(_propertyTable, _collectionLock);
 		}
 
-		public static void SavePublishedDocx(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, int batchSize, DictionaryConfigurationModel configuration,
-			XCore.PropertyTable propertyTable, string filePath, IThreadedProgress progress = null)
+		public static void SavePublishedDocx(int[] entryHvos, RecordClerk clerk, DictionaryPublicationDecorator publicationDecorator, int batchSize,
+			DictionaryConfigurationModel configuration, XCore.PropertyTable propertyTable, string filePath, IThreadedProgress progress = null)
 		{
 			using (MemoryStream mem = new MemoryStream())
 			{
@@ -67,7 +67,6 @@ namespace SIL.FieldWorks.XWorks
 
 				var entryCount = entryHvos.Length;
 				var cssPath = System.IO.Path.ChangeExtension(filePath, "css");
-				var clerk = propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 				var cache = propertyTable.GetValue<LcmCache>("cache", null);
 				var generator = new LcmWordGenerator(cache);
 				var readOnlyPropertyTable = new ReadOnlyPropertyTable(propertyTable);

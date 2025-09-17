@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.XWorks
 			var values = new int[] {23, 56, 2048};
 			Notifiee recorder = new Notifiee();
 			publisher.AddNotification(recorder);
-			publisher.CacheVecProp(hvoRoot, values);
+			publisher.CacheVecProp(hvoRoot, values, true);
 			Assert.AreEqual(values.Length, publisher.get_VecSize(hvoRoot, ObjectListFlid), "override of vec size");
 			//Assert.AreEqual(Cache.LangProject.Texts.Count, publisher.get_VecSize(Cache.LangProject.Hvo, LangProjectTags.kflidTexts), "base vec size");
 
