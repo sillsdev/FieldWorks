@@ -286,3 +286,14 @@ jobs:
           path: |
             Build/*.log
             Build/*.binlog
+
+      - name: Upload signed installers
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          if-no-files-found: warn
+          name: installers
+          path: |
+            ${{ steps.stage_installers.outputs.offline_exe }}
+            ${{ steps.stage_installers.outputs.online_exe }}
+            
