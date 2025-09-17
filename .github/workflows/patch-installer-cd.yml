@@ -27,7 +27,7 @@ on:
 # default should be changed to the most recent base release for the release cycle
       base_release:
         description: 'The github release for the base build artifacts'
-        default: 'FieldWorks9.3.0'
+        default: 'build-1129'
       base_build_number:
         description: 'The base build number (only for bootstrapping, should be removed after 9.3 is the stable)'
         required: false
@@ -138,7 +138,7 @@ jobs:
       - name: Import Base Build Artifacts
         shell: pwsh
         run: |
-          $release = "${{ inputs.base_release || 'FieldWorks9.3.0' }}"
+          $release = "${{ inputs.base_release || 'build-1122' }}"
           $repo    = "${{ github.repository }}"
 
           Write-Host "Downloading artifacts for release $release from $repo"
