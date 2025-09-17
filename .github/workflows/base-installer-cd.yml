@@ -293,7 +293,5 @@ jobs:
         with:
           if-no-files-found: warn
           name: installers
-          path: |
-            ${{ steps.stage_installers.outputs.offline_exe }}
-            ${{ steps.stage_installers.outputs.online_exe }}
+          path: **/FieldWorks_*.exe
             
