@@ -427,7 +427,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				return;
 			}
 
-			LayoutFinder layoutFinder = null;
 			if (updateAndNotify)
 			{
 				// This looks like our best chance to update a global "Current Reversal Index Writing System" value.
@@ -440,6 +439,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				if (updateAndNotify)
 				{
 					UpdateFiltersAndSortersIfNeeded(updateAndNotify); // Load the index-specific sorter
+					SyncReversalWritingSystem(ri);
 					OnChangeSorter(); // Update the column headers with sort arrows
 					SetOwningObject(newOwningObj, updateAndNotify); // Reloads and sorts the list.
 					m_propertyTable.SetProperty("ActiveClerkOwningObject", newOwningObj, true);
@@ -449,7 +449,34 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				else
 				{
 					UpdateFiltersAndSortersIfNeeded(updateAndNotify, dictConfig); // Load the index-specific sorter
+					SyncReversalWritingSystem(ri);
 					SetOwningObject(newOwningObj, updateAndNotify); // Sorts the list
+				}
+			}
+		}
+
+		/// <summary>
+		/// Sync the reversal writing system in the LayoutFinder and Vc for both the Filter and Sorter.
+		/// </summary>
+		/// <param name="ri"></param>
+		private void SyncReversalWritingSystem(IReversalIndex ri)
+		{
+			int wsId = Cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem).Handle;
+
+			if ((Filter as FilterBarCellFilter)?.Finder is LayoutFinder filterFinder)
+			{
+				filterFinder.ReversalWs = wsId;
+				if (filterFinder.Vc != null)
+				{
+					filterFinder.Vc.ReversalWs = wsId;
+				}
+			}
+			if (((Sorter as GenRecordSorter)?.Comparer as StringFinderCompare)?.Finder is LayoutFinder sortFinder)
+			{
+				sortFinder.ReversalWs = wsId;
+				if (sortFinder.Vc != null)
+				{
+					sortFinder.Vc.ReversalWs = wsId;
 				}
 			}
 		}

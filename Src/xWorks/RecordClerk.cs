@@ -3097,33 +3097,11 @@ namespace SIL.FieldWorks.XWorks
 				// Change the OwningObject and update filters and sorters.
 				ChangeOwningObject(reversalGuid, false, revConfig);
 
-				// Set the ws to use for filtering.
-				int? origReversalWs = null;
-				if (m_list.Filter is FilterBarCellFilter filter && filter.Finder is LayoutFinder finder)
-				{
-					int wsId = Cache.ServiceLocator.WritingSystemManager.Get(revIndex.WritingSystem).Handle;
-					finder.ReversalWs = wsId;
-					if (finder.Vc != null)
-					{
-						origReversalWs = finder.Vc.ReversalWs;
-						finder.Vc.ReversalWs = wsId;
-					}
-				}
-
 				// Filters and Sorts the list, then populates the virtual cache with the result.
 				m_list.FilterAndSortList();
 				// Gets the entries from the virtual cache and applies additional filtering for the publication.
 				int[] retEntries = decorator.GetSortedAndFilteredReversalEntries(revIndex.Hvo, VirtualFlid);
 
-				// Restore reversalWs.
-				if (m_list.Filter is FilterBarCellFilter filter2 && filter2.Finder is LayoutFinder finder2)
-				{
-					finder2.ReversalWs = 0;
-					if (origReversalWs != null)
-					{
-						finder2.Vc.ReversalWs = origReversalWs.Value;
-					}
-				}
 				return retEntries;
 			}
 			return new int[] { };
