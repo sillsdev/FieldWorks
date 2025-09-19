@@ -104,7 +104,7 @@
 		<ItemGroup>
 			<!-- <RemovedSinceLastBase Include="$(dir-outputBase)/Helps/WW-ConceptualIntro/ConceptualIntroduction.htm" /> -->
 		</ItemGroup>
-		<WriteLinesToFile File="%(RemovedSinceLastBase.FullPath)" Lines="" />
+		<WriteLinesToFile File="%(RemovedSinceLastBase.FullPath)" Lines="" Condition="@(RemovedSinceLastBase->Count()) != 0"/>
 	</Target>
 	<!-- ########################################################################################################## -->
 	<!-- ### Compile Targets                                                                                    ### -->
