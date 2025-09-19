@@ -251,31 +251,33 @@ jobs:
         if: ${{ inputs.make_release == 'true' }}
         run: |
             [System.IO.Compression.ZipFile]::CreateFromDirectory(
-              "$pwd\BuildDir",
-              "$pwd\BuildDir.zip",
+              "${{ github.workspace }}\BuildDir",
+              "${{ github.workspace }}\BuildDir.zip",
               [System.IO.Compression.CompressionLevel]::Optimal,
               $false
             )
             [System.IO.Compression.ZipFile]::CreateFromDirectory(
-              "$pwd\PatchableInstaller\ProcRunner\ProcRunner\bin\Release\net48",
-              "$pwd\ProcRunner.zip",
+              "${{ github.workspace }}\PatchableInstaller\ProcRunner\ProcRunner\bin\Release\net48",
+              "${{ github.workspace }}\ProcRunner.zip",
               [System.IO.Compression.CompressionLevel]::Optimal,
               $false
             )
+            Get-ChildItem "${{ github.workspace }}" -Filter "*.zip" | Select-Object Name, Length
+            "build_dir_zip=$(("${{ github.workspace }}/BuildDir.zip") -replace '\\','/')" >> $env:GITHUB_OUTPUT
+            "proc_runner_zip=$(("${{ github.workspace }}/ProcRunner.zip") -replace '\\','/')" >> $env:GITHUB_OUTPUT
+
 
       - name: Create Release and Upload artifacts
         if: ${{ inputs.make_release == 'true' }}
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@6cbd405e2c4e67a21c47fa9e383d020e4e28b836
         with:
             tag_name: build-${{ env.RELEASE_BASE_BUILD_NUMBER }}
             name: "FieldWorks Base Build #${{ env.RELEASE_BASE_BUILD_NUMBER }}"
             draft: false
             prerelease: true
             files: |
-              ${{ github.workspace }}/BuildDir.zip
-              ${{ github.workspace }}/ProcRunner.zip
-              ${{ steps.stage_installers.outputs.offline_exe }}
-              ${{ steps.stage_installers.outputs.online_exe }}
+              ${{ steps.prepare_paths.outputs.build_dir_zip }}
+              ${{ steps.prepare_paths.outputs.proc_runner_zip }}
 
       - name: Upload Build Logs
         uses: actions/upload-artifact@v4
