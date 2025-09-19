@@ -275,6 +275,9 @@
   <data name="khtpTryAWord" xml:space="preserve">
     <value>User_Interface/Menus/Parser/Try_a_word.htm</value>
   </data>
+  <data name="khtpHCMaxCompoundRules" xml:space="preserve">
+    <value>User_Interface/Menus/Parser/MaxApps_dialog_box.htm</value>
+  </data>
   <data name="khtpField-LexEntry-CitationForm" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Citation_Form_field.htm</value>
   </data>
