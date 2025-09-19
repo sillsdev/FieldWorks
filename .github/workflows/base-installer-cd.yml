@@ -248,6 +248,7 @@ jobs:
           Write-Host "Uploaded online installer to s3://flex-updates/$onlineS3Key"
 
       - name: Compress Build Artifacts
+        id: compress_artifacts
         if: ${{ inputs.make_release == 'true' }}
         run: |
             [System.IO.Compression.ZipFile]::CreateFromDirectory(
@@ -275,9 +276,10 @@ jobs:
             name: "FieldWorks Base Build #${{ env.RELEASE_BASE_BUILD_NUMBER }}"
             draft: false
             prerelease: true
+            fail_on_unmatched_files: true
             files: |
-              ${{ steps.prepare_paths.outputs.build_dir_zip }}
-              ${{ steps.prepare_paths.outputs.proc_runner_zip }}
+              ${{ steps.compress_artifacts.outputs.build_dir_zip }}
+              ${{ steps.compress_artifacts.outputs.proc_runner_zip }}
 
       - name: Upload Build Logs
         uses: actions/upload-artifact@v4
