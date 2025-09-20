@@ -251,8 +251,8 @@ jobs:
         if: ${{ (inputs.make_release || 'true') == 'true' }}
         shell: pwsh
         env:
-          BASE_RELEASE: ${{ inputs.base_release }}
-          BASE_BUILD_NUMBER: ${{ inputs.base_build_number }}
+          BASE_RELEASE: ${{ inputs.base_release || 'build-1141' }}
+          BASE_BUILD_NUMBER: ${{ inputs.base_build_number || '' }}
           BUILD_VERSION_SEGMENT: ${{ env.BuildVersionSegment }}
         run: |
           # The github action base-installer-cd will make releases with a tag build-[build number]
