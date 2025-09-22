@@ -215,7 +215,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			// create and show compound rule max apps dialog
 			var dlg = new HCMaxCompoundRulesDlg();
-			dlg.SetDlgInfo("MaxApps", XmlRep, m_compoundRules);
+			dlg.SetDlgInfo("MaxApps", XmlRep, m_compoundRules, m_helpTopicProvider);
 			dlg.ShowDialog(this);
 			XmlRep = dlg.XmlRep;
 		}

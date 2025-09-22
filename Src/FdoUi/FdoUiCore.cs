@@ -1155,7 +1155,11 @@ namespace SIL.FieldWorks.FdoUi
 					mergeCandidates.Sort();
 					dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, wp, dObj, mergeCandidates, guiControl, helpTopic);
 					if (DialogResult.OK == dlg.ShowDialog(mainWindow))
+					{
 						ReallyMergeUnderlyingObject(dlg.Hvo, fLoseNoTextData);
+						// Refresh in case "Sense Number" was 0 in the target and non-0 in the source (LT-22155).
+						m_mediator.SendMessage("MasterRefresh", null);
+					}
 				}
 			}
 		}
