@@ -9,6 +9,9 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <WarningsNotAsErrors>168;169;219;414;649;1635;1702;1701</WarningsNotAsErrors>
+    <!-- Work with FieldWorks build system that uses external packages.config -->
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <RestorePackagesPath>$(MSBuildThisFileDirectory)..\..\..\packages</RestorePackagesPath>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86' Or '$(Configuration)|$(Platform)'=='Debug|x64' Or '$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
