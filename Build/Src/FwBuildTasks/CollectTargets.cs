@@ -54,6 +54,7 @@ namespace FwBuildTasks
 		private TaskLoggingHelper Log { get; }
 		private XmlDocument m_csprojFile;
 		private XmlNamespaceManager m_namespaceMgr;
+		private bool m_isSdkStyle;
 		private Dictionary<string, int> m_timeoutMap;
 		private string ToolsVersion { get; set; }
 
@@ -193,7 +194,20 @@ namespace FwBuildTasks
 				m_csprojFile = new XmlDocument();
 				m_csprojFile.Load(projectFile);
 				m_namespaceMgr = new XmlNamespaceManager(m_csprojFile.NameTable);
-				m_namespaceMgr.AddNamespace("c", "http://schemas.microsoft.com/developer/msbuild/2003");
+				
+				// Check if this is an SDK-style project
+				var root = m_csprojFile.DocumentElement;
+				if (root.HasAttribute("Sdk"))
+				{
+					// SDK-style project - no explicit namespace needed for XPath
+					m_isSdkStyle = true;
+				}
+				else
+				{
+					// Old-style project with explicit namespace
+					m_namespaceMgr.AddNamespace("c", "http://schemas.microsoft.com/developer/msbuild/2003");
+					m_isSdkStyle = false;
+				}
 			}
 			catch (XmlException e)
 			{
@@ -212,14 +226,26 @@ namespace FwBuildTasks
 		{
 			get
 			{
-				var name = m_csprojFile.SelectSingleNode("/c:Project/c:PropertyGroup/c:AssemblyName",
-					m_namespaceMgr);
-				var type = m_csprojFile.SelectSingleNode("/c:Project/c:PropertyGroup/c:OutputType",
-					m_namespaceMgr);
+				XmlNode name, type;
+				
+				if (m_isSdkStyle)
+				{
+					// SDK-style project - no namespace prefix needed
+					name = m_csprojFile.SelectSingleNode("/Project/PropertyGroup/AssemblyName");
+					type = m_csprojFile.SelectSingleNode("/Project/PropertyGroup/OutputType");
+				}
+				else
+				{
+					// Old-style project with namespace
+					name = m_csprojFile.SelectSingleNode("/c:Project/c:PropertyGroup/c:AssemblyName", m_namespaceMgr);
+					type = m_csprojFile.SelectSingleNode("/c:Project/c:PropertyGroup/c:OutputType", m_namespaceMgr);
+				}
+				
 				string extension = ".dll";
-				if (type.InnerText == "WinExe" || type.InnerText == "Exe")
+				if (type != null && (type.InnerText == "WinExe" || type.InnerText == "Exe"))
 					extension = ".exe";
-				return name.InnerText + extension;
+				
+				return name?.InnerText + extension;
 			}
 		}
 
@@ -230,9 +256,34 @@ namespace FwBuildTasks
 		{
 			get
 			{
-				return m_csprojFile.SelectNodes("/c:Project/c:PropertyGroup[c:DefineConstants]",
-					m_namespaceMgr);
+				if (m_isSdkStyle)
+				{
+					// SDK-style project - no namespace prefix needed
+					return m_csprojFile.SelectNodes("/Project/PropertyGroup[DefineConstants]");
+				}
+				else
+				{
+					// Old-style project with namespace
+					return m_csprojFile.SelectNodes("/c:Project/c:PropertyGroup[c:DefineConstants]", m_namespaceMgr);
+				}
 			}
+		}
+
+		/// <summary>
+		/// Helper method to get DefineConstants from a PropertyGroup node for both old and SDK-style projects
+		/// </summary>
+		private string GetDefineConstants(XmlNode node)
+		{
+			XmlNode defineNode;
+			if (m_isSdkStyle)
+			{
+				defineNode = node.SelectSingleNode("DefineConstants");
+			}
+			else
+			{
+				defineNode = node.SelectSingleNode("c:DefineConstants", m_namespaceMgr);
+			}
+			return defineNode?.InnerText?.Replace(";", " ") ?? "";
 		}
 
 		private string GetProjectSubDir(string project)
@@ -308,14 +359,14 @@ namespace FwBuildTasks
 							// for multiple platforms, e.g. for AnyCpu and x64.
 							if (configs.ContainsKey(configuration))
 							{
-								if (configs[configuration] != node.SelectSingleNode("c:DefineConstants", m_namespaceMgr).InnerText.Replace(";", " "))
+								if (configs[configuration] != GetDefineConstants(node))
 								{
 									Log.LogError("Configuration {0} for project {1} is defined several times " +
 										"but contains differing values for DefineConstants.", configuration, project);
 								}
 								continue;
 							}
-							configs.Add(configuration, node.SelectSingleNode("c:DefineConstants", m_namespaceMgr).InnerText.Replace(";", " "));
+							configs.Add(configuration, GetDefineConstants(node));
 
 							writer.WriteLine("\t\t<When Condition=\" '$(config-capital)' == '{0}' \">", configuration);
 							writer.WriteLine("\t\t\t<PropertyGroup>");
@@ -328,7 +379,7 @@ namespace FwBuildTasks
 								otherwiseBldr.AppendLine("\t\t<Otherwise>");
 								otherwiseBldr.AppendLine("\t\t\t<PropertyGroup>");
 								otherwiseBldr.AppendLine(string.Format("\t\t\t\t<{0}Defines>{1} CODE_ANALYSIS</{0}Defines>", project,
-									node.SelectSingleNode("c:DefineConstants", m_namespaceMgr).InnerText.Replace(";", " ")));
+									GetDefineConstants(node)));
 								otherwiseBldr.AppendLine("\t\t\t</PropertyGroup>");
 								otherwiseBldr.AppendLine("\t\t</Otherwise>");
 								otherwiseAdded = true;
