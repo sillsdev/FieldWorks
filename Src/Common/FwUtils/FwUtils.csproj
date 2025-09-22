@@ -37,8 +37,6 @@
     <!-- Exclude template files and test files -->
     <Compile Remove="FwUtils.template.cs" />
     <Compile Remove="FwUtilsTests/**" />
-    <!-- Ensure generated file is included when it exists -->
-    <Compile Include="GeneratedFwUtils.cs" Condition="Exists('GeneratedFwUtils.cs')" />
   </ItemGroup>
 
   <!-- PackageReferences matched from nuget-common/packages.config -->
