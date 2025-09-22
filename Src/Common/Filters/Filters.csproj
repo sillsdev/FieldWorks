@@ -45,9 +45,6 @@
       <ExcludeAssets>Build,Analyzers</ExcludeAssets>
     </PackageReference>
     <PackageReference Include="SIL.Core" Version="15.0.0-beta0117" />
-    <PackageReference Include="SIL.LCModel" Version="11.0.0-beta0135" />
-    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-beta0135" />
-    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-beta0135" />
     <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
   </ItemGroup>
 
@@ -55,6 +52,15 @@
   <ItemGroup>
     <Reference Include="FwUtils">
       <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.LCModel.Core">
+      <HintPath>..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.LCModel">
+      <HintPath>..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.LCModel.Utils">
+      <HintPath>..\..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
     <Reference Include="ViewsInterfaces">
       <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
