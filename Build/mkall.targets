@@ -329,6 +329,7 @@
 		<PalasoFiles Include="SIL.Windows.Forms.Archiving.dll"/>
 		<PalasoFiles Include="SIL.Windows.Forms.Archiving.dll.config" Condition="'$(OS)'=='Unix'"/>
 		<PalasoFiles Include="SIL.Windows.Forms.WritingSystems.dll"/>
+		<PalasoFiles Include="System.Buffers.dll"/>
 		<PalasoFiles Include="System.Drawing.Common.dll"/>
 		<PalasoFiles Include="System.Drawing.Common.pdb"/>
 		<PalasoFiles Include="System.Memory.dll"/>
@@ -519,6 +520,7 @@
 			<SILNugetPackages Include="SIL.WritingSystems"><Version>$(PalasoNugetVersion)</Version><Path>lib/net462/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="SIL.WritingSystems.Tests"><Version>$(PalasoNugetVersion)</Version><Path>lib/net462/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="System.Drawing.Common"><Version>9.0.0</Version><Path>lib/net462/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="System.Buffers"><Version>4.5.1</Version><Path>lib/net461/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="System.Memory"><Version>4.5.4</Version><Path>lib/net461/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="System.Resources.Extensions"><Version>4.6.0</Version><Path>lib/netstandard2.0/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="L10NSharp"><Version>7.0.0</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
