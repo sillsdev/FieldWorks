@@ -20,6 +20,15 @@
 		<!-- Download packages in packages-common.config. Then download packages in packages-windows.config. -->
 		<Exec Condition="'$(OS)' == 'Windows_NT'" Command="$(RestoreCommandCommon)"/>
 		<Exec Condition="'$(OS)' == 'Windows_NT'" Command="$(RestoreCommandPlatformSpecific)"/>
+		
+		<!-- Also run dotnet restore for SDK-style projects to generate project.assets.json -->
+		<Message Text="Running dotnet restore for SDK-style projects..." />
+		<Exec Command="dotnet restore &quot;$(fwrt)/Src/Common/FwUtils/FwUtils.csproj&quot; --packages &quot;$(fwrt)/packages&quot;" 
+			  Condition="'$(OS)' == 'Windows_NT' AND Exists('$(fwrt)/Src/Common/FwUtils/FwUtils.csproj')" 
+			  ContinueOnError="false" />
+		<Exec Command="dotnet restore &quot;$(fwrt)/Src/Common/Filters/Filters.csproj&quot; --packages &quot;$(fwrt)/packages&quot;" 
+			  Condition="'$(OS)' == 'Windows_NT' AND Exists('$(fwrt)/Src/Common/Filters/Filters.csproj')" 
+			  ContinueOnError="false" />
 	</Target>
 
 	<PropertyGroup>
