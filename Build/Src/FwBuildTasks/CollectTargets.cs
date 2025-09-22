@@ -194,7 +194,7 @@ namespace FwBuildTasks
 				m_csprojFile = new XmlDocument();
 				m_csprojFile.Load(projectFile);
 				m_namespaceMgr = new XmlNamespaceManager(m_csprojFile.NameTable);
-				
+
 				// Check if this is an SDK-style project
 				var root = m_csprojFile.DocumentElement;
 				if (root.HasAttribute("Sdk"))
@@ -227,7 +227,7 @@ namespace FwBuildTasks
 			get
 			{
 				XmlNode name, type;
-				
+
 				if (m_isSdkStyle)
 				{
 					// SDK-style project - no namespace prefix needed
@@ -240,11 +240,11 @@ namespace FwBuildTasks
 					name = m_csprojFile.SelectSingleNode("/c:Project/c:PropertyGroup/c:AssemblyName", m_namespaceMgr);
 					type = m_csprojFile.SelectSingleNode("/c:Project/c:PropertyGroup/c:OutputType", m_namespaceMgr);
 				}
-				
+
 				string extension = ".dll";
 				if (type != null && (type.InnerText == "WinExe" || type.InnerText == "Exe"))
 					extension = ".exe";
-				
+
 				return name?.InnerText + extension;
 			}
 		}
