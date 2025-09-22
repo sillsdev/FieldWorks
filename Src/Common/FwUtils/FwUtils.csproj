@@ -55,6 +55,9 @@
     <PackageReference Include="SIL.Core.Desktop" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.DesktopAnalytics" Version="4.0.0" />
     <PackageReference Include="SIL.FLExBridge.IPCFramework" Version="1.1.1-beta0001" />
+    <PackageReference Include="SIL.LCModel" Version="11.0.0-beta0135" />
+    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-beta0135" />
+    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-beta0135" />
     <PackageReference Include="SIL.Windows.Forms" Version="15.0.0-beta0117" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
@@ -64,15 +67,6 @@
     <Reference Include="FwResources">
       <HintPath>..\..\..\Output\Debug\FwResources.dll</HintPath>
       <Private>false</Private>
-    </Reference>
-    <Reference Include="SIL.LCModel.Core">
-      <HintPath>..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.LCModel">
-      <HintPath>..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.LCModel.Utils">
-      <HintPath>..\..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
     </Reference>
     <Reference Include="ViewsInterfaces">
       <HintPath>..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
