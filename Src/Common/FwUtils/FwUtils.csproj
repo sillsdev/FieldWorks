@@ -58,6 +58,7 @@
     <PackageReference Include="SIL.LCModel" Version="11.0.0-beta0135" />
     <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-beta0135" />
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-beta0135" />
+    <PackageReference Include="SIL.Lexicon" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.Windows.Forms" Version="15.0.0-beta0117" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
