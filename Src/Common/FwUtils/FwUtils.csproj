@@ -32,9 +32,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Include CommonAssemblyInfo that is generated during build -->
+    <Compile Include="..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" Condition="Exists('..\..\CommonAssemblyInfo.cs')" />
     <!-- Exclude template files and test files -->
     <Compile Remove="FwUtils.template.cs" />
     <Compile Remove="FwUtilsTests/**" />
+    <!-- Ensure generated file is included when it exists -->
+    <Compile Include="GeneratedFwUtils.cs" Condition="Exists('GeneratedFwUtils.cs')" />
   </ItemGroup>
 
   <!-- PackageReferences matched from nuget-common/packages.config -->

@@ -28,6 +28,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <!-- Include CommonAssemblyInfo that is generated during build -->
+    <Compile Include="..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" Condition="Exists('..\..\CommonAssemblyInfo.cs')" />
     <!-- Exclude test files -->
     <Compile Remove="FiltersTests/**" />
   </ItemGroup>
