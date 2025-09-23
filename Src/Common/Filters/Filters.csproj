@@ -42,7 +42,7 @@
       <HintPath>..\..\..\packages\CommonServiceLocator.2.0.7\lib\net47\CommonServiceLocator.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <Reference Include="Icu">
+    <Reference Include="icu.net">
       <HintPath>..\..\..\packages\icu.net.3.0.0\lib\net461\icu.net.dll</HintPath>
       <Private>false</Private>
     </Reference>
