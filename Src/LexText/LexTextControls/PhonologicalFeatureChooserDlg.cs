@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 SIL International
+// Copyright (c) 2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -482,7 +482,7 @@ namespace SIL.FieldWorks.LexText.Controls
 								 orderby s.Name.BestAnalysisAlternative.Text
 								 select s.Hvo;
 			int[] featureHvos = sortedFeatureHvos.ToArray();
-			m_sda.CacheVecProp(m_cache.LangProject.Hvo, featureHvos);
+			m_sda.CacheVecProp(m_cache.LangProject.Hvo, featureHvos, true);
 			m_bvList = new BrowseViewer(toolNode, m_cache.LangProject.Hvo, PhonologicalFeaturePublisher.ListFlid, m_cache, m_mediator, m_propertyTable, null, m_sda);
 			m_bvList.SelectionChanged += m_bvList_SelectionChanged;
 			m_bvList.ScrollBar.ValueChanged += ScrollBar_ValueChanged;

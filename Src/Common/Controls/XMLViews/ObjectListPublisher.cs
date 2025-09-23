@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -76,7 +76,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="hvoObj">The hvo.</param>
 		/// <param name="hvos">The hvos.</param>
-		public void CacheVecProp(int hvoObj, int[] hvos)
+		/// <param name="updateAndNotify">If true: Gui and properties should be updated, and notifications sent.</param>
+		public void CacheVecProp(int hvoObj, int[] hvos, bool updateAndNotify)
 		{
 			if (hvos == null)
 				throw new ArgumentNullException("Should not pass null to CacheVecProp");
@@ -86,7 +87,10 @@ namespace SIL.FieldWorks.Common.Controls
 				cvDel = old.Length;
 
 			m_values[hvoObj] = hvos;
-			SendPropChanged(hvoObj, 0, hvos.Length, cvDel);
+			if (updateAndNotify)
+			{
+				SendPropChanged(hvoObj, 0, hvos.Length, cvDel);
+			}
 		}
 
 		/// <summary>

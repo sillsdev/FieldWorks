@@ -399,7 +399,7 @@ namespace SIL.FieldWorks.Common.Controls
 			int count = hvos.Length;
 			int prevIndex = m_bvMatches.SelectedIndex;
 			int prevHvo = prevIndex == -1 ? 0 : m_bvMatches.AllItems[prevIndex];
-			m_listPublisher.CacheVecProp(m_cache.LanguageProject.LexDbOA.Hvo, hvos);
+			m_listPublisher.CacheVecProp(m_cache.LanguageProject.LexDbOA.Hvo, hvos, true);
 			TabStop = count > 0;
 			// Disable the list so that it doesn't steal the focus (LT-9481)
 			m_bvMatches.Enabled = false;

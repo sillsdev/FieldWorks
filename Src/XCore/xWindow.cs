@@ -2197,6 +2197,37 @@ namespace XCore
 			return toolId;
 		}
 
+		public static bool TryGetToolNode(string areaName, string toolName, PropertyTable propTable, out XmlNode node)
+		{
+			string xpath = GetToolXPath(areaName) + "[@value = '" + XmlUtils.MakeSafeXmlAttribute(toolName) + "']";
+			var windowConfiguration = propTable.GetValue<XmlNode>("WindowConfiguration");
+			node = windowConfiguration.SelectSingleNode(xpath);
+			if (node == null)
+				node = FindToolNode(windowConfiguration, areaName, toolName);
+			return node != null;
+		}
+
+		public static string GetToolXPath(string areaId)
+		{
+			if (areaId == null)
+				return "//item/parameters/tools/tool";
+
+			return "//item[@value='" + areaId + "']/parameters/tools/tool";
+		}
+
+		public static XmlNode FindToolNode(XmlNode windowConfig, string areaName, string toolName)
+		{
+			foreach (XmlNode node in windowConfig.SelectNodes(GetToolXPath(areaName)))
+			{
+				string value = XmlUtils.GetAttributeValue(node, "value");
+				if (value == toolName)
+					return node;
+			}
+			return null;
+		}
+
+
+
 		#endregion Helper methods
 
 		#region Windows Event handlers

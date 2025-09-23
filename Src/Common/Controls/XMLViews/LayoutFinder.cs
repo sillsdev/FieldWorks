@@ -150,29 +150,10 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-//		/// ------------------------------------------------------------------------------------
-//		/// <summary>
-//		/// Given a spec that might be some sort of element, or might be something wrapping a flow object
-//		/// around that element, return the element. Or, it might be a "frag" element wrapping all of that.
-//		/// </summary>
-//		/// <param name="viewSpec">The view spec.</param>
-//		/// <returns></returns>
-//		/// ------------------------------------------------------------------------------------
-//		XmlNode ExtractFromFlow(XmlNode viewSpec)
-//		{
-//			if (viewSpec == null)
-//				return null;
-//			if (viewSpec.Name == "frag")
-//				viewSpec = viewSpec.FirstChild;
-//			if (viewSpec.Name == "para" || viewSpec.Name == "div")
-//		{
-//				if (viewSpec.ChildNodes.Count == 2 && viewSpec.FirstChild.Name == "properties")
-//					return viewSpec.ChildNodes[1];
-//				else if (viewSpec.ChildNodes.Count == 1)
-//					return viewSpec.FirstChild;
-//		}
-//			return viewSpec; // None of the special flow object cases, use the node itself.
-//		}
+		/// <summary>
+		/// Stores the reversal ws that should be used for filtering.
+		/// </summary>
+		public int ReversalWs { set; get; }
 
 		#region StringFinder Members
 
@@ -278,6 +259,7 @@ namespace SIL.FieldWorks.Common.Controls
 				m_vc = new XmlBrowseViewBaseVc(m_cache);
 				m_vc.SuppressPictures = true; // we won't dispose of it, so it mustn't make pictures (which we don't need)
 				m_vc.DataAccess = m_sda;
+				m_vc.ReversalWs = ReversalWs;
 			}
 			else
 			{
