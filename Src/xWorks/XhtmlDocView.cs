@@ -1410,7 +1410,7 @@ namespace SIL.FieldWorks.XWorks
 				progress.Maximum = entriesPerPage + 1 + entriesPerPage / 100;
 				progress.Position++;
 			}
-			var xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(entriesToPublish, publicationDecorator, configuration, m_propertyTable,
+			var xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(entriesToPublish, Clerk, publicationDecorator, configuration, m_propertyTable,
 				progress, entriesPerPage);
 			var end = DateTime.Now;
 			Debug.WriteLine($"saving xhtml/css took {end - start}");

@@ -376,18 +376,28 @@ namespace SIL.FieldWorks.XWorks.LexEd
 	{
 		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode viewConfiguration)
 		{
-			CheckDisposed();
-
-			base.Init(mediator, propertyTable, viewConfiguration);
-			ChangeOwningObjectIfPossible();
+			Init(mediator, propertyTable, viewConfiguration, true);
 		}
 
-		private void ChangeOwningObjectIfPossible()
+		/// <param name="updateAndNotify">If true: Gui and properties should be updated, and notifications sent.</param>
+		public override void Init(Mediator mediator, PropertyTable propertyTable, XmlNode viewConfiguration, bool updateAndNotify)
+		{
+			CheckDisposed();
+
+			base.Init(mediator, propertyTable, viewConfiguration, updateAndNotify);
+			ChangeOwningObjectIfPossible(updateAndNotify);
+		}
+
+		/// <summary>
+		/// Tries to change the owning object and catches all exceptions.
+		/// </summary>
+		/// <param name="updateAndNotify">If true: Gui and properties should be updated, and notifications sent.</param>
+		private void ChangeOwningObjectIfPossible(bool updateAndNotify)
 		{
 			var newGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(m_propertyTable, "ReversalIndexGuid");
 			try
 			{
-				ChangeOwningObject(newGuid);
+				ChangeOwningObject(newGuid, updateAndNotify);
 			}
 			catch
 			{
@@ -395,13 +405,20 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			}
 		}
 
-		private void ChangeOwningObject(Guid newGuid)
+		/// <summary>
+		/// Change the OwningObject and update filters and sorters.
+		/// </summary>
+		/// <param name="updateAndNotify">If true: Gui and properties should be updated, and notifications sent.</param>
+		public override void ChangeOwningObject(Guid newGuid, bool updateAndNotify, DictionaryConfigurationModel dictConfig = null)
 		{
 			if (newGuid.Equals(Guid.Empty))
 			{
 				// We need to find another reversal index. Any will do.
 				newGuid = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances().First().Guid;
-				m_propertyTable.SetProperty("ReversalIndexGuid", newGuid.ToString(), true);
+				if (updateAndNotify)
+				{
+					m_propertyTable.SetProperty("ReversalIndexGuid", newGuid.ToString(), true);
+				}
 			}
 
 			var ri = Cache.ServiceLocator.GetObject(newGuid) as IReversalIndex;
@@ -410,42 +427,56 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				return;
 			}
 
-			// This looks like our best chance to update a global "Current Reversal Index Writing System" value.
-			WritingSystemServices.CurrentReversalWsId = Cache.WritingSystemFactory.GetWsFromStr(ri.WritingSystem);
-
-			// Set the override writing system. LT-21198
-			var layoutFinder = ((Sorter as GenRecordSorter)?.Comparer as StringFinderCompare)?.Finder as LayoutFinder;
-			if (layoutFinder?.Vc != null)
+			if (updateAndNotify)
 			{
-				var wsComparer = ((Sorter as GenRecordSorter)?.Comparer as StringFinderCompare)?.SubComparer as WritingSystemComparer;
-				if (wsComparer != null)
-				{
-					layoutFinder.Vc.OverrideWs = Cache.WritingSystemFactory.GetWsFromStr(wsComparer.WsId);
-				}
-				else
-				{
-					layoutFinder.Vc.OverrideWs = WritingSystemServices.CurrentReversalWsId;
-				}
+				// This looks like our best chance to update a global "Current Reversal Index Writing System" value.
+				WritingSystemServices.CurrentReversalWsId = Cache.WritingSystemFactory.GetWsFromStr(ri.WritingSystem);
 			}
 
-			try
+			ICmObject newOwningObj = NewOwningObject(ri);
+			if (newOwningObj != OwningObject)
 			{
-				ICmObject newOwningObj = NewOwningObject(ri);
-				if (newOwningObj != OwningObject)
+				if (updateAndNotify)
 				{
-					UpdateFiltersAndSortersIfNeeded(); // Load the index-specific sorter
+					UpdateFiltersAndSortersIfNeeded(updateAndNotify); // Load the index-specific sorter
+					SyncReversalWritingSystem(ri);
 					OnChangeSorter(); // Update the column headers with sort arrows
-					OwningObject = newOwningObj; // This automatically reloads (and sorts) the list
+					SetOwningObject(newOwningObj, updateAndNotify); // Reloads and sorts the list.
 					m_propertyTable.SetProperty("ActiveClerkOwningObject", newOwningObj, true);
 					m_propertyTable.SetPropertyPersistence("ActiveClerkOwningObject", false);
 					m_mediator.SendMessage("ClerkOwningObjChanged", this);
 				}
-			}
-			finally
-			{
-				if (layoutFinder?.Vc != null)
+				else
 				{
-					layoutFinder.Vc.OverrideWs = 0;
+					UpdateFiltersAndSortersIfNeeded(updateAndNotify, dictConfig); // Load the index-specific sorter
+					SyncReversalWritingSystem(ri);
+					SetOwningObject(newOwningObj, updateAndNotify); // Sorts the list
+				}
+			}
+		}
+
+		/// <summary>
+		/// Sync the reversal writing system in the LayoutFinder and Vc for both the Filter and Sorter.
+		/// </summary>
+		/// <param name="ri"></param>
+		private void SyncReversalWritingSystem(IReversalIndex ri)
+		{
+			int wsId = Cache.ServiceLocator.WritingSystemManager.Get(ri.WritingSystem).Handle;
+
+			if ((Filter as FilterBarCellFilter)?.Finder is LayoutFinder filterFinder)
+			{
+				filterFinder.ReversalWs = wsId;
+				if (filterFinder.Vc != null)
+				{
+					filterFinder.Vc.ReversalWs = wsId;
+				}
+			}
+			if (((Sorter as GenRecordSorter)?.Comparer as StringFinderCompare)?.Finder is LayoutFinder sortFinder)
+			{
+				sortFinder.ReversalWs = wsId;
+				if (sortFinder.Vc != null)
+				{
+					sortFinder.Vc.ReversalWs = wsId;
 				}
 			}
 		}
@@ -500,10 +531,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// The stored sorter files keep messing us up here, so we need to do a bit of post-deserialization processing.
 		/// </summary>
 		/// <returns>true if we restored something different from what was already there.</returns>
-		protected override bool TryRestoreSorter(XmlNode clerkConfiguration, LcmCache cache)
+		protected override bool TryRestoreSorter(XmlNode clerkConfiguration, LcmCache cache, DictionaryConfigurationModel dictConfig = null)
 		{
 			var fakevc = new XmlBrowseViewBaseVc { SuppressPictures = true, Cache = Cache }; // SuppressPictures to make sure that we don't leak anything as this will not be disposed.
-			if (base.TryRestoreSorter(clerkConfiguration, cache) && Sorter is GenRecordSorter)
+			if (base.TryRestoreSorter(clerkConfiguration, cache, dictConfig) && Sorter is GenRecordSorter)
 			{
 				var sorter = (GenRecordSorter)Sorter;
 				var stringFinderComparer = sorter.Comparer as StringFinderCompare;
@@ -550,7 +581,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					base.OnPropertyChanged(name);
 					break;
 				case "ReversalIndexGuid":
-					ChangeOwningObjectIfPossible();
+					ChangeOwningObjectIfPossible(true);
 					break;
 				case "ToolForAreaNamed_lexicon":
 					int rootIndex = GetRootIndex(m_list.CurrentIndex);
@@ -560,7 +591,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				case "ActiveClerk":
 					RecordClerk activeClerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
 					if (activeClerk == this)
-						ChangeOwningObjectIfPossible();
+						ChangeOwningObjectIfPossible(true);
 					else
 						base.OnPropertyChanged(name);
 					break;
@@ -687,7 +718,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						var idxNew = ReversalIndexAfterDeletion(Cache, out cobjNew);
 						SetReversalIndexGuid(idxNew.Guid);
 					});
-				ChangeOwningObjectIfPossible();
+				ChangeOwningObjectIfPossible(true);
 			}
 			finally
 			{

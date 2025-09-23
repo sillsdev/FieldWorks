@@ -74,7 +74,7 @@ namespace SIL.FieldWorks.IText
 			string name = XmlUtils.GetAttributeValue(configurationParameters, "clerk");
 			var clerk = RecordClerk.FindClerk(_propertyTable, name);
 			m_clerk = (clerk == null || clerk is TemporaryRecordClerk) ?
-				(InterlinearTextsRecordClerk)RecordClerkFactory.CreateClerk(mediator, _propertyTable, configurationParameters, true) :
+				(InterlinearTextsRecordClerk)RecordClerkFactory.CreateClerk(mediator, _propertyTable, configurationParameters, true, true) :
 				(InterlinearTextsRecordClerk)clerk;
 			// There's no record bar for it to control, but it should control the staus bar (e.g., it should update if we change
 			// the set of selected texts).

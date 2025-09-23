@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -52,7 +52,8 @@ namespace SIL.FieldWorks.IText
 			m_configurationParameters = configurationParameters;
 			m_cache = m_propertyTable.GetValue<LcmCache>("cache");
 			string name = RecordClerk.GetCorrespondingPropertyName(XmlUtils.GetAttributeValue(configurationParameters, "clerk"));
-			m_clerk = m_propertyTable.GetValue<OccurrencesOfSelectedUnit>(name) ?? (OccurrencesOfSelectedUnit)RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, m_configurationParameters, true);
+			m_clerk = m_propertyTable.GetValue<OccurrencesOfSelectedUnit>(name) ?? (OccurrencesOfSelectedUnit)RecordClerkFactory.CreateClerk(
+				m_mediator, m_propertyTable, m_configurationParameters, true, true);
 			m_clerk.ConcordanceControl = this;
 		}
 
@@ -126,7 +127,7 @@ namespace SIL.FieldWorks.IText
 			IsLoadingMatches = true;
 			try
 			{
-				m_clerk.OwningObject = m_cache.LangProject;
+				m_clerk.SetOwningObject(m_cache.LangProject, true);
 				decorator.SetOccurrences(m_cache.LangProject.Hvo, occurrences);
 				m_clerk.UpdateList(true);
 			}

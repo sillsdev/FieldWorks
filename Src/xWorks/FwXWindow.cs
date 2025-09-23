@@ -1195,7 +1195,6 @@ namespace SIL.FieldWorks.XWorks
 			using (var dialog = new UploadToWebonaryDlg(controller, model, propertyTable))
 			{
 				dialog.ShowDialog();
-				mediator.SendMessage("Refresh", null);
 			}
 		}
 

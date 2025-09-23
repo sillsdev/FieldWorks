@@ -52,6 +52,11 @@ namespace SIL.FieldWorks.XWorks
 			m_mediator = m_window.Mediator;
 			m_mediator.AddColleague(new StubContentControlProvider());
 			m_window.LoadUI(configFilePath);
+			var layoutInventory = new Inventory("*.fwlayout", "/LayoutInventory/*", null, "test", "nowhere");
+			Inventory.SetInventory("layouts", Cache.ProjectId.Name, layoutInventory);
+			var partInventory = new Inventory("*Parts.xml", "/PartInventory/bin/*", null, "test", "nowhere");
+			Inventory.SetInventory("parts", Cache.ProjectId.Name, partInventory);
+
 			// set up clerk to allow DictionaryPublicationDecorator to be created during the UploadToWebonaryController driven export
 			const string reversalIndexClerk = @"<?xml version='1.0' encoding='UTF-8'?>
 			<root>
@@ -60,19 +65,20 @@ namespace SIL.FieldWorks.XWorks
 						<recordList owner='LexDb' property='Entries'/>
 					</clerk>
 					<clerk id='AllReversalEntries'>
+						<dynamicloaderinfo assemblyPath='LexEdDll.dll' class='SIL.FieldWorks.XWorks.LexEd.ReversalEntryClerk' />
 						<recordList owner = 'ReversalIndex' property='AllEntries'>
 						<dynamicloaderinfo assemblyPath = 'LexEdDll.dll' class='SIL.FieldWorks.XWorks.LexEd.AllReversalEntriesRecordList'/>
 						</recordList>
 					</clerk>
 				</clerks>
 				<tools>
-					<tool label='Dictionary' value='lexiconDictionary' icon='DocumentView'>
+					<tool label='Dictionary' value='lexiconDictionary' icon='DocumentView' clerk='entries'>
 						<control>
 							<dynamicloaderinfo assemblyPath='xWorks.dll' class='SIL.FieldWorks.XWorks.XhtmlDocView'/>
 							<parameters area='lexicon' clerk='entries' layout='Bartholomew' layoutProperty='DictionaryPublicationLayout' editable='false' configureObjectName='Dictionary'/>
 						</control>
 					</tool>
-					<tool label='ReversalIndex' value='lexiconReversalIndex' icon='DocumentView'>
+					<tool label='ReversalIndex' value='lexiconReversalIndex' icon='DocumentView' clerk='AllReversalEntries'>
 						<control>
 							<dynamicloaderinfo assemblyPath='xWorks.dll' class='SIL.FieldWorks.XWorks.RecordEditView'/>
 							<parameters area = 'lexicon' clerk = 'AllReversalEntries' layout = 'Normal' treeBarAvailability = 'NotAllowed' emptyTitleId = 'No-ReversalIndexEntries' />
@@ -84,19 +90,21 @@ namespace SIL.FieldWorks.XWorks
 			doc.LoadXml(reversalIndexClerk);
 
 			XmlNode clerkNode = doc.SelectSingleNode("//tools/tool[@label='Dictionary']//parameters[@area='lexicon']");
-			m_Clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false);
+			m_Clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false, false);
 			m_propertyTable.SetProperty("ActiveClerk", m_Clerk, false);
 
+
+			var revIndex = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(Cache.DefaultAnalWs);
+			m_propertyTable.SetProperty("ReversalIndexGuid", revIndex.Guid.ToString(), true);
+
 			clerkNode = doc.SelectSingleNode("//tools/tool[@label='ReversalIndex']//parameters[@area='lexicon']");
-			m_Clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false);
+			m_Clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false, false);
 			m_propertyTable.SetProperty("ActiveClerk", m_Clerk, false);
 
 			m_propertyTable.SetProperty("ToolForAreaNamed_lexicon", "lexiconDictionary", false);
 			Cache.ProjectId.Path = Path.Combine(FwDirectoryFinder.SourceDirectory, "xWorks/xWorksTests/TestData/");
 			// setup style sheet and style to allow the css to generate during the UploadToWebonaryController driven export
 			m_styleSheet = FontHeightAdjuster.StyleSheetFromPropertyTable(m_propertyTable);
-
-			Cache.ServiceLocator.GetInstance<IReversalIndexRepository>().FindOrCreateIndexForWs(Cache.DefaultAnalWs);
 
 			m_owningTable = new StyleInfoTable("AbbySomebody", Cache.ServiceLocator.WritingSystemManager);
 			var fontInfo = new FontInfo();
@@ -330,19 +338,6 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
-		public void ResetsPropTablesPublicationOnExit()
-		{
-			var originalPub = m_propertyTable.GetStringProperty("SelectedPublication", "Main Dictionary");
-			m_propertyTable.SetProperty("SelectedPublication", originalPub, false); // just in case we fell back on the default
-			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator))
-			{
-				controller.ActivatePublication("Wiktionary");
-				Assert.AreEqual("Wiktionary", m_propertyTable.GetStringProperty("SelectedPublication", null), "Didn't activate temp publication");
-			}
-			Assert.AreEqual("Main Dictionary", m_propertyTable.GetStringProperty("SelectedPublication", null), "Didn't reset publication");
-		}
-
-		[Test]
 		public void DeleteDictionaryHandles404()
 		{
 			// Test with an exception which indicates a redirect should happen
@@ -467,6 +462,8 @@ namespace SIL.FieldWorks.XWorks
 			public string UploadURI { get; set; }
 
 			internal override bool UseJsonApi => false;
+			internal override bool ForTesting => true;
+
 
 			/// <summary>
 			/// This constructor should be used in tests that will actually hit a server, and are marked [ByHand]

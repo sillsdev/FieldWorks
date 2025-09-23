@@ -2682,7 +2682,12 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (propertyValue is IMultiStringAccessor)
 			{
-				return GenerateContentForStrings((IMultiStringAccessor)propertyValue, nodeList, settings, guid);
+				string reversalWs = null;
+				if (field is IReversalIndexEntry revIndexEntry && revIndexEntry.Owner is IReversalIndex revIndex)
+				{
+					reversalWs = revIndex.WritingSystem;
+				}
+				return GenerateContentForStrings((IMultiStringAccessor)propertyValue, nodeList, settings, guid, reversalWs);
 			}
 
 			if (propertyValue is int)
@@ -2766,7 +2771,7 @@ namespace SIL.FieldWorks.XWorks
 		/// DictionaryWritingSystemOptions of the configuration that also has data in the given IMultiStringAccessor
 		/// </summary>
 		private static IFragment GenerateContentForStrings(IMultiStringAccessor multiStringAccessor,
-			List<ConfigurableDictionaryNode> nodeList, GeneratorSettings settings, Guid guid)
+			List<ConfigurableDictionaryNode> nodeList, GeneratorSettings settings, Guid guid, string reversalWs = null)
 		{
 			var wsOptions = nodeList.Last().DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 			if (wsOptions == null)
@@ -2785,7 +2790,18 @@ namespace SIL.FieldWorks.XWorks
 				{
 					continue;
 				}
-				var wsId = WritingSystemServices.GetMagicWsIdFromName(option.Id);
+
+				int wsId = 0;
+				if (option.Id == "reversal")
+				{
+					wsId = settings.Cache.WritingSystemFactory.GetWsFromStr(reversalWs);
+				}
+
+				if (wsId == 0)
+				{
+					wsId = WritingSystemServices.GetMagicWsIdFromName(option.Id);
+				}
+
 				// The string for the specific wsId in the option, or the best string option in the accessor if the wsId is magic
 				ITsString bestString;
 				if (wsId == 0)
@@ -3330,22 +3346,23 @@ namespace SIL.FieldWorks.XWorks
 			return wsOptions.Options[0].Id;
 		}
 
-		public static DictionaryPublicationDecorator GetPublicationDecoratorAndEntries(PropertyTable propertyTable, out int[] entriesToSave, string dictionaryType)
+		/// <summary>
+		/// Creates a decorator for the current publication using the given clerk.
+		/// </summary>
+		public static DictionaryPublicationDecorator CurrentDecorator(PropertyTable propertyTable, LcmCache cache, RecordClerk clerk)
 		{
-			var cache = propertyTable.GetValue<LcmCache>("cache");
-			if (cache == null)
-			{
-				throw new ArgumentException(@"PropertyTable had no cache", "mediator");
-			}
-			var clerk = propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
-			if (clerk == null)
-			{
-				throw new ArgumentException(@"PropertyTable had no clerk", "mediator");
-			}
-
-			ICmPossibility currentPublication;
 			var currentPublicationString = propertyTable.GetStringProperty("SelectedPublication", xWorksStrings.AllEntriesPublication);
-			if (currentPublicationString == xWorksStrings.AllEntriesPublication)
+			return GetDecorator(propertyTable, cache, clerk, currentPublicationString);
+		}
+
+		/// <summary>
+		/// Creates a decorator for the provided publication name, using the given clerk.
+		/// </summary>
+		/// <param name="pubName">Name of the publication.</param>
+		public static DictionaryPublicationDecorator GetDecorator(PropertyTable propertyTable, LcmCache cache, RecordClerk clerk, string pubName)
+		{
+			ICmPossibility currentPublication;
+			if (pubName == xWorksStrings.AllEntriesPublication)
 			{
 				currentPublication = null;
 			}
@@ -3353,11 +3370,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				currentPublication =
 					(from item in cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS
-					 where item.Name.UserDefaultWritingSystem.Text == currentPublicationString
+					 where item.Name.UserDefaultWritingSystem.Text == pubName
 					 select item).FirstOrDefault();
 			}
 			var decorator = new DictionaryPublicationDecorator(cache, clerk.VirtualListPublisher, clerk.VirtualFlid, currentPublication);
-			entriesToSave = decorator.GetEntriesToPublish(propertyTable, clerk.VirtualFlid, dictionaryType);
 			return decorator;
 		}
 
