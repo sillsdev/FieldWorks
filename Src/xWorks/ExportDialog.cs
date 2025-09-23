@@ -905,7 +905,7 @@ namespace SIL.FieldWorks.XWorks
 				int[] invokeEntries = null;
 				btnExport.Invoke(() =>
 				{
-					exportService.GetDictionaryEntries(null, true, out invokeClerk, out invokeDecorator, out invokeEntries);
+					exportService.GetDictionaryFilteredAndSortedEntries(null, true, out invokeClerk, out invokeDecorator, out invokeEntries);
 				});
 				clerk = invokeClerk;
 				entries = invokeEntries;
@@ -913,7 +913,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
-				exportService.GetDictionaryEntries(null, true, out clerk, out decorator, out entries);
+				exportService.GetDictionaryFilteredAndSortedEntries(null, true, out clerk, out decorator, out entries);
 			}
 		}
 
@@ -933,13 +933,13 @@ namespace SIL.FieldWorks.XWorks
 				int[] entries = null;
 				btnExport.Invoke(() =>
 				{
-					entries = revClerk.GetReversalFilteredAndSortedEntries(reversalGuid, decorator, revConfig);
+					entries = exportService.GetReversalFilteredAndSortedEntries(reversalGuid, decorator, revConfig, revClerk);
 				});
 				entriesToSave = entries;
 			}
 			else
 			{
-				entriesToSave = revClerk.GetReversalFilteredAndSortedEntries(reversalGuid, pubDecorator, revConfig);
+				entriesToSave = exportService.GetReversalFilteredAndSortedEntries(reversalGuid, pubDecorator, revConfig, revClerk);
 			}
 		}
 

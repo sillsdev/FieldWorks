@@ -471,7 +471,7 @@ namespace SIL.FieldWorks.XWorks
 					view.UpdateStatus(string.Format(xWorksStrings.ExportingReversalsToWebonary, selectedReversal), WebonaryStatusCondition.None);
 					var writingSystem = revConfig.WritingSystem;
 					var revIndex = allReversalIndexes.First(index => index.WritingSystem == writingSystem);
-					var entriesToSave = revClerk.GetReversalFilteredAndSortedEntries(revIndex.Guid, decorator, revConfig);
+					var entriesToSave = m_exportService.GetReversalFilteredAndSortedEntries(revIndex.Guid, decorator, revConfig, revClerk);
 
 					entries = m_exportService.ExportJsonReversal(entriesToSave, decorator,
 						tempDirectoryForExport, writingSystem, out entryIds, revConfig);

@@ -37,7 +37,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public int CountDictionaryEntries(DictionaryConfigurationModel config, string pubName)
 		{
-			GetDictionaryEntries(pubName, false, out RecordClerk clerk, out DictionaryPublicationDecorator decorator,
+			GetDictionaryFilteredAndSortedEntries(pubName, false, out RecordClerk clerk, out DictionaryPublicationDecorator decorator,
 				out int[] entries);
 			return entries.Count(e => IsGenerated(m_cache, config, e));
 		}
@@ -95,7 +95,7 @@ namespace SIL.FieldWorks.XWorks
 		internal int CountReversalIndexEntries(IReversalIndex ri, RecordClerk revClerk, DictionaryPublicationDecorator decorator,
 			DictionaryConfigurationModel revConfig)
 		{
-			var entries = revClerk.GetReversalFilteredAndSortedEntries(ri.Guid, decorator, revConfig);
+			var entries = GetReversalFilteredAndSortedEntries(ri.Guid, decorator, revConfig, revClerk);
 			return entries.Length;
 		}
 
@@ -150,7 +150,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public List<JArray> ExportJsonDictionary(string folderPath, DictionaryConfigurationModel config, string pubName, out int[] entryIds)
 		{
-			GetDictionaryEntries(pubName, false, out RecordClerk clerk,
+			GetDictionaryFilteredAndSortedEntries(pubName, false, out RecordClerk clerk,
 				out DictionaryPublicationDecorator decorator, out int[] entries);
 
 			return LcmJsonGenerator.SavePublishedJsonWithStyles(entries, decorator, BatchSize, config, m_propertyTable,
@@ -225,7 +225,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="pubName">The name of the publication to use.  If null, then use the current publication.</param>
 		/// <param name="stopSuppressingListLoading">If true then after we get the entries stop suppressing list
 		/// loading. If we don't then the 'Lexicon Edit' view may be blank the first time viewed.</param>
-		public void GetDictionaryEntries(string pubName, bool stopSuppressingListLoading,
+		public void GetDictionaryFilteredAndSortedEntries(string pubName, bool stopSuppressingListLoading,
 			out RecordClerk clerk, out DictionaryPublicationDecorator decorator, out int[] entries)
 		{
 			clerk = GetDictionaryClerk();
@@ -240,13 +240,40 @@ namespace SIL.FieldWorks.XWorks
 				decorator = ConfiguredLcmGenerator.GetDecorator(m_propertyTable, m_cache, clerk, pubName);
 			}
 
-			entries = clerk.GetDictionaryFilteredAndSortedEntries(decorator);
+			// Filters and Sorts the list, then populate the virtual cache with the result.
+			clerk.FilterAndSortList();
+
+			// Gets the entries from the virtual cache.
+			entries = decorator.VecProp(m_cache.LangProject.LexDbOA.Hvo, clerk.VirtualFlid);
 
 			// Stop suppressing list loading, or the 'Lexicon Edit' view may be blank the first time viewed.
 			if (stopSuppressingListLoading)
 			{
 				clerk.ListLoadingSuppressed = false;
 			}
+		}
+
+		/// <summary>
+		/// Gets the filtered and sorted entries for the specified reversal.
+		/// </summary>
+		/// <param name="reversalGuid">The Guid that identifies the reversal.</param>
+		public int[] GetReversalFilteredAndSortedEntries(Guid reversalGuid, DictionaryPublicationDecorator decorator,
+			DictionaryConfigurationModel revConfig, RecordClerk revClerk)
+		{
+			var revIndex = m_cache.ServiceLocator.GetObject(reversalGuid) as IReversalIndex;
+			if (revIndex != null)
+			{
+				// Change the OwningObject and update filters and sorters.
+				revClerk.ChangeOwningObject(reversalGuid, false, revConfig);
+
+				// Filter and Sort the list, then populate the virtual cache with the result.
+				revClerk.FilterAndSortList();
+
+				// Gets the entries from the virtual cache and applies additional filtering for the publication.
+				int[] retEntries = decorator.GetSortedAndFilteredReversalEntries(revIndex.Hvo, revClerk.VirtualFlid);
+				return retEntries;
+			}
+			return new int[] { };
 		}
 
 		/// <summary>

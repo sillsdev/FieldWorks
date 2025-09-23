@@ -3072,39 +3072,12 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Gets the filtered and sorted dictionary entries.
+		/// Filters and Sorts the list, then populates the virtual cache with the result. Does not
+		/// update the Gui, change properties, or send notifications.</param>
 		/// </summary>
-		public int[] GetDictionaryFilteredAndSortedEntries(DictionaryPublicationDecorator decorator)
+		public void FilterAndSortList()
 		{
-			// Filters and Sorts the list, then populates the virtual cache with the result.
 			m_list.FilterAndSortList();
-
-			// Gets the entries from the virtual cache.
-			int[] retEntries = decorator.VecProp(Cache.LangProject.LexDbOA.Hvo, VirtualFlid);
-
-			return retEntries;
-		}
-
-		/// <summary>
-		/// Gets the filtered and sorted entries for the specified reversal.
-		/// </summary>
-		/// <param name="reversalGuid">The Guid that identifies the reversal.</param>
-		public int[] GetReversalFilteredAndSortedEntries(Guid reversalGuid, DictionaryPublicationDecorator decorator, DictionaryConfigurationModel revConfig)
-		{
-			var revIndex = Cache.ServiceLocator.GetObject(reversalGuid) as IReversalIndex;
-			if (revIndex != null)
-			{
-				// Change the OwningObject and update filters and sorters.
-				ChangeOwningObject(reversalGuid, false, revConfig);
-
-				// Filters and Sorts the list, then populates the virtual cache with the result.
-				m_list.FilterAndSortList();
-				// Gets the entries from the virtual cache and applies additional filtering for the publication.
-				int[] retEntries = decorator.GetSortedAndFilteredReversalEntries(revIndex.Hvo, VirtualFlid);
-
-				return retEntries;
-			}
-			return new int[] { };
 		}
 
 		/// <summary>
