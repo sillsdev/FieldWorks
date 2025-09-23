@@ -36,36 +36,15 @@
     <Compile Remove="FiltersTests/**" />
   </ItemGroup>
 
-  <!-- References to assemblies restored by packages.config -->
+  <!-- PackageReferences from packages.config -->
   <ItemGroup>
-    <Reference Include="CommonServiceLocator">
-      <HintPath>..\..\..\packages\CommonServiceLocator.2.0.7\lib\net47\CommonServiceLocator.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="icu.net">
-      <HintPath>..\..\..\packages\icu.net.3.0.0\lib\net461\icu.net.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="SIL.Core">
-      <HintPath>..\..\..\packages\SIL.Core.15.0.0-beta0117\lib\net461\SIL.Core.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="SIL.LCModel">
-      <HintPath>..\..\..\packages\SIL.LCModel.11.0.0-beta0135\lib\net461\SIL.LCModel.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="SIL.LCModel.Core">
-      <HintPath>..\..\..\packages\SIL.LCModel.Core.11.0.0-beta0135\lib\net461\SIL.LCModel.Core.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="SIL.LCModel.Utils">
-      <HintPath>..\..\..\packages\SIL.LCModel.Utils.11.0.0-beta0135\lib\net461\SIL.LCModel.Utils.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="SIL.WritingSystems">
-      <HintPath>..\..\..\packages\SIL.WritingSystems.15.0.0-beta0117\lib\net461\SIL.WritingSystems.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
+    <PackageReference Include="CommonServiceLocator" Version="2.0.7" />
+    <PackageReference Include="icu.net" Version="3.0.0" />
+    <PackageReference Include="SIL.Core" Version="15.0.0-beta0117" />
+    <PackageReference Include="SIL.LCModel" Version="11.0.0-beta0135" />
+    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-beta0135" />
+    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-beta0135" />
+    <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
   </ItemGroup>
 
   <!-- References to local assemblies that are not NuGet packages -->

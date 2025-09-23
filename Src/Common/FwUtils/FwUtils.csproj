@@ -41,64 +41,22 @@
     <Compile Remove="FwUtilsTests/**" />
   </ItemGroup>
 
-  <!-- References to assemblies restored by packages.config -->
+  <!-- PackageReferences from packages.config -->
   <ItemGroup>
-    <Reference Include="CommonServiceLocator">
-      <HintPath>..\..\..\packages\CommonServiceLocator.2.0.7\lib\net47\CommonServiceLocator.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="icu.net">
-      <HintPath>..\..\..\packages\icu.net.3.0.0\lib\net461\icu.net.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="NAudio">
-      <HintPath>..\..\..\packages\NAudio.1.10.0\lib\net35\NAudio.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="NAudio.Lame">
-      <HintPath>..\..\..\packages\NAudio.Lame.1.1.5\lib\net20\NAudio.Lame.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="SIL.Core">
-      <HintPath>..\..\..\packages\SIL.Core.15.0.0-beta0117\lib\net461\SIL.Core.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="SIL.Core.Desktop">
-      <HintPath>..\..\..\packages\SIL.Core.Desktop.15.0.0-beta0117\lib\net461\SIL.Core.Desktop.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="SIL.DesktopAnalytics">
-      <HintPath>..\..\..\packages\SIL.DesktopAnalytics.4.0.0\lib\net461\SIL.DesktopAnalytics.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="SIL.FLExBridge.IPCFramework">
-      <HintPath>..\..\..\packages\SIL.FLExBridge.IPCFramework.1.1.1-beta0001\lib\net461\SIL.FLExBridge.IPCFramework.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="SIL.LCModel">
-      <HintPath>..\..\..\packages\SIL.LCModel.11.0.0-beta0135\lib\net461\SIL.LCModel.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="SIL.LCModel.Core">
-      <HintPath>..\..\..\packages\SIL.LCModel.Core.11.0.0-beta0135\lib\net461\SIL.LCModel.Core.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="SIL.LCModel.Utils">
-      <HintPath>..\..\..\packages\SIL.LCModel.Utils.11.0.0-beta0135\lib\net461\SIL.LCModel.Utils.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="SIL.Lexicon">
-      <HintPath>..\..\..\packages\SIL.Lexicon.15.0.0-beta0117\lib\net462\SIL.Lexicon.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="SIL.Windows.Forms">
-      <HintPath>..\..\..\packages\SIL.Windows.Forms.15.0.0-beta0117\lib\net461\SIL.Windows.Forms.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
-    <Reference Include="System.ValueTuple">
-      <HintPath>..\..\..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
-      <Private>false</Private>
-    </Reference>
+    <PackageReference Include="CommonServiceLocator" Version="2.0.7" />
+    <PackageReference Include="icu.net" Version="3.0.0" />
+    <PackageReference Include="NAudio" Version="1.10.0" />
+    <PackageReference Include="NAudio.Lame" Version="1.1.5" />
+    <PackageReference Include="SIL.Core" Version="15.0.0-beta0117" />
+    <PackageReference Include="SIL.Core.Desktop" Version="15.0.0-beta0117" />
+    <PackageReference Include="SIL.DesktopAnalytics" Version="4.0.0" />
+    <PackageReference Include="SIL.FLExBridge.IPCFramework" Version="1.1.1-beta0001" />
+    <PackageReference Include="SIL.LCModel" Version="11.0.0-beta0135" />
+    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-beta0135" />
+    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-beta0135" />
+    <PackageReference Include="SIL.Lexicon" Version="15.0.0-beta0117" />
+    <PackageReference Include="SIL.Windows.Forms" Version="15.0.0-beta0117" />
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 
   <!-- References to local assemblies that are not NuGet packages -->
