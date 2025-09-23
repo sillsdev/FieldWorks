@@ -199,8 +199,8 @@ jobs:
         working-directory: Installers
         shell: cmd
         run: |
-            insignia -ab online-engine.exe "${{ steps.stage_installers.outputs.offline_exe }}" -o "${{ steps.stage_installers.outputs.offline_exe }}"
-            insignia -ab offline-engine.exe "${{ steps.stage_installers.outputs.online_exe }}" -o "${{ steps.stage_installers.outputs.online_exe }}"
+            insignia -ab offline-engine.exe "${{ steps.stage_installers.outputs.offline_exe }}" -o "${{ steps.stage_installers.outputs.offline_exe }}"
+            insignia -ab online-engine.exe "${{ steps.stage_installers.outputs.online_exe }}" -o "${{ steps.stage_installers.outputs.online_exe }}"
 
       - name: Sign Bundles
         if: github.event_name != 'pull_request'
@@ -248,34 +248,38 @@ jobs:
           Write-Host "Uploaded online installer to s3://flex-updates/$onlineS3Key"
 
       - name: Compress Build Artifacts
+        id: compress_artifacts
         if: ${{ inputs.make_release == 'true' }}
         run: |
             [System.IO.Compression.ZipFile]::CreateFromDirectory(
-              "$pwd\BuildDir",
-              "$pwd\BuildDir.zip",
+              "${{ github.workspace }}\BuildDir",
+              "${{ github.workspace }}\BuildDir.zip",
               [System.IO.Compression.CompressionLevel]::Optimal,
               $false
             )
             [System.IO.Compression.ZipFile]::CreateFromDirectory(
-              "$pwd\PatchableInstaller\ProcRunner\ProcRunner\bin\Release\net48",
-              "$pwd\ProcRunner.zip",
+              "${{ github.workspace }}\PatchableInstaller\ProcRunner\ProcRunner\bin\Release\net48",
+              "${{ github.workspace }}\ProcRunner.zip",
               [System.IO.Compression.CompressionLevel]::Optimal,
               $false
             )
+            Get-ChildItem "${{ github.workspace }}" -Filter "*.zip" | Select-Object Name, Length
+            "build_dir_zip=$(("${{ github.workspace }}/BuildDir.zip") -replace '\\','/')" >> $env:GITHUB_OUTPUT
+            "proc_runner_zip=$(("${{ github.workspace }}/ProcRunner.zip") -replace '\\','/')" >> $env:GITHUB_OUTPUT
+
 
       - name: Create Release and Upload artifacts
         if: ${{ inputs.make_release == 'true' }}
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@6cbd405e2c4e67a21c47fa9e383d020e4e28b836
         with:
             tag_name: build-${{ env.RELEASE_BASE_BUILD_NUMBER }}
             name: "FieldWorks Base Build #${{ env.RELEASE_BASE_BUILD_NUMBER }}"
             draft: false
             prerelease: true
+            fail_on_unmatched_files: true
             files: |
-              ${{ github.workspace }}/BuildDir.zip
-              ${{ github.workspace }}/ProcRunner.zip
-              ${{ steps.stage_installers.outputs.offline_exe }}
-              ${{ steps.stage_installers.outputs.online_exe }}
+              ${{ steps.compress_artifacts.outputs.build_dir_zip }}
+              ${{ steps.compress_artifacts.outputs.proc_runner_zip }}
 
       - name: Upload Build Logs
         uses: actions/upload-artifact@v4
