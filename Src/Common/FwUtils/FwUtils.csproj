@@ -14,6 +14,7 @@
     <DocumentationFile>$(OutputPath)FwUtils.xml</DocumentationFile>
     <!-- Disable deterministic builds to allow version wildcards in CommonAssemblyInfo.cs -->
     <Deterministic>false</Deterministic>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86' Or '$(Configuration)|$(Platform)'=='Debug|x64' Or '$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
