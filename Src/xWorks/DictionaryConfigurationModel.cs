@@ -12,6 +12,7 @@ using System.Xml.Serialization;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainImpl;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -332,6 +333,22 @@ namespace SIL.FieldWorks.XWorks
 		{
 			return Label;
 		}
+
+		/// <summary>
+		/// Gets the reversal configuration model for the specified writing system.
+		/// </summary>
+		public static DictionaryConfigurationModel GetReversalConfigurationModel(string ws, LcmCache cache, PropertyTable propTable)
+		{
+			var projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(
+				propTable, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+			var defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(
+				DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+			var configurationModels = DictionaryConfigurationController.GetDictionaryConfigurationModels(
+				cache, defaultConfigDir, projectConfigDir);
+
+			return configurationModels.First(config => config.WritingSystem == ws);
+		}
+
 	}
 
 	/// <summary>

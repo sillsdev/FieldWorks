@@ -193,7 +193,7 @@ namespace SIL.FieldWorks.XWorks
 
 		internal RecordClerk CreateClerk(bool loadList)
 		{
-			var clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, m_configurationParameters, loadList);
+			var clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, m_configurationParameters, loadList, true);
 			clerk.Editable = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParameters, "allowInsertDeleteRecord", true);
 			return clerk;
 		}

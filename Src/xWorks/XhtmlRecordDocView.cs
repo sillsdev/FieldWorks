@@ -115,7 +115,7 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				}
 				var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
-				var xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new [] { cmo.Hvo }, null, configuration, m_propertyTable);
+				var xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new [] { cmo.Hvo }, Clerk, null, configuration, m_propertyTable);
 				m_mainView.Url = new Uri(xhtmlPath);
 				m_mainView.Refresh(WebBrowserRefreshOption.Completely);
 			}

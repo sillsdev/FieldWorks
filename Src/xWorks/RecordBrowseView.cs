@@ -256,7 +256,7 @@ namespace SIL.FieldWorks.XWorks
 			base.SetupDataContext();
 			// Make sure our persisted sorter/filters are up to date so browse viewer
 			// has the latest set for configuring/activating the filterBar
-			bool fNeedReload = Clerk.UpdateFiltersAndSortersIfNeeded();
+			bool fNeedReload = Clerk.UpdateFiltersAndSortersIfNeeded(true);
 			// This is mainly to handle the possibility that one of our objects in a virtual
 			// property has been deleted, either by some other tool, or by another client altogether.
 			// Enhance: it would be very nice not to do this any time we can be sure it isn't needed.

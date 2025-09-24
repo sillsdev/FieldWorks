@@ -595,9 +595,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 				// Dispose of the old record clerk and create one for the new Source analysis
 				DisposeRecordClerk(m_recordClerk);
-				m_recordClerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, configurationNode, true);
+				m_recordClerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, configurationNode, true, true);
 				m_recordClerk.ProgressReporter = m_progAdvInd;
-				m_recordClerk.OwningObject = selObj;
+				m_recordClerk.SetOwningObject(selObj, true);
 
 				m_currentBrowseView = new RecordBrowseView();
 				m_currentBrowseView.Init(m_mediator, m_propertyTable, configurationNode);

@@ -1024,13 +1024,6 @@ namespace SIL.FieldWorks.Common.Controls
 			set { m_wsForce = value; }
 		}
 
-		/// <summary>
-		/// If we are uploading multiple reversals to Webonary then the writing system can be different for
-		/// each reversal.  OverrideWs is a hack to allow cell data to be generated using the writing system
-		/// for the current reversal (instead of using the writing system for the displayed column). LT-21198
-		/// </summary>
-		public int OverrideWs { get; set; }
-
 		private void AddTableCell(IVwEnv vwenv, int hvo, int index, int hvoRoot, int icolActive, int cAdjCol, int icol)
 		{
 			XmlNode node = m_columns[icol - 1];
@@ -1414,18 +1407,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				if (node.Name == "column")
 				{
-					// Unfortunately this method is called to generate non-displayed data (data that is
-					// uploaded to Webonary).  If we are uploading multiple reversals then the writing system
-					// can be different for each reversal.  OverrideWs is the reversal writing system (instead
-					// of using the writing system for the displayed column). LT-21198
-					if (OverrideWs != 0)
-					{
-						WsForce = OverrideWs;
-					}
-					else
-					{
-						SetForcedWs(node);
-					}
+					SetForcedWs(node);
 				}
 				OpenOuterParts(outerParts, vwenv, hvo);
 				if (hvoToDisplay == hvo)

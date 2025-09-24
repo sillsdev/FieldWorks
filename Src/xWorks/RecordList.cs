@@ -777,7 +777,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		/// <param name="sorterOrFilter"></param>
 		/// <returns></returns>
-		internal protected override string PropertyTableId(string sorterOrFilter)
+		internal protected override string PropertyTableId(string sorterOrFilter, DictionaryConfigurationModel dictConfig = null)
 		{
 			return String.Format("{0}.{1}_{2}", "LexDb", "Entries", sorterOrFilter);
 		}
@@ -1227,7 +1227,7 @@ namespace SIL.FieldWorks.XWorks
 			return result;
 		}
 
-		internal protected virtual string PropertyTableId(string sorterOrFilter)
+		internal protected virtual string PropertyTableId(string sorterOrFilter, DictionaryConfigurationModel dictConfig = null)
 		{
 			// Dependent lists do not have owner/property set. Rather they have class/field.
 			string className = VirtualListPublisher.MetaDataCache.GetOwnClsName((int)m_flid);
@@ -1351,14 +1351,22 @@ namespace SIL.FieldWorks.XWorks
 				CheckDisposed();
 				return m_owningObject;
 			}
-			set
-			{
-				CheckDisposed();
-				if (m_owningObject == value)
-					return; // no need to reload.
+		}
 
-				m_owningObject = value;
-				m_oldLength = 0;
+		/// <summary>
+		/// Sets the owning object.
+		/// </summary>
+		/// <param name="updateAndNotify">If true: Gui and properties should be updated, and notifications sent.</param>
+		public void SetOwningObject(ICmObject value, bool updateAndNotify)
+		{
+			CheckDisposed();
+			if (m_owningObject == value)
+				return; // no need to reload.
+
+			m_owningObject = value;
+			m_oldLength = 0;
+			if (updateAndNotify)
+			{
 				ReloadList();
 			}
 		}
@@ -2031,13 +2039,6 @@ namespace SIL.FieldWorks.XWorks
 				return indices[0];
 			else
 				return -1;
-		}
-
-		public void ChangeOwningObjectId(int hvo)
-		{
-			CheckDisposed();
-
-			OwningObject = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
 		}
 
 		public virtual void InitLoad(bool loadList)
@@ -2716,7 +2717,7 @@ namespace SIL.FieldWorks.XWorks
 
 				try
 				{
-					newSortedObjects = GetFilteredSortedList();
+					newSortedObjects = GetFilteredSortedList(true);
 				}
 				catch (LcmInvalidFieldException)
 				{
@@ -2775,11 +2776,29 @@ namespace SIL.FieldWorks.XWorks
 			m_sorter = null;
 			MessageBox.Show(Form.ActiveForm, xWorksStrings.ksInvalidFieldInFilterOrSorter, xWorksStrings.ksErrorCaption,
 				MessageBoxButtons.OK, MessageBoxIcon.Warning);
-			newSortedObjects = GetFilteredSortedList();
+			newSortedObjects = GetFilteredSortedList(true);
 			return newSortedObjects;
 		}
 
-		private ArrayList GetFilteredSortedList()
+		/// <summary>
+		/// Filters and Sorts the list, then populates the virtual cache with the result. Does not
+		/// update the Gui, change properties, or send notifications.</param>
+		/// </summary>
+		public void FilterAndSortList()
+		{
+			var newSortedObjects = GetFilteredSortedList(false);
+			SortedObjects = newSortedObjects;
+
+			//Populate the virtual cache property which will hold this set of hvos, in this order.
+			int[] hvos = new int[newSortedObjects.Count];
+			int i = 0;
+			foreach (IManyOnePathSortItem item in newSortedObjects)
+				hvos[i++] = item.RootObjectHvo;
+			(VirtualListPublisher as ObjectListPublisher).CacheVecProp(OwningObject.Hvo, hvos, false);
+		}
+
+		/// <param name="updateAndNotify">If true: Gui and properties should be updated, and notifications sent.</param>
+		public ArrayList GetFilteredSortedList(bool updateAndNotify)
 		{
 			ArrayList newSortedObjects;
 			newSortedObjects = new ArrayList();
@@ -2792,26 +2811,40 @@ namespace SIL.FieldWorks.XWorks
 			else if (m_sorter != null)
 				m_sorter.Preload(OwningObject);
 
-			using (var progress = FwXWindow.CreateSimpleProgressState(m_propertyTable))
+			if (updateAndNotify)
 			{
-				progress.SetMilestone(xWorksStrings.ksSorting);
-				// Allocate an arbitrary 20% for making the items.
+				using (var progress = FwXWindow.CreateSimpleProgressState(m_propertyTable))
+				{
+					progress.SetMilestone(xWorksStrings.ksSorting);
+					// Allocate an arbitrary 20% for making the items.
+					var objectSet = GetObjectSet();
+					int count = objectSet.Count();
+					int done = 0;
+					foreach (var obj in objectSet)
+					{
+						done++;
+						var newPercentDone = done * 20 / count;
+						if (progress.PercentDone != newPercentDone)
+						{
+							progress.PercentDone = newPercentDone;
+							progress.Breath();
+						}
+						MakeItemsFor(newSortedObjects, obj);
+					}
+
+					SortList(newSortedObjects, true, progress);
+				}
+			}
+			else
+			{
 				var objectSet = GetObjectSet();
 				int count = objectSet.Count();
-				int done = 0;
 				foreach (var obj in objectSet)
 				{
-					done++;
-					var newPercentDone = done*20/count;
-					if (progress.PercentDone != newPercentDone)
-					{
-						progress.PercentDone = newPercentDone;
-						progress.Breath();
-					}
 					MakeItemsFor(newSortedObjects, obj);
 				}
 
-				SortList(newSortedObjects, progress);
+				SortList(newSortedObjects, false, null);
 			}
 			return newSortedObjects;
 		}
@@ -2858,12 +2891,16 @@ namespace SIL.FieldWorks.XWorks
 			return IndexOf(newSortedObjects, hvoCurrent);
 		}
 
-		protected void SortList(ArrayList newSortedObjects, ProgressState progress)
+		/// <summary>
+		/// Sort the list.
+		/// </summary>
+		/// <param name="updateAndNotify">If true: Gui and properties should be updated, and notifications sent.</param>
+		protected void SortList(ArrayList newSortedObjects, bool updateAndNotify, ProgressState progress)
 		{
 			if (m_sorter != null && !ListAlreadySorted)
 			{
 				m_sorter.DataAccess = m_publisher;
-				if (m_sorter is IReportsSortProgress)
+				if (updateAndNotify && m_sorter is IReportsSortProgress)
 				{
 					// Uses the last 80% of the bar (first part used for building the list).
 					((IReportsSortProgress) m_sorter).SetPercentDone =
@@ -2953,7 +2990,7 @@ namespace SIL.FieldWorks.XWorks
 				newCurrentIndex = -1;
 			}
 			CurrentIndex = newCurrentIndex;
-			(VirtualListPublisher as ObjectListPublisher).CacheVecProp(m_owningObject.Hvo, hvos);
+			(VirtualListPublisher as ObjectListPublisher).CacheVecProp(m_owningObject.Hvo, hvos, true);
 
 			m_oldLength = hvos.Length;
 

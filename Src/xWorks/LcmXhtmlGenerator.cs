@@ -45,14 +45,14 @@ namespace SIL.FieldWorks.XWorks
 		/// Saves the generated content in the Temp directory, to a unique but discoverable and somewhat stable location.
 		/// </summary>
 		/// <returns>The path to the XHTML file</returns>
-		public static string SavePreviewHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, DictionaryConfigurationModel configuration, XCore.PropertyTable propertyTable,
+		public static string SavePreviewHtmlWithStyles(int[] entryHvos, RecordClerk clerk, DictionaryPublicationDecorator publicationDecorator, DictionaryConfigurationModel configuration, XCore.PropertyTable propertyTable,
 			IThreadedProgress progress = null, int entriesPerPage = EntriesPerPage)
 		{
 			var preferredPath = GetPreferredPreviewPath(configuration, propertyTable.GetValue<LcmCache>("cache"), entryHvos.Length == 1);
 			var xhtmlPath = Path.ChangeExtension(preferredPath, "xhtml");
 			try
 			{
-				SavePublishedHtmlWithStyles(entryHvos, publicationDecorator, entriesPerPage, configuration, propertyTable, xhtmlPath, progress);
+				SavePublishedHtmlWithStyles(entryHvos, clerk, publicationDecorator, entriesPerPage, configuration, propertyTable, xhtmlPath, progress);
 			}
 			catch (IOException ioEx)
 			{
@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.XWorks
 					xhtmlPath = Path.ChangeExtension(preferredPath + i, "xhtml");
 					try
 					{
-						SavePublishedHtmlWithStyles(entryHvos, publicationDecorator, entriesPerPage, configuration, propertyTable, xhtmlPath, progress);
+						SavePublishedHtmlWithStyles(entryHvos, clerk, publicationDecorator, entriesPerPage, configuration, propertyTable, xhtmlPath, progress);
 					}
 					catch (IOException e)
 					{
@@ -80,13 +80,12 @@ namespace SIL.FieldWorks.XWorks
 		/// Saves the generated content into the given xhtml and css file paths for all the entries in
 		/// the given collection.
 		/// </summary>
-		public static void SavePublishedHtmlWithStyles(int[] entryHvos, DictionaryPublicationDecorator publicationDecorator, int entriesPerPage,
+		public static void SavePublishedHtmlWithStyles(int[] entryHvos, RecordClerk clerk, DictionaryPublicationDecorator publicationDecorator, int entriesPerPage,
 			DictionaryConfigurationModel configuration, XCore.PropertyTable propertyTable, string xhtmlPath, IThreadedProgress progress = null,
 			bool isXhtmlExport = false)
 		{
 			var entryCount = entryHvos.Length;
 			var cssPath = Path.ChangeExtension(xhtmlPath, "css");
-			var clerk = propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 			var cache = propertyTable.GetValue<LcmCache>("cache", null);
 			// Don't display letter headers if we're showing a preview in the Edit tool or we're not sorting by headword
 			var wantLetterHeaders = (entryCount > 1 || !IsLexEditPreviewOnly(publicationDecorator)) && (RecordClerk.IsClerkSortingByHeadword(clerk));
