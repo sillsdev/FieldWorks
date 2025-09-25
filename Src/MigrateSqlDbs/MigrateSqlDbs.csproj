@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <OutputType>WinExe</OutputType>
     <AssemblyName>MigrateSqlDbs</AssemblyName>
     <RootNamespace>SIL.FieldWorks.MigrateSqlDbs.MigrateProjects</RootNamespace>

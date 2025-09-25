@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <AssemblyName>XAmpleManagedWrapper</AssemblyName>
     <RootNamespace>XAmpleManagedWrapper</RootNamespace>
     <OutputPath>../../../../Output/$(Configuration)</OutputPath>

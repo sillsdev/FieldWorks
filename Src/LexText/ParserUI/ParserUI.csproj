@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <AssemblyName>ParserUI</AssemblyName>
     <RootNamespace>SIL.FieldWorks.LexText.Controls</RootNamespace>
     <OutputPath>../../../Output/$(Configuration)</OutputPath>
