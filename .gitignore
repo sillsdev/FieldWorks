@@ -1,4 +1,5 @@
 # Generated or Downloaded (as part of the build process)
+# SDK-style projects auto-include files, reducing the need for explicit entries
 GeneratedAssemblyInfo.cs
 Collection.cpp
 .vs/
