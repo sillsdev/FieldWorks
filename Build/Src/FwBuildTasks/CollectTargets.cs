@@ -99,7 +99,7 @@ namespace FwBuildTasks
 			m_log.LogMessage(MessageImportance.Normal, "Collecting project information from Src directory...");
 			var infoSrc = new DirectoryInfo(Path.Combine(m_fwroot, "Src"));
 			CollectInfo(infoSrc);
-			
+
 			// These projects from Lib had nant targets.  They really should be under Src.
 			m_log.LogMessage(MessageImportance.Normal, "Collecting project information from Lib directories...");
 			var infoEth = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/Ethnologue"));
@@ -108,7 +108,7 @@ namespace FwBuildTasks
 			CollectInfo(infoScr2);
 			var infoObj = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ObjectBrowser"));
 			CollectInfo(infoObj);
-			
+
 			m_log.LogMessage(MessageImportance.Normal, "Found {0} projects. Writing target files...", m_projects.Count);
 			WriteTargetFiles();
 			m_log.LogMessage(MessageImportance.Normal, "Target file generation completed.");
@@ -124,9 +124,9 @@ namespace FwBuildTasks
 				m_log.LogMessage(MessageImportance.Low, "Directory does not exist: {0}", dirInfo?.FullName ?? "null");
 				return;
 			}
-			
+
 			m_log.LogMessage(MessageImportance.Low, "Scanning directory: {0}", dirInfo.FullName);
-			
+
 			foreach (var fi in dirInfo.GetFiles())
 			{
 				if (fi.Name.EndsWith(".csproj") && fi.Exists)
@@ -482,7 +482,7 @@ namespace FwBuildTasks
 			{
 				m_log.LogError("Error occurred while writing target files: {0}", e.Message);
 				m_log.LogError("Stack trace: {0}", e.StackTrace);
-				
+
 				var badFile = targetsFile + ".bad";
 				try
 				{
@@ -496,7 +496,7 @@ namespace FwBuildTasks
 				{
 					m_log.LogError("Failed to move bad targets file: {0}", moveEx.Message);
 				}
-				
+
 				throw new StopTaskException(e);
 			}
 		}
