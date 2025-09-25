@@ -1,119 +1,34 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="Current" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<?xml version='1.0' encoding='utf-8'?>
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{536ED718-EA3A-4ABA-A120-392442A0A4BC}</ProjectGuid>
+    <TargetFramework>net462</TargetFramework>
     <OutputType>Exe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>GenerateHCConfig</RootNamespace>
     <AssemblyName>GenerateHCConfig</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
-    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\Output\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <RootNamespace>GenerateHCConfig</RootNamespace>
+    <OutputPath>../../Output/$(Configuration)</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <NoWarn>67</NoWarn>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\Output\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <NoWarn>67</NoWarn>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\Output\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>67</NoWarn>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\Output\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>67</NoWarn>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup>
-    <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FwUtils, Version=9.0.3.26067, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.LCModel.Core">
-      <HintPath>..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.LCModel">
-      <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
-    </Reference>
-    <Reference Include="ParserCore">
-      <HintPath>..\..\Output\Debug\ParserCore.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Machine.Morphology.HermitCrab">
-      <HintPath>..\..\Output\Debug\SIL.Machine.Morphology.HermitCrab.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Machine">
-      <HintPath>..\..\Output\Debug\SIL.Machine.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="../Common/FwUtils/FwUtils.csproj" />
+    <ProjectReference Include="../LexText/ParserCore/ParserCore.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-beta0135" />
+    <PackageReference Include="SIL.LCModel" Version="11.0.0-beta0135" />
+    <PackageReference Include="SIL.Machine.Morphology.HermitCrab" Version="3.7.4" />
+    <PackageReference Include="SIL.Machine" Version="3.7.4" />
     <Reference Include="netstandard" />
-    <Reference Include="SIL.WritingSystems, Version=3.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.WritingSystems.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.LCModel.Utils">
-      <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
-    </Reference>
+    <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
+    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-beta0135" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
-    <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="ConsoleLogger.cs" />
-    <Compile Include="NullFdoDirectories.cs" />
-    <Compile Include="NullThreadedProgress.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="ProjectIdentifier.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\CommonAssemblyInfo.cs" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
-  <Import Project="BuildInclude.targets" />
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
 </Project>

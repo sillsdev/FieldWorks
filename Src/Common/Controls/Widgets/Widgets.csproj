@@ -1,375 +1,71 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
+<?xml version='1.0' encoding='utf-8'?>
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <ProjectType>Local</ProjectType>
-    <ProductVersion>9.0.21022</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{C39FF7C2-A408-45A8-A400-3C2EF3220195}</ProjectGuid>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ApplicationIcon>
-    </ApplicationIcon>
-    <AssemblyKeyContainerName>
-    </AssemblyKeyContainerName>
+    <TargetFramework>net462</TargetFramework>
     <AssemblyName>Widgets</AssemblyName>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
-    <DefaultClientScript>JScript</DefaultClientScript>
-    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
-    <DefaultTargetSchema>IE50</DefaultTargetSchema>
-    <DelaySign>false</DelaySign>
-    <OutputType>Library</OutputType>
     <RootNamespace>SIL.FieldWorks.Common.Widgets</RootNamespace>
-    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
-    <StartupObject>
-    </StartupObject>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <PublishUrl>publish\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Disk</InstallFrom>
-    <UpdateEnabled>false</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>7</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>false</UpdatePeriodically>
-    <UpdateRequired>false</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <ApplicationRevision>0</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <OutputPath>..\..\..\..\Output\Debug\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <BaseAddress>285212672</BaseAddress>
-    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>..\..\..\..\Output\Debug\Widgets.xml</DocumentationFile>
-    <DebugSymbols>true</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoStdLib>false</NoStdLib>
-    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-    <Optimize>false</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <OutputPath>../../../../Output/$(Configuration)</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <UseWindowsForms>true</UseWindowsForms>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
-    <DebugType>full</DebugType>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <OutputPath>..\..\..\..\Output\Release\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <BaseAddress>285212672</BaseAddress>
-    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>
-    </DocumentationFile>
-    <DebugSymbols>true</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoStdLib>false</NoStdLib>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-    <Optimize>true</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <WarningLevel>4</WarningLevel>
-    <DebugType>full</DebugType>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
-    <OutputPath>..\..\..\..\Output\Debug\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <BaseAddress>285212672</BaseAddress>
-    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>..\..\..\..\Output\Debug\Widgets.xml</DocumentationFile>
-    <DebugSymbols>true</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoStdLib>false</NoStdLib>
-    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-    <Optimize>false</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
-    <DebugType>full</DebugType>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-    <OutputPath>..\..\..\..\Output\Release\</OutputPath>
-    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
-    <BaseAddress>285212672</BaseAddress>
-    <CheckForOverflowUnderflow>false</CheckForOverflowUnderflow>
-    <ConfigurationOverrideFile>
-    </ConfigurationOverrideFile>
-    <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>
-    </DocumentationFile>
-    <DebugSymbols>true</DebugSymbols>
-    <FileAlignment>4096</FileAlignment>
-    <NoStdLib>false</NoStdLib>
-    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-    <Optimize>true</Optimize>
-    <RegisterForComInterop>false</RegisterForComInterop>
-    <RemoveIntegerChecks>false</RemoveIntegerChecks>
-    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
-    <DebugType>full</DebugType>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="SIL.Core.Desktop, Version=4.1.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="../../ViewsInterfaces/ViewsInterfaces.csproj" />
+    <ProjectReference Include="../../../FwResources/FwResources.csproj" />
+    <ProjectReference Include="../../FwUtils/FwUtils.csproj" />
+    <ProjectReference Include="../../RootSite/RootSite.csproj" />
+    <ProjectReference Include="../../SimpleRootSite/SimpleRootSite.csproj" />
+    <ProjectReference Include="../../../XCore/xCoreInterfaces/xCoreInterfaces.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="SIL.Core.Desktop" Version="15.0.0-beta0117" />
     <Reference Include="netstandard" />
-    <Reference Include="ViewsInterfaces">
-      <Name>ViewsInterfaces</Name>
-      <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.LCModel.Core, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.LCModel">
-      <Name>SIL.LCModel</Name>
-      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>
-    </Reference>
-    <Reference Include="FwResources">
-      <Name>FwResources</Name>
-      <HintPath>..\..\..\..\Output\Debug\FwResources.dll</HintPath>
-    </Reference>
-    <Reference Include="CommonServiceLocator, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\CommonServiceLocator.dll</HintPath>
-    </Reference>
-    <Reference Include="FwUtils">
-      <Name>FwUtils</Name>
-      <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="RootSite">
-      <Name>RootSite</Name>
-      <HintPath>..\..\..\..\Output\Debug\RootSite.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\SIL.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Media, Version=3.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\SIL.Media.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\SIL.WritingSystems.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
-    </Reference>
-    <Reference Include="icu.net">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Output\Debug\icu.net.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="SimpleRootSite">
-      <Name>SimpleRootSite</Name>
-      <HintPath>..\..\..\..\Output\Debug\SimpleRootSite.dll</HintPath>
-    </Reference>
+    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-beta0135" />
+    <PackageReference Include="SIL.LCModel" Version="11.0.0-beta0135" />
+    <PackageReference Include="CommonServiceLocator" Version="2.0.7" />
+    <PackageReference Include="SIL.Core" Version="8.1.0-beta0035" />
+    <PackageReference Include="SIL.Media" Version="15.0.0-beta0117" />
+    <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
+    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-beta0135" />
+    <PackageReference Include="icu.net" Version="3.0.0-beta.297" />
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="xCoreInterfaces">
-      <Name>xCoreInterfaces</Name>
-      <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Windows.Forms">
-      <HintPath>..\..\..\..\Output\Debug\SIL.Windows.Forms.dll</HintPath>
-    </Reference>
+    <PackageReference Include="SIL.Windows.Forms" Version="15.0.0-beta0117" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\CommonAssemblyInfo.cs">
-      <Link>CommonAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="AssemblyInfo.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="CustomDigitEntryControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="DataGridView\FwTextBoxCell.cs" />
-    <Compile Include="DataGridView\FwTextBoxColumn.cs" />
-    <Compile Include="DataGridView\FwTextBoxControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DataGridView\FwTextBoxRow.cs" />
-    <Compile Include="DataGridView\SilButtonCell.cs" />
-    <Compile Include="DataGridView\SortableBindingList.cs" />
-    <Compile Include="FwLabel.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="FwMultilingualPropView.cs" />
-    <Compile Include="FontHeightAdjuster.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="FwComboBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="FwListBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="FwMultiParaTextBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="FwTextBox.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="HvoTreeNode.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="IWritingSystemAndStylesheet.cs" />
-    <Compile Include="LabeledMultiStringView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="PasswordBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="PasswordBox.Designer.cs">
-      <DependentUpon>PasswordBox.cs</DependentUpon>
-    </Compile>
-    <Compile Include="PopupTree.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Strings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Strings.resx</DependentUpon>
-    </Compile>
-    <Compile Include="ToolStripControlComboBox.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="TreeCombo.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UserInterfaceChooser.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="UserInterfaceChooser.Designer.cs">
-      <DependentUpon>UserInterfaceChooser.cs</DependentUpon>
-    </Compile>
-    <Compile Include="VSTabControl.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="VSTabControl.designer.cs">
-      <DependentUpon>VSTabControl.cs</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="FwMultilingualPropView.resx">
-      <DependentUpon>FwMultilingualPropView.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FwComboBox.resx">
-      <DependentUpon>FwComboBox.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FwListBox.resx">
-      <DependentUpon>FwListBox.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FwTextBox.resx">
-      <DependentUpon>FwTextBox.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PasswordBox.resx">
-      <DependentUpon>PasswordBox.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="PopupTree.resx">
-      <DependentUpon>PopupTree.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Strings.resx">
-      <SubType>Designer</SubType>
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="TreeCombo.resx">
-      <DependentUpon>TreeCombo.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UserInterfaceChooser.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>UserInterfaceChooser.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="VSTabControl.resx">
-      <DependentUpon>VSTabControl.cs</DependentUpon>
-    </EmbeddedResource>
-    <Compile Include="LabeledMultiStringControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="InnerLabeledMultiStringControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="InnerLabeledMultiStringView.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="MultiStringSelectionUtils.cs" />
+    <Compile Include="..\..\..\CommonAssemblyInfo.cs" />
+    <Compile Include="CustomDigitEntryControl.cs" SubType="Component" />
+    <Compile Include="DataGridView\FwTextBoxControl.cs" SubType="UserControl" />
+    <Compile Include="FwLabel.cs" SubType="Component" />
+    <Compile Include="FwComboBox.cs" SubType="UserControl" />
+    <Compile Include="FwListBox.cs" SubType="Component" />
+    <Compile Include="FwMultiParaTextBox.cs" SubType="Component" />
+    <Compile Include="FwTextBox.cs" SubType="UserControl" />
+    <Compile Include="LabeledMultiStringView.cs" SubType="UserControl" />
+    <Compile Include="PasswordBox.cs" SubType="Component" />
+    <Compile Include="PopupTree.cs" SubType="Form" />
+    <Compile Include="ToolStripControlComboBox.cs" SubType="Component" />
+    <Compile Include="TreeCombo.cs" SubType="UserControl" />
+    <Compile Include="UserInterfaceChooser.cs" SubType="Component" />
+    <Compile Include="VSTabControl.cs" SubType="Component" />
+    <Compile Include="LabeledMultiStringControl.cs" SubType="UserControl" />
+    <Compile Include="InnerLabeledMultiStringControl.cs" SubType="UserControl" />
+    <Compile Include="InnerLabeledMultiStringView.cs" SubType="UserControl" />
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.2.0">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 2.0 %28x86%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.0">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.0 %28x86%29</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
+    <EmbeddedResource Include="FwMultilingualPropView.resx" DependentUpon="FwMultilingualPropView.cs" />
+    <EmbeddedResource Include="FwComboBox.resx" DependentUpon="FwComboBox.cs" />
+    <EmbeddedResource Include="FwListBox.resx" DependentUpon="FwListBox.cs" />
+    <EmbeddedResource Include="FwTextBox.resx" DependentUpon="FwTextBox.cs" />
+    <EmbeddedResource Include="PasswordBox.resx" DependentUpon="PasswordBox.cs" />
+    <EmbeddedResource Include="PopupTree.resx" DependentUpon="PopupTree.cs" />
+    <EmbeddedResource Include="Strings.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Strings.Designer.cs" />
+    <EmbeddedResource Include="TreeCombo.resx" DependentUpon="TreeCombo.cs" />
+    <EmbeddedResource Include="UserInterfaceChooser.resx" DependentUpon="UserInterfaceChooser.cs" />
+    <EmbeddedResource Include="VSTabControl.resx" DependentUpon="VSTabControl.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\" />
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <DistFiles>../../../../DistFiles</DistFiles>
-  </PropertyGroup>
 </Project>
