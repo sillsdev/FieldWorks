@@ -24,12 +24,26 @@ namespace FwBuildTasks
 		{
 			try
 			{
+				Log.LogMessage(MessageImportance.Normal, "Starting GenerateFwTargets task...");
 				var gen = new CollectTargets(Log, ToolsVersion);
 				gen.Generate();
+				Log.LogMessage(MessageImportance.Normal, "GenerateFwTargets task completed successfully.");
 				return true;
 			}
-			catch (CollectTargets.StopTaskException)
+			catch (CollectTargets.StopTaskException ex)
 			{
+				Log.LogError("GenerateFwTargets task failed.");
+				if (ex.InnerException != null)
+				{
+					Log.LogError("Inner exception: {0}", ex.InnerException.Message);
+					Log.LogError("Stack trace: {0}", ex.InnerException.StackTrace);
+				}
+				return false;
+			}
+			catch (Exception ex)
+			{
+				Log.LogError("GenerateFwTargets task failed with unexpected exception: {0}", ex.Message);
+				Log.LogError("Stack trace: {0}", ex.StackTrace);
 				return false;
 			}
 		}
@@ -82,16 +96,22 @@ namespace FwBuildTasks
 		/// </summary>
 		public void Generate()
 		{
+			m_log.LogMessage(MessageImportance.Normal, "Collecting project information from Src directory...");
 			var infoSrc = new DirectoryInfo(Path.Combine(m_fwroot, "Src"));
 			CollectInfo(infoSrc);
+			
 			// These projects from Lib had nant targets.  They really should be under Src.
+			m_log.LogMessage(MessageImportance.Normal, "Collecting project information from Lib directories...");
 			var infoEth = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/Ethnologue"));
 			CollectInfo(infoEth);
 			var infoScr2 = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ScrChecks"));
 			CollectInfo(infoScr2);
 			var infoObj = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ObjectBrowser"));
 			CollectInfo(infoObj);
+			
+			m_log.LogMessage(MessageImportance.Normal, "Found {0} projects. Writing target files...", m_projects.Count);
 			WriteTargetFiles();
+			m_log.LogMessage(MessageImportance.Normal, "Target file generation completed.");
 		}
 
 		/// <summary>
@@ -100,11 +120,20 @@ namespace FwBuildTasks
 		private void CollectInfo(DirectoryInfo dirInfo)
 		{
 			if (dirInfo == null || !dirInfo.Exists)
+			{
+				m_log.LogMessage(MessageImportance.Low, "Directory does not exist: {0}", dirInfo?.FullName ?? "null");
 				return;
+			}
+			
+			m_log.LogMessage(MessageImportance.Low, "Scanning directory: {0}", dirInfo.FullName);
+			
 			foreach (var fi in dirInfo.GetFiles())
 			{
 				if (fi.Name.EndsWith(".csproj") && fi.Exists)
+				{
+					m_log.LogMessage(MessageImportance.Low, "Processing project file: {0}", fi.FullName);
 					ProcessCsProjFile(fi.FullName);
+				}
 			}
 			foreach (var diSub in dirInfo.GetDirectories())
 				CollectInfo(diSub);
@@ -451,11 +480,23 @@ namespace FwBuildTasks
 			}
 			catch (Exception e)
 			{
+				m_log.LogError("Error occurred while writing target files: {0}", e.Message);
+				m_log.LogError("Stack trace: {0}", e.StackTrace);
+				
 				var badFile = targetsFile + ".bad";
-				if (File.Exists(badFile))
-					File.Delete(badFile);
-				File.Move(targetsFile, badFile);
-				Console.WriteLine("Failed to Create FieldWorks.targets bad result stored in {0}", badFile);
+				try
+				{
+					if (File.Exists(badFile))
+						File.Delete(badFile);
+					File.Move(targetsFile, badFile);
+					m_log.LogMessage(MessageImportance.High, "Failed to create FieldWorks.targets, bad result stored in {0}", badFile);
+					Console.WriteLine("Failed to Create FieldWorks.targets bad result stored in {0}", badFile);
+				}
+				catch (Exception moveEx)
+				{
+					m_log.LogError("Failed to move bad targets file: {0}", moveEx.Message);
+				}
+				
 				throw new StopTaskException(e);
 			}
 		}
