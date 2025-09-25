@@ -1,0 +1,550 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
+  <PropertyGroup>
+    <ProjectType>Local</ProjectType>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{2322C388-DD81-466A-B079-956B5524B9A9}</ProjectGuid>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <AssemblyKeyContainerName>
+    </AssemblyKeyContainerName>
+    <AssemblyName>FwControls</AssemblyName>
+    <DefaultClientScript>JScript</DefaultClientScript>
+    <DefaultHTMLPageLayout>Grid</DefaultHTMLPageLayout>
+    <DefaultTargetSchema>IE50</DefaultTargetSchema>
+    <DelaySign>false</DelaySign>
+    <OutputType>Library</OutputType>
+    <RootNamespace>SIL.FieldWorks.Common.Controls</RootNamespace>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <OutputPath>..\..\..\..\Output\Debug\</OutputPath>
+    <BaseAddress>285212672</BaseAddress>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>..\..\..\..\Output\Debug\FwControls.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>..\..\..\..\Output\Release\</OutputPath>
+    <BaseAddress>285212672</BaseAddress>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <OutputPath>..\..\..\..\Output\Debug\</OutputPath>
+    <BaseAddress>285212672</BaseAddress>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DocumentationFile>..\..\..\..\Output\Debug\FwControls.xml</DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <Optimize>false</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <OutputPath>..\..\..\..\Output\Release\</OutputPath>
+    <BaseAddress>285212672</BaseAddress>
+    <ConfigurationOverrideFile>
+    </ConfigurationOverrideFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <DocumentationFile>
+    </DocumentationFile>
+    <DebugSymbols>true</DebugSymbols>
+    <FileAlignment>4096</FileAlignment>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <Optimize>true</Optimize>
+    <RegisterForComInterop>false</RegisterForComInterop>
+    <RemoveIntegerChecks>false</RemoveIntegerChecks>
+    <WarningLevel>4</WarningLevel>
+    <DebugType>full</DebugType>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Accessibility">
+      <Name>Accessibility</Name>
+    </Reference>
+    <Reference Include="AtkSharp">
+      <HintPath>..\..\..\..\packages\AtkSharp-signed.3.22.24.37\lib\netstandard2.0\AtkSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="DesktopAnalytics, Version=1.3.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\DesktopAnalytics.dll</HintPath>
+    </Reference>
+    <Reference Include="GdkSharp">
+      <HintPath>..\..\..\..\packages\GdkSharp-signed.3.22.24.37\lib\netstandard2.0\GdkSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="GioSharp">
+      <HintPath>..\..\..\..\packages\GioSharp-signed.3.22.24.37\lib\netstandard2.0\GioSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="GLibSharp">
+      <HintPath>..\..\..\..\packages\GLibSharp-signed.3.22.24.37\lib\netstandard2.0\GLibSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="GtkSharp">
+      <HintPath>..\..\..\..\packages\GtkSharp-signed.3.22.24.37\lib\netstandard2.0\GtkSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="RootSite, Version=9.0.0.20498, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\RootSite.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Core.Desktop, Version=6.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\SIL.Core.Desktop.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Windows.Forms.WritingSystems, Version=6.0.0.0, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\SIL.Windows.Forms.WritingSystems.dll</HintPath>
+    </Reference>
+    <Reference Include="netstandard" />
+    <Reference Include="ViewsInterfaces">
+      <Name>ViewsInterfaces</Name>
+      <HintPath>..\..\..\..\Output\Debug\ViewsInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.LCModel">
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.dll</HintPath>
+    </Reference>
+    <Reference Include="FwUtils">
+      <HintPath>..\..\..\..\Output\Debug\FwUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="ManagedLgIcuCollator">
+      <HintPath>..\..\..\..\Output\Debug\ManagedLgIcuCollator.dll</HintPath>
+    </Reference>
+    <Reference Include="CommonServiceLocator, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\Output\Debug\CommonServiceLocator.dll</HintPath>
+    </Reference>
+    <Reference Include="ParatextShared, Version=7.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\ParatextShared.dll</HintPath>
+    </Reference>
+    <Reference Include="ScriptureUtils, Version=8.0.9.31119, Culture=neutral, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\ScriptureUtils.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\SIL.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\SIL.WritingSystems.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="SIL.LCModel.Core">
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="FwResources">
+      <HintPath>..\..\..\..\Output\Debug\FwResources.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.LCModel.Utils">
+      <HintPath>..\..\..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
+    </Reference>
+    <Reference Include="xCore">
+      <HintPath>..\..\..\..\Output\Debug\xCore.dll</HintPath>
+    </Reference>
+    <Reference Include="xCoreInterfaces">
+      <HintPath>..\..\..\..\Output\Debug\xCoreInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="SIL.Windows.Forms">
+      <HintPath>..\..\..\..\Output\Debug\SIL.Windows.Forms.dll</HintPath>
+    </Reference>
+    <Reference Include="icu.net">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Output\Debug\icu.net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.ValueTuple">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\CommonAssemblyInfo.cs">
+      <Link>CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="CharacterGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CharacterInfoToolTip.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="CollapsibleSplitter.cs">
+    </Compile>
+    <Compile Include="ColorPickerDropDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ColorPickerMatrix.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ColorPickerMatrix.Designer.cs">
+      <DependentUpon>ColorPickerMatrix.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ColorPickerStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ColorPickerStrings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="CaseSensitiveListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="DataUpDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="DockExtender\DockExtender.cs" />
+    <Compile Include="DockExtender\Floaty.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="DockExtender\IFloaty.cs" />
+    <Compile Include="DockExtender\Overlay.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ExplorerBarItem.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="IInheritableFwControl.cs" />
+    <Compile Include="ObtainProjectMethod.cs" />
+    <Compile Include="FwBasicGrid.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FwButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FwColorButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FwColorCombo.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FwColorPicker.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FwContainer.cs" />
+    <Compile Include="FwControls.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>FwControls.resx</DependentUpon>
+    </Compile>
+    <Compile Include="FwHelpButton.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FwHelpButton.Designer.cs">
+      <DependentUpon>FwHelpButton.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FwOverrideComboBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FwDrawing.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FwPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FwPopup.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FwPopup.designer.cs">
+      <DependentUpon>FwPopup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FwSplitContainer.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FwSplitContainer.Designer.cs">
+      <DependentUpon>FwSplitContainer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FwTextPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="HeaderLabel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="IFwMainWndSettings.cs" />
+    <Compile Include="InformationBar.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="InformationBarButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="InformationBarButtonCollection.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="LineControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LineControl.Designer.cs">
+      <DependentUpon>LineControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="OptionListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Persistence.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="PredictiveProgressState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ProgressDialogWorkingOn.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProgressLine.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ProgressLine.Designer.cs">
+      <DependentUpon>ProgressLine.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ProgressState.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="ProgressDialogImpl.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ProgressDialogImpl.Designer.cs">
+      <DependentUpon>ProgressDialogImpl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ScrollListBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SimpleExplorerBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="SizingLine.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="StatusBarProgressPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="StatusBarTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ProgressDialogWithTask.cs" />
+    <Compile Include="TriStateTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="WizardDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="WSChooser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="XButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <EmbeddedResource Include="CharacterGrid.resx">
+      <DependentUpon>CharacterGrid.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorPickerDropDown.resx">
+      <DependentUpon>ColorPickerDropDown.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorPickerMatrix.resx">
+      <DependentUpon>ColorPickerMatrix.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ColorPickerStrings.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ColorPickerStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DockExtender\Floaty.resx">
+      <DependentUpon>Floaty.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwButton.resx">
+      <DependentUpon>FwButton.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwColorButton.resx">
+      <DependentUpon>FwColorButton.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwColorCombo.resx">
+      <DependentUpon>FwColorCombo.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwColorPicker.resx">
+      <DependentUpon>FwColorPicker.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwControls.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>FwControls.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwDrawing.resx">
+      <DependentUpon>FwDrawing.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwHelpButton.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>FwHelpButton.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FwPopup.resx">
+      <DependentUpon>FwPopup.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InformationBar.resx">
+      <DependentUpon>InformationBar.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="InformationBarButton.resx">
+      <DependentUpon>InformationBarButton.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LineControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>LineControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Persistence.resx">
+      <DependentUpon>Persistence.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProgressDialogImpl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ProgressDialogImpl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProgressDialogWorkingOn.resx">
+      <DependentUpon>ProgressDialogWorkingOn.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ProgressLine.resx">
+      <DependentUpon>ProgressLine.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="resources\BorderDrawing.bmp" />
+    <EmbeddedResource Include="resources\HelpButton.ICO" />
+    <EmbeddedResource Include="resources\InformationBar.ico" />
+    <EmbeddedResource Include="resources\Persistence.bmp" />
+    <EmbeddedResource Include="resources\SelectedOption.bmp" />
+    <EmbeddedResource Include="resources\UnSelectedOption.bmp" />
+    <EmbeddedResource Include="resources\WhatsThisHelpProvider.bmp" />
+    <EmbeddedResource Include="ScrollListBox.resx">
+      <DependentUpon>ScrollListBox.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StatusBarProgressPanel.resx">
+      <DependentUpon>StatusBarProgressPanel.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TriStateTreeView.resx">
+      <DependentUpon>TriStateTreeView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WizardDialog.resx">
+      <DependentUpon>WizardDialog.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WSChooser.resx">
+      <DependentUpon>WSChooser.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Content Include="resources\Checked.bmp" />
+    <None Include="resources\ExplorerBar_Collapse_Glyph.png" />
+    <None Include="resources\ExplorerBar_Epand_Glyph.png" />
+    <Content Include="resources\FWButtonMenuArrow.bmp" />
+    <Content Include="resources\GreyChecked.bmp" />
+    <None Include="resources\MissingGlyph.png" />
+    <Content Include="resources\Unchecked.bmp" />
+    <Compile Include="FileDialog\FileDialogAdapter.cs" />
+    <Compile Include="FileDialog\FileDialogStrings.Designer.cs">
+      <DependentUpon>FileDialogStrings.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="FileDialog\FolderBrowserDialogAdapter.cs" />
+    <Compile Include="FileDialog\Manager.cs" />
+    <Compile Include="FileDialog\OpenFileDialogAdapter.cs" />
+    <Compile Include="FileDialog\SaveFileDialogAdapter.cs" />
+    <None Include="FileDialog\readme.txt" />
+    <Compile Include="FileDialog\Interfaces\IFileDialog.cs" />
+    <Compile Include="FileDialog\Interfaces\IFolderBrowserDialog.cs" />
+    <Compile Include="FileDialog\Interfaces\IOpenFileDialog.cs" />
+    <Compile Include="FileDialog\Interfaces\ISaveFileDialog.cs" />
+    <Compile Include="FileDialog\Windows\FileDialogWindows.cs" />
+    <Compile Include="FileDialog\Windows\FolderBrowserDialogWindows.cs" />
+    <Compile Include="FileDialog\Windows\OpenFileDialogWindows.cs" />
+    <Compile Include="FileDialog\Windows\SaveFileDialogWindows.cs" />
+    <EmbeddedResource Include="FileDialog\FileDialogStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>FileDialogStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <DistFiles>../../../../DistFiles</DistFiles>
+  </PropertyGroup>
+</Project>
