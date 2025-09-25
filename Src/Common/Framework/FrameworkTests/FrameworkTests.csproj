@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <AssemblyName>FrameworkTests</AssemblyName>
     <RootNamespace>SIL.FieldWorks.Common.Framework</RootNamespace>
     <OutputPath>../../../../Output/$(Configuration)</OutputPath>

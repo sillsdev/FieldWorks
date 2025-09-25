@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <AssemblyName>FormsTester</AssemblyName>
     <RootNamespace>FormsTester</RootNamespace>
     <OutputPath>../../../../Output/$(Configuration)</OutputPath>

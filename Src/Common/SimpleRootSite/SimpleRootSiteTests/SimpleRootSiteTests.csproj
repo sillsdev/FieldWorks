@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <AssemblyName>SimpleRootSiteTests</AssemblyName>
     <RootNamespace>SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests</RootNamespace>
     <OutputPath>../../../../Output/$(Configuration)</OutputPath>
