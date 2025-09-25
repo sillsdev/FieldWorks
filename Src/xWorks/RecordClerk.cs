@@ -2629,7 +2629,8 @@ namespace SIL.FieldWorks.XWorks
 				!(m_list.CurrentObject is ICloneableCmObject))
 			{
 				display.Visible = display.Enabled = false;
-			} else
+			}
+			else
 			{
 				display.Text = string.Format(display.Text, GetTypeNameForUi(m_list.CurrentObject));
 			}
