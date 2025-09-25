@@ -2664,6 +2664,7 @@ namespace SIL.FieldWorks.XWorks
 			string className = selectedObject.ClassName;
 			bool result = false;
 			m_suppressSaveOnChangeRecord = true;
+			ICmObject newObj = null;
 
 			try
 			{
@@ -2671,7 +2672,7 @@ namespace SIL.FieldWorks.XWorks
 											string.Format(xWorksStrings.ksRedoDuplicate, className),
 											Cache.ActionHandlerAccessor, () =>
 					{
-						result = m_list.CreateAndInsert(className, out ICmObject newObj);
+						result = m_list.CreateAndInsert(className, out newObj);
 						((ICloneableCmObject)selectedObject).SetCloneProperties(newObj);
 					});
 			}
@@ -2684,6 +2685,8 @@ namespace SIL.FieldWorks.XWorks
 				m_suppressSaveOnChangeRecord = false;
 			}
 
+			if (newObj != null)
+				m_mediator.BroadcastMessage("UpdateItemCheckedState", newObj);
 			m_mediator.BroadcastMessage("FocusFirstPossibleSlice", null);
 			return result;
 		}
