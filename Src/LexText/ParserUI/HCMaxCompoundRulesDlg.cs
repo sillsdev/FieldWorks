@@ -1,6 +1,7 @@
 // Copyright (c) 2025 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using System;
 using System.Data;
@@ -21,10 +22,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		private const string m_MaxApps = "MaxApps";
 		private const string m_Guid = "Guid";
 		private const string m_CompoundRules = "CompoundRules";
+		private const string HelpTopicID = "khtpHCMaxCompoundRules";
 		private XElement m_ParserParametersElem;
 
 		private DataGrid m_dataGrid;
 		private DataSet m_dsCompoundRules;
+		private IHelpTopicProvider m_helpTopicProvider;
 
 		public HCMaxCompoundRulesDlg()
 		{
@@ -34,13 +37,14 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		public void SetDlgInfo(string title, string parserParameters, ILcmOwningSequence<IMoCompoundRule> compoundRules)
+		public void SetDlgInfo(string title, string parserParameters, ILcmOwningSequence<IMoCompoundRule> compoundRules, IHelpTopicProvider helpTopicProvider)
 		{
 			CheckDisposed();
 
 			XmlRep = parserParameters;
 			m_ParserParametersElem = XElement.Parse(parserParameters);
 			Text = title;
+			m_helpTopicProvider = helpTopicProvider;
 
 			m_dsCompoundRules = new DataSet { DataSetName = m_CompoundRules };
 
@@ -151,7 +155,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void btnHelp_Click(object sender, EventArgs e)
 		{
-			MessageBox.Show("Help clicked");
+			ShowHelp.ShowHelpTopic(m_helpTopicProvider, HelpTopicID);
 		}
 
 		protected void EnforceValidValue(XElement elem, string item, int min, int max, bool useMinIfZero)

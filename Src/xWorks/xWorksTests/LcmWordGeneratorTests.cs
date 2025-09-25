@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.XWorks
 			var doc = new XmlDocument();
 			doc.LoadXml(entryClerk);
 			XmlNode clerkNode = doc.SelectSingleNode("//tools/tool[@label='Dictionary']//parameters[@area='lexicon']");
-			RecordClerk clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false);
+			RecordClerk clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false, false);
 			clerk.SortName = "Headword";
 			return clerk;
 		}

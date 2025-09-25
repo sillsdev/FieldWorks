@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			var rghvo = (from obj in objs
 						 select obj.Hvo).ToArray();
-			m_listPublisher.CacheVecProp(m_cache.LanguageProject.Hvo, rghvo);
+			m_listPublisher.CacheVecProp(m_cache.LanguageProject.Hvo, rghvo, true);
 		}
 		#endregion
 

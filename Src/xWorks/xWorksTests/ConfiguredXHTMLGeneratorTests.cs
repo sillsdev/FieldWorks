@@ -110,7 +110,7 @@ namespace SIL.FieldWorks.XWorks
 			var doc = new XmlDocument();
 			doc.LoadXml(entryClerk);
 			XmlNode clerkNode = doc.SelectSingleNode("//tools/tool[@label='Dictionary']//parameters[@area='lexicon']");
-			RecordClerk clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false);
+			RecordClerk clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false, false);
 			clerk.SortName = "Headword";
 			return clerk;
 		}
@@ -248,7 +248,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 				clerk.SortName = "Headword (fr)";
-				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { firstAEntry.Hvo }, pubEverything, model, m_propertyTable);
+				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { firstAEntry.Hvo }, clerk, pubEverything, model, m_propertyTable);
 				AssertThatXmlIn.File(xhtmlPath).HasSpecifiedNumberOfMatchesForXpath(letterHeadingXPath, 1);
 			}
 			finally
@@ -3005,7 +3005,8 @@ namespace SIL.FieldWorks.XWorks
 			string xhtmlPath = null;
 			try
 			{
-				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { firstEntry.Hvo }, pubEverything, model, m_propertyTable);
+				var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
+				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { firstEntry.Hvo }, clerk, pubEverything, model, m_propertyTable);
 				var xhtml = File.ReadAllText(xhtmlPath);
 				// SUT
 				const string gramInfoPath = "/html/body/div[@class='lexentry']/span[@class='senses']/span[@class='sharedgrammaticalinfo']/span[@class='morphosyntaxanalysis']/span[@class='mlpartofspeech']/span[@lang='en' and text()='n']";
@@ -8677,22 +8678,23 @@ namespace SIL.FieldWorks.XWorks
 			const string xpath = "//div[@class='letHead']";
 			try
 			{
-				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { lexentry1.Hvo, lexentry2.Hvo }, pubEverything, model, m_propertyTable);
+				var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
+				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { lexentry1.Hvo, lexentry2.Hvo }, clerk, pubEverything, model, m_propertyTable);
 				var xhtml = File.ReadAllText(xhtmlPath);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 2);
 				DeleteTempXhtmlAndCssFiles(xhtmlPath);
 
-				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { lexentry1.Hvo, lexentry2.Hvo }, null, model, m_propertyTable);
+				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { lexentry1.Hvo, lexentry2.Hvo }, clerk, null, model, m_propertyTable);
 				xhtml = File.ReadAllText(xhtmlPath);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 2);
 				DeleteTempXhtmlAndCssFiles(xhtmlPath);
 
-				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { lexentry1.Hvo }, pubEverything, model, m_propertyTable);
+				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { lexentry1.Hvo }, clerk, pubEverything, model, m_propertyTable);
 				xhtml = File.ReadAllText(xhtmlPath);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 1);
 				DeleteTempXhtmlAndCssFiles(xhtmlPath);
 
-				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { lexentry1.Hvo }, null, model, m_propertyTable);
+				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { lexentry1.Hvo }, clerk, null, model, m_propertyTable);
 				xhtml = File.ReadAllText(xhtmlPath);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(xpath, 0);
 			}
@@ -8735,7 +8737,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 				clerk.SortName = "Glosses";
-				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { firstAEntry.Hvo }, pubEverything, model, m_propertyTable);
+				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { firstAEntry.Hvo }, clerk, pubEverything, model, m_propertyTable);
 				var xhtml = File.ReadAllText(xhtmlPath);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(letterHeaderXPath, 0);
 			}
@@ -8779,7 +8781,8 @@ namespace SIL.FieldWorks.XWorks
 			const string letterHeaderXPath = "//div[@class='letHead']";
 			try
 			{
-				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { firstAEntry.Hvo, secondAEntry.Hvo, bEntry.Hvo }, pubEverything, model, m_propertyTable);
+				var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
+				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { firstAEntry.Hvo, secondAEntry.Hvo, bEntry.Hvo }, clerk, pubEverything, model, m_propertyTable);
 				var xhtml = File.ReadAllText(xhtmlPath);
 				//System.Diagnostics.Debug.WriteLine(String.Format("GENERATED XHTML = \r\n{0}\r\n=====================", xhtml));
 				// There should be only 2 letter headers if both a entries are generated in order
@@ -8832,7 +8835,8 @@ namespace SIL.FieldWorks.XWorks
 			const string pageButtonXPath = "//div[@class='pages']/span[@class='pagebutton' and @lang='fr']";
 			try
 			{
-				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { firstAEntry.Hvo, secondAEntry.Hvo, bEntry.Hvo }, pubEverything, model, m_propertyTable, entriesPerPage: 1);
+				var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
+				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { firstAEntry.Hvo, secondAEntry.Hvo, bEntry.Hvo }, clerk, pubEverything, model, m_propertyTable, entriesPerPage: 1);
 				var xhtml = File.ReadAllText(xhtmlPath);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(pagesDivXPath, 2);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(pageButtonXPath, 6);
@@ -8889,7 +8893,8 @@ namespace SIL.FieldWorks.XWorks
 			const string entryDivXPath = "//div[@class='entry']";
 			try
 			{
-				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(hvos, pubEverything, model, m_propertyTable, entriesPerPage: 10);
+				var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
+				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(hvos, clerk, pubEverything, model, m_propertyTable, entriesPerPage: 10);
 				var xhtml = File.ReadAllText(xhtmlPath);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(pagesDivXPath, 2);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(pageButtonXPath, 4); // 2 page buttons (top and bottom)
@@ -8938,7 +8943,8 @@ namespace SIL.FieldWorks.XWorks
 			const string entryXPath = "//div[@class='entry']";
 			try
 			{
-				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(hvos, pubEverything, model, m_propertyTable, entriesPerPage: 8);
+				var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
+				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(hvos, clerk, pubEverything, model, m_propertyTable, entriesPerPage: 8);
 				var xhtml = File.ReadAllText(xhtmlPath);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(pagesDivXPath, 2);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath(pageButtonXPath, 6); // 3 pages on top and bottom
@@ -8977,7 +8983,8 @@ namespace SIL.FieldWorks.XWorks
 			string xhtmlPath = null;
 			try
 			{
-				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(hvos, pubEverything, model, m_propertyTable, entriesPerPage: 8);
+				var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
+				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(hvos, clerk, pubEverything, model, m_propertyTable, entriesPerPage: 8);
 				var xhtml = File.ReadAllText(xhtmlPath);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath("//div[@entry]", 0);
 				AssertThatXmlIn.String(xhtml).HasSpecifiedNumberOfMatchesForXpath("//*[@page]", 0);
@@ -8997,10 +9004,11 @@ namespace SIL.FieldWorks.XWorks
 			var model = CreateInterestingConfigurationModel(Cache, m_propertyTable);
 			model.FilePath = "/nowhere/" + configName + DictionaryConfigurationModel.FileExtension;
 			string xhtmlPath = null;
+			var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 			try
 			{
 				//SUT
-				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { entry.Hvo }, null, model, m_propertyTable);
+				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { entry.Hvo }, clerk, null, model, m_propertyTable);
 				// Since this is for the LexEdit Preview, the config name will be appended with '-Preview'
 				// Note: because the project name is the file name, and there is no file behind our cache, Name is the empty string
 				var xpath = $"/html/head/title[text()='{configName}-Preview - {Cache.ProjectId.Name}']";
@@ -9124,9 +9132,10 @@ namespace SIL.FieldWorks.XWorks
 
 			string xhtmlPath = null;
 			var letterHeaderXPath = "//div[@class='letHead']";
+			var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
 			try
 			{
-				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { thirdEntry.Hvo, secondEntry.Hvo, firstEntry.Hvo }, pubEverything, model, m_propertyTable);
+				xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new[] { thirdEntry.Hvo, secondEntry.Hvo, firstEntry.Hvo }, clerk, pubEverything, model, m_propertyTable);
 				var xhtml = File.ReadAllText(xhtmlPath);
 				//System.Diagnostics.Debug.WriteLine(String.Format("GENERATED XHTML = \r\n{0}\r\n=====================", xhtml));
 				// SUT
@@ -9157,13 +9166,14 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var entries = new int[0];
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode>() };
-			var preferredPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(entries, null, model, m_propertyTable); // to get the preferred path
+			var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
+			var preferredPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(entries, clerk, null, model, m_propertyTable); // to get the preferred path
 			var actualPath = preferredPath;
 			try
 			{
 				using (new StreamWriter(preferredPath)) // lock the preferred path
 				{
-					Assert.DoesNotThrow(() => actualPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(entries, null, model, m_propertyTable));
+					Assert.DoesNotThrow(() => actualPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(entries, clerk, null, model, m_propertyTable));
 				}
 				Assert.AreNotEqual(preferredPath, actualPath, "Should have saved to a different path.");
 			}
@@ -9184,7 +9194,8 @@ namespace SIL.FieldWorks.XWorks
 				FilePath = Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable),
 										"filename" + DictionaryConfigurationModel.FileExtension)
 			};
-			var xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(entries, null, model, m_propertyTable);
+			var clerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
+			var xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(entries, clerk, null, model, m_propertyTable);
 			try
 			{
 				var previewXhtmlContent = File.ReadAllText(xhtmlPath);
