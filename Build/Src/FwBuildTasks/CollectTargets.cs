@@ -452,6 +452,8 @@ namespace FwBuildTasks
 			catch (Exception e)
 			{
 				var badFile = targetsFile + ".bad";
+				if (File.Exists(badFile))
+					File.Delete(badFile);
 				File.Move(targetsFile, badFile);
 				Console.WriteLine("Failed to Create FieldWorks.targets bad result stored in {0}", badFile);
 				throw new StopTaskException(e);
