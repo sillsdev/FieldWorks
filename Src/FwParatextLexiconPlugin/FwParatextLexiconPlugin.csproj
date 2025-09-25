@@ -1,199 +1,51 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="Current" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version='1.0' encoding='utf-8'?>
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{41FE243C-4D03-45E3-B556-CF361272B3BA}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>SIL.FieldWorks.ParatextLexiconPlugin</RootNamespace>
+    <TargetFramework>net462</TargetFramework>
     <AssemblyName>FwParatextLexiconPlugin</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\Output\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <RootNamespace>SIL.FieldWorks.ParatextLexiconPlugin</RootNamespace>
+    <OutputPath>../../Output/$(Configuration)</OutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <UseWindowsForms>true</UseWindowsForms>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DocumentationFile>..\..\Output\Debug\FwParatextLexiconPlugin.xml</DocumentationFile>
     <NoWarn>67</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\Output\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <NoWarn>67</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\Output\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DocumentationFile>..\..\Output\Debug\FwParatextLexiconPlugin.xml</DocumentationFile>
-    <NoWarn>67</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\Output\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <NoWarn>67</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FwUtils">
-      <HintPath>..\..\Output\Debug\FwUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.LCModel.Core">
-      <HintPath>..\..\Output\Debug\SIL.LCModel.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.LCModel">
-      <HintPath>..\..\Output\Debug\SIL.LCModel.dll</HintPath>
-    </Reference>
-    <Reference Include="CommonServiceLocator, Version=1.4.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\CommonServiceLocator.dll</HintPath>
-    </Reference>
-    <Reference Include="Paratext.LexicalContracts, Version=1.0.0.0, Culture=neutral, PublicKeyToken=9a5af29a0e638a7b, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\Paratext.LexicalContracts.dll</HintPath>
-    </Reference>
-    <Reference Include="Paratext.LexicalContractsV2, PublicKeyToken=9a5af29a0e638a7b, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\Paratext.LexicalContractsV2.dll</HintPath>
-    </Reference>
-    <Reference Include="ParserCore">
-      <HintPath>..\..\Output\Debug\ParserCore.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="../Common/FwUtils/FwUtils.csproj" />
+    <ProjectReference Include="../LexText/ParserCore/ParserCore.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-beta0135" />
+    <PackageReference Include="SIL.LCModel" Version="11.0.0-beta0135" />
+    <PackageReference Include="CommonServiceLocator" Version="2.0.7" />
     <Reference Include="netstandard" />
-    <Reference Include="SIL.Core, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.Machine">
-      <HintPath>..\..\Lib\debug\SIL.Machine.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.WritingSystems, Version=2.6.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.WritingSystems.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.LCModel.Utils, Version=9.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\Output\Debug\SIL.LCModel.Utils.dll</HintPath>
-    </Reference>
+    <PackageReference Include="SIL.Core" Version="8.1.0-beta0035" />
+    <PackageReference Include="SIL.Machine" Version="3.7.4" />
+    <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
+    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-beta0135" />
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
-    </Reference>
+    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
     <Reference Include="System.Web" />
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="ChooseFdoProjectForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ChooseFdoProjectForm.Designer.cs">
-      <DependentUpon>ChooseFdoProjectForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FdoLanguageText.cs" />
-    <Compile Include="FdoLexemeAddedEventArgs.cs" />
-    <Compile Include="FdoLexicalRelation.cs" />
-    <Compile Include="FdoLexEntryLexeme.cs" />
-    <Compile Include="FdoLexicon.cs" />
-    <Compile Include="FdoLexiconGlossAddedEventArgs.cs" />
-    <Compile Include="FdoLexiconSenseAddedEventArgs.cs" />
-    <Compile Include="FdoWordAnalysisV2.cs" />
-    <Compile Include="FilesToRestoreAreOlder.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="FilesToRestoreAreOlder.Designer.cs">
-      <DependentUpon>FilesToRestoreAreOlder.cs</DependentUpon>
-    </Compile>
-    <Compile Include="FwLexiconPlugin.cs" />
-    <Compile Include="FdoSemanticDomain.cs" />
-    <Compile Include="FdoWordAnalysis.cs" />
-    <Compile Include="FdoWordformLexeme.cs" />
-    <Compile Include="FwLexiconPluginV2.cs" />
-    <Compile Include="GeneratedParatextLexiconPluginRegistryHelper.cs" />
-    <Compile Include="LexemeKey.cs" />
-    <Compile Include="ParatextLexiconPluginDirectoryFinder.cs" />
-    <Compile Include="ParatextLexiconPluginProjectId.cs" />
-    <Compile Include="ParatextLexiconPluginLcmUI.cs" />
-    <Compile Include="ParatextLexiconPluginRegistryHelper.cs" />
-    <Compile Include="ParatextLexiconPluginThreadedProgress.cs" />
-    <Compile Include="ProjectExistsForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ProjectExistsForm.Designer.cs">
-      <DependentUpon>ProjectExistsForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Include="Strings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Strings.resx</DependentUpon>
-    </Compile>
+    <Compile Include="..\CommonAssemblyInfo.cs" />
+    <Compile Include="ChooseFdoProjectForm.cs" SubType="Form" />
+    <Compile Include="FilesToRestoreAreOlder.cs" SubType="Form" />
+    <Compile Include="ProjectExistsForm.cs" SubType="Form" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ChooseFdoProjectForm.resx">
-      <DependentUpon>ChooseFdoProjectForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="FilesToRestoreAreOlder.resx">
-      <DependentUpon>FilesToRestoreAreOlder.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ProjectExistsForm.resx">
-      <DependentUpon>ProjectExistsForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Strings.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Strings.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    <EmbeddedResource Include="ChooseFdoProjectForm.resx" DependentUpon="ChooseFdoProjectForm.cs" />
+    <EmbeddedResource Include="FilesToRestoreAreOlder.resx" DependentUpon="FilesToRestoreAreOlder.cs" />
+    <EmbeddedResource Include="ProjectExistsForm.resx" DependentUpon="ProjectExistsForm.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Resources.Designer.cs" />
+    <EmbeddedResource Include="Strings.resx" Generator="ResXFileCodeGenerator" LastGenOutput="Strings.Designer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\question.ico" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="ILRepack.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

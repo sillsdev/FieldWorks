@@ -58,7 +58,7 @@ REM Run the next target only if the previous target succeeded
 (
 	%MsBuild% Src\FwBuildTasks\FwBuildTasks.sln /t:Restore;Build /p:Platform="Any CPU"
 ) && (
-	if "%all_args:disableDownloads=%"=="%all_args%" %MsBuild% FieldWorks.proj /t:RestoreNuGetPackages
+	if "%all_args:disableDownloads=%"=="%all_args%" dotnet restore
 ) && (
 	%MsBuild% FieldWorks.proj /t:CheckDevelopmentPropertiesFile
 ) && (

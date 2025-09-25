@@ -370,7 +370,12 @@
 		<LcmMissingFiles Include="SIL.LCModel.dll.config" />
 	</ItemGroup>
 
-	<Target Name="downloadDlls" DependsOnTargets="RestoreNuGetPackages;CollectAssemblyAndPdbPaths" Condition="'$(disableDownloads)'!='true'">
+	<Target Name="RestorePackages">
+		<Message Text="Restoring packages using dotnet restore..." />
+		<Exec Command="dotnet restore &quot;$(fwrt)&quot;" />
+	</Target>
+
+	<Target Name="downloadDlls" DependsOnTargets="RestorePackages;CollectAssemblyAndPdbPaths" Condition="'$(disableDownloads)'!='true'">
 		<MakeDir Directories="$(DownloadsDir)"/>
 		<MakeDir Directories="$(DownloadsDir)/lib"/>
 		<MakeDir Directories="$(DownloadsDir)/lib/x64"/>
