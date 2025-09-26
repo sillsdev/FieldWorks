@@ -4,67 +4,45 @@
     <RootNamespace>SIL.FieldWorks.CacheLight</RootNamespace>
     <TargetFramework>net462</TargetFramework>
     <OutputType>Library</OutputType>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-    <OutputPath>..\..\Output\$(Configuration)\</OutputPath>
-    <DocumentationFile>..\..\Output\$(Configuration)\CacheLight.xml</DocumentationFile>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
     <Optimize>false</Optimize>
+    <DebugType>full</DebugType>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DefineConstants>TRACE</DefineConstants>
     <DebugSymbols>false</DebugSymbols>
-    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
     <Optimize>false</Optimize>
+    <DebugType>full</DebugType>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DefineConstants>TRACE</DefineConstants>
     <DebugSymbols>false</DebugSymbols>
-    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LCModel\Utils\SIL.LCModel.Utils.csproj" Condition="Exists('..\LCModel\Utils\SIL.LCModel.Utils.csproj')" />
-    <ProjectReference Include="..\..\Views\ViewsInterfaces\ViewsInterfaces.csproj" Condition="Exists('..\..\Views\ViewsInterfaces\ViewsInterfaces.csproj')" />
-    <ProjectReference Include="..\LCModel\Core\SIL.LCModel.Core.csproj" Condition="Exists('..\LCModel\Core\SIL.LCModel.Core.csproj')" />
-    <ProjectReference Include="..\..\XMLUtils\XMLUtils.csproj" Condition="Exists('..\..\XMLUtils\XMLUtils.csproj')" />
-  </ItemGroup>
-
-  <ItemGroup Condition="!Exists('..\LCModel\Utils\SIL.LCModel.Utils.csproj')">
-    <Reference Include="SIL.LCModel.Utils" />
-  </ItemGroup>
-
-  <ItemGroup Condition="!Exists('..\..\Views\ViewsInterfaces\ViewsInterfaces.csproj')">
-    <Reference Include="ViewsInterfaces" />
-  </ItemGroup>
-
-  <ItemGroup Condition="!Exists('..\LCModel\Core\SIL.LCModel.Core.csproj')">
     <Reference Include="SIL.LCModel.Core" />
-  </ItemGroup>
-
-  <ItemGroup Condition="!Exists('..\..\XMLUtils\XMLUtils.csproj')">
+    <Reference Include="SIL.LCModel.Utils" />
+    <Reference Include="ViewsInterfaces" />
     <Reference Include="XMLUtils" />
+    <Reference Include="netstandard" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="netstandard" />
-    <Reference Include="System" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
 </Project>
