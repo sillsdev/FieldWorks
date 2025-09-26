@@ -761,10 +761,15 @@ namespace SIL.FieldWorks.IText
 		{
 			string title = "atrocious";
 			string abbr = "atroc";
+			string source = "source";
+			string description = "description";
 			//an interliner text example xml string
 			string xml = "<document><interlinear-text>" +
 			"<item type=\"title\" lang=\"en\">" + title + "</item>" +
 			"<item type=\"title-abbreviation\" lang=\"en\">" + abbr + "</item>" +
+			"<item type=\"source\" lang=\"en\">" + source + "</item>" +
+			"<item type=\"comment\" lang=\"en\">" + description + "</item>" +
+			"<item type=\"is-translated\" lang=\"en\">true</item>" +
 			"<paragraphs><paragraph><phrases><phrase>" +
 			"<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
 			"<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
@@ -785,6 +790,13 @@ namespace SIL.FieldWorks.IText
 					Assert.True(imported.Name.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle).Text.Equals(title));
 					//The title abbreviation imported
 					Assert.True(imported.Abbreviation.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle).Text.Equals(abbr));
+					//The source imported
+					Assert.True(imported.Source.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle).Text.Equals(source));
+					//The description imported
+					Assert.True(imported.Description.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle).Text.Equals(description));
+					//The isTranslated imported
+					Assert.True(imported.IsTranslated);
+					//The DateCreated imported
 				}
 			}
 		}

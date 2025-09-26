@@ -1156,6 +1156,9 @@ namespace SIL.FieldWorks.IText
 						case "comment":
 							newText.Description.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
 							break;
+						case "is-translated":
+							newText.IsTranslated = (item.Value.ToLower() == "true");
+							break;
 					}
 				}
 			}
