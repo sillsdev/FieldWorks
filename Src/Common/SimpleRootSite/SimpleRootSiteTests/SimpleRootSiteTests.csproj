@@ -11,6 +11,18 @@
     <NoWarn>168,169,219,414,649,1635,1702,1701,1685</NoWarn>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="../../../CacheLight/CacheLight.csproj" />
     <ProjectReference Include="../../../CacheLight/CacheLightTests/CacheLightTests.csproj" />

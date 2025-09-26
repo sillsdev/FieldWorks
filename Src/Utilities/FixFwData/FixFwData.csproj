@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
@@ -8,7 +9,18 @@
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="netstandard" />
     <PackageReference Include="SIL.Core" Version="8.1.0-beta0035" />
@@ -19,9 +31,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
-
   <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs" />
   </ItemGroup>
-
 </Project>

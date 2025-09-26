@@ -307,12 +307,31 @@ namespace FwBuildTasks
 		{
 			get
 			{
+				// Try SDK-style first (no namespace)
+				var nodes = m_csprojFile.SelectNodes("//PropertyGroup[DefineConstants]");
+				if (nodes.Count > 0)
+					return nodes;
+				
+				// Fall back to legacy format with namespace
 				return m_csprojFile.SelectNodes("/c:Project/c:PropertyGroup[c:DefineConstants]",
 					m_namespaceMgr);
 			}
 		}
 
-		private string GetProjectSubDir(string project)
+		/// <summary>
+		/// Get DefineConstants value from a PropertyGroup node
+		/// </summary>
+		private string GetDefineConstants(XmlNode node)
+		{
+			// Try SDK-style first (no namespace)
+			var defineConstantsElement = node.SelectSingleNode("DefineConstants");
+			if (defineConstantsElement != null)
+				return defineConstantsElement.InnerText;
+			
+			// Fall back to legacy format with namespace
+			var legacyElement = node.SelectSingleNode("c:DefineConstants", m_namespaceMgr);
+			return legacyElement?.InnerText ?? "";
+		}
 		{
 			var projectSubDir = Path.GetDirectoryName(m_mapProjFile[project]);
 			projectSubDir = projectSubDir.Substring(m_fwroot.Length);
@@ -385,14 +404,14 @@ namespace FwBuildTasks
 							// for multiple platforms, e.g. for AnyCpu and x64.
 							if (configs.ContainsKey(configuration))
 							{
-								if (configs[configuration] != node.SelectSingleNode("c:DefineConstants", m_namespaceMgr).InnerText.Replace(";", " "))
+								if (configs[configuration] != GetDefineConstants(node).Replace(";", " "))
 								{
 									Log.LogError("Configuration {0} for project {1} is defined several times " +
 										"but contains differing values for DefineConstants.", configuration, project);
 								}
 								continue;
 							}
-							configs.Add(configuration, node.SelectSingleNode("c:DefineConstants", m_namespaceMgr).InnerText.Replace(";", " "));
+							configs.Add(configuration, GetDefineConstants(node).Replace(";", " "));
 
 							writer.WriteLine("\t\t<When Condition=\" '$(config-capital)' == '{0}' \">", configuration);
 							writer.WriteLine("\t\t\t<PropertyGroup>");
