@@ -267,6 +267,40 @@ namespace FwBuildTasks
 		}
 
 		/// <summary>
+		/// Gets the assembly name for a specific project by name.
+		/// </summary>
+		/// <param name="projectName">The name of the project</param>
+		/// <returns>The assembly name with extension</returns>
+		private string GetAssemblyNameForProject(string projectName)
+		{
+			if (!m_mapProjFile.ContainsKey(projectName))
+			{
+				Log.LogWarning($"Project {projectName} not found in project map");
+				return projectName + ".dll";
+			}
+
+			var projectPath = m_mapProjFile[projectName];
+			var savedCsprojFile = m_csprojFile;
+
+			try
+			{
+				// Load the specific project file
+				LoadProjectFile(projectPath);
+				return AssemblyName;
+			}
+			catch (Exception ex)
+			{
+				Log.LogWarning($"Failed to load project file {projectPath}: {ex.Message}");
+				return projectName + ".dll";
+			}
+			finally
+			{
+				// Restore the original project file
+				m_csprojFile = savedCsprojFile;
+			}
+		}
+
+		/// <summary>
 		/// Gets property groups for the different configurations from the project file
 		/// </summary>
 		private XmlNodeList ConfigNodes
@@ -415,7 +449,7 @@ namespace FwBuildTasks
 						writer.WriteLine("\t\t\tProperties=\"$(msbuild-props);IntermediateOutputPath=$(dir-fwobj){0}{1}{0};DefineConstants=$({2}Defines);$(warningsAsErrors);WarningLevel=4;LcmArtifactsDir=$(LcmArtifactsDir)\"/>",
 							Path.DirectorySeparatorChar, GetProjectSubDir(project), project);
 						// <Clouseau> verification task
-						writer.WriteLine($"\t\t<Clouseau Condition=\"'$(Configuration)' == 'Debug'\" AssemblyPathname=\"$(dir-outputBase)/{AssemblyName}\"/>");
+						writer.WriteLine($"\t\t<Clouseau Condition=\"'$(Configuration)' == 'Debug'\" AssemblyPathname=\"$(dir-outputBase)/{GetAssemblyNameForProject(project)}\"/>");
 
 						if (isTestProject)
 						{
