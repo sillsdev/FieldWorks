@@ -531,6 +531,21 @@ namespace FwBuildTasks
 				Log.LogError("Error occurred while writing target files: {0}", e.Message);
 				Log.LogError("Stack trace: {0}", e.StackTrace);
 
+				// Output the generated file content for debugging
+				if (File.Exists(targetsFile))
+				{
+					Log.LogError("Generated targets file content:");
+					try
+					{
+						var content = File.ReadAllText(targetsFile);
+						Log.LogError(content);
+					}
+					catch (Exception readEx)
+					{
+						Log.LogError("Failed to read targets file for debugging: {0}", readEx.Message);
+					}
+				}
+
 				var badFile = targetsFile + ".bad";
 				try
 				{
