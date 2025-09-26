@@ -525,6 +525,21 @@ namespace FwBuildTasks
 					writer.Close();
 				}
 				Console.WriteLine("Created {0}", targetsFile);
+				
+				// Always output the generated file content for debugging
+				if (File.Exists(targetsFile))
+				{
+					Log.LogMessage(MessageImportance.High, "Generated targets file content:");
+					try
+					{
+						var content = File.ReadAllText(targetsFile);
+						Log.LogMessage(MessageImportance.High, content);
+					}
+					catch (Exception readEx)
+					{
+						Log.LogError("Failed to read targets file for debugging: {0}", readEx.Message);
+					}
+				}
 			}
 			catch (Exception e)
 			{
