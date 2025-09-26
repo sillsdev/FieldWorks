@@ -36,5 +36,4 @@
   <Import Project="Installer.targets" Condition="'$(OS)'=='Windows_NT'"/>
   <Import Project="LocalLibrary.targets"/>
   <Import Project="Localize.targets"/>
-  <Import Project="NuGet.targets"/>
 </Project>

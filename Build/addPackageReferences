@@ -1,0 +1,222 @@
+#!/usr/bin/env python3
+"""
+Add PackageReference entries to SDK format projects based on packages.config files
+"""
+
+import os
+import sys
+import xml.etree.ElementTree as ET
+import re
+from pathlib import Path
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+class PackageReferenceAdder:
+    def __init__(self, repo_root):
+        self.repo_root = Path(repo_root)
+        self.common_packages = self._load_packages_config("Build/nuget-common/packages.config")
+        self.windows_packages = self._load_packages_config("Build/nuget-windows/packages.config")
+        self.all_packages = {**self.common_packages, **self.windows_packages}
+
+        # Define packages that should be excluded or handled specially
+        self.excluded_packages = {
+            'Microsoft.Net.Client.3.5', 'Microsoft.Net.Framework.3.5.SP1',
+            'Microsoft.Windows.Installer.3.1', 'NuGet.CommandLine'
+        }
+
+        # SIL.Core version mapping - prefer the newer version
+        self.sil_core_version = "15.0.0-beta0117"
+
+        self.updated_projects = []
+        self.failed_projects = []
+
+    def _load_packages_config(self, packages_file):
+        """Load package references from packages.config file"""
+        packages = {}
+        config_path = self.repo_root / packages_file
+        if not config_path.exists():
+            logger.warning(f"Package config file not found: {config_path}")
+            return packages
+
+        try:
+            tree = ET.parse(config_path)
+            root = tree.getroot()
+            for package in root.findall('package'):
+                pkg_id = package.get('id')
+                version = package.get('version')
+                target_framework = package.get('targetFramework', '')
+                exclude = package.get('exclude', '')
+                packages[pkg_id] = {
+                    'version': version,
+                    'targetFramework': target_framework,
+                    'exclude': exclude
+                }
+            logger.info(f"Loaded {len(packages)} packages from {packages_file}")
+        except ET.ParseError as e:
+            logger.error(f"Error parsing {packages_file}: {e}")
+
+        return packages
+
+    def add_package_references_to_project(self, csproj_path):
+        """Add PackageReference entries to a single SDK format project"""
+        logger.info(f"Adding PackageReferences to {csproj_path}")
+
+        try:
+            with open(csproj_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+
+            # Check if already has PackageReferences
+            if '<PackageReference' in content:
+                logger.info(f"Project {csproj_path} already has PackageReferences, skipping")
+                return
+
+            # Parse XML
+            root = ET.fromstring(content)
+
+            # Check if it's SDK format
+            if root.get('Sdk') != 'Microsoft.NET.Sdk':
+                logger.warning(f"Project {csproj_path} is not SDK format, skipping")
+                return
+
+            # Create package references
+            package_refs = []
+
+            # Add common packages based on project characteristics
+            for pkg_id, pkg_info in self.all_packages.items():
+                if pkg_id in self.excluded_packages:
+                    continue
+
+                version = pkg_info["version"]
+
+                # Handle SIL.Core version conflict - use the newer version
+                if pkg_id == 'SIL.Core':
+                    version = self.sil_core_version
+
+                exclude_attr = ''
+                if pkg_info.get('exclude'):
+                    exclude_attr = f' Exclude="{pkg_info["exclude"]}"'
+
+                # Skip packages that are platform-specific or test-only for certain projects
+                if self._should_include_package(pkg_id, csproj_path):
+                    package_refs.append(f'    <PackageReference Include="{pkg_id}" Version="{version}"{exclude_attr} />')
+
+            if not package_refs:
+                logger.info(f"No packages to add to {csproj_path}")
+                return
+
+            # Add PackageReference ItemGroup to the XML
+            lines = content.split('\n')
+
+            # Find where to insert PackageReferences (after the last PropertyGroup)
+            insert_index = -1
+            for i, line in enumerate(lines):
+                if '</PropertyGroup>' in line:
+                    insert_index = i + 1
+
+            if insert_index == -1:
+                # Find where to insert before </Project>
+                for i, line in enumerate(lines):
+                    if '</Project>' in line:
+                        insert_index = i
+                        break
+
+            if insert_index != -1:
+                # Insert PackageReference ItemGroup
+                lines.insert(insert_index, '')
+                lines.insert(insert_index + 1, '  <ItemGroup>')
+                for j, package_ref in enumerate(sorted(set(package_refs))):
+                    lines.insert(insert_index + 2 + j, package_ref)
+                lines.insert(insert_index + 2 + len(package_refs), '  </ItemGroup>')
+
+            # Write the updated content
+            new_content = '\n'.join(lines)
+
+            with open(csproj_path, 'w', encoding='utf-8') as f:
+                f.write(new_content)
+
+            self.updated_projects.append(str(csproj_path))
+            logger.info(f"Successfully added PackageReferences to {csproj_path}")
+
+        except Exception as e:
+            logger.error(f"Failed to add PackageReferences to {csproj_path}: {e}")
+            self.failed_projects.append((str(csproj_path), str(e)))
+
+    def _should_include_package(self, pkg_id, csproj_path):
+        """Determine if a package should be included in a specific project"""
+        project_path = str(csproj_path).lower()
+
+        # Test-specific packages
+        test_packages = {'NUnit', 'NUnit3TestAdapter', 'NUnit.ConsoleRunner', 'NUnit.Extension.NUnitV2ResultWriter'}
+        if pkg_id in test_packages and 'test' not in project_path:
+            return False
+
+        # Windows-specific packages
+        windows_packages = {'Geckofx60.32', 'Geckofx60.64', 'Encoding-Converters-Core',
+                           'Microsoft.Win32.Registry', 'Icu4c.Win.Fw.Bin'}
+
+        # For now, include most common packages but be selective about platform-specific ones
+        # This is a simplified approach - in reality, you'd want more sophisticated filtering
+        return pkg_id not in windows_packages or 'windows' in project_path.lower()
+
+    def find_all_sdk_projects(self):
+        """Find all SDK format .csproj files"""
+        csproj_files = []
+
+        # Only search in specific subdirectories of the repo
+        search_dirs = ['Src', 'Lib', 'Build']
+        exclude_dirs = {'.git', 'bin', 'obj', 'packages', '.vs', '.vscode', 'node_modules'}
+
+        for search_dir in search_dirs:
+            search_path = self.repo_root / search_dir
+            if not search_path.exists():
+                continue
+
+            for root, dirs, files in os.walk(search_path):
+                # Filter out excluded directories from the search
+                dirs[:] = [d for d in dirs if d not in exclude_dirs]
+
+                for file in files:
+                    if file.endswith('.csproj'):
+                        csproj_path = Path(root) / file
+                        try:
+                            with open(csproj_path, 'r', encoding='utf-8') as f:
+                                content = f.read()
+
+                            # Only process SDK format projects
+                            if 'Project Sdk=' in content:
+                                csproj_files.append(csproj_path)
+
+                        except Exception as e:
+                            logger.warning(f"Could not read {csproj_path}: {e}")
+
+        return csproj_files
+
+    def add_package_references_to_all_projects(self):
+        """Add PackageReferences to all SDK format projects"""
+        csproj_files = self.find_all_sdk_projects()
+        logger.info(f"Found {len(csproj_files)} SDK format projects")
+
+        for csproj_path in csproj_files:
+            self.add_package_references_to_project(csproj_path)
+
+        logger.info(f"Update complete: {len(self.updated_projects)} successful, {len(self.failed_projects)} failed")
+
+        if self.failed_projects:
+            logger.error("Failed projects:")
+            for project, error in self.failed_projects:
+                logger.error(f"  {project}: {error}")
+
+def main():
+    if len(sys.argv) > 1:
+        repo_root = sys.argv[1]
+    else:
+        repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+    adder = PackageReferenceAdder(repo_root)
+    adder.add_package_references_to_all_projects()
+
+if __name__ == '__main__':
+    main()

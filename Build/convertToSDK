@@ -27,16 +27,16 @@ class SDKConverter:
         self.all_packages = {**self.common_packages, **self.windows_packages}
         self.converted_projects = []
         self.failed_projects = []
-        
+
         # Define packages that should be excluded or handled specially
         self.excluded_packages = {
-            'Microsoft.Net.Client.3.5', 'Microsoft.Net.Framework.3.5.SP1', 
+            'Microsoft.Net.Client.3.5', 'Microsoft.Net.Framework.3.5.SP1',
             'Microsoft.Windows.Installer.3.1'
         }
-        
+
         # SIL.Core version mapping - prefer the newer version
         self.sil_core_version = "15.0.0-beta0117"
-        
+
     def _load_packages_config(self, packages_file):
         """Load package references from packages.config file"""
         packages = {}
@@ -44,7 +44,7 @@ class SDKConverter:
         if not config_path.exists():
             logger.warning(f"Package config file not found: {config_path}")
             return packages
-            
+
         try:
             tree = ET.parse(config_path)
             root = tree.getroot()
@@ -61,14 +61,14 @@ class SDKConverter:
             logger.info(f"Loaded {len(packages)} packages from {packages_file}")
         except ET.ParseError as e:
             logger.error(f"Error parsing {packages_file}: {e}")
-        
+
         return packages
-    
+
     def _get_target_framework_from_version(self, version_string):
         """Convert TargetFrameworkVersion to TargetFramework"""
         version_map = {
             'v4.6.2': 'net462',
-            'v4.6.1': 'net461', 
+            'v4.6.1': 'net461',
             'v4.6': 'net46',
             'v4.5.2': 'net452',
             'v4.5.1': 'net451',
@@ -77,7 +77,7 @@ class SDKConverter:
             'v3.5': 'net35'
         }
         return version_map.get(version_string, 'net462')
-    
+
     def _has_assembly_info(self, project_dir):
         """Check if project has AssemblyInfo.cs or references CommonAssemblyInfo.cs"""
         # Check for AssemblyInfo.cs in various locations
@@ -85,34 +85,34 @@ class SDKConverter:
             project_dir / "AssemblyInfo.cs",
             project_dir / "Properties" / "AssemblyInfo.cs"
         ]
-        
+
         for path in assembly_info_paths:
             if path.exists():
                 return True
-        
+
         return False
-    
+
     def _has_common_assembly_info_reference(self, csproj_content):
         """Check if project references CommonAssemblyInfo.cs"""
         return "CommonAssemblyInfo.cs" in csproj_content
-    
+
     def _extract_conditional_property_groups(self, root, ns):
         """Extract conditional PropertyGroups that should be preserved"""
         conditional_groups = []
-        
+
         for prop_group in root.findall('.//ms:PropertyGroup[@Condition]', ns):
             condition = prop_group.get('Condition')
             if prop_group.find('ms:DefineConstants', ns) is not None:
                 conditional_groups.append((condition, prop_group))
-        
+
         return conditional_groups
-    
+
     def _extract_references(self, root, ns):
         """Extract Reference and ProjectReference items"""
         references = []
         project_references = []
-        
-        # Extract References 
+
+        # Extract References
         for ref in root.findall('.//ms:Reference', ns):
             include = ref.get('Include')
             if include:
@@ -125,20 +125,20 @@ class SDKConverter:
                 else:
                     # System or local reference
                     references.append(('reference', include.split(',')[0]))
-        
+
         # Extract ProjectReferences
         for proj_ref in root.findall('.//ms:ProjectReference', ns):
             include = proj_ref.get('Include')
             if include:
                 project_references.append(include)
-        
+
         return references, project_references
-    
+
     def _find_project_references(self, project_dir, references):
         """Convert assembly references to project references where possible"""
         project_references = []
         remaining_references = []
-        
+
         # Common project reference mappings
         project_mappings = {
             'SIL.LCModel.Utils': ['../LCModel/Utils/SIL.LCModel.Utils.csproj', '../../LCModel/Utils/SIL.LCModel.Utils.csproj'],
@@ -148,7 +148,7 @@ class SDKConverter:
             'Views': ['../../Views/Views.csproj', '../Views/Views.csproj'],
             'FwKernel': ['../../FwKernel/FwKernel.csproj', '../FwKernel/FwKernel.csproj']
         }
-        
+
         for ref_type, ref_name in references:
             if ref_type == 'reference' and ref_name in project_mappings:
                 # Try to find the project file
@@ -158,88 +158,88 @@ class SDKConverter:
                     if full_path.exists():
                         found_project = potential_path
                         break
-                
+
                 if found_project:
                     project_references.append(found_project)
                 else:
                     remaining_references.append((ref_type, ref_name))
             else:
                 remaining_references.append((ref_type, ref_name))
-        
+
         return project_references, remaining_references
 
     def convert_project(self, csproj_path):
         """Convert a single .csproj file to SDK format"""
         logger.info(f"Converting {csproj_path}")
-        
+
         try:
             with open(csproj_path, 'r', encoding='utf-8-sig') as f:
                 content = f.read()
-            
+
             # Parse XML with namespace handling
             # Register the default namespace to handle MSBuild XML properly
             ET.register_namespace('', 'http://schemas.microsoft.com/developer/msbuild/2003')
             root = ET.fromstring(content)
-            
+
             # Define namespace for XPath queries
             ns = {'ms': 'http://schemas.microsoft.com/developer/msbuild/2003'}
-            
+
             # Extract key information
             project_dir = Path(csproj_path).parent
-            
+
             # Get basic properties with namespace
             assembly_name_elem = root.find('.//ms:AssemblyName', ns)
             assembly_name = assembly_name_elem.text if assembly_name_elem is not None else project_dir.name
-            
-            output_type_elem = root.find('.//ms:OutputType', ns) 
+
+            output_type_elem = root.find('.//ms:OutputType', ns)
             output_type = output_type_elem.text if output_type_elem is not None else 'Library'
-            
+
             target_framework_version_elem = root.find('.//ms:TargetFrameworkVersion', ns)
             if target_framework_version_elem is not None:
                 target_framework = self._get_target_framework_from_version(target_framework_version_elem.text)
             else:
                 target_framework = 'net462'
-            
+
             root_namespace_elem = root.find('.//ms:RootNamespace', ns)
             root_namespace = root_namespace_elem.text if root_namespace_elem is not None else assembly_name
-            
+
             # Extract conditional property groups
             conditional_groups = self._extract_conditional_property_groups(root, ns)
-            
+
             # Extract references
             references, existing_project_references = self._extract_references(root, ns)
-            
+
             # Try to convert assembly references to project references
             new_project_references, remaining_references = self._find_project_references(project_dir, references)
             all_project_references = existing_project_references + new_project_references
-            
+
             # Check for AssemblyInfo
-            has_assembly_info = (self._has_assembly_info(project_dir) or 
+            has_assembly_info = (self._has_assembly_info(project_dir) or
                                self._has_common_assembly_info_reference(content))
-            
+
             # Generate new SDK format content
             new_content = self._generate_sdk_project(
                 assembly_name, output_type, target_framework, root_namespace,
-                remaining_references, all_project_references, conditional_groups, 
+                remaining_references, all_project_references, conditional_groups,
                 has_assembly_info, project_dir
             )
-            
+
             # Write new file
             with open(csproj_path, 'w', encoding='utf-8') as f:
                 f.write(new_content)
-            
+
             self.converted_projects.append(str(csproj_path))
             logger.info(f"Successfully converted {csproj_path}")
-            
+
         except Exception as e:
             logger.error(f"Failed to convert {csproj_path}: {e}")
             self.failed_projects.append((str(csproj_path), str(e)))
-    
-    def _generate_sdk_project(self, assembly_name, output_type, target_framework, 
-                             root_namespace, references, project_references, 
+
+    def _generate_sdk_project(self, assembly_name, output_type, target_framework,
+                             root_namespace, references, project_references,
                              conditional_groups, has_assembly_info, project_dir):
         """Generate SDK format project content"""
-        
+
         lines = [
             '<Project Sdk="Microsoft.NET.Sdk">',
             '  <PropertyGroup>',
@@ -250,17 +250,17 @@ class SDKConverter:
             '    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>',
             '    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>'
         ]
-        
+
         if has_assembly_info:
             lines.append('    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>')
-        
+
         lines.append('  </PropertyGroup>')
         lines.append('')
-        
+
         # Add conditional property groups
         for condition, prop_group in conditional_groups:
             lines.append(f'  <PropertyGroup Condition="{condition}">')
-            
+
             for child in prop_group:
                 tag_name = child.tag.split('}')[-1] if '}' in child.tag else child.tag  # Remove namespace prefix
                 if tag_name == 'DefineConstants':
@@ -271,48 +271,48 @@ class SDKConverter:
                     lines.append(f'    <DebugType>{child.text or "none"}</DebugType>')
                 elif tag_name == 'Optimize':
                     lines.append(f'    <Optimize>{child.text or "false"}</Optimize>')
-            
+
             lines.append('  </PropertyGroup>')
             lines.append('')
-        
+
         # Add package references
         package_refs = []
         system_refs = []
-        
+
         for ref_type, ref_name in references:
             if ref_type == 'package' and ref_name in self.all_packages:
                 if ref_name in self.excluded_packages:
                     continue
-                    
+
                 pkg_info = self.all_packages[ref_name]
                 version = pkg_info["version"]
-                
+
                 # Handle SIL.Core version conflict - use the newer version
                 if ref_name == 'SIL.Core':
                     version = self.sil_core_version
-                
+
                 exclude_attr = ''
                 if pkg_info.get('exclude'):
                     exclude_attr = f' Exclude="{pkg_info["exclude"]}"'
-                
+
                 package_refs.append(f'    <PackageReference Include="{ref_name}" Version="{version}"{exclude_attr} />')
             elif ref_type == 'reference':
                 # Skip common system references that are included by default in SDK projects
                 if ref_name not in ['System', 'System.Core', 'System.Xml', 'System.Data', 'mscorlib']:
                     system_refs.append(f'    <Reference Include="{ref_name}" />')
-        
+
         if package_refs:
             lines.append('  <ItemGroup>')
             lines.extend(sorted(set(package_refs)))  # Remove duplicates and sort
             lines.append('  </ItemGroup>')
             lines.append('')
-        
+
         if system_refs:
             lines.append('  <ItemGroup>')
             lines.extend(sorted(set(system_refs)))  # Remove duplicates and sort
             lines.append('  </ItemGroup>')
             lines.append('')
-        
+
         # Add project references
         if project_references:
             lines.append('  <ItemGroup>')
@@ -320,57 +320,57 @@ class SDKConverter:
                 lines.append(f'    <ProjectReference Include="{proj_ref}" />')
             lines.append('  </ItemGroup>')
             lines.append('')
-        
+
         lines.append('</Project>')
-        
+
         return '\n'.join(lines)
-    
+
     def find_all_csproj_files(self):
         """Find all traditional .csproj files (excluding SDK format ones)"""
         csproj_files = []
-        
+
         # Only search in specific subdirectories of the repo
         search_dirs = ['Src', 'Lib', 'Build', 'Bin']
         exclude_dirs = {'.git', 'bin', 'obj', 'packages', '.vs', '.vscode', 'node_modules'}
-        
+
         for search_dir in search_dirs:
             search_path = self.repo_root / search_dir
             if not search_path.exists():
                 continue
-                
+
             for root, dirs, files in os.walk(search_path):
                 # Filter out excluded directories from the search
                 dirs[:] = [d for d in dirs if d not in exclude_dirs]
-                
+
                 for file in files:
                     if file.endswith('.csproj'):
                         csproj_path = Path(root) / file
                         try:
                             with open(csproj_path, 'r', encoding='utf-8-sig') as f:
                                 content = f.read()
-                            
+
                             # Skip if already SDK format
                             if 'Project Sdk=' in content:
                                 logger.info(f"Skipping already converted: {csproj_path}")
                                 continue
-                            
+
                             csproj_files.append(csproj_path)
-                            
+
                         except Exception as e:
                             logger.warning(f"Could not read {csproj_path}: {e}")
-        
+
         return csproj_files
-    
+
     def convert_all_projects(self):
         """Convert all traditional .csproj files"""
         csproj_files = self.find_all_csproj_files()
         logger.info(f"Found {len(csproj_files)} projects to convert")
-        
+
         for csproj_path in csproj_files:
             self.convert_project(csproj_path)
-        
+
         logger.info(f"Conversion complete: {len(self.converted_projects)} successful, {len(self.failed_projects)} failed")
-        
+
         if self.failed_projects:
             logger.error("Failed projects:")
             for project, error in self.failed_projects:
@@ -381,7 +381,7 @@ def main():
         repo_root = sys.argv[1]
     else:
         repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    
+
     converter = SDKConverter(repo_root)
     converter.convert_all_projects()
 
