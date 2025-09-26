@@ -241,14 +241,28 @@ namespace FwBuildTasks
 		{
 			get
 			{
-				var name = m_csprojFile.SelectSingleNode("/c:Project/c:PropertyGroup/c:AssemblyName",
-					m_namespaceMgr);
-				var type = m_csprojFile.SelectSingleNode("/c:Project/c:PropertyGroup/c:OutputType",
-					m_namespaceMgr);
+				// Try SDK-style project first (no namespace)
+				var name = m_csprojFile.SelectSingleNode("/Project/PropertyGroup/AssemblyName");
+				var type = m_csprojFile.SelectSingleNode("/Project/PropertyGroup/OutputType");
+
+				// If not found, try old-style project with namespace
+				if (name == null)
+				{
+					name = m_csprojFile.SelectSingleNode("/c:Project/c:PropertyGroup/c:AssemblyName", m_namespaceMgr);
+					type = m_csprojFile.SelectSingleNode("/c:Project/c:PropertyGroup/c:OutputType", m_namespaceMgr);
+				}
+
+				// Default extension is .dll (for Library output type or when OutputType is not specified)
 				string extension = ".dll";
-				if (type.InnerText == "WinExe" || type.InnerText == "Exe")
+				if (type != null && (type.InnerText == "WinExe" || type.InnerText == "Exe"))
 					extension = ".exe";
-				return name.InnerText + extension;
+
+				if (name != null)
+					return name.InnerText + extension;
+
+				// If AssemblyName is not found, this shouldn't happen but return a safe default
+				Log.LogWarning("AssemblyName not found in project file, using default");
+				return "Unknown" + extension;
 			}
 		}
 
