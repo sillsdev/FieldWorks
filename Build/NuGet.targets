@@ -17,7 +17,11 @@
 	</PropertyGroup>
 
 	<Target Name="RestoreNuGetPackages" DependsOnTargets="CheckPrerequisites">
-		<!-- Download packages in packages-common.config. Then download packages in packages-windows.config. -->
+		<!-- Use dotnet restore for SDK-style projects and traditional NuGet restore for packages.config -->
+		<Message Text="Restoring NuGet packages with dotnet restore..." />
+		<Exec Condition="'$(OS)' == 'Windows_NT'" Command="dotnet restore &quot;$(fwrt)&quot;" ContinueOnError="false" />
+		
+		<!-- Still restore packages.config for compatibility during transition -->
 		<Exec Condition="'$(OS)' == 'Windows_NT'" Command="$(RestoreCommandCommon)"/>
 		<Exec Condition="'$(OS)' == 'Windows_NT'" Command="$(RestoreCommandPlatformSpecific)"/>
 	</Target>
