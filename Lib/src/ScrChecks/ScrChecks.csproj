@@ -36,12 +36,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="FwUtils" />
-    <Reference Include="SIL.LCModel.Core" />
+    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-beta0136" />
     <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="netstandard" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Src\Common\FwUtils\FwUtils.csproj" />
   </ItemGroup>
 
 </Project>

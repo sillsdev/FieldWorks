@@ -14,6 +14,7 @@
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <DebugType>full</DebugType>
+    <OutputPath>..\..\Output\Debug\</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
@@ -21,6 +22,7 @@
     <DebugSymbols>false</DebugSymbols>
     <Optimize>true</Optimize>
     <DebugType>none</DebugType>
+    <OutputPath>..\..\Output\Release\</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
@@ -28,6 +30,7 @@
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <DebugType>full</DebugType>
+    <OutputPath>..\..\Output\Debug\</OutputPath>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
@@ -35,14 +38,18 @@
     <DebugSymbols>false</DebugSymbols>
     <Optimize>true</Optimize>
     <DebugType>none</DebugType>
+    <OutputPath>..\..\Output\Release\</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="SIL.LCModel.Core" />
-    <Reference Include="SIL.LCModel.Utils" />
-    <Reference Include="ViewsInterfaces" />
-    <Reference Include="XMLUtils" />
+    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-beta0136" />
+    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-beta0136" />
     <Reference Include="netstandard" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ViewsInterfaces\ViewsInterfaces.csproj" />
+    <ProjectReference Include="..\Utilities\XMLUtils\XMLUtils.csproj" />
   </ItemGroup>
 
 </Project>

@@ -35,12 +35,15 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="FwUtils" />
-    <Reference Include="SIL.LCModel.Core" />
-    <Reference Include="SIL.LCModel.Core.Tests" />
-    <Reference Include="SIL.LCModel.Utils" />
-    <Reference Include="ScrChecks" />
+    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-beta0136" />
+    <PackageReference Include="SIL.LCModel.Core.Tests" Version="11.0.0-beta0136" />
+    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-beta0136" />
     <Reference Include="netstandard" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Src\Common\FwUtils\FwUtils.csproj" />
+    <ProjectReference Include="..\ScrChecks.csproj" />
   </ItemGroup>
 
 </Project>
