@@ -24,12 +24,26 @@ namespace FwBuildTasks
 		{
 			try
 			{
+				Log.LogMessage(MessageImportance.Normal, "Starting GenerateFwTargets task...");
 				var gen = new CollectTargets(Log, ToolsVersion);
 				gen.Generate();
+				Log.LogMessage(MessageImportance.Normal, "GenerateFwTargets task completed successfully.");
 				return true;
 			}
-			catch (CollectTargets.StopTaskException)
+			catch (CollectTargets.StopTaskException ex)
 			{
+				Log.LogError("GenerateFwTargets task failed.");
+				if (ex.InnerException != null)
+				{
+					Log.LogError("Inner exception: {0}", ex.InnerException.Message);
+					Log.LogError("Stack trace: {0}", ex.InnerException.StackTrace);
+				}
+				return false;
+			}
+			catch (Exception ex)
+			{
+				Log.LogError("GenerateFwTargets task failed with unexpected exception: {0}", ex.Message);
+				Log.LogError("Stack trace: {0}", ex.StackTrace);
 				return false;
 			}
 		}
@@ -82,16 +96,22 @@ namespace FwBuildTasks
 		/// </summary>
 		public void Generate()
 		{
+			Log.LogMessage(MessageImportance.Normal, "Collecting project information from Src directory...");
 			var infoSrc = new DirectoryInfo(Path.Combine(m_fwroot, "Src"));
 			CollectInfo(infoSrc);
+
 			// These projects from Lib had nant targets.  They really should be under Src.
+			Log.LogMessage(MessageImportance.Normal, "Collecting project information from Lib directories...");
 			var infoEth = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/Ethnologue"));
 			CollectInfo(infoEth);
 			var infoScr2 = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ScrChecks"));
 			CollectInfo(infoScr2);
 			var infoObj = new DirectoryInfo(Path.Combine(m_fwroot, "Lib/src/ObjectBrowser"));
 			CollectInfo(infoObj);
+
+			Log.LogMessage(MessageImportance.Normal, "Found {0} projects. Writing target files...", m_mapProjFile.Count);
 			WriteTargetFiles();
+			Log.LogMessage(MessageImportance.Normal, "Target file generation completed.");
 		}
 
 		/// <summary>
@@ -100,11 +120,20 @@ namespace FwBuildTasks
 		private void CollectInfo(DirectoryInfo dirInfo)
 		{
 			if (dirInfo == null || !dirInfo.Exists)
+			{
+				Log.LogMessage(MessageImportance.Low, "Directory does not exist: {0}", dirInfo?.FullName ?? "null");
 				return;
+			}
+
+			Log.LogMessage(MessageImportance.Low, "Scanning directory: {0}", dirInfo.FullName);
+
 			foreach (var fi in dirInfo.GetFiles())
 			{
 				if (fi.Name.EndsWith(".csproj") && fi.Exists)
+				{
+					Log.LogMessage(MessageImportance.Low, "Processing project file: {0}", fi.FullName);
 					ProcessCsProjFile(fi.FullName);
+				}
 			}
 			foreach (var diSub in dirInfo.GetDirectories())
 				CollectInfo(diSub);
@@ -212,14 +241,62 @@ namespace FwBuildTasks
 		{
 			get
 			{
-				var name = m_csprojFile.SelectSingleNode("/c:Project/c:PropertyGroup/c:AssemblyName",
-					m_namespaceMgr);
-				var type = m_csprojFile.SelectSingleNode("/c:Project/c:PropertyGroup/c:OutputType",
-					m_namespaceMgr);
+				// Try SDK-style project first (no namespace)
+				var name = m_csprojFile.SelectSingleNode("/Project/PropertyGroup/AssemblyName");
+				var type = m_csprojFile.SelectSingleNode("/Project/PropertyGroup/OutputType");
+
+				// If not found, try old-style project with namespace
+				if (name == null)
+				{
+					name = m_csprojFile.SelectSingleNode("/c:Project/c:PropertyGroup/c:AssemblyName", m_namespaceMgr);
+					type = m_csprojFile.SelectSingleNode("/c:Project/c:PropertyGroup/c:OutputType", m_namespaceMgr);
+				}
+
+				// Default extension is .dll (for Library output type or when OutputType is not specified)
 				string extension = ".dll";
-				if (type.InnerText == "WinExe" || type.InnerText == "Exe")
+				if (type != null && (type.InnerText == "WinExe" || type.InnerText == "Exe"))
 					extension = ".exe";
-				return name.InnerText + extension;
+
+				if (name != null)
+					return name.InnerText + extension;
+
+				// If AssemblyName is not found, this shouldn't happen but return a safe default
+				Log.LogWarning("AssemblyName not found in project file, using default");
+				return "Unknown" + extension;
+			}
+		}
+
+		/// <summary>
+		/// Gets the assembly name for a specific project by name.
+		/// </summary>
+		/// <param name="projectName">The name of the project</param>
+		/// <returns>The assembly name with extension</returns>
+		private string GetAssemblyNameForProject(string projectName)
+		{
+			if (!m_mapProjFile.ContainsKey(projectName))
+			{
+				Log.LogWarning($"Project {projectName} not found in project map");
+				return projectName + ".dll";
+			}
+
+			var projectPath = m_mapProjFile[projectName];
+			var savedCsprojFile = m_csprojFile;
+
+			try
+			{
+				// Load the specific project file
+				LoadProjectFile(projectPath);
+				return AssemblyName;
+			}
+			catch (Exception ex)
+			{
+				Log.LogWarning($"Failed to load project file {projectPath}: {ex.Message}");
+				return projectName + ".dll";
+			}
+			finally
+			{
+				// Restore the original project file
+				m_csprojFile = savedCsprojFile;
 			}
 		}
 
@@ -230,12 +307,33 @@ namespace FwBuildTasks
 		{
 			get
 			{
+				// Try SDK-style first (no namespace)
+				var nodes = m_csprojFile.SelectNodes("//PropertyGroup[DefineConstants]");
+				if (nodes.Count > 0)
+					return nodes;
+				
+				// Fall back to legacy format with namespace
 				return m_csprojFile.SelectNodes("/c:Project/c:PropertyGroup[c:DefineConstants]",
 					m_namespaceMgr);
 			}
 		}
 
-		private string GetProjectSubDir(string project)
+		/// <summary>
+		/// Get DefineConstants value from a PropertyGroup node
+		/// </summary>
+		private string GetDefineConstants(XmlNode node)
+		{
+			// Try SDK-style first (no namespace)
+			var defineConstantsElement = node.SelectSingleNode("DefineConstants");
+			if (defineConstantsElement != null)
+				return defineConstantsElement.InnerText;
+			
+			// Fall back to legacy format with namespace
+			var legacyElement = node.SelectSingleNode("c:DefineConstants", m_namespaceMgr);
+			return legacyElement?.InnerText ?? "";
+		}
+
+		public string GetProjectSubDir(string project)
 		{
 			var projectSubDir = Path.GetDirectoryName(m_mapProjFile[project]);
 			projectSubDir = projectSubDir.Substring(m_fwroot.Length);
@@ -308,14 +406,14 @@ namespace FwBuildTasks
 							// for multiple platforms, e.g. for AnyCpu and x64.
 							if (configs.ContainsKey(configuration))
 							{
-								if (configs[configuration] != node.SelectSingleNode("c:DefineConstants", m_namespaceMgr).InnerText.Replace(";", " "))
+								if (configs[configuration] != GetDefineConstants(node).Replace(";", " "))
 								{
 									Log.LogError("Configuration {0} for project {1} is defined several times " +
 										"but contains differing values for DefineConstants.", configuration, project);
 								}
 								continue;
 							}
-							configs.Add(configuration, node.SelectSingleNode("c:DefineConstants", m_namespaceMgr).InnerText.Replace(";", " "));
+							configs.Add(configuration, GetDefineConstants(node).Replace(";", " "));
 
 							writer.WriteLine("\t\t<When Condition=\" '$(config-capital)' == '{0}' \">", configuration);
 							writer.WriteLine("\t\t\t<PropertyGroup>");
@@ -372,7 +470,7 @@ namespace FwBuildTasks
 						writer.WriteLine("\t\t\tProperties=\"$(msbuild-props);IntermediateOutputPath=$(dir-fwobj){0}{1}{0};DefineConstants=$({2}Defines);$(warningsAsErrors);WarningLevel=4;LcmArtifactsDir=$(LcmArtifactsDir)\"/>",
 							Path.DirectorySeparatorChar, GetProjectSubDir(project), project);
 						// <Clouseau> verification task
-						writer.WriteLine($"\t\t<Clouseau Condition=\"'$(Configuration)' == 'Debug'\" AssemblyPathname=\"$(dir-outputBase)/{AssemblyName}\"/>");
+						writer.WriteLine($"\t\t<Clouseau Condition=\"'$(Configuration)' == 'Debug'\" AssemblyPathname=\"$(dir-outputBase)/{GetAssemblyNameForProject(project)}\"/>");
 
 						if (isTestProject)
 						{
@@ -448,12 +546,56 @@ namespace FwBuildTasks
 					writer.Close();
 				}
 				Console.WriteLine("Created {0}", targetsFile);
+				
+				// Always output the generated file content for debugging
+				if (File.Exists(targetsFile))
+				{
+					Log.LogMessage(MessageImportance.High, "Generated targets file content:");
+					try
+					{
+						var content = File.ReadAllText(targetsFile);
+						Log.LogMessage(MessageImportance.High, content);
+					}
+					catch (Exception readEx)
+					{
+						Log.LogError("Failed to read targets file for debugging: {0}", readEx.Message);
+					}
+				}
 			}
 			catch (Exception e)
 			{
+				Log.LogError("Error occurred while writing target files: {0}", e.Message);
+				Log.LogError("Stack trace: {0}", e.StackTrace);
+
+				// Output the generated file content for debugging
+				if (File.Exists(targetsFile))
+				{
+					Log.LogError("Generated targets file content:");
+					try
+					{
+						var content = File.ReadAllText(targetsFile);
+						Log.LogError(content);
+					}
+					catch (Exception readEx)
+					{
+						Log.LogError("Failed to read targets file for debugging: {0}", readEx.Message);
+					}
+				}
+
 				var badFile = targetsFile + ".bad";
-				File.Move(targetsFile, badFile);
-				Console.WriteLine("Failed to Create FieldWorks.targets bad result stored in {0}", badFile);
+				try
+				{
+					if (File.Exists(badFile))
+						File.Delete(badFile);
+					File.Move(targetsFile, badFile);
+					Log.LogMessage(MessageImportance.High, "Failed to create FieldWorks.targets, bad result stored in {0}", badFile);
+					Console.WriteLine("Failed to Create FieldWorks.targets bad result stored in {0}", badFile);
+				}
+				catch (Exception moveEx)
+				{
+					Log.LogError("Failed to move bad targets file: {0}", moveEx.Message);
+				}
+
 				throw new StopTaskException(e);
 			}
 		}
