@@ -77,19 +77,19 @@ namespace FwBuildTasks
 				var numberOfDays = Convert.ToInt32(Math.Truncate(DateTime.Now.ToOADate())).ToString();
 				fileContents = regex.Replace(fileContents, numberOfDays);
 
-				// Jenkins builds should set the BUILD_NUMBER in the environment
-				var buildNumber = Environment.GetEnvironmentVariable("BUILD_NUMBER");
+				// GHA builds set the RELEASE_BASE_BUILD_NUMBER in the environment
+				var buildNumber = Environment.GetEnvironmentVariable("RELEASE_BASE_BUILD_NUMBER");
 				if (string.IsNullOrEmpty(buildNumber))
 				{
-					// fall back to number of days if no BUILD_NUMBER is in the environment
+					// fall back to number of days if no RELEASE_BASE_BUILD_NUMBER is in the environment
 					buildNumber = numberOfDays;
 				}
 				regex = new Regex("\\$BUILDNUMBER");
 				fileContents = regex.Replace(fileContents, buildNumber);
 
-				// If BaseBuildish is set, this is a patch build: use BaseBuildish;
-				// otherwise, this is a base build: use BUILD_NUMBER
-				var baseBuildNumber = Environment.GetEnvironmentVariable("BaseBuildish");
+				// If BASE_BUILD_NUMBER is set, this is a patch build: use BASE_BUILD_NUMBER;
+				// otherwise, this is a base build: use buildNumber
+				var baseBuildNumber = Environment.GetEnvironmentVariable("BASE_BUILD_NUMBER");
 				if (string.IsNullOrEmpty(baseBuildNumber))
 				{
 					baseBuildNumber = buildNumber;
