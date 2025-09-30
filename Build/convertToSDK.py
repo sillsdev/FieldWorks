@@ -37,6 +37,10 @@ class SDKConverter:
         # SIL.Core version mapping - prefer the newer version
         self.sil_core_version = "15.0.0-beta0117"
 
+        # Load NuGet assembly names from mkall.targets
+        self.nuget_assembly_names = self._load_nuget_assemblies_from_mkall_targets()
+        logger.info(f"Loaded {len(self.nuget_assembly_names)} NuGet assembly names from mkall.targets")
+
         # Build maps for intelligent reference resolution
         self.assembly_to_project_map = {}  # assembly name -> project path
         self.package_names = set(self.all_packages.keys())  # set of package names for quick lookup
@@ -135,6 +139,73 @@ class SDKConverter:
 
         return packages
 
+    def _load_nuget_assemblies_from_mkall_targets(self):
+        """Load NuGet assembly names from mkall.targets ItemGroups"""
+        nuget_assemblies = set()
+        mkall_targets_path = self.repo_root / "Build" / "mkall.targets"
+        
+        if not mkall_targets_path.exists():
+            logger.warning(f"mkall.targets file not found: {mkall_targets_path}")
+            return nuget_assemblies
+
+        try:
+            tree = ET.parse(mkall_targets_path)
+            root = tree.getroot()
+            ns = {'ms': 'http://schemas.microsoft.com/developer/msbuild/2003'}
+            
+            # ItemGroups that contain NuGet assembly names
+            nuget_itemgroups = [
+                'PalasoFiles', 'ChorusFiles', 'LcmOutputBaseFiles', 
+                'LcmToolsBaseFiles', 'LcmBuildTasksBaseFiles'
+            ]
+            
+            for itemgroup_name in nuget_itemgroups:
+                for item in root.findall(f'.//ms:{itemgroup_name}', ns):
+                    include_attr = item.get('Include')
+                    if include_attr:
+                        # Remove .dll extension if present
+                        assembly_name = include_attr.replace('.dll', '')
+                        nuget_assemblies.add(assembly_name)
+                        logger.debug(f"Found NuGet assembly from {itemgroup_name}: {assembly_name}")
+            
+            # Also extract from package names - some packages have different assembly names
+            # Add common NuGet packages from packages.config that might not be in mkall.targets
+            for package_name in self.all_packages.keys():
+                # Map package names to their likely assembly names
+                assembly_mappings = {
+                    'SharpZipLib': 'ICSharpCode.SharpZipLib',
+                    'Geckofx60.32': 'Geckofx-Core',  # Both x32 and x64 provide the same assemblies
+                    'Geckofx60.64': 'Geckofx-Core',
+                    'SIL.ParatextShared': 'ParatextShared',
+                    'ParatextData': 'Paratext.LexicalContracts',  # ParatextData provides multiple assemblies
+                }
+                
+                # Add the package name itself
+                nuget_assemblies.add(package_name)
+                
+                # Add any mapped assembly names
+                if package_name in assembly_mappings:
+                    mapped_name = assembly_mappings[package_name]
+                    nuget_assemblies.add(mapped_name)
+                    # Geckofx packages provide both Core and Winforms
+                    if 'Geckofx' in package_name:
+                        nuget_assemblies.add('Geckofx-Winforms')
+                    # ParatextData provides multiple assemblies
+                    if package_name == 'ParatextData':
+                        nuget_assemblies.add('Paratext.LexicalContractsV2')
+                        nuget_assemblies.add('ParatextData')
+                        nuget_assemblies.add('PtxUtils')
+                    logger.debug(f"Mapped package {package_name} -> assembly {mapped_name}")
+            
+            logger.info(f"Loaded {len(nuget_assemblies)} NuGet assemblies from mkall.targets and package mappings")
+            
+        except ET.ParseError as e:
+            logger.error(f"Error parsing mkall.targets: {e}")
+        except Exception as e:
+            logger.error(f"Error loading NuGet assemblies from mkall.targets: {e}")
+
+        return nuget_assemblies
+
     def _get_target_framework_from_version(self, version_string):
         """Convert TargetFrameworkVersion to TargetFramework"""
         version_map = {
@@ -187,15 +258,17 @@ class SDKConverter:
         for ref in root.findall('.//ms:Reference', ns):
             include = ref.get('Include')
             if include:
-                # Check if it's a NuGet package or system reference
-                hint_path = ref.find('ms:HintPath', ns)
-                if hint_path is not None and ('packages' in hint_path.text or 'nuget' in hint_path.text.lower()):
-                    # This is likely a NuGet package reference
-                    package_name = include.split(',')[0]  # Remove version info
-                    references.append(('package', package_name))
+                # Remove version info from assembly name
+                assembly_name = include.split(',')[0]
+                
+                # Check if it's a NuGet package using mkall.targets information
+                if assembly_name in self.nuget_assembly_names:
+                    # This is a NuGet package reference
+                    references.append(('package', assembly_name))
+                    logger.debug(f"Identified '{assembly_name}' as NuGet package from mkall.targets")
                 else:
                     # System or local reference
-                    references.append(('reference', include.split(',')[0]))
+                    references.append(('reference', assembly_name))
 
         # Extract ProjectReferences
         for proj_ref in root.findall('.//ms:ProjectReference', ns):

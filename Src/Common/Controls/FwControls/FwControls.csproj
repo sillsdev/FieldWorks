@@ -41,20 +41,19 @@
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
     <PackageReference Include="SIL.Core" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.Core.Desktop" Version="15.0.0-beta0117" />
+    <PackageReference Include="SIL.DesktopAnalytics" Version="4.0.0" />
     <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
+    <PackageReference Include="SIL.ParatextShared" Version="7.4.0.1" />
     <PackageReference Include="SIL.Windows.Forms" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.Windows.Forms.WritingSystems" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-    <PackageReference Include="SIL.DesktopAnalytics" Version="4.0.0" />
-    
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="Accessibility" />
-    <Reference Include="ParatextShared" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="netstandard" />

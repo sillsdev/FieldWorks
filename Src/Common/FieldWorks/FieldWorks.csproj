@@ -37,27 +37,26 @@
 
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
+    <PackageReference Include="Geckofx60.32" Version="60.0.50" Condition="'$(Platform)' != 'x64'" />
+    <PackageReference Include="Geckofx60.64" Version="60.0.50" Condition="'$(Platform)' == 'x64'" />
     <PackageReference Include="L10NSharp" Version="7.0.0" />
+    <PackageReference Include="SharpZipLib" Version="1.4.0" Exclude="Build,Analyzers" />
     <PackageReference Include="SIL.Core" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.Core.Desktop" Version="15.0.0-beta0117" />
+    <PackageReference Include="SIL.DesktopAnalytics" Version="4.0.0" />
     <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
     <PackageReference Include="SIL.Lexicon" Version="15.0.0-beta0117" />
+    <PackageReference Include="SIL.ParatextShared" Version="7.4.0.1" />
     <PackageReference Include="SIL.Windows.Forms" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.Windows.Forms.Keyboarding" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
-    <PackageReference Include="SIL.DesktopAnalytics" Version="4.0.0" />
-    
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Geckofx-Core" />
-    <Reference Include="Geckofx-Winforms" />
-    <Reference Include="ICSharpCode.SharpZipLib" />
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="PaToFdoInterfaces" />
-    <Reference Include="ParatextShared" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net" />

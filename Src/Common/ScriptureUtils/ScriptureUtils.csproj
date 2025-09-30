@@ -38,17 +38,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ParatextData" Version="9.4.0.1-beta" />
     <PackageReference Include="SIL.Core" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.Core.Desktop" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
+    <PackageReference Include="SIL.ParatextShared" Version="7.4.0.1" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Paratext.LexicalContracts" />
-    <Reference Include="ParatextShared" />
     <Reference Include="SilEncConverters40" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="Utilities" />
