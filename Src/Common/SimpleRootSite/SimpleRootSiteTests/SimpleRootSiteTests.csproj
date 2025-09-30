@@ -39,10 +39,10 @@
   <ItemGroup>
     <PackageReference Include="NDesk.DBus" Version="0.15.0" />
     <PackageReference Include="SIL.Core" Version="15.0.0-beta0117" />
-    <PackageReference Include="SIL.LCModel.Core" Version="11.*" />
-    <PackageReference Include="SIL.LCModel.Core.Tests" Version="11.*" PrivateAssets="All" />
-    <PackageReference Include="SIL.LCModel.Utils" Version="11.*" />
-    <PackageReference Include="SIL.LCModel.Utils.Tests" Version="11.*" PrivateAssets="All" />
+    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
+    <PackageReference Include="SIL.LCModel.Core.Tests" Version="11.0.0-*" PrivateAssets="All" />
+    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
+    <PackageReference Include="SIL.LCModel.Utils.Tests" Version="11.0.0-*" PrivateAssets="All" />
     <PackageReference Include="SIL.TestUtilities" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.Windows.Forms.Keyboarding" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
