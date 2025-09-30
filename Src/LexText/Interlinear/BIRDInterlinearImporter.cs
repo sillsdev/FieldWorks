@@ -1156,7 +1156,7 @@ namespace SIL.FieldWorks.IText
 						case "comment":
 							newText.Description.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
 							break;
-						case "is-translated":
+						case "text-is-translation":
 							newText.IsTranslated = (item.Value.ToLower() == "true");
 							break;
 						case "date-created":

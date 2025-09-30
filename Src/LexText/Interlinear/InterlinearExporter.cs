@@ -600,7 +600,7 @@ namespace SIL.FieldWorks.IText
 					if (pendingIsTranslated)
 					{
 						var hystericalRaisens = TsStringUtils.MakeString("true", m_cache.WritingSystemFactory.UserWs);
-						WritePendingItem("is-translated", ref hystericalRaisens);
+						WritePendingItem("text-is-translation", ref hystericalRaisens);
 					}
 					ITsString dateCreated = TsStringUtils.MakeString(pendingDateCreated.ToLCMTimeFormatWithMillisString(), m_cache.WritingSystemFactory.UserWs);
 					WritePendingItem("date-created", ref dateCreated);

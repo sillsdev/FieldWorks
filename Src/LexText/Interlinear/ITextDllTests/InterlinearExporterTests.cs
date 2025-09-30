@@ -1116,7 +1116,7 @@ namespace SIL.FieldWorks.IText
 			{
 				m_text1.IsTranslated = true;
 				XmlDocument exportedDoc = ExportToXml();
-				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath("//interlinear-text/item[@type=\"is-translated\"]", 1);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath("//interlinear-text/item[@type=\"text-is-translation\"]", 1);
 			}
 
 			[Test]

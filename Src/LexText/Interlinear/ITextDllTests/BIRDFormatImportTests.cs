@@ -771,7 +771,7 @@ namespace SIL.FieldWorks.IText
 			"<item type=\"title-abbreviation\" lang=\"en\">" + abbr + "</item>" +
 			"<item type=\"source\" lang=\"en\">" + source + "</item>" +
 			"<item type=\"comment\" lang=\"en\">" + description + "</item>" +
-			"<item type=\"is-translated\" lang=\"en\">true</item>" +
+			"<item type=\"text-is-translation\" lang=\"en\">true</item>" +
 			"<item type=\"date-created\" lang=\"en\">" + dateCreated + "</item>" +
 			"<item type=\"date-modified\" lang=\"en\">" + dateModified + "</item>" +
 			"<paragraphs><paragraph><phrases><phrase>" +
