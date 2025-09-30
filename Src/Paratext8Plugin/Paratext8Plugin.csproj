@@ -42,7 +42,6 @@
 
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Paratext.LexicalContracts" />
     <Reference Include="PtxUtils" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Data.DataSetExtensions" />

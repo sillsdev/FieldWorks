@@ -177,6 +177,7 @@ class SDKConverter:
                     'Geckofx60.32': 'Geckofx-Core',  # Both x32 and x64 provide the same assemblies
                     'Geckofx60.64': 'Geckofx-Core',
                     'SIL.ParatextShared': 'ParatextShared',
+                    'ParatextData': 'Paratext.LexicalContracts',  # ParatextData provides multiple assemblies
                 }
                 
                 # Add the package name itself
@@ -189,6 +190,11 @@ class SDKConverter:
                     # Geckofx packages provide both Core and Winforms
                     if 'Geckofx' in package_name:
                         nuget_assemblies.add('Geckofx-Winforms')
+                    # ParatextData provides multiple assemblies
+                    if package_name == 'ParatextData':
+                        nuget_assemblies.add('Paratext.LexicalContractsV2')
+                        nuget_assemblies.add('ParatextData')
+                        nuget_assemblies.add('PtxUtils')
                     logger.debug(f"Mapped package {package_name} -> assembly {mapped_name}")
             
             logger.info(f"Loaded {len(nuget_assemblies)} NuGet assemblies from mkall.targets and package mappings")

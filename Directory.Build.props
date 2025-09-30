@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <!-- Suppress NU1903 security warning for DotNetZip -->
+    <!-- This is a known issue with an old version; upgrade not currently feasible -->
+    <NoWarn>$(NoWarn);NU1903</NoWarn>
+  </PropertyGroup>
+</Project>

@@ -45,11 +45,11 @@
     <PackageReference Include="SIL.LCModel.Tests" Version="11.0.0-*" PrivateAssets="All" />
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Utils.Tests" Version="11.0.0-*" PrivateAssets="All" />
+    <PackageReference Include="SIL.ParatextShared" Version="7.4.0.1" />
     <PackageReference Include="SIL.TestUtilities" Version="15.0.0-beta0117" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="ParatextShared" />
     <Reference Include="Utilities" />
     <Reference Include="netstandard" />
   </ItemGroup>
