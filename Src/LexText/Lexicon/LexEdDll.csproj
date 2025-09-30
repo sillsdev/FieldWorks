@@ -41,9 +41,9 @@
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
     <PackageReference Include="SIL.Core" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.Core.Desktop" Version="15.0.0-beta0117" />
-    <PackageReference Include="SIL.LCModel" Version="11.0.0-beta0136" />
-    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-beta0136" />
-    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-beta0136" />
+    <PackageReference Include="SIL.LCModel" Version="11.*" />
+    <PackageReference Include="SIL.LCModel.Core" Version="11.*" />
+    <PackageReference Include="SIL.LCModel.Utils" Version="11.*" />
     <PackageReference Include="SIL.Lift" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
   </ItemGroup>

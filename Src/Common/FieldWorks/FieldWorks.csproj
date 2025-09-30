@@ -40,14 +40,14 @@
     <PackageReference Include="L10NSharp" Version="7.0.0" />
     <PackageReference Include="SIL.Core" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.Core.Desktop" Version="15.0.0-beta0117" />
-    <PackageReference Include="SIL.LCModel" Version="11.0.0-beta0136" />
-    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-beta0136" />
-    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-beta0136" />
+    <PackageReference Include="SIL.LCModel" Version="11.*" />
+    <PackageReference Include="SIL.LCModel.Core" Version="11.*" />
+    <PackageReference Include="SIL.LCModel.Utils" Version="11.*" />
     <PackageReference Include="SIL.Lexicon" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.Windows.Forms" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.Windows.Forms.Keyboarding" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
-    <PackageReference Include="icu.net" Version="3.0.0-beta.297" Exclude="Build,Analyzers" />
+    
   </ItemGroup>
 
   <ItemGroup>

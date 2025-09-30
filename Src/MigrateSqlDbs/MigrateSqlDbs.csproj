@@ -37,8 +37,8 @@
 
   <ItemGroup>
     <PackageReference Include="SIL.Core" Version="15.0.0-beta0117" />
-    <PackageReference Include="SIL.LCModel" Version="11.0.0-beta0136" />
-    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-beta0136" />
+    <PackageReference Include="SIL.LCModel" Version="11.*" />
+    <PackageReference Include="SIL.LCModel.Utils" Version="11.*" />
     <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
   </ItemGroup>
 
