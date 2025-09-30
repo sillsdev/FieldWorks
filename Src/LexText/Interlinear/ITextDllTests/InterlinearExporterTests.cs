@@ -1111,6 +1111,24 @@ namespace SIL.FieldWorks.IText
 				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath("//interlinear-text/item[@type=\"comment\"]", 2);
 			}
 
+			[Test]
+			public void ValidateIsTranslated()
+			{
+				m_text1.IsTranslated = true;
+				XmlDocument exportedDoc = ExportToXml();
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath("//interlinear-text/item[@type=\"is-translated\"]", 1);
+			}
+
+			[Test]
+			public void ValidateDates()
+			{
+				m_text1.DateCreated = DateTime.Now;
+				m_text1.DateModified = DateTime.Now;
+				XmlDocument exportedDoc = ExportToXml();
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath("//interlinear-text/item[@type=\"date-created\"]", 1);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath("//interlinear-text/item[@type=\"date-modified\"]", 1);
+			}
+
 			/// <summary>
 			/// Create two paragraphs with two identical sentences. The first paragraph has real analyses, the second has only guesses.
 			/// Validate that the guids for each paragraph, and each phrase and word annotation are unique.

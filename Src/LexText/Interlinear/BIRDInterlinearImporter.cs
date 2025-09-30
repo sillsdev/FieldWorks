@@ -1159,6 +1159,12 @@ namespace SIL.FieldWorks.IText
 						case "is-translated":
 							newText.IsTranslated = (item.Value.ToLower() == "true");
 							break;
+						case "date-created":
+							newText.DateCreated = DateTime.Parse(item.Value, null, System.Globalization.DateTimeStyles.AssumeUniversal);
+							break;
+						case "date-modified":
+							newText.DateModified = DateTime.Parse(item.Value, null, System.Globalization.DateTimeStyles.AssumeUniversal);
+							break;
 					}
 				}
 			}

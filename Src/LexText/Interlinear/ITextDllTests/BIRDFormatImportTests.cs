@@ -763,6 +763,8 @@ namespace SIL.FieldWorks.IText
 			string abbr = "atroc";
 			string source = "source";
 			string description = "description";
+			string dateCreated = "2006-08-23 19:31:09.500";
+			string dateModified = "2006-09-14 13:46:01.247";
 			//an interliner text example xml string
 			string xml = "<document><interlinear-text>" +
 			"<item type=\"title\" lang=\"en\">" + title + "</item>" +
@@ -770,6 +772,8 @@ namespace SIL.FieldWorks.IText
 			"<item type=\"source\" lang=\"en\">" + source + "</item>" +
 			"<item type=\"comment\" lang=\"en\">" + description + "</item>" +
 			"<item type=\"is-translated\" lang=\"en\">true</item>" +
+			"<item type=\"date-created\" lang=\"en\">" + dateCreated + "</item>" +
+			"<item type=\"date-modified\" lang=\"en\">" + dateModified + "</item>" +
 			"<paragraphs><paragraph><phrases><phrase>" +
 			"<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
 			"<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
@@ -796,7 +800,11 @@ namespace SIL.FieldWorks.IText
 					Assert.True(imported.Description.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle).Text.Equals(description));
 					//The isTranslated imported
 					Assert.True(imported.IsTranslated);
-					//The DateCreated imported
+					//The Dates imported
+					string importedDateCreated = imported.DateCreated.ToLCMTimeFormatWithMillisString();
+					Assert.True(importedDateCreated.Equals(dateCreated));
+					string importedDateModified = imported.DateModified.ToLCMTimeFormatWithMillisString();
+					Assert.True(importedDateModified.Equals(dateModified));
 				}
 			}
 		}

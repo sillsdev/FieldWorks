@@ -13,6 +13,8 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.IText
 {
@@ -40,6 +42,9 @@ namespace SIL.FieldWorks.IText
 		List<ITsString> pendingSources = new List<ITsString>();
 		private List<ITsString> pendingAbbreviations = new List<ITsString>();
 		List<ITsString> pendingComments = new List<ITsString>();
+		bool pendingIsTranslated = false;
+		DateTime pendingDateCreated = DateTime.MinValue;
+		DateTime pendingDateModified = DateTime.MinValue;
 		int m_flidStTextTitle;
 		int m_flidStTextSource;
 		InterlinVc m_vc = null;
@@ -592,6 +597,15 @@ namespace SIL.FieldWorks.IText
 						var hystericalRaisens = desc;
 						WritePendingItem("comment", ref hystericalRaisens);
 					}
+					if (pendingIsTranslated)
+					{
+						var hystericalRaisens = TsStringUtils.MakeString("true", m_cache.WritingSystemFactory.UserWs);
+						WritePendingItem("is-translated", ref hystericalRaisens);
+					}
+					ITsString dateCreated = TsStringUtils.MakeString(pendingDateCreated.ToLCMTimeFormatWithMillisString(), m_cache.WritingSystemFactory.UserWs);
+					WritePendingItem("date-created", ref dateCreated);
+					ITsString dateModified = TsStringUtils.MakeString(pendingDateModified.ToLCMTimeFormatWithMillisString(), m_cache.WritingSystemFactory.UserWs);
+					WritePendingItem("date-modified", ref dateModified);
 					m_writer.WriteStartElement("paragraphs");
 					break;
 				case InterlinVc.kfragParaSegment:
@@ -785,6 +799,9 @@ namespace SIL.FieldWorks.IText
 				{
 					pendingComments.Add(text.Description.get_String(writingSystemId));
 				}
+				pendingIsTranslated = text.IsTranslated;
+				pendingDateCreated = text.DateCreated;
+				pendingDateModified = text.DateModified;
 			}
 			else if (TextSource.IsScriptureText(txt))
 			{
