@@ -21,6 +21,9 @@ using SIL.LCModel;
 using XCore;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.Utils;
+using SIL.FieldWorks.XWorks;
+using Gecko;
+using static SIL.FieldWorks.XWorks.GeneratedHtmlViewer;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -65,6 +68,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private WebPageInteractor m_webPageInteractor;
 		private IParserTrace m_trace;
+
+		private GeneratedHtmlViewer.FindDialog findDialog;
 
 		#endregion Data members
 
@@ -153,6 +158,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					Size = new Size(m_resultsPanel.Width, m_resultsPanel.Height - (m_resultsLabel.Height + 1)),
 					Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Bottom | AnchorStyles.Right
 				};
+			m_htmlControl.Browser.DomKeyPress += new EventHandler<DomKeyEventArgs>(OnDomKeyPress);
 			// Setting the Dock to fill doesn't work, as we lose the top of the HtmlControl to the
 			// label control at the top of the panel.  See LT-7446 for the worst case scenario (120dpi).
 			// So, set the location and size of the HTML control, and anchor it to all four sides of the
@@ -359,6 +365,30 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		#endregion
+		private void OnDomKeyPress(object sender, DomKeyEventArgs e)
+		{
+			var ctrl = e.CtrlKey;
+			if (ctrl && (char)e.KeyChar == 'f')
+			{
+				findDialog = new FindDialog(m_htmlControl.Browser);
+				findDialog.FormClosing += new FormClosingEventHandler(FindDialog_FormClosing);
+				findDialog.Show(this);
+			}
+			else if (e.KeyCode == 27)
+			{
+				// we use escape to close the find dialog
+				findDialog?.Close();
+			}
+		}
+		private void FindDialog_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			using (var executor = new AutoJSContext(m_htmlControl.Browser.Window))
+			{
+				// Javascript query to execute in the browser
+				var browserJsQuery = "cleanUpHighlights()";
+				executor.EvaluateScript(browserJsQuery);
+			}
+		}
 
 		protected override void OnClosed(EventArgs ea)
 		{

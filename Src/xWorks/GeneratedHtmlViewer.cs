@@ -25,6 +25,8 @@ using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using XCore;
+using SIL.FieldWorks.FwCoreDlgs;
+using Gecko;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -124,6 +126,9 @@ namespace SIL.FieldWorks.XWorks
 
 		private readonly Dictionary<string, XslCompiledTransform> m_transforms = new Dictionary<string, XslCompiledTransform>();
 
+		private ContextMenu m_ContextMenu;
+		private FindDialog findDlg = null;
+
 		#endregion // Data Members
 
 		#region Properties
@@ -212,8 +217,19 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_htmlControl = new HtmlControl {Dock = DockStyle.Fill};
 			m_htmlControl.HCBeforeNavigate += OnBeforeNavigate;
+			m_htmlControl.Browser.DomKeyPress += new EventHandler<DomKeyEventArgs>(OnDomKeyPress);
+			m_ContextMenu = new ContextMenu();
+			m_ContextMenu.MenuItems.Add("Find", new EventHandler(Find_Click));
+			m_htmlControl.ContextMenu = this.m_ContextMenu;
 
 			ResetURLCount();
+		}
+
+		private void Find_Click(object sender, EventArgs e)
+		{
+			findDlg = new FindDialog(m_htmlControl.Browser);
+			findDlg.FormClosing += new FormClosingEventHandler(FindDialog_FormClosing);
+			findDlg.Show(this);
 		}
 
 		private void ReadParameters()
@@ -996,6 +1012,139 @@ namespace SIL.FieldWorks.XWorks
 
 			display.Enabled = false;
 			return true;	// we handled this, no need to ask anyone else.
+		}
+		private void OnDomKeyPress(object sender, DomKeyEventArgs e)
+		{
+			var ctrl = e.CtrlKey;
+			if (ctrl && (char)e.KeyChar == 'f')
+			{
+				Find_Click(sender, e);
+			}
+			else if (e.KeyCode == 27)
+			{
+				// we use escape to close the find dialog
+				findDlg?.Close();
+			}
+		}
+		private void FindDialog_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			using (var executor = new AutoJSContext(m_htmlControl.Browser.Window))
+			{
+				// Javascript query to execute in the browser
+				var browserJsQuery = "cleanUpHighlights()";
+				executor.EvaluateScript(browserJsQuery);
+			}
+		}
+
+		public class FindDialog : BasicFindDialog
+		{
+			//private string results = "";
+			private int resultIndex = 0;
+			private int resultCount = 0;
+			GeckoWebBrowser geckoBrowser;
+			internal const string CurrentSelectedEntryClass = "currentSelectedEntry";
+			CheckBox matchCase = new CheckBox();
+			public FindDialog(GeckoWebBrowser geckoBrowser)
+			{
+				this.geckoBrowser = geckoBrowser;
+				string content = geckoBrowser.Text;
+				FindNext += FindNextInBrowser;
+				FindPrev += FindPrevInBrowser;
+				SearchTextChanged += (sender, args) =>
+				{
+					InvokeSearch(args.SearchText, matchCase.Checked);
+				};
+				AddMatchCaseCheckBox();
+			}
+
+			private void AddMatchCaseCheckBox()
+			{
+				matchCase.Checked = false;
+				matchCase.Text = "Match case";
+				Height = Height + 20;
+				matchCase.Location = new Point(Location.X + 10, Location.Y + 50);
+				var label = Controls[2];
+				label.Location = new Point(label.Location.X, label.Location.Y + 30);
+				Controls.Add(matchCase);
+				matchCase.CheckedChanged += new System.EventHandler(matchCase_CheckedChanged);
+			}
+			private void matchCase_CheckedChanged(object sender, EventArgs e)
+			{
+				InvokeSearch(SearchText, matchCase.Checked);
+				using (var executor = new AutoJSContext(geckoBrowser.Window))
+				{
+					// Javascript query to execute in the browser
+					// assume the resultIndex changed
+					var browserJsQuery = "scrollToStoredPosition(0)";
+					executor.EvaluateScript(browserJsQuery);
+					UpdateSearchCountDisplay();
+				}
+			}
+
+			private void FindPrevInBrowser(object sender, IBasicFindView view)
+			{
+				FindInBrowser(false);
+			}
+
+			private void FindNextInBrowser(object sender, IBasicFindView view)
+			{
+				FindInBrowser(true);
+			}
+
+			private void FindInBrowser(bool forward)
+			{
+				if (geckoBrowser == null)
+					return;
+				int originalResultIndex = resultIndex;
+				using (var executor = new AutoJSContext(geckoBrowser.Window))
+				{
+					bool nodeIsVisible = false;
+					while (!nodeIsVisible)
+					{
+						if (forward)
+						{
+							resultIndex = resultIndex++ < resultCount - 1 ? resultIndex : 0;
+						}
+						else
+						{
+							resultIndex = resultIndex-- > 0 ? resultIndex : resultCount - 1;
+						}
+						// Javascript query to execute in the browser
+						var browserJsQuery = "scrollToStoredPosition(" + resultIndex + ", " + forward.ToString().ToLower() + ")";
+						var found = executor.EvaluateScript(browserJsQuery);
+						nodeIsVisible = found.ToBoolean();
+						UpdateSearchCountDisplay();
+						if (resultIndex == originalResultIndex)
+						{
+							MessageBox.Show("No visible match found.");
+							break;
+						}
+					}
+				}
+			}
+
+			private void UpdateSearchCountDisplay()
+			{
+				if (resultCount > 0)
+					StatusText = $"{resultIndex + 1} of {resultCount} Results";
+				else
+					StatusText = "0 Results";
+			}
+			private void InvokeSearch(string searchText, bool matchCase)
+			{
+				if (geckoBrowser == null)
+					throw new ApplicationException();
+				using (var executor = new AutoJSContext(geckoBrowser.Window))
+				{
+					// Javascript query to execute in the browser
+					// finds every text element matching the search string and returns the number of occurences
+					var browserJsQuery = "findAndHighlightText('" + searchText + "'," + matchCase.ToString().ToLower() + ");";
+					var matchCount = executor.EvaluateScript(browserJsQuery);
+					resultCount = (int)matchCount.U32;
+				}
+				resultIndex = 0;
+				UpdateSearchCountDisplay();
+			}
 		}
 		public bool OnDisplayExport(object commandObject,
 			ref UIItemDisplayProperties display)
