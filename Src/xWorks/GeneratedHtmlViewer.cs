@@ -1020,7 +1020,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				Find_Click(sender, e);
 			}
-			else if (e.KeyCode == 27)
+			else if (e.KeyCode == (uint)Keys.Escape)
 			{
 				// we use escape to close the find dialog
 				findDlg?.Close();

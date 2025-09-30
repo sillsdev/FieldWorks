@@ -374,7 +374,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				findDialog.FormClosing += new FormClosingEventHandler(FindDialog_FormClosing);
 				findDialog.Show(this);
 			}
-			else if (e.KeyCode == 27)
+			else if (e.KeyCode == (uint)Keys.Escape)
 			{
 				// we use escape to close the find dialog
 				findDialog?.Close();
