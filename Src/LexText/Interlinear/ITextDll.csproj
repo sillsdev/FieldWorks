@@ -50,9 +50,9 @@
     <PackageReference Include="SIL.Windows.Forms" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.Windows.Forms.Keyboarding" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
-    <PackageReference Include="Geckofx60.64" Version="60.0.51" Condition="'$(Platform)'=='x64'" />
-    <PackageReference Include="Geckofx60.32" Version="60.0.51" Condition="'$(Platform)'=='x86'" />
-    <PackageReference Include="SharpZipLib" Version="1.3.3" />
+    <PackageReference Include="Geckofx60.64" Version="60.0.52" Condition="'$(Platform)'=='x64'" />
+    <PackageReference Include="Geckofx60.32" Version="60.0.52" Condition="'$(Platform)'=='x86'" />
+    <PackageReference Include="SharpZipLib" Version="1.4.0" />
   </ItemGroup>
 
   <ItemGroup>

@@ -37,8 +37,8 @@
 
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
-    <PackageReference Include="Geckofx60.32" Version="60.0.50" Condition="'$(Platform)' != 'x64'" />
-    <PackageReference Include="Geckofx60.64" Version="60.0.50" Condition="'$(Platform)' == 'x64'" />
+    <PackageReference Include="Geckofx60.32" Version="60.0.52" Condition="'$(Platform)' != 'x64'" />
+    <PackageReference Include="Geckofx60.64" Version="60.0.52" Condition="'$(Platform)' == 'x64'" />
     <PackageReference Include="L10NSharp" Version="7.0.0" />
     <PackageReference Include="SharpZipLib" Version="1.4.0" Exclude="Build,Analyzers" />
     <PackageReference Include="SIL.Core" Version="15.0.0-beta0117" />
