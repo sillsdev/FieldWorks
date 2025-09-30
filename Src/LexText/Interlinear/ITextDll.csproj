@@ -48,13 +48,13 @@
     <PackageReference Include="SIL.Windows.Forms" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.Windows.Forms.Keyboarding" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
+    <PackageReference Include="SIL.DesktopAnalytics" Version="4.0.0" />
     
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="Accessibility" />
     <Reference Include="Aga.Controls" />
-    <Reference Include="DesktopAnalytics" />
     <Reference Include="ECInterfaces" />
     <Reference Include="ExCSS" />
     <Reference Include="Geckofx-Core" />

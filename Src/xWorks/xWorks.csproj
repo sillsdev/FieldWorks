@@ -56,12 +56,12 @@
     <PackageReference Include="SIL.Windows.Forms.Archiving" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
     <PackageReference Include="TagLibSharp" Version="2.2.0" />
+    <PackageReference Include="SIL.DesktopAnalytics" Version="4.0.0" />
     
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="Accessibility" />
-    <Reference Include="DesktopAnalytics" />
     <Reference Include="ExCSS" />
     <Reference Include="Geckofx-Core" />
     <Reference Include="Geckofx-Winforms" />
