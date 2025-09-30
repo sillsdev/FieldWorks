@@ -36,7 +36,7 @@
 
   <ItemGroup>
     <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-beta0136" />
-    <PackageReference Include="SIL.LCModel.Core.Tests" Version="11.0.0-beta0136" />
+    <PackageReference Include="SIL.LCModel.Core.Tests" Version="11.0.0-beta0136" PrivateAssets="All" />
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-beta0136" />
   </ItemGroup>
 

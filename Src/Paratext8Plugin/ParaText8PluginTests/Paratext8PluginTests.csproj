@@ -36,8 +36,8 @@
 
   <ItemGroup>
     <PackageReference Include="ParatextData" Version="9.4.0.1-beta" />
-    <PackageReference Include="SIL.LCModel.Core.Tests" Version="11.0.0-beta0136" />
-    <PackageReference Include="SIL.LCModel.Utils.Tests" Version="11.0.0-beta0136" />
+    <PackageReference Include="SIL.LCModel.Core.Tests" Version="11.0.0-beta0136" PrivateAssets="All" />
+    <PackageReference Include="SIL.LCModel.Utils.Tests" Version="11.0.0-beta0136" PrivateAssets="All" />
     <PackageReference Include="SIL.TestUtilities" Version="15.0.0-beta0117" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
