@@ -54,14 +54,14 @@
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="SIL.Core" Version="15.0.0-beta0117" />
-    <PackageReference Include="SIL.LCModel" Version="11.0.0-beta0136" />
-    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-beta0136" />
-    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-beta0136" />
+    <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
+    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
+    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
     <PackageReference Include="SIL.Machine" Version="3.7.4" />
     <PackageReference Include="SIL.Machine.Morphology.HermitCrab" Version="3.7.4" />
     <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-    <PackageReference Include="icu.net" Version="3.0.0-beta.297" Exclude="Build,Analyzers" />
+    
   </ItemGroup>
 
   <ItemGroup>

@@ -38,7 +38,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SIL.LCModel" Version="11.0.0-beta0136" />
+    <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
   </ItemGroup>
 
   <ItemGroup>

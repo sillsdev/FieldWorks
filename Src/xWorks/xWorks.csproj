@@ -48,15 +48,15 @@
     <PackageReference Include="SIL.Archiving" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.Core" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.Core.Desktop" Version="15.0.0-beta0117" />
-    <PackageReference Include="SIL.LCModel" Version="11.0.0-beta0136" />
-    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-beta0136" />
-    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-beta0136" />
+    <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
+    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
+    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
     <PackageReference Include="SIL.Lift" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.Windows.Forms" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.Windows.Forms.Archiving" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
     <PackageReference Include="TagLibSharp" Version="2.2.0" />
-    <PackageReference Include="icu.net" Version="3.0.0-beta.297" Exclude="Build,Analyzers" />
+    
   </ItemGroup>
 
   <ItemGroup>
