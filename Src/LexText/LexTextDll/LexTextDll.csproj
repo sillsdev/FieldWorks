@@ -44,10 +44,10 @@
     <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
+    <PackageReference Include="SIL.DesktopAnalytics" Version="4.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="DesktopAnalytics" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="netstandard" />
