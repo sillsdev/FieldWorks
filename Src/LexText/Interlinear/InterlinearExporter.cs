@@ -602,10 +602,16 @@ namespace SIL.FieldWorks.IText
 						var hystericalRaisens = TsStringUtils.MakeString("true", m_cache.WritingSystemFactory.UserWs);
 						WritePendingItem("text-is-translation", ref hystericalRaisens);
 					}
-					ITsString dateCreated = TsStringUtils.MakeString(pendingDateCreated.ToLCMTimeFormatWithMillisString(), m_cache.WritingSystemFactory.UserWs);
-					WritePendingItem("date-created", ref dateCreated);
-					ITsString dateModified = TsStringUtils.MakeString(pendingDateModified.ToLCMTimeFormatWithMillisString(), m_cache.WritingSystemFactory.UserWs);
-					WritePendingItem("date-modified", ref dateModified);
+					if (pendingDateCreated != DateTime.MinValue)
+					{
+						ITsString dateCreated = TsStringUtils.MakeString(pendingDateCreated.ToLCMTimeFormatWithMillisString(), m_cache.WritingSystemFactory.UserWs);
+						WritePendingItem("date-created", ref dateCreated);
+					}
+					if (pendingDateModified != DateTime.MinValue)
+					{
+						ITsString dateModified = TsStringUtils.MakeString(pendingDateModified.ToLCMTimeFormatWithMillisString(), m_cache.WritingSystemFactory.UserWs);
+						WritePendingItem("date-modified", ref dateModified);
+					}
 					m_writer.WriteStartElement("paragraphs");
 					break;
 				case InterlinVc.kfragParaSegment:

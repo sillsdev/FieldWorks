@@ -545,6 +545,8 @@ namespace SIL.FieldWorks.IText
 				freeVarType.ReverseAbbr.SetAnalysisDefaultWritingSystem("fr. var.");
 				pa.SetVariantOf(0, 1, leGo, freeVarType);
 				pa.ReparseParagraph();
+				m_text1.DateCreated = DateTime.MinValue;
+				m_text1.DateModified = DateTime.MinValue;
 				exportedDoc = ExportToXml();
 
 				//validate export xml against schema
@@ -762,6 +764,8 @@ namespace SIL.FieldWorks.IText
 				IStTxtPara para1 = m_text1.ContentsOA.ParagraphsOS[1] as IStTxtPara;
 				ParagraphAnnotator pa = new ParagraphAnnotator(para1);
 				pa.ReparseParagraph();
+				m_text1.DateCreated = DateTime.MinValue;
+				m_text1.DateModified = DateTime.MinValue;
 				var exportedDoc = ExportToXml();
 
 				string formLexEntry = "go";
@@ -827,6 +831,8 @@ namespace SIL.FieldWorks.IText
 				IStTxtPara para1 = m_text1.ContentsOA.ParagraphsOS[1] as IStTxtPara;
 				ParagraphAnnotator pa = new ParagraphAnnotator(para1);
 				pa.ReparseParagraph();
+				m_text1.DateCreated = DateTime.MinValue;
+				m_text1.DateModified = DateTime.MinValue;
 				var exportedDoc = ExportToXml();
 
 				string formLexEntry = "go";
@@ -888,6 +894,8 @@ namespace SIL.FieldWorks.IText
 				IStTxtPara para1 = m_text1.ContentsOA.ParagraphsOS[1] as IStTxtPara;
 				ParagraphAnnotator pa = new ParagraphAnnotator(para1);
 				pa.ReparseParagraph();
+				m_text1.DateCreated = DateTime.MinValue;
+				m_text1.DateModified = DateTime.MinValue;
 				var exportedDoc = ExportToXml();
 
 				string formLexEntry = "go";
