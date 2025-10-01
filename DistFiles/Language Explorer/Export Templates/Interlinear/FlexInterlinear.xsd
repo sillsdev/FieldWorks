@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" id="document">
   <xs:element name="document">
 	<xs:complexType>
@@ -7,6 +7,23 @@
 		  <xs:complexType>
 			<xs:sequence minOccurs="0" maxOccurs="unbounded">
 			  <xs:element ref="item" minOccurs="0" maxOccurs="unbounded"/>
+			  <xs:element ref="link" minOccurs="0" maxOccurs="unbounded"/>
+			  <xs:element name="records" minOccurs="0" maxOccurs="1">
+				  <xs:complexType>
+					  <xs:sequence minOccurs="1" maxOccurs="1">
+						  <xs:element name="record" minOccurs="0" maxOccurs="unbounded">
+							  <xs:complexType>
+								  <xs:sequence>
+									  <xs:element ref="item" minOccurs="0" maxOccurs="unbounded"/>
+									  <xs:element ref="link" minOccurs="0" maxOccurs="unbounded"/>
+								  </xs:sequence>
+								  <xs:attribute name="guid" type="xs:string" use="required"/>
+								  <xs:attribute name="type" type="xs:string" use="required"/>
+							  </xs:complexType>
+						  </xs:element>
+					  </xs:sequence>
+				  </xs:complexType>
+			  </xs:element>
 			  <xs:element name="paragraphs" minOccurs="1" maxOccurs="1">
 				<xs:complexType>
 				  <xs:sequence minOccurs="1" maxOccurs="1">
@@ -128,6 +145,15 @@
 		  <xs:attribute name="type" type="itemTypes" use="required"/>
 		  <xs:attribute name="lang" type="xs:string" use="required"/>
 		  <xs:attribute name="analysisStatus" type="analysisStatusTypes" use="optional"/>
+		</xs:extension>
+	  </xs:simpleContent>
+	</xs:complexType>
+  </xs:element>
+  <xs:element name="link" nillable="true">
+	<xs:complexType>
+	  <xs:simpleContent>
+		<xs:extension base="xs:string">
+		  <xs:attribute name="type" type="xs:string" use="required"/>
 		</xs:extension>
 	  </xs:simpleContent>
 	</xs:complexType>
