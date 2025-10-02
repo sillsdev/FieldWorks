@@ -15,47 +15,47 @@ namespace SIL.FieldWorks.IText
 	/// </summary>
 	internal class InterlinearRecords
 	{
-		private Dictionary<Type, string> m_typeMap;
-		private Dictionary<string, Type> m_invertedTypeMap;
+		private Dictionary<string, string> m_typeMap;
+		private Dictionary<string, string> m_invertedTypeMap;
 
-		private readonly Dictionary<Type, Dictionary<string, string>> m_propertyMaps;
+		private readonly Dictionary<string, Dictionary<string, string>> m_propertyMaps;
 		private readonly Dictionary<string, Dictionary<string, string>> m_invertedPropertyMaps;
 
-		internal Dictionary<Type, string> TypeMap
+		internal Dictionary<string, string> TypeMap
 		{ get { return m_typeMap; } }
 
-		internal Dictionary<string, Type> InvertedTypeMap
+		internal Dictionary<string, string> InvertedTypeMap
 		{ get { return m_invertedTypeMap; } }
 
 		internal InterlinearRecords()
 		{
-			m_typeMap = new Dictionary<Type, string>
+			m_typeMap = new Dictionary<string, string>
 			{
-				{ typeof(ICmPossibility), "Possibility" },
-				{ typeof(IRnGenericRec), "Record" }
+				{ "CmPossibility", "Possibility" },
+				{ "RnGenericRec", "Record" }
 			};
-			m_invertedTypeMap = new Dictionary<string, Type>();
-			foreach (Type type in m_typeMap.Keys)
+			m_invertedTypeMap = new Dictionary<string, string>();
+			foreach (string type in m_typeMap.Keys)
 			{
 				m_invertedTypeMap[m_typeMap[type]] = type;
 			}
 
-			m_propertyMaps = new Dictionary<Type, Dictionary<string, string>>();
-			m_propertyMaps[typeof(ICmPossibility)] = new Dictionary<string, string>()
+			m_propertyMaps = new Dictionary<string, Dictionary<string, string>>();
+			m_propertyMaps["CmPossibility"] = new Dictionary<string, string>()
 			{
 				{ "Name", "name" },
 				{ "Abbreviation", "abbreviation" },
 				{ "Description", "description" },
 				{ "StatusRA", "status" },
-				{ "DiscusionOA", "discussion" },
+				{ "DiscussionOA", "discussion" },
 				{ "ConfidenceRA", "confidence" },
-				{ "ResearchersRA", "researcher" },
-				{ "RestrictionsRA", "restriction" },
+				{ "ResearchersRC", "researcher" },
+				{ "RestrictionsRC", "restriction" },
 			};
 			m_invertedPropertyMaps = new Dictionary<string, Dictionary<string, string>>();
 		}
 
-		internal Dictionary<string, string> GetPropertyMap(Type type)
+		internal Dictionary<string, string> GetPropertyMap(string type)
 		{
 			return m_propertyMaps[type];
 		}

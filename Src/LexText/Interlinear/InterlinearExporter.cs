@@ -2,19 +2,20 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 using System.Xml;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.IText
 {
@@ -45,6 +46,8 @@ namespace SIL.FieldWorks.IText
 		bool pendingIsTranslated = false;
 		DateTime pendingDateCreated = DateTime.MinValue;
 		DateTime pendingDateModified = DateTime.MinValue;
+		ILcmReferenceCollection<ICmPossibility> pendingGenres;
+		Queue<ICmObject> pendingRecords = new Queue<ICmObject>();
 		int m_flidStTextTitle;
 		int m_flidStTextSource;
 		InterlinVc m_vc = null;
@@ -55,6 +58,7 @@ namespace SIL.FieldWorks.IText
 		IMoMorphType m_mmtProclitic;
 		protected WritingSystemManager m_wsManager;
 		protected ICmObjectRepository m_repoObj;
+		InterlinearRecords m_records;
 
 		public static InterlinearExporter Create(string mode, LcmCache cache, XmlWriter writer, ICmObject objRoot,
 			InterlinLineChoices lineChoices, InterlinVc vc)
@@ -95,6 +99,7 @@ namespace SIL.FieldWorks.IText
 
 			m_wsManager = m_cache.ServiceLocator.WritingSystemManager;
 			m_repoObj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+			m_records = new InterlinearRecords();
 		}
 
 		public void ExportDisplay()
@@ -552,6 +557,82 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
+		/// Write an link to an object.
+		/// </summary>
+		private void WritePendingLink(string linkType, ICmObject obj)
+		{
+			if (obj == null)
+				return;
+			m_writer.WriteStartElement("link");
+			m_writer.WriteAttributeString("type", linkType);
+			m_writer.WriteString(obj.Guid.ToString());
+			m_writer.WriteEndElement();
+			pendingRecords.Enqueue(obj);
+		}
+
+		/// <summary>
+		/// Write an object out as a record.
+		/// </summary>
+		private void WritePendingRecord(ICmObject record)
+		{
+			Type recordType = record.GetType();
+			string typeName = recordType.Name;
+			if (!m_records.TypeMap.ContainsKey(typeName))
+				return;
+			m_writer.WriteStartElement("record");
+			m_writer.WriteAttributeString("type", m_records.TypeMap[typeName]);
+			m_writer.WriteAttributeString("guid", record.Guid.ToString());
+			Dictionary<string, string> propertyMap = m_records.GetPropertyMap(typeName);
+			foreach (string propName in propertyMap.Keys)
+			{
+				PropertyInfo property = recordType.GetProperty(propName);
+				object value = property.GetValue(record, null);
+				WritePendingProperty(propName, value);
+			}
+			m_writer.WriteEndElement();
+		}
+
+		/// <summary>
+		/// Write property and value, dispatching on value type.
+		/// </summary>
+		/// <param name="propName"></param>
+		/// <param name="value"></param>
+		private void WritePendingProperty(string propName, object value)
+		{
+			if (value == null) return;
+			if (value is ICmObject objectValue)
+			{
+				WritePendingLink(propName, objectValue);
+			}
+			else if (value is ITsString)
+			{
+				ITsString hystericalRaisens = (ITsString)value;
+				WritePendingItem(propName, ref hystericalRaisens);
+			}
+			else if (value is ITsMultiString multiString)
+			{
+				for (int i = 0; i < multiString.StringCount; i++)
+				{
+					ITsString hystericalRaisens = multiString.GetStringFromIndex(i, out int ws);
+					WritePendingItem(propName, ref hystericalRaisens);
+				}
+			}
+			else if (value is bool boolValue)
+			{
+				var hystericalRaisens = TsStringUtils.MakeString(boolValue ? "true" : "false", m_cache.DefaultAnalWs);
+				WritePendingItem(propName, ref hystericalRaisens);
+			}
+			else if (value is DateTime dateTime)
+			{
+				if (dateTime != DateTime.MinValue)
+				{
+					ITsString dateTimeString = TsStringUtils.MakeString(dateTime.ToLCMTimeFormatWithMillisString(), m_cache.DefaultAnalWs);
+					WritePendingItem(propName, ref dateTimeString);
+				}
+			}
+		}
+
+		/// <summary>
 		/// This method (as far as I know) will be first called on the StText object, and then recursively from the
 		/// base implementation for vector items in component objects.
 		/// </summary>
@@ -599,18 +680,22 @@ namespace SIL.FieldWorks.IText
 					}
 					if (pendingIsTranslated)
 					{
-						var hystericalRaisens = TsStringUtils.MakeString("true", m_cache.WritingSystemFactory.UserWs);
-						WritePendingItem("text-is-translation", ref hystericalRaisens);
+						WritePendingProperty("text-is-translation", true);
 					}
-					if (pendingDateCreated != DateTime.MinValue)
+					WritePendingProperty("date-created", pendingDateCreated);
+					WritePendingProperty("date-modified", pendingDateModified);
+					foreach (var genre in pendingGenres)
 					{
-						ITsString dateCreated = TsStringUtils.MakeString(pendingDateCreated.ToLCMTimeFormatWithMillisString(), m_cache.WritingSystemFactory.UserWs);
-						WritePendingItem("date-created", ref dateCreated);
+						WritePendingLink("genre", genre);
 					}
-					if (pendingDateModified != DateTime.MinValue)
+					if (pendingRecords.Count > 0)
 					{
-						ITsString dateModified = TsStringUtils.MakeString(pendingDateModified.ToLCMTimeFormatWithMillisString(), m_cache.WritingSystemFactory.UserWs);
-						WritePendingItem("date-modified", ref dateModified);
+						m_writer.WriteStartElement("records");
+						while (pendingRecords.Count > 0)
+						{
+							WritePendingRecord(pendingRecords.Dequeue());
+						}
+						m_writer.WriteEndElement();
 					}
 					m_writer.WriteStartElement("paragraphs");
 					break;
@@ -808,6 +893,9 @@ namespace SIL.FieldWorks.IText
 				pendingIsTranslated = text.IsTranslated;
 				pendingDateCreated = text.DateCreated;
 				pendingDateModified = text.DateModified;
+				pendingGenres = text.GenresRC;
+				if (text.AssociatedNotebookRecord != null)
+					pendingRecords.Enqueue(text.AssociatedNotebookRecord);
 			}
 			else if (TextSource.IsScriptureText(txt))
 			{

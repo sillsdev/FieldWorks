@@ -1120,6 +1120,19 @@ namespace SIL.FieldWorks.IText
 			}
 
 			[Test]
+			public void ValidateMultipleGenres()
+			{
+				Cache.LanguageProject.GenreListOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				var genre1 = Cache.LanguageProject.GenreListOA.FindOrCreatePossibility("genre1", Cache.DefaultAnalWs);
+				var genre2 = Cache.LanguageProject.GenreListOA.FindOrCreatePossibility("genre2", Cache.DefaultAnalWs);
+				m_text1.GenresRC.Add(genre1);
+				m_text1.GenresRC.Add(genre2);
+				XmlDocument exportedDoc = ExportToXml();
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath("//interlinear-text/link[@type=\"genre\"]", 2);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath("//interlinear-text/records/record[@type=\"Possibility\"]", 2);
+			}
+
+			[Test]
 			public void ValidateIsTranslated()
 			{
 				m_text1.IsTranslated = true;
