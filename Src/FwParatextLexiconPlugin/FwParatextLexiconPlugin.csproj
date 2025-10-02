@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>FwParatextLexiconPlugin</AssemblyName>
@@ -60,4 +61,6 @@
     <ProjectReference Include="../LexText/ParserCore/ParserCore.csproj" />
   </ItemGroup>
 
-</Project>
+
+  <ItemGroup>
+    <Compile Remove="FwParatextLexiconPluginTests/**" /><None Remove="FwParatextLexiconPluginTests/**" /></ItemGroup></Project>

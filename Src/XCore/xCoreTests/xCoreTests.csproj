@@ -6,6 +6,7 @@
     <OutputType>Library</OutputType>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -57,5 +58,7 @@
     <ProjectReference Include="../xCore.csproj" />
     <ProjectReference Include="../xCoreInterfaces/xCoreInterfaces.csproj" />
   </ItemGroup>
-
+  <ItemGroup>
+    <Compile Include="..\..\AssemblyInfoForTests.cs" Link="Properties\AssemblyInfoForTests.cs" />
+  </ItemGroup>
 </Project>

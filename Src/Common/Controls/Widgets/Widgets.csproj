@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>Widgets</AssemblyName>
@@ -65,4 +66,6 @@
     <ProjectReference Include="../../ViewsInterfaces/ViewsInterfaces.csproj" />
   </ItemGroup>
 
-</Project>
+
+  <ItemGroup>
+    <Compile Remove="WidgetsTests/**" /><None Remove="WidgetsTests/**" /></ItemGroup></Project>

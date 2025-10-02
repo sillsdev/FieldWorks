@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>Paratext8Plugin</AssemblyName>
@@ -54,4 +55,6 @@
     <ProjectReference Include="../Common/ScriptureUtils/ScriptureUtils.csproj" />
   </ItemGroup>
 
-</Project>
+
+  <ItemGroup>
+    <Compile Remove="ParaText8PluginTests/**" /><None Remove="ParaText8PluginTests/**" /></ItemGroup></Project>

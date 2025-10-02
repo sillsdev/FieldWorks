@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>ScrChecks</AssemblyName>
@@ -50,4 +51,6 @@
     <ProjectReference Include="../../../Src/Common/FwUtils/FwUtils.csproj" />
   </ItemGroup>
 
-</Project>
+
+  <ItemGroup>
+    <Compile Remove="ScrChecksTests/**" /><None Remove="ScrChecksTests/**" /></ItemGroup></Project>

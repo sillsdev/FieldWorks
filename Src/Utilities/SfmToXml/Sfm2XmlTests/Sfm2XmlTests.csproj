@@ -37,11 +37,10 @@
 
   <ItemGroup>
     <PackageReference Include="SIL.TestUtilities" Version="15.0.0-beta0117" />
+    <PackageReference Include="Encoding-Converters-Core" Version="0.9.7" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="ECInterfaces" />
-    <Reference Include="SilEncConverters40" />
     <Reference Include="netstandard" />
   </ItemGroup>
 

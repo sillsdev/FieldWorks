@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>SimpleRootSite</AssemblyName>
@@ -64,6 +65,22 @@
     <ProjectReference Include="../../XCore/xCoreInterfaces/xCoreInterfaces.csproj" />
     <ProjectReference Include="../FwUtils/FwUtils.csproj" />
     <ProjectReference Include="../ViewsInterfaces/ViewsInterfaces.csproj" />
+    <ProjectReference Include="../../FwResources/FwResources.csproj" />
   </ItemGroup>
+<ItemGroup>
+  <EmbeddedResource Update="Properties\Resources.resx">
+    <Generator>ResXFileCodeGenerator</Generator>
+    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+  </EmbeddedResource>
+  <Compile Update="Properties\Resources.Designer.cs">
+    <AutoGen>True</AutoGen>
+    <DependentUpon>Resources.resx</DependentUpon>
+    <DesignTime>True</DesignTime>
+  </Compile>
+</ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="SimpleRootSiteTests/**" />
+    <None Remove="SimpleRootSiteTests/**" />
+  </ItemGroup>
 </Project>

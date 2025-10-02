@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>InstallValidator</AssemblyName>
@@ -46,4 +47,6 @@
     <Reference Include="netstandard" />
   </ItemGroup>
 
-</Project>
+
+  <ItemGroup>
+    <Compile Remove="InstallValidatorTests/**" /><None Remove="InstallValidatorTests/**" /></ItemGroup></Project>

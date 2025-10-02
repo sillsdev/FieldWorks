@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>FwUtils</AssemblyName>
@@ -68,4 +69,9 @@
     <ProjectReference Include="../ViewsInterfaces/ViewsInterfaces.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="FwUtilsTests/**" />
+    <None Remove="FwUtilsTests/**" />
+    <Compile Remove="**/*.template.cs" />
+  </ItemGroup>
 </Project>

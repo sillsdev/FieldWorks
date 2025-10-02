@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>Sfm2Xml</AssemblyName>
@@ -38,11 +39,20 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="ECInterfaces" />
-    <Reference Include="SilEncConverters40" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="netstandard" />
   </ItemGroup>
 
-</Project>
+
+  <ItemGroup>
+    <Compile Remove="Sfm2XmlTests/**" />
+    <None Remove="Sfm2XmlTests/**" />
+    <Compile Remove="ConvertSFM/**" />
+    <None Remove="ConvertSFM/**" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Encoding-Converters-Core" Version="0.9.7" />
+  </ItemGroup></Project>

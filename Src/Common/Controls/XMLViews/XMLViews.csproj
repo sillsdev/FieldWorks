@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>XMLViews</AssemblyName>
@@ -78,4 +79,6 @@
     <ProjectReference Include="../Widgets/Widgets.csproj" />
   </ItemGroup>
 
-</Project>
+
+  <ItemGroup>
+    <Compile Remove="XMLViewsTests/**" /><None Remove="XMLViewsTests/**" /></ItemGroup></Project>

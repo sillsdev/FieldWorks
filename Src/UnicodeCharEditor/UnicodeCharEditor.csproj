@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>UnicodeCharEditor</AssemblyName>
@@ -58,4 +59,6 @@
     <ProjectReference Include="../Utilities/XMLUtils/XMLUtils.csproj" />
   </ItemGroup>
 
-</Project>
+
+  <ItemGroup>
+    <Compile Remove="UnicodeCharEditorTests/**" /><None Remove="UnicodeCharEditorTests/**" /></ItemGroup></Project>

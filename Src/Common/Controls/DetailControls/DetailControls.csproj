@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>DetailControls</AssemblyName>
@@ -74,4 +75,6 @@
     <ProjectReference Include="../XMLViews/XMLViews.csproj" />
   </ItemGroup>
 
-</Project>
+
+  <ItemGroup>
+    <Compile Remove="DetailControlsTests/**" /><None Remove="DetailControlsTests/**" /></ItemGroup></Project>
