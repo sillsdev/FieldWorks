@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>xCoreInterfaces</AssemblyName>
@@ -56,4 +57,6 @@
     <ProjectReference Include="../../Utilities/XMLUtils/XMLUtils.csproj" />
   </ItemGroup>
 
-</Project>
+
+  <ItemGroup>
+    <Compile Remove="xCoreInterfacesTests/**" /><None Remove="xCoreInterfacesTests/**" /></ItemGroup></Project>

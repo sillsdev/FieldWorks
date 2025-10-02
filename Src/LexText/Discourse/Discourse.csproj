@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>Discourse</AssemblyName>
@@ -69,4 +70,6 @@
     <ProjectReference Include="../Interlinear/ITextDll.csproj" />
   </ItemGroup>
 
-</Project>
+
+  <ItemGroup>
+    <Compile Remove="DiscourseTests/**" /><None Remove="DiscourseTests/**" /></ItemGroup></Project>

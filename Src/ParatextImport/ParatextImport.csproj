@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>ParatextImport</AssemblyName>
@@ -67,4 +68,6 @@
     <ProjectReference Include="../XCore/xCoreInterfaces/xCoreInterfaces.csproj" />
   </ItemGroup>
 
-</Project>
+
+  <ItemGroup>
+    <Compile Remove="ParatextImportTests/**" /><None Remove="ParatextImportTests/**" /></ItemGroup></Project>

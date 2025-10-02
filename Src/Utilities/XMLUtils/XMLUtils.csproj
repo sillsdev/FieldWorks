@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>XMLUtils</AssemblyName>
@@ -51,4 +52,6 @@
     <ProjectReference Include="../../Common/FwUtils/FwUtils.csproj" />
   </ItemGroup>
 
-</Project>
+
+  <ItemGroup>
+    <Compile Remove="XMLUtilsTests/**" /><None Remove="XMLUtilsTests/**" /></ItemGroup></Project>

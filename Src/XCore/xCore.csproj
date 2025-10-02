@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>xCore</AssemblyName>
@@ -7,6 +8,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -38,6 +40,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Geckofx60.32" Version="60.0.52" Condition="'$(Platform)' != 'x64'" />
+    <PackageReference Include="Geckofx60.64" Version="60.0.52" Condition="'$(Platform)' == 'x64'" />
     <PackageReference Include="SIL.Core" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
@@ -46,9 +50,9 @@
 
   <ItemGroup>
     <Reference Include="Accessibility" />
-    <Reference Include="Geckofx-Core" />
-    <Reference Include="Geckofx-Winforms" />
-    <Reference Include="MsHtmHstInterop" />
+    <Reference Include="MsHtmHstInterop">
+      <HintPath>..\..\Bin\MsHtmHstInterop.dll</HintPath>
+    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="netstandard" />
@@ -62,4 +66,15 @@
     <ProjectReference Include="xCoreInterfaces/xCoreInterfaces.csproj" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <Compile Remove="xCoreTests/**" />
+    <None Remove="xCoreTests/**" />
+    <Compile Remove="FlexUIAdapter/**" />
+    <None Remove="FlexUIAdapter/**" />
+    <Compile Remove="SilSidePane/**" />
+    <None Remove="SilSidePane/**" />
+    <Compile Remove="xCoreInterfaces/**" />
+    <None Remove="xCoreInterfaces/**" />
+  </ItemGroup>
 </Project>

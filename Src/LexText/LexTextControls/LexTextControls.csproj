@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>LexTextControls</AssemblyName>
@@ -89,4 +90,6 @@
     <ProjectReference Include="../ParserCore/ParserCore.csproj" />
   </ItemGroup>
 
-</Project>
+
+  <ItemGroup>
+    <Compile Remove="LexTextControlsTests/**" /><None Remove="LexTextControlsTests/**" /></ItemGroup></Project>

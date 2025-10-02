@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>MGA</AssemblyName>
@@ -39,6 +40,8 @@
 
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
+    <PackageReference Include="Geckofx60.32" Version="60.0.52" Condition="'$(Platform)' != 'x64'" />
+    <PackageReference Include="Geckofx60.64" Version="60.0.52" Condition="'$(Platform)' == 'x64'" />
     <PackageReference Include="SIL.Core" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
@@ -47,8 +50,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Geckofx-Core" />
-    <Reference Include="Geckofx-Winforms" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="netstandard" />
@@ -60,4 +61,6 @@
     <ProjectReference Include="../../../Utilities/XMLUtils/XMLUtils.csproj" />
   </ItemGroup>
 
-</Project>
+
+  <ItemGroup>
+    <Compile Remove="MGATests/**" /><None Remove="MGATests/**" /></ItemGroup></Project>

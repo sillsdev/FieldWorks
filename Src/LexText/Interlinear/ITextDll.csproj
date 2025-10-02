@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>ITextDll</AssemblyName>
@@ -92,4 +93,6 @@
     <ProjectReference Include="../LexTextControls/LexTextControls.csproj" />
   </ItemGroup>
 
-</Project>
+
+  <ItemGroup>
+    <Compile Remove="ITextDllTests/**" /><None Remove="ITextDllTests/**" /></ItemGroup></Project>

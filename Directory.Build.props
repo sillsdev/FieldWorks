@@ -4,4 +4,7 @@
     <!-- This is a known issue with an old version; upgrade not currently feasible -->
     <NoWarn>$(NoWarn);NU1903</NoWarn>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="**/*.template.cs" />
+  </ItemGroup>
 </Project>

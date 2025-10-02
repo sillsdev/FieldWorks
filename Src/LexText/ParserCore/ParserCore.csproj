@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>ParserCore</AssemblyName>
@@ -66,7 +67,9 @@
 
   <ItemGroup>
     <Reference Include="ApplicationTransforms" />
-    <Reference Include="GAFAWSAnalysis" />
+    <Reference Include="GAFAWSAnalysis">
+      <HintPath>..\..\..\DistFiles\GAFAWSAnalysis.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="netstandard" />
   </ItemGroup>
@@ -77,4 +80,9 @@
     <ProjectReference Include="XAmpleManagedWrapper/XAmpleManagedWrapper.csproj" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <Compile Remove="ParserCoreTests/**" /><None Remove="ParserCoreTests/**" />
+    <Compile Remove="XAmpleManagedWrapper/**" /><None Remove="XAmpleManagedWrapper/**" />
+  </ItemGroup>
 </Project>

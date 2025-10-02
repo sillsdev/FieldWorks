@@ -1,4 +1,6 @@
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="BuildInclude.targets" />
   <PropertyGroup>
     <AssemblyName>ViewsInterfaces</AssemblyName>
     <RootNamespace>SIL.FieldWorks.Common.ViewsInterfaces</RootNamespace>
@@ -49,4 +51,8 @@
     <Reference Include="netstandard" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="ViewsInterfacesTests/**" />
+    <None Remove="ViewsInterfacesTests/**" />
+  </ItemGroup>
 </Project>
