@@ -46,7 +46,7 @@ function delete_and_pack_liblcm {
 			(cd "$liblcm_dir/artifacts" && rm *nupkg)
 
 			echo "Running 'dotnet pack' in the liblcm directory: $liblcm_dir"
-			pack_output=$(cd "$liblcm_dir" && dotnet pack -c Debug -p:TargetFrameworks=$liblcm_net_ver)
+			pack_output=$(cd "$liblcm_dir" && dotnet pack -c Debug)
 
 			# Extract version number using regex
 			if [[ $pack_output =~ $version_regex ]]; then
@@ -91,7 +91,7 @@ function delete_and_pack_chorus {
 			(cd "$chorus_dir/output" && rm *nupkg)
 
 			echo "Running 'dotnet pack' in the chorus directory: $chorus_dir"
-			pack_output=$(cd "$chorus_dir" && dotnet pack -c Debug -p:TargetFrameworks=$chorus_net_ver)
+			pack_output=$(cd "$chorus_dir" && dotnet pack -c Debug)
 
 			# Extract version number using regex
 			if [[ $pack_output =~ $version_regex ]]; then
@@ -136,7 +136,7 @@ function delete_and_pack_libpalaso {
 			(cd "$libpalaso_dir/output" && rm *nupkg)
 
 			echo "Running 'dotnet pack' in the libpalaso directory: $libpalaso_dir"
-			pack_output=$(cd "$libpalaso_dir" && dotnet pack -c Debug -p:TargetFrameworks=$libpalaso_net_ver)
+			pack_output=$(cd "$libpalaso_dir" && dotnet pack -c Debug)
 
 			# Extract version number using regex
 			if [[ $pack_output =~ $version_regex ]]; then
