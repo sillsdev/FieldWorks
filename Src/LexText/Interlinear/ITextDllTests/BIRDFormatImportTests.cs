@@ -810,6 +810,52 @@ namespace SIL.FieldWorks.IText
 		}
 
 		[Test]
+		public void TestGenres()
+		{
+			string title = "atrocious";
+			string textGuid = "a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb3";
+			string genre1Guid = "b405f3c0-58e1-4492-8a40-e955774a6912";
+			string genre2Guid = "45e6f056-98ac-45d6-858e-59450993f269";
+			string genre1Name = "genre1";
+			string genre2Name = "genre2";
+			//an interliner text example xml string
+			string xml = "<document><interlinear-text guid=\"" + textGuid + "\">" +
+			"<item type=\"title\" lang=\"en\">" + title + "</item>" +
+			"<link type=\"genre\">" + genre1Guid + "</link>" +
+			"<link type=\"genre\">" + genre2Guid + "</link>" +
+			"<records>" +
+			"<record type=\"Possibility\" guid=\"" + genre1Guid + "\"><item type=\"name\" lang=\"en\">" + genre1Name + "</item></record>" +
+			"<record type=\"Possibility\" guid=\"" + genre2Guid + "\"><item type=\"name\" lang=\"en\">" + genre2Name + "</item></record>" +
+			"</records>" +
+			"<paragraphs><paragraph><phrases><phrase>" +
+			"<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
+			"<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
+			"<words><word><item type=\"txt\" lang=\"en\">supercalifragilisticexpialidocious</item>" +
+			"<item type=\"gls\" lang=\"pt\">absurdo</item></word>" +
+			"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				Cache.LanguageProject.GenreListOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+			});
+			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
+			LCModel.IText text = null;
+			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
+				using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
+				{
+					firstEntry.MoveNext();
+					var imported = firstEntry.Current;
+					Assert.AreEqual(2, imported.GenresRC.Count);
+					Assert.AreEqual(genre1Guid, imported.GenresRC.First().Guid.ToString());
+					Assert.AreEqual(genre1Name, imported.GenresRC.First().Name.BestAnalysisAlternative.Text);
+					Assert.AreEqual(2, imported.Cache.LanguageProject.GenreListOA.PossibilitiesOS.Count);
+				}
+			}
+		}
+
+		[Test]
 		public void TestSpacesAroundPunct()
 		{
 			string xml = "<document><interlinear-text>" +

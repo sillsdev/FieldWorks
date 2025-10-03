@@ -160,7 +160,7 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 		/// <remarks/>
 		[System.Xml.Serialization.XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
 		[System.Xml.Serialization.XmlArrayItemAttribute("record", Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
-		public Record[] Records
+		public Record[] records
 		{
 			get
 			{

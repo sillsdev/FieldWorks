@@ -2,24 +2,24 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Extensions;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.IText.FlexInterlinModel;
+using SIL.LCModel;
 using SIL.LCModel.Application.ApplicationServices;
 using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
-using SIL.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Windows.Forms;
 
 namespace SIL.FieldWorks.IText
 {
@@ -1169,6 +1169,36 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 
+			// Process links and records.
+			Dictionary<string, List<Property>> valueProperties = new Dictionary<string, List<Property>>();
+			InterlinearRecords records = new InterlinearRecords();
+
+			if (interlinText.Links != null)
+			{
+				foreach (var link in interlinText.Links)
+				{
+					switch (link.type)
+					{
+						case "genre":
+							SaveLink(interlinText.guid.ToString(), link.type, link.Value, valueProperties);
+							break;
+					}
+				}
+			}
+			if (interlinText.records != null)
+			{
+				foreach (var record in interlinText.records)
+				{
+					SaveLinks(record, valueProperties);
+				}
+				foreach (var record in interlinText.records)
+				{
+					CreateRecord(record, valueProperties, records, cache);
+				}
+			}
+			CreateLinks(valueProperties, records, cache);
+
+
 			if (interlinText.mediafiles != null)
 			{
 				if (newText.MediaFilesOA == null)
@@ -1203,5 +1233,147 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 		}
+
+		private class Property
+		{
+			public string Object { get; set; }
+
+			public string PropName {  get; set; }
+
+		}
+
+		/// <summary>
+		/// Save a link from object to value in valueProperties.
+		/// </summary>
+		private static void SaveLink(string obj, string propName, string value, Dictionary<string, List<Property>> valueProperties)
+		{
+			if (!valueProperties.ContainsKey(value))
+				valueProperties[value] = new List<Property>();
+			valueProperties[value].Add(new Property {Object = obj, PropName = propName});
+		}
+
+		/// <summary>
+		/// Save all links from record to values in valueProperties.
+		/// </summary>
+		private static void SaveLinks(Interlineartext.Record record, Dictionary<string, List<Property>> valueProperties)
+		{
+			if (record.link != null)
+			{
+				for (int i = 0; i < record.link.Length; i++)
+				{
+					SaveLink(record.guid, record.link[i].type, record.link[i].Value, valueProperties);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Create record and fill in item properties.
+		/// </summary>
+		private static void CreateRecord(Interlineartext.Record record, Dictionary<string, List<Property>> valueProperties, InterlinearRecords records, LcmCache cache)
+		{
+			if (!valueProperties.Keys.Contains(record.guid))
+				return;
+			Guid guid = new Guid(record.guid);
+			ICmObjectRepository repository = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+			if (!repository.TryGetObject(guid, out ICmObject obj))
+			{
+				obj = CreateRecordObject(record, valueProperties[record.guid], cache);
+				Type objType = obj.GetType();
+				/// Set item properties.
+				Dictionary<string, string> propertyMap = records.GetInvertedPropertyMap(record.type);
+				foreach (var item in record.item)
+				{
+					PropertyInfo propInfo = objType.GetProperty(propertyMap[item.type]);
+					Type valueType = propInfo.PropertyType;
+					object value = null;
+					if (valueType.Name == "IMultiUnicode")
+					{
+						int ws = GetWsEngine(cache.WritingSystemFactory, item.lang).Handle;
+						value = TsStringUtils.MakeString(item.Value, ws);
+					}
+					SetProperty(obj, propertyMap[item.type], value);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Create record.
+		/// </summary>
+		private static ICmObject CreateRecordObject(Interlineartext.Record record, List<Property> properties, LcmCache cache)
+		{
+			foreach (var property in properties)
+			{
+				switch (property.PropName)
+				{
+					case "genre":
+						ICmPossibility genre = cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(new Guid(record.guid));
+						cache.LanguageProject.GenreListOA.PossibilitiesOS.Add(genre);
+						return genre;
+				}
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Create links.
+		/// </summary>
+		private static void CreateLinks(Dictionary<string, List<Property>> valueProperties, InterlinearRecords records, LcmCache cache)
+		{
+			foreach (var valGuid in valueProperties.Keys)
+			{
+				foreach (var property in valueProperties[valGuid])
+				{
+					CreateLink(property.Object, property.PropName, valGuid, records, cache);
+				}
+			}
+		}
+
+		/// <summary>
+		/// Create given link.
+		/// </summary>
+		private static void CreateLink(string objGuid, string propName, string valueGuid, InterlinearRecords records, LcmCache cache)
+		{
+			ICmObjectRepository repository = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+			ICmObject obj = repository.GetObject(new Guid(objGuid));
+			ICmObject value = repository.GetObject(new Guid(valueGuid));
+			Dictionary<string, string> propertyMap = records.InvertMap(records.GetPropertyMap(obj.GetType().ToString()));
+			SetProperty(obj, propertyMap[propName], value);
+		}
+
+		/// <summary>
+		/// Set object property to value.
+		private static void SetProperty(ICmObject obj, string propName, object value)
+		{
+			PropertyInfo propInfo = obj.GetType().GetProperty(propName);
+			Type valueType = propInfo.PropertyType;
+			if (value == null)
+				return;
+			if (valueType.Name == "IMultiUnicode")
+			{
+				IMultiUnicode currentValue = (IMultiUnicode)propInfo.GetValue(obj, null);
+				if (value is ITsString itsString)
+				{
+					currentValue.set_String(itsString.get_WritingSystemAt(0), itsString.Text);
+					return;
+				}
+				currentValue.CopyAlternatives((IMultiUnicode)value);
+			}
+			else if (valueType.IsInstanceOfType(value))
+			{
+				propInfo.SetValue(obj, value);
+				return;
+			}
+			else if (valueType.Name == "ILcmReferenceCollection`1")
+			{
+				ILcmReferenceCollection<ICmPossibility> currentValue = (ILcmReferenceCollection<ICmPossibility>)propInfo.GetValue(obj, null);
+				currentValue.Add((ICmPossibility)value);
+				return;
+			}
+			else
+			{
+				throw new Exception();
+			}
+		}
+
 	}
 }

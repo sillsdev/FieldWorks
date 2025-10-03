@@ -52,6 +52,10 @@ namespace SIL.FieldWorks.IText
 				{ "ResearchersRC", "researcher" },
 				{ "RestrictionsRC", "restriction" },
 			};
+			m_propertyMaps["SIL.LCModel.DomainImpl.Text"] = new Dictionary<string, string>()
+			{
+				{ "GenresRC", "genre" },
+			};
 			m_invertedPropertyMaps = new Dictionary<string, Dictionary<string, string>>();
 		}
 
@@ -66,12 +70,18 @@ namespace SIL.FieldWorks.IText
 				return m_invertedPropertyMaps[type];
 
 			Dictionary<string, string> propertyMap = GetPropertyMap(InvertedTypeMap[type]);
+			Dictionary<string, string> invertedPropertyMap = InvertMap(propertyMap);
+			m_invertedPropertyMaps.Add(type, invertedPropertyMap);
+			return invertedPropertyMap;
+		}
+
+		internal Dictionary<string, string> InvertMap(Dictionary<string, string> propertyMap)
+		{
 			Dictionary<string, string> invertedPropertyMap = new Dictionary<string, string>();
-			foreach(string name in propertyMap.Keys)
+			foreach (string name in propertyMap.Keys)
 			{
 				invertedPropertyMap[propertyMap[name]] = name;
 			}
-			m_invertedPropertyMaps.Add(type, propertyMap);
 			return invertedPropertyMap;
 		}
 
