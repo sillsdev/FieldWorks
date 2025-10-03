@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>FwCoreDlgs</AssemblyName>
@@ -9,37 +9,33 @@
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <DebugType>full</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DefineConstants>TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>true</Optimize>
     <DebugType>full</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <DebugType>full</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DefineConstants>TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>true</Optimize>
     <DebugType>full</DebugType>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
+    <PackageReference Include="encoding-converters-core" Version="0.9.7" />
     <PackageReference Include="SIL.Core" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.Core.Desktop" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
@@ -51,18 +47,12 @@
     <PackageReference Include="SIL.Windows.Forms.WritingSystems" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-    
   </ItemGroup>
-
   <ItemGroup>
-    <Reference Include="ECInterfaces" />
-    <Reference Include="SilEncConverters40" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="XCore" />
     <Reference Include="netstandard" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="../Common/Controls/FwControls/FwControls.csproj" />
     <ProjectReference Include="../Common/Controls/Widgets/Widgets.csproj" />
@@ -76,9 +66,13 @@
     <ProjectReference Include="../Utilities/Reporting/Reporting.csproj" />
     <ProjectReference Include="../Utilities/XMLUtils/XMLUtils.csproj" />
     <ProjectReference Include="../XCore/xCoreInterfaces/xCoreInterfaces.csproj" />
+    <ProjectReference Include="..\XCore\xCore.csproj" />
     <ProjectReference Include="FwCoreDlgControls/FwCoreDlgControls.csproj" />
   </ItemGroup>
-
-
   <ItemGroup>
-    <Compile Remove="FwCoreDlgsTests/**" /><None Remove="FwCoreDlgsTests/**" /></ItemGroup></Project>
+    <Compile Remove="FwCoreDlgsTests/**" />
+    <None Remove="FwCoreDlgsTests/**" />
+    <Compile Remove="FwCoreDlgControls/**" />
+    <None Remove="FwCoreDlgControls/**" />
+  </ItemGroup>
+</Project>

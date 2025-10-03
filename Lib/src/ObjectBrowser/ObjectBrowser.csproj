@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>ObjectBrowser</AssemblyName>
     <RootNamespace>SIL.ObjectBrowser</RootNamespace>
@@ -34,6 +34,10 @@
     <Optimize>true</Optimize>
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="SIL.LCModel" Version="11.0.0-beta0139" />
+  </ItemGroup>
 
   <ItemGroup>
     <Reference Include="System.Drawing" />

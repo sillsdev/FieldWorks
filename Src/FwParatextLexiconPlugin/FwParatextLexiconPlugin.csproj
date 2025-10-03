@@ -63,4 +63,8 @@
 
 
   <ItemGroup>
-    <Compile Remove="FwParatextLexiconPluginTests/**" /><None Remove="FwParatextLexiconPluginTests/**" /></ItemGroup></Project>
+    <Compile Remove="**/*.template.cs" />
+    <Compile Remove="FwParatextLexiconPluginTests/**" />
+    <None Remove="FwParatextLexiconPluginTests/**" />
+  </ItemGroup>
+</Project>

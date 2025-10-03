@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void DefaultBackupFile_BackupForCurrentProjectExists()
 		{
-			var backupSettings = new BackupProjectSettings(Cache, null, FwDirectoryFinder.DefaultBackupDirectory, "Version: 1.0");
+			var backupSettings = new LCModel.DomainServices.BackupRestore.BackupProjectSettings(Cache, null, FwDirectoryFinder.DefaultBackupDirectory, "Version: 1.0");
 			string backupFileName1 = backupSettings.ZipFileName;
 			m_fileOs.AddExistingFile(backupFileName1);
 			// Force the second backup to appear to be older
@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Test]
 		public void DefaultBackupFile_BackupsForOtherProjectsButNotCurrent()
 		{
-			var backupSettings = new BackupProjectSettings(Cache, null, FwDirectoryFinder.DefaultBackupDirectory, "Version: 1.0");
+			var backupSettings = new LCModel.DomainServices.BackupRestore.BackupProjectSettings(Cache, null, FwDirectoryFinder.DefaultBackupDirectory, "Version: 1.0");
 			backupSettings.ProjectName = "AAA";
 			string backupFileName1 = backupSettings.ZipFileName;
 			m_fileOs.AddExistingFile(backupFileName1);
@@ -155,7 +155,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			string proj3 = Path.Combine(Path.Combine(FwDirectoryFinder.ProjectsDirectory, "AAA-01"), "AAA-01.fwdata");
 			m_fileOs.AddExistingFile(proj3);
 
-			var backupSettings = new BackupProjectSettings(Cache, null, FwDirectoryFinder.DefaultBackupDirectory, "Version: 1.0");
+			var backupSettings = new LCModel.DomainServices.BackupRestore.BackupProjectSettings(Cache, null, FwDirectoryFinder.DefaultBackupDirectory, "Version: 1.0");
 			backupSettings.ProjectName = "AAA";
 			string backupFileName1 = backupSettings.ZipFileName;
 			m_fileOs.AddExistingFile(backupFileName1);

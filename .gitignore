@@ -116,6 +116,7 @@ Src/DebugProcs/libDebugProcs
 Src/Generic/libGeneric
 Src/Language/libLanguage
 xulrunner/*
+**/bin/Debug
 
 DistFiles/ReleaseData/
 # Locally configurable project to run FieldWorks

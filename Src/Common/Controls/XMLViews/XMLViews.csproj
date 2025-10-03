@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>XMLViews</AssemblyName>
@@ -9,37 +9,33 @@
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <DebugType>full</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DefineConstants>TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>true</Optimize>
     <DebugType>full</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <DebugType>full</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DefineConstants>TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>true</Optimize>
     <DebugType>full</DebugType>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
+    <PackageReference Include="encoding-converters-core" Version="0.9.7" />
     <PackageReference Include="Geckofx60.32" Version="60.0.52" Condition="'$(Platform)' != 'x64'" />
     <PackageReference Include="Geckofx60.64" Version="60.0.52" Condition="'$(Platform)' == 'x64'" />
     <PackageReference Include="SIL.Core" Version="15.0.0-beta0117" />
@@ -50,17 +46,13 @@
     <PackageReference Include="SIL.Windows.Forms" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
   </ItemGroup>
-
   <ItemGroup>
     <Reference Include="Accessibility" />
-    <Reference Include="ECInterfaces" />
-    <Reference Include="SilEncConverters40" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="netstandard" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="../../../FwCoreDlgs/FwCoreDlgControls/FwCoreDlgControls.csproj" />
     <ProjectReference Include="../../../FwCoreDlgs/FwCoreDlgs.csproj" />
@@ -78,7 +70,8 @@
     <ProjectReference Include="../FwControls/FwControls.csproj" />
     <ProjectReference Include="../Widgets/Widgets.csproj" />
   </ItemGroup>
-
-
   <ItemGroup>
-    <Compile Remove="XMLViewsTests/**" /><None Remove="XMLViewsTests/**" /></ItemGroup></Project>
+    <Compile Remove="XMLViewsTests/**" />
+    <None Remove="XMLViewsTests/**" />
+  </ItemGroup>
+</Project>

@@ -59,7 +59,8 @@
     <PackageReference Include="TagLibSharp" Version="2.3.0" />
     <PackageReference Include="SIL.DesktopAnalytics" Version="4.0.0" />
     
-  </ItemGroup>
+  <PackageReference Include="Geckofx60.32" Version="60.0.54" Condition="'$(Platform)' == 'x86'" />
+<PackageReference Include="Geckofx60.64" Version="60.0.54" Condition="'$(Platform)' == 'x64'" /></ItemGroup>
 
   <ItemGroup>
     <Reference Include="Accessibility" />
@@ -104,4 +105,7 @@
 
 
   <ItemGroup>
-    <Compile Remove="xWorksTests/**" /><None Remove="xWorksTests/**" /></ItemGroup></Project>
+    <Compile Remove="xWorksTests/**" />
+<None Remove="xWorksTests/**" />
+</ItemGroup>
+</Project>
