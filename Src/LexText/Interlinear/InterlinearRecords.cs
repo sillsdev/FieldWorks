@@ -16,16 +16,16 @@ namespace SIL.FieldWorks.IText
 	internal class InterlinearRecords
 	{
 		private Dictionary<string, string> m_typeMap;
-		private Dictionary<string, string> m_invertedTypeMap;
+		private Dictionary<string, string> m_xmlTypeMap;
 
 		private readonly Dictionary<string, Dictionary<string, string>> m_propertyMaps;
-		private readonly Dictionary<string, Dictionary<string, string>> m_invertedPropertyMaps;
+		private readonly Dictionary<string, Dictionary<string, string>> m_xmlPropertyMaps;
 
 		internal Dictionary<string, string> TypeMap
 		{ get { return m_typeMap; } }
 
-		internal Dictionary<string, string> InvertedTypeMap
-		{ get { return m_invertedTypeMap; } }
+		internal Dictionary<string, string> XmlTypeMap
+		{ get { return m_xmlTypeMap; } }
 
 		internal InterlinearRecords()
 		{
@@ -34,29 +34,27 @@ namespace SIL.FieldWorks.IText
 				{ "CmPossibility", "Possibility" },
 				{ "RnGenericRec", "Record" }
 			};
-			m_invertedTypeMap = new Dictionary<string, string>();
+			m_xmlTypeMap = new Dictionary<string, string>();
 			foreach (string type in m_typeMap.Keys)
 			{
-				m_invertedTypeMap[m_typeMap[type]] = type;
+				m_xmlTypeMap[m_typeMap[type]] = type;
 			}
 
-			m_propertyMaps = new Dictionary<string, Dictionary<string, string>>();
-			m_propertyMaps["CmPossibility"] = new Dictionary<string, string>()
+			m_propertyMaps = new Dictionary<string, Dictionary<string, string>>
 			{
-				{ "Name", "name" },
-				{ "Abbreviation", "abbreviation" },
-				{ "Description", "description" },
-				{ "StatusRA", "status" },
-				{ "DiscussionOA", "discussion" },
-				{ "ConfidenceRA", "confidence" },
-				{ "ResearchersRC", "researcher" },
-				{ "RestrictionsRC", "restriction" },
+				["CmPossibility"] = new Dictionary<string, string>()
+				{
+					{ "Name", "name" },
+					{ "Abbreviation", "abbreviation" },
+					{ "Description", "description" },
+					{ "OwningPossibility", "parent" },
+				},
+				["Text"] = new Dictionary<string, string>()
+				{
+					{ "GenresRC", "genre" },
+				}
 			};
-			m_propertyMaps["SIL.LCModel.DomainImpl.Text"] = new Dictionary<string, string>()
-			{
-				{ "GenresRC", "genre" },
-			};
-			m_invertedPropertyMaps = new Dictionary<string, Dictionary<string, string>>();
+			m_xmlPropertyMaps = new Dictionary<string, Dictionary<string, string>>();
 		}
 
 		internal Dictionary<string, string> GetPropertyMap(string type)
@@ -64,15 +62,15 @@ namespace SIL.FieldWorks.IText
 			return m_propertyMaps[type];
 		}
 
-		internal Dictionary<string, string> GetInvertedPropertyMap(string type)
+		internal Dictionary<string, string> GetXmlPropertyMap(string type)
 		{
-			if (m_invertedPropertyMaps.ContainsKey(type))
-				return m_invertedPropertyMaps[type];
+			if (m_xmlPropertyMaps.ContainsKey(type))
+				return m_xmlPropertyMaps[type];
 
-			Dictionary<string, string> propertyMap = GetPropertyMap(InvertedTypeMap[type]);
-			Dictionary<string, string> invertedPropertyMap = InvertMap(propertyMap);
-			m_invertedPropertyMaps.Add(type, invertedPropertyMap);
-			return invertedPropertyMap;
+			Dictionary<string, string> propertyMap = GetPropertyMap(XmlTypeMap[type]);
+			Dictionary<string, string> xmlPropertyMap = InvertMap(propertyMap);
+			m_xmlPropertyMaps.Add(type, xmlPropertyMap);
+			return xmlPropertyMap;
 		}
 
 		internal Dictionary<string, string> InvertMap(Dictionary<string, string> propertyMap)

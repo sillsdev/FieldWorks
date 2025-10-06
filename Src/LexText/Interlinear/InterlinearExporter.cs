@@ -587,7 +587,7 @@ namespace SIL.FieldWorks.IText
 			{
 				PropertyInfo property = recordType.GetProperty(propName);
 				object value = property.GetValue(record, null);
-				WritePendingProperty(propName, value);
+				WritePendingProperty(propertyMap[propName], value);
 			}
 			m_writer.WriteEndElement();
 		}
@@ -595,39 +595,39 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Write property and value, dispatching on value type.
 		/// </summary>
-		/// <param name="propName"></param>
+		/// <param name="propType"></param>
 		/// <param name="value"></param>
-		private void WritePendingProperty(string propName, object value)
+		private void WritePendingProperty(string propType, object value)
 		{
 			if (value == null) return;
 			if (value is ICmObject objectValue)
 			{
-				WritePendingLink(propName, objectValue);
+				WritePendingLink(propType, objectValue);
 			}
 			else if (value is ITsString)
 			{
 				ITsString hystericalRaisens = (ITsString)value;
-				WritePendingItem(propName, ref hystericalRaisens);
+				WritePendingItem(propType, ref hystericalRaisens);
 			}
 			else if (value is ITsMultiString multiString)
 			{
 				for (int i = 0; i < multiString.StringCount; i++)
 				{
 					ITsString hystericalRaisens = multiString.GetStringFromIndex(i, out int ws);
-					WritePendingItem(propName, ref hystericalRaisens);
+					WritePendingItem(propType, ref hystericalRaisens);
 				}
 			}
 			else if (value is bool boolValue)
 			{
 				var hystericalRaisens = TsStringUtils.MakeString(boolValue ? "true" : "false", m_cache.DefaultAnalWs);
-				WritePendingItem(propName, ref hystericalRaisens);
+				WritePendingItem(propType, ref hystericalRaisens);
 			}
 			else if (value is DateTime dateTime)
 			{
 				if (dateTime != DateTime.MinValue)
 				{
 					ITsString dateTimeString = TsStringUtils.MakeString(dateTime.ToLCMTimeFormatWithMillisString(), m_cache.DefaultAnalWs);
-					WritePendingItem(propName, ref dateTimeString);
+					WritePendingItem(propType, ref dateTimeString);
 				}
 			}
 		}

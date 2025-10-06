@@ -1277,21 +1277,23 @@ namespace SIL.FieldWorks.IText
 			ICmObjectRepository repository = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			if (!repository.TryGetObject(guid, out ICmObject obj))
 			{
-				obj = CreateRecordObject(record, valueProperties[record.guid], cache);
+				obj = CreateRecordObject(record, valueProperties, records, cache);
 				Type objType = obj.GetType();
 				/// Set item properties.
-				Dictionary<string, string> propertyMap = records.GetInvertedPropertyMap(record.type);
+				Dictionary<string, string> xmlPropertyMap = records.GetXmlPropertyMap(record.type);
 				foreach (var item in record.item)
 				{
-					PropertyInfo propInfo = objType.GetProperty(propertyMap[item.type]);
-					Type valueType = propInfo.PropertyType;
+
 					object value = null;
-					if (valueType.Name == "IMultiUnicode")
+					PropertyInfo propInfo = objType.GetProperty(xmlPropertyMap[item.type]);
+					object currentValue = propInfo.GetValue(obj, null);
+					if (currentValue is IMultiUnicode)
 					{
+						// value is an ITsString.
 						int ws = GetWsEngine(cache.WritingSystemFactory, item.lang).Handle;
 						value = TsStringUtils.MakeString(item.Value, ws);
 					}
-					SetProperty(obj, propertyMap[item.type], value);
+					SetPropertyValue(obj, xmlPropertyMap[item.type], value);
 				}
 			}
 		}
@@ -1299,19 +1301,41 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Create record.
 		/// </summary>
-		private static ICmObject CreateRecordObject(Interlineartext.Record record, List<Property> properties, LcmCache cache)
+		private static ICmObject CreateRecordObject(Interlineartext.Record record, Dictionary<string, List<Property>> valueProperties, InterlinearRecords records, LcmCache cache)
 		{
-			foreach (var property in properties)
+			string recordType = records.XmlTypeMap[record.type];
+			switch (recordType)
+			{
+				case "CmPossibility":
+					ICmPossibility possibility = cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(new Guid(record.guid));
+					AddPossibilityToOwner(possibility, record.guid, valueProperties, cache);
+					return possibility;
+			}
+			return null;
+		}
+
+		private static void AddPossibilityToOwner(ICmPossibility possibility, string guid, Dictionary<string, List<Property>> valueProperties, LcmCache cache)
+		{
+			// Determine the type of possibility based on the property that points to it.
+			foreach (var property in valueProperties[guid])
 			{
 				switch (property.PropName)
 				{
 					case "genre":
-						ICmPossibility genre = cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(new Guid(record.guid));
-						cache.LanguageProject.GenreListOA.PossibilitiesOS.Add(genre);
-						return genre;
+						cache.LanguageProject.GenreListOA.PossibilitiesOS.Add(possibility);
+						return;
 				}
 			}
-			return null;
+			// Determine the type of the possibility based on the type of the child.
+			foreach (var property in valueProperties[guid])
+			{
+				switch (property.PropName)
+				{
+					case "parent":
+						AddPossibilityToOwner(possibility, property.Object, valueProperties, cache);
+						return;
+				}
+			}
 		}
 
 		/// <summary>
@@ -1336,38 +1360,55 @@ namespace SIL.FieldWorks.IText
 			ICmObjectRepository repository = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			ICmObject obj = repository.GetObject(new Guid(objGuid));
 			ICmObject value = repository.GetObject(new Guid(valueGuid));
-			Dictionary<string, string> propertyMap = records.InvertMap(records.GetPropertyMap(obj.GetType().ToString()));
-			SetProperty(obj, propertyMap[propName], value);
+			Dictionary<string, string> xmlPropertyMap = records.InvertMap(records.GetPropertyMap(obj.GetType().Name));
+			SetPropertyValue(obj, xmlPropertyMap[propName], value);
 		}
 
 		/// <summary>
 		/// Set object property to value.
-		private static void SetProperty(ICmObject obj, string propName, object value)
+		private static void SetPropertyValue(ICmObject obj, string propName, object value)
 		{
-			PropertyInfo propInfo = obj.GetType().GetProperty(propName);
-			Type valueType = propInfo.PropertyType;
 			if (value == null)
 				return;
-			if (valueType.Name == "IMultiUnicode")
+			if (propName == "OwningPossibility")
 			{
-				IMultiUnicode currentValue = (IMultiUnicode)propInfo.GetValue(obj, null);
-				if (value is ITsString itsString)
-				{
-					currentValue.set_String(itsString.get_WritingSystemAt(0), itsString.Text);
-					return;
-				}
-				currentValue.CopyAlternatives((IMultiUnicode)value);
+				// We store OwningPossibility but set SubPossibilitiesOS.
+				SetPropertyValue((ICmObject)value, "SubPossibilitiesOS", obj);
+				return;
 			}
-			else if (valueType.IsInstanceOfType(value))
+			PropertyInfo propInfo = obj.GetType().GetProperty(propName);
+			object currentValue = propInfo.GetValue(obj, null);
+			if (value.GetType().IsInstanceOfType(currentValue.GetType()))
 			{
 				propInfo.SetValue(obj, value);
-				return;
 			}
-			else if (valueType.Name == "ILcmReferenceCollection`1")
+			else if (currentValue is ILcmOwningSequence<ICmPossibility> possibilitySequence)
 			{
-				ILcmReferenceCollection<ICmPossibility> currentValue = (ILcmReferenceCollection<ICmPossibility>)propInfo.GetValue(obj, null);
-				currentValue.Add((ICmPossibility)value);
-				return;
+				if (value is ICmPossibility possibility)
+				{
+					possibilitySequence.Add(possibility);
+				}
+			}
+			else if (currentValue is ILcmReferenceCollection<ICmPossibility> possibilityCollection)
+			{
+				if (value is ICmPossibility possibility)
+				{
+					possibilityCollection.Add(possibility);
+				}
+			}
+			else if (currentValue is IMultiString multiString)
+			{
+				if (value is ITsString itsString)
+				{
+					multiString.set_String(itsString.get_WritingSystemAt(0), itsString);
+				}
+			}
+			else if (currentValue is IMultiUnicode multiUnicode)
+			{
+				if (value is ITsString itsString)
+				{
+					multiUnicode.set_String(itsString.get_WritingSystemAt(0), itsString.Text);
+				}
 			}
 			else
 			{
