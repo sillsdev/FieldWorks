@@ -2,7 +2,6 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using Gecko.WebIDL;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
@@ -48,7 +47,7 @@ namespace SIL.FieldWorks.IText
 		DateTime pendingDateCreated = DateTime.MinValue;
 		DateTime pendingDateModified = DateTime.MinValue;
 		ILcmReferenceCollection<ICmPossibility> pendingGenres;
-		Queue<ICmObject> pendingRecords = new Queue<ICmObject>();
+		Queue<ICmObject> pendingObjects = new Queue<ICmObject>();
 		int m_flidStTextTitle;
 		int m_flidStTextSource;
 		InterlinVc m_vc = null;
@@ -59,7 +58,7 @@ namespace SIL.FieldWorks.IText
 		IMoMorphType m_mmtProclitic;
 		protected WritingSystemManager m_wsManager;
 		protected ICmObjectRepository m_repoObj;
-		InterlinearRecords m_records;
+		InterlinearObjects m_objects;
 
 		public static InterlinearExporter Create(string mode, LcmCache cache, XmlWriter writer, ICmObject objRoot,
 			InterlinLineChoices lineChoices, InterlinVc vc)
@@ -100,7 +99,7 @@ namespace SIL.FieldWorks.IText
 
 			m_wsManager = m_cache.ServiceLocator.WritingSystemManager;
 			m_repoObj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
-			m_records = new InterlinearRecords();
+			m_objects = new InterlinearObjects();
 		}
 
 		public void ExportDisplay()
@@ -579,26 +578,26 @@ namespace SIL.FieldWorks.IText
 			}
 			WriteLangAndContent(GetWsFromTsString(name), name);
 			m_writer.WriteEndElement();
-			pendingRecords.Enqueue(obj);
+			pendingObjects.Enqueue(obj);
 		}
 
 		/// <summary>
-		/// Write an object out as a record.
+		/// Write an ICmObject as an object.
 		/// </summary>
-		private void WritePendingRecord(ICmObject record)
+		private void WritePendingObject(ICmObject obj)
 		{
-			Type recordType = record.GetType();
-			string typeName = recordType.Name;
-			if (!m_records.TypeMap.ContainsKey(typeName))
+			Type objType = obj.GetType();
+			string typeName = objType.Name;
+			if (!m_objects.TypeMap.ContainsKey(typeName))
 				return;
-			m_writer.WriteStartElement("record");
-			m_writer.WriteAttributeString("type", m_records.TypeMap[typeName]);
-			m_writer.WriteAttributeString("guid", record.Guid.ToString());
-			Dictionary<string, string> propertyMap = m_records.GetPropertyMap(typeName);
+			m_writer.WriteStartElement("object");
+			m_writer.WriteAttributeString("type", m_objects.TypeMap[typeName]);
+			m_writer.WriteAttributeString("guid", obj.Guid.ToString());
+			Dictionary<string, string> propertyMap = m_objects.GetPropertyMap(typeName);
 			foreach (string propName in propertyMap.Keys)
 			{
-				PropertyInfo property = recordType.GetProperty(propName);
-				object value = property.GetValue(record, null);
+				PropertyInfo property = objType.GetProperty(propName);
+				object value = property.GetValue(obj, null);
 				WritePendingProperty(propertyMap[propName], value);
 			}
 			m_writer.WriteEndElement();
@@ -700,12 +699,12 @@ namespace SIL.FieldWorks.IText
 					{
 						WritePendingLink("genre", genre);
 					}
-					if (pendingRecords.Count > 0)
+					if (pendingObjects.Count > 0)
 					{
-						m_writer.WriteStartElement("records");
-						while (pendingRecords.Count > 0)
+						m_writer.WriteStartElement("objects");
+						while (pendingObjects.Count > 0)
 						{
-							WritePendingRecord(pendingRecords.Dequeue());
+							WritePendingObject(pendingObjects.Dequeue());
 						}
 						m_writer.WriteEndElement();
 					}
@@ -907,7 +906,7 @@ namespace SIL.FieldWorks.IText
 				pendingDateModified = text.DateModified;
 				pendingGenres = text.GenresRC;
 				if (text.AssociatedNotebookRecord != null)
-					pendingRecords.Enqueue(text.AssociatedNotebookRecord);
+					pendingObjects.Enqueue(text.AssociatedNotebookRecord);
 			}
 			else if (TextSource.IsScriptureText(txt))
 			{

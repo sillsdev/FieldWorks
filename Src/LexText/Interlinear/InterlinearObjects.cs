@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 namespace SIL.FieldWorks.IText
 {
 	/// <summary>
-	/// InterlinearRecords provides a mapping between type and property names and XML names
-	/// for records associated with interlinear texts.  The standard mapping is used for export,
+	/// InterlinearObjects provides a mapping between type and property names and XML names
+	/// for objects associated with interlinear texts.  The standard mapping is used for export,
 	/// and the inverted mapping is used for import.
 	/// </summary>
-	internal class InterlinearRecords
+	internal class InterlinearObjects
 	{
 		private Dictionary<string, string> m_typeMap;
 		private Dictionary<string, string> m_xmlTypeMap;
@@ -27,12 +27,12 @@ namespace SIL.FieldWorks.IText
 		internal Dictionary<string, string> XmlTypeMap
 		{ get { return m_xmlTypeMap; } }
 
-		internal InterlinearRecords()
+		internal InterlinearObjects()
 		{
 			m_typeMap = new Dictionary<string, string>
 			{
 				{ "CmPossibility", "Possibility" },
-				{ "RnGenericRec", "Record" }
+				{ "RnGenericRec", "NotebookRecord" }
 			};
 			m_xmlTypeMap = new Dictionary<string, string>();
 			foreach (string type in m_typeMap.Keys)

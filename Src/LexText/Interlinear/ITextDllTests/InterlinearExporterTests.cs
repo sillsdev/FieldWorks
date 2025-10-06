@@ -1129,7 +1129,7 @@ namespace SIL.FieldWorks.IText
 				m_text1.GenresRC.Add(genre2);
 				XmlDocument exportedDoc = ExportToXml();
 				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath("//interlinear-text/item[@type=\"genre\"]", 2);
-				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath("//interlinear-text/records/record[@type=\"Possibility\"]", 2);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath("//interlinear-text/objects/object[@type=\"Possibility\"]", 2);
 			}
 
 			[Test]

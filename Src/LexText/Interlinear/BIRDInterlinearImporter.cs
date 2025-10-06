@@ -1174,21 +1174,21 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 
-			// Process links and records.
-			InterlinearRecords records = new InterlinearRecords();
+			// Process links and objects.
+			InterlinearObjects objects = new InterlinearObjects();
 
-			if (interlinText.records != null)
+			if (interlinText.objects != null)
 			{
-				foreach (var record in interlinText.records)
+				foreach (var obj in interlinText.objects)
 				{
-					SaveLinks(record, valueProperties);
+					SaveLinks(obj, valueProperties);
 				}
-				foreach (var record in interlinText.records)
+				foreach (var obj in interlinText.objects)
 				{
-					CreateRecord(record, valueProperties, records, cache);
+					CreateFullObject(obj, valueProperties, objects, cache);
 				}
 			}
-			CreateLinks(valueProperties, records, cache);
+			CreateLinks(valueProperties, objects, cache);
 
 
 			if (interlinText.mediafiles != null)
@@ -1245,63 +1245,63 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// Save all links from record to values in valueProperties.
+		/// Save all links from obj to values in valueProperties.
 		/// </summary>
-		private static void SaveLinks(Interlineartext.Record record, Dictionary<string, List<Property>> valueProperties)
+		private static void SaveLinks(Interlineartext.Object obj, Dictionary<string, List<Property>> valueProperties)
 		{
-			if (record.item != null)
+			if (obj.item != null)
 			{
-				for (int i = 0; i < record.item.Length; i++)
+				for (int i = 0; i < obj.item.Length; i++)
 				{
-					if (record.item[i].guid != null)
-						SaveLink(record.guid, record.item[i].type, record.item[i].guid, valueProperties);
+					if (obj.item[i].guid != null)
+						SaveLink(obj.guid, obj.item[i].type, obj.item[i].guid, valueProperties);
 				}
 			}
 		}
 
 		/// <summary>
-		/// Create record and fill in item properties.
+		/// Create object and fill in item properties.
 		/// </summary>
-		private static void CreateRecord(Interlineartext.Record record, Dictionary<string, List<Property>> valueProperties, InterlinearRecords records, LcmCache cache)
+		private static void CreateFullObject(Interlineartext.Object obj, Dictionary<string, List<Property>> valueProperties, InterlinearObjects objects, LcmCache cache)
 		{
-			if (!valueProperties.Keys.Contains(record.guid))
+			if (!valueProperties.Keys.Contains(obj.guid))
 				return;
-			Guid guid = new Guid(record.guid);
+			Guid guid = new Guid(obj.guid);
 			ICmObjectRepository repository = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
-			if (!repository.TryGetObject(guid, out ICmObject obj))
+			if (!repository.TryGetObject(guid, out ICmObject icmObject))
 			{
-				obj = CreateRecordObject(record, valueProperties, records, cache);
-				Type objType = obj.GetType();
+				icmObject = CreateObject(obj, valueProperties, objects, cache);
+				Type objType = icmObject.GetType();
 				/// Set item properties.
-				Dictionary<string, string> xmlPropertyMap = records.GetXmlPropertyMap(record.type);
-				foreach (var item in record.item)
+				Dictionary<string, string> xmlPropertyMap = objects.GetXmlPropertyMap(obj.type);
+				foreach (var item in obj.item)
 				{
 
 					object value = null;
 					PropertyInfo propInfo = objType.GetProperty(xmlPropertyMap[item.type]);
-					object currentValue = propInfo.GetValue(obj, null);
+					object currentValue = propInfo.GetValue(icmObject, null);
 					if (currentValue is IMultiUnicode)
 					{
 						// value is an ITsString.
 						int ws = GetWsEngine(cache.WritingSystemFactory, item.lang).Handle;
 						value = TsStringUtils.MakeString(item.Value, ws);
 					}
-					SetPropertyValue(obj, xmlPropertyMap[item.type], value);
+					SetPropertyValue(icmObject, xmlPropertyMap[item.type], value);
 				}
 			}
 		}
 
 		/// <summary>
-		/// Create record.
+		/// Create object.
 		/// </summary>
-		private static ICmObject CreateRecordObject(Interlineartext.Record record, Dictionary<string, List<Property>> valueProperties, InterlinearRecords records, LcmCache cache)
+		private static ICmObject CreateObject(Interlineartext.Object obj, Dictionary<string, List<Property>> valueProperties, InterlinearObjects objects, LcmCache cache)
 		{
-			string recordType = records.XmlTypeMap[record.type];
-			switch (recordType)
+			string objType = objects.XmlTypeMap[obj.type];
+			switch (objType)
 			{
 				case "CmPossibility":
-					ICmPossibility possibility = cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(new Guid(record.guid));
-					AddPossibilityToOwner(possibility, record.guid, valueProperties, cache);
+					ICmPossibility possibility = cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(new Guid(obj.guid));
+					AddPossibilityToOwner(possibility, obj.guid, valueProperties, cache);
 					return possibility;
 			}
 			return null;
@@ -1334,13 +1334,13 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Create links.
 		/// </summary>
-		private static void CreateLinks(Dictionary<string, List<Property>> valueProperties, InterlinearRecords records, LcmCache cache)
+		private static void CreateLinks(Dictionary<string, List<Property>> valueProperties, InterlinearObjects objects, LcmCache cache)
 		{
 			foreach (var valGuid in valueProperties.Keys)
 			{
 				foreach (var property in valueProperties[valGuid])
 				{
-					CreateLink(property.Object, property.PropName, valGuid, records, cache);
+					CreateLink(property.Object, property.PropName, valGuid, objects, cache);
 				}
 			}
 		}
@@ -1348,12 +1348,12 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Create given link.
 		/// </summary>
-		private static void CreateLink(string objGuid, string propName, string valueGuid, InterlinearRecords records, LcmCache cache)
+		private static void CreateLink(string objGuid, string propName, string valueGuid, InterlinearObjects objects, LcmCache cache)
 		{
 			ICmObjectRepository repository = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			ICmObject obj = repository.GetObject(new Guid(objGuid));
 			ICmObject value = repository.GetObject(new Guid(valueGuid));
-			Dictionary<string, string> xmlPropertyMap = records.InvertMap(records.GetPropertyMap(obj.GetType().Name));
+			Dictionary<string, string> xmlPropertyMap = objects.InvertMap(objects.GetPropertyMap(obj.GetType().Name));
 			SetPropertyValue(obj, xmlPropertyMap[propName], value);
 		}
 

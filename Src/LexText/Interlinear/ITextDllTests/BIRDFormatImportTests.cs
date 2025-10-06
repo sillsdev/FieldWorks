@@ -825,14 +825,14 @@ namespace SIL.FieldWorks.IText
 			"<item type=\"title\" lang=\"en\">" + title + "</item>\n" +
 			"<item type=\"genre\" guid=\"" + genre1Guid + "\" lang=\"en\">" + genre1Name + "</item>\n" +
 			"<item type=\"genre\" guid=\"" + genre3Guid + "\" lang=\"en\">" + "</item>\n" +
-			"<records>\n" +
-			"<record type=\"Possibility\" guid=\"" + genre1Guid + "\"><item type=\"name\" lang=\"en\">" + genre1Name + "</item></record>\n" +
-			"<record type=\"Possibility\" guid=\"" + genre2Guid + "\"><item type=\"name\" lang=\"en\">" + genre2Name + "</item></record>\n" +
-			"<record type=\"Possibility\" guid=\"" + genre3Guid + "\"\n>" +
+			"<objects>\n" +
+			"<object type=\"Possibility\" guid=\"" + genre1Guid + "\"><item type=\"name\" lang=\"en\">" + genre1Name + "</item></object>\n" +
+			"<object type=\"Possibility\" guid=\"" + genre2Guid + "\"><item type=\"name\" lang=\"en\">" + genre2Name + "</item></object>\n" +
+			"<object type=\"Possibility\" guid=\"" + genre3Guid + "\"\n>" +
 				"<item type=\"name\" lang=\"en\">" + genre3Name + "</item>\n" +
 				"<item type=\"parent\" guid=\"" + genre2Guid + "\" lang=\"en\">" + genre2Name + "</item>\n" +
-			"</record>\n" +
-			"</records>\n" +
+			"</object>\n" +
+			"</objects>\n" +
 			"<paragraphs><paragraph><phrases><phrase>" +
 			"<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
 			"<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +

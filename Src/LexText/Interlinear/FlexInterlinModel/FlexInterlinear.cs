@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 
 		private item[] itemField;
 
-		private Record[] recordsField;
+		private Object[] objectsField;
 
 		private Paragraph[] paragraphsField;
 
@@ -143,16 +143,16 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
-		[System.Xml.Serialization.XmlArrayItemAttribute("record", Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
-		public Record[] records
+		[System.Xml.Serialization.XmlArrayItemAttribute("object", Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
+		public Object[] objects
 		{
 			get
 			{
-				return this.recordsField;
+				return this.objectsField;
 			}
 			set
 			{
-				this.recordsField = value;
+				this.objectsField = value;
 			}
 		}
 
@@ -162,7 +162,7 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 		[System.Diagnostics.DebuggerStepThroughAttribute()]
 		[System.ComponentModel.DesignerCategoryAttribute("code")]
 		[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-		public partial class Record
+		public partial class Object
 		{
 
 			private item[] itemField;
