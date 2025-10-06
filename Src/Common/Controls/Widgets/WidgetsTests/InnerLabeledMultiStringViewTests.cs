@@ -42,7 +42,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			var args = new FwPasteFixTssEventArgs(m_tss, new TextSelInfo((IVwSelection)null));
 			// Veryify that we are testing  with a field of the correct type (if this fails the model changed)
-			Assert.AreEqual((int)CellarPropertyType.String, Cache.MetaDataCacheAccessor.GetFieldType(LexEntryTags.kflidImportResidue));
+			Assert.That(Cache.MetaDataCacheAccessor.GetFieldType(LexEntryTags.kflidImportResidue), Is.EqualTo((int)CellarPropertyType.String));
 			//SUT
 			InnerLabeledMultiStringView.EliminateExtraStyleAndWsInfo(Cache.MetaDataCacheAccessor, args, LexEntryTags.kflidImportResidue);
 			string differences;
@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			var args = new FwPasteFixTssEventArgs(m_tss, new TextSelInfo((IVwSelection)null));
 			// Veryify that we are testing  with a field of the correct type (if this fails the model changed)
-			Assert.AreEqual((int)CellarPropertyType.MultiString, Cache.MetaDataCacheAccessor.GetFieldType(LexSenseTags.kflidGeneralNote));
+			Assert.That(Cache.MetaDataCacheAccessor.GetFieldType(LexSenseTags.kflidGeneralNote), Is.EqualTo((int)CellarPropertyType.MultiString));
 			//SUT
 			InnerLabeledMultiStringView.EliminateExtraStyleAndWsInfo(Cache.MetaDataCacheAccessor, args, LexSenseTags.kflidGeneralNote);
 			string differences;
@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			var args = new FwPasteFixTssEventArgs(m_tss, new TextSelInfo((IVwSelection)null));
 			// Veryify that we are testing  with a field of the correct type (if this fails the model changed)
-			Assert.AreEqual((int)CellarPropertyType.Unicode, Cache.MetaDataCacheAccessor.GetFieldType(LexEntryTags.kflidLiftResidue));
+			Assert.That(Cache.MetaDataCacheAccessor.GetFieldType(LexEntryTags.kflidLiftResidue), Is.EqualTo((int)CellarPropertyType.Unicode));
 			//SUT
 			InnerLabeledMultiStringView.EliminateExtraStyleAndWsInfo(Cache.MetaDataCacheAccessor, args, LexEntryTags.kflidLiftResidue);
 			string differences;
@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.Common.Widgets
 		{
 			var args = new FwPasteFixTssEventArgs(m_tss, new TextSelInfo((IVwSelection)null));
 			// Veryify that we are testing  with a field of the correct type (if this fails the model changed)
-			Assert.AreEqual((int)CellarPropertyType.MultiUnicode, Cache.MetaDataCacheAccessor.GetFieldType(LexEntryTags.kflidCitationForm));
+			Assert.That(Cache.MetaDataCacheAccessor.GetFieldType(LexEntryTags.kflidCitationForm), Is.EqualTo((int)CellarPropertyType.MultiUnicode));
 			//SUT
 			InnerLabeledMultiStringView.EliminateExtraStyleAndWsInfo(Cache.MetaDataCacheAccessor, args, LexEntryTags.kflidCitationForm);
 			string differences;
@@ -108,16 +108,16 @@ namespace SIL.FieldWorks.Common.Widgets
 
 			// Access the Handle of the innerView to construct the RootBox.
 			var handle = innerView.Handle;
-			Assert.IsFalse(innerView.Visible);
-			Assert.IsFalse(innerView.RefreshPending);
+			Assert.That(innerView.Visible, Is.False);
+			Assert.That(innerView.RefreshPending, Is.False);
 			view.WritingSystemsToDisplay =
 				WritingSystemServices.GetWritingSystemList(Cache, WritingSystemServices.kwsVern, false);
 			view.RefreshDisplay();
 			// The flag gets set because the view is not yet visible, so the display cannot refresh.
-			Assert.IsTrue(innerView.RefreshPending);
+			Assert.That(innerView.RefreshPending, Is.True);
 			// Trigger the display to refresh by making the form visible.
 			dummyForm.Visible = true;
-			Assert.IsFalse(innerView.RefreshPending);
+			Assert.That(innerView.RefreshPending, Is.False);
 			view.Dispose();
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () => entry.Delete());
 		}

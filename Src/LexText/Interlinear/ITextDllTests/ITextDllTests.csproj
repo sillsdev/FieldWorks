@@ -33,20 +33,20 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
-    <PackageReference Include="SIL.Core" Version="15.0.0-beta0117" />
+    <PackageReference Include="SIL.Core" Version="15.0.0" />
     <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Core.Tests" Version="11.0.0-*" PrivateAssets="All" />
     <PackageReference Include="SIL.LCModel.Tests" Version="11.0.0-*" PrivateAssets="All" />
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Utils.Tests" Version="11.0.0-*" PrivateAssets="All" />
-    <PackageReference Include="SIL.TestUtilities" Version="15.0.0-beta0117" />
-    <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
+    <PackageReference Include="SIL.TestUtilities" Version="15.0.0" />
+    <PackageReference Include="SIL.WritingSystems" Version="15.0.0" />
     <PackageReference Include="encoding-converters-core" Version="0.9.7" />
+    <PackageReference Include="RhinoMocks" Version="4.0.0-alpha3" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
-    <Reference Include="Rhino.Mocks" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="netstandard" />

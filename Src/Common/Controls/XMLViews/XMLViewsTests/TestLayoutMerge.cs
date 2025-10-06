@@ -23,7 +23,7 @@ namespace XMLViewsTests
 			XmlNode output = merger.Merge(newMasterDoc.DocumentElement, userDoc.DocumentElement, outputDoc, suffix);
 			var expectedDoc = new XmlDocument();
 			expectedDoc.LoadXml(expectedOutput);
-			Assert.IsTrue(XmlUtils.NodesMatch(output, expectedDoc.DocumentElement));
+			Assert.That(XmlUtils.NodesMatch(output, expectedDoc.DocumentElement), Is.True);
 		}
 
 		[Test]

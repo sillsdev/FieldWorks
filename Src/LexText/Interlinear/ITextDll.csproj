@@ -46,15 +46,15 @@
     <PackageReference Include="SIL.Windows.Forms" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.Windows.Forms.Keyboarding" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
-    <PackageReference Include="Geckofx60.64" Version="60.0.52" Condition="'$(Platform)'=='x64'" />
-    <PackageReference Include="Geckofx60.32" Version="60.0.52" Condition="'$(Platform)'=='x86'" />
+    <PackageReference Include="Geckofx60.64" Version="60.0.54" Condition="'$(Platform)'=='x64'" />
+    <PackageReference Include="Geckofx60.32" Version="60.0.54" Condition="'$(Platform)'=='x86'" />
     <PackageReference Include="SharpZipLib" Version="1.4.0" />
     <PackageReference Include="encoding-converters-core" Version="0.9.7" />
+    <PackageReference Include="AdamsLair.TreeViewAdv" Version="1.7.7" />
+    <PackageReference Include="SIL.ExCSS" Version="2.0.2" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
-    <Reference Include="Aga.Controls" />
-    <Reference Include="ExCSS" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />

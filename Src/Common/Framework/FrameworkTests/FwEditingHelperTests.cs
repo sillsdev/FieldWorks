@@ -99,12 +99,12 @@ namespace SIL.FieldWorks.Common.Framework
 
 				IList<object[]> argsSentToSetTypingProps =
 					selection.GetArgumentsForCallsMadeOn(sel => sel.SetTypingProps(null));
-				Assert.AreEqual(1, argsSentToSetTypingProps.Count);
+				Assert.That(argsSentToSetTypingProps.Count, Is.EqualTo(1));
 				ITsTextProps ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
-				Assert.AreEqual(0, ttpSentToSetTypingProps.StrPropCount);
-				Assert.AreEqual(1, ttpSentToSetTypingProps.IntPropCount);
+				Assert.That(ttpSentToSetTypingProps.StrPropCount, Is.EqualTo(0));
+				Assert.That(ttpSentToSetTypingProps.IntPropCount, Is.EqualTo(1));
 				int nVar;
-				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+				Assert.That(ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar), Is.EqualTo(911));
 			}
 		}
 
@@ -134,7 +134,7 @@ namespace SIL.FieldWorks.Common.Framework
 	//			selection.AssertWasNotCalled(sel => sel.SetTypingProps(null));
 				IList<object[]> argsSentToSetTypingProps =
 					selection.GetArgumentsForCallsMadeOn(sel => sel.SetTypingProps(null));
-				Assert.AreEqual(0, argsSentToSetTypingProps.Count);
+				Assert.That(argsSentToSetTypingProps.Count, Is.EqualTo(0));
 			}
 		}
 
@@ -162,12 +162,12 @@ namespace SIL.FieldWorks.Common.Framework
 
 				IList<object[]> argsSentToSetTypingProps =
 					selection.GetArgumentsForCallsMadeOn(sel => sel.SetTypingProps(null));
-				Assert.AreEqual(1, argsSentToSetTypingProps.Count);
+				Assert.That(argsSentToSetTypingProps.Count, Is.EqualTo(1));
 				ITsTextProps ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
-				Assert.AreEqual(0, ttpSentToSetTypingProps.StrPropCount);
-				Assert.AreEqual(1, ttpSentToSetTypingProps.IntPropCount);
+				Assert.That(ttpSentToSetTypingProps.StrPropCount, Is.EqualTo(0));
+				Assert.That(ttpSentToSetTypingProps.IntPropCount, Is.EqualTo(1));
 				int nVar;
-				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+				Assert.That(ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar), Is.EqualTo(911));
 			}
 		}
 
@@ -196,12 +196,12 @@ namespace SIL.FieldWorks.Common.Framework
 
 				IList<object[]> argsSentToSetTypingProps =
 					selection.GetArgumentsForCallsMadeOn(sel => sel.SetTypingProps(null));
-				Assert.AreEqual(1, argsSentToSetTypingProps.Count);
+				Assert.That(argsSentToSetTypingProps.Count, Is.EqualTo(1));
 				ITsTextProps ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
-				Assert.AreEqual(0, ttpSentToSetTypingProps.StrPropCount);
-				Assert.AreEqual(1, ttpSentToSetTypingProps.IntPropCount);
+				Assert.That(ttpSentToSetTypingProps.StrPropCount, Is.EqualTo(0));
+				Assert.That(ttpSentToSetTypingProps.IntPropCount, Is.EqualTo(1));
 				int nVar;
-				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+				Assert.That(ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar), Is.EqualTo(911));
 			}
 		}
 
@@ -233,13 +233,13 @@ namespace SIL.FieldWorks.Common.Framework
 
 				IList<object[]> argsSentToSetTypingProps =
 					selection.GetArgumentsForCallsMadeOn(sel => sel.SetTypingProps(null));
-				Assert.AreEqual(1, argsSentToSetTypingProps.Count);
+				Assert.That(argsSentToSetTypingProps.Count, Is.EqualTo(1));
 				ITsTextProps ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
-				Assert.AreEqual(1, ttpSentToSetTypingProps.StrPropCount);
-				Assert.AreEqual(1, ttpSentToSetTypingProps.IntPropCount);
+				Assert.That(ttpSentToSetTypingProps.StrPropCount, Is.EqualTo(1));
+				Assert.That(ttpSentToSetTypingProps.IntPropCount, Is.EqualTo(1));
 				int nVar;
-				Assert.AreEqual("Italics", ttpSentToSetTypingProps.GetStrPropValue((int)FwTextPropType.ktptNamedStyle));
-				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+				Assert.That(ttpSentToSetTypingProps.GetStrPropValue((int)FwTextPropType.ktptNamedStyle), Is.EqualTo("Italics"));
+				Assert.That(ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar), Is.EqualTo(911));
 			}
 		}
 
@@ -267,12 +267,12 @@ namespace SIL.FieldWorks.Common.Framework
 
 				IList<object[]> argsSentToSetTypingProps =
 					selection.GetArgumentsForCallsMadeOn(sel => sel.SetTypingProps(null));
-				Assert.AreEqual(1, argsSentToSetTypingProps.Count);
+				Assert.That(argsSentToSetTypingProps.Count, Is.EqualTo(1));
 				ITsTextProps ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
-				Assert.AreEqual(0, ttpSentToSetTypingProps.StrPropCount);
-				Assert.AreEqual(1, ttpSentToSetTypingProps.IntPropCount);
+				Assert.That(ttpSentToSetTypingProps.StrPropCount, Is.EqualTo(0));
+				Assert.That(ttpSentToSetTypingProps.IntPropCount, Is.EqualTo(1));
 				int nVar;
-				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+				Assert.That(ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar), Is.EqualTo(911));
 			}
 		}
 
@@ -303,13 +303,13 @@ namespace SIL.FieldWorks.Common.Framework
 
 				IList<object[]> argsSentToSetTypingProps =
 					selection.GetArgumentsForCallsMadeOn(sel => sel.SetTypingProps(null));
-				Assert.AreEqual(1, argsSentToSetTypingProps.Count);
+				Assert.That(argsSentToSetTypingProps.Count, Is.EqualTo(1));
 				ITsTextProps ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
-				Assert.AreEqual(1, ttpSentToSetTypingProps.StrPropCount);
-				Assert.AreEqual(1, ttpSentToSetTypingProps.IntPropCount);
+				Assert.That(ttpSentToSetTypingProps.StrPropCount, Is.EqualTo(1));
+				Assert.That(ttpSentToSetTypingProps.IntPropCount, Is.EqualTo(1));
 				int nVar;
-				Assert.AreEqual("Italics", ttpSentToSetTypingProps.GetStrPropValue((int)FwTextPropType.ktptNamedStyle));
-				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+				Assert.That(ttpSentToSetTypingProps.GetStrPropValue((int)FwTextPropType.ktptNamedStyle), Is.EqualTo("Italics"));
+				Assert.That(ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar), Is.EqualTo(911));
 			}
 		}
 
@@ -337,12 +337,12 @@ namespace SIL.FieldWorks.Common.Framework
 
 				IList<object[]> argsSentToSetTypingProps =
 					selection.GetArgumentsForCallsMadeOn(sel => sel.SetTypingProps(null));
-				Assert.AreEqual(1, argsSentToSetTypingProps.Count);
+				Assert.That(argsSentToSetTypingProps.Count, Is.EqualTo(1));
 				ITsTextProps ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
-				Assert.AreEqual(0, ttpSentToSetTypingProps.StrPropCount);
-				Assert.AreEqual(1, ttpSentToSetTypingProps.IntPropCount);
+				Assert.That(ttpSentToSetTypingProps.StrPropCount, Is.EqualTo(0));
+				Assert.That(ttpSentToSetTypingProps.IntPropCount, Is.EqualTo(1));
 				int nVar;
-				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+				Assert.That(ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar), Is.EqualTo(911));
 			}
 		}
 
@@ -370,12 +370,12 @@ namespace SIL.FieldWorks.Common.Framework
 
 				IList<object[]> argsSentToSetTypingProps =
 					selection.GetArgumentsForCallsMadeOn(sel => sel.SetTypingProps(null));
-				Assert.AreEqual(1, argsSentToSetTypingProps.Count);
+				Assert.That(argsSentToSetTypingProps.Count, Is.EqualTo(1));
 				ITsTextProps ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
-				Assert.AreEqual(0, ttpSentToSetTypingProps.StrPropCount);
-				Assert.AreEqual(1, ttpSentToSetTypingProps.IntPropCount);
+				Assert.That(ttpSentToSetTypingProps.StrPropCount, Is.EqualTo(0));
+				Assert.That(ttpSentToSetTypingProps.IntPropCount, Is.EqualTo(1));
 				int nVar;
-				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+				Assert.That(ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar), Is.EqualTo(911));
 			}
 		}
 
@@ -404,12 +404,12 @@ namespace SIL.FieldWorks.Common.Framework
 
 				IList<object[]> argsSentToSetTypingProps =
 					selection.GetArgumentsForCallsMadeOn(sel => sel.SetTypingProps(null));
-				Assert.AreEqual(1, argsSentToSetTypingProps.Count);
+				Assert.That(argsSentToSetTypingProps.Count, Is.EqualTo(1));
 				ITsTextProps ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
-				Assert.AreEqual(0, ttpSentToSetTypingProps.StrPropCount);
-				Assert.AreEqual(1, ttpSentToSetTypingProps.IntPropCount);
+				Assert.That(ttpSentToSetTypingProps.StrPropCount, Is.EqualTo(0));
+				Assert.That(ttpSentToSetTypingProps.IntPropCount, Is.EqualTo(1));
 				int nVar;
-				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+				Assert.That(ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar), Is.EqualTo(911));
 			}
 		}
 
@@ -438,12 +438,12 @@ namespace SIL.FieldWorks.Common.Framework
 
 				IList<object[]> argsSentToSetTypingProps =
 					selection.GetArgumentsForCallsMadeOn(sel => sel.SetTypingProps(null));
-				Assert.AreEqual(1, argsSentToSetTypingProps.Count);
+				Assert.That(argsSentToSetTypingProps.Count, Is.EqualTo(1));
 				ITsTextProps ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
-				Assert.AreEqual(0, ttpSentToSetTypingProps.StrPropCount);
-				Assert.AreEqual(1, ttpSentToSetTypingProps.IntPropCount);
+				Assert.That(ttpSentToSetTypingProps.StrPropCount, Is.EqualTo(0));
+				Assert.That(ttpSentToSetTypingProps.IntPropCount, Is.EqualTo(1));
 				int nVar;
-				Assert.AreEqual(911, ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar));
+				Assert.That(ttpSentToSetTypingProps.GetIntPropValues((int)FwTextPropType.ktptWs, out nVar), Is.EqualTo(911));
 			}
 		}
 
@@ -473,7 +473,7 @@ namespace SIL.FieldWorks.Common.Framework
 	//			selection.AssertWasNotCalled(sel => sel.SetTypingProps(null));
 				IList<object[]> argsSentToSetTypingProps =
 					selection.GetArgumentsForCallsMadeOn(sel => sel.SetTypingProps(null));
-				Assert.AreEqual(0, argsSentToSetTypingProps.Count);
+				Assert.That(argsSentToSetTypingProps.Count, Is.EqualTo(0));
 			}
 		}
 
@@ -493,10 +493,10 @@ namespace SIL.FieldWorks.Common.Framework
 			mockHyperlinkStyle.Stub(x => x.InUse).Return(true);
 			mockStylesheet.Stub(x => x.FindStyle(StyleServices.Hyperlink)).Return(mockHyperlinkStyle);
 
-			Assert.IsTrue(FwEditingHelper.AddHyperlink(strBldr, Cache.DefaultAnalWs, "Click Here",
-				"www.google.com", mockStylesheet));
-			Assert.AreEqual(1, strBldr.RunCount);
-			Assert.AreEqual("Click Here", strBldr.get_RunText(0));
+			Assert.That(FwEditingHelper.AddHyperlink(strBldr, Cache.DefaultAnalWs, "Click Here",
+				"www.google.com", mockStylesheet), Is.True);
+			Assert.That(strBldr.RunCount, Is.EqualTo(1));
+			Assert.That(strBldr.get_RunText(0), Is.EqualTo("Click Here"));
 			ITsTextProps props = strBldr.get_Properties(0);
 			LcmTestHelper.VerifyHyperlinkPropsAreCorrect(props, Cache.DefaultAnalWs, "www.google.com");
 		}

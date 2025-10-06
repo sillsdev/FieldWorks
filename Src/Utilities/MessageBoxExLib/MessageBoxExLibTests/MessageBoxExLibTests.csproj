@@ -43,7 +43,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="FormsTester" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="netstandard" />
   </ItemGroup>

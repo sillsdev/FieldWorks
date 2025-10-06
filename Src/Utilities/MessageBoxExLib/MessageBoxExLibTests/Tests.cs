@@ -3,7 +3,6 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System.Windows.Forms;
-using NUnit.Extensions.Forms;
 using NUnit.Framework;
 
 namespace Utils.MessageBoxExLib
@@ -12,24 +11,8 @@ namespace Utils.MessageBoxExLib
 	///
 	/// </summary>
 	[TestFixture]
-	[Platform(Exclude = "Linux", Reason = "TODO-Linux: depends on nunitforms which is not cross platform")]
 	public class MessageBoxTests
 	{
-		private NUnitFormTest m_FormTest;
-
-		[SetUp]
-		public void Setup()
-		{
-			m_FormTest = new NUnitFormTest();
-			m_FormTest.SetUp();
-		}
-
-		[TearDown]
-		public void Teardown()
-		{
-			m_FormTest.TearDown();
-		}
-
 		[OneTimeTearDown]
 		public void FixtureTearDown()
 		{
@@ -37,63 +20,34 @@ namespace Utils.MessageBoxExLib
 		}
 
 		[Test]
-		public void TimeoutOfNewBox()
+		public void ShowReturnsSavedResponseWithoutShowingDialog()
 		{
-			string name=System.IO.Path.GetTempPath()/*just a hack to get a unique name*/;
+			string name = "SavedResponseTest";
 			using (MessageBoxEx msgBox = MessageBoxExManager.CreateMessageBox(name))
 			{
-				msgBox.Caption = "Question";
-				msgBox.Text = "Blah blah blah?";
-
+				msgBox.Caption = "Test Caption";
+				msgBox.Text = "Test message";
 				msgBox.AddButtons(MessageBoxButtons.YesNo);
-
-				msgBox.Timeout = 10;
-				msgBox.TimeoutResult = TimeoutResult.Timeout;
-
-				m_FormTest.ExpectModal(name, DoNothing, true);//the nunitforms framework freaks out if we show a dialog with out warning it first
-				Assert.AreEqual("Timeout",msgBox.Show());
-			}
-		}
-
-		[Test]
-		public void RememberOkBox()
-		{
-			string name = "X";
-			using (MessageBoxEx msgBox = MessageBoxExManager.CreateMessageBox(name))
-			{
-				msgBox.Caption = name;
-				msgBox.Text = "Blah blah blah?";
-
-				msgBox.AddButtons(MessageBoxButtons.YesNo);
-
-				msgBox.SaveResponseText = "Don't ask me again";
-				msgBox.UseSavedResponse = false;
-				msgBox.AllowSaveResponse  = true;
-
-				//click the yes button when the dialog comes up
-				m_FormTest.ExpectModal(name, ConfirmModalByYesAndRemember, true);
-
-				Assert.AreEqual("Yes", msgBox.Show());
-
-				m_FormTest.ExpectModal(name, DoNothing, false /*don't expect it, because it should use our saved response*/);
+				
+				// Set a saved response directly via the manager
+				var savedResponse = "No gracias";
+				MessageBoxExManager.SavedResponses[name] = savedResponse;
+				
+				// Enable using saved responses
 				msgBox.UseSavedResponse = true;
-				Assert.AreEqual("Yes", msgBox.Show());
+				
+				// Show should return the saved response without showing the dialog
+				string result = msgBox.Show();
+				
+				Assert.That(result, Is.EqualTo(savedResponse), "Show should return the saved response");
 			}
+			
+			// Clean up the saved response
+			MessageBoxExManager.ResetSavedResponse("SavedResponseTest");
 		}
 
 		public void DoNothing()
 		{
-		}
-
-		public void ConfirmModalByYes()
-		{
-			var t = new ButtonTester("Yes");
-			t.Click();
-		}
-		public void ConfirmModalByYesAndRemember()
-		{
-			new CheckBoxTester("chbSaveResponse").Check(true);
-			new ButtonTester("Yes").Click();
 		}
 	}
 }

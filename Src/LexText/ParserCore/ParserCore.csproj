@@ -9,48 +9,41 @@
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <DebugType>full</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DefineConstants>TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>true</Optimize>
     <DebugType>full</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <DebugType>full</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DefineConstants>TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>true</Optimize>
     <DebugType>full</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugType>full</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <DebugSymbols>true</DebugSymbols>
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>full</DebugType>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
@@ -62,27 +55,22 @@
     <PackageReference Include="SIL.Machine.Morphology.HermitCrab" Version="3.7.4" />
     <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
-    
+    <PackageReference Include="SIL.Paradigm.GAFAWSAnalysis" Version="1.0.2" />
   </ItemGroup>
-
   <ItemGroup>
     <Reference Include="ApplicationTransforms" />
-    <Reference Include="GAFAWSAnalysis">
-      <HintPath>..\..\..\DistFiles\GAFAWSAnalysis.dll</HintPath>
-    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="netstandard" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="../../Utilities/XMLUtils/XMLUtils.csproj" />
     <ProjectReference Include="../../XCore/xCoreInterfaces/xCoreInterfaces.csproj" />
     <ProjectReference Include="XAmpleManagedWrapper/XAmpleManagedWrapper.csproj" />
   </ItemGroup>
-
-
   <ItemGroup>
-    <Compile Remove="ParserCoreTests/**" /><None Remove="ParserCoreTests/**" />
-    <Compile Remove="XAmpleManagedWrapper/**" /><None Remove="XAmpleManagedWrapper/**" />
+    <Compile Remove="ParserCoreTests/**" />
+    <None Remove="ParserCoreTests/**" />
+    <Compile Remove="XAmpleManagedWrapper/**" />
+    <None Remove="XAmpleManagedWrapper/**" />
   </ItemGroup>
 </Project>

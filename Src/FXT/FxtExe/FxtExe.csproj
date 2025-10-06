@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>Fxt</AssemblyName>
     <RootNamespace>SIL.FieldWorks.Common</RootNamespace>
@@ -42,7 +42,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="BasicUtils" />
     <Reference Include="netstandard" />
   </ItemGroup>
 

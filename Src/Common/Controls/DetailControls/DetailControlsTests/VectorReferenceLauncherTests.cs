@@ -88,8 +88,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private ILexEntryRef AddComponentEntryRef(ILexEntry mainEntry, ILexEntry secondaryEntry)
 		{
-			Assert.IsNotNull(secondaryEntry.EntryRefsOS,
-							 "Entry is not set up correctly.");
+			Assert.That(secondaryEntry.EntryRefsOS, Is.Not.Null, "Entry is not set up correctly.");
 			if (secondaryEntry.EntryRefsOS.Count > 0)
 			{
 				var existingLer = secondaryEntry.EntryRefsOS[0];
@@ -106,8 +105,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private ILexEntryRef AddPrimaryEntryRef(ILexEntry mainEntry, ILexEntry secondaryEntry)
 		{
-			Assert.IsNotNull(secondaryEntry.EntryRefsOS,
-							 "Entry is not set up correctly.");
+			Assert.That(secondaryEntry.EntryRefsOS, Is.Not.Null, "Entry is not set up correctly.");
 			if (secondaryEntry.EntryRefsOS.Count > 0)
 			{
 				var existingLer = secondaryEntry.EntryRefsOS[0];
@@ -144,12 +142,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			MockLauncher.AddItem(testItem);
 
 			// Verify results
-			Assert.AreEqual(2, obj.ComponentLexemesRS.Count,
-				"Wrong number of ComponentLexemes.");
-			Assert.IsTrue(obj.ComponentLexemesRS.ToHvoArray().Contains(testItem.Hvo),
-				"testItem should be in ComponentLexemes property");
-			Assert.AreEqual(0, mainEntry.EntryRefsOS.Count,
-				"Shouldn't ever have any entry refs here.");
+			Assert.That(obj.ComponentLexemesRS.Count, Is.EqualTo(2), "Wrong number of ComponentLexemes.");
+			Assert.That(obj.ComponentLexemesRS.ToHvoArray().Contains(testItem.Hvo), Is.True, "testItem should be in ComponentLexemes property");
+			Assert.That(mainEntry.EntryRefsOS.Count, Is.EqualTo(0), "Shouldn't ever have any entry refs here.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -177,12 +172,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			MockLauncher.SetItems(new List<ICmObject> { testItem, testItem2 });
 
 			// Verify results
-			Assert.AreEqual(2, obj.ComponentLexemesRS.Count,
-				"Wrong number of ComponentLexemes.");
-			Assert.IsTrue(obj.ComponentLexemesRS.ToHvoArray().Contains(testItem.Hvo),
-				"testItem should be in ComponentLexemes property");
-			Assert.IsTrue(obj.ComponentLexemesRS.ToHvoArray().Contains(testItem2.Hvo),
-				"testItem2 should be in ComponentLexemes property");
+			Assert.That(obj.ComponentLexemesRS.Count, Is.EqualTo(2), "Wrong number of ComponentLexemes.");
+			Assert.That(obj.ComponentLexemesRS.ToHvoArray().Contains(testItem.Hvo), Is.True, "testItem should be in ComponentLexemes property");
+			Assert.That(obj.ComponentLexemesRS.ToHvoArray().Contains(testItem2.Hvo), Is.True, "testItem2 should be in ComponentLexemes property");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -207,14 +199,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			MockLauncher.SetItems(new List<ICmObject>());
 
 			// Verify results
-			Assert.AreEqual(1, secondaryEntry.EntryRefsOS.Count,
-				"Should only have one entry ref object.");
-			Assert.AreEqual(0, secondaryEntry.EntryRefsOS[0].ComponentLexemesRS.Count,
-				"Shouldn't have any ComponentLexemes left.");
-			Assert.AreEqual(0, secondaryEntry.EntryRefsOS[0].PrimaryLexemesRS.Count,
-				"Shouldn't have any PrimaryLexemes left.");
-			Assert.AreEqual(0, mainEntry.EntryRefsOS.Count,
-				"Shouldn't ever have any entry refs here.");
+			Assert.That(secondaryEntry.EntryRefsOS.Count, Is.EqualTo(1), "Should only have one entry ref object.");
+			Assert.That(secondaryEntry.EntryRefsOS[0].ComponentLexemesRS.Count, Is.EqualTo(0), "Shouldn't have any ComponentLexemes left.");
+			Assert.That(secondaryEntry.EntryRefsOS[0].PrimaryLexemesRS.Count, Is.EqualTo(0), "Shouldn't have any PrimaryLexemes left.");
+			Assert.That(mainEntry.EntryRefsOS.Count, Is.EqualTo(0), "Shouldn't ever have any entry refs here.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -244,13 +232,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			MockLauncher.SetItems(new List<ICmObject> { entry1, entry3 });
 
 			// Verify results
-			Assert.AreEqual(1, secondaryEntry.EntryRefsOS.Count,
-				"Should only have one entry ref object.");
+			Assert.That(secondaryEntry.EntryRefsOS.Count, Is.EqualTo(1), "Should only have one entry ref object.");
 			var result = secondaryEntry.EntryRefsOS[0].ComponentLexemesRS;
-			Assert.AreEqual(2, result.Count,
-				"Should have two ComponentLexemes left.");
-			Assert.AreEqual(0, secondaryEntry.EntryRefsOS[0].PrimaryLexemesRS.Count,
-				"Shouldn't have any PrimaryLexemes.");
+			Assert.That(result.Count, Is.EqualTo(2), "Should have two ComponentLexemes left.");
+			Assert.That(secondaryEntry.EntryRefsOS[0].PrimaryLexemesRS.Count, Is.EqualTo(0), "Shouldn't have any PrimaryLexemes.");
 			Assert.False(result.ToHvoArray().Contains(entry2.Hvo),
 				"The entry2 object should have been removed from ComponentLexemes.");
 		}
@@ -279,26 +264,21 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				"ComponentLexemesRS", m_wsAnalStr);
 
 			// Check pre-condition
-			Assert.AreEqual(1, obj.PrimaryLexemesRS.Count,
-				"There should be one PrimaryLexeme.");
-			Assert.AreEqual(entry3.Hvo, obj.PrimaryLexemesRS[0].Hvo,
-				"Wrong lexeme in PrimaryLexemes.");
+			Assert.That(obj.PrimaryLexemesRS.Count, Is.EqualTo(1), "There should be one PrimaryLexeme.");
+			Assert.That(obj.PrimaryLexemesRS[0].Hvo, Is.EqualTo(entry3.Hvo), "Wrong lexeme in PrimaryLexemes.");
 
 			// SUT
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			MockLauncher.SetItems(new List<ICmObject> { entry1, entry2 });
 
 			// Verify results
-			Assert.AreEqual(1, secondaryEntry.EntryRefsOS.Count,
-				"Should only have one entry ref object.");
+			Assert.That(secondaryEntry.EntryRefsOS.Count, Is.EqualTo(1), "Should only have one entry ref object.");
 			var compResult = secondaryEntry.EntryRefsOS[0].ComponentLexemesRS;
-			Assert.AreEqual(2, compResult.Count,
-				"Should have two ComponentLexemes left.");
+			Assert.That(compResult.Count, Is.EqualTo(2), "Should have two ComponentLexemes left.");
 			Assert.False(compResult.ToHvoArray().Contains(entry3.Hvo),
 				"The entry3 object should have been removed from ComponentLexemes.");
 			var primResult = secondaryEntry.EntryRefsOS[0].PrimaryLexemesRS;
-			Assert.AreEqual(0, primResult.Count,
-				"Deleting entry3 object from ComponentLexemes, should remove it from PrimaryLexemes.");
+			Assert.That(primResult.Count, Is.EqualTo(0), "Deleting entry3 object from ComponentLexemes, should remove it from PrimaryLexemes.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -325,26 +305,21 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				"ComponentLexemesRS", m_wsAnalStr);
 
 			// Check pre-condition
-			Assert.AreEqual(1, obj.PrimaryLexemesRS.Count,
-				"There should be one PrimaryLexeme.");
-			Assert.AreEqual(entry2.Hvo, obj.PrimaryLexemesRS[0].Hvo,
-				"Wrong lexeme in PrimaryLexemes.");
+			Assert.That(obj.PrimaryLexemesRS.Count, Is.EqualTo(1), "There should be one PrimaryLexeme.");
+			Assert.That(obj.PrimaryLexemesRS[0].Hvo, Is.EqualTo(entry2.Hvo), "Wrong lexeme in PrimaryLexemes.");
 
 			// SUT
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			MockLauncher.SetItems(new List<ICmObject> { entry1, entry2 });
 
 			// Verify results
-			Assert.AreEqual(1, secondaryEntry.EntryRefsOS.Count,
-				"Should only have one entry ref object.");
+			Assert.That(secondaryEntry.EntryRefsOS.Count, Is.EqualTo(1), "Should only have one entry ref object.");
 			var compResult = secondaryEntry.EntryRefsOS[0].ComponentLexemesRS;
-			Assert.AreEqual(2, compResult.Count,
-				"Should have two ComponentLexemes left.");
+			Assert.That(compResult.Count, Is.EqualTo(2), "Should have two ComponentLexemes left.");
 			Assert.False(compResult.ToHvoArray().Contains(entry3.Hvo),
 				"The entry3 object should have been removed from ComponentLexemes.");
 			var primResult = secondaryEntry.EntryRefsOS[0].PrimaryLexemesRS;
-			Assert.AreEqual(1, primResult.Count,
-				"Deleting entry3 object from ComponentLexemes, should not remove existing PrimaryLexeme.");
+			Assert.That(primResult.Count, Is.EqualTo(1), "Deleting entry3 object from ComponentLexemes, should not remove existing PrimaryLexeme.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -370,30 +345,24 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				"ComponentLexemesRS", m_wsAnalStr);
 
 			// Check pre-condition
-			Assert.AreEqual(1, obj.PrimaryLexemesRS.Count,
-				"There should be one PrimaryLexeme.");
-			Assert.AreEqual(entry2.Hvo, obj.PrimaryLexemesRS[0].Hvo,
-				"Wrong lexeme in PrimaryLexemes.");
+			Assert.That(obj.PrimaryLexemesRS.Count, Is.EqualTo(1), "There should be one PrimaryLexeme.");
+			Assert.That(obj.PrimaryLexemesRS[0].Hvo, Is.EqualTo(entry2.Hvo), "Wrong lexeme in PrimaryLexemes.");
 
 			// SUT
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			MockLauncher.SetItems(new List<ICmObject> { entry2, entry3 });
 
 			// Verify results
-			Assert.AreEqual(1, secondaryEntry.EntryRefsOS.Count,
-				"Should only have one entry ref object.");
+			Assert.That(secondaryEntry.EntryRefsOS.Count, Is.EqualTo(1), "Should only have one entry ref object.");
 			var compResult = secondaryEntry.EntryRefsOS[0].ComponentLexemesRS;
-			Assert.AreEqual(2, compResult.Count,
-				"Should have two ComponentLexemes left.");
+			Assert.That(compResult.Count, Is.EqualTo(2), "Should have two ComponentLexemes left.");
 			Assert.False(compResult.ToHvoArray().Contains(entry1.Hvo),
 				"The entry1 object should have been removed from ComponentLexemes.");
 			Assert.True(compResult.ToHvoArray().Contains(entry3.Hvo),
 				"The entry3 object should have been added to ComponentLexemes.");
 			var primResult = secondaryEntry.EntryRefsOS[0].PrimaryLexemesRS;
-			Assert.AreEqual(1, primResult.Count,
-				"Modifications of ComponentLexemes, should not affect PrimaryLexemes.");
-			Assert.AreEqual(entry2.Hvo, primResult[0].Hvo,
-				"Entry2 object should be in PrimaryLexemes.");
+			Assert.That(primResult.Count, Is.EqualTo(1), "Modifications of ComponentLexemes, should not affect PrimaryLexemes.");
+			Assert.That(primResult[0].Hvo, Is.EqualTo(entry2.Hvo), "Entry2 object should be in PrimaryLexemes.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -420,28 +389,22 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				"ComponentLexemesRS", m_wsAnalStr);
 
 			// Check pre-condition
-			Assert.AreEqual(1, obj.PrimaryLexemesRS.Count,
-				"There should be one PrimaryLexeme.");
-			Assert.AreEqual(entry2.Hvo, obj.PrimaryLexemesRS[0].Hvo,
-				"Wrong lexeme in PrimaryLexemes.");
+			Assert.That(obj.PrimaryLexemesRS.Count, Is.EqualTo(1), "There should be one PrimaryLexeme.");
+			Assert.That(obj.PrimaryLexemesRS[0].Hvo, Is.EqualTo(entry2.Hvo), "Wrong lexeme in PrimaryLexemes.");
 
 			// SUT
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			MockLauncher.SetItems(new List<ICmObject> { entry2, entry3 });
 
 			// Verify results
-			Assert.AreEqual(1, secondaryEntry.EntryRefsOS.Count,
-				"Should only have one entry ref object.");
+			Assert.That(secondaryEntry.EntryRefsOS.Count, Is.EqualTo(1), "Should only have one entry ref object.");
 			var compResult = secondaryEntry.EntryRefsOS[0].ComponentLexemesRS;
-			Assert.AreEqual(2, compResult.Count,
-				"Should have two ComponentLexemes left.");
+			Assert.That(compResult.Count, Is.EqualTo(2), "Should have two ComponentLexemes left.");
 			Assert.False(compResult.ToHvoArray().Contains(entry1.Hvo),
 				"The entry1 object should have been removed from ComponentLexemes.");
 			var primResult = secondaryEntry.EntryRefsOS[0].PrimaryLexemesRS;
-			Assert.AreEqual(1, primResult.Count,
-				"Deleting entry1 object from ComponentLexemes, should not affect PrimaryLexemes.");
-			Assert.AreEqual(entry2.Hvo, primResult[0].Hvo,
-				"Entry2 object should be in PrimaryLexemes.");
+			Assert.That(primResult.Count, Is.EqualTo(1), "Deleting entry1 object from ComponentLexemes, should not affect PrimaryLexemes.");
+			Assert.That(primResult[0].Hvo, Is.EqualTo(entry2.Hvo), "Entry2 object should be in PrimaryLexemes.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -467,28 +430,23 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				"ComponentLexemesRS", m_wsAnalStr);
 
 			// Check pre-condition
-			Assert.AreEqual(1, obj.PrimaryLexemesRS.Count,
-				"There should be one PrimaryLexeme.");
-			Assert.AreEqual(entry2.Hvo, obj.PrimaryLexemesRS[0].Hvo,
-				"Wrong lexeme in PrimaryLexemes.");
+			Assert.That(obj.PrimaryLexemesRS.Count, Is.EqualTo(1), "There should be one PrimaryLexeme.");
+			Assert.That(obj.PrimaryLexemesRS[0].Hvo, Is.EqualTo(entry2.Hvo), "Wrong lexeme in PrimaryLexemes.");
 
 			// SUT
 			Cache.ActionHandlerAccessor.EndUndoTask();
 			MockLauncher.SetItems(new List<ICmObject> { entry3 });
 
 			// Verify results
-			Assert.AreEqual(1, secondaryEntry.EntryRefsOS.Count,
-				"Should only have one entry ref object.");
+			Assert.That(secondaryEntry.EntryRefsOS.Count, Is.EqualTo(1), "Should only have one entry ref object.");
 			var compResult = secondaryEntry.EntryRefsOS[0].ComponentLexemesRS;
-			Assert.AreEqual(1, compResult.Count,
-				"Should only have one new ComponentLexeme left.");
+			Assert.That(compResult.Count, Is.EqualTo(1), "Should only have one new ComponentLexeme left.");
 			Assert.False(compResult.ToHvoArray().Contains(entry2.Hvo),
 				"The entry2 object should have been removed from ComponentLexemes.");
 			Assert.True(compResult.ToHvoArray().Contains(entry3.Hvo),
 				"The entry3 object should have been added to ComponentLexemes.");
 			var primResult = secondaryEntry.EntryRefsOS[0].PrimaryLexemesRS;
-			Assert.AreEqual(0, primResult.Count,
-				"Modifications of ComponentLexemes, should remove the one PrimaryLexeme.");
+			Assert.That(primResult.Count, Is.EqualTo(0), "Modifications of ComponentLexemes, should remove the one PrimaryLexeme.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -517,7 +475,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var targets = MockLauncher.Targets;
 
 			// Verify results
-			CollectionAssert.IsEmpty(targets, "Should return empty array");
+			Assert.That(targets, Is.Empty, "Should return empty array");
 		}
 	}
 
@@ -550,7 +508,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public void Initialize(LcmCache cache, ICmObject obj, int flid, string fieldName, string analysisWs)
 		{
 			Assert.That(obj, Is.Not.Null, "Must initialize with an object and flid.");
-			Assert.Greater(flid, 0, "Must initialize with an object and flid.");
+			Assert.That(flid, Is.GreaterThan(0), "Must initialize with an object and flid.");
 			Assert.That(fieldName, Is.Not.Null.Or.Empty, "Must initialize with a field name.");
 			Initialize(cache, obj, flid, fieldName, null, null, null, "", analysisWs);
 		}

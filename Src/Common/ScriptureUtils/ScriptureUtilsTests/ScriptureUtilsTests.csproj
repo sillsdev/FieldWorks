@@ -50,7 +50,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Utilities" />
     <Reference Include="netstandard" />
   </ItemGroup>
 

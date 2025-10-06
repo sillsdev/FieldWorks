@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			using (var logger = new SimpleLogger())
 			{
 				logger.WriteLine("Sample Text");
-				Assert.AreEqual("Sample Text" + Environment.NewLine, logger.Content);
+				Assert.That(logger.Content, Is.EqualTo("Sample Text" + Environment.NewLine));
 			}
 		}
 

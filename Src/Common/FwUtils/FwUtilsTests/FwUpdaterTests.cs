@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2021 SIL International
+﻿// Copyright (c) 2021-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -118,12 +118,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			var result = FwUpdater.Parse(xElt, baseURL);
 
-			Assert.AreEqual(version, result.Version.ToString());
-			Assert.AreEqual($"{baseURL}{key}", result.URL);
-			Assert.AreEqual(baseBuild, result.BaseBuild);
-			Assert.AreEqual(FwUpdate.Typ.Patch, result.InstallerType);
-			Assert.AreEqual(arch == 64, result.Is64Bit, $"Arch: {arch}");
-			Assert.AreEqual(mbSize, result.Size);
+			Assert.That(result.Version.ToString(), Is.EqualTo(version));
+			Assert.That(result.URL, Is.EqualTo($"{baseURL}{key}"));
+			Assert.That(result.BaseBuild, Is.EqualTo(baseBuild));
+			Assert.That(result.InstallerType, Is.EqualTo(FwUpdate.Typ.Patch));
+			Assert.That(result.Is64Bit, Is.EqualTo(arch == 64), $"Arch: {arch}");
+			Assert.That(result.Size, Is.EqualTo(mbSize));
 		}
 
 		[TestCase("https://test.s3.amazonaws.com/", "9.0.15.1", 316, 64, true, 536111222, 512)]
@@ -135,12 +135,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			var result = FwUpdater.Parse(xElt, baseURL);
 
-			Assert.AreEqual(version, result.Version.ToString());
-			Assert.AreEqual($"{baseURL}{key}", result.URL);
-			Assert.AreEqual(baseBuild, result.BaseBuild);
-			Assert.AreEqual(isOnline ? FwUpdate.Typ.Online : FwUpdate.Typ.Offline, result.InstallerType);
-			Assert.AreEqual(arch == 64, result.Is64Bit, $"Arch: {arch}");
-			Assert.AreEqual(mbSize, result.Size);
+			Assert.That(result.Version.ToString(), Is.EqualTo(version));
+			Assert.That(result.URL, Is.EqualTo($"{baseURL}{key}"));
+			Assert.That(result.BaseBuild, Is.EqualTo(baseBuild));
+			Assert.That(result.InstallerType, Is.EqualTo(isOnline ? FwUpdate.Typ.Online : FwUpdate.Typ.Offline));
+			Assert.That(result.Is64Bit, Is.EqualTo(arch == 64), $"Arch: {arch}");
+			Assert.That(result.Size, Is.EqualTo(mbSize));
 		}
 
 		[TestCase("jobs/FieldWorks-Win-all-Release-Patch/761/FieldWorks_9.1.1.7.6.1_b12_x64.msp")]
@@ -164,12 +164,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			var result = FwUpdater.Parse(xElt, baseURL);
 
-			Assert.AreEqual(version, result.Version.ToString());
-			Assert.AreEqual($"{baseURL}{key}", result.URL);
-			Assert.AreEqual(baseBuild, result.BaseBuild);
-			Assert.AreEqual(FwUpdate.Typ.Patch, result.InstallerType);
-			Assert.AreEqual(arch == 64, result.Is64Bit, $"Arch: {arch}");
-			Assert.AreEqual(mbSize, result.Size);
+			Assert.That(result.Version.ToString(), Is.EqualTo(version));
+			Assert.That(result.URL, Is.EqualTo($"{baseURL}{key}"));
+			Assert.That(result.BaseBuild, Is.EqualTo(baseBuild));
+			Assert.That(result.InstallerType, Is.EqualTo(FwUpdate.Typ.Patch));
+			Assert.That(result.Is64Bit, Is.EqualTo(arch == 64), $"Arch: {arch}");
+			Assert.That(result.Size, Is.EqualTo(mbSize));
 		}
 
 		[TestCase("https://downloads.languagetechnology.org/", "9.0.15.1", 316, 64, true, 536111222, 512)]
@@ -181,12 +181,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			var result = FwUpdater.Parse(xElt, baseURL);
 
-			Assert.AreEqual(version, result.Version.ToString());
-			Assert.AreEqual($"{baseURL}{key}", result.URL);
-			Assert.AreEqual(baseBuild, result.BaseBuild);
-			Assert.AreEqual(isOnline ? FwUpdate.Typ.Online : FwUpdate.Typ.Offline, result.InstallerType);
-			Assert.AreEqual(arch == 64, result.Is64Bit, $"Arch: {arch}");
-			Assert.AreEqual(mbSize, result.Size);
+			Assert.That(result.Version.ToString(), Is.EqualTo(version));
+			Assert.That(result.URL, Is.EqualTo($"{baseURL}{key}"));
+			Assert.That(result.BaseBuild, Is.EqualTo(baseBuild));
+			Assert.That(result.InstallerType, Is.EqualTo(isOnline ? FwUpdate.Typ.Online : FwUpdate.Typ.Offline));
+			Assert.That(result.Is64Bit, Is.EqualTo(arch == 64), $"Arch: {arch}");
+			Assert.That(result.Size, Is.EqualTo(mbSize));
 		}
 
 		[TestCase("fieldworks/9.1.1/FieldWorks9.1.1_Offline_x64.exe")]
@@ -207,11 +207,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			var result = FwUpdater.Parse(filename, baseURL);
 
-			Assert.AreEqual(version, result.Version.ToString());
-			Assert.AreEqual($"{baseURL}{filename}", result.URL);
-			Assert.AreEqual(0, result.BaseBuild, "not important at this point");
-			Assert.AreEqual(isOnline ? FwUpdate.Typ.Online : FwUpdate.Typ.Offline, result.InstallerType);
-			Assert.AreEqual(arch == 64, result.Is64Bit, $"Arch: {arch}");
+			Assert.That(result.Version.ToString(), Is.EqualTo(version));
+			Assert.That(result.URL, Is.EqualTo($"{baseURL}{filename}"));
+			Assert.That(result.BaseBuild, Is.EqualTo(0), "not important at this point");
+			Assert.That(result.InstallerType, Is.EqualTo(isOnline ? FwUpdate.Typ.Online : FwUpdate.Typ.Offline));
+			Assert.That(result.Is64Bit, Is.EqualTo(arch == 64), $"Arch: {arch}");
 		}
 
 		[Test]

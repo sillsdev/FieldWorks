@@ -37,6 +37,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Moq" Version="4.20.70" />
     <PackageReference Include="NDesk.DBus" Version="0.15.0" />
     <PackageReference Include="SIL.Core" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
@@ -50,7 +51,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Rhino.Mocks" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="netstandard" />

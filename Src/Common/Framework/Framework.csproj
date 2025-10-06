@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>Framework</AssemblyName>
@@ -9,35 +9,30 @@
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <DebugType>full</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DefineConstants>TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>true</Optimize>
     <DebugType>full</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <DebugType>full</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DefineConstants>TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>true</Optimize>
     <DebugType>full</DebugType>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
     <PackageReference Include="SIL.Core" Version="15.0.0-beta0117" />
@@ -47,14 +42,10 @@
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
     <PackageReference Include="SIL.Windows.Forms" Version="15.0.0-beta0117" />
     <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
-    
+    <PackageReference Include="Interop.IWshRuntimeLibrary" Version="1.0.1" />
   </ItemGroup>
-
   <ItemGroup>
     <Reference Include="Accessibility" />
-    <Reference Include="Interop.IWshRuntimeLibrary">
-      <HintPath>..\..\..\Bin\Interop.IWshRuntimeLibrary.dll</HintPath>
-    </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="System.Design" />
     <Reference Include="System.Drawing" />
@@ -63,7 +54,6 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="netstandard" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="../../FwCoreDlgs/FwCoreDlgControls/FwCoreDlgControls.csproj" />
     <ProjectReference Include="../../FwCoreDlgs/FwCoreDlgs.csproj" />
@@ -79,7 +69,8 @@
     <ProjectReference Include="../UIAdapterInterfaces/UIAdapterInterfaces.csproj" />
     <ProjectReference Include="../ViewsInterfaces/ViewsInterfaces.csproj" />
   </ItemGroup>
-
-
   <ItemGroup>
-    <Compile Remove="FrameworkTests/**" /><None Remove="FrameworkTests/**" /></ItemGroup></Project>
+    <Compile Remove="FrameworkTests/**" />
+    <None Remove="FrameworkTests/**" />
+  </ItemGroup>
+</Project>

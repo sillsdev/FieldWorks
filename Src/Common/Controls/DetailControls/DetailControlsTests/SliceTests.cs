@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				using (var slice = new Slice(control))
 				{
-			Assert.AreEqual(control, slice.Control);
+			Assert.That(slice.Control, Is.EqualTo(control));
 			Assert.NotNull(slice);
 		}
 			}
@@ -193,7 +193,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			m_DataTree.MakeGhostSlice(path, node, reuseMap, obj, m_Slice, flidEmptyProp, null, indent, ref insertPosition);
 			var ghostSlice = m_DataTree.Slices[0];
 			Assert.NotNull(ghostSlice);
-			Assert.AreEqual(ghostSlice.PropTable, m_Slice.PropTable);
+			Assert.That(m_Slice.PropTable, Is.EqualTo(ghostSlice.PropTable));
 		}
 	}
 }
