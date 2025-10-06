@@ -2,6 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using Gecko.WebIDL;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
@@ -557,15 +558,26 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// Write an link to an object.
+		/// Write a link to an object.
 		/// </summary>
 		private void WritePendingLink(string linkType, ICmObject obj)
 		{
 			if (obj == null)
 				return;
-			m_writer.WriteStartElement("link");
+			m_writer.WriteStartElement("item");
 			m_writer.WriteAttributeString("type", linkType);
-			m_writer.WriteString(obj.Guid.ToString());
+			m_writer.WriteAttributeString("guid", obj.Guid.ToString());
+			// Include name in case the guid isn't defined.
+			ITsString name;
+			if (obj is ICmPossibility possibility)
+			{
+				name = possibility.Name.BestAnalysisVernacularAlternative;
+			}
+			else
+			{
+				name = TsStringUtils.EmptyString(m_cache.DefaultAnalWs);
+			}
+			WriteLangAndContent(GetWsFromTsString(name), name);
 			m_writer.WriteEndElement();
 			pendingRecords.Enqueue(obj);
 		}

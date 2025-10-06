@@ -1138,6 +1138,8 @@ namespace SIL.FieldWorks.IText
 		private static void SetTextMetaAndMergeMedia(LcmCache cache, Interlineartext interlinText, ILgWritingSystemFactory wsFactory,
 			LCModel.IText newText, bool merging)
 		{
+			Dictionary<string, List<Property>> valueProperties = new Dictionary<string, List<Property>>();
+
 			if (interlinText.Items != null) // apparently it is null if there are no items.
 			{
 				foreach (var item in interlinText.Items)
@@ -1165,26 +1167,16 @@ namespace SIL.FieldWorks.IText
 						case "date-modified":
 							newText.DateModified = DateTime.Parse(item.Value, null, System.Globalization.DateTimeStyles.AssumeUniversal);
 							break;
+						case "genre":
+							SaveLink(interlinText.guid.ToString(), item.type, item.guid, valueProperties);
+							break;
 					}
 				}
 			}
 
 			// Process links and records.
-			Dictionary<string, List<Property>> valueProperties = new Dictionary<string, List<Property>>();
 			InterlinearRecords records = new InterlinearRecords();
 
-			if (interlinText.Links != null)
-			{
-				foreach (var link in interlinText.Links)
-				{
-					switch (link.type)
-					{
-						case "genre":
-							SaveLink(interlinText.guid.ToString(), link.type, link.Value, valueProperties);
-							break;
-					}
-				}
-			}
 			if (interlinText.records != null)
 			{
 				foreach (var record in interlinText.records)
@@ -1257,11 +1249,12 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		private static void SaveLinks(Interlineartext.Record record, Dictionary<string, List<Property>> valueProperties)
 		{
-			if (record.link != null)
+			if (record.item != null)
 			{
-				for (int i = 0; i < record.link.Length; i++)
+				for (int i = 0; i < record.item.Length; i++)
 				{
-					SaveLink(record.guid, record.link[i].type, record.link[i].Value, valueProperties);
+					if (record.item[i].guid != null)
+						SaveLink(record.guid, record.item[i].type, record.item[i].guid, valueProperties);
 				}
 			}
 		}

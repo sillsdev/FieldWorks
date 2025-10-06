@@ -111,8 +111,6 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 
 		private item[] itemField;
 
-		private link[] linkField;
-
 		private Record[] recordsField;
 
 		private Paragraph[] paragraphsField;
@@ -144,20 +142,6 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 		}
 
 		/// <remarks/>
-		[System.Xml.Serialization.XmlElementAttribute("link", IsNullable = true)]
-		public link[] Links
-		{
-			get
-			{
-				return this.linkField;
-			}
-			set
-			{
-				this.linkField = value;
-			}
-		}
-
-		/// <remarks/>
 		[System.Xml.Serialization.XmlArrayAttribute(Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
 		[System.Xml.Serialization.XmlArrayItemAttribute("record", Form = System.Xml.Schema.XmlSchemaForm.Unqualified, IsNullable = false)]
 		public Record[] records
@@ -178,55 +162,10 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 		[System.Diagnostics.DebuggerStepThroughAttribute()]
 		[System.ComponentModel.DesignerCategoryAttribute("code")]
 		[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
-		[System.Xml.Serialization.XmlRootAttribute(Namespace = "", IsNullable = true)]
-		public partial class link
-		{
-
-			private string typeField;
-
-			private string valueField;
-
-			/// <remarks/>
-			[System.Xml.Serialization.XmlAttributeAttribute()]
-			public string type
-			{
-				get
-				{
-					return this.typeField;
-				}
-				set
-				{
-					this.typeField = value;
-				}
-			}
-
-			/// <remarks/>
-			[System.Xml.Serialization.XmlTextAttribute()]
-			public string Value
-			{
-				get
-				{
-					return this.valueField;
-				}
-				set
-				{
-					this.valueField = value;
-				}
-			}
-		}
-
-		/// <remarks/>
-		[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0")]
-		[System.SerializableAttribute()]
-		[System.Diagnostics.DebuggerStepThroughAttribute()]
-		[System.ComponentModel.DesignerCategoryAttribute("code")]
-		[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
 		public partial class Record
 		{
 
 			private item[] itemField;
-
-			private link[] linkField;
 
 			private string guidField;
 
@@ -243,20 +182,6 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 				set
 				{
 					this.itemField = value;
-				}
-			}
-
-			/// <remarks/>
-			[System.Xml.Serialization.XmlElementAttribute("link", IsNullable = true)]
-			public link[] link
-			{
-				get
-				{
-					return this.linkField;
-				}
-				set
-				{
-					this.linkField = value;
 				}
 			}
 
@@ -399,6 +324,8 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 
 		private string typeField;
 
+		private string guidField;
+
 		private string langField;
 
 		private analysisStatusTypes analysisStatusField;
@@ -432,6 +359,20 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 			set
 			{
 				this.langField = value;
+			}
+		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public string guid
+		{
+			get
+			{
+				return this.guidField;
+			}
+			set
+			{
+				this.guidField = value;
 			}
 		}
 

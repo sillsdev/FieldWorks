@@ -7,7 +7,6 @@
 		  <xs:complexType>
 			<xs:sequence minOccurs="0" maxOccurs="unbounded">
 			  <xs:element ref="item" minOccurs="0" maxOccurs="unbounded"/>
-			  <xs:element ref="link" minOccurs="0" maxOccurs="unbounded"/>
 			  <xs:element name="records" minOccurs="0" maxOccurs="1">
 				  <xs:complexType>
 					  <xs:sequence minOccurs="1" maxOccurs="1">
@@ -15,10 +14,9 @@
 							  <xs:complexType>
 								  <xs:sequence>
 									  <xs:element ref="item" minOccurs="0" maxOccurs="unbounded"/>
-									  <xs:element ref="link" minOccurs="0" maxOccurs="unbounded"/>
 								  </xs:sequence>
 								  <xs:attribute name="guid" type="xs:string" use="required"/>
-								  <xs:attribute name="type" type="xs:string" use="required"/>
+								  <xs:attribute name="type" type="recordTypes" use="required"/>
 							  </xs:complexType>
 						  </xs:element>
 					  </xs:sequence>
@@ -143,17 +141,9 @@
 	  <xs:simpleContent>
 		<xs:extension base="xs:string">
 		  <xs:attribute name="type" type="itemTypes" use="required"/>
+		  <xs:attribute name="guid" type="xs:string" use="optional"/>
 		  <xs:attribute name="lang" type="xs:string" use="required"/>
 		  <xs:attribute name="analysisStatus" type="analysisStatusTypes" use="optional"/>
-		</xs:extension>
-	  </xs:simpleContent>
-	</xs:complexType>
-  </xs:element>
-  <xs:element name="link" nillable="true">
-	<xs:complexType>
-	  <xs:simpleContent>
-		<xs:extension base="xs:string">
-		  <xs:attribute name="type" type="xs:string" use="required"/>
 		</xs:extension>
 	  </xs:simpleContent>
 	</xs:complexType>
@@ -179,7 +169,18 @@
   <xs:simpleType name="itemTypes">
 	<xs:union memberTypes="knownItemTypes xs:string"/>
   </xs:simpleType>
-  <xs:simpleType name="morphTypes">
+	<xs:simpleType name="knownRecordTypes">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Location"/>
+			<xs:enumeration value="NotebookRecord"/>
+			<xs:enumeration value="Person"/>
+			<xs:enumeration value="Possibility"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="recordTypes">
+		<xs:union memberTypes="knownRecordTypes xs:string"/>
+	</xs:simpleType>
+	<xs:simpleType name="morphTypes">
 	<xs:restriction base="xs:string">
 	  <xs:enumeration value="particle"/>
 	  <xs:enumeration value="infix"/>
