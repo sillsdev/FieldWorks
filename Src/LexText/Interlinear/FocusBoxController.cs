@@ -316,7 +316,19 @@ namespace SIL.FieldWorks.IText
 		{
 			if (IsDisposed)
 				return false; // result is not currently used, not sure what it should be.
-			InterlinWordControl.MakeDefaultSelection();
+			if (InterlinWordControl != null)
+			{
+				InterlinWordControl.MakeDefaultSelection();
+			}
+			else
+			{
+				// It wasn't ready yet. Try once more later.
+				m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, _ =>
+				{
+					InterlinWordControl?.MakeDefaultSelection();
+					return true;
+				});
+			}
 			return true;
 		}
 
