@@ -821,16 +821,22 @@ namespace SIL.FieldWorks.IText
 			string genre2Name = "genre2";
 			string genre3Name = "genre3";
 			//an interliner text example xml string
-			string xml = "<document><interlinear-text guid=\"" + textGuid + "\">\n" +
-			"<item type=\"title\" lang=\"en\">" + title + "</item>\n" +
-			"<item type=\"genre\" guid=\"" + genre1Guid + "\" lang=\"en\">" + genre1Name + "</item>\n" +
-			"<item type=\"genre\" guid=\"" + genre3Guid + "\" lang=\"en\">" + "</item>\n" +
-			"<objects>\n" +
-			"<object type=\"Possibility\" guid=\"" + genre1Guid + "\"><item type=\"name\" lang=\"en\">" + genre1Name + "</item></object>\n" +
-			"<object type=\"Possibility\" guid=\"" + genre2Guid + "\"><item type=\"name\" lang=\"en\">" + genre2Name + "</item></object>\n" +
-			"<object type=\"Possibility\" guid=\"" + genre3Guid + "\"\n>" +
-				"<item type=\"name\" lang=\"en\">" + genre3Name + "</item>\n" +
-				"<item type=\"parent\" guid=\"" + genre2Guid + "\" lang=\"en\">" + genre2Name + "</item>\n" +
+			string xml = "<document><interlinear-text guid=\"" + textGuid + "\">" +
+			"<item type=\"title\" lang=\"en\">" + title + "</item>" +
+			"<item type=\"genre\" guid=\"" + genre1Guid + "\" lang=\"en\">" + genre1Name + "</item>" +
+			"<item type=\"genre\" guid=\"" + genre3Guid + "\" lang=\"en\">" + "</item>" +
+			"<objects>" +
+			"<object type=\"Possibility\" guid=\"" + genre1Guid + "\">" +
+				"<item type=\"name\" lang=\"en\">" + genre1Name + "</item>" +
+				"<item type=\"owner\" lang=\"en\">GenreList</item>" +
+			"</object>" +
+			"<object type=\"Possibility\" guid=\"" + genre2Guid + "\">" +
+				"<item type=\"name\" lang=\"en\">" + genre2Name + "</item>" +
+				"<item type=\"owner\" lang=\"en\">GenreList</item>" +
+			"</object>" +
+			"<object type=\"Possibility\" guid=\"" + genre3Guid + "\">" +
+				"<item type=\"name\" lang=\"en\">" + genre3Name + "</item>" +
+				"<item type=\"owner\" guid=\"" + genre2Guid + "\" lang=\"en\">" + genre2Name + "</item>" +
 			"</object>\n" +
 			"</objects>\n" +
 			"<paragraphs><paragraph><phrases><phrase>" +

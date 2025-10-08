@@ -31,8 +31,12 @@ namespace SIL.FieldWorks.IText
 		{
 			m_typeMap = new Dictionary<string, string>
 			{
+				{ "CmAnthroItem", "AnthroItem" },
+				{ "CmLocation", "Location" },
+				{ "CmPerson", "Person" },
 				{ "CmPossibility", "Possibility" },
-				{ "RnGenericRec", "NotebookRecord" }
+				{ "RnGenericRec", "NotebookRecord" },
+				{ "RnRoledPartic", "RoledParticipants" },
 			};
 			m_xmlTypeMap = new Dictionary<string, string>();
 			foreach (string type in m_typeMap.Keys)
@@ -42,12 +46,55 @@ namespace SIL.FieldWorks.IText
 
 			m_propertyMaps = new Dictionary<string, Dictionary<string, string>>
 			{
+				["CmAnthroItem"] = new Dictionary<string, string>()
+				{
+					{ "Name", "name" },
+					{ "Abbreviation", "abbreviation" },
+					{ "Description", "description" },
+					{ "ConfidenceRA", "confidence" },
+					{ "ResearchersRC", "researcher" },
+					{ "RestrictionsRC", "restriction" },
+					{ "StatusRA", "status" },
+				},
+				["CmLocation"] = new Dictionary<string, string>()
+				{
+					{ "Name", "name" },
+					{ "Abbreviation", "abbreviation" },
+					{ "Description", "description" },
+				},
+				["CmPerson"] = new Dictionary<string, string>()
+				{
+					{ "Name", "name" },
+					{ "Abbreviation", "abbreviation" },
+					{ "Description", "description" },
+					{ "ConfidenceRA", "confidence" },
+					{ "PositionsRC", "position" },
+					{ "RestrictionsRC", "restriction" },
+					{ "StatusRA", "status" },
+					{ "EducationRA", "education" },
+					{ "Gender", "gender" },
+					{ "IsResearcher", "is-researcher" },
+					{ "PlacesOfResidenceRC", "place-of-residence" },
+					{ "PlaceOfBirthRA", "place-of-birth" },
+				},
 				["CmPossibility"] = new Dictionary<string, string>()
 				{
 					{ "Name", "name" },
 					{ "Abbreviation", "abbreviation" },
 					{ "Description", "description" },
-					{ "OwningPossibility", "parent" },
+				},
+				["RnGenericRec"] = new Dictionary<string, string>()
+				{
+					{ "ResearchersRC", "researcher" },
+					{ "ParticipantsOC", "roled-participants" },
+					{ "SourcesRC", "source" },
+					{ "LocationsRC", "location" },
+					{ "AnthroCodesRC", "anthro-code" },
+				},
+				["RnRoledPartic"] = new Dictionary<string, string>()
+				{
+					{ "ParticipantsRC", "participant" },
+					{ "RoleRA", "role" },
 				},
 				["Text"] = new Dictionary<string, string>()
 				{

@@ -47,6 +47,7 @@ namespace SIL.FieldWorks.IText
 		DateTime pendingDateCreated = DateTime.MinValue;
 		DateTime pendingDateModified = DateTime.MinValue;
 		ILcmReferenceCollection<ICmPossibility> pendingGenres;
+		ICmObject pendingNotebookRecord = null;
 		Queue<ICmObject> pendingObjects = new Queue<ICmObject>();
 		int m_flidStTextTitle;
 		int m_flidStTextSource;
@@ -600,6 +601,22 @@ namespace SIL.FieldWorks.IText
 				object value = property.GetValue(obj, null);
 				WritePendingProperty(propertyMap[propName], value);
 			}
+			if (obj is ICmMajorObject majorObj)
+			{
+				WritePendingProperty("date-created", majorObj.DateCreated);
+				WritePendingProperty("date-modified", majorObj.DateCreated);
+			}
+			if (obj is ICmPossibility)
+			{
+				if (obj.Owner is ICmPossibilityList possibilityList)
+				{
+					WritePendingProperty("owner", possibilityList.ChooserNameTS);
+				}
+				else
+				{
+					WritePendingProperty("owner", obj.Owner);
+				}
+			}
 			m_writer.WriteEndElement();
 		}
 
@@ -633,12 +650,24 @@ namespace SIL.FieldWorks.IText
 				var hystericalRaisens = TsStringUtils.MakeString(boolValue ? "true" : "false", m_cache.DefaultAnalWs);
 				WritePendingItem(propType, ref hystericalRaisens);
 			}
+			else if (value is int intValue)
+			{
+				var hystericalRaisens = TsStringUtils.MakeString(intValue.ToString(), m_cache.DefaultAnalWs);
+				WritePendingItem(propType, ref hystericalRaisens);
+			}
 			else if (value is DateTime dateTime)
 			{
 				if (dateTime != DateTime.MinValue)
 				{
 					ITsString dateTimeString = TsStringUtils.MakeString(dateTime.ToLCMTimeFormatWithMillisString(), m_cache.DefaultAnalWs);
 					WritePendingItem(propType, ref dateTimeString);
+				}
+			}
+			else if (value is System.Collections.IEnumerable enumerable)
+			{
+				foreach (var item in enumerable)
+				{
+					WritePendingProperty(propType, item);
 				}
 			}
 		}
@@ -695,16 +724,23 @@ namespace SIL.FieldWorks.IText
 					}
 					WritePendingProperty("date-created", pendingDateCreated);
 					WritePendingProperty("date-modified", pendingDateModified);
+					if (pendingNotebookRecord != null)
+						WritePendingProperty("notebook-record", pendingNotebookRecord);
 					foreach (var genre in pendingGenres)
 					{
 						WritePendingLink("genre", genre);
 					}
 					if (pendingObjects.Count > 0)
 					{
+						// Write out any objects that were referenced in an item.
+						HashSet<ICmObject> writtenObjects = new HashSet<ICmObject>();
 						m_writer.WriteStartElement("objects");
 						while (pendingObjects.Count > 0)
 						{
-							WritePendingObject(pendingObjects.Dequeue());
+							ICmObject pendingObject = pendingObjects.Dequeue();
+							if (!writtenObjects.Contains(pendingObject))
+								WritePendingObject(pendingObject);
+							writtenObjects.Add(pendingObject);
 						}
 						m_writer.WriteEndElement();
 					}
@@ -905,8 +941,7 @@ namespace SIL.FieldWorks.IText
 				pendingDateCreated = text.DateCreated;
 				pendingDateModified = text.DateModified;
 				pendingGenres = text.GenresRC;
-				if (text.AssociatedNotebookRecord != null)
-					pendingObjects.Enqueue(text.AssociatedNotebookRecord);
+				pendingNotebookRecord = text.AssociatedNotebookRecord;
 			}
 			else if (TextSource.IsScriptureText(txt))
 			{

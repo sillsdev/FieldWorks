@@ -1181,10 +1181,6 @@ namespace SIL.FieldWorks.IText
 			{
 				foreach (var obj in interlinText.objects)
 				{
-					SaveLinks(obj, valueProperties);
-				}
-				foreach (var obj in interlinText.objects)
-				{
 					CreateFullObject(obj, valueProperties, objects, cache);
 				}
 			}
@@ -1245,40 +1241,53 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// Save all links from obj to values in valueProperties.
-		/// </summary>
-		private static void SaveLinks(Interlineartext.Object obj, Dictionary<string, List<Property>> valueProperties)
-		{
-			if (obj.item != null)
-			{
-				for (int i = 0; i < obj.item.Length; i++)
-				{
-					if (obj.item[i].guid != null)
-						SaveLink(obj.guid, obj.item[i].type, obj.item[i].guid, valueProperties);
-				}
-			}
-		}
-
-		/// <summary>
 		/// Create object and fill in item properties.
 		/// </summary>
 		private static void CreateFullObject(Interlineartext.Object obj, Dictionary<string, List<Property>> valueProperties, InterlinearObjects objects, LcmCache cache)
 		{
-			if (!valueProperties.Keys.Contains(obj.guid))
-				return;
 			Guid guid = new Guid(obj.guid);
 			ICmObjectRepository repository = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			if (!repository.TryGetObject(guid, out ICmObject icmObject))
 			{
-				icmObject = CreateObject(obj, valueProperties, objects, cache);
+				icmObject = CreateObject(obj, objects, cache);
 				Type objType = icmObject.GetType();
 				/// Set item properties.
 				Dictionary<string, string> xmlPropertyMap = objects.GetXmlPropertyMap(obj.type);
 				foreach (var item in obj.item)
 				{
-
+					if (item.guid != null)
+					{
+						// Save until all objects are created.
+						SaveLink(obj.guid, item.type, item.guid, valueProperties);
+						continue;
+					}
+					if (item.type == "owner" && icmObject is ICmPossibility possibility)
+					{
+						// Add to possibilities list rooted in LanguageProject.
+						int ws = GetWsEngine(cache.WritingSystemFactory, item.lang).Handle;
+						ITsString itsString = TsStringUtils.MakeString(item.Value, ws);
+						foreach (PropertyInfo langPropInfo in cache.LanguageProject.GetType().GetProperties())
+						{
+							var propValue = langPropInfo.GetValue(cache.LanguageProject);
+							if (propValue is ICmPossibilityList possibilityList)
+							{
+								if (possibilityList.ChooserNameTS.Text == itsString.Text)
+								{
+									possibilityList.PossibilitiesOS.Add(possibility);
+								}
+							}
+						}
+						continue;
+					}
 					object value = null;
-					PropertyInfo propInfo = objType.GetProperty(xmlPropertyMap[item.type]);
+					string propName = null;
+					if (xmlPropertyMap.ContainsKey(item.type))
+						propName = xmlPropertyMap[item.type];
+					else if (item.type == "date-created")
+						propName = "DateCreated";
+					else if (item.type == "date-modified")
+						propName = "DateModified";
+					PropertyInfo propInfo = objType.GetProperty(propName);
 					object currentValue = propInfo.GetValue(icmObject, null);
 					if (currentValue is IMultiUnicode)
 					{
@@ -1286,7 +1295,7 @@ namespace SIL.FieldWorks.IText
 						int ws = GetWsEngine(cache.WritingSystemFactory, item.lang).Handle;
 						value = TsStringUtils.MakeString(item.Value, ws);
 					}
-					SetPropertyValue(icmObject, xmlPropertyMap[item.type], value);
+					SetPropertyValue(icmObject, propName, value);
 				}
 			}
 		}
@@ -1294,41 +1303,16 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Create object.
 		/// </summary>
-		private static ICmObject CreateObject(Interlineartext.Object obj, Dictionary<string, List<Property>> valueProperties, InterlinearObjects objects, LcmCache cache)
+		private static ICmObject CreateObject(Interlineartext.Object obj, InterlinearObjects objects, LcmCache cache)
 		{
 			string objType = objects.XmlTypeMap[obj.type];
 			switch (objType)
 			{
 				case "CmPossibility":
 					ICmPossibility possibility = cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(new Guid(obj.guid));
-					AddPossibilityToOwner(possibility, obj.guid, valueProperties, cache);
 					return possibility;
 			}
 			return null;
-		}
-
-		private static void AddPossibilityToOwner(ICmPossibility possibility, string guid, Dictionary<string, List<Property>> valueProperties, LcmCache cache)
-		{
-			// Determine the type of possibility based on the property that points to it.
-			foreach (var property in valueProperties[guid])
-			{
-				switch (property.PropName)
-				{
-					case "genre":
-						cache.LanguageProject.GenreListOA.PossibilitiesOS.Add(possibility);
-						return;
-				}
-			}
-			// Determine the type of the possibility based on the type of the child.
-			foreach (var property in valueProperties[guid])
-			{
-				switch (property.PropName)
-				{
-					case "parent":
-						AddPossibilityToOwner(possibility, property.Object, valueProperties, cache);
-						return;
-				}
-			}
 		}
 
 		/// <summary>
@@ -1348,13 +1332,14 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Create given link.
 		/// </summary>
-		private static void CreateLink(string objGuid, string propName, string valueGuid, InterlinearObjects objects, LcmCache cache)
+		private static void CreateLink(string objGuid, string xmlPropName, string valueGuid, InterlinearObjects objects, LcmCache cache)
 		{
 			ICmObjectRepository repository = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			ICmObject obj = repository.GetObject(new Guid(objGuid));
 			ICmObject value = repository.GetObject(new Guid(valueGuid));
 			Dictionary<string, string> xmlPropertyMap = objects.InvertMap(objects.GetPropertyMap(obj.GetType().Name));
-			SetPropertyValue(obj, xmlPropertyMap[propName], value);
+			string propName = (xmlPropName == "owner") ? "Owner" : xmlPropertyMap[xmlPropName];
+			SetPropertyValue(obj, propName, value);
 		}
 
 		/// <summary>
@@ -1363,9 +1348,9 @@ namespace SIL.FieldWorks.IText
 		{
 			if (value == null)
 				return;
-			if (propName == "OwningPossibility")
+			if (propName == "Owner")
 			{
-				// We store OwningPossibility but set SubPossibilitiesOS.
+				// We store Owner but set SubPossibilitiesOS.
 				SetPropertyValue((ICmObject)value, "SubPossibilitiesOS", obj);
 				return;
 			}
