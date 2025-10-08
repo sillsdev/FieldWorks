@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>ITextDll</AssemblyName>
@@ -36,23 +36,21 @@
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
     <PackageReference Include="CsvHelper" Version="28.0.1" />
-    <PackageReference Include="SIL.Core" Version="15.0.0-beta0117" />
+    <PackageReference Include="SIL.Core" Version="17.0.0-*" />
     <PackageReference Include="SIL.DesktopAnalytics" Version="4.0.0" />
     <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
     <PackageReference Include="SIL.Machine" Version="3.7.4" />
     <PackageReference Include="SIL.ParatextShared" Version="7.4.0.1" />
-    <PackageReference Include="SIL.Windows.Forms" Version="15.0.0-beta0117" />
-    <PackageReference Include="SIL.Windows.Forms.Keyboarding" Version="15.0.0-beta0117" />
-    <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
-    <PackageReference Include="Geckofx60.64" Version="60.0.54" Condition="'$(Platform)'=='x64'" />
-    <PackageReference Include="Geckofx60.32" Version="60.0.54" Condition="'$(Platform)'=='x86'" />
+    <PackageReference Include="SIL.Windows.Forms" Version="17.0.0-*" />
+    <PackageReference Include="SIL.Windows.Forms.Keyboarding" Version="17.0.0-*" />
+    <PackageReference Include="SIL.WritingSystems" Version="17.0.0-*" />
     <PackageReference Include="SharpZipLib" Version="1.4.0" />
     <PackageReference Include="encoding-converters-core" Version="0.9.7" />
     <PackageReference Include="AdamsLair.TreeViewAdv" Version="1.7.7" />
     <PackageReference Include="SIL.ExCSS" Version="2.0.2" />
-  </ItemGroup>
+  <PackageReference Include="Geckofx60.64" Version="60.0.54" /></ItemGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
     <Reference Include="System.Configuration" />

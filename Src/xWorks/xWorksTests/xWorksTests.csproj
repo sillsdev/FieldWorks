@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>xWorksTests</AssemblyName>
@@ -36,17 +36,17 @@
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.20.0" />
     <PackageReference Include="DotNetZip" Version="1.16.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-    <PackageReference Include="SIL.Core" Version="15.0.0" />
-    <PackageReference Include="SIL.Core.Desktop" Version="15.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="SIL.Core" Version="17.0.0-*" />
+    <PackageReference Include="SIL.Core.Desktop" Version="17.0.0-*" />
     <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Core.Tests" Version="11.0.0-*" PrivateAssets="All" />
     <PackageReference Include="SIL.LCModel.Tests" Version="11.0.0-*" PrivateAssets="All" />
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Utils.Tests" Version="11.0.0-*" PrivateAssets="All" />
-    <PackageReference Include="SIL.TestUtilities" Version="15.0.0" />
-    <PackageReference Include="SIL.WritingSystems" Version="15.0.0" />
+    <PackageReference Include="SIL.TestUtilities" Version="17.0.0-*" />
+    <PackageReference Include="SIL.WritingSystems" Version="17.0.0-*" />
     <PackageReference Include="SIL.ExCSS" Version="2.0.2" />
   </ItemGroup>
   <ItemGroup>

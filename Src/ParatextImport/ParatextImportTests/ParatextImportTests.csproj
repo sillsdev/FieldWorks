@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>ParatextImportTests</AssemblyName>
@@ -35,7 +35,7 @@
     <PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
-    <PackageReference Include="SIL.Core" Version="15.0.0-beta0117" />
+    <PackageReference Include="SIL.Core" Version="17.0.0-*" />
     <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Core.Tests" Version="11.0.0-*" PrivateAssets="All" />
@@ -43,8 +43,8 @@
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Utils.Tests" Version="11.0.0-*" PrivateAssets="All" />
     <PackageReference Include="SIL.ParatextShared" Version="7.4.0.1" />
-    <PackageReference Include="SIL.TestUtilities" Version="15.0.0-beta0117" />
-    <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
+    <PackageReference Include="SIL.TestUtilities" Version="17.0.0-*" />
+    <PackageReference Include="SIL.WritingSystems" Version="17.0.0-*" />
     <PackageReference Include="encoding-converters-core" Version="0.9.7" />
     <PackageReference Include="RhinoMocks" Version="4.0.0-alpha3" />
   </ItemGroup>

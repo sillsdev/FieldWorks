@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>xWorks</AssemblyName>
@@ -38,26 +38,24 @@
     <PackageReference Include="DialogAdapters" Version="0.1.11" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.20.0" />
     <PackageReference Include="DotNetZip" Version="1.16.0" />
-    <PackageReference Include="L10NSharp" Version="7.0.0" />
+    <PackageReference Include="L10NSharp" Version="9.0.0-*" />
     <PackageReference Include="NAudio" Version="1.10.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
-    <PackageReference Include="SIL.Archiving" Version="15.0.0-beta0117" />
-    <PackageReference Include="SIL.Core" Version="15.0.0-beta0117" />
-    <PackageReference Include="SIL.Core.Desktop" Version="15.0.0-beta0117" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="SIL.Archiving" Version="17.0.0-*" />
+    <PackageReference Include="SIL.Core" Version="17.0.0-*" />
+    <PackageReference Include="SIL.Core.Desktop" Version="17.0.0-*" />
     <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
-    <PackageReference Include="SIL.Lift" Version="15.0.0-beta0117" />
-    <PackageReference Include="SIL.Windows.Forms" Version="15.0.0-beta0117" />
-    <PackageReference Include="SIL.Windows.Forms.Archiving" Version="15.0.0-beta0117" />
-    <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
+    <PackageReference Include="SIL.Lift" Version="17.0.0-*" />
+    <PackageReference Include="SIL.Windows.Forms" Version="17.0.0-*" />
+    <PackageReference Include="SIL.Windows.Forms.Archiving" Version="17.0.0-*" />
+    <PackageReference Include="SIL.WritingSystems" Version="17.0.0-*" />
     <PackageReference Include="TagLibSharp" Version="2.3.0" />
     <PackageReference Include="SIL.DesktopAnalytics" Version="4.0.0" />
-    <PackageReference Include="Geckofx60.32" Version="60.0.54" Condition="'$(Platform)' == 'x86'" />
-    <PackageReference Include="Geckofx60.64" Version="60.0.54" Condition="'$(Platform)' == 'x64'" />
     <PackageReference Include="SIL.ExCSS" Version="2.0.2" />
     <PackageReference Include="Geckofx60.64.Windows" Version="0.19.0" />
-  </ItemGroup>
+  <PackageReference Include="Geckofx60.64" Version="60.0.54" /></ItemGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
     <Reference Include="Microsoft.CSharp" />

@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>GenerateHCConfig</AssemblyName>
@@ -41,7 +42,7 @@
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
     <PackageReference Include="SIL.Machine" Version="3.7.4" />
     <PackageReference Include="SIL.Machine.Morphology.HermitCrab" Version="3.7.4" />
-    <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
+    <PackageReference Include="SIL.WritingSystems" Version="17.0.0-*" />
   </ItemGroup>
 
   <ItemGroup>

@@ -39,12 +39,12 @@
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
     <PackageReference Include="ParatextData" Version="9.4.0.1-beta" />
-    <PackageReference Include="SIL.Core" Version="15.0.0-beta0117" />
+    <PackageReference Include="SIL.Core" Version="17.0.0-*" />
     <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
     <PackageReference Include="SIL.Machine" Version="3.7.4" />
-    <PackageReference Include="SIL.WritingSystems" Version="15.0.0-beta0117" />
+    <PackageReference Include="SIL.WritingSystems" Version="17.0.0-*" />
     <PackageReference Include="System.ValueTuple" Version="4.5.0" />
   </ItemGroup>
 

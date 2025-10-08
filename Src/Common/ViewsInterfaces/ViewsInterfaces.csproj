@@ -40,7 +40,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="SIL.Core" Version="15.0.0-beta0117" />
+    <PackageReference Include="SIL.Core" Version="17.0.0-*" />
     <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
   </ItemGroup>
