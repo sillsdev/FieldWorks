@@ -1139,40 +1139,12 @@ namespace SIL.FieldWorks.IText
 		private static void SetTextMetaAndMergeMedia(LcmCache cache, Interlineartext interlinText, ILgWritingSystemFactory wsFactory,
 			LCModel.IText newText, bool merging)
 		{
-			if (interlinText.Items != null) // apparently it is null if there are no items.
-			{
-				foreach (var item in interlinText.Items)
-				{
-					switch (item.type)
-					{
-						case "title":
-							newText.Name.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
-							break;
-						case "title-abbreviation":
-							newText.Abbreviation.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
-							break;
-						case "source":
-							newText.Source.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
-							break;
-						case "comment":
-							newText.Description.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
-							break;
-						case "text-is-translation":
-							newText.IsTranslated = (item.Value.ToLower() == "true");
-							break;
-						case "date-created":
-							newText.DateCreated = DateTime.Parse(item.Value, null, System.Globalization.DateTimeStyles.AssumeUniversal);
-							break;
-						case "date-modified":
-							newText.DateModified = DateTime.Parse(item.Value, null, System.Globalization.DateTimeStyles.AssumeUniversal);
-							break;
-					}
-				}
-			}
-
-			// Process links and objects.
 			InterlinearObjects objects = new InterlinearObjects();
 
+			// Set top-level metadata properties.
+			SetObjectPropertyValues(newText, interlinText.Items, objects.GetXmlPropertyMap("Text"), cache);
+
+			// Create objects except for links.
 			if (interlinText.objects != null)
 			{
 				foreach (var obj in interlinText.objects)
@@ -1244,64 +1216,78 @@ namespace SIL.FieldWorks.IText
 			if (!repository.TryGetObject(guid, out ICmObject icmObject))
 			{
 				icmObject = CreateObject(obj, objects, cache);
-				Type objType = icmObject.GetType();
-				/// Set item properties.
 				Dictionary<string, string> xmlPropertyMap = objects.GetXmlPropertyMap(obj.type);
-				foreach (var item in obj.item)
+				SetObjectPropertyValues(icmObject, obj.item, xmlPropertyMap, cache);
+			}
+		}
+
+		private static void SetObjectPropertyValues(ICmObject icmObject, item[] items, Dictionary<string, string> xmlPropertyMap, LcmCache cache)
+		{
+			if (items == null) return;
+			Type objType = icmObject.GetType();
+			/// Set item properties.
+			foreach (var item in items)
+			{
+				if (item.guid != null)
 				{
-					if (item.guid != null)
+					continue;
+				}
+				if (item.type == "owner" && icmObject is ICmPossibility possibility)
+				{
+					// Add possibility to a possibility list rooted in LanguageProject.
+					foreach (PropertyInfo langPropInfo in cache.LanguageProject.GetType().GetProperties())
 					{
-						continue;
-					}
-					if (item.type == "owner" && icmObject is ICmPossibility possibility)
-					{
-						// Add possibility to a possibility list rooted in LanguageProject.
-						foreach (PropertyInfo langPropInfo in cache.LanguageProject.GetType().GetProperties())
+						string langPropName = langPropInfo.Name;
+						if (langPropName.EndsWith("OA"))
+							langPropName = langPropName.Substring(0, langPropName.Length - 2);
+						if (langPropName == item.Value)
 						{
-							string langPropName = langPropInfo.Name;
-							if (langPropName.EndsWith("OA"))
-								langPropName = langPropName.Substring(0, langPropName.Length - 2);
-							if (langPropName == item.Value)
+							var langPropValue = langPropInfo.GetValue(cache.LanguageProject);
+							if (langPropValue is ICmPossibilityList possibilityList)
 							{
-								var langPropValue = langPropInfo.GetValue(cache.LanguageProject);
-								if (langPropValue is ICmPossibilityList possibilityList)
-								{
-									possibilityList.PossibilitiesOS.Add(possibility);
-								}
+								possibilityList.PossibilitiesOS.Add(possibility);
 							}
 						}
-						continue;
 					}
-					object value = null;
-					string propName = null;
-					if (xmlPropertyMap.ContainsKey(item.type))
-						propName = xmlPropertyMap[item.type];
-					else if (item.type == "date-created")
-						propName = "DateCreated";
-					else if (item.type == "date-modified")
-						propName = "DateModified";
-					PropertyInfo propInfo = objType.GetProperty(propName);
-					object currentValue = propInfo.GetValue(icmObject, null);
-					if (currentValue is IMultiString)
-					{
-						// value is an ITsString.
-						int ws = GetWsEngine(cache.WritingSystemFactory, item.lang).Handle;
-						value = TsStringUtils.MakeString(item.Value, ws);
-					}
-					else if (currentValue is IMultiUnicode)
-					{
-						// value is an ITsString.
-						int ws = GetWsEngine(cache.WritingSystemFactory, item.lang).Handle;
-						value = TsStringUtils.MakeString(item.Value, ws);
-					}
-					else if (currentValue is int)
-					{
-						int intValue = 0;
-						if (int.TryParse(item.Value, out intValue))
-							value = intValue;
-					}
-					SetPropertyValue(icmObject, propName, value);
+					continue;
 				}
+				object value = null;
+				string propName = null;
+				if (xmlPropertyMap.ContainsKey(item.type))
+					propName = xmlPropertyMap[item.type];
+				else if (item.type == "date-created")
+					propName = "DateCreated";
+				else if (item.type == "date-modified")
+					propName = "DateModified";
+				PropertyInfo propInfo = objType.GetProperty(propName);
+				object currentValue = propInfo.GetValue(icmObject, null);
+				if (currentValue is bool)
+				{
+					value = item.Value.ToLower() == "true";
+				}
+				else if (currentValue is DateTime)
+				{
+					value = DateTime.Parse(item.Value, null, System.Globalization.DateTimeStyles.AssumeUniversal);
+				}
+				else if (currentValue is IMultiString)
+				{
+					// value is an ITsString.
+					int ws = GetWsEngine(cache.WritingSystemFactory, item.lang).Handle;
+					value = TsStringUtils.MakeString(item.Value, ws);
+				}
+				else if (currentValue is IMultiUnicode)
+				{
+					// value is an ITsString.
+					int ws = GetWsEngine(cache.WritingSystemFactory, item.lang).Handle;
+					value = TsStringUtils.MakeString(item.Value, ws);
+				}
+				else if (currentValue is int)
+				{
+					int intValue = 0;
+					if (int.TryParse(item.Value, out intValue))
+						value = intValue;
+				}
+				SetPropertyValue(icmObject, propName, value);
 			}
 		}
 
@@ -1393,7 +1379,7 @@ namespace SIL.FieldWorks.IText
 				(currentValueType.GetGenericTypeDefinition().Name == "LcmOwningCollection`1" ||
 				 currentValueType.GetGenericTypeDefinition().Name == "LcmOwningSequence`1" ||
 				 currentValueType.GetGenericTypeDefinition().Name == "LcmReferenceCollection`1" ||
-				 currentValueType.GetGenericTypeDefinition().Name == "LcmReferenceSequence`"))
+				 currentValueType.GetGenericTypeDefinition().Name == "LcmReferenceSequence`1"))
 			{
 				Type itemType = currentValueType.GetGenericArguments()[0];
 				if (itemType.IsAssignableFrom(value.GetType()))

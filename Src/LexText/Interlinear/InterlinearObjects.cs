@@ -37,6 +37,7 @@ namespace SIL.FieldWorks.IText
 				{ "CmPossibility", "Possibility" },
 				{ "RnGenericRec", "NotebookRecord" },
 				{ "RnRoledPartic", "RoledParticipants" },
+				{ "Text", "Text" },
 			};
 			m_xmlTypeMap = new Dictionary<string, string>();
 			foreach (string type in m_typeMap.Keys)
@@ -98,8 +99,13 @@ namespace SIL.FieldWorks.IText
 				},
 				["Text"] = new Dictionary<string, string>()
 				{
-					{ "GenresRC", "genre" },
+					{ "Abbreviation", "title-abbreviation" },
 					{ "AssociatedNotebookRecord", "notebook-record" },
+					{ "Description", "comment" },
+					{ "GenresRC", "genre" },
+					{ "IsTranslated", "text-is-translation" },
+					{ "Name", "title" },
+					{ "Source", "source" },
 				}
 			};
 			m_xmlPropertyMaps = new Dictionary<string, Dictionary<string, string>>();

@@ -594,17 +594,34 @@ namespace SIL.FieldWorks.IText
 			m_writer.WriteStartElement("object");
 			m_writer.WriteAttributeString("type", m_objects.TypeMap[typeName]);
 			m_writer.WriteAttributeString("guid", obj.Guid.ToString());
+			WritePendingObjectProperties(obj, null);
+			m_writer.WriteEndElement();
+		}
+
+		private void WritePendingObjectProperties(ICmObject obj, IList<string> skipXmlProperties)
+		{
+			Type objType = obj.GetType();
+			string typeName = objType.Name;
 			Dictionary<string, string> propertyMap = m_objects.GetPropertyMap(typeName);
 			foreach (string propName in propertyMap.Keys)
 			{
 				PropertyInfo property = objType.GetProperty(propName);
 				object value = property.GetValue(obj, null);
-				WritePendingProperty(propertyMap[propName], value);
+				if (value == null)
+				{
+					continue;
+				}
+				string xmlProperty = propertyMap[propName];
+				if (skipXmlProperties != null && skipXmlProperties.Contains(xmlProperty))
+				{
+					continue;
+				}
+				WritePendingProperty(xmlProperty, value);
 			}
 			if (obj is ICmMajorObject majorObj)
 			{
 				WritePendingProperty("date-created", majorObj.DateCreated);
-				WritePendingProperty("date-modified", majorObj.DateCreated);
+				WritePendingProperty("date-modified", majorObj.DateModified);
 			}
 			if (obj is ICmPossibility)
 			{
@@ -617,7 +634,6 @@ namespace SIL.FieldWorks.IText
 					WritePendingProperty("owner", obj.Owner);
 				}
 			}
-			m_writer.WriteEndElement();
 		}
 
 		private ITsString GetPossibilityListName(ICmPossibilityList possibilityList)
@@ -722,15 +738,12 @@ namespace SIL.FieldWorks.IText
 					{
 						m_writer.WriteAttributeString("guid", text.Guid.ToString());
 					}
+
+					// The next few properties can come from text or from the display.
 					foreach (var mTssPendingTitle in pendingTitles)
 					{
 						var hystericalRaisens = mTssPendingTitle;
 						WritePendingItem("title", ref hystericalRaisens);
-					}
-					foreach (var mTssPendingAbbrev in pendingAbbreviations)
-					{
-						var hystericalRaisens = mTssPendingAbbrev;
-						WritePendingItem("title-abbreviation", ref hystericalRaisens);
 					}
 					foreach(var source in pendingSources)
 					{
@@ -742,18 +755,13 @@ namespace SIL.FieldWorks.IText
 						var hystericalRaisens = desc;
 						WritePendingItem("comment", ref hystericalRaisens);
 					}
+					// Only write out IsTranslated if it is true.
 					if (pendingIsTranslated)
 					{
 						WritePendingProperty("text-is-translation", true);
 					}
-					WritePendingProperty("date-created", pendingDateCreated);
-					WritePendingProperty("date-modified", pendingDateModified);
-					if (pendingNotebookRecord != null)
-						WritePendingProperty("notebook-record", pendingNotebookRecord);
-					foreach (var genre in pendingGenres)
-					{
-						WritePendingLink("genre", genre);
-					}
+					IList<string> skipXmlProperties = new List<string>() { "title", "source", "comment", "text-is-translation"};
+					WritePendingObjectProperties(text, skipXmlProperties);
 					if (pendingObjects.Count > 0)
 					{
 						// Write out any objects that were referenced in an item.
@@ -970,7 +978,6 @@ namespace SIL.FieldWorks.IText
 			else if (TextSource.IsScriptureText(txt))
 			{
 				pendingTitles.Add(txt.ShortNameTSS);
-				pendingAbbreviations.Add(null);
 			}
 		}
 	}
