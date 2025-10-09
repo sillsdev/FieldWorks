@@ -1139,8 +1139,6 @@ namespace SIL.FieldWorks.IText
 		private static void SetTextMetaAndMergeMedia(LcmCache cache, Interlineartext interlinText, ILgWritingSystemFactory wsFactory,
 			LCModel.IText newText, bool merging)
 		{
-			Dictionary<string, List<Property>> valueProperties = new Dictionary<string, List<Property>>();
-
 			if (interlinText.Items != null) // apparently it is null if there are no items.
 			{
 				foreach (var item in interlinText.Items)
@@ -1168,12 +1166,6 @@ namespace SIL.FieldWorks.IText
 						case "date-modified":
 							newText.DateModified = DateTime.Parse(item.Value, null, System.Globalization.DateTimeStyles.AssumeUniversal);
 							break;
-						case "genre":
-							SaveLink(interlinText.guid.ToString(), item.type, item.guid, valueProperties);
-							break;
-						case "notebook-record":
-							SaveLink(interlinText.guid.ToString(), item.type, item.guid, valueProperties);
-							break;
 					}
 				}
 			}
@@ -1185,11 +1177,19 @@ namespace SIL.FieldWorks.IText
 			{
 				foreach (var obj in interlinText.objects)
 				{
-					CreateFullObject(obj, valueProperties, objects, cache);
+					CreateFullObject(obj, objects, cache);
 				}
 			}
-			CreateLinks(valueProperties, objects, cache);
 
+			// Create links after all objects have been created.
+			CreateItemLinks(interlinText.guid, interlinText.Items, objects, cache);
+			if (interlinText.objects != null)
+			{
+				foreach (var obj in interlinText.objects)
+				{
+					CreateItemLinks(obj.guid, obj.item, objects, cache);
+				}
+			}
 
 			if (interlinText.mediafiles != null)
 			{
@@ -1235,19 +1235,9 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
-		/// Save a link from object to value in valueProperties.
-		/// </summary>
-		private static void SaveLink(string obj, string propName, string value, Dictionary<string, List<Property>> valueProperties)
-		{
-			if (!valueProperties.ContainsKey(value))
-				valueProperties[value] = new List<Property>();
-			valueProperties[value].Add(new Property {Object = obj, PropName = propName});
-		}
-
-		/// <summary>
 		/// Create object and fill in item properties.
 		/// </summary>
-		private static void CreateFullObject(Interlineartext.Object obj, Dictionary<string, List<Property>> valueProperties, InterlinearObjects objects, LcmCache cache)
+		private static void CreateFullObject(Interlineartext.Object obj, InterlinearObjects objects, LcmCache cache)
 		{
 			Guid guid = new Guid(obj.guid);
 			ICmObjectRepository repository = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
@@ -1261,8 +1251,6 @@ namespace SIL.FieldWorks.IText
 				{
 					if (item.guid != null)
 					{
-						// Save until all objects are created.
-						SaveLink(obj.guid, item.type, item.guid, valueProperties);
 						continue;
 					}
 					if (item.type == "owner" && icmObject is ICmPossibility possibility)
@@ -1343,19 +1331,20 @@ namespace SIL.FieldWorks.IText
 			return null;
 		}
 
-		/// <summary>
-		/// Create links.
-		/// </summary>
-		private static void CreateLinks(Dictionary<string, List<Property>> valueProperties, InterlinearObjects objects, LcmCache cache)
+		private static void CreateItemLinks(string objGuid, item[] items, InterlinearObjects objects, LcmCache cache)
 		{
-			foreach (var valGuid in valueProperties.Keys)
+			if (items != null)
 			{
-				foreach (var property in valueProperties[valGuid])
+				foreach (var item in items)
 				{
-					CreateLink(property.Object, property.PropName, valGuid, objects, cache);
+					if (item.guid != null)
+					{
+						CreateLink(objGuid, item.type, item.guid, objects, cache);
+					}
 				}
 			}
 		}
+
 
 		/// <summary>
 		/// Create given link.
