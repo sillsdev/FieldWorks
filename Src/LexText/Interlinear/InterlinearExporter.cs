@@ -610,7 +610,7 @@ namespace SIL.FieldWorks.IText
 			{
 				if (obj.Owner is ICmPossibilityList possibilityList)
 				{
-					WritePendingProperty("owner", possibilityList.ChooserNameTS);
+					WritePendingProperty("owner", GetPossibilityListName(possibilityList));
 				}
 				else
 				{
@@ -618,6 +618,30 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 			m_writer.WriteEndElement();
+		}
+
+		private ITsString GetPossibilityListName(ICmPossibilityList possibilityList)
+		{
+			foreach (var propInfo in m_cache.LangProject.GetType().GetProperties())
+			{
+				object propValue = null;
+				try
+				{
+					propValue = propInfo.GetValue(m_cache.LangProject, null);
+				}
+				catch (Exception e)
+				{
+
+				}
+				if (propValue == possibilityList)
+				{
+					string name = propInfo.Name;
+					if (name.EndsWith("OA"))
+						name = name.Substring(0, name.Length - 2);
+					return TsStringUtils.MakeString(name, m_cache.DefaultAnalWs);
+				}
+			}
+			return null;
 		}
 
 		/// <summary>

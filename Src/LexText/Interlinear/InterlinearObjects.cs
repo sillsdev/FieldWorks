@@ -99,6 +99,7 @@ namespace SIL.FieldWorks.IText
 				["Text"] = new Dictionary<string, string>()
 				{
 					{ "GenresRC", "genre" },
+					{ "AssociatedNotebookRecord", "notebook-record" },
 				}
 			};
 			m_xmlPropertyMaps = new Dictionary<string, Dictionary<string, string>>();

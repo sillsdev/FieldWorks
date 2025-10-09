@@ -329,6 +329,7 @@
     <Content Include="ParagraphParserTestTexts.xml" />
     <Content Include="InterlinearExporterTests.xml" />
     <Content Include="toolConfigurationForITextDllTests.xml" />
+    <None Include="FlexTextImport\FlexTextMetadataImport.flextext" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Client.3.5">

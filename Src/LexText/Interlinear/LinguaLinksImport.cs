@@ -27,6 +27,7 @@ using SIL.LCModel.Application.ApplicationServices;
 using System.Xml.Serialization;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Application;
 
 
 namespace SIL.FieldWorks.IText
@@ -290,9 +291,12 @@ namespace SIL.FieldWorks.IText
 			firstNewText = null;
 			BIRDDocument doc;
 			int initialProgress = progress.Position;
+			bool canStartUow = ((IActionHandlerExtensions)m_cache.ActionHandlerAccessor).CanStartUow;
 			try
 			{
-				m_cache.DomainDataByFlid.BeginNonUndoableTask();
+				if (canStartUow)
+					// Don't BeginNonUndoableTask if we are already in an task.
+					m_cache.DomainDataByFlid.BeginNonUndoableTask();
 				progress.Message = ITextStrings.ksInterlinImportPhase1of2;
 				var serializer = new XmlSerializer(typeof(BIRDDocument));
 				doc = (BIRDDocument)serializer.Deserialize(birdData);
@@ -346,7 +350,7 @@ namespace SIL.FieldWorks.IText
 						}
 						if (!continueMerge)
 							break;
-						progress.Position = initialProgress + allottedProgress/2 + allottedProgress*step/2/doc.interlineartext.Length;
+						progress.Position = initialProgress + allottedProgress / 2 + allottedProgress * step / 2 / doc.interlineartext.Length;
 						if (firstNewText == null)
 							firstNewText = newText;
 
@@ -363,7 +367,8 @@ namespace SIL.FieldWorks.IText
 			}
 			finally
 			{
-				m_cache.DomainDataByFlid.EndNonUndoableTask();
+				if (canStartUow)
+					m_cache.DomainDataByFlid.EndNonUndoableTask();
 			}
 			return mergeSucceeded;
 		}

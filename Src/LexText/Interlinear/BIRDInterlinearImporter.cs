@@ -87,13 +87,14 @@ namespace SIL.FieldWorks.IText
 			//handle the header(info or meta) information
 			SetTextMetaAndMergeMedia(cache, interlinText, wsFactory, newText, false);
 
+			if (newText.ContentsOA == null)
+			{
+				// Create ContentsOA even if there are no paragraphs.
+				newText.ContentsOA = cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
+			}
 			//create all the paragraphs
 			foreach (var paragraph in interlinText.paragraphs)
 			{
-				if (newText.ContentsOA == null)
-				{
-					newText.ContentsOA = cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
-				}
 				IStTxtPara newTextPara = newText.ContentsOA.AddNewTextPara("");
 				int offset = 0;
 				if (paragraph.phrases == null)
@@ -1170,6 +1171,9 @@ namespace SIL.FieldWorks.IText
 						case "genre":
 							SaveLink(interlinText.guid.ToString(), item.type, item.guid, valueProperties);
 							break;
+						case "notebook-record":
+							SaveLink(interlinText.guid.ToString(), item.type, item.guid, valueProperties);
+							break;
 					}
 				}
 			}
@@ -1263,15 +1267,16 @@ namespace SIL.FieldWorks.IText
 					}
 					if (item.type == "owner" && icmObject is ICmPossibility possibility)
 					{
-						// Add to possibilities list rooted in LanguageProject.
-						int ws = GetWsEngine(cache.WritingSystemFactory, item.lang).Handle;
-						ITsString itsString = TsStringUtils.MakeString(item.Value, ws);
+						// Add possibility to a possibility list rooted in LanguageProject.
 						foreach (PropertyInfo langPropInfo in cache.LanguageProject.GetType().GetProperties())
 						{
-							var propValue = langPropInfo.GetValue(cache.LanguageProject);
-							if (propValue is ICmPossibilityList possibilityList)
+							string langPropName = langPropInfo.Name;
+							if (langPropName.EndsWith("OA"))
+								langPropName = langPropName.Substring(0, langPropName.Length - 2);
+							if (langPropName == item.Value)
 							{
-								if (possibilityList.ChooserNameTS.Text == itsString.Text)
+								var langPropValue = langPropInfo.GetValue(cache.LanguageProject);
+								if (langPropValue is ICmPossibilityList possibilityList)
 								{
 									possibilityList.PossibilitiesOS.Add(possibility);
 								}
@@ -1289,11 +1294,23 @@ namespace SIL.FieldWorks.IText
 						propName = "DateModified";
 					PropertyInfo propInfo = objType.GetProperty(propName);
 					object currentValue = propInfo.GetValue(icmObject, null);
-					if (currentValue is IMultiUnicode)
+					if (currentValue is IMultiString)
 					{
 						// value is an ITsString.
 						int ws = GetWsEngine(cache.WritingSystemFactory, item.lang).Handle;
 						value = TsStringUtils.MakeString(item.Value, ws);
+					}
+					else if (currentValue is IMultiUnicode)
+					{
+						// value is an ITsString.
+						int ws = GetWsEngine(cache.WritingSystemFactory, item.lang).Handle;
+						value = TsStringUtils.MakeString(item.Value, ws);
+					}
+					else if (currentValue is int)
+					{
+						int intValue = 0;
+						if (int.TryParse(item.Value, out intValue))
+							value = intValue;
 					}
 					SetPropertyValue(icmObject, propName, value);
 				}
@@ -1308,9 +1325,20 @@ namespace SIL.FieldWorks.IText
 			string objType = objects.XmlTypeMap[obj.type];
 			switch (objType)
 			{
+				case "CmAnthroItem":
+					return cache.ServiceLocator.GetInstance<ICmAnthroItemFactory>().Create(new Guid(obj.guid));
+				case "CmLocation":
+					return cache.ServiceLocator.GetInstance<ICmLocationFactory>().Create(new Guid(obj.guid));
+				case "CmPerson":
+					return cache.ServiceLocator.GetInstance<ICmPersonFactory>().Create(new Guid(obj.guid));
 				case "CmPossibility":
-					ICmPossibility possibility = cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(new Guid(obj.guid));
-					return possibility;
+					return cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(new Guid(obj.guid));
+				case "RnGenericRec":
+					IRnGenericRec record = cache.ServiceLocator.GetInstance<IRnGenericRecFactory>().Create(new Guid(obj.guid));
+					cache.LanguageProject.ResearchNotebookOA.RecordsOC.Add(record);
+					return record;
+				case "RnRoledPartic":
+					return cache.ServiceLocator.GetInstance<IRnRoledParticFactory>().Create(new Guid(obj.guid));
 			}
 			return null;
 		}
@@ -1354,24 +1382,35 @@ namespace SIL.FieldWorks.IText
 				SetPropertyValue((ICmObject)value, "SubPossibilitiesOS", obj);
 				return;
 			}
+			if (propName == "AssociatedNotebookRecord")
+			{
+				SetPropertyValue((ICmObject)value, "TextRA", obj);
+				return;
+			}
 			PropertyInfo propInfo = obj.GetType().GetProperty(propName);
 			object currentValue = propInfo.GetValue(obj, null);
-			if (value.GetType().IsInstanceOfType(currentValue.GetType()))
+			if (currentValue == null)
+			{
+				propInfo.SetValue(obj, value);
+				return;
+			}
+
+			Type currentValueType = currentValue.GetType();
+			if (value.GetType().IsInstanceOfType(currentValueType))
 			{
 				propInfo.SetValue(obj, value);
 			}
-			else if (currentValue is ILcmOwningSequence<ICmPossibility> possibilitySequence)
+			else if (currentValueType.IsGenericType &&
+				(currentValueType.GetGenericTypeDefinition().Name == "LcmOwningCollection`1" ||
+				 currentValueType.GetGenericTypeDefinition().Name == "LcmOwningSequence`1" ||
+				 currentValueType.GetGenericTypeDefinition().Name == "LcmReferenceCollection`1" ||
+				 currentValueType.GetGenericTypeDefinition().Name == "LcmReferenceSequence`"))
 			{
-				if (value is ICmPossibility possibility)
+				Type itemType = currentValueType.GetGenericArguments()[0];
+				if (itemType.IsAssignableFrom(value.GetType()))
 				{
-					possibilitySequence.Add(possibility);
-				}
-			}
-			else if (currentValue is ILcmReferenceCollection<ICmPossibility> possibilityCollection)
-			{
-				if (value is ICmPossibility possibility)
-				{
-					possibilityCollection.Add(possibility);
+					var addMethod = currentValueType.GetMethod("Add");
+					addMethod?.Invoke(currentValue, new[] { value });
 				}
 			}
 			else if (currentValue is IMultiString multiString)
@@ -1390,7 +1429,7 @@ namespace SIL.FieldWorks.IText
 			}
 			else
 			{
-				throw new Exception();
+				propInfo.SetValue(obj, value);
 			}
 		}
 
