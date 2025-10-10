@@ -96,15 +96,5 @@ namespace SIL.FieldWorks.IText
 			return invertedPropertyMap;
 		}
 
-		internal string HyphenCase(string name)
-		{
-			string newName = "";
-			for (int i = 0; i < name.Length; i++)
-			{
-				newName += (i > 0 && char.IsUpper(name[i])) ? ("-" + char.ToLower(name[i])) : name[i].ToString();
-			}
-			return newName;
-		}
-
 	}
 }

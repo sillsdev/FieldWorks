@@ -44,10 +44,6 @@ namespace SIL.FieldWorks.IText
 		private List<ITsString> pendingAbbreviations = new List<ITsString>();
 		List<ITsString> pendingComments = new List<ITsString>();
 		bool pendingIsTranslated = false;
-		DateTime pendingDateCreated = DateTime.MinValue;
-		DateTime pendingDateModified = DateTime.MinValue;
-		ILcmReferenceCollection<ICmPossibility> pendingGenres;
-		ICmObject pendingNotebookRecord = null;
 		Queue<ICmObject> pendingObjects = new Queue<ICmObject>();
 		int m_flidStTextTitle;
 		int m_flidStTextSource;
@@ -971,10 +967,6 @@ namespace SIL.FieldWorks.IText
 					pendingComments.Add(text.Description.get_String(writingSystemId));
 				}
 				pendingIsTranslated = text.IsTranslated;
-				pendingDateCreated = text.DateCreated;
-				pendingDateModified = text.DateModified;
-				pendingGenres = text.GenresRC;
-				pendingNotebookRecord = text.AssociatedNotebookRecord;
 			}
 			else if (TextSource.IsScriptureText(txt))
 			{

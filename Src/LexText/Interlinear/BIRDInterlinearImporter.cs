@@ -1198,14 +1198,6 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
-		private class Property
-		{
-			public string Object { get; set; }
-
-			public string PropName {  get; set; }
-
-		}
-
 		/// <summary>
 		/// Create object and fill in item properties.
 		/// </summary>

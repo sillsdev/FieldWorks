@@ -171,10 +171,8 @@
   </xs:simpleType>
 	<xs:simpleType name="knownObjectTypes">
 		<xs:restriction base="xs:string">
-			<xs:enumeration value="Location"/>
 			<xs:enumeration value="NotebookRecord"/>
-			<xs:enumeration value="Person"/>
-			<xs:enumeration value="Possibility"/>
+			<xs:enumeration value="RoledParticipants"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="objectTypes">
