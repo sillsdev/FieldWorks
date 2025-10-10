@@ -572,14 +572,15 @@ namespace SIL.FieldWorks.IText
 			if (obj is ICmPossibility possibility)
 			{
 				name = possibility.Name.BestAnalysisVernacularAlternative;
+				// Don't store possibility as object.
 			}
 			else
 			{
 				name = TsStringUtils.EmptyString(m_cache.DefaultAnalWs);
+				pendingObjects.Enqueue(obj);
 			}
 			WriteLangAndContent(GetWsFromTsString(name), name);
 			m_writer.WriteEndElement();
-			pendingObjects.Enqueue(obj);
 		}
 
 		/// <summary>

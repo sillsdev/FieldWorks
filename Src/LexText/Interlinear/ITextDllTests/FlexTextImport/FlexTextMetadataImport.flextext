@@ -18,106 +18,12 @@
 				<item type="location" guid="7d7579c2-edcd-4658-918d-be29eac4c3fd" lang="en">California</item>
 				<item type="anthro-code" guid="a5f4f143-014a-463c-aff3-2aa36831ee2b" lang="en">derivations</item>
 			</object>
-			<object type="Possibility" guid="c181fb60-ea5e-11de-9e08-0013722f8dec">
-				<item type="name" lang="en">Paradigm</item>
-				<item type="abbreviation" lang="en">para</item>
-				<item type="description" lang="en">A list of well-formed words, typically arranged according to inflection</item>
-				<item type="owner" guid="c1787202-ea5e-11de-95b1-0013722f8dec" lang="en">Word List</item>
-			</object>
-			<object type="Possibility" guid="d686fc68-ea5e-11de-8f7f-0013722f8dec">
-				<item type="name" lang="en">Prose</item>
-				<item type="abbreviation" lang="en">pros</item>
-				<item type="description" lang="en">Non-metrical arrangement of the text, typically using the grammar of ordinary speech</item>
-				<item type="owner" guid="c199d2c6-ea5e-11de-9810-0013722f8dec" lang="en">Metrical Category</item>
-			</object>
-			<object type="Person" guid="5d543e4f-50d7-41fe-93a7-cf851c1d229e">
-				<item type="name" lang="en">John Smith</item>
-				<item type="abbreviation" lang="en">John</item>
-				<item type="description" lang="en">senior citizen</item>
-				<item type="confidence" guid="bbb70c02-ea5e-11de-8a97-0013722f8dec" lang="en">Low</item>
-				<item type="position" guid="c7ba3b45-a31a-4ecd-bcc1-396df1bc36bc" lang="en">volunteer software developer</item>
-				<item type="restriction" guid="6ebc80f8-9ce0-45d9-bb49-3869591fb1ff" lang="en">No restrictions</item>
-				<item type="education" guid="bdd903d2-ea5e-11de-9be6-0013722f8dec" lang="en">Graduate</item>
-				<item type="gender" lang="en">1</item>
-				<item type="is-researcher" lang="en">false</item>
-				<item type="place-of-residence" guid="7d7579c2-edcd-4658-918d-be29eac4c3fd" lang="en">California</item>
-				<item type="place-of-birth" guid="c2313dd5-1481-45ce-9a7e-12816bb80a41" lang="en">Santa Clara</item>
-				<item type="owner" lang="en">People</item>
-			</object>
 			<object type="RoledParticipants" guid="16dd8759-4e91-4825-ad48-9da75a5264df">
 				<item type="participant" guid="5d543e4f-50d7-41fe-93a7-cf851c1d229e" lang="en">John Smith</item>
 			</object>
 			<object type="RoledParticipants" guid="6d0960c7-b80e-438d-8b60-14ad42f23c8e">
 				<item type="participant" guid="5d543e4f-50d7-41fe-93a7-cf851c1d229e" lang="en">John Smith</item>
 				<item type="role" guid="bd26345a-ea5e-11de-9973-0013722f8dec" lang="en">Arbitrator</item>
-			</object>
-			<object type="Location" guid="7d7579c2-edcd-4658-918d-be29eac4c3fd">
-				<item type="name" lang="en">California</item>
-				<item type="abbreviation" lang="en">CA</item>
-				<item type="description" lang="en">a US state</item>
-				<item type="owner" lang="en">Locations</item>
-			</object>
-			<object type="AnthroItem" guid="a5f4f143-014a-463c-aff3-2aa36831ee2b">
-				<item type="name" lang="en">derivations</item>
-				<item type="confidence" guid="bbc09560-ea5e-11de-8de5-0013722f8dec" lang="en">Unknown</item>
-				<item type="restriction" guid="bbe1f61a-ea5e-11de-9640-0013722f8dec" lang="en">Unknown</item>
-				<item type="status" guid="bd964254-ea5e-11de-8cdf-0013722f8dec" lang="en">Pending</item>
-				<item type="owner" lang="en">AnthroList</item>
-			</object>
-			<object type="Possibility" guid="c1787202-ea5e-11de-95b1-0013722f8dec">
-				<item type="name" lang="en">Word List</item>
-				<item type="abbreviation" lang="en">wd. lst</item>
-				<item type="description" lang="en">A list of words used for language research or documentation</item>
-				<item type="owner" lang="en">GenreList</item>
-			</object>
-			<object type="Possibility" guid="c199d2c6-ea5e-11de-9810-0013722f8dec">
-				<item type="name" lang="en">Metrical Category</item>
-				<item type="abbreviation" lang="en">met. cat</item>
-				<item type="description" lang="en">Genre according to metrical form (versus content)</item>
-				<item type="owner" lang="en">GenreList</item>
-			</object>
-			<object type="Possibility" guid="bbb70c02-ea5e-11de-8a97-0013722f8dec">
-				<item type="name" lang="en">Low</item>
-				<item type="abbreviation" lang="en">Low</item>
-				<item type="owner" lang="en">ConfidenceLevels</item>
-			</object>
-			<object type="Possibility" guid="c7ba3b45-a31a-4ecd-bcc1-396df1bc36bc">
-				<item type="name" lang="en">volunteer software developer</item>
-				<item type="owner" lang="en">Positions</item>
-			</object>
-			<object type="Possibility" guid="6ebc80f8-9ce0-45d9-bb49-3869591fb1ff">
-				<item type="name" lang="en">No restrictions</item>
-				<item type="abbreviation" lang="en">None</item>
-				<item type="owner" lang="en">Restrictions</item>
-			</object>
-			<object type="Possibility" guid="bdd903d2-ea5e-11de-9be6-0013722f8dec">
-				<item type="name" lang="en">Graduate</item>
-				<item type="abbreviation" lang="en">Grad</item>
-				<item type="owner" lang="en">Education</item>
-			</object>
-			<object type="Location" guid="c2313dd5-1481-45ce-9a7e-12816bb80a41">
-				<item type="name" lang="en">Santa Clara</item>
-				<item type="owner" guid="7d7579c2-edcd-4658-918d-be29eac4c3fd" lang="en">California</item>
-			</object>
-			<object type="Possibility" guid="bd26345a-ea5e-11de-9973-0013722f8dec">
-				<item type="name" lang="en">Arbitrator</item>
-				<item type="abbreviation" lang="en">Arbtr</item>
-				<item type="owner" lang="en">Roles</item>
-			</object>
-			<object type="Possibility" guid="bbc09560-ea5e-11de-8de5-0013722f8dec">
-				<item type="name" lang="en">Unknown</item>
-				<item type="abbreviation" lang="en">Unk</item>
-				<item type="owner" lang="en">ConfidenceLevels</item>
-			</object>
-			<object type="Possibility" guid="bbe1f61a-ea5e-11de-9640-0013722f8dec">
-				<item type="name" lang="en">Unknown</item>
-				<item type="abbreviation" lang="en">Unk</item>
-				<item type="owner" lang="en">Restrictions</item>
-			</object>
-			<object type="Possibility" guid="bd964254-ea5e-11de-8cdf-0013722f8dec">
-				<item type="name" lang="en">Pending</item>
-				<item type="abbreviation" lang="en">Pend</item>
-				<item type="owner" lang="en">Status</item>
 			</object>
 		</objects>
 		<paragraphs />

@@ -1325,7 +1325,7 @@ namespace SIL.FieldWorks.IText
 				{
 					if (item.guid != null)
 					{
-						CreateLink(objGuid, item.type, item.guid, objects, cache);
+						CreateLink(objGuid, item.type, item.guid, item.lang, item.Value, objects, cache);
 					}
 				}
 			}
@@ -1335,14 +1335,96 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Create given link.
 		/// </summary>
-		private static void CreateLink(string objGuid, string xmlPropName, string valueGuid, InterlinearObjects objects, LcmCache cache)
+		private static void CreateLink(string objGuid, string xmlPropName, string valueGuid, string lang, string valueName, InterlinearObjects objects, LcmCache cache)
 		{
 			ICmObjectRepository repository = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
 			ICmObject obj = repository.GetObject(new Guid(objGuid));
-			ICmObject value = repository.GetObject(new Guid(valueGuid));
 			Dictionary<string, string> xmlPropertyMap = objects.InvertMap(objects.GetPropertyMap(obj.GetType().Name));
 			string propName = (xmlPropName == "owner") ? "Owner" : xmlPropertyMap[xmlPropName];
+			ICmObject value = null;
+			if (!repository.TryGetObject(new Guid(valueGuid), out value))
+			{
+				value = CreateObjectByName(obj, propName, lang, valueName, valueGuid, cache);
+			}
 			SetPropertyValue(obj, propName, value);
+		}
+
+		private static ICmObject CreateObjectByName(ICmObject obj, string propName, string lang, string valueName, string valueGuid, LcmCache cache)
+		{
+			ICmPossibilityList possibilityList = null;
+			string possibilityType = "ICmPossibility";
+			switch (propName)
+			{
+				case "AnthroCodesRC":
+					{
+						possibilityList = cache.LanguageProject.AnthroListOA;
+						possibilityType = "ICmAnthroItem";
+						break;
+					}
+				case "GenresRC":
+					{
+						possibilityList = cache.LanguageProject.GenreListOA;
+						break;
+					}
+				case "ParticipantsRC":
+				case "ResearchersRC":
+				case "Source":
+					{
+						possibilityList = cache.LanguageProject.PeopleOA;
+						possibilityType = "ICmPerson";
+						break;
+					}
+				case "RoleRA":
+					{
+						possibilityList = cache.LanguageProject.RolesOA;
+						break;
+					}
+				case "LocationsRC":
+					{
+						possibilityList = cache.LanguageProject.LocationsOA;
+						possibilityType = "ICmLocation";
+						break;
+					}
+			}
+			if (possibilityList == null)
+			{
+				return null;
+			}
+			// Look for an existing possibility with the given name.
+			int ws = GetWsEngine(cache.WritingSystemFactory, lang).Handle;
+			foreach (var candidate in possibilityList.ReallyReallyAllPossibilities)
+			{
+				ITsString name = candidate.Name.BestAnalysisAlternative;
+				if (name.Text == valueName && name.get_WritingSystemAt(0) == ws)
+				{
+					// Should we set the candidate's guid to valueGuid?
+					return candidate;
+				}
+			}
+			// Create a new possibility.
+			ICmPossibility newPossibility = null;
+			Guid guid = new Guid(valueGuid);
+			switch (possibilityType)
+			{
+				case "ICmAnthroItem":
+					newPossibility = cache.ServiceLocator.GetInstance<ICmAnthroItemFactory>().Create(guid);
+					break;
+				case "ICmLocation":
+					newPossibility = cache.ServiceLocator.GetInstance<ICmLocationFactory>().Create(guid);
+					break;
+				case "ICmPerson":
+					newPossibility = cache.ServiceLocator.GetInstance<ICmPersonFactory>().Create(guid);
+					break;
+				case "ICmPossibility":
+					newPossibility = cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(guid);
+					break;
+			}
+			if (newPossibility != null)
+			{
+				newPossibility.Name.set_String(ws, valueName);
+				possibilityList.PossibilitiesOS.Add(newPossibility);
+			}
+			return newPossibility;
 		}
 
 		/// <summary>

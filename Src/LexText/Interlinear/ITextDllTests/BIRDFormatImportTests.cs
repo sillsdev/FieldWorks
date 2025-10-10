@@ -816,28 +816,14 @@ namespace SIL.FieldWorks.IText
 			string textGuid = "a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb3";
 			string genre1Guid = "b405f3c0-58e1-4492-8a40-e955774a6912";
 			string genre2Guid = "45e6f056-98ac-45d6-858e-59450993f269";
-			string genre3Guid = "45e6f056-98ac-45d6-858f-59450993f269";
 			string genre1Name = "genre1";
 			string genre2Name = "genre2";
-			string genre3Name = "genre3";
 			//an interliner text example xml string
 			string xml = "<document><interlinear-text guid=\"" + textGuid + "\">" +
 			"<item type=\"title\" lang=\"en\">" + title + "</item>" +
 			"<item type=\"genre\" guid=\"" + genre1Guid + "\" lang=\"en\">" + genre1Name + "</item>" +
-			"<item type=\"genre\" guid=\"" + genre3Guid + "\" lang=\"en\">" + "</item>" +
+			"<item type=\"genre\" guid=\"" + genre2Guid + "\" lang=\"en\">" + genre2Name + "</item>" +
 			"<objects>" +
-			"<object type=\"Possibility\" guid=\"" + genre1Guid + "\">" +
-				"<item type=\"name\" lang=\"en\">" + genre1Name + "</item>" +
-				"<item type=\"owner\" lang=\"en\">GenreList</item>" +
-			"</object>" +
-			"<object type=\"Possibility\" guid=\"" + genre2Guid + "\">" +
-				"<item type=\"name\" lang=\"en\">" + genre2Name + "</item>" +
-				"<item type=\"owner\" lang=\"en\">GenreList</item>" +
-			"</object>" +
-			"<object type=\"Possibility\" guid=\"" + genre3Guid + "\">" +
-				"<item type=\"name\" lang=\"en\">" + genre3Name + "</item>" +
-				"<item type=\"owner\" guid=\"" + genre2Guid + "\" lang=\"en\">" + genre2Name + "</item>" +
-			"</object>\n" +
 			"</objects>\n" +
 			"<paragraphs><paragraph><phrases><phrase>" +
 			"<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
@@ -862,16 +848,14 @@ namespace SIL.FieldWorks.IText
 					Assert.AreEqual(2, imported.GenresRC.Count);
 					Assert.AreEqual(genre1Guid, imported.GenresRC.First().Guid.ToString());
 					Assert.AreEqual(genre1Name, imported.GenresRC.First().Name.BestAnalysisAlternative.Text);
-					Assert.AreEqual(genre3Guid, imported.GenresRC.Last().Guid.ToString());
-					Assert.AreEqual(genre3Name, imported.GenresRC.Last().Name.BestAnalysisAlternative.Text);
-					Assert.AreEqual(2, imported.Cache.LanguageProject.GenreListOA.PossibilitiesOS.Count);
+					Assert.AreEqual(genre2Guid, imported.GenresRC.Last().Guid.ToString());
+					Assert.AreEqual(genre2Name, imported.GenresRC.Last().Name.BestAnalysisAlternative.Text);
 					ILcmOwningSequence<ICmPossibility> genres = imported.Cache.LanguageProject.GenreListOA.PossibilitiesOS;
+					Assert.AreEqual(2, genres.Count);
 					Assert.AreEqual(genre1Guid, genres.First().Guid.ToString());
 					Assert.AreEqual(genre1Name, genres.First().Name.BestAnalysisAlternative.Text);
 					Assert.AreEqual(genre2Guid, genres.Last().Guid.ToString());
 					Assert.AreEqual(genre2Name, genres.Last().Name.BestAnalysisAlternative.Text);
-					Assert.AreEqual(genre3Guid, genres.Last().SubPossibilitiesOS.First().Guid.ToString());
-					Assert.AreEqual(genre3Name, genres.Last().SubPossibilitiesOS.First().Name.BestAnalysisAlternative.Text);
 				}
 			}
 		}

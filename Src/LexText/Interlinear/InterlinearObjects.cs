@@ -31,10 +31,6 @@ namespace SIL.FieldWorks.IText
 		{
 			m_typeMap = new Dictionary<string, string>
 			{
-				{ "CmAnthroItem", "AnthroItem" },
-				{ "CmLocation", "Location" },
-				{ "CmPerson", "Person" },
-				{ "CmPossibility", "Possibility" },
 				{ "RnGenericRec", "NotebookRecord" },
 				{ "RnRoledPartic", "RoledParticipants" },
 				{ "Text", "Text" },
@@ -47,43 +43,6 @@ namespace SIL.FieldWorks.IText
 
 			m_propertyMaps = new Dictionary<string, Dictionary<string, string>>
 			{
-				["CmAnthroItem"] = new Dictionary<string, string>()
-				{
-					{ "Name", "name" },
-					{ "Abbreviation", "abbreviation" },
-					{ "Description", "description" },
-					{ "ConfidenceRA", "confidence" },
-					{ "ResearchersRC", "researcher" },
-					{ "RestrictionsRC", "restriction" },
-					{ "StatusRA", "status" },
-				},
-				["CmLocation"] = new Dictionary<string, string>()
-				{
-					{ "Name", "name" },
-					{ "Abbreviation", "abbreviation" },
-					{ "Description", "description" },
-				},
-				["CmPerson"] = new Dictionary<string, string>()
-				{
-					{ "Name", "name" },
-					{ "Abbreviation", "abbreviation" },
-					{ "Description", "description" },
-					{ "ConfidenceRA", "confidence" },
-					{ "PositionsRC", "position" },
-					{ "RestrictionsRC", "restriction" },
-					{ "StatusRA", "status" },
-					{ "EducationRA", "education" },
-					{ "Gender", "gender" },
-					{ "IsResearcher", "is-researcher" },
-					{ "PlacesOfResidenceRC", "place-of-residence" },
-					{ "PlaceOfBirthRA", "place-of-birth" },
-				},
-				["CmPossibility"] = new Dictionary<string, string>()
-				{
-					{ "Name", "name" },
-					{ "Abbreviation", "abbreviation" },
-					{ "Description", "description" },
-				},
 				["RnGenericRec"] = new Dictionary<string, string>()
 				{
 					{ "ResearchersRC", "researcher" },
