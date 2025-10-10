@@ -7,6 +7,8 @@
     <OutputType>Library</OutputType>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <IsTestProject>true</IsTestProject>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -35,6 +37,7 @@
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
     <PackageReference Include="encoding-converters-core" Version="0.9.7" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="8.0.0" />
     <PackageReference Include="RhinoMocks" Version="3.6.1" />
     <PackageReference Include="SIL.Core" Version="17.0.0-*" />
     <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
@@ -67,5 +70,13 @@
     <ProjectReference Include="../../XCore/xCoreInterfaces/xCoreInterfaces.csproj" />
     <ProjectReference Include="../FwCoreDlgControls/FwCoreDlgControls.csproj" />
     <ProjectReference Include="../FwCoreDlgs.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="../../AppForTests.config" Link="App.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="../../AssemblyInfoForTests.cs" Link="Properties/AssemblyInfoForTests.cs" />
   </ItemGroup>
 </Project>

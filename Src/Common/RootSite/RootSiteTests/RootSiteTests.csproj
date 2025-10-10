@@ -5,8 +5,11 @@
     <RootNamespace>SIL.FieldWorks.Common.RootSites</RootNamespace>
     <TargetFramework>net48</TargetFramework>
     <OutputType>Library</OutputType>
+    <IsTestProject>true</IsTestProject>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -49,7 +52,7 @@
     <PackageReference Include="SIL.LCModel.Utils.Tests" Version="11.0.0-*" PrivateAssets="All" />
     <PackageReference Include="SIL.TestUtilities" Version="17.0.0-*" />
     <PackageReference Include="SIL.WritingSystems" Version="17.0.0-*" />
-    <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
+    <PackageReference Include="System.Resources.Extensions" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -66,6 +69,10 @@
     <ProjectReference Include="../../SimpleRootSite/SimpleRootSite.csproj" />
     <ProjectReference Include="../../ViewsInterfaces/ViewsInterfaces.csproj" />
     <ProjectReference Include="../RootSite.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="../../../AssemblyInfoForTests.cs" Link="Properties/AssemblyInfoForTests.cs" />
   </ItemGroup>
 
 </Project>

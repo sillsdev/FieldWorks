@@ -144,4 +144,34 @@
   <data name="WriteEverythingCannotUndo" xml:space="preserve">
     <value>This operation cannot be undone, since it makes no changes.</value>
   </data>
+  <data name="ksReadingTheInputFile" xml:space="preserve">
+    <value>Reading the input file: {0}</value>
+  </data>
+  <data name="ksLookingForAndFixingErrors" xml:space="preserve">
+    <value>Looking for and fixing errors in {0}</value>
+  </data>
+  <data name="ksObjectWithGuidAlreadyExists" xml:space="preserve">
+    <value>Object with GUID {0} already exists</value>
+  </data>
+  <data name="ksObjectWithGuidAlreadyOwned" xml:space="preserve">
+    <value>Object with GUID {0} is already owned by {1}</value>
+  </data>
+  <data name="ksChangingOwnerGuidValue" xml:space="preserve">
+    <value>Changing owner GUID value from {0} to {1} for {2} object {3}</value>
+  </data>
+  <data name="ksRemovingLinkToNonexistentOwner" xml:space="preserve">
+    <value>Removing link to nonexistent owner {0} from {1} object {2}</value>
+  </data>
+  <data name="ksAddingLinkToOwner" xml:space="preserve">
+    <value>Adding link to owner {0} for {1} object {2}</value>
+  </data>
+  <data name="ksRemovingLinkToNonexistingObject" xml:space="preserve">
+    <value>Removing link to nonexisting object {0} from {1} object {2}, field {3}</value>
+  </data>
+  <data name="ksRemovingMultipleOwnershipLink" xml:space="preserve">
+    <value>Removing multiple ownership link: object {0} from {1}, field {2}</value>
+  </data>
+  <data name="ksRemovingEditableAttribute" xml:space="preserve">
+    <value>Removing editable attribute from {0}</value>
+  </data>
 </root>

@@ -19,17 +19,17 @@ namespace SIL.FieldWorks.FixData {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Strings {
+    internal class FixFwDataStrings {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal Strings() {
+        internal FixFwDataStrings() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.FixData {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SIL.FieldWorks.FixData.Strings", typeof(Strings).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("SIL.FieldWorks.FixData.FixFwDataStrings", typeof(FixFwDataStrings).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -57,6 +57,24 @@ namespace SIL.FieldWorks.FixData {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adding link to owner {0} for {1} object {2}.
+        /// </summary>
+        internal static string ksAddingLinkToOwner {
+            get {
+                return ResourceManager.GetString("ksAddingLinkToOwner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Changing owner GUID value from {0} to {1} for {2} object {3}.
+        /// </summary>
+        internal static string ksChangingOwnerGuidValue {
+            get {
+                return ResourceManager.GetString("ksChangingOwnerGuidValue", resourceCulture);
             }
         }
         
@@ -102,6 +120,78 @@ namespace SIL.FieldWorks.FixData {
         internal static string ksFindAndFixErrors {
             get {
                 return ResourceManager.GetString("ksFindAndFixErrors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Looking for and fixing errors in {0}.
+        /// </summary>
+        internal static string ksLookingForAndFixingErrors {
+            get {
+                return ResourceManager.GetString("ksLookingForAndFixingErrors", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Object with GUID {0} already exists.
+        /// </summary>
+        internal static string ksObjectWithGuidAlreadyExists {
+            get {
+                return ResourceManager.GetString("ksObjectWithGuidAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Object with GUID {0} is already owned by {1}.
+        /// </summary>
+        internal static string ksObjectWithGuidAlreadyOwned {
+            get {
+                return ResourceManager.GetString("ksObjectWithGuidAlreadyOwned", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reading the input file: {0}.
+        /// </summary>
+        internal static string ksReadingTheInputFile {
+            get {
+                return ResourceManager.GetString("ksReadingTheInputFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Removing editable attribute from {0}.
+        /// </summary>
+        internal static string ksRemovingEditableAttribute {
+            get {
+                return ResourceManager.GetString("ksRemovingEditableAttribute", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Removing link to nonexistent owner {0} from {1} object {2}.
+        /// </summary>
+        internal static string ksRemovingLinkToNonexistentOwner {
+            get {
+                return ResourceManager.GetString("ksRemovingLinkToNonexistentOwner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Removing link to nonexisting object {0} from {1} object {2}, field {3}.
+        /// </summary>
+        internal static string ksRemovingLinkToNonexistingObject {
+            get {
+                return ResourceManager.GetString("ksRemovingLinkToNonexistingObject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Removing multiple ownership link: object {0} from {1}, field {2}.
+        /// </summary>
+        internal static string ksRemovingMultipleOwnershipLink {
+            get {
+                return ResourceManager.GetString("ksRemovingMultipleOwnershipLink", resourceCulture);
             }
         }
         
