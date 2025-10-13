@@ -810,7 +810,7 @@ namespace SIL.FieldWorks.IText
 			if (word.Items != null && wordForm.Analysis != null)
 			{
 				// Look for an existing category that matches a "pos".
-				bool catFound = false;
+				bool hasPOS = false;
 				foreach (var item in word.Items)
 				{
 					if (wordForm.Analysis.CategoryRA != null)
@@ -820,6 +820,7 @@ namespace SIL.FieldWorks.IText
 					}
 					if (item.type == "pos")
 					{
+						hasPOS = true;
 						ILgWritingSystem writingSystem = GetWsEngine(cache.WritingSystemFactory, item.lang);
 						if (writingSystem != null)
 						{
@@ -828,14 +829,13 @@ namespace SIL.FieldWorks.IText
 								if (MatchesCatNameOrAbbreviation(writingSystem.Handle, item.Value, cat))
 								{
 									wordForm.Analysis.CategoryRA = cat;
-									catFound = true;
 									break;
 								}
 							}
 						}
 					}
 				}
-				if (catFound && wordForm.Analysis.CategoryRA == null)
+				if (hasPOS && wordForm.Analysis.CategoryRA == null)
 				{
 					// Create a new category.
 					IPartOfSpeech cat = cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
@@ -848,6 +848,7 @@ namespace SIL.FieldWorks.IText
 							if (writingSystem != null)
 							{
 								cat.Name.set_String(writingSystem.Handle, item.Value);
+								cat.Abbreviation.set_String(writingSystem.Handle, item.Value);
 							}
 						}
 					}
