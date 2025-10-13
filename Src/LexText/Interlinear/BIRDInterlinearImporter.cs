@@ -2,24 +2,23 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.Extensions;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.IText.FlexInterlinModel;
+using SIL.LCModel;
+using SIL.LCModel.Application.ApplicationServices;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.IText.FlexInterlinModel;
-using SIL.LCModel.Application.ApplicationServices;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Infrastructure;
-using SIL.LCModel.Utils;
-using SIL.Extensions;
 
 namespace SIL.FieldWorks.IText
 {
@@ -807,6 +806,55 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 
+			// Try to fill in category.
+			if (word.Items != null && wordForm.Analysis != null)
+			{
+				// Look for an existing category that matches a "pos".
+				bool catFound = false;
+				foreach (var item in word.Items)
+				{
+					if (wordForm.Analysis.CategoryRA != null)
+					{
+						// Category filled in.
+						break;
+					}
+					if (item.type == "pos")
+					{
+						ILgWritingSystem writingSystem = GetWsEngine(cache.WritingSystemFactory, item.lang);
+						if (writingSystem != null)
+						{
+							foreach (var cat in cache.LanguageProject.AllPartsOfSpeech)
+							{
+								if (MatchesCatNameOrAbbreviation(writingSystem.Handle, item.Value, cat))
+								{
+									wordForm.Analysis.CategoryRA = cat;
+									catFound = true;
+									break;
+								}
+							}
+						}
+					}
+				}
+				if (catFound && wordForm.Analysis.CategoryRA == null)
+				{
+					// Create a new category.
+					IPartOfSpeech cat = cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
+					cache.LanguageProject.PartsOfSpeechOA.PossibilitiesOS.Add(cat);
+					foreach (var item in word.Items)
+					{
+						if (item.type == "pos")
+						{
+							ILgWritingSystem writingSystem = GetWsEngine(cache.WritingSystemFactory, item.lang);
+							if (writingSystem != null)
+							{
+								cat.Name.set_String(writingSystem.Handle, item.Value);
+							}
+						}
+					}
+					wordForm.Analysis.CategoryRA = cat;
+				}
+			}
+
 			return wordForm;
 		}
 
@@ -819,6 +867,7 @@ namespace SIL.FieldWorks.IText
 			// First, collect all expected forms and glosses from the Word
 			var expectedForms = new Dictionary<int, string>(); // wsHandle -> expected value
 			var expectedGlosses = new Dictionary<int, string>(); // wsHandle -> expected gloss
+			var expectedCats = new Dictionary<int, string>(); // wsHandle -> expected cat
 			IAnalysis candidateForm = null;
 			ITsString wordForm = null;
 			ITsString punctForm = null;
@@ -869,6 +918,10 @@ namespace SIL.FieldWorks.IText
 							continue;
 
 						expectedGlosses[ws.Handle] = wordItem.Value;
+						break;
+
+					case "pos":
+						expectedCats[ws.Handle] = wordItem.Value;
 						break;
 				}
 			}
@@ -922,7 +975,7 @@ namespace SIL.FieldWorks.IText
 
 				if (morphemeMatch)
 				{
-					var matchingGloss = wfiAnalysis.MeaningsOC.FirstOrDefault(g => VerifyGlossesMatch(g, expectedGlosses));
+					var matchingGloss = wfiAnalysis.MeaningsOC.FirstOrDefault(g => VerifyGlossesMatch(g, expectedGlosses, expectedCats));
 					if (matchingGloss != null)
 					{
 						analysis = matchingGloss;
@@ -1030,7 +1083,8 @@ namespace SIL.FieldWorks.IText
 
 		// Helper method to verify that all expected glosses match the stored glosses
 		private static bool VerifyGlossesMatch(IWfiGloss wfiGloss,
-			Dictionary<int, string> expectedGlosses)
+			Dictionary<int, string> expectedGlosses,
+			Dictionary<int, string> expectedCats)
 		{
 			foreach (var expectedGloss in expectedGlosses)
 			{
@@ -1041,8 +1095,26 @@ namespace SIL.FieldWorks.IText
 				if (storedGloss == null || storedGloss.Text != expectedValue)
 					return false; // Mismatch found
 			}
+			foreach (var expectedCat in expectedCats)
+			{
+				if (!MatchesCatNameOrAbbreviation(expectedCat.Key, expectedCat.Value, wfiGloss.Analysis?.CategoryRA))
+					return false;
+			}
 
 			return true;
+		}
+
+		private static bool MatchesCatNameOrAbbreviation(int ws, string text, IPartOfSpeech cat)
+		{
+			if (cat == null)
+				return false;
+			ITsString name = cat.Name.get_String(ws);
+			if (name != null && name.Text == text)
+				return true;
+			ITsString abbr = cat.Abbreviation.get_String(ws);
+			if (abbr != null && abbr.Text == text)
+				return true;
+			return false;
 		}
 
 		/// <summary>
