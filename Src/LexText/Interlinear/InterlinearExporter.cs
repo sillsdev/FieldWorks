@@ -983,7 +983,7 @@ namespace SIL.FieldWorks.IText
 	/// </summary>
 	public class InterlinearExporterForElan : InterlinearExporter
 	{
-		private const int kDocVersion = 2;
+		private const int kDocVersion = 3;
 		protected internal InterlinearExporterForElan(LcmCache cache, XmlWriter writer, ICmObject objRoot,
 			InterlinLineChoices lineChoices, InterlinVc vc)
 			: base(cache, writer, objRoot, lineChoices, vc)
