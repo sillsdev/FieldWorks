@@ -224,9 +224,21 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			else
 			{
+				var newPossibleColumns = new List<XmlNode>(m_possibleColumns);
 				foreach (XmlNode node in doc.DocumentElement.SelectNodes("//column"))
 				{
+					// if there is a corresponding possible column remove it from the newPossibleColumns list.
+					var possible = newPossibleColumns.Find(n => n.Attributes?["label"].Value == node.Attributes?["label"].Value);
+					if (possible != null)
+						newPossibleColumns.Remove(possible);
 					if (IsValidColumnSpec(node))
+						m_columns.Add(node);
+				}
+
+				foreach (var node in newPossibleColumns)
+				{
+					// add any possible columns that were not in the saved list and are common
+					if (XmlUtils.GetOptionalAttributeValue(node, "common", "false") == "true")
 						m_columns.Add(node);
 				}
 			}
