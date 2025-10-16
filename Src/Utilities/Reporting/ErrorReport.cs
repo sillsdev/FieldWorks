@@ -535,7 +535,7 @@ namespace SIL.Utils
 			Exception innerMostException = null;
 			if (error != null)
 			{
-				detailsText.AppendLine(ExceptionHelper.GetHiearchicalExceptionInfo(error, ref innerMostException));
+				detailsText.AppendLine(ExceptionHelper.GetHierarchicalExceptionInfo(error, ref innerMostException));
 
 				// if the exception had inner exceptions, show the inner-most exception first, since
 				// that is usually the one we want the developer to read.

@@ -23,6 +23,7 @@ using System.Windows.Forms;
 using DesktopAnalytics;
 using Gecko;
 using L10NSharp;
+using L10NSharp.Windows.Forms;
 using Microsoft.Win32;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
@@ -3640,7 +3641,7 @@ namespace SIL.FieldWorks
 				var versionObj = Assembly.LoadFrom(Path.Combine(fieldWorksFolder ?? string.Empty, "Chorus.exe")).GetName().Version;
 				var version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
 				// First create localization manager for Chorus with english
-				LocalizationManager.Create("en",
+				LocalizationManagerWinforms.Create("en",
 					"Chorus", "Chorus", version, installedL10nBaseDir, userL10nBaseDir, null, "flex_localization@sil.org", new [] { "Chorus", "LibChorus" });
 				// Now that we have one manager initialized check and see if the users UI language has
 				// localizations available
@@ -3648,12 +3649,12 @@ namespace SIL.FieldWorks
 				if (LocalizationManager.GetUILanguages(true).Any(lang => lang.TwoLetterISOLanguageName == uiCulture))
 				{
 					// If it is switch to using that instead of english
-					LocalizationManager.SetUILanguage(uiCulture, true);
+					LocalizationManagerWinforms.SetUILanguage(uiCulture, true);
 				}
 
 				versionObj = Assembly.GetAssembly(typeof(ErrorReport)).GetName().Version;
 				version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
-				LocalizationManager.Create(LocalizationManager.UILanguageId, "Palaso", "Palaso", version, installedL10nBaseDir,
+				LocalizationManagerWinforms.Create(LocalizationManager.UILanguageId, "Palaso", "Palaso", version, installedL10nBaseDir,
 					userL10nBaseDir, null, "flex_localization@sil.org", new [] { "SIL.Windows.Forms" });
 			}
 			catch (Exception e)
@@ -3668,7 +3669,7 @@ namespace SIL.FieldWorks
 			var langFromCache = cache.ServiceLocator.WritingSystemManager.UserWritingSystem.Id;
 			if (langFromCache != LocalizationManager.UILanguageId)
 			{
-				LocalizationManager.SetUILanguage(langFromCache, true);
+				LocalizationManagerWinforms.SetUILanguage(langFromCache, true);
 			}
 		}
 
