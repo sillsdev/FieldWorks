@@ -767,38 +767,72 @@ namespace SIL.FieldWorks.IText
 
 					if (itemDict.ContainsKey("cf")) // Lex. Entries
 					{
+						// NB: "cf" records the lexeme, not the headword/citation form (in spite of the name).
 						int ws_cf = GetWsEngine(wsFact, itemDict["cf"].Item1).Handle;
 						ILexEntry entry = null;
-						// Match on lexeme, not citation form.
 						var entries = lex_entry_repo.AllInstances().Where(
-							m => DecorateFormWithAffixMarkers(m.LexemeFormOA, LexemeFormStaticForWs(m, ws_cf, string.Empty)) == itemDict["cf"].Item2);
-						if (entries.Count() == 1)
+							m => DecorateFormWithAffixMarkers(m.LexemeFormOA?.MorphTypeRA, m.LexemeFormOA?.Form?.get_String(ws_cf)?.Text) == itemDict["cf"].Item2);
+
+						// Filter entries by homograph number.
+						// If the lexeme and the headword are different,
+						// then there may be more than one entry with the given homograph number.
+						// This is because homograph numbers distinguish headwords rather than lexemes.
+						// If there is no "hn" entry, then the hn is 0.
+						string hn = "0";
+						if (itemDict.ContainsKey("hn")) // Homograph Number
+						{
+							hn = itemDict["hn"].Item2;
+						}
+						var hnEntries = entries.Where(m => m.HomographNumber.ToString() == hn);
+						if (hnEntries.Count() > 0)
+						{
+							entries = hnEntries;
+						}
+
+						if (itemDict.ContainsKey("gls")) // Lex. Gloss
+						{
+							// Filter senses by gloss.
+							int ws_gls = GetWsEngine(wsFact, itemDict["gls"].Item1).Handle;
+							IList<ILexSense> senses = new List<ILexSense>();
+							foreach (var e in entries)
+							{
+								senses.AddRange(e.SensesOS.Where(s => s.Gloss.get_String(ws_gls).Text == itemDict["gls"].Item2));
+							}
+							if (senses.Count() > 1 && itemDict.ContainsKey("msa"))
+							{
+								// Filter senses by MSA.
+								IList<ILexSense> msaSenses = senses.Where(s => s.MorphoSyntaxAnalysisRA?.InterlinearAbbr == itemDict["msa"].Item2).ToList();
+								if (msaSenses.Count() > 0)
+								{
+									senses = msaSenses;
+								}
+							}
+							// Record sense.
+							if (senses.Count() > 0)
+							{
+								bundle.SenseRA = senses.FirstOrDefault();
+								entry = bundle.SenseRA.Entry;
+							}
+						}
+
+						if (entry == null && entries.Count() > 0)
 						{
 							entry = entries.First();
 						}
-						else if (itemDict.ContainsKey("hn")) // Homograph Number
-						{
-							entry = entries.FirstOrDefault(m => m.HomographNumber.ToString() == itemDict["hn"].Item2);
-						}
+
+						// Record morpheme.
 						if (entry != null)
 						{
-							bundle.MorphRA = entry.LexemeFormOA;
-
-							if (itemDict.ContainsKey("gls")) // Lex. Gloss
+							if (itemDict.ContainsKey("txt"))
 							{
-								int ws_gls = GetWsEngine(wsFact, itemDict["gls"].Item1).Handle;
-								IEnumerable<ILexSense> senses = entry.SensesOS.Where(s => s.Gloss.get_String(ws_gls).Text == itemDict["gls"].Item2);
-								int sensesCount = senses.Count();
-								if (senses.Count() > 1 && itemDict.ContainsKey("msa"))
-								{
-									// Filter by MSA.
-									IEnumerable<ILexSense> msaSenses = senses.Where(s => s.MorphoSyntaxAnalysisRA?.InterlinearAbbr == itemDict["msa"].Item2);
-									if (msaSenses.Count() > 0)
-									{
-										senses = msaSenses;
-									}
-								}
-								bundle.SenseRA = senses.FirstOrDefault();
+								// Try allomorph first.
+								var ws_txt = GetWsEngine(wsFact, itemDict["txt"].Item1).Handle;
+								bundle.MorphRA = entry.AllAllomorphs.Where(
+									m => DecorateFormWithAffixMarkers(m.MorphTypeRA, m.Form.get_String(ws_txt).Text) == itemDict["txt"].Item2).FirstOrDefault();
+							}
+							if (bundle.MorphRA == null)
+							{
+								bundle.MorphRA = entry.LexemeFormOA;
 							}
 						}
 					}
@@ -875,16 +909,11 @@ namespace SIL.FieldWorks.IText
 		}
 
 		// Based on StringServices.DecorateFormWithAffixMarkers.
-		private static string DecorateFormWithAffixMarkers(IMoForm mForm, string form)
+		private static string DecorateFormWithAffixMarkers(IMoMorphType mmt, string form)
 		{
-			// No type info...return simpler version of name.
-			if (mForm == null)
+			if (mmt == null || form == null)
 				return form;
-
 			// Add pre- post markers, if any.
-			var mmt = mForm.MorphTypeRA;
-			if (mmt == null)
-				return form;
 			if (!String.IsNullOrEmpty(mmt.Prefix))
 			{
 				form = mmt.Prefix + form;
@@ -894,21 +923,6 @@ namespace SIL.FieldWorks.IText
 				form = form + mmt.Postfix;
 			}
 			return form;
-		}
-
-		// Based on StringServices.LexemeFormStaticForWs.
-		private static string LexemeFormStaticForWs(ILexEntry entry, int wsVern, string defaultForm)
-		{
-			ITsString tss;
-			// try lexeme form
-			var form = entry.LexemeFormOA;
-			if (form != null)
-			{
-				tss = form.Form.get_String(wsVern);
-				if (tss != null && tss.Length > 0)
-					return tss.Text;
-			}
-			return defaultForm;
 		}
 
 		private static bool FindOrCreateWfiAnalysis(LcmCache cache, Word word,
@@ -1001,24 +1015,27 @@ namespace SIL.FieldWorks.IText
 				return true;
 			}
 
-			analysis = FindMatchingAnalysis(cache, candidateWordform, word, expectedGlosses, expectedCats);
-			if (analysis != null)
+			if (word.morphemes?.analysisStatus == analysisStatusTypes.humanApproved)
 			{
-				return true;
-			}
-
-			if (wordForm.Text.ToLower() != wordForm.Text)
-			{
-				// Try lowercase.
-				var lcCandidateForm = cache.ServiceLocator
-								.GetInstance<IWfiWordformRepository>()
-								.GetMatchingWordform(wordForm.get_WritingSystemAt(0), wordForm.Text.ToLower());
-				if (lcCandidateForm is IWfiWordform lcCandidateWordform)
+				analysis = FindMatchingAnalysis(cache, candidateWordform, word, expectedGlosses, expectedCats);
+				if (analysis != null)
 				{
-					analysis = FindMatchingAnalysis(cache, lcCandidateWordform, word, expectedGlosses, expectedCats);
-					if (analysis != null)
+					return true;
+				}
+
+				if (wordForm.Text.ToLower() != wordForm.Text)
+				{
+					// Try lowercase.
+					var lcCandidateForm = cache.ServiceLocator
+									.GetInstance<IWfiWordformRepository>()
+									.GetMatchingWordform(wordForm.get_WritingSystemAt(0), wordForm.Text.ToLower());
+					if (lcCandidateForm is IWfiWordform lcCandidateWordform)
 					{
-						return true;
+						analysis = FindMatchingAnalysis(cache, lcCandidateWordform, word, expectedGlosses, expectedCats);
+						if (analysis != null)
+						{
+							return true;
+						}
 					}
 				}
 			}
@@ -1050,7 +1067,7 @@ namespace SIL.FieldWorks.IText
 						// compare the import item to the extant morph form
 						if (importMorphForm == null || extantMorphForm == null ||
 							TsStringUtils.IsNullOrEmpty(extantMorphForm.get_String(importFormWs.Handle)) ||
-							!DecorateFormWithAffixMarkers(morphBundle.MorphRA, extantMorphForm.get_String(importFormWs.Handle).Text).Normalize()
+							!DecorateFormWithAffixMarkers(morphBundle.MorphRA?.MorphTypeRA, extantMorphForm.get_String(importFormWs.Handle).Text).Normalize()
 								.Equals(importMorphForm.Value?.Normalize()))
 						{
 							morphemeMatch = false;
