@@ -291,73 +291,72 @@ namespace SIL.FieldWorks.IText
 			firstNewText = null;
 			BIRDDocument doc;
 			int initialProgress = progress.Position;
-			bool canStartUow = ((IActionHandlerExtensions)m_cache.ActionHandlerAccessor).CanStartUow;
+			LCModel.IText localFirstNewText = firstNewText;
 			try
 			{
-				if (canStartUow)
-					// Don't BeginNonUndoableTask if we are already in an task.
-					m_cache.DomainDataByFlid.BeginNonUndoableTask();
-				progress.Message = ITextStrings.ksInterlinImportPhase1of2;
-				var serializer = new XmlSerializer(typeof(BIRDDocument));
-				doc = (BIRDDocument)serializer.Deserialize(birdData);
-				Normalize(doc);
-				int version = 0;
-				if (!string.IsNullOrEmpty(doc.version))
-					int.TryParse(doc.version, out version);
-				progress.Position = initialProgress + allottedProgress / 2;
-				progress.Message = ITextStrings.ksInterlinImportPhase2of2;
-				if (doc.interlineartext != null)
+				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 				{
-					int step = 0;
-					foreach (var interlineartext in doc.interlineartext)
+					progress.Message = ITextStrings.ksInterlinImportPhase1of2;
+					var serializer = new XmlSerializer(typeof(BIRDDocument));
+					doc = (BIRDDocument)serializer.Deserialize(birdData);
+					Normalize(doc);
+					int version = 0;
+					if (!string.IsNullOrEmpty(doc.version))
+						int.TryParse(doc.version, out version);
+					progress.Position = initialProgress + allottedProgress / 2;
+					progress.Message = ITextStrings.ksInterlinImportPhase2of2;
+					if (doc.interlineartext != null)
 					{
-						step++;
-						ILangProject langProject = m_cache.LangProject;
-						LCModel.IText newText = null;
-						if (!String.IsNullOrEmpty(interlineartext.guid))
+						int step = 0;
+						foreach (var interlineartext in doc.interlineartext)
 						{
-							ICmObject repoObj;
-							m_cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(interlineartext.guid), out repoObj);
-							newText = repoObj as LCModel.IText;
-							if (newText != null && ShowPossibleMergeDialog(progress) == DialogResult.Yes)
+							step++;
+							ILangProject langProject = m_cache.LangProject;
+							LCModel.IText newText = null;
+							if (!String.IsNullOrEmpty(interlineartext.guid))
 							{
-								continueMerge = MergeTextWithBIRDDoc(ref newText,
-												new TextCreationParams
-												{
-													Cache = m_cache,
-													InterlinText = interlineartext,
-													Progress = progress,
-													ImportOptions = options,
-													Version = version
-												});
+								ICmObject repoObj;
+								m_cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(interlineartext.guid), out repoObj);
+								newText = repoObj as LCModel.IText;
+								if (newText != null && ShowPossibleMergeDialog(progress) == DialogResult.Yes)
+								{
+									continueMerge = MergeTextWithBIRDDoc(ref newText,
+													new TextCreationParams
+													{
+														Cache = m_cache,
+														InterlinText = interlineartext,
+														Progress = progress,
+														ImportOptions = options,
+														Version = version
+													});
+								}
+								else if (newText == null)
+								{
+									newText = m_cache.ServiceLocator.GetInstance<ITextFactory>().Create(m_cache, new Guid(interlineartext.guid));
+									continueMerge = PopulateTextIfPossible(options, ref newText, interlineartext, progress, version);
+								}
+								else //user said do not merge.
+								{
+									//ignore the Guid; we shouldn't create another text with the same guid
+									newText = m_cache.ServiceLocator.GetInstance<ITextFactory>().Create();
+									continueMerge = PopulateTextIfPossible(options, ref newText, interlineartext, progress, version);
+								}
 							}
-							else if (newText == null)
+							else
 							{
-								newText = m_cache.ServiceLocator.GetInstance<ITextFactory>().Create(m_cache, new Guid(interlineartext.guid));
-								continueMerge = PopulateTextIfPossible(options, ref newText, interlineartext, progress, version);
-							}
-							else //user said do not merge.
-							{
-								//ignore the Guid; we shouldn't create another text with the same guid
 								newText = m_cache.ServiceLocator.GetInstance<ITextFactory>().Create();
 								continueMerge = PopulateTextIfPossible(options, ref newText, interlineartext, progress, version);
 							}
-						}
-						else
-						{
-							newText = m_cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-							continueMerge = PopulateTextIfPossible(options, ref newText, interlineartext, progress, version);
-						}
-						if (!continueMerge)
-							break;
-						progress.Position = initialProgress + allottedProgress / 2 + allottedProgress * step / 2 / doc.interlineartext.Length;
-						if (firstNewText == null)
-							firstNewText = newText;
+							if (!continueMerge)
+								break;
+							progress.Position = initialProgress + allottedProgress / 2 + allottedProgress * step / 2 / doc.interlineartext.Length;
+							if (localFirstNewText == null)
+								localFirstNewText = newText;
 
+						}
+						mergeSucceeded = continueMerge;
 					}
-					mergeSucceeded = continueMerge;
-
-				}
+				});
 			}
 			catch (Exception e)
 			{
@@ -365,11 +364,7 @@ namespace SIL.FieldWorks.IText
 				Debug.Print(e.Message);
 				Debug.Print(e.StackTrace);
 			}
-			finally
-			{
-				if (canStartUow)
-					m_cache.DomainDataByFlid.EndNonUndoableTask();
-			}
+			firstNewText = localFirstNewText;
 			return mergeSucceeded;
 		}
 
