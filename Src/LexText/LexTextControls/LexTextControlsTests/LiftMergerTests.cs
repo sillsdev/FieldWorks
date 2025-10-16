@@ -3663,37 +3663,6 @@ namespace LexTextControlsTests
 			Assert.That(entry.AlternateFormsOS.First().LiftResidue, Does.Contain("look for this"));
 		}
 
-		private static readonly string[] s_LiftPronunciations = {
-			"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
-			"<lift producer=\"SIL.FLEx 8.0.3.41457\" version=\"0.13\">",
-			"<header>",
-			"<ranges/>",
-			"<fields/>",
-			"</header>",
-			"<entry dateCreated=\"2013-07-02T20:01:04Z\" dateModified=\"2013-07-02T20:05:43Z\" id=\"test_503d3478-3545-4213-9f6b-1f087464e140\" guid=\"503d3478-3545-4213-9f6b-1f087464e140\">",
-			"<lexical-unit>",
-			"<form lang=\"fr\"><text>test</text></form>",
-			"</lexical-unit>",
-			"<trait name=\"morph-type\" value=\"stem\"/>",
-			"<pronunciation>",
-			"<form lang=\"fr\"><text>pronunciation</text></form>",
-			"</pronunciation>",
-			"<pronunciation>",
-			"<form lang=\"es\"><text>pronunciation</text></form>",
-			"</pronunciation>",
-			"</entry>",
-			"<entry dateCreated=\"2013-07-02T20:01:04Z\" dateModified=\"2013-07-02T20:05:43Z\" id=\"test_8d735e34-c555-4390-a0af-21a12e1dd6ff\" guid=\"8d735e34-c555-4390-a0af-21a12e1dd6ff\">",
-			"<lexical-unit>",
-			"<form lang=\"fr\"><text>testb</text></form>",
-			"</lexical-unit>",
-			"<trait name=\"morph-type\" value=\"stem\"/>",
-			"<pronunciation>",
-			"<form lang=\"es\"><text>pronunciation</text></form>",
-			"</pronunciation>",
-			"</entry>",
-			"</lift>"
-		};
-
 		private string[] _minimalLiftData  = {
 				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
 				"<lift producer=\"SIL.FLEx 7.3.2.41302\" version=\"0.13\">",
@@ -3711,41 +3680,552 @@ namespace LexTextControlsTests
 				"</lift>"
 			};
 
-		///--------------------------------------------------------------------------------------
 		/// <summary>
-		/// Test LIFT merger for problems merging pronunciations.
-		/// To produce the problem that led to this test, an entry with one or formless pronunciation
-		/// gets merged with a LIFT file that has the same entry with other pronunciations. (LT-14725)
+		///     Test merging pronunciations when entry has formless pronunciation and LIFT has pronunciations
+		///     with forms.
+		///     Verifies that formless pronunciations don't interfere with form-based matching. (LT-14725)
 		/// </summary>
-		///--------------------------------------------------------------------------------------
 		[Test]
-		public void TestLiftMergeOfPronunciations()
+		public void MergePronunciations_EntryHasFormlessPronunciation_MergesCorrectly()
 		{
 			SetWritingSystems("fr es");
 
+			var wsEs = Cache.WritingSystemFactory.GetWsFromStr("es");
+
+			// Setup: Create entry with pronunciations including a formless one
+			var entry = CreateSimpleStemEntry("503d3478-3545-4213-9f6b-1f087464e140", "test");
+			AddPronunciation(entry, "pronunciation", Cache.DefaultVernWs); // 'fr' pronunciation
+			AddPronunciation(entry, "", -1); // blank pronunciation, no form
+
+			var liftXml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+				<lift producer=""SIL.FLEx 8.0.3.41457"" version=""0.13"">
+				<header>
+				<ranges/>
+				<fields/>
+				</header>
+				<entry dateCreated=""2013-07-02T20:01:04Z"" dateModified=""2013-07-02T20:05:43Z"" id=""test_503d3478-3545-4213-9f6b-1f087464e140"" guid=""503d3478-3545-4213-9f6b-1f087464e140"">
+				<lexical-unit>
+				<form lang=""fr""><text>test</text></form>
+				</lexical-unit>
+				<trait name=""morph-type"" value=""stem""/>
+				<pronunciation>
+				<form lang=""fr""><text>pronunciation</text></form>
+				</pronunciation>
+				<pronunciation>
+				<form lang=""es""><text>pronunciation</text></form>
+				</pronunciation>
+				</entry>
+				</lift>";
+
+			var sOrigFile = CreateInputFile(liftXml.Split('\n'));
+			TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepBoth, 1);
+			File.Delete(sOrigFile);
+
+			// Verify: Should have 3 pronunciations total
+			// - 'pronunciation' in 'fr' (merged)
+			// - 'pronunciation' in 'es' (added)
+			// - blank pronunciation with no form (unchanged)
+			Assert.That(entry.PronunciationsOS, Has.Count.EqualTo(3),
+				"Should have merged 'fr', added 'es', and kept formless pronunciation");
+			var frPronuns = entry.PronunciationsOS.Count(p =>
+				p.Form.get_String(Cache.DefaultVernWs).Text == "pronunciation");
+			Assert.That(frPronuns, Is.EqualTo(1), "Should have one 'fr' pronunciation");
+			var esPronuns = entry.PronunciationsOS.Count(p =>
+				p.Form.get_String(wsEs).Text == "pronunciation");
+			Assert.That(esPronuns, Is.EqualTo(1), "Should have one 'es' pronunciation");
+			var formlessPronuns = entry.PronunciationsOS.Count(p =>
+				p.Form.StringCount == 0);
+			Assert.That(formlessPronuns, Is.EqualTo(1), "Should have one formless pronunciation");
+		}
+
+		/// <summary>
+		///     Test merging pronunciations with media files when entry already has matching media.
+		///     Verifies media files are merged correctly when pronunciation forms match. (LT-14725)
+		/// </summary>
+		[Test]
+		public void MergePronunciations_MatchingMediaFiles_MergesIntoExisting()
+		{
+			SetWritingSystems("fr es");
+
+			var wsEs = Cache.WritingSystemFactory.GetWsFromStr("es");
+
+			// Setup: Create entry with pronunciation that has one media file
+			var entry = CreateSimpleStemEntry("503d3478-3545-4213-9f6b-1f087464e140", "test");
+			var misPronun = AddPronunciation(entry, "pronunciation", wsEs);
+
+			// Add existing media file
+			var mediaFolder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(mediaFolder);
+			var mediaFile = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			mediaFolder.FilesOC.Add(mediaFile);
+			mediaFile.InternalPath = "test_audio3.mp3";
+			var audioLink = Cache.ServiceLocator.GetInstance<ICmMediaFactory>().Create();
+			misPronun.MediaFilesOS.Add(audioLink);
+			audioLink.MediaFileRA = mediaFile;
+
+			var liftXml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+				<lift producer=""SIL.FLEx 8.0.3.41457"" version=""0.13"">
+				<header>
+				<ranges/>
+				<fields/>
+				</header>
+				<entry dateCreated=""2013-07-02T20:01:04Z"" dateModified=""2013-07-02T20:05:43Z"" id=""test_503d3478-3545-4213-9f6b-1f087464e140"" guid=""503d3478-3545-4213-9f6b-1f087464e140"">
+				<lexical-unit>
+				<form lang=""fr""><text>test</text></form>
+				</lexical-unit>
+				<trait name=""morph-type"" value=""stem""/>
+				<pronunciation>
+				<form lang=""es""><text>pronunciation</text></form>
+				<media href=""test_audio2.mp3""/>
+				<media href=""test_audio3.mp3""/>
+				</pronunciation>
+				</entry>
+				</lift>";
+
+			var sOrigFile = CreateInputFile(liftXml.Split('\n'));
+			TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepBoth, 1);
+			File.Delete(sOrigFile);
+
+			// Verify: Should merge into existing pronunciation due to matching form and media
+			Assert.That(entry.PronunciationsOS, Has.Count.EqualTo(1),
+				"Should merge into existing pronunciation with matching form and media");
+			Assert.That(misPronun.MediaFilesOS, Has.Count.EqualTo(2),
+				"Should have 2 media files after merge (original + new)");
+		}
+
+		/// <summary>
+		///     Test merging multiple duplicate pronunciations with same form but different media.
+		///     Verifies that duplicates in the entry don't interfere with proper matching. (LT-14725)
+		/// </summary>
+		[Test]
+		public void MergePronunciations_DuplicateFormsWithDifferentMedia_MergesBestMatch()
+		{
+			SetWritingSystems("fr es");
+
+			var wsEs = Cache.WritingSystemFactory.GetWsFromStr("es");
+			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
+
+			// Setup: Create entry with duplicate pronunciations, one with media, one without
+			var entry = CreateSimpleStemEntry("503d3478-3545-4213-9f6b-1f087464e140", "test");
+			var pronunWithMedia = AddPronunciation(entry, "pronunciation", wsEs);
+			var pronunWithoutMedia = AddPronunciation(entry, "pronunciation", wsEs);
+
+			// Add media file to first pronunciation
+			var mediaFolder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(mediaFolder);
+			var mediaFile = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			mediaFolder.FilesOC.Add(mediaFile);
+			mediaFile.InternalPath = "test_audio3.mp3";
+			var audioLink = Cache.ServiceLocator.GetInstance<ICmMediaFactory>().Create();
+			pronunWithMedia.MediaFilesOS.Add(audioLink);
+			audioLink.MediaFileRA = mediaFile;
+
+			var liftXml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+				<lift producer=""SIL.FLEx 8.0.3.41457"" version=""0.13"">
+				<header>
+				<ranges/>
+				<fields/>
+				</header>
+				<entry dateCreated=""2013-07-02T20:01:04Z"" dateModified=""2013-07-02T20:05:43Z"" id=""test_503d3478-3545-4213-9f6b-1f087464e140"" guid=""503d3478-3545-4213-9f6b-1f087464e140"">
+				<lexical-unit>
+				<form lang=""fr""><text>test</text></form>
+				</lexical-unit>
+				<trait name=""morph-type"" value=""stem""/>
+				<pronunciation>
+				<form lang=""es""><text>pronunciation</text></form>
+				<media href=""test_audio2.mp3""/>
+				<media href=""test_audio3.mp3""/>
+				</pronunciation>
+				</entry>
+				</lift>";
+
+			var sOrigFile = CreateInputFile(liftXml.Split('\n'));
+			TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepBoth, 1);
+			File.Delete(sOrigFile);
+
+			// Verify: Should still have 2 pronunciations (merged into best match)
+			Assert.That(entry.PronunciationsOS, Has.Count.EqualTo(2),
+				"Should keep both duplicate pronunciations");
+			// The pronunciation with matching media should get the merge
+			Assert.That(pronunWithMedia.MediaFilesOS, Has.Count.EqualTo(2),
+				"Pronunciation with matching media should receive merged media files");
+			Assert.That(pronunWithoutMedia.MediaFilesOS, Has.Count.EqualTo(0),
+				"Pronunciation without media should remain unchanged");
+		}
+
+		/// <summary>
+		///     Test comprehensive merge scenario with multiple pronunciations in different languages.
+		///     Verifies the complete merging logic with forms in French and Spanish. (LT-14725)
+		/// </summary>
+		[Test]
+		public void MergePronunciations_MultipleLanguagesAndForms_MergesAllCorrectly()
+		{
+			SetWritingSystems("fr es");
+
+			var wsEs = Cache.WritingSystemFactory.GetWsFromStr("es");
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 			Assert.AreEqual(0, repoEntry.Count);
 			Assert.AreEqual(0, repoSense.Count);
 
-			// The entries should already be present.
+			// Setup: Create first entry with multiple pronunciations
 			var entry1 = CreateSimpleStemEntry("503d3478-3545-4213-9f6b-1f087464e140", "test");
-			AddPronunciation(entry1, "pronunciation", Cache.DefaultVernWs); // add 'fr' pronunciation
-			AddPronunciation(entry1, "", -1); // add blank pronunciation, no form
+			AddPronunciation(entry1, "pronunciation", Cache.DefaultVernWs); // 'fr'
+			AddPronunciation(entry1, "", -1); // blank pronunciation
+			AddPronunciation(entry1, "mispronunciation", wsEs);
+			var misPronun = AddPronunciation(entry1, "mispronunciation", wsEs);
+
+			// Add media file to one mispronunciation
+			var mediaFolder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(mediaFolder);
+			var mediaFile = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			mediaFolder.FilesOC.Add(mediaFile);
+			mediaFile.InternalPath = "test_audio3.mp3";
+			var audioLink = Cache.ServiceLocator.GetInstance<ICmMediaFactory>().Create();
+			misPronun.MediaFilesOS.Add(audioLink);
+			audioLink.MediaFileRA = mediaFile;
+
+			// Setup: Create second entry with single pronunciation
 			var entry2 = CreateSimpleStemEntry("8d735e34-c555-4390-a0af-21a12e1dd6ff", "testb");
-			AddPronunciation(entry2, "pronunciation", Cache.DefaultVernWs); // add 'fr' pronunciation
+			AddPronunciation(entry2, "pronunciation", Cache.DefaultVernWs); // 'fr'
 
-			var sOrigFile = CreateInputFile(s_LiftPronunciations);
+			var liftXml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+				<lift producer=""SIL.FLEx 8.0.3.41457"" version=""0.13"">
+				<header>
+				<ranges/>
+				<fields/>
+				</header>
+				<entry dateCreated=""2013-07-02T20:01:04Z"" dateModified=""2013-07-02T20:05:43Z"" id=""test_503d3478-3545-4213-9f6b-1f087464e140"" guid=""503d3478-3545-4213-9f6b-1f087464e140"">
+				<lexical-unit>
+				<form lang=""fr""><text>test</text></form>
+				</lexical-unit>
+				<trait name=""morph-type"" value=""stem""/>
+				<pronunciation>
+				<form lang=""fr""><text>pronunciation</text></form>
+				</pronunciation>
+				<pronunciation>
+				<form lang=""es""><text>pronunciation</text></form>
+				</pronunciation>
+				<pronunciation>
+				<form lang=""es""><text>mispronunciation</text></form>
+				<media href=""test_audio2.mp3""/>
+				<media href=""test_audio3.mp3""/>
+				</pronunciation>
+				</entry>
+				<entry dateCreated=""2013-07-02T20:01:04Z"" dateModified=""2013-07-02T20:05:43Z"" id=""test_8d735e34-c555-4390-a0af-21a12e1dd6ff"" guid=""8d735e34-c555-4390-a0af-21a12e1dd6ff"">
+				<lexical-unit>
+				<form lang=""fr""><text>testb</text></form>
+				</lexical-unit>
+				<trait name=""morph-type"" value=""stem""/>
+				<pronunciation>
+				<form lang=""es""><text>pronunciation</text></form>
+				</pronunciation>
+				</entry>
+				</lift>";
 
-			// Try to merge in two LIFT file entries that match our two existing entries
+			var sOrigFile = CreateInputFile(liftXml.Split('\n'));
 			TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepBoth, 2);
 			File.Delete(sOrigFile);
 
-			// Verification
-			Assert.AreEqual(2, repoEntry.Count, "Created some unnecessary entries.");
-			Assert.AreEqual(0, repoSense.Count, "Created some unnecessary senses.");
-			var repoPronunciation = Cache.ServiceLocator.GetInstance<ILexPronunciationRepository>();
-			Assert.AreEqual(5, repoPronunciation.Count, "Wrong number of remaining LexPronunciation objects");
+			// Verify overall counts
+			Assert.AreEqual(2, repoEntry.Count, "Should have exactly 2 entries");
+			Assert.AreEqual(0, repoSense.Count, "Should not create any senses");
+
+			var repoPronunciation =
+				Cache.ServiceLocator.GetInstance<ILexPronunciationRepository>();
+			Assert.AreEqual(7, repoPronunciation.Count, "Should have 7 total pronunciations");
+
+			// Verify entry1: Should have 5 pronunciations after merge
+			// - 'pronunciation' in 'fr' (merged)
+			// - 'pronunciation' in 'es' (added from LIFT)
+			// - 'mispronunciation' in 'es' with 2 media files (merged)
+			// - 'mispronunciation' in 'es' with no media files (unchanged)
+			// - blank pronunciation with no form (unchanged)
+			Assert.That(entry1.PronunciationsOS, Has.Count.EqualTo(5),
+				"Entry 'test' should have 5 pronunciations");
+			Assert.That(misPronun.MediaFilesOS, Has.Count.EqualTo(2),
+				"Mispronunciation should have 2 media files after merge");
+
+			// Verify entry2: Should have 2 pronunciations after merge
+			// - 'pronunciation' in 'fr' (original)
+			// - 'pronunciation' in 'es' (added from LIFT)
+			Assert.That(entry2.PronunciationsOS, Has.Count.EqualTo(2),
+				"Entry 'testb' should have 2 pronunciations");
+		}
+
+		/// <summary>
+		///     Test merging when entry has pronunciation with media but LIFT has same form without media.
+		///     Verifies that form-only matches work correctly. (LT-14725)
+		/// </summary>
+		[Test]
+		public void MergePronunciations_EntryHasMediaLiftDoesNot_MergesOnForm()
+		{
+			SetWritingSystems("fr");
+
+			// Setup: Create entry with pronunciation that has media
+			var entry = CreateSimpleStemEntry("66EE6430-D40E-4BBF-8E17-0793E1176CF0", "test");
+			var pronun = AddPronunciation(entry, "pronunciation", Cache.DefaultVernWs);
+
+			// Add media file to entry pronunciation
+			var mediaFolder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(mediaFolder);
+			var mediaFile = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			mediaFolder.FilesOC.Add(mediaFile);
+			mediaFile.InternalPath = "existing_audio.mp3";
+			var audioLink = Cache.ServiceLocator.GetInstance<ICmMediaFactory>().Create();
+			pronun.MediaFilesOS.Add(audioLink);
+			audioLink.MediaFileRA = mediaFile;
+
+			var liftXml = @"<?xml version=""1.0"" encoding=""UTF-8""?>
+				<lift producer=""SIL.FLEx 8.0.3.41457"" version=""0.13"">
+				<header><ranges/><fields/></header>
+				<entry id=""66EE6430-D40E-4BBF-8E17-0793E1176CF0"" guid=""66EE6430-D40E-4BBF-8E17-0793E1176CF0"">
+				<lexical-unit><form lang=""fr""><text>test</text></form></lexical-unit>
+				<trait name=""morph-type"" value=""stem""/>
+				<pronunciation>
+				<form lang=""fr""><text>pronunciation</text></form>
+				</pronunciation>
+				</entry>
+				</lift>";
+
+			var sOrigFile = CreateInputFile(liftXml.Split('\n'));
+			TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepBoth, 1);
+			File.Delete(sOrigFile);
+
+			// Verify: Should merge into existing pronunciation based on form match
+			Assert.That(entry.PronunciationsOS, Has.Count.EqualTo(1),
+				"Should merge based on form match even though LIFT has no media");
+			Assert.That(pronun.MediaFilesOS, Has.Count.EqualTo(1),
+				"Original media file should be preserved");
+		}
+
+		/// <summary>
+		///     Test media file matching is case-insensitive
+		/// </summary>
+		[Test]
+		public void MergePronunciations_MediaFileMatching_CaseInsensitive()
+		{
+			SetWritingSystems("fr");
+
+			var entry = CreateSimpleStemEntry("66EE6430-D40E-4BBF-8E17-0793E1176CF0", "test");
+			var pronun = AddPronunciation(entry, "pronunciation", Cache.DefaultVernWs);
+
+			// Add media file with uppercase extension
+			var mediaFolder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(mediaFolder);
+			var mediaFile = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			mediaFolder.FilesOC.Add(mediaFile);
+			mediaFile.InternalPath = "Test_Audio.MP3"; // uppercase
+			var audioLink = Cache.ServiceLocator.GetInstance<ICmMediaFactory>().Create();
+			pronun.MediaFilesOS.Add(audioLink);
+			audioLink.MediaFileRA = mediaFile;
+
+			var liftData = new[]
+			{
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+				"<lift producer=\"SIL.FLEx 8.0.3.41457\" version=\"0.13\">",
+				"<header><ranges/><fields/></header>",
+				"<entry dateCreated=\"2013-07-02T20:01:04Z\" dateModified=\"2013-07-02T20:05:43Z\" id=\"66EE6430-D40E-4BBF-8E17-0793E1176CF0\" guid=\"66EE6430-D40E-4BBF-8E17-0793E1176CF0\">",
+				"<lexical-unit><form lang=\"fr\"><text>test</text></form></lexical-unit>",
+				"<trait name=\"morph-type\" value=\"stem\"/>",
+				"<pronunciation>",
+				"<form lang=\"fr\"><text>pronunciation</text></form>",
+				"<media href=\"test_audio.mp3\"/>", // lowercase
+				"</pronunciation>",
+				"</entry>",
+				"</lift>"
+			};
+
+			var sOrigFile = CreateInputFile(liftData);
+			TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepBoth, 1);
+			File.Delete(sOrigFile);
+
+			// Should merge into existing pronunciation (not create new one) despite case difference
+			Assert.That(entry.PronunciationsOS, Has.Count.EqualTo(1),
+				"Media file matching should be case-insensitive");
+		}
+
+		/// <summary>
+		///     Test that blank pronunciations in both LIFT and entry match and merge
+		/// </summary>
+		[Test]
+		public void MergePronunciations_BothBlankForms_ShouldMatch()
+		{
+			SetWritingSystems("fr");
+
+			var entry = CreateSimpleStemEntry("66EE6430-D40E-4BBF-8E17-0793E1176CF0", "test");
+			AddPronunciation(entry, "", -1); // blank pronunciation
+
+			var liftData = new[]
+			{
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+				"<lift producer=\"SIL.FLEx 8.0.3.41457\" version=\"0.13\">",
+				"<header><ranges/><fields/></header>",
+				"<entry id=\"test-guid-3\" guid=\"66EE6430-D40E-4BBF-8E17-0793E1176CF0\">",
+				"<lexical-unit><form lang=\"fr\"><text>test</text></form></lexical-unit>",
+				"<trait name=\"morph-type\" value=\"stem\"/>",
+				"<pronunciation/>", // blank pronunciation in LIFT
+				"</entry>",
+				"</lift>"
+			};
+
+			var sOrigFile = CreateInputFile(liftData);
+			TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepBoth, 1);
+			File.Delete(sOrigFile);
+
+			// Should still have only 1 pronunciation (merged blank with blank)
+			Assert.That(entry.PronunciationsOS, Has.Count.EqualTo(1),
+				"Blank pronunciation should merge with blank pronunciation");
+		}
+
+		/// <summary>
+		///     Test pronunciation with media but no matching form creates new entry
+		/// </summary>
+		[Test]
+		public void MergePronunciations_MediaWithoutFormMatch_CreatesNew()
+		{
+			SetWritingSystems("fr es");
+
+			var wsEs = Cache.WritingSystemFactory.GetWsFromStr("es");
+			var entry = CreateSimpleStemEntry("66EE6430-D40E-4BBF-8E17-0793E1176CF0", "test");
+			AddPronunciation(entry, "pronunciation", Cache.DefaultVernWs); // fr only
+
+			var liftData = new[]
+			{
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+				"<lift producer=\"SIL.FLEx 8.0.3.41457\" version=\"0.13\">",
+				"<header><ranges/><fields/></header>",
+				"<entry dateCreated=\"2013-07-02T20:01:04Z\" dateModified=\"2013-07-02T20:05:43Z\" id=\"test_66EE6430-D40E-4BBF-8E17-0793E1176CF0\" guid=\"66EE6430-D40E-4BBF-8E17-0793E1176CF0\">",
+				"<lexical-unit><form lang=\"fr\"><text>test</text></form></lexical-unit>",
+				"<trait name=\"morph-type\" value=\"stem\"/>",
+				"<pronunciation>",
+				"<form lang=\"es\"><text>differentform</text></form>", // different form
+				"<media href=\"audio.mp3\"/>",
+				"</pronunciation>",
+				"</entry>",
+				"</lift>"
+			};
+
+			var sOrigFile = CreateInputFile(liftData);
+			TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepBoth, 1);
+			File.Delete(sOrigFile);
+
+			// Should create new pronunciation since form doesn't match (score = 0)
+			Assert.That(entry.PronunciationsOS, Has.Count.EqualTo(2),
+				"Non-matching form with media should create new pronunciation");
+			Assert.That(entry.PronunciationsOS.Any(p =>
+					p.Form.get_String(wsEs).Text == "differentform"),
+				"Spanish pronunciation should be added");
+		}
+
+		/// <summary>
+		///     Test best match selection when multiple entry pronunciations match
+		/// </summary>
+		[Test]
+		public void MergePronunciations_MultipleMatches_SelectsBestScore()
+		{
+			SetWritingSystems("fr es");
+
+			var entry = CreateSimpleStemEntry("66EE6430-D40E-4BBF-8E17-0793E1176CF0", "test");
+
+			// Create entry with two matching pronunciations, one with media
+			AddPronunciation(entry, "pronunciation", Cache.DefaultVernWs);
+			var pronun2 = AddPronunciation(entry, "pronunciation", Cache.DefaultVernWs);
+
+			// Add media to pronun2
+			var mediaFolder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(mediaFolder);
+			var mediaFile = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			mediaFolder.FilesOC.Add(mediaFile);
+			mediaFile.InternalPath = "matching_audio.mp3";
+			var audioLink = Cache.ServiceLocator.GetInstance<ICmMediaFactory>().Create();
+			pronun2.MediaFilesOS.Add(audioLink);
+			audioLink.MediaFileRA = mediaFile;
+
+			var liftData = new[]
+			{
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+				"<lift producer=\"SIL.FLEx 8.0.3.41457\" version=\"0.13\">",
+				"<header><ranges/><fields/></header>",
+				"<entry dateCreated=\"2013-07-02T20:01:04Z\" dateModified=\"2013-07-02T20:05:43Z\" id=\"66EE6430-D40E-4BBF-8E17-0793E1176CF0\" guid=\"66EE6430-D40E-4BBF-8E17-0793E1176CF0\">",
+				"<lexical-unit><form lang=\"fr\"><text>test</text></form></lexical-unit>",
+				"<trait name=\"morph-type\" value=\"stem\"/>",
+				"<pronunciation>",
+				"<form lang=\"fr\"><text>pronunciation</text></form>",
+				"<media href=\"matching_audio.mp3\"/>",
+				"</pronunciation>",
+				"</entry>",
+				"</lift>"
+			};
+
+			var sOrigFile = CreateInputFile(liftData);
+			TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepBoth, 1);
+			File.Delete(sOrigFile);
+
+			// Should still have 2 pronunciations (merged into best match)
+			Assert.That(entry.PronunciationsOS, Has.Count.EqualTo(2),
+				"Should merge into best matching pronunciation");
+			// pronun2 should have been selected due to higher score (form + media match)
+			Assert.That(pronun2.MediaFilesOS, Has.Count.EqualTo(1),
+				"Pronunciation with media should be selected as best match");
+		}
+
+		/// <summary>
+		///     Test partial media file matches contribute to score
+		/// </summary>
+		[Test]
+		public void MergePronunciations_PartialMediaMatch_CorrectScore()
+		{
+			SetWritingSystems("fr");
+
+			var entry = CreateSimpleStemEntry("66EE6430-D40E-4BBF-8E17-0793E1176CF0", "test");
+			var pronun = AddPronunciation(entry, "pronunciation", Cache.DefaultVernWs);
+
+			// Add two media files, only one will match
+			var mediaFolder = Cache.ServiceLocator.GetInstance<ICmFolderFactory>().Create();
+			Cache.LangProject.MediaOC.Add(mediaFolder);
+
+			var mediaFile1 = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			mediaFolder.FilesOC.Add(mediaFile1);
+			mediaFile1.InternalPath = "audio1.mp3";
+			var audioLink1 = Cache.ServiceLocator.GetInstance<ICmMediaFactory>().Create();
+			pronun.MediaFilesOS.Add(audioLink1);
+			audioLink1.MediaFileRA = mediaFile1;
+
+			var mediaFile2 = Cache.ServiceLocator.GetInstance<ICmFileFactory>().Create();
+			mediaFolder.FilesOC.Add(mediaFile2);
+			mediaFile2.InternalPath = "audio2.mp3";
+			var audioLink2 = Cache.ServiceLocator.GetInstance<ICmMediaFactory>().Create();
+			pronun.MediaFilesOS.Add(audioLink2);
+			audioLink2.MediaFileRA = mediaFile2;
+
+			var liftData = new[]
+			{
+				"<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+				"<lift producer=\"SIL.FLEx 8.0.3.41457\" version=\"0.13\">",
+				"<header><ranges/><fields/></header>",
+				"<entry dateCreated=\"2013-07-02T20:01:04Z\" dateModified=\"2013-07-02T20:05:43Z\" id=\"66EE6430-D40E-4BBF-8E17-0793E1176CF0\" guid=\"66EE6430-D40E-4BBF-8E17-0793E1176CF0\">",
+				"<lexical-unit><form lang=\"fr\"><text>test</text></form></lexical-unit>",
+				"<trait name=\"morph-type\" value=\"stem\"/>",
+				"<pronunciation>",
+				"<form lang=\"fr\"><text>pronunciation</text></form>",
+				"<media href=\"audio1.mp3\"/>", // only this one matches
+				"<media href=\"audio3.mp3\"/>", // this doesn't exist in entry
+				"</pronunciation>",
+				"</entry>",
+				"</lift>"
+			};
+
+			var sOrigFile = CreateInputFile(liftData);
+			TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepBoth, 1);
+			File.Delete(sOrigFile);
+
+			// Should merge since there's a partial match (form + at least one media file)
+			Assert.That(entry.PronunciationsOS, Has.Count.EqualTo(1),
+				"Should merge when at least one media file matches");
+			// After merge, should have 3 media files (original 2 + 1 new from LIFT)
+			Assert.That(pronun.MediaFilesOS, Has.Count.GreaterThanOrEqualTo(2),
+				"Should retain existing media files after merge");
 		}
 
 		[Test]
@@ -3966,12 +4446,13 @@ namespace LexTextControlsTests
 			return entry;
 		}
 
-		private void AddPronunciation(ILexEntry entry, string pronunciation, int ws)
+		private ILexPronunciation AddPronunciation(ILexEntry entry, string pronunciation, int ws)
 		{
 			var lexPronunciation = Cache.ServiceLocator.GetInstance<ILexPronunciationFactory>().Create();
 			entry.PronunciationsOS.Add(lexPronunciation);
 			if (ws > 0)
 				lexPronunciation.Form.set_String(ws, TsStringUtils.MakeString(pronunciation, ws));
+			return lexPronunciation;
 		}
 
 		[Test]

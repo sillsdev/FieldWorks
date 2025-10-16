@@ -10,17 +10,17 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
-using SIL.Lift;
-using SIL.Lift.Parsing;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
+using SIL.Lift;
+using SIL.Lift.Parsing;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.LexText.Controls
@@ -3325,22 +3325,23 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private void MergeEntryPronunciations(ILexEntry le, CmLiftEntry entry)
 		{
-			Dictionary<int, CmLiftPhonetic> dictHvoPhon = new Dictionary<int, CmLiftPhonetic>();
-			foreach (CmLiftPhonetic phon in entry.Pronunciations)
+			var matchedEntries = FindBestPronunciationMatches(entry.Pronunciations, le.PronunciationsOS);
+			foreach (var matchedEntry in matchedEntries)
 			{
+				var entryPronunciation = matchedEntry.Value;
+				var liftPronunciation = matchedEntry.Key;
 				IgnoreNewWs();
-				ILexPronunciation pron = FindMatchingPronunciation(le, dictHvoPhon, phon);
-				if (pron == null)
+				if (entryPronunciation == null)
 				{
-					pron = CreateNewLexPronunciation();
-					le.PronunciationsOS.Add(pron);
-					dictHvoPhon.Add(pron.Hvo, phon);
+					entryPronunciation = CreateNewLexPronunciation();
+					le.PronunciationsOS.Add(entryPronunciation);
 				}
-				MergeInMultiUnicode(pron.Form, LexPronunciationTags.kflidForm, phon.Form, pron.Guid);
-				MergePronunciationMedia(pron, phon);
-				ProcessPronunciationFieldsAndTraits(pron, phon);
-				StoreAnnotationsAndDatesInResidue(pron, phon);
-				SavePronunciationWss(phon.Form.Keys);
+				MergeInMultiUnicode(entryPronunciation.Form, LexPronunciationTags.kflidForm,
+					liftPronunciation.Form, entryPronunciation.Guid);
+				MergePronunciationMedia(entryPronunciation, liftPronunciation);
+				ProcessPronunciationFieldsAndTraits(entryPronunciation, liftPronunciation);
+				StoreAnnotationsAndDatesInResidue(entryPronunciation, liftPronunciation);
+				SavePronunciationWss(liftPronunciation.Form.Keys);
 			}
 		}
 
@@ -3522,87 +3523,83 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		/// <summary>
-		/// Find the best matching pronunciation in the lex entry (if one exists) for the imported LiftPhonetic phon.
+		/// Find the best matching pronunciation in the lex entry (if one exists) for the imported LiftPhonetic data.
 		/// If neither has any form, then only the media filenames are compared.  If both have forms, then both forms
-		/// and media filenames are compared.  At least one form must match if any forms exist on either side.
-		/// If either has a media file, both must have the same number of media files, and at least one filename
-		/// must match.
-		/// As a side-effect, dictHvoPhon has the matching hvo keyed to the imported data (if one exists).
+		/// and media filenames are compared.  The first form that has a matching media file will be selected. If the imported form
+		/// has no media files the first matching form will be selected.
 		/// </summary>
 		/// <returns>best match, or null</returns>
-		private ILexPronunciation FindMatchingPronunciation(ILexEntry le, Dictionary<int, CmLiftPhonetic> dictHvoPhon,
-			CmLiftPhonetic phon)
+		private Dictionary<CmLiftPhonetic, ILexPronunciation> FindBestPronunciationMatches(
+			List<CmLiftPhonetic> liftPronunciations, IList<ILexPronunciation> entryPronunciations)
 		{
-			ILexPronunciation lexpron = null;
-			ILexPronunciation lexpronNoMedia = null;
-			int cMatches = 0;
-			foreach (ILexPronunciation pron in le.PronunciationsOS)
+			var bestMatches = new Dictionary<CmLiftPhonetic, ILexPronunciation>();
+			foreach (var liftPron in liftPronunciations)
 			{
-				if (dictHvoPhon.ContainsKey(pron.Hvo))
-					continue;
-				bool fFormMatches = false;
-				int cCurrent = 0;
-				IgnoreNewWs();
-				if (phon.Form.Count == 0)
+				ILexPronunciation bestMatch = null;
+				int bestScore = 0;
+				foreach (var entryPron in entryPronunciations)
 				{
-					Dictionary<int, string> forms = GetAllUnicodeAlternatives(pron.Form);
-					fFormMatches = (forms.Count == 0);
-				}
-				else
-				{
-					cCurrent = MultiUnicodeStringMatches(pron.Form, phon.Form, false, Guid.Empty, 0);
-					fFormMatches = (cCurrent > cMatches);
-				}
-				if (fFormMatches)
-				{
-					cMatches = cCurrent;
-					if (phon.Media.Count == pron.MediaFilesOS.Count)
+					int score = GetPronunciationMatchScore(liftPron, entryPron);
+					if (score > bestScore)
 					{
-						int cFilesMatch = 0;
-						for (int i = 0; i < phon.Media.Count; ++i)
-						{
-							string sURL = phon.Media[i].Url;
-							if (sURL == null)
-								continue;
-							string sFile = Path.GetFileName(sURL);
-							for (int j = 0; j < pron.MediaFilesOS.Count; ++j)
-							{
-								ICmFile cf = pron.MediaFilesOS[i].MediaFileRA;
-								if (cf != null)
-								{
-									string sPath = cf.InternalPath;
-									if (sPath == null)
-										continue;
-									if (sFile.ToLowerInvariant() == Path.GetFileName(sPath).ToLowerInvariant())
-										++cFilesMatch;
-								}
-							}
-						}
-						if (phon.Media.Count == 0 || cFilesMatch > 0)
-							lexpron = pron;
-						else
-							lexpronNoMedia = pron;
-					}
-					else
-					{
-						lexpronNoMedia = pron;
+						bestScore = score;
+						bestMatch = entryPron;
 					}
 				}
+				bestMatches[liftPron] = bestMatch;
 			}
-			if (lexpron != null)
+			return bestMatches;
+		}
+
+		private int GetPronunciationMatchScore(CmLiftPhonetic liftPronunciation, ILexPronunciation entryPronunciation)
+		{
+			bool hasFormMatch;
+			int formMatches = 0;
+			if (liftPronunciation.Form.Count == 0)
 			{
-				dictHvoPhon.Add(lexpron.Hvo, phon);
-				return lexpron;
-			}
-			else if (lexpronNoMedia != null)
-			{
-				dictHvoPhon.Add(lexpronNoMedia.Hvo, phon);
-				return lexpronNoMedia;
+				Dictionary<int, string> forms = GetAllUnicodeAlternatives(entryPronunciation.Form);
+				hasFormMatch = forms.Count == 0;
+				formMatches = 1; // both have no forms - count it as 1 for the match
 			}
 			else
 			{
-				return null;
+				formMatches = MultiUnicodeStringMatches(entryPronunciation.Form, liftPronunciation.Form, false, Guid.Empty, 0);
+				hasFormMatch = formMatches > 0;
 			}
+			if (hasFormMatch)
+			{
+				if (liftPronunciation.Media.Count == 0)
+				{
+					// If the imported form has no media files set the score based on if the entry form has media files.
+					if (entryPronunciation.MediaFilesOS.Count == 0)
+						return formMatches + 1; // both have no media files
+					return formMatches; // entry has media files, imported form does not
+				}
+				if (entryPronunciation.MediaFilesOS.Count > 0)
+				{
+					int matchingMedia = 0;
+					// Check if at least one media file matches
+					foreach (var file in entryPronunciation.MediaFilesOS)
+					{
+						var cf = file.MediaFileRA;
+						if (cf != null)
+						{
+							var path = cf.InternalPath;
+							if (path == null)
+								continue;
+							path = Path.GetFileName(path).ToLowerInvariant();
+							if (liftPronunciation.Media.Any(m => m.Url != null
+											&& Path.GetFileName(m.Url).ToLowerInvariant() == path))
+							{
+								matchingMedia++;
+							}
+						}
+					}
+
+					return matchingMedia + formMatches; // the matching form and one for each media match
+				}
+			}
+			return 0; // no form match, no score
 		}
 
 		private Dictionary<int, string> GetAllUnicodeAlternatives(ITsMultiString tsm)
