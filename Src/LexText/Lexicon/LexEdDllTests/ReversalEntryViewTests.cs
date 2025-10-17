@@ -67,7 +67,7 @@ namespace LexEdDllTests
 			reversalView.CacheNewDummyEntry(ri.Hvo, engWsId); // Create an additional dummy reversal entry before we edit one
 			reversalView.EditRevIndexEntryInCache(ri.Hvo, indexFirstEntry, engWsId, TsStringUtils.MakeString("first", engWsId));
 
-			// The dummy cache will have two dummy reversal index entries, but non exists in the real data yet.
+			// The dummy cache will have two dummy reversal index entries, but none exists in the real data yet.
 			// The reversal index entry control must maintain a dummy entry at the end to allow a place to click to add new entries.
 			Assert.AreEqual(0, m_revIndexEntryRepo.Count);
 			Assert.AreEqual(2, reversalView.GetIndexSize(ri.Hvo)); // The second dummy entry will remain a dummy
