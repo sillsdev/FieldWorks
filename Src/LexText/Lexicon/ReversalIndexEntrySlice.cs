@@ -22,13 +22,14 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainImpl;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
 	/// <summary>
 	/// A slice to show the IReversalIndexEntry objects.
 	/// </summary>
-	public class ReversalIndexEntrySlice : ViewPropertySlice, IVwNotifyChange
+	public class ReversalIndexEntrySlice : ViewPropertySlice, IVwNotifyChange, IWritingSystemChooser
 	{
 		/// <summary>
 		/// Use this to do the Add/RemoveNotifications.
@@ -46,9 +47,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>
 		/// Constructor.
 		/// </summary>
+		/// <remarks>
+		/// This constructor passes null to the base relying on a FinishInit to set the control later.
+		/// This is preferred because we need to use PartRef() in the construction of the view and the
+		/// XmlNode for the ref isn't set at construction time.
+		/// </remarks>
 		/// <param name="obj"></param>
 		public ReversalIndexEntrySlice(ICmObject obj) :
-			base(new ReversalIndexEntrySliceView(obj.Hvo), obj, obj.Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalIndexEntryBackRefs)
+			base(null, obj, obj.Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalIndexEntryBackRefs)
 		{
 		}
 
@@ -103,7 +109,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public override void FinishInit()
 		{
 			CheckDisposed();
-			ReversalIndexEntrySliceView ctrl = new ReversalIndexEntrySliceView(Object.Hvo)
+			ReversalIndexEntrySliceView ctrl = new ReversalIndexEntrySliceView(Object.Hvo, () => StringSliceUtils.GetVisibleWSSPropertyValue(PartRef(),
+				Cache.LanguageProject.AnalysisWritingSystems))
 			{
 				Cache = m_propertyTable.GetValue<LcmCache>("cache")
 			};
@@ -123,6 +130,61 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				ctrl.MakeRoot();
 		}
 
+		/// <summary>
+		/// Populate the writing system options for the slice.
+		/// </summary>
+		/// <param name="parameter">The parameter.</param>
+		/// <param name="display">The display.</param>
+		/// <returns></returns>
+		public bool OnDisplayWritingSystemOptionsForSlice(object parameter, ref UIListDisplayProperties display)
+		{
+			CheckDisposed();
+			display.List.Clear();
+			m_propertyTable.SetProperty(display.PropertyName, StringSliceUtils.GetVisibleWSSPropertyValue(PartRef(),
+				Cache.LanguageProject.AnalysisWritingSystems), false);
+			AddWritingSystemListWithIcuLocales(display, Cache.LanguageProject.AnalysisWritingSystems);
+			return true;//we handled this, no need to ask anyone else.
+		}
+
+		/// <summary>
+		/// stores the list values in terms of icu locale
+		/// </summary>
+		/// <param name="display"></param>
+		/// <param name="list"></param>
+		private void AddWritingSystemListWithIcuLocales(UIListDisplayProperties display, IEnumerable<CoreWritingSystemDefinition> list)
+		{
+			var active = StringSliceUtils.GetVisibleWSSPropertyValue(PartRef(),
+				Cache.LanguageProject.AnalysisWritingSystems).Split(',');
+			foreach (var ws in list)
+			{
+				// generally enable all items, but if only one is checked that one is disabled;
+				// it can't be turned off.
+				bool enabled = (active.Length != 1 || ws.Id != active[0]);
+				display.List.Add(ws.DisplayLabel, ws.Id, null, null, enabled);
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Called when property changed.
+		/// </summary>
+		/// <param name="name">The name.</param>
+		/// ------------------------------------------------------------------------------------
+		public virtual void OnPropertyChanged(string name)
+		{
+			CheckDisposed();
+
+			switch (name)
+			{
+				case "SelectedWritingSystemHvosForCurrentContextMenu":
+					var singlePropertySequenceValue = m_propertyTable.GetStringProperty("SelectedWritingSystemHvosForCurrentContextMenu", null);
+					ReplacePartWithNewAttribute("visibleWritingSystems", singlePropertySequenceValue);
+					// The control needs to know about this change.
+					var ctrl = Control as ReversalIndexEntrySliceView;
+					ctrl?.ResetEntries();
+					break;
+			}
+		}
 		#endregion ReversalIndexEntrySlice class info
 
 		#region IVwNotifyChange methods
@@ -203,15 +265,16 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			protected int m_hvoObj;
 			protected ILexSense m_sense;
 			protected List<IReversalIndex> m_usedIndices = new List<IReversalIndex>();
-
+			private readonly Func<string> getVisibleWritingSystems;
 			#endregion // Data members
 
-			public ReversalIndexEntrySliceView(int hvo)
+			public ReversalIndexEntrySliceView(int hvo, Func<string> getVisibleWss)
 			{
 				components = new Container();
 				m_hvoObj = hvo;
 				m_dummyId = kDummyEntry;
 				RightMouseClickedEvent += ReversalIndexEntrySliceView_RightMouseClickedEvent;
+				getVisibleWritingSystems = getVisibleWss;
 			}
 
 			/// <summary>
@@ -650,7 +713,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				foreach (IReversalIndexEntry ide in m_sense.ReferringReversalIndexEntries)
 					entries.Add(ide);
 
-				foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
+				foreach (CoreWritingSystemDefinition ws in StringSliceUtils.GetVisibleWritingSystems(getVisibleWritingSystems(), Cache.LangProject.AnalysisWritingSystems))
 				{
 					IReversalIndex idx = null;
 					foreach (IReversalIndex idxInner in m_cache.LanguageProject.LexDbOA.ReversalIndexesOC)
@@ -1518,5 +1581,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 #endregion
 		}
 #endregion //ISilDataAccess decorator class
+
+		public IEnumerable<CoreWritingSystemDefinition> GetVisibleWritingSystems()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
