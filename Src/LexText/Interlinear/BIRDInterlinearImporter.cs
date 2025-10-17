@@ -1015,7 +1015,7 @@ namespace SIL.FieldWorks.IText
 				return true;
 			}
 
-			if (word.morphemes?.analysisStatus == analysisStatusTypes.humanApproved)
+			if (word.morphemes == null || word.morphemes.analysisStatus == analysisStatusTypes.humanApproved)
 			{
 				analysis = FindMatchingAnalysis(cache, candidateWordform, word, expectedGlosses, expectedCats);
 				if (analysis != null)
