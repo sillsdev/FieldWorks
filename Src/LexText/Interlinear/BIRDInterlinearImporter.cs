@@ -769,46 +769,162 @@ namespace SIL.FieldWorks.IText
 
 					if (itemDict.ContainsKey("cf")) // Lex. Entries
 					{
+						// NB: "cf" records the lexeme, not the headword/citation form (in spite of the name).
 						int ws_cf = GetWsEngine(wsFact, itemDict["cf"].Item1).Handle;
 						ILexEntry entry = null;
 						var entries = lex_entry_repo.AllInstances().Where(
-							m => StringServices.CitationFormWithAffixTypeStaticForWs(m, ws_cf, string.Empty) == itemDict["cf"].Item2);
-						if (entries.Count() == 1)
+							m => DecorateFormWithAffixMarkers(m.LexemeFormOA?.MorphTypeRA, m.LexemeFormOA?.Form?.get_String(ws_cf)?.Text) == itemDict["cf"].Item2);
+
+						// Filter entries by homograph number.
+						// If the lexeme and the headword are different,
+						// then there may be more than one entry with the given homograph number.
+						// This is because homograph numbers distinguish headwords rather than lexemes.
+						// If there is no "hn" entry, then the hn is 0.
+						string hn = "0";
+						if (itemDict.ContainsKey("hn")) // Homograph Number
+						{
+							hn = itemDict["hn"].Item2;
+						}
+						var hnEntries = entries.Where(m => m.HomographNumber.ToString() == hn);
+						if (hnEntries.Count() > 0)
+						{
+							entries = hnEntries;
+						}
+
+						if (itemDict.ContainsKey("gls")) // Lex. Gloss
+						{
+							// Filter senses by gloss.
+							int ws_gls = GetWsEngine(wsFact, itemDict["gls"].Item1).Handle;
+							IList<ILexSense> senses = new List<ILexSense>();
+							foreach (var e in entries)
+							{
+								senses.AddRange(e.SensesOS.Where(s => s.Gloss.get_String(ws_gls).Text == itemDict["gls"].Item2));
+							}
+							if (senses.Count() > 1 && itemDict.ContainsKey("msa"))
+							{
+								// Filter senses by MSA.
+								IList<ILexSense> msaSenses = senses.Where(s => s.MorphoSyntaxAnalysisRA?.InterlinearAbbr == itemDict["msa"].Item2).ToList();
+								if (msaSenses.Count() > 0)
+								{
+									senses = msaSenses;
+								}
+							}
+							// Record sense.
+							if (senses.Count() > 0)
+							{
+								bundle.SenseRA = senses.FirstOrDefault();
+								entry = bundle.SenseRA.Entry;
+							}
+						}
+
+						if (entry == null && entries.Count() > 0)
 						{
 							entry = entries.First();
 						}
-						else if (itemDict.ContainsKey("hn")) // Homograph Number
-						{
-							entry = entries.FirstOrDefault(m => m.HomographNumber.ToString() == itemDict["hn"].Item2);
-						}
+
+						// Record morpheme.
 						if (entry != null)
 						{
-							bundle.MorphRA = entry.LexemeFormOA;
-
-							if (itemDict.ContainsKey("gls")) // Lex. Gloss
+							if (itemDict.ContainsKey("txt"))
 							{
-								int ws_gls = GetWsEngine(wsFact, itemDict["gls"].Item1).Handle;
-								ILexSense sense = entry.SensesOS.FirstOrDefault(s => s.Gloss.get_String(ws_gls).Text == itemDict["gls"].Item2);
-								if (sense != null)
-								{
-									bundle.SenseRA = sense;
-								}
+								// Try allomorph first.
+								var ws_txt = GetWsEngine(wsFact, itemDict["txt"].Item1).Handle;
+								bundle.MorphRA = entry.AllAllomorphs.Where(
+									m => DecorateFormWithAffixMarkers(m.MorphTypeRA, m.Form.get_String(ws_txt).Text) == itemDict["txt"].Item2).FirstOrDefault();
+							}
+							if (bundle.MorphRA == null)
+							{
+								bundle.MorphRA = entry.LexemeFormOA;
 							}
 						}
 					}
 
 					if (itemDict.ContainsKey("msa")) // Lex. Gram. Info
 					{
-						IMoMorphSynAnalysis match = msa_repo.AllInstances().FirstOrDefault(m => m.InterlinearAbbr == itemDict["msa"].Item2);
-						if (match != null)
+						if (bundle.SenseRA != null && bundle.SenseRA.MorphoSyntaxAnalysisRA?.InterlinearAbbr == itemDict["msa"].Item2)
 						{
-							bundle.MsaRA = match;
+							bundle.MsaRA = bundle.SenseRA.MorphoSyntaxAnalysisRA;
+						}
+						else
+						{
+							IMoMorphSynAnalysis match = msa_repo.AllInstances().FirstOrDefault(m => m.InterlinearAbbr == itemDict["msa"].Item2);
+							if (match != null)
+							{
+								bundle.MsaRA = match;
+							}
 						}
 					}
 				}
 			}
 
+			// Try to fill in category.
+			if (word.Items != null && wordForm.Analysis != null)
+			{
+				// Look for an existing category that matches a "pos".
+				bool hasPOS = false;
+				foreach (var item in word.Items)
+				{
+					if (wordForm.Analysis.CategoryRA != null)
+					{
+						// Category filled in.
+						break;
+					}
+					if (item.type == "pos")
+					{
+						hasPOS = true;
+						ILgWritingSystem writingSystem = GetWsEngine(cache.WritingSystemFactory, item.lang);
+						if (writingSystem != null)
+						{
+							foreach (var cat in cache.LanguageProject.AllPartsOfSpeech)
+							{
+								if (MatchesCatNameOrAbbreviation(writingSystem.Handle, item.Value, cat))
+								{
+									wordForm.Analysis.CategoryRA = cat;
+									break;
+								}
+							}
+						}
+					}
+				}
+				if (hasPOS && wordForm.Analysis.CategoryRA == null)
+				{
+					// Create a new category.
+					IPartOfSpeech cat = cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
+					cache.LanguageProject.PartsOfSpeechOA.PossibilitiesOS.Add(cat);
+					foreach (var item in word.Items)
+					{
+						if (item.type == "pos")
+						{
+							ILgWritingSystem writingSystem = GetWsEngine(cache.WritingSystemFactory, item.lang);
+							if (writingSystem != null)
+							{
+								cat.Name.set_String(writingSystem.Handle, item.Value);
+								cat.Abbreviation.set_String(writingSystem.Handle, item.Value);
+							}
+						}
+					}
+					wordForm.Analysis.CategoryRA = cat;
+				}
+			}
+
 			return wordForm;
+		}
+
+		// Based on StringServices.DecorateFormWithAffixMarkers.
+		private static string DecorateFormWithAffixMarkers(IMoMorphType mmt, string form)
+		{
+			if (mmt == null || form == null)
+				return form;
+			// Add pre- post markers, if any.
+			if (!String.IsNullOrEmpty(mmt.Prefix))
+			{
+				form = mmt.Prefix + form;
+			}
+			if (!String.IsNullOrEmpty(mmt.Postfix))
+			{
+				form = form + mmt.Postfix;
+			}
+			return form;
 		}
 
 		private static bool FindOrCreateWfiAnalysis(LcmCache cache, Word word,
@@ -820,6 +936,7 @@ namespace SIL.FieldWorks.IText
 			// First, collect all expected forms and glosses from the Word
 			var expectedForms = new Dictionary<int, string>(); // wsHandle -> expected value
 			var expectedGlosses = new Dictionary<int, string>(); // wsHandle -> expected gloss
+			var expectedCats = new Dictionary<int, string>(); // wsHandle -> expected cat
 			IAnalysis candidateForm = null;
 			ITsString wordForm = null;
 			ITsString punctForm = null;
@@ -871,6 +988,10 @@ namespace SIL.FieldWorks.IText
 
 						expectedGlosses[ws.Handle] = wordItem.Value;
 						break;
+
+					case "pos":
+						expectedCats[ws.Handle] = wordItem.Value;
+						break;
 				}
 			}
 
@@ -896,23 +1017,57 @@ namespace SIL.FieldWorks.IText
 				return true;
 			}
 
+			analysis = FindMatchingAnalysis(cache, candidateWordform, word, expectedGlosses, expectedCats);
+			if (analysis != null)
+			{
+				return true;
+			}
+
+			if (wordForm.Text.ToLower() != wordForm.Text)
+			{
+				// Try lowercase.
+				var lcCandidateForm = cache.ServiceLocator
+								.GetInstance<IWfiWordformRepository>()
+								.GetMatchingWordform(wordForm.get_WritingSystemAt(0), wordForm.Text.ToLower());
+				if (lcCandidateForm is IWfiWordform lcCandidateWordform)
+				{
+					analysis = FindMatchingAnalysis(cache, lcCandidateWordform, word, expectedGlosses, expectedCats);
+					if (analysis != null)
+					{
+						return true;
+					}
+				}
+			}
+
+			// No matching analysis found with all expected gloss and morpheme data
+			analysis = AddEmptyAnalysisToWordform(cache, candidateWordform);
+			return false;
+		}
+
+		private static IAnalysis FindMatchingAnalysis(LcmCache cache, IWfiWordform candidateWordform, Word word,
+			Dictionary<int, string> expectedGlosses, Dictionary<int, string> expectedCats)
+		{
+			IAnalysis analysis = null;
+			var wsFact = cache.WritingSystemFactory;
 			// Look for an analysis that has the correct morphemes and a matching gloss
 			foreach (var wfiAnalysis in candidateWordform.AnalysesOC)
 			{
 				var morphemeMatch = true;
 				// verify that the analysis has a Morph Bundle with the expected morphemes from the import
-				if (word.morphemes != null && wfiAnalysis.MorphBundlesOS.Count == word.morphemes?.morphs.Length)
+				if (word.morphemes != null && wfiAnalysis.MorphBundlesOS.Count == word.morphemes?.morphs.Length &&
+					word.morphemes.analysisStatus == analysisStatusTypes.humanApproved)
 				{
 					analysis = GetMostSpecificAnalysisForWordForm(wfiAnalysis);
-					for(var i = 0; i < wfiAnalysis.MorphBundlesOS.Count; ++i)
+					for (var i = 0; i < wfiAnalysis.MorphBundlesOS.Count; ++i)
 					{
-						var extantMorphForm = wfiAnalysis.MorphBundlesOS[i].Form;
+						var morphBundle = wfiAnalysis.MorphBundlesOS[i];
+						var extantMorphForm = morphBundle.Form;
 						var importMorphForm = word.morphemes.morphs[i].items.FirstOrDefault(item => item.type == "txt");
 						var importFormWs = GetWsEngine(wsFact, importMorphForm?.lang);
 						// compare the import item to the extant morph form
 						if (importMorphForm == null || extantMorphForm == null ||
 							TsStringUtils.IsNullOrEmpty(extantMorphForm.get_String(importFormWs.Handle)) ||
-							!extantMorphForm.get_String(importFormWs.Handle).Text.Normalize()
+							!DecorateFormWithAffixMarkers(morphBundle.MorphRA?.MorphTypeRA, extantMorphForm.get_String(importFormWs.Handle).Text).Normalize()
 								.Equals(importMorphForm.Value?.Normalize()))
 						{
 							morphemeMatch = false;
@@ -923,18 +1078,14 @@ namespace SIL.FieldWorks.IText
 
 				if (morphemeMatch)
 				{
-					var matchingGloss = wfiAnalysis.MeaningsOC.FirstOrDefault(g => VerifyGlossesMatch(g, expectedGlosses));
+					var matchingGloss = wfiAnalysis.MeaningsOC.FirstOrDefault(g => VerifyGlossesMatch(g, expectedGlosses, expectedCats));
 					if (matchingGloss != null)
 					{
-						analysis = matchingGloss;
-						return true;
+						return matchingGloss;
 					}
 				}
 			}
-
-			// No matching analysis found with all expected gloss and morpheme data
-			analysis = AddEmptyAnalysisToWordform(cache, candidateWordform);
-			return false;
+			return null;
 		}
 
 		private static IAnalysis GetMostSpecificAnalysisForWordForm(IAnalysis candidateWordform)
@@ -1031,7 +1182,8 @@ namespace SIL.FieldWorks.IText
 
 		// Helper method to verify that all expected glosses match the stored glosses
 		private static bool VerifyGlossesMatch(IWfiGloss wfiGloss,
-			Dictionary<int, string> expectedGlosses)
+			Dictionary<int, string> expectedGlosses,
+			Dictionary<int, string> expectedCats)
 		{
 			foreach (var expectedGloss in expectedGlosses)
 			{
@@ -1042,8 +1194,26 @@ namespace SIL.FieldWorks.IText
 				if (storedGloss == null || storedGloss.Text != expectedValue)
 					return false; // Mismatch found
 			}
+			foreach (var expectedCat in expectedCats)
+			{
+				if (!MatchesCatNameOrAbbreviation(expectedCat.Key, expectedCat.Value, wfiGloss.Analysis?.CategoryRA))
+					return false;
+			}
 
 			return true;
+		}
+
+		private static bool MatchesCatNameOrAbbreviation(int ws, string text, IPartOfSpeech cat)
+		{
+			if (cat == null)
+				return false;
+			ITsString name = cat.Name.get_String(ws);
+			if (name != null && name.Text == text)
+				return true;
+			ITsString abbr = cat.Abbreviation.get_String(ws);
+			if (abbr != null && abbr.Text == text)
+				return true;
+			return false;
 		}
 
 		/// <summary>

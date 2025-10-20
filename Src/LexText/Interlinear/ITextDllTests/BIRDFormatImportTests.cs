@@ -861,6 +861,78 @@ namespace SIL.FieldWorks.IText
 		}
 
 		[Test]
+		public void TestExistingWordCategory()
+		{
+			string title = "atrocious";
+			string abbr = "atroc";
+			//an interliner text example xml string
+			string xml = "<document><interlinear-text>" +
+			"<paragraphs><paragraph><phrases><phrase>" +
+			"<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
+			"<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
+			"<words><word><item type=\"txt\" lang=\"en\">supercalifragilisticexpialidocious</item>" +
+			"<item type=\"gls\" lang=\"pt\">absurdo</item>" +
+			"<item type=\"pos\" lang=\"en\">N</item></word>" +
+			"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			// Create a category to find.
+			IPartOfSpeech cat = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
+				() =>
+				{
+					cat = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
+					Cache.LanguageProject.PartsOfSpeechOA.PossibilitiesOS.Add(cat);
+					cat.Name.set_String(Cache.DefaultAnalWs, "N");
+				});
+			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
+			LCModel.IText text = null;
+			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
+				using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
+				{
+					firstEntry.MoveNext();
+					var imported = firstEntry.Current;
+					ISegment segment = imported.ContentsOA[0].SegmentsOS[0];
+					// Verify that we found the category.
+					Assert.That(segment.AnalysesRS[0].Analysis.CategoryRA, Is.EqualTo(cat));
+				}
+			}
+		}
+
+		[Test]
+		public void TestNewWordCategory()
+		{
+			string title = "atrocious";
+			string abbr = "atroc";
+			//an interliner text example xml string
+			string xml = "<document><interlinear-text>" +
+			"<paragraphs><paragraph><phrases><phrase>" +
+			"<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
+			"<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
+			"<words><word><item type=\"txt\" lang=\"en\">supercalifragilisticexpialidocious</item>" +
+			"<item type=\"gls\" lang=\"pt\">absurdo</item>" +
+			"<item type=\"pos\" lang=\"en\">X</item></word>" +
+			"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
+			LCModel.IText text = null;
+			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
+				using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
+				{
+					firstEntry.MoveNext();
+					var imported = firstEntry.Current;
+					ISegment segment = imported.ContentsOA[0].SegmentsOS[0];
+					// Verify that we created a category.
+					Assert.True(segment.AnalysesRS[0].Analysis.CategoryRA.Name.BestAnalysisAlternative.Text.Equals("X"));
+					Assert.True(segment.AnalysesRS[0].Analysis.CategoryRA.Abbreviation.BestAnalysisAlternative.Text.Equals("X"));
+				}
+			}
+		}
+
+		[Test]
 		public void TestSpacesAroundPunct()
 		{
 			string xml = "<document><interlinear-text>" +
