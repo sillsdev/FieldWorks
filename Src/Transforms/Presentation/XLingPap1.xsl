@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html" version="4.0" encoding="utf-8"/>
+	<xsl:include href="JSFunctions.xsl"/>
 	<!-- ===========================================================
 	  Version of this stylesheet
 	  =========================================================== -->
@@ -38,7 +39,10 @@
 				</title>
 				<style type="text/css">
 					.interblock { display: -moz-inline-box; display: inline-block; vertical-align: top; }
+					.searchHighlight { background-color: #ffff00;}
+					.searchFocusHighlight { background-color: orange;}
 				</style>
+				<xsl:call-template name="FindScript"/>
 			</head>
 			<body>
 				<xsl:apply-templates/>

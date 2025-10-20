@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,6 +9,7 @@ using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.FdoUi;
 using SIL.LCModel;
 using XCore;
+using static SIL.FieldWorks.XWorks.GeneratedHtmlViewer;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
@@ -77,6 +78,15 @@ namespace SIL.FieldWorks.LexText.Controls
 						GoToPreviousWordGrammarPage();
 						break;
 				}
+			}
+			if (elem.TagName.Equals("IMG", StringComparison.InvariantCultureIgnoreCase)
+				&& m_htmlControl.ParentForm != null && m_htmlControl.ParentForm.OwnedForms.Length > 0)
+			{
+				// Try a Word tracing items:
+				// close any instance of the find dialog when a section is opened or closed because the matches are
+				// no longer valid or needed.
+				FindDialog findDlg = (FindDialog)m_htmlControl.ParentForm.OwnedForms[0];
+				findDlg?.Close();
 			}
 		}
 

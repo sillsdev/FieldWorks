@@ -1247,7 +1247,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 		internal bool MoveableMSA(IMoInflAffMsa msa, bool up)
 		{
-			if (m_slot == null)
+			if (m_slot == null || !m_slot.IsValidObject)
 				return false;
 			List<ICmObject> vals = m_slot.Affixes.ToList<ICmObject>();
 			int pos = vals.IndexOf(msa);

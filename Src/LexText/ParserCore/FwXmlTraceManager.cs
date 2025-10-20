@@ -14,7 +14,6 @@ using SIL.Machine.Annotations;
 using System.Collections.Generic;
 using System.Text;
 using SIL.Machine.Rules;
-using SIL.Core.ClearShare;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {

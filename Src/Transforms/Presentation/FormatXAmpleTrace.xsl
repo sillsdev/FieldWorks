@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html" version="4.0" encoding="UTF-8" indent="yes" media-type="text/html; charset=utf-8"/>
+	<xsl:include href="JSFunctions.xsl"/>
 	<!--
 ================================================================
 Format the xml returned from XAmple for user display.
@@ -94,14 +95,7 @@ Main template
 		<html>
 			<head>
 				<meta charset="UTF-8" />
-				<xsl:call-template name="Script"/>
-				<style type="text/css">
-					.interblock {
-						display: -moz-inline-box;
-						display: inline-block;
-						vertical-align: top;
-						cursor: pointer;
-					}</style>
+				<xsl:call-template name="TraceScript"/>
 			</head>
 			<body style="font-family:Times New Roman">
 				<h1>
@@ -375,178 +369,6 @@ ResultSection
 				<xsl:call-template name="UseShowDetailsButton"/>
 			</xsl:otherwise>
 		</xsl:choose>
-	</xsl:template>
-	<!--
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-Script
-	Output the JavaScript script to handle dynamic "tree"
-		Parameters: none
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
--->
-	<xsl:template name="Script">
-		<script language="JavaScript" id="clientEventHandlersJS">
-			<xsl:text disable-output-escaping="yes">
-	function ButtonShowDetails()
-	{
-	if (TraceSection.style.display == 'none')
-	{
-	  TraceSection.style.display = 'block';
-	  ShowDetailsButton.value = "Hide Details";
-	}
-	else
-	{
-	  TraceSection.style.display = 'none';
-	  ShowDetailsButton.value = "Show Details";
-	}
-	}
-	// Center the mouse position in the browser
-	function CenterNodeInBrowser(node)
-	{
-	var posx = 0;
-	var posy = 0;
-	if (!e) var e = window.event;
-	if (e.pageX || e.pageY)
-	{
-		posx = e.pageX;
-		posy = e.pageY;
-	}
-	else if (e.clientX || e.clientY)
-	{
-		posx = e.clientX + document.body.scrollLeft;
-		posy = e.clientY + document.body.scrollTop;
-	}
-	// posx and posy contain the mouse position relative to the document
-	curY = findPosY(node);
-	offset = document.body.clientHeight/2;
-	window.scrollTo(0, curY-offset); // scroll to about the middle if possible
-	}
-	// findPosX() and findPosY() are from http://www.quirksmode.org/js/findpos.html
-	function findPosX(obj)
-{
-	var curleft = 0;
-	if (obj.offsetParent)
-	{
-		while (obj.offsetParent)
-		{
-			curleft += obj.offsetLeft
-			obj = obj.offsetParent;
-		}
-	}
-	else if (obj.x)
-		curleft += obj.x;
-	return curleft;
-}
-
-function findPosY(obj)
-{
-	var curtop = 0;
-	if (obj.offsetParent)
-	{
-		while (obj.offsetParent)
-		{
-			curtop += obj.offsetTop
-			obj = obj.offsetParent;
-		}
-	}
-	else if (obj.y)
-		curtop += obj.y;
-	return curtop;
-}
-
-// nextSibling function that skips over textNodes.
-function NextNonTextSibling(node)
-{
-	while(node.nextSibling.nodeName == "#text")
-		node = node.nextSibling;
-
-	return node.nextSibling;
-}
-
-// This script based on the one given in http://www.codeproject.com/jscript/dhtml_treeview.asp.
-function Toggle(node, path, imgOffset)
-{
-
-	Images = new Array('beginminus.gif', 'beginplus.gif', 'lastminus.gif', 'lastplus.gif', 'minus.gif', 'plus.gif', 'singleminus.gif', 'singleplus.gif',
-										 'beginminusRTL.gif', 'beginplusRTL.gif', 'lastminusRTL.gif', 'lastplusRTL.gif', 'minusRTL.gif', 'plusRTL.gif', 'singleminusRTL.gif', 'singleplusRTL.gif');
-	// Unfold the branch if it isn't visible
-
-	if (NextNonTextSibling(node).style.display == 'none')
-	{
-		// Change the image (if there is an image)
-		if (node.childNodes.length > 0)
-		{
-			if (node.childNodes.item(0).nodeName == "IMG")
-			{
-				var str = node.childNodes.item(0).src;
-				var pos = str.indexOf(Images[1 + imgOffset]); // beginplus.gif
-				if (pos >= 0)
-				{
-					node.childNodes.item(0).src = path + Images[0 + imgOffset]; // "beginminus.gif";
-				}
-				else
-				{
-					pos = str.indexOf(Images[7 + imgOffset]); // "singleplus.gif");
-					if (pos >= 0)
-					{
-						node.childNodes.item(0).src = path + Images[6 + imgOffset]; // "singleminus.gif";
-					}
-					else
-					{
-						pos = str.indexOf(Images[3 + imgOffset]); // "lastplus.gif");
-						if (pos >= 0)
-						{
-							node.childNodes.item(0).src = path + Images[2 + imgOffset]; // "lastminus.gif";
-						}
-						else
-						{
-							node.childNodes.item(0).src = path + Images[4 + imgOffset]; // "minus.gif";
-						}
-					}
-				}
-			}
-		}
-		NextNonTextSibling(node).style.display = 'block';
-		CenterNodeInBrowser(node);
-	}
-	// Collapse the branch if it IS visible
-	else
-	{
-		// Change the image (if there is an image)
-		if (node.childNodes.length > 0)
-		{
-			if (node.childNodes.item(0).nodeName == "IMG")
-				var str = node.childNodes.item(0).src;
-				var pos = str.indexOf(Images[0 + imgOffset]); // "beginminus.gif");
-				if (pos >= 0)
-				{
-					node.childNodes.item(0).src = path + Images[1 + imgOffset]; // "beginplus.gif";
-				}
-				else
-				{
-					pos = str.indexOf(Images[6 + imgOffset]); // "singleminus.gif");
-					if (pos >= 0)
-					{
-						node.childNodes.item(0).src = path + Images[7 + imgOffset]; // "singleplus.gif";
-					}
-					else
-					{
-						pos = str.indexOf(Images[2 + imgOffset]); // "lastminus.gif");
-						if (pos >= 0)
-						{
-							node.childNodes.item(0).src = path + Images[3 + imgOffset]; // "lastplus.gif";
-						}
-						else
-						{
-							node.childNodes.item(0).src = path + Images[5 + imgOffset]; // "plus.gif";
-						}
-					}
-				}
-	}
-	NextNonTextSibling(node).style.display = 'none';
-}
-}
-			</xsl:text>
-		</script>
 	</xsl:template>
 	<!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
