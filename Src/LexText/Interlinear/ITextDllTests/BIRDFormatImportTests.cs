@@ -761,10 +761,19 @@ namespace SIL.FieldWorks.IText
 		{
 			string title = "atrocious";
 			string abbr = "atroc";
+			string source = "source";
+			string description = "description";
+			string dateCreated = "2006-08-23 19:31:09.500";
+			string dateModified = "2006-09-14 13:46:01.247";
 			//an interliner text example xml string
 			string xml = "<document><interlinear-text>" +
 			"<item type=\"title\" lang=\"en\">" + title + "</item>" +
 			"<item type=\"title-abbreviation\" lang=\"en\">" + abbr + "</item>" +
+			"<item type=\"source\" lang=\"en\">" + source + "</item>" +
+			"<item type=\"comment\" lang=\"en\">" + description + "</item>" +
+			"<item type=\"text-is-translation\" lang=\"en\">true</item>" +
+			"<item type=\"date-created\" lang=\"en\">" + dateCreated + "</item>" +
+			"<item type=\"date-modified\" lang=\"en\">" + dateModified + "</item>" +
 			"<paragraphs><paragraph><phrases><phrase>" +
 			"<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
 			"<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
@@ -785,6 +794,68 @@ namespace SIL.FieldWorks.IText
 					Assert.True(imported.Name.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle).Text.Equals(title));
 					//The title abbreviation imported
 					Assert.True(imported.Abbreviation.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle).Text.Equals(abbr));
+					//The source imported
+					Assert.True(imported.Source.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle).Text.Equals(source));
+					//The description imported
+					Assert.True(imported.Description.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle).Text.Equals(description));
+					//The isTranslated imported
+					Assert.True(imported.IsTranslated);
+					//The Dates imported
+					string importedDateCreated = imported.DateCreated.ToLCMTimeFormatWithMillisString();
+					Assert.True(importedDateCreated.Equals(dateCreated));
+					string importedDateModified = imported.DateModified.ToLCMTimeFormatWithMillisString();
+					Assert.True(importedDateModified.Equals(dateModified));
+				}
+			}
+		}
+
+		[Test]
+		public void TestGenres()
+		{
+			string title = "atrocious";
+			string textGuid = "a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb3";
+			string genre1Guid = "b405f3c0-58e1-4492-8a40-e955774a6912";
+			string genre2Guid = "45e6f056-98ac-45d6-858e-59450993f269";
+			string genre1Name = "genre1";
+			string genre2Name = "genre2";
+			//an interliner text example xml string
+			string xml = "<document><interlinear-text guid=\"" + textGuid + "\">" +
+			"<item type=\"title\" lang=\"en\">" + title + "</item>" +
+			"<item type=\"genre\" guid=\"" + genre1Guid + "\" lang=\"en\">" + genre1Name + "</item>" +
+			"<item type=\"genre\" guid=\"" + genre2Guid + "\" lang=\"en\">" + genre2Name + "</item>" +
+			"<objects>" +
+			"</objects>\n" +
+			"<paragraphs><paragraph><phrases><phrase>" +
+			"<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
+			"<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
+			"<words><word><item type=\"txt\" lang=\"en\">supercalifragilisticexpialidocious</item>" +
+			"<item type=\"gls\" lang=\"pt\">absurdo</item></word>" +
+			"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				Cache.LanguageProject.GenreListOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+			});
+			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
+			LCModel.IText text = null;
+			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
+				using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
+				{
+					firstEntry.MoveNext();
+					var imported = firstEntry.Current;
+					Assert.AreEqual(2, imported.GenresRC.Count);
+					Assert.AreEqual(genre1Guid, imported.GenresRC.First().Guid.ToString());
+					Assert.AreEqual(genre1Name, imported.GenresRC.First().Name.BestAnalysisAlternative.Text);
+					Assert.AreEqual(genre2Guid, imported.GenresRC.Last().Guid.ToString());
+					Assert.AreEqual(genre2Name, imported.GenresRC.Last().Name.BestAnalysisAlternative.Text);
+					ILcmOwningSequence<ICmPossibility> genres = imported.Cache.LanguageProject.GenreListOA.PossibilitiesOS;
+					Assert.AreEqual(2, genres.Count);
+					Assert.AreEqual(genre1Guid, genres.First().Guid.ToString());
+					Assert.AreEqual(genre1Name, genres.First().Name.BestAnalysisAlternative.Text);
+					Assert.AreEqual(genre2Guid, genres.Last().Guid.ToString());
+					Assert.AreEqual(genre2Name, genres.Last().Name.BestAnalysisAlternative.Text);
 				}
 			}
 		}
