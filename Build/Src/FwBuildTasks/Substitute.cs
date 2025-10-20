@@ -77,11 +77,11 @@ namespace FwBuildTasks
 				var numberOfDays = Convert.ToInt32(Math.Truncate(DateTime.Now.ToOADate())).ToString();
 				fileContents = regex.Replace(fileContents, numberOfDays);
 
-				// GHA builds set the RELEASE_BASE_BUILD_NUMBER in the environment
-				var buildNumber = Environment.GetEnvironmentVariable("RELEASE_BASE_BUILD_NUMBER");
+				// GHA builds set the RELEASE_BUILD_NUMBER in the environment
+				var buildNumber = Environment.GetEnvironmentVariable("RELEASE_BUILD_NUMBER");
 				if (string.IsNullOrEmpty(buildNumber))
 				{
-					// fall back to number of days if no RELEASE_BASE_BUILD_NUMBER is in the environment
+					// fall back to number of days if no RELEASE_BUILD_NUMBER is in the environment
 					buildNumber = numberOfDays;
 				}
 				regex = new Regex("\\$BUILDNUMBER");
