@@ -60,7 +60,7 @@ jobs:
           $githubRun = $env:GITHUB_RUN_NUMBER
           $combined = $lastJenkins + $githubRun
           echo "Calculated build number: $combined"
-          echo "RELEASE_BUILD_NUMBER=$combined" >> $env:GITHUB_ENV
+          echo "FW_BUILD_NUMBER=$combined" >> $env:GITHUB_ENV
 
       - name: Checkout Files
         uses: actions/checkout@v4
@@ -278,7 +278,7 @@ jobs:
             throw "Unexpected patch filename format: $patchFile"
           }
           $patchWithBaseInName = "$($Matches[1])${baseBuildNumber}$($Matches[2])"
-          $s3Key = "jobs/FieldWorks-Win-all-Release-Patch/$($env:RELEASE_BUILD_NUMBER)/$patchWithBaseInName"
+          $s3Key = "jobs/FieldWorks-Win-all-Release-Patch/$($env:FW_BUILD_NUMBER)/$patchWithBaseInName"
           aws s3 cp $patchPath "s3://flex-updates/$s3Key"
           Write-Host "Uploaded to s3://flex-updates/$s3Key"
 
