@@ -1,8 +1,8 @@
 name: Base Installer
 on:
   schedule:
-    # Runs every day at 02:30 UTC (which is 6:30pm PST / 7:30pm PDT)
-    - cron: "30 2 * * *"
+    # Runs every Monday at 02:30 UTC (which is 6:30pm PST / 7:30pm PDT Sunday evening)
+    - cron: "30 2 * * 1"
   workflow_dispatch:
     inputs:
       fw_ref:

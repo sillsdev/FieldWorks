@@ -2,6 +2,9 @@ name: Patch Installer
 on:
   push:
     branches: ["release/9.3"]
+  schedule:
+    # Runs every Monday at 03:30 UTC (which is 8:30pm MST/PDT Sunday evening)
+    - cron: "30 3 * * 1"
   workflow_dispatch:
     inputs:
       fw_ref:
