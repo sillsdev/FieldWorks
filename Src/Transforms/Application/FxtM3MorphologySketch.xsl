@@ -6917,13 +6917,15 @@ ProcessSlotNames
 		<xsl:choose>
 			<xsl:when test="$bVernRightToLeft='1'">
 				<xsl:for-each select="$Slots">
-					<xsl:sort select="@ord" order="descending"/>
+					<!-- no need to sort; the input to this transform has them in order
+						<xsl:sort select="@ord" order="descending"/>-->
 					<xsl:call-template name="ProcessSlotName"/>
 				</xsl:for-each>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:for-each select="$Slots">
-					<xsl:sort select="@ord"/>
+					<!-- no need to sort; the input to this transform has them in order
+						<xsl:sort select="@ord" order="descending"/>-->
 					<xsl:call-template name="ProcessSlotName"/>
 				</xsl:for-each>
 			</xsl:otherwise>

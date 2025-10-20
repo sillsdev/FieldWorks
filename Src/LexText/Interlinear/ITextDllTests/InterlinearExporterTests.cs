@@ -2,21 +2,22 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections;
-using System.IO;
-using System.Xml;
-using System.Xml.Schema;
-using System.Xml.Xsl;
 using NUnit.Framework;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.PlatformUtilities;
 using SIL.TestUtilities;
+using System;
+using System.Collections;
+using System.IO;
+using System.Text;
+using System.Xml;
+using System.Xml.Schema;
+using System.Xml.Xsl;
 
 namespace SIL.FieldWorks.IText
 {
@@ -55,9 +56,14 @@ namespace SIL.FieldWorks.IText
 		protected XmlDocument ExportToXml(string mode)
 		{
 			XmlDocument exportedXml = new XmlDocument();
+			var settings = new XmlWriterSettings
+			{
+				Encoding = System.Text.Encoding.UTF8,
+				Indent = true
+			};
 			using (var vc = new InterlinVc(Cache))
 			using (var stream = new MemoryStream())
-			using (var writer = new XmlTextWriter(stream, System.Text.Encoding.UTF8))
+			using (var writer = XmlWriter.Create(stream, settings))
 			{
 				vc.LineChoices = m_choices;
 				var exporter = InterlinearExporter.Create(mode, Cache, writer, m_text1.ContentsOA, m_choices, vc);
@@ -545,6 +551,8 @@ namespace SIL.FieldWorks.IText
 				freeVarType.ReverseAbbr.SetAnalysisDefaultWritingSystem("fr. var.");
 				pa.SetVariantOf(0, 1, leGo, freeVarType);
 				pa.ReparseParagraph();
+				m_text1.DateCreated = DateTime.MinValue;
+				m_text1.DateModified = DateTime.MinValue;
 				exportedDoc = ExportToXml();
 
 				//validate export xml against schema
@@ -762,6 +770,8 @@ namespace SIL.FieldWorks.IText
 				IStTxtPara para1 = m_text1.ContentsOA.ParagraphsOS[1] as IStTxtPara;
 				ParagraphAnnotator pa = new ParagraphAnnotator(para1);
 				pa.ReparseParagraph();
+				m_text1.DateCreated = DateTime.MinValue;
+				m_text1.DateModified = DateTime.MinValue;
 				var exportedDoc = ExportToXml();
 
 				string formLexEntry = "go";
@@ -827,6 +837,8 @@ namespace SIL.FieldWorks.IText
 				IStTxtPara para1 = m_text1.ContentsOA.ParagraphsOS[1] as IStTxtPara;
 				ParagraphAnnotator pa = new ParagraphAnnotator(para1);
 				pa.ReparseParagraph();
+				m_text1.DateCreated = DateTime.MinValue;
+				m_text1.DateModified = DateTime.MinValue;
 				var exportedDoc = ExportToXml();
 
 				string formLexEntry = "go";
@@ -888,6 +900,8 @@ namespace SIL.FieldWorks.IText
 				IStTxtPara para1 = m_text1.ContentsOA.ParagraphsOS[1] as IStTxtPara;
 				ParagraphAnnotator pa = new ParagraphAnnotator(para1);
 				pa.ReparseParagraph();
+				m_text1.DateCreated = DateTime.MinValue;
+				m_text1.DateModified = DateTime.MinValue;
 				var exportedDoc = ExportToXml();
 
 				string formLexEntry = "go";
@@ -1109,6 +1123,69 @@ namespace SIL.FieldWorks.IText
 				m_text1.Description.set_String(Cache.WritingSystemFactory.GetWsFromStr("fr"), "french");
 				XmlDocument exportedDoc = ExportToXml();
 				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath("//interlinear-text/item[@type=\"comment\"]", 2);
+			}
+
+			[Test]
+			public void ValidateMultipleGenres()
+			{
+				Cache.LanguageProject.GenreListOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				var genre1 = Cache.LanguageProject.GenreListOA.FindOrCreatePossibility("genre1", Cache.DefaultAnalWs);
+				var genre2 = Cache.LanguageProject.GenreListOA.FindOrCreatePossibility("genre2", Cache.DefaultAnalWs);
+				m_text1.GenresRC.Add(genre1);
+				m_text1.GenresRC.Add(genre2);
+				XmlDocument exportedDoc = ExportToXml();
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath("//interlinear-text/item[@type=\"genre\"]", 2);
+			}
+
+			[Test]
+			public void TestMetadataRoundTrip()
+			{
+				//an interliner text example xml string
+				string path = Path.Combine(FwDirectoryFinder.SourceDirectory, @"LexText/Interlinear/ITextDllTests/FlexTextImport");
+				string file = Path.Combine(path, "FlexTextMetadataImport.flextext");
+				XmlDocument doc = new XmlDocument();
+				doc.Load(file);
+				string xml = doc.OuterXml;
+				ILgWritingSystemFactory wsFactory = Cache.WritingSystemFactory;
+
+				var writingSystem = wsFactory.get_Engine("es");
+				Cache.LanguageProject.AddToCurrentAnalysisWritingSystems((CoreWritingSystemDefinition)writingSystem);
+				writingSystem = wsFactory.get_Engine("en");
+				Cache.LanguageProject.AddToCurrentVernacularWritingSystems((CoreWritingSystemDefinition)writingSystem);
+				Cache.LanguageProject.GenreListOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				Cache.LanguageProject.PositionsOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				Cache.LanguageProject.RestrictionsOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				Cache.LanguageProject.EducationOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				Cache.LanguageProject.RolesOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				Cache.LanguageProject.StatusOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+				LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
+				LCModel.IText text = null;
+				using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+				{
+					li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
+					m_text1 = text;
+					XmlDocument exportedDoc = ExportToXml("elan");
+					string exportedXml = exportedDoc.OuterXml;
+					Assert.That(exportedXml, Is.EqualTo(xml));
+				}
+			}
+
+			[Test]
+			public void ValidateIsTranslated()
+			{
+				m_text1.IsTranslated = true;
+				XmlDocument exportedDoc = ExportToXml();
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath("//interlinear-text/item[@type=\"text-is-translation\"]", 1);
+			}
+
+			[Test]
+			public void ValidateDates()
+			{
+				m_text1.DateCreated = DateTime.Now;
+				m_text1.DateModified = DateTime.Now;
+				XmlDocument exportedDoc = ExportToXml();
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath("//interlinear-text/item[@type=\"date-created\"]", 1);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath("//interlinear-text/item[@type=\"date-modified\"]", 1);
 			}
 
 			/// <summary>
