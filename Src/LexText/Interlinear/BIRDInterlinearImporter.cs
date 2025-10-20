@@ -2,24 +2,24 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Extensions;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.IText.FlexInterlinModel;
+using SIL.LCModel;
 using SIL.LCModel.Application.ApplicationServices;
 using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
-using SIL.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Windows.Forms;
 
 namespace SIL.FieldWorks.IText
 {
@@ -87,13 +87,14 @@ namespace SIL.FieldWorks.IText
 			//handle the header(info or meta) information
 			SetTextMetaAndMergeMedia(cache, interlinText, wsFactory, newText, false);
 
+			if (newText.ContentsOA == null)
+			{
+				// Create ContentsOA even if there are no paragraphs.
+				newText.ContentsOA = cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
+			}
 			//create all the paragraphs
 			foreach (var paragraph in interlinText.paragraphs)
 			{
-				if (newText.ContentsOA == null)
-				{
-					newText.ContentsOA = cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
-				}
 				IStTxtPara newTextPara = newText.ContentsOA.AddNewTextPara("");
 				int offset = 0;
 				if (paragraph.phrases == null)
@@ -1138,25 +1139,27 @@ namespace SIL.FieldWorks.IText
 		private static void SetTextMetaAndMergeMedia(LcmCache cache, Interlineartext interlinText, ILgWritingSystemFactory wsFactory,
 			LCModel.IText newText, bool merging)
 		{
-			if (interlinText.Items != null) // apparently it is null if there are no items.
+			InterlinearObjects objects = new InterlinearObjects();
+
+			// Set top-level metadata properties.
+			SetObjectPropertyValues(newText, interlinText.Items, objects.GetXmlPropertyMap("Text"), cache);
+
+			// Create objects except for links.
+			if (interlinText.objects != null)
 			{
-				foreach (var item in interlinText.Items)
+				foreach (var obj in interlinText.objects)
 				{
-					switch (item.type)
-					{
-						case "title":
-							newText.Name.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
-							break;
-						case "title-abbreviation":
-							newText.Abbreviation.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
-							break;
-						case "source":
-							newText.Source.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
-							break;
-						case "comment":
-							newText.Description.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
-							break;
-					}
+					CreateFullObject(obj, objects, cache);
+				}
+			}
+
+			// Create links after all objects have been created.
+			CreateItemLinks(interlinText.guid, interlinText.Items, objects, cache);
+			if (interlinText.objects != null)
+			{
+				foreach (var obj in interlinText.objects)
+				{
+					CreateItemLinks(obj.guid, obj.item, objects, cache);
 				}
 			}
 
@@ -1194,5 +1197,290 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 		}
+
+		/// <summary>
+		/// Create object and fill in item properties.
+		/// </summary>
+		private static void CreateFullObject(Interlineartext.Object obj, InterlinearObjects objects, LcmCache cache)
+		{
+			Guid guid = new Guid(obj.guid);
+			ICmObjectRepository repository = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+			if (!repository.TryGetObject(guid, out ICmObject icmObject))
+			{
+				icmObject = CreateObject(obj, objects, cache);
+				Dictionary<string, string> xmlPropertyMap = objects.GetXmlPropertyMap(obj.type);
+				SetObjectPropertyValues(icmObject, obj.item, xmlPropertyMap, cache);
+			}
+		}
+
+		private static void SetObjectPropertyValues(ICmObject icmObject, item[] items, Dictionary<string, string> xmlPropertyMap, LcmCache cache)
+		{
+			if (items == null) return;
+			Type objType = icmObject.GetType();
+			/// Set item properties.
+			foreach (var item in items)
+			{
+				if (item.guid != null)
+				{
+					continue;
+				}
+				if (item.type == "owner" && icmObject is ICmPossibility possibility)
+				{
+					// Add possibility to a possibility list rooted in LanguageProject.
+					foreach (PropertyInfo langPropInfo in cache.LanguageProject.GetType().GetProperties())
+					{
+						string langPropName = langPropInfo.Name;
+						if (langPropName.EndsWith("OA"))
+							langPropName = langPropName.Substring(0, langPropName.Length - 2);
+						if (langPropName == item.Value)
+						{
+							var langPropValue = langPropInfo.GetValue(cache.LanguageProject);
+							if (langPropValue is ICmPossibilityList possibilityList)
+							{
+								possibilityList.PossibilitiesOS.Add(possibility);
+							}
+						}
+					}
+					continue;
+				}
+				object value = null;
+				string propName = null;
+				if (xmlPropertyMap.ContainsKey(item.type))
+					propName = xmlPropertyMap[item.type];
+				else if (item.type == "date-created")
+					propName = "DateCreated";
+				else if (item.type == "date-modified")
+					propName = "DateModified";
+				PropertyInfo propInfo = objType.GetProperty(propName);
+				object currentValue = propInfo.GetValue(icmObject, null);
+				if (currentValue is bool)
+				{
+					value = item.Value.ToLower() == "true";
+				}
+				else if (currentValue is DateTime)
+				{
+					value = DateTime.Parse(item.Value, null, System.Globalization.DateTimeStyles.AssumeUniversal);
+				}
+				else if (currentValue is IMultiString)
+				{
+					// value is an ITsString.
+					int ws = GetWsEngine(cache.WritingSystemFactory, item.lang).Handle;
+					value = TsStringUtils.MakeString(item.Value, ws);
+				}
+				else if (currentValue is IMultiUnicode)
+				{
+					// value is an ITsString.
+					int ws = GetWsEngine(cache.WritingSystemFactory, item.lang).Handle;
+					value = TsStringUtils.MakeString(item.Value, ws);
+				}
+				else if (currentValue is int)
+				{
+					int intValue = 0;
+					if (int.TryParse(item.Value, out intValue))
+						value = intValue;
+				}
+				SetPropertyValue(icmObject, propName, value);
+			}
+		}
+
+		/// <summary>
+		/// Create object.
+		/// </summary>
+		private static ICmObject CreateObject(Interlineartext.Object obj, InterlinearObjects objects, LcmCache cache)
+		{
+			string objType = objects.XmlTypeMap[obj.type];
+			switch (objType)
+			{
+				case "CmAnthroItem":
+					return cache.ServiceLocator.GetInstance<ICmAnthroItemFactory>().Create(new Guid(obj.guid));
+				case "CmLocation":
+					return cache.ServiceLocator.GetInstance<ICmLocationFactory>().Create(new Guid(obj.guid));
+				case "CmPerson":
+					return cache.ServiceLocator.GetInstance<ICmPersonFactory>().Create(new Guid(obj.guid));
+				case "CmPossibility":
+					return cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(new Guid(obj.guid));
+				case "RnGenericRec":
+					IRnGenericRec record = cache.ServiceLocator.GetInstance<IRnGenericRecFactory>().Create(new Guid(obj.guid));
+					cache.LanguageProject.ResearchNotebookOA.RecordsOC.Add(record);
+					return record;
+				case "RnRoledPartic":
+					return cache.ServiceLocator.GetInstance<IRnRoledParticFactory>().Create(new Guid(obj.guid));
+			}
+			return null;
+		}
+
+		private static void CreateItemLinks(string objGuid, item[] items, InterlinearObjects objects, LcmCache cache)
+		{
+			if (items != null)
+			{
+				foreach (var item in items)
+				{
+					if (item.guid != null)
+					{
+						CreateLink(objGuid, item.type, item.guid, item.lang, item.Value, objects, cache);
+					}
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// Create given link.
+		/// </summary>
+		private static void CreateLink(string objGuid, string xmlPropName, string valueGuid, string lang, string valueName, InterlinearObjects objects, LcmCache cache)
+		{
+			ICmObjectRepository repository = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+			ICmObject obj = repository.GetObject(new Guid(objGuid));
+			Dictionary<string, string> xmlPropertyMap = objects.InvertMap(objects.GetPropertyMap(obj.GetType().Name));
+			string propName = (xmlPropName == "owner") ? "Owner" : xmlPropertyMap[xmlPropName];
+			ICmObject value = null;
+			if (!repository.TryGetObject(new Guid(valueGuid), out value))
+			{
+				value = CreateObjectByName(obj, propName, lang, valueName, valueGuid, cache);
+			}
+			SetPropertyValue(obj, propName, value);
+		}
+
+		private static ICmObject CreateObjectByName(ICmObject obj, string propName, string lang, string valueName, string valueGuid, LcmCache cache)
+		{
+			ICmPossibilityList possibilityList = null;
+			string possibilityType = "ICmPossibility";
+			switch (propName)
+			{
+				case "AnthroCodesRC":
+					{
+						possibilityList = cache.LanguageProject.AnthroListOA;
+						possibilityType = "ICmAnthroItem";
+						break;
+					}
+				case "GenresRC":
+					{
+						possibilityList = cache.LanguageProject.GenreListOA;
+						break;
+					}
+				case "ParticipantsRC":
+				case "ResearchersRC":
+				case "Source":
+					{
+						possibilityList = cache.LanguageProject.PeopleOA;
+						possibilityType = "ICmPerson";
+						break;
+					}
+				case "RoleRA":
+					{
+						possibilityList = cache.LanguageProject.RolesOA;
+						break;
+					}
+				case "LocationsRC":
+					{
+						possibilityList = cache.LanguageProject.LocationsOA;
+						possibilityType = "ICmLocation";
+						break;
+					}
+			}
+			if (possibilityList == null)
+			{
+				return null;
+			}
+			// Look for an existing possibility with the given name.
+			int ws = GetWsEngine(cache.WritingSystemFactory, lang).Handle;
+			foreach (var candidate in possibilityList.ReallyReallyAllPossibilities)
+			{
+				ITsString name = candidate.Name.BestAnalysisAlternative;
+				if (name.Text == valueName && name.get_WritingSystemAt(0) == ws)
+				{
+					// Should we set the candidate's guid to valueGuid?
+					return candidate;
+				}
+			}
+			// Create a new possibility.
+			ICmPossibility newPossibility = null;
+			Guid guid = new Guid(valueGuid);
+			switch (possibilityType)
+			{
+				case "ICmAnthroItem":
+					newPossibility = cache.ServiceLocator.GetInstance<ICmAnthroItemFactory>().Create(guid);
+					break;
+				case "ICmLocation":
+					newPossibility = cache.ServiceLocator.GetInstance<ICmLocationFactory>().Create(guid);
+					break;
+				case "ICmPerson":
+					newPossibility = cache.ServiceLocator.GetInstance<ICmPersonFactory>().Create(guid);
+					break;
+				case "ICmPossibility":
+					newPossibility = cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(guid);
+					break;
+			}
+			if (newPossibility != null)
+			{
+				newPossibility.Name.set_String(ws, valueName);
+				possibilityList.PossibilitiesOS.Add(newPossibility);
+			}
+			return newPossibility;
+		}
+
+		/// <summary>
+		/// Set object property to value.
+		private static void SetPropertyValue(ICmObject obj, string propName, object value)
+		{
+			if (value == null)
+				return;
+			if (propName == "Owner")
+			{
+				// We store Owner but set SubPossibilitiesOS.
+				SetPropertyValue((ICmObject)value, "SubPossibilitiesOS", obj);
+				return;
+			}
+			if (propName == "AssociatedNotebookRecord")
+			{
+				SetPropertyValue((ICmObject)value, "TextRA", obj);
+				return;
+			}
+			PropertyInfo propInfo = obj.GetType().GetProperty(propName);
+			object currentValue = propInfo.GetValue(obj, null);
+			if (currentValue == null)
+			{
+				propInfo.SetValue(obj, value);
+				return;
+			}
+
+			Type currentValueType = currentValue.GetType();
+			if (value.GetType().IsInstanceOfType(currentValueType))
+			{
+				propInfo.SetValue(obj, value);
+			}
+			else if (currentValueType.IsGenericType &&
+				(currentValueType.GetGenericTypeDefinition().Name == "LcmOwningCollection`1" ||
+				 currentValueType.GetGenericTypeDefinition().Name == "LcmOwningSequence`1" ||
+				 currentValueType.GetGenericTypeDefinition().Name == "LcmReferenceCollection`1" ||
+				 currentValueType.GetGenericTypeDefinition().Name == "LcmReferenceSequence`1"))
+			{
+				Type itemType = currentValueType.GetGenericArguments()[0];
+				if (itemType.IsAssignableFrom(value.GetType()))
+				{
+					var addMethod = currentValueType.GetMethod("Add");
+					addMethod?.Invoke(currentValue, new[] { value });
+				}
+			}
+			else if (currentValue is IMultiString multiString)
+			{
+				if (value is ITsString itsString)
+				{
+					multiString.set_String(itsString.get_WritingSystemAt(0), itsString);
+				}
+			}
+			else if (currentValue is IMultiUnicode multiUnicode)
+			{
+				if (value is ITsString itsString)
+				{
+					multiUnicode.set_String(itsString.get_WritingSystemAt(0), itsString.Text);
+				}
+			}
+			else
+			{
+				propInfo.SetValue(obj, value);
+			}
+		}
+
 	}
 }

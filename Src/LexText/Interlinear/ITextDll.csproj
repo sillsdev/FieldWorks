@@ -460,6 +460,7 @@
     <Compile Include="InterlinDocForAnalysis.Designer.cs">
       <DependentUpon>InterlinDocForAnalysis.cs</DependentUpon>
     </Compile>
+    <Compile Include="InterlinearObjects.cs" />
     <Compile Include="InterlinearSfmImportWizard.cs">
       <SubType>Form</SubType>
     </Compile>

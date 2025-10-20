@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<document version="3">
+	<interlinear-text guid="dea29dba-e9b0-4f25-82b4-3f993a3f8505">
+		<item type="title" lang="es">Derivation Test</item>
+		<item type="comment" lang="en">Test of derivations</item>
+		<item type="text-is-translation" lang="en">true</item>
+		<item type="notebook-record" guid="22323122-b0e8-47b6-b6fc-24afe1e872b3" lang="en"></item>
+		<item type="genre" guid="c181fb60-ea5e-11de-9e08-0013722f8dec" lang="en">Paradigm</item>
+		<item type="genre" guid="d686fc68-ea5e-11de-8f7f-0013722f8dec" lang="en">Prose</item>
+		<item type="date-created" lang="en">2024-08-27 16:46:12.972</item>
+		<item type="date-modified" lang="en">2025-09-30 16:04:20.323</item>
+		<objects>
+			<object type="NotebookRecord" guid="22323122-b0e8-47b6-b6fc-24afe1e872b3">
+				<item type="researcher" guid="5d543e4f-50d7-41fe-93a7-cf851c1d229f" lang="en">John Smith</item>
+				<item type="roled-participants" guid="16dd8759-4e91-4825-ad48-9da75a5264df" lang="en"></item>
+				<item type="roled-participants" guid="6d0960c7-b80e-438d-8b60-14ad42f23c8e" lang="en"></item>
+				<item type="source" guid="5d543e4f-50d7-41fe-93a7-cf851c1d229f" lang="en">John Smith</item>
+				<item type="location" guid="7d7579c2-edcd-4658-918d-be29eac4c3fd" lang="en">California</item>
+				<item type="anthro-code" guid="a5f4f143-014a-463c-aff3-2aa36831ee2b" lang="en">derivations</item>
+			</object>
+			<object type="RoledParticipants" guid="16dd8759-4e91-4825-ad48-9da75a5264df">
+				<item type="participant" guid="5d543e4f-50d7-41fe-93a7-cf851c1d229f" lang="en">John Smith</item>
+			</object>
+			<object type="RoledParticipants" guid="6d0960c7-b80e-438d-8b60-14ad42f23c8e">
+				<item type="participant" guid="5d543e4f-50d7-41fe-93a7-cf851c1d229f" lang="en">John Smith</item>
+				<item type="role" guid="bd26345a-ea5e-11de-9973-0013722f8dec" lang="en">Arbitrator</item>
+			</object>
+		</objects>
+		<paragraphs />
+		<languages>
+			<language lang="es" font="Charis SIL" />
+			<language lang="en" font="Charis SIL" vernacular="true" />
+		</languages>
+	</interlinear-text>
+</document>
