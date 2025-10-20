@@ -5,8 +5,8 @@
 using System;
 using System.Linq;
 using System.Security;
+using SIL.Core.ClearShare;
 using SIL.Reporting;
-using SIL.Windows.Forms.ClearShare;
 
 namespace SIL.FieldWorks.XWorks
 {

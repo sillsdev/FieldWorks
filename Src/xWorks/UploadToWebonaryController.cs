@@ -17,9 +17,9 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SIL.Code;
+using SIL.Core.ClearShare;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.PlatformUtilities;
-using SIL.Windows.Forms.ClearShare;
 
 namespace SIL.FieldWorks.XWorks
 {
