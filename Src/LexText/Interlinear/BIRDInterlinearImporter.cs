@@ -1015,27 +1015,24 @@ namespace SIL.FieldWorks.IText
 				return true;
 			}
 
-			if (word.morphemes == null || word.morphemes.analysisStatus == analysisStatusTypes.humanApproved)
+			analysis = FindMatchingAnalysis(cache, candidateWordform, word, expectedGlosses, expectedCats);
+			if (analysis != null)
 			{
-				analysis = FindMatchingAnalysis(cache, candidateWordform, word, expectedGlosses, expectedCats);
-				if (analysis != null)
-				{
-					return true;
-				}
+				return true;
+			}
 
-				if (wordForm.Text.ToLower() != wordForm.Text)
+			if (wordForm.Text.ToLower() != wordForm.Text)
+			{
+				// Try lowercase.
+				var lcCandidateForm = cache.ServiceLocator
+								.GetInstance<IWfiWordformRepository>()
+								.GetMatchingWordform(wordForm.get_WritingSystemAt(0), wordForm.Text.ToLower());
+				if (lcCandidateForm is IWfiWordform lcCandidateWordform)
 				{
-					// Try lowercase.
-					var lcCandidateForm = cache.ServiceLocator
-									.GetInstance<IWfiWordformRepository>()
-									.GetMatchingWordform(wordForm.get_WritingSystemAt(0), wordForm.Text.ToLower());
-					if (lcCandidateForm is IWfiWordform lcCandidateWordform)
+					analysis = FindMatchingAnalysis(cache, lcCandidateWordform, word, expectedGlosses, expectedCats);
+					if (analysis != null)
 					{
-						analysis = FindMatchingAnalysis(cache, lcCandidateWordform, word, expectedGlosses, expectedCats);
-						if (analysis != null)
-						{
-							return true;
-						}
+						return true;
 					}
 				}
 			}
@@ -1055,7 +1052,8 @@ namespace SIL.FieldWorks.IText
 			{
 				var morphemeMatch = true;
 				// verify that the analysis has a Morph Bundle with the expected morphemes from the import
-				if (word.morphemes != null && wfiAnalysis.MorphBundlesOS.Count == word.morphemes?.morphs.Length)
+				if (word.morphemes != null && wfiAnalysis.MorphBundlesOS.Count == word.morphemes?.morphs.Length &&
+					word.morphemes.analysisStatus == analysisStatusTypes.humanApproved)
 				{
 					analysis = GetMostSpecificAnalysisForWordForm(wfiAnalysis);
 					for (var i = 0; i < wfiAnalysis.MorphBundlesOS.Count; ++i)

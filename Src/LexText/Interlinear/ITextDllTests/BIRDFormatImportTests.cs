@@ -824,7 +824,7 @@ namespace SIL.FieldWorks.IText
 					var imported = firstEntry.Current;
 					ISegment segment = imported.ContentsOA[0].SegmentsOS[0];
 					// Verify that we found the category.
-					Assert.True(segment.AnalysesRS[0].Analysis.CategoryRA.Equals(cat));
+					Assert.That(segment.AnalysesRS[0].Analysis.CategoryRA, Is.EqualTo(cat));
 				}
 			}
 		}
