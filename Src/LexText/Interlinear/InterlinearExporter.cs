@@ -2,17 +2,20 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Reflection;
 using System.Xml;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.IText
 {
@@ -40,6 +43,8 @@ namespace SIL.FieldWorks.IText
 		List<ITsString> pendingSources = new List<ITsString>();
 		private List<ITsString> pendingAbbreviations = new List<ITsString>();
 		List<ITsString> pendingComments = new List<ITsString>();
+		bool pendingIsTranslated = false;
+		Queue<ICmObject> pendingObjects = new Queue<ICmObject>();
 		int m_flidStTextTitle;
 		int m_flidStTextSource;
 		InterlinVc m_vc = null;
@@ -50,6 +55,7 @@ namespace SIL.FieldWorks.IText
 		IMoMorphType m_mmtProclitic;
 		protected WritingSystemManager m_wsManager;
 		protected ICmObjectRepository m_repoObj;
+		InterlinearObjects m_objects;
 
 		public static InterlinearExporter Create(string mode, LcmCache cache, XmlWriter writer, ICmObject objRoot,
 			InterlinLineChoices lineChoices, InterlinVc vc)
@@ -90,6 +96,7 @@ namespace SIL.FieldWorks.IText
 
 			m_wsManager = m_cache.ServiceLocator.WritingSystemManager;
 			m_repoObj = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+			m_objects = new InterlinearObjects();
 		}
 
 		public void ExportDisplay()
@@ -547,6 +554,162 @@ namespace SIL.FieldWorks.IText
 		}
 
 		/// <summary>
+		/// Write a link to an object.
+		/// </summary>
+		private void WritePendingLink(string linkType, ICmObject obj)
+		{
+			if (obj == null)
+				return;
+			m_writer.WriteStartElement("item");
+			m_writer.WriteAttributeString("type", linkType);
+			m_writer.WriteAttributeString("guid", obj.Guid.ToString());
+			// Include name in case the guid isn't defined.
+			ITsString name;
+			if (obj is ICmPossibility possibility)
+			{
+				name = possibility.Name.BestAnalysisVernacularAlternative;
+				// Don't store possibility as object.
+			}
+			else
+			{
+				name = TsStringUtils.EmptyString(m_cache.DefaultAnalWs);
+				pendingObjects.Enqueue(obj);
+			}
+			WriteLangAndContent(GetWsFromTsString(name), name);
+			m_writer.WriteEndElement();
+		}
+
+		/// <summary>
+		/// Write an ICmObject as an object.
+		/// </summary>
+		private void WritePendingObject(ICmObject obj)
+		{
+			Type objType = obj.GetType();
+			string typeName = objType.Name;
+			if (!m_objects.TypeMap.ContainsKey(typeName))
+				return;
+			m_writer.WriteStartElement("object");
+			m_writer.WriteAttributeString("type", m_objects.TypeMap[typeName]);
+			m_writer.WriteAttributeString("guid", obj.Guid.ToString());
+			WritePendingObjectProperties(obj, null);
+			m_writer.WriteEndElement();
+		}
+
+		private void WritePendingObjectProperties(ICmObject obj, IList<string> skipXmlProperties)
+		{
+			Type objType = obj.GetType();
+			string typeName = objType.Name;
+			Dictionary<string, string> propertyMap = m_objects.GetPropertyMap(typeName);
+			foreach (string propName in propertyMap.Keys)
+			{
+				PropertyInfo property = objType.GetProperty(propName);
+				object value = property.GetValue(obj, null);
+				if (value == null)
+				{
+					continue;
+				}
+				string xmlProperty = propertyMap[propName];
+				if (skipXmlProperties != null && skipXmlProperties.Contains(xmlProperty))
+				{
+					continue;
+				}
+				WritePendingProperty(xmlProperty, value);
+			}
+			if (obj is ICmMajorObject majorObj)
+			{
+				WritePendingProperty("date-created", majorObj.DateCreated);
+				WritePendingProperty("date-modified", majorObj.DateModified);
+			}
+			if (obj is ICmPossibility)
+			{
+				if (obj.Owner is ICmPossibilityList possibilityList)
+				{
+					WritePendingProperty("owner", GetPossibilityListName(possibilityList));
+				}
+				else
+				{
+					WritePendingProperty("owner", obj.Owner);
+				}
+			}
+		}
+
+		private ITsString GetPossibilityListName(ICmPossibilityList possibilityList)
+		{
+			foreach (var propInfo in m_cache.LangProject.GetType().GetProperties())
+			{
+				object propValue = null;
+				try
+				{
+					propValue = propInfo.GetValue(m_cache.LangProject, null);
+				}
+				catch (Exception e)
+				{
+
+				}
+				if (propValue == possibilityList)
+				{
+					string name = propInfo.Name;
+					if (name.EndsWith("OA"))
+						name = name.Substring(0, name.Length - 2);
+					return TsStringUtils.MakeString(name, m_cache.DefaultAnalWs);
+				}
+			}
+			return null;
+		}
+
+		/// <summary>
+		/// Write property and value, dispatching on value type.
+		/// </summary>
+		/// <param name="propType"></param>
+		/// <param name="value"></param>
+		private void WritePendingProperty(string propType, object value)
+		{
+			if (value == null) return;
+			if (value is ICmObject objectValue)
+			{
+				WritePendingLink(propType, objectValue);
+			}
+			else if (value is ITsString)
+			{
+				ITsString hystericalRaisens = (ITsString)value;
+				WritePendingItem(propType, ref hystericalRaisens);
+			}
+			else if (value is ITsMultiString multiString)
+			{
+				for (int i = 0; i < multiString.StringCount; i++)
+				{
+					ITsString hystericalRaisens = multiString.GetStringFromIndex(i, out int ws);
+					WritePendingItem(propType, ref hystericalRaisens);
+				}
+			}
+			else if (value is bool boolValue)
+			{
+				var hystericalRaisens = TsStringUtils.MakeString(boolValue ? "true" : "false", m_cache.DefaultAnalWs);
+				WritePendingItem(propType, ref hystericalRaisens);
+			}
+			else if (value is int intValue)
+			{
+				var hystericalRaisens = TsStringUtils.MakeString(intValue.ToString(), m_cache.DefaultAnalWs);
+				WritePendingItem(propType, ref hystericalRaisens);
+			}
+			else if (value is DateTime dateTime)
+			{
+				if (dateTime != DateTime.MinValue)
+				{
+					ITsString dateTimeString = TsStringUtils.MakeString(dateTime.ToLCMTimeFormatWithMillisString(), m_cache.DefaultAnalWs);
+					WritePendingItem(propType, ref dateTimeString);
+				}
+			}
+			else if (value is System.Collections.IEnumerable enumerable)
+			{
+				foreach (var item in enumerable)
+				{
+					WritePendingProperty(propType, item);
+				}
+			}
+		}
+
+		/// <summary>
 		/// This method (as far as I know) will be first called on the StText object, and then recursively from the
 		/// base implementation for vector items in component objects.
 		/// </summary>
@@ -572,15 +735,12 @@ namespace SIL.FieldWorks.IText
 					{
 						m_writer.WriteAttributeString("guid", text.Guid.ToString());
 					}
+
+					// The next few properties can come from text or from the display.
 					foreach (var mTssPendingTitle in pendingTitles)
 					{
 						var hystericalRaisens = mTssPendingTitle;
 						WritePendingItem("title", ref hystericalRaisens);
-					}
-					foreach (var mTssPendingAbbrev in pendingAbbreviations)
-					{
-						var hystericalRaisens = mTssPendingAbbrev;
-						WritePendingItem("title-abbreviation", ref hystericalRaisens);
 					}
 					foreach(var source in pendingSources)
 					{
@@ -591,6 +751,27 @@ namespace SIL.FieldWorks.IText
 					{
 						var hystericalRaisens = desc;
 						WritePendingItem("comment", ref hystericalRaisens);
+					}
+					// Only write out IsTranslated if it is true.
+					if (pendingIsTranslated)
+					{
+						WritePendingProperty("text-is-translation", true);
+					}
+					IList<string> skipXmlProperties = new List<string>() { "title", "source", "comment", "text-is-translation"};
+					WritePendingObjectProperties(text, skipXmlProperties);
+					if (pendingObjects.Count > 0)
+					{
+						// Write out any objects that were referenced in an item.
+						HashSet<ICmObject> writtenObjects = new HashSet<ICmObject>();
+						m_writer.WriteStartElement("objects");
+						while (pendingObjects.Count > 0)
+						{
+							ICmObject pendingObject = pendingObjects.Dequeue();
+							if (!writtenObjects.Contains(pendingObject))
+								WritePendingObject(pendingObject);
+							writtenObjects.Add(pendingObject);
+						}
+						m_writer.WriteEndElement();
 					}
 					m_writer.WriteStartElement("paragraphs");
 					break;
@@ -785,11 +966,11 @@ namespace SIL.FieldWorks.IText
 				{
 					pendingComments.Add(text.Description.get_String(writingSystemId));
 				}
+				pendingIsTranslated = text.IsTranslated;
 			}
 			else if (TextSource.IsScriptureText(txt))
 			{
 				pendingTitles.Add(txt.ShortNameTSS);
-				pendingAbbreviations.Add(null);
 			}
 		}
 	}
@@ -802,7 +983,7 @@ namespace SIL.FieldWorks.IText
 	/// </summary>
 	public class InterlinearExporterForElan : InterlinearExporter
 	{
-		private const int kDocVersion = 2;
+		private const int kDocVersion = 3;
 		protected internal InterlinearExporterForElan(LcmCache cache, XmlWriter writer, ICmObject objRoot,
 			InterlinLineChoices lineChoices, InterlinVc vc)
 			: base(cache, writer, objRoot, lineChoices, vc)
