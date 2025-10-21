@@ -1212,6 +1212,24 @@ namespace SIL.FieldWorks.XWorks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Create a popup window to edit the given lexical entry.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		protected bool OnJumpToPopupLexEntry(object command)
+		{
+			XmlNode node;
+			if (XWindow.TryGetToolNode("lexicon", "lexiconEditPopup", m_propertyTable, out node))
+			{
+				var popup = new PopupToolWindow();
+				popup.Init(m_mediator, m_propertyTable, node.SelectSingleNode("control"));
+				Control mainControl = popup.MainControl;
+				Mediator.BroadcastMessage("JumpToRecord", command);
+			}
+			return true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Exits the application :)
 		/// </summary>
 		/// <param name="param"></param>
@@ -2050,7 +2068,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <remarks>LT-20371</remarks>
 		public bool OnImportTranslatedGramCats(object commandObject)
 		{
-			if(DialogResult.OK == MessageBox.Show(xWorksStrings.ImportTranslatedGramCatsPrompt,
+			if (DialogResult.OK == MessageBox.Show(xWorksStrings.ImportTranslatedGramCatsPrompt,
 				xWorksStrings.ImportTranslatedGramCats, MessageBoxButtons.OKCancel))
 			{
 				using (new WaitCursor(ActiveForm ?? this, true))
@@ -2059,7 +2077,8 @@ namespace SIL.FieldWorks.XWorks
 					doc.Load(Path.Combine(FwDirectoryFinder.TemplateDirectory, "GOLDEtic.xml"));
 					MasterCategory.UpdatePOSStrings(Cache, doc);
 				}
-			}	return true;
+			}
+			return true;
 		}
 
 		#endregion // XCore Message Handlers

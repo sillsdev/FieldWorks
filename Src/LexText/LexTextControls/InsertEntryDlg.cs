@@ -57,6 +57,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private ListBox.ObjectCollection m_MGAGlossListBoxItems;
 
 		private Button m_btnOK;
+		private Button m_btnRetry;
 		private Button m_btnCancel;
 		private Label m_formLabel;
 		private FwTextBox m_tbLexicalForm;	// text box used if one vernacular ws
@@ -1070,6 +1071,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InsertEntryDlg));
 			this.m_btnOK = new System.Windows.Forms.Button();
+			this.m_btnRetry = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_formLabel = new System.Windows.Forms.Label();
 			this.m_tbLexicalForm = new SIL.FieldWorks.Common.Widgets.FwTextBox();
@@ -1101,6 +1103,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			resources.ApplyResources(this.m_btnOK, "m_btnOK");
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.m_btnOK.Name = "m_btnOK";
+			//
+			// m_btnRetry
+			//
+			resources.ApplyResources(this.m_btnRetry, "m_btnRetry");
+			this.m_btnRetry.DialogResult = System.Windows.Forms.DialogResult.Retry;
+			this.m_btnRetry.Name = "m_btnRetry";
 			//
 			// m_btnCancel
 			//
@@ -1262,6 +1270,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.Controls.Add(this.m_btnHelp);
 			this.Controls.Add(this.m_btnCancel);
 			this.Controls.Add(this.m_btnOK);
+			this.Controls.Add(this.m_btnRetry);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "InsertEntryDlg";
@@ -1305,6 +1314,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					break;
 				}
 				case DialogResult.OK:
+				case DialogResult.Retry:
 				{
 					// In the beginning, Larry specified the gloss to not be required.
 					// Then, Andy changed it to be required.
@@ -1337,6 +1347,10 @@ namespace SIL.FieldWorks.LexText.Controls
 						return;
 					}
 					CreateNewEntry();
+					if (DialogResult == DialogResult.Retry)
+					{
+						m_mediator.SendMessage("JumpToPopupLexEntry", m_entry.Hvo);
+					}
 					break;
 				}
 			}
