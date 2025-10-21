@@ -445,6 +445,9 @@
     <Compile Include="LcmWordGenerator.cs" />
     <Compile Include="LcmXhtmlGenerator.cs" />
     <Compile Include="PictureConfiguration.cs" />
+    <Compile Include="PopupToolWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="ReversalIndexServices.cs" />
     <Compile Include="SilErrorReportingAdapter.cs" />
     <Compile Include="IDictionaryDetailsView.cs" />
