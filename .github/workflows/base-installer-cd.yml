@@ -1,8 +1,8 @@
 name: Base Installer
 on:
   schedule:
-    # Runs every day at 02:30 UTC (which is 6:30pm PST / 7:30pm PDT)
-    - cron: "30 2 * * *"
+    # Runs every Monday at 02:30 UTC (which is 6:30pm PST / 7:30pm PDT Sunday evening)
+    - cron: "30 2 * * 1"
   workflow_dispatch:
     inputs:
       fw_ref:
@@ -50,7 +50,7 @@ jobs:
           $githubRun = $env:GITHUB_RUN_NUMBER
           $combined = $lastJenkins + $githubRun
           echo "Calculated build number: $combined"
-          echo "RELEASE_BUILD_NUMBER=$combined" >> $env:GITHUB_ENV
+          echo "FW_BUILD_NUMBER=$combined" >> $env:GITHUB_ENV
 
       - name: Checkout Files
         uses: actions/checkout@v4
@@ -237,7 +237,7 @@ jobs:
           $offlineFile = Split-Path $offlineExe -Leaf
           $onlineFile = Split-Path $onlineExe -Leaf
           
-          $s3BasePath = "jobs/FieldWorks-Win-all-Release-Base/$($env:RELEASE_BUILD_NUMBER)"
+          $s3BasePath = "jobs/FieldWorks-Win-all-Release-Base/$($env:FW_BUILD_NUMBER)"
           $offlineS3Key = "$s3BasePath/$offlineFile"
           $onlineS3Key = "$s3BasePath/$onlineFile"
           
@@ -272,8 +272,8 @@ jobs:
         if: ${{ inputs.make_release == 'true' }}
         uses: softprops/action-gh-release@6cbd405e2c4e67a21c47fa9e383d020e4e28b836
         with:
-            tag_name: build-${{ env.RELEASE_BUILD_NUMBER }}
-            name: "FieldWorks Base Build #${{ env.RELEASE_BUILD_NUMBER }}"
+            tag_name: build-${{ env.FW_BUILD_NUMBER }}
+            name: "FieldWorks Base Build #${{ env.FW_BUILD_NUMBER }}"
             draft: false
             prerelease: true
             fail_on_unmatched_files: true
