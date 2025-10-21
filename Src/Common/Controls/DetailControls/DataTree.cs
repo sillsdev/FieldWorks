@@ -2807,6 +2807,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							if (realSda.get_StringProp(obj.Hvo, flid).Length == 0)
 								return NodeTestResult.kntrNothing;
 							break;
+						case CellarPropertyType.Boolean:
+							if (realSda.get_BooleanProp(obj.Hvo, flid) == false)
+								return NodeTestResult.kntrNothing;
+							break;
+						case CellarPropertyType.Integer:
+							// This is displayed as a checkbox.
+							if (flid == LexEntryRefTags.kflidHideMinorEntry && realSda.get_IntProp(obj.Hvo, flid) != 0)
+								return NodeTestResult.kntrNothing;
+							break;
 						case CellarPropertyType.Unicode:
 							string val = realSda.get_UnicodeProp(obj.Hvo, flid);
 							if (string.IsNullOrEmpty(val))
