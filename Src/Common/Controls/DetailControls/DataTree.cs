@@ -2812,7 +2812,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 								return NodeTestResult.kntrNothing;
 							break;
 						case CellarPropertyType.Integer:
-							// This is displayed as a checkbox.
+							// 'Show Minor Entry' is displayed as a checkbox.
 							if (flid == LexEntryRefTags.kflidHideMinorEntry && realSda.get_IntProp(obj.Hvo, flid) != 0)
 								return NodeTestResult.kntrNothing;
 							break;
