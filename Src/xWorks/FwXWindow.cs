@@ -1221,8 +1221,8 @@ namespace SIL.FieldWorks.XWorks
 			if (XWindow.TryGetToolNode("lexicon", "lexiconEditPopup", m_propertyTable, out node))
 			{
 				var popup = new PopupToolWindow();
+				popup.Owner = this;
 				popup.Init(m_mediator, m_propertyTable, node.SelectSingleNode("control"));
-				Control mainControl = popup.MainControl;
 				Mediator.BroadcastMessage("JumpToRecord", command);
 			}
 			return true;
