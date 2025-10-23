@@ -74,8 +74,8 @@
   isActive (yes | no) "yes"
 >
 
-<!ELEMENT AssignedHeadFeatures (FeatureValueList+) >
-<!ELEMENT AssignedFootFeatures (FeatureValueList+) >
+<!ELEMENT AssignedHeadFeatures (FeatureValueList*) >
+<!ELEMENT AssignedFootFeatures (FeatureValueList*) >
 
 <!ELEMENT RequiredEnvironments (Environment+) >
 <!ELEMENT ExcludedEnvironments (Environment+) >
