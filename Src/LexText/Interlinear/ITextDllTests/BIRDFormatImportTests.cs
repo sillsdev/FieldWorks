@@ -1282,7 +1282,7 @@ namespace SIL.FieldWorks.IText
 				NumTimesDlgShown = 0;
 			}
 
-			protected override DialogResult ShowPossibleMergeDialog(IThreadedProgress progress)
+			protected override DialogResult ShowPossibleMergeDialog(IThreadedProgress progress, string textName)
 			{
 				NumTimesDlgShown++;
 				return DialogResult.Yes;
@@ -1301,7 +1301,7 @@ namespace SIL.FieldWorks.IText
 				NumTimesDlgShown = 0;
 			}
 
-			protected override DialogResult ShowPossibleMergeDialog(IThreadedProgress progress)
+			protected override DialogResult ShowPossibleMergeDialog(IThreadedProgress progress, string textName)
 			{
 				NumTimesDlgShown++;
 				return DialogResult.No;

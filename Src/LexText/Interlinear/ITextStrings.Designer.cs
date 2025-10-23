@@ -205,7 +205,7 @@ namespace SIL.FieldWorks.IText {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You already have this interlinear text in your project. Would you like to merge it?.
+        ///   Looks up a localized string similar to You already have &apos;{0}&apos; in your project. Would you like to merge it?.
         /// </summary>
         internal static string ksAskMergeInterlinearText {
             get {
