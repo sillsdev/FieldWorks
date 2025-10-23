@@ -471,7 +471,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public Slice(Control ctrlT)
 			: this()
 		{
-			Control = ctrlT;
+			if(ctrlT != Control)
+				Control = ctrlT;
 #if _DEBUG
 			Control.CheckForIllegalCrossThreadCalls = true;
 #endif
@@ -2021,7 +2022,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return false;
 		}
 
-		static internal int InsertObjectIntoVirtualBackref(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
+		internal static int InsertObjectIntoVirtualBackref(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
 			int hvoSlice, int clidNewObj, int flid)
 		{
 			var metadata = cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
@@ -2269,7 +2270,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// Return true if the target array starts with the objects in the match array.
 		/// </summary>
-		static internal bool StartsWith(object[] target, object[] match)
+		internal static bool StartsWith(object[] target, object[] match)
 		{
 			if (match.Length > target.Length)
 				return false;
@@ -2801,7 +2802,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Updates the display of a slice, if an hvo and tag it cares about has changed in some way.
 		/// </summary>
 		/// <returns>true, if it the slice updated its display</returns>
-		internal protected virtual bool UpdateDisplayIfNeeded(int hvo, int tag)
+		protected internal virtual bool UpdateDisplayIfNeeded(int hvo, int tag)
 		{
 			CheckDisposed();
 
@@ -3057,10 +3058,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// extract the "part ref" node from the slice.Key
 		/// </summary>
-		protected internal XmlNode PartRef()
+		protected internal virtual XmlNode PartRef()
 		{
-			int indexInKey;
-			return PartRef(out indexInKey);
+			return PartRef(out _);
 		}
 
 		private XmlNode PartRef(out int indexInKey)
