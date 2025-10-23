@@ -64,6 +64,7 @@ _user.mak.lnx
 *.log
 *.vshost.exe*
 *.sdf
+*.tmp
 *.opensdf
 *.orig
 .project
