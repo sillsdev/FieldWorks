@@ -266,7 +266,6 @@ jobs:
           BASE_BUILD_NUMBER: ${{ inputs.base_build_number || '' }}
         run: |
           # The github action base-installer-cd will make releases with a tag build-[build number].
-          # REVIEW (Hasso) 2025.10: we gave up on targeting Jenkins bases; how much of this is obsolete?
           # Manually created releases with Jenkins artifacts need to use existing tags, so we need
           # to specify the base build number when we launch patches against Jenkins releases.
           if ($env:BASE_BUILD_NUMBER -and $env:BASE_BUILD_NUMBER.Trim() -ne "") {
