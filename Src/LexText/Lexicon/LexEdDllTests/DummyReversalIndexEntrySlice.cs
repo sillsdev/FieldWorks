@@ -3,7 +3,10 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.Configuration;
 using System.Windows.Forms;
+using System.Xml;
+using SIL.FieldWorks.Common.Framework.DetailControls;
 using SIL.FieldWorks.XWorks.LexEd;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -29,7 +32,9 @@ namespace LexEdDllTests
 		{
 			CheckDisposed();
 
-			DummyReversalIndexEntrySliceView ctrl = new DummyReversalIndexEntrySliceView(Object.Hvo);
+			DummyReversalIndexEntrySliceView ctrl = new DummyReversalIndexEntrySliceView(
+				Object.Hvo, () => StringSliceUtils.GetVisibleWSSPropertyValue(PartRef(),
+					Cache.LanguageProject.AnalysisWritingSystems));
 			ctrl.Cache = Cache;
 			DummyControl = ctrl;
 
@@ -37,6 +42,11 @@ namespace LexEdDllTests
 				ctrl.MakeRoot();
 		}
 
+		// Return an empty PartRef element
+		protected override XmlNode PartRef()
+		{
+			return new ConfigXmlDocument().CreateElement("PartRef");
+		}
 	}
 
 	/// <summary>
@@ -44,7 +54,7 @@ namespace LexEdDllTests
 	/// </summary>
 	public class DummyReversalIndexEntrySliceView : ReversalIndexEntrySlice.ReversalIndexEntrySliceView
 	{
-		public DummyReversalIndexEntrySliceView(int hvo) : base(hvo)
+		public DummyReversalIndexEntrySliceView(int hvo, Func<string> getVisibleWss) : base(hvo, getVisibleWss)
 		{
 		}
 

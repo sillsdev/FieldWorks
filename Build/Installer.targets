@@ -46,6 +46,8 @@
 	<Target Name="InstallerVersionNumbers" DependsOnTargets="VersionNumbers">
 		<PropertyGroup>
 			<!-- set default values for trailing version numbers -->
+			<!-- REVIEW (Hasso): is the base build number required to be 1 for WiX, too? Mismatched numbers is confusing, and having to maintain two numbers
+				has caused us to need a followup change for a patching bug fix (LT-22298) -->
 			<BuildVersionSegment Condition="'$(BuildVersionSegment)'==''">1</BuildVersionSegment> <!-- 1 is the base build number. It may be a NAnt thing... -->
 
 			<MajorVersion>$(MajorVersionSegment)</MajorVersion>

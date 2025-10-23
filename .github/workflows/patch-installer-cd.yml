@@ -1,4 +1,11 @@
 name: Patch Installer
+
+# Builds the FieldWorks Patch Installer on the specified `base_release`
+# If `make_release` is true, uploads installers to https://flex-updates.s3.amazonaws.com/?prefix=jobs/FieldWorks-Win-all-Release-Patch.
+# Saves the build log as an artifact of the workflow run.
+# Note: FW_BUILD_NUMBER is higher than GITHUB_RUN_NUMBER because it needs to be higher than the build number on artifacts from our previous system.
+# Note: FW_BUILD_NUMBER must be higher for patches than their base so that the patch is considered an upgrade.
+
 on:
   push:
     branches: ["release/9.3"]
@@ -30,7 +37,7 @@ on:
 # default should be changed to the most recent base release for the release cycle
       base_release:
         description: 'The github release for the base build artifacts'
-        default: 'build-1155'
+        default: 'build-1182' # When updating this, update fallbacks below, too.
       base_build_number:
         description: 'The base build number (only for bootstrapping, should be removed after 9.3 is the stable)'
         required: false
@@ -64,6 +71,7 @@ jobs:
           $combined = $lastJenkins + $githubRun
           echo "Calculated build number: $combined"
           echo "FW_BUILD_NUMBER=$combined" >> $env:GITHUB_ENV
+          echo "BuildVersionSegment=$combined" >> $env:GITHUB_ENV
 
       - name: Checkout Files
         uses: actions/checkout@v4
@@ -141,7 +149,7 @@ jobs:
       - name: Import Base Build Artifacts
         shell: pwsh
         run: |
-          $release = "${{ inputs.base_release || 'build-1155' }}"
+          $release = "${{ inputs.base_release || 'build-1182' }}"
           $repo    = "${{ github.repository }}"
 
           Write-Host "Downloading artifacts for release $release from $repo"
@@ -254,12 +262,12 @@ jobs:
         if: ${{ (inputs.make_release || 'true') == 'true' }}
         shell: pwsh
         env:
-          BASE_RELEASE: ${{ inputs.base_release || 'build-1155' }}
+          BASE_RELEASE: ${{ inputs.base_release || 'build-1182' }}
           BASE_BUILD_NUMBER: ${{ inputs.base_build_number || '' }}
         run: |
-          # The github action base-installer-cd will make releases with a tag build-[build number]
-          # manually created releases with Jenkins artifacts need to use existing tags so we need
-          # to specify the base build number when we launch patches against Jenkins releases
+          # The github action base-installer-cd will make releases with a tag build-[build number].
+          # Manually created releases with Jenkins artifacts need to use existing tags, so we need
+          # to specify the base build number when we launch patches against Jenkins releases.
           if ($env:BASE_BUILD_NUMBER -and $env:BASE_BUILD_NUMBER.Trim() -ne "") {
             $baseBuildNumber = "_b$($env:BASE_BUILD_NUMBER)"
           } elseif ($env:BASE_RELEASE -and $env:BASE_RELEASE.Trim() -ne "") {
