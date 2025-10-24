@@ -741,7 +741,8 @@ namespace SIL.FieldWorks.IText
 				return null;
 
 			// Fill in morphemes, lex. entries, lex. gloss, and lex.gram.info
-			if (word.morphemes != null && word.morphemes.morphs.Length > 0)
+			if (word.morphemes != null && word.morphemes.morphs.Length > 0 &&
+				word.morphemes.analysisStatus == analysisStatusTypes.humanApproved)
 			{
 				var lex_entry_repo = cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 				var msa_repo = cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>();
@@ -994,6 +995,12 @@ namespace SIL.FieldWorks.IText
 						break;
 				}
 			}
+			if (word.morphemes != null && word.morphemes.analysisStatus != analysisStatusTypes.humanApproved)
+			{
+				// If the morphemes were guessed then the glosses and cats were also guessed.
+				expectedGlosses.Clear();
+				expectedCats.Clear();
+			}
 
 			if (candidateForm == null || !MatchPrimaryFormAndAddMissingAlternatives(candidateForm, expectedForms, mainWritingSystem))
 			{
@@ -1011,7 +1018,8 @@ namespace SIL.FieldWorks.IText
 			analysis = candidateWordform;
 			// If no glosses or morphemes are expected the wordform itself is the match
 			if (expectedGlosses.Count == 0
-				&& (word.morphemes == null || word.morphemes.morphs.Length == 0))
+				&& (word.morphemes == null || word.morphemes.morphs.Length == 0 ||
+					word.morphemes.analysisStatus != analysisStatusTypes.humanApproved))
 			{
 				analysis = GetMostSpecificAnalysisForWordForm(candidateWordform);
 				return true;
