@@ -34,14 +34,16 @@ on:
         description: 'Commit-ish for liblcm repository'
         required: false
         default: 'master'
-# default should be changed to the most recent base release for the release cycle
+# default should be changed to the most recent base release for the release cycle.
+# After 9.3 is stable, base_release can be computed from base_build_number, but they need to be independent for bootstrapping patches
+# on Jenkins-built bases.
       base_release:
-        description: 'The github release for the base build artifacts'
-        default: 'build-1182' # When updating this, update fallbacks below, too.
+        description: 'The github release for the base build artifacts (separate only for bootstrapping; should be removed after 9.3 is the stable)'
+        default: 'build-1182' # When updating this, update base_build_number and their fallbacks below, too.
       base_build_number:
-        description: 'The base build number (only for bootstrapping, should be removed after 9.3 is the stable)'
+        description: 'The base build number'
         required: false
-        default: ''
+        default: '1182'
       make_release:
         description: 'Should the release be pushed to s3 - use false for test builds'
         required: false
@@ -115,14 +117,14 @@ jobs:
           fetch-depth: 0
           path: 'Localizations/LCM'
 
-      - name: Download 461 targeting pack
+      - name: Download .NET 461 targeting pack
         uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9 # 1.6.0
         id: downloadfile  # Remember to give an ID if you need the output filename
         with:
             url: "https://download.microsoft.com/download/F/1/D/F1DEB8DB-D277-4EF9-9F48-3A65D4D8F965/NDP461-DevPack-KB3105179-ENU.exe"
             target: public/
 
-      - name: Install targeting pack
+      - name: Install .NET 461 targeting pack
         shell: cmd
         working-directory: public
         run: NDP461-DevPack-KB3105179-ENU.exe /q
@@ -207,6 +209,7 @@ jobs:
         id: build_installer
         shell: powershell
         run: |
+          $base_build_number = "${{ inputs.base_build_number || '1182' }}"
           Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\.NETFramework\AppContext"
           cd Build
           .\build64.bat /t:BuildPatchInstaller  "/property:config=release;action=test;desktopNotAvailable=true" /v:d /bl ^| tee-object -FilePath build.log
@@ -261,35 +264,13 @@ jobs:
         # Use inputs if defined but default to true
         if: ${{ (inputs.make_release || 'true') == 'true' }}
         shell: pwsh
-        env:
-          BASE_RELEASE: ${{ inputs.base_release || 'build-1182' }}
-          BASE_BUILD_NUMBER: ${{ inputs.base_build_number || '' }}
         run: |
-          # The github action base-installer-cd will make releases with a tag build-[build number].
-          # Manually created releases with Jenkins artifacts need to use existing tags, so we need
-          # to specify the base build number when we launch patches against Jenkins releases.
-          if ($env:BASE_BUILD_NUMBER -and $env:BASE_BUILD_NUMBER.Trim() -ne "") {
-            $baseBuildNumber = "_b$($env:BASE_BUILD_NUMBER)"
-          } elseif ($env:BASE_RELEASE -and $env:BASE_RELEASE.Trim() -ne "") {
-            if ($env:BASE_RELEASE -notmatch '^build-\d+$') {
-              throw "BASE_RELEASE must start with 'build-' (got '$env:BASE_RELEASE')"
-            }
-            $baseBuildNumber = "_b$($env:BASE_RELEASE -replace '^build-','')"
-          } else {
-            throw "Must have a base_build_number or a valid base_release to support automatic updating"
-          }
           $patchPath = "${{ steps.find_patch.outputs.patch_file }}"
           if (-not (Test-Path $patchPath)) {
             throw "Patch file not found at $patchPath"
           }
           $patchFile = Split-Path $patchPath -Leaf
-          $patchDir  = Split-Path $patchPath -Parent
-          # Insert baseBuildNumber before _x64.msp necessary for Automatic Update code Src\Common\FwUtils\FwUpdater.cs
-          if ($patchFile -notmatch '^(.*)(_x64\.msp)$') {
-            throw "Unexpected patch filename format: $patchFile"
-          }
-          $patchWithBaseInName = "$($Matches[1])${baseBuildNumber}$($Matches[2])"
-          $s3Key = "jobs/FieldWorks-Win-all-Release-Patch/$($env:FW_BUILD_NUMBER)/$patchWithBaseInName"
+          $s3Key = "jobs/FieldWorks-Win-all-Release-Patch/$($env:FW_BUILD_NUMBER)/$patchFile"
           aws s3 cp $patchPath "s3://flex-updates/$s3Key"
           Write-Host "Uploaded to s3://flex-updates/$s3Key"
 

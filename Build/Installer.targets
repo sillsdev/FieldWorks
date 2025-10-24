@@ -434,7 +434,7 @@
 	<PropertyGroup>
 		<Arch Condition="'$(Platform)' != 'x64'">x86</Arch> <!-- Handle x86 and WIN32 -->
 		<Arch Condition="'$(Platform)' == 'x64'">x64</Arch>
-		<Base Condition="'$(BaseBuildish)' != ''">b$(BaseBuildish)_</Base>
+		<Base Condition="'$(BASE_BUILD_NUMBER)' != ''">b$(BASE_BUILD_NUMBER)_</Base>
 	</PropertyGroup>
 
 	<Target Name="BuildProductBaseMsi" DependsOnTargets="InstallerVersionNumbers">
