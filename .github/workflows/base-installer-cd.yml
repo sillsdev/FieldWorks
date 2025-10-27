@@ -1,4 +1,13 @@
 name: Base Installer
+
+# Builds the FieldWorks Base Installers (On- and Offline) (x64).
+# If `make_release` is true:
+#  - Uploads installers to https://flex-updates.s3.amazonaws.com/?prefix=jobs/FieldWorks-Win-all-Release-Base.
+#  - Tags the repository.
+#  - Creates a GitHub Release of the artifacts required for creating a patch installer on this base.
+# Saves the build log as an artifact of the workflow run.
+# Note: FW_BUILD_NUMBER is higher than GITHUB_RUN_NUMBER because it needs to be higher than the build number on artifacts from our previous system.
+
 on:
   schedule:
     # Runs every Monday at 02:30 UTC (which is 6:30pm PST / 7:30pm PDT Sunday evening)
@@ -94,14 +103,14 @@ jobs:
           fetch-depth: 0
           path: 'Localizations/LCM'
 
-      - name: Download 461 targeting pack
+      - name: Download .NET 461 targeting pack
         uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9 # 1.6.0
         id: downloadfile  # Remember to give an ID if you need the output filename
         with:
             url: "https://download.microsoft.com/download/F/1/D/F1DEB8DB-D277-4EF9-9F48-3A65D4D8F965/NDP461-DevPack-KB3105179-ENU.exe"
             target: public/
 
-      - name: Install targeting pack
+      - name: Install .NET 461 targeting pack
         shell: cmd
         working-directory: public
         run: NDP461-DevPack-KB3105179-ENU.exe /q
@@ -130,7 +139,7 @@ jobs:
         working-directory: Build
         run: build64.bat /t:WriteNonlocalDevelopmentPropertiesFile
 
-      - name: Build Debug and run tests
+      - name: Build and run tests
         id: build_installer
         shell: powershell
         run: |
@@ -140,7 +149,7 @@ jobs:
           cd BuildDir
           md5sum *.exe > md5.txt
 
-      - name: Scan Debug Build Output
+      - name: Scan Build Output
         shell: powershell
         working-directory: Build
         run: |
@@ -268,7 +277,7 @@ jobs:
             "proc_runner_zip=$(("${{ github.workspace }}/ProcRunner.zip") -replace '\\','/')" >> $env:GITHUB_OUTPUT
 
 
-      - name: Create Release and Upload artifacts
+      - name: Tag, Create Release, and Upload artifacts
         if: ${{ inputs.make_release == 'true' }}
         uses: softprops/action-gh-release@6cbd405e2c4e67a21c47fa9e383d020e4e28b836
         with:

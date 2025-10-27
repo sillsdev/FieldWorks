@@ -37,7 +37,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		protected void InternalInitialize()
 		{
-			RootSite.Enter += new EventHandler(ViewSlice_Enter);
+			if(RootSite != null)
+				RootSite.Enter += ViewSlice_Enter;
 		}
 
 		#region IDisposable override

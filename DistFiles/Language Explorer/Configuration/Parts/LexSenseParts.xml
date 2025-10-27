@@ -437,7 +437,7 @@
 		</part>
 		<part id="LexSense-Detail-ReversalEntries" type="detail">
 			<slice field="ReferringReversalIndexEntries" label="Reversal Entries" editor="Custom" assemblyPath="LexEdDll.dll"
-				class="SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice" menu="mnuDataTree-Help"
+				class="SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice" menu="mnuDataTree-MultiStringSlice"
 				tooltip="Translation equivalent used in the finder list (Reversal Index)."/>
 		</part>
 		<part id="LexSense-Detail-SenseType" type="Detail">
