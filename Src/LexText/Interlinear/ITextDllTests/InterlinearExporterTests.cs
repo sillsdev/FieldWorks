@@ -1126,6 +1126,33 @@ namespace SIL.FieldWorks.IText
 			}
 
 			[Test]
+			public void ValidateMultilingualComment()
+			{
+				ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
+				int en_ws = Cache.WritingSystemFactory.GetWsFromStr("en");
+				int fr_ws = Cache.WritingSystemFactory.GetWsFromStr("fr");
+				strBldr.Append("english", en_ws);
+				strBldr.Append("french", fr_ws);
+				m_text1.Description.set_String(en_ws, strBldr.GetString());
+				XmlDocument exportedDoc = ExportToXml();
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath("//interlinear-text/item[@type=\"comment\"]/run[@lang=\"en\"]", 1);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath("//interlinear-text/item[@type=\"comment\"]/run[@lang=\"fr\"]", 1);
+			}
+
+			[Test]
+			public void ValidateMultiStyleComment()
+			{
+				ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
+				int en_ws = Cache.WritingSystemFactory.GetWsFromStr("en");
+				strBldr.Append("text1", StyleUtils.CharStyleTextProps("style1", en_ws));
+				strBldr.Append("text2", StyleUtils.CharStyleTextProps("style2", en_ws));
+				m_text1.Description.set_String(en_ws, strBldr.GetString());
+				XmlDocument exportedDoc = ExportToXml();
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath("//interlinear-text/item[@type=\"comment\"]/run[@style=\"style1\"]", 1);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath("//interlinear-text/item[@type=\"comment\"]/run[@style=\"style2\"]", 1);
+			}
+
+			[Test]
 			public void ValidateMultipleGenres()
 			{
 				Cache.LanguageProject.GenreListOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
