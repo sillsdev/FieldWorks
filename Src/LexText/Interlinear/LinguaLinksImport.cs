@@ -318,7 +318,8 @@ namespace SIL.FieldWorks.IText
 								ICmObject repoObj;
 								m_cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(interlineartext.guid), out repoObj);
 								newText = repoObj as LCModel.IText;
-								if (newText != null && ShowPossibleMergeDialog(progress) == DialogResult.Yes)
+								string textName = newText?.Name?.BestVernacularAnalysisAlternative?.Text ?? "";
+								if (newText != null && ShowPossibleMergeDialog(progress, textName) == DialogResult.Yes)
 								{
 									continueMerge = MergeTextWithBIRDDoc(ref newText,
 													new TextCreationParams
@@ -448,14 +449,14 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		/// <param name="progress"></param>
 		/// <returns></returns>
-		protected virtual DialogResult ShowPossibleMergeDialog(IThreadedProgress progress)
+		protected virtual DialogResult ShowPossibleMergeDialog(IThreadedProgress progress, string textName)
 		{							//we need to invoke the dialog on the main thread so we can use the progress dialog as the parent.
 			//otherwise the message box can be displayed behind everything
 			IAsyncResult asyncResult = progress.SynchronizeInvoke.BeginInvoke(new ShowDialogAboveProgressbarDelegate(ShowDialogAboveProgressbar),
 																		 new object[]
 																			{
 																				progress,
-																				ITextStrings.ksAskMergeInterlinearText,
+																				string.Format(ITextStrings.ksAskMergeInterlinearText, textName),
 																				ITextStrings.ksAskMergeInterlinearTextTitle,
 																				MessageBoxButtons.YesNo
 																			});
