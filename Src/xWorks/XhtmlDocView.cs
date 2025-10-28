@@ -42,6 +42,7 @@ namespace SIL.FieldWorks.XWorks
 		private string m_selectedObjectID = string.Empty;
 		internal string m_configObjectName;
 		internal const string CurrentSelectedEntryClass = "currentSelectedEntry";
+		private const string ClassifiedDictConfig = "SemanticDomainSenses.fwdictconfig";
 		private const string FieldWorksPrintLimitEnv = "FIELDWORKS_PRINT_LIMIT";
 		private bool m_updateContentLater = false; // Whether we should postpone calling UpdateContent
 		private string m_loadedConfig = null;
@@ -70,7 +71,7 @@ namespace SIL.FieldWorks.XWorks
 			if (m_mainView.NativeBrowser is GeckoWebBrowser browser)
 			{
 				var clerk = XmlUtils.GetOptionalAttributeValue(configurationParameters, "clerk");
-				if (clerk == "entries" || clerk == "AllReversalEntries")
+				if (clerk == "entries" || clerk == "AllReversalEntries" || clerk == "SemanticDomainList")
 				{
 					browser.DomClick += OnDomClick;
 					browser.DomKeyPress += OnDomKeyPress;
@@ -1031,6 +1032,10 @@ namespace SIL.FieldWorks.XWorks
 						SetActiveSelectedEntryOnView(browser);
 					}
 					break;
+				case "ShowFailingItems-lexiconClassifiedDictionary":
+					// When this property changes, we just need to refresh the current page.
+					OnMasterRefresh(this);
+					break;
 				default:
 					// Not sure what other properties might change, but I'm not doing anything.
 					break;
@@ -1113,8 +1118,28 @@ namespace SIL.FieldWorks.XWorks
 					m_updateContentLater = false;
 				}
 			}
+			else if (Clerk.Id == "SemanticDomainList")
+			{
+				var semanticDomain = Clerk.CurrentObject;
+				if (semanticDomain == null)
+					return;
+				var currentConfig = m_propertyTable.GetStringProperty("SemanticDomainListLayout", string.Empty);
+				var configuration = File.Exists(currentConfig) ? new DictionaryConfigurationModel(currentConfig, Cache) : null;
+				if (configuration == null)
+				{
+					var newConfig = Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable),
+						ClassifiedDictConfig);
+					m_propertyTable.SetProperty("SemanticDomainListLayout", File.Exists(newConfig) ? newConfig : null, true);
+				}
+				else if (m_updateContentLater)
+				{
+					UpdateContent(currentConfig);
+					m_updateContentLater = false;
+				}
+			}
+
 			var currentObjectGuid = Clerk.CurrentObject.Guid.ToString();
-			var currSelectedByGuid = browser.Document.GetHtmlElementById("g" + currentObjectGuid);
+			var currSelectedByGuid = browser.Document?.GetHtmlElementById("g" + currentObjectGuid);
 			if (currSelectedByGuid == null)
 				return;
 
