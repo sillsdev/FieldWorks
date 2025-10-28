@@ -437,9 +437,26 @@ namespace SIL.FieldWorks.IText
 				return;
 			foreach (var item in items)
 			{
-				if (item.Value == null)
-					continue;
-				item.Value = item.Value.Normalize(NormalizationForm.FormD);
+				if (item.Text != null)
+				{
+					for (int i = 0; i < item.Text.Length; i++)
+					{
+						if (item.Text[i] != null)
+						{
+							item.Text[i] = item.Text[i].Normalize(NormalizationForm.FormD);
+						}
+					}
+				}
+				if (item.run != null)
+				{
+					for (int i = 0; i < item.run.Length; i++)
+					{
+						if (item.run[i] != null)
+						{
+							item.run[i].Value = item.run[i].Value.Normalize(NormalizationForm.FormD);
+						}
+					}
+				}
 			}
 		}
 

@@ -137,15 +137,25 @@
 	</xs:complexType>
   </xs:element> <!-- document -->
   <xs:element name="item" nillable="true">
-	<xs:complexType>
-	  <xs:simpleContent>
-		<xs:extension base="xs:string">
-		  <xs:attribute name="type" type="itemTypes" use="required"/>
-		  <xs:attribute name="guid" type="xs:string" use="optional"/>
-		  <xs:attribute name="lang" type="xs:string" use="required"/>
-		  <xs:attribute name="analysisStatus" type="analysisStatusTypes" use="optional"/>
-		</xs:extension>
-	  </xs:simpleContent>
+	<!-- item can either be a sequence of runs or a string.
+		It can't have runs embedded in a string even though mixed="true" allows it. -->
+	<xs:complexType mixed="true">
+	  <xs:sequence>
+		  <xs:element name="run" minOccurs="0" maxOccurs="unbounded">
+			  <xs:complexType>
+				  <xs:simpleContent>
+					  <xs:extension base="xs:string">
+						  <xs:attribute name="lang" type="xs:string" use="required"/>
+						  <xs:attribute name="style" type="xs:string" use="optional"/>
+					  </xs:extension>
+				  </xs:simpleContent>
+			  </xs:complexType>
+		  </xs:element>
+	  </xs:sequence>
+	  <xs:attribute name="type" type="itemTypes" use="required"/>
+	  <xs:attribute name="guid" type="xs:string" use="optional"/>
+	  <xs:attribute name="lang" type="xs:string" use="required"/>
+	  <xs:attribute name="analysisStatus" type="analysisStatusTypes" use="optional"/>
 	</xs:complexType>
   </xs:element>
 	<xs:simpleType name="knownItemTypes">

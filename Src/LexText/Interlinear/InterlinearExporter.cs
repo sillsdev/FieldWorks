@@ -300,7 +300,8 @@ namespace SIL.FieldWorks.IText
 				{
 					m_writer.WriteAttributeString("style", style);
 				}
-				m_writer.WriteString(itsString.get_RunText(i));
+				string text = itsString.get_RunText(i) ?? "";
+				m_writer.WriteString(text.Normalize());
 				m_writer.WriteEndElement();
 			}
 		}
