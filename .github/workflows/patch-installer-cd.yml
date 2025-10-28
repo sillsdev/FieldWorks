@@ -39,11 +39,11 @@ on:
 # on Jenkins-built bases.
       base_release:
         description: 'The github release for the base build artifacts (separate only for bootstrapping; should be removed after 9.3 is the stable)'
-        default: 'build-1182' # When updating this, update base_build_number and their fallbacks below, too.
+        default: 'build-1188' # When updating this, update base_build_number and their fallbacks below, too.
       base_build_number:
         description: 'The base build number'
         required: false
-        default: '1182'
+        default: '1188'
       make_release:
         description: 'Should the release be pushed to s3 - use false for test builds'
         required: false
@@ -62,6 +62,7 @@ jobs:
       LcmRootDir: ${{ github.workspace }}/Localizations/LCM
       FILESTOSIGNLATER: ./signExternally
       GH_TOKEN: ${{ github.token }}
+      BASE_BUILD_NUMBER: ${{ inputs.base_build_number || '1188' }}
     name: Build Debug and run Tests
     runs-on: windows-latest
     steps:
@@ -151,7 +152,7 @@ jobs:
       - name: Import Base Build Artifacts
         shell: pwsh
         run: |
-          $release = "${{ inputs.base_release || 'build-1182' }}"
+          $release = "${{ inputs.base_release || 'build-1188' }}"
           $repo    = "${{ github.repository }}"
 
           Write-Host "Downloading artifacts for release $release from $repo"
@@ -209,7 +210,6 @@ jobs:
         id: build_installer
         shell: powershell
         run: |
-          $base_build_number = "${{ inputs.base_build_number || '1182' }}"
           Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\.NETFramework\AppContext"
           cd Build
           .\build64.bat /t:BuildPatchInstaller  "/property:config=release;action=test;desktopNotAvailable=true" /v:d /bl ^| tee-object -FilePath build.log
