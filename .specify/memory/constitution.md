@@ -1,50 +1,80 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+# FieldWorks (FLEx) Constitution
+<!--
+Sync Impact Report
+- Version change: n/a → 1.0.0
+- Modified principles: n/a (initial adoption)
+- Added sections: Core Principles; Additional Constraints; Development Workflow & Quality Gates; Governance
+- Removed sections: none
+- Templates requiring updates:
+	- ✅ .specify/templates/plan-template.md (Constitution Check gates aligned)
+	- ✅ .specify/templates/spec-template.md (edge cases/reminders aligned)
+	- ✅ .specify/templates/tasks-template.md (task guidance aligned)
+	- ⚠ .specify/templates/commands/*.md (no command templates found in repo; none updated)
+- Deferred TODOs:
+	- TODO(RATIFICATION_DATE): Original adoption date not known; update when confirmed.
+-->
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Data Integrity and Backward Compatibility
+FieldWorks MUST preserve user data across versions. All schema/data changes MUST include
+safe, tested migrations with rollback/backup guidance. Any change that risks data loss
+MUST be explicitly flagged, reviewed, and accompanied by a mitigation plan.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Test and Review Discipline (Non‑Negotiable)
+Changes that affect core data, text rendering/layout, installers, or public contracts
+MUST include automated tests (unit and/or integration) and pass code review. Red‑Green‑
+Refactor is encouraged; PRs MUST state test coverage for risk areas and link to failing
+tests when fixing defects.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Internationalization and Script Correctness
+The system MUST handle complex scripts and multilingual data correctly. Rendering and
+text processing MUST maintain correctness for non‑Latin scripts and use established
+libraries (e.g., ICU/Graphite) where applicable. Regressions in script handling are
+release‑blocking.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. User‑Centered Stability and Performance
+Windows is the primary supported platform. Releases MUST prioritize stability, predictable
+workflows, and sensible performance on typical field hardware, including offline use.
+Feature flags or staged rollouts SHOULD be used for risky changes.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Licensing and Open Collaboration
+The codebase is licensed under GNU LGPL 2.1 or later. All contributions MUST comply with
+license requirements and third‑party license obligations. Development occurs openly on
+GitHub following documented coding standards and review practices.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+## Additional Constraints
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+- Platform scope: Currently only Windows builds are supported. Build and packaging guidance MUST be documented when platforms or toolchains change.
+- Data migrations: Every schema or model change MUST include a migration plan, backup expectations, and tested upgrade paths.
+- Accessibility and localization: New UI elements SHOULD be accessible and localizable; string resources MUST be externalized where feasible.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+## Development Workflow & Quality Gates
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+- All PRs MUST include: a brief risk assessment, test evidence (new/updated tests or
+	rationale when tests are not applicable), and notes on data impact.
+- Changes affecting rendering, migrations, or installers MUST include integration tests
+	or scripted validation steps.
+- “Constitution Check” gates in feature plans MUST confirm: data migration coverage,
+	i18n/script correctness validation, test coverage for risk areas, and licensing
+	compliance for new dependencies.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This Constitution guides FieldWorks development practices and supersedes conflicting
+guidance elsewhere. Amendments are proposed via GitHub pull request with:
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+1. A summary of the change and rationale.
+2. Version bump per semantic rules below.
+3. A migration/communication plan when altering principles or gates.
+
+Constitution Versioning:
+- MAJOR: Backward‑incompatible governance changes (e.g., remove/redefine principles).
+- MINOR: Add a new principle/section or materially expand guidance.
+- PATCH: Clarifications and non‑semantic refinements.
+
+Compliance Review:
+- Reviewers MUST verify “Constitution Check” gates are satisfied before approval.
+- CI SHOULD enforce lint/test gates and block if required evidence is missing.
+
+**Version**: 1.0.0 | **Ratified**: TODO(RATIFICATION_DATE) | **Last Amended**: 2025-10-28
