@@ -833,7 +833,7 @@ Click "Cancel" to abort this import.</value>
     <value>{0} texts will be imported from this SFM file.</value>
   </data>
   <data name="ksAskMergeInterlinearText" xml:space="preserve">
-    <value>You already have this interlinear text in your project. Would you like to merge it?</value>
+    <value>You already have the text '{0}' in your project. Would you like to merge it?</value>
   </data>
   <data name="ksAskMergeInterlinearTextTitle" xml:space="preserve">
     <value>Duplicate text found.</value>
