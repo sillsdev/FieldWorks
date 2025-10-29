@@ -16,15 +16,37 @@
       ]
     },
     {
-      "label": "Whitespace check",
+      "label": "Whitespace check (workspace)",
       "type": "shell",
-      "command": "git fetch origin; git log --check --pretty=format:\"---% h% s\" origin/release/9.3..",
+      "command": "git diff --check; git diff --check --cached",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      },
       "problemMatcher": []
     },
     {
-      "label": "Gitlint preview",
+      "label": "Gitlint preview (workspace)",
       "type": "shell",
-      "command": "python -m pip install --upgrade gitlint; git fetch origin; gitlint --ignore body-is-missing --commits origin/release/9.3..",
+      "command": "python -m pip install --upgrade gitlint; $up = git rev-parse --abbrev-ref --symbolic-full-name '@{upstream}' 2>$null; if ($LASTEXITCODE -eq 0) { gitlint --ignore body-is-missing --commits $up.. } else { gitlint --ignore body-is-missing --commits HEAD~20..HEAD }",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      },
       "problemMatcher": []
     },
     {
