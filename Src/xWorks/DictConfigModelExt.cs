@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Security;
 using SIL.Core.ClearShare;
+using SIL.Windows.Forms.ClearShare;
 using SIL.Reporting;
 
 namespace SIL.FieldWorks.XWorks
@@ -42,12 +43,12 @@ namespace SIL.FieldWorks.XWorks
 			return SecurityElement.Escape(string.Join(", ", new[] { copyright, license }.Where(txt => !string.IsNullOrEmpty(txt))));
 		}
 
-		private static Metadata MetadataFromFile(this LCModel.ICmPicture picture)
+		private static MetadataForLicenseWithImage MetadataFromFile(this LCModel.ICmPicture picture)
 		{
 			var path = picture.PictureFileRA?.AbsoluteInternalPath;
 			try
 			{
-				return Metadata.FromFile(path);
+				return MetadataForLicenseWithImage.FromFile(path);
 			}
 			catch (Exception e)
 			{

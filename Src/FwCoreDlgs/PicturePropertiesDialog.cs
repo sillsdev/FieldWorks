@@ -566,7 +566,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			if (imageToolbox.ImageInfo.Metadata.IsLicenseNotSet)
 			{
-				imageToolbox.ImageInfo.Metadata.License = CreativeCommonsLicense.FromToken("cc0");
+				imageToolbox.ImageInfo.Metadata.License = CreativeCommonsLicenseWithImage.FromToken("cc0");
 				m_isSuggestingLicense = true;
 			}
 			else

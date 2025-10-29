@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PicturePropertiesDialog));
 			System.Windows.Forms.Button btnCancel;
 			SIL.Windows.Forms.ImageToolbox.PalasoImage palasoImage1 = new SIL.Windows.Forms.ImageToolbox.PalasoImage();
-			SIL.Core.ClearShare.Metadata metadata1 = new SIL.Core.ClearShare.Metadata();
+			SIL.Windows.Forms.ClearShare.MetadataForLicenseWithImage metadata1 = new SIL.Windows.Forms.ClearShare.MetadataForLicenseWithImage();
 			this.m_btnHelp = new System.Windows.Forms.Button();
 			this.m_tooltip = new System.Windows.Forms.ToolTip(this.components);
 			this.m_grpFileLocOptions = new System.Windows.Forms.GroupBox();

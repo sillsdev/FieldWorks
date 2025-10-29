@@ -111,6 +111,7 @@
 	<column layout="SummaryDefinitionForEntry" label="Summary Definition" transduce="LexEntry.SummaryDefinition" ws="$ws=analysis" visibility="dialog"/>
 	<column layout="PictureCaptionForSense" label="Picture-Caption"  multipara="true" editable="false" visibility="dialog" ws="$ws=vernacular analysis" />
 	<column layout="PictureFileNameForSense" label="Picture-FileName"  multipara="true" editable="false" visibility="dialog" />
+  <column layout="PictureLicenseForSense" label="Picture-License"  multipara="true" editable="false" visibility="dialog" />
 	<column layout="ScientificNameForSense" label="Scientific Names" multipara="true" ws="$ws=analysis" transduce="LexSense.ScientificName" visibility="dialog" />
 	<column layout="DiscourseNoteForSense" label="Discourse Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.DiscourseNote" visibility="dialog" />
 	<column layout="AnthropologyNoteForSense" label="Anthropology Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.AnthroNote" visibility="dialog" />

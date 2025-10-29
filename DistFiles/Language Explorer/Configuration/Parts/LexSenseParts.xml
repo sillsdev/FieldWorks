@@ -273,6 +273,13 @@
 				</para>
 			</seq>
 		</part>
+		<part id="LexSense-Jt-PictureLicenseForSense" type="jtview">
+			<seq field="Pictures" layout="empty">
+				<para>
+					<string field="License" ws="$ws=analysis"/>
+				</para>
+			</seq>
+		</part>
 		<part id="LexSense-Jt-PublishInForPicture" type="jtview">
 			<slice field="PublishIn" label="Publish Picture In" tooltip="Remove a publication from this field to completely exclude only this picture from that publication." editor="defaultVectorReference" visField="DoNotPublishIn"
 				menu="mnuDataTree-Help">
