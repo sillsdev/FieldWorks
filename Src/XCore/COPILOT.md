@@ -6,11 +6,13 @@ Cross-cutting framework base used by multiple FieldWorks applications. Provides 
 ## Key Components
 
 ### Subprojects
-- **xCore.csproj** - Main framework library
-- **xCoreInterfaces/xCoreInterfaces.csproj** - Framework interfaces
-- **xCoreTests/xCoreTests.csproj** - Framework tests
-- **FlexUIAdapter/FlexUIAdapter.csproj** - UI adapter for FLEx applications
-- **SilSidePane/SilSidePane.csproj** - Side pane UI component
+Each subfolder has its own COPILOT.md file with detailed documentation:
+
+- **xCore.csproj** - Main framework library (in this folder)
+- **xCoreInterfaces/** - Framework interfaces (see xCoreInterfaces/COPILOT.md)
+- **xCoreTests/** - Framework tests (see xCoreTests/COPILOT.md)
+- **FlexUIAdapter/** - UI adapter for FLEx applications (see FlexUIAdapter/COPILOT.md)
+- **SilSidePane/** - Side pane UI component (see SilSidePane/COPILOT.md)
 
 ## Technology Stack
 - C# .NET WinForms

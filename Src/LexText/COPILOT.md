@@ -6,16 +6,18 @@ Lexicon/Dictionary application and related components. This is one of the major 
 ## Key Components
 
 ### Subprojects
-- **LexTextExe/** (LexTextExe.csproj) - Lexicon application executable
-- **LexTextDll/** (LexTextDll.csproj) - Core lexicon functionality library
-- **LexTextControls/** (LexTextControls.csproj) - Lexicon UI controls
-- **Lexicon/** (LexEdDll.csproj) - Lexicon editing components
-- **Interlinear/** - Interlinear text analysis and glossing
-- **Morphology/** - Morphological analysis and parsing
-- **Discourse/** - Discourse analysis features
-- **ParserCore/** - Parsing engine components
-- **ParserUI/** - Parser user interface
-- **FlexPathwayPlugin/** (FlexPathwayPlugin.csproj) - Pathway publishing integration
+Each subfolder has its own COPILOT.md file with detailed documentation:
+
+- **LexTextExe/** - Lexicon application executable (see LexTextExe/COPILOT.md)
+- **LexTextDll/** - Core lexicon functionality library (see LexTextDll/COPILOT.md)
+- **LexTextControls/** - Lexicon UI controls (see LexTextControls/COPILOT.md)
+- **Lexicon/** - Lexicon editing components (see Lexicon/COPILOT.md)
+- **Interlinear/** - Interlinear text analysis and glossing (see Interlinear/COPILOT.md)
+- **Morphology/** - Morphological analysis and parsing (see Morphology/COPILOT.md)
+- **Discourse/** - Discourse analysis features (see Discourse/COPILOT.md)
+- **ParserCore/** - Parsing engine components (see ParserCore/COPILOT.md)
+- **ParserUI/** - Parser user interface (see ParserUI/COPILOT.md)
+- **FlexPathwayPlugin/** - Pathway publishing integration (see FlexPathwayPlugin/COPILOT.md)
 
 ## Technology Stack
 - C# .NET WinForms/WPF

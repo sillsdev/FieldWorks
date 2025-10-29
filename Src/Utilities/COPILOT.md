@@ -6,11 +6,15 @@ Miscellaneous utilities used across the FieldWorks repository. Contains various 
 ## Key Components
 
 ### Subprojects
-- **FixFwData/FixFwData.csproj** - Tool for repairing FieldWorks data
-- **FixFwDataDll/FixFwDataDll.csproj** - Data repair library
-- **XMLUtils/XMLUtils.csproj** - XML processing utilities
-- **MessageBoxExLib/MessageBoxExLib.csproj** - Enhanced message box library
-- **SfmStats/SfmStats.csproj** - SFM (Standard Format Marker) statistics tool
+Each subfolder has its own COPILOT.md file with detailed documentation:
+
+- **FixFwData/** - Tool for repairing FieldWorks data (see FixFwData/COPILOT.md)
+- **FixFwDataDll/** - Data repair library (see FixFwDataDll/COPILOT.md)
+- **XMLUtils/** - XML processing utilities (see XMLUtils/COPILOT.md)
+- **MessageBoxExLib/** - Enhanced message box library (see MessageBoxExLib/COPILOT.md)
+- **SfmStats/** - SFM statistics tool (see SfmStats/COPILOT.md)
+- **SfmToXml/** - SFM to XML conversion utility (see SfmToXml/COPILOT.md)
+- **Reporting/** - Error reporting functionality (see Reporting/COPILOT.md)
 
 ## Technology Stack
 - C# .NET

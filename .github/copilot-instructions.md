@@ -46,8 +46,9 @@ Top-level items you’ll use most often:
 - fw.code-workspace — VS Code workspace settings
 
 Src/ folder structure:
-- For a quick overview of all Src/ folders, see `.github/src-catalog.md`
+- For a quick overview of all Src/ folders and subfolders, see `.github/src-catalog.md`
 - For detailed information about any specific folder, see its `Src/<FolderName>/COPILOT.md` file
+- Some folders (Common, LexText, Utilities, XCore) have subfolders, each with their own COPILOT.md file (e.g., `Src/Common/Controls/COPILOT.md`)
 - Each COPILOT.md contains: purpose, key components, dependencies, build/test information, and relationships to other folders
 
 Tip: Use the top-level solution or build scripts instead of building projects individually; this avoids dependency misconfiguration.

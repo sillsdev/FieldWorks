@@ -6,16 +6,18 @@ Cross-cutting utilities and shared managed/native code used throughout FieldWork
 ## Key Components
 
 ### Subprojects
-- **Controls/** - Shared UI controls used across applications
-- **FieldWorks/** - Core FieldWorks-specific utilities and helpers
-- **Filters/** (Filters.csproj) - Data filtering functionality
-- **Framework/** - Application framework components
-- **FwUtils/** - General FieldWorks utilities
-- **RootSite/** (RootSite.csproj) - Root-level site management for views
-- **ScriptureUtils/** (ScriptureUtils.csproj) - Scripture-specific utilities
-- **SimpleRootSite/** (SimpleRootSite.csproj) - Simplified root site implementation
-- **UIAdapterInterfaces/** - UI adapter pattern interfaces
-- **ViewsInterfaces/** (ViewsInterfaces.csproj) - View layer interfaces
+Each subfolder has its own COPILOT.md file with detailed documentation:
+
+- **Controls/** - Shared UI controls library (see Controls/COPILOT.md)
+- **FieldWorks/** - Core FieldWorks-specific utilities (see FieldWorks/COPILOT.md)
+- **Filters/** - Data filtering functionality (see Filters/COPILOT.md)
+- **Framework/** - Application framework components (see Framework/COPILOT.md)
+- **FwUtils/** - General FieldWorks utilities (see FwUtils/COPILOT.md)
+- **RootSite/** - Root-level site management for views (see RootSite/COPILOT.md)
+- **ScriptureUtils/** - Scripture-specific utilities (see ScriptureUtils/COPILOT.md)
+- **SimpleRootSite/** - Simplified root site implementation (see SimpleRootSite/COPILOT.md)
+- **UIAdapterInterfaces/** - UI adapter pattern interfaces (see UIAdapterInterfaces/COPILOT.md)
+- **ViewsInterfaces/** - View layer interfaces (see ViewsInterfaces/COPILOT.md)
 
 ## Technology Stack
 - Mix of C# and C++/CLI
