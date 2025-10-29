@@ -55,6 +55,33 @@ Tip: Use the top-level solution or build scripts instead of building projects in
 
 --------------------------------------------------------------------------------
 
+## AI agent entry points
+
+Use these pre-scoped instructions and modes to keep agents focused and reliable:
+
+- Instructions (domain-specific rules):
+  - Managed (C# and .NET): `.github/instructions/managed.instructions.md`
+  - Native (C++ and C++/CLI): `.github/instructions/native.instructions.md`
+  - Installer (WiX): `.github/instructions/installer.instructions.md`
+  - Testing: `.github/instructions/testing.instructions.md`
+  - Build: `.github/instructions/build.instructions.md`
+- Chat modes (role boundaries):
+  - Managed engineer: `.github/chatmodes/managed-engineer.chatmode.md`
+  - Native engineer: `.github/chatmodes/native-engineer.chatmode.md`
+  - Installer engineer: `.github/chatmodes/installer-engineer.chatmode.md`
+  - Technical writer: `.github/chatmodes/technical-writer.chatmode.md`
+- Context helpers and memory:
+  - High-signal context links: `.github/context/codebase.context.md`
+  - Repository memory (decisions/pitfalls): `.github/memory.md`
+
+Src/ folder structure:
+- For a quick overview of all Src/ folders and subfolders, see `.github/src-catalog.md`
+- For detailed information about any specific folder, see its `Src/<FolderName>/COPILOT.md` file
+- Some folders (Common, LexText, Utilities, XCore) have subfolders, each with their own COPILOT.md file (e.g., `Src/Common/Controls/COPILOT.md`)
+- Each COPILOT.md contains: purpose, key components, dependencies, build/test information, and relationships to other folders
+
+--------------------------------------------------------------------------------
+
 ## CI checks you must satisfy
 
 These run on every PR. Run the quick checks locally before pushing to avoid churn.
