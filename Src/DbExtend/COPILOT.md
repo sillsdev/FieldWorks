@@ -1,0 +1,31 @@
+# DbExtend
+
+## Purpose
+Database extensions and schema helpers for the FieldWorks data model. Provides extensibility mechanisms for customizing and extending the database schema at runtime.
+
+## Key Components
+- Native C++ files for database schema extension
+- Schema customization and validation utilities
+
+## Technology Stack
+- C++ native code
+- Database schema manipulation
+- SQL and data model extension APIs
+
+## Dependencies
+- Depends on: Cellar (core data model), Kernel
+- Used by: Applications that need custom fields or schema extensions
+
+## Build Information
+- Native C++ library
+- Built as part of the larger solution
+- No standalone project file in root (built via includes)
+
+## Entry Points
+- Provides schema extension APIs
+- Used by applications to add custom fields and data types
+
+## Related Folders
+- **Cellar/** - Core data model that DbExtend extends
+- **MigrateSqlDbs/** - Database migration tools that work with schema changes
+- **FdoUi/** - UI for managing custom fields built on DbExtend

@@ -39,45 +39,16 @@ Top-level items you’ll use most often:
 - FLExInstaller/ — WiX-based installer project
 - Include/ — shared headers/includes for native components
 - Lib/ — third-party or prebuilt libraries used by the build
-- Src/ — all application, library, and tooling source (see breakdown below)
+- Src/ — all application, library, and tooling source (see .github/src-catalog.md for folder descriptions; each folder has a COPILOT.md file with detailed documentation)
 - TestLangProj/ — test data/projects used by tests and integration scenarios
 - ReadMe.md — links to developer documentation wiki
 - License.htm — license information
 - fw.code-workspace — VS Code workspace settings
 
-Src/ major folders (one level down):
-
-- AppCore/ — shared application core helpers and base infrastructure
-- CacheLight/ — lightweight caching services used by core components
-- Cellar/ — core data model and persistence layer (Cellar/LCM)
-- Common/ — cross-cutting utilities and shared managed/native code
-- DbExtend/ — database extensions and schema helpers
-- DebugProcs/ — developer diagnostics and debug helpers
-- DocConvert/ — document and data conversion tools
-- FdoUi/ — UI components for FieldWorks Data Objects
-- FwCoreDlgs/ — common dialogs used across FieldWorks apps
-- FwParatextLexiconPlugin/ — Paratext lexicon integration plugin
-- FwResources/ — shared resources (images, strings, assets) for apps/libraries
-- FXT/ — FieldWorks transform assets and related tooling
-- GenerateHCConfig/ — build-time configuration generation utilities
-- Generic/ — generic/shared components that don’t fit a single app
-- InstallValidator/ — utilities to validate installation prerequisites
-- Kernel/ — low-level core services and infrastructure
-- LCMBrowser/ — LCM/Cellar model browser tooling
-- LexText/ — Lexicon/Dictionary application and related components
-- ManagedLgIcuCollator/ — managed wrapper for ICU collation
-- ManagedVwDrawRootBuffered/ — managed view rendering primitives
-- ManagedVwWindow/ — managed view window components
-- MigrateSqlDbs/ — database migration and upgrade tooling
-- Paratext8Plugin/ — integration plugin for Paratext 8
-- ParatextImport/ — import pipeline for Paratext data
-- ProjectUnpacker/ — utilities for unpacking FieldWorks projects
-- Transforms/ — transformation assets (e.g., XSLT) and helpers
-- UnicodeCharEditor/ — Unicode character editor tool
-- Utilities/ — misc utilities used across the repo
-- views/ — C++ view-layer components and UI view infrastructure
-- XCore/ — cross-cutting framework base used by multiple apps
-- xWorks/ — primary FieldWorks application (shell and modules)
+Src/ folder structure:
+- For a quick overview of all Src/ folders, see `.github/src-catalog.md`
+- For detailed information about any specific folder, see its `Src/<FolderName>/COPILOT.md` file
+- Each COPILOT.md contains: purpose, key components, dependencies, build/test information, and relationships to other folders
 
 Tip: Use the top-level solution or build scripts instead of building projects individually; this avoids dependency misconfiguration.
 
@@ -192,3 +163,37 @@ Dependencies and hidden coupling:
 - Keep coding style consistent (.editorconfig, ReSharper settings).
 - Touch installer/localization only when necessary, and validate those paths explicitly.
 - Trust this guide; only search the repo if a command here fails or a path is missing.
+--------------------------------------------------------------------------------
+
+## Maintaining Src/ Folder Documentation
+
+Each folder under Src/ has a COPILOT.md file that documents its purpose, components, and relationships. These files are essential for understanding the codebase.
+
+**When to update COPILOT.md files:**
+- When making significant architectural changes to a folder
+- When adding new major components or subprojects
+- When changing the purpose or scope of a folder
+- When discovering discrepancies between documentation and reality
+
+**How to update COPILOT.md files:**
+1. Read the existing COPILOT.md file for the folder you're working in
+2. If you notice discrepancies (e.g., missing components, outdated descriptions, incorrect dependencies):
+   - Update the COPILOT.md file to reflect the current state
+   - Update cross-references in related folders' COPILOT.md files if relationships changed
+   - Update `.github/src-catalog.md` with the new concise description
+3. Keep documentation concise but informative:
+   - Purpose: What the folder is for (1-2 sentences)
+   - Key Components: Major files, subprojects, or features
+   - Technology Stack: Primary languages and frameworks
+   - Dependencies: What it depends on and what uses it
+   - Build Information: How to build and test
+   - Entry Points: How the code is used or invoked
+   - Related Folders: Cross-references to other Src/ folders
+
+**Example scenarios requiring COPILOT.md updates:**
+- Adding a new C# project to a folder → Update "Key Components" and "Build Information"
+- Discovering a folder depends on another folder not listed → Update "Dependencies" and "Related Folders"
+- Finding that a folder's description is inaccurate → Update "Purpose" section
+- Adding new test projects → Update "Build Information" and "Testing" sections
+
+Always validate that your code changes align with the documented architecture. If they don't, either adjust your changes or update the documentation to reflect the new architecture.
