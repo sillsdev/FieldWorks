@@ -126,7 +126,7 @@ function Test-FileExists {
 
 function Test-DirHasFiles {
     param([string]$Path, [string]$Description)
-    if ((Test-Path -Path $Path -PathType Container) -and (Get-ChildItem -Path $Path -ErrorAction SilentlyContinue | Where-Object { -not $_.PSIsContainer } | Select-Object -First 1)) {
+    if ((Test-Path -Path $Path -PathType Container) -and (Get-ChildItem -Path $Path -ErrorAction SilentlyContinue | Where-Object { -not $_.PSIsDirectory } | Select-Object -First 1)) {
         Write-Output "  ✓ $Description"
         return $true
     } else {
