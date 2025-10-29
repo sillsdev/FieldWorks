@@ -188,6 +188,17 @@ Known gotchas and guidance:
 Timing:
 - This is a large solution; first-time builds can be lengthy. Prefer incremental builds for inner-loop development. Avoid cleaning unless necessary.
 
+## Agentic workflows (prompts) and specs
+
+- Prompts (agentic workflows): `.github/prompts/`
+  - `feature-spec.prompt.md` — spec → plan → implement with validation gates
+  - `bugfix.prompt.md` — triage → root cause → minimal fix with gate
+  - `test-failure-debug.prompt.md` — parse failures and propose targeted fixes (no file edits)
+- Specification templates: `.github/spec-templates/`
+  - `spec.md` — problem, approach, components, risks, tests, rollout
+  - `plan.md` — implementation plan with gates and rollback
+- Recipes/playbooks: `.github/recipes/` — guided steps for common scenarios (e.g., add xWorks dialog, extend Cellar schema)
+
 --------------------------------------------------------------------------------
 
 ## CI and validation

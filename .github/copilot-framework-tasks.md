@@ -36,13 +36,23 @@ This checklist tracks repository updates that improve AI workflows using agentic
 ## Option 3 — Outer-loop automation + MCP integration (higher effort)
 
 - [ ] Copilot CLI/APM scaffolding:
-  - [ ] apm.yml: map scripts to prompts
-  - [ ] GH Action to run chosen prompt on PR, post summary
+  - [ ] apm.yml: map scripts to prompts and declare MCP dependencies
+  - [ ] Document local usage: `apm install`, `apm run copilot-feature-spec --param specFile=...`
+  - [ ] GH Action to run chosen prompt on PR, post summary/comments
 - [ ] MCP servers & boundaries:
-  - [ ] Curate recommended MCP servers; restrict by chat mode
+  - [ ] Add GitHub MCP server and Filesystem MCP (pilot set); restrict by chat mode
+  - [ ] Capture list and policies in `.github/context/mcp.servers.md`
 - [ ] CI governance:
-  - [ ] lint-docs job to verify COPILOT.md presence/links
-  - [ ] prompt syntax/frontmatter validation
+  - [ ] lint-docs job to verify COPILOT.md presence/links and src-catalog consistency
+  - [ ] prompt validation job to parse `.prompt.md` frontmatter/structure
+- [ ] Security & secrets:
+  - [ ] Use least-privilege tokens (e.g., `secrets.COPILOT_CLI_PAT`)
+  - [ ] Add a security review checklist for enabling new tools/servers
+- [ ] Rollout strategy:
+  - [ ] Pilot a no-write prompt (`test-failure-debug.prompt.md`) on PRs
+  - [ ] Iterate then enable selective write-capable workflows
+
+See: `.github/option3-plan.md` for details.
 
 ## Notes
 - Keep instructions concise and domain-scoped (use `applyTo` when appropriate).
