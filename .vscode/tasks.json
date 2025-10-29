@@ -16,6 +16,18 @@
       ]
     },
     {
+      "label": "Whitespace check",
+      "type": "shell",
+      "command": "git fetch origin; git log --check --pretty=format:\"---% h% s\" origin/release/9.3..",
+      "problemMatcher": []
+    },
+    {
+      "label": "Gitlint preview",
+      "type": "shell",
+      "command": "python -m pip install --upgrade gitlint; git fetch origin; gitlint --ignore body-is-missing --commits origin/release/9.3..",
+      "problemMatcher": []
+    },
+    {
       "label": "remakefw",
       "type": "shell",
       "command": "cd Build && build.bat /t:remakefw",
