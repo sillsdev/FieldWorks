@@ -16,6 +16,48 @@
       ]
     },
     {
+      "label": "Whitespace check (CI parity)",
+      "type": "shell",
+      "command": "./Build/Agent/check-and-fix-whitespace.sh",
+      "windows": {
+        "command": "./Build/Agent/check-and-fix-whitespace.ps1",
+        "options": {
+          "shell": {
+            "executable": "powershell.exe",
+            "args": [
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-Command"
+            ]
+          }
+        }
+      },
+      "detail": "Runs git log --check from nearest origin/release/* (or origin default), then runs the fixer to normalize whitespace.",
+      "problemMatcher": []
+    },
+    {
+      "label": "Commit messages check (CI parity)",
+      "type": "shell",
+      "command": "./Build/Agent/commit-messages.sh",
+      "windows": {
+        "command": "./Build/Agent/commit-messages.ps1",
+        "options": {
+          "shell": {
+            "executable": "powershell.exe",
+            "args": [
+              "-NoProfile",
+              "-ExecutionPolicy",
+              "Bypass",
+              "-Command"
+            ]
+          }
+        }
+      },
+      "detail": "Installs gitlint and lints commits since the nearest origin/release/* (or origin default).",
+      "problemMatcher": []
+    },
+    {
       "label": "remakefw",
       "type": "shell",
       "command": "cd Build && build.bat /t:remakefw",
@@ -34,6 +76,15 @@
       "linux": {
         "command": ". environ && cd Build && ./build /t:remakefw /p:Action=Test"
       }
+    },
+    {
+      "label": "local CI check",
+      "dependsOn": [
+        "Commit messages check (CI parity)",
+        "Whitespace check (CI parity)"
+      ],
+      "dependsOrder": "sequence",
+      "detail": "Runs commit message lint and whitespace checks in the same order as CI"
     }
   ]
 }
