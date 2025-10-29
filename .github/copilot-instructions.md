@@ -55,6 +55,47 @@ Tip: Use the top-level solution or build scripts instead of building projects in
 
 --------------------------------------------------------------------------------
 
+## CI checks you must satisfy
+
+These run on every PR. Run the quick checks locally before pushing to avoid churn.
+
+**Commit messages (gitlint)**
+- Subject ≤ 72 chars, no trailing punctuation, no tabs/leading/trailing whitespace.
+- If you include a body: add a blank line after the subject; body lines ≤ 80 chars.
+- Quick check (Windows PowerShell):
+  ```powershell
+  python -m pip install --upgrade gitlint
+  git fetch origin
+  # Replace <base> with your target branch (e.g., release/9.3, develop)
+  gitlint --ignore body-is-missing --commits origin/<base>..
+  ```
+- Full rules: see `.github/commit-guidelines.md`
+
+**Whitespace in diffs (git log --check)**
+- No trailing whitespace, no space-before-tab in indentation; end files with a newline.
+- Quick checks:
+  ```powershell
+  git fetch origin
+  # Review all commits in your PR for whitespace errors
+  git log --check --pretty=format:"---% h% s" origin/<base>..
+  # Also check staged changes before committing
+  git diff --check --cached
+  ```
+- Configure your editor to trim trailing whitespace and insert a final newline.
+
+**Build and tests**
+- Build and test locally before PR to avoid CI failures:
+  ```powershell
+  # From a Developer Command Prompt for VS or with env set
+  # Fast path: replicate CI behavior
+  bash ./agent-build-fw.sh
+  # Or MSBuild
+  msbuild FW.sln /m /p:Configuration=Debug
+  ```
+- If you change installer/config, validate those paths explicitly per the sections below.
+
+--------------------------------------------------------------------------------
+
 ## Build, test, run, lint
 
 Always start from a clean environment, then follow the steps below. If a step fails, do not probe randomly; re-read this section and the developer docs wiki linked above.
