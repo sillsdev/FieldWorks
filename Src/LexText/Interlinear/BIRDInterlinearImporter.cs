@@ -395,6 +395,14 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		private static bool IsGuess(Morphemes item)
+		{
+			if (item != null && item.analysisStatusSpecified &&
+				(item.analysisStatus != analysisStatusTypes.humanApproved))
+				return true;
+			return false;
+		}
+
 		/// <summary>
 		/// Add all the data from items in the FLExText file into their proper spots in the segment.
 		/// </summary>
@@ -1063,7 +1071,7 @@ namespace SIL.FieldWorks.IText
 				var morphemeMatch = true;
 				// verify that the analysis has a Morph Bundle with the expected morphemes from the import
 				if (word.morphemes != null && wfiAnalysis.MorphBundlesOS.Count == word.morphemes?.morphs.Length &&
-					word.morphemes.analysisStatus == analysisStatusTypes.humanApproved)
+					!IsGuess(word.morphemes))
 				{
 					analysis = GetMostSpecificAnalysisForWordForm(wfiAnalysis);
 					for (var i = 0; i < wfiAnalysis.MorphBundlesOS.Count; ++i)
@@ -1279,7 +1287,7 @@ namespace SIL.FieldWorks.IText
 						analysisTree = new AnalysisTree(wfiGloss);
 					}
 					analysisTree.Gloss.Form.set_String(wsNewGloss, wordGlossItem.Value);
-					if (word.morphemes?.analysisStatus != analysisStatusTypes.guess)
+					if (!IsGuess(word.morphemes))
 						// Make sure this analysis is marked as user-approved (green check mark)
 						cache.LangProject.DefaultUserAgent.SetEvaluation(
 							analysisTree.WfiAnalysis, Opinions.approves);
@@ -1300,7 +1308,7 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 
-			if (wordForm != null && word.morphemes?.analysisStatus == analysisStatusTypes.guess)
+			if (wordForm != null && IsGuess(word.morphemes))
 				// Ignore gloss if morphological analysis was only a guess.
 				wordForm = wordForm.Wordform;
 		}
