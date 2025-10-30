@@ -7,195 +7,245 @@ Editorial note: See `.github/update-copilot-summaries.md` for how to update and 
 ## Folder Descriptions
 
 ### AppCore
-Shared application core helpers and base infrastructure. Provides fundamental graphics and styled text rendering capabilities.
+Shared application core helpers and base infrastructure used across FieldWorks applications.
 
 ### CacheLight
-Lightweight caching services used by core components. Efficient in-memory caching for FieldWorks data access.
+Lightweight caching services providing efficient in-memory data access for FieldWorks components.
 
 ### Cellar
-Core data model and persistence layer (LCM - FieldWorks Language and Culture Model). Foundational data model with XML serialization.
+Core data model infrastructure providing XML processing and serialization services.
 
 ### Common
-Cross-cutting utilities and shared managed/native code. Contains fundamental UI controls, framework components, and utility libraries used throughout FieldWorks.
+Cross-cutting utilities and shared infrastructure used throughout FieldWorks. Contains fundamental UI controls (Controls), framework components (Framework), shared managed 
+code (FwUtils), native c...
 
 ### DbExtend
-Database extensions and schema helpers. Provides extensibility mechanisms for customizing database schema at runtime.
+Database schema extension and runtime customization infrastructure. Provides mechanisms for extending the base FieldWorks data model with custom fields, 
+properties, and relationships at runtime.
 
 ### DebugProcs
-Developer diagnostics and debug helpers. Provides debugging utilities and diagnostic tools for troubleshooting.
+Developer diagnostics and debugging utilities for troubleshooting FieldWorks issues.
 
 ### DocConvert
-Document and data conversion tools. Handles conversion between different document formats and data representations.
+Document and data format conversion utilities. Handles transformation between 
+different document formats and data representations used in FieldWorks.
 
 ### FXT
-FieldWorks transform assets and related tooling. Provides XSLT-based transformation capabilities for converting linguistic data.
+FieldWorks Transform (FXT) assets and XSLT-based transformation infrastructure. Provides XSLT stylesheets and transformation utilities for converting and presenting linguistic 
+data in different fo...
 
 ### FdoUi
-UI components for FieldWorks Data Objects. Provides user interface elements for interacting with the data model, including custom field management.
+User interface components for FieldWorks Data Objects (FDO/LCM). Provides specialized UI controls for editing and displaying data model objects, including 
+custom field management dialogs (CustomFi...
 
 ### FwCoreDlgs
-Common dialogs used across FieldWorks applications. Standardized dialog boxes for file selection, configuration, and user input.
+Common dialogs and UI components shared across FieldWorks applications. Includes standardized dialog boxes for file operations (BackupProjectDlg, RestoreProjectDlg), 
+writing system configuration (...
 
 ### FwParatextLexiconPlugin
-Paratext lexicon integration plugin. Enables FieldWorks lexicon data access from within Paratext Bible translation software.
+Integration plugin enabling Paratext Bible translation software to access 
+FieldWorks lexicon data.
 
 ### FwResources
-Shared resources (images, strings, assets) for FieldWorks applications. Centralizes resource management for consistent UI and localization.
+Centralized resource management for FieldWorks applications. Contains shared images, icons, localized strings, and other UI assets used throughout the application suite.
 
 ### GenerateHCConfig
-Build-time configuration generation utilities. Creates help configuration files and build artifacts for the help system.
+Build-time utilities for generating help system configuration files. Creates configuration artifacts and metadata files needed by the FieldWorks help system.
 
 ### Generic
-Generic/shared components that don't fit a single application. Low-level utility classes, algorithms, and helper functions.
+Generic utility components and low-level helper classes that don't fit into more 
+specific categories.
 
 ### InstallValidator
-Utilities to validate installation prerequisites. Checks system requirements and configuration before installation or startup.
+Installation prerequisite validation utilities. Checks system requirements, validates configuration, and verifies that necessary dependencies 
+are present before FieldWorks installation or startup.
 
 ### Kernel
-Low-level core services and infrastructure. Provides fundamental building blocks including memory management, error handling, and string processing.
+Low-level core services and fundamental infrastructure for all FieldWorks native code.
 
 ### LCMBrowser
-LCM/Cellar model browser tooling. Development tool for exploring the FieldWorks data model and debugging data structures.
+Development tool for exploring and debugging the FieldWorks data model (LCM). Provides a browser interface for navigating object relationships, inspecting properties, 
+and understanding the structu...
 
 ### LexText
-Lexicon/Dictionary application and related components. Comprehensive lexicon editing, dictionary configuration, interlinear text analysis, morphology, and discourse features.
+Lexicon/Dictionary application suite and related components. Encompasses the FieldWorks Language Explorer (FLEx) application including lexicon editing (Lexicon), 
+dictionary configuration (LexTextD...
 
 ### ManagedLgIcuCollator
-Managed wrapper for ICU collation services. Provides .NET-friendly access to ICU collation for proper linguistic text ordering.
+Managed .NET wrapper for ICU (International Components for Unicode) collation services.
 
 ### ManagedVwDrawRootBuffered
-Managed view rendering primitives for buffered drawing. Double-buffered rendering infrastructure to eliminate flicker.
+Managed wrapper for buffered view rendering infrastructure. Implements double-buffered drawing to eliminate flicker in complex text displays.
 
 ### ManagedVwWindow
-Managed view window components. .NET wrappers for native view windows, bridging managed UI and native rendering.
+Managed .NET wrappers for native view window components. Bridges managed UI code with the native views rendering engine, enabling .NET applications 
+to host sophisticated text display views that le...
 
 ### MigrateSqlDbs
-Database migration and upgrade tooling. Handles schema migrations and version upgrades between FieldWorks versions.
+Database migration and versioning infrastructure. Handles schema migrations, data transformations, and version upgrades between different 
+FieldWorks releases.
 
 ### Paratext8Plugin
-Integration plugin for Paratext 8. Enables bidirectional integration between FieldWorks and Paratext 8.
+Bidirectional integration plugin for Paratext 8 Bible translation software. Enables data exchange and synchronization between FieldWorks and Paratext 8 projects.
 
 ### ParatextImport
-Import pipeline for Paratext data. Handles importing Scripture texts, notes, and related data from Paratext projects.
+Import pipeline for bringing Paratext Scripture data into FieldWorks. Handles parsing and conversion of Paratext USFM texts, notes, and associated data into 
+the FieldWorks data model.
 
 ### ProjectUnpacker
-Utilities for unpacking FieldWorks projects. Handles decompression and extraction of project archives.
+Utilities for extracting and decompressing FieldWorks project archives. Handles unpacking of .fwbackup files and other compressed project formats.
 
 ### Transforms
-Transformation assets (XSLT) and helpers. Contains XSLT stylesheets for data conversion, report generation, and content export.
+Collection of XSLT transformation stylesheets and supporting utilities. Contains templates for data conversion, report generation, and content export across 
+various formats.
 
 ### UnicodeCharEditor
-Unicode character editor tool. Specialized interface for viewing and editing Unicode character properties.
+Specialized tool for viewing and editing Unicode character properties. Provides detailed information about Unicode characters, their properties, and rendering 
+characteristics.
 
 ### Utilities
-Miscellaneous utilities used across the repository. Contains standalone tools including data repair, XML utilities, and helper libraries.
+Miscellaneous utilities and standalone tools. Contains data repair utilities (FixFwData, FixFwDataDll), format conversion tools (SfmToXml, SfmStats), 
+XML helpers (XMLUtils), error reporting (Repor...
 
 ### XCore
-Cross-cutting framework base used by multiple applications. Provides application framework, plugin architecture, command handling, and UI composition infrastructure.
+Cross-cutting application framework and plugin architecture. Provides command handling, choice management, property propagation, UI composition, and extensibility 
+infrastructure (xCoreInterfaces, ...
 
 ### views
-C++ view-layer components and UI view infrastructure. Native rendering engine for sophisticated text display with complex writing systems.
+C++ native rendering engine providing sophisticated text display capabilities for complex 
+writing systems.
 
 ### xWorks
-Primary FieldWorks application shell and modules. Main application infrastructure hosting LexText and other work areas, with dictionary configuration and data navigation.
+Primary FieldWorks application shell and module hosting infrastructure. Implements the main application framework (xWorks) that hosts LexText and other work areas, 
+provides dictionary configuratio...
 
 ## Common Subfolders
 
 ### Common/Controls
-Shared UI controls library. Provides reusable widgets and XML-based view components used throughout FieldWorks applications.
+Shared UI controls library providing reusable widgets and XML-based view components.
 
 ### Common/FieldWorks
-Core FieldWorks-specific utilities and application infrastructure. Provides fundamental application services including settings management and busy dialogs.
+Core FieldWorks-specific application infrastructure and utilities. Provides fundamental application services including project management (FieldWorksManager, ProjectId), 
+settings management (FwRes...
 
 ### Common/Filters
-Data filtering functionality. Provides filter matchers and sorting capabilities for searching and displaying filtered data sets.
+Data filtering and sorting infrastructure for searchable data views. Implements various matcher types (IntMatcher, RangeIntMatcher, ExactMatcher, BeginMatcher) 
+and filtering logic (RecordFilter, P...
 
 ### Common/Framework
-Application framework components. Provides core application infrastructure including editing helpers, settings management, and export functionality.
+Application framework components providing core infrastructure services. Includes editing helpers (FwEditingHelper), publication interfaces (IPublicationView, IPageSetupDialog), 
+settings managemen...
 
 ### Common/FwUtils
-General FieldWorks utilities library. Provides utility functions, helpers, and extension methods used throughout FieldWorks.
+General FieldWorks utilities library containing wide-ranging helper functions. Provides utilities for image handling (ManagedPictureFactory), registry access (IFwRegistryHelper), 
+XML serialization...
 
 ### Common/RootSite
-Root-level site management for views. Provides base infrastructure for hosting and managing FieldWorks' view system.
+Root-level site management infrastructure for hosting FieldWorks views. Implements RootSite classes that provide the top-level container for the Views rendering system, 
+handle view lifecycle manag...
 
 ### Common/ScriptureUtils
-Scripture-specific utilities. Provides support for Paratext integration, scripture references, and biblical text handling.
+Scripture-specific utilities and Paratext integration support. Provides specialized handling for biblical text references, Paratext project integration, 
+scripture navigation, and biblical text str...
 
 ### Common/SimpleRootSite
-Simplified root site implementation. Provides streamlined API for hosting FieldWorks views with common functionality pre-configured.
+Simplified root site implementation with streamlined API. Provides a more accessible interface to the Views system for common scenarios, handling 
+standard view hosting patterns with pre-configured...
 
 ### Common/UIAdapterInterfaces
-UI adapter pattern interfaces. Defines contracts for adapting different UI technologies and providing abstraction layers.
+UI adapter pattern interfaces for abstraction and testability. Defines contracts that allow UI components to be adapted to different technologies or replaced 
+with test doubles.
 
 ### Common/ViewsInterfaces
-View layer interfaces. Defines managed interfaces for interacting with the native view rendering engine.
+Managed interface definitions for the native Views rendering engine. Declares .NET interfaces corresponding to native COM interfaces in the Views system, enabling 
+managed code to interact with the...
 
 ## LexText Subfolders
 
 ### LexText/Discourse
-Discourse analysis features. Provides tools for analyzing and charting discourse structure in texts.
+Discourse analysis and charting functionality for linguistic text analysis. Implements tools for analyzing and visualizing discourse structure, including constituent charts, 
+template-based analysi...
 
 ### LexText/FlexPathwayPlugin
-Pathway publishing integration plugin. Enables export and publishing of lexicon and text data using SIL's Pathway system.
+Pathway publishing system integration for FLEx. Provides plugin infrastructure to export lexicon and interlinear data using SIL's Pathway 
+publishing system.
 
 ### LexText/Interlinear
-Interlinear text analysis and glossing. Provides tools for creating and managing interlinear texts with morpheme-by-morpheme analysis.
+Interlinear text analysis and morpheme-by-morpheme glossing functionality. Implements the interlinear text editor (InterlinDocChart, InterlinVc), morpheme analysis tools, 
+glossing interfaces, conc...
 
 ### LexText/LexTextControls
-Lexicon UI controls library. Provides specialized controls and dialogs for lexicon editing, including import/export wizards.
+Lexicon UI controls library for FLEx editing interfaces. Provides specialized controls and dialogs for lexicon management including import/export wizards 
+(LexImportWizard, FlexLiftMerger), entry e...
 
 ### LexText/LexTextDll
-Core lexicon application functionality. Provides the main application logic and infrastructure for the LexText (FLEx) application.
+Core LexText application logic and infrastructure. Implements the main application coordination, module initialization, integration of various 
+areas (lexicon, morphology, interlinear, discourse), ...
 
 ### LexText/LexTextExe
-Main executable for LexText (FLEx). Provides the entry point for launching the FieldWorks Language Explorer application.
+Main executable entry point for FieldWorks Language Explorer (FLEx). Provides the startup code, application initialization, and hosting environment for the LexText 
+application.
 
 ### LexText/Lexicon
-Lexicon editing components. Provides the main lexicon entry editing interface, reference management, and FLEx Bridge integration.
+Lexicon editing and entry management components. Implements the core lexical database editing interface including entry forms, reference management, 
+sense hierarchies, and FLEx Bridge integration ...
 
 ### LexText/Morphology
-Morphological analysis and morphology editor. Provides tools for defining morphological rules, allomorph conditions, and phonological features.
+Morphological analysis and morphology editor infrastructure. Provides tools for defining morphological rules, allomorph conditions, phonological features, 
+natural classes, and morpheme environments.
 
 ### LexText/ParserCore
-Core parsing engine. Provides the Hermit Crab (HC) parser implementation for analyzing words into morphemes.
+Core morphological parsing engine (Hermit Crab). Implements the HC (Hermit Crab) parser that analyzes words into component morphemes based on 
+linguistic rules defined in the morphology editor.
 
 ### LexText/ParserUI
-Parser user interface components. Provides UI for configuring, testing, and tracing the morphological parser.
+User interface components for parser configuration and testing. Provides UI for configuring the morphological parser, testing parser behavior, viewing parse traces, 
+managing parser settings, and d...
 
 ## Utilities Subfolders
 
 ### Utilities/FixFwData
-Command-line tool for repairing FieldWorks data files. Provides automated data integrity checking and repair functionality.
+Command-line tool for repairing FieldWorks project data files. Provides automated data integrity checking, error detection, and repair functionality that can be 
+run outside the main FieldWorks app...
 
 ### Utilities/FixFwDataDll
-Core data repair library. Provides implementation of data validation, error detection, and automatic repair functionality.
+Core data repair library implementing validation and fix logic. Contains the actual implementation of data integrity checks, error detection algorithms, and 
+automatic repair routines.
 
 ### Utilities/MessageBoxExLib
-Enhanced message box library. Provides extended message box functionality beyond standard Windows message boxes.
+Enhanced message box library with extended functionality. Provides message boxes with additional features beyond standard Windows message boxes, 
+such as custom button layouts, checkboxes for "don'...
 
 ### Utilities/Reporting
-Error reporting functionality. Provides infrastructure for collecting, displaying, and submitting error reports.
+Error reporting and diagnostic information collection infrastructure. Implements functionality for gathering error details, capturing system state, displaying error 
+reports to users, and optionall...
 
 ### Utilities/SfmStats
-SFM statistics tool. Analyzes Standard Format Marker files to provide statistics about marker usage.
+Standard Format Marker (SFM) statistics and analysis tool. Analyzes SFM-formatted data files to provide statistics about marker usage, frequency, 
+and patterns.
 
 ### Utilities/SfmToXml
-SFM to XML conversion utility. Converts SFM-formatted data files to XML format for processing and import.
+SFM to XML data conversion utility and library. Converts Standard Format Marker files (legacy linguistic data format) into XML format 
+for processing and import into FieldWorks.
 
 ### Utilities/XMLUtils
-XML processing utilities. Provides common XML handling functionality, dynamic loading, and exception handling.
+XML processing utilities and helper functions. Provides common XML handling functionality including dynamic assembly loading (DynamicLoader), 
+exception handling, validation, and XML manipulation h...
 
 ## XCore Subfolders
 
 ### XCore/FlexUIAdapter
-FLEx UI adapter implementation. Provides concrete implementation of UI adapter interfaces for FieldWorks applications.
+FLEx implementation of XCore UI adapter interfaces. Provides concrete adapter implementations that connect FLEx application components to the 
+XCore framework's command handling, choice management,...
 
 ### XCore/SilSidePane
-Side pane UI component. Provides the navigation pane (sidebar) control used in FieldWorks applications.
+Side pane navigation control for FieldWorks applications. Implements the navigation sidebar (SidePane, Tab, Item classes) that provides hierarchical 
+navigation between different areas and tools in...
 
 ### XCore/xCoreInterfaces
-Core interfaces for XCore framework. Defines contracts for command handling, choice management, UI components, and mediator pattern.
+Core interface definitions for the XCore framework. Declares fundamental contracts for command handling (IxCoreColleague), choice management 
+(ChoiceGroup), property tables (PropertyTable), mediato...
 
 ### XCore/xCoreTests
-Test suite for XCore framework. Provides comprehensive tests for XCore framework functionality.
+Test suite for XCore framework functionality. Provides comprehensive tests validating XCore's command handling, property table behavior, 
+mediator functionality, and plugin infrastructure.
