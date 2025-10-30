@@ -17,6 +17,17 @@ Morphological analysis and morphology editor. Provides tools for defining morpho
 - Phonological rule editing
 - Morphological feature management
 
+
+## Key Classes/Interfaces
+- **AdhocCoProhibAtomicLauncher**
+- **UpdateRealAnalysisMethod**
+- **ParserAnnotationRemover**
+- **RuleFormulaSlice**
+- **WordformGoDlg**
+- **RegRuleFormulaSlice**
+- **RespellerDlgListener**
+- **RespellerTemporaryRecordClerk**
+
 ## Technology Stack
 - C# .NET WinForms
 - Linguistic rule system

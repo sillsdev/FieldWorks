@@ -16,6 +16,17 @@ XML processing utilities for FieldWorks. Provides common XML handling functional
 - **SILExceptions.cs** - Custom exception types
 - **XMLUtilsTests/** - Test suite
 
+
+## Key Classes/Interfaces
+- **IAttributeVisitor**
+- **ReplaceSubstringInAttr**
+- **IResolvePath**
+- **SimpleResolver**
+- **ConfigurationException**
+- **RuntimeConfigurationException**
+- **DynamicLoader**
+- **IPersistAsXml**
+
 ## Technology Stack
 - C# .NET
 - XML processing

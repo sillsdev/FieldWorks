@@ -15,6 +15,16 @@ Core FieldWorks-specific utilities and application infrastructure. Provides fund
 - **FwRegistrySettings.cs** (in Framework) - Settings management
 - Application icons and resources
 
+
+## Key Classes/Interfaces
+- **FwRestoreProjectSettings**
+- **ProjectId**
+- **FieldWorksManager**
+- **ButtonPress**
+- **ProjectMatch**
+- **WaitFor**
+- **RemoteRequest**
+
 ## Technology Stack
 - C# .NET
 - Windows registry integration

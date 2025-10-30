@@ -13,6 +13,10 @@ Managed view window components. Provides .NET wrappers and management for native
 - **ManagedVwWindow.csproj** - Managed window wrapper library
 - **ManagedVwWindowTests/ManagedVwWindowTests.csproj** - Window component tests
 
+
+## Key Classes/Interfaces
+- **ManagedVwWindow**
+
 ## Technology Stack
 - C# .NET with C++/CLI interop
 - Windows Forms integration

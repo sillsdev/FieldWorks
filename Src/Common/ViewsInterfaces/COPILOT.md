@@ -19,6 +19,17 @@ View layer interfaces for FieldWorks. Defines managed interfaces for interacting
 - **VwPropertyStoreManaged.cs** - Property store management
 - **ViewsInterfacesTests/** - Interface tests
 
+
+## Key Classes/Interfaces
+- **Rect**
+- **IPicture**
+- **IPictureDisp**
+- **ClipFormat**
+- **IOleServiceProvider**
+- **ComPictureWrapper**
+- **SelLevInfo**
+- **InnerPileHelper**
+
 ## Technology Stack
 - C# .NET with COM interop
 - Interface definitions for native views

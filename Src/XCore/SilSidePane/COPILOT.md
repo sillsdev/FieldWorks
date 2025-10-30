@@ -17,6 +17,13 @@ Side pane UI component for navigation. Provides the navigation pane (sidebar) co
 - **ListViewItemArea.cs** - List view area implementation
 - **NavPaneOptionsDlg** - Navigation pane configuration dialog
 
+
+## Key Classes/Interfaces
+- **Item**
+- **SidePaneItemAreaStyle**
+- **Tab**
+- **SidePane**
+
 ## Technology Stack
 - C# .NET WinForms
 - Custom control development

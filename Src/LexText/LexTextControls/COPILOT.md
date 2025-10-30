@@ -21,6 +21,17 @@ Lexicon UI controls library. Provides specialized controls and dialogs for lexic
 - **WordsSfmImport** - SFM format import
 - **LexTextControlsTests/** - Comprehensive test suite
 
+
+## Key Classes/Interfaces
+- **InterlinDestination**
+- **InterlinearMapping**
+- **Sfm2FlexTextWordsFrag**
+- **PhonologicalFeatureChooserDlg**
+- **LexImportWizard**
+- **AddAllomorphDlg**
+- **MasterCategoryListDlg**
+- **LexImportField**
+
 ## Technology Stack
 - C# .NET WinForms
 - Dialog and wizard UI patterns

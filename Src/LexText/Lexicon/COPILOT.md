@@ -18,6 +18,17 @@ Lexicon editing components and features. Provides the main lexicon entry editing
 - **FLExBridgeFirstSendReceiveInstructionsDlg** - FLEx Bridge onboarding
 - Lexicon entry editing components
 
+
+## Key Classes/Interfaces
+- **HomographResetter**
+- **LexReferencePairView**
+- **LexReferencePairVc**
+- **LexReferenceCollectionView**
+- **LexReferenceCollectionVc**
+- **LexReferencePairSlice**
+- **GhostLexRefSlice**
+- **GhostLexRefLauncher**
+
 ## Technology Stack
 - C# .NET WinForms
 - Complex data editing UI

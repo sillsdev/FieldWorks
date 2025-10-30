@@ -12,6 +12,11 @@ Utilities for unpacking FieldWorks projects. Handles decompression and extractio
 ## Key Components
 - **ProjectUnpacker.csproj** - Project unpacking utility
 
+
+## Key Classes/Interfaces
+- **RegistryData**
+- **ResourceUnpacker**
+
 ## Technology Stack
 - C# .NET
 - Archive/compression handling

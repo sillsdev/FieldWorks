@@ -19,6 +19,17 @@ Root-level site management for views. Provides the base infrastructure for hosti
 - **IVwGraphicsNet.cs** - Graphics interface
 - **PictureWrapper.cs** - Picture handling
 
+
+## Key Classes/Interfaces
+- **CollectorEnv**
+- **PrevPropCounter**
+- **StackItem**
+- **RequestSelectionHelper**
+- **RequestSelectionByHelper**
+- **SpellCheckHelper**
+- **SpellCorrectMenuItem**
+- **AddToDictMenuItem**
+
 ## Technology Stack
 - C# .NET
 - View infrastructure

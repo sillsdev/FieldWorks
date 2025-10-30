@@ -15,6 +15,14 @@ UI adapter pattern interfaces for FieldWorks. Defines contracts for adapting dif
 - **TMInterface.cs** - Toolbar/menu interface definitions
 - **HelperClasses.cs** - Support classes for adapters
 
+
+## Key Classes/Interfaces
+- **TMItemProperties**
+- **TMBarProperties**
+- **WindowListInfo**
+- **ISIBInterface**
+- **ITMAdapter**
+
 ## Technology Stack
 - C# .NET
 - Interface-based design

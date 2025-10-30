@@ -19,6 +19,17 @@ Scripture-specific utilities for working with biblical texts. Provides support f
 - **ScriptureReferenceComparer.cs** - Reference comparison
 - **ScriptureUtilsTests/** - Test suite
 
+
+## Key Classes/Interfaces
+- **IParatextHelper**
+- **IScrText**
+- **ILexicalProject**
+- **ScrReferencePositionComparer**
+- **ReferencePositionType**
+- **ScriptureReferenceComparer**
+- **ScriptureProvider**
+- **IScriptureProviderMetadata**
+
 ## Technology Stack
 - C# .NET
 - Paratext integration APIs

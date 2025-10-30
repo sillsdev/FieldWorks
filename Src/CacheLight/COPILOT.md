@@ -13,6 +13,10 @@ Lightweight caching services used by core components. Provides efficient in-memo
 - **CacheLight.csproj** - Main caching library
 - **CacheLightTests/CacheLightTests.csproj** - Unit tests for caching functionality
 
+
+## Key Classes/Interfaces
+- **IRealDataCache**
+
 ## Technology Stack
 - C# .NET
 - In-memory caching strategies

@@ -20,6 +20,17 @@ General FieldWorks utilities library. Provides a wide range of utility functions
 - **ComponentsExtensionMethods.cs** - Extension methods for common types
 - Many more utility classes and helpers
 
+
+## Key Classes/Interfaces
+- **ManagedPictureFactory**
+- **IFwRegistryHelper**
+- **SaveFile**
+- **InstallationException**
+- **FlexHelpProvider**
+- **Benchmark**
+- **TimeRecorder**
+- **ConsoleProgress**
+
 ## Technology Stack
 - C# .NET
 - Extension methods pattern

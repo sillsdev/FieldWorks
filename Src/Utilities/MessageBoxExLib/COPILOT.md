@@ -14,6 +14,14 @@ Enhanced message box library for FieldWorks. Provides extended message box funct
 - **MessageBoxEx.cs** - Extended message box implementation
 - Custom icon resources (Icon_2.ico through Icon_5.ico)
 
+
+## Key Classes/Interfaces
+- **MessageBoxExButtons**
+- **MessageBoxExResult**
+- **MessageBoxExIcon**
+- **TimeoutResult**
+- **MessageBoxExButton**
+
 ## Technology Stack
 - C# .NET WinForms
 - Windows Forms extensions

@@ -13,6 +13,17 @@ UI components for FieldWorks Data Objects (FDO). Provides user interface element
 - **FdoUi.csproj** - Main UI library for data objects
 - **FdoUiTests/FdoUiTests.csproj** - Comprehensive UI component tests
 
+
+## Key Classes/Interfaces
+- **InflectionFeatureEditor**
+- **WfiWordformUi**
+- **InflectionClassEditor**
+- **BulkPosEditor**
+- **LexPronunciationUi**
+- **PartOfSpeechUi**
+- **IFwGuiControl**
+- **VcFrags**
+
 ## Technology Stack
 - C# .NET WinForms/WPF
 - UI controls and dialogs

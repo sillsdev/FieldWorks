@@ -13,6 +13,12 @@ Integration plugin for Paratext 8. Enables bidirectional integration between Fie
 - **Paratext8Plugin.csproj** - Main plugin library for Paratext 8
 - **ParaText8PluginTests/Paratext8PluginTests.csproj** - Plugin tests
 
+
+## Key Classes/Interfaces
+- **ParatextAlert**
+- **Paratext8Provider**
+- **PT8ParserStateWrapper**
+
 ## Technology Stack
 - C# .NET
 - Paratext 8 plugin API

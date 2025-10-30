@@ -13,6 +13,16 @@ Unicode character editor tool for FieldWorks. Provides a specialized interface f
 - **UnicodeCharEditor.csproj** - Main character editor application
 - **UnicodeCharEditorTests/UnicodeCharEditorTests.csproj** - Editor tests
 
+
+## Key Classes/Interfaces
+- **IcuLockedException**
+- **CustomCharDlg**
+- **PUAInstaller**
+- **UndoFiles**
+- **PuaException**
+- **ErrorCodes**
+- **IcuErrorCodes**
+
 ## Technology Stack
 - C# .NET WinForms
 - Unicode character database integration

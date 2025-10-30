@@ -13,6 +13,17 @@ Import pipeline for Paratext data into FieldWorks. Handles importing Scripture t
 - **ParatextImport.csproj** - Main import library
 - **ParatextImportTests/ParatextImportTests.csproj** - Import functionality tests
 
+
+## Key Classes/Interfaces
+- **ScrAnnotationInfo**
+- **Cluster**
+- **OverlapInfo**
+- **ClusterType**
+- **ImportedBooks**
+- **UndoImportManager**
+- **ImportStyleProxy**
+- **ParatextImportManager**
+
 ## Technology Stack
 - C# .NET
 - Paratext data format parsing

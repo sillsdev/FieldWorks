@@ -18,6 +18,17 @@ Core parsing engine for morphological analysis. Provides the Hermit Crab (HC) pa
 - **IHCLoadErrorLogger.cs** - Error logging interface
 - Exception classes for parsing errors
 
+
+## Key Classes/Interfaces
+- **ParserModelChangeListener**
+- **HCLoader**
+- **IParser**
+- **HCParser**
+- **ParserReport**
+- **ParseReport**
+- **ParseResult**
+- **ParseAnalysis**
+
 ## Technology Stack
 - C# .NET
 - Hermit Crab parsing algorithm

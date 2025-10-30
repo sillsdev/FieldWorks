@@ -14,6 +14,10 @@ Main executable for the LexText (FLEx) lexicon and dictionary application. Provi
 - **LexText.cs** - Main entry point
 - Application icons (LT.ico, LT.png, various sizes)
 
+
+## Key Classes/Interfaces
+- **LexText**
+
 ## Technology Stack
 - C# .NET WinForms
 - Application executable

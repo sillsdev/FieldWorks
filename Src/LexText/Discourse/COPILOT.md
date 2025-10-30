@@ -17,6 +17,17 @@ Discourse analysis features for FieldWorks. Provides tools for analyzing and cha
 - **ConstChartRowDecorator.cs** - Chart row decoration
 - **ChartLocation.cs** - Chart location tracking
 
+
+## Key Classes/Interfaces
+- **ConstChartBody**
+- **DiscourseExportDialog**
+- **MultilevelHeaderModel**
+- **MultilevelHeaderNode**
+- **ConstituentChartLogic**
+- **FindWhereToAddResult**
+- **RowModifiedEventArgs**
+- **InterlinRibbon**
+
 ## Technology Stack
 - C# .NET WinForms
 - Discourse analysis algorithms

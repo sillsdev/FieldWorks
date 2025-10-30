@@ -14,6 +14,17 @@ Common dialogs used across FieldWorks applications. Provides a standardized set 
 - **FwCoreDlgControls/FwCoreDlgControls.csproj** - Reusable dialog controls
 - **FwCoreDlgsTests/FwCoreDlgsTests.csproj** - Dialog component tests
 
+
+## Key Classes/Interfaces
+- **FwFindReplaceDlg**
+- **MatchType**
+- **IFindAndReplaceContext**
+- **RegexHelperMenu**
+- **AddNewUserDlg**
+- **ChooserTreeView**
+- **FwProjPropertiesDlg**
+- **FileLocationChoice**
+
 ## Technology Stack
 - C# .NET WinForms
 - Standard dialog patterns

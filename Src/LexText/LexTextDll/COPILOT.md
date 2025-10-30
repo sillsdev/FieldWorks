@@ -17,6 +17,14 @@ Core lexicon application functionality library. Provides the main application lo
 - **ImageHolder.cs** - Image resource management
 - Application icons and resources
 
+
+## Key Classes/Interfaces
+- **FlexHelpTopicProvider**
+- **AreaListener**
+- **SampleCitationFormTransducer**
+- **ImageHolder**
+- **LexTextApp**
+
 ## Technology Stack
 - C# .NET
 - Application framework integration

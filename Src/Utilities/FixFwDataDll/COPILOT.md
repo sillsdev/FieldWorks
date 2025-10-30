@@ -15,6 +15,12 @@ Core data repair library for FieldWorks. Provides the implementation of data val
 - **FixErrorsDlg** - UI dialog for interactive repair
 - **FwData.cs** - FieldWorks data access and manipulation
 
+
+## Key Classes/Interfaces
+- **FwData**
+- **WriteAllObjectsUtility**
+- **ErrorFixer**
+
 ## Technology Stack
 - C# .NET
 - Data validation algorithms

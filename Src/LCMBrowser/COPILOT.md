@@ -12,6 +12,16 @@ LCM/Cellar model browser tooling. Provides a development and diagnostic tool for
 ## Key Components
 - **LCMBrowser.csproj** - Model browser application
 
+
+## Key Classes/Interfaces
+- **LCMInspectorList**
+- **TsStringRunInfo**
+- **TextProps**
+- **BrowserProjectId**
+- **CustomFields**
+- **LCMClass**
+- **LCMClassProperty**
+
 ## Technology Stack
 - C# .NET WinForms
 - Data model visualization

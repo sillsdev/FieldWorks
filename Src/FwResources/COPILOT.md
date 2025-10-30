@@ -15,6 +15,10 @@ Shared resources (images, strings, assets) for FieldWorks applications and libra
 - Localized strings and translations
 - Shared UI assets
 
+
+## Key Classes/Interfaces
+- **FileFilterType**
+
 ## Technology Stack
 - C# resource files (.resx)
 - Image files and icons

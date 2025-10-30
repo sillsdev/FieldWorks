@@ -17,6 +17,17 @@ Data filtering functionality for FieldWorks. Provides filter matchers and sortin
 - **FindResultSorter.cs** - Result sorting infrastructure
 - **FiltersTests/** - Comprehensive test suite
 
+
+## Key Classes/Interfaces
+- **RangeIntMatcher**
+- **NotEqualIntMatcher**
+- **FilterChangeEventArgs**
+- **ProblemAnnotationFilter**
+- **IMatcher**
+- **DateTimeMatcher**
+- **DateMatchType**
+- **ExactLiteralMatcher**
+
 ## Technology Stack
 - C# .NET
 - Filter pattern implementation

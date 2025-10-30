@@ -19,6 +19,17 @@ Core interfaces for the XCore application framework. Defines the contracts for c
 - **IImageCollection.cs** - Image collection interface
 - **IPaneBar.cs** - Pane bar interface
 
+
+## Key Classes/Interfaces
+- **SettingsGroup**
+- **IFeedbackInfoProvider**
+- **IContextHelper**
+- **ReadOnlyPropertyTable**
+- **ChoiceGroupCollection**
+- **ChoiceGroup**
+- **MediatorDisposeAttribute**
+- **IUIAdapter**
+
 ## Technology Stack
 - C# .NET
 - Interface-based design

@@ -18,6 +18,17 @@ Application framework components for FieldWorks. Provides core application infra
 - **ExternalSettingsAccessorBase.cs** - Settings abstraction
 - **FrameworkTests/** - Framework test suite
 
+
+## Key Classes/Interfaces
+- **FwEditingHelper**
+- **ExportStyleInfo**
+- **IPublicationView**
+- **IPageSetupDialog**
+- **IMainWindowDelegatedFunctions**
+- **IMainWindowDelegateCallbacks**
+- **FwRegistrySettings**
+- **IFieldWorksManager**
+
 ## Technology Stack
 - C# .NET
 - Application framework patterns

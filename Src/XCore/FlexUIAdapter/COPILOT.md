@@ -17,6 +17,16 @@ FLEx UI adapter implementation. Provides the concrete implementation of UI adapt
 - Accessibility mode registry settings
 - Adapter localization resources
 
+
+## Key Classes/Interfaces
+- **ToolStripManager**
+- **ReBarAdapter**
+- **ContextHelper**
+- **SidebarAdapter**
+- **MenuAdapter**
+- **PaneBar**
+- **PanelCollection**
+
 ## Technology Stack
 - C# .NET WinForms
 - Adapter pattern implementation

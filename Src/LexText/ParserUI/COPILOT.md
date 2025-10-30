@@ -17,6 +17,17 @@ Parser user interface components. Provides UI for configuring, testing, and trac
 - **FileTimeToDateTimeConverter.cs** - Utility converters
 - **IParserTrace.cs** - Trace interface
 
+
+## Key Classes/Interfaces
+- **TryAWordDlg**
+- **TryAWordSandbox**
+- **IParserTrace**
+- **WordImporter**
+- **ParserParametersDlg**
+- **FileTimeToDateTimeConverter**
+- **ImportWordSetDlg**
+- **XAmpleWordGrammarDebugger**
+
 ## Technology Stack
 - C# .NET WinForms
 - Parser configuration UI

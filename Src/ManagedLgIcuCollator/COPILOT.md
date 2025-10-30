@@ -13,6 +13,10 @@ Managed wrapper for ICU collation services. Provides .NET-friendly access to ICU
 - **ManagedLgIcuCollator.csproj** - Managed collation wrapper library
 - **ManagedLgIcuCollatorTests/ManagedLgIcuCollatorTests.csproj** - Collation tests
 
+
+## Key Classes/Interfaces
+- **ManagedLgIcuCollator**
+
 ## Technology Stack
 - C# .NET with P/Invoke or C++/CLI
 - ICU library integration

@@ -18,6 +18,17 @@ Interlinear text analysis and glossing functionality. Provides tools for creatin
 - Interlinear text editing and display components
 - Morpheme analysis tools
 
+
+## Key Classes/Interfaces
+- **InterlinPrintVc**
+- **OccurrencesOfSelectedUnit**
+- **MatchingConcordanceItems**
+- **InterlinearTextsRecordClerk**
+- **InterlinearExportDialog**
+- **InterlinDocChart**
+- **ParseIsCurrentFixer**
+- **ComplexConcPatternVc**
+
 ## Technology Stack
 - C# .NET WinForms
 - Complex text layout and rendering

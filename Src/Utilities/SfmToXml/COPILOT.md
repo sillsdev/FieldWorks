@@ -16,6 +16,17 @@ Standard Format Marker (SFM) to XML conversion utility. Converts SFM-formatted d
 - **ClsInFieldMarker.cs** - In-field marker processing
 - **CRC.cs** - Checksum utilities
 
+
+## Key Classes/Interfaces
+- **ILexImportFields**
+- **LexImportFields**
+- **SfmData**
+- **WrnErrInfo**
+- **ClsLog**
+- **ClsInFieldMarker**
+- **ClsHierarchyEntry**
+- **ClsPathObject**
+
 ## Technology Stack
 - C# .NET
 - SFM parsing and processing

@@ -26,6 +26,17 @@ Each subfolder has its own COPILOT.md file with detailed documentation:
 - **FlexUIAdapter/** - UI adapter for FLEx applications (see FlexUIAdapter/COPILOT.md)
 - **SilSidePane/** - Side pane UI component (see SilSidePane/COPILOT.md)
 
+
+## Key Classes/Interfaces
+- **Inventory**
+- **IOldVersionMerger**
+- **XmlIncluder**
+- **ImageContent**
+- **NotifyWindow**
+- **BackgroundStyles**
+- **ClockStates**
+- **IconHolder**
+
 ## Technology Stack
 - C# .NET WinForms
 - Plugin/mediator architecture

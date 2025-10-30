@@ -15,6 +15,11 @@ Pathway publishing integration plugin for FLEx. Enables export and publishing of
 - **myFolders.cs** - Folder management for publishing
 - **FlexPathwayPluginTests/** - Plugin test suite
 
+
+## Key Classes/Interfaces
+- **FlexPathwayPlugin**
+- **DeExportDialog**
+
 ## Technology Stack
 - C# .NET
 - Pathway publishing API integration

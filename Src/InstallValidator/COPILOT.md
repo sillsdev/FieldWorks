@@ -13,6 +13,10 @@ Utilities to validate installation prerequisites for FieldWorks. Checks system r
 - **InstallValidator.csproj** - Main validation library
 - **InstallValidatorTests/InstallValidatorTests.csproj** - Validation tests
 
+
+## Key Classes/Interfaces
+- **InstallValidator**
+
 ## Technology Stack
 - C# .NET
 - System detection and validation

@@ -21,6 +21,17 @@ Simplified root site implementation for view hosting. Provides a streamlined API
 - **VwSelectionArgs.cs** - Selection event arguments
 - **IRootSite.cs** - Root site interface
 
+
+## Key Classes/Interfaces
+- **VwSelectionArgs**
+- **SelPositionInfo**
+- **IPrintRootSite**
+- **PrintRootSite**
+- **IChangeRootObject**
+- **SelectionRestorer**
+- **ISelectionChangeNotifier**
+- **IRawElementProviderFragment**
+
 ## Technology Stack
 - C# .NET
 - View hosting infrastructure

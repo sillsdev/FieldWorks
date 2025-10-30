@@ -13,6 +13,10 @@ Paratext lexicon integration plugin. Enables FieldWorks lexicon data to be acces
 - **FwParatextLexiconPlugin.csproj** - Main plugin library
 - **FwParatextLexiconPluginTests/FwParatextLexiconPluginTests.csproj** - Plugin tests
 
+
+## Key Classes/Interfaces
+- **FwLexiconPlugin**
+
 ## Technology Stack
 - C# .NET
 - Paratext plugin API

@@ -14,6 +14,11 @@ Error reporting functionality for FieldWorks. Provides infrastructure for collec
 - **ErrorReport.cs** - Error report collection and display
 - Dialog image resources for error reporting UI
 
+
+## Key Classes/Interfaces
+- **UsageEmailDialog**
+- **ErrorReporter**
+
 ## Technology Stack
 - C# .NET WinForms
 - Error collection and reporting

@@ -12,6 +12,10 @@ Managed view rendering primitives for buffered drawing. Provides double-buffered
 ## Key Components
 - **ManagedVwDrawRootBuffered.csproj** - Buffered rendering library
 
+
+## Key Classes/Interfaces
+- **VwDrawRootBuffered**
+
 ## Technology Stack
 - C# .NET with GDI+ or DirectX
 - Double-buffered rendering
