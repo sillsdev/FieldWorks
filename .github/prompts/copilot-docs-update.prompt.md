@@ -5,7 +5,7 @@ Purpose: Run a reliable 3-step flow to ensure COPILOT.md files are updated whene
 Context: FieldWorks repository. Scripts referenced below exist under `.github/` and are documented in `.github/update-copilot-summaries.md`.
 
 Inputs:
-- base_ref: git ref to diff against (default: origin/release/9.3, or the PR base branch)
+- base_ref: optional git ref to diff against (default behavior compares to the repo default via origin/HEAD)
 - status: draft|verified (default: draft)
 
 Success criteria:
@@ -14,18 +14,18 @@ Success criteria:
 
 Steps:
 1) Detect impacted folders
-   - Run: `python .github/detect_copilot_needed.py --base <base_ref> --strict`
+   - Run: `python .github/detect_copilot_needed.py --strict` (or pass `--base origin/<branch>` explicitly)
    - Collect the set of folders reported as missing `COPILOT.md` updates.
 
 2) Propose/prepare updates for those folders
-   - Run: `python .github/propose_copilot_updates.py --base <base_ref> --status <status>`
+   - Run: `python .github/propose_copilot_updates.py --status <status>` (or pass `--base origin/<branch>` explicitly)
    - This ensures frontmatter and all required headings exist and appends an "References (auto-generated hints)" section.
    - Do not remove human-written content; only append/fix structure.
 
 3) Follow the instructions in update-copilot-summairies.md for the files identified as needing updates.  Focus on the descriptions for accuracy, ALWAYS reading through all the relevant source files.
 
 4) Validate documentation integrity
-   - Run: `python .github/check_copilot_docs.py --fail --verbose`
+   - Run: `python .github/check_copilot_docs.py --only-changed --fail --verbose`
    - If failures occur, iterate step 2 or manually edit `Src/<Folder>/COPILOT.md` to address missing headings, placeholders, or reference issues. Re-run until green.
 
 5) Commit and summarize
@@ -34,8 +34,8 @@ Steps:
 
 Notes:
 - VS Code tasks are available for convenience:
-  - "COPILOT: Detect updates needed"
-  - "COPILOT: Propose updates for changed folders"
-  - "COPILOT: Validate COPILOT docs"
-  - "COPILOT: Update flow (detect → propose → validate)"
+   - "COPILOT: Detect updates needed"
+   - "COPILOT: Propose updates for changed folders"
+   - "COPILOT: Validate COPILOT docs (changed only)"
+   - "COPILOT: Update flow (detect → propose → validate)"
 - In CI, `.github/workflows/copilot-docs-detect.yml` runs the detector and (optionally) the validator in advisory mode.

@@ -9,7 +9,8 @@ Checks:
 - References entries appear to map to real files in repo (best-effort)
 
 Usage:
-  python .github/check_copilot_docs.py [--root <repo-root>] [--fail] [--json <out>] [--verbose]
+    python .github/check_copilot_docs.py [--root <repo-root>] [--fail] [--json <out>] [--verbose]
+                                                                            [--only-changed] [--base <ref>] [--head <ref>] [--since <ref>]
 
 Exit codes:
   0 = no issues
@@ -21,6 +22,7 @@ import json
 import os
 import re
 import sys
+import subprocess
 from pathlib import Path
 
 REQUIRED_HEADINGS = [
@@ -71,6 +73,33 @@ def find_repo_root(start: Path) -> Path:
             return p
         p = p.parent
     return start.resolve()
+
+
+def run(cmd, cwd=None):
+    return subprocess.check_output(cmd, cwd=cwd, stderr=subprocess.STDOUT).decode(
+        "utf-8", errors="replace"
+    )
+
+
+def git_changed_files(
+    root: Path, base: str = None, head: str = "HEAD", since: str = None
+):
+    if since:
+        diff_range = f"{since}..{head}"
+    elif base:
+        # Ensure origin/ prefix if a bare branch name is provided
+        if not base.startswith("origin/") and "/" not in base:
+            base = f"origin/{base}"
+        diff_range = f"{base}..{head}"
+    else:
+        # Fallback: compare to merge-base with origin/HEAD (best effort)
+        try:
+            mb = run(["git", "merge-base", head, "origin/HEAD"], cwd=str(root)).strip()
+            diff_range = f"{mb}..{head}"
+        except Exception:
+            diff_range = f"HEAD~1..{head}"
+    out = run(["git", "diff", "--name-only", diff_range], cwd=str(root))
+    return [l.strip().replace("\\", "/") for l in out.splitlines() if l.strip()]
 
 
 def index_repo_files(root: Path):
@@ -214,6 +243,20 @@ def main():
         "--json", dest="json_out", default=None, help="Write JSON report to file"
     )
     ap.add_argument("--verbose", action="store_true")
+    ap.add_argument(
+        "--only-changed",
+        action="store_true",
+        help="Validate only changed COPILOT.md files",
+    )
+    ap.add_argument(
+        "--base",
+        default=None,
+        help="Base git ref (e.g., origin/<branch> or branch name)",
+    )
+    ap.add_argument("--head", default="HEAD", help="Head ref (default HEAD)")
+    ap.add_argument(
+        "--since", default=None, help="Alternative to base/head: since this ref"
+    )
     args = ap.parse_args()
 
     root = Path(args.root).resolve()
@@ -224,8 +267,19 @@ def main():
 
     repo_index = index_repo_files(root)
 
+    paths_to_check = []
+    if args.only - changed:
+        changed = git_changed_files(
+            root, base=args.base, head=args.head, since=args.since
+        )
+        for p in changed:
+            if p.endswith("/COPILOT.md") and p.startswith("Src/"):
+                paths_to_check.append(root / p)
+    if not paths_to_check:
+        paths_to_check = list(src.rglob("COPILOT.md"))
+
     results = []
-    for copath in src.rglob("COPILOT.md"):
+    for copath in paths_to_check:
         results.append(validate_file(copath, repo_index, verbose=args.verbose))
 
     failures = [r for r in results if not r["ok"]]

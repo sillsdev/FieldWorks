@@ -19,11 +19,11 @@ jobs:
             - name: Detect folders needing COPILOT updates
               shell: pwsh
               run: |
-                  python .github/detect_copilot_needed.py --base $env:GITHUB_BASE_REF --strict
+                  python .github/detect_copilot_needed.py --base "origin/$env:GITHUB_BASE_REF" --strict
             # Optional: Validate changed COPILOT.md files structure
             - name: Validate COPILOT structure (optional)
               if: ${{ always() }}
               shell: pwsh
               run: |
-                  python .github/check_copilot_docs.py --fail
+                  python .github/check_copilot_docs.py --only-changed --base "origin/$env:GITHUB_BASE_REF" --fail
               continue-on-error: true

@@ -3,14 +3,7 @@
   // for the documentation about the tasks.json format
   // "$schema": "https://raw.githubusercontent.com/microsoft/vscode/master/resources/app/schemas/tasks.schema.json",
   "version": "2.0.0",
-  "inputs": [
-    {
-      "id": "baseRef",
-      "type": "promptString",
-      "description": "Git base ref for diff (e.g., origin/release/9.3 or origin/<branch>)",
-      "default": "origin/release/9.3"
-    }
-  ],
+  "inputs": [],
   "tasks": [
     {
       "label": "build recent",
@@ -87,7 +80,7 @@
     {
       "label": "COPILOT: Detect updates needed",
       "type": "shell",
-      "command": "python .github/detect_copilot_needed.py --base ${input:baseRef} --strict",
+      "command": "& { . ./Build/Agent/GitHelpers.ps1; $base = Get-DefaultBranchRef; python .github/detect_copilot_needed.py --base $base --strict }",
       "group": {
         "kind": "test",
         "isDefault": false
@@ -108,7 +101,7 @@
     {
       "label": "COPILOT: Propose updates for changed folders",
       "type": "shell",
-      "command": "python .github/propose_copilot_updates.py --base ${input:baseRef}",
+      "command": "& { . ./Build/Agent/GitHelpers.ps1; $base = Get-DefaultBranchRef; python .github/propose_copilot_updates.py --base $base }",
       "group": "build",
       "options": {
         "shell": {
@@ -124,9 +117,9 @@
       "problemMatcher": []
     },
     {
-      "label": "COPILOT: Validate COPILOT docs",
+      "label": "COPILOT: Validate COPILOT docs (changed only)",
       "type": "shell",
-      "command": "python .github/check_copilot_docs.py --fail",
+      "command": "& { . ./Build/Agent/GitHelpers.ps1; $base = Get-DefaultBranchRef; python .github/check_copilot_docs.py --only-changed --base $base --fail }",
       "group": {
         "kind": "test",
         "isDefault": false
@@ -149,7 +142,7 @@
       "dependsOn": [
         "COPILOT: Detect updates needed",
         "COPILOT: Propose updates for changed folders",
-        "COPILOT: Validate COPILOT docs"
+        "COPILOT: Validate COPILOT docs (changed only)"
       ],
       "dependsOrder": "sequence"
     }

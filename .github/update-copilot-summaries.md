@@ -227,14 +227,16 @@ Quick starts (run from repo root):
 # Ensure required frontmatter fields across all Src/**/COPILOT.md
 python .github/fill_copilot_frontmatter.py --status draft --commit HEAD
 
-# Validate structure, headings, and references; fail build on errors
-python .github/check_copilot_docs.py --fail --verbose
+# Validate structure, headings, and references for changed COPILOT.md only; fail build on errors
+python .github/check_copilot_docs.py --only-changed --fail --verbose
 
 # Detect which folders changed and need COPILOT.md updates (CI-friendly)
-python .github/detect_copilot_needed.py --base origin/release/9.3 --strict
+# Tip: Base is optional; script defaults to diffing against origin/HEAD when omitted
+python .github/detect_copilot_needed.py --strict
 
 # Prepare/update COPILOT.md in changed folders with required headings and auto References hints
-python .github/propose_copilot_updates.py --base origin/release/9.3
+# Tip: Base is optional; script defaults to diffing against origin/HEAD when omitted
+python .github/propose_copilot_updates.py
 ```
 
 You can also script your own analysis. Example snippet for parsing .csproj references:
@@ -268,15 +270,17 @@ Additional automation ideas:
 CI tip: You may add a non-blocking docs validation job that runs `python .github/check_copilot_docs.py` and posts results as annotations. Keep it advisory until coverage is consistent.
 
 Recommended CI wiring:
-- Run `detect_copilot_needed.py` on pull_request with `--base ${{ github.base_ref }}` and `--strict` to fail when code changes under `Src/**` don’t include a corresponding COPILOT.md update.
-- Optionally run `check_copilot_docs.py --fail` to ensure updated COPILOT.md files still meet the skeleton (prevents unintentional section deletions).
+- Run `detect_copilot_needed.py` on pull_request with `--base origin/${{ github.base_ref }}` and `--strict` to fail when code changes under `Src/**` don’t include a corresponding COPILOT.md update.
+- Optionally run `check_copilot_docs.py --only-changed --base origin/${{ github.base_ref }} --fail` to ensure updated COPILOT.md files still meet the skeleton (prevents unintentional section deletions) without flagging unrelated folders.
 
 VS Code integration:
 - Use the tasks under `.vscode/tasks.json`:
    - COPILOT: Detect updates needed
    - COPILOT: Propose updates for changed folders
-   - COPILOT: Validate COPILOT docs
+   - COPILOT: Validate COPILOT docs (changed only)
    - COPILOT: Update flow (detect → propose → validate)
+
+Note: Local VS Code tasks resolve the default base branch dynamically via `Build/Agent/GitHelpers.ps1` (Get-DefaultBranchRef) to avoid hardcoded branch names.
 
 Agentic flow prompt:
 - See `.github/prompts/copilot-docs-update.prompt.md` to drive the full detect → propose → validate sequence with clear success criteria and step-by-step instructions.
