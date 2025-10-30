@@ -50,3 +50,53 @@ LCM/Cellar model browser tooling. Provides a development and diagnostic tool for
 
 - **Classes found**: 14 public classes
 - **Namespaces**: LCMBrowser
+
+## Interfaces and Data Models
+
+- **BrowserProjectId** (class)
+  - Path: `BrowserProjectId.cs`
+  - Public class implementation
+
+- **CustomFields** (class)
+  - Path: `CustomFields.cs`
+  - Public class implementation
+
+- **LCMClass** (class)
+  - Path: `LCMClassList.cs`
+  - Public class implementation
+
+- **LCMClassList** (class)
+  - Path: `LCMClassList.cs`
+  - Public class implementation
+
+- **LCMClassProperty** (class)
+  - Path: `LCMClassList.cs`
+  - Public class implementation
+
+- **LCMInspectorList** (class)
+  - Path: `LCMInspectorList.cs`
+  - Public class implementation
+
+- **TextIntPropInfo** (class)
+  - Path: `LCMInspectorList.cs`
+  - Public class implementation
+
+- **TextProps** (class)
+  - Path: `LCMInspectorList.cs`
+  - Public class implementation
+
+- **TextStrPropInfo** (class)
+  - Path: `LCMInspectorList.cs`
+  - Public class implementation
+
+- **TsStringRunInfo** (class)
+  - Path: `LCMInspectorList.cs`
+  - Public class implementation
+
+## References
+
+- **Project files**: LCMBrowser.csproj
+- **Target frameworks**: net462
+- **Key C# files**: BrowserProjectId.cs, ClassPropertySelector.Designer.cs, ClassPropertySelector.cs, CustomFields.cs, LCMBrowserForm.cs, LCMClassList.cs, LCMInspectorList.cs, ModelWnd.Designer.cs, ModelWnd.cs, RealListChooser.cs
+- **Source file count**: 16 files
+- **Data file count**: 6 files

@@ -43,3 +43,17 @@ Managed wrapper for ICU collation services. Provides .NET-friendly access to ICU
 
 - **Classes found**: 2 public classes
 - **Namespaces**: SIL.FieldWorks.Language
+
+## Interfaces and Data Models
+
+- **ManagedLgIcuCollator** (class)
+  - Path: `LgIcuCollator.cs`
+  - Public class implementation
+
+## References
+
+- **Project files**: ManagedLgIcuCollator.csproj, ManagedLgIcuCollatorTests.csproj
+- **Target frameworks**: net462
+- **Key C# files**: LgIcuCollator.cs, ManagedLgIcuCollatorTests.cs
+- **Source file count**: 2 files
+- **Data file count**: 0 files

@@ -45,3 +45,29 @@ Integration plugin for Paratext 8. Enables bidirectional integration between Fie
 
 - **Classes found**: 5 public classes
 - **Namespaces**: Paratext8Plugin
+
+## Interfaces and Data Models
+
+- **MockScriptureProvider** (class)
+  - Path: `ParaText8PluginTests/ParatextDataIntegrationTests.cs`
+  - Public class implementation
+
+- **PT8ParserStateWrapper** (class)
+  - Path: `Paratext8Provider.cs`
+  - Public class implementation
+
+- **Paratext8Provider** (class)
+  - Path: `Paratext8Provider.cs`
+  - Public class implementation
+
+- **ParatextAlert** (class)
+  - Path: `ParatextAlert.cs`
+  - Public class implementation
+
+## References
+
+- **Project files**: Paratext8Plugin.csproj, Paratext8PluginTests.csproj
+- **Target frameworks**: net462
+- **Key C# files**: AssemblyInfo.cs, PT8VerseRefWrapper.cs, PTScrTextWrapper.cs, Paratext8Provider.cs, ParatextAlert.cs, ParatextDataIntegrationTests.cs, Pt8VerseWrapper.cs
+- **Source file count**: 7 files
+- **Data file count**: 1 files

@@ -44,3 +44,37 @@ Enhanced message box library for FieldWorks. Provides extended message box funct
 
 - **Classes found**: 4 public classes
 - **Namespaces**: Utils.MessageBoxExLib
+
+## Interfaces and Data Models
+
+- **MessageBoxEx** (class)
+  - Path: `MessageBoxEx.cs`
+  - Public class implementation
+
+- **MessageBoxExButton** (class)
+  - Path: `MessageBoxExButton.cs`
+  - Public class implementation
+
+- **MessageBoxExManager** (class)
+  - Path: `MessageBoxExManager.cs`
+  - Public class implementation
+
+- **MessageBoxExResult** (struct)
+  - Path: `MessageBoxExResult.cs`
+
+- **MessageBoxExButtons** (enum)
+  - Path: `MessageBoxExButtons.cs`
+
+- **MessageBoxExIcon** (enum)
+  - Path: `MessageBoxExIcon.cs`
+
+- **TimeoutResult** (enum)
+  - Path: `TimeoutResult.cs`
+
+## References
+
+- **Project files**: MessageBoxExLib.csproj, MessageBoxExLibTests.csproj
+- **Target frameworks**: net462
+- **Key C# files**: AssemblyInfo.cs, MessageBoxEx.cs, MessageBoxExButton.cs, MessageBoxExButtons.cs, MessageBoxExForm.cs, MessageBoxExIcon.cs, MessageBoxExManager.cs, MessageBoxExResult.cs, Tests.cs, TimeoutResult.cs
+- **Source file count**: 10 files
+- **Data file count**: 2 files

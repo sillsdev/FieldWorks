@@ -43,3 +43,25 @@ Utilities for unpacking FieldWorks projects. Handles decompression and extractio
 
 - **Classes found**: 3 public classes
 - **Namespaces**: SIL.FieldWorks.Test.ProjectUnpacker
+
+## Interfaces and Data Models
+
+- **RegistryData** (class)
+  - Path: `RegistryData.cs`
+  - Public class implementation
+
+- **ResourceUnpacker** (class)
+  - Path: `Unpacker.cs`
+  - Public class implementation
+
+- **Unpacker** (class)
+  - Path: `Unpacker.cs`
+  - Public class implementation
+
+## References
+
+- **Project files**: ProjectUnpacker.csproj
+- **Target frameworks**: net462
+- **Key C# files**: AssemblyInfo.cs, RegistryData.cs, Unpacker.cs
+- **Source file count**: 3 files
+- **Data file count**: 3 files

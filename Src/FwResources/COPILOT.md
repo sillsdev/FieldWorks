@@ -46,3 +46,28 @@ Shared resources (images, strings, assets) for FieldWorks applications and libra
 
 - **Classes found**: 4 public classes
 - **Namespaces**: SIL.FieldWorks.Resources
+
+## Interfaces and Data Models
+
+- **FwFileExtensions** (class)
+  - Path: `FwFileExtensions.cs`
+  - Public class implementation
+
+- **Images** (class)
+  - Path: `Images.Designer.cs`
+  - Public class implementation
+
+- **ResourceHelper** (class)
+  - Path: `ResourceHelper.cs`
+  - Public class implementation
+
+- **FileFilterType** (enum)
+  - Path: `ResourceHelper.cs`
+
+## References
+
+- **Project files**: FwResources.csproj
+- **Target frameworks**: net462
+- **Key C# files**: AssemblyInfo.cs, FwFileExtensions.cs, FwStrings.Designer.cs, FwTMStrings.Designer.cs, HelpTopicPaths.Designer.cs, Images.Designer.cs, ResourceHelper.cs, ResourceHelperImpl.Designer.cs, SearchingAnimation.cs, ToolBarSystemStrings.Designer.cs
+- **Source file count**: 12 files
+- **Data file count**: 7 files

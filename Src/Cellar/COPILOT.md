@@ -42,3 +42,9 @@ No major public classes identified.
 ## Code Evidence
 *Analysis based on scanning 3 source files*
 
+## References
+
+- **Key C++ files**: FwXml.cpp, FwXmlString.cpp
+- **Key headers**: FwXml.h
+- **Source file count**: 3 files
+- **Data file count**: 0 files

@@ -64,3 +64,165 @@ Simplified root site implementation for view hosting. Provides a streamlined API
 - **Classes found**: 20 public classes
 - **Interfaces found**: 15 public interfaces
 - **Namespaces**: SIL.FieldWorks.Common.RootSites, SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
+
+## Interfaces and Data Models
+
+- **IChangeRootObject** (interface)
+  - Path: `IChangeRootObject.cs`
+  - Public interface definition
+
+- **IControl** (interface)
+  - Path: `IControl.cs`
+  - Public interface definition
+
+- **IEditingCallbacks** (interface)
+  - Path: `EditingHelper.cs`
+  - Public interface definition
+
+- **IPrintRootSite** (interface)
+  - Path: `PrintRootSite.cs`
+  - Public interface definition
+
+- **IRawElementProviderFragment** (interface)
+  - Path: `WpfInterfacesForMono.cs`
+  - Public interface definition
+
+- **IRawElementProviderFragmentRoot** (interface)
+  - Path: `WpfInterfacesForMono.cs`
+  - Public interface definition
+
+- **IRawElementProviderSimple** (interface)
+  - Path: `WpfInterfacesForMono.cs`
+  - Public interface definition
+
+- **IRefreshableRoot** (interface)
+  - Path: `IRootSite.cs`
+  - Public interface definition
+
+- **IRootSite** (interface)
+  - Path: `IRootSite.cs`
+  - Public interface definition
+
+- **ISelectionChangeNotifier** (interface)
+  - Path: `ISelectionChangeNotifier.cs`
+  - Public interface definition
+
+- **ISuppressDefaultKeyboardOnKillFocus** (interface)
+  - Path: `SimpleRootSite.cs`
+  - Public interface definition
+
+- **ITextProvider** (interface)
+  - Path: `WpfInterfacesForMono.cs`
+  - Public interface definition
+
+- **IValueProvider** (interface)
+  - Path: `WpfInterfacesForMono.cs`
+  - Public interface definition
+
+- **NavigateDirection** (interface)
+  - Path: `WpfInterfacesForMono.cs`
+  - Public interface definition
+
+- **ActiveViewHelper** (class)
+  - Path: `ActiveViewHelper.cs`
+  - Public class implementation
+
+- **DataUpdateMonitor** (class)
+  - Path: `DataUpdateMonitor.cs`
+  - Public class implementation
+
+- **FwRightMouseClickEventArgs** (class)
+  - Path: `FwRightMouseClickEventArgs.cs`
+  - Public class implementation
+
+- **IbusRootSiteEventHandler** (class)
+  - Path: `IbusRootSiteEventHandler.cs`
+  - Public class implementation
+
+- **LocalLinkArgs** (class)
+  - Path: `LocalLinkArgs.cs`
+  - Public class implementation
+
+- **OrientationManager** (class)
+  - Path: `OrientationManager.cs`
+  - Public class implementation
+
+- **PrintRootSite** (class)
+  - Path: `PrintRootSite.cs`
+  - Public class implementation
+
+- **RenderEngineFactory** (class)
+  - Path: `RenderEngineFactory.cs`
+  - Public class implementation
+
+- **SelInfo** (class)
+  - Path: `SelectionHelper.cs`
+  - Public class implementation
+
+- **SelPositionInfo** (class)
+  - Path: `SelPositionInfo.cs`
+  - Public class implementation
+
+- **SelectionHelper** (class)
+  - Path: `SelectionHelper.cs`
+  - Public class implementation
+
+- **SelectionRestorer** (class)
+  - Path: `SelectionRestorer.cs`
+  - Public class implementation
+
+- **SimpleRootSite** (class)
+  - Path: `SimpleRootSite.cs`
+  - Public class implementation
+
+- **SuspendDrawing** (class)
+  - Path: `SimpleRootSite.cs`
+  - Public class implementation
+
+- **TextSelInfo** (class)
+  - Path: `TextSelInfo.cs`
+  - Public class implementation
+
+- **UpdateSemaphore** (class)
+  - Path: `DataUpdateMonitor.cs`
+  - Public class implementation
+
+- **VerticalOrientationManager** (class)
+  - Path: `OrientationManager.cs`
+  - Public class implementation
+
+- **ViewInputManager** (class)
+  - Path: `ViewInputManager.cs`
+  - Public class implementation
+
+- **VwBaseVc** (class)
+  - Path: `VwBaseVc.cs`
+  - Public class implementation
+
+- **VwSelectionArgs** (class)
+  - Path: `VwSelectionArgs.cs`
+  - Public class implementation
+
+- **CkBehavior** (enum)
+  - Path: `EditingHelper.cs`
+
+- **ObjType** (enum)
+  - Path: `SimpleRootSiteTests/UndoableRealDataCache.cs`
+
+- **PasteStatus** (enum)
+  - Path: `EditingHelper.cs`
+
+- **ProviderOptions** (enum)
+  - Path: `WpfInterfacesForMono.cs`
+
+- **SelLimitType** (enum)
+  - Path: `SelectionHelper.cs`
+
+## References
+
+- **Project files**: SimpleRootSite.csproj, SimpleRootSiteTests.csproj
+- **Target frameworks**: net462
+- **Key C# files**: ActiveViewHelper.cs, AssemblyInfo.cs, IChangeRootObject.cs, ISelectionChangeNotifier.cs, PrintRootSite.cs, RenderEngineFactory.cs, SelPositionInfo.cs, SelectionRestorer.cs, VwSelectionArgs.cs, WpfInterfacesForMono.cs
+- **XML data/config**: SimpleRootSiteDataProviderCacheModel.xml, TextCacheModel.xml
+- **Source file count**: 43 files
+- **Data file count**: 6 files

@@ -45,3 +45,11 @@ Database migration and upgrade tooling for FieldWorks. Handles schema migrations
 
 - **Classes found**: 4 public classes
 - **Namespaces**: SIL.FieldWorks.MigrateSqlDbs.MigrateProjects, SIL.FieldWorks.MigrateSqlDbs.MigrateProjects.Properties
+
+## References
+
+- **Project files**: MigrateSqlDbs.csproj
+- **Target frameworks**: net462
+- **Key C# files**: AssemblyInfo.cs, ExistingProjectDlg.Designer.cs, ExistingProjectDlg.cs, FWVersionTooOld.Designer.cs, FWVersionTooOld.cs, MigrateProjects.Designer.cs, MigrateProjects.cs, Program.cs, Settings.Designer.cs, Settings.cs
+- **Source file count**: 11 files
+- **Data file count**: 4 files

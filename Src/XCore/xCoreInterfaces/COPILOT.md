@@ -64,3 +64,180 @@ Core interfaces for the XCore application framework. Defines the contracts for c
 - **Classes found**: 20 public classes
 - **Interfaces found**: 15 public interfaces
 - **Namespaces**: XCore
+
+## Interfaces and Data Models
+
+- **ICommandUndoRedoText** (interface)
+  - Path: `Command.cs`
+  - Public interface definition
+
+- **IContextHelper** (interface)
+  - Path: `BaseContextHelper.cs`
+  - Public interface definition
+
+- **IFeedbackInfoProvider** (interface)
+  - Path: `IFeedbackInfoProvider.cs`
+  - Public interface definition
+
+- **IImageCollection** (interface)
+  - Path: `IImageCollection.cs`
+  - Public interface definition
+
+- **IMediatorProvider** (interface)
+  - Path: `IxCoreColleague.cs`
+  - Public interface definition
+
+- **IPaneBar** (interface)
+  - Path: `IPaneBar.cs`
+  - Public interface definition
+
+- **IPaneBarUser** (interface)
+  - Path: `IPaneBar.cs`
+  - Public interface definition
+
+- **IPersistenceProvider** (interface)
+  - Path: `IPersistenceProvider.cs`
+  - Public interface definition
+
+- **IPropertyRetriever** (interface)
+  - Path: `IPropertyRetriever.cs`
+  - Public interface definition
+
+- **IPropertyTableProvider** (interface)
+  - Path: `IxCoreColleague.cs`
+  - Public interface definition
+
+- **ISnapSplitPosition** (interface)
+  - Path: `IxCoreColleague.cs`
+  - Public interface definition
+
+- **ITestableUIAdapter** (interface)
+  - Path: `IUIAdapter.cs`
+  - Public interface definition
+
+- **IUIAdapter** (interface)
+  - Path: `IUIAdapter.cs`
+  - Public interface definition
+
+- **IUIAdapterForceRegenerate** (interface)
+  - Path: `IUIAdapter.cs`
+  - Public interface definition
+
+- **IUIMenuAdapter** (interface)
+  - Path: `IUIAdapter.cs`
+  - Public interface definition
+
+- **IXCoreUserControl** (interface)
+  - Path: `IxCoreColleague.cs`
+  - Public interface definition
+
+- **IxCoreColleague** (interface)
+  - Path: `IxCoreColleague.cs`
+  - Public interface definition
+
+- **IxCoreContentControl** (interface)
+  - Path: `IxCoreColleague.cs`
+  - Public interface definition
+
+- **IxCoreCtrlTabProvider** (interface)
+  - Path: `IxCoreColleague.cs`
+  - Public interface definition
+
+- **IxWindow** (interface)
+  - Path: `IxCoreColleague.cs`
+  - Public interface definition
+
+- **AdapterAssemblyFactory** (class)
+  - Path: `IUIAdapter.cs`
+  - Public class implementation
+
+- **BaseContextHelper** (class)
+  - Path: `BaseContextHelper.cs`
+  - Public class implementation
+
+- **BoolPropertyChoice** (class)
+  - Path: `Choice.cs`
+  - Public class implementation
+
+- **ChoiceBase** (class)
+  - Path: `Choice.cs`
+  - Public class implementation
+
+- **ChoiceGroup** (class)
+  - Path: `ChoiceGroup.cs`
+  - Public class implementation
+
+- **ChoiceGroupCollection** (class)
+  - Path: `ChoiceGroup.cs`
+  - Public class implementation
+
+- **ChoiceRelatedClass** (class)
+  - Path: `ChoiceGroup.cs`
+  - Public class implementation
+
+- **CommandChoice** (class)
+  - Path: `Choice.cs`
+  - Public class implementation
+
+- **List** (class)
+  - Path: `List.cs`
+  - Public class implementation
+
+- **ListItem** (class)
+  - Path: `List.cs`
+  - Public class implementation
+
+- **Mediator** (class)
+  - Path: `Mediator.cs`
+  - Public class implementation
+
+- **MediatorDisposeAttribute** (class)
+  - Path: `Mediator.cs`
+  - Public class implementation
+
+- **PropertyTable** (class)
+  - Path: `PropertyTable.cs`
+  - Public class implementation
+
+- **ReadOnlyPropertyTable** (class)
+  - Path: `ReadOnlyPropertyTable.cs`
+  - Public class implementation
+
+- **RecordFilterListProvider** (class)
+  - Path: `RecordFilterListProvider.cs`
+  - Public class implementation
+
+- **SeparatorItem** (class)
+  - Path: `List.cs`
+  - Public class implementation
+
+- **TemporaryColleagueParameter** (class)
+  - Path: `IUIAdapter.cs`
+  - Public class implementation
+
+- **ToolTipHolder** (class)
+  - Path: `IUIAdapter.cs`
+  - Public class implementation
+
+- **UIItemDisplayProperties** (class)
+  - Path: `IUIAdapter.cs`
+  - Public class implementation
+
+- **UIListDisplayProperties** (class)
+  - Path: `IUIAdapter.cs`
+  - Public class implementation
+
+- **ColleaguePriority** (enum)
+  - Path: `IxCoreColleague.cs`
+
+- **SettingsGroup** (enum)
+  - Path: `PropertyTable.cs`
+
+## References
+
+- **Project files**: xCoreInterfaces.csproj, xCoreInterfacesTests.csproj
+- **Target frameworks**: net462
+- **Key C# files**: AssemblyInfo.cs, BaseContextHelper.cs, ChoiceGroup.cs, IFeedbackInfoProvider.cs, IImageCollection.cs, IUIAdapter.cs, Mediator.cs, PropertyTable.cs, ReadOnlyPropertyTable.cs, RecordFilterListProvider.cs
+- **XML data/config**: Settings.xml, db_TestLocal_Settings.xml
+- **Source file count**: 26 files
+- **Data file count**: 4 files

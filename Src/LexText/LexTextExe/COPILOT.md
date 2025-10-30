@@ -41,3 +41,17 @@ Main executable for the LexText (FLEx) lexicon and dictionary application. Provi
 
 - **Classes found**: 1 public classes
 - **Namespaces**: SIL.FieldWorks.XWorks.LexText
+
+## Interfaces and Data Models
+
+- **LexText** (class)
+  - Path: `LexText.cs`
+  - Public class implementation
+
+## References
+
+- **Project files**: LexTextExe.csproj
+- **Target frameworks**: net462
+- **Key C# files**: AssemblyInfo.cs, LexText.cs
+- **Source file count**: 2 files
+- **Data file count**: 0 files

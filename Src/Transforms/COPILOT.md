@@ -39,3 +39,86 @@ No major public classes identified.
 ## Code Evidence
 *Analysis based on scanning 0 source files*
 
+## Interfaces and Data Models
+
+- **BoundaryMarkerGuids** (xslt)
+  - Path: `Application/BoundaryMarkerGuids.xsl`
+  - XSLT transformation template
+
+- **CalculateStemNamesUsedInLexicalEntries** (xslt)
+  - Path: `Application/CalculateStemNamesUsedInLexicalEntries.xsl`
+  - XSLT transformation template
+
+- **FormatCommon** (xslt)
+  - Path: `Presentation/FormatCommon.xsl`
+  - XSLT transformation template
+
+- **FormatHCTrace** (xslt)
+  - Path: `Presentation/FormatHCTrace.xsl`
+  - XSLT transformation template
+
+- **FormatXAmpleParse** (xslt)
+  - Path: `Presentation/FormatXAmpleParse.xsl`
+  - XSLT transformation template
+
+- **FormatXAmpleTrace** (xslt)
+  - Path: `Presentation/FormatXAmpleTrace.xsl`
+  - XSLT transformation template
+
+- **FormatXAmpleWordGrammarDebuggerResult** (xslt)
+  - Path: `Presentation/FormatXAmpleWordGrammarDebuggerResult.xsl`
+  - XSLT transformation template
+
+- **FxtM3MorphologySketch** (xslt)
+  - Path: `Application/FxtM3MorphologySketch.xsl`
+  - XSLT transformation template
+
+- **FxtM3ParserCommon** (xslt)
+  - Path: `Application/FxtM3ParserCommon.xsl`
+  - XSLT transformation template
+
+- **FxtM3ParserToGAFAWS** (xslt)
+  - Path: `Application/FxtM3ParserToGAFAWS.xsl`
+  - XSLT transformation template
+
+- **FxtM3ParserToToXAmpleGrammar** (xslt)
+  - Path: `Application/FxtM3ParserToToXAmpleGrammar.xsl`
+  - XSLT transformation template
+
+- **FxtM3ParserToXAmpleADCtl** (xslt)
+  - Path: `Application/FxtM3ParserToXAmpleADCtl.xsl`
+  - XSLT transformation template
+
+- **FxtM3ParserToXAmpleLex** (xslt)
+  - Path: `Application/FxtM3ParserToXAmpleLex.xsl`
+  - XSLT transformation template
+
+- **FxtM3ParserToXAmpleWordGrammarDebuggingXSLT** (xslt)
+  - Path: `Application/FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl`
+  - XSLT transformation template
+
+- **JSFunctions** (xslt)
+  - Path: `Presentation/JSFunctions.xsl`
+  - XSLT transformation template
+
+- **MorphTypeGuids** (xslt)
+  - Path: `Application/MorphTypeGuids.xsl`
+  - XSLT transformation template
+
+- **UnifyTwoFeatureStructures** (xslt)
+  - Path: `Application/UnifyTwoFeatureStructures.xsl`
+  - XSLT transformation template
+
+- **XAmpleTemplateVariables** (xslt)
+  - Path: `Application/XAmpleTemplateVariables.xsl`
+  - XSLT transformation template
+
+- **XLingPap1** (xslt)
+  - Path: `Presentation/XLingPap1.xsl`
+  - XSLT transformation template
+
+## References
+
+- **XSLT transforms**: CalculateStemNamesUsedInLexicalEntries.xsl, FxtM3MorphologySketch.xsl, FxtM3ParserCommon.xsl, FxtM3ParserToToXAmpleGrammar.xsl, FxtM3ParserToXAmpleADCtl.xsl
+- **Source file count**: 0 files
+- **Data file count**: 19 files

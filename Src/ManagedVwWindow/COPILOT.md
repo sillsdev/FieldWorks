@@ -44,3 +44,17 @@ Managed view window components. Provides .NET wrappers and management for native
 
 - **Classes found**: 2 public classes
 - **Namespaces**: SIL.FieldWorks.Language, SIL.FieldWorks.Views
+
+## Interfaces and Data Models
+
+- **ManagedVwWindow** (class)
+  - Path: `ManagedVwWindow.cs`
+  - Public class implementation
+
+## References
+
+- **Project files**: ManagedVwWindow.csproj, ManagedVwWindowTests.csproj
+- **Target frameworks**: net462
+- **Key C# files**: AssemblyInfo.cs, ManagedVwWindow.cs, ManagedVwWindowTests.cs
+- **Source file count**: 3 files
+- **Data file count**: 0 files

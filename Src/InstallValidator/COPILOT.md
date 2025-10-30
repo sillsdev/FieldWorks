@@ -41,3 +41,17 @@ Utilities to validate installation prerequisites for FieldWorks. Checks system r
 
 - **Classes found**: 2 public classes
 - **Namespaces**: SIL.InstallValidator
+
+## Interfaces and Data Models
+
+- **InstallValidator** (class)
+  - Path: `InstallValidator.cs`
+  - Public class implementation
+
+## References
+
+- **Project files**: InstallValidator.csproj, InstallValidatorTests.csproj
+- **Target frameworks**: net462
+- **Key C# files**: AssemblyInfo.cs, InstallValidator.cs, InstallValidatorTests.cs
+- **Source file count**: 3 files
+- **Data file count**: 0 files

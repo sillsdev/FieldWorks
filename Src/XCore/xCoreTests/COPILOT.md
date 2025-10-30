@@ -43,3 +43,12 @@ Test suite for XCore framework. Provides comprehensive tests for XCore framework
 
 - **Classes found**: 3 public classes
 - **Namespaces**: XCore
+
+## References
+
+- **Project files**: xCoreTests.csproj
+- **Target frameworks**: net462
+- **Key C# files**: IncludeXmlTests.cs, InventoryTests.cs, Resources.Designer.cs
+- **XML data/config**: CreateOverrideTestData.xml, IncludeXmlTestSource.xml, IncludeXmlTestSourceB.xml, basicTest.xml, includeTest.xml
+- **Source file count**: 3 files
+- **Data file count**: 12 files

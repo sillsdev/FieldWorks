@@ -38,3 +38,11 @@ No major public classes identified.
 *Analysis based on scanning 1 source files*
 
 - **Namespaces**: FixFwData
+
+## References
+
+- **Project files**: FixFwData.csproj
+- **Target frameworks**: net462
+- **Key C# files**: AssemblyInfo.cs, Program.cs
+- **Source file count**: 2 files
+- **Data file count**: 0 files

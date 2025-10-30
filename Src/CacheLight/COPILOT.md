@@ -54,3 +54,42 @@ Lightweight caching services used by core components. Provides efficient in-memo
 - **Classes found**: 12 public classes
 - **Interfaces found**: 1 public interfaces
 - **Namespaces**: SIL.FieldWorks.CacheLight, SIL.FieldWorks.CacheLightTests
+
+## Interfaces and Data Models
+
+- **IRealDataCache** (interface)
+  - Path: `RealDataCache.cs`
+  - Public interface definition
+
+- **MetaDataCache** (class)
+  - Path: `MetaDataCache.cs`
+  - Public class implementation
+
+- **MetaDataCacheBase** (class)
+  - Path: `CacheLightTests/MetaDataCacheTests.cs`
+  - Public class implementation
+
+- **RealCacheLoader** (class)
+  - Path: `RealCacheLoader.cs`
+  - Public class implementation
+
+- **RealDataCache** (class)
+  - Path: `RealDataCache.cs`
+  - Public class implementation
+
+- **RealDataCacheBase** (class)
+  - Path: `CacheLightTests/RealDataCacheTests.cs`
+  - Public class implementation
+
+- **Resources** (class)
+  - Path: `CacheLightTests/Properties/Resources.Designer.cs`
+  - Public class implementation
+
+## References
+
+- **Project files**: CacheLight.csproj, CacheLightTests.csproj
+- **Target frameworks**: net462
+- **Key C# files**: AssemblyInfo.cs, MetaDataCache.cs, MetaDataCacheTests.cs, RealCacheLoader.cs, RealDataCache.cs, RealDataCacheTests.cs, Resources.Designer.cs, TsMultiString.cs, TsStringfactory.cs
+- **XML data/config**: TestModel.xml
+- **Source file count**: 9 files
+- **Data file count**: 3 files

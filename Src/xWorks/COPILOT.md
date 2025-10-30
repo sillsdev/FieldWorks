@@ -69,3 +69,130 @@ Primary FieldWorks application shell and modules. Provides the main application 
 - **Classes found**: 20 public classes
 - **Interfaces found**: 15 public interfaces
 - **Namespaces**: SIL.FieldWorks.XWorks, SIL.FieldWorks.XWorks.Archiving, SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators, SIL.FieldWorks.XWorks.DictionaryDetailsView, SIL.FieldWorks.XWorks.LexText
+
+## Interfaces and Data Models
+
+- **IDictionaryGroupingOptionsView** (interface)
+  - Path: `IDictionaryGroupingOptionsView.cs`
+  - Public interface definition
+
+- **IDictionaryListOptionsView** (interface)
+  - Path: `IDictionaryListOptionsView.cs`
+  - Public interface definition
+
+- **IFragment** (interface)
+  - Path: `ConfiguredLcmGenerator.cs`
+  - Public interface definition
+
+- **IFragmentWriter** (interface)
+  - Path: `ConfiguredLcmGenerator.cs`
+  - Public interface definition
+
+- **ILcmStylesGenerator** (interface)
+  - Path: `ConfiguredLcmGenerator.cs`
+  - Public interface definition
+
+- **IParaOption** (interface)
+  - Path: `DictionaryNodeOptions.cs`
+  - Public interface definition
+
+- **DTMenuHandler** (class)
+  - Path: `DTMenuHandler.cs`
+  - Public class implementation
+
+- **DictionaryNodeGroupingOptions** (class)
+  - Path: `DictionaryNodeOptions.cs`
+  - Public class implementation
+
+- **DictionaryNodeListAndParaOptions** (class)
+  - Path: `DictionaryNodeOptions.cs`
+  - Public class implementation
+
+- **DictionaryNodeListOptions** (class)
+  - Path: `DictionaryNodeOptions.cs`
+  - Public class implementation
+
+- **DictionaryNodeOption** (class)
+  - Path: `DictionaryNodeOptions.cs`
+  - Public class implementation
+
+- **DictionaryNodeOptions** (class)
+  - Path: `DictionaryNodeOptions.cs`
+  - Public class implementation
+
+- **DictionaryNodePictureOptions** (class)
+  - Path: `DictionaryNodeOptions.cs`
+  - Public class implementation
+
+- **DictionaryNodeReferringSenseOptions** (class)
+  - Path: `DictionaryNodeOptions.cs`
+  - Public class implementation
+
+- **DictionaryNodeSenseOptions** (class)
+  - Path: `DictionaryNodeOptions.cs`
+  - Public class implementation
+
+- **DictionaryNodeWritingSystemAndParaOptions** (class)
+  - Path: `DictionaryNodeOptions.cs`
+  - Public class implementation
+
+- **DictionaryNodeWritingSystemOptions** (class)
+  - Path: `DictionaryNodeOptions.cs`
+  - Public class implementation
+
+- **DictionaryPublicationDecorator** (class)
+  - Path: `DictionaryPublicationDecorator.cs`
+  - Public class implementation
+
+- **InterestingTextList** (class)
+  - Path: `InterestingTextList.cs`
+  - Public class implementation
+
+- **InterestingTextsChangedArgs** (class)
+  - Path: `InterestingTextList.cs`
+  - Public class implementation
+
+- **RecordBrowseActiveView** (class)
+  - Path: `RecordBrowseView.cs`
+  - Public class implementation
+
+- **RecordBrowseView** (class)
+  - Path: `RecordBrowseView.cs`
+  - Public class implementation
+
+- **RecordView** (class)
+  - Path: `RecordView.cs`
+  - Public class implementation
+
+- **TreeBarHandlerUtils** (class)
+  - Path: `TreeBarHandlerUtils.cs`
+  - Public class implementation
+
+- **VisibleListItem** (class)
+  - Path: `DictionaryConfigMgrDlg.cs`
+  - Public class implementation
+
+- **WordStylesGenerator** (class)
+  - Path: `WordStylesGenerator.cs`
+  - Public class implementation
+
+- **AlignmentType** (enum)
+  - Path: `DictionaryNodeOptions.cs`
+
+- **ListIds** (enum)
+  - Path: `DictionaryNodeOptions.cs`
+
+- **TreebarAvailability** (enum)
+  - Path: `XWorksViewBase.cs`
+
+- **WritingSystemType** (enum)
+  - Path: `DictionaryNodeOptions.cs`
+
+## References
+
+- **Project files**: xWorks.csproj, xWorksTests.csproj
+- **Target frameworks**: net462
+- **Key C# files**: DTMenuHandler.cs, DictionaryConfigurationDlg.Designer.cs, DictionaryConfigurationManagerDlg.Designer.cs, DictionaryNodeOptions.cs, DictionaryPublicationDecorator.cs, HeadWordNumbersDlg.cs, IDictionaryListOptionsView.cs, InterestingTextList.cs, LiftExportMessageDlg.Designer.cs, XmlDocConfigureDlg.Designer.cs
+- **XML data/config**: strings-en.xml, strings-es-MX.xml, strings-fr.xml
+- **Source file count**: 181 files
+- **Data file count**: 38 files

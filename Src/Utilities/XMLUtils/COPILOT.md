@@ -60,3 +60,49 @@ XML processing utilities for FieldWorks. Provides common XML handling functional
 - **Classes found**: 10 public classes
 - **Interfaces found**: 4 public interfaces
 - **Namespaces**: SIL.Utils
+
+## Interfaces and Data Models
+
+- **IAttributeVisitor** (interface)
+  - Path: `XmlUtils.cs`
+  - Public interface definition
+
+- **IPersistAsXml** (interface)
+  - Path: `DynamicLoader.cs`
+  - Public interface definition
+
+- **IResolvePath** (interface)
+  - Path: `ResolveDirectory.cs`
+  - Public interface definition
+
+- **ConfigurationException** (class)
+  - Path: `SILExceptions.cs`
+  - Public class implementation
+
+- **DynamicLoader** (class)
+  - Path: `DynamicLoader.cs`
+  - Public class implementation
+
+- **ReplaceSubstringInAttr** (class)
+  - Path: `XmlUtils.cs`
+  - Public class implementation
+
+- **RuntimeConfigurationException** (class)
+  - Path: `SILExceptions.cs`
+  - Public class implementation
+
+- **SimpleResolver** (class)
+  - Path: `ResolveDirectory.cs`
+  - Public class implementation
+
+- **XmlUtils** (class)
+  - Path: `XmlUtils.cs`
+  - Public class implementation
+
+## References
+
+- **Project files**: XMLUtils.csproj, XMLUtilsTests.csproj
+- **Target frameworks**: net462
+- **Key C# files**: AssemblyInfo.cs, DynamicLoader.cs, DynamicLoaderTests.cs, ResolveDirectory.cs, SILExceptions.cs, XmlUtils.cs, XmlUtilsStrings.Designer.cs, XmlUtilsTest.cs
+- **Source file count**: 8 files
+- **Data file count**: 1 files

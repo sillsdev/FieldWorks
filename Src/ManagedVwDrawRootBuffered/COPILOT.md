@@ -42,3 +42,17 @@ Managed view rendering primitives for buffered drawing. Provides double-buffered
 
 - **Classes found**: 1 public classes
 - **Namespaces**: SIL.FieldWorks.Views
+
+## Interfaces and Data Models
+
+- **VwDrawRootBuffered** (class)
+  - Path: `VwDrawRootBuffered.cs`
+  - Public class implementation
+
+## References
+
+- **Project files**: ManagedVwDrawRootBuffered.csproj
+- **Target frameworks**: net462
+- **Key C# files**: AssemblyInfo.cs, VwDrawRootBuffered.cs
+- **Source file count**: 2 files
+- **Data file count**: 0 files

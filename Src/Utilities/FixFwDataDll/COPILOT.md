@@ -45,3 +45,25 @@ Core data repair library for FieldWorks. Provides the implementation of data val
 
 - **Classes found**: 4 public classes
 - **Namespaces**: SIL.FieldWorks.FixData
+
+## Interfaces and Data Models
+
+- **ErrorFixer** (class)
+  - Path: `ErrorFixer.cs`
+  - Public class implementation
+
+- **FwData** (class)
+  - Path: `FwData.cs`
+  - Public class implementation
+
+- **WriteAllObjectsUtility** (class)
+  - Path: `WriteAllObjectsUtility.cs`
+  - Public class implementation
+
+## References
+
+- **Project files**: FixFwDataDll.csproj
+- **Target frameworks**: net462
+- **Key C# files**: AssemblyInfo.cs, ErrorFixer.cs, FixErrorsDlg.Designer.cs, FixErrorsDlg.cs, FwData.cs, Strings.Designer.cs, WriteAllObjectsUtility.cs
+- **Source file count**: 7 files
+- **Data file count**: 2 files

@@ -43,3 +43,21 @@ Error reporting functionality for FieldWorks. Provides infrastructure for collec
 
 - **Classes found**: 2 public classes
 - **Namespaces**: SIL.Utils
+
+## Interfaces and Data Models
+
+- **ErrorReporter** (class)
+  - Path: `ErrorReport.cs`
+  - Public class implementation
+
+- **UsageEmailDialog** (class)
+  - Path: `UsageEmailDialog.cs`
+  - Public class implementation
+
+## References
+
+- **Project files**: Reporting.csproj
+- **Target frameworks**: net462
+- **Key C# files**: AssemblyInfo.cs, ErrorReport.cs, ReportingStrings.Designer.cs, UsageEmailDialog.cs
+- **Source file count**: 4 files
+- **Data file count**: 4 files

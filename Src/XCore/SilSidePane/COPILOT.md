@@ -52,3 +52,28 @@ Side pane UI component for navigation. Provides the navigation pane (sidebar) co
 
 - **Classes found**: 12 public classes
 - **Namespaces**: SIL.SilSidePane
+
+## Interfaces and Data Models
+
+- **Item** (class)
+  - Path: `Item.cs`
+  - Public class implementation
+
+- **SidePane** (class)
+  - Path: `SidePane.cs`
+  - Public class implementation
+
+- **Tab** (class)
+  - Path: `Tab.cs`
+  - Public class implementation
+
+- **SidePaneItemAreaStyle** (enum)
+  - Path: `SidePaneItemAreaStyle.cs`
+
+## References
+
+- **Project files**: SilSidePane.csproj, SilSidePaneTests.csproj
+- **Target frameworks**: net462
+- **Key C# files**: Banner.cs, IItemArea.cs, Item.cs, NavPaneOptionsDlg.Designer.cs, OutlookBarButtonCollection.cs, SidePane.cs, SidePaneItemAreaStyle.cs, SilSidePane.Designer.cs, StripListItemArea.cs, Tab.cs
+- **Source file count**: 26 files
+- **Data file count**: 3 files

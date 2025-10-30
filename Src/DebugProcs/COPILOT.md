@@ -37,3 +37,10 @@ No major public classes identified.
 ## Code Evidence
 *Analysis based on scanning 2 source files*
 
+## References
+
+- **Project files**: DebugProcs.vcxproj
+- **Key C++ files**: DebugProcs.cpp
+- **Key headers**: DebugProcs.h
+- **Source file count**: 2 files
+- **Data file count**: 0 files

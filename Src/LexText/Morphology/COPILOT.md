@@ -52,3 +52,95 @@ Morphological analysis and morphology editor. Provides tools for defining morpho
 
 - **Classes found**: 20 public classes
 - **Namespaces**: SIL.FieldWorks.LexText.Controls.MGA, SIL.FieldWorks.XWorks.MorphologyEditor
+
+## Interfaces and Data Models
+
+- **AdhocCoProhibAtomicLauncher** (class)
+  - Path: `AdhocCoProhibAtomicLauncher.cs`
+  - Public class implementation
+
+- **InflAffixTemplateSlice** (class)
+  - Path: `InflAffixTemplateSlice.cs`
+  - Public class implementation
+
+- **MEImages** (class)
+  - Path: `MEImages.cs`
+  - Public class implementation
+
+- **MetaRuleFormulaControl** (class)
+  - Path: `MetaRuleFormulaControl.cs`
+  - Public class implementation
+
+- **OccurrenceComparer** (class)
+  - Path: `RespellerDlgListener.cs`
+  - Public class implementation
+
+- **OccurrenceSorter** (class)
+  - Path: `RespellerDlgListener.cs`
+  - Public class implementation
+
+- **ParserAnnotationRemover** (class)
+  - Path: `ParserAnnotationRemover.cs`
+  - Public class implementation
+
+- **PhEnvStrRepresentationSlice** (class)
+  - Path: `PhEnvStrRepresentationSlice.cs`
+  - Public class implementation
+
+- **RegRuleFormulaSlice** (class)
+  - Path: `RegRuleFormulaSlice.cs`
+  - Public class implementation
+
+- **RespellerDlgListener** (class)
+  - Path: `RespellerDlgListener.cs`
+  - Public class implementation
+
+- **RespellerRecordList** (class)
+  - Path: `RespellerDlgListener.cs`
+  - Public class implementation
+
+- **RespellerTemporaryRecordClerk** (class)
+  - Path: `RespellerDlgListener.cs`
+  - Public class implementation
+
+- **RuleFormulaControl** (class)
+  - Path: `RuleFormulaControl.cs`
+  - Public class implementation
+
+- **RuleFormulaSlice** (class)
+  - Path: `RuleFormulaSlice.cs`
+  - Public class implementation
+
+- **RuleFormulaVcBase** (class)
+  - Path: `RuleFormulaVcBase.cs`
+  - Public class implementation
+
+- **StringRepSliceVc** (class)
+  - Path: `PhEnvStrRepresentationSlice.cs`
+  - Public class implementation
+
+- **UpdateRealAnalysisMethod** (class)
+  - Path: `OneAnalysisSandbox.cs`
+  - Public class implementation
+
+- **UserAnalysisRemover** (class)
+  - Path: `UserAnalysisRemover.cs`
+  - Public class implementation
+
+- **WordformApplicationServices** (class)
+  - Path: `RespellerDlgListener.cs`
+  - Public class implementation
+
+- **WordformGoDlg** (class)
+  - Path: `WordformGoDlg.cs`
+  - Public class implementation
+
+## References
+
+- **Project files**: MGA.csproj, MGATests.csproj, MorphologyEditorDll.csproj, MorphologyEditorDllTests.csproj
+- **Target frameworks**: net462
+- **Key C# files**: AdhocCoProhibAtomicLauncher.cs, AssemblyInfo.cs, AssignFeaturesToPhonemes.Designer.cs, MEStrings.Designer.cs, OneAnalysisSandbox.cs, ParserAnnotationRemover.cs, RegRuleFormulaSlice.cs, RuleFormulaSlice.cs, RuleFormulaVcBase.cs, WordformGoDlg.cs
+- **XSLT transforms**: CreateFeatureCatalog.xsl, MasterToEticGlossList.xsl, schematron-report.xsl, skeleton1-5.xsl, verbid.xsl
+- **XML data/config**: EticGlossList.xml, FeatureCatalog.xml, MGAMaster.xml, MasterGlossListValidityConstraints.xml, MasterGlossListWithValidtyFailures.xml
+- **Source file count**: 61 files
+- **Data file count**: 27 files

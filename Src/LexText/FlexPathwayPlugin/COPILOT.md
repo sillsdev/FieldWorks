@@ -45,3 +45,25 @@ Pathway publishing integration plugin for FLEx. Enables export and publishing of
 
 - **Classes found**: 5 public classes
 - **Namespaces**: FlexDePluginTests, FlexPathwayPluginTests, SIL.FieldWorks.XWorks, SIL.PublishingSolution
+
+## Interfaces and Data Models
+
+- **DeExportDialog** (class)
+  - Path: `FlexPathwayPlugin.cs`
+  - Public class implementation
+
+- **FlexPathwayPlugin** (class)
+  - Path: `FlexPathwayPlugin.cs`
+  - Public class implementation
+
+- **MyFolders** (class)
+  - Path: `myFolders.cs`
+  - Public class implementation
+
+## References
+
+- **Project files**: FlexPathwayPlugin.csproj, FlexPathwayPluginTests.csproj
+- **Target frameworks**: net462
+- **Key C# files**: AssemblyInfo.cs, FlexPathwayPlugin.cs, FlexPathwayPluginTests.cs, MyFoldersTest.cs, MyProcess.cs, myFolders.cs
+- **Source file count**: 6 files
+- **Data file count**: 0 files

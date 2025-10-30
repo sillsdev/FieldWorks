@@ -57,3 +57,96 @@ C++ view-layer components and UI view infrastructure. Provides the native render
 
 - **Classes found**: 20 public classes
 - **Namespaces**: VwGraphicsReplayer
+
+## Interfaces and Data Models
+
+- **IVwNotifier** (class)
+  - Path: `VwSimpleBoxes.h`
+  - Public class implementation
+
+- **NotifierRec** (class)
+  - Path: `VwEnv.h`
+  - Public class implementation
+
+- **ParaBuilder** (class)
+  - Path: `VwTextBoxes.h`
+  - Public class implementation
+
+- **VwAccessRoot** (class)
+  - Path: `VwAccessRoot.h`
+  - Public class implementation
+
+- **VwAnchorBox** (class)
+  - Path: `VwSimpleBoxes.h`
+  - Public class implementation
+
+- **VwBox** (class)
+  - Path: `VwSimpleBoxes.h`
+  - Public class implementation
+
+- **VwConcParaBox** (class)
+  - Path: `VwTextBoxes.h`
+  - Public class implementation
+
+- **VwDivBox** (class)
+  - Path: `VwSimpleBoxes.h`
+  - Public class implementation
+
+- **VwDropCapStringBox** (class)
+  - Path: `VwTextBoxes.h`
+  - Public class implementation
+
+- **VwEnv** (class)
+  - Path: `VwEnv.h`
+  - Public class implementation
+
+- **VwGroupBox** (class)
+  - Path: `VwSimpleBoxes.h`
+  - Public class implementation
+
+- **VwInnerPileBox** (class)
+  - Path: `VwSimpleBoxes.h`
+  - Public class implementation
+
+- **VwLazyBox** (class)
+  - Path: `VwSimpleBoxes.h`
+  - Public class implementation
+
+- **VwLeafBox** (class)
+  - Path: `VwSimpleBoxes.h`
+  - Public class implementation
+
+- **VwMoveablePileBox** (class)
+  - Path: `VwSimpleBoxes.h`
+  - Public class implementation
+
+- **VwParagraphBox** (class)
+  - Path: `VwTextBoxes.h`
+  - Public class implementation
+
+- **VwPictureSelection** (class)
+  - Path: `VwSimpleBoxes.h`
+  - Public class implementation
+
+- **VwPileBox** (class)
+  - Path: `VwSimpleBoxes.h`
+  - Public class implementation
+
+- **VwStringBox** (class)
+  - Path: `VwTextBoxes.h`
+  - Public class implementation
+
+- **__declspec** (class)
+  - Path: `VwEnv.h`
+  - Public class implementation
+
+## References
+
+- **Project files**: TestViews.vcxproj, VwGraphicsReplayer.csproj, views.vcxproj
+- **Target frameworks**: net462
+- **Key C# files**: AssemblyInfo.cs, VwGraphicsReplayer.cs
+- **Key C++ files**: ExplicitInstantiation.cpp, VwAccessRoot.cpp, VwLayoutStream.cpp, VwLazyBox.cpp, VwNotifier.cpp, VwPattern.cpp, VwSelection.cpp, VwTextBoxes.cpp, VwTextStore.cpp, VwTxtSrc.cpp
+- **Key headers**: VwAccessRoot.h, VwEnv.h, VwNotifier.h, VwPattern.h, VwResources.h, VwSimpleBoxes.h, VwSynchronizer.h, VwTableBox.h, VwTextBoxes.h, VwTxtSrc.h
+- **XML data/config**: VirtualsCm.xml
+- **Source file count**: 130 files
+- **Data file count**: 1 files

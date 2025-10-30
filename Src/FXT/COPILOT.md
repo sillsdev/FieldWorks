@@ -54,3 +54,61 @@ FieldWorks transform assets and related tooling. Provides transformation capabil
 - **Classes found**: 13 public classes
 - **Interfaces found**: 1 public interfaces
 - **Namespaces**: SIL.FieldWorks.Common.FXT
+
+## Interfaces and Data Models
+
+- **IFilterStrategy** (interface)
+  - Path: `FxtDll/FilterStrategy.cs`
+  - Public interface definition
+
+- **ChangedDataItem** (class)
+  - Path: `FxtDll/ChangedDataItem.cs`
+  - Public class implementation
+
+- **ConstraintFilterStrategy** (class)
+  - Path: `FxtDll/FilterStrategy.cs`
+  - Public class implementation
+
+- **FXTElementSearchProperties** (class)
+  - Path: `FxtDll/XUpdater.cs`
+  - Public class implementation
+
+- **StandardFormat** (class)
+  - Path: `FxtDll/FxtDllTests/StandFormatExportTests.cs`
+  - Public class implementation
+
+- **XDumper** (class)
+  - Path: `FxtDll/XDumper.cs`
+  - Public class implementation
+
+- **XUpdater** (class)
+  - Path: `FxtDll/XUpdater.cs`
+  - Public class implementation
+
+- **XUpdaterException** (class)
+  - Path: `FxtDll/XUpdater.cs`
+  - Public class implementation
+
+- **main** (class)
+  - Path: `FxtExe/main.cs`
+  - Public class implementation
+
+- **StringFormatOutputStyle** (enum)
+  - Path: `FxtDll/XDumper.cs`
+
+- **WritingSystemAttrStyles** (enum)
+  - Path: `FxtDll/XDumper.cs`
+
+- **NormalizeOutput** (xslt)
+  - Path: `FxtDll/FxtDllTests/NormalizeOutput.xsl`
+  - XSLT transformation template
+
+## References
+
+- **Project files**: FxtDll.csproj, FxtDllTests.csproj, FxtExe.csproj
+- **Target frameworks**: net462
+- **Key C# files**: AssemblyInfo.cs, AssemblyInfo.cs, ChangedDataItem.cs, FilterStrategy.cs, FxtTestBase.cs, M3ParserDumpTests.cs, SimpleTests.cs, XDumper.cs, XUpdater.cs, main.cs
+- **XSLT transforms**: NormalizeOutput.xsl
+- **XML data/config**: Phase1-Sena3-bo-ConfiguredDictionary.xml, Phase2-Sena3-bo-ConfiguredDictionary.xml, TLPParser.xml, TLPSimpleGuidsAnswer.xml, TLPSketchGen.xml
+- **Source file count**: 13 files
+- **Data file count**: 6 files

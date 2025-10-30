@@ -43,3 +43,17 @@ Paratext lexicon integration plugin. Enables FieldWorks lexicon data to be acces
 
 - **Classes found**: 3 public classes
 - **Namespaces**: SIL.FieldWorks.ParatextLexiconPlugin
+
+## Interfaces and Data Models
+
+- **FwLexiconPlugin** (class)
+  - Path: `FwLexiconPlugin.cs`
+  - Public class implementation
+
+## References
+
+- **Project files**: FwParatextLexiconPlugin.csproj, FwParatextLexiconPluginTests.csproj
+- **Target frameworks**: net462
+- **Key C# files**: ChooseFdoProjectForm.cs, FdoLexEntryLexeme.cs, FdoWordAnalysis.cs, FwLexiconPluginV2.cs, LexemeKey.cs, ParatextLexiconPluginLcmUI.cs, ParatextLexiconPluginRegistryHelper.template.cs, ParatextLexiconPluginThreadedProgress.cs, ProjectExistsForm.cs, Strings.Designer.cs
+- **Source file count**: 32 files
+- **Data file count**: 5 files

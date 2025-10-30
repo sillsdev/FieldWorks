@@ -50,3 +50,60 @@ Shared application core helpers and base infrastructure used across FieldWorks a
 *Analysis based on scanning 8 source files*
 
 - **Classes found**: 12 public classes
+
+## Interfaces and Data Models
+
+- **AfGdi** (class)
+  - Path: `AfGfx.h`
+  - Public class implementation
+
+- **AfGfx** (class)
+  - Path: `AfGfx.h`
+  - Public class implementation
+
+- **BrushWrap** (class)
+  - Path: `AfGfx.h`
+  - Public class implementation
+
+- **ChrpInheritance** (class)
+  - Path: `FwStyledText.h`
+  - Public class implementation
+
+- **ClipRgnWrap** (class)
+  - Path: `AfGfx.h`
+  - Public class implementation
+
+- **ColorTable** (class)
+  - Path: `AfColorTable.h`
+  - Public class implementation
+
+- **FontWrap** (class)
+  - Path: `AfGfx.h`
+  - Public class implementation
+
+- **PenWrap** (class)
+  - Path: `AfGfx.h`
+  - Public class implementation
+
+- **RgnWrap** (class)
+  - Path: `AfGfx.h`
+  - Public class implementation
+
+- **SmartDc** (class)
+  - Path: `AfGfx.h`
+  - Public class implementation
+
+- **SmartPalette** (class)
+  - Path: `AfGfx.h`
+  - Public class implementation
+
+- **WsStyleInfo** (class)
+  - Path: `FwStyledText.h`
+  - Public class implementation
+
+## References
+
+- **Key C++ files**: AfColorTable.cpp, AfGfx.cpp, FwStyledText.cpp
+- **Key headers**: AfAppRes.h, AfColorTable.h, AfDef.h, AfGfx.h, FwStyledText.h
+- **Source file count**: 8 files
+- **Data file count**: 0 files

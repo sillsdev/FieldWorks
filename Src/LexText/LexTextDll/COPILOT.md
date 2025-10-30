@@ -51,3 +51,37 @@ Core lexicon application functionality library. Provides the main application lo
 
 - **Classes found**: 7 public classes
 - **Namespaces**: LexTextDllTests, SIL.FieldWorks.XWorks.LexText
+
+## Interfaces and Data Models
+
+- **AreaListener** (class)
+  - Path: `AreaListener.cs`
+  - Public class implementation
+
+- **FlexHelpTopicProvider** (class)
+  - Path: `FlexHelpTopicProvider.cs`
+  - Public class implementation
+
+- **ImageHolder** (class)
+  - Path: `ImageHolder.cs`
+  - Public class implementation
+
+- **LexTextApp** (class)
+  - Path: `LexTextApp.cs`
+  - Public class implementation
+
+- **LexTextStrings** (class)
+  - Path: `LexTextStrings.Designer.cs`
+  - Public class implementation
+
+- **SampleCitationFormTransducer** (class)
+  - Path: `TransductionSample.cs`
+  - Public class implementation
+
+## References
+
+- **Project files**: LexTextDll.csproj, LexTextDllTests.csproj
+- **Target frameworks**: net462
+- **Key C# files**: AreaListener.cs, AreaListenerTests.cs, AssemblyInfo.cs, FlexHelpTopicProvider.cs, ImageHolder.cs, LexTextApp.cs, LexTextStrings.Designer.cs, RestoreDefaultsDlg.Designer.cs, RestoreDefaultsDlg.cs, TransductionSample.cs
+- **Source file count**: 10 files
+- **Data file count**: 4 files

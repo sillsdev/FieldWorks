@@ -55,3 +55,100 @@ UI components for FieldWorks Data Objects (FDO). Provides user interface element
 - **Classes found**: 20 public classes
 - **Interfaces found**: 1 public interfaces
 - **Namespaces**: SIL.FieldWorks.FdoUi, SIL.FieldWorks.FdoUi.Dialogs
+
+## Interfaces and Data Models
+
+- **IFwGuiControl** (interface)
+  - Path: `FdoUiCore.cs`
+  - Public interface definition
+
+- **BulkPosEditor** (class)
+  - Path: `BulkPosEditor.cs`
+  - Public class implementation
+
+- **BulkPosEditorBase** (class)
+  - Path: `BulkPosEditor.cs`
+  - Public class implementation
+
+- **CmAnalObjectVc** (class)
+  - Path: `FdoUiCore.cs`
+  - Public class implementation
+
+- **CmNameAbbrObjVc** (class)
+  - Path: `FdoUiCore.cs`
+  - Public class implementation
+
+- **CmNamedObjVc** (class)
+  - Path: `FdoUiCore.cs`
+  - Public class implementation
+
+- **CmObjectUi** (class)
+  - Path: `FdoUiCore.cs`
+  - Public class implementation
+
+- **CmObjectVc** (class)
+  - Path: `FdoUiCore.cs`
+  - Public class implementation
+
+- **CmPossRefVc** (class)
+  - Path: `FdoUiCore.cs`
+  - Public class implementation
+
+- **CmPossibilityUi** (class)
+  - Path: `FdoUiCore.cs`
+  - Public class implementation
+
+- **CmVernObjectVc** (class)
+  - Path: `FdoUiCore.cs`
+  - Public class implementation
+
+- **InflectionClassEditor** (class)
+  - Path: `InflectionClassEditor.cs`
+  - Public class implementation
+
+- **InflectionFeatureEditor** (class)
+  - Path: `InflectionFeatureEditor.cs`
+  - Public class implementation
+
+- **LexPronunciationUi** (class)
+  - Path: `LexPronunciationUi.cs`
+  - Public class implementation
+
+- **MoDerivAffMsaUi** (class)
+  - Path: `FdoUiCore.cs`
+  - Public class implementation
+
+- **MoInflAffMsaUi** (class)
+  - Path: `FdoUiCore.cs`
+  - Public class implementation
+
+- **MoMorphSynAnalysisUi** (class)
+  - Path: `FdoUiCore.cs`
+  - Public class implementation
+
+- **MoStemMsaUi** (class)
+  - Path: `FdoUiCore.cs`
+  - Public class implementation
+
+- **MsaVc** (class)
+  - Path: `FdoUiCore.cs`
+  - Public class implementation
+
+- **PartOfSpeechUi** (class)
+  - Path: `PartOfSpeechUi.cs`
+  - Public class implementation
+
+- **WfiWordformUi** (class)
+  - Path: `WfiWordformUi.cs`
+  - Public class implementation
+
+- **VcFrags** (enum)
+  - Path: `FdoUiCore.cs`
+
+## References
+
+- **Project files**: FdoUi.csproj, FdoUiTests.csproj
+- **Target frameworks**: net462
+- **Key C# files**: AssemblyInfo.cs, BulkPosEditor.cs, FdoUiCore.cs, InflectionClassEditor.cs, InflectionFeatureEditor.cs, LexPronunciationUi.cs, PartOfSpeechUi.cs, PhonologicalFeatureEditor.cs, TypeAheadSupportVc.cs, WfiWordformUi.cs
+- **Source file count**: 31 files
+- **Data file count**: 10 files

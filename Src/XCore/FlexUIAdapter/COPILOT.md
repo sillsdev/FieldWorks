@@ -51,3 +51,49 @@ FLEx UI adapter implementation. Provides the concrete implementation of UI adapt
 
 - **Classes found**: 9 public classes
 - **Namespaces**: XCore, XCoreUnused
+
+## Interfaces and Data Models
+
+- **AdapterBase** (class)
+  - Path: `AdapterBase.cs`
+  - Public class implementation
+
+- **BarAdapterBase** (class)
+  - Path: `BarAdapterBase.cs`
+  - Public class implementation
+
+- **ContextHelper** (class)
+  - Path: `ContextHelper.cs`
+  - Public class implementation
+
+- **MenuAdapter** (class)
+  - Path: `MenuAdapter.cs`
+  - Public class implementation
+
+- **PaneBar** (class)
+  - Path: `PaneBar.cs`
+  - Public class implementation
+
+- **PanelCollection** (class)
+  - Path: `SidebarAdapter.cs`
+  - Public class implementation
+
+- **ReBarAdapter** (class)
+  - Path: `ToolbarAdapter.cs`
+  - Public class implementation
+
+- **SidebarAdapter** (class)
+  - Path: `NavBarAdapter.cs`
+  - Public class implementation
+
+- **ToolStripManager** (class)
+  - Path: `ToolbarAdapter.cs`
+  - Public class implementation
+
+## References
+
+- **Project files**: FlexUIAdapter.csproj
+- **Target frameworks**: net462
+- **Key C# files**: AdapterBase.cs, AdapterStrings.Designer.cs, AssemblyInfo.cs, BarAdapterBase.cs, ContextHelper.cs, MenuAdapter.cs, NavBarAdapter.cs, PaneBar.cs, PanelMenu.cs, ToolbarAdapter.cs
+- **Source file count**: 12 files
+- **Data file count**: 2 files

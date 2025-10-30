@@ -57,3 +57,62 @@ View layer interfaces for FieldWorks. Defines managed interfaces for interacting
 - **Classes found**: 9 public classes
 - **Interfaces found**: 3 public interfaces
 - **Namespaces**: SIL.FieldWorks.Common.ViewsInterfaces
+
+## Interfaces and Data Models
+
+- **IOleServiceProvider** (interface)
+  - Path: `ComWrapper.cs`
+  - Public interface definition
+
+- **IPicture** (interface)
+  - Path: `IPicture.cs`
+  - Public interface definition
+
+- **IPictureDisp** (interface)
+  - Path: `IPicture.cs`
+  - Public interface definition
+
+- **ComPictureWrapper** (class)
+  - Path: `ComWrapper.cs`
+  - Public class implementation
+
+- **DispPropOverrideFactory** (class)
+  - Path: `DispPropOverrideFactory.cs`
+  - Public class implementation
+
+- **InnerPileHelper** (class)
+  - Path: `ComUtils.cs`
+  - Public class implementation
+
+- **MockIStream** (class)
+  - Path: `ViewsInterfacesTests/ExtraComInterfacesTests.cs`
+  - Public class implementation
+
+- **ParagraphBoxHelper** (class)
+  - Path: `ComUtils.cs`
+  - Public class implementation
+
+- **VwConstructorServices** (class)
+  - Path: `ComUtils.cs`
+  - Public class implementation
+
+- **VwPropertyStoreManaged** (class)
+  - Path: `VwPropertyStoreManaged.cs`
+  - Public class implementation
+
+- **Rect** (struct)
+  - Path: `Rect.cs`
+
+- **SelLevInfo** (struct)
+  - Path: `ComUtils.cs`
+
+- **ClipFormat** (enum)
+  - Path: `ComWrapper.cs`
+
+## References
+
+- **Project files**: ViewsInterfaces.csproj, ViewsInterfacesTests.csproj
+- **Target frameworks**: net462
+- **Key C# files**: AssemblyInfo.cs, AssemblyInfo.cs, ComUtils.cs, ComWrapper.cs, DispPropOverrideFactory.cs, ExtraComInterfacesTests.cs, IPicture.cs, Rect.cs, VwGraphicsTests.cs, VwPropertyStoreManaged.cs
+- **Source file count**: 10 files
+- **Data file count**: 0 files

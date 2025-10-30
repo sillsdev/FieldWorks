@@ -40,3 +40,10 @@ No major public classes identified.
 ## Code Evidence
 *Analysis based on scanning 4 source files*
 
+## References
+
+- **Project files**: Kernel.vcxproj
+- **Key C++ files**: FwKernel_GUIDs.cpp
+- **Key headers**: CellarBaseConstants.h, CellarConstants.vm.h
+- **Source file count**: 5 files
+- **Data file count**: 0 files

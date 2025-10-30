@@ -50,3 +50,41 @@ UI adapter pattern interfaces for FieldWorks. Defines contracts for adapting dif
 - **Classes found**: 5 public classes
 - **Interfaces found**: 2 public interfaces
 - **Namespaces**: SIL.FieldWorks.Common.UIAdapters
+
+## Interfaces and Data Models
+
+- **ISIBInterface** (interface)
+  - Path: `SIBInterface.cs`
+  - Public interface definition
+
+- **ITMAdapter** (interface)
+  - Path: `TMInterface.cs`
+  - Public interface definition
+
+- **SBTabItemProperties** (class)
+  - Path: `HelperClasses.cs`
+  - Public class implementation
+
+- **SBTabProperties** (class)
+  - Path: `HelperClasses.cs`
+  - Public class implementation
+
+- **TMBarProperties** (class)
+  - Path: `HelperClasses.cs`
+  - Public class implementation
+
+- **TMItemProperties** (class)
+  - Path: `HelperClasses.cs`
+  - Public class implementation
+
+- **WindowListInfo** (class)
+  - Path: `HelperClasses.cs`
+  - Public class implementation
+
+## References
+
+- **Project files**: UIAdapterInterfaces.csproj
+- **Target frameworks**: net462
+- **Key C# files**: AssemblyInfo.cs, HelperClasses.cs, SIBInterface.cs, TMInterface.cs, UIAdapterInterfacesStrings.Designer.cs
+- **Source file count**: 5 files
+- **Data file count**: 1 files

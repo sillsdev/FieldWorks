@@ -39,3 +39,11 @@ No major public classes identified.
 *Analysis based on scanning 5 source files*
 
 - **Namespaces**: GenerateHCConfig
+
+## References
+
+- **Project files**: GenerateHCConfig.csproj
+- **Target frameworks**: net462
+- **Key C# files**: AssemblyInfo.cs, ConsoleLogger.cs, NullFdoDirectories.cs, NullThreadedProgress.cs, Program.cs, ProjectIdentifier.cs
+- **Source file count**: 6 files
+- **Data file count**: 1 files

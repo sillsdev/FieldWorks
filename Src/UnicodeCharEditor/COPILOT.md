@@ -49,3 +49,50 @@ Unicode character editor tool for FieldWorks. Provides a specialized interface f
 
 - **Classes found**: 9 public classes
 - **Namespaces**: SIL.FieldWorks.UnicodeCharEditor
+
+## Interfaces and Data Models
+
+- **CustomCharDlg** (class)
+  - Path: `CustomCharDlg.cs`
+  - Public class implementation
+
+- **ErrorCodesExtensionMethods** (class)
+  - Path: `ErrorCodes.cs`
+  - Public class implementation
+
+- **IcuLockedException** (class)
+  - Path: `IcuLockedException.cs`
+  - Public class implementation
+
+- **LogFile** (class)
+  - Path: `LogFile.cs`
+  - Public class implementation
+
+- **PUAInstaller** (class)
+  - Path: `PUAInstaller.cs`
+  - Public class implementation
+
+- **PuaException** (class)
+  - Path: `PuaException.cs`
+  - Public class implementation
+
+- **UceException** (class)
+  - Path: `UceException.cs`
+  - Public class implementation
+
+- **UndoFiles** (struct)
+  - Path: `PUAInstaller.cs`
+
+- **ErrorCodes** (enum)
+  - Path: `ErrorCodes.cs`
+
+- **IcuErrorCodes** (enum)
+  - Path: `IcuErrorCodes.cs`
+
+## References
+
+- **Project files**: UnicodeCharEditor.csproj, UnicodeCharEditorTests.csproj
+- **Target frameworks**: net462
+- **Key C# files**: CharEditorWindow.Designer.cs, CharEditorWindow.cs, CustomCharDlg.cs, ErrorCodes.cs, HelpTopicPaths.Designer.cs, IcuErrorCodes.cs, IcuLockedException.cs, PUAInstaller.cs, PuaException.cs, UceException.cs
+- **Source file count**: 16 files
+- **Data file count**: 5 files
