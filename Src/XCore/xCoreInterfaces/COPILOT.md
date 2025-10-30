@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # XCore/xCoreInterfaces
 
 ## Purpose
@@ -38,3 +44,8 @@ Core interfaces for the XCore application framework. Defines the contracts for c
 - **Common/UIAdapterInterfaces/** - Related adapter interfaces
 - **xWorks/** - Uses XCore interfaces
 - **LexText/** - Uses XCore interfaces
+
+
+## References
+- **Project Files**: xCoreInterfaces.csproj
+- **Key C# Files**: BaseContextHelper.cs, Choice.cs, ChoiceGroup.cs, Command.cs, IFeedbackInfoProvider.cs, IImageCollection.cs, IPaneBar.cs, IPersistenceProvider.cs

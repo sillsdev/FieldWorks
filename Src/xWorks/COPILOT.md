@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # xWorks
 
 ## Purpose
@@ -53,3 +59,8 @@ Primary FieldWorks application shell and modules. Provides the main application 
 - **ManagedVwWindow/** - View window management
 - **Cellar/** - Data model accessed by xWorks
 - **FwResources/** - Resources used in xWorks UI
+
+
+## References
+- **Project Files**: xWorks.csproj
+- **Key C# Files**: AddCustomFieldDlg.cs, ConcDecorator.cs, ConfigurableDictionaryNode.cs, ConfiguredLcmGenerator.cs, CssGenerator.cs, CustomListDlg.cs, DTMenuHandler.cs, DataTreeImages.cs

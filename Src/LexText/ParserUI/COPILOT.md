@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # LexText/ParserUI
 
 ## Purpose
@@ -34,3 +40,9 @@ Parser user interface components. Provides UI for configuring, testing, and trac
 - **LexText/ParserCore/** - Parser engine configured by this UI
 - **LexText/Morphology/** - Morphology editor with parser integration
 - **LexText/Interlinear/** - Uses parser for text analysis
+
+
+## References
+- **Project Files**: ParserUI.csproj
+- **Key Dependencies**: ..\..\Common\Controls\DetailControls\DetailControls, ..\..\Common\Controls\XMLViews\XMLViews
+- **Key C# Files**: FileTimeToDateTimeConverter.cs, HCMaxCompoundRulesDlg.cs, HCTrace.cs, IParserTrace.cs, ImportWordSetDlg.cs, ImportWordSetListener.cs, MillisecondsToTimeSpanConverter.cs, ParserConnection.cs

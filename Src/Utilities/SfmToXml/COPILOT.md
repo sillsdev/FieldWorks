@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # Utilities/SfmToXml
 
 ## Purpose
@@ -34,3 +40,8 @@ Standard Format Marker (SFM) to XML conversion utility. Converts SFM-formatted d
 - **LexText/LexTextControls/** - Uses SFM import
 - **ParatextImport/** - Paratext SFM data import
 - **Utilities/XMLUtils/** - XML utilities
+
+
+## References
+- **Project Files**: Sfm2Xml.csproj
+- **Key C# Files**: CRC.cs, ClsFieldDescription.cs, ClsHierarchyEntry.cs, ClsInFieldMarker.cs, ClsLanguage.cs, Converter.cs, FieldHierarchyInfo.cs, FileReader.cs

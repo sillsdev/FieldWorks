@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # FwParatextLexiconPlugin
 
 ## Purpose
@@ -33,3 +39,8 @@ Paratext lexicon integration plugin. Enables FieldWorks lexicon data to be acces
 - **Paratext8Plugin/** - Plugin for Paratext 8 (different version)
 - **ParatextImport/** - Imports data from Paratext into FieldWorks
 - **LexText/** - Lexicon application whose data is exposed to Paratext
+
+
+## References
+- **Project Files**: FwParatextLexiconPlugin.csproj
+- **Key C# Files**: ChooseFdoProjectForm.cs, FdoLanguageText.cs, FdoLexEntryLexeme.cs, FdoLexemeAddedEventArgs.cs, FdoLexicalRelation.cs, FdoLexicon.cs, FdoLexiconGlossAddedEventArgs.cs, FdoLexiconSenseAddedEventArgs.cs

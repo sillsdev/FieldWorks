@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # LexText/Discourse
 
 ## Purpose
@@ -34,3 +40,8 @@ Discourse analysis features for FieldWorks. Provides tools for analyzing and cha
 - **LexText/Interlinear/** - Works with interlinear text for discourse analysis
 - **LexText/LexTextControls/** - UI controls for discourse features
 - **Cellar/** - Stores discourse analysis data
+
+
+## References
+- **Project Files**: Discourse.csproj
+- **Key C# Files**: AdvancedMTDialog.cs, ChartLocation.cs, ConstChartBody.cs, ConstChartRowDecorator.cs, ConstChartVc.cs, ConstituentChart.cs, ConstituentChartLogic.cs, DiscourseExportDialog.cs

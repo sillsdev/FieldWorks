@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # Common/Framework
 
 ## Purpose
@@ -40,3 +46,8 @@ Application framework components for FieldWorks. Provides core application infra
 - **Common/FieldWorks/** - FieldWorks-specific infrastructure
 - **XCore/** - Application framework that uses Common/Framework
 - **xWorks/** - Applications built on this framework
+
+
+## References
+- **Project Files**: Framework.csproj
+- **Key C# Files**: ExportStyleInfo.cs, ExternalSettingsAccessorBase.cs, FwApp.cs, FwEditingHelper.cs, FwRegistrySettings.cs, FwRootSite.cs, IFieldWorksManager.cs, IFwMainWnd.cs

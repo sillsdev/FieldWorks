@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # LexText/LexTextControls
 
 ## Purpose
@@ -43,3 +49,8 @@ Lexicon UI controls library. Provides specialized controls and dialogs for lexic
 - **LexText/LexTextDll/** - Core functionality using controls
 - **FwCoreDlgs/** - Common dialog infrastructure
 - **Common/Controls/** - Base control infrastructure
+
+
+## References
+- **Project Files**: LexTextControls.csproj
+- **Key C# Files**: AddAllomorphDlg.cs, AddNewSenseDlg.cs, AddWritingSystemButton.cs, BaseGoDlg.cs, CombineImportDlg.cs, ConfigureHomographDlg.cs, ContextMenuRequestedEventArgs.cs, EntryDlgListener.cs

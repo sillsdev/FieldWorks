@@ -1,9 +1,21 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # XCore
 
 ## Purpose
 Cross-cutting framework base used by multiple FieldWorks applications. Provides the application framework, plugin architecture, command handling, and UI composition infrastructure that all major FieldWorks applications are built upon.
 
 ## Key Components
+- **AdapterMenuItem.cs**
+- **AreaManager.cs**
+- **CollapsingSplitContainer.cs**
+- **HtmlControl.cs**
+- **HtmlViewer.cs**
+
 
 ### Subprojects
 Each subfolder has its own COPILOT.md file with detailed documentation:
@@ -43,3 +55,8 @@ Each subfolder has its own COPILOT.md file with detailed documentation:
 - **Common/** - Provides lower-level UI components used by XCore
 - **FwCoreDlgs/** - Dialogs integrated into XCore applications
 - **FwResources/** - Resources used by XCore framework
+
+
+## References
+- **Project Files**: xCore.csproj
+- **Key C# Files**: AdapterMenuItem.cs, AreaManager.cs, CollapsingSplitContainer.cs, HtmlControl.cs, HtmlViewer.cs, IconHolder.cs, ImageCollection.cs, ImageContent.cs

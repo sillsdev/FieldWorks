@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # FwCoreDlgs
 
 ## Purpose
@@ -35,3 +41,8 @@ Common dialogs used across FieldWorks applications. Provides a standardized set 
 - **FdoUi/** - Data object UI that uses FwCoreDlgs
 - **xWorks/** - Primary consumer of standard dialogs
 - **LexText/** - Uses FwCoreDlgs for common operations
+
+
+## References
+- **Project Files**: FwCoreDlgs.csproj
+- **Key C# Files**: AddCnvtrDlg.cs, AddNewUserDlg.cs, AddNewVernLangWarningDlg.cs, AdvancedEncProps.cs, AdvancedScriptRegionVariantModel.cs, AdvancedScriptRegionVariantView.cs, ArchiveWithRamp.cs, BackupProjectSettings.cs

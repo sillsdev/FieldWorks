@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # Common/ViewsInterfaces
 
 ## Purpose
@@ -41,3 +47,8 @@ View layer interfaces for FieldWorks. Defines managed interfaces for interacting
 - **Common/RootSite/** - Uses ViewsInterfaces extensively
 - **Common/SimpleRootSite/** - Built on ViewsInterfaces
 - **ManagedVwWindow/** - Window management using these interfaces
+
+
+## References
+- **Project Files**: ViewsInterfaces.csproj
+- **Key C# Files**: ComUtils.cs, ComWrapper.cs, DispPropOverrideFactory.cs, IPicture.cs, Rect.cs, VwPropertyStoreManaged.cs

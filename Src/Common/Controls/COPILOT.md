@@ -1,6 +1,6 @@
 ---
 owner: FIXME(set-owner)
-last-reviewed: 2025-10-29
+last-reviewed: 2025-10-30
 status: draft
 ---
 
@@ -29,8 +29,7 @@ Shared UI controls library providing reusable widgets and XML-based view compone
 - Build using the top-level FW.sln (Visual Studio/MSBuild) or run: `bash ./agent-build-fw.sh`
 - Avoid building this project in isolation; solution builds ensure repo props/targets and interop settings are applied.
 - Contains multiple control libraries under this folder; build as part of the full solution.
-- FIXME(build): If per-project SDK-style builds are supported for any subproject, add exact commands here.
-
+- 
 ## Entry Points
 - Provides reusable controls for application UIs
 - XML view system for declarative UI definition
@@ -40,7 +39,3 @@ Shared UI controls library providing reusable widgets and XML-based view compone
 - **Common/ViewsInterfaces/** - Interfaces implemented by controls
 - **xWorks/** - Major consumer of Common controls
 - **FwCoreDlgs/** - Dialog system using Common controls
-
-## Review Notes (FIXME)
-- FIXME(accuracy): Verify the dependency on ViewsInterfaces and Framework, and add any missing key subfolders or notable controls.
-

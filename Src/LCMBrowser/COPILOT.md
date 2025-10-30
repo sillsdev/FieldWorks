@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # LCMBrowser
 
 ## Purpose
@@ -28,3 +34,8 @@ LCM/Cellar model browser tooling. Provides a development and diagnostic tool for
 - **Cellar/** - Core LCM data model that LCMBrowser visualizes
 - **DbExtend/** - Schema extensions browsed by LCMBrowser
 - **FdoUi/** - Data object UI components (related visualization)
+
+
+## References
+- **Project Files**: LCMBrowser.csproj
+- **Key C# Files**: BrowserProjectId.cs, ClassPropertySelector.cs, CustomFields.cs, LCMBrowser.cs, LCMBrowserForm.cs, LCMClassList.cs, LCMInspectorList.cs, ModelWnd.cs

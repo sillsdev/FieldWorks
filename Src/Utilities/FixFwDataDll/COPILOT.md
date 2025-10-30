@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # Utilities/FixFwDataDll
 
 ## Purpose
@@ -32,3 +38,8 @@ Core data repair library for FieldWorks. Provides the implementation of data val
 - **Utilities/FixFwData/** - Command-line wrapper
 - **Cellar/** - Data model accessed and repaired
 - **MigrateSqlDbs/** - Database migration (related to data integrity)
+
+
+## References
+- **Project Files**: FixFwDataDll.csproj
+- **Key C# Files**: ErrorFixer.cs, FixErrorsDlg.cs, FwData.cs, WriteAllObjectsUtility.cs

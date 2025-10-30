@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # LexText/Lexicon
 
 ## Purpose
@@ -36,3 +42,8 @@ Lexicon editing components and features. Provides the main lexicon entry editing
 - **LexText/LexTextDll/** - Application hosting lexicon features
 - **Cellar/** - Lexicon data model
 - **xWorks/** - Dictionary configuration and display
+
+
+## References
+- **Project Files**: LexEdDll.csproj
+- **Key C# Files**: CircularRefBreaker.cs, DeleteEntriesSensesWithoutInterlinearization.cs, EntrySequenceReferenceLauncher.cs, EntrySequenceReferenceSlice.cs, FLExBridgeFirstSendReceiveInstructionsDlg.cs, FLExBridgeListener.cs, FindExampleSentenceDlg.cs, GhostLexRefSlice.cs

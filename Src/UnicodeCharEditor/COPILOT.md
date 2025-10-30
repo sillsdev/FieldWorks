@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # UnicodeCharEditor
 
 ## Purpose
@@ -33,3 +39,8 @@ Unicode character editor tool for FieldWorks. Provides a specialized interface f
 - **Common/** - UI infrastructure for the editor
 - **Kernel/** - String utilities for Unicode handling
 - **LexText/** - May use custom character definitions from editor
+
+
+## References
+- **Project Files**: UnicodeCharEditor.csproj
+- **Key C# Files**: CharEditorWindow.cs, CustomCharDlg.cs, ErrorCodes.cs, IcuErrorCodes.cs, IcuLockedException.cs, LogFile.cs, PUAInstaller.cs, Program.cs

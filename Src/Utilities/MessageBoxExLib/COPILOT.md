@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # Utilities/MessageBoxExLib
 
 ## Purpose
@@ -30,3 +36,8 @@ Enhanced message box library for FieldWorks. Provides extended message box funct
 - **FwCoreDlgs/** - Standard FieldWorks dialogs
 - **Common/FwUtils/** - General utilities
 - Used throughout FieldWorks applications
+
+
+## References
+- **Project Files**: MessageBoxExLib.csproj
+- **Key C# Files**: MessageBoxEx.cs, MessageBoxExButton.cs, MessageBoxExButtons.cs, MessageBoxExForm.cs, MessageBoxExIcon.cs, MessageBoxExManager.cs, MessageBoxExResult.cs, TimeoutResult.cs

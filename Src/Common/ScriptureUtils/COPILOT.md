@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # Common/ScriptureUtils
 
 ## Purpose
@@ -40,3 +46,8 @@ Scripture-specific utilities for working with biblical texts. Provides support f
 - **ParatextImport/** - Uses ScriptureUtils for data import
 - **Paratext8Plugin/** - Modern Paratext integration
 - **FwParatextLexiconPlugin/** - Lexicon integration with Paratext
+
+
+## References
+- **Project Files**: ScriptureUtils.csproj
+- **Key C# Files**: PT7ScrTextWrapper.cs, Paratext7Provider.cs, ParatextHelper.cs, ScrReferencePositionComparer.cs, ScriptureProvider.cs, ScriptureReferenceComparer.cs

@@ -1,6 +1,6 @@
 ---
 owner: FIXME(set-owner)
-last-reviewed: 2025-10-29
+last-reviewed: 2025-10-30
 status: draft
 ---
 
@@ -27,8 +27,7 @@ Core FieldWorks-specific utilities and application infrastructure. Provides fund
 ## Build Information
 - Build using the top-level FW.sln (Visual Studio/MSBuild) or run: `bash ./agent-build-fw.sh`
 - Avoid building this project in isolation; solution builds ensure repo props/targets and interop settings are applied.
-- FIXME(build): If SDK-style direct builds/tests are available, document exact commands here.
-
+- 
 ## Entry Points
 - Provides application-level utilities
 - Settings and configuration management
@@ -40,7 +39,8 @@ Core FieldWorks-specific utilities and application infrastructure. Provides fund
 - **xWorks/** - Main application using these utilities
 - **XCore/** - Framework that integrates FieldWorks utilities
 
-## Review Notes (FIXME)
-- FIXME(components): Confirm notable classes (e.g., ApplicationBusyDialog) and any additional utilities/resources to highlight.
-- FIXME(dependencies): Validate dependency relationships with Framework and FwUtils.
 
+## References
+- **Project Files**: FieldWorks.csproj
+- **Key Dependencies**: ..\..\LexText\LexTextControls\LexTextControls
+- **Key C# Files**: ApplicationBusyDialog.cs, FieldWorks.cs, FieldWorksManager.cs, FwRestoreProjectSettings.cs, MoveProjectsDlg.cs, ProjectId.cs, ProjectMatch.cs, RemoteRequest.cs

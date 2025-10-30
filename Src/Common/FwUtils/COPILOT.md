@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # Common/FwUtils
 
 ## Purpose
@@ -38,3 +44,8 @@ General FieldWorks utilities library. Provides a wide range of utility functions
 - **Common/Filters/** - Uses utility functions
 - **Common/FieldWorks/** - FieldWorks-specific utilities building on FwUtils
 - Used by virtually all FieldWorks components
+
+
+## References
+- **Project Files**: FwUtils.csproj
+- **Key C# Files**: AccessibleNameCreator.cs, ActivationContextHelper.cs, AlphaOutline.cs, Benchmark.cs, CachePair.cs, CharEnumeratorForByteArray.cs, CharacterCategorizer.cs, ClipboardUtils.cs

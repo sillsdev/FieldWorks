@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # Common/Filters
 
 ## Purpose
@@ -37,3 +43,8 @@ Data filtering functionality for FieldWorks. Provides filter matchers and sortin
 - **Common/FwUtils/** - Utilities used by filters
 - **xWorks/** - Uses filtering for data tree and searches
 - **LexText/** - Uses filtering in lexicon searches
+
+
+## References
+- **Project Files**: Filters.csproj
+- **Key C# Files**: BadSpellingMatcher.cs, DateTimeMatcher.cs, ExactLiteralMatcher.cs, FindResultSorter.cs, IManyOnePathSortItem.cs, IntFinder.cs, IntMatcher.cs, ManyOnePathSortItem.cs

@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # Paratext8Plugin
 
 ## Purpose
@@ -33,3 +39,8 @@ Integration plugin for Paratext 8. Enables bidirectional integration between Fie
 - **FwParatextLexiconPlugin/** - Lexicon-specific Paratext integration
 - **ParatextImport/** - Imports Paratext data into FieldWorks
 - **LexText/** - Lexicon data shared with Paratext
+
+
+## References
+- **Project Files**: Paratext8Plugin.csproj
+- **Key C# Files**: PT8VerseRefWrapper.cs, PTScrTextWrapper.cs, Paratext8Provider.cs, ParatextAlert.cs, Pt8VerseWrapper.cs

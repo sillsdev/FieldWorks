@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # Common/RootSite
 
 ## Purpose
@@ -39,3 +45,8 @@ Root-level site management for views. Provides the base infrastructure for hosti
 - **ManagedVwWindow/** - Window management using root sites
 - **xWorks/** - Uses root sites for data display
 - **LexText/** - Uses root sites for text views
+
+
+## References
+- **Project Files**: RootSite.csproj
+- **Key C# Files**: CollectorEnv.cs, FwBaseVc.cs, IApp.cs, IRootSiteGroup.cs, IRootSiteSlave.cs, IVwGraphicsNet.cs, PictureWrapper.cs, RequestSelectionHelper.cs

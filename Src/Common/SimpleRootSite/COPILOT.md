@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # Common/SimpleRootSite
 
 ## Purpose
@@ -40,3 +46,8 @@ Simplified root site implementation for view hosting. Provides a streamlined API
 - **ManagedVwWindow/** - Window components using SimpleRootSite
 - **xWorks/** - Uses SimpleRootSite for data views
 - **LexText/** - Uses SimpleRootSite for text editing
+
+
+## References
+- **Project Files**: SimpleRootSite.csproj
+- **Key C# Files**: AccessibilityWrapper.cs, ActiveViewHelper.cs, DataUpdateMonitor.cs, EditingHelper.cs, FwRightMouseClickEventArgs.cs, HoldGraphics.cs, IChangeRootObject.cs, IControl.cs

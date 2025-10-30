@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # LexText/ParserCore
 
 ## Purpose
@@ -36,3 +42,8 @@ Core parsing engine for morphological analysis. Provides the Hermit Crab (HC) pa
 - **LexText/Morphology/** - Morphology rules used by parser
 - **LexText/Interlinear/** - Uses parser for text analysis
 - **LexText/Lexicon/** - Lexicon data used in parsing
+
+
+## References
+- **Project Files**: ParserCore.csproj
+- **Key C# Files**: FwXmlTraceManager.cs, HCLoader.cs, HCParser.cs, IHCLoadErrorLogger.cs, IParser.cs, InvalidAffixProcessException.cs, InvalidReduplicationFormException.cs, M3ToXAmpleTransformer.cs

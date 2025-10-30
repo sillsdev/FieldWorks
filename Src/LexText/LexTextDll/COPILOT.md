@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # LexText/LexTextDll
 
 ## Purpose
@@ -37,3 +43,8 @@ Core lexicon application functionality library. Provides the main application lo
 - **LexText/Interlinear/** - Interlinear text features
 - **LexText/Morphology/** - Morphology features
 - All other LexText subfolders
+
+
+## References
+- **Project Files**: LexTextDll.csproj
+- **Key C# Files**: AreaListener.cs, FlexHelpTopicProvider.cs, ImageHolder.cs, LexTextApp.cs, RestoreDefaultsDlg.cs, TransductionSample.cs

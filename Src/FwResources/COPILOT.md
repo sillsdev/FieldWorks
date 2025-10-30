@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # FwResources
 
 ## Purpose
@@ -33,3 +39,8 @@ Shared resources (images, strings, assets) for FieldWorks applications and libra
 - **LexText/** - Uses shared icons and strings
 - **FwCoreDlgs/** - Dialogs that use shared resources
 - **Transforms/** - May include XSLT resources
+
+
+## References
+- **Project Files**: FwResources.csproj
+- **Key C# Files**: FwFileExtensions.cs, ResourceHelper.cs, ResourceHelperImpl.cs, SearchingAnimation.cs

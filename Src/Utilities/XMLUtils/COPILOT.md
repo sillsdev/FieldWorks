@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # Utilities/XMLUtils
 
 ## Purpose
@@ -39,3 +45,8 @@ XML processing utilities for FieldWorks. Provides common XML handling functional
 - **Cellar/** - XML serialization using these utilities
 - **Transforms/** - XSLT processing with XML utilities
 - **FXT/** - Transform tool using XML utilities
+
+
+## References
+- **Project Files**: XMLUtils.csproj
+- **Key C# Files**: DynamicLoader.cs, ResolveDirectory.cs, SILExceptions.cs, XmlUtils.cs

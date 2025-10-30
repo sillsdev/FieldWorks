@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # CacheLight
 
 ## Purpose
@@ -33,3 +39,8 @@ Lightweight caching services used by core components. Provides efficient in-memo
 - **Cellar/** - Core data model that benefits from CacheLight services
 - **Common/** - Provides utility infrastructure used by CacheLight
 - **DbExtend/** - Database extensions that may use caching
+
+
+## References
+- **Project Files**: CacheLight.csproj
+- **Key C# Files**: MetaDataCache.cs, RealCacheLoader.cs, RealDataCache.cs, TsMultiString.cs, TsStringfactory.cs

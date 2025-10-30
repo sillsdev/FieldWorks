@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # XCore/SilSidePane
 
 ## Purpose
@@ -35,3 +41,8 @@ Side pane UI component for navigation. Provides the navigation pane (sidebar) co
 - **Common/Controls/** - Base control infrastructure
 - **xWorks/** - Uses side pane for navigation
 - **LexText/** - Uses side pane for area selection
+
+
+## References
+- **Project Files**: SilSidePane.csproj
+- **Key C# Files**: Banner.cs, IItemArea.cs, Item.cs, ListViewItemArea.cs, NavPaneOptionsDlg.cs, OutlookBar.cs, OutlookBarButton.cs, OutlookBarButtonCollection.cs

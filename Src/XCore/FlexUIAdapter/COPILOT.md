@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # XCore/FlexUIAdapter
 
 ## Purpose
@@ -35,3 +41,8 @@ FLEx UI adapter implementation. Provides the concrete implementation of UI adapt
 - **Common/UIAdapterInterfaces/** - Additional adapter interfaces
 - **XCore/** - Framework using these adapters
 - **xWorks/** - Application using UI adapters
+
+
+## References
+- **Project Files**: FlexUIAdapter.csproj
+- **Key C# Files**: AdapterBase.cs, BarAdapterBase.cs, ContextHelper.cs, MenuAdapter.cs, NavBarAdapter.cs, PaneBar.cs, PanelButton.cs, PanelMenu.cs

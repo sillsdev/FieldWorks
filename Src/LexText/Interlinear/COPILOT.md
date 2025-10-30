@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # LexText/Interlinear
 
 ## Purpose
@@ -37,3 +43,8 @@ Interlinear text analysis and glossing functionality. Provides tools for creatin
 - **LexText/Discourse/** - Discourse analysis on interlinear texts
 - **Common/SimpleRootSite/** - View hosting for interlinear display
 - **views/** - Native rendering for complex interlinear layout
+
+
+## References
+- **Project Files**: ITextDll.csproj
+- **Key C# Files**: BIRDInterlinearImporter.cs, ChooseAnalysisHandler.cs, ChooseTextWritingSystemDlg.cs, ClosedFeatureNode.cs, ClosedFeatureValue.cs, ComplexConcControl.cs, ComplexConcGroupNode.cs, ComplexConcLeafNode.cs

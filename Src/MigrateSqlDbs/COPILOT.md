@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # MigrateSqlDbs
 
 ## Purpose
@@ -29,3 +35,8 @@ Database migration and upgrade tooling for FieldWorks. Handles schema migrations
 - **Cellar/** - Core data model being migrated
 - **DbExtend/** - Schema extensions handled during migration
 - **InstallValidator/** - May check database version compatibility
+
+
+## References
+- **Project Files**: MigrateSqlDbs.csproj
+- **Key C# Files**: ExistingProjectDlg.cs, FWVersionTooOld.cs, MigrateProjects.cs, Program.cs, Settings.cs

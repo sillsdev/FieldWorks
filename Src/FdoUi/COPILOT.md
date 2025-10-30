@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # FdoUi
 
 ## Purpose
@@ -34,3 +40,8 @@ UI components for FieldWorks Data Objects (FDO). Provides user interface element
 - **DbExtend/** - Custom field extensions that FdoUi provides UI for
 - **FwCoreDlgs/** - Additional dialogs that work with FdoUi components
 - **xWorks/** - Uses FdoUi for data object display and editing
+
+
+## References
+- **Project Files**: FdoUi.csproj
+- **Key C# Files**: BulkPosEditor.cs, DummyCmObject.cs, FdoUiCore.cs, FsFeatDefnUi.cs, FwLcmUI.cs, InflectionClassEditor.cs, InflectionFeatureEditor.cs, LexEntryUi.cs

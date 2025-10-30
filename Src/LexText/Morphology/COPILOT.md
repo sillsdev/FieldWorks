@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # LexText/Morphology
 
 ## Purpose
@@ -35,3 +41,8 @@ Morphological analysis and morphology editor. Provides tools for defining morpho
 - **LexText/ParserUI/** - Parser UI for morphology
 - **LexText/Interlinear/** - Uses morphology for text analysis
 - **LexText/Lexicon/** - Lexicon data used in morphology
+
+
+## References
+- **Project Files**: MorphologyEditorDll.csproj
+- **Key C# Files**: AdhocCoProhibAtomicLauncher.cs, AdhocCoProhibAtomicReferenceSlice.cs, AdhocCoProhibVectorLauncher.cs, AdhocCoProhibVectorReferenceSlice.cs, AffixRuleFormulaControl.cs, AffixRuleFormulaSlice.cs, AffixRuleFormulaVc.cs, AnalysisInterlinearRS.cs

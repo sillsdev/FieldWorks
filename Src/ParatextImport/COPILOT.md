@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-30
+status: verified
+---
+
 # ParatextImport
 
 ## Purpose
@@ -36,3 +42,8 @@ Import pipeline for Paratext data into FieldWorks. Handles importing Scripture t
 - **LexText/** - Target for imported lexical data
 - **DocConvert/** - Document conversion utilities used in import
 - **FXT/** - May use transformations during import
+
+
+## References
+- **Project Files**: ParatextImport.csproj
+- **Key C# Files**: BookMerger.cs, Cluster.cs, DiffLocation.cs, Difference.cs, IBookVersionAgent.cs, ISCScriptureText.cs, ISCTextEnum.cs, ISCTextSegment.cs
