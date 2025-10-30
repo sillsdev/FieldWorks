@@ -229,3 +229,21 @@ needed to embed Views in applications while maintaining full rendering capabilit
 - **XML data/config**: SimpleRootSiteDataProviderCacheModel.xml, TextCacheModel.xml
 - **Source file count**: 43 files
 - **Data file count**: 6 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.

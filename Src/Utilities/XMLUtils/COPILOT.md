@@ -109,3 +109,21 @@ and data processing throughout FieldWorks.
 - **Key C# files**: AssemblyInfo.cs, DynamicLoader.cs, DynamicLoaderTests.cs, ResolveDirectory.cs, SILExceptions.cs, XmlUtils.cs, XmlUtilsStrings.Designer.cs, XmlUtilsTest.cs
 - **Source file count**: 8 files
 - **Data file count**: 1 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.

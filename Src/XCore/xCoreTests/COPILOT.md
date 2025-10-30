@@ -55,3 +55,24 @@ behaves correctly as it underpins all FieldWorks applications.
 - **XML data/config**: CreateOverrideTestData.xml, IncludeXmlTestSource.xml, IncludeXmlTestSourceB.xml, basicTest.xml, includeTest.xml
 - **Source file count**: 3 files
 - **Data file count**: 12 files
+
+## Interfaces and Data Models
+TBD — populate from code. See auto-generated hints below.
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.

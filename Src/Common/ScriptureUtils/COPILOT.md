@@ -168,3 +168,21 @@ with Bible translation projects and interoperate with Paratext software.
 - **Key C# files**: AssemblyInfo.cs, PT7ScrTextWrapper.cs, Paratext7Provider.cs, ParatextHelper.cs, ParatextHelperTests.cs, ScrReferencePositionComparer.cs, ScrReferencePositionComparerTests.cs, ScriptureProvider.cs, ScriptureReferenceComparer.cs, ScriptureReferenceComparerTests.cs
 - **Source file count**: 10 files
 - **Data file count**: 0 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.

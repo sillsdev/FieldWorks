@@ -141,3 +141,21 @@ document how texts are organized at levels above the sentence.
 - **Key C# files**: AdvancedMTDialog.cs, ConstChartBody.cs, ConstituentChart.cs, ConstituentChartLogic.cs, DiscourseExportDialog.cs, DiscourseExporter.cs, InterlinRibbon.cs, MaxStringWidthForChartColumn.cs, MultilevelHeaderModel.cs, SelectClausesDialog.cs
 - **Source file count**: 36 files
 - **Data file count**: 5 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.

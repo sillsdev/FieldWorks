@@ -91,3 +91,21 @@ and facilitates unit testing of UI-dependent code.
 - **Key C# files**: AssemblyInfo.cs, HelperClasses.cs, SIBInterface.cs, TMInterface.cs, UIAdapterInterfacesStrings.Designer.cs
 - **Source file count**: 5 files
 - **Data file count**: 1 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.

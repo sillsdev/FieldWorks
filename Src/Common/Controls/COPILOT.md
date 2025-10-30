@@ -188,3 +188,21 @@ support complex data-driven interfaces through declarative XML specifications.
 - **XML data/config**: My_Stem-based_LexEntry_Layouts.xml, SampleCm.xml, SampleData.xml, TestColumns.xml, TestParts.xml
 - **Source file count**: 276 files
 - **Data file count**: 95 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.

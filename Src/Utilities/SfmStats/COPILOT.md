@@ -50,3 +50,24 @@ No major public classes identified.
 - **Key C# files**: AssemblyInfo.cs, Program.cs
 - **Source file count**: 2 files
 - **Data file count**: 0 files
+
+## Interfaces and Data Models
+TBD — populate from code. See auto-generated hints below.
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.

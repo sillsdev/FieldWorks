@@ -173,3 +173,21 @@ throughout FieldWorks applications.
 - **Key C# files**: AssemblyInfo.cs, DateTimeMatcher.cs, ExactLiteralMatcher.cs, FiltersStrings.Designer.cs, IManyOnePathSortItem.cs, IntFinder.cs, IntMatcher.cs, ManyOnePathSortItem.cs, RecordFilter.cs, RecordSorter.cs
 - **Source file count**: 18 files
 - **Data file count**: 1 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.

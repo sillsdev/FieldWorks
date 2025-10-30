@@ -70,3 +70,21 @@ the main applications for data validation.
 - **Key C# files**: AssemblyInfo.cs, ErrorFixer.cs, FixErrorsDlg.Designer.cs, FixErrorsDlg.cs, FwData.cs, Strings.Designer.cs, WriteAllObjectsUtility.cs
 - **Source file count**: 7 files
 - **Data file count**: 2 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.

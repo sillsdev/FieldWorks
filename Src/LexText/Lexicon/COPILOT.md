@@ -149,3 +149,21 @@ dictionary and lexicon development workflows in FLEx.
 - **Key C# files**: AssemblyInfo.cs, FLExBridgeFirstSendReceiveInstructionsDlg.Designer.cs, FindExampleSentenceDlg.Designer.cs, GhostLexRefSlice.cs, HomographResetter.cs, LexReferenceCollectionView.cs, LexReferencePairSlice.cs, LexReferencePairView.cs, RevEntrySensesCollectionReferenceSlice.cs, SortReversalSubEntries.cs
 - **Source file count**: 77 files
 - **Data file count**: 24 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.

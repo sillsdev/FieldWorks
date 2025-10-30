@@ -169,3 +169,21 @@ and validate their morphological descriptions.
 - **XML data/config**: nihimbiliguStep01BadInflectionClass.xml, nihinlikximuraNoCompoundRulesStep00.xml, nihinxolikximukestiraNoCompoundRulesStep00.xml, niyuwowwupeStemNameNotSetStep00.xml, niyuyiywupeStemNameFailStep02Result.xml
 - **Source file count**: 28 files
 - **Data file count**: 261 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.

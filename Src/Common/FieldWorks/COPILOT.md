@@ -176,3 +176,21 @@ and managing shared resources across FieldWorks applications.
 - **Key C# files**: ApplicationBusyDialog.Designer.cs, FieldWorks.cs, FieldWorksManager.cs, FwRestoreProjectSettings.cs, MoveProjectsDlg.Designer.cs, MoveProjectsDlg.cs, ProjectId.cs, WelcomeToFieldWorksDlg.Designer.cs, WelcomeToFieldWorksDlg.cs, WindowsInstallerQuery.cs
 - **Source file count**: 35 files
 - **Data file count**: 5 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.

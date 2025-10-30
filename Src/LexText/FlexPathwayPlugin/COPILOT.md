@@ -70,3 +70,21 @@ publications in various formats (PDF, EPUB, Word) from FieldWorks data.
 - **Key C# files**: AssemblyInfo.cs, FlexPathwayPlugin.cs, FlexPathwayPluginTests.cs, MyFoldersTest.cs, MyProcess.cs, myFolders.cs
 - **Source file count**: 6 files
 - **Data file count**: 0 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.

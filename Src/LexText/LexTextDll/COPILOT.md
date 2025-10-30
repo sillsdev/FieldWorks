@@ -88,3 +88,21 @@ Serves as the integration layer that brings together all FLEx components into a 
 - **Key C# files**: AreaListener.cs, AreaListenerTests.cs, AssemblyInfo.cs, FlexHelpTopicProvider.cs, ImageHolder.cs, LexTextApp.cs, LexTextStrings.Designer.cs, RestoreDefaultsDlg.Designer.cs, RestoreDefaultsDlg.cs, TransductionSample.cs
 - **Source file count**: 10 files
 - **Data file count**: 4 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.
