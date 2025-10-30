@@ -594,7 +594,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// check to see if column spec is still valid and useable.
 		/// </summary>
 		/// <param name="node"></param>
-		/// <returns></returns>
+		/// <returns>True if we can't prove the column is invalid</returns>
 		internal bool IsValidColumnSpec(XmlNode node)
 		{
 			List<XmlNode> possibleColumns = this.PossibleColumnSpecs;
@@ -655,8 +655,6 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			return false;
 		}
-
-
 
 		private string GetNewLabelFromMatchingCustomField(List<XmlNode> possibleColumns, int flid)
 		{
