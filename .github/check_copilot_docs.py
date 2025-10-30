@@ -268,7 +268,7 @@ def main():
     repo_index = index_repo_files(root)
 
     paths_to_check = []
-    if args.only - changed:
+    if args.only_changed:
         changed = git_changed_files(
             root, base=args.base, head=args.head, since=args.since
         )
