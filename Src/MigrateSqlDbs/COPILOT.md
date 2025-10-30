@@ -10,7 +10,11 @@ status: verified
 Database migration and upgrade tooling for FieldWorks. Handles schema migrations, data transformations, and version upgrades when moving between different versions of FieldWorks.
 
 ## Key Components
-- **MigrateSqlDbs.csproj** - Database migration tool
+### Key Classes
+- **ExistingProjectDlg**
+- **FWVersionTooOld**
+- **Settings**
+- **MigrateProjects**
 
 ## Technology Stack
 - C# .NET
@@ -36,7 +40,8 @@ Database migration and upgrade tooling for FieldWorks. Handles schema migrations
 - **DbExtend/** - Schema extensions handled during migration
 - **InstallValidator/** - May check database version compatibility
 
+## Code Evidence
+*Analysis based on scanning 5 source files*
 
-## References
-- **Project Files**: MigrateSqlDbs.csproj
-- **Key C# Files**: ExistingProjectDlg.cs, FWVersionTooOld.cs, MigrateProjects.cs, Program.cs, Settings.cs
+- **Classes found**: 4 public classes
+- **Namespaces**: SIL.FieldWorks.MigrateSqlDbs.MigrateProjects, SIL.FieldWorks.MigrateSqlDbs.MigrateProjects.Properties

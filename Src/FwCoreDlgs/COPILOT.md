@@ -10,20 +10,25 @@ status: verified
 Common dialogs used across FieldWorks applications. Provides a standardized set of dialog boxes and UI components for common operations like file selection, configuration, and user input.
 
 ## Key Components
-- **FwCoreDlgs.csproj** - Core dialog library
-- **FwCoreDlgControls/FwCoreDlgControls.csproj** - Reusable dialog controls
-- **FwCoreDlgsTests/FwCoreDlgsTests.csproj** - Dialog component tests
-
-
-## Key Classes/Interfaces
+### Key Classes
+- **FwChooseAnthroListCtrl**
+- **ArchiveWithRamp**
+- **FwApplyStyleDlg**
 - **FwFindReplaceDlg**
-- **MatchType**
-- **IFindAndReplaceContext**
+- **VwPatternSerializableSettings**
+- **SearchKiller**
+- **SampleVc**
+- **SampleView**
 - **RegexHelperMenu**
-- **AddNewUserDlg**
-- **ChooserTreeView**
-- **FwProjPropertiesDlg**
-- **FileLocationChoice**
+- **MissingOldFieldWorksDlg**
+
+### Key Interfaces
+- **IFindAndReplaceContext**
+- **IUtility**
+- **IWizardStep**
+- **IBasicFindView**
+- **IFontDialog**
+- **IStylesTab**
 
 ## Technology Stack
 - C# .NET WinForms
@@ -39,10 +44,6 @@ Common dialogs used across FieldWorks applications. Provides a standardized set 
 - Build with MSBuild or Visual Studio
 - Provides shared dialog infrastructure
 
-## Testing
-- Run tests: `dotnet test FwCoreDlgs/FwCoreDlgsTests/FwCoreDlgsTests.csproj`
-- Tests cover dialog behavior and user interactions
-
 ## Entry Points
 - Provides standard dialogs (file choosers, configuration dialogs, etc.)
 - Reusable controls for building consistent UI
@@ -53,7 +54,9 @@ Common dialogs used across FieldWorks applications. Provides a standardized set 
 - **xWorks/** - Primary consumer of standard dialogs
 - **LexText/** - Uses FwCoreDlgs for common operations
 
+## Code Evidence
+*Analysis based on scanning 120 source files*
 
-## References
-- **Project Files**: FwCoreDlgs.csproj
-- **Key C# Files**: AddCnvtrDlg.cs, AddNewUserDlg.cs, AddNewVernLangWarningDlg.cs, AdvancedEncProps.cs, AdvancedScriptRegionVariantModel.cs, AdvancedScriptRegionVariantView.cs, ArchiveWithRamp.cs, BackupProjectSettings.cs
+- **Classes found**: 20 public classes
+- **Interfaces found**: 6 public interfaces
+- **Namespaces**: AddConverterDlgTests, SIL.FieldWorks.Common.Controls, SIL.FieldWorks.FwCoreDlgControls, SIL.FieldWorks.FwCoreDlgControlsTests, SIL.FieldWorks.FwCoreDlgs

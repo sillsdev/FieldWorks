@@ -10,19 +10,23 @@ status: verified
 Import pipeline for Paratext data into FieldWorks. Handles importing Scripture texts, notes, and related data from Paratext projects into the FieldWorks data model.
 
 ## Key Components
-- **ParatextImport.csproj** - Main import library
-- **ParatextImportTests/ParatextImportTests.csproj** - Import functionality tests
-
-
-## Key Classes/Interfaces
+### Key Classes
 - **ScrAnnotationInfo**
 - **Cluster**
 - **OverlapInfo**
-- **ClusterType**
+- **ClusterListHelper**
+- **SectionHeadCorrelationHelper**
 - **ImportedBooks**
 - **UndoImportManager**
 - **ImportStyleProxy**
 - **ParatextImportManager**
+- **DifferenceList**
+
+### Key Interfaces
+- **ISCTextSegment**
+- **ISCScriptureText**
+- **IBookVersionAgent**
+- **ISCTextEnum**
 
 ## Technology Stack
 - C# .NET
@@ -39,10 +43,6 @@ Import pipeline for Paratext data into FieldWorks. Handles importing Scripture t
 - Includes comprehensive test suite
 - Build with MSBuild or Visual Studio
 
-## Testing
-- Run tests: `dotnet test ParatextImport/ParatextImportTests/ParatextImportTests.csproj`
-- Tests cover import scenarios and data transformation
-
 ## Entry Points
 - Provides import APIs and wizards
 - Used through UI import commands in applications
@@ -54,7 +54,9 @@ Import pipeline for Paratext data into FieldWorks. Handles importing Scripture t
 - **DocConvert/** - Document conversion utilities used in import
 - **FXT/** - May use transformations during import
 
+## Code Evidence
+*Analysis based on scanning 41 source files*
 
-## References
-- **Project Files**: ParatextImport.csproj
-- **Key C# Files**: BookMerger.cs, Cluster.cs, DiffLocation.cs, Difference.cs, IBookVersionAgent.cs, ISCScriptureText.cs, ISCTextEnum.cs, ISCTextSegment.cs
+- **Classes found**: 20 public classes
+- **Interfaces found**: 4 public interfaces
+- **Namespaces**: ParatextImport, ParatextImport.ImportTests

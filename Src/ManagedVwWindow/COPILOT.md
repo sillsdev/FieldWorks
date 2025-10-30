@@ -10,12 +10,9 @@ status: verified
 Managed view window components. Provides .NET wrappers and management for native view windows, bridging the gap between managed UI code and native view rendering.
 
 ## Key Components
-- **ManagedVwWindow.csproj** - Managed window wrapper library
-- **ManagedVwWindowTests/ManagedVwWindowTests.csproj** - Window component tests
-
-
-## Key Classes/Interfaces
+### Key Classes
 - **ManagedVwWindow**
+- **ManagedVwWindowTests**
 
 ## Technology Stack
 - C# .NET with C++/CLI interop
@@ -31,10 +28,6 @@ Managed view window components. Provides .NET wrappers and management for native
 - Includes test suite
 - Build with MSBuild or Visual Studio
 
-## Testing
-- Run tests: `dotnet test ManagedVwWindow/ManagedVwWindowTests/ManagedVwWindowTests.csproj`
-- Tests cover window management and view integration
-
 ## Entry Points
 - Provides managed window classes for views
 - Bridge between managed UI and native rendering
@@ -45,3 +38,9 @@ Managed view window components. Provides .NET wrappers and management for native
 - **Common/RootSite/** - Root site components using managed windows
 - **xWorks/** - Applications using view windows
 - **LexText/** - Uses view windows for text display
+
+## Code Evidence
+*Analysis based on scanning 3 source files*
+
+- **Classes found**: 2 public classes
+- **Namespaces**: SIL.FieldWorks.Language, SIL.FieldWorks.Views

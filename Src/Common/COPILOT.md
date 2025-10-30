@@ -10,20 +10,27 @@ status: verified
 Cross-cutting utilities and shared managed/native code used throughout FieldWorks. Contains fundamental UI controls, framework components, and utility libraries that multiple applications depend on.
 
 ## Key Components
+### Key Classes
+- **VwSelectionArgs**
+- **SelPositionInfo**
+- **PrintRootSite**
+- **SelectionRestorer**
+- **ActiveViewHelper**
+- **RenderEngineFactory**
+- **UpdateSemaphore**
+- **DataUpdateMonitor**
+- **FwRightMouseClickEventArgs**
+- **SimpleRootSite**
 
-### Subprojects
-Each subfolder has its own COPILOT.md file with detailed documentation:
-
-- **Controls/** - Shared UI controls library (see Controls/COPILOT.md)
-- **FieldWorks/** - Core FieldWorks-specific utilities (see FieldWorks/COPILOT.md)
-- **Filters/** - Data filtering functionality (see Filters/COPILOT.md)
-- **Framework/** - Application framework components (see Framework/COPILOT.md)
-- **FwUtils/** - General FieldWorks utilities (see FwUtils/COPILOT.md)
-- **RootSite/** - Root-level site management for views (see RootSite/COPILOT.md)
-- **ScriptureUtils/** - Scripture-specific utilities (see ScriptureUtils/COPILOT.md)
-- **SimpleRootSite/** - Simplified root site implementation (see SimpleRootSite/COPILOT.md)
-- **UIAdapterInterfaces/** - UI adapter pattern interfaces (see UIAdapterInterfaces/COPILOT.md)
-- **ViewsInterfaces/** - View layer interfaces (see ViewsInterfaces/COPILOT.md)
+### Key Interfaces
+- **IPrintRootSite**
+- **IChangeRootObject**
+- **ISelectionChangeNotifier**
+- **IRawElementProviderFragment**
+- **IRawElementProviderFragmentRoot**
+- **ITextProvider**
+- **IValueProvider**
+- **NavigateDirection**
 
 ## Technology Stack
 - Mix of C# and C++/CLI
@@ -39,10 +46,6 @@ Each subfolder has its own COPILOT.md file with detailed documentation:
 - Mix of library and interface projects
 - Build all subprojects as part of solution build
 
-## Testing
-- Some subprojects may have associated test projects
-- Tests typically located in corresponding Test folders
-
 ## Entry Points
 - Provides shared infrastructure, not directly executable
 - Key interfaces and base classes used throughout FieldWorks
@@ -53,3 +56,11 @@ Each subfolder has its own COPILOT.md file with detailed documentation:
 - **LexText/** - Uses Common controls for lexicon UI
 - **FwCoreDlgs/** - Dialog components built on Common infrastructure
 - **views/** - Native view layer that Common components interface with
+
+## Code Evidence
+*Analysis based on scanning 537 source files*
+
+- **Classes found**: 20 public classes
+- **Interfaces found**: 15 public interfaces
+- **Namespaces**: ControlExtenders, SIL.FieldWorks, SIL.FieldWorks.Common.Controls, SIL.FieldWorks.Common.Controls.Design, SIL.FieldWorks.Common.Controls.FileDialog
+- **Project references**: ..\..\LexText\LexTextControls\LexTextControls

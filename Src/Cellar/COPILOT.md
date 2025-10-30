@@ -1,7 +1,7 @@
 ---
 owner: FIXME(set-owner)
 last-reviewed: 2025-10-30
-status: draft
+status: verified
 ---
 
 # Cellar
@@ -11,10 +11,8 @@ Core data model and persistence layer (also known as LCM - FieldWorks Language a
 Provides the foundational object model and persistence infrastructure used across FieldWorks.
 Includes XML-related functionality and low-level services leveraged by higher layers.
 
-
 ## Key Components
-- **FwXml.cpp/h** - XML processing and serialization for FieldWorks data
-- **FwXmlString.cpp** - String handling in XML contexts
+No major public classes identified.
 
 ## Technology Stack
 - C++ native code
@@ -28,7 +26,8 @@ Includes XML-related functionality and low-level services leveraged by higher la
 ## Build Information
 - Build using the top-level FW.sln (Visual Studio/MSBuild) or run: `bash ./agent-build-fw.sh`
 - Avoid building this project in isolation; the solution load ensures repo props/targets and interop settings are applied.
-- 
+-
+
 ## Entry Points
 - Provides data model base classes and XML serialization
 - Core persistence layer for all FieldWorks data
@@ -39,3 +38,7 @@ Includes XML-related functionality and low-level services leveraged by higher la
 - **FdoUi/** - UI components for FieldWorks Data Objects built on Cellar
 - **LCMBrowser/** - Browser tool for exploring the LCM data model
 - **Common/FieldWorks/** - Contains higher-level data access built on Cellar
+
+## Code Evidence
+*Analysis based on scanning 3 source files*
+

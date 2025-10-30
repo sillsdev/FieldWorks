@@ -10,7 +10,7 @@ status: verified
 Build-time configuration generation utilities for FieldWorks. Creates help configuration files and other build artifacts needed for the application's help system.
 
 ## Key Components
-- **GenerateHCConfig.csproj** - Configuration generation tool
+No major public classes identified.
 
 ## Technology Stack
 - C# .NET
@@ -35,7 +35,7 @@ Build-time configuration generation utilities for FieldWorks. Creates help confi
 - **DistFiles/** - May contain generated help configuration output
 - **FwResources/** - May work with resource files
 
+## Code Evidence
+*Analysis based on scanning 5 source files*
 
-## References
-- **Project Files**: GenerateHCConfig.csproj
-- **Key C# Files**: ConsoleLogger.cs, NullFdoDirectories.cs, NullThreadedProgress.cs, Program.cs, ProjectIdentifier.cs
+- **Namespaces**: GenerateHCConfig

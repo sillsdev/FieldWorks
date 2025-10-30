@@ -10,8 +10,20 @@ status: verified
 FieldWorks transform assets and related tooling. Provides transformation capabilities for converting and processing linguistic data between different formats and representations.
 
 ## Key Components
-- **FxtExe/FxtExe.csproj** - Executable transformation tool
-- **FxtDll/FxtDll.csproj** - Transform library for programmatic use
+### Key Classes
+- **main**
+- **ChangedDataItem**
+- **XDumper**
+- **XUpdater**
+- **FXTElementSearchProperties**
+- **XUpdaterException**
+- **ConstraintFilterStrategy**
+- **FxtTestBase**
+- **QuickTests**
+- **M3ParserDumpTests**
+
+### Key Interfaces
+- **IFilterStrategy**
 
 ## Technology Stack
 - C# .NET
@@ -35,3 +47,10 @@ FieldWorks transform assets and related tooling. Provides transformation capabil
 - **Transforms/** - Contains XSLT files and transformation assets used by FXT
 - **DocConvert/** - Document conversion that may use FXT transformations
 - **ParatextImport/** - May use FXT for data transformation during import
+
+## Code Evidence
+*Analysis based on scanning 13 source files*
+
+- **Classes found**: 13 public classes
+- **Interfaces found**: 1 public interfaces
+- **Namespaces**: SIL.FieldWorks.Common.FXT

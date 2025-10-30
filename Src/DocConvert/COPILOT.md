@@ -10,9 +10,7 @@ status: verified
 Document and data conversion tools for FieldWorks. Handles conversion between different document formats and data representations used in linguistic work.
 
 ## Key Components
-- Document conversion utilities
-- Format transformation tools
-- Data import/export helpers
+No major public classes identified.
 
 ## Technology Stack
 - Mix of native and managed code
@@ -35,3 +33,7 @@ Document and data conversion tools for FieldWorks. Handles conversion between di
 - **Transforms/** - XSLT and transformation assets for document conversion
 - **ParatextImport/** - Specialized import for Paratext data
 - **FXT/** - FieldWorks transform tools that may use DocConvert
+
+## Code Evidence
+*Analysis based on scanning 0 source files*
+

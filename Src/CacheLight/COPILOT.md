@@ -10,11 +10,19 @@ status: verified
 Lightweight caching services used by core components. Provides efficient in-memory caching mechanisms for FieldWorks data access patterns.
 
 ## Key Components
-- **CacheLight.csproj** - Main caching library
-- **CacheLightTests/CacheLightTests.csproj** - Unit tests for caching functionality
+### Key Classes
+- **MetaDataCache**
+- **RealCacheLoader**
+- **RealDataCache**
+- **RealDataCacheBase**
+- **RealDataCacheIVwCacheDaTests**
+- **RealDataCacheISilDataAccessTests**
+- **MetaDataCacheInitializationTests**
+- **MetaDataCacheBase**
+- **MetaDataCacheFieldAccessTests**
+- **MetaDataCacheClassAccessTests**
 
-
-## Key Classes/Interfaces
+### Key Interfaces
 - **IRealDataCache**
 
 ## Technology Stack
@@ -31,10 +39,6 @@ Lightweight caching services used by core components. Provides efficient in-memo
 - Contains comprehensive unit tests
 - Build with MSBuild or Visual Studio
 
-## Testing
-- Run tests: `dotnet test CacheLight/CacheLightTests/CacheLightTests.csproj`
-- Tests cover caching behavior, invalidation, and performance
-
 ## Entry Points
 - Provides caching services and interfaces
 - Integrated into data access pipelines
@@ -44,7 +48,9 @@ Lightweight caching services used by core components. Provides efficient in-memo
 - **Common/** - Provides utility infrastructure used by CacheLight
 - **DbExtend/** - Database extensions that may use caching
 
+## Code Evidence
+*Analysis based on scanning 8 source files*
 
-## References
-- **Project Files**: CacheLight.csproj
-- **Key C# Files**: MetaDataCache.cs, RealCacheLoader.cs, RealDataCache.cs, TsMultiString.cs, TsStringfactory.cs
+- **Classes found**: 12 public classes
+- **Interfaces found**: 1 public interfaces
+- **Namespaces**: SIL.FieldWorks.CacheLight, SIL.FieldWorks.CacheLightTests

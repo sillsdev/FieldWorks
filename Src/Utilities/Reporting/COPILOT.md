@@ -4,18 +4,13 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# Utilities/Reporting
+# Reporting
 
 ## Purpose
 Error reporting functionality for FieldWorks. Provides infrastructure for collecting, displaying, and submitting error reports when exceptions or problems occur.
 
 ## Key Components
-- **Reporting.csproj** - Error reporting library
-- **ErrorReport.cs** - Error report collection and display
-- Dialog image resources for error reporting UI
-
-
-## Key Classes/Interfaces
+### Key Classes
 - **UsageEmailDialog**
 - **ErrorReporter**
 
@@ -42,3 +37,9 @@ Error reporting functionality for FieldWorks. Provides infrastructure for collec
 - **Common/Framework/** - Application framework with error handling
 - **DebugProcs/** - Debug diagnostics (related functionality)
 - Used throughout FieldWorks for exception handling
+
+## Code Evidence
+*Analysis based on scanning 3 source files*
+
+- **Classes found**: 2 public classes
+- **Namespaces**: SIL.Utils

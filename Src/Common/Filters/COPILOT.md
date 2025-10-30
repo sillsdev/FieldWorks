@@ -4,29 +4,29 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# Common/Filters
+# Filters
 
 ## Purpose
 Data filtering functionality for FieldWorks. Provides filter matchers and sorting capabilities for searching and displaying filtered data sets.
 
 ## Key Components
-- **Filters.csproj** - Main filtering library
-- **BadSpellingMatcher.cs** - Spell-check filtering
-- **DateTimeMatcher.cs** - Date/time filtering
-- **ExactLiteralMatcher.cs** - Exact text matching
-- **FindResultSorter.cs** - Result sorting infrastructure
-- **FiltersTests/** - Comprehensive test suite
-
-
-## Key Classes/Interfaces
+### Key Classes
+- **IntMatcher**
 - **RangeIntMatcher**
 - **NotEqualIntMatcher**
 - **FilterChangeEventArgs**
+- **RecordFilter**
 - **ProblemAnnotationFilter**
+- **BaseMatcher**
+- **SimpleStringMatcher**
+- **ExactMatcher**
+- **BeginMatcher**
+
+### Key Interfaces
 - **IMatcher**
-- **DateTimeMatcher**
-- **DateMatchType**
-- **ExactLiteralMatcher**
+- **IStringFinder**
+- **IReportsSortProgress**
+- **IManyOnePathSortItem**
 
 ## Technology Stack
 - C# .NET
@@ -42,10 +42,6 @@ Data filtering functionality for FieldWorks. Provides filter matchers and sortin
 - Build via: `dotnet build Filters.csproj`
 - Includes test project
 
-## Testing
-- Run tests: `dotnet test Filters/FiltersTests/`
-- Tests cover matcher and sorter functionality
-
 ## Entry Points
 - Filter matchers for data filtering
 - Sorting infrastructure for result display
@@ -55,7 +51,9 @@ Data filtering functionality for FieldWorks. Provides filter matchers and sortin
 - **xWorks/** - Uses filtering for data tree and searches
 - **LexText/** - Uses filtering in lexicon searches
 
+## Code Evidence
+*Analysis based on scanning 17 source files*
 
-## References
-- **Project Files**: Filters.csproj
-- **Key C# Files**: BadSpellingMatcher.cs, DateTimeMatcher.cs, ExactLiteralMatcher.cs, FindResultSorter.cs, IManyOnePathSortItem.cs, IntFinder.cs, IntMatcher.cs, ManyOnePathSortItem.cs
+- **Classes found**: 20 public classes
+- **Interfaces found**: 4 public interfaces
+- **Namespaces**: SIL.FieldWorks.Filters

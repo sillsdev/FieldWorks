@@ -4,23 +4,17 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# Utilities/MessageBoxExLib
+# MessageBoxExLib
 
 ## Purpose
 Enhanced message box library for FieldWorks. Provides extended message box functionality beyond standard Windows message boxes, including additional icons and customization options.
 
 ## Key Components
-- **MessageBoxExLib.csproj** - Enhanced message box library
-- **MessageBoxEx.cs** - Extended message box implementation
-- Custom icon resources (Icon_2.ico through Icon_5.ico)
-
-
-## Key Classes/Interfaces
-- **MessageBoxExButtons**
-- **MessageBoxExResult**
-- **MessageBoxExIcon**
-- **TimeoutResult**
+### Key Classes
+- **MessageBoxEx**
 - **MessageBoxExButton**
+- **MessageBoxExManager**
+- **MessageBoxTests**
 
 ## Technology Stack
 - C# .NET WinForms
@@ -45,7 +39,8 @@ Enhanced message box library for FieldWorks. Provides extended message box funct
 - **Common/FwUtils/** - General utilities
 - Used throughout FieldWorks applications
 
+## Code Evidence
+*Analysis based on scanning 10 source files*
 
-## References
-- **Project Files**: MessageBoxExLib.csproj
-- **Key C# Files**: MessageBoxEx.cs, MessageBoxExButton.cs, MessageBoxExButtons.cs, MessageBoxExForm.cs, MessageBoxExIcon.cs, MessageBoxExManager.cs, MessageBoxExResult.cs, TimeoutResult.cs
+- **Classes found**: 4 public classes
+- **Namespaces**: Utils.MessageBoxExLib

@@ -4,33 +4,28 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# LexText/LexTextControls
+# LexTextControls
 
 ## Purpose
 Lexicon UI controls library. Provides specialized controls and dialogs for lexicon editing, including allomorph addition, sense management, and lexicon import/export wizards.
 
 ## Key Components
-- **LexTextControls.csproj** - Controls library
-- **AddAllomorphDlg** - Add allomorph dialog
-- **AddNewSenseDlg** - Add sense dialog
-- **AddWritingSystemButton** - Writing system addition control
-- **BaseGoDlg** - Base dialog for lexicon operations
-- **LexImportWizard** - Lexicon import wizard
-- **LiftMerger** - LIFT format merging
-- **LiftExporter** - LIFT format export
-- **WordsSfmImport** - SFM format import
-- **LexTextControlsTests/** - Comprehensive test suite
-
-
-## Key Classes/Interfaces
-- **InterlinDestination**
+### Key Classes
 - **InterlinearMapping**
 - **Sfm2FlexTextWordsFrag**
+- **Sfm2FlexTextMappingBase**
+- **Sfm2FlexTextBase**
 - **PhonologicalFeatureChooserDlg**
 - **LexImportWizard**
 - **AddAllomorphDlg**
 - **MasterCategoryListDlg**
 - **LexImportField**
+- **LexImportFields**
+
+### Key Interfaces
+- **IFwExtension**
+- **ICmLiftObject**
+- **IPatternControl**
 
 ## Technology Stack
 - C# .NET WinForms
@@ -46,10 +41,6 @@ Lexicon UI controls library. Provides specialized controls and dialogs for lexic
 - Build via: `dotnet build LexTextControls.csproj`
 - Includes extensive test suite
 
-## Testing
-- Run tests: `dotnet test LexTextControls/LexTextControlsTests/`
-- Tests cover dialogs, wizards, and import/export
-
 ## Entry Points
 - Lexicon editing dialogs
 - Import/export wizards
@@ -61,7 +52,9 @@ Lexicon UI controls library. Provides specialized controls and dialogs for lexic
 - **FwCoreDlgs/** - Common dialog infrastructure
 - **Common/Controls/** - Base control infrastructure
 
+## Code Evidence
+*Analysis based on scanning 81 source files*
 
-## References
-- **Project Files**: LexTextControls.csproj
-- **Key C# Files**: AddAllomorphDlg.cs, AddNewSenseDlg.cs, AddWritingSystemButton.cs, BaseGoDlg.cs, CombineImportDlg.cs, ConfigureHomographDlg.cs, ContextMenuRequestedEventArgs.cs, EntryDlgListener.cs
+- **Classes found**: 20 public classes
+- **Interfaces found**: 3 public interfaces
+- **Namespaces**: LexTextControlsTests, SIL.FieldWorks.LexText.Controls, SIL.FieldWorks.LexText.Controls.DataNotebook, SIL.FieldWorks.XWorks.MorphologyEditor, to

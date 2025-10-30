@@ -4,32 +4,33 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# Common/FwUtils
+# FwUtils
 
 ## Purpose
 General FieldWorks utilities library. Provides a wide range of utility functions, helpers, and extension methods used throughout the FieldWorks codebase.
 
 ## Key Components
-- **FwUtils.csproj** - Main utilities library
-- **AccessibleNameCreator.cs** - Accessibility support
-- **AlphaOutline.cs** - Outline numbering utilities
-- **Benchmark.cs** - Performance measurement
-- **CachePair.cs** - Caching utilities
-- **CharacterCategorizer.cs** - Unicode character categorization
-- **ClipboardUtils.cs** - Clipboard operations
-- **ComponentsExtensionMethods.cs** - Extension methods for common types
-- Many more utility classes and helpers
-
-
-## Key Classes/Interfaces
+### Key Classes
 - **ManagedPictureFactory**
-- **IFwRegistryHelper**
-- **SaveFile**
+- **XmlSerializationHelper**
+- **WavConverter**
 - **InstallationException**
 - **FlexHelpProvider**
 - **Benchmark**
 - **TimeRecorder**
+- **ComponentsExtensionMethods**
 - **ConsoleProgress**
+- **MessageBoxUtils**
+
+### Key Interfaces
+- **IFwRegistryHelper**
+- **IMessageBox**
+- **IClipboard**
+- **IChecksDataSource**
+- **IProjectSpecificSettingsKeyProvider**
+- **IFocusablePanePortion**
+- **IHelpTopicProvider**
+- **ITextToken**
 
 ## Technology Stack
 - C# .NET
@@ -56,7 +57,9 @@ General FieldWorks utilities library. Provides a wide range of utility functions
 - **Common/FieldWorks/** - FieldWorks-specific utilities building on FwUtils
 - Used by virtually all FieldWorks components
 
+## Code Evidence
+*Analysis based on scanning 121 source files*
 
-## References
-- **Project Files**: FwUtils.csproj
-- **Key C# Files**: AccessibleNameCreator.cs, ActivationContextHelper.cs, AlphaOutline.cs, Benchmark.cs, CachePair.cs, CharEnumeratorForByteArray.cs, CharacterCategorizer.cs, ClipboardUtils.cs
+- **Classes found**: 20 public classes
+- **Interfaces found**: 11 public interfaces
+- **Namespaces**: SIL.FieldWorks.Common.FwUtils, SIL.FieldWorks.Common.FwUtils.Attributes, SIL.FieldWorks.Common.FwUtils.Pathway, SIL.FieldWorks.Common.FwUtils.Properties, SIL.FieldWorks.FwCoreDlgs

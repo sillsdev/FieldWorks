@@ -10,10 +10,7 @@ status: verified
 Transformation assets (e.g., XSLT) and helpers for FieldWorks. Contains XSLT stylesheets and transformation definitions used for converting data between formats, generating reports, and exporting content.
 
 ## Key Components
-- XSLT stylesheets for various transformations
-- Transformation configuration files
-- Export templates
-- Report generation templates
+No major public classes identified.
 
 ## Technology Stack
 - XSLT (eXtensible Stylesheet Language Transformations)
@@ -38,3 +35,7 @@ Transformation assets (e.g., XSLT) and helpers for FieldWorks. Contains XSLT sty
 - **DocConvert/** - Document conversion using transformations
 - **ParatextImport/** - May use transforms for data mapping
 - **LexText/** - Uses transforms for dictionary export and formatting
+
+## Code Evidence
+*Analysis based on scanning 0 source files*
+

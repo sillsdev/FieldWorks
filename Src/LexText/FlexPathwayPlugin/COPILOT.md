@@ -4,21 +4,18 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# LexText/FlexPathwayPlugin
+# FlexPathwayPlugin
 
 ## Purpose
 Pathway publishing integration plugin for FLEx. Enables export and publishing of lexicon and text data using SIL's Pathway publishing system.
 
 ## Key Components
-- **FlexPathwayPlugin.csproj** - Main plugin library
-- **FlexPathwayPlugin.cs** - Plugin implementation
-- **myFolders.cs** - Folder management for publishing
-- **FlexPathwayPluginTests/** - Plugin test suite
-
-
-## Key Classes/Interfaces
+### Key Classes
 - **FlexPathwayPlugin**
 - **DeExportDialog**
+- **MyFolders**
+- **MyFoldersTest**
+- **FlexPathwayPluginTest**
 
 ## Technology Stack
 - C# .NET
@@ -34,10 +31,6 @@ Pathway publishing integration plugin for FLEx. Enables export and publishing of
 - Build via: `dotnet build FlexPathwayPlugin.csproj`
 - Includes test suite
 
-## Testing
-- Run tests: `dotnet test FlexPathwayPlugin/FlexPathwayPluginTests/`
-- Tests cover plugin integration and export
-
 ## Entry Points
 - Plugin interface for Pathway integration
 - Export and publishing workflows
@@ -46,3 +39,9 @@ Pathway publishing integration plugin for FLEx. Enables export and publishing of
 - **LexText/LexTextDll/** - Core LexText functionality
 - **Transforms/** - XSLT transforms used for export
 - **FXT/** - Transform tools for data conversion
+
+## Code Evidence
+*Analysis based on scanning 6 source files*
+
+- **Classes found**: 5 public classes
+- **Namespaces**: FlexDePluginTests, FlexPathwayPluginTests, SIL.FieldWorks.XWorks, SIL.PublishingSolution

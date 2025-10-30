@@ -4,29 +4,26 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# LexText/Discourse
+# Discourse
 
 ## Purpose
 Discourse analysis features for FieldWorks. Provides tools for analyzing and charting discourse structure in texts, including constituent chart creation and management.
 
 ## Key Components
-- **Discourse.csproj** - Main discourse analysis library
-- **AdvancedMTDialog** - Advanced morphological tagging dialog
-- **ConstChartBody.cs** - Constituent chart body implementation
-- **ConstChartVc.cs** - Constituent chart view constructor
-- **ConstChartRowDecorator.cs** - Chart row decoration
-- **ChartLocation.cs** - Chart location tracking
-
-
-## Key Classes/Interfaces
+### Key Classes
 - **ConstChartBody**
+- **AdvancedMTDialog**
 - **DiscourseExportDialog**
+- **SelectClausesDialog**
 - **MultilevelHeaderModel**
-- **MultilevelHeaderNode**
 - **ConstituentChartLogic**
-- **FindWhereToAddResult**
 - **RowModifiedEventArgs**
+- **RowColPossibilityMenuItem**
+- **UpdateRibbonAction**
 - **InterlinRibbon**
+
+### Key Interfaces
+- **IInterlinRibbon**
 
 ## Technology Stack
 - C# .NET WinForms
@@ -52,7 +49,9 @@ Discourse analysis features for FieldWorks. Provides tools for analyzing and cha
 - **LexText/LexTextControls/** - UI controls for discourse features
 - **Cellar/** - Stores discourse analysis data
 
+## Code Evidence
+*Analysis based on scanning 30 source files*
 
-## References
-- **Project Files**: Discourse.csproj
-- **Key C# Files**: AdvancedMTDialog.cs, ChartLocation.cs, ConstChartBody.cs, ConstChartRowDecorator.cs, ConstChartVc.cs, ConstituentChart.cs, ConstituentChartLogic.cs, DiscourseExportDialog.cs
+- **Classes found**: 20 public classes
+- **Interfaces found**: 1 public interfaces
+- **Namespaces**: SIL.FieldWorks.Discourse

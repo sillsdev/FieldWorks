@@ -4,22 +4,20 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# Common/UIAdapterInterfaces
+# UIAdapterInterfaces
 
 ## Purpose
 UI adapter pattern interfaces for FieldWorks. Defines contracts for adapting different UI technologies and providing abstraction layers between UI implementations and business logic.
 
 ## Key Components
-- **UIAdapterInterfaces.csproj** - Interface definitions library
-- **SIBInterface.cs** - Sidebar interface definitions
-- **TMInterface.cs** - Toolbar/menu interface definitions
-- **HelperClasses.cs** - Support classes for adapters
-
-
-## Key Classes/Interfaces
+### Key Classes
 - **TMItemProperties**
 - **TMBarProperties**
 - **WindowListInfo**
+- **SBTabProperties**
+- **SBTabItemProperties**
+
+### Key Interfaces
 - **ISIBInterface**
 - **ITMAdapter**
 
@@ -45,3 +43,10 @@ UI adapter pattern interfaces for FieldWorks. Defines contracts for adapting dif
 - **XCore/** - Uses these interfaces extensively
 - **XCore/FlexUIAdapter/** - Implements these interfaces
 - **Common/Controls/** - Controls that work with adapters
+
+## Code Evidence
+*Analysis based on scanning 4 source files*
+
+- **Classes found**: 5 public classes
+- **Interfaces found**: 2 public interfaces
+- **Namespaces**: SIL.FieldWorks.Common.UIAdapters

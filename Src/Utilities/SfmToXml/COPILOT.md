@@ -4,21 +4,13 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# Utilities/SfmToXml
+# SfmToXml
 
 ## Purpose
 Standard Format Marker (SFM) to XML conversion utility. Converts SFM-formatted data files to XML format for processing and import into FieldWorks.
 
 ## Key Components
-- **Sfm2Xml.csproj** - SFM to XML converter
-- **ClsFieldDescription.cs** - Field definition classes
-- **ClsHierarchyEntry.cs** - Hierarchical structure handling
-- **ClsInFieldMarker.cs** - In-field marker processing
-- **CRC.cs** - Checksum utilities
-
-
-## Key Classes/Interfaces
-- **ILexImportFields**
+### Key Classes
 - **LexImportFields**
 - **SfmData**
 - **WrnErrInfo**
@@ -26,6 +18,16 @@ Standard Format Marker (SFM) to XML conversion utility. Converts SFM-formatted d
 - **ClsInFieldMarker**
 - **ClsHierarchyEntry**
 - **ClsPathObject**
+- **Converter**
+- **AutoFieldInfo**
+- **DP**
+
+### Key Interfaces
+- **ILexImportFields**
+- **ILexImportField**
+- **ILexImportCustomField**
+- **ILanguageInfoUI**
+- **ILexImportOption**
 
 ## Technology Stack
 - C# .NET
@@ -52,7 +54,9 @@ Standard Format Marker (SFM) to XML conversion utility. Converts SFM-formatted d
 - **ParatextImport/** - Paratext SFM data import
 - **Utilities/XMLUtils/** - XML utilities
 
+## Code Evidence
+*Analysis based on scanning 17 source files*
 
-## References
-- **Project Files**: Sfm2Xml.csproj
-- **Key C# Files**: CRC.cs, ClsFieldDescription.cs, ClsHierarchyEntry.cs, ClsInFieldMarker.cs, ClsLanguage.cs, Converter.cs, FieldHierarchyInfo.cs, FileReader.cs
+- **Classes found**: 20 public classes
+- **Interfaces found**: 5 public interfaces
+- **Namespaces**: ConvertSFM, Sfm2Xml, Sfm2XmlTests

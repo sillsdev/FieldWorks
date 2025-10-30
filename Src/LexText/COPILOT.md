@@ -10,20 +10,27 @@ status: verified
 Lexicon/Dictionary application and related components. This is one of the major application areas of FieldWorks, providing comprehensive lexicon editing, dictionary configuration, interlinear text analysis, morphology, and discourse features.
 
 ## Key Components
+### Key Classes
+- **FlexPathwayPlugin**
+- **DeExportDialog**
+- **MyFolders**
+- **MyFoldersTest**
+- **FlexPathwayPluginTest**
+- **InterlinearMapping**
+- **Sfm2FlexTextWordsFrag**
+- **Sfm2FlexTextMappingBase**
+- **Sfm2FlexTextBase**
+- **PhonologicalFeatureChooserDlg**
 
-### Subprojects
-Each subfolder has its own COPILOT.md file with detailed documentation:
-
-- **LexTextExe/** - Lexicon application executable (see LexTextExe/COPILOT.md)
-- **LexTextDll/** - Core lexicon functionality library (see LexTextDll/COPILOT.md)
-- **LexTextControls/** - Lexicon UI controls (see LexTextControls/COPILOT.md)
-- **Lexicon/** - Lexicon editing components (see Lexicon/COPILOT.md)
-- **Interlinear/** - Interlinear text analysis and glossing (see Interlinear/COPILOT.md)
-- **Morphology/** - Morphological analysis and parsing (see Morphology/COPILOT.md)
-- **Discourse/** - Discourse analysis features (see Discourse/COPILOT.md)
-- **ParserCore/** - Parsing engine components (see ParserCore/COPILOT.md)
-- **ParserUI/** - Parser user interface (see ParserUI/COPILOT.md)
-- **FlexPathwayPlugin/** - Pathway publishing integration (see FlexPathwayPlugin/COPILOT.md)
+### Key Interfaces
+- **IFwExtension**
+- **ICmLiftObject**
+- **IPatternControl**
+- **ILexReferenceSlice**
+- **IParser**
+- **IHCLoadErrorLogger**
+- **IXAmpleWrapper**
+- **IInterlinRibbon**
 
 ## Technology Stack
 - C# .NET WinForms/WPF
@@ -51,3 +58,11 @@ Each subfolder has its own COPILOT.md file with detailed documentation:
 - **Cellar/** - Data model for lexicon data
 - **FwParatextLexiconPlugin/** - Exposes LexText data to Paratext
 - **ParatextImport/** - Imports Paratext data into LexText
+
+## Code Evidence
+*Analysis based on scanning 430 source files*
+
+- **Classes found**: 20 public classes
+- **Interfaces found**: 15 public interfaces
+- **Namespaces**: FlexDePluginTests, FlexPathwayPluginTests, LexEdDllTests, LexTextControlsTests, LexTextDllTests
+- **Project references**: ..\..\Common\Controls\DetailControls\DetailControls, ..\..\Common\Controls\XMLViews\XMLViews

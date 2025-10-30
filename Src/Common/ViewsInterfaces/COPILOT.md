@@ -4,31 +4,27 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# Common/ViewsInterfaces
+# ViewsInterfaces
 
 ## Purpose
 View layer interfaces for FieldWorks. Defines managed interfaces for interacting with the native view rendering engine, providing the contract between managed and native view code.
 
 ## Key Components
-- **ViewsInterfaces.csproj** - View interfaces library
-- **ComUtils.cs** - COM interop utilities
-- **ComWrapper.cs** - COM object wrappers
-- **DispPropOverrideFactory.cs** - Display property overrides
-- **IPicture.cs** - Picture interface
-- **Rect.cs** - Rectangle utilities
-- **VwPropertyStoreManaged.cs** - Property store management
-- **ViewsInterfacesTests/** - Interface tests
+### Key Classes
+- **VwPropertyStoreManaged**
+- **DispPropOverrideFactory**
+- **ComPictureWrapper**
+- **VwConstructorServices**
+- **InnerPileHelper**
+- **ParagraphBoxHelper**
+- **MockIStream**
+- **ReleaseComObjectTests**
+- **VwGraphicsTests**
 
-
-## Key Classes/Interfaces
-- **Rect**
+### Key Interfaces
 - **IPicture**
 - **IPictureDisp**
-- **ClipFormat**
 - **IOleServiceProvider**
-- **ComPictureWrapper**
-- **SelLevInfo**
-- **InnerPileHelper**
 
 ## Technology Stack
 - C# .NET with COM interop
@@ -44,10 +40,6 @@ View layer interfaces for FieldWorks. Defines managed interfaces for interacting
 - Build via: `dotnet build ViewsInterfaces.csproj`
 - Includes test suite
 
-## Testing
-- Run tests: `dotnet test ViewsInterfaces/ViewsInterfacesTests/`
-- Tests cover interface contracts and COM interop
-
 ## Entry Points
 - Interface definitions for view layer
 - COM wrappers for native views
@@ -59,7 +51,9 @@ View layer interfaces for FieldWorks. Defines managed interfaces for interacting
 - **Common/SimpleRootSite/** - Built on ViewsInterfaces
 - **ManagedVwWindow/** - Window management using these interfaces
 
+## Code Evidence
+*Analysis based on scanning 9 source files*
 
-## References
-- **Project Files**: ViewsInterfaces.csproj
-- **Key C# Files**: ComUtils.cs, ComWrapper.cs, DispPropOverrideFactory.cs, IPicture.cs, Rect.cs, VwPropertyStoreManaged.cs
+- **Classes found**: 9 public classes
+- **Interfaces found**: 3 public interfaces
+- **Namespaces**: SIL.FieldWorks.Common.ViewsInterfaces

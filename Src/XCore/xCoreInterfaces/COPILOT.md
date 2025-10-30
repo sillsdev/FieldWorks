@@ -4,31 +4,33 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# XCore/xCoreInterfaces
+# xCoreInterfaces
 
 ## Purpose
 Core interfaces for the XCore application framework. Defines the contracts for command handling, choice management, UI components, and the mediator pattern used throughout XCore.
 
 ## Key Components
-- **xCoreInterfaces.csproj** - Framework interface definitions
-- **Command.cs** - Command pattern interfaces
-- **Choice.cs** - Choice/option interfaces
-- **ChoiceGroup.cs** - Choice grouping interfaces
-- **BaseContextHelper.cs** - Context helper base class
-- **IFeedbackInfoProvider.cs** - Feedback interface
-- **IImageCollection.cs** - Image collection interface
-- **IPaneBar.cs** - Pane bar interface
-
-
-## Key Classes/Interfaces
-- **SettingsGroup**
-- **IFeedbackInfoProvider**
-- **IContextHelper**
+### Key Classes
+- **PropertyTable**
+- **BaseContextHelper**
 - **ReadOnlyPropertyTable**
+- **ChoiceRelatedClass**
 - **ChoiceGroupCollection**
 - **ChoiceGroup**
 - **MediatorDisposeAttribute**
+- **Mediator**
+- **RecordFilterListProvider**
+- **AdapterAssemblyFactory**
+
+### Key Interfaces
+- **IFeedbackInfoProvider**
+- **IContextHelper**
 - **IUIAdapter**
+- **IUIAdapterForceRegenerate**
+- **IUIMenuAdapter**
+- **ITestableUIAdapter**
+- **IImageCollection**
+- **IxCoreColleague**
 
 ## Technology Stack
 - C# .NET
@@ -56,7 +58,9 @@ Core interfaces for the XCore application framework. Defines the contracts for c
 - **xWorks/** - Uses XCore interfaces
 - **LexText/** - Uses XCore interfaces
 
+## Code Evidence
+*Analysis based on scanning 23 source files*
 
-## References
-- **Project Files**: xCoreInterfaces.csproj
-- **Key C# Files**: BaseContextHelper.cs, Choice.cs, ChoiceGroup.cs, Command.cs, IFeedbackInfoProvider.cs, IImageCollection.cs, IPaneBar.cs, IPersistenceProvider.cs
+- **Classes found**: 20 public classes
+- **Interfaces found**: 15 public interfaces
+- **Namespaces**: XCore

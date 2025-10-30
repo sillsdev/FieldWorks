@@ -4,26 +4,20 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# LexText/LexTextDll
+# LexTextDll
 
 ## Purpose
 Core lexicon application functionality library. Provides the main application logic and infrastructure for the LexText (FLEx) lexicon and dictionary application.
 
 ## Key Components
-- **LexTextDll.csproj** - Core LexText library
-- **LexTextApp.cs** - Main application class
-- **AreaListener.cs** - Application area management
-- **FlexHelpTopicProvider.cs** - Context-sensitive help
-- **ImageHolder.cs** - Image resource management
-- Application icons and resources
-
-
-## Key Classes/Interfaces
+### Key Classes
 - **FlexHelpTopicProvider**
 - **AreaListener**
 - **SampleCitationFormTransducer**
+- **RestoreDefaultsDlg**
 - **ImageHolder**
 - **LexTextApp**
+- **AreaListenerTests**
 
 ## Technology Stack
 - C# .NET
@@ -52,7 +46,8 @@ Core lexicon application functionality library. Provides the main application lo
 - **LexText/Morphology/** - Morphology features
 - All other LexText subfolders
 
+## Code Evidence
+*Analysis based on scanning 8 source files*
 
-## References
-- **Project Files**: LexTextDll.csproj
-- **Key C# Files**: AreaListener.cs, FlexHelpTopicProvider.cs, ImageHolder.cs, LexTextApp.cs, RestoreDefaultsDlg.cs, TransductionSample.cs
+- **Classes found**: 7 public classes
+- **Namespaces**: LexTextDllTests, SIL.FieldWorks.XWorks.LexText

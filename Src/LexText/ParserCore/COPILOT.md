@@ -4,30 +4,28 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# LexText/ParserCore
+# ParserCore
 
 ## Purpose
 Core parsing engine for morphological analysis. Provides the Hermit Crab (HC) parser implementation for analyzing words into morphemes based on morphological rules.
 
 ## Key Components
-- **ParserCore.csproj** - Parser engine library
-- **HCParser.cs** - Main Hermit Crab parser implementation
-- **HCLoader.cs** - Parser rule and data loader
-- **FwXmlTraceManager.cs** - Parser trace management
-- **IParser.cs** - Parser interface
-- **IHCLoadErrorLogger.cs** - Error logging interface
-- Exception classes for parsing errors
-
-
-## Key Classes/Interfaces
+### Key Classes
 - **ParserModelChangeListener**
 - **HCLoader**
-- **IParser**
 - **HCParser**
 - **ParserReport**
 - **ParseReport**
 - **ParseResult**
 - **ParseAnalysis**
+- **ParseMorph**
+- **WordformUpdatedEventArgs**
+- **ParseFiler**
+
+### Key Interfaces
+- **IParser**
+- **IHCLoadErrorLogger**
+- **IXAmpleWrapper**
 
 ## Technology Stack
 - C# .NET
@@ -54,7 +52,9 @@ Core parsing engine for morphological analysis. Provides the Hermit Crab (HC) pa
 - **LexText/Interlinear/** - Uses parser for text analysis
 - **LexText/Lexicon/** - Lexicon data used in parsing
 
+## Code Evidence
+*Analysis based on scanning 41 source files*
 
-## References
-- **Project Files**: ParserCore.csproj
-- **Key C# Files**: FwXmlTraceManager.cs, HCLoader.cs, HCParser.cs, IHCLoadErrorLogger.cs, IParser.cs, InvalidAffixProcessException.cs, InvalidReduplicationFormException.cs, M3ToXAmpleTransformer.cs
+- **Classes found**: 20 public classes
+- **Interfaces found**: 3 public interfaces
+- **Namespaces**: SIL.FieldWorks.WordWorks.Parser, XAmpleManagedWrapper, XAmpleManagedWrapperTests

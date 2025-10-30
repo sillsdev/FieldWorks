@@ -10,7 +10,7 @@ status: verified
 Developer diagnostics and debug helpers for troubleshooting FieldWorks issues. Provides debugging utilities, diagnostic tools, and development aids.
 
 ## Key Components
-- **DebugProcs.vcxproj** - Native debugging procedures and helpers
+No major public classes identified.
 
 ## Technology Stack
 - C++ native code
@@ -33,3 +33,7 @@ Developer diagnostics and debug helpers for troubleshooting FieldWorks issues. P
 ## Related Folders
 - **Kernel/** - Core infrastructure that DebugProcs instruments
 - **Generic/** - Generic utilities that may include debug support
+
+## Code Evidence
+*Analysis based on scanning 2 source files*
+

@@ -10,12 +10,9 @@ status: verified
 Utilities to validate installation prerequisites for FieldWorks. Checks system requirements, installed components, and configuration before allowing installation or application startup.
 
 ## Key Components
-- **InstallValidator.csproj** - Main validation library
-- **InstallValidatorTests/InstallValidatorTests.csproj** - Validation tests
-
-
-## Key Classes/Interfaces
+### Key Classes
 - **InstallValidator**
+- **InstallValidatorTests**
 
 ## Technology Stack
 - C# .NET
@@ -31,10 +28,6 @@ Utilities to validate installation prerequisites for FieldWorks. Checks system r
 - Includes test suite
 - Build with MSBuild or Visual Studio
 
-## Testing
-- Run tests: `dotnet test InstallValidator/InstallValidatorTests/InstallValidatorTests.csproj`
-- Tests cover validation logic and system checks
-
 ## Entry Points
 - Invoked by installer and application startup
 - Validates prerequisites before installation or launch
@@ -42,3 +35,9 @@ Utilities to validate installation prerequisites for FieldWorks. Checks system r
 ## Related Folders
 - **FLExInstaller/** - Installer that uses InstallValidator
 - **Kernel/** - May check for system-level dependencies
+
+## Code Evidence
+*Analysis based on scanning 2 source files*
+
+- **Classes found**: 2 public classes
+- **Namespaces**: SIL.InstallValidator

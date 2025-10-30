@@ -10,14 +10,12 @@ status: verified
 Integration plugin for Paratext 8. Enables bidirectional integration between FieldWorks and Paratext 8 Bible translation software, allowing data sharing and collaboration between the two systems.
 
 ## Key Components
-- **Paratext8Plugin.csproj** - Main plugin library for Paratext 8
-- **ParaText8PluginTests/Paratext8PluginTests.csproj** - Plugin tests
-
-
-## Key Classes/Interfaces
+### Key Classes
 - **ParatextAlert**
 - **Paratext8Provider**
 - **PT8ParserStateWrapper**
+- **MockScriptureProvider**
+- **ParatextDataIntegrationTests**
 
 ## Technology Stack
 - C# .NET
@@ -33,10 +31,6 @@ Integration plugin for Paratext 8. Enables bidirectional integration between Fie
 - Includes test suite
 - Build with MSBuild or Visual Studio
 
-## Testing
-- Run tests: `dotnet test Paratext8Plugin/ParaText8PluginTests/Paratext8PluginTests.csproj`
-- Tests cover plugin integration and data exchange
-
 ## Entry Points
 - Plugin entry points defined by Paratext 8 architecture
 - Provides FieldWorks integration from within Paratext 8
@@ -46,7 +40,8 @@ Integration plugin for Paratext 8. Enables bidirectional integration between Fie
 - **ParatextImport/** - Imports Paratext data into FieldWorks
 - **LexText/** - Lexicon data shared with Paratext
 
+## Code Evidence
+*Analysis based on scanning 6 source files*
 
-## References
-- **Project Files**: Paratext8Plugin.csproj
-- **Key C# Files**: PT8VerseRefWrapper.cs, PTScrTextWrapper.cs, Paratext8Provider.cs, ParatextAlert.cs, Pt8VerseWrapper.cs
+- **Classes found**: 5 public classes
+- **Namespaces**: Paratext8Plugin

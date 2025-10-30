@@ -4,29 +4,26 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# LexText/ParserUI
+# ParserUI
 
 ## Purpose
 Parser user interface components. Provides UI for configuring, testing, and tracing the morphological parser, including parser trace visualization and word import dialogs.
 
 ## Key Components
-- **ParserUI.csproj** - Parser UI library
-- **HCTrace.cs** - Parser trace visualization
-- **HCMaxCompoundRulesDlg** - Maximum compound rules configuration
-- **ImportWordSetDlg** - Word set import dialog
-- **FileTimeToDateTimeConverter.cs** - Utility converters
-- **IParserTrace.cs** - Trace interface
-
-
-## Key Classes/Interfaces
+### Key Classes
 - **TryAWordDlg**
+- **ParserReportsDialog**
 - **TryAWordSandbox**
-- **IParserTrace**
 - **WordImporter**
 - **ParserParametersDlg**
 - **FileTimeToDateTimeConverter**
 - **ImportWordSetDlg**
 - **XAmpleWordGrammarDebugger**
+- **ImportWordSetListener**
+- **ParserParametersListener**
+
+### Key Interfaces
+- **IParserTrace**
 
 ## Technology Stack
 - C# .NET WinForms
@@ -52,8 +49,10 @@ Parser user interface components. Provides UI for configuring, testing, and trac
 - **LexText/Morphology/** - Morphology editor with parser integration
 - **LexText/Interlinear/** - Uses parser for text analysis
 
+## Code Evidence
+*Analysis based on scanning 26 source files*
 
-## References
-- **Project Files**: ParserUI.csproj
-- **Key Dependencies**: ..\..\Common\Controls\DetailControls\DetailControls, ..\..\Common\Controls\XMLViews\XMLViews
-- **Key C# Files**: FileTimeToDateTimeConverter.cs, HCMaxCompoundRulesDlg.cs, HCTrace.cs, IParserTrace.cs, ImportWordSetDlg.cs, ImportWordSetListener.cs, MillisecondsToTimeSpanConverter.cs, ParserConnection.cs
+- **Classes found**: 20 public classes
+- **Interfaces found**: 1 public interfaces
+- **Namespaces**: SIL.FieldWorks.LexText.Controls
+- **Project references**: ..\..\Common\Controls\DetailControls\DetailControls, ..\..\Common\Controls\XMLViews\XMLViews

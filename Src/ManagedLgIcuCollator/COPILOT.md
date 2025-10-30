@@ -10,12 +10,9 @@ status: verified
 Managed wrapper for ICU collation services. Provides .NET-friendly access to ICU (International Components for Unicode) collation and sorting functionality for proper linguistic text ordering.
 
 ## Key Components
-- **ManagedLgIcuCollator.csproj** - Managed collation wrapper library
-- **ManagedLgIcuCollatorTests/ManagedLgIcuCollatorTests.csproj** - Collation tests
-
-
-## Key Classes/Interfaces
+### Key Classes
 - **ManagedLgIcuCollator**
+- **ManagedLgIcuCollatorTests**
 
 ## Technology Stack
 - C# .NET with P/Invoke or C++/CLI
@@ -31,10 +28,6 @@ Managed wrapper for ICU collation services. Provides .NET-friendly access to ICU
 - Includes comprehensive test suite
 - Build with MSBuild or Visual Studio
 
-## Testing
-- Run tests: `dotnet test ManagedLgIcuCollator/ManagedLgIcuCollatorTests/ManagedLgIcuCollatorTests.csproj`
-- Tests cover various collation scenarios and locales
-
 ## Entry Points
 - Provides collation services for linguistic text sorting
 - Used by UI components displaying sorted linguistic data
@@ -44,3 +37,9 @@ Managed wrapper for ICU collation services. Provides .NET-friendly access to ICU
 - **Kernel/** - May provide low-level string utilities
 - **LexText/** - Uses collation for lexicon entry sorting
 - **xWorks/** - Uses collation in various data displays
+
+## Code Evidence
+*Analysis based on scanning 2 source files*
+
+- **Classes found**: 2 public classes
+- **Namespaces**: SIL.FieldWorks.Language

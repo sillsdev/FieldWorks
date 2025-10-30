@@ -10,14 +10,11 @@ status: verified
 Shared resources (images, strings, assets) for FieldWorks applications and libraries. Centralizes resource management to ensure consistent UI appearance and localization across all applications.
 
 ## Key Components
-- **FwResources.csproj** - Resource library project
-- Images, icons, and graphical assets
-- Localized strings and translations
-- Shared UI assets
-
-
-## Key Classes/Interfaces
-- **FileFilterType**
+### Key Classes
+- **ResourceHelper**
+- **FwFileExtensions**
+- **SearchingAnimation**
+- **ResourceHelperImpl**
 
 ## Technology Stack
 - C# resource files (.resx)
@@ -44,7 +41,8 @@ Shared resources (images, strings, assets) for FieldWorks applications and libra
 - **FwCoreDlgs/** - Dialogs that use shared resources
 - **Transforms/** - May include XSLT resources
 
+## Code Evidence
+*Analysis based on scanning 5 source files*
 
-## References
-- **Project Files**: FwResources.csproj
-- **Key C# Files**: FwFileExtensions.cs, ResourceHelper.cs, ResourceHelperImpl.cs, SearchingAnimation.cs
+- **Classes found**: 4 public classes
+- **Namespaces**: SIL.FieldWorks.Resources

@@ -10,19 +10,20 @@ status: verified
 UI components for FieldWorks Data Objects (FDO). Provides user interface elements for interacting with the FieldWorks data model, including custom field management and data object visualization.
 
 ## Key Components
-- **FdoUi.csproj** - Main UI library for data objects
-- **FdoUiTests/FdoUiTests.csproj** - Comprehensive UI component tests
-
-
-## Key Classes/Interfaces
+### Key Classes
 - **InflectionFeatureEditor**
 - **WfiWordformUi**
 - **InflectionClassEditor**
+- **BulkPosEditorBase**
 - **BulkPosEditor**
 - **LexPronunciationUi**
 - **PartOfSpeechUi**
+- **CmObjectUi**
+- **CmObjectVc**
+- **CmAnalObjectVc**
+
+### Key Interfaces
 - **IFwGuiControl**
-- **VcFrags**
 
 ## Technology Stack
 - C# .NET WinForms/WPF
@@ -38,10 +39,6 @@ UI components for FieldWorks Data Objects (FDO). Provides user interface element
 - Includes comprehensive test suite
 - Build with MSBuild or Visual Studio
 
-## Testing
-- Run tests: `dotnet test FdoUi/FdoUiTests/FdoUiTests.csproj`
-- Tests cover UI components and data object interactions
-
 ## Entry Points
 - Provides UI controls and dialogs for data object management
 - Custom field editors and data visualization components
@@ -52,7 +49,9 @@ UI components for FieldWorks Data Objects (FDO). Provides user interface element
 - **FwCoreDlgs/** - Additional dialogs that work with FdoUi components
 - **xWorks/** - Uses FdoUi for data object display and editing
 
+## Code Evidence
+*Analysis based on scanning 25 source files*
 
-## References
-- **Project Files**: FdoUi.csproj
-- **Key C# Files**: BulkPosEditor.cs, DummyCmObject.cs, FdoUiCore.cs, FsFeatDefnUi.cs, FwLcmUI.cs, InflectionClassEditor.cs, InflectionFeatureEditor.cs, LexEntryUi.cs
+- **Classes found**: 20 public classes
+- **Interfaces found**: 1 public interfaces
+- **Namespaces**: SIL.FieldWorks.FdoUi, SIL.FieldWorks.FdoUi.Dialogs

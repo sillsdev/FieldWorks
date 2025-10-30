@@ -4,23 +4,17 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# LexText/Morphology
+# Morphology
 
 ## Purpose
 Morphological analysis and morphology editor. Provides tools for defining morphological rules, allomorph conditions, and phonological features.
 
 ## Key Components
-- **MorphologyEditorDll.csproj** - Morphology editor library
-- **AdhocCoProhibAtomicLauncher** - Co-prohibition rule editing (atomic)
-- **AdhocCoProhibVectorLauncher** - Co-prohibition rule editing (vector)
-- Morpheme and allomorph management
-- Phonological rule editing
-- Morphological feature management
-
-
-## Key Classes/Interfaces
+### Key Classes
 - **AdhocCoProhibAtomicLauncher**
+- **OneAnalysisSandbox**
 - **UpdateRealAnalysisMethod**
+- **RuleFormulaVcBase**
 - **ParserAnnotationRemover**
 - **RuleFormulaSlice**
 - **WordformGoDlg**
@@ -53,7 +47,8 @@ Morphological analysis and morphology editor. Provides tools for defining morpho
 - **LexText/Interlinear/** - Uses morphology for text analysis
 - **LexText/Lexicon/** - Lexicon data used in morphology
 
+## Code Evidence
+*Analysis based on scanning 55 source files*
 
-## References
-- **Project Files**: MorphologyEditorDll.csproj
-- **Key C# Files**: AdhocCoProhibAtomicLauncher.cs, AdhocCoProhibAtomicReferenceSlice.cs, AdhocCoProhibVectorLauncher.cs, AdhocCoProhibVectorReferenceSlice.cs, AffixRuleFormulaControl.cs, AffixRuleFormulaSlice.cs, AffixRuleFormulaVc.cs, AnalysisInterlinearRS.cs
+- **Classes found**: 20 public classes
+- **Namespaces**: SIL.FieldWorks.LexText.Controls.MGA, SIL.FieldWorks.XWorks.MorphologyEditor

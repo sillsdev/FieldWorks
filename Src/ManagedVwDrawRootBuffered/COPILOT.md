@@ -10,10 +10,7 @@ status: verified
 Managed view rendering primitives for buffered drawing. Provides double-buffered rendering infrastructure for FieldWorks views to eliminate flicker and improve visual performance.
 
 ## Key Components
-- **ManagedVwDrawRootBuffered.csproj** - Buffered rendering library
-
-
-## Key Classes/Interfaces
+### Key Classes
 - **VwDrawRootBuffered**
 
 ## Technology Stack
@@ -39,3 +36,9 @@ Managed view rendering primitives for buffered drawing. Provides double-buffered
 - **ManagedVwWindow/** - Window management that uses buffered drawing
 - **Common/RootSite/** - Root site components using buffered rendering
 - **Common/SimpleRootSite/** - Simplified sites using this infrastructure
+
+## Code Evidence
+*Analysis based on scanning 2 source files*
+
+- **Classes found**: 1 public classes
+- **Namespaces**: SIL.FieldWorks.Views

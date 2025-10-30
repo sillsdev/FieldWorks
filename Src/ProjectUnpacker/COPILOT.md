@@ -10,11 +10,9 @@ status: verified
 Utilities for unpacking FieldWorks projects. Handles decompression and extraction of FieldWorks project archives, enabling project sharing and backup/restore functionality.
 
 ## Key Components
-- **ProjectUnpacker.csproj** - Project unpacking utility
-
-
-## Key Classes/Interfaces
+### Key Classes
 - **RegistryData**
+- **Unpacker**
 - **ResourceUnpacker**
 
 ## Technology Stack
@@ -39,3 +37,9 @@ Utilities for unpacking FieldWorks projects. Handles decompression and extractio
 - **Cellar/** - Data model for projects being unpacked
 - **MigrateSqlDbs/** - May need to migrate unpacked projects
 - **InstallValidator/** - May validate unpacked project structure
+
+## Code Evidence
+*Analysis based on scanning 3 source files*
+
+- **Classes found**: 3 public classes
+- **Namespaces**: SIL.FieldWorks.Test.ProjectUnpacker

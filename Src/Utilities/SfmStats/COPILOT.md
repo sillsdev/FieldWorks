@@ -4,14 +4,13 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# Utilities/SfmStats
+# SfmStats
 
 ## Purpose
 Standard Format Marker (SFM) statistics tool. Analyzes SFM files to provide statistics about marker usage, helping users understand their data structure before import.
 
 ## Key Components
-- **SfmStats.csproj** - SFM statistics utility
-- **Program.cs** - Main analysis and reporting logic
+No major public classes identified.
 
 ## Technology Stack
 - C# .NET console application
@@ -35,3 +34,8 @@ Standard Format Marker (SFM) statistics tool. Analyzes SFM files to provide stat
 - **Utilities/SfmToXml/** - SFM to XML conversion (related tool)
 - **LexText/LexTextControls/** - SFM import functionality
 - **ParatextImport/** - Uses SFM parsing
+
+## Code Evidence
+*Analysis based on scanning 1 source files*
+
+- **Namespaces**: SfmStats

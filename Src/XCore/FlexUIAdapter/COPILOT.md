@@ -4,27 +4,21 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# XCore/FlexUIAdapter
+# FlexUIAdapter
 
 ## Purpose
 FLEx UI adapter implementation. Provides the concrete implementation of UI adapter interfaces for FieldWorks applications, translating between XCore framework commands and actual UI controls.
 
 ## Key Components
-- **FlexUIAdapter.csproj** - UI adapter library
-- **AdapterBase.cs** - Base adapter class
-- **BarAdapterBase.cs** - Toolbar/menubar adapter base
-- **ContextHelper.cs** - Context management for adapters
-- Accessibility mode registry settings
-- Adapter localization resources
-
-
-## Key Classes/Interfaces
+### Key Classes
 - **ToolStripManager**
 - **ReBarAdapter**
 - **ContextHelper**
 - **SidebarAdapter**
 - **MenuAdapter**
+- **BarAdapterBase**
 - **PaneBar**
+- **AdapterBase**
 - **PanelCollection**
 
 ## Technology Stack
@@ -52,7 +46,8 @@ FLEx UI adapter implementation. Provides the concrete implementation of UI adapt
 - **XCore/** - Framework using these adapters
 - **xWorks/** - Application using UI adapters
 
+## Code Evidence
+*Analysis based on scanning 11 source files*
 
-## References
-- **Project Files**: FlexUIAdapter.csproj
-- **Key C# Files**: AdapterBase.cs, BarAdapterBase.cs, ContextHelper.cs, MenuAdapter.cs, NavBarAdapter.cs, PaneBar.cs, PanelButton.cs, PanelMenu.cs
+- **Classes found**: 9 public classes
+- **Namespaces**: XCore, XCoreUnused

@@ -4,30 +4,33 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# LexText/Interlinear
+# Interlinear
 
 ## Purpose
 Interlinear text analysis and glossing functionality. Provides tools for creating and managing interlinear texts with morpheme-by-morpheme analysis and glossing.
 
 ## Key Components
-- **ITextDll.csproj** - Interlinear text library
-- **BIRDInterlinearImporter.cs** - BIRD format import
-- **ChooseAnalysisHandler.cs** - Analysis selection
-- **ChooseTextWritingSystemDlg** - Writing system selection dialog
-- **ClosedFeatureNode.cs** - Feature analysis nodes
-- Interlinear text editing and display components
-- Morpheme analysis tools
-
-
-## Key Classes/Interfaces
+### Key Classes
+- **InterlinPrintChild**
 - **InterlinPrintVc**
+- **ConcordanceControl**
 - **OccurrencesOfSelectedUnit**
 - **MatchingConcordanceItems**
 - **InterlinearTextsRecordClerk**
 - **InterlinearExportDialog**
 - **InterlinDocChart**
 - **ParseIsCurrentFixer**
-- **ComplexConcPatternVc**
+- **ComplexConcLeafNode**
+
+### Key Interfaces
+- **IParaDataLoader**
+- **ISelectOccurrence**
+- **ISetupLineChoices**
+- **IInterlinearTabControl**
+- **IStyleSheet**
+- **IHandleBookmark**
+- **IStTextBookmark**
+- **IInterlinConfigurable**
 
 ## Technology Stack
 - C# .NET WinForms
@@ -55,7 +58,9 @@ Interlinear text analysis and glossing functionality. Provides tools for creatin
 - **Common/SimpleRootSite/** - View hosting for interlinear display
 - **views/** - Native rendering for complex interlinear layout
 
+## Code Evidence
+*Analysis based on scanning 108 source files*
 
-## References
-- **Project Files**: ITextDll.csproj
-- **Key C# Files**: BIRDInterlinearImporter.cs, ChooseAnalysisHandler.cs, ChooseTextWritingSystemDlg.cs, ClosedFeatureNode.cs, ClosedFeatureValue.cs, ComplexConcControl.cs, ComplexConcGroupNode.cs, ComplexConcLeafNode.cs
+- **Classes found**: 20 public classes
+- **Interfaces found**: 8 public interfaces
+- **Namespaces**: SIL.FieldWorks.IText, SIL.FieldWorks.IText.FlexInterlinModel, has, needs, via

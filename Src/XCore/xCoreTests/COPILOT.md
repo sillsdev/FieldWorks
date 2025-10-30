@@ -4,17 +4,16 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# XCore/xCoreTests
+# xCoreTests
 
 ## Purpose
 Test suite for XCore framework. Provides comprehensive tests for XCore framework functionality including XML configuration, inventory management, and command handling.
 
 ## Key Components
-- **xCoreTests.csproj** - XCore test project
-- **IncludeXmlTests.cs** - XML include/merge testing
-- **InventoryTests.cs** - Component inventory tests
-- Test data files (CreateOverrideTestData.xml, etc.)
-- Inventory test file sets
+### Key Classes
+- **IncludeXmlTests**
+- **InventoryTests**
+- **CreateOverrideTests**
 
 ## Technology Stack
 - C# .NET with NUnit or similar
@@ -30,11 +29,6 @@ Test suite for XCore framework. Provides comprehensive tests for XCore framework
 - Build via: `dotnet build xCoreTests.csproj`
 - Run tests: `dotnet test xCoreTests.csproj`
 
-## Testing
-- Tests cover XCore framework functionality
-- XML configuration and inventory management
-- Command and choice handling
-
 ## Entry Points
 - Test fixtures for XCore components
 - Validation of framework behavior
@@ -43,3 +37,9 @@ Test suite for XCore framework. Provides comprehensive tests for XCore framework
 - **XCore/** - Framework being tested
 - **XCore/xCoreInterfaces/** - Interfaces being tested
 - **XCore/FlexUIAdapter/** - May have related tests
+
+## Code Evidence
+*Analysis based on scanning 2 source files*
+
+- **Classes found**: 3 public classes
+- **Namespaces**: XCore

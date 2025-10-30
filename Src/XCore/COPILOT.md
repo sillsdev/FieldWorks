@@ -10,32 +10,27 @@ status: verified
 Cross-cutting framework base used by multiple FieldWorks applications. Provides the application framework, plugin architecture, command handling, and UI composition infrastructure that all major FieldWorks applications are built upon.
 
 ## Key Components
-- **AdapterMenuItem.cs**
-- **AreaManager.cs**
-- **CollapsingSplitContainer.cs**
-- **HtmlControl.cs**
-- **HtmlViewer.cs**
-
-
-### Subprojects
-Each subfolder has its own COPILOT.md file with detailed documentation:
-
-- **xCore.csproj** - Main framework library (in this folder)
-- **xCoreInterfaces/** - Framework interfaces (see xCoreInterfaces/COPILOT.md)
-- **xCoreTests/** - Framework tests (see xCoreTests/COPILOT.md)
-- **FlexUIAdapter/** - UI adapter for FLEx applications (see FlexUIAdapter/COPILOT.md)
-- **SilSidePane/** - Side pane UI component (see SilSidePane/COPILOT.md)
-
-
-## Key Classes/Interfaces
+### Key Classes
 - **Inventory**
-- **IOldVersionMerger**
 - **XmlIncluder**
 - **ImageContent**
 - **NotifyWindow**
-- **BackgroundStyles**
-- **ClockStates**
 - **IconHolder**
+- **MockupDialogLauncher**
+- **CollapsingSplitContainer**
+- **Ticker**
+- **XWindow**
+- **HtmlViewer**
+
+### Key Interfaces
+- **IOldVersionMerger**
+- **IPostLayoutInit**
+- **IFeedbackInfoProvider**
+- **IContextHelper**
+- **IUIAdapter**
+- **IUIAdapterForceRegenerate**
+- **IUIMenuAdapter**
+- **ITestableUIAdapter**
 
 ## Technology Stack
 - C# .NET WinForms
@@ -52,10 +47,6 @@ Each subfolder has its own COPILOT.md file with detailed documentation:
 - Includes comprehensive test suite
 - Build with MSBuild or Visual Studio
 
-## Testing
-- Run tests: `dotnet test XCore/xCoreTests/xCoreTests.csproj`
-- Tests cover framework functionality, command handling, plugins
-
 ## Entry Points
 - Provides framework base classes for applications
 - Main application shell infrastructure
@@ -67,7 +58,9 @@ Each subfolder has its own COPILOT.md file with detailed documentation:
 - **FwCoreDlgs/** - Dialogs integrated into XCore applications
 - **FwResources/** - Resources used by XCore framework
 
+## Code Evidence
+*Analysis based on scanning 78 source files*
 
-## References
-- **Project Files**: xCore.csproj
-- **Key C# Files**: AdapterMenuItem.cs, AreaManager.cs, CollapsingSplitContainer.cs, HtmlControl.cs, HtmlViewer.cs, IconHolder.cs, ImageCollection.cs, ImageContent.cs
+- **Classes found**: 20 public classes
+- **Interfaces found**: 15 public interfaces
+- **Namespaces**: SIL.SilSidePane, XCore, XCoreUnused

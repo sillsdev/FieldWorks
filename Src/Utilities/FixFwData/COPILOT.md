@@ -4,14 +4,13 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# Utilities/FixFwData
+# FixFwData
 
 ## Purpose
 Command-line tool for repairing FieldWorks data files. Provides automated data integrity checking and repair functionality for FieldWorks databases.
 
 ## Key Components
-- **FixFwData.csproj** - Repair tool executable
-- **Program.cs** - Main entry point and command-line interface
+No major public classes identified.
 
 ## Technology Stack
 - C# .NET console application
@@ -34,3 +33,8 @@ Command-line tool for repairing FieldWorks data files. Provides automated data i
 - **Utilities/FixFwDataDll/** - Core data repair library
 - **Cellar/** - Data model being repaired
 - **MigrateSqlDbs/** - Database migration (related functionality)
+
+## Code Evidence
+*Analysis based on scanning 1 source files*
+
+- **Namespaces**: FixFwData

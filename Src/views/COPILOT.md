@@ -10,11 +10,17 @@ status: verified
 C++ view-layer components and UI view infrastructure. Provides the native rendering engine for FieldWorks' sophisticated text display, including complex writing systems, interlinear text, and formatted linguistic data.
 
 ## Key Components
-- **views.vcxproj** - Main native views library
-- **Test/TestViews.vcxproj** - View layer tests
-- Complex text rendering engine
-- View composition and layout
-- Writing system support
+### Key Classes
+- **ParaBuilder**
+- **VwStringBox**
+- **VwDropCapStringBox**
+- **VwParagraphBox**
+- **VwConcParaBox**
+- **VwAccessRoot**
+- **__declspec**
+- **VwEnv**
+- **NotifierRec**
+- **VwLazyBox**
 
 ## Technology Stack
 - C++ native code
@@ -32,10 +38,6 @@ C++ view-layer components and UI view infrastructure. Provides the native render
 - Includes test suite
 - Build with Visual Studio or MSBuild
 
-## Testing
-- Tests in Test/TestViews.vcxproj
-- Unit tests for view rendering and layout
-
 ## Entry Points
 - Provides view classes and rendering engine
 - Accessed from managed code via ManagedVwWindow and interop layers
@@ -49,3 +51,9 @@ C++ view-layer components and UI view infrastructure. Provides the native render
 - **Common/SimpleRootSite/** - Simplified view hosting
 - **LexText/** - Major consumer of view rendering for lexicon display
 - **xWorks/** - Uses views for data visualization
+
+## Code Evidence
+*Analysis based on scanning 129 source files*
+
+- **Classes found**: 20 public classes
+- **Namespaces**: VwGraphicsReplayer

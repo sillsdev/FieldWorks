@@ -10,17 +10,17 @@ status: verified
 LCM/Cellar model browser tooling. Provides a development and diagnostic tool for exploring the FieldWorks Language and Culture Model (LCM), viewing data structures, and debugging data model issues.
 
 ## Key Components
-- **LCMBrowser.csproj** - Model browser application
-
-
-## Key Classes/Interfaces
+### Key Classes
+- **RealListChooser**
 - **LCMInspectorList**
 - **TsStringRunInfo**
 - **TextProps**
+- **TextStrPropInfo**
+- **TextIntPropInfo**
+- **LCMBrowserForm**
+- **ClassPropertySelector**
 - **BrowserProjectId**
-- **CustomFields**
-- **LCMClass**
-- **LCMClassProperty**
+- **ModelWnd**
 
 ## Technology Stack
 - C# .NET WinForms
@@ -45,7 +45,8 @@ LCM/Cellar model browser tooling. Provides a development and diagnostic tool for
 - **DbExtend/** - Schema extensions browsed by LCMBrowser
 - **FdoUi/** - Data object UI components (related visualization)
 
+## Code Evidence
+*Analysis based on scanning 9 source files*
 
-## References
-- **Project Files**: LCMBrowser.csproj
-- **Key C# Files**: BrowserProjectId.cs, ClassPropertySelector.cs, CustomFields.cs, LCMBrowser.cs, LCMBrowserForm.cs, LCMClassList.cs, LCMInspectorList.cs, ModelWnd.cs
+- **Classes found**: 14 public classes
+- **Namespaces**: LCMBrowser

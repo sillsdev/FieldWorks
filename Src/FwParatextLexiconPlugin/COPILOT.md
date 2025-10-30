@@ -10,12 +10,10 @@ status: verified
 Paratext lexicon integration plugin. Enables FieldWorks lexicon data to be accessed and used within Paratext Bible translation software, providing seamless integration between the two systems.
 
 ## Key Components
-- **FwParatextLexiconPlugin.csproj** - Main plugin library
-- **FwParatextLexiconPluginTests/FwParatextLexiconPluginTests.csproj** - Plugin tests
-
-
-## Key Classes/Interfaces
+### Key Classes
+- **FilesToRestoreAreOlder**
 - **FwLexiconPlugin**
+- **FdoLexiconTests**
 
 ## Technology Stack
 - C# .NET
@@ -31,10 +29,6 @@ Paratext lexicon integration plugin. Enables FieldWorks lexicon data to be acces
 - Includes test suite
 - Build with MSBuild or Visual Studio
 
-## Testing
-- Run tests: `dotnet test FwParatextLexiconPlugin/FwParatextLexiconPluginTests/FwParatextLexiconPluginTests.csproj`
-- Tests cover plugin integration and data access
-
 ## Entry Points
 - Plugin entry points defined by Paratext plugin architecture
 - Provides lexicon lookup and access from Paratext
@@ -44,7 +38,8 @@ Paratext lexicon integration plugin. Enables FieldWorks lexicon data to be acces
 - **ParatextImport/** - Imports data from Paratext into FieldWorks
 - **LexText/** - Lexicon application whose data is exposed to Paratext
 
+## Code Evidence
+*Analysis based on scanning 25 source files*
 
-## References
-- **Project Files**: FwParatextLexiconPlugin.csproj
-- **Key C# Files**: ChooseFdoProjectForm.cs, FdoLanguageText.cs, FdoLexEntryLexeme.cs, FdoLexemeAddedEventArgs.cs, FdoLexicalRelation.cs, FdoLexicon.cs, FdoLexiconGlossAddedEventArgs.cs, FdoLexiconSenseAddedEventArgs.cs
+- **Classes found**: 3 public classes
+- **Namespaces**: SIL.FieldWorks.ParatextLexiconPlugin

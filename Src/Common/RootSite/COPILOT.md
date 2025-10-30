@@ -4,31 +4,31 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# Common/RootSite
+# RootSite
 
 ## Purpose
 Root-level site management for views. Provides the base infrastructure for hosting and managing FieldWorks' view system, including view composition and rendering coordination.
 
 ## Key Components
-- **RootSite.csproj** - Root site library
-- **FwBaseVc.cs** - Base view constructor class
-- **CollectorEnv.cs** - Environment for collecting view data
-- **IApp.cs** - Application interface for root sites
-- **IRootSiteGroup.cs** - Root site grouping interface
-- **IRootSiteSlave.cs** - Slave site management
-- **IVwGraphicsNet.cs** - Graphics interface
-- **PictureWrapper.cs** - Picture handling
-
-
-## Key Classes/Interfaces
+### Key Classes
 - **CollectorEnv**
 - **PrevPropCounter**
 - **StackItem**
-- **RequestSelectionHelper**
-- **RequestSelectionByHelper**
-- **SpellCheckHelper**
-- **SpellCorrectMenuItem**
-- **AddToDictMenuItem**
+- **LocationInfo**
+- **PointsOfInterestCollectorEnv**
+- **StringCollectorEnv**
+- **StringMeasureEnv**
+- **MaxStringWidthForColumnEnv**
+- **TestCollectorEnv**
+- **TsStringCollectorEnv**
+
+### Key Interfaces
+- **ICollectPicturePathsOnly**
+- **IVwGraphicsNet**
+- **IRootSiteSlave**
+- **IRootSiteGroup**
+- **IHeightEstimator**
+- **IApp**
 
 ## Technology Stack
 - C# .NET
@@ -57,7 +57,9 @@ Root-level site management for views. Provides the base infrastructure for hosti
 - **xWorks/** - Uses root sites for data display
 - **LexText/** - Uses root sites for text views
 
+## Code Evidence
+*Analysis based on scanning 28 source files*
 
-## References
-- **Project Files**: RootSite.csproj
-- **Key C# Files**: CollectorEnv.cs, FwBaseVc.cs, IApp.cs, IRootSiteGroup.cs, IRootSiteSlave.cs, IVwGraphicsNet.cs, PictureWrapper.cs, RequestSelectionHelper.cs
+- **Classes found**: 20 public classes
+- **Interfaces found**: 6 public interfaces
+- **Namespaces**: SIL.FieldWorks.Common.RootSites

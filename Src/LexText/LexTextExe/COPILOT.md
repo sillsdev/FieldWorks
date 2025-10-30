@@ -4,18 +4,13 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# LexText/LexTextExe
+# LexTextExe
 
 ## Purpose
 Main executable for the LexText (FLEx) lexicon and dictionary application. Provides the entry point for launching the FieldWorks Language Explorer (FLEx) application.
 
 ## Key Components
-- **LexTextExe.csproj** - Executable project
-- **LexText.cs** - Main entry point
-- Application icons (LT.ico, LT.png, various sizes)
-
-
-## Key Classes/Interfaces
+### Key Classes
 - **LexText**
 
 ## Technology Stack
@@ -40,3 +35,9 @@ Main executable for the LexText (FLEx) lexicon and dictionary application. Provi
 - **LexText/LexTextDll/** - Core application logic loaded by this executable
 - **XCore/** - Application framework
 - **xWorks/** - Shared application infrastructure
+
+## Code Evidence
+*Analysis based on scanning 2 source files*
+
+- **Classes found**: 1 public classes
+- **Namespaces**: SIL.FieldWorks.XWorks.LexText

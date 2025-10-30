@@ -10,10 +10,17 @@ status: verified
 Shared application core helpers and base infrastructure used across FieldWorks applications. Provides fundamental graphics and styled text rendering capabilities for the application layer.
 
 ## Key Components
-- **AfColorTable.cpp/h** - Color table management for application-wide color schemes
-- **AfGfx.cpp/h** - Core graphics utilities and rendering helpers
-- **FwStyledText.cpp/h** - Styled text rendering and formatting infrastructure
-- **Res/** - Application-level resources
+### Key Classes
+- **AfGdi**
+- **AfGfx**
+- **SmartPalette**
+- **SmartDc**
+- **FontWrap**
+- **BrushWrap**
+- **PenWrap**
+- **RgnWrap**
+- **ClipRgnWrap**
+- **ColorTable**
 
 ## Technology Stack
 - C++ native code
@@ -38,3 +45,8 @@ Shared application core helpers and base infrastructure used across FieldWorks a
 - **Generic/** - Shares generic utilities with AppCore
 - **xWorks/** - Primary consumer of AppCore functionality
 - **LexText/** - Uses AppCore for text rendering in lexicon views
+
+## Code Evidence
+*Analysis based on scanning 8 source files*
+
+- **Classes found**: 12 public classes

@@ -4,22 +4,13 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# LexText/Lexicon
+# Lexicon
 
 ## Purpose
 Lexicon editing components and features. Provides the main lexicon entry editing interface, reference management, and FLEx Bridge integration for collaboration.
 
 ## Key Components
-- **LexEdDll.csproj** - Lexicon editing library
-- **EntrySequenceReferenceLauncher** - Entry reference management
-- **EntrySequenceReferenceSlice** - Reference UI slice
-- **CircularRefBreaker.cs** - Prevents circular references
-- **DeleteEntriesSensesWithoutInterlinearization.cs** - Cleanup utilities
-- **FLExBridgeFirstSendReceiveInstructionsDlg** - FLEx Bridge onboarding
-- Lexicon entry editing components
-
-
-## Key Classes/Interfaces
+### Key Classes
 - **HomographResetter**
 - **LexReferencePairView**
 - **LexReferencePairVc**
@@ -28,6 +19,11 @@ Lexicon editing components and features. Provides the main lexicon entry editing
 - **LexReferencePairSlice**
 - **GhostLexRefSlice**
 - **GhostLexRefLauncher**
+- **RevEntrySensesCollectionReferenceSlice**
+- **LexReferenceTreeRootView**
+
+### Key Interfaces
+- **ILexReferenceSlice**
 
 ## Technology Stack
 - C# .NET WinForms
@@ -54,7 +50,9 @@ Lexicon editing components and features. Provides the main lexicon entry editing
 - **Cellar/** - Lexicon data model
 - **xWorks/** - Dictionary configuration and display
 
+## Code Evidence
+*Analysis based on scanning 73 source files*
 
-## References
-- **Project Files**: LexEdDll.csproj
-- **Key C# Files**: CircularRefBreaker.cs, DeleteEntriesSensesWithoutInterlinearization.cs, EntrySequenceReferenceLauncher.cs, EntrySequenceReferenceSlice.cs, FLExBridgeFirstSendReceiveInstructionsDlg.cs, FLExBridgeListener.cs, FindExampleSentenceDlg.cs, GhostLexRefSlice.cs
+- **Classes found**: 20 public classes
+- **Interfaces found**: 1 public interfaces
+- **Namespaces**: LexEdDllTests, SIL.FieldWorks.XWorks.LexEd

@@ -4,31 +4,33 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# Common/ScriptureUtils
+# ScriptureUtils
 
 ## Purpose
 Scripture-specific utilities for working with biblical texts. Provides support for Paratext integration, scripture references, and biblical text handling.
 
 ## Key Components
-- **ScriptureUtils.csproj** - Scripture utilities library
-- **PT7ScrTextWrapper.cs** - Paratext 7 text wrapper
-- **Paratext7Provider.cs** - Paratext 7 data provider
-- **ParatextHelper.cs** - Paratext integration helpers
-- **ScriptureProvider.cs** - Scripture data provider abstraction
-- **ScrReferencePositionComparer.cs** - Reference sorting
-- **ScriptureReferenceComparer.cs** - Reference comparison
-- **ScriptureUtilsTests/** - Test suite
-
-
-## Key Classes/Interfaces
-- **IParatextHelper**
-- **IScrText**
-- **ILexicalProject**
+### Key Classes
+- **ParatextHelper**
+- **Manager**
 - **ScrReferencePositionComparer**
 - **ReferencePositionType**
 - **ScriptureReferenceComparer**
 - **ScriptureProvider**
-- **IScriptureProviderMetadata**
+- **ScrReferencePositionComparerTests**
+- **ScriptureReferenceComparerTests**
+- **MockParatextHelper**
+- **ParatextHelperUnitTests**
+
+### Key Interfaces
+- **IParatextHelper**
+- **IScrText**
+- **ILexicalProject**
+- **ITranslationInfo**
+- **IScriptureProviderBookSet**
+- **IScriptureProviderParser**
+- **IUsfmToken**
+- **IVerseRef**
 
 ## Technology Stack
 - C# .NET
@@ -44,10 +46,6 @@ Scripture-specific utilities for working with biblical texts. Provides support f
 - Build via: `dotnet build ScriptureUtils.csproj`
 - Includes test suite
 
-## Testing
-- Run tests: `dotnet test ScriptureUtils/ScriptureUtilsTests/`
-- Tests cover reference handling and Paratext integration
-
 ## Entry Points
 - Paratext data providers
 - Scripture reference comparison and sorting
@@ -58,7 +56,9 @@ Scripture-specific utilities for working with biblical texts. Provides support f
 - **Paratext8Plugin/** - Modern Paratext integration
 - **FwParatextLexiconPlugin/** - Lexicon integration with Paratext
 
+## Code Evidence
+*Analysis based on scanning 10 source files*
 
-## References
-- **Project Files**: ScriptureUtils.csproj
-- **Key C# Files**: PT7ScrTextWrapper.cs, Paratext7Provider.cs, ParatextHelper.cs, ScrReferencePositionComparer.cs, ScriptureProvider.cs, ScriptureReferenceComparer.cs
+- **Classes found**: 11 public classes
+- **Interfaces found**: 14 public interfaces
+- **Namespaces**: SIL.FieldWorks.Common.ScriptureUtils

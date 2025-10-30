@@ -10,17 +10,27 @@ status: verified
 Miscellaneous utilities used across the FieldWorks repository. Contains various standalone tools, helper applications, and utility libraries that don't fit into other specific categories.
 
 ## Key Components
+### Key Classes
+- **XmlUtils**
+- **ReplaceSubstringInAttr**
+- **SimpleResolver**
+- **ConfigurationException**
+- **RuntimeConfigurationException**
+- **DynamicLoader**
+- **DynamicLoaderTests**
+- **Test1**
+- **XmlUtilsTest**
+- **XmlResourceResolverTests**
 
-### Subprojects
-Each subfolder has its own COPILOT.md file with detailed documentation:
-
-- **FixFwData/** - Tool for repairing FieldWorks data (see FixFwData/COPILOT.md)
-- **FixFwDataDll/** - Data repair library (see FixFwDataDll/COPILOT.md)
-- **XMLUtils/** - XML processing utilities (see XMLUtils/COPILOT.md)
-- **MessageBoxExLib/** - Enhanced message box library (see MessageBoxExLib/COPILOT.md)
-- **SfmStats/** - SFM statistics tool (see SfmStats/COPILOT.md)
-- **SfmToXml/** - SFM to XML conversion utility (see SfmToXml/COPILOT.md)
-- **Reporting/** - Error reporting functionality (see Reporting/COPILOT.md)
+### Key Interfaces
+- **IAttributeVisitor**
+- **IResolvePath**
+- **IPersistAsXml**
+- **ITest1**
+- **ILexImportFields**
+- **ILexImportField**
+- **ILexImportCustomField**
+- **ILanguageInfoUI**
 
 ## Technology Stack
 - C# .NET
@@ -47,3 +57,10 @@ Each subfolder has its own COPILOT.md file with detailed documentation:
 - **Cellar/** - Data model that FixFwData works with
 - **Common/** - Shared utilities that Utilities extends
 - **MigrateSqlDbs/** - Database migration (related to data repair)
+
+## Code Evidence
+*Analysis based on scanning 43 source files*
+
+- **Classes found**: 20 public classes
+- **Interfaces found**: 9 public interfaces
+- **Namespaces**: ConvertSFM, FixFwData, SIL.FieldWorks.FixData, SIL.Utils, Sfm2Xml

@@ -4,30 +4,33 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# Common/Framework
+# Framework
 
 ## Purpose
 Application framework components for FieldWorks. Provides core application infrastructure including editing helpers, settings management, and export functionality.
 
 ## Key Components
-- **Framework.csproj** - Main framework library
-- **FwApp.cs** - Application base class
-- **FwEditingHelper.cs** - Editing infrastructure support
-- **FwRegistrySettings.cs** - Registry-based settings
-- **ExportStyleInfo.cs** - Export styling configuration
-- **ExternalSettingsAccessorBase.cs** - Settings abstraction
-- **FrameworkTests/** - Framework test suite
-
-
-## Key Classes/Interfaces
+### Key Classes
 - **FwEditingHelper**
 - **ExportStyleInfo**
+- **MainWindowDelegate**
+- **FwRegistrySettings**
+- **ExternalSettingsAccessorBase**
+- **UndoRedoDropDown**
+- **SettingsXmlAccessorBase**
+- **FwApp**
+- **StatusBarProgressHandler**
+- **StylesXmlAccessor**
+
+### Key Interfaces
 - **IPublicationView**
 - **IPageSetupDialog**
 - **IMainWindowDelegatedFunctions**
 - **IMainWindowDelegateCallbacks**
-- **FwRegistrySettings**
 - **IFieldWorksManager**
+- **IFwMainWnd**
+- **IRecordListUpdater**
+- **IRecordListOwner**
 
 ## Technology Stack
 - C# .NET
@@ -43,10 +46,6 @@ Application framework components for FieldWorks. Provides core application infra
 - Build via: `dotnet build Framework.csproj`
 - Includes comprehensive test suite
 
-## Testing
-- Run tests: `dotnet test Framework/FrameworkTests/`
-- Tests cover framework components and settings
-
 ## Entry Points
 - Base application classes (FwApp)
 - Editing helper infrastructure
@@ -58,7 +57,9 @@ Application framework components for FieldWorks. Provides core application infra
 - **XCore/** - Application framework that uses Common/Framework
 - **xWorks/** - Applications built on this framework
 
+## Code Evidence
+*Analysis based on scanning 21 source files*
 
-## References
-- **Project Files**: Framework.csproj
-- **Key C# Files**: ExportStyleInfo.cs, ExternalSettingsAccessorBase.cs, FwApp.cs, FwEditingHelper.cs, FwRegistrySettings.cs, FwRootSite.cs, IFieldWorksManager.cs, IFwMainWnd.cs
+- **Classes found**: 20 public classes
+- **Interfaces found**: 9 public interfaces
+- **Namespaces**: SIL.FieldWorks.Common.Framework, SIL.FieldWorks.Common.Framework.SelInfo, for, info.

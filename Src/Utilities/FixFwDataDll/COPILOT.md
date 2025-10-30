@@ -4,19 +4,14 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# Utilities/FixFwDataDll
+# FixFwDataDll
 
 ## Purpose
 Core data repair library for FieldWorks. Provides the implementation of data validation, error detection, and automatic repair functionality for FieldWorks databases.
 
 ## Key Components
-- **FixFwDataDll.csproj** - Data repair library
-- **ErrorFixer.cs** - Error detection and repair logic
-- **FixErrorsDlg** - UI dialog for interactive repair
-- **FwData.cs** - FieldWorks data access and manipulation
-
-
-## Key Classes/Interfaces
+### Key Classes
+- **FixErrorsDlg**
 - **FwData**
 - **WriteAllObjectsUtility**
 - **ErrorFixer**
@@ -45,7 +40,8 @@ Core data repair library for FieldWorks. Provides the implementation of data val
 - **Cellar/** - Data model accessed and repaired
 - **MigrateSqlDbs/** - Database migration (related to data integrity)
 
+## Code Evidence
+*Analysis based on scanning 4 source files*
 
-## References
-- **Project Files**: FixFwDataDll.csproj
-- **Key C# Files**: ErrorFixer.cs, FixErrorsDlg.cs, FwData.cs, WriteAllObjectsUtility.cs
+- **Classes found**: 4 public classes
+- **Namespaces**: SIL.FieldWorks.FixData

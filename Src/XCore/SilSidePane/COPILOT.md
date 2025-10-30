@@ -4,25 +4,23 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# XCore/SilSidePane
+# SilSidePane
 
 ## Purpose
 Side pane UI component for navigation. Provides the navigation pane (sidebar) control used in FieldWorks applications for area and view selection.
 
 ## Key Components
-- **SilSidePane.csproj** - Side pane control library
-- **Banner.cs** - Banner/header component
-- **Item.cs** - Navigation item representation
-- **IItemArea.cs** - Item area interface
-- **ListViewItemArea.cs** - List view area implementation
-- **NavPaneOptionsDlg** - Navigation pane configuration dialog
-
-
-## Key Classes/Interfaces
+### Key Classes
 - **Item**
-- **SidePaneItemAreaStyle**
 - **Tab**
 - **SidePane**
+- **OutlookBarButtonTests**
+- **TabTests**
+- **NavPaneOptionsDlgTests**
+- **ItemTests**
+- **SidePaneTests_Buttons**
+- **SidePaneTests_List**
+- **SidePaneTests_StripList**
 
 ## Technology Stack
 - C# .NET WinForms
@@ -49,7 +47,8 @@ Side pane UI component for navigation. Provides the navigation pane (sidebar) co
 - **xWorks/** - Uses side pane for navigation
 - **LexText/** - Uses side pane for area selection
 
+## Code Evidence
+*Analysis based on scanning 21 source files*
 
-## References
-- **Project Files**: SilSidePane.csproj
-- **Key C# Files**: Banner.cs, IItemArea.cs, Item.cs, ListViewItemArea.cs, NavPaneOptionsDlg.cs, OutlookBar.cs, OutlookBarButton.cs, OutlookBarButtonCollection.cs
+- **Classes found**: 12 public classes
+- **Namespaces**: SIL.SilSidePane

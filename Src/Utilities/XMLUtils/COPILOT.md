@@ -4,28 +4,29 @@ last-reviewed: 2025-10-30
 status: verified
 ---
 
-# Utilities/XMLUtils
+# XMLUtils
 
 ## Purpose
 XML processing utilities for FieldWorks. Provides common XML handling functionality, dynamic loading, and exception handling for XML operations.
 
 ## Key Components
-- **XMLUtils.csproj** - XML utilities library
-- **DynamicLoader.cs** - Dynamic assembly and plugin loading
-- **ResolveDirectory.cs** - Path and directory resolution
-- **SILExceptions.cs** - Custom exception types
-- **XMLUtilsTests/** - Test suite
-
-
-## Key Classes/Interfaces
-- **IAttributeVisitor**
+### Key Classes
+- **XmlUtils**
 - **ReplaceSubstringInAttr**
-- **IResolvePath**
 - **SimpleResolver**
 - **ConfigurationException**
 - **RuntimeConfigurationException**
 - **DynamicLoader**
+- **DynamicLoaderTests**
+- **Test1**
+- **XmlUtilsTest**
+- **XmlResourceResolverTests**
+
+### Key Interfaces
+- **IAttributeVisitor**
+- **IResolvePath**
 - **IPersistAsXml**
+- **ITest1**
 
 ## Technology Stack
 - C# .NET
@@ -41,10 +42,6 @@ XML processing utilities for FieldWorks. Provides common XML handling functional
 - Build via: `dotnet build XMLUtils.csproj`
 - Includes test suite
 
-## Testing
-- Run tests: `dotnet test XMLUtils/XMLUtilsTests/`
-- Tests cover XML utilities and dynamic loading
-
 ## Entry Points
 - XML utility methods
 - Dynamic loader for plugins
@@ -57,7 +54,9 @@ XML processing utilities for FieldWorks. Provides common XML handling functional
 - **Transforms/** - XSLT processing with XML utilities
 - **FXT/** - Transform tool using XML utilities
 
+## Code Evidence
+*Analysis based on scanning 7 source files*
 
-## References
-- **Project Files**: XMLUtils.csproj
-- **Key C# Files**: DynamicLoader.cs, ResolveDirectory.cs, SILExceptions.cs, XmlUtils.cs
+- **Classes found**: 10 public classes
+- **Interfaces found**: 4 public interfaces
+- **Namespaces**: SIL.Utils
