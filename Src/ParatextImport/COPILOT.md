@@ -7,7 +7,10 @@ status: verified
 # ParatextImport
 
 ## Purpose
-Import pipeline for Paratext data into FieldWorks. Handles importing Scripture texts, notes, and related data from Paratext projects into the FieldWorks data model.
+Import pipeline for bringing Paratext Scripture data into FieldWorks. 
+Handles parsing and conversion of Paratext USFM texts, notes, and associated data into 
+the FieldWorks data model. Supports importing both Scripture texts and related project 
+information while preserving markup and structure.
 
 ## Key Components
 ### Key Classes

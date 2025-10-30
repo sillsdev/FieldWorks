@@ -7,7 +7,12 @@ status: verified
 # LexText
 
 ## Purpose
-Lexicon/Dictionary application and related components. This is one of the major application areas of FieldWorks, providing comprehensive lexicon editing, dictionary configuration, interlinear text analysis, morphology, and discourse features.
+Lexicon/Dictionary application suite and related components. 
+Encompasses the FieldWorks Language Explorer (FLEx) application including lexicon editing (Lexicon), 
+dictionary configuration (LexTextDll), interlinear text analysis (Interlinear), morphological 
+analysis (Morphology, ParserCore, ParserUI), discourse analysis (Discourse), specialized controls 
+(LexTextControls), and publishing integration (FlexPathwayPlugin). Complete solution for 
+dictionary development and linguistic text analysis.
 
 ## Key Components
 ### Key Classes

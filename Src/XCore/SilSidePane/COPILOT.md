@@ -7,7 +7,10 @@ status: verified
 # SilSidePane
 
 ## Purpose
-Side pane UI component for navigation. Provides the navigation pane (sidebar) control used in FieldWorks applications for area and view selection.
+Side pane navigation control for FieldWorks applications. 
+Implements the navigation sidebar (SidePane, Tab, Item classes) that provides hierarchical 
+navigation between different areas and tools in FieldWorks applications. Enables the 
+multi-area interface pattern used throughout FLEx and other FieldWorks apps.
 
 ## Key Components
 ### Key Classes

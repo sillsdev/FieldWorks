@@ -7,7 +7,10 @@ status: verified
 # Reporting
 
 ## Purpose
-Error reporting functionality for FieldWorks. Provides infrastructure for collecting, displaying, and submitting error reports when exceptions or problems occur.
+Error reporting and diagnostic information collection infrastructure. 
+Implements functionality for gathering error details, capturing system state, displaying error 
+reports to users, and optionally submitting crash reports. Helps improve software quality by 
+collecting diagnostic information when issues occur.
 
 ## Key Components
 ### Key Classes

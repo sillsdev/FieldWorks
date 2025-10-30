@@ -7,7 +7,10 @@ status: verified
 # Transforms
 
 ## Purpose
-Transformation assets (e.g., XSLT) and helpers for FieldWorks. Contains XSLT stylesheets and transformation definitions used for converting data between formats, generating reports, and exporting content.
+Collection of XSLT transformation stylesheets and supporting utilities. 
+Contains templates for data conversion, report generation, and content export across 
+various formats. Used throughout FieldWorks for transforming XML representations of 
+linguistic data into different output formats for reports, publishing, and data exchange.
 
 ## Key Components
 No major public classes identified.

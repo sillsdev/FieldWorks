@@ -7,7 +7,10 @@ status: verified
 # FwCoreDlgs
 
 ## Purpose
-Common dialogs used across FieldWorks applications. Provides a standardized set of dialog boxes and UI components for common operations like file selection, configuration, and user input.
+Common dialogs and UI components shared across FieldWorks applications. 
+Includes standardized dialog boxes for file operations (BackupProjectDlg, RestoreProjectDlg), 
+writing system configuration (FwWritingSystemSetupDlg), project management, and user preferences. 
+Ensures consistent user experience across different parts of FieldWorks.
 
 ## Key Components
 ### Key Classes

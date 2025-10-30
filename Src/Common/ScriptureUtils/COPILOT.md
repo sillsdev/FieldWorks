@@ -7,7 +7,10 @@ status: verified
 # ScriptureUtils
 
 ## Purpose
-Scripture-specific utilities for working with biblical texts. Provides support for Paratext integration, scripture references, and biblical text handling.
+Scripture-specific utilities and Paratext integration support. 
+Provides specialized handling for biblical text references, Paratext project integration, 
+scripture navigation, and biblical text structure. Enables FieldWorks to work effectively 
+with Bible translation projects and interoperate with Paratext software.
 
 ## Key Components
 ### Key Classes

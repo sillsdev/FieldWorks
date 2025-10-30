@@ -7,7 +7,10 @@ status: verified
 # CacheLight
 
 ## Purpose
-Lightweight caching services used by core components. Provides efficient in-memory caching mechanisms for FieldWorks data access patterns.
+Lightweight caching services providing efficient in-memory data access for FieldWorks components.
+Implements MetaDataCache for model metadata and RealDataCache for runtime object caching. 
+Designed to optimize data access patterns by reducing database queries and providing fast lookup 
+of frequently accessed linguistic data objects. Critical for application performance.
 
 ## Key Components
 ### Key Classes

@@ -7,7 +7,10 @@ status: verified
 # InstallValidator
 
 ## Purpose
-Utilities to validate installation prerequisites for FieldWorks. Checks system requirements, installed components, and configuration before allowing installation or application startup.
+Installation prerequisite validation utilities. 
+Checks system requirements, validates configuration, and verifies that necessary dependencies 
+are present before FieldWorks installation or startup. Helps prevent installation failures 
+and provides clear diagnostics when requirements are not met.
 
 ## Key Components
 ### Key Classes

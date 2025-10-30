@@ -7,7 +7,10 @@ status: verified
 # Lexicon
 
 ## Purpose
-Lexicon editing components and features. Provides the main lexicon entry editing interface, reference management, and FLEx Bridge integration for collaboration.
+Lexicon editing and entry management components. 
+Implements the core lexical database editing interface including entry forms, reference management, 
+sense hierarchies, and FLEx Bridge integration for version control. Central component for 
+dictionary and lexicon development workflows in FLEx.
 
 ## Key Components
 ### Key Classes

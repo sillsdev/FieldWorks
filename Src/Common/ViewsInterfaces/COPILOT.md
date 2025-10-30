@@ -7,7 +7,10 @@ status: verified
 # ViewsInterfaces
 
 ## Purpose
-View layer interfaces for FieldWorks. Defines managed interfaces for interacting with the native view rendering engine, providing the contract between managed and native view code.
+Managed interface definitions for the native Views rendering engine. 
+Declares .NET interfaces corresponding to native COM interfaces in the Views system, enabling 
+managed code to interact with the powerful native text rendering capabilities. Provides type-safe, 
+managed access to complex text layout, multilingual display, and sophisticated formatting features.
 
 ## Key Components
 ### Key Classes

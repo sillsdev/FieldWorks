@@ -7,7 +7,10 @@ status: verified
 # FwParatextLexiconPlugin
 
 ## Purpose
-Paratext lexicon integration plugin. Enables FieldWorks lexicon data to be accessed and used within Paratext Bible translation software, providing seamless integration between the two systems.
+Integration plugin enabling Paratext Bible translation software to access 
+FieldWorks lexicon data. Implements the Paratext plugin interface to expose FLEx lexical database 
+as a searchable lexicon resource within Paratext, facilitating translation workflows that leverage 
+comprehensive lexical information.
 
 ## Key Components
 ### Key Classes

@@ -7,7 +7,10 @@ status: verified
 # FXT
 
 ## Purpose
-FieldWorks transform assets and related tooling. Provides transformation capabilities for converting and processing linguistic data between different formats and representations.
+FieldWorks Transform (FXT) assets and XSLT-based transformation infrastructure. 
+Provides XSLT stylesheets and transformation utilities for converting and presenting linguistic 
+data in different formats. Used extensively for generating reports, exports, and formatted output 
+from the FieldWorks data model.
 
 ## Key Components
 ### Key Classes

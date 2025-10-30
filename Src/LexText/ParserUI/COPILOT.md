@@ -7,7 +7,10 @@ status: verified
 # ParserUI
 
 ## Purpose
-Parser user interface components. Provides UI for configuring, testing, and tracing the morphological parser, including parser trace visualization and word import dialogs.
+User interface components for parser configuration and testing. 
+Provides UI for configuring the morphological parser, testing parser behavior, viewing parse traces, 
+managing parser settings, and debugging morphological analyses. Enables linguists to refine 
+and validate their morphological descriptions.
 
 ## Key Components
 ### Key Classes

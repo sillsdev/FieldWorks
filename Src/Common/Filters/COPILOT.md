@@ -7,7 +7,11 @@ status: verified
 # Filters
 
 ## Purpose
-Data filtering functionality for FieldWorks. Provides filter matchers and sorting capabilities for searching and displaying filtered data sets.
+Data filtering and sorting infrastructure for searchable data views. 
+Implements various matcher types (IntMatcher, RangeIntMatcher, ExactMatcher, BeginMatcher) 
+and filtering logic (RecordFilter, ProblemAnnotationFilter) for narrowing and organizing 
+data sets. Essential for browse views, search functionality, and filtered list displays 
+throughout FieldWorks applications.
 
 ## Key Components
 ### Key Classes

@@ -7,9 +7,10 @@ status: verified
 # Cellar
 
 ## Purpose
-Core data model and persistence layer (also known as LCM - FieldWorks Language and Culture Model).
-Provides the foundational object model and persistence infrastructure used across FieldWorks.
-Includes XML-related functionality and low-level services leveraged by higher layers.
+Core data model infrastructure providing XML processing and serialization services. 
+Contains FwXml and FwXmlString utilities for handling XML data structures used throughout FieldWorks.
+While much of the core data model (LCM) has moved to dedicated libraries, this folder maintains 
+fundamental XML handling and low-level data utilities that support the persistence layer.
 
 ## Key Components
 No major public classes identified.

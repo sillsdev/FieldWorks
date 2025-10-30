@@ -7,7 +7,10 @@ status: verified
 # DbExtend
 
 ## Purpose
-Database extensions and schema helpers for the FieldWorks data model. Provides extensibility mechanisms for customizing and extending the database schema at runtime.
+Database schema extension and runtime customization infrastructure. 
+Provides mechanisms for extending the base FieldWorks data model with custom fields, 
+properties, and relationships at runtime. Enables users and plugins to add domain-specific 
+data structures without modifying core schema definitions.
 
 ## Key Components
 No major public classes identified.

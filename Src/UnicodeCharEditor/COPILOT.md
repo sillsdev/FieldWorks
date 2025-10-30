@@ -7,7 +7,10 @@ status: verified
 # UnicodeCharEditor
 
 ## Purpose
-Unicode character editor tool for FieldWorks. Provides a specialized interface for viewing, editing, and managing Unicode character properties, enabling linguists to work with complex Unicode characters and special symbols.
+Specialized tool for viewing and editing Unicode character properties. 
+Provides detailed information about Unicode characters, their properties, and rendering 
+characteristics. Useful for linguists working with uncommon scripts or diagnosing 
+character encoding and display issues.
 
 ## Key Components
 ### Key Classes

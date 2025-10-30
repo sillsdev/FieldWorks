@@ -7,7 +7,10 @@ status: verified
 # LexTextControls
 
 ## Purpose
-Lexicon UI controls library. Provides specialized controls and dialogs for lexicon editing, including allomorph addition, sense management, and lexicon import/export wizards.
+Lexicon UI controls library for FLEx editing interfaces. 
+Provides specialized controls and dialogs for lexicon management including import/export wizards 
+(LexImportWizard, FlexLiftMerger), entry editing components, chooser dialogs, and dictionary 
+configuration interfaces. Essential UI building blocks for the FLEx lexicon editor.
 
 ## Key Components
 ### Key Classes

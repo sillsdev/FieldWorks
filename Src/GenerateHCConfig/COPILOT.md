@@ -7,7 +7,9 @@ status: verified
 # GenerateHCConfig
 
 ## Purpose
-Build-time configuration generation utilities for FieldWorks. Creates help configuration files and other build artifacts needed for the application's help system.
+Build-time utilities for generating help system configuration files. 
+Creates configuration artifacts and metadata files needed by the FieldWorks help system. 
+Typically runs during the build process to prepare help content for deployment.
 
 ## Key Components
 No major public classes identified.

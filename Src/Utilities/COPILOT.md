@@ -7,7 +7,10 @@ status: verified
 # Utilities
 
 ## Purpose
-Miscellaneous utilities used across the FieldWorks repository. Contains various standalone tools, helper applications, and utility libraries that don't fit into other specific categories.
+Miscellaneous utilities and standalone tools. 
+Contains data repair utilities (FixFwData, FixFwDataDll), format conversion tools (SfmToXml, SfmStats), 
+XML helpers (XMLUtils), error reporting (Reporting), and enhanced UI components (MessageBoxExLib). 
+Collection of helper applications and libraries that support but don't fit cleanly into other categories.
 
 ## Key Components
 ### Key Classes

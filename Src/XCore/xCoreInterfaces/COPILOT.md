@@ -7,7 +7,11 @@ status: verified
 # xCoreInterfaces
 
 ## Purpose
-Core interfaces for the XCore application framework. Defines the contracts for command handling, choice management, UI components, and the mediator pattern used throughout XCore.
+Core interface definitions for the XCore framework. 
+Declares fundamental contracts for command handling (IxCoreColleague), choice management 
+(ChoiceGroup), property tables (PropertyTable), mediator pattern (Mediator), and UI component 
+integration. These interfaces define the extensibility architecture that enables plugin-based 
+application composition in FieldWorks.
 
 ## Key Components
 ### Key Classes

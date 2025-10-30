@@ -7,7 +7,10 @@ status: verified
 # XMLUtils
 
 ## Purpose
-XML processing utilities for FieldWorks. Provides common XML handling functionality, dynamic loading, and exception handling for XML operations.
+XML processing utilities and helper functions. 
+Provides common XML handling functionality including dynamic assembly loading (DynamicLoader), 
+exception handling, validation, and XML manipulation helpers. Supports XML-based configuration 
+and data processing throughout FieldWorks.
 
 ## Key Components
 ### Key Classes

@@ -7,7 +7,10 @@ status: verified
 # AppCore
 
 ## Purpose
-Shared application core helpers and base infrastructure used across FieldWorks applications. Provides fundamental graphics and styled text rendering capabilities for the application layer.
+Shared application core helpers and base infrastructure used across FieldWorks applications. 
+Provides fundamental graphics rendering capabilities through Windows GDI wrappers (AfGfx, AfGdi), 
+styled text rendering (FwStyledText), and resource management utilities (ColorTable, SmartPalette). 
+These classes enable consistent rendering behavior and provide abstraction over Windows graphics APIs.
 
 ## Key Components
 ### Key Classes

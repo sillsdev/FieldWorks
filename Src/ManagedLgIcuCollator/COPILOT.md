@@ -7,7 +7,10 @@ status: verified
 # ManagedLgIcuCollator
 
 ## Purpose
-Managed wrapper for ICU collation services. Provides .NET-friendly access to ICU (International Components for Unicode) collation and sorting functionality for proper linguistic text ordering.
+Managed .NET wrapper for ICU (International Components for Unicode) collation services. 
+Provides proper linguistic text sorting and comparison functionality for multiple writing systems. 
+Enables correct alphabetical ordering of text in various languages by bridging ICU native libraries 
+with .NET code through a managed interface.
 
 ## Key Components
 ### Key Classes

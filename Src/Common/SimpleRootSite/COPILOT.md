@@ -7,7 +7,10 @@ status: verified
 # SimpleRootSite
 
 ## Purpose
-Simplified root site implementation for view hosting. Provides a streamlined API for hosting FieldWorks views with common functionality pre-configured.
+Simplified root site implementation with streamlined API. 
+Provides a more accessible interface to the Views system for common scenarios, handling 
+standard view hosting patterns with pre-configured functionality. Reduces boilerplate code 
+needed to embed Views in applications while maintaining full rendering capabilities.
 
 ## Key Components
 ### Key Classes

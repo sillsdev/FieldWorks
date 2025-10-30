@@ -7,7 +7,10 @@ status: verified
 # ProjectUnpacker
 
 ## Purpose
-Utilities for unpacking FieldWorks projects. Handles decompression and extraction of FieldWorks project archives, enabling project sharing and backup/restore functionality.
+Utilities for extracting and decompressing FieldWorks project archives. 
+Handles unpacking of .fwbackup files and other compressed project formats. 
+Supports project restoration, sharing, and migration scenarios by providing 
+reliable extraction of project data from archive formats.
 
 ## Key Components
 ### Key Classes

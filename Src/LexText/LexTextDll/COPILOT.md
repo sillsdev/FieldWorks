@@ -7,7 +7,10 @@ status: verified
 # LexTextDll
 
 ## Purpose
-Core lexicon application functionality library. Provides the main application logic and infrastructure for the LexText (FLEx) lexicon and dictionary application.
+Core LexText application logic and infrastructure. 
+Implements the main application coordination, module initialization, integration of various 
+areas (lexicon, morphology, interlinear, discourse), and shared services for the FLEx application. 
+Serves as the integration layer that brings together all FLEx components into a cohesive application.
 
 ## Key Components
 ### Key Classes

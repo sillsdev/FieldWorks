@@ -7,7 +7,11 @@ status: verified
 # Framework
 
 ## Purpose
-Application framework components for FieldWorks. Provides core application infrastructure including editing helpers, settings management, and export functionality.
+Application framework components providing core infrastructure services. 
+Includes editing helpers (FwEditingHelper), publication interfaces (IPublicationView, IPageSetupDialog), 
+settings management (FwRegistrySettings), style export (ExportStyleInfo), and main window coordination 
+(MainWindowDelegate). Establishes architectural patterns and shared functionality for building 
+FieldWorks applications.
 
 ## Key Components
 ### Key Classes

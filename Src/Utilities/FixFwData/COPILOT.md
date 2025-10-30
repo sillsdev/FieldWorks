@@ -7,7 +7,10 @@ status: verified
 # FixFwData
 
 ## Purpose
-Command-line tool for repairing FieldWorks data files. Provides automated data integrity checking and repair functionality for FieldWorks databases.
+Command-line tool for repairing FieldWorks project data files. 
+Provides automated data integrity checking, error detection, and repair functionality that can be 
+run outside the main FieldWorks application. Useful for data recovery, troubleshooting, and 
+batch maintenance of project files.
 
 ## Key Components
 No major public classes identified.

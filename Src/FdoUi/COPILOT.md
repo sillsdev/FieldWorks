@@ -7,7 +7,10 @@ status: verified
 # FdoUi
 
 ## Purpose
-UI components for FieldWorks Data Objects (FDO). Provides user interface elements for interacting with the FieldWorks data model, including custom field management and data object visualization.
+User interface components for FieldWorks Data Objects (FDO/LCM). 
+Provides specialized UI controls for editing and displaying data model objects, including 
+custom field management dialogs (CustomFieldDlg), chooser dialogs for selecting data objects, 
+and editors for complex data types. Bridges the data layer with the presentation layer.
 
 ## Key Components
 ### Key Classes

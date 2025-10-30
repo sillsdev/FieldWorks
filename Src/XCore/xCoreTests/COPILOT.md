@@ -7,7 +7,10 @@ status: verified
 # xCoreTests
 
 ## Purpose
-Test suite for XCore framework. Provides comprehensive tests for XCore framework functionality including XML configuration, inventory management, and command handling.
+Test suite for XCore framework functionality. 
+Provides comprehensive tests validating XCore's command handling, property table behavior, 
+mediator functionality, and plugin infrastructure. Ensures the foundational framework 
+behaves correctly as it underpins all FieldWorks applications.
 
 ## Key Components
 ### Key Classes

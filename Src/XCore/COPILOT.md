@@ -7,7 +7,11 @@ status: verified
 # XCore
 
 ## Purpose
-Cross-cutting framework base used by multiple FieldWorks applications. Provides the application framework, plugin architecture, command handling, and UI composition infrastructure that all major FieldWorks applications are built upon.
+Cross-cutting application framework and plugin architecture. 
+Provides command handling, choice management, property propagation, UI composition, and extensibility 
+infrastructure (xCoreInterfaces, FlexUIAdapter) used by multiple FieldWorks applications. Includes 
+navigation components (SilSidePane) and comprehensive tests (xCoreTests). Foundation for building 
+extensible, plugin-based applications with consistent command and UI patterns.
 
 ## Key Components
 ### Key Classes

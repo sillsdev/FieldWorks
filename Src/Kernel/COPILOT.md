@@ -7,7 +7,10 @@ status: verified
 # Kernel
 
 ## Purpose
-Low-level core services and infrastructure for FieldWorks. Provides fundamental building blocks including memory management, error handling, string processing, and system-level utilities that all other components depend on.
+Low-level core services and fundamental infrastructure for all FieldWorks native code. 
+Provides essential building blocks including memory management abstractions, string processing utilities, 
+error handling mechanisms, and system-level services. Acts as the foundation layer that all other 
+native components depend on. Contains core definitions, constants, and fundamental types used throughout.
 
 ## Key Components
 No major public classes identified.

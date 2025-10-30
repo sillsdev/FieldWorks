@@ -7,7 +7,11 @@ status: verified
 # ParserCore
 
 ## Purpose
-Core parsing engine for morphological analysis. Provides the Hermit Crab (HC) parser implementation for analyzing words into morphemes based on morphological rules.
+Core morphological parsing engine (Hermit Crab). 
+Implements the HC (Hermit Crab) parser that analyzes words into component morphemes based on 
+linguistic rules defined in the morphology editor. Applies phonological rules, morphotactics, 
+and allomorphy to decompose words and propose analyses. Critical for computer-assisted 
+morphological analysis in FLEx.
 
 ## Key Components
 ### Key Classes

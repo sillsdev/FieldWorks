@@ -7,7 +7,9 @@ status: verified
 # Generic
 
 ## Purpose
-Generic/shared components that don't fit a single application. Provides low-level utility classes, algorithms, and helper functions used throughout the FieldWorks codebase.
+Generic utility components and low-level helper classes that don't fit into more 
+specific categories. Includes fundamental algorithms, data structures, and utility functions 
+used across the codebase. Provides building blocks for higher-level functionality.
 
 ## Key Components
 ### Key Classes

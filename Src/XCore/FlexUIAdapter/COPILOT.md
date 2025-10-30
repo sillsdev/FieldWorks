@@ -7,7 +7,10 @@ status: verified
 # FlexUIAdapter
 
 ## Purpose
-FLEx UI adapter implementation. Provides the concrete implementation of UI adapter interfaces for FieldWorks applications, translating between XCore framework commands and actual UI controls.
+FLEx implementation of XCore UI adapter interfaces. 
+Provides concrete adapter implementations that connect FLEx application components to the 
+XCore framework's command handling, choice management, and UI composition systems. Enables 
+FLEx to leverage XCore's plugin architecture and extensibility features.
 
 ## Key Components
 ### Key Classes

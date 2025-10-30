@@ -7,7 +7,9 @@ status: verified
 # LexTextExe
 
 ## Purpose
-Main executable for the LexText (FLEx) lexicon and dictionary application. Provides the entry point for launching the FieldWorks Language Explorer (FLEx) application.
+Main executable entry point for FieldWorks Language Explorer (FLEx). 
+Provides the startup code, application initialization, and hosting environment for the LexText 
+application. Minimal code here as most functionality resides in LexTextDll and other libraries.
 
 ## Key Components
 ### Key Classes

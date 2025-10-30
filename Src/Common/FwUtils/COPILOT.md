@@ -7,7 +7,10 @@ status: verified
 # FwUtils
 
 ## Purpose
-General FieldWorks utilities library. Provides a wide range of utility functions, helpers, and extension methods used throughout the FieldWorks codebase.
+General FieldWorks utilities library containing wide-ranging helper functions. 
+Provides utilities for image handling (ManagedPictureFactory), registry access (IFwRegistryHelper), 
+XML serialization (XmlSerializationHelper), audio conversion (WavConverter), exception handling, 
+and numerous other cross-cutting concerns. Most comprehensive utility collection in FieldWorks.
 
 ## Key Components
 ### Key Classes

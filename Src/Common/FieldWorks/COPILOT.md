@@ -7,7 +7,11 @@ status: verified
 # FieldWorks
 
 ## Purpose
-Core FieldWorks-specific utilities and application infrastructure. Provides fundamental application services including settings management, busy dialogs, and application-level helpers.
+Core FieldWorks-specific application infrastructure and utilities. 
+Provides fundamental application services including project management (FieldWorksManager, ProjectId), 
+settings management (FwRestoreProjectSettings), startup coordination (WelcomeToFieldWorksDlg), 
+and busy state handling (ApplicationBusyDialog). Central to coordinating application lifecycle 
+and managing shared resources across FieldWorks applications.
 
 ## Key Components
 ### Key Classes

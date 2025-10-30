@@ -7,7 +7,10 @@ status: verified
 # SfmToXml
 
 ## Purpose
-Standard Format Marker (SFM) to XML conversion utility. Converts SFM-formatted data files to XML format for processing and import into FieldWorks.
+SFM to XML data conversion utility and library. 
+Converts Standard Format Marker files (legacy linguistic data format) into XML format 
+for processing and import into FieldWorks. Handles parsing of SFM structure and mapping 
+to XML representation while preserving data semantics.
 
 ## Key Components
 ### Key Classes

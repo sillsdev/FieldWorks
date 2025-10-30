@@ -7,7 +7,10 @@ status: verified
 # Paratext8Plugin
 
 ## Purpose
-Integration plugin for Paratext 8. Enables bidirectional integration between FieldWorks and Paratext 8 Bible translation software, allowing data sharing and collaboration between the two systems.
+Bidirectional integration plugin for Paratext 8 Bible translation software. 
+Enables data exchange and synchronization between FieldWorks and Paratext 8 projects. 
+Supports sharing linguistic data, managing project relationships, and coordinating 
+translation workflows between the two applications.
 
 ## Key Components
 ### Key Classes

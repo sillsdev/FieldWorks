@@ -7,7 +7,11 @@ status: verified
 # Common
 
 ## Purpose
-Cross-cutting utilities and shared managed/native code used throughout FieldWorks. Contains fundamental UI controls, framework components, and utility libraries that multiple applications depend on.
+Cross-cutting utilities and shared infrastructure used throughout FieldWorks. 
+Contains fundamental UI controls (Controls), framework components (Framework), shared managed 
+code (FwUtils), native code bridges (SimpleRootSite, RootSite), view interfaces (ViewsInterfaces), 
+filtering (Filters), scripture utilities (ScriptureUtils), and application services (FieldWorks). 
+Most comprehensive collection of shared code, providing building blocks for all FieldWorks applications.
 
 ## Key Components
 ### Key Classes

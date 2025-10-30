@@ -7,7 +7,10 @@ status: verified
 # MigrateSqlDbs
 
 ## Purpose
-Database migration and upgrade tooling for FieldWorks. Handles schema migrations, data transformations, and version upgrades when moving between different versions of FieldWorks.
+Database migration and versioning infrastructure. 
+Handles schema migrations, data transformations, and version upgrades between different 
+FieldWorks releases. Ensures smooth upgrades by automatically transforming user data 
+to match the current schema version while preserving data integrity.
 
 ## Key Components
 ### Key Classes

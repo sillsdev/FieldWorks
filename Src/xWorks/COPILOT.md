@@ -7,7 +7,11 @@ status: verified
 # xWorks
 
 ## Purpose
-Primary FieldWorks application shell and modules. Provides the main application infrastructure, dictionary configuration, data tree navigation, and shared functionality used across all FieldWorks work areas. This is the core application framework that hosts LexText and other modules.
+Primary FieldWorks application shell and module hosting infrastructure. 
+Implements the main application framework (xWorks) that hosts LexText and other work areas, 
+provides dictionary configuration (DictionaryConfigurationDlg, DictionaryNodeOptions), area switching, 
+data navigation, and shared application services. Serves as the container that brings together 
+different FieldWorks tools into an integrated application environment.
 
 ## Key Components
 ### Key Classes

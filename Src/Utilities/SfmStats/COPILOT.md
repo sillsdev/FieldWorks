@@ -7,7 +7,10 @@ status: verified
 # SfmStats
 
 ## Purpose
-Standard Format Marker (SFM) statistics tool. Analyzes SFM files to provide statistics about marker usage, helping users understand their data structure before import.
+Standard Format Marker (SFM) statistics and analysis tool. 
+Analyzes SFM-formatted data files to provide statistics about marker usage, frequency, 
+and patterns. Useful for understanding legacy data structure and preparing for data migration 
+or import into FieldWorks.
 
 ## Key Components
 No major public classes identified.

@@ -7,7 +7,11 @@ status: verified
 # Interlinear
 
 ## Purpose
-Interlinear text analysis and glossing functionality. Provides tools for creating and managing interlinear texts with morpheme-by-morpheme analysis and glossing.
+Interlinear text analysis and morpheme-by-morpheme glossing functionality. 
+Implements the interlinear text editor (InterlinDocChart, InterlinVc), morpheme analysis tools, 
+glossing interfaces, concordance views (ConcordanceControl), and text import capabilities. 
+Central to linguistic text analysis workflows in FLEx, enabling detailed morphosyntactic 
+annotation of natural language texts.
 
 ## Key Components
 ### Key Classes

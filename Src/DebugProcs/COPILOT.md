@@ -7,7 +7,10 @@ status: verified
 # DebugProcs
 
 ## Purpose
-Developer diagnostics and debug helpers for troubleshooting FieldWorks issues. Provides debugging utilities, diagnostic tools, and development aids.
+Developer diagnostics and debugging utilities for troubleshooting FieldWorks issues. 
+Provides specialized debugging helpers, diagnostic output, and instrumentation code used during 
+development and support scenarios. Not typically used in production builds but invaluable 
+for diagnosing complex issues in the codebase.
 
 ## Key Components
 No major public classes identified.

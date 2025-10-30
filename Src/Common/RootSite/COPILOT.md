@@ -7,7 +7,11 @@ status: verified
 # RootSite
 
 ## Purpose
-Root-level site management for views. Provides the base infrastructure for hosting and managing FieldWorks' view system, including view composition and rendering coordination.
+Root-level site management infrastructure for hosting FieldWorks views. 
+Implements RootSite classes that provide the top-level container for the Views rendering system, 
+handle view lifecycle management, coordinate printing, manage selection and editing, and bridge 
+between Windows Forms and the native Views architecture. Critical foundation for all text 
+display and editing functionality.
 
 ## Key Components
 ### Key Classes

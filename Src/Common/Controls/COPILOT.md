@@ -7,7 +7,11 @@ status: verified
 # Controls
 
 ## Purpose
-Shared UI controls library providing reusable widgets and XML-based view components used throughout FieldWorks applications.
+Shared UI controls library providing reusable widgets and XML-based view components. 
+Contains sophisticated controls like DetailControls for property editing, FwControls for specialized 
+FieldWorks UI elements, Widgets for general-purpose controls, and XMLViews for XML-driven view 
+composition. These components enable consistent UI patterns across all FieldWorks applications and 
+support complex data-driven interfaces through declarative XML specifications.
 
 ## Key Components
 ### Key Classes

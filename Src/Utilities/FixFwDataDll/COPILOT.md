@@ -7,7 +7,10 @@ status: verified
 # FixFwDataDll
 
 ## Purpose
-Core data repair library for FieldWorks. Provides the implementation of data validation, error detection, and automatic repair functionality for FieldWorks databases.
+Core data repair library implementing validation and fix logic. 
+Contains the actual implementation of data integrity checks, error detection algorithms, and 
+automatic repair routines. Used by both the FixFwData command-line tool and potentially by 
+the main applications for data validation.
 
 ## Key Components
 ### Key Classes

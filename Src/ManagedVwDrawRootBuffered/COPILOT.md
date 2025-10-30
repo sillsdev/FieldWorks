@@ -7,7 +7,10 @@ status: verified
 # ManagedVwDrawRootBuffered
 
 ## Purpose
-Managed view rendering primitives for buffered drawing. Provides double-buffered rendering infrastructure for FieldWorks views to eliminate flicker and improve visual performance.
+Managed wrapper for buffered view rendering infrastructure. 
+Implements double-buffered drawing to eliminate flicker in complex text displays. 
+Provides smooth rendering experience for views containing large amounts of formatted text 
+with multiple writing systems and complex layouts.
 
 ## Key Components
 ### Key Classes

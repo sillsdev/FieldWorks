@@ -7,7 +7,10 @@ status: verified
 # Discourse
 
 ## Purpose
-Discourse analysis features for FieldWorks. Provides tools for analyzing and charting discourse structure in texts, including constituent chart creation and management.
+Discourse analysis and charting functionality for linguistic text analysis. 
+Implements tools for analyzing and visualizing discourse structure, including constituent charts, 
+template-based analysis, and discourse hierarchy navigation. Enables linguists to study and 
+document how texts are organized at levels above the sentence.
 
 ## Key Components
 ### Key Classes

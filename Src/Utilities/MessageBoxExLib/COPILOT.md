@@ -7,7 +7,10 @@ status: verified
 # MessageBoxExLib
 
 ## Purpose
-Enhanced message box library for FieldWorks. Provides extended message box functionality beyond standard Windows message boxes, including additional icons and customization options.
+Enhanced message box library with extended functionality. 
+Provides message boxes with additional features beyond standard Windows message boxes, 
+such as custom button layouts, checkboxes for "don't show again", and richer formatting. 
+Enables better user communication throughout FieldWorks applications.
 
 ## Key Components
 ### Key Classes

@@ -7,7 +7,9 @@ status: verified
 # FwResources
 
 ## Purpose
-Shared resources (images, strings, assets) for FieldWorks applications and libraries. Centralizes resource management to ensure consistent UI appearance and localization across all applications.
+Centralized resource management for FieldWorks applications. 
+Contains shared images, icons, localized strings, and other UI assets used throughout the application suite. 
+Provides consistent branding and enables efficient resource packaging and localization workflows.
 
 ## Key Components
 ### Key Classes

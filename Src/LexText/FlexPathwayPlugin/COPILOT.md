@@ -7,7 +7,10 @@ status: verified
 # FlexPathwayPlugin
 
 ## Purpose
-Pathway publishing integration plugin for FLEx. Enables export and publishing of lexicon and text data using SIL's Pathway publishing system.
+Pathway publishing system integration for FLEx. 
+Provides plugin infrastructure to export lexicon and interlinear data using SIL's Pathway 
+publishing system. Enables creation of formatted dictionaries, interlinear texts, and other 
+publications in various formats (PDF, EPUB, Word) from FieldWorks data.
 
 ## Key Components
 ### Key Classes

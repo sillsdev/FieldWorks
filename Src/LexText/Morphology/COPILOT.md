@@ -7,7 +7,10 @@ status: verified
 # Morphology
 
 ## Purpose
-Morphological analysis and morphology editor. Provides tools for defining morphological rules, allomorph conditions, and phonological features.
+Morphological analysis and morphology editor infrastructure. 
+Provides tools for defining morphological rules, allomorph conditions, phonological features, 
+natural classes, and morpheme environments. Enables linguistic definition of word formation 
+patterns and supports the morphological parser configuration.
 
 ## Key Components
 ### Key Classes

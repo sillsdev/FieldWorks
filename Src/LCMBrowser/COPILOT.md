@@ -7,7 +7,10 @@ status: verified
 # LCMBrowser
 
 ## Purpose
-LCM/Cellar model browser tooling. Provides a development and diagnostic tool for exploring the FieldWorks Language and Culture Model (LCM), viewing data structures, and debugging data model issues.
+Development tool for exploring and debugging the FieldWorks data model (LCM). 
+Provides a browser interface for navigating object relationships, inspecting properties, 
+and understanding the structure of linguistic databases. Primarily used during development 
+and troubleshooting rather than in production scenarios.
 
 ## Key Components
 ### Key Classes

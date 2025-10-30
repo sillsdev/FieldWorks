@@ -7,7 +7,9 @@ status: verified
 # DocConvert
 
 ## Purpose
-Document and data conversion tools for FieldWorks. Handles conversion between different document formats and data representations used in linguistic work.
+Document and data format conversion utilities. Handles transformation between 
+different document formats and data representations used in FieldWorks. Supports importing 
+and exporting linguistic data in various industry-standard formats.
 
 ## Key Components
 No major public classes identified.

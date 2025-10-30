@@ -7,7 +7,11 @@ status: verified
 # views
 
 ## Purpose
-C++ view-layer components and UI view infrastructure. Provides the native rendering engine for FieldWorks' sophisticated text display, including complex writing systems, interlinear text, and formatted linguistic data.
+C++ native rendering engine providing sophisticated text display capabilities for complex 
+writing systems. Implements the Views architecture that handles multi-script text layout, 
+bidirectional text, complex rendering requirements, and performance-critical display operations. 
+Core component enabling FieldWorks to properly display texts in hundreds of writing systems 
+with accurate formatting, alignment, and complex script rendering.
 
 ## Key Components
 ### Key Classes
