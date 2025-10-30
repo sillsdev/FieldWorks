@@ -1,3 +1,9 @@
+---
+owner: FIXME(set-owner)
+last-reviewed: 2025-10-29
+status: draft
+---
+
 # Common/FieldWorks
 
 ## Purpose
@@ -19,9 +25,9 @@ Core FieldWorks-specific utilities and application infrastructure. Provides fund
 - Used by: All FieldWorks applications (xWorks, LexText)
 
 ## Build Information
-- C# class library project
-- Build via: `dotnet build FieldWorks.csproj`
-- Part of Common solution
+- Build using the top-level FW.sln (Visual Studio/MSBuild) or run: `bash ./agent-build-fw.sh`
+- Avoid building this project in isolation; solution builds ensure repo props/targets and interop settings are applied.
+- FIXME(build): If SDK-style direct builds/tests are available, document exact commands here.
 
 ## Entry Points
 - Provides application-level utilities
@@ -33,3 +39,8 @@ Core FieldWorks-specific utilities and application infrastructure. Provides fund
 - **Common/FwUtils/** - General utilities used by FieldWorks
 - **xWorks/** - Main application using these utilities
 - **XCore/** - Framework that integrates FieldWorks utilities
+
+## Review Notes (FIXME)
+- FIXME(components): Confirm notable classes (e.g., ApplicationBusyDialog) and any additional utilities/resources to highlight.
+- FIXME(dependencies): Validate dependency relationships with Framework and FwUtils.
+

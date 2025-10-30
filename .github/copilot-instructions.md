@@ -247,33 +247,8 @@ Dependencies and hidden coupling:
 
 ## Maintaining Src/ Folder Documentation
 
-Each folder under Src/ has a COPILOT.md file that documents its purpose, components, and relationships. These files are essential for understanding the codebase.
-
-**When to update COPILOT.md files:**
-- When making significant architectural changes to a folder
-- When adding new major components or subprojects
-- When changing the purpose or scope of a folder
-- When discovering discrepancies between documentation and reality
-
-**How to update COPILOT.md files:**
-1. Read the existing COPILOT.md file for the folder you're working in
-2. If you notice discrepancies (e.g., missing components, outdated descriptions, incorrect dependencies):
-   - Update the COPILOT.md file to reflect the current state
-   - Update cross-references in related folders' COPILOT.md files if relationships changed
-   - Update `.github/src-catalog.md` with the new concise description
-3. Keep documentation concise but informative:
-   - Purpose: What the folder is for (1-2 sentences)
-   - Key Components: Major files, subprojects, or features
-   - Technology Stack: Primary languages and frameworks
-   - Dependencies: What it depends on and what uses it
-   - Build Information: How to build and test
-   - Entry Points: How the code is used or invoked
-   - Related Folders: Cross-references to other Src/ folders
-
-**Example scenarios requiring COPILOT.md updates:**
-- Adding a new C# project to a folder → Update "Key Components" and "Build Information"
-- Discovering a folder depends on another folder not listed → Update "Dependencies" and "Related Folders"
-- Finding that a folder's description is inaccurate → Update "Purpose" section
-- Adding new test projects → Update "Build Information" and "Testing" sections
-
-Always validate that your code changes align with the documented architecture. If they don't, either adjust your changes or update the documentation to reflect the new architecture.
+The COPILOT.md update guide is located at `update-copilot-summaries.md` and should be used whenever:
+- making significant architectural changes to a folder
+- adding new major components or subprojects
+- changing the purpose or scope of a folder
+- discovering discrepancies between documentation and reality

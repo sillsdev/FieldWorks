@@ -2,6 +2,8 @@
 
 This catalog provides brief descriptions of each folder under `Src/`. For detailed information about any folder, see its `COPILOT.md` file.
 
+Editorial note: See `.github/update-copilot-summaries.md` for how to update and maintain these per-folder summaries (including frontmatter expectations and review cadence).
+
 ## Folder Descriptions
 
 ### AppCore
