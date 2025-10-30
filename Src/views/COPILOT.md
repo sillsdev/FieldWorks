@@ -156,7 +156,7 @@ with accurate formatting, alignment, and complex script rendering.
 - **Data file count**: 1 files
 
 ## Architecture
-C# library with 2 source files. Contains 2 subprojects: views, VwGraphicsReplayer.
+C++ native rendering engine with 45 implementation files and 81 headers. Contains sophisticated text layout and display infrastructure with box-based rendering model.
 
 ## Interop & Contracts
 No explicit interop boundaries detected. Pure managed or native code.
