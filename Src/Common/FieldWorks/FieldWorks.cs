@@ -185,18 +185,6 @@ namespace SIL.FieldWorks
 				s_appSettings.DeleteCorruptedSettingsFilesIfPresent();
 				s_appSettings.UpgradeIfNecessary();
 
-				if (s_appSettings.Update == null && Platform.IsWindows)
-				{
-					s_appSettings.Update = new UpdateSettings
-					{
-						Behavior = DialogResult.Yes == FlexibleMessageBox.Show(
-								Properties.Resources.AutomaticUpdatesMessage, Properties.Resources.AutomaticUpdatesCaption, MessageBoxButtons.YesNo,
-								options: FlexibleMessageBoxOptions.AlwaysOnTop)
-							? UpdateSettings.Behaviors.Download
-							: UpdateSettings.Behaviors.DoNotCheck
-					};
-				}
-
 				var reportingSettings = s_appSettings.Reporting;
 				if (reportingSettings == null)
 				{
@@ -232,6 +220,19 @@ namespace SIL.FieldWorks
 					SetGlobalExceptionHandler();
 					SetupErrorReportInformation();
 					InitializeLocalizationManager();
+
+					// Initialize update settings for users who don't have them. After InitializeLocalizationManager because it displays strings (LT-22306)
+					if (s_appSettings.Update == null && Platform.IsWindows)
+					{
+						s_appSettings.Update = new UpdateSettings
+						{
+							Behavior = DialogResult.Yes == FlexibleMessageBox.Show(
+									Properties.Resources.AutomaticUpdatesMessage, Properties.Resources.AutomaticUpdatesCaption, MessageBoxButtons.YesNo,
+									options: FlexibleMessageBoxOptions.AlwaysOnTop)
+								? UpdateSettings.Behaviors.Download
+								: UpdateSettings.Behaviors.DoNotCheck
+						};
+					}
 
 					// Invoke does nothing directly, but causes BroadcastEventWindow to be initialized
 					// on this thread to prevent race conditions on shutdown.See TE-975
