@@ -1,0 +1,29 @@
+name: COPILOT docs detection
+
+on:
+    pull_request:
+        types: [opened, synchronize, reopened]
+
+jobs:
+    detect:
+        runs-on: windows-latest
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+            - name: Setup Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: "3.x"
+            - name: Detect folders needing COPILOT updates
+              shell: pwsh
+              run: |
+                  python .github/detect_copilot_needed.py --base $env:GITHUB_BASE_REF --strict
+            # Optional: Validate changed COPILOT.md files structure
+            - name: Validate COPILOT structure (optional)
+              if: ${{ always() }}
+              shell: pwsh
+              run: |
+                  python .github/check_copilot_docs.py --fail
+              continue-on-error: true

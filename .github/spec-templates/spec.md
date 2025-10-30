@@ -1,7 +1,6 @@
 # Feature Specification
 
 - Title:
-- Owner:
 - Date:
 - Related issues:
 

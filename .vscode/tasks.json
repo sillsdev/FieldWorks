@@ -1,7 +1,16 @@
 {
   // See https://go.microsoft.com/fwlink/?LinkId=733558
   // for the documentation about the tasks.json format
+  // "$schema": "https://raw.githubusercontent.com/microsoft/vscode/master/resources/app/schemas/tasks.schema.json",
   "version": "2.0.0",
+  "inputs": [
+    {
+      "id": "baseRef",
+      "type": "promptString",
+      "description": "Git base ref for diff (e.g., origin/release/9.3 or origin/<branch>)",
+      "default": "origin/release/9.3"
+    }
+  ],
   "tasks": [
     {
       "label": "build recent",
@@ -10,61 +19,50 @@
       "group": {
         "kind": "build",
         "isDefault": true
-      },
-      "problemMatcher": [
-        "$msCompile"
-      ]
+      }
     },
     {
       "label": "Whitespace check (CI parity)",
       "type": "shell",
-      "command": "./Build/Agent/check-and-fix-whitespace.sh",
-      "windows": {
-        "command": "./Build/Agent/check-and-fix-whitespace.ps1",
-        "options": {
-          "shell": {
-            "executable": "powershell.exe",
-            "args": [
-              "-NoProfile",
-              "-ExecutionPolicy",
-              "Bypass",
-              "-Command"
-            ]
-          }
-        }
-      },
+      "command": "./Build/Agent/check-and-fix-whitespace.ps1",
       "detail": "Runs git log --check from nearest origin/release/* (or origin default), then runs the fixer to normalize whitespace.",
-      "problemMatcher": []
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      }
     },
     {
       "label": "Commit messages check (CI parity)",
       "type": "shell",
-      "command": "./Build/Agent/commit-messages.sh",
-      "windows": {
-        "command": "./Build/Agent/commit-messages.ps1",
-        "options": {
-          "shell": {
-            "executable": "powershell.exe",
-            "args": [
-              "-NoProfile",
-              "-ExecutionPolicy",
-              "Bypass",
-              "-Command"
-            ]
-          }
-        }
-      },
+      "command": "./Build/Agent/commit-messages.ps1",
       "detail": "Installs gitlint and lints commits since the nearest origin/release/* (or origin default).",
-      "problemMatcher": []
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      }
     },
     {
       "label": "remakefw",
       "type": "shell",
       "command": "cd Build && build.bat /t:remakefw",
+      "group": "build",
       "linux": {
         "command": ". environ && cd Build && ./build /t:remakefw"
       },
-      "group": "build",
       "problemMatcher": [
         "$msCompile"
       ]
@@ -85,6 +83,75 @@
       ],
       "dependsOrder": "sequence",
       "detail": "Runs commit message lint and whitespace checks in the same order as CI"
+    },
+    {
+      "label": "COPILOT: Detect updates needed",
+      "type": "shell",
+      "command": "python .github/detect_copilot_needed.py --base ${input:baseRef} --strict",
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "COPILOT: Propose updates for changed folders",
+      "type": "shell",
+      "command": "python .github/propose_copilot_updates.py --base ${input:baseRef}",
+      "group": "build",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "COPILOT: Validate COPILOT docs",
+      "type": "shell",
+      "command": "python .github/check_copilot_docs.py --fail",
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "COPILOT: Update flow (detect → propose → validate)",
+      "dependsOn": [
+        "COPILOT: Detect updates needed",
+        "COPILOT: Propose updates for changed folders",
+        "COPILOT: Validate COPILOT docs"
+      ],
+      "dependsOrder": "sequence"
     }
   ]
 }

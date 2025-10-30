@@ -13,7 +13,7 @@ description: "FieldWorks native (C++/C++-CLI) development guidelines"
 - Interop boundaries: Define clear marshaling rules (strings/arrays/structs). Avoid throwing exceptions across managed/native boundaries; translate appropriately.
 - SAL annotations and warnings: Use SAL where feasible; keep warning level strict; fix warnings, don’t suppress casually.
 - Encoding: Be explicit about UTF-8/UTF-16 conversions; do not rely on locale defaults.
-- Threading: Document ownership and thread-affinity for UI and shared objects.
+- Threading: Document thread-affinity for UI and shared objects.
 
 ## Structured output
 - Header hygiene: Minimize transitive includes; prefer forward declarations where reasonable.

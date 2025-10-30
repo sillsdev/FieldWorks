@@ -1,0 +1,256 @@
+#!/usr/bin/env python3
+"""
+check_copilot_docs.py — Validate Src/**/COPILOT.md against the canonical skeleton
+
+Checks:
+- Frontmatter: last-reviewed, last-verified-commit, status
+- last-verified-commit not FIXME
+- Required headings present
+- References entries appear to map to real files in repo (best-effort)
+
+Usage:
+  python .github/check_copilot_docs.py [--root <repo-root>] [--fail] [--json <out>] [--verbose]
+
+Exit codes:
+  0 = no issues
+  1 = warnings (non-fatal) and no --fail provided
+  2 = failures when --fail provided
+"""
+import argparse
+import json
+import os
+import re
+import sys
+from pathlib import Path
+
+REQUIRED_HEADINGS = [
+    "Purpose",
+    "Architecture",
+    "Key Components",
+    "Technology Stack",
+    "Dependencies",
+    "Interop & Contracts",
+    "Threading & Performance",
+    "Config & Feature Flags",
+    "Build Information",
+    "Interfaces and Data Models",
+    "Entry Points",
+    "Test Index",
+    "Usage Hints",
+    "Related Folders",
+    "References",
+]
+
+REFERENCE_EXTS = {
+    ".cs",
+    ".cpp",
+    ".cc",
+    ".c",
+    ".h",
+    ".hpp",
+    ".ixx",
+    ".xml",
+    ".xsl",
+    ".xslt",
+    ".xsd",
+    ".dtd",
+    ".xaml",
+    ".resx",
+    ".config",
+    ".csproj",
+    ".vcxproj",
+    ".props",
+    ".targets",
+}
+
+
+def find_repo_root(start: Path) -> Path:
+    p = start.resolve()
+    while p != p.parent:
+        if (p / ".git").exists():
+            return p
+        p = p.parent
+    return start.resolve()
+
+
+def index_repo_files(root: Path):
+    index = {}
+    for dirpath, dirnames, filenames in os.walk(root):
+        # Skip some big or irrelevant directories
+        rel = Path(dirpath).relative_to(root)
+        parts = rel.parts
+        if parts and parts[0] in {
+            ".git",
+            "packages",
+            "Obj",
+            "Output",
+            "Downloads",
+            "vagrant",
+        }:
+            continue
+        for f in filenames:
+            index.setdefault(f, []).append(os.path.join(dirpath, f))
+    return index
+
+
+def parse_frontmatter(text: str):
+    lines = text.splitlines()
+    fm = {}
+    if len(lines) >= 3 and lines[0].strip() == "---":
+        # Find closing '---'
+        try:
+            end_idx = lines[1:].index("---") + 1
+        except ValueError:
+            # Not properly closed; try to find a line that is just '---'
+            end_idx = -1
+            for i in range(1, min(len(lines), 100)):
+                if lines[i].strip() == "---":
+                    end_idx = i
+                    break
+            if end_idx == -1:
+                return None, text
+        fm_lines = lines[1:end_idx]
+        body = "\n".join(lines[end_idx + 1 :])
+        for l in fm_lines:
+            l = l.strip()
+            if not l or l.startswith("#"):
+                continue
+            if ":" in l:
+                k, v = l.split(":", 1)
+                fm[k.strip()] = v.strip().strip('"')
+        return fm, body
+    return None, text
+
+
+def extract_headings(text: str):
+    headings = []
+    for line in text.splitlines():
+        if line.startswith("## "):
+            headings.append(line[3:].strip())
+    return headings
+
+
+def extract_references(text: str):
+    # Find References section
+    refs = []
+    lines = text.splitlines()
+    in_refs = False
+    for i, l in enumerate(lines):
+        if l.strip().lower() == "## references":
+            in_refs = True
+            continue
+        if in_refs and l.startswith("## "):
+            break
+        if in_refs:
+            # Look for tokens that look like filenames
+            # e.g., "- Key C# files: MainClass.cs, Important.cs"
+            for token in re.split(r"[\s,()]+", l):
+                if any(token.endswith(ext) for ext in REFERENCE_EXTS):
+                    # Strip trailing punctuation
+                    token = token.rstrip(".,;:")
+                    refs.append(token)
+    return list(dict.fromkeys(refs))  # de-dup, preserve order
+
+
+def validate_file(path: Path, repo_index: dict, verbose=False):
+    result = {
+        "path": str(path),
+        "frontmatter": {
+            "missing": [],
+            "last_verified_missing": False,
+        },
+        "headings_missing": [],
+        "references_missing": [],
+        "ok": True,
+    }
+    text = path.read_text(encoding="utf-8", errors="replace")
+    fm, body = parse_frontmatter(text)
+    if not fm:
+        result["frontmatter"]["missing"] = [
+            "last-reviewed",
+            "last-verified-commit",
+            "status",
+        ]
+        result["ok"] = False
+    else:
+        for key in ["last-reviewed", "last-verified-commit", "status"]:
+            if key not in fm or not fm[key]:
+                result["frontmatter"]["missing"].append(key)
+        lvc = fm.get("last-verified-commit", "")
+        if not lvc or lvc.startswith("FIXME"):
+            result["frontmatter"]["last_verified_missing"] = True
+        if (
+            result["frontmatter"]["missing"]
+            or result["frontmatter"]["last_verified_missing"]
+        ):
+            result["ok"] = False
+
+    headings = extract_headings(body)
+    for h in REQUIRED_HEADINGS:
+        if h not in headings:
+            result["headings_missing"].append(h)
+    if result["headings_missing"]:
+        result["ok"] = False
+
+    refs = extract_references(body)
+    for r in refs:
+        base = os.path.basename(r)
+        if base not in repo_index:
+            result["references_missing"].append(r)
+    # references_missing doesn't necessarily fail; treat as warning unless all missing
+    if refs and len(result["references_missing"]) == len(refs):
+        result["ok"] = False
+
+    if verbose:
+        print(f"Checked {path}")
+    return result
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--root", default=str(find_repo_root(Path.cwd())))
+    ap.add_argument("--fail", action="store_true", help="Exit non-zero on failures")
+    ap.add_argument(
+        "--json", dest="json_out", default=None, help="Write JSON report to file"
+    )
+    ap.add_argument("--verbose", action="store_true")
+    args = ap.parse_args()
+
+    root = Path(args.root).resolve()
+    src = root / "Src"
+    if not src.exists():
+        print(f"ERROR: Src/ not found under {root}")
+        return 2
+
+    repo_index = index_repo_files(root)
+
+    results = []
+    for copath in src.rglob("COPILOT.md"):
+        results.append(validate_file(copath, repo_index, verbose=args.verbose))
+
+    failures = [r for r in results if not r["ok"]]
+    print(f"Checked {len(results)} COPILOT.md files. Failures: {len(failures)}")
+    for r in failures:
+        print(f"- {r['path']}")
+        if r["frontmatter"]["missing"]:
+            print(f"  frontmatter missing: {', '.join(r['frontmatter']['missing'])}")
+        if r["frontmatter"]["last_verified_missing"]:
+            print("  last-verified-commit missing or FIXME")
+        if r["headings_missing"]:
+            print(f"  headings missing: {', '.join(r['headings_missing'])}")
+        if r["references_missing"]:
+            print(
+                f"  unresolved references: {', '.join(r['references_missing'][:10])}{' …' if len(r['references_missing'])>10 else ''}"
+            )
+
+    if args.json_out:
+        with open(args.json_out, "w", encoding="utf-8") as f:
+            json.dump(results, f, indent=2)
+
+    if args.fail and failures:
+        return 2
+    return 0 if not failures else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
