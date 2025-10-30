@@ -1,7 +1,7 @@
-﻿---
-owner: FIXME(set-owner)
+---
 last-reviewed: 2025-10-30
-status: verified
+last-verified-commit: 9611cf70e
+status: draft
 ---
 
 # FwCoreDlgs
@@ -194,3 +194,80 @@ Ensures consistent user experience across different parts of FieldWorks.
 - **XML data/config**: custompua.xml, xtst.xml
 - **Source file count**: 166 files
 - **Data file count**: 67 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.
+
+## References (auto-generated hints)
+- Project files:
+  - Src\FwCoreDlgs\FwCoreDlgControls\FwCoreDlgControls.csproj
+  - Src\FwCoreDlgs\FwCoreDlgControls\FwCoreDlgControlsTests\FwCoreDlgControlsTests.csproj
+  - Src\FwCoreDlgs\FwCoreDlgs.csproj
+  - Src\FwCoreDlgs\FwCoreDlgsTests\FwCoreDlgsTests.csproj
+- Key C# files:
+  - Src\FwCoreDlgs\AddCnvtrDlg.cs
+  - Src\FwCoreDlgs\AddConverterDlgStrings.Designer.cs
+  - Src\FwCoreDlgs\AddConverterResources.Designer.cs
+  - Src\FwCoreDlgs\AddNewUserDlg.cs
+  - Src\FwCoreDlgs\AddNewVernLangWarningDlg.Designer.cs
+  - Src\FwCoreDlgs\AddNewVernLangWarningDlg.cs
+  - Src\FwCoreDlgs\AdvancedEncProps.cs
+  - Src\FwCoreDlgs\AdvancedScriptRegionVariantModel.cs
+  - Src\FwCoreDlgs\AdvancedScriptRegionVariantView.Designer.cs
+  - Src\FwCoreDlgs\AdvancedScriptRegionVariantView.cs
+  - Src\FwCoreDlgs\ArchiveWithRamp.Designer.cs
+  - Src\FwCoreDlgs\ArchiveWithRamp.cs
+  - Src\FwCoreDlgs\AssemblyInfo.cs
+  - Src\FwCoreDlgs\BackupProjectSettings.cs
+  - Src\FwCoreDlgs\BackupRestore\BackupProjectDlg.Designer.cs
+  - Src\FwCoreDlgs\BackupRestore\BackupProjectDlg.cs
+  - Src\FwCoreDlgs\BackupRestore\BackupProjectPresenter.cs
+  - Src\FwCoreDlgs\BackupRestore\ChangeDefaultBackupDir.Designer.cs
+  - Src\FwCoreDlgs\BackupRestore\ChangeDefaultBackupDir.cs
+  - Src\FwCoreDlgs\BackupRestore\IBackupProjectView.cs
+  - Src\FwCoreDlgs\BackupRestore\OverwriteExistingProject.Designer.cs
+  - Src\FwCoreDlgs\BackupRestore\OverwriteExistingProject.cs
+  - Src\FwCoreDlgs\BackupRestore\RestoreProjectDlg.Designer.cs
+  - Src\FwCoreDlgs\BackupRestore\RestoreProjectDlg.cs
+  - Src\FwCoreDlgs\BackupRestore\RestoreProjectPresenter.cs
+- Data contracts/transforms:
+  - Src\FwCoreDlgs\AddCnvtrDlg.resx
+  - Src\FwCoreDlgs\AddConverterDlgStrings.resx
+  - Src\FwCoreDlgs\AddConverterResources.resx
+  - Src\FwCoreDlgs\AddNewUserDlg.resx
+  - Src\FwCoreDlgs\AddNewVernLangWarningDlg.resx
+  - Src\FwCoreDlgs\AdvancedEncProps.resx
+  - Src\FwCoreDlgs\AdvancedScriptRegionVariantView.resx
+  - Src\FwCoreDlgs\ArchiveWithRamp.resx
+  - Src\FwCoreDlgs\BackupRestore\BackupProjectDlg.resx
+  - Src\FwCoreDlgs\BackupRestore\ChangeDefaultBackupDir.resx
+  - Src\FwCoreDlgs\BackupRestore\OverwriteExistingProject.resx
+  - Src\FwCoreDlgs\BackupRestore\RestoreProjectDlg.resx
+  - Src\FwCoreDlgs\BasicFindDialog.resx
+  - Src\FwCoreDlgs\CharContextCtrl.resx
+  - Src\FwCoreDlgs\ChooseLangProjectDialog.resx
+  - Src\FwCoreDlgs\CnvtrPropertiesCtrl.resx
+  - Src\FwCoreDlgs\ConverterTest.resx
+  - Src\FwCoreDlgs\DeleteWritingSystemWarningDialog.resx
+  - Src\FwCoreDlgs\FWCoreDlgsErrors.resx
+  - Src\FwCoreDlgs\FwApplyStyleDlg.resx
+  - Src\FwCoreDlgs\FwChooseAnthroListCtrl.resx
+  - Src\FwCoreDlgs\FwChooserDlg.resx
+  - Src\FwCoreDlgs\FwCoreDlgControls\ConfigParentNode.resx
+  - Src\FwCoreDlgs\FwCoreDlgControls\ConfigSenseLayout.resx
+  - Src\FwCoreDlgs\FwCoreDlgControls\DefaultFontsControl.resx

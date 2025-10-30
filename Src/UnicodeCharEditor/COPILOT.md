@@ -1,7 +1,7 @@
-﻿---
-owner: FIXME(set-owner)
+---
 last-reviewed: 2025-10-30
-status: verified
+last-verified-commit: 9611cf70e
+status: draft
 ---
 
 # UnicodeCharEditor
@@ -99,3 +99,50 @@ character encoding and display issues.
 - **Key C# files**: CharEditorWindow.Designer.cs, CharEditorWindow.cs, CustomCharDlg.cs, ErrorCodes.cs, HelpTopicPaths.Designer.cs, IcuErrorCodes.cs, IcuLockedException.cs, PUAInstaller.cs, PuaException.cs, UceException.cs
 - **Source file count**: 16 files
 - **Data file count**: 5 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.
+
+## References (auto-generated hints)
+- Project files:
+  - Src\UnicodeCharEditor\BuildInclude.targets
+  - Src\UnicodeCharEditor\UnicodeCharEditor.csproj
+  - Src\UnicodeCharEditor\UnicodeCharEditorTests\UnicodeCharEditorTests.csproj
+- Key C# files:
+  - Src\UnicodeCharEditor\CharEditorWindow.Designer.cs
+  - Src\UnicodeCharEditor\CharEditorWindow.cs
+  - Src\UnicodeCharEditor\CustomCharDlg.cs
+  - Src\UnicodeCharEditor\ErrorCodes.cs
+  - Src\UnicodeCharEditor\HelpTopicPaths.Designer.cs
+  - Src\UnicodeCharEditor\IcuErrorCodes.cs
+  - Src\UnicodeCharEditor\IcuLockedException.cs
+  - Src\UnicodeCharEditor\LogFile.cs
+  - Src\UnicodeCharEditor\PUAInstaller.cs
+  - Src\UnicodeCharEditor\Program.cs
+  - Src\UnicodeCharEditor\Properties\AssemblyInfo.cs
+  - Src\UnicodeCharEditor\Properties\Resources.Designer.cs
+  - Src\UnicodeCharEditor\Properties\Settings.Designer.cs
+  - Src\UnicodeCharEditor\PuaException.cs
+  - Src\UnicodeCharEditor\UceException.cs
+  - Src\UnicodeCharEditor\UnicodeCharEditorTests\PUAInstallerTests.cs
+- Data contracts/transforms:
+  - Src\UnicodeCharEditor\App.config
+  - Src\UnicodeCharEditor\CharEditorWindow.resx
+  - Src\UnicodeCharEditor\CustomCharDlg.resx
+  - Src\UnicodeCharEditor\HelpTopicPaths.resx
+  - Src\UnicodeCharEditor\Properties\Resources.resx

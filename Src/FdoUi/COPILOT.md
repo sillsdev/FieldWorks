@@ -1,7 +1,7 @@
-﻿---
-owner: FIXME(set-owner)
+---
 last-reviewed: 2025-10-30
-status: verified
+last-verified-commit: 9611cf70e
+status: draft
 ---
 
 # FdoUi
@@ -155,3 +155,63 @@ and editors for complex data types. Bridges the data layer with the presentation
 - **Key C# files**: AssemblyInfo.cs, BulkPosEditor.cs, FdoUiCore.cs, InflectionClassEditor.cs, InflectionFeatureEditor.cs, LexPronunciationUi.cs, PartOfSpeechUi.cs, PhonologicalFeatureEditor.cs, TypeAheadSupportVc.cs, WfiWordformUi.cs
 - **Source file count**: 31 files
 - **Data file count**: 10 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.
+
+## References (auto-generated hints)
+- Project files:
+  - Src\FdoUi\FdoUi.csproj
+  - Src\FdoUi\FdoUiTests\FdoUiTests.csproj
+- Key C# files:
+  - Src\FdoUi\AssemblyInfo.cs
+  - Src\FdoUi\BulkPosEditor.cs
+  - Src\FdoUi\Dialogs\CantRestoreLinkedFilesToOriginalLocation.Designer.cs
+  - Src\FdoUi\Dialogs\CantRestoreLinkedFilesToOriginalLocation.cs
+  - Src\FdoUi\Dialogs\ConfirmDeleteObjectDlg.cs
+  - Src\FdoUi\Dialogs\ConflictingSaveDlg.Designer.cs
+  - Src\FdoUi\Dialogs\ConflictingSaveDlg.cs
+  - Src\FdoUi\Dialogs\FilesToRestoreAreOlder.Designer.cs
+  - Src\FdoUi\Dialogs\FilesToRestoreAreOlder.cs
+  - Src\FdoUi\Dialogs\MergeObjectDlg.cs
+  - Src\FdoUi\Dialogs\RelatedWords.cs
+  - Src\FdoUi\Dialogs\RestoreLinkedFilesToProjectsFolder.Designer.cs
+  - Src\FdoUi\Dialogs\RestoreLinkedFilesToProjectsFolder.cs
+  - Src\FdoUi\Dialogs\SummaryDialogForm.cs
+  - Src\FdoUi\DummyCmObject.cs
+  - Src\FdoUi\FdoUiCore.cs
+  - Src\FdoUi\FdoUiStrings.Designer.cs
+  - Src\FdoUi\FdoUiTests\FdoUiTests.cs
+  - Src\FdoUi\FsFeatDefnUi.cs
+  - Src\FdoUi\FwLcmUI.cs
+  - Src\FdoUi\InflectionClassEditor.cs
+  - Src\FdoUi\InflectionFeatureEditor.cs
+  - Src\FdoUi\LexEntryUi.cs
+  - Src\FdoUi\LexPronunciationUi.cs
+  - Src\FdoUi\PartOfSpeechUi.cs
+- Data contracts/transforms:
+  - Src\FdoUi\Dialogs\CantRestoreLinkedFilesToOriginalLocation.resx
+  - Src\FdoUi\Dialogs\ConfirmDeleteObjectDlg.resx
+  - Src\FdoUi\Dialogs\ConflictingSaveDlg.resx
+  - Src\FdoUi\Dialogs\FilesToRestoreAreOlder.resx
+  - Src\FdoUi\Dialogs\MergeObjectDlg.resx
+  - Src\FdoUi\Dialogs\RelatedWords.resx
+  - Src\FdoUi\Dialogs\RestoreLinkedFilesToProjectsFolder.resx
+  - Src\FdoUi\Dialogs\SummaryDialogForm.resx
+  - Src\FdoUi\FdoUiStrings.resx
+  - Src\FdoUi\Properties\Resources.resx

@@ -1,7 +1,7 @@
-﻿---
-owner: FIXME(set-owner)
+---
 last-reviewed: 2025-10-30
-status: verified
+last-verified-commit: 9611cf70e
+status: draft
 ---
 
 # Transforms
@@ -125,3 +125,43 @@ No major public classes identified.
 - **XSLT transforms**: CalculateStemNamesUsedInLexicalEntries.xsl, FxtM3MorphologySketch.xsl, FxtM3ParserCommon.xsl, FxtM3ParserToToXAmpleGrammar.xsl, FxtM3ParserToXAmpleADCtl.xsl
 - **Source file count**: 0 files
 - **Data file count**: 19 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.
+
+## References (auto-generated hints)
+- Data contracts/transforms:
+  - Src\Transforms\Application\BoundaryMarkerGuids.xsl
+  - Src\Transforms\Application\CalculateStemNamesUsedInLexicalEntries.xsl
+  - Src\Transforms\Application\FxtM3MorphologySketch.xsl
+  - Src\Transforms\Application\FxtM3ParserCommon.xsl
+  - Src\Transforms\Application\FxtM3ParserToGAFAWS.xsl
+  - Src\Transforms\Application\FxtM3ParserToToXAmpleGrammar.xsl
+  - Src\Transforms\Application\FxtM3ParserToXAmpleADCtl.xsl
+  - Src\Transforms\Application\FxtM3ParserToXAmpleLex.xsl
+  - Src\Transforms\Application\FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl
+  - Src\Transforms\Application\MorphTypeGuids.xsl
+  - Src\Transforms\Application\UnifyTwoFeatureStructures.xsl
+  - Src\Transforms\Application\XAmpleTemplateVariables.xsl
+  - Src\Transforms\Presentation\FormatCommon.xsl
+  - Src\Transforms\Presentation\FormatHCTrace.xsl
+  - Src\Transforms\Presentation\FormatXAmpleParse.xsl
+  - Src\Transforms\Presentation\FormatXAmpleTrace.xsl
+  - Src\Transforms\Presentation\FormatXAmpleWordGrammarDebuggerResult.xsl
+  - Src\Transforms\Presentation\JSFunctions.xsl
+  - Src\Transforms\Presentation\XLingPap1.xsl

@@ -1,7 +1,7 @@
-﻿---
-owner: FIXME(set-owner)
+---
 last-reviewed: 2025-10-30
-status: verified
+last-verified-commit: 9611cf70e
+status: draft
 ---
 
 # ManagedVwWindow
@@ -61,3 +61,30 @@ Essential for integrating the powerful native views system into WinForms applica
 - **Key C# files**: AssemblyInfo.cs, ManagedVwWindow.cs, ManagedVwWindowTests.cs
 - **Source file count**: 3 files
 - **Data file count**: 0 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.
+
+## References (auto-generated hints)
+- Project files:
+  - Src\ManagedVwWindow\ManagedVwWindow.csproj
+  - Src\ManagedVwWindow\ManagedVwWindowTests\ManagedVwWindowTests.csproj
+- Key C# files:
+  - Src\ManagedVwWindow\AssemblyInfo.cs
+  - Src\ManagedVwWindow\ManagedVwWindow.cs
+  - Src\ManagedVwWindow\ManagedVwWindowTests\ManagedVwWindowTests.cs

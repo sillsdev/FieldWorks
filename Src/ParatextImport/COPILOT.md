@@ -1,7 +1,7 @@
-﻿---
-owner: FIXME(set-owner)
+---
 last-reviewed: 2025-10-30
-status: verified
+last-verified-commit: 9611cf70e
+status: draft
 ---
 
 # ParatextImport
@@ -178,3 +178,55 @@ information while preserving markup and structure.
 - **Key C# files**: Cluster.cs, Difference.cs, ImportStyleProxy.cs, ImportedBooks.cs, ParatextImportManager.cs, ReplaceInFilterFixer.cs, SCTextEnum.cs, ScrAnnotationInfo.cs, ScrObjWrapper.cs, UndoImportManager.cs
 - **Source file count**: 43 files
 - **Data file count**: 2 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.
+
+## References (auto-generated hints)
+- Project files:
+  - Src\ParatextImport\ParatextImport.csproj
+  - Src\ParatextImport\ParatextImportTests\ParatextImportTests.csproj
+- Key C# files:
+  - Src\ParatextImport\BookMerger.cs
+  - Src\ParatextImport\Cluster.cs
+  - Src\ParatextImport\DiffLocation.cs
+  - Src\ParatextImport\Difference.cs
+  - Src\ParatextImport\IBookVersionAgent.cs
+  - Src\ParatextImport\ISCScriptureText.cs
+  - Src\ParatextImport\ISCTextEnum.cs
+  - Src\ParatextImport\ISCTextSegment.cs
+  - Src\ParatextImport\ImportStyleProxy.cs
+  - Src\ParatextImport\ImportedBooks.cs
+  - Src\ParatextImport\ParatextImportExtensions.cs
+  - Src\ParatextImport\ParatextImportManager.cs
+  - Src\ParatextImport\ParatextImportTests\AutoMergeTests.cs
+  - Src\ParatextImport\ParatextImportTests\BookMergerTests.cs
+  - Src\ParatextImport\ParatextImportTests\BookMergerTestsBase.cs
+  - Src\ParatextImport\ParatextImportTests\ClusterTests.cs
+  - Src\ParatextImport\ParatextImportTests\DiffTestHelper.cs
+  - Src\ParatextImport\ParatextImportTests\DifferenceTests.cs
+  - Src\ParatextImport\ParatextImportTests\ImportTests\ImportStyleProxyTests.cs
+  - Src\ParatextImport\ParatextImportTests\ImportTests\ParatextImportBtInterleaved.cs
+  - Src\ParatextImport\ParatextImportTests\ImportTests\ParatextImportBtNonInterleaved.cs
+  - Src\ParatextImport\ParatextImportTests\ImportTests\ParatextImportManagerTests.cs
+  - Src\ParatextImport\ParatextImportTests\ImportTests\ParatextImportNoUi.cs
+  - Src\ParatextImport\ParatextImportTests\ImportTests\ParatextImportParatext6Tests.cs
+  - Src\ParatextImport\ParatextImportTests\ImportTests\ParatextImportTests.cs
+- Data contracts/transforms:
+  - Src\ParatextImport\Difference.resx
+  - Src\ParatextImport\Properties\Resources.resx

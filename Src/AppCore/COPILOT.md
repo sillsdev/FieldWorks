@@ -1,7 +1,7 @@
-﻿---
-owner: FIXME(set-owner)
+---
 last-reviewed: 2025-10-30
-status: verified
+last-verified-commit: 9611cf70e
+status: draft
 ---
 
 # AppCore
@@ -110,3 +110,33 @@ These classes enable consistent rendering behavior and provide abstraction over 
 - **Key headers**: AfAppRes.h, AfColorTable.h, AfDef.h, AfGfx.h, FwStyledText.h
 - **Source file count**: 8 files
 - **Data file count**: 0 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.
+
+## References (auto-generated hints)
+- Key C++ files:
+  - Src\AppCore\AfColorTable.cpp
+  - Src\AppCore\AfGfx.cpp
+  - Src\AppCore\FwStyledText.cpp
+- Key headers:
+  - Src\AppCore\AfColorTable.h
+  - Src\AppCore\AfDef.h
+  - Src\AppCore\AfGfx.h
+  - Src\AppCore\FwStyledText.h
+  - Src\AppCore\Res\AfAppRes.h

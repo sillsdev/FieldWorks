@@ -1,7 +1,7 @@
-﻿---
-owner: FIXME(set-owner)
+---
 last-reviewed: 2025-10-30
-status: verified
+last-verified-commit: 9611cf70e
+status: draft
 ---
 
 # xWorks
@@ -200,3 +200,78 @@ different FieldWorks tools into an integrated application environment.
 - **XML data/config**: strings-en.xml, strings-es-MX.xml, strings-fr.xml
 - **Source file count**: 181 files
 - **Data file count**: 38 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.
+
+## References (auto-generated hints)
+- Project files:
+  - Src\xWorks\xWorks.csproj
+  - Src\xWorks\xWorksTests\xWorksTests.csproj
+- Key C# files:
+  - Src\xWorks\AddCustomFieldDlg.cs
+  - Src\xWorks\Archiving\ArchivingExtensions.cs
+  - Src\xWorks\Archiving\ReapRamp.cs
+  - Src\xWorks\AssemblyInfo.cs
+  - Src\xWorks\ConcDecorator.cs
+  - Src\xWorks\ConfigurableDictionaryNode.cs
+  - Src\xWorks\ConfiguredLcmGenerator.cs
+  - Src\xWorks\CssGenerator.cs
+  - Src\xWorks\CustomListDlg.Designer.cs
+  - Src\xWorks\CustomListDlg.cs
+  - Src\xWorks\DTMenuHandler.cs
+  - Src\xWorks\DataTreeImages.cs
+  - Src\xWorks\DeleteCustomList.cs
+  - Src\xWorks\DictConfigModelExt.cs
+  - Src\xWorks\DictionaryConfigManager.cs
+  - Src\xWorks\DictionaryConfigMgrDlg.Designer.cs
+  - Src\xWorks\DictionaryConfigMgrDlg.cs
+  - Src\xWorks\DictionaryConfigurationController.cs
+  - Src\xWorks\DictionaryConfigurationDlg.Designer.cs
+  - Src\xWorks\DictionaryConfigurationDlg.cs
+  - Src\xWorks\DictionaryConfigurationImportController.cs
+  - Src\xWorks\DictionaryConfigurationImportDlg.Designer.cs
+  - Src\xWorks\DictionaryConfigurationImportDlg.cs
+  - Src\xWorks\DictionaryConfigurationListener.cs
+  - Src\xWorks\DictionaryConfigurationManagerController.cs
+- Data contracts/transforms:
+  - Src\xWorks\AddCustomFieldDlg.resx
+  - Src\xWorks\CustomListDlg.resx
+  - Src\xWorks\DataTreeImages.resx
+  - Src\xWorks\DictionaryConfigMgrDlg.resx
+  - Src\xWorks\DictionaryConfigurationDlg.resx
+  - Src\xWorks\DictionaryConfigurationImportDlg.resx
+  - Src\xWorks\DictionaryConfigurationManagerDlg.resx
+  - Src\xWorks\DictionaryConfigurationNodeRenameDlg.resx
+  - Src\xWorks\DictionaryConfigurationTreeControl.resx
+  - Src\xWorks\DictionaryDetailsView\ButtonOverPanel.resx
+  - Src\xWorks\DictionaryDetailsView\DetailsView.resx
+  - Src\xWorks\DictionaryDetailsView\GroupingOptionsView.resx
+  - Src\xWorks\DictionaryDetailsView\LabelOverPanel.resx
+  - Src\xWorks\DictionaryDetailsView\ListOptionsView.resx
+  - Src\xWorks\DictionaryDetailsView\PictureOptionsView.resx
+  - Src\xWorks\DictionaryDetailsView\SenseOptionsView.resx
+  - Src\xWorks\ExportDialog.resx
+  - Src\xWorks\ExportSemanticDomainsDlg.resx
+  - Src\xWorks\ExportTranslatedListsDlg.resx
+  - Src\xWorks\FwXWindow.resx
+  - Src\xWorks\GeneratedHtmlViewer.resx
+  - Src\xWorks\HeadWordNumbersDlg.resx
+  - Src\xWorks\ImageHolder.resx
+  - Src\xWorks\LiftExportMessageDlg.resx
+  - Src\xWorks\RecordBrowseView.resx

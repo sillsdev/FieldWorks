@@ -1,7 +1,7 @@
-﻿---
-owner: FIXME(set-owner)
+---
 last-reviewed: 2025-10-30
-status: verified
+last-verified-commit: 9611cf70e
+status: draft
 ---
 
 # LCMBrowser
@@ -103,3 +103,50 @@ and troubleshooting rather than in production scenarios.
 - **Key C# files**: BrowserProjectId.cs, ClassPropertySelector.Designer.cs, ClassPropertySelector.cs, CustomFields.cs, LCMBrowserForm.cs, LCMClassList.cs, LCMInspectorList.cs, ModelWnd.Designer.cs, ModelWnd.cs, RealListChooser.cs
 - **Source file count**: 16 files
 - **Data file count**: 6 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.
+
+## References (auto-generated hints)
+- Project files:
+  - Src\LCMBrowser\BuildInclude.targets
+  - Src\LCMBrowser\LCMBrowser.csproj
+- Key C# files:
+  - Src\LCMBrowser\BrowserProjectId.cs
+  - Src\LCMBrowser\ClassPropertySelector.Designer.cs
+  - Src\LCMBrowser\ClassPropertySelector.cs
+  - Src\LCMBrowser\CustomFields.cs
+  - Src\LCMBrowser\LCMBrowser.cs
+  - Src\LCMBrowser\LCMBrowserForm.Designer.cs
+  - Src\LCMBrowser\LCMBrowserForm.cs
+  - Src\LCMBrowser\LCMClassList.cs
+  - Src\LCMBrowser\LCMInspectorList.cs
+  - Src\LCMBrowser\ModelWnd.Designer.cs
+  - Src\LCMBrowser\ModelWnd.cs
+  - Src\LCMBrowser\Properties\AssemblyInfo.cs
+  - Src\LCMBrowser\Properties\Resources.Designer.cs
+  - Src\LCMBrowser\Properties\Settings.Designer.cs
+  - Src\LCMBrowser\RealListChooser.Designer.cs
+  - Src\LCMBrowser\RealListChooser.cs
+- Data contracts/transforms:
+  - Src\LCMBrowser\App.config
+  - Src\LCMBrowser\ClassPropertySelector.resx
+  - Src\LCMBrowser\LCMBrowserForm.resx
+  - Src\LCMBrowser\ModelWnd.resx
+  - Src\LCMBrowser\Properties\Resources.resx
+  - Src\LCMBrowser\RealListChooser.resx

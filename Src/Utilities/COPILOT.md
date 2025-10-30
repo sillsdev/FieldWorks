@@ -1,7 +1,7 @@
-﻿---
-owner: FIXME(set-owner)
+---
 last-reviewed: 2025-10-30
-status: verified
+last-verified-commit: 9611cf70e
+status: draft
 ---
 
 # Utilities
@@ -206,3 +206,78 @@ Collection of helper applications and libraries that support but don't fit clean
 - **XML data/config**: MoeMap.xml, TestMapping.xml, TestMapping.xml, YiGreenMap.xml
 - **Source file count**: 52 files
 - **Data file count**: 17 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.
+
+## References (auto-generated hints)
+- Project files:
+  - Src\Utilities\FixFwDataDll\FixFwDataDll.csproj
+  - Src\Utilities\FixFwData\FixFwData.csproj
+  - Src\Utilities\MessageBoxExLib\MessageBoxExLib.csproj
+  - Src\Utilities\MessageBoxExLib\MessageBoxExLibTests\MessageBoxExLibTests.csproj
+  - Src\Utilities\Reporting\Reporting.csproj
+  - Src\Utilities\SfmStats\SfmStats.csproj
+  - Src\Utilities\SfmToXml\ConvertSFM\ConvertSFM.csproj
+  - Src\Utilities\SfmToXml\Sfm2Xml.csproj
+  - Src\Utilities\SfmToXml\Sfm2XmlTests\Sfm2XmlTests.csproj
+  - Src\Utilities\XMLUtils\XMLUtils.csproj
+  - Src\Utilities\XMLUtils\XMLUtilsTests\XMLUtilsTests.csproj
+- Key C# files:
+  - Src\Utilities\FixFwDataDll\ErrorFixer.cs
+  - Src\Utilities\FixFwDataDll\FixErrorsDlg.Designer.cs
+  - Src\Utilities\FixFwDataDll\FixErrorsDlg.cs
+  - Src\Utilities\FixFwDataDll\FwData.cs
+  - Src\Utilities\FixFwDataDll\Properties\AssemblyInfo.cs
+  - Src\Utilities\FixFwDataDll\Strings.Designer.cs
+  - Src\Utilities\FixFwDataDll\WriteAllObjectsUtility.cs
+  - Src\Utilities\FixFwData\Program.cs
+  - Src\Utilities\FixFwData\Properties\AssemblyInfo.cs
+  - Src\Utilities\MessageBoxExLib\AssemblyInfo.cs
+  - Src\Utilities\MessageBoxExLib\MessageBoxEx.cs
+  - Src\Utilities\MessageBoxExLib\MessageBoxExButton.cs
+  - Src\Utilities\MessageBoxExLib\MessageBoxExButtons.cs
+  - Src\Utilities\MessageBoxExLib\MessageBoxExForm.cs
+  - Src\Utilities\MessageBoxExLib\MessageBoxExIcon.cs
+  - Src\Utilities\MessageBoxExLib\MessageBoxExLibTests\Tests.cs
+  - Src\Utilities\MessageBoxExLib\MessageBoxExManager.cs
+  - Src\Utilities\MessageBoxExLib\MessageBoxExResult.cs
+  - Src\Utilities\MessageBoxExLib\TimeoutResult.cs
+  - Src\Utilities\Reporting\AssemblyInfo.cs
+  - Src\Utilities\Reporting\ErrorReport.cs
+  - Src\Utilities\Reporting\ReportingStrings.Designer.cs
+  - Src\Utilities\Reporting\UsageEmailDialog.cs
+  - Src\Utilities\SfmStats\Program.cs
+  - Src\Utilities\SfmStats\Properties\AssemblyInfo.cs
+- Data contracts/transforms:
+  - Src\Utilities\FixFwDataDll\FixErrorsDlg.resx
+  - Src\Utilities\FixFwDataDll\Strings.resx
+  - Src\Utilities\MessageBoxExLib\MessageBoxExForm.resx
+  - Src\Utilities\MessageBoxExLib\Resources\StandardButtonsText.resx
+  - Src\Utilities\Reporting\App.config
+  - Src\Utilities\Reporting\ErrorReport.resx
+  - Src\Utilities\Reporting\ReportingStrings.resx
+  - Src\Utilities\Reporting\UsageEmailDialog.resx
+  - Src\Utilities\SfmToXml\Sfm2XmlStrings.resx
+  - Src\Utilities\SfmToXml\TestData\BuildPhase2XSLT.xsl
+  - Src\Utilities\SfmToXml\TestData\MoeMap.xml
+  - Src\Utilities\SfmToXml\TestData\Phase3.xsl
+  - Src\Utilities\SfmToXml\TestData\Phase4.xsl
+  - Src\Utilities\SfmToXml\TestData\TestMapping.xml
+  - Src\Utilities\SfmToXml\TestData\YiGreenMap.xml
+  - Src\Utilities\XMLUtils\XmlUtilsStrings.resx

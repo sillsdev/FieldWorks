@@ -1,7 +1,7 @@
-﻿---
-owner: FIXME(set-owner)
+---
 last-reviewed: 2025-10-30
-status: verified
+last-verified-commit: 9611cf70e
+status: draft
 ---
 
 # ManagedVwDrawRootBuffered
@@ -59,3 +59,28 @@ with multiple writing systems and complex layouts.
 - **Key C# files**: AssemblyInfo.cs, VwDrawRootBuffered.cs
 - **Source file count**: 2 files
 - **Data file count**: 0 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.
+
+## References (auto-generated hints)
+- Project files:
+  - Src\ManagedVwDrawRootBuffered\ManagedVwDrawRootBuffered.csproj
+- Key C# files:
+  - Src\ManagedVwDrawRootBuffered\AssemblyInfo.cs
+  - Src\ManagedVwDrawRootBuffered\VwDrawRootBuffered.cs

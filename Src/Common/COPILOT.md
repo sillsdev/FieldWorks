@@ -1,7 +1,7 @@
-﻿---
-owner: FIXME(set-owner)
+---
 last-reviewed: 2025-10-30
-status: verified
+last-verified-commit: 9611cf70e
+status: draft
 ---
 
 # Common
@@ -229,3 +229,101 @@ Most comprehensive collection of shared code, providing building blocks for all 
 - **XML data/config**: SampleCm.xml, SampleData.xml, SimpleRootSiteDataProviderCacheModel.xml, TestParts.xml, TextCacheModel.xml
 - **Source file count**: 576 files
 - **Data file count**: 124 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.
+
+## References (auto-generated hints)
+- Project files:
+  - Src\Common\Controls\Design\Design.csproj
+  - Src\Common\Controls\DetailControls\DetailControls.csproj
+  - Src\Common\Controls\DetailControls\DetailControlsTests\DetailControlsTests.csproj
+  - Src\Common\Controls\FwControls\FwControls.csproj
+  - Src\Common\Controls\FwControls\FwControlsTests\FwControlsTests.csproj
+  - Src\Common\Controls\Widgets\Widgets.csproj
+  - Src\Common\Controls\Widgets\WidgetsTests\WidgetsTests.csproj
+  - Src\Common\Controls\XMLViews\XMLViews.csproj
+  - Src\Common\Controls\XMLViews\XMLViewsTests\XMLViewsTests.csproj
+  - Src\Common\FieldWorks\BuildInclude.targets
+  - Src\Common\FieldWorks\FieldWorks.csproj
+  - Src\Common\FieldWorks\FieldWorksTests\FieldWorksTests.csproj
+  - Src\Common\Filters\Filters.csproj
+  - Src\Common\Filters\FiltersTests\FiltersTests.csproj
+  - Src\Common\Framework\Framework.csproj
+  - Src\Common\Framework\FrameworkTests\FrameworkTests.csproj
+  - Src\Common\FwUtils\BuildInclude.targets
+  - Src\Common\FwUtils\FwUtils.csproj
+  - Src\Common\FwUtils\FwUtilsTests\FwUtilsTests.csproj
+  - Src\Common\RootSite\RootSite.csproj
+  - Src\Common\RootSite\RootSiteTests\RootSiteTests.csproj
+  - Src\Common\ScriptureUtils\ScriptureUtils.csproj
+  - Src\Common\ScriptureUtils\ScriptureUtilsTests\ScriptureUtilsTests.csproj
+  - Src\Common\SimpleRootSite\SimpleRootSite.csproj
+  - Src\Common\SimpleRootSite\SimpleRootSiteTests\SimpleRootSiteTests.csproj
+- Key C# files:
+  - Src\Common\Controls\Design\AssemblyInfo.cs
+  - Src\Common\Controls\Design\EnhancedCollectionEditor.cs
+  - Src\Common\Controls\Design\FwButtonDesigner.cs
+  - Src\Common\Controls\Design\FwHelpButtonDesigner.cs
+  - Src\Common\Controls\Design\InformationBarButtonDesigner.cs
+  - Src\Common\Controls\Design\PersistenceDesigner.cs
+  - Src\Common\Controls\Design\ProgressLineDesigner.cs
+  - Src\Common\Controls\Design\SideBarButtonDesigner.cs
+  - Src\Common\Controls\Design\SideBarDesigner.cs
+  - Src\Common\Controls\Design\SideBarTabDesigner.cs
+  - Src\Common\Controls\DetailControls\AssemblyInfo.cs
+  - Src\Common\Controls\DetailControls\AtomicRefTypeAheadSlice.cs
+  - Src\Common\Controls\DetailControls\AtomicReferenceLauncher.cs
+  - Src\Common\Controls\DetailControls\AtomicReferencePOSSlice.cs
+  - Src\Common\Controls\DetailControls\AtomicReferenceSlice.cs
+  - Src\Common\Controls\DetailControls\AtomicReferenceView.cs
+  - Src\Common\Controls\DetailControls\AudioVisualSlice.cs
+  - Src\Common\Controls\DetailControls\AutoMenuHandler.cs
+  - Src\Common\Controls\DetailControls\BasicTypeSlices.cs
+  - Src\Common\Controls\DetailControls\ButtonLauncher.cs
+  - Src\Common\Controls\DetailControls\ChooserCommand.cs
+  - Src\Common\Controls\DetailControls\CommandSlice.cs
+  - Src\Common\Controls\DetailControls\ConfigureWritingSystemsDlg.cs
+  - Src\Common\Controls\DetailControls\DataTree.cs
+  - Src\Common\Controls\DetailControls\DataTreeImages.cs
+- Data contracts/transforms:
+  - Src\Common\Controls\Design\EnhancedCollectionEditor.resx
+  - Src\Common\Controls\DetailControls\AtomicReferenceLauncher.resx
+  - Src\Common\Controls\DetailControls\AtomicReferenceView.resx
+  - Src\Common\Controls\DetailControls\ButtonLauncher.resx
+  - Src\Common\Controls\DetailControls\ConfigureWritingSystemsDlg.resx
+  - Src\Common\Controls\DetailControls\DataTree.resx
+  - Src\Common\Controls\DetailControls\DataTreeImages.resx
+  - Src\Common\Controls\DetailControls\DetailControlsTests\TestParts.xml
+  - Src\Common\Controls\DetailControls\GenDateChooserDlg.resx
+  - Src\Common\Controls\DetailControls\GenDateLauncher.resx
+  - Src\Common\Controls\DetailControls\MorphTypeAtomicLauncher.resx
+  - Src\Common\Controls\DetailControls\MorphTypeChooser.resx
+  - Src\Common\Controls\DetailControls\MultiLevelConc.resx
+  - Src\Common\Controls\DetailControls\PartGenerator\LayoutGenerate.xslt
+  - Src\Common\Controls\DetailControls\PartGenerator\PartGenerate.xslt
+  - Src\Common\Controls\DetailControls\PhoneEnvReferenceLauncher.resx
+  - Src\Common\Controls\DetailControls\PhoneEnvReferenceView.resx
+  - Src\Common\Controls\DetailControls\ReferenceLauncher.resx
+  - Src\Common\Controls\DetailControls\Resources\DetailControlsStrings.resx
+  - Src\Common\Controls\DetailControls\SemanticDomainsChooser.resx
+  - Src\Common\Controls\DetailControls\SimpleListChooser.resx
+  - Src\Common\Controls\DetailControls\SliceTreeNode.resx
+  - Src\Common\Controls\DetailControls\SummaryCommandControl.resx
+  - Src\Common\Controls\DetailControls\VectorReferenceLauncher.resx
+  - Src\Common\Controls\DetailControls\VectorReferenceView.resx

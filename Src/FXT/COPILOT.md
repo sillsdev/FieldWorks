@@ -1,7 +1,7 @@
-﻿---
-owner: FIXME(set-owner)
+---
 last-reviewed: 2025-10-30
-status: verified
+last-verified-commit: 9611cf70e
+status: draft
 ---
 
 # FXT
@@ -115,3 +115,48 @@ from the FieldWorks data model.
 - **XML data/config**: Phase1-Sena3-bo-ConfiguredDictionary.xml, Phase2-Sena3-bo-ConfiguredDictionary.xml, TLPParser.xml, TLPSimpleGuidsAnswer.xml, TLPSketchGen.xml
 - **Source file count**: 13 files
 - **Data file count**: 6 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.
+
+## References (auto-generated hints)
+- Project files:
+  - Src\FXT\FxtDll\FxtDll.csproj
+  - Src\FXT\FxtDll\FxtDllTests\FxtDllTests.csproj
+  - Src\FXT\FxtExe\FxtExe.csproj
+- Key C# files:
+  - Src\FXT\FxtDll\AssemblyInfo.cs
+  - Src\FXT\FxtDll\ChangedDataItem.cs
+  - Src\FXT\FxtDll\FilterStrategy.cs
+  - Src\FXT\FxtDll\FxtDllTests\DumperTests.cs
+  - Src\FXT\FxtDll\FxtDllTests\FxtTestBase.cs
+  - Src\FXT\FxtDll\FxtDllTests\M3ParserDumpTests.cs
+  - Src\FXT\FxtDll\FxtDllTests\M3SketchDumpTests.cs
+  - Src\FXT\FxtDll\FxtDllTests\SimpleTests.cs
+  - Src\FXT\FxtDll\FxtDllTests\StandFormatExportTests.cs
+  - Src\FXT\FxtDll\XDumper.cs
+  - Src\FXT\FxtDll\XUpdater.cs
+  - Src\FXT\FxtExe\AssemblyInfo.cs
+  - Src\FXT\FxtExe\main.cs
+- Data contracts/transforms:
+  - Src\FXT\FxtDll\FxtDllTests\ExpectedResults\Phase1-Sena3-bo-ConfiguredDictionary.xml
+  - Src\FXT\FxtDll\FxtDllTests\ExpectedResults\Phase2-Sena3-bo-ConfiguredDictionary.xml
+  - Src\FXT\FxtDll\FxtDllTests\ExpectedResults\TLPParser.xml
+  - Src\FXT\FxtDll\FxtDllTests\ExpectedResults\TLPSimpleGuidsAnswer.xml
+  - Src\FXT\FxtDll\FxtDllTests\ExpectedResults\TLPSketchGen.xml
+  - Src\FXT\FxtDll\FxtDllTests\NormalizeOutput.xsl

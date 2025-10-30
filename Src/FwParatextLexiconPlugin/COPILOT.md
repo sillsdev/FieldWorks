@@ -1,7 +1,7 @@
-﻿---
-owner: FIXME(set-owner)
+---
 last-reviewed: 2025-10-30
-status: verified
+last-verified-commit: 9611cf70e
+status: draft
 ---
 
 # FwParatextLexiconPlugin
@@ -60,3 +60,59 @@ comprehensive lexical information.
 - **Key C# files**: ChooseFdoProjectForm.cs, FdoLexEntryLexeme.cs, FdoWordAnalysis.cs, FwLexiconPluginV2.cs, LexemeKey.cs, ParatextLexiconPluginLcmUI.cs, ParatextLexiconPluginRegistryHelper.template.cs, ParatextLexiconPluginThreadedProgress.cs, ProjectExistsForm.cs, Strings.Designer.cs
 - **Source file count**: 32 files
 - **Data file count**: 5 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.
+
+## References (auto-generated hints)
+- Project files:
+  - Src\FwParatextLexiconPlugin\FwParatextLexiconPlugin.csproj
+  - Src\FwParatextLexiconPlugin\FwParatextLexiconPluginTests\FwParatextLexiconPluginTests.csproj
+  - Src\FwParatextLexiconPlugin\ILRepack.targets
+- Key C# files:
+  - Src\FwParatextLexiconPlugin\ChooseFdoProjectForm.Designer.cs
+  - Src\FwParatextLexiconPlugin\ChooseFdoProjectForm.cs
+  - Src\FwParatextLexiconPlugin\FdoLanguageText.cs
+  - Src\FwParatextLexiconPlugin\FdoLexEntryLexeme.cs
+  - Src\FwParatextLexiconPlugin\FdoLexemeAddedEventArgs.cs
+  - Src\FwParatextLexiconPlugin\FdoLexicalRelation.cs
+  - Src\FwParatextLexiconPlugin\FdoLexicon.cs
+  - Src\FwParatextLexiconPlugin\FdoLexiconGlossAddedEventArgs.cs
+  - Src\FwParatextLexiconPlugin\FdoLexiconSenseAddedEventArgs.cs
+  - Src\FwParatextLexiconPlugin\FdoSemanticDomain.cs
+  - Src\FwParatextLexiconPlugin\FdoWordAnalysis.cs
+  - Src\FwParatextLexiconPlugin\FdoWordAnalysisV2.cs
+  - Src\FwParatextLexiconPlugin\FdoWordformLexeme.cs
+  - Src\FwParatextLexiconPlugin\FilesToRestoreAreOlder.Designer.cs
+  - Src\FwParatextLexiconPlugin\FilesToRestoreAreOlder.cs
+  - Src\FwParatextLexiconPlugin\FwLexiconPlugin.cs
+  - Src\FwParatextLexiconPlugin\FwLexiconPluginV2.cs
+  - Src\FwParatextLexiconPlugin\FwParatextLexiconPluginTests\DummyLcmUI.cs
+  - Src\FwParatextLexiconPlugin\FwParatextLexiconPluginTests\FdoLexiconTests.cs
+  - Src\FwParatextLexiconPlugin\FwParatextLexiconPluginTests\Properties\AssemblyInfo.cs
+  - Src\FwParatextLexiconPlugin\GeneratedParatextLexiconPluginRegistryHelper.cs
+  - Src\FwParatextLexiconPlugin\LexemeKey.cs
+  - Src\FwParatextLexiconPlugin\ParatextLexiconPluginDirectoryFinder.cs
+  - Src\FwParatextLexiconPlugin\ParatextLexiconPluginLcmUI.cs
+  - Src\FwParatextLexiconPlugin\ParatextLexiconPluginProjectId.cs
+- Data contracts/transforms:
+  - Src\FwParatextLexiconPlugin\ChooseFdoProjectForm.resx
+  - Src\FwParatextLexiconPlugin\FilesToRestoreAreOlder.resx
+  - Src\FwParatextLexiconPlugin\ProjectExistsForm.resx
+  - Src\FwParatextLexiconPlugin\Properties\Resources.resx
+  - Src\FwParatextLexiconPlugin\Strings.resx

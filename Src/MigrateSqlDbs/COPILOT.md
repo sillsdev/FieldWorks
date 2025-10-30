@@ -1,7 +1,7 @@
-﻿---
-owner: FIXME(set-owner)
+---
 last-reviewed: 2025-10-30
-status: verified
+last-verified-commit: 9611cf70e
+status: draft
 ---
 
 # MigrateSqlDbs
@@ -56,3 +56,45 @@ to match the current schema version while preserving data integrity.
 - **Key C# files**: AssemblyInfo.cs, ExistingProjectDlg.Designer.cs, ExistingProjectDlg.cs, FWVersionTooOld.Designer.cs, FWVersionTooOld.cs, MigrateProjects.Designer.cs, MigrateProjects.cs, Program.cs, Settings.Designer.cs, Settings.cs
 - **Source file count**: 11 files
 - **Data file count**: 4 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Interfaces and Data Models
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.
+
+## References (auto-generated hints)
+- Project files:
+  - Src\MigrateSqlDbs\MigrateSqlDbs.csproj
+- Key C# files:
+  - Src\MigrateSqlDbs\ExistingProjectDlg.Designer.cs
+  - Src\MigrateSqlDbs\ExistingProjectDlg.cs
+  - Src\MigrateSqlDbs\FWVersionTooOld.Designer.cs
+  - Src\MigrateSqlDbs\FWVersionTooOld.cs
+  - Src\MigrateSqlDbs\MigrateProjects.Designer.cs
+  - Src\MigrateSqlDbs\MigrateProjects.cs
+  - Src\MigrateSqlDbs\Program.cs
+  - Src\MigrateSqlDbs\Properties\AssemblyInfo.cs
+  - Src\MigrateSqlDbs\Properties\Resources.Designer.cs
+  - Src\MigrateSqlDbs\Properties\Settings.Designer.cs
+  - Src\MigrateSqlDbs\Settings.cs
+- Data contracts/transforms:
+  - Src\MigrateSqlDbs\ExistingProjectDlg.resx
+  - Src\MigrateSqlDbs\FWVersionTooOld.resx
+  - Src\MigrateSqlDbs\MigrateProjects.resx
+  - Src\MigrateSqlDbs\Properties\Resources.resx

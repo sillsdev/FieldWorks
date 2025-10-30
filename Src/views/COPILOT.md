@@ -1,7 +1,7 @@
-﻿---
-owner: FIXME(set-owner)
+---
 last-reviewed: 2025-10-30
-status: verified
+last-verified-commit: 9611cf70e
+status: draft
 ---
 
 # views
@@ -154,3 +154,84 @@ with accurate formatting, alignment, and complex script rendering.
 - **XML data/config**: VirtualsCm.xml
 - **Source file count**: 130 files
 - **Data file count**: 1 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.
+
+## References (auto-generated hints)
+- Project files:
+  - Src\views\Test\TestViews.vcxproj
+  - Src\views\lib\VwGraphicsReplayer\VwGraphicsReplayer.csproj
+  - Src\views\views.vcxproj
+- Key C# files:
+  - Src\views\lib\VwGraphicsReplayer\AssemblyInfo.cs
+  - Src\views\lib\VwGraphicsReplayer\VwGraphicsReplayer.cs
+- Key C++ files:
+  - Src\views\ExplicitInstantiation.cpp
+  - Src\views\Test\Collection.cpp
+  - Src\views\Test\testViews.cpp
+  - Src\views\ViewsExtra_GUIDs.cpp
+  - Src\views\ViewsGlobals.cpp
+  - Src\views\Views_GUIDs.cpp
+  - Src\views\VwAccessRoot.cpp
+  - Src\views\VwEnv.cpp
+  - Src\views\VwInvertedViews.cpp
+  - Src\views\VwLayoutStream.cpp
+  - Src\views\VwLazyBox.cpp
+  - Src\views\VwNotifier.cpp
+  - Src\views\VwOverlay.cpp
+  - Src\views\VwPattern.cpp
+  - Src\views\VwPrintContext.cpp
+  - Src\views\VwPropertyStore.cpp
+  - Src\views\VwRootBox.cpp
+  - Src\views\VwSelection.cpp
+  - Src\views\VwSimpleBoxes.cpp
+  - Src\views\VwSynchronizer.cpp
+  - Src\views\VwTableBox.cpp
+  - Src\views\VwTextBoxes.cpp
+  - Src\views\VwTextStore.cpp
+  - Src\views\VwTxtSrc.cpp
+  - Src\views\dlldatax.c
+- Key headers:
+  - Src\views\Main.h
+  - Src\views\Test\BasicVc.h
+  - Src\views\Test\DummyBaseVc.h
+  - Src\views\Test\DummyRootsite.h
+  - Src\views\Test\MockLgWritingSystem.h
+  - Src\views\Test\MockLgWritingSystemFactory.h
+  - Src\views\Test\MockRenderEngineFactory.h
+  - Src\views\Test\RenderEngineTestBase.h
+  - Src\views\Test\TestGraphiteEngine.h
+  - Src\views\Test\TestInsertDiffPara.h
+  - Src\views\Test\TestLayoutPage.h
+  - Src\views\Test\TestLazyBox.h
+  - Src\views\Test\TestLgCollatingEngine.h
+  - Src\views\Test\TestLgLineBreaker.h
+  - Src\views\Test\TestNotifier.h
+  - Src\views\Test\TestTsPropsBldr.h
+  - Src\views\Test\TestTsStrBldr.h
+  - Src\views\Test\TestTsString.h
+  - Src\views\Test\TestTsTextProps.h
+  - Src\views\Test\TestUndoStack.h
+  - Src\views\Test\TestUniscribeEngine.h
+  - Src\views\Test\TestVirtualHandlers.h
+  - Src\views\Test\TestVwEnv.h
+  - Src\views\Test\TestVwGraphics.h
+  - Src\views\Test\TestVwOverlay.h
+- Data contracts/transforms:
+  - Src\views\Test\VirtualsCm.xml

@@ -1,7 +1,7 @@
-﻿---
-owner: FIXME(set-owner)
+---
 last-reviewed: 2025-10-30
-status: verified
+last-verified-commit: 9611cf70e
+status: draft
 ---
 
 # InstallValidator
@@ -58,3 +58,30 @@ and provides clear diagnostics when requirements are not met.
 - **Key C# files**: AssemblyInfo.cs, InstallValidator.cs, InstallValidatorTests.cs
 - **Source file count**: 3 files
 - **Data file count**: 0 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.
+
+## References (auto-generated hints)
+- Project files:
+  - Src\InstallValidator\InstallValidator.csproj
+  - Src\InstallValidator\InstallValidatorTests\InstallValidatorTests.csproj
+- Key C# files:
+  - Src\InstallValidator\InstallValidator.cs
+  - Src\InstallValidator\InstallValidatorTests\InstallValidatorTests.cs
+  - Src\InstallValidator\Properties\AssemblyInfo.cs

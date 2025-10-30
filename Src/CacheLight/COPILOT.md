@@ -1,7 +1,7 @@
-﻿---
-owner: FIXME(set-owner)
+---
 last-reviewed: 2025-10-30
-status: verified
+last-verified-commit: 9611cf70e
+status: draft
 ---
 
 # CacheLight
@@ -96,3 +96,40 @@ of frequently accessed linguistic data objects. Critical for application perform
 - **XML data/config**: TestModel.xml
 - **Source file count**: 9 files
 - **Data file count**: 3 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.
+
+## References (auto-generated hints)
+- Project files:
+  - Src\CacheLight\CacheLight.csproj
+  - Src\CacheLight\CacheLightTests\CacheLightTests.csproj
+- Key C# files:
+  - Src\CacheLight\AssemblyInfo.cs
+  - Src\CacheLight\CacheLightTests\MetaDataCacheTests.cs
+  - Src\CacheLight\CacheLightTests\Properties\Resources.Designer.cs
+  - Src\CacheLight\CacheLightTests\RealDataCacheTests.cs
+  - Src\CacheLight\MetaDataCache.cs
+  - Src\CacheLight\RealCacheLoader.cs
+  - Src\CacheLight\RealDataCache.cs
+  - Src\CacheLight\TsMultiString.cs
+  - Src\CacheLight\TsStringfactory.cs
+- Data contracts/transforms:
+  - Src\CacheLight\CacheLightTests\Properties\Resources.resx
+  - Src\CacheLight\CacheLightTests\TestModel.xml
+  - Src\CacheLight\CacheLightTests\TestModel.xsd

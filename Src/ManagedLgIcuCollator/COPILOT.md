@@ -1,7 +1,7 @@
-﻿---
-owner: FIXME(set-owner)
+---
 last-reviewed: 2025-10-30
-status: verified
+last-verified-commit: 9611cf70e
+status: draft
 ---
 
 # ManagedLgIcuCollator
@@ -60,3 +60,29 @@ with .NET code through a managed interface.
 - **Key C# files**: LgIcuCollator.cs, ManagedLgIcuCollatorTests.cs
 - **Source file count**: 2 files
 - **Data file count**: 0 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.
+
+## References (auto-generated hints)
+- Project files:
+  - Src\ManagedLgIcuCollator\ManagedLgIcuCollator.csproj
+  - Src\ManagedLgIcuCollator\ManagedLgIcuCollatorTests\ManagedLgIcuCollatorTests.csproj
+- Key C# files:
+  - Src\ManagedLgIcuCollator\LgIcuCollator.cs
+  - Src\ManagedLgIcuCollator\ManagedLgIcuCollatorTests\ManagedLgIcuCollatorTests.cs

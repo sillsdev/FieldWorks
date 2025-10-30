@@ -1,7 +1,7 @@
-﻿---
-owner: FIXME(set-owner)
+---
 last-reviewed: 2025-10-30
-status: verified
+last-verified-commit: 9611cf70e
+status: draft
 ---
 
 # GenerateHCConfig
@@ -49,3 +49,38 @@ No major public classes identified.
 - **Key C# files**: AssemblyInfo.cs, ConsoleLogger.cs, NullFdoDirectories.cs, NullThreadedProgress.cs, Program.cs, ProjectIdentifier.cs
 - **Source file count**: 6 files
 - **Data file count**: 1 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Interfaces and Data Models
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.
+
+## References (auto-generated hints)
+- Project files:
+  - Src\GenerateHCConfig\BuildInclude.targets
+  - Src\GenerateHCConfig\GenerateHCConfig.csproj
+- Key C# files:
+  - Src\GenerateHCConfig\ConsoleLogger.cs
+  - Src\GenerateHCConfig\NullFdoDirectories.cs
+  - Src\GenerateHCConfig\NullThreadedProgress.cs
+  - Src\GenerateHCConfig\Program.cs
+  - Src\GenerateHCConfig\ProjectIdentifier.cs
+  - Src\GenerateHCConfig\Properties\AssemblyInfo.cs
+- Data contracts/transforms:
+  - Src\GenerateHCConfig\App.config

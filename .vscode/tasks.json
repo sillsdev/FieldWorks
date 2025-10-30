@@ -144,7 +144,10 @@
         "COPILOT: Propose updates for changed folders",
         "COPILOT: Validate COPILOT docs (changed only)"
       ],
-      "dependsOrder": "sequence"
+      "dependsOrder": "sequence",
+      "problemMatcher": [
+        "$python"
+      ]
     }
   ]
 }

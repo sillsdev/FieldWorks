@@ -1,7 +1,7 @@
-﻿---
-owner: FIXME(set-owner)
+---
 last-reviewed: 2025-10-30
-status: verified
+last-verified-commit: 9611cf70e
+status: draft
 ---
 
 # Generic
@@ -142,3 +142,78 @@ used across the codebase. Provides building blocks for higher-level functionalit
 - **Key headers**: CSupportErrorInfo.h, ComVector.h, DataReader.h, DispatchImpl.h, LinkedList.h, Mutex.h, UnicodeString8.h, UtilCom.h, UtilPersist.h, UtilRect.h
 - **Source file count**: 114 files
 - **Data file count**: 0 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.
+
+## References (auto-generated hints)
+- Project files:
+  - Src\Generic\Generic.vcxproj
+  - Src\Generic\Test\TestGeneric.vcxproj
+- Key C++ files:
+  - Src\Generic\BinTree_i.cpp
+  - Src\Generic\ComHashMap_i.cpp
+  - Src\Generic\ComMultiMap_i.cpp
+  - Src\Generic\ComVector.cpp
+  - Src\Generic\DataStream.cpp
+  - Src\Generic\Debug.cpp
+  - Src\Generic\DecodeUtf8_i.c
+  - Src\Generic\DllModul.cpp
+  - Src\Generic\FileStrm.cpp
+  - Src\Generic\FwSettings.cpp
+  - Src\Generic\GenericFactory.cpp
+  - Src\Generic\GpHashMap_i.cpp
+  - Src\Generic\HashMap.cpp
+  - Src\Generic\HashMap_i.cpp
+  - Src\Generic\MakeDir.cpp
+  - Src\Generic\ModuleEntry.cpp
+  - Src\Generic\MultiMap_i.cpp
+  - Src\Generic\OleStringLiteral.cpp
+  - Src\Generic\ResourceStrm.cpp
+  - Src\Generic\Set_i.cpp
+  - Src\Generic\StackDumper.cpp
+  - Src\Generic\StackDumperWin32.cpp
+  - Src\Generic\StackDumperWin64.cpp
+  - Src\Generic\StrUtil.cpp
+  - Src\Generic\StringStrm.cpp
+- Key headers:
+  - Src\Generic\BinTree.h
+  - Src\Generic\COMBase.h
+  - Src\Generic\CSupportErrorInfo.h
+  - Src\Generic\ComHashMap.h
+  - Src\Generic\ComMultiMap.h
+  - Src\Generic\ComSmartPtr.h
+  - Src\Generic\ComSmartPtrImpl.h
+  - Src\Generic\ComVector.h
+  - Src\Generic\CompileStringTable.h
+  - Src\Generic\DataReader.h
+  - Src\Generic\DataStream.h
+  - Src\Generic\DataWriter.h
+  - Src\Generic\Database.h
+  - Src\Generic\DispatchImpl.h
+  - Src\Generic\FileStrm.h
+  - Src\Generic\FwSettings.h
+  - Src\Generic\GenSmartPtr.h
+  - Src\Generic\GenericFactory.h
+  - Src\Generic\GenericResource.h
+  - Src\Generic\GpHashMap.h
+  - Src\Generic\HashMap.h
+  - Src\Generic\LinkedList.h
+  - Src\Generic\MakeDir.h
+  - Src\Generic\ModuleEntry.h
+  - Src\Generic\MultiMap.h

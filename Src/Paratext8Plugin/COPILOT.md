@@ -1,7 +1,7 @@
-﻿---
-owner: FIXME(set-owner)
+---
 last-reviewed: 2025-10-30
-status: verified
+last-verified-commit: 9611cf70e
+status: draft
 ---
 
 # Paratext8Plugin
@@ -74,3 +74,36 @@ translation workflows between the two applications.
 - **Key C# files**: AssemblyInfo.cs, PT8VerseRefWrapper.cs, PTScrTextWrapper.cs, Paratext8Provider.cs, ParatextAlert.cs, ParatextDataIntegrationTests.cs, Pt8VerseWrapper.cs
 - **Source file count**: 7 files
 - **Data file count**: 1 files
+
+## Architecture
+TBD — populate from code. See auto-generated hints below.
+
+## Interop & Contracts
+TBD — populate from code. See auto-generated hints below.
+
+## Threading & Performance
+TBD — populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD — populate from code. See auto-generated hints below.
+
+## Test Index
+TBD — populate from code. See auto-generated hints below.
+
+## Usage Hints
+TBD — populate from code. See auto-generated hints below.
+
+## References (auto-generated hints)
+- Project files:
+  - Src\Paratext8Plugin\ParaText8PluginTests\Paratext8PluginTests.csproj
+  - Src\Paratext8Plugin\Paratext8Plugin.csproj
+- Key C# files:
+  - Src\Paratext8Plugin\PT8VerseRefWrapper.cs
+  - Src\Paratext8Plugin\PTScrTextWrapper.cs
+  - Src\Paratext8Plugin\ParaText8PluginTests\ParatextDataIntegrationTests.cs
+  - Src\Paratext8Plugin\Paratext8Provider.cs
+  - Src\Paratext8Plugin\ParatextAlert.cs
+  - Src\Paratext8Plugin\Properties\AssemblyInfo.cs
+  - Src\Paratext8Plugin\Pt8VerseWrapper.cs
+- Data contracts/transforms:
+  - Src\Paratext8Plugin\ParaText8PluginTests\App.config
