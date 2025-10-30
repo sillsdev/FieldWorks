@@ -175,19 +175,19 @@ morphological analysis in FLEx.
 - **Data file count**: 20 files
 
 ## Architecture
-TBD — populate from code. See auto-generated hints below.
+C# library with 34 source files. Contains 3 subprojects: ParserCore, XAmpleManagedWrapper, XAmpleCOMWrapper.
 
 ## Interop & Contracts
-TBD — populate from code. See auto-generated hints below.
+Uses COM for cross-boundary calls.
 
 ## Threading & Performance
-TBD — populate from code. See auto-generated hints below.
+Single-threaded or thread-agnostic code. No explicit threading detected.
 
 ## Config & Feature Flags
-TBD — populate from code. See auto-generated hints below.
+No explicit configuration or feature flags detected.
 
 ## Test Index
-TBD — populate from code. See auto-generated hints below.
+Test projects: XAmpleManagedWrapperTests, ParserCoreTests. 8 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
 
 ## Usage Hints
-TBD — populate from code. See auto-generated hints below.
+Library component. Reference in consuming projects. See Dependencies section for integration points.

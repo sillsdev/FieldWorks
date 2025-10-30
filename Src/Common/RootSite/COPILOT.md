@@ -199,19 +199,19 @@ display and editing functionality.
 - **Data file count**: 7 files
 
 ## Architecture
-TBD — populate from code. See auto-generated hints below.
+C# library with 31 source files. Contains 1 subprojects: RootSite.
 
 ## Interop & Contracts
-TBD — populate from code. See auto-generated hints below.
+Uses Marshaling, COM for cross-boundary calls.
 
 ## Threading & Performance
-TBD — populate from code. See auto-generated hints below.
+Threading model: explicit threading, UI thread marshaling.
 
 ## Config & Feature Flags
-TBD — populate from code. See auto-generated hints below.
+No explicit configuration or feature flags detected.
 
 ## Test Index
-TBD — populate from code. See auto-generated hints below.
+Test projects: RootSiteTests. 11 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
 
 ## Usage Hints
-TBD — populate from code. See auto-generated hints below.
+Library component. Reference in consuming projects. See Dependencies section for integration points.

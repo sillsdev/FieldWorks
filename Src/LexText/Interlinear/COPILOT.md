@@ -184,19 +184,19 @@ annotation of natural language texts.
 - **Data file count**: 62 files
 
 ## Architecture
-TBD — populate from code. See auto-generated hints below.
+C# library with 124 source files. Contains 1 subprojects: ITextDll.
 
 ## Interop & Contracts
-TBD — populate from code. See auto-generated hints below.
+Uses COM for cross-boundary calls.
 
 ## Threading & Performance
-TBD — populate from code. See auto-generated hints below.
+Threading model: synchronization.
 
 ## Config & Feature Flags
-TBD — populate from code. See auto-generated hints below.
+Config files: toolConfigurationForITextDllTests.xml.
 
 ## Test Index
-TBD — populate from code. See auto-generated hints below.
+Test projects: ITextDllTests. 23 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
 
 ## Usage Hints
-TBD — populate from code. See auto-generated hints below.
+Library component. Reference in consuming projects. See Dependencies section for integration points.

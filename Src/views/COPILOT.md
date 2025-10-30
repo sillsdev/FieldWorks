@@ -156,22 +156,22 @@ with accurate formatting, alignment, and complex script rendering.
 - **Data file count**: 1 files
 
 ## Architecture
-TBD — populate from code. See auto-generated hints below.
+C# library with 2 source files. Contains 2 subprojects: views, VwGraphicsReplayer.
 
 ## Interop & Contracts
-TBD — populate from code. See auto-generated hints below.
+No explicit interop boundaries detected. Pure managed or native code.
 
 ## Threading & Performance
-TBD — populate from code. See auto-generated hints below.
+Threading model: UI thread marshaling, synchronization.
 
 ## Config & Feature Flags
-TBD — populate from code. See auto-generated hints below.
+No explicit configuration or feature flags detected.
 
 ## Test Index
-TBD — populate from code. See auto-generated hints below.
+Test projects: TestViews. 29 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
 
 ## Usage Hints
-TBD — populate from code. See auto-generated hints below.
+Library component. Reference in consuming projects. See Dependencies section for integration points.
 
 ## References (auto-generated hints)
 - Project files:

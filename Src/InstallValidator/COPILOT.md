@@ -60,22 +60,22 @@ and provides clear diagnostics when requirements are not met.
 - **Data file count**: 0 files
 
 ## Architecture
-TBD — populate from code. See auto-generated hints below.
+C# library with 3 source files. Contains 1 subprojects: InstallValidator.
 
 ## Interop & Contracts
-TBD — populate from code. See auto-generated hints below.
+Uses COM for cross-boundary calls.
 
 ## Threading & Performance
-TBD — populate from code. See auto-generated hints below.
+Single-threaded or thread-agnostic code. No explicit threading detected.
 
 ## Config & Feature Flags
-TBD — populate from code. See auto-generated hints below.
+No explicit configuration or feature flags detected.
 
 ## Test Index
-TBD — populate from code. See auto-generated hints below.
+Test projects: InstallValidatorTests. 1 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
 
 ## Usage Hints
-TBD — populate from code. See auto-generated hints below.
+Console application. Build and run via command line or Visual Studio. See Entry Points section.
 
 ## References (auto-generated hints)
 - Project files:

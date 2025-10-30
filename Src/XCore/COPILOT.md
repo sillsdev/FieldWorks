@@ -218,22 +218,22 @@ extensible, plugin-based applications with consistent command and UI patterns.
 - **Data file count**: 35 files
 
 ## Architecture
-TBD — populate from code. See auto-generated hints below.
+C# library with 91 source files. Contains 4 subprojects: xCore, xCoreInterfaces, FlexUIAdapter....
 
 ## Interop & Contracts
-TBD — populate from code. See auto-generated hints below.
+Uses COM, P/Invoke for cross-boundary calls.
 
 ## Threading & Performance
-TBD — populate from code. See auto-generated hints below.
+Threading model: UI thread marshaling.
 
 ## Config & Feature Flags
-TBD — populate from code. See auto-generated hints below.
+No explicit configuration or feature flags detected.
 
 ## Test Index
-TBD — populate from code. See auto-generated hints below.
+Test projects: xCoreTests, xCoreInterfacesTests, SilSidePaneTests. 11 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
 
 ## Usage Hints
-TBD — populate from code. See auto-generated hints below.
+Library component. Reference in consuming projects. See Dependencies section for integration points.
 
 ## References (auto-generated hints)
 - Project files:

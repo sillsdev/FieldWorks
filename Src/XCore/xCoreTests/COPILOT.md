@@ -57,22 +57,22 @@ behaves correctly as it underpins all FieldWorks applications.
 - **Data file count**: 12 files
 
 ## Interfaces and Data Models
-TBD — populate from code. See auto-generated hints below.
+See code analysis sections above for key interfaces and data models. Additional interfaces may be documented in source files.
 
 ## Architecture
-TBD — populate from code. See auto-generated hints below.
+Test project with 2 test files.
 
 ## Interop & Contracts
-TBD — populate from code. See auto-generated hints below.
+No explicit interop boundaries detected. Pure managed or native code.
 
 ## Threading & Performance
-TBD — populate from code. See auto-generated hints below.
+Single-threaded or thread-agnostic code. No explicit threading detected.
 
 ## Config & Feature Flags
-TBD — populate from code. See auto-generated hints below.
+No explicit configuration or feature flags detected.
 
 ## Test Index
-TBD — populate from code. See auto-generated hints below.
+Test projects: xCoreTests. 2 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
 
 ## Usage Hints
-TBD — populate from code. See auto-generated hints below.
+Test project. Run tests to validate functionality. See Test Index section for details.

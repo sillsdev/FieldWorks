@@ -196,22 +196,22 @@ Ensures consistent user experience across different parts of FieldWorks.
 - **Data file count**: 67 files
 
 ## Architecture
-TBD — populate from code. See auto-generated hints below.
+C# library with 166 source files. Contains 2 subprojects: FwCoreDlgs, FwCoreDlgControls.
 
 ## Interop & Contracts
-TBD — populate from code. See auto-generated hints below.
+Uses Marshaling, COM for cross-boundary calls.
 
 ## Threading & Performance
-TBD — populate from code. See auto-generated hints below.
+Threading model: explicit threading, synchronization.
 
 ## Config & Feature Flags
-TBD — populate from code. See auto-generated hints below.
+Config files: App.config.
 
 ## Test Index
-TBD — populate from code. See auto-generated hints below.
+Test projects: FwCoreDlgsTests, FwCoreDlgControlsTests. 26 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
 
 ## Usage Hints
-TBD — populate from code. See auto-generated hints below.
+Library component. Reference in consuming projects. See Dependencies section for integration points.
 
 ## References (auto-generated hints)
 - Project files:

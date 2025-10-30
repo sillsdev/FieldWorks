@@ -144,22 +144,22 @@ used across the codebase. Provides building blocks for higher-level functionalit
 - **Data file count**: 0 files
 
 ## Architecture
-TBD — populate from code. See auto-generated hints below.
+C++ native library with 47 implementation files and 67 headers. Contains 1 subprojects: Generic.
 
 ## Interop & Contracts
-TBD — populate from code. See auto-generated hints below.
+No explicit interop boundaries detected. Pure managed or native code.
 
 ## Threading & Performance
-TBD — populate from code. See auto-generated hints below.
+Threading model: UI thread marshaling, synchronization.
 
 ## Config & Feature Flags
-TBD — populate from code. See auto-generated hints below.
+No explicit configuration or feature flags detected.
 
 ## Test Index
-TBD — populate from code. See auto-generated hints below.
+Test projects: TestGeneric. 16 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
 
 ## Usage Hints
-TBD — populate from code. See auto-generated hints below.
+Library component. Reference in consuming projects. See Dependencies section for integration points.
 
 ## References (auto-generated hints)
 - Project files:

@@ -58,25 +58,25 @@ to match the current schema version while preserving data integrity.
 - **Data file count**: 4 files
 
 ## Architecture
-TBD — populate from code. See auto-generated hints below.
+C# library with 11 source files.
 
 ## Interop & Contracts
-TBD — populate from code. See auto-generated hints below.
+Uses COM for cross-boundary calls.
 
 ## Threading & Performance
-TBD — populate from code. See auto-generated hints below.
+Threading model: explicit threading.
 
 ## Config & Feature Flags
-TBD — populate from code. See auto-generated hints below.
+No explicit configuration or feature flags detected.
 
 ## Interfaces and Data Models
-TBD — populate from code. See auto-generated hints below.
+See code analysis sections above for key interfaces and data models. Additional interfaces may be documented in source files.
 
 ## Test Index
-TBD — populate from code. See auto-generated hints below.
+No tests found in this folder. Tests may be in a separate Test folder or solution.
 
 ## Usage Hints
-TBD — populate from code. See auto-generated hints below.
+Console application. Build and run via command line or Visual Studio. See Entry Points section.
 
 ## References (auto-generated hints)
 - Project files:

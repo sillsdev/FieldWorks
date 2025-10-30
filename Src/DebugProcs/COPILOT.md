@@ -49,25 +49,25 @@ No major public classes identified.
 - **Data file count**: 0 files
 
 ## Architecture
-TBD — populate from code. See auto-generated hints below.
+C++ native library with 1 implementation files and 1 headers.
 
 ## Interop & Contracts
-TBD — populate from code. See auto-generated hints below.
+No explicit interop boundaries detected. Pure managed or native code.
 
 ## Threading & Performance
-TBD — populate from code. See auto-generated hints below.
+Single-threaded or thread-agnostic code. No explicit threading detected.
 
 ## Config & Feature Flags
-TBD — populate from code. See auto-generated hints below.
+No explicit configuration or feature flags detected.
 
 ## Interfaces and Data Models
-TBD — populate from code. See auto-generated hints below.
+See code analysis sections above for key interfaces and data models. Additional interfaces may be documented in source files.
 
 ## Test Index
-TBD — populate from code. See auto-generated hints below.
+No tests found in this folder. Tests may be in a separate Test folder or solution.
 
 ## Usage Hints
-TBD — populate from code. See auto-generated hints below.
+Library component. Reference in consuming projects. See Dependencies section for integration points.
 
 ## References (auto-generated hints)
 - Project files:

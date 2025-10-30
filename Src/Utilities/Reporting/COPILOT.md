@@ -66,19 +66,19 @@ collecting diagnostic information when issues occur.
 - **Data file count**: 4 files
 
 ## Architecture
-TBD — populate from code. See auto-generated hints below.
+C# library with 4 source files.
 
 ## Interop & Contracts
-TBD — populate from code. See auto-generated hints below.
+Uses P/Invoke for cross-boundary calls.
 
 ## Threading & Performance
-TBD — populate from code. See auto-generated hints below.
+Threading model: explicit threading.
 
 ## Config & Feature Flags
-TBD — populate from code. See auto-generated hints below.
+Config files: App.config.
 
 ## Test Index
-TBD — populate from code. See auto-generated hints below.
+No tests found in this folder. Tests may be in a separate Test folder or solution.
 
 ## Usage Hints
-TBD — populate from code. See auto-generated hints below.
+Library component. Reference in consuming projects. See Dependencies section for integration points.

@@ -178,19 +178,19 @@ and managing shared resources across FieldWorks applications.
 - **Data file count**: 5 files
 
 ## Architecture
-TBD — populate from code. See auto-generated hints below.
+C# library with 35 source files. Contains 1 subprojects: FieldWorks.
 
 ## Interop & Contracts
-TBD — populate from code. See auto-generated hints below.
+Uses COM, P/Invoke for cross-boundary calls.
 
 ## Threading & Performance
-TBD — populate from code. See auto-generated hints below.
+Threading model: explicit threading, UI thread marshaling, synchronization.
 
 ## Config & Feature Flags
-TBD — populate from code. See auto-generated hints below.
+Config files: App.config. configuration settings.
 
 ## Test Index
-TBD — populate from code. See auto-generated hints below.
+Test projects: FieldWorksTests. 4 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
 
 ## Usage Hints
-TBD — populate from code. See auto-generated hints below.
+Console application. Build and run via command line or Visual Studio. See Entry Points section.

@@ -117,22 +117,22 @@ from the FieldWorks data model.
 - **Data file count**: 6 files
 
 ## Architecture
-TBD — populate from code. See auto-generated hints below.
+C# library with 13 source files. Contains 2 subprojects: FxtExe, FxtDll.
 
 ## Interop & Contracts
-TBD — populate from code. See auto-generated hints below.
+Uses COM for cross-boundary calls.
 
 ## Threading & Performance
-TBD — populate from code. See auto-generated hints below.
+Threading model: explicit threading, UI thread marshaling, synchronization.
 
 ## Config & Feature Flags
-TBD — populate from code. See auto-generated hints below.
+Config files: Phase1-Sena3-bo-ConfiguredDictionary.xml, Phase2-Sena3-bo-ConfiguredDictionary.xml.
 
 ## Test Index
-TBD — populate from code. See auto-generated hints below.
+Test projects: FxtDllTests. 6 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
 
 ## Usage Hints
-TBD — populate from code. See auto-generated hints below.
+Console application. Build and run via command line or Visual Studio. See Entry Points section.
 
 ## References (auto-generated hints)
 - Project files:

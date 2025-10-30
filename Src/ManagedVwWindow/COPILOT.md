@@ -63,22 +63,22 @@ Essential for integrating the powerful native views system into WinForms applica
 - **Data file count**: 0 files
 
 ## Architecture
-TBD — populate from code. See auto-generated hints below.
+C# library with 3 source files. Contains 1 subprojects: ManagedVwWindow.
 
 ## Interop & Contracts
-TBD — populate from code. See auto-generated hints below.
+Uses COM for cross-boundary calls.
 
 ## Threading & Performance
-TBD — populate from code. See auto-generated hints below.
+Single-threaded or thread-agnostic code. No explicit threading detected.
 
 ## Config & Feature Flags
-TBD — populate from code. See auto-generated hints below.
+No explicit configuration or feature flags detected.
 
 ## Test Index
-TBD — populate from code. See auto-generated hints below.
+Test projects: ManagedVwWindowTests. 1 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
 
 ## Usage Hints
-TBD — populate from code. See auto-generated hints below.
+Library component. Reference in consuming projects. See Dependencies section for integration points.
 
 ## References (auto-generated hints)
 - Project files:

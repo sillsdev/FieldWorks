@@ -62,22 +62,22 @@ comprehensive lexical information.
 - **Data file count**: 5 files
 
 ## Architecture
-TBD — populate from code. See auto-generated hints below.
+C# library with 32 source files. Contains 1 subprojects: FwParatextLexiconPlugin.
 
 ## Interop & Contracts
-TBD — populate from code. See auto-generated hints below.
+No explicit interop boundaries detected. Pure managed or native code.
 
 ## Threading & Performance
-TBD — populate from code. See auto-generated hints below.
+Threading model: UI thread marshaling, synchronization.
 
 ## Config & Feature Flags
-TBD — populate from code. See auto-generated hints below.
+No explicit configuration or feature flags detected.
 
 ## Test Index
-TBD — populate from code. See auto-generated hints below.
+Test projects: FwParatextLexiconPluginTests. 1 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
 
 ## Usage Hints
-TBD — populate from code. See auto-generated hints below.
+Library component. Reference in consuming projects. See Dependencies section for integration points.
 
 ## References (auto-generated hints)
 - Project files:

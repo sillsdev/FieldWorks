@@ -51,25 +51,25 @@ No major public classes identified.
 - **Data file count**: 1 files
 
 ## Architecture
-TBD — populate from code. See auto-generated hints below.
+C# library with 6 source files.
 
 ## Interop & Contracts
-TBD — populate from code. See auto-generated hints below.
+No explicit interop boundaries detected. Pure managed or native code.
 
 ## Threading & Performance
-TBD — populate from code. See auto-generated hints below.
+Threading model: UI thread marshaling.
 
 ## Config & Feature Flags
-TBD — populate from code. See auto-generated hints below.
+Config files: App.config.
 
 ## Interfaces and Data Models
-TBD — populate from code. See auto-generated hints below.
+See code analysis sections above for key interfaces and data models. Additional interfaces may be documented in source files.
 
 ## Test Index
-TBD — populate from code. See auto-generated hints below.
+No tests found in this folder. Tests may be in a separate Test folder or solution.
 
 ## Usage Hints
-TBD — populate from code. See auto-generated hints below.
+Console application. Build and run via command line or Visual Studio. See Entry Points section.
 
 ## References (auto-generated hints)
 - Project files:

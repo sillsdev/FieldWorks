@@ -231,19 +231,19 @@ needed to embed Views in applications while maintaining full rendering capabilit
 - **Data file count**: 6 files
 
 ## Architecture
-TBD — populate from code. See auto-generated hints below.
+C# library with 43 source files. Contains 1 subprojects: SimpleRootSite.
 
 ## Interop & Contracts
-TBD — populate from code. See auto-generated hints below.
+Uses Marshaling, COM, P/Invoke for cross-boundary calls.
 
 ## Threading & Performance
-TBD — populate from code. See auto-generated hints below.
+Threading model: UI thread marshaling, synchronization.
 
 ## Config & Feature Flags
-TBD — populate from code. See auto-generated hints below.
+No explicit configuration or feature flags detected.
 
 ## Test Index
-TBD — populate from code. See auto-generated hints below.
+Test projects: SimpleRootSiteTests. 10 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
 
 ## Usage Hints
-TBD — populate from code. See auto-generated hints below.
+Library component. Reference in consuming projects. See Dependencies section for integration points.

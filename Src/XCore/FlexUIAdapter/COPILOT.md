@@ -102,19 +102,19 @@ FLEx to leverage XCore's plugin architecture and extensibility features.
 - **Data file count**: 2 files
 
 ## Architecture
-TBD — populate from code. See auto-generated hints below.
+C# library with 12 source files.
 
 ## Interop & Contracts
-TBD — populate from code. See auto-generated hints below.
+Uses P/Invoke for cross-boundary calls.
 
 ## Threading & Performance
-TBD — populate from code. See auto-generated hints below.
+Single-threaded or thread-agnostic code. No explicit threading detected.
 
 ## Config & Feature Flags
-TBD — populate from code. See auto-generated hints below.
+No explicit configuration or feature flags detected.
 
 ## Test Index
-TBD — populate from code. See auto-generated hints below.
+No tests found in this folder. Tests may be in a separate Test folder or solution.
 
 ## Usage Hints
-TBD — populate from code. See auto-generated hints below.
+Library component. Reference in consuming projects. See Dependencies section for integration points.

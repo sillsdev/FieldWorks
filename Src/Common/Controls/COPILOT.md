@@ -190,19 +190,19 @@ support complex data-driven interfaces through declarative XML specifications.
 - **Data file count**: 95 files
 
 ## Architecture
-TBD — populate from code. See auto-generated hints below.
+C# library with 276 source files. Contains 5 subprojects: XMLViews, FwControls, Widgets....
 
 ## Interop & Contracts
-TBD — populate from code. See auto-generated hints below.
+No explicit interop boundaries detected. Pure managed or native code.
 
 ## Threading & Performance
-TBD — populate from code. See auto-generated hints below.
+Threading model: async/await, UI thread marshaling.
 
 ## Config & Feature Flags
-TBD — populate from code. See auto-generated hints below.
+No explicit configuration or feature flags detected.
 
 ## Test Index
-TBD — populate from code. See auto-generated hints below.
+Test projects: XMLViewsTests, FwControlsTests, WidgetsTests, DetailControlsTests. 36 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
 
 ## Usage Hints
-TBD — populate from code. See auto-generated hints below.
+Library component. Reference in consuming projects. See Dependencies section for integration points.
