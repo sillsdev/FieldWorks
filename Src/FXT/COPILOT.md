@@ -1,161 +1,157 @@
 ---
-last-reviewed: 2025-10-30
+last-reviewed: 2025-10-31
 last-verified-commit: 9611cf70e
 status: draft
 ---
 
-# FXT
+# FXT COPILOT summary
 
 ## Purpose
-FieldWorks Transform (FXT) assets and XSLT-based transformation infrastructure.
-Provides XSLT stylesheets and transformation utilities for converting and presenting linguistic
-data in different formats. Used extensively for generating reports, exports, and formatted output
-from the FieldWorks data model.
+FieldWorks Transform (FXT) infrastructure for XML-based data export and import using template-driven transformations. XDumper handles XML export of FieldWorks data with customizable filtering and formatting. XUpdater handles XML import for updating FieldWorks data. FilterStrategy provides filtering logic for selective export/import. ChangedDataItem tracks data changes. FxtExe provides command-line tool for FXT operations. Enables bulk data operations, custom exports, and data synchronization scenarios using declarative XML templates.
 
 ## Architecture
-C# library with 13 source files. Contains 2 subprojects: FxtExe, FxtDll.
+C# libraries and executable with XML transformation engine. FxtDll/ contains core library (XDumper, XUpdater, FilterStrategy, ChangedDataItem - 4716 lines), FxtExe/ contains command-line tool (main.cs). FxtReference.doc provides documentation. Test project FxtDllTests validates functionality. Uses template-driven approach: XML templates control which data to export/import and how to format it.
 
 ## Key Components
-### Key Classes
-- **main**
-- **ChangedDataItem**
-- **XDumper**
-- **XUpdater**
-- **FXTElementSearchProperties**
-- **XUpdaterException**
-- **ConstraintFilterStrategy**
-- **FxtTestBase**
-- **QuickTests**
-- **M3ParserDumpTests**
-
-### Key Interfaces
-- **IFilterStrategy**
+- **XDumper** class (XDumper.cs): XML export engine
+  - Exports FieldWorks data to XML using FXT templates
+  - Caches custom fields and writing system data for performance
+  - ProgressHandler delegate for progress reporting
+  - Supports multiple output formats: XML, SFM (Standard Format Marker)
+  - Filtering via IFilterStrategy[]
+  - WritingSystemAttrStyles enum: controls writing system representation
+  - StringFormatOutputStyle enum: controls string formatting
+  - Template-driven: XML template defines what to export and structure
+- **XUpdater** class (XUpdater.cs): XML import/update engine
+  - Imports XML data back into FieldWorks database
+  - Applies updates based on FXT templates
+  - Reverse of XDumper functionality
+- **FilterStrategy** (FilterStrategy.cs): Filter logic interface/implementation
+  - IFilterStrategy interface for filtering data during export/import
+  - Enables selective operations (e.g., export only changed data)
+- **ChangedDataItem** (ChangedDataItem.cs): Change tracking
+  - Tracks modifications to FieldWorks data
+  - Used by filters to identify changed objects
+- **FxtExe** (FxtExe/main.cs): Command-line tool
+  - Executable interface to FXT library
+  - Runs export/import operations from command line
+  - App.ico icon for executable
 
 ## Technology Stack
-- C# .NET
-- XSLT transformation engine
-- XML processing
+- C# .NET Framework 4.6.2 (assumed based on repo)
+- OutputType: FxtDll.dll (Library), FxtExe.exe (Executable)
+- SIL.LCModel for data access
+- System.Xml for XML processing
+- ICU normalization (Icu.Normalization)
 
 ## Dependencies
-- Depends on: Common utilities, data model
-- Used by: Export/import pipelines, document generation
+
+### Upstream (consumes)
+- **SIL.LCModel**: Language and Culture Model (LcmCache, ICmObject)
+- **SIL.LCModel.Application**: Application services
+- **SIL.LCModel.Infrastructure**: Infrastructure layer
+- **SIL.LCModel.DomainServices**: Domain services
+- **SIL.LCModel.Core.Cellar**: Core data types
+- **SIL.LCModel.Core.Text**: Text handling
+- **SIL.LCModel.Core.WritingSystems**: Writing systems
+- **Common/FwUtils**: FieldWorks utilities
+- **System.Xml**: XML parsing and generation
+
+### Downstream (consumed by)
+- **Export operations**: Applications use FXT for data export
+- **Import operations**: Applications use FXT for data import
+- **FxtExe**: Command-line users
+- **Custom bulk operations**: Scripts and tools using FXT templates
 
 ## Interop & Contracts
-Uses COM for cross-boundary calls.
+- **IFilterStrategy**: Contract for filtering data during export/import
+- **ProgressHandler**: Delegate for progress callbacks
+- **ICmObject**: FieldWorks data objects exported/imported
+- **XML templates**: Declarative contracts for export/import structure
 
 ## Threading & Performance
-Threading model: explicit threading, UI thread marshaling, synchronization.
+- **Caching**: XDumper caches custom fields and writing system data per instance
+  - New XDumper per export recommended if database changes
+- **Progress reporting**: ProgressHandler enables responsive UI during long operations
+- **Cancellation**: m_cancelNow flag for operation cancellation
+- **Performance**: Template-driven approach efficient for bulk operations
 
 ## Config & Feature Flags
-Config files: Phase1-Sena3-bo-ConfiguredDictionary.xml, Phase2-Sena3-bo-ConfiguredDictionary.xml.
+- **WritingSystemAttrStyles**: Controls writing system representation in output
+- **StringFormatOutputStyle**: Controls string formatting (None, etc.)
+- **m_outputGuids**: Boolean controlling GUID output
+- **m_requireClassTemplatesForEverything**: Strict template enforcement
+- **Format**: "xml" or "sf" (Standard Format Marker)
 
 ## Build Information
-- Two C# projects: executable (FxtExe) and library (FxtDll)
-- Build with MSBuild or Visual Studio
-- Command-line transformation tool
+- **Project files**: FxtDll/FxtDll.csproj (Library), FxtExe/FxtExe.csproj (Executable)
+- **Test project**: FxtDll/FxtDllTests/
+- **Output**: FxtDll.dll, FxtExe.exe
+- **Build**: Via top-level FW.sln
+- **Documentation**: FxtReference.doc (127KB)
 
 ## Interfaces and Data Models
 
-- **IFilterStrategy** (interface)
-  - Path: `FxtDll/FilterStrategy.cs`
-  - Public interface definition
+- **XDumper** (XDumper.cs)
+  - Purpose: Export FieldWorks data to XML using FXT templates
+  - Inputs: LcmCache, XML template, root object, filters, output format
+  - Outputs: XML file or stream with exported data
+  - Notes: Create new instance per export for cache freshness
 
-- **ChangedDataItem** (class)
-  - Path: `FxtDll/ChangedDataItem.cs`
-  - Public class implementation
+- **IFilterStrategy** (FilterStrategy.cs)
+  - Purpose: Contract for filtering objects during export/import
+  - Inputs: ICmObject to evaluate
+  - Outputs: bool (true to include, false to exclude)
+  - Notes: Multiple filters can be applied (m_filters array)
 
-- **ConstraintFilterStrategy** (class)
-  - Path: `FxtDll/FilterStrategy.cs`
-  - Public class implementation
+- **XUpdater** (XUpdater.cs)
+  - Purpose: Import XML data into FieldWorks database using FXT templates
+  - Inputs: LcmCache, XML data file, FXT template
+  - Outputs: Updated database
+  - Notes: Reverse of XDumper
 
-- **FXTElementSearchProperties** (class)
-  - Path: `FxtDll/XUpdater.cs`
-  - Public class implementation
+- **ChangedDataItem** (ChangedDataItem.cs)
+  - Purpose: Track data changes for change-based exports
+  - Inputs: Object identifier, change type
+  - Outputs: Change tracking data
+  - Notes: Used by filters to export only changed data
 
-- **StandardFormat** (class)
-  - Path: `FxtDll/FxtDllTests/StandFormatExportTests.cs`
-  - Public class implementation
-
-- **XDumper** (class)
-  - Path: `FxtDll/XDumper.cs`
-  - Public class implementation
-
-- **XUpdater** (class)
-  - Path: `FxtDll/XUpdater.cs`
-  - Public class implementation
-
-- **XUpdaterException** (class)
-  - Path: `FxtDll/XUpdater.cs`
-  - Public class implementation
-
-- **main** (class)
-  - Path: `FxtExe/main.cs`
-  - Public class implementation
-
-- **StringFormatOutputStyle** (enum)
-  - Path: `FxtDll/XDumper.cs`
-
-- **WritingSystemAttrStyles** (enum)
-  - Path: `FxtDll/XDumper.cs`
-
-- **NormalizeOutput** (xslt)
-  - Path: `FxtDll/FxtDllTests/NormalizeOutput.xsl`
-  - XSLT transformation template
+- **ProgressHandler delegate**
+  - Purpose: Progress callback during long export/import operations
+  - Inputs: object sender
+  - Outputs: void (notification only)
+  - Notes: Enables responsive UI with progress feedback
 
 ## Entry Points
-- **FxtExe** - Command-line tool for applying transforms
-- **FxtDll** - Library for embedding transformation capabilities
+- **FxtExe.exe**: Command-line tool for FXT operations
+- **XDumper**: Library entry point for XML export
+- **XUpdater**: Library entry point for XML import
+- Referenced by applications needing bulk data operations
 
 ## Test Index
-Test projects: FxtDllTests. 6 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+- **Test project**: FxtDll/FxtDllTests/
+- **Run tests**: `dotnet test FxtDll/FxtDllTests/` or Visual Studio Test Explorer
+- **Coverage**: XDumper, XUpdater, filtering
 
 ## Usage Hints
-Console application. Build and run via command line or Visual Studio. See Entry Points section.
+- Create FXT XML template defining export/import structure
+- Instantiate XDumper with LcmCache and template
+- Call export method with root object and filters
+- Use IFilterStrategy for selective exports (e.g., changed data only)
+- FxtExe for command-line batch operations
+- See FxtReference.doc for template syntax and examples
+- Create new XDumper per export if database changes (caching)
 
 ## Related Folders
-- **Transforms/** - Contains XSLT files and transformation assets used by FXT
-- **DocConvert/** - Document conversion that may use FXT transformations
-- **ParatextImport/** - May use FXT for data transformation during import
+- **Transforms/**: XSLT stylesheets that may complement FXT operations
+- **ParatextImport/**: Specialized import (may use FXT infrastructure)
+- Applications using FXT for export/import
 
 ## References
-
-- **Project files**: FxtDll.csproj, FxtDllTests.csproj, FxtExe.csproj
-- **Target frameworks**: net462
-- **Key C# files**: AssemblyInfo.cs, AssemblyInfo.cs, ChangedDataItem.cs, FilterStrategy.cs, FxtTestBase.cs, M3ParserDumpTests.cs, SimpleTests.cs, XDumper.cs, XUpdater.cs, main.cs
-- **XSLT transforms**: NormalizeOutput.xsl
-- **XML data/config**: Phase1-Sena3-bo-ConfiguredDictionary.xml, Phase2-Sena3-bo-ConfiguredDictionary.xml, TLPParser.xml, TLPSimpleGuidsAnswer.xml, TLPSketchGen.xml
-- **Source file count**: 13 files
-- **Data file count**: 6 files
-
-## References (auto-generated hints)
-- Project files:
-  - Src/FXT/FxtDll/FxtDll.csproj
-  - Src/FXT/FxtDll/FxtDllTests/FxtDllTests.csproj
-  - Src/FXT/FxtExe/FxtExe.csproj
-- Key C# files:
-  - Src/FXT/FxtDll/AssemblyInfo.cs
-  - Src/FXT/FxtDll/ChangedDataItem.cs
-  - Src/FXT/FxtDll/FilterStrategy.cs
-  - Src/FXT/FxtDll/FxtDllTests/DumperTests.cs
-  - Src/FXT/FxtDll/FxtDllTests/FxtTestBase.cs
-  - Src/FXT/FxtDll/FxtDllTests/M3ParserDumpTests.cs
-  - Src/FXT/FxtDll/FxtDllTests/M3SketchDumpTests.cs
-  - Src/FXT/FxtDll/FxtDllTests/SimpleTests.cs
-  - Src/FXT/FxtDll/FxtDllTests/StandFormatExportTests.cs
-  - Src/FXT/FxtDll/XDumper.cs
-  - Src/FXT/FxtDll/XUpdater.cs
-  - Src/FXT/FxtExe/AssemblyInfo.cs
-  - Src/FXT/FxtExe/main.cs
-- Data contracts/transforms:
-  - Src/FXT/FxtDll/FxtDllTests/ExpectedResults/Phase1-Sena3-bo-ConfiguredDictionary.xml
-  - Src/FXT/FxtDll/FxtDllTests/ExpectedResults/Phase2-Sena3-bo-ConfiguredDictionary.xml
-  - Src/FXT/FxtDll/FxtDllTests/ExpectedResults/TLPParser.xml
-  - Src/FXT/FxtDll/FxtDllTests/ExpectedResults/TLPSimpleGuidsAnswer.xml
-  - Src/FXT/FxtDll/FxtDllTests/ExpectedResults/TLPSketchGen.xml
-  - Src/FXT/FxtDll/FxtDllTests/NormalizeOutput.xsl
-## Code Evidence
-*Analysis based on scanning 13 source files*
-
-- **Classes found**: 13 public classes
-- **Interfaces found**: 1 public interfaces
-- **Namespaces**: SIL.FieldWorks.Common.FXT
+- **Project files**: FxtDll/FxtDll.csproj, FxtExe/FxtExe.csproj
+- **Test project**: FxtDll/FxtDllTests/
+- **Documentation**: FxtReference.doc (127KB reference manual)
+- **Key C# files**: FxtDll/XDumper.cs, FxtDll/XUpdater.cs, FxtDll/FilterStrategy.cs, FxtDll/ChangedDataItem.cs, FxtExe/main.cs
+- **Total lines (FxtDll)**: 4716
+- **Output**: FxtDll.dll, FxtExe.exe
+- **Namespace**: SIL.FieldWorks.Common.FXT
