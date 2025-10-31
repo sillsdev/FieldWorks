@@ -1,216 +1,159 @@
 ---
-last-reviewed: 2025-10-30
+last-reviewed: 2025-10-31
 last-verified-commit: 9611cf70e
 status: draft
 ---
 
-# FdoUi
+# FdoUi COPILOT summary
 
 ## Purpose
-User interface components for FieldWorks Data Objects (FDO/LCM).
-Provides specialized UI controls for editing and displaying data model objects, including
-custom field management dialogs (CustomFieldDlg), chooser dialogs for selecting data objects,
-and editors for complex data types. Bridges the data layer with the presentation layer.
+User interface components for FieldWorks Data Objects (FDO/LCModel). Provides specialized UI controls, dialogs, and view constructors for editing and displaying linguistic data model objects. CmObjectUi base class and subclasses (LexEntryUi, PartOfSpeechUi, ReversalIndexEntryUi, etc.) implement object-specific UI behavior. Editors for complex data (BulkPosEditor, InflectionClassEditor, InflectionFeatureEditor, PhonologicalFeatureEditor) provide specialized editing interfaces. DummyCmObject for testing, FwLcmUI for LCModel UI integration, ProgressBarWrapper for progress reporting. Essential UI layer between data model and applications.
 
 ## Architecture
-C# library with 31 source files. Contains 1 subprojects: FdoUi.
+C# class library (.NET Framework 4.6.2) with UI components for data objects. CmObjectUi base class with factory pattern for creating object-specific UI instances (m_subclasses dictionary maps clsids). IFwGuiControl interface for dynamically initialized GUI controls. VcFrags enum defines view fragments supported by all objects. Test project FdoUiTests validates functionality. 8408 lines of UI code.
 
 ## Key Components
-### Key Classes
-- **InflectionFeatureEditor**
-- **WfiWordformUi**
-- **InflectionClassEditor**
-- **BulkPosEditorBase**
-- **BulkPosEditor**
-- **LexPronunciationUi**
-- **PartOfSpeechUi**
-- **CmObjectUi**
-- **CmObjectVc**
-- **CmAnalObjectVc**
-
-### Key Interfaces
-- **IFwGuiControl**
+- **CmObjectUi** class (FdoUiCore.cs): Base UI class for all data objects
+  - Implements IxCoreColleague for XCore command routing
+  - Factory pattern: maps clsid to UI subclass via m_subclasses dictionary
+  - Mediator, PropertyTable, LcmCache integration
+  - IVwViewConstructor m_vc for view construction
+  - Subclasses override for object-specific UI behavior
+- **IFwGuiControl** interface (FdoUiCore.cs): Dynamic GUI control initialization
+  - Init(): Configure with mediator, property table, XML config, source object
+  - Launch(): Start control operation
+  - Enables plugin-style GUI components
+- **VcFrags** enum (FdoUiCore.cs): View fragment identifiers
+  - kfragShortName, kfragName: Name display variants
+  - kfragInterlinearName, kfragInterlinearAbbr: Interlinear view fragments
+  - kfragFullMSAInterlinearname: MSA (Morphosyntactic Analysis) display
+  - kfragHeadWord: Lexical entry headword
+  - kfragPosAbbrAnalysis: Part of speech abbreviation
+- **LexEntryUi** (LexEntryUi.cs): Lexical entry UI behavior
+- **PartOfSpeechUi** (PartOfSpeechUi.cs): Part of speech UI behavior
+- **ReversalIndexEntryUi** (ReversalIndexEntryUi.cs): Reversal entry UI
+- **LexPronunciationUi** (LexPronunciationUi.cs): Pronunciation UI
+- **FsFeatDefnUi** (FsFeatDefnUi.cs): Feature definition UI
+- **BulkPosEditor** (BulkPosEditor.cs): Bulk part-of-speech editing
+- **InflectionClassEditor** (InflectionClassEditor.cs): Inflection class editing
+- **InflectionFeatureEditor** (InflectionFeatureEditor.cs): Inflection feature editing
+- **PhonologicalFeatureEditor** (PhonologicalFeatureEditor.cs): Phonological feature editing
+- **DummyCmObject** (DummyCmObject.cs): Test double for data objects
+- **FwLcmUI** (FwLcmUI.cs): FieldWorks LCModel UI integration
+- **ProgressBarWrapper** (ProgressBarWrapper.cs): Progress reporting UI
+- **FdoUiStrings** (FdoUiStrings.Designer.cs): Localized UI strings
 
 ## Technology Stack
-- C# .NET WinForms/WPF
-- UI controls and dialogs
-- Data binding to FieldWorks data model
+- C# .NET Framework 4.6.2 (net462)
+- OutputType: Library
+- Windows Forms (System.Windows.Forms)
+- XCore for command routing (IxCoreColleague)
+- Views engine integration (IVwViewConstructor)
+- LCModel for data access
 
 ## Dependencies
-- Depends on: Cellar (data model), Common (UI infrastructure), DbExtend (custom fields)
-- Used by: xWorks, LexText, and other applications displaying data objects
+
+### Upstream (consumes)
+- **SIL.LCModel**: Data model (ICmObject, LcmCache)
+- **SIL.LCModel.DomainServices**: Domain services
+- **SIL.LCModel.Infrastructure**: Infrastructure layer
+- **Common/Framework**: Application framework (Mediator, PropertyTable)
+- **Common/Controls**: Common controls
+- **Common/RootSites**: View hosting
+- **Common/FwUtils**: Utilities
+- **LexText/Controls**: Lexicon controls
+- **XCore**: Command routing
+- **Windows Forms**: UI framework
+
+### Downstream (consumed by)
+- **xWorks**: Uses FdoUi for data object editing
+- **LexText**: Lexicon editing uses object-specific UI
+- Any application displaying/editing FieldWorks data objects
 
 ## Interop & Contracts
-Uses COM for cross-boundary calls.
+- **IFwGuiControl**: Contract for dynamically initialized GUI controls
+- **IxCoreColleague**: XCore command routing integration
+- **IVwViewConstructor**: View construction for Views engine
+- Factory pattern via m_subclasses for object-specific UI
 
 ## Threading & Performance
-Threading model: UI thread marshaling, synchronization.
+- **UI thread required**: All UI operations
+- **Factory caching**: m_subclasses dictionary caches clsid mappings
+- **Performance**: UI components optimized for responsive editing
 
 ## Config & Feature Flags
-No explicit configuration or feature flags detected.
+- **XML configuration**: IFwGuiControl.Init() accepts XML config nodes
+- **VcFrags enum**: Fragment identifiers control view construction
+- No explicit feature flags
 
 ## Build Information
-- C# class library with UI components
-- Includes comprehensive test suite
-- Build with MSBuild or Visual Studio
+- **Project file**: FdoUi.csproj (net462, OutputType=Library)
+- **Test project**: FdoUiTests/
+- **Output**: FdoUi.dll
+- **Build**: Via top-level FW.sln
+- **Run tests**: `dotnet test FdoUiTests/`
 
 ## Interfaces and Data Models
 
-- **IFwGuiControl** (interface)
-  - Path: `FdoUiCore.cs`
-  - Public interface definition
+- **CmObjectUi** (FdoUiCore.cs)
+  - Purpose: Base class for object-specific UI behavior
+  - Inputs: Mediator, PropertyTable, ICmObject, LcmCache
+  - Outputs: UI operations, command handling
+  - Notes: Factory pattern creates subclass instances based on clsid
 
-- **BulkPosEditor** (class)
-  - Path: `BulkPosEditor.cs`
-  - Public class implementation
+- **IFwGuiControl** (FdoUiCore.cs)
+  - Purpose: Contract for dynamically initialized GUI controls
+  - Inputs: Init(mediator, propertyTable, configurationNode, sourceObject)
+  - Outputs: Configured GUI control via Launch()
+  - Notes: Enables plugin-style extensibility
 
-- **BulkPosEditorBase** (class)
-  - Path: `BulkPosEditor.cs`
-  - Public class implementation
+- **VcFrags enum** (FdoUiCore.cs)
+  - Purpose: View fragment identifiers for view construction
+  - Values: kfragShortName, kfragName, kfragInterlinearName, etc.
+  - Notes: All CmObject subclasses support these fragments
 
-- **CmAnalObjectVc** (class)
-  - Path: `FdoUiCore.cs`
-  - Public class implementation
+- **LexEntryUi** (LexEntryUi.cs)
+  - Purpose: Lexical entry-specific UI behavior
+  - Inputs: LexEntry object
+  - Outputs: Headword display, entry editing UI
+  - Notes: Overrides CmObjectUi for lexical entries
 
-- **CmNameAbbrObjVc** (class)
-  - Path: `FdoUiCore.cs`
-  - Public class implementation
+- **BulkPosEditor** (BulkPosEditor.cs)
+  - Purpose: Bulk editing of part-of-speech assignments
+  - Inputs: Multiple objects, POS values
+  - Outputs: Mass POS updates
+  - Notes: Efficiency for large-scale edits
 
-- **CmNamedObjVc** (class)
-  - Path: `FdoUiCore.cs`
-  - Public class implementation
-
-- **CmObjectUi** (class)
-  - Path: `FdoUiCore.cs`
-  - Public class implementation
-
-- **CmObjectVc** (class)
-  - Path: `FdoUiCore.cs`
-  - Public class implementation
-
-- **CmPossRefVc** (class)
-  - Path: `FdoUiCore.cs`
-  - Public class implementation
-
-- **CmPossibilityUi** (class)
-  - Path: `FdoUiCore.cs`
-  - Public class implementation
-
-- **CmVernObjectVc** (class)
-  - Path: `FdoUiCore.cs`
-  - Public class implementation
-
-- **InflectionClassEditor** (class)
-  - Path: `InflectionClassEditor.cs`
-  - Public class implementation
-
-- **InflectionFeatureEditor** (class)
-  - Path: `InflectionFeatureEditor.cs`
-  - Public class implementation
-
-- **LexPronunciationUi** (class)
-  - Path: `LexPronunciationUi.cs`
-  - Public class implementation
-
-- **MoDerivAffMsaUi** (class)
-  - Path: `FdoUiCore.cs`
-  - Public class implementation
-
-- **MoInflAffMsaUi** (class)
-  - Path: `FdoUiCore.cs`
-  - Public class implementation
-
-- **MoMorphSynAnalysisUi** (class)
-  - Path: `FdoUiCore.cs`
-  - Public class implementation
-
-- **MoStemMsaUi** (class)
-  - Path: `FdoUiCore.cs`
-  - Public class implementation
-
-- **MsaVc** (class)
-  - Path: `FdoUiCore.cs`
-  - Public class implementation
-
-- **PartOfSpeechUi** (class)
-  - Path: `PartOfSpeechUi.cs`
-  - Public class implementation
-
-- **WfiWordformUi** (class)
-  - Path: `WfiWordformUi.cs`
-  - Public class implementation
-
-- **VcFrags** (enum)
-  - Path: `FdoUiCore.cs`
+- **InflectionClassEditor, InflectionFeatureEditor, PhonologicalFeatureEditor**
+  - Purpose: Specialized editors for linguistic features
+  - Inputs: Feature definitions, values
+  - Outputs: Feature assignments
+  - Notes: Complex editing interfaces for morphological/phonological data
 
 ## Entry Points
-- Provides UI controls and dialogs for data object management
-- Custom field editors and data visualization components
+Referenced as library for data object UI. CmObjectUi factory creates appropriate UI subclass instances.
 
 ## Test Index
-Test projects: FdoUiTests. 1 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+- **Test project**: FdoUiTests/
+- **Run tests**: `dotnet test FdoUiTests/`
+- **Coverage**: Object UI behavior, editors, dummy objects
 
 ## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- Use CmObjectUi factory to get appropriate UI for any ICmObject
+- Implement IFwGuiControl for custom dynamic GUI controls
+- VcFrags enum for consistent view fragment usage
+- Extend CmObjectUi subclasses for custom object UI behavior
+- DummyCmObject for unit testing UI components
 
 ## Related Folders
-- **Cellar/** - Core data model that FdoUi visualizes
-- **DbExtend/** - Custom field extensions that FdoUi provides UI for
-- **FwCoreDlgs/** - Additional dialogs that work with FdoUi components
-- **xWorks/** - Uses FdoUi for data object display and editing
+- **LexText/**: Major consumer of FdoUi for lexicon editing
+- **xWorks/**: Uses FdoUi for data display and editing
+- **Common/Controls**: Complementary control library
 
 ## References
-
-- **Project files**: FdoUi.csproj, FdoUiTests.csproj
-- **Target frameworks**: net462
-- **Key C# files**: AssemblyInfo.cs, BulkPosEditor.cs, FdoUiCore.cs, InflectionClassEditor.cs, InflectionFeatureEditor.cs, LexPronunciationUi.cs, PartOfSpeechUi.cs, PhonologicalFeatureEditor.cs, TypeAheadSupportVc.cs, WfiWordformUi.cs
-- **Source file count**: 31 files
-- **Data file count**: 10 files
-
-## References (auto-generated hints)
-- Project files:
-  - Src/FdoUi/FdoUi.csproj
-  - Src/FdoUi/FdoUiTests/FdoUiTests.csproj
-- Key C# files:
-  - Src/FdoUi/AssemblyInfo.cs
-  - Src/FdoUi/BulkPosEditor.cs
-  - Src/FdoUi/Dialogs/CantRestoreLinkedFilesToOriginalLocation.Designer.cs
-  - Src/FdoUi/Dialogs/CantRestoreLinkedFilesToOriginalLocation.cs
-  - Src/FdoUi/Dialogs/ConfirmDeleteObjectDlg.cs
-  - Src/FdoUi/Dialogs/ConflictingSaveDlg.Designer.cs
-  - Src/FdoUi/Dialogs/ConflictingSaveDlg.cs
-  - Src/FdoUi/Dialogs/FilesToRestoreAreOlder.Designer.cs
-  - Src/FdoUi/Dialogs/FilesToRestoreAreOlder.cs
-  - Src/FdoUi/Dialogs/MergeObjectDlg.cs
-  - Src/FdoUi/Dialogs/RelatedWords.cs
-  - Src/FdoUi/Dialogs/RestoreLinkedFilesToProjectsFolder.Designer.cs
-  - Src/FdoUi/Dialogs/RestoreLinkedFilesToProjectsFolder.cs
-  - Src/FdoUi/Dialogs/SummaryDialogForm.cs
-  - Src/FdoUi/DummyCmObject.cs
-  - Src/FdoUi/FdoUiCore.cs
-  - Src/FdoUi/FdoUiStrings.Designer.cs
-  - Src/FdoUi/FdoUiTests/FdoUiTests.cs
-  - Src/FdoUi/FsFeatDefnUi.cs
-  - Src/FdoUi/FwLcmUI.cs
-  - Src/FdoUi/InflectionClassEditor.cs
-  - Src/FdoUi/InflectionFeatureEditor.cs
-  - Src/FdoUi/LexEntryUi.cs
-  - Src/FdoUi/LexPronunciationUi.cs
-  - Src/FdoUi/PartOfSpeechUi.cs
-- Data contracts/transforms:
-  - Src/FdoUi/Dialogs/CantRestoreLinkedFilesToOriginalLocation.resx
-  - Src/FdoUi/Dialogs/ConfirmDeleteObjectDlg.resx
-  - Src/FdoUi/Dialogs/ConflictingSaveDlg.resx
-  - Src/FdoUi/Dialogs/FilesToRestoreAreOlder.resx
-  - Src/FdoUi/Dialogs/MergeObjectDlg.resx
-  - Src/FdoUi/Dialogs/RelatedWords.resx
-  - Src/FdoUi/Dialogs/RestoreLinkedFilesToProjectsFolder.resx
-  - Src/FdoUi/Dialogs/SummaryDialogForm.resx
-  - Src/FdoUi/FdoUiStrings.resx
-  - Src/FdoUi/Properties/Resources.resx
-## Code Evidence
-*Analysis based on scanning 25 source files*
-
-- **Classes found**: 20 public classes
-- **Interfaces found**: 1 public interfaces
-- **Namespaces**: SIL.FieldWorks.FdoUi, SIL.FieldWorks.FdoUi.Dialogs
+- **Project files**: FdoUi.csproj (net462), FdoUiTests/
+- **Target frameworks**: .NET Framework 4.6.2
+- **Key C# files**: FdoUiCore.cs, LexEntryUi.cs, PartOfSpeechUi.cs, BulkPosEditor.cs, InflectionClassEditor.cs, and others
+- **Total lines of code**: 8408
+- **Output**: FdoUi.dll
+- **Namespace**: SIL.FieldWorks.FdoUi
