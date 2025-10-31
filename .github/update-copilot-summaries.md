@@ -27,6 +27,13 @@ Optional frontmatter fields (use sparingly):
 - related-folders: ["Src/Common/Controls", "Src/XCore"]
 - tags: [interop, threading, xml]
 
+## Accuracy principles
+
+- Never speculate. If the code or assets do not confirm a fact, capture the gap with an explicit `FIXME(<topic>): ...` instead of inventing an answer.
+- When a folder contains only trivial stubs or archived artifacts, state that plainly and list the actual files under `## References` so readers can verify the claim.
+- Prefer grounded references to specific files, symbols, or project entries over generic phrases like "utilities" or "helpers".
+- Remove a `FIXME` only after verifying the information against source files, project metadata, or other authoritative artifacts—never by replacing it with a guess.
+
 ## When to update COPILOT.md files
 
 **Update threshold (substantive change gates)**: COPILOT.md files should be updated when there are **substantive changes** to a folder:
@@ -55,6 +62,8 @@ Optional frontmatter fields (use sparingly):
 ## Canonical COPILOT.md skeleton (required headings)
 
 Use this skeleton for all `Src/**/COPILOT.md` files. Keep sections concise, but prefer concrete, verifiable details.
+
+> Keep the sections in this exact order as per `.github\scaffold_copilot_markdown.py`. Remove scaffold leftovers such as `## Auto Summary`, duplicated `## References`, or any headings that are not part of this template.
 
 ```markdown
 ---
@@ -120,6 +129,22 @@ Authoritative file lists: project files, key sources/headers, data artifacts.
 ## Systematic validation approach (scan everything)
 
 When performing comprehensive COPILOT.md updates (e.g., repository-wide validation), use this systematic process:
+
+### Pass 1 – Comprehension
+- Read the existing `COPILOT.md` alongside every file in the folder (and immediate subfolders) to build a grounded understanding of the main inputs, outputs, and classes.
+- Capture a draft Purpose/Architecture summary tied to explicit files. Whenever information is missing, add `FIXME(<topic>)` markers instead of guessing.
+
+### Pass 2 – Contracts, dependencies, and edge cases
+- Inspect project files, includes/usings, and interop hooks to document upstream/downstream dependencies, configuration knobs, XML/data contracts, and boundary conditions.
+- Replace placeholder dependency terms with the concrete library/header (e.g., `Include/xmlparse.h`, `Lib/DataWriterRgb.lib`).
+- Note any unusual behaviors (binary parsing, marshaling, threading) with references to the relevant files.
+
+### Pass 3 – Synthesis and cleanup
+- Re-architect the `COPILOT.md` narrative: ensure required sections exist in canonical order, trim duplication, and resolve as many `FIXME` markers as possible with verified evidence.
+- If unresolved `FIXME` entries remain, explain the blocker inline so the next reviewer knows what is missing.
+- Perform a final scan of the folder to confirm every significant file/class is reflected in the doc and dependencies align with project metadata.
+
+Add extra focused passes when warranted (e.g., dedicated performance review). The key is to stay scoped to the folder during each pass—close unrelated files and searches until the current folder is complete.
 
 ### 1. Analyze every folder's actual contents (code + XML)
 For each `Src/` folder, examine all relevant files:
@@ -199,11 +224,11 @@ This provides Copilot with authoritative, verifiable information about folder co
    - **Related Folders**: Cross-references to other `Src/` folders (bidirectional)
    - **References**: Authoritative section with concrete file names, project files, and dependencies
 
-4. Remove FIXME markers once information has been validated (and prefer including file paths inline for context when helpful to Copilot):
-   - Replace `FIXME(accuracy): ...` with verified information from code analysis
-   - Replace `FIXME(build): ...` with tested build commands
-   - Replace `FIXME(components): ...` with actual file listings
-   - Only keep FIXME markers for items requiring domain expert knowledge
+4. Resolve `FIXME` markers deliberately:
+   - Replace `FIXME(accuracy): ...` with verified information drawn from the inspected files.
+   - Replace `FIXME(build): ...` only after running or validating the documented command.
+   - Replace `FIXME(components): ...` with the actual file listings or authoritative references.
+   - Leave a `FIXME` in place **only** when SME input or future work is required, and annotate why it could not be resolved.
 
 5. Use longer descriptions when they raise accuracy.
    - Prefer brevity, but if a few extra sentences materially improve precision (especially for architecture, interop, or data contracts), include them.
@@ -298,7 +323,7 @@ Before committing COPILOT.md changes, verify:
 ✓ **Cross-references bidirectional**: If A references B, B should reference A
 ✓ **Required headings present**: Matches the canonical skeleton
 ✓ **Consistency with src-catalog.md**: Short description matches catalog entry
-✓ **No vague FIXME markers**: Only keep FIXMEs for items requiring domain expertise
+✓ **FIXME markers are purposeful**: Remaining FIXMEs explain why verification is blocked and point to needed evidence; none mask speculation.
 ✓ **File lists current**: Key files section reflects actual directory contents
 
 Always validate that your code and data changes align with the documented architecture and contracts. If they don't, either adjust your changes or update the documentation to reflect the new reality.
