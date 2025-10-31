@@ -1,258 +1,192 @@
 ---
-last-reviewed: 2025-10-30
-last-verified-commit: 9611cf70e
+last-reviewed: 2025-10-31
+last-verified-commit: cccaeb6
 status: draft
 ---
 
-# Interlinear
+# Interlinear (ITextDll) COPILOT summary
 
 ## Purpose
-Interlinear text analysis and morpheme-by-morpheme glossing functionality.
-Implements the interlinear text editor (InterlinDocChart, InterlinVc), morpheme analysis tools,
-glossing interfaces, concordance views (ConcordanceControl), and text import capabilities.
-Central to linguistic text analysis workflows in FLEx, enabling detailed morphosyntactic
-annotation of natural language texts.
+Comprehensive interlinear text analysis library providing core functionality for glossing, analyzing, and annotating texts word-by-word. Supports interlinear display (baseline text, morphemes, glosses, word categories, free translation), text analysis workflows, concordance search, complex concordance patterns, BIRD format import/export, and text configuration. Central to FLEx text analysis features. Massive 49.6K line library with multiple specialized subsystems: InterlinDocForAnalysis (main analysis UI), Sandbox (word-level editing), ConcordanceControl (search), ComplexConc* (pattern matching), TextTaggingView (tagging), TreebarControl (navigation), PrintLayout (export). Namespace: SIL.FieldWorks.IText (project name ITextDll).
 
 ## Architecture
-C# library with 124 source files. Contains 1 subprojects: ITextDll.
+C# library (net462, OutputType=Library) with modular subsystem design. InterlinDocRootSiteBase abstract base for interlinear views. InterlinDocForAnalysis main analysis UI (extends InterlinDocRootSiteBase). Sandbox component for word-level glossing/analysis. ConcordanceControl/ConcordanceWordList for text search. ComplexConc* classes for advanced pattern concordance. TextTaggingView for text tagging/annotation. TreebarControl for text/paragraph navigation. InterlinPrintChild/PrintLayoutView for export. InterlinVc view constructors for rendering. Heavily integrated with LCModel (segments, analyses, glosses), Views rendering, XCore framework.
 
 ## Key Components
-### Key Classes
-- **InterlinPrintChild**
-- **InterlinPrintVc**
-- **ConcordanceControl**
-- **OccurrencesOfSelectedUnit**
-- **MatchingConcordanceItems**
-- **InterlinearTextsRecordClerk**
-- **InterlinearExportDialog**
-- **InterlinDocChart**
-- **ParseIsCurrentFixer**
-- **ComplexConcLeafNode**
-
-### Key Interfaces
-- **IParaDataLoader**
-- **ISelectOccurrence**
-- **ISetupLineChoices**
-- **IInterlinearTabControl**
-- **IStyleSheet**
-- **IHandleBookmark**
-- **IStTextBookmark**
-- **IInterlinConfigurable**
+- **InterlinDocForAnalysis** (InterlinDocForAnalysis.cs, 2.8K lines): Main interlinear analysis UI
+  - Extends InterlinDocRootSiteBase
+  - Handles word analysis, glossing workflow
+  - Right-click context menus (spelling, note delete)
+  - AddWordsToLexicon mode (glossing vs browsing)
+  - DoSpellCheck integration
+- **InterlinDocRootSiteBase** (InterlinDocRootSiteBase.cs, 3.3K lines): Abstract base for interlinear views
+  - Extends SimpleRootSite
+  - Common interlinear view infrastructure
+  - Selection handling, rendering coordination
+- **Sandbox** (ITextDll likely has Sandbox*.cs files): Word-level editing component
+  - Edit morphemes, glosses, word categories inline
+  - Analysis approval/disapproval
+- **ConcordanceControl** (ConcordanceControl.cs, 1.9K lines): Concordance search UI
+  - Search text occurrences with context
+  - Filter by word, morpheme, gloss
+  - Export results (ConcordanceResultsExporter)
+- **ConcordanceWordList** (ConcordanceWordList.cs, likely hundreds of lines): Word concordance list
+  - List occurrences with sorting
+- **ComplexConc* classes** (multiple files, 10K+ lines combined): Advanced pattern concordance
+  - ComplexConcControl (ComplexConcControl.cs, 770 lines): Pattern editor UI
+  - ComplexConcPatternVc (ComplexConcPatternVc.cs, 699 lines): Pattern rendering
+  - ComplexConcParagraphData (ComplexConcParagraphData.cs, 386 lines): Search data
+  - ComplexConcPatternModel (ComplexConcPatternModel.cs, 265 lines): Pattern model
+  - ComplexConcWordDlg, ComplexConcMorphDlg, ComplexConcTagDlg: Pattern element dialogs
+  - Node classes: ComplexConcPatternNode, ComplexConcGroupNode, ComplexConcLeafNode, ComplexConcOrNode, ComplexConcMorphNode, ComplexConcWordNode, ComplexConcTagNode, ComplexConcWordBdryNode
+  - Complex search patterns (word sequences, morpheme patterns, feature matching)
+- **TextTaggingView** (TextTaggingView.cs, likely 1K+ lines): Text tagging/annotation
+  - Tag portions of text with categories
+  - Tagging UI and display
+- **TreebarControl** (TreebarControl*.cs): Text/paragraph navigation
+  - Tree view for navigating text structure
+  - Paragraph/segment selection
+- **PrintLayout** (InterlinPrintChild.cs, PrintLayoutView*.cs, 5K+ lines combined): Export/print
+  - Layout for printing/exporting interlinear texts
+  - Page breaks, formatting
+- **InterlinVc** (InterlinVc*.cs, likely 3K+ lines): View constructors
+  - Render interlinear lines (baseline, morpheme, gloss, category, etc.)
+  - Styling, column layout
+- **BIRDInterlinearImporter** (BIRDInterlinearImporter.cs, 1.8K lines): BIRD format import
+  - Import interlinear texts from BIRD XML format
+  - Parse analyzed texts, create LCM objects
+- **ChooseAnalysisHandler** (ChooseAnalysisHandler.cs, 747 lines): Analysis selection
+  - Choose among multiple analyses for words
+  - Approval/disapproval logic
+- **ConfigureInterlinDialog** (ConfigureInterlinDialog.cs, likely 500+ lines): Interlinear configuration
+  - Configure which interlinear lines to display
+  - Line ordering, writing systems
+- **ChooseTextWritingSystemDlg** (ChooseTextWritingSystemDlg.cs, 74 lines): Writing system chooser
+  - Select writing systems for text input
 
 ## Technology Stack
-- C# .NET WinForms
-- Complex text layout and rendering
-- Linguistic analysis algorithms
+- C# .NET Framework 4.6.2 (net462)
+- OutputType: Library
+- Windows Forms (custom controls, dialogs)
+- LCModel (data model)
+- Views (rendering engine)
+- XCore (application framework)
 
 ## Dependencies
-- Depends on: Cellar (data model), Common (UI and views), LexText/ParserCore
-- Used by: LexText application for text analysis
+
+### Upstream (consumes)
+- **LCModel**: Data model (IText, IStText, ISegment, IAnalysis, IWfiGloss, IWfiAnalysis, IWfiWordform)
+- **Views**: Rendering engine (IVwRootSite, IVwViewConstructor)
+- **XCore**: Application framework (Mediator, IxCoreColleague)
+- **Common/RootSites**: SimpleRootSite base
+- **Common/ViewsInterfaces**: COM views interfaces
+- **Common/FwUtils**: Utilities
+- **FwCoreDlgControls**: Dialog controls
+
+### Downstream (consumed by)
+- **xWorks**: Interlinear text window
+- **LexTextExe**: FLEx application
+- **Discourse**: Constituent charts (inherits InterlinDocChart)
+- **Linguists**: Text analysis workflows
 
 ## Interop & Contracts
-Uses COM for cross-boundary calls.
+- **IText**: LCModel text object (paragraphs, segments)
+- **IStText**: Structured text (paragraphs)
+- **ISegment**: Text segment (analyses)
+- **IAnalysis**: Word analysis (WfiWordform/WfiAnalysis/WfiGloss/PunctuationForm)
+- **IWfiWordform**: Word form
+- **IWfiAnalysis**: Morphological analysis
+- **IWfiGloss**: Word gloss
+- **InterlinDocRootSiteBase**: Base class for interlinear views
+- **IInterlinConfigurable**: Configuration interface
+- **IxCoreColleague**: XCore colleague pattern
 
 ## Threading & Performance
-Threading model: synchronization.
+- **UI thread**: All operations on UI thread
+- **Lazy loading**: Segments/analyses loaded on demand
+- **Rendering optimization**: Views engine caching
+- **Large texts**: May have performance challenges with very long texts
 
 ## Config & Feature Flags
-Config files: toolConfigurationForITextDllTests.xml.
+- **AddWordsToLexicon mode**: Glossing vs browsing (ksPropertyAddWordsToLexicon)
+- **Interlinear line configuration**: Which lines to display (baseline, morphemes, glosses, categories, translation)
+- **DoSpellCheck**: Spell checking enabled/disabled
 
 ## Build Information
-- C# class library project
-- Build via: `dotnet build ITextDll.csproj` (Note: project named ITextDll)
-- Core component of text analysis features
+- **Project file**: ITextDll.csproj (net462, OutputType=Library)
+- **Test project**: ITextDllTests/
+- **Output**: SIL.FieldWorks.IText.dll
+- **Build**: Via top-level FW.sln or: `msbuild ITextDll.csproj`
+- **Run tests**: `dotnet test ITextDllTests/`
 
 ## Interfaces and Data Models
 
-- **IInterlinearTabControl** (interface)
-  - Path: `InterlinDocRootSiteBase.cs`
-  - Public interface definition
+- **InterlinDocForAnalysis** (InterlinDocForAnalysis.cs)
+  - Purpose: Main interlinear analysis UI
+  - Base: InterlinDocRootSiteBase
+  - Key features: Word analysis, glossing, context menus, spell check
+  - Notes: Partial class (Designer file exists)
 
-- **IParaDataLoader** (interface)
-  - Path: `InterlinVc.cs`
-  - Public interface definition
+- **InterlinDocRootSiteBase** (InterlinDocRootSiteBase.cs)
+  - Purpose: Abstract base for interlinear views
+  - Base: SimpleRootSite
+  - Provides: Common infrastructure, selection handling
+  - Notes: Subclassed by InterlinDocForAnalysis, InterlinDocChart (Discourse)
 
-- **ISelectOccurrence** (interface)
-  - Path: `InterlinDocRootSiteBase.cs`
-  - Public interface definition
+- **ConcordanceControl** (ConcordanceControl.cs)
+  - Purpose: Concordance search UI
+  - Inputs: Search terms, filters
+  - Outputs: Concordance results with context
+  - Notes: Export support via ConcordanceResultsExporter
 
-- **ISetupLineChoices** (interface)
-  - Path: `InterlinDocRootSiteBase.cs`
-  - Public interface definition
+- **ComplexConc* pattern matching**:
+  - ComplexConcControl: Pattern editor UI
+  - ComplexConcPatternVc: Pattern rendering
+  - ComplexConcPatternModel: Pattern data model
+  - Node classes: Represent pattern elements (words, morphemes, features, boundaries)
+  - Advanced linguistic search patterns
 
-- **IStyleSheet** (interface)
-  - Path: `InterlinDocRootSiteBase.cs`
-  - Public interface definition
-
-- **ComplexConcLeafNode** (class)
-  - Path: `ComplexConcLeafNode.cs`
-  - Public class implementation
-
-- **ComplexConcPatternModel** (class)
-  - Path: `ComplexConcPatternModel.cs`
-  - Public class implementation
-
-- **ComplexConcPatternVc** (class)
-  - Path: `ComplexConcPatternVc.cs`
-  - Public class implementation
-
-- **DuplicateAnalysisFixer** (class)
-  - Path: `DuplicateAnalysisFixer.cs`
-  - Public class implementation
-
-- **DuplicateWordformFixer** (class)
-  - Path: `DuplicateWordformFixer.cs`
-  - Public class implementation
-
-- **EditMorphBreaksDlg** (class)
-  - Path: `EditMorphBreaksDlg.cs`
-  - Public class implementation
-
-- **InfoPane** (class)
-  - Path: `InfoPane.cs`
-  - Public class implementation
-
-- **InterlinComboHandler** (class)
-  - Path: `SandboxBase.ComboHandlers.cs`
-  - Public class implementation
-
-- **InterlinDocChart** (class)
-  - Path: `InterlinDocChart.cs`
-  - Public class implementation
-
-- **InterlinDocForAnalysisVc** (class)
-  - Path: `InterlinDocForAnalysis.cs`
-  - Public class implementation
-
-- **InterlinMasterNoTitleContent** (class)
-  - Path: `InterlinMasterNoTitleContent.cs`
-  - Public class implementation
-
-- **InterlinPrintVc** (class)
-  - Path: `InterlinPrintView.cs`
-  - Public class implementation
-
-- **InterlinearExportDialog** (class)
-  - Path: `InterlinearExportDialog.cs`
-  - Public class implementation
-
-- **InterlinearExporter** (class)
-  - Path: `InterlinearExporter.cs`
-  - Public class implementation
-
-- **InterlinearExporterForElan** (class)
-  - Path: `InterlinearExporter.cs`
-  - Public class implementation
-
-- **InterlinearTextsRecordClerk** (class)
-  - Path: `InterlinearTextsRecordClerk.cs`
-  - Public class implementation
-
-- **LinguaLinksImportDlg** (class)
-  - Path: `LinguaLinksImportDlg.cs`
-  - Public class implementation
-
-- **MatchingConcordanceItems** (class)
-  - Path: `ConcordanceControl.cs`
-  - Public class implementation
-
-- **OccurrencesOfSelectedUnit** (class)
-  - Path: `ConcordanceControl.cs`
-  - Public class implementation
-
-- **ParseIsCurrentFixer** (class)
-  - Path: `ParseIsCurrentFixer.cs`
-  - Public class implementation
-
-- **InterlinMode** (enum)
-  - Path: `InterlinLineChoices.cs`
+- **Interlinear data model**:
+  - IText: Text collection (paragraphs)
+  - IStText: Structured text (Title, Contents paragraphs)
+  - ISegment: Analyzed segment (collection of analyses)
+  - IAnalysis: Word analysis (morphemes, gloss, category)
+  - IWfiWordform: Wordform lexicon entry
+  - IWfiAnalysis: Analysis with morphemes
+  - IWfiGloss: Gloss with category, definition
 
 ## Entry Points
-- Interlinear text editor
-- Morpheme analysis and glossing
-- Text import from various formats
+Loaded by xWorks interlinear text window. InterlinDocForAnalysis instantiated for text analysis views.
 
 ## Test Index
-Test projects: ITextDllTests. 23 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+- **Test project**: ITextDllTests/
+- **Run tests**: `dotnet test ITextDllTests/`
+- **Coverage**: Interlinear logic, concordance, BIRD import, analysis handling
 
 ## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- **Open text**: In FLEx, Texts & Words → Analyze tab
+- **Analyze words**: Click words to open Sandbox for glossing
+- **Approve analyses**: Checkmark icon approves analysis
+- **Concordance**: Search for word/morpheme occurrences across texts
+- **Complex concordance**: Advanced pattern search (e.g., find sequences, morpheme features)
+- **Configure lines**: Choose which interlinear lines to display (Tools → Configure)
+- **BIRD import**: Import analyzed texts from BIRD XML format
+- **Tagging**: Tag text portions for discourse/syntactic annotation
+- **Print/Export**: Use print layout for formatted output
+- **Navigation**: Use treebar to navigate paragraphs/segments
+- **Large library**: 49.6K lines covering comprehensive interlinear functionality
 
 ## Related Folders
-- **LexText/Morphology/** - Morphological parsing for interlinear
-- **LexText/ParserCore/** - Parsing engine for analysis
-- **LexText/Discourse/** - Discourse analysis on interlinear texts
-- **Common/SimpleRootSite/** - View hosting for interlinear display
-- **views/** - Native rendering for complex interlinear layout
+- **Discourse/**: Constituent charts (inherits InterlinDocChart)
+- **LexTextControls/**: Shared controls
+- **LexTextDll/**: Business logic
+- **xWorks/**: Application shell
 
 ## References
-
-- **Project files**: ITextDll.csproj, ITextDllTests.csproj
-- **Target frameworks**: net462
-- **Key C# files**: AssemblyInfo.cs, ComplexConcLeafNode.cs, ConcordanceControl.cs, ConcordanceResultsExporter.cs, ConfigureInterlinDialog.Designer.cs, InterlinDocChart.cs, InterlinPrintView.cs, InterlinearExportDialog.cs, InterlinearTextsRecordClerk.cs, ParseIsCurrentFixer.cs
-- **XML data/config**: HalbiST1Old.xml, InterlinearExporterTests.xml, ParagraphParserTestTexts.xml, Phase1-Jibiyal3Text.xml, toolConfigurationForITextDllTests.xml
-- **Source file count**: 124 files
-- **Data file count**: 62 files
-
-## References (auto-generated hints)
-- Project files:
-  - LexText/Interlinear/ITextDll.csproj
-  - LexText/Interlinear/ITextDllTests/ITextDllTests.csproj
-- Key C# files:
-  - LexText/Interlinear/AssemblyInfo.cs
-  - LexText/Interlinear/BIRDInterlinearImporter.cs
-  - LexText/Interlinear/ChooseAnalysisHandler.cs
-  - LexText/Interlinear/ChooseTextWritingSystemDlg.Designer.cs
-  - LexText/Interlinear/ChooseTextWritingSystemDlg.cs
-  - LexText/Interlinear/ClosedFeatureNode.cs
-  - LexText/Interlinear/ClosedFeatureValue.cs
-  - LexText/Interlinear/ComplexConcControl.Designer.cs
-  - LexText/Interlinear/ComplexConcControl.cs
-  - LexText/Interlinear/ComplexConcGroupNode.cs
-  - LexText/Interlinear/ComplexConcLeafNode.cs
-  - LexText/Interlinear/ComplexConcMorphDlg.cs
-  - LexText/Interlinear/ComplexConcMorphNode.cs
-  - LexText/Interlinear/ComplexConcOrNode.cs
-  - LexText/Interlinear/ComplexConcParagraphData.cs
-  - LexText/Interlinear/ComplexConcPatternModel.cs
-  - LexText/Interlinear/ComplexConcPatternNode.cs
-  - LexText/Interlinear/ComplexConcPatternSda.cs
-  - LexText/Interlinear/ComplexConcPatternVc.cs
-  - LexText/Interlinear/ComplexConcTagDlg.cs
-  - LexText/Interlinear/ComplexConcTagNode.cs
-  - LexText/Interlinear/ComplexConcWordBdryNode.cs
-  - LexText/Interlinear/ComplexConcWordDlg.cs
-  - LexText/Interlinear/ComplexConcWordNode.cs
-  - LexText/Interlinear/ComplexFeatureNode.cs
-- Data contracts/transforms:
-  - LexText/Interlinear/ChooseTextWritingSystemDlg.resx
-  - LexText/Interlinear/ComplexConcControl.resx
-  - LexText/Interlinear/ComplexConcMorphDlg.resx
-  - LexText/Interlinear/ComplexConcTagDlg.resx
-  - LexText/Interlinear/ComplexConcWordDlg.resx
-  - LexText/Interlinear/ConcordanceControl.resx
-  - LexText/Interlinear/ConfigureInterlinDialog.resx
-  - LexText/Interlinear/CreateAllomorphTypeMismatchDlg.resx
-  - LexText/Interlinear/EditMorphBreaksDlg.resx
-  - LexText/Interlinear/FilterAllTextsDialog.resx
-  - LexText/Interlinear/FilterTextsDialog.resx
-  - LexText/Interlinear/FocusBoxController.resx
-  - LexText/Interlinear/ITextDllTests/ExportTestFiles/Phase1-KalabaTest.xml
-  - LexText/Interlinear/ITextDllTests/ExportTestFiles/Phase1-KalabaTestPunctuation.xml
-  - LexText/Interlinear/ITextDllTests/ExportTestFiles/Phase1-KalabaTestPunctuationWordAlignedXLingPap.xml
-  - LexText/Interlinear/ITextDllTests/ExportTestFiles/Phase1-KalabaTestWordAlignedXLingPap.xml
-  - LexText/Interlinear/ITextDllTests/ExportTestFiles/Phase1-OrizabaLesson2.xml
-  - LexText/Interlinear/ITextDllTests/ExportTestFiles/Phase1-OrizabaLesson2WordAlignedXLingPap.xml
-  - LexText/Interlinear/ITextDllTests/ExportTestFiles/Phase1-SETepehuanCorn.xml
-  - LexText/Interlinear/ITextDllTests/ExportTestFiles/SETepehuanCornSingleListExample.xml
-  - LexText/Interlinear/ITextDllTests/ExportTestFiles/SETepehuanCornWordsAppendix.xml
-  - LexText/Interlinear/ITextDllTests/InterlinearExporterTests.xml
-  - LexText/Interlinear/ITextDllTests/ParagraphParserTestTexts.xml
-  - LexText/Interlinear/ITextDllTests/XLingPaperTransformerTestsDataFiles/BruceCoxEmptyOld.xml
-  - LexText/Interlinear/ITextDllTests/XLingPaperTransformerTestsDataFiles/Gilaki01Old.xml
-## Code Evidence
-*Analysis based on scanning 108 source files*
-
-- **Classes found**: 20 public classes
-- **Interfaces found**: 8 public interfaces
-- **Namespaces**: SIL.FieldWorks.IText, SIL.FieldWorks.IText.FlexInterlinModel, has, needs, via
+- **Project file**: ITextDll.csproj (net462, OutputType=Library)
+- **Key C# files**: InterlinDocRootSiteBase.cs (3.3K), InterlinDocForAnalysis.cs (2.8K), ConcordanceControl.cs (1.9K), BIRDInterlinearImporter.cs (1.8K), ComplexConcControl.cs (770), ChooseAnalysisHandler.cs (747), ComplexConcPatternVc.cs (699), and 100+ more files
+- **Test project**: ITextDllTests/
+- **Total lines of code**: 49644
+- **Output**: SIL.FieldWorks.IText.dll
+- **Namespace**: SIL.FieldWorks.IText
+- **Subsystems**: Interlinear display, Sandbox editing, Concordance search, Complex concordance patterns, BIRD import, Text tagging, Print layout, Navigation
