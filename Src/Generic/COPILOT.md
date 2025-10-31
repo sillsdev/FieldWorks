@@ -1,218 +1,153 @@
 ---
-last-reviewed: 2025-10-30
+last-reviewed: 2025-10-31
 last-verified-commit: 9611cf70e
 status: draft
 ---
 
-# Generic
+# Generic COPILOT summary
 
 ## Purpose
-Generic utility components and low-level helper classes that don't fit into more
-specific categories. Includes fundamental algorithms, data structures, and utility functions
-used across the codebase. Provides building blocks for higher-level functionality.
+Generic low-level utility components and foundational helper classes for FieldWorks native C++ code. Provides COM smart pointers (ComSmartPtr), collection classes (ComHashMap, ComMultiMap, ComVector, BinTree), stream/IO utilities (DataStream, FileStrm, DataReader, DataWriter), COM infrastructure (DispatchImpl, CSupportErrorInfo, COMBase), string handling (Vector, StrAnsi, StrApp, StrUni), memory management (ModuleEntry), settings (FwSettings), and numerous other low-level helpers. Critical foundation for Kernel, views, and all native FieldWorks components. 44K+ lines of template-heavy C++ code.
 
 ## Architecture
-C++ native library with 47 implementation files and 67 headers. Contains 1 subprojects: Generic.
+C++ native library (header-only templates and implementation files). Heavy use of templates for generic collection classes and smart pointers. COM-centric design with IUnknown-based interfaces. Stream classes for binary data I/O. Vector and HashMap as foundational collections. Cross-platform considerations (Windows/Linux) via conditional compilation.
 
 ## Key Components
-### Key Classes
-- **SilComTypeInfoHolder**
-- **SilDispatchImpl**
-- **CSupportErrorInfo**
-- **CSupportErrorInfo2**
-- **CSupportErrorInfo3**
-- **CSupportErrorInfoN**
-- **Point**
-- **Rect**
-- **UnicodeString8**
-- **Mutex**
+- **ComSmartPtr** (ComSmartPtr.h, 7K lines): COM smart pointer template
+  - Automatic AddRef/Release for COM interface pointers
+  - Template class for any COM interface
+  - IntfNoRelease: Helper for avoiding AddRef/Release on borrowed pointers
+- **ComHashMap** (ComHashMap.h/.cpp, 64K lines combined): Hash map collection
+  - Template hash map for COM-compatible storage
+  - Key-value pairs with hash-based lookup
+- **ComMultiMap** (ComMultiMap.h/.cpp, 36K lines combined): Multi-value hash map
+  - Hash map allowing multiple values per key
+- **ComVector** (ComVector.h/.cpp, 31K lines combined): Dynamic array
+  - Template vector/array class
+  - COM-compatible dynamic array
+- **BinTree** (BinTree.h/.cpp, 8.4K lines combined): Binary tree
+  - Template binary tree data structure
+- **DataStream** (DataStream.h/.cpp, 23K lines combined): Binary data streaming
+  - Binary I/O stream abstraction
+  - Read/write primitive types and structures
+- **FileStrm** (FileStrm.h/.cpp, 30K lines combined): File stream
+  - File-based stream implementation
+  - Extends DataStream for file I/O
+- **DataReader, DataWriter** (DataReader.h, DataWriter.h): Stream reader/writer interfaces
+  - Interface abstractions for data I/O
+- **DispatchImpl** (DispatchImpl.h, 6.5K lines): IDispatch implementation
+  - Helper for implementing COM IDispatch (automation)
+- **CSupportErrorInfo** (CSupportErrorInfo.h, 6K lines): COM error info support
+  - ISupportErrorInfo implementation for rich COM errors
+- **COMBase** (COMBase.h): COM base class utilities
+- **FwSettings** (FwSettings.h/.cpp, 17K lines combined): Settings management
+  - Read/write application settings (registry/config files)
+- **Vector** (Vector.h/.cpp): STL-like vector
+- **StrAnsi, StrApp, StrUni** (StrAnsi.h, StrApp.h, StrUni.h): String classes
+  - ANSI, application, and Unicode string utilities
+- **ModuleEntry** (ModuleEntry.h/.cpp): Module/DLL entry point helpers
+- **Database** (Database.h): Database abstraction
+- **DllModul** (DllModul.cpp): DLL module infrastructure
+- **DecodeUtf8** (DecodeUtf8_i.c): UTF-8 decoding
+- **Debug** (Debug.cpp): Debug utilities
+- Many more utility headers and implementation files
 
 ## Technology Stack
 - C++ native code
-- Generic algorithms and data structures
-- Cross-cutting utilities
+- COM (Component Object Model) infrastructure
+- Template metaprogramming (extensive use)
+- Windows API (primary platform)
+- Cross-platform support (conditional compilation)
 
 ## Dependencies
-- Depends on: Kernel (low-level services)
-- Used by: Almost all FieldWorks components (AppCore, Common, views, etc.)
+
+### Upstream (consumes)
+- **Windows APIs**: COM, file I/O, registry
+- **Standard C++ library**: Basic types, string
+- Minimal external dependencies (self-contained low-level library)
+
+### Downstream (consumed by)
+- **Kernel/**: Core services built on Generic
+- **views/**: Native rendering engine using collections and smart pointers
+- **All FieldWorks native C++ components**: Universal dependency
 
 ## Interop & Contracts
-No explicit interop boundaries detected. Pure managed or native code.
+- **IUnknown**: COM interface base
+- **IDispatch**: Automation interface support
+- **ISupportErrorInfo**: Rich error information
+- COM ABI compatibility (binary interface standard)
 
 ## Threading & Performance
-Threading model: UI thread marshaling, synchronization.
+- **COM threading**: Collections and smart pointers follow COM threading rules
+- **Reference counting**: ComSmartPtr ensures proper COM lifetime management
+- **Template overhead**: Compile-time; runtime efficient
+- **Performance**: Low-level optimized collections
 
 ## Config & Feature Flags
-No explicit configuration or feature flags detected.
+- **FwSettings**: Application settings management
+- Conditional compilation for platform differences (#ifdef WIN32, etc.)
 
 ## Build Information
-- Native C++ project (vcxproj)
-- Includes comprehensive test suite
-- Build with Visual Studio or MSBuild
+- **No project file**: Header-only templates built into consuming projects
+- **Compiled components**: Some .cpp files compiled into libraries
+- **Build**: Included via consuming projects' build systems
+- **Headers**: Included by Kernel, views, and other native components
 
 ## Interfaces and Data Models
 
-- **BaseOfComVector** (class)
-  - Path: `ComVector.h`
-  - Public class implementation
+- **ComSmartPtr<T>** (ComSmartPtr.h)
+  - Purpose: Automatic COM interface pointer lifetime management
+  - Inputs: Interface pointer (any COM interface)
+  - Outputs: Smart pointer with automatic AddRef/Release
+  - Notes: Template class; use ComSmartPtr<IFoo> fooPtr;
 
-- **CSupportErrorInfo** (class)
-  - Path: `CSupportErrorInfo.h`
-  - Public class implementation
+- **ComHashMap<K,V>** (ComHashMap.h)
+  - Purpose: Hash map collection for COM environments
+  - Inputs: Key type K, Value type V
+  - Outputs: Hash-based key-value storage
+  - Notes: Template class; efficient lookup
 
-- **CSupportErrorInfo2** (class)
-  - Path: `CSupportErrorInfo.h`
-  - Public class implementation
+- **ComVector<T>** (ComVector.h)
+  - Purpose: Dynamic array for COM-compatible objects
+  - Inputs: Element type T
+  - Outputs: Resizable array
+  - Notes: Template class; like std::vector
 
-- **CSupportErrorInfo3** (class)
-  - Path: `CSupportErrorInfo.h`
-  - Public class implementation
+- **DataStream** (DataStream.h)
+  - Purpose: Abstract binary I/O stream
+  - Inputs: Binary data
+  - Outputs: Serialized/deserialized data
+  - Notes: Base class for FileStrm and other streams
 
-- **CSupportErrorInfoN** (class)
-  - Path: `CSupportErrorInfo.h`
-  - Public class implementation
-
-- **ComBool** (class)
-  - Path: `UtilCom.h`
-  - Public class implementation
-
-- **DataReader** (class)
-  - Path: `DataReader.h`
-  - Public class implementation
-
-- **DataReaderRgb** (class)
-  - Path: `DataReader.h`
-  - Public class implementation
-
-- **DataReaderStrm** (class)
-  - Path: `DataReader.h`
-  - Public class implementation
-
-- **Mutex** (class)
-  - Path: `Mutex.h`
-  - Public class implementation
-
-- **MutexLock** (class)
-  - Path: `Mutex.h`
-  - Public class implementation
-
-- **Point** (class)
-  - Path: `UtilRect.h`
-  - Public class implementation
-
-- **Rect** (class)
-  - Path: `UtilRect.h`
-  - Public class implementation
-
-- **SilComTypeInfoHolder** (class)
-  - Path: `DispatchImpl.h`
-  - Public class implementation
-
-- **SilDispatchImpl** (class)
-  - Path: `DispatchImpl.h`
-  - Public class implementation
-
-- **StrAnsiStream** (class)
-  - Path: `StringStrm.h`
-  - Public class implementation
-
-- **StrEnumFORMATETC** (class)
-  - Path: `UtilCom.h`
-  - Public class implementation
-
-- **StringDataObject** (class)
-  - Path: `UtilCom.h`
-  - Public class implementation
-
-- **UnicodeString8** (class)
-  - Path: `UnicodeString8.h`
-  - Public class implementation
-
-- **_Lock_Unknown** (class)
-  - Path: `UtilCom.h`
-  - Public class implementation
+- **DispatchImpl** (DispatchImpl.h)
+  - Purpose: Helper for implementing IDispatch
+  - Inputs: Type info, method descriptors
+  - Outputs: Working IDispatch implementation
+  - Notes: Simplifies COM automation
 
 ## Entry Points
-- Provides utility classes and functions
-- Header-only or library components used throughout codebase
+Header files included by consuming projects. No standalone executable.
 
 ## Test Index
-Test projects: TestGeneric. 16 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+No dedicated test project for Generic. Tested via consuming components (Kernel, views, etc.).
 
 ## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- **ComSmartPtr**: Always use for COM interface pointers to avoid leaks
+- **ComHashMap/ComVector**: Use instead of STL in COM contexts for compatibility
+- **DataStream**: Use for binary serialization/deserialization
+- **FwSettings**: Centralized settings access
+- Template-heavy: Long compile times but efficient runtime
+- Header-only templates: Include appropriate headers in consuming projects
 
 ## Related Folders
-- **Kernel/** - Lower-level infrastructure that Generic builds upon
-- **AppCore/** - Application-level code that uses Generic utilities
-- **Common/** - Managed code that interfaces with Generic components
-- **views/** - Native views that use Generic utilities
+- **Kernel/**: Core services using Generic
+- **views/**: Rendering engine using Generic collections
+- **DebugProcs/**: Debug utilities complement Generic
 
 ## References
-
-- **Project files**: Generic.vcxproj, TestGeneric.vcxproj
-- **Key C++ files**: DataStream.cpp, FileStrm.cpp, GpHashMap_i.cpp, ModuleEntry.cpp, ResourceStrm.cpp, StackDumperWin32.cpp, StringTable.cpp, UtilSil.cpp, UtilXml.cpp, Vector_i.cpp
-- **Key headers**: CSupportErrorInfo.h, ComVector.h, DataReader.h, DispatchImpl.h, LinkedList.h, Mutex.h, UnicodeString8.h, UtilCom.h, UtilPersist.h, UtilRect.h
-- **Source file count**: 114 files
-- **Data file count**: 0 files
-
-## References (auto-generated hints)
-- Project files:
-  - Src/Generic/Generic.vcxproj
-  - Src/Generic/Test/TestGeneric.vcxproj
-- Key C++ files:
-  - Src/Generic/BinTree_i.cpp
-  - Src/Generic/ComHashMap_i.cpp
-  - Src/Generic/ComMultiMap_i.cpp
-  - Src/Generic/ComVector.cpp
-  - Src/Generic/DataStream.cpp
-  - Src/Generic/Debug.cpp
-  - Src/Generic/DecodeUtf8_i.c
-  - Src/Generic/DllModul.cpp
-  - Src/Generic/FileStrm.cpp
-  - Src/Generic/FwSettings.cpp
-  - Src/Generic/GenericFactory.cpp
-  - Src/Generic/GpHashMap_i.cpp
-  - Src/Generic/HashMap.cpp
-  - Src/Generic/HashMap_i.cpp
-  - Src/Generic/MakeDir.cpp
-  - Src/Generic/ModuleEntry.cpp
-  - Src/Generic/MultiMap_i.cpp
-  - Src/Generic/OleStringLiteral.cpp
-  - Src/Generic/ResourceStrm.cpp
-  - Src/Generic/Set_i.cpp
-  - Src/Generic/StackDumper.cpp
-  - Src/Generic/StackDumperWin32.cpp
-  - Src/Generic/StackDumperWin64.cpp
-  - Src/Generic/StrUtil.cpp
-  - Src/Generic/StringStrm.cpp
-- Key headers:
-  - Src/Generic/BinTree.h
-  - Src/Generic/COMBase.h
-  - Src/Generic/CSupportErrorInfo.h
-  - Src/Generic/ComHashMap.h
-  - Src/Generic/ComMultiMap.h
-  - Src/Generic/ComSmartPtr.h
-  - Src/Generic/ComSmartPtrImpl.h
-  - Src/Generic/ComVector.h
-  - Src/Generic/CompileStringTable.h
-  - Src/Generic/DataReader.h
-  - Src/Generic/DataStream.h
-  - Src/Generic/DataWriter.h
-  - Src/Generic/Database.h
-  - Src/Generic/DispatchImpl.h
-  - Src/Generic/FileStrm.h
-  - Src/Generic/FwSettings.h
-  - Src/Generic/GenSmartPtr.h
-  - Src/Generic/GenericFactory.h
-  - Src/Generic/GenericResource.h
-  - Src/Generic/GpHashMap.h
-  - Src/Generic/HashMap.h
-  - Src/Generic/LinkedList.h
-  - Src/Generic/MakeDir.h
-  - Src/Generic/ModuleEntry.h
-  - Src/Generic/MultiMap.h
-## Code Evidence
-*Analysis based on scanning 114 source files*
-
-- **Classes found**: 20 public classes
+- **Key headers**: ComSmartPtr.h (7K), ComHashMap.h (14K), ComMultiMap.h (9K), ComVector.h (21K), DataStream.h (5K), FileStrm.h (3K), DispatchImpl.h (6.5K), FwSettings.h (3K), and many more
+- **Implementation files**: ComHashMap_i.cpp (50K), ComMultiMap_i.cpp (27K), ComVector.cpp (11K), DataStream.cpp (18K), FileStrm.cpp (27K), FwSettings.cpp (14.5K), and others
+- **Total files**: 112 C++/H files
+- **Total lines of code**: 44373
+- **Output**: Compiled into consuming libraries/DLLs
+- **Platform**: Primarily Windows (COM-centric), some cross-platform support
