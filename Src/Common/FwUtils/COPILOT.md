@@ -1,249 +1,104 @@
 ---
-last-reviewed: 2025-10-30
+last-reviewed: 2025-10-31
 last-verified-commit: 9611cf70e
 status: draft
 ---
 
-# FwUtils
+# FwUtils COPILOT summary
 
 ## Purpose
-General FieldWorks utilities library containing wide-ranging helper functions.
-Provides utilities for image handling (ManagedPictureFactory), registry access (IFwRegistryHelper),
-XML serialization (XmlSerializationHelper), audio conversion (WavConverter), exception handling,
-and numerous other cross-cutting concerns. Most comprehensive utility collection in FieldWorks.
+General FieldWorks utilities library containing wide-ranging helper functions for cross-cutting concerns. Provides utilities for image handling (ManagedPictureFactory), registry access (FwRegistrySettings, IFwRegistryHelper), XML serialization (XmlSerializationHelper), audio conversion (WavConverter), application settings (FwApplicationSettings, FwApplicationSettingsBase), exception handling (FwUtilsException, InstallationException), clipboard operations (ClipboardUtils), threading helpers (ThreadHelper), progress reporting (ConsoleProgress), benchmarking (Benchmark, TimeRecorder), directory management (FwDirectoryFinder, Folders), FLEx Bridge integration (FLExBridgeHelper), help system support (FlexHelpProvider), character categorization (CharacterCategorizer), and numerous other utility classes. Most comprehensive utility collection in FieldWorks, used by all other components.
 
 ## Architecture
-C# library with 126 source files. Contains 1 subprojects: FwUtils.
+C# class library (.NET Framework 4.6.2) with ~80 utility classes covering diverse concerns. Organized as general-purpose helpers (no specific domain logic). Extension methods pattern via ComponentsExtensionMethods. Test project (FwUtilsTests) validates utility behavior.
 
 ## Key Components
-### Key Classes
-- **ManagedPictureFactory**
-- **XmlSerializationHelper**
-- **WavConverter**
-- **InstallationException**
-- **FlexHelpProvider**
-- **Benchmark**
-- **TimeRecorder**
-- **ComponentsExtensionMethods**
-- **ConsoleProgress**
-- **MessageBoxUtils**
-
-### Key Interfaces
-- **IFwRegistryHelper**
-- **IMessageBox**
-- **IClipboard**
-- **IChecksDataSource**
-- **IProjectSpecificSettingsKeyProvider**
-- **IFocusablePanePortion**
-- **IHelpTopicProvider**
-- **ITextToken**
+- **FwRegistrySettings, IFwRegistryHelper**: Windows registry access
+- **FwApplicationSettings, FwApplicationSettingsBase**: Application settings management
+- **XmlSerializationHelper**: XML serialization utilities
+- **ManagedPictureFactory**: Image loading and handling
+- **WavConverter**: Audio file conversion
+- **ClipboardUtils**: Clipboard operations
+- **ThreadHelper**: UI thread marshaling, threading utilities
+- **ConsoleProgress**: Console progress reporting
+- **Benchmark, TimeRecorder**: Performance measurement
+- **FwDirectoryFinder, Folders**: Directory location utilities
+- **FLExBridgeHelper**: FLEx Bridge integration
+- **FlexHelpProvider**: Help system integration
+- **CharacterCategorizer**: Unicode character categorization
+- **ComponentsExtensionMethods**: Extension methods for common types
+- **AccessibleNameCreator**: Accessibility support
+- **ActivationContextHelper**: COM activation context management
+- **DebugProcs**: Debug utilities
+- **MessageBoxUtils**: Message box helpers
+- **DisposableObjectsSet**: Disposal management
+- **DriveUtil**: Drive and file system utilities
+- **DownloadClient**: Download functionality
+- **FwUtilsException, InstallationException**: Exception types
 
 ## Technology Stack
-- C# .NET
-- Extension methods pattern
-- Utility and helper patterns
+- C# .NET Framework 4.6.2 (net462)
+- OutputType: Library
+- Windows Registry API
+- System.Xml for XML serialization
+- Image processing libraries
+- Audio conversion libraries
 
 ## Dependencies
-- Depends on: Minimal (mostly .NET framework)
-- Used by: All Common subprojects and FieldWorks applications
+
+### Upstream (consumes)
+- .NET Framework 4.6.2
+- Windows Registry API
+- System.Xml
+- Minimal external dependencies (self-contained utilities)
+
+### Downstream (consumed by)
+- All Common subprojects (Framework, Filters, Controls, etc.)
+- All FieldWorks applications (xWorks, LexText, etc.)
+- Foundational library used throughout FieldWorks
 
 ## Interop & Contracts
-No explicit interop boundaries detected. Pure managed or native code.
+- IFwRegistryHelper: Contract for registry access
+- COM interop helpers (ActivationContextHelper)
+- P/Invoke for Windows APIs
 
 ## Threading & Performance
-Threading model: UI thread marshaling.
+- ThreadHelper: UI thread marshaling utilities
+- Benchmark, TimeRecorder: Performance measurement
+- Threading utilities for cross-thread operations
 
 ## Config & Feature Flags
-Config files: app.config.
+- FwApplicationSettings: Application-level settings
+- FwRegistrySettings: Registry-based configuration
+- No feature flags; behavior controlled by settings
 
 ## Build Information
-- C# class library project
-- Build via: `dotnet build FwUtils.csproj`
-- Foundation library for Common
+- **Project file**: FwUtils.csproj (net462, OutputType=Library)
+- **Test project**: FwUtilsTests/FwUtilsTests.csproj
+- **Output**: FwUtils.dll
+- **Build**: Via top-level FW.sln or: `msbuild FwUtils.csproj /p:Configuration=Debug`
+- **Run tests**: `dotnet test FwUtilsTests/FwUtilsTests.csproj`
 
 ## Interfaces and Data Models
-
-- **IChecksDataSource** (interface)
-  - Path: `IChecksDataSource.cs`
-  - Public interface definition
-
-- **IClipboard** (interface)
-  - Path: `ClipboardUtils.cs`
-  - Public interface definition
-
-- **IFwRegistryHelper** (interface)
-  - Path: `IFwRegistryHelper.cs`
-  - Public interface definition
-
-- **IMessageBox** (interface)
-  - Path: `MessageBoxUtils.cs`
-  - Public interface definition
-
-- **AlphaOutline** (class)
-  - Path: `AlphaOutline.cs`
-  - Public class implementation
-
-- **Benchmark** (class)
-  - Path: `Benchmark.cs`
-  - Public class implementation
-
-- **ComponentsExtensionMethods** (class)
-  - Path: `ComponentsExtensionMethods.cs`
-  - Public class implementation
-
-- **ConsoleProgress** (class)
-  - Path: `ConsoleProgress.cs`
-  - Public class implementation
-
-- **FlexHelpProvider** (class)
-  - Path: `FlexHelpProvider.cs`
-  - Public class implementation
-
-- **FwAppArgs** (class)
-  - Path: `FwLinkArgs.cs`
-  - Public class implementation
-
-- **FwLinkArgs** (class)
-  - Path: `FwLinkArgs.cs`
-  - Public class implementation
-
-- **InstallationException** (class)
-  - Path: `InstallationException.cs`
-  - Public class implementation
-
-- **ManagedPictureFactory** (class)
-  - Path: `ManagedPictureFactory.cs`
-  - Public class implementation
-
-- **Manager** (class)
-  - Path: `MessageBoxUtils.cs`
-  - Public class implementation
-
-- **MeasurementUtils** (class)
-  - Path: `MeasurementUtils.cs`
-  - Public class implementation
-
-- **MessageBoxUtils** (class)
-  - Path: `MessageBoxUtils.cs`
-  - Public class implementation
-
-- **Property** (class)
-  - Path: `Property.cs`
-  - Public class implementation
-
-- **StartupException** (class)
-  - Path: `StartupException.cs`
-  - Public class implementation
-
-- **StyleMarkup** (class)
-  - Path: `StyleMarkupInfo.cs`
-  - Public class implementation
-
-- **StyleMarkupInfo** (class)
-  - Path: `StyleMarkupInfo.cs`
-  - Public class implementation
-
-- **ThreadHelper** (class)
-  - Path: `ThreadHelper.cs`
-  - Public class implementation
-
-- **TimeRecorder** (class)
-  - Path: `Benchmark.cs`
-  - Public class implementation
-
-- **WavConverter** (class)
-  - Path: `WavConverter.cs`
-  - Public class implementation
-
-- **XmlSerializationHelper** (class)
-  - Path: `XmlSerializationHelper.cs`
-  - Public class implementation
-
-- **ImportExportStep** (enum)
-  - Path: `ImportExportStep.cs`
-
-- **MsrSysType** (enum)
-  - Path: `MeasurementUtils.cs`
-
-- **SaveFile** (enum)
-  - Path: `WavConverter.cs`
-
-- **StyleTypes** (enum)
-  - Path: `StyleMarkupInfo.cs`
-
-- **Typ** (enum)
-  - Path: `FwUpdater.cs`
-
-- **UseTypes** (enum)
-  - Path: `StyleMarkupInfo.cs`
+See utility classes for specific interfaces and data models. Contains numerous helper classes and extension methods.
 
 ## Entry Points
-- Static utility methods and extension methods
-- Helper classes for common operations
-- Infrastructure support utilities
+Referenced as library by all FieldWorks components. No executable entry point.
 
 ## Test Index
-Test projects: FwUtilsTests. 27 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+- **Test project**: FwUtilsTests
+- **Run tests**: `dotnet test FwUtilsTests/FwUtilsTests.csproj`
 
 ## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+Reference FwUtils in consuming projects for utility functions. Use utility classes as static helpers or instantiate as needed.
 
 ## Related Folders
-- **Common/Framework/** - Uses FwUtils extensively
-- **Common/Filters/** - Uses utility functions
-- **Common/FieldWorks/** - FieldWorks-specific utilities building on FwUtils
-- Used by virtually all FieldWorks components
+- **All Common subfolders**: Use FwUtils for utility functions
+- **All FieldWorks applications**: Depend on FwUtils
 
 ## References
-
-- **Project files**: FwUtils.csproj, FwUtilsTests.csproj
-- **Target frameworks**: net462
-- **Key C# files**: Benchmark.cs, ComponentsExtensionMethods.cs, ConsoleProgress.cs, FlexHelpProvider.cs, IFwRegistryHelper.cs, ImportExportStep.cs, InstallationException.cs, ManagedPictureFactory.cs, WavConverter.cs, XmlSerializationHelper.cs
-- **XML data/config**: strings-en.xml, strings-en.xml
-- **Source file count**: 126 files
-- **Data file count**: 6 files
-
-## References (auto-generated hints)
-- Project files:
-  - Common/FwUtils/BuildInclude.targets
-  - Common/FwUtils/FwUtils.csproj
-  - Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj
-- Key C# files:
-  - Common/FwUtils/AccessibleNameCreator.cs
-  - Common/FwUtils/ActivationContextHelper.cs
-  - Common/FwUtils/AlphaOutline.cs
-  - Common/FwUtils/Benchmark.cs
-  - Common/FwUtils/CachePair.cs
-  - Common/FwUtils/CharEnumeratorForByteArray.cs
-  - Common/FwUtils/CharacterCategorizer.cs
-  - Common/FwUtils/ClipboardUtils.cs
-  - Common/FwUtils/ComponentsExtensionMethods.cs
-  - Common/FwUtils/ConsoleProgress.cs
-  - Common/FwUtils/DebugProcs.cs
-  - Common/FwUtils/DisposableObjectsSet.cs
-  - Common/FwUtils/DownloadClient.cs
-  - Common/FwUtils/DriveUtil.cs
-  - Common/FwUtils/FLExBridgeHelper.cs
-  - Common/FwUtils/FlexHelpProvider.cs
-  - Common/FwUtils/Folders.cs
-  - Common/FwUtils/FwApplicationSettings.cs
-  - Common/FwUtils/FwApplicationSettingsBase.cs
-  - Common/FwUtils/FwDirectoryFinder.cs
-  - Common/FwUtils/FwLinkArgs.cs
-  - Common/FwUtils/FwRegistryHelper.cs
-  - Common/FwUtils/FwSubKey.cs
-  - Common/FwUtils/FwUpdateChooserDlg.Designer.cs
-  - Common/FwUtils/FwUpdateChooserDlg.cs
-- Data contracts/transforms:
-  - Common/FwUtils/FwUpdateChooserDlg.resx
-  - Common/FwUtils/FwUtilsStrings.resx
-  - Common/FwUtils/FwUtilsTests/Properties/Resources.resx
-  - Common/FwUtils/FwUtilsTests/food/fruit/citrus/strings-en.xml
-  - Common/FwUtils/FwUtilsTests/food/fruit/strings-en.xml
-  - Common/FwUtils/app.config
-## Code Evidence
-*Analysis based on scanning 121 source files*
-
-- **Classes found**: 20 public classes
-- **Interfaces found**: 11 public interfaces
-- **Namespaces**: SIL.FieldWorks.Common.FwUtils, SIL.FieldWorks.Common.FwUtils.Attributes, SIL.FieldWorks.Common.FwUtils.Pathway, SIL.FieldWorks.Common.FwUtils.Properties, SIL.FieldWorks.FwCoreDlgs
+- **Project files**: FwUtils.csproj (net462), FwUtilsTests/FwUtilsTests.csproj
+- **Target frameworks**: .NET Framework 4.6.2
+- **Total lines of code**: ~19000
+- **Output**: Output/Debug/FwUtils.dll
+- **Namespace**: SIL.FieldWorks.Common.FwUtils
