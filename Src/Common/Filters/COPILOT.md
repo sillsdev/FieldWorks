@@ -1,218 +1,228 @@
 ---
-last-reviewed: 2025-10-30
+last-reviewed: 2025-10-31
 last-verified-commit: 9611cf70e
 status: draft
 ---
 
-# Filters
+# Filters COPILOT summary
 
 ## Purpose
-Data filtering and sorting infrastructure for searchable data views.
-Implements various matcher types (IntMatcher, RangeIntMatcher, ExactMatcher, BeginMatcher)
-and filtering logic (RecordFilter, ProblemAnnotationFilter) for narrowing and organizing
-data sets. Essential for browse views, search functionality, and filtered list displays
-throughout FieldWorks applications.
+Data filtering and sorting infrastructure for searchable data views throughout FieldWorks. Implements matcher types (IntMatcher, RangeIntMatcher, ExactMatcher, BeginMatcher, RegExpMatcher, DateTimeMatcher, BadSpellingMatcher) and filtering logic (RecordFilter, AndFilter, ProblemAnnotationFilter, FilterBarCellFilter) for narrowing data sets. Provides sorting infrastructure (RecordSorter, FindResultSorter, ManyOnePathSortItem) for organizing filtered results. Essential for browse views, search functionality, filtered list displays, and filter bar UI components in FieldWorks applications.
 
 ## Architecture
-C# library with 18 source files. Contains 1 subprojects: Filters.
+C# class library (.NET Framework 4.6.2) with filtering and sorting components. RecordFilter base class provides in-memory filtering using IMatcher implementations and IStringFinder interfaces to extract and match values from objects. Filter bar support via FilterBarCellFilter combines matchers with string finders for column-based filtering in browse views. Sorting via RecordSorter with progress reporting (IReportsSortProgress) and IManyOnePathSortItem for complex hierarchical sorts. Test project (FiltersTests) validates matcher behavior, sorting, and persistence.
 
 ## Key Components
-### Key Classes
-- **IntMatcher**
-- **RangeIntMatcher**
-- **NotEqualIntMatcher**
-- **FilterChangeEventArgs**
-- **RecordFilter**
-- **ProblemAnnotationFilter**
-- **BaseMatcher**
-- **SimpleStringMatcher**
-- **ExactMatcher**
-- **BeginMatcher**
-
-### Key Interfaces
-- **IMatcher**
-- **IStringFinder**
-- **IReportsSortProgress**
-- **IManyOnePathSortItem**
+- **RecordFilter** class (RecordFilter.cs, 2751 lines): Base class for in-memory filters
+  - Abstract class with Matches() method for object acceptance testing
+  - Subclasses: AndFilter (combines multiple filters), FilterBarCellFilter (filter bar cell), ProblemAnnotationFilter (annotation-specific)
+  - FilterChangeEventArgs: Event args for filter add/remove notifications
+- **Matcher classes** (RecordFilter.cs): String matching strategies
+  - **IMatcher** interface: Contract for text matching (Matches() method)
+  - **ExactMatcher**: Exact string match
+  - **BeginMatcher**: Match string beginning
+  - **EndMatcher**: Match string ending
+  - **AnywhereMatcher**: Substring match anywhere
+  - **RegExpMatcher**: Regular expression matching
+  - **BlankMatcher**: Matches empty/blank strings
+  - **NonBlankMatcher**: Matches non-empty strings
+  - **InvertMatcher**: Inverts another matcher's result
+- **IntMatcher** (IntMatcher.cs, 220 lines): Integer value matching
+  - Matches integer properties against target values
+  - **RangeIntMatcher**: Matches integers within range (min/max)
+  - **NotEqualIntMatcher**: Matches integers not equal to target
+- **DateTimeMatcher** (DateTimeMatcher.cs, 309 lines): Date/time matching
+  - DateMatchType enum: Before, After, On, Between, NotSet
+  - Matches date/time properties with various comparison modes
+- **BadSpellingMatcher** (BadSpellingMatcher.cs, 183 lines): Spelling error matcher
+  - Identifies strings with spelling errors
+  - Integrates with spelling checker services
+- **ExactLiteralMatcher** (ExactLiteralMatcher.cs, 136 lines): Literal string exact match
+  - Case-sensitive exact matching of literal strings
+- **WordFormFilters** (WordFormFilters.cs, 289 lines): Word form specific filters
+  - Specialized filters for linguistic word form data
+- **IStringFinder** interface (RecordFilter.cs): Extracts strings from objects
+  - Used by FilterBarCellFilter to obtain cell values for matching
+  - Implementations: OwnMlPropFinder, OwnMonoPropFinder, OneIndirectMlPropFinder, OneIndirectAtomMlPropFinder, MultiIndirectMlPropFinder
+- **RecordSorter** class (RecordSorter.cs, 2268 lines): Sorts filtered results
+  - Implements IComparer for object comparison
+  - Supports multi-level hierarchical sorting
+  - IReportsSortProgress interface: Progress callbacks during long sorts
+- **FindResultSorter** (FindResultSorter.cs, 75 lines): Sorts search/find results
+  - Specialized sorter for search result ordering
+- **IManyOnePathSortItem** interface (IManyOnePathSortItem.cs, 29 lines): Multi-path sort item
+  - Contract for items with multiple sort paths (e.g., many-to-one relationships)
+- **ManyOnePathSortItem** class (ManyOnePathSortItem.cs, 463 lines): Multi-path sort implementation
+  - Handles sorting of items with complex hierarchical relationships
+- **IntFinder** (IntFinder.cs, 102 lines): Integer property finder
+  - Extracts integer values from objects for IntMatcher filtering
+- **FiltersStrings** (FiltersStrings.Designer.cs/.resx): Localized string resources
+  - UI strings for filter-related messages and labels
 
 ## Technology Stack
-- C# .NET
-- Filter pattern implementation
-- Text matching and sorting algorithms
+- C# .NET Framework 4.6.2 (target framework: net462)
+- OutputType: Library (class library DLL)
+- System.Xml for XML-based filter persistence
+- Regular expressions (System.Text.RegularExpressions) for RegExpMatcher
+- SIL.LCModel for data access (LcmCache, ICmObject)
+- SIL.WritingSystems for writing system support
 
 ## Dependencies
-- Depends on: Common/FwUtils (utilities)
-- Used by: xWorks, LexText (search and filter features)
+
+### Upstream (consumes)
+- **SIL.LCModel**: Language and Culture Model (LcmCache, ICmObject)
+- **SIL.LCModel.Core.Text**: Text handling
+- **SIL.LCModel.Core.WritingSystems**: Writing system infrastructure
+- **SIL.LCModel.Core.KernelInterfaces**: Core interfaces
+- **Common/ViewsInterfaces**: View interfaces (IVwCacheDa)
+- **SIL.WritingSystems**: Writing system utilities
+- **SIL.Utils**: General utilities
+- **System.Xml**: XML parsing for filter persistence
+
+### Downstream (consumed by)
+- **xWorks/**: Uses filtering for data tree and browse view searches
+- **LexText/**: Uses filtering in lexicon searches and browse views
+- Any FieldWorks component requiring data filtering, sorting, or filter bar UI
 
 ## Interop & Contracts
-Uses Marshaling for cross-boundary calls.
+- **IMatcher**: Contract for text matching strategies
+- **IStringFinder**: Contract for extracting strings from objects for matching
+- **IReportsSortProgress**: Contract for reporting sort progress during long operations
+- **IManyOnePathSortItem**: Contract for items with multiple sort paths
+- Uses marshaling for COM interop scenarios (ICmObject from LCModel)
 
 ## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
+- Single-threaded in-memory filtering and sorting
+- RecordSorter supports progress reporting (IReportsSortProgress) for responsiveness during long sorts
+- Filter bar optimization: Limits unique value enumeration to ~30 items to avoid performance issues
+- Performance note: All filtering currently done in-memory (see RecordFilter.cs comments for future query-based filtering)
 
 ## Config & Feature Flags
-No explicit configuration or feature flags detected.
+- No external configuration files
+- Filter definitions can be persisted to/from XML
+- Filter bar behavior configurable via XML cell definitions
 
 ## Build Information
-- C# class library project
-- Build via: `dotnet build Filters.csproj`
-- Includes test project
+- **Project file**: Filters.csproj (.NET Framework 4.6.2, OutputType=Library)
+- **Test project**: FiltersTests/FiltersTests.csproj
+- **Output**: Filters.dll (to Output/Debug or Output/Release)
+- **Build**: Via top-level FW.sln or: `msbuild Filters.csproj /p:Configuration=Debug`
+- **Run tests**: `dotnet test FiltersTests/FiltersTests.csproj` or Visual Studio Test Explorer
 
 ## Interfaces and Data Models
 
-- **IManyOnePathSortItem** (interface)
-  - Path: `IManyOnePathSortItem.cs`
-  - Public interface definition
+- **IMatcher** (RecordFilter.cs)
+  - Purpose: Contract for string matching strategies
+  - Inputs: ITsString (formatted text string), int ws (writing system)
+  - Outputs: bool (true if matches)
+  - Notes: Implemented by ExactMatcher, BeginMatcher, EndMatcher, AnywhereMatcher, RegExpMatcher, etc.
 
-- **IMatcher** (interface)
-  - Path: `RecordFilter.cs`
-  - Public interface definition
+- **IStringFinder** (RecordFilter.cs)
+  - Purpose: Extracts strings from objects for matching
+  - Inputs: LcmCache cache, int hvo (object ID)
+  - Outputs: ITsString (extracted string value)
+  - Notes: Used by FilterBarCellFilter to get cell values from XML-defined cell specifications
 
-- **IReportsSortProgress** (interface)
-  - Path: `RecordFilter.cs`
-  - Public interface definition
+- **IReportsSortProgress** (RecordFilter.cs)
+  - Purpose: Progress reporting during long sort operations
+  - Inputs: int nTotal (total items), int nCompleted (completed items)
+  - Outputs: void (progress callbacks)
+  - Notes: Allows UI to show progress bar and remain responsive
 
-- **IStringFinder** (interface)
-  - Path: `RecordFilter.cs`
-  - Public interface definition
+- **IManyOnePathSortItem** (IManyOnePathSortItem.cs)
+  - Purpose: Contract for items with multiple sort paths (many-to-one relationships)
+  - Inputs: N/A (properties)
+  - Outputs: Multiple sort key paths for hierarchical sorting
+  - Notes: Enables complex multi-level sorts across object relationships
 
-- **AndFilter** (class)
-  - Path: `RecordFilter.cs`
-  - Public class implementation
+- **RecordFilter.Matches** (RecordFilter.cs)
+  - Purpose: Tests whether object passes filter
+  - Inputs: LcmCache cache, int hvo (object ID)
+  - Outputs: bool (true if object passes filter)
+  - Notes: Abstract method implemented by subclasses (AndFilter, FilterBarCellFilter, etc.)
 
-- **AnywhereMatcher** (class)
-  - Path: `RecordFilter.cs`
-  - Public class implementation
+- **AndFilter** (RecordFilter.cs)
+  - Purpose: Combines multiple filters with logical AND
+  - Inputs: Array of RecordFilter instances
+  - Outputs: bool (true if all filters match)
+  - Notes: Used to combine filter bar cell filters or layered filters
 
-- **BeginMatcher** (class)
-  - Path: `RecordFilter.cs`
-  - Public class implementation
+- **FilterBarCellFilter** (RecordFilter.cs)
+  - Purpose: Filter for one column in filter bar
+  - Inputs: IStringFinder (value extractor), IMatcher (matching strategy)
+  - Outputs: bool via Matches() method
+  - Notes: Combines string finder and matcher for column-based filtering
 
-- **BlankMatcher** (class)
-  - Path: `RecordFilter.cs`
-  - Public class implementation
+- **IntMatcher** (IntMatcher.cs)
+  - Purpose: Matches integer properties
+  - Inputs: int target value
+  - Outputs: bool (true if integer matches)
+  - Notes: Used with IntFinder for integer property filtering
 
-- **EndMatcher** (class)
-  - Path: `RecordFilter.cs`
-  - Public class implementation
+- **RangeIntMatcher** (IntMatcher.cs)
+  - Purpose: Matches integers within range
+  - Inputs: int min, int max
+  - Outputs: bool (true if value in range)
+  - Notes: Inclusive range matching
 
-- **ExactMatcher** (class)
-  - Path: `RecordFilter.cs`
-  - Public class implementation
+- **DateTimeMatcher** (DateTimeMatcher.cs)
+  - Purpose: Matches date/time properties with various comparison modes
+  - Inputs: DateMatchType (Before, After, On, Between, NotSet), DateTime value(s)
+  - Outputs: bool (true if date matches criteria)
+  - Notes: Supports single date or range comparisons
 
-- **FilterBarCellFilter** (class)
-  - Path: `RecordFilter.cs`
-  - Public class implementation
+- **BadSpellingMatcher** (BadSpellingMatcher.cs)
+  - Purpose: Identifies strings with spelling errors
+  - Inputs: Spelling checker service
+  - Outputs: bool (true if spelling errors detected)
+  - Notes: Integrates with FieldWorks spelling infrastructure
 
-- **FilterChangeEventArgs** (class)
-  - Path: `RecordFilter.cs`
-  - Public class implementation
+- **RecordSorter** (RecordSorter.cs)
+  - Purpose: Sorts filtered object lists
+  - Inputs: List of objects, sort specifications
+  - Outputs: Sorted list
+  - Notes: Implements IComparer; supports progress reporting via IReportsSortProgress
 
-- **IntMatcher** (class)
-  - Path: `IntMatcher.cs`
-  - Public class implementation
-
-- **InvertMatcher** (class)
-  - Path: `RecordFilter.cs`
-  - Public class implementation
-
-- **MultiIndirectMlPropFinder** (class)
-  - Path: `RecordFilter.cs`
-  - Public class implementation
-
-- **NonBlankMatcher** (class)
-  - Path: `RecordFilter.cs`
-  - Public class implementation
-
-- **NotEqualIntMatcher** (class)
-  - Path: `IntMatcher.cs`
-  - Public class implementation
-
-- **OneIndirectAtomMlPropFinder** (class)
-  - Path: `RecordFilter.cs`
-  - Public class implementation
-
-- **OneIndirectMlPropFinder** (class)
-  - Path: `RecordFilter.cs`
-  - Public class implementation
-
-- **OwnMlPropFinder** (class)
-  - Path: `RecordFilter.cs`
-  - Public class implementation
-
-- **OwnMonoPropFinder** (class)
-  - Path: `RecordFilter.cs`
-  - Public class implementation
-
-- **ProblemAnnotationFilter** (class)
-  - Path: `RecordFilter.cs`
-  - Public class implementation
-
-- **RangeIntMatcher** (class)
-  - Path: `IntMatcher.cs`
-  - Public class implementation
-
-- **RegExpMatcher** (class)
-  - Path: `RecordFilter.cs`
-  - Public class implementation
-
-- **MatchRangePair** (struct)
-  - Path: `RecordFilter.cs`
-
-- **DateMatchType** (enum)
-  - Path: `DateTimeMatcher.cs`
+- **MatchRangePair** struct (RecordFilter.cs)
+  - Purpose: Represents text match range (start and end positions)
+  - Inputs: int ich Min (start), int ichLim (end)
+  - Outputs: Struct with match positions
+  - Notes: Used in pattern matching and highlighting
 
 ## Entry Points
-- Filter matchers for data filtering
-- Sorting infrastructure for result display
+- Referenced as library in consuming projects for filtering and sorting
+- RecordFilter subclasses instantiated for specific filter scenarios
+- Matchers instantiated based on user filter bar selections or search criteria
+- RecordSorter used to order filtered results before display
 
 ## Test Index
-Test projects: FiltersTests. 5 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+- **Test project**: FiltersTests (FiltersTests.csproj)
+- **Test files**: DateTimeMatcherTests.cs, FindResultsSorterTests.cs, RangeIntMatcherTests.cs, TestPersistence.cs, WordformFiltersTests.cs
+- **Run tests**: `dotnet test FiltersTests/FiltersTests.csproj` or Visual Studio Test Explorer
+- **Coverage**: Unit tests for matchers, date/time filtering, sorting, filter persistence
 
 ## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- Extend RecordFilter to create custom filters; implement Matches() method
+- Use AndFilter to combine multiple filters (e.g., filter bar + base filter)
+- Implement IMatcher for custom matching strategies (pattern matching, custom logic)
+- Implement IStringFinder to extract values from custom object properties
+- Use RecordSorter with IReportsSortProgress for responsive long sorts
+- Filter bar: XML cell definitions + StringFinder + Matcher → FilterBarCellFilter
+- Check RecordFilter.cs header comments for design rationale and future plans (query-based filtering)
 
 ## Related Folders
-- **Common/FwUtils/** - Utilities used by filters
-- **xWorks/** - Uses filtering for data tree and searches
-- **LexText/** - Uses filtering in lexicon searches
+- **Common/FwUtils/**: Utilities used by filters
+- **Common/ViewsInterfaces/**: View interfaces (IVwCacheDa) used by filters
+- **xWorks/**: Major consumer using filtering for data tree and browse searches
+- **LexText/**: Uses filtering in lexicon searches and browse views
 
 ## References
-
-- **Project files**: Filters.csproj, FiltersTests.csproj
-- **Target frameworks**: net462
-- **Key C# files**: AssemblyInfo.cs, DateTimeMatcher.cs, ExactLiteralMatcher.cs, FiltersStrings.Designer.cs, IManyOnePathSortItem.cs, IntFinder.cs, IntMatcher.cs, ManyOnePathSortItem.cs, RecordFilter.cs, RecordSorter.cs
-- **Source file count**: 18 files
-- **Data file count**: 1 files
-
-## References (auto-generated hints)
-- Project files:
-  - Common/Filters/Filters.csproj
-  - Common/Filters/FiltersTests/FiltersTests.csproj
-- Key C# files:
-  - Common/Filters/AssemblyInfo.cs
-  - Common/Filters/BadSpellingMatcher.cs
-  - Common/Filters/DateTimeMatcher.cs
-  - Common/Filters/ExactLiteralMatcher.cs
-  - Common/Filters/FiltersStrings.Designer.cs
-  - Common/Filters/FiltersTests/DateTimeMatcherTests.cs
-  - Common/Filters/FiltersTests/FindResultsSorterTests.cs
-  - Common/Filters/FiltersTests/RangeIntMatcherTests.cs
-  - Common/Filters/FiltersTests/TestPersistence.cs
-  - Common/Filters/FiltersTests/WordformFiltersTests.cs
-  - Common/Filters/FindResultSorter.cs
-  - Common/Filters/IManyOnePathSortItem.cs
-  - Common/Filters/IntFinder.cs
-  - Common/Filters/IntMatcher.cs
-  - Common/Filters/ManyOnePathSortItem.cs
-  - Common/Filters/RecordFilter.cs
-  - Common/Filters/RecordSorter.cs
-  - Common/Filters/WordFormFilters.cs
-- Data contracts/transforms:
-  - Common/Filters/FiltersStrings.resx
-## Code Evidence
-*Analysis based on scanning 17 source files*
-
-- **Classes found**: 20 public classes
-- **Interfaces found**: 4 public interfaces
-- **Namespaces**: SIL.FieldWorks.Filters
+- **Project files**: Filters.csproj (net462, OutputType=Library), FiltersTests/FiltersTests.csproj
+- **Target frameworks**: .NET Framework 4.6.2 (net462)
+- **Key dependencies**: SIL.LCModel, SIL.LCModel.Core.Text, SIL.LCModel.Core.WritingSystems, SIL.WritingSystems, SIL.Utils
+- **Key C# files**: RecordFilter.cs (2751 lines), RecordSorter.cs (2268 lines), ManyOnePathSortItem.cs (463 lines), DateTimeMatcher.cs (309 lines), WordFormFilters.cs (289 lines), IntMatcher.cs (220 lines), BadSpellingMatcher.cs (183 lines), ExactLiteralMatcher.cs (136 lines), IntFinder.cs (102 lines), FindResultSorter.cs (75 lines), IManyOnePathSortItem.cs (29 lines), AssemblyInfo.cs (6 lines)
+- **Designer files**: FiltersStrings.Designer.cs (270 lines)
+- **Resources**: FiltersStrings.resx (localized strings)
+- **Total lines of code**: 7101
+- **Output**: Output/Debug/Filters.dll, Output/Release/Filters.dll
+- **Namespace**: SIL.FieldWorks.Filters
