@@ -1,134 +1,173 @@
 ---
-last-reviewed: 2025-10-30
+last-reviewed: 2025-10-31
 last-verified-commit: 9611cf70e
 status: draft
 ---
 
-# CacheLight
+# CacheLight COPILOT summary
 
 ## Purpose
-Lightweight caching services providing efficient in-memory data access for FieldWorks components.
-Implements MetaDataCache for model metadata and RealDataCache for runtime object caching.
-Designed to optimize data access patterns by reducing database queries and providing fast lookup
-of frequently accessed linguistic data objects. Critical for application performance.
+Provides lightweight, in-memory caching implementation for FieldWorks data access without requiring a full database connection. Includes MetaDataCache for model metadata (classes, fields, property types from XML model definitions) and RealDataCache for runtime object caching with support for ISilDataAccess and IVwCacheDa interfaces. Designed for testing scenarios, data import/export operations, and lightweight data access where full LCM is unnecessary.
 
 ## Architecture
-C# library with 9 source files. Contains 1 subprojects: CacheLight.
+C# class library (.NET Framework 4.6.2) with two primary cache implementations. MetaDataCache loads model definitions from XML files and provides IFwMetaDataCache interface. RealDataCache provides ISilDataAccess and IVwCacheDa interfaces for storing and retrieving object properties in memory using dictionaries keyed by HVO (object ID) and field ID combinations. Includes test project (CacheLightTests) with comprehensive unit tests.
 
 ## Key Components
-### Key Classes
-- **MetaDataCache**
-- **RealCacheLoader**
-- **RealDataCache**
-- **RealDataCacheBase**
-- **RealDataCacheIVwCacheDaTests**
-- **RealDataCacheISilDataAccessTests**
-- **MetaDataCacheInitializationTests**
-- **MetaDataCacheBase**
-- **MetaDataCacheFieldAccessTests**
-- **MetaDataCacheClassAccessTests**
-
-### Key Interfaces
-- **IRealDataCache**
+- **MetaDataCache** class (MetaDataCache.cs, 990 lines): XML-based metadata cache
+  - Implements IFwMetaDataCache for model metadata queries
+  - Loads class/field definitions from XML model files
+  - `InitXml()`: Parses XML model files into internal dictionaries
+  - `CreateMetaDataCache()`: Factory method for creating initialized instances
+  - `MetaClassRec`, `MetaFieldRec`: Internal structs storing class and field metadata
+  - Dictionaries: m_metaClassRecords (clid→class), m_nameToClid (name→clid), m_metaFieldRecords (flid→field), m_nameToFlid (name→flid)
+  - Supports queries for class names, field names, property types, inheritance, signatures
+- **RealDataCache** class (RealDataCache.cs, 2135 lines): In-memory object property cache
+  - Implements IRealDataCache (combines ISilDataAccess, IVwCacheDa, IStructuredTextDataAccess)
+  - Stores objects and properties in typed dictionaries (int, bool, long, string, ITsString, byte[], vector)
+  - `HvoFlidKey`, `HvoFlidWSKey`: Composite keys for cache lookups (object ID + field ID + optional writing system)
+  - Dictionary caches: m_basicObjectCache, m_extendedKeyCache, m_basicITsStringCache, m_basicByteArrayCache, m_basicStringCache, m_guidCache, m_guidToHvo, m_intCache, m_longCache, m_boolCache, m_vectorCache
+  - Supports atomic, sequence, collection, and reference properties
+  - `get_*PropCount()`, `get_*Prop()`, `Set*Prop()`: Property accessor methods
+  - `CacheStringAlt()`, `CacheStringFields()`: Multi-string (multilingual) property support
+  - `MakeNewObject()`: Allocates new HVO for objects
+  - `CheckWithMDC`: Optional metadata validation flag
+- **RealCacheLoader** class (RealCacheLoader.cs, 480 lines): Populates cache from XML data
+  - Loads object data from XML files into RealDataCache
+  - Handles various property types (atomic, sequence, collection, reference)
+  - Supports TsString (formatted text) and multi-string properties
+- **TsStringfactory** class (TsStringfactory.cs, 176 lines): Factory for creating ITsString instances
+  - `MakeString()`: Creates ITsString from string and writing system
+  - `MakeStringRgch()`: Creates ITsString from character array
+  - Minimal ITsStrFactory implementation for testing
+- **TsMultiString** class (TsMultiString.cs, 65 lines): Simple multi-string implementation
+  - Stores string values per writing system
+  - Implements ITsMultiString interface for testing
+- **IRealDataCache** interface (RealDataCache.cs): Combined interface for RealDataCache
+  - Extends ISilDataAccess, IVwCacheDa, IStructuredTextDataAccess, IDisposable
+  - Adds properties: ParaContentsFlid, ParaPropertiesFlid, TextParagraphsFlid (for structured text support)
 
 ## Technology Stack
-- C# .NET
-- In-memory caching strategies
-- Data access optimization
+- C# .NET Framework 4.6.2 (target framework: net462)
+- System.Xml for XML model parsing
+- System.Collections.Generic for dictionary-based caching
+- System.Runtime.InteropServices for Marshal operations (COM interop support)
+- NUnit for unit tests (CacheLightTests project)
 
 ## Dependencies
-- Depends on: Common utilities, data model interfaces
-- Used by: Core data access layers, LCM (Language and Culture Model)
+
+### Upstream (consumes)
+- **SIL.LCModel.Core**: Core data model interfaces (IFwMetaDataCache, ISilDataAccess, CellarPropertyType)
+- **SIL.LCModel.Utils**: Utility classes and interfaces
+- **ViewsInterfaces**: View interfaces (IVwCacheDa, ITsString, ITsMultiString)
+- **XMLUtils**: XML processing utilities
+- **System.Xml**: XML parsing for model loading
+
+### Downstream (consumed by)
+- **CacheLightTests**: Comprehensive unit test project for CacheLight
+- **Common/SimpleRootSite/SimpleRootSiteTests**: Uses CacheLight for testing
+- Test scenarios requiring lightweight data access without full LCM database
 
 ## Interop & Contracts
-Uses Marshaling for cross-boundary calls.
+Implements COM-compatible interfaces (ISilDataAccess, IVwCacheDa, IFwMetaDataCache) to support interop with native FieldWorks components. Uses Marshal operations for cross-boundary calls. RealDataCache implements IDisposable for proper cleanup.
 
 ## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
+Single-threaded design; not thread-safe. All caches use Dictionary<TKey, TValue> for O(1) average-case lookups. Performance optimized for testing and lightweight data access; not designed for large-scale production data. MetaDataCache caches all class IDs (m_clids) to avoid repeated MDC queries. CheckWithMDC flag can be disabled for faster property access without metadata validation.
 
 ## Config & Feature Flags
-No explicit configuration or feature flags detected.
+- **RealDataCache.CheckWithMDC** (bool): When true, validates property access against metadata cache; disable for performance in trusted scenarios
+- No external configuration files; behavior controlled by code and constructor parameters
 
 ## Build Information
-- C# class library project
-- Contains comprehensive unit tests
-- Build with MSBuild or Visual Studio
+- C# class library project: CacheLight.csproj (.NET Framework 4.6.2)
+- Test project: CacheLightTests/CacheLightTests.csproj
+- Output: CacheLight.dll, CacheLightTests.dll (to Output/Debug or Output/Release)
+- Build via top-level FW.sln or: `msbuild CacheLight.csproj /p:Configuration=Debug`
+- Run tests: `dotnet test CacheLightTests/CacheLightTests.csproj` or via Visual Studio Test Explorer
+- Documentation: Debug builds produce CacheLight.xml documentation file
 
 ## Interfaces and Data Models
 
-- **IRealDataCache** (interface)
-  - Path: `RealDataCache.cs`
-  - Public interface definition
+- **IFwMetaDataCache** (implemented by MetaDataCache)
+  - Purpose: Provides read-only access to model metadata (classes, fields, property types)
+  - Inputs: Class IDs, field IDs, class/field names
+  - Outputs: Metadata queries (class names, field types, inheritance, signatures)
+  - Notes: Loaded from XML model files via InitXml()
 
-- **MetaDataCache** (class)
-  - Path: `MetaDataCache.cs`
-  - Public class implementation
+- **IRealDataCache** (implemented by RealDataCache)
+  - Purpose: Combined interface for in-memory data cache supporting multiple data access patterns
+  - Inputs: HVO (object ID), flid (field ID), ws (writing system), property values
+  - Outputs: Cached property values, object data
+  - Notes: Extends ISilDataAccess, IVwCacheDa, IStructuredTextDataAccess
 
-- **MetaDataCacheBase** (class)
-  - Path: `CacheLightTests/MetaDataCacheTests.cs`
-  - Public class implementation
+- **MetaDataCache.InitXml** (MetaDataCache.cs)
+  - Purpose: Parses XML model file to populate metadata cache
+  - Inputs: string mainModelPathname (path to XML model file), bool loadRelatedFiles
+  - Outputs: Populates internal dictionaries with class/field metadata
+  - Notes: Parses &lt;class&gt; and &lt;field&gt; elements; supports inheritance and abstract classes
 
-- **RealCacheLoader** (class)
-  - Path: `RealCacheLoader.cs`
-  - Public class implementation
+- **RealDataCache property accessors** (RealDataCache.cs)
+  - Purpose: Get/Set properties of various types (int, bool, long, string, ITsString, byte[], vectors)
+  - Inputs: HVO (object ID), flid (field ID), ws (writing system for multi-string properties)
+  - Outputs: Property values or void (for setters)
+  - Notes: Methods follow naming pattern: get_*Prop(), Set*Prop(), Cache*Prop()
 
-- **RealDataCache** (class)
-  - Path: `RealDataCache.cs`
-  - Public class implementation
+- **RealDataCache.MakeNewObject** (RealDataCache.cs)
+  - Purpose: Allocates new object ID (HVO) and registers class ID
+  - Inputs: int clid (class ID), int hvoOwner (owner object), int flid (owning property)
+  - Outputs: int hvo (new object ID)
+  - Notes: Increments m_nextHvo; stores object in m_basicObjectCache
 
-- **RealDataCacheBase** (class)
-  - Path: `CacheLightTests/RealDataCacheTests.cs`
-  - Public class implementation
+- **RealCacheLoader.LoadCache** (RealCacheLoader.cs)
+  - Purpose: Populates RealDataCache from XML data file
+  - Inputs: RealDataCache cache, string xmlDataPath, MetaDataCache mdc
+  - Outputs: void (side effect: populates cache)
+  - Notes: Parses &lt;rt&gt; elements (objects) and nested property elements
 
-- **Resources** (class)
-  - Path: `CacheLightTests/Properties/Resources.Designer.cs`
-  - Public class implementation
+- **TsStringfactory.MakeString** (TsStringfactory.cs)
+  - Purpose: Creates ITsString instance from string and writing system
+  - Inputs: string text, int ws (writing system ID)
+  - Outputs: ITsString (formatted text object)
+  - Notes: Minimal implementation for testing; full implementation in other components
+
+- **XML Model Format** (TestModel.xml in CacheLightTests)
+  - Purpose: Defines data model structure (classes, fields, types, inheritance)
+  - Shape: &lt;ModelDef&gt; root with &lt;class&gt; and &lt;field&gt; elements
+  - Consumers: MetaDataCache.InitXml() parses into m_metaClassRecords and m_metaFieldRecords
+  - Notes: Field types use CellarPropertyType enum (OwningAtomic, ReferenceSequence, etc.)
 
 ## Entry Points
-- Provides caching services and interfaces
-- Integrated into data access pipelines
+- **MetaDataCache.CreateMetaDataCache()**: Factory method to create and initialize metadata cache from XML model
+- **RealDataCache constructor**: Creates empty in-memory cache; populate via property setters or RealCacheLoader
+- **RealCacheLoader.LoadCache()**: Populates cache from XML data file
+- Used in test projects via dependency injection or direct instantiation
 
 ## Test Index
-Test projects: CacheLightTests. 2 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+- **Test project**: CacheLightTests (CacheLightTests.csproj)
+- **Test files**: MetaDataCacheTests.cs (MetaDataCacheInitializationTests, MetaDataCacheFieldAccessTests, MetaDataCacheClassAccessTests), RealDataCacheTests.cs (RealDataCacheIVwCacheDaTests, RealDataCacheISilDataAccessTests)
+- **Test data**: TestModel.xml (model definition), TestModel.xsd (schema)
+- **Run tests**: `dotnet test CacheLightTests/CacheLightTests.csproj` or Visual Studio Test Explorer
+- **Coverage**: Unit tests for metadata loading, property access, cache operations
 
 ## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- Use MetaDataCache.CreateMetaDataCache() to load model from XML file
+- Use RealDataCache for in-memory object storage during testing or lightweight data operations
+- Disable CheckWithMDC in RealDataCache for faster property access when metadata validation is unnecessary
+- Use RealCacheLoader to populate RealDataCache from XML data files
+- Use TsStringfactory.MakeString() to create formatted text (ITsString) for testing
+- Check CacheLightTests for usage examples and patterns
 
 ## Related Folders
-- **Cellar/** - Core data model that benefits from CacheLight services
-- **Common/** - Provides utility infrastructure used by CacheLight
-- **DbExtend/** - Database extensions that may use caching
+- **Common/ViewsInterfaces/**: Defines ITsString, IVwCacheDa interfaces implemented by CacheLight
+- **Common/SimpleRootSite/**: Uses CacheLight in tests for lightweight data access
+- **Utilities/XMLUtils/**: Provides XML utilities used by CacheLight
 
 ## References
-
-- **Project files**: CacheLight.csproj, CacheLightTests.csproj
-- **Target frameworks**: net462
-- **Key C# files**: AssemblyInfo.cs, MetaDataCache.cs, MetaDataCacheTests.cs, RealCacheLoader.cs, RealDataCache.cs, RealDataCacheTests.cs, Resources.Designer.cs, TsMultiString.cs, TsStringfactory.cs
-- **XML data/config**: TestModel.xml
-- **Source file count**: 9 files
-- **Data file count**: 3 files
-
-## References (auto-generated hints)
-- Project files:
-  - Src/CacheLight/CacheLight.csproj
-  - Src/CacheLight/CacheLightTests/CacheLightTests.csproj
-- Key C# files:
-  - Src/CacheLight/AssemblyInfo.cs
-  - Src/CacheLight/CacheLightTests/MetaDataCacheTests.cs
-  - Src/CacheLight/CacheLightTests/Properties/Resources.Designer.cs
-  - Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
-  - Src/CacheLight/MetaDataCache.cs
-  - Src/CacheLight/RealCacheLoader.cs
-  - Src/CacheLight/RealDataCache.cs
-  - Src/CacheLight/TsMultiString.cs
-  - Src/CacheLight/TsStringfactory.cs
-- Data contracts/transforms:
-  - Src/CacheLight/CacheLightTests/Properties/Resources.resx
-  - Src/CacheLight/CacheLightTests/TestModel.xml
-  - Src/CacheLight/CacheLightTests/TestModel.xsd
-## Code Evidence
-*Analysis based on scanning 8 source files*
-
-- **Classes found**: 12 public classes
-- **Interfaces found**: 1 public interfaces
-- **Namespaces**: SIL.FieldWorks.CacheLight, SIL.FieldWorks.CacheLightTests
+- **Project files**: CacheLight.csproj (net462), CacheLightTests/CacheLightTests.csproj
+- **Target frameworks**: .NET Framework 4.6.2 (net462)
+- **Key dependencies**: SIL.LCModel.Core, SIL.LCModel.Utils, ViewsInterfaces, XMLUtils
+- **Key C# files**: MetaDataCache.cs (990 lines), RealCacheLoader.cs (480 lines), RealDataCache.cs (2135 lines), TsMultiString.cs (65 lines), TsStringfactory.cs (176 lines), AssemblyInfo.cs (6 lines)
+- **Test files**: CacheLightTests/MetaDataCacheTests.cs, CacheLightTests/RealDataCacheTests.cs
+- **Data contracts**: CacheLightTests/TestModel.xml (model definition), CacheLightTests/TestModel.xsd (schema), CacheLightTests/Properties/Resources.resx
+- **Total lines of code**: 3852 (main library), plus test code
+- **Output**: Output/Debug/CacheLight.dll, Output/Debug/CacheLight.xml (documentation)
+- **Namespace**: SIL.FieldWorks.CacheLight
