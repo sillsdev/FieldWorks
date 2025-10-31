@@ -1,272 +1,143 @@
 ---
-last-reviewed: 2025-10-30
+last-reviewed: 2025-10-31
 last-verified-commit: 9611cf70e
 status: draft
 ---
 
-# FwCoreDlgs
+# FwCoreDlgs COPILOT summary
 
 ## Purpose
-Common dialogs and UI components shared across FieldWorks applications.
-Includes standardized dialog boxes for file operations (BackupProjectDlg, RestoreProjectDlg),
-writing system configuration (FwWritingSystemSetupDlg), project management, and user preferences.
-Ensures consistent user experience across different parts of FieldWorks.
+Common dialogs and UI components shared across FieldWorks applications. Comprehensive collection of standardized dialog boxes including backup/restore (BackupProjectSettings, RestoreProjectPresenter), project management (ChooseLangProjectDialog, AddNewUserDlg), writing system configuration (WritingSystemPropertiesDialog, AdvancedScriptRegionVariantView), converter management (AddCnvtrDlg, EncConverters), find/replace (BasicFindDialog, FindReplaceDialog), character context display (CharContextCtrl), archiving (ArchiveWithRamp), and numerous other common UI patterns. Ensures consistent user experience across xWorks, LexText, and other FieldWorks applications. Over 35K lines of dialog and UI code.
 
 ## Architecture
-C# library with 166 source files. Contains 2 subprojects: FwCoreDlgs, FwCoreDlgControls.
+C# class library (.NET Framework 4.6.2) with Windows Forms dialogs and controls. Extensive collection of ~90 C# files providing reusable UI components. Many dialogs follow MVP (Model-View-Presenter) pattern (e.g., BackupProjectPresenter, RestoreProjectPresenter). Localized strings via resource files (*Strings.Designer.cs, *Resources.Designer.cs). Test project FwCoreDlgsTests validates dialog behavior.
 
 ## Key Components
-### Key Classes
-- **FwChooseAnthroListCtrl**
-- **ArchiveWithRamp**
-- **FwApplyStyleDlg**
-- **FwFindReplaceDlg**
-- **VwPatternSerializableSettings**
-- **SearchKiller**
-- **SampleVc**
-- **SampleView**
-- **RegexHelperMenu**
-- **MissingOldFieldWorksDlg**
-
-### Key Interfaces
-- **IFindAndReplaceContext**
-- **IUtility**
-- **IWizardStep**
-- **IBasicFindView**
-- **IFontDialog**
-- **IStylesTab**
+- **BackupProjectSettings** (BackupProjectSettings.cs): Backup configuration
+  - Properties: Comment, ConfigurationSettings, MediaFiles, Fonts, Keyboards, DestinationFolder
+  - Serializable settings for backup operations
+- **RestoreProjectPresenter**: Restore project dialog presenter (MVP pattern)
+- **ChooseLangProjectDialog**: Project selection dialog
+- **AddNewUserDlg**: Add user to project
+- **WritingSystemPropertiesDialog**: Writing system configuration
+- **AdvancedScriptRegionVariantView**: Advanced WS script/region/variant editor
+- **AddCnvtrDlg**: Add encoding converter dialog
+- **BasicFindDialog, FindReplaceDialog**: Search functionality
+- **CharContextCtrl**: Character context display control
+- **ArchiveWithRamp**: RAMP archiving support
+- **LanguageChooser**: Language selection UI
+- **MergeObjectDlg**: Object merging dialog
+- **ProgressDialogWithTask**: Long operation progress
+- **ValidCharactersDlg**: Valid characters configuration
+- **CheckBoxColumnHeaderHandler**: Checkbox header for grid columns
+- **Numerous specialized dialogs**: AddNewVernLangWarningDlg, AdvancedEncProps, and many more
 
 ## Technology Stack
-- C# .NET WinForms
-- Standard dialog patterns
-- Reusable UI components
+- C# .NET Framework 4.6.2 (net462)
+- OutputType: Library
+- Windows Forms (extensive use of Form, Control, UserControl)
+- MVP pattern for complex dialogs
+- Resource files for localization
 
 ## Dependencies
-- Depends on: Common (UI infrastructure), FdoUi (data object UI)
-- Used by: All major FieldWorks applications (xWorks, LexText)
+
+### Upstream (consumes)
+- **SIL.LCModel**: Data model (LcmCache, ICmObject)
+- **Common/Framework**: Application framework
+- **Common/Controls**: Common controls
+- **Common/FwUtils**: Utilities (DirectoryFinder, etc.)
+- **Windows Forms**: UI framework
+- **XCore**: Command routing for some dialogs
+
+### Downstream (consumed by)
+- **xWorks**: Uses FwCoreDlgs for common UI
+- **LexText**: Lexicon editing dialogs
+- **All FieldWorks applications**: Standardized dialog experience
 
 ## Interop & Contracts
-Uses Marshaling, COM for cross-boundary calls.
+- Many dialogs implement standard Windows Forms patterns (ShowDialog, DialogResult)
+- MVP pattern for testability (presenters separate from views)
+- Resource-based localization
 
 ## Threading & Performance
-Threading model: explicit threading, synchronization.
+- **UI thread required**: All dialog operations
+- **Progress dialogs**: ProgressDialogWithTask for responsive long operations
+- **Performance**: Standard dialog performance; some with caching
 
 ## Config & Feature Flags
-Config files: App.config.
+- **BackupProjectSettings**: Configurable backup options (media, fonts, keyboards, config)
+- Dialogs configured via properties and initialization methods
+- Many dialogs accept configuration objects
 
 ## Build Information
-- Three C# projects: dialogs, controls, and tests
-- Build with MSBuild or Visual Studio
-- Provides shared dialog infrastructure
+- **Project file**: FwCoreDlgs.csproj (net462, OutputType=Library)
+- **Test project**: FwCoreDlgsTests/
+- **Output**: FwCoreDlgs.dll
+- **Build**: Via top-level FW.sln
+- **Run tests**: `dotnet test FwCoreDlgsTests/`
 
 ## Interfaces and Data Models
 
-- **IBasicFindView** (interface)
-  - Path: `BasicFindDialog.cs`
-  - Public interface definition
+- **BackupProjectSettings** (BackupProjectSettings.cs)
+  - Purpose: Backup configuration data
+  - Properties: Comment, ConfigurationSettings, MediaFiles, Fonts, Keyboards, DestinationFolder
+  - Notes: XML serializable; default DestinationFolder from DirectoryFinder
 
-- **IFindAndReplaceContext** (interface)
-  - Path: `FwFindReplaceDlg.cs`
-  - Public interface definition
+- **ChooseLangProjectDialog**
+  - Purpose: User selects language project to open
+  - Inputs: Available projects
+  - Outputs: Selected project (DialogResult.OK) or cancellation
+  - Notes: Standard project selection UI
 
-- **IUtility** (interface)
-  - Path: `IUtility.cs`
-  - Public interface definition
+- **WritingSystemPropertiesDialog**
+  - Purpose: Configure writing system properties
+  - Inputs: Writing system definition
+  - Outputs: Modified WS configuration
+  - Notes: Comprehensive WS editing including script, region, variant
 
-- **IWizardStep** (interface)
-  - Path: `FwNewLangProjectModel.cs`
-  - Public interface definition
+- **BasicFindDialog, FindReplaceDialog**
+  - Purpose: Find and replace text operations
+  - Inputs: Search parameters, scope
+  - Outputs: Find/replace operations
+  - Notes: Standard search UI pattern
 
-- **AddCnvtrDlg** (class)
-  - Path: `AddCnvtrDlg.cs`
-  - Public class implementation
+- **ProgressDialogWithTask**
+  - Purpose: Show progress during long-running operations
+  - Inputs: Task delegate, cancellation token
+  - Outputs: Task completion or cancellation
+  - Notes: Keeps UI responsive with progress feedback
 
-- **AddNewUserDlg** (class)
-  - Path: `AddNewUserDlg.cs`
-  - Public class implementation
-
-- **ChooserTreeView** (class)
-  - Path: `ChooserTreeView.cs`
-  - Public class implementation
-
-- **CnvtrTypeComboItem** (class)
-  - Path: `CnvtrTypeComboItem.cs`
-  - Public class implementation
-
-- **ErrorMessageHandler** (class)
-  - Path: `ErrorMessage.cs`
-  - Public class implementation
-
-- **FwChooseAnthroListModel** (class)
-  - Path: `FwChooseAnthroListModel.cs`
-  - Public class implementation
-
-- **FwChooserDlg** (class)
-  - Path: `FwChooserDlg.cs`
-  - Public class implementation
-
-- **FwCoreDlgs** (class)
-  - Path: `FwCoreDlgs.Designer.cs`
-  - Public class implementation
-
-- **FwDeleteProjectDlg** (class)
-  - Path: `FwDeleteProjectDlg.cs`
-  - Public class implementation
-
-- **FwFindReplaceDlg** (class)
-  - Path: `FwFindReplaceDlg.cs`
-  - Public class implementation
-
-- **FwProjPropertiesDlg** (class)
-  - Path: `FwProjPropertiesDlg.cs`
-  - Public class implementation
-
-- **FwSplashScreen** (class)
-  - Path: `FwSplashScreen.cs`
-  - Public class implementation
-
-- **FwUserProperties** (class)
-  - Path: `FwUserProperties.cs`
-  - Public class implementation
-
-- **HelperMenu** (class)
-  - Path: `HelperMenu.cs`
-  - Public class implementation
-
-- **RegexHelperMenu** (class)
-  - Path: `RegexHelperMenu.cs`
-  - Public class implementation
-
-- **SampleVc** (class)
-  - Path: `ConverterTest.cs`
-  - Public class implementation
-
-- **SampleView** (class)
-  - Path: `ConverterTest.cs`
-  - Public class implementation
-
-- **SearchKiller** (class)
-  - Path: `FwFindReplaceDlg.cs`
-  - Public class implementation
-
-- **ViewHiddenWritingSystemsModel** (class)
-  - Path: `ViewHiddenWritingSystemsModel.cs`
-  - Public class implementation
-
-- **VwPatternSerializableSettings** (class)
-  - Path: `FwFindReplaceDlg.cs`
-  - Public class implementation
-
-- **ConverterType** (enum)
-  - Path: `CnvtrTypeComboItem.cs`
-
-- **ErrorMessage** (enum)
-  - Path: `ErrorMessage.cs`
-
-- **FileLocationChoice** (enum)
-  - Path: `MoveOrCopyFilesDlg.cs`
-
-- **ListChoice** (enum)
-  - Path: `FwChooseAnthroListModel.cs`
-
-- **MatchType** (enum)
-  - Path: `FwFindReplaceDlg.cs`
-
-- **SampleFrags** (enum)
-  - Path: `ConverterTest.cs`
-
-- **SampleTags** (enum)
-  - Path: `ConverterTest.cs`
-
-- **StyleChangeType** (enum)
-  - Path: `FwStylesDlg.cs`
+- **MergeObjectDlg**
+  - Purpose: Merge duplicate data objects
+  - Inputs: Source and target objects
+  - Outputs: Merged object
+  - Notes: Conflict resolution UI
 
 ## Entry Points
-- Provides standard dialogs (file choosers, configuration dialogs, etc.)
-- Reusable controls for building consistent UI
+Referenced as library by FieldWorks applications. Dialogs instantiated and shown via ShowDialog() pattern.
 
 ## Test Index
-Test projects: FwCoreDlgsTests, FwCoreDlgControlsTests. 26 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+- **Test project**: FwCoreDlgsTests/
+- **Run tests**: `dotnet test FwCoreDlgsTests/`
+- **Coverage**: Dialog initialization, presenter logic, MVP patterns
 
 ## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- Use standard Windows Forms pattern: instantiate dialog, call ShowDialog(), check DialogResult
+- MVP pattern dialogs: create presenter, initialize, call Run()
+- BackupProjectSettings for configurable backups
+- ProgressDialogWithTask for long operations with cancellation
+- Many dialogs are application-modal; use carefully
+- Localized strings via resource files
 
 ## Related Folders
-- **Common/** - UI infrastructure that FwCoreDlgs builds upon
-- **FdoUi/** - Data object UI that uses FwCoreDlgs
-- **xWorks/** - Primary consumer of standard dialogs
-- **LexText/** - Uses FwCoreDlgs for common operations
+- **Common/Framework**: Framework using these dialogs
+- **Common/Controls**: Complementary controls
+- **xWorks, LexText**: Major consumers
 
 ## References
-
-- **Project files**: FwCoreDlgControls.csproj, FwCoreDlgControlsTests.csproj, FwCoreDlgs.csproj, FwCoreDlgsTests.csproj
-- **Target frameworks**: net462
-- **Key C# files**: ArchiveWithRamp.cs, AssemblyInfo.cs, ConverterTest.cs, FwApplyStyleDlg.cs, FwChooseAnthroListCtrl.cs, FwCoreDlgs.Designer.cs, FwFindReplaceDlg.cs, FwNewLangProject.Designer.cs, RegexHelperMenu.cs, ValidCharactersDlg.Designer.cs
-- **XML data/config**: custompua.xml, xtst.xml
-- **Source file count**: 166 files
-- **Data file count**: 67 files
-
-## References (auto-generated hints)
-- Project files:
-  - Src/FwCoreDlgs/FwCoreDlgControls/FwCoreDlgControls.csproj
-  - Src/FwCoreDlgs/FwCoreDlgControls/FwCoreDlgControlsTests/FwCoreDlgControlsTests.csproj
-  - Src/FwCoreDlgs/FwCoreDlgs.csproj
-  - Src/FwCoreDlgs/FwCoreDlgsTests/FwCoreDlgsTests.csproj
-- Key C# files:
-  - Src/FwCoreDlgs/AddCnvtrDlg.cs
-  - Src/FwCoreDlgs/AddConverterDlgStrings.Designer.cs
-  - Src/FwCoreDlgs/AddConverterResources.Designer.cs
-  - Src/FwCoreDlgs/AddNewUserDlg.cs
-  - Src/FwCoreDlgs/AddNewVernLangWarningDlg.Designer.cs
-  - Src/FwCoreDlgs/AddNewVernLangWarningDlg.cs
-  - Src/FwCoreDlgs/AdvancedEncProps.cs
-  - Src/FwCoreDlgs/AdvancedScriptRegionVariantModel.cs
-  - Src/FwCoreDlgs/AdvancedScriptRegionVariantView.Designer.cs
-  - Src/FwCoreDlgs/AdvancedScriptRegionVariantView.cs
-  - Src/FwCoreDlgs/ArchiveWithRamp.Designer.cs
-  - Src/FwCoreDlgs/ArchiveWithRamp.cs
-  - Src/FwCoreDlgs/AssemblyInfo.cs
-  - Src/FwCoreDlgs/BackupProjectSettings.cs
-  - Src/FwCoreDlgs/BackupRestore/BackupProjectDlg.Designer.cs
-  - Src/FwCoreDlgs/BackupRestore/BackupProjectDlg.cs
-  - Src/FwCoreDlgs/BackupRestore/BackupProjectPresenter.cs
-  - Src/FwCoreDlgs/BackupRestore/ChangeDefaultBackupDir.Designer.cs
-  - Src/FwCoreDlgs/BackupRestore/ChangeDefaultBackupDir.cs
-  - Src/FwCoreDlgs/BackupRestore/IBackupProjectView.cs
-  - Src/FwCoreDlgs/BackupRestore/OverwriteExistingProject.Designer.cs
-  - Src/FwCoreDlgs/BackupRestore/OverwriteExistingProject.cs
-  - Src/FwCoreDlgs/BackupRestore/RestoreProjectDlg.Designer.cs
-  - Src/FwCoreDlgs/BackupRestore/RestoreProjectDlg.cs
-  - Src/FwCoreDlgs/BackupRestore/RestoreProjectPresenter.cs
-- Data contracts/transforms:
-  - Src/FwCoreDlgs/AddCnvtrDlg.resx
-  - Src/FwCoreDlgs/AddConverterDlgStrings.resx
-  - Src/FwCoreDlgs/AddConverterResources.resx
-  - Src/FwCoreDlgs/AddNewUserDlg.resx
-  - Src/FwCoreDlgs/AddNewVernLangWarningDlg.resx
-  - Src/FwCoreDlgs/AdvancedEncProps.resx
-  - Src/FwCoreDlgs/AdvancedScriptRegionVariantView.resx
-  - Src/FwCoreDlgs/ArchiveWithRamp.resx
-  - Src/FwCoreDlgs/BackupRestore/BackupProjectDlg.resx
-  - Src/FwCoreDlgs/BackupRestore/ChangeDefaultBackupDir.resx
-  - Src/FwCoreDlgs/BackupRestore/OverwriteExistingProject.resx
-  - Src/FwCoreDlgs/BackupRestore/RestoreProjectDlg.resx
-  - Src/FwCoreDlgs/BasicFindDialog.resx
-  - Src/FwCoreDlgs/CharContextCtrl.resx
-  - Src/FwCoreDlgs/ChooseLangProjectDialog.resx
-  - Src/FwCoreDlgs/CnvtrPropertiesCtrl.resx
-  - Src/FwCoreDlgs/ConverterTest.resx
-  - Src/FwCoreDlgs/DeleteWritingSystemWarningDialog.resx
-  - Src/FwCoreDlgs/FWCoreDlgsErrors.resx
-  - Src/FwCoreDlgs/FwApplyStyleDlg.resx
-  - Src/FwCoreDlgs/FwChooseAnthroListCtrl.resx
-  - Src/FwCoreDlgs/FwChooserDlg.resx
-  - Src/FwCoreDlgs/FwCoreDlgControls/ConfigParentNode.resx
-  - Src/FwCoreDlgs/FwCoreDlgControls/ConfigSenseLayout.resx
-  - Src/FwCoreDlgs/FwCoreDlgControls/DefaultFontsControl.resx
-## Code Evidence
-*Analysis based on scanning 120 source files*
-
-- **Classes found**: 20 public classes
-- **Interfaces found**: 6 public interfaces
-- **Namespaces**: AddConverterDlgTests, SIL.FieldWorks.Common.Controls, SIL.FieldWorks.FwCoreDlgControls, SIL.FieldWorks.FwCoreDlgControlsTests, SIL.FieldWorks.FwCoreDlgs
+- **Project files**: FwCoreDlgs.csproj (net462), FwCoreDlgsTests/
+- **Target frameworks**: .NET Framework 4.6.2
+- **Key C# files**: ~90 dialog and control files including BackupProjectSettings.cs, ChooseLangProjectDialog.cs, WritingSystemPropertiesDialog.cs, and many more
+- **Total lines of code**: 35502
+- **Output**: FwCoreDlgs.dll
+- **Namespace**: SIL.FieldWorks.FwCoreDlgs
