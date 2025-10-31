@@ -1,83 +1,63 @@
 ---
-last-reviewed: 2025-10-30
-last-verified-commit: 9611cf70e
-status: draft
+last-reviewed: 2025-10-31
+last-verified-commit: ed9c587
+status: reviewed
 ---
 
 # ManagedVwDrawRootBuffered
 
 ## Purpose
-Managed wrapper for buffered view rendering infrastructure.
-Implements double-buffered drawing to eliminate flicker in complex text displays.
-Provides smooth rendering experience for views containing large amounts of formatted text
-with multiple writing systems and complex layouts.
+Managed C# implementation of IVwDrawRootBuffered for double-buffered Views rendering. Eliminates flicker by rendering IVwRootBox content to off-screen bitmap (GDI+ Bitmap), then blitting to screen HDC. Direct port of C++ VwDrawRootBuffered from VwRootBox.cpp. Used by Views infrastructure to provide smooth rendering for complex multi-writing-system text displays with selections, highlighting, and dynamic content updates.
 
 ## Architecture
-C# library with 2 source files.
+C# library (net462) with 2 source files (~283 lines total). Single class VwDrawRootBuffered implementing IVwDrawRootBuffered, using nested MemoryBuffer class for bitmap management. Integrates with native Views COM infrastructure (IVwRootBox, IVwRootSite, IVwSynchronizer).
 
 ## Key Components
-### Key Classes
-- **VwDrawRootBuffered**
 
-## Technology Stack
-- C# .NET with GDI+ or DirectX
-- Double-buffered rendering
-- View drawing optimization
+### Buffered Drawing Engine
+- **VwDrawRootBuffered**: Implements IVwDrawRootBuffered.DrawTheRoot() for double-buffered rendering. Creates off-screen bitmap via MemoryBuffer (wraps GDI+ Bitmap + Graphics), invokes IVwRootBox.DrawRoot() to render to bitmap HDC, copies bitmap to target HDC via BitBlt. Handles synchronizer checks (skips draw if IsExpandingLazyItems), selection rendering (fDrawSel parameter), background color fill (bkclr parameter).
+  - Inputs: IVwRootBox (root box to render), IntPtr hdc (target device context), Rect rcpDraw (drawing rectangle), uint bkclr (background color RGB), bool fDrawSel (render selection), IVwRootSite pvrs (root site for callbacks)
+  - Methods: DrawTheRoot(...) - main rendering entry point
+  - Internal: MemoryBuffer nested class for bitmap lifecycle
+  - COM GUID: 97199458-10C7-49da-B3AE-EA922EA64859
+
+### Memory Buffer Management
+- **MemoryBuffer** (nested class): Manages off-screen GDI+ Bitmap and Graphics for double buffering. Creates Bitmap(width, height), gets Graphics from bitmap, acquires HDC via Graphics.GetHdc() for Views rendering, releases HDC on dispose. Implements IDisposable with proper finalizer for deterministic cleanup.
+  - Properties: Bitmap (GDI+ Bitmap), Graphics (GDI+ Graphics with acquired HDC)
+  - Lifecycle: Created per DrawTheRoot() call, disposed after BitBlt to screen
 
 ## Dependencies
-- Depends on: views (native view layer), Common (UI infrastructure)
-- Used by: All view-based UI components requiring smooth rendering
-
-## Interop & Contracts
-Uses COM for cross-boundary calls.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
+- **External**: Common/ViewsInterfaces (IVwDrawRootBuffered, IVwRootBox, IVwRootSite, IVwSynchronizer, Rect), LCModel.Core.Text, System.Drawing (GDI+ Bitmap, Graphics, IntPtr HDC interop), System.Runtime.InteropServices (COM attributes)
+- **Internal (upstream)**: ViewsInterfaces (interface contracts)
+- **Consumed by**: Common/RootSite (SimpleRootSite, RootSite use buffered drawing), ManagedVwWindow (window hosting Views), views (native Views engine calls back to managed buffered drawer)
 
 ## Build Information
-- C# class library
-- Build with MSBuild or Visual Studio
-- Performance-critical rendering code
+- Project type: C# class library (net462)
+- Build: `msbuild ManagedVwDrawRootBuffered.csproj` or `dotnet build` (from FW.sln)
+- Output: ManagedVwDrawRootBuffered.dll
+- Dependencies: ViewsInterfaces, LCModel.Core, System.Drawing (GDI+)
+- COM attributes: [ComVisible], GUID for COM registration
 
-## Interfaces and Data Models
-
-- **VwDrawRootBuffered** (class)
-  - Path: `VwDrawRootBuffered.cs`
-  - Public class implementation
-
-## Entry Points
-- Provides buffered drawing surfaces for views
-- Used by view infrastructure for rendering
-
-## Test Index
-No tests found in this folder. Tests may be in a separate Test folder or solution.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+## Test Information
+- No dedicated test project found in this folder
+- Integration tested via RootSite tests (Common/RootSite tests exercise buffered rendering)
+- Manual testing: Any FLEx view with text (lexicon, interlinear, browse views) uses buffered rendering to eliminate flicker during scroll/selection
 
 ## Related Folders
-- **views/** - Native view layer that works with buffered rendering
-- **ManagedVwWindow/** - Window management that uses buffered drawing
-- **Common/RootSite/** - Root site components using buffered rendering
-- **Common/SimpleRootSite/** - Simplified sites using this infrastructure
+- **views/**: Native Views C++ engine, calls IVwDrawRootBuffered for managed buffering
+- **ManagedVwWindow/**: Window management hosting Views with buffered rendering
+- **Common/RootSite/**: RootSite base classes using buffered drawer
+- **Common/SimpleRootSite/**: SimpleRootSite subclasses using buffered rendering
+- **Common/ViewsInterfaces/**: Defines IVwDrawRootBuffered, IVwRootBox interfaces
 
 ## References
-
-- **Project files**: ManagedVwDrawRootBuffered.csproj
-- **Target frameworks**: net462
-- **Key C# files**: AssemblyInfo.cs, VwDrawRootBuffered.cs
-- **Source file count**: 2 files
-- **Data file count**: 0 files
-
-## References (auto-generated hints)
-- Project files:
-  - Src/ManagedVwDrawRootBuffered/ManagedVwDrawRootBuffered.csproj
-- Key C# files:
-  - Src/ManagedVwDrawRootBuffered/AssemblyInfo.cs
-  - Src/ManagedVwDrawRootBuffered/VwDrawRootBuffered.cs
+- **Source files**: 2 C# files (~283 lines): VwDrawRootBuffered.cs, AssemblyInfo.cs
+- **Project file**: ManagedVwDrawRootBuffered.csproj
+- **Key class**: VwDrawRootBuffered (implements IVwDrawRootBuffered, nested MemoryBuffer)
+- **Key interface**: IVwDrawRootBuffered (from ViewsInterfaces)
+- **COM GUID**: 97199458-10C7-49da-B3AE-EA922EA64859
+- **Namespace**: SIL.FieldWorks.Views
+- **Target framework**: net462
 ## Code Evidence
 *Analysis based on scanning 2 source files*
 
