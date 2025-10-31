@@ -1,122 +1,38 @@
 ---
-last-reviewed: 2025-10-30
+last-reviewed: 2025-10-31
 last-verified-commit: 9611cf70e
 status: draft
 ---
 
-# UIAdapterInterfaces
+# UIAdapterInterfaces COPILOT summary
 
 ## Purpose
-UI adapter pattern interfaces for abstraction and testability.
-Defines contracts that allow UI components to be adapted to different technologies or replaced
-with test doubles. Enables better separation of concerns between business logic and UI presentation,
-and facilitates unit testing of UI-dependent code.
+UI adapter pattern interfaces for abstraction and testability. Defines contracts (SIBInterface, TMInterface) that allow UI components to be adapted to different technologies or replaced with test doubles. Enables dependency injection and testing of UI-dependent code.
 
 ## Architecture
-C# library with 5 source files.
+C# interface library (.NET Framework 4.6.2) with UI adapter contracts.
 
 ## Key Components
-### Key Classes
-- **TMItemProperties**
-- **TMBarProperties**
-- **WindowListInfo**
-- **SBTabProperties**
-- **SBTabItemProperties**
-
-### Key Interfaces
-- **ISIBInterface**
-- **ITMAdapter**
+- **SIBInterface**: Side bar interface contract
+- **TMInterface**: Text manager interface contract
+- Helper classes for UI adaptation
+- Adapter pattern interfaces
 
 ## Technology Stack
-- C# .NET
-- Interface-based design
-- Adapter pattern implementation
+- C# .NET Framework 4.6.2
+- Interface definitions only
 
 ## Dependencies
-- Depends on: Minimal (interface definitions)
-- Used by: XCore, UI adapter implementations
+### Upstream
+- Minimal (interface definitions)
 
-## Interop & Contracts
-Uses COM for cross-boundary calls.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
+### Downstream
+- UI components implementing adapters
+- Test projects using test doubles
 
 ## Build Information
-- C# interface library project
-- Build via: `dotnet build UIAdapterInterfaces.csproj`
-- Pure interface definitions
-
-## Interfaces and Data Models
-
-- **ISIBInterface** (interface)
-  - Path: `SIBInterface.cs`
-  - Public interface definition
-
-- **ITMAdapter** (interface)
-  - Path: `TMInterface.cs`
-  - Public interface definition
-
-- **SBTabItemProperties** (class)
-  - Path: `HelperClasses.cs`
-  - Public class implementation
-
-- **SBTabProperties** (class)
-  - Path: `HelperClasses.cs`
-  - Public class implementation
-
-- **TMBarProperties** (class)
-  - Path: `HelperClasses.cs`
-  - Public class implementation
-
-- **TMItemProperties** (class)
-  - Path: `HelperClasses.cs`
-  - Public class implementation
-
-- **WindowListInfo** (class)
-  - Path: `HelperClasses.cs`
-  - Public class implementation
-
-## Entry Points
-- Interface contracts for UI adapters
-- Abstraction layer for UI technologies
-
-## Test Index
-No tests found in this folder. Tests may be in a separate Test folder or solution.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
-
-## Related Folders
-- **XCore/** - Uses these interfaces extensively
-- **XCore/FlexUIAdapter/** - Implements these interfaces
-- **Common/Controls/** - Controls that work with adapters
+- **Project**: UIAdapterInterfaces.csproj (net462, Library)
+- **Build**: Via FW.sln
 
 ## References
-
-- **Project files**: UIAdapterInterfaces.csproj
-- **Target frameworks**: net462
-- **Key C# files**: AssemblyInfo.cs, HelperClasses.cs, SIBInterface.cs, TMInterface.cs, UIAdapterInterfacesStrings.Designer.cs
-- **Source file count**: 5 files
-- **Data file count**: 1 files
-
-## References (auto-generated hints)
-- Project files:
-  - Common/UIAdapterInterfaces/UIAdapterInterfaces.csproj
-- Key C# files:
-  - Common/UIAdapterInterfaces/AssemblyInfo.cs
-  - Common/UIAdapterInterfaces/HelperClasses.cs
-  - Common/UIAdapterInterfaces/SIBInterface.cs
-  - Common/UIAdapterInterfaces/TMInterface.cs
-  - Common/UIAdapterInterfaces/UIAdapterInterfacesStrings.Designer.cs
-- Data contracts/transforms:
-  - Common/UIAdapterInterfaces/UIAdapterInterfacesStrings.resx
-## Code Evidence
-*Analysis based on scanning 4 source files*
-
-- **Classes found**: 5 public classes
-- **Interfaces found**: 2 public interfaces
-- **Namespaces**: SIL.FieldWorks.Common.UIAdapters
+- **Namespace**: SIL.FieldWorks.Common.UIAdapterInterfaces
