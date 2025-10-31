@@ -1,245 +1,99 @@
 ---
-last-reviewed: 2025-10-30
-last-verified-commit: 9611cf70e
-status: draft
+last-reviewed: 2025-10-31
+last-verified-commit: b2590c1
+status: reviewed
 ---
 
 # ParserUI
 
 ## Purpose
-User interface components for parser configuration and testing.
-Provides UI for configuring the morphological parser, testing parser behavior, viewing parse traces,
-managing parser settings, and debugging morphological analyses. Enables linguists to refine
-and validate their morphological descriptions.
+Parser configuration and testing UI components. Provides TryAWordDlg for interactive single-word parsing with trace visualization, ParserReportsDialog for viewing parse batch results and statistics, ImportWordSetDlg for bulk wordlist import, ParserParametersDlg for parser configuration, and XAmpleWordGrammarDebugger for grammar file debugging. Enables linguists to refine and validate morphological descriptions by testing parser behavior, viewing parse traces (HC XML or XAmple SGML), managing parser settings, and debugging morphological analyses.
 
 ## Architecture
-C# library with 28 source files. Contains 1 subprojects: ParserUI.
+C# library (net462) with 28 source files (~5.9K lines). Mix of WinForms (TryAWordDlg, ImportWordSetDlg, ParserParametersDlg) and WPF/XAML (ParserReportsDialog, ParserReportDialog) with MVVM view models. Integrates Gecko WebBrowser control for HTML trace display via GeneratedHtmlViewer.
 
 ## Key Components
-### Key Classes
-- **TryAWordDlg**
-- **ParserReportsDialog**
-- **TryAWordSandbox**
-- **WordImporter**
-- **ParserParametersDlg**
-- **FileTimeToDateTimeConverter**
-- **ImportWordSetDlg**
-- **XAmpleWordGrammarDebugger**
-- **ImportWordSetListener**
-- **ParserParametersListener**
 
-### Key Interfaces
-- **IParserTrace**
+### Try A Word Dialog
+- **TryAWordDlg**: Main parser testing dialog. Allows entering a wordform, invoking parser via ParserListener→ParserConnection→ParserScheduler, displaying analyses in TryAWordSandbox, and showing trace in HTML viewer (Gecko WebBrowser). Supports "Trace parse" checkbox and "Select morphs to trace" for granular HC trace control. Persists state via PersistenceProvider. Implements IMediatorProvider, IPropertyTableProvider for XCore integration.
+  - Inputs: LcmCache, Mediator, PropertyTable, word string, ParserListener
+  - UI Controls: FwTextBox (wordform input), TryAWordSandbox (analysis display), HtmlControl (Gecko trace viewer), CheckBox (trace options), Timer (async status updates)
+  - Methods: SetDlgInfo(), TryItHandler(), OnParse(), DisplayTrace()
+- **TryAWordSandbox**: Sandbox control for displaying parse results within TryAWordDlg. Extends InterlinLineChoices for analysis display. Uses TryAWordRootSite for Views rendering.
+- **TryAWordRootSite**: Root site for Views-based analysis display in sandbox. Extends SimpleRootSite.
 
-## Technology Stack
-- C# .NET WinForms
-- Parser configuration UI
-- Trace visualization
+### Parser Reports
+- **ParserReportsDialog**: WPF dialog showing list of parser batch reports. Uses ObservableCollection<ParserReportViewModel> data binding. Allows viewing individual report details via ParserReportDialog, deleting reports.
+  - UI: XAML with ListBox, DataGrid, buttons for View/Delete/Close
+  - ViewModel: ParserReportsViewModel (manages collection of reports)
+- **ParserReportDialog**: WPF dialog showing details of single ParserReport. Displays statistics (words parsed, time taken, errors), comment editing.
+  - UI: XAML with TextBox, DataGrid
+  - ViewModel: ParserReportViewModel (wraps ParserReport from ParserCore)
+- **ParserReportViewModel**: View model for single ParserReport. Exposes Date, Name, Comment, TimeToParseAllWordforms, TimeToLoadGrammar, NumberOfWordformsParsed, etc. Implements INotifyPropertyChanged.
+  - Converters: FileTimeToDateTimeConverter, MillisecondsToTimeSpanConverter, PositiveIntToRedBrushConverter (for highlighting errors)
+
+### Import Word Set
+- **ImportWordSetDlg**: Dialog for importing wordlists for bulk parsing. Uses WordImporter to load words from file, creates IWfiWordform objects. Integrated with ParserListener for parsing after import.
+  - Inputs: PropertyTable, Mediator
+  - Methods: ImportWordSet(), HandleImport()
+- **ImportWordSetListener**: XCore colleague for triggering ImportWordSetDlg from menu/toolbar (OnImportWordSet message handler)
+- **WordImporter**: Utility class for reading wordlists from text files, creating IWfiWordform objects in LcmCache
+
+### Parser Configuration
+- **ParserParametersDlg**: Dialog for configuring parser settings (parameters vary by active parser - HC or XAmple)
+  - Base class: ParserParametersBase
+- **ParserParametersListener**: XCore colleague for triggering ParserParametersDlg (OnParserParameters message handler)
+
+### Parser Coordination
+- **ParserListener**: XCore colleague coordinating parser operations. Implements IxCoreColleague, IVwNotifyChange for data change notifications. Manages ParserConnection (wraps ParserScheduler), TryAWordDlg state, ParserReportsDialog lifecycle. Tracks m_checkParserResults for validation, manages bulk parsing via ParseTextWordforms/ParseWordforms.
+  - Properties: ParserConnection (ParserScheduler wrapper), TryAWordDlg reference, ParserReportsDialog reference
+  - Message handlers: OnTryAWord, OnParserParameters, OnParserReports, OnBulkParseWordforms, OnRefreshParser, OnCheckParser
+  - Events: Handles TaskUpdateEventArgs from ParserScheduler
+- **ParserConnection**: Wrapper around ParserScheduler from ParserCore. Provides convenient access to parser operations, manages ParserScheduler lifecycle. Implements IDisposable.
+  - Properties: ParserScheduler reference
+  - Methods: TryAWord(), ScheduleWordformsForUpdate(), Refresh()
+
+### Trace Display
+- **IParserTrace** (interface): Abstract trace viewer interface
+  - Methods: DisplayTrace(string htmlFilename, string title)
+- **HCTrace** (IParserTrace): HermitCrab trace display. Transforms HC XML trace to HTML via ParserTraceUITransform XSLT, displays in WebBrowser (Gecko via WebPageInteractor).
+- **XAmpleTrace** (IParserTrace): XAmple trace display. Converts SGML trace to HTML (basic formatting), displays in WebBrowser.
+- **ParserTraceUITransform**: XSLT stylesheet wrapper for transforming HC XML trace to readable HTML
+- **WebPageInteractor**: Bridge between C# and Gecko WebBrowser for HTML display, JavaScript interaction (used by GeneratedHtmlViewer)
+
+### Debugging Tools
+- **XAmpleWordGrammarDebugger**: Tool for debugging XAmple grammar files (ana, dictOrtho, dictPrefix files). Displays grammar contents for manual inspection.
 
 ## Dependencies
-- Depends on: LexText/ParserCore (engine), Common (UI infrastructure)
-- Used by: LexText/LexTextDll (morphology tools)
-
-## Interop & Contracts
-No explicit interop boundaries detected. Pure managed or native code.
-
-## Threading & Performance
-Threading model: UI thread marshaling.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
+- **External**: XCore (Mediator, PropertyTable, IxCoreColleague, message handling), LexText/ParserCore (ParserScheduler, ParserWorker, ParseFiler, IParser, ParserReport, ParseResult), Common/RootSites (SimpleRootSite, TryAWordRootSite base), Common/Widgets (FwTextBox), Common/FwUtils (PersistenceProvider, FlexHelpProvider), XWorks (GeneratedHtmlViewer, WebPageInteractor for Gecko), LCModel (LcmCache, IWfiWordform, IWfiAnalysis), Gecko (GeckoWebBrowser for HTML trace display), System.Windows.Forms (WinForms controls), System.Windows (WPF/XAML for reports dialogs)
+- **Internal (upstream)**: ParserCore (all parser operations), RootSite (Views rendering), XCore (colleague pattern integration)
+- **Consumed by**: LexText/LexTextDll (via XCore listeners - ImportWordSetListener, ParserListener, ParserParametersListener invoked from menu/toolbar commands)
 
 ## Build Information
-- C# class library project
-- Build via: `dotnet build ParserUI.csproj`
-- Parser UI and configuration
+- Project type: C# class library (net462)
+- Build: `msbuild ParserUI.csproj` or `dotnet build` (from FW.sln)
+- Output: ParserUI.dll
+- Dependencies: Gecko WebBrowser (via NuGet), XCore, ParserCore, RootSites, FwUtils, LCModel
+- UI technologies: WinForms (dialogs, controls), WPF/XAML (reports dialogs with MVVM), Gecko WebBrowser (HTML trace display)
 
-## Interfaces and Data Models
-
-- **IParserTrace** (interface)
-  - Path: `IParserTrace.cs`
-  - Public interface definition
-
-- **FileTimeToDateTimeConverter** (class)
-  - Path: `FileTimeToDateTimeConverter.cs`
-  - Public class implementation
-
-- **HCTrace** (class)
-  - Path: `HCTrace.cs`
-  - Public class implementation
-
-- **ImportWordSetDlg** (class)
-  - Path: `ImportWordSetDlg.cs`
-  - Public class implementation
-
-- **ImportWordSetListener** (class)
-  - Path: `ImportWordSetListener.cs`
-  - Public class implementation
-
-- **MillisecondsToTimeSpanConverter** (class)
-  - Path: `MillisecondsToTimeSpanConverter.cs`
-  - Public class implementation
-
-- **ParserConnection** (class)
-  - Path: `ParserConnection.cs`
-  - Public class implementation
-
-- **ParserListener** (class)
-  - Path: `ParserListener.cs`
-  - Public class implementation
-
-- **ParserParametersBase** (class)
-  - Path: `ParserParametersBase.cs`
-  - Public class implementation
-
-- **ParserParametersDlg** (class)
-  - Path: `ParserParametersDlg.cs`
-  - Public class implementation
-
-- **ParserParametersListener** (class)
-  - Path: `ImportWordSetListener.cs`
-  - Public class implementation
-
-- **ParserReportViewModel** (class)
-  - Path: `ParserReportViewModel.cs`
-  - Public class implementation
-
-- **ParserReportsViewModel** (class)
-  - Path: `ParserReportsViewModel.cs`
-  - Public class implementation
-
-- **ParserTraceUITransform** (class)
-  - Path: `ParserTraceUITransform.cs`
-  - Public class implementation
-
-- **ParserUIStrings** (class)
-  - Path: `ParserUIStrings.Designer.cs`
-  - Public class implementation
-
-- **TryAWordDlg** (class)
-  - Path: `TryAWordDlg.cs`
-  - Public class implementation
-
-- **TryAWordSandbox** (class)
-  - Path: `TryAWordSandbox.cs`
-  - Public class implementation
-
-- **WebPageInteractor** (class)
-  - Path: `WebPageInteractor.cs`
-  - Public class implementation
-
-- **WordImporter** (class)
-  - Path: `WordImporter.cs`
-  - Public class implementation
-
-- **XAmpleTrace** (class)
-  - Path: `XAmpleTrace.cs`
-  - Public class implementation
-
-- **XAmpleWordGrammarDebugger** (class)
-  - Path: `XAmpleWordGrammarDebugger.cs`
-  - Public class implementation
-
-- **ParserReportDialog** (xaml)
-  - Path: `ParserReportDialog.xaml`
-  - XAML UI definition
-
-- **ParserReportsDialog** (xaml)
-  - Path: `ParserReportsDialog.xaml`
-  - XAML UI definition
-
-- **TestUnificationViaXSLT** (xslt)
-  - Path: `ParserUITests/TestUnificationViaXSLT.xsl`
-  - XSLT transformation template
-
-## Entry Points
-- Parser configuration dialogs
-- Trace viewer for parser analysis
-- Word set import interface
-
-## Test Index
-Test projects: ParserUITests. 1 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+## Test Information
+- Test project: ParserUITests (if present)
+- Manual testing: Launch TryAWordDlg via Tools→Parser→Try A Word menu in FLEx, enter wordform, click "Try It", verify parse results display and trace HTML renders correctly in Gecko browser
+- Test scenarios: Parse valid word (expect analyses), parse invalid word (expect errors), trace enabled (expect HTML trace), select morphs to trace (expect filtered trace), import word set (expect wordforms created), view parser reports (expect statistics)
 
 ## Related Folders
-- **LexText/ParserCore/** - Parser engine configured by this UI
-- **LexText/Morphology/** - Morphology editor with parser integration
-- **LexText/Interlinear/** - Uses parser for text analysis
+- **LexText/ParserCore/**: Parser engine consumed by all UI components via ParserConnection/ParserScheduler
+- **LexText/LexTextDll/**: Application host, XCore listeners integration point (ImportWordSetListener, ParserListener registered in LexTextDll)
+- **LexText/Interlinear/**: May invoke parser for text analysis (uses ParseFiler from ParserCore)
+- **Common/RootSites/**: Base classes for TryAWordRootSite Views rendering
+- **XWorks/**: GeneratedHtmlViewer, WebPageInteractor for Gecko HTML display
 
 ## References
-
-- **Project files**: ParserUI.csproj, ParserUITests.csproj
-- **Target frameworks**: net462
-- **Key dependencies**: ..\..\Common\Controls\DetailControls\DetailControls, ..\..\Common\Controls\XMLViews\XMLViews
-- **Key C# files**: AssemblyInfo.cs, FileTimeToDateTimeConverter.cs, IParserTrace.cs, ImportWordSetDlg.cs, ParserParametersDlg.cs, ParserReportsDialog.xaml.cs, ParserUIStrings.Designer.cs, TryAWordDlg.cs, TryAWordSandbox.cs, WordImporter.cs
-- **XAML files**: ParserReportDialog.xaml, ParserReportsDialog.xaml
-- **XSLT transforms**: RequiredOptionalPrefixSlotsWordGrammarDebugger.xsl, TLPSameSlotTwiceWordGrammarDebugger.xsl, TestUnificationViaXSLT.xsl
-- **XML data/config**: nihimbiliguStep01BadInflectionClass.xml, nihinlikximuraNoCompoundRulesStep00.xml, nihinxolikximukestiraNoCompoundRulesStep00.xml, niyuwowwupeStemNameNotSetStep00.xml, niyuyiywupeStemNameFailStep02Result.xml
-- **Source file count**: 28 files
-- **Data file count**: 261 files
-
-## References (auto-generated hints)
-- Project files:
-  - LexText/ParserUI/ParserUI.csproj
-  - LexText/ParserUI/ParserUITests/ParserUITests.csproj
-- Key C# files:
-  - LexText/ParserUI/AssemblyInfo.cs
-  - LexText/ParserUI/FileTimeToDateTimeConverter.cs
-  - LexText/ParserUI/HCMaxCompoundRulesDlg.Designer.cs
-  - LexText/ParserUI/HCMaxCompoundRulesDlg.cs
-  - LexText/ParserUI/HCTrace.cs
-  - LexText/ParserUI/IParserTrace.cs
-  - LexText/ParserUI/ImportWordSetDlg.cs
-  - LexText/ParserUI/ImportWordSetListener.cs
-  - LexText/ParserUI/MillisecondsToTimeSpanConverter.cs
-  - LexText/ParserUI/ParserConnection.cs
-  - LexText/ParserUI/ParserListener.cs
-  - LexText/ParserUI/ParserParametersBase.cs
-  - LexText/ParserUI/ParserParametersDlg.cs
-  - LexText/ParserUI/ParserReportDialog.xaml.cs
-  - LexText/ParserUI/ParserReportViewModel.cs
-  - LexText/ParserUI/ParserReportsDialog.xaml.cs
-  - LexText/ParserUI/ParserReportsViewModel.cs
-  - LexText/ParserUI/ParserTraceUITransform.cs
-  - LexText/ParserUI/ParserUIStrings.Designer.cs
-  - LexText/ParserUI/ParserUITests/WordGrammarDebuggingTests.cs
-  - LexText/ParserUI/PositiveIntToRedBrushConverter.cs
-  - LexText/ParserUI/TryAWordDlg.cs
-  - LexText/ParserUI/TryAWordRootSite.cs
-  - LexText/ParserUI/TryAWordSandbox.cs
-  - LexText/ParserUI/WebPageInteractor.cs
-- Data contracts/transforms:
-  - LexText/ParserUI/HCMaxCompoundRulesDlg.resx
-  - LexText/ParserUI/ImportWordSetDlg.resx
-  - LexText/ParserUI/ParserParametersDlg.resx
-  - LexText/ParserUI/ParserReportDialog.xaml
-  - LexText/ParserUI/ParserReportsDialog.xaml
-  - LexText/ParserUI/ParserUIStrings.resx
-  - LexText/ParserUI/ParserUITests/TestUnificationViaXSLT.xsl
-  - LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults/EmptyWord.xml
-  - LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults/M3FXTDump.xml
-  - LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults/M3FXTDumpAffixAlloFeats.xml
-  - LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults/M3FXTDumpNoCompoundRules.xml
-  - LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults/M3FXTDumpStemNames.xml
-  - LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults/M3FXTRequiredOptionalPrefixSlots.xml
-  - LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults/RequiredOptionalPrefixSlotsWordGrammarDebugger.xsl
-  - LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults/TLPSameSlotTwiceWordGrammarDebugger.xsl
-  - LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults/TestFeatureStructureUnification.xml
-  - LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults/biliStep00BadInflection.xml
-  - LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults/biliStep01BadInflection.xml
-  - LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults/biliStep02BadInflection.xml
-  - LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults/bilikesziStep00.xml
-  - LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults/bilikesziStep01.xml
-  - LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults/bilikesziStep02.xml
-  - LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults/bilikesziStep03.xml
-  - LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults/bilikesziStep04.xml
-  - LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults/bilikesziStep05.xml
-## Code Evidence
-*Analysis based on scanning 26 source files*
-
-- **Classes found**: 20 public classes
-- **Interfaces found**: 1 public interfaces
-- **Namespaces**: SIL.FieldWorks.LexText.Controls
-- **Project references**: ..\..\Common\Controls\DetailControls\DetailControls, ..\..\Common\Controls\XMLViews\XMLViews
+- **Source files**: 28 C# files (~5.9K lines), 3 XAML files (ParserReportDialog.xaml, ParserReportsDialog.xaml), 3 .resx resource files
+- **Project file**: ParserUI.csproj
+- **Key dialogs**: TryAWordDlg (WinForms), ParserReportsDialog (WPF), ImportWordSetDlg (WinForms), ParserParametersDlg (WinForms)
+- **Key listeners**: ParserListener (main coordinator), ImportWordSetListener, ParserParametersListener (XCore colleagues)
+- **Key interfaces**: IParserTrace (HCTrace, XAmpleTrace implementations)
+- **View models**: ParserReportViewModel, ParserReportsViewModel (WPF MVVM pattern)
+- **Converters**: FileTimeToDateTimeConverter, MillisecondsToTimeSpanConverter, PositiveIntToRedBrushConverter (WPF value converters)
+- **Target framework**: net462
