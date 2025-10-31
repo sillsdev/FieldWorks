@@ -1,87 +1,71 @@
 ---
-last-reviewed: 2025-10-30
-last-verified-commit: 9611cf70e
-status: draft
+last-reviewed: 2025-10-31
+last-verified-commit: 3d625c3
+status: reviewed
 ---
 
 # ManagedLgIcuCollator
 
 ## Purpose
-Managed .NET wrapper for ICU (International Components for Unicode) collation services.
-Provides proper linguistic text sorting and comparison functionality for multiple writing systems.
-Enables correct alphabetical ordering of text in various languages by bridging ICU native libraries
-with .NET code through a managed interface.
+Managed C# implementation of ILgCollatingEngine for ICU-based collation. Direct port of C++ LgIcuCollator providing locale-aware string comparison and sort key generation. Enables culturally correct alphabetical ordering for multiple writing systems by wrapping Icu.Net Collator with FieldWorks-specific ILgCollatingEngine interface. Used throughout FLEx for sorting lexicon entries, wordforms, and linguistic data according to writing system collation rules.
 
 ## Architecture
-C# library with 2 source files. Contains 1 subprojects: ManagedLgIcuCollator.
+C# library (net462) with 2 source files (~180 lines total). Single class ManagedLgIcuCollator implementing IL gCollatingEngine COM interface, using Icu.Net library (NuGet) for ICU collation access. Marked [Serializable] and [ComVisible] for COM interop.
 
 ## Key Components
-### Key Classes
-- **ManagedLgIcuCollator**
-- **ManagedLgIcuCollatorTests**
 
-## Technology Stack
-- C# .NET with P/Invoke or C++/CLI
-- ICU library integration
-- Unicode collation algorithms
+### Collation Engine
+- **ManagedLgIcuCollator**: Implements ILgCollatingEngine for ICU-based collation. Wraps Icu.Net Collator instance, manages locale initialization via Open(bstrLocale), provides Compare() for string comparison, get_SortKeyVariant() for binary sort key generation, CompareVariant() for sort key comparison. Implements lazy collator creation via EnsureCollator(). Marked with COM GUID e771361c-ff54-4120-9525-98a0b7a9accf for COM interop.
+  - Inputs: ILgWritingSystemFactory (for writing system metadata), locale string (e.g., "en-US", "fr-FR")
+  - Methods: 
+    - Open(string bstrLocale): Initializes collator for given locale
+    - Close(): Disposes collator
+    - Compare(string val1, string val2, LgCollatingOptions): Returns -1/0/1 for val1 < = > val2
+    - get_SortKeyVariant(string value, LgCollatingOptions): Returns byte[] sort key
+    - CompareVariant(object key1, object key2, LgCollatingOptions): Compares byte[] sort keys
+    - get_SortKey(string, LgCollatingOptions): Not implemented (throws)
+    - SortKeyRgch(...): Not implemented (throws)
+  - Properties: WritingSystemFactory (ILgWritingSystemFactory)
+  - Internal: m_collator (Icu.Net Collator), m_stuLocale (locale string), m_qwsf (ILgWritingSystemFactory)
+  - Notes: LgCollatingOptions parameter (e.g., IgnoreCase, IgnoreDiacritics) currently not used in implementation
+
+### Sort Key Comparison
+- **CompareVariant()**: Byte-by-byte comparison of ICU sort keys. Handles null keys (null < non-null), compares byte arrays element-wise, shorter key considered less if all matching bytes equal. Efficient for repeated comparisons (generate sort key once, compare many times).
+
+### Lazy Initialization
+- **EnsureCollator()**: Creates Icu.Net Collator on first use. Converts FieldWorks locale string to ICU Locale, calls Collator.Create(icuLocale, Fallback.FallbackAllowed) allowing locale fallback (e.g., "en-US" falls back to "en" if specific variant unavailable).
 
 ## Dependencies
-- Depends on: ICU libraries (in Lib/), Common utilities
-- Used by: Components needing proper linguistic sorting (LexText, xWorks)
-
-## Interop & Contracts
-No explicit interop boundaries detected. Pure managed or native code.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
+- **External**: Icu.Net (NuGet package wrapping ICU C++ libraries), SIL.LCModel.Core (ILgWritingSystemFactory, ITsString, ArrayPtr, LgCollatingOptions enum), Common/ViewsInterfaces (ILgCollatingEngine interface), SIL.LCModel.Utils
+- **Internal (upstream)**: ViewsInterfaces (ILgCollatingEngine interface contract)
+- **Consumed by**: Components needing locale-aware sorting - LexText/Lexicon (lexicon entry lists), LexText/Interlinear (wordform lists), xWorks (browse views with sorted columns), Common/RootSite (Views rendering with sorted data), any UI displaying writing-system-specific alphabetical lists
 
 ## Build Information
-- C# class library with native interop
-- Includes comprehensive test suite
-- Build with MSBuild or Visual Studio
+- Project type: C# class library (net462)
+- Build: `msbuild ManagedLgIcuCollator.csproj` or `dotnet build` (from FW.sln)
+- Output: ManagedLgIcuCollator.dll
+- Dependencies: Icu.Net NuGet package, LCModel.Core, ViewsInterfaces
+- COM attributes: [ComVisible], [Serializable], [ClassInterface(ClassInterfaceType.None)], GUID for COM registration
 
-## Interfaces and Data Models
-
-- **ManagedLgIcuCollator** (class)
-  - Path: `LgIcuCollator.cs`
-  - Public class implementation
-
-## Entry Points
-- Provides collation services for linguistic text sorting
-- Used by UI components displaying sorted linguistic data
-
-## Test Index
-Test projects: ManagedLgIcuCollatorTests. 1 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+## Test Information
+- Test project: ManagedLgIcuCollatorTests
+- Test file: ManagedLgIcuCollatorTests.cs
+- Run: `dotnet test` or Test Explorer in Visual Studio
+- Test coverage: Collator initialization, Compare() for various locales, sort key generation, sort key comparison, locale fallback behavior, null handling, dispose patterns
 
 ## Related Folders
-- **Lib/** - Contains ICU native libraries
-- **Kernel/** - May provide low-level string utilities
-- **LexText/** - Uses collation for lexicon entry sorting
-- **xWorks/** - Uses collation in various data displays
+- **Common/ViewsInterfaces/**: Defines ILgCollatingEngine interface
+- **LexText/Lexicon/**: Uses collation for lexicon entry sorting
+- **xWorks/**: Uses collation in browse views with sortable columns
+- **Common/RootSite/**: Views rendering may use collation for sorted displays
+- **Lib/**: ICU native libraries (accessed via Icu.Net wrapper)
 
 ## References
-
-- **Project files**: ManagedLgIcuCollator.csproj, ManagedLgIcuCollatorTests.csproj
-- **Target frameworks**: net462
-- **Key C# files**: LgIcuCollator.cs, ManagedLgIcuCollatorTests.cs
-- **Source file count**: 2 files
-- **Data file count**: 0 files
-
-## References (auto-generated hints)
-- Project files:
-  - Src/ManagedLgIcuCollator/ManagedLgIcuCollator.csproj
-  - Src/ManagedLgIcuCollator/ManagedLgIcuCollatorTests/ManagedLgIcuCollatorTests.csproj
-- Key C# files:
-  - Src/ManagedLgIcuCollator/LgIcuCollator.cs
-  - Src/ManagedLgIcuCollator/ManagedLgIcuCollatorTests/ManagedLgIcuCollatorTests.cs
-## Code Evidence
-*Analysis based on scanning 2 source files*
-
-- **Classes found**: 2 public classes
-- **Namespaces**: SIL.FieldWorks.Language
+- **Source files**: 2 C# files (~180 lines): LgIcuCollator.cs, ManagedLgIcuCollatorTests/ManagedLgIcuCollatorTests.cs
+- **Project files**: ManagedLgIcuCollator.csproj, ManagedLgIcuCollatorTests/ManagedLgIcuCollatorTests.csproj
+- **Key class**: ManagedLgIcuCollator (implements ILgCollatingEngine, IDisposable)
+- **Key interface**: ILgCollatingEngine (from ViewsInterfaces)
+- **NuGet dependencies**: Icu.Net (ICU collation wrapper)
+- **COM GUID**: e771361c-ff54-4120-9525-98a0b7a9accf
+- **Namespace**: SIL.FieldWorks.Language
+- **Target framework**: net462
