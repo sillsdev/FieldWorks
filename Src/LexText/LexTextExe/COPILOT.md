@@ -1,83 +1,106 @@
 ---
-last-reviewed: 2025-10-30
-last-verified-commit: 9611cf70e
+last-reviewed: 2025-10-31
+last-verified-commit: e6180bb
 status: draft
 ---
 
-# LexTextExe
+# LexTextExe COPILOT summary
 
 ## Purpose
-Main executable entry point for FieldWorks Language Explorer (FLEx).
-Provides the startup code, application initialization, and hosting environment for the LexText
-application. Minimal code here as most functionality resides in LexTextDll and other libraries.
+Minimal entry point executable for FieldWorks Language Explorer (FLEx). Contains only Main() entry point calling Common/FieldWorks/FieldWorks.StartFwApp() to launch FLEx application. Actual application logic lives in LexTextDll (LexTextApp class) and xWorks (main shell). Icons/resources for FLEx executable branding. Smallest possible entry point (32 lines) delegating to shared FieldWorks infrastructure.
 
 ## Architecture
-C# library with 2 source files.
+C# Windows executable (WinExe, net462) with single entry point class. LexText.Main() calls FieldWorks.StartFwApp() passing command-line arguments. StartFwApp() handles application instantiation, project selection, window creation. LexTextApp (from LexTextDll) provides application-specific logic. Icons (LT.ico, LT.png variants) for executable branding.
 
 ## Key Components
-### Key Classes
-- **LexText**
+- **LexText** (LexText.cs, 32 lines): Application entry point class
+  - Main() entry point: STAThread attribute for Windows Forms threading
+  - Calls FieldWorks.StartFwApp(rgArgs): Delegates to shared FW infrastructure
+  - Returns 0 on success
+  - using statement ensures proper disposal of FW app
+- **Icons/Resources**:
+  - LT.ico (4.5KB): Windows icon
+  - LT.png (1.8KB): 48x48 PNG icon
+  - LT64.png (3.3KB): 64x64 PNG icon
+  - LT128.png (6.8KB): 128x128 PNG icon
+- **AssemblyInfo.cs** (12 lines): Assembly metadata
 
 ## Technology Stack
-- C# .NET WinForms
-- Application executable
-- XCore framework integration
+- C# .NET Framework 4.6.2 (net462)
+- OutputType: WinExe (Windows executable)
+- STAThread (Windows Forms threading model)
 
 ## Dependencies
-- Depends on: LexText/LexTextDll (core logic), XCore (framework), all dependencies
-- Used by: End users launching FLEx application
+
+### Upstream (consumes)
+- **Common/FieldWorks**: FieldWorks.StartFwApp() (shared FW entry point)
+- **LexTextDll**: LexTextApp application class (instantiated by StartFwApp)
+- **xWorks**: Main application shell
+
+### Downstream (consumed by)
+- **Windows**: Launched by users from Start menu, desktop shortcuts
+- **Command line**: Can be invoked with project arguments
 
 ## Interop & Contracts
-Uses COM for cross-boundary calls.
+- **FieldWorks.StartFwApp()**: Shared FieldWorks application launcher
+  - Inputs: string[] rgArgs (command-line arguments)
+  - Outputs: IDisposable application instance
+  - Handles: Project selection, application instantiation, window creation
+- **Command-line arguments**: Passed through to StartFwApp for project selection
 
 ## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
+- **STAThread**: Required for Windows Forms COM interop
+- **Startup**: StartFwApp() handles splash screen, initialization
 
 ## Config & Feature Flags
-No explicit configuration or feature flags detected.
+Configuration handled by StartFwApp() and LexTextApp. No config in entry point.
 
 ## Build Information
-- C# Windows application executable
-- Build via: `dotnet build LexTextExe.csproj`
-- Produces LexText.exe (FLEx application)
+- **Project file**: LexTextExe.csproj (net462, OutputType=WinExe)
+- **Output**: FieldWorks.exe (FLEx executable)
+- **Build**: Via top-level FW.sln or: `msbuild LexTextExe.csproj`
+- **Run**: `FieldWorks.exe` (double-click or command line)
+- **Icon**: LT.ico embedded in executable
 
 ## Interfaces and Data Models
 
-- **LexText** (class)
-  - Path: `LexText.cs`
-  - Public class implementation
+- **LexText.Main()** (LexText.cs)
+  - Purpose: Application entry point
+  - Inputs: string[] rgArgs (command-line arguments)
+  - Outputs: int (exit code, always 0)
+  - Notes: STAThread, delegates to FieldWorks.StartFwApp()
+
+- **FieldWorks.StartFwApp()** (from Common/FieldWorks)
+  - Purpose: Launch FieldWorks application
+  - Inputs: string[] args (command-line arguments for project selection)
+  - Outputs: IDisposable application instance
+  - Notes: Handles project selection, app instantiation, window creation
 
 ## Entry Points
-- Main() method - application entry point
-- Initializes XCore framework and loads LexTextDll
+- **FieldWorks.exe**: Main executable (built from LexTextExe project)
+- **LexText.Main()**: Entry point method
 
 ## Test Index
-No tests found in this folder. Tests may be in a separate Test folder or solution.
+No dedicated test project (minimal entry point, tested via FLEx integration tests).
 
 ## Usage Hints
-Console application. Build and run via command line or Visual Studio. See Entry Points section.
+- **Launch**: Double-click FieldWorks.exe or run from command line
+- **Command line**: `FieldWorks.exe` (prompts for project) or `FieldWorks.exe -p "ProjectName"`
+- **Minimal code**: 32 lines, all logic in LexTextDll/xWorks/Common
+- **Delegation pattern**: Entry point delegates to shared FieldWorks infrastructure
+- **Icons**: LT.* files provide branding for executable, taskbar, shortcuts
 
 ## Related Folders
-- **LexText/LexTextDll/** - Core application logic loaded by this executable
-- **XCore/** - Application framework
-- **xWorks/** - Shared application infrastructure
+- **Common/FieldWorks**: FieldWorks.StartFwApp() (shared entry point)
+- **LexTextDll**: LexTextApp application class
+- **xWorks**: Main application shell
+- **Common/Framework**: FwXApp base class
 
 ## References
-
-- **Project files**: LexTextExe.csproj
-- **Target frameworks**: net462
-- **Key C# files**: AssemblyInfo.cs, LexText.cs
-- **Source file count**: 2 files
-- **Data file count**: 0 files
-
-## References (auto-generated hints)
-- Project files:
-  - LexText/LexTextExe/LexTextExe.csproj
-- Key C# files:
-  - LexText/LexTextExe/AssemblyInfo.cs
-  - LexText/LexTextExe/LexText.cs
-## Code Evidence
-*Analysis based on scanning 2 source files*
-
-- **Classes found**: 1 public classes
-- **Namespaces**: SIL.FieldWorks.XWorks.LexText
+- **Project file**: LexTextExe.csproj (net462, OutputType=WinExe)
+- **Key C# files**: LexText.cs (32 lines), AssemblyInfo.cs (12 lines)
+- **Icons**: LT.ico (4.5KB), LT.png (1.8KB), LT64.png (3.3KB), LT128.png (6.8KB)
+- **Total lines of code**: 44
+- **Output**: FieldWorks.exe (FLEx main executable)
+- **Namespace**: SIL.FieldWorks.XWorks.LexText
+- **Entry point**: LexText.Main()
