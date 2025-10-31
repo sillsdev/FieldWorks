@@ -1,32 +1,77 @@
 ---
-last-reviewed: 2025-10-31
+last-reviewed: 2025-10-30
 last-verified-commit: 9611cf70e
 status: draft
 ---
 
-# DebugProcs COPILOT summary
+# DebugProcs
 
 ## Purpose
 Developer diagnostics and debugging utilities for troubleshooting FieldWorks issues.
+Provides specialized debugging helpers, diagnostic output, and instrumentation code used during
+development and support scenarios. Not typically used in production builds but invaluable
+for diagnosing complex issues in the codebase.
 
 ## Architecture
-C++ native library
+C++ native library with 1 implementation files and 1 headers.
 
 ## Key Components
-Debug helpers, diagnostics
+No major public classes identified.
 
 ## Technology Stack
-C# or C++ as appropriate. See source files for specific technologies.
+- C++ native code
+- Debugging and diagnostic APIs
+- Windows debugging infrastructure
 
 ## Dependencies
-### Upstream
-Dependencies determined by project references.
+- Depends on: Kernel, Generic (core infrastructure)
+- Used by: All components during development and debugging
 
-### Downstream  
-Used by FieldWorks applications as needed.
+## Interop & Contracts
+No explicit interop boundaries detected. Pure managed or native code.
+
+## Threading & Performance
+Single-threaded or thread-agnostic code. No explicit threading detected.
+
+## Config & Feature Flags
+No explicit configuration or feature flags detected.
 
 ## Build Information
-Build via top-level FW.sln or agent-build-fw.sh.
+- Native C++ project (vcxproj)
+- Typically built in Debug configuration
+- May not be included in Release builds
+
+## Interfaces and Data Models
+See code analysis sections above for key interfaces and data models. Additional interfaces may be documented in source files.
+
+## Entry Points
+- Provides debugging macros, assertion handlers, and diagnostic utilities
+- Integrated into debug builds of applications
+
+## Test Index
+No tests found in this folder. Tests may be in a separate Test folder or solution.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **Kernel/** - Core infrastructure that DebugProcs instruments
+- **Generic/** - Generic utilities that may include debug support
 
 ## References
-See source files in Src/DebugProcs for complete file listing.
+
+- **Project files**: DebugProcs.vcxproj
+- **Key C++ files**: DebugProcs.cpp
+- **Key headers**: DebugProcs.h
+- **Source file count**: 2 files
+- **Data file count**: 0 files
+
+## References (auto-generated hints)
+- Project files:
+  - Src/DebugProcs/DebugProcs.vcxproj
+- Key C++ files:
+  - Src/DebugProcs/DebugProcs.cpp
+- Key headers:
+  - Src/DebugProcs/DebugProcs.h
+## Code Evidence
+*Analysis based on scanning 2 source files*

@@ -1,32 +1,86 @@
 ---
-last-reviewed: 2025-10-31
+last-reviewed: 2025-10-30
 last-verified-commit: 9611cf70e
 status: draft
 ---
 
-# InstallValidator COPILOT summary
+# InstallValidator
 
 ## Purpose
-Installation prerequisite validation. Checks system requirements and dependencies.
+Installation prerequisite validation utilities.
+Checks system requirements, validates configuration, and verifies that necessary dependencies
+are present before FieldWorks installation or startup. Helps prevent installation failures
+and provides clear diagnostics when requirements are not met.
 
 ## Architecture
-C# utility
+C# library with 3 source files. Contains 1 subprojects: InstallValidator.
 
 ## Key Components
-Installation checks, prerequisite validation
+### Key Classes
+- **InstallValidator**
+- **InstallValidatorTests**
 
 ## Technology Stack
-C# or C++ as appropriate. See source files for specific technologies.
+- C# .NET
+- System detection and validation
+- Windows API for system checks
 
 ## Dependencies
-### Upstream
-Dependencies determined by project references.
+- Depends on: System libraries, minimal FieldWorks dependencies
+- Used by: Installer (FLExInstaller), application startup
 
-### Downstream  
-Used by FieldWorks applications as needed.
+## Interop & Contracts
+Uses COM for cross-boundary calls.
+
+## Threading & Performance
+Single-threaded or thread-agnostic code. No explicit threading detected.
+
+## Config & Feature Flags
+No explicit configuration or feature flags detected.
 
 ## Build Information
-Build via top-level FW.sln or agent-build-fw.sh.
+- C# class library
+- Includes test suite
+- Build with MSBuild or Visual Studio
+
+## Interfaces and Data Models
+
+- **InstallValidator** (class)
+  - Path: `InstallValidator.cs`
+  - Public class implementation
+
+## Entry Points
+- Invoked by installer and application startup
+- Validates prerequisites before installation or launch
+
+## Test Index
+Test projects: InstallValidatorTests. 1 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Console application. Build and run via command line or Visual Studio. See Entry Points section.
+
+## Related Folders
+- **FLExInstaller/** - Installer that uses InstallValidator
+- **Kernel/** - May check for system-level dependencies
 
 ## References
-See source files in Src/InstallValidator for complete file listing.
+
+- **Project files**: InstallValidator.csproj, InstallValidatorTests.csproj
+- **Target frameworks**: net462
+- **Key C# files**: AssemblyInfo.cs, InstallValidator.cs, InstallValidatorTests.cs
+- **Source file count**: 3 files
+- **Data file count**: 0 files
+
+## References (auto-generated hints)
+- Project files:
+  - Src/InstallValidator/InstallValidator.csproj
+  - Src/InstallValidator/InstallValidatorTests/InstallValidatorTests.csproj
+- Key C# files:
+  - Src/InstallValidator/InstallValidator.cs
+  - Src/InstallValidator/InstallValidatorTests/InstallValidatorTests.cs
+  - Src/InstallValidator/Properties/AssemblyInfo.cs
+## Code Evidence
+*Analysis based on scanning 2 source files*
+
+- **Classes found**: 2 public classes
+- **Namespaces**: SIL.InstallValidator
