@@ -1,286 +1,192 @@
 ---
-last-reviewed: 2025-10-30
+last-reviewed: 2025-10-31
 last-verified-commit: 9611cf70e
 status: draft
 ---
 
-# SimpleRootSite
+# SimpleRootSite COPILOT summary
 
 ## Purpose
-Simplified root site implementation with streamlined API.
-Provides a more accessible interface to the Views system for common scenarios, handling
-standard view hosting patterns with pre-configured functionality. Reduces boilerplate code
-needed to embed Views in applications while maintaining full rendering capabilities.
+Simplified root site implementation providing streamlined API for hosting FieldWorks views. Base class SimpleRootSite extends UserControl and implements IVwRootSite, IRootSite, IxCoreColleague, IEditingCallbacks for standard view hosting scenarios. Includes ActiveViewHelper for view activation tracking, DataUpdateMonitor for coordinating data change notifications, EditingHelper for clipboard/undo/redo operations, SelectionHelper for selection management, PrintRootSite for printing infrastructure, and numerous helper classes. Easier-to-use alternative to RootSite for most view hosting needs. Used extensively throughout FieldWorks for text display and editing.
 
 ## Architecture
-C# library with 43 source files. Contains 1 subprojects: SimpleRootSite.
+C# class library (.NET Framework 4.6.2) with simplified root site implementation (17K+ lines in SimpleRootSite.cs alone). SimpleRootSite base class provides complete view hosting with event handling, keyboard management, accessibility support, printing, selection tracking, and data update coordination. Helper classes separate concerns (EditingHelper for editing, SelectionHelper for selection, ActiveViewHelper for activation). Test project (SimpleRootSiteTests) validates functionality.
 
 ## Key Components
-### Key Classes
-- **VwSelectionArgs**
-- **SelPositionInfo**
-- **PrintRootSite**
-- **SelectionRestorer**
-- **ActiveViewHelper**
-- **RenderEngineFactory**
-- **UpdateSemaphore**
-- **DataUpdateMonitor**
-- **FwRightMouseClickEventArgs**
-- **SimpleRootSite**
-
-### Key Interfaces
-- **IPrintRootSite**
-- **IChangeRootObject**
-- **ISelectionChangeNotifier**
-- **IRawElementProviderFragment**
-- **IRawElementProviderFragmentRoot**
-- **ITextProvider**
-- **IValueProvider**
-- **NavigateDirection**
+- **SimpleRootSite** class (SimpleRootSite.cs, massive file): Base view host control
+  - Extends UserControl, implements IVwRootSite, IRootSite
+  - Integrates with Views rendering engine (m_rootb: IVwRootBox)
+  - Keyboard management (WindowsLanguageProfileSink, IKeyboardDefinition)
+  - Mouse/selection handling
+  - Scroll management
+  - Printing support
+  - Accessibility (IAccessible via AccessibilityWrapper)
+  - Data update monitoring integration
+- **ActiveViewHelper** (ActiveViewHelper.cs): View activation tracking
+  - Tracks which view is currently active
+  - Coordinates focus management
+- **DataUpdateMonitor** (DataUpdateMonitor.cs): Change notification coordination
+  - Monitors data updates in progress
+  - Prevents reentrant updates
+  - UpdateSemaphore for synchronization
+- **EditingHelper** (EditingHelper.cs): Editing operations
+  - Clipboard (cut/copy/paste)
+  - Undo/redo coordination
+  - Implements IEditingCallbacks
+- **SelectionHelper** (SelectionHelper.cs): Selection management
+  - Selection analysis and manipulation
+  - SelInfo: Selection information capture
+  - GetFirstWsOfSelection: Extract writing system from selection
+- **SelectionRestorer** (SelectionRestorer.cs): Selection restoration
+  - Preserves and restores selections across updates
+- **PrintRootSite** (PrintRootSite.cs): Printing infrastructure
+  - IPrintRootSite interface
+  - Page layout and rendering for printing
+- **VwSelectionArgs** (VwSelectionArgs.cs): Selection event args
+- **SelPositionInfo** (SelPositionInfo.cs): Selection position tracking
+- **TextSelInfo** (TextSelInfo.cs): Text selection details
+- **ViewInputManager** (ViewInputManager.cs): Input management
+- **VwBaseVc** (VwBaseVc.cs): Base view constructor
+- **OrientationManager** (OrientationManager.cs): Vertical/horizontal text orientation
+- **AccessibilityWrapper** (AccessibilityWrapper.cs): Accessibility support
+  - Wraps IAccessible for Windows accessibility APIs
+- **IbusRootSiteEventHandler** (IbusRootSiteEventHandler.cs): IBus integration (Linux)
+- **IChangeRootObject** (IChangeRootObject.cs): Root object change interface
+- **IControl** (IControl.cs): Control interface abstraction
+- **IRootSite** (IRootSite.cs): Root site contract
+- **ISelectionChangeNotifier** (ISelectionChangeNotifier.cs): Selection change notifications
+- **LocalLinkArgs** (LocalLinkArgs.cs): Local hyperlink arguments
+- **FwRightMouseClickEventArgs** (FwRightMouseClickEventArgs.cs): Right-click event args
+- **HoldGraphics** (HoldGraphics.cs): Graphics context holder
+- **RenderEngineFactory** (RenderEngineFactory.cs): Rendering engine creation
 
 ## Technology Stack
-- C# .NET
-- View hosting infrastructure
-- Event-driven architecture
+- C# .NET Framework 4.6.2 (net462)
+- OutputType: Library
+- Windows Forms (UserControl base)
+- COM interop for Views engine (IVwRootSite, IVwRootBox)
+- Accessibility APIs (IAccessible)
+- IBus support for Linux keyboard input
+- XCore for command routing (IxCoreColleague)
 
 ## Dependencies
-- Depends on: Common/RootSite, views (native views), Common/ViewsInterfaces
-- Used by: Most FieldWorks view-based components
+
+### Upstream (consumes)
+- **views**: Native rendering engine (IVwRootBox, IVwGraphics)
+- **Common/ViewsInterfaces**: View interfaces (IVwRootSite, IVwSelection)
+- **Common/FwUtils**: Utilities (Win32, ThreadHelper)
+- **SIL.LCModel**: Data model
+- **SIL.LCModel.Application**: Application services
+- **SIL.Keyboarding**: Keyboard management
+- **XCore**: Command routing (IxCoreColleague)
+- **Windows Forms**: UI framework
+
+### Downstream (consumed by)
+- **xWorks**: Extensively uses SimpleRootSite for views
+- **LexText**: Lexicon editing views
+- **Common/RootSite**: Advanced root site extends SimpleRootSite
+- Most FieldWorks components displaying text
 
 ## Interop & Contracts
-Uses Marshaling, COM, P/Invoke for cross-boundary calls.
+- **IVwRootSite**: COM interface for Views engine callbacks
+- **IRootSite**: FieldWorks root site contract
+- **IxCoreColleague**: XCore command routing
+- **IEditingCallbacks**: Editing operation notifications
+- **IAccessible**: Windows accessibility
+- COM marshaling for Views engine integration
 
 ## Threading & Performance
-Threading model: UI thread marshaling, synchronization.
+- **UI thread requirement**: All view operations must be on UI thread
+- **DataUpdateMonitor**: Prevents reentrant updates
+- **UpdateSemaphore**: Synchronization primitive
+- **Performance**: Efficient view hosting; 17K lines indicates comprehensive functionality
 
 ## Config & Feature Flags
-No explicit configuration or feature flags detected.
+No explicit configuration. Behavior controlled by View specifications and data.
 
 ## Build Information
-- C# class library project
-- Build via: `dotnet build SimpleRootSite.csproj`
-- Higher-level abstraction over RootSite
+- **Project file**: SimpleRootSite.csproj (net462, OutputType=Library)
+- **Test project**: SimpleRootSiteTests/SimpleRootSiteTests.csproj
+- **Output**: SimpleRootSite.dll
+- **Build**: Via top-level FW.sln or: `msbuild SimpleRootSite.csproj /p:Configuration=Debug`
+- **Run tests**: `dotnet test SimpleRootSiteTests/SimpleRootSiteTests.csproj`
 
 ## Interfaces and Data Models
 
-- **IChangeRootObject** (interface)
-  - Path: `IChangeRootObject.cs`
-  - Public interface definition
+- **SimpleRootSite** (SimpleRootSite.cs)
+  - Purpose: Base class for view hosting controls
+  - Inputs: View specifications, root object, stylesheet
+  - Outputs: Rendered text display with editing, selection, scrolling
+  - Notes: Comprehensive 17K+ line implementation; extend for custom views
 
-- **IControl** (interface)
-  - Path: `IControl.cs`
-  - Public interface definition
+- **IVwRootSite** (implemented by SimpleRootSite)
+  - Purpose: COM contract for Views engine callbacks
+  - Inputs: Notifications from Views (selection change, scroll, etc.)
+  - Outputs: Responses to Views queries (client rect, graphics, etc.)
+  - Notes: Core interface bridging managed and native Views
 
-- **IEditingCallbacks** (interface)
-  - Path: `EditingHelper.cs`
-  - Public interface definition
+- **IRootSite** (IRootSite.cs, implemented by SimpleRootSite)
+  - Purpose: FieldWorks root site contract
+  - Inputs: N/A (properties)
+  - Outputs: RootBox, cache, stylesheet access
+  - Notes: FieldWorks-specific extensions beyond IVwRootSite
 
-- **IPrintRootSite** (interface)
-  - Path: `PrintRootSite.cs`
-  - Public interface definition
+- **EditingHelper** (EditingHelper.cs)
+  - Purpose: Editing operations (clipboard, undo/redo)
+  - Inputs: Edit commands, clipboard data
+  - Outputs: Executes edits via Views
+  - Notes: Implements IEditingCallbacks
 
-- **IRawElementProviderFragment** (interface)
-  - Path: `WpfInterfacesForMono.cs`
-  - Public interface definition
+- **SelectionHelper** (SelectionHelper.cs)
+  - Purpose: Selection analysis and manipulation utilities
+  - Inputs: IVwSelection objects
+  - Outputs: Selection details (SelInfo), writing systems, ranges
+  - Notes: Static helper methods for selection operations
 
-- **IRawElementProviderFragmentRoot** (interface)
-  - Path: `WpfInterfacesForMono.cs`
-  - Public interface definition
+- **DataUpdateMonitor** (DataUpdateMonitor.cs)
+  - Purpose: Coordinates data change notifications, prevents reentrant updates
+  - Inputs: Begin/EndUpdate calls
+  - Outputs: IsUpdateInProgress flag
+  - Notes: UpdateSemaphore for synchronization; critical for data consistency
 
-- **IRawElementProviderSimple** (interface)
-  - Path: `WpfInterfacesForMono.cs`
-  - Public interface definition
+- **ActiveViewHelper** (ActiveViewHelper.cs)
+  - Purpose: Tracks active view for focus management
+  - Inputs: View activation events
+  - Outputs: Current active view
+  - Notes: Singleton pattern for global active view tracking
 
-- **IRefreshableRoot** (interface)
-  - Path: `IRootSite.cs`
-  - Public interface definition
-
-- **IRootSite** (interface)
-  - Path: `IRootSite.cs`
-  - Public interface definition
-
-- **ISelectionChangeNotifier** (interface)
-  - Path: `ISelectionChangeNotifier.cs`
-  - Public interface definition
-
-- **ISuppressDefaultKeyboardOnKillFocus** (interface)
-  - Path: `SimpleRootSite.cs`
-  - Public interface definition
-
-- **ITextProvider** (interface)
-  - Path: `WpfInterfacesForMono.cs`
-  - Public interface definition
-
-- **IValueProvider** (interface)
-  - Path: `WpfInterfacesForMono.cs`
-  - Public interface definition
-
-- **NavigateDirection** (interface)
-  - Path: `WpfInterfacesForMono.cs`
-  - Public interface definition
-
-- **ActiveViewHelper** (class)
-  - Path: `ActiveViewHelper.cs`
-  - Public class implementation
-
-- **DataUpdateMonitor** (class)
-  - Path: `DataUpdateMonitor.cs`
-  - Public class implementation
-
-- **FwRightMouseClickEventArgs** (class)
-  - Path: `FwRightMouseClickEventArgs.cs`
-  - Public class implementation
-
-- **IbusRootSiteEventHandler** (class)
-  - Path: `IbusRootSiteEventHandler.cs`
-  - Public class implementation
-
-- **LocalLinkArgs** (class)
-  - Path: `LocalLinkArgs.cs`
-  - Public class implementation
-
-- **OrientationManager** (class)
-  - Path: `OrientationManager.cs`
-  - Public class implementation
-
-- **PrintRootSite** (class)
-  - Path: `PrintRootSite.cs`
-  - Public class implementation
-
-- **RenderEngineFactory** (class)
-  - Path: `RenderEngineFactory.cs`
-  - Public class implementation
-
-- **SelInfo** (class)
-  - Path: `SelectionHelper.cs`
-  - Public class implementation
-
-- **SelPositionInfo** (class)
-  - Path: `SelPositionInfo.cs`
-  - Public class implementation
-
-- **SelectionHelper** (class)
-  - Path: `SelectionHelper.cs`
-  - Public class implementation
-
-- **SelectionRestorer** (class)
-  - Path: `SelectionRestorer.cs`
-  - Public class implementation
-
-- **SimpleRootSite** (class)
-  - Path: `SimpleRootSite.cs`
-  - Public class implementation
-
-- **SuspendDrawing** (class)
-  - Path: `SimpleRootSite.cs`
-  - Public class implementation
-
-- **TextSelInfo** (class)
-  - Path: `TextSelInfo.cs`
-  - Public class implementation
-
-- **UpdateSemaphore** (class)
-  - Path: `DataUpdateMonitor.cs`
-  - Public class implementation
-
-- **VerticalOrientationManager** (class)
-  - Path: `OrientationManager.cs`
-  - Public class implementation
-
-- **ViewInputManager** (class)
-  - Path: `ViewInputManager.cs`
-  - Public class implementation
-
-- **VwBaseVc** (class)
-  - Path: `VwBaseVc.cs`
-  - Public class implementation
-
-- **VwSelectionArgs** (class)
-  - Path: `VwSelectionArgs.cs`
-  - Public class implementation
-
-- **CkBehavior** (enum)
-  - Path: `EditingHelper.cs`
-
-- **ObjType** (enum)
-  - Path: `SimpleRootSiteTests/UndoableRealDataCache.cs`
-
-- **PasteStatus** (enum)
-  - Path: `EditingHelper.cs`
-
-- **ProviderOptions** (enum)
-  - Path: `WpfInterfacesForMono.cs`
-
-- **SelLimitType** (enum)
-  - Path: `SelectionHelper.cs`
+- **PrintRootSite** (PrintRootSite.cs)
+  - Purpose: Printing infrastructure and page layout
+  - Inputs: Print settings, page dimensions
+  - Outputs: Rendered pages for printing
+  - Notes: Implements IPrintRootSite
 
 ## Entry Points
-- SimpleRootSite class for easy view hosting
-- Helper classes for common view operations
-- Selection and editing support
+Extended by view hosting controls throughout FieldWorks. SimpleRootSite is base class for most text display components.
 
 ## Test Index
-Test projects: SimpleRootSiteTests. 10 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+- **Test project**: SimpleRootSiteTests
+- **Run tests**: `dotnet test SimpleRootSiteTests/SimpleRootSiteTests.csproj`
+- **Coverage**: Root site functionality, editing, selection, updates
 
 ## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- Extend SimpleRootSite for view hosting controls
+- Override MakeRoot() to construct view
+- Use EditingHelper for clipboard operations
+- Use SelectionHelper for selection analysis
+- Use DataUpdateMonitor.BeginUpdate/EndUpdate for coordinated updates
+- Simpler than RootSite; prefer SimpleRootSite unless advanced features needed
 
 ## Related Folders
-- **Common/RootSite/** - Base infrastructure used by SimpleRootSite
-- **Common/ViewsInterfaces/** - Interfaces implemented
-- **ManagedVwWindow/** - Window components using SimpleRootSite
-- **xWorks/** - Uses SimpleRootSite for data views
-- **LexText/** - Uses SimpleRootSite for text editing
+- **Common/RootSite**: Advanced root site infrastructure (SimpleRootSite uses some RootSite classes)
+- **Common/ViewsInterfaces**: Interfaces implemented by SimpleRootSite
+- **views/**: Native rendering engine
+- **xWorks, LexText**: Major consumers of SimpleRootSite
 
 ## References
-
-- **Project files**: SimpleRootSite.csproj, SimpleRootSiteTests.csproj
-- **Target frameworks**: net462
-- **Key C# files**: ActiveViewHelper.cs, AssemblyInfo.cs, IChangeRootObject.cs, ISelectionChangeNotifier.cs, PrintRootSite.cs, RenderEngineFactory.cs, SelPositionInfo.cs, SelectionRestorer.cs, VwSelectionArgs.cs, WpfInterfacesForMono.cs
-- **XML data/config**: SimpleRootSiteDataProviderCacheModel.xml, TextCacheModel.xml
-- **Source file count**: 43 files
-- **Data file count**: 6 files
-
-## References (auto-generated hints)
-- Project files:
-  - Common/SimpleRootSite/SimpleRootSite.csproj
-  - Common/SimpleRootSite/SimpleRootSiteTests/SimpleRootSiteTests.csproj
-- Key C# files:
-  - Common/SimpleRootSite/AccessibilityWrapper.cs
-  - Common/SimpleRootSite/ActiveViewHelper.cs
-  - Common/SimpleRootSite/AssemblyInfo.cs
-  - Common/SimpleRootSite/DataUpdateMonitor.cs
-  - Common/SimpleRootSite/EditingHelper.cs
-  - Common/SimpleRootSite/FwRightMouseClickEventArgs.cs
-  - Common/SimpleRootSite/HoldGraphics.cs
-  - Common/SimpleRootSite/IChangeRootObject.cs
-  - Common/SimpleRootSite/IControl.cs
-  - Common/SimpleRootSite/IRootSite.cs
-  - Common/SimpleRootSite/ISelectionChangeNotifier.cs
-  - Common/SimpleRootSite/IbusRootSiteEventHandler.cs
-  - Common/SimpleRootSite/LocalLinkArgs.cs
-  - Common/SimpleRootSite/OrientationManager.cs
-  - Common/SimpleRootSite/PrintRootSite.cs
-  - Common/SimpleRootSite/Properties/Resources.Designer.cs
-  - Common/SimpleRootSite/RenderEngineFactory.cs
-  - Common/SimpleRootSite/SelPositionInfo.cs
-  - Common/SimpleRootSite/SelectionHelper.cs
-  - Common/SimpleRootSite/SelectionRestorer.cs
-  - Common/SimpleRootSite/SimpleRootSite.cs
-  - Common/SimpleRootSite/SimpleRootSiteTests/EditingHelperTests.cs
-  - Common/SimpleRootSite/SimpleRootSiteTests/IbusRootSiteEventHandlerTests.cs
-  - Common/SimpleRootSite/SimpleRootSiteTests/IbusRootSiteEventHandlerTests_Simple.cs
-  - Common/SimpleRootSite/SimpleRootSiteTests/Properties/Resources.Designer.cs
-- Data contracts/transforms:
-  - Common/SimpleRootSite/Properties/Resources.resx
-  - Common/SimpleRootSite/SimpleRootSite.resx
-  - Common/SimpleRootSite/SimpleRootSiteTests/Properties/Resources.resx
-  - Common/SimpleRootSite/SimpleRootSiteTests/SimpleBasicView.resx
-  - Common/SimpleRootSite/SimpleRootSiteTests/SimpleRootSiteDataProviderCacheModel.xml
-  - Common/SimpleRootSite/SimpleRootSiteTests/TextCacheModel.xml
-## Code Evidence
-*Analysis based on scanning 40 source files*
-
-- **Classes found**: 20 public classes
-- **Interfaces found**: 15 public interfaces
-- **Namespaces**: SIL.FieldWorks.Common.RootSites, SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
+- **Project files**: SimpleRootSite.csproj (net462), SimpleRootSiteTests/SimpleRootSiteTests.csproj
+- **Target frameworks**: .NET Framework 4.6.2
+- **Key C# files**: SimpleRootSite.cs (massive, 17K+ lines), ActiveViewHelper.cs, DataUpdateMonitor.cs, EditingHelper.cs, SelectionHelper.cs, SelectionRestorer.cs, PrintRootSite.cs, and others
+- **Total lines of code**: 17073+ (SimpleRootSite.cs alone)
+- **Output**: Output/Debug/SimpleRootSite.dll
+- **Namespace**: SIL.FieldWorks.Common.RootSites
