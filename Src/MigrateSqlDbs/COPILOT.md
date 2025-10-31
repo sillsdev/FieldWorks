@@ -1,83 +1,74 @@
 ---
-last-reviewed: 2025-10-30
-last-verified-commit: 9611cf70e
-status: draft
+last-reviewed: 2025-10-31
+last-verified-commit: cbd4c43
+status: reviewed
 ---
 
 # MigrateSqlDbs
 
 ## Purpose
-Database migration and versioning infrastructure.
-Handles schema migrations, data transformations, and version upgrades between different
-FieldWorks releases. Ensures smooth upgrades by automatically transforming user data
-to match the current schema version while preserving data integrity.
+Legacy SQL Server to XML database migration utility for FieldWorks 6.0→7.0 upgrade. Console/GUI application (WinExe) detecting SQL Server FieldWorks projects, converting them to XML format via ImportFrom6_0, migrating LDML writing system files (version 1→2), and providing user selection dialog (MigrateProjects form) for batch migration. Historical tool for one-time FW6→FW7 upgrade; no longer actively used for new migrations but preserved for archival/reference. LCModel now uses XML backend exclusively, handles subsequent migrations (7.x→8.x→9.x) via DataMigration infrastructure.
 
 ## Architecture
-C# library with 11 source files.
+C# WinExe application (net462) with 11 source files (~1.1K lines). Mix of WinForms dialogs (MigrateProjects, ExistingProjectDlg, FWVersionTooOld) and migration logic (Program.Main, ImportFrom6_0 integration). Command-line flags: -debug, -autoclose, -chars (deprecated).
 
 ## Key Components
-### Key Classes
-- **ExistingProjectDlg**
-- **FWVersionTooOld**
-- **Settings**
-- **MigrateProjects**
 
-## Technology Stack
-- C# .NET
-- SQL database operations
-- Schema migration and data transformation
-- Version upgrade logic
+### Migration Entry Point
+- **Program.Main()**: Application entry point. Parses command-line args (-debug, -autoclose, -chars deprecated), initializes FwRegistryHelper, migrates global LDML writing systems (LdmlInFolderWritingSystemRepositoryMigrator v1→2), creates ImportFrom6_0 instance, checks for SQL Server installation (IsFwSqlServerInstalled()), validates FW6 version (IsValidOldFwInstalled()), launches MigrateProjects dialog for user project selection. Returns: -1 (no SQL Server), 0 (success or nothing to migrate), >0 (number of failed migrations).
+  - Command-line flags:
+    - `-debug`: Enables debug mode for verbose logging
+    - `-autoclose`: Automatically close dialog after migration
+    - `-chars`: Deprecated flag (warns user to run UnicodeCharEditor -i instead)
+  - Inputs: Command-line args, FW6 SQL Server database registry entries
+  - Outputs: Migration progress dialog, converted XML databases, return code for installer
+
+### User Dialogs
+- **MigrateProjects**: Main dialog listing SQL Server projects for migration. Uses ExistingProjectDlg for project enumeration, provides checkboxes for multi-project selection, invokes ImportFrom6_0 converter for each selected project. Shows progress via ProgressDialogWithTask.
+- **ExistingProjectDlg**: Dialog enumerating existing FW6 SQL Server projects from registry/database queries
+- **FWVersionTooOld**: Warning dialog when FW6 version < 5.4 detected (too old to migrate)
+
+### Migration Logic (ImportFrom6_0)
+- **ImportFrom6_0**: Handles actual SQL→XML conversion. Invoked from MigrateProjects. Launches ConverterConsole.exe (external process) to perform database export/import. Checks for SQL Server installation, validates FW version compatibility. Located in LCModel.DomainServices.DataMigration (dependency, not in this project).
+  - Inputs: SQL Server connection strings, target XML file paths, ProgressDialogWithTask for UI feedback
+  - Executables: ConverterConsole.exe (FwDirectoryFinder.ConverterConsoleExe), db.exe (FwDirectoryFinder.DbExe)
+
+### LDML Writing System Migration
+- **LdmlInFolderWritingSystemRepositoryMigrator**: Migrates global writing system LDML files from version 1→2. Runs before project migration to ensure compatibility. Targets OldGlobalWritingSystemStoreDirectory.
+  - Note: Comment mentions TODO for migrating to version 3
 
 ## Dependencies
-- Depends on: Cellar (data model), DbExtend (schema extensions)
-- Used by: Application startup and upgrade process
-
-## Interop & Contracts
-Uses COM for cross-boundary calls.
-
-## Threading & Performance
-Threading model: explicit threading.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
+- **External**: LCModel (LcmCache, LcmFileHelper, ProjectId), LCModel.DomainServices.DataMigration (ImportFrom6_0), SIL.WritingSystems.Migration (LdmlInFolderWritingSystemRepositoryMigrator), Common/Controls (ProgressDialogWithTask, ThreadHelper), Common/FwUtils (FwRegistryHelper, FwDirectoryFinder), System.Data.SqlClient (SQL Server connectivity), System.Windows.Forms (WinForms dialogs), Microsoft.Win32 (Registry access)
+- **Internal (upstream)**: LCModel (data migration infrastructure), Common/Controls (progress dialogs), Common/FwUtils (FW configuration)
+- **Consumed by**: FieldWorks installer (FLExInstaller launches MigrateSqlDbs.exe during FW6→FW7 upgrade), standalone execution for manual migrations
 
 ## Build Information
-- C# executable or library
-- Critical for database version compatibility
-- Build with MSBuild or Visual Studio
+- Project type: C# WinExe application (net462)
+- Build: `msbuild MigrateSqlDbs.csproj` or `dotnet build` (from FW.sln)
+- Output: MigrateSqlDbs.exe (standalone executable)
+- Dependencies: LCModel, LCModel.DomainServices.DataMigration, SIL.WritingSystems, Common/Controls, Common/FwUtils, System.Data.SqlClient
+- Deployment: Included in FLEx installer for upgrade path support
 
-## Interfaces and Data Models
-See code analysis sections above for key interfaces and data models. Additional interfaces may be documented in source files.
-
-## Entry Points
-- Command-line tool or library for database migrations
-- Invoked during application upgrades
-
-## Test Index
-No tests found in this folder. Tests may be in a separate Test folder or solution.
-
-## Usage Hints
-Console application. Build and run via command line or Visual Studio. See Entry Points section.
+## Test Information
+- No dedicated test project found
+- Testing: Manual execution against FW6 SQL Server databases
+- Historical tool: Active testing only for FW6→FW7 migrations (no longer primary use case)
 
 ## Related Folders
-- **Cellar/** - Core data model being migrated
-- **DbExtend/** - Schema extensions handled during migration
-- **InstallValidator/** - May check database version compatibility
+- **LCModel/DomainServices/DataMigration/**: Contains ImportFrom6_0 and data migration infrastructure (ongoing XML-based migrations FW7+)
+- **Common/Controls/**: ProgressDialogWithTask, ThreadHelper used for UI feedback
+- **Common/FwUtils/**: FwRegistryHelper, FwDirectoryFinder for FW configuration
+- **FLExInstaller/**: Launches MigrateSqlDbs.exe during FW6→FW7 upgrade workflow
 
 ## References
-
-- **Project files**: MigrateSqlDbs.csproj
-- **Target frameworks**: net462
-- **Key C# files**: AssemblyInfo.cs, ExistingProjectDlg.Designer.cs, ExistingProjectDlg.cs, FWVersionTooOld.Designer.cs, FWVersionTooOld.cs, MigrateProjects.Designer.cs, MigrateProjects.cs, Program.cs, Settings.Designer.cs, Settings.cs
-- **Source file count**: 11 files
-- **Data file count**: 4 files
-
-## References (auto-generated hints)
-- Project files:
-  - Src/MigrateSqlDbs/MigrateSqlDbs.csproj
-- Key C# files:
-  - Src/MigrateSqlDbs/ExistingProjectDlg.Designer.cs
-  - Src/MigrateSqlDbs/ExistingProjectDlg.cs
+- **Source files**: 11 C# files (~1.1K lines): Program.cs, MigrateProjects.cs, ExistingProjectDlg.cs, FWVersionTooOld.cs, Settings.cs, Designer files, AssemblyInfo.cs
+- **Project file**: MigrateSqlDbs.csproj
+- **Key classes**: Program (Main entry point), MigrateProjects (main dialog), ExistingProjectDlg, FWVersionTooOld
+- **Key dependencies**: ImportFrom6_0 (LCModel.DomainServices.DataMigration), LdmlInFolderWritingSystemRepositoryMigrator (SIL.WritingSystems.Migration)
+- **External executables**: ConverterConsole.exe (SQL export/import), db.exe (database operations)
+- **Namespace**: SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
+- **Target framework**: net462
+- **Return codes**: -1 (no SQL Server), 0 (success), >0 (failures count)
   - Src/MigrateSqlDbs/FWVersionTooOld.Designer.cs
   - Src/MigrateSqlDbs/FWVersionTooOld.cs
   - Src/MigrateSqlDbs/MigrateProjects.Designer.cs
