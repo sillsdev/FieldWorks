@@ -1,237 +1,197 @@
 ---
-last-reviewed: 2025-10-30
+last-reviewed: 2025-10-31
 last-verified-commit: 9611cf70e
 status: draft
 ---
 
-# Framework
+# Framework COPILOT summary
 
 ## Purpose
-Application framework components providing core infrastructure services.
-Includes editing helpers (FwEditingHelper), publication interfaces (IPublicationView, IPageSetupDialog),
-settings management (FwRegistrySettings), style export (ExportStyleInfo), and main window coordination
-(MainWindowDelegate). Establishes architectural patterns and shared functionality for building
-FieldWorks applications.
+Application framework components providing core infrastructure services for FieldWorks applications. Includes FwApp base class for application coordination, editing helpers (FwEditingHelper for edit operations), publication interfaces (IPublicationView, IPageSetupDialog for printing/publishing), settings management (FwRegistrySettings, ExternalSettingsAccessorBase, SettingsXmlAccessorBase, StylesXmlAccessor), main window coordination (MainWindowDelegate, IFwMainWnd), application manager interface (IFieldWorksManager), status bar progress handling (StatusBarProgressHandler), undo/redo UI (UndoRedoDropDown), and XHTML export utilities (XhtmlHelper). Establishes architectural patterns, lifecycle management, and shared functionality for all FieldWorks applications.
 
 ## Architecture
-C# library with 22 source files. Contains 1 subprojects: Framework.
+C# class library (.NET Framework 4.6.2) providing base classes and interfaces for FieldWorks applications. FwApp abstract class serves as application base with cache management, window coordination, and undo/redo infrastructure. Delegate pattern via MainWindowDelegate separates main window concerns. Settings abstraction via SettingsXmlAccessorBase and ExternalSettingsAccessorBase. Test project (FrameworkTests) validates framework components.
 
 ## Key Components
-### Key Classes
-- **FwEditingHelper**
-- **ExportStyleInfo**
-- **MainWindowDelegate**
-- **FwRegistrySettings**
-- **ExternalSettingsAccessorBase**
-- **UndoRedoDropDown**
-- **SettingsXmlAccessorBase**
-- **FwApp**
-- **StatusBarProgressHandler**
-- **StylesXmlAccessor**
-
-### Key Interfaces
-- **IPublicationView**
-- **IPageSetupDialog**
-- **IMainWindowDelegatedFunctions**
-- **IMainWindowDelegateCallbacks**
-- **IFieldWorksManager**
-- **IFwMainWnd**
-- **IRecordListUpdater**
-- **IRecordListOwner**
+- **FwApp** class (FwApp.cs): Abstract base class for FieldWorks applications
+  - Manages LcmCache, action handler, mediator, window list
+  - IRecordListOwner, IRecordListUpdater, IRecordChangeHandler interfaces for list management
+  - Application lifecycle: startup, synchronize, shutdown
+  - Window management: CreateAndInitNewMainWindow, RemoveWindow
+  - Cache management: SetupCache, ShutdownCache
+- **MainWindowDelegate** class (MainWindowDelegate.cs): Main window coordination
+  - IMainWindowDelegatedFunctions, IMainWindowDelegateCallbacks interfaces
+  - Separates main window logic from FwApp
+- **FwEditingHelper** class (FwEditingHelper.cs): Editing operations helper
+  - Clipboard operations, paste handling, undo/redo coordination
+  - Provides shared editing functionality across applications
+- **IFieldWorksManager** interface (IFieldWorksManager.cs): Application manager contract
+  - Cache access, application shutdown, window management
+  - Implemented by FieldWorksManager in Common/FieldWorks
+- **IFwMainWnd** interface (IFwMainWnd.cs): Main window contract
+  - Main window behavior expected by framework
+- **FwRegistrySettings** class (FwRegistrySettings.cs): Windows registry settings access
+  - Read/write application settings to registry
+- **ExternalSettingsAccessorBase** class (ExternalSettingsAccessorBase.cs): External settings base
+  - Abstract base for accessing external settings (registry, files)
+- **SettingsXmlAccessorBase** class (SettingsXmlAccessorBase.cs): XML settings base
+  - Abstract base for XML-based settings persistence
+- **StylesXmlAccessor** class (StylesXmlAccessor.cs): Styles XML persistence
+  - Read/write style definitions to XML
+- **ExportStyleInfo** class (ExportStyleInfo.cs): Style export information
+  - Metadata for style export operations
+- **UndoRedoDropDown** class (UndoRedoDropDown.cs/.resx): Undo/redo dropdown control
+  - UI control showing undo/redo stack with multiple level selection
+- **StatusBarProgressHandler** class (StatusBarProgressHandler.cs): Progress reporting
+  - Displays progress in status bar during long operations
+- **XhtmlHelper** class (XhtmlHelper.cs): XHTML export utilities
+  - Helper functions for XHTML generation
+- **IPublicationView** interface (PublicationInterfaces.cs): Publication view contract
+  - Implemented by views supporting print/publish operations
+- **IPageSetupDialog** interface (PublicationInterfaces.cs): Page setup contract
+  - Interface for page setup dialogs
 
 ## Technology Stack
-- C# .NET
-- Application framework patterns
-- Settings and configuration management
+- C# .NET Framework 4.6.2 (target framework: net462)
+- OutputType: Library (class library DLL)
+- Windows Forms for UI (System.Windows.Forms)
+- Windows Registry access (Microsoft.Win32)
+- XCore for mediator/command pattern
+- SIL.LCModel for data access
 
 ## Dependencies
-- Depends on: Common/FwUtils, Common/ViewsInterfaces
-- Used by: All FieldWorks applications (xWorks, LexText)
+
+### Upstream (consumes)
+- **SIL.LCModel**: Language and Culture Model (LcmCache, action handler)
+- **SIL.LCModel.Infrastructure**: Infrastructure services
+- **SIL.LCModel.DomainServices**: Domain service layer
+- **Common/FwUtils**: FieldWorks utilities
+- **Common/ViewsInterfaces**: View interfaces
+- **Common/RootSites**: Root site infrastructure
+- **Common/Controls**: Common controls
+- **XCore**: Command/mediator framework
+- **FwCoreDlgs**: Core dialogs
+- **System.Windows.Forms**: Windows Forms UI
+
+### Downstream (consumed by)
+- **xWorks/**: Main FLEx application extends FwApp
+- **LexText/**: Lexicon application uses framework
+- All FieldWorks applications requiring application framework services
 
 ## Interop & Contracts
-Uses COM for cross-boundary calls.
+- **IFieldWorksManager**: Contract for application manager
+- **IFwMainWnd**: Contract for main windows
+- **IRecordListUpdater, IRecordListOwner, IRecordChangeHandler**: Contracts for list management and side-effect handling
+- **IPublicationView, IPageSetupDialog**: Contracts for print/publish functionality
+- Uses COM interop for legacy components
 
 ## Threading & Performance
-Threading model: explicit threading, UI thread marshaling, synchronization.
+- **UI thread marshaling**: Framework ensures UI operations on UI thread
+- **Explicit threading**: Some operations use background threads with progress reporting
+- **Synchronization**: Cache access coordinated across windows/threads
 
 ## Config & Feature Flags
-No explicit configuration or feature flags detected.
+- **FwRegistrySettings**: Windows registry for application settings
+- **XML settings**: SettingsXmlAccessorBase, StylesXmlAccessor for XML-based configuration
+- No explicit feature flags; behavior controlled by settings
 
 ## Build Information
-- C# class library project
-- Build via: `dotnet build Framework.csproj`
-- Includes comprehensive test suite
+- **Project file**: Framework.csproj (.NET Framework 4.6.2, OutputType=Library)
+- **Test project**: FrameworkTests/FrameworkTests.csproj
+- **Output**: Framework.dll (to Output/Debug or Output/Release)
+- **Build**: Via top-level FW.sln or: `msbuild Framework.csproj /p:Configuration=Debug`
+- **Run tests**: `dotnet test FrameworkTests/FrameworkTests.csproj` or Visual Studio Test Explorer
 
 ## Interfaces and Data Models
 
-- **IFieldWorksManager** (interface)
-  - Path: `IFieldWorksManager.cs`
-  - Public interface definition
+- **FwApp** (FwApp.cs)
+  - Purpose: Abstract base class for FieldWorks applications
+  - Inputs: LcmCache, action handler, mediator, window list
+  - Outputs: Application lifecycle management, window coordination
+  - Notes: Subclasses implement application-specific behavior
 
-- **IFwMainWnd** (interface)
-  - Path: `IFwMainWnd.cs`
-  - Public interface definition
+- **IFieldWorksManager** (IFieldWorksManager.cs)
+  - Purpose: Contract for application manager facade
+  - Inputs: Application instances, window management requests
+  - Outputs: Cache access, shutdown coordination
+  - Notes: Implemented by FieldWorksManager (Common/FieldWorks)
 
-- **IMainWindowDelegateCallbacks** (interface)
-  - Path: `MainWindowDelegate.cs`
-  - Public interface definition
+- **IFwMainWnd** (IFwMainWnd.cs)
+  - Purpose: Contract for main application windows
+  - Inputs: N/A (properties)
+  - Outputs: Main window services (mediator, synchronization, refresh)
+  - Notes: Main windows implement to participate in framework
 
-- **IMainWindowDelegatedFunctions** (interface)
-  - Path: `MainWindowDelegate.cs`
-  - Public interface definition
+- **IRecordListUpdater** (FwApp.cs)
+  - Purpose: Contract for updating record lists with side-effect handling
+  - Inputs: IRecordChangeHandler, refresh flags
+  - Outputs: UpdateList(), RefreshCurrentRecord()
+  - Notes: Helps coordinate list updates after object changes
 
-- **IPageSetupDialog** (interface)
-  - Path: `PublicationInterfaces.cs`
-  - Public interface definition
+- **IRecordListOwner** (FwApp.cs)
+  - Purpose: Contract for finding record list updaters by name
+  - Inputs: string name
+  - Outputs: IRecordListUpdater or null
+  - Notes: Allows components to locate and update specific lists
 
-- **IPublicationView** (interface)
-  - Path: `PublicationInterfaces.cs`
-  - Public interface definition
+- **IRecordChangeHandler** (FwApp.cs)
+  - Purpose: Contract for handling side-effects of object changes
+  - Inputs: Object change events
+  - Outputs: Fixup() method for pre-refresh processing
+  - Notes: Ensures side-effects complete before list refresh
 
-- **IRecordChangeHandler** (interface)
-  - Path: `FwApp.cs`
-  - Public interface definition
+- **IPublicationView** (PublicationInterfaces.cs)
+  - Purpose: Contract for views supporting print/publish
+  - Inputs: N/A (properties)
+  - Outputs: Print services, page layout access
+  - Notes: Views implement for print/export functionality
 
-- **IRecordListOwner** (interface)
-  - Path: `FwApp.cs`
-  - Public interface definition
+- **IPageSetupDialog** (PublicationInterfaces.cs)
+  - Purpose: Contract for page setup dialogs
+  - Inputs: Page setup parameters
+  - Outputs: ShowDialog(), page configuration
+  - Notes: Standard interface for page setup UI
 
-- **IRecordListUpdater** (interface)
-  - Path: `FwApp.cs`
-  - Public interface definition
-
-- **DummyFwApp** (class)
-  - Path: `FrameworkTests/MainWindowDelegateTests.cs`
-  - Public class implementation
-
-- **DummyMainWindowDelegateCallbacks** (class)
-  - Path: `FrameworkTests/MainWindowDelegateTests.cs`
-  - Public class implementation
-
-- **ExportStyleInfo** (class)
-  - Path: `ExportStyleInfo.cs`
-  - Public class implementation
-
-- **ExternalSettingsAccessorBase** (class)
-  - Path: `ExternalSettingsAccessorBase.cs`
-  - Public class implementation
-
-- **FwApp** (class)
-  - Path: `FwApp.cs`
-  - Public class implementation
-
-- **FwEditingHelper** (class)
-  - Path: `FwEditingHelper.cs`
-  - Public class implementation
-
-- **FwRegistrySettings** (class)
-  - Path: `FwRegistrySettings.cs`
-  - Public class implementation
-
-- **FwRootSite** (class)
-  - Path: `FwRootSite.cs`
-  - Public class implementation
-
-- **MainWindowDelegate** (class)
-  - Path: `MainWindowDelegate.cs`
-  - Public class implementation
-
-- **ReservedStyleInfo** (class)
-  - Path: `StylesXmlAccessor.cs`
-  - Public class implementation
-
-- **SelInfo_Compare** (class)
-  - Path: `FrameworkTests/SelInfoTests.cs`
-  - Public class implementation
-
-- **SettingsXmlAccessorBase** (class)
-  - Path: `SettingsXmlAccessorBase.cs`
-  - Public class implementation
-
-- **StatusBarProgressHandler** (class)
-  - Path: `StatusBarProgressHandler.cs`
-  - Public class implementation
-
-- **StylesXmlAccessor** (class)
-  - Path: `StylesXmlAccessor.cs`
-  - Public class implementation
-
-- **UndoRedoDropDown** (class)
-  - Path: `UndoRedoDropDown.cs`
-  - Public class implementation
-
-- **XhtmlHelper** (class)
-  - Path: `XhtmlHelper.cs`
-  - Public class implementation
-
-- **CssType** (enum)
-  - Path: `XhtmlHelper.cs`
-
-- **ResourceStringType** (enum)
-  - Path: `FwApp.cs`
-
-- **WindowTiling** (enum)
-  - Path: `FwApp.cs`
+- **MainWindowDelegate** (MainWindowDelegate.cs)
+  - Purpose: Coordinates main window operations via delegation
+  - Inputs: IMainWindowDelegateCallbacks (callbacks to main window)
+  - Outputs: IMainWindowDelegatedFunctions (delegated operations)
+  - Notes: Separates concerns between FwApp and main window
 
 ## Entry Points
-- Base application classes (FwApp)
-- Editing helper infrastructure
-- Settings and configuration APIs
+- FwApp subclasses instantiated as application entry points
+- IFieldWorksManager accessed via FieldWorksManager
+- Framework components referenced by all FieldWorks applications
 
 ## Test Index
-Test projects: FrameworkTests. 5 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+- **Test project**: FrameworkTests (FrameworkTests.csproj)
+- **Run tests**: `dotnet test FrameworkTests/FrameworkTests.csproj` or Visual Studio Test Explorer
+- **Coverage**: Unit tests for framework components
 
 ## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- Extend FwApp to create FieldWorks applications
+- Implement IFwMainWnd for main windows
+- Use IRecordListUpdater pattern for side-effect coordination
+- Implement IPublicationView for print/export support
+- Use StatusBarProgressHandler for progress reporting
+- Access settings via FwRegistrySettings or XML accessor classes
 
 ## Related Folders
-- **Common/FwUtils/** - Utilities used by framework
-- **Common/FieldWorks/** - FieldWorks-specific infrastructure
-- **XCore/** - Application framework that uses Common/Framework
-- **xWorks/** - Applications built on this framework
+- **Common/FwUtils/**: Utilities used by framework
+- **Common/ViewsInterfaces/**: View interfaces used by framework
+- **Common/RootSites/**: Root site infrastructure
+- **Common/FieldWorks/**: FieldWorksManager implements IFieldWorksManager
+- **XCore/**: Command/mediator framework integrated with Framework
+- **xWorks/**: Main consumer extending FwApp
+- **LexText/**: Lexicon application using framework
 
 ## References
-
-- **Project files**: Framework.csproj, FrameworkTests.csproj
-- **Target frameworks**: net462
-- **Key C# files**: AssemblyInfo.cs, ExportStyleInfo.cs, ExternalSettingsAccessorBase.cs, FrameworkStrings.Designer.cs, FwEditingHelper.cs, FwRegistrySettings.cs, IFieldWorksManager.cs, IFwMainWnd.cs, MainWindowDelegate.cs, PublicationInterfaces.cs
-- **Source file count**: 22 files
-- **Data file count**: 3 files
-
-## References (auto-generated hints)
-- Project files:
-  - Common/Framework/Framework.csproj
-  - Common/Framework/FrameworkTests/FrameworkTests.csproj
-- Key C# files:
-  - Common/Framework/AssemblyInfo.cs
-  - Common/Framework/ExportStyleInfo.cs
-  - Common/Framework/ExternalSettingsAccessorBase.cs
-  - Common/Framework/FrameworkStrings.Designer.cs
-  - Common/Framework/FrameworkTests/FwEditingHelperTests.cs
-  - Common/Framework/FrameworkTests/MainWindowDelegateTests.cs
-  - Common/Framework/FrameworkTests/SelInfoTests.cs
-  - Common/Framework/FrameworkTests/StylesXmlAccessorTests.cs
-  - Common/Framework/FrameworkTests/XhtmlHelperTests.cs
-  - Common/Framework/FwApp.cs
-  - Common/Framework/FwEditingHelper.cs
-  - Common/Framework/FwRegistrySettings.cs
-  - Common/Framework/FwRootSite.cs
-  - Common/Framework/IFieldWorksManager.cs
-  - Common/Framework/IFwMainWnd.cs
-  - Common/Framework/MainWindowDelegate.cs
-  - Common/Framework/PublicationInterfaces.cs
-  - Common/Framework/SettingsXmlAccessorBase.cs
-  - Common/Framework/StatusBarProgressHandler.cs
-  - Common/Framework/StylesXmlAccessor.cs
-  - Common/Framework/UndoRedoDropDown.cs
-  - Common/Framework/XhtmlHelper.cs
-- Data contracts/transforms:
-  - Common/Framework/FrameworkStrings.resx
-  - Common/Framework/FwRootSite.resx
-  - Common/Framework/UndoRedoDropDown.resx
-## Code Evidence
-*Analysis based on scanning 21 source files*
-
-- **Classes found**: 20 public classes
-- **Interfaces found**: 9 public interfaces
-- **Namespaces**: SIL.FieldWorks.Common.Framework, SIL.FieldWorks.Common.Framework.SelInfo, for, info.
+- **Project files**: Framework.csproj (net462, OutputType=Library), FrameworkTests/FrameworkTests.csproj
+- **Target frameworks**: .NET Framework 4.6.2 (net462)
+- **Key dependencies**: SIL.LCModel, SIL.LCModel.Infrastructure, SIL.LCModel.DomainServices, XCore, Common/FwUtils, Common/ViewsInterfaces, Common/RootSites
+- **Key C# files**: FwApp.cs, MainWindowDelegate.cs, FwEditingHelper.cs, IFieldWorksManager.cs, IFwMainWnd.cs, FwRegistrySettings.cs, ExternalSettingsAccessorBase.cs, SettingsXmlAccessorBase.cs, StylesXmlAccessor.cs, ExportStyleInfo.cs, UndoRedoDropDown.cs, StatusBarProgressHandler.cs, XhtmlHelper.cs, PublicationInterfaces.cs, AssemblyInfo.cs
+- **Designer files**: FrameworkStrings.Designer.cs
+- **Resources**: FrameworkStrings.resx, UndoRedoDropDown.resx
+- **Total lines of code**: 10034
+- **Output**: Output/Debug/Framework.dll, Output/Release/Framework.dll
+- **Namespace**: SIL.FieldWorks.Common.Framework
