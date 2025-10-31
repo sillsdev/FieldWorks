@@ -1,117 +1,141 @@
 ---
-last-reviewed: 2025-10-30
+last-reviewed: 2025-10-31
 last-verified-commit: 9611cf70e
 status: draft
 ---
 
-# FwResources
+# FwResources COPILOT summary
 
 ## Purpose
-Centralized resource management for FieldWorks applications.
-Contains shared images, icons, localized strings, and other UI assets used throughout the application suite.
-Provides consistent branding and enables efficient resource packaging and localization workflows.
+Centralized resource management for FieldWorks applications. Shared images, icons, localized strings, and UI assets used across xWorks, LexText, and other FieldWorks components. ResourceHelper utility class provides file filter specifications, resource string access, and image loading. Localized string resources: FwStrings (general strings), FwTMStrings (task management strings), HelpTopicPaths (help system paths), ToolBarSystemStrings (toolbar text). Images organized by category (Edit/, File/, Format/, Help/, Tools/, View/, Window/). SearchingAnimation for progress indicators. FwFileExtensions defines standard file extensions. Essential for consistent UI appearance and localization across FieldWorks.
 
 ## Architecture
-C# library with 12 source files.
+C# class library (.NET Framework 4.6.2) with embedded resources. Resource files (.resx) with auto-generated Designer.cs classes for type-safe access. Images/ folder organized by UI category (Edit, File, Format, Help, Tools, View, Window). ResourceHelper main utility class with FileFilterType enum for standardized file dialog filters. Extensive localization support via .resx files. 7458 lines of C# code plus extensive resource files.
 
 ## Key Components
-### Key Classes
-- **ResourceHelper**
-- **FwFileExtensions**
-- **SearchingAnimation**
-- **ResourceHelperImpl**
+- **ResourceHelper** class (ResourceHelper.cs, 32K lines): Resource access utilities
+  - FileFilterType enum: Standardized file type filters (AllFiles, XML, Text, PDF, LIFT, etc.)
+  - FileFilter() method: Generate file dialog filter strings
+  - Resource string access methods
+  - Image loading utilities
+- **FwFileExtensions** (FwFileExtensions.cs): Standard file extension constants
+  - Defines .fwdata, .fwbackup, and other FW extensions
+- **FwStrings** (FwStrings.Designer.cs/.resx): General localized strings (110K lines Designer.cs, 69K .resx)
+  - Comprehensive string resources for FieldWorks UI
+- **FwTMStrings** (FwTMStrings.Designer.cs/.resx): Task management strings (47K lines Designer.cs, 37K .resx)
+- **HelpTopicPaths** (HelpTopicPaths.Designer.cs/.resx): Help system topic paths (28K lines Designer.cs, 22K .resx)
+- **ToolBarSystemStrings** (ToolBarSystemStrings.Designer.cs/.resx): Toolbar text resources (17K lines Designer.cs)
+- **Images** (Images.Designer.cs/.resx): Image resource access (4K lines)
+  - Images/ folder: Icon and image files organized by category
+    - Edit/: Edit operation icons
+    - File/: File operation icons
+    - Format/: Formatting icons
+    - Help/: Help system icons
+    - Tools/: Tools menu icons
+    - View/: View menu icons
+    - Window/: Window management icons
+- **ResourceHelperImpl** (ResourceHelperImpl.cs/.Designer.cs/.resx): Resource helper implementation (104K .resx)
+- **SearchingAnimation** (SearchingAnimation.cs/.Designer.cs/.resx): Animated search progress indicator
 
 ## Technology Stack
-- C# resource files (.resx)
-- Image files and icons
-- Localization infrastructure
+- C# .NET Framework 4.6.2 (net462)
+- OutputType: Library
+- Resource files (.resx) for localization
+- Embedded resources for images/icons
+- System.Resources for resource management
 
 ## Dependencies
-- Depends on: Minimal (provides resources to others)
-- Used by: All FieldWorks applications and UI libraries
+
+### Upstream (consumes)
+- **System.Resources**: .NET resource management
+- **System.Drawing**: Image/Icon loading
+- **SIL.LCModel.Utils**: Utility classes
+- Minimal dependencies (resource library)
+
+### Downstream (consumed by)
+- **All FieldWorks applications**: xWorks, LexText, FwCoreDlgs, etc.
+- **UI components**: Reference FwResources for strings and images
+- **Help system**: Uses HelpTopicPaths
+- Universal dependency across FieldWorks
 
 ## Interop & Contracts
-Uses COM for cross-boundary calls.
+- **FileFilterType enum**: Standard contract for file dialog filters
+- **Resource classes**: Type-safe access to strings and images via Designer.cs classes
+- **.resx format**: Standard .NET resource format for localization
 
 ## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
+- **Static resources**: Loaded on demand and cached by .NET resource manager
+- **Thread-safe**: .NET ResourceManager is thread-safe
+- **Performance**: Efficient resource lookup; images cached after first load
 
 ## Config & Feature Flags
-No explicit configuration or feature flags detected.
+- **Localization**: .resx files for different cultures
+- **FileFilterType**: Extensible enum for new file types
+- No runtime configuration; compile-time resource embedding
 
 ## Build Information
-- C# resource library
-- Build with MSBuild or Visual Studio
-- Compiled into satellite assemblies for localization
+- **Project file**: FwResources.csproj (net462, OutputType=Library)
+- **Output**: FwResources.dll (embedded resources)
+- **Build**: Via top-level FW.sln
+- **Localization**: .resx files compiled into satellite assemblies for different cultures
 
 ## Interfaces and Data Models
 
-- **FwFileExtensions** (class)
-  - Path: `FwFileExtensions.cs`
-  - Public class implementation
+- **ResourceHelper** (ResourceHelper.cs)
+  - Purpose: Utility class for resource access and file filters
+  - Inputs: FileFilterType enum values
+  - Outputs: File dialog filter strings, resource strings, images
+  - Notes: Static methods for resource access
 
-- **Images** (class)
-  - Path: `Images.Designer.cs`
-  - Public class implementation
+- **FileFilterType enum** (ResourceHelper.cs)
+  - Purpose: Standardized file type specifications for file dialogs
+  - Values: AllFiles, XML, Text, PDF, LIFT, OXES, AllImage, AllAudio, AllVideo, etc.
+  - Notes: Each enum has corresponding resource string kstid{EnumMember}
 
-- **ResourceHelper** (class)
-  - Path: `ResourceHelper.cs`
-  - Public class implementation
+- **FwStrings** (FwStrings.Designer.cs)
+  - Purpose: General localized strings for FieldWorks UI
+  - Access: FwStrings.ResourceString (type-safe properties)
+  - Notes: Auto-generated from FwStrings.resx
 
-- **FileFilterType** (enum)
-  - Path: `ResourceHelper.cs`
+- **FwTMStrings** (FwTMStrings.Designer.cs)
+  - Purpose: Task management localized strings
+  - Access: FwTMStrings.ResourceString
+  - Notes: Auto-generated from FwTMStrings.resx
+
+- **HelpTopicPaths** (HelpTopicPaths.Designer.cs)
+  - Purpose: Help system topic path mappings
+  - Access: HelpTopicPaths.TopicName
+  - Notes: Maps help topics to paths
+
+- **Images** (Images.Designer.cs)
+  - Purpose: Type-safe access to embedded image resources
+  - Access: Images.ImageName (returns Bitmap or Icon)
+  - Notes: Images organized in subfolders (Edit/, File/, etc.)
 
 ## Entry Points
-- Provides centralized resource access
-- Used via resource managers throughout applications
+Referenced as library by all FieldWorks components. Resources accessed via static Designer classes.
 
 ## Test Index
-No tests found in this folder. Tests may be in a separate Test folder or solution.
+No dedicated test project (resource library). Tested via consuming applications.
 
 ## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- Access strings: FwStrings.ResourceStringName
+- Access images: Images.ImageName (returns Bitmap/Icon)
+- File filters: ResourceHelper.FileFilter(FileFilterType.XML) for OpenFileDialog
+- Localization: Add/modify .resx files; satellite assemblies built automatically
+- Help paths: HelpTopicPaths.TopicName for context-sensitive help
+- Images organized by menu category (Edit, File, Format, Help, Tools, View, Window)
 
 ## Related Folders
-- **Common/** - UI infrastructure that uses FwResources
-- **xWorks/** - Consumes shared resources for UI
-- **LexText/** - Uses shared icons and strings
-- **FwCoreDlgs/** - Dialogs that use shared resources
-- **Transforms/** - May include XSLT resources
+- **All FieldWorks applications**: Consume FwResources
+- **Localization tools**: Process .resx files for translation
 
 ## References
-
-- **Project files**: FwResources.csproj
-- **Target frameworks**: net462
-- **Key C# files**: AssemblyInfo.cs, FwFileExtensions.cs, FwStrings.Designer.cs, FwTMStrings.Designer.cs, HelpTopicPaths.Designer.cs, Images.Designer.cs, ResourceHelper.cs, ResourceHelperImpl.Designer.cs, SearchingAnimation.cs, ToolBarSystemStrings.Designer.cs
-- **Source file count**: 12 files
-- **Data file count**: 7 files
-
-## References (auto-generated hints)
-- Project files:
-  - Src/FwResources/FwResources.csproj
-- Key C# files:
-  - Src/FwResources/AssemblyInfo.cs
-  - Src/FwResources/FwFileExtensions.cs
-  - Src/FwResources/FwStrings.Designer.cs
-  - Src/FwResources/FwTMStrings.Designer.cs
-  - Src/FwResources/HelpTopicPaths.Designer.cs
-  - Src/FwResources/Images.Designer.cs
-  - Src/FwResources/ResourceHelper.cs
-  - Src/FwResources/ResourceHelperImpl.Designer.cs
-  - Src/FwResources/ResourceHelperImpl.cs
-  - Src/FwResources/SearchingAnimation.Designer.cs
-  - Src/FwResources/SearchingAnimation.cs
-  - Src/FwResources/ToolBarSystemStrings.Designer.cs
-- Data contracts/transforms:
-  - Src/FwResources/FwStrings.resx
-  - Src/FwResources/FwTMStrings.resx
-  - Src/FwResources/HelpTopicPaths.resx
-  - Src/FwResources/Images.resx
-  - Src/FwResources/ResourceHelperImpl.resx
-  - Src/FwResources/SearchingAnimation.resx
-  - Src/FwResources/ToolBarSystemStrings.resx
-## Code Evidence
-*Analysis based on scanning 5 source files*
-
-- **Classes found**: 4 public classes
-- **Namespaces**: SIL.FieldWorks.Resources
+- **Project files**: FwResources.csproj (net462)
+- **Target frameworks**: .NET Framework 4.6.2
+- **Key C# files**: ResourceHelper.cs (32K lines), FwFileExtensions.cs, FwStrings.Designer.cs (110K lines), FwTMStrings.Designer.cs (47K lines), HelpTopicPaths.Designer.cs (28K lines), ToolBarSystemStrings.Designer.cs (17K lines), Images.Designer.cs, ResourceHelperImpl.cs, SearchingAnimation.cs
+- **Resource files**: FwStrings.resx (69K), FwTMStrings.resx (37K), HelpTopicPaths.resx (22K), ToolBarSystemStrings.resx, Images.resx, ResourceHelperImpl.resx (104K), SearchingAnimation.resx
+- **Images folder**: Edit/, File/, Format/, Help/, Tools/, View/, Window/ subfolders with icons/images
+- **Total C# lines**: 7458 (plus extensive Designer.cs auto-generated code)
+- **Output**: FwResources.dll with embedded resources
+- **Namespace**: SIL.FieldWorks.Resources
