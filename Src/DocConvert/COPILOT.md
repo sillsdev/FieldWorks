@@ -1,67 +1,49 @@
 ---
-last-reviewed: 2025-10-30
+last-reviewed: 2025-10-31
 last-verified-commit: 9611cf70e
 status: draft
 ---
 
-# DocConvert
+# DocConvert COPILOT summary
 
 ## Purpose
-Document and data format conversion utilities. Handles transformation between
-different document formats and data representations used in FieldWorks. Supports importing
-and exporting linguistic data in various industry-standard formats.
+Legacy/placeholder folder for document conversion utilities. Currently contains only resource files (DocConvert.ico icon). May have been used historically for document and data format transformation utilities, but active functionality appears to have been moved to other folders (Transforms/, ParatextImport/, FXT/).
 
 ## Architecture
-No source files found in this folder.
+Empty folder with no source files. Contains only Res/ subfolder with DocConvert.ico icon file.
 
 ## Key Components
-No major public classes identified.
+No source files present. Only DocConvert.ico icon in Res/ folder.
 
 ## Technology Stack
-- Mix of native and managed code
-- Document processing
-- Format conversion pipelines
+N/A - no source code present.
 
 ## Dependencies
-- Depends on: Common utilities, data model (Cellar)
-- Used by: Import/export functionality in applications
-
-## Interop & Contracts
-No explicit interop boundaries detected. Pure managed or native code.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
+N/A - no source code present.
 
 ## Build Information
-- No standalone project file in root (built as part of solution)
-- May contain utilities and libraries used by other components
+No project files. No build required.
 
 ## Interfaces and Data Models
-See code analysis sections above for key interfaces and data models. Additional interfaces may be documented in source files.
+N/A - no source code present.
 
 ## Entry Points
-- Provides document conversion APIs
-- Used during import/export operations
+None - no executable code.
 
 ## Test Index
-No tests found in this folder. Tests may be in a separate Test folder or solution.
+No tests (no source code).
 
 ## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+This appears to be a legacy or placeholder folder. For document conversion functionality, see:
+- **Transforms/**: XSLT stylesheets for data transformation
+- **ParatextImport/**: Specialized Paratext document import
+- **FXT/**: FieldWorks transformation infrastructure
 
 ## Related Folders
-- **Transforms/** - XSLT and transformation assets for document conversion
-- **ParatextImport/** - Specialized import for Paratext data
-- **FXT/** - FieldWorks transform tools that may use DocConvert
+- **Transforms/**: Active XSLT transformation folder
+- **ParatextImport/**: Import utilities
+- **FXT/**: FieldWorks transform tools
 
 ## References
-
-- **Source file count**: 0 files
-- **Data file count**: 0 files
-
-## References (auto-generated hints)
-## Code Evidence
-*Analysis based on scanning 0 source files*
+- **Contents**: Res/DocConvert.ico (icon file only)
+- **Source files**: None
