@@ -234,9 +234,9 @@ python .github/check_copilot_docs.py --only-changed --fail --verbose
 # Tip: Base is optional; script defaults to diffing against origin/HEAD when omitted
 python .github/detect_copilot_needed.py --strict
 
-# Prepare/update COPILOT.md in changed folders with required headings and auto References hints
+# Scaffold COPILOT.md for changed folders (frontmatter, section ordering, auto references)
 # Tip: Base is optional; script defaults to diffing against origin/HEAD when omitted
-python .github/propose_copilot_updates.py
+python .github/scaffold_copilot_markdown.py
 ```
 
 You can also script your own analysis. Example snippet for parsing .csproj references:
@@ -272,6 +272,7 @@ CI tip: You may add a non-blocking docs validation job that runs `python .github
 Recommended CI wiring:
 - Run `detect_copilot_needed.py` on pull_request with `--base origin/${{ github.base_ref }}` and `--strict` to fail when code changes under `Src/**` don’t include a corresponding COPILOT.md update.
 - Optionally run `check_copilot_docs.py --only-changed --base origin/${{ github.base_ref }} --fail` to ensure updated COPILOT.md files still meet the skeleton (prevents unintentional section deletions) without flagging unrelated folders.
+- Use `scaffold_copilot_markdown.py` in automation to normalize section ordering when COPILOT docs change.
 
 VS Code integration:
 - Use the tasks under `.vscode/tasks.json`:

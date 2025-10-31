@@ -65,6 +65,10 @@ REFERENCE_EXTS = {
     ".targets",
 }
 
+PLACEHOLDER_PREFIXES = ("tbd",)
+LINES_THRESHOLD = 50
+MAX_HISTORY_COMMITS = 10
+
 
 def find_repo_root(start: Path) -> Path:
     p = start.resolve()
@@ -151,34 +155,40 @@ def parse_frontmatter(text: str):
     return None, text
 
 
-def extract_headings(text: str):
-    headings = []
+def split_sections(text: str):
+    sections = {}
+    current = None
+    buffer = []
     for line in text.splitlines():
         if line.startswith("## "):
-            headings.append(line[3:].strip())
-    return headings
+            if current is not None:
+                sections[current] = "\n".join(buffer).strip()
+            current = line[3:].strip()
+            buffer = []
+        else:
+            if current is not None:
+                buffer.append(line)
+    if current is not None:
+        sections[current] = "\n".join(buffer).strip()
+    return sections
 
 
-def extract_references(text: str):
-    # Find References section
+def extract_references(reference_section: str):
     refs = []
-    lines = text.splitlines()
-    in_refs = False
-    for i, l in enumerate(lines):
-        if l.strip().lower() == "## references":
-            in_refs = True
-            continue
-        if in_refs and l.startswith("## "):
-            break
-        if in_refs:
-            # Look for tokens that look like filenames
-            # e.g., "- Key C# files: MainClass.cs, Important.cs"
-            for token in re.split(r"[\s,()]+", l):
-                if any(token.endswith(ext) for ext in REFERENCE_EXTS):
-                    # Strip trailing punctuation
-                    token = token.rstrip(".,;:")
-                    refs.append(token)
-    return list(dict.fromkeys(refs))  # de-dup, preserve order
+    for line in reference_section.splitlines():
+        for token in re.split(r"[\s,()]+", line):
+            if any(token.endswith(ext) for ext in REFERENCE_EXTS):
+                token = token.rstrip(".,;:")
+                refs.append(token)
+    return list(dict.fromkeys(refs))
+
+
+def maybe_placeholder(text: str) -> bool:
+    stripped = text.strip()
+    if not stripped:
+        return True
+    lowered = stripped.lower()
+    return any(lowered.startswith(prefix) for prefix in PLACEHOLDER_PREFIXES)
 
 
 def validate_file(path: Path, repo_index: dict, verbose=False):
@@ -187,9 +197,12 @@ def validate_file(path: Path, repo_index: dict, verbose=False):
         "frontmatter": {
             "missing": [],
             "last_verified_missing": False,
+            "last_verified_value": "",
         },
         "headings_missing": [],
         "references_missing": [],
+        "empty_sections": [],
+        "warnings": [],
         "ok": True,
     }
     text = path.read_text(encoding="utf-8", errors="replace")
@@ -206,6 +219,7 @@ def validate_file(path: Path, repo_index: dict, verbose=False):
             if key not in fm or not fm[key]:
                 result["frontmatter"]["missing"].append(key)
         lvc = fm.get("last-verified-commit", "")
+        result["frontmatter"]["last_verified_value"] = lvc
         if not lvc or lvc.startswith("FIXME"):
             result["frontmatter"]["last_verified_missing"] = True
         if (
@@ -214,14 +228,22 @@ def validate_file(path: Path, repo_index: dict, verbose=False):
         ):
             result["ok"] = False
 
-    headings = extract_headings(body)
+    sections = split_sections(body)
     for h in REQUIRED_HEADINGS:
-        if h not in headings:
+        if h not in sections:
             result["headings_missing"].append(h)
     if result["headings_missing"]:
         result["ok"] = False
 
-    refs = extract_references(body)
+    for h in REQUIRED_HEADINGS:
+        if h in sections:
+            if maybe_placeholder(sections[h]):
+                result["empty_sections"].append(h)
+    if result["empty_sections"]:
+        for h in result["empty_sections"]:
+            result["warnings"].append(f"Section '{h}' is empty or placeholder text")
+
+    refs = extract_references(sections.get("References", ""))
     for r in refs:
         base = os.path.basename(r)
         if base not in repo_index:
@@ -233,6 +255,68 @@ def validate_file(path: Path, repo_index: dict, verbose=False):
     if verbose:
         print(f"Checked {path}")
     return result
+
+
+def compute_folder_change_stats(root: Path, folder_commits: dict):
+    if not folder_commits:
+        return {}
+    change_map = {
+        folder: {"lines": 0, "commit_found": False, "target": target}
+        for folder, target in folder_commits.items()
+    }
+    cmd = [
+        "git",
+        "log",
+        "--numstat",
+        f"--max-count={MAX_HISTORY_COMMITS}",
+        "--pretty=format:%H",
+    ]
+    try:
+        output = run(cmd, cwd=str(root))
+    except subprocess.CalledProcessError:
+        return change_map
+
+    valid_targets = {
+        folder: target
+        for folder, target in folder_commits.items()
+        if target and not target.startswith("FIXME")
+    }
+
+    current_commit = None
+    for raw_line in output.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        if "\t" not in line:
+            current_commit = line
+            for folder, target in valid_targets.items():
+                if change_map[folder]["commit_found"]:
+                    continue
+                if current_commit.startswith(target) or target.startswith(current_commit):
+                    change_map[folder]["commit_found"] = True
+            continue
+        if current_commit is None:
+            continue
+        insertions, deletions, path = line.split("\t")
+        path = path.replace("\\", "/")
+        if not path.startswith("Src/"):
+            continue
+        if path.endswith("COPILOT.md"):
+            continue
+        try:
+            added = 0 if insertions == "-" else int(insertions)
+            deleted = 0 if deletions == "-" else int(deletions)
+        except ValueError:
+            continue
+        delta = added + deleted
+        for folder, info in change_map.items():
+            if not path.startswith(folder.rstrip("/") + "/"):
+                continue
+            target = valid_targets.get(folder)
+            if target and info["commit_found"]:
+                continue
+            info["lines"] += delta
+    return change_map
 
 
 def main():
@@ -279,8 +363,31 @@ def main():
         paths_to_check = list(src.rglob("COPILOT.md"))
 
     results = []
+    folder_commits = {}
     for copath in paths_to_check:
-        results.append(validate_file(copath, repo_index, verbose=args.verbose))
+        result = validate_file(copath, repo_index, verbose=args.verbose)
+        rel_parts = Path(result["path"]).relative_to(root).parts
+        folder_key = "/".join(rel_parts[:-1])
+        result["folder"] = folder_key
+        folder_commits[folder_key] = result["frontmatter"]["last_verified_value"]
+        results.append(result)
+
+    change_map = compute_folder_change_stats(root, folder_commits)
+    for r in results:
+        folder_key = r.get("folder")
+        info = change_map.get(folder_key, {"lines": 0, "commit_found": False, "target": None})
+        r["lines_changed"] = info.get("lines", 0)
+        target = info.get("target") or r["frontmatter"].get("last_verified_value", "")
+        if info.get("lines", 0) > LINES_THRESHOLD:
+            r["warnings"].append(
+                f"Approximately {info['lines']} lines changed since last documented commit; re-run COPILOT analysis"
+            )
+        if target and not target.startswith("FIXME") and not info.get("commit_found", False):
+            r["warnings"].append(
+                "last-verified-commit not seen within last 10 commits; review history"
+            )
+        if not target or target.startswith("FIXME"):
+            r["warnings"].append("last-verified-commit missing; treat doc as draft")
 
     failures = [r for r in results if not r["ok"]]
     print(f"Checked {len(results)} COPILOT.md files. Failures: {len(failures)}")
@@ -296,6 +403,9 @@ def main():
             print(
                 f"  unresolved references: {', '.join(r['references_missing'][:10])}{' …' if len(r['references_missing'])>10 else ''}"
             )
+    warnings = [r for r in results if r["warnings"]]
+    for r in warnings:
+        print(f"- WARN {r['path']}: { '; '.join(r['warnings']) }")
 
     if args.json_out:
         with open(args.json_out, "w", encoding="utf-8") as f:

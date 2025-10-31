@@ -101,7 +101,7 @@
     {
       "label": "COPILOT: Propose updates for changed folders",
       "type": "shell",
-      "command": "& { . ./Build/Agent/GitHelpers.ps1; $base = Get-DefaultBranchRef; python .github/propose_copilot_updates.py --base $base }",
+      "command": "& { . ./Build/Agent/GitHelpers.ps1; $base = Get-DefaultBranchRef; python .github/scaffold_copilot_markdown.py --base $base }",
       "group": "build",
       "options": {
         "shell": {

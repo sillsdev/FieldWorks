@@ -74,6 +74,8 @@ Use these pre-scoped instructions and modes to keep agents focused and reliable:
   - High-signal context links: `.github/context/codebase.context.md`
   - Repository memory (decisions/pitfalls): `.github/memory.md`
 
+Machine / user specific instructions are available in `.github/machine-specific.md`.  The file can be created if needed.
+
 Src/ folder structure:
 - For a quick overview of all Src/ folders and subfolders, see `.github/src-catalog.md`
 - For detailed information about any specific folder, see its `Src/<FolderName>/COPILOT.md` file

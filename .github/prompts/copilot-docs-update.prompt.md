@@ -18,7 +18,7 @@ Steps:
    - Collect the set of folders reported as missing `COPILOT.md` updates.
 
 2) Propose/prepare updates for those folders
-   - Run: `python .github/propose_copilot_updates.py --status <status>` (or pass `--base origin/<branch>` explicitly)
+   - Run: `python .github/scaffold_copilot_markdown.py --status <status>` (or pass `--base origin/<branch>` explicitly)
    - This ensures frontmatter and all required headings exist and appends an "References (auto-generated hints)" section.
    - Do not remove human-written content; only append/fix structure.
 
