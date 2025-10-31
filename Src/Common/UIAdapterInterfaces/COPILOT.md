@@ -1,122 +1,138 @@
 ---
-last-reviewed: 2025-10-30
+last-reviewed: 2025-10-31
 last-verified-commit: 9611cf70e
 status: draft
 ---
 
-# UIAdapterInterfaces
+# UIAdapterInterfaces COPILOT summary
 
 ## Purpose
-UI adapter pattern interfaces for abstraction and testability.
-Defines contracts that allow UI components to be adapted to different technologies or replaced
-with test doubles. Enables better separation of concerns between business logic and UI presentation,
-and facilitates unit testing of UI-dependent code.
+UI adapter pattern interfaces for abstraction and testability in FieldWorks applications. Defines contracts ISIBInterface (Side Bar and Information Bar Interface) and ITMInterface (Tool Manager Interface) that allow UI components to be adapted to different implementations or replaced with test doubles for unit testing. Helper classes (SBTabProperties, SBTabItemProperties, ITMAdapter) support adapter implementations. Enables dependency injection, testing of UI-dependent code without actual UI, and flexibility in UI component selection.
 
 ## Architecture
-C# library with 5 source files.
+C# interface library (.NET Framework 4.6.2) defining UI adapter contracts. Pure interface definitions with supporting helper classes for property transfer. No implementations in this project - implementations reside in consuming projects (e.g., XCore provides concrete adapters).
 
 ## Key Components
-### Key Classes
-- **TMItemProperties**
-- **TMBarProperties**
-- **WindowListInfo**
-- **SBTabProperties**
-- **SBTabItemProperties**
-
-### Key Interfaces
-- **ISIBInterface**
-- **ITMAdapter**
+- **ISIBInterface** (SIBInterface.cs): Side Bar and Information Bar contract
+  - Initialize(): Set up sidebar and info bar with containers and mediator
+  - AddTab(): Add category tab to sidebar (SBTabProperties)
+  - AddTabItem(): Add item to category tab (SBTabItemProperties)
+  - SetCurrentTab(): Switch active tab
+  - SetCurrentTabItem(): Switch active tab item
+  - SetupSideBarMenus(): Configure sidebar menus
+  - RefreshTab(): Refresh tab items
+  - CurrentTab, CurrentTabItem: Properties for current selections
+  - TabCount: Number of tabs
+- **ITMInterface** (TMInterface.cs): Tool Manager contract
+  - Initialize(): Set up tool manager with container and mediator
+  - AddTool(): Add tool to manager
+  - SetCurrentTool(): Switch active tool
+  - CurrentTool: Property for current tool
+  - Tools: Collection of available tools
+- **SBTabProperties** (HelperClasses.cs): Sidebar tab properties
+  - Name, Text, ImageList, DefaultIconIndex
+  - Properties for tab appearance and behavior
+- **SBTabItemProperties** (HelperClasses.cs): Sidebar tab item properties
+  - Name, Text, Tag, IconIndex, Message
+  - Properties for tab item appearance and behavior
+- **ITMAdapter** (HelperClasses.cs): Tool manager adapter interface
+  - GetToolAdapter(): Retrieve adapter for tool
+  - Tool management abstraction
+- **HelperClasses** (HelperClasses.cs): Supporting classes
+  - Property classes for UI element configuration
+- **UIAdapterInterfacesStrings** (UIAdapterInterfacesStrings.Designer.cs): Localized strings
 
 ## Technology Stack
-- C# .NET
-- Interface-based design
-- Adapter pattern implementation
+- C# .NET Framework 4.6.2 (net462)
+- OutputType: Library
+- Interface definitions only (no UI framework dependency)
+- XCore integration (Mediator references)
 
 ## Dependencies
-- Depends on: Minimal (interface definitions)
-- Used by: XCore, UI adapter implementations
+
+### Upstream (consumes)
+- **XCore**: Mediator for command routing
+- **System.Windows.Forms**: Control references (containers)
+- Minimal dependencies (interface library)
+
+### Downstream (consumed by)
+- **XCore**: Provides concrete adapter implementations (SIBAdapter, etc.)
+- **UI components**: Implement these interfaces for testability
+- **Test projects**: Use test doubles implementing these interfaces
+- Any component requiring adaptable UI patterns
 
 ## Interop & Contracts
-Uses COM for cross-boundary calls.
+- **ISIBInterface**: Contract for side bar and information bar adapters
+- **ITMInterface**: Contract for tool manager adapters
+- Enables test doubles and dependency injection
+- Decouples UI component selection from business logic
 
 ## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
+Interface definitions have no threading implications. Implementations must handle threading appropriately.
 
 ## Config & Feature Flags
-No explicit configuration or feature flags detected.
+No configuration in interface library. Behavior determined by implementations.
 
 ## Build Information
-- C# interface library project
-- Build via: `dotnet build UIAdapterInterfaces.csproj`
-- Pure interface definitions
+- **Project file**: UIAdapterInterfaces.csproj (net462, OutputType=Library)
+- **Output**: UIAdapterInterfaces.dll
+- **Build**: Via top-level FW.sln or: `msbuild UIAdapterInterfaces.csproj /p:Configuration=Debug`
+- **No test project**: Interface library; implementations tested in consuming projects
 
 ## Interfaces and Data Models
 
-- **ISIBInterface** (interface)
-  - Path: `SIBInterface.cs`
-  - Public interface definition
+- **ISIBInterface** (SIBInterface.cs)
+  - Purpose: Contract for side bar and information bar UI components
+  - Inputs: Container controls, mediator, tab/item properties
+  - Outputs: Tab management, item selection, menu setup
+  - Notes: Enables different side bar implementations (e.g., native, cross-platform, test doubles)
 
-- **ITMAdapter** (interface)
-  - Path: `TMInterface.cs`
-  - Public interface definition
+- **ITMInterface** (TMInterface.cs)
+  - Purpose: Contract for tool manager UI components
+  - Inputs: Container controls, mediator, tool specifications
+  - Outputs: Tool management, tool selection
+  - Notes: Abstracts tool window management for testing and flexibility
 
-- **SBTabItemProperties** (class)
-  - Path: `HelperClasses.cs`
-  - Public class implementation
+- **SBTabProperties** (HelperClasses.cs)
+  - Purpose: Data class for sidebar tab configuration
+  - Inputs: Name, Text, ImageList, DefaultIconIndex
+  - Outputs: Property values for tab creation
+  - Notes: DTO for tab properties
 
-- **SBTabProperties** (class)
-  - Path: `HelperClasses.cs`
-  - Public class implementation
+- **SBTabItemProperties** (HelperClasses.cs)
+  - Purpose: Data class for sidebar tab item configuration
+  - Inputs: Name, Text, Tag, IconIndex, Message
+  - Outputs: Property values for tab item creation
+  - Notes: DTO for tab item properties
 
-- **TMBarProperties** (class)
-  - Path: `HelperClasses.cs`
-  - Public class implementation
-
-- **TMItemProperties** (class)
-  - Path: `HelperClasses.cs`
-  - Public class implementation
-
-- **WindowListInfo** (class)
-  - Path: `HelperClasses.cs`
-  - Public class implementation
+- **ITMAdapter** (HelperClasses.cs)
+  - Purpose: Contract for tool manager adapter retrieval
+  - Inputs: Tool identifier
+  - Outputs: Adapter instance for tool
+  - Notes: Supports tool-specific adapters
 
 ## Entry Points
-- Interface contracts for UI adapters
-- Abstraction layer for UI technologies
+Referenced by UI components and XCore for adapter pattern implementation. No executable entry point.
 
 ## Test Index
-No tests found in this folder. Tests may be in a separate Test folder or solution.
+No test project for interface library. Implementations tested in consuming projects using these interfaces.
 
 ## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- Define ISIBInterface and ITMInterface in business logic for dependency injection
+- XCore provides concrete implementations (SIBAdapter, TMAdapter)
+- Create test doubles implementing these interfaces for unit testing
+- Use SBTabProperties and SBTabItemProperties for property transfer
+- Adapter pattern enables UI flexibility and testability
 
 ## Related Folders
-- **XCore/** - Uses these interfaces extensively
-- **XCore/FlexUIAdapter/** - Implements these interfaces
-- **Common/Controls/** - Controls that work with adapters
+- **XCore/**: Provides concrete adapter implementations
+- **XCore/SilSidePane/**: Side pane UI using these adapters
+- Test projects: Use test doubles implementing these interfaces
 
 ## References
-
-- **Project files**: UIAdapterInterfaces.csproj
-- **Target frameworks**: net462
-- **Key C# files**: AssemblyInfo.cs, HelperClasses.cs, SIBInterface.cs, TMInterface.cs, UIAdapterInterfacesStrings.Designer.cs
-- **Source file count**: 5 files
-- **Data file count**: 1 files
-
-## References (auto-generated hints)
-- Project files:
-  - Common/UIAdapterInterfaces/UIAdapterInterfaces.csproj
-- Key C# files:
-  - Common/UIAdapterInterfaces/AssemblyInfo.cs
-  - Common/UIAdapterInterfaces/HelperClasses.cs
-  - Common/UIAdapterInterfaces/SIBInterface.cs
-  - Common/UIAdapterInterfaces/TMInterface.cs
-  - Common/UIAdapterInterfaces/UIAdapterInterfacesStrings.Designer.cs
-- Data contracts/transforms:
-  - Common/UIAdapterInterfaces/UIAdapterInterfacesStrings.resx
-## Code Evidence
-*Analysis based on scanning 4 source files*
-
-- **Classes found**: 5 public classes
-- **Interfaces found**: 2 public interfaces
-- **Namespaces**: SIL.FieldWorks.Common.UIAdapters
+- **Project files**: UIAdapterInterfaces.csproj (net462)
+- **Target frameworks**: .NET Framework 4.6.2
+- **Key C# files**: SIBInterface.cs, TMInterface.cs, HelperClasses.cs, UIAdapterInterfacesStrings.Designer.cs, AssemblyInfo.cs
+- **Total lines of code**: 1395
+- **Output**: Output/Debug/UIAdapterInterfaces.dll
+- **Namespace**: SIL.FieldWorks.Common.UIAdapters
