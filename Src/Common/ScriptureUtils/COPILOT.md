@@ -12,6 +12,9 @@ Provides specialized handling for biblical text references, Paratext project int
 scripture navigation, and biblical text structure. Enables FieldWorks to work effectively
 with Bible translation projects and interoperate with Paratext software.
 
+## Architecture
+C# library with 10 source files. Contains 1 subprojects: ScriptureUtils.
+
 ## Key Components
 ### Key Classes
 - **ParatextHelper**
@@ -44,27 +47,19 @@ with Bible translation projects and interoperate with Paratext software.
 - Depends on: Paratext SDK, Common/FwUtils
 - Used by: Scripture-related features in xWorks and specialized modules
 
+## Interop & Contracts
+Uses COM for cross-boundary calls.
+
+## Threading & Performance
+Threading model: UI thread marshaling.
+
+## Config & Feature Flags
+No explicit configuration or feature flags detected.
+
 ## Build Information
 - C# class library project
 - Build via: `dotnet build ScriptureUtils.csproj`
 - Includes test suite
-
-## Entry Points
-- Paratext data providers
-- Scripture reference comparison and sorting
-- Biblical text handling utilities
-
-## Related Folders
-- **ParatextImport/** - Uses ScriptureUtils for data import
-- **Paratext8Plugin/** - Modern Paratext integration
-- **FwParatextLexiconPlugin/** - Lexicon integration with Paratext
-
-## Code Evidence
-*Analysis based on scanning 10 source files*
-
-- **Classes found**: 11 public classes
-- **Interfaces found**: 14 public interfaces
-- **Namespaces**: SIL.FieldWorks.Common.ScriptureUtils
 
 ## Interfaces and Data Models
 
@@ -161,6 +156,22 @@ with Bible translation projects and interoperate with Paratext software.
 - **TokenType** (enum)
   - Path: `ParatextHelper.cs`
 
+## Entry Points
+- Paratext data providers
+- Scripture reference comparison and sorting
+- Biblical text handling utilities
+
+## Test Index
+Test projects: ScriptureUtilsTests. 3 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **ParatextImport/** - Uses ScriptureUtils for data import
+- **Paratext8Plugin/** - Modern Paratext integration
+- **FwParatextLexiconPlugin/** - Lexicon integration with Paratext
+
 ## References
 
 - **Project files**: ScriptureUtils.csproj, ScriptureUtilsTests.csproj
@@ -169,20 +180,24 @@ with Bible translation projects and interoperate with Paratext software.
 - **Source file count**: 10 files
 - **Data file count**: 0 files
 
-## Architecture
-C# library with 10 source files. Contains 1 subprojects: ScriptureUtils.
+## References (auto-generated hints)
+- Project files:
+  - Common/ScriptureUtils/ScriptureUtils.csproj
+  - Common/ScriptureUtils/ScriptureUtilsTests/ScriptureUtilsTests.csproj
+- Key C# files:
+  - Common/ScriptureUtils/AssemblyInfo.cs
+  - Common/ScriptureUtils/PT7ScrTextWrapper.cs
+  - Common/ScriptureUtils/Paratext7Provider.cs
+  - Common/ScriptureUtils/ParatextHelper.cs
+  - Common/ScriptureUtils/ScrReferencePositionComparer.cs
+  - Common/ScriptureUtils/ScriptureProvider.cs
+  - Common/ScriptureUtils/ScriptureReferenceComparer.cs
+  - Common/ScriptureUtils/ScriptureUtilsTests/ParatextHelperTests.cs
+  - Common/ScriptureUtils/ScriptureUtilsTests/ScrReferencePositionComparerTests.cs
+  - Common/ScriptureUtils/ScriptureUtilsTests/ScriptureReferenceComparerTests.cs
+## Code Evidence
+*Analysis based on scanning 10 source files*
 
-## Interop & Contracts
-Uses COM for cross-boundary calls.
-
-## Threading & Performance
-Threading model: UI thread marshaling.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Test Index
-Test projects: ScriptureUtilsTests. 3 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- **Classes found**: 11 public classes
+- **Interfaces found**: 14 public interfaces
+- **Namespaces**: SIL.FieldWorks.Common.ScriptureUtils

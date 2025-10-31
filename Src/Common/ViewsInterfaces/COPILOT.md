@@ -12,6 +12,9 @@ Declares .NET interfaces corresponding to native COM interfaces in the Views sys
 managed code to interact with the powerful native text rendering capabilities. Provides type-safe,
 managed access to complex text layout, multilingual display, and sophisticated formatting features.
 
+## Architecture
+C# library with 10 source files. Contains 1 subprojects: ViewsInterfaces.
+
 ## Key Components
 ### Key Classes
 - **VwPropertyStoreManaged**
@@ -38,28 +41,19 @@ managed access to complex text layout, multilingual display, and sophisticated f
 - Depends on: views (native view layer)
 - Used by: Common/RootSite, Common/SimpleRootSite, view-based components
 
+## Interop & Contracts
+Uses Marshaling, COM, P/Invoke for cross-boundary calls.
+
+## Threading & Performance
+Single-threaded or thread-agnostic code. No explicit threading detected.
+
+## Config & Feature Flags
+No explicit configuration or feature flags detected.
+
 ## Build Information
 - C# interface library with COM interop
 - Build via: `dotnet build ViewsInterfaces.csproj`
 - Includes test suite
-
-## Entry Points
-- Interface definitions for view layer
-- COM wrappers for native views
-- Property and rendering abstractions
-
-## Related Folders
-- **views/** - Native view layer implementing these interfaces
-- **Common/RootSite/** - Uses ViewsInterfaces extensively
-- **Common/SimpleRootSite/** - Built on ViewsInterfaces
-- **ManagedVwWindow/** - Window management using these interfaces
-
-## Code Evidence
-*Analysis based on scanning 9 source files*
-
-- **Classes found**: 9 public classes
-- **Interfaces found**: 3 public interfaces
-- **Namespaces**: SIL.FieldWorks.Common.ViewsInterfaces
 
 ## Interfaces and Data Models
 
@@ -112,6 +106,23 @@ managed access to complex text layout, multilingual display, and sophisticated f
 - **ClipFormat** (enum)
   - Path: `ComWrapper.cs`
 
+## Entry Points
+- Interface definitions for view layer
+- COM wrappers for native views
+- Property and rendering abstractions
+
+## Test Index
+Test projects: ViewsInterfacesTests. 2 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **views/** - Native view layer implementing these interfaces
+- **Common/RootSite/** - Uses ViewsInterfaces extensively
+- **Common/SimpleRootSite/** - Built on ViewsInterfaces
+- **ManagedVwWindow/** - Window management using these interfaces
+
 ## References
 
 - **Project files**: ViewsInterfaces.csproj, ViewsInterfacesTests.csproj
@@ -120,20 +131,26 @@ managed access to complex text layout, multilingual display, and sophisticated f
 - **Source file count**: 10 files
 - **Data file count**: 0 files
 
-## Architecture
-C# library with 10 source files. Contains 1 subprojects: ViewsInterfaces.
+## References (auto-generated hints)
+- Project files:
+  - Common/ViewsInterfaces/BuildInclude.targets
+  - Common/ViewsInterfaces/ViewsInterfaces.csproj
+  - Common/ViewsInterfaces/ViewsInterfacesTests/ViewsInterfacesTests.csproj
+- Key C# files:
+  - Common/ViewsInterfaces/AssemblyInfo.cs
+  - Common/ViewsInterfaces/ComUtils.cs
+  - Common/ViewsInterfaces/ComWrapper.cs
+  - Common/ViewsInterfaces/DispPropOverrideFactory.cs
+  - Common/ViewsInterfaces/IPicture.cs
+  - Common/ViewsInterfaces/Rect.cs
+  - Common/ViewsInterfaces/Views.cs
+  - Common/ViewsInterfaces/ViewsInterfacesTests/ExtraComInterfacesTests.cs
+  - Common/ViewsInterfaces/ViewsInterfacesTests/Properties/AssemblyInfo.cs
+  - Common/ViewsInterfaces/ViewsInterfacesTests/VwGraphicsTests.cs
+  - Common/ViewsInterfaces/VwPropertyStoreManaged.cs
+## Code Evidence
+*Analysis based on scanning 9 source files*
 
-## Interop & Contracts
-Uses Marshaling, COM, P/Invoke for cross-boundary calls.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Test Index
-Test projects: ViewsInterfacesTests. 2 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- **Classes found**: 9 public classes
+- **Interfaces found**: 3 public interfaces
+- **Namespaces**: SIL.FieldWorks.Common.ViewsInterfaces

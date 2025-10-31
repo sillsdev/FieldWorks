@@ -12,6 +12,9 @@ Handles unpacking of .fwbackup files and other compressed project formats.
 Supports project restoration, sharing, and migration scenarios by providing
 reliable extraction of project data from archive formats.
 
+## Architecture
+C# library with 3 source files.
+
 ## Key Components
 ### Key Classes
 - **RegistryData**
@@ -28,24 +31,18 @@ reliable extraction of project data from archive formats.
 - Depends on: Cellar (data model), Common utilities
 - Used by: Application startup, project opening, import/restore features
 
+## Interop & Contracts
+No explicit interop boundaries detected. Pure managed or native code.
+
+## Threading & Performance
+Single-threaded or thread-agnostic code. No explicit threading detected.
+
+## Config & Feature Flags
+No explicit configuration or feature flags detected.
+
 ## Build Information
 - C# executable or library
 - Build with MSBuild or Visual Studio
-
-## Entry Points
-- Command-line tool or library for project unpacking
-- Used when opening archived projects
-
-## Related Folders
-- **Cellar/** - Data model for projects being unpacked
-- **MigrateSqlDbs/** - May need to migrate unpacked projects
-- **InstallValidator/** - May validate unpacked project structure
-
-## Code Evidence
-*Analysis based on scanning 3 source files*
-
-- **Classes found**: 3 public classes
-- **Namespaces**: SIL.FieldWorks.Test.ProjectUnpacker
 
 ## Interfaces and Data Models
 
@@ -61,6 +58,21 @@ reliable extraction of project data from archive formats.
   - Path: `Unpacker.cs`
   - Public class implementation
 
+## Entry Points
+- Command-line tool or library for project unpacking
+- Used when opening archived projects
+
+## Test Index
+No tests found in this folder. Tests may be in a separate Test folder or solution.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **Cellar/** - Data model for projects being unpacked
+- **MigrateSqlDbs/** - May need to migrate unpacked projects
+- **InstallValidator/** - May validate unpacked project structure
+
 ## References
 
 - **Project files**: ProjectUnpacker.csproj
@@ -69,32 +81,19 @@ reliable extraction of project data from archive formats.
 - **Source file count**: 3 files
 - **Data file count**: 3 files
 
-## Architecture
-C# library with 3 source files.
-
-## Interop & Contracts
-No explicit interop boundaries detected. Pure managed or native code.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Test Index
-No tests found in this folder. Tests may be in a separate Test folder or solution.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
-
 ## References (auto-generated hints)
 - Project files:
-  - Src\ProjectUnpacker\ProjectUnpacker.csproj
+  - Src/ProjectUnpacker/ProjectUnpacker.csproj
 - Key C# files:
-  - Src\ProjectUnpacker\AssemblyInfo.cs
-  - Src\ProjectUnpacker\RegistryData.cs
-  - Src\ProjectUnpacker\Unpacker.cs
+  - Src/ProjectUnpacker/AssemblyInfo.cs
+  - Src/ProjectUnpacker/RegistryData.cs
+  - Src/ProjectUnpacker/Unpacker.cs
 - Data contracts/transforms:
-  - Src\ProjectUnpacker\ZippedParaPrjWithMissingFiles.resx
-  - Src\ProjectUnpacker\ZippedParatextPrj.resx
-  - Src\ProjectUnpacker\ZippedTEVTitusWithUnmappedStyle.resx
+  - Src/ProjectUnpacker/ZippedParaPrjWithMissingFiles.resx
+  - Src/ProjectUnpacker/ZippedParatextPrj.resx
+  - Src/ProjectUnpacker/ZippedTEVTitusWithUnmappedStyle.resx
+## Code Evidence
+*Analysis based on scanning 3 source files*
+
+- **Classes found**: 3 public classes
+- **Namespaces**: SIL.FieldWorks.Test.ProjectUnpacker

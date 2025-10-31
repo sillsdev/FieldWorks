@@ -12,6 +12,9 @@ Provides a more accessible interface to the Views system for common scenarios, h
 standard view hosting patterns with pre-configured functionality. Reduces boilerplate code
 needed to embed Views in applications while maintaining full rendering capabilities.
 
+## Architecture
+C# library with 43 source files. Contains 1 subprojects: SimpleRootSite.
+
 ## Key Components
 ### Key Classes
 - **VwSelectionArgs**
@@ -44,29 +47,19 @@ needed to embed Views in applications while maintaining full rendering capabilit
 - Depends on: Common/RootSite, views (native views), Common/ViewsInterfaces
 - Used by: Most FieldWorks view-based components
 
+## Interop & Contracts
+Uses Marshaling, COM, P/Invoke for cross-boundary calls.
+
+## Threading & Performance
+Threading model: UI thread marshaling, synchronization.
+
+## Config & Feature Flags
+No explicit configuration or feature flags detected.
+
 ## Build Information
 - C# class library project
 - Build via: `dotnet build SimpleRootSite.csproj`
 - Higher-level abstraction over RootSite
-
-## Entry Points
-- SimpleRootSite class for easy view hosting
-- Helper classes for common view operations
-- Selection and editing support
-
-## Related Folders
-- **Common/RootSite/** - Base infrastructure used by SimpleRootSite
-- **Common/ViewsInterfaces/** - Interfaces implemented
-- **ManagedVwWindow/** - Window components using SimpleRootSite
-- **xWorks/** - Uses SimpleRootSite for data views
-- **LexText/** - Uses SimpleRootSite for text editing
-
-## Code Evidence
-*Analysis based on scanning 40 source files*
-
-- **Classes found**: 20 public classes
-- **Interfaces found**: 15 public interfaces
-- **Namespaces**: SIL.FieldWorks.Common.RootSites, SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 ## Interfaces and Data Models
 
@@ -221,6 +214,24 @@ needed to embed Views in applications while maintaining full rendering capabilit
 - **SelLimitType** (enum)
   - Path: `SelectionHelper.cs`
 
+## Entry Points
+- SimpleRootSite class for easy view hosting
+- Helper classes for common view operations
+- Selection and editing support
+
+## Test Index
+Test projects: SimpleRootSiteTests. 10 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **Common/RootSite/** - Base infrastructure used by SimpleRootSite
+- **Common/ViewsInterfaces/** - Interfaces implemented
+- **ManagedVwWindow/** - Window components using SimpleRootSite
+- **xWorks/** - Uses SimpleRootSite for data views
+- **LexText/** - Uses SimpleRootSite for text editing
+
 ## References
 
 - **Project files**: SimpleRootSite.csproj, SimpleRootSiteTests.csproj
@@ -230,20 +241,46 @@ needed to embed Views in applications while maintaining full rendering capabilit
 - **Source file count**: 43 files
 - **Data file count**: 6 files
 
-## Architecture
-C# library with 43 source files. Contains 1 subprojects: SimpleRootSite.
+## References (auto-generated hints)
+- Project files:
+  - Common/SimpleRootSite/SimpleRootSite.csproj
+  - Common/SimpleRootSite/SimpleRootSiteTests/SimpleRootSiteTests.csproj
+- Key C# files:
+  - Common/SimpleRootSite/AccessibilityWrapper.cs
+  - Common/SimpleRootSite/ActiveViewHelper.cs
+  - Common/SimpleRootSite/AssemblyInfo.cs
+  - Common/SimpleRootSite/DataUpdateMonitor.cs
+  - Common/SimpleRootSite/EditingHelper.cs
+  - Common/SimpleRootSite/FwRightMouseClickEventArgs.cs
+  - Common/SimpleRootSite/HoldGraphics.cs
+  - Common/SimpleRootSite/IChangeRootObject.cs
+  - Common/SimpleRootSite/IControl.cs
+  - Common/SimpleRootSite/IRootSite.cs
+  - Common/SimpleRootSite/ISelectionChangeNotifier.cs
+  - Common/SimpleRootSite/IbusRootSiteEventHandler.cs
+  - Common/SimpleRootSite/LocalLinkArgs.cs
+  - Common/SimpleRootSite/OrientationManager.cs
+  - Common/SimpleRootSite/PrintRootSite.cs
+  - Common/SimpleRootSite/Properties/Resources.Designer.cs
+  - Common/SimpleRootSite/RenderEngineFactory.cs
+  - Common/SimpleRootSite/SelPositionInfo.cs
+  - Common/SimpleRootSite/SelectionHelper.cs
+  - Common/SimpleRootSite/SelectionRestorer.cs
+  - Common/SimpleRootSite/SimpleRootSite.cs
+  - Common/SimpleRootSite/SimpleRootSiteTests/EditingHelperTests.cs
+  - Common/SimpleRootSite/SimpleRootSiteTests/IbusRootSiteEventHandlerTests.cs
+  - Common/SimpleRootSite/SimpleRootSiteTests/IbusRootSiteEventHandlerTests_Simple.cs
+  - Common/SimpleRootSite/SimpleRootSiteTests/Properties/Resources.Designer.cs
+- Data contracts/transforms:
+  - Common/SimpleRootSite/Properties/Resources.resx
+  - Common/SimpleRootSite/SimpleRootSite.resx
+  - Common/SimpleRootSite/SimpleRootSiteTests/Properties/Resources.resx
+  - Common/SimpleRootSite/SimpleRootSiteTests/SimpleBasicView.resx
+  - Common/SimpleRootSite/SimpleRootSiteTests/SimpleRootSiteDataProviderCacheModel.xml
+  - Common/SimpleRootSite/SimpleRootSiteTests/TextCacheModel.xml
+## Code Evidence
+*Analysis based on scanning 40 source files*
 
-## Interop & Contracts
-Uses Marshaling, COM, P/Invoke for cross-boundary calls.
-
-## Threading & Performance
-Threading model: UI thread marshaling, synchronization.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Test Index
-Test projects: SimpleRootSiteTests. 10 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- **Classes found**: 20 public classes
+- **Interfaces found**: 15 public interfaces
+- **Namespaces**: SIL.FieldWorks.Common.RootSites, SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests

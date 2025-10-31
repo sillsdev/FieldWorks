@@ -12,6 +12,9 @@ Contains the actual implementation of data integrity checks, error detection alg
 automatic repair routines. Used by both the FixFwData command-line tool and potentially by
 the main applications for data validation.
 
+## Architecture
+C# library with 7 source files.
+
 ## Key Components
 ### Key Classes
 - **FixErrorsDlg**
@@ -28,26 +31,19 @@ the main applications for data validation.
 - Depends on: Cellar (data model), Common utilities
 - Used by: Utilities/FixFwData (command-line tool), applications for data validation
 
+## Interop & Contracts
+Uses COM for cross-boundary calls.
+
+## Threading & Performance
+Single-threaded or thread-agnostic code. No explicit threading detected.
+
+## Config & Feature Flags
+No explicit configuration or feature flags detected.
+
 ## Build Information
 - C# class library project
 - Build via: `dotnet build FixFwDataDll.csproj`
 - Core repair functionality
-
-## Entry Points
-- ErrorFixer class for data repair
-- FixErrorsDlg for interactive repair
-- Data validation and integrity checking APIs
-
-## Related Folders
-- **Utilities/FixFwData/** - Command-line wrapper
-- **Cellar/** - Data model accessed and repaired
-- **MigrateSqlDbs/** - Database migration (related to data integrity)
-
-## Code Evidence
-*Analysis based on scanning 4 source files*
-
-- **Classes found**: 4 public classes
-- **Namespaces**: SIL.FieldWorks.FixData
 
 ## Interfaces and Data Models
 
@@ -63,6 +59,22 @@ the main applications for data validation.
   - Path: `WriteAllObjectsUtility.cs`
   - Public class implementation
 
+## Entry Points
+- ErrorFixer class for data repair
+- FixErrorsDlg for interactive repair
+- Data validation and integrity checking APIs
+
+## Test Index
+No tests found in this folder. Tests may be in a separate Test folder or solution.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **Utilities/FixFwData/** - Command-line wrapper
+- **Cellar/** - Data model accessed and repaired
+- **MigrateSqlDbs/** - Database migration (related to data integrity)
+
 ## References
 
 - **Project files**: FixFwDataDll.csproj
@@ -71,20 +83,22 @@ the main applications for data validation.
 - **Source file count**: 7 files
 - **Data file count**: 2 files
 
-## Architecture
-C# library with 7 source files.
+## References (auto-generated hints)
+- Project files:
+  - Utilities/FixFwDataDll/FixFwDataDll.csproj
+- Key C# files:
+  - Utilities/FixFwDataDll/ErrorFixer.cs
+  - Utilities/FixFwDataDll/FixErrorsDlg.Designer.cs
+  - Utilities/FixFwDataDll/FixErrorsDlg.cs
+  - Utilities/FixFwDataDll/FwData.cs
+  - Utilities/FixFwDataDll/Properties/AssemblyInfo.cs
+  - Utilities/FixFwDataDll/Strings.Designer.cs
+  - Utilities/FixFwDataDll/WriteAllObjectsUtility.cs
+- Data contracts/transforms:
+  - Utilities/FixFwDataDll/FixErrorsDlg.resx
+  - Utilities/FixFwDataDll/Strings.resx
+## Code Evidence
+*Analysis based on scanning 4 source files*
 
-## Interop & Contracts
-Uses COM for cross-boundary calls.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Test Index
-No tests found in this folder. Tests may be in a separate Test folder or solution.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- **Classes found**: 4 public classes
+- **Namespaces**: SIL.FieldWorks.FixData

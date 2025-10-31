@@ -12,6 +12,9 @@ Contains data repair utilities (FixFwData, FixFwDataDll), format conversion tool
 XML helpers (XMLUtils), error reporting (Reporting), and enhanced UI components (MessageBoxExLib).
 Collection of helper applications and libraries that support but don't fit cleanly into other categories.
 
+## Architecture
+C# library with 52 source files. Contains 8 subprojects: FixFwData, SfmStats, XMLUtils....
+
 ## Key Components
 ### Key Classes
 - **XmlUtils**
@@ -46,27 +49,19 @@ Collection of helper applications and libraries that support but don't fit clean
 - Generally depends on: Common utilities, Cellar (for data access)
 - Used by: Various components needing utility functionality
 
+## Interop & Contracts
+Uses COM, P/Invoke for cross-boundary calls.
+
+## Threading & Performance
+Single-threaded or thread-agnostic code. No explicit threading detected.
+
+## Config & Feature Flags
+Config files: App.config.
+
 ## Build Information
 - Multiple C# projects in subfolders
 - Mix of executables and libraries
 - Build with MSBuild or Visual Studio
-
-## Entry Points
-- **FixFwData** - Command-line or GUI tool for data repair
-- **XMLUtils** - Library for XML operations
-- **MessageBoxExLib** - Enhanced dialog library
-
-## Related Folders
-- **Cellar/** - Data model that FixFwData works with
-- **Common/** - Shared utilities that Utilities extends
-- **MigrateSqlDbs/** - Database migration (related to data repair)
-
-## Code Evidence
-*Analysis based on scanning 43 source files*
-
-- **Classes found**: 20 public classes
-- **Interfaces found**: 9 public interfaces
-- **Namespaces**: ConvertSFM, FixFwData, SIL.FieldWorks.FixData, SIL.Utils, Sfm2Xml
 
 ## Interfaces and Data Models
 
@@ -197,6 +192,22 @@ Collection of helper applications and libraries that support but don't fit clean
 - **TimeoutResult** (enum)
   - Path: `MessageBoxExLib/TimeoutResult.cs`
 
+## Entry Points
+- **FixFwData** - Command-line or GUI tool for data repair
+- **XMLUtils** - Library for XML operations
+- **MessageBoxExLib** - Enhanced dialog library
+
+## Test Index
+Test projects: XMLUtilsTests, MessageBoxExLibTests, Sfm2XmlTests. 4 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Console application. Build and run via command line or Visual Studio. See Entry Points section.
+
+## Related Folders
+- **Cellar/** - Data model that FixFwData works with
+- **Common/** - Shared utilities that Utilities extends
+- **MigrateSqlDbs/** - Database migration (related to data repair)
+
 ## References
 
 - **Project files**: ConvertSFM.csproj, FixFwData.csproj, FixFwDataDll.csproj, MessageBoxExLib.csproj, MessageBoxExLibTests.csproj, Reporting.csproj, Sfm2Xml.csproj, Sfm2XmlTests.csproj, SfmStats.csproj, XMLUtils.csproj, XMLUtilsTests.csproj
@@ -207,77 +218,65 @@ Collection of helper applications and libraries that support but don't fit clean
 - **Source file count**: 52 files
 - **Data file count**: 17 files
 
-## Architecture
-C# library with 52 source files. Contains 8 subprojects: FixFwData, SfmStats, XMLUtils....
-
-## Interop & Contracts
-Uses COM, P/Invoke for cross-boundary calls.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-Config files: App.config.
-
-## Test Index
-Test projects: XMLUtilsTests, MessageBoxExLibTests, Sfm2XmlTests. 4 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Console application. Build and run via command line or Visual Studio. See Entry Points section.
-
 ## References (auto-generated hints)
 - Project files:
-  - Src\Utilities\FixFwDataDll\FixFwDataDll.csproj
-  - Src\Utilities\FixFwData\FixFwData.csproj
-  - Src\Utilities\MessageBoxExLib\MessageBoxExLib.csproj
-  - Src\Utilities\MessageBoxExLib\MessageBoxExLibTests\MessageBoxExLibTests.csproj
-  - Src\Utilities\Reporting\Reporting.csproj
-  - Src\Utilities\SfmStats\SfmStats.csproj
-  - Src\Utilities\SfmToXml\ConvertSFM\ConvertSFM.csproj
-  - Src\Utilities\SfmToXml\Sfm2Xml.csproj
-  - Src\Utilities\SfmToXml\Sfm2XmlTests\Sfm2XmlTests.csproj
-  - Src\Utilities\XMLUtils\XMLUtils.csproj
-  - Src\Utilities\XMLUtils\XMLUtilsTests\XMLUtilsTests.csproj
+  - Src/Utilities/FixFwData/FixFwData.csproj
+  - Src/Utilities/FixFwDataDll/FixFwDataDll.csproj
+  - Src/Utilities/MessageBoxExLib/MessageBoxExLib.csproj
+  - Src/Utilities/MessageBoxExLib/MessageBoxExLibTests/MessageBoxExLibTests.csproj
+  - Src/Utilities/Reporting/Reporting.csproj
+  - Src/Utilities/SfmStats/SfmStats.csproj
+  - Src/Utilities/SfmToXml/ConvertSFM/ConvertSFM.csproj
+  - Src/Utilities/SfmToXml/Sfm2Xml.csproj
+  - Src/Utilities/SfmToXml/Sfm2XmlTests/Sfm2XmlTests.csproj
+  - Src/Utilities/XMLUtils/XMLUtils.csproj
+  - Src/Utilities/XMLUtils/XMLUtilsTests/XMLUtilsTests.csproj
 - Key C# files:
-  - Src\Utilities\FixFwDataDll\ErrorFixer.cs
-  - Src\Utilities\FixFwDataDll\FixErrorsDlg.Designer.cs
-  - Src\Utilities\FixFwDataDll\FixErrorsDlg.cs
-  - Src\Utilities\FixFwDataDll\FwData.cs
-  - Src\Utilities\FixFwDataDll\Properties\AssemblyInfo.cs
-  - Src\Utilities\FixFwDataDll\Strings.Designer.cs
-  - Src\Utilities\FixFwDataDll\WriteAllObjectsUtility.cs
-  - Src\Utilities\FixFwData\Program.cs
-  - Src\Utilities\FixFwData\Properties\AssemblyInfo.cs
-  - Src\Utilities\MessageBoxExLib\AssemblyInfo.cs
-  - Src\Utilities\MessageBoxExLib\MessageBoxEx.cs
-  - Src\Utilities\MessageBoxExLib\MessageBoxExButton.cs
-  - Src\Utilities\MessageBoxExLib\MessageBoxExButtons.cs
-  - Src\Utilities\MessageBoxExLib\MessageBoxExForm.cs
-  - Src\Utilities\MessageBoxExLib\MessageBoxExIcon.cs
-  - Src\Utilities\MessageBoxExLib\MessageBoxExLibTests\Tests.cs
-  - Src\Utilities\MessageBoxExLib\MessageBoxExManager.cs
-  - Src\Utilities\MessageBoxExLib\MessageBoxExResult.cs
-  - Src\Utilities\MessageBoxExLib\TimeoutResult.cs
-  - Src\Utilities\Reporting\AssemblyInfo.cs
-  - Src\Utilities\Reporting\ErrorReport.cs
-  - Src\Utilities\Reporting\ReportingStrings.Designer.cs
-  - Src\Utilities\Reporting\UsageEmailDialog.cs
-  - Src\Utilities\SfmStats\Program.cs
-  - Src\Utilities\SfmStats\Properties\AssemblyInfo.cs
+  - Src/Utilities/FixFwData/Program.cs
+  - Src/Utilities/FixFwData/Properties/AssemblyInfo.cs
+  - Src/Utilities/FixFwDataDll/ErrorFixer.cs
+  - Src/Utilities/FixFwDataDll/FixErrorsDlg.Designer.cs
+  - Src/Utilities/FixFwDataDll/FixErrorsDlg.cs
+  - Src/Utilities/FixFwDataDll/FwData.cs
+  - Src/Utilities/FixFwDataDll/Properties/AssemblyInfo.cs
+  - Src/Utilities/FixFwDataDll/Strings.Designer.cs
+  - Src/Utilities/FixFwDataDll/WriteAllObjectsUtility.cs
+  - Src/Utilities/MessageBoxExLib/AssemblyInfo.cs
+  - Src/Utilities/MessageBoxExLib/MessageBoxEx.cs
+  - Src/Utilities/MessageBoxExLib/MessageBoxExButton.cs
+  - Src/Utilities/MessageBoxExLib/MessageBoxExButtons.cs
+  - Src/Utilities/MessageBoxExLib/MessageBoxExForm.cs
+  - Src/Utilities/MessageBoxExLib/MessageBoxExIcon.cs
+  - Src/Utilities/MessageBoxExLib/MessageBoxExLibTests/Tests.cs
+  - Src/Utilities/MessageBoxExLib/MessageBoxExManager.cs
+  - Src/Utilities/MessageBoxExLib/MessageBoxExResult.cs
+  - Src/Utilities/MessageBoxExLib/TimeoutResult.cs
+  - Src/Utilities/Reporting/AssemblyInfo.cs
+  - Src/Utilities/Reporting/ErrorReport.cs
+  - Src/Utilities/Reporting/ReportingStrings.Designer.cs
+  - Src/Utilities/Reporting/UsageEmailDialog.cs
+  - Src/Utilities/SfmStats/Program.cs
+  - Src/Utilities/SfmStats/Properties/AssemblyInfo.cs
 - Data contracts/transforms:
-  - Src\Utilities\FixFwDataDll\FixErrorsDlg.resx
-  - Src\Utilities\FixFwDataDll\Strings.resx
-  - Src\Utilities\MessageBoxExLib\MessageBoxExForm.resx
-  - Src\Utilities\MessageBoxExLib\Resources\StandardButtonsText.resx
-  - Src\Utilities\Reporting\App.config
-  - Src\Utilities\Reporting\ErrorReport.resx
-  - Src\Utilities\Reporting\ReportingStrings.resx
-  - Src\Utilities\Reporting\UsageEmailDialog.resx
-  - Src\Utilities\SfmToXml\Sfm2XmlStrings.resx
-  - Src\Utilities\SfmToXml\TestData\BuildPhase2XSLT.xsl
-  - Src\Utilities\SfmToXml\TestData\MoeMap.xml
-  - Src\Utilities\SfmToXml\TestData\Phase3.xsl
-  - Src\Utilities\SfmToXml\TestData\Phase4.xsl
-  - Src\Utilities\SfmToXml\TestData\TestMapping.xml
-  - Src\Utilities\SfmToXml\TestData\YiGreenMap.xml
-  - Src\Utilities\XMLUtils\XmlUtilsStrings.resx
+  - Src/Utilities/FixFwDataDll/FixErrorsDlg.resx
+  - Src/Utilities/FixFwDataDll/Strings.resx
+  - Src/Utilities/MessageBoxExLib/MessageBoxExForm.resx
+  - Src/Utilities/MessageBoxExLib/Resources/StandardButtonsText.resx
+  - Src/Utilities/Reporting/App.config
+  - Src/Utilities/Reporting/ErrorReport.resx
+  - Src/Utilities/Reporting/ReportingStrings.resx
+  - Src/Utilities/Reporting/UsageEmailDialog.resx
+  - Src/Utilities/SfmToXml/Sfm2XmlStrings.resx
+  - Src/Utilities/SfmToXml/TestData/BuildPhase2XSLT.xsl
+  - Src/Utilities/SfmToXml/TestData/MoeMap.xml
+  - Src/Utilities/SfmToXml/TestData/Phase3.xsl
+  - Src/Utilities/SfmToXml/TestData/Phase4.xsl
+  - Src/Utilities/SfmToXml/TestData/TestMapping.xml
+  - Src/Utilities/SfmToXml/TestData/YiGreenMap.xml
+  - Src/Utilities/XMLUtils/XmlUtilsStrings.resx
+## Code Evidence
+*Analysis based on scanning 43 source files*
+
+- **Classes found**: 20 public classes
+- **Interfaces found**: 9 public interfaces
+- **Namespaces**: ConvertSFM, FixFwData, SIL.FieldWorks.FixData, SIL.Utils, Sfm2Xml

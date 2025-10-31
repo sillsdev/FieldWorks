@@ -12,6 +12,9 @@ Defines contracts that allow UI components to be adapted to different technologi
 with test doubles. Enables better separation of concerns between business logic and UI presentation,
 and facilitates unit testing of UI-dependent code.
 
+## Architecture
+C# library with 5 source files.
+
 ## Key Components
 ### Key Classes
 - **TMItemProperties**
@@ -33,26 +36,19 @@ and facilitates unit testing of UI-dependent code.
 - Depends on: Minimal (interface definitions)
 - Used by: XCore, UI adapter implementations
 
+## Interop & Contracts
+Uses COM for cross-boundary calls.
+
+## Threading & Performance
+Single-threaded or thread-agnostic code. No explicit threading detected.
+
+## Config & Feature Flags
+No explicit configuration or feature flags detected.
+
 ## Build Information
 - C# interface library project
 - Build via: `dotnet build UIAdapterInterfaces.csproj`
 - Pure interface definitions
-
-## Entry Points
-- Interface contracts for UI adapters
-- Abstraction layer for UI technologies
-
-## Related Folders
-- **XCore/** - Uses these interfaces extensively
-- **XCore/FlexUIAdapter/** - Implements these interfaces
-- **Common/Controls/** - Controls that work with adapters
-
-## Code Evidence
-*Analysis based on scanning 4 source files*
-
-- **Classes found**: 5 public classes
-- **Interfaces found**: 2 public interfaces
-- **Namespaces**: SIL.FieldWorks.Common.UIAdapters
 
 ## Interfaces and Data Models
 
@@ -84,6 +80,21 @@ and facilitates unit testing of UI-dependent code.
   - Path: `HelperClasses.cs`
   - Public class implementation
 
+## Entry Points
+- Interface contracts for UI adapters
+- Abstraction layer for UI technologies
+
+## Test Index
+No tests found in this folder. Tests may be in a separate Test folder or solution.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **XCore/** - Uses these interfaces extensively
+- **XCore/FlexUIAdapter/** - Implements these interfaces
+- **Common/Controls/** - Controls that work with adapters
+
 ## References
 
 - **Project files**: UIAdapterInterfaces.csproj
@@ -92,20 +103,20 @@ and facilitates unit testing of UI-dependent code.
 - **Source file count**: 5 files
 - **Data file count**: 1 files
 
-## Architecture
-C# library with 5 source files.
+## References (auto-generated hints)
+- Project files:
+  - Common/UIAdapterInterfaces/UIAdapterInterfaces.csproj
+- Key C# files:
+  - Common/UIAdapterInterfaces/AssemblyInfo.cs
+  - Common/UIAdapterInterfaces/HelperClasses.cs
+  - Common/UIAdapterInterfaces/SIBInterface.cs
+  - Common/UIAdapterInterfaces/TMInterface.cs
+  - Common/UIAdapterInterfaces/UIAdapterInterfacesStrings.Designer.cs
+- Data contracts/transforms:
+  - Common/UIAdapterInterfaces/UIAdapterInterfacesStrings.resx
+## Code Evidence
+*Analysis based on scanning 4 source files*
 
-## Interop & Contracts
-Uses COM for cross-boundary calls.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Test Index
-No tests found in this folder. Tests may be in a separate Test folder or solution.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- **Classes found**: 5 public classes
+- **Interfaces found**: 2 public interfaces
+- **Namespaces**: SIL.FieldWorks.Common.UIAdapters

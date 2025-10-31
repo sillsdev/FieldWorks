@@ -13,6 +13,9 @@ infrastructure (xCoreInterfaces, FlexUIAdapter) used by multiple FieldWorks appl
 navigation components (SilSidePane) and comprehensive tests (xCoreTests). Foundation for building
 extensible, plugin-based applications with consistent command and UI patterns.
 
+## Architecture
+C# library with 91 source files. Contains 4 subprojects: xCore, xCoreInterfaces, FlexUIAdapter....
+
 ## Key Components
 ### Key Classes
 - **Inventory**
@@ -46,28 +49,19 @@ extensible, plugin-based applications with consistent command and UI patterns.
 - Depends on: Common (UI infrastructure), FwResources (resources)
 - Used by: xWorks, LexText (all major applications built on XCore)
 
+## Interop & Contracts
+Uses COM, P/Invoke for cross-boundary calls.
+
+## Threading & Performance
+Threading model: UI thread marshaling.
+
+## Config & Feature Flags
+No explicit configuration or feature flags detected.
+
 ## Build Information
 - Multiple C# projects comprising the framework
 - Includes comprehensive test suite
 - Build with MSBuild or Visual Studio
-
-## Entry Points
-- Provides framework base classes for applications
-- Main application shell infrastructure
-
-## Related Folders
-- **xWorks/** - Primary application built on XCore framework
-- **LexText/** - Lexicon application using XCore architecture
-- **Common/** - Provides lower-level UI components used by XCore
-- **FwCoreDlgs/** - Dialogs integrated into XCore applications
-- **FwResources/** - Resources used by XCore framework
-
-## Code Evidence
-*Analysis based on scanning 78 source files*
-
-- **Classes found**: 20 public classes
-- **Interfaces found**: 15 public interfaces
-- **Namespaces**: SIL.SilSidePane, XCore, XCoreUnused
 
 ## Interfaces and Data Models
 
@@ -208,6 +202,23 @@ extensible, plugin-based applications with consistent command and UI patterns.
 - **SettingsGroup** (enum)
   - Path: `xCoreInterfaces/PropertyTable.cs`
 
+## Entry Points
+- Provides framework base classes for applications
+- Main application shell infrastructure
+
+## Test Index
+Test projects: xCoreTests, xCoreInterfacesTests, SilSidePaneTests. 11 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **xWorks/** - Primary application built on XCore framework
+- **LexText/** - Lexicon application using XCore architecture
+- **Common/** - Provides lower-level UI components used by XCore
+- **FwCoreDlgs/** - Dialogs integrated into XCore applications
+- **FwResources/** - Resources used by XCore framework
+
 ## References
 
 - **Project files**: FlexUIAdapter.csproj, SilSidePane.csproj, SilSidePaneTests.csproj, xCore.csproj, xCoreInterfaces.csproj, xCoreInterfacesTests.csproj, xCoreTests.csproj
@@ -217,84 +228,72 @@ extensible, plugin-based applications with consistent command and UI patterns.
 - **Source file count**: 91 files
 - **Data file count**: 35 files
 
-## Architecture
-C# library with 91 source files. Contains 4 subprojects: xCore, xCoreInterfaces, FlexUIAdapter....
-
-## Interop & Contracts
-Uses COM, P/Invoke for cross-boundary calls.
-
-## Threading & Performance
-Threading model: UI thread marshaling.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Test Index
-Test projects: xCoreTests, xCoreInterfacesTests, SilSidePaneTests. 11 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
-
 ## References (auto-generated hints)
 - Project files:
-  - Src\XCore\FlexUIAdapter\FlexUIAdapter.csproj
-  - Src\XCore\SilSidePane\SilSidePane.csproj
-  - Src\XCore\SilSidePane\SilSidePaneTests\BuildInclude.targets
-  - Src\XCore\SilSidePane\SilSidePaneTests\SilSidePaneTests.csproj
-  - Src\XCore\xCore.csproj
-  - Src\XCore\xCoreInterfaces\xCoreInterfaces.csproj
-  - Src\XCore\xCoreInterfaces\xCoreInterfacesTests\xCoreInterfacesTests.csproj
-  - Src\XCore\xCoreTests\BuildInclude.targets
-  - Src\XCore\xCoreTests\xCoreTests.csproj
+  - Src/XCore/FlexUIAdapter/FlexUIAdapter.csproj
+  - Src/XCore/SilSidePane/SilSidePane.csproj
+  - Src/XCore/SilSidePane/SilSidePaneTests/BuildInclude.targets
+  - Src/XCore/SilSidePane/SilSidePaneTests/SilSidePaneTests.csproj
+  - Src/XCore/xCore.csproj
+  - Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj
+  - Src/XCore/xCoreInterfaces/xCoreInterfacesTests/xCoreInterfacesTests.csproj
+  - Src/XCore/xCoreTests/BuildInclude.targets
+  - Src/XCore/xCoreTests/xCoreTests.csproj
 - Key C# files:
-  - Src\XCore\AdapterMenuItem.cs
-  - Src\XCore\AreaManager.cs
-  - Src\XCore\AssemblyInfo.cs
-  - Src\XCore\CollapsingSplitContainer.Designer.cs
-  - Src\XCore\CollapsingSplitContainer.cs
-  - Src\XCore\FlexUIAdapter\AdapterBase.cs
-  - Src\XCore\FlexUIAdapter\AdapterStrings.Designer.cs
-  - Src\XCore\FlexUIAdapter\AssemblyInfo.cs
-  - Src\XCore\FlexUIAdapter\BarAdapterBase.cs
-  - Src\XCore\FlexUIAdapter\ContextHelper.cs
-  - Src\XCore\FlexUIAdapter\MenuAdapter.cs
-  - Src\XCore\FlexUIAdapter\NavBarAdapter.cs
-  - Src\XCore\FlexUIAdapter\PaneBar.cs
-  - Src\XCore\FlexUIAdapter\PanelButton.cs
-  - Src\XCore\FlexUIAdapter\PanelMenu.cs
-  - Src\XCore\FlexUIAdapter\SidebarAdapter.cs
-  - Src\XCore\FlexUIAdapter\ToolbarAdapter.cs
-  - Src\XCore\HtmlControl.cs
-  - Src\XCore\HtmlViewer.cs
-  - Src\XCore\IconHolder.cs
-  - Src\XCore\ImageCollection.cs
-  - Src\XCore\ImageContent.cs
-  - Src\XCore\ImageDialog.cs
-  - Src\XCore\IncludeXml.cs
-  - Src\XCore\Inventory.cs
+  - Src/XCore/AdapterMenuItem.cs
+  - Src/XCore/AreaManager.cs
+  - Src/XCore/AssemblyInfo.cs
+  - Src/XCore/CollapsingSplitContainer.Designer.cs
+  - Src/XCore/CollapsingSplitContainer.cs
+  - Src/XCore/FlexUIAdapter/AdapterBase.cs
+  - Src/XCore/FlexUIAdapter/AdapterStrings.Designer.cs
+  - Src/XCore/FlexUIAdapter/AssemblyInfo.cs
+  - Src/XCore/FlexUIAdapter/BarAdapterBase.cs
+  - Src/XCore/FlexUIAdapter/ContextHelper.cs
+  - Src/XCore/FlexUIAdapter/MenuAdapter.cs
+  - Src/XCore/FlexUIAdapter/NavBarAdapter.cs
+  - Src/XCore/FlexUIAdapter/PaneBar.cs
+  - Src/XCore/FlexUIAdapter/PanelButton.cs
+  - Src/XCore/FlexUIAdapter/PanelMenu.cs
+  - Src/XCore/FlexUIAdapter/SidebarAdapter.cs
+  - Src/XCore/FlexUIAdapter/ToolbarAdapter.cs
+  - Src/XCore/HtmlControl.cs
+  - Src/XCore/HtmlViewer.cs
+  - Src/XCore/IconHolder.cs
+  - Src/XCore/ImageCollection.cs
+  - Src/XCore/ImageContent.cs
+  - Src/XCore/ImageDialog.cs
+  - Src/XCore/IncludeXml.cs
+  - Src/XCore/Inventory.cs
 - Data contracts/transforms:
-  - Src\XCore\AdapterMenuItem.resx
-  - Src\XCore\CollapsingSplitContainer.resx
-  - Src\XCore\FlexUIAdapter\AdapterStrings.resx
-  - Src\XCore\FlexUIAdapter\PaneBar.resx
-  - Src\XCore\HtmlControl.resx
-  - Src\XCore\HtmlViewer.resx
-  - Src\XCore\IconHolder.resx
-  - Src\XCore\ImageContent.resx
-  - Src\XCore\ImageDialog.resx
-  - Src\XCore\MultiPane.resx
-  - Src\XCore\NotifyWindow.resx
-  - Src\XCore\PaneBarContainer.resx
-  - Src\XCore\RecordBar.resx
-  - Src\XCore\SilSidePane\NavPaneOptionsDlg.resx
-  - Src\XCore\SilSidePane\Properties\Resources.resx
-  - Src\XCore\SilSidePane\SilSidePane.resx
-  - Src\XCore\Ticker.resx
-  - Src\XCore\xCoreInterfaces\xCoreInterfaces.resx
-  - Src\XCore\xCoreInterfaces\xCoreInterfacesTests\Properties\Resources.resx
-  - Src\XCore\xCoreInterfaces\xCoreInterfacesTests\settingsBackup\Settings.xml
-  - Src\XCore\xCoreInterfaces\xCoreInterfacesTests\settingsBackup\db_TestLocal_Settings.xml
-  - Src\XCore\xCoreStrings.resx
-  - Src\XCore\xCoreTests\CreateOverrideTestData.xml
-  - Src\XCore\xCoreTests\IncludeXmlTestSource.xml
-  - Src\XCore\xCoreTests\IncludeXmlTestSourceB.xml
+  - Src/XCore/AdapterMenuItem.resx
+  - Src/XCore/CollapsingSplitContainer.resx
+  - Src/XCore/FlexUIAdapter/AdapterStrings.resx
+  - Src/XCore/FlexUIAdapter/PaneBar.resx
+  - Src/XCore/HtmlControl.resx
+  - Src/XCore/HtmlViewer.resx
+  - Src/XCore/IconHolder.resx
+  - Src/XCore/ImageContent.resx
+  - Src/XCore/ImageDialog.resx
+  - Src/XCore/MultiPane.resx
+  - Src/XCore/NotifyWindow.resx
+  - Src/XCore/PaneBarContainer.resx
+  - Src/XCore/RecordBar.resx
+  - Src/XCore/SilSidePane/NavPaneOptionsDlg.resx
+  - Src/XCore/SilSidePane/Properties/Resources.resx
+  - Src/XCore/SilSidePane/SilSidePane.resx
+  - Src/XCore/Ticker.resx
+  - Src/XCore/xCoreInterfaces/xCoreInterfaces.resx
+  - Src/XCore/xCoreInterfaces/xCoreInterfacesTests/Properties/Resources.resx
+  - Src/XCore/xCoreInterfaces/xCoreInterfacesTests/settingsBackup/Settings.xml
+  - Src/XCore/xCoreInterfaces/xCoreInterfacesTests/settingsBackup/db_TestLocal_Settings.xml
+  - Src/XCore/xCoreStrings.resx
+  - Src/XCore/xCoreTests/CreateOverrideTestData.xml
+  - Src/XCore/xCoreTests/IncludeXmlTestSource.xml
+  - Src/XCore/xCoreTests/IncludeXmlTestSourceB.xml
+## Code Evidence
+*Analysis based on scanning 78 source files*
+
+- **Classes found**: 20 public classes
+- **Interfaces found**: 15 public interfaces
+- **Namespaces**: SIL.SilSidePane, XCore, XCoreUnused

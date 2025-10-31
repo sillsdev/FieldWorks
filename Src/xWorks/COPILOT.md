@@ -13,6 +13,9 @@ provides dictionary configuration (DictionaryConfigurationDlg, DictionaryNodeOpt
 data navigation, and shared application services. Serves as the container that brings together
 different FieldWorks tools into an integrated application environment.
 
+## Architecture
+C# library with 181 source files. Contains 1 subprojects: xWorks.
+
 ## Key Components
 ### Key Classes
 - **DTMenuHandler**
@@ -46,33 +49,19 @@ different FieldWorks tools into an integrated application environment.
 - Depends on: XCore (framework), Cellar (data model), Common (UI), FdoUi (data UI), FwCoreDlgs (dialogs), views (rendering)
 - Used by: End users as the main FieldWorks application
 
+## Interop & Contracts
+Uses COM for cross-boundary calls.
+
+## Threading & Performance
+Single-threaded or thread-agnostic code. No explicit threading detected.
+
+## Config & Feature Flags
+configuration settings.
+
 ## Build Information
 - C# application with extensive test suite
 - Build with MSBuild or Visual Studio
 - Primary executable for FieldWorks
-
-## Entry Points
-- Main application executable
-- Application shell hosting various modules (LexText, etc.)
-- Dictionary and data tree interfaces
-
-## Related Folders
-- **XCore/** - Application framework that xWorks is built on
-- **LexText/** - Major module hosted by xWorks
-- **Common/** - UI infrastructure used throughout xWorks
-- **FdoUi/** - Data object UI components
-- **FwCoreDlgs/** - Dialogs used in xWorks
-- **views/** - Native rendering engine for data display
-- **ManagedVwWindow/** - View window management
-- **Cellar/** - Data model accessed by xWorks
-- **FwResources/** - Resources used in xWorks UI
-
-## Code Evidence
-*Analysis based on scanning 159 source files*
-
-- **Classes found**: 20 public classes
-- **Interfaces found**: 15 public interfaces
-- **Namespaces**: SIL.FieldWorks.XWorks, SIL.FieldWorks.XWorks.Archiving, SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators, SIL.FieldWorks.XWorks.DictionaryDetailsView, SIL.FieldWorks.XWorks.LexText
 
 ## Interfaces and Data Models
 
@@ -192,6 +181,28 @@ different FieldWorks tools into an integrated application environment.
 - **WritingSystemType** (enum)
   - Path: `DictionaryNodeOptions.cs`
 
+## Entry Points
+- Main application executable
+- Application shell hosting various modules (LexText, etc.)
+- Dictionary and data tree interfaces
+
+## Test Index
+Test projects: xWorksTests. 46 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **XCore/** - Application framework that xWorks is built on
+- **LexText/** - Major module hosted by xWorks
+- **Common/** - UI infrastructure used throughout xWorks
+- **FdoUi/** - Data object UI components
+- **FwCoreDlgs/** - Dialogs used in xWorks
+- **views/** - Native rendering engine for data display
+- **ManagedVwWindow/** - View window management
+- **Cellar/** - Data model accessed by xWorks
+- **FwResources/** - Resources used in xWorks UI
+
 ## References
 
 - **Project files**: xWorks.csproj, xWorksTests.csproj
@@ -201,77 +212,65 @@ different FieldWorks tools into an integrated application environment.
 - **Source file count**: 181 files
 - **Data file count**: 38 files
 
-## Architecture
-C# library with 181 source files. Contains 1 subprojects: xWorks.
-
-## Interop & Contracts
-Uses COM for cross-boundary calls.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-configuration settings.
-
-## Test Index
-Test projects: xWorksTests. 46 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
-
 ## References (auto-generated hints)
 - Project files:
-  - Src\xWorks\xWorks.csproj
-  - Src\xWorks\xWorksTests\xWorksTests.csproj
+  - Src/xWorks/xWorks.csproj
+  - Src/xWorks/xWorksTests/xWorksTests.csproj
 - Key C# files:
-  - Src\xWorks\AddCustomFieldDlg.cs
-  - Src\xWorks\Archiving\ArchivingExtensions.cs
-  - Src\xWorks\Archiving\ReapRamp.cs
-  - Src\xWorks\AssemblyInfo.cs
-  - Src\xWorks\ConcDecorator.cs
-  - Src\xWorks\ConfigurableDictionaryNode.cs
-  - Src\xWorks\ConfiguredLcmGenerator.cs
-  - Src\xWorks\CssGenerator.cs
-  - Src\xWorks\CustomListDlg.Designer.cs
-  - Src\xWorks\CustomListDlg.cs
-  - Src\xWorks\DTMenuHandler.cs
-  - Src\xWorks\DataTreeImages.cs
-  - Src\xWorks\DeleteCustomList.cs
-  - Src\xWorks\DictConfigModelExt.cs
-  - Src\xWorks\DictionaryConfigManager.cs
-  - Src\xWorks\DictionaryConfigMgrDlg.Designer.cs
-  - Src\xWorks\DictionaryConfigMgrDlg.cs
-  - Src\xWorks\DictionaryConfigurationController.cs
-  - Src\xWorks\DictionaryConfigurationDlg.Designer.cs
-  - Src\xWorks\DictionaryConfigurationDlg.cs
-  - Src\xWorks\DictionaryConfigurationImportController.cs
-  - Src\xWorks\DictionaryConfigurationImportDlg.Designer.cs
-  - Src\xWorks\DictionaryConfigurationImportDlg.cs
-  - Src\xWorks\DictionaryConfigurationListener.cs
-  - Src\xWorks\DictionaryConfigurationManagerController.cs
+  - Src/xWorks/AddCustomFieldDlg.cs
+  - Src/xWorks/Archiving/ArchivingExtensions.cs
+  - Src/xWorks/Archiving/ReapRamp.cs
+  - Src/xWorks/AssemblyInfo.cs
+  - Src/xWorks/ConcDecorator.cs
+  - Src/xWorks/ConfigurableDictionaryNode.cs
+  - Src/xWorks/ConfiguredLcmGenerator.cs
+  - Src/xWorks/CssGenerator.cs
+  - Src/xWorks/CustomListDlg.Designer.cs
+  - Src/xWorks/CustomListDlg.cs
+  - Src/xWorks/DTMenuHandler.cs
+  - Src/xWorks/DataTreeImages.cs
+  - Src/xWorks/DeleteCustomList.cs
+  - Src/xWorks/DictConfigModelExt.cs
+  - Src/xWorks/DictionaryConfigManager.cs
+  - Src/xWorks/DictionaryConfigMgrDlg.Designer.cs
+  - Src/xWorks/DictionaryConfigMgrDlg.cs
+  - Src/xWorks/DictionaryConfigurationController.cs
+  - Src/xWorks/DictionaryConfigurationDlg.Designer.cs
+  - Src/xWorks/DictionaryConfigurationDlg.cs
+  - Src/xWorks/DictionaryConfigurationImportController.cs
+  - Src/xWorks/DictionaryConfigurationImportDlg.Designer.cs
+  - Src/xWorks/DictionaryConfigurationImportDlg.cs
+  - Src/xWorks/DictionaryConfigurationListener.cs
+  - Src/xWorks/DictionaryConfigurationManagerController.cs
 - Data contracts/transforms:
-  - Src\xWorks\AddCustomFieldDlg.resx
-  - Src\xWorks\CustomListDlg.resx
-  - Src\xWorks\DataTreeImages.resx
-  - Src\xWorks\DictionaryConfigMgrDlg.resx
-  - Src\xWorks\DictionaryConfigurationDlg.resx
-  - Src\xWorks\DictionaryConfigurationImportDlg.resx
-  - Src\xWorks\DictionaryConfigurationManagerDlg.resx
-  - Src\xWorks\DictionaryConfigurationNodeRenameDlg.resx
-  - Src\xWorks\DictionaryConfigurationTreeControl.resx
-  - Src\xWorks\DictionaryDetailsView\ButtonOverPanel.resx
-  - Src\xWorks\DictionaryDetailsView\DetailsView.resx
-  - Src\xWorks\DictionaryDetailsView\GroupingOptionsView.resx
-  - Src\xWorks\DictionaryDetailsView\LabelOverPanel.resx
-  - Src\xWorks\DictionaryDetailsView\ListOptionsView.resx
-  - Src\xWorks\DictionaryDetailsView\PictureOptionsView.resx
-  - Src\xWorks\DictionaryDetailsView\SenseOptionsView.resx
-  - Src\xWorks\ExportDialog.resx
-  - Src\xWorks\ExportSemanticDomainsDlg.resx
-  - Src\xWorks\ExportTranslatedListsDlg.resx
-  - Src\xWorks\FwXWindow.resx
-  - Src\xWorks\GeneratedHtmlViewer.resx
-  - Src\xWorks\HeadWordNumbersDlg.resx
-  - Src\xWorks\ImageHolder.resx
-  - Src\xWorks\LiftExportMessageDlg.resx
-  - Src\xWorks\RecordBrowseView.resx
+  - Src/xWorks/AddCustomFieldDlg.resx
+  - Src/xWorks/CustomListDlg.resx
+  - Src/xWorks/DataTreeImages.resx
+  - Src/xWorks/DictionaryConfigMgrDlg.resx
+  - Src/xWorks/DictionaryConfigurationDlg.resx
+  - Src/xWorks/DictionaryConfigurationImportDlg.resx
+  - Src/xWorks/DictionaryConfigurationManagerDlg.resx
+  - Src/xWorks/DictionaryConfigurationNodeRenameDlg.resx
+  - Src/xWorks/DictionaryConfigurationTreeControl.resx
+  - Src/xWorks/DictionaryDetailsView/ButtonOverPanel.resx
+  - Src/xWorks/DictionaryDetailsView/DetailsView.resx
+  - Src/xWorks/DictionaryDetailsView/GroupingOptionsView.resx
+  - Src/xWorks/DictionaryDetailsView/LabelOverPanel.resx
+  - Src/xWorks/DictionaryDetailsView/ListOptionsView.resx
+  - Src/xWorks/DictionaryDetailsView/PictureOptionsView.resx
+  - Src/xWorks/DictionaryDetailsView/SenseOptionsView.resx
+  - Src/xWorks/ExportDialog.resx
+  - Src/xWorks/ExportSemanticDomainsDlg.resx
+  - Src/xWorks/ExportTranslatedListsDlg.resx
+  - Src/xWorks/FwXWindow.resx
+  - Src/xWorks/GeneratedHtmlViewer.resx
+  - Src/xWorks/HeadWordNumbersDlg.resx
+  - Src/xWorks/ImageHolder.resx
+  - Src/xWorks/LiftExportMessageDlg.resx
+  - Src/xWorks/RecordBrowseView.resx
+## Code Evidence
+*Analysis based on scanning 159 source files*
+
+- **Classes found**: 20 public classes
+- **Interfaces found**: 15 public interfaces
+- **Namespaces**: SIL.FieldWorks.XWorks, SIL.FieldWorks.XWorks.Archiving, SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators, SIL.FieldWorks.XWorks.DictionaryDetailsView, SIL.FieldWorks.XWorks.LexText

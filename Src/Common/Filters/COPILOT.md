@@ -13,6 +13,9 @@ and filtering logic (RecordFilter, ProblemAnnotationFilter) for narrowing and or
 data sets. Essential for browse views, search functionality, and filtered list displays
 throughout FieldWorks applications.
 
+## Architecture
+C# library with 18 source files. Contains 1 subprojects: Filters.
+
 ## Key Components
 ### Key Classes
 - **IntMatcher**
@@ -41,26 +44,19 @@ throughout FieldWorks applications.
 - Depends on: Common/FwUtils (utilities)
 - Used by: xWorks, LexText (search and filter features)
 
+## Interop & Contracts
+Uses Marshaling for cross-boundary calls.
+
+## Threading & Performance
+Single-threaded or thread-agnostic code. No explicit threading detected.
+
+## Config & Feature Flags
+No explicit configuration or feature flags detected.
+
 ## Build Information
 - C# class library project
 - Build via: `dotnet build Filters.csproj`
 - Includes test project
-
-## Entry Points
-- Filter matchers for data filtering
-- Sorting infrastructure for result display
-
-## Related Folders
-- **Common/FwUtils/** - Utilities used by filters
-- **xWorks/** - Uses filtering for data tree and searches
-- **LexText/** - Uses filtering in lexicon searches
-
-## Code Evidence
-*Analysis based on scanning 17 source files*
-
-- **Classes found**: 20 public classes
-- **Interfaces found**: 4 public interfaces
-- **Namespaces**: SIL.FieldWorks.Filters
 
 ## Interfaces and Data Models
 
@@ -166,6 +162,21 @@ throughout FieldWorks applications.
 - **DateMatchType** (enum)
   - Path: `DateTimeMatcher.cs`
 
+## Entry Points
+- Filter matchers for data filtering
+- Sorting infrastructure for result display
+
+## Test Index
+Test projects: FiltersTests. 5 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **Common/FwUtils/** - Utilities used by filters
+- **xWorks/** - Uses filtering for data tree and searches
+- **LexText/** - Uses filtering in lexicon searches
+
 ## References
 
 - **Project files**: Filters.csproj, FiltersTests.csproj
@@ -174,20 +185,34 @@ throughout FieldWorks applications.
 - **Source file count**: 18 files
 - **Data file count**: 1 files
 
-## Architecture
-C# library with 18 source files. Contains 1 subprojects: Filters.
+## References (auto-generated hints)
+- Project files:
+  - Common/Filters/Filters.csproj
+  - Common/Filters/FiltersTests/FiltersTests.csproj
+- Key C# files:
+  - Common/Filters/AssemblyInfo.cs
+  - Common/Filters/BadSpellingMatcher.cs
+  - Common/Filters/DateTimeMatcher.cs
+  - Common/Filters/ExactLiteralMatcher.cs
+  - Common/Filters/FiltersStrings.Designer.cs
+  - Common/Filters/FiltersTests/DateTimeMatcherTests.cs
+  - Common/Filters/FiltersTests/FindResultsSorterTests.cs
+  - Common/Filters/FiltersTests/RangeIntMatcherTests.cs
+  - Common/Filters/FiltersTests/TestPersistence.cs
+  - Common/Filters/FiltersTests/WordformFiltersTests.cs
+  - Common/Filters/FindResultSorter.cs
+  - Common/Filters/IManyOnePathSortItem.cs
+  - Common/Filters/IntFinder.cs
+  - Common/Filters/IntMatcher.cs
+  - Common/Filters/ManyOnePathSortItem.cs
+  - Common/Filters/RecordFilter.cs
+  - Common/Filters/RecordSorter.cs
+  - Common/Filters/WordFormFilters.cs
+- Data contracts/transforms:
+  - Common/Filters/FiltersStrings.resx
+## Code Evidence
+*Analysis based on scanning 17 source files*
 
-## Interop & Contracts
-Uses Marshaling for cross-boundary calls.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Test Index
-Test projects: FiltersTests. 5 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- **Classes found**: 20 public classes
+- **Interfaces found**: 4 public interfaces
+- **Namespaces**: SIL.FieldWorks.Filters

@@ -13,6 +13,9 @@ Declares fundamental contracts for command handling (IxCoreColleague), choice ma
 integration. These interfaces define the extensibility architecture that enables plugin-based
 application composition in FieldWorks.
 
+## Architecture
+C# library with 26 source files. Contains 1 subprojects: xCoreInterfaces.
+
 ## Key Components
 ### Key Classes
 - **PropertyTable**
@@ -45,29 +48,19 @@ application composition in FieldWorks.
 - Depends on: Minimal (pure interface definitions)
 - Used by: XCore, XCore/FlexUIAdapter, all XCore-based applications
 
+## Interop & Contracts
+Uses COM for cross-boundary calls.
+
+## Threading & Performance
+Threading model: explicit threading, UI thread marshaling.
+
+## Config & Feature Flags
+No explicit configuration or feature flags detected.
+
 ## Build Information
 - C# interface library project
 - Build via: `dotnet build xCoreInterfaces.csproj`
 - Pure interface definitions
-
-## Entry Points
-- Framework interface contracts
-- Command and choice abstractions
-- UI component interfaces
-
-## Related Folders
-- **XCore/** - Framework implementing these interfaces
-- **XCore/FlexUIAdapter/** - Implements UI interfaces
-- **Common/UIAdapterInterfaces/** - Related adapter interfaces
-- **xWorks/** - Uses XCore interfaces
-- **LexText/** - Uses XCore interfaces
-
-## Code Evidence
-*Analysis based on scanning 23 source files*
-
-- **Classes found**: 20 public classes
-- **Interfaces found**: 15 public interfaces
-- **Namespaces**: XCore
 
 ## Interfaces and Data Models
 
@@ -237,6 +230,24 @@ application composition in FieldWorks.
 - **SettingsGroup** (enum)
   - Path: `PropertyTable.cs`
 
+## Entry Points
+- Framework interface contracts
+- Command and choice abstractions
+- UI component interfaces
+
+## Test Index
+Test projects: xCoreInterfacesTests. 3 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **XCore/** - Framework implementing these interfaces
+- **XCore/FlexUIAdapter/** - Implements UI interfaces
+- **Common/UIAdapterInterfaces/** - Related adapter interfaces
+- **xWorks/** - Uses XCore interfaces
+- **LexText/** - Uses XCore interfaces
+
 ## References
 
 - **Project files**: xCoreInterfaces.csproj, xCoreInterfacesTests.csproj
@@ -246,20 +257,44 @@ application composition in FieldWorks.
 - **Source file count**: 26 files
 - **Data file count**: 4 files
 
-## Architecture
-C# library with 26 source files. Contains 1 subprojects: xCoreInterfaces.
+## References (auto-generated hints)
+- Project files:
+  - XCore/xCoreInterfaces/xCoreInterfaces.csproj
+  - XCore/xCoreInterfaces/xCoreInterfacesTests/xCoreInterfacesTests.csproj
+- Key C# files:
+  - XCore/xCoreInterfaces/AssemblyInfo.cs
+  - XCore/xCoreInterfaces/BaseContextHelper.cs
+  - XCore/xCoreInterfaces/Choice.cs
+  - XCore/xCoreInterfaces/ChoiceGroup.cs
+  - XCore/xCoreInterfaces/Command.cs
+  - XCore/xCoreInterfaces/IFeedbackInfoProvider.cs
+  - XCore/xCoreInterfaces/IImageCollection.cs
+  - XCore/xCoreInterfaces/IPaneBar.cs
+  - XCore/xCoreInterfaces/IPersistenceProvider.cs
+  - XCore/xCoreInterfaces/IPropertyRetriever.cs
+  - XCore/xCoreInterfaces/IUIAdapter.cs
+  - XCore/xCoreInterfaces/IdleQueue.cs
+  - XCore/xCoreInterfaces/IxCoreColleague.cs
+  - XCore/xCoreInterfaces/List.cs
+  - XCore/xCoreInterfaces/Mediator.cs
+  - XCore/xCoreInterfaces/MessageSequencer.cs
+  - XCore/xCoreInterfaces/PersistenceProvider.cs
+  - XCore/xCoreInterfaces/PropertyTable.cs
+  - XCore/xCoreInterfaces/ReadOnlyPropertyTable.cs
+  - XCore/xCoreInterfaces/RecordFilterListProvider.cs
+  - XCore/xCoreInterfaces/xCoreInterfaces.Designer.cs
+  - XCore/xCoreInterfaces/xCoreInterfacesTests/Properties/AssemblyInfo.cs
+  - XCore/xCoreInterfaces/xCoreInterfacesTests/Properties/Resources.Designer.cs
+  - XCore/xCoreInterfaces/xCoreInterfacesTests/PropertyTableTests.cs
+  - XCore/xCoreInterfaces/xCoreInterfacesTests/TestMessageSequencer.cs
+- Data contracts/transforms:
+  - XCore/xCoreInterfaces/xCoreInterfaces.resx
+  - XCore/xCoreInterfaces/xCoreInterfacesTests/Properties/Resources.resx
+  - XCore/xCoreInterfaces/xCoreInterfacesTests/settingsBackup/Settings.xml
+  - XCore/xCoreInterfaces/xCoreInterfacesTests/settingsBackup/db_TestLocal_Settings.xml
+## Code Evidence
+*Analysis based on scanning 23 source files*
 
-## Interop & Contracts
-Uses COM for cross-boundary calls.
-
-## Threading & Performance
-Threading model: explicit threading, UI thread marshaling.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Test Index
-Test projects: xCoreInterfacesTests. 3 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- **Classes found**: 20 public classes
+- **Interfaces found**: 15 public interfaces
+- **Namespaces**: XCore

@@ -12,6 +12,9 @@ Enables data exchange and synchronization between FieldWorks and Paratext 8 proj
 Supports sharing linguistic data, managing project relationships, and coordinating
 translation workflows between the two applications.
 
+## Architecture
+C# library with 7 source files. Contains 1 subprojects: Paratext8Plugin.
+
 ## Key Components
 ### Key Classes
 - **ParatextAlert**
@@ -29,25 +32,19 @@ translation workflows between the two applications.
 - Depends on: Cellar (data model), Paratext 8 SDK, FdoUi
 - Used by: Paratext 8 application when integrating with FieldWorks
 
+## Interop & Contracts
+Uses COM for cross-boundary calls.
+
+## Threading & Performance
+Single-threaded or thread-agnostic code. No explicit threading detected.
+
+## Config & Feature Flags
+Config files: App.config.
+
 ## Build Information
 - C# class library implementing Paratext 8 plugin interface
 - Includes test suite
 - Build with MSBuild or Visual Studio
-
-## Entry Points
-- Plugin entry points defined by Paratext 8 architecture
-- Provides FieldWorks integration from within Paratext 8
-
-## Related Folders
-- **FwParatextLexiconPlugin/** - Lexicon-specific Paratext integration
-- **ParatextImport/** - Imports Paratext data into FieldWorks
-- **LexText/** - Lexicon data shared with Paratext
-
-## Code Evidence
-*Analysis based on scanning 6 source files*
-
-- **Classes found**: 5 public classes
-- **Namespaces**: Paratext8Plugin
 
 ## Interfaces and Data Models
 
@@ -67,6 +64,21 @@ translation workflows between the two applications.
   - Path: `ParatextAlert.cs`
   - Public class implementation
 
+## Entry Points
+- Plugin entry points defined by Paratext 8 architecture
+- Provides FieldWorks integration from within Paratext 8
+
+## Test Index
+Test projects: Paratext8PluginTests. 1 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **FwParatextLexiconPlugin/** - Lexicon-specific Paratext integration
+- **ParatextImport/** - Imports Paratext data into FieldWorks
+- **LexText/** - Lexicon data shared with Paratext
+
 ## References
 
 - **Project files**: Paratext8Plugin.csproj, Paratext8PluginTests.csproj
@@ -75,35 +87,22 @@ translation workflows between the two applications.
 - **Source file count**: 7 files
 - **Data file count**: 1 files
 
-## Architecture
-C# library with 7 source files. Contains 1 subprojects: Paratext8Plugin.
-
-## Interop & Contracts
-Uses COM for cross-boundary calls.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-Config files: App.config.
-
-## Test Index
-Test projects: Paratext8PluginTests. 1 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
-
 ## References (auto-generated hints)
 - Project files:
-  - Src\Paratext8Plugin\ParaText8PluginTests\Paratext8PluginTests.csproj
-  - Src\Paratext8Plugin\Paratext8Plugin.csproj
+  - Src/Paratext8Plugin/ParaText8PluginTests/Paratext8PluginTests.csproj
+  - Src/Paratext8Plugin/Paratext8Plugin.csproj
 - Key C# files:
-  - Src\Paratext8Plugin\PT8VerseRefWrapper.cs
-  - Src\Paratext8Plugin\PTScrTextWrapper.cs
-  - Src\Paratext8Plugin\ParaText8PluginTests\ParatextDataIntegrationTests.cs
-  - Src\Paratext8Plugin\Paratext8Provider.cs
-  - Src\Paratext8Plugin\ParatextAlert.cs
-  - Src\Paratext8Plugin\Properties\AssemblyInfo.cs
-  - Src\Paratext8Plugin\Pt8VerseWrapper.cs
+  - Src/Paratext8Plugin/PT8VerseRefWrapper.cs
+  - Src/Paratext8Plugin/PTScrTextWrapper.cs
+  - Src/Paratext8Plugin/ParaText8PluginTests/ParatextDataIntegrationTests.cs
+  - Src/Paratext8Plugin/Paratext8Provider.cs
+  - Src/Paratext8Plugin/ParatextAlert.cs
+  - Src/Paratext8Plugin/Properties/AssemblyInfo.cs
+  - Src/Paratext8Plugin/Pt8VerseWrapper.cs
 - Data contracts/transforms:
-  - Src\Paratext8Plugin\ParaText8PluginTests\App.config
+  - Src/Paratext8Plugin/ParaText8PluginTests/App.config
+## Code Evidence
+*Analysis based on scanning 6 source files*
+
+- **Classes found**: 5 public classes
+- **Namespaces**: Paratext8Plugin

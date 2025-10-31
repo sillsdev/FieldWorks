@@ -13,6 +13,9 @@ bidirectional text, complex rendering requirements, and performance-critical dis
 Core component enabling FieldWorks to properly display texts in hundreds of writing systems
 with accurate formatting, alignment, and complex script rendering.
 
+## Architecture
+C++ native rendering engine with 45 implementation files and 81 headers. Contains sophisticated text layout and display infrastructure with box-based rendering model.
+
 ## Key Components
 ### Key Classes
 - **ParaBuilder**
@@ -36,31 +39,20 @@ with accurate formatting, alignment, and complex script rendering.
 - Depends on: Kernel (low-level services), Generic (utilities), AppCore
 - Used by: All UI components displaying formatted text (via ManagedVwWindow wrappers)
 
+## Interop & Contracts
+No explicit interop boundaries detected. Pure managed or native code.
+
+## Threading & Performance
+Threading model: UI thread marshaling, synchronization.
+
+## Config & Feature Flags
+No explicit configuration or feature flags detected.
+
 ## Build Information
 - Native C++ project (vcxproj)
 - Performance-critical rendering code
 - Includes test suite
 - Build with Visual Studio or MSBuild
-
-## Entry Points
-- Provides view classes and rendering engine
-- Accessed from managed code via ManagedVwWindow and interop layers
-
-## Related Folders
-- **ManagedVwWindow/** - Managed wrappers for native views
-- **ManagedVwDrawRootBuffered/** - Buffered rendering for views
-- **Kernel/** - Low-level infrastructure used by views
-- **AppCore/** - Application-level graphics utilities
-- **Common/RootSite/** - Root site components using views
-- **Common/SimpleRootSite/** - Simplified view hosting
-- **LexText/** - Major consumer of view rendering for lexicon display
-- **xWorks/** - Uses views for data visualization
-
-## Code Evidence
-*Analysis based on scanning 129 source files*
-
-- **Classes found**: 20 public classes
-- **Namespaces**: VwGraphicsReplayer
 
 ## Interfaces and Data Models
 
@@ -144,6 +136,26 @@ with accurate formatting, alignment, and complex script rendering.
   - Path: `VwEnv.h`
   - Public class implementation
 
+## Entry Points
+- Provides view classes and rendering engine
+- Accessed from managed code via ManagedVwWindow and interop layers
+
+## Test Index
+Test projects: TestViews. 29 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **ManagedVwWindow/** - Managed wrappers for native views
+- **ManagedVwDrawRootBuffered/** - Buffered rendering for views
+- **Kernel/** - Low-level infrastructure used by views
+- **AppCore/** - Application-level graphics utilities
+- **Common/RootSite/** - Root site components using views
+- **Common/SimpleRootSite/** - Simplified view hosting
+- **LexText/** - Major consumer of view rendering for lexicon display
+- **xWorks/** - Uses views for data visualization
+
 ## References
 
 - **Project files**: TestViews.vcxproj, VwGraphicsReplayer.csproj, views.vcxproj
@@ -155,83 +167,70 @@ with accurate formatting, alignment, and complex script rendering.
 - **Source file count**: 130 files
 - **Data file count**: 1 files
 
-## Architecture
-C++ native rendering engine with 45 implementation files and 81 headers. Contains sophisticated text layout and display infrastructure with box-based rendering model.
-
-## Interop & Contracts
-No explicit interop boundaries detected. Pure managed or native code.
-
-## Threading & Performance
-Threading model: UI thread marshaling, synchronization.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Test Index
-Test projects: TestViews. 29 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
-
 ## References (auto-generated hints)
 - Project files:
-  - Src\views\Test\TestViews.vcxproj
-  - Src\views\lib\VwGraphicsReplayer\VwGraphicsReplayer.csproj
-  - Src\views\views.vcxproj
+  - Src/views/Test/TestViews.vcxproj
+  - Src/views/lib/VwGraphicsReplayer/VwGraphicsReplayer.csproj
+  - Src/views/views.vcxproj
 - Key C# files:
-  - Src\views\lib\VwGraphicsReplayer\AssemblyInfo.cs
-  - Src\views\lib\VwGraphicsReplayer\VwGraphicsReplayer.cs
+  - Src/views/lib/VwGraphicsReplayer/AssemblyInfo.cs
+  - Src/views/lib/VwGraphicsReplayer/VwGraphicsReplayer.cs
 - Key C++ files:
-  - Src\views\ExplicitInstantiation.cpp
-  - Src\views\Test\Collection.cpp
-  - Src\views\Test\testViews.cpp
-  - Src\views\ViewsExtra_GUIDs.cpp
-  - Src\views\ViewsGlobals.cpp
-  - Src\views\Views_GUIDs.cpp
-  - Src\views\VwAccessRoot.cpp
-  - Src\views\VwEnv.cpp
-  - Src\views\VwInvertedViews.cpp
-  - Src\views\VwLayoutStream.cpp
-  - Src\views\VwLazyBox.cpp
-  - Src\views\VwNotifier.cpp
-  - Src\views\VwOverlay.cpp
-  - Src\views\VwPattern.cpp
-  - Src\views\VwPrintContext.cpp
-  - Src\views\VwPropertyStore.cpp
-  - Src\views\VwRootBox.cpp
-  - Src\views\VwSelection.cpp
-  - Src\views\VwSimpleBoxes.cpp
-  - Src\views\VwSynchronizer.cpp
-  - Src\views\VwTableBox.cpp
-  - Src\views\VwTextBoxes.cpp
-  - Src\views\VwTextStore.cpp
-  - Src\views\VwTxtSrc.cpp
-  - Src\views\dlldatax.c
+  - Src/views/ExplicitInstantiation.cpp
+  - Src/views/Test/Collection.cpp
+  - Src/views/Test/testViews.cpp
+  - Src/views/ViewsExtra_GUIDs.cpp
+  - Src/views/ViewsGlobals.cpp
+  - Src/views/Views_GUIDs.cpp
+  - Src/views/VwAccessRoot.cpp
+  - Src/views/VwEnv.cpp
+  - Src/views/VwInvertedViews.cpp
+  - Src/views/VwLayoutStream.cpp
+  - Src/views/VwLazyBox.cpp
+  - Src/views/VwNotifier.cpp
+  - Src/views/VwOverlay.cpp
+  - Src/views/VwPattern.cpp
+  - Src/views/VwPrintContext.cpp
+  - Src/views/VwPropertyStore.cpp
+  - Src/views/VwRootBox.cpp
+  - Src/views/VwSelection.cpp
+  - Src/views/VwSimpleBoxes.cpp
+  - Src/views/VwSynchronizer.cpp
+  - Src/views/VwTableBox.cpp
+  - Src/views/VwTextBoxes.cpp
+  - Src/views/VwTextStore.cpp
+  - Src/views/VwTxtSrc.cpp
+  - Src/views/dlldatax.c
 - Key headers:
-  - Src\views\Main.h
-  - Src\views\Test\BasicVc.h
-  - Src\views\Test\DummyBaseVc.h
-  - Src\views\Test\DummyRootsite.h
-  - Src\views\Test\MockLgWritingSystem.h
-  - Src\views\Test\MockLgWritingSystemFactory.h
-  - Src\views\Test\MockRenderEngineFactory.h
-  - Src\views\Test\RenderEngineTestBase.h
-  - Src\views\Test\TestGraphiteEngine.h
-  - Src\views\Test\TestInsertDiffPara.h
-  - Src\views\Test\TestLayoutPage.h
-  - Src\views\Test\TestLazyBox.h
-  - Src\views\Test\TestLgCollatingEngine.h
-  - Src\views\Test\TestLgLineBreaker.h
-  - Src\views\Test\TestNotifier.h
-  - Src\views\Test\TestTsPropsBldr.h
-  - Src\views\Test\TestTsStrBldr.h
-  - Src\views\Test\TestTsString.h
-  - Src\views\Test\TestTsTextProps.h
-  - Src\views\Test\TestUndoStack.h
-  - Src\views\Test\TestUniscribeEngine.h
-  - Src\views\Test\TestVirtualHandlers.h
-  - Src\views\Test\TestVwEnv.h
-  - Src\views\Test\TestVwGraphics.h
-  - Src\views\Test\TestVwOverlay.h
+  - Src/views/Main.h
+  - Src/views/Test/BasicVc.h
+  - Src/views/Test/DummyBaseVc.h
+  - Src/views/Test/DummyRootsite.h
+  - Src/views/Test/MockLgWritingSystem.h
+  - Src/views/Test/MockLgWritingSystemFactory.h
+  - Src/views/Test/MockRenderEngineFactory.h
+  - Src/views/Test/RenderEngineTestBase.h
+  - Src/views/Test/TestGraphiteEngine.h
+  - Src/views/Test/TestInsertDiffPara.h
+  - Src/views/Test/TestLayoutPage.h
+  - Src/views/Test/TestLazyBox.h
+  - Src/views/Test/TestLgCollatingEngine.h
+  - Src/views/Test/TestLgLineBreaker.h
+  - Src/views/Test/TestNotifier.h
+  - Src/views/Test/TestTsPropsBldr.h
+  - Src/views/Test/TestTsStrBldr.h
+  - Src/views/Test/TestTsString.h
+  - Src/views/Test/TestTsTextProps.h
+  - Src/views/Test/TestUndoStack.h
+  - Src/views/Test/TestUniscribeEngine.h
+  - Src/views/Test/TestVirtualHandlers.h
+  - Src/views/Test/TestVwEnv.h
+  - Src/views/Test/TestVwGraphics.h
+  - Src/views/Test/TestVwOverlay.h
 - Data contracts/transforms:
-  - Src\views\Test\VirtualsCm.xml
+  - Src/views/Test/VirtualsCm.xml
+## Code Evidence
+*Analysis based on scanning 129 source files*
+
+- **Classes found**: 20 public classes
+- **Namespaces**: VwGraphicsReplayer

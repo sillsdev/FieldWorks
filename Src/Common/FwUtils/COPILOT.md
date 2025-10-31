@@ -12,6 +12,9 @@ Provides utilities for image handling (ManagedPictureFactory), registry access (
 XML serialization (XmlSerializationHelper), audio conversion (WavConverter), exception handling,
 and numerous other cross-cutting concerns. Most comprehensive utility collection in FieldWorks.
 
+## Architecture
+C# library with 126 source files. Contains 1 subprojects: FwUtils.
+
 ## Key Components
 ### Key Classes
 - **ManagedPictureFactory**
@@ -44,28 +47,19 @@ and numerous other cross-cutting concerns. Most comprehensive utility collection
 - Depends on: Minimal (mostly .NET framework)
 - Used by: All Common subprojects and FieldWorks applications
 
+## Interop & Contracts
+No explicit interop boundaries detected. Pure managed or native code.
+
+## Threading & Performance
+Threading model: UI thread marshaling.
+
+## Config & Feature Flags
+Config files: app.config.
+
 ## Build Information
 - C# class library project
 - Build via: `dotnet build FwUtils.csproj`
 - Foundation library for Common
-
-## Entry Points
-- Static utility methods and extension methods
-- Helper classes for common operations
-- Infrastructure support utilities
-
-## Related Folders
-- **Common/Framework/** - Uses FwUtils extensively
-- **Common/Filters/** - Uses utility functions
-- **Common/FieldWorks/** - FieldWorks-specific utilities building on FwUtils
-- Used by virtually all FieldWorks components
-
-## Code Evidence
-*Analysis based on scanning 121 source files*
-
-- **Classes found**: 20 public classes
-- **Interfaces found**: 11 public interfaces
-- **Namespaces**: SIL.FieldWorks.Common.FwUtils, SIL.FieldWorks.Common.FwUtils.Attributes, SIL.FieldWorks.Common.FwUtils.Pathway, SIL.FieldWorks.Common.FwUtils.Properties, SIL.FieldWorks.FwCoreDlgs
 
 ## Interfaces and Data Models
 
@@ -183,6 +177,23 @@ and numerous other cross-cutting concerns. Most comprehensive utility collection
 - **UseTypes** (enum)
   - Path: `StyleMarkupInfo.cs`
 
+## Entry Points
+- Static utility methods and extension methods
+- Helper classes for common operations
+- Infrastructure support utilities
+
+## Test Index
+Test projects: FwUtilsTests. 27 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **Common/Framework/** - Uses FwUtils extensively
+- **Common/Filters/** - Uses utility functions
+- **Common/FieldWorks/** - FieldWorks-specific utilities building on FwUtils
+- Used by virtually all FieldWorks components
+
 ## References
 
 - **Project files**: FwUtils.csproj, FwUtilsTests.csproj
@@ -192,20 +203,47 @@ and numerous other cross-cutting concerns. Most comprehensive utility collection
 - **Source file count**: 126 files
 - **Data file count**: 6 files
 
-## Architecture
-C# library with 126 source files. Contains 1 subprojects: FwUtils.
+## References (auto-generated hints)
+- Project files:
+  - Common/FwUtils/BuildInclude.targets
+  - Common/FwUtils/FwUtils.csproj
+  - Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj
+- Key C# files:
+  - Common/FwUtils/AccessibleNameCreator.cs
+  - Common/FwUtils/ActivationContextHelper.cs
+  - Common/FwUtils/AlphaOutline.cs
+  - Common/FwUtils/Benchmark.cs
+  - Common/FwUtils/CachePair.cs
+  - Common/FwUtils/CharEnumeratorForByteArray.cs
+  - Common/FwUtils/CharacterCategorizer.cs
+  - Common/FwUtils/ClipboardUtils.cs
+  - Common/FwUtils/ComponentsExtensionMethods.cs
+  - Common/FwUtils/ConsoleProgress.cs
+  - Common/FwUtils/DebugProcs.cs
+  - Common/FwUtils/DisposableObjectsSet.cs
+  - Common/FwUtils/DownloadClient.cs
+  - Common/FwUtils/DriveUtil.cs
+  - Common/FwUtils/FLExBridgeHelper.cs
+  - Common/FwUtils/FlexHelpProvider.cs
+  - Common/FwUtils/Folders.cs
+  - Common/FwUtils/FwApplicationSettings.cs
+  - Common/FwUtils/FwApplicationSettingsBase.cs
+  - Common/FwUtils/FwDirectoryFinder.cs
+  - Common/FwUtils/FwLinkArgs.cs
+  - Common/FwUtils/FwRegistryHelper.cs
+  - Common/FwUtils/FwSubKey.cs
+  - Common/FwUtils/FwUpdateChooserDlg.Designer.cs
+  - Common/FwUtils/FwUpdateChooserDlg.cs
+- Data contracts/transforms:
+  - Common/FwUtils/FwUpdateChooserDlg.resx
+  - Common/FwUtils/FwUtilsStrings.resx
+  - Common/FwUtils/FwUtilsTests/Properties/Resources.resx
+  - Common/FwUtils/FwUtilsTests/food/fruit/citrus/strings-en.xml
+  - Common/FwUtils/FwUtilsTests/food/fruit/strings-en.xml
+  - Common/FwUtils/app.config
+## Code Evidence
+*Analysis based on scanning 121 source files*
 
-## Interop & Contracts
-No explicit interop boundaries detected. Pure managed or native code.
-
-## Threading & Performance
-Threading model: UI thread marshaling.
-
-## Config & Feature Flags
-Config files: app.config.
-
-## Test Index
-Test projects: FwUtilsTests. 27 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- **Classes found**: 20 public classes
+- **Interfaces found**: 11 public interfaces
+- **Namespaces**: SIL.FieldWorks.Common.FwUtils, SIL.FieldWorks.Common.FwUtils.Attributes, SIL.FieldWorks.Common.FwUtils.Pathway, SIL.FieldWorks.Common.FwUtils.Properties, SIL.FieldWorks.FwCoreDlgs

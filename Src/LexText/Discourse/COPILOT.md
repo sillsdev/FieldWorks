@@ -12,6 +12,9 @@ Implements tools for analyzing and visualizing discourse structure, including co
 template-based analysis, and discourse hierarchy navigation. Enables linguists to study and
 document how texts are organized at levels above the sentence.
 
+## Architecture
+C# library with 36 source files. Contains 1 subprojects: Discourse.
+
 ## Key Components
 ### Key Classes
 - **ConstChartBody**
@@ -37,27 +40,19 @@ document how texts are organized at levels above the sentence.
 - Depends on: Cellar (data model), Common (UI infrastructure), LexText core
 - Used by: LexText application discourse analysis features
 
+## Interop & Contracts
+Uses COM for cross-boundary calls.
+
+## Threading & Performance
+Threading model: UI thread marshaling.
+
+## Config & Feature Flags
+No explicit configuration or feature flags detected.
+
 ## Build Information
 - C# class library project
 - Build via: `dotnet build Discourse.csproj`
 - Part of LexText suite
-
-## Entry Points
-- Discourse chart creation and editing
-- Constituent analysis tools
-- Chart visualization components
-
-## Related Folders
-- **LexText/Interlinear/** - Works with interlinear text for discourse analysis
-- **LexText/LexTextControls/** - UI controls for discourse features
-- **Cellar/** - Stores discourse analysis data
-
-## Code Evidence
-*Analysis based on scanning 30 source files*
-
-- **Classes found**: 20 public classes
-- **Interfaces found**: 1 public interfaces
-- **Namespaces**: SIL.FieldWorks.Discourse
 
 ## Interfaces and Data Models
 
@@ -134,6 +129,22 @@ document how texts are organized at levels above the sentence.
 - **FindWhereToAddResult** (enum)
   - Path: `ConstituentChartLogic.cs`
 
+## Entry Points
+- Discourse chart creation and editing
+- Constituent analysis tools
+- Chart visualization components
+
+## Test Index
+Test projects: DiscourseTests. 14 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **LexText/Interlinear/** - Works with interlinear text for discourse analysis
+- **LexText/LexTextControls/** - UI controls for discourse features
+- **Cellar/** - Stores discourse analysis data
+
 ## References
 
 - **Project files**: Discourse.csproj, DiscourseTests.csproj
@@ -142,20 +153,45 @@ document how texts are organized at levels above the sentence.
 - **Source file count**: 36 files
 - **Data file count**: 5 files
 
-## Architecture
-C# library with 36 source files. Contains 1 subprojects: Discourse.
+## References (auto-generated hints)
+- Project files:
+  - LexText/Discourse/Discourse.csproj
+  - LexText/Discourse/DiscourseTests/DiscourseTests.csproj
+- Key C# files:
+  - LexText/Discourse/AdvancedMTDialog.Designer.cs
+  - LexText/Discourse/AdvancedMTDialog.cs
+  - LexText/Discourse/ChartLocation.cs
+  - LexText/Discourse/ConstChartBody.cs
+  - LexText/Discourse/ConstChartRowDecorator.cs
+  - LexText/Discourse/ConstChartVc.cs
+  - LexText/Discourse/ConstituentChart.Designer.cs
+  - LexText/Discourse/ConstituentChart.cs
+  - LexText/Discourse/ConstituentChartLogic.cs
+  - LexText/Discourse/DiscourseExportDialog.cs
+  - LexText/Discourse/DiscourseExporter.cs
+  - LexText/Discourse/DiscourseStrings.Designer.cs
+  - LexText/Discourse/DiscourseTests/AdvancedMTDialogLogicTests.cs
+  - LexText/Discourse/DiscourseTests/ConstChartRowDecoratorTests.cs
+  - LexText/Discourse/DiscourseTests/ConstituentChartDatabaseTests.cs
+  - LexText/Discourse/DiscourseTests/ConstituentChartTests.cs
+  - LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
+  - LexText/Discourse/DiscourseTests/DiscourseTestHelper.cs
+  - LexText/Discourse/DiscourseTests/InMemoryDiscourseTestBase.cs
+  - LexText/Discourse/DiscourseTests/InMemoryLogicTest.cs
+  - LexText/Discourse/DiscourseTests/InMemoryMoveEditTests.cs
+  - LexText/Discourse/DiscourseTests/InMemoryMovedTextTests.cs
+  - LexText/Discourse/DiscourseTests/InterlinRibbonTests.cs
+  - LexText/Discourse/DiscourseTests/LogicTest.cs
+  - LexText/Discourse/DiscourseTests/MultilevelHeaderModelTests.cs
+- Data contracts/transforms:
+  - LexText/Discourse/AdvancedMTDialog.resx
+  - LexText/Discourse/ConstChartBody.resx
+  - LexText/Discourse/ConstituentChart.resx
+  - LexText/Discourse/DiscourseStrings.resx
+  - LexText/Discourse/SelectClausesDialog.resx
+## Code Evidence
+*Analysis based on scanning 30 source files*
 
-## Interop & Contracts
-Uses COM for cross-boundary calls.
-
-## Threading & Performance
-Threading model: UI thread marshaling.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Test Index
-Test projects: DiscourseTests. 14 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- **Classes found**: 20 public classes
+- **Interfaces found**: 1 public interfaces
+- **Namespaces**: SIL.FieldWorks.Discourse

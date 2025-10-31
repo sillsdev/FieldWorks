@@ -14,6 +14,9 @@ analysis (Morphology, ParserCore, ParserUI), discourse analysis (Discourse), spe
 (LexTextControls), and publishing integration (FlexPathwayPlugin). Complete solution for
 dictionary development and linguistic text analysis.
 
+## Architecture
+C# library with 478 source files. Contains 13 subprojects: FlexPathwayPlugin, LexTextControls, LexTextExe....
+
 ## Key Components
 ### Key Classes
 - **FlexPathwayPlugin**
@@ -47,30 +50,19 @@ dictionary development and linguistic text analysis.
 - Depends on: Cellar (data model), Common (UI infrastructure), FdoUi (data object UI), XCore (framework), xWorks (shared app infrastructure)
 - Used by: Linguists and language workers for lexicon and text work
 
+## Interop & Contracts
+Uses COM for cross-boundary calls.
+
+## Threading & Performance
+Threading model: UI thread marshaling.
+
+## Config & Feature Flags
+Config files: toolConfigurationForITextDllTests.xml.
+
 ## Build Information
 - Multiple C# projects comprising the lexicon application
 - Build entire suite via solution or individual projects
 - Build with MSBuild or Visual Studio
-
-## Entry Points
-- **LexTextExe** - Main lexicon application executable
-- **LexTextDll** - Core functionality exposed to other components
-
-## Related Folders
-- **xWorks/** - Shared application infrastructure for LexText
-- **XCore/** - Framework components used by LexText
-- **FdoUi/** - Data object UI used in lexicon editing
-- **Cellar/** - Data model for lexicon data
-- **FwParatextLexiconPlugin/** - Exposes LexText data to Paratext
-- **ParatextImport/** - Imports Paratext data into LexText
-
-## Code Evidence
-*Analysis based on scanning 430 source files*
-
-- **Classes found**: 20 public classes
-- **Interfaces found**: 15 public interfaces
-- **Namespaces**: FlexDePluginTests, FlexPathwayPluginTests, LexEdDllTests, LexTextControlsTests, LexTextDllTests
-- **Project references**: ..\..\Common\Controls\DetailControls\DetailControls, ..\..\Common\Controls\XMLViews\XMLViews
 
 ## Interfaces and Data Models
 
@@ -173,6 +165,24 @@ dictionary development and linguistic text analysis.
 - **NodeKind** (enum)
   - Path: `LexTextControls/FeatureStructureTreeView.cs`
 
+## Entry Points
+- **LexTextExe** - Main lexicon application executable
+- **LexTextDll** - Core functionality exposed to other components
+
+## Test Index
+Test projects: FlexPathwayPluginTests, LexTextControlsTests, LexTextDllTests, LexEdDllTests, XAmpleManagedWrapperTests, ParserCoreTests, MGATests, MorphologyEditorDllTests, DiscourseTests, ITextDllTests, ParserUITests. 67 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **xWorks/** - Shared application infrastructure for LexText
+- **XCore/** - Framework components used by LexText
+- **FdoUi/** - Data object UI used in lexicon editing
+- **Cellar/** - Data model for lexicon data
+- **FwParatextLexiconPlugin/** - Exposes LexText data to Paratext
+- **ParatextImport/** - Imports Paratext data into LexText
+
 ## References
 
 - **Project files**: Discourse.csproj, DiscourseTests.csproj, FlexPathwayPlugin.csproj, FlexPathwayPluginTests.csproj, ITextDll.csproj, ITextDllTests.csproj, LexEdDll.csproj, LexEdDllTests.csproj, LexTextControls.csproj, LexTextControlsTests.csproj, LexTextDll.csproj, LexTextDllTests.csproj, LexTextExe.csproj, MGA.csproj, MGATests.csproj, MorphologyEditorDll.csproj, MorphologyEditorDllTests.csproj, ParserCore.csproj, ParserCoreTests.csproj, ParserUI.csproj, ParserUITests.csproj, XAmpleCOMWrapper.vcxproj, XAmpleManagedWrapper.csproj, XAmpleManagedWrapperTests.csproj
@@ -187,110 +197,99 @@ dictionary development and linguistic text analysis.
 - **Source file count**: 487 files
 - **Data file count**: 450 files
 
-## Architecture
-C# library with 478 source files. Contains 13 subprojects: FlexPathwayPlugin, LexTextControls, LexTextExe....
-
-## Interop & Contracts
-Uses COM for cross-boundary calls.
-
-## Threading & Performance
-Threading model: UI thread marshaling.
-
-## Config & Feature Flags
-Config files: toolConfigurationForITextDllTests.xml.
-
-## Test Index
-Test projects: FlexPathwayPluginTests, LexTextControlsTests, LexTextDllTests, LexEdDllTests, XAmpleManagedWrapperTests, ParserCoreTests, MGATests, MorphologyEditorDllTests, DiscourseTests, ITextDllTests, ParserUITests. 67 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
-
 ## References (auto-generated hints)
 - Project files:
-  - Src\LexText\Discourse\Discourse.csproj
-  - Src\LexText\Discourse\DiscourseTests\DiscourseTests.csproj
-  - Src\LexText\FlexPathwayPlugin\FlexPathwayPlugin.csproj
-  - Src\LexText\FlexPathwayPlugin\FlexPathwayPluginTests\FlexPathwayPluginTests.csproj
-  - Src\LexText\Interlinear\ITextDll.csproj
-  - Src\LexText\Interlinear\ITextDllTests\ITextDllTests.csproj
-  - Src\LexText\LexTextControls\LexTextControls.csproj
-  - Src\LexText\LexTextControls\LexTextControlsTests\LexTextControlsTests.csproj
-  - Src\LexText\LexTextDll\LexTextDll.csproj
-  - Src\LexText\LexTextDll\LexTextDllTests\LexTextDllTests.csproj
-  - Src\LexText\LexTextExe\LexTextExe.csproj
-  - Src\LexText\Lexicon\LexEdDll.csproj
-  - Src\LexText\Lexicon\LexEdDllTests\LexEdDllTests.csproj
-  - Src\LexText\Morphology\MGA\MGA.csproj
-  - Src\LexText\Morphology\MGA\MGATests\MGATests.csproj
-  - Src\LexText\Morphology\MorphologyEditorDll.csproj
-  - Src\LexText\Morphology\MorphologyEditorDllTests\MorphologyEditorDllTests.csproj
-  - Src\LexText\ParserCore\ParserCore.csproj
-  - Src\LexText\ParserCore\ParserCoreTests\ParserCoreTests.csproj
-  - Src\LexText\ParserCore\XAmpleCOMWrapper\XAmpleCOMWrapper.vcxproj
-  - Src\LexText\ParserCore\XAmpleManagedWrapper\BuildInclude.targets
-  - Src\LexText\ParserCore\XAmpleManagedWrapper\XAmpleManagedWrapper.csproj
-  - Src\LexText\ParserCore\XAmpleManagedWrapper\XAmpleManagedWrapperTests\XAmpleManagedWrapperTests.csproj
-  - Src\LexText\ParserUI\ParserUI.csproj
-  - Src\LexText\ParserUI\ParserUITests\ParserUITests.csproj
+  - Src/LexText/Discourse/Discourse.csproj
+  - Src/LexText/Discourse/DiscourseTests/DiscourseTests.csproj
+  - Src/LexText/FlexPathwayPlugin/FlexPathwayPlugin.csproj
+  - Src/LexText/FlexPathwayPlugin/FlexPathwayPluginTests/FlexPathwayPluginTests.csproj
+  - Src/LexText/Interlinear/ITextDll.csproj
+  - Src/LexText/Interlinear/ITextDllTests/ITextDllTests.csproj
+  - Src/LexText/LexTextControls/LexTextControls.csproj
+  - Src/LexText/LexTextControls/LexTextControlsTests/LexTextControlsTests.csproj
+  - Src/LexText/LexTextDll/LexTextDll.csproj
+  - Src/LexText/LexTextDll/LexTextDllTests/LexTextDllTests.csproj
+  - Src/LexText/LexTextExe/LexTextExe.csproj
+  - Src/LexText/Lexicon/LexEdDll.csproj
+  - Src/LexText/Lexicon/LexEdDllTests/LexEdDllTests.csproj
+  - Src/LexText/Morphology/MGA/MGA.csproj
+  - Src/LexText/Morphology/MGA/MGATests/MGATests.csproj
+  - Src/LexText/Morphology/MorphologyEditorDll.csproj
+  - Src/LexText/Morphology/MorphologyEditorDllTests/MorphologyEditorDllTests.csproj
+  - Src/LexText/ParserCore/ParserCore.csproj
+  - Src/LexText/ParserCore/ParserCoreTests/ParserCoreTests.csproj
+  - Src/LexText/ParserCore/XAmpleCOMWrapper/XAmpleCOMWrapper.vcxproj
+  - Src/LexText/ParserCore/XAmpleManagedWrapper/BuildInclude.targets
+  - Src/LexText/ParserCore/XAmpleManagedWrapper/XAmpleManagedWrapper.csproj
+  - Src/LexText/ParserCore/XAmpleManagedWrapper/XAmpleManagedWrapperTests/XAmpleManagedWrapperTests.csproj
+  - Src/LexText/ParserUI/ParserUI.csproj
+  - Src/LexText/ParserUI/ParserUITests/ParserUITests.csproj
 - Key C# files:
-  - Src\LexText\Discourse\AdvancedMTDialog.Designer.cs
-  - Src\LexText\Discourse\AdvancedMTDialog.cs
-  - Src\LexText\Discourse\ChartLocation.cs
-  - Src\LexText\Discourse\ConstChartBody.cs
-  - Src\LexText\Discourse\ConstChartRowDecorator.cs
-  - Src\LexText\Discourse\ConstChartVc.cs
-  - Src\LexText\Discourse\ConstituentChart.Designer.cs
-  - Src\LexText\Discourse\ConstituentChart.cs
-  - Src\LexText\Discourse\ConstituentChartLogic.cs
-  - Src\LexText\Discourse\DiscourseExportDialog.cs
-  - Src\LexText\Discourse\DiscourseExporter.cs
-  - Src\LexText\Discourse\DiscourseStrings.Designer.cs
-  - Src\LexText\Discourse\DiscourseTests\AdvancedMTDialogLogicTests.cs
-  - Src\LexText\Discourse\DiscourseTests\ConstChartRowDecoratorTests.cs
-  - Src\LexText\Discourse\DiscourseTests\ConstituentChartDatabaseTests.cs
-  - Src\LexText\Discourse\DiscourseTests\ConstituentChartTests.cs
-  - Src\LexText\Discourse\DiscourseTests\DiscourseExportTests.cs
-  - Src\LexText\Discourse\DiscourseTests\DiscourseTestHelper.cs
-  - Src\LexText\Discourse\DiscourseTests\InMemoryDiscourseTestBase.cs
-  - Src\LexText\Discourse\DiscourseTests\InMemoryLogicTest.cs
-  - Src\LexText\Discourse\DiscourseTests\InMemoryMoveEditTests.cs
-  - Src\LexText\Discourse\DiscourseTests\InMemoryMovedTextTests.cs
-  - Src\LexText\Discourse\DiscourseTests\InterlinRibbonTests.cs
-  - Src\LexText\Discourse\DiscourseTests\LogicTest.cs
-  - Src\LexText\Discourse\DiscourseTests\MultilevelHeaderModelTests.cs
+  - Src/LexText/Discourse/AdvancedMTDialog.Designer.cs
+  - Src/LexText/Discourse/AdvancedMTDialog.cs
+  - Src/LexText/Discourse/ChartLocation.cs
+  - Src/LexText/Discourse/ConstChartBody.cs
+  - Src/LexText/Discourse/ConstChartRowDecorator.cs
+  - Src/LexText/Discourse/ConstChartVc.cs
+  - Src/LexText/Discourse/ConstituentChart.Designer.cs
+  - Src/LexText/Discourse/ConstituentChart.cs
+  - Src/LexText/Discourse/ConstituentChartLogic.cs
+  - Src/LexText/Discourse/DiscourseExportDialog.cs
+  - Src/LexText/Discourse/DiscourseExporter.cs
+  - Src/LexText/Discourse/DiscourseStrings.Designer.cs
+  - Src/LexText/Discourse/DiscourseTests/AdvancedMTDialogLogicTests.cs
+  - Src/LexText/Discourse/DiscourseTests/ConstChartRowDecoratorTests.cs
+  - Src/LexText/Discourse/DiscourseTests/ConstituentChartDatabaseTests.cs
+  - Src/LexText/Discourse/DiscourseTests/ConstituentChartTests.cs
+  - Src/LexText/Discourse/DiscourseTests/DiscourseExportTests.cs
+  - Src/LexText/Discourse/DiscourseTests/DiscourseTestHelper.cs
+  - Src/LexText/Discourse/DiscourseTests/InMemoryDiscourseTestBase.cs
+  - Src/LexText/Discourse/DiscourseTests/InMemoryLogicTest.cs
+  - Src/LexText/Discourse/DiscourseTests/InMemoryMoveEditTests.cs
+  - Src/LexText/Discourse/DiscourseTests/InMemoryMovedTextTests.cs
+  - Src/LexText/Discourse/DiscourseTests/InterlinRibbonTests.cs
+  - Src/LexText/Discourse/DiscourseTests/LogicTest.cs
+  - Src/LexText/Discourse/DiscourseTests/MultilevelHeaderModelTests.cs
 - Key C++ files:
-  - Src\LexText\ParserCore\XAmpleCOMWrapper\XAmpleCOMWrapper.cpp
-  - Src\LexText\ParserCore\XAmpleCOMWrapper\XAmpleWrapper.cpp
-  - Src\LexText\ParserCore\XAmpleCOMWrapper\XAmpleWrapperCore.cpp
-  - Src\LexText\ParserCore\XAmpleCOMWrapper\stdafx.cpp
+  - Src/LexText/ParserCore/XAmpleCOMWrapper/XAmpleCOMWrapper.cpp
+  - Src/LexText/ParserCore/XAmpleCOMWrapper/XAmpleWrapper.cpp
+  - Src/LexText/ParserCore/XAmpleCOMWrapper/XAmpleWrapperCore.cpp
+  - Src/LexText/ParserCore/XAmpleCOMWrapper/stdafx.cpp
 - Key headers:
-  - Src\LexText\ParserCore\XAmpleCOMWrapper\Resource.h
-  - Src\LexText\ParserCore\XAmpleCOMWrapper\XAmpleWrapperCore.h
-  - Src\LexText\ParserCore\XAmpleCOMWrapper\stdafx.h
-  - Src\LexText\ParserCore\XAmpleCOMWrapper\xamplewrapper.h
+  - Src/LexText/ParserCore/XAmpleCOMWrapper/Resource.h
+  - Src/LexText/ParserCore/XAmpleCOMWrapper/XAmpleWrapperCore.h
+  - Src/LexText/ParserCore/XAmpleCOMWrapper/stdafx.h
+  - Src/LexText/ParserCore/XAmpleCOMWrapper/xamplewrapper.h
 - Data contracts/transforms:
-  - Src\LexText\Discourse\AdvancedMTDialog.resx
-  - Src\LexText\Discourse\ConstChartBody.resx
-  - Src\LexText\Discourse\ConstituentChart.resx
-  - Src\LexText\Discourse\DiscourseStrings.resx
-  - Src\LexText\Discourse\SelectClausesDialog.resx
-  - Src\LexText\Interlinear\ChooseTextWritingSystemDlg.resx
-  - Src\LexText\Interlinear\ComplexConcControl.resx
-  - Src\LexText\Interlinear\ComplexConcMorphDlg.resx
-  - Src\LexText\Interlinear\ComplexConcTagDlg.resx
-  - Src\LexText\Interlinear\ComplexConcWordDlg.resx
-  - Src\LexText\Interlinear\ConcordanceControl.resx
-  - Src\LexText\Interlinear\ConfigureInterlinDialog.resx
-  - Src\LexText\Interlinear\CreateAllomorphTypeMismatchDlg.resx
-  - Src\LexText\Interlinear\EditMorphBreaksDlg.resx
-  - Src\LexText\Interlinear\FilterAllTextsDialog.resx
-  - Src\LexText\Interlinear\FilterTextsDialog.resx
-  - Src\LexText\Interlinear\FocusBoxController.resx
-  - Src\LexText\Interlinear\ITextDllTests\ExportTestFiles\Phase1-KalabaTest.xml
-  - Src\LexText\Interlinear\ITextDllTests\ExportTestFiles\Phase1-KalabaTestPunctuation.xml
-  - Src\LexText\Interlinear\ITextDllTests\ExportTestFiles\Phase1-KalabaTestPunctuationWordAlignedXLingPap.xml
-  - Src\LexText\Interlinear\ITextDllTests\ExportTestFiles\Phase1-KalabaTestWordAlignedXLingPap.xml
-  - Src\LexText\Interlinear\ITextDllTests\ExportTestFiles\Phase1-OrizabaLesson2.xml
-  - Src\LexText\Interlinear\ITextDllTests\ExportTestFiles\Phase1-OrizabaLesson2WordAlignedXLingPap.xml
-  - Src\LexText\Interlinear\ITextDllTests\ExportTestFiles\Phase1-SETepehuanCorn.xml
-  - Src\LexText\Interlinear\ITextDllTests\ExportTestFiles\SETepehuanCornSingleListExample.xml
+  - Src/LexText/Discourse/AdvancedMTDialog.resx
+  - Src/LexText/Discourse/ConstChartBody.resx
+  - Src/LexText/Discourse/ConstituentChart.resx
+  - Src/LexText/Discourse/DiscourseStrings.resx
+  - Src/LexText/Discourse/SelectClausesDialog.resx
+  - Src/LexText/Interlinear/ChooseTextWritingSystemDlg.resx
+  - Src/LexText/Interlinear/ComplexConcControl.resx
+  - Src/LexText/Interlinear/ComplexConcMorphDlg.resx
+  - Src/LexText/Interlinear/ComplexConcTagDlg.resx
+  - Src/LexText/Interlinear/ComplexConcWordDlg.resx
+  - Src/LexText/Interlinear/ConcordanceControl.resx
+  - Src/LexText/Interlinear/ConfigureInterlinDialog.resx
+  - Src/LexText/Interlinear/CreateAllomorphTypeMismatchDlg.resx
+  - Src/LexText/Interlinear/EditMorphBreaksDlg.resx
+  - Src/LexText/Interlinear/FilterAllTextsDialog.resx
+  - Src/LexText/Interlinear/FilterTextsDialog.resx
+  - Src/LexText/Interlinear/FocusBoxController.resx
+  - Src/LexText/Interlinear/ITextDllTests/ExportTestFiles/Phase1-KalabaTest.xml
+  - Src/LexText/Interlinear/ITextDllTests/ExportTestFiles/Phase1-KalabaTestPunctuation.xml
+  - Src/LexText/Interlinear/ITextDllTests/ExportTestFiles/Phase1-KalabaTestPunctuationWordAlignedXLingPap.xml
+  - Src/LexText/Interlinear/ITextDllTests/ExportTestFiles/Phase1-KalabaTestWordAlignedXLingPap.xml
+  - Src/LexText/Interlinear/ITextDllTests/ExportTestFiles/Phase1-OrizabaLesson2.xml
+  - Src/LexText/Interlinear/ITextDllTests/ExportTestFiles/Phase1-OrizabaLesson2WordAlignedXLingPap.xml
+  - Src/LexText/Interlinear/ITextDllTests/ExportTestFiles/Phase1-SETepehuanCorn.xml
+  - Src/LexText/Interlinear/ITextDllTests/ExportTestFiles/SETepehuanCornSingleListExample.xml
+## Code Evidence
+*Analysis based on scanning 430 source files*
+
+- **Classes found**: 20 public classes
+- **Interfaces found**: 15 public interfaces
+- **Namespaces**: FlexDePluginTests, FlexPathwayPluginTests, LexEdDllTests, LexTextControlsTests, LexTextDllTests
+- **Project references**: ..\..\Common\Controls\DetailControls\DetailControls, ..\..\Common\Controls\XMLViews\XMLViews

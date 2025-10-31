@@ -12,6 +12,9 @@ Provides fundamental graphics rendering capabilities through Windows GDI wrapper
 styled text rendering (FwStyledText), and resource management utilities (ColorTable, SmartPalette).
 These classes enable consistent rendering behavior and provide abstraction over Windows graphics APIs.
 
+## Architecture
+C++ native library with 3 implementation files and 5 headers.
+
 ## Key Components
 ### Key Classes
 - **AfGdi**
@@ -34,25 +37,19 @@ These classes enable consistent rendering behavior and provide abstraction over 
 - Depends on: Kernel (low-level services), Generic (shared components)
 - Used by: All major FieldWorks UI applications (xWorks, LexText)
 
+## Interop & Contracts
+No explicit interop boundaries detected. Pure managed or native code.
+
+## Threading & Performance
+Single-threaded or thread-agnostic code. No explicit threading detected.
+
+## Config & Feature Flags
+No explicit configuration or feature flags detected.
+
 ## Build Information
 - Native C++ project (no .csproj or .vcxproj in root, built as part of larger solution)
 - Compiled as a library/DLL
 - Build via top-level solution or Build/ scripts
-
-## Entry Points
-- Provides base classes and utilities used by application-level components
-- Not directly executable; linked into applications
-
-## Related Folders
-- **Kernel/** - Provides low-level infrastructure that AppCore builds upon
-- **Generic/** - Shares generic utilities with AppCore
-- **xWorks/** - Primary consumer of AppCore functionality
-- **LexText/** - Uses AppCore for text rendering in lexicon views
-
-## Code Evidence
-*Analysis based on scanning 8 source files*
-
-- **Classes found**: 12 public classes
 
 ## Interfaces and Data Models
 
@@ -104,24 +101,9 @@ These classes enable consistent rendering behavior and provide abstraction over 
   - Path: `FwStyledText.h`
   - Public class implementation
 
-## References
-
-- **Key C++ files**: AfColorTable.cpp, AfGfx.cpp, FwStyledText.cpp
-- **Key headers**: AfAppRes.h, AfColorTable.h, AfDef.h, AfGfx.h, FwStyledText.h
-- **Source file count**: 8 files
-- **Data file count**: 0 files
-
-## Architecture
-C++ native library with 3 implementation files and 5 headers.
-
-## Interop & Contracts
-No explicit interop boundaries detected. Pure managed or native code.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
+## Entry Points
+- Provides base classes and utilities used by application-level components
+- Not directly executable; linked into applications
 
 ## Test Index
 No tests found in this folder. Tests may be in a separate Test folder or solution.
@@ -129,14 +111,31 @@ No tests found in this folder. Tests may be in a separate Test folder or solutio
 ## Usage Hints
 Library component. Reference in consuming projects. See Dependencies section for integration points.
 
+## Related Folders
+- **Kernel/** - Provides low-level infrastructure that AppCore builds upon
+- **Generic/** - Shares generic utilities with AppCore
+- **xWorks/** - Primary consumer of AppCore functionality
+- **LexText/** - Uses AppCore for text rendering in lexicon views
+
+## References
+
+- **Key C++ files**: AfColorTable.cpp, AfGfx.cpp, FwStyledText.cpp
+- **Key headers**: AfAppRes.h, AfColorTable.h, AfDef.h, AfGfx.h, FwStyledText.h
+- **Source file count**: 8 files
+- **Data file count**: 0 files
+
 ## References (auto-generated hints)
 - Key C++ files:
-  - Src\AppCore\AfColorTable.cpp
-  - Src\AppCore\AfGfx.cpp
-  - Src\AppCore\FwStyledText.cpp
+  - Src/AppCore/AfColorTable.cpp
+  - Src/AppCore/AfGfx.cpp
+  - Src/AppCore/FwStyledText.cpp
 - Key headers:
-  - Src\AppCore\AfColorTable.h
-  - Src\AppCore\AfDef.h
-  - Src\AppCore\AfGfx.h
-  - Src\AppCore\FwStyledText.h
-  - Src\AppCore\Res\AfAppRes.h
+  - Src/AppCore/AfColorTable.h
+  - Src/AppCore/AfDef.h
+  - Src/AppCore/AfGfx.h
+  - Src/AppCore/FwStyledText.h
+  - Src/AppCore/Res/AfAppRes.h
+## Code Evidence
+*Analysis based on scanning 8 source files*
+
+- **Classes found**: 12 public classes

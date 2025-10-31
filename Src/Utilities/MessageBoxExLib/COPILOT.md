@@ -12,6 +12,9 @@ Provides message boxes with additional features beyond standard Windows message 
 such as custom button layouts, checkboxes for "don't show again", and richer formatting.
 Enables better user communication throughout FieldWorks applications.
 
+## Architecture
+C# library with 10 source files. Contains 1 subprojects: MessageBoxExLib.
+
 ## Key Components
 ### Key Classes
 - **MessageBoxEx**
@@ -28,25 +31,19 @@ Enables better user communication throughout FieldWorks applications.
 - Depends on: System.Windows.Forms
 - Used by: All FieldWorks applications for user notifications
 
+## Interop & Contracts
+Uses P/Invoke for cross-boundary calls.
+
+## Threading & Performance
+Single-threaded or thread-agnostic code. No explicit threading detected.
+
+## Config & Feature Flags
+No explicit configuration or feature flags detected.
+
 ## Build Information
 - C# class library project
 - Build via: `dotnet build MessageBoxExLib.csproj`
 - UI utility library
-
-## Entry Points
-- MessageBoxEx.Show() methods
-- Enhanced dialog display API
-
-## Related Folders
-- **FwCoreDlgs/** - Standard FieldWorks dialogs
-- **Common/FwUtils/** - General utilities
-- Used throughout FieldWorks applications
-
-## Code Evidence
-*Analysis based on scanning 10 source files*
-
-- **Classes found**: 4 public classes
-- **Namespaces**: Utils.MessageBoxExLib
 
 ## Interfaces and Data Models
 
@@ -74,6 +71,21 @@ Enables better user communication throughout FieldWorks applications.
 - **TimeoutResult** (enum)
   - Path: `TimeoutResult.cs`
 
+## Entry Points
+- MessageBoxEx.Show() methods
+- Enhanced dialog display API
+
+## Test Index
+Test projects: MessageBoxExLibTests. 1 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **FwCoreDlgs/** - Standard FieldWorks dialogs
+- **Common/FwUtils/** - General utilities
+- Used throughout FieldWorks applications
+
 ## References
 
 - **Project files**: MessageBoxExLib.csproj, MessageBoxExLibTests.csproj
@@ -82,20 +94,26 @@ Enables better user communication throughout FieldWorks applications.
 - **Source file count**: 10 files
 - **Data file count**: 2 files
 
-## Architecture
-C# library with 10 source files. Contains 1 subprojects: MessageBoxExLib.
+## References (auto-generated hints)
+- Project files:
+  - Utilities/MessageBoxExLib/MessageBoxExLib.csproj
+  - Utilities/MessageBoxExLib/MessageBoxExLibTests/MessageBoxExLibTests.csproj
+- Key C# files:
+  - Utilities/MessageBoxExLib/AssemblyInfo.cs
+  - Utilities/MessageBoxExLib/MessageBoxEx.cs
+  - Utilities/MessageBoxExLib/MessageBoxExButton.cs
+  - Utilities/MessageBoxExLib/MessageBoxExButtons.cs
+  - Utilities/MessageBoxExLib/MessageBoxExForm.cs
+  - Utilities/MessageBoxExLib/MessageBoxExIcon.cs
+  - Utilities/MessageBoxExLib/MessageBoxExLibTests/Tests.cs
+  - Utilities/MessageBoxExLib/MessageBoxExManager.cs
+  - Utilities/MessageBoxExLib/MessageBoxExResult.cs
+  - Utilities/MessageBoxExLib/TimeoutResult.cs
+- Data contracts/transforms:
+  - Utilities/MessageBoxExLib/MessageBoxExForm.resx
+  - Utilities/MessageBoxExLib/Resources/StandardButtonsText.resx
+## Code Evidence
+*Analysis based on scanning 10 source files*
 
-## Interop & Contracts
-Uses P/Invoke for cross-boundary calls.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Test Index
-Test projects: MessageBoxExLibTests. 1 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- **Classes found**: 4 public classes
+- **Namespaces**: Utils.MessageBoxExLib

@@ -12,6 +12,9 @@ Contains FwXml and FwXmlString utilities for handling XML data structures used t
 While much of the core data model (LCM) has moved to dedicated libraries, this folder maintains
 fundamental XML handling and low-level data utilities that support the persistence layer.
 
+## Architecture
+C++ native library with 2 implementation files and 1 headers.
+
 ## Key Components
 No major public classes identified.
 
@@ -24,35 +27,6 @@ No major public classes identified.
 - Depends on: Kernel (low-level infrastructure), Generic (utilities)
 - Used by: All data-driven components across FieldWorks (FdoUi, LexText, xWorks)
 
-## Build Information
-- Build using the top-level FW.sln (Visual Studio/MSBuild) or run: `bash ./agent-build-fw.sh`
-- Avoid building this project in isolation; the solution load ensures repo props/targets and interop settings are applied.
--
-
-## Entry Points
-- Provides data model base classes and XML serialization
-- Core persistence layer for all FieldWorks data
-
-## Related Folders
-- **DbExtend/** - Extends database schema and data model capabilities
-- **CacheLight/** - Provides caching for data model objects
-- **FdoUi/** - UI components for FieldWorks Data Objects built on Cellar
-- **LCMBrowser/** - Browser tool for exploring the LCM data model
-- **Common/FieldWorks/** - Contains higher-level data access built on Cellar
-
-## Code Evidence
-*Analysis based on scanning 3 source files*
-
-## References
-
-- **Key C++ files**: FwXml.cpp, FwXmlString.cpp
-- **Key headers**: FwXml.h
-- **Source file count**: 3 files
-- **Data file count**: 0 files
-
-## Architecture
-C++ native library with 2 implementation files and 1 headers.
-
 ## Interop & Contracts
 No explicit interop boundaries detected. Pure managed or native code.
 
@@ -62,8 +36,17 @@ Single-threaded or thread-agnostic code. No explicit threading detected.
 ## Config & Feature Flags
 No explicit configuration or feature flags detected.
 
+## Build Information
+- Build using the top-level FW.sln (Visual Studio/MSBuild) or run: `bash ./agent-build-fw.sh`
+- Avoid building this project in isolation; the solution load ensures repo props/targets and interop settings are applied.
+-
+
 ## Interfaces and Data Models
 See code analysis sections above for key interfaces and data models. Additional interfaces may be documented in source files.
+
+## Entry Points
+- Provides data model base classes and XML serialization
+- Core persistence layer for all FieldWorks data
 
 ## Test Index
 No tests found in this folder. Tests may be in a separate Test folder or solution.
@@ -71,9 +54,25 @@ No tests found in this folder. Tests may be in a separate Test folder or solutio
 ## Usage Hints
 Library component. Reference in consuming projects. See Dependencies section for integration points.
 
+## Related Folders
+- **DbExtend/** - Extends database schema and data model capabilities
+- **CacheLight/** - Provides caching for data model objects
+- **FdoUi/** - UI components for FieldWorks Data Objects built on Cellar
+- **LCMBrowser/** - Browser tool for exploring the LCM data model
+- **Common/FieldWorks/** - Contains higher-level data access built on Cellar
+
+## References
+
+- **Key C++ files**: FwXml.cpp, FwXmlString.cpp
+- **Key headers**: FwXml.h
+- **Source file count**: 3 files
+- **Data file count**: 0 files
+
 ## References (auto-generated hints)
 - Key C++ files:
-  - Src\Cellar\FwXml.cpp
-  - Src\Cellar\FwXmlString.cpp
+  - Src/Cellar/FwXml.cpp
+  - Src/Cellar/FwXmlString.cpp
 - Key headers:
-  - Src\Cellar\FwXml.h
+  - Src/Cellar/FwXml.h
+## Code Evidence
+*Analysis based on scanning 3 source files*

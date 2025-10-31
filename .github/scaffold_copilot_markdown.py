@@ -12,8 +12,9 @@ Behavior:
 - Never delete unknown sections; they are appended after canonical sections.
 
 Usage examples:
-  python .github/scaffold_copilot_markdown.py --base origin/release/9.3
-  python .github/scaffold_copilot_markdown.py --folders Src/Common/Controls Src/Cellar
+    python .github/scaffold_copilot_markdown.py --base origin/release/9.3
+    python .github/scaffold_copilot_markdown.py --folders Src/Common/Controls Src/Cellar
+    python .github/scaffold_copilot_markdown.py --all
 """
 from __future__ import annotations
 
@@ -296,6 +297,11 @@ def main() -> int:
         help="Explicit Src/<Folder> paths to update",
     )
     ap.add_argument("--status", default="draft")
+    ap.add_argument(
+        "--all",
+        action="store_true",
+        help="Normalize every COPILOT.md under Src/ regardless of git changes",
+    )
     args = ap.parse_args()
 
     root = Path(args.root).resolve()
@@ -303,19 +309,22 @@ def main() -> int:
     if args.folders:
         folders = [Path(f.replace("\\", "/")) for f in args.folders]
     else:
-        changed = git_changed_files(
-            root, base=args.base, head=args.head, since=args.since
-        )
-        tops = set()
-        for path in changed:
-            if not path.startswith("Src/"):
-                continue
-            if path.endswith("/COPILOT.md"):
-                continue
-            parts = path.split("/")
-            if len(parts) >= 2:
-                tops.add("/".join(parts[:2]))
-        folders = [root / t for t in sorted(tops)]
+        if args.all:
+            folders = sorted((path.parent for path in root.glob("Src/**/COPILOT.md")))
+        else:
+            changed = git_changed_files(
+                root, base=args.base, head=args.head, since=args.since
+            )
+            tops = set()
+            for path in changed:
+                if not path.startswith("Src/"):
+                    continue
+                if path.endswith("/COPILOT.md"):
+                    continue
+                parts = path.split("/")
+                if len(parts) >= 2:
+                    tops.add("/".join(parts[:2]))
+            folders = [root / t for t in sorted(tops)]
 
     commit = git_rev_parse(root, "HEAD", short=True)
     updated = 0

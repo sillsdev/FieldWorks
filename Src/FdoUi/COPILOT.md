@@ -12,6 +12,9 @@ Provides specialized UI controls for editing and displaying data model objects, 
 custom field management dialogs (CustomFieldDlg), chooser dialogs for selecting data objects,
 and editors for complex data types. Bridges the data layer with the presentation layer.
 
+## Architecture
+C# library with 31 source files. Contains 1 subprojects: FdoUi.
+
 ## Key Components
 ### Key Classes
 - **InflectionFeatureEditor**
@@ -37,27 +40,19 @@ and editors for complex data types. Bridges the data layer with the presentation
 - Depends on: Cellar (data model), Common (UI infrastructure), DbExtend (custom fields)
 - Used by: xWorks, LexText, and other applications displaying data objects
 
+## Interop & Contracts
+Uses COM for cross-boundary calls.
+
+## Threading & Performance
+Threading model: UI thread marshaling, synchronization.
+
+## Config & Feature Flags
+No explicit configuration or feature flags detected.
+
 ## Build Information
 - C# class library with UI components
 - Includes comprehensive test suite
 - Build with MSBuild or Visual Studio
-
-## Entry Points
-- Provides UI controls and dialogs for data object management
-- Custom field editors and data visualization components
-
-## Related Folders
-- **Cellar/** - Core data model that FdoUi visualizes
-- **DbExtend/** - Custom field extensions that FdoUi provides UI for
-- **FwCoreDlgs/** - Additional dialogs that work with FdoUi components
-- **xWorks/** - Uses FdoUi for data object display and editing
-
-## Code Evidence
-*Analysis based on scanning 25 source files*
-
-- **Classes found**: 20 public classes
-- **Interfaces found**: 1 public interfaces
-- **Namespaces**: SIL.FieldWorks.FdoUi, SIL.FieldWorks.FdoUi.Dialogs
 
 ## Interfaces and Data Models
 
@@ -148,6 +143,22 @@ and editors for complex data types. Bridges the data layer with the presentation
 - **VcFrags** (enum)
   - Path: `FdoUiCore.cs`
 
+## Entry Points
+- Provides UI controls and dialogs for data object management
+- Custom field editors and data visualization components
+
+## Test Index
+Test projects: FdoUiTests. 1 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **Cellar/** - Core data model that FdoUi visualizes
+- **DbExtend/** - Custom field extensions that FdoUi provides UI for
+- **FwCoreDlgs/** - Additional dialogs that work with FdoUi components
+- **xWorks/** - Uses FdoUi for data object display and editing
+
 ## References
 
 - **Project files**: FdoUi.csproj, FdoUiTests.csproj
@@ -156,62 +167,50 @@ and editors for complex data types. Bridges the data layer with the presentation
 - **Source file count**: 31 files
 - **Data file count**: 10 files
 
-## Architecture
-C# library with 31 source files. Contains 1 subprojects: FdoUi.
-
-## Interop & Contracts
-Uses COM for cross-boundary calls.
-
-## Threading & Performance
-Threading model: UI thread marshaling, synchronization.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Test Index
-Test projects: FdoUiTests. 1 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
-
 ## References (auto-generated hints)
 - Project files:
-  - Src\FdoUi\FdoUi.csproj
-  - Src\FdoUi\FdoUiTests\FdoUiTests.csproj
+  - Src/FdoUi/FdoUi.csproj
+  - Src/FdoUi/FdoUiTests/FdoUiTests.csproj
 - Key C# files:
-  - Src\FdoUi\AssemblyInfo.cs
-  - Src\FdoUi\BulkPosEditor.cs
-  - Src\FdoUi\Dialogs\CantRestoreLinkedFilesToOriginalLocation.Designer.cs
-  - Src\FdoUi\Dialogs\CantRestoreLinkedFilesToOriginalLocation.cs
-  - Src\FdoUi\Dialogs\ConfirmDeleteObjectDlg.cs
-  - Src\FdoUi\Dialogs\ConflictingSaveDlg.Designer.cs
-  - Src\FdoUi\Dialogs\ConflictingSaveDlg.cs
-  - Src\FdoUi\Dialogs\FilesToRestoreAreOlder.Designer.cs
-  - Src\FdoUi\Dialogs\FilesToRestoreAreOlder.cs
-  - Src\FdoUi\Dialogs\MergeObjectDlg.cs
-  - Src\FdoUi\Dialogs\RelatedWords.cs
-  - Src\FdoUi\Dialogs\RestoreLinkedFilesToProjectsFolder.Designer.cs
-  - Src\FdoUi\Dialogs\RestoreLinkedFilesToProjectsFolder.cs
-  - Src\FdoUi\Dialogs\SummaryDialogForm.cs
-  - Src\FdoUi\DummyCmObject.cs
-  - Src\FdoUi\FdoUiCore.cs
-  - Src\FdoUi\FdoUiStrings.Designer.cs
-  - Src\FdoUi\FdoUiTests\FdoUiTests.cs
-  - Src\FdoUi\FsFeatDefnUi.cs
-  - Src\FdoUi\FwLcmUI.cs
-  - Src\FdoUi\InflectionClassEditor.cs
-  - Src\FdoUi\InflectionFeatureEditor.cs
-  - Src\FdoUi\LexEntryUi.cs
-  - Src\FdoUi\LexPronunciationUi.cs
-  - Src\FdoUi\PartOfSpeechUi.cs
+  - Src/FdoUi/AssemblyInfo.cs
+  - Src/FdoUi/BulkPosEditor.cs
+  - Src/FdoUi/Dialogs/CantRestoreLinkedFilesToOriginalLocation.Designer.cs
+  - Src/FdoUi/Dialogs/CantRestoreLinkedFilesToOriginalLocation.cs
+  - Src/FdoUi/Dialogs/ConfirmDeleteObjectDlg.cs
+  - Src/FdoUi/Dialogs/ConflictingSaveDlg.Designer.cs
+  - Src/FdoUi/Dialogs/ConflictingSaveDlg.cs
+  - Src/FdoUi/Dialogs/FilesToRestoreAreOlder.Designer.cs
+  - Src/FdoUi/Dialogs/FilesToRestoreAreOlder.cs
+  - Src/FdoUi/Dialogs/MergeObjectDlg.cs
+  - Src/FdoUi/Dialogs/RelatedWords.cs
+  - Src/FdoUi/Dialogs/RestoreLinkedFilesToProjectsFolder.Designer.cs
+  - Src/FdoUi/Dialogs/RestoreLinkedFilesToProjectsFolder.cs
+  - Src/FdoUi/Dialogs/SummaryDialogForm.cs
+  - Src/FdoUi/DummyCmObject.cs
+  - Src/FdoUi/FdoUiCore.cs
+  - Src/FdoUi/FdoUiStrings.Designer.cs
+  - Src/FdoUi/FdoUiTests/FdoUiTests.cs
+  - Src/FdoUi/FsFeatDefnUi.cs
+  - Src/FdoUi/FwLcmUI.cs
+  - Src/FdoUi/InflectionClassEditor.cs
+  - Src/FdoUi/InflectionFeatureEditor.cs
+  - Src/FdoUi/LexEntryUi.cs
+  - Src/FdoUi/LexPronunciationUi.cs
+  - Src/FdoUi/PartOfSpeechUi.cs
 - Data contracts/transforms:
-  - Src\FdoUi\Dialogs\CantRestoreLinkedFilesToOriginalLocation.resx
-  - Src\FdoUi\Dialogs\ConfirmDeleteObjectDlg.resx
-  - Src\FdoUi\Dialogs\ConflictingSaveDlg.resx
-  - Src\FdoUi\Dialogs\FilesToRestoreAreOlder.resx
-  - Src\FdoUi\Dialogs\MergeObjectDlg.resx
-  - Src\FdoUi\Dialogs\RelatedWords.resx
-  - Src\FdoUi\Dialogs\RestoreLinkedFilesToProjectsFolder.resx
-  - Src\FdoUi\Dialogs\SummaryDialogForm.resx
-  - Src\FdoUi\FdoUiStrings.resx
-  - Src\FdoUi\Properties\Resources.resx
+  - Src/FdoUi/Dialogs/CantRestoreLinkedFilesToOriginalLocation.resx
+  - Src/FdoUi/Dialogs/ConfirmDeleteObjectDlg.resx
+  - Src/FdoUi/Dialogs/ConflictingSaveDlg.resx
+  - Src/FdoUi/Dialogs/FilesToRestoreAreOlder.resx
+  - Src/FdoUi/Dialogs/MergeObjectDlg.resx
+  - Src/FdoUi/Dialogs/RelatedWords.resx
+  - Src/FdoUi/Dialogs/RestoreLinkedFilesToProjectsFolder.resx
+  - Src/FdoUi/Dialogs/SummaryDialogForm.resx
+  - Src/FdoUi/FdoUiStrings.resx
+  - Src/FdoUi/Properties/Resources.resx
+## Code Evidence
+*Analysis based on scanning 25 source files*
+
+- **Classes found**: 20 public classes
+- **Interfaces found**: 1 public interfaces
+- **Namespaces**: SIL.FieldWorks.FdoUi, SIL.FieldWorks.FdoUi.Dialogs

@@ -12,6 +12,9 @@ Provides essential building blocks including memory management abstractions, str
 error handling mechanisms, and system-level services. Acts as the foundation layer that all other
 native components depend on. Contains core definitions, constants, and fundamental types used throughout.
 
+## Architecture
+C++ native library with 2 implementation files and 2 headers.
+
 ## Key Components
 No major public classes identified.
 
@@ -24,36 +27,6 @@ No major public classes identified.
 - Depends on: System libraries, STL, Windows SDK
 - Used by: All FieldWorks components (acts as foundation layer)
 
-## Build Information
-- Native C++ project (vcxproj)
-- Critical foundation library
-- Build with Visual Studio or MSBuild
-
-## Entry Points
-- Provides fundamental classes and utilities
-- Base layer for all other native code
-
-## Related Folders
-- **Generic/** - Builds on Kernel infrastructure
-- **AppCore/** - Application-level code built on Kernel
-- **views/** - Native views using Kernel services
-- **DebugProcs/** - Debugging utilities that instrument Kernel
-- All other native components depend on Kernel
-
-## Code Evidence
-*Analysis based on scanning 4 source files*
-
-## References
-
-- **Project files**: Kernel.vcxproj
-- **Key C++ files**: FwKernel_GUIDs.cpp
-- **Key headers**: CellarBaseConstants.h, CellarConstants.vm.h
-- **Source file count**: 5 files
-- **Data file count**: 0 files
-
-## Architecture
-C++ native library with 2 implementation files and 2 headers.
-
 ## Interop & Contracts
 No explicit interop boundaries detected. Pure managed or native code.
 
@@ -63,8 +36,17 @@ Single-threaded or thread-agnostic code. No explicit threading detected.
 ## Config & Feature Flags
 No explicit configuration or feature flags detected.
 
+## Build Information
+- Native C++ project (vcxproj)
+- Critical foundation library
+- Build with Visual Studio or MSBuild
+
 ## Interfaces and Data Models
 See code analysis sections above for key interfaces and data models. Additional interfaces may be documented in source files.
+
+## Entry Points
+- Provides fundamental classes and utilities
+- Base layer for all other native code
 
 ## Test Index
 No tests found in this folder. Tests may be in a separate Test folder or solution.
@@ -72,12 +54,29 @@ No tests found in this folder. Tests may be in a separate Test folder or solutio
 ## Usage Hints
 Library component. Reference in consuming projects. See Dependencies section for integration points.
 
+## Related Folders
+- **Generic/** - Builds on Kernel infrastructure
+- **AppCore/** - Application-level code built on Kernel
+- **views/** - Native views using Kernel services
+- **DebugProcs/** - Debugging utilities that instrument Kernel
+- All other native components depend on Kernel
+
+## References
+
+- **Project files**: Kernel.vcxproj
+- **Key C++ files**: FwKernel_GUIDs.cpp
+- **Key headers**: CellarBaseConstants.h, CellarConstants.vm.h
+- **Source file count**: 5 files
+- **Data file count**: 0 files
+
 ## References (auto-generated hints)
 - Project files:
-  - Src\Kernel\Kernel.vcxproj
+  - Src/Kernel/Kernel.vcxproj
 - Key C++ files:
-  - Src\Kernel\FwKernel_GUIDs.cpp
-  - Src\Kernel\dlldatax.c
+  - Src/Kernel/FwKernel_GUIDs.cpp
+  - Src/Kernel/dlldatax.c
 - Key headers:
-  - Src\Kernel\CellarBaseConstants.h
-  - Src\Kernel\CellarConstants.vm.h
+  - Src/Kernel/CellarBaseConstants.h
+  - Src/Kernel/CellarConstants.vm.h
+## Code Evidence
+*Analysis based on scanning 4 source files*

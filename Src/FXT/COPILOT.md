@@ -12,6 +12,9 @@ Provides XSLT stylesheets and transformation utilities for converting and presen
 data in different formats. Used extensively for generating reports, exports, and formatted output
 from the FieldWorks data model.
 
+## Architecture
+C# library with 13 source files. Contains 2 subprojects: FxtExe, FxtDll.
+
 ## Key Components
 ### Key Classes
 - **main**
@@ -37,26 +40,19 @@ from the FieldWorks data model.
 - Depends on: Common utilities, data model
 - Used by: Export/import pipelines, document generation
 
+## Interop & Contracts
+Uses COM for cross-boundary calls.
+
+## Threading & Performance
+Threading model: explicit threading, UI thread marshaling, synchronization.
+
+## Config & Feature Flags
+Config files: Phase1-Sena3-bo-ConfiguredDictionary.xml, Phase2-Sena3-bo-ConfiguredDictionary.xml.
+
 ## Build Information
 - Two C# projects: executable (FxtExe) and library (FxtDll)
 - Build with MSBuild or Visual Studio
 - Command-line transformation tool
-
-## Entry Points
-- **FxtExe** - Command-line tool for applying transforms
-- **FxtDll** - Library for embedding transformation capabilities
-
-## Related Folders
-- **Transforms/** - Contains XSLT files and transformation assets used by FXT
-- **DocConvert/** - Document conversion that may use FXT transformations
-- **ParatextImport/** - May use FXT for data transformation during import
-
-## Code Evidence
-*Analysis based on scanning 13 source files*
-
-- **Classes found**: 13 public classes
-- **Interfaces found**: 1 public interfaces
-- **Namespaces**: SIL.FieldWorks.Common.FXT
 
 ## Interfaces and Data Models
 
@@ -106,6 +102,21 @@ from the FieldWorks data model.
   - Path: `FxtDll/FxtDllTests/NormalizeOutput.xsl`
   - XSLT transformation template
 
+## Entry Points
+- **FxtExe** - Command-line tool for applying transforms
+- **FxtDll** - Library for embedding transformation capabilities
+
+## Test Index
+Test projects: FxtDllTests. 6 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Console application. Build and run via command line or Visual Studio. See Entry Points section.
+
+## Related Folders
+- **Transforms/** - Contains XSLT files and transformation assets used by FXT
+- **DocConvert/** - Document conversion that may use FXT transformations
+- **ParatextImport/** - May use FXT for data transformation during import
+
 ## References
 
 - **Project files**: FxtDll.csproj, FxtDllTests.csproj, FxtExe.csproj
@@ -116,47 +127,35 @@ from the FieldWorks data model.
 - **Source file count**: 13 files
 - **Data file count**: 6 files
 
-## Architecture
-C# library with 13 source files. Contains 2 subprojects: FxtExe, FxtDll.
-
-## Interop & Contracts
-Uses COM for cross-boundary calls.
-
-## Threading & Performance
-Threading model: explicit threading, UI thread marshaling, synchronization.
-
-## Config & Feature Flags
-Config files: Phase1-Sena3-bo-ConfiguredDictionary.xml, Phase2-Sena3-bo-ConfiguredDictionary.xml.
-
-## Test Index
-Test projects: FxtDllTests. 6 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Console application. Build and run via command line or Visual Studio. See Entry Points section.
-
 ## References (auto-generated hints)
 - Project files:
-  - Src\FXT\FxtDll\FxtDll.csproj
-  - Src\FXT\FxtDll\FxtDllTests\FxtDllTests.csproj
-  - Src\FXT\FxtExe\FxtExe.csproj
+  - Src/FXT/FxtDll/FxtDll.csproj
+  - Src/FXT/FxtDll/FxtDllTests/FxtDllTests.csproj
+  - Src/FXT/FxtExe/FxtExe.csproj
 - Key C# files:
-  - Src\FXT\FxtDll\AssemblyInfo.cs
-  - Src\FXT\FxtDll\ChangedDataItem.cs
-  - Src\FXT\FxtDll\FilterStrategy.cs
-  - Src\FXT\FxtDll\FxtDllTests\DumperTests.cs
-  - Src\FXT\FxtDll\FxtDllTests\FxtTestBase.cs
-  - Src\FXT\FxtDll\FxtDllTests\M3ParserDumpTests.cs
-  - Src\FXT\FxtDll\FxtDllTests\M3SketchDumpTests.cs
-  - Src\FXT\FxtDll\FxtDllTests\SimpleTests.cs
-  - Src\FXT\FxtDll\FxtDllTests\StandFormatExportTests.cs
-  - Src\FXT\FxtDll\XDumper.cs
-  - Src\FXT\FxtDll\XUpdater.cs
-  - Src\FXT\FxtExe\AssemblyInfo.cs
-  - Src\FXT\FxtExe\main.cs
+  - Src/FXT/FxtDll/AssemblyInfo.cs
+  - Src/FXT/FxtDll/ChangedDataItem.cs
+  - Src/FXT/FxtDll/FilterStrategy.cs
+  - Src/FXT/FxtDll/FxtDllTests/DumperTests.cs
+  - Src/FXT/FxtDll/FxtDllTests/FxtTestBase.cs
+  - Src/FXT/FxtDll/FxtDllTests/M3ParserDumpTests.cs
+  - Src/FXT/FxtDll/FxtDllTests/M3SketchDumpTests.cs
+  - Src/FXT/FxtDll/FxtDllTests/SimpleTests.cs
+  - Src/FXT/FxtDll/FxtDllTests/StandFormatExportTests.cs
+  - Src/FXT/FxtDll/XDumper.cs
+  - Src/FXT/FxtDll/XUpdater.cs
+  - Src/FXT/FxtExe/AssemblyInfo.cs
+  - Src/FXT/FxtExe/main.cs
 - Data contracts/transforms:
-  - Src\FXT\FxtDll\FxtDllTests\ExpectedResults\Phase1-Sena3-bo-ConfiguredDictionary.xml
-  - Src\FXT\FxtDll\FxtDllTests\ExpectedResults\Phase2-Sena3-bo-ConfiguredDictionary.xml
-  - Src\FXT\FxtDll\FxtDllTests\ExpectedResults\TLPParser.xml
-  - Src\FXT\FxtDll\FxtDllTests\ExpectedResults\TLPSimpleGuidsAnswer.xml
-  - Src\FXT\FxtDll\FxtDllTests\ExpectedResults\TLPSketchGen.xml
-  - Src\FXT\FxtDll\FxtDllTests\NormalizeOutput.xsl
+  - Src/FXT/FxtDll/FxtDllTests/ExpectedResults/Phase1-Sena3-bo-ConfiguredDictionary.xml
+  - Src/FXT/FxtDll/FxtDllTests/ExpectedResults/Phase2-Sena3-bo-ConfiguredDictionary.xml
+  - Src/FXT/FxtDll/FxtDllTests/ExpectedResults/TLPParser.xml
+  - Src/FXT/FxtDll/FxtDllTests/ExpectedResults/TLPSimpleGuidsAnswer.xml
+  - Src/FXT/FxtDll/FxtDllTests/ExpectedResults/TLPSketchGen.xml
+  - Src/FXT/FxtDll/FxtDllTests/NormalizeOutput.xsl
+## Code Evidence
+*Analysis based on scanning 13 source files*
+
+- **Classes found**: 13 public classes
+- **Interfaces found**: 1 public interfaces
+- **Namespaces**: SIL.FieldWorks.Common.FXT

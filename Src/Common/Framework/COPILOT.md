@@ -13,6 +13,9 @@ settings management (FwRegistrySettings), style export (ExportStyleInfo), and ma
 (MainWindowDelegate). Establishes architectural patterns and shared functionality for building
 FieldWorks applications.
 
+## Architecture
+C# library with 22 source files. Contains 1 subprojects: Framework.
+
 ## Key Components
 ### Key Classes
 - **FwEditingHelper**
@@ -45,28 +48,19 @@ FieldWorks applications.
 - Depends on: Common/FwUtils, Common/ViewsInterfaces
 - Used by: All FieldWorks applications (xWorks, LexText)
 
+## Interop & Contracts
+Uses COM for cross-boundary calls.
+
+## Threading & Performance
+Threading model: explicit threading, UI thread marshaling, synchronization.
+
+## Config & Feature Flags
+No explicit configuration or feature flags detected.
+
 ## Build Information
 - C# class library project
 - Build via: `dotnet build Framework.csproj`
 - Includes comprehensive test suite
-
-## Entry Points
-- Base application classes (FwApp)
-- Editing helper infrastructure
-- Settings and configuration APIs
-
-## Related Folders
-- **Common/FwUtils/** - Utilities used by framework
-- **Common/FieldWorks/** - FieldWorks-specific infrastructure
-- **XCore/** - Application framework that uses Common/Framework
-- **xWorks/** - Applications built on this framework
-
-## Code Evidence
-*Analysis based on scanning 21 source files*
-
-- **Classes found**: 20 public classes
-- **Interfaces found**: 9 public interfaces
-- **Namespaces**: SIL.FieldWorks.Common.Framework, SIL.FieldWorks.Common.Framework.SelInfo, for, info.
 
 ## Interfaces and Data Models
 
@@ -179,6 +173,23 @@ FieldWorks applications.
 - **WindowTiling** (enum)
   - Path: `FwApp.cs`
 
+## Entry Points
+- Base application classes (FwApp)
+- Editing helper infrastructure
+- Settings and configuration APIs
+
+## Test Index
+Test projects: FrameworkTests. 5 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **Common/FwUtils/** - Utilities used by framework
+- **Common/FieldWorks/** - FieldWorks-specific infrastructure
+- **XCore/** - Application framework that uses Common/Framework
+- **xWorks/** - Applications built on this framework
+
 ## References
 
 - **Project files**: Framework.csproj, FrameworkTests.csproj
@@ -187,20 +198,40 @@ FieldWorks applications.
 - **Source file count**: 22 files
 - **Data file count**: 3 files
 
-## Architecture
-C# library with 22 source files. Contains 1 subprojects: Framework.
+## References (auto-generated hints)
+- Project files:
+  - Common/Framework/Framework.csproj
+  - Common/Framework/FrameworkTests/FrameworkTests.csproj
+- Key C# files:
+  - Common/Framework/AssemblyInfo.cs
+  - Common/Framework/ExportStyleInfo.cs
+  - Common/Framework/ExternalSettingsAccessorBase.cs
+  - Common/Framework/FrameworkStrings.Designer.cs
+  - Common/Framework/FrameworkTests/FwEditingHelperTests.cs
+  - Common/Framework/FrameworkTests/MainWindowDelegateTests.cs
+  - Common/Framework/FrameworkTests/SelInfoTests.cs
+  - Common/Framework/FrameworkTests/StylesXmlAccessorTests.cs
+  - Common/Framework/FrameworkTests/XhtmlHelperTests.cs
+  - Common/Framework/FwApp.cs
+  - Common/Framework/FwEditingHelper.cs
+  - Common/Framework/FwRegistrySettings.cs
+  - Common/Framework/FwRootSite.cs
+  - Common/Framework/IFieldWorksManager.cs
+  - Common/Framework/IFwMainWnd.cs
+  - Common/Framework/MainWindowDelegate.cs
+  - Common/Framework/PublicationInterfaces.cs
+  - Common/Framework/SettingsXmlAccessorBase.cs
+  - Common/Framework/StatusBarProgressHandler.cs
+  - Common/Framework/StylesXmlAccessor.cs
+  - Common/Framework/UndoRedoDropDown.cs
+  - Common/Framework/XhtmlHelper.cs
+- Data contracts/transforms:
+  - Common/Framework/FrameworkStrings.resx
+  - Common/Framework/FwRootSite.resx
+  - Common/Framework/UndoRedoDropDown.resx
+## Code Evidence
+*Analysis based on scanning 21 source files*
 
-## Interop & Contracts
-Uses COM for cross-boundary calls.
-
-## Threading & Performance
-Threading model: explicit threading, UI thread marshaling, synchronization.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Test Index
-Test projects: FrameworkTests. 5 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- **Classes found**: 20 public classes
+- **Interfaces found**: 9 public interfaces
+- **Namespaces**: SIL.FieldWorks.Common.Framework, SIL.FieldWorks.Common.Framework.SelInfo, for, info.

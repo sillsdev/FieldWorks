@@ -12,6 +12,9 @@ Implements MetaDataCache for model metadata and RealDataCache for runtime object
 Designed to optimize data access patterns by reducing database queries and providing fast lookup
 of frequently accessed linguistic data objects. Critical for application performance.
 
+## Architecture
+C# library with 9 source files. Contains 1 subprojects: CacheLight.
+
 ## Key Components
 ### Key Classes
 - **MetaDataCache**
@@ -37,26 +40,19 @@ of frequently accessed linguistic data objects. Critical for application perform
 - Depends on: Common utilities, data model interfaces
 - Used by: Core data access layers, LCM (Language and Culture Model)
 
+## Interop & Contracts
+Uses Marshaling for cross-boundary calls.
+
+## Threading & Performance
+Single-threaded or thread-agnostic code. No explicit threading detected.
+
+## Config & Feature Flags
+No explicit configuration or feature flags detected.
+
 ## Build Information
 - C# class library project
 - Contains comprehensive unit tests
 - Build with MSBuild or Visual Studio
-
-## Entry Points
-- Provides caching services and interfaces
-- Integrated into data access pipelines
-
-## Related Folders
-- **Cellar/** - Core data model that benefits from CacheLight services
-- **Common/** - Provides utility infrastructure used by CacheLight
-- **DbExtend/** - Database extensions that may use caching
-
-## Code Evidence
-*Analysis based on scanning 8 source files*
-
-- **Classes found**: 12 public classes
-- **Interfaces found**: 1 public interfaces
-- **Namespaces**: SIL.FieldWorks.CacheLight, SIL.FieldWorks.CacheLightTests
 
 ## Interfaces and Data Models
 
@@ -88,6 +84,21 @@ of frequently accessed linguistic data objects. Critical for application perform
   - Path: `CacheLightTests/Properties/Resources.Designer.cs`
   - Public class implementation
 
+## Entry Points
+- Provides caching services and interfaces
+- Integrated into data access pipelines
+
+## Test Index
+Test projects: CacheLightTests. 2 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **Cellar/** - Core data model that benefits from CacheLight services
+- **Common/** - Provides utility infrastructure used by CacheLight
+- **DbExtend/** - Database extensions that may use caching
+
 ## References
 
 - **Project files**: CacheLight.csproj, CacheLightTests.csproj
@@ -97,39 +108,27 @@ of frequently accessed linguistic data objects. Critical for application perform
 - **Source file count**: 9 files
 - **Data file count**: 3 files
 
-## Architecture
-C# library with 9 source files. Contains 1 subprojects: CacheLight.
-
-## Interop & Contracts
-Uses Marshaling for cross-boundary calls.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Test Index
-Test projects: CacheLightTests. 2 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
-
 ## References (auto-generated hints)
 - Project files:
-  - Src\CacheLight\CacheLight.csproj
-  - Src\CacheLight\CacheLightTests\CacheLightTests.csproj
+  - Src/CacheLight/CacheLight.csproj
+  - Src/CacheLight/CacheLightTests/CacheLightTests.csproj
 - Key C# files:
-  - Src\CacheLight\AssemblyInfo.cs
-  - Src\CacheLight\CacheLightTests\MetaDataCacheTests.cs
-  - Src\CacheLight\CacheLightTests\Properties\Resources.Designer.cs
-  - Src\CacheLight\CacheLightTests\RealDataCacheTests.cs
-  - Src\CacheLight\MetaDataCache.cs
-  - Src\CacheLight\RealCacheLoader.cs
-  - Src\CacheLight\RealDataCache.cs
-  - Src\CacheLight\TsMultiString.cs
-  - Src\CacheLight\TsStringfactory.cs
+  - Src/CacheLight/AssemblyInfo.cs
+  - Src/CacheLight/CacheLightTests/MetaDataCacheTests.cs
+  - Src/CacheLight/CacheLightTests/Properties/Resources.Designer.cs
+  - Src/CacheLight/CacheLightTests/RealDataCacheTests.cs
+  - Src/CacheLight/MetaDataCache.cs
+  - Src/CacheLight/RealCacheLoader.cs
+  - Src/CacheLight/RealDataCache.cs
+  - Src/CacheLight/TsMultiString.cs
+  - Src/CacheLight/TsStringfactory.cs
 - Data contracts/transforms:
-  - Src\CacheLight\CacheLightTests\Properties\Resources.resx
-  - Src\CacheLight\CacheLightTests\TestModel.xml
-  - Src\CacheLight\CacheLightTests\TestModel.xsd
+  - Src/CacheLight/CacheLightTests/Properties/Resources.resx
+  - Src/CacheLight/CacheLightTests/TestModel.xml
+  - Src/CacheLight/CacheLightTests/TestModel.xsd
+## Code Evidence
+*Analysis based on scanning 8 source files*
+
+- **Classes found**: 12 public classes
+- **Interfaces found**: 1 public interfaces
+- **Namespaces**: SIL.FieldWorks.CacheLight, SIL.FieldWorks.CacheLightTests

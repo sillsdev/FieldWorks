@@ -292,7 +292,9 @@ def compute_folder_change_stats(root: Path, folder_commits: dict):
             for folder, target in valid_targets.items():
                 if change_map[folder]["commit_found"]:
                     continue
-                if current_commit.startswith(target) or target.startswith(current_commit):
+                if current_commit.startswith(target) or target.startswith(
+                    current_commit
+                ):
                     change_map[folder]["commit_found"] = True
             continue
         if current_commit is None:
@@ -375,14 +377,20 @@ def main():
     change_map = compute_folder_change_stats(root, folder_commits)
     for r in results:
         folder_key = r.get("folder")
-        info = change_map.get(folder_key, {"lines": 0, "commit_found": False, "target": None})
+        info = change_map.get(
+            folder_key, {"lines": 0, "commit_found": False, "target": None}
+        )
         r["lines_changed"] = info.get("lines", 0)
         target = info.get("target") or r["frontmatter"].get("last_verified_value", "")
         if info.get("lines", 0) > LINES_THRESHOLD:
             r["warnings"].append(
                 f"Approximately {info['lines']} lines changed since last documented commit; re-run COPILOT analysis"
             )
-        if target and not target.startswith("FIXME") and not info.get("commit_found", False):
+        if (
+            target
+            and not target.startswith("FIXME")
+            and not info.get("commit_found", False)
+        ):
             r["warnings"].append(
                 "last-verified-commit not seen within last 10 commits; review history"
             )

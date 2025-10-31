@@ -12,6 +12,9 @@ Provides plugin infrastructure to export lexicon and interlinear data using SIL'
 publishing system. Enables creation of formatted dictionaries, interlinear texts, and other
 publications in various formats (PDF, EPUB, Word) from FieldWorks data.
 
+## Architecture
+C# library with 6 source files. Contains 1 subprojects: FlexPathwayPlugin.
+
 ## Key Components
 ### Key Classes
 - **FlexPathwayPlugin**
@@ -29,25 +32,19 @@ publications in various formats (PDF, EPUB, Word) from FieldWorks data.
 - Depends on: Pathway SDK, LexText core, Cellar (data model)
 - Used by: LexText export and publishing features
 
+## Interop & Contracts
+Uses COM for cross-boundary calls.
+
+## Threading & Performance
+Single-threaded or thread-agnostic code. No explicit threading detected.
+
+## Config & Feature Flags
+No explicit configuration or feature flags detected.
+
 ## Build Information
 - C# class library plugin project
 - Build via: `dotnet build FlexPathwayPlugin.csproj`
 - Includes test suite
-
-## Entry Points
-- Plugin interface for Pathway integration
-- Export and publishing workflows
-
-## Related Folders
-- **LexText/LexTextDll/** - Core LexText functionality
-- **Transforms/** - XSLT transforms used for export
-- **FXT/** - Transform tools for data conversion
-
-## Code Evidence
-*Analysis based on scanning 6 source files*
-
-- **Classes found**: 5 public classes
-- **Namespaces**: FlexDePluginTests, FlexPathwayPluginTests, SIL.FieldWorks.XWorks, SIL.PublishingSolution
 
 ## Interfaces and Data Models
 
@@ -63,6 +60,21 @@ publications in various formats (PDF, EPUB, Word) from FieldWorks data.
   - Path: `myFolders.cs`
   - Public class implementation
 
+## Entry Points
+- Plugin interface for Pathway integration
+- Export and publishing workflows
+
+## Test Index
+Test projects: FlexPathwayPluginTests. 2 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **LexText/LexTextDll/** - Core LexText functionality
+- **Transforms/** - XSLT transforms used for export
+- **FXT/** - Transform tools for data conversion
+
 ## References
 
 - **Project files**: FlexPathwayPlugin.csproj, FlexPathwayPluginTests.csproj
@@ -71,20 +83,19 @@ publications in various formats (PDF, EPUB, Word) from FieldWorks data.
 - **Source file count**: 6 files
 - **Data file count**: 0 files
 
-## Architecture
-C# library with 6 source files. Contains 1 subprojects: FlexPathwayPlugin.
+## References (auto-generated hints)
+- Project files:
+  - LexText/FlexPathwayPlugin/FlexPathwayPlugin.csproj
+  - LexText/FlexPathwayPlugin/FlexPathwayPluginTests/FlexPathwayPluginTests.csproj
+- Key C# files:
+  - LexText/FlexPathwayPlugin/AssemblyInfo.cs
+  - LexText/FlexPathwayPlugin/FlexPathwayPlugin.cs
+  - LexText/FlexPathwayPlugin/FlexPathwayPluginTests/FlexPathwayPluginTests.cs
+  - LexText/FlexPathwayPlugin/FlexPathwayPluginTests/MyFoldersTest.cs
+  - LexText/FlexPathwayPlugin/FlexPathwayPluginTests/MyProcess.cs
+  - LexText/FlexPathwayPlugin/myFolders.cs
+## Code Evidence
+*Analysis based on scanning 6 source files*
 
-## Interop & Contracts
-Uses COM for cross-boundary calls.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Test Index
-Test projects: FlexPathwayPluginTests. 2 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- **Classes found**: 5 public classes
+- **Namespaces**: FlexDePluginTests, FlexPathwayPluginTests, SIL.FieldWorks.XWorks, SIL.PublishingSolution

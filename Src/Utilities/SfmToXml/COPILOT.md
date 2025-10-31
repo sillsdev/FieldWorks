@@ -12,6 +12,9 @@ Converts Standard Format Marker files (legacy linguistic data format) into XML f
 for processing and import into FieldWorks. Handles parsing of SFM structure and mapping
 to XML representation while preserving data semantics.
 
+## Architecture
+C# library with 19 source files. Contains 2 subprojects: Sfm2Xml, ConvertSFM.
+
 ## Key Components
 ### Key Classes
 - **LexImportFields**
@@ -41,28 +44,19 @@ to XML representation while preserving data semantics.
 - Depends on: XML utilities, Common utilities
 - Used by: Import pipelines and data conversion workflows
 
+## Interop & Contracts
+Uses COM for cross-boundary calls.
+
+## Threading & Performance
+Single-threaded or thread-agnostic code. No explicit threading detected.
+
+## Config & Feature Flags
+No explicit configuration or feature flags detected.
+
 ## Build Information
 - C# application/library
 - Build via: `dotnet build Sfm2Xml.csproj`
 - Data conversion utility
-
-## Entry Points
-- SFM parsing and XML generation
-- Field and hierarchy mapping
-- In-field marker processing
-
-## Related Folders
-- **Utilities/SfmStats/** - SFM statistics tool (related)
-- **LexText/LexTextControls/** - Uses SFM import
-- **ParatextImport/** - Paratext SFM data import
-- **Utilities/XMLUtils/** - XML utilities
-
-## Code Evidence
-*Analysis based on scanning 17 source files*
-
-- **Classes found**: 20 public classes
-- **Interfaces found**: 5 public interfaces
-- **Namespaces**: ConvertSFM, Sfm2Xml, Sfm2XmlTests
 
 ## Interfaces and Data Models
 
@@ -184,6 +178,23 @@ to XML representation while preserving data semantics.
   - Path: `TestData/Phase4.xsl`
   - XSLT transformation template
 
+## Entry Points
+- SFM parsing and XML generation
+- Field and hierarchy mapping
+- In-field marker processing
+
+## Test Index
+Test projects: Sfm2XmlTests. 1 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **Utilities/SfmStats/** - SFM statistics tool (related)
+- **LexText/LexTextControls/** - Uses SFM import
+- **ParatextImport/** - Paratext SFM data import
+- **Utilities/XMLUtils/** - XML utilities
+
 ## References
 
 - **Project files**: ConvertSFM.csproj, Sfm2Xml.csproj, Sfm2XmlTests.csproj
@@ -194,20 +205,42 @@ to XML representation while preserving data semantics.
 - **Source file count**: 19 files
 - **Data file count**: 8 files
 
-## Architecture
-C# library with 19 source files. Contains 2 subprojects: Sfm2Xml, ConvertSFM.
+## References (auto-generated hints)
+- Project files:
+  - Utilities/SfmToXml/ConvertSFM/ConvertSFM.csproj
+  - Utilities/SfmToXml/Sfm2Xml.csproj
+  - Utilities/SfmToXml/Sfm2XmlTests/Sfm2XmlTests.csproj
+- Key C# files:
+  - Utilities/SfmToXml/AssemblyInfo.cs
+  - Utilities/SfmToXml/CRC.cs
+  - Utilities/SfmToXml/ClsFieldDescription.cs
+  - Utilities/SfmToXml/ClsHierarchyEntry.cs
+  - Utilities/SfmToXml/ClsInFieldMarker.cs
+  - Utilities/SfmToXml/ClsLanguage.cs
+  - Utilities/SfmToXml/ConvertSFM/ConvertSFM.cs
+  - Utilities/SfmToXml/Converter.cs
+  - Utilities/SfmToXml/FieldHierarchyInfo.cs
+  - Utilities/SfmToXml/FileReader.cs
+  - Utilities/SfmToXml/LanguageInfoUI.cs
+  - Utilities/SfmToXml/LexImportField.cs
+  - Utilities/SfmToXml/LexImportFields.cs
+  - Utilities/SfmToXml/LexImportOption.cs
+  - Utilities/SfmToXml/Log.cs
+  - Utilities/SfmToXml/Sfm2XmlStrings.Designer.cs
+  - Utilities/SfmToXml/Sfm2XmlTests/ConverterTests.cs
+  - Utilities/SfmToXml/Sfm2XmlTests/Properties/AssemblyInfo.cs
+  - Utilities/SfmToXml/Statics.cs
+- Data contracts/transforms:
+  - Utilities/SfmToXml/Sfm2XmlStrings.resx
+  - Utilities/SfmToXml/TestData/BuildPhase2XSLT.xsl
+  - Utilities/SfmToXml/TestData/MoeMap.xml
+  - Utilities/SfmToXml/TestData/Phase3.xsl
+  - Utilities/SfmToXml/TestData/Phase4.xsl
+  - Utilities/SfmToXml/TestData/TestMapping.xml
+  - Utilities/SfmToXml/TestData/YiGreenMap.xml
+## Code Evidence
+*Analysis based on scanning 17 source files*
 
-## Interop & Contracts
-Uses COM for cross-boundary calls.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Test Index
-Test projects: Sfm2XmlTests. 1 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- **Classes found**: 20 public classes
+- **Interfaces found**: 5 public interfaces
+- **Namespaces**: ConvertSFM, Sfm2Xml, Sfm2XmlTests

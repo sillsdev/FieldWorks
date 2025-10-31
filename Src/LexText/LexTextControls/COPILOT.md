@@ -12,6 +12,9 @@ Provides specialized controls and dialogs for lexicon management including impor
 (LexImportWizard, FlexLiftMerger), entry editing components, chooser dialogs, and dictionary
 configuration interfaces. Essential UI building blocks for the FLEx lexicon editor.
 
+## Architecture
+C# library with 100 source files. Contains 1 subprojects: LexTextControls.
+
 ## Key Components
 ### Key Classes
 - **InterlinearMapping**
@@ -39,28 +42,19 @@ configuration interfaces. Essential UI building blocks for the FLEx lexicon edit
 - Depends on: Cellar (data model), Common (UI infrastructure), LexText core
 - Used by: LexText/LexTextDll, LexText/Lexicon
 
+## Interop & Contracts
+Uses COM for cross-boundary calls.
+
+## Threading & Performance
+Threading model: UI thread marshaling.
+
+## Config & Feature Flags
+No explicit configuration or feature flags detected.
+
 ## Build Information
 - C# class library project
 - Build via: `dotnet build LexTextControls.csproj`
 - Includes extensive test suite
-
-## Entry Points
-- Lexicon editing dialogs
-- Import/export wizards
-- Specialized lexicon controls
-
-## Related Folders
-- **LexText/Lexicon/** - Uses these controls for lexicon editing
-- **LexText/LexTextDll/** - Core functionality using controls
-- **FwCoreDlgs/** - Common dialog infrastructure
-- **Common/Controls/** - Base control infrastructure
-
-## Code Evidence
-*Analysis based on scanning 81 source files*
-
-- **Classes found**: 20 public classes
-- **Interfaces found**: 3 public interfaces
-- **Namespaces**: LexTextControlsTests, SIL.FieldWorks.LexText.Controls, SIL.FieldWorks.LexText.Controls.DataNotebook, SIL.FieldWorks.XWorks.MorphologyEditor, to
 
 ## Interfaces and Data Models
 
@@ -166,6 +160,23 @@ configuration interfaces. Essential UI building blocks for the FLEx lexicon edit
 - **NodeKind** (enum)
   - Path: `FeatureStructureTreeView.cs`
 
+## Entry Points
+- Lexicon editing dialogs
+- Import/export wizards
+- Specialized lexicon controls
+
+## Test Index
+Test projects: LexTextControlsTests. 7 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **LexText/Lexicon/** - Uses these controls for lexicon editing
+- **LexText/LexTextDll/** - Core functionality using controls
+- **FwCoreDlgs/** - Common dialog infrastructure
+- **Common/Controls/** - Base control infrastructure
+
 ## References
 
 - **Project files**: LexTextControls.csproj, LexTextControlsTests.csproj
@@ -175,20 +186,65 @@ configuration interfaces. Essential UI building blocks for the FLEx lexicon edit
 - **Source file count**: 100 files
 - **Data file count**: 47 files
 
-## Architecture
-C# library with 100 source files. Contains 1 subprojects: LexTextControls.
+## References (auto-generated hints)
+- Project files:
+  - LexText/LexTextControls/LexTextControls.csproj
+  - LexText/LexTextControls/LexTextControlsTests/LexTextControlsTests.csproj
+- Key C# files:
+  - LexText/LexTextControls/AddAllomorphDlg.cs
+  - LexText/LexTextControls/AddNewSenseDlg.cs
+  - LexText/LexTextControls/AddWritingSystemButton.Designer.cs
+  - LexText/LexTextControls/AddWritingSystemButton.cs
+  - LexText/LexTextControls/AssemblyInfo.cs
+  - LexText/LexTextControls/BaseGoDlg.cs
+  - LexText/LexTextControls/CombineImportDlg.Designer.cs
+  - LexText/LexTextControls/CombineImportDlg.cs
+  - LexText/LexTextControls/ConfigureHomographDlg.cs
+  - LexText/LexTextControls/ConfigureHomographDlg.designer.cs
+  - LexText/LexTextControls/ContextMenuRequestedEventArgs.cs
+  - LexText/LexTextControls/DataNotebook/AnthroFieldMappingDlg.Designer.cs
+  - LexText/LexTextControls/DataNotebook/AnthroFieldMappingDlg.cs
+  - LexText/LexTextControls/DataNotebook/DateFieldOptions.Designer.cs
+  - LexText/LexTextControls/DataNotebook/DateFieldOptions.cs
+  - LexText/LexTextControls/DataNotebook/DiscardOptions.Designer.cs
+  - LexText/LexTextControls/DataNotebook/DiscardOptions.cs
+  - LexText/LexTextControls/DataNotebook/ImportCharMappingDlg.Designer.cs
+  - LexText/LexTextControls/DataNotebook/ImportCharMappingDlg.cs
+  - LexText/LexTextControls/DataNotebook/ImportDateFormatDlg.Designer.cs
+  - LexText/LexTextControls/DataNotebook/ImportDateFormatDlg.cs
+  - LexText/LexTextControls/DataNotebook/ImportEncCvtrDlg.Designer.cs
+  - LexText/LexTextControls/DataNotebook/ImportEncCvtrDlg.cs
+  - LexText/LexTextControls/DataNotebook/ImportMatchReplaceDlg.Designer.cs
+  - LexText/LexTextControls/DataNotebook/ImportMatchReplaceDlg.cs
+- Data contracts/transforms:
+  - LexText/LexTextControls/AddAllomorphDlg.resx
+  - LexText/LexTextControls/AddNewSenseDlg.resx
+  - LexText/LexTextControls/BaseGoDlg.resx
+  - LexText/LexTextControls/CombineImportDlg.resx
+  - LexText/LexTextControls/ConfigureHomographDlg.resx
+  - LexText/LexTextControls/DataNotebook/AnthroFieldMappingDlg.resx
+  - LexText/LexTextControls/DataNotebook/DateFieldOptions.resx
+  - LexText/LexTextControls/DataNotebook/DiscardOptions.resx
+  - LexText/LexTextControls/DataNotebook/ImportCharMappingDlg.resx
+  - LexText/LexTextControls/DataNotebook/ImportDateFormatDlg.resx
+  - LexText/LexTextControls/DataNotebook/ImportEncCvtrDlg.resx
+  - LexText/LexTextControls/DataNotebook/ImportMatchReplaceDlg.resx
+  - LexText/LexTextControls/DataNotebook/LinkFieldOptions.resx
+  - LexText/LexTextControls/DataNotebook/ListRefFieldOptions.resx
+  - LexText/LexTextControls/DataNotebook/NotebookImportWiz.resx
+  - LexText/LexTextControls/DataNotebook/StringFieldOptions.resx
+  - LexText/LexTextControls/DataNotebook/TextFieldOptions.resx
+  - LexText/LexTextControls/FeatureStructureTreeView.resx
+  - LexText/LexTextControls/InsertEntryDlg.resx
+  - LexText/LexTextControls/InsertRecordDlg.resx
+  - LexText/LexTextControls/InsertionControl.resx
+  - LexText/LexTextControls/LexImportWizard.resx
+  - LexText/LexTextControls/LexImportWizardCharMarkerDlg.resx
+  - LexText/LexTextControls/LexImportWizardLanguage.resx
+  - LexText/LexTextControls/LexImportWizardMarker.resx
+## Code Evidence
+*Analysis based on scanning 81 source files*
 
-## Interop & Contracts
-Uses COM for cross-boundary calls.
-
-## Threading & Performance
-Threading model: UI thread marshaling.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Test Index
-Test projects: LexTextControlsTests. 7 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- **Classes found**: 20 public classes
+- **Interfaces found**: 3 public interfaces
+- **Namespaces**: LexTextControlsTests, SIL.FieldWorks.LexText.Controls, SIL.FieldWorks.LexText.Controls.DataNotebook, SIL.FieldWorks.XWorks.MorphologyEditor, to

@@ -12,6 +12,9 @@ Implements the main application coordination, module initialization, integration
 areas (lexicon, morphology, interlinear, discourse), and shared services for the FLEx application.
 Serves as the integration layer that brings together all FLEx components into a cohesive application.
 
+## Architecture
+C# library with 10 source files. Contains 1 subprojects: LexTextDll.
+
 ## Key Components
 ### Key Classes
 - **FlexHelpTopicProvider**
@@ -31,29 +34,19 @@ Serves as the integration layer that brings together all FLEx components into a 
 - Depends on: XCore (framework), Cellar (data model), Common, all LexText subprojects
 - Used by: LexText/LexTextExe (main executable)
 
+## Interop & Contracts
+Uses COM for cross-boundary calls.
+
+## Threading & Performance
+Single-threaded or thread-agnostic code. No explicit threading detected.
+
+## Config & Feature Flags
+No explicit configuration or feature flags detected.
+
 ## Build Information
 - C# class library project
 - Build via: `dotnet build LexTextDll.csproj`
 - Core library loaded by LexText executable
-
-## Entry Points
-- LexTextApp class (main application logic)
-- Area management and navigation
-- Help system integration
-
-## Related Folders
-- **LexText/LexTextExe/** - Executable that loads LexTextDll
-- **XCore/** - Framework hosting LexText
-- **LexText/Lexicon/** - Lexicon editing features
-- **LexText/Interlinear/** - Interlinear text features
-- **LexText/Morphology/** - Morphology features
-- All other LexText subfolders
-
-## Code Evidence
-*Analysis based on scanning 8 source files*
-
-- **Classes found**: 7 public classes
-- **Namespaces**: LexTextDllTests, SIL.FieldWorks.XWorks.LexText
 
 ## Interfaces and Data Models
 
@@ -81,6 +74,25 @@ Serves as the integration layer that brings together all FLEx components into a 
   - Path: `TransductionSample.cs`
   - Public class implementation
 
+## Entry Points
+- LexTextApp class (main application logic)
+- Area management and navigation
+- Help system integration
+
+## Test Index
+Test projects: LexTextDllTests. 1 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **LexText/LexTextExe/** - Executable that loads LexTextDll
+- **XCore/** - Framework hosting LexText
+- **LexText/Lexicon/** - Lexicon editing features
+- **LexText/Interlinear/** - Interlinear text features
+- **LexText/Morphology/** - Morphology features
+- All other LexText subfolders
+
 ## References
 
 - **Project files**: LexTextDll.csproj, LexTextDllTests.csproj
@@ -89,20 +101,28 @@ Serves as the integration layer that brings together all FLEx components into a 
 - **Source file count**: 10 files
 - **Data file count**: 4 files
 
-## Architecture
-C# library with 10 source files. Contains 1 subprojects: LexTextDll.
+## References (auto-generated hints)
+- Project files:
+  - LexText/LexTextDll/LexTextDll.csproj
+  - LexText/LexTextDll/LexTextDllTests/LexTextDllTests.csproj
+- Key C# files:
+  - LexText/LexTextDll/AreaListener.cs
+  - LexText/LexTextDll/AssemblyInfo.cs
+  - LexText/LexTextDll/FlexHelpTopicProvider.cs
+  - LexText/LexTextDll/ImageHolder.cs
+  - LexText/LexTextDll/LexTextApp.cs
+  - LexText/LexTextDll/LexTextDllTests/AreaListenerTests.cs
+  - LexText/LexTextDll/LexTextStrings.Designer.cs
+  - LexText/LexTextDll/RestoreDefaultsDlg.Designer.cs
+  - LexText/LexTextDll/RestoreDefaultsDlg.cs
+  - LexText/LexTextDll/TransductionSample.cs
+- Data contracts/transforms:
+  - LexText/LexTextDll/HelpTopicPaths.resx
+  - LexText/LexTextDll/ImageHolder.resx
+  - LexText/LexTextDll/LexTextStrings.resx
+  - LexText/LexTextDll/RestoreDefaultsDlg.resx
+## Code Evidence
+*Analysis based on scanning 8 source files*
 
-## Interop & Contracts
-Uses COM for cross-boundary calls.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Test Index
-Test projects: LexTextDllTests. 1 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- **Classes found**: 7 public classes
+- **Namespaces**: LexTextDllTests, SIL.FieldWorks.XWorks.LexText

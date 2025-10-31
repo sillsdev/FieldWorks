@@ -12,6 +12,9 @@ Provides tools for defining morphological rules, allomorph conditions, phonologi
 natural classes, and morpheme environments. Enables linguistic definition of word formation
 patterns and supports the morphological parser configuration.
 
+## Architecture
+C# library with 61 source files. Contains 2 subprojects: MorphologyEditorDll, MGA.
+
 ## Key Components
 ### Key Classes
 - **AdhocCoProhibAtomicLauncher**
@@ -34,27 +37,19 @@ patterns and supports the morphological parser configuration.
 - Depends on: Cellar (data model), LexText/ParserCore, Common (UI)
 - Used by: LexText/LexTextDll, LexText/Interlinear (for parsing)
 
+## Interop & Contracts
+Uses COM for cross-boundary calls.
+
+## Threading & Performance
+Single-threaded or thread-agnostic code. No explicit threading detected.
+
+## Config & Feature Flags
+No explicit configuration or feature flags detected.
+
 ## Build Information
 - C# class library project
 - Build via: `dotnet build MorphologyEditorDll.csproj`
 - Morphology editing and rule management
-
-## Entry Points
-- Morphology editor interface
-- Rule and feature editors
-- Allomorph condition management
-
-## Related Folders
-- **LexText/ParserCore/** - Parsing engine using morphology rules
-- **LexText/ParserUI/** - Parser UI for morphology
-- **LexText/Interlinear/** - Uses morphology for text analysis
-- **LexText/Lexicon/** - Lexicon data used in morphology
-
-## Code Evidence
-*Analysis based on scanning 55 source files*
-
-- **Classes found**: 20 public classes
-- **Namespaces**: SIL.FieldWorks.LexText.Controls.MGA, SIL.FieldWorks.XWorks.MorphologyEditor
 
 ## Interfaces and Data Models
 
@@ -138,6 +133,23 @@ patterns and supports the morphological parser configuration.
   - Path: `WordformGoDlg.cs`
   - Public class implementation
 
+## Entry Points
+- Morphology editor interface
+- Rule and feature editors
+- Allomorph condition management
+
+## Test Index
+Test projects: MGATests, MorphologyEditorDllTests. 2 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **LexText/ParserCore/** - Parsing engine using morphology rules
+- **LexText/ParserUI/** - Parser UI for morphology
+- **LexText/Interlinear/** - Uses morphology for text analysis
+- **LexText/Lexicon/** - Lexicon data used in morphology
+
 ## References
 
 - **Project files**: MGA.csproj, MGATests.csproj, MorphologyEditorDll.csproj, MorphologyEditorDllTests.csproj
@@ -148,20 +160,66 @@ patterns and supports the morphological parser configuration.
 - **Source file count**: 61 files
 - **Data file count**: 27 files
 
-## Architecture
-C# library with 61 source files. Contains 2 subprojects: MorphologyEditorDll, MGA.
+## References (auto-generated hints)
+- Project files:
+  - LexText/Morphology/MGA/MGA.csproj
+  - LexText/Morphology/MGA/MGATests/MGATests.csproj
+  - LexText/Morphology/MorphologyEditorDll.csproj
+  - LexText/Morphology/MorphologyEditorDllTests/MorphologyEditorDllTests.csproj
+- Key C# files:
+  - LexText/Morphology/AdhocCoProhibAtomicLauncher.cs
+  - LexText/Morphology/AdhocCoProhibAtomicReferenceSlice.cs
+  - LexText/Morphology/AdhocCoProhibVectorLauncher.cs
+  - LexText/Morphology/AdhocCoProhibVectorReferenceSlice.cs
+  - LexText/Morphology/AffixRuleFormulaControl.cs
+  - LexText/Morphology/AffixRuleFormulaSlice.cs
+  - LexText/Morphology/AffixRuleFormulaVc.cs
+  - LexText/Morphology/AnalysisInterlinearRS.cs
+  - LexText/Morphology/AssemblyInfo.cs
+  - LexText/Morphology/AssignFeaturesToPhonemes.Designer.cs
+  - LexText/Morphology/AssignFeaturesToPhonemes.cs
+  - LexText/Morphology/BasicIPASymbolSlice.cs
+  - LexText/Morphology/ConcordanceDlg.cs
+  - LexText/Morphology/ImageHolder.cs
+  - LexText/Morphology/InflAffixTemplateControl.cs
+  - LexText/Morphology/InflAffixTemplateEventArgs.cs
+  - LexText/Morphology/InflAffixTemplateMenuHandler.cs
+  - LexText/Morphology/InflAffixTemplateSlice.cs
+  - LexText/Morphology/InterlinearSlice.cs
+  - LexText/Morphology/MEImages.cs
+  - LexText/Morphology/MEStrings.Designer.cs
+  - LexText/Morphology/MGA/AssemblyInfo.cs
+  - LexText/Morphology/MGA/GlossListBox.cs
+  - LexText/Morphology/MGA/GlossListBoxItem.cs
+  - LexText/Morphology/MGA/GlossListEventArgs.cs
+- Data contracts/transforms:
+  - LexText/Morphology/AdhocCoProhibAtomicLauncher.resx
+  - LexText/Morphology/AdhocCoProhibVectorLauncher.resx
+  - LexText/Morphology/AnalysisInterlinearRS.resx
+  - LexText/Morphology/ConcordanceDlg.resx
+  - LexText/Morphology/ImageHolder.resx
+  - LexText/Morphology/MEImages.resx
+  - LexText/Morphology/MEStrings.resx
+  - LexText/Morphology/MGA/GlossListBox.resx
+  - LexText/Morphology/MGA/GlossLists/CreateFeatureCatalog.xsl
+  - LexText/Morphology/MGA/GlossLists/EticGlossList.xml
+  - LexText/Morphology/MGA/GlossLists/FeatureCatalog.dtd
+  - LexText/Morphology/MGA/GlossLists/FeatureCatalog.xml
+  - LexText/Morphology/MGA/GlossLists/OriginalWayToProduceEticGlossList/MGAMaster.xml
+  - LexText/Morphology/MGA/GlossLists/OriginalWayToProduceEticGlossList/MasterGlossList.xml
+  - LexText/Morphology/MGA/GlossLists/OriginalWayToProduceEticGlossList/MasterGlossListValidityConstraints.xml
+  - LexText/Morphology/MGA/GlossLists/OriginalWayToProduceEticGlossList/MasterGlossListWithValidtyFailures.xml
+  - LexText/Morphology/MGA/GlossLists/OriginalWayToProduceEticGlossList/MasterToEticGlossList.xsl
+  - LexText/Morphology/MGA/GlossLists/OriginalWayToProduceEticGlossList/masterGlossList.dtd
+  - LexText/Morphology/MGA/GlossLists/OriginalWayToProduceEticGlossList/schematron-report.xsl
+  - LexText/Morphology/MGA/GlossLists/OriginalWayToProduceEticGlossList/schematron1-5.xsd
+  - LexText/Morphology/MGA/GlossLists/OriginalWayToProduceEticGlossList/skeleton1-5.xsl
+  - LexText/Morphology/MGA/GlossLists/OriginalWayToProduceEticGlossList/verbid.xsl
+  - LexText/Morphology/MGA/GlossLists/eticGlossList.dtd
+  - LexText/Morphology/MGA/MGADialog.resx
+  - LexText/Morphology/MGA/MGAStrings.resx
+## Code Evidence
+*Analysis based on scanning 55 source files*
 
-## Interop & Contracts
-Uses COM for cross-boundary calls.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Test Index
-Test projects: MGATests, MorphologyEditorDllTests. 2 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- **Classes found**: 20 public classes
+- **Namespaces**: SIL.FieldWorks.LexText.Controls.MGA, SIL.FieldWorks.XWorks.MorphologyEditor

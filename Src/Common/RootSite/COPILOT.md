@@ -13,6 +13,9 @@ handle view lifecycle management, coordinate printing, manage selection and edit
 between Windows Forms and the native Views architecture. Critical foundation for all text
 display and editing functionality.
 
+## Architecture
+C# library with 31 source files. Contains 1 subprojects: RootSite.
+
 ## Key Components
 ### Key Classes
 - **CollectorEnv**
@@ -43,30 +46,19 @@ display and editing functionality.
 - Depends on: views (native view layer), Common/ViewsInterfaces
 - Used by: Common/SimpleRootSite, applications with complex views
 
+## Interop & Contracts
+Uses Marshaling, COM for cross-boundary calls.
+
+## Threading & Performance
+Threading model: explicit threading, UI thread marshaling.
+
+## Config & Feature Flags
+No explicit configuration or feature flags detected.
+
 ## Build Information
 - C# class library project
 - Build via: `dotnet build RootSite.csproj`
 - Bridge between managed and native views
-
-## Entry Points
-- Base classes for view hosting
-- Interfaces for view management
-- Graphics coordination
-
-## Related Folders
-- **Common/SimpleRootSite/** - Simplified root site built on RootSite
-- **Common/ViewsInterfaces/** - Interfaces used by RootSite
-- **views/** - Native view layer that RootSite manages
-- **ManagedVwWindow/** - Window management using root sites
-- **xWorks/** - Uses root sites for data display
-- **LexText/** - Uses root sites for text views
-
-## Code Evidence
-*Analysis based on scanning 28 source files*
-
-- **Classes found**: 20 public classes
-- **Interfaces found**: 6 public interfaces
-- **Namespaces**: SIL.FieldWorks.Common.RootSites
 
 ## Interfaces and Data Models
 
@@ -189,6 +181,25 @@ display and editing functionality.
 - **StTextFrags** (enum)
   - Path: `StVc.cs`
 
+## Entry Points
+- Base classes for view hosting
+- Interfaces for view management
+- Graphics coordination
+
+## Test Index
+Test projects: RootSiteTests. 11 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- **Common/SimpleRootSite/** - Simplified root site built on RootSite
+- **Common/ViewsInterfaces/** - Interfaces used by RootSite
+- **views/** - Native view layer that RootSite manages
+- **ManagedVwWindow/** - Window management using root sites
+- **xWorks/** - Uses root sites for data display
+- **LexText/** - Uses root sites for text views
+
 ## References
 
 - **Project files**: RootSite.csproj, RootSiteTests.csproj
@@ -198,20 +209,47 @@ display and editing functionality.
 - **Source file count**: 31 files
 - **Data file count**: 7 files
 
-## Architecture
-C# library with 31 source files. Contains 1 subprojects: RootSite.
+## References (auto-generated hints)
+- Project files:
+  - Common/RootSite/RootSite.csproj
+  - Common/RootSite/RootSiteTests/RootSiteTests.csproj
+- Key C# files:
+  - Common/RootSite/AssemblyInfo.cs
+  - Common/RootSite/CollectorEnv.cs
+  - Common/RootSite/FwBaseVc.cs
+  - Common/RootSite/IApp.cs
+  - Common/RootSite/IHeightEstimator.cs
+  - Common/RootSite/IRootSiteGroup.cs
+  - Common/RootSite/IRootSiteSlave.cs
+  - Common/RootSite/IVwGraphicsNet.cs
+  - Common/RootSite/PictureWrapper.cs
+  - Common/RootSite/Properties/Resources.Designer.cs
+  - Common/RootSite/RequestSelectionHelper.cs
+  - Common/RootSite/RootSite.cs
+  - Common/RootSite/RootSiteControl.cs
+  - Common/RootSite/RootSiteEditingHelper.cs
+  - Common/RootSite/RootSiteStrings.Designer.cs
+  - Common/RootSite/RootSiteTests/BasicViewTestsBase.cs
+  - Common/RootSite/RootSiteTests/CollectorEnvTests.cs
+  - Common/RootSite/RootSiteTests/DummyBasicView.cs
+  - Common/RootSite/RootSiteTests/DummyBasicViewVc.cs
+  - Common/RootSite/RootSiteTests/MoreRootSiteTests.cs
+  - Common/RootSite/RootSiteTests/PrintRootSiteTests.cs
+  - Common/RootSite/RootSiteTests/Properties/Resources.Designer.cs
+  - Common/RootSite/RootSiteTests/RootSiteEditingHelperTests.cs
+  - Common/RootSite/RootSiteTests/RootSiteGroupTests.cs
+  - Common/RootSite/RootSiteTests/RootsiteBasicViewTestsBase.cs
+- Data contracts/transforms:
+  - Common/RootSite/Properties/Resources.resx
+  - Common/RootSite/RootSite.resx
+  - Common/RootSite/RootSiteControl.resx
+  - Common/RootSite/RootSiteStrings.resx
+  - Common/RootSite/RootSiteTests/DummyBasicView.resx
+  - Common/RootSite/RootSiteTests/Properties/Resources.resx
+  - Common/RootSite/RootSiteTests/RootSiteDataProviderCacheModel.xml
+## Code Evidence
+*Analysis based on scanning 28 source files*
 
-## Interop & Contracts
-Uses Marshaling, COM for cross-boundary calls.
-
-## Threading & Performance
-Threading model: explicit threading, UI thread marshaling.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Test Index
-Test projects: RootSiteTests. 11 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- **Classes found**: 20 public classes
+- **Interfaces found**: 6 public interfaces
+- **Namespaces**: SIL.FieldWorks.Common.RootSites
