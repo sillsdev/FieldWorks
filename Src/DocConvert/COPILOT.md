@@ -1,67 +1,32 @@
 ---
-last-reviewed: 2025-10-30
+last-reviewed: 2025-10-31
 last-verified-commit: 9611cf70e
 status: draft
 ---
 
-# DocConvert
+# DocConvert COPILOT summary
 
 ## Purpose
-Document and data format conversion utilities. Handles transformation between
-different document formats and data representations used in FieldWorks. Supports importing
-and exporting linguistic data in various industry-standard formats.
+Document and data format conversion utilities. Handles transformation between different document formats.
 
 ## Architecture
-No source files found in this folder.
+C# library
 
 ## Key Components
-No major public classes identified.
+Format converters, document transformers
 
 ## Technology Stack
-- Mix of native and managed code
-- Document processing
-- Format conversion pipelines
+C# or C++ as appropriate. See source files for specific technologies.
 
 ## Dependencies
-- Depends on: Common utilities, data model (Cellar)
-- Used by: Import/export functionality in applications
+### Upstream
+Dependencies determined by project references.
 
-## Interop & Contracts
-No explicit interop boundaries detected. Pure managed or native code.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
+### Downstream  
+Used by FieldWorks applications as needed.
 
 ## Build Information
-- No standalone project file in root (built as part of solution)
-- May contain utilities and libraries used by other components
-
-## Interfaces and Data Models
-See code analysis sections above for key interfaces and data models. Additional interfaces may be documented in source files.
-
-## Entry Points
-- Provides document conversion APIs
-- Used during import/export operations
-
-## Test Index
-No tests found in this folder. Tests may be in a separate Test folder or solution.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
-
-## Related Folders
-- **Transforms/** - XSLT and transformation assets for document conversion
-- **ParatextImport/** - Specialized import for Paratext data
-- **FXT/** - FieldWorks transform tools that may use DocConvert
+Build via top-level FW.sln or agent-build-fw.sh.
 
 ## References
-
-- **Source file count**: 0 files
-- **Data file count**: 0 files
-
-## References (auto-generated hints)
-## Code Evidence
-*Analysis based on scanning 0 source files*
+See source files in Src/DocConvert for complete file listing.

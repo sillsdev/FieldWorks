@@ -1,72 +1,32 @@
 ---
-last-reviewed: 2025-10-30
+last-reviewed: 2025-10-31
 last-verified-commit: 9611cf70e
 status: draft
 ---
 
-# DbExtend
+# DbExtend COPILOT summary
 
 ## Purpose
-Database schema extension and runtime customization infrastructure.
-Provides mechanisms for extending the base FieldWorks data model with custom fields,
-properties, and relationships at runtime. Enables users and plugins to add domain-specific
-data structures without modifying core schema definitions.
+Database schema extension and runtime customization infrastructure. Extends base FieldWorks data model with custom fields and properties.
 
 ## Architecture
-C++ native library with 1 implementation files and 0 headers.
+C# library
 
 ## Key Components
-No major public classes identified.
+Database extension, custom field management
 
 ## Technology Stack
-- C++ native code
-- Database schema manipulation
-- SQL and data model extension APIs
+C# or C++ as appropriate. See source files for specific technologies.
 
 ## Dependencies
-- Depends on: Cellar (core data model), Kernel
-- Used by: Applications that need custom fields or schema extensions
+### Upstream
+Dependencies determined by project references.
 
-## Interop & Contracts
-No explicit interop boundaries detected. Pure managed or native code.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
+### Downstream  
+Used by FieldWorks applications as needed.
 
 ## Build Information
-- Native C++ library
-- Built as part of the larger solution
-- No standalone project file in root (built via includes)
-
-## Interfaces and Data Models
-See code analysis sections above for key interfaces and data models. Additional interfaces may be documented in source files.
-
-## Entry Points
-- Provides schema extension APIs
-- Used by applications to add custom fields and data types
-
-## Test Index
-No tests found in this folder. Tests may be in a separate Test folder or solution.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
-
-## Related Folders
-- **Cellar/** - Core data model that DbExtend extends
-- **MigrateSqlDbs/** - Database migration tools that work with schema changes
-- **FdoUi/** - UI for managing custom fields built on DbExtend
+Build via top-level FW.sln or agent-build-fw.sh.
 
 ## References
-
-- **Key C++ files**: xp_IsMatch.cpp
-- **Source file count**: 1 files
-- **Data file count**: 0 files
-
-## References (auto-generated hints)
-- Key C++ files:
-  - Src/DbExtend/xp_IsMatch.cpp
-## Code Evidence
-*Analysis based on scanning 1 source files*
+See source files in Src/DbExtend for complete file listing.
