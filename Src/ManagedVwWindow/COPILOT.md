@@ -1,83 +1,64 @@
 ---
-last-reviewed: 2025-10-30
-last-verified-commit: 9611cf70e
-status: draft
+last-reviewed: 2025-10-31
+last-verified-commit: 0e76301
+status: reviewed
 ---
 
 # ManagedVwWindow
 
 ## Purpose
-Managed .NET wrappers for native view window components.
-Bridges managed UI code with the native views rendering engine, enabling .NET applications
-to host sophisticated text display views that leverage the native rendering capabilities.
-Essential for integrating the powerful native views system into WinForms applications.
+Managed C# wrapper for IVwWindow interface enabling cross-platform window handle access. Wraps Windows Forms Control (HWND) to provide IVwWindow implementation for native Views engine. Bridges managed UI code (WinForms Controls) with native Views rendering by converting between IntPtr HWNDs and managed Control references, exposing client rectangle geometry. Minimal ~50-line adapter class essential for integrating native Views system into .NET WinForms applications (xWorks, LexText, RootSite-based displays).
 
 ## Architecture
-C# library with 3 source files. Contains 1 subprojects: ManagedVwWindow.
+C# library (net462) with 3 source files (~58 lines total). Single class ManagedVwWindow implementing IVwWindow COM interface, wrapping System.Windows.Forms.Control. Marked with COM GUID 3fb0fcd2-ac55-42a8-b580-73b89a2b6215 for COM registration.
 
 ## Key Components
-### Key Classes
-- **ManagedVwWindow**
-- **ManagedVwWindowTests**
 
-## Technology Stack
-- C# .NET with C++/CLI interop
-- Windows Forms integration
-- Native window handle management
+### Window Wrapper
+- **ManagedVwWindow**: Implements IVwWindow for managed Control access. Stores m_control (System.Windows.Forms.Control reference), provides GetClientRectangle() converting Control.ClientRectangle to Views Rect struct, implements Window property setter converting uint HWND to IntPtr and resolving Control via Control.FromHandle().
+  - Inputs: uint Window property (HWND as unsigned int)
+  - Methods:
+    - GetClientRectangle(out Rect clientRectangle): Fills Views Rect with Control's client rectangle (top, left, right, bottom)
+    - Window setter: Converts uint HWND to Control via Control.FromHandle(IntPtr)
+  - Properties: Window (set-only, uint HWND)
+  - Internal: m_control (protected Control field)
+  - Throws: ApplicationException if GetClientRectangle() called before Window set
+  - COM GUID: 3fb0fcd2-ac55-42a8-b580-73b89a2b6215
 
 ## Dependencies
-- Depends on: views (native view layer), Common (UI infrastructure), ManagedVwDrawRootBuffered
-- Used by: All applications with view-based UI (xWorks, LexText)
-
-## Interop & Contracts
-Uses COM for cross-boundary calls.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
+- **External**: Common/ViewsInterfaces (IVwWindow interface, Rect struct), System.Windows.Forms (Control, Control.FromHandle()), System.Runtime.InteropServices (COM attributes)
+- **Internal (upstream)**: ViewsInterfaces (interface contract)
+- **Consumed by**: Common/RootSite (SimpleRootSite creates ManagedVwWindow for its Control), views (native Views engine calls IVwWindow methods), xWorks (browse views host Controls with ManagedVwWindow), LexText (all view-based displays use ManagedVwWindow wrapper)
 
 ## Build Information
-- C# class library with native interop
-- Includes test suite
-- Build with MSBuild or Visual Studio
+- Project type: C# class library (net462)
+- Build: `msbuild ManagedVwWindow.csproj` or `dotnet build` (from FW.sln)
+- Output: ManagedVwWindow.dll
+- Dependencies: ViewsInterfaces, System.Windows.Forms
+- COM attributes: [ComVisible], GUID for COM registration
 
-## Interfaces and Data Models
-
-- **ManagedVwWindow** (class)
-  - Path: `ManagedVwWindow.cs`
-  - Public class implementation
-
-## Entry Points
-- Provides managed window classes for views
-- Bridge between managed UI and native rendering
-
-## Test Index
-Test projects: ManagedVwWindowTests. 1 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+## Test Information
+- Test project: ManagedVwWindowTests
+- Test coverage: Window property setter with valid/invalid HWNDs, GetClientRectangle() with set/unset window, Control.FromHandle() resolution
+- Run: `dotnet test` or Test Explorer in Visual Studio
 
 ## Related Folders
-- **views/** - Native view layer that ManagedVwWindow wraps
-- **ManagedVwDrawRootBuffered/** - Buffered rendering used by windows
-- **Common/RootSite/** - Root site components using managed windows
-- **xWorks/** - Applications using view windows
-- **LexText/** - Uses view windows for text display
+- **views/**: Native Views C++ engine consuming IVwWindow interface
+- **ManagedVwDrawRootBuffered/**: Buffered rendering used alongside ManagedVwWindow
+- **Common/RootSite/**: RootSite base classes creating ManagedVwWindow instances
+- **Common/SimpleRootSite/**: SimpleRootSite uses ManagedVwWindow for Control wrapping
+- **Common/ViewsInterfaces/**: Defines IVwWindow interface and Rect struct
+- **xWorks/**: Browse views and data displays use ManagedVwWindow
+- **LexText/**: All LexText view-based UI uses ManagedVwWindow
 
 ## References
-
-- **Project files**: ManagedVwWindow.csproj, ManagedVwWindowTests.csproj
-- **Target frameworks**: net462
-- **Key C# files**: AssemblyInfo.cs, ManagedVwWindow.cs, ManagedVwWindowTests.cs
-- **Source file count**: 3 files
-- **Data file count**: 0 files
-
-## References (auto-generated hints)
-- Project files:
-  - Src/ManagedVwWindow/ManagedVwWindow.csproj
-  - Src/ManagedVwWindow/ManagedVwWindowTests/ManagedVwWindowTests.csproj
+- **Source files**: 3 C# files (~58 lines): ManagedVwWindow.cs, AssemblyInfo.cs, ManagedVwWindowTests/ManagedVwWindowTests.cs
+- **Project files**: ManagedVwWindow.csproj, ManagedVwWindowTests/ManagedVwWindowTests.csproj
+- **Key class**: ManagedVwWindow (implements IVwWindow)
+- **Key interface**: IVwWindow (from ViewsInterfaces)
+- **COM GUID**: 3fb0fcd2-ac55-42a8-b580-73b89a2b6215
+- **Namespace**: SIL.FieldWorks.Views
+- **Target framework**: net462
 - Key C# files:
   - Src/ManagedVwWindow/AssemblyInfo.cs
   - Src/ManagedVwWindow/ManagedVwWindow.cs
