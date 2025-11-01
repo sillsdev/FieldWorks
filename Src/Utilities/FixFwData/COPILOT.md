@@ -1,78 +1,50 @@
 ---
-last-reviewed: 2025-10-30
-last-verified-commit: 9611cf70e
-status: draft
+last-reviewed: 2025-11-01
+last-verified-commit: HEAD
+status: production
 ---
 
 # FixFwData
 
 ## Purpose
-Command-line tool for repairing FieldWorks project data files.
-Provides automated data integrity checking, error detection, and repair functionality that can be
-run outside the main FieldWorks application. Useful for data recovery, troubleshooting, and
-batch maintenance of project files.
-
-## Architecture
-C# library with 2 source files.
+Command-line utility (WinExe) for repairing FieldWorks project data files. Takes a single file path argument, invokes FwDataFixer from SIL.LCModel.FixData, logs errors to console, and returns exit code 0 (success) or 1 (errors occurred). Provides standalone data repair capability outside the main FieldWorks application for troubleshooting and data recovery.
 
 ## Key Components
-No major public classes identified.
 
-## Technology Stack
-- C# .NET console application
-- Data validation and repair algorithms
+### Program.cs (~120 lines)
+- **Main(string[] args)**: Entry point. Takes file path argument, creates FwDataFixer, calls FixErrorsAndSave(), returns exit code
+  - Input: args[0] = pathname to FW project file
+  - Output: Exit code 0 (no errors) or 1 (errors occurred)
+  - Uses NullProgress (console-based IProgress)
+  - Calls SetUpErrorHandling() for WinForms exception handling
+- **logger(string description, bool errorFixed)**: Callback for FwDataFixer. Prints errors to console, sets errorsOccurred flag, counts fixes
+- **counter()**: Callback returning total error count
+- **SetUpErrorHandling()**: Configures ErrorReport email (flex_errors@sil.org), WinFormsExceptionHandler
+- **NullProgress**: IProgress implementation that writes messages to Console.Out, doesn't support cancellation
 
 ## Dependencies
-- Depends on: Utilities/FixFwDataDll (core repair logic), Cellar (data model)
-- Used by: Administrators and support staff for data repair
-
-## Interop & Contracts
-Uses COM for cross-boundary calls.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
+- **SIL.LCModel.FixData**: FwDataFixer class (core repair logic)
+- **SIL.Reporting**: ErrorReport
+- **SIL.LCModel.Utils**: IProgress
+- **SIL.Windows.Forms**: HotSpotProvider, WinFormsExceptionHandler
+- **Consumer**: Administrators, support staff for data repair
 
 ## Build Information
-- C# console application
-- Build via: `dotnet build FixFwData.csproj`
-- Command-line utility
-
-## Interfaces and Data Models
-See code analysis sections above for key interfaces and data models. Additional interfaces may be documented in source files.
-
-## Entry Points
-- Main() method with command-line argument parsing
-- Invokes FixFwDataDll for actual repair work
+- **Project**: FixFwData.csproj
+- **Type**: WinExe (.NET Framework 4.6.2)
+- **Output**: FixFwData.exe
+- **Platform**: AnyCPU
+- **Source files**: Program.cs, Properties/AssemblyInfo.cs (2 files)
 
 ## Test Index
-No tests found in this folder. Tests may be in a separate Test folder or solution.
-
-## Usage Hints
-Console application. Build and run via command line or Visual Studio. See Entry Points section.
+No test project found.
 
 ## Related Folders
-- **Utilities/FixFwDataDll/** - Core data repair library
-- **Cellar/** - Data model being repaired
-- **MigrateSqlDbs/** - Database migration (related functionality)
+- **Utilities/FixFwDataDll/**: Core data repair library (would contain FwDataFixer if not in LCModel)
+- **SIL.LCModel.FixData**: External library with FwDataFixer
+- **MigrateSqlDbs/**: Legacy FW6→FW7 migration (related data repair scenario)
 
 ## References
-
-- **Project files**: FixFwData.csproj
-- **Target frameworks**: net462
-- **Key C# files**: AssemblyInfo.cs, Program.cs
-- **Source file count**: 2 files
-- **Data file count**: 0 files
-
-## References (auto-generated hints)
-- Project files:
-  - Utilities/FixFwData/FixFwData.csproj
-- Key C# files:
-  - Utilities/FixFwData/Program.cs
-  - Utilities/FixFwData/Properties/AssemblyInfo.cs
-## Code Evidence
-*Analysis based on scanning 1 source files*
-
-- **Namespaces**: FixFwData
+- **SIL.LCModel.FixData.FwDataFixer**: Main repair engine
+- **SIL.LCModel.Utils.IProgress**: Progress reporting interface
+- **SIL.Windows.Forms.Reporting.WinFormsExceptionHandler**: Error handling
