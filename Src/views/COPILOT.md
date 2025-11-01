@@ -1,103 +1,93 @@
 ---
-last-reviewed: 2025-10-30
-last-verified-commit: 9611cf70e
-status: draft
+last-reviewed: 2025-10-31
+last-verified-commit: 73fb49b
+status: reviewed
 ---
 
 # views
 
 ## Purpose
-C++ native rendering engine providing sophisticated text display capabilities for complex
-writing systems. Implements the Views architecture that handles multi-script text layout,
-bidirectional text, complex rendering requirements, and performance-critical display operations.
-Core component enabling FieldWorks to properly display texts in hundreds of writing systems
-with accurate formatting, alignment, and complex script rendering.
-
-## Architecture
-C++ native rendering engine with 45 implementation files and 81 headers. Contains sophisticated text layout and display infrastructure with box-based rendering model.
+Native C++ rendering engine (~66.7K lines) implementing sophisticated box-based layout and display for complex writing systems. Provides VwRootBox (root display), VwParagraphBox (paragraph layout), VwStringBox (text runs), VwTableBox (table layout), VwSelection (text selection), VwEnv (display environment), and VwPropertyStore (formatting properties). Core component enabling accurate multi-script text layout, bidirectional text, complex rendering, and accessible UI across all FieldWorks applications.
 
 ## Key Components
-### Key Classes
-- **ParaBuilder**
-- **VwStringBox**
-- **VwDropCapStringBox**
-- **VwParagraphBox**
-- **VwConcParaBox**
-- **VwAccessRoot**
-- **__declspec**
-- **VwEnv**
-- **NotifierRec**
-- **VwLazyBox**
 
-## Technology Stack
-- C++ native code
-- GDI/DirectX rendering
-- Complex text layout algorithms
-- Unicode and writing system support
+### Box Hierarchy (VwSimpleBoxes.h, VwTextBoxes.h, VwTableBox.h)
+- **VwBox** - Abstract base class for all display boxes
+- **VwGroupBox** - Container box for nested boxes
+- **VwParagraphBox** - Paragraph layout with line breaking, justification
+- **VwConcParaBox** - Concatenated paragraph box for interlinear text
+- **VwStringBox** - Text run display with font, color, style
+- **VwDropCapStringBox** - Drop capital initial letter
+- **VwTableBox**, **VwTableRowBox**, **VwTableCellBox** - Table layout (VwTableBox.cpp/h)
+- **VwDivBox**, **VwAnchorBox** - Division and anchor boxes
+- **VwLazyBox** (VwLazyBox.cpp/h) - Lazy-loading container for performance
+
+### Root and Environment
+- **VwRootBox** (VwRootBox.cpp/h) - Top-level display root, owns VwSelection, coordinates layout/paint
+  - `Layout(IVwGraphics* pvg, int dxsAvailWidth)` - Performs layout pass
+  - `DrawRoot(IVwGraphics* pvg, RECT* prcpDraw, ...)` - Renders to graphics context
+  - Manages: m_qvss (selections), m_pvpbox (paragraph boxes), m_qdrs (data access)
+- **VwEnv** (VwEnv.cpp/h) - Display environment for view construction
+  - Implements IVwEnv COM interface for managed callers
+  - `OpenParagraph()`, `CloseParagraph()`, `AddString(ITsString* ptss)` - Display element creation
+  - **NotifierRec** - Tracks display notifications
+
+### Selection and Interaction
+- **VwSelection** (VwSelection.cpp/h) - Abstract base for text selections
+- **VwTextSelection** - Text range selection with IP (insertion point) support
+  - `Install()` - Activates selection for keyboard input
+  - `EndKey(bool fSuppressClumping)` - Handles End key navigation
+
+### Text Storage and Access (VwTextStore.cpp/h, VwTxtSrc.cpp/h)
+- **VwTextStore** - Text storage interface for COM Text Services Framework (TSF)
+- **VwTxtSrc** - Text source abstraction for string iteration
+
+### Property Management (VwPropertyStore.cpp/h)
+- **VwPropertyStore** - Stores text formatting properties (font, color, alignment, etc.)
+  - Implements ITsTextProps for interop with TsString system
+
+### Rendering Utilities
+- **VwLayoutStream** (VwLayoutStream.cpp/h) - Stream-based layout coordination
+- **VwPrintContext** (VwPrintContext.cpp/h) - Print layout context
+- **VwOverlay** (VwOverlay.cpp/h) - Overlay graphics for selection highlighting
+- **VwPattern** (VwPattern.cpp/h) - Pattern matching for search/replace display
+
+### Synchronization and Notifications
+- **VwSynchronizer** (VwSynchronizer.cpp/h) - Synchronizes display updates with data changes
+- **VwNotifier**, **VwAbstractNotifier** (VwNotifier.cpp/h) - Change notification system
+- **VwInvertedViews** (VwInvertedViews.cpp/h) - Manages inverted (reflected) view hierarchies
+
+### Accessibility (Windows-specific)
+- **VwAccessRoot** (VwAccessRoot.cpp/h) - IAccessible implementation for screen readers (WIN32/WIN64 only)
+
+## COM Interfaces (IDL files)
+- **Views.idh**, **ViewsTlb.idl**, **ViewsPs.idl** - COM interface definitions
+- **Render.idh** - Rendering interfaces
+- Exports: IVwRootBox, IVwEnv, IVwSelection, IVwPropertyStore, IVwGraphics, IVwLayoutStream, IVwOverlay
 
 ## Dependencies
-- Depends on: Kernel (low-level services), Generic (utilities), AppCore
-- Used by: All UI components displaying formatted text (via ManagedVwWindow wrappers)
+- **Upstream**: Kernel (low-level utilities, COM infrastructure), Generic (ComSmartPtr, collections), AppCore (GDI wrappers, styled text), Cellar (XML parsing for FwXml)
+- **Downstream consumers**: Common/ViewsInterfaces (COM wrappers), ManagedVwWindow (HWND wrapper), Common/RootSite (SimpleRootSite, CollectorEnv), Common/SimpleRootSite (EditingHelper), all UI displaying formatted text
+- **External**: Windows GDI/GDI+, Text Services Framework (TSF) for advanced input
 
-## Interop & Contracts
-No explicit interop boundaries detected. Pure managed or native code.
+## Test Infrastructure
+- **Test/** subfolder (excluded from main line count)
+- Native C++ tests for box layout, selection, rendering
 
-## Threading & Performance
-Threading model: UI thread marshaling, synchronization.
+## Related Folders
+- **Common/ViewsInterfaces/** - Managed COM wrappers for Views interfaces
+- **ManagedVwWindow/** - Managed IVwWindow implementation
+- **ManagedVwDrawRootBuffered/** - Managed double-buffered drawing
+- **Common/RootSite/** - View coordinator (SimpleRootSite, CollectorEnv)
+- **Kernel/** - Low-level utilities used by Views
+- **Generic/** - COM smart pointers and collections
+- **AppCore/** - GDI wrappers, ColorTable, FwStyledText
 
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Build Information
-- Native C++ project (vcxproj)
-- Performance-critical rendering code
-- Includes test suite
-- Build with Visual Studio or MSBuild
-
-## Interfaces and Data Models
-
-- **IVwNotifier** (class)
-  - Path: `VwSimpleBoxes.h`
-  - Public class implementation
-
-- **NotifierRec** (class)
-  - Path: `VwEnv.h`
-  - Public class implementation
-
-- **ParaBuilder** (class)
-  - Path: `VwTextBoxes.h`
-  - Public class implementation
-
-- **VwAccessRoot** (class)
-  - Path: `VwAccessRoot.h`
-  - Public class implementation
-
-- **VwAnchorBox** (class)
-  - Path: `VwSimpleBoxes.h`
-  - Public class implementation
-
-- **VwBox** (class)
-  - Path: `VwSimpleBoxes.h`
-  - Public class implementation
-
-- **VwConcParaBox** (class)
-  - Path: `VwTextBoxes.h`
-  - Public class implementation
-
-- **VwDivBox** (class)
-  - Path: `VwSimpleBoxes.h`
-  - Public class implementation
-
-- **VwDropCapStringBox** (class)
-  - Path: `VwTextBoxes.h`
-  - Public class implementation
-
-- **VwEnv** (class)
-  - Path: `VwEnv.h`
-  - Public class implementation
-
-- **VwGroupBox** (class)
-  - Path: `VwSimpleBoxes.h`
+## References
+- **Project**: views.vcxproj (native C++ DLL)
+- **90 source/header files** (~66.7K lines): VwRootBox.cpp, VwEnv.cpp, VwSelection.cpp, VwParagraphBox in VwTextBoxes.cpp, VwStringBox in VwTextBoxes.cpp, VwTableBox.cpp, VwPropertyStore.cpp, VwLazyBox.cpp, VwNotifier.cpp, VwSynchronizer.cpp, VwAccessRoot.cpp (Windows), etc.
+- **Main.h** - Central header with forward declarations
+- **Views.def** - DLL export definitions
   - Public class implementation
 
 - **VwInnerPileBox** (class)
