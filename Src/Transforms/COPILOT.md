@@ -1,166 +1,66 @@
 ---
-last-reviewed: 2025-10-30
-last-verified-commit: 9611cf70e
-status: draft
+last-reviewed: 2025-10-31
+last-verified-commit: febcf92
+status: reviewed
 ---
 
 # Transforms
 
 ## Purpose
-Collection of XSLT transformation stylesheets and supporting utilities.
-Contains templates for data conversion, report generation, and content export across
-various formats. Used throughout FieldWorks for transforming XML representations of
-linguistic data into different output formats for reports, publishing, and data exchange.
+Collection of 19 XSLT 1.0 stylesheets organized in Application/ and Presentation/ subdirectories. Provides data transforms for parser integration (XAmple, HermitCrab, GAFAWS), morphology export, trace formatting, and linguistic publishing (XLingPap). Used by FXT tool and export features throughout FieldWorks.
 
-## Architecture
-No source files found in this folder.
+## Subfolders
 
-## Key Components
-No major public classes identified.
+### Application/ (12 XSLT files)
+Parser and morphology data generation transforms:
+- **FxtM3ParserToXAmpleLex.xsl** - M3 to XAmple unified dictionary export
+- **FxtM3ParserToXAmpleADCtl.xsl** - M3 to XAmple AD control file generation
+- **FxtM3ParserToToXAmpleGrammar.xsl** - M3 to XAmple grammar export
+- **FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl** - Word grammar debugging transforms
+- **FxtM3ParserToGAFAWS.xsl** - M3 to GAFAWS format export
+- **FxtM3MorphologySketch.xsl** - Morphology sketch document generation
+- **FxtM3ParserCommon.xsl** - Shared templates and utilities for M3 parser exports
+- **CalculateStemNamesUsedInLexicalEntries.xsl** - Stem name usage analysis
+- **UnifyTwoFeatureStructures.xsl** - Feature unification logic
+- **BoundaryMarkerGuids.xsl** - GUID definitions for phonological boundary markers
+- **MorphTypeGuids.xsl** - GUID definitions for morpheme types
+- **XAmpleTemplateVariables.xsl** - XAmple template variable definitions
 
-## Technology Stack
-- XSLT (eXtensible Stylesheet Language Transformations)
-- XML processing
-- Template-based document generation
+### Presentation/ (7 XSLT files)
+Formatting and display transforms:
+- **FormatXAmpleTrace.xsl** - XAmple parser trace HTML formatting
+- **FormatHCTrace.xsl** - HermitCrab parser trace HTML formatting
+- **FormatXAmpleParse.xsl** - XAmple parse result formatting
+- **FormatXAmpleWordGrammarDebuggerResult.xsl** - Word grammar debugger output formatting
+- **FormatCommon.xsl** - Shared formatting templates and utilities
+- **JSFunctions.xsl** - JavaScript function generation for interactive HTML
+- **XLingPap1.xsl** - XLingPap linguistic paper formatting (publication-quality output)
+
+## Key Transform Patterns
+
+### M3 Parser Exports (Application/)
+- Input: XML dump from LCModel M3 parser server (post CleanFWDump.xslt processing)
+- Output: XAmple lexicon, grammar, AD control files for legacy XAmple parser
+- Uses extensive XSL keys for efficient lookup: `AffixAlloID`, `LexEntryID`, `StemMsaID`, `POSID`, etc.
+- Handles: Affixes, stems, allomorphs, inflection classes, feature structures, phonological environments
+
+### Trace Formatters (Presentation/)
+- Input: XML trace output from HermitCrab or XAmple parsers
+- Output: Styled HTML with CSS and optional JavaScript for interactive exploration
+- Provides: Collapsible sections, syntax highlighting, step-by-step parse visualization
 
 ## Dependencies
-- Depends on: XML data model
-- Used by: FXT (transform tool), export features, report generation
-
-## Interop & Contracts
-No explicit interop boundaries detected. Pure managed or native code.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Build Information
-- Resource files and XSLT templates
-- No compilation required (data files)
-- Packaged with application for runtime use
-
-## Interfaces and Data Models
-
-- **BoundaryMarkerGuids** (xslt)
-  - Path: `Application/BoundaryMarkerGuids.xsl`
-  - XSLT transformation template
-
-- **CalculateStemNamesUsedInLexicalEntries** (xslt)
-  - Path: `Application/CalculateStemNamesUsedInLexicalEntries.xsl`
-  - XSLT transformation template
-
-- **FormatCommon** (xslt)
-  - Path: `Presentation/FormatCommon.xsl`
-  - XSLT transformation template
-
-- **FormatHCTrace** (xslt)
-  - Path: `Presentation/FormatHCTrace.xsl`
-  - XSLT transformation template
-
-- **FormatXAmpleParse** (xslt)
-  - Path: `Presentation/FormatXAmpleParse.xsl`
-  - XSLT transformation template
-
-- **FormatXAmpleTrace** (xslt)
-  - Path: `Presentation/FormatXAmpleTrace.xsl`
-  - XSLT transformation template
-
-- **FormatXAmpleWordGrammarDebuggerResult** (xslt)
-  - Path: `Presentation/FormatXAmpleWordGrammarDebuggerResult.xsl`
-  - XSLT transformation template
-
-- **FxtM3MorphologySketch** (xslt)
-  - Path: `Application/FxtM3MorphologySketch.xsl`
-  - XSLT transformation template
-
-- **FxtM3ParserCommon** (xslt)
-  - Path: `Application/FxtM3ParserCommon.xsl`
-  - XSLT transformation template
-
-- **FxtM3ParserToGAFAWS** (xslt)
-  - Path: `Application/FxtM3ParserToGAFAWS.xsl`
-  - XSLT transformation template
-
-- **FxtM3ParserToToXAmpleGrammar** (xslt)
-  - Path: `Application/FxtM3ParserToToXAmpleGrammar.xsl`
-  - XSLT transformation template
-
-- **FxtM3ParserToXAmpleADCtl** (xslt)
-  - Path: `Application/FxtM3ParserToXAmpleADCtl.xsl`
-  - XSLT transformation template
-
-- **FxtM3ParserToXAmpleLex** (xslt)
-  - Path: `Application/FxtM3ParserToXAmpleLex.xsl`
-  - XSLT transformation template
-
-- **FxtM3ParserToXAmpleWordGrammarDebuggingXSLT** (xslt)
-  - Path: `Application/FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl`
-  - XSLT transformation template
-
-- **JSFunctions** (xslt)
-  - Path: `Presentation/JSFunctions.xsl`
-  - XSLT transformation template
-
-- **MorphTypeGuids** (xslt)
-  - Path: `Application/MorphTypeGuids.xsl`
-  - XSLT transformation template
-
-- **UnifyTwoFeatureStructures** (xslt)
-  - Path: `Application/UnifyTwoFeatureStructures.xsl`
-  - XSLT transformation template
-
-- **XAmpleTemplateVariables** (xslt)
-  - Path: `Application/XAmpleTemplateVariables.xsl`
-  - XSLT transformation template
-
-- **XLingPap1** (xslt)
-  - Path: `Presentation/XLingPap1.xsl`
-  - XSLT transformation template
-
-## Entry Points
-- XSLT files loaded by transformation engine
-- Used during export, report generation, and data conversion
-
-## Test Index
-No tests found in this folder. Tests may be in a separate Test folder or solution.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- **Upstream**: XSLT 1.0 processor (System.Xml.Xsl in .NET), LCModel XML export schema
+- **Downstream consumers**: FXT/ (XDumper, XUpdater), ParserUI/ (trace display), LexText/Morphology/ (parser config), export features
+- **Data contracts**: M3Dump XML schema (from LCModel), XAmple file formats, HermitCrab XML, XLingPap schema
 
 ## Related Folders
-- **FXT/** - FieldWorks transform tool that applies these XSLT files
-- **DocConvert/** - Document conversion using transformations
-- **ParatextImport/** - May use transforms for data mapping
-- **LexText/** - Uses transforms for dictionary export and formatting
+- **FXT/** - Applies these transforms via XDumper/XUpdater
+- **LexText/ParserCore/** - HermitCrab and XAmple parsers consume generated files
+- **LexText/ParserUI/** - Displays formatted parser traces using FormatHCTrace.xsl, FormatXAmpleTrace.xsl
+- **LexText/Morphology/** - Morphology editors generate data consumed by parser transforms
 
 ## References
-
-- **XSLT transforms**: CalculateStemNamesUsedInLexicalEntries.xsl, FxtM3MorphologySketch.xsl, FxtM3ParserCommon.xsl, FxtM3ParserToToXAmpleGrammar.xsl, FxtM3ParserToXAmpleADCtl.xsl
-- **Source file count**: 0 files
-- **Data file count**: 19 files
-
-## References (auto-generated hints)
-- Data contracts/transforms:
-  - Src/Transforms/Application/BoundaryMarkerGuids.xsl
-  - Src/Transforms/Application/CalculateStemNamesUsedInLexicalEntries.xsl
-  - Src/Transforms/Application/FxtM3MorphologySketch.xsl
-  - Src/Transforms/Application/FxtM3ParserCommon.xsl
-  - Src/Transforms/Application/FxtM3ParserToGAFAWS.xsl
-  - Src/Transforms/Application/FxtM3ParserToToXAmpleGrammar.xsl
-  - Src/Transforms/Application/FxtM3ParserToXAmpleADCtl.xsl
-  - Src/Transforms/Application/FxtM3ParserToXAmpleLex.xsl
-  - Src/Transforms/Application/FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl
-  - Src/Transforms/Application/MorphTypeGuids.xsl
-  - Src/Transforms/Application/UnifyTwoFeatureStructures.xsl
-  - Src/Transforms/Application/XAmpleTemplateVariables.xsl
-  - Src/Transforms/Presentation/FormatCommon.xsl
-  - Src/Transforms/Presentation/FormatHCTrace.xsl
-  - Src/Transforms/Presentation/FormatXAmpleParse.xsl
-  - Src/Transforms/Presentation/FormatXAmpleTrace.xsl
-  - Src/Transforms/Presentation/FormatXAmpleWordGrammarDebuggerResult.xsl
-  - Src/Transforms/Presentation/JSFunctions.xsl
-  - Src/Transforms/Presentation/XLingPap1.xsl
-## Code Evidence
-*Analysis based on scanning 0 source files*
+- **19 XSLT files** total: 12 in Application/, 7 in Presentation/
+- **No compilation** - Pure data files, loaded at runtime by XSLT processor
+- **Packaged with DistFiles** for distribution
