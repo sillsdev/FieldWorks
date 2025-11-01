@@ -1,99 +1,50 @@
 ---
-last-reviewed: 2025-10-30
-last-verified-commit: 9611cf70e
-status: draft
+last-reviewed: 2025-10-31
+last-verified-commit: 32cc17e
+status: reviewed
 ---
 
 # ProjectUnpacker
 
 ## Purpose
-Utilities for extracting and decompressing FieldWorks project archives.
-Handles unpacking of .fwbackup files and other compressed project formats.
-Supports project restoration, sharing, and migration scenarios by providing
-reliable extraction of project data from archive formats.
-
-## Architecture
-C# library with 3 source files.
+Test infrastructure utility (~427 lines) for unpacking embedded ZIP resources containing Paratext and FLEx test projects. Provides **Unpacker** static class with methods to extract test data from embedded .resx files to temporary directories, and **RegistryData** for managing Paratext registry settings during tests. Used exclusively in test fixtures, not production code.
 
 ## Key Components
-### Key Classes
-- **RegistryData**
-- **Unpacker**
-- **ResourceUnpacker**
 
-## Technology Stack
-- C# .NET
-- Archive/compression handling
-- File system operations
-- Project file management
+### Unpacker (static class)
+- **ResourceUnpacker** nested class - Extracts single embedded resource to folder
+  - Constructor: `ResourceUnpacker(String resource, String folder)` - Unpacks resource
+  - `UnpackedDestinationPath` property - Returns extraction path
+  - `CleanUp()` - Removes unpacked files
+- **PTProjectDirectory** property - Reads Paratext project folder from registry (PT 7/8 support)
+- **PTSettingsRegKey** property - Returns `SOFTWARE\ScrChecks\1.0\Settings_Directory` path
+- **PtProjectTestFolder** property - Computed test folder path
+- **UnpackFile(String resource, String destination)** - Internal extraction using SharpZipLib
+- **RemoveFiles(String directory)** - Recursive cleanup
+- **PrepareProjectFiles(String folder, String resource)** - Convenience wrapper
+
+### RegistryData (class)
+- **RegistryData(String subKey, String name, object value)** - Captures current registry value
+  - Stores: `RegistryHive`, `RegistryView`, `SubKey`, `Name`, `Value`
+  - Used to save/restore Paratext settings around tests
+- **ToString()** - Debug representation
+
+## Test Data Resources (embedded .resx)
+- **ZippedParatextPrj.resx** - Standard Paratext project ZIP
+- **ZippedParaPrjWithMissingFiles.resx** - Test case for missing file handling
+- **ZippedTEVTitusWithUnmappedStyle.resx** - TE Vern/Titus project with style issues
 
 ## Dependencies
-- Depends on: Cellar (data model), Common utilities
-- Used by: Application startup, project opening, import/restore features
-
-## Interop & Contracts
-No explicit interop boundaries detected. Pure managed or native code.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Build Information
-- C# executable or library
-- Build with MSBuild or Visual Studio
-
-## Interfaces and Data Models
-
-- **RegistryData** (class)
-  - Path: `RegistryData.cs`
-  - Public class implementation
-
-- **ResourceUnpacker** (class)
-  - Path: `Unpacker.cs`
-  - Public class implementation
-
-- **Unpacker** (class)
-  - Path: `Unpacker.cs`
-  - Public class implementation
-
-## Entry Points
-- Command-line tool or library for project unpacking
-- Used when opening archived projects
-
-## Test Index
-No tests found in this folder. Tests may be in a separate Test folder or solution.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+- **Upstream**: ICSharpCode.SharpZipLib.Zip (ZIP extraction), Microsoft.Win32 (registry), NUnit.Framework (test attributes), Common/FwUtils (utilities), SIL.PlatformUtilities
+- **Downstream consumers**: ParatextImportTests, other test projects needing Paratext/FLEx project data
+- **Note**: This is a test-only library (namespace SIL.FieldWorks.Test.ProjectUnpacker)
 
 ## Related Folders
-- **Cellar/** - Data model for projects being unpacked
-- **MigrateSqlDbs/** - May need to migrate unpacked projects
-- **InstallValidator/** - May validate unpacked project structure
+- **ParatextImport/** - Main consumer for Paratext test projects
+- **Common/ScriptureUtils/** - May use for Paratext integration tests
+- **MigrateSqlDbs/** - Could use for migration test scenarios
 
 ## References
-
-- **Project files**: ProjectUnpacker.csproj
-- **Target frameworks**: net462
-- **Key C# files**: AssemblyInfo.cs, RegistryData.cs, Unpacker.cs
-- **Source file count**: 3 files
-- **Data file count**: 3 files
-
-## References (auto-generated hints)
-- Project files:
-  - Src/ProjectUnpacker/ProjectUnpacker.csproj
-- Key C# files:
-  - Src/ProjectUnpacker/AssemblyInfo.cs
-  - Src/ProjectUnpacker/RegistryData.cs
-  - Src/ProjectUnpacker/Unpacker.cs
-- Data contracts/transforms:
-  - Src/ProjectUnpacker/ZippedParaPrjWithMissingFiles.resx
-  - Src/ProjectUnpacker/ZippedParatextPrj.resx
-  - Src/ProjectUnpacker/ZippedTEVTitusWithUnmappedStyle.resx
-## Code Evidence
-*Analysis based on scanning 3 source files*
-
-- **Classes found**: 3 public classes
-- **Namespaces**: SIL.FieldWorks.Test.ProjectUnpacker
+- **Project**: ProjectUnpacker.csproj (.NET Framework 4.6.2 library)
+- **3 CS files**: Unpacker.cs (~300 lines), RegistryData.cs (~60 lines), AssemblyInfo.cs
+- **3 embedded resources**: ZippedParatextPrj.resx, ZippedParaPrjWithMissingFiles.resx, ZippedTEVTitusWithUnmappedStyle.resx
