@@ -1,104 +1,61 @@
 ---
-last-reviewed: 2025-10-30
-last-verified-commit: 9611cf70e
-status: draft
+last-reviewed: 2025-11-01
+last-verified-commit: HEAD
+status: production
 ---
 
 # FixFwDataDll
 
 ## Purpose
-Core data repair library implementing validation and fix logic.
-Contains the actual implementation of data integrity checks, error detection algorithms, and
-automatic repair routines. Used by both the FixFwData command-line tool and potentially by
-the main applications for data validation.
-
-## Architecture
-C# library with 7 source files.
+Data repair library integrating SIL.LCModel.FixData with FieldWorks UI. Provides IUtility plugin (ErrorFixer) for FwCoreDlgs UtilityDlg framework, FixErrorsDlg for project selection, and helper utilities (FwData, WriteAllObjectsUtility). Used by FwCoreDlgs utility menu and FixFwData command-line tool.
 
 ## Key Components
-### Key Classes
-- **FixErrorsDlg**
-- **FwData**
-- **WriteAllObjectsUtility**
-- **ErrorFixer**
 
-## Technology Stack
-- C# .NET
-- Data validation algorithms
-- Database integrity checking
+### ErrorFixer.cs (~180 lines)
+- **ErrorFixer**: IUtility implementation for UtilityDlg plugin system
+  - **Process()**: Shows FixErrorsDlg, invokes FwDataFixer on selected project, logs results to RichText control
+  - **Label**: "Find and Fix Errors"
+  - **OnSelection()**: Updates UtilityDlg descriptions (WhenDescription, WhatDescription, RedoDescription)
+  - Uses FwDataFixer from SIL.LCModel.FixData
+- Reports errors to m_dlg.LogRichText with HTML styling
+
+### FixErrorsDlg.cs (~100 lines)
+- **FixErrorsDlg**: WinForms dialog for project selection
+  - Scans FwDirectoryFinder.ProjectsDirectory for unlocked .fwdata files
+  - Single-select CheckedListBox (m_lvProjects)
+  - **SelectedProject**: Returns checked project name
+  - **m_btnFixLinks_Click**: Sets DialogResult.OK
+- Filters out locked projects (.fwdata.lock)
+
+### FwData.cs
+- **FwData**: Legacy wrapper/utility (not analyzed in detail)
+
+### WriteAllObjectsUtility.cs
+- **WriteAllObjectsUtility**: Export utility for all objects (not analyzed in detail)
 
 ## Dependencies
-- Depends on: Cellar (data model), Common utilities
-- Used by: Utilities/FixFwData (command-line tool), applications for data validation
-
-## Interop & Contracts
-Uses COM for cross-boundary calls.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
+- **SIL.LCModel.FixData**: FwDataFixer (core repair logic)
+- **SIL.FieldWorks.FwCoreDlgs**: UtilityDlg, IUtility
+- **SIL.FieldWorks.Common.FwUtils**: FwDirectoryFinder
+- **SIL.LCModel**: LcmFileHelper
+- **Consumer**: FwCoreDlgs utility menu, Utilities/FixFwData command-line tool
 
 ## Build Information
-- C# class library project
-- Build via: `dotnet build FixFwDataDll.csproj`
-- Core repair functionality
-
-## Interfaces and Data Models
-
-- **ErrorFixer** (class)
-  - Path: `ErrorFixer.cs`
-  - Public class implementation
-
-- **FwData** (class)
-  - Path: `FwData.cs`
-  - Public class implementation
-
-- **WriteAllObjectsUtility** (class)
-  - Path: `WriteAllObjectsUtility.cs`
-  - Public class implementation
-
-## Entry Points
-- ErrorFixer class for data repair
-- FixErrorsDlg for interactive repair
-- Data validation and integrity checking APIs
+- **Project**: FixFwDataDll.csproj
+- **Type**: Library (.NET Framework 4.6.2)
+- **Output**: FixFwDataDll.dll
+- **Namespace**: SIL.FieldWorks.FixData
+- **Source files**: ErrorFixer.cs, FixErrorsDlg.cs, FwData.cs, WriteAllObjectsUtility.cs (7 files total including Designer/Strings, ~1065 lines)
 
 ## Test Index
-No tests found in this folder. Tests may be in a separate Test folder or solution.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+No test project found.
 
 ## Related Folders
-- **Utilities/FixFwData/** - Command-line wrapper
-- **Cellar/** - Data model accessed and repaired
-- **MigrateSqlDbs/** - Database migration (related to data integrity)
+- **Utilities/FixFwData/**: Command-line wrapper for non-interactive repair
+- **FwCoreDlgs/**: UtilityDlg framework (IUtility plugin host)
+- **SIL.LCModel.FixData**: External library with FwDataFixer
 
 ## References
-
-- **Project files**: FixFwDataDll.csproj
-- **Target frameworks**: net462
-- **Key C# files**: AssemblyInfo.cs, ErrorFixer.cs, FixErrorsDlg.Designer.cs, FixErrorsDlg.cs, FwData.cs, Strings.Designer.cs, WriteAllObjectsUtility.cs
-- **Source file count**: 7 files
-- **Data file count**: 2 files
-
-## References (auto-generated hints)
-- Project files:
-  - Utilities/FixFwDataDll/FixFwDataDll.csproj
-- Key C# files:
-  - Utilities/FixFwDataDll/ErrorFixer.cs
-  - Utilities/FixFwDataDll/FixErrorsDlg.Designer.cs
-  - Utilities/FixFwDataDll/FixErrorsDlg.cs
-  - Utilities/FixFwDataDll/FwData.cs
-  - Utilities/FixFwDataDll/Properties/AssemblyInfo.cs
-  - Utilities/FixFwDataDll/Strings.Designer.cs
-  - Utilities/FixFwDataDll/WriteAllObjectsUtility.cs
-- Data contracts/transforms:
-  - Utilities/FixFwDataDll/FixErrorsDlg.resx
-  - Utilities/FixFwDataDll/Strings.resx
-## Code Evidence
-*Analysis based on scanning 4 source files*
-
-- **Classes found**: 4 public classes
-- **Namespaces**: SIL.FieldWorks.FixData
+- **SIL.FieldWorks.FwCoreDlgs.IUtility**: Plugin interface
+- **SIL.LCModel.FixData.FwDataFixer**: Core repair engine
+- **SIL.FieldWorks.Common.FwUtils.FwDirectoryFinder**: Projects directory location
