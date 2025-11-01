@@ -1,43 +1,50 @@
 ---
-last-reviewed: 2025-10-30
-last-verified-commit: 9611cf70e
-status: draft
+last-reviewed: 2025-11-01
+last-verified-commit: HEAD
+status: production
 ---
 
 # SfmToXml
 
 ## Purpose
-SFM to XML data conversion utility and library.
-Converts Standard Format Marker files (legacy linguistic data format) into XML format
-for processing and import into FieldWorks. Handles parsing of SFM structure and mapping
-to XML representation while preserving data semantics.
-
-## Architecture
-C# library with 19 source files. Contains 2 subprojects: Sfm2Xml, ConvertSFM.
+SFM to XML conversion library and command-line utility. Parses Standard Format Marker files (legacy Toolbox/Shoebox linguistic data) into XML for FieldWorks import. Includes Sfm2Xml core library (ClsHierarchyEntry, ClsPathObject, ClsInFieldMarker parsing) and ConvertSFM.exe command-line tool. Used by LexTextControls LexImportWizard for lexicon/interlinear imports.
 
 ## Key Components
-### Key Classes
-- **LexImportFields**
-- **SfmData**
-- **WrnErrInfo**
-- **ClsLog**
-- **ClsInFieldMarker**
-- **ClsHierarchyEntry**
-- **ClsPathObject**
-- **Converter**
-- **AutoFieldInfo**
-- **DP**
 
-### Key Interfaces
-- **ILexImportFields**
-- **ILexImportField**
-- **ILexImportCustomField**
-- **ILanguageInfoUI**
-- **ILexImportOption**
+### Sfm2Xml Library (~7K lines)
+- **ClsHierarchyEntry**: SFM hierarchy structure representation
+- **ClsPathObject**: Path-based SFM navigation
+- **ClsInFieldMarker**: Inline marker handling
+- **Converter**: Main SFM→XML transformation engine
+- **LexImportFields**: ILexImportFields implementation for field mapping
+- **AutoFieldInfo**: Automatic field detection
+- **ClsLog, WrnErrInfo**: Error/warning logging
 
-## Technology Stack
-- C# .NET
-- SFM parsing and processing
+### ConvertSFM.exe (~2K lines)
+- **Command-line wrapper** for Sfm2Xml library
+- Batch SFM file conversion to XML
+
+## Dependencies
+- **Consumer**: LexTextControls/LexImportWizard, ParatextImport (USFM), SfmStats
+- **System.Xml**: XML generation
+
+## Build Information
+- **Projects**: Sfm2Xml.csproj (library), ConvertSFM.csproj (console)
+- **Type**: Library + Console (.NET Framework 4.6.2)
+- **Namespace**: Sfm2Xml
+- **Source files**: 16 files (~9587 lines)
+
+## Test Index
+Test project: Sfm2XmlTests. Run via Test Explorer.
+
+## Related Folders
+- **LexText/LexTextControls/**: LexImportWizard (main consumer)
+- **Utilities/SfmStats/**: SFM analysis tool (uses Sfm2Xml parsing)
+- **ParatextImport/**: USFM import (SFM variant)
+
+## References
+- **Sfm2Xml.ILexImportFields**: Field mapping interface
+- **Sfm2Xml.Converter.Convert()**: Main conversion entry point
 - XML generation
 
 ## Dependencies

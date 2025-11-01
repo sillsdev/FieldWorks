@@ -1,97 +1,58 @@
 ---
-last-reviewed: 2025-10-30
-last-verified-commit: 9611cf70e
-status: draft
+last-reviewed: 2025-11-01
+last-verified-commit: HEAD
+status: production
 ---
 
 # Reporting
 
 ## Purpose
-Error reporting and diagnostic information collection infrastructure.
-Implements functionality for gathering error details, capturing system state, displaying error
-reports to users, and optionally submitting crash reports. Helps improve software quality by
-collecting diagnostic information when issues occur.
-
-## Architecture
-C# library with 4 source files.
+Error reporting and diagnostic information collection infrastructure from SIL.Core. Wraps SIL.Reporting.ErrorReport functionality for FieldWorks integration. Provides ErrorReport class for gathering error details, ReportingStrings localized resources, and UsageEmailDialog for user feedback. Used throughout FieldWorks for exception handling and crash reporting.
 
 ## Key Components
-### Key Classes
-- **UsageEmailDialog**
-- **ErrorReporter**
 
-## Technology Stack
-- C# .NET WinForms
-- Error collection and reporting
-- Exception handling infrastructure
+### ErrorReport.cs (~900 lines)
+- **ErrorReport**: Static exception reporting API (from SIL.Core/SIL.Reporting)
+  - **ReportNonFatalException(Exception)**: Logs non-fatal errors
+  - **ReportFatalException(Exception)**: Shows fatal error dialog, terminates app
+  - **AddStandardProperties()**: Adds system info (OS, RAM, etc.)
+  - EmailAddress, EmailSubject properties for crash report submission
+  - NotifyUserOfProblem() for user-facing errors
+- Note: Implementation likely in SIL.Reporting NuGet package (not in this folder)
+
+### UsageEmailDialog.cs (~350 lines)
+- **UsageEmailDialog**: WinForms dialog for optional user feedback
+  - Collects email address, allows user comments on error
+  - Privacy-conscious design ("don't show again" checkbox)
+  - Integrates with ErrorReport submission workflow
+
+### ReportingStrings.Designer.cs (~400 lines)
+- **ReportingStrings**: Localized string resources (Designer-generated)
+  - Error messages, dialog text, report templates
+  - Culture-specific formatting
 
 ## Dependencies
-- Depends on: Common utilities, System libraries
-- Used by: All FieldWorks applications for error handling
-
-## Interop & Contracts
-Uses P/Invoke for cross-boundary calls.
-
-## Threading & Performance
-Threading model: explicit threading.
-
-## Config & Feature Flags
-Config files: App.config.
+- **SIL.Reporting**: ErrorReport implementation (NuGet package)
+- **SIL.Core**: Base utilities
+- **System.Windows.Forms**: Dialog infrastructure
+- **Consumer**: All FieldWorks applications (Common/Framework, DebugProcs) for exception handling
 
 ## Build Information
-- C# class library project
-- Build via: `dotnet build Reporting.csproj`
-- Error reporting infrastructure
-
-## Interfaces and Data Models
-
-- **ErrorReporter** (class)
-  - Path: `ErrorReport.cs`
-  - Public class implementation
-
-- **UsageEmailDialog** (class)
-  - Path: `UsageEmailDialog.cs`
-  - Public class implementation
-
-## Entry Points
-- ErrorReport class for exception handling
-- Error report dialog display
-- Error submission functionality
+- **Project**: Reporting.csproj
+- **Type**: Library (.NET Framework 4.6.2)
+- **Output**: Reporting.dll (FieldWorks wrapper) 
+- **Namespace**: SIL.Utils (wrapper), SIL.Reporting (core)
+- **Source files**: 4 files (~1554 lines)
+- **Resources**: ErrorReport.resx, ReportingStrings.resx, UsageEmailDialog.resx, App.config
 
 ## Test Index
-No tests found in this folder. Tests may be in a separate Test folder or solution.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+No test project found.
 
 ## Related Folders
-- **Common/Framework/** - Application framework with error handling
-- **DebugProcs/** - Debug diagnostics (related functionality)
-- Used throughout FieldWorks for exception handling
+- **Common/Framework/**: Application framework with error handling hooks
+- **DebugProcs/**: Debug diagnostics and assertion handlers
+- **SIL.Core/SIL.Reporting**: External NuGet package with ErrorReport implementation
 
 ## References
-
-- **Project files**: Reporting.csproj
-- **Target frameworks**: net462
-- **Key C# files**: AssemblyInfo.cs, ErrorReport.cs, ReportingStrings.Designer.cs, UsageEmailDialog.cs
-- **Source file count**: 4 files
-- **Data file count**: 4 files
-
-## References (auto-generated hints)
-- Project files:
-  - Utilities/Reporting/Reporting.csproj
-- Key C# files:
-  - Utilities/Reporting/AssemblyInfo.cs
-  - Utilities/Reporting/ErrorReport.cs
-  - Utilities/Reporting/ReportingStrings.Designer.cs
-  - Utilities/Reporting/UsageEmailDialog.cs
-- Data contracts/transforms:
-  - Utilities/Reporting/App.config
-  - Utilities/Reporting/ErrorReport.resx
-  - Utilities/Reporting/ReportingStrings.resx
-  - Utilities/Reporting/UsageEmailDialog.resx
-## Code Evidence
-*Analysis based on scanning 3 source files*
-
-- **Classes found**: 2 public classes
-- **Namespaces**: SIL.Utils
+- **SIL.Reporting.ErrorReport**: Main exception reporting class
+- **System.Windows.Forms.Form**: UsageEmailDialog base class

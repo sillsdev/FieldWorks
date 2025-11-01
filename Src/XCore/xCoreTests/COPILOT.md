@@ -1,43 +1,48 @@
 ---
-last-reviewed: 2025-10-30
-last-verified-commit: 9611cf70e
-status: draft
+last-reviewed: 2025-11-01
+last-verified-commit: HEAD
+status: production
 ---
 
 # xCoreTests
 
 ## Purpose
-Test suite for XCore framework functionality.
-Provides comprehensive tests validating XCore's command handling, property table behavior,
-mediator functionality, and plugin infrastructure. Ensures the foundational framework
-behaves correctly as it underpins all FieldWorks applications.
-
-## Architecture
-Test project with 2 test files.
+Test suite for XCore framework. Validates command handling, PropertyTable behavior, Mediator functionality, and plugin infrastructure (Inventory XML processing). Includes IncludeXmlTests (XML include/override directives), InventoryTests (plugin loading), and CreateOverrideTests. Ensures XCore foundation works correctly for all FieldWorks applications.
 
 ## Key Components
-### Key Classes
-- **IncludeXmlTests**
-- **InventoryTests**
-- **CreateOverrideTests**
 
-## Technology Stack
-- C# .NET with NUnit or similar
-- Unit testing framework
-- XML test data
+### Test Classes (~500 lines)
+- **IncludeXmlTests**: Tests XML `<include>` directive processing in configuration files
+  - Validates recursive includes, path resolution, error handling
+- **InventoryTests**: Tests Inventory.xml plugin loading and configuration
+  - DynamicLoader object creation, assembly loading, parameter passing
+- **CreateOverrideTests**: Tests configuration override mechanisms
+  - XML override merging, attribute replacement, node insertion
 
 ## Dependencies
-- Depends on: XCore (framework being tested), XCore/xCoreInterfaces
-- Used by: Build and CI systems for validation
+- **XCore/**: Mediator, PropertyTable, Inventory (systems under test)
+- **XCore/xCoreInterfaces/**: IxCoreColleague, ChoiceGroup
+- **NUnit**: Test framework
+- **Consumer**: Build/CI systems
 
-## Interop & Contracts
-No explicit interop boundaries detected. Pure managed or native code.
+## Build Information
+- **Project**: xCoreTests.csproj
+- **Type**: Test Library (.NET Framework 4.6.2)
+- **Namespace**: XCore.XCoreTests, XCore
+- **Source files**: 2 files (~511 lines)
+- **Test data**: XML config files for include/override scenarios
 
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
+## Test Index
+Run via Test Explorer or `dotnet test`. 3 test classes with comprehensive XCore validation.
 
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
+## Related Folders
+- **XCore/**: Framework being tested (Mediator, Inventory, PropertyTable)
+- **XCore/xCoreInterfaces/**: Interfaces validated by tests
+
+## References
+- **XCore.Mediator**: Command/message routing under test
+- **XCore.Inventory**: Plugin configuration loader under test
+- **NUnit.Framework.TestFixture**: Test infrastructure
 
 ## Build Information
 - C# test project

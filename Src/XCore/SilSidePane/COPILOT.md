@@ -1,43 +1,52 @@
 ---
-last-reviewed: 2025-10-30
-last-verified-commit: 9611cf70e
-status: draft
+last-reviewed: 2025-11-01
+last-verified-commit: HEAD
+status: production
 ---
 
 # SilSidePane
 
 ## Purpose
-Side pane navigation control for FieldWorks applications.
-Implements the navigation sidebar (SidePane, Tab, Item classes) that provides hierarchical
-navigation between different areas and tools in FieldWorks applications. Enables the
-multi-area interface pattern used throughout FLEx and other FieldWorks apps.
-
-## Architecture
-C# library with 26 source files. Contains 1 subprojects: SilSidePane.
+Side pane navigation control for FieldWorks multi-area interface. Provides SidePane, Tab, and Item classes implementing hierarchical navigation sidebar (similar to Outlook bar). Enables area/tool switching in FLEx and other FieldWorks apps. Includes OutlookBarButton rendering, drag-and-drop tab reordering, and NavPaneOptionsDlg customization.
 
 ## Key Components
-### Key Classes
-- **Item**
-- **Tab**
-- **SidePane**
-- **OutlookBarButtonTests**
-- **TabTests**
-- **NavPaneOptionsDlgTests**
-- **ItemTests**
-- **SidePaneTests_Buttons**
-- **SidePaneTests_List**
-- **SidePaneTests_StripList**
 
-## Technology Stack
-- C# .NET WinForms
-- Custom control development
-- Navigation UI patterns
+### Core Classes (~2K lines)
+- **SidePane**: Main side pane control (UserControl)
+  - Manages Tab collection, item selection, context menus
+  - Supports button/list/strip-list display modes
+  - Drag-and-drop tab reordering
+- **Tab**: Individual tab (area) in side pane
+  - Contains Item collection, icon, label
+- **Item**: Individual navigation item within tab
+  - Represents tool/view, click handling, icon
+- **OutlookBarButton**: Custom-drawn navigation button
+
+### Supporting (~1K lines)
+- **NavPaneOptionsDlg**: Customization dialog (show/hide tabs, reorder)
+- **ItemClickedEventArgs**: Item click event data
+- **PanelPosition**: Enum (top, bottom)
 
 ## Dependencies
-- Depends on: Common (UI infrastructure), XCore/xCoreInterfaces
-- Used by: xWorks, LexText (for navigation sidebar)
+- **System.Windows.Forms**: UserControl, custom painting
+- **Consumer**: xWorks (FwXWindow), LexText (area navigation)
 
-## Interop & Contracts
+## Build Information
+- **Project**: SilSidePane.csproj
+- **Type**: Library (.NET Framework 4.6.2)
+- **Namespace**: SIL.SilSidePane
+- **Source files**: 17 files (~3252 lines)
+
+## Test Index
+Test project: SilSidePaneTests with OutlookBarButtonTests, TabTests, ItemTests, SidePaneTests_Buttons/List/StripList. Run via Test Explorer.
+
+## Related Folders
+- **xWorks/**: FwXWindow (main consumer - area navigation sidebar)
+- **XCore/xCoreInterfaces/**: Colleague pattern integration
+
+## References
+- **System.Windows.Forms.UserControl**: Base control class
+- **System.Drawing.Graphics**: Custom rendering API
 Uses COM for cross-boundary calls.
 
 ## Threading & Performance

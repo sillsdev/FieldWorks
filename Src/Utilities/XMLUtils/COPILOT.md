@@ -1,43 +1,55 @@
 ---
-last-reviewed: 2025-10-30
-last-verified-commit: 9611cf70e
-status: draft
+last-reviewed: 2025-11-01
+last-verified-commit: HEAD
+status: production
 ---
 
 # XMLUtils
 
 ## Purpose
-XML processing utilities and helper functions.
-Provides common XML handling functionality including dynamic assembly loading (DynamicLoader),
-exception handling, validation, and XML manipulation helpers. Supports XML-based configuration
-and data processing throughout FieldWorks.
-
-## Architecture
-C# library with 8 source files. Contains 1 subprojects: XMLUtils.
+XML processing utilities and helper functions. Provides XmlUtils static helpers (GetMandatoryAttributeValue, AppendAttribute, etc.), DynamicLoader for XML-configured assembly loading, SimpleResolver for XML entity resolution, and Configuration exceptions. Used throughout FieldWorks for XML-based configuration, data files, and dynamic plugin loading.
 
 ## Key Components
-### Key Classes
-- **XmlUtils**
-- **ReplaceSubstringInAttr**
-- **SimpleResolver**
-- **ConfigurationException**
-- **RuntimeConfigurationException**
-- **DynamicLoader**
-- **DynamicLoaderTests**
-- **Test1**
-- **XmlUtilsTest**
-- **XmlResourceResolverTests**
 
-### Key Interfaces
-- **IAttributeVisitor**
-- **IResolvePath**
-- **IPersistAsXml**
-- **ITest1**
+### XmlUtils.cs (~600 lines)
+- **XmlUtils**: Static XML helper methods
+  - GetMandatory/OptionalAttributeValue, AppendAttribute, GetLocalizedAttributeValue
+  - FindNode, GetAttributes manipulation
+  - XML validation helpers
 
-## Technology Stack
-- C# .NET
-- XML processing
-- Dynamic loading and reflection
+### DynamicLoader.cs (~400 lines)
+- **DynamicLoader**: XML-configured assembly/type loading
+  - **CreateObject(XmlNode)**: Instantiates objects from XML assembly/class specifications
+  - Supports constructor arguments from XML attributes
+  - Used by XCore Inventory for plugin loading
+
+### Supporting Classes (~500 lines)
+- **SimpleResolver**: IXmlResourceResolver implementation
+- **ConfigurationException, RuntimeConfigurationException**: XML config errors
+- **ReplaceSubstringInAttr**: IAttributeVisitor for XML transformation
+- **IPersistAsXml, IResolvePath**: Persistence interfaces
+
+## Dependencies
+- **System.Xml**: Core XML APIs
+- **System.Reflection**: Dynamic loading
+- **Consumer**: XCore Inventory, Common utilities, XML-based configuration across FieldWorks
+
+## Build Information
+- **Project**: XMLUtils.csproj
+- **Type**: Library (.NET Framework 4.6.2)
+- **Namespace**: SIL.Utils, SIL.Utils.Xml
+- **Source files**: 6 files (~1542 lines)
+
+## Test Index
+Test project: XMLUtilsTests with DynamicLoaderTests, XmlUtilsTest, XmlResourceResolverTests. Run via Test Explorer.
+
+## Related Folders
+- **XCore/**: Inventory.xml plugin loading (uses DynamicLoader)
+- **Common/Framework/**: XML configuration consumers
+
+## References
+- **System.Xml.XmlNode**: XML DOM API
+- **System.Reflection.Assembly.Load()**: Dynamic assembly loading
 
 ## Dependencies
 - Depends on: System.Xml, Common utilities

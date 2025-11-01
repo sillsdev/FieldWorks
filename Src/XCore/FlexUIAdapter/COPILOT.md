@@ -1,43 +1,52 @@
 ---
-last-reviewed: 2025-10-30
-last-verified-commit: 9611cf70e
-status: draft
+last-reviewed: 2025-11-01
+last-verified-commit: HEAD
+status: production
 ---
 
 # FlexUIAdapter
 
 ## Purpose
-FLEx implementation of XCore UI adapter interfaces.
-Provides concrete adapter implementations that connect FLEx application components to the
-XCore framework's command handling, choice management, and UI composition systems. Enables
-FLEx to leverage XCore's plugin architecture and extensibility features.
-
-## Architecture
-C# library with 12 source files.
+FLEx implementation of XCore UI adapter interfaces. Provides concrete adapters (MenuAdapter, ToolStripManager, ReBarAdapter, SidebarAdapter, PaneBar) connecting FLEx WinForms UI to XCore's command/choice framework. Implements Common/UIAdapterInterfaces (ITMAdapter, ISIBInterface) enabling XCore Mediator integration with Windows Forms controls.
 
 ## Key Components
-### Key Classes
-- **ToolStripManager**
-- **ReBarAdapter**
-- **ContextHelper**
-- **SidebarAdapter**
-- **MenuAdapter**
-- **BarAdapterBase**
-- **PaneBar**
-- **AdapterBase**
-- **PanelCollection**
 
-## Technology Stack
-- C# .NET WinForms
-- Adapter pattern implementation
-- XCore framework integration
+### Adapter Classes (~3K lines)
+- **AdapterBase**: Base adapter with IxCoreColleague integration
+- **MenuAdapter**: MenuStrip/ContextMenuStrip→XCore command binding
+- **ToolStripManager**: ToolStrip→XCore command integration
+- **ReBarAdapter**: Rebar/toolbar management
+- **SidebarAdapter**: Sidebar button/item control
+- **PaneBar**: Pane bar UI element
+- **BarAdapterBase**: Base for bar-style adapters
+- **ContextHelper**: Context menu helpers
+
+### Supporting (~200 lines)
+- **PanelCollection**: Panel container management
 
 ## Dependencies
-- Depends on: XCore/xCoreInterfaces, Common/UIAdapterInterfaces
-- Used by: xWorks, LexText (for UI integration)
+- **XCore/xCoreInterfaces**: Mediator, IxCoreColleague, ChoiceGroup
+- **Common/UIAdapterInterfaces**: ITMAdapter, ISIBInterface
+- **System.Windows.Forms**: MenuStrip, ToolStrip, Button controls
+- **Consumer**: xWorks, LexText (FLEx UI integration)
 
-## Interop & Contracts
-Uses P/Invoke for cross-boundary calls.
+## Build Information
+- **Project**: FlexUIAdapter.csproj
+- **Type**: Library (.NET Framework 4.6.2)
+- **Namespace**: SIL.FieldWorks.XWorks
+- **Source files**: 12 files (~3239 lines)
+
+## Test Index
+No dedicated test project (integration tested via xWorks).
+
+## Related Folders
+- **XCore/xCoreInterfaces/**: Mediator, IxCoreColleague interfaces
+- **Common/UIAdapterInterfaces/**: ITMAdapter, ISIBInterface
+- **xWorks/**: Main consumer (FwXApp, FwXWindow)
+
+## References
+- **SIL.FieldWorks.XWorks.IxCoreColleague**: XCore colleague pattern
+- **SIL.FieldWorks.Common.UIAdapterInterfaces.ITMAdapter**: Adapter interface
 
 ## Threading & Performance
 Single-threaded or thread-agnostic code. No explicit threading detected.

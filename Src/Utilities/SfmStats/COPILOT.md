@@ -1,79 +1,47 @@
 ---
-last-reviewed: 2025-10-30
-last-verified-commit: 9611cf70e
-status: draft
+last-reviewed: 2025-11-01
+last-verified-commit: HEAD
+status: production
 ---
 
 # SfmStats
 
 ## Purpose
-Standard Format Marker (SFM) statistics and analysis tool.
-Analyzes SFM-formatted data files to provide statistics about marker usage, frequency,
-and patterns. Useful for understanding legacy data structure and preparing for data migration
-or import into FieldWorks.
-
-## Architecture
-C# library with 2 source files.
+Command-line tool for analyzing Standard Format Marker (SFM) files. Generates statistics about marker usage, frequency, byte counts (excluding SFMs), and marker pair patterns. Created for "Import Wizard" KenZ to understand legacy SFM data structure before import into FieldWorks. Uses Sfm2Xml underlying classes.
 
 ## Key Components
-No major public classes identified.
 
-## Technology Stack
-- C# .NET console application
-- SFM file parsing
-- Statistical analysis
+### Program.cs (~299 lines)
+- **Main(string[] args)**: Entry point
+  - Input: SFM file path, optional output file path
+  - Outputs three report types:
+    1. Byte count histogram by character code (e.g., [0xE9] = 140 bytes)
+    2. SFM usage frequency (e.g., \v = 48 occurrences)
+    3. SFM pair patterns (e.g., \p - \v = 6 times)
+  - **Usage()**: Prints command-line help
+  - Uses Sfm2Xml parsing infrastructure
+- Excludes inline SFMs from counts
 
 ## Dependencies
-- Depends on: SFM parsing utilities, Common utilities
-- Used by: Users analyzing SFM data before import
-
-## Interop & Contracts
-Uses COM for cross-boundary calls.
-
-## Threading & Performance
-Single-threaded or thread-agnostic code. No explicit threading detected.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
+- **Sfm2Xml**: SFM parsing classes (Utilities/SfmToXml or external library)
+- **Consumer**: Data migration specialists analyzing legacy SFM files before import
 
 ## Build Information
-- C# console application
-- Build via: `dotnet build SfmStats.csproj`
-- Command-line utility
-
-## Interfaces and Data Models
-See code analysis sections above for key interfaces and data models. Additional interfaces may be documented in source files.
-
-## Entry Points
-- Main() method with command-line interface
-- SFM file analysis and statistics generation
+- **Project**: SfmStats.csproj
+- **Type**: Console (.NET Framework 4.6.2)
+- **Output**: SfmStats.exe
+- **Namespace**: SfmStats
+- **Source files**: Program.cs, AssemblyInfo.cs (2 files, ~299 lines)
 
 ## Test Index
-No tests found in this folder. Tests may be in a separate Test folder or solution.
-
-## Usage Hints
-Console application. Build and run via command line or Visual Studio. See Entry Points section.
+No test project found.
 
 ## Related Folders
-- **Utilities/SfmToXml/** - SFM to XML conversion (related tool)
-- **LexText/LexTextControls/** - SFM import functionality
-- **ParatextImport/** - Uses SFM parsing
+- **Utilities/SfmToXml/**: SFM to XML conversion (uses shared Sfm2Xml parsing)
+- **LexText/LexTextControls/**: LexImportWizard (SFM import functionality)
+- **ParatextImport/**: USFM/SFM parsing
 
 ## References
-
-- **Project files**: SfmStats.csproj
-- **Target frameworks**: net462
-- **Key C# files**: AssemblyInfo.cs, Program.cs
-- **Source file count**: 2 files
-- **Data file count**: 0 files
-
-## References (auto-generated hints)
-- Project files:
-  - Utilities/SfmStats/SfmStats.csproj
-- Key C# files:
-  - Utilities/SfmStats/Program.cs
-  - Utilities/SfmStats/Properties/AssemblyInfo.cs
-## Code Evidence
-*Analysis based on scanning 1 source files*
-
-- **Namespaces**: SfmStats
+- **Sfm2Xml namespace**: SFM parsing infrastructure
+- **System.IO.File**: File reading
+- **System.Text.Encoding**: Character encoding analysis
