@@ -1,10 +1,115 @@
 ---
-last-reviewed: 2025-10-30
-last-verified-commit: 9611cf70e
-status: draft
+last-reviewed: 2025-10-31
+last-verified-commit: 8af93b2
+status: reviewed
 ---
 
 # xWorks
+
+## Purpose
+Main application shell and area-based UI framework (~66.9K lines in main folder + subfolders) built on XCore. Provides FwXApp (application base class), FwXWindow (area-based window), RecordClerk (record management), RecordView hierarchy (browse/edit/doc views), dictionary configuration subsystem (ConfigurableDictionaryNode, DictionaryConfigurationModel), and XHTML export (LcmXhtmlGenerator, DictionaryExportService, Webonary upload). Implements area-switching UI, record browsing/editing, configurable dictionary publishing, and interlinear text display for all FieldWorks applications.
+
+## Key Components
+
+### Application Framework
+- **FwXApp** (FwXApp.cs) - Abstract base class extending FwApp
+  - `OnMasterRefresh(object sender)` - Master refresh coordination
+  - `DefaultConfigurationPathname` property - XML config file path
+  - Subclassed by LexTextApp, etc.
+- **FwXWindow** (FwXWindow.cs) - Main area-based window extending XWindow
+  - Hosts: RecordView, RecordClerk, area switching UI
+  - XML-driven configuration via Inventory system
+
+### Record Management (RecordClerk.cs, SubitemRecordClerk.cs)
+- **RecordClerk** - Master record list manager
+  - `CurrentObject` property - Active LCModel object
+  - `OnRecordNavigation` - Record navigation handling
+  - Filters: m_filters, m_filterProvider
+  - Sorters: m_sorter, m_sortName
+- **SubitemRecordClerk** - Subitem/sub-entry management
+- **RecordList** (RecordList.cs) - Manages lists of records with filtering/sorting
+- **InterestingTextList** (InterestingTextList.cs) - Text corpus management
+
+### View Hierarchy
+- **RecordView** (RecordView.cs) - Abstract base for record display views
+- **RecordBrowseView** (RecordBrowseView.cs) - Browse view (list/grid)
+- **RecordEditView** (RecordEditView.cs) - Edit view (form-based)
+- **RecordDocView** (RecordDocView.cs) - Document view (read-only display)
+- **XmlDocView** (XmlDocView.cs) - XML-configured document view
+- **XhtmlDocView** (XhtmlDocView.cs) - XHTML export/display view
+- **XhtmlRecordDocView** (XhtmlRecordDocView.cs) - Per-record XHTML view
+- **XWorksViewBase** (XWorksViewBase.cs) - Shared view base class
+- **GeneratedHtmlViewer** (GeneratedHtmlViewer.cs) - HTML preview pane
+
+### Dictionary Configuration System
+- **DictionaryConfigurationModel** (DictionaryConfigurationModel.cs) - Configuration data model
+- **ConfigurableDictionaryNode** (ConfigurableDictionaryNode.cs) - Tree node for configuration
+- **DictionaryConfigurationController**, **DictionaryConfigurationManagerController** - MVC controllers
+- **DictionaryConfigMgrDlg**, **DictionaryConfigurationDlg** - Configuration dialogs
+- **DictionaryConfigurationTreeControl** - Tree editor for configuration
+- **DictionaryNodeOptions** (DictionaryNodeOptions.cs) - Per-node display options
+- **DictionaryConfigurationMigrator** (DictionaryConfigurationMigrator.cs) - Config version migration
+- **DictionaryDetailsController** (DictionaryDetailsController.cs) - Details panel controller
+
+### XHTML/HTML Generation
+- **LcmXhtmlGenerator** (LcmXhtmlGenerator.cs) - Main XHTML generator for dictionary export
+- **LcmJsonGenerator** (LcmJsonGenerator.cs) - JSON export for Webonary
+- **LcmWordGenerator** (LcmWordGenerator.cs) - Word document generation
+- **ConfiguredLcmGenerator** (ConfiguredLcmGenerator.cs) - Configurable export generator
+- **CssGenerator** (CssGenerator.cs) - CSS stylesheet generation
+- **WordStylesGenerator** (WordStylesGenerator.cs) - Word style definitions
+- **FlexStylesXmlAccessor** (FlexStylesXmlAccessor.cs) - FLEx styles to CSS mapping
+- **DictionaryExportService** (DictionaryExportService.cs) - Export coordination
+
+### Webonary Integration
+- **UploadToWebonaryController**, **UploadToWebonaryModel** (UploadToWebonaryController.cs, UploadToWebonaryModel.cs) - Webonary upload
+- **UploadToWebonaryDlg** (UploadToWebonaryDlg.cs) - Upload dialog
+- **WebonaryClient** (WebonaryClient.cs) - Webonary API client implementing IWebonaryClient
+- **WebonaryLogViewer** (WebonaryLogViewer.cs) - Upload log display
+- **WebonaryUploadLog** (WebonaryUploadLog.cs) - Upload log model
+
+### UI Components and Handlers
+- **RecordBarListHandler**, **RecordBarTreeHandler** (RecordBarListHandler.cs, RecordBarTreeHandler.cs) - Record bar UI handlers
+- **TreeBarHandlerUtils** (TreeBarHandlerUtils.cs) - Tree bar utilities
+- **DTMenuHandler** (DTMenuHandler.cs) - Dynamic menu handler
+- **LinkListener**, **MacroListener**, **TextListeners** - Event listeners
+- **ImageHolder** (ImageHolder.cs) - Image display control
+
+### Supporting Services
+- **GlobalSettingServices** (GlobalSettingServices.cs) - Global settings management
+- **ReversalIndexServices** (ReversalIndexServices.cs) - Reversal index operations
+- **ExportDialog** (ExportDialog.cs) - Generic export dialog
+- **LiftExportMessageDlg** (LiftExportMessageDlg.cs) - LIFT export messages
+- **UnicodeCharacterEditingHelper** (UnicodeCharacterEditingHelper.cs) - PUA character support
+- **SilErrorReportingAdapter** (SilErrorReportingAdapter.cs) - Error reporting integration
+
+## Subfolders (detailed docs in individual COPILOT.md files)
+- **xWorksTests/** - Comprehensive test suite
+- **DictionaryConfigurationMigrators/** - Version-specific migration code
+- **DictionaryDetailsView/** - Details view implementations
+- **Archiving/** - RAMP/REAP archiving support
+- **Resources/** - Images, XML configs, stylesheets
+
+## Dependencies
+- **Upstream**: XCore (Mediator, Inventory, XWindow), Common/Framework (FwApp, FwXApp), Common/RootSite (view infrastructure), LCModel (data model), LCModel.DomainServices (export), FdoUi (object-specific UI), Common/FwUtils (utilities)
+- **Downstream consumers**: LexText/LexTextDll (LexTextApp extends FwXApp), all area-based FLEx applications
+
+## Test Infrastructure
+- **xWorksTests/** subfolder with comprehensive unit tests
+- Tests for: Dictionary configuration, export generation, record management, view coordination
+
+## Related Folders
+- **XCore/** - Application framework foundation
+- **LexText/** - Dictionary/lexicon areas built on xWorks
+- **Common/Framework/** - FwApp base class
+- **FdoUi/** - Object-specific UI components
+- **FXT/** - XML export templates used by dictionary export
+
+## References
+- **Project**: xWorks.csproj (.NET Framework 4.6.2 class library)
+- **Test project**: xWorksTests/xWorksTests.csproj
+- **~97 CS files** in main folder (~66.9K lines): FwXApp.cs, FwXWindow.cs, RecordClerk.cs, RecordView hierarchy, DictionaryConfigurationModel.cs, LcmXhtmlGenerator.cs, UploadToWebonaryController.cs, etc.
+- **Resources**: xWorksStrings.resx, DataTreeImages.resx, RecordClerkImages.resx, many dialog .resx files
 
 ## Purpose
 Primary FieldWorks application shell and module hosting infrastructure.
