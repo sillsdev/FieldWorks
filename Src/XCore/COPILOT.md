@@ -1,153 +1,67 @@
 ---
-last-reviewed: 2025-10-30
-last-verified-commit: 9611cf70e
-status: draft
+last-reviewed: 2025-10-31
+last-verified-commit: ded4707
+status: reviewed
 ---
 
 # XCore
 
 ## Purpose
-Cross-cutting application framework and plugin architecture.
-Provides command handling, choice management, property propagation, UI composition, and extensibility
-infrastructure (xCoreInterfaces, FlexUIAdapter) used by multiple FieldWorks applications. Includes
-navigation components (SilSidePane) and comprehensive tests (xCoreTests). Foundation for building
-extensible, plugin-based applications with consistent command and UI patterns.
-
-## Architecture
-C# library with 91 source files. Contains 4 subprojects: xCore, xCoreInterfaces, FlexUIAdapter....
+Cross-cutting application framework (~9.8K lines in main folder + 4 subfolders) providing plugin architecture, command routing (Mediator), XML-driven UI composition (Inventory, XWindow), and extensibility infrastructure for FieldWorks applications. Implements colleague pattern (IxCoreColleague), UI adapters (IUIAdapter), property propagation (PropertyTable), and choice management. See subfolder COPILOT.md files for xCoreInterfaces/, FlexUIAdapter/, SilSidePane/, xCoreTests/ details.
 
 ## Key Components
-### Key Classes
-- **Inventory**
-- **XmlIncluder**
-- **ImageContent**
-- **NotifyWindow**
-- **IconHolder**
-- **MockupDialogLauncher**
-- **CollapsingSplitContainer**
-- **Ticker**
-- **XWindow**
-- **HtmlViewer**
 
-### Key Interfaces
-- **IOldVersionMerger**
-- **IPostLayoutInit**
-- **IFeedbackInfoProvider**
-- **IContextHelper**
-- **IUIAdapter**
-- **IUIAdapterForceRegenerate**
-- **IUIMenuAdapter**
-- **ITestableUIAdapter**
+### Core Framework (main folder)
+- **Inventory** (Inventory.cs) - XML configuration aggregation with base/derived unification
+  - `GetElement(string xpath)` - Retrieves unified config elements (layouts, parts)
+  - `LoadElements(string path, string xpath)` - Loads XML from files with key attribute merging
+  - Handles derivation: elements with `base` attribute unified with base elements
+- **XWindow** (xWindow.cs) - Main application window implementing IxCoreColleague, IxWindow
+  - Manages: m_mainSplitContainer (CollapsingSplitContainer), m_sidebar, m_recordBar, m_mainContentControl
+  - Properties: ShowSidebar, ShowRecordList, persistent splitter distances
+  - `Init(Mediator mediator, PropertyTable propertyTable, XmlNode config)` - XML-driven window initialization
+- **Mediator** - Central command routing and colleague coordination (referenced throughout)
+- **PropertyTable** - Centralized property storage and change notification
 
-## Technology Stack
-- C# .NET WinForms
-- Plugin/mediator architecture
-- Command pattern implementation
-- Event-driven UI framework
+### UI Components
+- **CollapsingSplitContainer** (CollapsingSplitContainer.cs) - Enhanced SplitContainer with panel collapse
+- **RecordBar** (RecordBar.cs) - Navigation bar for record lists
+- **MultiPane** (MultiPane.cs) - Tab control equivalent for area switching
+- **PaneBarContainer** (PaneBarContainer.cs) - Container for pane bars and content
+- **AdapterMenuItem** (AdapterMenuItem.cs) - Menu item with command routing
+
+### Supporting Infrastructure
+- **HtmlViewer**, **HtmlControl** (HtmlViewer.cs, HtmlControl.cs) - Embedded HTML display (Gecko/WebBrowser wrappers)
+- **ImageCollection**, **ImageContent** (ImageCollection.cs, ImageContent.cs) - Image resource management
+- **IconHolder** (IconHolder.cs) - Icon wrapper for UI elements
+- **NotifyWindow** (NotifyWindow.cs) - Toast/notification popup
+- **Ticker** (Ticker.cs) - Timer-based UI updates
+- **AreaManager** (AreaManager.cs) - Area switching and configuration with DlgListenerBase
+- **IncludeXml** (IncludeXml.cs) - XML inclusion helper
+- **XMessageBoxExManager** (XMessageBoxExManager.cs) - MessageBoxEx adapter
+- **xCoreUserControl** (xCoreUserControl.cs) - Base class for XCore-aware user controls implementing IXCoreUserControl
+
+## Subfolders (detailed docs in individual COPILOT.md files)
+- **xCoreInterfaces/** - Core interfaces: IxCoreColleague, IUIAdapter, IxCoreContentControl, etc.
+- **FlexUIAdapter/** - FLEx-specific UI adapter implementations
+- **SilSidePane/** - WeifenLuo.WinFormsUI.Docking sidebar integration
+- **xCoreTests/** - Comprehensive test suite for XCore framework
 
 ## Dependencies
-- Depends on: Common (UI infrastructure), FwResources (resources)
-- Used by: xWorks, LexText (all major applications built on XCore)
+- **Upstream**: Common/FwUtils (utilities), Common/Framework (FwApp integration), FwResources (images), LCModel.Utils, SIL.Utils, WeifenLuo.WinFormsUI.Docking (SilSidePane)
+- **Downstream consumers**: xWorks/, LexText applications (all major FLEx apps built on XCore), Common/Framework (FwApp uses XCore)
 
-## Interop & Contracts
-Uses COM, P/Invoke for cross-boundary calls.
+## Related Folders
+- **xWorks/** - Primary consumer, area-based application shell
+- **Common/Framework/** - FwApp integration layer
+- **LexText/** - Dictionary/lexicon areas built on XCore
+- **FwResources/** - Images and resources used by XCore UI
 
-## Threading & Performance
-Threading model: UI thread marshaling.
-
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Build Information
-- Multiple C# projects comprising the framework
-- Includes comprehensive test suite
-- Build with MSBuild or Visual Studio
-
-## Interfaces and Data Models
-
-- **IContextHelper** (interface)
-  - Path: `xCoreInterfaces/BaseContextHelper.cs`
-  - Public interface definition
-
-- **IFeedbackInfoProvider** (interface)
-  - Path: `xCoreInterfaces/IFeedbackInfoProvider.cs`
-  - Public interface definition
-
-- **IImageCollection** (interface)
-  - Path: `xCoreInterfaces/IImageCollection.cs`
-  - Public interface definition
-
-- **IOldVersionMerger** (interface)
-  - Path: `Inventory.cs`
-  - Public interface definition
-
-- **IPostLayoutInit** (interface)
-  - Path: `xWindow.cs`
-  - Public interface definition
-
-- **ITestableUIAdapter** (interface)
-  - Path: `xCoreInterfaces/IUIAdapter.cs`
-  - Public interface definition
-
-- **IUIAdapter** (interface)
-  - Path: `xCoreInterfaces/IUIAdapter.cs`
-  - Public interface definition
-
-- **IUIAdapterForceRegenerate** (interface)
-  - Path: `xCoreInterfaces/IUIAdapter.cs`
-  - Public interface definition
-
-- **IUIMenuAdapter** (interface)
-  - Path: `xCoreInterfaces/IUIAdapter.cs`
-  - Public interface definition
-
-- **IXCoreUserControl** (interface)
-  - Path: `xCoreInterfaces/IxCoreColleague.cs`
-  - Public interface definition
-
-- **IxCoreColleague** (interface)
-  - Path: `xCoreInterfaces/IxCoreColleague.cs`
-  - Public interface definition
-
-- **IxCoreContentControl** (interface)
-  - Path: `xCoreInterfaces/IxCoreColleague.cs`
-  - Public interface definition
-
-- **AdapterMenuItem** (class)
-  - Path: `AdapterMenuItem.cs`
-  - Public class implementation
-
-- **DlgListenerBase** (class)
-  - Path: `AreaManager.cs`
-  - Public class implementation
-
-- **HtmlControl** (class)
-  - Path: `HtmlControl.cs`
-  - Public class implementation
-
-- **HtmlControlEventArgs** (class)
-  - Path: `HtmlControl.cs`
-  - Public class implementation
-
-- **HtmlViewer** (class)
-  - Path: `HtmlViewer.cs`
-  - Public class implementation
-
-- **IconHolder** (class)
-  - Path: `IconHolder.cs`
-  - Public class implementation
-
-- **ImageCollection** (class)
-  - Path: `ImageCollection.cs`
-  - Public class implementation
-
-- **ImageContent** (class)
-  - Path: `ImageContent.cs`
-  - Public class implementation
-
-- **Inventory** (class)
-  - Path: `Inventory.cs`
-  - Public class implementation
+## References
+- **Project**: xCore.csproj (.NET Framework 4.6.2 class library)
+- **Subprojects**: xCoreInterfaces/, FlexUIAdapter/, SilSidePane/, xCoreTests/ (see individual COPILOT.md files)
+- **21 CS files** in main folder (~9.8K lines): Inventory.cs, xWindow.cs, CollapsingSplitContainer.cs, RecordBar.cs, MultiPane.cs, HtmlViewer.cs, ImageCollection.cs, AreaManager.cs, etc.
+- **Resources**: xCoreStrings.resx, AdapterMenuItem.resx, CollapsingSplitContainer.resx, HtmlControl.resx, etc.
 
 - **MockupDialogLauncher** (class)
   - Path: `MockupDialogLauncher.cs`
