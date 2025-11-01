@@ -1,83 +1,66 @@
 ---
-last-reviewed: 2025-10-30
-last-verified-commit: 9611cf70e
-status: draft
+last-reviewed: 2025-10-31
+last-verified-commit: e38a4e9
+status: reviewed
 ---
 
 # xCoreInterfaces
 
 ## Purpose
-Core interface definitions for the XCore framework.
-Declares fundamental contracts for command handling (IxCoreColleague), choice management
-(ChoiceGroup), property tables (PropertyTable), mediator pattern (Mediator), and UI component
-integration. These interfaces define the extensibility architecture that enables plugin-based
-application composition in FieldWorks.
-
-## Architecture
-C# library with 26 source files. Contains 1 subprojects: xCoreInterfaces.
+Core interface definitions and implementations (~7.8K lines) for XCore framework. Provides Mediator (central message broker), PropertyTable (property storage), IxCoreColleague (colleague pattern), ChoiceGroup/Choice (menu/toolbar definitions), Command (command pattern), IUIAdapter (UI adapter contracts), and IdleQueue (idle-time processing). Foundation for plugin-based extensibility across FieldWorks.
 
 ## Key Components
-### Key Classes
-- **PropertyTable**
-- **BaseContextHelper**
-- **ReadOnlyPropertyTable**
-- **ChoiceRelatedClass**
-- **ChoiceGroupCollection**
-- **ChoiceGroup**
-- **MediatorDisposeAttribute**
-- **Mediator**
-- **RecordFilterListProvider**
-- **AdapterAssemblyFactory**
 
-### Key Interfaces
-- **IFeedbackInfoProvider**
-- **IContextHelper**
-- **IUIAdapter**
-- **IUIAdapterForceRegenerate**
-- **IUIMenuAdapter**
-- **ITestableUIAdapter**
-- **IImageCollection**
-- **IxCoreColleague**
+### Core Patterns
+- **Mediator** (Mediator.cs) - Central command routing and colleague coordination (~2.4K lines)
+  - `BroadcastMessage(string message, object parameter)` - Message broadcast
+  - `SendMessage(string message, object parameter)` - Direct message send
+  - Manages: Colleague registration, property table, idle queue
+- **PropertyTable**, **ReadOnlyPropertyTable** (PropertyTable.cs, ReadOnlyPropertyTable.cs) - Property storage with change notification
+  - `SetProperty(string name, object value, bool doSetPropertyEvents)` - Set property with optional events
+  - `GetValue<T>(string name)` - Strongly-typed property retrieval
+- **IxCoreColleague** (IxCoreColleague.cs) - Colleague pattern interface
+  - `IxCoreContentControl`, `IXCoreUserControl` - Specialized colleague interfaces
+- **Command** (Command.cs) - Command pattern with undo/redo support
+  - `ICommandUndoRedoText` interface for undo text customization
 
-## Technology Stack
-- C# .NET
-- Interface-based design
-- Mediator and command patterns
+### UI Abstractions
+- **ChoiceGroup**, **Choice**, **ChoiceGroupCollection** (ChoiceGroup.cs, Choice.cs) - Menu/toolbar definitions
+  - XML-driven choice loading from Inventory
+- **IUIAdapter**, **IUIMenuAdapter**, **ITestableUIAdapter** (IUIAdapter.cs) - UI adapter contracts
+  - `IUIAdapterForceRegenerate` - Forces UI regeneration
+  - `AdapterAssemblyFactory` - Creates UI adapters from assemblies
+
+### Supporting Services
+- **IdleQueue** (IdleQueue.cs) - Idle-time work queue
+  - `AddTask(Task task)` - Queue work for idle execution
+- **MessageSequencer** (MessageSequencer.cs) - Message sequencing and filtering
+- **PersistenceProvider**, **IPersistenceProvider** (PersistenceProvider.cs, IPersistenceProvider.cs) - Settings persistence
+- **BaseContextHelper**, **IContextHelper** (BaseContextHelper.cs) - Context-aware help
+- **IFeedbackInfoProvider** (IFeedbackInfoProvider.cs) - User feedback interface
+- **IImageCollection** (IImageCollection.cs) - Image resource access
+- **RecordFilterListProvider** (RecordFilterListProvider.cs) - Record filtering support
+- **IPaneBar** (IPaneBar.cs) - Pane bar interface
+- **IPropertyRetriever** (IPropertyRetriever.cs) - Property access abstraction
+- **List** (List.cs) - Generic list utilities
 
 ## Dependencies
-- Depends on: Minimal (pure interface definitions)
-- Used by: XCore, XCore/FlexUIAdapter, all XCore-based applications
+- **Upstream**: Minimal - SIL.Utils, System assemblies (pure interface definitions)
+- **Downstream consumers**: XCore/ (Inventory, XWindow), XCore/FlexUIAdapter/, xWorks/, LexText/, all XCore-based apps
 
-## Interop & Contracts
-Uses COM for cross-boundary calls.
+## Test Infrastructure
+- **xCoreInterfacesTests/** subfolder
+- Tests for: Mediator, PropertyTable, ChoiceGroup, Command
 
-## Threading & Performance
-Threading model: explicit threading, UI thread marshaling.
+## Related Folders
+- **XCore/** - Main framework implementation using these interfaces
+- **XCore/FlexUIAdapter/** - UI adapter implementations
+- **xWorks/** - Application shell built on XCore interfaces
 
-## Config & Feature Flags
-No explicit configuration or feature flags detected.
-
-## Build Information
-- C# interface library project
-- Build via: `dotnet build xCoreInterfaces.csproj`
-- Pure interface definitions
-
-## Interfaces and Data Models
-
-- **ICommandUndoRedoText** (interface)
-  - Path: `Command.cs`
-  - Public interface definition
-
-- **IContextHelper** (interface)
-  - Path: `BaseContextHelper.cs`
-  - Public interface definition
-
-- **IFeedbackInfoProvider** (interface)
-  - Path: `IFeedbackInfoProvider.cs`
-  - Public interface definition
-
-- **IImageCollection** (interface)
-  - Path: `IImageCollection.cs`
+## References
+- **Project**: xCoreInterfaces.csproj (.NET Framework 4.6.2 class library)
+- **Test project**: xCoreInterfacesTests/xCoreInterfacesTests.csproj
+- **~22 CS files** (~7.8K lines): Mediator.cs, PropertyTable.cs, IxCoreColleague.cs, ChoiceGroup.cs, Command.cs, IUIAdapter.cs, IdleQueue.cs, etc.
   - Public interface definition
 
 - **IMediatorProvider** (interface)
