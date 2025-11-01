@@ -1,147 +1,68 @@
 ---
-last-reviewed: 2025-10-30
-last-verified-commit: 9611cf70e
-status: draft
+last-reviewed: 2025-10-31
+last-verified-commit: 4e824be
+status: reviewed
 ---
 
 # UnicodeCharEditor
 
 ## Purpose
-Specialized tool for viewing and editing Unicode character properties.
-Provides detailed information about Unicode characters, their properties, and rendering
-characteristics. Useful for linguists working with uncommon scripts or diagnosing
-character encoding and display issues.
-
-## Architecture
-C# library with 16 source files. Contains 1 subprojects: UnicodeCharEditor.
+Standalone WinForms application (~4.1K lines) for managing Private Use Area (PUA) character definitions in FieldWorks. Allows linguists to create, edit, and install custom character properties that override Unicode defaults. Writes to CustomChars.xml and installs data into ICU's data folder for use across FieldWorks applications.
 
 ## Key Components
-### Key Classes
-- **CharEditorWindow**
-- **IcuLockedException**
-- **UceException**
-- **CustomCharDlg**
-- **PUAInstaller**
-- **PuaException**
-- **ErrorCodesExtensionMethods**
-- **LogFile**
-- **PUAInstallerTests**
 
-## Technology Stack
-- C# .NET WinForms
-- Unicode character database integration
-- Character property editing
+### Main Application
+- **Program** (Program.cs) - Entry point with command-line parsing
+  - `-i, --install` switch - Install CustomChars.xml data to ICU folder without GUI
+  - `-l, --log` switch - Enable logging to file
+  - `-v, --verbose` switch - Enable verbose logging
+  - `-c, --cleanup <processId>` - Clean up locked ICU files (background process)
+  - Uses CommandLineParser library for argument handling
+
+### Character Editor UI
+- **CharEditorWindow** (CharEditorWindow.cs) - Main form implementing IHelpTopicProvider
+  - `m_dictCustomChars` - Dictionary<int, PUACharacter> for user overrides from CustomChars.xml
+  - `m_dictModifiedChars` - Dictionary<int, PUACharacter> for standard Unicode overrides from UnicodeDataOverrides.txt
+  - **PuaListItem** nested class - ListView items with hex code sorting
+  - **PuaListItemComparer** - Sorts by Unicode codepoint value
+  - `ReadDataFromUnicodeFiles()` - Loads Unicode base data
+  - `ReadCustomCharData()` - Loads CustomChars.xml
+  - `WriteCustomCharData()` - Saves modifications to CustomChars.xml
+- **CustomCharDlg** (CustomCharDlg.cs) - Dialog for editing individual character properties
+
+### ICU Data Installation
+- **PUAInstaller** (PUAInstaller.cs) - Installs CustomChars.xml into ICU data files
+  - `Install(string icuDir, string customCharsFile)` - Main installation method
+  - **UndoFiles** struct - Tracks backup files for rollback
+  - Handles file locking via cleanup child process spawning
+  - Modifies ICU's UnicodeData.txt, nfkc.txt, nfc.txt files
+
+### Supporting Infrastructure
+- **LogFile** (LogFile.cs) - File-based logging with `IsLogging`, `IsVerbose` properties
+- **IcuLockedException** (IcuLockedException.cs) - Exception for ICU file access failures
+- **UceException**, **PuaException** (UceException.cs, PuaException.cs) - Application-specific exceptions
+- **ErrorCodes** enum (ErrorCodes.cs) - Application error code enumeration
+- **IcuErrorCodes** enum (IcuErrorCodes.cs) - ICU-specific error codes
+- **ErrorCodesExtensionMethods** - Extension methods for error code handling
 
 ## Dependencies
-- Depends on: Common (UI infrastructure), Unicode data files
-- Used by: Linguists needing to edit character properties
+- **Upstream**: LCModel.Core.Text (PUACharacter, Unicode utilities), Common/FwUtils (FwRegistryHelper, IHelpTopicProvider, MessageBoxUtils), SIL.Utils, CommandLineParser (NuGet), System.Windows.Forms
+- **Downstream consumers**: All FieldWorks applications that use ICU for Unicode normalization and character properties
+- **External data**: ICU data folder (UnicodeData.txt, nfkc.txt, nfc.txt), CustomChars.xml (user data in local settings)
 
-## Interop & Contracts
-Uses COM for cross-boundary calls.
-
-## Threading & Performance
-Threading model: explicit threading, synchronization.
-
-## Config & Feature Flags
-Config files: App.config.
-
-## Build Information
-- C# WinForms application
-- Includes test suite
-- Build with MSBuild or Visual Studio
-
-## Interfaces and Data Models
-
-- **CustomCharDlg** (class)
-  - Path: `CustomCharDlg.cs`
-  - Public class implementation
-
-- **ErrorCodesExtensionMethods** (class)
-  - Path: `ErrorCodes.cs`
-  - Public class implementation
-
-- **IcuLockedException** (class)
-  - Path: `IcuLockedException.cs`
-  - Public class implementation
-
-- **LogFile** (class)
-  - Path: `LogFile.cs`
-  - Public class implementation
-
-- **PUAInstaller** (class)
-  - Path: `PUAInstaller.cs`
-  - Public class implementation
-
-- **PuaException** (class)
-  - Path: `PuaException.cs`
-  - Public class implementation
-
-- **UceException** (class)
-  - Path: `UceException.cs`
-  - Public class implementation
-
-- **UndoFiles** (struct)
-  - Path: `PUAInstaller.cs`
-
-- **ErrorCodes** (enum)
-  - Path: `ErrorCodes.cs`
-
-- **IcuErrorCodes** (enum)
-  - Path: `IcuErrorCodes.cs`
-
-## Entry Points
-- Standalone application for Unicode character editing
-- May be launched from main FieldWorks applications
-
-## Test Index
-Test projects: UnicodeCharEditorTests. 1 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
-
-## Usage Hints
-Library component. Reference in consuming projects. See Dependencies section for integration points.
+## Test Infrastructure
+- **UnicodeCharEditorTests/** subfolder with 1 test file
+- **PUAInstallerTests** - Tests for ICU data installation logic
+- Run via: `dotnet test` or Visual Studio Test Explorer
 
 ## Related Folders
-- **Common/** - UI infrastructure for the editor
-- **Kernel/** - String utilities for Unicode handling
-- **LexText/** - May use custom character definitions from editor
+- **LCModel.Core/** - PUACharacter class definition, Unicode utilities
+- **Common/FwUtils/** - Registry access, help topic provider interface
+- **Kernel/** - May consume installed PUA character definitions
 
 ## References
-
-- **Project files**: UnicodeCharEditor.csproj, UnicodeCharEditorTests.csproj
-- **Target frameworks**: net462
-- **Key C# files**: CharEditorWindow.Designer.cs, CharEditorWindow.cs, CustomCharDlg.cs, ErrorCodes.cs, HelpTopicPaths.Designer.cs, IcuErrorCodes.cs, IcuLockedException.cs, PUAInstaller.cs, PuaException.cs, UceException.cs
-- **Source file count**: 16 files
-- **Data file count**: 5 files
-
-## References (auto-generated hints)
-- Project files:
-  - Src/UnicodeCharEditor/BuildInclude.targets
-  - Src/UnicodeCharEditor/UnicodeCharEditor.csproj
-  - Src/UnicodeCharEditor/UnicodeCharEditorTests/UnicodeCharEditorTests.csproj
-- Key C# files:
-  - Src/UnicodeCharEditor/CharEditorWindow.Designer.cs
-  - Src/UnicodeCharEditor/CharEditorWindow.cs
-  - Src/UnicodeCharEditor/CustomCharDlg.cs
-  - Src/UnicodeCharEditor/ErrorCodes.cs
-  - Src/UnicodeCharEditor/HelpTopicPaths.Designer.cs
-  - Src/UnicodeCharEditor/IcuErrorCodes.cs
-  - Src/UnicodeCharEditor/IcuLockedException.cs
-  - Src/UnicodeCharEditor/LogFile.cs
-  - Src/UnicodeCharEditor/PUAInstaller.cs
-  - Src/UnicodeCharEditor/Program.cs
-  - Src/UnicodeCharEditor/Properties/AssemblyInfo.cs
-  - Src/UnicodeCharEditor/Properties/Resources.Designer.cs
-  - Src/UnicodeCharEditor/Properties/Settings.Designer.cs
-  - Src/UnicodeCharEditor/PuaException.cs
-  - Src/UnicodeCharEditor/UceException.cs
-  - Src/UnicodeCharEditor/UnicodeCharEditorTests/PUAInstallerTests.cs
-- Data contracts/transforms:
-  - Src/UnicodeCharEditor/App.config
-  - Src/UnicodeCharEditor/CharEditorWindow.resx
-  - Src/UnicodeCharEditor/CustomCharDlg.resx
-  - Src/UnicodeCharEditor/HelpTopicPaths.resx
-  - Src/UnicodeCharEditor/Properties/Resources.resx
-## Code Evidence
-*Analysis based on scanning 11 source files*
-
-- **Classes found**: 9 public classes
-- **Namespaces**: SIL.FieldWorks.UnicodeCharEditor
+- **Project**: UnicodeCharEditor.csproj (.NET Framework 4.6.2 WinExe)
+- **Test project**: UnicodeCharEditorTests/UnicodeCharEditorTests.csproj
+- **16 CS files** (~4.1K lines): Program.cs, CharEditorWindow.cs, CustomCharDlg.cs, PUAInstaller.cs, LogFile.cs, exceptions, enums
+- **Resources**: CharEditorWindow.resx, CustomCharDlg.resx, HelpTopicPaths.resx
+- **Config**: App.config
