@@ -460,7 +460,7 @@ namespace SIL.FieldWorks.XWorks
 				if (Cache.ServiceLocator.GetObject(domainHvo) is ICmSemanticDomain domain)
 				{
 					var refSenseFlid = Cache.MetaDataCacheAccessor.GetFieldId2(CmSemanticDomainTags.kClassId, "ReferringSenses", false);
-					if(showEmpties || VecProp(domain.Hvo, refSenseFlid).Length > 0)
+					if (showEmpties || VecProp(domain.Hvo, refSenseFlid).Length > 0)
 						result.Add(domainHvo);
 					// Add domain subentries in this domain
 					result.AddRange(flattenDomains(domain.SubPossibilitiesOS.Select(sub => sub.Hvo).ToArray(), showEmpties));
