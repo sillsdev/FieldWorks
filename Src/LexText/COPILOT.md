@@ -13,7 +13,18 @@ Organizational parent folder containing lexicon and text analysis components of 
 Container folder organizing related lexicon/text functionality into cohesive modules.
 
 ## Key Components
-TBD - populate from code. See auto-generated hints below.
+This is an organizational parent folder. Key components are in the subfolders:
+- **Discourse/**: Discourse chart analysis (Discourse.csproj)
+- **FlexPathwayPlugin/**: Pathway publishing integration (FlexPathwayPlugin.csproj)
+- **Interlinear/**: Interlinear text analysis (ITextDll.csproj)
+- **LexTextControls/**: Shared UI controls (LexTextControls.csproj)
+- **LexTextDll/**: Core business logic (LexTextDll.csproj)
+- **LexTextExe/**: Application entry point (LexTextExe.csproj)
+- **Lexicon/**: Lexicon editor UI (LexEdDll.csproj)
+- **Morphology/**: Morphological analysis (MorphologyEditorDll.csproj, MGA.csproj)
+- **ParserCore/**: Parser engine (ParserCore.csproj, XAmpleCOMWrapper.vcxproj)
+- **ParserUI/**: Parser UI (ParserUI.csproj)
+- **images/**: Shared image resources
 
 ## Technology Stack
 See individual subfolder COPILOT.md files.
@@ -32,28 +43,62 @@ See individual subfolder COPILOT.md files.
 - **FLEx users**: Lexicon and text analysis features
 
 ## Interop & Contracts
-TBD - populate from code. See auto-generated hints below.
+This folder is organizational only. Interop contracts exist in subfolders:
+- **ParserCore/XAmpleCOMWrapper**: C++ COM interop for XAmple parser integration
+- See individual subfolder COPILOT.md files for detailed interop contracts
 
 ## Threading & Performance
-TBD - populate from code. See auto-generated hints below.
+No direct threading code at this organizational level. Threading considerations are documented in individual subfolder COPILOT.md files, particularly:
+- **Interlinear/**: UI controls requiring main thread affinity
+- **ParserCore/**: Parser engine threading model
+- **LexTextExe/**: Application-level threading concerns
 
 ## Config & Feature Flags
-TBD - populate from code. See auto-generated hints below.
+Configuration is managed at the subfolder level. No centralized config at this organizational level. See individual subfolder COPILOT.md files for component-specific configurations.
 
 ## Build Information
-TBD - populate from code. See auto-generated hints below.
+No direct build at this level. Build via:
+- Top-level FW.sln includes all LexText subprojects
+- `bash agent-build-fw.sh` builds entire FieldWorks including LexText components
+- Individual subfolders have their own .csproj/.vcxproj files (see References section for complete list)
 
 ## Interfaces and Data Models
-TBD - populate from code. See auto-generated hints below.
+No interfaces or data models at this organizational level. Each subfolder defines its own interfaces and models:
+- **Discourse/**: Chart data structures and UI contracts
+- **Interlinear/**: Interlinear text models and glossing interfaces
+- **Lexicon/**: Lexicon entry models and editor interfaces
+- **ParserCore/**: Parser interfaces and morphological data models
+- See individual subfolder COPILOT.md files for detailed interface documentation
 
 ## Entry Points
-TBD - populate from code. See auto-generated hints below.
+No direct entry points at this organizational level. Main entry points are:
+- **LexTextExe/**: Application executable for FLEx lexicon/text features
+- **LexTextDll/**: Core library consumed by xWorks main application
+- See individual subfolder COPILOT.md files for component-specific entry points
 
 ## Test Index
-TBD - populate from code. See auto-generated hints below.
+No tests at this organizational level. Tests are organized in subfolder test projects:
+- Discourse/DiscourseTests/DiscourseTests.csproj
+- FlexPathwayPlugin/FlexPathwayPluginTests/FlexPathwayPluginTests.csproj
+- Interlinear/ITextDllTests/ITextDllTests.csproj
+- LexTextControls/LexTextControlsTests/LexTextControlsTests.csproj
+- LexTextDll/LexTextDllTests/LexTextDllTests.csproj
+- Lexicon/LexEdDllTests/LexEdDllTests.csproj
+- Morphology/MorphologyEditorDllTests/MorphologyEditorDllTests.csproj
+- Morphology/MGA/MGATests/MGATests.csproj
+- ParserCore/ParserCoreTests/ParserCoreTests.csproj
+- ParserCore/XAmpleManagedWrapper/XAmpleManagedWrapperTests/XAmpleManagedWrapperTests.csproj
+- ParserUI/ParserUITests/ParserUITests.csproj
+
+Run tests via Visual Studio Test Explorer or FW.sln build.
 
 ## Usage Hints
-TBD - populate from code. See auto-generated hints below.
+This is an organizational folder. For usage guidance, see individual subfolder COPILOT.md files:
+- **Lexicon/**: How to work with lexicon entries and management UI
+- **Interlinear/**: Interlinear text analysis workflow
+- **Discourse/**: Discourse chart creation and analysis
+- **ParserCore/**: Parser configuration and integration
+- **Morphology/**: Morphological analysis tools
 
 ## Related Folders
 - **xWorks/**: Main application container
@@ -73,7 +118,7 @@ See individual subfolder COPILOT.md files:
 - ParserCore/COPILOT.md
 - ParserUI/COPILOT.md
 
-## References (auto-generated hints)
+## Auto-Generated Project References
 - Project files:
   - Src/LexText/Discourse/Discourse.csproj
   - Src/LexText/Discourse/DiscourseTests/DiscourseTests.csproj
