@@ -367,8 +367,7 @@ namespace SIL.FieldWorks.IText
 						isWord = true;
 						goto case "punct";
 					case "punct":
-						ITsString wordString = TsStringUtils.MakeString(item.Value,
-							GetWsEngine(wsFactory, item.lang).Handle);
+						ITsString wordString = GetItemValue(item, wsFactory);
 						if (phraseText == null)
 						{
 							phraseText = wordString;
@@ -395,6 +394,30 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		private static bool IsGuess(Morphemes item)
+		{
+			if (item != null && item.analysisStatusSpecified &&
+				(item.analysisStatus != analysisStatusTypes.humanApproved))
+				return true;
+			return false;
+    }
+    
+		private static ITsString GetItemValue(item item, ILgWritingSystemFactory wsFactory)
+		{
+			if (item.run != null)
+			{
+				ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
+				foreach (var run in item.run)
+				{
+					int runWs = GetWsEngine(wsFactory, run.lang).Handle;
+					strBldr.Append(run.Value, StyleUtils.CharStyleTextProps(run.style, runWs));
+				}
+				return strBldr.GetString();
+			}
+			int itemWs = GetWsEngine(wsFactory, item.lang).Handle;
+			return TsStringUtils.MakeString(item.Value, itemWs);
+		}
+
 		/// <summary>
 		/// Add all the data from items in the FLExText file into their proper spots in the segment.
 		/// </summary>
@@ -413,14 +436,13 @@ namespace SIL.FieldWorks.IText
 					switch (item.type)
 					{
 						case "reference-label":
-							newSegment.Reference = TsStringUtils.MakeString(item.Value,
-								GetWsEngine(wsFactory, item.lang).Handle);
+							newSegment.Reference = GetItemValue(item, wsFactory);
 							break;
 						case "gls":
-							newSegment.FreeTranslation.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
+							newSegment.FreeTranslation.set_String(GetWsEngine(wsFactory, item.lang).Handle, GetItemValue(item, wsFactory));
 							break;
 						case "lit":
-							newSegment.LiteralTranslation.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
+							newSegment.LiteralTranslation.set_String(GetWsEngine(wsFactory, item.lang).Handle, GetItemValue(item, wsFactory));
 							break;
 						case "note":
 							int ws = GetWsEngine(wsFactory, item.lang).Handle;
@@ -429,11 +451,11 @@ namespace SIL.FieldWorks.IText
 							{
 								newNote = cache.ServiceLocator.GetInstance<INoteFactory>().Create();
 								newSegment.NotesOS.Add(newNote);
-								newNote.Content.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
+								newNote.Content.set_String(GetWsEngine(wsFactory, item.lang).Handle, GetItemValue(item, wsFactory));
 							}
 							break;
 						case "txt":
-							phraseText = TsStringUtils.MakeString(item.Value, GetWsEngine(wsFactory, item.lang).Handle);
+							phraseText = GetItemValue(item, wsFactory);
 							textInFile = true;
 							break;
 						case "segnum":
@@ -448,8 +470,7 @@ namespace SIL.FieldWorks.IText
 								var customId = mdc.GetFieldId2(classId, item.type, true);
 								if (customId != 0)
 								{
-									var customWs = GetWsEngine(wsFactory, item.lang).Handle;
-									var customTierText = TsStringUtils.MakeString(item.Value, customWs);
+									var customTierText = GetItemValue(item, wsFactory);
 									cache.MainCacheAccessor.SetString(newSegment.Hvo, customId, customTierText);
 								}
 							}
@@ -741,24 +762,25 @@ namespace SIL.FieldWorks.IText
 				return null;
 
 			// Fill in morphemes, lex. entries, lex. gloss, and lex.gram.info
-			if (word.morphemes != null && word.morphemes.morphs.Length > 0)
+			if (word.morphemes != null && word.morphemes.morphs.Length > 0 &&
+				word.morphemes.analysisStatus == analysisStatusTypes.humanApproved)
 			{
 				var lex_entry_repo = cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 				var msa_repo = cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>();
 				foreach (var morpheme in word.morphemes.morphs)
 				{
-					var itemDict = new Dictionary<string, Tuple<string, string>>();
+					var itemDict = new Dictionary<string, Tuple<string, ITsString>>();
 					if (wordForm.Analysis == null)
 						break;
 
 					foreach (var item in morpheme.items)
-						itemDict[item.type] = new Tuple<string, string>(item.lang, item.Value);
+						itemDict[item.type] = new Tuple<string, ITsString>(item.lang, GetItemValue(item, wsFact));
 
 					if (itemDict.ContainsKey("txt")) // Morphemes
 					{
 						var ws = GetWsEngine(wsFact, itemDict["txt"].Item1).Handle;
 						var morphForm = itemDict["txt"].Item2;
-						var wf = TsStringUtils.MakeString(morphForm, ws);
+						var wf = morphForm;
 
 						// Otherwise create a new bundle and add it to analysis
 						bundle = cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>()
@@ -773,7 +795,7 @@ namespace SIL.FieldWorks.IText
 						int ws_cf = GetWsEngine(wsFact, itemDict["cf"].Item1).Handle;
 						ILexEntry entry = null;
 						var entries = lex_entry_repo.AllInstances().Where(
-							m => DecorateFormWithAffixMarkers(m.LexemeFormOA?.MorphTypeRA, m.LexemeFormOA?.Form?.get_String(ws_cf)?.Text) == itemDict["cf"].Item2);
+							m => DecorateFormWithAffixMarkers(m.LexemeFormOA?.MorphTypeRA, m.LexemeFormOA?.Form?.get_String(ws_cf)?.Text) == itemDict["cf"].Item2.Text);
 
 						// Filter entries by homograph number.
 						// If the lexeme and the headword are different,
@@ -783,7 +805,7 @@ namespace SIL.FieldWorks.IText
 						string hn = "0";
 						if (itemDict.ContainsKey("hn")) // Homograph Number
 						{
-							hn = itemDict["hn"].Item2;
+							hn = itemDict["hn"].Item2.Text;
 						}
 						var hnEntries = entries.Where(m => m.HomographNumber.ToString() == hn);
 						if (hnEntries.Count() > 0)
@@ -798,12 +820,12 @@ namespace SIL.FieldWorks.IText
 							IList<ILexSense> senses = new List<ILexSense>();
 							foreach (var e in entries)
 							{
-								senses.AddRange(e.SensesOS.Where(s => s.Gloss.get_String(ws_gls).Text == itemDict["gls"].Item2));
+								senses.AddRange(e.SensesOS.Where(s => s.Gloss.get_String(ws_gls).Text == itemDict["gls"].Item2.Text));
 							}
 							if (senses.Count() > 1 && itemDict.ContainsKey("msa"))
 							{
 								// Filter senses by MSA.
-								IList<ILexSense> msaSenses = senses.Where(s => s.MorphoSyntaxAnalysisRA?.InterlinearAbbr == itemDict["msa"].Item2).ToList();
+								IList<ILexSense> msaSenses = senses.Where(s => s.MorphoSyntaxAnalysisRA?.InterlinearAbbr == itemDict["msa"].Item2.Text).ToList();
 								if (msaSenses.Count() > 0)
 								{
 									senses = msaSenses;
@@ -830,7 +852,7 @@ namespace SIL.FieldWorks.IText
 								// Try allomorph first.
 								var ws_txt = GetWsEngine(wsFact, itemDict["txt"].Item1).Handle;
 								bundle.MorphRA = entry.AllAllomorphs.Where(
-									m => DecorateFormWithAffixMarkers(m.MorphTypeRA, m.Form.get_String(ws_txt).Text) == itemDict["txt"].Item2).FirstOrDefault();
+									m => DecorateFormWithAffixMarkers(m.MorphTypeRA, m.Form.get_String(ws_txt).Text) == itemDict["txt"].Item2.Text).FirstOrDefault();
 							}
 							if (bundle.MorphRA == null)
 							{
@@ -841,13 +863,13 @@ namespace SIL.FieldWorks.IText
 
 					if (itemDict.ContainsKey("msa")) // Lex. Gram. Info
 					{
-						if (bundle.SenseRA != null && bundle.SenseRA.MorphoSyntaxAnalysisRA?.InterlinearAbbr == itemDict["msa"].Item2)
+						if (bundle.SenseRA != null && bundle.SenseRA.MorphoSyntaxAnalysisRA?.InterlinearAbbr == itemDict["msa"].Item2.Text)
 						{
 							bundle.MsaRA = bundle.SenseRA.MorphoSyntaxAnalysisRA;
 						}
 						else
 						{
-							IMoMorphSynAnalysis match = msa_repo.AllInstances().FirstOrDefault(m => m.InterlinearAbbr == itemDict["msa"].Item2);
+							IMoMorphSynAnalysis match = msa_repo.AllInstances().FirstOrDefault(m => m.InterlinearAbbr == itemDict["msa"].Item2.Text);
 							if (match != null)
 							{
 								bundle.MsaRA = match;
@@ -898,8 +920,8 @@ namespace SIL.FieldWorks.IText
 							ILgWritingSystem writingSystem = GetWsEngine(cache.WritingSystemFactory, item.lang);
 							if (writingSystem != null)
 							{
-								cat.Name.set_String(writingSystem.Handle, item.Value);
-								cat.Abbreviation.set_String(writingSystem.Handle, item.Value);
+								cat.Name.set_String(writingSystem.Handle, GetItemValue(item, cache.WritingSystemFactory));
+								cat.Abbreviation.set_String(writingSystem.Handle, GetItemValue(item, cache.WritingSystemFactory));
 							}
 						}
 					}
@@ -994,6 +1016,12 @@ namespace SIL.FieldWorks.IText
 						break;
 				}
 			}
+			if (word.morphemes != null && word.morphemes.analysisStatus != analysisStatusTypes.humanApproved)
+			{
+				// If the morphemes were guessed then the glosses and cats were also guessed.
+				expectedGlosses.Clear();
+				expectedCats.Clear();
+			}
 
 			if (candidateForm == null || !MatchPrimaryFormAndAddMissingAlternatives(candidateForm, expectedForms, mainWritingSystem))
 			{
@@ -1011,7 +1039,8 @@ namespace SIL.FieldWorks.IText
 			analysis = candidateWordform;
 			// If no glosses or morphemes are expected the wordform itself is the match
 			if (expectedGlosses.Count == 0
-				&& (word.morphemes == null || word.morphemes.morphs.Length == 0))
+				&& (word.morphemes == null || word.morphemes.morphs.Length == 0 ||
+					word.morphemes.analysisStatus != analysisStatusTypes.humanApproved))
 			{
 				analysis = GetMostSpecificAnalysisForWordForm(candidateWordform);
 				return true;
@@ -1055,7 +1084,7 @@ namespace SIL.FieldWorks.IText
 				var morphemeMatch = true;
 				// verify that the analysis has a Morph Bundle with the expected morphemes from the import
 				if (word.morphemes != null && wfiAnalysis.MorphBundlesOS.Count == word.morphemes?.morphs.Length &&
-					word.morphemes.analysisStatus == analysisStatusTypes.humanApproved)
+					!IsGuess(word.morphemes))
 				{
 					analysis = GetMostSpecificAnalysisForWordForm(wfiAnalysis);
 					for (var i = 0; i < wfiAnalysis.MorphBundlesOS.Count; ++i)
@@ -1271,7 +1300,7 @@ namespace SIL.FieldWorks.IText
 						analysisTree = new AnalysisTree(wfiGloss);
 					}
 					analysisTree.Gloss.Form.set_String(wsNewGloss, wordGlossItem.Value);
-					if (word.morphemes?.analysisStatus != analysisStatusTypes.guess)
+					if (!IsGuess(word.morphemes))
 						// Make sure this analysis is marked as user-approved (green check mark)
 						cache.LangProject.DefaultUserAgent.SetEvaluation(
 							analysisTree.WfiAnalysis, Opinions.approves);
@@ -1292,7 +1321,7 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 
-			if (wordForm != null && word.morphemes?.analysisStatus == analysisStatusTypes.guess)
+			if (wordForm != null && IsGuess(word.morphemes))
 				// Ignore gloss if morphological analysis was only a guess.
 				wordForm = wordForm.Wordform;
 		}
@@ -1434,14 +1463,12 @@ namespace SIL.FieldWorks.IText
 				else if (currentValue is IMultiString)
 				{
 					// value is an ITsString.
-					int ws = GetWsEngine(cache.WritingSystemFactory, item.lang).Handle;
-					value = TsStringUtils.MakeString(item.Value, ws);
+					value = GetItemValue(item, cache.WritingSystemFactory);
 				}
 				else if (currentValue is IMultiUnicode)
 				{
 					// value is an ITsString.
-					int ws = GetWsEngine(cache.WritingSystemFactory, item.lang).Handle;
-					value = TsStringUtils.MakeString(item.Value, ws);
+					value = GetItemValue(item, cache.WritingSystemFactory);
 				}
 				else if (currentValue is int)
 				{

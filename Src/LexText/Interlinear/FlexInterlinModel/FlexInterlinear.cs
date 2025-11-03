@@ -321,6 +321,10 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 	public partial class item
 	{
 
+		private itemRun[] runField;
+
+		private string[] textField;
+
 		private string typeField;
 
 		private string guidField;
@@ -332,6 +336,34 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 		private bool analysisStatusFieldSpecified;
 
 		private string valueField;
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlElementAttribute("run", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]
+		public itemRun[] run
+		{
+			get
+			{
+				return this.runField;
+			}
+			set
+			{
+				this.runField = value;
+			}
+		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlTextAttribute()]
+		public string[] Text
+		{
+			get
+			{
+				return this.textField;
+			}
+			set
+			{
+				this.textField = value;
+			}
+		}
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlAttributeAttribute()]
@@ -400,6 +432,74 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 			set
 			{
 				this.analysisStatusFieldSpecified = value;
+			}
+		}
+
+		/// Item should either be a sequence of runs or a string.
+		/// Runs cannot be embedded in strings even though mixed="true".
+		[System.Xml.Serialization.XmlTextAttribute()]
+		public string Value
+		{
+			get
+			{
+				if (this.run != null)
+				{
+					string value = "";
+					foreach (var run in this.run)
+					{
+						value += run.Value;
+					}
+					return value;
+				}
+				if (this.Text != null && this.Text.Length > 0)
+				{
+					return this.Text[0];
+				}
+				return null;
+			}
+		}
+	}
+
+	/// <remarks/>
+	[System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0")]
+	[System.SerializableAttribute()]
+	[System.Diagnostics.DebuggerStepThroughAttribute()]
+	[System.ComponentModel.DesignerCategoryAttribute("code")]
+	[System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true)]
+	public partial class itemRun
+	{
+
+		private string langField;
+
+		private string styleField;
+
+		private string valueField;
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public string lang
+		{
+			get
+			{
+				return this.langField;
+			}
+			set
+			{
+				this.langField = value;
+			}
+		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public string style
+		{
+			get
+			{
+				return this.styleField;
+			}
+			set
+			{
+				this.styleField = value;
 			}
 		}
 

@@ -358,7 +358,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &amp;Add Variant.
+        ///   Looks up a localized string similar to &amp;Link Selected.
         /// </summary>
         internal static string ksAddVariant {
             get {
@@ -2443,7 +2443,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo Add Variant.
+        ///   Looks up a localized string similar to Redo Link Selected.
         /// </summary>
         internal static string ksRedoAddVariant {
             get {
@@ -3001,7 +3001,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Undo Add Variant.
+        ///   Looks up a localized string similar to Undo Link Selected.
         /// </summary>
         internal static string ksUndoAddVariant {
             get {
