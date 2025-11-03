@@ -1681,7 +1681,7 @@ namespace SIL.FieldWorks.XWorks
 				menus.Add(menuId);
 				if (slice is MultiStringSlice)
 					menus.Add("mnuDataTree-MultiStringSlice");
-				else
+				if(menus.TrueForAll(item => item != "mnuDataTree-MultiStringSlice" && item != "mnuDataTree-Object"))
 					menus.Add("mnuDataTree-Object");
 				window.ShowContextMenu(menus.ToArray(),
 					new Point(Cursor.Position.X, Cursor.Position.Y),

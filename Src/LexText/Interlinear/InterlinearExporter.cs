@@ -278,6 +278,34 @@ namespace SIL.FieldWorks.IText
 			m_writer.WriteString(GetText(m_sda.get_MultiStringAlt(m_hvoCurr, tag, ws)));
 		}
 
+		private void WriteITsString(ITsString itsString)
+		{
+			if (itsString.RunCount == 0)
+				return;
+			if (itsString.RunCount == 1 && String.IsNullOrEmpty(itsString.Style(0)))
+			{
+				// Runs aren't needed.
+				m_writer.WriteString(GetText(itsString));
+				return;
+			}
+			// Write out each run.
+			for (int i = 0; i < itsString.RunCount; i++)
+			{
+				int ws = itsString.get_WritingSystem(i);
+				string style = itsString.Style(i);
+				m_writer.WriteStartElement("run");
+				string icuCode = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(ws);
+				m_writer.WriteAttributeString("lang", icuCode);
+				if (!String.IsNullOrEmpty(style))
+				{
+					m_writer.WriteAttributeString("style", style);
+				}
+				string text = itsString.get_RunText(i) ?? "";
+				m_writer.WriteString(text.Normalize());
+				m_writer.WriteEndElement();
+			}
+		}
+
 		private void WriteItem(int tag, string itemType, int alt)
 		{
 			ITsString tss;
@@ -320,7 +348,7 @@ namespace SIL.FieldWorks.IText
 			UpdateWsList(ws);
 			string icuCode = m_cache.LanguageWritingSystemFactoryAccessor.GetStrFromWs(ws);
 			m_writer.WriteAttributeString("lang", icuCode);
-			m_writer.WriteString(GetText(tss));
+			WriteITsString(tss);
 		}
 
 		void UpdateWsList(int ws)
@@ -438,7 +466,7 @@ namespace SIL.FieldWorks.IText
 				// For now just concatenate all the variant types info into one string (including separators [+,]).
 				// NOTE: We'll need to re-evaluate this when we want this (and homograph item) to be
 				// standard enough to import (see LT-9664).
-				m_writer.WriteString(GetText(tss));
+				WriteITsString(tss);
 			}
 			else if (m_fDoingHeadword)
 			{

@@ -519,7 +519,7 @@ namespace XCore
 		protected void Populate(XmlNode node)
 		{
 			Debug.Assert( node != null);
-			XmlNodeList items =node.SelectNodes("item | menu | group");
+			XmlNodeList items = node.SelectNodes("item | menu | group");
 			foreach (XmlNode childNode in items)
 			{
 				switch (childNode.Name)

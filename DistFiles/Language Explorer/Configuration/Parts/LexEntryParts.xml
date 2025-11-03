@@ -1006,7 +1006,7 @@
 		</part>
 		<part id="LexEtymology-Jt-EtymologyLanguage" type="jtview">
 			<para>
-				<seq field="Language" layout="Abbreviation" sep="; "/>
+				<seq field="Language" layout="Name" sep="; "/>
 			</para>
 		</part>
 		<part id="LexEtymology-Jt-EtymologyLanguageNotes" type="jtview">

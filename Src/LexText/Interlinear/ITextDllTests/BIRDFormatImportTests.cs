@@ -408,6 +408,49 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		[Test]
+		public void TestEmbeddedRuns()
+		{
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+
+			const string xml =
+			@"<document version='2'>
+			  <interlinear-text guid='5eecc8be-f41b-4433-be94-8950a8ce75e5'>
+				<item type='title' lang='en'>title</item>
+				<item type='comment' lang='en'><run lang='en'>english </run><run lang='fr' style='style1'>french</run></item>
+				<paragraphs>
+				</paragraphs>
+				<languages>
+					<language lang='fr' font='Times New Roman' vernacular='true'/>
+					<language lang='en' font='Times New Roman' />
+				</languages>
+			</interlinear-text>
+			</document>";
+
+			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
+			LCModel.IText text = null;
+			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
+				using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
+				{
+					firstEntry.MoveNext();
+					var imported = firstEntry.Current;
+					//The title imported
+					ITsString comment = imported.Description.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle);
+					Assert.True(comment.Text.Equals("english french"));
+					Assert.True(comment.RunCount == 2);
+					Assert.True(comment.get_RunText(0) == "english ");
+					Assert.True(comment.get_WritingSystem(0) == wsEn);
+					Assert.True(comment.Style(0) == null);
+					Assert.True(comment.get_RunText(1) == "french");
+					Assert.True(comment.get_WritingSystem(1) == wsFr);
+					Assert.True(comment.Style(1) == "style1");
+				}
+			}
+		}
+
 		#endregion ScrElements
 
 		[Test]
@@ -1351,7 +1394,7 @@ namespace SIL.FieldWorks.IText
 				NumTimesDlgShown = 0;
 			}
 
-			protected override DialogResult ShowPossibleMergeDialog(IThreadedProgress progress)
+			protected override DialogResult ShowPossibleMergeDialog(IThreadedProgress progress, string textName)
 			{
 				NumTimesDlgShown++;
 				return DialogResult.Yes;
@@ -1370,7 +1413,7 @@ namespace SIL.FieldWorks.IText
 				NumTimesDlgShown = 0;
 			}
 
-			protected override DialogResult ShowPossibleMergeDialog(IThreadedProgress progress)
+			protected override DialogResult ShowPossibleMergeDialog(IThreadedProgress progress, string textName)
 			{
 				NumTimesDlgShown++;
 				return DialogResult.No;
