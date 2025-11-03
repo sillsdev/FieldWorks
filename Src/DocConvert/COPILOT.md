@@ -22,13 +22,13 @@ N/A - no source code present.
 N/A - no source code present.
 
 ## Interop & Contracts
-TBD - populate from code. See auto-generated hints below.
+N/A - no source code present.
 
 ## Threading & Performance
-TBD - populate from code. See auto-generated hints below.
+N/A - no source code present.
 
 ## Config & Feature Flags
-TBD - populate from code. See auto-generated hints below.
+N/A - no source code present.
 
 ## Build Information
 No project files. No build required.
@@ -57,4 +57,4 @@ This appears to be a legacy or placeholder folder. For document conversion funct
 - **Contents**: Res/DocConvert.ico (icon file only)
 - **Source files**: None
 
-## References (auto-generated hints)
+
