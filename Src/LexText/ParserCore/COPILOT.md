@@ -68,7 +68,16 @@ C# library (net462) with 34 source files (~9K lines total). Contains 3 subprojec
 - **FwXmlTraceManager**: Manages XML trace output for HermitCrab parser diagnostics
 
 ## Technology Stack
-TBD - populate from code. See auto-generated hints below.
+- **Languages**: C# (main library), C++/CLI (XAmpleCOMWrapper COM interop)
+- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Key libraries**: 
+  - SIL.Machine.Morphology.HermitCrab (HermitCrab parser engine)
+  - SIL.LCModel (morphology data model)
+  - SIL.LCModel.Core (ITsString, ILgWritingSystem)
+  - SIL.ObjectModel (DisposableBase)
+  - XCore (PropertyTable, IdleQueue)
+  - System.Xml.Linq (XML processing for FXT transforms)
+- **Native dependencies**: Native XAmple DLL (legacy C++ parser via COM)
 
 ## Dependencies
 - **External**: SIL.Machine.Morphology.HermitCrab (HermitCrab parser engine), native XAmple DLL (legacy parser), SIL.LCModel (morphology data model), SIL.LCModel.Core (ILgWritingSystem, ITsString), SIL.ObjectModel (DisposableBase), XCore (PropertyTable, IdleQueue), System.Xml.Linq (XML processing)
@@ -76,13 +85,47 @@ TBD - populate from code. See auto-generated hints below.
 - **Consumed by**: LexText/ParserUI (parser UI and testing tools), LexText/Interlinear (automatic parsing of interlinear texts), LexText/Morphology (parser configuration and management)
 
 ## Interop & Contracts
-TBD - populate from code. See auto-generated hints below.
+- **COM interop**: XAmpleCOMWrapper (C++/CLI) exposes IXAmpleWrapper COM interface
+  - Purpose: Bridge managed C# to native XAmple C++ parser library
+  - Key methods: Init(), AmpleParseFile(), SetParameter(), LoadFiles()
+  - Threading: COM STA required for XAmple parser interaction
+- **Native DLL**: XAmpleDLLWrapper P/Invoke calls to native XAmple.dll
+- **Managed wrapper**: XAmpleManagedWrapper.dll wraps COM calls for C# consumers
+- **Data contracts**: 
+  - FXT XML format for morphology export (consumed by M3ToXAmpleTransformer)
+  - XAmple ANA/DICT file formats (grammar/lexicon for legacy parser)
+  - ParseResult/ParseAnalysis/ParseMorph DTOs for parse results
+- **Event contracts**: ParserUpdateEventArgs for task progress events
 
 ## Threading & Performance
-TBD - populate from code. See auto-generated hints below.
+- **Threading model**:
+  - ParserScheduler: Single background worker thread (ParserWorker) with synchronized priority queue
+  - Thread creation: Managed via System.Threading.Thread in ParserScheduler
+  - Synchronization: lock() statements for queue access, Interlocked for counters
+  - UI thread: Results delivered via events on UI thread (IdleQueue marshaling)
+- **Background processing**:
+  - ParserWorker executes on background thread
+  - TryAWord work: High priority for immediate user feedback
+  - BulkParse work: Lower priority batch processing
+  - Grammar reload: Highest priority (blocks other work)
+- **Priority queue**: 5 levels (ReloadGrammarAndLexicon=0, TryAWord=1, High=2, Medium=3, Low=4)
+- **Performance considerations**:
+  - Parser instantiation: Expensive, reused across multiple parse operations
+  - Model change detection: ParserModelChangeListener monitors PropChanged events to avoid unnecessary reloads
+  - Bulk operations: Batched to reduce overhead
+- **Thread affinity**: XAmple COM components require STA threading model
 
 ## Config & Feature Flags
-TBD - populate from code. See auto-generated hints below.
+- **Parser selection**: MorphologicalDataOA.ActiveParser setting determines HCParser vs XAmpleParser
+- **Parser options** (HCParser):
+  - GuessRoots: Enable/disable root guessing for unknown morphemes
+  - MergeAnalyses: Merge duplicate analyses in results
+- **XAmple options** (legacy): AmpleOptions enum (TraceOff, TraceMorphs, TraceAnalysis, etc.)
+- **Trace output**: 
+  - FwXmlTraceManager: XML trace file generation for HermitCrab diagnostics
+  - TraceWord/TraceWordXml methods for debugging parse failures
+- **Data directory**: Configurable dataDir parameter for parser workspace and temp files
+- **PropertyTable**: XCore configuration for parser behavior (passed to ParserScheduler)
 
 ## Build Information
 - Project type: C# class library (net462)
@@ -95,16 +138,112 @@ TBD - populate from code. See auto-generated hints below.
   - XAmpleCOMWrapper: C++/CLI COM component for XAmple (legacy)
 
 ## Interfaces and Data Models
-TBD - populate from code. See auto-generated hints below.
+
+### Interfaces
+- **IParser** (path: Src/LexText/ParserCore/IParser.cs)
+  - Purpose: Abstract parser contract for HermitCrab and XAmple implementations
+  - Inputs: string word (for ParseWord), TextWriter (for trace methods)
+  - Outputs: ParseResult (with analyses and error messages)
+  - Methods: ParseWord(), TraceWord(), TraceWordXml(), Update(), Reset(), IsUpToDate()
+  - Notes: Thread-safe, reusable across multiple parse operations
+
+- **IHCLoadErrorLogger** (path: Src/LexText/ParserCore/IHCLoadErrorLogger.cs)
+  - Purpose: Log errors during HermitCrab grammar/lexicon loading
+  - Inputs: Error messages from HCLoader
+  - Outputs: Logged error information for debugging
+  - Notes: Used by HCLoader to report load failures
+
+- **IXAmpleWrapper** (path: Src/LexText/ParserCore/XAmpleManagedWrapper/*)
+  - Purpose: COM interface for native XAmple parser access
+  - Inputs: Grammar files, word strings, AmpleOptions
+  - Outputs: Parse results in XAmple format
+  - Notes: COM STA threading model required, legacy interface
+
+### Data Models
+- **ParseResult** (path: Src/LexText/ParserCore/ParseResult.cs)
+  - Purpose: Top-level container for parse results
+  - Shape: ParseAnalyses (List<ParseAnalysis>), ErrorMessages (List<string>)
+  - Consumers: ParseFiler (files to database), UI components (displays results)
+
+- **ParseAnalysis** (path: Src/LexText/ParserCore/ParseResult.cs)
+  - Purpose: Single morphological analysis for a wordform
+  - Shape: ParseMorphs (List<ParseMorph>), Shape (surface form string), ParseSuccess (bool)
+  - Consumers: ParseFiler creates IWfiAnalysis objects from these
+
+- **ParseMorph** (path: Src/LexText/ParserCore/ParseResult.cs)
+  - Purpose: Single morpheme in an analysis
+  - Shape: Form (string), Msa (IMoMorphSynAnalysis ref), Morph (IMoForm ref), MsaPartId/MorphPartId (Guids)
+  - Consumers: ParseFiler maps to database WfiMorphBundle objects
+
+- **TaskReport** (path: Src/LexText/ParserCore/TaskReport.cs)
+  - Purpose: Progress tracking for parse operations
+  - Shape: TaskPhase (enum), PercentComplete (int), CurrentTasks/TotalTasks (int)
+  - Consumers: UI components display progress during bulk parsing
+
+### XML Data Contracts
+- **FXT XML** (path: Various test files in ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/)
+  - Purpose: FieldWorks export format for morphology data
+  - Shape: XML with morphemes, allomorphs, MSAs, phonological rules, templates
+  - Consumers: M3ToXAmpleTransformer converts to XAmple grammar format
 
 ## Entry Points
-TBD - populate from code. See auto-generated hints below.
+- **ParserScheduler** (primary): Created and managed by UI layer (ParserUI)
+  - Instantiation: new ParserScheduler(cache, propertyTable)
+  - Usage: ScheduleWork() to queue parse operations, handles background thread lifecycle
+- **HCParser/XAmpleParser**: Instantiated by ParserWorker based on ActiveParser setting
+  - HCParser: Uses SIL.Machine.Morphology.HermitCrab for parsing
+  - XAmpleParser: Uses XAmpleManagedWrapper COM interop for legacy XAmple
+- **ParseFiler**: Created by ParserWorker to file parse results to database
+  - Instantiation: new ParseFiler(cache, agent, idleQueue, taskUpdateHandler)
+  - Usage: ProcessParses() to convert ParseResult objects to IWfiAnalysis database objects
+- **Invocation patterns**:
+  - Interactive: TryAWord dialog → ParserScheduler.ScheduleTryAWordWork()
+  - Batch: Bulk parse command → ParserScheduler.ScheduleWork(BulkParseWork)
+  - Background: Text analysis → Interlinear calls ParseFiler directly
 
 ## Test Index
-TBD - populate from code. See auto-generated hints below.
+- **Test projects**:
+  - ParserCoreTests/ParserCoreTests.csproj (~2.7K lines, 18 test files)
+  - XAmpleManagedWrapper/XAmpleManagedWrapperTests/XAmpleManagedWrapperTests.csproj
+- **Key test files**:
+  - HCLoaderTests.cs: HermitCrab grammar/lexicon loading
+  - M3ToXAmpleTransformerTests.cs: FXT XML to XAmple format conversion (18 XML test data files)
+  - ParseFilerProcessingTests.cs: Parse result filing to database
+  - ParseWorkerTests.cs: Background worker thread behavior
+  - ParserReportTests.cs: Parser status reporting
+  - XAmpleParserTests.cs: Legacy XAmple parser integration
+- **Test data**: 18 XML files in ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/
+  - Abaza-OrderclassPlay.xml, CliticEnvsParserFxtResult.xml, ConceptualIntroTestParserFxtResult.xml, etc.
+  - Cover various morphological phenomena: clitics, circumfixes, infixes, reduplication, irregular forms
+- **Test runners**: 
+  - Visual Studio Test Explorer
+  - `dotnet test ParserCore.sln` (if SDK-style)
+  - Via FW.sln top-level build
+- **Test approach**: Unit tests with in-memory LCModel cache, XML-based parser transform tests
 
 ## Usage Hints
-TBD - populate from code. See auto-generated hints below.
+- **Choosing parser**: Set MorphologicalDataOA.ActiveParser to "HC" (HermitCrab) or "XAmple" (legacy)
+  - HermitCrab: Modern, actively maintained, supports complex phonological rules
+  - XAmple: Legacy, limited maintenance, COM interop complexity
+- **Background parsing**: Use ParserScheduler for all parse operations
+  - Schedule work via ScheduleWork(IParserWork) or convenience methods
+  - Monitor progress via ParserUpdateEventArgs events
+  - Priority levels control work ordering
+- **Interactive testing**: TryAWord dialog (in ParserUI) uses TryAWordWork for immediate feedback
+- **Bulk operations**: BulkUpdateOfWordforms() for batch parsing of corpus
+- **Model changes**: ParserModelChangeListener automatically detects morphology/phonology changes
+  - Parser reloads grammar/lexicon when ModelChanged flag set
+  - Avoid manual Update() calls; let listener manage reload lifecycle
+- **Trace debugging**: Use TraceWord/TraceWordXml methods to diagnose parse failures
+  - FwXmlTraceManager generates detailed XML trace files
+  - Trace output shows rule application, phonological processes, feature matching
+- **Extension point**: Implement IParser interface for new parser engines
+  - Follow HCParser or XAmpleParser patterns
+  - Register via ActiveParser setting
+- **Common pitfalls**:
+  - Don't instantiate HCParser/XAmpleParser directly; use ParserWorker/ParserScheduler
+  - XAmple COM requires STA threading; don't call from worker threads directly
+  - Grammar reload is expensive; rely on ParserModelChangeListener to minimize reloads
 
 ## Related Folders
 - **LexText/ParserUI/**: Parser UI components (TryAWord dialog, parser configuration), consumes ParserScheduler
@@ -120,7 +259,7 @@ TBD - populate from code. See auto-generated hints below.
 - **Enums**: ParserPriority (5 levels), TaskPhase (6 states), AmpleOptions
 - **Target framework**: net462
 
-## References (auto-generated hints)
+## Auto-Generated Project and File References
 - Project files:
   - LexText/ParserCore/ParserCore.csproj
   - LexText/ParserCore/ParserCoreTests/ParserCoreTests.csproj
