@@ -597,7 +597,15 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns>True if we can't prove the column is invalid</returns>
 		internal bool IsValidColumnSpec(XmlNode node)
 		{
-			List<XmlNode> possibleColumns = ComputePossibleColumns();
+			// In the simple case, `node`s label should match a label in PossibleColumnSpecs. There may be more complicated cases.
+			// The existing code sure seems complicated and is entirely untested.
+			var label = XmlUtils.GetLocalizedAttributeValue(node, "label", null) ??
+						   XmlUtils.GetMandatoryAttributeValue(node, "label");
+			var oLabel = XmlUtils.GetAttributeValue(node, "originalLabel");
+			//MenuItem mi = new MenuItem(label, ConfigItemClicked);
+			if (XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "label", label) != null ||
+				XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "originalLabel", label) != null)
+				return PossibleColumnSpecs.Contains(node);
 			//// first, check to see if we can find some part or child node information
 			//// to process. Eg. Custom field column nodes that refer to parts that no longer exist
 			//// because the custom field has been removed so the parts cannot be generated
@@ -610,7 +618,7 @@ namespace SIL.FieldWorks.Common.Controls
 			//bool badReversalIndex = CheckForBadReversalIndex(possibleColumns, node);
 			//if (badReversalIndex)
 			//	return false;
-			return true;	// valid as far as we can tell.
+			return true;    // valid as far as we can tell.
 		}
 
 		/// <summary>

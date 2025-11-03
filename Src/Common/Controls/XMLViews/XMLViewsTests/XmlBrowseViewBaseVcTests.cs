@@ -178,5 +178,21 @@ namespace XMLViewsTests
 
 			CollectionAssert.AreEqual(new List<string> { "Ref", "Occurrence" }, columnLabels);
 		}
+
+		[Test]
+		public void IsValidColumnSpec_ValidReturnsTrue()
+		{
+			// set up PossibleColumnSpecs
+			// Pass a valid node
+			Assert.IsTrue(false);
+		}
+
+		[Test]
+		public void IsValidColumnSpec_InvalidReturnsFalse()
+		{
+			// set up PossibleColumnSpecs
+			// Pass an invalid node
+			Assert.IsFalse(true);
+		}
 	}
 }
