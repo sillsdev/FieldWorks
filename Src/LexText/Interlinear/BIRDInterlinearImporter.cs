@@ -394,6 +394,14 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		private static bool IsGuess(Morphemes item)
+		{
+			if (item != null && item.analysisStatusSpecified &&
+				(item.analysisStatus != analysisStatusTypes.humanApproved))
+				return true;
+			return false;
+    }
+    
 		private static ITsString GetItemValue(item item, ILgWritingSystemFactory wsFactory)
 		{
 			if (item.run != null)
@@ -754,7 +762,8 @@ namespace SIL.FieldWorks.IText
 				return null;
 
 			// Fill in morphemes, lex. entries, lex. gloss, and lex.gram.info
-			if (word.morphemes != null && word.morphemes.morphs.Length > 0)
+			if (word.morphemes != null && word.morphemes.morphs.Length > 0 &&
+				word.morphemes.analysisStatus == analysisStatusTypes.humanApproved)
 			{
 				var lex_entry_repo = cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 				var msa_repo = cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>();
@@ -1007,6 +1016,12 @@ namespace SIL.FieldWorks.IText
 						break;
 				}
 			}
+			if (word.morphemes != null && word.morphemes.analysisStatus != analysisStatusTypes.humanApproved)
+			{
+				// If the morphemes were guessed then the glosses and cats were also guessed.
+				expectedGlosses.Clear();
+				expectedCats.Clear();
+			}
 
 			if (candidateForm == null || !MatchPrimaryFormAndAddMissingAlternatives(candidateForm, expectedForms, mainWritingSystem))
 			{
@@ -1024,7 +1039,8 @@ namespace SIL.FieldWorks.IText
 			analysis = candidateWordform;
 			// If no glosses or morphemes are expected the wordform itself is the match
 			if (expectedGlosses.Count == 0
-				&& (word.morphemes == null || word.morphemes.morphs.Length == 0))
+				&& (word.morphemes == null || word.morphemes.morphs.Length == 0 ||
+					word.morphemes.analysisStatus != analysisStatusTypes.humanApproved))
 			{
 				analysis = GetMostSpecificAnalysisForWordForm(candidateWordform);
 				return true;
@@ -1068,7 +1084,7 @@ namespace SIL.FieldWorks.IText
 				var morphemeMatch = true;
 				// verify that the analysis has a Morph Bundle with the expected morphemes from the import
 				if (word.morphemes != null && wfiAnalysis.MorphBundlesOS.Count == word.morphemes?.morphs.Length &&
-					word.morphemes.analysisStatus == analysisStatusTypes.humanApproved)
+					!IsGuess(word.morphemes))
 				{
 					analysis = GetMostSpecificAnalysisForWordForm(wfiAnalysis);
 					for (var i = 0; i < wfiAnalysis.MorphBundlesOS.Count; ++i)
@@ -1284,7 +1300,7 @@ namespace SIL.FieldWorks.IText
 						analysisTree = new AnalysisTree(wfiGloss);
 					}
 					analysisTree.Gloss.Form.set_String(wsNewGloss, wordGlossItem.Value);
-					if (word.morphemes?.analysisStatus != analysisStatusTypes.guess)
+					if (!IsGuess(word.morphemes))
 						// Make sure this analysis is marked as user-approved (green check mark)
 						cache.LangProject.DefaultUserAgent.SetEvaluation(
 							analysisTree.WfiAnalysis, Opinions.approves);
@@ -1305,7 +1321,7 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 
-			if (wordForm != null && word.morphemes?.analysisStatus == analysisStatusTypes.guess)
+			if (wordForm != null && IsGuess(word.morphemes))
 				// Ignore gloss if morphological analysis was only a guess.
 				wordForm = wordForm.Wordform;
 		}
