@@ -178,6 +178,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Classified Dictionary.
+        /// </summary>
+        internal static string ClassifiedDictionary {
+            get {
+                return ResourceManager.GetString("ClassifiedDictionary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Click to jump to {0}..
         /// </summary>
         internal static string ClickToJumpTo {

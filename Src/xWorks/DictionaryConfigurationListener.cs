@@ -29,6 +29,9 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private Mediator m_mediator;
 		private PropertyTable m_propertyTable;
+		public const string ReversalType = "Reversal Index";
+		public const string DictionaryType = "Dictionary";
+		public const string ClassifiedType = "Classified Dictionary";
 
 		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
 		{
@@ -90,7 +93,7 @@ namespace SIL.FieldWorks.XWorks
 
 		internal static string GetConfigDialogHelpTopic(PropertyTable propertyTable)
 		{
-			return GetDictionaryConfigurationBaseType(propertyTable) == "Reversal Index"
+			return GetDictionaryConfigurationBaseType(propertyTable) == ReversalType
 				? "khtpConfigureReversalIndex" : "khtpConfigureDictionary";
 		}
 
@@ -104,11 +107,13 @@ namespace SIL.FieldWorks.XWorks
 			{
 				case "reversalToolBulkEditReversalEntries":
 				case "reversalToolEditComplete":
-					return "Reversal Index";
+					return ReversalType;
 				case "lexiconBrowse":
 				case "lexiconDictionary":
 				case "lexiconEdit":
-					return "Dictionary";
+					return DictionaryType;
+				case "lexiconClassifiedDictionary":
+					return ClassifiedType;
 				default:
 					return null;
 			}
@@ -122,10 +127,12 @@ namespace SIL.FieldWorks.XWorks
 			var nonLocalizedConfigurationType = GetDictionaryConfigurationBaseType(propertyTable);
 			switch(nonLocalizedConfigurationType)
 			{
-				case "Reversal Index":
+				case ReversalType:
 					return xWorksStrings.ReversalIndex;
-				case "Dictionary":
+				case DictionaryType:
 					return xWorksStrings.Dictionary;
+				case ClassifiedType:
+					return xWorksStrings.ClassifiedDictionary;
 				default:
 					return null;
 			}
@@ -166,6 +173,7 @@ namespace SIL.FieldWorks.XWorks
 
 		internal const string ReversalIndexConfigurationDirectoryName = "ReversalIndex";
 		internal const string DictionaryConfigurationDirectoryName = "Dictionary";
+		internal const string ClassifiedDictionaryConfigurationDirectoryName = "Classified Dictionary";
 
 		/// <summary>
 		/// Get the name of the innermost directory name for configurations for the part of FLEx the user is
@@ -182,6 +190,8 @@ namespace SIL.FieldWorks.XWorks
 				case "lexiconDictionary":
 				case "lexiconEdit":
 					return DictionaryConfigurationDirectoryName;
+				case "lexiconClassifiedDictionary":
+					return ClassifiedDictionaryConfigurationDirectoryName;
 				default:
 					return null;
 			}
