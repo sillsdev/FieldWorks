@@ -443,7 +443,7 @@ namespace SIL.FieldWorks.IText
 							INote newNote = newSegment.NotesOS.FirstOrDefault(note => note.Content.get_String(ws).Text == item.Value);
 							if (newNote == null)
 							{
-								// Group notes with the same groupid together.
+								// In the file note items with the same group id are different translations of the same note. Read them into the same INote.
 								string groupid = item.groupid;
 								if (!String.IsNullOrEmpty(groupid) && groupNote.ContainsKey(groupid))
 								{
