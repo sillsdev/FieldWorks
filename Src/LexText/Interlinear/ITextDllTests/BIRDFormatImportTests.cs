@@ -944,6 +944,75 @@ namespace SIL.FieldWorks.IText
 		}
 
 		[Test]
+		public void TestApprovedMorphemes()
+		{
+			string title = "atrocious";
+			string abbr = "atroc";
+			//an interliner text example xml string
+			string xml = "<document><interlinear-text>" +
+			"<paragraphs><paragraph><phrases><phrase>" +
+			"<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
+			"<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
+			"<words><word><item type=\"txt\" lang=\"en\">supercalifragilisticexpialidocious</item>" +
+			"<morphemes analysisStatus='humanApproved'>" +
+			"<morph><item type=\"txt\" lang=\"en\">supercali-</item>" +
+			"<item type=\"gls\" lang=\"pt\">superlative</item></morph>" +
+			"</morphemes>" +
+			"<item type=\"gls\" lang=\"pt\">absurdo</item></word>" +
+			"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
+			LCModel.IText text = null;
+			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
+				using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
+				{
+					firstEntry.MoveNext();
+					var imported = firstEntry.Current;
+					ISegment segment = imported.ContentsOA[0].SegmentsOS[0];
+					// Verify that we found the morphemes.
+					Assert.That(segment.AnalysesRS.Count, Is.EqualTo(1));
+					Assert.That(segment.AnalysesRS[0].Analysis.MorphBundlesOS.Count, Is.EqualTo(1));
+				}
+			}
+		}
+
+		[Test]
+		public void TestGuessedMorphemes()
+		{
+			string title = "atrocious";
+			string abbr = "atroc";
+			//an interliner text example xml string
+			string xml = "<document><interlinear-text>" +
+			"<paragraphs><paragraph><phrases><phrase>" +
+			"<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
+			"<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
+			"<words><word><item type=\"txt\" lang=\"en\">supercalifragilisticexpialidocious2</item>" +
+			"<morphemes analysisStatus='guess'>" +
+			"<morph><item type=\"txt\" lang=\"en\">supercali2-</item>" +
+			"<item type=\"gls\" lang=\"pt\">superlative</item></morph>" +
+			"</morphemes></word>" +
+			"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
+			LCModel.IText text = null;
+			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
+				using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
+				{
+					firstEntry.MoveNext();
+					var imported = firstEntry.Current;
+					ISegment segment = imported.ContentsOA[0].SegmentsOS[0];
+					// Verify that we ignored the guessed morphemes.
+					Assert.That(segment.AnalysesRS.Count, Is.EqualTo(0));
+				}
+			}
+		}
+
+
+		[Test]
 		public void TestNewWordCategory()
 		{
 			string title = "atrocious";
