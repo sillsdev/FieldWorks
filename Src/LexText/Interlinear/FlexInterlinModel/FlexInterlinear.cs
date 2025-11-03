@@ -329,6 +329,8 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 
 		private string guidField;
 
+		private string groupidField;
+
 		private string langField;
 
 		private analysisStatusTypes analysisStatusField;
@@ -404,6 +406,20 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 			set
 			{
 				this.guidField = value;
+			}
+		}
+
+		/// <remarks/>
+		[System.Xml.Serialization.XmlAttributeAttribute()]
+		public string groupid
+		{
+			get
+			{
+				return this.groupidField;
+			}
+			set
+			{
+				this.groupidField = value;
 			}
 		}
 

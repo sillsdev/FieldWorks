@@ -800,6 +800,37 @@ namespace SIL.FieldWorks.IText
 		}
 
 		[Test]
+		public void TestMultilingualNote()
+		{
+			const string EnglishNote = "English note.";
+			const string FrenchNote = "French note.";
+			const string xml = "<document version=\"2\">" +
+								"<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
+								"<item type=\"title\" lang=\"en\">My Green Mat</item>" +
+								"<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
+								"<paragraphs><paragraph guid=\"a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb2\">" +
+								"<phrases><phrase guid=\"b405f3c0-58e1-4492-8a40-e955774a6911\">" +
+								"<words><word guid=\"45e6f056-98ac-45d6-858e-59450993f268\">" +
+								"<item type=\"txt\" lang=\"qaa-x-kal\">pus</item>" +
+								"</word></words><item type=\"note\" lang=\"en\" groupid=\"1\">" + EnglishNote + "</item>" +
+								"<item type =\"note\" lang=\"fr\" groupid=\"1\">" + FrenchNote + "</item>" +
+								"</phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			int wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+			int wsEng = Cache.WritingSystemFactory.GetWsFromStr("en");
+			LLIMergeExtension li = new LLIMergeExtension(Cache, null, null);
+			LCModel.IText text = null;
+			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				bool result = li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
+				IStTxtPara para = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
+				Assert.AreEqual(1, para.SegmentsOS[0].NotesOS.Count);
+				Assert.AreEqual(EnglishNote, para.SegmentsOS[0].NotesOS[0].Content.get_String(wsEng).Text);
+				Assert.AreEqual(FrenchNote, para.SegmentsOS[0].NotesOS[0].Content.get_String(wsFr).Text);
+			}
+		}
+
+		[Test]
 		public void OneOfEachElementTypeTest()
 		{
 			string title = "atrocious";

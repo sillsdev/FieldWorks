@@ -295,6 +295,8 @@ namespace SIL.FieldWorks.IText
 				Assert.That(exportedDoc.SelectSingleNode("//phrase/item[@type='note'][5]").InnerText, Is.EqualTo("third note analWs"));
 				Assert.That(exportedDoc.SelectSingleNode("//phrase/item[@type='note'][6]").InnerText, Is.EqualTo("third note xKalWs"));
 				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//phrase/item[@groupid='1']", 2);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//phrase/item[@groupid='2']", 2);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//phrase/item[@groupid='3']", 2);
 			}
 
 			/// <summary>

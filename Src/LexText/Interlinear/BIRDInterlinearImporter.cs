@@ -75,6 +75,7 @@ namespace SIL.FieldWorks.IText
 			Interlineartext interlinText = textParams.InterlinText;
 			LcmCache cache = textParams.Cache;
 			IThreadedProgress progress = textParams.Progress;
+			IDictionary<string, INote> groupNote = new Dictionary<string, INote>();
 			if (s_importOptions.CheckAndAddLanguages == null)
 				s_importOptions.CheckAndAddLanguages = CheckAndAddLanguagesInternal;
 
@@ -126,7 +127,7 @@ namespace SIL.FieldWorks.IText
 					ITsString phraseText = null;
 					bool textInFile = false;
 					//Add all of the data from <item> elements into the segment.
-					AddSegmentItemData(cache, wsFactory, phrase, newSegment, ref textInFile, ref phraseText);
+					AddSegmentItemData(cache, wsFactory, phrase, newSegment, groupNote, ref textInFile, ref phraseText);
 					bool lastWasWord = false;
 					if (phrase.WordsContent != null && phrase.WordsContent.Words != null)
 					{
@@ -198,6 +199,7 @@ namespace SIL.FieldWorks.IText
 			Interlineartext interlinText = textParams.InterlinText;
 			LcmCache cache = textParams.Cache;
 			IThreadedProgress progress = textParams.Progress;
+			IDictionary<string, INote> groupNote = new Dictionary<string, INote>();
 			if (s_importOptions.CheckAndAddLanguages == null)
 				s_importOptions.CheckAndAddLanguages = CheckAndAddLanguagesInternal;
 
@@ -289,7 +291,7 @@ namespace SIL.FieldWorks.IText
 					ITsString phraseText = null;
 					bool textInFile = false;
 					//Add all of the data from <item> elements into the segment.
-					AddSegmentItemData(cache, wsFactory, phrase, newSegment, ref textInFile, ref phraseText);
+					AddSegmentItemData(cache, wsFactory, phrase, newSegment, groupNote, ref textInFile, ref phraseText);
 
 					bool lastWasWord = false;
 					if (phrase.WordsContent != null && phrase.WordsContent.Words != null)
@@ -419,7 +421,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="newSegment"></param>
 		/// <param name="textInFile">This reference boolean indicates if there was a text item in the phrase</param>
 		/// <param name="phraseText">This reference string will be filled with the contents of the "txt" item in the phrase if it is there</param>
-		private static void AddSegmentItemData(LcmCache cache, ILgWritingSystemFactory wsFactory, Phrase phrase, ISegment newSegment, ref bool textInFile, ref ITsString phraseText)
+		private static void AddSegmentItemData(LcmCache cache, ILgWritingSystemFactory wsFactory, Phrase phrase, ISegment newSegment, IDictionary<string, INote> groupNote, ref bool textInFile, ref ITsString phraseText)
 		{
 			if (phrase.Items != null)
 			{
@@ -441,8 +443,22 @@ namespace SIL.FieldWorks.IText
 							INote newNote = newSegment.NotesOS.FirstOrDefault(note => note.Content.get_String(ws).Text == item.Value);
 							if (newNote == null)
 							{
-								newNote = cache.ServiceLocator.GetInstance<INoteFactory>().Create();
-								newSegment.NotesOS.Add(newNote);
+								// Group notes with the same groupid together.
+								string groupid = item.groupid;
+								if (!String.IsNullOrEmpty(groupid) && groupNote.ContainsKey(groupid))
+								{
+									newNote = groupNote[groupid];
+								}
+								else
+								{
+									newNote = cache.ServiceLocator.GetInstance<INoteFactory>().Create();
+									newSegment.NotesOS.Add(newNote);
+									// Save note for groupid.
+									if (!String.IsNullOrEmpty(groupid))
+									{
+										groupNote[groupid] = newNote;
+									}
+								}
 								newNote.Content.set_String(GetWsEngine(wsFactory, item.lang).Handle, GetItemValue(item, wsFactory));
 							}
 							break;

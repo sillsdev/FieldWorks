@@ -322,19 +322,15 @@ namespace SIL.FieldWorks.IText
 			}
 			if (itemType == "note")
 			{
-				ITsMultiString multiString = m_sda.get_MultiStringProp(m_hvoCurr, tag);
-				if (multiString != null && multiString.StringCount > 1)
+				// Group multilingual alternatives together with a group id.
+				// This assumes that the alternatives are displayed together.
+				if (m_hvoMultiString != m_hvoCurr)
 				{
-					// Group multilingual notes together with a group id.
-					// This assumes that the alternatives are displayed together.
-					if (m_hvoMultiString != m_hvoCurr)
-					{
-						m_hvoMultiString = m_hvoCurr;
-						m_groupId += 1;
-					}
-					WriteGroupItem(itemType, tss, m_groupId);
-					return;
+					m_hvoMultiString = m_hvoCurr;
+					m_groupId += 1;
 				}
+				WriteGroupItem(itemType, tss, m_groupId);
+				return;
 			}
 			WriteItem(itemType, tss);
 		}
