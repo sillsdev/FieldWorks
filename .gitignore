@@ -142,3 +142,4 @@ DistFiles/Templates/SemDom.xml
 
 Src/Kernel/FwKernelTlb.idl
 Src/Kernel/*.idh
+.github/machine-specific.md
