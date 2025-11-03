@@ -597,19 +597,19 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns>True if we can't prove the column is invalid</returns>
 		internal bool IsValidColumnSpec(XmlNode node)
 		{
-			List<XmlNode> possibleColumns = this.PossibleColumnSpecs;
-			// first, check to see if we can find some part or child node information
-			// to process. Eg. Custom field column nodes that refer to parts that no longer exist
-			// because the custom field has been removed so the parts cannot be generated
-			XmlNode partNode = this.GetPartFromParentNode(node, this.ListItemsClass);
-			if (partNode == null)
-				return false;	// invalid node, don't add.
-			bool badCustomField = CheckForBadCustomField(possibleColumns, node);
-			if (badCustomField)
-				return false;	// invalid custom field, don't add.
-			bool badReversalIndex = CheckForBadReversalIndex(possibleColumns, node);
-			if (badReversalIndex)
-				return false;
+			List<XmlNode> possibleColumns = ComputePossibleColumns();
+			//// first, check to see if we can find some part or child node information
+			//// to process. Eg. Custom field column nodes that refer to parts that no longer exist
+			//// because the custom field has been removed so the parts cannot be generated
+			//XmlNode partNode = this.GetPartFromParentNode(node, this.ListItemsClass);
+			//if (partNode == null)
+			//	return false;	// invalid node, don't add.
+			//bool badCustomField = CheckForBadCustomField(possibleColumns, node);
+			//if (badCustomField)
+			//	return false;	// invalid custom field, don't add.
+			//bool badReversalIndex = CheckForBadReversalIndex(possibleColumns, node);
+			//if (badReversalIndex)
+			//	return false;
 			return true;	// valid as far as we can tell.
 		}
 
@@ -1906,15 +1906,16 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		internal bool RemoveInvalidColumns()
 		{
-			List<XmlNode> invalidColumns = new List<XmlNode>();
-			for (int i = 0; i < m_columns.Count; ++i)
-			{
-				if (!IsValidColumnSpec(m_columns[i]))
-					invalidColumns.Add(m_columns[i]);
-			}
-			for (int i = 0; i < invalidColumns.Count; ++i)
-				m_columns.Remove(invalidColumns[i]);
-			return invalidColumns.Count > 0;
+			return false;
+			//List<XmlNode> invalidColumns = new List<XmlNode>();
+			//for (int i = 0; i < m_columns.Count; ++i)
+			//{
+			//	if (!IsValidColumnSpec(m_columns[i]))
+			//		invalidColumns.Add(m_columns[i]);
+			//}
+			//for (int i = 0; i < invalidColumns.Count; ++i)
+			//	m_columns.Remove(invalidColumns[i]);
+			//return invalidColumns.Count > 0;
 		}
 	}
 }
