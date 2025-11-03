@@ -78,6 +78,24 @@
       "detail": "Runs commit message lint and whitespace checks in the same order as CI"
     },
     {
+      "label": "git: prune remote branches",
+      "type": "shell",
+      "command": "git fetch --prune",
+      "detail": "Remove stale remote-tracking branches that were deleted on the server.",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "COPILOT: Detect updates needed",
       "type": "shell",
       "command": "& { . ./Build/Agent/GitHelpers.ps1; $base = Get-DefaultBranchRef; python .github/detect_copilot_needed.py --base $base --strict }",
