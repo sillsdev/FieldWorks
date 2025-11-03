@@ -3567,10 +3567,13 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static void SetupErrorReportInformation()
 		{
+			var version = Version;
 			var entryAssembly = Assembly.GetEntryAssembly();
-			var version = entryAssembly == null
-				? Version
-				: new VersionInfoProvider(entryAssembly, true).ApplicationVersion;
+			if (entryAssembly != null)
+			{
+				var vip =  new VersionInfoProvider(entryAssembly, true);
+				version = $"{vip.ApplicationVersion} (Base build: {vip.BaseBuildNumber})";
+			}
 			if (version != null)
 			{
 				// The property "Version" would be overwritten when Palaso adds the standard properties
