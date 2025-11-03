@@ -26,7 +26,14 @@ C# library (net462) with 3 source files (~58 lines total). Single class ManagedV
   - COM GUID: 3fb0fcd2-ac55-42a8-b580-73b89a2b6215
 
 ## Technology Stack
-TBD - populate from code. See auto-generated hints below.
+- **Language**: C#
+- **Target framework**: .NET Framework 4.6.2 (net462)
+- **UI framework**: System.Windows.Forms (Control class)
+- **Key libraries**:
+  - Common/ViewsInterfaces (IVwWindow interface, Rect struct)
+  - System.Runtime.InteropServices (COM interop attributes)
+- **COM**: Marked [ComVisible] with GUID for native Views engine access
+- **Platform**: Windows-specific (relies on HWND and WinForms Control)
 
 ## Dependencies
 - **External**: Common/ViewsInterfaces (IVwWindow interface, Rect struct), System.Windows.Forms (Control, Control.FromHandle()), System.Runtime.InteropServices (COM attributes)
@@ -34,13 +41,38 @@ TBD - populate from code. See auto-generated hints below.
 - **Consumed by**: Common/RootSite (SimpleRootSite creates ManagedVwWindow for its Control), views (native Views engine calls IVwWindow methods), xWorks (browse views host Controls with ManagedVwWindow), LexText (all view-based displays use ManagedVwWindow wrapper)
 
 ## Interop & Contracts
-TBD - populate from code. See auto-generated hints below.
+- **COM interface**: IVwWindow from ViewsInterfaces
+  - COM GUID: 3fb0fcd2-ac55-42a8-b580-73b89a2b6215
+  - Property: Window (uint HWND, set-only)
+  - Method: GetClientRectangle(out Rect clientRectangle)
+  - Purpose: Provide window handle and geometry to native Views engine
+- **HWND conversion**: uint HWND → IntPtr → Control.FromHandle()
+  - Native Views passes HWND as uint
+  - Managed code converts to IntPtr for WinForms Control lookup
+- **Data contracts**:
+  - Rect struct: Views geometry (int left, top, right, bottom)
+  - ClientRectangle: WinForms Control.ClientRectangle → Views Rect
+- **Cross-platform bridge**: Connects managed WinForms Control to native Views COM interface
+- **Lifetime**: ManagedVwWindow instance typically matches Control lifetime
 
 ## Threading & Performance
-TBD - populate from code. See auto-generated hints below.
+- **Thread affinity**: Must be used on UI thread (Control.FromHandle() requires UI thread)
+- **Performance**: Minimal overhead (~2 pointer dereferences + struct copy)
+  - Window setter: HWND lookup via Control.FromHandle() (fast dictionary lookup)
+  - GetClientRectangle(): Direct property access + struct copy (nanoseconds)
+- **No blocking operations**: All operations synchronous and fast
+- **Thread safety**: Not thread-safe (relies on WinForms Control which is UI-thread-only)
+- **GC pressure**: Minimal (no allocations except ManagedVwWindow instance itself)
+- **Typical usage pattern**: Created once per Control, reused for lifetime of view
 
 ## Config & Feature Flags
-TBD - populate from code. See auto-generated hints below.
+- **No configuration**: Behavior entirely determined by wrapped Control
+- **Window property**: Must be set before GetClientRectangle() called
+  - Throws ApplicationException if accessed before initialization
+- **Control resolution**: Control.FromHandle() automatically resolves HWND to Control
+  - Returns null if HWND invalid (caller responsible for null check)
+- **Client rectangle**: Always reflects current Control.ClientRectangle (no caching)
+- **No global state**: Each ManagedVwWindow instance is independent
 
 ## Build Information
 - Project type: C# class library (net462)
@@ -50,16 +82,80 @@ TBD - populate from code. See auto-generated hints below.
 - COM attributes: [ComVisible], GUID for COM registration
 
 ## Interfaces and Data Models
-TBD - populate from code. See auto-generated hints below.
+
+### Interfaces
+- **IVwWindow** (path: Src/Common/ViewsInterfaces/)
+  - Purpose: Expose window handle and geometry to native Views engine
+  - Property: Window (uint HWND, set-only)
+  - Method: GetClientRectangle(out Rect clientRectangle)
+  - Notes: COM-visible, called by native Views C++ code
+
+### Data Models
+- **Rect** (from ViewsInterfaces)
+  - Purpose: Views geometry specification
+  - Shape: int left, int top, int right, int bottom
+  - Usage: Output parameter for GetClientRectangle()
+  - Notes: Matches native Views Rect structure
+
+### Structures
+- **Control** (System.Windows.Forms.Control)
+  - Purpose: Managed WinForms control being wrapped
+  - Properties: Handle (IntPtr HWND), ClientRectangle (Rectangle)
+  - Notes: Resolved via Control.FromHandle(IntPtr)
 
 ## Entry Points
-TBD - populate from code. See auto-generated hints below.
+- **Instantiation**: Created by RootSite or view-hosting code
+  ```csharp
+  var vwWindow = new ManagedVwWindow();
+  vwWindow.Window = (uint)control.Handle.ToInt32();  // Set HWND
+  ```
+- **COM access**: Native Views engine calls via IVwWindow COM interface
+- **Typical usage** (RootSite initialization):
+  1. Create ManagedVwWindow: `var vwWindow = new ManagedVwWindow()`
+  2. Set Window property: `vwWindow.Window = (uint)this.Handle`
+  3. Pass to Views engine: Register with IVwRootBox or layout code
+  4. Native Views calls GetClientRectangle() during layout
+- **Common consumers**:
+  - RootSite.OnHandleCreated(): Sets up ManagedVwWindow for root site
+  - Browse views: xWorks browse columns use ManagedVwWindow for view geometry
+  - Lexicon/Interlinear displays: All Views-based UI uses ManagedVwWindow wrapper
 
 ## Test Index
-TBD - populate from code. See auto-generated hints below.
+- **Test project**: ManagedVwWindowTests/ManagedVwWindowTests.csproj
+- **Test file**: ManagedVwWindowTests.cs
+- **Test coverage**:
+  - Window property setter: HWND → Control conversion
+  - GetClientRectangle(): Correct Rect output matching Control.ClientRectangle
+  - Exception handling: ApplicationException when GetClientRectangle() called before Window set
+  - Null HWND: Behavior when Control.FromHandle() returns null
+- **Test approach**: Unit tests with WinForms Control instances
+- **Test runners**:
+  - Visual Studio Test Explorer
+  - Via FW.sln top-level build
+- **Manual testing**: Any FLEx view (lexicon, interlinear, browse) exercises ManagedVwWindow via Views rendering
 
 ## Usage Hints
-TBD - populate from code. See auto-generated hints below.
+- **Typical usage pattern**:
+  ```csharp
+  var vwWindow = new ManagedVwWindow();
+  vwWindow.Window = (uint)myControl.Handle.ToInt32();
+  Rect clientRect;
+  vwWindow.GetClientRectangle(out clientRect);
+  // clientRect now contains control's client area geometry
+  ```
+- **Common pitfall**: Forgetting to set Window property before calling GetClientRectangle()
+  - Always set Window property in Control.OnHandleCreated() or after Handle is valid
+- **HWND validity**: Ensure Control.Handle is created before passing to Window property
+  - WinForms Controls don't create HWND until Control.CreateHandle() or first access
+- **Lifetime**: Keep ManagedVwWindow alive while Control is in use
+  - Typically stored as field in RootSite or view-hosting class
+- **COM registration**: GUID 3fb0fcd2-ac55-42a8-b580-73b89a2b6215 must be registered for native Views access
+- **Debugging tips**:
+  - Verify Control.Handle != IntPtr.Zero before setting Window property
+  - Check Control.ClientRectangle matches output Rect
+  - Ensure UI thread affinity (Control.InvokeRequired should be false)
+- **Extension**: Minimal class; no easy extension points
+- **Replacement**: Direct port of C++ VwWindow wrapper; functionally equivalent
 
 ## Related Folders
 - **views/**: Native Views C++ engine consuming IVwWindow interface
@@ -83,7 +179,7 @@ TBD - populate from code. See auto-generated hints below.
   - Src/ManagedVwWindow/ManagedVwWindow.cs
   - Src/ManagedVwWindow/ManagedVwWindowTests/ManagedVwWindowTests.cs
 
-## References (auto-generated hints)
+## Auto-Generated Project and File References
 - Project files:
   - Src/ManagedVwWindow/ManagedVwWindow.csproj
   - Src/ManagedVwWindow/ManagedVwWindowTests/ManagedVwWindowTests.csproj
