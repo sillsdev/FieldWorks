@@ -10,7 +10,7 @@ status: production
 Side pane navigation control for FieldWorks multi-area interface. Provides SidePane, Tab, and Item classes implementing hierarchical navigation sidebar (similar to Outlook bar). Enables area/tool switching in FLEx and other FieldWorks apps. Includes OutlookBarButton rendering, drag-and-drop tab reordering, and NavPaneOptionsDlg customization.
 
 ## Architecture
-TBD - populate from code. See auto-generated hints below.
+Side pane navigation control library (~3K lines) implementing hierarchical sidebar (Outlook bar style). Provides SidePane, Tab, Item classes with OutlookBarButton custom rendering, drag-drop tab reordering, NavPaneOptionsDlg customization. Enables area/tool switching in FieldWorks multi-area interface.
 
 ## Key Components
 
@@ -31,14 +31,22 @@ TBD - populate from code. See auto-generated hints below.
 - **PanelPosition**: Enum (top, bottom)
 
 ## Technology Stack
-TBD - populate from code. See auto-generated hints below.
+- **Language**: C#
+- **Target framework**: .NET Framework 4.6.2 (net462)
+- **UI framework**: System.Windows.Forms (UserControl, custom GDI+ painting)
+- **Key features**: Custom button rendering, drag-drop, context menus
+- **Display modes**: Button, list, strip-list layouts
 
 ## Dependencies
 - **System.Windows.Forms**: UserControl, custom painting
 - **Consumer**: xWorks (FwXWindow), LexText (area navigation)
 
 ## Interop & Contracts
-TBD - populate from code. See auto-generated hints below.
+- **SidePane control**: Embeddable UserControl for navigation
+- **Tab/Item hierarchy**: Tab contains Items (tools/views)
+- **Events**: ItemClicked event for navigation handling
+- **Drag-drop**: Tab reordering via mouse drag
+- **NavPaneOptionsDlg**: Customization dialog (show/hide tabs, reorder)
 
 ## Threading & Performance
 Threading model: UI thread marshaling.

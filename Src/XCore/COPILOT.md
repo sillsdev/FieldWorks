@@ -10,7 +10,7 @@ status: reviewed
 Cross-cutting application framework (~9.8K lines in main folder + 4 subfolders) providing plugin architecture, command routing (Mediator), XML-driven UI composition (Inventory, XWindow), and extensibility infrastructure for FieldWorks applications. Implements colleague pattern (IxCoreColleague), UI adapters (IUIAdapter), property propagation (PropertyTable), and choice management. See subfolder COPILOT.md files for xCoreInterfaces/, FlexUIAdapter/, SilSidePane/, xCoreTests/ details.
 
 ## Architecture
-TBD - populate from code. See auto-generated hints below.
+Plugin-based application framework (~9.8K lines main + 4 subfolders) with XML-driven UI composition. Three-tier design: 1) Core framework (Mediator, PropertyTable, Inventory XML processor), 2) UI components (XWindow, CollapsingSplitContainer, MultiPane, RecordBar), 3) Plugin interfaces (IxCoreColleague, IUIAdapter). Implements colleague pattern for extensible command routing and view coordination across all FieldWorks applications.
 
 ## Key Components
 
@@ -45,26 +45,54 @@ TBD - populate from code. See auto-generated hints below.
 - **xCoreUserControl** (xCoreUserControl.cs) - Base class for XCore-aware user controls implementing IXCoreUserControl
 
 ## Technology Stack
-TBD - populate from code. See auto-generated hints below.
+- **Language**: C#
+- **Target framework**: .NET Framework 4.6.2 (net462)
+- **UI framework**: System.Windows.Forms (WinForms)
+- **Key libraries**: WeifenLuo.WinFormsUI.Docking (SilSidePane), SIL.Utils, Common/FwUtils
+- **Configuration**: XML-based Inventory system for UI composition
+- **Pattern**: Mediator (command routing), Colleague (plugin integration)
 
 ## Dependencies
 - **Upstream**: Common/FwUtils (utilities), Common/Framework (FwApp integration), FwResources (images), LCModel.Utils, SIL.Utils, WeifenLuo.WinFormsUI.Docking (SilSidePane)
 - **Downstream consumers**: xWorks/, LexText applications (all major FLEx apps built on XCore), Common/Framework (FwApp uses XCore)
 
 ## Interop & Contracts
-TBD - populate from code. See auto-generated hints below.
+- **IxCoreColleague**: Plugin interface for command handling and property access
+- **Mediator**: Central message broker (BroadcastMessage, SendMessage)
+- **PropertyTable**: Shared property storage with change notification
+- **Inventory**: XML configuration aggregation with base/derived unification
+- **IUIAdapter**: UI adapter contracts for menu/toolbar integration
+- **XML configuration**: Layouts, commands, choices defined in XML files
 
 ## Threading & Performance
-TBD - populate from code. See auto-generated hints below.
+- **UI thread**: All XCore operations on main UI thread (WinForms single-threaded model)
+- **Idle processing**: IdleQueue for background work during idle time
+- **Message sequencing**: MessageSequencer filters/sequences commands for performance
+- **Lazy loading**: VwLazyBox supports deferred content creation
+- **Property caching**: PropertyTable caches values for fast access
 
 ## Config & Feature Flags
-TBD - populate from code. See auto-generated hints below.
+- **Inventory XML**: Configuration files define UI structure (layouts, commands, choices)
+- **Base/derived**: XML elements support `base` attribute for inheritance/override
+- **PropertyTable**: Persistent properties (window size, splitter positions, user preferences)
+- **Mediator configuration**: Command routing rules in XML
+- **PersistenceProvider**: Settings persistence to registry or config files
 
 ## Build Information
-TBD - populate from code. See auto-generated hints below.
+- **Project type**: C# class library (net462)
+- **Build**: `msbuild XCore.csproj` or via FW.sln
+- **Output**: XCore.dll (main), xCoreInterfaces.dll, FlexUIAdapter.dll, SilSidePane.dll
+- **Dependencies**: xCoreInterfaces (interfaces), Common/FwUtils, SIL.Utils, WeifenLuo docking
+- **Test projects**: xCoreTests, xCoreInterfacesTests, SilSidePaneTests (11 test files)
 
 ## Interfaces and Data Models
-TBD - populate from code. See auto-generated hints below.
+- **IxCoreColleague**: Plugin interface (HandleMessage, PropertyValue methods)
+- **IxWindow**: Main window contract (ShowSidebar, ShowRecordList properties)
+- **IUIAdapter**: UI adapter interface (menu/toolbar binding)
+- **PropertyTable**: Key-value property storage with change events
+- **Mediator**: Central command broker
+- **ChoiceGroup/Choice**: Menu/toolbar definitions from XML
+- **Command**: Command pattern with undo/redo support
 
 ## Entry Points
 - Provides framework base classes for applications

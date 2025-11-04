@@ -10,7 +10,7 @@ status: production
 XML processing utilities and helper functions. Provides XmlUtils static helpers (GetMandatoryAttributeValue, AppendAttribute, etc.), DynamicLoader for XML-configured assembly loading, SimpleResolver for XML entity resolution, and Configuration exceptions. Used throughout FieldWorks for XML-based configuration, data files, and dynamic plugin loading.
 
 ## Architecture
-TBD - populate from code. See auto-generated hints below.
+Core XML utility library with 1) XmlUtils (~600 lines) static helpers for XML manipulation, 2) DynamicLoader (~400 lines) for XML-configured object instantiation, 3) Supporting classes (~500 lines) including SimpleResolver, ConfigurationException, IPersistAsXml. Foundation for XML-based configuration and plugin loading across FieldWorks.
 
 ## Key Components
 
@@ -33,7 +33,11 @@ TBD - populate from code. See auto-generated hints below.
 - **IPersistAsXml, IResolvePath**: Persistence interfaces
 
 ## Technology Stack
-TBD - populate from code. See auto-generated hints below.
+- **Language**: C#
+- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Library type**: Core utility DLL
+- **Key libraries**: System.Xml (XmlDocument, XmlNode, XPath), System.Reflection (dynamic loading)
+- **Used by**: XCore Inventory, configuration systems, plugin loaders throughout FieldWorks
 
 ## Dependencies
 - Depends on: System.Xml, Common utilities

@@ -10,7 +10,7 @@ status: production
 SFM to XML conversion library and command-line utility. Parses Standard Format Marker files (legacy Toolbox/Shoebox linguistic data) into XML for FieldWorks import. Includes Sfm2Xml core library (ClsHierarchyEntry, ClsPathObject, ClsInFieldMarker parsing) and ConvertSFM.exe command-line tool. Used by LexTextControls LexImportWizard for lexicon/interlinear imports.
 
 ## Architecture
-TBD - populate from code. See auto-generated hints below.
+Two-component system: 1) Sfm2Xml library (~7K lines) with ClsHierarchyEntry, Converter, LexImportFields for SFM→XML transformation, 2) ConvertSFM.exe (~2K lines) command-line wrapper. Parser handles SFM hierarchy, inline markers, field mapping, and XML generation for FieldWorks import pipelines.
 
 ## Key Components
 
@@ -28,7 +28,12 @@ TBD - populate from code. See auto-generated hints below.
 - Batch SFM file conversion to XML
 
 ## Technology Stack
-TBD - populate from code. See auto-generated hints below.
+- **Language**: C#
+- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Components**: Sfm2Xml.dll (library), ConvertSFM.exe (CLI tool)
+- **Key libraries**: System.Xml (XML generation), Common utilities
+- **Input format**: SFM/Toolbox text files
+- **Output format**: Structured XML for FLEx import
 
 ## Dependencies
 - Depends on: XML utilities, Common utilities

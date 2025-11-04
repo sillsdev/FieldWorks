@@ -10,7 +10,7 @@ status: reviewed
 Core interface definitions and implementations (~7.8K lines) for XCore framework. Provides Mediator (central message broker), PropertyTable (property storage), IxCoreColleague (colleague pattern), ChoiceGroup/Choice (menu/toolbar definitions), Command (command pattern), IUIAdapter (UI adapter contracts), and IdleQueue (idle-time processing). Foundation for plugin-based extensibility across FieldWorks.
 
 ## Architecture
-TBD - populate from code. See auto-generated hints below.
+Core interface definitions (~7.8K lines) for XCore framework. Provides Mediator (message broker), PropertyTable (property storage), IxCoreColleague (plugin interface), ChoiceGroup/Choice (UI definitions), Command (command pattern), IUIAdapter (UI adapter contracts), IdleQueue (idle processing). Foundation for plugin extensibility across FieldWorks.
 
 ## Key Components
 
@@ -48,14 +48,23 @@ TBD - populate from code. See auto-generated hints below.
 - **List** (List.cs) - Generic list utilities
 
 ## Technology Stack
-TBD - populate from code. See auto-generated hints below.
+- **Language**: C#
+- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Library type**: Pure interface definitions + core implementations
+- **Key libraries**: Minimal dependencies (SIL.Utils, System assemblies)
+- **Pattern**: Mediator, Command, Observer (property change notification)
 
 ## Dependencies
 - **Upstream**: Minimal - SIL.Utils, System assemblies (pure interface definitions)
 - **Downstream consumers**: XCore/ (Inventory, XWindow), XCore/FlexUIAdapter/, xWorks/, LexText/, all XCore-based apps
 
 ## Interop & Contracts
-TBD - populate from code. See auto-generated hints below.
+- **Mediator**: BroadcastMessage(), SendMessage() for command routing
+- **IxCoreColleague**: Plugin interface (HandleMessage, PropertyValue methods)
+- **PropertyTable**: GetValue<T>(), SetProperty() with change notification
+- **ChoiceGroup/Choice**: XML-driven menu/toolbar definitions
+- **IUIAdapter**: UI adapter interface for framework independence
+- **IdleQueue**: AddTask() for idle-time processing
 
 ## Threading & Performance
 TBD - populate from code. See auto-generated hints below.

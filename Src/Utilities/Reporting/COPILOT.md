@@ -10,7 +10,7 @@ status: production
 Error reporting and diagnostic information collection infrastructure from SIL.Core. Wraps SIL.Reporting.ErrorReport functionality for FieldWorks integration. Provides ErrorReport class for gathering error details, ReportingStrings localized resources, and UsageEmailDialog for user feedback. Used throughout FieldWorks for exception handling and crash reporting.
 
 ## Architecture
-TBD - populate from code. See auto-generated hints below.
+Thin wrapper library (~1554 lines, 4 C# files) around SIL.Reporting NuGet package. Provides FieldWorks-specific error reporting with ErrorReport static API, UsageEmailDialog for user feedback, and ReportingStrings localized resources. Integrates SIL.Core error reporting infrastructure into FieldWorks exception handling pipeline.
 
 ## Key Components
 
@@ -35,7 +35,12 @@ TBD - populate from code. See auto-generated hints below.
   - Culture-specific formatting
 
 ## Technology Stack
-TBD - populate from code. See auto-generated hints below.
+- **Language**: C#
+- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Library type**: Class library wrapper around SIL.Reporting
+- **UI framework**: System.Windows.Forms (UsageEmailDialog)
+- **Key libraries**: SIL.Reporting (NuGet), SIL.Core
+- **Resources**: ErrorReport.resx, ReportingStrings.resx, UsageEmailDialog.resx, App.config
 
 ## Dependencies
 - **SIL.Reporting**: ErrorReport implementation (NuGet package)
@@ -44,13 +49,23 @@ TBD - populate from code. See auto-generated hints below.
 - **Consumer**: All FieldWorks applications (Common/Framework, DebugProcs) for exception handling
 
 ## Interop & Contracts
-TBD - populate from code. See auto-generated hints below.
+- **ErrorReport static API**: ReportNonFatalException(), ReportFatalException(), NotifyUserOfProblem()
+- **UsageEmailDialog**: Modal WinForms dialog for user feedback collection
+- **Email submission**: Configurable EmailAddress, EmailSubject properties
+- **System info**: AddStandardProperties() adds OS, RAM, .NET version to reports
+- **Privacy**: "Don't show again" checkbox for user control
 
 ## Threading & Performance
-TBD - populate from code. See auto-generated hints below.
+- **UI thread**: Error dialogs must show on UI thread
+- **Synchronous**: ReportFatalException terminates app (blocks)
+- **Asynchronous email**: UsageEmailDialog may submit email async
+- **Lightweight**: Minimal overhead for non-fatal exceptions (logging only)
 
 ## Config & Feature Flags
-TBD - populate from code. See auto-generated hints below.
+- **Email configuration**: ErrorReport.EmailAddress, ErrorReport.EmailSubject
+- **Report detail level**: Configurable via SIL.Reporting settings
+- **User privacy**: UsageEmailDialog "don't show again" persisted
+- **Localization**: ReportingStrings.resx for multi-language support
 
 ## Build Information
 - **Project**: Reporting.csproj
@@ -61,16 +76,25 @@ TBD - populate from code. See auto-generated hints below.
 - **Resources**: ErrorReport.resx, ReportingStrings.resx, UsageEmailDialog.resx, App.config
 
 ## Interfaces and Data Models
-TBD - populate from code. See auto-generated hints below.
+- **ErrorReport**: Static error reporting API from SIL.Reporting
+- **UsageEmailDialog**: WinForms dialog for user feedback (email, comments)
+- **ReportingStrings**: Designer-generated localized resources
 
 ## Entry Points
-TBD - populate from code. See auto-generated hints below.
+- **ErrorReport.ReportNonFatalException(exception)**: Log non-fatal errors
+- **ErrorReport.ReportFatalException(exception)**: Show error dialog, terminate
+- **ErrorReport.NotifyUserOfProblem(message)**: User-facing error notification
+- **UsageEmailDialog.ShowDialog()**: Collect user feedback
 
 ## Test Index
 No test project found.
 
 ## Usage Hints
-TBD - populate from code. See auto-generated hints below.
+- **Fatal errors**: `ErrorReport.ReportFatalException(ex);` shows dialog and exits
+- **Non-fatal**: `ErrorReport.ReportNonFatalException(ex);` logs only
+- **User notification**: `ErrorReport.NotifyUserOfProblem("Message");` shows message
+- **Configuration**: Set ErrorReport.EmailAddress before first use
+- **Best practice**: Wrap top-level exception handlers with ReportFatalException
 
 ## Related Folders
 - **Common/Framework/**: Application framework with error handling hooks

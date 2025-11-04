@@ -10,7 +10,7 @@ status: production
 FLEx implementation of XCore UI adapter interfaces. Provides concrete adapters (MenuAdapter, ToolStripManager, ReBarAdapter, SidebarAdapter, PaneBar) connecting FLEx WinForms UI to XCore's command/choice framework. Implements Common/UIAdapterInterfaces (ITMAdapter, ISIBInterface) enabling XCore Mediator integration with Windows Forms controls.
 
 ## Architecture
-TBD - populate from code. See auto-generated hints below.
+UI adapter implementation library (~3K lines, 9 C# files) connecting XCore framework to WinForms controls. Provides MenuAdapter, ToolStripManager, ReBarAdapter, SidebarAdapter implementing ITMAdapter/ISIBInterface. Enables XCore Mediator command routing to MenuStrip, ToolStrip, and other WinForms UI elements for FLEx applications.
 
 ## Key Components
 
@@ -28,7 +28,11 @@ TBD - populate from code. See auto-generated hints below.
 - **PanelCollection**: Panel container management
 
 ## Technology Stack
-TBD - populate from code. See auto-generated hints below.
+- **Language**: C#
+- **Target framework**: .NET Framework 4.6.2 (net462)
+- **UI framework**: System.Windows.Forms (MenuStrip, ToolStrip, Button controls)
+- **Key libraries**: XCore/xCoreInterfaces (Mediator, IxCoreColleague), Common/UIAdapterInterfaces
+- **Pattern**: Adapter pattern (WinForms ↔ XCore command system)
 
 ## Dependencies
 - **XCore/xCoreInterfaces**: Mediator, IxCoreColleague, ChoiceGroup
@@ -37,7 +41,11 @@ TBD - populate from code. See auto-generated hints below.
 - **Consumer**: xWorks, LexText (FLEx UI integration)
 
 ## Interop & Contracts
-TBD - populate from code. See auto-generated hints below.
+- **ITMAdapter**: Menu/toolbar adapter interface (PopulateNow, CreateUIElement methods)
+- **ISIBInterface**: Sidebar interface
+- **IxCoreColleague**: Colleague pattern integration
+- **Command binding**: Maps WinForms Click events to XCore Mediator messages
+- **Dynamic UI**: Adapters rebuild UI from ChoiceGroup definitions
 
 ## Threading & Performance
 Single-threaded or thread-agnostic code. No explicit threading detected.

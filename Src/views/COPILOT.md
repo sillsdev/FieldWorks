@@ -10,7 +10,7 @@ status: reviewed
 Native C++ rendering engine (~66.7K lines) implementing sophisticated box-based layout and display for complex writing systems. Provides VwRootBox (root display), VwParagraphBox (paragraph layout), VwStringBox (text runs), VwTableBox (table layout), VwSelection (text selection), VwEnv (display environment), and VwPropertyStore (formatting properties). Core component enabling accurate multi-script text layout, bidirectional text, complex rendering, and accessible UI across all FieldWorks applications.
 
 ## Architecture
-TBD - populate from code. See auto-generated hints below.
+Sophisticated C++ rendering engine (~66.7K lines) implementing box-based layout system. Three-layer hierarchy: 1) Box system (VwBox, VwGroupBox, VwParagraphBox, VwStringBox, VwTableBox), 2) Root/Environment (VwRootBox coordinates layout/paint, VwEnv constructs display), 3) Selection/Interaction (VwSelection, VwTextSelection for editing). Provides accurate multi-script text layout, bidirectional text, complex rendering for all FieldWorks text display.
 
 ## Key Components
 

@@ -10,7 +10,7 @@ status: production
 Test suite for XCore framework. Validates command handling, PropertyTable behavior, Mediator functionality, and plugin infrastructure (Inventory XML processing). Includes IncludeXmlTests (XML include/override directives), InventoryTests (plugin loading), and CreateOverrideTests. Ensures XCore foundation works correctly for all FieldWorks applications.
 
 ## Architecture
-TBD - populate from code. See auto-generated hints below.
+Test suite (~500 lines) for XCore framework validation. Tests Inventory XML processing (includes, overrides), DynamicLoader plugin instantiation, and configuration merging. Ensures XCore foundation works correctly for all FieldWorks applications using NUnit framework.
 
 ## Key Components
 
@@ -23,7 +23,11 @@ TBD - populate from code. See auto-generated hints below.
   - XML override merging, attribute replacement, node insertion
 
 ## Technology Stack
-TBD - populate from code. See auto-generated hints below.
+- **Language**: C#
+- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Test framework**: NUnit
+- **Systems under test**: Mediator, PropertyTable, Inventory, DynamicLoader
+- **Test approach**: Unit tests with mock objects
 
 ## Dependencies
 - **XCore/**: Mediator, PropertyTable, Inventory (systems under test)
@@ -32,13 +36,20 @@ TBD - populate from code. See auto-generated hints below.
 - **Consumer**: Build/CI systems
 
 ## Interop & Contracts
-TBD - populate from code. See auto-generated hints below.
+- **IncludeXmlTests**: Tests XML `<include>` directive (recursive includes, path resolution)
+- **InventoryTests**: Tests plugin loading (DynamicLoader.CreateObject, assembly loading)
+- **CreateOverrideTests**: Tests configuration override merging
+- **Test isolation**: Mock objects for Mediator, PropertyTable dependencies
 
 ## Threading & Performance
-TBD - populate from code. See auto-generated hints below.
+- **Test execution**: Single-threaded NUnit test runner
+- **Performance tests**: None (functional correctness only)
+- **Test data**: Small XML snippets, mock objects (fast execution)
 
 ## Config & Feature Flags
-TBD - populate from code. See auto-generated hints below.
+- **Test XML files**: Embedded test data for Inventory/include tests
+- **No external config**: All test data in code or embedded resources
+- **Test isolation**: Each test independent, no shared state
 
 ## Build Information
 - C# test project
