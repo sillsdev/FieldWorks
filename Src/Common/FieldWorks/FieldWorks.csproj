@@ -8,6 +8,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Deterministic>false</Deterministic>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -51,11 +52,14 @@
     <PackageReference Include="SIL.Windows.Forms" Version="17.0.0-*" />
     <PackageReference Include="SIL.Windows.Forms.Keyboarding" Version="17.0.0-*" />
     <PackageReference Include="SIL.WritingSystems" Version="17.0.0-*" />
-  <PackageReference Include="Geckofx60.64" Version="60.0.54" /></ItemGroup>
+    <PackageReference Include="Geckofx60.64" Version="60.0.54" />
+  </ItemGroup>
 
   <ItemGroup>
     <Reference Include="Microsoft.Build.Framework" />
-    <Reference Include="PaToFdoInterfaces" />
+    <Reference Include="PaToFdoInterfaces">
+      <HintPath>..\..\..\DistFiles\PaToFdoInterfaces.dll</HintPath>
+    </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net" />
@@ -83,7 +87,12 @@
     <ProjectReference Include="../ViewsInterfaces/ViewsInterfaces.csproj" />
     <ProjectReference Include="..\..\LexText\LexTextControls\LexTextControls.csproj" />
   </ItemGroup>
-
-
   <ItemGroup>
-    <Compile Remove="FieldWorksTests/**" /><None Remove="FieldWorksTests/**" /></ItemGroup></Project>
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <EmbeddedResource Update="Properties\Resources.resx" />
+    <Compile Remove="FieldWorksTests/**" />
+    <None Remove="FieldWorksTests/**" />
+  </ItemGroup>
+</Project>

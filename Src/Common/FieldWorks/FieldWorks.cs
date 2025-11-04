@@ -2603,7 +2603,7 @@ namespace SIL.FieldWorks
 				try
 				{
 					var versionInfoProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), false);
-					var backupSettings = new BackupProjectSettings(cache, restoreSettings.Settings,
+					var backupSettings = new LCModel.DomainServices.BackupRestore.BackupProjectSettings(cache, restoreSettings.Settings,
 						FwDirectoryFinder.DefaultBackupDirectory, versionInfoProvider.MajorVersion);
 					backupSettings.DestinationFolder = FwDirectoryFinder.DefaultBackupDirectory;
 
