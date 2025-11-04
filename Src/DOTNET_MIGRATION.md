@@ -246,6 +246,173 @@ Based on dependency analysis, we recommend migrating in 5 phases:
 3. Consider keeping some components on .NET Framework temporarily
 4. Document long-term strategy for remaining C++/CLI
 
+## Top 5 Highest Risks
+
+After detailed analysis of the codebase and research into .NET 8 migration gotchas, these are the five highest-risk areas requiring special attention:
+
+### Risk #1: Native Views Rendering Engine P/Invoke Compatibility ⚠️ **CRITICAL**
+
+**Affected Projects**: `views/` (66.7K lines native C++), `ManagedVwWindow`, `Common/RootSite`, `Common/SimpleRootSite`, `Common/ViewsInterfaces`
+
+**Description**: The views rendering engine is a sophisticated 66,700-line native C++ codebase that implements box-based layout, complex writing system support, bidirectional text, and accessible UI. All text display in FieldWorks flows through this engine via P/Invoke.
+
+**Specific Risks**:
+- **Marshaling changes**: .NET 8 has stricter marshaling rules for P/Invoke. COM interfaces (IVwEnv, IVwGraphics, IVwSelection) must be validated.
+- **COM Interop**: The Views engine uses COM extensively. .NET 8's COMWrappers pattern is fundamentally different from classic RCW (Runtime Callable Wrappers).
+- **Callback delegates**: VwEnv and VwSelection use callbacks from native to managed code. Delegate lifetime and GC behavior changed in .NET Core/.NET 8.
+- **Structure layouts**: Any structs passed across P/Invoke boundaries (VwSelectionInfo, RECT, etc.) must have explicit layouts validated.
+- **Text Services Framework (TSF)**: VwTextStore implements TSF for advanced input. TSF behavior may differ on .NET 8.
+
+**Impact**: **HIGH** - Failure here breaks all text display and editing in FieldWorks.
+
+**Mitigation Strategy**:
+1. Create comprehensive P/Invoke validation test suite
+2. Use LibraryImport source generator for new P/Invoke declarations
+3. Audit all COM interface definitions and update to COMWrappers pattern
+4. Test complex writing systems (RTL, BiDi, vertical text) extensively
+5. Validate TSF input scenarios (IME, complex scripts)
+6. Consider creating P/Invoke compatibility layer for gradual migration
+
+**Estimated Effort**: 4-6 weeks for full validation and fixes
+
+---
+
+### Risk #2: WinForms Designer and Custom Controls ⚠️ **HIGH**
+
+**Affected Projects**: LexTextDll (high complexity), Common/Controls, Common/RootSite, FdoUi, xWorks, all UI projects (37 total)
+
+**Description**: FieldWorks has extensive custom WinForms controls with design-time support. .NET 8 introduces the out-of-process designer architecture, which breaks many traditional design-time extensibility patterns.
+
+**Specific Risks**:
+- **Out-of-process designer**: Custom control designers, type converters, and UI type editors require migration to work with the new architecture.
+- **Designer serialization**: Complex property serialization in designer-generated code may fail or produce incorrect code.
+- **Data binding engine changes**: .NET 8's new MVVM-oriented binding engine isn't fully compatible with legacy WinForms binding scenarios.
+- **DataGridView customization**: Heavily customized DataGridView derivatives (custom cell editors, dynamic columns) may have rendering or editing issues.
+- **High DPI behavior**: Designer DPI awareness changed; `<ForceDesignerDPIUnaware>true</ForceDesignerDPIUnaware>` may be needed.
+- **Resource file issues**: .resx files with embedded designer code may not deserialize correctly.
+
+**Discovered in Analysis**:
+- **LexTextDll** (955 lines in LexTextApp.cs): Uses RestoreDefaultsDlg with designer, ImageHolder resources, and XCore integration that relies on design-time services.
+- **Common/RootSite**: CollectorEnv classes bridge managed and native rendering - designer integration fragile.
+- **Common/Controls**: Shared UI controls library with XML-based views - custom designers at risk.
+
+**Impact**: **HIGH** - Developer productivity severely impacted if designers don't work. Runtime issues possible for controls that rely on design-time-generated code.
+
+**Mitigation Strategy**:
+1. Audit all custom control designers and update for out-of-process architecture
+2. Test all designer scenarios in Visual Studio 2022 after migration
+3. Consider manual .resx editing for controls that can't be fixed
+4. Create design-time test harness for rapid validation
+5. Document designer workarounds for team
+6. Evaluate third-party control migration costs vs. replacement
+
+**Estimated Effort**: 6-8 weeks for full designer compatibility
+
+---
+
+### Risk #3: XCore Framework and Plugin Architecture ⚠️ **HIGH**
+
+**Affected Projects**: XCore/, LexTextDll, xWorks, FlexUIAdapter, all application layers
+
+**Description**: XCore provides the plugin-based application framework using Mediator pattern, colleague pattern, and extensive use of reflection for command routing. This architecture relies on .NET Framework reflection APIs and dynamic behavior that changed significantly in .NET 8.
+
+**Specific Risks**:
+- **Reflection API changes**: XCore uses extensive reflection for command discovery and routing. .NET 8's trim-friendly reflection has different behavior.
+- **Assembly loading**: Plugin discovery via assembly scanning may fail with new assembly loading contexts.
+- **Configuration system**: App.config → appsettings.json transition affects XCore configuration.
+- **Mediator performance**: XCore's reflection-heavy Mediator may perform poorly on .NET 8 without optimization.
+- **IxCoreColleague pattern**: Colleague pattern uses interface-based discovery that may break with .NET 8's linker/trimming.
+
+**Discovered in Analysis**:
+- **LexTextDll/LexTextApp.cs**: Implements IxCoreColleague, IApp - core integration point at risk.
+- **LexTextDll/AreaListener.cs** (1,050 lines): Complex XCore colleague managing list configuration - relies on Mediator heavily.
+- **XCore/FlexUIAdapter**: Bridges XCore to UI layer - architectural boundary at risk.
+
+**Impact**: **MEDIUM-HIGH** - Core application framework. Failure breaks application structure, command routing, plugin system.
+
+**Mitigation Strategy**:
+1. Create XCore compatibility tests focusing on reflection scenarios
+2. Consider source-generated alternatives for hot paths
+3. Audit all IxCoreColleague implementations
+4. Test plugin discovery and loading thoroughly
+5. Validate Mediator performance with profiling
+6. Plan incremental XCore refactoring if performance unacceptable
+
+**Estimated Effort**: 4-6 weeks for XCore migration and validation
+
+---
+
+### Risk #4: Resource and Localization Infrastructure ⚠️ **MEDIUM-HIGH**
+
+**Affected Projects**: FwResources, LexTextDll (LexTextStrings.resx, HelpTopicPaths.resx 215KB), all projects with .resx files
+
+**Description**: FieldWorks uses extensive .resx resource files for localization, help topics, and embedded resources. .NET 8 has different resource loading behavior and Crowdin integration must continue working.
+
+**Specific Risks**:
+- **Resource file format changes**: .resx files may need regeneration with new ResXResourceWriter.
+- **Designer-generated resource classes**: Auto-generated Designer.cs files may not compile or may generate different code.
+- **Satellite assembly loading**: Localized resource satellite assemblies load differently in .NET 8.
+- **Large resource files**: HelpTopicPaths.resx (215KB) in LexTextDll may have performance implications.
+- **Crowdin integration**: crowdin.json configuration must continue working with .NET 8 build process.
+- **Runtime resource lookup**: Resource manager behavior changed subtly for fallback handling.
+
+**Impact**: **MEDIUM-HIGH** - Localization broken = unusable for international users. Help system broken = poor user experience.
+
+**Mitigation Strategy**:
+1. Regenerate all .resx Designer.cs files with .NET 8 tools
+2. Test resource loading in all supported locales
+3. Validate Crowdin sync process with .NET 8 build
+4. Test large resource file performance (HelpTopicPaths.resx)
+5. Audit satellite assembly packaging and deployment
+6. Create resource loading test suite
+
+**Estimated Effort**: 3-4 weeks for resource migration and validation
+
+---
+
+### Risk #5: Database and ORM Layer Compatibility ⚠️ **MEDIUM**
+
+**Affected Projects**: All projects depending on LCModel, MigrateSqlDbs, DbExtend
+
+**Description**: FieldWorks uses LCModel for data access, which includes database migrations, XML persistence, and complex object graphs. .NET 8 has changes to System.Data, SQL Client, and serialization that may affect data access.
+
+**Specific Risks**:
+- **SQL Server client**: Microsoft.Data.SqlClient behavior differs from System.Data.SqlClient used in .NET Framework.
+- **XML serialization**: XmlSerializer behavior changed for edge cases (nullable references, collections).
+- **Binary serialization**: BinaryFormatter is obsolete in .NET 8 - if used anywhere, must be replaced.
+- **Connection string handling**: Configuration and connection string management changed.
+- **Transaction scope**: Distributed transactions behave differently on .NET 8.
+- **Migration scripts**: SQL migration scripts must be validated for .NET 8 execution.
+
+**Impact**: **MEDIUM** - Data corruption risk if not handled properly. Migration failures = blocked users.
+
+**Mitigation Strategy**:
+1. Audit all database access code for .NET Framework-specific patterns
+2. Update to Microsoft.Data.SqlClient with compatibility testing
+3. Test all migration scenarios (old → new data format)
+4. Validate XML round-tripping of complex objects
+5. Check for any BinaryFormatter usage and eliminate
+6. Create data integrity test suite
+7. Test with real-world project data
+
+**Estimated Effort**: 3-4 weeks for data access validation
+
+---
+
+### Risk Summary Table
+
+| Risk | Impact | Effort | Priority | Dependencies |
+|------|--------|--------|----------|--------------|
+| 1. Native Views P/Invoke | Critical | 4-6 weeks | 1 | Blocks all UI migration |
+| 2. WinForms Designer | High | 6-8 weeks | 2 | Blocks developer workflow |
+| 3. XCore Framework | High | 4-6 weeks | 3 | Blocks application structure |
+| 4. Resources/Localization | Medium-High | 3-4 weeks | 4 | Blocks internationalization |
+| 5. Database/ORM | Medium | 3-4 weeks | 5 | Blocks data migration |
+
+**Total Risk Mitigation Effort**: 20-28 weeks (~5-7 months) of focused work
+
+These risks should be addressed in priority order during the migration phases. Risk #1 (Views P/Invoke) must be resolved in Phase 2-3 before UI components can migrate. Risks #2-3 should be addressed in Phase 4 during UI framework migration.
+
 ## Critical Challenges
 
 ### Challenge 1: WinForms Windows-Only Limitation
