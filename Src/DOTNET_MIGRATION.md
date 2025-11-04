@@ -413,6 +413,105 @@ After detailed analysis of the codebase and research into .NET 8 migration gotch
 
 These risks should be addressed in priority order during the migration phases. Risk #1 (Views P/Invoke) must be resolved in Phase 2-3 before UI components can migrate. Risks #2-3 should be addressed in Phase 4 during UI framework migration.
 
+### Detailed Risk Analysis Documents
+
+Each risk has been analyzed in depth with 2-3 alternative approaches:
+
+- **[MIGRATION-RISK-1-NATIVE-VIEWS-PINVOKE.md](MIGRATION-RISK-1-NATIVE-VIEWS-PINVOKE.md)**: Native Views rendering engine P/Invoke compatibility
+  - Approach #1: Incremental validation with compatibility layer (LOW RISK)
+  - Approach #2: Clean break with modernized boundary (HIGH RISK)
+  - Approach #3: Replace with Avalonia text rendering (VERY HIGH RISK, strategic)
+
+- **[MIGRATION-RISK-2-WINFORMS-DESIGNER.md](MIGRATION-RISK-2-WINFORMS-DESIGNER.md)**: WinForms designer and custom controls
+  - Approach #1: Fix designer compatibility issues (MEDIUM-HIGH RISK)
+  - Approach #2: Bypass designer with code-first development (MEDIUM RISK)
+  - Approach #3: Accelerate Avalonia migration (HIGH RISK, strategic)
+
+- **[MIGRATION-RISK-3-XCORE-FRAMEWORK.md](MIGRATION-RISK-3-XCORE-FRAMEWORK.md)**: XCore framework and plugin architecture
+  - Approach #1: Modernize with source generators (MEDIUM RISK)
+  - Approach #2: Minimal changes with runtime reflection (LOW-MEDIUM RISK)
+  - Approach #3: Replace with MVVM framework (HIGH RISK, aligns with Avalonia)
+
+- **[MIGRATION-RISK-4-RESOURCES-LOCALIZATION.md](MIGRATION-RISK-4-RESOURCES-LOCALIZATION.md)**: Resource and localization infrastructure
+  - Approach #1: Regenerate and validate all resources (LOW-MEDIUM RISK)
+  - Approach #2: Minimal changes with targeted fixes (MEDIUM RISK)
+  - Approach #3: Modernize resource infrastructure, remove Graphite complexity (MEDIUM-HIGH RISK, strategic)
+
+- **[MIGRATION-RISK-5-DATABASE-ORM.md](MIGRATION-RISK-5-DATABASE-ORM.md)**: Database and ORM layer compatibility
+  - Approach #1: Systematic validation with parallel testing (LOW RISK, recommended)
+  - Approach #2: Minimal changes with focused testing (MEDIUM RISK)
+  - Approach #3: Modernize data access layer (VERY HIGH RISK, deferred)
+
+## Migration Proposals
+
+Based on the risk analyses, three comprehensive migration proposals have been developed:
+
+### Proposal A: Conservative .NET 8-Only Migration
+**Timeline**: 6-9 months | **Risk**: LOW | **Team**: 3-4 developers
+
+Focuses exclusively on migrating to .NET 8 while keeping WinForms. Uses the lowest-risk approach from each risk analysis. Appropriate when cross-platform is not immediately required.
+
+**[Read Full Proposal A →](MIGRATION-PROPOSAL-A-CONSERVATIVE-DOTNET8.md)**
+
+**Key Characteristics**:
+- Windows-only (WinForms on .NET 8)
+- Minimum viable changes
+- Extensive testing at each phase
+- Fastest path to .NET 8 support
+- Defers Avalonia migration to future phase
+
+---
+
+### Proposal B: Combined .NET 8 + Avalonia Migration
+**Timeline**: 12-18 months | **Risk**: MEDIUM-HIGH | **Team**: 5-7 developers
+
+Combines .NET 8 migration with Avalonia UI migration based on **MIGRATION-PLAN-0.md**. Addresses most risks by moving to modern solutions rather than fixing legacy patterns. Achieves cross-platform support.
+
+**[Read Full Proposal B →](MIGRATION-PROPOSAL-B-COMBINED-AVALONIA.md)**
+
+**Key Characteristics**:
+- Cross-platform (Windows, Linux, macOS)
+- Implements MIGRATION-PLAN-0.md systematically
+- Removes GeckoFX, Graphite, legacy complexity
+- One-time migration (don't fix WinForms then migrate again)
+- Modern, maintainable codebase for next decade
+
+**References**:
+- **[MIGRATION-PLAN-0.md](MIGRATION-PLAN-0.md)**: Detailed Avalonia migration with patch-by-patch backlog
+
+---
+
+### Proposal C: Pragmatic Hybrid Approach (RECOMMENDED)
+**Timeline**: 9-15 months | **Risk**: MEDIUM | **Team**: 4-5 developers
+
+Starts conservatively with .NET 8 migration but runs Avalonia pilot in parallel. Includes decision gates to pivot based on validation results. Balances risk with innovation.
+
+**[Read Full Proposal C →](MIGRATION-PROPOSAL-C-PRAGMATIC-HYBRID.md)**
+
+**Key Characteristics**:
+- Three-track strategy (primary, pilot, research)
+- Decision gates at Months 3, 9, and 12
+- Can deliver .NET 8 quickly or expand to full Avalonia
+- Builds team Avalonia skills gradually
+- Measured approach with validation before commitment
+- **Recommended** for balanced risk/reward
+
+---
+
+### Proposal Comparison
+
+| Aspect | Proposal A | Proposal B | Proposal C |
+|--------|-----------|-----------|-----------|
+| Timeline | 6-9 months | 12-18 months | 9-15 months |
+| Team Size | 3-4 devs | 5-7 devs | 4-5 devs |
+| Risk Level | LOW | MEDIUM-HIGH | MEDIUM |
+| Cross-Platform | No (Windows) | Yes (Win/Lin/Mac) | Conditional |
+| WinForms | Keep | Remove | Conditional |
+| Avalonia | Future | Full | Pilot/Optional |
+| GeckoFX Removed | No | Yes | Conditional |
+| Graphite Removed | No | Yes | Conditional |
+| Best For | Quick .NET 8, Windows-only | Strategic modernization | Balanced, risk-averse |
+
 ## Critical Challenges
 
 ### Challenge 1: WinForms Windows-Only Limitation
