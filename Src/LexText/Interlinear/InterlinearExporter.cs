@@ -56,6 +56,8 @@ namespace SIL.FieldWorks.IText
 		protected WritingSystemManager m_wsManager;
 		protected ICmObjectRepository m_repoObj;
 		InterlinearObjects m_objects;
+		int m_hvoMultiString = 0;
+		int m_groupId = 0;
 
 		public static InterlinearExporter Create(string mode, LcmCache cache, XmlWriter writer, ICmObject objRoot,
 			InterlinLineChoices lineChoices, InterlinVc vc)
@@ -318,7 +320,29 @@ namespace SIL.FieldWorks.IText
 			{
 				tss = m_sda.get_MultiStringAlt(m_hvoCurr, tag, alt);
 			}
+			if (itemType == "note")
+			{
+				// Group multilingual alternatives together with a group id.
+				// This assumes that the alternatives are displayed together.
+				if (m_hvoMultiString != m_hvoCurr)
+				{
+					m_hvoMultiString = m_hvoCurr;
+					m_groupId += 1;
+				}
+				WriteGroupItem(itemType, tss, m_groupId);
+				return;
+			}
 			WriteItem(itemType, tss);
+		}
+
+		protected void WriteGroupItem(string itemType, ITsString tss, int groupId)
+		{
+			m_writer.WriteStartElement("item");
+			m_writer.WriteAttributeString("type", itemType);
+			m_writer.WriteAttributeString("groupid", groupId.ToString());
+			int ws = GetWsFromTsString(tss);
+			WriteLangAndContent(ws, tss);
+			m_writer.WriteEndElement();
 		}
 
 		protected void WriteItem(string itemType, ITsString tss)
