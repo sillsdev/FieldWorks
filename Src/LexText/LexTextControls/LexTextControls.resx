@@ -924,7 +924,7 @@ Each feature has two values (+ and -).</value>
     <value>Variant not found?</value>
   </data>
   <data name="ksAddVariant" xml:space="preserve">
-    <value>&amp;Add Variant</value>
+    <value>&amp;Link Selected</value>
   </data>
   <data name="ksUseEntry" xml:space="preserve">
     <value>&amp;Use Entry</value>
@@ -969,13 +969,13 @@ If you see this message again, exit the import wizard (saving your settings) and
     <comment>{0} and {1} will often, but not always, be the same.</comment>
   </data>
   <data name="ksRedoAddVariant" xml:space="preserve">
-    <value>Redo Add Variant</value>
+    <value>Redo Link Selected</value>
   </data>
   <data name="ksRedoCreateVarEntry" xml:space="preserve">
     <value>Redo Create Variant Entry</value>
   </data>
   <data name="ksUndoAddVariant" xml:space="preserve">
-    <value>Undo Add Variant</value>
+    <value>Undo Link Selected</value>
   </data>
   <data name="ksUndoCreateVarEntry" xml:space="preserve">
     <value>Undo Create Variant Entry</value>

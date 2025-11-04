@@ -62,6 +62,7 @@ jobs:
       LcmRootDir: ${{ github.workspace }}/Localizations/LCM
       FILESTOSIGNLATER: ./signExternally
       GH_TOKEN: ${{ github.token }}
+      BASE_BUILD_NUMBER: ${{ inputs.base_build_number || '1182' }}
     name: Build Debug and run Tests
     runs-on: windows-latest
     steps:
@@ -209,7 +210,6 @@ jobs:
         id: build_installer
         shell: powershell
         run: |
-          $base_build_number = "${{ inputs.base_build_number || '1182' }}"
           Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\.NETFramework\AppContext"
           cd Build
           .\build64.bat /t:BuildPatchInstaller  "/property:config=release;action=test;desktopNotAvailable=true" /v:d /bl ^| tee-object -FilePath build.log
