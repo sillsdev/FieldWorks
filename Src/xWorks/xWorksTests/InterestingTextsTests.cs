@@ -802,7 +802,7 @@ namespace SIL.FieldWorks.XWorks
 	}
 
 
-	internal class MockTextRepository : ITextRepository
+	internal class MockTextRepository : IRepository<IText>
 	{
 
 		public List<IText> m_texts = new List<IText>();

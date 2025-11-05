@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -72,5 +72,7 @@
   <ItemGroup>
     <Compile Remove="MorphologyEditorDllTests/**" />
     <None Remove="MorphologyEditorDllTests/**" />
+    <Compile Remove="MGA/MGATests/**" />
+    <None Remove="MGA/MGATests/**" />
   </ItemGroup>
 </Project>

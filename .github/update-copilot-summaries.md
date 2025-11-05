@@ -105,7 +105,7 @@ Threading model, synchronization, known hot paths, perf considerations.
 List config sources, feature flags, and effects at a glance.
 
 ## Build Information
-Prefer FW.sln or agent-build-fw.sh; note any special targets/props.
+Prefer FieldWorks.sln or agent-build-fw.sh; note any special targets/props.
 
 ## Interfaces and Data Models
 Public interfaces and XML/XAML/XSLT contracts (see template in this guide).

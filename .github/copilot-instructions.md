@@ -30,7 +30,7 @@ Repo size and structure:
 
 | Focus | Primary resources |
 | --- | --- |
-| Build & test | `agent-build-fw.sh`, `.github/instructions/build.instructions.md`, FW.sln |
+| Build & test | `.github/instructions/build.instructions.md`, FieldWorks.sln |
 | Managed code rules | `.github/instructions/managed.instructions.md`, `.github/chatmodes/managed-engineer.chatmode.md` |
 | Native code rules | `.github/instructions/native.instructions.md`, `.github/chatmodes/native-engineer.chatmode.md` |
 | Installer work | `.github/instructions/installer.instructions.md`, `.github/chatmodes/installer-engineer.chatmode.md` |
@@ -124,7 +124,7 @@ These run on every PR. Run the quick checks locally before pushing to avoid chur
   # Fast path: replicate CI behavior
   bash ./agent-build-fw.sh
   # Or MSBuild
-  msbuild FW.sln /m /p:Configuration=Debug
+  msbuild FieldWorks.sln /m /p:Configuration=Debug
   ```
 - If you change installer/config, validate those paths explicitly per the sections below.
 
@@ -135,7 +135,7 @@ These run on every PR. Run the quick checks locally before pushing to avoid chur
 Use the build guides in `.github/instructions/build.instructions.md` for full detail. Key reminders:
 
 - Prerequisites: Visual Studio 2022 with .NET desktop + Desktop C++ workloads, WiX 3.11.x, Git. Install optional tooling (Crowdin CLI, etc.) only when needed.
-- Bootstrap: open a Developer Command Prompt, run `source ./environ`, then call `bash ./agent-build-fw.sh` to mirror CI. Use FW.sln with MSBuild/VS when iterating locally.
+- Bootstrap: open a Developer Command Prompt, run `source ./environ`, then call `bash ./agent-build-fw.sh` to mirror CI. Use FieldWorks.sln with MSBuild/VS when iterating locally.
 - Tests: follow `.github/instructions/testing.instructions.md`; run via Visual Studio Test Explorer, `dotnet test`, or `nunit3-console` as appropriate.
 - Installer or config changes: execute the WiX validation steps documented in `FLExInstaller` guidance before posting a PR.
 - Formatting/localization: respect `.editorconfig`, reuse existing localization patterns, and prefer incremental builds to shorten iteration.

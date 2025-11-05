@@ -44,14 +44,24 @@ namespace GenerateHCConfig
 			get { return false; }
 		}
 
-		public event CancelEventHandler Canceling;
+		public bool Canceling
+		{
+			get { return false; }
+		}
 
-		public object RunTask(Func<IThreadedProgress, object[], object> backgroundTask, params object[] parameters)
+		public object RunTask(
+			Func<IThreadedProgress, object[], object> backgroundTask,
+			params object[] parameters
+		)
 		{
 			return RunTask(true, backgroundTask, parameters);
 		}
 
-		public object RunTask(bool fDisplayUi, Func<IThreadedProgress, object[], object> backgroundTask, params object[] parameters)
+		public object RunTask(
+			bool fDisplayUi,
+			Func<IThreadedProgress, object[], object> backgroundTask,
+			params object[] parameters
+		)
 		{
 			return backgroundTask(this, parameters);
 		}
