@@ -8,7 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Xml;
 using NUnit.Framework;
-using Rhino.Mocks;
+using Moq;
 using SIL.Extensions;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
@@ -626,8 +626,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void Model_NewWritingSystemAddedInManagerAndList()
 		{
 			// Set up mocks to verify wsManager save behavior
-			var mockWsManager = MockRepository.GenerateMock<IWritingSystemManager>();
-			mockWsManager.Expect(manager => manager.Replace(Arg<CoreWritingSystemDefinition>.Is.Anything)).WhenCalled(a => { }).Repeat.Once();
+			var mockWsManager = new Mock<IWritingSystemManager>();
+			mockWsManager.Expect(manager => manager.Replace(It.IsAny<CoreWritingSystemDefinition>())).WhenCalled(a => { }).Repeat.Once();
 
 			var container = new TestWSContainer(new[] { "en" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager);
@@ -646,8 +646,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void Model_ChangedWritingSystemIdSetInManager()
 		{
 			// Set up mocks to verify wsManager save behavior
-			var mockWsManager = MockRepository.GenerateMock<IWritingSystemManager>();
-			mockWsManager.Expect(manager => manager.Replace(Arg<CoreWritingSystemDefinition>.Is.Anything)).WhenCalled(a => { }).Repeat.Once();
+			var mockWsManager = new Mock<IWritingSystemManager>();
+			mockWsManager.Expect(manager => manager.Replace(It.IsAny<CoreWritingSystemDefinition>())).WhenCalled(a => { }).Repeat.Once();
 
 			var container = new TestWSContainer(new[] { "es", "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager);
@@ -664,7 +664,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void Model_ChangesContainerOnlyOnSave()
 		{
 			// Set up mocks to verify wsManager save behavior
-			var mockWsManager = MockRepository.GenerateMock<IWritingSystemManager>();
+			var mockWsManager = new Mock<IWritingSystemManager>();
 			mockWsManager.Expect(manager => manager.Save()).WhenCalled(a => { }).Repeat.Once();
 
 			var container = new TestWSContainer(new[] {"fr", "fr-FR", "fr-Zxxx-x-audio"});
@@ -691,7 +691,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void Model_WritingSystemListUpdated_CalledOnChange()
 		{
 			var writingSystemListUpdatedCalled = false;
-			var mockWsManager = MockRepository.GenerateMock<IWritingSystemManager>();
+			var mockWsManager = new Mock<IWritingSystemManager>();
 
 			var container = new TestWSContainer(new[] { "fr", "fr-FR", "fr-Zxxx-x-audio" });
 			var testModel = new FwWritingSystemSetupModel(container,
@@ -710,7 +710,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void Model_WritingSystemChanged_CalledOnAbbrevChange()
 		{
 			var writingSystemChanged = false;
-			var mockWsManager = MockRepository.GenerateMock<IWritingSystemManager>();
+			var mockWsManager = new Mock<IWritingSystemManager>();
 
 			var container = new TestWSContainer(new[] { "fr" });
 			var testModel = new FwWritingSystemSetupModel(container,
@@ -729,7 +729,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void Model_WritingSystemChanged_CalledOnWsIdChange()
 		{
 			var writingSystemChanged = false;
-			var mockWsManager = MockRepository.GenerateMock<IWritingSystemManager>();
+			var mockWsManager = new Mock<IWritingSystemManager>();
 
 			var container = new TestWSContainer(new[] { "fr" });
 			var testModel = new FwWritingSystemSetupModel(container,
@@ -748,7 +748,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		public void Model_WritingSystemChanged_NotCalledOnIrrelevantChange()
 		{
 			var writingSystemChanged = false;
-			var mockWsManager = MockRepository.GenerateMock<IWritingSystemManager>();
+			var mockWsManager = new Mock<IWritingSystemManager>();
 
 			var container = new TestWSContainer(new[] { "fr" });
 			var testModel = new FwWritingSystemSetupModel(container,

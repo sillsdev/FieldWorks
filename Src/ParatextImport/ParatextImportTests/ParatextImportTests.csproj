@@ -38,6 +38,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
     <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="8.0.0" />
+    <PackageReference Include="Moq" Version="4.20.70" />
     <PackageReference Include="SIL.Core" Version="17.0.0-*" />
     <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
@@ -49,7 +50,6 @@
     <PackageReference Include="SIL.TestUtilities" Version="17.0.0-*" />
     <PackageReference Include="SIL.WritingSystems" Version="17.0.0-*" />
     <PackageReference Include="encoding-converters-core" Version="0.9.7" />
-    <PackageReference Include="RhinoMocks" Version="4.0.0-alpha3" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Windows.Forms" />

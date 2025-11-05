@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
-using Rhino.Mocks;
+using Moq;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
@@ -296,11 +296,11 @@ namespace SIL.FieldWorks.IText
 		#region Helper methods
 		private void SetUpMocksForTest(ISegment seg)
 		{
-			IVwRootBox rootb = MockRepository.GenerateStrictMock<IVwRootBox>();
+			IVwRootBox rootb = new Mock<IVwRootBox>(MockBehavior.Strict);
 			m_interlinDoc.MockedRootBox = rootb;
-			IVwSelection vwsel = MockRepository.GenerateStrictMock<IVwSelection>();
-			rootb.Stub(x => x.Selection).Return(vwsel);
-			rootb.Stub(x => x.DataAccess).Return(Cache.DomainDataByFlid);
+			IVwSelection vwsel = new Mock<IVwSelection>(MockBehavior.Strict);
+			rootb.Setup(x => x.Selection).Returns(vwsel);
+			rootb.Setup(x => x.DataAccess).Returns(Cache.DomainDataByFlid);
 			vwsel.Stub(x =>
 				x.TextSelInfo(
 					Arg<bool>.Is.Equal(false),
@@ -312,11 +312,11 @@ namespace SIL.FieldWorks.IText
 					out Arg<int>.Out(Cache.DefaultAnalWs).Dummy
 				)
 			);
-			vwsel.Stub(x => x.IsValid).Return(true);
-			vwsel.Stub(x => x.CLevels(Arg<bool>.Is.Anything)).Return(0);
+			vwsel.Setup(x => x.IsValid).Returns(true);
+			vwsel.Stub(x => x.CLevels(It.IsAny<bool>())).Return(0);
 			vwsel.Stub(x =>
 				x.AllSelEndInfo(
-					Arg<bool>.Is.Anything,
+					It.IsAny<bool>(),
 					out Arg<int>.Out(0).Dummy,
 					Arg<int>.Is.Equal(0),
 					Arg<ArrayPtr>.Is.Null,

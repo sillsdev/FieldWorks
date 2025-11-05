@@ -2,7 +2,7 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using Rhino.Mocks;
+using Moq;
 using System.Drawing;
 using System.Windows.Forms;
 using NUnit.Framework;
@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		[Test]
 		public void AdjustScrollRange()
 		{
-			var rootBox = MockRepository.GenerateMock<IVwRootBox>();
+			var rootBox = new Mock<IVwRootBox>();
 			// This was taken out because it doesn't seem like the views code does this
 			// anymore. It just calls AdjustScrollRange for the original view that changed.
 			// Done as a part of TE-3576
@@ -62,11 +62,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			//rootBox.ExpectAndReturn("Height", 1000);
 			//rootBox.ExpectAndReturn("Width", 100);
 			// result for bt pane
-			rootBox.Expect(r => r.Height).Return(1100);
-			rootBox.Expect(r => r.Width).Return(100);
-			//rootBox.Expect(r => r.Height).Return(1100);
-			//rootBox.Expect(r => r.Height).Return(1100);
-			//rootBox.Expect(r => r.Height).Return(1100);
+			rootBox.Setup(r => r.Height).Returns(1100);
+			rootBox.Setup(r => r.Width).Returns(100);
+			//rootBox.Setup(r => r.Height).Returns(1100);
+			//rootBox.Setup(r => r.Height).Returns(1100);
+			//rootBox.Setup(r => r.Height).Returns(1100);
 			//rootBox.ExpectAndReturn("Height", 1100);
 			//rootBox.ExpectAndReturn("Width", 100);
 			//rootBox.ExpectAndReturn("Height", 900);

@@ -4,7 +4,7 @@
 
 using System.Linq;
 using NUnit.Framework;
-using Rhino.Mocks;
+using Moq;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
@@ -91,8 +91,8 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void SandBoxWithGlossConfig_LoadsGuessForGlossFromAnalysis()
 		{
-			var mockRb = MockRepository.GenerateStrictMock<IVwRootBox>();
-			mockRb.Expect(rb => rb.DataAccess).Return(Cache.MainCacheAccessor);
+			var mockRb = new Mock<IVwRootBox>(MockBehavior.Strict);
+			mockRb.Setup(rb => rb.DataAccess).Returns(Cache.MainCacheAccessor);
 			var textFactory = Cache.ServiceLocator.GetInstance<ITextFactory>();
 			var stTextFactory = Cache.ServiceLocator.GetInstance<IStTextFactory>();
 			text = textFactory.Create();

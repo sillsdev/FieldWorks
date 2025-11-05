@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-using Rhino.Mocks;
+using Moq;
 using NUnit.Framework;
 
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -977,8 +977,8 @@ namespace SIL.FieldWorks.Common.RootSites
 			Assert.That(pict, Is.Not.Null);
 
 			ShowForm(Lng.English, DummyBasicViewVc.DisplayType.kNormal);
-			var mockedSelection = MockRepository.GenerateMock<IVwSelection>();
-			mockedSelection.Expect(s => s.IsValid).Return(true);
+			var mockedSelection = new Mock<IVwSelection>();
+			mockedSelection.Setup(s => s.IsValid).Returns(true);
 			VwChangeInfo changeInfo = new VwChangeInfo();
 			changeInfo.hvo = 0;
 			mockedSelection.Expect(s => s.CompleteEdits(out changeInfo)).IgnoreArguments().Return(true);
@@ -993,7 +993,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			mockedSelection.Expect(
 				s => s.PropInfo(true, 0, out ignoreOut, out ignoreOut, out ignoreOut, out ignoreOut, out outPropStore))
 				.OutRef(pict.Hvo, CmPictureTags.kflidCaption, 0, 0, null);
-			mockedSelection.Expect(s => s.EndBeforeAnchor).Return(false);
+			mockedSelection.Setup(s => s.EndBeforeAnchor).Returns(false);
 
 			DummyBasicView.DummyEditingHelper editingHelper =
 				(DummyBasicView.DummyEditingHelper)m_basicView.EditingHelper;
