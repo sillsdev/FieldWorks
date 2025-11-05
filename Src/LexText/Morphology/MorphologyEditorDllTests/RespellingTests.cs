@@ -376,23 +376,25 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			});
 
 			var rsda = new RespellingSda((ISilDataAccessManaged)Cache.MainCacheAccessor, null, Cache.ServiceLocator);
-			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(m_mediator, m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
+			var mockTextList = new Mock<InterestingTextList>(m_mediator, m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
 			Cache.ServiceLocator.GetInstance<IStTextRepository>());
+			InterestingTextList dummyTextList = mockTextList.Object;
 			if (clidPara == ScrTxtParaTags.kClassId)
-				dummyTextList.Setup(tl => tl.InterestingTexts).Returns(new IStText[0]);
+				mockTextList.Setup(tl => tl.InterestingTexts).Returns(new IStText[0]);
 			else
-				dummyTextList.Setup(t1 => t1.InterestingTexts).Returns(new IStText[1] { stText });
+				mockTextList.Setup(t1 => t1.InterestingTexts).Returns(new IStText[1] { stText });
 			ReflectionHelper.SetField(rsda, "m_interestingTexts", dummyTextList);
 			rsda.SetCache(Cache);
 			rsda.SetOccurrences(0, paraFrags);
 			ObjectListPublisher publisher = new ObjectListPublisher(rsda, kObjectListFlid);
-			XMLViewsDataCache xmlCache = MockRepository.GenerateStub<XMLViewsDataCache>(publisher, true, new Dictionary<int, int>());
+			var mockXmlCache = new Mock<XMLViewsDataCache>(publisher, true, new Dictionary<int, int>());
+			XMLViewsDataCache xmlCache = mockXmlCache.Object;
 
-			xmlCache.Stub(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass)).Returns(ScrTxtParaTags.kClassId);
-			xmlCache.Stub(c => c.VecProp(It.IsAny<int>(), It.IsAny<int>())).Do(new Func<int, int, int[]>(publisher.VecProp));
+			mockXmlCache.Setup(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass)).Returns(ScrTxtParaTags.kClassId);
+			mockXmlCache.Setup(c => c.VecProp(It.IsAny<int>(), It.IsAny<int>())).Returns((int hvo, int tag) => publisher.VecProp(hvo, tag));
 			xmlCache.MetaDataCache = new RespellingMdc((IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor);
-			xmlCache.Stub(c => c.get_ObjectProp(It.IsAny<int>(), It.IsAny<int>())).Do(new Func<int, int, int>(publisher.get_ObjectProp));
-			xmlCache.Stub(c => c.get_IntProp(It.IsAny<int>(), It.IsAny<int>())).Do(new Func<int, int, int>(publisher.get_IntProp));
+			mockXmlCache.Setup(c => c.get_ObjectProp(It.IsAny<int>(), It.IsAny<int>())).Returns((int hvo, int tag) => publisher.get_ObjectProp(hvo, tag));
+			mockXmlCache.Setup(c => c.get_IntProp(It.IsAny<int>(), It.IsAny<int>())).Returns((int hvo, int tag) => publisher.get_IntProp(hvo, tag));
 
 			var respellUndoaction = new RespellUndoAction(xmlCache, Cache, Cache.DefaultVernWs, sWordToReplace, sNewWord);
 			foreach (int hvoFake in rsda.VecProp(0, ConcDecorator.kflidConcOccurrences))
@@ -460,23 +462,25 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			});
 
 			var rsda = new RespellingSda((ISilDataAccessManaged)Cache.MainCacheAccessor, null, Cache.ServiceLocator);
-			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(m_mediator, m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
+			var mockTextList = new Mock<InterestingTextList>(m_mediator, m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
 			Cache.ServiceLocator.GetInstance<IStTextRepository>());
+			InterestingTextList dummyTextList = mockTextList.Object;
 			if (clidPara == ScrTxtParaTags.kClassId)
-				dummyTextList.Setup(tl => tl.InterestingTexts).Returns(new IStText[0]);
+				mockTextList.Setup(tl => tl.InterestingTexts).Returns(new IStText[0]);
 			else
-				dummyTextList.Setup(t1 => t1.InterestingTexts).Returns(new IStText[1] { stText });
+				mockTextList.Setup(t1 => t1.InterestingTexts).Returns(new IStText[1] { stText });
 			ReflectionHelper.SetField(rsda, "m_interestingTexts", dummyTextList);
 			rsda.SetCache(Cache);
 			rsda.SetOccurrences(0, paraFrags);
 			ObjectListPublisher publisher = new ObjectListPublisher(rsda, kObjectListFlid);
-			XMLViewsDataCache xmlCache = MockRepository.GenerateStub<XMLViewsDataCache>(publisher, true, new Dictionary<int, int>());
+			var mockXmlCache = new Mock<XMLViewsDataCache>(publisher, true, new Dictionary<int, int>());
+			XMLViewsDataCache xmlCache = mockXmlCache.Object;
 
-			xmlCache.Stub(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass)).Returns(ScrTxtParaTags.kClassId);
-			xmlCache.Stub(c => c.VecProp(It.IsAny<int>(), It.IsAny<int>())).Do(new Func<int, int, int[]>(publisher.VecProp));
+			mockXmlCache.Setup(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass)).Returns(ScrTxtParaTags.kClassId);
+			mockXmlCache.Setup(c => c.VecProp(It.IsAny<int>(), It.IsAny<int>())).Returns((int hvo, int tag) => publisher.VecProp(hvo, tag));
 			xmlCache.MetaDataCache = new RespellingMdc((IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor);
-			xmlCache.Stub(c => c.get_ObjectProp(It.IsAny<int>(), It.IsAny<int>())).Do(new Func<int, int, int>(publisher.get_ObjectProp));
-			xmlCache.Stub(c => c.get_IntProp(It.IsAny<int>(), It.IsAny<int>())).Do(new Func<int, int, int>(publisher.get_IntProp));
+			mockXmlCache.Setup(c => c.get_ObjectProp(It.IsAny<int>(), It.IsAny<int>())).Returns((int hvo, int tag) => publisher.get_ObjectProp(hvo, tag));
+			mockXmlCache.Setup(c => c.get_IntProp(It.IsAny<int>(), It.IsAny<int>())).Returns((int hvo, int tag) => publisher.get_IntProp(hvo, tag));
 
 			var respellUndoaction = new RespellUndoAction(xmlCache, Cache, Cache.DefaultVernWs, sWordToReplace, sNewWord);
 			foreach (int hvoFake in rsda.VecProp(0, ConcDecorator.kflidConcOccurrences))

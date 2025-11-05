@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.IText
 				{
 					sut.SetSandboxForTesting(sandbox);
 					var mockList = new Mock<IComboList>(MockBehavior.Strict);
-					sut.SetComboListForTesting(mockList);
+					sut.SetComboListForTesting(mockList.Object);
 					sut.SetMorphForTesting(0);
 					sut.LoadMorphItems();
 					Assert.That(sut.NeedSelectSame(), Is.True);
@@ -145,7 +145,7 @@ namespace SIL.FieldWorks.IText
 			var vwsel = new Mock<IVwSelection>(MockBehavior.Strict);
 			vwsel.Setup(s => s.IsValid).Returns(false);
 			Assert.That(
-				() => SandboxBase.InterlinComboHandler.MakeCombo(null, vwsel, null, true),
+				() => SandboxBase.InterlinComboHandler.MakeCombo(null, vwsel.Object, null, true),
 				Throws.ArgumentException
 			);
 		}
@@ -156,27 +156,27 @@ namespace SIL.FieldWorks.IText
 			// Mock the various model objects to avoid having to create entries,
 			// senses, texts, analysis and morph bundles when we really just need to test
 			// the behaviour around a specific set of conditions
-			var glossString = new Mock<IMultiUnicode>().Object;
+			var glossString = new Mock<IMultiUnicode>();
 			glossString
-				.Stub(g => g.get_String(Cache.DefaultAnalWs))
+				.Setup(g => g.get_String(Cache.DefaultAnalWs))
 				.Returns(TsStringUtils.MakeString("hello", Cache.DefaultAnalWs));
-			var formString = new Mock<IMultiString>().Object;
+			var formString = new Mock<IMultiString>();
 			formString
-				.Stub(f => f.get_String(Cache.DefaultVernWs))
+				.Setup(f => f.get_String(Cache.DefaultVernWs))
 				.Returns(TsStringUtils.MakeString("hi", Cache.DefaultVernWs));
-			var sense = new Mock<ILexSense>().Object;
-			sense.Setup(s => s.Gloss).Returns(glossString);
-			var bundle = new Mock<IWfiMorphBundle>().Object;
-			bundle.Setup(b => b.Form).Returns(formString);
-			bundle.Setup(b => b.DefaultSense).Returns(sense);
-			var bundleList = MockRepository.GenerateStub<ILcmOwningSequence<IWfiMorphBundle>>();
+			var sense = new Mock<ILexSense>();
+			sense.Setup(s => s.Gloss).Returns(glossString.Object);
+			var bundle = new Mock<IWfiMorphBundle>();
+			bundle.Setup(b => b.Form).Returns(formString.Object);
+			bundle.Setup(b => b.DefaultSense).Returns(sense.Object);
+			var bundleList = new Mock<ILcmOwningSequence<IWfiMorphBundle>>();
 			bundleList.Setup(x => x.Count).Returns(1);
-			bundleList[0] = bundle;
-			var wfiAnalysis = new Mock<IWfiAnalysis>().Object;
-			wfiAnalysis.Setup(x => x.MorphBundlesOS).Returns(bundleList);
+			bundleList.SetupGet(x => x[0]).Returns(bundle.Object);
+			var wfiAnalysis = new Mock<IWfiAnalysis>();
+			wfiAnalysis.Setup(x => x.MorphBundlesOS).Returns(bundleList.Object);
 			// SUT
 			var result = ChooseAnalysisHandler.MakeAnalysisStringRep(
-				wfiAnalysis,
+				wfiAnalysis.Object,
 				Cache,
 				false,
 				Cache.DefaultVernWs
@@ -184,7 +184,7 @@ namespace SIL.FieldWorks.IText
 			// Verify that the form value of the IWfiMorphBundle is displayed (test verification)
 			Assert.That(result.Text, Does.Contain("hi"));
 			// Verify that the sense reference in the bundle is null (key condition for the test)
-			Assert.That(bundle.SenseRA, Is.Null);
+			Assert.That(bundle.Object.SenseRA, Is.Null);
 			// Verify that the gloss for the DefaultSense is displayed (key test data)
 			Assert.That(result.Text, Does.Contain("hello"));
 		}

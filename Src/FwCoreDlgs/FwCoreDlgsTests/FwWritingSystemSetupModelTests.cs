@@ -627,10 +627,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			// Set up mocks to verify wsManager save behavior
 			var mockWsManager = new Mock<IWritingSystemManager>();
-			mockWsManager.Expect(manager => manager.Replace(It.IsAny<CoreWritingSystemDefinition>())).WhenCalled(a => { }).Repeat.Once();
+			mockWsManager.Setup(manager => manager.Replace(It.IsAny<CoreWritingSystemDefinition>()));
 
 			var container = new TestWSContainer(new[] { "en" });
-			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager);
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager.Object);
 			// no-op handling of importing lists for new writing system
 			testModel.ImportListForNewWs = import => { };
 			var french = new CoreWritingSystemDefinition("fr");
@@ -639,7 +639,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			testModel.Save();
 
 			Assert.That(2, Is.EqualTo(container.VernacularWritingSystems.Count));
-			mockWsManager.AssertWasCalled(manager => manager.Replace(french));
+			mockWsManager.Verify(manager => manager.Replace(french), Times.Once);
 		}
 
 		[Test]
@@ -647,17 +647,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			// Set up mocks to verify wsManager save behavior
 			var mockWsManager = new Mock<IWritingSystemManager>();
-			mockWsManager.Expect(manager => manager.Replace(It.IsAny<CoreWritingSystemDefinition>())).WhenCalled(a => { }).Repeat.Once();
+			mockWsManager.Setup(manager => manager.Replace(It.IsAny<CoreWritingSystemDefinition>()));
 
 			var container = new TestWSContainer(new[] { "es", "fr" });
-			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager);
+			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager.Object);
 			var enWs = container.VernacularWritingSystems.First();
 			testModel.ShowChangeLanguage = ShowChangeLanguage;
 			testModel.ChangeLanguage();
 			testModel.Save();
 
 			Assert.That(2, Is.EqualTo(container.VernacularWritingSystems.Count));
-			mockWsManager.AssertWasCalled(manager => manager.Replace(enWs));
+			mockWsManager.Verify(manager => manager.Replace(enWs), Times.Once);
 		}
 
 		[Test]
@@ -665,11 +665,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			// Set up mocks to verify wsManager save behavior
 			var mockWsManager = new Mock<IWritingSystemManager>();
-			mockWsManager.Expect(manager => manager.Save()).WhenCalled(a => { }).Repeat.Once();
+			mockWsManager.Setup(manager => manager.Save());
 
 			var container = new TestWSContainer(new[] {"fr", "fr-FR", "fr-Zxxx-x-audio"});
 			var testModel = new FwWritingSystemSetupModel(container,
-				FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager);
+				FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager.Object);
 			// Start changing stuff like crazy
 			testModel.CurrentWsSetupModel.CurrentAbbreviation = "free.";
 			testModel.CurrentWsSetupModel.CurrentCollationRulesType = "CustomSimple";
@@ -680,7 +680,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Assert.That(container.VernacularWritingSystems.First().DefaultCollation, Is.Null);
 			testModel.Save();
 			// verify that the container WorkingWs defs have changed
-			mockWsManager.VerifyAllExpectations();
+			mockWsManager.Verify(manager => manager.Save(), Times.Once);
 			Assert.That(container.VernacularWritingSystems.First().Abbreviation, Is.EqualTo("free."));
 			Assert.That(container.VernacularWritingSystems.First().DefaultCollation, Is.Not.Null);
 			Assert.That(((SimpleRulesCollationDefinition) container.VernacularWritingSystems.First().DefaultCollation).SimpleRules, Is.EqualTo("Z z Y y X x"));
@@ -694,7 +694,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			var container = new TestWSContainer(new[] { "fr", "fr-FR", "fr-Zxxx-x-audio" });
 			var testModel = new FwWritingSystemSetupModel(container,
-				FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager);
+				FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager.Object);
 			testModel.WritingSystemListUpdated += (sender, args) =>
 			{
 				writingSystemListUpdatedCalled = true;
@@ -713,7 +713,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			var container = new TestWSContainer(new[] { "fr" });
 			var testModel = new FwWritingSystemSetupModel(container,
-				FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager);
+				FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager.Object);
 			testModel.WritingSystemUpdated += (sender, args) =>
 			{
 				writingSystemChanged = true;
@@ -732,7 +732,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			var container = new TestWSContainer(new[] { "fr" });
 			var testModel = new FwWritingSystemSetupModel(container,
-				FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager);
+				FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager.Object);
 			testModel.WritingSystemUpdated += (sender, args) =>
 			{
 				writingSystemChanged = true;
@@ -751,7 +751,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			var container = new TestWSContainer(new[] { "fr" });
 			var testModel = new FwWritingSystemSetupModel(container,
-				FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager);
+				FwWritingSystemSetupModel.ListType.Vernacular, mockWsManager.Object);
 			testModel.WritingSystemUpdated += (sender, args) =>
 			{
 				writingSystemChanged = true;

@@ -590,7 +590,7 @@ msgstr ""_Über Language Explorer""
 			if (actual == null)
 				Assert.Fail($"Expected a node matching {ComputeXPath(expected)}, but was null");
 
-			Assert.That(actual.Elements().Count(), Is.EqualTo(expected.Elements().Count()).Within($"Incorrect number of children under {ComputeXPath(expected)}"));
+			Assert.That(actual.Elements().Count(), Is.EqualTo(expected.Elements().Count()), $"Incorrect number of children under {ComputeXPath(expected)}");
 			AssertThatXmlStartsWithHelper(expected, actual);
 		}
 
@@ -605,12 +605,12 @@ msgstr ""_Über Language Explorer""
 			// verify attributes
 			var expectedAtts = expected.Attributes().ToArray();
 			var actualAtts = actual.Attributes().ToArray();
-			Assert.That(actualAtts.Length, Is.EqualTo(expectedAtts.Length).Within($"Incorrect number of attributes on {ComputeXPath(expected)}"));
+			Assert.That(actualAtts.Length, Is.EqualTo(expectedAtts.Length), $"Incorrect number of attributes on {ComputeXPath(expected)}");
 			for (var i = 0; i < expectedAtts.Length; i++)
 			{
 				var message = ComputeXPath(expected, expectedAtts[i]);
-				Assert.That(actualAtts[i].Name, Is.EqualTo(expectedAtts[i].Name).Within(message));
-				Assert.That(actualAtts[i].Value, Is.EqualTo(expectedAtts[i].Value).Within(message));
+				Assert.That(actualAtts[i].Name, Is.EqualTo(expectedAtts[i].Name), message);
+				Assert.That(actualAtts[i].Value, Is.EqualTo(expectedAtts[i].Value), message);
 			}
 
 			// verify children

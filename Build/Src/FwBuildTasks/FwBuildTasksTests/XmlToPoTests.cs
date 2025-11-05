@@ -388,16 +388,14 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			AssertArraysAreEqual(sortedStrings, msgIds);
 		}
 
-		private static void AssertArraysAreEqual(IReadOnlyList<string> arr1, IReadOnlyList<string> arr2)
+	private static void AssertArraysAreEqual(IReadOnlyList<string> arr1, IReadOnlyList<string> arr2)
+	{
+		for (var i = 0; i < arr1.Count && i < arr2.Count; i++)
 		{
-			for (var i = 0; i < arr1.Count && i < arr2.Count; i++)
-			{
-				Assert.That(arr2[i], Is.EqualTo(arr1[i]).Within($"Arrays differ at index {i}"));
-			}
-			Assert.That(arr2.Count, Is.EqualTo(arr1.Count), "Array lengths differ");
+			Assert.That(arr2[i], Is.EqualTo(arr1[i]), $"Arrays differ at index {i}");
 		}
-
-		[Test]
+		Assert.That(arr2.Count, Is.EqualTo(arr1.Count), "Array lengths differ");
+	}		[Test]
 		public void POString_WriteAndReadLeadingNewlines()
 		{
 			var poStr = new POString(new []{"Displayed in a message box.", "/Src/FwResources//FwStrings.resx::kstidFatalError2"},
@@ -427,16 +425,16 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			var poLines = serializedPo.Split(new[] { Environment.NewLine }, 100, StringSplitOptions.None);
 			for (var i = 0; i <= 10; i += 10)
 			{
-				Assert.That(poLines[0 + i], Is.EqualTo("#. Displayed in a message box.").Within($"Error line {0 + i}"));
-				Assert.That(poLines[1 + i], Is.EqualTo("#. /Src/FwResources//FwStrings.resx::kstidFatalError2").Within($"Error line {1 + i}"));
-				Assert.That(poLines[2 + i], Is.EqualTo("msgid \"\"").Within($"Error line {2 + i}"));
-				Assert.That(poLines[3 + i], Is.EqualTo("\"\\n\"").Within($"Error line {3 + i}"));
-				Assert.That(poLines[4 + i], Is.EqualTo("\"\\n\"").Within($"Error line {4 + i}"));
-				Assert.That(poLines[5 + i], Is.EqualTo("\"In order to protect your data, the FieldWorks program needs to close.\\n\"").Within($"Error line {5 + i}"));
-				Assert.That(poLines[6 + i], Is.EqualTo("\"\\n\"").Within($"Error line {6 + i}"));
-				Assert.That(poLines[7 + i], Is.EqualTo("\"You should be able to restart it normally.\\n\"").Within($"Error line {7 + i}"));
-				Assert.That(poLines[8 + i], Is.EqualTo("msgstr \"\"").Within($"Error line {8 + i}"));
-				Assert.That(poLines[9 + i], Is.EqualTo("").Within($"Error line {9 + i}"));
+				Assert.That(poLines[0 + i], Is.EqualTo("#. Displayed in a message box."), $"Error line {0 + i}");
+				Assert.That(poLines[1 + i], Is.EqualTo("#. /Src/FwResources//FwStrings.resx::kstidFatalError2"), $"Error line {1 + i}");
+				Assert.That(poLines[2 + i], Is.EqualTo("msgid \"\""), $"Error line {2 + i}");
+				Assert.That(poLines[3 + i], Is.EqualTo("\"\\n\""), $"Error line {3 + i}");
+				Assert.That(poLines[4 + i], Is.EqualTo("\"\\n\""), $"Error line {4 + i}");
+				Assert.That(poLines[5 + i], Is.EqualTo("\"In order to protect your data, the FieldWorks program needs to close.\\n\""), $"Error line {5 + i}");
+				Assert.That(poLines[6 + i], Is.EqualTo("\"\\n\""), $"Error line {6 + i}");
+				Assert.That(poLines[7 + i], Is.EqualTo("\"You should be able to restart it normally.\\n\""), $"Error line {7 + i}");
+				Assert.That(poLines[8 + i], Is.EqualTo("msgstr \"\""), $"Error line {8 + i}");
+				Assert.That(poLines[9 + i], Is.EqualTo(""), $"Error line {9 + i}");
 			}
 			Assert.That(poLines[20], Is.EqualTo(""));
 			Assert.That(poLines.Length, Is.EqualTo(21));
@@ -466,9 +464,9 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				return;
 			}
 			Assert.That(list2, Is.Not.Null, msg + " (both not null)");
-			Assert.That(list2.Count, Is.EqualTo(list1.Count).Within(msg + " (same number of lines)"));
+			Assert.That(list2.Count, Is.EqualTo(list1.Count), msg + " (same number of lines)");
 			for (var i = 0; i < list1.Count; ++i)
-				Assert.That(list2[i], Is.EqualTo(list1[i]).Within($"{msg} - line {i} is same"));
+				Assert.That(list2[i], Is.EqualTo(list1[i]), $"{msg} - line {i} is same");
 		}
 	}
 }

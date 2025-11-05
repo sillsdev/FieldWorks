@@ -44,6 +44,10 @@ namespace GenerateHCConfig
 			get { return false; }
 		}
 
+#pragma warning disable CS0067 // Event is never used
+		public event CancelEventHandler Canceling;
+#pragma warning restore CS0067
+
 		public object RunTask(
 			Func<IThreadedProgress, object[], object> backgroundTask,
 			params object[] parameters

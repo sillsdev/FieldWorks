@@ -107,7 +107,7 @@ namespace SIL.FieldWorks.IText
 			using (
 				var mockInterlinDocForAnalyis = new MockInterlinDocForAnalyis(stText1)
 				{
-					MockedRootBox = mockRb,
+					MockedRootBox = mockRb.Object,
 				}
 			)
 			{
@@ -125,7 +125,7 @@ namespace SIL.FieldWorks.IText
 				gloss.Form.set_String(Cache.DefaultAnalWs, glossTss);
 				m_sandbox.SwitchWord(cba0_0);
 				// Verify that the wordgloss was loaded into the m_sandbox
-				Assert.That(m_sandbox.WordGlossHvo, Is.Not.EqualTo(0).Within("The gloss was not set to Default gloss from the analysis."));
+				Assert.That(m_sandbox.WordGlossHvo, Is.Not.EqualTo(0), "The gloss was not set to Default gloss from the analysis.");
 				Assert.That(gloss.Hvo, Is.EqualTo(m_sandbox.WordGlossHvo), "The gloss was not set to Default gloss from the analysis.");
 			}
 		}
