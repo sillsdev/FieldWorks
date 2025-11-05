@@ -114,7 +114,7 @@ C# library (net462, OutputType=Library) with MVC-like separation. ConstituentCha
 - **Project file**: Discourse.csproj (net462, OutputType=Library)
 - **Test project**: DiscourseTests/
 - **Output**: SIL.FieldWorks.Discourse.dll
-- **Build**: Via top-level FW.sln or: `msbuild Discourse.csproj`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild Discourse.csproj`
 - **Run tests**: `dotnet test DiscourseTests/`
 
 ## Interfaces and Data Models

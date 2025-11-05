@@ -80,7 +80,7 @@ No configuration. Interface definitions only.
 - **Project file**: ViewsInterfaces.csproj (net462, OutputType=Library)
 - **Test project**: ViewsInterfacesTests/ViewsInterfacesTests.csproj
 - **Output**: ViewsInterfaces.dll
-- **Build**: Via top-level FW.sln or: `msbuild ViewsInterfaces.csproj /p:Configuration=Debug`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild ViewsInterfaces.csproj /p:Configuration=Debug`
 - **Run tests**: `dotnet test ViewsInterfacesTests/ViewsInterfacesTests.csproj`
 
 ## Interfaces and Data Models

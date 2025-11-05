@@ -108,7 +108,7 @@ No explicit configuration. Behavior controlled by View specifications and data.
 - **Project file**: SimpleRootSite.csproj (net462, OutputType=Library)
 - **Test project**: SimpleRootSiteTests/SimpleRootSiteTests.csproj
 - **Output**: SimpleRootSite.dll
-- **Build**: Via top-level FW.sln or: `msbuild SimpleRootSite.csproj /p:Configuration=Debug`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild SimpleRootSite.csproj /p:Configuration=Debug`
 - **Run tests**: `dotnet test SimpleRootSiteTests/SimpleRootSiteTests.csproj`
 
 ## Interfaces and Data Models

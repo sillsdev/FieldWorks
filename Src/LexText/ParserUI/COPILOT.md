@@ -132,7 +132,7 @@ C# library (net462) with 28 source files (~5.9K lines). Mix of WinForms (TryAWor
 
 ## Build Information
 - Project type: C# class library (net462)
-- Build: `msbuild ParserUI.csproj` or `dotnet build` (from FW.sln)
+- Build: `msbuild ParserUI.csproj` or `dotnet build` (from FieldWorks.sln)
 - Output: ParserUI.dll
 - Dependencies: Gecko WebBrowser (via NuGet), XCore, ParserCore, RootSites, FwUtils, LCModel
 - UI technologies: WinForms (dialogs, controls), WPF/XAML (reports dialogs with MVVM), Gecko WebBrowser (HTML trace display)
@@ -214,7 +214,7 @@ C# library (net462) with 28 source files (~5.9K lines). Mix of WinForms (TryAWor
 - **Test data**: ParserUITests/WordGrammarDebuggingInputsAndResults/
   - 14 XML files for grammar debugging scenarios (EmptyWord.xml, M3FXTDump.xml, bilikeszi*.xml, bili*BadInflection.xml)
   - 3 XSLT files for grammar transform testing (TestUnificationViaXSLT.xsl, RequiredOptionalPrefixSlotsWordGrammarDebugger.xsl, TLPSameSlotTwiceWordGrammarDebugger.xsl)
-- **Test approach**: 
+- **Test approach**:
   - Unit tests for grammar debugging logic
   - XML-based test scenarios for XSLT transforms
   - Mock/fake LcmCache for isolated testing
@@ -226,7 +226,7 @@ C# library (net462) with 28 source files (~5.9K lines). Mix of WinForms (TryAWor
   - View parser reports, verify statistics display correctly
 - **Test runners**:
   - Visual Studio Test Explorer
-  - Via FW.sln top-level build
+  - Via FieldWorks.sln top-level build
 
 ## Usage Hints
 - **Interactive word testing**:

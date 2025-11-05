@@ -49,7 +49,7 @@ Configuration varies by subfolder. XML-driven view system (XMLViews) uses XML fi
 
 ## Build Information
 - No project file in this organizational folder; each subfolder has its own .csproj
-- Build via top-level FW.sln (Visual Studio/MSBuild) or run: `bash ./agent-build-fw.sh`
+- Build via top-level FieldWorks.sln (Visual Studio/MSBuild)
 - All subfolder projects are built as part of the main solution
 - Test projects: DetailControlsTests/, FwControlsTests/, WidgetsTests/, XMLViewsTests/
 

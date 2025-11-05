@@ -72,7 +72,7 @@ C# console application (.NET Framework 4.6.2) with 350 lines of code. Program.cs
 ## Build Information
 - **Project file**: GenerateHCConfig.csproj (net462, OutputType=Exe)
 - **Output**: GenerateHCConfig.exe (console tool)
-- **Build**: Via top-level FW.sln or: `msbuild GenerateHCConfig.csproj`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild GenerateHCConfig.csproj`
 - **Usage**: `GenerateHCConfig.exe <project.fwdata> <output.xml>`
 
 ## Interfaces and Data Models

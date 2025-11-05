@@ -106,7 +106,7 @@ C# class library (.NET Framework 4.6.2) with filtering and sorting components. R
 - **Project file**: Filters.csproj (.NET Framework 4.6.2, OutputType=Library)
 - **Test project**: FiltersTests/FiltersTests.csproj
 - **Output**: Filters.dll (to Output/Debug or Output/Release)
-- **Build**: Via top-level FW.sln or: `msbuild Filters.csproj /p:Configuration=Debug`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild Filters.csproj /p:Configuration=Debug`
 - **Run tests**: `dotnet test FiltersTests/FiltersTests.csproj` or Visual Studio Test Explorer
 
 ## Interfaces and Data Models

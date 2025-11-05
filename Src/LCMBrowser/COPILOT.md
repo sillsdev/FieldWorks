@@ -92,7 +92,7 @@ C# Windows Forms application (WinExe, net462) extending SIL.ObjectBrowser base c
 ## Build Information
 - **Project file**: LCMBrowser.csproj (net462, OutputType=WinExe)
 - **Output**: LCMBrowser.exe
-- **Build**: Via top-level FW.sln or: `msbuild LCMBrowser.csproj`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild LCMBrowser.csproj`
 - **Run**: `LCMBrowser.exe` (prompts for project selection)
 - **Dependencies**: WeifenLuo.WinFormsUI.Docking.dll (included)
 

@@ -58,8 +58,7 @@ Configuration is managed at the subfolder level. No centralized config at this o
 
 ## Build Information
 No direct build at this level. Build via:
-- Top-level FW.sln includes all LexText subprojects
-- `bash agent-build-fw.sh` builds entire FieldWorks including LexText components
+- Top-level FieldWorks.sln includes all LexText subprojects
 - Individual subfolders have their own .csproj/.vcxproj files (see References section for complete list)
 
 ## Interfaces and Data Models
@@ -90,7 +89,7 @@ No tests at this organizational level. Tests are organized in subfolder test pro
 - ParserCore/XAmpleManagedWrapper/XAmpleManagedWrapperTests/XAmpleManagedWrapperTests.csproj
 - ParserUI/ParserUITests/ParserUITests.csproj
 
-Run tests via Visual Studio Test Explorer or FW.sln build.
+Run tests via Visual Studio Test Explorer or FieldWorks.sln build.
 
 ## Usage Hints
 This is an organizational folder. For usage guidance, see individual subfolder COPILOT.md files:

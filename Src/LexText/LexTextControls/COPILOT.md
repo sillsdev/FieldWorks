@@ -121,7 +121,7 @@ C# library (net462, OutputType=Library) organizing lexicon/text UI components fo
 - **Project file**: LexTextControls.csproj (net462, OutputType=Library)
 - **Test project**: LexTextControlsTests/
 - **Output**: SIL.FieldWorks.LexTextControls.dll
-- **Build**: Via top-level FW.sln or: `msbuild LexTextControls.csproj`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild LexTextControls.csproj`
 - **Run tests**: `dotnet test LexTextControlsTests/`
 
 ## Interfaces and Data Models

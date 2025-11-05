@@ -70,7 +70,7 @@ No explicit configuration. Behavior determined by view specifications and data.
 - **Project file**: RootSite.csproj (net462, OutputType=Library)
 - **Test project**: RootSiteTests/RootSiteTests.csproj
 - **Output**: RootSite.dll
-- **Build**: Via top-level FW.sln or: `msbuild RootSite.csproj /p:Configuration=Debug`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild RootSite.csproj /p:Configuration=Debug`
 - **Run tests**: `dotnet test RootSiteTests/RootSiteTests.csproj`
 
 ## Interfaces and Data Models

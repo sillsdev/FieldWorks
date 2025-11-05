@@ -76,7 +76,7 @@ C# library (net462) with 3 source files (~58 lines total). Single class ManagedV
 
 ## Build Information
 - Project type: C# class library (net462)
-- Build: `msbuild ManagedVwWindow.csproj` or `dotnet build` (from FW.sln)
+- Build: `msbuild ManagedVwWindow.csproj` or `dotnet build` (from FieldWorks.sln)
 - Output: ManagedVwWindow.dll
 - Dependencies: ViewsInterfaces, System.Windows.Forms
 - COM attributes: [ComVisible], GUID for COM registration
@@ -131,7 +131,7 @@ C# library (net462) with 3 source files (~58 lines total). Single class ManagedV
 - **Test approach**: Unit tests with WinForms Control instances
 - **Test runners**:
   - Visual Studio Test Explorer
-  - Via FW.sln top-level build
+  - Via FieldWorks.sln top-level build
 - **Manual testing**: Any FLEx view (lexicon, interlinear, browse) exercises ManagedVwWindow via Views rendering
 
 ## Usage Hints

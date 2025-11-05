@@ -92,7 +92,7 @@ C# library (net462, OutputType=Library) with application infrastructure classes.
 - **Project file**: LexTextDll.csproj (net462, OutputType=Library)
 - **Test project**: LexTextDllTests/
 - **Output**: SIL.FieldWorks.XWorks.LexText.dll
-- **Build**: Via top-level FW.sln or: `msbuild LexTextDll.csproj`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild LexTextDll.csproj`
 - **Run tests**: `dotnet test LexTextDllTests/`
 
 ## Interfaces and Data Models

@@ -87,7 +87,7 @@ C# libraries and executable with XML transformation engine. FxtDll/ contains cor
 - **Project files**: FxtDll/FxtDll.csproj (Library), FxtExe/FxtExe.csproj (Executable)
 - **Test project**: FxtDll/FxtDllTests/
 - **Output**: FxtDll.dll, FxtExe.exe
-- **Build**: Via top-level FW.sln
+- **Build**: Via top-level FieldWorks.sln
 - **Documentation**: FxtReference.doc (127KB)
 
 ## Interfaces and Data Models

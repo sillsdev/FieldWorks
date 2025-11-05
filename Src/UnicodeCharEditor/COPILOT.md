@@ -128,7 +128,7 @@ Workflow: User edits PUA characters → saves to CustomChars.xml → installs to
 
 ## Build Information
 - **Project type**: C# WinExe (Windows GUI application)
-- **Build**: `msbuild UnicodeCharEditor.csproj` or via FW.sln
+- **Build**: `msbuild UnicodeCharEditor.csproj` or via FieldWorks.sln
 - **Output**: UnicodeCharEditor.exe (standalone executable)
 - **Dependencies**:
   - LCModel.Core.Text (PUACharacter)

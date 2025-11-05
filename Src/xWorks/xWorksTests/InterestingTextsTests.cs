@@ -1001,31 +1001,31 @@ namespace SIL.FieldWorks.XWorks
 		}
 	}
 
-	internal class MockTextRepository : IRepository<IText>
+	internal class MockTextRepository : IRepository<SIL.LCModel.IText>
 	{
-		public List<IText> m_texts = new List<IText>();
+		public List<SIL.LCModel.IText> m_texts = new List<SIL.LCModel.IText>();
 
 		public IEnumerable<ICmObject> AllInstances(int classId)
 		{
 			throw new NotImplementedException();
 		}
 
-		public IText GetObject(ICmObjectId id)
+		public SIL.LCModel.IText GetObject(ICmObjectId id)
 		{
 			throw new NotImplementedException();
 		}
 
-		public IText GetObject(Guid id)
+		public SIL.LCModel.IText GetObject(Guid id)
 		{
 			throw new NotImplementedException();
 		}
 
-		public bool TryGetObject(Guid guid, out IText obj)
+		public bool TryGetObject(Guid guid, out SIL.LCModel.IText obj)
 		{
 			throw new NotImplementedException();
 		}
 
-		public IText GetObject(int hvo)
+		public SIL.LCModel.IText GetObject(int hvo)
 		{
 			foreach (var st in m_texts)
 				if (st.Hvo == hvo)
@@ -1034,12 +1034,12 @@ namespace SIL.FieldWorks.XWorks
 			return null; // make compiler happy.
 		}
 
-		public bool TryGetObject(int hvo, out IText obj)
+		public bool TryGetObject(int hvo, out SIL.LCModel.IText obj)
 		{
 			throw new NotImplementedException();
 		}
 
-		public IEnumerable<IText> AllInstances()
+		public IEnumerable<SIL.LCModel.IText> AllInstances()
 		{
 			return m_texts.ToArray();
 		}
@@ -1050,7 +1050,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 	}
 
-	internal class MockText : MockCmObject, IText
+	internal class MockText : MockCmObject, SIL.LCModel.IText
 	{
 		public MockText()
 		{

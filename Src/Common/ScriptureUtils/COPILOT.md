@@ -85,7 +85,7 @@ C# class library (.NET Framework 4.6.2) with Paratext integration components. Im
 - **Project file**: ScriptureUtils.csproj (net462, OutputType=Library)
 - **Test project**: ScriptureUtilsTests/ScriptureUtilsTests.csproj
 - **Output**: ScriptureUtils.dll
-- **Build**: Via top-level FW.sln or: `msbuild ScriptureUtils.csproj /p:Configuration=Debug`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild ScriptureUtils.csproj /p:Configuration=Debug`
 - **Run tests**: `dotnet test ScriptureUtilsTests/ScriptureUtilsTests.csproj`
 
 ## Interfaces and Data Models

@@ -4,10 +4,9 @@
 
 using System;
 using System.Collections.Generic;
-using NUnit.Framework;
 using System.Diagnostics;
+using NUnit.Framework;
 using SILUBS.ScriptureChecks;
-using SILUBS.SharedScrUtils;
 
 namespace SILUBS.ScriptureChecks
 {
@@ -18,9 +17,7 @@ namespace SILUBS.ScriptureChecks
 		UnitTestChecksDataSource source = new UnitTestChecksDataSource();
 
 		[SetUp]
-		public void RunBeforeEachTest()
-		{
-		}
+		public void RunBeforeEachTest() { }
 
 		void Test(string[] result, string text)
 		{
@@ -32,14 +29,20 @@ namespace SILUBS.ScriptureChecks
 			source.Text = text;
 
 			RepeatedWordsCheck check = new RepeatedWordsCheck(source);
-			List<TextTokenSubstring> tts =
-				check.GetReferences(source.TextTokens(), desiredKey);
+			List<TextTokenSubstring> tts = check.GetReferences(source.TextTokens(), desiredKey);
 
-			Assert.AreEqual(result.GetUpperBound(0)+1, tts.Count,
-				"A different number of results was returned than what was expected." );
+			Assert.AreEqual(
+				result.GetUpperBound(0) + 1,
+				tts.Count,
+				"A different number of results was returned than what was expected."
+			);
 
 			for (int i = 0; i <= result.GetUpperBound(0); ++i)
-				Assert.AreEqual(result[i], tts[i].InventoryText, "Result number: " + i.ToString());
+				Assert.AreEqual(
+					result[i],
+					tts[i].InventoryText,
+					"Result number: " + i.ToString()
+				);
 		}
 
 		[Test]
@@ -64,16 +67,21 @@ namespace SILUBS.ScriptureChecks
 		[Ignore("Text needs to be normalized to NFC (or maybe NFD) before check is run.")]
 		public void DifferentNormalization()
 		{
-			Test(new string[] { "B\u00E3r", "B\u00E3r" },
-				"\\p \\v 1 B\u00E3r Ba\u0303r and Ba\u0303r B\u00E3r ");
+			Test(
+				new string[] { "B\u00E3r", "B\u00E3r" },
+				"\\p \\v 1 B\u00E3r Ba\u0303r and Ba\u0303r B\u00E3r "
+			);
 		}
 
 		[Test]
 		[Ignore("Text needs to be normalized to NFC (or maybe NFD) before check is run.")]
 		public void FindingDifferentNormalization()
 		{
-			Test(new string[] { "B\u00E3r", "B\u00E3r" },
-				"\\p \\v 1 B\u00E3r Ba\u0303r and and Ba\u0303r B\u00E3r ", "B\u00E3r");
+			Test(
+				new string[] { "B\u00E3r", "B\u00E3r" },
+				"\\p \\v 1 B\u00E3r Ba\u0303r and and Ba\u0303r B\u00E3r ",
+				"B\u00E3r"
+			);
 		}
 
 		[Test]

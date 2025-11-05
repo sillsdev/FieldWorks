@@ -102,7 +102,7 @@ No specific feature flags. Configuration via LCModel morphology settings.
 - **Project file**: Morphology.csproj (net462, OutputType=Library)
 - **Test project**: MorphologyTests/
 - **Output**: SIL.FieldWorks.XWorks.Morphology.dll
-- **Build**: Via top-level FW.sln or: `msbuild Morphology.csproj`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild Morphology.csproj`
 - **Run tests**: `dotnet test MorphologyTests/`
 
 ## Interfaces and Data Models

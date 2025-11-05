@@ -101,7 +101,7 @@ C# library (net462, OutputType=Library) with lexicon UI components. Slice/Launch
 - **Project file**: LexEdDll.csproj (net462, OutputType=Library)
 - **Test project**: LexEdDllTests/
 - **Output**: SIL.FieldWorks.XWorks.LexEd.dll
-- **Build**: Via top-level FW.sln or: `msbuild LexEdDll.csproj`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild LexEdDll.csproj`
 - **Run tests**: `dotnet test LexEdDllTests/`
 
 ## Interfaces and Data Models

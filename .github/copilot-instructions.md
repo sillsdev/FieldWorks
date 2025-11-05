@@ -121,9 +121,6 @@ These run on every PR. Run the quick checks locally before pushing to avoid chur
 - Build and test locally before PR to avoid CI failures:
   ```powershell
   # From a Developer Command Prompt for VS or with env set
-  # Fast path: replicate CI behavior
-  bash ./agent-build-fw.sh
-  # Or MSBuild
   msbuild FieldWorks.sln /m /p:Configuration=Debug
   ```
 - If you change installer/config, validate those paths explicitly per the sections below.
@@ -135,7 +132,7 @@ These run on every PR. Run the quick checks locally before pushing to avoid chur
 Use the build guides in `.github/instructions/build.instructions.md` for full detail. Key reminders:
 
 - Prerequisites: Visual Studio 2022 with .NET desktop + Desktop C++ workloads, WiX 3.11.x, Git. Install optional tooling (Crowdin CLI, etc.) only when needed.
-- Bootstrap: open a Developer Command Prompt, run `source ./environ`, then call `bash ./agent-build-fw.sh` to mirror CI. Use FieldWorks.sln with MSBuild/VS when iterating locally.
+- Bootstrap: open a Developer Command Prompt, run `source ./environ`, then call FieldWorks.sln with MSBuild/VS.
 - Tests: follow `.github/instructions/testing.instructions.md`; run via Visual Studio Test Explorer, `dotnet test`, or `nunit3-console` as appropriate.
 - Installer or config changes: execute the WiX validation steps documented in `FLExInstaller` guidance before posting a PR.
 - Formatting/localization: respect `.editorconfig`, reuse existing localization patterns, and prefer incremental builds to shorten iteration.
@@ -157,7 +154,7 @@ Use the build guides in `.github/instructions/build.instructions.md` for full de
 
 - GitHub Actions are defined under .github/workflows/. Pull Requests trigger validation builds and tests.
 - To replicate CI locally:
-  - Use: source ./environ && bash ./agent-build-fw.sh
+  - Use: `msbuild FieldWorks.sln /m /p:Configuration=Debug 2>&1`
   - Or run the same msbuild/test steps referenced by the workflow YAMLs.
 - Pre-merge checklist the CI approximates:
   - Successful build for all targeted configurations
@@ -195,7 +192,7 @@ Dependencies and hidden coupling:
 
 ## Confidence checklist for agents
 
-- Prefer the top-level build flow (agent-build-fw.sh or solution-wide MSBuild) over piecemeal project builds.
+- Prefer the top-level build flow (MSBuild) over piecemeal project builds.
 - Always initialize environment via ./environ before script-based builds.
 - Validate with tests in Visual Studio or via the same runners CI uses.
 - Keep coding style consistent (.editorconfig, ReSharper settings).

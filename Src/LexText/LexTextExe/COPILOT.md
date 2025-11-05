@@ -58,7 +58,7 @@ Configuration handled by StartFwApp() and LexTextApp. No config in entry point.
 ## Build Information
 - **Project file**: LexTextExe.csproj (net462, OutputType=WinExe)
 - **Output**: FieldWorks.exe (FLEx executable)
-- **Build**: Via top-level FW.sln or: `msbuild LexTextExe.csproj`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild LexTextExe.csproj`
 - **Run**: `FieldWorks.exe` (double-click or command line)
 - **Icon**: LT.ico embedded in executable
 

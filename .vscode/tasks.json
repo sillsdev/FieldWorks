@@ -49,26 +49,6 @@
       }
     },
     {
-      "label": "remakefw",
-      "type": "shell",
-      "command": "cd Build && build.bat /t:remakefw",
-      "group": "build",
-      "linux": {
-        "command": ". environ && cd Build && ./build /t:remakefw"
-      },
-      "problemMatcher": [
-        "$msCompile"
-      ]
-    },
-    {
-      "label": "remakefw + test",
-      "type": "shell",
-      "command": "cd Build && build.bat /t:remakefw /p:Action=Test",
-      "linux": {
-        "command": ". environ && cd Build && ./build /t:remakefw /p:Action=Test"
-      }
-    },
-    {
       "label": "local CI check",
       "dependsOn": [
         "Commit messages check (CI parity)",

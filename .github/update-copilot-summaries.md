@@ -105,7 +105,7 @@ Threading model, synchronization, known hot paths, perf considerations.
 List config sources, feature flags, and effects at a glance.
 
 ## Build Information
-Prefer FieldWorks.sln or agent-build-fw.sh; note any special targets/props.
+Prefer FieldWorks.sln; note any special targets/props.
 
 ## Interfaces and Data Models
 Public interfaces and XML/XAML/XSLT contracts (see template in this guide).
@@ -214,7 +214,7 @@ This provides Copilot with authoritative, verifiable information about folder co
    - **Key Components**: Major files, subprojects, or features (with concrete file names from References)
    - **Technology Stack**: Primary languages and frameworks (validated from project files)
    - **Dependencies**: What it depends on and what uses it (from project references)
-   - **Build Information**: Always prefer top-level solution or `agent-build-fw.sh`; avoid per-project builds unless clearly supported. If per-project SDK-style build/test is valid, document exact commands.
+   - **Build Information**: Always prefer top-level solution; avoid per-project builds unless clearly supported. If per-project SDK-style build/test is valid, document exact commands.
    - **Interfaces and Data Models**: Public interfaces and XML/XAML/XSLT contracts with 1–2 sentence summaries and terse I/O notes
    - **Entry Points**: How the code is used or invoked
    - **Threading & Performance**: Concurrency model and any practical perf notes

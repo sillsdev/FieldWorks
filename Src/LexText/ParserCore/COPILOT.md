@@ -70,7 +70,7 @@ C# library (net462) with 34 source files (~9K lines total). Contains 3 subprojec
 ## Technology Stack
 - **Languages**: C# (main library), C++/CLI (XAmpleCOMWrapper COM interop)
 - **Target framework**: .NET Framework 4.6.2 (net462)
-- **Key libraries**: 
+- **Key libraries**:
   - SIL.Machine.Morphology.HermitCrab (HermitCrab parser engine)
   - SIL.LCModel (morphology data model)
   - SIL.LCModel.Core (ITsString, ILgWritingSystem)
@@ -91,7 +91,7 @@ C# library (net462) with 34 source files (~9K lines total). Contains 3 subprojec
   - Threading: COM STA required for XAmple parser interaction
 - **Native DLL**: XAmpleDLLWrapper P/Invoke calls to native XAmple.dll
 - **Managed wrapper**: XAmpleManagedWrapper.dll wraps COM calls for C# consumers
-- **Data contracts**: 
+- **Data contracts**:
   - FXT XML format for morphology export (consumed by M3ToXAmpleTransformer)
   - XAmple ANA/DICT file formats (grammar/lexicon for legacy parser)
   - ParseResult/ParseAnalysis/ParseMorph DTOs for parse results
@@ -121,7 +121,7 @@ C# library (net462) with 34 source files (~9K lines total). Contains 3 subprojec
   - GuessRoots: Enable/disable root guessing for unknown morphemes
   - MergeAnalyses: Merge duplicate analyses in results
 - **XAmple options** (legacy): AmpleOptions enum (TraceOff, TraceMorphs, TraceAnalysis, etc.)
-- **Trace output**: 
+- **Trace output**:
   - FwXmlTraceManager: XML trace file generation for HermitCrab diagnostics
   - TraceWord/TraceWordXml methods for debugging parse failures
 - **Data directory**: Configurable dataDir parameter for parser workspace and temp files
@@ -129,7 +129,7 @@ C# library (net462) with 34 source files (~9K lines total). Contains 3 subprojec
 
 ## Build Information
 - Project type: C# class library (net462)
-- Build: `msbuild ParserCore.csproj` or `dotnet build` (from FW.sln)
+- Build: `msbuild ParserCore.csproj` or `dotnet build` (from FieldWorks.sln)
 - Output: ParserCore.dll, XAmpleManagedWrapper.dll, XAmpleCOMWrapper.dll (native C++/CLI)
 - Dependencies: SIL.Machine.Morphology.HermitCrab NuGet package
 - Subprojects:
@@ -215,10 +215,10 @@ C# library (net462) with 34 source files (~9K lines total). Contains 3 subprojec
 - **Test data**: 18 XML files in ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/
   - Abaza-OrderclassPlay.xml, CliticEnvsParserFxtResult.xml, ConceptualIntroTestParserFxtResult.xml, etc.
   - Cover various morphological phenomena: clitics, circumfixes, infixes, reduplication, irregular forms
-- **Test runners**: 
+- **Test runners**:
   - Visual Studio Test Explorer
   - `dotnet test ParserCore.sln` (if SDK-style)
-  - Via FW.sln top-level build
+  - Via FieldWorks.sln top-level build
 - **Test approach**: Unit tests with in-memory LCModel cache, XML-based parser transform tests
 
 ## Usage Hints

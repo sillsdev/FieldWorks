@@ -57,7 +57,7 @@ No configuration files or feature flags. Behavior is determined by XML content a
 
 ## Build Information
 - No standalone project file; this is a header-only library consumed via include paths
-- Build using the top-level FW.sln (Visual Studio/MSBuild) or run: `bash ./agent-build-fw.sh`
+- Build using the top-level FieldWorks.sln (Visual Studio/MSBuild)
 - Consumer projects (e.g., Kernel, views) reference Cellar via NMakeIncludeSearchPath
 - Do not attempt to build Cellar in isolation; it is included directly into consumer C++ projects
 

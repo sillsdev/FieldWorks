@@ -99,7 +99,7 @@ C# class library (.NET Framework 4.6.2) providing base classes and interfaces fo
 - **Project file**: Framework.csproj (.NET Framework 4.6.2, OutputType=Library)
 - **Test project**: FrameworkTests/FrameworkTests.csproj
 - **Output**: Framework.dll (to Output/Debug or Output/Release)
-- **Build**: Via top-level FW.sln or: `msbuild Framework.csproj /p:Configuration=Debug`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild Framework.csproj /p:Configuration=Debug`
 - **Run tests**: `dotnet test FrameworkTests/FrameworkTests.csproj` or Visual Studio Test Explorer
 
 ## Interfaces and Data Models

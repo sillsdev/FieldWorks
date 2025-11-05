@@ -47,6 +47,7 @@ namespace GenerateHCConfig
 		public bool Canceling
 		{
 			get { return false; }
+			set { }
 		}
 
 		public object RunTask(

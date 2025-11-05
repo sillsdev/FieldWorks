@@ -116,7 +116,7 @@ C# library (net462, OutputType=Library) with modular subsystem design. InterlinD
 - **Project file**: ITextDll.csproj (net462, OutputType=Library)
 - **Test project**: ITextDllTests/
 - **Output**: SIL.FieldWorks.IText.dll
-- **Build**: Via top-level FW.sln or: `msbuild ITextDll.csproj`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild ITextDll.csproj`
 - **Run tests**: `dotnet test ITextDllTests/`
 
 ## Interfaces and Data Models

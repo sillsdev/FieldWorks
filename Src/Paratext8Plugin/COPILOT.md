@@ -113,7 +113,7 @@ C# library (net462) with 7 source files (~546 lines). Implements MEF-based plugi
 
 ## Build Information
 - Project type: C# class library (net462)
-- Build: `msbuild Paratext8Plugin.csproj` or `dotnet build` (from FW.sln)
+- Build: `msbuild Paratext8Plugin.csproj` or `dotnet build` (from FieldWorks.sln)
 - Output: Paratext8Plugin.dll
 - Dependencies: Paratext.Data (Paratext SDK NuGet or local assembly), PtxUtils, SIL.Scripture, Common/ScriptureUtils, System.ComponentModel.Composition (MEF)
 - Deployment: Loaded dynamically via MEF when Paratext 8 installed and version match detected
@@ -194,7 +194,7 @@ C# library (net462) with 7 source files (~546 lines). Implements MEF-based plugi
 - **Test approach**: Integration tests requiring Paratext 8 SDK (or mocks for CI)
 - **Test runners**:
   - Visual Studio Test Explorer
-  - Via FW.sln top-level build
+  - Via FieldWorks.sln top-level build
 - **Prerequisites for tests**: Paratext 8 SDK assemblies (Paratext.Data.dll, PtxUtils.dll)
 
 ## Usage Hints

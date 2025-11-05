@@ -90,7 +90,7 @@ C# class library (.NET Framework 4.6.2) with UI components for data objects. CmO
 - **Project file**: FdoUi.csproj (net462, OutputType=Library)
 - **Test project**: FdoUiTests/
 - **Output**: FdoUi.dll
-- **Build**: Via top-level FW.sln
+- **Build**: Via top-level FieldWorks.sln
 - **Run tests**: `dotnet test FdoUiTests/`
 
 ## Interfaces and Data Models

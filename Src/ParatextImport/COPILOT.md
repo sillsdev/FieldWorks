@@ -122,7 +122,7 @@ Import flow: User selects Paratext project â†’ ParatextSfmImporter parses USFM â
 
 ## Build Information
 - **Project type**: C# class library (net462)
-- **Build**: `msbuild ParatextImport.csproj` or `dotnet build` (from FW.sln)
+- **Build**: `msbuild ParatextImport.csproj` or `dotnet build` (from FieldWorks.sln)
 - **Output**: ParatextImport.dll
 - **Dependencies**: LCModel, LCModel.Core, Common/Controls, Common/FwUtils, Common/RootSites, SIL.Reporting
 - **Test project**: ParatextImportTests/ParatextImportTests.csproj (15 test files)

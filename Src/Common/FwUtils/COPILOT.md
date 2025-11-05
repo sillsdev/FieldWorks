@@ -76,7 +76,7 @@ C# class library (.NET Framework 4.6.2) with ~80 utility classes covering divers
 - **Project file**: FwUtils.csproj (net462, OutputType=Library)
 - **Test project**: FwUtilsTests/FwUtilsTests.csproj
 - **Output**: FwUtils.dll
-- **Build**: Via top-level FW.sln or: `msbuild FwUtils.csproj /p:Configuration=Debug`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild FwUtils.csproj /p:Configuration=Debug`
 - **Run tests**: `dotnet test FwUtilsTests/FwUtilsTests.csproj`
 
 ## Interfaces and Data Models

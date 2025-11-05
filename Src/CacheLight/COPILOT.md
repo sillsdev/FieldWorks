@@ -81,7 +81,7 @@ Single-threaded design; not thread-safe. All caches use Dictionary<TKey, TValue>
 - C# class library project: CacheLight.csproj (.NET Framework 4.6.2)
 - Test project: CacheLightTests/CacheLightTests.csproj
 - Output: CacheLight.dll, CacheLightTests.dll (to Output/Debug or Output/Release)
-- Build via top-level FW.sln or: `msbuild CacheLight.csproj /p:Configuration=Debug`
+- Build via top-level FieldWorks.sln or: `msbuild CacheLight.csproj /p:Configuration=Debug`
 - Run tests: `dotnet test CacheLightTests/CacheLightTests.csproj` or via Visual Studio Test Explorer
 - Documentation: Debug builds produce CacheLight.xml documentation file
 

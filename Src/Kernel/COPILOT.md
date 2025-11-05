@@ -75,7 +75,7 @@ No configuration. Constants generated from MasterLCModel.xml at build time.
 - **Project file**: Kernel.vcxproj (builds FwKernel.dll - proxy/stub DLL)
 - **LcmGenerate task**: Processes CellarConstants.vm.h with MasterLCModel.xml
 - **Generated output**: CellarConstants.h (constants from template)
-- **Build**: Via top-level FW.sln; LcmGenerate runs during build
+- **Build**: Via top-level FieldWorks.sln; LcmGenerate runs during build
 - **Output**: FwKernel.dll (COM proxy/stub DLL), generated CellarConstants.h
 
 ## Interfaces and Data Models

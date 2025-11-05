@@ -73,7 +73,7 @@ C# class library (.NET Framework 4.6.2) with Windows Forms dialogs and controls.
 - **Project file**: FwCoreDlgs.csproj (net462, OutputType=Library)
 - **Test project**: FwCoreDlgsTests/
 - **Output**: FwCoreDlgs.dll
-- **Build**: Via top-level FW.sln
+- **Build**: Via top-level FieldWorks.sln
 - **Run tests**: `dotnet test FwCoreDlgsTests/`
 
 ## Interfaces and Data Models

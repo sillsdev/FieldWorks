@@ -80,7 +80,7 @@ Plugin-based application framework (~9.8K lines main + 4 subfolders) with XML-dr
 
 ## Build Information
 - **Project type**: C# class library (net462)
-- **Build**: `msbuild XCore.csproj` or via FW.sln
+- **Build**: `msbuild XCore.csproj` or via FieldWorks.sln
 - **Output**: XCore.dll (main), xCoreInterfaces.dll, FlexUIAdapter.dll, SilSidePane.dll
 - **Dependencies**: xCoreInterfaces (interfaces), Common/FwUtils, SIL.Utils, WeifenLuo docking
 - **Test projects**: xCoreTests, xCoreInterfacesTests, SilSidePaneTests (11 test files)

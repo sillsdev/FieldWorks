@@ -125,7 +125,7 @@ C# Windows executable (WinExe) targeting .NET Framework 4.6.2. Main entry point 
 - **Test project**: FieldWorksTests/FieldWorksTests.csproj
 - **Output**: FieldWorks.exe (main executable), FieldWorks.xml (documentation)
 - **Icon**: BookOnCube.ico (multiple variants: BookOnCube, CubeOnBook, versions, sizes)
-- **Build**: Via top-level FW.sln or: `msbuild FieldWorks.csproj /p:Configuration=Debug`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild FieldWorks.csproj /p:Configuration=Debug`
 - **Run tests**: `dotnet test FieldWorksTests/FieldWorksTests.csproj` or Visual Studio Test Explorer
 - **Auto-generate binding redirects**: Enabled for assembly version resolution
 

@@ -76,7 +76,7 @@ C# class library (.NET Framework 4.6.2) with embedded resources. Resource files 
 ## Build Information
 - **Project file**: FwResources.csproj (net462, OutputType=Library)
 - **Output**: FwResources.dll (embedded resources)
-- **Build**: Via top-level FW.sln
+- **Build**: Via top-level FieldWorks.sln
 - **Localization**: .resx files compiled into satellite assemblies for different cultures
 
 ## Interfaces and Data Models

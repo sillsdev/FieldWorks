@@ -93,7 +93,7 @@ C# class library (.NET Framework 4.6.2) implementing Paratext plugin contracts. 
 - **Test project**: FwParatextLexiconPluginTests/
 - **ILRepack**: ILRepack.targets merges dependencies into single DLL
 - **Output**: FwParatextLexiconPlugin.dll (deployed to Paratext plugins)
-- **Build**: Via top-level FW.sln
+- **Build**: Via top-level FieldWorks.sln
 - **Run tests**: `dotnet test FwParatextLexiconPluginTests/`
 
 ## Interfaces and Data Models

@@ -71,7 +71,7 @@ C# library (net462, OutputType=Library) implementing IUtility and IFeedbackInfoP
 - **Project file**: FlexPathwayPlugin.csproj (net462, OutputType=Library)
 - **Test project**: FlexPathwayPluginTests/
 - **Output**: SIL.FieldWorks.FlexPathwayPlugin.dll
-- **Build**: Via top-level FW.sln or: `msbuild FlexPathwayPlugin.csproj`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild FlexPathwayPlugin.csproj`
 - **Run tests**: `dotnet test FlexPathwayPluginTests/`
 - **Discovery**: Loaded by FLEx via IUtility interface (reflection or explicit reference)
 

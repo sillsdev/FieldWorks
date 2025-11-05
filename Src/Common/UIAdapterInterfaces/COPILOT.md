@@ -76,7 +76,7 @@ No configuration in interface library. Behavior determined by implementations.
 ## Build Information
 - **Project file**: UIAdapterInterfaces.csproj (net462, OutputType=Library)
 - **Output**: UIAdapterInterfaces.dll
-- **Build**: Via top-level FW.sln or: `msbuild UIAdapterInterfaces.csproj /p:Configuration=Debug`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild UIAdapterInterfaces.csproj /p:Configuration=Debug`
 - **No test project**: Interface library; implementations tested in consuming projects
 
 ## Interfaces and Data Models

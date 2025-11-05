@@ -91,7 +91,7 @@ C# library (net462) with 2 source files (~283 lines total). Single class VwDrawR
 
 ## Build Information
 - Project type: C# class library (net462)
-- Build: `msbuild ManagedVwDrawRootBuffered.csproj` or `dotnet build` (from FW.sln)
+- Build: `msbuild ManagedVwDrawRootBuffered.csproj` or `dotnet build` (from FieldWorks.sln)
 - Output: ManagedVwDrawRootBuffered.dll
 - Dependencies: ViewsInterfaces, LCModel.Core, System.Drawing (GDI+)
 - COM attributes: [ComVisible], GUID for COM registration

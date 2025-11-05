@@ -46,7 +46,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="netstandard" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../../Common/Controls/DetailControls/DetailControls.csproj" />
@@ -74,5 +73,6 @@
     <None Remove="MorphologyEditorDllTests/**" />
     <Compile Remove="MGA/MGATests/**" />
     <None Remove="MGA/MGATests/**" />
+    <Compile Remove="MGA/AssemblyInfo.cs" />
   </ItemGroup>
 </Project>

@@ -94,7 +94,7 @@ C# library (net462) with 2 source files (~180 lines total). Single class Managed
 
 ## Build Information
 - Project type: C# class library (net462)
-- Build: `msbuild ManagedLgIcuCollator.csproj` or `dotnet build` (from FW.sln)
+- Build: `msbuild ManagedLgIcuCollator.csproj` or `dotnet build` (from FieldWorks.sln)
 - Output: ManagedLgIcuCollator.dll
 - Dependencies: Icu.Net NuGet package, LCModel.Core, ViewsInterfaces
 - COM attributes: [ComVisible], [Serializable], [ClassInterface(ClassInterfaceType.None)], GUID for COM registration
@@ -165,7 +165,7 @@ C# library (net462) with 2 source files (~180 lines total). Single class Managed
 - **Test runners**:
   - Visual Studio Test Explorer
   - `dotnet test` (if SDK-style)
-  - Via FW.sln top-level build
+  - Via FieldWorks.sln top-level build
 - **Test data**: Inline test strings in various scripts (Latin, Cyrillic, Chinese, etc.)
 
 ## Usage Hints

@@ -93,9 +93,9 @@ C# test utility library (net462) with 3 source files (~427 lines). Single static
 
 ## Build Information
 - **Project type**: C# class library (net462)
-- **Build**: `msbuild ProjectUnpacker.csproj` or `dotnet build` (from FW.sln)
+- **Build**: `msbuild ProjectUnpacker.csproj` or `dotnet build` (from FieldWorks.sln)
 - **Output**: ProjectUnpacker.dll (test utility library)
-- **Dependencies**: 
+- **Dependencies**:
   - ICSharpCode.SharpZipLib.Zip (NuGet package for ZIP extraction)
   - Microsoft.Win32 (registry access)
   - NUnit.Framework (test infrastructure)
@@ -146,20 +146,20 @@ C# test utility library (net462) with 3 source files (~427 lines). Single static
   public class ParatextImportTests
   {
       private Unpacker.ResourceUnpacker m_unpacker;
-      
+
       [SetUp]
       public void Setup()
       {
           m_unpacker = new Unpacker.ResourceUnpacker("ZippedParatextPrj", Unpacker.PtProjectTestFolder);
           // m_unpacker.UnpackedDestinationPath now contains extracted project
       }
-      
+
       [TearDown]
       public void TearDown()
       {
           m_unpacker.CleanUp();
       }
-      
+
       [Test]
       public void ImportParatextProject_Success()
       {
@@ -184,7 +184,7 @@ C# test utility library (net462) with 3 source files (~427 lines). Single static
 - **Integration testing**: Exercised by test projects that consume it
   - ParatextImportTests: Primary consumer, validates extraction and project loading
   - Tests verify: ZIP extraction works, files accessible, cleanup removes all files
-- **Manual validation**: 
+- **Manual validation**:
   - Run ParatextImportTests with breakpoint after SetUp
   - Verify extracted files exist in m_unpacker.UnpackedDestinationPath
   - Verify CleanUp() removes all files in TearDown

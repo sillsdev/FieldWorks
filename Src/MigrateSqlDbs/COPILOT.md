@@ -111,7 +111,7 @@ C# WinExe application (net462) with 11 source files (~1.1K lines). Mix of WinFor
 
 ## Build Information
 - Project type: C# WinExe application (net462)
-- Build: `msbuild MigrateSqlDbs.csproj` or `dotnet build` (from FW.sln)
+- Build: `msbuild MigrateSqlDbs.csproj` or `dotnet build` (from FieldWorks.sln)
 - Output: MigrateSqlDbs.exe (standalone executable)
 - Dependencies: LCModel, LCModel.DomainServices.DataMigration, SIL.WritingSystems, Common/Controls, Common/FwUtils, System.Data.SqlClient
 - Deployment: Included in FLEx installer for upgrade path support

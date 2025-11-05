@@ -63,7 +63,7 @@ No configuration. Behavior controlled by input CSV.
 - **Project file**: InstallValidator.csproj (net462, OutputType=Exe)
 - **Test project**: InstallValidatorTests/
 - **Output**: InstallValidator.exe
-- **Build**: Via top-level FW.sln or: `msbuild InstallValidator.csproj`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild InstallValidator.csproj`
 - **Run tests**: `dotnet test InstallValidatorTests/`
 
 ## Interfaces and Data Models
