@@ -80,9 +80,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			{
 				using (RootSiteGroup group = new RootSiteGroup())
 				{
-					PrepareView(stylePane, 50, 300, (IVwRootBox)rootBox);
-					PrepareView(draftPane, 150, 300, (IVwRootBox)rootBox);
-					PrepareView(btPane, 150, 300, (IVwRootBox)rootBox);
+					PrepareView(stylePane, 50, 300, rootBox.Object);
+					PrepareView(draftPane, 150, 300, rootBox.Object);
+					PrepareView(btPane, 150, 300, rootBox.Object);
 
 					group.AddToSyncGroup(stylePane);
 					group.AddToSyncGroup(draftPane);

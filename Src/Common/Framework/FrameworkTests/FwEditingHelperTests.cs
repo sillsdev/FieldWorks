@@ -28,10 +28,16 @@ namespace SIL.FieldWorks.Common.Framework
 	public class FwEditingHelperTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		#region Data members
-		private IEditingCallbacks m_callbacks = new Mock<IEditingCallbacks>().Object;
-		private IVwRootSite m_rootsite = new Mock<IVwRootSite>().Object;
-		private IVwRootBox m_rootbox = new Mock<IVwRootBox>().Object;
-		private IVwGraphics m_vg = new Mock<IVwGraphics>().Object;
+		private Mock<IEditingCallbacks> m_callbacksMock = new Mock<IEditingCallbacks>();
+		private Mock<IVwRootSite> m_rootsiteMock = new Mock<IVwRootSite>();
+		private Mock<IVwRootBox> m_rootboxMock = new Mock<IVwRootBox>();
+		private Mock<IVwGraphics> m_vgMock = new Mock<IVwGraphics>();
+		
+		private IEditingCallbacks m_callbacks => m_callbacksMock.Object;
+		private IVwRootSite m_rootsite => m_rootsiteMock.Object;
+		private IVwRootBox m_rootbox => m_rootboxMock.Object;
+		private IVwGraphics m_vg => m_vgMock.Object;
+		
 		private ITsTextProps m_ttpHyperlink, m_ttpNormal;
 		#endregion
 
@@ -56,13 +62,15 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			base.FixtureSetup();
 
-			m_callbacks.Setup(x => x.EditedRootBox).Returns(m_rootbox);
-			m_rootbox.Setup(rbox => rbox.Site).Returns(m_rootsite);
-			m_rootbox.DataAccess = new Mock<ISilDataAccess>();
-			m_rootsite.Stub(site => site.GetGraphics(Arg<IVwRootBox>.Is.Equal(m_rootbox),
-				out Arg<IVwGraphics>.Out(m_vg).Dummy,
-				out Arg<Rect>.Out(new Rect()).Dummy,
-				out Arg<Rect>.Out(new Rect()).Dummy));
+			m_callbacksMock.Setup(x => x.EditedRootBox).Returns(m_rootbox);
+			m_rootboxMock.Setup(rbox => rbox.Site).Returns(m_rootsite);
+			m_rootboxMock.Object.DataAccess = new Mock<ISilDataAccess>().Object;
+			
+			// Setup GetGraphics with out parameters
+			IVwGraphics vgOut = m_vg;
+			Rect rect1 = new Rect();
+			Rect rect2 = new Rect();
+			m_rootsiteMock.Setup(site => site.GetGraphics(m_rootbox, out vgOut, out rect1, out rect2));
 
 			ITsPropsBldr ttpBldr = TsStringUtils.MakePropsBldr();
 			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, -1, 911);
@@ -525,8 +533,8 @@ namespace SIL.FieldWorks.Common.Framework
 			selection.Setup(sel => sel.IsRange).Returns(fRange);
 			selection.Setup(sel => sel.IsValid).Returns(true);
 			selection.Setup(sel => sel.IsEditable).Returns(true);
-			m_rootbox.Setup(rbox => rbox.Selection).Returns(selection);
-			return selection;
+			m_rootboxMock.Setup(rbox => rbox.Selection).Returns(selection.Object);
+			return selection.Object;
 		}
 
 		/// ------------------------------------------------------------------------------------
