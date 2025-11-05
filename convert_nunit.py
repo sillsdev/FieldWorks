@@ -279,13 +279,84 @@ def convert_is_false(args_str: str, original: str) -> Optional[str]:
     return convert_simple_predicate(args_str, original, "Is.False")
 
 
+def convert_is_empty(args_str: str, original: str) -> Optional[str]:
+    return convert_simple_predicate(args_str, original, "Is.Empty")
+
+
+def convert_is_not_empty(args_str: str, original: str) -> Optional[str]:
+    return convert_simple_predicate(args_str, original, "Is.Not.Empty")
+
+
+def convert_true(args_str: str, original: str) -> Optional[str]:
+    return convert_simple_predicate(args_str, original, "Is.True")
+
+
+def convert_false(args_str: str, original: str) -> Optional[str]:
+    return convert_simple_predicate(args_str, original, "Is.False")
+
+
+def convert_less_or_equal(args_str: str, original: str) -> Optional[str]:
+    args = split_args(args_str)
+    if len(args) < 2:
+        return None
+
+    actual = args[0].strip()
+    expected = args[1].strip()
+    extras = args[2:]
+
+    suffix = ""
+    if extras:
+        suffix = ", " + ", ".join(extras)
+
+    return f"Assert.That({actual}, Is.LessThanOrEqualTo({expected}){suffix})"
+
+
+def convert_greater(args_str: str, original: str) -> Optional[str]:
+    args = split_args(args_str)
+    if len(args) < 2:
+        return None
+
+    actual = args[0].strip()
+    expected = args[1].strip()
+    extras = args[2:]
+
+    suffix = ""
+    if extras:
+        suffix = ", " + ", ".join(extras)
+
+    return f"Assert.That({actual}, Is.GreaterThan({expected}){suffix})"
+
+
+def convert_contains(args_str: str, original: str) -> Optional[str]:
+    args = split_args(args_str)
+    if len(args) < 2:
+        return None
+
+    expected = args[0].strip()
+    collection = args[1].strip()
+    extras = args[2:]
+
+    suffix = ""
+    if extras:
+        suffix = ", " + ", ".join(extras)
+
+    return f"Assert.That({collection}, Does.Contain({expected}){suffix})"
+
+
 CONVERTERS: List[tuple[str, Callable[[str, str], Optional[str]]]] = [
+    ("Assert.Contains", convert_contains),
     ("Assert.AreEqual", convert_are_equal),
     ("Assert.AreNotEqual", convert_are_not_equal),
+    ("Assert.IsEmpty", convert_is_empty),
+    ("Assert.IsNotEmpty", convert_is_not_empty),
     ("Assert.IsTrue", convert_is_true),
     ("Assert.IsFalse", convert_is_false),
+    ("Assert.True", convert_true),
+    ("Assert.False", convert_false),
     ("Assert.IsNull", convert_is_null),
     ("Assert.IsNotNull", convert_is_not_null),
+    ("Assert.LessOrEqual", convert_less_or_equal),
+    ("Assert.Greater", convert_greater),
 ]
 
 
