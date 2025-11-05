@@ -154,6 +154,7 @@
 	  </xs:sequence>
 	  <xs:attribute name="type" type="itemTypes" use="required"/>
 	  <xs:attribute name="guid" type="xs:string" use="optional"/>
+	  <xs:attribute name="groupid" type="xs:string" use="optional"/>
 	  <xs:attribute name="lang" type="xs:string" use="required"/>
 	  <xs:attribute name="analysisStatus" type="analysisStatusTypes" use="optional"/>
 	</xs:complexType>

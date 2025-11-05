@@ -254,10 +254,12 @@ namespace SIL.FieldWorks.IText
 			[Test]
 			public void ExportFreeLiteralNoteLines_xml()
 			{
+				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
 				m_choices.Add(InterlinLineChoices.kflidWord);
 				m_choices.Add(InterlinLineChoices.kflidFreeTrans);
 				m_choices.Add(InterlinLineChoices.kflidLitTrans);
 				m_choices.Add(InterlinLineChoices.kflidNote);
+				m_choices.Add(InterlinLineChoices.kflidNote, wsXkal.Handle);
 
 				IStTxtPara para1 = m_text1.ContentsOA.ParagraphsOS[1] as IStTxtPara;
 				ParagraphAnnotator pa = new ParagraphAnnotator(para1);
@@ -275,6 +277,10 @@ namespace SIL.FieldWorks.IText
 				var note2 = Cache.ServiceLocator.GetInstance<INoteFactory>().Create();
 				segment0.NotesOS.Add(note2);
 				note2.Content.set_String(Cache.DefaultAnalWs, "second note");
+				var note3 = Cache.ServiceLocator.GetInstance<INoteFactory>().Create();
+				segment0.NotesOS.Add(note3);
+				note3.Content.set_String(Cache.DefaultAnalWs, "third note analWs");
+				note3.Content.set_String(wsXkal.Handle, "third note xKalWs");
 				pa.ReparseParagraph();
 				exportedDoc = ExportToXml();
 
@@ -283,9 +289,14 @@ namespace SIL.FieldWorks.IText
 
 				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//phrase[item[@type='gls']='" + tssFreeTranslation.Text + @"']", 1);
 				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//phrase[item[@type='lit']='" + tssLitTranslation.Text + @"']", 1);
-				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//phrase/item[@type='note']", 2);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//phrase/item[@type='note']", 6);
 				Assert.That(exportedDoc.SelectSingleNode("//phrase/item[@type='note'][1]").InnerText, Is.EqualTo(tssNote1.Text));
-				Assert.That(exportedDoc.SelectSingleNode("//phrase/item[@type='note'][2]").InnerText, Is.EqualTo("second note"));
+				Assert.That(exportedDoc.SelectSingleNode("//phrase/item[@type='note'][3]").InnerText, Is.EqualTo("second note"));
+				Assert.That(exportedDoc.SelectSingleNode("//phrase/item[@type='note'][5]").InnerText, Is.EqualTo("third note analWs"));
+				Assert.That(exportedDoc.SelectSingleNode("//phrase/item[@type='note'][6]").InnerText, Is.EqualTo("third note xKalWs"));
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//phrase/item[@groupid='1']", 2);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//phrase/item[@groupid='2']", 2);
+				AssertThatXmlIn.Dom(exportedDoc).HasSpecifiedNumberOfMatchesForXpath(@"//phrase/item[@groupid='3']", 2);
 			}
 
 			/// <summary>
@@ -1194,6 +1205,11 @@ namespace SIL.FieldWorks.IText
 					XmlDocument exportedDoc = ExportToXml("elan");
 					string exportedXml = exportedDoc.OuterXml;
 					Assert.That(exportedXml, Is.EqualTo(xml));
+					//validate export against schema.
+					string p = Path.Combine(FwDirectoryFinder.FlexFolder, Path.Combine("Export Templates", "Interlinear"));
+					string schemaFile = Path.Combine(p, "FlexInterlinear.xsd");
+					exportedDoc.Schemas.Add("", new Uri(schemaFile).AbsoluteUri);
+					Assert.DoesNotThrow(() => exportedDoc.Validate(DontIgnore));
 				}
 			}
 

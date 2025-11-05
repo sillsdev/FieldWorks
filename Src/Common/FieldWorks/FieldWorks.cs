@@ -232,6 +232,7 @@ namespace SIL.FieldWorks
 								? UpdateSettings.Behaviors.Download
 								: UpdateSettings.Behaviors.DoNotCheck
 						};
+						s_appSettings.Save();
 					}
 
 					// Invoke does nothing directly, but causes BroadcastEventWindow to be initialized
