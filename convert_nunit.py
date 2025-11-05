@@ -323,7 +323,7 @@ def convert_content(content: str) -> str:
 
 def main() -> None:
     import sys
-    
+
     if len(sys.argv) > 1:
         # Use provided folder argument
         folder = sys.argv[1]
@@ -334,7 +334,7 @@ def main() -> None:
     else:
         # Use default file list
         files_to_process = FILES_TO_CONVERT
-    
+
     for relative_path in files_to_process:
         path = Path(relative_path)
         if not path.exists():
@@ -343,14 +343,14 @@ def main() -> None:
 
         print(f"Converting {relative_path}...")
         try:
-            original = path.read_text(encoding='utf-8')
+            original = path.read_text(encoding="utf-8")
         except UnicodeDecodeError:
             # Fallback to latin-1 which can handle any byte sequence
-            original = path.read_text(encoding='latin-1')
-        
+            original = path.read_text(encoding="latin-1")
+
         converted = convert_content(original)
         if converted != original:
-            path.write_text(converted, encoding='utf-8')
+            path.write_text(converted, encoding="utf-8")
             print(f"  ✓ Converted {relative_path}")
         else:
             print(f"  · No changes for {relative_path}")

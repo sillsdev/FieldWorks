@@ -32,10 +32,18 @@ namespace SILUBS.ScriptureChecks
 			RepeatedWordsCheck check = new RepeatedWordsCheck(source);
 			List<TextTokenSubstring> tts = check.GetReferences(source.TextTokens(), desiredKey);
 
-			Assert.That(tts.Count, Is.EqualTo(result.GetUpperBound(0) + 1), "A different number of results was returned than what was expected.");
+			Assert.That(
+				tts.Count,
+				Is.EqualTo(result.GetUpperBound(0) + 1),
+				"A different number of results was returned than what was expected."
+			);
 
 			for (int i = 0; i <= result.GetUpperBound(0); ++i)
-				Assert.That(tts[i].InventoryText, Is.EqualTo(result[i]), "Result number: " + i.ToString());
+				Assert.That(
+					tts[i].InventoryText,
+					Is.EqualTo(result[i]),
+					"Result number: " + i.ToString()
+				);
 		}
 
 		[Test]
