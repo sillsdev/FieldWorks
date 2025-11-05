@@ -6,7 +6,7 @@
     <TargetFramework>net48</TargetFramework>
     <OutputType>Library</OutputType>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <NoWarn>168,169,219,414,649,1635,1702,1701,0579,0436</NoWarn>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">

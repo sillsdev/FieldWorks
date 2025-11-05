@@ -13,7 +13,7 @@ using System.Windows.Forms;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 
-namespace FDOBrowser
+namespace SIL.ObjectBrowser
 {
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>

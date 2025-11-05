@@ -1001,7 +1001,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 	}
 
-	internal class MockTextRepository : IRepository<SIL.LCModel.IText>
+	internal class MockTextRepository : ITextRepository, IRepository<SIL.LCModel.IText>
 	{
 		public List<SIL.LCModel.IText> m_texts = new List<SIL.LCModel.IText>();
 

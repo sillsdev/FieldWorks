@@ -1,4 +1,4 @@
-﻿namespace FDOBrowser
+﻿namespace SIL.ObjectBrowser
 {
 	partial class ClassPropertySelector
 	{
