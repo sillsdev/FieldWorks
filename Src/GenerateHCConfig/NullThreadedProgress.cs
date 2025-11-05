@@ -44,12 +44,6 @@ namespace GenerateHCConfig
 			get { return false; }
 		}
 
-		public bool Canceling
-		{
-			get { return false; }
-			set { }
-		}
-
 		public object RunTask(
 			Func<IThreadedProgress, object[], object> backgroundTask,
 			params object[] parameters

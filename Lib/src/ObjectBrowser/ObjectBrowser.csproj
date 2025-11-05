@@ -37,6 +37,11 @@
   <ItemGroup>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="WeifenLuo.WinFormsUI.Docking" />
+    <Reference Include="WeifenLuo.WinFormsUI.Docking">
+      <HintPath>.\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Src\Common\ViewsInterfaces\ViewsInterfaces.csproj" />
   </ItemGroup>
 </Project>

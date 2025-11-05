@@ -72,8 +72,9 @@ namespace SIL.FieldWorks.IText
 			var morph = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>().Create();
 			entry.LexemeFormOA = morph;
 			morph.Form.SetVernacularDefaultWritingSystem("kick");
-			morph.MorphTypeRA =
-				Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphRoot);
+			morph.MorphTypeRA = Cache
+				.ServiceLocator.GetInstance<IMoMorphTypeRepository>()
+				.GetObject(MoMorphTypeTags.kguidMorphRoot);
 			var sense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
 			entry.SensesOS.Add(sense);
 			sense.Gloss.SetAnalysisDefaultWritingSystem("strike with foot");
@@ -89,14 +90,27 @@ namespace SIL.FieldWorks.IText
 			mb.MorphRA = morph;
 
 			// Make a sandbox and sut
-			InterlinLineChoices lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject,
-				Cache.DefaultVernWs, Cache.DefaultAnalWs, InterlinLineChoices.InterlinMode.Analyze);
+			InterlinLineChoices lineChoices = InterlinLineChoices.DefaultChoices(
+				Cache.LangProject,
+				Cache.DefaultVernWs,
+				Cache.DefaultAnalWs,
+				InterlinLineChoices.InterlinMode.Analyze
+			);
 			using (var sut = new SandboxBase.IhMissingEntry(null))
 			{
-				using (var sandbox = new SandboxBase(Cache, m_mediator, m_propertyTable, null, lineChoices, wa.Hvo))
+				using (
+					var sandbox = new SandboxBase(
+						Cache,
+						m_mediator,
+						m_propertyTable,
+						null,
+						lineChoices,
+						wa.Hvo
+					)
+				)
 				{
 					sut.SetSandboxForTesting(sandbox);
-					var mockList = MockRepository.GenerateMock<IComboList>();
+					var mockList = MockRepository.GenerateStrictMock<IComboList>();
 					sut.SetComboListForTesting(mockList);
 					sut.SetMorphForTesting(0);
 					sut.LoadMorphItems();
@@ -108,7 +122,16 @@ namespace SIL.FieldWorks.IText
 				entry.MorphoSyntaxAnalysesOC.Add(msa);
 				sense.MorphoSyntaxAnalysisRA = msa;
 				mb.MsaRA = msa;
-				using (var sandbox = new SandboxBase(Cache, m_mediator, m_propertyTable, null, lineChoices, wa.Hvo))
+				using (
+					var sandbox = new SandboxBase(
+						Cache,
+						m_mediator,
+						m_propertyTable,
+						null,
+						lineChoices,
+						wa.Hvo
+					)
+				)
 				{
 					sut.SetSandboxForTesting(sandbox);
 					Assert.That(sut.NeedSelectSame(), Is.False);
@@ -119,9 +142,12 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void MakeCombo_SelectionIsInvalid_Throws()
 		{
-			var vwsel = MockRepository.GenerateMock<IVwSelection>();
+			var vwsel = MockRepository.GenerateStrictMock<IVwSelection>();
 			vwsel.Stub(s => s.IsValid).Return(false);
-			Assert.That(() => SandboxBase.InterlinComboHandler.MakeCombo(null, vwsel, null, true), Throws.ArgumentException);
+			Assert.That(
+				() => SandboxBase.InterlinComboHandler.MakeCombo(null, vwsel, null, true),
+				Throws.ArgumentException
+			);
 		}
 
 		[Test]
@@ -131,10 +157,12 @@ namespace SIL.FieldWorks.IText
 			// senses, texts, analysis and morph bundles when we really just need to test
 			// the behaviour around a specific set of conditions
 			var glossString = MockRepository.GenerateStub<IMultiUnicode>();
-			glossString.Stub(g => g.get_String(Cache.DefaultAnalWs))
+			glossString
+				.Stub(g => g.get_String(Cache.DefaultAnalWs))
 				.Return(TsStringUtils.MakeString("hello", Cache.DefaultAnalWs));
 			var formString = MockRepository.GenerateStub<IMultiString>();
-			formString.Stub(f => f.get_String(Cache.DefaultVernWs))
+			formString
+				.Stub(f => f.get_String(Cache.DefaultVernWs))
 				.Return(TsStringUtils.MakeString("hi", Cache.DefaultVernWs));
 			var sense = MockRepository.GenerateStub<ILexSense>();
 			sense.Stub(s => s.Gloss).Return(glossString);
@@ -147,8 +175,12 @@ namespace SIL.FieldWorks.IText
 			var wfiAnalysis = MockRepository.GenerateStub<IWfiAnalysis>();
 			wfiAnalysis.Stub(x => x.MorphBundlesOS).Return(bundleList);
 			// SUT
-			var result = ChooseAnalysisHandler.MakeAnalysisStringRep(wfiAnalysis, Cache, false,
-				Cache.DefaultVernWs);
+			var result = ChooseAnalysisHandler.MakeAnalysisStringRep(
+				wfiAnalysis,
+				Cache,
+				false,
+				Cache.DefaultVernWs
+			);
 			// Verify that the form value of the IWfiMorphBundle is displayed (test verification)
 			Assert.That(result.Text, Does.Contain("hi"));
 			// Verify that the sense reference in the bundle is null (key condition for the test)

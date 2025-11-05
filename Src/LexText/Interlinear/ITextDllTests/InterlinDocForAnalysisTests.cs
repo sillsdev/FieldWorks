@@ -8,17 +8,17 @@ using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
 using Rhino.Mocks;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.WritingSystems;
 using XCore;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.IText
 {
@@ -31,6 +31,7 @@ namespace SIL.FieldWorks.IText
 		LCModel.IText m_text0;
 		private IStText m_stText0;
 		private IStTxtPara m_para0_0;
+
 		//private TestableInterlinDocForAnalyis m_interlinDoc;
 		private TestableFocusBox m_focusBox;
 		private MockInterlinDocForAnalyis m_interlinDoc;
@@ -43,8 +44,7 @@ namespace SIL.FieldWorks.IText
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
-				DoSetupFixture);
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, DoSetupFixture);
 		}
 
 		/// <summary>
@@ -53,7 +53,9 @@ namespace SIL.FieldWorks.IText
 		private void DoSetupFixture()
 		{
 			// setup default vernacular ws.
-			CoreWritingSystemDefinition wsXkal = Cache.ServiceLocator.WritingSystemManager.Set("qaa-x-kal");
+			CoreWritingSystemDefinition wsXkal = Cache.ServiceLocator.WritingSystemManager.Set(
+				"qaa-x-kal"
+			);
 			wsXkal.DefaultFont = new FontDefinition("Times New Roman");
 			Cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Add(wsXkal);
 			Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Insert(0, wsXkal);
@@ -64,14 +66,19 @@ namespace SIL.FieldWorks.IText
 			m_stText0 = stTextFactory.Create();
 			m_text0.ContentsOA = m_stText0;
 			m_para0_0 = m_stText0.AddNewTextPara(null);
-			m_para0_0.Contents = TsStringUtils.MakeString("Xxxhope xxxthis xxxwill xxxdo. xxxI xxxhope.", wsXkal.Handle);
+			m_para0_0.Contents = TsStringUtils.MakeString(
+				"Xxxhope xxxthis xxxwill xxxdo. xxxI xxxhope.",
+				wsXkal.Handle
+			);
 
-			InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(m_stText0, false);
+			InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(
+				m_stText0,
+				false
+			);
 			// paragraph 0_0 simply has wordforms as analyses
 			foreach (var occurence in SegmentServices.GetAnalysisOccurrences(m_para0_0))
 				if (occurence.HasWordform)
 					m_analysis_para0_0.Add(new AnalysisTree(occurence.Analysis));
-
 		}
 
 		public override void TestSetup()
@@ -125,7 +132,9 @@ namespace SIL.FieldWorks.IText
 			// create a new analysis.
 			var initialAnalysisTree = m_focusBox.InitialAnalysis;
 			m_focusBox.DoDuringUnitOfWork = () =>
-				WordAnalysisOrGlossServices.CreateNewAnalysisTreeGloss(initialAnalysisTree.Wordform);
+				WordAnalysisOrGlossServices.CreateNewAnalysisTreeGloss(
+					initialAnalysisTree.Wordform
+				);
 			var undoRedoText = new MockUndoRedoText("Undo", "Redo");
 			m_focusBox.ApproveAndStayPut(undoRedoText);
 
@@ -186,7 +195,9 @@ namespace SIL.FieldWorks.IText
 			var initialAnalysisTree_wfic0 = m_focusBox.InitialAnalysis;
 			var newAnalysisTree_wfic0 = m_focusBox.NewAnalysisTree;
 			m_focusBox.DoDuringUnitOfWork = () =>
-				WordAnalysisOrGlossServices.CreateNewAnalysisTreeGloss(initialAnalysisTree_wfic0.Wordform);
+				WordAnalysisOrGlossServices.CreateNewAnalysisTreeGloss(
+					initialAnalysisTree_wfic0.Wordform
+				);
 			var undoRedoText = new MockUndoRedoText("Undo", "Redo");
 			m_focusBox.ApproveAndMoveNext(undoRedoText);
 
@@ -219,8 +230,10 @@ namespace SIL.FieldWorks.IText
 
 			m_interlinDoc.OnAddWordGlossesToFreeTrans(null);
 
-			AssertEx.AreTsStringsEqual(TsStringUtils.MakeString("hope this works.", Cache.DefaultAnalWs),
-				seg.FreeTranslation.AnalysisDefaultWritingSystem);
+			AssertEx.AreTsStringsEqual(
+				TsStringUtils.MakeString("hope this works.", Cache.DefaultAnalWs),
+				seg.FreeTranslation.AnalysisDefaultWritingSystem
+			);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -234,13 +247,23 @@ namespace SIL.FieldWorks.IText
 			ISegment seg = m_para0_0.SegmentsOS[0];
 			ITsStrBldr strBldr = m_para0_0.Contents.GetBldr();
 			Guid footnoteGuid = Guid.NewGuid();
-			TsStringUtils.InsertOrcIntoPara(footnoteGuid, FwObjDataTypes.kodtOwnNameGuidHot,
-				strBldr, 7, 7, Cache.DefaultVernWs);
-			UndoableUnitOfWorkHelper.Do("undo Add ORC", "redo Add ORC", Cache.ActionHandlerAccessor,
+			TsStringUtils.InsertOrcIntoPara(
+				footnoteGuid,
+				FwObjDataTypes.kodtOwnNameGuidHot,
+				strBldr,
+				7,
+				7,
+				Cache.DefaultVernWs
+			);
+			UndoableUnitOfWorkHelper.Do(
+				"undo Add ORC",
+				"redo Add ORC",
+				Cache.ActionHandlerAccessor,
 				() =>
 				{
 					m_para0_0.Contents = strBldr.GetString();
-				});
+				}
+			);
 
 			SetUpMocksForTest(seg);
 			SetUpGlosses(seg, "hope", null, "this", "works");
@@ -248,30 +271,63 @@ namespace SIL.FieldWorks.IText
 			m_interlinDoc.OnAddWordGlossesToFreeTrans(null);
 
 			strBldr.Clear();
-			strBldr.Replace(0, 0, "hope this works.", StyleUtils.CharStyleTextProps(null, Cache.DefaultAnalWs));
-			TsStringUtils.InsertOrcIntoPara(footnoteGuid, FwObjDataTypes.kodtNameGuidHot,
-				strBldr, 4, 4, Cache.DefaultAnalWs);
+			strBldr.Replace(
+				0,
+				0,
+				"hope this works.",
+				StyleUtils.CharStyleTextProps(null, Cache.DefaultAnalWs)
+			);
+			TsStringUtils.InsertOrcIntoPara(
+				footnoteGuid,
+				FwObjDataTypes.kodtNameGuidHot,
+				strBldr,
+				4,
+				4,
+				Cache.DefaultAnalWs
+			);
 
-			AssertEx.AreTsStringsEqual(strBldr.GetString(), seg.FreeTranslation.AnalysisDefaultWritingSystem);
+			AssertEx.AreTsStringsEqual(
+				strBldr.GetString(),
+				seg.FreeTranslation.AnalysisDefaultWritingSystem
+			);
 		}
 		#endregion
 
 		#region Helper methods
 		private void SetUpMocksForTest(ISegment seg)
 		{
-			IVwRootBox rootb = MockRepository.GenerateMock<IVwRootBox>();
+			IVwRootBox rootb = MockRepository.GenerateStrictMock<IVwRootBox>();
 			m_interlinDoc.MockedRootBox = rootb;
-			IVwSelection vwsel = MockRepository.GenerateMock<IVwSelection>();
+			IVwSelection vwsel = MockRepository.GenerateStrictMock<IVwSelection>();
 			rootb.Stub(x => x.Selection).Return(vwsel);
 			rootb.Stub(x => x.DataAccess).Return(Cache.DomainDataByFlid);
-			vwsel.Stub(x => x.TextSelInfo(Arg<bool>.Is.Equal(false), out Arg<ITsString>.Out(null).Dummy,
-				out Arg<int>.Out(0).Dummy, out Arg<bool>.Out(false).Dummy, out Arg<int>.Out(seg.Hvo).Dummy,
-				out Arg<int>.Out(SimpleRootSite.kTagUserPrompt).Dummy, out Arg<int>.Out(Cache.DefaultAnalWs).Dummy));
+			vwsel.Stub(x =>
+				x.TextSelInfo(
+					Arg<bool>.Is.Equal(false),
+					out Arg<ITsString>.Out(null).Dummy,
+					out Arg<int>.Out(0).Dummy,
+					out Arg<bool>.Out(false).Dummy,
+					out Arg<int>.Out(seg.Hvo).Dummy,
+					out Arg<int>.Out(SimpleRootSite.kTagUserPrompt).Dummy,
+					out Arg<int>.Out(Cache.DefaultAnalWs).Dummy
+				)
+			);
 			vwsel.Stub(x => x.IsValid).Return(true);
 			vwsel.Stub(x => x.CLevels(Arg<bool>.Is.Anything)).Return(0);
-			vwsel.Stub(x => x.AllSelEndInfo(Arg<bool>.Is.Anything, out Arg<int>.Out(0).Dummy, Arg<int>.Is.Equal(0),
-				Arg<ArrayPtr>.Is.Null, out Arg<int>.Out(0).Dummy, out Arg<int>.Out(0).Dummy, out Arg<int>.Out(0).Dummy,
-				out Arg<int>.Out(0).Dummy, out Arg<bool>.Out(true).Dummy, out Arg<ITsTextProps>.Out(null).Dummy));
+			vwsel.Stub(x =>
+				x.AllSelEndInfo(
+					Arg<bool>.Is.Anything,
+					out Arg<int>.Out(0).Dummy,
+					Arg<int>.Is.Equal(0),
+					Arg<ArrayPtr>.Is.Null,
+					out Arg<int>.Out(0).Dummy,
+					out Arg<int>.Out(0).Dummy,
+					out Arg<int>.Out(0).Dummy,
+					out Arg<int>.Out(0).Dummy,
+					out Arg<bool>.Out(true).Dummy,
+					out Arg<ITsTextProps>.Out(null).Dummy
+				)
+			);
 			m_interlinDoc.CallSetActiveFreeform(seg.Hvo, Cache.DefaultAnalWs);
 		}
 
@@ -280,7 +336,10 @@ namespace SIL.FieldWorks.IText
 			var servloc = Cache.ServiceLocator;
 			IWfiAnalysisFactory analFactory = servloc.GetInstance<IWfiAnalysisFactory>();
 			IWfiGlossFactory glossFactory = servloc.GetInstance<IWfiGlossFactory>();
-			UndoableUnitOfWorkHelper.Do("Undo add glosses", "Redo add glosses", Cache.ActionHandlerAccessor,
+			UndoableUnitOfWorkHelper.Do(
+				"Undo add glosses",
+				"Redo add glosses",
+				Cache.ActionHandlerAccessor,
 				() =>
 				{
 					for (int i = 0; i < glosses.Length; i++)
@@ -293,7 +352,8 @@ namespace SIL.FieldWorks.IText
 						seg.AnalysesRS[i] = gloss;
 						gloss.Form.SetAnalysisDefaultWritingSystem(glosses[i]);
 					}
-				});
+				}
+			);
 		}
 		#endregion
 	}
@@ -301,6 +361,7 @@ namespace SIL.FieldWorks.IText
 	class MockInterlinDocForAnalyis : InterlinDocForAnalysis
 	{
 		private IStText m_testText;
+
 		internal MockInterlinDocForAnalyis(IStText testText)
 		{
 			Cache = testText.Cache;
@@ -310,7 +371,6 @@ namespace SIL.FieldWorks.IText
 			Vc.RootSite = this;
 			m_mediator = new Mediator();
 			m_propertyTable = new PropertyTable(m_mediator);
-
 		}
 
 		protected override void Dispose(bool disposing)
@@ -376,8 +436,14 @@ namespace SIL.FieldWorks.IText
 		/// ------------------------------------------------------------------------------------
 		internal void CallSetActiveFreeform(int hvoSeg, int ws)
 		{
-			ReflectionHelper.CallMethod(Vc, "SetActiveFreeform", hvoSeg,
-				SegmentTags.kflidFreeTranslation, ws, 0);
+			ReflectionHelper.CallMethod(
+				Vc,
+				"SetActiveFreeform",
+				hvoSeg,
+				SegmentTags.kflidFreeTranslation,
+				ws,
+				0
+			);
 		}
 	}
 
@@ -430,7 +496,11 @@ namespace SIL.FieldWorks.IText
 			return base.ShouldCreateAnalysisFromSandbox(fSaveGuess);
 		}
 
-		public override void ApproveAnalysis(AnalysisOccurrence occ, bool allOccurrences, bool fSaveGuess)
+		public override void ApproveAnalysis(
+			AnalysisOccurrence occ,
+			bool allOccurrences,
+			bool fSaveGuess
+		)
 		{
 			if (DoDuringUnitOfWork != null)
 				NewAnalysisTree.Analysis = DoDuringUnitOfWork().Analysis;
@@ -453,17 +523,9 @@ namespace SIL.FieldWorks.IText
 
 		#region ICommandUndoRedoText Members
 
-		public string RedoText
-		{
-			get;
-			set;
-		}
+		public string RedoText { get; set; }
 
-		public string UndoText
-		{
-			get;
-			set;
-		}
+		public string UndoText { get; set; }
 
 		#endregion
 	}
@@ -478,7 +540,10 @@ namespace SIL.FieldWorks.IText
 
 		protected override void Dispose(bool disposing)
 		{
-			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType() + " ******");
+			System.Diagnostics.Debug.WriteLineIf(
+				!disposing,
+				"****** Missing Dispose() call for " + GetType() + " ******"
+			);
 			base.Dispose(disposing);
 		}
 
@@ -489,9 +554,7 @@ namespace SIL.FieldWorks.IText
 			get { return CurrentAnalysisTree.Analysis != NewAnalysisTree.Analysis; }
 		}
 
-		void IAnalysisControlInternal.MakeDefaultSelection()
-		{
-		}
+		void IAnalysisControlInternal.MakeDefaultSelection() { }
 
 		bool IAnalysisControlInternal.RightToLeftWritingSystem
 		{
@@ -512,13 +575,14 @@ namespace SIL.FieldWorks.IText
 			return (this as IAnalysisControlInternal).HasChanged;
 		}
 
-		void IAnalysisControlInternal.Undo()
-		{
-		}
+		void IAnalysisControlInternal.Undo() { }
 
 		#endregion
 
-		AnalysisTree IAnalysisControlInternal.GetRealAnalysis(bool fSaveGuess, out IWfiAnalysis obsoleteAna)
+		AnalysisTree IAnalysisControlInternal.GetRealAnalysis(
+			bool fSaveGuess,
+			out IWfiAnalysis obsoleteAna
+		)
 		{
 			obsoleteAna = null;
 			return NewAnalysisTree;

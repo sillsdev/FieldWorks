@@ -13,10 +13,10 @@ using XCore;
 
 namespace SIL.FieldWorks.IText
 {
-
 	/// <summary/>
 	[TestFixture]
-	public class GlossToolLoadsGuessContentsTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
+	public class GlossToolLoadsGuessContentsTests
+		: MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		private LCModel.IText text;
 		private AddWordsToLexiconTests.SandboxForTests m_sandbox;
@@ -30,8 +30,7 @@ namespace SIL.FieldWorks.IText
 			m_mediator = new Mediator();
 			m_propertyTable = new PropertyTable(m_mediator);
 			base.FixtureSetup();
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
-				DoSetupFixture);
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, DoSetupFixture);
 		}
 
 		public override void FixtureTeardown()
@@ -71,12 +70,20 @@ namespace SIL.FieldWorks.IText
 		public override void TestSetup()
 		{
 			base.TestSetup();
-			InterlinLineChoices lineChoices = InterlinLineChoices.DefaultChoices(Cache.LangProject,
-																				 Cache.DefaultVernWs,
-																				 Cache.DefaultAnalWs,
-																				 InterlinLineChoices.InterlinMode.Gloss);
-			m_sandbox = new AddWordsToLexiconTests.SandboxForTests(Cache, m_mediator, m_propertyTable, lineChoices);
+			InterlinLineChoices lineChoices = InterlinLineChoices.DefaultChoices(
+				Cache.LangProject,
+				Cache.DefaultVernWs,
+				Cache.DefaultAnalWs,
+				InterlinLineChoices.InterlinMode.Gloss
+			);
+			m_sandbox = new AddWordsToLexiconTests.SandboxForTests(
+				Cache,
+				m_mediator,
+				m_propertyTable,
+				lineChoices
+			);
 		}
+
 		/// <summary>
 		/// This unit test simulates selecting a wordform in interlinear view configured for glossing where there is an Analysis guess.
 		/// The first meaning from the Analysis should be used to fill in the gloss in the sandbox.
@@ -84,7 +91,7 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void SandBoxWithGlossConfig_LoadsGuessForGlossFromAnalysis()
 		{
-			var mockRb = MockRepository.GenerateMock<IVwRootBox>();
+			var mockRb = MockRepository.GenerateStrictMock<IVwRootBox>();
 			mockRb.Expect(rb => rb.DataAccess).Return(Cache.MainCacheAccessor);
 			var textFactory = Cache.ServiceLocator.GetInstance<ITextFactory>();
 			var stTextFactory = Cache.ServiceLocator.GetInstance<IStTextFactory>();
@@ -92,22 +99,42 @@ namespace SIL.FieldWorks.IText
 			var stText1 = stTextFactory.Create();
 			text.ContentsOA = stText1;
 			var para1 = stText1.AddNewTextPara(null);
-			(text.ContentsOA[0]).Contents = TsStringUtils.MakeString("xxxa xxxa xxxa.", Cache.DefaultVernWs);
+			(text.ContentsOA[0]).Contents = TsStringUtils.MakeString(
+				"xxxa xxxa xxxa.",
+				Cache.DefaultVernWs
+			);
 			InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(stText1, true);
-			using (var mockInterlinDocForAnalyis = new MockInterlinDocForAnalyis(stText1) { MockedRootBox = mockRb })
+			using (
+				var mockInterlinDocForAnalyis = new MockInterlinDocForAnalyis(stText1)
+				{
+					MockedRootBox = mockRb,
+				}
+			)
 			{
 				m_sandbox.SetInterlinDocForTest(mockInterlinDocForAnalyis);
 
 				var cba0_0 = AddWordsToLexiconTests.GetNewAnalysisOccurence(text, 0, 0, 0);
-				var wf = Cache.ServiceLocator.GetInstance<IWfiWordformFactory>().Create(TsStringUtils.MakeString("xxxa", Cache.DefaultVernWs));
-				cba0_0.Analysis = Cache.ServiceLocator.GetInstance<IWfiAnalysisFactory>().Create(wf, Cache.ServiceLocator.GetInstance<IWfiGlossFactory>());
+				var wf = Cache
+					.ServiceLocator.GetInstance<IWfiWordformFactory>()
+					.Create(TsStringUtils.MakeString("xxxa", Cache.DefaultVernWs));
+				cba0_0.Analysis = Cache
+					.ServiceLocator.GetInstance<IWfiAnalysisFactory>()
+					.Create(wf, Cache.ServiceLocator.GetInstance<IWfiGlossFactory>());
 				var gloss = cba0_0.Analysis.Analysis.MeaningsOC.First();
 				var glossTss = TsStringUtils.MakeString("I did it", Cache.DefaultAnalWs);
 				gloss.Form.set_String(Cache.DefaultAnalWs, glossTss);
 				m_sandbox.SwitchWord(cba0_0);
 				// Verify that the wordgloss was loaded into the m_sandbox
-				Assert.AreNotEqual(0, m_sandbox.WordGlossHvo, "The gloss was not set to Default gloss from the analysis.");
-				Assert.AreEqual(m_sandbox.WordGlossHvo, gloss.Hvo, "The gloss was not set to Default gloss from the analysis.");
+				Assert.AreNotEqual(
+					0,
+					m_sandbox.WordGlossHvo,
+					"The gloss was not set to Default gloss from the analysis."
+				);
+				Assert.AreEqual(
+					m_sandbox.WordGlossHvo,
+					gloss.Hvo,
+					"The gloss was not set to Default gloss from the analysis."
+				);
 			}
 		}
 	}
