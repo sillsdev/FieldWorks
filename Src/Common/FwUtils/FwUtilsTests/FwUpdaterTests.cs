@@ -151,7 +151,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var xElt = XElement.Parse(Contents(key));
 
 			var result = FwUpdater.Parse(xElt, "https://test.s3.amazonaws.com/");
-			Assert.Null(result);
+			Assert.That(result, Is.Null);
 		}
 
 		[TestCase("https://downloads.languagetechnology.org/", "9.0.14.10", 367, 64, 217055232, 207)]
@@ -196,7 +196,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var xElt = XElement.Parse(Contents(key));
 
 			var result = FwUpdater.Parse(xElt, "https://test.s3.amazonaws.com/");
-			Assert.Null(result);
+			Assert.That(result, Is.Null);
 		}
 
 		[TestCase(@"C:\ProgramData\SIL\FieldWorks\DownloadedUpdates\", "9.0.15.1", 64, true)]
@@ -586,7 +586,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(result.LCModelVersion, Is.EqualTo("1.0"));
 			Assert.That(result.LIFTModelVersion, Is.EqualTo("2.0"));
 			Assert.That(result.FlexBridgeDataVersion, Is.EqualTo("3.0"));
-			Assert.False(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath(false)), "Local update XML should have been deleted");
+			Assert.That(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath(false)), Is.False, "Local update XML should have been deleted");
 		}
 
 		[Test]
@@ -618,7 +618,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(result.LCModelVersion, Is.EqualTo("1.0"));
 			Assert.That(result.LIFTModelVersion, Is.EqualTo("2.0"));
 			Assert.That(result.FlexBridgeDataVersion, Is.EqualTo("3.0"));
-			Assert.False(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath(false)), "Local update XML should have been deleted");
+			Assert.That(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath(false)), Is.False, "Local update XML should have been deleted");
 		}
 
 		[Test]
@@ -648,11 +648,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// SUT
 			FwUpdater.DeleteOldUpdateFiles(result);
 
-			Assert.False(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath(false)), "Local update XML should have been deleted");
-			Assert.False(FileUtils.FileExists(earlierBaseFileName), "Earlier Base should have been deleted");
-			Assert.True(FileUtils.FileExists(updateFileName), "The Update File should NOT have been deleted");
-			Assert.False(FileUtils.FileExists(patchForDifferentBase), "Patch For Different Base should have been deleted");
-			Assert.False(FileUtils.FileExists(otherFileName), "Other File should have been deleted");
+			Assert.That(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath(false)), Is.False, "Local update XML should have been deleted");
+			Assert.That(FileUtils.FileExists(earlierBaseFileName), Is.False, "Earlier Base should have been deleted");
+			Assert.That(FileUtils.FileExists(updateFileName), Is.True, "The Update File should NOT have been deleted");
+			Assert.That(FileUtils.FileExists(patchForDifferentBase), Is.False, "Patch For Different Base should have been deleted");
+			Assert.That(FileUtils.FileExists(otherFileName), Is.False, "Other File should have been deleted");
 		}
 
 		[Test]
@@ -692,14 +692,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// SUT
 			FwUpdater.DeleteOldUpdateFiles(result);
 
-			Assert.False(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath(false)), "Local update XML should have been deleted");
-			Assert.False(FileUtils.FileExists(earlierPatchFileName), "Earlier Patch should have been deleted");
-			Assert.False(FileUtils.FileExists(earlierBaseFileName), "Earlier Base should have been deleted");
-			Assert.False(FileUtils.FileExists(onlineBaseFileName), "The Online Base File should have been deleted");
-			Assert.True(FileUtils.FileExists(offlineBaseFileName), "The Offline Base File should NOT have been deleted");
-			Assert.True(FileUtils.FileExists(updateFileName), "The Update File should NOT have been deleted");
-			Assert.False(FileUtils.FileExists(patchForDifferentBase), "Patch For Different Base should have been deleted");
-			Assert.False(FileUtils.FileExists(otherFileName), "Other File should have been deleted");
+			Assert.That(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath(false)), Is.False, "Local update XML should have been deleted");
+			Assert.That(FileUtils.FileExists(earlierPatchFileName), Is.False, "Earlier Patch should have been deleted");
+			Assert.That(FileUtils.FileExists(earlierBaseFileName), Is.False, "Earlier Base should have been deleted");
+			Assert.That(FileUtils.FileExists(onlineBaseFileName), Is.False, "The Online Base File should have been deleted");
+			Assert.That(FileUtils.FileExists(offlineBaseFileName), Is.True, "The Offline Base File should NOT have been deleted");
+			Assert.That(FileUtils.FileExists(updateFileName), Is.True, "The Update File should NOT have been deleted");
+			Assert.That(FileUtils.FileExists(patchForDifferentBase), Is.False, "Patch For Different Base should have been deleted");
+			Assert.That(FileUtils.FileExists(otherFileName), Is.False, "Other File should have been deleted");
 		}
 
 		[Test]

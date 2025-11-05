@@ -109,7 +109,7 @@ Library component. Reference in consuming projects. See Dependencies section for
 ## References
 
 - **Project files**: TestViews.vcxproj, VwGraphicsReplayer.csproj, views.vcxproj
-- **Target frameworks**: net462
+- **Target frameworks**: net48
 - **Key C# files**: AssemblyInfo.cs, VwGraphicsReplayer.cs
 - **Key C++ files**: ExplicitInstantiation.cpp, VwAccessRoot.cpp, VwLayoutStream.cpp, VwLazyBox.cpp, VwNotifier.cpp, VwPattern.cpp, VwSelection.cpp, VwTextBoxes.cpp, VwTextStore.cpp, VwTxtSrc.cpp
 - **Key headers**: VwAccessRoot.h, VwEnv.h, VwNotifier.h, VwPattern.h, VwResources.h, VwSimpleBoxes.h, VwSynchronizer.h, VwTableBox.h, VwTextBoxes.h, VwTxtSrc.h

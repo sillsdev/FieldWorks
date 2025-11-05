@@ -35,9 +35,9 @@ Total: 11 projects, ~52 C# files, 17 data files (XSLT, test data, resources)
 ## Technology Stack
 No direct code at this organizational level. Subfolders use:
 - **Languages**: C# (all projects)
-- **Target frameworks**: .NET Framework 4.6.2 (net462)
+- **Target frameworks**: .NET Framework 4.8.x (net48)
 - **UI frameworks**: WinForms (FixFwData, FixFwDataDll, MessageBoxExLib, Reporting)
-- **Key libraries**: 
+- **Key libraries**:
   - LCModel (FixFwDataDll for data model access)
   - System.Xml (XMLUtils, SfmToXml for XML processing)
   - System.Windows.Forms (UI components)
@@ -80,8 +80,7 @@ No centralized config at this organizational level. Subfolders have:
 
 ## Build Information
 No direct build at this organizational level. Build via:
-- Top-level FW.sln includes all Utilities subprojects
-- `bash agent-build-fw.sh` builds entire FieldWorks including Utilities
+- Top-level FieldWorks.sln includes all Utilities subprojects
 - Individual subfolders have own .csproj files (11 projects total)
 - Outputs: 7 DLLs (libraries), 2 EXEs (FixFwData, SfmStats/ConvertSFM)
 - Test projects: MessageBoxExLibTests, Sfm2XmlTests, XMLUtilsTests
@@ -93,7 +92,7 @@ No interfaces/models at this organizational level. Subfolders define:
 - **MessageBoxExLib**: MessageBoxExResult, MessageBoxExButtons, MessageBoxExIcon, TimeoutResult
 - **Reporting**: ErrorReport data models, usage feedback models
 - **SfmToXml**: LexImportFields, ClsHierarchyEntry (SFM data structures)
-- **XMLUtils**: 
+- **XMLUtils**:
   - IPersistAsXml: XML serialization contract
   - IResolvePath: Path resolution interface
   - IAttributeVisitor: XML attribute visitor pattern
@@ -121,7 +120,7 @@ No tests at this organizational level. Test projects in subfolders:
 - **Test data**: SfmToXml/TestData/ contains:
   - BuildPhase2XSLT.xsl, Phase3.xsl, Phase4.xsl (XSLT transforms)
   - MoeMap.xml, YiGreenMap.xml, TestMapping.xml (mapping files)
-- **Test runners**: Visual Studio Test Explorer, `dotnet test`, via FW.sln
+- **Test runners**: Visual Studio Test Explorer, `dotnet test`, via FieldWorks.sln
 - See individual subfolder COPILOT.md files for test details
 
 ## Usage Hints

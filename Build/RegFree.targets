@@ -1,10 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
-	<UsingTask TaskName="RegFree" AssemblyFile="FwBuildTasks.dll" />
-
+	<PropertyGroup>
+		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'==''"
+			>$(MSBuildThisFileDirectory)..\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll</FwBuildTasksAssembly
+		>
+	</PropertyGroup>
+	<UsingTask TaskName="RegFree" AssemblyFile="$(FwBuildTasksAssembly)" />
 	<PropertyGroup>
 		<DistFilesDir Condition="'$(OutDir)' != ''">$(OutDir)../../DistFiles</DistFilesDir>
-		<DistFilesDir Condition="'$(OutDir)' == ''">$(MSBuildThisFileDirectory)../DistFiles</DistFilesDir>
+		<DistFilesDir Condition="'$(OutDir)' == ''"
+			>$(MSBuildThisFileDirectory)../DistFiles</DistFilesDir
+		>
+	</PropertyGroup>
+	<!-- Import Windows SDK paths to get mt.exe location -->
+	<Import
+		Project="$(VCTargetsPath)\Microsoft.Cpp.WindowsSDK.props"
+		Condition="Exists('$(VCTargetsPath)\Microsoft.Cpp.WindowsSDK.props')"
+	/>
+	<PropertyGroup>
+		<!-- Find mt.exe from Windows SDK - try multiple locations -->
+		<MtExe
+			Condition="'$(MtExe)' == '' And '$(WindowsSdkBinPath)' != '' And Exists('$(WindowsSdkBinPath)x64\mt.exe')"
+			>$(WindowsSdkBinPath)x64\mt.exe</MtExe
+		>
+		<MtExe
+			Condition="'$(MtExe)' == '' And '$(WindowsSDK_ExecutablePath_x64)' != '' And Exists('$(WindowsSDK_ExecutablePath_x64)mt.exe')"
+			>$(WindowsSDK_ExecutablePath_x64)mt.exe</MtExe
+		>
+		<!-- Hardcoded fallback for common Windows 10 SDK location -->
+		<MtExe
+			Condition="'$(MtExe)' == '' And Exists('C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x64\mt.exe')"
+			>C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x64\mt.exe</MtExe
+		>
+		<!-- Final fallback: assume mt.exe is in PATH (e.g., Developer Command Prompt) -->
+		<MtExe Condition="'$(MtExe)' == ''">mt.exe</MtExe>
 	</PropertyGroup>
 	<!-- This file is included in BuildInclude.targets for each of our EXEs which use our COM components.
 	It runs a custom task to create a manifest, then EXEC's a program to embed it in the EXE itself.
@@ -13,18 +42,38 @@
 	Manifest files should have a different name from the dll to allow windows XP to load them.
 	See: "Registration-Free Activation of COM Components: A Walkthrough"(http://msdn.microsoft.com/en-us/library/ms973913.aspx) Aug 2014 -->
 	<ItemGroup>
-		<DependentAssemblies Include="$(OutDir)FwKernel.X.manifest"/>
-		<DependentAssemblies Include="$(OutDir)Views.X.manifest"/>
+		<DependentAssemblies Include="$(OutDir)FwKernel.X.manifest" />
+		<DependentAssemblies Include="$(OutDir)Views.X.manifest" />
+	</ItemGroup>
+	<ItemGroup Condition="'@(NativeComDlls)' == ''">
+		<NativeComDlls Include="$(OutDir)*.dll" />
 	</ItemGroup>
 	<ItemGroup>
-		<Fragments Include="$(DistFilesDir)/*.fragment.manifest"/>
+		<NativeComDlls Remove="$(OutDir)*.resources.dll" />
+		<NativeComDlls Remove="$(OutDir)*.ni.dll" />
 	</ItemGroup>
-	<Target Name="CreateManifest" Condition="'$(OS)'=='Windows_NT'" Inputs="@(DependentAssemblies)" Outputs="$(Executable).manifest">
-		<RegFree Executable="$(Executable)" DependentAssemblies="@(DependentAssemblies)" AsIs="@(Fragments)" Platform="$(Platform)" MSBuildArchitecture="$(Platform)"/>
+	<ItemGroup>
+		<Fragments Include="$(DistFilesDir)/*.fragment.manifest" />
+	</ItemGroup>
+	<Target Name="CreateManifest" Condition="'$(OS)'=='Windows_NT'">
+		<RegFree
+			Executable="$(Executable)"
+			DependentAssemblies="@(DependentAssemblies)"
+			Dlls="@(NativeComDlls)"
+			AsIs="@(Fragments)"
+			Platform="$(Platform)"
+		/>
 	</Target>
-	<Target Name="AttachManifest" Condition="'$(OS)'=='Windows_NT'" DependsOnTargets="CreateManifest">
-		<Exec Command="mt.exe -outputresource:$(Executable) -manifest $(Executable).manifest"/>
+	<Target
+		Name="AttachManifest"
+		Condition="'$(OS)'=='Windows_NT'"
+		DependsOnTargets="CreateManifest"
+	>
+		<Exec Command="&quot;$(MtExe)&quot; -nologo -manifest &quot;$(Executable).manifest&quot; -outputresource:&quot;$(Executable);#1&quot;" />
 	</Target>
-	<Target Name="RegFree" Condition="'$(OS)'=='Windows_NT'" DependsOnTargets="CreateManifest;AttachManifest">
-	</Target>
+	<Target
+		Name="RegFree"
+		Condition="'$(OS)'=='Windows_NT'"
+		DependsOnTargets="CreateManifest;AttachManifest"
+	></Target>
 </Project>

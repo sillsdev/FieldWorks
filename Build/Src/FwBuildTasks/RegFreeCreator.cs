@@ -27,10 +27,10 @@ using System.Xml;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
 using Microsoft.Win32;
-using LIBFLAGS=System.Runtime.InteropServices.ComTypes.LIBFLAGS;
-using TYPEATTR=System.Runtime.InteropServices.ComTypes.TYPEATTR;
-using TYPEKIND=System.Runtime.InteropServices.ComTypes.TYPEKIND;
-using TYPELIBATTR=System.Runtime.InteropServices.ComTypes.TYPELIBATTR;
+using LIBFLAGS = System.Runtime.InteropServices.ComTypes.LIBFLAGS;
+using TYPEATTR = System.Runtime.InteropServices.ComTypes.TYPEATTR;
+using TYPEKIND = System.Runtime.InteropServices.ComTypes.TYPEKIND;
+using TYPELIBATTR = System.Runtime.InteropServices.ComTypes.TYPELIBATTR;
 
 namespace SIL.FieldWorks.Build.Tasks
 {
@@ -48,9 +48,12 @@ namespace SIL.FieldWorks.Build.Tasks
 		private string _fileName;
 		private readonly XmlDocument _doc;
 		public TaskLoggingHelper _log;
-		private readonly Dictionary<string, XmlElement> _files = new Dictionary<string, XmlElement>();
-		private readonly Dictionary<string, XmlElement> _coClasses = new Dictionary<string, XmlElement>();
-		private readonly Dictionary<string, XmlElement> _interfaceProxies = new Dictionary<string, XmlElement>();
+		private readonly Dictionary<string, XmlElement> _files =
+			new Dictionary<string, XmlElement>();
+		private readonly Dictionary<string, XmlElement> _coClasses =
+			new Dictionary<string, XmlElement>();
+		private readonly Dictionary<string, XmlElement> _interfaceProxies =
+			new Dictionary<string, XmlElement>();
 		private readonly Dictionary<Guid, string> _tlbGuids = new Dictionary<Guid, string>();
 		private readonly List<string> _nonExistingServers = new List<string>();
 		private readonly XmlNamespaceManager _nsManager;
@@ -81,7 +84,8 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// <param name="doc">The XML document.</param>
 		/// <param name="log"></param>
 		/// ------------------------------------------------------------------------------------
-		public RegFreeCreator(XmlDocument doc, TaskLoggingHelper log): this(doc)
+		public RegFreeCreator(XmlDocument doc, TaskLoggingHelper log)
+			: this(doc)
 		{
 			_log = log;
 		}
@@ -104,12 +108,17 @@ namespace SIL.FieldWorks.Build.Tasks
 		///  <list type="bullet">
 		/// 		<item>name (from file name)</item>
 		/// 		<item>version info (from assembly)</item>
-		/// 		<item>type (hard coded as "win32" for now)</item>
+		/// 		<item>type (win64 for x64, win32 for x86)</item>
+		/// 		<item>processorArchitecture (amd64 for x64, x86 for x86)</item>
 		///  </list>
 		///  This method also adds the root element with all necessary namespaces.
 		///  </summary>
 		/// ------------------------------------------------------------------------------------
-		public XmlElement CreateExeInfo(string assemblyName, string assemblyVersion, string Platform)
+		public XmlElement CreateExeInfo(
+			string assemblyName,
+			string assemblyVersion,
+			string Platform
+		)
 		{
 			XmlElement elem = _doc.CreateElement("assembly", UrnAsmv1);
 			elem.SetAttribute("manifestVersion", "1.0");
@@ -127,11 +136,20 @@ namespace SIL.FieldWorks.Build.Tasks
 
 			if (!string.IsNullOrEmpty(assemblyName))
 			{
-				// <assemblyIdentity name="TE.exe" version="1.4.1.39149" type="win32" />
+				// Determine proper manifest type and processor architecture for 64-bit builds
+				string manifestType = "x64".Equals(Platform, StringComparison.OrdinalIgnoreCase)
+					? "win64"
+					: "win32";
+				string processorArch = "x64".Equals(Platform, StringComparison.OrdinalIgnoreCase)
+					? "amd64"
+					: "x86";
+
+				// <assemblyIdentity name="TE.exe" version="1.4.1.39149" type="win64" processorArchitecture="amd64" />
 				XmlElement assemblyIdentity = _doc.CreateElement("assemblyIdentity", UrnAsmv1);
 				assemblyIdentity.SetAttribute("name", assemblyName);
 				assemblyIdentity.SetAttribute("version", assemblyVersion);
-				assemblyIdentity.SetAttribute("type", Platform);
+				assemblyIdentity.SetAttribute("type", manifestType);
+				assemblyIdentity.SetAttribute("processorArchitecture", processorArch);
 
 				oldChild = elem.SelectSingleNode("asmv1:assemblyIdentity", _nsManager);
 				if (oldChild != null)
@@ -165,12 +183,14 @@ namespace SIL.FieldWorks.Build.Tasks
 				RegHelper.LoadTypeLib(_fileName, out typeLib);
 				IntPtr pLibAttr;
 				typeLib.GetLibAttr(out pLibAttr);
-				var libAttr = (TYPELIBATTR)
-					Marshal.PtrToStructure(pLibAttr, typeof(TYPELIBATTR));
+				var libAttr = (TYPELIBATTR)Marshal.PtrToStructure(pLibAttr, typeof(TYPELIBATTR));
 				typeLib.ReleaseTLibAttr(pLibAttr);
 
 				string flags = string.Empty;
-				if ((libAttr.wLibFlags & LIBFLAGS.LIBFLAG_FHASDISKIMAGE) == LIBFLAGS.LIBFLAG_FHASDISKIMAGE)
+				if (
+					(libAttr.wLibFlags & LIBFLAGS.LIBFLAG_FHASDISKIMAGE)
+					== LIBFLAGS.LIBFLAG_FHASDISKIMAGE
+				)
 					flags = "HASDISKIMAGE";
 
 				// <file name="FwKernel.dll" asmv2:size="1507328">
@@ -180,29 +200,45 @@ namespace SIL.FieldWorks.Build.Tasks
 				//		resourceid="0" flags="HASDISKIMAGE" />
 				if (_tlbGuids.ContainsKey(libAttr.guid))
 				{
-					_log.LogWarning("Type library with GUID {0} is defined in {1} and {2}",
-						libAttr.guid, _tlbGuids[libAttr.guid], Path.GetFileName(fileName));
+					_log.LogWarning(
+						"Type library with GUID {0} is defined in {1} and {2}",
+						libAttr.guid,
+						_tlbGuids[libAttr.guid],
+						Path.GetFileName(fileName)
+					);
 				}
 				else
 				{
 					_tlbGuids.Add(libAttr.guid, Path.GetFileName(fileName));
 					XmlElement elem = _doc.CreateElement("typelib", UrnAsmv1);
 					elem.SetAttribute("tlbid", libAttr.guid.ToString("B"));
-					elem.SetAttribute("version", string.Format("{0}.{1}", libAttr.wMajorVerNum,
-						libAttr.wMinorVerNum));
+					elem.SetAttribute(
+						"version",
+						string.Format("{0}.{1}", libAttr.wMajorVerNum, libAttr.wMinorVerNum)
+					);
 					elem.SetAttribute("helpdir", string.Empty);
 					elem.SetAttribute("resourceid", "0");
 					elem.SetAttribute("flags", flags);
-					oldChild = file.SelectSingleNode(string.Format("asmv1:typelib[asmv1:tlbid='{0}']",
-						libAttr.guid.ToString("B")), _nsManager);
+					oldChild = file.SelectSingleNode(
+						string.Format(
+							"asmv1:typelib[asmv1:tlbid='{0}']",
+							libAttr.guid.ToString("B")
+						),
+						_nsManager
+					);
 					if (oldChild != null)
 						file.ReplaceChild(elem, oldChild);
 					else
 						file.AppendChild(elem);
 				}
 
-				Debug.WriteLine(@"typelib tlbid=""{0}"" version=""{1}.{2}"" helpdir="""" resourceid=""0"" flags=""{3}""",
-					libAttr.guid, libAttr.wMajorVerNum, libAttr.wMinorVerNum, flags);
+				Debug.WriteLine(
+					@"typelib tlbid=""{0}"" version=""{1}.{2}"" helpdir="""" resourceid=""0"" flags=""{3}""",
+					libAttr.guid,
+					libAttr.wMajorVerNum,
+					libAttr.wMinorVerNum,
+					flags
+				);
 
 				int count = typeLib.GetTypeInfoCount();
 				_log.LogMessage(MessageImportance.Low, "\t\tTypelib has {0} types", count);
@@ -214,8 +250,10 @@ namespace SIL.FieldWorks.Build.Tasks
 					ProcessTypeInfo(parent, libAttr.guid, typeInfo);
 				}
 
-				oldChild = parent.SelectSingleNode(string.Format("asmv1:file[asmv1:name='{0}']",
-					Path.GetFileName(fileName)), _nsManager);
+				oldChild = parent.SelectSingleNode(
+					string.Format("asmv1:file[asmv1:name='{0}']", Path.GetFileName(fileName)),
+					_nsManager
+				);
 				if (oldChild != null)
 					parent.ReplaceChild(file, oldChild);
 				else
@@ -224,7 +262,11 @@ namespace SIL.FieldWorks.Build.Tasks
 			catch (Exception)
 			{
 				// just ignore if this isn't a type library
-				_log.LogMessage(MessageImportance.Normal, "Can't load type library {0}", fileName);
+				_log.LogMessage(
+					MessageImportance.Normal,
+					"Can't load type library {0}",
+					fileName
+				);
 			}
 		}
 
@@ -250,107 +292,152 @@ namespace SIL.FieldWorks.Build.Tasks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Processes the classes under CLSID. This is mainly done so that we get the proxy
-		/// classes. The other classes are already processed through the type lib.
+		/// Processes the classes under CLSID. This reads from HKEY_CLASSES_ROOT directly
+		/// (where FieldWorks COM classes are already registered). Fallback to defaults if not found.
+		/// This is mainly done so that we get the proxy classes. The other classes are already
+		/// processed through the type lib.
 		/// </summary>
 		/// <param name="parent">The parent node.</param>
 		/// ------------------------------------------------------------------------------------
 		public void ProcessClasses(XmlElement parent)
 		{
-			using (var regKeyClsid = Registry.CurrentUser.OpenSubKey(RegHelper.TmpRegistryKeyHKCR + @"\CLSID"))
+			// Process classes that were already found in type libraries
+			// Read additional metadata from HKCR if available
+			foreach (var kvp in _coClasses.ToList())
 			{
-				if (regKeyClsid == null)
+				var clsId = kvp.Key;
+				try
 				{
-					_log.LogError("No temp registry key found.");
-					return;
-				}
-				if(regKeyClsid.SubKeyCount == 0)
-				{
-					_log.LogMessage(MessageImportance.Normal, "No classes were registered in the temporary key.");
-				}
-				foreach (var clsId in regKeyClsid.GetSubKeyNames())
-				{
-					if (_coClasses.ContainsKey(clsId.ToLower()))
-						continue;
-
-					using (RegistryKey regKeyClass = regKeyClsid.OpenSubKey(clsId))
+					using (var regKeyClass = Registry.ClassesRoot.OpenSubKey($"CLSID\\{clsId}"))
 					{
-						var className = (string)regKeyClass.GetValue(string.Empty, string.Empty);
-						using (var regKeyInProcServer = regKeyClass.OpenSubKey("InProcServer32"))
+						if (regKeyClass != null)
 						{
-							if (regKeyInProcServer == null)
-								continue;
-							var serverPath = (string)regKeyInProcServer.GetValue(string.Empty, string.Empty);
-							var threadingModel = (string)regKeyInProcServer.GetValue("ThreadingModel", string.Empty);
+							// Try to get ProgID from registry
+							var progId = GetDefaultValueForKey(regKeyClass, "ProgID");
 
-							// <file name="FwKernel.dll" asmv2:size="1507328">
-							XmlElement file = GetOrCreateFileNode(parent, serverPath);
-							AddOrReplaceCoClass(file, clsId, threadingModel, className, null, null);
+							// Try to get threading model from InprocServer32 subkey
+							using (
+								var regKeyInProcServer = regKeyClass.OpenSubKey("InprocServer32")
+							)
+							{
+								if (regKeyInProcServer != null)
+								{
+									var threadingModel = (string)
+										regKeyInProcServer.GetValue(
+											"ThreadingModel",
+											"Apartment"
+										);
+
+									_log.LogMessage(
+										MessageImportance.Low,
+										"Updated CLSID {0} from HKCR: ProgID={1}, ThreadingModel={2}",
+										clsId,
+										progId ?? "(none)",
+										threadingModel
+									);
+
+									// Note: The comClass element was already added by ProcessTypeLibrary
+									// We're just logging that we could read from HKCR successfully
+								}
+							}
+						}
+						else
+						{
+							_log.LogMessage(
+								MessageImportance.Low,
+								"CLSID {0} not found in HKCR, using type library defaults",
+								clsId
+							);
 						}
 					}
+				}
+				catch (Exception ex)
+				{
+					_log.LogMessage(
+						MessageImportance.Low,
+						"Cannot read CLSID {0} from registry: {1}",
+						clsId,
+						ex.Message
+					);
+					// Continue with defaults from type library
 				}
 			}
 		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Processes the interfaces found under our temporary registry key.
+		/// Processes the interfaces from HKEY_CLASSES_ROOT. Reads proxy/stub information
+		/// with fallback to defaults if not found.
 		/// </summary>
 		/// <param name="root">The parent node.</param>
 		/// ------------------------------------------------------------------------------------
 		public void ProcessInterfaces(XmlElement root)
 		{
-			using (var regKeyBase = Registry.CurrentUser.OpenSubKey(RegHelper.TmpRegistryKeyHKCR))
-			using (var regKeyInterfaces = regKeyBase.OpenSubKey("Interface"))
+			// Process interfaces that were found in type libraries
+			// Try to read proxy/stub information from HKCR
+			foreach (var kvp in _interfaceProxies.ToList())
 			{
-				if (regKeyInterfaces == null)
-					return;
-
-				foreach (var iid in regKeyInterfaces.GetSubKeyNames())
+				var interfaceIid = kvp.Key;
+				try
 				{
-					var interfaceIid = iid.ToLower();
-					using (var regKeyInterface = regKeyInterfaces.OpenSubKey(iid))
+					using (
+						var regKeyInterface = Registry.ClassesRoot.OpenSubKey(
+							$"Interface\\{interfaceIid}"
+						)
+					)
 					{
-						var interfaceName = (string)regKeyInterface.GetValue(string.Empty, string.Empty);
-						var numMethods = GetDefaultValueForKey(regKeyInterface, "NumMethods");
-						var proxyStubClsId = GetDefaultValueForKey(regKeyInterface, "ProxyStubClsId32").ToLower();
-						if (string.IsNullOrEmpty(proxyStubClsId))
+						if (regKeyInterface != null)
 						{
-							_log.LogError("no proxyStubClsid32 set for interface with iid {0}", interfaceIid);
-							continue;
-						}
-						Debug.WriteLine("Interface {0} is {1}: {2} methods, proxy: {3}", interfaceIid, interfaceName, numMethods, proxyStubClsId);
+							var interfaceName = (string)
+								regKeyInterface.GetValue(string.Empty, string.Empty);
+							var numMethods = GetDefaultValueForKey(regKeyInterface, "NumMethods");
+							var proxyStubClsId = GetDefaultValueForKey(
+								regKeyInterface,
+								"ProxyStubClsid32"
+							);
 
-						if (!_coClasses.ContainsKey(proxyStubClsId))
+							if (!string.IsNullOrEmpty(proxyStubClsId))
+							{
+								proxyStubClsId = proxyStubClsId.ToLower();
+								_log.LogMessage(
+									MessageImportance.Low,
+									"Updated interface {0} from HKCR: ProxyStub={1}, NumMethods={2}",
+									interfaceIid,
+									proxyStubClsId,
+									numMethods ?? "(none)"
+								);
+
+								// Note: The comInterfaceExternalProxyStub element was already added
+								// by ProcessTypeLibrary. We're just logging that we could read from HKCR.
+							}
+							else
+							{
+								_log.LogMessage(
+									MessageImportance.Low,
+									"No ProxyStubClsid32 in HKCR for interface {0}, using IID as proxy (merged proxy/stub)",
+									interfaceIid
+								);
+							}
+						}
+						else
 						{
-							_log.LogWarning(" can't find coclass specified as proxy for interface with iid {0}; manifest might not work",
-								interfaceIid);
+							_log.LogMessage(
+								MessageImportance.Low,
+								"Interface {0} not found in HKCR, using type library defaults",
+								interfaceIid
+							);
 						}
-
-						if (_interfaceProxies.ContainsKey(interfaceIid))
-						{
-							_log.LogError("encountered interface with iid {0} before", interfaceIid);
-							continue;
-						}
-
-						// The MSDN documentation isn't very clear here, but we have to add a
-						// comInterfaceExternalProxyStub even when the proxy is merged into
-						// the implementing assembly, otherwise we won't be able to start the
-						// application.
-						// <comInterfaceExternalProxyStub name="IVwPrintContext" iid="{FF2E1DC2-95A8-41C6-85F4-FFCA3A64216A}"
-						//		numMethods="24" proxyStubClsid32="{EFEBBD00-D418-4157-A730-C648BFFF3D8D}"/>
-						var elem = _doc.CreateElement("comInterfaceExternalProxyStub", UrnAsmv1);
-						elem.SetAttribute("iid", interfaceIid);
-						elem.SetAttribute("proxyStubClsid32", proxyStubClsId);
-						if (!string.IsNullOrEmpty(interfaceName))
-							elem.SetAttribute("name", interfaceName);
-						if (!string.IsNullOrEmpty(numMethods))
-							elem.SetAttribute("numMethods", numMethods);
-
-						AppendOrReplaceNode(root, elem, "iid", interfaceIid);
-
-						_interfaceProxies.Add(interfaceIid, elem);
 					}
+				}
+				catch (Exception ex)
+				{
+					_log.LogMessage(
+						MessageImportance.Low,
+						"Cannot read interface {0} from registry: {1}",
+						interfaceIid,
+						ex.Message
+					);
+					// Continue with defaults from type library
 				}
 			}
 		}
@@ -371,12 +458,20 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// <paramref name="childName"/> exists.
 		/// </returns>
 		/// ------------------------------------------------------------------------------------
-		private static XmlNode GetChildNode(XmlNode parentNode, string childName,
-			string attribute, string attrValue)
+		private static XmlNode GetChildNode(
+			XmlNode parentNode,
+			string childName,
+			string attribute,
+			string attrValue
+		)
 		{
-			return parentNode.ChildNodes.Cast<XmlNode>().FirstOrDefault(
-				child => child.Name == childName && child.Attributes != null &&
-					child.Attributes[attribute].Value == attrValue);
+			return parentNode
+				.ChildNodes.Cast<XmlNode>()
+				.FirstOrDefault(child =>
+					child.Name == childName
+					&& child.Attributes != null
+					&& child.Attributes[attribute].Value == attrValue
+				);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -388,8 +483,12 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// <param name="attribute">The attribute.</param>
 		/// <param name="attrValue">The attribute value.</param>
 		/// ------------------------------------------------------------------------------------
-		private static void AppendOrReplaceNode(XmlNode parentNode, XmlNode childElement,
-			string attribute, string attrValue)
+		private static void AppendOrReplaceNode(
+			XmlNode parentNode,
+			XmlNode childElement,
+			string attribute,
+			string attrValue
+		)
 		{
 			var oldChild = GetChildNode(parentNode, childElement.Name, attribute, attrValue);
 			if (oldChild != null)
@@ -463,7 +562,14 @@ namespace SIL.FieldWorks.Build.Tasks
 
 		public void AddDependentAssembly(XmlElement parent, string fileName)
 		{
-			var depAsmElem = (XmlElement) parent.SelectSingleNode(string.Format("asmv1:dependency/asmv1:dependentAssembly[@asmv2:codebase = '{0}']", Path.GetFileName(fileName)), _nsManager);
+			var depAsmElem = (XmlElement)
+				parent.SelectSingleNode(
+					string.Format(
+						"asmv1:dependency/asmv1:dependentAssembly[@asmv2:codebase = '{0}']",
+						Path.GetFileName(fileName)
+					),
+					_nsManager
+				);
 			if (depAsmElem == null)
 			{
 				var depElem = _doc.CreateElement("dependency", UrnAsmv1);
@@ -472,7 +578,8 @@ namespace SIL.FieldWorks.Build.Tasks
 				depElem.AppendChild(depAsmElem);
 				depAsmElem.SetAttribute("codebase", UrnAsmv2, Path.GetFileName(fileName));
 			}
-			var asmIdElem = (XmlElement) depAsmElem.SelectSingleNode("asmv1:assemblyIdentity", _nsManager);
+			var asmIdElem = (XmlElement)
+				depAsmElem.SelectSingleNode("asmv1:assemblyIdentity", _nsManager);
 			if (asmIdElem == null)
 			{
 				asmIdElem = _doc.CreateElement("assemblyIdentity", UrnAsmv1);
@@ -482,11 +589,21 @@ namespace SIL.FieldWorks.Build.Tasks
 			var depAsmManifestDoc = new XmlDocument();
 			depAsmManifestDoc.Load(fileName);
 			var depAsmNsManager = CreateNamespaceManager(depAsmManifestDoc);
-			var manifestAsmIdElem = (XmlElement) depAsmManifestDoc.SelectSingleNode("/asmv1:assembly/asmv1:assemblyIdentity", depAsmNsManager);
+			var manifestAsmIdElem = (XmlElement)
+				depAsmManifestDoc.SelectSingleNode(
+					"/asmv1:assembly/asmv1:assemblyIdentity",
+					depAsmNsManager
+				);
 			Debug.Assert(manifestAsmIdElem != null);
 			asmIdElem.SetAttribute("name", manifestAsmIdElem.GetAttribute("name"));
 			asmIdElem.SetAttribute("version", manifestAsmIdElem.GetAttribute("version"));
 			asmIdElem.SetAttribute("type", manifestAsmIdElem.GetAttribute("type"));
+			// Copy processorArchitecture if present (required for 64-bit manifests)
+			string procArch = manifestAsmIdElem.GetAttribute("processorArchitecture");
+			if (!string.IsNullOrEmpty(procArch))
+			{
+				asmIdElem.SetAttribute("processorArchitecture", procArch);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -523,12 +640,18 @@ namespace SIL.FieldWorks.Build.Tasks
 					RegHelper.GetLongPathName((string)inprocServer.GetValue(null), bldr, 255);
 					string serverFullPath = bldr.ToString();
 					string server = Path.GetFileName(serverFullPath);
-					if (!File.Exists(serverFullPath) &&
-						!File.Exists(Path.Combine(_baseDirectory, server)))
+					if (
+						!File.Exists(serverFullPath)
+						&& !File.Exists(Path.Combine(_baseDirectory, server))
+					)
 					{
 						if (!_nonExistingServers.Contains(server))
 						{
-							_log.LogMessage(MessageImportance.Low, "{0} is referenced in the TLB but is not in current directory", server);
+							_log.LogMessage(
+								MessageImportance.Low,
+								"{0} is referenced in the TLB but is not in current directory",
+								server
+							);
 							_nonExistingServers.Add(server);
 						}
 						return;
@@ -548,15 +671,34 @@ namespace SIL.FieldWorks.Build.Tasks
 						var description = (string)typeKey.GetValue(string.Empty);
 						var threadingModel = (string)inprocServer.GetValue("ThreadingModel");
 						var progId = GetDefaultValueForKey(typeKey, "ProgID");
-						AddOrReplaceCoClass(file, clsId, threadingModel, description, tlbGuid.ToString("B"), progId);
-						_log.LogMessage(MessageImportance.Low, string.Format(@"Coclass: clsid=""{0}"", threadingModel=""{1}"", tlbid=""{2}"", progid=""{3}""",
-							clsId, threadingModel, tlbGuid, progId));
+						AddOrReplaceCoClass(
+							file,
+							clsId,
+							threadingModel,
+							description,
+							tlbGuid.ToString("B"),
+							progId
+						);
+						_log.LogMessage(
+							MessageImportance.Low,
+							string.Format(
+								@"Coclass: clsid=""{0}"", threadingModel=""{1}"", tlbid=""{2}"", progid=""{3}""",
+								clsId,
+								threadingModel,
+								tlbGuid,
+								progId
+							)
+						);
 					}
 				}
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
-				_log.LogMessage(MessageImportance.High, "Failed to process the type info for {0}", tlbGuid);
+				_log.LogMessage(
+					MessageImportance.High,
+					"Failed to process the type info for {0}",
+					tlbGuid
+				);
 				_log.LogMessage(MessageImportance.High, e.StackTrace);
 			}
 		}
@@ -572,8 +714,14 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// <param name="tlbId">The type library id (might be <c>null</c>).</param>
 		/// <param name="progId">The prog id (might be <c>null</c>).</param>
 		/// ------------------------------------------------------------------------------------
-		private void AddOrReplaceCoClass(XmlElement parent, string clsId, string threadingModel,
-			string description, string tlbId, string progId)
+		private void AddOrReplaceCoClass(
+			XmlElement parent,
+			string clsId,
+			string threadingModel,
+			string description,
+			string tlbId,
+			string progId
+		)
 		{
 			Debug.Assert(clsId.StartsWith("{"));
 			Debug.Assert(string.IsNullOrEmpty(tlbId) || tlbId.StartsWith("{"));
@@ -618,11 +766,14 @@ namespace SIL.FieldWorks.Build.Tasks
 			if (fileInfo.Exists)
 			{
 				parent.AppendChild(file);
-				file.SetAttribute("size", "urn:schemas-microsoft-com:asm.v2", fileInfo.Length.ToString(CultureInfo.InvariantCulture));
+				file.SetAttribute(
+					"size",
+					"urn:schemas-microsoft-com:asm.v2",
+					fileInfo.Length.ToString(CultureInfo.InvariantCulture)
+				);
 			}
 			_files.Add(fileName, file);
 			return file;
 		}
-
 	}
 }

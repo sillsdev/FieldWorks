@@ -10,7 +10,7 @@ status: draft
 Core business logic library for FLEx lexicon and text features. Provides LexTextApp application class (extends FwXApp), AreaListener (XCore colleague managing list area configuration), FlexHelpTopicProvider (context-sensitive help), RestoreDefaultsDlg (restore default settings), and resource files (localized strings, images, help topic paths). Central application coordination layer between XCore framework and lexicon/text-specific functionality. Small focused library (2.8K lines) providing essential infrastructure without heavy UI or business logic (which lives in Lexicon/, Interlinear/, etc.).
 
 ## Architecture
-C# library (net462, OutputType=Library) with application infrastructure classes. LexTextApp main application class (extends FwXApp, implements IApp, IxCoreColleague). AreaListener XCore colleague for managing area configuration. Resource files for localization (LexTextStrings.resx) and help topics (HelpTopicPaths.resx). ImageHolder icon resources. Integrates XCore framework, LCModel, and lexicon/text-specific features.
+C# library (net48, OutputType=Library) with application infrastructure classes. LexTextApp main application class (extends FwXApp, implements IApp, IxCoreColleague). AreaListener XCore colleague for managing area configuration. Resource files for localization (LexTextStrings.resx) and help topics (HelpTopicPaths.resx). ImageHolder icon resources. Integrates XCore framework, LCModel, and lexicon/text-specific features.
 
 ## Key Components
 - **LexTextApp** (LexTextApp.cs, 955 lines): Main FLEx lexicon/text application class
@@ -46,7 +46,7 @@ C# library (net462, OutputType=Library) with application infrastructure classes.
   - Resource accessor class
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: Library
 - XCore (application framework)
 - LCModel (data model)
@@ -89,10 +89,10 @@ C# library (net462, OutputType=Library) with application infrastructure classes.
 - **Area configuration**: AreaListener manages list area customization
 
 ## Build Information
-- **Project file**: LexTextDll.csproj (net462, OutputType=Library)
+- **Project file**: LexTextDll.csproj (net48, OutputType=Library)
 - **Test project**: LexTextDllTests/
 - **Output**: SIL.FieldWorks.XWorks.LexText.dll
-- **Build**: Via top-level FW.sln or: `msbuild LexTextDll.csproj`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild LexTextDll.csproj`
 - **Run tests**: `dotnet test LexTextDllTests/`
 
 ## Interfaces and Data Models
@@ -143,7 +143,7 @@ Loaded by LexTextExe (FLEx application). LexTextApp instantiated as main applica
 - **Common/Framework**: FwXApp base class
 
 ## References
-- **Project file**: LexTextDll.csproj (net462, OutputType=Library)
+- **Project file**: LexTextDll.csproj (net48, OutputType=Library)
 - **Key C# files**: AreaListener.cs (1113 lines), LexTextApp.cs (955 lines), LexTextStrings.Designer.cs (530 lines), ImageHolder.cs (156 lines), TransductionSample.cs (114 lines), FlexHelpTopicProvider.cs (29 lines), RestoreDefaultsDlg.cs (26 lines), AssemblyInfo.cs (14 lines)
 - **Resources**: LexTextStrings.resx (13.6KB), HelpTopicPaths.resx (215KB), ImageHolder.resx (23.6KB)
 - **Test project**: LexTextDllTests/

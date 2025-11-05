@@ -10,7 +10,7 @@ status: draft
 Data filtering and sorting infrastructure for searchable data views throughout FieldWorks. Implements matcher types (IntMatcher, RangeIntMatcher, ExactMatcher, BeginMatcher, RegExpMatcher, DateTimeMatcher, BadSpellingMatcher) and filtering logic (RecordFilter, AndFilter, ProblemAnnotationFilter, FilterBarCellFilter) for narrowing data sets. Provides sorting infrastructure (RecordSorter, FindResultSorter, ManyOnePathSortItem) for organizing filtered results. Essential for browse views, search functionality, filtered list displays, and filter bar UI components in FieldWorks applications.
 
 ## Architecture
-C# class library (.NET Framework 4.6.2) with filtering and sorting components. RecordFilter base class provides in-memory filtering using IMatcher implementations and IStringFinder interfaces to extract and match values from objects. Filter bar support via FilterBarCellFilter combines matchers with string finders for column-based filtering in browse views. Sorting via RecordSorter with progress reporting (IReportsSortProgress) and IManyOnePathSortItem for complex hierarchical sorts. Test project (FiltersTests) validates matcher behavior, sorting, and persistence.
+C# class library (.NET Framework 4.8.x) with filtering and sorting components. RecordFilter base class provides in-memory filtering using IMatcher implementations and IStringFinder interfaces to extract and match values from objects. Filter bar support via FilterBarCellFilter combines matchers with string finders for column-based filtering in browse views. Sorting via RecordSorter with progress reporting (IReportsSortProgress) and IManyOnePathSortItem for complex hierarchical sorts. Test project (FiltersTests) validates matcher behavior, sorting, and persistence.
 
 ## Key Components
 - **RecordFilter** class (RecordFilter.cs, 2751 lines): Base class for in-memory filters
@@ -60,7 +60,7 @@ C# class library (.NET Framework 4.6.2) with filtering and sorting components. R
   - UI strings for filter-related messages and labels
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (target framework: net462)
+- C# .NET Framework 4.8.x (target framework: net48)
 - OutputType: Library (class library DLL)
 - System.Xml for XML-based filter persistence
 - Regular expressions (System.Text.RegularExpressions) for RegExpMatcher
@@ -103,10 +103,10 @@ C# class library (.NET Framework 4.6.2) with filtering and sorting components. R
 - Filter bar behavior configurable via XML cell definitions
 
 ## Build Information
-- **Project file**: Filters.csproj (.NET Framework 4.6.2, OutputType=Library)
+- **Project file**: Filters.csproj (.NET Framework 4.8.x, OutputType=Library)
 - **Test project**: FiltersTests/FiltersTests.csproj
 - **Output**: Filters.dll (to Output/Debug or Output/Release)
-- **Build**: Via top-level FW.sln or: `msbuild Filters.csproj /p:Configuration=Debug`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild Filters.csproj /p:Configuration=Debug`
 - **Run tests**: `dotnet test FiltersTests/FiltersTests.csproj` or Visual Studio Test Explorer
 
 ## Interfaces and Data Models
@@ -217,8 +217,8 @@ C# class library (.NET Framework 4.6.2) with filtering and sorting components. R
 - **LexText/**: Uses filtering in lexicon searches and browse views
 
 ## References
-- **Project files**: Filters.csproj (net462, OutputType=Library), FiltersTests/FiltersTests.csproj
-- **Target frameworks**: .NET Framework 4.6.2 (net462)
+- **Project files**: Filters.csproj (net48, OutputType=Library), FiltersTests/FiltersTests.csproj
+- **Target frameworks**: .NET Framework 4.8.x (net48)
 - **Key dependencies**: SIL.LCModel, SIL.LCModel.Core.Text, SIL.LCModel.Core.WritingSystems, SIL.WritingSystems, SIL.Utils
 - **Key C# files**: RecordFilter.cs (2751 lines), RecordSorter.cs (2268 lines), ManyOnePathSortItem.cs (463 lines), DateTimeMatcher.cs (309 lines), WordFormFilters.cs (289 lines), IntMatcher.cs (220 lines), BadSpellingMatcher.cs (183 lines), ExactLiteralMatcher.cs (136 lines), IntFinder.cs (102 lines), FindResultSorter.cs (75 lines), IManyOnePathSortItem.cs (29 lines), AssemblyInfo.cs (6 lines)
 - **Designer files**: FiltersStrings.Designer.cs (270 lines)

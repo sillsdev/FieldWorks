@@ -10,7 +10,7 @@ status: reviewed
 Morphological parser infrastructure supporting both HermitCrab and XAmple parsing engines. Implements background parsing scheduler (ParserScheduler/ParserWorker) with priority queue, manages parse result filing (ParseFiler), provides parser model change detection (ParserModelChangeListener), and wraps both HC (HermitCrab via SIL.Machine) and XAmple (legacy C++ parser via COM/managed wrapper) engines. Enables computer-assisted morphological analysis in FLEx by decomposing words into morphemes based on linguistic rules, phonology, morphotactics, and allomorphy defined in the morphology editor.
 
 ## Architecture
-C# library (net462) with 34 source files (~9K lines total). Contains 3 subprojects: ParserCore (main library), XAmpleManagedWrapper (C# wrapper for XAmple DLL), XAmpleCOMWrapper (C++/CLI COM wrapper for XAmple). Supports pluggable parser architecture via IParser interface (HCParser for HermitCrab, XAmpleParser for legacy XAmple).
+C# library (net48) with 34 source files (~9K lines total). Contains 3 subprojects: ParserCore (main library), XAmpleManagedWrapper (C# wrapper for XAmple DLL), XAmpleCOMWrapper (C++/CLI COM wrapper for XAmple). Supports pluggable parser architecture via IParser interface (HCParser for HermitCrab, XAmpleParser for legacy XAmple).
 
 ## Key Components
 
@@ -69,8 +69,8 @@ C# library (net462) with 34 source files (~9K lines total). Contains 3 subprojec
 
 ## Technology Stack
 - **Languages**: C# (main library), C++/CLI (XAmpleCOMWrapper COM interop)
-- **Target framework**: .NET Framework 4.6.2 (net462)
-- **Key libraries**: 
+- **Target framework**: .NET Framework 4.8.x (net48)
+- **Key libraries**:
   - SIL.Machine.Morphology.HermitCrab (HermitCrab parser engine)
   - SIL.LCModel (morphology data model)
   - SIL.LCModel.Core (ITsString, ILgWritingSystem)
@@ -91,7 +91,7 @@ C# library (net462) with 34 source files (~9K lines total). Contains 3 subprojec
   - Threading: COM STA required for XAmple parser interaction
 - **Native DLL**: XAmpleDLLWrapper P/Invoke calls to native XAmple.dll
 - **Managed wrapper**: XAmpleManagedWrapper.dll wraps COM calls for C# consumers
-- **Data contracts**: 
+- **Data contracts**:
   - FXT XML format for morphology export (consumed by M3ToXAmpleTransformer)
   - XAmple ANA/DICT file formats (grammar/lexicon for legacy parser)
   - ParseResult/ParseAnalysis/ParseMorph DTOs for parse results
@@ -121,15 +121,15 @@ C# library (net462) with 34 source files (~9K lines total). Contains 3 subprojec
   - GuessRoots: Enable/disable root guessing for unknown morphemes
   - MergeAnalyses: Merge duplicate analyses in results
 - **XAmple options** (legacy): AmpleOptions enum (TraceOff, TraceMorphs, TraceAnalysis, etc.)
-- **Trace output**: 
+- **Trace output**:
   - FwXmlTraceManager: XML trace file generation for HermitCrab diagnostics
   - TraceWord/TraceWordXml methods for debugging parse failures
 - **Data directory**: Configurable dataDir parameter for parser workspace and temp files
 - **PropertyTable**: XCore configuration for parser behavior (passed to ParserScheduler)
 
 ## Build Information
-- Project type: C# class library (net462)
-- Build: `msbuild ParserCore.csproj` or `dotnet build` (from FW.sln)
+- Project type: C# class library (net48)
+- Build: `msbuild ParserCore.csproj` or `dotnet build` (from FieldWorks.sln)
 - Output: ParserCore.dll, XAmpleManagedWrapper.dll, XAmpleCOMWrapper.dll (native C++/CLI)
 - Dependencies: SIL.Machine.Morphology.HermitCrab NuGet package
 - Subprojects:
@@ -215,10 +215,10 @@ C# library (net462) with 34 source files (~9K lines total). Contains 3 subprojec
 - **Test data**: 18 XML files in ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/
   - Abaza-OrderclassPlay.xml, CliticEnvsParserFxtResult.xml, ConceptualIntroTestParserFxtResult.xml, etc.
   - Cover various morphological phenomena: clitics, circumfixes, infixes, reduplication, irregular forms
-- **Test runners**: 
+- **Test runners**:
   - Visual Studio Test Explorer
   - `dotnet test ParserCore.sln` (if SDK-style)
-  - Via FW.sln top-level build
+  - Via FieldWorks.sln top-level build
 - **Test approach**: Unit tests with in-memory LCModel cache, XML-based parser transform tests
 
 ## Usage Hints
@@ -257,7 +257,7 @@ C# library (net462) with 34 source files (~9K lines total). Contains 3 subprojec
 - **Key classes**: ParserScheduler, ParserWorker, ParseFiler, HCParser, XAmpleParser, ParserModelChangeListener, FwXmlTraceManager, M3ToXAmpleTransformer
 - **Key interfaces**: IParser, IHCLoadErrorLogger, IXAmpleWrapper
 - **Enums**: ParserPriority (5 levels), TaskPhase (6 states), AmpleOptions
-- **Target framework**: net462
+- **Target framework**: net48
 
 ## Auto-Generated Project and File References
 - Project files:

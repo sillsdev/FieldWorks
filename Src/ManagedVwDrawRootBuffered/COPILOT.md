@@ -10,7 +10,7 @@ status: reviewed
 Managed C# implementation of IVwDrawRootBuffered for double-buffered Views rendering. Eliminates flicker by rendering IVwRootBox content to off-screen bitmap (GDI+ Bitmap), then blitting to screen HDC. Direct port of C++ VwDrawRootBuffered from VwRootBox.cpp. Used by Views infrastructure to provide smooth rendering for complex multi-writing-system text displays with selections, highlighting, and dynamic content updates.
 
 ## Architecture
-C# library (net462) with 2 source files (~283 lines total). Single class VwDrawRootBuffered implementing IVwDrawRootBuffered, using nested MemoryBuffer class for bitmap management. Integrates with native Views COM infrastructure (IVwRootBox, IVwRootSite, IVwSynchronizer).
+C# library (net48) with 2 source files (~283 lines total). Single class VwDrawRootBuffered implementing IVwDrawRootBuffered, using nested MemoryBuffer class for bitmap management. Integrates with native Views COM infrastructure (IVwRootBox, IVwRootSite, IVwSynchronizer).
 
 ## Key Components
 
@@ -28,7 +28,7 @@ C# library (net462) with 2 source files (~283 lines total). Single class VwDrawR
 
 ## Technology Stack
 - **Language**: C#
-- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Target framework**: .NET Framework 4.8.x (net48)
 - **Graphics**: System.Drawing (GDI+ Bitmap and Graphics)
 - **Key libraries**:
   - Common/ViewsInterfaces (IVwDrawRootBuffered, IVwRootBox, IVwRootSite, IVwSynchronizer)
@@ -90,8 +90,8 @@ C# library (net462) with 2 source files (~283 lines total). Single class VwDrawR
 - **Deterministic cleanup**: MemoryBuffer implements IDisposable with finalizer for robust resource cleanup
 
 ## Build Information
-- Project type: C# class library (net462)
-- Build: `msbuild ManagedVwDrawRootBuffered.csproj` or `dotnet build` (from FW.sln)
+- Project type: C# class library (net48)
+- Build: `msbuild ManagedVwDrawRootBuffered.csproj` or `dotnet build` (from FieldWorks.sln)
 - Output: ManagedVwDrawRootBuffered.dll
 - Dependencies: ViewsInterfaces, LCModel.Core, System.Drawing (GDI+)
 - COM attributes: [ComVisible], GUID for COM registration
@@ -194,7 +194,7 @@ C# library (net462) with 2 source files (~283 lines total). Single class VwDrawR
 - **Key interface**: IVwDrawRootBuffered (from ViewsInterfaces)
 - **COM GUID**: 97199458-10C7-49da-B3AE-EA922EA64859
 - **Namespace**: SIL.FieldWorks.Views
-- **Target framework**: net462
+- **Target framework**: net48
 
 ## Auto-Generated Project and File References
 - Project files:

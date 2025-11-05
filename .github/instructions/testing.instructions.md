@@ -18,5 +18,4 @@ description: "FieldWorks testing guidelines (unit/integration)"
 - Prefer stable IDs and data to avoid flakiness.
 
 ## References
-- Build/test scripts: `agent-build-fw.sh`, `Build/build-recent`
 - Test data: `TestLangProj/`

@@ -24,7 +24,7 @@ Test suite (~500 lines) for XCore framework validation. Tests Inventory XML proc
 
 ## Technology Stack
 - **Language**: C#
-- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Target framework**: .NET Framework 4.8.x (net48)
 - **Test framework**: NUnit
 - **Systems under test**: Mediator, PropertyTable, Inventory, DynamicLoader
 - **Test approach**: Unit tests with mock objects
@@ -77,7 +77,7 @@ Test project. Run tests to validate functionality. See Test Index section for de
 ## References
 
 - **Project files**: xCoreTests.csproj
-- **Target frameworks**: net462
+- **Target frameworks**: net48
 - **Key C# files**: IncludeXmlTests.cs, InventoryTests.cs, Resources.Designer.cs
 - **XML data/config**: CreateOverrideTestData.xml, IncludeXmlTestSource.xml, IncludeXmlTestSourceB.xml, basicTest.xml, includeTest.xml
 - **Source file count**: 3 files

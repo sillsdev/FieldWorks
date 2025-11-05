@@ -126,6 +126,9 @@
 			<File Id="FieldWorks.exe" Name="FieldWorks.exe" Source="!(wix.RootObjectsDir)\FieldWorks.exe" ReadOnly="yes" Checksum="yes" KeyPath="yes" Assembly=".net" AssemblyApplication="FieldWorks.exe" AssemblyManifest="FieldWorks.exe">
 				<fire:FirewallException Id="FieldWorks.exe" Name="FieldWorks" IgnoreFailure="yes" Scope="any" xmlns:fire="http://schemas.microsoft.com/wix/FirewallExtension"/>
 			</File>
+			<File Id="FieldWorks.exe.manifest" Name="FieldWorks.exe.manifest" Source="!(wix.RootObjectsDir)\FieldWorks.exe.manifest" ReadOnly="yes" Checksum="yes" />
+			<File Id="FwKernel.X.manifest" Name="FwKernel.X.manifest" Source="!(wix.RootObjectsDir)\FwKernel.X.manifest" ReadOnly="yes" Checksum="yes" />
+			<File Id="Views.X.manifest" Name="Views.X.manifest" Source="!(wix.RootObjectsDir)\Views.X.manifest" ReadOnly="yes" Checksum="yes" />
 			<ProgId Id="FwBackupFile" Icon="FieldWorks.exe" Description="FieldWorks Backup">
 				<Extension Id="fwbackup" >
 					<Verb Id="open" Command="&amp;Restore" Argument="&quot;%1&quot;" TargetFile="FieldWorks.exe" />

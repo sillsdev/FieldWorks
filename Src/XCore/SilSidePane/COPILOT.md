@@ -32,7 +32,7 @@ Side pane navigation control library (~3K lines) implementing hierarchical sideb
 
 ## Technology Stack
 - **Language**: C#
-- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Target framework**: .NET Framework 4.8.x (net48)
 - **UI framework**: System.Windows.Forms (UserControl, custom GDI+ painting)
 - **Key features**: Custom button rendering, drag-drop, context menus
 - **Display modes**: Button, list, strip-list layouts
@@ -96,7 +96,7 @@ Library component. Reference in consuming projects. See Dependencies section for
 ## References
 
 - **Project files**: SilSidePane.csproj, SilSidePaneTests.csproj
-- **Target frameworks**: net462
+- **Target frameworks**: net48
 - **Key C# files**: Banner.cs, IItemArea.cs, Item.cs, NavPaneOptionsDlg.Designer.cs, OutlookBarButtonCollection.cs, SidePane.cs, SidePaneItemAreaStyle.cs, SilSidePane.Designer.cs, StripListItemArea.cs, Tab.cs
 - **Source file count**: 26 files
 - **Data file count**: 3 files

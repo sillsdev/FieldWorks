@@ -43,7 +43,7 @@ Integration flow: UtilityDlg → ErrorFixer.Process() → FixErrorsDlg (select p
 
 ## Technology Stack
 - **Language**: C#
-- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Target framework**: .NET Framework 4.8.x (net48)
 - **Library type**: Class library (DLL)
 - **UI framework**: System.Windows.Forms (FixErrorsDlg)
 - **Key libraries**:
@@ -106,7 +106,7 @@ Integration flow: UtilityDlg → ErrorFixer.Process() → FixErrorsDlg (select p
 
 ## Build Information
 - **Project**: FixFwDataDll.csproj
-- **Type**: Library (.NET Framework 4.6.2)
+- **Type**: Library (.NET Framework 4.8.x)
 - **Output**: FixFwDataDll.dll
 - **Namespace**: SIL.FieldWorks.FixData
 - **Source files**: ErrorFixer.cs, FixErrorsDlg.cs, FwData.cs, WriteAllObjectsUtility.cs (7 files total including Designer/Strings, ~1065 lines)

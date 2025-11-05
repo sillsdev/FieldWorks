@@ -1,10 +1,29 @@
 <Project>
-  <PropertyGroup>
-    <!-- Suppress NU1903 security warning for DotNetZip -->
-    <!-- This is a known issue with an old version; upgrade not currently feasible -->
-    <NoWarn>$(NoWarn);NU1903</NoWarn>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="**/*.template.cs" />
-  </ItemGroup>
+	<PropertyGroup>
+		<!-- Suppress NU1903 security warning for DotNetZip -->
+		<!-- This is a known issue with an old version; upgrade not currently feasible -->
+		<NoWarn>$(NoWarn);NU1903</NoWarn>
+		<!-- Default all managed projects to x64 unless explicitly overridden -->
+		<PlatformTarget Condition="'$(PlatformTarget)' == ''">x64</PlatformTarget>
+		<Platforms Condition="'$(Platforms)' == ''">x64</Platforms>
+		<!-- Force 64-bit MSBuild host to avoid crashes loading 64-bit native DLLs in build tasks -->
+		<PreferredToolArchitecture>x64</PreferredToolArchitecture>
+	</PropertyGroup>
+	<PropertyGroup Label="Shared Paths for Traversal Build">
+		<!-- Root directory paths -->
+		<FwRoot>$(MSBuildThisFileDirectory)</FwRoot>
+		<FwDistFiles>$(FwRoot)DistFiles\</FwDistFiles>
+		<FwOutput>$(FwRoot)Output\</FwOutput>
+		<FwOutputBase>$(FwOutput)$(Configuration)\</FwOutputBase>
+		<FwObj>$(FwRoot)Obj\</FwObj>
+		<!-- LCM artifacts directory -->
+		<DownloadsDir Condition="'$(DownloadsDir)'==''">$(FwRoot)Downloads</DownloadsDir>
+		<LcmArtifactsDir Condition="'$(LcmArtifactsDir)'==''">$(DownloadsDir)</LcmArtifactsDir>
+		<!-- Enable binding redirects for all projects -->
+		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+		<GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="**/*.template.cs" />
+	</ItemGroup>
 </Project>

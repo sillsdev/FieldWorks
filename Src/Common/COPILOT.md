@@ -54,7 +54,7 @@ Configuration varies by subfolder. See individual subfolder COPILOT.md files for
 
 ## Build Information
 - No project file in this folder; each subfolder has its own .csproj or .vcxproj
-- Build via top-level FW.sln (Visual Studio/MSBuild) or run: `bash ./agent-build-fw.sh`
+- Build via top-level FieldWorks.sln (Visual Studio/MSBuild)
 - All subfolder projects are built as part of the main solution
 - Each subfolder may have accompanying test projects (e.g., FwUtilsTests/, FrameworkTests/)
 

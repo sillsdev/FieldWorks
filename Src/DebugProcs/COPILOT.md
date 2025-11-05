@@ -90,7 +90,7 @@ C++ native DLL (DebugProcs.dll) with debug utility functions (660 lines total). 
 ## Build Information
 - **Project file**: DebugProcs.vcxproj, DebugProcs.mak
 - **Output**: DebugProcs.dll (native DLL)
-- **Build**: Via top-level FW.sln or: `msbuild DebugProcs.vcxproj /p:Configuration=Debug`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild DebugProcs.vcxproj /p:Configuration=Debug`
 - **Platform**: Windows (primary), Linux/Unix (conditional support)
 
 ## Interfaces and Data Models

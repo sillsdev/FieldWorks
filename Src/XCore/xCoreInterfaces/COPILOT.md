@@ -49,7 +49,7 @@ Core interface definitions (~7.8K lines) for XCore framework. Provides Mediator 
 
 ## Technology Stack
 - **Language**: C#
-- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Target framework**: .NET Framework 4.8.x (net48)
 - **Library type**: Pure interface definitions + core implementations
 - **Key libraries**: Minimal dependencies (SIL.Utils, System assemblies)
 - **Pattern**: Mediator, Command, Observer (property change notification)
@@ -99,7 +99,7 @@ Library component. Reference in consuming projects. See Dependencies section for
 ## References
 
 - **Project files**: xCoreInterfaces.csproj, xCoreInterfacesTests.csproj
-- **Target frameworks**: net462
+- **Target frameworks**: net48
 - **Key C# files**: AssemblyInfo.cs, BaseContextHelper.cs, ChoiceGroup.cs, IFeedbackInfoProvider.cs, IImageCollection.cs, IUIAdapter.cs, Mediator.cs, PropertyTable.cs, ReadOnlyPropertyTable.cs, RecordFilterListProvider.cs
 - **XML data/config**: Settings.xml, db_TestLocal_Settings.xml
 - **Source file count**: 26 files

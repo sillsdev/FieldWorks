@@ -10,7 +10,7 @@ status: draft
 Lexicon editing UI library for FieldWorks Language Explorer (FLEx). Provides specialized controls, handlers, and dialogs for lexical entry editing: entry/sense slices (EntrySequenceReferenceSlice, LexReferencePairSlice, LexReferenceMultiSlice), launchers (EntrySequenceReferenceLauncher, LexReferenceCollectionLauncher), menu handlers (LexEntryMenuHandler), FLExBridge integration (FLExBridgeListener for collaboration), example sentence search (FindExampleSentenceDlg), homograph management (HomographResetter), entry deletion (DeleteEntriesSensesWithoutInterlinearization), and resource files (LexEdStrings localized strings, ImageHolder/LexEntryImages icons). Moderate-sized library (15.7K lines) focusing on lexicon-specific UI and collaboration infrastructure. Project name: LexEdDll.
 
 ## Architecture
-C# library (net462, OutputType=Library) with lexicon UI components. Slice/Launcher pattern for entry field editing. LexEntryMenuHandler for context menus. FLExBridgeListener XCore colleague for Send/Receive collaboration. Dialogs for specialized tasks (FindExampleSentenceDlg). Utility classes for data operations (CircularRefBreaker, GoldEticGuidFixer, HomographResetter). Resource files for localization. Integrates with LCModel (ILexEntry, ILexSense, ILexReference), XCore framework, FLExBridge (external collaboration tool).
+C# library (net48, OutputType=Library) with lexicon UI components. Slice/Launcher pattern for entry field editing. LexEntryMenuHandler for context menus. FLExBridgeListener XCore colleague for Send/Receive collaboration. Dialogs for specialized tasks (FindExampleSentenceDlg). Utility classes for data operations (CircularRefBreaker, GoldEticGuidFixer, HomographResetter). Resource files for localization. Integrates with LCModel (ILexEntry, ILexSense, ILexReference), XCore framework, FLExBridge (external collaboration tool).
 
 ## Key Components
 - **FLExBridgeListener** (FLExBridgeListener.cs, 1.9K lines): FLExBridge collaboration integration
@@ -61,7 +61,7 @@ C# library (net462, OutputType=Library) with lexicon UI components. Slice/Launch
   - Embedded icons/images for lexicon UI
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: Library
 - Windows Forms (dialogs, slices)
 - LCModel (data model)
@@ -98,10 +98,10 @@ C# library (net462, OutputType=Library) with lexicon UI components. Slice/Launch
 - **Homograph numbering**: Configured separately (HomographResetter recalculates)
 
 ## Build Information
-- **Project file**: LexEdDll.csproj (net462, OutputType=Library)
+- **Project file**: LexEdDll.csproj (net48, OutputType=Library)
 - **Test project**: LexEdDllTests/
 - **Output**: SIL.FieldWorks.XWorks.LexEd.dll
-- **Build**: Via top-level FW.sln or: `msbuild LexEdDll.csproj`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild LexEdDll.csproj`
 - **Run tests**: `dotnet test LexEdDllTests/`
 
 ## Interfaces and Data Models
@@ -160,7 +160,7 @@ Loaded by xWorks main application shell. Slices/launchers instantiated by data e
 - **xWorks/**: Main application shell
 
 ## References
-- **Project file**: LexEdDll.csproj (net462, OutputType=Library)
+- **Project file**: LexEdDll.csproj (net48, OutputType=Library)
 - **Key C# files**: FLExBridgeListener.cs (1.9K), LexEdStrings.Designer.cs (2K), LexReferenceMultiSlice.cs (1.2K), EntrySequenceReferenceLauncher.cs (656), LexEntryMenuHandler.cs (591), FindExampleSentenceDlg.cs (308), LexEntryInflTypeConverter.cs (231), and 70+ more files
 - **Resources**: LexEdStrings.resx (35.8KB), ImageHolder.resx (10KB), LexEntryImages.resx (10.8KB)
 - **Test project**: LexEdDllTests/

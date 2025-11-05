@@ -10,7 +10,7 @@ status: draft
 Application framework components providing core infrastructure services for FieldWorks applications. Includes FwApp base class for application coordination, editing helpers (FwEditingHelper for edit operations), publication interfaces (IPublicationView, IPageSetupDialog for printing/publishing), settings management (FwRegistrySettings, ExternalSettingsAccessorBase, SettingsXmlAccessorBase, StylesXmlAccessor), main window coordination (MainWindowDelegate, IFwMainWnd), application manager interface (IFieldWorksManager), status bar progress handling (StatusBarProgressHandler), undo/redo UI (UndoRedoDropDown), and XHTML export utilities (XhtmlHelper). Establishes architectural patterns, lifecycle management, and shared functionality for all FieldWorks applications.
 
 ## Architecture
-C# class library (.NET Framework 4.6.2) providing base classes and interfaces for FieldWorks applications. FwApp abstract class serves as application base with cache management, window coordination, and undo/redo infrastructure. Delegate pattern via MainWindowDelegate separates main window concerns. Settings abstraction via SettingsXmlAccessorBase and ExternalSettingsAccessorBase. Test project (FrameworkTests) validates framework components.
+C# class library (.NET Framework 4.8.x) providing base classes and interfaces for FieldWorks applications. FwApp abstract class serves as application base with cache management, window coordination, and undo/redo infrastructure. Delegate pattern via MainWindowDelegate separates main window concerns. Settings abstraction via SettingsXmlAccessorBase and ExternalSettingsAccessorBase. Test project (FrameworkTests) validates framework components.
 
 ## Key Components
 - **FwApp** class (FwApp.cs): Abstract base class for FieldWorks applications
@@ -52,7 +52,7 @@ C# class library (.NET Framework 4.6.2) providing base classes and interfaces fo
   - Interface for page setup dialogs
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (target framework: net462)
+- C# .NET Framework 4.8.x (target framework: net48)
 - OutputType: Library (class library DLL)
 - Windows Forms for UI (System.Windows.Forms)
 - Windows Registry access (Microsoft.Win32)
@@ -96,10 +96,10 @@ C# class library (.NET Framework 4.6.2) providing base classes and interfaces fo
 - No explicit feature flags; behavior controlled by settings
 
 ## Build Information
-- **Project file**: Framework.csproj (.NET Framework 4.6.2, OutputType=Library)
+- **Project file**: Framework.csproj (.NET Framework 4.8.x, OutputType=Library)
 - **Test project**: FrameworkTests/FrameworkTests.csproj
 - **Output**: Framework.dll (to Output/Debug or Output/Release)
-- **Build**: Via top-level FW.sln or: `msbuild Framework.csproj /p:Configuration=Debug`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild Framework.csproj /p:Configuration=Debug`
 - **Run tests**: `dotnet test FrameworkTests/FrameworkTests.csproj` or Visual Studio Test Explorer
 
 ## Interfaces and Data Models
@@ -186,8 +186,8 @@ C# class library (.NET Framework 4.6.2) providing base classes and interfaces fo
 - **LexText/**: Lexicon application using framework
 
 ## References
-- **Project files**: Framework.csproj (net462, OutputType=Library), FrameworkTests/FrameworkTests.csproj
-- **Target frameworks**: .NET Framework 4.6.2 (net462)
+- **Project files**: Framework.csproj (net48, OutputType=Library), FrameworkTests/FrameworkTests.csproj
+- **Target frameworks**: .NET Framework 4.8.x (net48)
 - **Key dependencies**: SIL.LCModel, SIL.LCModel.Infrastructure, SIL.LCModel.DomainServices, XCore, Common/FwUtils, Common/ViewsInterfaces, Common/RootSites
 - **Key C# files**: FwApp.cs, MainWindowDelegate.cs, FwEditingHelper.cs, IFieldWorksManager.cs, IFwMainWnd.cs, FwRegistrySettings.cs, ExternalSettingsAccessorBase.cs, SettingsXmlAccessorBase.cs, StylesXmlAccessor.cs, ExportStyleInfo.cs, UndoRedoDropDown.cs, StatusBarProgressHandler.cs, XhtmlHelper.cs, PublicationInterfaces.cs, AssemblyInfo.cs
 - **Designer files**: FrameworkStrings.Designer.cs

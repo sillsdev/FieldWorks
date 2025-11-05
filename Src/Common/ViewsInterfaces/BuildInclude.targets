@@ -1,48 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
-  <ItemGroup>
-    <PackageReference Include="SIL.IdlImporter" Version="4.0.0-beta0052" PrivateAssets="All" GeneratePathProperty="true" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <UsingNamespaces Include="SIL.LCModel.Core.KernelInterfaces" />
-    <UsingNamespaces Include="SIL.LCModel.Utils" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <ViewsIdhFiles Include="$(MSBuildProjectDirectory)/../../views/Render.idh"/>
-    <ViewsIdhFiles Include="$(MSBuildProjectDirectory)/../../views/Views.idh"/>
-  </ItemGroup>
-  
-  <ItemGroup>
-    <ViewsInputs Include="@(ViewsIdhFiles)" />
-    <ViewsInputs Include="@(ViewsSources)" />
-  </ItemGroup>
-  
-  <Target Name="ViewsCs" 
-          BeforeTargets="CoreCompile" 
-          Inputs="@(ViewsInputs);$(OutputPath)../Common/ViewsTlb.idl" 
-          Outputs="Views.cs">
-    <PropertyGroup>
-      <IdlImpVer>4.0.0-beta0052</IdlImpVer>
-      <ViewsTlbSrc>$([System.IO.Path]::GetFullPath('$(OutputPath)../Common/ViewsTlb.idl'))</ViewsTlbSrc>
-      <ViewsRefsJson>$([System.IO.Path]::GetFullPath('$(OutputPath)../Common/FwKernelTlb.json'))</ViewsRefsJson>
-      <IdlImporterXmlPath>$(PkgSIL_IdlImporter)\build\IDLImporter.xml</IdlImporterXmlPath>
-    </PropertyGroup>
-    
-    <!-- Ensure output directory exists -->
-    <MakeDir Directories="$(OutputPath)../Common" ContinueOnError="true" />
-    
-    <!-- Update the global tool -->
-    <Exec Command="dotnet tool update --global SIL.IdlImporter.Tool --version $(IdlImpVer)" ContinueOnError="true" />
-    
-    <!-- Run IDL import -->
-    <Exec Command="idlimport /c &quot;$(IdlImporterXmlPath)&quot; /o &quot;$(MSBuildProjectDirectory)\Views.cs&quot; /i &quot;@(ViewsIdhFiles)&quot; /n SIL.FieldWorks.Common.ViewsInterfaces /u &quot;@(UsingNamespaces)&quot; /r &quot;$(ViewsRefsJson)&quot; &quot;$(ViewsTlbSrc)&quot;"
-          Condition="Exists('$(ViewsTlbSrc)') AND Exists('$(ViewsRefsJson)')" />
-  </Target>
-  
-  <Target Name="AfterClean" AfterTargets="Clean">
-    <Delete Files="@(OutputFiles)" ContinueOnError="true"/>
-    <Delete Files="Views.cs;$(OutputPath)../Common/ViewsTlb.iip;$(OutputPath)../Common/ViewsTlb.json" ContinueOnError="true"/>
-  </Target>
+	<ItemGroup>
+		<PackageReference
+			Include="SIL.IdlImporter"
+			Version="4.0.0-beta0052"
+			PrivateAssets="All"
+			GeneratePathProperty="true"
+		/>
+	</ItemGroup>
+	<ItemGroup>
+		<UsingNamespaces Include="SIL.LCModel.Core.KernelInterfaces" />
+		<UsingNamespaces Include="SIL.LCModel.Utils" />
+	</ItemGroup>
+	<ItemGroup>
+		<ViewsIdhFiles Include="$(MSBuildProjectDirectory)/../../views/Render.idh" />
+		<ViewsIdhFiles Include="$(MSBuildProjectDirectory)/../../views/Views.idh" />
+	</ItemGroup>
+	<ItemGroup>
+		<ViewsInputs Include="@(ViewsIdhFiles)" />
+		<ViewsInputs Include="@(ViewsSources)" />
+	</ItemGroup>
+	<!-- Ensure native C++ artifacts exist before code generation -->
+	<Target Name="EnsureNativeArtifacts">
+		<PropertyGroup>
+			<ViewsTlbPath>$(OutputPath)../Common/ViewsTlb.idl</ViewsTlbPath>
+			<FwKernelJsonPath>$(OutputPath)../Common/FwKernelTlb.json</FwKernelJsonPath>
+		</PropertyGroup>
+		<Warning
+			Text="Native artifacts missing ($(ViewsTlbPath), $(FwKernelJsonPath)). Please build native C++ projects first using 'msbuild Build\Src\NativeBuild\NativeBuild.csproj' before building ViewsInterfaces."
+			Condition="!Exists('$(ViewsTlbPath)') OR !Exists('$(FwKernelJsonPath)')"
+		/>
+		<Error
+			Text="Cannot generate Views.cs without native artifacts. Run: msbuild Build\Src\NativeBuild\NativeBuild.csproj"
+			Condition="!Exists('$(ViewsTlbPath)') OR !Exists('$(FwKernelJsonPath)')"
+		/>
+	</Target>
+	<Target
+		Name="ViewsCs"
+		BeforeTargets="CoreCompile"
+		DependsOnTargets="EnsureNativeArtifacts"
+		Inputs="@(ViewsInputs);$(OutputPath)../Common/ViewsTlb.idl"
+		Outputs="Views.cs"
+	>
+		<PropertyGroup>
+			<IdlImpVer>4.0.0-beta0052</IdlImpVer>
+			<ViewsTlbSrc>$([System.IO.Path]::GetFullPath('$(OutputPath)../Common/ViewsTlb.idl'))</ViewsTlbSrc>
+			<ViewsRefsJson>$([System.IO.Path]::GetFullPath('$(OutputPath)../Common/FwKernelTlb.json'))</ViewsRefsJson>
+			<IdlImporterXmlPath>$(PkgSIL_IdlImporter)\build\IDLImporter.xml</IdlImporterXmlPath>
+		</PropertyGroup>
+		<!-- Ensure output directory exists -->
+		<MakeDir Directories="$(OutputPath)../Common" ContinueOnError="true" />
+		<!-- Update the global tool -->
+		<Exec
+			Command="dotnet tool update --global SIL.IdlImporter.Tool --version $(IdlImpVer)"
+			ContinueOnError="true"
+		/>
+		<!-- Run IDL import -->
+		<Exec
+			Command="idlimport /c &quot;$(IdlImporterXmlPath)&quot; /o &quot;$(MSBuildProjectDirectory)\Views.cs&quot; /i &quot;@(ViewsIdhFiles)&quot; /n SIL.FieldWorks.Common.ViewsInterfaces /u &quot;@(UsingNamespaces)&quot; /r &quot;$(ViewsRefsJson)&quot; &quot;$(ViewsTlbSrc)&quot;"
+			Condition="Exists('$(ViewsTlbSrc)') AND Exists('$(ViewsRefsJson)')"
+		/>
+	</Target>
+	<Target Name="AfterClean" AfterTargets="Clean">
+		<Delete Files="@(OutputFiles)" ContinueOnError="true" />
+		<Delete
+			Files="Views.cs;$(OutputPath)../Common/ViewsTlb.iip;$(OutputPath)../Common/ViewsTlb.json"
+			ContinueOnError="true"
+		/>
+	</Target>
 </Project>

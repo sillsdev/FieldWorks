@@ -46,7 +46,7 @@ Plugin-based application framework (~9.8K lines main + 4 subfolders) with XML-dr
 
 ## Technology Stack
 - **Language**: C#
-- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Target framework**: .NET Framework 4.8.x (net48)
 - **UI framework**: System.Windows.Forms (WinForms)
 - **Key libraries**: WeifenLuo.WinFormsUI.Docking (SilSidePane), SIL.Utils, Common/FwUtils
 - **Configuration**: XML-based Inventory system for UI composition
@@ -79,8 +79,8 @@ Plugin-based application framework (~9.8K lines main + 4 subfolders) with XML-dr
 - **PersistenceProvider**: Settings persistence to registry or config files
 
 ## Build Information
-- **Project type**: C# class library (net462)
-- **Build**: `msbuild XCore.csproj` or via FW.sln
+- **Project type**: C# class library (net48)
+- **Build**: `msbuild XCore.csproj` or via FieldWorks.sln
 - **Output**: XCore.dll (main), xCoreInterfaces.dll, FlexUIAdapter.dll, SilSidePane.dll
 - **Dependencies**: xCoreInterfaces (interfaces), Common/FwUtils, SIL.Utils, WeifenLuo docking
 - **Test projects**: xCoreTests, xCoreInterfacesTests, SilSidePaneTests (11 test files)
@@ -114,7 +114,7 @@ Library component. Reference in consuming projects. See Dependencies section for
 ## References
 
 - **Project files**: FlexUIAdapter.csproj, SilSidePane.csproj, SilSidePaneTests.csproj, xCore.csproj, xCoreInterfaces.csproj, xCoreInterfacesTests.csproj, xCoreTests.csproj
-- **Target frameworks**: net462
+- **Target frameworks**: net48
 - **Key C# files**: AssemblyInfo.cs, CollapsingSplitContainer.cs, IconHolder.cs, ImageContent.cs, IncludeXml.cs, Inventory.cs, MockupDialogLauncher.cs, NotifyWindow.cs, PaneBarContainer.Designer.cs, Ticker.cs
 - **XML data/config**: CreateOverrideTestData.xml, IncludeXmlTestSource.xml, IncludeXmlTestSourceB.xml, basicTest.xml, includeTest.xml
 - **Source file count**: 91 files

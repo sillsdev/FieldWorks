@@ -10,7 +10,7 @@ status: reviewed
 Standalone WinForms application (~4.1K lines) for managing Private Use Area (PUA) character definitions in FieldWorks. Allows linguists to create, edit, and install custom character properties that override Unicode defaults. Writes to CustomChars.xml and installs data into ICU's data folder for use across FieldWorks applications.
 
 ## Architecture
-C# WinForms application (net462, WinExe) with 16 source files (~4.1K lines). Single-window UI (CharEditorWindow) for editing Private Use Area characters + command-line installer mode (PUAInstaller). Three-layer architecture:
+C# WinForms application (net48, WinExe) with 16 source files (~4.1K lines). Single-window UI (CharEditorWindow) for editing Private Use Area characters + command-line installer mode (PUAInstaller). Three-layer architecture:
 1. **UI layer**: CharEditorWindow (main form), CustomCharDlg (character editor)
 2. **Business logic**: PUAInstaller (ICU data modification), character dictionaries
 3. **Infrastructure**: LogFile, exceptions, error codes
@@ -55,7 +55,7 @@ Workflow: User edits PUA characters → saves to CustomChars.xml → installs to
 
 ## Technology Stack
 - **Language**: C#
-- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Target framework**: .NET Framework 4.8.x (net48)
 - **Application type**: WinExe (Windows GUI application with command-line support)
 - **UI framework**: System.Windows.Forms (WinForms)
 - **Key libraries**:
@@ -128,7 +128,7 @@ Workflow: User edits PUA characters → saves to CustomChars.xml → installs to
 
 ## Build Information
 - **Project type**: C# WinExe (Windows GUI application)
-- **Build**: `msbuild UnicodeCharEditor.csproj` or via FW.sln
+- **Build**: `msbuild UnicodeCharEditor.csproj` or via FieldWorks.sln
 - **Output**: UnicodeCharEditor.exe (standalone executable)
 - **Dependencies**:
   - LCModel.Core.Text (PUACharacter)
@@ -259,7 +259,7 @@ Workflow: User edits PUA characters → saves to CustomChars.xml → installs to
 - **Kernel/** - May consume installed PUA character definitions
 
 ## References
-- **Project**: UnicodeCharEditor.csproj (.NET Framework 4.6.2 WinExe)
+- **Project**: UnicodeCharEditor.csproj (.NET Framework 4.8.x WinExe)
 - **Test project**: UnicodeCharEditorTests/UnicodeCharEditorTests.csproj
 - **16 CS files** (~4.1K lines): Program.cs, CharEditorWindow.cs, CustomCharDlg.cs, PUAInstaller.cs, LogFile.cs, exceptions, enums
 - **Resources**: CharEditorWindow.resx, CustomCharDlg.resx, HelpTopicPaths.resx

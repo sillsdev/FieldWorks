@@ -59,8 +59,7 @@ namespace XMLViewsTests
 				window.Show();
 				window.currentList.Items[1].Selected = true;
 				window.moveDownButton.PerformClick();
-				Assert.True(window.moveUpButton.Enabled,
-					"Up button should not be disabled after moving an item down.");
+				Assert.That(window.moveUpButton.Enabled, Is.True, "Up button should not be disabled after moving an item down.");
 			}
 		}
 
@@ -73,8 +72,7 @@ namespace XMLViewsTests
 				window.Show();
 				window.currentList.Items[1].Selected = true;
 				window.moveUpButton.PerformClick();
-				Assert.True(window.moveDownButton.Enabled,
-					"Down button should not be disabled after moving an item up.");
+				Assert.That(window.moveDownButton.Enabled, Is.True, "Down button should not be disabled after moving an item up.");
 			}
 		}
 		#endregion

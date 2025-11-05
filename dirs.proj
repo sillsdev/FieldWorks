@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.Build.Traversal/4.1.0">
+  <!--
+    FieldWorks Traversal Build Project
+
+    This file defines the declarative build order for all FieldWorks projects using
+    the Microsoft.Build.Traversal SDK. Projects are built in the order they appear,
+    with proper dependency resolution.
+
+    Build Phases:
+    1. Native C++ components (FwKernel, Views)
+    2. Code generation (ViewsInterfaces)
+    3. Managed C# projects (grouped by dependency layer)
+
+    Usage:
+      dotnet build dirs.proj
+      msbuild dirs.proj /p:Configuration=Debug /p:Platform=x64
+  -->
+
+  <PropertyGroup>
+    <Platform Condition="'$(Platform)'==''">x64</Platform>
+    <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
+    <!-- Suppress warnings about missing projects during restore -->
+    <ReportAnalyzer>false</ReportAnalyzer>
+  </PropertyGroup>
+
+  <!-- Phase 1: Build Tasks - Excluded from traversal build because build.ps1 bootstraps it -->
+  <!-- FwBuildTasks must be built separately before dirs.proj to avoid file locking issues -->
+
+  <ItemGroup Label="Phase 2: Native C++ Components">
+    <!-- Native components (DebugProcs, GenericLib, FwKernel, Views) are built via NativeBuild SDK project -->
+    <ProjectReference Include="Build\Src\NativeBuild\NativeBuild.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Label="Phase 3: Code Generation - ViewsInterfaces">
+    <!-- ViewsInterfaces depends on native artifacts (ViewsTlb.idl, FwKernelTlb.json) -->
+    <ProjectReference Include="Src\Common\ViewsInterfaces\ViewsInterfaces.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Label="Phase 4: Foundation Layer">
+    <!-- Core utilities and resources - minimal dependencies -->
+    <ProjectReference Include="Src\FwResources\FwResources.csproj" />
+    <ProjectReference Include="Src\Common\FwUtils\FwUtils.csproj" />
+    <ProjectReference Include="Src\Common\UIAdapterInterfaces\UIAdapterInterfaces.csproj" />
+    <ProjectReference Include="Src\Utilities\Reporting\Reporting.csproj" />
+    <ProjectReference Include="Src\Utilities\XMLUtils\XMLUtils.csproj" />
+    <ProjectReference Include="Src\ManagedLgIcuCollator\ManagedLgIcuCollator.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Label="Phase 5: XCore Framework">
+    <!-- XCore interface and implementation -->
+    <ProjectReference Include="Src\XCore\xCoreInterfaces\xCoreInterfaces.csproj" />
+    <ProjectReference Include="Src\Utilities\MessageBoxExLib\MessageBoxExLib.csproj" />
+    <ProjectReference Include="Src\XCore\xCore.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Label="Phase 6: Basic UI Components">
+    <!-- Core rendering and UI infrastructure -->
+    <ProjectReference Include="Src\ManagedVwDrawRootBuffered\ManagedVwDrawRootBuffered.csproj" />
+    <ProjectReference Include="Src\Common\SimpleRootSite\SimpleRootSite.csproj" />
+    <ProjectReference Include="Src\Common\RootSite\RootSite.csproj" />
+    <ProjectReference Include="Src\Common\ScriptureUtils\ScriptureUtils.csproj" />
+    <ProjectReference Include="Src\ManagedVwWindow\ManagedVwWindow.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Label="Phase 7: Controls and Widgets">
+    <!-- UI controls that depend on RootSite -->
+    <ProjectReference Include="Src\Common\Controls\Widgets\Widgets.csproj" />
+    <ProjectReference Include="Src\Common\Controls\Design\Design.csproj" />
+    <ProjectReference Include="Src\Common\Controls\FwControls\FwControls.csproj" />
+    <ProjectReference Include="Src\FwCoreDlgs\FwCoreDlgControls\FwCoreDlgControls.csproj" />
+    <ProjectReference Include="Src\XCore\FlexUIAdapter\FlexUIAdapter.csproj" />
+    <ProjectReference Include="Src\XCore\SilSidePane\SilSidePane.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Label="Phase 8: Advanced UI Components">
+    <!-- Higher-level UI components -->
+    <ProjectReference Include="Src\Common\Filters\Filters.csproj" />
+    <ProjectReference Include="Src\FwCoreDlgs\FwCoreDlgs.csproj" />
+    <ProjectReference Include="Src\Common\Controls\XMLViews\XMLViews.csproj" />
+    <ProjectReference Include="Src\Common\Framework\Framework.csproj" />
+    <ProjectReference Include="Src\Common\Controls\DetailControls\DetailControls.csproj" />
+    <ProjectReference Include="Src\Common\FieldWorks\FieldWorks.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Label="Phase 9: FDO UI and Data Management">
+    <!-- Data-oriented UI components -->
+    <ProjectReference Include="Src\FdoUi\FdoUi.csproj" />
+    <ProjectReference Include="Src\CacheLight\CacheLight.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Label="Phase 10: LexText Core Components">
+    <!-- Lexicon and text processing core -->
+    <ProjectReference Include="Src\LexText\ParserCore\XAmpleManagedWrapper\XAmpleManagedWrapper.csproj" />
+    <ProjectReference Include="Src\LexText\ParserCore\ParserCore.csproj" />
+    <ProjectReference Include="Src\LexText\ParserUI\ParserUI.csproj" />
+    <ProjectReference Include="Src\LexText\LexTextControls\LexTextControls.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Label="Phase 11: LexText Applications">
+    <!-- Lexicon and morphology editors -->
+    <ProjectReference Include="Src\LexText\Lexicon\LexEdDll.csproj" />
+    <ProjectReference Include="Src\LexText\Morphology\MGA\MGA.csproj" />
+    <ProjectReference Include="Src\LexText\Morphology\MorphologyEditorDll.csproj" />
+    <ProjectReference Include="Src\LexText\Interlinear\ITextDll.csproj" />
+    <ProjectReference Include="Src\LexText\Discourse\Discourse.csproj" />
+    <ProjectReference Include="Src\LexText\LexTextDll\LexTextDll.csproj" />
+    <ProjectReference Include="Src\LexText\LexTextExe\LexTextExe.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Label="Phase 12: xWorks and Top-Level Applications">
+    <!-- Main application shell -->
+    <ProjectReference Include="Src\FXT\FxtDll\FxtDll.csproj" />
+    <ProjectReference Include="Src\xWorks\xWorks.csproj" />
+    <ProjectReference Include="Src\FXT\FxtExe\FxtExe.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Label="Phase 13: Plugins and Extensions">
+    <!-- Paratext integration and plugins -->
+    <ProjectReference Include="Src\Paratext8Plugin\Paratext8Plugin.csproj" />
+    <ProjectReference Include="Src\ParatextImport\ParatextImport.csproj" />
+    <ProjectReference Include="Src\FwParatextLexiconPlugin\FwParatextLexiconPlugin.csproj" />
+    <ProjectReference Include="Src\LexText\FlexPathwayPlugin\FlexPathwayPlugin.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Label="Phase 14: Utilities and Tools">
+    <!-- Standalone utilities -->
+    <ProjectReference Include="Src\Utilities\SfmToXml\Sfm2Xml.csproj" />
+    <ProjectReference Include="Src\Utilities\SfmToXml\ConvertSFM\ConvertSFM.csproj" />
+    <ProjectReference Include="Src\Utilities\FixFwData\FixFwData.csproj" />
+    <ProjectReference Include="Src\Utilities\FixFwDataDll\FixFwDataDll.csproj" />
+    <ProjectReference Include="Src\UnicodeCharEditor\UnicodeCharEditor.csproj" />
+    <ProjectReference Include="Src\ProjectUnpacker\ProjectUnpacker.csproj" />
+    <ProjectReference Include="Src\MigrateSqlDbs\MigrateSqlDbs.csproj" />
+    <ProjectReference Include="Src\LCMBrowser\LCMBrowser.csproj" />
+    <ProjectReference Include="Src\InstallValidator\InstallValidator.csproj" />
+    <ProjectReference Include="Src\GenerateHCConfig\GenerateHCConfig.csproj" />
+    <ProjectReference Include="Src\Utilities\ComManifestTestHost\ComManifestTestHost.csproj" />
+    <ProjectReference Include="Lib\src\ScrChecks\ScrChecks.csproj" />
+    <ProjectReference Include="Lib\src\ObjectBrowser\ObjectBrowser.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Label="Phase 15: Test Projects - Foundation">
+    <!-- Tests for foundation components -->
+    <ProjectReference Include="Src\Common\FwUtils\FwUtilsTests\FwUtilsTests.csproj" />
+    <ProjectReference Include="Src\Utilities\XMLUtils\XMLUtilsTests\XMLUtilsTests.csproj" />
+    <ProjectReference Include="Src\Utilities\MessageBoxExLib\MessageBoxExLibTests\MessageBoxExLibTests.csproj" />
+    <ProjectReference Include="Src\ManagedLgIcuCollator\ManagedLgIcuCollatorTests\ManagedLgIcuCollatorTests.csproj" />
+    <ProjectReference Include="Src\Common\ViewsInterfaces\ViewsInterfacesTests\ViewsInterfacesTests.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Label="Phase 16: Test Projects - UI Components">
+    <!-- Tests for UI components -->
+    <ProjectReference Include="Src\Common\SimpleRootSite\SimpleRootSiteTests\SimpleRootSiteTests.csproj" />
+    <ProjectReference Include="Src\Common\RootSite\RootSiteTests\RootSiteTests.csproj" />
+    <ProjectReference Include="Src\Common\ScriptureUtils\ScriptureUtilsTests\ScriptureUtilsTests.csproj" />
+    <ProjectReference Include="Src\ManagedVwWindow\ManagedVwWindowTests\ManagedVwWindowTests.csproj" />
+    <ProjectReference Include="Src\Common\Controls\Widgets\WidgetsTests\WidgetsTests.csproj" />
+    <ProjectReference Include="Src\Common\Controls\FwControls\FwControlsTests\FwControlsTests.csproj" />
+    <ProjectReference Include="Src\FwCoreDlgs\FwCoreDlgControls\FwCoreDlgControlsTests\FwCoreDlgControlsTests.csproj" />
+    <ProjectReference Include="Src\XCore\SilSidePane\SilSidePaneTests\SilSidePaneTests.csproj" />
+    <ProjectReference Include="Src\Common\Filters\FiltersTests\FiltersTests.csproj" />
+    <ProjectReference Include="Src\FwCoreDlgs\FwCoreDlgsTests\FwCoreDlgsTests.csproj" />
+    <ProjectReference Include="Src\Common\Controls\XMLViews\XMLViewsTests\XMLViewsTests.csproj" />
+    <ProjectReference Include="Src\Common\Framework\FrameworkTests\FrameworkTests.csproj" />
+    <ProjectReference Include="Src\Common\Controls\DetailControls\DetailControlsTests\DetailControlsTests.csproj" />
+    <ProjectReference Include="Src\Common\FieldWorks\FieldWorksTests\FieldWorksTests.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Label="Phase 17: Test Projects - XCore">
+    <!-- Tests for XCore components -->
+    <ProjectReference Include="Src\XCore\xCoreInterfaces\xCoreInterfacesTests\xCoreInterfacesTests.csproj" />
+    <ProjectReference Include="Src\XCore\xCoreTests\xCoreTests.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Label="Phase 18: Test Projects - Data and FDO">
+    <!-- Tests for data components -->
+    <ProjectReference Include="Src\FdoUi\FdoUiTests\FdoUiTests.csproj" />
+    <ProjectReference Include="Src\CacheLight\CacheLightTests\CacheLightTests.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Label="Phase 19: Test Projects - LexText">
+    <!-- Tests for LexText components -->
+    <ProjectReference Include="Src\LexText\ParserCore\XAmpleManagedWrapper\XAmpleManagedWrapperTests\XAmpleManagedWrapperTests.csproj" />
+    <ProjectReference Include="Src\LexText\ParserCore\ParserCoreTests\ParserCoreTests.csproj" />
+    <ProjectReference Include="Src\LexText\ParserUI\ParserUITests\ParserUITests.csproj" />
+    <ProjectReference Include="Src\LexText\LexTextControls\LexTextControlsTests\LexTextControlsTests.csproj" />
+    <ProjectReference Include="Src\LexText\Lexicon\LexEdDllTests\LexEdDllTests.csproj" />
+    <ProjectReference Include="Src\LexText\Morphology\MGA\MGATests\MGATests.csproj" />
+    <ProjectReference Include="Src\LexText\Morphology\MorphologyEditorDllTests\MorphologyEditorDllTests.csproj" />
+    <ProjectReference Include="Src\LexText\Interlinear\ITextDllTests\ITextDllTests.csproj" />
+    <ProjectReference Include="Src\LexText\Discourse\DiscourseTests\DiscourseTests.csproj" />
+    <ProjectReference Include="Src\LexText\LexTextDll\LexTextDllTests\LexTextDllTests.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Label="Phase 20: Test Projects - Applications and Plugins">
+    <!-- Tests for applications and plugins -->
+    <ProjectReference Include="Src\FXT\FxtDll\FxtDllTests\FxtDllTests.csproj" />
+    <ProjectReference Include="Src\xWorks\xWorksTests\xWorksTests.csproj" />
+    <ProjectReference Include="Src\Paratext8Plugin\ParaText8PluginTests\Paratext8PluginTests.csproj" />
+    <ProjectReference Include="Src\ParatextImport\ParatextImportTests\ParatextImportTests.csproj" />
+    <ProjectReference Include="Src\FwParatextLexiconPlugin\FwParatextLexiconPluginTests\FwParatextLexiconPluginTests.csproj" />
+    <ProjectReference Include="Src\LexText\FlexPathwayPlugin\FlexPathwayPluginTests\FlexPathwayPluginTests.csproj" />
+  </ItemGroup>
+
+  <ItemGroup Label="Phase 21: Test Projects - Utilities">
+    <!-- Tests for utility components -->
+    <ProjectReference Include="Src\Utilities\SfmToXml\Sfm2XmlTests\Sfm2XmlTests.csproj" />
+    <ProjectReference Include="Src\UnicodeCharEditor\UnicodeCharEditorTests\UnicodeCharEditorTests.csproj" />
+    <!-- InstallValidatorTests excluded: it depends on FwBuildTasks types, which causes circular dependency since FwBuildTasks is bootstrapped before traversal -->
+    <!-- <ProjectReference Include="Src\InstallValidator\InstallValidatorTests\InstallValidatorTests.csproj" /> -->
+    <ProjectReference Include="Lib\src\ScrChecks\ScrChecksTests\ScrChecksTests.csproj" />
+  </ItemGroup>
+
+  <!-- Import shared build properties if they exist -->
+  <Import Project="Directory.Build.props" Condition="Exists('Directory.Build.props')" />
+
+</Project>

@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>xCore</AssemblyName>
@@ -9,43 +9,28 @@
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+    <PlatformTarget>x64</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugSymbols>true</DebugSymbols>
-    <Optimize>false</Optimize>
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DefineConstants>TRACE</DefineConstants>
-    <DebugSymbols>true</DebugSymbols>
-    <Optimize>true</Optimize>
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DefineConstants>TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>true</Optimize>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="SIL.Core" Version="17.0.0-*" />
     <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
-  <PackageReference Include="Geckofx60.64" Version="60.0.54" /></ItemGroup>
-
+    <PackageReference Include="Geckofx60.64" Version="60.0.54" />
+  </ItemGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
     <Reference Include="MsHtmHstInterop">
@@ -55,7 +40,6 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="netstandard" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="../Common/FwUtils/FwUtils.csproj" />
     <ProjectReference Include="../Utilities/MessageBoxExLib/MessageBoxExLib.csproj" />
@@ -63,8 +47,6 @@
     <ProjectReference Include="../Utilities/XMLUtils/XMLUtils.csproj" />
     <ProjectReference Include="xCoreInterfaces/xCoreInterfaces.csproj" />
   </ItemGroup>
-
-
   <ItemGroup>
     <Compile Remove="xCoreTests/**" />
     <None Remove="xCoreTests/**" />
@@ -74,5 +56,16 @@
     <None Remove="SilSidePane/**" />
     <Compile Remove="xCoreInterfaces/**" />
     <None Remove="xCoreInterfaces/**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="SilSidePane\Resources\Arrow_Down.ico" />
+    <EmbeddedResource Include="SilSidePane\Resources\Arrow_Up.ico" />
+    <EmbeddedResource Include="SilSidePane\Resources\DefaultIcon.ico" />
+    <EmbeddedResource Include="SilSidePane\Resources\DropDown2003.ico" />
+    <EmbeddedResource Include="SilSidePane\Resources\DropDown2007.ico" />
+    <EmbeddedResource Include="SilSidePane\Resources\Grip2003.ico" />
+    <EmbeddedResource Include="SilSidePane\Resources\Grip2007.ico" />
+    <EmbeddedResource Include="SilSidePane\SilSidePaneTests\DefaultIcon.ico" />
+    <EmbeddedResource Include="xCoreInterfaces\Resources\construction-slow.ico" />
   </ItemGroup>
 </Project>

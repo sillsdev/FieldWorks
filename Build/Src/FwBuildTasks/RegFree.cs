@@ -34,7 +34,7 @@ namespace SIL.FieldWorks.Build.Tasks
 	/// Adapted from Nant RegFreeTask. Some properties have not been tested.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class RegFree: Task
+	public class RegFree : Task
 	{
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -139,120 +139,141 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// ------------------------------------------------------------------------------------
 		public override bool Execute()
 		{
-			Log.LogMessage(MessageImportance.Normal, "RegFree processing {0}",
-				Path.GetFileName(Executable));
+			Log.LogMessage(
+				MessageImportance.Normal,
+				"RegFree processing {0}",
+				Path.GetFileName(Executable)
+			);
 
 			StringCollection dllPaths = GetFilesFrom(Dlls);
 			if (dllPaths.Count == 0)
 			{
 				string ext = Path.GetExtension(Executable);
-				if (ext != null && ext.Equals(".dll", StringComparison.InvariantCultureIgnoreCase))
+				if (
+					ext != null
+					&& ext.Equals(".dll", StringComparison.InvariantCultureIgnoreCase)
+				)
 					dllPaths.Add(Executable);
 			}
-			string manifestFile = string.IsNullOrEmpty(Output) ? Executable + ".manifest" : Output;
+			string manifestFile = string.IsNullOrEmpty(Output)
+				? Executable + ".manifest"
+				: Output;
 
 			try
 			{
 				var doc = new XmlDocument { PreserveWhitespace = true };
 
-				using (XmlReader reader = new XmlTextReader(manifestFile))
+				// Try to load existing manifest, or create empty document if it doesn't exist
+				if (File.Exists(manifestFile))
 				{
-					if (reader.MoveToElement())
-						doc.ReadNode(reader);
-				}
-
-				// Register all DLLs temporarily
-				using (var regHelper = new RegHelper(Log, Platform))
-				{
-					regHelper.RedirectRegistry(!UserIsAdmin);
-					var creator = new RegFreeCreator(doc, Log);
-					var filesToRemove = dllPaths.Cast<string>().Where(fileName => !File.Exists(fileName)).ToList();
-					foreach (var file in filesToRemove)
-						dllPaths.Remove(file);
-
-					foreach (string fileName in dllPaths)
+					using (XmlReader reader = new XmlTextReader(manifestFile))
 					{
-						Log.LogMessage(MessageImportance.Low, "\tRegistering library {0}", Path.GetFileName(fileName));
-						try
-						{
-							regHelper.Register(fileName, true, false);
-						}
-						catch (Exception e)
-						{
-							Log.LogMessage(MessageImportance.High, "Failed to register library {0}", fileName);
-							Log.LogMessage(MessageImportance.High, e.StackTrace);
-						}
-					}
-
-					string assemblyName = Path.GetFileNameWithoutExtension(manifestFile);
-					Debug.Assert(assemblyName != null);
-					// The C++ test programs won't run if an assemblyIdentity element exists.
-					//if (assemblyName.StartsWith("test"))
-					//	assemblyName = null;
-					string assemblyVersion = null;
-					try
-					{
-						assemblyVersion = FileVersionInfo.GetVersionInfo(Executable).FileVersion;
-					}
-					catch
-					{
-						// just ignore
-					}
-					if (string.IsNullOrEmpty(assemblyVersion))
-						assemblyVersion = "1.0.0.0";
-					XmlElement root = creator.CreateExeInfo(assemblyName, assemblyVersion, Platform);
-					foreach (string fileName in dllPaths)
-					{
-						if (NoTypeLib.Count(f => f.ItemSpec == fileName) != 0)
-							continue;
-
-						Log.LogMessage(MessageImportance.Low, "\tProcessing library {0}", Path.GetFileName(fileName));
-						creator.ProcessTypeLibrary(root, fileName);
-					}
-					creator.ProcessClasses(root);
-					creator.ProcessInterfaces(root);
-					foreach (string fragmentName in GetFilesFrom(Fragments))
-					{
-						Log.LogMessage(MessageImportance.Low, "\tAdding fragment {0}", Path.GetFileName(fragmentName));
-						creator.AddFragment(root, fragmentName);
-					}
-
-					foreach (string fragmentName in GetFilesFrom(AsIs))
-					{
-						Log.LogMessage(MessageImportance.Low, "\tAdding as-is fragment {0}", Path.GetFileName(fragmentName));
-						creator.AddAsIs(root, fragmentName);
-					}
-
-					foreach (string assemblyFileName in GetFilesFrom(DependentAssemblies))
-					{
-						Log.LogMessage(MessageImportance.Low, "\tAdding dependent assembly {0}", Path.GetFileName(assemblyFileName));
-						creator.AddDependentAssembly(root, assemblyFileName);
-					}
-
-					var settings = new XmlWriterSettings
-									{
-										OmitXmlDeclaration = false,
-										NewLineOnAttributes = false,
-										NewLineChars = Environment.NewLine,
-										Indent = true,
-										IndentChars = "\t"
-									};
-					using (XmlWriter writer = XmlWriter.Create(manifestFile, settings))
-					{
-						doc.WriteContentTo(writer);
-					}
-
-					// Unregister DLLs
-					if (Unregister)
-					{
-						foreach (string fileName in dllPaths)
-						{
-							Log.LogMessage(MessageImportance.Low, "\tUnregistering library {0}",
-								Path.GetFileName(fileName));
-							regHelper.Unregister(fileName, true);
-						}
+						if (reader.MoveToElement())
+							doc.ReadNode(reader);
 					}
 				}
+				else
+				{
+					// Create a minimal valid XML document if manifest doesn't exist
+					Log.LogMessage(
+						MessageImportance.Low,
+						"\tCreating new manifest file {0}",
+						manifestFile
+					);
+				}
+
+				// Process all DLLs using direct type library parsing (no registry redirection needed)
+				var creator = new RegFreeCreator(doc, Log);
+				var filesToRemove = dllPaths
+					.Cast<string>()
+					.Where(fileName => !File.Exists(fileName))
+					.ToList();
+				foreach (var file in filesToRemove)
+					dllPaths.Remove(file);
+
+				string assemblyName = Path.GetFileNameWithoutExtension(manifestFile);
+				Debug.Assert(assemblyName != null);
+				// The C++ test programs won't run if an assemblyIdentity element exists.
+				//if (assemblyName.StartsWith("test"))
+				//	assemblyName = null;
+				string assemblyVersion = null;
+				try
+				{
+					assemblyVersion = FileVersionInfo.GetVersionInfo(Executable).FileVersion;
+				}
+				catch
+				{
+					// just ignore
+				}
+				if (string.IsNullOrEmpty(assemblyVersion))
+					assemblyVersion = "1.0.0.0";
+
+				XmlElement root = creator.CreateExeInfo(assemblyName, assemblyVersion, Platform);
+
+				foreach (string fileName in dllPaths)
+				{
+					if (NoTypeLib.Count(f => f.ItemSpec == fileName) != 0)
+						continue;
+
+					Log.LogMessage(
+						MessageImportance.Low,
+						"\tProcessing library {0}",
+						Path.GetFileName(fileName)
+					);
+
+					// Process type library directly (no registry redirection needed)
+					creator.ProcessTypeLibrary(root, fileName);
+				}
+
+				// Process classes and interfaces from HKCR (where COM is already registered)
+				creator.ProcessClasses(root);
+				creator.ProcessInterfaces(root);
+
+				foreach (string fragmentName in GetFilesFrom(Fragments))
+				{
+					Log.LogMessage(
+						MessageImportance.Low,
+						"\tAdding fragment {0}",
+						Path.GetFileName(fragmentName)
+					);
+					creator.AddFragment(root, fragmentName);
+				}
+
+				foreach (string fragmentName in GetFilesFrom(AsIs))
+				{
+					Log.LogMessage(
+						MessageImportance.Low,
+						"\tAdding as-is fragment {0}",
+						Path.GetFileName(fragmentName)
+					);
+					creator.AddAsIs(root, fragmentName);
+				}
+
+				foreach (string assemblyFileName in GetFilesFrom(DependentAssemblies))
+				{
+					Log.LogMessage(
+						MessageImportance.Low,
+						"\tAdding dependent assembly {0}",
+						Path.GetFileName(assemblyFileName)
+					);
+					creator.AddDependentAssembly(root, assemblyFileName);
+				}
+
+				var settings = new XmlWriterSettings
+				{
+					OmitXmlDeclaration = false,
+					NewLineOnAttributes = false,
+					NewLineChars = Environment.NewLine,
+					Indent = true,
+					IndentChars = "\t",
+				};
+				using (XmlWriter writer = XmlWriter.Create(manifestFile, settings))
+				{
+					doc.WriteContentTo(writer);
+				}
+
+				// Note: No unregistration needed - we never registered anything!
+				// Direct type library parsing doesn't touch the registry.
 			}
 			catch (Exception e)
 			{

@@ -52,7 +52,7 @@ namespace XAmpleManagedWrapperTests
 		public void TestGetSetup()
 		{
 			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
-				Assert.AreNotEqual(IntPtr.Zero, wrapper.GetSetup());
+				Assert.That(wrapper.GetSetup(), Is.Not.EqualTo(IntPtr.Zero));
 		}
 
 		[Test]
@@ -69,7 +69,7 @@ namespace XAmpleManagedWrapperTests
 			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
 			{
 				int threadId = wrapper.GetAmpleThreadId();
-				Assert.AreNotEqual(0, threadId);
+				Assert.That(threadId, Is.Not.EqualTo(0));
 			}
 		}
 
@@ -80,7 +80,7 @@ namespace XAmpleManagedWrapperTests
 			using (XAmpleDLLWrapper wrapper = CreateXAmpleDllWrapper())
 			{
 				int threadId = wrapper.GetAmpleThreadId();
-				Assert.AreEqual(0, threadId);
+				Assert.That(threadId, Is.EqualTo(0));
 			}
 		}
 
@@ -92,7 +92,7 @@ namespace XAmpleManagedWrapperTests
 			{
 				LoadFilesHelper(wrapper);
 				string parsedString = wrapper.ParseString("Hello");
-				Assert.IsNotEmpty(parsedString);
+				Assert.That(parsedString, Is.Not.Empty);
 				Assert.That(parsedString, Is.Not.Null);
 			}
 		}
@@ -104,7 +104,7 @@ namespace XAmpleManagedWrapperTests
 			{
 				LoadFilesHelper(wrapper);
 				string tracedString = wrapper.TraceString("Hello", "Hello");
-				Assert.IsNotEmpty(tracedString);
+				Assert.That(tracedString, Is.Not.Empty);
 				Assert.That(tracedString, Is.Not.Null);
 			}
 		}

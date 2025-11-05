@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project
+  DefaultTargets="Build"
+  xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
+  ToolsVersion="Current"
+>
+  <!--
+    NativeBuild: Build orchestrator for native C++ component builds
+
+    This project serves as a bridge between the MSBuild Traversal SDK (dirs.proj)
+    and the native build system (mkall.targets). It allows the traversal
+    build to properly sequence native component builds before managed projects.
+
+    The project doesn't produce any output itself - it's purely a build orchestrator.
+    Uses traditional MSBuild format to avoid SDK package resolution overhead.
+  -->
+  <PropertyGroup>
+    <Platform Condition="'$(Platform)'==''">x64</Platform>
+    <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
+    <!-- Set fwrt early so NuGet package restore can find packages -->
+    <fwrt>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\..'))</fwrt>
+    <PackagesDir>$(fwrt)/packages</PackagesDir>
+    <RestorePackagesPath>$(PackagesDir)</RestorePackagesPath>
+  </PropertyGroup>
+  <!-- Import the native build orchestration -->
+  <Import Project="$(MSBuildThisFileDirectory)..\..\FwBuildTasks.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)..\..\SetupInclude.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)..\..\mkall.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)..\..\Windows.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)..\..\RegFree.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)..\..\Localize.targets" />
+  <!-- Override computed paths after imports - SetupInclude.targets computes them wrong for nested projects -->
+  <PropertyGroup>
+    <!-- fwrt and PackagesDir already set above before imports -->
+    <DownloadsDir>$(fwrt)/Downloads</DownloadsDir>
+    <!-- Don't override LcmArtifactsDir - let mkall.targets set it from the package -->
+  </PropertyGroup>
+  <!-- Reference to sil.lcmodel.core package for contentFiles.
+       We don't use GeneratePathProperty because it requires a full restore,
+       so we compute the path manually in mkall.targets using LcmNugetVersion. -->
+  <ItemGroup>
+    <PackageReference Include="SIL.LCModel.Core" Version="$(LcmNugetVersion)">
+      <IncludeAssets>none</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+  <!-- Override the Build target to call native build instead -->
+  <Target Name="Build" DependsOnTargets="allCppNoTest">
+    <Message Text="Native C++ components built successfully" Importance="high" />
+  </Target>
+  <!-- Ensure Clean works -->
+  <Target Name="Clean" DependsOnTargets="CleanAll">
+    <Message Text="Native C++ components cleaned" Importance="high" />
+  </Target>
+</Project>

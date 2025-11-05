@@ -101,7 +101,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		protected virtual void ShowForm(DummyBasicViewVc.DisplayType display, int height)
 		{
-			Assert.IsTrue(m_flidContainingTexts != 0, "Need to initialize m_flidContainingTexts");
+			Assert.That(m_flidContainingTexts != 0, Is.True, "Need to initialize m_flidContainingTexts");
 
 			m_basicView.DisplayType = display;
 

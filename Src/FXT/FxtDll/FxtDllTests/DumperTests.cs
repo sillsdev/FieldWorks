@@ -89,7 +89,7 @@ namespace SIL.FieldWorks.Common.FXT
 		{
 			string result = GetResultString("<test><multilingualStringElement ws='all' name='name' simpleProperty='Name'/></test>", "",
 				"writingSystemAttributeStyle='LIFT'");
-			Assert.AreEqual(String.Format("<test><name lang=\"de\">bestAnalName-german</name>{0}<name lang=\"fr\">frenchNameOfProject</name>{0}</test>", Environment.NewLine), result.Trim());
+			Assert.That(result.Trim(), Is.EqualTo(String.Format("<test><name lang=\"de\">bestAnalName-german</name>{0}<name lang=\"fr\">frenchNameOfProject</name>{0}</test>", Environment.NewLine)));
 
 		}
 
@@ -100,7 +100,7 @@ namespace SIL.FieldWorks.Common.FXT
 			XmlDocument doc = new XmlDocument();
 			doc.LoadXml(result);
 			string attr = doc.ChildNodes[0].Attributes["lang"].Value;
-			Assert.AreEqual("bestAnalName-german", attr);
+			Assert.That(attr, Is.EqualTo("bestAnalName-german"));
 		}
 
 
@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.Common.FXT
 			XmlDocument doc = new XmlDocument();
 			doc.LoadXml(result);
 			string attr = XmlUtils.GetOptionalAttributeValue(doc.ChildNodes[0], "lang");
-			Assert.AreEqual("", attr);
+			Assert.That(attr, Is.EqualTo(""));
 		}
 
 		[Test]
@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.Common.FXT
 			XmlDocument doc = new XmlDocument();
 			doc.LoadXml(result);
 			string attr = doc.ChildNodes[0].Attributes["lang"].Value;
-			Assert.AreEqual("bestAnalName-german", attr);
+			Assert.That(attr, Is.EqualTo("bestAnalName-german"));
 		}
 
 		[Test]
@@ -155,7 +155,7 @@ namespace SIL.FieldWorks.Common.FXT
 			string c = "<class name='MoForm'><multilingualStringElement name='form' simpleProperty='NamesWithMarkers'/></class>";
 			string result = GetResultStringFromEntry(le, t, c);
 
-			Assert.AreEqual(String.Format("<entry><form ws=\"fr\">-is</form>{0}<form ws=\"ur\">-iz</form>{0}</entry>", Environment.NewLine), result.Trim());
+			Assert.That(result.Trim(), Is.EqualTo(String.Format("<entry><form ws=\"fr\">-is</form>{0}<form ws=\"ur\">-iz</form>{0}</entry>", Environment.NewLine)));
 		}
 
 
@@ -195,7 +195,7 @@ namespace SIL.FieldWorks.Common.FXT
 			doc.LoadXml(result);
 			string attr = doc.ChildNodes[0].Attributes["value"].Value;
 
-			Assert.AreEqual("frenchLexDBName", attr);
+			Assert.That(attr, Is.EqualTo("frenchLexDBName"));
 		}
 
 		[Test]
@@ -224,21 +224,21 @@ namespace SIL.FieldWorks.Common.FXT
 		[Test,Ignore("apparent memory cache bug prevents test")]
 		public void OutputGuidOfOwnerAsAttribute()
 		{
-			Assert.AreEqual(Cache.LangProject.Hvo, Cache.LangProject.WordformInventoryOA.Owner.Hvo);
+			Assert.That(Cache.LangProject.WordformInventoryOA.Owner.Hvo, Is.EqualTo(Cache.LangProject.Hvo));
 			Assert.That(Cache.LangProject.WordformInventoryOA, Is.Not.Null);
-			Assert.Greater(Cache.LangProject.WordformInventoryOA.Owner.Hvo, 0);
+			Assert.That(Cache.LangProject.WordformInventoryOA.Owner.Hvo, Is.GreaterThan(0));
 			string result = GetResultString("<objAtomic objProperty='WordformInventoryOA'/>",
 			   "<class name='WordformInventory'><wfi><attributeIndirect  name='parent' simpleProperty='Guid' target='Owner'/></wfi></class>");
 			XmlDocument doc = new XmlDocument();
 			doc.LoadXml(result);
 			string attr = doc.SelectSingleNode("wfi").Attributes["parent"].Value;
 
-			Assert.AreEqual(Cache.LangProject.Guid.ToString(), attr);
+			Assert.That(attr, Is.EqualTo(Cache.LangProject.Guid.ToString()));
 		}
 
 		private void Check(string content, string expectedResult)
 		{
-			Assert.AreEqual(expectedResult, GetResultString(content));
+			Assert.That(GetResultString(content), Is.EqualTo(expectedResult));
 		}
 
 		private string GetResultString(string insideLangProjClass)

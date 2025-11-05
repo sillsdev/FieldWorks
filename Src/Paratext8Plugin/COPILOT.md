@@ -10,7 +10,7 @@ status: reviewed
 Paratext 8 integration adapter implementing IScriptureProvider interface for FLEx↔Paratext data interchange. Wraps Paratext.Data API (Paratext SDK v8) to provide FieldWorks-compatible scripture project access, verse reference handling (PT8VerseRefWrapper), text data wrappers (PT8ScrTextWrapper), and USFM parser state (PT8ParserStateWrapper). Enables Send/Receive synchronization between FLEx back translations and Paratext translation projects, supporting collaborative translation workflows where linguistic analysis (FLEx) informs translation (Paratext8) and vice versa.
 
 ## Architecture
-C# library (net462) with 7 source files (~546 lines). Implements MEF-based plugin pattern via [Export(typeof(IScriptureProvider))] attribute with [ExportMetadata("Version", "8")] for Paratext 8 API versioning. Wraps Paratext.Data types (ScrText, VerseRef, ScrParserState) with FLEx-compatible interfaces.
+C# library (net48) with 7 source files (~546 lines). Implements MEF-based plugin pattern via [Export(typeof(IScriptureProvider))] attribute with [ExportMetadata("Version", "8")] for Paratext 8 API versioning. Wraps Paratext.Data types (ScrText, VerseRef, ScrParserState) with FLEx-compatible interfaces.
 
 ## Key Components
 
@@ -46,7 +46,7 @@ C# library (net462) with 7 source files (~546 lines). Implements MEF-based plugi
 
 ## Technology Stack
 - **Language**: C#
-- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Target framework**: .NET Framework 4.8.x (net48)
 - **Plugin pattern**: MEF (Managed Extensibility Framework)
   - Export attributes: [Export(typeof(IScriptureProvider))], [ExportMetadata("Version", "8")]
 - **Key libraries**:
@@ -112,8 +112,8 @@ C# library (net462) with 7 source files (~546 lines). Implements MEF-based plugi
 - **No feature flags**: Behavior entirely determined by Paratext SDK and project properties
 
 ## Build Information
-- Project type: C# class library (net462)
-- Build: `msbuild Paratext8Plugin.csproj` or `dotnet build` (from FW.sln)
+- Project type: C# class library (net48)
+- Build: `msbuild Paratext8Plugin.csproj` or `dotnet build` (from FieldWorks.sln)
 - Output: Paratext8Plugin.dll
 - Dependencies: Paratext.Data (Paratext SDK NuGet or local assembly), PtxUtils, SIL.Scripture, Common/ScriptureUtils, System.ComponentModel.Composition (MEF)
 - Deployment: Loaded dynamically via MEF when Paratext 8 installed and version match detected
@@ -194,7 +194,7 @@ C# library (net462) with 7 source files (~546 lines). Implements MEF-based plugi
 - **Test approach**: Integration tests requiring Paratext 8 SDK (or mocks for CI)
 - **Test runners**:
   - Visual Studio Test Explorer
-  - Via FW.sln top-level build
+  - Via FieldWorks.sln top-level build
 - **Prerequisites for tests**: Paratext 8 SDK assemblies (Paratext.Data.dll, PtxUtils.dll)
 
 ## Usage Hints
@@ -238,7 +238,7 @@ C# library (net462) with 7 source files (~546 lines). Implements MEF-based plugi
 ## References
 
 - **Project files**: Paratext8Plugin.csproj, Paratext8PluginTests.csproj
-- **Target frameworks**: net462
+- **Target frameworks**: net48
 - **Key C# files**: AssemblyInfo.cs, PT8VerseRefWrapper.cs, PTScrTextWrapper.cs, Paratext8Provider.cs, ParatextAlert.cs, ParatextDataIntegrationTests.cs, Pt8VerseWrapper.cs
 - **Source file count**: 7 files
 - **Data file count**: 1 files

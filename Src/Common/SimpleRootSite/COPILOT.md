@@ -10,7 +10,7 @@ status: draft
 Simplified root site implementation providing streamlined API for hosting FieldWorks views. Base class SimpleRootSite extends UserControl and implements IVwRootSite, IRootSite, IxCoreColleague, IEditingCallbacks for standard view hosting scenarios. Includes ActiveViewHelper for view activation tracking, DataUpdateMonitor for coordinating data change notifications, EditingHelper for clipboard/undo/redo operations, SelectionHelper for selection management, PrintRootSite for printing infrastructure, and numerous helper classes. Easier-to-use alternative to RootSite for most view hosting needs. Used extensively throughout FieldWorks for text display and editing.
 
 ## Architecture
-C# class library (.NET Framework 4.6.2) with simplified root site implementation (17K+ lines in SimpleRootSite.cs alone). SimpleRootSite base class provides complete view hosting with event handling, keyboard management, accessibility support, printing, selection tracking, and data update coordination. Helper classes separate concerns (EditingHelper for editing, SelectionHelper for selection, ActiveViewHelper for activation). Test project (SimpleRootSiteTests) validates functionality.
+C# class library (.NET Framework 4.8.x) with simplified root site implementation (17K+ lines in SimpleRootSite.cs alone). SimpleRootSite base class provides complete view hosting with event handling, keyboard management, accessibility support, printing, selection tracking, and data update coordination. Helper classes separate concerns (EditingHelper for editing, SelectionHelper for selection, ActiveViewHelper for activation). Test project (SimpleRootSiteTests) validates functionality.
 
 ## Key Components
 - **SimpleRootSite** class (SimpleRootSite.cs, massive file): Base view host control
@@ -61,7 +61,7 @@ C# class library (.NET Framework 4.6.2) with simplified root site implementation
 - **RenderEngineFactory** (RenderEngineFactory.cs): Rendering engine creation
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: Library
 - Windows Forms (UserControl base)
 - COM interop for Views engine (IVwRootSite, IVwRootBox)
@@ -105,10 +105,10 @@ C# class library (.NET Framework 4.6.2) with simplified root site implementation
 No explicit configuration. Behavior controlled by View specifications and data.
 
 ## Build Information
-- **Project file**: SimpleRootSite.csproj (net462, OutputType=Library)
+- **Project file**: SimpleRootSite.csproj (net48, OutputType=Library)
 - **Test project**: SimpleRootSiteTests/SimpleRootSiteTests.csproj
 - **Output**: SimpleRootSite.dll
-- **Build**: Via top-level FW.sln or: `msbuild SimpleRootSite.csproj /p:Configuration=Debug`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild SimpleRootSite.csproj /p:Configuration=Debug`
 - **Run tests**: `dotnet test SimpleRootSiteTests/SimpleRootSiteTests.csproj`
 
 ## Interfaces and Data Models
@@ -184,8 +184,8 @@ Extended by view hosting controls throughout FieldWorks. SimpleRootSite is base 
 - **xWorks, LexText**: Major consumers of SimpleRootSite
 
 ## References
-- **Project files**: SimpleRootSite.csproj (net462), SimpleRootSiteTests/SimpleRootSiteTests.csproj
-- **Target frameworks**: .NET Framework 4.6.2
+- **Project files**: SimpleRootSite.csproj (net48), SimpleRootSiteTests/SimpleRootSiteTests.csproj
+- **Target frameworks**: .NET Framework 4.8.x
 - **Key C# files**: SimpleRootSite.cs (massive, 17K+ lines), ActiveViewHelper.cs, DataUpdateMonitor.cs, EditingHelper.cs, SelectionHelper.cs, SelectionRestorer.cs, PrintRootSite.cs, and others
 - **Total lines of code**: 17073+ (SimpleRootSite.cs alone)
 - **Output**: Output/Debug/SimpleRootSite.dll

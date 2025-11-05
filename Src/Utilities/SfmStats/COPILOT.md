@@ -27,7 +27,7 @@ Simple command-line tool (~299 lines, single Program.cs) for SFM file analysis. 
 
 ## Technology Stack
 - **Language**: C#
-- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Target framework**: .NET Framework 4.8.x (net48)
 - **Application type**: Console executable
 - **Key libraries**: Sfm2Xml (SFM parsing), System.IO, System.Text.Encoding
 - **Output format**: Plain text statistical reports
@@ -56,7 +56,7 @@ Simple command-line tool (~299 lines, single Program.cs) for SFM file analysis. 
 
 ## Build Information
 - **Project**: SfmStats.csproj
-- **Type**: Console (.NET Framework 4.6.2)
+- **Type**: Console (.NET Framework 4.8.x)
 - **Output**: SfmStats.exe
 - **Namespace**: SfmStats
 - **Source files**: Program.cs, AssemblyInfo.cs (2 files, ~299 lines)
@@ -78,7 +78,7 @@ No test project found.
 ## Usage Hints
 - **Basic**: `SfmStats.exe mydata.sfm` shows stats on console
 - **Save output**: `SfmStats.exe mydata.sfm report.txt`
-- **Interpreting results**: 
+- **Interpreting results**:
   - Byte histogram shows character distribution
   - SFM frequency shows which markers are used most
   - SFM pairs show common marker sequences (helps understand structure)

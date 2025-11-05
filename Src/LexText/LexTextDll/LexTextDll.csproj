@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>LexTextDll</AssemblyName>
@@ -8,36 +8,21 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>168,169,219,414,649,1635,1702,1701,NU1903</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <PlatformTarget>x64</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugSymbols>true</DebugSymbols>
-    <Optimize>false</Optimize>
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DefineConstants>TRACE</DefineConstants>
-    <DebugSymbols>true</DebugSymbols>
-    <Optimize>true</Optimize>
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DefineConstants>TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>true</Optimize>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
     <PackageReference Include="SIL.Core" Version="17.0.0-*" />
@@ -47,13 +32,11 @@
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
     <PackageReference Include="SIL.DesktopAnalytics" Version="4.0.0" />
   </ItemGroup>
-
   <ItemGroup>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="netstandard" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="../../Common/Controls/FwControls/FwControls.csproj" />
     <ProjectReference Include="../../Common/Controls/XMLViews/XMLViews.csproj" />
@@ -68,7 +51,13 @@
     <ProjectReference Include="../Interlinear/ITextDll.csproj" />
     <ProjectReference Include="../LexTextControls/LexTextControls.csproj" />
   </ItemGroup>
-
-
   <ItemGroup>
-    <Compile Remove="LexTextDllTests/**" /><None Remove="LexTextDllTests/**" /></ItemGroup></Project>
+    <Compile Remove="LexTextDllTests/**" />
+    <None Remove="LexTextDllTests/**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="icons\Add New Analysis.ico" />
+    <EmbeddedResource Include="icons\Find a Wordform.ico" />
+    <EmbeddedResource Include="LT.ico" />
+  </ItemGroup>
+</Project>

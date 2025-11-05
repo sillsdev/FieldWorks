@@ -10,7 +10,7 @@ status: reviewed
 Test infrastructure utility (~427 lines) for unpacking embedded ZIP resources containing Paratext and FLEx test projects. Provides **Unpacker** static class with methods to extract test data from embedded .resx files to temporary directories, and **RegistryData** for managing Paratext registry settings during tests. Used exclusively in test fixtures, not production code.
 
 ## Architecture
-C# test utility library (net462) with 3 source files (~427 lines). Single static class **Unpacker** with nested **ResourceUnpacker** for ZIP extraction from embedded .resx files. **RegistryData** helper for Paratext registry state management. Designed exclusively for test fixtures to provide Paratext/FLEx test project data without requiring external files or Paratext installation.
+C# test utility library (net48) with 3 source files (~427 lines). Single static class **Unpacker** with nested **ResourceUnpacker** for ZIP extraction from embedded .resx files. **RegistryData** helper for Paratext registry state management. Designed exclusively for test fixtures to provide Paratext/FLEx test project data without requiring external files or Paratext installation.
 
 ## Key Components
 
@@ -34,7 +34,7 @@ C# test utility library (net462) with 3 source files (~427 lines). Single static
 
 ## Technology Stack
 - **Language**: C#
-- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Target framework**: .NET Framework 4.8.x (net48)
 - **Namespace**: SIL.FieldWorks.Test.ProjectUnpacker (test-only library)
 - **Key libraries**:
   - ICSharpCode.SharpZipLib.Zip (ZIP extraction from embedded resources)
@@ -92,10 +92,10 @@ C# test utility library (net462) with 3 source files (~427 lines). Single static
 - **Windows-specific**: Registry dependency limits to Windows platform
 
 ## Build Information
-- **Project type**: C# class library (net462)
-- **Build**: `msbuild ProjectUnpacker.csproj` or `dotnet build` (from FW.sln)
+- **Project type**: C# class library (net48)
+- **Build**: `msbuild ProjectUnpacker.csproj` or `dotnet build` (from FieldWorks.sln)
 - **Output**: ProjectUnpacker.dll (test utility library)
-- **Dependencies**: 
+- **Dependencies**:
   - ICSharpCode.SharpZipLib.Zip (NuGet package for ZIP extraction)
   - Microsoft.Win32 (registry access)
   - NUnit.Framework (test infrastructure)
@@ -146,20 +146,20 @@ C# test utility library (net462) with 3 source files (~427 lines). Single static
   public class ParatextImportTests
   {
       private Unpacker.ResourceUnpacker m_unpacker;
-      
+
       [SetUp]
       public void Setup()
       {
           m_unpacker = new Unpacker.ResourceUnpacker("ZippedParatextPrj", Unpacker.PtProjectTestFolder);
           // m_unpacker.UnpackedDestinationPath now contains extracted project
       }
-      
+
       [TearDown]
       public void TearDown()
       {
           m_unpacker.CleanUp();
       }
-      
+
       [Test]
       public void ImportParatextProject_Success()
       {
@@ -184,7 +184,7 @@ C# test utility library (net462) with 3 source files (~427 lines). Single static
 - **Integration testing**: Exercised by test projects that consume it
   - ParatextImportTests: Primary consumer, validates extraction and project loading
   - Tests verify: ZIP extraction works, files accessible, cleanup removes all files
-- **Manual validation**: 
+- **Manual validation**:
   - Run ParatextImportTests with breakpoint after SetUp
   - Verify extracted files exist in m_unpacker.UnpackedDestinationPath
   - Verify CleanUp() removes all files in TearDown
@@ -226,7 +226,7 @@ C# test utility library (net462) with 3 source files (~427 lines). Single static
 - **MigrateSqlDbs/** - Could use for migration test scenarios
 
 ## References
-- **Project**: ProjectUnpacker.csproj (.NET Framework 4.6.2 library)
+- **Project**: ProjectUnpacker.csproj (.NET Framework 4.8.x library)
 - **3 CS files**: Unpacker.cs (~300 lines), RegistryData.cs (~60 lines), AssemblyInfo.cs
 - **3 embedded resources**: ZippedParatextPrj.resx, ZippedParaPrjWithMissingFiles.resx, ZippedTEVTitusWithUnmappedStyle.resx
 

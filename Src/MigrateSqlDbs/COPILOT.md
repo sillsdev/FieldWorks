@@ -10,7 +10,7 @@ status: reviewed
 Legacy SQL Server to XML database migration utility for FieldWorks 6.0→7.0 upgrade. Console/GUI application (WinExe) detecting SQL Server FieldWorks projects, converting them to XML format via ImportFrom6_0, migrating LDML writing system files (version 1→2), and providing user selection dialog (MigrateProjects form) for batch migration. Historical tool for one-time FW6→FW7 upgrade; no longer actively used for new migrations but preserved for archival/reference. LCModel now uses XML backend exclusively, handles subsequent migrations (7.x→8.x→9.x) via DataMigration infrastructure.
 
 ## Architecture
-C# WinExe application (net462) with 11 source files (~1.1K lines). Mix of WinForms dialogs (MigrateProjects, ExistingProjectDlg, FWVersionTooOld) and migration logic (Program.Main, ImportFrom6_0 integration). Command-line flags: -debug, -autoclose, -chars (deprecated).
+C# WinExe application (net48) with 11 source files (~1.1K lines). Mix of WinForms dialogs (MigrateProjects, ExistingProjectDlg, FWVersionTooOld) and migration logic (Program.Main, ImportFrom6_0 integration). Command-line flags: -debug, -autoclose, -chars (deprecated).
 
 ## Key Components
 
@@ -39,7 +39,7 @@ C# WinExe application (net462) with 11 source files (~1.1K lines). Mix of WinFor
 
 ## Technology Stack
 - **Language**: C#
-- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Target framework**: .NET Framework 4.8.x (net48)
 - **Application type**: WinExe (Windows GUI application with console fallback)
 - **UI framework**: System.Windows.Forms (WinForms dialogs)
 - **Key libraries**:
@@ -110,8 +110,8 @@ C# WinExe application (net462) with 11 source files (~1.1K lines). Mix of WinFor
 - **No config files**: All configuration from registry, command-line args, and hardcoded paths
 
 ## Build Information
-- Project type: C# WinExe application (net462)
-- Build: `msbuild MigrateSqlDbs.csproj` or `dotnet build` (from FW.sln)
+- Project type: C# WinExe application (net48)
+- Build: `msbuild MigrateSqlDbs.csproj` or `dotnet build` (from FieldWorks.sln)
 - Output: MigrateSqlDbs.exe (standalone executable)
 - Dependencies: LCModel, LCModel.DomainServices.DataMigration, SIL.WritingSystems, Common/Controls, Common/FwUtils, System.Data.SqlClient
 - Deployment: Included in FLEx installer for upgrade path support
@@ -233,7 +233,7 @@ C# WinExe application (net462) with 11 source files (~1.1K lines). Mix of WinFor
 - **Key dependencies**: ImportFrom6_0 (LCModel.DomainServices.DataMigration), LdmlInFolderWritingSystemRepositoryMigrator (SIL.WritingSystems.Migration)
 - **External executables**: ConverterConsole.exe (SQL export/import), db.exe (database operations)
 - **Namespace**: SIL.FieldWorks.MigrateSqlDbs.MigrateProjects
-- **Target framework**: net462
+- **Target framework**: net48
 - **Return codes**: -1 (no SQL Server), 0 (success), >0 (failures count)
   - Src/MigrateSqlDbs/FWVersionTooOld.Designer.cs
   - Src/MigrateSqlDbs/FWVersionTooOld.cs

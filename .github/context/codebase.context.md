@@ -5,12 +5,12 @@ Use these entry points to load context efficiently without scanning the entire r
 - Onboarding: `.github/copilot-instructions.md`
 - Src catalog (overview of major folders): `.github/src-catalog.md`
 - Component guides: `Src/<Folder>/COPILOT.md` (and subfolder COPILOT.md where present)
-- Build system: `Build/FieldWorks.targets`, `Build/FieldWorks.proj`, `agent-build-fw.sh`, `FW.sln`
+- Build system: `Build/FieldWorks.targets`, `Build/FieldWorks.proj`, `FieldWorks.sln`
 - Installer: `FLExInstaller/`
 - Test data: `TestLangProj/`
 - Localization: `crowdin.json`, `DistFiles/CommonLocalizations/`
 - Documentation discipline: `.github/update-copilot-summaries.md` (three-pass workflow, COPILOT skeleton)
 
 Tips
-- Prefer top-level scripts or FW.sln over ad-hoc project builds
+- Prefer top-level scripts or FieldWorks.sln over ad-hoc project builds
 - Respect CI checks (commit messages, whitespace) before pushing

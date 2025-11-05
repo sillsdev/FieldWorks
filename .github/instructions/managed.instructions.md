@@ -21,6 +21,6 @@ description: "FieldWorks managed (.NET/C#) development guidelines"
 - Follow existing project/solution structure; avoid creating new top-level patterns without consensus.
 
 ## References
-- Build: `bash ./agent-build-fw.sh` or `msbuild FW.sln /m /p:Configuration=Debug`
+- Build: `msbuild FieldWorks.sln /m /p:Configuration=Debug`
 - Tests: Use Test Explorer or `dotnet test` for SDK-style; NUnit console for .NET Framework assemblies.
 - Localization: See `DistFiles/CommonLocalizations/` and `crowdin.json`.

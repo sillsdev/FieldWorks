@@ -1,418 +1,227 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Bounds|Win32">
-      <Configuration>Bounds</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Bounds|x64">
-      <Configuration>Bounds</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x64">
-      <Configuration>Release</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-  </ItemGroup>
-  <PropertyGroup Label="Globals">
-    <ProjectGuid>{D841AF80-C339-4523-9919-1E645F41D08E}</ProjectGuid>
-    <RootNamespace>XAmpleCOMWrapper</RootNamespace>
-    <Keyword>AtlProj</Keyword>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseOfAtl>Static</UseOfAtl>
-    <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseOfAtl>Static</UseOfAtl>
-    <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseOfAtl>Static</UseOfAtl>
-    <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseOfAtl>Static</UseOfAtl>
-    <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseOfAtl>Static</UseOfAtl>
-    <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>DynamicLibrary</ConfigurationType>
-    <UseOfAtl>Static</UseOfAtl>
-    <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v143</PlatformToolset>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup>
-    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\..\Lib\$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\Obj\</IntDir>
-    <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</IgnoreImportLibrary>
-    <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</IgnoreImportLibrary>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\..\Lib\$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\Obj\</IntDir>
-    <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</IgnoreImportLibrary>
-    <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</IgnoreImportLibrary>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</LinkIncremental>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">..\..\..\..\Lib\$(Configuration)\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">Bounds\</IntDir>
-    <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">true</IgnoreImportLibrary>
-    <IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">true</IgnoreImportLibrary>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">true</LinkIncremental>
-    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">true</LinkIncremental>
-  </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <Midl>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MkTypLibCompatible>false</MkTypLibCompatible>
-      <TargetEnvironment>Win32</TargetEnvironment>
-      <GenerateStublessProxies>true</GenerateStublessProxies>
-      <TypeLibraryName>$(IntDir)XAmpleCOMWrapper.tlb</TypeLibraryName>
-      <HeaderFileName>XAmpleCOMWrapper.h</HeaderFileName>
-      <DllDataFileName>
-      </DllDataFileName>
-      <InterfaceIdentifierFileName>XAmpleCOMWrapper_i.c</InterfaceIdentifierFileName>
-      <ProxyFileName>XAmpleCOMWrapper_p.c</ProxyFileName>
-    </Midl>
-    <ClCompile>
-      <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\..\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_USRDLL;_ATL_ATTRIBUTES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
-      <TreatWarningAsError>true</TreatWarningAsError>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-    </ClCompile>
-    <ResourceCompile>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ResourceCompile>
-    <Link>
-      <AdditionalDependencies>icudt.lib;icuind.lib;icuucd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)XAmpleCOMWrapper.dll</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\..\Lib;..\..\..\..\Lib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <MergedIDLBaseFileName>_XAmpleCOMWrapper.idl</MergedIDLBaseFileName>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
-      <ImportLibrary>$(OutDir)XAmpleCOMWrapper.lib</ImportLibrary>
-      <TargetMachine>MachineX86</TargetMachine>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <Midl>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MkTypLibCompatible>false</MkTypLibCompatible>
-      <GenerateStublessProxies>true</GenerateStublessProxies>
-      <TypeLibraryName>$(IntDir)XAmpleCOMWrapper.tlb</TypeLibraryName>
-      <HeaderFileName>XAmpleCOMWrapper.h</HeaderFileName>
-      <DllDataFileName>
-      </DllDataFileName>
-      <InterfaceIdentifierFileName>XAmpleCOMWrapper_i.c</InterfaceIdentifierFileName>
-      <ProxyFileName>XAmpleCOMWrapper_p.c</ProxyFileName>
-    </Midl>
-    <ClCompile>
-      <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\..\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_USRDLL;_ATL_ATTRIBUTES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
-      <TreatWarningAsError>true</TreatWarningAsError>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-    </ClCompile>
-    <ResourceCompile>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ResourceCompile>
-    <Link>
-      <AdditionalDependencies>icudt.lib;icuind.lib;icuucd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)XAmpleCOMWrapper.dll</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\..\Lib;..\..\..\..\Lib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <MergedIDLBaseFileName>_XAmpleCOMWrapper.idl</MergedIDLBaseFileName>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
-      <ImportLibrary>$(OutDir)XAmpleCOMWrapper.lib</ImportLibrary>
-    </Link>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <Midl>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MkTypLibCompatible>false</MkTypLibCompatible>
-      <TargetEnvironment>Win32</TargetEnvironment>
-      <GenerateStublessProxies>true</GenerateStublessProxies>
-      <TypeLibraryName>$(IntDir)XAmpleCOMWrapper.tlb</TypeLibraryName>
-      <HeaderFileName>XAmpleCOMWrapper.h</HeaderFileName>
-      <DllDataFileName>
-      </DllDataFileName>
-      <InterfaceIdentifierFileName>XAmpleCOMWrapper_i.c</InterfaceIdentifierFileName>
-      <ProxyFileName>XAmpleCOMWrapper_p.c</ProxyFileName>
-    </Midl>
-    <ClCompile>
-      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\..\..\..\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_USRDLL;_ATL_ATTRIBUTES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-    </ClCompile>
-    <ResourceCompile>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ResourceCompile>
-    <Link>
-      <AdditionalDependencies>icudt.lib;icuin.lib;icuuc.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)XAmpleCOMWrapper.dll</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\..\Lib;..\..\..\..\Lib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <MergedIDLBaseFileName>_XAmpleCOMWrapper.idl</MergedIDLBaseFileName>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
-      <OptimizeReferences>true</OptimizeReferences>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <ImportLibrary>$(OutDir)XAmpleCOMWrapper.lib</ImportLibrary>
-      <TargetMachine>MachineX86</TargetMachine>
-    </Link>
-    <PostBuildEvent>
-      <Message>Performing registration</Message>
-      <Command>regsvr32 /s /c "$(TargetPath)"</Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <Midl>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MkTypLibCompatible>false</MkTypLibCompatible>
-      <GenerateStublessProxies>true</GenerateStublessProxies>
-      <TypeLibraryName>$(IntDir)XAmpleCOMWrapper.tlb</TypeLibraryName>
-      <HeaderFileName>XAmpleCOMWrapper.h</HeaderFileName>
-      <DllDataFileName>
-      </DllDataFileName>
-      <InterfaceIdentifierFileName>XAmpleCOMWrapper_i.c</InterfaceIdentifierFileName>
-      <ProxyFileName>XAmpleCOMWrapper_p.c</ProxyFileName>
-    </Midl>
-    <ClCompile>
-      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..\..\..\..\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_USRDLL;_ATL_ATTRIBUTES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>true</StringPooling>
-      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <FunctionLevelLinking>true</FunctionLevelLinking>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-    </ClCompile>
-    <ResourceCompile>
-      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ResourceCompile>
-    <Link>
-      <AdditionalDependencies>icudt.lib;icuin.lib;icuuc.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)XAmpleCOMWrapper.dll</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\..\Lib;..\..\..\..\Lib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <MergedIDLBaseFileName>_XAmpleCOMWrapper.idl</MergedIDLBaseFileName>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
-      <OptimizeReferences>true</OptimizeReferences>
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <ImportLibrary>$(OutDir)XAmpleCOMWrapper.lib</ImportLibrary>
-    </Link>
-    <PostBuildEvent>
-      <Message>Performing registration</Message>
-      <Command>regsvr32 /s /c "$(TargetPath)"</Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">
-    <CustomBuildStep>
-      <Message>Making .Net Interop</Message>
-      <Command>tlbimp "$(TargetPath)" /out:"$(TargetDir)\XAmpleCOMWrapperInterop.dll"
-</Command>
-      <Outputs>$(TargetDir)\XAmpleCOMWrapperInterop.dll;%(Outputs)</Outputs>
-    </CustomBuildStep>
-    <Midl>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MkTypLibCompatible>false</MkTypLibCompatible>
-      <TargetEnvironment>Win32</TargetEnvironment>
-      <GenerateStublessProxies>true</GenerateStublessProxies>
-      <TypeLibraryName>$(IntDir)XAmpleCOMWrapper.tlb</TypeLibraryName>
-      <HeaderFileName>XAmpleCOMWrapper.h</HeaderFileName>
-      <DllDataFileName>
-      </DllDataFileName>
-      <InterfaceIdentifierFileName>XAmpleCOMWrapper_i.c</InterfaceIdentifierFileName>
-      <ProxyFileName>XAmpleCOMWrapper_p.c</ProxyFileName>
-    </Midl>
-    <ClCompile>
-      <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\..\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_USRDLL;_ATL_ATTRIBUTES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MinimalRebuild>true</MinimalRebuild>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
-    </ClCompile>
-    <ResourceCompile>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ResourceCompile>
-    <Link>
-      <AdditionalDependencies>icudt.lib;icuind.lib;icuucd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)XAmpleCOMWrapper.dll</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\..\Lib;..\..\..\..\Lib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <MergedIDLBaseFileName>_XAmpleCOMWrapper.idl</MergedIDLBaseFileName>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
-      <ImportLibrary>$(OutDir)XAmpleCOMWrapper.lib</ImportLibrary>
-      <TargetMachine>MachineX86</TargetMachine>
-    </Link>
-    <PostBuildEvent>
-      <Message>Performing registration</Message>
-      <Command>regsvr32 /s /c "$(TargetPath)"</Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">
-    <CustomBuildStep>
-      <Message>Making .Net Interop</Message>
-      <Command>tlbimp "$(TargetPath)" /out:"$(TargetDir)\XAmpleCOMWrapperInterop.dll"
-</Command>
-      <Outputs>$(TargetDir)\XAmpleCOMWrapperInterop.dll;%(Outputs)</Outputs>
-    </CustomBuildStep>
-    <Midl>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <MkTypLibCompatible>false</MkTypLibCompatible>
-      <GenerateStublessProxies>true</GenerateStublessProxies>
-      <TypeLibraryName>$(IntDir)XAmpleCOMWrapper.tlb</TypeLibraryName>
-      <HeaderFileName>XAmpleCOMWrapper.h</HeaderFileName>
-      <DllDataFileName>
-      </DllDataFileName>
-      <InterfaceIdentifierFileName>XAmpleCOMWrapper_i.c</InterfaceIdentifierFileName>
-      <ProxyFileName>XAmpleCOMWrapper_p.c</ProxyFileName>
-    </Midl>
-    <ClCompile>
-      <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\..\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_USRDLL;_ATL_ATTRIBUTES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level4</WarningLevel>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
-    </ClCompile>
-    <ResourceCompile>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <Culture>0x0409</Culture>
-      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ResourceCompile>
-    <Link>
-      <AdditionalDependencies>icudt.lib;icuind.lib;icuucd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <OutputFile>$(OutDir)XAmpleCOMWrapper.dll</OutputFile>
-      <AdditionalLibraryDirectories>..\..\..\..\Lib;..\..\..\..\Lib\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <MergedIDLBaseFileName>_XAmpleCOMWrapper.idl</MergedIDLBaseFileName>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
-      <ImportLibrary>$(OutDir)XAmpleCOMWrapper.lib</ImportLibrary>
-    </Link>
-    <PostBuildEvent>
-      <Message>Performing registration</Message>
-      <Command>regsvr32 /s /c "$(TargetPath)"</Command>
-    </PostBuildEvent>
-  </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="XAmpleCOMWrapper.cpp" />
-    <ClCompile Include="XAmpleWrapper.cpp" />
-    <ClCompile Include="XAmpleWrapperCore.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Resource.h" />
-    <ClInclude Include="stdafx.h" />
-    <ClInclude Include="XAmpleWrapper.h" />
-    <ClInclude Include="XAmpleWrapperCore.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="XAmpleCOMWrapper.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="XAmpleCOMWrapper.rgs" />
-    <CustomBuildStep Include="ReadMe.txt">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-    </CustomBuildStep>
-  </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
-</Project>
+<?xml version='1.0' encoding='utf-8'?>
+<ns0:Project xmlns:ns0="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="Current">
+  <ns0:ItemGroup Label="ProjectConfigurations">
+    <ns0:ProjectConfiguration Include="Bounds|x64">
+      <ns0:Configuration>Bounds</ns0:Configuration>
+      <ns0:Platform>x64</ns0:Platform>
+    </ns0:ProjectConfiguration>
+    <ns0:ProjectConfiguration Include="Debug|x64">
+      <ns0:Configuration>Debug</ns0:Configuration>
+      <ns0:Platform>x64</ns0:Platform>
+    </ns0:ProjectConfiguration>
+    <ns0:ProjectConfiguration Include="Release|x64">
+      <ns0:Configuration>Release</ns0:Configuration>
+      <ns0:Platform>x64</ns0:Platform>
+    </ns0:ProjectConfiguration>
+  </ns0:ItemGroup>
+  <ns0:PropertyGroup Label="Globals">
+    <ns0:ProjectGuid>{D841AF80-C339-4523-9919-1E645F41D08E}</ns0:ProjectGuid>
+    <ns0:RootNamespace>XAmpleCOMWrapper</ns0:RootNamespace>
+    <ns0:Keyword>AtlProj</ns0:Keyword>
+  </ns0:PropertyGroup>
+  <ns0:Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <ns0:PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'" Label="Configuration">
+    <ns0:ConfigurationType>DynamicLibrary</ns0:ConfigurationType>
+    <ns0:UseOfAtl>Static</ns0:UseOfAtl>
+    <ns0:CharacterSet>MultiByte</ns0:CharacterSet>
+    <ns0:PlatformToolset>v143</ns0:PlatformToolset>
+  </ns0:PropertyGroup>
+  <ns0:PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ns0:ConfigurationType>DynamicLibrary</ns0:ConfigurationType>
+    <ns0:UseOfAtl>Static</ns0:UseOfAtl>
+    <ns0:CharacterSet>MultiByte</ns0:CharacterSet>
+    <ns0:PlatformToolset>v143</ns0:PlatformToolset>
+  </ns0:PropertyGroup>
+  <ns0:PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ns0:ConfigurationType>DynamicLibrary</ns0:ConfigurationType>
+    <ns0:UseOfAtl>Static</ns0:UseOfAtl>
+    <ns0:CharacterSet>MultiByte</ns0:CharacterSet>
+    <ns0:PlatformToolset>v143</ns0:PlatformToolset>
+  </ns0:PropertyGroup>
+  <ns0:Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ns0:ImportGroup Label="ExtensionSettings">
+  </ns0:ImportGroup>
+  <ns0:ImportGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'" Label="PropertySheets">
+    <ns0:Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <ns0:Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ns0:ImportGroup>
+  <ns0:ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <ns0:Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <ns0:Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ns0:ImportGroup>
+  <ns0:ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <ns0:Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <ns0:Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ns0:ImportGroup>
+  <ns0:PropertyGroup Label="UserMacros" />
+  <ns0:PropertyGroup>
+    <ns0:_ProjectFileVersion>10.0.30319.1</ns0:_ProjectFileVersion>
+    <ns0:IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ns0:IgnoreImportLibrary>
+    <ns0:LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ns0:LinkIncremental>
+    <ns0:IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ns0:IgnoreImportLibrary>
+    <ns0:LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ns0:LinkIncremental>
+    <ns0:IgnoreImportLibrary Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">true</ns0:IgnoreImportLibrary>
+    <ns0:LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">true</ns0:LinkIncremental>
+  </ns0:PropertyGroup>
+  <ns0:ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ns0:Midl>
+      <ns0:PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</ns0:PreprocessorDefinitions>
+      <ns0:MkTypLibCompatible>false</ns0:MkTypLibCompatible>
+      <ns0:GenerateStublessProxies>true</ns0:GenerateStublessProxies>
+      <ns0:TypeLibraryName>$(IntDir)XAmpleCOMWrapper.tlb</ns0:TypeLibraryName>
+      <ns0:HeaderFileName>XAmpleCOMWrapper.h</ns0:HeaderFileName>
+      <ns0:DllDataFileName>
+      </ns0:DllDataFileName>
+      <ns0:InterfaceIdentifierFileName>XAmpleCOMWrapper_i.c</ns0:InterfaceIdentifierFileName>
+      <ns0:ProxyFileName>XAmpleCOMWrapper_p.c</ns0:ProxyFileName>
+    </ns0:Midl>
+    <ns0:ClCompile>
+      <ns0:Optimization>Disabled</ns0:Optimization>
+      <ns0:AdditionalIncludeDirectories>..\..\..\..\Include;%(AdditionalIncludeDirectories)</ns0:AdditionalIncludeDirectories>
+      <ns0:PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_USRDLL;_ATL_ATTRIBUTES;%(PreprocessorDefinitions)</ns0:PreprocessorDefinitions>
+      <ns0:BasicRuntimeChecks>EnableFastChecks</ns0:BasicRuntimeChecks>
+      <ns0:RuntimeLibrary>MultiThreadedDebugDLL</ns0:RuntimeLibrary>
+      <ns0:PrecompiledHeader>Use</ns0:PrecompiledHeader>
+      <ns0:WarningLevel>Level4</ns0:WarningLevel>
+      <ns0:TreatWarningAsError>true</ns0:TreatWarningAsError>
+      <ns0:DebugInformationFormat>ProgramDatabase</ns0:DebugInformationFormat>
+    </ns0:ClCompile>
+    <ns0:ResourceCompile>
+      <ns0:PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</ns0:PreprocessorDefinitions>
+      <ns0:Culture>0x0409</ns0:Culture>
+      <ns0:AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</ns0:AdditionalIncludeDirectories>
+    </ns0:ResourceCompile>
+    <ns0:Link>
+      <ns0:AdditionalDependencies>icudt.lib;icuind.lib;icuucd.lib;%(AdditionalDependencies)</ns0:AdditionalDependencies>
+      <ns0:OutputFile>$(OutDir)XAmpleCOMWrapper.dll</ns0:OutputFile>
+      <ns0:AdditionalLibraryDirectories>..\..\..\..\Lib;..\..\..\..\Lib\$(Configuration);%(AdditionalLibraryDirectories)</ns0:AdditionalLibraryDirectories>
+      <ns0:MergedIDLBaseFileName>_XAmpleCOMWrapper.idl</ns0:MergedIDLBaseFileName>
+      <ns0:GenerateDebugInformation>true</ns0:GenerateDebugInformation>
+      <ns0:SubSystem>Windows</ns0:SubSystem>
+      <ns0:ImportLibrary>$(OutDir)XAmpleCOMWrapper.lib</ns0:ImportLibrary>
+    </ns0:Link>
+  </ns0:ItemDefinitionGroup>
+  <ns0:ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ns0:Midl>
+      <ns0:PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</ns0:PreprocessorDefinitions>
+      <ns0:MkTypLibCompatible>false</ns0:MkTypLibCompatible>
+      <ns0:GenerateStublessProxies>true</ns0:GenerateStublessProxies>
+      <ns0:TypeLibraryName>$(IntDir)XAmpleCOMWrapper.tlb</ns0:TypeLibraryName>
+      <ns0:HeaderFileName>XAmpleCOMWrapper.h</ns0:HeaderFileName>
+      <ns0:DllDataFileName>
+      </ns0:DllDataFileName>
+      <ns0:InterfaceIdentifierFileName>XAmpleCOMWrapper_i.c</ns0:InterfaceIdentifierFileName>
+      <ns0:ProxyFileName>XAmpleCOMWrapper_p.c</ns0:ProxyFileName>
+    </ns0:Midl>
+    <ns0:ClCompile>
+      <ns0:InlineFunctionExpansion>OnlyExplicitInline</ns0:InlineFunctionExpansion>
+      <ns0:AdditionalIncludeDirectories>..\..\..\..\Include;%(AdditionalIncludeDirectories)</ns0:AdditionalIncludeDirectories>
+      <ns0:PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;_USRDLL;_ATL_ATTRIBUTES;%(PreprocessorDefinitions)</ns0:PreprocessorDefinitions>
+      <ns0:StringPooling>true</ns0:StringPooling>
+      <ns0:RuntimeLibrary>MultiThreadedDLL</ns0:RuntimeLibrary>
+      <ns0:FunctionLevelLinking>true</ns0:FunctionLevelLinking>
+      <ns0:PrecompiledHeader>Use</ns0:PrecompiledHeader>
+      <ns0:WarningLevel>Level3</ns0:WarningLevel>
+      <ns0:DebugInformationFormat>ProgramDatabase</ns0:DebugInformationFormat>
+    </ns0:ClCompile>
+    <ns0:ResourceCompile>
+      <ns0:PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</ns0:PreprocessorDefinitions>
+      <ns0:Culture>0x0409</ns0:Culture>
+      <ns0:AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</ns0:AdditionalIncludeDirectories>
+    </ns0:ResourceCompile>
+    <ns0:Link>
+      <ns0:AdditionalDependencies>icudt.lib;icuin.lib;icuuc.lib;%(AdditionalDependencies)</ns0:AdditionalDependencies>
+      <ns0:OutputFile>$(OutDir)XAmpleCOMWrapper.dll</ns0:OutputFile>
+      <ns0:AdditionalLibraryDirectories>..\..\..\..\Lib;..\..\..\..\Lib\$(Configuration);%(AdditionalLibraryDirectories)</ns0:AdditionalLibraryDirectories>
+      <ns0:MergedIDLBaseFileName>_XAmpleCOMWrapper.idl</ns0:MergedIDLBaseFileName>
+      <ns0:GenerateDebugInformation>true</ns0:GenerateDebugInformation>
+      <ns0:SubSystem>Windows</ns0:SubSystem>
+      <ns0:OptimizeReferences>true</ns0:OptimizeReferences>
+      <ns0:EnableCOMDATFolding>true</ns0:EnableCOMDATFolding>
+      <ns0:ImportLibrary>$(OutDir)XAmpleCOMWrapper.lib</ns0:ImportLibrary>
+    </ns0:Link>
+    <ns0:PostBuildEvent>
+      <ns0:Message>Performing registration</ns0:Message>
+      <ns0:Command>regsvr32 /s /c "$(TargetPath)"</ns0:Command>
+    </ns0:PostBuildEvent>
+  </ns0:ItemDefinitionGroup>
+  <ns0:ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">
+    <ns0:CustomBuildStep>
+      <ns0:Message>Making .Net Interop</ns0:Message>
+      <ns0:Command>tlbimp "$(TargetPath)" /out:"$(TargetDir)\XAmpleCOMWrapperInterop.dll"
+</ns0:Command>
+      <ns0:Outputs>$(TargetDir)\XAmpleCOMWrapperInterop.dll;%(Outputs)</ns0:Outputs>
+    </ns0:CustomBuildStep>
+    <ns0:Midl>
+      <ns0:PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</ns0:PreprocessorDefinitions>
+      <ns0:MkTypLibCompatible>false</ns0:MkTypLibCompatible>
+      <ns0:GenerateStublessProxies>true</ns0:GenerateStublessProxies>
+      <ns0:TypeLibraryName>$(IntDir)XAmpleCOMWrapper.tlb</ns0:TypeLibraryName>
+      <ns0:HeaderFileName>XAmpleCOMWrapper.h</ns0:HeaderFileName>
+      <ns0:DllDataFileName>
+      </ns0:DllDataFileName>
+      <ns0:InterfaceIdentifierFileName>XAmpleCOMWrapper_i.c</ns0:InterfaceIdentifierFileName>
+      <ns0:ProxyFileName>XAmpleCOMWrapper_p.c</ns0:ProxyFileName>
+    </ns0:Midl>
+    <ns0:ClCompile>
+      <ns0:Optimization>Disabled</ns0:Optimization>
+      <ns0:AdditionalIncludeDirectories>..\..\..\..\Include;%(AdditionalIncludeDirectories)</ns0:AdditionalIncludeDirectories>
+      <ns0:PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;_USRDLL;_ATL_ATTRIBUTES;%(PreprocessorDefinitions)</ns0:PreprocessorDefinitions>
+      <ns0:BasicRuntimeChecks>EnableFastChecks</ns0:BasicRuntimeChecks>
+      <ns0:RuntimeLibrary>MultiThreadedDebugDLL</ns0:RuntimeLibrary>
+      <ns0:PrecompiledHeader>Use</ns0:PrecompiledHeader>
+      <ns0:WarningLevel>Level4</ns0:WarningLevel>
+      <ns0:DebugInformationFormat>ProgramDatabase</ns0:DebugInformationFormat>
+    </ns0:ClCompile>
+    <ns0:ResourceCompile>
+      <ns0:PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</ns0:PreprocessorDefinitions>
+      <ns0:Culture>0x0409</ns0:Culture>
+      <ns0:AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</ns0:AdditionalIncludeDirectories>
+    </ns0:ResourceCompile>
+    <ns0:Link>
+      <ns0:AdditionalDependencies>icudt.lib;icuind.lib;icuucd.lib;%(AdditionalDependencies)</ns0:AdditionalDependencies>
+      <ns0:OutputFile>$(OutDir)XAmpleCOMWrapper.dll</ns0:OutputFile>
+      <ns0:AdditionalLibraryDirectories>..\..\..\..\Lib;..\..\..\..\Lib\$(Configuration);%(AdditionalLibraryDirectories)</ns0:AdditionalLibraryDirectories>
+      <ns0:MergedIDLBaseFileName>_XAmpleCOMWrapper.idl</ns0:MergedIDLBaseFileName>
+      <ns0:GenerateDebugInformation>true</ns0:GenerateDebugInformation>
+      <ns0:SubSystem>Windows</ns0:SubSystem>
+      <ns0:ImportLibrary>$(OutDir)XAmpleCOMWrapper.lib</ns0:ImportLibrary>
+    </ns0:Link>
+    <ns0:PostBuildEvent>
+      <ns0:Message>Performing registration</ns0:Message>
+      <ns0:Command>regsvr32 /s /c "$(TargetPath)"</ns0:Command>
+    </ns0:PostBuildEvent>
+  </ns0:ItemDefinitionGroup>
+  <ns0:ItemGroup>
+    <ns0:ClCompile Include="stdafx.cpp">
+      <ns0:PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">Create</ns0:PrecompiledHeader>
+      <ns0:PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">Create</ns0:PrecompiledHeader>
+      <ns0:PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</ns0:PrecompiledHeader>
+      <ns0:PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</ns0:PrecompiledHeader>
+      <ns0:PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</ns0:PrecompiledHeader>
+      <ns0:PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</ns0:PrecompiledHeader>
+    </ns0:ClCompile>
+    <ns0:ClCompile Include="XAmpleCOMWrapper.cpp" />
+    <ns0:ClCompile Include="XAmpleWrapper.cpp" />
+    <ns0:ClCompile Include="XAmpleWrapperCore.cpp" />
+  </ns0:ItemGroup>
+  <ns0:ItemGroup>
+    <ns0:ClInclude Include="Resource.h" />
+    <ns0:ClInclude Include="stdafx.h" />
+    <ns0:ClInclude Include="XAmpleWrapper.h" />
+    <ns0:ClInclude Include="XAmpleWrapperCore.h" />
+  </ns0:ItemGroup>
+  <ns0:ItemGroup>
+    <ns0:ResourceCompile Include="XAmpleCOMWrapper.rc" />
+  </ns0:ItemGroup>
+  <ns0:ItemGroup>
+    <ns0:None Include="XAmpleCOMWrapper.rgs" />
+    <ns0:CustomBuildStep Include="ReadMe.txt">
+      <ns0:ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ns0:ExcludedFromBuild>
+      <ns0:ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ns0:ExcludedFromBuild>
+    </ns0:CustomBuildStep>
+  </ns0:ItemGroup>
+  <ns0:Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ns0:ImportGroup Label="ExtensionTargets">
+  </ns0:ImportGroup>
+</ns0:Project>

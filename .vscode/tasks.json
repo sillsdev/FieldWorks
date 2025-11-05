@@ -6,15 +6,6 @@
   "inputs": [],
   "tasks": [
     {
-      "label": "build recent",
-      "type": "shell",
-      "command": "Build/build-recent",
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      }
-    },
-    {
       "label": "Whitespace check (CI parity)",
       "type": "shell",
       "command": "./Build/Agent/check-and-fix-whitespace.ps1",
@@ -46,26 +37,6 @@
             "-Command"
           ]
         }
-      }
-    },
-    {
-      "label": "remakefw",
-      "type": "shell",
-      "command": "cd Build && build.bat /t:remakefw",
-      "group": "build",
-      "linux": {
-        "command": ". environ && cd Build && ./build /t:remakefw"
-      },
-      "problemMatcher": [
-        "$msCompile"
-      ]
-    },
-    {
-      "label": "remakefw + test",
-      "type": "shell",
-      "command": "cd Build && build.bat /t:remakefw /p:Action=Test",
-      "linux": {
-        "command": ". environ && cd Build && ./build /t:remakefw /p:Action=Test"
       }
     },
     {

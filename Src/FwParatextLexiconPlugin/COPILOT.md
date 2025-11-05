@@ -10,7 +10,7 @@ status: draft
 Integration plugin enabling Paratext to access FieldWorks lexicon data. Implements Paratext.LexicalContracts interfaces (LexiconPlugin, LexiconPluginV2) allowing Paratext users to query and utilize FLEx lexicons during translation work. FwLexiconPlugin main class provides bidirectional access between Paratext and FieldWorks lexical data. FdoLexicon exposes lexicon as Lexicon/LexiconV2 interface. Supporting classes handle project selection (ChooseFdoProjectForm), data structures (FdoLexEntryLexeme, FdoWordAnalysis), and UI integration. Enables translators to leverage rich FLEx lexical resources within Paratext workflow.
 
 ## Architecture
-C# class library (.NET Framework 4.6.2) implementing Paratext plugin contracts. FwLexiconPlugin (attributed with [LexiconPlugin]) is main plugin class maintaining lexicon cache (FdoLexiconCollection) and LCM cache (LcmCacheCollection). COM activation context management for FDO interop. ILRepack merges dependencies into single plugin DLL. Test project FwParatextLexiconPluginTests validates functionality. 4026 lines total.
+C# class library (.NET Framework 4.8.x) implementing Paratext plugin contracts. FwLexiconPlugin (attributed with [LexiconPlugin]) is main plugin class maintaining lexicon cache (FdoLexiconCollection) and LCM cache (LcmCacheCollection). COM activation context management for FDO interop. ILRepack merges dependencies into single plugin DLL. Test project FwParatextLexiconPluginTests validates functionality. 4026 lines total.
 
 ## Key Components
 - **FwLexiconPlugin** class (FwLexiconPlugin.cs): Main plugin entry point
@@ -47,7 +47,7 @@ C# class library (.NET Framework 4.6.2) implementing Paratext plugin contracts. 
 - **Event args**: FdoLexemeAddedEventArgs, FdoLexiconGlossAddedEventArgs, FdoLexiconSenseAddedEventArgs
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: Library (plugin DLL)
 - **Paratext.LexicalContracts**: Paratext plugin interfaces
 - **SIL.LCModel**: FieldWorks data model access
@@ -89,11 +89,11 @@ C# class library (.NET Framework 4.6.2) implementing Paratext plugin contracts. 
 - Directory locations via ParatextLexiconPluginDirectoryFinder
 
 ## Build Information
-- **Project file**: FwParatextLexiconPlugin.csproj (net462, OutputType=Library)
+- **Project file**: FwParatextLexiconPlugin.csproj (net48, OutputType=Library)
 - **Test project**: FwParatextLexiconPluginTests/
 - **ILRepack**: ILRepack.targets merges dependencies into single DLL
 - **Output**: FwParatextLexiconPlugin.dll (deployed to Paratext plugins)
-- **Build**: Via top-level FW.sln
+- **Build**: Via top-level FieldWorks.sln
 - **Run tests**: `dotnet test FwParatextLexiconPluginTests/`
 
 ## Interfaces and Data Models
@@ -151,8 +151,8 @@ C# class library (.NET Framework 4.6.2) implementing Paratext plugin contracts. 
 - **Common/ScriptureUtils**: Paratext utilities
 
 ## References
-- **Project files**: FwParatextLexiconPlugin.csproj (net462), FwParatextLexiconPluginTests/, ILRepack.targets
-- **Target frameworks**: .NET Framework 4.6.2
+- **Project files**: FwParatextLexiconPlugin.csproj (net48), FwParatextLexiconPluginTests/, ILRepack.targets
+- **Target frameworks**: .NET Framework 4.8.x
 - **Key C# files**: FwLexiconPlugin.cs, FwLexiconPluginV2.cs, FdoLexicon.cs, FdoLexEntryLexeme.cs, FdoWordAnalysis.cs, and others
 - **Total lines of code**: 4026
 - **Output**: FwParatextLexiconPlugin.dll (plugin for Paratext)

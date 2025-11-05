@@ -10,7 +10,7 @@ status: draft
 Shared UI controls and dialogs library for FLEx lexicon and text features. Provides reusable lexicon-specific dialogs (InsertEntryDlg, AddAllomorphDlg, AddNewSenseDlg), search dialogs (EntryGoDlg, ReverseGoDlg, BaseGoDlg), import wizards (LexImportWizard, CombineImportDlg), configuration dialogs (ConfigureHomographDlg, LexiconSettingsDlg), and specialized controls (FeatureStructureTreeView, InflectionClassPopupTreeManager, PopupTree). Critical shared infrastructure for Lexicon/, LexTextDll/, and other lexicon UI components. Massive 48.1K line library with 100+ source files covering comprehensive lexicon UI needs.
 
 ## Architecture
-C# library (net462, OutputType=Library) organizing lexicon/text UI components for reuse. BaseGoDlg abstract base for search dialogs. InsertEntryDlg family for adding lexicon entries. LexImportWizard multi-step import process. PopupTreeManager family for hierarchical selection (InflectionClassPopupTreeManager, InflectionFeaturePopupTreeManager, PhonologicalFeaturePopupTreeManager). DataNotebook/ subfolder for notebook-style controls. Heavy integration with LCModel (ILexEntry, ILexSense, IMoForm), Views rendering, XCore framework.
+C# library (net48, OutputType=Library) organizing lexicon/text UI components for reuse. BaseGoDlg abstract base for search dialogs. InsertEntryDlg family for adding lexicon entries. LexImportWizard multi-step import process. PopupTreeManager family for hierarchical selection (InflectionClassPopupTreeManager, InflectionFeaturePopupTreeManager, PhonologicalFeaturePopupTreeManager). DataNotebook/ subfolder for notebook-style controls. Heavy integration with LCModel (ILexEntry, ILexSense, IMoForm), Views rendering, XCore framework.
 
 ## Key Components
 - **InsertEntryDlg** (InsertEntryDlg.cs, 1.7K lines): Insert/find lexicon entries
@@ -74,7 +74,7 @@ C# library (net462, OutputType=Library) organizing lexicon/text UI components fo
   - Interface for pattern-based controls
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: Library
 - Windows Forms (dialogs, custom controls)
 - LCModel (data model)
@@ -118,10 +118,10 @@ C# library (net462, OutputType=Library) organizing lexicon/text UI components fo
 - **Import settings**: LexImportWizard configuration
 
 ## Build Information
-- **Project file**: LexTextControls.csproj (net462, OutputType=Library)
+- **Project file**: LexTextControls.csproj (net48, OutputType=Library)
 - **Test project**: LexTextControlsTests/
 - **Output**: SIL.FieldWorks.LexTextControls.dll
-- **Build**: Via top-level FW.sln or: `msbuild LexTextControls.csproj`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild LexTextControls.csproj`
 - **Run tests**: `dotnet test LexTextControlsTests/`
 
 ## Interfaces and Data Models
@@ -187,7 +187,7 @@ Loaded by Lexicon/, LexTextDll/, and other lexicon UI components. Dialogs instan
 - **LexTextExe/**: FLEx application
 
 ## References
-- **Project file**: LexTextControls.csproj (net462, OutputType=Library)
+- **Project file**: LexTextControls.csproj (net48, OutputType=Library)
 - **Key C# files**: InsertEntryDlg.cs (1.7K), LexImportWizard family (10K+ combined), BaseGoDlg.cs (947), FeatureStructureTreeView.cs (386), AddNewSenseDlg.cs (372), CombineImportDlg.cs (348), EntryGoDlg.cs (236), AddWritingSystemButton.cs (229), EntryObjects.cs (208), AddAllomorphDlg.cs (197), and 90+ more files
 - **Test project**: LexTextControlsTests/
 - **Total lines of code**: 48129

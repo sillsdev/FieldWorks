@@ -10,7 +10,7 @@ status: reviewed
 Parser configuration and testing UI components. Provides TryAWordDlg for interactive single-word parsing with trace visualization, ParserReportsDialog for viewing parse batch results and statistics, ImportWordSetDlg for bulk wordlist import, ParserParametersDlg for parser configuration, and XAmpleWordGrammarDebugger for grammar file debugging. Enables linguists to refine and validate morphological descriptions by testing parser behavior, viewing parse traces (HC XML or XAmple SGML), managing parser settings, and debugging morphological analyses.
 
 ## Architecture
-C# library (net462) with 28 source files (~5.9K lines). Mix of WinForms (TryAWordDlg, ImportWordSetDlg, ParserParametersDlg) and WPF/XAML (ParserReportsDialog, ParserReportDialog) with MVVM view models. Integrates Gecko WebBrowser control for HTML trace display via GeneratedHtmlViewer.
+C# library (net48) with 28 source files (~5.9K lines). Mix of WinForms (TryAWordDlg, ImportWordSetDlg, ParserParametersDlg) and WPF/XAML (ParserReportsDialog, ParserReportDialog) with MVVM view models. Integrates Gecko WebBrowser control for HTML trace display via GeneratedHtmlViewer.
 
 ## Key Components
 
@@ -66,7 +66,7 @@ C# library (net462) with 28 source files (~5.9K lines). Mix of WinForms (TryAWor
 
 ## Technology Stack
 - **Languages**: C#
-- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Target framework**: .NET Framework 4.8.x (net48)
 - **UI frameworks**:
   - Windows Forms (TryAWordDlg, ImportWordSetDlg, ParserParametersDlg)
   - WPF/XAML (ParserReportsDialog, ParserReportDialog with MVVM pattern)
@@ -131,8 +131,8 @@ C# library (net462) with 28 source files (~5.9K lines). Mix of WinForms (TryAWor
 - **Report retention**: ParserReportsDialog allows deleting old batch reports (stored in LCModel as ParserReport objects)
 
 ## Build Information
-- Project type: C# class library (net462)
-- Build: `msbuild ParserUI.csproj` or `dotnet build` (from FW.sln)
+- Project type: C# class library (net48)
+- Build: `msbuild ParserUI.csproj` or `dotnet build` (from FieldWorks.sln)
 - Output: ParserUI.dll
 - Dependencies: Gecko WebBrowser (via NuGet), XCore, ParserCore, RootSites, FwUtils, LCModel
 - UI technologies: WinForms (dialogs, controls), WPF/XAML (reports dialogs with MVVM), Gecko WebBrowser (HTML trace display)
@@ -214,7 +214,7 @@ C# library (net462) with 28 source files (~5.9K lines). Mix of WinForms (TryAWor
 - **Test data**: ParserUITests/WordGrammarDebuggingInputsAndResults/
   - 14 XML files for grammar debugging scenarios (EmptyWord.xml, M3FXTDump.xml, bilikeszi*.xml, bili*BadInflection.xml)
   - 3 XSLT files for grammar transform testing (TestUnificationViaXSLT.xsl, RequiredOptionalPrefixSlotsWordGrammarDebugger.xsl, TLPSameSlotTwiceWordGrammarDebugger.xsl)
-- **Test approach**: 
+- **Test approach**:
   - Unit tests for grammar debugging logic
   - XML-based test scenarios for XSLT transforms
   - Mock/fake LcmCache for isolated testing
@@ -226,7 +226,7 @@ C# library (net462) with 28 source files (~5.9K lines). Mix of WinForms (TryAWor
   - View parser reports, verify statistics display correctly
 - **Test runners**:
   - Visual Studio Test Explorer
-  - Via FW.sln top-level build
+  - Via FieldWorks.sln top-level build
 
 ## Usage Hints
 - **Interactive word testing**:
@@ -278,7 +278,7 @@ C# library (net462) with 28 source files (~5.9K lines). Mix of WinForms (TryAWor
 - **Key interfaces**: IParserTrace (HCTrace, XAmpleTrace implementations)
 - **View models**: ParserReportViewModel, ParserReportsViewModel (WPF MVVM pattern)
 - **Converters**: FileTimeToDateTimeConverter, MillisecondsToTimeSpanConverter, PositiveIntToRedBrushConverter (WPF value converters)
-- **Target framework**: net462
+- **Target framework**: net48
 
 ## Auto-Generated Project and File References
 - Project files:

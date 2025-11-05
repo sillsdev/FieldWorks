@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
 			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName,
 				"Lexeme" + DictionaryConfigurationModel.FileExtension);
-			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
+			Assert.That(File.Exists(newConfigFilePath), Is.False, "should not yet be migrated");
 			Directory.CreateDirectory(configSettingsDir);
 			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
 				@"<layoutType label='Lexeme-based (complex forms as main entries)' layout='publishStem'><configure class='LexEntry' label='Main Entry' layout='publishStemEntry' />",
@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var migrator = new DictionaryConfigurationMigrator(m_propertyTable, m_mediator);
 			migrator.MigrateOldConfigurationsIfNeeded(); // SUT
 			var updatedConfigModel = new DictionaryConfigurationModel(newConfigFilePath, Cache);
-			Assert.AreEqual(DictionaryConfigurationMigrator.VersionCurrent, updatedConfigModel.Version);
+			Assert.That(updatedConfigModel.Version, Is.EqualTo(DictionaryConfigurationMigrator.VersionCurrent));
 			RobustIO.DeleteDirectoryAndContents(configSettingsDir);
 		}
 
@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
 			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName,
 				"Lexeme" + DictionaryConfigurationModel.FileExtension);
-			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
+			Assert.That(File.Exists(newConfigFilePath), Is.False, "should not yet be migrated");
 			Directory.CreateDirectory(configSettingsDir);
 			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
 				@"<layoutType label='Lexeme-based (complex forms as main entries)' layout='publishStem'><configure class='LexEntry' label='Main Entry' layout='publishStemEntry' />",
@@ -89,8 +89,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var migrator = new DictionaryConfigurationMigrator(m_propertyTable, m_mediator);
 			Assert.DoesNotThrow(() => migrator.MigrateOldConfigurationsIfNeeded(), "ArgumentException indicates localized labels."); // SUT
 			var updatedConfigModel = new DictionaryConfigurationModel(newConfigFilePath, Cache);
-			Assert.AreEqual(2, updatedConfigModel.Parts.Count, "Should have 2 top-level nodes");
-			Assert.AreEqual("Main Entry", updatedConfigModel.Parts[0].Label);
+			Assert.That(updatedConfigModel.Parts.Count, Is.EqualTo(2), "Should have 2 top-level nodes");
+			Assert.That(updatedConfigModel.Parts[0].Label, Is.EqualTo("Main Entry"));
 			RobustIO.DeleteDirectoryAndContents(configSettingsDir);
 		}
 
@@ -100,7 +100,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
 			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName,
 				"AllReversalIndexes" + DictionaryConfigurationModel.FileExtension);
-			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
+			Assert.That(File.Exists(newConfigFilePath), Is.False, "should not yet be migrated");
 			Directory.CreateDirectory(configSettingsDir);
 			File.WriteAllLines(Path.Combine(configSettingsDir, "Test.fwlayout"), new[]{
 				@"<layoutType label='All Reversal Indexes' layout='publishReversal'>",
@@ -115,14 +115,14 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				var bibNode = refdSenseChildren[i];
 				if (!bibNode.Label.StartsWith("Bibliography"))
 					continue;
-				StringAssert.StartsWith("Bibliography (", bibNode.Label, "Should specify (entry|sense), lest we never know");
-				Assert.False(bibNode.IsCustomField, bibNode.Label + " should not be custom.");
+				Assert.That(bibNode.Label, Does.StartWith("Bibliography ("), "Should specify (entry|sense), lest we never know");
+				Assert.That(bibNode.IsCustomField, Is.False, bibNode.Label + " should not be custom.");
 				// Rough test to ensure Bibliography nodes aren't bumped to the end of the list. In the defaults, the later Bibliography
 				// node is a little more than five nodes from the end
-				Assert.LessOrEqual(i, refdSenseChildren.Count - 5, "Bibliography nodes should not have been bumped to the end of the list");
+				Assert.That(i, Is.LessThanOrEqualTo(refdSenseChildren.Count - 5), "Bibliography nodes should not have been bumped to the end of the list");
 				++bibCount;
 			}
-			Assert.AreEqual(2, bibCount, "Should be exactly two Bibliography nodes (sense and entry)");
+			Assert.That(bibCount, Is.EqualTo(2), "Should be exactly two Bibliography nodes (sense and entry)");
 			RobustIO.DeleteDirectoryAndContents(configSettingsDir);
 		}
 
@@ -142,9 +142,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var model = DictionaryConfigurationModelTests.CreateSimpleSharingModel(mainEntry, sharedSenses);
 			CssGeneratorTests.PopulateFieldsForTesting(model); // PopulateFieldsForTesting populates each node's Label with its FieldDescription
 
-			Assert.AreEqual("LexEntry > Senses > SharedSenses > Subsenses", DictionaryConfigurationMigrator.BuildPathStringFromNode(subsenses));
-			Assert.AreEqual("LexEntry > Senses > Subsenses", DictionaryConfigurationMigrator.BuildPathStringFromNode(subsenses, false));
-			Assert.AreEqual("LexEntry", DictionaryConfigurationMigrator.BuildPathStringFromNode(mainEntry));
+			Assert.That(DictionaryConfigurationMigrator.BuildPathStringFromNode(subsenses), Is.EqualTo("LexEntry > Senses > SharedSenses > Subsenses"));
+			Assert.That(DictionaryConfigurationMigrator.BuildPathStringFromNode(subsenses, false), Is.EqualTo("LexEntry > Senses > Subsenses"));
+			Assert.That(DictionaryConfigurationMigrator.BuildPathStringFromNode(mainEntry), Is.EqualTo("LexEntry"));
 		}
 
 		[Test]
@@ -180,19 +180,19 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var newModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { newMain } };
 
 			// Verify valid starting point
-			Assert.AreNotEqual("{", oldModel.Parts[0].Children[0].Before, "Invalid preconditions");
-			Assert.AreNotEqual("}", oldModel.Parts[0].Children[0].After, "Invalid preconditions");
-			Assert.AreNotEqual(",", oldModel.Parts[0].Children[0].Between, "Invalid preconditions");
-			Assert.AreNotEqual("Stylish", oldModel.Parts[0].Children[0].Style, "Invalid preconditions");
-			Assert.True(oldModel.Parts[0].Children[0].IsEnabled, "Invalid preconditions");
+			Assert.That(oldModel.Parts[0].Children[0].Before, Is.Not.EqualTo("{").Within("Invalid preconditions"));
+			Assert.That(oldModel.Parts[0].Children[0].After, Is.Not.EqualTo("}").Within("Invalid preconditions"));
+			Assert.That(oldModel.Parts[0].Children[0].Between, Is.Not.EqualTo(",").Within("Invalid preconditions"));
+			Assert.That(oldModel.Parts[0].Children[0].Style, Is.Not.EqualTo("Stylish").Within("Invalid preconditions"));
+			Assert.That(oldModel.Parts[0].Children[0].IsEnabled, Is.True, "Invalid preconditions");
 
 			DictionaryConfigurationMigrator.LoadConfigWithCurrentDefaults(oldModel, newModel); // SUT
-			Assert.AreEqual(2, oldModel.Parts[0].Children[0].Children.Count, "Old non-matching part was not retained");
-			Assert.AreEqual("{", oldModel.Parts[0].Children[0].Before, "Before not copied from new defaults");
-			Assert.AreEqual("}", oldModel.Parts[0].Children[0].After, "After not copied from new defaults");
-			Assert.AreEqual(",", oldModel.Parts[0].Children[0].Between, "Between not copied from new defaults");
-			Assert.AreEqual("Stylish", oldModel.Parts[0].Children[0].Style, "Style not copied from new defaults");
-			Assert.False(oldModel.Parts[0].Children[0].IsEnabled, "IsEnabled value not copied from new defaults");
+			Assert.That(oldModel.Parts[0].Children[0].Children.Count, Is.EqualTo(2), "Old non-matching part was not retained");
+			Assert.That(oldModel.Parts[0].Children[0].Before, Is.EqualTo("{"), "Before not copied from new defaults");
+			Assert.That(oldModel.Parts[0].Children[0].After, Is.EqualTo("}"), "After not copied from new defaults");
+			Assert.That(oldModel.Parts[0].Children[0].Between, Is.EqualTo(","), "Between not copied from new defaults");
+			Assert.That(oldModel.Parts[0].Children[0].Style, Is.EqualTo("Stylish"), "Style not copied from new defaults");
+			Assert.That(oldModel.Parts[0].Children[0].IsEnabled, Is.False, "IsEnabled value not copied from new defaults");
 		}
 	}
 }

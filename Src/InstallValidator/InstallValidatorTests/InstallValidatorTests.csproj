@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>InstallValidatorTests</AssemblyName>
@@ -8,46 +8,35 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <IsTestProject>true</IsTestProject>
+    <PlatformTarget>x64</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
-    <DefineConstants>TRACE</DefineConstants>
-  </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="SIL.TestUtilities" Version="17.0.0-*" />
   </ItemGroup>
-
   <ItemGroup>
     <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="netstandard" />
   </ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="../../../Build/Src/FwBuildTasks/FwBuildTasks.csproj" />
+    <!-- FwBuildTasks is referenced for assembly access but NOT built (bootstrapped separately by build.ps1) -->
+    <!-- Build=false prevents MSBuild from trying to build this project during traversal -->
+    <ProjectReference Include="../../../Build/Src/FwBuildTasks/FwBuildTasks.csproj">
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <Build>false</Build>
+      <Private>False</Private>
+    </ProjectReference>
     <ProjectReference Include="../InstallValidator.csproj" />
   </ItemGroup>
-
 </Project>

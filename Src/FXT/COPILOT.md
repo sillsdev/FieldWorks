@@ -38,7 +38,7 @@ C# libraries and executable with XML transformation engine. FxtDll/ contains cor
   - App.ico icon for executable
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (assumed based on repo)
+- C# .NET Framework 4.8.x (assumed based on repo)
 - OutputType: FxtDll.dll (Library), FxtExe.exe (Executable)
 - SIL.LCModel for data access
 - System.Xml for XML processing
@@ -87,7 +87,7 @@ C# libraries and executable with XML transformation engine. FxtDll/ contains cor
 - **Project files**: FxtDll/FxtDll.csproj (Library), FxtExe/FxtExe.csproj (Executable)
 - **Test project**: FxtDll/FxtDllTests/
 - **Output**: FxtDll.dll, FxtExe.exe
-- **Build**: Via top-level FW.sln
+- **Build**: Via top-level FieldWorks.sln
 - **Documentation**: FxtReference.doc (127KB)
 
 ## Interfaces and Data Models

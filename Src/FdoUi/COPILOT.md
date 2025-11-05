@@ -10,7 +10,7 @@ status: draft
 User interface components for FieldWorks Data Objects (FDO/LCModel). Provides specialized UI controls, dialogs, and view constructors for editing and displaying linguistic data model objects. CmObjectUi base class and subclasses (LexEntryUi, PartOfSpeechUi, ReversalIndexEntryUi, etc.) implement object-specific UI behavior. Editors for complex data (BulkPosEditor, InflectionClassEditor, InflectionFeatureEditor, PhonologicalFeatureEditor) provide specialized editing interfaces. DummyCmObject for testing, FwLcmUI for LCModel UI integration, ProgressBarWrapper for progress reporting. Essential UI layer between data model and applications.
 
 ## Architecture
-C# class library (.NET Framework 4.6.2) with UI components for data objects. CmObjectUi base class with factory pattern for creating object-specific UI instances (m_subclasses dictionary maps clsids). IFwGuiControl interface for dynamically initialized GUI controls. VcFrags enum defines view fragments supported by all objects. Test project FdoUiTests validates functionality. 8408 lines of UI code.
+C# class library (.NET Framework 4.8.x) with UI components for data objects. CmObjectUi base class with factory pattern for creating object-specific UI instances (m_subclasses dictionary maps clsids). IFwGuiControl interface for dynamically initialized GUI controls. VcFrags enum defines view fragments supported by all objects. Test project FdoUiTests validates functionality. 8408 lines of UI code.
 
 ## Key Components
 - **CmObjectUi** class (FdoUiCore.cs): Base UI class for all data objects
@@ -44,7 +44,7 @@ C# class library (.NET Framework 4.6.2) with UI components for data objects. CmO
 - **FdoUiStrings** (FdoUiStrings.Designer.cs): Localized UI strings
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: Library
 - Windows Forms (System.Windows.Forms)
 - XCore for command routing (IxCoreColleague)
@@ -87,10 +87,10 @@ C# class library (.NET Framework 4.6.2) with UI components for data objects. CmO
 - No explicit feature flags
 
 ## Build Information
-- **Project file**: FdoUi.csproj (net462, OutputType=Library)
+- **Project file**: FdoUi.csproj (net48, OutputType=Library)
 - **Test project**: FdoUiTests/
 - **Output**: FdoUi.dll
-- **Build**: Via top-level FW.sln
+- **Build**: Via top-level FieldWorks.sln
 - **Run tests**: `dotnet test FdoUiTests/`
 
 ## Interfaces and Data Models
@@ -151,8 +151,8 @@ Referenced as library for data object UI. CmObjectUi factory creates appropriate
 - **Common/Controls**: Complementary control library
 
 ## References
-- **Project files**: FdoUi.csproj (net462), FdoUiTests/
-- **Target frameworks**: .NET Framework 4.6.2
+- **Project files**: FdoUi.csproj (net48), FdoUiTests/
+- **Target frameworks**: .NET Framework 4.8.x
 - **Key C# files**: FdoUiCore.cs, LexEntryUi.cs, PartOfSpeechUi.cs, BulkPosEditor.cs, InflectionClassEditor.cs, and others
 - **Total lines of code**: 8408
 - **Output**: FdoUi.dll

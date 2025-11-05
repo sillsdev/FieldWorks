@@ -12,6 +12,7 @@ Build/venv
 Build/*.config
 Build/*.dll
 Build/*.pdb
+BuildTools/FwBuildTasks/
 BuildDir/
 Src/Common/ViewsInterfaces/Views.cs
 DistFiles/Data/
@@ -144,3 +145,5 @@ DistFiles/Templates/SemDom.xml
 Src/Kernel/FwKernelTlb.idl
 Src/Kernel/*.idh
 .github/machine-specific.md
+build_output.txt
+*.backup

@@ -10,7 +10,7 @@ status: draft
 Morphological analysis UI library for FieldWorks Language Explorer (FLEx). Provides specialized controls, slices, and dialogs for morphology features: inflectional affix templates (InflAffixTemplateControl, InflAffixTemplateSlice), affix rule formulas (AffixRuleFormulaControl, AffixRuleFormulaVc), phoneme/feature editing (PhonemeWithAllophonesSlice, BasicIPASymbolSlice), phonological environments (PhEnvReferenceSlice, SegmentSequenceSlice), morpheme analysis (AnalysisInterlinearRS, MorphemeContextCtrl), concordance (ConcordanceDlg), and morphology-grammar area (MGA/ subfolder with rule strata, templates). Master list listeners (MasterCatDlgListener, MasterDlgListener, MasterInflFeatDlgListener, MasterPhonFeatDlgListener) handle list editing coordination. Moderate-sized library (16.9K lines) supporting FLEx morphology/grammar features. Project name: Morphology.csproj.
 
 ## Architecture
-C# library (net462, OutputType=Library) with morphology UI components. Slice/control pattern for data entry fields. View constructors (InflAffixTemplateVc, AffixRuleFormulaVc, PhoneEnvReferenceVc) for custom rendering. Master list listeners as XCore colleagues. MGA/ subfolder for morphology-grammar area components (rule strata, templates, environment choosers). Resource files for localization (MEStrings.resx) and images (ImageHolder.resx, MEImages.resx). Integrates with LCModel (IMoAffixAllomorph, IMoInflAffixTemplate, IPhEnvironment, IPhoneme), Views rendering, XCore framework.
+C# library (net48, OutputType=Library) with morphology UI components. Slice/control pattern for data entry fields. View constructors (InflAffixTemplateVc, AffixRuleFormulaVc, PhoneEnvReferenceVc) for custom rendering. Master list listeners as XCore colleagues. MGA/ subfolder for morphology-grammar area components (rule strata, templates, environment choosers). Resource files for localization (MEStrings.resx) and images (ImageHolder.resx, MEImages.resx). Integrates with LCModel (IMoAffixAllomorph, IMoInflAffixTemplate, IPhEnvironment, IPhoneme), Views rendering, XCore framework.
 
 ## Key Components
 - **InflAffixTemplateControl** (InflAffixTemplateControl.cs, 1.3K lines): Inflectional affix template editor
@@ -62,7 +62,7 @@ C# library (net462, OutputType=Library) with morphology UI components. Slice/con
   - Embedded icons/images for morphology UI
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: Library
 - Windows Forms (slices, controls, dialogs)
 - LCModel (data model)
@@ -99,10 +99,10 @@ C# library (net462, OutputType=Library) with morphology UI components. Slice/con
 No specific feature flags. Configuration via LCModel morphology settings.
 
 ## Build Information
-- **Project file**: Morphology.csproj (net462, OutputType=Library)
+- **Project file**: Morphology.csproj (net48, OutputType=Library)
 - **Test project**: MorphologyTests/
 - **Output**: SIL.FieldWorks.XWorks.Morphology.dll
-- **Build**: Via top-level FW.sln or: `msbuild Morphology.csproj`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild Morphology.csproj`
 - **Run tests**: `dotnet test MorphologyTests/`
 
 ## Interfaces and Data Models
@@ -158,7 +158,7 @@ Loaded by xWorks main application shell. Slices/controls instantiated by data en
 - **xWorks/**: Main application shell
 
 ## References
-- **Project file**: Morphology.csproj (net462, OutputType=Library)
+- **Project file**: Morphology.csproj (net48, OutputType=Library)
 - **Key C# files**: InflAffixTemplateControl.cs (1.3K), MEStrings.Designer.cs (1.2K), ConcordanceDlg.cs (816), AffixRuleFormulaControl.cs (824), AffixRuleFormulaVc.cs (566), InflAffixTemplateMenuHandler.cs (460), AnalysisInterlinearRS.cs (434), and 55+ more files
 - **MGA/ subfolder**: Additional components (see MGA/COPILOT.md)
 - **Resources**: MEStrings.resx (19.2KB), ImageHolder.resx (20.2KB), MEImages.resx (14.4KB)

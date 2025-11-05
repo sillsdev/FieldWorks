@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>FieldWorks</AssemblyName>
@@ -9,37 +9,26 @@
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Deterministic>false</Deterministic>
+    <PlatformTarget>x64</PlatformTarget>
+    <RuntimeIdentifier />
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>pdbonly</DebugType>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <DefineConstants>TRACE</DefineConstants>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
+    <PackageReference Include="icu.net" Version="3.0.1" />
     <PackageReference Include="L10NSharp" Version="9.0.0-*" />
+    <PackageReference Include="mixpanel-csharp" Version="6.0.0" />
     <PackageReference Include="SharpZipLib" Version="1.4.0" Exclude="Build,Analyzers" />
     <PackageReference Include="SIL.Core" Version="17.0.0-*" />
     <PackageReference Include="SIL.Core.Desktop" Version="17.0.0-*" />
@@ -54,7 +43,6 @@
     <PackageReference Include="SIL.WritingSystems" Version="17.0.0-*" />
     <PackageReference Include="Geckofx60.64" Version="60.0.54" />
   </ItemGroup>
-
   <ItemGroup>
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="PaToFdoInterfaces">
@@ -69,7 +57,6 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="netstandard" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="../../FdoUi/FdoUi.csproj" />
     <ProjectReference Include="../../FwCoreDlgs/FwCoreDlgs.csproj" />
@@ -94,5 +81,17 @@
     <EmbeddedResource Update="Properties\Resources.resx" />
     <Compile Remove="FieldWorksTests/**" />
     <None Remove="FieldWorksTests/**" />
+  </ItemGroup>
+  <Import Project="BuildInclude.targets" />
+  <ItemGroup>
+    <EmbeddedResource Include="BookAndCube.ico" />
+    <EmbeddedResource Include="BookOnCube.ico" />
+    <EmbeddedResource Include="BookOnCubeVersion.ico" />
+    <EmbeddedResource Include="CubeOnBook.ico" />
+    <EmbeddedResource Include="CubeOnBookVersion.ico" />
+    <EmbeddedResource Include="LargeCubeOnBook.ico" />
+    <EmbeddedResource Include="LargeCubeOnBookVersion.ico" />
+    <EmbeddedResource Include="SmallBookOnCube.ico" />
+    <EmbeddedResource Include="SmallBookOnCubeVersion.ico" />
   </ItemGroup>
 </Project>

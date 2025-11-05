@@ -36,7 +36,7 @@ Thin wrapper library (~1554 lines, 4 C# files) around SIL.Reporting NuGet packag
 
 ## Technology Stack
 - **Language**: C#
-- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Target framework**: .NET Framework 4.8.x (net48)
 - **Library type**: Class library wrapper around SIL.Reporting
 - **UI framework**: System.Windows.Forms (UsageEmailDialog)
 - **Key libraries**: SIL.Reporting (NuGet), SIL.Core
@@ -69,7 +69,7 @@ Thin wrapper library (~1554 lines, 4 C# files) around SIL.Reporting NuGet packag
 
 ## Build Information
 - **Project**: Reporting.csproj
-- **Type**: Library (.NET Framework 4.6.2)
+- **Type**: Library (.NET Framework 4.8.x)
 - **Output**: Reporting.dll (FieldWorks wrapper)
 - **Namespace**: SIL.Utils (wrapper), SIL.Reporting (core)
 - **Source files**: 4 files (~1554 lines)

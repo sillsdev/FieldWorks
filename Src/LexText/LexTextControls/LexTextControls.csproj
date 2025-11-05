@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>LexTextControls</AssemblyName>
@@ -8,30 +8,20 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>168,169,219,414,649,1635,1702,1701,NU1903</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugSymbols>true</DebugSymbols>
-    <Optimize>false</Optimize>
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DefineConstants>TRACE</DefineConstants>
-    <DebugSymbols>true</DebugSymbols>
-    <Optimize>true</Optimize>
-    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DefineConstants>TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>true</Optimize>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
@@ -47,7 +37,8 @@
     <PackageReference Include="SIL.DesktopAnalytics" Version="4.0.0" />
     <PackageReference Include="encoding-converters-core" Version="0.9.7" />
     <PackageReference Include="Geckofx60.64.Windows" Version="0.19.0" />
-  <PackageReference Include="Geckofx60.64" Version="60.0.54" /></ItemGroup>
+    <PackageReference Include="Geckofx60.64" Version="60.0.54" />
+  </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Drawing" />
     <Reference Include="System.ServiceProcess" />
@@ -82,5 +73,9 @@
   <ItemGroup>
     <Compile Remove="LexTextControlsTests/**" />
     <None Remove="LexTextControlsTests/**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Create Entry.ico" />
+    <EmbeddedResource Include="Resources\Find Lexical Entry.ico" />
   </ItemGroup>
 </Project>

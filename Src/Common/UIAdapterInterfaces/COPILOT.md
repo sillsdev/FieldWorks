@@ -10,7 +10,7 @@ status: draft
 UI adapter pattern interfaces for abstraction and testability in FieldWorks applications. Defines contracts ISIBInterface (Side Bar and Information Bar Interface) and ITMInterface (Tool Manager Interface) that allow UI components to be adapted to different implementations or replaced with test doubles for unit testing. Helper classes (SBTabProperties, SBTabItemProperties, ITMAdapter) support adapter implementations. Enables dependency injection, testing of UI-dependent code without actual UI, and flexibility in UI component selection.
 
 ## Architecture
-C# interface library (.NET Framework 4.6.2) defining UI adapter contracts. Pure interface definitions with supporting helper classes for property transfer. No implementations in this project - implementations reside in consuming projects (e.g., XCore provides concrete adapters).
+C# interface library (.NET Framework 4.8.x) defining UI adapter contracts. Pure interface definitions with supporting helper classes for property transfer. No implementations in this project - implementations reside in consuming projects (e.g., XCore provides concrete adapters).
 
 ## Key Components
 - **ISIBInterface** (SIBInterface.cs): Side Bar and Information Bar contract
@@ -43,7 +43,7 @@ C# interface library (.NET Framework 4.6.2) defining UI adapter contracts. Pure 
 - **UIAdapterInterfacesStrings** (UIAdapterInterfacesStrings.Designer.cs): Localized strings
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: Library
 - Interface definitions only (no UI framework dependency)
 - XCore integration (Mediator references)
@@ -74,9 +74,9 @@ Interface definitions have no threading implications. Implementations must handl
 No configuration in interface library. Behavior determined by implementations.
 
 ## Build Information
-- **Project file**: UIAdapterInterfaces.csproj (net462, OutputType=Library)
+- **Project file**: UIAdapterInterfaces.csproj (net48, OutputType=Library)
 - **Output**: UIAdapterInterfaces.dll
-- **Build**: Via top-level FW.sln or: `msbuild UIAdapterInterfaces.csproj /p:Configuration=Debug`
+- **Build**: Via top-level FieldWorks.sln or: `msbuild UIAdapterInterfaces.csproj /p:Configuration=Debug`
 - **No test project**: Interface library; implementations tested in consuming projects
 
 ## Interfaces and Data Models
@@ -130,8 +130,8 @@ No test project for interface library. Implementations tested in consuming proje
 - Test projects: Use test doubles implementing these interfaces
 
 ## References
-- **Project files**: UIAdapterInterfaces.csproj (net462)
-- **Target frameworks**: .NET Framework 4.6.2
+- **Project files**: UIAdapterInterfaces.csproj (net48)
+- **Target frameworks**: .NET Framework 4.8.x
 - **Key C# files**: SIBInterface.cs, TMInterface.cs, HelperClasses.cs, UIAdapterInterfacesStrings.Designer.cs, AssemblyInfo.cs
 - **Total lines of code**: 1395
 - **Output**: Output/Debug/UIAdapterInterfaces.dll

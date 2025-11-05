@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>MorphologyEditorDll</AssemblyName>
@@ -6,32 +6,23 @@
     <TargetFramework>net48</TargetFramework>
     <OutputType>Library</OutputType>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <NoWarn>168,169,219,414,649,1635,1702,1701,0579,0436</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugSymbols>true</DebugSymbols>
-    <Optimize>false</Optimize>
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DefineConstants>TRACE</DefineConstants>
-    <DebugSymbols>true</DebugSymbols>
-    <Optimize>true</Optimize>
-    <DebugType>full</DebugType>
+    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
+    <PlatformTarget>x64</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DefineConstants>TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>true</Optimize>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
@@ -46,7 +37,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
-    <Reference Include="netstandard" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../../Common/Controls/DetailControls/DetailControls.csproj" />
@@ -72,5 +62,29 @@
   <ItemGroup>
     <Compile Remove="MorphologyEditorDllTests/**" />
     <None Remove="MorphologyEditorDllTests/**" />
+    <Compile Remove="MGA/MGATests/**" />
+    <None Remove="MGA/MGATests/**" />
+    <Compile Remove="MGA/AssemblyInfo.cs" />
+    <Compile Remove="MGA/bin/**" />
+    <None Remove="MGA/bin/**" />
+    <Compile Remove="MGA/obj/**" />
+    <None Remove="MGA/obj/**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="icons\adhoc Allomorph rule.ico" />
+    <EmbeddedResource Include="icons\adhoc Group.ico" />
+    <EmbeddedResource Include="icons\adhoc Morpheme rule.ico" />
+    <EmbeddedResource Include="icons\Environment.ico" />
+    <EmbeddedResource Include="icons\Exception Feature.ico" />
+    <EmbeddedResource Include="icons\Headed Comp Rule.ico" />
+    <EmbeddedResource Include="icons\Insert Cat.ico" />
+    <EmbeddedResource Include="icons\Insert Complex Feature.ico" />
+    <EmbeddedResource Include="icons\Insert Feature.ico" />
+    <EmbeddedResource Include="icons\Insert Sub-Cat.ico" />
+    <EmbeddedResource Include="icons\Metathesis.ico" />
+    <EmbeddedResource Include="icons\Natural Class.ico" />
+    <EmbeddedResource Include="icons\non-Headed Comp Rule.ico" />
+    <EmbeddedResource Include="icons\Phoneme.ico" />
+    <EmbeddedResource Include="ME.ico" />
   </ItemGroup>
 </Project>

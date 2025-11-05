@@ -8,37 +8,28 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>168,169,219,414,649,1635,1702,1701,NU1903</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugSymbols>true</DebugSymbols>
-    <Optimize>false</Optimize>
-    <DebugType>full</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DefineConstants>TRACE</DefineConstants>
-    <DebugSymbols>true</DebugSymbols>
-    <Optimize>true</Optimize>
-    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DefineConstants>TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>true</Optimize>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
     <PackageReference Include="DialogAdapters" Version="0.1.11" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.20.0" />
     <PackageReference Include="DotNetZip" Version="1.16.0" />
-    <PackageReference Include="L10NSharp" Version="9.0.0-*" />
+    <PackageReference Include="icu.net" Version="3.0.1" />
+  <PackageReference Include="L10NSharp" Version="9.0.0-*" />
     <PackageReference Include="NAudio" Version="1.10.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="SIL.Archiving" Version="17.0.0-*" />
@@ -55,7 +46,8 @@
     <PackageReference Include="SIL.DesktopAnalytics" Version="4.0.0" />
     <PackageReference Include="SIL.ExCSS" Version="2.0.2" />
     <PackageReference Include="Geckofx60.64.Windows" Version="0.19.0" />
-  <PackageReference Include="Geckofx60.64" Version="60.0.54" /></ItemGroup>
+    <PackageReference Include="Geckofx60.64" Version="60.0.54" />
+  </ItemGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
     <Reference Include="Microsoft.CSharp" />
@@ -95,5 +87,13 @@
   <ItemGroup>
     <Compile Remove="xWorksTests/**" />
     <None Remove="xWorksTests/**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\App.ico" />
+    <EmbeddedResource Include="Resources\Grammar 32.ico" />
+    <EmbeddedResource Include="Resources\Lexicon 32.ico" />
+    <EmbeddedResource Include="Resources\Lists 32.ico" />
+    <EmbeddedResource Include="Resources\Texts 32.ico" />
+    <EmbeddedResource Include="Resources\Words 32.ico" />
   </ItemGroup>
 </Project>

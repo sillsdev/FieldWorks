@@ -44,7 +44,7 @@ Original source: CodeProject (http://www.codeproject.com/cs/miscctrl/MessageBoxE
 
 ## Technology Stack
 - **Language**: C#
-- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Target framework**: .NET Framework 4.8.x (net48)
 - **Library type**: Class library (DLL)
 - **UI framework**: System.Windows.Forms
 - **Key libraries**: System.Drawing (icons, fonts), System.Media (sound playback)
@@ -93,7 +93,7 @@ Original source: CodeProject (http://www.codeproject.com/cs/miscctrl/MessageBoxE
 
 ## Build Information
 - **Project**: MessageBoxExLib.csproj
-- **Type**: Library (.NET Framework 4.6.2)
+- **Type**: Library (.NET Framework 4.8.x)
 - **Output**: MessageBoxExLib.dll
 - **Namespace**: Utils.MessageBoxExLib
 - **Source files**: 10 files (~1646 lines)

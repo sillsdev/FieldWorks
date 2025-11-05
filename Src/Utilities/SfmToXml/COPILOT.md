@@ -29,7 +29,7 @@ Two-component system: 1) Sfm2Xml library (~7K lines) with ClsHierarchyEntry, Con
 
 ## Technology Stack
 - **Language**: C#
-- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Target framework**: .NET Framework 4.8.x (net48)
 - **Components**: Sfm2Xml.dll (library), ConvertSFM.exe (CLI tool)
 - **Key libraries**: System.Xml (XML generation), Common utilities
 - **Input format**: SFM/Toolbox text files
@@ -193,7 +193,7 @@ Library component. Reference in consuming projects. See Dependencies section for
 ## References
 
 - **Project files**: ConvertSFM.csproj, Sfm2Xml.csproj, Sfm2XmlTests.csproj
-- **Target frameworks**: net462
+- **Target frameworks**: net48
 - **Key C# files**: AssemblyInfo.cs, ClsHierarchyEntry.cs, ClsInFieldMarker.cs, Converter.cs, LanguageInfoUI.cs, LexImportField.cs, LexImportFields.cs, Log.cs, Sfm2XmlStrings.Designer.cs, Statics.cs
 - **XSLT transforms**: BuildPhase2XSLT.xsl, Phase3.xsl, Phase4.xsl
 - **XML data/config**: MoeMap.xml, TestMapping.xml, TestMapping.xml, YiGreenMap.xml
