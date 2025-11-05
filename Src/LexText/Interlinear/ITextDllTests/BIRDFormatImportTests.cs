@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.IText
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
 
-			Assert.DoesNotThrow( ()=> ReadXmlForValidation(xmlReader));
+			Assert.That(()=> ReadXmlForValidation(xmlReader), Throws.Nothing);
 		}
 
 		private static void ReadXmlForValidation(XmlReader xmlReader)
@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.IText
 			const string xml = "<document exportSource='paratext' exportTarget='flex'><interlinear-text/></document>";
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
-			Assert.DoesNotThrow(() => ReadXmlForValidation(xmlReader));
+			Assert.That(() => ReadXmlForValidation(xmlReader), Throws.Nothing);
 		}
 
 		[Test]
@@ -104,7 +104,7 @@ namespace SIL.FieldWorks.IText
 						 "</interlinear-text></document>";
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
-			Assert.DoesNotThrow(() => ReadXmlForValidation(xmlReader));
+			Assert.That(() => ReadXmlForValidation(xmlReader), Throws.Nothing);
 		}
 
 		[Test]
@@ -120,7 +120,7 @@ namespace SIL.FieldWorks.IText
 				"</document>";
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
-			Assert.DoesNotThrow(() => ReadXmlForValidation(xmlReader));
+			Assert.That(() => ReadXmlForValidation(xmlReader), Throws.Nothing);
 		}
 
 		[Test]
@@ -131,7 +131,7 @@ namespace SIL.FieldWorks.IText
 						 "</document>";
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
-			Assert.DoesNotThrow(() => ReadXmlForValidation(xmlReader));
+			Assert.That(() => ReadXmlForValidation(xmlReader), Throws.Nothing);
 		}
 
 		[Test]
@@ -144,7 +144,7 @@ namespace SIL.FieldWorks.IText
 						 "</document>";
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
-			Assert.DoesNotThrow(() => ReadXmlForValidation(xmlReader));
+			Assert.That(() => ReadXmlForValidation(xmlReader), Throws.Nothing);
 		}
 
 		[Test]
@@ -170,7 +170,7 @@ namespace SIL.FieldWorks.IText
 						 "</phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
-			Assert.DoesNotThrow(() => ReadXmlForValidation(xmlReader));
+			Assert.That(() => ReadXmlForValidation(xmlReader), Throws.Nothing);
 		}
 
 		[Test]
@@ -252,7 +252,7 @@ namespace SIL.FieldWorks.IText
 						 "</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
-			Assert.DoesNotThrow(() => ReadXmlForValidation(xmlReader));
+			Assert.That(() => ReadXmlForValidation(xmlReader), Throws.Nothing);
 		}
 
 		[Test]
@@ -265,7 +265,7 @@ namespace SIL.FieldWorks.IText
 						 "</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
-			Assert.DoesNotThrow(() => ReadXmlForValidation(xmlReader));
+			Assert.That(() => ReadXmlForValidation(xmlReader), Throws.Nothing);
 		}
 
 		[Test]
@@ -294,7 +294,7 @@ namespace SIL.FieldWorks.IText
 						 "</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
 
 			XmlReader xmlReader = GetXmlReaderForTest(xml);
-			Assert.DoesNotThrow(() => ReadXmlForValidation(xmlReader));
+			Assert.That(() => ReadXmlForValidation(xmlReader), Throws.Nothing);
 		}
 
 		bool DummyCheckAndAddLanguagesInternal(LcmCache cache, Interlineartext interlinText, ILgWritingSystemFactory wsFactory, IThreadedProgress progress)
@@ -311,7 +311,7 @@ namespace SIL.FieldWorks.IText
 			doc.Load(file);
 
 			XmlReader xmlReader = GetXmlReaderForTest(doc.OuterXml);
-			Assert.DoesNotThrow(() => ReadXmlForValidation(xmlReader));
+			Assert.That(() => ReadXmlForValidation(xmlReader), Throws.Nothing);
 		}
 
 		[Test]
@@ -466,7 +466,7 @@ namespace SIL.FieldWorks.IText
 			LCModel.IText text = null;
 			using(var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
-				Assert.DoesNotThrow(()=> li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text));
+				Assert.That(()=> li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text), Throws.Nothing);
 				using(var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 				{
 					firstEntry.MoveNext();
@@ -535,7 +535,7 @@ namespace SIL.FieldWorks.IText
 			using(var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
 			{
 				// SUT - Verify that no crash occurs importing this data: see LT-22008
-				Assert.DoesNotThrow(()=> li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text));
+				Assert.That(()=> li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text), Throws.Nothing);
 				using(var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
 				{
 					firstEntry.MoveNext();

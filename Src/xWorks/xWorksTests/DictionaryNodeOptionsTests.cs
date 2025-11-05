@@ -60,7 +60,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var clone = genericClone as DictionaryNodeListOptions;
 			Assert.That(clone, Is.Not.Null, "Incorrect subclass returned; expected DictionaryNodeListOptions");
-			Assert.Null(clone as DictionaryNodeListAndParaOptions, "Incorrect subclass returned; did not expect DictionaryNodeListAndParaOptions");
+			Assert.That(clone as DictionaryNodeListAndParaOptions, Is.Null, "Incorrect subclass returned; did not expect DictionaryNodeListAndParaOptions");
 			Assert.That(clone, Is.Not.SameAs(orig), "Not deep cloned; shallow cloned");
 			Assert.That(clone.ListId, Is.EqualTo(orig.ListId));
 			AssertListWasDeepCloned(orig.Options, clone.Options);

@@ -34,7 +34,7 @@ namespace SIL.FieldWorks
 			var entry = CreateLexEntry();
 			// SUT
 			var paEntry = new PaLexEntry(entry);
-			Assert.Null(paEntry.xEtymology);
+			Assert.That(paEntry.xEtymology, Is.Null);
 		}
 
 		/// <summary/>

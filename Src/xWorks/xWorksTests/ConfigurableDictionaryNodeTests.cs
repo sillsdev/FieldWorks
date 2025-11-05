@@ -225,7 +225,7 @@ namespace SIL.FieldWorks.XWorks
 			parent.Children = new List<ConfigurableDictionaryNode> { nodeA, nodeB };
 
 			// SUT
-			Assert.DoesNotThrow(() => nodeB.DuplicateAmongSiblings(), "problem with edge case");
+			Assert.That(() => nodeB.DuplicateAmongSiblings(), "problem with edge case", Throws.Nothing);
 		}
 
 		[Test]
@@ -278,8 +278,8 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode>() // just because we haven't any doesn't mean the list is null!
 			};
 			var clone = masterParent.DeepCloneUnderSameParent(); // SUT
-			Assert.Null(clone.ReferenceItem);
-			Assert.Null(clone.ReferencedNode);
+			Assert.That(clone.ReferenceItem, Is.Null);
+			Assert.That(clone.ReferencedNode, Is.Null);
 			VerifyDuplicationList(clone.Children, masterParent.ReferencedOrDirectChildren, clone);
 		}
 
@@ -321,7 +321,7 @@ namespace SIL.FieldWorks.XWorks
 			node.UnlinkFromParent();
 			Assert.That(node.Parent, Is.Null); // node is now at the root of a hierarchy
 			// SUT
-			Assert.DoesNotThrow(() => node.UnlinkFromParent());
+			Assert.That(() => node.UnlinkFromParent(), Throws.Nothing);
 		}
 
 		[Test]

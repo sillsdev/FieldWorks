@@ -12,15 +12,15 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void EncryptPassword_NullAndEmptyDoNotCrash()
 		{
-			Assert.DoesNotThrow(() => UploadToWebonaryModel.EncryptPassword(null));
-			Assert.DoesNotThrow(() => UploadToWebonaryModel.EncryptPassword(string.Empty));
+			Assert.That(() => UploadToWebonaryModel.EncryptPassword(null), Throws.Nothing);
+			Assert.That(() => UploadToWebonaryModel.EncryptPassword(string.Empty), Throws.Nothing);
 		}
 
 		[Test]
 		public void DecryptPassword_NullAndEmptyDoNotCrash()
 		{
-			Assert.DoesNotThrow(() => UploadToWebonaryModel.DecryptPassword(null));
-			Assert.DoesNotThrow(() => UploadToWebonaryModel.DecryptPassword(string.Empty));
+			Assert.That(() => UploadToWebonaryModel.DecryptPassword(null), Throws.Nothing);
+			Assert.That(() => UploadToWebonaryModel.DecryptPassword(string.Empty), Throws.Nothing);
 		}
 	}
 }

@@ -396,7 +396,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(configurationToDelete.FilePath, Is.Null, "Unit test not testing what it used to. Perhaps the code is smarter now.");
 
 			// SUT
-			Assert.DoesNotThrow(()=> _controller.DeleteConfiguration(configurationToDelete), "Don't crash if the FilePath isn't set for some reason.");
+			Assert.That(()=> _controller.DeleteConfiguration(configurationToDelete), "Don't crash if the FilePath isn't set for some reason.", Throws.Nothing);
 			Assert.That(_controller.IsDirty, "made changes; should be dirty");
 		}
 

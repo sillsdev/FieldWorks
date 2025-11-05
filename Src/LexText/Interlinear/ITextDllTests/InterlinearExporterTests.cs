@@ -431,7 +431,7 @@ namespace SIL.FieldWorks.IText
 				exportedDoc.Schemas.Add("", new Uri(file).AbsoluteUri);
 
 				//validate export against schema.
-				Assert.DoesNotThrow(() => exportedDoc.Validate(DontIgnore));
+				Assert.That(() => exportedDoc.Validate(DontIgnore), Throws.Nothing);
 			}
 
 			[Test]
@@ -1209,7 +1209,7 @@ namespace SIL.FieldWorks.IText
 					string p = Path.Combine(FwDirectoryFinder.FlexFolder, Path.Combine("Export Templates", "Interlinear"));
 					string schemaFile = Path.Combine(p, "FlexInterlinear.xsd");
 					exportedDoc.Schemas.Add("", new Uri(schemaFile).AbsoluteUri);
-					Assert.DoesNotThrow(() => exportedDoc.Validate(DontIgnore));
+					Assert.That(() => exportedDoc.Validate(DontIgnore), Throws.Nothing);
 				}
 			}
 
@@ -1262,10 +1262,10 @@ namespace SIL.FieldWorks.IText
 				if (!Platform.IsMono)
 				{
 					//validate export against schema.
-					Assert.DoesNotThrow(() =>
+					Assert.That(() =>
 					{
 						exportedDoc.Validate(DontIgnore);
-					});
+					}, Throws.Nothing);
 				}
 
 				//validate segment reference to MediaURI

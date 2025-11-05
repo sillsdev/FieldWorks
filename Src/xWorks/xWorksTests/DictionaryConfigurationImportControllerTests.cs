@@ -432,13 +432,13 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void PrepareImport_BadInputHandled()
 		{
-			Assert.DoesNotThrow(() => { _controller.PrepareImport("nonexistentfile.zip"); });
+			Assert.That(() => { _controller.PrepareImport("nonexistentfile.zip"); }, Throws.Nothing);
 			Assert.That(_controller.NewConfigToImport, Is.Null, "Did not handle bad data as desired");
 			Assert.That(_controller._originalConfigLabel, Is.Null, "Did not handle bad data as desired");
-			Assert.DoesNotThrow(() => { _controller.PrepareImport("bad$# \\characters/in!: filename;.~*("); });
-			Assert.DoesNotThrow(() => { _controller.PrepareImport(""); }, "Don't actually crash for this");
+			Assert.That(() => { _controller.PrepareImport("bad$# \\characters/in!: filename;.~*("); }, Throws.Nothing);
+			Assert.That(() => { _controller.PrepareImport(""); }, "Don't actually crash for this", Throws.Nothing);
 			Assert.That(_controller.NewConfigToImport, Is.Null, "Did not handle bad data as desired");
-			Assert.DoesNotThrow(() => { _controller.PrepareImport(null); }, "Don't actually crash for this");
+			Assert.That(() => { _controller.PrepareImport(null); }, "Don't actually crash for this", Throws.Nothing);
 			Assert.That(_controller.NewConfigToImport, Is.Null, "Did not handle bad data as desired");
 		}
 

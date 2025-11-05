@@ -770,7 +770,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 
 			var lexiconAnalyses = ((WordAnalysesV2)m_lexicon).WordAnalyses;
 			Assert.That(lexiconAnalyses.Count(), Is.EqualTo(2));
-			Assert.DoesNotThrow(()=>lexiconAnalyses.First().GetEnumerator());
+			Assert.That(()=>lexiconAnalyses.First().GetEnumerator(), Throws.Nothing);
 			Assert.That(lexiconAnalyses.First().Glosses.Count(), Is.EqualTo(1));
 			Assert.That(lexiconAnalyses.First().Glosses.First().Text, Is.EqualTo("how glossy"));
 	  }

@@ -388,8 +388,8 @@ namespace SIL.FieldWorks.Discourse
 
 			// SUT
 			ChartLocation result = null;
-			Assert.DoesNotThrow(() => result = m_ccl.FindChartLocOfWordform(w2),
-				"No crashes should happen when working with stale AnalysisOccurences");
+			Assert.That(() => result = m_ccl.FindChartLocOfWordform(w2),
+				"No crashes should happen when working with stale AnalysisOccurences", Throws.Nothing);
 			// The result should be null when looking for the invalidated wordform
 			Assert.That(result, Is.Null);
 		}

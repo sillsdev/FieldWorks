@@ -38,7 +38,7 @@ namespace LexEdDllTests
 			{
 				using(var recordList = new TestReversalRecordList(Cache, mediator, propertyTable))
 				{
-					Assert.Null(recordList.GetPropertyTableId(FieldName));
+					Assert.That(recordList.GetPropertyTableId(FieldName), Is.Null);
 				}
 			}
 		}

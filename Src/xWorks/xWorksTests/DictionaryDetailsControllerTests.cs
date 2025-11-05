@@ -448,11 +448,11 @@ namespace SIL.FieldWorks.XWorks
 				}
 			};
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			Assert.DoesNotThrow(() =>
+			Assert.That(() =>
 			{
 				// SUT
 				controller.LoadNode(null, node);
-			});
+			}, Throws.Nothing);
 			controller.View.Dispose();
 		}
 
@@ -500,7 +500,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// SUT is LoadNode.  `using ... .View` to ensure disposal
 			var controller = new DictionaryDetailsController(new TestDictionaryDetailsView(), m_propertyTable);
-			Assert.DoesNotThrow(() => { using(controller.View) { controller.LoadNode(null, childGramarNode); } });
+			Assert.That(() => { using(controller.View) { controller.LoadNode(null, childGramarNode); } }, Throws.Nothing);
 		}
 		#endregion Sense tests
 
@@ -628,7 +628,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(((TestDictionaryDetailsView)controller.View).OptionsView, Is.Not.Null, "Test setup failed, OptionsView shoud not be null");
 			var optionlessNode = new ConfigurableDictionaryNode();
 			controller.LoadNode(null, optionlessNode);
-			Assert.Null(((TestDictionaryDetailsView)controller.View).OptionsView, "OptionsView should be set to null after loading a node without options");
+			Assert.That(((TestDictionaryDetailsView)controller.View).OptionsView, Is.Null, "OptionsView should be set to null after loading a node without options");
 			controller.View.Dispose();
 		}
 

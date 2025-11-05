@@ -1024,7 +1024,7 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 				Parts = new List<ConfigurableDictionaryNode> { mainEntryNode }
 			};
 			var rootModel = m_migrator.LoadBetaDefaultForAlphaConfig(alphaModel);
-			Assert.DoesNotThrow(() => m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, rootModel));
+			Assert.That(() => m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, rootModel), Throws.Nothing);
 		}
 
 		private static void TestForWritingSystemOptionsType(ConfigurableDictionaryNode configNode,
@@ -1327,7 +1327,7 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			alphaModel.Version = 18;
 			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, betaModel); // SUT
 			Assert.That(betaModel.SharedItems[0].Children[2].Children[0].SubField, Is.Not.EqualTo("MLHeadWord"));
-			Assert.Null(betaModel.SharedItems[0].Children[2].Children[0].SubField);
+			Assert.That(betaModel.SharedItems[0].Children[2].Children[0].SubField, Is.Null);
 		}
 
 		[Test]

@@ -5758,7 +5758,7 @@ namespace SIL.FieldWorks.XWorks
 			var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, true, true, tempFolder.FullName);
 			//SUT
-			Assert.DoesNotThrow(() => ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings));
+			Assert.That(() => ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings), Throws.Nothing);
 		}
 
 		[Test]
@@ -5779,7 +5779,7 @@ namespace SIL.FieldWorks.XWorks
 			var tempFolder = Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), "ConfigDictPictureExportTest"));
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, true, true, tempFolder.FullName);
 			//SUT
-			Assert.DoesNotThrow(() => ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings));
+			Assert.That(() => ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings), Throws.Nothing);
 		}
 
 		[Test]
@@ -5830,7 +5830,7 @@ namespace SIL.FieldWorks.XWorks
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 
 			//SUT
-			Assert.DoesNotThrow(() => ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings));
+			Assert.That(() => ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings), Throws.Nothing);
 		}
 
 		[Test]
@@ -7020,7 +7020,7 @@ namespace SIL.FieldWorks.XWorks
 				var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, true, true, "//audio/source/@src");
 
 				// SUT
-				Assert.DoesNotThrow(() => ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings), "Having an audio ws first should not cause crash.");
+				Assert.That(() => ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings), "Having an audio ws first should not cause crash.", Throws.Nothing);
 			}
 			finally
 			{
@@ -7301,7 +7301,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			Assert.DoesNotThrow(() => ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings), "Having an empty complexentrytype list after the click event should not cause crash.");
+			Assert.That(() => ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings), "Having an empty complexentrytype list after the click event should not cause crash.", Throws.Nothing);
 		}
 
 		[Test]
@@ -7484,7 +7484,7 @@ namespace SIL.FieldWorks.XWorks
 
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
-			Assert.DoesNotThrow(() => ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings), "Having an empty variantentrytype list after the click event should not cause crash.");
+			Assert.That(() => ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings), "Having an empty variantentrytype list after the click event should not cause crash.", Throws.Nothing);
 		}
 
 		[Test]
@@ -9172,7 +9172,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				using (new StreamWriter(preferredPath)) // lock the preferred path
 				{
-					Assert.DoesNotThrow(() => actualPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(entries, clerk, null, model, m_propertyTable));
+					Assert.That(() => actualPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(entries, clerk, null, model, m_propertyTable), Throws.Nothing);
 				}
 				Assert.That(actualPath, Is.Not.EqualTo(preferredPath), "Should have saved to a different path.");
 			}
@@ -10058,7 +10058,7 @@ namespace SIL.FieldWorks.XWorks
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 
 			//SUT
-			Assert.DoesNotThrow(() => ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings), "Invalid filename in CmFile should not lead to crash");
+			Assert.That(() => ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings), "Invalid filename in CmFile should not lead to crash", Throws.Nothing);
 		}
 
 		[TestCase("Bob", false, "Bo")]

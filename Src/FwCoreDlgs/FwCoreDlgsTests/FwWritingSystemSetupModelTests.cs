@@ -29,7 +29,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var container = new TestWSContainer(new [] {"en"});
 			// ReSharper disable once ObjectCreationAsStatement
-			Assert.DoesNotThrow(() => new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular));
+			Assert.That(() => new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular), Throws.Nothing);
 		}
 
 		[Test]
@@ -972,7 +972,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			testModel.ShowChangeLanguage = ShowChangeLanguage;
 			testModel.ChangeLanguage();
 			Assert.That(testModel.CurrentWsSetupModel.CurrentLanguageName, Is.EqualTo("TestName"));
-			Assert.DoesNotThrow(() => testModel.Save());
+			Assert.That(() => testModel.Save(), Throws.Nothing);
 			Assert.That(langProj.CurVernWss, Is.EqualTo("auc"));
 		}
 
@@ -1208,7 +1208,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			testModel.ConfirmDeleteWritingSystem = label => true;
 			var menu = testModel.GetRightClickMenuItems();
 			menu.First(item => item.MenuText.Contains("Delete")).ClickHandler(this, EventArgs.Empty);
-			Assert.DoesNotThrow(() => testModel.Save());
+			Assert.That(() => testModel.Save(), Throws.Nothing);
 			Assert.That(container.VernacularWritingSystems.Count, Is.EqualTo(1));
 		}
 
@@ -1227,7 +1227,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			};
 			var menu = testModel.GetRightClickMenuItems();
 			menu.First(item => item.MenuText.Contains("Merge")).ClickHandler(this, EventArgs.Empty);
-			Assert.DoesNotThrow(() => testModel.Save());
+			Assert.That(() => testModel.Save(), Throws.Nothing);
 			Assert.That(container.VernacularWritingSystems.Count, Is.EqualTo(1));
 		}
 
@@ -1750,7 +1750,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var container = new TestWSContainer(new[] { "fr" });
 			var testModel = new FwWritingSystemSetupModel(container, FwWritingSystemSetupModel.ListType.Vernacular, new WritingSystemManager());
-			Assert.DoesNotThrow(() => testModel.SpellingDictionary = null);
+			Assert.That(() => testModel.SpellingDictionary = null, Throws.Nothing);
 			Assert.That(testModel.SpellingDictionary.Id, Is.Null.Or.Empty);
 		}
 

@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				Parts = new List<ConfigurableDictionaryNode> { configParent }
 			};
 			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.Null(configChild.ReferenceItem, "Unused ReferenceItem should have been removed");
+			Assert.That(configChild.ReferenceItem, Is.Null, "Unused ReferenceItem should have been removed");
 		}
 
 		[Test]
@@ -100,7 +100,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var configParent = new ConfigurableDictionaryNode { FieldDescription = "Parent", Children = new List<ConfigurableDictionaryNode> { configChild } };
 			var configModel = new DictionaryConfigurationModel { Version = 1, Parts = new List<ConfigurableDictionaryNode> { configParent } };
 			m_migrator.MigrateFrom83Alpha(configModel);
-			Assert.Null(configChild.ReferenceItem, "Unused ReferenceItem should have been removed");
+			Assert.That(configChild.ReferenceItem, Is.Null, "Unused ReferenceItem should have been removed");
 		}
 
 		[Test]
@@ -261,7 +261,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				FilePath = Path.Combine("NotReversalIndex", "English.fwdictconfig")
 			};
 			m_migrator.MigrateFrom83Alpha(configModelRoot);
-			Assert.Null(configModelRoot.WritingSystem, "The WritingSystem should not be filled in for configurations that aren't for reversal");
+			Assert.That(configModelRoot.WritingSystem, Is.Null, "The WritingSystem should not be filled in for configurations that aren't for reversal");
 		}
 
 		[Test]
@@ -301,7 +301,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			// SUT
 			m_migrator.MigrateFrom83Alpha(model);
 			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
-			Assert.IsInstanceOf(typeof(DictionaryNodeWritingSystemOptions), testNodeOptions);
+			Assert.That(testNodeOptions, Is.InstanceOf(typeof(DictionaryNodeWritingSystemOptions)));
 			var wsOptions = (DictionaryNodeWritingSystemOptions)testNodeOptions;
 			Assert.That(wsOptions.DisplayWritingSystemAbbreviations, Is.True);
 			Assert.That(wsOptions.WsType, Is.EqualTo(DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular));
@@ -347,9 +347,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.That(subsenses.ReferenceItem, Does.Match("MainEntrySubsenses"));
 			Assert.That(subsubsenses.ReferenceItem, Does.Match("MainEntrySubsenses"));
 			Assert.That(subentriesUnderSenses.ReferenceItem, Does.Match("MainEntrySubentries"));
-			Assert.Null(subsenses.Children, "Children not removed from shared nodes");
-			Assert.Null(subsubsenses.Children, "Children not removed from shared nodes");
-			Assert.Null(subentriesUnderSenses.Children, "Children not removed from shared nodes");
+			Assert.That(subsenses.Children, Is.Null, "Children not removed from shared nodes");
+			Assert.That(subsubsenses.Children, Is.Null, "Children not removed from shared nodes");
+			Assert.That(subentriesUnderSenses.Children, Is.Null, "Children not removed from shared nodes");
 			var sharedSubsenses = model.SharedItems.FirstOrDefault(si => si.Label == "MainEntrySubsenses");
 			Assert.That(sharedSubsenses, Is.Not.Null, "No Subsenses in SharedItems");
 			Assert.That(sharedSubsenses.Children.Count(n => n.FieldDescription == "SensesOS"), Is.EqualTo(1), "Should have exactly one Subsubsenses node");
@@ -423,7 +423,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.That(subSenses, Is.Not.Null);
 			Assert.That(subSenses.Children.Count, Is.EqualTo(2), "Subsenses children were not moved to shared");
 			Assert.That(subSenses.Children[1].Label, Does.Match("Subsubsenses"), "Subsubsenses not added during migration");
-			Assert.Null(model.Parts[0].Children[0].Children[0].Children, "Subsenses children were left in non-shared node");
+			Assert.That(model.Parts[0].Children[0].Children[0].Children, Is.Null, "Subsenses children were left in non-shared node");
 		}
 
 		[Test]
@@ -500,13 +500,13 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				model.SharedItems.Find(node => node.Label == "MainEntrySubsenses").Children.Find(child => child.Label == subGramInfoNode.Label);
 			var subEntries = model.SharedItems.Find(node => node.Label == "MainEntrySubentries");
 			Assert.That(subSenseGloss, Is.Not.Null, "Subsenses did not get moved into the shared node");
-			Assert.Null(model.Parts[0].Children[1].Children, "Subsenses children were left in non-shared node");
+			Assert.That(model.Parts[0].Children[1].Children, Is.Null, "Subsenses children were left in non-shared node");
 			Assert.That(subSenseGloss.IsEnabled, Is.True, "Enabled not migrated into shared nodes for direct children");
 			Assert.That(subGramInfo, Is.Not.Null, "Subsense children were not moved into the shared node");
 			Assert.That(subGramInfo.IsEnabled, Is.True, "Enabled not migrated into shared nodes for descendents");
 			Assert.That(subEntries, Is.Not.Null);
 			Assert.That(subEntries.Children.Count, Is.EqualTo(1), "Subentries children were not moved to shared");
-			Assert.Null(model.Parts[0].Children[1].Children, "Subentries children were left in non-shared node");
+			Assert.That(model.Parts[0].Children[1].Children, Is.Null, "Subentries children were left in non-shared node");
 			Assert.That(model.Parts[0].Children[1].DictionaryNodeOptions, Is.Not.Null, "Subentries complex form options not added in migration");
 		}
 
@@ -538,7 +538,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.That(subEntries, Is.Not.Null);
 			Assert.That(subEntries.Children.Count, Is.EqualTo(2), "Subentries children were not moved to shared");
 			Assert.That(subEntries.Children[1].Label, Does.Match("Reversal Subsubentries"), "Subsubentries not added during migration");
-			Assert.Null(model.Parts[0].Children[0].Children, "Subentries children were left in non-shared node");
+			Assert.That(model.Parts[0].Children[0].Children, Is.Null, "Subentries children were left in non-shared node");
 		}
 
 		[Test]
@@ -573,7 +573,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.That(subEntries, Is.Not.Null);
 			Assert.That(subEntries.Children.Count, Is.EqualTo(2), "Subentries children were not moved to shared");
 			Assert.That(subEntries.Children[1].Label, Does.Match("Reversal Subsubentries"), "Subsubentries not added during migration");
-			Assert.Null(model.Parts[0].Children[0].Children, "Subentries children were left in non-shared node");
+			Assert.That(model.Parts[0].Children[0].Children, Is.Null, "Subentries children were left in non-shared node");
 		}
 
 		[Test]

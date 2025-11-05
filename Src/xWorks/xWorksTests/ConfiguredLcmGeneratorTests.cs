@@ -136,7 +136,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
 			var result = ConfiguredLcmGenerator.PropertyType.InvalidProperty;
 			// SUT
-			Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(stringNode));
+			Assert.That(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(stringNode), Throws.Nothing);
 			Assert.That(result, Is.EqualTo(ConfiguredLcmGenerator.PropertyType.PrimitiveType));
 		}
 
@@ -158,7 +158,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
 			var result = ConfiguredLcmGenerator.PropertyType.InvalidProperty;
 			// SUT
-			Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(interfaceNode));
+			Assert.That(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(interfaceNode), Throws.Nothing);
 			Assert.That(result, Is.EqualTo(ConfiguredLcmGenerator.PropertyType.PrimitiveType));
 		}
 
@@ -180,7 +180,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
 			var result = ConfiguredLcmGenerator.PropertyType.InvalidProperty;
 			// SUT
-			Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(interfaceNode));
+			Assert.That(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(interfaceNode), Throws.Nothing);
 			Assert.That(result, Is.EqualTo(ConfiguredLcmGenerator.PropertyType.MoFormType));
 		}
 
@@ -202,7 +202,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
 			var result = ConfiguredLcmGenerator.PropertyType.InvalidProperty;
 			// SUT
-			Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(interfaceNode));
+			Assert.That(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(interfaceNode), Throws.Nothing);
 			Assert.That(result, Is.EqualTo(ConfiguredLcmGenerator.PropertyType.CmObjectType));
 		}
 
@@ -224,7 +224,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
 			var result = ConfiguredLcmGenerator.PropertyType.InvalidProperty;
 			// SUT
-			Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(interfaceNode));
+			Assert.That(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(interfaceNode), Throws.Nothing);
 			Assert.That(result, Is.EqualTo(ConfiguredLcmGenerator.PropertyType.CollectionType));
 		}
 
@@ -246,7 +246,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
 			var result = ConfiguredLcmGenerator.PropertyType.InvalidProperty;
 			// SUT
-			Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(stringNodeInClass));
+			Assert.That(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(stringNodeInClass), Throws.Nothing);
 			Assert.That(result, Is.EqualTo(ConfiguredLcmGenerator.PropertyType.PrimitiveType));
 		}
 
@@ -269,7 +269,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
 			var result = ConfiguredLcmGenerator.PropertyType.PrimitiveType;
 			// SUT
-			Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(interfaceNode));
+			Assert.That(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(interfaceNode), Throws.Nothing);
 			Assert.That(result, Is.EqualTo(ConfiguredLcmGenerator.PropertyType.InvalidProperty));
 		}
 
@@ -290,7 +290,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
 			var result = ConfiguredLcmGenerator.PropertyType.InvalidProperty;
 			// SUT
-			Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(memberNode));
+			Assert.That(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(memberNode), Throws.Nothing);
 			Assert.That(result, Is.EqualTo(ConfiguredLcmGenerator.PropertyType.PrimitiveType));
 		}
 
@@ -311,7 +311,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
 			var result = ConfiguredLcmGenerator.PropertyType.PrimitiveType;
 			// SUT
-			Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(memberNode));
+			Assert.That(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(memberNode), Throws.Nothing);
 			Assert.That(result, Is.EqualTo(ConfiguredLcmGenerator.PropertyType.InvalidProperty));
 		}
 
@@ -347,7 +347,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
 			var result = ConfiguredLcmGenerator.PropertyType.InvalidProperty;
 			// SUT
-			Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(pictureFileNode));
+			Assert.That(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(pictureFileNode), Throws.Nothing);
 			Assert.That(result, Is.EqualTo(ConfiguredLcmGenerator.PropertyType.CmPictureType));
 		}
 
@@ -401,7 +401,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
 			var result = ConfiguredLcmGenerator.PropertyType.InvalidProperty;
 			// SUT
-			Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(memberNode));
+			Assert.That(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(memberNode), Throws.Nothing);
 			Assert.That(result, Is.EqualTo(ConfiguredLcmGenerator.PropertyType.PrimitiveType));
 		}
 
@@ -425,9 +425,9 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(rootNode);
 			var result = ConfiguredLcmGenerator.PropertyType.PrimitiveType;
 		 // SUT
-		 Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(missingClassMember));
+		 Assert.That(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(missingClassMember), Throws.Nothing);
 		 Assert.That(result, Is.EqualTo(ConfiguredLcmGenerator.PropertyType.InvalidProperty));
-		 Assert.DoesNotThrow(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(missingMethodMember));
+		 Assert.That(() => result = ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(missingMethodMember), Throws.Nothing);
 		 Assert.That(result, Is.EqualTo(ConfiguredLcmGenerator.PropertyType.InvalidProperty));
 		}
 

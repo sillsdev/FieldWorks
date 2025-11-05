@@ -108,8 +108,8 @@ namespace SIL.FieldWorks.IText
 				morph.MorphTypeRA = Cache.ServiceLocator.GetInstance<IMoMorphTypeRepository>().GetObject(MoMorphTypeTags.kguidMorphSuffix);
 
 				testSandbox.RawWordform = TsStringUtils.MakeString("here", Cache.DefaultVernWs);
-				Assert.DoesNotThrow(() => testSandbox.EstablishDefaultEntry(morph.Hvo, "here", morph.MorphTypeRA, false));
-				Assert.DoesNotThrow(() => testSandbox.EstablishDefaultEntry(morph.Hvo, "notHere", morph.MorphTypeRA, false));
+				Assert.That(() => testSandbox.EstablishDefaultEntry(morph.Hvo, "here", morph.MorphTypeRA, false), Throws.Nothing);
+				Assert.That(() => testSandbox.EstablishDefaultEntry(morph.Hvo, "notHere", morph.MorphTypeRA, false), Throws.Nothing);
 			}
 		}
 	}

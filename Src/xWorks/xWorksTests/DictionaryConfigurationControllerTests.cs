@@ -385,7 +385,7 @@ namespace SIL.FieldWorks.XWorks
 			var userFolderName = Path.GetRandomFileName();
 			var testUserFolder = Path.Combine(Path.GetTempPath(), userFolderName);
 			// SUT
-			Assert.DoesNotThrow(() => DictionaryConfigurationController.ListDictionaryConfigurationChoices(testDefaultFolder, testUserFolder), "A missing User location should not throw.");
+			Assert.That(() => DictionaryConfigurationController.ListDictionaryConfigurationChoices(testDefaultFolder, testUserFolder), "A missing User location should not throw.", Throws.Nothing);
 			Assert.That(Directory.Exists(testUserFolder), Is.True, "A missing user configuration folder should be created.");
 		}
 
@@ -1412,7 +1412,7 @@ namespace SIL.FieldWorks.XWorks
 					Cache);
 
 				//SUT
-				Assert.DoesNotThrow(() => DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache));
+				Assert.That(() => DictionaryConfigurationController.MergeCustomFieldsIntoDictionaryModel(model, Cache), Throws.Nothing);
 			}
 		}
 
@@ -1446,7 +1446,7 @@ namespace SIL.FieldWorks.XWorks
 		public void EnableNodeAndDescendants_EnablesNodeWithNoChildren()
 		{
 			var node = new ConfigurableDictionaryNode { IsEnabled = false };
-			Assert.DoesNotThrow(() => DictionaryConfigurationController.EnableNodeAndDescendants(node));
+			Assert.That(() => DictionaryConfigurationController.EnableNodeAndDescendants(node), Throws.Nothing);
 			Assert.That(node.IsEnabled, Is.True);
 		}
 
@@ -1454,7 +1454,7 @@ namespace SIL.FieldWorks.XWorks
 		public void DisableNodeAndDescendants_UnchecksNodeWithNoChildren()
 		{
 			var node = new ConfigurableDictionaryNode { IsEnabled = true };
-			Assert.DoesNotThrow(() => DictionaryConfigurationController.DisableNodeAndDescendants(node));
+			Assert.That(() => DictionaryConfigurationController.DisableNodeAndDescendants(node), Throws.Nothing);
 			Assert.That(node.IsEnabled, Is.False);
 		}
 
@@ -1464,7 +1464,7 @@ namespace SIL.FieldWorks.XWorks
 			var grandchild = new ConfigurableDictionaryNode { IsEnabled = false };
 			var child = new ConfigurableDictionaryNode { IsEnabled = false, Children = new List<ConfigurableDictionaryNode> { grandchild } };
 			var node = new ConfigurableDictionaryNode { IsEnabled = false, Children = new List<ConfigurableDictionaryNode> { child } };
-			Assert.DoesNotThrow(() => DictionaryConfigurationController.EnableNodeAndDescendants(node));
+			Assert.That(() => DictionaryConfigurationController.EnableNodeAndDescendants(node), Throws.Nothing);
 			Assert.That(node.IsEnabled, Is.True);
 			Assert.That(child.IsEnabled, Is.True);
 			Assert.That(grandchild.IsEnabled, Is.True);
@@ -1476,7 +1476,7 @@ namespace SIL.FieldWorks.XWorks
 			var grandchild = new ConfigurableDictionaryNode { IsEnabled = true };
 			var child = new ConfigurableDictionaryNode { IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { grandchild } };
 			var node = new ConfigurableDictionaryNode { IsEnabled = true, Children = new List<ConfigurableDictionaryNode> { child } };
-			Assert.DoesNotThrow(() => DictionaryConfigurationController.DisableNodeAndDescendants(node));
+			Assert.That(() => DictionaryConfigurationController.DisableNodeAndDescendants(node), Throws.Nothing);
 			Assert.That(node.IsEnabled, Is.False);
 			Assert.That(child.IsEnabled, Is.False);
 			Assert.That(grandchild.IsEnabled, Is.False);

@@ -31,7 +31,7 @@ namespace LexEdDllTests
 			TestUtils.AddComplexFormComponents(Cache, c, new List<ICmObject> {ac.SensesOS[0]});
 			// SUT
 			var breaker = new CircularRefBreaker();
-			Assert.DoesNotThrow(() => breaker.Process(Cache), "The BreakCircularRefs.Process(cache) method does not throw an exception");
+			Assert.That(() => breaker.Process(Cache), "The BreakCircularRefs.Process(cache) method does not throw an exception", Throws.Nothing);
 			Assert.That(a.EntryRefsOS.Count, Is.EqualTo(0), "Invalid LexEntryRef should be be removed from 'a'");
 			Assert.That(b.EntryRefsOS.Count, Is.EqualTo(0), "Invalid LexEntryRef should be be removed from 'b'");
 			Assert.That(c.EntryRefsOS.Count, Is.EqualTo(0), "Invalid LexEntryRef should be be removed from 'c'");
@@ -41,7 +41,7 @@ namespace LexEdDllTests
 			Assert.That(abcd.EntryRefsOS.Count, Is.EqualTo(1), "'abcd' should have a single LexEntryRef");
 			Assert.That(breaker.Count, Is.EqualTo(6), "There should have been 6 LexEntryRef objects to process for this test");
 			Assert.That(breaker.Circular, Is.EqualTo(5), "There should have been 5 circular references fixed");
-			Assert.DoesNotThrow(() => breaker.Process(Cache), "The BreakCircularRefs.Process(cache) method still does not throw an exception");
+			Assert.That(() => breaker.Process(Cache), "The BreakCircularRefs.Process(cache) method still does not throw an exception", Throws.Nothing);
 			Assert.That(a.EntryRefsOS.Count, Is.EqualTo(0), "'a' should still not have any LexEntryRef objects");
 			Assert.That(b.EntryRefsOS.Count, Is.EqualTo(0), "'b' should still not have any LexEntryRef objects");
 			Assert.That(c.EntryRefsOS.Count, Is.EqualTo(0), "'c' should still not have any LexEntryRef objects");

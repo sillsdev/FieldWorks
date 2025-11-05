@@ -202,7 +202,7 @@ namespace SIL.FieldWorks.XWorks
 			var entry = CreateInterestingLexEntry(almostTable);
 			var result = string.Empty;
 			// SUT
-			Assert.DoesNotThrow(() => result = (ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings)).ToString());
+			Assert.That(() => result = (ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings)).ToString(), Throws.Nothing);
 
 			// Verify that the field is in the results
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToUSFMField, 1);
@@ -218,7 +218,7 @@ namespace SIL.FieldWorks.XWorks
 			var entry = CreateInterestingLexEntry(almostTable);
 			var result = string.Empty;
 			// SUT
-			Assert.DoesNotThrow(() => result = (ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings)).ToString());
+			Assert.That(() => result = (ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings)).ToString(), Throws.Nothing);
 
 			// Verify that the partially-typed table is in the results
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(XPathToTitle + "[text()='" + TR + "']", 1);
@@ -233,7 +233,7 @@ namespace SIL.FieldWorks.XWorks
 			var entry = CreateInterestingLexEntry(almostTable);
 			var result = string.Empty;
 			// SUT
-			Assert.DoesNotThrow(() => result = (ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings)).ToString());
+			Assert.That(() => result = (ConfiguredLcmGenerator.GenerateContentForEntry(entry, m_configNode, null, m_settings)).ToString(), Throws.Nothing);
 
 			// Verify that the field is in the results
 			AssertThatXmlIn.String(result).HasNoMatchForXpath("//th");

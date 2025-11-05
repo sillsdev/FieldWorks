@@ -325,7 +325,7 @@ namespace SIL.FieldWorks.XWorks
 				// SUT
 				string last = null;
 				XHTMLWriter.WriteStartElement("TestElement");
-				Assert.DoesNotThrow(() => LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings));
+				Assert.That(() => LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings), Throws.Nothing);
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='en' and text()='R r']";
@@ -344,7 +344,7 @@ namespace SIL.FieldWorks.XWorks
 				// SUT
 				var last = "A a";
 				XHTMLWriter.WriteStartElement("TestElement");
-				Assert.DoesNotThrow(() => LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings));
+				Assert.That(() => LcmXhtmlGenerator.GenerateLetterHeaderIfNeeded(entry, ref last, XHTMLWriter, col, DefaultSettings), Throws.Nothing);
 				XHTMLWriter.WriteEndElement();
 				XHTMLWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='en' and text()='R r']";

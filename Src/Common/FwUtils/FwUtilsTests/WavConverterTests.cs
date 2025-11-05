@@ -110,7 +110,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				var file = Path.ChangeExtension(Path.GetRandomFileName(), ".mp3");
 				var destination = tempDirPath.Combine(tempDirPath.Path, file);
-				Assert.DoesNotThrow(()=>WavConverter.WavToMp3(_badWavFile, destination));
+				Assert.That(()=>WavConverter.WavToMp3(_badWavFile, destination), Throws.Nothing);
 				Assert.That(File.Exists(destination), Is.False, "WavConverter should not have created an mp3 file.");
 				Assert.That(messageBoxAdapter.MessagesDisplayed.Count, Is.EqualTo(1));
 				Assert.That(messageBoxAdapter.MessagesDisplayed[0],

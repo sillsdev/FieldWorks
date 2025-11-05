@@ -87,7 +87,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				@"<layoutType label='Lexeme-based (complex forms as main entries)' layout='publishStem'><configure class='LexEntry' label='Main Entry' layout='publishStemEntry' />",
 				@"<configure class='LexEntry' label='Minor Entry' layout='publishStemMinorEntry' hideConfig='true' /></layoutType>'"});
 			var migrator = new DictionaryConfigurationMigrator(m_propertyTable, m_mediator);
-			Assert.DoesNotThrow(() => migrator.MigrateOldConfigurationsIfNeeded(), "ArgumentException indicates localized labels."); // SUT
+			Assert.That(() => migrator.MigrateOldConfigurationsIfNeeded(), "ArgumentException indicates localized labels.", Throws.Nothing); // SUT
 			var updatedConfigModel = new DictionaryConfigurationModel(newConfigFilePath, Cache);
 			Assert.That(updatedConfigModel.Parts.Count, Is.EqualTo(2), "Should have 2 top-level nodes");
 			Assert.That(updatedConfigModel.Parts[0].Label, Is.EqualTo("Main Entry"));

@@ -1185,7 +1185,7 @@ namespace LexTextControlsTests
 					exporter.ExportPicturesAndMedia = false;
 					exporter.ExportLift(w, LiftFolder);
 				}
-				Assert.DoesNotThrow(() => Validator.CheckLiftWithPossibleThrow(liftFilePath));
+				Assert.That(() => Validator.CheckLiftWithPossibleThrow(liftFilePath), Throws.Nothing);
 			}
 		}
 

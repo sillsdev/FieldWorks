@@ -172,7 +172,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var mockView = SetUpView();
 				//SUT
-				Assert.DoesNotThrow(() => controller.UploadToWebonary(mockView.Model, mockView));
+				Assert.That(() => controller.UploadToWebonary(mockView.Model, mockView), Throws.Nothing);
 				Assert.That(mockView.StatusStrings.Any(s => s.Contains(mockView.Model.SelectedPublication) && s.Contains(mockView.Model.SelectedConfiguration)),
 					string.Concat(mockView.StatusStrings));
 			}
@@ -240,7 +240,7 @@ namespace SIL.FieldWorks.XWorks
 				var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
 				entry.CitationForm.set_String(wsFr, TsStringUtils.MakeString("Headword", wsFr));
 				//SUT
-				Assert.DoesNotThrow(() => controller.UploadToWebonary(mockView.Model, mockView));
+				Assert.That(() => controller.UploadToWebonary(mockView.Model, mockView), Throws.Nothing);
 
 				// The names of the files being sent to webonary are listed while logging the zip
 				Assert.That(mockView.StatusStrings.Any(s => s.Contains("lexentry.xhtml")), "xhtml not logged as sent: ");
@@ -261,19 +261,19 @@ namespace SIL.FieldWorks.XWorks
 				var model = view.Model;
 
 				model.SiteName = null;
-				Assert.DoesNotThrow(() => controller.UploadToWebonary(model, view));
+				Assert.That(() => controller.UploadToWebonary(model, view), Throws.Nothing);
 				model.SiteName = "site";
 				model.UserName = null;
-				Assert.DoesNotThrow(() => controller.UploadToWebonary(model, view));
+				Assert.That(() => controller.UploadToWebonary(model, view), Throws.Nothing);
 				model.UserName = "user";
 				model.Password = null;
-				Assert.DoesNotThrow(() => controller.UploadToWebonary(model, view));
+				Assert.That(() => controller.UploadToWebonary(model, view), Throws.Nothing);
 				model.Password = "password";
 				model.SelectedPublication = null;
-				Assert.DoesNotThrow(() => controller.UploadToWebonary(model, view));
+				Assert.That(() => controller.UploadToWebonary(model, view), Throws.Nothing);
 				model.SelectedPublication = "Test publication";
 				model.SelectedConfiguration = null;
-				Assert.DoesNotThrow(() => controller.UploadToWebonary(model, view));
+				Assert.That(() => controller.UploadToWebonary(model, view), Throws.Nothing);
 			}
 		}
 
@@ -287,7 +287,7 @@ namespace SIL.FieldWorks.XWorks
 				model.UserName = "webonary";
 				model.Password = "webonary";
 				//SUT
-				Assert.DoesNotThrow(() => controller.UploadToWebonary(model, mockView));
+				Assert.That(() => controller.UploadToWebonary(model, mockView), Throws.Nothing);
 				mockView.StatusStrings.ForEach(Console.WriteLine); // Remove this output line once this test works.
 				Assert.That(String.IsNullOrEmpty(mockView.StatusStrings.Find(s => s.Contains("Error") || s.Contains("ERROR") || s.Contains("error"))));
 			}

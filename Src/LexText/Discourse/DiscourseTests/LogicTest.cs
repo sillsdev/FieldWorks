@@ -195,8 +195,8 @@ namespace SIL.FieldWorks.Discourse
 		public void LogicWithNullChart_ColumnsAndGroups_IsEmpty()
 		{
 			m_logic.Chart = null;
-			Assert.DoesNotThrow(() => { var _ = m_logic.ColumnsAndGroups.Headers; },
-				"Null chart in logic should not cause crash. Data changes can invalidate the chart leaving the logic with a null chart temporarily.");
+			Assert.That(() => { var _ = m_logic.ColumnsAndGroups.Headers; },
+				"Null chart in logic should not cause crash. Data changes can invalidate the chart leaving the logic with a null chart temporarily.", Throws.Nothing);
 			Assert.That(m_logic.ColumnsAndGroups.Headers, Is.Empty);
 		}
 
@@ -204,8 +204,8 @@ namespace SIL.FieldWorks.Discourse
 		public void LogicWithNullChart_AllMyColumns_IsEmpty()
 		{
 			m_logic.Chart = null;
-			Assert.DoesNotThrow(() => { var _ = m_logic.AllMyColumns; },
-				"Null chart in logic should not cause crash. Data changes can invalidate the chart leaving the logic with a null chart temporarily.");
+			Assert.That(() => { var _ = m_logic.AllMyColumns; },
+				"Null chart in logic should not cause crash. Data changes can invalidate the chart leaving the logic with a null chart temporarily.", Throws.Nothing);
 			Assert.That(m_logic.AllMyColumns, Is.Empty);
 		}
 

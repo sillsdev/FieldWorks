@@ -151,7 +151,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var xElt = XElement.Parse(Contents(key));
 
 			var result = FwUpdater.Parse(xElt, "https://test.s3.amazonaws.com/");
-			Assert.Null(result);
+			Assert.That(result, Is.Null);
 		}
 
 		[TestCase("https://downloads.languagetechnology.org/", "9.0.14.10", 367, 64, 217055232, 207)]
@@ -196,7 +196,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var xElt = XElement.Parse(Contents(key));
 
 			var result = FwUpdater.Parse(xElt, "https://test.s3.amazonaws.com/");
-			Assert.Null(result);
+			Assert.That(result, Is.Null);
 		}
 
 		[TestCase(@"C:\ProgramData\SIL\FieldWorks\DownloadedUpdates\", "9.0.15.1", 64, true)]

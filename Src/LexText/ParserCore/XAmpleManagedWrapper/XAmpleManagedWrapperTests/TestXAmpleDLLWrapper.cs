@@ -112,13 +112,13 @@ namespace XAmpleManagedWrapperTests
 		[Test]
 		public void TestDisposeBeforeInit()
 		{
-			Assert.DoesNotThrow(() =>
+			Assert.That(() =>
 			{
 				using (var xAmpleDllWrapper = new XAmpleDLLWrapper())
 				{
 					// prove that disposing the uninitialized wrapper does not throw
 				}
-			});
+			}, Throws.Nothing);
 		}
 	}
 }

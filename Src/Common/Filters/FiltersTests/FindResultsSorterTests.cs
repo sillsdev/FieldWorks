@@ -112,7 +112,7 @@ namespace SIL.FieldWorks.Filters
 
 			var resultsSorter = new FindResultSorter(matchString, sorter);
 			var records = CreateRecords(new[] { "Ramban", "buburuq" });
-			Assert.DoesNotThrow(() => resultsSorter.Sort(records));
+			Assert.That(() => resultsSorter.Sort(records), Throws.Nothing);
 			VerifySortOrder(new[] { "buburuq", "Ramban" }, records);
 		}
 

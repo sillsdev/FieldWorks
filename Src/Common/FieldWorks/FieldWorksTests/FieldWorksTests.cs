@@ -132,7 +132,7 @@ namespace SIL.FieldWorks
 				FileUtils.EnsureDirectoryExists(defaultFolder);
 
 				// Not crash or anything
-				Assert.DoesNotThrow(() => FieldWorks.EnsureValidLinkedFilesFolderCore(defaultFolder, defaultFolder));
+				Assert.That(() => FieldWorks.EnsureValidLinkedFilesFolderCore(defaultFolder, defaultFolder), Throws.Nothing);
 			});
 		}
 

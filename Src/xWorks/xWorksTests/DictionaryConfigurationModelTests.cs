@@ -135,7 +135,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
-			Assert.IsInstanceOf(typeof(DictionaryNodeWritingSystemOptions), testNodeOptions);
+			Assert.That(testNodeOptions, Is.InstanceOf(typeof(DictionaryNodeWritingSystemOptions)));
 			var wsOptions = (DictionaryNodeWritingSystemOptions)testNodeOptions;
 			Assert.That(wsOptions.DisplayWritingSystemAbbreviations, Is.True);
 			Assert.That(wsOptions.WsType, Is.EqualTo(DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular));
@@ -164,7 +164,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// The following assertions are based on the specific test data loaded from the file
 			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
-			Assert.IsInstanceOf(typeof(DictionaryNodeSenseOptions), testNodeOptions);
+			Assert.That(testNodeOptions, Is.InstanceOf(typeof(DictionaryNodeSenseOptions)));
 			var senseOptions = (DictionaryNodeSenseOptions)testNodeOptions;
 			Assert.That(senseOptions.NumberingStyle, Is.EqualTo("%d"), "NumberingStyle should be same");
 			Assert.That(senseOptions.BeforeNumber, Is.EqualTo("("));
@@ -201,7 +201,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// The following assertions are based on the specific test data loaded from the file
 			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
-			Assert.IsInstanceOf(typeof(DictionaryNodeListOptions), testNodeOptions);
+			Assert.That(testNodeOptions, Is.InstanceOf(typeof(DictionaryNodeListOptions)));
 			var listOptions = (DictionaryNodeListOptions)testNodeOptions;
 			Assert.That(listOptions.ListId, Is.EqualTo(DictionaryNodeListOptions.ListIds.Variant));
 			// The first guid (b0000000-c40e-433e-80b5-31da08771344) is a special marker for
@@ -233,7 +233,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// The following assertions are based on the specific test data loaded from the file
 			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
-			Assert.IsInstanceOf(typeof(DictionaryNodeListAndParaOptions), testNodeOptions);
+			Assert.That(testNodeOptions, Is.InstanceOf(typeof(DictionaryNodeListAndParaOptions)));
 			var lpOptions = (DictionaryNodeListAndParaOptions)testNodeOptions;
 			Assert.That(lpOptions.ListId, Is.EqualTo(DictionaryNodeListOptions.ListIds.Complex));
 			Assert.That(lpOptions.DisplayEachInAParagraph, Is.True);
@@ -264,7 +264,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// The following assertions are based on the specific test data loaded from the file
 			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
-			Assert.IsInstanceOf(typeof(DictionaryNodeListAndParaOptions), testNodeOptions);
+			Assert.That(testNodeOptions, Is.InstanceOf(typeof(DictionaryNodeListAndParaOptions)));
 			var lpOptions = (DictionaryNodeListAndParaOptions)testNodeOptions;
 			Assert.That(lpOptions.ListId, Is.EqualTo(DictionaryNodeListOptions.ListIds.None));
 			Assert.That(lpOptions.Options, Is.Null.Or.Empty);

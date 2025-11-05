@@ -306,9 +306,9 @@ namespace SIL.FieldWorks.Common.Framework
 				var window = new MainWindowDelegate(dummyWindow);
 				window.App = app;
 
-				Assert.DoesNotThrow(() => {
+				Assert.That(() => {
 					window.CreateShortcut(nonexistentDir);
-				});
+				}, Throws.Nothing);
 			}
 
 			Assert.That(FileUtils.DirectoryExists(nonexistentDir), Is.False,

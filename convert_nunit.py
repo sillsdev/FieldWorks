@@ -192,11 +192,45 @@ def convert_comparison_assert(content, old_method, constraint_template):
     
     return ''.join(result)
 
+def convert_does_not_throw(content):
+    """Convert Assert.DoesNotThrow to Assert.That with Throws.Nothing"""
+    result = []
+    pattern = r'Assert\.DoesNotThrow\s*\('
+    pos = 0
+    
+    while pos < len(content):
+        match = re.search(pattern, content[pos:])
+        if not match:
+            result.append(content[pos:])
+            break
+        
+        # Add text before match
+        result.append(content[pos:pos + match.start()])
+        
+        # Find closing paren
+        open_paren_idx = pos + match.end() - 1
+        close_paren_idx = find_matching_paren(content, open_paren_idx)
+        
+        if close_paren_idx == -1:
+            result.append(match.group(0))
+            pos = pos + match.end()
+            continue
+        
+        # Extract the delegate/lambda
+        delegate = content[open_paren_idx + 1:close_paren_idx].strip()
+        
+        # Convert to Assert.That
+        result.append(f'Assert.That({delegate}, Throws.Nothing)')
+        
+        pos = close_paren_idx + 1
+    
+    return ''.join(result)
+
 def convert_string_assert(content):
     """Convert StringAssert methods to Assert.That"""
     # StringAssert.Contains
     content = convert_comparison_assert(content, 'StringAssert\\.Contains', 'Does.Contain({0})')
-    # StringAssert.StartsWith
+    # StringAssert.StartsWith  
     content = convert_comparison_assert(content, 'StringAssert\\.StartsWith', 'Does.StartWith({0})')
     # StringAssert.EndsWith
     content = convert_comparison_assert(content, 'StringAssert\\.EndsWith', 'Does.EndWith({0})')
@@ -214,6 +248,8 @@ def convert_collection_assert(content):
     content = convert_comparison_assert(content, 'CollectionAssert\\.Contains', 'Does.Contain({0})')
     # CollectionAssert.DoesNotContain
     content = convert_comparison_assert(content, 'CollectionAssert\\.DoesNotContain', 'Does.Not.Contain({0})')
+    # CollectionAssert.AllItemsAreUnique
+    content = convert_simple_assert(content, 'CollectionAssert\\.AllItemsAreUnique', 'Is.Unique')
     # CollectionAssert.IsEmpty
     content = convert_simple_assert(content, 'CollectionAssert\\.IsEmpty', 'Is.Empty')
     # CollectionAssert.IsNotEmpty
@@ -244,16 +280,23 @@ def convert_file(file_path, dry_run=False):
         content = convert_comparison_assert(content, 'Less', 'Is.LessThan({0})')
         content = convert_comparison_assert(content, 'Contains', 'Does.Contain({0})')
         
+        # IsInstanceOf - special handling
+        content = convert_comparison_assert(content, 'IsInstanceOf', 'Is.InstanceOf({0})')
+        
         # Simple asserts (with one argument + optional message)
         content = convert_simple_assert(content, 'IsNotNull', 'Is.Not.Null')
         content = convert_simple_assert(content, 'IsNull', 'Is.Null')
         content = convert_simple_assert(content, 'NotNull', 'Is.Not.Null')
+        content = convert_simple_assert(content, 'Null', 'Is.Null')
         content = convert_simple_assert(content, 'IsFalse', 'Is.False')
         content = convert_simple_assert(content, 'IsTrue', 'Is.True')
         content = convert_simple_assert(content, 'False', 'Is.False')
         content = convert_simple_assert(content, 'True', 'Is.True')
         content = convert_simple_assert(content, 'IsNotEmpty', 'Is.Not.Empty')
         content = convert_simple_assert(content, 'IsEmpty', 'Is.Empty')
+        
+        # DoesNotThrow - convert to Assert.That with Throws.Nothing
+        content = convert_does_not_throw(content)
         
         # String and Collection asserts
         content = convert_string_assert(content)

@@ -27,7 +27,7 @@ namespace LexEdDllTests
 		{
 			// verify test conditions
 			Assert.That(0, Is.EqualTo(m_revIndexRepo.Count), "Test setup is broken, should be no RIs");
-			Assert.DoesNotThrow(()=>SortReversalSubEntries.SortReversalSubEntriesInPlace(Cache));
+			Assert.That(()=>SortReversalSubEntries.SortReversalSubEntriesInPlace(Cache), Throws.Nothing);
 		}
 
 		[Test]
