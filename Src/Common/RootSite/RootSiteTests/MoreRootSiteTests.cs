@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-using Rhino.Mocks;
+using Moq;
 using NUnit.Framework;
 
 using SIL.FieldWorks.Common.ViewsInterfaces;
@@ -977,27 +977,30 @@ namespace SIL.FieldWorks.Common.RootSites
 			Assert.That(pict, Is.Not.Null);
 
 			ShowForm(Lng.English, DummyBasicViewVc.DisplayType.kNormal);
-			var mockedSelection = MockRepository.GenerateMock<IVwSelection>();
-			mockedSelection.Expect(s => s.IsValid).Return(true);
+			var mockedSelection = new Mock<IVwSelection>();
+			mockedSelection.Setup(s => s.IsValid).Returns(true);
 			VwChangeInfo changeInfo = new VwChangeInfo();
 			changeInfo.hvo = 0;
-			mockedSelection.Expect(s => s.CompleteEdits(out changeInfo)).IgnoreArguments().Return(true);
-			mockedSelection.Expect(s => s.CLevels(true)).Return(2);
-			mockedSelection.Expect(s => s.CLevels(false)).Return(2);
-			string sIntType = typeof(int).FullName;
-			string intRef = sIntType + "&";
-			int ignoreOut;
-			IVwPropertyStore outPropStore;
-			mockedSelection.Expect(s => s.PropInfo(false, 0, out ignoreOut, out ignoreOut, out ignoreOut, out ignoreOut, out outPropStore))
-				.OutRef(pict.Hvo, CmPictureTags.kflidCaption, 0, 0, null);
-			mockedSelection.Expect(
-				s => s.PropInfo(true, 0, out ignoreOut, out ignoreOut, out ignoreOut, out ignoreOut, out outPropStore))
-				.OutRef(pict.Hvo, CmPictureTags.kflidCaption, 0, 0, null);
-			mockedSelection.Expect(s => s.EndBeforeAnchor).Return(false);
+			mockedSelection.Setup(s => s.CompleteEdits(out changeInfo)).Returns(true);
+			mockedSelection.Setup(s => s.CLevels(true)).Returns(2);
+			mockedSelection.Setup(s => s.CLevels(false)).Returns(2);
+			
+			// Setup PropInfo with out parameters - Moq will return the out values we specify
+			int hvo1 = pict.Hvo, tag1 = CmPictureTags.kflidCaption, ihvoEnd1 = 0, cpropPrevious1 = 0;
+			IVwPropertyStore vps1 = null;
+			mockedSelection.Setup(s => s.PropInfo(false, 0, out hvo1, out tag1, out ihvoEnd1, out cpropPrevious1, out vps1))
+				.Returns(true);
+				
+			int hvo2 = pict.Hvo, tag2 = CmPictureTags.kflidCaption, ihvoEnd2 = 0, cpropPrevious2 = 0;
+			IVwPropertyStore vps2 = null;
+			mockedSelection.Setup(s => s.PropInfo(true, 0, out hvo2, out tag2, out ihvoEnd2, out cpropPrevious2, out vps2))
+				.Returns(true);
+				
+			mockedSelection.Setup(s => s.EndBeforeAnchor).Returns(false);
 
 			DummyBasicView.DummyEditingHelper editingHelper =
 				(DummyBasicView.DummyEditingHelper)m_basicView.EditingHelper;
-			editingHelper.m_mockedSelection = (IVwSelection)mockedSelection;
+			editingHelper.m_mockedSelection = mockedSelection.Object;
 			editingHelper.m_fOverrideGetParaPropStores = true;
 
 			IVwSelection vwsel;

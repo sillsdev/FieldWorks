@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
-using Rhino.Mocks;
+using Moq;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
@@ -296,36 +296,47 @@ namespace SIL.FieldWorks.IText
 		#region Helper methods
 		private void SetUpMocksForTest(ISegment seg)
 		{
-			IVwRootBox rootb = MockRepository.GenerateStrictMock<IVwRootBox>();
-			m_interlinDoc.MockedRootBox = rootb;
-			IVwSelection vwsel = MockRepository.GenerateStrictMock<IVwSelection>();
-			rootb.Stub(x => x.Selection).Return(vwsel);
-			rootb.Stub(x => x.DataAccess).Return(Cache.DomainDataByFlid);
-			vwsel.Stub(x =>
+			var rootbMock = new Mock<IVwRootBox>(MockBehavior.Strict);
+			m_interlinDoc.MockedRootBox = rootbMock.Object;
+			var vwselMock = new Mock<IVwSelection>(MockBehavior.Strict);
+			rootbMock.Setup(x => x.Selection).Returns(vwselMock.Object);
+			rootbMock.Setup(x => x.DataAccess).Returns(Cache.DomainDataByFlid);
+			
+			// Setup TextSelInfo with out parameters
+			ITsString tsStringOut = null;
+			int int1Out = 0, int4Out = seg.Hvo, int5Out = SimpleRootSite.kTagUserPrompt, int6Out = Cache.DefaultAnalWs;
+			bool bool1Out = false;
+			vwselMock.Setup(x =>
 				x.TextSelInfo(
-					Arg<bool>.Is.Equal(false),
-					out Arg<ITsString>.Out(null).Dummy,
-					out Arg<int>.Out(0).Dummy,
-					out Arg<bool>.Out(false).Dummy,
-					out Arg<int>.Out(seg.Hvo).Dummy,
-					out Arg<int>.Out(SimpleRootSite.kTagUserPrompt).Dummy,
-					out Arg<int>.Out(Cache.DefaultAnalWs).Dummy
+					false,
+					out tsStringOut,
+					out int1Out,
+					out bool1Out,
+					out int4Out,
+					out int5Out,
+					out int6Out
 				)
 			);
-			vwsel.Stub(x => x.IsValid).Return(true);
-			vwsel.Stub(x => x.CLevels(Arg<bool>.Is.Anything)).Return(0);
-			vwsel.Stub(x =>
+			
+			vwselMock.Setup(x => x.IsValid).Returns(true);
+			vwselMock.Setup(x => x.CLevels(It.IsAny<bool>())).Returns(0);
+			
+			// Setup AllSelEndInfo with out parameters
+			int allSelInt1 = 0, allSelInt3 = 0, allSelInt4 = 0, allSelInt5 = 0, allSelInt6 = 0;
+			bool allSelBool = true;
+			ITsTextProps allSelProps = null;
+			vwselMock.Setup(x =>
 				x.AllSelEndInfo(
-					Arg<bool>.Is.Anything,
-					out Arg<int>.Out(0).Dummy,
-					Arg<int>.Is.Equal(0),
-					Arg<ArrayPtr>.Is.Null,
-					out Arg<int>.Out(0).Dummy,
-					out Arg<int>.Out(0).Dummy,
-					out Arg<int>.Out(0).Dummy,
-					out Arg<int>.Out(0).Dummy,
-					out Arg<bool>.Out(true).Dummy,
-					out Arg<ITsTextProps>.Out(null).Dummy
+					It.IsAny<bool>(),
+					out allSelInt1,
+					0,
+					null,
+					out allSelInt3,
+					out allSelInt4,
+					out allSelInt5,
+					out allSelInt6,
+					out allSelBool,
+					out allSelProps
 				)
 			);
 			m_interlinDoc.CallSetActiveFreeform(seg.Hvo, Cache.DefaultAnalWs);

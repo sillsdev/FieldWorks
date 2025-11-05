@@ -8,7 +8,7 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using Rhino.Mocks;
+using Moq;
 using SIL.FieldWorks.Common.RootSites;
 using System.Windows.Forms;
 using SIL.LCModel.Core.Text;
@@ -28,10 +28,16 @@ namespace SIL.FieldWorks.Common.Framework
 	public class FwEditingHelperTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
 		#region Data members
-		private IEditingCallbacks m_callbacks = MockRepository.GenerateStub<IEditingCallbacks>();
-		private IVwRootSite m_rootsite = MockRepository.GenerateStub<IVwRootSite>();
-		private IVwRootBox m_rootbox = MockRepository.GenerateStub<IVwRootBox>();
-		private IVwGraphics m_vg = MockRepository.GenerateStub<IVwGraphics>();
+		private Mock<IEditingCallbacks> m_callbacksMock = new Mock<IEditingCallbacks>();
+		private Mock<IVwRootSite> m_rootsiteMock = new Mock<IVwRootSite>();
+		private Mock<IVwRootBox> m_rootboxMock = new Mock<IVwRootBox>();
+		private Mock<IVwGraphics> m_vgMock = new Mock<IVwGraphics>();
+		
+		private IEditingCallbacks m_callbacks => m_callbacksMock.Object;
+		private IVwRootSite m_rootsite => m_rootsiteMock.Object;
+		private IVwRootBox m_rootbox => m_rootboxMock.Object;
+		private IVwGraphics m_vg => m_vgMock.Object;
+		
 		private ITsTextProps m_ttpHyperlink, m_ttpNormal;
 		#endregion
 
@@ -56,13 +62,15 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			base.FixtureSetup();
 
-			m_callbacks.Stub(x => x.EditedRootBox).Return(m_rootbox);
-			m_rootbox.Stub(rbox => rbox.Site).Return(m_rootsite);
-			m_rootbox.DataAccess = MockRepository.GenerateMock<ISilDataAccess>();
-			m_rootsite.Stub(site => site.GetGraphics(Arg<IVwRootBox>.Is.Equal(m_rootbox),
-				out Arg<IVwGraphics>.Out(m_vg).Dummy,
-				out Arg<Rect>.Out(new Rect()).Dummy,
-				out Arg<Rect>.Out(new Rect()).Dummy));
+			m_callbacksMock.Setup(x => x.EditedRootBox).Returns(m_rootbox);
+			m_rootboxMock.Setup(rbox => rbox.Site).Returns(m_rootsite);
+			m_rootboxMock.Object.DataAccess = new Mock<ISilDataAccess>().Object;
+			
+			// Setup GetGraphics with out parameters
+			IVwGraphics vgOut = m_vg;
+			Rect rect1 = new Rect();
+			Rect rect2 = new Rect();
+			m_rootsiteMock.Setup(site => site.GetGraphics(m_rootbox, out vgOut, out rect1, out rect2));
 
 			ITsPropsBldr ttpBldr = TsStringUtils.MakePropsBldr();
 			ttpBldr.SetIntPropValues((int)FwTextPropType.ktptWs, -1, 911);
@@ -85,22 +93,27 @@ namespace SIL.FieldWorks.Common.Framework
 		[Test]
 		public void OverTypingHyperlink_LinkPluSFollowingText_WholeParagraphSelected()
 		{
-			var selection = MakeMockSelection();
-			var selHelper = SelectionHelper.s_mockedSelectionHelper =
-				MockRepository.GenerateStub<SelectionHelper>();
-			selHelper.Stub(selH => selH.Selection).Return(selection);
+			var selectionMock = MakeMockSelectionMock();
+			var selHelperMock = new Mock<SelectionHelper>();
+			selHelperMock.Setup(selH => selH.Selection).Returns(selectionMock.Object);
 
-			SimulateHyperlinkFollowedByPlainText(selHelper, IchPosition.StartOfString,
+			SimulateHyperlinkFollowedByPlainText(selHelperMock, IchPosition.StartOfString,
 				IchPosition.EndOfString);
+
+			SelectionHelper.s_mockedSelectionHelper = selHelperMock.Object;
+
+			// Setup callback to capture arguments passed to SetTypingProps
+			var capturedProps = new List<ITsTextProps>();
+			selectionMock.Setup(sel => sel.SetTypingProps(It.IsAny<ITsTextProps>()))
+				.Callback<ITsTextProps>(ttp => capturedProps.Add(ttp));
 
 			using (FwEditingHelper editingHelper = new FwEditingHelper(Cache, m_callbacks))
 			{
 				editingHelper.OnKeyPress(new KeyPressEventArgs('b'), Keys.None);
 
-				IList<object[]> argsSentToSetTypingProps =
-					selection.GetArgumentsForCallsMadeOn(sel => sel.SetTypingProps(null));
-				Assert.That(argsSentToSetTypingProps.Count, Is.EqualTo(1));
-				ITsTextProps ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
+				// Verify SetTypingProps was called exactly once
+				Assert.That(capturedProps.Count, Is.EqualTo(1));
+				ITsTextProps ttpSentToSetTypingProps = capturedProps[0];
 				Assert.That(ttpSentToSetTypingProps.StrPropCount, Is.EqualTo(0));
 				Assert.That(ttpSentToSetTypingProps.IntPropCount, Is.EqualTo(1));
 				int nVar;
@@ -119,22 +132,26 @@ namespace SIL.FieldWorks.Common.Framework
 		[Test]
 		public void OverTypingHyperlink_LinkButNotFollowingText()
 		{
-			var selection = MakeMockSelection();
-			var selHelper = SelectionHelper.s_mockedSelectionHelper =
-				MockRepository.GenerateStub<SelectionHelper>();
-			selHelper.Stub(selH => selH.Selection).Return(selection);
+			var selectionMock = MakeMockSelectionMock();
+			var selHelperMock = new Mock<SelectionHelper>();
+			selHelperMock.Setup(selH => selH.Selection).Returns(selectionMock.Object);
 
-			SimulateHyperlinkFollowedByPlainText(selHelper, IchPosition.StartOfHyperlink,
+			SimulateHyperlinkFollowedByPlainText(selHelperMock, IchPosition.StartOfHyperlink,
 				IchPosition.EndOfHyperlink);
+
+			// Setup callbackSelectionHelper.s_mockedSelectionHelper = selHelperMock.Object;
+
+			// Setup callback to capture arguments passed to SetTypingProps
+			var capturedProps = new List<ITsTextProps>();
+			selectionMock.Setup(sel => sel.SetTypingProps(It.IsAny<ITsTextProps>()))
+				.Callback<ITsTextProps>(ttp => capturedProps.Add(ttp));
 
 			using (FwEditingHelper editingHelper = new FwEditingHelper(Cache, m_callbacks))
 			{
 				editingHelper.OnKeyPress(new KeyPressEventArgs('b'), Keys.None);
 
-	//			selection.AssertWasNotCalled(sel => sel.SetTypingProps(null));
-				IList<object[]> argsSentToSetTypingProps =
-					selection.GetArgumentsForCallsMadeOn(sel => sel.SetTypingProps(null));
-				Assert.That(argsSentToSetTypingProps.Count, Is.EqualTo(0));
+				// Verify SetTypingProps was not called
+				Assert.That(capturedProps.Count, Is.EqualTo(0));
 			}
 		}
 
@@ -149,21 +166,25 @@ namespace SIL.FieldWorks.Common.Framework
 		[Test]
 		public void TypingAfterHyperlink()
 		{
-			var selection = MakeMockSelection(false);
-			var selHelper = SelectionHelper.s_mockedSelectionHelper =
-				MockRepository.GenerateStub<SelectionHelper>();
-			selHelper.Stub(selH => selH.Selection).Return(selection);
+			var selectionMock = MakeMockSelectionMock(false);
+			var selHelperMock = new Mock<SelectionHelper>();
+			selHelperMock.Setup(selH => selH.Selection).Returns(selectionMock.Object);
 
-			SimulateHyperlinkOnly(selHelper, IchPosition.EndOfString, IchPosition.EndOfString);
+			SimulateHyperlinkOnly(selHelperMock, IchPosition.EndOfString, IchPosition.EndOfString);
+
+			// Setup callbackSelectionHelper.s_mockedSelectionHelper = selHelperMock.Object;
+
+			// Setup callback to capture arguments passed to SetTypingProps
+			var capturedProps = new List<ITsTextProps>();
+			selectionMock.Setup(sel => sel.SetTypingProps(It.IsAny<ITsTextProps>()))
+				.Callback<ITsTextProps>(ttp => capturedProps.Add(ttp));
 
 			using (FwEditingHelper editingHelper = new FwEditingHelper(Cache, m_callbacks))
 			{
 				editingHelper.OnKeyPress(new KeyPressEventArgs('b'), Keys.None);
 
-				IList<object[]> argsSentToSetTypingProps =
-					selection.GetArgumentsForCallsMadeOn(sel => sel.SetTypingProps(null));
-				Assert.That(argsSentToSetTypingProps.Count, Is.EqualTo(1));
-				ITsTextProps ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
+				Assert.That(capturedProps.Count, Is.EqualTo(1));
+				ITsTextProps ttpSentToSetTypingProps = capturedProps[0];
 				Assert.That(ttpSentToSetTypingProps.StrPropCount, Is.EqualTo(0));
 				Assert.That(ttpSentToSetTypingProps.IntPropCount, Is.EqualTo(1));
 				int nVar;
@@ -182,22 +203,26 @@ namespace SIL.FieldWorks.Common.Framework
 		[Test]
 		public void TypingAfterHyperlink_WithFollowingPlainText()
 		{
-			var selection = MakeMockSelection(false);
-			var selHelper = SelectionHelper.s_mockedSelectionHelper =
-				MockRepository.GenerateStub<SelectionHelper>();
-			selHelper.Stub(selH => selH.Selection).Return(selection);
+			var selectionMock = MakeMockSelectionMock(false);
+			var selHelperMock = new Mock<SelectionHelper>();
+			selHelperMock.Setup(selH => selH.Selection).Returns(selectionMock.Object);
 
-			SimulateHyperlinkFollowedByPlainText(selHelper, IchPosition.EndOfHyperlink,
+			SimulateHyperlinkFollowedByPlainText(selHelperMock, IchPosition.EndOfHyperlink,
 				IchPosition.EndOfHyperlink);
+
+			// Setup callbackSelectionHelper.s_mockedSelectionHelper = selHelperMock.Object;
+
+			// Setup callback to capture arguments passed to SetTypingProps
+			var capturedProps = new List<ITsTextProps>();
+			selectionMock.Setup(sel => sel.SetTypingProps(It.IsAny<ITsTextProps>()))
+				.Callback<ITsTextProps>(ttp => capturedProps.Add(ttp));
 
 			using (FwEditingHelper editingHelper = new FwEditingHelper(Cache, m_callbacks))
 			{
 				editingHelper.OnKeyPress(new KeyPressEventArgs('b'), Keys.None);
 
-				IList<object[]> argsSentToSetTypingProps =
-					selection.GetArgumentsForCallsMadeOn(sel => sel.SetTypingProps(null));
-				Assert.That(argsSentToSetTypingProps.Count, Is.EqualTo(1));
-				ITsTextProps ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
+				Assert.That(capturedProps.Count, Is.EqualTo(1));
+				ITsTextProps ttpSentToSetTypingProps = capturedProps[0];
 				Assert.That(ttpSentToSetTypingProps.StrPropCount, Is.EqualTo(0));
 				Assert.That(ttpSentToSetTypingProps.IntPropCount, Is.EqualTo(1));
 				int nVar;
@@ -217,24 +242,26 @@ namespace SIL.FieldWorks.Common.Framework
 		[Test]
 		public void TypingAfterHyperlink_WithFollowingItalicsText()
 		{
-			var selection = MakeMockSelection(false);
-			var selHelper = SelectionHelper.s_mockedSelectionHelper =
-				MockRepository.GenerateStub<SelectionHelper>();
-			selHelper.Stub(selH => selH.Selection).Return(selection);
+			var selectionMock = MakeMockSelectionMock(false);
+			var selHelperMock = new Mock<SelectionHelper>();
+			selHelperMock.Setup(selH => selH.Selection).Returns(selectionMock.Object);
 
 			ITsPropsBldr bldr = m_ttpNormal.GetBldr();
 			bldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Italics");
-			SimulateHyperlinkFollowedByText(selHelper, bldr.GetTextProps(),
+			SimulateHyperlinkFollowedByText(selHelperMock, bldr.GetTextProps(),
 				IchPosition.EndOfHyperlink, IchPosition.EndOfHyperlink);
+
+			// Setup callback to capture arguments passed to SetTypingProps
+			var capturedProps = new List<ITsTextProps>();
+			selectionMock.Setup(sel => sel.SetTypingProps(It.IsAny<ITsTextProps>()))
+				.Callback<ITsTextProps>(ttp => capturedProps.Add(ttp));
 
 			using (FwEditingHelper editingHelper = new FwEditingHelper(Cache, m_callbacks))
 			{
 				editingHelper.OnKeyPress(new KeyPressEventArgs('b'), Keys.None);
 
-				IList<object[]> argsSentToSetTypingProps =
-					selection.GetArgumentsForCallsMadeOn(sel => sel.SetTypingProps(null));
-				Assert.That(argsSentToSetTypingProps.Count, Is.EqualTo(1));
-				ITsTextProps ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
+				Assert.That(capturedProps.Count, Is.EqualTo(1));
+				ITsTextProps ttpSentToSetTypingProps = capturedProps[0];
 				Assert.That(ttpSentToSetTypingProps.StrPropCount, Is.EqualTo(1));
 				Assert.That(ttpSentToSetTypingProps.IntPropCount, Is.EqualTo(1));
 				int nVar;
@@ -254,21 +281,25 @@ namespace SIL.FieldWorks.Common.Framework
 		[Test]
 		public void TypingBeforeHyperlink()
 		{
-			var selection = MakeMockSelection(false);
-			var selHelper = SelectionHelper.s_mockedSelectionHelper =
-				MockRepository.GenerateStub<SelectionHelper>();
-			selHelper.Stub(selH => selH.Selection).Return(selection);
+			var selectionMock = MakeMockSelectionMock(false);
+			var selHelperMock = new Mock<SelectionHelper>();
+			selHelperMock.Setup(selH => selH.Selection).Returns(selectionMock.Object);
 
-			SimulateHyperlinkOnly(selHelper, IchPosition.StartOfString, IchPosition.StartOfString);
+			SimulateHyperlinkOnly(selHelperMock, IchPosition.StartOfString, IchPosition.StartOfString);
+
+			// Setup callbackSelectionHelper.s_mockedSelectionHelper = selHelperMock.Object;
+
+			// Setup callback to capture arguments passed to SetTypingProps
+			var capturedProps = new List<ITsTextProps>();
+			selectionMock.Setup(sel => sel.SetTypingProps(It.IsAny<ITsTextProps>()))
+				.Callback<ITsTextProps>(ttp => capturedProps.Add(ttp));
 
 			using (FwEditingHelper editingHelper = new FwEditingHelper(Cache, m_callbacks))
 			{
 				editingHelper.OnKeyPress(new KeyPressEventArgs('b'), Keys.None);
 
-				IList<object[]> argsSentToSetTypingProps =
-					selection.GetArgumentsForCallsMadeOn(sel => sel.SetTypingProps(null));
-				Assert.That(argsSentToSetTypingProps.Count, Is.EqualTo(1));
-				ITsTextProps ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
+				Assert.That(capturedProps.Count, Is.EqualTo(1));
+				ITsTextProps ttpSentToSetTypingProps = capturedProps[0];
 				Assert.That(ttpSentToSetTypingProps.StrPropCount, Is.EqualTo(0));
 				Assert.That(ttpSentToSetTypingProps.IntPropCount, Is.EqualTo(1));
 				int nVar;
@@ -287,24 +318,26 @@ namespace SIL.FieldWorks.Common.Framework
 		[Test]
 		public void TypingBeforeHyperlink_WithPrecedingItalicsText()
 		{
-			var selection = MakeMockSelection(false);
-			var selHelper = SelectionHelper.s_mockedSelectionHelper =
-				MockRepository.GenerateStub<SelectionHelper>();
-			selHelper.Stub(selH => selH.Selection).Return(selection);
+			var selectionMock = MakeMockSelectionMock(false);
+			var selHelperMock = new Mock<SelectionHelper>();
+			selHelperMock.Setup(selH => selH.Selection).Returns(selectionMock.Object);
 
 			ITsPropsBldr bldr = m_ttpNormal.GetBldr();
 			bldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Italics");
-			SimulateTextFollowedByHyperlink(selHelper, bldr.GetTextProps(),
+			SimulateTextFollowedByHyperlink(selHelperMock, bldr.GetTextProps(),
 				IchPosition.StartOfHyperlink, IchPosition.StartOfHyperlink);
+
+			// Setup callback to capture arguments passed to SetTypingProps
+			var capturedProps = new List<ITsTextProps>();
+			selectionMock.Setup(sel => sel.SetTypingProps(It.IsAny<ITsTextProps>()))
+				.Callback<ITsTextProps>(ttp => capturedProps.Add(ttp));
 
 			using (FwEditingHelper editingHelper = new FwEditingHelper(Cache, m_callbacks))
 			{
 				editingHelper.OnKeyPress(new KeyPressEventArgs('b'), Keys.None);
 
-				IList<object[]> argsSentToSetTypingProps =
-					selection.GetArgumentsForCallsMadeOn(sel => sel.SetTypingProps(null));
-				Assert.That(argsSentToSetTypingProps.Count, Is.EqualTo(1));
-				ITsTextProps ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
+				Assert.That(capturedProps.Count, Is.EqualTo(1));
+				ITsTextProps ttpSentToSetTypingProps = capturedProps[0];
 				Assert.That(ttpSentToSetTypingProps.StrPropCount, Is.EqualTo(1));
 				Assert.That(ttpSentToSetTypingProps.IntPropCount, Is.EqualTo(1));
 				int nVar;
@@ -323,22 +356,26 @@ namespace SIL.FieldWorks.Common.Framework
 		[Test]
 		public void BackspaceHyperlink_EntireLink_WholeParagraph()
 		{
-			var selection = MakeMockSelection();
-			var selHelper = SelectionHelper.s_mockedSelectionHelper =
-				MockRepository.GenerateStub<SelectionHelper>();
-			selHelper.Stub(selH => selH.Selection).Return(selection);
+			var selectionMock = MakeMockSelectionMock();
+			var selHelperMock = new Mock<SelectionHelper>();
+			selHelperMock.Setup(selH => selH.Selection).Returns(selectionMock.Object);
 
-			SimulateHyperlinkOnly(selHelper, IchPosition.StartOfString,
+			SimulateHyperlinkOnly(selHelperMock, IchPosition.StartOfString,
 				IchPosition.EndOfString);
+
+			// Setup callbackSelectionHelper.s_mockedSelectionHelper = selHelperMock.Object;
+
+			// Setup callback to capture arguments passed to SetTypingProps
+			var capturedProps = new List<ITsTextProps>();
+			selectionMock.Setup(sel => sel.SetTypingProps(It.IsAny<ITsTextProps>()))
+				.Callback<ITsTextProps>(ttp => capturedProps.Add(ttp));
 
 			using (FwEditingHelper editingHelper = new FwEditingHelper(Cache, m_callbacks))
 			{
 				editingHelper.OnKeyPress(new KeyPressEventArgs((char)VwSpecialChars.kscBackspace), Keys.None);
 
-				IList<object[]> argsSentToSetTypingProps =
-					selection.GetArgumentsForCallsMadeOn(sel => sel.SetTypingProps(null));
-				Assert.That(argsSentToSetTypingProps.Count, Is.EqualTo(1));
-				ITsTextProps ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
+				Assert.That(capturedProps.Count, Is.EqualTo(1));
+				ITsTextProps ttpSentToSetTypingProps = capturedProps[0];
 				Assert.That(ttpSentToSetTypingProps.StrPropCount, Is.EqualTo(0));
 				Assert.That(ttpSentToSetTypingProps.IntPropCount, Is.EqualTo(1));
 				int nVar;
@@ -356,22 +393,26 @@ namespace SIL.FieldWorks.Common.Framework
 		[Test]
 		public void DeletingHyperlink_EntireLink_WholeParagraph()
 		{
-			var selection = MakeMockSelection();
-			var selHelper = SelectionHelper.s_mockedSelectionHelper =
-				MockRepository.GenerateStub<SelectionHelper>();
-			selHelper.Stub(selH => selH.Selection).Return(selection);
+			var selectionMock = MakeMockSelectionMock();
+			var selHelperMock = new Mock<SelectionHelper>();
+			selHelperMock.Setup(selH => selH.Selection).Returns(selectionMock.Object);
 
-			SimulateHyperlinkOnly(selHelper, IchPosition.StartOfString,
+			SimulateHyperlinkOnly(selHelperMock, IchPosition.StartOfString,
 				IchPosition.EndOfString);
+
+			// Setup callbackSelectionHelper.s_mockedSelectionHelper = selHelperMock.Object;
+
+			// Setup callback to capture arguments passed to SetTypingProps
+			var capturedProps = new List<ITsTextProps>();
+			selectionMock.Setup(sel => sel.SetTypingProps(It.IsAny<ITsTextProps>()))
+				.Callback<ITsTextProps>(ttp => capturedProps.Add(ttp));
 
 			using (FwEditingHelper editingHelper = new FwEditingHelper(Cache, m_callbacks))
 			{
 				editingHelper.HandleKeyPress((char)(int)VwSpecialChars.kscDelForward, Keys.None);
 
-				IList<object[]> argsSentToSetTypingProps =
-					selection.GetArgumentsForCallsMadeOn(sel => sel.SetTypingProps(null));
-				Assert.That(argsSentToSetTypingProps.Count, Is.EqualTo(1));
-				ITsTextProps ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
+				Assert.That(capturedProps.Count, Is.EqualTo(1));
+				ITsTextProps ttpSentToSetTypingProps = capturedProps[0];
 				Assert.That(ttpSentToSetTypingProps.StrPropCount, Is.EqualTo(0));
 				Assert.That(ttpSentToSetTypingProps.IntPropCount, Is.EqualTo(1));
 				int nVar;
@@ -390,22 +431,26 @@ namespace SIL.FieldWorks.Common.Framework
 		[Test]
 		public void DeletingHyperlink_LinkButNotFollowingText()
 		{
-			var selection = MakeMockSelection();
-			var selHelper = SelectionHelper.s_mockedSelectionHelper =
-				MockRepository.GenerateStub<SelectionHelper>();
-			selHelper.Stub(selH => selH.Selection).Return(selection);
+			var selectionMock = MakeMockSelectionMock();
+			var selHelperMock = new Mock<SelectionHelper>();
+			selHelperMock.Setup(selH => selH.Selection).Returns(selectionMock.Object);
 
-			SimulateHyperlinkFollowedByPlainText(selHelper, IchPosition.StartOfHyperlink,
+			SimulateHyperlinkFollowedByPlainText(selHelperMock, IchPosition.StartOfHyperlink,
 				IchPosition.EndOfHyperlink);
+
+			// Setup callbackSelectionHelper.s_mockedSelectionHelper = selHelperMock.Object;
+
+			// Setup callback to capture arguments passed to SetTypingProps
+			var capturedProps = new List<ITsTextProps>();
+			selectionMock.Setup(sel => sel.SetTypingProps(It.IsAny<ITsTextProps>()))
+				.Callback<ITsTextProps>(ttp => capturedProps.Add(ttp));
 
 			using (FwEditingHelper editingHelper = new FwEditingHelper(Cache, m_callbacks))
 			{
 				editingHelper.HandleKeyPress((char)(int)VwSpecialChars.kscDelForward, Keys.None);
 
-				IList<object[]> argsSentToSetTypingProps =
-					selection.GetArgumentsForCallsMadeOn(sel => sel.SetTypingProps(null));
-				Assert.That(argsSentToSetTypingProps.Count, Is.EqualTo(1));
-				ITsTextProps ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
+				Assert.That(capturedProps.Count, Is.EqualTo(1));
+				ITsTextProps ttpSentToSetTypingProps = capturedProps[0];
 				Assert.That(ttpSentToSetTypingProps.StrPropCount, Is.EqualTo(0));
 				Assert.That(ttpSentToSetTypingProps.IntPropCount, Is.EqualTo(1));
 				int nVar;
@@ -424,22 +469,26 @@ namespace SIL.FieldWorks.Common.Framework
 		[Test]
 		public void DeletingHyperlink_LinkButNotPrecedingText()
 		{
-			var selection = MakeMockSelection();
-			var selHelper = SelectionHelper.s_mockedSelectionHelper =
-				MockRepository.GenerateStub<SelectionHelper>();
-			selHelper.Stub(selH => selH.Selection).Return(selection);
+			var selectionMock = MakeMockSelectionMock();
+			var selHelperMock = new Mock<SelectionHelper>();
+			selHelperMock.Setup(selH => selH.Selection).Returns(selectionMock.Object);
 
-			SimulatePlainTextFollowedByHyperlink(selHelper, IchPosition.StartOfHyperlink,
+			SimulatePlainTextFollowedByHyperlink(selHelperMock, IchPosition.StartOfHyperlink,
 				IchPosition.EndOfHyperlink);
+
+			// Setup callbackSelectionHelper.s_mockedSelectionHelper = selHelperMock.Object;
+
+			// Setup callback to capture arguments passed to SetTypingProps
+			var capturedProps = new List<ITsTextProps>();
+			selectionMock.Setup(sel => sel.SetTypingProps(It.IsAny<ITsTextProps>()))
+				.Callback<ITsTextProps>(ttp => capturedProps.Add(ttp));
 
 			using (FwEditingHelper editingHelper = new FwEditingHelper(Cache, m_callbacks))
 			{
 				editingHelper.HandleKeyPress((char)(int)VwSpecialChars.kscDelForward, Keys.None);
 
-				IList<object[]> argsSentToSetTypingProps =
-					selection.GetArgumentsForCallsMadeOn(sel => sel.SetTypingProps(null));
-				Assert.That(argsSentToSetTypingProps.Count, Is.EqualTo(1));
-				ITsTextProps ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
+				Assert.That(capturedProps.Count, Is.EqualTo(1));
+				ITsTextProps ttpSentToSetTypingProps = capturedProps[0];
 				Assert.That(ttpSentToSetTypingProps.StrPropCount, Is.EqualTo(0));
 				Assert.That(ttpSentToSetTypingProps.IntPropCount, Is.EqualTo(1));
 				int nVar;
@@ -458,22 +507,26 @@ namespace SIL.FieldWorks.Common.Framework
 		[Test]
 		public void DeletingMiddleOfHyperlink()
 		{
-			var selection = MakeMockSelection();
-			var selHelper = SelectionHelper.s_mockedSelectionHelper =
-				MockRepository.GenerateStub<SelectionHelper>();
-			selHelper.Stub(selH => selH.Selection).Return(selection);
+			var selectionMock = MakeMockSelectionMock();
+			var selHelperMock = new Mock<SelectionHelper>();
+			selHelperMock.Setup(selH => selH.Selection).Returns(selectionMock.Object);
 
-			SimulateHyperlinkOnly(selHelper, IchPosition.EarlyInHyperlink,
+			SimulateHyperlinkOnly(selHelperMock, IchPosition.EarlyInHyperlink,
 				IchPosition.LateInHyperlink);
+
+			// Setup callbackSelectionHelper.s_mockedSelectionHelper = selHelperMock.Object;
+
+			// Setup callback to capture arguments passed to SetTypingProps
+			var capturedProps = new List<ITsTextProps>();
+			selectionMock.Setup(sel => sel.SetTypingProps(It.IsAny<ITsTextProps>()))
+				.Callback<ITsTextProps>(ttp => capturedProps.Add(ttp));
 
 			using (FwEditingHelper editingHelper = new FwEditingHelper(Cache, m_callbacks))
 			{
 				editingHelper.HandleKeyPress((char)(int)VwSpecialChars.kscDelForward, Keys.None);
 
-	//			selection.AssertWasNotCalled(sel => sel.SetTypingProps(null));
-				IList<object[]> argsSentToSetTypingProps =
-					selection.GetArgumentsForCallsMadeOn(sel => sel.SetTypingProps(null));
-				Assert.That(argsSentToSetTypingProps.Count, Is.EqualTo(0));
+				// Verify SetTypingProps was not called
+				Assert.That(capturedProps.Count, Is.EqualTo(0));
 			}
 		}
 
@@ -487,14 +540,14 @@ namespace SIL.FieldWorks.Common.Framework
 		{
 			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
 
-			LcmStyleSheet mockStylesheet = MockRepository.GenerateStub<LcmStyleSheet>();
-			IStStyle mockHyperlinkStyle = MockRepository.GenerateStub<IStStyle>();
-			mockHyperlinkStyle.Name = StyleServices.Hyperlink;
-			mockHyperlinkStyle.Stub(x => x.InUse).Return(true);
-			mockStylesheet.Stub(x => x.FindStyle(StyleServices.Hyperlink)).Return(mockHyperlinkStyle);
+			var mockStylesheetMock = new Mock<LcmStyleSheet>();
+			var mockHyperlinkStyleMock = new Mock<IStStyle>();
+			mockHyperlinkStyleMock.Setup(x => x.Name).Returns(StyleServices.Hyperlink);
+			mockHyperlinkStyleMock.Setup(x => x.InUse).Returns(true);
+			mockStylesheetMock.Setup(x => x.FindStyle(StyleServices.Hyperlink)).Returns(mockHyperlinkStyleMock.Object);
 
 			Assert.That(FwEditingHelper.AddHyperlink(strBldr, Cache.DefaultAnalWs, "Click Here",
-				"www.google.com", mockStylesheet), Is.True);
+				"www.google.com", mockStylesheetMock.Object), Is.True);
 			Assert.That(strBldr.RunCount, Is.EqualTo(1));
 			Assert.That(strBldr.get_RunText(0), Is.EqualTo("Click Here"));
 			ITsTextProps props = strBldr.get_Properties(0);
@@ -508,6 +561,25 @@ namespace SIL.FieldWorks.Common.Framework
 		/// needed for all the tests in this fixture.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Generates a mock IVwSelection and sets up some basic properties needed for all the
+		/// tests in this fixture. Returns the mock object so tests can verify calls.
+		/// </summary>
+		private Mock<IVwSelection> MakeMockSelectionMock()
+		{
+			return MakeMockSelectionMock(true);
+		}
+
+		private Mock<IVwSelection> MakeMockSelectionMock(bool fRange)
+		{
+			var selectionMock = new Mock<IVwSelection>();
+			selectionMock.Setup(sel => sel.IsRange).Returns(fRange);
+			selectionMock.Setup(sel => sel.IsValid).Returns(true);
+			selectionMock.Setup(sel => sel.IsEditable).Returns(true);
+			m_rootboxMock.Setup(rbox => rbox.Selection).Returns(selectionMock.Object);
+			return selectionMock;
+		}
+
 		private IVwSelection MakeMockSelection()
 		{
 			return MakeMockSelection(true);
@@ -521,12 +593,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		private IVwSelection MakeMockSelection(bool fRange)
 		{
-			var selection = MockRepository.GenerateMock<IVwSelection>();
-			selection.Stub(sel => sel.IsRange).Return(fRange);
-			selection.Stub(sel => sel.IsValid).Return(true);
-			selection.Stub(sel => sel.IsEditable).Return(true);
-			m_rootbox.Stub(rbox => rbox.Selection).Return(selection);
-			return selection;
+			return MakeMockSelectionMock(fRange).Object;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -536,10 +603,10 @@ namespace SIL.FieldWorks.Common.Framework
 		/// by some plain text.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void SimulateHyperlinkFollowedByPlainText(SelectionHelper selHelper,
+		private void SimulateHyperlinkFollowedByPlainText(Mock<SelectionHelper> selHelperMock,
 			IchPosition start, IchPosition end)
 		{
-			SimulateHyperlinkFollowedByText(selHelper, m_ttpNormal, start, end);
+			SimulateHyperlinkFollowedByText(selHelperMock, m_ttpNormal, start, end);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -549,17 +616,17 @@ namespace SIL.FieldWorks.Common.Framework
 		/// by some non-hyperlink text.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void SimulateHyperlinkFollowedByText(SelectionHelper selHelper,
+		private void SimulateHyperlinkFollowedByText(Mock<SelectionHelper> selHelperMock,
 			ITsTextProps ttpFollowingText, IchPosition start, IchPosition end)
 		{
 			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Google", m_ttpHyperlink);
 			bldr.Replace(bldr.Length, bldr.Length, "some more text", ttpFollowingText);
-			selHelper.Stub(selH => selH.GetTss(Arg<SelectionHelper.SelLimitType>.Is.Anything))
-				.Return(bldr.GetString());
+			selHelperMock.Setup(selH => selH.GetTss(It.IsAny<SelectionHelper.SelLimitType>()))
+				.Returns(bldr.GetString());
 
-			selHelper.Stub(selH => selH.GetSelProps(Arg<SelectionHelper.SelLimitType>.Is.Equal(
-				SelectionHelper.SelLimitType.Top))).Return(m_ttpHyperlink);
+			selHelperMock.Setup(selH => selH.GetSelProps(SelectionHelper.SelLimitType.Top))
+				.Returns(m_ttpHyperlink);
 
 			int ichStart = 0;
 			int ichEnd = 0;
@@ -570,19 +637,19 @@ namespace SIL.FieldWorks.Common.Framework
 			switch (end)
 			{
 				case IchPosition.EndOfString:
-					selHelper.Stub(selH => selH.GetSelProps(Arg<SelectionHelper.SelLimitType>.Is.Equal(
-						SelectionHelper.SelLimitType.Bottom))).Return(ttpFollowingText);
+					selHelperMock.Setup(selH => selH.GetSelProps(SelectionHelper.SelLimitType.Bottom))
+						.Returns(ttpFollowingText);
 					ichEnd = bldr.Length;
 					break;
 				case IchPosition.EndOfHyperlink:
-					selHelper.Stub(selH => selH.GetSelProps(Arg<SelectionHelper.SelLimitType>.Is.Equal(
-						SelectionHelper.SelLimitType.Bottom))).Return(m_ttpHyperlink);
+					selHelperMock.Setup(selH => selH.GetSelProps(SelectionHelper.SelLimitType.Bottom))
+						.Returns(m_ttpHyperlink);
 					ichEnd = "Google".Length;
 					break;
 			}
-			selHelper.Stub(selH => selH.GetIch(SelectionHelper.SelLimitType.Top)).Return(ichStart);
-			selHelper.Stub(selH => selH.GetIch(SelectionHelper.SelLimitType.Bottom)).Return(ichEnd);
-			selHelper.Stub(selH => selH.IsRange).Return(ichStart != ichEnd);
+			selHelperMock.Setup(selH => selH.GetIch(SelectionHelper.SelLimitType.Top)).Returns(ichStart);
+			selHelperMock.Setup(selH => selH.GetIch(SelectionHelper.SelLimitType.Bottom)).Returns(ichEnd);
+			selHelperMock.Setup(selH => selH.IsRange).Returns(ichStart != ichEnd);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -592,10 +659,10 @@ namespace SIL.FieldWorks.Common.Framework
 		/// by a hyperlink.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void SimulatePlainTextFollowedByHyperlink(SelectionHelper selHelper,
+		private void SimulatePlainTextFollowedByHyperlink(Mock<SelectionHelper> selHelperMock,
 			IchPosition start, IchPosition end)
 		{
-			SimulateTextFollowedByHyperlink(selHelper, m_ttpNormal, start, end);
+			SimulateTextFollowedByHyperlink(selHelperMock, m_ttpNormal, start, end);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -605,26 +672,26 @@ namespace SIL.FieldWorks.Common.Framework
 		/// by a hyperlink.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void SimulateTextFollowedByHyperlink(SelectionHelper selHelper,
+		private void SimulateTextFollowedByHyperlink(Mock<SelectionHelper> selHelperMock,
 			ITsTextProps ttpPrecedingText, IchPosition start, IchPosition end)
 		{
 			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(bldr.Length, bldr.Length, "some plain text", ttpPrecedingText);
 			bldr.Replace(0, 0, "Google", m_ttpHyperlink);
-			selHelper.Stub(selH => selH.GetTss(Arg<SelectionHelper.SelLimitType>.Is.Anything))
-				.Return(bldr.GetString());
+			selHelperMock.Setup(selH => selH.GetTss(It.IsAny<SelectionHelper.SelLimitType>()))
+				.Returns(bldr.GetString());
 
 			int ichStart = 0;
 			int ichEnd = bldr.Length;
 			switch (start)
 			{
 				case IchPosition.StartOfString:
-					selHelper.Stub(selH => selH.GetSelProps(Arg<SelectionHelper.SelLimitType>.Is.Equal(
-						SelectionHelper.SelLimitType.Top))).Return(ttpPrecedingText);
+					selHelperMock.Setup(selH => selH.GetSelProps(SelectionHelper.SelLimitType.Top))
+						.Returns(ttpPrecedingText);
 					break;
 				case IchPosition.StartOfHyperlink:
-					selHelper.Stub(selH => selH.GetSelProps(Arg<SelectionHelper.SelLimitType>.Is.Equal(
-						SelectionHelper.SelLimitType.Top))).Return(m_ttpHyperlink);
+					selHelperMock.Setup(selH => selH.GetSelProps(SelectionHelper.SelLimitType.Top))
+						.Returns(m_ttpHyperlink);
 					ichStart = "some plain text".Length;
 					break;
 			}
@@ -632,11 +699,11 @@ namespace SIL.FieldWorks.Common.Framework
 			{
 				case IchPosition.StartOfHyperlink: ichEnd = "some plain text".Length; break;
 			}
-			selHelper.Stub(selH => selH.GetSelProps(Arg<SelectionHelper.SelLimitType>.Is.Equal(
-				SelectionHelper.SelLimitType.Bottom))).Return(m_ttpHyperlink);
-			selHelper.Stub(selH => selH.GetIch(SelectionHelper.SelLimitType.Top)).Return(ichStart);
-			selHelper.Stub(selH => selH.GetIch(SelectionHelper.SelLimitType.Bottom)).Return(ichEnd);
-			selHelper.Stub(selH => selH.IsRange).Return(ichStart != ichEnd);
+			selHelperMock.Setup(selH => selH.GetSelProps(SelectionHelper.SelLimitType.Bottom))
+				.Returns(m_ttpHyperlink);
+			selHelperMock.Setup(selH => selH.GetIch(SelectionHelper.SelLimitType.Top)).Returns(ichStart);
+			selHelperMock.Setup(selH => selH.GetIch(SelectionHelper.SelLimitType.Bottom)).Returns(ichEnd);
+			selHelperMock.Setup(selH => selH.IsRange).Returns(ichStart != ichEnd);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -645,16 +712,16 @@ namespace SIL.FieldWorks.Common.Framework
 		/// to the editing helper as though we're editing a string consisting of only a hyperlink.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		private void SimulateHyperlinkOnly(SelectionHelper selHelper,
+		private void SimulateHyperlinkOnly(Mock<SelectionHelper> selHelperMock,
 			IchPosition start, IchPosition end)
 		{
 			ITsStrBldr bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, "Google", m_ttpHyperlink);
-			selHelper.Stub(selH => selH.GetTss(Arg<SelectionHelper.SelLimitType>.Is.Anything))
-				.Return(bldr.GetString());
+			selHelperMock.Setup(selH => selH.GetTss(It.IsAny<SelectionHelper.SelLimitType>()))
+				.Returns(bldr.GetString());
 
-			selHelper.Stub(selH => selH.GetSelProps(Arg<SelectionHelper.SelLimitType>.Is.Anything))
-				.Return(m_ttpHyperlink);
+			selHelperMock.Setup(selH => selH.GetSelProps(It.IsAny<SelectionHelper.SelLimitType>()))
+				.Returns(m_ttpHyperlink);
 
 			int ichStart = 0;
 			int ichEnd = 0;
@@ -670,9 +737,9 @@ namespace SIL.FieldWorks.Common.Framework
 				case IchPosition.EndOfString:
 				case IchPosition.EndOfHyperlink: ichEnd = bldr.Length; break;
 			}
-			selHelper.Stub(selH => selH.GetIch(SelectionHelper.SelLimitType.Top)).Return(ichStart);
-			selHelper.Stub(selH => selH.GetIch(SelectionHelper.SelLimitType.Bottom)).Return(ichEnd);
-			selHelper.Stub(selH => selH.IsRange).Return(ichStart != ichEnd);
+			selHelperMock.Setup(selH => selH.GetIch(SelectionHelper.SelLimitType.Top)).Returns(ichStart);
+			selHelperMock.Setup(selH => selH.GetIch(SelectionHelper.SelLimitType.Bottom)).Returns(ichEnd);
+			selHelperMock.Setup(selH => selH.IsRange).Returns(ichStart != ichEnd);
 		}
 		#endregion
 	}

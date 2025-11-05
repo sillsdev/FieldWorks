@@ -11,7 +11,7 @@ using System.Linq;
 using System.Reflection;
 
 using NUnit.Framework;
-using Rhino.Mocks;
+using Moq;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -105,7 +105,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = MockRepository.GenerateStub<Mediator>();
+			Mediator mediator = new Mock<Mediator>().Object;
 			respellUndoaction.DoIt(mediator);
 
 			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
@@ -128,7 +128,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = MockRepository.GenerateStub<Mediator>();
+			Mediator mediator = new Mock<Mediator>().Object;
 			respellUndoaction.DoIt(mediator);
 
 			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
@@ -156,7 +156,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.CopyAnalyses = true; // in the dialog this is always true?
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = MockRepository.GenerateStub<Mediator>();
+			Mediator mediator = new Mock<Mediator>().Object;
 			respellUndoaction.DoIt(mediator);
 
 			Assert.AreEqual(0, para.SegmentsOS[0].AnalysesRS[2].Analysis.MorphBundlesOS.Count,
@@ -192,7 +192,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = MockRepository.GenerateStub<Mediator>();
+			Mediator mediator = new Mock<Mediator>().Object;
 			respellUndoaction.DoIt(mediator);
 
 			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
@@ -221,7 +221,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = MockRepository.GenerateStub<Mediator>();
+			Mediator mediator = new Mock<Mediator>().Object;
 			respellUndoaction.DoIt(mediator);
 
 			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
@@ -261,7 +261,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = MockRepository.GenerateStub<Mediator>();
+			Mediator mediator = new Mock<Mediator>().Object;
 			respellUndoaction.DoIt(mediator);
 
 			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
@@ -315,7 +315,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.PreserveCase = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = MockRepository.GenerateStub<Mediator>();
+			Mediator mediator = new Mock<Mediator>().Object;
 			respellUndoaction.DoIt(mediator);
 
 			Assert.AreEqual(ksParaText.Replace(ksWordToReplace, ksNewWord), para.Contents.Text);
@@ -384,20 +384,20 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(m_mediator, m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
 			Cache.ServiceLocator.GetInstance<IStTextRepository>());
 			if (clidPara == ScrTxtParaTags.kClassId)
-				dummyTextList.Stub(tl => tl.InterestingTexts).Return(new IStText[0]);
+				dummyTextList.Setup(tl => tl.InterestingTexts).Returns(new IStText[0]);
 			else
-				dummyTextList.Stub(t1 => t1.InterestingTexts).Return(new IStText[1] { stText });
+				dummyTextList.Setup(t1 => t1.InterestingTexts).Returns(new IStText[1] { stText });
 			ReflectionHelper.SetField(rsda, "m_interestingTexts", dummyTextList);
 			rsda.SetCache(Cache);
 			rsda.SetOccurrences(0, paraFrags);
 			ObjectListPublisher publisher = new ObjectListPublisher(rsda, kObjectListFlid);
 			XMLViewsDataCache xmlCache = MockRepository.GenerateStub<XMLViewsDataCache>(publisher, true, new Dictionary<int, int>());
 
-			xmlCache.Stub(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass)).Return(ScrTxtParaTags.kClassId);
-			xmlCache.Stub(c => c.VecProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int[]>(publisher.VecProp));
+			xmlCache.Stub(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass)).Returns(ScrTxtParaTags.kClassId);
+			xmlCache.Stub(c => c.VecProp(It.IsAny<int>(), It.IsAny<int>())).Do(new Func<int, int, int[]>(publisher.VecProp));
 			xmlCache.MetaDataCache = new RespellingMdc((IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor);
-			xmlCache.Stub(c => c.get_ObjectProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_ObjectProp));
-			xmlCache.Stub(c => c.get_IntProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_IntProp));
+			xmlCache.Stub(c => c.get_ObjectProp(It.IsAny<int>(), It.IsAny<int>())).Do(new Func<int, int, int>(publisher.get_ObjectProp));
+			xmlCache.Stub(c => c.get_IntProp(It.IsAny<int>(), It.IsAny<int>())).Do(new Func<int, int, int>(publisher.get_IntProp));
 
 			var respellUndoaction = new RespellUndoAction(xmlCache, Cache, Cache.DefaultVernWs, sWordToReplace, sNewWord);
 			foreach (int hvoFake in rsda.VecProp(0, ConcDecorator.kflidConcOccurrences))
@@ -468,20 +468,20 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(m_mediator, m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
 			Cache.ServiceLocator.GetInstance<IStTextRepository>());
 			if (clidPara == ScrTxtParaTags.kClassId)
-				dummyTextList.Stub(tl => tl.InterestingTexts).Return(new IStText[0]);
+				dummyTextList.Setup(tl => tl.InterestingTexts).Returns(new IStText[0]);
 			else
-				dummyTextList.Stub(t1 => t1.InterestingTexts).Return(new IStText[1] { stText });
+				dummyTextList.Setup(t1 => t1.InterestingTexts).Returns(new IStText[1] { stText });
 			ReflectionHelper.SetField(rsda, "m_interestingTexts", dummyTextList);
 			rsda.SetCache(Cache);
 			rsda.SetOccurrences(0, paraFrags);
 			ObjectListPublisher publisher = new ObjectListPublisher(rsda, kObjectListFlid);
 			XMLViewsDataCache xmlCache = MockRepository.GenerateStub<XMLViewsDataCache>(publisher, true, new Dictionary<int, int>());
 
-			xmlCache.Stub(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass)).Return(ScrTxtParaTags.kClassId);
-			xmlCache.Stub(c => c.VecProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int[]>(publisher.VecProp));
+			xmlCache.Stub(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass)).Returns(ScrTxtParaTags.kClassId);
+			xmlCache.Stub(c => c.VecProp(It.IsAny<int>(), It.IsAny<int>())).Do(new Func<int, int, int[]>(publisher.VecProp));
 			xmlCache.MetaDataCache = new RespellingMdc((IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor);
-			xmlCache.Stub(c => c.get_ObjectProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_ObjectProp));
-			xmlCache.Stub(c => c.get_IntProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_IntProp));
+			xmlCache.Stub(c => c.get_ObjectProp(It.IsAny<int>(), It.IsAny<int>())).Do(new Func<int, int, int>(publisher.get_ObjectProp));
+			xmlCache.Stub(c => c.get_IntProp(It.IsAny<int>(), It.IsAny<int>())).Do(new Func<int, int, int>(publisher.get_IntProp));
 
 			var respellUndoaction = new RespellUndoAction(xmlCache, Cache, Cache.DefaultVernWs, sWordToReplace, sNewWord);
 			foreach (int hvoFake in rsda.VecProp(0, ConcDecorator.kflidConcOccurrences))
