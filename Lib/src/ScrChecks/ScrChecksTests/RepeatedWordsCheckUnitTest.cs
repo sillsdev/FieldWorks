@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SILUBS.ScriptureChecks;
 
 namespace SILUBS.ScriptureChecks

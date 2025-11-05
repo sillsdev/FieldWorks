@@ -305,6 +305,15 @@ FILES_TO_CONVERT = [
 ]
 
 
+def get_files_from_folder(folder: str) -> List[str]:
+    """Recursively find all .cs files in a folder."""
+    folder_path = Path(folder)
+    if not folder_path.is_dir():
+        print(f"Error: {folder} is not a valid directory")
+        return []
+    return [str(p) for p in folder_path.rglob("*.cs")]
+
+
 def convert_content(content: str) -> str:
     updated = content
     for method, converter in CONVERTERS:
@@ -313,17 +322,35 @@ def convert_content(content: str) -> str:
 
 
 def main() -> None:
-    for relative_path in FILES_TO_CONVERT:
+    import sys
+    
+    if len(sys.argv) > 1:
+        # Use provided folder argument
+        folder = sys.argv[1]
+        files_to_process = get_files_from_folder(folder)
+        if not files_to_process:
+            print("No .cs files found in the specified folder")
+            return
+    else:
+        # Use default file list
+        files_to_process = FILES_TO_CONVERT
+    
+    for relative_path in files_to_process:
         path = Path(relative_path)
         if not path.exists():
             print(f"File not found: {relative_path}")
             continue
 
         print(f"Converting {relative_path}...")
-        original = path.read_text()
+        try:
+            original = path.read_text(encoding='utf-8')
+        except UnicodeDecodeError:
+            # Fallback to latin-1 which can handle any byte sequence
+            original = path.read_text(encoding='latin-1')
+        
         converted = convert_content(original)
         if converted != original:
-            path.write_text(converted)
+            path.write_text(converted, encoding='utf-8')
             print(f"  ✓ Converted {relative_path}")
         else:
             print(f"  · No changes for {relative_path}")

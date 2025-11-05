@@ -318,7 +318,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 
 			Assert.That(result, Is.True, m_sut.ErrorMessages);
 			var stringsEsPath = m_sut.StringsXmlPath("es");
-			Assert.AreEqual(copyStringsXml, File.Exists(stringsEsPath), "strings-xx.xml copied if and only if requested.");
+			Assert.That(File.Exists(stringsEsPath), Is.EqualTo(copyStringsXml), "strings-xx.xml copied if and only if requested.");
 
 			// The Assembly Linker should not be run for source-only
 			Assert.That(InstrumentedProjectLocalizer.LinkerPath.Count, Is.EqualTo(0));
@@ -582,7 +582,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			SimpleSetupFDO(LocaleGe);
 			CreateLocalizedResX(m_FdoFolder, filename, LocaleGe, original, localized);
 
-			Assert.AreEqual(result, m_sut.Execute(), message);
+			Assert.That(m_sut.Execute(), Is.EqualTo(result).Within(message));
 
 			if (!result)
 				Assert.That(m_sut.ErrorMessages, Does.Contain("color"));

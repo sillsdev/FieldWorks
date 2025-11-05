@@ -1150,8 +1150,8 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(xpathToDescSource, 1, true);
 			var nameSourceElt = xliffDoc.XPathSelectElement(xpathToNameSource);
 			var descSourceElt = xliffDoc.XPathSelectElement(xpathToDescSource);
-			Assert.AreEqual(unescaped, nameSourceElt.Value);
-			Assert.AreEqual(unescaped, descSourceElt.Value);
+			Assert.That(nameSourceElt.Value, Is.EqualTo(unescaped));
+			Assert.That(descSourceElt.Value, Is.EqualTo(unescaped));
 
 			// Test and verify the round trip
 			var roundTripped = XElement.Parse("<Lists/>");
@@ -1163,8 +1163,8 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			AssertThatXmlIn.String(roundTripped.ToString()).HasSpecifiedNumberOfMatchesForXpath(xpathToDescRun, 1);
 			var nameAUni = roundTripped.XPathSelectElement(xpathToNameAUni);
 			var descRun = roundTripped.XPathSelectElement(xpathToDescRun);
-			Assert.AreEqual(unescaped, nameAUni.Value);
-			Assert.AreEqual(unescaped, descRun.Value);
+			Assert.That(nameAUni.Value, Is.EqualTo(unescaped));
+			Assert.That(descRun.Value, Is.EqualTo(unescaped));
 			// ReSharper enable PossibleNullReferenceException
 		}
 

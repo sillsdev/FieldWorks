@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 					"<def ws='" + WsEs + "'>prueba</def>" +
 					"<def ws='" + WsDe + "'>Probe</def></item></eticPOSList>"));
 
-			Assert.AreEqual(3, xliffDocs.Count);
+			Assert.That(xliffDocs.Count, Is.EqualTo(3));
 			Assert.Contains(WsEn, xliffDocs.Keys);
 			Assert.Contains(WsEs, xliffDocs.Keys);
 			Assert.Contains(WsDe, xliffDocs.Keys);
@@ -110,7 +110,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 					"<term ws='" + WsEn + "'>test</term>" +
 					"<def ws='" + WsEn + "'>test</def></item></eticPOSList>"));
 
-			Assert.AreEqual(1, xliffDocs.Count);
+			Assert.That(xliffDocs.Count, Is.EqualTo(1));
 			Assert.Contains(WsEn, xliffDocs.Keys);
 
 			AssertThatXmlIn.String(xliffDocs[WsEn].ToString()).HasSpecifiedNumberOfMatchesForXpath($"/xliff/file[@original='{TestFileName}']", 1);
@@ -140,7 +140,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 </eticPOSList>"));
 
 
-			Assert.AreEqual(1, xliffDocs.Count);
+			Assert.That(xliffDocs.Count, Is.EqualTo(1));
 			Assert.Contains(WsEn, xliffDocs.Keys);
 			var enXliff = xliffDocs[WsEn].ToString();
 
@@ -195,7 +195,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 </eticPOSList>"));
 
 
-			Assert.AreEqual(3, xliffDocs.Count);
+			Assert.That(xliffDocs.Count, Is.EqualTo(3));
 			Assert.Contains(WsEn, xliffDocs.Keys);
 			Assert.Contains(WsEs, xliffDocs.Keys);
 			Assert.Contains(WsZh, xliffDocs.Keys);
@@ -249,7 +249,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 </eticPOSList>"));
 
 
-			Assert.AreEqual(3, xliffDocs.Count);
+			Assert.That(xliffDocs.Count, Is.EqualTo(3));
 			Assert.Contains(WsEn, xliffDocs.Keys);
 			Assert.Contains(WsEs, xliffDocs.Keys);
 			Assert.Contains(WsZh, xliffDocs.Keys);
@@ -316,7 +316,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 </eticPOSList>"));
 
 
-			Assert.AreEqual(2, xliffDocs.Count);
+			Assert.That(xliffDocs.Count, Is.EqualTo(2));
 			Assert.Contains(WsEn, xliffDocs.Keys);
 			Assert.Contains(WsEs, xliffDocs.Keys);
 			var esXliff = xliffDocs[WsEs].ToString();
@@ -375,7 +375,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 </eticPOSList>"));
 
 
-			Assert.AreEqual(3, xliffDocs.Count);
+			Assert.That(xliffDocs.Count, Is.EqualTo(3));
 			Assert.Contains(WsEn, xliffDocs.Keys);
 			Assert.Contains(WsEs, xliffDocs.Keys);
 			Assert.Contains(WsZh, xliffDocs.Keys);
