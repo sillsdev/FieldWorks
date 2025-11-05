@@ -708,6 +708,36 @@ def convert_content(content: str) -> str:
 def main() -> None:
     import sys
 
+    if len(sys.argv) > 1 and sys.argv[1] in ("-h", "--help"):
+        print("NUnit 3 to NUnit 4 Converter")
+        print("=" * 50)
+        print()
+        print("Usage: python3 convert_nunit.py [folder_path]")
+        print()
+        print("Description:")
+        print("  Converts NUnit 3 style assertions to NUnit 4 constraint model.")
+        print("  Recursively processes all .cs files in the specified folder.")
+        print()
+        print("Arguments:")
+        print("  folder_path  Path to folder containing C# test files to convert.")
+        print("               If not specified, uses the default file list.")
+        print()
+        print("Examples:")
+        print("  python3 convert_nunit.py Src")
+        print("  python3 convert_nunit.py Src/Common/FwUtils/FwUtilsTests")
+        print()
+        print("Converts:")
+        print("  - Assert.AreEqual, IsTrue, IsNull, Contains, Greater, etc.")
+        print("  - StringAssert.Contains, StartsWith, EndsWith, etc.")
+        print("  - CollectionAssert.IsEmpty, Contains, AreEquivalent, etc.")
+        print("  - FileAssert.AreEqual")
+        print()
+        print("Does NOT convert (already NUnit 4 compatible):")
+        print("  - Assert.That(...)")
+        print("  - Assert.Throws, DoesNotThrow, Catch")
+        print("  - Assert.Fail, Ignore, Pass")
+        return
+
     if len(sys.argv) > 1:
         # Use provided folder argument
         folder = sys.argv[1]
