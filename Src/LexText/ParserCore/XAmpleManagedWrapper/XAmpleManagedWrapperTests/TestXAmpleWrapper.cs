@@ -40,7 +40,7 @@ namespace XAmpleManagedWrapperTests
 				LoadFilesHelper(xAmple);
 				string parsedWord = xAmple.ParseWord("Hello");
 				Assert.That(parsedWord, Is.Not.Null);
-				Assert.IsNotEmpty(parsedWord);
+				Assert.That(parsedWord, Is.Not.Empty);
 			}
 		}
 
@@ -52,7 +52,7 @@ namespace XAmpleManagedWrapperTests
 				LoadFilesHelper(xAmple);
 				string tracedWord = xAmple.TraceWord("Hello", "Hello");
 				Assert.That(tracedWord, Is.Not.Null);
-				Assert.IsNotEmpty(tracedWord);
+				Assert.That(tracedWord, Is.Not.Empty);
 			}
 		}
 

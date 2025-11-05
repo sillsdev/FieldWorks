@@ -58,27 +58,27 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			ReflectionHelper.SetField(backupSettings, "m_configurationSettings", true);
 			String resultStr = restoreProjectPresenter.IncludesFiles(backupSettings);
-			Assert.AreEqual("Configuration settings", resultStr);
+			Assert.That(resultStr, Is.EqualTo("Configuration settings"));
 
 			ReflectionHelper.SetField(backupSettings, "m_supportingFiles", true);
 			resultStr = restoreProjectPresenter.IncludesFiles(backupSettings);
-			Assert.AreEqual("Configuration settings and Supporting Files.", resultStr);
+			Assert.That(resultStr, Is.EqualTo("Configuration settings and Supporting Files."));
 
 			ReflectionHelper.SetField(backupSettings, "m_configurationSettings", false);
 			resultStr = restoreProjectPresenter.IncludesFiles(backupSettings);
-			Assert.AreEqual("Supporting Files", resultStr);
+			Assert.That(resultStr, Is.EqualTo("Supporting Files"));
 
 			ReflectionHelper.SetField(backupSettings, "m_linkedFiles", true);
 			resultStr = restoreProjectPresenter.IncludesFiles(backupSettings);
-			Assert.AreEqual("Linked files and Supporting Files.", resultStr);
+			Assert.That(resultStr, Is.EqualTo("Linked files and Supporting Files."));
 
 			ReflectionHelper.SetField(backupSettings, "m_configurationSettings", true);
 			resultStr = restoreProjectPresenter.IncludesFiles(backupSettings);
-			Assert.AreEqual("Configuration settings, Linked files and Supporting Files.", resultStr);
+			Assert.That(resultStr, Is.EqualTo("Configuration settings, Linked files and Supporting Files."));
 
 			ReflectionHelper.SetField(backupSettings, "m_spellCheckAdditions", true);
 			resultStr = restoreProjectPresenter.IncludesFiles(backupSettings);
-			Assert.AreEqual("Configuration settings, Linked files, Supporting Files and Spelling dictionary.", resultStr);
+			Assert.That(resultStr, Is.EqualTo("Configuration settings, Linked files, Supporting Files and Spelling dictionary."));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			m_fileOs.ExistingDirectories.Add(FwDirectoryFinder.DefaultBackupDirectory);
 			RestoreProjectPresenter presenter = new RestoreProjectPresenter(null, string.Empty);
-			Assert.AreEqual(String.Empty, presenter.DefaultProjectName);
+			Assert.That(presenter.DefaultProjectName, Is.EqualTo(String.Empty));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			string backupFileName2 = backupSettings.ZipFileName;
 			m_fileOs.AddExistingFile(backupFileName2);
 			RestoreProjectPresenter presenter = new RestoreProjectPresenter(null, string.Empty);
-			Assert.AreEqual(backupSettings.ProjectName, presenter.DefaultProjectName);
+			Assert.That(presenter.DefaultProjectName, Is.EqualTo(backupSettings.ProjectName));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -136,7 +136,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			string backupFileName3 = backupSettings.ZipFileName;
 			m_fileOs.AddExistingFile(backupFileName3);
 			RestoreProjectPresenter presenter = new RestoreProjectPresenter(null, "Current Project");
-			Assert.AreEqual("AAA", presenter.DefaultProjectName);
+			Assert.That(presenter.DefaultProjectName, Is.EqualTo("AAA"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -164,7 +164,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			dlg1.Settings.ProjectName = "AAA";
 			RestoreProjectPresenter presenter1 = new RestoreProjectPresenter(dlg1, "AAA");
 			string suggestion1 = presenter1.GetSuggestedNewProjectName();
-			Assert.AreEqual("AAA-02", suggestion1);
+			Assert.That(suggestion1, Is.EqualTo("AAA-02"));
 			}
 
 			backupSettings.ProjectName = "BBB";
@@ -175,7 +175,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			dlg2.Settings.ProjectName = "BBB";
 			RestoreProjectPresenter presenter2 = new RestoreProjectPresenter(dlg2, "BBB");
 			string suggestion2 = presenter2.GetSuggestedNewProjectName();
-			Assert.AreEqual("BBB-01", suggestion2);
+			Assert.That(suggestion2, Is.EqualTo("BBB-01"));
 			}
 
 			backupSettings.ProjectName = "CCC";
@@ -186,7 +186,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			dlg3.Settings.ProjectName = "CCC";
 			RestoreProjectPresenter presenter3 = new RestoreProjectPresenter(dlg3, "CCC");
 			string suggestion3 = presenter3.GetSuggestedNewProjectName();
-			Assert.AreEqual("CCC-01", suggestion3);
+			Assert.That(suggestion3, Is.EqualTo("CCC-01"));
 		}
 	}
 }

@@ -514,21 +514,21 @@ namespace SIL.FieldWorks.XWorks
 			m_bv.SetSort("Lexeme Form");
 
 			// Make sure our filters have worked to limit the data
-			Assert.AreEqual(1, m_bv.AllItems.Count);
+			Assert.That(m_bv.AllItems.Count, Is.EqualTo(1));
 
 			// now switch list items to senses, and see if our Main Entry filter still has results.
 			// TargetField == Sense (e.g. "Grammatical Category")
 			m_bulkEditBar.SetTargetField("Grammatical Category");
-			Assert.AreEqual("Grammatical Category", m_bulkEditBar.SelectedTargetFieldItem.ToString());
+			Assert.That(m_bulkEditBar.SelectedTargetFieldItem.ToString(), Is.EqualTo("Grammatical Category"));
 			// make sure current record is a Sense
 			// Make sure filter is still applied on right column during the transition.
 			// verify there are 4 rows
-			Assert.AreEqual(4, m_bv.AllItems.Count);
+			Assert.That(m_bv.AllItems.Count, Is.EqualTo(4));
 
 			// make sure we can refresh and still have the filter set.
 			MasterRefresh();
-			Assert.AreEqual("Grammatical Category", m_bulkEditBar.SelectedTargetFieldItem.ToString());
-			Assert.AreEqual(4, m_bv.AllItems.Count);
+			Assert.That(m_bulkEditBar.SelectedTargetFieldItem.ToString(), Is.EqualTo("Grammatical Category"));
+			Assert.That(m_bv.AllItems.Count, Is.EqualTo(4));
 		}
 
 		[Test]
@@ -544,21 +544,21 @@ namespace SIL.FieldWorks.XWorks
 			using (var fsFilter = m_bv.SetFilter("Variant Types", "Non-blanks", ""))
 			{
 				m_bv.SetSort("Lexeme Form");
-				Assert.AreEqual(2, m_bv.AllItems.Count);
+				Assert.That(m_bv.AllItems.Count, Is.EqualTo(2));
 
 				// TargetField == Complex or Variant Entry References (e.g. "Variant Types")
 				m_bulkEditBar.SetTargetField("Variant Types");
-				Assert.AreEqual("Variant Types", m_bulkEditBar.SelectedTargetFieldItem.ToString());
+				Assert.That(m_bulkEditBar.SelectedTargetFieldItem.ToString(), Is.EqualTo("Variant Types"));
 
 				// verify there are 2 rows
-				Assert.AreEqual(2, m_bv.AllItems.Count);
-				Assert.AreEqual("Choose...", m_bulkEditBar.CurrentBulkEditSpecControl.Control.Text);
+				Assert.That(m_bv.AllItems.Count, Is.EqualTo(2));
+				Assert.That(m_bulkEditBar.CurrentBulkEditSpecControl.Control.Text, Is.EqualTo("Choose..."));
 
 				// make sure we can refresh and still have the filter set.
 				MasterRefresh();
-				Assert.AreEqual("Variant Types", m_bulkEditBar.SelectedTargetFieldItem.ToString());
-				Assert.AreEqual(2, m_bv.AllItems.Count);
-				Assert.AreEqual("Choose...", m_bulkEditBar.CurrentBulkEditSpecControl.Control.Text);
+				Assert.That(m_bulkEditBar.SelectedTargetFieldItem.ToString(), Is.EqualTo("Variant Types"));
+				Assert.That(m_bv.AllItems.Count, Is.EqualTo(2));
+				Assert.That(m_bulkEditBar.CurrentBulkEditSpecControl.Control.Text, Is.EqualTo("Choose..."));
 			}
 		}
 
@@ -607,47 +607,47 @@ namespace SIL.FieldWorks.XWorks
 			using (FilterSortItem fsFilter = m_bv.SetFilter("Lexeme Form", "Filter for...", "underlying form")) // 'underlying form'
 			{
 				m_bv.SetSort("Lexeme Form");
-				Assert.AreEqual(1, m_bv.AllItems.Count);
+				Assert.That(m_bv.AllItems.Count, Is.EqualTo(1));
 				// Make sure we have the expected target fields
 				List<FieldComboItem> targetFields = m_bulkEditBar.GetTargetFields();
-				Assert.AreEqual(2, targetFields.Count);
-				Assert.AreEqual("Morph Type", targetFields[0].ToString());
-				Assert.AreEqual("Grammatical Category", targetFields[1].ToString());
+				Assert.That(targetFields.Count, Is.EqualTo(2));
+				Assert.That(targetFields[0].ToString(), Is.EqualTo("Morph Type"));
+				Assert.That(targetFields[1].ToString(), Is.EqualTo("Grammatical Category"));
 
 				// TargetField == Entry (e.g. "Morph Type")
 				m_bulkEditBar.SetTargetField("Morph Type");
-				Assert.AreEqual("Morph Type", m_bulkEditBar.SelectedTargetFieldItem.ToString());
+				Assert.That(m_bulkEditBar.SelectedTargetFieldItem.ToString(), Is.EqualTo("Morph Type"));
 				// make sure current record is an Entry
 				int hvoOfCurrentEntry = m_bv.AllItems[m_bv.SelectedIndex];
-				Assert.AreEqual(LexEntryTags.kClassId, GetClassOfObject(hvoOfCurrentEntry));
+				Assert.That(GetClassOfObject(hvoOfCurrentEntry), Is.EqualTo(LexEntryTags.kClassId));
 				// verify there is still only 1 row.
-				Assert.AreEqual(1, m_bv.AllItems.Count);
+				Assert.That(m_bv.AllItems.Count, Is.EqualTo(1));
 				// Set sorter on a sense field and make sure unchecking one entry unchecks them all
 				m_bv.SetSort("Grammatical Category");
 				int numOfEntryRows = m_bv.AllItems.Count;
 				// we expect to have more than one Entry rows when sorted on a sense field
-				Assert.Less(1, numOfEntryRows);
-				Assert.AreEqual(numOfEntryRows, m_bv.CheckedItems.Count);	// all checked.
+				Assert.That(1, Is.LessThan(numOfEntryRows));
+				Assert.That(m_bv.CheckedItems.Count, Is.EqualTo(numOfEntryRows));	// all checked.
 				// check current item, should check all rows.
 				m_bv.SetCheckedItems(new List<int>());	// uncheck all rows.
-				Assert.AreEqual(0, m_bv.CheckedItems.Count);
+				Assert.That(m_bv.CheckedItems.Count, Is.EqualTo(0));
 				m_bv.SetCheckedItems(new List<int>(new int[] { hvoOfCurrentEntry }));
-				Assert.AreEqual(numOfEntryRows, m_bv.CheckedItems.Count);
+				Assert.That(m_bv.CheckedItems.Count, Is.EqualTo(numOfEntryRows));
 
 				// TargetField == Sense (e.g. "Grammatical Category")
 				m_bulkEditBar.SetTargetField("Grammatical Category");
-				Assert.AreEqual("Grammatical Category", m_bulkEditBar.SelectedTargetFieldItem.ToString());
+				Assert.That(m_bulkEditBar.SelectedTargetFieldItem.ToString(), Is.EqualTo("Grammatical Category"));
 				// make sure current record is a Sense
 				int hvoOfCurrentSense = m_bv.AllItems[m_bv.SelectedIndex];
-				Assert.AreEqual(LexSenseTags.kClassId, GetClassOfObject(hvoOfCurrentSense));
+				Assert.That(GetClassOfObject(hvoOfCurrentSense), Is.EqualTo(LexSenseTags.kClassId));
 				// Make sure filter is still applied on right column during the transition.
 				// verify there are 4 rows
-				Assert.AreEqual(4, m_bv.AllItems.Count);
+				Assert.That(m_bv.AllItems.Count, Is.EqualTo(4));
 
 				// make sure checking only one sense should only check one row.
 				m_bv.SetCheckedItems(new List<int>());	// uncheck all rows.
 				m_bv.SetCheckedItems(new List<int>(new int[] { hvoOfCurrentSense }));
-				Assert.AreEqual(1, m_bv.CheckedItems.Count);
+				Assert.That(m_bv.CheckedItems.Count, Is.EqualTo(1));
 
 				// take off the filter and make sure switching between Senses/Entries maintains a selection
 				// in the ownership tree.
@@ -656,9 +656,9 @@ namespace SIL.FieldWorks.XWorks
 				// now switch back to Entry level
 				m_bulkEditBar.SetTargetField("Morph Type");
 				hvoOfCurrentEntry = m_bv.AllItems[m_bv.SelectedIndex];
-				Assert.AreEqual(LexEntryTags.kClassId, GetClassOfObject(hvoOfCurrentEntry));
+				Assert.That(GetClassOfObject(hvoOfCurrentEntry), Is.EqualTo(LexEntryTags.kClassId));
 				// make sure this entry owns the Sense we were on.
-				Assert.AreEqual(hvoOfCurrentEntry, Cache.ServiceLocator.GetObject(hvoOfCurrentSense).OwnerOfClass<ILexEntry>().Hvo);
+				Assert.That(Cache.ServiceLocator.GetObject(hvoOfCurrentSense).OwnerOfClass<ILexEntry>().Hvo, Is.EqualTo(hvoOfCurrentEntry));
 			}
 		}
 
@@ -677,27 +677,27 @@ namespace SIL.FieldWorks.XWorks
 
 			m_bulkEditBar.SwitchTab("ListChoice");
 			m_bv.ShowColumn("DomainsOfSensesForSense");
-			Assert.AreEqual(3, m_bv.AllItems.Count);
+			Assert.That(m_bv.AllItems.Count, Is.EqualTo(3));
 			// Make sure we have the expected target fields
 			List<FieldComboItem> targetFields = m_bulkEditBar.GetTargetFields();
-			Assert.AreEqual(3, targetFields.Count);
-			Assert.AreEqual("Morph Type", targetFields[0].ToString());
-			Assert.AreEqual("Grammatical Category", targetFields[1].ToString());
-			Assert.AreEqual("Semantic Domains", targetFields[2].ToString());
+			Assert.That(targetFields.Count, Is.EqualTo(3));
+			Assert.That(targetFields[0].ToString(), Is.EqualTo("Morph Type"));
+			Assert.That(targetFields[1].ToString(), Is.EqualTo("Grammatical Category"));
+			Assert.That(targetFields[2].ToString(), Is.EqualTo("Semantic Domains"));
 
 			// TargetField == Sense (e.g. "Semantic Domains")
 			using (m_bulkEditBar.SetTargetField("Semantic Domains"))
 			{
-				Assert.AreEqual("Semantic Domains", m_bulkEditBar.SelectedTargetFieldItem.ToString());
+				Assert.That(m_bulkEditBar.SelectedTargetFieldItem.ToString(), Is.EqualTo("Semantic Domains"));
 				// make sure current record is an Sense
 				int hvoOfCurrentSense = m_bv.AllItems[m_bv.SelectedIndex];
-				Assert.AreEqual(LexSenseTags.kClassId, GetClassOfObject(hvoOfCurrentSense));
+				Assert.That(GetClassOfObject(hvoOfCurrentSense), Is.EqualTo(LexSenseTags.kClassId));
 				// verify there are now 7 rows.
-				Assert.AreEqual(7, m_bv.AllItems.Count);
+				Assert.That(m_bv.AllItems.Count, Is.EqualTo(7));
 				// make sure checking only one sense should only check one row.
 				m_bv.SetCheckedItems(new List<int>()); // uncheck all rows.
 				m_bv.SetCheckedItems(new List<int>(new int[] {hvoOfCurrentSense}));
-				Assert.AreEqual(1, m_bv.CheckedItems.Count);
+				Assert.That(m_bv.CheckedItems.Count, Is.EqualTo(1));
 
 				// Set all items to be checked (so ClickApply works on all of them)
 				m_bv.SetCheckedItems(m_bv.AllItems);
@@ -707,18 +707,12 @@ namespace SIL.FieldWorks.XWorks
 
 				// Verify that clicking Apply adds "semantic domains" to any entries
 				// whose glosses match something in the domain name (and that it doesn't for others)
-				Assert.AreEqual(greenSemDom, green.SemanticDomainsRC.FirstOrDefault(),
-					"'green' should have gotten a matching domain");
-				Assert.AreEqual(oilSemDom, understand.SemanticDomainsRC.FirstOrDefault(),
-					"'to.understand' should still have its pre-existing domain");
-				Assert.AreEqual(0, see.SemanticDomainsRC.Count,
-					"'to.see' should not have gotten a domain");
-				Assert.AreEqual(0, english1.SemanticDomainsRC.Count,
-					"'English gloss' should not have gotten a domain");
-				Assert.AreEqual(subsenseSemDom, subsense1.SemanticDomainsRC.FirstOrDefault(),
-					"'English subsense gloss1.1' should have gotten a matching domain");
-				Assert.AreEqual(subsenseSemDom, subsense2.SemanticDomainsRC.FirstOrDefault(),
-					"'English subsense gloss1.2' should have gotten a matching domain");
+				Assert.That(green.SemanticDomainsRC.FirstOrDefault(), Is.EqualTo(greenSemDom), "'green' should have gotten a matching domain");
+				Assert.That(understand.SemanticDomainsRC.FirstOrDefault(), Is.EqualTo(oilSemDom), "'to.understand' should still have its pre-existing domain");
+				Assert.That(see.SemanticDomainsRC.Count, Is.EqualTo(0), "'to.see' should not have gotten a domain");
+				Assert.That(english1.SemanticDomainsRC.Count, Is.EqualTo(0), "'English gloss' should not have gotten a domain");
+				Assert.That(subsense1.SemanticDomainsRC.FirstOrDefault(), Is.EqualTo(subsenseSemDom), "'English subsense gloss1.1' should have gotten a matching domain");
+				Assert.That(subsense2.SemanticDomainsRC.FirstOrDefault(), Is.EqualTo(subsenseSemDom), "'English subsense gloss1.2' should have gotten a matching domain");
 			}
 		}
 
@@ -793,31 +787,31 @@ namespace SIL.FieldWorks.XWorks
 			FilterSortItem fsFilter = m_bv.SetFilter("Lexeme Form", "Filter for...",
 				"underlying form"); // 'underlying form'
 			m_bv.SetSort("Lexeme Form");
-			Assert.AreEqual(1, m_bv.AllItems.Count);
+			Assert.That(m_bv.AllItems.Count, Is.EqualTo(1));
 			// Make sure we have the expected target fields
 			List<FieldComboItem> targetFields = m_bulkEditBar.GetTargetFields();
-			Assert.AreEqual(4, targetFields.Count);
-			Assert.AreEqual("Lexeme Form", targetFields[0].ToString());
-			Assert.AreEqual("Citation Form", targetFields[1].ToString());
-			Assert.AreEqual("Glosses", targetFields[2].ToString());
-			Assert.AreEqual("Definition", targetFields[3].ToString());
+			Assert.That(targetFields.Count, Is.EqualTo(4));
+			Assert.That(targetFields[0].ToString(), Is.EqualTo("Lexeme Form"));
+			Assert.That(targetFields[1].ToString(), Is.EqualTo("Citation Form"));
+			Assert.That(targetFields[2].ToString(), Is.EqualTo("Glosses"));
+			Assert.That(targetFields[3].ToString(), Is.EqualTo("Definition"));
 
 			// TargetField == Entry
 			m_bulkEditBar.SetTargetField("Citation Form");
 			// make sure current record is an Entry
 			int hvoOfCurrentEntry = m_bv.AllItems[m_bv.SelectedIndex];
-			Assert.AreEqual(LexEntryTags.kClassId, GetClassOfObject(hvoOfCurrentEntry));
+			Assert.That(GetClassOfObject(hvoOfCurrentEntry), Is.EqualTo(LexEntryTags.kClassId));
 			// verify there is still only 1 row.
-			Assert.AreEqual(1, m_bv.AllItems.Count);
+			Assert.That(m_bv.AllItems.Count, Is.EqualTo(1));
 
 			// TargetField == Sense
 			m_bulkEditBar.SetTargetField("Glosses");
 			// make sure current record is a Sense
 			int hvoOfCurrentSense = m_bv.AllItems[m_bv.SelectedIndex];
-			Assert.AreEqual(LexSenseTags.kClassId, GetClassOfObject(hvoOfCurrentSense));
+			Assert.That(GetClassOfObject(hvoOfCurrentSense), Is.EqualTo(LexSenseTags.kClassId));
 			// Make sure filter is still applied on right column during the transition.
 			// verify there are 4 rows
-			Assert.AreEqual(4, m_bv.AllItems.Count);
+			Assert.That(m_bv.AllItems.Count, Is.EqualTo(4));
 		}
 
 		[Test]
@@ -827,40 +821,40 @@ namespace SIL.FieldWorks.XWorks
 			// first apply a filter on Lexeme Form for 'underlying form' to limit browse view to one Entry.
 			FilterSortItem fsFilter = m_bv.SetFilter("Lexeme Form", "Filter for...", "underlying form"); // 'underlying form'
 			m_bv.SetSort("Lexeme Form");
-			Assert.AreEqual(1, m_bv.AllItems.Count);
+			Assert.That(m_bv.AllItems.Count, Is.EqualTo(1));
 			// Make sure we have the expected target fields
 			List<FieldComboItem> targetFields = m_bulkEditBar.GetTargetFields();
-			Assert.AreEqual(7, targetFields.Count);
-			Assert.AreEqual("Lexeme Form", targetFields[0].ToString());
-			Assert.AreEqual("Citation Form", targetFields[1].ToString());
-			Assert.AreEqual("Glosses", targetFields[2].ToString());
-			Assert.AreEqual("Definition", targetFields[3].ToString());
-			Assert.AreEqual("Grammatical Category", targetFields[4].ToString());
-			Assert.AreEqual("Entries (Rows)", targetFields[5].ToString());
-			Assert.AreEqual("Senses (Rows)", targetFields[6].ToString());
+			Assert.That(targetFields.Count, Is.EqualTo(7));
+			Assert.That(targetFields[0].ToString(), Is.EqualTo("Lexeme Form"));
+			Assert.That(targetFields[1].ToString(), Is.EqualTo("Citation Form"));
+			Assert.That(targetFields[2].ToString(), Is.EqualTo("Glosses"));
+			Assert.That(targetFields[3].ToString(), Is.EqualTo("Definition"));
+			Assert.That(targetFields[4].ToString(), Is.EqualTo("Grammatical Category"));
+			Assert.That(targetFields[5].ToString(), Is.EqualTo("Entries (Rows)"));
+			Assert.That(targetFields[6].ToString(), Is.EqualTo("Senses (Rows)"));
 
 			// TargetField == Sense
 			m_bulkEditBar.SetTargetField("Senses (Rows)");
 			// make sure current record is a Sense
 			int hvoOfCurrentSense = m_bv.AllItems[m_bv.SelectedIndex];
-			Assert.AreEqual(LexSenseTags.kClassId, GetClassOfObject(hvoOfCurrentSense));
+			Assert.That(GetClassOfObject(hvoOfCurrentSense), Is.EqualTo(LexSenseTags.kClassId));
 			// Make sure filter is still applied on right column during the transition.
 			// verify there are 4 rows
-			Assert.AreEqual(4, m_bv.AllItems.Count);
+			Assert.That(m_bv.AllItems.Count, Is.EqualTo(4));
 
 			// TargetField == Entry
 			m_bulkEditBar.SetTargetField("Entries (Rows)");
 			// make sure current record is an Entry
 			int hvoOfCurrentEntry = m_bv.AllItems[m_bv.SelectedIndex];
-			Assert.AreEqual(LexEntryTags.kClassId, GetClassOfObject(hvoOfCurrentEntry));
+			Assert.That(GetClassOfObject(hvoOfCurrentEntry), Is.EqualTo(LexEntryTags.kClassId));
 			// verify there is still only 1 row.
-			Assert.AreEqual(1, m_bv.AllItems.Count);
+			Assert.That(m_bv.AllItems.Count, Is.EqualTo(1));
 
 			m_bv.ShowColumn("VariantEntryTypesBrowse");
 			targetFields = m_bulkEditBar.GetTargetFields();
-			Assert.AreEqual(9, targetFields.Count);
-			Assert.AreEqual("Variant Types", targetFields[5].ToString());
-			Assert.AreEqual("Complex or Variant Entry References (Rows)", targetFields[8].ToString());
+			Assert.That(targetFields.Count, Is.EqualTo(9));
+			Assert.That(targetFields[5].ToString(), Is.EqualTo("Variant Types"));
+			Assert.That(targetFields[8].ToString(), Is.EqualTo("Complex or Variant Entry References (Rows)"));
 		}
 
 		/// <summary>
@@ -890,38 +884,38 @@ namespace SIL.FieldWorks.XWorks
 			// when we switch to pronunciations list.
 			clerk.JumpToRecord(firstEntryWithPronunciation.Hvo);
 			((MockFwXWindow)m_window).ProcessPendingItems();
-			Assert.AreEqual(firstEntryWithPronunciation.Hvo, clerk.CurrentObject.Hvo);
+			Assert.That(clerk.CurrentObject.Hvo, Is.EqualTo(firstEntryWithPronunciation.Hvo));
 			// make sure we're not on the first index, since when we switch to pronunciations,
 			// we want to make sure there is logic in place for keeping the index on a child pronunciation of this entry.
-			Assert.Less(0, clerk.CurrentIndex);
+			Assert.That(0, Is.LessThan(clerk.CurrentIndex));
 
 			m_bulkEditBar.SwitchTab("ListChoice");
 			int cOriginal = m_bv.ColumnSpecs.Count;
 			// add column for Pronunciation Location
 			m_bv.ShowColumn("Location");
 			// make sure column got added.
-			Assert.AreEqual(cOriginal + 1, m_bv.ColumnSpecs.Count);
+			Assert.That(m_bv.ColumnSpecs.Count, Is.EqualTo(cOriginal + 1));
 			m_bulkEditBar.SetTargetField("Pronunciation-Location");
-			Assert.AreEqual("Pronunciation-Location", m_bulkEditBar.SelectedTargetFieldItem.ToString());
+			Assert.That(m_bulkEditBar.SelectedTargetFieldItem.ToString(), Is.EqualTo("Pronunciation-Location"));
 			// check number of options and first is "jungle" (or Empty?)
 			FwComboBox listChoiceControl = m_bulkEditBar.GetTabControlChild("m_listChoiceControl") as FwComboBox;
 			Assert.That(listChoiceControl, Is.Not.Null);
 			// expect to have some options.
-			Assert.Less(2, listChoiceControl.Items.Count);
+			Assert.That(2, Is.LessThan(listChoiceControl.Items.Count));
 			// expect the first option to be of class CmLocation
 			HvoTssComboItem item = listChoiceControl.Items[0] as HvoTssComboItem;
-			Assert.AreEqual(CmLocationTags.kClassId, GetClassOfObject(item.Hvo));
+			Assert.That(GetClassOfObject(item.Hvo), Is.EqualTo(CmLocationTags.kClassId));
 			// check browse view class changed to LexPronunciation
-			Assert.AreEqual(LexPronunciationTags.kClassId, m_bv.ListItemsClass);
+			Assert.That(m_bv.ListItemsClass, Is.EqualTo(LexPronunciationTags.kClassId));
 			// check that clerk list has also changed.
-			Assert.AreEqual(LexPronunciationTags.kClassId, m_bv.SortItemProvider.ListItemsClass);
+			Assert.That(m_bv.SortItemProvider.ListItemsClass, Is.EqualTo(LexPronunciationTags.kClassId));
 			// make sure the list size includes all pronunciations, and all entries that don't have pronunciations.
-			Assert.AreEqual(clerk.ListSize, pronunciations.Count + entriesWithoutPronunciations.Count);
+			Assert.That(pronunciations.Count + entriesWithoutPronunciations.Count, Is.EqualTo(clerk.ListSize));
 
 			// make sure we're on the pronunciation of the entry we changed from
-			Assert.AreEqual(firstPronunciation.Hvo, clerk.CurrentObject.Hvo);
+			Assert.That(clerk.CurrentObject.Hvo, Is.EqualTo(firstPronunciation.Hvo));
 			// change the first pronunciation's (non-existing) location to something else
-			Assert.AreEqual(null, firstPronunciation.LocationRA);
+			Assert.That(firstPronunciation.LocationRA, Is.EqualTo(null));
 			m_bv.OnUncheckAll();
 			m_bv.SetCheckedItems(new List<int>(new int[] { firstPronunciation.Hvo }));
 			// set list choice to the first location (eg. 'jungle')
@@ -931,16 +925,16 @@ namespace SIL.FieldWorks.XWorks
 			m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
 			m_bulkEditBar.ClickApply();
 			// make sure we changed the list option and didn't add another separate pronunciation.
-			Assert.AreEqual(item.Hvo, firstPronunciation.LocationRA.Hvo);
-			Assert.AreEqual(cPronunciations, firstEntryWithPronunciation.PronunciationsOS.Count);
-			Assert.AreEqual(clerk.ListSize, pronunciations.Count + entriesWithoutPronunciations.Count);
+			Assert.That(firstPronunciation.LocationRA.Hvo, Is.EqualTo(item.Hvo));
+			Assert.That(firstEntryWithPronunciation.PronunciationsOS.Count, Is.EqualTo(cPronunciations));
+			Assert.That(pronunciations.Count + entriesWithoutPronunciations.Count, Is.EqualTo(clerk.ListSize));
 
 			// now create a new pronunciation on an entry that does not have one.
 			cPronunciations = firstEntryWithoutPronunciation.PronunciationsOS.Count;
-			Assert.AreEqual(0, cPronunciations);
+			Assert.That(cPronunciations, Is.EqualTo(0));
 			clerk.JumpToRecord(firstEntryWithoutPronunciation.Hvo);
 			((MockFwXWindow)m_window).ProcessPendingItems();
-			Assert.AreEqual(firstEntryWithoutPronunciation.Hvo, clerk.CurrentObject.Hvo);
+			Assert.That(clerk.CurrentObject.Hvo, Is.EqualTo(firstEntryWithoutPronunciation.Hvo));
 			int currentIndex = clerk.CurrentIndex;
 			m_bv.OnUncheckAll();
 			m_bv.SetCheckedItems(new List<int>(new int[] { firstEntryWithoutPronunciation.Hvo }));
@@ -949,25 +943,25 @@ namespace SIL.FieldWorks.XWorks
 			m_bulkEditBar.ClickApply();
 
 			// check that current index has remained the same.
-			Assert.AreEqual(currentIndex, clerk.CurrentIndex);
+			Assert.That(clerk.CurrentIndex, Is.EqualTo(currentIndex));
 			// but current object (entry) still does not have a Pronunciation
-			Assert.AreEqual(0, firstEntryWithoutPronunciation.PronunciationsOS.Count);
+			Assert.That(firstEntryWithoutPronunciation.PronunciationsOS.Count, Is.EqualTo(0));
 
 			// now change the location to something else, and make sure we still didn't create a pronunciation.
 			HvoTssComboItem item2 = listChoiceControl.Items[1] as HvoTssComboItem;
 			listChoiceControl.SelectedItem = item2;
 			m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
 			m_bulkEditBar.ClickApply();
-			Assert.AreEqual(0, firstEntryWithoutPronunciation.PronunciationsOS.Count);
-			Assert.AreEqual(clerk.ListSize, pronunciations.Count + entriesWithoutPronunciations.Count);
+			Assert.That(firstEntryWithoutPronunciation.PronunciationsOS.Count, Is.EqualTo(0));
+			Assert.That(pronunciations.Count + entriesWithoutPronunciations.Count, Is.EqualTo(clerk.ListSize));
 
 			// refresh list, and make sure the clerk still has the entry.
 			MasterRefresh();
 			clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
-			Assert.AreEqual(firstEntryWithoutPronunciation.Hvo, clerk.CurrentObject.Hvo);
+			Assert.That(clerk.CurrentObject.Hvo, Is.EqualTo(firstEntryWithoutPronunciation.Hvo));
 			// also make sure the total count of the list has not changed.
 			// we only converted an entry (ghost) to pronunciation.
-			Assert.AreEqual(clerk.ListSize, pronunciations.Count + entriesWithoutPronunciations.Count);
+			Assert.That(pronunciations.Count + entriesWithoutPronunciations.Count, Is.EqualTo(clerk.ListSize));
 		}
 
 		private void AddTwoLocations()
@@ -1075,12 +1069,12 @@ namespace SIL.FieldWorks.XWorks
 			// first bulk copy into an existing pronunciation
 			m_bv.OnUncheckAll();
 			m_bv.SetCheckedItems(new List<int>(new int[] { firstPronunciation.Hvo }));
-			Assert.AreEqual(firstPronunciation.Form.VernacularDefaultWritingSystem.Text, "Pronunciation");
+			Assert.That(firstPronunciation.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("Pronunciation"));
 
 			m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
 			m_bulkEditBar.ClickApply();
 			string lexemeForm = firstEntryWithPronunciation.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text;
-			Assert.AreEqual(lexemeForm, firstPronunciation.Form.VernacularDefaultWritingSystem.Text);
+			Assert.That(firstPronunciation.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo(lexemeForm));
 
 			// next bulk copy into an empty (ghost) pronunciation
 			m_bv.OnUncheckAll();
@@ -1089,8 +1083,8 @@ namespace SIL.FieldWorks.XWorks
 
 			m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
 			m_bulkEditBar.ClickApply();
-			Assert.AreEqual(1, firstEntryWithoutPronunciation.PronunciationsOS.Count);
-			Assert.AreEqual(lexemeForm, firstEntryWithoutPronunciation.PronunciationsOS[0].Form.VernacularDefaultWritingSystem.Text);
+			Assert.That(firstEntryWithoutPronunciation.PronunciationsOS.Count, Is.EqualTo(1));
+			Assert.That(firstEntryWithoutPronunciation.PronunciationsOS[0].Form.VernacularDefaultWritingSystem.Text, Is.EqualTo(lexemeForm));
 		}
 
 		/// <summary>
@@ -1129,12 +1123,12 @@ namespace SIL.FieldWorks.XWorks
 			// first bulk copy into an existing pronunciation
 			m_bv.OnUncheckAll();
 			m_bv.SetCheckedItems(new List<int>(new int[] { firstPronunciation.Hvo }));
-			Assert.AreEqual(firstPronunciation.Tone.Text, null);
+			Assert.That(firstPronunciation.Tone.Text, Is.EqualTo(null));
 
 			m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
 			m_bulkEditBar.ClickApply();
 			string lexemeForm = firstEntryWithPronunciation.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text;
-			Assert.AreEqual(lexemeForm, firstPronunciation.Tone.Text);
+			Assert.That(firstPronunciation.Tone.Text, Is.EqualTo(lexemeForm));
 
 			// next bulk copy into an empty (ghost) pronunciation
 			m_bv.OnUncheckAll();
@@ -1143,8 +1137,8 @@ namespace SIL.FieldWorks.XWorks
 
 			m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
 			m_bulkEditBar.ClickApply();
-			Assert.AreEqual(1, firstEntryWithoutPronunciation.PronunciationsOS.Count);
-			Assert.AreEqual(lexemeForm, firstEntryWithoutPronunciation.PronunciationsOS[0].Tone.Text);
+			Assert.That(firstEntryWithoutPronunciation.PronunciationsOS.Count, Is.EqualTo(1));
+			Assert.That(firstEntryWithoutPronunciation.PronunciationsOS[0].Tone.Text, Is.EqualTo(lexemeForm));
 		}
 
 		/// <summary>
@@ -1180,12 +1174,12 @@ namespace SIL.FieldWorks.XWorks
 				// try bulk copy into an existing Comment
 				m_bv.OnUncheckAll();
 				m_bv.SetCheckedItems(new List<int>(new int[] {complexEntryRef.Hvo}));
-				Assert.AreEqual("exising comment", complexEntryRef.Summary.AnalysisDefaultWritingSystem.Text);
+				Assert.That(complexEntryRef.Summary.AnalysisDefaultWritingSystem.Text, Is.EqualTo("exising comment"));
 
 				m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
 				m_bulkEditBar.ClickApply();
 				string result = complexEntry.EntryRefsOS[0].Summary.AnalysisDefaultWritingSystem.Text;
-				Assert.AreEqual("Complex Form note", result);
+				Assert.That(result, Is.EqualTo("Complex Form note"));
 			}
 		}
 
@@ -1224,7 +1218,7 @@ namespace SIL.FieldWorks.XWorks
 				m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
 				m_bulkEditBar.ClickApply();
 				var result = variantEntry.EntryRefsOS[0].Summary.AnalysisDefaultWritingSystem.Text;
-				Assert.AreEqual("Variant note", result);
+				Assert.That(result, Is.EqualTo("Variant note"));
 			}
 		}
 
@@ -1295,37 +1289,37 @@ namespace SIL.FieldWorks.XWorks
 			// when we switch to "Is Abstract Form (Allomorph)" for target field.
 			clerk.JumpToRecord(firstEntryWithAllomorph.Hvo);
 			((MockFwXWindow)m_window).ProcessPendingItems();
-			Assert.AreEqual(firstEntryWithAllomorph.Hvo, clerk.CurrentObject.Hvo);
+			Assert.That(clerk.CurrentObject.Hvo, Is.EqualTo(firstEntryWithAllomorph.Hvo));
 			// make sure we're not on the first index, since when we switch to pronunciations,
 			// we want to make sure there is logic in place for keeping the index on a child pronunciation of this entry.
-			Assert.Less(0, clerk.CurrentIndex);
+			Assert.That(0, Is.LessThan(clerk.CurrentIndex));
 
 			m_bulkEditBar.SwitchTab("ListChoice");
 			int cOriginal = m_bv.ColumnSpecs.Count;
 			// add column for "Is Abstract Form (Allomorph)"
 			m_bv.ShowColumn("IsAbstractFormForAllomorph");
 			// make sure column got added.
-			Assert.AreEqual(cOriginal + 1, m_bv.ColumnSpecs.Count);
+			Assert.That(m_bv.ColumnSpecs.Count, Is.EqualTo(cOriginal + 1));
 			m_bulkEditBar.SetTargetField("Is Abstract Form (Allomorph)");
-			Assert.AreEqual("Is Abstract Form (Allomorph)", m_bulkEditBar.SelectedTargetFieldItem.ToString());
+			Assert.That(m_bulkEditBar.SelectedTargetFieldItem.ToString(), Is.EqualTo("Is Abstract Form (Allomorph)"));
 			// check number of options and second is "yes"
 			ComboBox listChoiceControl = m_bulkEditBar.GetTabControlChild("m_listChoiceControl") as ComboBox;
 			Assert.That(listChoiceControl, Is.Not.Null);
 			// expect to have some options (yes & no).
-			Assert.AreEqual(2, listChoiceControl.Items.Count);
+			Assert.That(listChoiceControl.Items.Count, Is.EqualTo(2));
 			IntComboItem item = listChoiceControl.Items[1] as IntComboItem;
-			Assert.AreEqual("yes", item.ToString()); // 'yes'
+			Assert.That(item.ToString(), Is.EqualTo("yes")); // 'yes'
 			// check browse view class changed to MoForm
-			Assert.AreEqual(MoFormTags.kClassId, m_bv.ListItemsClass);
+			Assert.That(m_bv.ListItemsClass, Is.EqualTo(MoFormTags.kClassId));
 			// check that clerk list has also changed.
-			Assert.AreEqual(MoFormTags.kClassId, m_bv.SortItemProvider.ListItemsClass);
+			Assert.That(m_bv.SortItemProvider.ListItemsClass, Is.EqualTo(MoFormTags.kClassId));
 			// make sure the list size includes all allomorphs, and all entries that don't have allomorphs.
-			Assert.AreEqual(clerk.ListSize, allomorphs.Count + entriesWithoutAllomorphs.Count);
+			Assert.That(allomorphs.Count + entriesWithoutAllomorphs.Count, Is.EqualTo(clerk.ListSize));
 
 			// make sure we're on the first allomorph of the entry we changed from
-			Assert.AreEqual(firstAllomorph.Hvo, clerk.CurrentObject.Hvo);
+			Assert.That(clerk.CurrentObject.Hvo, Is.EqualTo(firstAllomorph.Hvo));
 			// change the first allomorphs's IsAbstract to something else
-			Assert.AreEqual(false, firstAllomorph.IsAbstract);
+			Assert.That(firstAllomorph.IsAbstract, Is.EqualTo(false));
 			m_bv.OnUncheckAll();
 			m_bv.SetCheckedItems(new List<int>(new int[] { firstAllomorph.Hvo }));
 			listChoiceControl.SelectedItem = item; // change to 'yes'
@@ -1334,16 +1328,16 @@ namespace SIL.FieldWorks.XWorks
 			m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
 			m_bulkEditBar.ClickApply();
 			// make sure we changed the list option and didn't add another separate allomorph.
-			Assert.AreEqual(Convert.ToBoolean(item.Value), firstAllomorph.IsAbstract);
-			Assert.AreEqual(cAllomorphs, firstEntryWithAllomorph.AlternateFormsOS.Count);
-			Assert.AreEqual(clerk.ListSize, allomorphs.Count + entriesWithoutAllomorphs.Count);
+			Assert.That(firstAllomorph.IsAbstract, Is.EqualTo(Convert.ToBoolean(item.Value)));
+			Assert.That(firstEntryWithAllomorph.AlternateFormsOS.Count, Is.EqualTo(cAllomorphs));
+			Assert.That(allomorphs.Count + entriesWithoutAllomorphs.Count, Is.EqualTo(clerk.ListSize));
 
 			// now try previewing and setting IsAbstract on an entry that does not have an allomorph.
 			cAllomorphs = firstEntryWithoutAllomorph.AlternateFormsOS.Count;
-			Assert.AreEqual(0, cAllomorphs);
+			Assert.That(cAllomorphs, Is.EqualTo(0));
 			clerk.JumpToRecord(firstEntryWithoutAllomorph.Hvo);
 			((MockFwXWindow)m_window).ProcessPendingItems();
-			Assert.AreEqual(firstEntryWithoutAllomorph.Hvo, clerk.CurrentObject.Hvo);
+			Assert.That(clerk.CurrentObject.Hvo, Is.EqualTo(firstEntryWithoutAllomorph.Hvo));
 			int currentIndex = clerk.CurrentIndex;
 			m_bv.OnUncheckAll();
 			m_bv.SetCheckedItems(new List<int>(new int[] { firstEntryWithoutAllomorph.Hvo }));
@@ -1352,12 +1346,12 @@ namespace SIL.FieldWorks.XWorks
 			m_bulkEditBar.ClickApply();
 
 			// check that current index has remained the same.
-			Assert.AreEqual(currentIndex, clerk.CurrentIndex);
+			Assert.That(clerk.CurrentIndex, Is.EqualTo(currentIndex));
 			// We no longer create allomorphs as a side-effect of setting "Is Abstract Form (Allomorph)"
-			Assert.AreEqual(0, firstEntryWithoutAllomorph.AlternateFormsOS.Count);
+			Assert.That(firstEntryWithoutAllomorph.AlternateFormsOS.Count, Is.EqualTo(0));
 			//IMoForm newAllomorph = firstEntryWithoutAllomorph.AlternateFormsOS[0];
 			//// make sure we gave the new allomorph the expected setting.
-			//Assert.AreEqual(Convert.ToBoolean(item.Value), newAllomorph.IsAbstract);
+			//Assert.That(newAllomorph.IsAbstract, Is.EqualTo(Convert.ToBoolean(item.Value)));
 
 			// now try changing the (non-existent) IsAbstract to something else, and make sure we didn't
 			// create another allomorph.
@@ -1366,15 +1360,15 @@ namespace SIL.FieldWorks.XWorks
 			m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
 			m_bulkEditBar.ClickApply();
 			// make sure there still isn't a new allomorph.
-			Assert.AreEqual(0, firstEntryWithoutAllomorph.AlternateFormsOS.Count);
-			Assert.AreEqual(clerk.ListSize, allomorphs.Count + entriesWithoutAllomorphs.Count);
+			Assert.That(firstEntryWithoutAllomorph.AlternateFormsOS.Count, Is.EqualTo(0));
+			Assert.That(allomorphs.Count + entriesWithoutAllomorphs.Count, Is.EqualTo(clerk.ListSize));
 
 			// refresh list, and make sure the clerk now has the same entry.
 			this.MasterRefresh();
 			clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
-			Assert.AreEqual(firstEntryWithoutAllomorph.Hvo, clerk.CurrentObject.Hvo);
+			Assert.That(clerk.CurrentObject.Hvo, Is.EqualTo(firstEntryWithoutAllomorph.Hvo));
 			// also make sure the total count of the list has not changed.
-			Assert.AreEqual(clerk.ListSize, allomorphs.Count + entriesWithoutAllomorphs.Count);
+			Assert.That(allomorphs.Count + entriesWithoutAllomorphs.Count, Is.EqualTo(clerk.ListSize));
 		}
 
 		/// <summary>
@@ -1393,27 +1387,27 @@ namespace SIL.FieldWorks.XWorks
 			// add column for Pronunciation Location
 			m_bv.ShowColumn("VariantEntryTypesBrowse");
 			// make sure column got added.
-			Assert.AreEqual(cOriginal + 1, m_bv.ColumnSpecs.Count);
+			Assert.That(m_bv.ColumnSpecs.Count, Is.EqualTo(cOriginal + 1));
 			m_bulkEditBar.SetTargetField("Variant Types");
-			Assert.AreEqual("Variant Types", m_bulkEditBar.SelectedTargetFieldItem.ToString());
+			Assert.That(m_bulkEditBar.SelectedTargetFieldItem.ToString(), Is.EqualTo("Variant Types"));
 			RecordClerk clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
 			clerk.JumpToRecord(secondVariantRef.Hvo);
 			((MockFwXWindow)m_window).ProcessPendingItems();
-			Assert.AreEqual(secondVariantRef, clerk.CurrentObject as ILexEntryRef);
+			Assert.That(clerk.CurrentObject as ILexEntryRef, Is.EqualTo(secondVariantRef));
 			// make sure we're not on the first index, since when we switch to pronunciations,
 			// we want to make sure there is logic in place for keeping the index on a child pronunciation of this entry.
-			Assert.Less(0, clerk.CurrentIndex);
+			Assert.That(0, Is.LessThan(clerk.CurrentIndex));
 			secondVariantRef = clerk.CurrentObject as ILexEntryRef;
 			ILexEntryType firstVariantRefType = secondVariantRef.VariantEntryTypesRS[0];
-			Assert.AreEqual("Spelling Variant", firstVariantRefType.Name.AnalysisDefaultWritingSystem.Text);
+			Assert.That(firstVariantRefType.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Spelling Variant"));
 
 			// check number of options
 			ComplexListChooserBEditControl listChoiceControl = m_bulkEditBar.CurrentBulkEditSpecControl as ComplexListChooserBEditControl;
 			Assert.That(listChoiceControl, Is.Not.Null);
 			// check browse view class changed to LexPronunciation
-			Assert.AreEqual(LexEntryRefTags.kClassId, m_bv.ListItemsClass);
+			Assert.That(m_bv.ListItemsClass, Is.EqualTo(LexEntryRefTags.kClassId));
 			// check that clerk list has also changed.
-			Assert.AreEqual(LexEntryRefTags.kClassId, m_bv.SortItemProvider.ListItemsClass);
+			Assert.That(m_bv.SortItemProvider.ListItemsClass, Is.EqualTo(LexEntryRefTags.kClassId));
 			// allow changing an existing variant entry type to something else.
 			m_bv.OnUncheckAll();
 			m_bv.SetCheckedItems(new List<int>(new int[] { secondVariantRef.Hvo }));
@@ -1426,7 +1420,7 @@ namespace SIL.FieldWorks.XWorks
 			m_bulkEditBar.ClickApply();
 
 			// make sure we gave the LexEntryRef the expected type.
-			Assert.AreEqual(choiceFreeVariant.Hvo, secondVariantRef.VariantEntryTypesRS[0].Hvo);
+			Assert.That(secondVariantRef.VariantEntryTypesRS[0].Hvo, Is.EqualTo(choiceFreeVariant.Hvo));
 
 			// Now try to add a variant entry type to a complex entry reference,
 			// verify nothing changed.
@@ -1439,12 +1433,12 @@ namespace SIL.FieldWorks.XWorks
 			// SUT (2)
 			m_bv.ShowColumn("ComplexEntryTypesBrowse");
 			// make sure column got added.
-			Assert.AreEqual(cOriginal + 2, m_bv.ColumnSpecs.Count);
+			Assert.That(m_bv.ColumnSpecs.Count, Is.EqualTo(cOriginal + 2));
 			m_bulkEditBar.SetTargetField("Complex Form Types");
-			Assert.AreEqual("Complex Form Types", m_bulkEditBar.SelectedTargetFieldItem.ToString());
+			Assert.That(m_bulkEditBar.SelectedTargetFieldItem.ToString(), Is.EqualTo("Complex Form Types"));
 			clerk.JumpToRecord(hvoComplexRef);
 			ILexEntryRef complexEntryRef = clerk.CurrentObject as ILexEntryRef;
-			Assert.AreEqual(0, complexEntryRef.VariantEntryTypesRS.Count);
+			Assert.That(complexEntryRef.VariantEntryTypesRS.Count, Is.EqualTo(0));
 
 			m_bv.OnUncheckAll();
 			m_bv.SetCheckedItems(new List<int>(new int[] { hvoComplexRef }));
@@ -1457,7 +1451,7 @@ namespace SIL.FieldWorks.XWorks
 			m_bulkEditBar.ClickApply();
 
 			// make sure we didn't add a variant entry type to the complex entry ref.
-			Assert.AreEqual(0, complexEntryRef.VariantEntryTypesRS.Count);
+			Assert.That(complexEntryRef.VariantEntryTypesRS.Count, Is.EqualTo(0));
 		}
 
 		private ILexEntry AddOneComplexEntry(ILexEntry part)
@@ -1669,23 +1663,23 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_bulkEditBar.SwitchTab("BulkCopy");
 			m_bulkEditBar.SetTargetField("Lexeme Form");
-			Assert.AreEqual(LexEntryTags.kClassId, m_bv.ListItemsClass);
+			Assert.That(m_bv.ListItemsClass, Is.EqualTo(LexEntryTags.kClassId));
 			var clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
 
 			// check that clerk list has also changed.
-			Assert.AreEqual(clerk.ListSize, m_bv.CheckedItems.Count);
+			Assert.That(m_bv.CheckedItems.Count, Is.EqualTo(clerk.ListSize));
 
 			// Verify that Refresh doesn't change current selection state
 			MasterRefresh();
-			Assert.AreEqual(clerk.ListSize, m_bv.CheckedItems.Count);
+			Assert.That(m_bv.CheckedItems.Count, Is.EqualTo(clerk.ListSize));
 
 			// Try again in unchecked state
 			m_bv.OnUncheckAll();
-			Assert.AreEqual(0, m_bv.CheckedItems.Count);
+			Assert.That(m_bv.CheckedItems.Count, Is.EqualTo(0));
 			MasterRefresh();
 
 			// Verify that Refresh doesn't change current selection state
-			Assert.AreEqual(0, m_bv.CheckedItems.Count);
+			Assert.That(m_bv.CheckedItems.Count, Is.EqualTo(0));
 		}
 
 		/// <summary>
@@ -1700,22 +1694,22 @@ namespace SIL.FieldWorks.XWorks
 
 			m_bulkEditBar.SwitchTab("BulkCopy");
 			m_bulkEditBar.SetTargetField("Lexeme Form");
-			Assert.AreEqual(LexEntryTags.kClassId, m_bv.ListItemsClass);
+			Assert.That(m_bv.ListItemsClass, Is.EqualTo(LexEntryTags.kClassId));
 
 			// select only "ZZZparentEntry" before we filter it out.
 			m_bv.OnUncheckAll();
 			m_bv.SetCheckedItems(new List<int>(new int[] { ZZZparentEntry.Hvo }));
-			Assert.AreEqual(1, m_bv.CheckedItems.Count);
+			Assert.That(m_bv.CheckedItems.Count, Is.EqualTo(1));
 
 			// Filter on "pus" and make sure everything now unselected.
 			m_bv.SetFilter("Lexeme Form", "Filter for...", "pus");
-			Assert.AreEqual(0, m_bv.CheckedItems.Count);
+			Assert.That(m_bv.CheckedItems.Count, Is.EqualTo(0));
 
 			// Broaden the to include everything again, and make sure that
 			// our entry is still selected.
 			m_bv.SetFilter("Lexeme Form", "Show All", null);
-			Assert.AreEqual(1, m_bv.CheckedItems.Count);
-			Assert.AreEqual(ZZZparentEntry.Hvo, m_bv.CheckedItems[0]);
+			Assert.That(m_bv.CheckedItems.Count, Is.EqualTo(1));
+			Assert.That(m_bv.CheckedItems[0], Is.EqualTo(ZZZparentEntry.Hvo));
 		}
 
 		[Test]
@@ -1725,25 +1719,25 @@ namespace SIL.FieldWorks.XWorks
 
 			m_bulkEditBar.SwitchTab("BulkCopy");
 			m_bulkEditBar.SetTargetField("Lexeme Form");
-			Assert.AreEqual(LexEntryTags.kClassId, m_bv.ListItemsClass);
+			Assert.That(m_bv.ListItemsClass, Is.EqualTo(LexEntryTags.kClassId));
 			var clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
 
 			// unselect our test data
 			m_bv.UnselectItem(ZZZparentEntry.Hvo);
 			IList<int> unselectedItems = m_bv.UncheckedItems();
-			Assert.AreEqual(1, unselectedItems.Count);
-			Assert.AreEqual(ZZZparentEntry.Hvo, unselectedItems[0]);
+			Assert.That(unselectedItems.Count, Is.EqualTo(1));
+			Assert.That(unselectedItems[0], Is.EqualTo(ZZZparentEntry.Hvo));
 
 			// Filter on "pus" and make sure nothing is unselected.
 			m_bv.SetFilter("Lexeme Form", "Filter for...", "pus");
 			IList<int> unselectedItemsAfterFilterPus = m_bv.UncheckedItems();
-			Assert.AreEqual(0, unselectedItemsAfterFilterPus.Count);
+			Assert.That(unselectedItemsAfterFilterPus.Count, Is.EqualTo(0));
 
 			// Extend our filter and make sure we've restored the thing we had selected.
 			m_bv.SetFilter("Lexeme Form", "Show All", null);
 			IList<int> unselectedItemsAfterShowAll = m_bv.UncheckedItems();
-			Assert.AreEqual(1, unselectedItemsAfterShowAll.Count);
-			Assert.AreEqual(ZZZparentEntry.Hvo, unselectedItemsAfterShowAll[0]);
+			Assert.That(unselectedItemsAfterShowAll.Count, Is.EqualTo(1));
+			Assert.That(unselectedItemsAfterShowAll[0], Is.EqualTo(ZZZparentEntry.Hvo));
 		}
 
 		/// <summary>
@@ -1760,7 +1754,7 @@ namespace SIL.FieldWorks.XWorks
 
 			m_bulkEditBar.SwitchTab("BulkCopy");
 			m_bulkEditBar.SetTargetField("Lexeme Form");
-			Assert.AreEqual(LexEntryTags.kClassId, m_bv.ListItemsClass);
+			Assert.That(m_bv.ListItemsClass, Is.EqualTo(LexEntryTags.kClassId));
 
 			m_bv.OnUncheckAll();
 			// select the entry.
@@ -1770,8 +1764,8 @@ namespace SIL.FieldWorks.XWorks
 
 			var allSensesForEntry = new HashSet<int>(entryWithMultipleDescendents.AllSenses.Select(s => s.Hvo));
 			var checkedItems = new HashSet<int>(m_bv.CheckedItems);
-			Assert.AreEqual(allSensesForEntry.Count, checkedItems.Count, "Checked items mismatched.");
-			Assert.IsTrue(checkedItems.SetEquals(allSensesForEntry), "Checked items mismatched.");
+			Assert.That(checkedItems.Count, Is.EqualTo(allSensesForEntry.Count), "Checked items mismatched.");
+			Assert.That(checkedItems.SetEquals(allSensesForEntry), Is.True, "Checked items mismatched.");
 		}
 
 		[Test]
@@ -1782,7 +1776,7 @@ namespace SIL.FieldWorks.XWorks
 
 			m_bulkEditBar.SwitchTab("BulkCopy");
 			m_bulkEditBar.SetTargetField("Lexeme Form");
-			Assert.AreEqual(LexEntryTags.kClassId, m_bv.ListItemsClass);
+			Assert.That(m_bv.ListItemsClass, Is.EqualTo(LexEntryTags.kClassId));
 			var clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
 
 			// unselect the entry.
@@ -1793,8 +1787,8 @@ namespace SIL.FieldWorks.XWorks
 
 			var allSensesForEntry = new HashSet<int>(entryWithMultipleDescendents.AllSenses.Select(s => s.Hvo));
 			var uncheckedItems = new HashSet<int>(m_bv.UncheckedItems());
-			Assert.AreEqual(allSensesForEntry.Count, uncheckedItems.Count, "Unchecked items mismatched.");
-			Assert.IsTrue(uncheckedItems.SetEquals(allSensesForEntry), "Unchecked items mismatched.");
+			Assert.That(uncheckedItems.Count, Is.EqualTo(allSensesForEntry.Count), "Unchecked items mismatched.");
+			Assert.That(uncheckedItems.SetEquals(allSensesForEntry), Is.True, "Unchecked items mismatched.");
 		}
 
 		/// <summary>
@@ -1813,7 +1807,7 @@ namespace SIL.FieldWorks.XWorks
 
 			m_bulkEditBar.SwitchTab("BulkCopy");
 			m_bulkEditBar.SetTargetField("Glosses");
-			Assert.AreEqual(LexSenseTags.kClassId, m_bv.ListItemsClass);
+			Assert.That(m_bv.ListItemsClass, Is.EqualTo(LexSenseTags.kClassId));
 			var clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
 
 			m_bv.OnUncheckAll();
@@ -1826,8 +1820,8 @@ namespace SIL.FieldWorks.XWorks
 			var selectedEntries = new HashSet<int> {entryWithMultipleDescendents.Hvo};
 			selectedEntries.UnionWith(entriesWithoutSenses.Select(e => e.Hvo));
 			var checkedItems = new HashSet<int>(m_bv.CheckedItems);
-			Assert.AreEqual(selectedEntries.Count, checkedItems.Count, "Checked items mismatched.");
-			Assert.IsTrue(checkedItems.SetEquals(selectedEntries), "Checked items mismatched.");
+			Assert.That(checkedItems.Count, Is.EqualTo(selectedEntries.Count), "Checked items mismatched.");
+			Assert.That(checkedItems.SetEquals(selectedEntries), Is.True, "Checked items mismatched.");
 		}
 
 		/// <summary>
@@ -1841,7 +1835,7 @@ namespace SIL.FieldWorks.XWorks
 
 			m_bulkEditBar.SwitchTab("BulkCopy");
 			m_bulkEditBar.SetTargetField("Glosses");
-			Assert.AreEqual(LexSenseTags.kClassId, m_bv.ListItemsClass);
+			Assert.That(m_bv.ListItemsClass, Is.EqualTo(LexSenseTags.kClassId));
 			var clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
 
 			// unselect all the senses belonging to this entry
@@ -1853,8 +1847,8 @@ namespace SIL.FieldWorks.XWorks
 
 			var unselectedEntries = new HashSet<int> {entryWithMultipleDescendents.Hvo};
 			var uncheckedItems = new HashSet<int>(m_bv.UncheckedItems());
-			Assert.AreEqual(unselectedEntries.Count, uncheckedItems.Count, "Unchecked items mismatched.");
-			Assert.IsTrue(uncheckedItems.SetEquals(unselectedEntries), "Unchecked items mismatched.");
+			Assert.That(uncheckedItems.Count, Is.EqualTo(unselectedEntries.Count), "Unchecked items mismatched.");
+			Assert.That(uncheckedItems.SetEquals(unselectedEntries), Is.True, "Unchecked items mismatched.");
 		}
 
 		/// <summary>
@@ -1886,8 +1880,8 @@ namespace SIL.FieldWorks.XWorks
 				m_bulkEditBar.SetTargetField("Glosses");
 			// validate that only the siblings are selected.
 			var hvoSenseSiblings = new HashSet<int>(parentEntry.AllSenses.Select(s => s.Hvo));
-			Assert.AreEqual(hvoSenseSiblings.Count, m_bv.CheckedItems.Count);
-			Assert.IsTrue(hvoSenseSiblings.SetEquals(new HashSet<int>(m_bv.CheckedItems)));
+			Assert.That(m_bv.CheckedItems.Count, Is.EqualTo(hvoSenseSiblings.Count));
+			Assert.That(hvoSenseSiblings.SetEquals(new HashSet<int>(m_bv.CheckedItems)), Is.True);
 		}
 
 		[Test]
@@ -1913,8 +1907,8 @@ namespace SIL.FieldWorks.XWorks
 			// validate that only the siblings are unselected.
 			var hvoSenseSiblings = new HashSet<int>(parentEntry.AllSenses.Select(s => s.Hvo));
 			var uncheckedItems = new HashSet<int>(m_bv.UncheckedItems());
-			Assert.AreEqual(hvoSenseSiblings.Count, uncheckedItems.Count);
-			Assert.IsTrue(hvoSenseSiblings.SetEquals(uncheckedItems));
+			Assert.That(uncheckedItems.Count, Is.EqualTo(hvoSenseSiblings.Count));
+			Assert.That(hvoSenseSiblings.SetEquals(uncheckedItems), Is.True);
 		}
 
 		/// <summary>
@@ -1942,7 +1936,7 @@ namespace SIL.FieldWorks.XWorks
 			// validate that everything (except variant allomorph?) is still not selected.
 			var checkedItems = new HashSet<int>(m_bv.CheckedItems);
 			var selectedEntries = new HashSet<int>(entriesWithoutSenses.Select(e => e.Hvo));
-			Assert.AreEqual(selectedEntries.Count, checkedItems.Count);
+			Assert.That(checkedItems.Count, Is.EqualTo(selectedEntries.Count));
 		}
 
 		/// <summary>
@@ -1965,12 +1959,12 @@ namespace SIL.FieldWorks.XWorks
 			// but it's currently the only way we can allow bulk editing translations.
 			// We can allow ghosting for Examples that don't have translations
 			// but not for a translation of a ghosted (not-yet existing) Example.
-			Assert.Less(clerk.ListSize, Cache.LangProject.LexDbOA.Entries.Count());
+			Assert.That(clerk.ListSize, Is.LessThan(Cache.LangProject.LexDbOA.Entries.Count()));
 
 			// Uncheck everything before we switch to parent list
 			m_bv.OnUncheckAll();
 			var uncheckedTranslationItems = m_bv.UncheckedItems();
-			Assert.AreEqual(uncheckedTranslationItems.Count, clerk.ListSize);
+			Assert.That(clerk.ListSize, Is.EqualTo(uncheckedTranslationItems.Count));
 
 			// go through each of the translation items, and find the LexEntry owner.
 			var translationsToEntries = GetParentOfClassMap(uncheckedTranslationItems,
@@ -1983,9 +1977,9 @@ namespace SIL.FieldWorks.XWorks
 
 			var entriesSelected = new HashSet<int>(m_bv.CheckedItems);
 			var entriesUnselected = new HashSet<int>(m_bv.UncheckedItems());
-			Assert.AreEqual(expectedUnselectedEntries.Count, entriesUnselected.Count, "Unselected items mismatched.");
-			Assert.IsTrue(expectedUnselectedEntries.SetEquals(entriesUnselected), "Unselected items mismatched.");
-			Assert.Greater(entriesSelected.Count, 0);
+			Assert.That(entriesUnselected.Count, Is.EqualTo(expectedUnselectedEntries.Count), "Unselected items mismatched.");
+			Assert.That(expectedUnselectedEntries.SetEquals(entriesUnselected), Is.True, "Unselected items mismatched.");
+			Assert.That(entriesSelected.Count, Is.GreaterThan(0));
 		}
 
 		/// <summary>

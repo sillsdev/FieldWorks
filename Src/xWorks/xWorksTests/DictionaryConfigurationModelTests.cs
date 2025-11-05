@@ -87,34 +87,34 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			// basic info
-			Assert.AreEqual("Root", model.Label);
-			Assert.AreEqual(1, model.Version);
-			Assert.AreEqual(new DateTime(2014, 02, 13), model.LastModified);
+			Assert.That(model.Label, Is.EqualTo("Root"));
+			Assert.That(model.Version, Is.EqualTo(1));
+			Assert.That(model.LastModified, Is.EqualTo(new DateTime(2014, 02, 13)));
 
 			// Main Entry
-			Assert.AreEqual(1, model.Parts.Count);
+			Assert.That(model.Parts.Count, Is.EqualTo(1));
 			var rootConfigNode = model.Parts[0];
-			Assert.AreEqual("Main Entry", rootConfigNode.Label);
-			Assert.AreEqual("LexEntry", rootConfigNode.FieldDescription);
+			Assert.That(rootConfigNode.Label, Is.EqualTo("Main Entry"));
+			Assert.That(rootConfigNode.FieldDescription, Is.EqualTo("LexEntry"));
 			Assert.That(rootConfigNode.LabelSuffix, Is.Null.Or.Empty);
 			Assert.That(rootConfigNode.SubField, Is.Null.Or.Empty);
 			Assert.That(rootConfigNode.Before, Is.Null.Or.Empty);
 			Assert.That(rootConfigNode.Between, Is.Null.Or.Empty);
 			Assert.That(rootConfigNode.After, Is.Null.Or.Empty);
-			Assert.IsFalse(rootConfigNode.IsCustomField);
-			Assert.IsFalse(rootConfigNode.IsDuplicate);
-			Assert.IsTrue(rootConfigNode.IsEnabled);
+			Assert.That(rootConfigNode.IsCustomField, Is.False);
+			Assert.That(rootConfigNode.IsDuplicate, Is.False);
+			Assert.That(rootConfigNode.IsEnabled, Is.True);
 
 			// Testword
-			Assert.AreEqual(1, rootConfigNode.Children.Count);
+			Assert.That(rootConfigNode.Children.Count, Is.EqualTo(1));
 			var headword = rootConfigNode.Children[0];
-			Assert.AreEqual("Testword", headword.Label);
-			Assert.AreEqual("2b", headword.LabelSuffix);
-			Assert.AreEqual("Dictionary-Headword", model.Parts[0].Children[0].Style);
-			Assert.AreEqual("[", headword.Before);
-			Assert.AreEqual(", ", headword.Between);
-			Assert.AreEqual("] ", headword.After);
-			Assert.IsTrue(headword.IsEnabled);
+			Assert.That(headword.Label, Is.EqualTo("Testword"));
+			Assert.That(headword.LabelSuffix, Is.EqualTo("2b"));
+			Assert.That(model.Parts[0].Children[0].Style, Is.EqualTo("Dictionary-Headword"));
+			Assert.That(headword.Before, Is.EqualTo("["));
+			Assert.That(headword.Between, Is.EqualTo(", "));
+			Assert.That(headword.After, Is.EqualTo("] "));
+			Assert.That(headword.IsEnabled, Is.True);
 		}
 
 		[Test]
@@ -135,13 +135,13 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
-			Assert.IsInstanceOf(typeof(DictionaryNodeWritingSystemOptions), testNodeOptions);
+			Assert.That(testNodeOptions, Is.InstanceOf(typeof(DictionaryNodeWritingSystemOptions)));
 			var wsOptions = (DictionaryNodeWritingSystemOptions)testNodeOptions;
-			Assert.IsTrue(wsOptions.DisplayWritingSystemAbbreviations);
-			Assert.AreEqual(DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular, wsOptions.WsType);
-			Assert.AreEqual(1, wsOptions.Options.Count);
-			Assert.AreEqual("fr", wsOptions.Options[0].Id);
-			Assert.IsTrue(wsOptions.Options[0].IsEnabled);
+			Assert.That(wsOptions.DisplayWritingSystemAbbreviations, Is.True);
+			Assert.That(wsOptions.WsType, Is.EqualTo(DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular));
+			Assert.That(wsOptions.Options.Count, Is.EqualTo(1));
+			Assert.That(wsOptions.Options[0].Id, Is.EqualTo("fr"));
+			Assert.That(wsOptions.Options[0].IsEnabled, Is.True);
 		}
 
 		[Test]
@@ -164,15 +164,15 @@ namespace SIL.FieldWorks.XWorks
 
 			// The following assertions are based on the specific test data loaded from the file
 			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
-			Assert.IsInstanceOf(typeof(DictionaryNodeSenseOptions), testNodeOptions);
+			Assert.That(testNodeOptions, Is.InstanceOf(typeof(DictionaryNodeSenseOptions)));
 			var senseOptions = (DictionaryNodeSenseOptions)testNodeOptions;
 			Assert.That(senseOptions.NumberingStyle, Is.EqualTo("%d"), "NumberingStyle should be same");
-			Assert.AreEqual("(", senseOptions.BeforeNumber);
-			Assert.AreEqual(") ", senseOptions.AfterNumber);
-			Assert.AreEqual("bold", senseOptions.NumberStyle);
-			Assert.IsTrue(senseOptions.DisplayEachSenseInAParagraph);
-			Assert.IsTrue(senseOptions.NumberEvenASingleSense);
-			Assert.IsTrue(senseOptions.ShowSharedGrammarInfoFirst);
+			Assert.That(senseOptions.BeforeNumber, Is.EqualTo("("));
+			Assert.That(senseOptions.AfterNumber, Is.EqualTo(") "));
+			Assert.That(senseOptions.NumberStyle, Is.EqualTo("bold"));
+			Assert.That(senseOptions.DisplayEachSenseInAParagraph, Is.True);
+			Assert.That(senseOptions.NumberEvenASingleSense, Is.True);
+			Assert.That(senseOptions.ShowSharedGrammarInfoFirst, Is.True);
 		}
 
 		[Test]
@@ -201,14 +201,14 @@ namespace SIL.FieldWorks.XWorks
 
 			// The following assertions are based on the specific test data loaded from the file
 			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
-			Assert.IsInstanceOf(typeof(DictionaryNodeListOptions), testNodeOptions);
+			Assert.That(testNodeOptions, Is.InstanceOf(typeof(DictionaryNodeListOptions)));
 			var listOptions = (DictionaryNodeListOptions)testNodeOptions;
-			Assert.AreEqual(DictionaryNodeListOptions.ListIds.Variant, listOptions.ListId);
+			Assert.That(listOptions.ListId, Is.EqualTo(DictionaryNodeListOptions.ListIds.Variant));
 			// The first guid (b0000000-c40e-433e-80b5-31da08771344) is a special marker for
 			// "No Variant Type".  The second guid does not exist, so it gets removed from the list.
-			Assert.AreEqual(8, listOptions.Options.Count);
-			Assert.AreEqual(8, listOptions.Options.Count(option => option.IsEnabled));
-			Assert.AreEqual("b0000000-c40e-433e-80b5-31da08771344", listOptions.Options[0].Id);
+			Assert.That(listOptions.Options.Count, Is.EqualTo(8));
+			Assert.That(listOptions.Options.Count(option => option.IsEnabled), Is.EqualTo(8));
+			Assert.That(listOptions.Options[0].Id, Is.EqualTo("b0000000-c40e-433e-80b5-31da08771344"));
 		}
 
 		[Test]
@@ -233,18 +233,18 @@ namespace SIL.FieldWorks.XWorks
 
 			// The following assertions are based on the specific test data loaded from the file
 			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
-			Assert.IsInstanceOf(typeof(DictionaryNodeListAndParaOptions), testNodeOptions);
+			Assert.That(testNodeOptions, Is.InstanceOf(typeof(DictionaryNodeListAndParaOptions)));
 			var lpOptions = (DictionaryNodeListAndParaOptions)testNodeOptions;
-			Assert.AreEqual(DictionaryNodeListOptions.ListIds.Complex, lpOptions.ListId);
-			Assert.IsTrue(lpOptions.DisplayEachInAParagraph);
+			Assert.That(lpOptions.ListId, Is.EqualTo(DictionaryNodeListOptions.ListIds.Complex));
+			Assert.That(lpOptions.DisplayEachInAParagraph, Is.True);
 			// There are seven complex form types by default in the language project.  (The second and third
 			// guids above are used by two of those default types.)  Ones that are missing in the configuration
 			// data are added in, ones that the configuration has but which don't exist in the language project
 			// are removed.  Note that the first one above (a0000000-dd15-4a03-9032-b40faaa9a754) is a special
 			// value used to indicate "No Complex Form Type".  The fourth value does not exist.
-			Assert.AreEqual(8, lpOptions.Options.Count);
-			Assert.AreEqual(8, lpOptions.Options.Count(option => option.IsEnabled));
-			Assert.AreEqual("a0000000-dd15-4a03-9032-b40faaa9a754", lpOptions.Options[0].Id);
+			Assert.That(lpOptions.Options.Count, Is.EqualTo(8));
+			Assert.That(lpOptions.Options.Count(option => option.IsEnabled), Is.EqualTo(8));
+			Assert.That(lpOptions.Options[0].Id, Is.EqualTo("a0000000-dd15-4a03-9032-b40faaa9a754"));
 		}
 
 		[Test]
@@ -264,11 +264,11 @@ namespace SIL.FieldWorks.XWorks
 
 			// The following assertions are based on the specific test data loaded from the file
 			var testNodeOptions = model.Parts[0].Children[0].DictionaryNodeOptions;
-			Assert.IsInstanceOf(typeof(DictionaryNodeListAndParaOptions), testNodeOptions);
+			Assert.That(testNodeOptions, Is.InstanceOf(typeof(DictionaryNodeListAndParaOptions)));
 			var lpOptions = (DictionaryNodeListAndParaOptions)testNodeOptions;
-			Assert.AreEqual(DictionaryNodeListOptions.ListIds.None, lpOptions.ListId);
+			Assert.That(lpOptions.ListId, Is.EqualTo(DictionaryNodeListOptions.ListIds.None));
 			Assert.That(lpOptions.Options, Is.Null.Or.Empty);
-			Assert.IsFalse(lpOptions.DisplayEachInAParagraph);
+			Assert.That(lpOptions.DisplayEachInAParagraph, Is.False);
 		}
 
 		[Test]
@@ -289,10 +289,10 @@ namespace SIL.FieldWorks.XWorks
 				model = new DictionaryConfigurationModel(modelFile.Path, Cache);
 			}
 
-			Assert.IsNotEmpty(model.Publications);
-			Assert.AreEqual(2, model.Publications.Count);
-			Assert.AreEqual("Main Dictionary", model.Publications[0]);
-			Assert.AreEqual("Another Dictionary", model.Publications[1]);
+			Assert.That(model.Publications, Is.Not.Empty);
+			Assert.That(model.Publications.Count, Is.EqualTo(2));
+			Assert.That(model.Publications[0], Is.EqualTo("Main Dictionary"));
+			Assert.That(model.Publications[1], Is.EqualTo("Another Dictionary"));
 
 			RemovePublication(addedPublication);
 		}
@@ -345,7 +345,7 @@ namespace SIL.FieldWorks.XWorks
 					model = new DictionaryConfigurationModel(modelFile.Path, Cache);
 				}
 
-				Assert.IsEmpty(model.Publications, "Should have resulted in an empty set of publications for input XML: " + string.Join("",noPublicationsXml));
+				Assert.That(model.Publications, Is.Empty, "Should have resulted in an empty set of publications for input XML: " + string.Join("",noPublicationsXml));
 			}
 
 			RemovePublication(addedPublication);
@@ -370,10 +370,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			Assert.That(model.AllPublications, Is.True, "Should have turned on AllPublications flag.");
-			Assert.IsNotEmpty(model.Publications);
-			Assert.AreEqual(2, model.Publications.Count);
-			Assert.AreEqual("Main Dictionary", model.Publications[0], "Should have reported this dictionary since AllPublications is enabled.");
-			Assert.AreEqual("Another Dictionary", model.Publications[1]);
+			Assert.That(model.Publications, Is.Not.Empty);
+			Assert.That(model.Publications.Count, Is.EqualTo(2));
+			Assert.That(model.Publications[0], Is.EqualTo("Main Dictionary"), "Should have reported this dictionary since AllPublications is enabled.");
+			Assert.That(model.Publications[1], Is.EqualTo("Another Dictionary"));
 
 			RemovePublication(addedPublication);
 		}
@@ -394,9 +394,9 @@ namespace SIL.FieldWorks.XWorks
 				model = new DictionaryConfigurationModel(modelFile.Path, Cache);
 			}
 
-			Assert.IsNotEmpty(model.Publications);
-			Assert.AreEqual(1, model.Publications.Count);
-			Assert.AreEqual("Main Dictionary", model.Publications[0]);
+			Assert.That(model.Publications, Is.Not.Empty);
+			Assert.That(model.Publications.Count, Is.EqualTo(1));
+			Assert.That(model.Publications[0], Is.EqualTo("Main Dictionary"));
 		}
 
 		[Test]
@@ -415,7 +415,7 @@ namespace SIL.FieldWorks.XWorks
 				model = new DictionaryConfigurationModel(modelFile.Path, Cache);
 			}
 
-			Assert.IsEmpty(model.Publications);
+			Assert.That(model.Publications, Is.Empty);
 		}
 
 		/// <summary>
@@ -454,7 +454,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					VerifyNoRedundantChildren(model.SharedItems);
 					foreach(var si in model.SharedItems)
-						Assert.NotNull(si.Parent, "Shared item {0} is an orphan", si.Label);
+						Assert.That(si.Parent, Is.Not.Null, "Shared item {0} is an orphan", si.Label);
 				}
 			}
 		}
@@ -533,7 +533,7 @@ namespace SIL.FieldWorks.XWorks
 			var shippedConfigfolder = Path.Combine(FwDirectoryFinder.FlexFolder, "DefaultConfigurations", subFolder);
 			foreach(var shippedFile in Directory.EnumerateFiles(shippedConfigfolder, "*"+DictionaryConfigurationModel.FileExtension))
 			{
-				Assert.AreEqual(DictionaryConfigurationMigrator.VersionCurrent, new DictionaryConfigurationModel(shippedFile, Cache).Version);
+				Assert.That(new DictionaryConfigurationModel(shippedFile, Cache).Version, Is.EqualTo(DictionaryConfigurationMigrator.VersionCurrent));
 			}
 		}
 
@@ -1014,8 +1014,8 @@ namespace SIL.FieldWorks.XWorks
 				//SUT
 				model.Save();
 				ValidateAgainstSchema(modelFile);
-				StringAssert.Contains("      ", File.ReadAllText(modelFile), "Currently expecting default intent style: two spaces");
-				StringAssert.Contains(Environment.NewLine, File.ReadAllText(modelFile), "Configuration XML should not all be on one line");
+				Assert.That(File.ReadAllText(modelFile), Does.Contain("      "), "Currently expecting default intent style: two spaces");
+				Assert.That(File.ReadAllText(modelFile), Does.Contain(Environment.NewLine), "Configuration XML should not all be on one line");
 			}
 		}
 
@@ -1123,7 +1123,7 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, sharedItems: model.SharedItems);
 
-			Assert.AreSame(oneRefConfigNode, oneConfigNode.ReferencedNode);
+			Assert.That(oneConfigNode.ReferencedNode, Is.SameAs(oneRefConfigNode));
 		}
 
 		[Test]
@@ -1141,7 +1141,7 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, sharedItems: model.SharedItems);
 
-			Assert.AreSame(configNodeOne, refdConfigNode.Parent, "The Referenced node's 'Parent' should be the first to reference (breadth first)");
+			Assert.That(refdConfigNode.Parent, Is.SameAs(configNodeOne), "The Referenced node's 'Parent' should be the first to reference (breadth first)");
 		}
 
 		[Test]
@@ -1160,7 +1160,7 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, sharedItems: model.SharedItems);
 
-			Assert.AreSame(configNodeTwo, refdConfigNode.Parent, "The Referenced node's 'Parent' should be the first to reference (breadth first)");
+			Assert.That(refdConfigNode.Parent, Is.SameAs(configNodeTwo), "The Referenced node's 'Parent' should be the first to reference (breadth first)");
 		}
 
 		[Test]
@@ -1178,8 +1178,8 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(model.Parts, sharedItems: model.SharedItems);
 
-			Assert.AreSame(refdConfigNode, refdConfigNodeChild.Parent);
-			Assert.AreSame(refdConfigNode, refdConfigNodeChild.ReferencedNode);
+			Assert.That(refdConfigNodeChild.Parent, Is.SameAs(refdConfigNode));
+			Assert.That(refdConfigNodeChild.ReferencedNode, Is.SameAs(refdConfigNode));
 		}
 
 		[Test]
@@ -1191,8 +1191,8 @@ namespace SIL.FieldWorks.XWorks
 
 			// SUT
 			DictionaryConfigurationController.LinkReferencedNode(model.SharedItems, configNode, m_reference);
-			Assert.AreEqual(refConfigNode.Label, configNode.ReferenceItem);
-			Assert.AreSame(refConfigNode, configNode.ReferencedNode);
+			Assert.That(configNode.ReferenceItem, Is.EqualTo(refConfigNode.Label));
+			Assert.That(configNode.ReferencedNode, Is.SameAs(refConfigNode));
 			Assert.That(refConfigNode.IsEnabled, "Referenced nodes are inaccessible to users, but must be enabled for their children to function");
 		}
 
@@ -1219,16 +1219,16 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			var clone = model.DeepClone();
 
-			Assert.AreEqual(model.FilePath, clone.FilePath);
-			Assert.AreEqual(model.Label, clone.Label);
-			Assert.AreEqual(model.Version, clone.Version);
+			Assert.That(clone.FilePath, Is.EqualTo(model.FilePath));
+			Assert.That(clone.Label, Is.EqualTo(model.Label));
+			Assert.That(clone.Version, Is.EqualTo(model.Version));
 			ConfigurableDictionaryNodeTests.VerifyDuplicationList(clone.Parts, model.Parts, null);
 			ConfigurableDictionaryNodeTests.VerifyDuplicationList(clone.SharedItems, model.SharedItems, null);
-			Assert.AreNotSame(model.Publications, clone.Publications);
-			Assert.AreEqual(model.Publications.Count, clone.Publications.Count);
+			Assert.That(clone.Publications, Is.Not.SameAs(model.Publications));
+			Assert.That(clone.Publications.Count, Is.EqualTo(model.Publications.Count));
 			for (int i = 0; i < model.Publications.Count; i++)
 			{
-				Assert.AreEqual(model.Publications[i], clone.Publications[i]);
+				Assert.That(clone.Publications[i], Is.EqualTo(model.Publications[i]));
 			}
 			Assert.That(model.HomographConfiguration, Is.Not.SameAs(clone.HomographConfiguration));
 			// If we were on NUnit 4
@@ -1263,10 +1263,10 @@ namespace SIL.FieldWorks.XWorks
 			var clonedModel = model.DeepClone();
 			var clonedMainEntry = clonedModel.Parts[0];
 			var clonedSubentries = clonedMainEntry.Children[0];
-			Assert.AreEqual(sharedSubsName, clonedSubentries.ReferenceItem, "ReferenceItem should have been cloned");
-			Assert.AreSame(clonedModel.SharedItems[0], clonedSubentries.ReferencedNode, "ReferencedNode should have been cloned");
-			Assert.AreSame(clonedSubentries, clonedModel.SharedItems[0].Parent, "SharedItems' Parents should connect to their new masters");
-			Assert.AreNotSame(model.SharedItems[0], clonedModel.SharedItems[0], "SharedItems were not deep cloned");
+			Assert.That(clonedSubentries.ReferenceItem, Is.EqualTo(sharedSubsName), "ReferenceItem should have been cloned");
+			Assert.That(clonedSubentries.ReferencedNode, Is.SameAs(clonedModel.SharedItems[0]), "ReferencedNode should have been cloned");
+			Assert.That(clonedModel.SharedItems[0].Parent, Is.SameAs(clonedSubentries), "SharedItems' Parents should connect to their new masters");
+			Assert.That(clonedModel.SharedItems[0], Is.Not.SameAs(model.SharedItems[0]), "SharedItems were not deep cloned");
 		}
 
 		internal static DictionaryConfigurationModel CreateSimpleSharingModel(ConfigurableDictionaryNode part, ConfigurableDictionaryNode sharedItem)

@@ -88,19 +88,19 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			// plain, simple ASCII
 			string name = "abc 123";
 			string convertedName = XAmpleParser.ConvertNameToUseAnsiCharacters(name);
-			Assert.AreEqual("abc 123", convertedName);
+			Assert.That(convertedName, Is.EqualTo("abc 123"));
 			// Using upper ANSI characters as well as ASCII
 			name = "ÿýúadctl";
 			convertedName = XAmpleParser.ConvertNameToUseAnsiCharacters(name);
-			Assert.AreEqual("ÿýúadctl", convertedName);
+			Assert.That(convertedName, Is.EqualTo("ÿýúadctl"));
 			// Using characters just above ANSI as well as ASCII
 			name = "ąćălex";
 			convertedName = XAmpleParser.ConvertNameToUseAnsiCharacters(name);
-			Assert.AreEqual("010501070103lex", convertedName);
+			Assert.That(convertedName, Is.EqualTo("010501070103lex"));
 			// Using Cyrillic characters as well as ASCII
 			name = "Английский для семинараgram";
 			convertedName = XAmpleParser.ConvertNameToUseAnsiCharacters(name);
-			Assert.AreEqual("0410043D0433043B043804390441043A04380439 0434043B044F 04410435043C0438043D043004400430gram", convertedName);
+			Assert.That(convertedName, Is.EqualTo("0410043D0433043B043804390441043A04380439 0434043B044F 04410435043C0438043D043004400430gram"));
 		}
 	}
 }

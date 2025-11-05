@@ -308,12 +308,12 @@ namespace SIL.FieldWorks.IText
 		{
 			if (tssExpected != null && tssActual != null)
 			{
-				Assert.AreEqual(tssExpected.Text, tssActual.Text);
-				Assert.IsTrue(tssExpected.Equals(tssActual));
+				Assert.That(tssActual.Text, Is.EqualTo(tssExpected.Text));
+				Assert.That(tssExpected.Equals(tssActual), Is.True);
 			}
 			else
 			{
-				Assert.AreEqual(tssExpected, tssActual);
+				Assert.That(tssActual, Is.EqualTo(tssExpected));
 			}
 		}
 
@@ -366,12 +366,12 @@ namespace SIL.FieldWorks.IText
 			{
 				while (m_doneStack.Count > 0)
 				{
-					Assert.AreEqual(m_doneStack.Peek().Undo, m_actionHandler.GetUndoText());
+					Assert.That(m_actionHandler.GetUndoText(), Is.EqualTo(m_doneStack.Peek().Undo));
 					m_actionHandler.Undo();
 					// put it back on the taskQueue as something that can be Redone.
 					m_taskQueue.Enqueue(m_doneStack.Pop());
 				}
-				Assert.AreEqual(OriginalUndoCount, m_actionHandler.UndoableSequenceCount);
+				Assert.That(m_actionHandler.UndoableSequenceCount, Is.EqualTo(OriginalUndoCount));
 			}
 
 			class UOW
@@ -423,11 +423,11 @@ namespace SIL.FieldWorks.IText
 			int cEntriesOrig = Cache.LangProject.LexDbOA.Entries.Count();
 			// verify no analyses exist for this wordform;
 			IWfiWordform wf = cba0_0.Analysis.Wordform;
-			Assert.AreEqual(0, wf.AnalysesOC.Count);
+			Assert.That(wf.AnalysesOC.Count, Is.EqualTo(0));
 
 			// set word pos, to first possibility (e.g. 'adjunct')
 			int hvoSbWordPos = m_sandbox.SelectIndexInCombo(InterlinLineChoices.kflidWordPos, 0, 0);
-			Assert.IsFalse(hvoSbWordPos == 0); // select nonzero pos
+			Assert.That(hvoSbWordPos == 0, Is.False); // select nonzero pos
 
 			// confirm the analysis (making a real analysis and a LexSense)
 			var wag = m_sandbox.ConfirmAnalysis();
@@ -437,17 +437,17 @@ namespace SIL.FieldWorks.IText
 			CompareTss(tssWordGlossInSandbox, wfiGloss.Form.get_String(Cache.DefaultAnalWs));
 			// confirm we have only one analysis and that it is monomorphemic
 			IWfiAnalysis wfiAnalysis = wag.WfiAnalysis;
-			Assert.AreEqual(wf, wag.Wordform, "Expected confirmed analysis to be owned by the original wordform.");
-			Assert.AreEqual(1, wf.AnalysesOC.Count);
-			Assert.AreEqual(1, wfiAnalysis.MorphBundlesOS.Count);
-			Assert.AreEqual(1, wfiAnalysis.MeaningsOC.Count);
+			Assert.That(wag.Wordform, Is.EqualTo(wf), "Expected confirmed analysis to be owned by the original wordform.");
+			Assert.That(wf.AnalysesOC.Count, Is.EqualTo(1));
+			Assert.That(wfiAnalysis.MorphBundlesOS.Count, Is.EqualTo(1));
+			Assert.That(wfiAnalysis.MeaningsOC.Count, Is.EqualTo(1));
 
 			// make sure the strings of the wfi gloss matches the strings of the lex gloss.
 			ValidateSenseWithAnalysis(m_sandbox.GetLexSenseForWord(), wfiGloss, hvoSbWordPos);
 
 			// make sure a new entry is in the Lexicon.
 			int cEntriesAfter = Cache.LangProject.LexDbOA.Entries.Count();
-			Assert.AreEqual(cEntriesOrig + 1, cEntriesAfter);
+			Assert.That(cEntriesAfter, Is.EqualTo(cEntriesOrig + 1));
 		}
 
 
@@ -464,20 +464,20 @@ namespace SIL.FieldWorks.IText
 
 			// make sure the morph is linked to the lexicon sense, msa, and part of speech.
 			IWfiMorphBundle morphBundle = wfiAnalysis.MorphBundlesOS[0];
-			Assert.AreEqual(sense, morphBundle.SenseRA);
-			Assert.AreEqual(sense.MorphoSyntaxAnalysisRA, morphBundle.MsaRA);
+			Assert.That(morphBundle.SenseRA, Is.EqualTo(sense));
+			Assert.That(morphBundle.MsaRA, Is.EqualTo(sense.MorphoSyntaxAnalysisRA));
 			if (!fMatchMainPossibility)
 			{
 				// expect exact possibility
-				Assert.AreEqual(hvoSbWordPos, (sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Hvo);
+				Assert.That((sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.Hvo, Is.EqualTo(hvoSbWordPos));
 			}
 			else
 			{
 				IPartOfSpeech posTarget = Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().GetObject(hvoSbWordPos);
-				Assert.AreEqual(posTarget.MainPossibility, (sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.MainPossibility);
+				Assert.That((sense.MorphoSyntaxAnalysisRA as IMoStemMsa).PartOfSpeechRA.MainPossibility, Is.EqualTo(posTarget.MainPossibility));
 			}
-			Assert.AreEqual(allomorph, morphBundle.MorphRA);
-			Assert.AreEqual(hvoSbWordPos, wfiAnalysis.CategoryRA.Hvo);
+			Assert.That(morphBundle.MorphRA, Is.EqualTo(allomorph));
+			Assert.That(wfiAnalysis.CategoryRA.Hvo, Is.EqualTo(hvoSbWordPos));
 		}
 
 		/// <summary>
@@ -509,14 +509,14 @@ namespace SIL.FieldWorks.IText
 
 			// make sure we didn't add entries to the Lexicon.
 			int cEntriesAfter = Cache.LangProject.LexDbOA.Entries.Count();
-			Assert.AreEqual(cEntriesOrig, cEntriesAfter);
+			Assert.That(cEntriesAfter, Is.EqualTo(cEntriesOrig));
 
 			// confirm we have only one analysis and that it is monomorphemic
 			IWfiAnalysis wfiAnalysis = wag.WfiAnalysis;
-			Assert.AreEqual(wf, wag.Wordform, "Expected confirmed analysis to be owned by the original wordform.");
-			Assert.AreEqual(1, wf.AnalysesOC.Count);
-			Assert.AreEqual(1, wfiAnalysis.MorphBundlesOS.Count);
-			Assert.AreEqual(1, wfiAnalysis.MeaningsOC.Count);
+			Assert.That(wag.Wordform, Is.EqualTo(wf), "Expected confirmed analysis to be owned by the original wordform.");
+			Assert.That(wf.AnalysesOC.Count, Is.EqualTo(1));
+			Assert.That(wfiAnalysis.MorphBundlesOS.Count, Is.EqualTo(1));
+			Assert.That(wfiAnalysis.MeaningsOC.Count, Is.EqualTo(1));
 
 			// make sure the strings of the wfi gloss matches the strings of the lex gloss.
 			ValidateSenseWithAnalysis(m_sandbox.GetLexSenseForWord(), wfiGloss, hvoSbWordPos);
@@ -569,14 +569,14 @@ namespace SIL.FieldWorks.IText
 
 			// make sure we didn't add entries to the Lexicon.
 			int cEntriesAfter = Cache.LangProject.LexDbOA.Entries.Count();
-			Assert.AreEqual(cEntriesOrig, cEntriesAfter);
+			Assert.That(cEntriesAfter, Is.EqualTo(cEntriesOrig));
 
 			// confirm we have only one analysis and that it is monomorphemic
 			IWfiAnalysis wfiAnalysis = wag.WfiAnalysis;
-			Assert.AreEqual(wf, wag.Wordform, "Expected confirmed analysis to be owned by the original wordform.");
-			Assert.AreEqual(1, wf.AnalysesOC.Count);
-			Assert.AreEqual(1, wfiAnalysis.MorphBundlesOS.Count);
-			Assert.AreEqual(1, wfiAnalysis.MeaningsOC.Count);
+			Assert.That(wag.Wordform, Is.EqualTo(wf), "Expected confirmed analysis to be owned by the original wordform.");
+			Assert.That(wf.AnalysesOC.Count, Is.EqualTo(1));
+			Assert.That(wfiAnalysis.MorphBundlesOS.Count, Is.EqualTo(1));
+			Assert.That(wfiAnalysis.MeaningsOC.Count, Is.EqualTo(1));
 
 			// make sure the strings of the wfi gloss matches the strings of the lex gloss.
 			ValidateSenseWithAnalysis(m_sandbox.GetLexSenseForWord(), wfiGloss, hvoSbWordPos, true, allomorph);
@@ -607,21 +607,21 @@ namespace SIL.FieldWorks.IText
 
 			// make sure we didn't add entries or senses to the Lexicon.
 			int cEntriesAfter = Cache.LangProject.LexDbOA.Entries.Count();
-			Assert.AreEqual(cEntriesOrig, cEntriesAfter);
-			Assert.AreEqual(1, lexEntry1_Entry.SensesOS.Count);
+			Assert.That(cEntriesAfter, Is.EqualTo(cEntriesOrig));
+			Assert.That(lexEntry1_Entry.SensesOS.Count, Is.EqualTo(1));
 
 			// make sure the sense matches the existing one.
 			ILexSense sense = m_sandbox.GetLexSenseForWord();
-			Assert.AreEqual(lexEntry1_Sense1.Hvo, sense.Hvo);
+			Assert.That(sense.Hvo, Is.EqualTo(lexEntry1_Sense1.Hvo));
 			// make sure the morph is linked to our lexicon sense, msa, and part of speech.
 			ValidateSenseWithAnalysis(sense, wfiGloss, hvoSbWordPos);
 
 			// confirm we have created a new analysis and that it is monomorphemic
 			IWfiAnalysis wfiAnalysis = wag.WfiAnalysis;
-			Assert.AreEqual(wf, wag.Wordform, "Expected confirmed analysis to be owned by the original wordform.");
-			Assert.AreEqual(1, wf.AnalysesOC.Count);
-			Assert.AreEqual(1, wfiAnalysis.MorphBundlesOS.Count);
-			Assert.AreEqual(1, wfiAnalysis.MeaningsOC.Count);
+			Assert.That(wag.Wordform, Is.EqualTo(wf), "Expected confirmed analysis to be owned by the original wordform.");
+			Assert.That(wf.AnalysesOC.Count, Is.EqualTo(1));
+			Assert.That(wfiAnalysis.MorphBundlesOS.Count, Is.EqualTo(1));
+			Assert.That(wfiAnalysis.MeaningsOC.Count, Is.EqualTo(1));
 		}
 
 		private void SetupLexEntryAndSense(string formLexEntry, string senseGloss, out ILexEntry lexEntry, out ILexSense lexSense)
@@ -677,7 +677,7 @@ namespace SIL.FieldWorks.IText
 			AppendMorphBundleToAnalysis(lexEntry2_Entry, lexEntry2_Sense1, analysis);
 			// load sandbox with a polymonomorphemic guess.
 			m_sandbox.SwitchWord(cba0_0);
-			Assert.IsTrue(m_sandbox.UsingGuess);
+			Assert.That(m_sandbox.UsingGuess, Is.True);
 
 			// begin testing.
 		}
@@ -727,7 +727,7 @@ namespace SIL.FieldWorks.IText
 			// load sandbox with a guess.
 			m_sandbox.SwitchWord(cba0_0);
 #if WANTTESTPORT
-				Assert.IsTrue(m_sandbox.UsingGuess);
+				Assert.That(m_sandbox.UsingGuess, Is.True);
 #endif
 
 			// mark the count of LexEntries
@@ -738,27 +738,27 @@ namespace SIL.FieldWorks.IText
 			// confirm Sandbox is in the expected state.
 			ITsString tssWordGlossInSandbox = m_sandbox.GetTssInSandbox(InterlinLineChoices.kflidWordGloss,
 																		Cache.DefaultAnalWs);
-			Assert.AreEqual(null, tssWordGlossInSandbox.Text);
+			Assert.That(tssWordGlossInSandbox.Text, Is.EqualTo(null));
 			int hvoPos = m_sandbox.GetRealHvoInSandbox(InterlinLineChoices.kflidWordPos, 0);
-			Assert.AreEqual(0, hvoPos);
+			Assert.That(hvoPos, Is.EqualTo(0));
 
 			// simulate selecting a lex gloss '0.0.xxxa'
 			m_sandbox.SelectItemInCombo(InterlinLineChoices.kflidWordGloss, 0, lexEntry1_Sense1.Hvo);
 			// confirm Sandbox is in the expected state.
 			tssWordGlossInSandbox = m_sandbox.GetTssInSandbox(InterlinLineChoices.kflidWordGloss,
 															  Cache.DefaultAnalWs);
-			Assert.AreEqual("0.0.xxxa", tssWordGlossInSandbox.Text);
+			Assert.That(tssWordGlossInSandbox.Text, Is.EqualTo("0.0.xxxa"));
 			int hvoPos2 = m_sandbox.GetRealHvoInSandbox(InterlinLineChoices.kflidWordPos, 0);
-			Assert.AreNotEqual(0, hvoPos2);
+			Assert.That(hvoPos2, Is.Not.EqualTo(0));
 
 			// simulate selecting the other lex gloss 'xxxa.AlternativeGloss'
 			m_sandbox.SelectItemInCombo(InterlinLineChoices.kflidWordGloss, 0, lexEntry2_Sense1.Hvo);
 			// confirm Sandbox is in the expected state.
 			tssWordGlossInSandbox = m_sandbox.GetTssInSandbox(InterlinLineChoices.kflidWordGloss,
 															  Cache.DefaultAnalWs);
-			Assert.AreEqual("xxxa.AlternativeGloss", tssWordGlossInSandbox.Text);
+			Assert.That(tssWordGlossInSandbox.Text, Is.EqualTo("xxxa.AlternativeGloss"));
 			int hvoPos3 = m_sandbox.GetRealHvoInSandbox(InterlinLineChoices.kflidWordPos, 0);
-			Assert.AreNotEqual(0, hvoPos3);
+			Assert.That(hvoPos3, Is.Not.EqualTo(0));
 
 			// Next simulate picking an existing word gloss/pos by typing/selecting
 			tssWordGlossInSandbox = m_sandbox.SetTssInSandbox(InterlinLineChoices.kflidWordGloss,
@@ -772,29 +772,29 @@ namespace SIL.FieldWorks.IText
 
 			// make sure we didn't add entries or senses to the Lexicon.
 			int cEntriesAfter = Cache.LangProject.LexDbOA.Entries.Count();
-			Assert.AreEqual(cEntriesOrig, cEntriesAfter);
-			Assert.AreEqual(1, lexEntry1_Entry.SensesOS.Count);
+			Assert.That(cEntriesAfter, Is.EqualTo(cEntriesOrig));
+			Assert.That(lexEntry1_Entry.SensesOS.Count, Is.EqualTo(1));
 
 			// make sure the sense matches the existing one.
 			ILexSense sense = m_sandbox.GetLexSenseForWord();
-			Assert.AreEqual(lexEntry1_Sense1.Hvo, sense.Hvo);
+			Assert.That(sense.Hvo, Is.EqualTo(lexEntry1_Sense1.Hvo));
 			// make sure the strings of the wfi gloss matches the strings of the lex gloss.
 			ValidateSenseWithAnalysis(sense, wfiGloss, hvoSbWordPos);
 
 			// confirm we have not created a new analysis and that it is monomorphemic
 			IWfiAnalysis wfiAnalysis = wag.WfiAnalysis;
-			Assert.AreEqual(wf, wag.Wordform, "Expected confirmed analysis to be owned by the original wordform.");
-			Assert.AreEqual(hvoSbWordPos, wfiAnalysis.CategoryRA.Hvo);
-			Assert.AreEqual(2, wf.AnalysesOC.Count);
-			Assert.AreEqual(1, wfiAnalysis.MorphBundlesOS.Count);
-			Assert.AreEqual(1, wfiAnalysis.MeaningsOC.Count);
+			Assert.That(wag.Wordform, Is.EqualTo(wf), "Expected confirmed analysis to be owned by the original wordform.");
+			Assert.That(wfiAnalysis.CategoryRA.Hvo, Is.EqualTo(hvoSbWordPos));
+			Assert.That(wf.AnalysesOC.Count, Is.EqualTo(2));
+			Assert.That(wfiAnalysis.MorphBundlesOS.Count, Is.EqualTo(1));
+			Assert.That(wfiAnalysis.MeaningsOC.Count, Is.EqualTo(1));
 			IWfiAnalysis wfiAnalysis2 = (morphBundle2 as IWfiMorphBundle).Owner as IWfiAnalysis;
-			Assert.AreEqual(1, wfiAnalysis2.MorphBundlesOS.Count);
-			Assert.AreEqual(1, wfiAnalysis2.MeaningsOC.Count);
+			Assert.That(wfiAnalysis2.MorphBundlesOS.Count, Is.EqualTo(1));
+			Assert.That(wfiAnalysis2.MeaningsOC.Count, Is.EqualTo(1));
 
 			// make sure the morph is linked to our lexicon sense, msa, and part of speech.
 			IWfiMorphBundle wfiMorphBundle = wfiAnalysis.MorphBundlesOS[0];
-			Assert.AreEqual(morphBundle1.Hvo, wfiMorphBundle.Hvo);
+			Assert.That(wfiMorphBundle.Hvo, Is.EqualTo(morphBundle1.Hvo));
 		}
 	}
 }

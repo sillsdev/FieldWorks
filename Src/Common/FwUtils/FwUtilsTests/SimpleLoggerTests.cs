@@ -25,7 +25,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			using (var logger = new SimpleLogger())
 			{
-				Assert.False(logger.HasContent);
+				Assert.That(logger.HasContent, Is.False);
 			}
 		}
 

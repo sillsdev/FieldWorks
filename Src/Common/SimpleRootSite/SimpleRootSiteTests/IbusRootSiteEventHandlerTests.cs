@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		public virtual void TestSetup()
 		{
 			m_dummySimpleRootSite = new DummySimpleRootSite();
-			Assert.NotNull(m_dummySimpleRootSite.RootBox);
+			Assert.That(m_dummySimpleRootSite.RootBox, Is.Not.Null);
 			Keyboard.Controller = new DefaultKeyboardController();
 		}
 
@@ -176,10 +176,10 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			var dummyRootBox = (DummyRootBox)m_dummySimpleRootSite.RootBox;
 			var dummySelection = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
 
-			Assert.AreEqual(expectedDocument, dummyRootBox.Text, "RootSite text");
-			Assert.AreEqual(expectedSelectionText, m_dummyIBusCommunicator.PreEdit, "Preedit text");
-			Assert.AreEqual(expectedAnchor, dummySelection.Anchor, "Selection anchor");
-			Assert.AreEqual(expectedEnd, dummySelection.End, "Selection end");
+			Assert.That(dummyRootBox.Text, Is.EqualTo(expectedDocument), "RootSite text");
+			Assert.That(m_dummyIBusCommunicator.PreEdit, Is.EqualTo(expectedSelectionText), "Preedit text");
+			Assert.That(dummySelection.Anchor, Is.EqualTo(expectedAnchor), "Selection anchor");
+			Assert.That(dummySelection.End, Is.EqualTo(expectedEnd), "Selection end");
 		}
 
 		/// <summary></summary>
@@ -195,11 +195,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			var dummyRootBox = (DummyRootBox)m_dummySimpleRootSite.RootBox;
 			var dummySelection = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
 
-			Assert.AreEqual(string.Empty, dummyRootBox.Text);
+			Assert.That(dummyRootBox.Text, Is.EqualTo(string.Empty));
 
-			Assert.AreEqual(string.Empty, m_dummyIBusCommunicator.PreEdit);
-			Assert.AreEqual(0, dummySelection.Anchor);
-			Assert.AreEqual(0, dummySelection.End);
+			Assert.That(m_dummyIBusCommunicator.PreEdit, Is.EqualTo(string.Empty));
+			Assert.That(dummySelection.Anchor, Is.EqualTo(0));
+			Assert.That(dummySelection.End, Is.EqualTo(0));
 		}
 
 		/// <summary></summary>
@@ -221,11 +221,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			var dummyRootBox = (DummyRootBox)m_dummySimpleRootSite.RootBox;
 			var dummySelection = (DummyVwSelection)m_dummySimpleRootSite.RootBox.Selection;
 
-			Assert.AreEqual("TU", dummyRootBox.Text, "Rootbox text");
+			Assert.That(dummyRootBox.Text, Is.EqualTo("TU"), "Rootbox text");
 
-			Assert.AreEqual("U", m_dummyIBusCommunicator.PreEdit, "pre-edit text");
-			Assert.AreEqual(2, dummySelection.Anchor, "Selection anchor");
-			Assert.AreEqual(2, dummySelection.End, "Selection end");
+			Assert.That(m_dummyIBusCommunicator.PreEdit, Is.EqualTo("U"), "pre-edit text");
+			Assert.That(dummySelection.Anchor, Is.EqualTo(2), "Selection anchor");
+			Assert.That(dummySelection.End, Is.EqualTo(2), "Selection end");
 		}
 
 		/// <summary>Test cases for FWNX-674</summary>

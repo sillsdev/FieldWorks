@@ -236,8 +236,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var result = secondaryEntry.EntryRefsOS[0].ComponentLexemesRS;
 			Assert.That(result.Count, Is.EqualTo(2), "Should have two ComponentLexemes left.");
 			Assert.That(secondaryEntry.EntryRefsOS[0].PrimaryLexemesRS.Count, Is.EqualTo(0), "Shouldn't have any PrimaryLexemes.");
-			Assert.False(result.ToHvoArray().Contains(entry2.Hvo),
-				"The entry2 object should have been removed from ComponentLexemes.");
+			Assert.That(result.ToHvoArray().Contains(entry2.Hvo), Is.False, "The entry2 object should have been removed from ComponentLexemes.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -275,8 +274,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Assert.That(secondaryEntry.EntryRefsOS.Count, Is.EqualTo(1), "Should only have one entry ref object.");
 			var compResult = secondaryEntry.EntryRefsOS[0].ComponentLexemesRS;
 			Assert.That(compResult.Count, Is.EqualTo(2), "Should have two ComponentLexemes left.");
-			Assert.False(compResult.ToHvoArray().Contains(entry3.Hvo),
-				"The entry3 object should have been removed from ComponentLexemes.");
+			Assert.That(compResult.ToHvoArray().Contains(entry3.Hvo), Is.False, "The entry3 object should have been removed from ComponentLexemes.");
 			var primResult = secondaryEntry.EntryRefsOS[0].PrimaryLexemesRS;
 			Assert.That(primResult.Count, Is.EqualTo(0), "Deleting entry3 object from ComponentLexemes, should remove it from PrimaryLexemes.");
 		}
@@ -316,8 +314,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Assert.That(secondaryEntry.EntryRefsOS.Count, Is.EqualTo(1), "Should only have one entry ref object.");
 			var compResult = secondaryEntry.EntryRefsOS[0].ComponentLexemesRS;
 			Assert.That(compResult.Count, Is.EqualTo(2), "Should have two ComponentLexemes left.");
-			Assert.False(compResult.ToHvoArray().Contains(entry3.Hvo),
-				"The entry3 object should have been removed from ComponentLexemes.");
+			Assert.That(compResult.ToHvoArray().Contains(entry3.Hvo), Is.False, "The entry3 object should have been removed from ComponentLexemes.");
 			var primResult = secondaryEntry.EntryRefsOS[0].PrimaryLexemesRS;
 			Assert.That(primResult.Count, Is.EqualTo(1), "Deleting entry3 object from ComponentLexemes, should not remove existing PrimaryLexeme.");
 		}
@@ -356,10 +353,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Assert.That(secondaryEntry.EntryRefsOS.Count, Is.EqualTo(1), "Should only have one entry ref object.");
 			var compResult = secondaryEntry.EntryRefsOS[0].ComponentLexemesRS;
 			Assert.That(compResult.Count, Is.EqualTo(2), "Should have two ComponentLexemes left.");
-			Assert.False(compResult.ToHvoArray().Contains(entry1.Hvo),
-				"The entry1 object should have been removed from ComponentLexemes.");
-			Assert.True(compResult.ToHvoArray().Contains(entry3.Hvo),
-				"The entry3 object should have been added to ComponentLexemes.");
+			Assert.That(compResult.ToHvoArray().Contains(entry1.Hvo), Is.False, "The entry1 object should have been removed from ComponentLexemes.");
+			Assert.That(compResult.ToHvoArray().Contains(entry3.Hvo), Is.True, "The entry3 object should have been added to ComponentLexemes.");
 			var primResult = secondaryEntry.EntryRefsOS[0].PrimaryLexemesRS;
 			Assert.That(primResult.Count, Is.EqualTo(1), "Modifications of ComponentLexemes, should not affect PrimaryLexemes.");
 			Assert.That(primResult[0].Hvo, Is.EqualTo(entry2.Hvo), "Entry2 object should be in PrimaryLexemes.");
@@ -400,8 +395,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Assert.That(secondaryEntry.EntryRefsOS.Count, Is.EqualTo(1), "Should only have one entry ref object.");
 			var compResult = secondaryEntry.EntryRefsOS[0].ComponentLexemesRS;
 			Assert.That(compResult.Count, Is.EqualTo(2), "Should have two ComponentLexemes left.");
-			Assert.False(compResult.ToHvoArray().Contains(entry1.Hvo),
-				"The entry1 object should have been removed from ComponentLexemes.");
+			Assert.That(compResult.ToHvoArray().Contains(entry1.Hvo), Is.False, "The entry1 object should have been removed from ComponentLexemes.");
 			var primResult = secondaryEntry.EntryRefsOS[0].PrimaryLexemesRS;
 			Assert.That(primResult.Count, Is.EqualTo(1), "Deleting entry1 object from ComponentLexemes, should not affect PrimaryLexemes.");
 			Assert.That(primResult[0].Hvo, Is.EqualTo(entry2.Hvo), "Entry2 object should be in PrimaryLexemes.");
@@ -441,10 +435,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Assert.That(secondaryEntry.EntryRefsOS.Count, Is.EqualTo(1), "Should only have one entry ref object.");
 			var compResult = secondaryEntry.EntryRefsOS[0].ComponentLexemesRS;
 			Assert.That(compResult.Count, Is.EqualTo(1), "Should only have one new ComponentLexeme left.");
-			Assert.False(compResult.ToHvoArray().Contains(entry2.Hvo),
-				"The entry2 object should have been removed from ComponentLexemes.");
-			Assert.True(compResult.ToHvoArray().Contains(entry3.Hvo),
-				"The entry3 object should have been added to ComponentLexemes.");
+			Assert.That(compResult.ToHvoArray().Contains(entry2.Hvo), Is.False, "The entry2 object should have been removed from ComponentLexemes.");
+			Assert.That(compResult.ToHvoArray().Contains(entry3.Hvo), Is.True, "The entry3 object should have been added to ComponentLexemes.");
 			var primResult = secondaryEntry.EntryRefsOS[0].PrimaryLexemesRS;
 			Assert.That(primResult.Count, Is.EqualTo(0), "Modifications of ComponentLexemes, should remove the one PrimaryLexeme.");
 		}

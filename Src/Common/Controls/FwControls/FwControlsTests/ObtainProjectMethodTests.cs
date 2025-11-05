@@ -140,10 +140,10 @@ namespace SIL.FieldWorks.Common.Controls
 			var flags = (BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static);
 			var type = ReflectionHelper.GetType(ObtainProjectMethod.ImportLexiconDll,
 															ObtainProjectMethod.ImportLexiconClass);
-			Assert.NotNull(type, "Class used for ImportObtainedLexicon moved.");
+			Assert.That(type, Is.Not.Null, "Class used for ImportObtainedLexicon moved.");
 			var method = type.GetMethod(ObtainProjectMethod.ImportLexiconMethod,
 												 new[] { typeof(LcmCache), typeof(string), typeof(System.Windows.Forms.Form) });
-			Assert.NotNull(method, "Method name changed, or parameters changed.");
+			Assert.That(method, Is.Not.Null, "Method name changed, or parameters changed.");
 		}
 	}
 }

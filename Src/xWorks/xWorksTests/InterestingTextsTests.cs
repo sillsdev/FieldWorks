@@ -61,17 +61,14 @@ namespace SIL.FieldWorks.XWorks
 				"texts from initial list of two"
 			);
 			// Make sure it works if there are none.
-			Assert.AreEqual(
-				0,
-				new InterestingTextList(
+			Assert.That(new InterestingTextList(
 					m_mediator,
 					m_propertyTable,
 					new MockTextRepository(),
 					m_mockStTextRepo
-				).InterestingTexts.Count()
-			);
-			Assert.IsTrue(testObj.IsInterestingText(mockTextRep.m_texts[0].ContentsOA));
-			Assert.IsFalse(testObj.IsInterestingText(new MockStText()));
+				).InterestingTexts.Count(), Is.EqualTo(0));
+			Assert.That(testObj.IsInterestingText(mockTextRep.m_texts[0].ContentsOA), Is.True);
+			Assert.That(testObj.IsInterestingText(new MockStText()), Is.False);
 		}
 
 		[Test]
@@ -84,7 +81,7 @@ namespace SIL.FieldWorks.XWorks
 				mockTextRep,
 				m_mockStTextRepo
 			);
-			Assert.AreEqual(0, testObj.ScriptureTexts.Count());
+			Assert.That(testObj.ScriptureTexts.Count(), Is.EqualTo(0));
 			testObj.InterestingTextsChanged += TextsChangedHandler;
 			MockText newText = AddMockText(mockTextRep, testObj);
 			VerifyList(
@@ -101,14 +98,8 @@ namespace SIL.FieldWorks.XWorks
 				"texts from initial list of two"
 			);
 			VerifyTextsChangedArgs(1, 0, 1);
-			Assert.IsTrue(
-				testObj.IsInterestingText(mockTextRep.m_texts[1].ContentsOA),
-				"text not removed still interesting"
-			);
-			Assert.IsFalse(
-				testObj.IsInterestingText(removed),
-				"removed text no longer interesting"
-			);
+			Assert.That(testObj.IsInterestingText(mockTextRep.m_texts[1].ContentsOA), Is.True, "text not removed still interesting");
+			Assert.That(testObj.IsInterestingText(removed), Is.False, "removed text no longer interesting");
 		}
 
 		[Test]
@@ -161,8 +152,8 @@ namespace SIL.FieldWorks.XWorks
 				expectedScripture,
 				"new Scripture objects are not added automatically to ScriptureTexts"
 			);
-			Assert.IsTrue(testObj.IsInterestingText(expectedScripture[0]));
-			Assert.IsTrue(testObj.IsInterestingText(expectedScripture[1]));
+			Assert.That(testObj.IsInterestingText(expectedScripture[0]), Is.True);
+			Assert.That(testObj.IsInterestingText(expectedScripture[1]), Is.True);
 
 			var remove = ((MockStText)m_sections[0].ContentOA);
 			remove.IsValidObject = false;
@@ -181,8 +172,8 @@ namespace SIL.FieldWorks.XWorks
 				"deleted Scripture texts are removed from ScriptureTexts (ContentsOA"
 			);
 			VerifyTextsChangedArgs(2, 0, 1);
-			Assert.IsFalse(testObj.IsInterestingText(remove));
-			Assert.IsTrue(testObj.IsInterestingText(expectedScripture[0]));
+			Assert.That(testObj.IsInterestingText(remove), Is.False);
+			Assert.That(testObj.IsInterestingText(expectedScripture[0]), Is.True);
 
 			((MockStText)m_sections[0].HeadingOA).IsValidObject = false;
 			expected.Remove(m_sections[0].HeadingOA); // before we clear ContentsOA!
@@ -252,11 +243,7 @@ namespace SIL.FieldWorks.XWorks
 				"deleted Scripture texts are removed (ScrBookTags.Title)"
 			);
 			VerifyTextsChangedArgs(2, 0, 1);
-			Assert.AreEqual(
-				0,
-				testObj.ScriptureTexts.Count(),
-				"by now we've removed all ScriptureTexts"
-			);
+			Assert.That(testObj.ScriptureTexts.Count(), Is.EqualTo(0), "by now we've removed all ScriptureTexts");
 
 			((MockStText)expected[1]).IsValidObject = false;
 			expected.RemoveAt(1);
@@ -355,10 +342,7 @@ namespace SIL.FieldWorks.XWorks
 				out expectedScripture,
 				out expected
 			);
-			Assert.IsFalse(
-				testObj.IsInterestingText(expectedScripture[1]),
-				"in this mode no Scripture is interesting"
-			);
+			Assert.That(testObj.IsInterestingText(expectedScripture[1]), Is.False, "in this mode no Scripture is interesting");
 
 			// Invalidating a Scripture book should NOT generate PropChanged etc. when Scripture is not included.
 			((MockStText)m_sections[0].ContentOA).IsValidObject = false;
@@ -400,10 +384,7 @@ namespace SIL.FieldWorks.XWorks
 		)
 		{
 			VerifyList(expectedScripture, testObj.ScriptureTexts, comment);
-			Assert.AreEqual(
-				InterestingTextList.MakeIdList(expectedScripture.Cast<ICmObject>()),
-				m_propertyTable.GetStringProperty(InterestingTextList.PersistPropertyName, null)
-			);
+			Assert.That(m_propertyTable.GetStringProperty(InterestingTextList.PersistPropertyName, null), Is.EqualTo(InterestingTextList.MakeIdList(expectedScripture.Cast<ICmObject>())));
 		}
 
 		private List<MockScrSection> m_sections = new List<MockScrSection>();
@@ -420,9 +401,9 @@ namespace SIL.FieldWorks.XWorks
 
 		private void VerifyTextsChangedArgs(int insertAt, int inserted, int deleted)
 		{
-			Assert.AreEqual(insertAt, m_lastTextsChangedArgs.InsertedAt);
-			Assert.AreEqual(inserted, m_lastTextsChangedArgs.NumberInserted);
-			Assert.AreEqual(deleted, m_lastTextsChangedArgs.NumberDeleted);
+			Assert.That(m_lastTextsChangedArgs.InsertedAt, Is.EqualTo(insertAt));
+			Assert.That(m_lastTextsChangedArgs.NumberInserted, Is.EqualTo(inserted));
+			Assert.That(m_lastTextsChangedArgs.NumberDeleted, Is.EqualTo(deleted));
 		}
 
 		private InterestingTextsChangedArgs m_lastTextsChangedArgs;
@@ -472,13 +453,13 @@ namespace SIL.FieldWorks.XWorks
 			string comment
 		)
 		{
-			Assert.AreEqual(expected.Count, actual.Count(), comment + " count");
+			Assert.That(actual.Count(), Is.EqualTo(expected.Count).Within(comment + " count"));
 			var expectedSet = new HashSet<IStText>(expected);
 			var actualSet = new HashSet<IStText>(actual);
 			var unexpected = actualSet.Except(expectedSet);
-			Assert.AreEqual(0, unexpected.Count(), comment + " has extra elements");
+			Assert.That(unexpected.Count(), Is.EqualTo(0).Within(comment + " has extra elements"));
 			var missing = expectedSet.Except(actualSet);
-			Assert.AreEqual(0, missing.Count(), comment + " has missing elements");
+			Assert.That(missing.Count(), Is.EqualTo(0).Within(comment + " has missing elements"));
 		}
 
 		private MockTextRepository MakeMockTextRepoWithTwoMockTexts()

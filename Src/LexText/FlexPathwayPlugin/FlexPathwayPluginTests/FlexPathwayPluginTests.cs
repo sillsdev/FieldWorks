@@ -60,7 +60,7 @@ namespace FlexDePluginTests
 			FlexPathwayPlugin target = new FlexPathwayPlugin();
 			string actual;
 			actual = target.Label;
-			Assert.AreEqual("Pathway", actual);
+			Assert.That(actual, Is.EqualTo("Pathway"));
 		}
 
 		/// <summary>
@@ -115,7 +115,7 @@ namespace FlexDePluginTests
 			string expected = "Pathway";
 			string actual;
 			actual = target.ToString();
-			Assert.AreEqual(expected, actual);
+			Assert.That(actual, Is.EqualTo(expected));
 		}
 
 		/// <summary>

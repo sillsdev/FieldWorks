@@ -102,8 +102,8 @@ namespace SIL.FieldWorks.Common.RootSites
 					//draftPane.AdjustScrollRange(null, 0, 0, -50, 500);
 					btPane.AdjustScrollRange(null, 0, 0, 100, 500);
 
-					Assert.AreEqual(1108, btPane.ScrollMinSize.Height, "Wrong ScrollMinSize");
-					Assert.AreEqual(800, -btPane.ScrollPosition.Y, "Wrong scroll position");
+					Assert.That(btPane.ScrollMinSize.Height, Is.EqualTo(1108), "Wrong ScrollMinSize");
+					Assert.That(-btPane.ScrollPosition.Y, Is.EqualTo(800), "Wrong scroll position");
 				}
 			}
 		}
