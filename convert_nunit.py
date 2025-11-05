@@ -343,20 +343,333 @@ def convert_contains(args_str: str, original: str) -> Optional[str]:
     return f"Assert.That({collection}, Does.Contain({expected}){suffix})"
 
 
+def convert_does_not_contain(args_str: str, original: str) -> Optional[str]:
+    args = split_args(args_str)
+    if len(args) < 2:
+        return None
+
+    expected = args[0].strip()
+    collection = args[1].strip()
+    extras = args[2:]
+
+    suffix = ""
+    if extras:
+        suffix = ", " + ", ".join(extras)
+
+    return f"Assert.That({collection}, Does.Not.Contain({expected}){suffix})"
+
+
+def convert_are_same(args_str: str, original: str) -> Optional[str]:
+    args = split_args(args_str)
+    if len(args) < 2:
+        return None
+
+    expected = args[0].strip()
+    actual = args[1].strip()
+    extras = args[2:]
+
+    suffix = ""
+    if extras:
+        suffix = ", " + ", ".join(extras)
+
+    return f"Assert.That({actual}, Is.SameAs({expected}){suffix})"
+
+
+def convert_are_not_same(args_str: str, original: str) -> Optional[str]:
+    args = split_args(args_str)
+    if len(args) < 2:
+        return None
+
+    expected = args[0].strip()
+    actual = args[1].strip()
+    extras = args[2:]
+
+    suffix = ""
+    if extras:
+        suffix = ", " + ", ".join(extras)
+
+    return f"Assert.That({actual}, Is.Not.SameAs({expected}){suffix})"
+
+
+def convert_less(args_str: str, original: str) -> Optional[str]:
+    args = split_args(args_str)
+    if len(args) < 2:
+        return None
+
+    actual = args[0].strip()
+    expected = args[1].strip()
+    extras = args[2:]
+
+    suffix = ""
+    if extras:
+        suffix = ", " + ", ".join(extras)
+
+    return f"Assert.That({actual}, Is.LessThan({expected}){suffix})"
+
+
+def convert_greater_or_equal(args_str: str, original: str) -> Optional[str]:
+    args = split_args(args_str)
+    if len(args) < 2:
+        return None
+
+    actual = args[0].strip()
+    expected = args[1].strip()
+    extras = args[2:]
+
+    suffix = ""
+    if extras:
+        suffix = ", " + ", ".join(extras)
+
+    return f"Assert.That({actual}, Is.GreaterThanOrEqualTo({expected}){suffix})"
+
+
+def convert_is_instance_of(args_str: str, original: str) -> Optional[str]:
+    args = split_args(args_str)
+    if len(args) < 2:
+        return None
+
+    expected_type = args[0].strip()
+    actual = args[1].strip()
+    extras = args[2:]
+
+    suffix = ""
+    if extras:
+        suffix = ", " + ", ".join(extras)
+
+    return f"Assert.That({actual}, Is.InstanceOf({expected_type}){suffix})"
+
+
+# Converters for Assert methods that don't need changes (just keep them as-is)
+def no_conversion(args_str: str, original: str) -> Optional[str]:
+    # These methods are already compatible with NUnit 4
+    return original
+
+
+# StringAssert converters
+def convert_string_assert_contains(args_str: str, original: str) -> Optional[str]:
+    args = split_args(args_str)
+    if len(args) < 2:
+        return None
+
+    expected = args[0].strip()
+    actual = args[1].strip()
+    extras = args[2:]
+
+    suffix = ""
+    if extras:
+        suffix = ", " + ", ".join(extras)
+
+    return f"Assert.That({actual}, Does.Contain({expected}){suffix})"
+
+
+def convert_string_assert_does_not_contain(args_str: str, original: str) -> Optional[str]:
+    args = split_args(args_str)
+    if len(args) < 2:
+        return None
+
+    expected = args[0].strip()
+    actual = args[1].strip()
+    extras = args[2:]
+
+    suffix = ""
+    if extras:
+        suffix = ", " + ", ".join(extras)
+
+    return f"Assert.That({actual}, Does.Not.Contain({expected}){suffix})"
+
+
+def convert_string_assert_starts_with(args_str: str, original: str) -> Optional[str]:
+    args = split_args(args_str)
+    if len(args) < 2:
+        return None
+
+    expected = args[0].strip()
+    actual = args[1].strip()
+    extras = args[2:]
+
+    suffix = ""
+    if extras:
+        suffix = ", " + ", ".join(extras)
+
+    return f"Assert.That({actual}, Does.StartWith({expected}){suffix})"
+
+
+def convert_string_assert_ends_with(args_str: str, original: str) -> Optional[str]:
+    args = split_args(args_str)
+    if len(args) < 2:
+        return None
+
+    expected = args[0].strip()
+    actual = args[1].strip()
+    extras = args[2:]
+
+    suffix = ""
+    if extras:
+        suffix = ", " + ", ".join(extras)
+
+    return f"Assert.That({actual}, Does.EndWith({expected}){suffix})"
+
+
+# CollectionAssert converters
+def convert_collection_assert_are_equal(args_str: str, original: str) -> Optional[str]:
+    args = split_args(args_str)
+    if len(args) < 2:
+        return None
+
+    expected = args[0].strip()
+    actual = args[1].strip()
+    extras = args[2:]
+
+    suffix = ""
+    if extras:
+        suffix = ", " + ", ".join(extras)
+
+    return f"Assert.That({actual}, Is.EqualTo({expected}){suffix})"
+
+
+def convert_collection_assert_are_equivalent(args_str: str, original: str) -> Optional[str]:
+    args = split_args(args_str)
+    if len(args) < 2:
+        return None
+
+    expected = args[0].strip()
+    actual = args[1].strip()
+    extras = args[2:]
+
+    suffix = ""
+    if extras:
+        suffix = ", " + ", ".join(extras)
+
+    return f"Assert.That({actual}, Is.EquivalentTo({expected}){suffix})"
+
+
+def convert_collection_assert_contains(args_str: str, original: str) -> Optional[str]:
+    args = split_args(args_str)
+    if len(args) < 2:
+        return None
+
+    expected = args[0].strip()
+    actual = args[1].strip()
+    extras = args[2:]
+
+    suffix = ""
+    if extras:
+        suffix = ", " + ", ".join(extras)
+
+    return f"Assert.That({actual}, Does.Contain({expected}){suffix})"
+
+
+def convert_collection_assert_does_not_contain(args_str: str, original: str) -> Optional[str]:
+    args = split_args(args_str)
+    if len(args) < 2:
+        return None
+
+    expected = args[0].strip()
+    actual = args[1].strip()
+    extras = args[2:]
+
+    suffix = ""
+    if extras:
+        suffix = ", " + ", ".join(extras)
+
+    return f"Assert.That({actual}, Does.Not.Contain({expected}){suffix})"
+
+
+def convert_collection_assert_is_empty(args_str: str, original: str) -> Optional[str]:
+    return convert_simple_predicate(args_str, original, "Is.Empty")
+
+
+def convert_collection_assert_is_not_empty(args_str: str, original: str) -> Optional[str]:
+    return convert_simple_predicate(args_str, original, "Is.Not.Empty")
+
+
+def convert_collection_assert_all_items_are_unique(args_str: str, original: str) -> Optional[str]:
+    return convert_simple_predicate(args_str, original, "Is.Unique")
+
+
+def convert_collection_assert_is_subset_of(args_str: str, original: str) -> Optional[str]:
+    args = split_args(args_str)
+    if len(args) < 2:
+        return None
+
+    subset = args[0].strip()
+    superset = args[1].strip()
+    extras = args[2:]
+
+    suffix = ""
+    if extras:
+        suffix = ", " + ", ".join(extras)
+
+    return f"Assert.That({subset}, Is.SubsetOf({superset}){suffix})"
+
+
+# FileAssert converters
+def convert_file_assert_are_equal(args_str: str, original: str) -> Optional[str]:
+    args = split_args(args_str)
+    if len(args) < 2:
+        return None
+
+    expected = args[0].strip()
+    actual = args[1].strip()
+    extras = args[2:]
+
+    suffix = ""
+    if extras:
+        suffix = ", " + ", ".join(extras)
+
+    return f"Assert.That({actual}, Is.EqualTo({expected}){suffix})"
+
+
 CONVERTERS: List[tuple[str, Callable[[str, str], Optional[str]]]] = [
-    ("Assert.Contains", convert_contains),
+    # StringAssert - must come before Assert to avoid partial matches
+    ("StringAssert.Contains", convert_string_assert_contains),
+    ("StringAssert.DoesNotContain", convert_string_assert_does_not_contain),
+    ("StringAssert.StartsWith", convert_string_assert_starts_with),
+    ("StringAssert.EndsWith", convert_string_assert_ends_with),
+    # CollectionAssert - must come before Assert to avoid partial matches
+    ("CollectionAssert.AreEqual", convert_collection_assert_are_equal),
+    ("CollectionAssert.AreEquivalent", convert_collection_assert_are_equivalent),
+    ("CollectionAssert.Contains", convert_collection_assert_contains),
+    ("CollectionAssert.DoesNotContain", convert_collection_assert_does_not_contain),
+    ("CollectionAssert.IsEmpty", convert_collection_assert_is_empty),
+    ("CollectionAssert.IsNotEmpty", convert_collection_assert_is_not_empty),
+    ("CollectionAssert.AllItemsAreUnique", convert_collection_assert_all_items_are_unique),
+    ("CollectionAssert.IsSubsetOf", convert_collection_assert_is_subset_of),
+    # FileAssert - must come before Assert to avoid partial matches
+    ("FileAssert.AreEqual", convert_file_assert_are_equal),
+    # Assert methods that need conversion
     ("Assert.AreEqual", convert_are_equal),
     ("Assert.AreNotEqual", convert_are_not_equal),
+    ("Assert.AreSame", convert_are_same),
+    ("Assert.AreNotSame", convert_are_not_same),
+    ("Assert.Contains", convert_contains),
+    ("Assert.DoesNotContain", convert_does_not_contain),
+    ("Assert.Greater", convert_greater),
+    ("Assert.GreaterOrEqual", convert_greater_or_equal),
     ("Assert.IsEmpty", convert_is_empty),
-    ("Assert.IsNotEmpty", convert_is_not_empty),
-    ("Assert.IsTrue", convert_is_true),
     ("Assert.IsFalse", convert_is_false),
+    ("Assert.IsInstanceOf", convert_is_instance_of),
+    ("Assert.IsNotEmpty", convert_is_not_empty),
+    ("Assert.IsNotNull", convert_is_not_null),
+    ("Assert.IsNull", convert_is_null),
+    ("Assert.IsTrue", convert_is_true),
+    ("Assert.Less", convert_less),
+    ("Assert.LessOrEqual", convert_less_or_equal),
+    # Assert.NotNull and Assert.Null are aliases that also need conversion
+    ("Assert.NotNull", convert_is_not_null),
+    ("Assert.Null", convert_is_null),
     ("Assert.True", convert_true),
     ("Assert.False", convert_false),
-    ("Assert.IsNull", convert_is_null),
-    ("Assert.IsNotNull", convert_is_not_null),
-    ("Assert.LessOrEqual", convert_less_or_equal),
-    ("Assert.Greater", convert_greater),
+    # Assert methods that don't need conversion (already NUnit 4 compatible)
+    # We list them to ensure they are not accidentally matched by other patterns
+    # but they return the original string unchanged
+    ("Assert.Throws", no_conversion),
+    ("Assert.Catch", no_conversion),
+    ("Assert.DoesNotThrow", no_conversion),
+    ("Assert.Fail", no_conversion),
+    ("Assert.Ignore", no_conversion),
+    ("Assert.Pass", no_conversion),
+    ("Assert.Inconclusive", no_conversion),
 ]
 
 
