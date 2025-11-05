@@ -93,22 +93,26 @@ namespace SIL.FieldWorks.Common.Framework
 		[Test]
 		public void OverTypingHyperlink_LinkPluSFollowingText_WholeParagraphSelected()
 		{
-			var selection = MakeMockSelection();
+			var selectionMock = MakeMockSelectionMock();
 			var selHelper = SelectionHelper.s_mockedSelectionHelper =
 				new Mock<SelectionHelper>().Object;
-			selHelper.Setup(selH => selH.Selection).Returns(selection);
+			selHelper.Setup(selH => selH.Selection).Returns(selectionMock.Object);
 
 			SimulateHyperlinkFollowedByPlainText(selHelper, IchPosition.StartOfString,
 				IchPosition.EndOfString);
+
+			// Setup callback to capture arguments passed to SetTypingProps
+			var capturedProps = new List<ITsTextProps>();
+			selectionMock.Setup(sel => sel.SetTypingProps(It.IsAny<ITsTextProps>()))
+				.Callback<ITsTextProps>(ttp => capturedProps.Add(ttp));
 
 			using (FwEditingHelper editingHelper = new FwEditingHelper(Cache, m_callbacks))
 			{
 				editingHelper.OnKeyPress(new KeyPressEventArgs('b'), Keys.None);
 
-				IList<object[]> argsSentToSetTypingProps =
-					selection.GetArgumentsForCallsMadeOn(sel => sel.SetTypingProps(null));
-				Assert.That(argsSentToSetTypingProps.Count, Is.EqualTo(1));
-				ITsTextProps ttpSentToSetTypingProps = (ITsTextProps)argsSentToSetTypingProps[0][0];
+				// Verify SetTypingProps was called exactly once
+				Assert.That(capturedProps.Count, Is.EqualTo(1));
+				ITsTextProps ttpSentToSetTypingProps = capturedProps[0];
 				Assert.That(ttpSentToSetTypingProps.StrPropCount, Is.EqualTo(0));
 				Assert.That(ttpSentToSetTypingProps.IntPropCount, Is.EqualTo(1));
 				int nVar;
@@ -516,6 +520,25 @@ namespace SIL.FieldWorks.Common.Framework
 		/// needed for all the tests in this fixture.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Generates a mock IVwSelection and sets up some basic properties needed for all the
+		/// tests in this fixture. Returns the mock object so tests can verify calls.
+		/// </summary>
+		private Mock<IVwSelection> MakeMockSelectionMock()
+		{
+			return MakeMockSelectionMock(true);
+		}
+
+		private Mock<IVwSelection> MakeMockSelectionMock(bool fRange)
+		{
+			var selectionMock = new Mock<IVwSelection>();
+			selectionMock.Setup(sel => sel.IsRange).Returns(fRange);
+			selectionMock.Setup(sel => sel.IsValid).Returns(true);
+			selectionMock.Setup(sel => sel.IsEditable).Returns(true);
+			m_rootboxMock.Setup(rbox => rbox.Selection).Returns(selectionMock.Object);
+			return selectionMock;
+		}
+
 		private IVwSelection MakeMockSelection()
 		{
 			return MakeMockSelection(true);
@@ -529,12 +552,7 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		private IVwSelection MakeMockSelection(bool fRange)
 		{
-			var selection = new Mock<IVwSelection>();
-			selection.Setup(sel => sel.IsRange).Returns(fRange);
-			selection.Setup(sel => sel.IsValid).Returns(true);
-			selection.Setup(sel => sel.IsEditable).Returns(true);
-			m_rootboxMock.Setup(rbox => rbox.Selection).Returns(selection.Object);
-			return selection.Object;
+			return MakeMockSelectionMock(fRange).Object;
 		}
 
 		/// ------------------------------------------------------------------------------------
