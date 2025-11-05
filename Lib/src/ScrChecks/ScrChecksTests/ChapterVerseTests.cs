@@ -102,9 +102,9 @@ namespace SILUBS.ScriptureChecks
 		public void OverlappingSingleVerse1()
 		{
 			object[] retVerses;
-			Assert.IsTrue(Check.AnyOverlappingVerses(5, 5, 5, 5, out retVerses));
-			Assert.AreEqual(1, retVerses.Length);
-			Assert.AreEqual(5, retVerses[0]);
+			Assert.That(Check.AnyOverlappingVerses(5, 5, 5, 5, out retVerses), Is.True);
+			Assert.That(retVerses.Length, Is.EqualTo(1));
+			Assert.That(retVerses[0], Is.EqualTo(5));
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -117,9 +117,9 @@ namespace SILUBS.ScriptureChecks
 		public void OverlappingSingleVerse2()
 		{
 			object[] retVerses;
-			Assert.IsTrue(Check.AnyOverlappingVerses(6, 6, 5, 8, out retVerses));
-			Assert.AreEqual(1, retVerses.Length);
-			Assert.AreEqual(6, retVerses[0]);
+			Assert.That(Check.AnyOverlappingVerses(6, 6, 5, 8, out retVerses), Is.True);
+			Assert.That(retVerses.Length, Is.EqualTo(1));
+			Assert.That(retVerses[0], Is.EqualTo(6));
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -132,9 +132,9 @@ namespace SILUBS.ScriptureChecks
 		public void OverlappingSingleVerse3()
 		{
 			object[] retVerses;
-			Assert.IsTrue(Check.AnyOverlappingVerses(5, 8, 6, 6, out retVerses));
-			Assert.AreEqual(1, retVerses.Length);
-			Assert.AreEqual(6, retVerses[0]);
+			Assert.That(Check.AnyOverlappingVerses(5, 8, 6, 6, out retVerses), Is.True);
+			Assert.That(retVerses.Length, Is.EqualTo(1));
+			Assert.That(retVerses[0], Is.EqualTo(6));
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -147,10 +147,10 @@ namespace SILUBS.ScriptureChecks
 		public void OverlappingVerseRange1()
 		{
 			object[] retVerses;
-			Assert.IsTrue(Check.AnyOverlappingVerses(5, 8, 3, 6, out retVerses));
-			Assert.AreEqual(2, retVerses.Length);
-			Assert.AreEqual(5, retVerses[0]);
-			Assert.AreEqual(6, retVerses[1]);
+			Assert.That(Check.AnyOverlappingVerses(5, 8, 3, 6, out retVerses), Is.True);
+			Assert.That(retVerses.Length, Is.EqualTo(2));
+			Assert.That(retVerses[0], Is.EqualTo(5));
+			Assert.That(retVerses[1], Is.EqualTo(6));
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -163,10 +163,10 @@ namespace SILUBS.ScriptureChecks
 		public void OverlappingVerseRange2()
 		{
 			object[] retVerses;
-			Assert.IsTrue(Check.AnyOverlappingVerses(5, 20, 10, 100, out retVerses));
-			Assert.AreEqual(2, retVerses.Length);
-			Assert.AreEqual(10, retVerses[0]);
-			Assert.AreEqual(20, retVerses[1]);
+			Assert.That(Check.AnyOverlappingVerses(5, 20, 10, 100, out retVerses), Is.True);
+			Assert.That(retVerses.Length, Is.EqualTo(2));
+			Assert.That(retVerses[0], Is.EqualTo(10));
+			Assert.That(retVerses[1], Is.EqualTo(20));
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -202,19 +202,19 @@ namespace SILUBS.ScriptureChecks
 				args
 			);
 
-			Assert.AreEqual(3, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(3));
 
 			CheckError(0, versesFound[0].Text, 1, String.Empty, "Missing verse number 1");
-			Assert.AreEqual(new BCVRef(2005001), m_errors[0].Tts.MissingStartRef);
-			Assert.AreEqual(null, m_errors[0].Tts.MissingEndRef);
+			Assert.That(m_errors[0].Tts.MissingStartRef, Is.EqualTo(new BCVRef(2005001)));
+			Assert.That(m_errors[0].Tts.MissingEndRef, Is.EqualTo(null));
 
 			CheckError(1, versesFound[3].Text, 3, String.Empty, "Missing verse number 4");
-			Assert.AreEqual(new BCVRef(2005004), m_errors[1].Tts.MissingStartRef);
-			Assert.AreEqual(null, m_errors[1].Tts.MissingEndRef);
+			Assert.That(m_errors[1].Tts.MissingStartRef, Is.EqualTo(new BCVRef(2005004)));
+			Assert.That(m_errors[1].Tts.MissingEndRef, Is.EqualTo(null));
 
 			CheckError(2, versesFound[5].Text, 2, String.Empty, "Missing verse number 6");
-			Assert.AreEqual(new BCVRef(2005006), m_errors[2].Tts.MissingStartRef);
-			Assert.AreEqual(null, m_errors[2].Tts.MissingEndRef);
+			Assert.That(m_errors[2].Tts.MissingStartRef, Is.EqualTo(new BCVRef(2005006)));
+			Assert.That(m_errors[2].Tts.MissingEndRef, Is.EqualTo(null));
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -255,19 +255,19 @@ namespace SILUBS.ScriptureChecks
 				args
 			);
 
-			Assert.AreEqual(3, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(3));
 
 			CheckError(0, versesFound[0].Text, 1, String.Empty, "Missing verse numbers 1-2");
-			Assert.AreEqual(new BCVRef(2005001), m_errors[0].Tts.MissingStartRef);
-			Assert.AreEqual(new BCVRef(2005002), m_errors[0].Tts.MissingEndRef);
+			Assert.That(m_errors[0].Tts.MissingStartRef, Is.EqualTo(new BCVRef(2005001)));
+			Assert.That(m_errors[0].Tts.MissingEndRef, Is.EqualTo(new BCVRef(2005002)));
 
 			CheckError(1, versesFound[3].Text, 3, String.Empty, "Missing verse numbers 4-6");
-			Assert.AreEqual(new BCVRef(2005004), m_errors[1].Tts.MissingStartRef);
-			Assert.AreEqual(new BCVRef(2005006), m_errors[1].Tts.MissingEndRef);
+			Assert.That(m_errors[1].Tts.MissingStartRef, Is.EqualTo(new BCVRef(2005004)));
+			Assert.That(m_errors[1].Tts.MissingEndRef, Is.EqualTo(new BCVRef(2005006)));
 
 			CheckError(2, versesFound[9].Text, 2, String.Empty, "Missing verse numbers 10-11");
-			Assert.AreEqual(new BCVRef(2005010), m_errors[2].Tts.MissingStartRef);
-			Assert.AreEqual(new BCVRef(2005011), m_errors[2].Tts.MissingEndRef);
+			Assert.That(m_errors[2].Tts.MissingStartRef, Is.EqualTo(new BCVRef(2005010)));
+			Assert.That(m_errors[2].Tts.MissingEndRef, Is.EqualTo(new BCVRef(2005011)));
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -316,7 +316,7 @@ namespace SILUBS.ScriptureChecks
 				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -381,7 +381,7 @@ namespace SILUBS.ScriptureChecks
 				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -449,7 +449,7 @@ namespace SILUBS.ScriptureChecks
 				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(2, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(2));
 			CheckError(0, badToken1.Text, 0, badToken1.Text, "Invalid chapter number");
 			CheckError(1, badToken2.Text, 0, badToken2.Text, "Invalid verse number");
 		}
@@ -519,7 +519,7 @@ namespace SILUBS.ScriptureChecks
 				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(2, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(2));
 			CheckError(0, badToken1.Text, 0, badToken1.Text, "Invalid chapter number");
 			CheckError(1, badToken2.Text, 0, badToken2.Text, "Invalid verse number");
 		}
@@ -562,7 +562,7 @@ namespace SILUBS.ScriptureChecks
 				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 			CheckError(0, badToken.Text, 0, badToken.Text, "Invalid verse number");
 		}
 
@@ -602,7 +602,7 @@ namespace SILUBS.ScriptureChecks
 				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 			CheckError(0, badToken.Text, 0, badToken.Text, "Invalid verse number");
 		}
 
@@ -637,7 +637,7 @@ namespace SILUBS.ScriptureChecks
 				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 			CheckError(0, badToken.Text, 0, badToken.Text, "Invalid verse number");
 		}
 
@@ -694,14 +694,14 @@ namespace SILUBS.ScriptureChecks
 				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 
 			m_dataSource.SetParameterValue("Versification Scheme", "Septuagint");
 
 			((DummyTextToken)TempTok).Text = "1-14";
 			((DummyTextToken)TempTok2).Text = "1-14";
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -749,7 +749,7 @@ namespace SILUBS.ScriptureChecks
 				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -797,7 +797,7 @@ namespace SILUBS.ScriptureChecks
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(2, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(2));
 			CheckError(
 				0,
 				m_dataSource.m_tokens[0].Text,
@@ -859,7 +859,7 @@ namespace SILUBS.ScriptureChecks
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(2, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(2));
 			CheckError(
 				0,
 				m_dataSource.m_tokens[0].Text,
@@ -915,7 +915,7 @@ namespace SILUBS.ScriptureChecks
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -968,7 +968,7 @@ namespace SILUBS.ScriptureChecks
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(2, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(2));
 			CheckError(0, TempTok.Text, 0, TempTok.Text, "Duplicate verse numbers");
 			CheckError(
 				1,
@@ -1015,7 +1015,7 @@ namespace SILUBS.ScriptureChecks
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(2, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(2));
 			CheckError(0, TempTok.Text, 0, TempTok.Text, "Duplicate verse numbers");
 			CheckError(
 				1,
@@ -1066,7 +1066,7 @@ namespace SILUBS.ScriptureChecks
 			// Missing entire chapter 2
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 			CheckError(
 				0,
 				m_dataSource.m_tokens[0].Text,
@@ -1109,10 +1109,10 @@ namespace SILUBS.ScriptureChecks
 			);
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(2, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(2));
 			CheckError(1, "1", 1, String.Empty, "Missing chapter number 2");
-			Assert.AreEqual(m_errors[1].Tts.MissingStartRef.BBCCCVVV, 2000);
-			Assert.IsNull(m_errors[1].Tts.MissingEndRef);
+			Assert.That(m_errors[1].Tts.MissingStartRef.BBCCCVVV, Is.EqualTo(2000));
+			Assert.That(m_errors[1].Tts.MissingEndRef, Is.Null);
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -1166,7 +1166,7 @@ namespace SILUBS.ScriptureChecks
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 			CheckError(0, dupChapter.Text, 0, dupChapter.Text, "Duplicate chapter number");
 		}
 
@@ -1211,10 +1211,10 @@ namespace SILUBS.ScriptureChecks
 			);
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 			CheckError(0, "2", 0, String.Empty, "Missing chapter number 1");
-			Assert.AreEqual(m_errors[0].Tts.MissingStartRef.BBCCCVVV, 1000);
-			Assert.IsNull(m_errors[0].Tts.MissingEndRef);
+			Assert.That(m_errors[0].Tts.MissingStartRef.BBCCCVVV, Is.EqualTo(1000));
+			Assert.That(m_errors[0].Tts.MissingEndRef, Is.Null);
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -1277,7 +1277,7 @@ namespace SILUBS.ScriptureChecks
 			// Missing verse 23
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(4, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(4));
 			CheckError(
 				0,
 				m_dataSource.m_tokens[1].Text,
@@ -1342,7 +1342,7 @@ namespace SILUBS.ScriptureChecks
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(2, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(2));
 			CheckError(0, TempTok.Text, 0, TempTok.Text, "Chapter number out of range");
 			CheckError(
 				1,
@@ -1410,7 +1410,7 @@ namespace SILUBS.ScriptureChecks
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(2, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(2));
 			CheckError(0, TempTok.Text, 0, TempTok.Text, "Verse number out of range");
 			CheckError(1, TempTok2.Text, 0, TempTok2.Text, "Verse number out of range");
 		}
@@ -1468,7 +1468,7 @@ namespace SILUBS.ScriptureChecks
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 			CheckError(0, TempTok.Text, 0, TempTok.Text, "Invalid verse number");
 		}
 
@@ -1521,7 +1521,7 @@ namespace SILUBS.ScriptureChecks
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(2, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(2));
 
 			CheckError(
 				0,
@@ -1613,7 +1613,7 @@ namespace SILUBS.ScriptureChecks
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(3, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(3));
 
 			CheckError(0, TempTok.Text, 0, TempTok.Text, "Duplicate verse number");
 			CheckError(1, TempTok2.Text, 0, TempTok2.Text, "Duplicate verse number");
@@ -1696,7 +1696,7 @@ namespace SILUBS.ScriptureChecks
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(2, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(2));
 
 			CheckError(
 				0,
@@ -1770,7 +1770,7 @@ namespace SILUBS.ScriptureChecks
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(2, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(2));
 
 			CheckError(0, TempTok2.Text, 0, TempTok2.Text, "Verse number out of range");
 			CheckError(1, TempTok.Text, 4, String.Empty, "Missing verse numbers 15-16");
@@ -1863,7 +1863,7 @@ namespace SILUBS.ScriptureChecks
 			);
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -2044,7 +2044,7 @@ namespace SILUBS.ScriptureChecks
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(6, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(6));
 
 			CheckError(0, TempTok.Text, 2, String.Empty, "Missing verse number 6b");
 			CheckError(1, TempTok2.Text, 0, String.Empty, "Missing verse number 8a");
@@ -2117,7 +2117,7 @@ namespace SILUBS.ScriptureChecks
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(2, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(2));
 
 			CheckError(0, tempTok1.Text, 5, string.Empty, "Missing verse number 23b");
 			CheckError(1, tempTok2.Text, 0, tempTok2.Text, "Invalid verse number");
@@ -2172,7 +2172,7 @@ namespace SILUBS.ScriptureChecks
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 			CheckError(
 				0,
 				m_dataSource.m_tokens[0].Text,
@@ -2252,7 +2252,7 @@ namespace SILUBS.ScriptureChecks
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(3, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(3));
 
 			CheckError(0, TempTok.Text, 0, TempTok.Text, "Unexpected verse number");
 			CheckError(1, TempTok2.Text, 0, TempTok2.Text, "Unexpected verse numbers");
@@ -2324,7 +2324,7 @@ namespace SILUBS.ScriptureChecks
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(2, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(2));
 
 			CheckError(
 				0,
@@ -2417,7 +2417,7 @@ namespace SILUBS.ScriptureChecks
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(7, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(7));
 
 			CheckError(0, TempTok.Text, 0, TempTok.Text, "Invalid verse number");
 			CheckError(
@@ -2498,7 +2498,7 @@ namespace SILUBS.ScriptureChecks
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(2, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(2));
 
 			CheckError(0, TempTok.Text, 0, TempTok.Text, "Invalid chapter number");
 			CheckError(1, TempTok.Text, 4, String.Empty, "Missing chapter number 2");
@@ -2542,7 +2542,7 @@ namespace SILUBS.ScriptureChecks
 			);
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(3, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(3));
 
 			CheckError(0, TempTok.Text, 0, TempTok.Text, "Duplicate verse numbers");
 			CheckError(
@@ -2598,7 +2598,7 @@ namespace SILUBS.ScriptureChecks
 			// Missing chapters 3-5
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(5, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(5));
 
 			CheckError(0, TempTok.Text, 0, TempTok.Text, "Duplicate verse numbers");
 
@@ -2655,7 +2655,7 @@ namespace SILUBS.ScriptureChecks
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(4, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(4));
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -2717,7 +2717,7 @@ namespace SILUBS.ScriptureChecks
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(4, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(4));
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -2774,7 +2774,7 @@ namespace SILUBS.ScriptureChecks
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -2833,7 +2833,7 @@ namespace SILUBS.ScriptureChecks
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -2900,7 +2900,7 @@ namespace SILUBS.ScriptureChecks
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		//Need test for chapter number out of range with verses following it (because valid chapter missing).

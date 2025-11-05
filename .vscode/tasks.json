@@ -6,15 +6,6 @@
   "inputs": [],
   "tasks": [
     {
-      "label": "build recent",
-      "type": "shell",
-      "command": "Build/build-recent",
-      "group": {
-        "kind": "build",
-        "isDefault": true
-      }
-    },
-    {
       "label": "Whitespace check (CI parity)",
       "type": "shell",
       "command": "./Build/Agent/check-and-fix-whitespace.ps1",
