@@ -22,7 +22,15 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// <summary>
 	/// Delegate for PropInfo method with out parameters
 	/// </summary>
-	delegate void PropInfoDelegate(bool fEndPoint, int ihvo, out int hvo, out int tag, out int ihvoEnd, out int cpropPrevious, out IVwPropertyStore vps);
+	delegate void PropInfoDelegate(
+		bool fEndPoint,
+		int ihvo,
+		out int hvo,
+		out int tag,
+		out int ihvoEnd,
+		out int cpropPrevious,
+		out IVwPropertyStore vps
+	);
 
 	/// ----------------------------------------------------------------------------------------
 	/// <summary>
@@ -1166,32 +1174,78 @@ namespace SIL.FieldWorks.Common.RootSites
 			int ihvoEnd1 = 0;
 			int cpropPrevious1 = 0;
 			IVwPropertyStore vps1 = null;
-			
-			mockedSelection.Setup(s => s.PropInfo(false, 0, out It.Ref<int>.IsAny, out It.Ref<int>.IsAny, out It.Ref<int>.IsAny, out It.Ref<int>.IsAny, out It.Ref<IVwPropertyStore>.IsAny))
-				.Callback(new PropInfoDelegate((bool fEndPoint, int ihvo, out int hvo, out int tag, out int ihvoEnd, out int cpropPrevious, out IVwPropertyStore vps) =>
-				{
-					hvo = hvo1;
-					tag = tag1;
-					ihvoEnd = ihvoEnd1;
-					cpropPrevious = cpropPrevious1;
-					vps = vps1;
-				}));
+
+			mockedSelection
+				.Setup(s =>
+					s.PropInfo(
+						false,
+						0,
+						out It.Ref<int>.IsAny,
+						out It.Ref<int>.IsAny,
+						out It.Ref<int>.IsAny,
+						out It.Ref<int>.IsAny,
+						out It.Ref<IVwPropertyStore>.IsAny
+					)
+				)
+				.Callback(
+					new PropInfoDelegate(
+						(
+							bool fEndPoint,
+							int ihvo,
+							out int hvo,
+							out int tag,
+							out int ihvoEnd,
+							out int cpropPrevious,
+							out IVwPropertyStore vps
+						) =>
+						{
+							hvo = hvo1;
+							tag = tag1;
+							ihvoEnd = ihvoEnd1;
+							cpropPrevious = cpropPrevious1;
+							vps = vps1;
+						}
+					)
+				);
 
 			int hvo2 = pict.Hvo;
 			int tag2 = CmPictureTags.kflidCaption;
 			int ihvoEnd2 = 0;
 			int cpropPrevious2 = 0;
 			IVwPropertyStore vps2 = null;
-			
-			mockedSelection.Setup(s => s.PropInfo(true, 0, out It.Ref<int>.IsAny, out It.Ref<int>.IsAny, out It.Ref<int>.IsAny, out It.Ref<int>.IsAny, out It.Ref<IVwPropertyStore>.IsAny))
-				.Callback(new PropInfoDelegate((bool fEndPoint, int ihvo, out int hvo, out int tag, out int ihvoEnd, out int cpropPrevious, out IVwPropertyStore vps) =>
-				{
-					hvo = hvo2;
-					tag = tag2;
-					ihvoEnd = ihvoEnd2;
-					cpropPrevious = cpropPrevious2;
-					vps = vps2;
-				}));
+
+			mockedSelection
+				.Setup(s =>
+					s.PropInfo(
+						true,
+						0,
+						out It.Ref<int>.IsAny,
+						out It.Ref<int>.IsAny,
+						out It.Ref<int>.IsAny,
+						out It.Ref<int>.IsAny,
+						out It.Ref<IVwPropertyStore>.IsAny
+					)
+				)
+				.Callback(
+					new PropInfoDelegate(
+						(
+							bool fEndPoint,
+							int ihvo,
+							out int hvo,
+							out int tag,
+							out int ihvoEnd,
+							out int cpropPrevious,
+							out IVwPropertyStore vps
+						) =>
+						{
+							hvo = hvo2;
+							tag = tag2;
+							ihvoEnd = ihvoEnd2;
+							cpropPrevious = cpropPrevious2;
+							vps = vps2;
+						}
+					)
+				);
 
 			mockedSelection.Setup(s => s.EndBeforeAnchor).Returns(false);
 

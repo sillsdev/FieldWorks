@@ -19,7 +19,8 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 	public class PoToXmlTests
 	{
 		#region FrenchPoData
-		internal const string FrenchPoData = @"#  Copyright (c) 2005-2020 SIL International
+		internal const string FrenchPoData =
+			@"#  Copyright (c) 2005-2020 SIL International
 #  This software is licensed under the LGPL, version 2.1 or later
 #  (http://www.gnu.org/licenses/lgpl-2.1.html)
 msgid """"
@@ -323,73 +324,246 @@ msgstr ""Que?""
 			var postr0 = rgsPoStrings[0].Value;
 			Assert.That(postr0, Is.Not.Null, "French po string[0] has data");
 			Assert.That(postr0.MsgId, Is.Not.Null, "French po string[0] has MsgId data");
-			Assert.That(postr0.MsgId.Count, Is.EqualTo(1), "French po string[0] has one line of MsgId data");
-			Assert.That(postr0.MsgId[0], Is.EqualTo(" - "), "French po string[0] has the expected MsgId data");
-			Assert.That(postr0.MsgIdAsString(), Is.EqualTo(" - "), "French po string[0] is ' - '");
-			Assert.That(postr0.MsgStr.Count, Is.EqualTo(1), "French po string[0] has one line of MsgStr data");
-			Assert.That(postr0.MsgStr[0], Is.EqualTo(" - "), "French po string[0] MsgStr is ' - '");
-			Assert.That(postr0.UserComments, Is.Null, "French po string[0] has no User Comments (as expected)");
-			Assert.That(postr0.References, Is.Null, "French po string[0] has no Reference data (as expected)");
-			Assert.That(postr0.Flags, Is.Null, "French po string[0] has no Flags data (as expected)");
-			Assert.That(postr0.AutoComments, Is.Not.Null, "French po string[0] has Auto Comments");
-			Assert.That(postr0.AutoComments.Count, Is.EqualTo(3), "French po string[0] has three lines of Auto Comments");
-			Assert.That(postr0.AutoComments[0], Is.EqualTo("separate name and abbreviation (space dash space)"), "French po string[0] has the expected first line of Auto Comment");
+			Assert.That(
+				postr0.MsgId.Count,
+				Is.EqualTo(1),
+				"French po string[0] has one line of MsgId data"
+			);
+			Assert.That(
+				postr0.MsgId[0],
+				Is.EqualTo(" - "),
+				"French po string[0] has the expected MsgId data"
+			);
+			Assert.That(
+				postr0.MsgIdAsString(),
+				Is.EqualTo(" - "),
+				"French po string[0] is ' - '"
+			);
+			Assert.That(
+				postr0.MsgStr.Count,
+				Is.EqualTo(1),
+				"French po string[0] has one line of MsgStr data"
+			);
+			Assert.That(
+				postr0.MsgStr[0],
+				Is.EqualTo(" - "),
+				"French po string[0] MsgStr is ' - '"
+			);
+			Assert.That(
+				postr0.UserComments,
+				Is.Null,
+				"French po string[0] has no User Comments (as expected)"
+			);
+			Assert.That(
+				postr0.References,
+				Is.Null,
+				"French po string[0] has no Reference data (as expected)"
+			);
+			Assert.That(
+				postr0.Flags,
+				Is.Null,
+				"French po string[0] has no Flags data (as expected)"
+			);
+			Assert.That(
+				postr0.AutoComments,
+				Is.Not.Null,
+				"French po string[0] has Auto Comments"
+			);
+			Assert.That(
+				postr0.AutoComments.Count,
+				Is.EqualTo(3),
+				"French po string[0] has three lines of Auto Comments"
+			);
+			Assert.That(
+				postr0.AutoComments[0],
+				Is.EqualTo("separate name and abbreviation (space dash space)"),
+				"French po string[0] has the expected first line of Auto Comment"
+			);
 
 			var postr5 = rgsPoStrings[5].Value;
 			Assert.That(postr5, Is.Not.Null, "French po string[5] has data");
 			Assert.That(postr5.MsgId, Is.Not.Null, "French po string[5] has MsgId data");
-			Assert.That(postr5.MsgId.Count, Is.EqualTo(1), "French po string[5] has one line of MsgId data");
-			Assert.That(postr5.MsgId[0], Is.EqualTo("Academic Domain"), "French po string[5] has the expected MsgId data");
-			Assert.That(postr5.MsgIdAsString(), Is.EqualTo("Academic Domain"), "French po string[5] is 'Academic Domain'");
-			Assert.That(postr5.MsgStr.Count, Is.EqualTo(1), "French po string[5] has one line of MsgStr data");
-			Assert.That(postr5.MsgStr[0], Is.EqualTo("Domaine technique"), "French po string[5] has the expected MsgStr data");
-			Assert.That(postr5.UserComments, Is.Not.Null, "French po string[5] has User Comments");
-			Assert.That(postr5.UserComments.Count, Is.EqualTo(1), "French po string[5] has one line of User Comments");
-			Assert.That(postr5.UserComments[0], Is.EqualTo("JDX:JN"), "French po string[5] has the expected User Comment");
-			Assert.That(postr5.References, Is.Null, "French po string[5] has no Reference data (as expected)");
-			Assert.That(postr5.Flags, Is.Null, "French po string[5] has no Flags data (as expected)");
-			Assert.That(postr5.AutoComments, Is.Not.Null, "French po string[5] has Auto Comments");
-			Assert.That(postr5.AutoComments.Count, Is.EqualTo(1), "French po string[5] has one line of Auto Comments");
-			Assert.That(postr5.AutoComments[0], Is.EqualTo("/|strings-en.xml::/PossibilityListItemTypeNames/DomainTypes|"), "French po string[5] has the expected Auto Comment");
+			Assert.That(
+				postr5.MsgId.Count,
+				Is.EqualTo(1),
+				"French po string[5] has one line of MsgId data"
+			);
+			Assert.That(
+				postr5.MsgId[0],
+				Is.EqualTo("Academic Domain"),
+				"French po string[5] has the expected MsgId data"
+			);
+			Assert.That(
+				postr5.MsgIdAsString(),
+				Is.EqualTo("Academic Domain"),
+				"French po string[5] is 'Academic Domain'"
+			);
+			Assert.That(
+				postr5.MsgStr.Count,
+				Is.EqualTo(1),
+				"French po string[5] has one line of MsgStr data"
+			);
+			Assert.That(
+				postr5.MsgStr[0],
+				Is.EqualTo("Domaine technique"),
+				"French po string[5] has the expected MsgStr data"
+			);
+			Assert.That(
+				postr5.UserComments,
+				Is.Not.Null,
+				"French po string[5] has User Comments"
+			);
+			Assert.That(
+				postr5.UserComments.Count,
+				Is.EqualTo(1),
+				"French po string[5] has one line of User Comments"
+			);
+			Assert.That(
+				postr5.UserComments[0],
+				Is.EqualTo("JDX:JN"),
+				"French po string[5] has the expected User Comment"
+			);
+			Assert.That(
+				postr5.References,
+				Is.Null,
+				"French po string[5] has no Reference data (as expected)"
+			);
+			Assert.That(
+				postr5.Flags,
+				Is.Null,
+				"French po string[5] has no Flags data (as expected)"
+			);
+			Assert.That(
+				postr5.AutoComments,
+				Is.Not.Null,
+				"French po string[5] has Auto Comments"
+			);
+			Assert.That(
+				postr5.AutoComments.Count,
+				Is.EqualTo(1),
+				"French po string[5] has one line of Auto Comments"
+			);
+			Assert.That(
+				postr5.AutoComments[0],
+				Is.EqualTo("/|strings-en.xml::/PossibilityListItemTypeNames/DomainTypes|"),
+				"French po string[5] has the expected Auto Comment"
+			);
 
 			var postr48 = rgsPoStrings[48].Value;
 			Assert.That(postr48, Is.Not.Null, "French po string[48] has data");
 			Assert.That(postr48.MsgId, Is.Not.Null, "French po string[48] has MsgId data");
-			Assert.That(postr48.MsgId.Count, Is.EqualTo(1), "French po string[48] has one line of MsgId data");
-			Assert.That(postr48.MsgId[0], Is.EqualTo("You still have {0} difference(s) left.  Are you sure you want to exit?"), "French po string[48] has the expected MsgId data");
-			Assert.That(postr48.MsgIdAsString(), Is.EqualTo("You still have {0} difference(s) left.  Are you sure you want to exit?"), "French po string[48] is 'You still have {0} difference(s) left.  Are you sure you want to exit?'");
-			Assert.That(postr48.MsgStr.Count, Is.EqualTo(1), "French po string[48] has one line of MsgStr data");
-			Assert.That(postr48.MsgStr[0], Is.EqualTo("Il reste {0} différences. Êtes-vous sûr de vouloir quitter?"), "French po string[48] has the expected MsgStr data");
-			Assert.That(postr48.UserComments, Is.Not.Null, "French po string[48] has User Comments");
-			Assert.That(postr48.UserComments.Count, Is.EqualTo(1), "French po string[48] has one line of User Comments");
-			Assert.That(postr48.UserComments[0], Is.EqualTo("JDX"), "French po string[48] has the expected User Comment");
-			Assert.That(postr48.References, Is.Null, "French po string[48] has no Reference data (as expected)");
-			Assert.That(postr48.Flags, Is.Null, "French po string[48] has no Flags data (as expected)");
-			Assert.That(postr48.AutoComments, Is.Not.Null, "French po string[48] has Auto Comments");
-			Assert.That(postr48.AutoComments.Count, Is.EqualTo(2), "French po string[48] has two lines of Auto Comments");
-			Assert.That(postr48.AutoComments[0], Is.EqualTo("This text will be displayed if a user tries to exit the diff dialog before all the differences have been taken care of."), "French po string[48] has the expected first line of Auto Comment");
-			Assert.That(postr48.AutoComments[1], Is.EqualTo("/Src/TE/TeResources/TeStrings.resx::kstidExitDiffMsg"), "French po string[48] has the expected second line of Auto Comment");
+			Assert.That(
+				postr48.MsgId.Count,
+				Is.EqualTo(1),
+				"French po string[48] has one line of MsgId data"
+			);
+			Assert.That(
+				postr48.MsgId[0],
+				Is.EqualTo(
+					"You still have {0} difference(s) left.  Are you sure you want to exit?"
+				),
+				"French po string[48] has the expected MsgId data"
+			);
+			Assert.That(
+				postr48.MsgIdAsString(),
+				Is.EqualTo(
+					"You still have {0} difference(s) left.  Are you sure you want to exit?"
+				),
+				"French po string[48] is 'You still have {0} difference(s) left.  Are you sure you want to exit?'"
+			);
+			Assert.That(
+				postr48.MsgStr.Count,
+				Is.EqualTo(1),
+				"French po string[48] has one line of MsgStr data"
+			);
+			Assert.That(
+				postr48.MsgStr[0],
+				Is.EqualTo("Il reste {0} différences. Êtes-vous sûr de vouloir quitter?"),
+				"French po string[48] has the expected MsgStr data"
+			);
+			Assert.That(
+				postr48.UserComments,
+				Is.Not.Null,
+				"French po string[48] has User Comments"
+			);
+			Assert.That(
+				postr48.UserComments.Count,
+				Is.EqualTo(1),
+				"French po string[48] has one line of User Comments"
+			);
+			Assert.That(
+				postr48.UserComments[0],
+				Is.EqualTo("JDX"),
+				"French po string[48] has the expected User Comment"
+			);
+			Assert.That(
+				postr48.References,
+				Is.Null,
+				"French po string[48] has no Reference data (as expected)"
+			);
+			Assert.That(
+				postr48.Flags,
+				Is.Null,
+				"French po string[48] has no Flags data (as expected)"
+			);
+			Assert.That(
+				postr48.AutoComments,
+				Is.Not.Null,
+				"French po string[48] has Auto Comments"
+			);
+			Assert.That(
+				postr48.AutoComments.Count,
+				Is.EqualTo(2),
+				"French po string[48] has two lines of Auto Comments"
+			);
+			Assert.That(
+				postr48.AutoComments[0],
+				Is.EqualTo(
+					"This text will be displayed if a user tries to exit the diff dialog before all the differences have been taken care of."
+				),
+				"French po string[48] has the expected first line of Auto Comment"
+			);
+			Assert.That(
+				postr48.AutoComments[1],
+				Is.EqualTo("/Src/TE/TeResources/TeStrings.resx::kstidExitDiffMsg"),
+				"French po string[48] has the expected second line of Auto Comment"
+			);
 
 			var postr49 = rgsPoStrings[49].Value;
 			Assert.That(postr49, Is.Not.Null, "French po string[49] has data");
 			Assert.That(postr49.MsgId, Is.Not.Null, "French po string[49] has MsgId data");
-			Assert.That(postr49.MsgId.Count, Is.EqualTo(1), "French po string[49] has one line of MsgId data");
-			Assert.That(postr49.MsgId[0], Is.EqualTo("You don't know how to translate this yet do you?"), "French po string[49] has the expected MsgId data");
+			Assert.That(
+				postr49.MsgId.Count,
+				Is.EqualTo(1),
+				"French po string[49] has one line of MsgId data"
+			);
+			Assert.That(
+				postr49.MsgId[0],
+				Is.EqualTo("You don't know how to translate this yet do you?"),
+				"French po string[49] has the expected MsgId data"
+			);
 			Assert.That(postr49.MsgStrAsString(), Is.EqualTo("Que?"));
 			Assert.That(postr49.Flags, Is.Not.Null);
 			Assert.That(postr49.Flags[0], Is.EqualTo("fuzzy"));
 			Assert.That(dictFrenchPo.Count, Is.EqualTo(50));
 		}
 
-		[TestCase(@"/Language Explorer/Configuration/ContextHelp.xml::/strings/item[@id=""AllomorphAdjacency""]/@captionformat", null)]
-		[TestCase(@"/Language Explorer/Configuration/ContextHelp.xml::/strings/item[@id=""AllomorphAdjacency""]", "AllomorphAdjacency")]
+		[TestCase(
+			@"/Language Explorer/Configuration/ContextHelp.xml::/strings/item[@id=""AllomorphAdjacency""]/@captionformat",
+			null
+		)]
+		[TestCase(
+			@"/Language Explorer/Configuration/ContextHelp.xml::/strings/item[@id=""AllomorphAdjacency""]",
+			"AllomorphAdjacency"
+		)]
 		public void FindContextHelpId(string comment, string id)
 		{
 			Assert.That(PoToXml.FindContextHelpId(comment), Is.EqualTo(id));
 		}
 
 		#region StringsDeData
-		private const string DeStringsDataBase = @"<?xml version='1.0' encoding='UTF-8'?>
+		private const string DeStringsDataBase =
+			@"<?xml version='1.0' encoding='UTF-8'?>
 <strings>
 	<group id='Misc'>
 		<string id='No Records' txt='Keine Ergebnisse'/>
@@ -418,17 +592,21 @@ msgstr ""Que?""
 			</group>
 		</group>
 	</group>";
-		private const string DeStringsData = DeStringsDataBase + @"
+		private const string DeStringsData =
+			DeStringsDataBase
+			+ @"
 </strings>";
 		#endregion StringsDeData
 
 		#region DePoData
-		private const string DePoData = @"
+		private const string DePoData =
+			@"
 # Created from FieldWorks sources
 # Copyright (c) 2020 SIL International
 # This software is licensed under the LGPL, version 2.1 or later
 # (http://www.gnu.org/licenses/lgpl-2.1.html)
-# " + @"
+# "
+			+ @"
 msgid """"
 msgstr """"
 ""Project-Id-Version: FieldWorks 9.0.8\n""
@@ -510,13 +688,24 @@ msgstr ""_Über Language Explorer""
 				PoToXml.StoreLocalizedStrings(poFile, stringsFile, null);
 
 				var fullFileContent = File.ReadAllText(stringsFile);
-				AssertThatXmlStartsWith(XDocument.Parse(DeStringsData).Root, XDocument.Parse(fullFileContent).Root);
-				Assert.That(fullFileContent.Length, Is.GreaterThan(DeStringsData.Length + 640), "The resulting file should be considerably longer than the original. 640 characters ought to be enough (for anyone).");
+				AssertThatXmlStartsWith(
+					XDocument.Parse(DeStringsData).Root,
+					XDocument.Parse(fullFileContent).Root
+				);
+				Assert.That(
+					fullFileContent.Length,
+					Is.GreaterThan(DeStringsData.Length + 640),
+					"The resulting file should be considerably longer than the original. 640 characters ought to be enough (for anyone)."
+				);
 			}
 		}
 
 		[Test]
-		[SuppressMessage("ReSharper", "PossibleNullReferenceException", Justification = "If it throws, we'll know to fix the test!")]
+		[SuppressMessage(
+			"ReSharper",
+			"PossibleNullReferenceException",
+			Justification = "If it throws, we'll know to fix the test!"
+		)]
 		public void NewStringsAdded()
 		{
 			using (var testDir = new TemporaryFolder(GetType().Name))
@@ -531,43 +720,111 @@ msgstr ""_Über Language Explorer""
 
 				var result = File.ReadAllText(stringsFile);
 				// The resulting file should contain the 5 original groups plus 3 new (attributes, literals, context help)
-				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath("/strings/group", 8);
+				AssertThatXmlIn
+					.String(result)
+					.HasSpecifiedNumberOfMatchesForXpath("/strings/group", 8);
 				const string attGroupXpath = "/strings/group[@id='LocalizedAttributes']";
-				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(attGroupXpath, 1);
+				AssertThatXmlIn
+					.String(result)
+					.HasSpecifiedNumberOfMatchesForXpath(attGroupXpath, 1);
 				const string attStringXpath = attGroupXpath + "/string";
-				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(attStringXpath, 6);
-				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
-					attStringXpath + "[@id='Abbreviation (Best Analysis)' and @txt='Abkürzung (Bestes Analyse)']", 1);
-				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
-					attStringXpath + "[@id='Allomorph' and @txt='Allomorph']", 1);
-				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
-					attStringXpath + "[@id='Choose {0}' and @txt='{0} wählen']", 1);
-				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
-					attStringXpath + "[@id='Comment' and @txt='Kommentar']", 1);
+				AssertThatXmlIn
+					.String(result)
+					.HasSpecifiedNumberOfMatchesForXpath(attStringXpath, 6);
+				AssertThatXmlIn
+					.String(result)
+					.HasSpecifiedNumberOfMatchesForXpath(
+						attStringXpath
+							+ "[@id='Abbreviation (Best Analysis)' and @txt='Abkürzung (Bestes Analyse)']",
+						1
+					);
+				AssertThatXmlIn
+					.String(result)
+					.HasSpecifiedNumberOfMatchesForXpath(
+						attStringXpath + "[@id='Allomorph' and @txt='Allomorph']",
+						1
+					);
+				AssertThatXmlIn
+					.String(result)
+					.HasSpecifiedNumberOfMatchesForXpath(
+						attStringXpath + "[@id='Choose {0}' and @txt='{0} wählen']",
+						1
+					);
+				AssertThatXmlIn
+					.String(result)
+					.HasSpecifiedNumberOfMatchesForXpath(
+						attStringXpath + "[@id='Comment' and @txt='Kommentar']",
+						1
+					);
 				const string litGroupXpath = "/strings/group[@id='LocalizedLiterals']";
-				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(litGroupXpath, 1);
+				AssertThatXmlIn
+					.String(result)
+					.HasSpecifiedNumberOfMatchesForXpath(litGroupXpath, 1);
 				const string litStringXpath = litGroupXpath + "/string";
-				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(litStringXpath, 2);
-				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
-					litStringXpath + "[@id='Allomorph' and @txt='Allomorph']", 1);
-				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
-					litStringXpath + "[@id='Analysis ' and @txt='Analyse ']", 1);
+				AssertThatXmlIn
+					.String(result)
+					.HasSpecifiedNumberOfMatchesForXpath(litStringXpath, 2);
+				AssertThatXmlIn
+					.String(result)
+					.HasSpecifiedNumberOfMatchesForXpath(
+						litStringXpath + "[@id='Allomorph' and @txt='Allomorph']",
+						1
+					);
+				AssertThatXmlIn
+					.String(result)
+					.HasSpecifiedNumberOfMatchesForXpath(
+						litStringXpath + "[@id='Analysis ' and @txt='Analyse ']",
+						1
+					);
 				const string helpGroupXpath = "/strings/group[@id='LocalizedContextHelp']";
-				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(helpGroupXpath, 1);
+				AssertThatXmlIn
+					.String(result)
+					.HasSpecifiedNumberOfMatchesForXpath(helpGroupXpath, 1);
 				const string helpStringXpath = helpGroupXpath + "/string";
-				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(helpStringXpath, 5);
-				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
-					helpStringXpath + "[@id='AllomorphAdjacency']", 1);
-				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
-					helpStringXpath + "[@id='AllomorphAdjacency' and @txt='Klicken Sie auf die Taste.']", 1);
-				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
-					helpStringXpath + "[@id='CmdInsertCustomItem' and @txt='Ein neues {0} erstellen.']", 1);
-				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
-					helpStringXpath + "[@id='CmdInsertLexEntryType' and @txt='Ein neues {0} erstellen.']", 1);
-				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
-					helpStringXpath + "[@id='CmdInsertPossibility' and @txt='Ein neues {0} erstellen.']", 1);
-				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(
-					helpStringXpath + "[@id='CmdCreateProjectShortcut' and @txt='Eine Desktop-Verknüpfung zu diesem Projekt erstellen.']", 1);
+				AssertThatXmlIn
+					.String(result)
+					.HasSpecifiedNumberOfMatchesForXpath(helpStringXpath, 5);
+				AssertThatXmlIn
+					.String(result)
+					.HasSpecifiedNumberOfMatchesForXpath(
+						helpStringXpath + "[@id='AllomorphAdjacency']",
+						1
+					);
+				AssertThatXmlIn
+					.String(result)
+					.HasSpecifiedNumberOfMatchesForXpath(
+						helpStringXpath
+							+ "[@id='AllomorphAdjacency' and @txt='Klicken Sie auf die Taste.']",
+						1
+					);
+				AssertThatXmlIn
+					.String(result)
+					.HasSpecifiedNumberOfMatchesForXpath(
+						helpStringXpath
+							+ "[@id='CmdInsertCustomItem' and @txt='Ein neues {0} erstellen.']",
+						1
+					);
+				AssertThatXmlIn
+					.String(result)
+					.HasSpecifiedNumberOfMatchesForXpath(
+						helpStringXpath
+							+ "[@id='CmdInsertLexEntryType' and @txt='Ein neues {0} erstellen.']",
+						1
+					);
+				AssertThatXmlIn
+					.String(result)
+					.HasSpecifiedNumberOfMatchesForXpath(
+						helpStringXpath
+							+ "[@id='CmdInsertPossibility' and @txt='Ein neues {0} erstellen.']",
+						1
+					);
+				AssertThatXmlIn
+					.String(result)
+					.HasSpecifiedNumberOfMatchesForXpath(
+						helpStringXpath
+							+ "[@id='CmdCreateProjectShortcut' and @txt='Eine Desktop-Verknüpfung zu diesem Projekt erstellen.']",
+						1
+					);
 			}
 		}
 
@@ -584,13 +841,21 @@ msgstr ""_Über Language Explorer""
 		{
 			if (expected == null)
 			{
-				Assert.That(actual, Is.Null, actual == null ? null : XmlToPo.ComputePathComment(actual, null, null));
+				Assert.That(
+					actual,
+					Is.Null,
+					actual == null ? null : XmlToPo.ComputePathComment(actual, null, null)
+				);
 				return;
 			}
 			if (actual == null)
 				Assert.Fail($"Expected a node matching {ComputeXPath(expected)}, but was null");
 
-			Assert.That(actual.Elements().Count(), Is.EqualTo(expected.Elements().Count()), $"Incorrect number of children under {ComputeXPath(expected)}");
+			Assert.That(
+				actual.Elements().Count(),
+				Is.EqualTo(expected.Elements().Count()),
+				$"Incorrect number of children under {ComputeXPath(expected)}"
+			);
 			AssertThatXmlStartsWithHelper(expected, actual);
 		}
 
@@ -605,7 +870,11 @@ msgstr ""_Über Language Explorer""
 			// verify attributes
 			var expectedAtts = expected.Attributes().ToArray();
 			var actualAtts = actual.Attributes().ToArray();
-			Assert.That(actualAtts.Length, Is.EqualTo(expectedAtts.Length), $"Incorrect number of attributes on {ComputeXPath(expected)}");
+			Assert.That(
+				actualAtts.Length,
+				Is.EqualTo(expectedAtts.Length),
+				$"Incorrect number of attributes on {ComputeXPath(expected)}"
+			);
 			for (var i = 0; i < expectedAtts.Length; i++)
 			{
 				var message = ComputeXPath(expected, expectedAtts[i]);
@@ -633,7 +902,10 @@ msgstr ""_Über Language Explorer""
 
 			while (element != null)
 			{
-				bldr.Insert(0, $"/{element.Name.LocalName}[@id='{element.Attribute("id")?.Value}']");
+				bldr.Insert(
+					0,
+					$"/{element.Name.LocalName}[@id='{element.Attribute("id")?.Value}']"
+				);
 				element = element.Parent;
 			}
 
