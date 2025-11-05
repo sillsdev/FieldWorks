@@ -5,18 +5,16 @@
 // File: MoreRootSiteTests.cs
 // Responsibility: FW team
 // --------------------------------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-
 using Moq;
 using NUnit.Framework;
-
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
-using System;
-using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.Utils;
 
 namespace SIL.FieldWorks.Common.RootSites
@@ -41,8 +39,11 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// Because these tests use ScrFootnotes with multiple paragraphs, we need to allow
 			// the use.
-			ReflectionHelper.SetField(Type.GetType("SIL.LCModel.DomainImpl.ScrFootnote, SIL.LCModel", true),
-				"s_maxAllowedParagraphs", 5);
+			ReflectionHelper.SetField(
+				Type.GetType("SIL.LCModel.DomainImpl.ScrFootnote, SIL.LCModel", true),
+				"s_maxAllowedParagraphs",
+				5
+			);
 		}
 
 		#region Misc tests
@@ -58,7 +59,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			ShowForm(Lng.English, DummyBasicViewVc.DisplayType.kAll);
 
 			Point pt = m_basicView.IPLocation;
-			Assert.That(m_basicView.ClientRectangle.Contains(pt), Is.True, "IP is not in Draft View's client area.");
+			Assert.That(
+				m_basicView.ClientRectangle.Contains(pt),
+				Is.True,
+				"IP is not in Draft View's client area."
+			);
 
 			Assert.That(pt == new Point(0, 0), Is.False, "IP is at 0, 0");
 		}
@@ -86,17 +91,31 @@ namespace SIL.FieldWorks.Common.RootSites
 			int currentHeight = m_basicView.RootBox.Height;
 			// Initially we have 2 expanded boxes with 6 lines each, and 2 lazy boxes with
 			// 2 fragments each
-			int expectedHeight = 2 * (6 * m_basicView.SelectionHeight
-				+ DummyBasicViewVc.kMarginTop * rcSrcRoot.Height / DummyBasicViewVc.kdzmpInch)
+			int expectedHeight =
+				2
+					* (
+						6 * m_basicView.SelectionHeight
+						+ DummyBasicViewVc.kMarginTop
+							* rcSrcRoot.Height
+							/ DummyBasicViewVc.kdzmpInch
+					)
 				+ 2 * (2 * DummyBasicViewVc.kEstimatedParaHeight * rcSrcRoot.Height / 72);
 			Assert.That(currentHeight, Is.EqualTo(expectedHeight), "Unexpected initial height");
 
 			m_basicView.ScrollToEnd();
 			currentHeight = m_basicView.RootBox.Height;
 			// we have 4 paragraphs with 6 lines each, and a margin before each paragraph
-			expectedHeight = 4 * (6 * m_basicView.SelectionHeight
-				+ DummyBasicViewVc.kMarginTop * rcSrcRoot.Height / DummyBasicViewVc.kdzmpInch);
-			Assert.That(currentHeight, Is.EqualTo(expectedHeight), "Unexpected height after scrolling");
+			expectedHeight =
+				4
+				* (
+					6 * m_basicView.SelectionHeight
+					+ DummyBasicViewVc.kMarginTop * rcSrcRoot.Height / DummyBasicViewVc.kdzmpInch
+				);
+			Assert.That(
+				currentHeight,
+				Is.EqualTo(expectedHeight),
+				"Unexpected height after scrolling"
+			);
 
 			// Determine width of one line, so that we can make the window smaller.
 			m_basicView.ScrollToTop();
@@ -112,9 +131,17 @@ namespace SIL.FieldWorks.Common.RootSites
 			selHelper.SetSelection(true);
 			currentHeight = m_basicView.RootBox.Height;
 			// we have 4 paragraphs with 12 lines each, and a margin before each paragraph
-			expectedHeight = 4 * (12 * m_basicView.SelectionHeight
-				+ DummyBasicViewVc.kMarginTop * rcSrcRoot.Height / DummyBasicViewVc.kdzmpInch);
-			Assert.That(currentHeight, Is.EqualTo(expectedHeight), "Unexpected height after resizing");
+			expectedHeight =
+				4
+				* (
+					12 * m_basicView.SelectionHeight
+					+ DummyBasicViewVc.kMarginTop * rcSrcRoot.Height / DummyBasicViewVc.kdzmpInch
+				);
+			Assert.That(
+				currentHeight,
+				Is.EqualTo(expectedHeight),
+				"Unexpected height after resizing"
+			);
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -130,7 +157,11 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			Point pt = m_basicView.ScrollPosition;
 			Rectangle rect = m_basicView.DisplayRectangle;
-			Assert.That(rect.Height, Is.EqualTo(-pt.Y + m_basicView.ClientRectangle.Height), "Scroll position is not at the very end");
+			Assert.That(
+				rect.Height,
+				Is.EqualTo(-pt.Y + m_basicView.ClientRectangle.Height),
+				"Scroll position is not at the very end"
+			);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -140,7 +171,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: This test is too dependent on mono ScrollableControl behaving the sames as .NET")]
+		[Platform(
+			Exclude = "Linux",
+			Reason = "TODO-Linux: This test is too dependent on mono ScrollableControl behaving the sames as .NET"
+		)]
 		public void AdjustScrollRange_VScroll_PosAtTop()
 		{
 			ShowForm(Lng.English, DummyBasicViewVc.DisplayType.kAll);
@@ -196,7 +230,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "This test is too dependent on mono ScrollableControl behaving the sames as .NET")]
+		[Platform(
+			Exclude = "Linux",
+			Reason = "This test is too dependent on mono ScrollableControl behaving the sames as .NET"
+		)]
 		public void AdjustScrollRange_VScroll_PosInMiddle()
 		{
 			ShowForm(Lng.English, DummyBasicViewVc.DisplayType.kAll);
@@ -263,7 +300,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "This test is too dependent on mono ScrollableControl behaving the sames as .NET")]
+		[Platform(
+			Exclude = "Linux",
+			Reason = "This test is too dependent on mono ScrollableControl behaving the sames as .NET"
+		)]
 		public void AdjustScrollRange_VScroll_PosAlmostAtEnd()
 		{
 			ShowForm(Lng.English, DummyBasicViewVc.DisplayType.kAll, 150);
@@ -328,7 +368,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			Assert.That(view.DisplayRectangle.Height, Is.EqualTo(nHeight), "3. test");
 			Assert.That(fRet, Is.True, "3. test"); // JohnT; because adjust scroll pos suppressed.
 
-			fRet = view.AdjustScrollRange(0, 0, - (dydWindheight + 30), 0);
+			fRet = view.AdjustScrollRange(0, 0, -(dydWindheight + 30), 0);
 			//nHeight -= dydWindheight + 30;
 			nPos = Math.Max(0, nPos - dydWindheight - 30); // JohnT: also can't be less than zero.
 			Assert.That(-view.ScrollPosition.Y, Is.EqualTo(nPos), "3. test");
@@ -356,7 +396,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "This test is too dependent on mono ScrollableControl behaving the sames as .NET")]
+		[Platform(
+			Exclude = "Linux",
+			Reason = "This test is too dependent on mono ScrollableControl behaving the sames as .NET"
+		)]
 		public void AdjustScrollRange_VScroll_PosAtEnd()
 		{
 			ShowForm(Lng.English, DummyBasicViewVc.DisplayType.kAll);
@@ -425,7 +468,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "This test is too dependent on mono ScrollableControl behaving the sames as .NET")]
+		[Platform(
+			Exclude = "Linux",
+			Reason = "This test is too dependent on mono ScrollableControl behaving the sames as .NET"
+		)]
 		public void AdjustScrollRange_VScroll_ScrollRangeLessThanClientRectangle()
 		{
 			ShowForm(Lng.English, DummyBasicViewVc.DisplayType.kAll);
@@ -487,7 +533,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: Test Too Dependent DisplayRectangle being updated by mono the same ways as .NET")]
+		[Platform(
+			Exclude = "Linux",
+			Reason = "TODO-Linux: Test Too Dependent DisplayRectangle being updated by mono the same ways as .NET"
+		)]
 		public void AdjustScrollRangeTestHScroll()
 		{
 			ShowForm(Lng.English, DummyBasicViewVc.DisplayType.kAll);
@@ -635,7 +684,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			Assert.That(view.DisplayRectangle.Width, Is.EqualTo(nWidth), "3. test");
 			Assert.That(fRet, Is.False, "3. test");
 
-			fRet = view.AdjustScrollRange(- (dxdWindwidth + 30), 0, 0, 0);
+			fRet = view.AdjustScrollRange(-(dxdWindwidth + 30), 0, 0, 0);
 			nWidth -= dxdWindwidth + 30;
 			nPos -= dxdWindwidth + 30;
 			Assert.That(-view.ScrollPosition.X, Is.EqualTo(nPos), "3. test");
@@ -752,7 +801,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Platform(Exclude = "Linux", Reason = "TODO-Linux: Test Too Dependent DisplayRectangle being updated by mono the same ways as .NET")]
+		[Platform(
+			Exclude = "Linux",
+			Reason = "TODO-Linux: Test Too Dependent DisplayRectangle being updated by mono the same ways as .NET"
+		)]
 		public void AdjustScrollRangeTestHVScroll()
 		{
 			ShowForm(Lng.English, DummyBasicViewVc.DisplayType.kAll);
@@ -818,14 +870,20 @@ namespace SIL.FieldWorks.Common.RootSites
 			ShowForm(Lng.English, DummyBasicViewVc.DisplayType.kNormal);
 			IVwRootBox rootBox = m_basicView.RootBox;
 			IVwSelection vwsel;
-			int hvoText, tagText, ihvoAnchor, ihvoEnd;
+			int hvoText,
+				tagText,
+				ihvoAnchor,
+				ihvoEnd;
 			IVwPropertyStore[] vqvps;
 
 			// Test 1: selection in one paragraph
 			rootBox.MakeSimpleSel(false, true, false, true);
 			IVwSelection sel = rootBox.Selection;
 			ITsString tss;
-			int ich, hvoObj, tag, ws;
+			int ich,
+				hvoObj,
+				tag,
+				ws;
 			bool fAssocPrev;
 			sel.TextSelInfo(true, out tss, out ich, out fAssocPrev, out hvoObj, out tag, out ws);
 			int clev = sel.CLevels(true);
@@ -838,15 +896,44 @@ namespace SIL.FieldWorks.Common.RootSites
 			ITsTextProps ttp;
 			using (ArrayPtr rgvsliTemp = MarshalEx.ArrayToNative<SelLevInfo>(clev))
 			{
-				sel.AllTextSelInfo(out ihvoRoot, clev, rgvsliTemp, out tag, out cpropPrevious,
-					out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd1, out ttp);
+				sel.AllTextSelInfo(
+					out ihvoRoot,
+					clev,
+					rgvsliTemp,
+					out tag,
+					out cpropPrevious,
+					out ichAnchor,
+					out ichEnd,
+					out ws,
+					out fAssocPrev,
+					out ihvoEnd1,
+					out ttp
+				);
 				SelLevInfo[] rgvsli = MarshalEx.NativeToArray<SelLevInfo>(rgvsliTemp, clev);
 				int ichInsert = 0;
-				rootBox.MakeTextSelection(ihvoRoot, clev, rgvsli, tag, cpropPrevious, ichInsert,
-					ichInsert + 5, ws, fAssocPrev, ihvoEnd1, ttp, true);
+				rootBox.MakeTextSelection(
+					ihvoRoot,
+					clev,
+					rgvsli,
+					tag,
+					cpropPrevious,
+					ichInsert,
+					ichInsert + 5,
+					ws,
+					fAssocPrev,
+					ihvoEnd1,
+					ttp,
+					true
+				);
 
-				bool fRet = m_basicView.IsParagraphProps(out vwsel, out hvoText, out tagText,
-					out vqvps, out ihvoAnchor, out ihvoEnd);
+				bool fRet = m_basicView.IsParagraphProps(
+					out vwsel,
+					out hvoText,
+					out tagText,
+					out vqvps,
+					out ihvoAnchor,
+					out ihvoEnd
+				);
 
 				Assert.That(fRet, Is.EqualTo(true), "1. test:");
 				Assert.That(ihvoEnd, Is.EqualTo(ihvoAnchor), "1. test:");
@@ -855,12 +942,28 @@ namespace SIL.FieldWorks.Common.RootSites
 				SelLevInfo[] rgvsliEnd = new SelLevInfo[clev];
 				rgvsli.CopyTo(rgvsliEnd, 0);
 				rgvsli[0].ihvo = 0; // first paragraph
-				rgvsli[clev-1].ihvo = 2; // third section
-				rootBox.MakeTextSelInObj(ihvoRoot, clev, rgvsli, clev, rgvsliEnd, false, true, true, true,
-					true);
+				rgvsli[clev - 1].ihvo = 2; // third section
+				rootBox.MakeTextSelInObj(
+					ihvoRoot,
+					clev,
+					rgvsli,
+					clev,
+					rgvsliEnd,
+					false,
+					true,
+					true,
+					true,
+					true
+				);
 
-				fRet = m_basicView.IsParagraphProps(out vwsel, out hvoText, out tagText,
-					out vqvps, out ihvoAnchor, out ihvoEnd);
+				fRet = m_basicView.IsParagraphProps(
+					out vwsel,
+					out hvoText,
+					out tagText,
+					out vqvps,
+					out ihvoAnchor,
+					out ihvoEnd
+				);
 
 				Assert.That(fRet, Is.EqualTo(false), "2. test:");
 			}
@@ -879,7 +982,10 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			IVwRootBox rootBox = m_basicView.RootBox;
 			IVwSelection vwsel;
-			int hvoText, tagText, ihvoAnchor, ihvoEnd;
+			int hvoText,
+				tagText,
+				ihvoAnchor,
+				ihvoEnd;
 			IVwPropertyStore[] vqvps;
 
 			IVwSelection selAnchor = rootBox.MakeSimpleSel(true, false, false, true);
@@ -887,8 +993,17 @@ namespace SIL.FieldWorks.Common.RootSites
 			IVwSelection selEnd = rootBox.Selection;
 			rootBox.MakeRangeSelection(selAnchor, selEnd, true);
 
-			Assert.That(m_basicView.IsParagraphProps(out vwsel, out hvoText, out tagText,
-				out vqvps, out ihvoAnchor, out ihvoEnd), Is.True);
+			Assert.That(
+				m_basicView.IsParagraphProps(
+					out vwsel,
+					out hvoText,
+					out tagText,
+					out vqvps,
+					out ihvoAnchor,
+					out ihvoEnd
+				),
+				Is.True
+			);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -905,7 +1020,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			ShowForm(Lng.English, DummyBasicViewVc.DisplayType.kNormal);
 			IVwRootBox rootBox = m_basicView.RootBox;
 			IVwSelection vwsel;
-			int hvoText, tagText, ihvoFirst, ihvoLast;
+			int hvoText,
+				tagText,
+				ihvoFirst,
+				ihvoLast;
 			IVwPropertyStore[] vqvps;
 			ITsTextProps[] vqttp;
 
@@ -913,7 +1031,10 @@ namespace SIL.FieldWorks.Common.RootSites
 			rootBox.MakeSimpleSel(false, true, false, true);
 			IVwSelection sel = rootBox.Selection;
 			ITsString tss;
-			int ich, hvoObj, tag, ws;
+			int ich,
+				hvoObj,
+				tag,
+				ws;
 			bool fAssocPrev;
 			sel.TextSelInfo(true, out tss, out ich, out fAssocPrev, out hvoObj, out tag, out ws);
 			int clev = sel.CLevels(true);
@@ -926,15 +1047,45 @@ namespace SIL.FieldWorks.Common.RootSites
 			ITsTextProps ttp;
 			using (ArrayPtr rgvsliTemp = MarshalEx.ArrayToNative<SelLevInfo>(clev))
 			{
-				sel.AllTextSelInfo(out ihvoRoot, clev, rgvsliTemp, out tag, out cpropPrevious,
-					out ichAnchor, out ichEnd, out ws, out fAssocPrev, out ihvoEnd1, out ttp);
+				sel.AllTextSelInfo(
+					out ihvoRoot,
+					clev,
+					rgvsliTemp,
+					out tag,
+					out cpropPrevious,
+					out ichAnchor,
+					out ichEnd,
+					out ws,
+					out fAssocPrev,
+					out ihvoEnd1,
+					out ttp
+				);
 				SelLevInfo[] rgvsli = MarshalEx.NativeToArray<SelLevInfo>(rgvsliTemp, clev);
 				int ichInsert = 0;
-				rootBox.MakeTextSelection(ihvoRoot, clev, rgvsli, tag, cpropPrevious, ichInsert,
-					ichInsert + 5, ws, fAssocPrev, ihvoEnd1, ttp, true);
+				rootBox.MakeTextSelection(
+					ihvoRoot,
+					clev,
+					rgvsli,
+					tag,
+					cpropPrevious,
+					ichInsert,
+					ichInsert + 5,
+					ws,
+					fAssocPrev,
+					ihvoEnd1,
+					ttp,
+					true
+				);
 
-				bool fRet = m_basicView.GetParagraphProps(out vwsel, out hvoText, out tagText,
-					out vqvps, out ihvoFirst, out ihvoLast, out vqttp);
+				bool fRet = m_basicView.GetParagraphProps(
+					out vwsel,
+					out hvoText,
+					out tagText,
+					out vqvps,
+					out ihvoFirst,
+					out ihvoLast,
+					out vqttp
+				);
 
 				Assert.That(fRet, Is.True, "Test 1 ");
 				Assert.That(ihvoLast, Is.EqualTo(ihvoFirst), "Test 1 ");
@@ -944,12 +1095,29 @@ namespace SIL.FieldWorks.Common.RootSites
 				SelLevInfo[] rgvsliEnd = new SelLevInfo[clev];
 				rgvsli.CopyTo(rgvsliEnd, 0);
 				rgvsli[0].ihvo = 0; // first paragraph
-				rgvsli[clev-1].ihvo = 2; // third section
-				rootBox.MakeTextSelInObj(ihvoRoot, clev, rgvsli, clev, rgvsliEnd, false, true, true, true,
-					true);
+				rgvsli[clev - 1].ihvo = 2; // third section
+				rootBox.MakeTextSelInObj(
+					ihvoRoot,
+					clev,
+					rgvsli,
+					clev,
+					rgvsliEnd,
+					false,
+					true,
+					true,
+					true,
+					true
+				);
 
-				fRet = m_basicView.GetParagraphProps(out vwsel, out hvoText, out tagText,
-					out vqvps, out ihvoFirst, out ihvoLast, out vqttp);
+				fRet = m_basicView.GetParagraphProps(
+					out vwsel,
+					out hvoText,
+					out tagText,
+					out vqvps,
+					out ihvoFirst,
+					out ihvoLast,
+					out vqttp
+				);
 
 				Assert.That(fRet, Is.False, "Test 2 ");
 			}
@@ -969,9 +1137,13 @@ namespace SIL.FieldWorks.Common.RootSites
 				filename = "/junk.jpg";
 			else
 				filename = "c:\\junk.jpg";
-			ICmPicture pict = Cache.ServiceLocator.GetInstance<ICmPictureFactory>().Create(filename,
-				TsStringUtils.MakeString("Test picture", Cache.DefaultVernWs),
-				CmFolderTags.LocalPictures);
+			ICmPicture pict = Cache
+				.ServiceLocator.GetInstance<ICmPictureFactory>()
+				.Create(
+					filename,
+					TsStringUtils.MakeString("Test picture", Cache.DefaultVernWs),
+					CmFolderTags.LocalPictures
+				);
 			Assert.That(pict, Is.Not.Null);
 
 			ShowForm(Lng.English, DummyBasicViewVc.DisplayType.kNormal);
@@ -982,36 +1154,80 @@ namespace SIL.FieldWorks.Common.RootSites
 			mockedSelection.Setup(s => s.CompleteEdits(out changeInfo)).Returns(true);
 			mockedSelection.Setup(s => s.CLevels(true)).Returns(2);
 			mockedSelection.Setup(s => s.CLevels(false)).Returns(2);
-			
+
 			// Setup PropInfo with out parameters - Moq will return the out values we specify
-			int hvo1 = pict.Hvo, tag1 = CmPictureTags.kflidCaption, ihvoEnd1 = 0, cpropPrevious1 = 0;
+			int hvo1 = pict.Hvo,
+				tag1 = CmPictureTags.kflidCaption,
+				ihvoEnd1 = 0,
+				cpropPrevious1 = 0;
 			IVwPropertyStore vps1 = null;
-			mockedSelection.Setup(s => s.PropInfo(false, 0, out hvo1, out tag1, out ihvoEnd1, out cpropPrevious1, out vps1))
+			mockedSelection
+				.Setup(s =>
+					s.PropInfo(
+						false,
+						0,
+						out hvo1,
+						out tag1,
+						out ihvoEnd1,
+						out cpropPrevious1,
+						out vps1
+					)
+				)
 				.Returns(true);
-				
-			int hvo2 = pict.Hvo, tag2 = CmPictureTags.kflidCaption, ihvoEnd2 = 0, cpropPrevious2 = 0;
+
+			int hvo2 = pict.Hvo,
+				tag2 = CmPictureTags.kflidCaption,
+				ihvoEnd2 = 0,
+				cpropPrevious2 = 0;
 			IVwPropertyStore vps2 = null;
-			mockedSelection.Setup(s => s.PropInfo(true, 0, out hvo2, out tag2, out ihvoEnd2, out cpropPrevious2, out vps2))
+			mockedSelection
+				.Setup(s =>
+					s.PropInfo(
+						true,
+						0,
+						out hvo2,
+						out tag2,
+						out ihvoEnd2,
+						out cpropPrevious2,
+						out vps2
+					)
+				)
 				.Returns(true);
-				
+
 			mockedSelection.Setup(s => s.EndBeforeAnchor).Returns(false);
 
-			DummyBasicView.DummyEditingHelper editingHelper =
-				(DummyBasicView.DummyEditingHelper)m_basicView.EditingHelper;
+			DummyBasicView.DummyEditingHelper editingHelper = (DummyBasicView.DummyEditingHelper)
+				m_basicView.EditingHelper;
 			editingHelper.m_mockedSelection = mockedSelection.Object;
 			editingHelper.m_fOverrideGetParaPropStores = true;
 
 			IVwSelection vwsel;
-			int hvoText, tagText, ihvoFirst, ihvoLast;
+			int hvoText,
+				tagText,
+				ihvoFirst,
+				ihvoLast;
 			IVwPropertyStore[] vvps;
 			ITsTextProps[] vttp;
 
-			Assert.That(m_basicView.GetParagraphProps(out vwsel, out hvoText, out tagText,
-				out vvps, out ihvoFirst, out ihvoLast, out vttp), Is.True);
+			Assert.That(
+				m_basicView.GetParagraphProps(
+					out vwsel,
+					out hvoText,
+					out tagText,
+					out vvps,
+					out ihvoFirst,
+					out ihvoLast,
+					out vttp
+				),
+				Is.True
+			);
 
 			Assert.That(tagText, Is.EqualTo(CmPictureTags.kflidCaption));
 			Assert.That(vttp.Length, Is.EqualTo(1));
-			Assert.That(vttp[0].GetStrPropValue((int)FwTextPropType.ktptNamedStyle), Is.EqualTo("Figure caption"));
+			Assert.That(
+				vttp[0].GetStrPropValue((int)FwTextPropType.ktptNamedStyle),
+				Is.EqualTo("Figure caption")
+			);
 		}
 		#endregion
 
@@ -1031,7 +1247,9 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// Add a second paragraph to the first text and create some translations on
 			// both paragraphs
-			IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookRepository>().GetObject(m_hvoRoot);
+			IScrBook book = Cache
+				.ServiceLocator.GetInstance<IScrBookRepository>()
+				.GetObject(m_hvoRoot);
 			IStText text1 = book.FootnotesOS[0];
 			IStTxtPara para1 = (IStTxtPara)text1.ParagraphsOS[0];
 			IStTxtPara para2 = AddParaToMockedText(text1, "TestStyle");
@@ -1054,12 +1272,26 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].cpropPrevious = 0;
 			levelInfo[0].ihvo = 0;
 			int ich = DummyBasicView.kFirstParaEng.Length;
-			rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, ich, 0, 0, true, 1, null,
-				true);
+			rootBox.MakeTextSelection(
+				0,
+				2,
+				levelInfo,
+				StTxtParaTags.kflidContents,
+				0,
+				ich,
+				0,
+				0,
+				true,
+				1,
+				null,
+				true
+			);
 			TypeBackspace();
 
-			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng));
+			Assert.That(
+				para1.Contents.Text,
+				Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng)
+			);
 			Assert.That(bt1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT1 BT2"));
 		}
 
@@ -1078,7 +1310,9 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// Add a second paragraph to the first text and create some translations on
 			// both paragraphs
-			IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookRepository>().GetObject(m_hvoRoot);
+			IScrBook book = Cache
+				.ServiceLocator.GetInstance<IScrBookRepository>()
+				.GetObject(m_hvoRoot);
 			IStText text1 = book.FootnotesOS[0];
 			IStTxtPara para1 = (IStTxtPara)text1.ParagraphsOS[0];
 			IStTxtPara para2 = AddParaToMockedText(text1, "TestStyle");
@@ -1099,10 +1333,26 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].cpropPrevious = 0;
 			levelInfo[0].ihvo = 0;
 			int ich = DummyBasicView.kFirstParaEng.Length;
-			rootBox.MakeTextSelection(0, 2, levelInfo, StTxtParaTags.kflidContents, 0, ich, 0, 0, true, 1, null, true);
+			rootBox.MakeTextSelection(
+				0,
+				2,
+				levelInfo,
+				StTxtParaTags.kflidContents,
+				0,
+				ich,
+				0,
+				0,
+				true,
+				1,
+				null,
+				true
+			);
 			TypeBackspace();
 
-			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng));
+			Assert.That(
+				para1.Contents.Text,
+				Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng)
+			);
 			ICmTranslation bt1 = para1.GetBT();
 			Assert.That(bt1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT2"));
 		}
@@ -1123,7 +1373,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			IVwRootBox rootBox = m_basicView.RootBox;
 
 			// Add two segments to the first text and create Back Translations
-			IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookRepository>().GetObject(m_hvoRoot);
+			IScrBook book = Cache
+				.ServiceLocator.GetInstance<IScrBookRepository>()
+				.GetObject(m_hvoRoot);
 			IStText text1 = book.FootnotesOS[0];
 			IScrTxtPara para = (IScrTxtPara)text1.ParagraphsOS[0];
 			AddRunToMockedPara(para, DummyBasicView.kSecondParaEng, Cache.DefaultVernWs);
@@ -1141,16 +1393,34 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].cpropPrevious = 0;
 			levelInfo[0].ihvo = 0;
 			int ich = DummyBasicView.kFirstParaEng.Length;
-			rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, ich, ich, 0, true, -1, null, true);
+			rootBox.MakeTextSelection(
+				0,
+				2,
+				levelInfo,
+				StTxtParaTags.kflidContents,
+				0,
+				ich,
+				ich,
+				0,
+				true,
+				-1,
+				null,
+				true
+			);
 			TypeEnter();
 
 			IStTxtPara para1 = (IStTxtPara)text1.ParagraphsOS[0];
 			IStTxtPara para2 = (IStTxtPara)text1.ParagraphsOS[1];
 			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng));
 			Assert.That(para2.Contents.Text, Is.EqualTo(DummyBasicView.kSecondParaEng));
-			Assert.That(para1.SegmentsOS[0].FreeTranslation.AnalysisDefaultWritingSystem.Text, Is.EqualTo("BT1"));
-			Assert.That(para2.SegmentsOS[0].FreeTranslation.AnalysisDefaultWritingSystem.Text, Is.EqualTo("BT2"));
+			Assert.That(
+				para1.SegmentsOS[0].FreeTranslation.AnalysisDefaultWritingSystem.Text,
+				Is.EqualTo("BT1")
+			);
+			Assert.That(
+				para2.SegmentsOS[0].FreeTranslation.AnalysisDefaultWritingSystem.Text,
+				Is.EqualTo("BT2")
+			);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1167,7 +1437,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			IVwRootBox rootBox = m_basicView.RootBox;
 
 			// Add two segments to the first text and create Back Translations
-			IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookRepository>().GetObject(m_hvoRoot);
+			IScrBook book = Cache
+				.ServiceLocator.GetInstance<IScrBookRepository>()
+				.GetObject(m_hvoRoot);
 			IStText text1 = book.FootnotesOS[0];
 			IScrTxtPara para = (IScrTxtPara)text1.ParagraphsOS[0];
 			AddRunToMockedPara(para, DummyBasicView.kSecondParaEng, Cache.DefaultVernWs);
@@ -1187,18 +1459,52 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].cpropPrevious = 0;
 			levelInfo[0].ihvo = 0;
 			int ich = DummyBasicView.kFirstParaEng.Length + 5;
-			rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, ich, ich, 0, true, -1, null, true);
+			rootBox.MakeTextSelection(
+				0,
+				2,
+				levelInfo,
+				StTxtParaTags.kflidContents,
+				0,
+				ich,
+				ich,
+				0,
+				true,
+				-1,
+				null,
+				true
+			);
 			TypeEnter();
 
 			IStTxtPara para1 = (IStTxtPara)text1.ParagraphsOS[0];
 			IStTxtPara para2 = (IStTxtPara)text1.ParagraphsOS[1];
-			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng.Substring(0, 5)));
-			Assert.That(para2.Contents.Text, Is.EqualTo(DummyBasicView.kSecondParaEng.Substring(5) + DummyBasicView.kSecondParaEng));
-			Assert.That(para1.SegmentsOS[0].FreeTranslation.AnalysisDefaultWritingSystem.Text, Is.EqualTo("BT1"));
-			Assert.That(para1.SegmentsOS[1].FreeTranslation.AnalysisDefaultWritingSystem.Text, Is.EqualTo("BT2"));
-			Assert.That(para2.SegmentsOS[0].FreeTranslation.AnalysisDefaultWritingSystem.Text, Is.Null);
-			Assert.That(para2.SegmentsOS[1].FreeTranslation.AnalysisDefaultWritingSystem.Text, Is.EqualTo("BT3"));
+			Assert.That(
+				para1.Contents.Text,
+				Is.EqualTo(
+					DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng.Substring(0, 5)
+				)
+			);
+			Assert.That(
+				para2.Contents.Text,
+				Is.EqualTo(
+					DummyBasicView.kSecondParaEng.Substring(5) + DummyBasicView.kSecondParaEng
+				)
+			);
+			Assert.That(
+				para1.SegmentsOS[0].FreeTranslation.AnalysisDefaultWritingSystem.Text,
+				Is.EqualTo("BT1")
+			);
+			Assert.That(
+				para1.SegmentsOS[1].FreeTranslation.AnalysisDefaultWritingSystem.Text,
+				Is.EqualTo("BT2")
+			);
+			Assert.That(
+				para2.SegmentsOS[0].FreeTranslation.AnalysisDefaultWritingSystem.Text,
+				Is.Null
+			);
+			Assert.That(
+				para2.SegmentsOS[1].FreeTranslation.AnalysisDefaultWritingSystem.Text,
+				Is.EqualTo("BT3")
+			);
 		}
 		#endregion
 
@@ -1218,7 +1524,9 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// Add a second paragraph to the first text and create some Back Translations on
 			// both paragraphs
-			IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookRepository>().GetObject(m_hvoRoot);
+			IScrBook book = Cache
+				.ServiceLocator.GetInstance<IScrBookRepository>()
+				.GetObject(m_hvoRoot);
 			IStText text1 = book.FootnotesOS[0];
 			IStTxtPara para1 = (IStTxtPara)text1.ParagraphsOS[0];
 			IStTxtPara para2 = AddParaToMockedText(text1, "TestStyle");
@@ -1240,12 +1548,26 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].cpropPrevious = 0;
 			levelInfo[0].ihvo = 0;
 			int ich = DummyBasicView.kFirstParaEng.Length;
-			rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, ich, 0, 0, true, 1, null,
-				true);
+			rootBox.MakeTextSelection(
+				0,
+				2,
+				levelInfo,
+				StTxtParaTags.kflidContents,
+				0,
+				ich,
+				0,
+				0,
+				true,
+				1,
+				null,
+				true
+			);
 			TypeBackspace();
 
-			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng));
+			Assert.That(
+				para1.Contents.Text,
+				Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng)
+			);
 			Assert.That(trans1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT1 BT2"));
 		}
 
@@ -1264,7 +1586,9 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// Add a second paragraph to the first text and create a Back Translations on
 			// only the second paragraph
-			IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookRepository>().GetObject(m_hvoRoot);
+			IScrBook book = Cache
+				.ServiceLocator.GetInstance<IScrBookRepository>()
+				.GetObject(m_hvoRoot);
 			IStText text1 = (IStText)book.FootnotesOS[0];
 			IStTxtPara para1 = (IStTxtPara)text1.ParagraphsOS[0];
 			IStTxtPara para2 = AddParaToMockedText(text1, "TestStyle");
@@ -1284,13 +1608,29 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].cpropPrevious = 0;
 			levelInfo[0].ihvo = 0;
 			int ich = DummyBasicView.kFirstParaEng.Length;
-			rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, ich, 0, 0, true, 1, null,
-				true);
+			rootBox.MakeTextSelection(
+				0,
+				2,
+				levelInfo,
+				StTxtParaTags.kflidContents,
+				0,
+				ich,
+				0,
+				0,
+				true,
+				1,
+				null,
+				true
+			);
 			TypeBackspace();
 
-			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng));
-			using (IEnumerator<ICmTranslation> translations = para1.TranslationsOC.GetEnumerator())
+			Assert.That(
+				para1.Contents.Text,
+				Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng)
+			);
+			using (
+				IEnumerator<ICmTranslation> translations = para1.TranslationsOC.GetEnumerator()
+			)
 			{
 				translations.MoveNext();
 				ICmTranslation transl = translations.Current;
@@ -1313,7 +1653,9 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// Add a second paragraph to the first text and create a Back Translations on
 			// only the first paragraph
-			IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookRepository>().GetObject(m_hvoRoot);
+			IScrBook book = Cache
+				.ServiceLocator.GetInstance<IScrBookRepository>()
+				.GetObject(m_hvoRoot);
 			IStText text1 = (IStText)book.FootnotesOS[0];
 			IStTxtPara para1 = (IStTxtPara)text1.ParagraphsOS[0];
 			IStTxtPara para2 = AddParaToMockedText(text1, "TestStyle");
@@ -1333,12 +1675,26 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].cpropPrevious = 0;
 			levelInfo[0].ihvo = 0;
 			int ich = DummyBasicView.kFirstParaEng.Length;
-			rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, ich, 0, 0, true, 1, null,
-				true);
+			rootBox.MakeTextSelection(
+				0,
+				2,
+				levelInfo,
+				StTxtParaTags.kflidContents,
+				0,
+				ich,
+				0,
+				0,
+				true,
+				1,
+				null,
+				true
+			);
 			TypeBackspace();
 
-			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng));
+			Assert.That(
+				para1.Contents.Text,
+				Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng)
+			);
 			Assert.That(trans1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT1"));
 		}
 
@@ -1358,7 +1714,9 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// Add a second paragraph to the first text and create some Back Translations on
 			// both paragraphs
-			IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookRepository>().GetObject(m_hvoRoot);
+			IScrBook book = Cache
+				.ServiceLocator.GetInstance<IScrBookRepository>()
+				.GetObject(m_hvoRoot);
 			IStText text1 = (IStText)book.FootnotesOS[0];
 			IStTxtPara para1 = (IStTxtPara)text1.ParagraphsOS[0];
 			IStTxtPara para2 = AddParaToMockedText(text1, "TestStyle");
@@ -1385,12 +1743,26 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].cpropPrevious = 0;
 			levelInfo[0].ihvo = 0;
 			int ich = DummyBasicView.kFirstParaEng.Length;
-			rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, ich, 0, 0, true, 1, null,
-				true);
+			rootBox.MakeTextSelection(
+				0,
+				2,
+				levelInfo,
+				StTxtParaTags.kflidContents,
+				0,
+				ich,
+				0,
+				0,
+				true,
+				1,
+				null,
+				true
+			);
 			TypeBackspace();
 
-			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng));
+			Assert.That(
+				para1.Contents.Text,
+				Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng)
+			);
 			Assert.That(trans1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT1 BT2"));
 			Assert.That(trans1.Translation.get_String(wsfr).Text, Is.EqualTo("BT1fr BT2fr"));
 		}
@@ -1412,7 +1784,9 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// Add a second paragraph to the first text and create some Back Translations on
 			// both paragraphs
-			IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookRepository>().GetObject(m_hvoRoot);
+			IScrBook book = Cache
+				.ServiceLocator.GetInstance<IScrBookRepository>()
+				.GetObject(m_hvoRoot);
 			IStText text1 = (IStText)book.FootnotesOS[0];
 			IStTxtPara para1 = (IStTxtPara)text1.ParagraphsOS[0];
 			IStTxtPara para2 = AddParaToMockedText(text1, "TestStyle");
@@ -1437,12 +1811,26 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].cpropPrevious = 0;
 			levelInfo[0].ihvo = 0;
 			int ich = DummyBasicView.kFirstParaEng.Length;
-			rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, ich, 0, 0, true, 1, null,
-				true);
+			rootBox.MakeTextSelection(
+				0,
+				2,
+				levelInfo,
+				StTxtParaTags.kflidContents,
+				0,
+				ich,
+				0,
+				0,
+				true,
+				1,
+				null,
+				true
+			);
 			TypeBackspace();
 
-			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng));
+			Assert.That(
+				para1.Contents.Text,
+				Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng)
+			);
 			Assert.That(trans1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT1 BT2"));
 			Assert.That(trans1.Translation.get_String(wsfr).Text, Is.EqualTo("BT2fr"));
 		}
@@ -1464,7 +1852,9 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// Add a second paragraph to the first text and create some Back Translations on
 			// both paragraphs
-			IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookRepository>().GetObject(m_hvoRoot);
+			IScrBook book = Cache
+				.ServiceLocator.GetInstance<IScrBookRepository>()
+				.GetObject(m_hvoRoot);
 			IStText text1 = (IStText)book.FootnotesOS[0];
 			IStTxtPara para1 = (IStTxtPara)text1.ParagraphsOS[0];
 			IStTxtPara para2 = AddParaToMockedText(text1, "TestStyle");
@@ -1488,12 +1878,26 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].cpropPrevious = 0;
 			levelInfo[0].ihvo = 0;
 			int ich = DummyBasicView.kFirstParaEng.Length;
-			rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, ich, 0, 0, true, 1, null,
-				true);
+			rootBox.MakeTextSelection(
+				0,
+				2,
+				levelInfo,
+				StTxtParaTags.kflidContents,
+				0,
+				ich,
+				0,
+				0,
+				true,
+				1,
+				null,
+				true
+			);
 			TypeBackspace();
 
-			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng));
+			Assert.That(
+				para1.Contents.Text,
+				Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng)
+			);
 			Assert.That(trans1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT1 BT2"));
 			Assert.That(trans1.Translation.get_String(wsfr).Text, Is.EqualTo("BT1fr"));
 		}
@@ -1513,7 +1917,9 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// Add a second paragraph to the first text and create some Back Translations on
 			// both paragraphs
-			IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookRepository>().GetObject(m_hvoRoot);
+			IScrBook book = Cache
+				.ServiceLocator.GetInstance<IScrBookRepository>()
+				.GetObject(m_hvoRoot);
 			IStText text1 = (IStText)book.FootnotesOS[0];
 			IStTxtPara para1 = (IStTxtPara)text1.ParagraphsOS[0];
 			IStTxtPara para2 = AddParaToMockedText(text1, "TestStyle");
@@ -1536,9 +1942,20 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].ihvo = 0;
 			int ichEndPara1 = DummyBasicView.kFirstParaEng.Length;
 			int ichEndPara2 = DummyBasicView.kSecondParaEng.Length;
-			rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, ichEndPara1,
-				ichEndPara2, 0, true, 1, null, true);
+			rootBox.MakeTextSelection(
+				0,
+				2,
+				levelInfo,
+				StTxtParaTags.kflidContents,
+				0,
+				ichEndPara1,
+				ichEndPara2,
+				0,
+				true,
+				1,
+				null,
+				true
+			);
 			TypeBackspace();
 
 			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng));
@@ -1561,7 +1978,9 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// Add a second paragraph to the first text and create some Back Translations on
 			// both paragraphs
-			IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookRepository>().GetObject(m_hvoRoot);
+			IScrBook book = Cache
+				.ServiceLocator.GetInstance<IScrBookRepository>()
+				.GetObject(m_hvoRoot);
 			IStText text1 = (IStText)book.FootnotesOS[0];
 			IStTxtPara para1 = (IStTxtPara)text1.ParagraphsOS[0];
 			IStTxtPara para2 = AddParaToMockedText(text1, "TestStyle");
@@ -1584,9 +2003,20 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].ihvo = 1;
 			int ichEndPara1 = DummyBasicView.kFirstParaEng.Length;
 			int ichEndPara2 = DummyBasicView.kSecondParaEng.Length;
-			rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, ichEndPara2,
-				ichEndPara1, 0, true, 0, null, true);
+			rootBox.MakeTextSelection(
+				0,
+				2,
+				levelInfo,
+				StTxtParaTags.kflidContents,
+				0,
+				ichEndPara2,
+				ichEndPara1,
+				0,
+				true,
+				0,
+				null,
+				true
+			);
 			TypeBackspace();
 
 			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng));
@@ -1608,7 +2038,9 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// Add a second paragraph to the first text and create some Back Translations on
 			// both paragraphs
-			IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookRepository>().GetObject(m_hvoRoot);
+			IScrBook book = Cache
+				.ServiceLocator.GetInstance<IScrBookRepository>()
+				.GetObject(m_hvoRoot);
 			IStText text1 = (IStText)book.FootnotesOS[0];
 			IStTxtPara para1 = (IStTxtPara)text1.ParagraphsOS[0];
 			IStTxtPara para2 = AddParaToMockedText(text1, "TestStyle");
@@ -1629,16 +2061,29 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].tag = StTextTags.kflidParagraphs;
 			levelInfo[0].cpropPrevious = 0;
 			levelInfo[0].ihvo = 0;
-			rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, 0, 0, 0,
-				true, 1, null, true);
+			rootBox.MakeTextSelection(
+				0,
+				2,
+				levelInfo,
+				StTxtParaTags.kflidContents,
+				0,
+				0,
+				0,
+				0,
+				true,
+				1,
+				null,
+				true
+			);
 			TypeBackspace();
 
 			// we don't know which paragraph survived, so get it from text
 			para1 = (IStTxtPara)text1.ParagraphsOS[0];
 
 			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kSecondParaEng));
-			using (IEnumerator<ICmTranslation> translations = para1.TranslationsOC.GetEnumerator())
+			using (
+				IEnumerator<ICmTranslation> translations = para1.TranslationsOC.GetEnumerator()
+			)
 			{
 				translations.MoveNext();
 				ICmTranslation transl = translations.Current;
@@ -1661,7 +2106,9 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// Add a second paragraph to the first text and create some Back Translations on
 			// both paragraphs
-			IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookRepository>().GetObject(m_hvoRoot);
+			IScrBook book = Cache
+				.ServiceLocator.GetInstance<IScrBookRepository>()
+				.GetObject(m_hvoRoot);
 			IStText text1 = (IStText)book.FootnotesOS[0];
 			IStTxtPara para1 = (IStTxtPara)text1.ParagraphsOS[0];
 			IStTxtPara para2 = AddParaToMockedText(text1, "TestStyle");
@@ -1683,15 +2130,29 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].cpropPrevious = 0;
 			levelInfo[0].ihvo = 1;
 			//int ich = DummyBasicView.kFirstParaEng.Length;
-			rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, 0, 0, 0,
-				true, -1, null, true);
+			rootBox.MakeTextSelection(
+				0,
+				2,
+				levelInfo,
+				StTxtParaTags.kflidContents,
+				0,
+				0,
+				0,
+				0,
+				true,
+				-1,
+				null,
+				true
+			);
 			TypeBackspace();
 
 			// we don't know which paragraph survived, so get it from text
 			para1 = (IStTxtPara)text1.ParagraphsOS[0];
 
-			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng));
+			Assert.That(
+				para1.Contents.Text,
+				Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng)
+			);
 			Assert.That(trans1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT1 BT2"));
 		}
 
@@ -1712,7 +2173,9 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// Add a second paragraph to the first text and create some Back Translations on
 			// both paragraphs
-			IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookRepository>().GetObject(m_hvoRoot);
+			IScrBook book = Cache
+				.ServiceLocator.GetInstance<IScrBookRepository>()
+				.GetObject(m_hvoRoot);
 			IStText text1 = (IStText)book.FootnotesOS[0];
 			IStTxtPara para1 = (IStTxtPara)text1.ParagraphsOS[0];
 			IStTxtPara para2 = AddParaToMockedText(text1, "TestStyle");
@@ -1738,12 +2201,26 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].cpropPrevious = 0;
 			levelInfo[0].ihvo = 0;
 			int ich = DummyBasicView.kFirstParaEng.Length;
-			rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, ich, 0, 0, true, 2, null,
-				true);
+			rootBox.MakeTextSelection(
+				0,
+				2,
+				levelInfo,
+				StTxtParaTags.kflidContents,
+				0,
+				ich,
+				0,
+				0,
+				true,
+				2,
+				null,
+				true
+			);
 			TypeBackspace();
 
-			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng));
+			Assert.That(
+				para1.Contents.Text,
+				Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng)
+			);
 			Assert.That(trans1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT1 BT3"));
 		}
 
@@ -1766,7 +2243,9 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// Add a second paragraph to the first text and create some Back Translations on
 			// both paragraphs
-			IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookRepository>().GetObject(m_hvoRoot);
+			IScrBook book = Cache
+				.ServiceLocator.GetInstance<IScrBookRepository>()
+				.GetObject(m_hvoRoot);
 			IStText text1 = (IStText)book.FootnotesOS[0];
 			IStTxtPara para1 = (IStTxtPara)text1.ParagraphsOS[0];
 			IStTxtPara para2 = AddParaToMockedText(text1, "TestStyle");
@@ -1794,13 +2273,29 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].ihvo = 0;
 			int ichAnchor = DummyBasicView.kFirstParaEng.Length - 2;
 			int ichEnd = 2;
-			rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, ichAnchor, ichEnd, 0, true, 2, null,
-				true);
+			rootBox.MakeTextSelection(
+				0,
+				2,
+				levelInfo,
+				StTxtParaTags.kflidContents,
+				0,
+				ichAnchor,
+				ichEnd,
+				0,
+				true,
+				2,
+				null,
+				true
+			);
 			TypeBackspace();
 
-			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng.Substring(0, ichAnchor) +
-				DummyBasicView.kSecondParaEng.Substring(ichEnd)));
+			Assert.That(
+				para1.Contents.Text,
+				Is.EqualTo(
+					DummyBasicView.kFirstParaEng.Substring(0, ichAnchor)
+						+ DummyBasicView.kSecondParaEng.Substring(ichEnd)
+				)
+			);
 			Assert.That(trans1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT1 BT3"));
 		}
 		#endregion
@@ -1822,7 +2317,9 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// Add a second paragraph to the first text and create some Back Translations on
 			// both paragraphs
-			IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookRepository>().GetObject(m_hvoRoot);
+			IScrBook book = Cache
+				.ServiceLocator.GetInstance<IScrBookRepository>()
+				.GetObject(m_hvoRoot);
 			IStText text1 = (IStText)book.FootnotesOS[0];
 			IStTxtPara para1 = (IStTxtPara)text1.ParagraphsOS[0];
 			IStTxtPara para2 = AddParaToMockedText(text1, "TestStyle");
@@ -1845,12 +2342,26 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].cpropPrevious = 0;
 			levelInfo[0].ihvo = 0;
 			int ich = DummyBasicView.kFirstParaEng.Length;
-			rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, ich, 0, 0, true, 1, null,
-				true);
+			rootBox.MakeTextSelection(
+				0,
+				2,
+				levelInfo,
+				StTxtParaTags.kflidContents,
+				0,
+				ich,
+				0,
+				0,
+				true,
+				1,
+				null,
+				true
+			);
 			TypeDelete();
 
-			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng));
+			Assert.That(
+				para1.Contents.Text,
+				Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng)
+			);
 			Assert.That(trans1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT1 BT2"));
 		}
 
@@ -1869,7 +2380,9 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// Add a second paragraph to the first text and create a Back Translations on
 			// only the second paragraph
-			IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookRepository>().GetObject(m_hvoRoot);
+			IScrBook book = Cache
+				.ServiceLocator.GetInstance<IScrBookRepository>()
+				.GetObject(m_hvoRoot);
 			IStText text1 = (IStText)book.FootnotesOS[0];
 			IStTxtPara para1 = (IStTxtPara)text1.ParagraphsOS[0];
 			IStTxtPara para2 = AddParaToMockedText(text1, "TestStyle");
@@ -1889,13 +2402,29 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].cpropPrevious = 0;
 			levelInfo[0].ihvo = 0;
 			int ich = DummyBasicView.kFirstParaEng.Length;
-			rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, ich, 0, 0, true, 1, null,
-				true);
+			rootBox.MakeTextSelection(
+				0,
+				2,
+				levelInfo,
+				StTxtParaTags.kflidContents,
+				0,
+				ich,
+				0,
+				0,
+				true,
+				1,
+				null,
+				true
+			);
 			TypeDelete();
 
-			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng));
-			using (IEnumerator<ICmTranslation> translations = para1.TranslationsOC.GetEnumerator())
+			Assert.That(
+				para1.Contents.Text,
+				Is.EqualTo(DummyBasicView.kFirstParaEng + DummyBasicView.kSecondParaEng)
+			);
+			using (
+				IEnumerator<ICmTranslation> translations = para1.TranslationsOC.GetEnumerator()
+			)
 			{
 				translations.MoveNext();
 				ICmTranslation transl = translations.Current;
@@ -1921,7 +2450,9 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// Add a second paragraph to the first text and create some Back Translations on
 			// both paragraphs
-			IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookRepository>().GetObject(m_hvoRoot);
+			IScrBook book = Cache
+				.ServiceLocator.GetInstance<IScrBookRepository>()
+				.GetObject(m_hvoRoot);
 			IStText text1 = (IStText)book.FootnotesOS[0];
 			IStTxtPara para1 = (IStTxtPara)text1.ParagraphsOS[0];
 			IStTxtPara para2 = AddParaToMockedText(text1, "TestStyle");
@@ -1948,12 +2479,30 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].ihvo = 0;
 			int ichAnchor = DummyBasicView.kFirstParaEng.Length - 2;
 			int ichEnd = 2;
-			IVwSelection sel = rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, ichAnchor, ichEnd, 0, true, 1, null, true);
+			IVwSelection sel = rootBox.MakeTextSelection(
+				0,
+				2,
+				levelInfo,
+				StTxtParaTags.kflidContents,
+				0,
+				ichAnchor,
+				ichEnd,
+				0,
+				true,
+				1,
+				null,
+				true
+			);
 			TypeChar('a');
 
-			Assert.That(para1.Contents.Text, Is.EqualTo(DummyBasicView.kFirstParaEng.Substring(0, ichAnchor) + "a" +
-				DummyBasicView.kSecondParaEng.Substring(ichEnd)));
+			Assert.That(
+				para1.Contents.Text,
+				Is.EqualTo(
+					DummyBasicView.kFirstParaEng.Substring(0, ichAnchor)
+						+ "a"
+						+ DummyBasicView.kSecondParaEng.Substring(ichEnd)
+				)
+			);
 			Assert.That(trans1.Translation.get_String(m_wsEng).Text, Is.EqualTo("BT1 BT2"));
 		}
 		#endregion
@@ -1984,8 +2533,20 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].tag = StTextTags.kflidParagraphs;
 			levelInfo[0].cpropPrevious = 0;
 			levelInfo[0].ihvo = 0;
-			rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, 0, 3, 0, true, 0, null, true);
+			rootBox.MakeTextSelection(
+				0,
+				2,
+				levelInfo,
+				StTxtParaTags.kflidContents,
+				0,
+				0,
+				3,
+				0,
+				true,
+				0,
+				null,
+				true
+			);
 
 			// We have to set up a form that contains the view and the control that we pretend
 			// gets focus.
@@ -1997,7 +2558,11 @@ namespace SIL.FieldWorks.Common.RootSites
 				// Lets pretend we a non-view gets the focus (although it's the same)
 				m_basicView.KillFocus(control);
 
-				Assert.That(rootBox.Selection.IsEnabled, Is.True, "Selection should still be enabled if non-view window got focus");
+				Assert.That(
+					rootBox.Selection.IsEnabled,
+					Is.True,
+					"Selection should still be enabled if non-view window got focus"
+				);
 			}
 		}
 
@@ -2023,13 +2588,29 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].tag = StTextTags.kflidParagraphs;
 			levelInfo[0].cpropPrevious = 0;
 			levelInfo[0].ihvo = 0;
-			rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, 0, 3, 0, true, 0, null, true);
+			rootBox.MakeTextSelection(
+				0,
+				2,
+				levelInfo,
+				StTxtParaTags.kflidContents,
+				0,
+				0,
+				3,
+				0,
+				true,
+				0,
+				null,
+				true
+			);
 
 			// Lets pretend we a different view gets the focus (although it's the same)
 			m_basicView.KillFocus(m_basicView);
 
-			Assert.That(rootBox.Selection.IsEnabled, Is.False, "Selection should not be enabled if other view window got focus");
+			Assert.That(
+				rootBox.Selection.IsEnabled,
+				Is.False,
+				"Selection should not be enabled if other view window got focus"
+			);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2055,13 +2636,29 @@ namespace SIL.FieldWorks.Common.RootSites
 			levelInfo[0].tag = StTextTags.kflidParagraphs;
 			levelInfo[0].cpropPrevious = 0;
 			levelInfo[0].ihvo = 0;
-			rootBox.MakeTextSelection(0, 2, levelInfo,
-				StTxtParaTags.kflidContents, 0, 0, 3, 0, true, 0, null, true);
+			rootBox.MakeTextSelection(
+				0,
+				2,
+				levelInfo,
+				StTxtParaTags.kflidContents,
+				0,
+				0,
+				3,
+				0,
+				true,
+				0,
+				null,
+				true
+			);
 
 			// Lets pretend we a different view gets the focus (although it's the same)
 			m_basicView.KillFocus(m_basicView);
 
-			Assert.That(rootBox.Selection.IsEnabled, Is.True, "Selection should still be enabled if the ShowRangeSelAfterLostFocus flag is set");
+			Assert.That(
+				rootBox.Selection.IsEnabled,
+				Is.True,
+				"Selection should still be enabled if the ShowRangeSelAfterLostFocus flag is set"
+			);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2091,7 +2688,11 @@ namespace SIL.FieldWorks.Common.RootSites
 				// Lets pretend we a non-view gets the focus (although it's the same)
 				m_basicView.KillFocus(control);
 
-				Assert.That(rootBox.Selection.IsEnabled, Is.False, "Selection should not be enabled if non-view window got focus if we have an IP");
+				Assert.That(
+					rootBox.Selection.IsEnabled,
+					Is.False,
+					"Selection should not be enabled if non-view window got focus if we have an IP"
+				);
 			}
 		}
 
@@ -2114,7 +2715,11 @@ namespace SIL.FieldWorks.Common.RootSites
 			// Lets pretend we a different view gets the focus (although it's the same)
 			m_basicView.KillFocus(m_basicView);
 
-			Assert.That(rootBox.Selection.IsEnabled, Is.False, "Selection should not be enabled if other view window got focus");
+			Assert.That(
+				rootBox.Selection.IsEnabled,
+				Is.False,
+				"Selection should not be enabled if other view window got focus"
+			);
 		}
 		#endregion
 
@@ -2197,9 +2802,17 @@ namespace SIL.FieldWorks.Common.RootSites
 
 				// Attempt to act like the real program in the case of complex deletions
 				if (fWasComplex)
-					rootBox.DataAccess.GetActionHandler().BreakUndoTask("complex deletion", "complex deletion");
+					rootBox
+						.DataAccess.GetActionHandler()
+						.BreakUndoTask("complex deletion", "complex deletion");
 
-				if (!fWasComplex || (ch != (char)VwSpecialChars.kscBackspace && ch != (char)VwSpecialChars.kscDelForward))
+				if (
+					!fWasComplex
+					|| (
+						ch != (char)VwSpecialChars.kscBackspace
+						&& ch != (char)VwSpecialChars.kscDelForward
+					)
+				)
 					rootBox.OnTyping(vg, ch.ToString(), VwShiftStatus.kfssNone, ref wsTemp);
 			}
 			finally

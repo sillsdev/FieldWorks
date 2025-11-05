@@ -81,9 +81,60 @@ def is_string_literal(token: str) -> bool:
     token = token.lstrip()
     if not token:
         return False
-    if token[0] in ('"', "'"):
+    first = token[0]
+    if first in ('"', "'"):
         return True
-    return token.startswith('@"')
+    if first == "$":
+        if len(token) > 1 and token[1] in ('"', "@"):
+            return True
+    if first == "@" and len(token) > 1 and token[1] == '"':
+        return True
+    if token.startswith('@$"') or token.startswith('$@"'):
+        return True
+    return False
+
+
+def looks_like_tolerance(token: str) -> bool:
+    token = token.strip()
+    if not token:
+        return False
+
+    lowered = token.lower()
+    if lowered.startswith("message:"):
+        return False
+
+    # String literals, interpolated strings, and concatenations contain quotes/dollar signs.
+    if (
+        '"' in token
+        or "'" in token
+        or token.startswith("$")
+        or token.startswith("@$")
+        or token.startswith("$@")
+    ):
+        return False
+
+    keywords = (
+        "timespan",
+        "tolerance",
+        "milliseconds",
+        "seconds",
+        "minutes",
+        "days",
+        "ticks",
+    )
+    if any(keyword in lowered for keyword in keywords):
+        return True
+
+    # Numeric literals or numeric expressions (including decimals, scientific notation, or simple arithmetic)
+    numeric_chars = set("0123456789")
+    if any(ch in numeric_chars for ch in token):
+        return True
+
+    # Expressions like SomeValue or Constants typically used for tolerance end in specific suffixes.
+    if token.endswith("Tolerance"):
+        return True
+
+    return False
 
 
 def is_constant_expression(token: str) -> bool:
@@ -188,7 +239,7 @@ def convert_are_equal(args_str: str, original: str) -> Optional[str]:
 
     if remaining:
         first = remaining[0]
-        if not is_string_literal(first) and not first.lower().startswith("message:"):
+        if looks_like_tolerance(first):
             constraint += f".Within({first})"
             remaining = remaining[1:]
 
@@ -239,8 +290,10 @@ def convert_are_not_equal(args_str: str, original: str) -> Optional[str]:
 
     constraint = f"Is.Not.EqualTo({expected})"
     if remaining:
-        constraint += f".Within({remaining[0]})"
-        remaining = remaining[1:]
+        first = remaining[0]
+        if looks_like_tolerance(first):
+            constraint += f".Within({first})"
+            remaining = remaining[1:]
 
     suffix = ""
     if remaining:
@@ -462,7 +515,9 @@ def convert_string_assert_contains(args_str: str, original: str) -> Optional[str
     return f"Assert.That({actual}, Does.Contain({expected}){suffix})"
 
 
-def convert_string_assert_does_not_contain(args_str: str, original: str) -> Optional[str]:
+def convert_string_assert_does_not_contain(
+    args_str: str, original: str
+) -> Optional[str]:
     args = split_args(args_str)
     if len(args) < 2:
         return None
@@ -527,7 +582,9 @@ def convert_collection_assert_are_equal(args_str: str, original: str) -> Optiona
     return f"Assert.That({actual}, Is.EqualTo({expected}){suffix})"
 
 
-def convert_collection_assert_are_equivalent(args_str: str, original: str) -> Optional[str]:
+def convert_collection_assert_are_equivalent(
+    args_str: str, original: str
+) -> Optional[str]:
     args = split_args(args_str)
     if len(args) < 2:
         return None
@@ -559,7 +616,9 @@ def convert_collection_assert_contains(args_str: str, original: str) -> Optional
     return f"Assert.That({actual}, Does.Contain({expected}){suffix})"
 
 
-def convert_collection_assert_does_not_contain(args_str: str, original: str) -> Optional[str]:
+def convert_collection_assert_does_not_contain(
+    args_str: str, original: str
+) -> Optional[str]:
     args = split_args(args_str)
     if len(args) < 2:
         return None
@@ -579,15 +638,21 @@ def convert_collection_assert_is_empty(args_str: str, original: str) -> Optional
     return convert_simple_predicate(args_str, original, "Is.Empty")
 
 
-def convert_collection_assert_is_not_empty(args_str: str, original: str) -> Optional[str]:
+def convert_collection_assert_is_not_empty(
+    args_str: str, original: str
+) -> Optional[str]:
     return convert_simple_predicate(args_str, original, "Is.Not.Empty")
 
 
-def convert_collection_assert_all_items_are_unique(args_str: str, original: str) -> Optional[str]:
+def convert_collection_assert_all_items_are_unique(
+    args_str: str, original: str
+) -> Optional[str]:
     return convert_simple_predicate(args_str, original, "Is.Unique")
 
 
-def convert_collection_assert_is_subset_of(args_str: str, original: str) -> Optional[str]:
+def convert_collection_assert_is_subset_of(
+    args_str: str, original: str
+) -> Optional[str]:
     args = split_args(args_str)
     if len(args) < 2:
         return None
@@ -633,7 +698,10 @@ CONVERTERS: List[tuple[str, Callable[[str, str], Optional[str]]]] = [
     ("CollectionAssert.DoesNotContain", convert_collection_assert_does_not_contain),
     ("CollectionAssert.IsEmpty", convert_collection_assert_is_empty),
     ("CollectionAssert.IsNotEmpty", convert_collection_assert_is_not_empty),
-    ("CollectionAssert.AllItemsAreUnique", convert_collection_assert_all_items_are_unique),
+    (
+        "CollectionAssert.AllItemsAreUnique",
+        convert_collection_assert_all_items_are_unique,
+    ),
     ("CollectionAssert.IsSubsetOf", convert_collection_assert_is_subset_of),
     # FileAssert - must come before Assert to avoid partial matches
     ("FileAssert.AreEqual", convert_file_assert_are_equal),

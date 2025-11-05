@@ -538,7 +538,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		{
 			var badResXFilePath = SimpleSetupWithResX(LocaleGe, english, localized);
 
-			Assert.False(m_sut.Execute());
+			Assert.That(m_sut.Execute(), Is.False);
 
 			Assert.That(m_sut.ErrorMessages, Does.Contain(badResXFilePath));
 		}
@@ -554,7 +554,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			CreateLocalizedResX(m_FdoFolder, "unbreakable", LocaleGe, english, localized,
 				$"{newlineArg} is a line separator character.  It is optional.");
 
-			Assert.True(m_sut.Execute(), m_sut.ErrorMessages);
+			Assert.That(m_sut.Execute(), Is.True, m_sut.ErrorMessages);
 		}
 
 		/// <summary>
@@ -568,7 +568,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				"{0} fell and the king couldn't put him together again",
 				"{0} fell and the king couldn't put {0} together again");
 
-			Assert.True(m_sut.Execute(), m_sut.ErrorMessages);
+			Assert.That(m_sut.Execute(), Is.True, m_sut.ErrorMessages);
 		}
 
 		[TestCase(ColorStringsFilenameNoExt, "White,255,255,255", "Weiß,225,123,0", false, "mismatched RGB")]
@@ -597,7 +597,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			CreateResX(m_FdoFolder, badFilenameBase, "some text");
 			var badFile = CreateLocalizedResXFor(m_FdoFolder, badFilenameBase, LocaleGe, "just fine", dataName2: extraDataName, textValue2: "not fine");
 
-			Assert.False(m_sut.Execute());
+			Assert.That(m_sut.Execute(), Is.False);
 
 			Assert.That(m_sut.ErrorMessages, Does.Contain(badFile));
 			Assert.That(m_sut.ErrorMessages, Does.Contain(extraDataName));
@@ -612,7 +612,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			CreateResX(m_FdoFolder, badFilenameBase, "some text", dataName2: extraDataName, textValue2: "you can't find me!");
 			var badFile = CreateLocalizedResXFor(m_FdoFolder, badFilenameBase, LocaleGe, "only one");
 
-			Assert.False(m_sut.Execute());
+			Assert.That(m_sut.Execute(), Is.False);
 
 			Assert.That(m_sut.ErrorMessages, Does.Contain(badFile));
 			Assert.That(m_sut.ErrorMessages, Does.Contain(extraDataName));
@@ -693,7 +693,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			CreateLocalizedResX(m_FdoFolder, "badFile", LocaleGe, "test {0}", badString1, "test {9}", badString2);
 
 
-			Assert.False(m_sut.Execute());
+			Assert.That(m_sut.Execute(), Is.False);
 
 			Assert.That(m_sut.ErrorMessages, Does.Contain(badString1));
 			Assert.That(m_sut.ErrorMessages, Does.Contain(badString2));
@@ -708,7 +708,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			var badFileName = CreateResX(m_FdoFolder, badFileNoExt, "unimportant", dataName2: dupStringId, textValue2: "unimportant");
 			CreateLocalizedResXFor(m_FdoFolder, badFileNoExt, LocaleGe, "egal", dataName2: dupStringId, textValue2: "völlig egal");
 
-			Assert.False(m_sut.Execute());
+			Assert.That(m_sut.Execute(), Is.False);
 
 			Assert.That(m_sut.ErrorMessages, Does.Contain(dupStringId));
 			Assert.That(m_sut.ErrorMessages, Does.Contain(badFileName));

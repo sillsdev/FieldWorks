@@ -83,9 +83,9 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 					"<def ws='" + WsDe + "'>Probe</def></item></eticPOSList>"));
 
 			Assert.That(xliffDocs.Count, Is.EqualTo(3));
-			Assert.Contains(WsEn, xliffDocs.Keys);
-			Assert.Contains(WsEs, xliffDocs.Keys);
-			Assert.Contains(WsDe, xliffDocs.Keys);
+			Assert.That(xliffDocs.Keys, Does.Contain(WsEn));
+			Assert.That(xliffDocs.Keys, Does.Contain(WsEs));
+			Assert.That(xliffDocs.Keys, Does.Contain(WsDe));
 
 			var originalXpath = $"/xliff/file[@original='{TestFileName}']";
 			AssertThatXmlIn.String(xliffDocs[WsEn].ToString()).HasSpecifiedNumberOfMatchesForXpath(originalXpath, 1);
@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 					"<def ws='" + WsEn + "'>test</def></item></eticPOSList>"));
 
 			Assert.That(xliffDocs.Count, Is.EqualTo(1));
-			Assert.Contains(WsEn, xliffDocs.Keys);
+			Assert.That(xliffDocs.Keys, Does.Contain(WsEn));
 
 			AssertThatXmlIn.String(xliffDocs[WsEn].ToString()).HasSpecifiedNumberOfMatchesForXpath($"/xliff/file[@original='{TestFileName}']", 1);
 			AssertThatXmlIn.String(xliffDocs[WsEn].ToString()).HasNoMatchForXpath($"/xliff/file[@original='{fullPath}']");
@@ -141,7 +141,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 
 
 			Assert.That(xliffDocs.Count, Is.EqualTo(1));
-			Assert.Contains(WsEn, xliffDocs.Keys);
+			Assert.That(xliffDocs.Keys, Does.Contain(WsEn));
 			var enXliff = xliffDocs[WsEn].ToString();
 
 			const string itemXpath = "/xliff/file/body/group[@id='" + guid + "_" + id + "']";
@@ -196,9 +196,9 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 
 
 			Assert.That(xliffDocs.Count, Is.EqualTo(3));
-			Assert.Contains(WsEn, xliffDocs.Keys);
-			Assert.Contains(WsEs, xliffDocs.Keys);
-			Assert.Contains(WsZh, xliffDocs.Keys);
+			Assert.That(xliffDocs.Keys, Does.Contain(WsEn));
+			Assert.That(xliffDocs.Keys, Does.Contain(WsEs));
+			Assert.That(xliffDocs.Keys, Does.Contain(WsZh));
 
 			var esXliff = xliffDocs[WsEs].ToString();
 			var zhXliff = xliffDocs[WsZh].ToString();
@@ -250,9 +250,9 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 
 
 			Assert.That(xliffDocs.Count, Is.EqualTo(3));
-			Assert.Contains(WsEn, xliffDocs.Keys);
-			Assert.Contains(WsEs, xliffDocs.Keys);
-			Assert.Contains(WsZh, xliffDocs.Keys);
+			Assert.That(xliffDocs.Keys, Does.Contain(WsEn));
+			Assert.That(xliffDocs.Keys, Does.Contain(WsEs));
+			Assert.That(xliffDocs.Keys, Does.Contain(WsZh));
 
 			var esXliff = xliffDocs[WsEs].ToString();
 			var zhXliff = xliffDocs[WsZh].ToString();
@@ -317,8 +317,8 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 
 
 			Assert.That(xliffDocs.Count, Is.EqualTo(2));
-			Assert.Contains(WsEn, xliffDocs.Keys);
-			Assert.Contains(WsEs, xliffDocs.Keys);
+			Assert.That(xliffDocs.Keys, Does.Contain(WsEn));
+			Assert.That(xliffDocs.Keys, Does.Contain(WsEs));
 			var esXliff = xliffDocs[WsEs].ToString();
 
 			const string itemXpath = "/xliff/file/body/group[@id='" + parentGuid + "_" + parentId + "']/group[@id='" + guid + "_" + id + "']";
@@ -376,9 +376,9 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 
 
 			Assert.That(xliffDocs.Count, Is.EqualTo(3));
-			Assert.Contains(WsEn, xliffDocs.Keys);
-			Assert.Contains(WsEs, xliffDocs.Keys);
-			Assert.Contains(WsZh, xliffDocs.Keys);
+			Assert.That(xliffDocs.Keys, Does.Contain(WsEn));
+			Assert.That(xliffDocs.Keys, Does.Contain(WsEs));
+			Assert.That(xliffDocs.Keys, Does.Contain(WsZh));
 
 			var esXliff = xliffDocs[WsEs].ToString();
 			var zhXliff = xliffDocs[WsZh].ToString();
@@ -414,19 +414,19 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			const string outputDir = @"C:\WorkingFiles\XliffGoldEtic";
 			TaskTestUtils.RecreateDirectory(outputDir);
 
-			Assert.True(new GoldEticToXliff
+			Assert.That(new GoldEticToXliff
 			{
 				SourceXml = @"..\..\..\..\DistFiles\Templates\GOLDEtic.xml",
 				XliffOutputDir = outputDir
-			}.Execute());
+			}.Execute(), Is.True);
 
 			var outputFiles = Directory.GetFiles(outputDir).Where(f => !f.EndsWith(".en.xlf")).ToArray();
 
-			Assert.True(new XliffToGoldEtic
+			Assert.That(new XliffToGoldEtic
 			{
 				XliffSourceFiles = outputFiles,
 				OutputXml = Path.Combine(outputDir, "..", "GOLDEticRoundtripped.xml")
-			}.Execute());
+			}.Execute(), Is.True);
 		}
 	}
 }

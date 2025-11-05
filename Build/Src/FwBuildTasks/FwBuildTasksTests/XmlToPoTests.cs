@@ -299,7 +299,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			Assert.That(postr38.AutoComments.Count, Is.EqualTo(1), "fwdictconfig string[38].AutoComments.Count");
 			Assert.That(postr38.AutoComments[0], Is.EqualTo("/Language Explorer/DefaultConfigurations/Dictionary/Root.fwdictconfig:://ConfigurationItem[@name='MainEntrySubentries']/ConfigurationItem/@name"), "fwdictconfig string[38].AutoComments[0]");
 
-			Assert.False(poStrings.Any(poStr => poStr.MsgIdAsString() == "MainEntrySubentries"), "Shared Items' labels should not be translatable");
+			Assert.That(poStrings.Any(poStr => poStr.MsgIdAsString() == "MainEntrySubentries"), Is.False, "Shared Items' labels should not be translatable");
 		}
 
 		[Test]

@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			var message = Assert.Throws<ArgumentException>(() =>
 					LocalizeLists.SplitSourceLists(Path.GetRandomFileName(), Path.GetTempPath(), null))
 				.Message;
-			StringAssert.Contains("The source file does not exist", message);
+			Assert.That(message, Does.Contain("The source file does not exist"));
 		}
 
 		[Test]
@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			{
 				var message = Assert.Throws<ArgumentException>(() =>
 					LocalizeLists.SplitLists(xmlReader, Path.GetTempPath(), null)).Message;
-				StringAssert.Contains("Source file is not in the expected format", message);
+				Assert.That(message, Does.Contain("Source file is not in the expected format"));
 			}
 		}
 
@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			{
 				var message = Assert.Throws<ArgumentException>(() =>
 					LocalizeLists.SplitLists(xmlReader, Path.GetTempPath(), null)).Message;
-				StringAssert.Contains("Source file has an unexpected list count.", message);
+				Assert.That(message, Does.Contain("Source file has an unexpected list count."));
 			}
 		}
 
@@ -96,8 +96,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				var message = Assert.Throws<ArgumentException>(() =>
 					LocalizeLists.SplitLists(xmlReader, Path.GetTempPath(), null,
 						new List<string> {"ArgumentIsNotRight"}, null)).Message;
-				StringAssert.Contains("ListsToInclude is expecting one or more .xlf file names",
-					message);
+				Assert.That(message, Does.Contain("ListsToInclude is expecting one or more .xlf file names"));
 			}
 		}
 
@@ -111,8 +110,8 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				var message = Assert.Throws<ArgumentException>(() =>
 					LocalizeLists.SplitLists(xmlReader, Path.GetTempPath(), null,
 						new List<string> { LocalizeLists.AnthropologyCategories }))?.Message;
-				StringAssert.Contains("Source file does not have content for all lists to include", message);
-				StringAssert.Contains(LocalizeLists.AnthropologyCategories, message);
+				Assert.That(message, Does.Contain("Source file does not have content for all lists to include"));
+				Assert.That(message, Does.Contain(LocalizeLists.AnthropologyCategories));
 			}
 		}
 
@@ -125,7 +124,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			{
 				var message = Assert.Throws<ArgumentException>(() =>
 					LocalizeLists.SplitLists(xmlReader, Path.GetTempPath(), LocalizeLists.AcademicDomains))?.Message;
-				StringAssert.Contains("Source file has an unexpected list count.", message);
+				Assert.That(message, Does.Contain("Source file has an unexpected list count."));
 			}
 		}
 
@@ -177,7 +176,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			{
 				var message = Assert.Throws<NotSupportedException>(() =>
 					LocalizeLists.SplitLists(xmlReader, Path.GetTempPath(), null)).Message;
-				StringAssert.Contains("GlossPrepend is not supported", message);
+				Assert.That(message, Does.Contain("GlossPrepend is not supported"));
 			}
 		}
 
