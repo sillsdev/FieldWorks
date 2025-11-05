@@ -393,7 +393,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			ObjectListPublisher publisher = new ObjectListPublisher(rsda, kObjectListFlid);
 			XMLViewsDataCache xmlCache = MockRepository.GenerateStub<XMLViewsDataCache>(publisher, true, new Dictionary<int, int>());
 
-			xmlCache.Stub(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass)).Return(ScrTxtParaTags.kClassId);
+			xmlCache.Stub(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass)).Returns(ScrTxtParaTags.kClassId);
 			xmlCache.Stub(c => c.VecProp(It.IsAny<int>(), It.IsAny<int>())).Do(new Func<int, int, int[]>(publisher.VecProp));
 			xmlCache.MetaDataCache = new RespellingMdc((IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor);
 			xmlCache.Stub(c => c.get_ObjectProp(It.IsAny<int>(), It.IsAny<int>())).Do(new Func<int, int, int>(publisher.get_ObjectProp));
@@ -477,7 +477,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			ObjectListPublisher publisher = new ObjectListPublisher(rsda, kObjectListFlid);
 			XMLViewsDataCache xmlCache = MockRepository.GenerateStub<XMLViewsDataCache>(publisher, true, new Dictionary<int, int>());
 
-			xmlCache.Stub(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass)).Return(ScrTxtParaTags.kClassId);
+			xmlCache.Stub(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass)).Returns(ScrTxtParaTags.kClassId);
 			xmlCache.Stub(c => c.VecProp(It.IsAny<int>(), It.IsAny<int>())).Do(new Func<int, int, int[]>(publisher.VecProp));
 			xmlCache.MetaDataCache = new RespellingMdc((IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor);
 			xmlCache.Stub(c => c.get_ObjectProp(It.IsAny<int>(), It.IsAny<int>())).Do(new Func<int, int, int>(publisher.get_ObjectProp));

@@ -159,11 +159,11 @@ namespace SIL.FieldWorks.IText
 			var glossString = new Mock<IMultiUnicode>().Object;
 			glossString
 				.Stub(g => g.get_String(Cache.DefaultAnalWs))
-				.Return(TsStringUtils.MakeString("hello", Cache.DefaultAnalWs));
+				.Returns(TsStringUtils.MakeString("hello", Cache.DefaultAnalWs));
 			var formString = new Mock<IMultiString>().Object;
 			formString
 				.Stub(f => f.get_String(Cache.DefaultVernWs))
-				.Return(TsStringUtils.MakeString("hi", Cache.DefaultVernWs));
+				.Returns(TsStringUtils.MakeString("hi", Cache.DefaultVernWs));
 			var sense = new Mock<ILexSense>().Object;
 			sense.Setup(s => s.Gloss).Returns(glossString);
 			var bundle = new Mock<IWfiMorphBundle>().Object;
