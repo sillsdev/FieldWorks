@@ -586,7 +586,14 @@ namespace SIL.FieldWorks.Common.Controls
 		///
 		/// <param name='obj'>The object to be serialized.</param>
 		/// <returns></returns>
+		/// <remarks>
+		/// NOTE: BinaryFormatter is deprecated in .NET 5+ due to security concerns.
+		/// This method is retained for backwards compatibility but should not be used in new code.
+		/// Consider using JSON, XML, or other safer serialization methods instead.
+		/// See: https://aka.ms/binaryformatter
+		/// </remarks>
 		///***********************************************************************************
+#pragma warning disable SYSLIB0011 // BinaryFormatter serialization is obsolete
 		public static MemoryStream SerializeToBinary(object obj)
 		{
 			MemoryStream stream = new MemoryStream();
@@ -603,6 +610,12 @@ namespace SIL.FieldWorks.Common.Controls
 		///
 		/// <param name="stream">The stream from which to deserialize</param>
 		/// <returns>The deserialized object.</returns>
+		/// <remarks>
+		/// NOTE: BinaryFormatter is deprecated in .NET 5+ due to security concerns.
+		/// This method is retained for backwards compatibility but should not be used in new code.
+		/// Consider using JSON, XML, or other safer serialization methods instead.
+		/// See: https://aka.ms/binaryformatter
+		/// </remarks>
 		///***********************************************************************************
 		public static Object DeserializeFromBinary(Stream stream)
 		{
@@ -610,6 +623,7 @@ namespace SIL.FieldWorks.Common.Controls
 			BinaryFormatter formatter = new BinaryFormatter();
 			return (formatter.Deserialize(stream));
 		}
+#pragma warning restore SYSLIB0011
 		#endregion
 
 		#region ISupportInitialize Methods
