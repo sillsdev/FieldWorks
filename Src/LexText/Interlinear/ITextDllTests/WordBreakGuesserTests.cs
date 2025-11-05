@@ -18,8 +18,8 @@ namespace SIL.FieldWorks.IText
 			WordBreakGuesserTester tester = new WordBreakGuesserTester();
 			tester.Init(new List<string> {"the", "there","is"});
 			int[] breakLocs = tester.BreakResults("thereis");
-			Assert.True(breakLocs.Length == 2); //we should have found 2 words
-			Assert.True(breakLocs[0] == 0 && breakLocs[1] == 5);//there at index 0, and is at index 5
+			Assert.That(breakLocs.Length == 2, Is.True); //we should have found 2 words
+			Assert.That(breakLocs[0] == 0 && breakLocs[1] == 5, Is.True);//there at index 0, and is at index 5
 		}
 
 		/// <summary>
@@ -31,9 +31,9 @@ namespace SIL.FieldWorks.IText
 			WordBreakGuesserTester tester = new WordBreakGuesserTester();
 			tester.Init(new List<string> { "the", "there", "is", "rest", "easy"});
 			int[] breakLocs = tester.BreakResults("therestiseasy");
-			Assert.True(breakLocs.Length == 4); //we should have found four words
+			Assert.That(breakLocs.Length == 4, Is.True); //we should have found four words
 			//the at index 0, rest at 3, is at 7, easy at 9
-			Assert.True(breakLocs[0] == 0 && breakLocs[1] == 3 && breakLocs[2] == 7 && breakLocs[3] == 9);
+			Assert.That(breakLocs[0] == 0 && breakLocs[1] == 3 && breakLocs[2] == 7 && breakLocs[3] == 9, Is.True);
 		}
 
 		/// <summary>
@@ -45,9 +45,9 @@ namespace SIL.FieldWorks.IText
 			WordBreakGuesserTester tester = new WordBreakGuesserTester();
 			tester.Init(new List<string> { "the", "he", "here", "a", "there", "is", "rest", "easy" });
 			int[] breakLocs = tester.BreakResults("therestiseasy");
-			Assert.True(breakLocs.Length == 4); //we should have found four words
+			Assert.That(breakLocs.Length == 4, Is.True); //we should have found four words
 			//the at index 0, rest at 3, is at 7, easy at 9
-			Assert.True(breakLocs[0] == 0 && breakLocs[1] == 3 && breakLocs[2] == 7 && breakLocs[3] == 9);
+			Assert.That(breakLocs[0] == 0 && breakLocs[1] == 3 && breakLocs[2] == 7 && breakLocs[3] == 9, Is.True);
 		}
 
 		/// <summary>
@@ -59,9 +59,9 @@ namespace SIL.FieldWorks.IText
 			WordBreakGuesserTester tester = new WordBreakGuesserTester();
 			tester.Init(new List<string> { "there", "isn't", "a", "problem", "is", "this", "fail" });
 			int[] breakLocs = tester.BreakResults("thereisn'tapunctuationproblem,isthere?thisshould'tfailifthereis");
-			Assert.True(breakLocs.Length == 11); //we should have found thirteen words
+			Assert.That(breakLocs.Length == 11, Is.True); //we should have found thirteen words
 			//there at index 0, isn't at 5, a at 10, is at 61
-			Assert.True(breakLocs[0] == 0 && breakLocs[1] == 5 && breakLocs[2] == 10 && breakLocs[10] == 61);
+			Assert.That(breakLocs[0] == 0 && breakLocs[1] == 5 && breakLocs[2] == 10 && breakLocs[10] == 61, Is.True);
 		}
 
 		[Test]
@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.IText
 												  "thesehonoreddeadwetakeincreaseddevotiontothatcauseforwhichtheygavethelastfullmeasureofdevotion" +
 												  "thatweherehighlyresolvethatthesedeadshallnothavediedinvainthatthisnationunderGodshallhaveanewbirth" +
 												  "offreedomandthatgovernmentofthepeoplebythepeopleandforthepeopleshallnotperishfromtheearth");
-			Assert.True(breakLocs.Length == 165); //we should have found 165 words
+			Assert.That(breakLocs.Length == 165, Is.True); //we should have found 165 words
 		}
 
 		/// <summary>
@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.IText
 			WordBreakGuesserTester tester = new WordBreakGuesserTester();
 			tester.Init(new List<string> { "thisisnotaword" });
 			int[] breakLocs = tester.BreakResults("thisisnotaword");
-			Assert.True(breakLocs.Length == 0);
+			Assert.That(breakLocs.Length == 0, Is.True);
 		}
 
 		sealed class WordBreakGuesserTester : WordBreakGuesser

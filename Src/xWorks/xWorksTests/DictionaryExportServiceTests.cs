@@ -24,18 +24,16 @@ namespace SIL.FieldWorks.XWorks
 			ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, mainEntry, complexEntry, false);
 			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, mainEntry, variantEntry, "Dialectal Variant");
 
-			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), "Should be generated once");
-			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo), "Should be generated once");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), Is.True, "Should be generated once");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo), Is.True, "Should be generated once");
 
 			ConfiguredXHTMLGeneratorTests.SetPublishAsMinorEntry(complexEntry, false);
 			ConfiguredXHTMLGeneratorTests.SetPublishAsMinorEntry(variantEntry, false);
 
 			//SUT
-			Assert.False(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo),
-				"Hidden minor entry should not be generated");
-			Assert.False(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo),
-				"Hidden minor entry should not be generated");
-			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, mainEntry.Hvo), "Main entry should still be generated");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), Is.False, "Hidden minor entry should not be generated");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo), Is.False, "Hidden minor entry should not be generated");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, mainEntry.Hvo), Is.True, "Main entry should still be generated");
 		}
 
 		[Test]
@@ -49,23 +47,21 @@ namespace SIL.FieldWorks.XWorks
 			ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, mainEntry, complexEntry, false);
 			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, mainEntry, variantEntry, "Dialectal Variant");
 
-			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), "Should be generated once");
-			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo), "Should be generated once");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), Is.True, "Should be generated once");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo), Is.True, "Should be generated once");
 
 			ConfiguredXHTMLGeneratorTests.SetPublishAsMinorEntry(complexEntry, false);
 			ConfiguredXHTMLGeneratorTests.SetPublishAsMinorEntry(variantEntry, false);
 
 			//SUT
-			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo),
-				"Lexeme-based hidden minor entry should still be generated, because Complex Forms are Main Entries");
-			Assert.False(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo),
-				"Lexeme-based hidden minor entry should not be generated, because Variants are always Minor Entries");
-			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, mainEntry.Hvo), "Main entry should still be generated");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), Is.True, "Lexeme-based hidden minor entry should still be generated, because Complex Forms are Main Entries");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo), Is.False, "Lexeme-based hidden minor entry should not be generated, because Variants are always Minor Entries");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, mainEntry.Hvo), Is.True, "Main entry should still be generated");
 
 			var compoundGuid = "1f6ae209-141a-40db-983c-bee93af0ca3c";
 			var complexOptions = (DictionaryNodeListOptions)configModel.Parts[0].DictionaryNodeOptions;
 			complexOptions.Options.First(option => option.Id == compoundGuid).IsEnabled = false;// Compound
-			Assert.False(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), "Should not be generated");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), Is.False, "Should not be generated");
 		}
 
 		[Test]
@@ -79,7 +75,7 @@ namespace SIL.FieldWorks.XWorks
 			var configModel = ConfiguredXHTMLGeneratorTests.CreateInterestingConfigurationModel(Cache);
 
 			// SUT
-			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, variComplexEntry.Hvo), "Should be generated once");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, variComplexEntry.Hvo), Is.True, "Should be generated once");
 		}
 	}
 }

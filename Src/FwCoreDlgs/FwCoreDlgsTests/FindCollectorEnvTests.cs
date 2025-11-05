@@ -124,12 +124,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				Assert.That(collectorEnv.FindNext(m_sel), Is.Null);
 
 				// Make sure nothing got replaced by accident.
-				Assert.AreEqual("This is some text so that we can test the find functionality.",
-					m_para1.Contents.Text);
-				Assert.AreEqual("Some more text so that we can test the find and replace functionality.",
-					m_para2.Contents.Text);
-				Assert.AreEqual("This purugruph doesn't contuin the first letter of the ulphubet.",
-					m_para3.Contents.Text);
+				Assert.That(m_para1.Contents.Text, Is.EqualTo("This is some text so that we can test the find functionality."));
+				Assert.That(m_para2.Contents.Text, Is.EqualTo("Some more text so that we can test the find and replace functionality."));
+				Assert.That(m_para3.Contents.Text, Is.EqualTo("This purugruph doesn't contuin the first letter of the ulphubet."));
 			}
 		}
 
@@ -160,12 +157,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				Assert.That(collectorEnv.FindNext(m_sel), Is.Null);
 
 				// Make sure nothing got replaced by accident.
-				Assert.AreEqual("This is some text so that we can test the find functionality.",
-					m_para1.Contents.Text);
-				Assert.AreEqual("Some more text so that we can test the find and replace functionality.",
-					m_para2.Contents.Text);
-				Assert.AreEqual("This purugruph doesn't contuin the first letter of the ulphubet.",
-					m_para3.Contents.Text);
+				Assert.That(m_para1.Contents.Text, Is.EqualTo("This is some text so that we can test the find functionality."));
+				Assert.That(m_para2.Contents.Text, Is.EqualTo("Some more text so that we can test the find and replace functionality."));
+				Assert.That(m_para3.Contents.Text, Is.EqualTo("This purugruph doesn't contuin the first letter of the ulphubet."));
 			}
 		}
 
@@ -183,12 +177,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			CollectorEnv.LocationInfo foundLocation = collectorEnv.FindNext(m_sel);
 			Assert.That(foundLocation, Is.Not.Null);
-			Assert.AreEqual(1, foundLocation.m_location.Length);
-			Assert.AreEqual(hvoExpected, foundLocation.TopLevelHvo);
-			Assert.AreEqual(StTextTags.kflidParagraphs, foundLocation.m_location[0].tag);
-			Assert.AreEqual(StTxtParaTags.kflidContents, foundLocation.m_tag);
-			Assert.AreEqual(ichMinExpected, foundLocation.m_ichMin);
-			Assert.AreEqual(ichLimExpected, foundLocation.m_ichLim);
+			Assert.That(foundLocation.m_location.Length, Is.EqualTo(1));
+			Assert.That(foundLocation.TopLevelHvo, Is.EqualTo(hvoExpected));
+			Assert.That(foundLocation.m_location[0].tag, Is.EqualTo(StTextTags.kflidParagraphs));
+			Assert.That(foundLocation.m_tag, Is.EqualTo(StTxtParaTags.kflidContents));
+			Assert.That(foundLocation.m_ichMin, Is.EqualTo(ichMinExpected));
+			Assert.That(foundLocation.m_ichLim, Is.EqualTo(ichLimExpected));
 			m_sel = foundLocation;
 		}
 		#endregion

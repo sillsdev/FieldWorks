@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			IWfiWordform wf = FindOrCreateWordform(form);
 			int actualSize = wf.AnalysesOC.Count;
 			string msg = String.Format("Wrong number of {0} analyses for: {1}", isStarting ? "starting" : "ending", form);
-			Assert.AreEqual(expectedSize, actualSize, msg);
+			Assert.That(actualSize, Is.EqualTo(expectedSize), msg);
 			return wf;
 		}
 
@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			int actualSize = analysis.EvaluationsRC.Count;
 			string msg = String.Format("Wrong number of {0} evaluations for analysis: {1} ({2})", isStarting ? "starting" : "ending", analysis.Hvo, additionalMessage);
-			Assert.AreEqual(expectedSize, actualSize, msg);
+			Assert.That(actualSize, Is.EqualTo(expectedSize), msg);
 		}
 
 		protected void ExecuteIdleQueue()
@@ -333,7 +333,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_filer.ProcessParse(pigs, ParserPriority.Low, result);
 			ExecuteIdleQueue();
 			CheckEvaluationSize(anal1, 1, false, "anal1Hvo");
-			Assert.IsFalse(anal2.IsValidObject, "analysis 2 should end up with no evaluations and so be deleted");
+			Assert.That(anal2.IsValidObject, Is.False, "analysis 2 should end up with no evaluations and so be deleted");
 			CheckEvaluationSize(anal3, 1, false, "anal3Hvo");
 		}
 
@@ -377,7 +377,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_filer.ProcessParse(theThreeLittlePigs, ParserPriority.Low, result);
 			ExecuteIdleQueue();
 			CheckEvaluationSize(anal, 2, false, "analHvo");
-			Assert.IsTrue(anal.IsValidObject, "analysis should end up with one evaluation and not be deleted");
+			Assert.That(anal.IsValidObject, Is.True, "analysis should end up with one evaluation and not be deleted");
 		}
 
 		[Test]
@@ -419,7 +419,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			m_filer.ProcessParse(threeLittlePigs, ParserPriority.Low, result);
 			ExecuteIdleQueue();
-			Assert.IsFalse(anal.IsValidObject, "analysis should end up with no evaluations and be deleted.");
+			Assert.That(anal.IsValidObject, Is.False, "analysis should end up with no evaluations and be deleted.");
 		}
 
 		[Test]
@@ -509,7 +509,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			CheckAnalysisSize("crebTEST", 2, false);
 			foreach (var analysis in creb.AnalysesOC)
 			{
-				Assert.AreEqual(1, analysis.MorphBundlesOS.Count, "Expected only 1 morph in the analysis");
+				Assert.That(analysis.MorphBundlesOS.Count, Is.EqualTo(1), "Expected only 1 morph in the analysis");
 				var morphBundle = analysis.MorphBundlesOS.ElementAt(0);
 				Assert.That(morphBundle.Form, Is.Not.Null, "First bundle: form is not null");
 				Assert.That(morphBundle.MsaRA, Is.Not.Null, "First bundle: msa is not null");
@@ -581,7 +581,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			ExecuteIdleQueue();
 			CheckAnalysisSize("brubsTEST", 1, false);
 			var analysis = brubs.AnalysesOC.ElementAt(0);
-			Assert.AreEqual(2, analysis.MorphBundlesOS.Count, "Expected only 2 morphs in the analysis");
+			Assert.That(analysis.MorphBundlesOS.Count, Is.EqualTo(2), "Expected only 2 morphs in the analysis");
 			var morphBundle = analysis.MorphBundlesOS.ElementAt(0);
 			Assert.That(morphBundle.Form, Is.Not.Null, "First bundle: form is not null");
 			Assert.That(morphBundle.MsaRA, Is.Not.Null, "First bundle: msa is not null");

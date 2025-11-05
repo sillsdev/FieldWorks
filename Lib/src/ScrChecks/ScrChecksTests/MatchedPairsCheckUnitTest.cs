@@ -67,13 +67,12 @@ namespace SILUBS.ScriptureChecks
 			List<TextTokenSubstring> tts =
 				CheckInventory.GetReferences(m_dataSource.TextTokens(), string.Empty);
 
-			Assert.AreEqual(result.GetUpperBound(0) + 1, tts.Count,
-				"A different number of results was returned than what was expected.");
+			Assert.That(tts.Count, Is.EqualTo(result.GetUpperBound(0) + 1), "A different number of results was returned than what was expected.");
 
 			for (int i = 0; i <= result.GetUpperBound(0); ++i)
 			{
-				Assert.AreEqual(result[i, 0], tts[i].InventoryText, "InventoryText number: " + i);
-				Assert.AreEqual(result[i, 1], tts[i].Message, "Message number: " + i);
+				Assert.That(0], Is.EqualTo(result[i), tts[i].InventoryText, "InventoryText number: " + i);
+				Assert.That(1], Is.EqualTo(result[i), tts[i].Message, "Message number: " + i);
 			}
 		}
 
@@ -376,7 +375,7 @@ namespace SILUBS.ScriptureChecks
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(2, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(2));
 			CheckError(0, m_dataSource.m_tokens[0].Text, 13, "(", "Unmatched punctuation");
 			CheckError(1, m_dataSource.m_tokens[2].Text, 19, ")", "Unmatched punctuation");
 		}
@@ -403,7 +402,7 @@ namespace SILUBS.ScriptureChecks
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 		#endregion
 	}

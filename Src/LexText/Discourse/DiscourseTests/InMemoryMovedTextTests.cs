@@ -255,7 +255,7 @@ namespace SIL.FieldWorks.Discourse
 				"Should remove 1st row and marker we moved onto; Hvo {0} still exists!");
 			// should have moved cellPart0_1 to start of row 1 and deleted marker
 			VerifyRowContents(0, new[] { cellPart0_1, cellPart1_2, cellPart1_4 });
-			Assert.AreEqual(row1.Hvo, m_chart.RowsOS[0].Hvo, "should have deleted row0 from chart");
+			Assert.That(m_chart.RowsOS[0].Hvo, Is.EqualTo(row1.Hvo), "should have deleted row0 from chart");
 			VerifyRowNumber("1", row1, "Should have modified row number");
 		}
 
@@ -558,10 +558,8 @@ namespace SIL.FieldWorks.Discourse
 			var col3Cell = MakeLocObj(row0, 3);
 
 			// SUT
-			Assert.IsTrue(m_logic.CallIsMarkedAsMovedFrom(col1Cell, 3),
-				"cell 1 should report a moved-from column 3 marker");
-			Assert.IsFalse(m_logic.CallIsMarkedAsMovedFrom(col3Cell, 1),
-				"cell 3 should not report a moved-from column 1 marker");
+			Assert.That(m_logic.CallIsMarkedAsMovedFrom(col1Cell, 3), Is.True, "cell 1 should report a moved-from column 3 marker");
+			Assert.That(m_logic.CallIsMarkedAsMovedFrom(col3Cell, 1), Is.False, "cell 3 should not report a moved-from column 1 marker");
 		}
 
 		/// <summary>
@@ -760,7 +758,7 @@ namespace SIL.FieldWorks.Discourse
 			VerifyRowNumber("1", row0, "Should have changed row number");
 
 			// make sure we have restored the words to the ribbon (?)
-			Assert.AreEqual(1, m_mockRibbon.CSelectFirstCalls);
+			Assert.That(m_mockRibbon.CSelectFirstCalls, Is.EqualTo(1));
 			AssertUsedAnalyses(allParaOccurrences, 1);
 		}
 
@@ -793,7 +791,7 @@ namespace SIL.FieldWorks.Discourse
 			VerifyChartRows(m_chart, new[] { row0, row1 }); // Should have deleted row 2
 
 			// make sure we have restored the words to the ribbon
-			Assert.AreEqual(1, m_mockRibbon.CSelectFirstCalls); // we've only selected the first ribbon item once?
+			Assert.That(m_mockRibbon.CSelectFirstCalls, Is.EqualTo(1)); // we've only selected the first ribbon item once?
 			AssertUsedAnalyses(allParaOccurrences, 3);
 		}
 
@@ -826,7 +824,7 @@ namespace SIL.FieldWorks.Discourse
 			VerifyRowContents(1, new[] { cellPart1_0 }); // Should have deleted postposed marker from row
 
 			// make sure we have restored the words to the ribbon
-			Assert.AreEqual(1, m_mockRibbon.CSelectFirstCalls);
+			Assert.That(m_mockRibbon.CSelectFirstCalls, Is.EqualTo(1));
 			AssertUsedAnalyses(allParaOccurrences, 2);
 		}
 
@@ -861,7 +859,7 @@ namespace SIL.FieldWorks.Discourse
 			VerifyRowContents(1, new[] { cellPart1_0 }); // Should have deleted postposed marker from row1
 
 			// make sure we have restored the words to the ribbon
-			Assert.AreEqual(1, m_mockRibbon.CSelectFirstCalls);
+			Assert.That(m_mockRibbon.CSelectFirstCalls, Is.EqualTo(1));
 			AssertUsedAnalyses(allParaOccurrences, 2);
 		}
 
@@ -892,7 +890,7 @@ namespace SIL.FieldWorks.Discourse
 			VerifyRowContents(0, new[] { cellPart0_1 }); // Should have deleted everything after 1st wordgrp
 
 			// make sure we have restored the words to the ribbon
-			Assert.AreEqual(1, m_mockRibbon.CSelectFirstCalls);
+			Assert.That(m_mockRibbon.CSelectFirstCalls, Is.EqualTo(1));
 			AssertUsedAnalyses(allParaOccurrences, 1);
 		}
 
@@ -1002,8 +1000,7 @@ namespace SIL.FieldWorks.Discourse
 			m_logic.CleanupInvalidChartCells();
 
 			// Verify
-			Assert.AreEqual((int)SpecialHVOValues.kHvoObjectDeleted, cellPartFoolish.Hvo,
-				"Should have deleted this cellpart.");
+			Assert.That(cellPartFoolish.Hvo, Is.EqualTo((int)SpecialHVOValues.kHvoObjectDeleted), "Should have deleted this cellpart.");
 			AssertUsedAnalyses(allParaOccurrences, 2); // no change in ribbon
 		}
 
@@ -1034,7 +1031,7 @@ namespace SIL.FieldWorks.Discourse
 			m_logic.CleanupInvalidChartCells();
 
 			// Verify that the rows are gone
-			CollectionAssert.IsEmpty(m_helper.Chart.RowsOS);
+			CollectionAssert.That(m_helper.Chart.RowsOS, Is.Empty);
 		}
 
 		/// <summary>
@@ -1072,7 +1069,7 @@ namespace SIL.FieldWorks.Discourse
 			m_logic.CleanupInvalidChartCells();
 
 			// Verify that the rows are gone
-			CollectionAssert.IsEmpty(m_helper.Chart.RowsOS);
+			CollectionAssert.That(m_helper.Chart.RowsOS, Is.Empty);
 		}
 
 		/// <summary>
@@ -1100,10 +1097,8 @@ namespace SIL.FieldWorks.Discourse
 
 			// Verify
 			AssertUsedAnalyses(allParaOccurrences, 1); // no change in ribbon
-			Assert.AreEqual(cfirstRow, row0.CellsOS.Count,
-				"Shouldn't have changed number of cells in first row.");
-			Assert.AreEqual(c2ndRow, row1.CellsOS.Count,
-				"Shouldn't have changed number of cells in second row.");
+			Assert.That(row0.CellsOS.Count, Is.EqualTo(cfirstRow), "Shouldn't have changed number of cells in first row.");
+			Assert.That(row1.CellsOS.Count, Is.EqualTo(c2ndRow), "Shouldn't have changed number of cells in second row.");
 		}
 
 		/// <summary>
@@ -1117,8 +1112,7 @@ namespace SIL.FieldWorks.Discourse
 			var row0 = m_helper.MakeRow1a(); // Create a single empty row
 
 			var crow = row0.CellsOS.Count;
-			Assert.AreEqual(0, crow,
-				"Shouldn't have any cells in first row.");
+			Assert.That(crow, Is.EqualTo(0), "Shouldn't have any cells in first row.");
 
 			EndSetupTask(); // SUT has its own UOW
 
@@ -1152,7 +1146,7 @@ namespace SIL.FieldWorks.Discourse
 			var actual = m_logic.CallCollectEligRows(new ChartLocation(row1, 0), false);
 
 			// Check results
-			Assert.AreEqual(new List<IConstChartRow> { row0 }, actual);
+			Assert.That(actual, Is.EqualTo(new List<IConstChartRow> { row0 }));
 		}
 
 		/// <summary>
@@ -1175,7 +1169,7 @@ namespace SIL.FieldWorks.Discourse
 			var actual = m_logic.CallCollectEligRows(new ChartLocation(row0, ilastCol), true);
 
 			// Check results
-			Assert.AreEqual(new List<IConstChartRow> { row1 }, actual);
+			Assert.That(actual, Is.EqualTo(new List<IConstChartRow> { row1 }));
 		}
 
 		/// <summary>
@@ -1196,7 +1190,7 @@ namespace SIL.FieldWorks.Discourse
 			// SUT (Test Undo)
 			try
 			{
-				Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo(), "ActionHandlerAccessor says we can't Undo! Why?");
+				Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True, "ActionHandlerAccessor says we can't Undo! Why?");
 				Cache.ActionHandlerAccessor.Undo();
 			}
 			catch (Exception)

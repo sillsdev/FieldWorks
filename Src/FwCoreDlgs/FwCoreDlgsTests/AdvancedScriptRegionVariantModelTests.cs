@@ -294,7 +294,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "fr" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
 			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
-			CollectionAssert.Contains(model.GetStandardVariants().Select(v => v.Name), "Early Modern French");
+			CollectionAssert.That("Early Modern French", Does.Contain(model.GetStandardVariants().Select(v => v.Name)));
 		}
 
 		/// <summary/>
@@ -303,7 +303,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "fr-x-extra" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
 			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
-			CollectionAssert.Contains(model.GetStandardVariants().Select(v => v.Name), "Early Modern French");
+			CollectionAssert.That("Early Modern French", Does.Contain(model.GetStandardVariants().Select(v => v.Name)));
 		}
 
 		/// <summary/>
@@ -312,7 +312,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "qaa" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
 			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
-			Assert.IsTrue(model.GetScripts().Any(s => s.IsPrivateUse && s.Code == "Qaaa"));
+			Assert.That(model.GetScripts().Any(s => s.IsPrivateUse && s.Code == "Qaaa"), Is.True);
 		}
 
 		/// <summary/>
@@ -322,7 +322,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "qaa" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
 			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
 			var regions = model.GetRegions();
-			Assert.IsTrue(regions.Any(r => r.IsPrivateUse && r.Code == "QM"));
+			Assert.That(regions.Any(r => r.IsPrivateUse && r.Code == "QM"), Is.True);
 		}
 
 		/// <summary/>
@@ -357,7 +357,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var regionOne = new AdvancedScriptRegionVariantModel.RegionListItem(new RegionSubtag("Qaaa"));
 			var regionTwo = new AdvancedScriptRegionVariantModel.RegionListItem(new RegionSubtag("Qaaa"));
-			Assert.AreEqual(regionOne, regionTwo);
+			Assert.That(regionTwo, Is.EqualTo(regionOne));
 		}
 
 		/// <summary/>
@@ -366,7 +366,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var regionOne = new AdvancedScriptRegionVariantModel.RegionListItem(new RegionSubtag("Qaaa"));
 			var regionTwo = new AdvancedScriptRegionVariantModel.RegionListItem(new RegionSubtag("Qaaa", "Booga"));
-			Assert.AreNotEqual(regionOne, regionTwo);
+			Assert.That(regionTwo, Is.Not.EqualTo(regionOne));
 		}
 
 		/// <summary/>

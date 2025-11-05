@@ -94,18 +94,17 @@ namespace SILUBS.ScriptureChecks
 				Debug.WriteLine(tts[i].Message);
 			}
 
-			Assert.AreEqual(result.GetUpperBound(0) + 1, tts.Count,
-				"A different number of results was returned than what was expected." );
+			Assert.That(tts.Count, Is.EqualTo(result.GetUpperBound(0) + 1), "A different number of results was returned than what was expected.");
 
 			for (int i = 0; i <= result.GetUpperBound(0); ++i)
 			{
 				// Verify the Reference, Message, and Details columns of the results pane.
 				// Verifies empty string, but not null, for the reference (for original tests).
 				if (result.GetUpperBound(1) == 2)
-					Assert.AreEqual(result[i, 2], tts[i].FirstToken.ScrRefString, "Reference number: " + i);
+					Assert.That(2], Is.EqualTo(result[i), tts[i].FirstToken.ScrRefString, "Reference number: " + i);
 
-				Assert.AreEqual(result[i, 0], tts[i].Text, "Text number: " + i.ToString());
-				Assert.AreEqual(result[i, 1], tts[i].Message, "Message number: " + i.ToString());
+				Assert.That(0], Is.EqualTo(result[i), tts[i].Text, "Text number: " + i.ToString());
+				Assert.That(1], Is.EqualTo(result[i), tts[i].Message, "Message number: " + i.ToString());
 			}
 		}
 

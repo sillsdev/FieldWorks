@@ -248,7 +248,7 @@ namespace SIL.FieldWorks.Common.Controls
 		public void GetNodesWithState_Checked()
 		{
 			TreeNode[] list = m_treeView.GetNodesWithState(TriStateTreeView.CheckState.Checked);
-			Assert.IsEmpty(list);
+			Assert.That(list, Is.Empty);
 
 			m_treeView.SetChecked(m_c1Node, TriStateTreeView.CheckState.Checked);
 			list = m_treeView.GetNodesWithState(TriStateTreeView.CheckState.Checked);
@@ -278,12 +278,12 @@ namespace SIL.FieldWorks.Common.Controls
 		public void GetNodesWithState_Unchecked()
 		{
 			TreeNode[] list = m_treeView.GetNodesWithState(TriStateTreeView.CheckState.Checked);
-			Assert.IsEmpty(list);
+			Assert.That(list, Is.Empty);
 
 			// Check all nodes.
 			m_treeView.SetChecked(m_aNode, TriStateTreeView.CheckState.Checked);
 			list = m_treeView.GetNodesWithState(TriStateTreeView.CheckState.Unchecked);
-			Assert.IsEmpty(list);
+			Assert.That(list, Is.Empty);
 
 			m_treeView.SetChecked(m_c1Node, TriStateTreeView.CheckState.Unchecked);
 			list = m_treeView.GetNodesWithState(TriStateTreeView.CheckState.Unchecked);
@@ -304,7 +304,7 @@ namespace SIL.FieldWorks.Common.Controls
 		public void GetNodesWithState_GreyChecked()
 		{
 			TreeNode[] list = m_treeView.GetNodesWithState(TriStateTreeView.CheckState.Checked);
-			Assert.IsEmpty(list);
+			Assert.That(list, Is.Empty);
 
 			m_treeView.SetChecked(m_c1Node, TriStateTreeView.CheckState.Checked);
 			// TomB: I have redefined GreyChecked to be synonymous with Unchecked | Checked, so

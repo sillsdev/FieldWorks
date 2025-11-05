@@ -70,9 +70,9 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			// SUT
 			_task.Execute();
 
-			Assert.IsEmpty(_tbi.Errors);
-			Assert.IsEmpty(_tbi.Warnings);
-			Assert.IsEmpty(_tbi.Messages);
+			Assert.That(_tbi.Errors, Is.Empty);
+			Assert.That(_tbi.Warnings, Is.Empty);
+			Assert.That(_tbi.Messages, Is.Empty);
 			var wxiFile = Path.ChangeExtension(wxsFile, "wxi");
 			AssertThatXmlIn.String(WxiOpen + WxCore + WxiClose).EqualsIgnoreWhitespace(File.ReadAllText(wxiFile));
 		}
@@ -86,8 +86,8 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			// SUT
 			_task.Execute();
 
-			Assert.IsNotEmpty(_tbi.Errors);
-			StringAssert.Contains("No <Wix> element", _tbi.Errors[0]);
+			Assert.That(_tbi.Errors, Is.Not.Empty);
+			StringAssert.That(_tbi.Errors[0], Does.Contain("No <Wix> element"));
 		}
 	}
 }

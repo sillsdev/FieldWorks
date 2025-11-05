@@ -55,8 +55,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var citems = configs.Count + 2; // Plus two for Root and Stem originals
 			m_testPresenter.LoadConfigList(configs);
-			Assert.AreEqual(citems, m_testPresenter.StubConfigDict.Count,
-							"Wrong number of items loaded into config dictionary.");
+			Assert.That(m_testPresenter.StubConfigDict.Count, Is.EqualTo(citems), "Wrong number of items loaded into config dictionary.");
 		}
 
 		/// <summary>
@@ -72,8 +71,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			LoadConfigListAndTest(configs);
 			m_testPresenter.StubOrigView = initialView;
-			Assert.AreEqual(initialView, m_testPresenter.StubCurView,
-							"Setting original view failed to set current view.");
+			Assert.That(m_testPresenter.StubCurView, Is.EqualTo(initialView), "Setting original view failed to set current view.");
 			return m_testPresenter.StubConfigDict.Count;
 		}
 
@@ -101,7 +99,7 @@ namespace SIL.FieldWorks.XWorks
 			m_testPresenter.UpdateCurSelection(stest1);
 
 			// Verify
-			Assert.AreEqual(stest1, m_testPresenter.StubCurView, "UpdateCurView didn't work.");
+			Assert.That(m_testPresenter.StubCurView, Is.EqualTo(stest1), "UpdateCurView didn't work.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -126,12 +124,11 @@ namespace SIL.FieldWorks.XWorks
 			var result = m_testPresenter.TryMarkForDeletion(stest2);
 
 			// Verify
-			Assert.IsTrue(result, "Mark for delete has wrong return value.");
+			Assert.That(result, Is.True, "Mark for delete has wrong return value.");
 			DictConfigItem item;
 			m_testPresenter.StubConfigDict.TryGetValue(stest2, out item);
-			Assert.IsTrue(item.UserMarkedDelete, "Mark for delete failed.");
-			Assert.AreEqual("C1", m_testPresenter.StubCurView,
-				"Delete shouldn't affect current view in this case.");
+			Assert.That(item.UserMarkedDelete, Is.True, "Mark for delete failed.");
+			Assert.That(m_testPresenter.StubCurView, Is.EqualTo("C1"), "Delete shouldn't affect current view in this case.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -156,12 +153,11 @@ namespace SIL.FieldWorks.XWorks
 			var result = m_testPresenter.TryMarkForDeletion(stest2);
 
 			// Verify
-			Assert.IsFalse(result, "Mark for delete has wrong return value.");
+			Assert.That(result, Is.False, "Mark for delete has wrong return value.");
 			DictConfigItem item;
 			m_testPresenter.StubConfigDict.TryGetValue(stest2, out item);
-			Assert.IsFalse(item.UserMarkedDelete, "Mark for delete succeeded wrongly.");
-			Assert.AreEqual(stest1, m_testPresenter.StubCurView,
-				"Delete shouldn't affect current view in this case.");
+			Assert.That(item.UserMarkedDelete, Is.False, "Mark for delete succeeded wrongly.");
+			Assert.That(m_testPresenter.StubCurView, Is.EqualTo(stest1), "Delete shouldn't affect current view in this case.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -188,12 +184,11 @@ namespace SIL.FieldWorks.XWorks
 			var result = m_testPresenter.TryMarkForDeletion(stest2);
 
 			// Verify
-			Assert.IsTrue(result, "Mark for delete has wrong return value.");
+			Assert.That(result, Is.True, "Mark for delete has wrong return value.");
 			DictConfigItem item;
 			m_testPresenter.StubConfigDict.TryGetValue(stest2, out item);
-			Assert.IsTrue(item.UserMarkedDelete, "Mark for delete failed.");
-			Assert.AreEqual(stest1, m_testPresenter.StubCurView,
-				"Delete should have changed current view back to the original.");
+			Assert.That(item.UserMarkedDelete, Is.True, "Mark for delete failed.");
+			Assert.That(m_testPresenter.StubCurView, Is.EqualTo(stest1), "Delete should have changed current view back to the original.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -219,14 +214,12 @@ namespace SIL.FieldWorks.XWorks
 			var result = m_testPresenter.TryMarkForDeletion(stest2);
 
 			// Verify
-			Assert.IsTrue(result, "Mark for delete has wrong return value.");
+			Assert.That(result, Is.True, "Mark for delete has wrong return value.");
 			DictConfigItem item;
 			m_testPresenter.StubConfigDict.TryGetValue(stest2, out item);
-			Assert.IsTrue(item.UserMarkedDelete, "Mark for delete failed.");
-			Assert.AreEqual(stest2, m_testPresenter.StubOrigView,
-				"Delete should not have changed original view.");
-			Assert.AreEqual(stest1, m_testPresenter.StubCurView,
-				"Delete should have changed current view to the first protected view.");
+			Assert.That(item.UserMarkedDelete, Is.True, "Mark for delete failed.");
+			Assert.That(m_testPresenter.StubOrigView, Is.EqualTo(stest2), "Delete should not have changed original view.");
+			Assert.That(m_testPresenter.StubCurView, Is.EqualTo(stest1), "Delete should have changed current view to the first protected view.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -252,14 +245,12 @@ namespace SIL.FieldWorks.XWorks
 			var result = m_testPresenter.TryMarkForDeletion(stest2);
 
 			// Verify
-			Assert.IsTrue(result, "Mark for delete has wrong return value.");
+			Assert.That(result, Is.True, "Mark for delete has wrong return value.");
 			DictConfigItem item;
 			m_testPresenter.StubConfigDict.TryGetValue(stest2, out item);
-			Assert.IsTrue(item.UserMarkedDelete, "Mark for delete failed.");
-			Assert.AreEqual(stest2, m_testPresenter.StubOrigView,
-				"Delete should not have changed original view.");
-			Assert.AreEqual(stest1, m_testPresenter.StubCurView,
-				"Delete should have changed current view to the first protected view.");
+			Assert.That(item.UserMarkedDelete, Is.True, "Mark for delete failed.");
+			Assert.That(m_testPresenter.StubOrigView, Is.EqualTo(stest2), "Delete should not have changed original view.");
+			Assert.That(m_testPresenter.StubCurView, Is.EqualTo(stest1), "Delete should have changed current view to the first protected view.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -284,20 +275,16 @@ namespace SIL.FieldWorks.XWorks
 			m_testPresenter.CopyConfigItem(stest2);
 
 			// Verify
-			Assert.AreEqual(cnt + 1, m_testPresenter.StubConfigDict.Count,
-				"Should have added a new item.");
+			Assert.That(m_testPresenter.StubConfigDict.Count, Is.EqualTo(cnt + 1), "Should have added a new item.");
 			DictConfigItem item;
 			m_testPresenter.StubConfigDict.TryGetValue(stest2, out item);
-			Assert.IsFalse(item.IsNew, "Old item should not be marked as New.");
+			Assert.That(item.IsNew, Is.False, "Old item should not be marked as New.");
 			var configItem = GetKeyFromValue("Copy of " + stest1);
 			Assert.That(configItem, Is.Not.Null, "Didn't find an item with the right Name.");
-			Assert.IsTrue(configItem.IsNew, "New item should be marked as New.");
-			Assert.AreEqual(stest2, configItem.CopyOf,
-				"New item should be marked as a 'Copy of' old item.");
-			Assert.AreEqual(stest2, m_testPresenter.StubOrigView,
-				"Copy should not have changed original view.");
-			Assert.AreEqual(configItem.UniqueCode, m_testPresenter.StubCurView,
-				"Copy should have changed current view to the new view.");
+			Assert.That(configItem.IsNew, Is.True, "New item should be marked as New.");
+			Assert.That(configItem.CopyOf, Is.EqualTo(stest2), "New item should be marked as a 'Copy of' old item.");
+			Assert.That(m_testPresenter.StubOrigView, Is.EqualTo(stest2), "Copy should not have changed original view.");
+			Assert.That(m_testPresenter.StubCurView, Is.EqualTo(configItem.UniqueCode), "Copy should have changed current view to the new view.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -324,17 +311,14 @@ namespace SIL.FieldWorks.XWorks
 			m_testPresenter.CopyConfigItem(stest2);
 
 			// Verify1
-			Assert.AreEqual(cnt + 1, m_testPresenter.StubConfigDict.Count,
-				"Should have added a new item.");
+			Assert.That(m_testPresenter.StubConfigDict.Count, Is.EqualTo(cnt + 1), "Should have added a new item.");
 			var configItem = GetKeyFromValue("Copy of " + stest1);
 			Assert.That(configItem, Is.Not.Null, "Didn't find an item with the right Name.");
 
 			// SUT2
 			m_testPresenter.CopyConfigItem(configItem.UniqueCode);
-			Assert.AreEqual(cnt + 1, m_testPresenter.StubConfigDict.Count,
-				"Should not have copied the copy.");
-			Assert.AreEqual(configItem.UniqueCode, m_testPresenter.StubCurView,
-				"Copy should have changed current view to the new view.");
+			Assert.That(m_testPresenter.StubConfigDict.Count, Is.EqualTo(cnt + 1), "Should not have copied the copy.");
+			Assert.That(m_testPresenter.StubCurView, Is.EqualTo(configItem.UniqueCode), "Copy should have changed current view to the new view.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -360,12 +344,10 @@ namespace SIL.FieldWorks.XWorks
 			m_testPresenter.RenameConfigItem(stest2, newName);
 
 			// Verify1
-			Assert.AreEqual(cnt, m_testPresenter.StubConfigDict.Count,
-				"Should have the same number of items.");
+			Assert.That(m_testPresenter.StubConfigDict.Count, Is.EqualTo(cnt), "Should have the same number of items.");
 			DictConfigItem item;
 			m_testPresenter.StubConfigDict.TryGetValue(stest2, out item);
-			Assert.AreEqual(newName, item.DispName,
-				"Should have renamed config item.");
+			Assert.That(item.DispName, Is.EqualTo(newName), "Should have renamed config item.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -393,12 +375,10 @@ namespace SIL.FieldWorks.XWorks
 			m_testPresenter.RenameConfigItem(sid2, newName);
 
 			// Verify1
-			Assert.AreEqual(cnt, m_testPresenter.StubConfigDict.Count,
-				"Should have the same number of items.");
+			Assert.That(m_testPresenter.StubConfigDict.Count, Is.EqualTo(cnt), "Should have the same number of items.");
 			DictConfigItem item;
 			m_testPresenter.StubConfigDict.TryGetValue(sid2, out item);
-			Assert.AreEqual(sname2, item.DispName,
-				"Should not have renamed protected config item.");
+			Assert.That(item.DispName, Is.EqualTo(sname2), "Should not have renamed protected config item.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -426,12 +406,10 @@ namespace SIL.FieldWorks.XWorks
 			m_testPresenter.RenameConfigItem(stest2, newName);
 
 			// Verify1
-			Assert.AreEqual(cnt, m_testPresenter.StubConfigDict.Count,
-				"Should have the same number of items.");
+			Assert.That(m_testPresenter.StubConfigDict.Count, Is.EqualTo(cnt), "Should have the same number of items.");
 			DictConfigItem item;
 			m_testPresenter.StubConfigDict.TryGetValue(stest2, out item);
-			Assert.AreNotEqual(newName, item.DispName,
-				"Should not have renamed config item.");
+			Assert.That(item.DispName, Is.Not.EqualTo(newName), "Should not have renamed config item.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -458,18 +436,14 @@ namespace SIL.FieldWorks.XWorks
 			m_testPresenter.CopyConfigItem(stest2);
 
 			// Verify1
-			Assert.AreEqual(cnt + 1, m_testPresenter.StubConfigDict.Count,
-				"Should have gained a copied item.");
+			Assert.That(m_testPresenter.StubConfigDict.Count, Is.EqualTo(cnt + 1), "Should have gained a copied item.");
 			DictConfigItem item;
 			var configItem = GetKeyFromValue(newName);
 			Assert.That(configItem, Is.Not.Null, "Didn't find an item with the right Name.");
-			Assert.IsTrue(configItem.IsNew, "New item should be marked as New.");
-			Assert.AreEqual(stest2, configItem.CopyOf,
-				"New item should be marked as a 'Copy of' old item.");
-			Assert.AreEqual(stest2, m_testPresenter.StubOrigView,
-				"Copy should not have changed original view.");
-			Assert.AreEqual(configItem.UniqueCode, m_testPresenter.StubCurView,
-				"Copy should have changed current view to the new view.");
+			Assert.That(configItem.IsNew, Is.True, "New item should be marked as New.");
+			Assert.That(configItem.CopyOf, Is.EqualTo(stest2), "New item should be marked as a 'Copy of' old item.");
+			Assert.That(m_testPresenter.StubOrigView, Is.EqualTo(stest2), "Copy should not have changed original view.");
+			Assert.That(m_testPresenter.StubCurView, Is.EqualTo(configItem.UniqueCode), "Copy should have changed current view to the new view.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -498,18 +472,14 @@ namespace SIL.FieldWorks.XWorks
 			m_testPresenter.CopyConfigItem(stest2);
 
 			// Verify1
-			Assert.AreEqual(cnt + 1, m_testPresenter.StubConfigDict.Count,
-				"Should have gained a copied item.");
+			Assert.That(m_testPresenter.StubConfigDict.Count, Is.EqualTo(cnt + 1), "Should have gained a copied item.");
 			DictConfigItem item;
 			var configItem = GetKeyFromValue(newName);
 			Assert.That(configItem, Is.Not.Null, "Didn't find an item with the right Name.");
-			Assert.IsTrue(configItem.IsNew, "New item should be marked as New.");
-			Assert.AreEqual(stest2, configItem.CopyOf,
-				"New item should be marked as a 'Copy of' old item.");
-			Assert.AreEqual(stest2, m_testPresenter.StubOrigView,
-				"Copy should not have changed original view.");
-			Assert.AreEqual(configItem.UniqueCode, m_testPresenter.StubCurView,
-				"Copy should have changed current view to the new view.");
+			Assert.That(configItem.IsNew, Is.True, "New item should be marked as New.");
+			Assert.That(configItem.CopyOf, Is.EqualTo(stest2), "New item should be marked as a 'Copy of' old item.");
+			Assert.That(m_testPresenter.StubOrigView, Is.EqualTo(stest2), "Copy should not have changed original view.");
+			Assert.That(m_testPresenter.StubCurView, Is.EqualTo(configItem.UniqueCode), "Copy should have changed current view to the new view.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -541,23 +511,16 @@ namespace SIL.FieldWorks.XWorks
 			m_testPresenter.PersistState();
 
 			// Verify1
-			Assert.AreEqual(1, m_testPresenter.NewConfigurationViews.Count(),
-				"Wrong number of new items.");
+			Assert.That(m_testPresenter.NewConfigurationViews.Count(), Is.EqualTo(1), "Wrong number of new items.");
 			var configItem = GetKeyFromValue("Copy of " + sname2);
 			Assert.That(configItem, Is.Not.Null, "Didn't find an item with the right Name.");
-			Assert.AreEqual(configItem.UniqueCode, m_testPresenter.NewConfigurationViews.First().Item1,
-				"Wrong unique code reported for new item.");
-			Assert.AreEqual(sid2, m_testPresenter.NewConfigurationViews.First().Item2,
-				"Wrong Copy Of reported for new item.");
-			Assert.AreEqual(1, m_testPresenter.RenamedExistingViews.Count());
-			Assert.AreEqual(sid2, m_testPresenter.RenamedExistingViews.First().Item1,
-				"Wrong item reported as renamed.");
-			Assert.AreEqual(newName, m_testPresenter.RenamedExistingViews.First().Item2,
-				"Wrong new name reported for renamed item.");
-			Assert.AreEqual(1, m_testPresenter.ConfigurationViewsToDelete.Count(),
-				"Wrong number of deleted items.");
-			Assert.AreEqual(sid3, m_testPresenter.ConfigurationViewsToDelete.First(),
-				"Wrong item reported as deleted.");
+			Assert.That(m_testPresenter.NewConfigurationViews.First().Item1, Is.EqualTo(configItem.UniqueCode), "Wrong unique code reported for new item.");
+			Assert.That(m_testPresenter.NewConfigurationViews.First().Item2, Is.EqualTo(sid2), "Wrong Copy Of reported for new item.");
+			Assert.That(m_testPresenter.RenamedExistingViews.Count(), Is.EqualTo(1));
+			Assert.That(m_testPresenter.RenamedExistingViews.First().Item1, Is.EqualTo(sid2), "Wrong item reported as renamed.");
+			Assert.That(m_testPresenter.RenamedExistingViews.First().Item2, Is.EqualTo(newName), "Wrong new name reported for renamed item.");
+			Assert.That(m_testPresenter.ConfigurationViewsToDelete.Count(), Is.EqualTo(1), "Wrong number of deleted items.");
+			Assert.That(m_testPresenter.ConfigurationViewsToDelete.First(), Is.EqualTo(sid3), "Wrong item reported as deleted.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -589,20 +552,14 @@ namespace SIL.FieldWorks.XWorks
 			m_testPresenter.PersistState();
 
 			// Verify1
-			Assert.AreEqual(1, m_testPresenter.NewConfigurationViews.Count(),
-				"Wrong number of new items.");
+			Assert.That(m_testPresenter.NewConfigurationViews.Count(), Is.EqualTo(1), "Wrong number of new items.");
 			var configItem = GetKeyFromValue("Copy of " + sname2);
 			Assert.That(configItem, Is.Not.Null, "Didn't find an item with the right Name.");
-			Assert.AreEqual(configItem.UniqueCode, m_testPresenter.NewConfigurationViews.First().Item1,
-				"Wrong unique code reported for new item.");
-			Assert.AreEqual(sid2, m_testPresenter.NewConfigurationViews.First().Item2,
-				"Wrong Copy Of reported for new item.");
-			Assert.IsNull(m_testPresenter.RenamedExistingViews,
-				"Deleted view should not be reported as renamed too.");
-			Assert.AreEqual(1, m_testPresenter.ConfigurationViewsToDelete.Count(),
-				"Wrong number of deleted items.");
-			Assert.AreEqual(sid2, m_testPresenter.ConfigurationViewsToDelete.First(),
-				"Wrong item reported as deleted.");
+			Assert.That(m_testPresenter.NewConfigurationViews.First().Item1, Is.EqualTo(configItem.UniqueCode), "Wrong unique code reported for new item.");
+			Assert.That(m_testPresenter.NewConfigurationViews.First().Item2, Is.EqualTo(sid2), "Wrong Copy Of reported for new item.");
+			Assert.That(m_testPresenter.RenamedExistingViews, Is.Null, "Deleted view should not be reported as renamed too.");
+			Assert.That(m_testPresenter.ConfigurationViewsToDelete.Count(), Is.EqualTo(1), "Wrong number of deleted items.");
+			Assert.That(m_testPresenter.ConfigurationViewsToDelete.First(), Is.EqualTo(sid2), "Wrong item reported as deleted.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -634,12 +591,9 @@ namespace SIL.FieldWorks.XWorks
 			//m_testPresenter.PersistState(); Don't persist!
 
 			// Verify1
-			Assert.IsNull(m_testPresenter.RenamedExistingViews,
-				"Should not have reported any views renamed.");
-			Assert.IsNull(m_testPresenter.ConfigurationViewsToDelete,
-				"Should not have reported any views deleted.");
-			Assert.IsNull(m_testPresenter.NewConfigurationViews,
-				"Should not have reported any views copied.");
+			Assert.That(m_testPresenter.RenamedExistingViews, Is.Null, "Should not have reported any views renamed.");
+			Assert.That(m_testPresenter.ConfigurationViewsToDelete, Is.Null, "Should not have reported any views deleted.");
+			Assert.That(m_testPresenter.NewConfigurationViews, Is.Null, "Should not have reported any views copied.");
 		}
 	}
 }

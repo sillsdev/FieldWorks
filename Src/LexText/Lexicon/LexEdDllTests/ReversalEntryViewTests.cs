@@ -69,15 +69,15 @@ namespace LexEdDllTests
 
 			// The dummy cache will have two dummy reversal index entries, but none exists in the real data yet.
 			// The reversal index entry control must maintain a dummy entry at the end to allow a place to click to add new entries.
-			Assert.AreEqual(0, m_revIndexEntryRepo.Count);
-			Assert.AreEqual(2, reversalView.GetIndexSize(ri.Hvo)); // The second dummy entry will remain a dummy
+			Assert.That(m_revIndexEntryRepo.Count, Is.EqualTo(0));
+			Assert.That(reversalView.GetIndexSize(ri.Hvo), Is.EqualTo(2)); // The second dummy entry will remain a dummy
 			reversalView.KillFocus(new Control());
-			Assert.AreEqual(1, m_revIndexEntryRepo.Count);
-			Assert.AreEqual(2, reversalView.GetIndexSize(ri.Hvo));
+			Assert.That(m_revIndexEntryRepo.Count, Is.EqualTo(1));
+			Assert.That(reversalView.GetIndexSize(ri.Hvo), Is.EqualTo(2));
 			IReversalIndexEntry rie = m_revIndexEntryRepo.AllInstances().First();
-			Assert.AreEqual("first", rie.ShortName);
-			Assert.AreEqual(1, m_lexEntry.SensesOS[0].ReferringReversalIndexEntries.Count());
-			Assert.True(m_lexEntry.SensesOS[0].ReferringReversalIndexEntries.Contains(rie));
+			Assert.That(rie.ShortName, Is.EqualTo("first"));
+			Assert.That(m_lexEntry.SensesOS[0].ReferringReversalIndexEntries.Count(), Is.EqualTo(1));
+			Assert.That(m_lexEntry.SensesOS[0].ReferringReversalIndexEntries.Contains(rie), Is.True);
 		}
 	}
 }

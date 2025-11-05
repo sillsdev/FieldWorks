@@ -73,19 +73,19 @@ namespace SIL.InstallValidator
 
 			var results = File.ReadLines(ResultsFlieName).Skip(2).Select(line => line.Split(',')).ToDictionary(line => line[0]);
 
-			Assert.Contains(goodFileName, results.Keys);
+			Assert.That(results.Keys, Does.Contain(goodFileName));
 			var result = results[goodFileName];
-			Assert.AreEqual(2, result.Length, "correctly-installed files should have two columns in the report");
+			Assert.That(result.Length, Is.EqualTo(2), "correctly-installed files should have two columns in the report");
 			StringAssert.EndsWith("installed correctly", result[1]);
 
-			Assert.Contains(badFileName, results.Keys);
+			Assert.That(results.Keys, Does.Contain(badFileName));
 			result = results[badFileName];
-			Assert.GreaterOrEqual(result.Length, 2, "'bad file' report");
-			StringAssert.Contains("incorrect", result[1]);
+			Assert.That(2, Is.GreaterThanOrEqualTo(result.Length), "'bad file' report");
+			StringAssert.That(result[1], Does.Contain("incorrect"));
 
-			Assert.Contains(missingFileName, results.Keys);
+			Assert.That(results.Keys, Does.Contain(missingFileName));
 			result = results[missingFileName];
-			Assert.GreaterOrEqual(result.Length, 2, "'missing file' report");
+			Assert.That(2, Is.GreaterThanOrEqualTo(result.Length), "'missing file' report");
 			StringAssert.EndsWith("missing", result[1]);
 
 			if (results.Count > 3)

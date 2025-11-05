@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			for (int i = 0; i + 1 < fontNamesNormal.Count; i++)
 			{
 				// Check that each font in the list is alphabetically before the next font in the list
-				Assert.LessOrEqual(fontNamesNormal[i] as string, fontNamesNormal[i+1] as string, "Font names not alphabetically sorted.");
+				Assert.That(fontNamesNormal[i+1] as string, Is.LessThanOrEqualTo(fontNamesNormal[i] as string), "Font names not alphabetically sorted.");
 			}
 		}
 	}

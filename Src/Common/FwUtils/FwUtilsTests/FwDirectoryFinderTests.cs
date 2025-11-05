@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			using (var fwHKLM = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine)
 			{
 				Assert.Null(fwHKCU.GetValue("ProjectsDir"));
-				Assert.NotNull(fwHKLM.GetValue("ProjectsDir"));
+				Assert.That(fwHKLM.GetValue("ProjectsDir"), Is.Not.Null);
 			}
 		}
 

@@ -43,9 +43,9 @@ namespace SIL.FieldWorks.XWorks
 			// ReSharper disable once UnusedVariable
 			var testController = new HeadwordNumbersController(view, model, Cache);
 			view.Show();
-			Assert.AreEqual(view.HomographBefore, hc.HomographNumberBefore);
-			Assert.AreEqual(view.ShowHomographOnCrossRef, hc.ShowHomographNumber(HomographConfiguration.HeadwordVariant.DictionaryCrossRef));
-			Assert.AreEqual(view.ShowSenseNumber, hc.ShowSenseNumberRef);
+			Assert.That(hc.HomographNumberBefore, Is.EqualTo(view.HomographBefore));
+			Assert.That(hc.ShowHomographNumber(HomographConfiguration.HeadwordVariant.DictionaryCrossRef), Is.EqualTo(view.ShowHomographOnCrossRef));
+			Assert.That(hc.ShowSenseNumberRef, Is.EqualTo(view.ShowSenseNumber));
 		}
 
 		[Test]
@@ -60,9 +60,9 @@ namespace SIL.FieldWorks.XWorks
 			// ReSharper disable once UnusedVariable
 			var testController = new HeadwordNumbersController(view, model, Cache);
 			view.Show();
-			Assert.IsTrue(view.HomographBefore);
-			Assert.IsFalse(view.ShowHomographOnCrossRef);
-			Assert.IsFalse(view.ShowSenseNumber);
+			Assert.That(view.HomographBefore, Is.True);
+			Assert.That(view.ShowHomographOnCrossRef, Is.False);
+			Assert.That(view.ShowSenseNumber, Is.False);
 		}
 
 		[Test]
@@ -79,9 +79,9 @@ namespace SIL.FieldWorks.XWorks
 			// ReSharper disable once UnusedVariable
 			var testController = new HeadwordNumbersController(view, model, Cache);
 			view.Show();
-			Assert.IsTrue(view.HomographBefore);
-			Assert.IsFalse(view.ShowHomographOnCrossRef);
-			Assert.IsFalse(view.ShowSenseNumber);
+			Assert.That(view.HomographBefore, Is.True);
+			Assert.That(view.ShowHomographOnCrossRef, Is.False);
+			Assert.That(view.ShowSenseNumber, Is.False);
 		}
 
 		[Test]
@@ -104,9 +104,9 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			testController.Save();
 			// Verify save in Dictionary Config
-			Assert.IsFalse(model.HomographConfiguration.HomographNumberBefore);
-			Assert.IsTrue(model.HomographConfiguration.ShowHwNumInCrossRef);
-			Assert.IsTrue(model.HomographConfiguration.ShowSenseNumber);
+			Assert.That(model.HomographConfiguration.HomographNumberBefore, Is.False);
+			Assert.That(model.HomographConfiguration.ShowHwNumInCrossRef, Is.True);
+			Assert.That(model.HomographConfiguration.ShowSenseNumber, Is.True);
 		}
 
 		[Test]
@@ -129,9 +129,9 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			testController.Save();
 			// Verify save in Dictionary Config
-			Assert.IsFalse(model.HomographConfiguration.HomographNumberBefore);
-			Assert.IsTrue(model.HomographConfiguration.ShowHwNumInReversalCrossRef);
-			Assert.IsTrue(model.HomographConfiguration.ShowSenseNumberReversal);
+			Assert.That(model.HomographConfiguration.HomographNumberBefore, Is.False);
+			Assert.That(model.HomographConfiguration.ShowHwNumInReversalCrossRef, Is.True);
+			Assert.That(model.HomographConfiguration.ShowSenseNumberReversal, Is.True);
 		}
 
 		[Test]
@@ -142,11 +142,11 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel();
 			var controller = new HeadwordNumbersController(view, model, Cache);
 			// verify ok button enabled on setup with no numbers
-			Assert.IsTrue(view.OkButtonEnabled, "Ok not enabled by controller constructor");
+			Assert.That(view.OkButtonEnabled, Is.True, "Ok not enabled by controller constructor");
 			view.OkButtonEnabled = false;
 			// verify ok button enabled when event is triggered and there are no custom numbers
 			view.TriggerCustomDigitsChanged();
-			Assert.IsTrue(view.OkButtonEnabled, "Ok button not enabled when event is fired");
+			Assert.That(view.OkButtonEnabled, Is.True, "Ok button not enabled when event is fired");
 		}
 
 		[Test]
@@ -163,11 +163,11 @@ namespace SIL.FieldWorks.XWorks
 			};
 			var controller = new HeadwordNumbersController(view, model, Cache);
 			// verify ok button enabled on setup with 10 numbers
-			Assert.IsTrue(view.OkButtonEnabled, "Ok not enabled by controller constructor");
+			Assert.That(view.OkButtonEnabled, Is.True, "Ok not enabled by controller constructor");
 			view.OkButtonEnabled = false;
 			// verify ok button enabled when event is triggered and there are 10 custom numbers
 			view.TriggerCustomDigitsChanged();
-			Assert.IsTrue(view.OkButtonEnabled, "Ok button not enabled when event is fired");
+			Assert.That(view.OkButtonEnabled, Is.True, "Ok button not enabled when event is fired");
 		}
 
 		[Test]
@@ -180,7 +180,7 @@ namespace SIL.FieldWorks.XWorks
 			view.OkButtonEnabled = true;
 			view.CustomDigits = new List<string> { "1" };
 			view.TriggerCustomDigitsChanged();
-			Assert.IsFalse(view.OkButtonEnabled, "Ok button still enabled after event is fired");
+			Assert.That(view.OkButtonEnabled, Is.False, "Ok button still enabled after event is fired");
 		}
 
 		[Test]
@@ -248,7 +248,7 @@ namespace SIL.FieldWorks.XWorks
 			// ReSharper disable once UnusedVariable
 			// SUT
 			var testController = new HeadwordNumbersController(view, model, Cache);
-			CollectionAssert.AreEqual(model.HomographConfiguration.CustomHomographNumberList, view.CustomDigits);
+			CollectionAssert.That(view.CustomDigits, Is.EqualTo(model.HomographConfiguration.CustomHomographNumberList));
 		}
 
 		public class TestHeadwordNumbersView : IHeadwordNumbersView

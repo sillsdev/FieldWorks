@@ -383,23 +383,23 @@ namespace SIL.FieldWorks.XWorks
 			var pubTest = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual, typeTest);
 			//SUT
 			var hvosMain = new List<int>(pubMain.GetEntriesToPublish(m_propertyTable, flidVirtual));
-			Assert.AreEqual(5, hvosMain.Count, "there are five entries in the main publication");
-			Assert.IsTrue(hvosMain.Contains(entryCorps.Hvo), "corps is shown in the main publication");
-			Assert.IsTrue(hvosMain.Contains(entryBras.Hvo), "bras is shown in the main publication");
-			Assert.IsTrue(hvosMain.Contains(bizarroVariant.Hvo), "bizarre is shown in the main publication");
-			Assert.IsFalse(hvosMain.Contains(entryOreille.Hvo), "oreille is not shown in the main publication");
-			Assert.IsTrue(hvosMain.Contains(entryEntry.Hvo), "entry is shown in the main publication");
-			Assert.IsTrue(hvosMain.Contains(entryMainsubentry.Hvo), "mainsubentry is shown in the main publication");
-			Assert.IsFalse(hvosMain.Contains(entryTestsubentry.Hvo), "testsubentry is not shown in the main publication");
+			Assert.That(hvosMain.Count, Is.EqualTo(5), "there are five entries in the main publication");
+			Assert.That(hvosMain.Contains(entryCorps.Hvo), Is.True, "corps is shown in the main publication");
+			Assert.That(hvosMain.Contains(entryBras.Hvo), Is.True, "bras is shown in the main publication");
+			Assert.That(hvosMain.Contains(bizarroVariant.Hvo), Is.True, "bizarre is shown in the main publication");
+			Assert.That(hvosMain.Contains(entryOreille.Hvo), Is.False, "oreille is not shown in the main publication");
+			Assert.That(hvosMain.Contains(entryEntry.Hvo), Is.True, "entry is shown in the main publication");
+			Assert.That(hvosMain.Contains(entryMainsubentry.Hvo), Is.True, "mainsubentry is shown in the main publication");
+			Assert.That(hvosMain.Contains(entryTestsubentry.Hvo), Is.False, "testsubentry is not shown in the main publication");
 			var hvosTest = new List<int>(pubTest.GetEntriesToPublish(m_propertyTable, flidVirtual));
-			Assert.AreEqual(4, hvosTest.Count, "there are four entries in the test publication");
-			Assert.IsTrue(hvosTest.Contains(entryCorps.Hvo), "corps is shown in the test publication");
-			Assert.IsFalse(hvosTest.Contains(entryBras.Hvo), "bras is not shown in the test publication");
-			Assert.IsFalse(hvosTest.Contains(bizarroVariant.Hvo), "bizarre is not shown in the test publication");
-			Assert.IsTrue(hvosTest.Contains(entryOreille.Hvo), "oreille is shown in the test publication");
-			Assert.IsTrue(hvosTest.Contains(entryEntry.Hvo), "entry is shown in the test publication");
-			Assert.IsFalse(hvosTest.Contains(entryMainsubentry.Hvo), "mainsubentry is shown in the test publication");
-			Assert.IsTrue(hvosTest.Contains(entryTestsubentry.Hvo), "testsubentry is shown in the test publication");
+			Assert.That(hvosTest.Count, Is.EqualTo(4), "there are four entries in the test publication");
+			Assert.That(hvosTest.Contains(entryCorps.Hvo), Is.True, "corps is shown in the test publication");
+			Assert.That(hvosTest.Contains(entryBras.Hvo), Is.False, "bras is not shown in the test publication");
+			Assert.That(hvosTest.Contains(bizarroVariant.Hvo), Is.False, "bizarre is not shown in the test publication");
+			Assert.That(hvosTest.Contains(entryOreille.Hvo), Is.True, "oreille is shown in the test publication");
+			Assert.That(hvosTest.Contains(entryEntry.Hvo), Is.True, "entry is shown in the test publication");
+			Assert.That(hvosTest.Contains(entryMainsubentry.Hvo), Is.False, "mainsubentry is shown in the test publication");
+			Assert.That(hvosTest.Contains(entryTestsubentry.Hvo), Is.True, "testsubentry is shown in the test publication");
 
 			var variantFormNode = new ConfigurableDictionaryNode
 			{
@@ -1179,11 +1179,11 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(results[1].Count, Is.EqualTo(1)); // one lonely entry in the last batch
 
 			dynamic jsonResult0 = results[0].First;
-			Assert.AreEqual(0, jsonResult0.sortIndex.Value);
+			Assert.That(jsonResult0.sortIndex.Value, Is.EqualTo(0));
 			dynamic jsonResult1 = results[0].Last;
-			Assert.AreEqual(1, jsonResult1.sortIndex.Value);
+			Assert.That(jsonResult1.sortIndex.Value, Is.EqualTo(1));
 			dynamic jsonResult2 = results[1].First;
-			Assert.AreEqual(2, jsonResult2.sortIndex.Value);
+			Assert.That(jsonResult2.sortIndex.Value, Is.EqualTo(2));
 		}
 
 		[Test]
@@ -1198,8 +1198,8 @@ namespace SIL.FieldWorks.XWorks
 			var result = LcmJsonGenerator.SavePublishedJsonWithStyles(new[] { minorEntry.Hvo },
 				DefaultDecorator, 1, configModel, m_propertyTable, "test.json", null, out int[] _);
 
-			Assert.AreEqual(1, result.Count, "batches");
-			Assert.AreEqual(0, result[0].Count, "entries");
+			Assert.That(result.Count, Is.EqualTo(1), "batches");
+			Assert.That(result[0].Count, Is.EqualTo(0), "entries");
 		}
 
 		[Test]
@@ -1214,9 +1214,9 @@ namespace SIL.FieldWorks.XWorks
 			var result = LcmJsonGenerator.SavePublishedJsonWithStyles(new[] { mainEntry.Hvo, minorEntry.Hvo },
 				DefaultDecorator, 10, configModel, m_propertyTable, "test.json", null, out int[] entryIds);
 
-			Assert.AreEqual(1, result.Count, "batches");
-			Assert.AreEqual(1, result[0].Count, "entries");
-			Assert.AreEqual(result[0].Count, entryIds.Length);
+			Assert.That(result.Count, Is.EqualTo(1), "batches");
+			Assert.That(result[0].Count, Is.EqualTo(1), "entries");
+			Assert.That(entryIds.Length, Is.EqualTo(result[0].Count));
 		}
 
 		[Test]

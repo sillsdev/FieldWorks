@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.XWorks
 				// all the shipped configs are in the return list
 				CollectionAssert.IsSubsetOf(shippedFileList, fileListFromResults);
 				// new user configuration is present in results
-				CollectionAssert.Contains(fileListFromResults, tempConfigFile.Path);
+				CollectionAssert.That(tempConfigFile.Path, Does.Contain(fileListFromResults));
 			}
 		}
 
@@ -86,9 +86,8 @@ namespace SIL.FieldWorks.XWorks
 					firstShippedConfigName + "'/>");
 				// SUT
 				var fileListFromResults = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(Cache, configObjectName).Values;
-				CollectionAssert.Contains(fileListFromResults, tempConfigFile.Path);
-				Assert.AreEqual(fileListFromResults.Count, fileList.Count(),
-					"Override was added instead of replacing a shipped config.");
+				CollectionAssert.That(tempConfigFile.Path, Does.Contain(fileListFromResults));
+				Assert.That(fileList.Count(), Is.EqualTo(fileListFromResults.Count), "Override was added instead of replacing a shipped config.");
 			}
 		}
 	}

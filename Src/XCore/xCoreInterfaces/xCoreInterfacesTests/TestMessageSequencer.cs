@@ -71,9 +71,9 @@ namespace XCore
 
 		private void VerifyArray(object[] expected, TestControl1 tc1)
 		{
-			Assert.AreEqual(expected.Length, tc1.m_messages.Count);
+			Assert.That(tc1.m_messages.Count, Is.EqualTo(expected.Length));
 			for (int i = 0; i < expected.Length; i++)
-				Assert.AreEqual(expected[i], tc1.m_messages[i], "unexpected object at " + i);
+				Assert.That(tc1.m_messages[i], Is.EqualTo(expected[i]), "unexpected object at " + i);
 		}
 
 		/// <summary>
@@ -133,7 +133,7 @@ namespace XCore
 			{
 				queue.Add(i);
 				count++;
-				Assert.AreEqual(count, queue.Count);
+				Assert.That(queue.Count, Is.EqualTo(count));
 			}
 		}
 
@@ -143,8 +143,8 @@ namespace XCore
 			{
 				int result = (int) queue.Remove();
 				count--;
-				Assert.AreEqual(i, result);
-				Assert.AreEqual(count, queue.Count);
+				Assert.That(result, Is.EqualTo(i));
+				Assert.That(queue.Count, Is.EqualTo(count));
 			}
 		}
 
@@ -161,19 +161,19 @@ namespace XCore
 
 			// Remove the first 40.
 			Check(0, 40, ref count, queue);
-			Assert.AreEqual(9, count);
+			Assert.That(count, Is.EqualTo(9));
 
 			// Add and remove another 40.
 			Fill(49, 89, ref count, queue);
 			Check(40, 80, ref count, queue);
-			Assert.AreEqual(9, count);
+			Assert.That(count, Is.EqualTo(9));
 
 			// And another group. This checks the situation where the queue is wrapped around during grow.
 			Fill(89, 149, ref count, queue);
-			Assert.AreEqual(69, count);
+			Assert.That(count, Is.EqualTo(69));
 
 			Check(80, 149, ref count, queue);
-			Assert.AreEqual(0, count);
+			Assert.That(count, Is.EqualTo(0));
 
 			// Re-establishes a situation for an earlier group of tests.
 			Fill(0,50, ref count, queue);
@@ -194,7 +194,7 @@ namespace XCore
 			Check(510, 555, ref count, queue);
 			// Remove the rest of the 600 series, just to check, and make sure we can be back to 0.
 			Check(600, 650, ref count, queue);
-			Assert.AreEqual(0, queue.Count);
+			Assert.That(queue.Count, Is.EqualTo(0));
 		}
 
 		/// <summary>
@@ -210,26 +210,26 @@ namespace XCore
 			{
 				queue.Add(i);
 				count++;
-				Assert.AreEqual(count, queue.Count);
+				Assert.That(queue.Count, Is.EqualTo(count));
 			}
 			queue.Add(300); // causes grow, with extra 10 from reentrant simulation.
-			Assert.AreEqual(60, queue.Count);
+			Assert.That(queue.Count, Is.EqualTo(60));
 			count += 11;
 			for (int i = 0; i < 49; i++)
 			{
 				int result = (int) queue.Remove();
 				count--;
-				Assert.AreEqual(i, result);
-				Assert.AreEqual(count, queue.Count);
+				Assert.That(result, Is.EqualTo(i));
+				Assert.That(queue.Count, Is.EqualTo(count));
 			}
-			Assert.AreEqual(300, (int)queue.Remove());
+			Assert.That((int)queue.Remove(), Is.EqualTo(300));
 			count--;
 			for (int i = 900; i < 910; i++)
 			{
 				int result = (int) queue.Remove();
 				count--;
-				Assert.AreEqual(i, result);
-				Assert.AreEqual(count, queue.Count);
+				Assert.That(result, Is.EqualTo(i));
+				Assert.That(queue.Count, Is.EqualTo(count));
 			}
 		}
 	}
@@ -252,7 +252,7 @@ namespace XCore
 				ArrayList testList = new ArrayList();
 				ArrayList expectedResult = new ArrayList() {"High", "Medium", "Low"};
 				mediator.SendMessage("AddTestItem", testList);
-				CollectionAssert.AreEqual(testList, expectedResult, "Mediator message Prioritization is broken.");
+				CollectionAssert.That(expectedResult, Is.EqualTo(testList), "Mediator message Prioritization is broken.");
 			}
 		}
 	}

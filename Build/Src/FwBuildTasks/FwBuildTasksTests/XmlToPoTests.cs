@@ -20,19 +20,19 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		{
 			var result = XmlToPo.ComputeAutoCommentFilePath(@"E:\fwrepo/fw\DistFiles",
 				@"E:\fwrepo\fw\DistFiles\Language Explorer\DefaultConfigurations\Dictionary\Hybrid.fwdictconfig");
-			Assert.AreEqual(@"/Language Explorer/DefaultConfigurations/Dictionary/Hybrid.fwdictconfig", result);
+			Assert.That(result, Is.EqualTo(@"/Language Explorer/DefaultConfigurations/Dictionary/Hybrid.fwdictconfig"));
 
 			result = XmlToPo.ComputeAutoCommentFilePath(@"C:\fwrepo\fw\DistFiles",
 				@"E:\fwrepo\fw\DistFiles\Language Explorer\DefaultConfigurations\Dictionary\Hybrid.fwdictconfig");
-			Assert.AreEqual(@"E:/fwrepo/fw/DistFiles/Language Explorer/DefaultConfigurations/Dictionary/Hybrid.fwdictconfig", result);
+			Assert.That(result, Is.EqualTo(@"E:/fwrepo/fw/DistFiles/Language Explorer/DefaultConfigurations/Dictionary/Hybrid.fwdictconfig"));
 
 			result = XmlToPo.ComputeAutoCommentFilePath("/home/steve/fwrepo/fw/DistFiles",
 				"/home/steve/fwrepo/fw/DistFiles/Language Explorer/Configuration/Parts/LexEntry.fwlayout");
-			Assert.AreEqual("/Language Explorer/Configuration/Parts/LexEntry.fwlayout", result);
+			Assert.That(result, Is.EqualTo("/Language Explorer/Configuration/Parts/LexEntry.fwlayout"));
 
 			result = XmlToPo.ComputeAutoCommentFilePath("/home/john/fwrepo/fw/DistFiles",
 				"/home/steve/fwrepo/fw/DistFiles/Language Explorer/Configuration/Parts/LexEntry.fwlayout");
-			Assert.AreEqual("/home/steve/fwrepo/fw/DistFiles/Language Explorer/Configuration/Parts/LexEntry.fwlayout", result);
+			Assert.That(result, Is.EqualTo("/home/steve/fwrepo/fw/DistFiles/Language Explorer/Configuration/Parts/LexEntry.fwlayout"));
 		}
 
 #region TestData
@@ -86,73 +86,65 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		{
 			var poStrings = new List<POString>();
 			var xdoc = XDocument.Parse(FwlayoutData);
-			Assert.IsNotNull(xdoc.Root);
+			Assert.That(xdoc.Root, Is.Not.Null);
 			//SUT
 			XmlToPo.ProcessConfigElement(xdoc.Root, "/Language Explorer/Configuration/Parts/LexEntry.fwlayout", poStrings);
-			Assert.AreEqual(14, poStrings.Count);
+			Assert.That(poStrings.Count, Is.EqualTo(14));
 			var postr5 = poStrings[5];
-			Assert.IsNotNull(postr5, "Detail Config string[5] has data");
-			Assert.IsNotNull(postr5.MsgId, "Detail Config string[5].MsgId");
-			Assert.AreEqual(1, postr5.MsgId.Count, "Detail Config string[5].MsgId.Count");
-			Assert.AreEqual("Grammatical Info. Details", postr5.MsgId[0], "Detail Config string[5].MsgId[0]");
-			Assert.AreEqual("Grammatical Info. Details", postr5.MsgIdAsString(), "Detail Config string[5] is 'Grammatical Info. Details'");
-			Assert.IsTrue(postr5.HasEmptyMsgStr, "Detail Config string[5].HasEmptyMsgStr");
-			Assert.IsNull(postr5.UserComments, "Detail Config string[5].UserComments");
-			Assert.IsNull(postr5.References, "Detail Config string[5].References");
-			Assert.IsNull(postr5.Flags, "Detail Config string[5].Flags");
-			Assert.IsNotNull(postr5.AutoComments, "Detail Config string[5].AutoComments");
-			Assert.AreEqual(1, postr5.AutoComments.Count, "Detail Config string[5].AutoComments.Count");
-			Assert.AreEqual(
-				"/Language Explorer/Configuration/Parts/LexEntry.fwlayout::/LayoutInventory/layout[\"LexEntry-detail-Normal\"]/part[@ref=\"GrammaticalFunctionsSection\"]/@label",
-				postr5.AutoComments[0], "Detail Config string[5].AutoComments[0]");
+			Assert.That(postr5, Is.Not.Null, "Detail Config string[5] has data");
+			Assert.That(postr5.MsgId, Is.Not.Null, "Detail Config string[5].MsgId");
+			Assert.That(postr5.MsgId.Count, Is.EqualTo(1), "Detail Config string[5].MsgId.Count");
+			Assert.That(postr5.MsgId[0], Is.EqualTo("Grammatical Info. Details"), "Detail Config string[5].MsgId[0]");
+			Assert.That(postr5.MsgIdAsString(), Is.EqualTo("Grammatical Info. Details"), "Detail Config string[5] is 'Grammatical Info. Details'");
+			Assert.That(postr5.HasEmptyMsgStr, Is.True, "Detail Config string[5].HasEmptyMsgStr");
+			Assert.That(postr5.UserComments, Is.Null, "Detail Config string[5].UserComments");
+			Assert.That(postr5.References, Is.Null, "Detail Config string[5].References");
+			Assert.That(postr5.Flags, Is.Null, "Detail Config string[5].Flags");
+			Assert.That(postr5.AutoComments, Is.Not.Null, "Detail Config string[5].AutoComments");
+			Assert.That(postr5.AutoComments.Count, Is.EqualTo(1), "Detail Config string[5].AutoComments.Count");
+			Assert.That(postr5.AutoComments[0], Is.EqualTo("/Language Explorer/Configuration/Parts/LexEntry.fwlayout::/LayoutInventory/layout[\"LexEntry-detail-Normal\"]/part[@ref=\"GrammaticalFunctionsSection\"]/@label"), "Detail Config string[5].AutoComments[0]");
 
 			var postr8 = poStrings[8];
-			Assert.IsNotNull(postr8, "Detail Config string[8] has data");
-			Assert.IsNotNull(postr8.MsgId, "Detail Config string[8].MsgId");
-			Assert.AreEqual(1, postr8.MsgId.Count, "Detail Config string[8].MsgId.Count");
-			Assert.AreEqual("Headword", postr8.MsgId[0], "Detail Config string[8].MsgId[0]");
-			Assert.AreEqual("Headword", poStrings[8].MsgIdAsString(), "Detail Config string[8] is 'Headword'");
-			Assert.IsTrue(postr8.HasEmptyMsgStr, "Detail Config string[8].HasEmptyMsgStr");
-			Assert.IsNull(postr8.UserComments, "Detail Config string[8].UserComments");
-			Assert.IsNull(postr8.References, "Detail Config string[8].References");
-			Assert.IsNull(postr8.Flags, "Detail Config string[8].Flags");
-			Assert.IsNotNull(postr8.AutoComments, "Detail Config string[8].AutoComments");
-			Assert.AreEqual(1, postr8.AutoComments.Count, "Detail Config string[8].AutoComments.Count");
-			Assert.AreEqual(
-				"/Language Explorer/Configuration/Parts/LexEntry.fwlayout::/LayoutInventory/layout[\"LexEntry-jtview-CrossRefPub\"]/part[@ref=\"MLHeadWordPub\"]/@label",
-				postr8.AutoComments[0], "Detail Config string[8].AutoComments[0]");
+			Assert.That(postr8, Is.Not.Null, "Detail Config string[8] has data");
+			Assert.That(postr8.MsgId, Is.Not.Null, "Detail Config string[8].MsgId");
+			Assert.That(postr8.MsgId.Count, Is.EqualTo(1), "Detail Config string[8].MsgId.Count");
+			Assert.That(postr8.MsgId[0], Is.EqualTo("Headword"), "Detail Config string[8].MsgId[0]");
+			Assert.That(poStrings[8].MsgIdAsString(), Is.EqualTo("Headword"), "Detail Config string[8] is 'Headword'");
+			Assert.That(postr8.HasEmptyMsgStr, Is.True, "Detail Config string[8].HasEmptyMsgStr");
+			Assert.That(postr8.UserComments, Is.Null, "Detail Config string[8].UserComments");
+			Assert.That(postr8.References, Is.Null, "Detail Config string[8].References");
+			Assert.That(postr8.Flags, Is.Null, "Detail Config string[8].Flags");
+			Assert.That(postr8.AutoComments, Is.Not.Null, "Detail Config string[8].AutoComments");
+			Assert.That(postr8.AutoComments.Count, Is.EqualTo(1), "Detail Config string[8].AutoComments.Count");
+			Assert.That(postr8.AutoComments[0], Is.EqualTo("/Language Explorer/Configuration/Parts/LexEntry.fwlayout::/LayoutInventory/layout[\"LexEntry-jtview-CrossRefPub\"]/part[@ref=\"MLHeadWordPub\"]/@label"), "Detail Config string[8].AutoComments[0]");
 
 			var postr10 = poStrings[10];
-			Assert.IsNotNull(postr10, "Detail Config string[10] has data");
-			Assert.IsNotNull(postr10.MsgId, "Detail Config string[10].MsgId");
-			Assert.AreEqual(1, postr10.MsgId.Count, "Detail Config string[10].MsgId.Count");
-			Assert.AreEqual(" CrossRef:", postr10.MsgId[0], "Detail Config string[10].MsgId[0]");
-			Assert.AreEqual(" CrossRef:", poStrings[10].MsgIdAsString(), "Detail Config string[8] is ' CrossRef:'");
-			Assert.IsTrue(postr10.HasEmptyMsgStr, "Detail Config string[10].HasEmptyMsgStr");
-			Assert.IsNull(postr10.UserComments, "Detail Config string[10].UserComments");
-			Assert.IsNull(postr10.References, "Detail Config string[10].References");
-			Assert.IsNull(postr10.Flags, "Detail Config string[10].Flags");
-			Assert.IsNotNull(postr10.AutoComments, "Detail Config string[10].AutoComments");
-			Assert.AreEqual(1, postr10.AutoComments.Count, "Detail Config string[10].AutoComments.Count");
-			Assert.AreEqual(
-				"/Language Explorer/Configuration/Parts/LexEntry.fwlayout::/LayoutInventory/layout[\"LexEntry-jtview-CrossRefPub\"]/part[@ref=\"MLHeadWordPub\"]/@before",
-				postr10.AutoComments[0], "Detail Config string[10].AutoComments[0]");
+			Assert.That(postr10, Is.Not.Null, "Detail Config string[10] has data");
+			Assert.That(postr10.MsgId, Is.Not.Null, "Detail Config string[10].MsgId");
+			Assert.That(postr10.MsgId.Count, Is.EqualTo(1), "Detail Config string[10].MsgId.Count");
+			Assert.That(postr10.MsgId[0], Is.EqualTo(" CrossRef:"), "Detail Config string[10].MsgId[0]");
+			Assert.That(poStrings[10].MsgIdAsString(), Is.EqualTo(" CrossRef:"), "Detail Config string[8] is ' CrossRef:'");
+			Assert.That(postr10.HasEmptyMsgStr, Is.True, "Detail Config string[10].HasEmptyMsgStr");
+			Assert.That(postr10.UserComments, Is.Null, "Detail Config string[10].UserComments");
+			Assert.That(postr10.References, Is.Null, "Detail Config string[10].References");
+			Assert.That(postr10.Flags, Is.Null, "Detail Config string[10].Flags");
+			Assert.That(postr10.AutoComments, Is.Not.Null, "Detail Config string[10].AutoComments");
+			Assert.That(postr10.AutoComments.Count, Is.EqualTo(1), "Detail Config string[10].AutoComments.Count");
+			Assert.That(postr10.AutoComments[0], Is.EqualTo("/Language Explorer/Configuration/Parts/LexEntry.fwlayout::/LayoutInventory/layout[\"LexEntry-jtview-CrossRefPub\"]/part[@ref=\"MLHeadWordPub\"]/@before"), "Detail Config string[10].AutoComments[0]");
 
 			var postr11 = poStrings[11];
-			Assert.IsNotNull(postr11, "Detail Config string[11] has data");
-			Assert.IsNotNull(postr11.MsgId, "Detail Config string[11].MsgId");
-			Assert.AreEqual(1, postr11.MsgId.Count, "Detail Config string[11].MsgId.Count");
-			Assert.AreEqual("Headword", postr11.MsgId[0], "Detail Config string[11].MsgId[0]");
-			Assert.AreEqual("Headword", poStrings[11].MsgIdAsString(), "Detail Config string[8] is 'Headword'");
-			Assert.IsTrue(postr11.HasEmptyMsgStr, "Detail Config string[11].HasEmptyMsgStr");
-			Assert.IsNull(postr11.UserComments, "Detail Config string[11].UserComments");
-			Assert.IsNull(postr11.References, "Detail Config string[11].References");
-			Assert.IsNull(postr11.Flags, "Detail Config string[11].Flags");
-			Assert.IsNotNull(postr11.AutoComments, "Detail Config string[11].AutoComments");
-			Assert.AreEqual(1, postr11.AutoComments.Count, "Detail Config string[11].AutoComments.Count");
-			Assert.AreEqual(
-				"/Language Explorer/Configuration/Parts/LexEntry.fwlayout::/LayoutInventory/layout[\"LexEntry-jtview-SubentryUnderPub\"]/part[@ref=\"MLHeadWordPub\"]/@label",
-				postr11.AutoComments[0], "Detail Config string[11].AutoComments[0]");
+			Assert.That(postr11, Is.Not.Null, "Detail Config string[11] has data");
+			Assert.That(postr11.MsgId, Is.Not.Null, "Detail Config string[11].MsgId");
+			Assert.That(postr11.MsgId.Count, Is.EqualTo(1), "Detail Config string[11].MsgId.Count");
+			Assert.That(postr11.MsgId[0], Is.EqualTo("Headword"), "Detail Config string[11].MsgId[0]");
+			Assert.That(poStrings[11].MsgIdAsString(), Is.EqualTo("Headword"), "Detail Config string[8] is 'Headword'");
+			Assert.That(postr11.HasEmptyMsgStr, Is.True, "Detail Config string[11].HasEmptyMsgStr");
+			Assert.That(postr11.UserComments, Is.Null, "Detail Config string[11].UserComments");
+			Assert.That(postr11.References, Is.Null, "Detail Config string[11].References");
+			Assert.That(postr11.Flags, Is.Null, "Detail Config string[11].Flags");
+			Assert.That(postr11.AutoComments, Is.Not.Null, "Detail Config string[11].AutoComments");
+			Assert.That(postr11.AutoComments.Count, Is.EqualTo(1), "Detail Config string[11].AutoComments.Count");
+			Assert.That(postr11.AutoComments[0], Is.EqualTo("/Language Explorer/Configuration/Parts/LexEntry.fwlayout::/LayoutInventory/layout[\"LexEntry-jtview-SubentryUnderPub\"]/part[@ref=\"MLHeadWordPub\"]/@label"), "Detail Config string[11].AutoComments[0]");
 		}
 
 #region DictConfigData
@@ -233,86 +225,81 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		{
 			var poStrings = new List<POString>();
 			var xdoc = XDocument.Parse(DictConfigData);
-			Assert.IsNotNull(xdoc.Root);
+			Assert.That(xdoc.Root, Is.Not.Null);
 			//SUT
 			XmlToPo.ProcessFwDictConfigElement(xdoc.Root, "/Language Explorer/DefaultConfigurations/Dictionary/Root.fwdictconfig", poStrings);
-			Assert.AreEqual(39, poStrings.Count);
+			Assert.That(poStrings.Count, Is.EqualTo(39));
 			var postr0 = poStrings[0];
-			Assert.IsNotNull(postr0, "fwdictconfig string[0] has data");
-			Assert.IsNotNull(postr0.MsgId, "fwdictconfig string[0].MsgId");
-			Assert.AreEqual(1, postr0.MsgId.Count, "fwdictconfig string[0].MsgId.Count");
-			Assert.AreEqual("Root-based (complex forms as subentries)", postr0.MsgId[0], "fwdictconfig string[0].MsgId[0]");
-			Assert.AreEqual("Root-based (complex forms as subentries)", postr0.MsgIdAsString(), "fwdictconfig string[0] is 'Root-based (complex forms as subentries)'");
-			Assert.IsTrue(postr0.HasEmptyMsgStr, "fwdictconfig string[0].HasEmptyMsgStr");
-			Assert.IsNull(postr0.UserComments, "fwdictconfig string[0].UserComments");
-			Assert.IsNull(postr0.References, "fwdictconfig string[0].References");
-			Assert.IsNull(postr0.Flags, "fwdictconfig string[0].Flags");
-			Assert.IsNotNull(postr0.AutoComments, "fwdictconfig string[0].AutoComments");
-			Assert.AreEqual(1, postr0.AutoComments.Count, "fwdictconfig string[0].AutoComments.Count");
-			Assert.AreEqual("/Language Explorer/DefaultConfigurations/Dictionary/Root.fwdictconfig:://DictionaryConfiguration/@name",
-				postr0.AutoComments[0], "fwdictconfig string[0].AutoComments[0]");
+			Assert.That(postr0, Is.Not.Null, "fwdictconfig string[0] has data");
+			Assert.That(postr0.MsgId, Is.Not.Null, "fwdictconfig string[0].MsgId");
+			Assert.That(postr0.MsgId.Count, Is.EqualTo(1), "fwdictconfig string[0].MsgId.Count");
+			Assert.That(postr0.MsgId[0], Is.EqualTo("Root-based (complex forms as subentries)"), "fwdictconfig string[0].MsgId[0]");
+			Assert.That(postr0.MsgIdAsString(), Is.EqualTo("Root-based (complex forms as subentries)"), "fwdictconfig string[0] is 'Root-based (complex forms as subentries)'");
+			Assert.That(postr0.HasEmptyMsgStr, Is.True, "fwdictconfig string[0].HasEmptyMsgStr");
+			Assert.That(postr0.UserComments, Is.Null, "fwdictconfig string[0].UserComments");
+			Assert.That(postr0.References, Is.Null, "fwdictconfig string[0].References");
+			Assert.That(postr0.Flags, Is.Null, "fwdictconfig string[0].Flags");
+			Assert.That(postr0.AutoComments, Is.Not.Null, "fwdictconfig string[0].AutoComments");
+			Assert.That(postr0.AutoComments.Count, Is.EqualTo(1), "fwdictconfig string[0].AutoComments.Count");
+			Assert.That(postr0.AutoComments[0], Is.EqualTo("/Language Explorer/DefaultConfigurations/Dictionary/Root.fwdictconfig:://DictionaryConfiguration/@name"), "fwdictconfig string[0].AutoComments[0]");
 
 			var postr5 = poStrings[5];
-			Assert.IsNotNull(postr5, "fwdictconfig string[5] has data");
-			Assert.IsNotNull(postr5.MsgId, "fwdictconfig string[5].MsgId");
-			Assert.AreEqual(1, postr5.MsgId.Count, "fwdictconfig string[5].MsgId.Count");
-			Assert.AreEqual("Grammatical Info.", postr5.MsgId[0], "fwdictconfig string[5].MsgId[0]");
-			Assert.AreEqual("Grammatical Info.", postr5.MsgIdAsString(), "fwdictconfig string[5] is 'Grammatical Info.'");
-			Assert.IsTrue(postr5.HasEmptyMsgStr, "fwdictconfig string[5].HasEmptyMsgStr");
-			Assert.IsNull(postr5.UserComments, "fwdictconfig string[5].UserComments");
-			Assert.IsNull(postr5.References, "fwdictconfig string[5].References");
-			Assert.IsNull(postr5.Flags, "fwdictconfig string[5].Flags");
-			Assert.IsNotNull(postr5.AutoComments, "fwdictconfig string[5].AutoComments");
-			Assert.AreEqual(1, postr5.AutoComments.Count, "fwdictconfig string[5].AutoComments.Count");
-			Assert.AreEqual("/Language Explorer/DefaultConfigurations/Dictionary/Root.fwdictconfig:://ConfigurationItem[@name='Senses']/ConfigurationItem/@name",
-				postr5.AutoComments[0], "fwdictconfig string[5].AutoComments[0]");
+			Assert.That(postr5, Is.Not.Null, "fwdictconfig string[5] has data");
+			Assert.That(postr5.MsgId, Is.Not.Null, "fwdictconfig string[5].MsgId");
+			Assert.That(postr5.MsgId.Count, Is.EqualTo(1), "fwdictconfig string[5].MsgId.Count");
+			Assert.That(postr5.MsgId[0], Is.EqualTo("Grammatical Info."), "fwdictconfig string[5].MsgId[0]");
+			Assert.That(postr5.MsgIdAsString(), Is.EqualTo("Grammatical Info."), "fwdictconfig string[5] is 'Grammatical Info.'");
+			Assert.That(postr5.HasEmptyMsgStr, Is.True, "fwdictconfig string[5].HasEmptyMsgStr");
+			Assert.That(postr5.UserComments, Is.Null, "fwdictconfig string[5].UserComments");
+			Assert.That(postr5.References, Is.Null, "fwdictconfig string[5].References");
+			Assert.That(postr5.Flags, Is.Null, "fwdictconfig string[5].Flags");
+			Assert.That(postr5.AutoComments, Is.Not.Null, "fwdictconfig string[5].AutoComments");
+			Assert.That(postr5.AutoComments.Count, Is.EqualTo(1), "fwdictconfig string[5].AutoComments.Count");
+			Assert.That(postr5.AutoComments[0], Is.EqualTo("/Language Explorer/DefaultConfigurations/Dictionary/Root.fwdictconfig:://ConfigurationItem[@name='Senses']/ConfigurationItem/@name"), "fwdictconfig string[5].AutoComments[0]");
 
 			var postr34 = poStrings[34];
-			Assert.IsNotNull(postr34, "fwdictconfig string[34] has data");
-			Assert.IsNotNull(postr34.MsgId, "fwdictconfig string[34].MsgId");
-			Assert.AreEqual(1, postr34.MsgId.Count, "fwdictconfig string[34].MsgId.Count");
-			Assert.AreEqual("Date Modified", postr34.MsgId[0], "fwdictconfig string[34].MsgId[0]");
-			Assert.AreEqual("Date Modified", postr34.MsgIdAsString(), "fwdictconfig string[34] is 'Date Modified'");
-			Assert.IsTrue(postr34.HasEmptyMsgStr, "fwdictconfig string[34].HasEmptyMsgStr");
-			Assert.IsNull(postr34.UserComments, "fwdictconfig string[34].UserComments");
-			Assert.IsNull(postr34.References, "fwdictconfig string[34].References");
-			Assert.IsNull(postr34.Flags, "fwdictconfig string[34].Flags");
-			Assert.IsNotNull(postr34.AutoComments, "fwdictconfig string[34].AutoComments");
-			Assert.AreEqual(1, postr34.AutoComments.Count, "fwdictconfig string[34].AutoComments.Count");
-			Assert.AreEqual("/Language Explorer/DefaultConfigurations/Dictionary/Root.fwdictconfig:://ConfigurationItem[@name='Minor Entry (Complex Forms)']/ConfigurationItem/@name",
-				postr34.AutoComments[0], "fwdictconfig string[34].AutoComments[0]");
+			Assert.That(postr34, Is.Not.Null, "fwdictconfig string[34] has data");
+			Assert.That(postr34.MsgId, Is.Not.Null, "fwdictconfig string[34].MsgId");
+			Assert.That(postr34.MsgId.Count, Is.EqualTo(1), "fwdictconfig string[34].MsgId.Count");
+			Assert.That(postr34.MsgId[0], Is.EqualTo("Date Modified"), "fwdictconfig string[34].MsgId[0]");
+			Assert.That(postr34.MsgIdAsString(), Is.EqualTo("Date Modified"), "fwdictconfig string[34] is 'Date Modified'");
+			Assert.That(postr34.HasEmptyMsgStr, Is.True, "fwdictconfig string[34].HasEmptyMsgStr");
+			Assert.That(postr34.UserComments, Is.Null, "fwdictconfig string[34].UserComments");
+			Assert.That(postr34.References, Is.Null, "fwdictconfig string[34].References");
+			Assert.That(postr34.Flags, Is.Null, "fwdictconfig string[34].Flags");
+			Assert.That(postr34.AutoComments, Is.Not.Null, "fwdictconfig string[34].AutoComments");
+			Assert.That(postr34.AutoComments.Count, Is.EqualTo(1), "fwdictconfig string[34].AutoComments.Count");
+			Assert.That(postr34.AutoComments[0], Is.EqualTo("/Language Explorer/DefaultConfigurations/Dictionary/Root.fwdictconfig:://ConfigurationItem[@name='Minor Entry (Complex Forms)']/ConfigurationItem/@name"), "fwdictconfig string[34].AutoComments[0]");
 
 			var postr35 = poStrings[35];
-			Assert.IsNotNull(postr35, "fwdictconfig string[35] has data");
-			Assert.IsNotNull(postr35.MsgId, "fwdictconfig string[35].MsgId");
-			Assert.AreEqual(1, postr35.MsgId.Count, "fwdictconfig string[35].MsgId.Count");
-			Assert.AreEqual("modified on: ", postr35.MsgId[0], "fwdictconfig string[35].MsgId[0]");
-			Assert.AreEqual("modified on: ", postr35.MsgIdAsString(), "fwdictconfig string[35] is 'modified on: '");
-			Assert.IsTrue(postr35.HasEmptyMsgStr, "fwdictconfig string[35].HasEmptyMsgStr");
-			Assert.IsNull(postr35.UserComments, "fwdictconfig string[35].UserComments");
-			Assert.IsNull(postr35.References, "fwdictconfig string[35].References");
-			Assert.IsNull(postr35.Flags, "fwdictconfig string[35].Flags");
-			Assert.IsNotNull(postr35.AutoComments, "fwdictconfig string[35].AutoComments");
-			Assert.AreEqual(1, postr35.AutoComments.Count, "fwdictconfig string[35].AutoComments.Count");
-			Assert.AreEqual("/Language Explorer/DefaultConfigurations/Dictionary/Root.fwdictconfig:://ConfigurationItem[@name='Date Modified']/@before",
-				postr35.AutoComments[0], "fwdictconfig string[35].AutoComments[0]");
+			Assert.That(postr35, Is.Not.Null, "fwdictconfig string[35] has data");
+			Assert.That(postr35.MsgId, Is.Not.Null, "fwdictconfig string[35].MsgId");
+			Assert.That(postr35.MsgId.Count, Is.EqualTo(1), "fwdictconfig string[35].MsgId.Count");
+			Assert.That(postr35.MsgId[0], Is.EqualTo("modified on: "), "fwdictconfig string[35].MsgId[0]");
+			Assert.That(postr35.MsgIdAsString(), Is.EqualTo("modified on: "), "fwdictconfig string[35] is 'modified on: '");
+			Assert.That(postr35.HasEmptyMsgStr, Is.True, "fwdictconfig string[35].HasEmptyMsgStr");
+			Assert.That(postr35.UserComments, Is.Null, "fwdictconfig string[35].UserComments");
+			Assert.That(postr35.References, Is.Null, "fwdictconfig string[35].References");
+			Assert.That(postr35.Flags, Is.Null, "fwdictconfig string[35].Flags");
+			Assert.That(postr35.AutoComments, Is.Not.Null, "fwdictconfig string[35].AutoComments");
+			Assert.That(postr35.AutoComments.Count, Is.EqualTo(1), "fwdictconfig string[35].AutoComments.Count");
+			Assert.That(postr35.AutoComments[0], Is.EqualTo("/Language Explorer/DefaultConfigurations/Dictionary/Root.fwdictconfig:://ConfigurationItem[@name='Date Modified']/@before"), "fwdictconfig string[35].AutoComments[0]");
 
 			var postr38 = poStrings[38];
-			Assert.IsNotNull(postr38, "string[38]");
-			Assert.IsNotNull(postr38.MsgId, "string[38].MsgId");
-			Assert.AreEqual(1, postr38.MsgId.Count, "fwdictconfig string[38].MsgId.Count");
-			Assert.AreEqual("Subsubentries", postr38.MsgId[0], "fwdictconfig string[38].MsgId[0]");
-			Assert.AreEqual("Subsubentries", postr38.MsgIdAsString(), "fwdictconfig string[38].MsgIdAsString()");
-			Assert.IsTrue(postr38.HasEmptyMsgStr, "fwdictconfig string[38].MsgStr");
-			Assert.IsNull(postr38.UserComments, "fwdictconfig string[38].UserComments");
-			Assert.IsNull(postr38.References, "fwdictconfig string[38].References");
-			Assert.IsNull(postr38.Flags, "fwdictconfig string[38].Flags");
-			Assert.IsNotNull(postr38.AutoComments, "fwdictconfig string[38].AutoComments");
-			Assert.AreEqual(1, postr38.AutoComments.Count, "fwdictconfig string[38].AutoComments.Count");
-			Assert.AreEqual("/Language Explorer/DefaultConfigurations/Dictionary/Root.fwdictconfig:://ConfigurationItem[@name='MainEntrySubentries']/ConfigurationItem/@name",
-				postr38.AutoComments[0], "fwdictconfig string[38].AutoComments[0]");
+			Assert.That(postr38, Is.Not.Null, "string[38]");
+			Assert.That(postr38.MsgId, Is.Not.Null, "string[38].MsgId");
+			Assert.That(postr38.MsgId.Count, Is.EqualTo(1), "fwdictconfig string[38].MsgId.Count");
+			Assert.That(postr38.MsgId[0], Is.EqualTo("Subsubentries"), "fwdictconfig string[38].MsgId[0]");
+			Assert.That(postr38.MsgIdAsString(), Is.EqualTo("Subsubentries"), "fwdictconfig string[38].MsgIdAsString()");
+			Assert.That(postr38.HasEmptyMsgStr, Is.True, "fwdictconfig string[38].MsgStr");
+			Assert.That(postr38.UserComments, Is.Null, "fwdictconfig string[38].UserComments");
+			Assert.That(postr38.References, Is.Null, "fwdictconfig string[38].References");
+			Assert.That(postr38.Flags, Is.Null, "fwdictconfig string[38].Flags");
+			Assert.That(postr38.AutoComments, Is.Not.Null, "fwdictconfig string[38].AutoComments");
+			Assert.That(postr38.AutoComments.Count, Is.EqualTo(1), "fwdictconfig string[38].AutoComments.Count");
+			Assert.That(postr38.AutoComments[0], Is.EqualTo("/Language Explorer/DefaultConfigurations/Dictionary/Root.fwdictconfig:://ConfigurationItem[@name='MainEntrySubentries']/ConfigurationItem/@name"), "fwdictconfig string[38].AutoComments[0]");
 
-			Assert.False(poStrings.Any(poStr => poStr.MsgIdAsString() == "MainEntrySubentries"), "Shared Items' labels should not be translatable");
+			Assert.That(poStrings.Any(poStr => poStr.MsgIdAsString() == "MainEntrySubentries"), Is.False, "Shared Items' labels should not be translatable");
 		}
 
 		[Test]
@@ -320,44 +307,44 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		{
 			var poStrings = new List<POString>();
 			var fwLayoutDoc = XDocument.Parse(FwlayoutData);
-			Assert.IsNotNull(fwLayoutDoc.Root);
+			Assert.That(fwLayoutDoc.Root, Is.Not.Null);
 			XmlToPo.ProcessConfigElement(fwLayoutDoc.Root, "/Language Explorer/Configuration/Parts/LexEntry.fwlayout", poStrings);
 			var fwDictConfigDoc = XDocument.Parse(DictConfigData);
-			Assert.IsNotNull(fwDictConfigDoc.Root);
+			Assert.That(fwDictConfigDoc.Root, Is.Not.Null);
 			XmlToPo.ProcessFwDictConfigElement(fwDictConfigDoc.Root, "/Language Explorer/DefaultConfigurations/Dictionary/Root.fwdictconfig", poStrings);
-			Assert.AreEqual(53, poStrings.Count);
-			Assert.AreEqual("Lexeme Form", poStrings[0].MsgIdAsString());
-			Assert.AreEqual("modified on: ", poStrings[49].MsgIdAsString());
+			Assert.That(poStrings.Count, Is.EqualTo(53));
+			Assert.That(poStrings[0].MsgIdAsString(), Is.EqualTo("Lexeme Form"));
+			Assert.That(poStrings[49].MsgIdAsString(), Is.EqualTo("modified on: "));
 			poStrings.Sort(POString.CompareMsgIds);
 			// SUT
 			POString.MergeDuplicateStrings(poStrings);
-			Assert.AreEqual(40, poStrings.Count);
-			Assert.AreEqual(" - ", poStrings[0].MsgIdAsString());
-			Assert.AreEqual("Variants", poStrings[39].MsgIdAsString());
+			Assert.That(poStrings.Count, Is.EqualTo(40));
+			Assert.That(poStrings[0].MsgIdAsString(), Is.EqualTo(" - "));
+			Assert.That(poStrings[39].MsgIdAsString(), Is.EqualTo("Variants"));
 			var sw = new StringWriter();
 			XmlToPo.WritePotFile(sw, "/home/testing/fw", poStrings);
 			var potFileStr = sw.ToString();
-			Assert.IsNotNull(potFileStr);
+			Assert.That(potFileStr, Is.Not.Null);
 			var sr = new StringReader(potFileStr);
 			var dictPot = PoToXml.ReadPoFile(sr, null);
-			Assert.AreEqual(40, dictPot.Count);
+			Assert.That(dictPot.Count, Is.EqualTo(40));
 			var listPot = dictPot.ToList();
-			Assert.AreEqual(" - ", listPot[0].Value.MsgIdAsString());
-			Assert.AreEqual("Variants", listPot[39].Value.MsgIdAsString());
+			Assert.That(listPot[0].Value.MsgIdAsString(), Is.EqualTo(" - "));
+			Assert.That(listPot[39].Value.MsgIdAsString(), Is.EqualTo("Variants"));
 
 			var posHeadword = dictPot["Headword"];
-			Assert.AreEqual(6, posHeadword.AutoComments.Count, "Headword AutoComments");
-			Assert.AreEqual("/Language Explorer/Configuration/Parts/LexEntry.fwlayout::/LayoutInventory/layout[\"LexEntry-jtview-CrossRefPub\"]/part[@ref=\"MLHeadWordPub\"]/@label", posHeadword.AutoComments[0]);
-			Assert.AreEqual("/Language Explorer/Configuration/Parts/LexEntry.fwlayout::/LayoutInventory/layout[\"LexEntry-jtview-SubentryUnderPub\"]/part[@ref=\"MLHeadWordPub\"]/@label", posHeadword.AutoComments[1]);
-			Assert.AreEqual("/Language Explorer/DefaultConfigurations/Dictionary/Root.fwdictconfig:://ConfigurationItem[@name='Main Entry']/ConfigurationItem/@name", posHeadword.AutoComments[2]);
-			Assert.AreEqual("/Language Explorer/DefaultConfigurations/Dictionary/Root.fwdictconfig:://ConfigurationItem[@name='MainEntrySubentries']/ConfigurationItem/@name", posHeadword.AutoComments[3]);
-			Assert.AreEqual("/Language Explorer/DefaultConfigurations/Dictionary/Root.fwdictconfig:://ConfigurationItem[@name='Minor Entry (Complex Forms)']/ConfigurationItem/@name", posHeadword.AutoComments[4]);
-			Assert.AreEqual("(String used 5 times.)", posHeadword.AutoComments[5]);
+			Assert.That(posHeadword.AutoComments.Count, Is.EqualTo(6), "Headword AutoComments");
+			Assert.That(posHeadword.AutoComments[0], Is.EqualTo("/Language Explorer/Configuration/Parts/LexEntry.fwlayout::/LayoutInventory/layout[\"LexEntry-jtview-CrossRefPub\"]/part[@ref=\"MLHeadWordPub\"]/@label"));
+			Assert.That(posHeadword.AutoComments[1], Is.EqualTo("/Language Explorer/Configuration/Parts/LexEntry.fwlayout::/LayoutInventory/layout[\"LexEntry-jtview-SubentryUnderPub\"]/part[@ref=\"MLHeadWordPub\"]/@label"));
+			Assert.That(posHeadword.AutoComments[2], Is.EqualTo("/Language Explorer/DefaultConfigurations/Dictionary/Root.fwdictconfig:://ConfigurationItem[@name='Main Entry']/ConfigurationItem/@name"));
+			Assert.That(posHeadword.AutoComments[3], Is.EqualTo("/Language Explorer/DefaultConfigurations/Dictionary/Root.fwdictconfig:://ConfigurationItem[@name='MainEntrySubentries']/ConfigurationItem/@name"));
+			Assert.That(posHeadword.AutoComments[4], Is.EqualTo("/Language Explorer/DefaultConfigurations/Dictionary/Root.fwdictconfig:://ConfigurationItem[@name='Minor Entry (Complex Forms)']/ConfigurationItem/@name"));
+			Assert.That(posHeadword.AutoComments[5], Is.EqualTo("(String used 5 times.)"));
 
 			var posComma = dictPot[", "];
-			Assert.AreEqual(4, posComma.AutoComments.Count, "AutoCommas");
-			Assert.AreEqual("/Language Explorer/DefaultConfigurations/Dictionary/Root.fwdictconfig:://ConfigurationItem[@name='Allomorphs']/@between", posComma.AutoComments[0]);
-			Assert.AreEqual("(String used 3 times.)", posComma.AutoComments[3]);
+			Assert.That(posComma.AutoComments.Count, Is.EqualTo(4), "AutoCommas");
+			Assert.That(posComma.AutoComments[0], Is.EqualTo("/Language Explorer/DefaultConfigurations/Dictionary/Root.fwdictconfig:://ConfigurationItem[@name='Allomorphs']/@between"));
+			Assert.That(posComma.AutoComments[3], Is.EqualTo("(String used 3 times.)"));
 		}
 
 		[Test]
@@ -405,9 +392,9 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		{
 			for (var i = 0; i < arr1.Count && i < arr2.Count; i++)
 			{
-				Assert.AreEqual(arr1[i], arr2[i], $"Arrays differ at index {i}");
+				Assert.That(arr2[i], Is.EqualTo(arr1[i]), $"Arrays differ at index {i}");
 			}
-			Assert.AreEqual(arr1.Count, arr2.Count, "Array lengths differ");
+			Assert.That(arr2.Count, Is.EqualTo(arr1.Count), "Array lengths differ");
 		}
 
 		[Test]
@@ -415,53 +402,53 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		{
 			var poStr = new POString(new []{"Displayed in a message box.", "/Src/FwResources//FwStrings.resx::kstidFatalError2"},
 				new[]{@"\n", @"\n", @"In order to protect your data, the FieldWorks program needs to close.\n", @"\n", @"You should be able to restart it normally.\n"});
-			Assert.IsNotNull(poStr.MsgId, "First resx string has MsgId data");
-			Assert.AreEqual(5, poStr.MsgId.Count, "First resx string has five lines of MsgId data");
-			Assert.AreEqual("\\n", poStr.MsgId[0], "First resx string has the expected MsgId data line one");
-			Assert.AreEqual("\\n", poStr.MsgId[1], "First resx string has the expected MsgId data line two");
-			Assert.AreEqual("In order to protect your data, the FieldWorks program needs to close.\\n", poStr.MsgId[2], "First resx string has the expected MsgId data line three");
-			Assert.AreEqual("\\n", poStr.MsgId[3], "First resx string has the expected MsgId data line four");
-			Assert.AreEqual("You should be able to restart it normally.\\n", poStr.MsgId[4], "First resx string has the expected MsgId data line five");
-			Assert.IsTrue(poStr.HasEmptyMsgStr, "First resx string has no MsgStr data (as expected)");
-			Assert.IsNull(poStr.UserComments, "First resx string has no User Comments (as expected)");
-			Assert.IsNull(poStr.References, "First resx string has no Reference data (as expected)");
-			Assert.IsNull(poStr.Flags, "First resx string.Flags");
-			Assert.IsNotNull(poStr.AutoComments, "Third resx string has Auto Comments");
-			Assert.AreEqual(2, poStr.AutoComments.Count, "First resx string has two lines of Auto Comments");
-			Assert.AreEqual("Displayed in a message box.", poStr.AutoComments[0], "First resx string has the expected Auto Comment line one");
-			Assert.AreEqual("/Src/FwResources//FwStrings.resx::kstidFatalError2", poStr.AutoComments[1], "First resx string has the expected Auto Comment line two");
+			Assert.That(poStr.MsgId, Is.Not.Null, "First resx string has MsgId data");
+			Assert.That(poStr.MsgId.Count, Is.EqualTo(5), "First resx string has five lines of MsgId data");
+			Assert.That(poStr.MsgId[0], Is.EqualTo("\\n"), "First resx string has the expected MsgId data line one");
+			Assert.That(poStr.MsgId[1], Is.EqualTo("\\n"), "First resx string has the expected MsgId data line two");
+			Assert.That(poStr.MsgId[2], Is.EqualTo("In order to protect your data, the FieldWorks program needs to close.\\n"), "First resx string has the expected MsgId data line three");
+			Assert.That(poStr.MsgId[3], Is.EqualTo("\\n"), "First resx string has the expected MsgId data line four");
+			Assert.That(poStr.MsgId[4], Is.EqualTo("You should be able to restart it normally.\\n"), "First resx string has the expected MsgId data line five");
+			Assert.That(poStr.HasEmptyMsgStr, Is.True, "First resx string has no MsgStr data (as expected)");
+			Assert.That(poStr.UserComments, Is.Null, "First resx string has no User Comments (as expected)");
+			Assert.That(poStr.References, Is.Null, "First resx string has no Reference data (as expected)");
+			Assert.That(poStr.Flags, Is.Null, "First resx string.Flags");
+			Assert.That(poStr.AutoComments, Is.Not.Null, "Third resx string has Auto Comments");
+			Assert.That(poStr.AutoComments.Count, Is.EqualTo(2), "First resx string has two lines of Auto Comments");
+			Assert.That(poStr.AutoComments[0], Is.EqualTo("Displayed in a message box."), "First resx string has the expected Auto Comment line one");
+			Assert.That(poStr.AutoComments[1], Is.EqualTo("/Src/FwResources//FwStrings.resx::kstidFatalError2"), "First resx string has the expected Auto Comment line two");
 
 			var sw = new StringWriter();
 			// SUT
 			poStr.Write(sw);
 			poStr.Write(sw); // write a second to ensure they can be read separately
 			var serializedPo = sw.ToString();
-			Assert.IsNotNull(serializedPo, "Writing resx strings' po data produced output");
+			Assert.That(serializedPo, Is.Not.Null, "Writing resx strings' po data produced output");
 			var poLines = serializedPo.Split(new[] { Environment.NewLine }, 100, StringSplitOptions.None);
 			for (var i = 0; i <= 10; i += 10)
 			{
-				Assert.AreEqual("#. Displayed in a message box.", poLines[0 + i], $"Error line {0 + i}");
-				Assert.AreEqual("#. /Src/FwResources//FwStrings.resx::kstidFatalError2", poLines[1 + i], $"Error line {1 + i}");
-				Assert.AreEqual("msgid \"\"", poLines[2 + i], $"Error line {2 + i}");
-				Assert.AreEqual("\"\\n\"", poLines[3 + i], $"Error line {3 + i}");
-				Assert.AreEqual("\"\\n\"", poLines[4 + i], $"Error line {4 + i}");
-				Assert.AreEqual("\"In order to protect your data, the FieldWorks program needs to close.\\n\"", poLines[5 + i], $"Error line {5 + i}");
-				Assert.AreEqual("\"\\n\"", poLines[6 + i], $"Error line {6 + i}");
-				Assert.AreEqual("\"You should be able to restart it normally.\\n\"", poLines[7 + i], $"Error line {7 + i}");
-				Assert.AreEqual("msgstr \"\"", poLines[8 + i], $"Error line {8 + i}");
-				Assert.AreEqual("", poLines[9 + i], $"Error line {9 + i}");
+				Assert.That(poLines[0 + i], Is.EqualTo("#. Displayed in a message box."), $"Error line {0 + i}");
+				Assert.That(poLines[1 + i], Is.EqualTo("#. /Src/FwResources//FwStrings.resx::kstidFatalError2"), $"Error line {1 + i}");
+				Assert.That(poLines[2 + i], Is.EqualTo("msgid \"\""), $"Error line {2 + i}");
+				Assert.That(poLines[3 + i], Is.EqualTo("\"\\n\""), $"Error line {3 + i}");
+				Assert.That(poLines[4 + i], Is.EqualTo("\"\\n\""), $"Error line {4 + i}");
+				Assert.That(poLines[5 + i], Is.EqualTo("\"In order to protect your data, the FieldWorks program needs to close.\\n\""), $"Error line {5 + i}");
+				Assert.That(poLines[6 + i], Is.EqualTo("\"\\n\""), $"Error line {6 + i}");
+				Assert.That(poLines[7 + i], Is.EqualTo("\"You should be able to restart it normally.\\n\""), $"Error line {7 + i}");
+				Assert.That(poLines[8 + i], Is.EqualTo("msgstr \"\""), $"Error line {8 + i}");
+				Assert.That(poLines[9 + i], Is.EqualTo(""), $"Error line {9 + i}");
 			}
-			Assert.AreEqual("", poLines[20]);
-			Assert.AreEqual(21, poLines.Length);
+			Assert.That(poLines[20], Is.EqualTo(""));
+			Assert.That(poLines.Length, Is.EqualTo(21));
 
 			var sr = new StringReader(serializedPo);
 			// SUT
 			var poStrA = POString.ReadFromFile(sr);
 			var poStrB = POString.ReadFromFile(sr);
 			var poStrC = POString.ReadFromFile(sr);
-			Assert.IsNotNull(poStrA, "Read first message from leading newline test data");
-			Assert.IsNotNull(poStrB, "Read second message from leading newline test data");
-			Assert.IsNull(poStrC, "Only two messages in leading newline test data");
+			Assert.That(poStrA, Is.Not.Null, "Read first message from leading newline test data");
+			Assert.That(poStrB, Is.Not.Null, "Read second message from leading newline test data");
+			Assert.That(poStrC, Is.Null, "Only two messages in leading newline test data");
 
 			CheckStringList(poStr.MsgId, poStrA.MsgId, "Preserve MsgId in first message from leading newline test data");
 			CheckStringList(poStr.MsgStr, poStrA.MsgStr, "Preserve MsgStr in first message from leading newline test data");
@@ -475,13 +462,13 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		{
 			if (list1 == null)
 			{
-				Assert.IsNull(list2, msg + " (both null)");
+				Assert.That(list2, Is.Null, msg + " (both null)");
 				return;
 			}
-			Assert.IsNotNull(list2, msg + " (both not null)");
-			Assert.AreEqual(list1.Count, list2.Count, msg + " (same number of lines)");
+			Assert.That(list2, Is.Not.Null, msg + " (both not null)");
+			Assert.That(list2.Count, Is.EqualTo(list1.Count), msg + " (same number of lines)");
 			for (var i = 0; i < list1.Count; ++i)
-				Assert.AreEqual(list1[i], list2[i], $"{msg} - line {i} is same");
+				Assert.That(list2[i], Is.EqualTo(list1[i]), $"{msg} - line {i} is same");
 		}
 	}
 }

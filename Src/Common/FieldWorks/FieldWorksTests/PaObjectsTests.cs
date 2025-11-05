@@ -48,7 +48,7 @@ namespace SIL.FieldWorks
 			etymology.Form.set_String(_enWsId, firstForm);
 			// SUT
 			var paEntry = new PaLexEntry(entry);
-			Assert.NotNull(paEntry.xEtymology);
+			Assert.That(paEntry.xEtymology, Is.Not.Null);
 			Assert.That(paEntry.xEtymology.Texts.Contains(firstForm.Text));
 		}
 
@@ -75,7 +75,7 @@ namespace SIL.FieldWorks
 			etymology.Form.set_String(_enWsId, secondForm);
 			// SUT
 			var paEntry = new PaLexEntry(entry);
-			Assert.NotNull(paEntry.xEtymology);
+			Assert.That(paEntry.xEtymology, Is.Not.Null);
 			Assert.That(paEntry.xEtymology.Texts.Contains(firstForm.Text + ", " + secondForm.Text));
 		}
 	}

@@ -85,7 +85,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				Parts = new List<ConfigurableDictionaryNode>()
 			};
 			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode>() }); // SUT
-			Assert.AreEqual(DictionaryConfigurationMigrator.VersionCurrent, alphaModel.Version);
+			Assert.That(alphaModel.Version, Is.EqualTo(DictionaryConfigurationMigrator.VersionCurrent));
 		}
 
 		[Test]
@@ -105,7 +105,7 @@ name='Stem-based (complex forms as main entries)' version='8' lastModified='2016
 				var convertedFilePath = Path.Combine(configLocations, "Lexeme" + DictionaryConfigurationModel.FileExtension);
 				File.WriteAllText(actualFilePath, content);
 				m_migrator.MigrateIfNeeded(m_logger, m_propertyTable, "Test App Version"); // SUT
-				Assert.IsTrue(File.Exists(convertedFilePath));
+				Assert.That(File.Exists(convertedFilePath), Is.True);
 			}
 		}
 
@@ -140,7 +140,7 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 				File.WriteAllText(filePath3, content3);
 				m_migrator.MigrateIfNeeded(m_logger, m_propertyTable, "Test App Version"); // SUT
 				var todoList = DCM.GetConfigsNeedingMigration(Cache, DCM.VersionCurrent);
-				Assert.IsTrue(todoList.Count == 0, "Should have already migrated everything");
+				Assert.That(todoList.Count == 0, Is.True, "Should have already migrated everything");
 			}
 		}
 
@@ -173,10 +173,10 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			// reset the kiddo state to false after using the utility methods (they set IsEnabled to true on all nodes)
 			firstPartNode.Children[0].IsEnabled = false;
 			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModelWithGroup); // SUT
-			Assert.IsFalse(alphaModel.Parts[0].Children.Any(child => child.FieldDescription == KidField), "The child should have been moved out of the parent and into the group");
-			Assert.IsTrue(alphaModel.Parts[0].Children.Any(child => child.FieldDescription == group), "The group should have been added");
-			Assert.IsTrue(alphaModel.Parts[0].Children[0].Children[0].FieldDescription == KidField, "The child should have ended up inside the group");
-			Assert.IsFalse(alphaModel.Parts[0].Children[0].Children[0].IsEnabled, "The child keep the enabled state even though it moved");
+			Assert.That(alphaModel.Parts[0].Children.Any(child => child.FieldDescription == KidField), Is.False, "The child should have been moved out of the parent and into the group");
+			Assert.That(alphaModel.Parts[0].Children.Any(child => child.FieldDescription == group), Is.True, "The group should have been added");
+			Assert.That(alphaModel.Parts[0].Children[0].Children[0].FieldDescription == KidField, Is.True, "The child should have ended up inside the group");
+			Assert.That(alphaModel.Parts[0].Children[0].Children[0].IsEnabled, Is.False, "The child keep the enabled state even though it moved");
 		}
 
 		[Test]
@@ -215,8 +215,8 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			// reset the kiddo state to false after using the utility methods (they set IsEnabled to true on all nodes)
 			firstPartNode.Children[0].IsEnabled = false;
 			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModelWithGroup); // SUT
-			Assert.IsTrue(alphaModel.Parts[0].Children[1].FieldDescription == group, "The group should have ended up following the olderBroField");
-			Assert.IsTrue(alphaModel.Parts[0].Children[2].FieldDescription == "OtherBrotherBob", "The original order of unrelated fields should be retained");
+			Assert.That(alphaModel.Parts[0].Children[1].FieldDescription == group, Is.True, "The group should have ended up following the olderBroField");
+			Assert.That(alphaModel.Parts[0].Children[2].FieldDescription == "OtherBrotherBob", Is.True, "The original order of unrelated fields should be retained");
 		}
 
 		[Test]
@@ -252,8 +252,7 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			CssGeneratorTests.PopulateFieldsForTesting(alphaModel);
 			CssGeneratorTests.PopulateFieldsForTesting(defaultModelWithGroup);
 			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModelWithGroup); // SUT
-			Assert.IsTrue(alphaModel.Parts[0].Children[2].FieldDescription == group,
-				"The group should be tacked on the end when the preceeding sibling couldn't be matched");
+			Assert.That(alphaModel.Parts[0].Children[2].FieldDescription == group, Is.True, "The group should be tacked on the end when the preceeding sibling couldn't be matched");
 		}
 
 		[Test]
@@ -311,11 +310,11 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 
 			var topGroupNode = alphaModel.Parts[0].Children[1];
 			var olderBroNode = alphaModel.Parts[0].Children[0];
-			Assert.IsTrue(topGroupNode.FieldDescription == group, "Child group not added");
-			Assert.IsTrue(olderBroNode.Children[0].FieldDescription == group, "Group under non group not added");
-			Assert.IsTrue(topGroupNode.Children[0].Children[0].FieldDescription == group, "Group not added under item that was moved into a group");
-			Assert.IsTrue(topGroupNode.Children[0].Children[0].Children[0].FieldDescription == grandChildField, "Grand child group contents incorrect");
-			Assert.IsTrue(olderBroNode.Children[0].Children[0].FieldDescription == cousinField, "Group under non-group contents incorrect");
+			Assert.That(topGroupNode.FieldDescription == group, Is.True, "Child group not added");
+			Assert.That(olderBroNode.Children[0].FieldDescription == group, Is.True, "Group under non group not added");
+			Assert.That(topGroupNode.Children[0].Children[0].FieldDescription == group, Is.True, "Group not added under item that was moved into a group");
+			Assert.That(topGroupNode.Children[0].Children[0].Children[0].FieldDescription == grandChildField, Is.True, "Grand child group contents incorrect");
+			Assert.That(olderBroNode.Children[0].Children[0].FieldDescription == cousinField, Is.True, "Group under non-group contents incorrect");
 		}
 
 		[Test]
@@ -353,12 +352,12 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			CssGeneratorTests.PopulateFieldsForTesting(alphaModel);
 			CssGeneratorTests.PopulateFieldsForTesting(defaultModelWithGroup);
 			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModelWithGroup); // SUT
-			Assert.IsTrue(alphaModel.Parts[0].Children[0].FieldDescription == group, "The group node was not properly cloned");
-			Assert.IsTrue(alphaModel.Parts[0].Children[0].Label == label, "The group node was not properly cloned");
-			Assert.IsTrue(alphaModel.Parts[0].Children[0].Before == before, "The group node was not properly cloned");
-			Assert.IsTrue(alphaModel.Parts[0].Children[0].After == after, "The group node was not properly cloned");
-			Assert.IsTrue(alphaModel.Parts[0].Children[0].Style == style, "The group node was not properly cloned");
-			Assert.AreEqual(alphaModel.Parts[0], alphaModel.Parts[0].Children[0].Parent, "The group node has the wrong parent");
+			Assert.That(alphaModel.Parts[0].Children[0].FieldDescription == group, Is.True, "The group node was not properly cloned");
+			Assert.That(alphaModel.Parts[0].Children[0].Label == label, Is.True, "The group node was not properly cloned");
+			Assert.That(alphaModel.Parts[0].Children[0].Before == before, Is.True, "The group node was not properly cloned");
+			Assert.That(alphaModel.Parts[0].Children[0].After == after, Is.True, "The group node was not properly cloned");
+			Assert.That(alphaModel.Parts[0].Children[0].Style == style, Is.True, "The group node was not properly cloned");
+			Assert.That(alphaModel.Parts[0].Children[0].Parent, Is.EqualTo(alphaModel.Parts[0]), "The group node has the wrong parent");
 		}
 
 		[Test]
@@ -444,21 +443,21 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			CssGeneratorTests.PopulateFieldsForTesting(betaModel);
 
 			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, betaModel); // SUT
-			Assert.AreEqual(2, alphaModel.Parts.Count, "All root-level Complex Form nodes should have been removed");
+			Assert.That(alphaModel.Parts.Count, Is.EqualTo(2), "All root-level Complex Form nodes should have been removed");
 			var mainChildren = alphaModel.Parts[0].Children;
-			Assert.AreEqual(isHybrid ? 5 : 4, mainChildren.Count, "All child nodes of Main Entry (Complex Forms) should have been copied to Main Entry");
-			Assert.AreEqual("Components", mainChildren[0].FieldDescription, "Components should have been inserted at the beginning");
-			Assert.AreEqual(componentsBefore, mainChildren[0].Before, "Components's Before material should have come from the user's configuration");
-			Assert.AreEqual(KidField, mainChildren[1].FieldDescription, "The existing field should be in the middle");
-			Assert.AreEqual(kiddoBefore, mainChildren[1].Before, "The existing node's Before should have retained its value from Main Entry proper");
-			Assert.AreEqual("ComplexKid", mainChildren[2].FieldDescription, "The other child node should have been inserted after the existing one");
-			Assert.AreEqual(typeof(DictionaryNodeGroupingOptions), mainChildren[3].DictionaryNodeOptions.GetType(), "The final node should be the group");
+			Assert.That(mainChildren.Count, Is.EqualTo(isHybrid ? 5 : 4), "All child nodes of Main Entry (Complex Forms) should have been copied to Main Entry");
+			Assert.That(mainChildren[0].FieldDescription, Is.EqualTo("Components"), "Components should have been inserted at the beginning");
+			Assert.That(mainChildren[0].Before, Is.EqualTo(componentsBefore), "Components's Before material should have come from the user's configuration");
+			Assert.That(mainChildren[1].FieldDescription, Is.EqualTo(KidField), "The existing field should be in the middle");
+			Assert.That(mainChildren[1].Before, Is.EqualTo(kiddoBefore), "The existing node's Before should have retained its value from Main Entry proper");
+			Assert.That(mainChildren[2].FieldDescription, Is.EqualTo("ComplexKid"), "The other child node should have been inserted after the existing one");
+			Assert.That(mainChildren[3].DictionaryNodeOptions.GetType(), Is.EqualTo(typeof(DictionaryNodeGroupingOptions)), "The final node should be the group");
 			var groupedChildren = mainChildren[3].Children;
-			Assert.AreEqual(3, groupedChildren.Count, "groupedChildren.Count");
-			Assert.AreEqual("GroupedChild", groupedChildren[0].FieldDescription, "Grouped child should have been copied into existing group");
-			Assert.AreEqual(RCFsForThisConfig, groupedChildren[1].FieldDescription, "Subentries should not be included in *Other* Referenced Complex Forms");
-			Assert.AreEqual("ComplexFormEntryRefs", groupedChildren[2].FieldDescription, "The legit node should have supplanted the placeholder Custom node");
-			Assert.False(groupedChildren[isHybrid ? 1 : 2].IsCustomField, "Component References is NOT a Custom field");
+			Assert.That(groupedChildren.Count, Is.EqualTo(3), "groupedChildren.Count");
+			Assert.That(groupedChildren[0].FieldDescription, Is.EqualTo("GroupedChild"), "Grouped child should have been copied into existing group");
+			Assert.That(groupedChildren[1].FieldDescription, Is.EqualTo(RCFsForThisConfig), "Subentries should not be included in *Other* Referenced Complex Forms");
+			Assert.That(groupedChildren[2].FieldDescription, Is.EqualTo("ComplexFormEntryRefs"), "The legit node should have supplanted the placeholder Custom node");
+			Assert.That(groupedChildren[isHybrid ? 1 : 2].IsCustomField, Is.False, "Component References is NOT a Custom field");
 		}
 
 		[Test]
@@ -498,14 +497,14 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 
 			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, betaModel);
 			var parts = alphaModel.Parts;
-			Assert.AreEqual(4, parts.Count, "No parts should have been lost in migration");
-			Assert.AreEqual("Main Entries", parts[0].Label);
-			Assert.AreEqual("Complex Entries", parts[1].Label, "Complex Entries remain distinct in root-based configs");
+			Assert.That(parts.Count, Is.EqualTo(4), "No parts should have been lost in migration");
+			Assert.That(parts[0].Label, Is.EqualTo("Main Entries"));
+			Assert.That(parts[1].Label, Is.EqualTo("Complex Entries"), "Complex Entries remain distinct in root-based configs");
 			Assert.That(parts[1].Children, Is.Null.Or.Empty, "Child field should not have been added to Complex Entries node");
-			Assert.AreEqual("Variants", parts[2].Label);
-			Assert.AreEqual(KidField, parts[2].Children[0].FieldDescription);
-			Assert.AreEqual("Variants", parts[3].Label);
-			Assert.AreEqual(KidField, parts[3].Children[0].FieldDescription);
+			Assert.That(parts[2].Label, Is.EqualTo("Variants"));
+			Assert.That(parts[2].Children[0].FieldDescription, Is.EqualTo(KidField));
+			Assert.That(parts[3].Label, Is.EqualTo("Variants"));
+			Assert.That(parts[3].Children[0].FieldDescription, Is.EqualTo(KidField));
 		}
 
 		[Test]
@@ -513,12 +512,12 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 		{
 			var reversalModel = new DictionaryConfigurationModel { WritingSystem = "en" };
 			var reversalDefault = m_migrator.LoadBetaDefaultForAlphaConfig(reversalModel); // SUT
-			Assert.IsTrue(reversalDefault.IsReversal);
+			Assert.That(reversalDefault.IsReversal, Is.True);
 			Assert.That(reversalDefault.Label, Does.Contain("Reversal"));
 
 			var rootModel = new DictionaryConfigurationModel { IsRootBased = true };
 			var rootDefault = m_migrator.LoadBetaDefaultForAlphaConfig(rootModel); // SUT
-			Assert.IsTrue(rootDefault.IsRootBased);
+			Assert.That(rootDefault.IsRootBased, Is.True);
 			Assert.That(rootDefault.Label, Does.Contain(DictionaryConfigurationMigrator.RootFileName));
 
 			var subEntry = new ConfigurableDictionaryNode
@@ -709,7 +708,7 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModel);
 
 			var migratedSenseVariantNode = alphaModel.Parts[0].Children[0].Children[0];
-			Assert.True(migratedSenseVariantNode.DictionaryNodeOptions != null, "ListTypeOptions not migrated");
+			Assert.That(migratedSenseVariantNode.DictionaryNodeOptions != null, Is.True, "ListTypeOptions not migrated");
 		}
 
 		[Test]
@@ -760,8 +759,8 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModel);
 
 			var migratedNoteDictionaryOptionsNode = alphaModel.Parts[0].Children[0].Children[0];
-			Assert.True(migratedNoteDictionaryOptionsNode.DictionaryNodeOptions != null, "DictionaryNodeOptions should not be null");
-			Assert.True(migratedNoteDictionaryOptionsNode.DictionaryNodeOptions is DictionaryNodeWritingSystemAndParaOptions, "Config node should have WritingSystemOptions");
+			Assert.That(migratedNoteDictionaryOptionsNode.DictionaryNodeOptions != null, Is.True, "DictionaryNodeOptions should not be null");
+			Assert.That(migratedNoteDictionaryOptionsNode.DictionaryNodeOptions is DictionaryNodeWritingSystemAndParaOptions, Is.True, "Config node should have WritingSystemOptions");
 		}
 
 		[Test]
@@ -835,8 +834,8 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, defaultModel);
 
 			var migratedNoteDictionaryOptionsNode = alphaModel.Parts[0].Children[0].Children[0].Children[0];
-			Assert.AreEqual("HeadWordRef", migratedNoteDictionaryOptionsNode.FieldDescription, "FieldDescription for Referenced Sense Headword should be HeadwordRef");
-			Assert.AreEqual(1, migratedNoteDictionaryOptionsNode.Parent.Children.Count, "no extra nodes should have been added");
+			Assert.That(migratedNoteDictionaryOptionsNode.FieldDescription, Is.EqualTo("HeadWordRef"), "FieldDescription for Referenced Sense Headword should be HeadwordRef");
+			Assert.That(migratedNoteDictionaryOptionsNode.Parent.Children.Count, Is.EqualTo(1), "no extra nodes should have been added");
 		}
 
 		[Test]
@@ -888,15 +887,15 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			};
 			var rootModel = m_migrator.LoadBetaDefaultForAlphaConfig(alphaModel);
 			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, rootModel);
-			Assert.AreEqual("EtymologyOS", etymologyNode.FieldDescription, "Should have changed to a sequence.");
-			Assert.AreEqual("etymologies", etymologyNode.CSSClassNameOverride, "Should have changed CSS override");
-			Assert.AreEqual("(", etymologyNode.Before, "Should have set Before to '('.");
-			Assert.AreEqual(") ", etymologyNode.After, "Should have set After to ') '.");
-			Assert.AreEqual(" ", etymologyNode.Between, "Should have set Between to one space.");
+			Assert.That(etymologyNode.FieldDescription, Is.EqualTo("EtymologyOS"), "Should have changed to a sequence.");
+			Assert.That(etymologyNode.CSSClassNameOverride, Is.EqualTo("etymologies"), "Should have changed CSS override");
+			Assert.That(etymologyNode.Before, Is.EqualTo("("), "Should have set Before to '('.");
+			Assert.That(etymologyNode.After, Is.EqualTo(") "), "Should have set After to ') '.");
+			Assert.That(etymologyNode.Between, Is.EqualTo(" "), "Should have set Between to one space.");
 			var etymChildren = etymologyNode.Children;
 			// instead of verifying certain nodes are NOT present, we'll just verify all 7 of the expected nodes
 			// and that there ARE only 7 nodes.
-			Assert.AreEqual(7, etymChildren.Count);
+			Assert.That(etymChildren.Count, Is.EqualTo(7));
 			var configNode = etymChildren.Find(node => node.Label == "Preceding Annotation");
 			Assert.That(configNode, Is.Not.Null, "Should have added Preceding Annotation node");
 			Assert.That(configNode.FieldDescription, Is.EqualTo("PrecComment"));
@@ -906,7 +905,7 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			Assert.That(configNode, Is.Not.Null, "Should have added Source Language node");
 			Assert.That(configNode.FieldDescription, Is.EqualTo("LanguageRS"));
 			Assert.That(configNode.IsEnabled, Is.True, "Language node should be enabled");
-			Assert.True(configNode.IsEnabled, "Source Language node should be enabled by default");
+			Assert.That(configNode.IsEnabled, Is.True, "Source Language node should be enabled by default");
 			Assert.That(configNode.CSSClassNameOverride, Is.EqualTo("languages"), "Should have changed the css override");
 			// Just checking that some 'contexts' have been filled in by the new default config.
 			Assert.That(configNode.Between, Is.EqualTo(", "));
@@ -916,11 +915,11 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			Assert.That(childNodes.Count, Is.EqualTo(2), "We ought to have Abbreviation and Name nodes here");
 			var abbrNode = childNodes.Find(n => n.Label == "Abbreviation");
 			Assert.That(abbrNode, Is.Not.Null, "Source Language should have an Abbrevation node");
-			Assert.True(abbrNode.IsEnabled, "Abbrevation node should be enabled by default");
+			Assert.That(abbrNode.IsEnabled, Is.True, "Abbrevation node should be enabled by default");
 			TestForWritingSystemOptionsType(abbrNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
 			var nameNode = childNodes.Find(n => n.Label == "Name");
 			Assert.That(nameNode, Is.Not.Null, "Source Language should have an Name node");
-			Assert.False(nameNode.IsEnabled, "Name node should not be enabled by default");
+			Assert.That(nameNode.IsEnabled, Is.False, "Name node should not be enabled by default");
 			TestForWritingSystemOptionsType(nameNode, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
 			var langNotesNode = etymChildren.Find(node => node.FieldDescription == "LanguageNotes");
 			Assert.That(langNotesNode.IsEnabled, Is.True, "LanguageNotes node should be enabled by default");
@@ -1032,8 +1031,8 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			DictionaryNodeWritingSystemOptions.WritingSystemType expectedWsType)
 		{
 			var options = configNode.DictionaryNodeOptions;
-			Assert.True(options is DictionaryNodeWritingSystemOptions, "Config node should have WritingSystemOptions");
-			Assert.AreEqual(expectedWsType, (options as DictionaryNodeWritingSystemOptions).WsType);
+			Assert.That(options is DictionaryNodeWritingSystemOptions, Is.True, "Config node should have WritingSystemOptions");
+			Assert.That((options as DictionaryNodeWritingSystemOptions).WsType, Is.EqualTo(expectedWsType));
 		}
 
 		[Test]
@@ -1094,10 +1093,10 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			};
 			var betaModel = m_migrator.LoadBetaDefaultForAlphaConfig(alphaModel);
 			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, betaModel);
-			Assert.AreEqual("EtymologyOS", etymologyNode.SubField, "Should have changed to a sequence.");
-			Assert.AreEqual("Entry", etymologyNode.FieldDescription, "Should have changed 'Owner' field for reversal to 'Entry'");
-			Assert.AreEqual("etymologies", etymologyNode.CSSClassNameOverride, "Should have changed CSS override");
-			Assert.AreEqual(7, etymologyNode.Children.Count, "There should be 7 nodes after the conversion.");
+			Assert.That(etymologyNode.SubField, Is.EqualTo("EtymologyOS"), "Should have changed to a sequence.");
+			Assert.That(etymologyNode.FieldDescription, Is.EqualTo("Entry"), "Should have changed 'Owner' field for reversal to 'Entry'");
+			Assert.That(etymologyNode.CSSClassNameOverride, Is.EqualTo("etymologies"), "Should have changed CSS override");
+			Assert.That(etymologyNode.Children.Count, Is.EqualTo(7), "There should be 7 nodes after the conversion.");
 			Assert.That(etymologyNode.DictionaryNodeOptions, Is.Null, "Improper options added to etymology sequence node.");
 		}
 
@@ -1135,8 +1134,8 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			};
 			var betaModel = m_migrator.LoadBetaDefaultForAlphaConfig(alphaModel);
 			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, betaModel);
-			Assert.AreEqual("SensesRS", referencedSensesNode.FieldDescription, "Should have changed 'ReferringSenses' field for reversal to 'SensesRS'");
-			Assert.AreEqual("SensesRS", refdSensesNode.FieldDescription, "Should have changed 'ReferringSenses' field for reversal to 'SensesRS'");
+			Assert.That(referencedSensesNode.FieldDescription, Is.EqualTo("SensesRS"), "Should have changed 'ReferringSenses' field for reversal to 'SensesRS'");
+			Assert.That(refdSensesNode.FieldDescription, Is.EqualTo("SensesRS"), "Should have changed 'ReferringSenses' field for reversal to 'SensesRS'");
 		}
 
 		/// <summary>Referenced Complex Forms that are siblings of Subentries should become Other Referenced Complex Forms</summary>
@@ -1177,14 +1176,14 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			};
 			m_migrator.MigrateFrom83Alpha(m_logger, userModel, betaModel); // SUT
 			var mainEntryChildren = userModel.Parts[0].Children;
-			Assert.AreEqual(2, mainEntryChildren.Count, "no children should have been created or deleted");
-			Assert.AreEqual(OtherRefdComplexForms, mainEntryChildren[0].FieldDescription, "should have changed");
-			Assert.AreEqual("Other Referenced Complex Forms", mainEntryChildren[0].Label, "should have changed");
-			Assert.AreEqual("Subentries", mainEntryChildren[1].FieldDescription, "should not have changed");
+			Assert.That(mainEntryChildren.Count, Is.EqualTo(2), "no children should have been created or deleted");
+			Assert.That(mainEntryChildren[0].FieldDescription, Is.EqualTo(OtherRefdComplexForms), "should have changed");
+			Assert.That(mainEntryChildren[0].Label, Is.EqualTo("Other Referenced Complex Forms"), "should have changed");
+			Assert.That(mainEntryChildren[1].FieldDescription, Is.EqualTo("Subentries"), "should not have changed");
 			var minorEntryChildren = userModel.Parts[1].Children;
-			Assert.AreEqual(1, minorEntryChildren.Count, "no children should have been added or deleted");
-			Assert.AreEqual(ReferencedComplexForms, minorEntryChildren[0].FieldDescription, "should not have changed");
-			Assert.AreEqual("Referenced Complex Forms", minorEntryChildren[0].Label, "should not have changed");
+			Assert.That(minorEntryChildren.Count, Is.EqualTo(1), "no children should have been added or deleted");
+			Assert.That(minorEntryChildren[0].FieldDescription, Is.EqualTo(ReferencedComplexForms), "should not have changed");
+			Assert.That(minorEntryChildren[0].Label, Is.EqualTo("Referenced Complex Forms"), "should not have changed");
 		}
 
 		[Test]
@@ -1245,9 +1244,9 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			};
 			m_migrator.MigrateFrom83Alpha(m_logger, userModel, betaModel); // SUT
 			var dialectLabels = userModel.Parts[0].Children[0].Children[0].Children[0].Children[0];
-			Assert.AreEqual("Dialect Labels", dialectLabels.Label, "should have Dialect Labels");
-			Assert.IsFalse(dialectLabels.IsEnabled, "dialectLabels should be false");
-			Assert.AreEqual(2, dialectLabels.Children.Count, "two children should have been created");
+			Assert.That(dialectLabels.Label, Is.EqualTo("Dialect Labels"), "should have Dialect Labels");
+			Assert.That(dialectLabels.IsEnabled, Is.False, "dialectLabels should be false");
+			Assert.That(dialectLabels.Children.Count, Is.EqualTo(2), "two children should have been created");
 		}
 
 		/// <summary>Apart from Category Info, all children of Gram. Info under (Other) Referenced Complex Forms should be removed</summary>
@@ -1309,10 +1308,10 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 
 			m_migrator.MigrateFrom83Alpha(m_logger, userModel, betaModel); // SUT
 			var remainingChildren = userModel.Parts[0].Children[0].Children[0].Children;
-			Assert.AreEqual(1, remainingChildren.Count, "Only one child should remain under GramInfo under (O)RCF's");
-			Assert.AreEqual("MLPartOfSpeech", remainingChildren[0].FieldDescription); // Label in production is Category Info.
+			Assert.That(remainingChildren.Count, Is.EqualTo(1), "Only one child should remain under GramInfo under (O)RCF's");
+			Assert.That(remainingChildren[0].FieldDescription, Is.EqualTo("MLPartOfSpeech")); // Label in production is Category Info.
 			remainingChildren = userModel.Parts[0].Children[1].Children[0].Children;
-			Assert.AreEqual(originalKidCount, remainingChildren.Count, "No children should have been removed from GramInfo under Senses");
+			Assert.That(remainingChildren.Count, Is.EqualTo(originalKidCount), "No children should have been removed from GramInfo under Senses");
 		}
 
 		[Test]
@@ -1321,13 +1320,13 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			//Populate a reversal configuration based on the current defaults
 			var reversalBetaModel = new DictionaryConfigurationModel { WritingSystem = "en"};
 			var betaModel = m_migrator.LoadBetaDefaultForAlphaConfig(reversalBetaModel); // SUT
-			Assert.IsTrue(betaModel.IsReversal);
+			Assert.That(betaModel.IsReversal, Is.True);
 			var alphaModel = betaModel.DeepClone();
 			//Set the SubField on the ReversalName Node for our 'old' configuration
 			alphaModel.SharedItems[0].Children[2].Children[0].SubField = "MLHeadWord";
 			alphaModel.Version = 18;
 			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, betaModel); // SUT
-			Assert.AreNotEqual("MLHeadWord", betaModel.SharedItems[0].Children[2].Children[0].SubField);
+			Assert.That(betaModel.SharedItems[0].Children[2].Children[0].SubField, Is.Not.EqualTo("MLHeadWord"));
 			Assert.Null(betaModel.SharedItems[0].Children[2].Children[0].SubField);
 		}
 
@@ -1367,9 +1366,9 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			};
 			var betaModel = m_migrator.LoadBetaDefaultForAlphaConfig(alphaModel);
 			m_migrator.MigrateFrom83Alpha(m_logger, alphaModel, betaModel);
-			Assert.AreEqual("MainEntryRefs", referencedEntryNode.FieldDescription, "Should have updated the field from 'EntryRefsWithThisMainSense' to 'MainEntryRefs'");
-			Assert.AreEqual("ConfigReferencedEntries", primaryEntries.FieldDescription, "Should have updated the field from 'PrimarySensesOrEntries' to 'ConfigReferencedEntries'");
-			Assert.AreEqual("referencedentries", primaryEntries.CSSClassNameOverride, "Should have changed the CSSClassNameOverride from 'primarylexemes' to 'referencedentries'");
+			Assert.That(referencedEntryNode.FieldDescription, Is.EqualTo("MainEntryRefs"), "Should have updated the field from 'EntryRefsWithThisMainSense' to 'MainEntryRefs'");
+			Assert.That(primaryEntries.FieldDescription, Is.EqualTo("ConfigReferencedEntries"), "Should have updated the field from 'PrimarySensesOrEntries' to 'ConfigReferencedEntries'");
+			Assert.That(primaryEntries.CSSClassNameOverride, Is.EqualTo("referencedentries"), "Should have changed the CSSClassNameOverride from 'primarylexemes' to 'referencedentries'");
 		}
 
 		[Test]
@@ -1396,8 +1395,8 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 
 			m_migrator.MigrateFrom83Alpha(m_logger, userModel, betaModel); // SUT
 			var migratedOptions = userModel.Parts[0].Children[0].DictionaryNodeOptions as DictionaryNodeListOptions;
-			Assert.NotNull(migratedOptions, "Referenced Complex Forms should have gotten List Options");
-			Assert.AreEqual(DictionaryNodeListOptions.ListIds.Complex, migratedOptions.ListId);
+			Assert.That(migratedOptions, Is.Not.Null, "Referenced Complex Forms should have gotten List Options");
+			Assert.That(migratedOptions.ListId, Is.EqualTo(DictionaryNodeListOptions.ListIds.Complex));
 		}
 
 		[Test]
@@ -1430,8 +1429,8 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 
 			m_migrator.MigrateFrom83Alpha(m_logger, userModel, betaModel); // SUT
 			var migratedReversalNode = userModel.Parts[0];
-			Assert.AreEqual(reversalStyle, migratedReversalNode.Style, "Reversal node should have gotten a Style");
-			Assert.AreEqual(reversalCss, migratedReversalNode.CSSClassNameOverride, "Reversal node should have gotten a CssClassNameOverride");
+			Assert.That(migratedReversalNode.Style, Is.EqualTo(reversalStyle), "Reversal node should have gotten a Style");
+			Assert.That(migratedReversalNode.CSSClassNameOverride, Is.EqualTo(reversalCss), "Reversal node should have gotten a CssClassNameOverride");
 		}
 
 		[Test]
@@ -1574,8 +1573,7 @@ name='French Reversal Index 3' writingSystem='fr' version='21' lastModified='202
 			{
 				if (!string.IsNullOrEmpty(node.ReferenceItem))
 				{
-					Assert.IsTrue(node.Children == null || !node.Children.Any(),
-						"Reference Item and children are exclusive:\n" + DictionaryConfigurationMigrator.BuildPathStringFromNode(node));
+					Assert.That(node.Children == null || !node.Children.Any(), Is.True, "Reference Item and children are exclusive:\n" + DictionaryConfigurationMigrator.BuildPathStringFromNode(node));
 				}
 			});
 		}

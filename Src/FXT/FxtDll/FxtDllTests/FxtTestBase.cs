@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.Common.FXT
 			string outputPath = FileUtils.GetTempFile("xml");
 			PerformDump(dumper, outputPath, databaseName, label);
 			if(answerPath!=null)
-				FileAssert.AreEqual(answerPath, outputPath);
+				FileAssert.That(outputPath, Is.EqualTo(answerPath));
 		}
 
 		protected static void PerformTransform(string xsl, string inputPath, string sTransformedResultPath)

@@ -552,8 +552,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					default:
 						continue;
 				}
-				Assert.AreEqual(flag, m_ISilDataAccess.get_IsPropInCache(hvo, tag, (int)cpt, 12345),
-					string.Format("IsPropInCache for property type '{0}' failed;", cpt));
+				Assert.That(m_ISilDataAccess.get_IsPropInCache(hvo, tag, (int)cpt, 12345), Is.EqualTo(flag), string.Format("IsPropInCache for property type '{0}' failed;", cpt));
 			}
 		}
 

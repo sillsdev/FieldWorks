@@ -54,12 +54,12 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		[Test]
 		public void GlossListBoxCountTest()
 		{
-			Assert.AreEqual(1, this.m_LabelGlosses.Items.Count);
+			Assert.That(this.m_LabelGlosses.Items.Count, Is.EqualTo(1));
 		}
 		[Test]
 		public void GlossListBoxContentTest()
 		{
-			Assert.AreEqual("positive: pos", this.m_LabelGlosses.Items[0].ToString());
+			Assert.That(this.m_LabelGlosses.Items[0].ToString(), Is.EqualTo("positive: pos"));
 		}
 		[Test]
 		public void GlossListItemConflicts()
@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 			var sMsg = glbiConflict != null
 				? $"Masculine gender should not conflict, but did with {glbiConflict.Abbrev}."
 				: "Masculine gender should not conflict";
-			Assert.IsFalse(fResult, sMsg);
+			Assert.That(fResult, Is.False, sMsg);
 			// check a non-terminal node, so no conflict
 			node = m_doc.SelectSingleNode("//item[@id='fDeg']");
 			glbiNew = new GlossListBoxItem(Cache, node, ".", "", false);
@@ -80,12 +80,12 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 			sMsg = glbiConflict != null
 				? $"Feature degree should not conflict, but did with {glbiConflict.Abbrev}"
 				: "Feature degree should not conflict";
-			Assert.IsFalse(fResult, sMsg);
+			Assert.That(fResult, Is.False, sMsg);
 			// check another terminal node with same parent, so there is conflict
 			node = m_doc.SelectSingleNode("//item[@id='vComp']");
 			glbiNew = new GlossListBoxItem(Cache, node, ".", "", false);
 			fResult = m_LabelGlosses.NewItemConflictsWithExtantItem(glbiNew, out glbiConflict);
-			Assert.IsTrue(fResult, "Comparative should conflict with positive, but did not");
+			Assert.That(fResult, Is.True, "Comparative should conflict with positive, but did not");
 		}
 	}
 	/// <summary>
@@ -125,19 +125,19 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		[Test]
 		public void SomeNodeCountsTest()
 		{
-			Assert.AreEqual(5, treeViewGlossList.Nodes.Count);
-			Assert.AreEqual(2, treeViewGlossList.Nodes[0].Nodes.Count);
-			Assert.AreEqual(2, treeViewGlossList.Nodes[1].Nodes.Count);
-			Assert.AreEqual(2, treeViewGlossList.Nodes[2].Nodes.Count);
-			Assert.AreEqual(682, treeViewGlossList.GetNodeCount(true));
+			Assert.That(treeViewGlossList.Nodes.Count, Is.EqualTo(5));
+			Assert.That(treeViewGlossList.Nodes[0].Nodes.Count, Is.EqualTo(2));
+			Assert.That(treeViewGlossList.Nodes[1].Nodes.Count, Is.EqualTo(2));
+			Assert.That(treeViewGlossList.Nodes[2].Nodes.Count, Is.EqualTo(2));
+			Assert.That(treeViewGlossList.GetNodeCount(true), Is.EqualTo(682));
 		}
 		[Test]
 		public void SomeNodeContentsTest()
 		{
-			Assert.AreEqual("adjective-related", treeViewGlossList.Nodes[0].Text);
-			Assert.AreEqual("degree: deg", treeViewGlossList.Nodes[0].Nodes[0].Text);
-			Assert.AreEqual("article-related", treeViewGlossList.Nodes[1].Text);
-			Assert.AreEqual("gender: gen", treeViewGlossList.Nodes[0].Nodes[1].Nodes[0].Text);
+			Assert.That(treeViewGlossList.Nodes[0].Text, Is.EqualTo("adjective-related"));
+			Assert.That(treeViewGlossList.Nodes[0].Nodes[0].Text, Is.EqualTo("degree: deg"));
+			Assert.That(treeViewGlossList.Nodes[1].Text, Is.EqualTo("article-related"));
+			Assert.That(treeViewGlossList.Nodes[0].Nodes[1].Nodes[0].Text, Is.EqualTo("gender: gen"));
 		}
 		[Test]
 		public void GetFirstItemAbbrevTest()
@@ -145,7 +145,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 
 			XmlNode xn = dom.SelectSingleNode(m_sTopOfList + "/item/abbrev");
 			string strCheckBoxes = xn.InnerText;
-			Assert.AreEqual("adj.r", strCheckBoxes);
+			Assert.That(strCheckBoxes, Is.EqualTo("adj.r"));
 		}
 		[Test]
 		public void GetTreeNonExistentAttrTest()
@@ -157,10 +157,8 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 		[Test]
 		public void TreeNodeBitmapTest()
 		{
-			Assert.AreEqual(GlossListTreeView.ImageKind.userChoice,
-				(GlossListTreeView.ImageKind)treeViewGlossList.Nodes[0].Nodes[0].ImageIndex);
-			Assert.AreEqual(GlossListTreeView.ImageKind.userChoice,
-				(GlossListTreeView.ImageKind)treeViewGlossList.Nodes[1].Nodes[1].ImageIndex);
+			Assert.That((GlossListTreeView.ImageKind)treeViewGlossList.Nodes[0].Nodes[0].ImageIndex, Is.EqualTo(GlossListTreeView.ImageKind.userChoice));
+			Assert.That((GlossListTreeView.ImageKind)treeViewGlossList.Nodes[1].Nodes[1].ImageIndex, Is.EqualTo(GlossListTreeView.ImageKind.userChoice));
 		}
 		[Test]
 		public void WritingSystemDefaultsToEnglishTest()
@@ -169,7 +167,7 @@ namespace SIL.FieldWorks.LexText.Controls.MGA
 			{
 				// sXmlFile doesn't have any "fr" items in it; so it should default to English
 				myTVGL.LoadGlossListTreeFromXml(sXmlFile, "fr");
-				Assert.IsTrue(myTVGL.WritingSystemAbbrev == "en", "Expected writing system to default to English, but it did not.");
+				Assert.That(myTVGL.WritingSystemAbbrev == "en", Is.True, "Expected writing system to default to English, but it did not.");
 			}
 		}
 	}

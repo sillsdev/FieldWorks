@@ -106,8 +106,8 @@ namespace SIL.FieldWorks.IText
 				gloss.Form.set_String(Cache.DefaultAnalWs, glossTss);
 				m_sandbox.SwitchWord(cba0_0);
 				// Verify that the wordgloss was loaded into the m_sandbox
-				Assert.AreNotEqual(0, m_sandbox.WordGlossHvo, "The gloss was not set to Default gloss from the analysis.");
-				Assert.AreEqual(m_sandbox.WordGlossHvo, gloss.Hvo, "The gloss was not set to Default gloss from the analysis.");
+				Assert.That(m_sandbox.WordGlossHvo, Is.Not.EqualTo(0), "The gloss was not set to Default gloss from the analysis.");
+				Assert.That(gloss.Hvo, Is.EqualTo(m_sandbox.WordGlossHvo), "The gloss was not set to Default gloss from the analysis.");
 			}
 		}
 	}

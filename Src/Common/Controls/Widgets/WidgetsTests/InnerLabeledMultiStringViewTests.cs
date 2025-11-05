@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			//SUT
 			InnerLabeledMultiStringView.EliminateExtraStyleAndWsInfo(Cache.MetaDataCacheAccessor, args, LexEntryTags.kflidImportResidue);
 			string differences;
-			Assert.True(TsStringHelper.TsStringsAreEqual(m_tss, args.TsString, out differences), differences);
+			Assert.That(TsStringHelper.TsStringsAreEqual(m_tss, args.TsString, out differences), Is.True, differences);
 		}
 
 		[Test]
@@ -58,7 +58,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			//SUT
 			InnerLabeledMultiStringView.EliminateExtraStyleAndWsInfo(Cache.MetaDataCacheAccessor, args, LexSenseTags.kflidGeneralNote);
 			string differences;
-			Assert.True(TsStringHelper.TsStringsAreEqual(m_tss, args.TsString, out differences), differences);
+			Assert.That(TsStringHelper.TsStringsAreEqual(m_tss, args.TsString, out differences), Is.True, differences);
 		}
 
 		[Test]
@@ -70,7 +70,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			//SUT
 			InnerLabeledMultiStringView.EliminateExtraStyleAndWsInfo(Cache.MetaDataCacheAccessor, args, LexEntryTags.kflidLiftResidue);
 			string differences;
-			Assert.False(TsStringHelper.TsStringsAreEqual(m_tss, args.TsString, out differences), differences);
+			Assert.That(TsStringHelper.TsStringsAreEqual(m_tss, args.TsString, out differences), Is.False, differences);
 			Assert.That(differences, Does.Contain("TsStrings have different number of runs"));
 		}
 
@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			//SUT
 			InnerLabeledMultiStringView.EliminateExtraStyleAndWsInfo(Cache.MetaDataCacheAccessor, args, LexEntryTags.kflidCitationForm);
 			string differences;
-			Assert.False(TsStringHelper.TsStringsAreEqual(m_tss, args.TsString, out differences), differences);
+			Assert.That(TsStringHelper.TsStringsAreEqual(m_tss, args.TsString, out differences), Is.False, differences);
 			Assert.That(differences, Does.Contain("TsStrings have different number of runs"));
 		}
 

@@ -233,9 +233,9 @@ namespace LexTextControlsTests
 		{
 			DoImport(sfmDataWithBlankPosFollowingRealPos, MakeDefaultFields(), 1);
 			var entry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>().AllInstances().First();
-			Assert.AreEqual(2, entry.SensesOS.Count(), "Import should have resulted in two senses");
-			Assert.AreEqual(entry.SensesOS[0].MorphoSyntaxAnalysisRA.PosFieldName, "n");
-			Assert.AreNotEqual(entry.SensesOS[1].MorphoSyntaxAnalysisRA.PosFieldName, "n");
+			Assert.That(entry.SensesOS.Count(), Is.EqualTo(2), "Import should have resulted in two senses");
+			Assert.That("n", Is.EqualTo(entry.SensesOS[0].MorphoSyntaxAnalysisRA.PosFieldName));
+			Assert.That("n", Is.Not.EqualTo(entry.SensesOS[1].MorphoSyntaxAnalysisRA.PosFieldName));
 		}
 
 		/// <summary>

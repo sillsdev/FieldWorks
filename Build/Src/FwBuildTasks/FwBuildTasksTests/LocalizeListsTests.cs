@@ -57,7 +57,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			var message = Assert.Throws<ArgumentException>(() =>
 					LocalizeLists.SplitSourceLists(Path.GetRandomFileName(), Path.GetTempPath(), null))
 				.Message;
-			StringAssert.Contains("The source file does not exist", message);
+			StringAssert.That(message, Does.Contain("The source file does not exist"));
 		}
 
 		[Test]
@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			{
 				var message = Assert.Throws<ArgumentException>(() =>
 					LocalizeLists.SplitLists(xmlReader, Path.GetTempPath(), null)).Message;
-				StringAssert.Contains("Source file is not in the expected format", message);
+				StringAssert.That(message, Does.Contain("Source file is not in the expected format"));
 			}
 		}
 
@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			{
 				var message = Assert.Throws<ArgumentException>(() =>
 					LocalizeLists.SplitLists(xmlReader, Path.GetTempPath(), null)).Message;
-				StringAssert.Contains("Source file has an unexpected list count.", message);
+				StringAssert.That(message, Does.Contain("Source file has an unexpected list count."));
 			}
 		}
 
@@ -96,8 +96,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				var message = Assert.Throws<ArgumentException>(() =>
 					LocalizeLists.SplitLists(xmlReader, Path.GetTempPath(), null,
 						new List<string> {"ArgumentIsNotRight"}, null)).Message;
-				StringAssert.Contains("ListsToInclude is expecting one or more .xlf file names",
-					message);
+				StringAssert.That(message, Does.Contain("ListsToInclude is expecting one or more .xlf file names"));
 			}
 		}
 
@@ -111,8 +110,8 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				var message = Assert.Throws<ArgumentException>(() =>
 					LocalizeLists.SplitLists(xmlReader, Path.GetTempPath(), null,
 						new List<string> { LocalizeLists.AnthropologyCategories }))?.Message;
-				StringAssert.Contains("Source file does not have content for all lists to include", message);
-				StringAssert.Contains(LocalizeLists.AnthropologyCategories, message);
+				StringAssert.That(message, Does.Contain("Source file does not have content for all lists to include"));
+				StringAssert.That(message, Does.Contain(LocalizeLists.AnthropologyCategories));
 			}
 		}
 
@@ -125,7 +124,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			{
 				var message = Assert.Throws<ArgumentException>(() =>
 					LocalizeLists.SplitLists(xmlReader, Path.GetTempPath(), LocalizeLists.AcademicDomains))?.Message;
-				StringAssert.Contains("Source file has an unexpected list count.", message);
+				StringAssert.That(message, Does.Contain("Source file has an unexpected list count."));
 			}
 		}
 
@@ -177,7 +176,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			{
 				var message = Assert.Throws<NotSupportedException>(() =>
 					LocalizeLists.SplitLists(xmlReader, Path.GetTempPath(), null)).Message;
-				StringAssert.Contains("GlossPrepend is not supported", message);
+				StringAssert.That(message, Does.Contain("GlossPrepend is not supported"));
 			}
 		}
 
@@ -1150,8 +1149,8 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			AssertThatXmlIn.String(xliffDoc.ToString()).HasSpecifiedNumberOfMatchesForXpath(xpathToDescSource, 1, true);
 			var nameSourceElt = xliffDoc.XPathSelectElement(xpathToNameSource);
 			var descSourceElt = xliffDoc.XPathSelectElement(xpathToDescSource);
-			Assert.AreEqual(unescaped, nameSourceElt.Value);
-			Assert.AreEqual(unescaped, descSourceElt.Value);
+			Assert.That(nameSourceElt.Value, Is.EqualTo(unescaped));
+			Assert.That(descSourceElt.Value, Is.EqualTo(unescaped));
 
 			// Test and verify the round trip
 			var roundTripped = XElement.Parse("<Lists/>");
@@ -1163,8 +1162,8 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			AssertThatXmlIn.String(roundTripped.ToString()).HasSpecifiedNumberOfMatchesForXpath(xpathToDescRun, 1);
 			var nameAUni = roundTripped.XPathSelectElement(xpathToNameAUni);
 			var descRun = roundTripped.XPathSelectElement(xpathToDescRun);
-			Assert.AreEqual(unescaped, nameAUni.Value);
-			Assert.AreEqual(unescaped, descRun.Value);
+			Assert.That(nameAUni.Value, Is.EqualTo(unescaped));
+			Assert.That(descRun.Value, Is.EqualTo(unescaped));
 			// ReSharper enable PossibleNullReferenceException
 		}
 

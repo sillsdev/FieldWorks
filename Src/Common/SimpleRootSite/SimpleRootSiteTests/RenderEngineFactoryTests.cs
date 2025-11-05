@@ -38,7 +38,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 					gm.VwGraphics.SetupGraphics(ref chrp);
 					IRenderEngine engine = reFactory.get_Renderer(ws, gm.VwGraphics);
 					Assert.That(engine, Is.Not.Null);
-					Assert.AreSame(wsManager, engine.WritingSystemFactory);
+					Assert.That(engine.WritingSystemFactory, Is.SameAs(wsManager));
 					Assert.IsInstanceOf(typeof(UniscribeEngine), engine);
 					wsManager.Save();
 				}
@@ -70,14 +70,14 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 					gm.VwGraphics.SetupGraphics(ref chrp);
 					IRenderEngine engine = reFactory.get_Renderer(ws, gm.VwGraphics);
 					Assert.That(engine, Is.Not.Null);
-					Assert.AreSame(wsManager, engine.WritingSystemFactory);
+					Assert.That(engine.WritingSystemFactory, Is.SameAs(wsManager));
 					Assert.IsInstanceOf(typeof(UniscribeEngine), engine);
 
 					ws.IsGraphiteEnabled = true;
 					gm.VwGraphics.SetupGraphics(ref chrp);
 					engine = reFactory.get_Renderer(ws, gm.VwGraphics);
 					Assert.That(engine, Is.Not.Null);
-					Assert.AreSame(wsManager, engine.WritingSystemFactory);
+					Assert.That(engine.WritingSystemFactory, Is.SameAs(wsManager));
 					Assert.IsInstanceOf(typeof(GraphiteEngine), engine);
 					wsManager.Save();
 				}

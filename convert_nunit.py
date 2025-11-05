@@ -9,361 +9,215 @@ import sys
 import os
 from pathlib import Path
 
-def convert_assert_are_equal(content):
-    """Convert Assert.AreEqual to Assert.That with Is.EqualTo"""
-    # Handle multi-line AreEqual with messages
-    pattern = r'Assert\.AreEqual\(\s*([^,]+?)\s*,\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\2, Is.EqualTo(\1), \3)'
-    content = re.sub(pattern, replacement, content)
+# Helper function to find matching parenthesis
+def find_matching_paren(text, start_idx):
+    """Find the index of the closing paren matching the opening paren at start_idx."""
+    count = 1
+    i = start_idx + 1
+    in_string = False
+    in_char = False
+    escape = False
     
-    # Handle simple AreEqual
-    pattern = r'Assert\.AreEqual\(\s*([^,]+?)\s*,\s*([^,]+?)\s*\)'
-    replacement = r'Assert.That(\2, Is.EqualTo(\1))'
-    content = re.sub(pattern, replacement, content)
+    while i < len(text):
+        ch = text[i]
+        
+        if escape:
+            escape = False
+            i += 1
+            continue
+        
+        if ch == '\\':
+            escape = True
+            i += 1
+            continue
+        
+        if ch == '"' and not in_char:
+            in_string = not in_string
+        elif ch == "'" and not in_string:
+            in_char = not in_char
+        elif not in_string and not in_char:
+            if ch == '(':
+                count += 1
+            elif ch == ')':
+                count -= 1
+                if count == 0:
+                    return i
+        
+        i += 1
     
-    return content
+    return -1
 
-def convert_assert_are_not_equal(content):
-    """Convert Assert.AreNotEqual to Assert.That with Is.Not.EqualTo"""
-    # With message
-    pattern = r'Assert\.AreNotEqual\(\s*([^,]+?)\s*,\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\2, Is.Not.EqualTo(\1), \3)'
-    content = re.sub(pattern, replacement, content)
+def split_args(args_text):
+    """Split comma-separated arguments, respecting nested parentheses and strings."""
+    args = []
+    current = []
+    depth = 0
+    in_string = False
+    in_char = False
+    escape = False
     
-    # Without message
-    pattern = r'Assert\.AreNotEqual\(\s*([^,]+?)\s*,\s*([^,]+?)\s*\)'
-    replacement = r'Assert.That(\2, Is.Not.EqualTo(\1))'
-    content = re.sub(pattern, replacement, content)
+    for ch in args_text:
+        if escape:
+            current.append(ch)
+            escape = False
+            continue
+        
+        if ch == '\\':
+            current.append(ch)
+            escape = True
+            continue
+        
+        if ch == '"' and not in_char:
+            in_string = not in_string
+            current.append(ch)
+        elif ch == "'" and not in_string:
+            in_char = not in_char
+            current.append(ch)
+        elif not in_string and not in_char:
+            if ch == '(':
+                depth += 1
+                current.append(ch)
+            elif ch == ')':
+                depth -= 1
+                current.append(ch)
+            elif ch == ',' and depth == 0:
+                args.append(''.join(current).strip())
+                current = []
+            else:
+                current.append(ch)
+        else:
+            current.append(ch)
     
-    return content
+    if current:
+        args.append(''.join(current).strip())
+    
+    return args
 
-def convert_assert_is_true(content):
-    """Convert Assert.IsTrue to Assert.That with Is.True"""
-    # With message (including format strings)
-    pattern = r'Assert\.IsTrue\(\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.True, \2)'
-    content = re.sub(pattern, replacement, content)
+def convert_simple_assert(content, old_method, constraint, has_message_format=True):
+    """
+    Generic converter for simple Assert methods.
+    old_method: e.g., 'IsTrue', 'IsFalse', 'IsNull'
+    constraint: e.g., 'Is.True', 'Is.False', 'Is.Null'
+    has_message_format: if True, looks for format string messages
+    """
+    result = []
+    pattern = f'Assert\\.{old_method}\\s*\\('
+    pos = 0
     
-    # Without message
-    pattern = r'Assert\.IsTrue\(\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.True)'
-    content = re.sub(pattern, replacement, content)
+    while pos < len(content):
+        match = re.search(pattern, content[pos:])
+        if not match:
+            result.append(content[pos:])
+            break
+        
+        # Add text before match
+        result.append(content[pos:pos + match.start()])
+        
+        # Find closing paren
+        open_paren_idx = pos + match.end() - 1
+        close_paren_idx = find_matching_paren(content, open_paren_idx)
+        
+        if close_paren_idx == -1:
+            result.append(match.group(0))
+            pos = pos + match.end()
+            continue
+        
+        # Extract arguments
+        args_text = content[open_paren_idx + 1:close_paren_idx]
+        args = split_args(args_text)
+        
+        # Convert based on arguments
+        if len(args) == 1:
+            # Simple: Assert.IsTrue(condition)
+            result.append(f'Assert.That({args[0]}, {constraint})')
+        elif len(args) >= 2:
+            # With message: Assert.IsTrue(condition, message, ...)
+            message_parts = ', '.join(args[1:])
+            result.append(f'Assert.That({args[0]}, {constraint}, {message_parts})')
+        else:
+            # Malformed, keep original
+            result.append(content[pos + match.start():close_paren_idx + 1])
+        
+        pos = close_paren_idx + 1
     
-    return content
+    return ''.join(result)
 
-def convert_assert_is_false(content):
-    """Convert Assert.IsFalse to Assert.That with Is.False"""
-    # With message
-    pattern = r'Assert\.IsFalse\(\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.False, \2)'
-    content = re.sub(pattern, replacement, content)
+def convert_comparison_assert(content, old_method, constraint_template):
+    """
+    Generic converter for comparison Assert methods (AreEqual, Greater, etc.).
+    old_method: e.g., 'AreEqual', 'Greater'
+    constraint_template: e.g., 'Is.EqualTo({0})', 'Is.GreaterThan({0})'
+    """
+    result = []
+    pattern = f'Assert\\.{old_method}\\s*\\('
+    pos = 0
     
-    # Without message
-    pattern = r'Assert\.IsFalse\(\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.False)'
-    content = re.sub(pattern, replacement, content)
+    while pos < len(content):
+        match = re.search(pattern, content[pos:])
+        if not match:
+            result.append(content[pos:])
+            break
+        
+        # Add text before match
+        result.append(content[pos:pos + match.start()])
+        
+        # Find closing paren
+        open_paren_idx = pos + match.end() - 1
+        close_paren_idx = find_matching_paren(content, open_paren_idx)
+        
+        if close_paren_idx == -1:
+            result.append(match.group(0))
+            pos = pos + match.end()
+            continue
+        
+        # Extract arguments
+        args_text = content[open_paren_idx + 1:close_paren_idx]
+        args = split_args(args_text)
+        
+        # Convert based on arguments
+        if len(args) == 2:
+            # Assert.AreEqual(expected, actual) or Assert.Greater(arg1, arg2)
+            constraint = constraint_template.format(args[0])
+            result.append(f'Assert.That({args[1]}, {constraint})')
+        elif len(args) >= 3:
+            # With message
+            constraint = constraint_template.format(args[0])
+            message_parts = ', '.join(args[2:])
+            result.append(f'Assert.That({args[1]}, {constraint}, {message_parts})')
+        else:
+            # Malformed, keep original
+            result.append(content[pos + match.start():close_paren_idx + 1])
+        
+        pos = close_paren_idx + 1
     
-    return content
-
-def convert_assert_is_null(content):
-    """Convert Assert.IsNull to Assert.That with Is.Null"""
-    # With message
-    pattern = r'Assert\.IsNull\(\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.Null, \2)'
-    content = re.sub(pattern, replacement, content)
-    
-    # Without message
-    pattern = r'Assert\.IsNull\(\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.Null)'
-    content = re.sub(pattern, replacement, content)
-    
-    return content
-
-def convert_assert_is_not_null(content):
-    """Convert Assert.IsNotNull to Assert.That with Is.Not.Null"""
-    # With message
-    pattern = r'Assert\.IsNotNull\(\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.Not.Null, \2)'
-    content = re.sub(pattern, replacement, content)
-    
-    # Without message
-    pattern = r'Assert\.IsNotNull\(\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.Not.Null)'
-    content = re.sub(pattern, replacement, content)
-    
-    return content
-
-def convert_assert_not_null(content):
-    """Convert Assert.NotNull to Assert.That with Is.Not.Null"""
-    # With message
-    pattern = r'Assert\.NotNull\(\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.Not.Null, \2)'
-    content = re.sub(pattern, replacement, content)
-    
-    # Without message
-    pattern = r'Assert\.NotNull\(\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.Not.Null)'
-    content = re.sub(pattern, replacement, content)
-    
-    return content
-
-def convert_assert_true(content):
-    """Convert Assert.True to Assert.That with Is.True"""
-    # With message
-    pattern = r'Assert\.True\(\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.True, \2)'
-    content = re.sub(pattern, replacement, content)
-    
-    # Without message
-    pattern = r'Assert\.True\(\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.True)'
-    content = re.sub(pattern, replacement, content)
-    
-    return content
-
-def convert_assert_false(content):
-    """Convert Assert.False to Assert.That with Is.False"""
-    # With message
-    pattern = r'Assert\.False\(\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.False, \2)'
-    content = re.sub(pattern, replacement, content)
-    
-    # Without message
-    pattern = r'Assert\.False\(\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.False)'
-    content = re.sub(pattern, replacement, content)
-    
-    return content
-
-def convert_assert_are_same(content):
-    """Convert Assert.AreSame to Assert.That with Is.SameAs"""
-    # With message
-    pattern = r'Assert\.AreSame\(\s*([^,]+?)\s*,\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\2, Is.SameAs(\1), \3)'
-    content = re.sub(pattern, replacement, content)
-    
-    # Without message
-    pattern = r'Assert\.AreSame\(\s*([^,]+?)\s*,\s*([^,]+?)\s*\)'
-    replacement = r'Assert.That(\2, Is.SameAs(\1))'
-    content = re.sub(pattern, replacement, content)
-    
-    return content
-
-def convert_assert_are_not_same(content):
-    """Convert Assert.AreNotSame to Assert.That with Is.Not.SameAs"""
-    # With message
-    pattern = r'Assert\.AreNotSame\(\s*([^,]+?)\s*,\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\2, Is.Not.SameAs(\1), \3)'
-    content = re.sub(pattern, replacement, content)
-    
-    # Without message
-    pattern = r'Assert\.AreNotSame\(\s*([^,]+?)\s*,\s*([^,]+?)\s*\)'
-    replacement = r'Assert.That(\2, Is.Not.SameAs(\1))'
-    content = re.sub(pattern, replacement, content)
-    
-    return content
-
-def convert_assert_greater(content):
-    """Convert Assert.Greater to Assert.That with Is.GreaterThan"""
-    # With message
-    pattern = r'Assert\.Greater\(\s*([^,]+?)\s*,\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.GreaterThan(\2), \3)'
-    content = re.sub(pattern, replacement, content)
-    
-    # Without message
-    pattern = r'Assert\.Greater\(\s*([^,]+?)\s*,\s*([^,]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.GreaterThan(\2))'
-    content = re.sub(pattern, replacement, content)
-    
-    return content
-
-def convert_assert_greater_or_equal(content):
-    """Convert Assert.GreaterOrEqual to Assert.That with Is.GreaterThanOrEqualTo"""
-    # With message
-    pattern = r'Assert\.GreaterOrEqual\(\s*([^,]+?)\s*,\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.GreaterThanOrEqualTo(\2), \3)'
-    content = re.sub(pattern, replacement, content)
-    
-    # Without message
-    pattern = r'Assert\.GreaterOrEqual\(\s*([^,]+?)\s*,\s*([^,]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.GreaterThanOrEqualTo(\2))'
-    content = re.sub(pattern, replacement, content)
-    
-    return content
-
-def convert_assert_less(content):
-    """Convert Assert.Less to Assert.That with Is.LessThan"""
-    # With message
-    pattern = r'Assert\.Less\(\s*([^,]+?)\s*,\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.LessThan(\2), \3)'
-    content = re.sub(pattern, replacement, content)
-    
-    # Without message
-    pattern = r'Assert\.Less\(\s*([^,]+?)\s*,\s*([^,]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.LessThan(\2))'
-    content = re.sub(pattern, replacement, content)
-    
-    return content
-
-def convert_assert_less_or_equal(content):
-    """Convert Assert.LessOrEqual to Assert.That with Is.LessThanOrEqualTo"""
-    # With message
-    pattern = r'Assert\.LessOrEqual\(\s*([^,]+?)\s*,\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.LessThanOrEqualTo(\2), \3)'
-    content = re.sub(pattern, replacement, content)
-    
-    # Without message
-    pattern = r'Assert\.LessOrEqual\(\s*([^,]+?)\s*,\s*([^,]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.LessThanOrEqualTo(\2))'
-    content = re.sub(pattern, replacement, content)
-    
-    return content
-
-def convert_assert_contains(content):
-    """Convert Assert.Contains to Assert.That with Does.Contain"""
-    # With message
-    pattern = r'Assert\.Contains\(\s*([^,]+?)\s*,\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\2, Does.Contain(\1), \3)'
-    content = re.sub(pattern, replacement, content)
-    
-    # Without message
-    pattern = r'Assert\.Contains\(\s*([^,]+?)\s*,\s*([^,]+?)\s*\)'
-    replacement = r'Assert.That(\2, Does.Contain(\1))'
-    content = re.sub(pattern, replacement, content)
-    
-    return content
-
-def convert_assert_is_empty(content):
-    """Convert Assert.IsEmpty to Assert.That with Is.Empty"""
-    # With message
-    pattern = r'Assert\.IsEmpty\(\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.Empty, \2)'
-    content = re.sub(pattern, replacement, content)
-    
-    # Without message
-    pattern = r'Assert\.IsEmpty\(\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.Empty)'
-    content = re.sub(pattern, replacement, content)
-    
-    return content
-
-def convert_assert_is_not_empty(content):
-    """Convert Assert.IsNotEmpty to Assert.That with Is.Not.Empty"""
-    # With message
-    pattern = r'Assert\.IsNotEmpty\(\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.Not.Empty, \2)'
-    content = re.sub(pattern, replacement, content)
-    
-    # Without message
-    pattern = r'Assert\.IsNotEmpty\(\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.Not.Empty)'
-    content = re.sub(pattern, replacement, content)
-    
-    return content
+    return ''.join(result)
 
 def convert_string_assert(content):
-    """Convert StringAssert methods to Assert.That with Does.Contain, Does.StartWith, etc."""
+    """Convert StringAssert methods to Assert.That"""
     # StringAssert.Contains
-    pattern = r'StringAssert\.Contains\(\s*([^,]+?)\s*,\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\2, Does.Contain(\1), \3)'
-    content = re.sub(pattern, replacement, content)
-    
-    pattern = r'StringAssert\.Contains\(\s*([^,]+?)\s*,\s*([^,]+?)\s*\)'
-    replacement = r'Assert.That(\2, Does.Contain(\1))'
-    content = re.sub(pattern, replacement, content)
-    
+    content = convert_comparison_assert(content, 'StringAssert\\.Contains', 'Does.Contain({0})')
     # StringAssert.StartsWith
-    pattern = r'StringAssert\.StartsWith\(\s*([^,]+?)\s*,\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\2, Does.StartWith(\1), \3)'
-    content = re.sub(pattern, replacement, content)
-    
-    pattern = r'StringAssert\.StartsWith\(\s*([^,]+?)\s*,\s*([^,]+?)\s*\)'
-    replacement = r'Assert.That(\2, Does.StartWith(\1))'
-    content = re.sub(pattern, replacement, content)
-    
+    content = convert_comparison_assert(content, 'StringAssert\\.StartsWith', 'Does.StartWith({0})')
     # StringAssert.EndsWith
-    pattern = r'StringAssert\.EndsWith\(\s*([^,]+?)\s*,\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\2, Does.EndWith(\1), \3)'
-    content = re.sub(pattern, replacement, content)
-    
-    pattern = r'StringAssert\.EndsWith\(\s*([^,]+?)\s*,\s*([^,]+?)\s*\)'
-    replacement = r'Assert.That(\2, Does.EndWith(\1))'
-    content = re.sub(pattern, replacement, content)
-    
+    content = convert_comparison_assert(content, 'StringAssert\\.EndsWith', 'Does.EndWith({0})')
     # StringAssert.AreEqualIgnoringCase
-    pattern = r'StringAssert\.AreEqualIgnoringCase\(\s*([^,]+?)\s*,\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\2, Is.EqualTo(\1).IgnoreCase, \3)'
-    content = re.sub(pattern, replacement, content)
-    
-    pattern = r'StringAssert\.AreEqualIgnoringCase\(\s*([^,]+?)\s*,\s*([^,]+?)\s*\)'
-    replacement = r'Assert.That(\2, Is.EqualTo(\1).IgnoreCase)'
-    content = re.sub(pattern, replacement, content)
-    
+    content = convert_comparison_assert(content, 'StringAssert\\.AreEqualIgnoringCase', 'Is.EqualTo({0}).IgnoreCase')
     return content
 
 def convert_collection_assert(content):
     """Convert CollectionAssert methods to Assert.That"""
     # CollectionAssert.AreEqual
-    pattern = r'CollectionAssert\.AreEqual\(\s*([^,]+?)\s*,\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\2, Is.EqualTo(\1), \3)'
-    content = re.sub(pattern, replacement, content)
-    
-    pattern = r'CollectionAssert\.AreEqual\(\s*([^,]+?)\s*,\s*([^,]+?)\s*\)'
-    replacement = r'Assert.That(\2, Is.EqualTo(\1))'
-    content = re.sub(pattern, replacement, content)
-    
+    content = convert_comparison_assert(content, 'CollectionAssert\\.AreEqual', 'Is.EqualTo({0})')
     # CollectionAssert.AreNotEqual
-    pattern = r'CollectionAssert\.AreNotEqual\(\s*([^,]+?)\s*,\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\2, Is.Not.EqualTo(\1), \3)'
-    content = re.sub(pattern, replacement, content)
-    
-    pattern = r'CollectionAssert\.AreNotEqual\(\s*([^,]+?)\s*,\s*([^,]+?)\s*\)'
-    replacement = r'Assert.That(\2, Is.Not.EqualTo(\1))'
-    content = re.sub(pattern, replacement, content)
-    
+    content = convert_comparison_assert(content, 'CollectionAssert\\.AreNotEqual', 'Is.Not.EqualTo({0})')
     # CollectionAssert.Contains
-    pattern = r'CollectionAssert\.Contains\(\s*([^,]+?)\s*,\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Does.Contain(\2), \3)'
-    content = re.sub(pattern, replacement, content)
-    
-    pattern = r'CollectionAssert\.Contains\(\s*([^,]+?)\s*,\s*([^,]+?)\s*\)'
-    replacement = r'Assert.That(\1, Does.Contain(\2))'
-    content = re.sub(pattern, replacement, content)
-    
+    content = convert_comparison_assert(content, 'CollectionAssert\\.Contains', 'Does.Contain({0})')
     # CollectionAssert.DoesNotContain
-    pattern = r'CollectionAssert\.DoesNotContain\(\s*([^,]+?)\s*,\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Does.Not.Contain(\2), \3)'
-    content = re.sub(pattern, replacement, content)
-    
-    pattern = r'CollectionAssert\.DoesNotContain\(\s*([^,]+?)\s*,\s*([^,]+?)\s*\)'
-    replacement = r'Assert.That(\1, Does.Not.Contain(\2))'
-    content = re.sub(pattern, replacement, content)
-    
+    content = convert_comparison_assert(content, 'CollectionAssert\\.DoesNotContain', 'Does.Not.Contain({0})')
     # CollectionAssert.IsEmpty
-    pattern = r'CollectionAssert\.IsEmpty\(\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.Empty, \2)'
-    content = re.sub(pattern, replacement, content)
-    
-    pattern = r'CollectionAssert\.IsEmpty\(\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.Empty)'
-    content = re.sub(pattern, replacement, content)
-    
+    content = convert_simple_assert(content, 'CollectionAssert\\.IsEmpty', 'Is.Empty')
     # CollectionAssert.IsNotEmpty
-    pattern = r'CollectionAssert\.IsNotEmpty\(\s*([^,]+?)\s*,\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.Not.Empty, \2)'
-    content = re.sub(pattern, replacement, content)
-    
-    pattern = r'CollectionAssert\.IsNotEmpty\(\s*([^)]+?)\s*\)'
-    replacement = r'Assert.That(\1, Is.Not.Empty)'
-    content = re.sub(pattern, replacement, content)
-    
-    return content
-
-def convert_assert_throws(content):
-    """Convert Assert.Throws to Assert.That with Throws"""
-    # Note: Assert.Throws already uses the correct syntax in NUnit 4
-    # But we need to handle cases like Assert.Throws<Exception>(() => { ... })
-    # These are already compatible, so no changes needed
+    content = convert_simple_assert(content, 'CollectionAssert\\.IsNotEmpty', 'Is.Not.Empty')
     return content
 
 def convert_file(file_path, dry_run=False):
@@ -378,28 +232,32 @@ def convert_file(file_path, dry_run=False):
         
         content = original_content
         
-        # Apply conversions in order (more specific patterns first)
-        content = convert_assert_are_not_equal(content)
-        content = convert_assert_are_equal(content)
-        content = convert_assert_are_not_same(content)
-        content = convert_assert_are_same(content)
-        content = convert_assert_is_not_null(content)
-        content = convert_assert_is_null(content)
-        content = convert_assert_not_null(content)
-        content = convert_assert_is_false(content)
-        content = convert_assert_is_true(content)
-        content = convert_assert_false(content)
-        content = convert_assert_true(content)
-        content = convert_assert_greater_or_equal(content)
-        content = convert_assert_greater(content)
-        content = convert_assert_less_or_equal(content)
-        content = convert_assert_less(content)
-        content = convert_assert_contains(content)
-        content = convert_assert_is_not_empty(content)
-        content = convert_assert_is_empty(content)
+        # Apply conversions in order - use helper functions
+        # Comparison asserts (with two arguments + optional message)
+        content = convert_comparison_assert(content, 'AreNotEqual', 'Is.Not.EqualTo({0})')
+        content = convert_comparison_assert(content, 'AreEqual', 'Is.EqualTo({0})')
+        content = convert_comparison_assert(content, 'AreNotSame', 'Is.Not.SameAs({0})')
+        content = convert_comparison_assert(content, 'AreSame', 'Is.SameAs({0})')
+        content = convert_comparison_assert(content, 'GreaterOrEqual', 'Is.GreaterThanOrEqualTo({0})')
+        content = convert_comparison_assert(content, 'Greater', 'Is.GreaterThan({0})')
+        content = convert_comparison_assert(content, 'LessOrEqual', 'Is.LessThanOrEqualTo({0})')
+        content = convert_comparison_assert(content, 'Less', 'Is.LessThan({0})')
+        content = convert_comparison_assert(content, 'Contains', 'Does.Contain({0})')
+        
+        # Simple asserts (with one argument + optional message)
+        content = convert_simple_assert(content, 'IsNotNull', 'Is.Not.Null')
+        content = convert_simple_assert(content, 'IsNull', 'Is.Null')
+        content = convert_simple_assert(content, 'NotNull', 'Is.Not.Null')
+        content = convert_simple_assert(content, 'IsFalse', 'Is.False')
+        content = convert_simple_assert(content, 'IsTrue', 'Is.True')
+        content = convert_simple_assert(content, 'False', 'Is.False')
+        content = convert_simple_assert(content, 'True', 'Is.True')
+        content = convert_simple_assert(content, 'IsNotEmpty', 'Is.Not.Empty')
+        content = convert_simple_assert(content, 'IsEmpty', 'Is.Empty')
+        
+        # String and Collection asserts
         content = convert_string_assert(content)
         content = convert_collection_assert(content)
-        content = convert_assert_throws(content)
         
         # Only write if content changed
         if content != original_content:

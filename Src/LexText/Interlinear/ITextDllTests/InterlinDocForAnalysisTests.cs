@@ -106,12 +106,12 @@ namespace SIL.FieldWorks.IText
 			m_focusBox.ApproveAndStayPut(undoRedoText);
 
 			// expect no change to the first occurrence.
-			Assert.AreEqual(initialAnalysisObj, ocurrences[0].Analysis);
+			Assert.That(ocurrences[0].Analysis, Is.EqualTo(initialAnalysisObj));
 			// expect the focus box to still be on the first occurrence.
-			Assert.AreEqual(ocurrences[0], m_focusBox.SelectedOccurrence);
+			Assert.That(m_focusBox.SelectedOccurrence, Is.EqualTo(ocurrences[0]));
 
 			// nothing to undo.
-			Assert.AreEqual(0, Cache.ActionHandlerAccessor.UndoableSequenceCount);
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(0));
 		}
 
 		/// <summary>
@@ -130,16 +130,16 @@ namespace SIL.FieldWorks.IText
 			m_focusBox.ApproveAndStayPut(undoRedoText);
 
 			// expect change to the first occurrence.
-			Assert.AreEqual(m_focusBox.NewAnalysisTree.Gloss, occurrences[0].Analysis);
+			Assert.That(occurrences[0].Analysis, Is.EqualTo(m_focusBox.NewAnalysisTree.Gloss));
 			// expect the focus box to still be on the first occurrence.
-			Assert.AreEqual(occurrences[0], m_focusBox.SelectedOccurrence);
+			Assert.That(m_focusBox.SelectedOccurrence, Is.EqualTo(occurrences[0]));
 
 			// test undo.
-			Assert.AreEqual(1, Cache.ActionHandlerAccessor.UndoableSequenceCount);
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(1));
 			Cache.ActionHandlerAccessor.Undo();
-			Assert.AreEqual(initialAnalysisTree.Analysis, occurrences[0].Analysis);
+			Assert.That(occurrences[0].Analysis, Is.EqualTo(initialAnalysisTree.Analysis));
 			// expect the focus box to still be on the first occurrence.
-			Assert.AreEqual(occurrences[0], m_focusBox.SelectedOccurrence);
+			Assert.That(m_focusBox.SelectedOccurrence, Is.EqualTo(occurrences[0]));
 		}
 
 		/// <summary>
@@ -162,12 +162,12 @@ namespace SIL.FieldWorks.IText
 			m_focusBox.ApproveAndMoveNext(undoRedoText);
 
 			// expect no change to the first occurrence.
-			Assert.AreEqual(initialAnalysisTree.Analysis, occurrences[0].Analysis);
+			Assert.That(occurrences[0].Analysis, Is.EqualTo(initialAnalysisTree.Analysis));
 			// expect the focus box to be on the next occurrence.
-			Assert.AreEqual(occurrences[1], m_focusBox.SelectedOccurrence);
+			Assert.That(m_focusBox.SelectedOccurrence, Is.EqualTo(occurrences[1]));
 
 			// nothing to undo.
-			Assert.AreEqual(0, Cache.ActionHandlerAccessor.UndoableSequenceCount);
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(0));
 
 			// Restore the InterlinVc for other tests.
 			m_interlinDoc.InterlinVc = origVc;
@@ -191,16 +191,16 @@ namespace SIL.FieldWorks.IText
 			m_focusBox.ApproveAndMoveNext(undoRedoText);
 
 			// expect change to the first wfic.
-			Assert.AreEqual(newAnalysisTree_wfic0.Gloss, xfics[0].Analysis);
+			Assert.That(xfics[0].Analysis, Is.EqualTo(newAnalysisTree_wfic0.Gloss));
 			// expect the focus box to be on the next wfic.
-			Assert.AreEqual(xfics[1], m_focusBox.SelectedWfic);
+			Assert.That(m_focusBox.SelectedWfic, Is.EqualTo(xfics[1]));
 
 			// test undo.
-			Assert.AreEqual(1, Cache.ActionHandlerAccessor.UndoableSequenceCount);
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(1));
 			Cache.ActionHandlerAccessor.Undo();
-			Assert.AreEqual(initialAnalysisTree_wfic0.Object, xfics[0].Analysis);
+			Assert.That(xfics[0].Analysis, Is.EqualTo(initialAnalysisTree_wfic0.Object));
 			// expect the focus box to be back on the first wfic.
-			Assert.AreEqual(xfics[0], m_focusBox.SelectedWfic);
+			Assert.That(m_focusBox.SelectedWfic, Is.EqualTo(xfics[0]));
 #endif
 		}
 

@@ -66,7 +66,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
-				Assert.AreNotSame(node.DictionaryNodeOptions, clone.DictionaryNodeOptions, "Didn't deep-clone");
+				Assert.That(clone.DictionaryNodeOptions, Is.Not.SameAs(node.DictionaryNodeOptions), "Didn't deep-clone");
 				if (node.DictionaryNodeOptions is DictionaryNodeListOptions)
 					DictionaryNodeOptionsTests.AssertListWasDeepCloned(((DictionaryNodeListOptions)node.DictionaryNodeOptions).Options,
 																		((DictionaryNodeListOptions)clone.DictionaryNodeOptions).Options);
@@ -172,8 +172,8 @@ namespace SIL.FieldWorks.XWorks
 			var inGroupDup = dupUnderGroup.DuplicateAmongSiblings();
 			Assert.That(duplicate.Label, Is.EqualTo(nodeToDuplicateLabel), "should not have changed original node label");
 			Assert.That(nodeToDuplicate.LabelSuffix, Is.Null, "should not have changed original node label suffix");
-			Assert.IsTrue(duplicate.LabelSuffix.EndsWith("2"), "(1) was used in the group, so the suffix should be 2 but is: " + duplicate.LabelSuffix);
-			Assert.IsTrue(inGroupDup.LabelSuffix.EndsWith("3"), "(2) was used in the group parent, so the suffix should be 3 but is: " + inGroupDup.LabelSuffix);
+			Assert.That(duplicate.LabelSuffix.EndsWith("2"), Is.True, "(1) was used in the group, so the suffix should be 2 but is: " + duplicate.LabelSuffix);
+			Assert.That(inGroupDup.LabelSuffix.EndsWith("3"), Is.True, "(2) was used in the group parent, so the suffix should be 3 but is: " + inGroupDup.LabelSuffix);
 		}
 
 		[Test]
@@ -197,8 +197,8 @@ namespace SIL.FieldWorks.XWorks
 			var inGroupDup = dupUnderShardGroup.DuplicateAmongSiblings();
 			Assert.That(duplicate.Label, Is.EqualTo(nodeToDuplicateLabel), "should not have changed original node label");
 			Assert.That(nodeToDuplicate.LabelSuffix, Is.Null, "should not have changed original node label suffix");
-			Assert.IsTrue(duplicate.LabelSuffix.EndsWith("2"), "(1) was used in the group, so the suffix should be 2 but is: " + duplicate.LabelSuffix);
-			Assert.IsTrue(inGroupDup.LabelSuffix.EndsWith("3"), "(2) was used in the group parent, so the suffix should be 3 but is: " + inGroupDup.LabelSuffix);
+			Assert.That(duplicate.LabelSuffix.EndsWith("2"), Is.True, "(1) was used in the group, so the suffix should be 2 but is: " + duplicate.LabelSuffix);
+			Assert.That(inGroupDup.LabelSuffix.EndsWith("3"), Is.True, "(2) was used in the group parent, so the suffix should be 3 but is: " + inGroupDup.LabelSuffix);
 		}
 
 		[Test]
@@ -239,7 +239,7 @@ namespace SIL.FieldWorks.XWorks
 
 			// SUT
 			var duplicate = groupNode.DuplicateAmongSiblings();
-			Assert.AreEqual(1, groupNode.Children.Count);
+			Assert.That(groupNode.Children.Count, Is.EqualTo(1));
 			Assert.That(duplicate.Children, Is.Null);
 		}
 
@@ -263,8 +263,8 @@ namespace SIL.FieldWorks.XWorks
 			var sharedItem = new ConfigurableDictionaryNode { Label = "Shared" };
 			var masterParent = new ConfigurableDictionaryNode { ReferenceItem = "Shared", ReferencedNode = sharedItem };
 			var clone = masterParent.DeepCloneUnderParent(null, true); // SUT: pretend this is a recursive call
-			Assert.AreEqual(masterParent.ReferenceItem, clone.ReferenceItem);
-			Assert.AreSame(masterParent.ReferencedNode, clone.ReferencedNode);
+			Assert.That(clone.ReferenceItem, Is.EqualTo(masterParent.ReferenceItem));
+			Assert.That(clone.ReferencedNode, Is.SameAs(masterParent.ReferencedNode));
 		}
 
 		[Test]
@@ -419,7 +419,7 @@ namespace SIL.FieldWorks.XWorks
 			var refNode = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { refChild } };
 			var child = new ConfigurableDictionaryNode { Label = "DirectChild" };
 			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { child }, ReferencedNode = refNode };
-			Assert.AreSame(refChild, parent.ReferencedOrDirectChildren.First());
+			Assert.That(parent.ReferencedOrDirectChildren.First(), Is.SameAs(refChild));
 		}
 
 		[Test]
@@ -427,7 +427,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var child = new ConfigurableDictionaryNode { Label = "DirectChild" };
 			var parent = new ConfigurableDictionaryNode { Children = new List<ConfigurableDictionaryNode> { child } };
-			Assert.AreSame(child, parent.ReferencedOrDirectChildren.First());
+			Assert.That(parent.ReferencedOrDirectChildren.First(), Is.SameAs(child));
 		}
 
 		[Test]
@@ -439,12 +439,12 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(secondNode.LabelSuffix, Is.Null);
 
 			// SUT
-			Assert.AreEqual(firstNode, secondNode);
+			Assert.That(secondNode, Is.EqualTo(firstNode));
 
 			firstNode.LabelSuffix = "suffix";
 			secondNode.LabelSuffix = "suffix";
 			// SUT
-			Assert.AreEqual(firstNode, secondNode);
+			Assert.That(secondNode, Is.EqualTo(firstNode));
 		}
 
 		[Test]
@@ -453,10 +453,10 @@ namespace SIL.FieldWorks.XWorks
 			var firstNode = new ConfigurableDictionaryNode { Label = "same" };
 			var secondNode = new ConfigurableDictionaryNode { Label = "same", Parent = firstNode };
 
-			Assert.AreNotEqual(firstNode, secondNode);
+			Assert.That(secondNode, Is.Not.EqualTo(firstNode));
 			secondNode.Parent = null;
 			firstNode.Parent = secondNode;
-			Assert.AreNotEqual(firstNode, secondNode);
+			Assert.That(secondNode, Is.Not.EqualTo(firstNode));
 		}
 
 		[Test]
@@ -467,7 +467,7 @@ namespace SIL.FieldWorks.XWorks
 			var firstNode = new ConfigurableDictionaryNode { Label = "same", Parent = firstParent };
 			var secondNode = new ConfigurableDictionaryNode { Label = "same", Parent = secondParent };
 
-			Assert.AreNotEqual(firstNode, secondNode);
+			Assert.That(secondNode, Is.Not.EqualTo(firstNode));
 		}
 
 		[Test]
@@ -476,7 +476,7 @@ namespace SIL.FieldWorks.XWorks
 			var firstNode = new ConfigurableDictionaryNode { Label = "same" };
 			var secondNode = new ConfigurableDictionaryNode { Label = "different" };
 
-			Assert.AreNotEqual(firstNode, secondNode);
+			Assert.That(secondNode, Is.Not.EqualTo(firstNode));
 		}
 
 		[Test]
@@ -485,7 +485,7 @@ namespace SIL.FieldWorks.XWorks
 			var firstNode = new ConfigurableDictionaryNode { Label="label", LabelSuffix = "same" };
 			var secondNode = new ConfigurableDictionaryNode { Label="label", LabelSuffix = "different" };
 
-			Assert.AreNotEqual(firstNode, secondNode);
+			Assert.That(secondNode, Is.Not.EqualTo(firstNode));
 		}
 
 		[Test]
@@ -494,7 +494,7 @@ namespace SIL.FieldWorks.XWorks
 			var firstNode = new ConfigurableDictionaryNode { Label = "same", LabelSuffix = "suffixA"};
 			var secondNode = new ConfigurableDictionaryNode { Label = "different", LabelSuffix = "suffixB"};
 
-			Assert.AreNotEqual(firstNode, secondNode);
+			Assert.That(secondNode, Is.Not.EqualTo(firstNode));
 		}
 
 		[Test]
@@ -504,7 +504,7 @@ namespace SIL.FieldWorks.XWorks
 			var firstNode = new ConfigurableDictionaryNode { Label = "same", Parent = parentNode, LabelSuffix = null};
 			var secondNode = new ConfigurableDictionaryNode { Label = "same", Parent = parentNode,LabelSuffix = null};
 
-			Assert.AreEqual(firstNode, secondNode);
+			Assert.That(secondNode, Is.EqualTo(firstNode));
 		}
 
 		[Test]
@@ -514,7 +514,7 @@ namespace SIL.FieldWorks.XWorks
 			var firstNode = new ConfigurableDictionaryNode { Label = "same", Parent = parentNode, LabelSuffix = null};
 			var secondNode = new ConfigurableDictionaryNode { Label = "different", Parent = parentNode, LabelSuffix = null};
 
-			Assert.AreNotEqual(firstNode, secondNode);
+			Assert.That(secondNode, Is.Not.EqualTo(firstNode));
 		}
 
 		[Test]
@@ -524,7 +524,7 @@ namespace SIL.FieldWorks.XWorks
 			var firstNode = new ConfigurableDictionaryNode { Label="label", LabelSuffix = "same", Parent = parentNode };
 			var secondNode = new ConfigurableDictionaryNode { Label="label", LabelSuffix = "different", Parent = parentNode };
 
-			Assert.AreNotEqual(firstNode, secondNode);
+			Assert.That(secondNode, Is.Not.EqualTo(firstNode));
 		}
 
 		[Test]
@@ -554,51 +554,38 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void IsHeadWord_HeadWord_True()
 		{
-			Assert.True(new ConfigurableDictionaryNode {
-				Label = "Headword",
-				FieldDescription = "MLHeadWord",
-				CSSClassNameOverride = "headword"
+			Assert.That(new ConfigurableDictionaryNode {
+				Label = "Headword", Is.True, FieldDescription = "MLHeadWord", CSSClassNameOverride = "headword"
 			}.IsHeadWord);
 		}
 
 		[Test]
 		public void IsHeadWord_NonStandardHeadWord_True()
 		{
-			Assert.True(new ConfigurableDictionaryNode
+			Assert.That(new ConfigurableDictionaryNode
 			{
-				Label = "Other Form",
-				FieldDescription = "MLHeadWord",
-				CSSClassNameOverride = "headword"
+				Label = "Other Form", Is.True, FieldDescription = "MLHeadWord", CSSClassNameOverride = "headword"
 			}.IsHeadWord);
-			Assert.True(new ConfigurableDictionaryNode
+			Assert.That(new ConfigurableDictionaryNode
 			{
-				Label = "Referenced Headword",
-				FieldDescription = "ReversalName",
-				CSSClassNameOverride = "headword"
+				Label = "Referenced Headword", Is.True, FieldDescription = "ReversalName", CSSClassNameOverride = "headword"
 			}.IsHeadWord);
-			Assert.True(new ConfigurableDictionaryNode
+			Assert.That(new ConfigurableDictionaryNode
 			{
-				Label = "Headword",
-				FieldDescription = "OwningEntry",
-				SubField = "MLHeadWord",
-				CSSClassNameOverride = "headword"
+				Label = "Headword", Is.True, FieldDescription = "OwningEntry", SubField = "MLHeadWord", CSSClassNameOverride = "headword"
 			}.IsHeadWord);
-			Assert.True(new ConfigurableDictionaryNode
+			Assert.That(new ConfigurableDictionaryNode
 			{
-				Label = "Headword",
-				FieldDescription = "MLHeadWord",
-				CSSClassNameOverride = "mainheadword"
+				Label = "Headword", Is.True, FieldDescription = "MLHeadWord", CSSClassNameOverride = "mainheadword"
 			}.IsHeadWord);
 		}
 
 		[Test]
 		public void IsHeadWord_NonHeadWord_False()
 		{
-			Assert.False(new ConfigurableDictionaryNode
+			Assert.That(new ConfigurableDictionaryNode
 			{
-				Label = "Headword",
-				FieldDescription = "OwningEntry",
-				CSSClassNameOverride = "alternateform"
+				Label = "Headword", Is.False, FieldDescription = "OwningEntry", CSSClassNameOverride = "alternateform"
 			}.IsHeadWord);
 		}
 
@@ -606,7 +593,7 @@ namespace SIL.FieldWorks.XWorks
 		public void IsMainEntry_MainEntry_True()
 		{
 			var mainEntryNode = new ConfigurableDictionaryNode { FieldDescription = "LexEntry", CSSClassNameOverride = "entry", Parent = null };
-			Assert.True(mainEntryNode.IsMainEntry, "Main Entry");
+			Assert.That(mainEntryNode.IsMainEntry, Is.True, "Main Entry");
 		}
 
 		[Test]
@@ -619,21 +606,21 @@ namespace SIL.FieldWorks.XWorks
 				DictionaryNodeOptions = new DictionaryNodeListOptions(),
 				Parent = null
 			};
-			Assert.True(mainEntryNode.IsMainEntry, "Main Entry");
+			Assert.That(mainEntryNode.IsMainEntry, Is.True, "Main Entry");
 		}
 
 		[Test]
 		public void IsMainEntry_MainReversalIndexEntry_True()
 		{
 			var mainEntryNode = new ConfigurableDictionaryNode { FieldDescription = "ReversalIndexEntry", CSSClassNameOverride = "reversalindexentry", Parent = null };
-			Assert.True(mainEntryNode.IsMainEntry, "Main Entry");
+			Assert.That(mainEntryNode.IsMainEntry, Is.True, "Main Entry");
 		}
 
 		[Test]
 		public void IsMainEntry_MinorEntry_False()
 		{
 			var minorEntryNode = new ConfigurableDictionaryNode { FieldDescription = "LexEntry", CSSClassNameOverride = "minorentry", Parent = null };
-			Assert.False(minorEntryNode.IsMainEntry, "Main Entry");
+			Assert.That(minorEntryNode.IsMainEntry, Is.False, "Main Entry");
 		}
 
 		[Test]
@@ -641,7 +628,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var mainEntryNode = new ConfigurableDictionaryNode { FieldDescription = "LexEntry", CSSClassNameOverride = "entry", Parent = null };
 			var someNode = new ConfigurableDictionaryNode { FieldDescription = "MLHeadWord", CSSClassNameOverride = "mainheadword", Parent = mainEntryNode };
-			Assert.False(someNode.IsMainEntry, "Main Entry");
+			Assert.That(someNode.IsMainEntry, Is.False, "Main Entry");
 		}
 
 		[Test]
@@ -654,13 +641,13 @@ namespace SIL.FieldWorks.XWorks
 			sharedNode.Parent = masterParent;
 			var standaloneParent = new ConfigurableDictionaryNode { Children = children };
 
-			Assert.True(masterParent.IsMasterParent, "Shared Node's Parent should be Master Parent");
-			Assert.False(otherParent.IsMasterParent, "Other node referring to Shared node should not be Master Parent");
-			Assert.False(standaloneParent.IsMasterParent, "node with only direct children should not be Master Parent");
+			Assert.That(masterParent.IsMasterParent, Is.True, "Shared Node's Parent should be Master Parent");
+			Assert.That(otherParent.IsMasterParent, Is.False, "Other node referring to Shared node should not be Master Parent");
+			Assert.That(standaloneParent.IsMasterParent, Is.False, "node with only direct children should not be Master Parent");
 
-			Assert.False(masterParent.IsSubordinateParent, "Shared Node's Parent should not be Subordinate Parent");
-			Assert.True(otherParent.IsSubordinateParent, "Other node referring to Shared node should be Subordinate Parent");
-			Assert.False(standaloneParent.IsSubordinateParent, "node with only direct children should not be Subordinate Parent (to whom would it subord?)");
+			Assert.That(masterParent.IsSubordinateParent, Is.False, "Shared Node's Parent should not be Subordinate Parent");
+			Assert.That(otherParent.IsSubordinateParent, Is.True, "Other node referring to Shared node should be Subordinate Parent");
+			Assert.That(standaloneParent.IsSubordinateParent, Is.False, "node with only direct children should not be Subordinate Parent (to whom would it subord?)");
 		}
 
 		[Test]
@@ -673,11 +660,11 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(DictionaryConfigurationModelTests.CreateSimpleSharingModel(root, sharedNode));
 
 			ConfigurableDictionaryNode returnedMasterParent;
-			Assert.True(child.TryGetMasterParent(out returnedMasterParent)); // SUT
-			Assert.AreSame(masterParent, returnedMasterParent);
-			Assert.False(masterParent.TryGetMasterParent(out returnedMasterParent), "The master parent doesn't *have* a master parent, it *is* one"); // SUT
+			Assert.That(child.TryGetMasterParent(out returnedMasterParent), Is.True); // SUT
+			Assert.That(returnedMasterParent, Is.SameAs(masterParent));
+			Assert.That(masterParent.TryGetMasterParent(out returnedMasterParent), Is.False, "The master parent doesn't *have* a master parent, it *is* one"); // SUT
 			Assert.That(returnedMasterParent, Is.Null, "Master Parent");
-			Assert.False(root.TryGetMasterParent(out returnedMasterParent), "The root node *certainly* doesn't have a master parent"); // SUT
+			Assert.That(root.TryGetMasterParent(out returnedMasterParent), Is.False, "The root node *certainly* doesn't have a master parent"); // SUT
 			Assert.That(returnedMasterParent, Is.Null, "Root Node");
 		}
 	}
