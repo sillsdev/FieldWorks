@@ -73,8 +73,8 @@ Added `Canceling` property to `NullThreadedProgress` class.
 
 ## Build Status After Fixes
 
-**Primary fixes applied:** 7 major issues resolved  
-**Secondary issues requiring investigation:** A few edge cases remain  
+**Primary fixes applied:** 7 major issues resolved
+**Secondary issues requiring investigation:** A few edge cases remain
 
 These remaining issues likely resolve with a clean rebuild due to NuGet cache or build artifact staling.
 
@@ -85,7 +85,7 @@ These remaining issues likely resolve with a clean rebuild due to NuGet cache or
 ### 5. ⚠️ Assembly Reference Conflicts in MorphologyEditorDll
 **Error pattern:** CS0436 - Type exists in both source and referenced assembly
 ```
-error CS0436: The type 'MasterItem' in '...MGA/MasterItem.cs' 
+error CS0436: The type 'MasterItem' in '...MGA/MasterItem.cs'
 conflicts with the imported type 'MasterItem' in 'MGA, Version=0.0.0.0'
 ```
 
@@ -111,7 +111,7 @@ conflicts with the imported type 'MasterItem' in 'MGA, Version=0.0.0.0'
 
 **Error pattern:**
 ```
-error CS0234: The type or namespace name 'FieldWorks' does not exist 
+error CS0234: The type or namespace name 'FieldWorks' does not exist
 in the namespace 'SIL' (are you missing an assembly reference?)
 ```
 
@@ -149,7 +149,7 @@ error CS0118: 'IText' is a namespace but is used like a type
 ### Pattern 1: SDK Migration Issues
 - **Symptom:** AssemblyInfo duplicates, XAML issues
 - **Root:** Projects converted from old-style to SDK-style (.csproj) without full compatibility
-- **Solution:** 
+- **Solution:**
   - Set `GenerateAssemblyInfo=true` (default) and remove manual attributes
   - Use correct SDK (WindowsDesktop for XAML, standard for console/libs)
   - Clean old build artifacts in Output/ directory

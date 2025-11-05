@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
     <AssemblyName>ParserUI</AssemblyName>
@@ -10,35 +10,30 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWPF>true</UseWPF>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <DebugType>full</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DefineConstants>TRACE</DefineConstants>
     <DebugSymbols>false</DebugSymbols>
     <Optimize>true</Optimize>
     <DebugType>none</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <DebugType>full</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DefineConstants>TRACE</DefineConstants>
     <DebugSymbols>false</DebugSymbols>
     <Optimize>true</Optimize>
     <DebugType>none</DebugType>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
     <PackageReference Include="SIL.Core" Version="17.0.0-*" />
@@ -46,8 +41,8 @@
     <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
     <PackageReference Include="SIL.WritingSystems" Version="17.0.0-*" />
-  <PackageReference Include="Geckofx60.64" Version="60.0.54" /></ItemGroup>
-
+    <PackageReference Include="Geckofx60.64" Version="60.0.54" />
+  </ItemGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -59,7 +54,6 @@
     <Reference Include="WindowsBase" />
     <Reference Include="netstandard" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="../../Common/Controls/FwControls/FwControls.csproj" />
     <ProjectReference Include="../../Common/Controls/Widgets/Widgets.csproj" />
@@ -81,7 +75,8 @@
     <ProjectReference Include="..\..\Common\Controls\DetailControls\DetailControls.csproj" />
     <ProjectReference Include="..\..\Common\Controls\XMLViews\XMLViews.csproj" />
   </ItemGroup>
-
-
   <ItemGroup>
-    <Compile Remove="ParserUITests/**" /><None Remove="ParserUITests/**" /></ItemGroup></Project>
+    <Compile Remove="ParserUITests/**" />
+    <None Remove="ParserUITests/**" />
+  </ItemGroup>
+</Project>

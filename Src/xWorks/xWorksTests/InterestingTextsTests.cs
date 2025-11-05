@@ -6,10 +6,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel;
-using SIL.LCModel.DomainServices;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Scripture;
+using SIL.LCModel.DomainServices;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -49,11 +49,27 @@ namespace SIL.FieldWorks.XWorks
 		public void GetCoreTexts()
 		{
 			MockTextRepository mockTextRep = MakeMockTextRepoWithTwoMockTexts();
-			var testObj = new InterestingTextList(m_mediator, m_propertyTable, mockTextRep, m_mockStTextRepo);
-			VerifyList(CurrentTexts(mockTextRep),
-				testObj.InterestingTexts, "texts from initial list of two");
+			var testObj = new InterestingTextList(
+				m_mediator,
+				m_propertyTable,
+				mockTextRep,
+				m_mockStTextRepo
+			);
+			VerifyList(
+				CurrentTexts(mockTextRep),
+				testObj.InterestingTexts,
+				"texts from initial list of two"
+			);
 			// Make sure it works if there are none.
-			Assert.AreEqual(0, new InterestingTextList(m_mediator, m_propertyTable, new MockTextRepository(), m_mockStTextRepo).InterestingTexts.Count());
+			Assert.AreEqual(
+				0,
+				new InterestingTextList(
+					m_mediator,
+					m_propertyTable,
+					new MockTextRepository(),
+					m_mockStTextRepo
+				).InterestingTexts.Count()
+			);
 			Assert.IsTrue(testObj.IsInterestingText(mockTextRep.m_texts[0].ContentsOA));
 			Assert.IsFalse(testObj.IsInterestingText(new MockStText()));
 		}
@@ -62,27 +78,49 @@ namespace SIL.FieldWorks.XWorks
 		public void AddAndRemoveCoreTexts()
 		{
 			MockTextRepository mockTextRep = MakeMockTextRepoWithTwoMockTexts();
-			var testObj = new InterestingTextList(m_mediator, m_propertyTable, mockTextRep, m_mockStTextRepo);
+			var testObj = new InterestingTextList(
+				m_mediator,
+				m_propertyTable,
+				mockTextRep,
+				m_mockStTextRepo
+			);
 			Assert.AreEqual(0, testObj.ScriptureTexts.Count());
 			testObj.InterestingTextsChanged += TextsChangedHandler;
 			MockText newText = AddMockText(mockTextRep, testObj);
-			VerifyList(CurrentTexts(mockTextRep),
-				testObj.InterestingTexts, "texts from initial list of two");
+			VerifyList(
+				CurrentTexts(mockTextRep),
+				testObj.InterestingTexts,
+				"texts from initial list of two"
+			);
 			VerifyTextsChangedArgs(2, 1, 0);
 			var removed = mockTextRep.m_texts[1].ContentsOA;
-			RemoveText(mockTextRep, testObj,1);
-			VerifyList(CurrentTexts(mockTextRep),
-				testObj.InterestingTexts, "texts from initial list of two");
+			RemoveText(mockTextRep, testObj, 1);
+			VerifyList(
+				CurrentTexts(mockTextRep),
+				testObj.InterestingTexts,
+				"texts from initial list of two"
+			);
 			VerifyTextsChangedArgs(1, 0, 1);
-			Assert.IsTrue(testObj.IsInterestingText(mockTextRep.m_texts[1].ContentsOA), "text not removed still interesting");
-			Assert.IsFalse(testObj.IsInterestingText(removed), "removed text no longer interesting");
+			Assert.IsTrue(
+				testObj.IsInterestingText(mockTextRep.m_texts[1].ContentsOA),
+				"text not removed still interesting"
+			);
+			Assert.IsFalse(
+				testObj.IsInterestingText(removed),
+				"removed text no longer interesting"
+			);
 		}
 
 		[Test]
 		public void ReplaceCoreText()
 		{
 			MockTextRepository mockTextRepo = MakeMockTextRepoWithTwoMockTexts();
-			var testObj = new InterestingTextList(m_mediator, m_propertyTable, mockTextRepo, m_mockStTextRepo);
+			var testObj = new InterestingTextList(
+				m_mediator,
+				m_propertyTable,
+				mockTextRepo,
+				m_mockStTextRepo
+			);
 			var firstStText = testObj.InterestingTexts.First();
 			MockText firstText = firstStText.Owner as MockText;
 			var replacement = new MockStText();
@@ -90,34 +128,58 @@ namespace SIL.FieldWorks.XWorks
 			firstText.ContentsOA = replacement;
 			testObj.PropChanged(firstText.Hvo, TextTags.kflidContents, 0, 1, 1);
 
-			VerifyList(CurrentTexts(mockTextRepo),
-				testObj.InterestingTexts, "texts after replace");
+			VerifyList(
+				CurrentTexts(mockTextRepo),
+				testObj.InterestingTexts,
+				"texts after replace"
+			);
 			// Various possibilities could be valid for the arguments...for now just verify we got something.
 			Assert.That(m_lastTextsChangedArgs, Is.Not.Null);
 		}
+
 		[Test]
 		[Ignore("Temporary until we figure out propchanged for unowned Texts.")]
 		public void AddAndRemoveScripture()
 		{
 			List<IStText> expectedScripture;
 			List<IStText> expected;
-			InterestingTextList testObj = SetupTwoMockTextsAndOneScriptureSection(true, out expectedScripture, out expected);
+			InterestingTextList testObj = SetupTwoMockTextsAndOneScriptureSection(
+				true,
+				out expectedScripture,
+				out expected
+			);
 			MakeMockScriptureSection();
 			testObj.PropChanged(m_sections[1].Hvo, ScrSectionTags.kflidContent, 0, 1, 0);
 			testObj.PropChanged(m_sections[1].Hvo, ScrSectionTags.kflidHeading, 0, 1, 0);
-			VerifyList(expected, testObj.InterestingTexts, "new Scripture objects are not added automatically");
-			VerifyScriptureList(testObj, expectedScripture, "new Scripture objects are not added automatically to ScriptureTexts");
+			VerifyList(
+				expected,
+				testObj.InterestingTexts,
+				"new Scripture objects are not added automatically"
+			);
+			VerifyScriptureList(
+				testObj,
+				expectedScripture,
+				"new Scripture objects are not added automatically to ScriptureTexts"
+			);
 			Assert.IsTrue(testObj.IsInterestingText(expectedScripture[0]));
 			Assert.IsTrue(testObj.IsInterestingText(expectedScripture[1]));
 
-			var remove = ((MockStText) m_sections[0].ContentOA);
+			var remove = ((MockStText)m_sections[0].ContentOA);
 			remove.IsValidObject = false;
 			expected.Remove(m_sections[0].ContentOA); // before we clear ContentsOA!
 			expectedScripture.Remove(m_sections[0].ContentOA);
 			m_sections[0].ContentOA = null; // not normally valid, but makes things somewhat more consistent for test.
 			testObj.PropChanged(m_sections[0].Hvo, ScrSectionTags.kflidContent, 0, 0, 1);
-			VerifyList(expected, testObj.InterestingTexts, "deleted Scripture texts are removed (ContentsOA)");
-			VerifyScriptureList(testObj, expectedScripture, "deleted Scripture texts are removed from ScriptureTexts (ContentsOA");
+			VerifyList(
+				expected,
+				testObj.InterestingTexts,
+				"deleted Scripture texts are removed (ContentsOA)"
+			);
+			VerifyScriptureList(
+				testObj,
+				expectedScripture,
+				"deleted Scripture texts are removed from ScriptureTexts (ContentsOA"
+			);
 			VerifyTextsChangedArgs(2, 0, 1);
 			Assert.IsFalse(testObj.IsInterestingText(remove));
 			Assert.IsTrue(testObj.IsInterestingText(expectedScripture[0]));
@@ -126,53 +188,109 @@ namespace SIL.FieldWorks.XWorks
 			expected.Remove(m_sections[0].HeadingOA); // before we clear ContentsOA!
 			m_sections[0].HeadingOA = null; // not normally valid, but makes things somewhat more consistent for test.
 			testObj.PropChanged(m_sections[0].Hvo, ScrSectionTags.kflidHeading, 0, 0, 1);
-			VerifyList(expected, testObj.InterestingTexts, "deleted Scripture texts are removed (HeadingOA)");
+			VerifyList(
+				expected,
+				testObj.InterestingTexts,
+				"deleted Scripture texts are removed (HeadingOA)"
+			);
 
 			m_sections[0].ContentOA = new MockStText();
-			var newTexts = new IStText[] {expected[0], expected[1], m_sections[0].ContentOA, m_sections[1].ContentOA, m_sections[1].HeadingOA};
+			var newTexts = new IStText[]
+			{
+				expected[0],
+				expected[1],
+				m_sections[0].ContentOA,
+				m_sections[1].ContentOA,
+				m_sections[1].HeadingOA,
+			};
 			testObj.SetInterestingTexts(newTexts);
 			VerifyTextsChangedArgs(2, 3, 0);
-			expected.AddRange(new[] { m_sections[0].ContentOA, m_sections[1].ContentOA, m_sections[1].HeadingOA });
-			VerifyList(expected, testObj.InterestingTexts, "deleted Scripture texts are removed (HeadingOA)");
+			expected.AddRange(
+				new[]
+				{
+					m_sections[0].ContentOA,
+					m_sections[1].ContentOA,
+					m_sections[1].HeadingOA,
+				}
+			);
+			VerifyList(
+				expected,
+				testObj.InterestingTexts,
+				"deleted Scripture texts are removed (HeadingOA)"
+			);
 			// Unfortunately, I don't think we actually get PropChanged on the direct owning property,
 			// if the owning object (Text or ScrSection) gets deleted. We need to detect deleted objects
 			// if things are deleted from any of the possible owning properties.
 			// This is also a chance to verify that being owned by an ScrDraft does not count as valid.
 			// It's not a very realistic test, as we aren't trying to make everything about the test data consistent.
-			((MockStText) m_sections[0].ContentOA).m_mockOwnerOfClass = new MockScrDraft(); // not allowed in list.
+			((MockStText)m_sections[0].ContentOA).m_mockOwnerOfClass = new MockScrDraft(); // not allowed in list.
 			testObj.PropChanged(m_sections[0].Hvo, ScrBookTags.kflidSections, 0, 0, 1);
 			expected.RemoveAt(2);
-			VerifyList(expected, testObj.InterestingTexts, "deleted Scripture texts are removed (ScrBook.SectionsOS)");
+			VerifyList(
+				expected,
+				testObj.InterestingTexts,
+				"deleted Scripture texts are removed (ScrBook.SectionsOS)"
+			);
 			VerifyTextsChangedArgs(2, 0, 1);
 
 			((MockStText)expected[3]).IsValidObject = false;
 			expected.RemoveAt(3);
 			testObj.PropChanged(m_sections[0].Hvo, ScriptureTags.kflidScriptureBooks, 0, 0, 1);
-			VerifyList(expected, testObj.InterestingTexts, "deleted Scripture texts are removed (Scripture.ScriptureBooks)");
+			VerifyList(
+				expected,
+				testObj.InterestingTexts,
+				"deleted Scripture texts are removed (Scripture.ScriptureBooks)"
+			);
 			VerifyTextsChangedArgs(3, 0, 1);
 
 			((MockStText)expected[2]).IsValidObject = false;
 			expected.RemoveAt(2);
 			testObj.PropChanged(m_sections[0].Hvo, ScrBookTags.kflidTitle, 0, 0, 1);
-			VerifyList(expected, testObj.InterestingTexts, "deleted Scripture texts are removed (ScrBookTags.Title)");
+			VerifyList(
+				expected,
+				testObj.InterestingTexts,
+				"deleted Scripture texts are removed (ScrBookTags.Title)"
+			);
 			VerifyTextsChangedArgs(2, 0, 1);
-			Assert.AreEqual(0, testObj.ScriptureTexts.Count(), "by now we've removed all ScriptureTexts");
+			Assert.AreEqual(
+				0,
+				testObj.ScriptureTexts.Count(),
+				"by now we've removed all ScriptureTexts"
+			);
 
 			((MockStText)expected[1]).IsValidObject = false;
 			expected.RemoveAt(1);
 			//testObj.PropChanged(1, LangProjectTags.kflidTexts, 0, 0, 1);
-			VerifyList(expected, testObj.InterestingTexts, "deleted texts are removed (LangProject.Texts)");
+			VerifyList(
+				expected,
+				testObj.InterestingTexts,
+				"deleted texts are removed (LangProject.Texts)"
+			);
 			VerifyTextsChangedArgs(1, 0, 1);
 		}
 
-		private InterestingTextList SetupTwoMockTextsAndOneScriptureSection(bool fIncludeScripture, out List<IStText> expectedScripture,
-			out List<IStText> expected)
+		private InterestingTextList SetupTwoMockTextsAndOneScriptureSection(
+			bool fIncludeScripture,
+			out List<IStText> expectedScripture,
+			out List<IStText> expected
+		)
 		{
 			MockTextRepository mockTextRep = MakeMockTextRepoWithTwoMockTexts();
 			MakeMockScriptureSection();
-			m_propertyTable.SetProperty(InterestingTextList.PersistPropertyName, InterestingTextList.MakeIdList(
-				new ICmObject[] { m_sections[0].ContentOA, m_sections[0].HeadingOA }), true);
-			var testObj = new InterestingTextList(m_mediator, m_propertyTable, mockTextRep, m_mockStTextRepo, fIncludeScripture);
+			m_propertyTable.SetProperty(
+				InterestingTextList.PersistPropertyName,
+				InterestingTextList.MakeIdList(
+					new ICmObject[] { m_sections[0].ContentOA, m_sections[0].HeadingOA }
+				),
+				true
+			);
+			var testObj = new InterestingTextList(
+				m_mediator,
+				m_propertyTable,
+				mockTextRep,
+				m_mockStTextRepo,
+				fIncludeScripture
+			);
 			testObj.InterestingTextsChanged += TextsChangedHandler;
 			expectedScripture = new List<IStText>();
 			expectedScripture.Add(m_sections[0].ContentOA);
@@ -182,7 +300,11 @@ namespace SIL.FieldWorks.XWorks
 			expected = new List<IStText>(CurrentTexts(mockTextRep));
 			if (fIncludeScripture)
 				expected.AddRange(expectedScripture);
-			VerifyList(expected, testObj.InterestingTexts, "two ordinary and two Scripture texts");
+			VerifyList(
+				expected,
+				testObj.InterestingTexts,
+				"two ordinary and two Scripture texts"
+			);
 			return testObj;
 		}
 
@@ -194,9 +316,23 @@ namespace SIL.FieldWorks.XWorks
 		{
 			MockTextRepository mockTextRep = MakeMockTextRepoWithTwoMockTexts();
 			MakeMockScriptureSection();
-			m_propertyTable.SetProperty(InterestingTextList.PersistPropertyName, InterestingTextList.MakeIdList(
-				new ICmObject[] { m_sections[0].ContentOA, m_sections[0].HeadingOA }) + "," + Convert.ToBase64String(Guid.NewGuid().ToByteArray()) + ",$%^#@+", true);
-			var testObj = new InterestingTextList(m_mediator, m_propertyTable, mockTextRep, m_mockStTextRepo, true);
+			m_propertyTable.SetProperty(
+				InterestingTextList.PersistPropertyName,
+				InterestingTextList.MakeIdList(
+					new ICmObject[] { m_sections[0].ContentOA, m_sections[0].HeadingOA }
+				)
+					+ ","
+					+ Convert.ToBase64String(Guid.NewGuid().ToByteArray())
+					+ ",$%^#@+",
+				true
+			);
+			var testObj = new InterestingTextList(
+				m_mediator,
+				m_propertyTable,
+				mockTextRep,
+				m_mockStTextRepo,
+				true
+			);
 			testObj.InterestingTextsChanged += TextsChangedHandler;
 			var expectedScripture = new List<IStText>();
 			expectedScripture.Add(m_sections[0].ContentOA);
@@ -214,8 +350,15 @@ namespace SIL.FieldWorks.XWorks
 		{
 			List<IStText> expectedScripture;
 			List<IStText> expected;
-			var testObj = SetupTwoMockTextsAndOneScriptureSection(false, out expectedScripture, out expected);
-			Assert.IsFalse(testObj.IsInterestingText(expectedScripture[1]), "in this mode no Scripture is interesting");
+			var testObj = SetupTwoMockTextsAndOneScriptureSection(
+				false,
+				out expectedScripture,
+				out expected
+			);
+			Assert.IsFalse(
+				testObj.IsInterestingText(expectedScripture[1]),
+				"in this mode no Scripture is interesting"
+			);
 
 			// Invalidating a Scripture book should NOT generate PropChanged etc. when Scripture is not included.
 			((MockStText)m_sections[0].ContentOA).IsValidObject = false;
@@ -223,21 +366,44 @@ namespace SIL.FieldWorks.XWorks
 			m_sections[0].ContentOA = null; // not normally valid, but makes things somewhat more consistent for test.
 			m_lastTextsChangedArgs = null;
 			testObj.PropChanged(m_sections[0].Hvo, ScrSectionTags.kflidContent, 0, 0, 1);
-			VerifyList(expected, testObj.InterestingTexts, "deleted Scripture texts are removed (ContentsOA)");
-			VerifyScriptureList(testObj, expectedScripture, "deleted Scripture texts are removed from ScriptureTexts (ContentsOA");
-			Assert.That(m_lastTextsChangedArgs, Is.Null, "should NOT get change notification deleting Scripture when not included");
+			VerifyList(
+				expected,
+				testObj.InterestingTexts,
+				"deleted Scripture texts are removed (ContentsOA)"
+			);
+			VerifyScriptureList(
+				testObj,
+				expectedScripture,
+				"deleted Scripture texts are removed from ScriptureTexts (ContentsOA"
+			);
+			Assert.That(
+				m_lastTextsChangedArgs,
+				Is.Null,
+				"should NOT get change notification deleting Scripture when not included"
+			);
 
 			((MockStText)expected[1]).IsValidObject = false;
 			expected.RemoveAt(1);
 			//testObj.PropChanged(1, LangProjectTags.kflidTexts, 0, 0, 1);
-			VerifyList(expected, testObj.InterestingTexts, "deleted texts are removed (LangProject.Texts)");
+			VerifyList(
+				expected,
+				testObj.InterestingTexts,
+				"deleted texts are removed (LangProject.Texts)"
+			);
 			VerifyTextsChangedArgs(1, 0, 1); // but, we still get PropChanged when deleting non-Scripture texts.
 		}
-		private void VerifyScriptureList(InterestingTextList testObj, List<IStText> expectedScripture, string comment)
+
+		private void VerifyScriptureList(
+			InterestingTextList testObj,
+			List<IStText> expectedScripture,
+			string comment
+		)
 		{
 			VerifyList(expectedScripture, testObj.ScriptureTexts, comment);
-			Assert.AreEqual(InterestingTextList.MakeIdList(expectedScripture.Cast<ICmObject>()),
-				m_propertyTable.GetStringProperty(InterestingTextList.PersistPropertyName, null));
+			Assert.AreEqual(
+				InterestingTextList.MakeIdList(expectedScripture.Cast<ICmObject>()),
+				m_propertyTable.GetStringProperty(InterestingTextList.PersistPropertyName, null)
+			);
 		}
 
 		private List<MockScrSection> m_sections = new List<MockScrSection>();
@@ -271,11 +437,15 @@ namespace SIL.FieldWorks.XWorks
 			return (from text in mockTextRep.m_texts select text.ContentsOA).ToList();
 		}
 
-		private void RemoveText(MockTextRepository mockTextRep, InterestingTextList testObj, int index)
+		private void RemoveText(
+			MockTextRepository mockTextRep,
+			InterestingTextList testObj,
+			int index
+		)
 		{
 			var oldTextHvo = mockTextRep.m_texts[index].Hvo;
 			((MockText)mockTextRep.m_texts[index]).IsValidObject = false;
-			((MockStText) mockTextRep.m_texts[index].ContentsOA).IsValidObject = false;
+			((MockStText)mockTextRep.m_texts[index].ContentsOA).IsValidObject = false;
 			mockTextRep.m_texts.RemoveAt(index);
 			testObj.PropChanged(oldTextHvo, TextTags.kflidContents, 0, 0, 1);
 		}
@@ -290,11 +460,17 @@ namespace SIL.FieldWorks.XWorks
 
 		static int s_nextHvo = 1;
 
-		static public int NextHvo() {
-			return s_nextHvo++; }
+		public static int NextHvo()
+		{
+			return s_nextHvo++;
+		}
 
 		// Verify the two lists have the same members (not necessarily in the same order)
-		private void VerifyList(List<IStText> expected, IEnumerable<IStText> actual, string comment)
+		private void VerifyList(
+			List<IStText> expected,
+			IEnumerable<IStText> actual,
+			string comment
+		)
 		{
 			Assert.AreEqual(expected.Count, actual.Count(), comment + " count");
 			var expectedSet = new HashSet<IStText>(expected);
@@ -324,13 +500,12 @@ namespace SIL.FieldWorks.XWorks
 			Hvo = InterestingTextsTests.NextHvo();
 			IsValidObject = true;
 			Guid = Guid.NewGuid();
-
 		}
 
 		public IEnumerable<ICmObject> AllOwnedObjects { get; private set; }
-		public int Hvo { get; private set;}
+		public int Hvo { get; private set; }
 
-		public ICmObject Owner { get; set;}
+		public ICmObject Owner { get; set; }
 
 		public int OwningFlid
 		{
@@ -347,7 +522,7 @@ namespace SIL.FieldWorks.XWorks
 			get { throw new NotImplementedException(); }
 		}
 
-		public Guid Guid { get; private set;}
+		public Guid Guid { get; private set; }
 
 		public ICmObjectId Id
 		{
@@ -383,12 +558,14 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		public ICmObject m_mockOwnerOfClass;
+
 		public ICmObject OwnerOfClass(int clsid)
 		{
 			return m_mockOwnerOfClass;
 		}
 
-		public T OwnerOfClass<T>() where T : ICmObject
+		public T OwnerOfClass<T>()
+			where T : ICmObject
 		{
 			throw new NotImplementedException();
 		}
@@ -398,7 +575,11 @@ namespace SIL.FieldWorks.XWorks
 			get { throw new NotImplementedException(); }
 		}
 
-		public bool CheckConstraints(int flidToCheck, bool createAnnotation, out ConstraintFailure failure)
+		public bool CheckConstraints(
+			int flidToCheck,
+			bool createAnnotation,
+			out ConstraintFailure failure
+		)
 		{
 			throw new NotImplementedException();
 		}
@@ -540,7 +721,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				m_content = value;
 				if (m_content != null)
-					((MockCmObject) m_content).Owner = this;
+					((MockCmObject)m_content).Owner = this;
 			}
 		}
 
@@ -668,7 +849,11 @@ namespace SIL.FieldWorks.XWorks
 			throw new NotImplementedException();
 		}
 
-		public IScrSection SplitSectionContent_atIP(int iParaSplit, ITsString headingText, string headingParaStyle)
+		public IScrSection SplitSectionContent_atIP(
+			int iParaSplit,
+			ITsString headingText,
+			string headingParaStyle
+		)
 		{
 			throw new NotImplementedException();
 		}
@@ -678,12 +863,19 @@ namespace SIL.FieldWorks.XWorks
 			throw new NotImplementedException();
 		}
 
-		public IScrSection SplitSectionContent_atIP(int iParaSplit, int ichSplit, IStText newHeading)
+		public IScrSection SplitSectionContent_atIP(
+			int iParaSplit,
+			int ichSplit,
+			IStText newHeading
+		)
 		{
 			throw new NotImplementedException();
 		}
 
-		public IScrSection SplitSectionContent_ExistingParaBecomesHeading(int iPara, int cParagraphs)
+		public IScrSection SplitSectionContent_ExistingParaBecomesHeading(
+			int iPara,
+			int cParagraphs
+		)
 		{
 			throw new NotImplementedException();
 		}
@@ -718,12 +910,20 @@ namespace SIL.FieldWorks.XWorks
 			throw new NotImplementedException();
 		}
 
-		public IScrSection SplitSectionContent_ExistingParaBecomesHeading(int iPara, int cParagraphs, IStStyle newStyle)
+		public IScrSection SplitSectionContent_ExistingParaBecomesHeading(
+			int iPara,
+			int cParagraphs,
+			IStStyle newStyle
+		)
 		{
 			throw new NotImplementedException();
 		}
 
-		public void SplitSectionHeading_ExistingParaBecomesContent(int iParaStart, int iParaEnd, IStStyle newStyle)
+		public void SplitSectionHeading_ExistingParaBecomesContent(
+			int iParaStart,
+			int iParaEnd,
+			IStStyle newStyle
+		)
 		{
 			throw new NotImplementedException();
 		}
@@ -801,10 +1001,8 @@ namespace SIL.FieldWorks.XWorks
 		}
 	}
 
-
 	internal class MockTextRepository : IRepository<IText>
 	{
-
 		public List<IText> m_texts = new List<IText>();
 
 		public IEnumerable<ICmObject> AllInstances(int classId)
@@ -891,7 +1089,6 @@ namespace SIL.FieldWorks.XWorks
 			set { throw new NotImplementedException(); }
 		}
 
-
 		private IStText m_contents;
 		public IStText ContentsOA
 		{
@@ -920,7 +1117,6 @@ namespace SIL.FieldWorks.XWorks
 			get { throw new NotImplementedException(); }
 			set { throw new NotImplementedException(); }
 		}
-
 
 		public IMultiUnicode Name
 		{
@@ -962,9 +1158,7 @@ namespace SIL.FieldWorks.XWorks
 
 	internal class MockStText : MockCmObject, IStText
 	{
-		public MockStText()
-		{
-		}
+		public MockStText() { }
 
 		public ILcmOwningSequence<IStPara> ParagraphsOS
 		{
@@ -1008,12 +1202,20 @@ namespace SIL.FieldWorks.XWorks
 			throw new NotImplementedException();
 		}
 
-		public IScrFootnote FindNextFootnote(ref int iPara, ref int ich, bool fSkipCurrentPosition)
+		public IScrFootnote FindNextFootnote(
+			ref int iPara,
+			ref int ich,
+			bool fSkipCurrentPosition
+		)
 		{
 			throw new NotImplementedException();
 		}
 
-		public IScrFootnote FindPreviousFootnote(ref int iPara, ref int ich, bool fSkipCurrentPosition)
+		public IScrFootnote FindPreviousFootnote(
+			ref int iPara,
+			ref int ich,
+			bool fSkipCurrentPosition
+		)
 		{
 			throw new NotImplementedException();
 		}

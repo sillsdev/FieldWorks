@@ -293,30 +293,30 @@ internal class MockTextRepository : IRepository<IText>
 ## Patterns & Root Causes
 
 ### Pattern 1: SDK Project Misconfiguration
-| Issue | Root Cause | Fix |
-|-------|-----------|-----|
-| Duplicate AssemblyInfo | GenerateAssemblyInfo=false conflicts with SDK | Set to `true`, remove manual attributes |
-| XAML not working | Wrong SDK (generic instead of WindowsDesktop) | Use `Microsoft.NET.Sdk.WindowsDesktop`, add UseWPF |
+| Issue                  | Root Cause                                    | Fix                                                |
+| ---------------------- | --------------------------------------------- | -------------------------------------------------- |
+| Duplicate AssemblyInfo | GenerateAssemblyInfo=false conflicts with SDK | Set to `true`, remove manual attributes            |
+| XAML not working       | Wrong SDK (generic instead of WindowsDesktop) | Use `Microsoft.NET.Sdk.WindowsDesktop`, add UseWPF |
 
 ### Pattern 2: Transitive Dependency Misalignment
-| Issue | Root Cause | Fix |
-|-------|-----------|-----|
-| NU1605 downgrade errors | Manual package versions don't account for transitive deps | Align to newer versions required by transitive deps |
-| Missing namespaces (CS0234) | Incomplete package references | Add missing packages that provide required namespaces |
+| Issue                       | Root Cause                                                | Fix                                                   |
+| --------------------------- | --------------------------------------------------------- | ----------------------------------------------------- |
+| NU1605 downgrade errors     | Manual package versions don't account for transitive deps | Align to newer versions required by transitive deps   |
+| Missing namespaces (CS0234) | Incomplete package references                             | Add missing packages that provide required namespaces |
 
 ### Pattern 3: Updated Interface Contracts
-| Issue | Root Cause | Fix |
-|-------|-----------|-----|
+| Issue                     | Root Cause                                        | Fix                                          |
+| ------------------------- | ------------------------------------------------- | -------------------------------------------- |
 | Missing interface members | SIL packages updated; new interface methods added | Implement new members in all implementations |
 
 ### Pattern 4: Test Code in Production Assemblies
-| Issue | Root Cause | Fix |
-|-------|-----------|-----|
+| Issue                   | Root Cause                                        | Fix                                               |
+| ----------------------- | ------------------------------------------------- | ------------------------------------------------- |
 | Type conflicts (CS0436) | Test files not properly excluded from compilation | Add Compile/None removal entries for test folders |
 
 ### Pattern 5: Mock/Test Signature Errors
-| Issue | Root Cause | Fix |
-|-------|-----------|-----|
+| Issue                | Root Cause                       | Fix                                                                |
+| -------------------- | -------------------------------- | ------------------------------------------------------------------ |
 | Wrong interface base | Incomplete interface declaration | Use correct generic interface: `IRepository<T>` not `IXRepository` |
 
 ---
@@ -339,16 +339,16 @@ internal class MockTextRepository : IRepository<IText>
 
 ### Error Categories Resolved
 
-| Category | Count | Resolution |
-|----------|-------|-----------|
-| Assembly Info duplicates | 8 errors | Enable auto-generation |
-| XAML code generation | 4 errors | Fix SDK selection |
-| Package downgrade | 2 errors | Align versions |
-| Missing interface members | 1 error | Add property |
-| Type conflicts | 50+ errors | Exclude test files |
-| Missing namespaces | 4 errors | Add packages |
-| Interface implementation | 10+ errors | Fix generic signature |
-| **Total** | **~80 errors** | **All fixed** |
+| Category                  | Count          | Resolution             |
+| ------------------------- | -------------- | ---------------------- |
+| Assembly Info duplicates  | 8 errors       | Enable auto-generation |
+| XAML code generation      | 4 errors       | Fix SDK selection      |
+| Package downgrade         | 2 errors       | Align versions         |
+| Missing interface members | 1 error        | Add property           |
+| Type conflicts            | 50+ errors     | Exclude test files     |
+| Missing namespaces        | 4 errors       | Add packages           |
+| Interface implementation  | 10+ errors     | Fix generic signature  |
+| **Total**                 | **~80 errors** | **All fixed**          |
 
 ---
 
