@@ -54,8 +54,8 @@ B) Registration‑free COM (no regsvr32)
  - Other COM servers referenced by generated interop in `Views.cs` (scan for `[ComImport]` coclasses’ implementing DLLs during implementation phase).
 - We will build the initial list by enumerating native output dirs for DLLs and letting `RegFree` filter down to those with type libraries/COM registration entries. This is robust against drift.
 
-2) Add a shared MSBuild target to generate manifests
-- Create `Build/Targets/RegFree.targets` with a property switch `EnableRegFreeCom` (default true):
+2) Extend the shared MSBuild target to generate manifests
+- Update `Build/RegFree.targets` with a property switch `EnableRegFreeCom` (default true):
  - Define per-EXE ItemGroups listing native DLLs to process into the EXE’s manifest. Start broad (all native DLLs in the output directory) then narrow if needed.
  - Invoke the existing `RegFree` task after each EXE build to update `<TargetPath>.manifest`.
  - Example (sketch):
@@ -92,6 +92,7 @@ B) Registration‑free COM (no regsvr32)
 3) Packaging/runtime layout
 - Keep native COM DLLs in the same directory as the EXE (or reference with `codebase` in the manifest). The `RegFree` task writes `<file name="...">` entries assuming same-dir layout.
 - Ensure ICU and other native dependencies remain locatable (FieldWorks.exe already prepends `lib/x64` to PATH).
+- Add a verification step to audit the build drop and installer payload, confirming every COM-reliant DLL remains beside its host EXE (or is explicitly referenced through `codebase`).
 
 4) Remove registration steps
 - Remove/disable any msbuild targets, scripts, or post-build steps that call regsvr32, `DllRegisterServer`, or use `RegisterForTests` in dev builds. Keep `RegisterForTestsTask` only where tests explicitly need install-time registration (should not be needed with reg-free manifests).
@@ -102,8 +103,9 @@ B) Registration‑free COM (no regsvr32)
 - Optional: validate manifests contain entries for expected CLSIDs/IIDs by checking for known GUIDs (e.g., `IDebugReport`, `IVwRootBox`).
 
 C) Update tests and utilities
-- Test executables that create COM must import `RegFree.targets` to produce their own manifests. For library-only tests (no EXE), prefer running under a testhost that already has a manifest (or avoid COM activation there).
+- Test executables that create COM must import `Build/RegFree.targets` to produce their own manifests. For library-only tests (no EXE), prefer running under a testhost that already has a manifest (or avoid COM activation there).
 - Remove test-time registration logic; if any test harness relied on `RegisterForTestsTask`, switch it off and ensure `@(NativeComDlls)` includes the required DLLs for the test EXE.
+- Run COM-activating suites under the shared host, target ≥95% pass rate without admin privileges, and archive the evidence (e.g., attach logs/screenshots in `specs/001-64bit-regfree-com/quickstart.md`).
 
 Risks/mitigations
 - Missing DLL list in manifests → COM activation fails:
@@ -115,12 +117,14 @@ Risks/mitigations
 - Installer: If MSI previously depended on COM registration at install, remove those steps and ensure the EXE manifests are installed intact.
 
 Work items checklist
-1) Create `Directory.Build.props` to default to x64, and update all csproj/vcxproj to drop x86/Win32 configurations.
-2) Create `Build/Targets/RegFree.targets` and wire `RegFree` task into EXE projects.
-3) Add `@(NativeComDlls)` item patterns and validate the manifest generation output.
-4) Remove any regsvr32/DllRegisterServer build steps.
-5) Update CI to build x64 only; run smoke tests on a clean VM.
-6) Update developer docs (build/run) to reflect no-registration workflow.
+1) Update `Directory.Build.props`, solution platforms, and all csproj/vcxproj to remove Win32/AnyCPU host configurations and default to x64.
+2) Extend `Build/RegFree.targets` and wire the RegFree task into FieldWorks.exe, LexText.exe, and supporting hosts.
+3) Add `@(NativeComDlls)` item patterns and validate manifest output (FieldWorks.exe/FLEx.exe manifest spot-checks).
+4) Remove any regsvr32/DllRegisterServer build steps from build scripts and targets.
+5) Update CI to build x64 only; upload manifests and run smoke checks on a clean VM.
+6) Verify build drops and installer payloads keep native COM DLLs beside their EXEs (or referenced via `codebase`).
+7) Run COM-activating suites under the shared test host, confirm ≥95% pass rate without admin rights, and capture evidence in the quickstart.
+8) Update developer docs (build/run) to reflect the reg-free workflow and validation results.
 
 Appendix: key references in repo
 - Reg-free tasks: `Build/Src/FwBuildTasks/RegFree.cs`, `RegFreeCreator.cs`, `RegHelper.cs`.
