@@ -75,5 +75,9 @@
     <Compile Remove="MGA/MGATests/**" />
     <None Remove="MGA/MGATests/**" />
     <Compile Remove="MGA/AssemblyInfo.cs" />
+    <Compile Remove="MGA/bin/**" />
+    <None Remove="MGA/bin/**" />
+    <Compile Remove="MGA/obj/**" />
+    <None Remove="MGA/obj/**" />
   </ItemGroup>
 </Project>

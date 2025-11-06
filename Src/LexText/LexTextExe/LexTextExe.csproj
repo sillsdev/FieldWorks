@@ -8,27 +8,23 @@
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <DebugType>full</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DefineConstants>TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>true</Optimize>
     <DebugType>full</DebugType>
   </PropertyGroup>
-
   <ItemGroup>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="netstandard" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="../../Common/Controls/FwControls/FwControls.csproj" />
     <ProjectReference Include="../../Common/FieldWorks/FieldWorks.csproj" />
@@ -42,6 +38,11 @@
     <ProjectReference Include="../../xWorks/xWorks.csproj" />
     <ProjectReference Include="../LexTextDll/LexTextDll.csproj" />
     <ProjectReference Include="../ParserUI/ParserUI.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Flex.exe.manifest">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <Import Project="BuildInclude.targets" />
 </Project>
