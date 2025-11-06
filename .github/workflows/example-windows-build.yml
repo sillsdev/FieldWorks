@@ -1,0 +1,20 @@
+name: Example Windows Build
+# This workflow demonstrates how to build FieldWorks on Windows using msbuild
+# 
+# To use this:
+# 1. This workflow will run on windows-latest (GitHub-hosted Windows runner)
+# 2. It uses the reusable copilot-setup-steps.yml workflow
+# 3. It builds the FieldWorks.sln solution using msbuild
+
+on:
+  workflow_dispatch:  # Manual trigger
+  # You can also add other triggers like push, pull_request, etc.
+  # push:
+  #   branches: ["develop"]
+
+jobs:
+  build:
+    name: Build FieldWorks on Windows
+    uses: ./.github/workflows/copilot-setup-steps.yml
+    with:
+      msbuild_args: "FieldWorks.sln /m /p:Configuration=Debug /v:minimal"

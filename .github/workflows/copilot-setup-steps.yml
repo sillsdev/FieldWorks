@@ -49,8 +49,9 @@ jobs:
                   }
                   if (-not $msbuild) {
                     Write-Error "MSBuild not found on runner. Consider installing Visual Studio Build Tools in the runner image or use a self-hosted Windows runner."
+                    exit 1
                   } else {
-                    Write-Output "::set-output name=msbuild-path::$msbuild"
+                    Add-Content -Path $env:GITHUB_OUTPUT -Value "msbuild-path=$msbuild"
                     Write-Host "Found MSBuild at $msbuild"
                   }
 
@@ -59,6 +60,14 @@ jobs:
               shell: pwsh
               run: |
                   $msbuildPath = "${{ steps.find-msbuild.outputs.msbuild-path }}"
-                  if (-not $msbuildPath) { Write-Error "MSBuild path not found" ; exit 2 }
+                  if (-not $msbuildPath) { 
+                    Write-Error "MSBuild path not found" 
+                    exit 2 
+                  }
                   Write-Host "Running MSBuild: $msbuildPath ${{ inputs.msbuild_args }}"
                   & $msbuildPath ${{ inputs.msbuild_args }}
+                  if ($LASTEXITCODE -ne 0) {
+                    Write-Error "MSBuild failed with exit code $LASTEXITCODE"
+                    exit $LASTEXITCODE
+                  }
+                  Write-Host "Build completed successfully!" -ForegroundColor Green
