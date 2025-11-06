@@ -59,9 +59,9 @@ Independent Test: CI logs show `/p:Platform=x64`; no `regsvr32` invocations; EXE
 
 ## Phase 6 — Shared manifest-enabled test host (per plan FR‑011)
 
-- [ ] T025 [P] Create new console host project for COM-activating tests in `Src/Utilities/ComManifestTestHost/ComManifestTestHost.csproj`
-- [ ] T026 [P] Add Program.cs that activates a known COM class (no registry) in `Src/Utilities/ComManifestTestHost/Program.cs`
-- [ ] T027 [P] Add BuildInclude that imports reg-free target and AfterBuild wiring in `Src/Utilities/ComManifestTestHost/BuildInclude.targets`
+- [x] T025 [P] Create new console host project for COM-activating tests in `Src/Utilities/ComManifestTestHost/ComManifestTestHost.csproj`
+- [x] T026 [P] Add Program.cs that activates a known COM class (no registry) in `Src/Utilities/ComManifestTestHost/Program.cs`
+- [x] T027 [P] Add BuildInclude that imports reg-free target and AfterBuild wiring in `Src/Utilities/ComManifestTestHost/BuildInclude.targets`
 - [ ] T028 Add project to solution under Utilities group in `FieldWorks.sln`
 - [ ] T029 Integrate host with test harness (invoke via existing test runner scripts) in `Bin/testWrapper.cmd`
 - [ ] T030 [US3] Run COM-activating test suites under the new host, document ≥95% pass rate, and capture evidence in `specs/001-64bit-regfree-com/quickstart.md`
