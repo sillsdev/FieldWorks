@@ -145,3 +145,4 @@ Src/Kernel/FwKernelTlb.idl
 Src/Kernel/*.idh
 .github/machine-specific.md
 build_output.txt
+*.backup

@@ -9,7 +9,7 @@ This task list is organized by user story. Each task is specific and immediately
 ## Phase 1 — Setup (infrastructure and policy)
 
 - [x] T001 Ensure x64 defaults in root `Directory.Build.props` (set `<PlatformTarget>x64</PlatformTarget>` and `<Platforms>x64</Platforms>`) in `Directory.Build.props`
-- [ ] T002 Remove Win32 configs from solution platforms in `FieldWorks.sln`
+- [x] T002 Remove Win32 configs from solution platforms in `FieldWorks.sln`
 - [ ] T003 [P] Remove Win32 (and AnyCPU host) configurations from native VCXPROJ/C++-CLI projects tied to COM activation (keep x64 only) across `Src/**`
 - [ ] T004 Enforce x64 in CI: update pipeline to pass `/p:Platform=x64` in `.github/workflows/CI.yml`
 - [ ] T005 Audit build scripts for COM registration and remove calls (e.g., `regsvr32`/`DllRegisterServer`) in `Build/Installer.targets`
