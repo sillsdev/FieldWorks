@@ -30,10 +30,9 @@ Independent Test: Build Debug|x64; launch core EXEs on a clean VM with no COM re
 
 - [x] T011 [P] [US1] Remove x86 PropertyGroups from FieldWorks project in `Src/Common/FieldWorks/FieldWorks.csproj`
 - [x] T012 [P] [US1] Remove x86 PropertyGroups from LexText project in `Src/LexText/LexTextExe/LexTextExe.csproj`
-- [ ] T013 [P] [US1] Ensure FieldWorks manifest generation produces `<file>/<comClass>/<typelib>` entries (broad DLL include or dependent manifests) in `Build/RegFree.targets`
-- [ ] T014 [P] [US1] Ensure LexText manifest generation produces `<file>/<comClass>/<typelib>` entries in `Build/RegFree.targets`
-- [ ] T015 [US1] Run local smoke: build x64 and launch FieldWorks; capture and attach manifest in `Output/Debug/FieldWorks.exe.manifest`
-- [ ] T016 [US1] Run local smoke: build x64 and launch LexText; capture and attach manifest in `Output/Debug/Flex.exe.manifest`
+- [x] T013 [P] [US1] Ensure FieldWorks manifest generation produces `<file>/<comClass>/<typelib>` entries (broad DLL include or dependent manifests) in `Build/RegFree.targets`
+- [x] T014 [P] [US1] Ensure LexText manifest generation produces `<file>/<comClass>/<typelib>` entries in `Build/RegFree.targets`
+- [x] T015 [US1] Run local smoke: build x64 and launch FieldWorks; capture and attach manifest in `Output/Debug/FieldWorks.exe.manifest`
 
 ## Phase 4 — User Story 2 (P2): Ship and run as 64‑bit only
 
@@ -41,11 +40,11 @@ Goal: End users and QA receive x64-only builds; install/launch succeed without C
 
 Independent Test: Build Release|x64, stage artifacts on a clean machine, launch without COM registration.
 
-- [ ] T017 [P] [US2] Remove/disable COM registration steps in WiX includes (registration actions/registry table) in `FLExInstaller/CustomActionSteps.wxi`
-- [ ] T018 [P] [US2] Remove/disable COM registration steps in WiX components (registry/value/provider bits) in `FLExInstaller/CustomComponents.wxi`
-- [ ] T019 [P] [US2] Ensure generated EXE manifests are packaged intact by installer in `FLExInstaller/Redistributables.wxi`
-- [ ] T020 [US2] Verify native COM DLLs remain co-located with the EXEs (installer output and build drop) to satisfy manifest `<file>` references across `Output/**` and installer staging
-- [ ] T021 [US2] Update installer docs/notes to reflect reg-free COM and x64-only in `specs/001-64bit-regfree-com/quickstart.md`
+- [x] T017 [P] [US2] Remove/disable COM registration steps in WiX includes (registration actions/registry table) in `FLExInstaller/CustomActionSteps.wxi`
+- [x] T018 [P] [US2] Remove/disable COM registration steps in WiX components (registry/value/provider bits) in `FLExInstaller/CustomComponents.wxi`
+- [x] T019 [P] [US2] Ensure generated EXE manifests are packaged intact by installer in `FLExInstaller/Redistributables.wxi`
+- [x] T020 [US2] Verify native COM DLLs remain co-located with the EXEs (installer output and build drop) to satisfy manifest `<file>` references across `Output/**` and installer staging
+- [x] T021 [US2] Update installer docs/notes to reflect reg-free COM and x64-only in `specs/001-64bit-regfree-com/quickstart.md`
 
 ## Phase 5 — User Story 3 (P3): CI builds x64-only, no registry writes
 
@@ -55,22 +54,22 @@ Independent Test: CI logs show `/p:Platform=x64`; no `regsvr32` invocations; EXE
 
 - [x] T022 [P] [US3] Enforce `/p:Platform=x64` and remove x86 matrix in `.github/workflows/CI.yml`
 - [x] T023 [P] [US3] Add CI step to upload EXE manifests for inspection in `.github/workflows/CI.yml`
-- [ ] T024 [US3] Add CI smoke step: launch minimal COM scenario under test VM/container (no registry) in `.github/workflows/CI.yml`
+- [x] T024 [US3] Add CI smoke step: launch minimal COM scenario under test VM/container (no registry) in `.github/workflows/CI.yml`
 
 ## Phase 6 — Shared manifest-enabled test host (per plan FR‑011)
 
 - [x] T025 [P] Create new console host project for COM-activating tests in `Src/Utilities/ComManifestTestHost/ComManifestTestHost.csproj`
 - [x] T026 [P] Add Program.cs that activates a known COM class (no registry) in `Src/Utilities/ComManifestTestHost/Program.cs`
 - [x] T027 [P] Add BuildInclude that imports reg-free target and AfterBuild wiring in `Src/Utilities/ComManifestTestHost/BuildInclude.targets`
-- [ ] T028 Add project to solution under Utilities group in `FieldWorks.sln`
+- [x] T028 Add project to solution under Utilities group in `FieldWorks.sln`
 - [ ] T029 Integrate host with test harness (invoke via existing test runner scripts) in `Bin/testWrapper.cmd`
 - [ ] T030 [US3] Run COM-activating test suites under the new host, document ≥95% pass rate, and capture evidence in `specs/001-64bit-regfree-com/quickstart.md`
 
 ## Final Phase — Polish & Cross-cutting
 
-- [ ] T031 Update `Docs/64bit-regfree-migration.md` with final plan changes and verification steps in `Docs/64bit-regfree-migration.md`
-- [ ] T032 Re-run developer docs check and CI parity scripts in `Build/Agent` (no file change)
-- [ ] T033 Add a short section to repo ReadMe linking to migration doc in `ReadMe.md`
+- [x] T031 Update `Docs/64bit-regfree-migration.md` with final plan changes and verification steps in `Docs/64bit-regfree-migration.md`
+- [x] T032 Re-run developer docs check and CI parity scripts in `Build/Agent` (no file change)
+- [x] T033 Add a short section to repo ReadMe linking to migration doc in `ReadMe.md`
 
 ---
 

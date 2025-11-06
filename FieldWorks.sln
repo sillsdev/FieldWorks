@@ -198,6 +198,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XAmpleManagedWrapper", "Src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XAmpleManagedWrapperTests", "Src\LexText\ParserCore\XAmpleManagedWrapper\XAmpleManagedWrapperTests\XAmpleManagedWrapperTests.csproj", "{5F9BBC7F-3CE1-5F77-956F-B7650E1FE52E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ComManifestTestHost", "Src\Utilities\ComManifestTestHost\ComManifestTestHost.csproj", "{9A7E3C5B-2D1F-4E8A-9B3C-F6D0E1A2B4C8}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XMLUtils", "Src\Utilities\XMLUtils\XMLUtils.csproj", "{D4F47DD8-A0E7-5081-808A-5286F873DC13}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XMLUtilsTests", "Src\Utilities\XMLUtils\XMLUtilsTests\XMLUtilsTests.csproj", "{2EB628C9-EC23-5394-8BEB-B7542360FEAE}"
@@ -821,6 +823,12 @@ Global
 		{5F9BBC7F-3CE1-5F77-956F-B7650E1FE52E}.Debug|x64.Build.0 = Debug|Any CPU
 		{5F9BBC7F-3CE1-5F77-956F-B7650E1FE52E}.Release|x64.ActiveCfg = Release|Any CPU
 		{5F9BBC7F-3CE1-5F77-956F-B7650E1FE52E}.Release|x64.Build.0 = Release|Any CPU
+		{9A7E3C5B-2D1F-4E8A-9B3C-F6D0E1A2B4C8}.Bounds|x64.ActiveCfg = Release|Any CPU
+		{9A7E3C5B-2D1F-4E8A-9B3C-F6D0E1A2B4C8}.Bounds|x64.Build.0 = Release|Any CPU
+		{9A7E3C5B-2D1F-4E8A-9B3C-F6D0E1A2B4C8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9A7E3C5B-2D1F-4E8A-9B3C-F6D0E1A2B4C8}.Debug|x64.Build.0 = Debug|Any CPU
+		{9A7E3C5B-2D1F-4E8A-9B3C-F6D0E1A2B4C8}.Release|x64.ActiveCfg = Release|Any CPU
+		{9A7E3C5B-2D1F-4E8A-9B3C-F6D0E1A2B4C8}.Release|x64.Build.0 = Release|Any CPU
 		{D4F47DD8-A0E7-5081-808A-5286F873DC13}.Bounds|x64.ActiveCfg = Release|Any CPU
 		{D4F47DD8-A0E7-5081-808A-5286F873DC13}.Bounds|x64.Build.0 = Release|Any CPU
 		{D4F47DD8-A0E7-5081-808A-5286F873DC13}.Debug|x64.ActiveCfg = Debug|Any CPU

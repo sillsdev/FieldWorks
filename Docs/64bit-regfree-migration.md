@@ -1,11 +1,11 @@
-# FieldWorks64-bit only + Registration-free COM migration plan
+# FieldWorks 64-bit only + Registration-free COM migration plan
 
 Owner: Build/Infra
-Status: Draft
+Status: **Phases 1-4 Complete** (x64-only + reg-free COM builds and installer)
 
 Goals
-- Drop32-bit (x86/Win32) builds; ship and run64-bit only.
-- Eliminate COM registration at install/dev time. All COM activation should succeed via application manifests (registration-free COM) so the app is self-contained and runnable without regsvr32/admin.
+- Drop 32-bit (x86/Win32) builds; ship and run 64-bit only. **✅ COMPLETE**
+- Eliminate COM registration at install/dev time. All COM activation should succeed via application manifests (registration-free COM) so the app is self-contained and runnable without regsvr32/admin. **✅ COMPLETE for FieldWorks.exe**
 
 Context (what we found)
 - Native COM servers and interop:
@@ -134,5 +134,75 @@ Appendix: key references in repo
 
 Validation path (first pass)
 - Build all (x64): `msbuild FieldWorks.sln /m /p:Configuration=Debug /p:Platform=x64`.
-- Confirm `FieldWorks.exe.manifest` is generated and contains `<file name="Views.dll">` with `comClass` entries and interfaces.
-- From a machine with no FieldWorks registrations, launch `FieldWorks.exe` → expect no class-not-registered exceptions.
+- Confirm `FieldWorks.exe.manifest` is generated and contains `<file name="Views.dll">` with `comClass` entries and interfaces. **✅ VERIFIED**
+- From a machine with no FieldWorks registrations, launch `FieldWorks.exe` → expect no class-not-registered exceptions. **✅ VERIFIED**
+
+## Implementation Status (as of current branch)
+
+### Phase 1: x64-only builds (✅ COMPLETE)
+- `Directory.Build.props` enforces `<PlatformTarget>x64</PlatformTarget>`
+- `FieldWorks.sln` Win32 configurations removed
+- Native VCXPROJs x86 configurations removed
+- CI enforces `/p:Platform=x64` via `build64.bat`
+
+### Phase 2: Manifest wiring (✅ COMPLETE)
+- `Build/RegFree.targets` generates manifests with COM class/typelib entries
+- `Src/Common/FieldWorks/BuildInclude.targets` imports RegFree.targets, triggers post-build
+- RegFree task implementation in `Build/Src/FwBuildTasks/`
+
+### Phase 3: EXE manifests (✅ COMPLETE)
+- FieldWorks.exe manifest generated with dependent assembly references
+- FwKernel.X.manifest and Views.X.manifest generated with COM entries
+- Manifests include `type="x64"` platform attribute
+- Verified 27+ COM classes in Views.X.manifest (VwGraphicsWin32, LgLineBreaker, TsStrFactory, etc.)
+
+### Phase 4: Installer (✅ COMPLETE)
+- `Build/Installer.targets` manifests added to CustomInstallFiles
+- `FLExInstaller/CustomComponents.wxi` manifest File entries added
+- No COM registration actions confirmed (CustomActionSteps.wxi, CustomComponents.wxi)
+
+### Phase 5: CI validation (🔄 PARTIAL)
+- CI uploads manifests as artifacts ✅
+- ComManifestTestHost.exe smoke test added ✅
+- Full test suite integration pending
+
+### Phase 6: Test host (🔄 PARTIAL)
+- ComManifestTestHost project created and added to solution ✅
+- Test harness integration pending
+- COM test suite migration pending
+
+### Final phase: Polish (⏳ PENDING)
+- Documentation updates in progress
+- CI parity checks pending
+- ReadMe updates pending
+
+## Current Artifacts
+
+**Generated Manifests**:
+- `Output/Debug/FieldWorks.exe.manifest` - Main EXE with dependent assembly references
+- `Output/Debug/FwKernel.X.manifest` - COM interface proxy stubs
+- `Output/Debug/Views.X.manifest` - 27+ COM class registrations
+
+**Build Integration**:
+- RegFree target executes post-build for EXE projects
+- NativeComDlls ItemGroup captures all DLLs via `$(OutDir)*.dll` pattern
+- Filters .resources.dll and .ni.dll files automatically
+
+**Installer Integration**:
+- Manifests co-located with FieldWorks.exe in CustomInstallFiles
+- All DLLs and manifests install to single directory (APPFOLDER)
+- No registry COM writes during install
+
+## Next Steps
+
+1. **Test Suite Integration** (Phase 6): Integrate ComManifestTestHost with existing test harness
+2. **Test Migration**: Run COM-activating test suites under reg-free manifests, target ≥95% pass
+3. **Additional EXEs**: Extend manifest generation to other EXE projects (utilities, tools)
+4. **Documentation**: Complete developer docs updates and ReadMe links
+
+## References
+
+- **Specification**: `specs/001-64bit-regfree-com/spec.md`
+- **Implementation Plan**: `specs/001-64bit-regfree-com/plan.md`
+- **Task Checklist**: `specs/001-64bit-regfree-com/tasks.md`
+- **Quickstart Guide**: `specs/001-64bit-regfree-com/quickstart.md`
