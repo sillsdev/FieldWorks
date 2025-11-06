@@ -53,8 +53,8 @@ Goal: CI produces x64-only artifacts and does not perform COM registration; test
 
 Independent Test: CI logs show `/p:Platform=x64`; no `regsvr32` invocations; EXE manifests present as artifacts; basic COM-activating tests pass.
 
-- [ ] T022 [P] [US3] Enforce `/p:Platform=x64` and remove x86 matrix in `.github/workflows/CI.yml`
-- [ ] T023 [P] [US3] Add CI step to upload EXE manifests for inspection in `.github/workflows/CI.yml`
+- [x] T022 [P] [US3] Enforce `/p:Platform=x64` and remove x86 matrix in `.github/workflows/CI.yml`
+- [x] T023 [P] [US3] Add CI step to upload EXE manifests for inspection in `.github/workflows/CI.yml`
 - [ ] T024 [US3] Add CI smoke step: launch minimal COM scenario under test VM/container (no registry) in `.github/workflows/CI.yml`
 
 ## Phase 6 — Shared manifest-enabled test host (per plan FR‑011)

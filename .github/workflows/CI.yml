@@ -14,7 +14,7 @@ jobs:
   debug_build_and_test:
     env:
       CROWDIN_API_KEY: ${{ secrets.FLEX_CROWDIN_API }}
-    name: Build Debug and run Tests
+    name: Build Debug and run Tests (x64 only)
     runs-on: windows-latest
     steps:
       - name: Checkout Files
@@ -81,7 +81,17 @@ jobs:
           log-path: Build/test-results.log
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      # Upload build and test artifacts
       - uses: actions/upload-artifact@v4
         with:
           name: build-logs
           path: Build/*.log
+
+      # Upload generated manifests for inspection (registration-free COM)
+      - uses: actions/upload-artifact@v4
+        with:
+          name: regfree-manifests
+          path: |
+            Output/Debug/FieldWorks.exe.manifest
+            Output/Debug/Flex.exe.manifest
+          if-no-files-found: warn
