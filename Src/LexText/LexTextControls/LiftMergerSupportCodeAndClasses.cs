@@ -474,24 +474,41 @@ namespace SIL.FieldWorks.LexText.Controls
 			int hvo;
 			if (m_mapLangWs.TryGetValue(key, out hvo))
 				return hvo;
+
+			// Get the path to the local WritingSystemRepository.
+			var localWSRepo = m_cache.ServiceLocator.WritingSystemManager.WritingSystemStore as CoreLdmlInFolderWritingSystemRepository;
+			string localWSRepoPath = null;
+			if (localWSRepo != null)
+			{
+				var globalWSRepo = localWSRepo.GlobalWritingSystemRepository;
+				localWSRepoPath = globalWSRepo.PathToWritingSystems;
+			}
+
+			// Try to add the Lift Import ldml file to the local WritingSystemRepository.
+			if (!string.IsNullOrEmpty(localWSRepoPath))
+			{
+				string repoLdmlFile = Path.Combine(localWSRepoPath, key + ".ldml");
+				// Don't overwrite existing files.
+				if (!File.Exists(repoLdmlFile))
+				{
+					// First check if the ldml file exists in the new lift ldml file location, then try the old location.
+					string liftLdmlFile = Path.Combine(Path.Combine(m_sLiftDir, "WritingSystems"), key + ".ldml");
+					if (!File.Exists(liftLdmlFile))
+						liftLdmlFile = Path.Combine(m_sLiftDir, key + ".ldml");
+
+					if (File.Exists(liftLdmlFile))
+					{
+						// Copy from lift import ldml file to the local WritingSystemRepository.
+						File.Copy(liftLdmlFile, repoLdmlFile, false);
+					}
+				}
+			}
+
 			CoreWritingSystemDefinition ws;
 			if (!WritingSystemServices.FindOrCreateSomeWritingSystem(m_cache, FwDirectoryFinder.TemplateDirectory, key,
 				m_fAddNewWsToAnal, m_fAddNewWsToVern, out ws))
 			{
 				m_addedWss.Add(ws);
-				// Use the LDML file if it's available.  Look in the current location first, then look
-				// in the old location.
-				string ldmlFile = Path.Combine(Path.Combine(m_sLiftDir, "WritingSystems"), key + ".ldml");
-				if (!File.Exists(ldmlFile))
-					ldmlFile = Path.Combine(m_sLiftDir, key + ".ldml");
-				if (File.Exists(ldmlFile) && key == ws.Id)
-				{
-					string id = ws.Id;
-					var adaptor = new LdmlDataMapper(new WritingSystemFactory());
-					adaptor.Read(ldmlFile, ws);
-					ws.Id = id;
-					ws.ForceChanged();
-				}
 			}
 			m_mapLangWs.Add(key, ws.Handle);
 			// If FindOrCreate had to get creative, the WS ID may not match the input identifier. We want both the
