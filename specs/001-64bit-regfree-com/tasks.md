@@ -13,7 +13,7 @@ This task list is organized by user story. Each task is specific and immediately
 - [x] T003 [P] Remove Win32 (and AnyCPU host) configurations from native VCXPROJ/C++-CLI projects tied to COM activation (keep x64 only) across `Src/**`
 - [x] T004 Enforce x64 in CI: update pipeline to pass `/p:Platform=x64` in `.github/workflows/CI.yml`
 - [x] T005 Audit build scripts for COM registration and remove calls (e.g., `regsvr32`/`DllRegisterServer`) in `Build/Installer.targets`
-- [ ] T006 Document build/run instructions for x64-only and reg-free activation in `specs/001-64bit-regfree-com/quickstart.md`
+- [x] T006 Document build/run instructions for x64-only and reg-free activation in `specs/001-64bit-regfree-com/quickstart.md`
 
 ## Phase 2 — Foundational (blocking prerequisites)
 
