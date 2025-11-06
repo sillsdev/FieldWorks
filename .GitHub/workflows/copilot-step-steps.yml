@@ -65,7 +65,12 @@ jobs:
                     exit 2 
                   }
                   Write-Host "Running MSBuild: $msbuildPath ${{ inputs.msbuild_args }}"
-                  & $msbuildPath ${{ inputs.msbuild_args }}
+                  $args = @()
+                  if ("${{ inputs.msbuild_args }}".Trim() -ne "") {
+                    # Split on spaces, preserving quoted substrings
+                    $args = [System.Management.Automation.PSParser]::Tokenize(${{ toJson(inputs.msbuild_args) }}, [ref]$null) | Where-Object { $_.Type -eq 'String' -or $_.Type -eq 'CommandArgument' } | ForEach-Object { $_.Content }
+                  }
+                  & $msbuildPath @args
                   if ($LASTEXITCODE -ne 0) {
                     Write-Error "MSBuild failed with exit code $LASTEXITCODE"
                     exit $LASTEXITCODE
