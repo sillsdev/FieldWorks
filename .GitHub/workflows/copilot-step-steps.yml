@@ -56,7 +56,7 @@ jobs:
                   }
 
             - name: Run msbuild (if args provided)
-              if: ${{ inputs.msbuild_args != '' && inputs.msbuild_args != null }}
+              if: inputs.msbuild_args != '' && inputs.msbuild_args != null
               shell: pwsh
               run: |
                   $msbuildPath = "${{ steps.find-msbuild.outputs.msbuild-path }}"
