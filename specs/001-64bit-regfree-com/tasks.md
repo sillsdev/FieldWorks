@@ -28,8 +28,8 @@ Goal: Developers can build and run FieldWorks/LexText on a clean machine without
 
 Independent Test: Build Debug|x64; launch core EXEs on a clean VM with no COM registrations; expect zero class-not-registered errors.
 
-- [ ] T011 [P] [US1] Remove x86 PropertyGroups from FieldWorks project in `Src/Common/FieldWorks/FieldWorks.csproj`
-- [ ] T012 [P] [US1] Remove x86 PropertyGroups from LexText project in `Src/LexText/LexTextExe/LexTextExe.csproj`
+- [x] T011 [P] [US1] Remove x86 PropertyGroups from FieldWorks project in `Src/Common/FieldWorks/FieldWorks.csproj`
+- [x] T012 [P] [US1] Remove x86 PropertyGroups from LexText project in `Src/LexText/LexTextExe/LexTextExe.csproj`
 - [ ] T013 [P] [US1] Ensure FieldWorks manifest generation produces `<file>/<comClass>/<typelib>` entries (broad DLL include or dependent manifests) in `Build/RegFree.targets`
 - [ ] T014 [P] [US1] Ensure LexText manifest generation produces `<file>/<comClass>/<typelib>` entries in `Build/RegFree.targets`
 - [ ] T015 [US1] Run local smoke: build x64 and launch FieldWorks; capture and attach manifest in `Output/Debug/FieldWorks.exe.manifest`
