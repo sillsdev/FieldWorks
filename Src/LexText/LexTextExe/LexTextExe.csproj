@@ -57,5 +57,5 @@
     <ProjectReference Include="../LexTextDll/LexTextDll.csproj" />
     <ProjectReference Include="../ParserUI/ParserUI.csproj" />
   </ItemGroup>
-
+  <Import Project="BuildInclude.targets" />
 </Project>

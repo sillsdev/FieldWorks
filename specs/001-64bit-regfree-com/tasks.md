@@ -17,10 +17,10 @@ This task list is organized by user story. Each task is specific and immediately
 
 ## Phase 2 — Foundational (blocking prerequisites)
 
-- [ ] T007 Verify and, if needed, adjust reg-free build target defaults (Platform, fragments) in `Build/RegFree.targets`
-- [ ] T008 Ensure FieldWorks EXE triggers reg-free generation by including project BuildInclude if required in `Src/Common/FieldWorks/BuildInclude.targets`
-- [ ] T009 Create BuildInclude for LexText EXE mirroring FieldWorks (imports `../../../Build/RegFree.targets`, AfterBuild depends on RegFree) in `Src/LexText/LexTextExe/BuildInclude.targets`
-- [ ] T010 Wire LexText EXE to use its BuildInclude (as needed per project import conventions) in `Src/LexText/LexTextExe/LexTextExe.csproj`
+- [x] T007 Verify and, if needed, adjust reg-free build target defaults (Platform, fragments) in `Build/RegFree.targets`
+- [x] T008 Ensure FieldWorks EXE triggers reg-free generation by including project BuildInclude if required in `Src/Common/FieldWorks/BuildInclude.targets`
+- [x] T009 Create BuildInclude for LexText EXE mirroring FieldWorks (imports `../../../Build/RegFree.targets`, AfterBuild depends on RegFree) in `Src/LexText/LexTextExe/BuildInclude.targets`
+- [x] T010 Wire LexText EXE to use its BuildInclude (as needed per project import conventions) in `Src/LexText/LexTextExe/LexTextExe.csproj`
 
 ## Phase 3 — User Story 1 (P1): Build and run without COM registration
 

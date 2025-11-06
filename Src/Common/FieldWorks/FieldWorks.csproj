@@ -95,4 +95,5 @@
     <Compile Remove="FieldWorksTests/**" />
     <None Remove="FieldWorksTests/**" />
   </ItemGroup>
+  <Import Project="BuildInclude.targets" />
 </Project>
