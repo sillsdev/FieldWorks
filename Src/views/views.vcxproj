@@ -1,304 +1,214 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Bounds|Win32">
-      <Configuration>Bounds</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Bounds|x64">
-      <Configuration>Bounds</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x64">
-      <Configuration>Release</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-  </ItemGroup>
-  <PropertyGroup Label="Globals">
-    <ProjectGuid>{C86CA2EB-81B5-4411-B5B7-E983314E02DA}</ProjectGuid>
-    <RootNamespace>views</RootNamespace>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccProvider>
-    </SccProvider>
-    <Keyword>MakeFileProj</Keyword>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Makefile</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
-    <UseOfMfc>false</UseOfMfc>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Makefile</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
-    <UseOfMfc>false</UseOfMfc>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'" Label="Configuration">
-    <ConfigurationType>Makefile</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
-    <UseOfMfc>false</UseOfMfc>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'" Label="Configuration">
-    <ConfigurationType>Makefile</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
-    <UseOfMfc>false</UseOfMfc>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Makefile</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
-    <UseOfMfc>false</UseOfMfc>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Makefile</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
-    <UseOfMfc>false</UseOfMfc>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup>
-    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\Release\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">.\Release\</IntDir>
-    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\Bin\mkvw.bat r</NMakeBuildCommandLine>
-    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\Bin\mkvw.bat r</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\Bin\mkvw.bat r cc</NMakeReBuildCommandLine>
-    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\Bin\mkvw.bat r cc</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
-    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\output\release\views.dll</NMakeOutput>
-    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\output\release\views.dll</NMakeOutput>
-    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
-    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
-    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
-    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
-    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
-    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
-    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
-    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">.\Bounds\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">.\Bounds\</IntDir>
-    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">..\..\Bin\mkvw.bat b</NMakeBuildCommandLine>
-    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">..\..\Bin\mkvw.bat b</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">..\..\Bin\mkvw.bat b cc</NMakeReBuildCommandLine>
-    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">..\..\Bin\mkvw.bat b cc</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'" />
-    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'" />
-    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">..\..\output\Bounds\views.dll</NMakeOutput>
-    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">..\..\output\Bounds\views.dll</NMakeOutput>
-    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
-    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
-    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
-    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
-    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
-    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
-    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
-    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">.\Debug\</IntDir>
-    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\Bin\mkvw.bat d</NMakeBuildCommandLine>
-    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\Bin\mkvw.bat d</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\Bin\mkvw.bat d cc</NMakeReBuildCommandLine>
-    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\Bin\mkvw.bat d cc</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\Bin\mkvw.bat d e</NMakeCleanCommandLine>
-    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\Bin\mkvw.bat d e</NMakeCleanCommandLine>
-    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\Output\Debug\views.dll</NMakeOutput>
-    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\Output\Debug\views.dll</NMakeOutput>
-    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">x64;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">x64;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\Output\Common\Raw;..\..\Output\Common;..\Kernel;..\Generic;.;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
-    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\Output\Common\Raw;..\..\Output\Common;..\Kernel;..\Generic;.;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
-    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
-    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
-    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
-    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
-    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
-    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">
-    <IncludePath>..\..\include;..\Generic;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">
-    <IncludePath>..\..\include;..\Generic;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>..\..\include;..\Generic;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>..\..\include;..\Generic;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>..\..\include;..\Generic;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>..\..\include;..\Generic;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|Win32'">
-    <IncludePath>..\..\include;..\Generic;..\Kernel;..\AppCore;.\lib;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">
-    <IncludePath>..\..\include;..\Generic;..\Kernel;..\AppCore;.\lib;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>..\..\include;..\Generic;..\Kernel;..\AppCore;.\lib;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>..\..\include;..\Generic;..\Kernel;..\AppCore;.\lib;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <IncludePath>..\..\include;..\Generic;..\Kernel;..\AppCore;.\lib;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>..\..\include;..\Generic;..\Kernel;..\AppCore;.\lib;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-  <ItemDefinitionGroup>
-  </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="lib\DebugReport.h" />
-    <ClInclude Include="lib\GraphiteEngine.h" />
-    <ClInclude Include="lib\GraphiteSegment.h" />
-    <ClInclude Include="lib\LgLineBreaker.h" />
-    <ClInclude Include="lib\LgUnicodeCollateInit.h" />
-    <ClInclude Include="lib\LgUnicodeCollater.h" />
-    <ClInclude Include="lib\TextServ.h" />
-    <ClInclude Include="lib\TsPropsFactory.h" />
-    <ClInclude Include="lib\TsStrFactory.h" />
-    <ClInclude Include="lib\TsString.h" />
-    <ClInclude Include="lib\TsTextProps.h" />
-    <ClInclude Include="lib\UniscribeEngine.h" />
-    <ClInclude Include="lib\UniscribeLinux.h" />
-    <ClInclude Include="lib\UniscribeSegment.h" />
-    <ClInclude Include="lib\VwBaseDataAccess.h" />
-    <ClInclude Include="lib\VwBaseVc.h" />
-    <ClInclude Include="lib\VwCacheDa.h" />
-    <ClInclude Include="lib\VwGraphics.h" />
-    <ClInclude Include="lib\VwUndo.h" />
-    <ClInclude Include="Main.h" />
-    <ClInclude Include="lib\UtilView.h" />
-    <ClInclude Include="lib\ActionHandler.h" />
-    <ClInclude Include="ViewsGlobals.h" />
-    <ClInclude Include="VwAccessRoot.h" />
-    <ClInclude Include="VwEnv.h" />
-    <ClInclude Include="VwInvertedViews.h" />
-    <ClInclude Include="VwLayoutStream.h" />
-    <ClInclude Include="VwLazyBox.h" />
-    <ClInclude Include="VwNotifier.h" />
-    <ClInclude Include="VwOverlay.h" />
-    <ClInclude Include="VwPattern.h" />
-    <ClInclude Include="VwPrintContext.h" />
-    <ClInclude Include="VwPropertyStore.h" />
-    <ClInclude Include="VwRootBox.h" />
-    <ClInclude Include="VwSelection.h" />
-    <ClInclude Include="VwSimpleBoxes.h" />
-    <ClInclude Include="VwSynchronizer.h" />
-    <ClInclude Include="VwTableBox.h" />
-    <ClInclude Include="VwTextBoxes.h" />
-    <ClInclude Include="VwTextStore.h" />
-    <ClInclude Include="VwTxtSrc.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="lib\DebugReport.cpp" />
-    <ClCompile Include="lib\GraphiteEngine.cpp" />
-    <ClCompile Include="lib\GraphiteSegment.cpp" />
-    <ClCompile Include="lib\LgLineBreaker.cpp" />
-    <ClCompile Include="lib\LgUnicodeCollater.cpp" />
-    <ClCompile Include="lib\TextServ.cpp" />
-    <ClCompile Include="lib\TsPropsFactory.cpp" />
-    <ClCompile Include="lib\TsStrFactory.cpp" />
-    <ClCompile Include="lib\TsString.cpp" />
-    <ClCompile Include="lib\TsTextProps.cpp" />
-    <ClCompile Include="lib\UniscribeEngine.cpp" />
-    <ClCompile Include="lib\UniscribeLinux.cpp" />
-    <ClCompile Include="lib\UniscribeSegment.cpp" />
-    <ClCompile Include="lib\VwBaseDataAccess.cpp" />
-    <ClCompile Include="lib\VwBaseVc.cpp" />
-    <ClCompile Include="lib\VwCacheDa.cpp" />
-    <ClCompile Include="lib\VwGraphics.cpp" />
-    <ClCompile Include="lib\VwUndo.cpp" />
-    <ClCompile Include="dlldatax.c" />
-    <ClCompile Include="ExplicitInstantiation.cpp" />
-    <ClCompile Include="lib\ActionHandler.cpp" />
-    <ClCompile Include="ViewsGlobals.cpp" />
-    <ClCompile Include="VwAccessRoot.cpp" />
-    <ClCompile Include="VwEnv.cpp" />
-    <ClCompile Include="VwInvertedViews.cpp" />
-    <ClCompile Include="VwLayoutStream.cpp" />
-    <ClCompile Include="VwLazyBox.cpp" />
-    <ClCompile Include="VwNotifier.cpp" />
-    <ClCompile Include="VwOverlay.cpp" />
-    <ClCompile Include="VwPattern.cpp" />
-    <ClCompile Include="VwPrintContext.cpp" />
-    <ClCompile Include="VwPropertyStore.cpp" />
-    <ClCompile Include="VwRootBox.cpp" />
-    <ClCompile Include="VwSelection.cpp" />
-    <ClCompile Include="VwSimpleBoxes.cpp" />
-    <ClCompile Include="VwSynchronizer.cpp" />
-    <ClCompile Include="VwTableBox.cpp" />
-    <ClCompile Include="VwTextBoxes.cpp" />
-    <ClCompile Include="VwTextStore.cpp" />
-    <ClCompile Include="VwTxtSrc.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\Bin\mkvw.bat" />
-    <None Include="Makefile" />
-    <None Include="Render.idh" />
-    <None Include="Views.def" />
-    <None Include="Views.idh" />
-    <None Include="Views.mak" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="Views.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Midl Include="ViewsPs.idl" />
-    <Midl Include="ViewsTlb.idl" />
-  </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
-</Project>
+<?xml version='1.0' encoding='utf-8'?>
+<ns0:Project xmlns:ns0="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="Current">
+  <ns0:ItemGroup Label="ProjectConfigurations">
+    <ns0:ProjectConfiguration Include="Bounds|x64">
+      <ns0:Configuration>Bounds</ns0:Configuration>
+      <ns0:Platform>x64</ns0:Platform>
+    </ns0:ProjectConfiguration>
+    <ns0:ProjectConfiguration Include="Debug|x64">
+      <ns0:Configuration>Debug</ns0:Configuration>
+      <ns0:Platform>x64</ns0:Platform>
+    </ns0:ProjectConfiguration>
+    <ns0:ProjectConfiguration Include="Release|x64">
+      <ns0:Configuration>Release</ns0:Configuration>
+      <ns0:Platform>x64</ns0:Platform>
+    </ns0:ProjectConfiguration>
+  </ns0:ItemGroup>
+  <ns0:PropertyGroup Label="Globals">
+    <ns0:ProjectGuid>{C86CA2EB-81B5-4411-B5B7-E983314E02DA}</ns0:ProjectGuid>
+    <ns0:RootNamespace>views</ns0:RootNamespace>
+    <ns0:SccProjectName>
+    </ns0:SccProjectName>
+    <ns0:SccLocalPath>
+    </ns0:SccLocalPath>
+    <ns0:SccProvider>
+    </ns0:SccProvider>
+    <ns0:Keyword>MakeFileProj</ns0:Keyword>
+    <ns0:WindowsTargetPlatformVersion>10.0</ns0:WindowsTargetPlatformVersion>
+  </ns0:PropertyGroup>
+  <ns0:Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <ns0:PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ns0:ConfigurationType>Makefile</ns0:ConfigurationType>
+    <ns0:PlatformToolset>v143</ns0:PlatformToolset>
+    <ns0:UseOfMfc>false</ns0:UseOfMfc>
+  </ns0:PropertyGroup>
+  <ns0:PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'" Label="Configuration">
+    <ns0:ConfigurationType>Makefile</ns0:ConfigurationType>
+    <ns0:PlatformToolset>v143</ns0:PlatformToolset>
+    <ns0:UseOfMfc>false</ns0:UseOfMfc>
+  </ns0:PropertyGroup>
+  <ns0:PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ns0:ConfigurationType>Makefile</ns0:ConfigurationType>
+    <ns0:PlatformToolset>v143</ns0:PlatformToolset>
+    <ns0:UseOfMfc>false</ns0:UseOfMfc>
+  </ns0:PropertyGroup>
+  <ns0:Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ns0:ImportGroup Label="ExtensionSettings">
+  </ns0:ImportGroup>
+  <ns0:ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <ns0:Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <ns0:Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ns0:ImportGroup>
+  <ns0:ImportGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'" Label="PropertySheets">
+    <ns0:Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <ns0:Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ns0:ImportGroup>
+  <ns0:ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <ns0:Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <ns0:Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ns0:ImportGroup>
+  <ns0:PropertyGroup Label="UserMacros" />
+  <ns0:PropertyGroup>
+    <ns0:_ProjectFileVersion>10.0.30319.1</ns0:_ProjectFileVersion>
+    <ns0:NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\Bin\mkvw.bat r</ns0:NMakeBuildCommandLine>
+    <ns0:NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\Bin\mkvw.bat r cc</ns0:NMakeReBuildCommandLine>
+    <ns0:NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <ns0:NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\..\output\release\views.dll</ns0:NMakeOutput>
+    <ns0:NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakePreprocessorDefinitions)</ns0:NMakePreprocessorDefinitions>
+    <ns0:NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeIncludeSearchPath)</ns0:NMakeIncludeSearchPath>
+    <ns0:NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeForcedIncludes)</ns0:NMakeForcedIncludes>
+    <ns0:NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeAssemblySearchPath)</ns0:NMakeAssemblySearchPath>
+    <ns0:NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeForcedUsingAssemblies)</ns0:NMakeForcedUsingAssemblies>
+    <ns0:NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">..\..\Bin\mkvw.bat b</ns0:NMakeBuildCommandLine>
+    <ns0:NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">..\..\Bin\mkvw.bat b cc</ns0:NMakeReBuildCommandLine>
+    <ns0:NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'" />
+    <ns0:NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">..\..\output\Bounds\views.dll</ns0:NMakeOutput>
+    <ns0:NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">$(NMakePreprocessorDefinitions)</ns0:NMakePreprocessorDefinitions>
+    <ns0:NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">$(NMakeIncludeSearchPath)</ns0:NMakeIncludeSearchPath>
+    <ns0:NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">$(NMakeForcedIncludes)</ns0:NMakeForcedIncludes>
+    <ns0:NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">$(NMakeAssemblySearchPath)</ns0:NMakeAssemblySearchPath>
+    <ns0:NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">$(NMakeForcedUsingAssemblies)</ns0:NMakeForcedUsingAssemblies>
+    <ns0:NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\Bin\mkvw.bat d</ns0:NMakeBuildCommandLine>
+    <ns0:NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\Bin\mkvw.bat d cc</ns0:NMakeReBuildCommandLine>
+    <ns0:NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\Bin\mkvw.bat d e</ns0:NMakeCleanCommandLine>
+    <ns0:NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\Output\Debug\views.dll</ns0:NMakeOutput>
+    <ns0:NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">x64;$(NMakePreprocessorDefinitions)</ns0:NMakePreprocessorDefinitions>
+    <ns0:NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\Output\Common\Raw;..\..\Output\Common;..\Kernel;..\Generic;.;$(NMakeIncludeSearchPath)</ns0:NMakeIncludeSearchPath>
+    <ns0:NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeForcedIncludes)</ns0:NMakeForcedIncludes>
+    <ns0:NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeAssemblySearchPath)</ns0:NMakeAssemblySearchPath>
+    <ns0:NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeForcedUsingAssemblies)</ns0:NMakeForcedUsingAssemblies>
+  </ns0:PropertyGroup>
+  <ns0:PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">
+    <ns0:IncludePath>..\..\include;..\Generic;$(IncludePath)</ns0:IncludePath>
+  </ns0:PropertyGroup>
+  <ns0:PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ns0:IncludePath>..\..\include;..\Generic;$(IncludePath)</ns0:IncludePath>
+  </ns0:PropertyGroup>
+  <ns0:PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ns0:IncludePath>..\..\include;..\Generic;$(IncludePath)</ns0:IncludePath>
+  </ns0:PropertyGroup>
+  <ns0:PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Bounds|x64'">
+    <ns0:IncludePath>..\..\include;..\Generic;..\Kernel;..\AppCore;.\lib;$(IncludePath)</ns0:IncludePath>
+  </ns0:PropertyGroup>
+  <ns0:PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ns0:IncludePath>..\..\include;..\Generic;..\Kernel;..\AppCore;.\lib;$(IncludePath)</ns0:IncludePath>
+  </ns0:PropertyGroup>
+  <ns0:PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ns0:IncludePath>..\..\include;..\Generic;..\Kernel;..\AppCore;.\lib;$(IncludePath)</ns0:IncludePath>
+  </ns0:PropertyGroup>
+  <ns0:ItemDefinitionGroup>
+  </ns0:ItemDefinitionGroup>
+  <ns0:ItemGroup>
+    <ns0:ClInclude Include="lib\DebugReport.h" />
+    <ns0:ClInclude Include="lib\GraphiteEngine.h" />
+    <ns0:ClInclude Include="lib\GraphiteSegment.h" />
+    <ns0:ClInclude Include="lib\LgLineBreaker.h" />
+    <ns0:ClInclude Include="lib\LgUnicodeCollateInit.h" />
+    <ns0:ClInclude Include="lib\LgUnicodeCollater.h" />
+    <ns0:ClInclude Include="lib\TextServ.h" />
+    <ns0:ClInclude Include="lib\TsPropsFactory.h" />
+    <ns0:ClInclude Include="lib\TsStrFactory.h" />
+    <ns0:ClInclude Include="lib\TsString.h" />
+    <ns0:ClInclude Include="lib\TsTextProps.h" />
+    <ns0:ClInclude Include="lib\UniscribeEngine.h" />
+    <ns0:ClInclude Include="lib\UniscribeLinux.h" />
+    <ns0:ClInclude Include="lib\UniscribeSegment.h" />
+    <ns0:ClInclude Include="lib\VwBaseDataAccess.h" />
+    <ns0:ClInclude Include="lib\VwBaseVc.h" />
+    <ns0:ClInclude Include="lib\VwCacheDa.h" />
+    <ns0:ClInclude Include="lib\VwGraphics.h" />
+    <ns0:ClInclude Include="lib\VwUndo.h" />
+    <ns0:ClInclude Include="Main.h" />
+    <ns0:ClInclude Include="lib\UtilView.h" />
+    <ns0:ClInclude Include="lib\ActionHandler.h" />
+    <ns0:ClInclude Include="ViewsGlobals.h" />
+    <ns0:ClInclude Include="VwAccessRoot.h" />
+    <ns0:ClInclude Include="VwEnv.h" />
+    <ns0:ClInclude Include="VwInvertedViews.h" />
+    <ns0:ClInclude Include="VwLayoutStream.h" />
+    <ns0:ClInclude Include="VwLazyBox.h" />
+    <ns0:ClInclude Include="VwNotifier.h" />
+    <ns0:ClInclude Include="VwOverlay.h" />
+    <ns0:ClInclude Include="VwPattern.h" />
+    <ns0:ClInclude Include="VwPrintContext.h" />
+    <ns0:ClInclude Include="VwPropertyStore.h" />
+    <ns0:ClInclude Include="VwRootBox.h" />
+    <ns0:ClInclude Include="VwSelection.h" />
+    <ns0:ClInclude Include="VwSimpleBoxes.h" />
+    <ns0:ClInclude Include="VwSynchronizer.h" />
+    <ns0:ClInclude Include="VwTableBox.h" />
+    <ns0:ClInclude Include="VwTextBoxes.h" />
+    <ns0:ClInclude Include="VwTextStore.h" />
+    <ns0:ClInclude Include="VwTxtSrc.h" />
+  </ns0:ItemGroup>
+  <ns0:ItemGroup>
+    <ns0:ClCompile Include="lib\DebugReport.cpp" />
+    <ns0:ClCompile Include="lib\GraphiteEngine.cpp" />
+    <ns0:ClCompile Include="lib\GraphiteSegment.cpp" />
+    <ns0:ClCompile Include="lib\LgLineBreaker.cpp" />
+    <ns0:ClCompile Include="lib\LgUnicodeCollater.cpp" />
+    <ns0:ClCompile Include="lib\TextServ.cpp" />
+    <ns0:ClCompile Include="lib\TsPropsFactory.cpp" />
+    <ns0:ClCompile Include="lib\TsStrFactory.cpp" />
+    <ns0:ClCompile Include="lib\TsString.cpp" />
+    <ns0:ClCompile Include="lib\TsTextProps.cpp" />
+    <ns0:ClCompile Include="lib\UniscribeEngine.cpp" />
+    <ns0:ClCompile Include="lib\UniscribeLinux.cpp" />
+    <ns0:ClCompile Include="lib\UniscribeSegment.cpp" />
+    <ns0:ClCompile Include="lib\VwBaseDataAccess.cpp" />
+    <ns0:ClCompile Include="lib\VwBaseVc.cpp" />
+    <ns0:ClCompile Include="lib\VwCacheDa.cpp" />
+    <ns0:ClCompile Include="lib\VwGraphics.cpp" />
+    <ns0:ClCompile Include="lib\VwUndo.cpp" />
+    <ns0:ClCompile Include="dlldatax.c" />
+    <ns0:ClCompile Include="ExplicitInstantiation.cpp" />
+    <ns0:ClCompile Include="lib\ActionHandler.cpp" />
+    <ns0:ClCompile Include="ViewsGlobals.cpp" />
+    <ns0:ClCompile Include="VwAccessRoot.cpp" />
+    <ns0:ClCompile Include="VwEnv.cpp" />
+    <ns0:ClCompile Include="VwInvertedViews.cpp" />
+    <ns0:ClCompile Include="VwLayoutStream.cpp" />
+    <ns0:ClCompile Include="VwLazyBox.cpp" />
+    <ns0:ClCompile Include="VwNotifier.cpp" />
+    <ns0:ClCompile Include="VwOverlay.cpp" />
+    <ns0:ClCompile Include="VwPattern.cpp" />
+    <ns0:ClCompile Include="VwPrintContext.cpp" />
+    <ns0:ClCompile Include="VwPropertyStore.cpp" />
+    <ns0:ClCompile Include="VwRootBox.cpp" />
+    <ns0:ClCompile Include="VwSelection.cpp" />
+    <ns0:ClCompile Include="VwSimpleBoxes.cpp" />
+    <ns0:ClCompile Include="VwSynchronizer.cpp" />
+    <ns0:ClCompile Include="VwTableBox.cpp" />
+    <ns0:ClCompile Include="VwTextBoxes.cpp" />
+    <ns0:ClCompile Include="VwTextStore.cpp" />
+    <ns0:ClCompile Include="VwTxtSrc.cpp" />
+  </ns0:ItemGroup>
+  <ns0:ItemGroup>
+    <ns0:None Include="..\..\Bin\mkvw.bat" />
+    <ns0:None Include="Makefile" />
+    <ns0:None Include="Render.idh" />
+    <ns0:None Include="Views.def" />
+    <ns0:None Include="Views.idh" />
+    <ns0:None Include="Views.mak" />
+  </ns0:ItemGroup>
+  <ns0:ItemGroup>
+    <ns0:ResourceCompile Include="Views.rc" />
+  </ns0:ItemGroup>
+  <ns0:ItemGroup>
+    <ns0:Midl Include="ViewsPs.idl" />
+    <ns0:Midl Include="ViewsTlb.idl" />
+  </ns0:ItemGroup>
+  <ns0:Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ns0:ImportGroup Label="ExtensionTargets">
+  </ns0:ImportGroup>
+</ns0:Project>
