@@ -1,4 +1,4 @@
-# Copilot coding agent onboarding guide
+﻿# Copilot coding agent onboarding guide
 
 This document gives you the shortest path to understand, build, test, and validate changes in this repository without exploratory searching. Trust these instructions; only search the repo if a step here is incomplete or produces an error.
 
