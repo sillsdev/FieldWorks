@@ -1,0 +1,78 @@
+# Reusable workflow to run msbuild tasks on Windows
+# Call with: uses: ./.github/workflows/copilot-setup-steps.yml
+name: "Copilot: Windows setup steps"
+on:
+    workflow_call:
+        inputs:
+            msbuild_args:
+                required: false
+                type: string
+                description: 'Arguments to pass to msbuild (e.g., "FieldWorks.sln /t:RunTests /p:Configuration=Debug")'
+        # optional secrets or other inputs may be added
+
+jobs:
+    windows-setup:
+        runs-on: windows-latest
+        outputs:
+            msbuild-path: ${{ steps.find-msbuild.outputs.msbuild-path }}
+
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v4
+
+            - name: Find MSBuild (vswhere)
+              id: find-msbuild
+              shell: pwsh
+              run: |
+                  # Try to find msbuild in Visual Studio using vswhere; fallback to common paths
+                  $vsWhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+                  if (Test-Path $vsWhere) {
+                    $ms = & $vsWhere -latest -requires Microsoft.Component.MSBuild -products * -property installationPath
+                    if ($ms) {
+                      $msbuild = Join-Path $ms 'MSBuild\Current\Bin\MSBuild.exe'
+                      if (-not (Test-Path $msbuild)) {
+                        # older path
+                        $msbuild = Join-Path $ms 'MSBuild\15.0\Bin\MSBuild.exe'
+                      }
+                    }
+                  }
+                  if (-not $msbuild) {
+                    # fallback: try common Program Files paths
+                    $candidates = @(
+                      "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe",
+                      "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe",
+                      "${env:ProgramFiles}\MSBuild\14.0\Bin\MSBuild.exe"
+                    )
+                    foreach ($c in $candidates) {
+                      if (Test-Path $c) { $msbuild = $c; break }
+                    }
+                  }
+                  if (-not $msbuild) {
+                    Write-Error "MSBuild not found on runner. Consider installing Visual Studio Build Tools in the runner image or use a self-hosted Windows runner."
+                    exit 1
+                  } else {
+                    Add-Content -Path $env:GITHUB_OUTPUT -Value "msbuild-path=$msbuild"
+                    Write-Host "Found MSBuild at $msbuild"
+                  }
+
+            - name: Run msbuild (if args provided)
+              if: inputs.msbuild_args != '' && inputs.msbuild_args != null
+              shell: pwsh
+              run: |
+                  $msbuildPath = "${{ steps.find-msbuild.outputs.msbuild-path }}"
+                  if (-not $msbuildPath) { 
+                    Write-Error "MSBuild path not found" 
+                    exit 2 
+                  }
+                  Write-Host "Running MSBuild: $msbuildPath ${{ inputs.msbuild_args }}"
+                  $args = @()
+                  if ("${{ inputs.msbuild_args }}".Trim() -ne "") {
+                    # Split on spaces, preserving quoted substrings
+                    $args = [System.Management.Automation.PSParser]::Tokenize(${{ toJson(inputs.msbuild_args) }}, [ref]$null) | Where-Object { $_.Type -eq 'String' -or $_.Type -eq 'CommandArgument' } | ForEach-Object { $_.Content }
+                  }
+                  & $msbuildPath @args
+                  if ($LASTEXITCODE -ne 0) {
+                    Write-Error "MSBuild failed with exit code $LASTEXITCODE"
+                    exit $LASTEXITCODE
+                  }
+                  Write-Host "Build completed successfully!" -ForegroundColor Green
