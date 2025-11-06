@@ -10,5 +10,16 @@
     ".specify/scripts/bash/": true,
     ".specify/scripts/powershell/": true
   },
-  "cmake.ignoreCMakeListsMissing": true
+  "cmake.ignoreCMakeListsMissing": true,
+  // Disable .NET test discovery since we use MSBuild + NUnit Console
+  "dotnet-test-explorer.testProjectPath": "**/*Tests.csproj",
+  "dotnet-test-explorer.pathForResultFile": "${workspaceFolder}/.testresults",
+  "dotnet-test-explorer.testArguments": ""
+  // Exclude patterns to speed up file watching
+  "files.watcherExclude": {
+    "**/Output/**": true,
+    "**/Obj/**": true,
+    "**/packages/**": true,
+    "**/Downloads/**": true
+  }
 }
