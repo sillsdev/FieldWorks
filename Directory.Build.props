@@ -1,14 +1,13 @@
 <Project>
-  <PropertyGroup>
-    <!-- Suppress NU1903 security warning for DotNetZip -->
-    <!-- This is a known issue with an old version; upgrade not currently feasible -->
-    <NoWarn>$(NoWarn);NU1903</NoWarn>
-
-    <!-- Default all managed projects to x64 unless explicitly overridden -->
-    <PlatformTarget Condition="'$(PlatformTarget)' == ''">x64</PlatformTarget>
-    <Platforms Condition="'$(Platforms)' == ''">x64</Platforms>
-  </PropertyGroup>
-  <ItemGroup>
-    <Compile Remove="**/*.template.cs" />
-  </ItemGroup>
+	<PropertyGroup>
+		<!-- Suppress NU1903 security warning for DotNetZip -->
+		<!-- This is a known issue with an old version; upgrade not currently feasible -->
+		<NoWarn>$(NoWarn);NU1903</NoWarn>
+		<!-- Default all managed projects to x64 unless explicitly overridden -->
+		<PlatformTarget Condition="'$(PlatformTarget)' == ''">x64</PlatformTarget>
+		<Platforms Condition="'$(Platforms)' == ''">x64</Platforms>
+	</PropertyGroup>
+	<ItemGroup>
+		<Compile Remove="**/*.template.cs" />
+	</ItemGroup>
 </Project>
