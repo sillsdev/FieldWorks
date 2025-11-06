@@ -41,11 +41,13 @@ jobs:
             3.1.x
             5.0.x
           
+      # FieldWorks is x64-only: build64.bat enforces /p:Platform=x64
       - name: Prepare for build
         shell: cmd
         working-directory: Build
         run: build64.bat /t:WriteNonlocalDevelopmentPropertiesFile
 
+      # Build with x64 platform enforced via build64.bat
       - name: Build Debug and run tests
         id: build_and_test
         shell: powershell
