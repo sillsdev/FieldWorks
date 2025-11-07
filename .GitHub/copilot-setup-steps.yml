@@ -60,9 +60,9 @@ jobs:
               shell: pwsh
               run: |
                   $msbuildPath = "${{ steps.find-msbuild.outputs.msbuild-path }}"
-                  if (-not $msbuildPath) { 
-                    Write-Error "MSBuild path not found" 
-                    exit 2 
+                  if (-not $msbuildPath) {
+                    Write-Error "MSBuild path not found"
+                    exit 2
                   }
                   Write-Host "Running MSBuild: $msbuildPath ${{ inputs.msbuild_args }}"
                   $args = @()
