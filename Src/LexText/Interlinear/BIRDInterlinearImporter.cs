@@ -304,7 +304,7 @@ namespace SIL.FieldWorks.IText
 							if (!textInFile)
 								UpdatePhraseTextForWordItems(wsFactory, ref phraseText, word,
 									ref lastWasWord, space);
-							MergeWordToSegment(newSegment, word, newContents.MainWritingSystem);
+							AddWordToSegment(newSegment, word, newContents.MainWritingSystem);
 						}
 					}
 					UpdateParagraphTextForPhrase(newTextPara, ref offset, phraseText);
@@ -533,30 +533,6 @@ namespace SIL.FieldWorks.IText
 			cache.LanguageProject.PeopleOA.PossibilitiesOS.Add(newPerson);
 			newPerson.Name.set_String(cache.DefaultVernWs, speaker);
 			return newPerson;
-		}
-
-		private static void MergeWordToSegment(ISegment newSegment, Word word, int mainWritingSystem)
-		{
-			if (!string.IsNullOrEmpty(word.guid))
-			{
-				ICmObject repoObj;
-				newSegment.Cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(word.guid),
-					out repoObj);
-				var modelWord = repoObj as IAnalysis;
-				if (modelWord != null)
-				{
-					UpgradeToWordGloss(word, ref modelWord);
-					newSegment.AnalysesRS.Add(modelWord);
-				}
-				else
-				{
-					AddWordToSegment(newSegment, word, mainWritingSystem);
-				}
-			}
-			else
-			{
-				AddWordToSegment(newSegment, word, mainWritingSystem);
-			}
 		}
 
 		private static bool SomeLanguageSpecifiesVernacular(Interlineartext interlinText)
@@ -978,6 +954,19 @@ namespace SIL.FieldWorks.IText
 			IAnalysis candidateForm = null;
 			ITsString wordForm = null;
 			ITsString punctForm = null;
+
+			if (!String.IsNullOrEmpty(word.guid))
+			{
+				// Base candidateForm on guid rather than "txt" when available.
+				// This works better for upper case versions of lower case words.
+				ICmObject repoObj;
+				cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(word.guid), out repoObj);
+				var modelWord = repoObj as IAnalysis;
+				if (modelWord != null)
+				{
+					candidateForm = modelWord.Wordform;
+				}
+			}
 
 			foreach (var wordItem in word.Items)
 			{
