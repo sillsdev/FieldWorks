@@ -4,8 +4,7 @@ param(
 	[string]$Configuration = "Debug",
 	[string]$Platform = "x64",
 	[string[]]$MsBuildArgs = @(),
-	[string]$LogFile,
-	[string]$Target  # Optional: Specific target for special cases (e.g., installer builds)
+	[string]$LogFile
 )
 
 $ErrorActionPreference = 'Stop'
@@ -117,33 +116,20 @@ function Invoke-MSBuildStep {
 	}
 }
 
-if ($Target) {
-	# Legacy mode for special targets (e.g., installer builds)
-	Write-Host "Building specific target: $Target (legacy mode)" -ForegroundColor Yellow
-	Write-Host "Configuration: $Configuration, Platform: $Platform" -ForegroundColor Yellow
-	
-	Invoke-MSBuildStep `
-		-Arguments (@('Build/FieldWorks.proj', "/t:$Target", "/p:Configuration=$Configuration", "/p:Platform=$Platform") + $MsBuildArgs) `
-		-Description "Target '$Target'" `
-		-LogPath $LogFile
-}
-else {
-	# Modern traversal build
-	Write-Host "Building FieldWorks using MSBuild Traversal SDK (dirs.proj)..." -ForegroundColor Cyan
-	Write-Host "Configuration: $Configuration, Platform: $Platform" -ForegroundColor Cyan
+Write-Host "Building FieldWorks using MSBuild Traversal SDK (dirs.proj)..." -ForegroundColor Cyan
+Write-Host "Configuration: $Configuration, Platform: $Platform" -ForegroundColor Cyan
 
-	# Restore packages first
-	Invoke-MSBuildStep `
-		-Arguments @('Build/FieldWorks.proj', '/t:RestorePackages', "/p:Configuration=$Configuration", "/p:Platform=$Platform") `
-		-Description 'RestorePackages'
+# Restore packages first
+Invoke-MSBuildStep `
+	-Arguments @('Build/FieldWorks.proj', '/t:RestorePackages', "/p:Configuration=$Configuration", "/p:Platform=$Platform") `
+	-Description 'RestorePackages'
 
-	# Build using traversal project
-	Invoke-MSBuildStep `
-		-Arguments (@('dirs.proj', "/p:Configuration=$Configuration", "/p:Platform=$Platform") + $MsBuildArgs) `
-		-Description "FieldWorks" `
-		-LogPath $LogFile
+# Build using traversal project
+Invoke-MSBuildStep `
+	-Arguments (@('dirs.proj', "/p:Configuration=$Configuration", "/p:Platform=$Platform") + $MsBuildArgs) `
+	-Description "FieldWorks" `
+	-LogPath $LogFile
 
-	Write-Host ""
-	Write-Host "✅ Build complete!" -ForegroundColor Green
-	Write-Host "Output directory: Output\$Configuration\" -ForegroundColor Cyan
-}
+Write-Host ""
+Write-Host "✅ Build complete!" -ForegroundColor Green
+Write-Host "Output directory: Output\$Configuration\" -ForegroundColor Cyan

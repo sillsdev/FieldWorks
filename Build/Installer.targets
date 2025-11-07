@@ -120,12 +120,22 @@
 	<!-- ########################################################################################################## -->
 	<!-- ### Compile Targets                                                                                    ### -->
 	<!-- ########################################################################################################## -->
-	<Target Name="ProductCompile" DependsOnTargets="remakefw;RescuePatching">
+	<Target Name="ProductCompile" DependsOnTargets="BuildFieldWorks;RescuePatching">
 		<MSBuild
 			Projects="$(InstallerDir)/CustomActions/CustomActions.sln"
 			Targets="CustomActions"
 			Properties="Configuration=Release;Platform=x86"
 		/>
+	</Target>
+
+	<!-- Modern traversal build for installer (replaces legacy remakefw) -->
+	<Target Name="BuildFieldWorks" DependsOnTargets="CleanAll;Initialize;CopyDlls;setRegistryValues;GeneratePartsAndLayoutFiles">
+		<Message Text="Building FieldWorks using MSBuild Traversal SDK..." Importance="High" />
+		<MSBuild
+			Projects="$(fwrt)/dirs.proj"
+			Properties="Configuration=$(Configuration);Platform=$(Platform);action=$(action);desktopNotAvailable=$(desktopNotAvailable)"
+		/>
+		<Message Text="FieldWorks build complete." Importance="High" />
 	</Target>
 	<!-- Remove residue from the PatchableInstaller repository -->
 	<Target Name="CleanInstaller">

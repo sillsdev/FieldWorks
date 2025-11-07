@@ -147,8 +147,10 @@ jobs:
               shell: powershell
               run: |
                   $ErrorActionPreference = 'Stop'
-                  # Installer builds use legacy mode with specific target
-                  ./build.ps1 -Target "BuildBaseInstaller" -Configuration Debug -Platform x64 -MsBuildArgs @('/m', '/p:config=release', '/p:action=test', '/p:desktopNotAvailable=true', '/v:d', '/bl') -LogFile Build/build.log
+                  # Build base installer (uses traversal build internally via Installer.targets)
+                  msbuild Build/FieldWorks.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64
+                  msbuild Build/FieldWorks.proj /t:BuildBaseInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /p:action=test /p:desktopNotAvailable=true /m /v:d /bl | Tee-Object -FilePath Build/build.log
+                  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
                   Set-Location BuildDir
                   md5sum *.exe > md5.txt
 

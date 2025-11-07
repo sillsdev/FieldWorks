@@ -219,8 +219,10 @@ jobs:
               run: |
                   $ErrorActionPreference = 'Stop'
                   Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\.NETFramework\AppContext"
-                  # Installer builds use legacy mode with specific target
-                  ./build.ps1 -Target "BuildPatchInstaller" -Configuration Debug -Platform x64 -MsBuildArgs @('/m', '/p:config=release', '/p:action=test', '/p:desktopNotAvailable=true', '/v:d', '/bl') -LogFile Build/build.log
+                  # Build patch installer (uses traversal build internally via Installer.targets)
+                  msbuild Build/FieldWorks.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64
+                  msbuild Build/FieldWorks.proj /t:BuildPatchInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /p:action=test /p:desktopNotAvailable=true /m /v:d /bl | Tee-Object -FilePath Build/build.log
+                  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
                   Set-Location BuildDir
 
             - name: Scan Debug Build Output

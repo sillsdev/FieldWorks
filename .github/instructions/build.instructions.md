@@ -83,7 +83,7 @@ Run: msbuild Build\FieldWorks.proj /t:allCppNoTest
 - **Dotnet CLI**: `dotnet build dirs.proj` (requires .NET SDK)
 - **Single project**: `msbuild Src/<Path>/<Project>.csproj` (for quick iterations)
 - **Native only**: `msbuild Build/FieldWorks.proj /t:allCppNoTest` (Phase 2 of traversal)
-- **Installer**: Only build when changing installer logic (requires WiX Toolset)
+- **Installer**: `msbuild Build/FieldWorks.proj /t:BuildBaseInstaller` or `/t:BuildPatchInstaller` (calls traversal internally, requires WiX Toolset)
 
 ### Configuration Options
 ```powershell
