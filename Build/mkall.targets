@@ -136,8 +136,10 @@
 		>
 			<Output TaskParameter="ExitCode" PropertyName="RegFreeExitCode" />
 		</RegFree>
-		<Warning Text="RegFree task failed for Views.dll (this may cause runtime issues with COM activation)" 
-			Condition="'$(RegFreeExitCode)' != '0' AND '$(RegFreeExitCode)' != ''" />
+		<Warning
+			Text="RegFree task failed for Views.dll (this may cause runtime issues with COM activation)"
+			Condition="'$(RegFreeExitCode)' != '0' AND '$(RegFreeExitCode)' != ''"
+		/>
 		<Message Text="Finished building Views." />
 	</Target>
 	<Target Name="testViews" DependsOnTargets="GenericLib;Views;SimpleRootSite;FwKernel">
