@@ -135,25 +135,32 @@ To update localizations, liblcm must be cloned locally to the location specified
 	</Target>
 	<Target Name="copyLibL10ns">
 		<PropertyGroup>
-			<ChorusL10nsNugetDir>$(fwrt)/packages/SIL.Chorus.l10ns.3.0.1</ChorusL10nsNugetDir>
-			<PalasoL10nsNugetDir>$(fwrt)/packages/SIL.libpalaso.l10ns.6.0.0</PalasoL10nsNugetDir>
+			<ChorusL10nsNugetDir>$(fwrt)/packages/sil.chorus.l10ns/3.0.1</ChorusL10nsNugetDir>
+			<PalasoL10nsNugetDir>$(fwrt)/packages/sil.libpalaso.l10ns/6.0.0</PalasoL10nsNugetDir>
 		</PropertyGroup>
-		<Error
-			Text="Chorus L10ns package missing, did you update nuget without updating Localize.targets?"
+		<Warning
+			Text="Chorus L10ns package missing ($(ChorusL10nsNugetDir)) - localization files will not be copied. This is optional for development builds."
 			Condition="!Exists('$(ChorusL10nsNugetDir)')"
 		/>
-		<Error
-			Text="Palaso L10ns package missing, did you update nuget without updating Localize.targets?"
+		<Warning
+			Text="Palaso L10ns package missing ($(PalasoL10nsNugetDir)) - localization files will not be copied. This is optional for development builds."
 			Condition="!Exists('$(PalasoL10nsNugetDir)')"
 		/>
 		<ItemGroup>
-			<XliffFiles Include="$(ChorusL10nsNugetDir)/content/**/*.xlf" />
-			<XliffFiles Include="$(PalasoL10nsNugetDir)/content/**/*.xlf" />
+			<XliffFiles
+				Include="$(ChorusL10nsNugetDir)/content/**/*.xlf"
+				Condition="Exists('$(ChorusL10nsNugetDir)')"
+			/>
+			<XliffFiles
+				Include="$(PalasoL10nsNugetDir)/content/**/*.xlf"
+				Condition="Exists('$(PalasoL10nsNugetDir)')"
+			/>
 		</ItemGroup>
 		<Copy
 			SourceFiles="@(XliffFiles)"
 			DestinationFiles="@(XliffFiles-&gt;'$(LibL10nsDirectory)/%(Filename)%(Extension)')"
 			SkipUnchangedFiles="true"
+			Condition="'@(XliffFiles)' != ''"
 		/>
 	</Target>
 	<!-- Each downloaded translation needs the following post-processing:

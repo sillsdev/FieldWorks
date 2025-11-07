@@ -305,10 +305,10 @@
 		<MasterVersionInfo>$(fwrt)/Src/MasterVersionInfo.txt</MasterVersionInfo>
 		<!-- Versions of NuGet packages. Keep these in sync with PackageReference versions in the managed projects. -->
 		<ChorusNugetVersion>6.0.0-beta0063</ChorusNugetVersion>
-		<PalasoNugetVersion>17.0.0-beta0072</PalasoNugetVersion>
+		<PalasoNugetVersion>17.0.0-beta0080</PalasoNugetVersion>
 		<ParatextNugetVersion>9.4.0.1-beta</ParatextNugetVersion>
 		<LcmNugetVersion>11.0.0-beta0140</LcmNugetVersion>
-		<IcuNugetVersion>70.1.123</IcuNugetVersion>
+		<IcuNugetVersion>70.1.152</IcuNugetVersion>
 		<HermitCrabNugetVersion>3.7.4</HermitCrabNugetVersion>
 		<IPCFrameworkVersion>1.1.1-beta0001</IPCFrameworkVersion>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
@@ -434,7 +434,7 @@
 	<Target Name="RestorePackages">
 		<Message Text="Restoring NuGet packages with dotnet restore..." />
 		<Exec
-			Command="dotnet restore &quot;$(fwrt)&quot; --packages &quot;$(PackagesDir)&quot;"
+			Command="dotnet restore &quot;$(fwrt)\FieldWorks.sln&quot; --packages &quot;$(PackagesDir)&quot;"
 			ContinueOnError="false"
 		/>
 	</Target>
@@ -483,9 +483,9 @@
 			Condition="'%(SILNugetPackages.NoSymbols)' != 'true'"
 		/>
 		<ItemGroup>
-			<SILNugetFiles Include="$(PackagesDir)/%(SILNugetPackages.Identity).%(SILNugetPackages.Version)/%(SILNugetPackages.Path)" />
+			<SILNugetFiles Include="$(PackagesDir)/$([System.String]::new('%(SILNugetPackages.Identity)').ToLower())/%(SILNugetPackages.Version)/%(SILNugetPackages.Path)" />
 			<SILNugetFiles
-				Include="$(DownloadsDir)/symbols/%(SILNugetPackages.Identity).%(SILNugetPackages.Version)/%(SILNugetPackages.Path)"
+				Include="$(DownloadsDir)/symbols/$([System.String]::new('%(SILNugetPackages.Identity)').ToLower())/%(SILNugetPackages.Version)/%(SILNugetPackages.Path)"
 				Condition="'%(SILNugetPackages.NoSymbols)' != 'true'"
 			/>
 		</ItemGroup>
@@ -910,21 +910,21 @@
 		/>
 		<!-- ICU libs - copy directly from NuGet packages -->
 		<Copy
-			SourceFiles="$(PackagesDir)/Icu4c.Win.Fw.Lib.$(IcuNugetVersion)/build/native/lib/win7-$(arch)/icudt.lib"
+			SourceFiles="$(PackagesDir)/icu4c.win.fw.lib/$(IcuNugetVersion)/build/native/lib/win7-$(arch)/icudt.lib"
 			DestinationFolder="$(fwrt)/Lib"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
 			Condition="'$(OS)'=='Windows_NT'"
 		/>
 		<Copy
-			SourceFiles="$(PackagesDir)/Icu4c.Win.Fw.Lib.$(IcuNugetVersion)/build/native/lib/win7-$(arch)/icuin.lib"
+			SourceFiles="$(PackagesDir)/icu4c.win.fw.lib/$(IcuNugetVersion)/build/native/lib/win7-$(arch)/icuin.lib"
 			DestinationFolder="$(fwrt)/Lib"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
 			Condition="'$(OS)'=='Windows_NT'"
 		/>
 		<Copy
-			SourceFiles="$(PackagesDir)/Icu4c.Win.Fw.Lib.$(IcuNugetVersion)/build/native/lib/win7-$(arch)/icuuc.lib"
+			SourceFiles="$(PackagesDir)/icu4c.win.fw.lib/$(IcuNugetVersion)/build/native/lib/win7-$(arch)/icuuc.lib"
 			DestinationFolder="$(fwrt)/Lib"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
@@ -932,7 +932,7 @@
 		/>
 		<!-- ICU headers - copy directly from NuGet package -->
 		<ItemGroup>
-			<IcuHeaders Include="$(PackagesDir)/Icu4c.Win.Fw.Lib.$(IcuNugetVersion)/build/native/include/unicode/*.h" />
+			<IcuHeaders Include="$(PackagesDir)/icu4c.win.fw.lib/$(IcuNugetVersion)/build/native/include/unicode/*.h" />
 		</ItemGroup>
 		<!-- ICU sources -->
 		<Copy
@@ -943,12 +943,12 @@
 		/>
 		<!-- Copy ICU dll's and exe's to lib/x64 and lib/x86 - copy directly from NuGet packages -->
 		<ItemGroup>
-			<IcuFileSet32 Include="$(PackagesDir)/Icu4c.Win.Fw.Lib.$(IcuNugetVersion)/runtimes/win7-x86/native/icu*.dll" />
-			<IcuFileSet32 Include="$(PackagesDir)/Icu4c.Win.Fw.Bin.$(IcuNugetVersion)/build/win-x86/gennorm2.exe" />
+			<IcuFileSet32 Include="$(PackagesDir)/icu4c.win.fw.lib/$(IcuNugetVersion)/runtimes/win7-x86/native/icu*.dll" />
+			<IcuFileSet32 Include="$(PackagesDir)/icu4c.win.fw.bin/$(IcuNugetVersion)/build/win-x86/gennorm2.exe" />
 		</ItemGroup>
 		<ItemGroup>
-			<IcuFileSet64 Include="$(PackagesDir)/Icu4c.Win.Fw.Lib.$(IcuNugetVersion)/runtimes/win7-x64/native/icu*.dll" />
-			<IcuFileSet64 Include="$(PackagesDir)/Icu4c.Win.Fw.Bin.$(IcuNugetVersion)/build/win-x64/gennorm2.exe" />
+			<IcuFileSet64 Include="$(PackagesDir)/icu4c.win.fw.lib/$(IcuNugetVersion)/runtimes/win7-x64/native/icu*.dll" />
+			<IcuFileSet64 Include="$(PackagesDir)/icu4c.win.fw.bin/$(IcuNugetVersion)/build/win-x64/gennorm2.exe" />
 		</ItemGroup>
 		<!-- Include 32-bit ICU, even if arch is x64, so we can provide 32-bit ICU for 32-bit Paratext to use when the tools interact. -->
 		<Copy

@@ -7,6 +7,20 @@
 		<PlatformTarget Condition="'$(PlatformTarget)' == ''">x64</PlatformTarget>
 		<Platforms Condition="'$(Platforms)' == ''">x64</Platforms>
 	</PropertyGroup>
+	<PropertyGroup Label="Shared Paths for Traversal Build">
+		<!-- Root directory paths -->
+		<FwRoot>$(MSBuildThisFileDirectory)</FwRoot>
+		<FwDistFiles>$(FwRoot)DistFiles\</FwDistFiles>
+		<FwOutput>$(FwRoot)Output\</FwOutput>
+		<FwOutputBase>$(FwOutput)$(Configuration)\</FwOutputBase>
+		<FwObj>$(FwRoot)Obj\</FwObj>
+		<!-- LCM artifacts directory -->
+		<DownloadsDir Condition="'$(DownloadsDir)'==''">$(FwRoot)Downloads</DownloadsDir>
+		<LcmArtifactsDir Condition="'$(LcmArtifactsDir)'==''">$(DownloadsDir)</LcmArtifactsDir>
+		<!-- Enable binding redirects for all projects -->
+		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+		<GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+	</PropertyGroup>
 	<ItemGroup>
 		<Compile Remove="**/*.template.cs" />
 	</ItemGroup>
