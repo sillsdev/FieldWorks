@@ -6,13 +6,30 @@ description: "FieldWorks build guidelines and inner-loop tips"
 
 ## Quick Start
 
-### Recommended: Traversal SDK Build (Modern)
+FieldWorks uses the **MSBuild Traversal SDK** for declarative build ordering. All builds use `dirs.proj`.
+
+### Windows (PowerShell)
 ```powershell
 # Full build with automatic dependency ordering
-.\build.ps1 -UseTraversal
+.\build.ps1
 
 # Specific configuration
-.\build.ps1 -UseTraversal -Configuration Release -Platform x64
+.\build.ps1 -Configuration Release -Platform x64
+
+# With parallel builds and detailed logging
+.\build.ps1 -MsBuildArgs @('/m', '/v:detailed')
+```
+
+### Linux/macOS (Bash)
+```bash
+# Full build
+./build.sh
+
+# Release build
+./build.sh -c Release
+
+# With parallel builds
+./build.sh -- /m
 ```
 
 **Benefits:**
@@ -21,15 +38,6 @@ description: "FieldWorks build guidelines and inner-loop tips"
 - Better incremental build performance
 - Works with `dotnet build dirs.proj`
 - Clear error messages when prerequisites missing
-
-### Legacy Build (Maintained for Compatibility)
-```powershell
-# Traditional build approach
-.\build.ps1
-
-# Specific target
-.\build.ps1 -Targets ViewsInterfaces
-```
 
 ## Build Architecture
 
@@ -63,30 +71,30 @@ Run: msbuild Build\FieldWorks.proj /t:allCppNoTest
 ## Deterministic requirements
 
 ### Inner loop (Developer Workflow)
-- **First build**: Use traversal for automatic ordering: `.\build.ps1 -UseTraversal`
+- **First build**: `.\build.ps1` or `./build.sh` (traversal handles automatic ordering)
 - **Incremental**: Only changed projects rebuild (MSBuild tracks `Inputs`/`Outputs`)
 - **Avoid full clean** unless:
   - Native artifacts corrupted (delete `Output/`, then rebuild native first)
   - Generated code out of sync (delete `Src/Common/ViewsInterfaces/Views.cs`)
 
 ### Choose the right path
-- **Full system build**: `.\build.ps1 -UseTraversal` (recommended)
-- **Single project**: `msbuild Src/<Path>/<Project>.csproj`
-- **Solution file**: `msbuild FieldWorks.sln /m /p:Configuration=Debug`
-- **Native only**: `msbuild Build/FieldWorks.proj /t:allCppNoTest`
-- **Managed only**: `msbuild Build/FieldWorks.proj /t:allCsharp` (requires native artifacts)
+- **Full system build**: `.\build.ps1` or `./build.sh` (uses dirs.proj traversal)
+- **Direct MSBuild**: `msbuild dirs.proj /p:Configuration=Debug /p:Platform=x64 /m`
+- **Dotnet CLI**: `dotnet build dirs.proj` (requires .NET SDK)
+- **Single project**: `msbuild Src/<Path>/<Project>.csproj` (for quick iterations)
+- **Native only**: `msbuild Build/FieldWorks.proj /t:allCppNoTest` (Phase 2 of traversal)
 - **Installer**: Only build when changing installer logic (requires WiX Toolset)
 
 ### Configuration Options
 ```powershell
 # Debug build (default, includes PDB symbols)
-.\build.ps1 -UseTraversal -Configuration Debug
+.\build.ps1 -Configuration Debug
 
 # Release build (optimized, smaller binaries)
-.\build.ps1 -UseTraversal -Configuration Release
+.\build.ps1 -Configuration Release
 
 # Platform selection (x64 is default and recommended)
-.\build.ps1 -UseTraversal -Platform x64
+.\build.ps1 -Platform x64
 ```
 
 ## Troubleshooting
@@ -99,24 +107,24 @@ Run: msbuild Build\FieldWorks.proj /t:allCppNoTest
 # Build native components first
 msbuild Build/FieldWorks.proj /t:allCppNoTest /p:Configuration=Debug /p:Platform=x64
 
-# Then continue with traversal build
-.\build.ps1 -UseTraversal
+# Then continue with full build
+.\build.ps1
 ```
 
 ### Build Order Issues
-**Symptom**: Project X fails because it can''t find assembly from project Y
+**Symptom**: Project X fails because it can't find assembly from project Y
 
-**Solution**: The traversal build handles this automatically. If using legacy build:
-- Check `Build/FieldWorks.targets` for target dependencies
-- Ensure proper `DependsOnTargets` in custom targets
-- Consider switching to traversal build: `.\build.ps1 -UseTraversal`
+**Solution**: The traversal build handles this automatically through `dirs.proj`:
+- Check that the dependency is listed in an earlier phase than the dependent
+- Verify both projects are included in `dirs.proj`
+- If you find a missing dependency, update `dirs.proj` phase ordering
 
 ### Parallel Build Race Conditions
 **Symptom**: Random failures in parallel builds
 
 **Solution**:
 - Traversal SDK respects dependencies and avoids races
-- For legacy build, reduce parallelism: `/m:1`
+- If you encounter race conditions, reduce parallelism: `.\build.ps1 -MsBuildArgs @('/m:1')`
 - Report race conditions so dependencies can be added to `dirs.proj`
 
 ### Clean Build Required
@@ -127,8 +135,8 @@ git clean -dfx Output/ Obj/
 # Then rebuild native first
 msbuild Build/FieldWorks.proj /t:allCppNoTest /p:Configuration=Debug /p:Platform=x64
 
-# Then full traversal build
-.\build.ps1 -UseTraversal
+# Then full build
+.\build.ps1
 ```
 
 ## Structured output
@@ -144,20 +152,17 @@ msbuild Build/FieldWorks.proj /t:allCppNoTest /p:Configuration=Debug /p:Platform
 # Traversal build with MSBuild
 msbuild dirs.proj /p:Configuration=Debug /p:Platform=x64 /m
 
-# Legacy build with MSBuild  
-msbuild Build/FieldWorks.proj /t:all /p:Configuration=Debug /p:Platform=x64
+# With tests
+msbuild dirs.proj /p:Configuration=Debug /p:Platform=x64 /p:action=test /m
 ```
 
 ### Building Specific Project Groups
 ```powershell
-# Native C++ only
+# Native C++ only (Phase 2 of traversal)
 msbuild Build/FieldWorks.proj /t:allCppNoTest
 
-# Managed C# only (requires native artifacts exist)
-msbuild Build/FieldWorks.proj /t:allCsharpNoTests
-
-# Just tests
-msbuild Build/FieldWorks.proj /t:test /p:action=test
+# Specific phase from dirs.proj (not typically needed)
+# The traversal build handles ordering automatically
 ```
 
 ### Dotnet CLI (Traversal Only)
@@ -169,11 +174,11 @@ dotnet build dirs.proj
 dotnet restore dirs.proj --packages packages/
 ```
 
-## Don''t modify targets lightly
-- `Build/FieldWorks.targets`: Auto-generated by GenerateFwTargets; regenerate with `/t:refreshTargets`
-- `Build/mkall.targets`: Core build orchestration; changes affect all developers
-- `Build/SetupInclude.targets`: Environment setup; touch only when absolutely needed
-- `dirs.proj`: Traversal build order; verify changes don''t create circular dependencies
+## Don't modify build files lightly
+- **`dirs.proj`**: Traversal build order; verify changes don't create circular dependencies
+- **`Build/mkall.targets`**: Native C++ build orchestration; changes affect all developers
+- **`Build/SetupInclude.targets`**: Environment setup; touch only when absolutely needed
+- **`Directory.Build.props`**: Shared properties for all projects; changes affect everyone
 
 ## References
 - **CI/CD**: `.github/workflows/` for CI steps

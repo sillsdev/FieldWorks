@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
+  <!--
+    Native C++ Build Wrapper
+    
+    This project provides a clean entry point for building native C++ components
+    (DebugProcs, GenericLib, FwKernel, Views) used by the traversal build.
+    
+    It wraps the existing mkall.targets build system while providing a modern
+    MSBuild project interface.
+    
+    Usage:
+      msbuild Build/native.proj /p:Configuration=Debug /p:Platform=x64
+      
+    Targets:
+      Build (default): Builds all native components without tests
+      BuildWithTests: Builds native components and runs C++ tests
+      Clean: Cleans native build artifacts
+  -->
+
+  <PropertyGroup>
+    <Platform Condition="'$(Platform)'==''">x64</Platform>
+    <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
+  </PropertyGroup>
+
+  <!-- Import the existing native build infrastructure -->
+  <Import Project="FieldWorks.proj"/>
+
+  <!-- Default target builds native components without tests -->
+  <Target Name="Build" DependsOnTargets="allCppNoTest">
+    <Message Text="Native C++ components built successfully." Importance="High" />
+  </Target>
+
+  <!-- Optional target to build with tests -->
+  <Target Name="BuildWithTests" DependsOnTargets="allCpp">
+    <Message Text="Native C++ components and tests built successfully." Importance="High" />
+  </Target>
+
+  <!-- Clean target -->
+  <Target Name="Clean">
+    <RemoveDir Directories="$(FwOutputBase)" Condition="Exists('$(FwOutputBase)')" />
+    <Message Text="Native C++ build artifacts cleaned." Importance="High" />
+  </Target>
+
+</Project>

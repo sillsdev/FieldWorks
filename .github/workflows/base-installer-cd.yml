@@ -142,17 +142,13 @@ jobs:
             - name: Setup MSBuild
               uses: microsoft/setup-msbuild@v2
 
-            - name: Restore packages and prime build
-              shell: powershell
-              run: |
-                  ./build.ps1 -Targets "RestorePackages;CheckDevelopmentPropertiesFile;refreshTargets;WriteNonlocalDevelopmentPropertiesFile" -Configuration Debug -Platform x64 -MsBuildArgs @('/m')
-
             - name: Build and run tests
               id: build_installer
               shell: powershell
               run: |
                   $ErrorActionPreference = 'Stop'
-                  ./build.ps1 -Targets "BuildBaseInstaller" -Configuration Debug -Platform x64 -MsBuildArgs @('/m', '/p:config=release', '/p:action=test', '/p:desktopNotAvailable=true', '/v:d', '/bl') -LogFile Build/build.log
+                  # Installer builds use legacy mode with specific target
+                  ./build.ps1 -Target "BuildBaseInstaller" -Configuration Debug -Platform x64 -MsBuildArgs @('/m', '/p:config=release', '/p:action=test', '/p:desktopNotAvailable=true', '/v:d', '/bl') -LogFile Build/build.log
                   Set-Location BuildDir
                   md5sum *.exe > md5.txt
 

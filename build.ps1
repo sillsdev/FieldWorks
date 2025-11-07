@@ -1,12 +1,11 @@
 [CmdletBinding()]
 
 param(
-	[string]$Targets = "all",
 	[string]$Configuration = "Debug",
 	[string]$Platform = "x64",
 	[string[]]$MsBuildArgs = @(),
 	[string]$LogFile,
-	[switch]$UseTraversal  # Use new MSBuild Traversal SDK approach
+	[string]$Target  # Optional: Specific target for special cases (e.g., installer builds)
 )
 
 $ErrorActionPreference = 'Stop'
@@ -118,8 +117,20 @@ function Invoke-MSBuildStep {
 	}
 }
 
-if ($UseTraversal) {
-	Write-Host "Using MSBuild Traversal SDK approach (dirs.proj)..." -ForegroundColor Cyan
+if ($Target) {
+	# Legacy mode for special targets (e.g., installer builds)
+	Write-Host "Building specific target: $Target (legacy mode)" -ForegroundColor Yellow
+	Write-Host "Configuration: $Configuration, Platform: $Platform" -ForegroundColor Yellow
+	
+	Invoke-MSBuildStep `
+		-Arguments (@('Build/FieldWorks.proj', "/t:$Target", "/p:Configuration=$Configuration", "/p:Platform=$Platform") + $MsBuildArgs) `
+		-Description "Target '$Target'" `
+		-LogPath $LogFile
+}
+else {
+	# Modern traversal build
+	Write-Host "Building FieldWorks using MSBuild Traversal SDK (dirs.proj)..." -ForegroundColor Cyan
+	Write-Host "Configuration: $Configuration, Platform: $Platform" -ForegroundColor Cyan
 
 	# Restore packages first
 	Invoke-MSBuildStep `
@@ -129,36 +140,10 @@ if ($UseTraversal) {
 	# Build using traversal project
 	Invoke-MSBuildStep `
 		-Arguments (@('dirs.proj', "/p:Configuration=$Configuration", "/p:Platform=$Platform") + $MsBuildArgs) `
-		-Description "Traversal build" `
+		-Description "FieldWorks" `
 		-LogPath $LogFile
-}
-else {
-	Write-Host "Using legacy build approach (FieldWorks.proj)..." -ForegroundColor Yellow
 
-	Invoke-MSBuildStep `
-		-Arguments @('Build/Src/FwBuildTasks/FwBuildTasks.csproj', '/t:Restore;Build', "/p:Configuration=$Configuration", '/p:Platform=AnyCPU') `
-		-Description 'FwBuildTasks build'
-
-	Invoke-MSBuildStep `
-		-Arguments @('Build/FieldWorks.proj', '/t:RestorePackages', "/p:Configuration=$Configuration", "/p:Platform=$Platform") `
-		-Description 'RestorePackages'
-
-	# CheckDevelopmentPropertiesFile is optional and may fail if MSBuild.Extension.Pack isn't installed
-	try {
-		Invoke-MSBuildStep `
-			-Arguments @('Build/FieldWorks.proj', '/t:CheckDevelopmentPropertiesFile', "/p:Configuration=$Configuration", "/p:Platform=$Platform") `
-			-Description 'CheckDevelopmentPropertiesFile'
-	}
-	catch {
-		Write-Host "Warning: CheckDevelopmentPropertiesFile failed (this is optional): $_" -ForegroundColor Yellow
-	}
-
-	Invoke-MSBuildStep `
-		-Arguments @('Build/FieldWorks.proj', '/t:refreshTargets', "/p:Configuration=$Configuration", "/p:Platform=$Platform") `
-		-Description 'refreshTargets'
-
-	Invoke-MSBuildStep `
-		-Arguments (@('Build/FieldWorks.proj', "/t:$Targets", "/p:Configuration=$Configuration", "/p:Platform=$Platform") + $MsBuildArgs) `
-		-Description "FieldWorks target '$Targets'" `
-		-LogPath $LogFile
+	Write-Host ""
+	Write-Host "✅ Build complete!" -ForegroundColor Green
+	Write-Host "Output directory: Output\$Configuration\" -ForegroundColor Cyan
 }

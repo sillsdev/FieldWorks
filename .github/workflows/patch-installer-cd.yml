@@ -213,15 +213,14 @@ jobs:
                       New-ItemProperty -Path $path -Name $valueName -Value $expectedValue -Type String -Force
                   }
 
-                  ./build.ps1 -Targets "RestorePackages;CheckDevelopmentPropertiesFile;refreshTargets;WriteNonlocalDevelopmentPropertiesFile" -Configuration Debug -Platform x64 -MsBuildArgs @('/m')
-
             - name: Build Debug and run tests
               id: build_installer
               shell: powershell
               run: |
                   $ErrorActionPreference = 'Stop'
                   Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\.NETFramework\AppContext"
-                  ./build.ps1 -Targets "BuildPatchInstaller" -Configuration Debug -Platform x64 -MsBuildArgs @('/m', '/p:config=release', '/p:action=test', '/p:desktopNotAvailable=true', '/v:d', '/bl') -LogFile Build/build.log
+                  # Installer builds use legacy mode with specific target
+                  ./build.ps1 -Target "BuildPatchInstaller" -Configuration Debug -Platform x64 -MsBuildArgs @('/m', '/p:config=release', '/p:action=test', '/p:desktopNotAvailable=true', '/v:d', '/bl') -LogFile Build/build.log
                   Set-Location BuildDir
 
             - name: Scan Debug Build Output
