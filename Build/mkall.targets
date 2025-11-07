@@ -125,13 +125,19 @@
 			BuildArch="'$(Platform)'"
 			WorkingDirectory="$(fwrt)\Src\views"
 		/>
+		<Message Text="RegFree processing Views.dll (Platform=$(Platform))" Importance="high" />
 		<RegFree
 			Executable="$(dir-outputBase)\Views.dll"
 			Output="$(dir-outputBase)\Views.X.manifest"
 			Condition="'$(OS)'=='Windows_NT'"
 			Platform="$(Platform)"
 			MSBuildArchitecture="$(Platform)"
-		/>
+			ContinueOnError="ErrorAndContinue"
+		>
+			<Output TaskParameter="ExitCode" PropertyName="RegFreeExitCode" />
+		</RegFree>
+		<Warning Text="RegFree task failed for Views.dll (this may cause runtime issues with COM activation)" 
+			Condition="'$(RegFreeExitCode)' != '0' AND '$(RegFreeExitCode)' != ''" />
 		<Message Text="Finished building Views." />
 	</Target>
 	<Target Name="testViews" DependsOnTargets="GenericLib;Views;SimpleRootSite;FwKernel">
@@ -458,6 +464,10 @@
 			Condition="'$(UseLocalLibraries)'=='Y'"
 		/>
 		<Message Text="Using pre-populated downloads directory for ExCss and GeckofxHtmlToPdf artifacts." />
+		<Warning
+			Text="GeckofxHtmlToPdf.exe not found - PDF export will not work. Build from https://github.com/sillsdev/geckofxHtmlToPdf and place output in Downloads directory."
+			Condition="!Exists('$(DownloadsDir)/GeckofxHtmlToPdf.exe')"
+		/>
 	</Target>
 	<Target
 		Name="CollectAssemblyAndPdbPaths"
@@ -846,7 +856,6 @@
 	<ItemGroup>
 		<!-- we need to explicitly specify the important files, otherwise they'll be ignored
 		if they don't exist by the time this ItemGroup is read -->
-		<DownloadedFiles Include="$(DownloadsDir)/Args.dll" />
 		<DownloadedFiles Include="$(DownloadsDir)/IPCFramework.dll" />
 		<DownloadedFiles
 			Include="$(DownloadsDir)/ExCss.dll"
@@ -1027,17 +1036,20 @@
 			OverwriteReadOnlyFiles="true"
 		/>
 		<!-- Rename GeckofxHtmlToPdf.exe to FieldWorksPdfMaker so it its origin is clear in case a user needs to release it from antivirus quarantine -->
+		<!-- TODO: GeckofxHtmlToPdf needs to be built from https://github.com/sillsdev/geckofxHtmlToPdf and binaries placed in Downloads or DistFiles/Windows -->
 		<Copy
 			SourceFiles="$(DownloadsDir)/GeckofxHtmlToPdf.exe"
 			DestinationFiles="$(dir-outputBase)/FieldWorksPdfMaker.exe"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
+			Condition="Exists('$(DownloadsDir)/GeckofxHtmlToPdf.exe')"
 		/>
 		<Copy
 			SourceFiles="$(DownloadsDir)/GeckofxHtmlToPdf.exe.config"
 			DestinationFiles="$(dir-outputBase)/FieldWorksPdfMaker.exe.config"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
+			Condition="Exists('$(DownloadsDir)/GeckofxHtmlToPdf.exe.config')"
 		/>
 		<!-- Encoding Converters Files -->
 		<Copy

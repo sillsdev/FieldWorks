@@ -107,7 +107,11 @@ function Invoke-MSBuildStep {
 	}
 
 	if ($LASTEXITCODE -ne 0) {
-		throw "MSBuild failed during $Description with exit code $LASTEXITCODE"
+		$errorMsg = "MSBuild failed during $Description with exit code $LASTEXITCODE"
+		if ($LASTEXITCODE -eq -1073741819) {
+			$errorMsg += " (0xC0000005 - Access Violation). This indicates a crash in native code during build."
+		}
+		throw $errorMsg
 	}
 }
 
