@@ -488,19 +488,34 @@
 	<Target Name="DefineNugetPackages">
 		<ItemGroup>
 			<!-- These NuGet packages used to arrive from our legacy CI. Because copyDlls can copy either downloaded or locally-built artifacts, copy them all to Downloads so the directory structure matches (locally-built artifacts have no separate packages). -->
-			<SILNugetPackages Include="Icu4c.Win.Fw.Bin" Condition="'$(OS)'=='Windows_NT'">
+			<!-- ICU binaries: x64 only for 64-bit builds -->
+			<SILNugetPackages
+				Include="Icu4c.Win.Fw.Bin"
+				Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'"
+			>
 				<Version>$(IcuNugetVersion)</Version>
-				<Path>build/**/*.*</Path>
+				<Path>build/win-x64/*.*</Path>
 				<NoSymbols>true</NoSymbols>
 			</SILNugetPackages>
-			<SILNugetPackages Include="Icu4c.Win.Fw.Lib" Condition="'$(OS)'=='Windows_NT'">
+			<!-- ICU DLLs: x64 runtime files -->
+			<SILNugetPackages
+				Include="Icu4c.Win.Fw.Lib"
+				Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'"
+			>
 				<Version>$(IcuNugetVersion)</Version>
-				<Path>runtimes/**/*.*</Path>
+				<Path>runtimes/win7-x64/native/*.*</Path>
 				<NoSymbols>true</NoSymbols>
 			</SILNugetPackages>
+			<!-- ICU static libraries: x64 lib files for linking -->
+			<SILNugetPackages Include="Icu4c.Win.Fw.Lib" Condition="'$(Platform)'=='x64'">
+				<Version>$(IcuNugetVersion)</Version>
+				<Path>build/native/lib/win7-x64/*.*</Path>
+				<NoSymbols>true</NoSymbols>
+			</SILNugetPackages>
+			<!-- ICU headers: platform-independent -->
 			<SILNugetPackages Include="Icu4c.Win.Fw.Lib">
 				<Version>$(IcuNugetVersion)</Version>
-				<Path>build/native/**/*.*</Path>
+				<Path>build/native/include/**/*.*</Path>
 				<NoSymbols>true</NoSymbols>
 			</SILNugetPackages>
 			<SILNugetPackages Include="SIL.FLExBridge.IPCFramework">
@@ -1096,7 +1111,14 @@
 			<NuGottenFiles Include="$(PackagesDir)/System.Numerics.Vectors.4.5.0/lib/net46/System.Numerics.Vectors.dll" />
 			<NuGottenFiles Include="$(PackagesDir)/System.Net.Http.4.3.4/lib/net46/System.Net.Http.dll" />
 			<NuGottenFiles Include="$(PackagesDir)/System.Numerics.Vectors.4.5.0/lib/net46/System.Numerics.Vectors.dll" />
-			<NuGottenFiles Include="$(PackagesDir)/System.Resources.Extensions.8.0.0/lib/netstandard2.0/System.Resources.Extensions.dll" />
+			<NuGottenFiles
+				Include="$(PackagesDir)/System.Resources.Extensions.8.0.0/lib/netstandard2.0/System.Resources.Extensions.dll"
+				Condition="Exists('$(PackagesDir)/System.Resources.Extensions.8.0.0/lib/netstandard2.0/System.Resources.Extensions.dll')"
+			/>
+			<NuGottenFiles
+				Include="$(PackagesDir)/system.resources.extensions/8.0.0/lib/netstandard2.0/System.Resources.Extensions.dll"
+				Condition="Exists('$(PackagesDir)/system.resources.extensions/8.0.0/lib/netstandard2.0/System.Resources.Extensions.dll')"
+			/>
 			<NuGottenFiles Include="$(PackagesDir)/System.Runtime.CompilerServices.Unsafe.6.0.0/lib/net461/System.Runtime.CompilerServices.Unsafe.dll" />
 			<NuGottenFiles Include="$(PackagesDir)/System.Threading.Tasks.Extensions.4.5.4/lib/net461/System.Threading.Tasks.Extensions.dll" />
 			<NuGottenFiles Include="$(PackagesDir)/System.ValueTuple.4.5.0/lib/net461/System.ValueTuple.dll" />

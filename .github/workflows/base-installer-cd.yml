@@ -40,7 +40,7 @@ on:
                 default: "false"
 
 concurrency:
-    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+    group: ${{ github.workflow }}-${{ github.ref }}
     cancel-in-progress: true
 
 jobs:
@@ -145,15 +145,14 @@ jobs:
             - name: Restore packages and prime build
               shell: powershell
               run: |
-                  msbuild Build/FieldWorks.proj /t:RestorePackages;CheckDevelopmentPropertiesFile;refreshTargets;WriteNonlocalDevelopmentPropertiesFile /p:Platform=x64 /m
+                  ./build.ps1 -Targets "RestorePackages;CheckDevelopmentPropertiesFile;refreshTargets;WriteNonlocalDevelopmentPropertiesFile" -Configuration Debug -Platform x64 -MsBuildArgs @('/m')
 
             - name: Build and run tests
               id: build_installer
               shell: powershell
               run: |
                   $ErrorActionPreference = 'Stop'
-                  msbuild Build/FieldWorks.proj /t:BuildBaseInstaller /p:Platform=x64 /p:config=release /p:action=test /p:desktopNotAvailable=true /v:d /bl | Tee-Object -FilePath Build/build.log
-                  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+                  ./build.ps1 -Targets "BuildBaseInstaller" -Configuration Debug -Platform x64 -MsBuildArgs @('/m', '/p:config=release', '/p:action=test', '/p:desktopNotAvailable=true', '/v:d', '/bl') -LogFile Build/build.log
                   Set-Location BuildDir
                   md5sum *.exe > md5.txt
 

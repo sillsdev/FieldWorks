@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project
-	InitialTargets="EnsureFwBuildTasks;Setup"
+	InitialTargets="Setup"
 	xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
 	ToolsVersion="Current"
 >
@@ -84,14 +84,11 @@
 			</PropertyGroup>
 		</Otherwise>
 	</Choose>
-	<Target Name="EnsureFwBuildTasks" Condition="Exists('$(FwBuildTasksProject)')">
-		<MSBuild
-			Projects="$(FwBuildTasksProject)"
-			Targets="Restore;Build"
-			Properties="Configuration=$(Configuration);Platform=AnyCPU"
+	<Target Name="Setup">
+		<Error
+			Condition="!Exists('$(FwBuildTasksAssembly)')"
+			Text="Missing FieldWorks build tasks assembly: $(FwBuildTasksAssembly). Build Build/Src/FwBuildTasks/FwBuildTasks.csproj first."
 		/>
-	</Target>
-	<Target Name="Setup" Condition="Exists('$(FwBuildTasksAssembly)')">
 		<!-- cannot depend on GenerateVersionFiles, because that creates a file in Output/Common which CleanAll deletes -->
 		<!-- This is less pretty then I would like since xbuild doesn't support relational operators in conditions -->
 		<PropertyGroup Condition="'$(OS)'=='Windows_NT'">

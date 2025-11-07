@@ -50,14 +50,13 @@ jobs:
             - name: Restore packages and prime build
               shell: powershell
               run: |
-                  msbuild Build/FieldWorks.proj /t:RestorePackages;CheckDevelopmentPropertiesFile;refreshTargets;WriteNonlocalDevelopmentPropertiesFile /p:Platform=x64 /m
+                  ./build.ps1 -Targets "RestorePackages;CheckDevelopmentPropertiesFile;refreshTargets;WriteNonlocalDevelopmentPropertiesFile" -Configuration Debug -Platform x64 -MsBuildArgs @('/m')
             - name: Build Debug and run tests
               id: build_and_test
               shell: powershell
               run: |
                   $ErrorActionPreference = 'Stop'
-                  msbuild Build/FieldWorks.proj /t:remakefw-jenkins /p:Platform=x64 /p:action=test /p:desktopNotAvailable=true /m | Tee-Object -FilePath Build/build.log
-                  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+                  ./build.ps1 -Targets "remakefw-jenkins" -Configuration Debug -Platform x64 -MsBuildArgs @('/m', '/p:action=test', '/p:desktopNotAvailable=true') -LogFile Build/build.log
 
             - name: Scan Debug Build Output
               shell: powershell

@@ -47,9 +47,12 @@ Top-level items you’ll use most often:
 - .github/ — GitHub workflows and configuration (CI runs from here)
 - Build/ — build scripts, targets, and shared build infrastructure
 - DistFiles/ — packaging inputs and distribution artifacts
+- Downloads/ - pdb and symbol files for debugging
 - FLExInstaller/ — WiX-based installer project
 - Include/ — shared headers/includes for native components
 - Lib/ — third-party or prebuilt libraries used by the build
+- Output/ — build output folders (binaries, logs, etc.)
+- packages/ — NuGet packages restored during build
 - Src/ — all application, library, and tooling source (see .github/src-catalog.md for folder descriptions; each folder has a COPILOT.md file with detailed documentation)
 - TestLangProj/ — test data/projects used by tests and integration scenarios
 - ReadMe.md — links to developer documentation wiki

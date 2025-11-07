@@ -50,7 +50,7 @@ on:
                 default: "true"
 
 concurrency:
-    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+    group: ${{ github.workflow }}-${{ github.ref }}
     cancel-in-progress: true
 
 jobs:
@@ -194,7 +194,7 @@ jobs:
             # Write out the properties file (a first build on a system requires a prompt response otherwise)
             # and set an OS feature in the registry that will allow Wix v3 to use temporary files without error
             - name: Prepare for build
-              working-directory: Build
+              shell: powershell
               run: |
                   $ErrorActionPreference = 'Stop'
                   # Define paths and the key/value to set
@@ -213,8 +213,7 @@ jobs:
                       New-ItemProperty -Path $path -Name $valueName -Value $expectedValue -Type String -Force
                   }
 
-                  msbuild FieldWorks.proj /t:RestorePackages;CheckDevelopmentPropertiesFile;refreshTargets;WriteNonlocalDevelopmentPropertiesFile /p:Platform=x64 /m
-                  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+                  ./build.ps1 -Targets "RestorePackages;CheckDevelopmentPropertiesFile;refreshTargets;WriteNonlocalDevelopmentPropertiesFile" -Configuration Debug -Platform x64 -MsBuildArgs @('/m')
 
             - name: Build Debug and run tests
               id: build_installer
@@ -222,8 +221,7 @@ jobs:
               run: |
                   $ErrorActionPreference = 'Stop'
                   Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\.NETFramework\AppContext"
-                  msbuild Build/FieldWorks.proj /t:BuildPatchInstaller /p:Platform=x64 /p:config=release /p:action=test /p:desktopNotAvailable=true /v:d /bl | Tee-Object -FilePath Build/build.log
-                  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+                  ./build.ps1 -Targets "BuildPatchInstaller" -Configuration Debug -Platform x64 -MsBuildArgs @('/m', '/p:config=release', '/p:action=test', '/p:desktopNotAvailable=true', '/v:d', '/bl') -LogFile Build/build.log
                   Set-Location BuildDir
 
             - name: Scan Debug Build Output
