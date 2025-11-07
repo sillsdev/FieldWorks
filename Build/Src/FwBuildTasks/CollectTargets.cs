@@ -406,7 +406,8 @@ namespace FwBuildTasks
 								continue;
 							}
 							var tmp = condition.Substring(condition.IndexOf("==") + 2).Trim().Trim('\'');
-							var configuration = tmp.Substring(0, tmp.IndexOf("|"));
+							var separatorIndex = tmp.IndexOf("|");
+							var configuration = separatorIndex < 0 ? tmp : tmp.Substring(0, separatorIndex);
 
 							// Add configuration only once even if same configuration is contained
 							// for multiple platforms, e.g. for AnyCpu and x64.

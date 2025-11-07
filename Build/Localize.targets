@@ -5,9 +5,6 @@
 			>$(MSBuildThisFileDirectory)..\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll</FwBuildTasksAssembly
 		>
 	</PropertyGroup>
-	<PropertyGroup Condition="!Exists('$(FwBuildTasksAssembly)')">
-		<FwBuildTasksAssembly>$(MSBuildThisFileDirectory)FwBuildTasks.dll</FwBuildTasksAssembly>
-	</PropertyGroup>
 	<UsingTask TaskName="CopyLocale" AssemblyFile="$(FwBuildTasksAssembly)" />
 	<UsingTask TaskName="GoldEticToXliff" AssemblyFile="$(FwBuildTasksAssembly)" />
 	<UsingTask TaskName="ListsToXliff" AssemblyFile="$(FwBuildTasksAssembly)" />

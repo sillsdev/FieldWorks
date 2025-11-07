@@ -254,8 +254,8 @@
 			Text="The following projects had failing tests: @(FailedSuites)"
 		/>
 	</Target>
-	<Target Name="remakefw-jenkins" DependsOnTargets="remakefw-internal">
-		<!-- Jenkins looks at the test output files to see if tests failed, so we don't have to fail on failed tests -->
+	<Target Name="remakefw-ci" DependsOnTargets="remakefw-internal">
+		<!-- GitHub Actions reads the test output files to determine failures, so the build need not fail explicitly here. -->
 		<Warning
 			Condition="'@(FailedSuites)'!=''"
 			Text="The following projects had failing tests: @(FailedSuites)"
@@ -301,7 +301,6 @@
 	</Target>
 	<PropertyGroup>
 		<MasterVersionInfo>$(fwrt)/Src/MasterVersionInfo.txt</MasterVersionInfo>
-		<TeamCityUrl>https://build.palaso.org/</TeamCityUrl>
 		<!-- Versions of NuGet packages. Keep these in sync with PackageReference versions in the managed projects. -->
 		<ChorusNugetVersion>6.0.0-beta0063</ChorusNugetVersion>
 		<PalasoNugetVersion>17.0.0-beta0072</PalasoNugetVersion>
@@ -310,17 +309,6 @@
 		<IcuNugetVersion>70.1.123</IcuNugetVersion>
 		<HermitCrabNugetVersion>3.7.4</HermitCrabNugetVersion>
 		<IPCFrameworkVersion>1.1.1-beta0001</IPCFrameworkVersion>
-		<!-- bt393 is the master branch build of ExCss for Windows development. Update when appropriate. -->
-		<ExCssBuildType Condition="'$(OS)'=='Windows_NT'">bt393</ExCssBuildType>
-		<ExCss Condition="'$(OS)'=='Windows_NT'">ExCss</ExCss>
-		<ExCssBuildTag>.lastSuccessful</ExCssBuildTag>
-		<GeckoFxHtmlToPdfBuildType Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'"
-			>GeckofxHtmlToPdf_GeckofxHtmlToPdfGeckofx60Win32continuous</GeckoFxHtmlToPdfBuildType
-		>
-		<GeckoFxHtmlToPdfBuildType Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'"
-			>GeckofxHtmlToPdf_Win64_continuous</GeckoFxHtmlToPdfBuildType
-		>
-		<GeckoFxHtmlToPdfBuildTag>.lastSuccessful</GeckoFxHtmlToPdfBuildTag>
 		<DebugInfo Condition="'$(OS)'=='Windows_NT'">pdb</DebugInfo>
 		<DownloadsDir>$(fwrt)/Downloads</DownloadsDir>
 		<PackagesDir>$(fwrt)/packages</PackagesDir>
@@ -470,23 +458,7 @@
 			Text="(Palaso, Chorus, and LCM artifacts will be copied to Output from $(PalasoArtifactsDir), $(ChorusArtifactsDir), and $(LcmArtifactsDir), respectively, as  specified in LibraryDevelopment.targets)"
 			Condition="'$(UseLocalLibraries)'=='Y'"
 		/>
-		<!-- Due to platform-specific casing, ExCSS or ExCss is included in a variable -->
-		<Message Text="Downloading artifacts for $(ExCss)." />
-		<DownloadFilesFromTeamCity
-			Address="$(TeamCityUrl)"
-			BuildType="$(ExCssBuildType)"
-			Tag="$(ExCssBuildTag)"
-			Artifacts="$(ExCss).dll;$(ExCss).$(DebugInfo)"
-			DownloadsDir="$(DownloadsDir)"
-		/>
-		<Message Text="Downloading artifacts for geckofxHtmlToPdf." />
-		<DownloadFilesFromTeamCity
-			Address="$(TeamCityUrl)"
-			BuildType="$(GeckoFxHtmlToPdfBuildType)"
-			Tag="$(GeckoFxHtmlToPdfBuildTag)"
-			Artifacts="GeckofxHtmlToPdf.exe;GeckofxHtmlToPdf.exe.config;Args.dll"
-			DownloadsDir="$(DownloadsDir)"
-		/>
+		<Message Text="Using pre-populated downloads directory for ExCss and GeckofxHtmlToPdf artifacts." />
 	</Target>
 	<Target
 		Name="CollectAssemblyAndPdbPaths"
@@ -515,7 +487,7 @@
 	</Target>
 	<Target Name="DefineNugetPackages">
 		<ItemGroup>
-			<!-- We had been downloading these Nuget packages from TeamCity. Because our copyDlls target can copy either downloaded or locally-built artifacts, copy them all to Downloads so the directory structure matches (locally-built artifacts have no separate packages). -->
+			<!-- These NuGet packages used to arrive from our legacy CI. Because copyDlls can copy either downloaded or locally-built artifacts, copy them all to Downloads so the directory structure matches (locally-built artifacts have no separate packages). -->
 			<SILNugetPackages Include="Icu4c.Win.Fw.Bin" Condition="'$(OS)'=='Windows_NT'">
 				<Version>$(IcuNugetVersion)</Version>
 				<Path>build/**/*.*</Path>
@@ -862,9 +834,22 @@
 		if they don't exist by the time this ItemGroup is read -->
 		<DownloadedFiles Include="$(DownloadsDir)/Args.dll" />
 		<DownloadedFiles Include="$(DownloadsDir)/IPCFramework.dll" />
-		<!-- xBuild and MsBuild generate different case artifacts off the same solution file. (sigh) -->
-		<DownloadedFiles Include="$(DownloadsDir)/$(ExCss).dll" />
-		<DownloadedFiles Include="$(DownloadsDir)/$(ExCss).$(DebugInfo)" />
+		<DownloadedFiles
+			Include="$(DownloadsDir)/ExCss.dll"
+			Condition="Exists('$(DownloadsDir)/ExCss.dll')"
+		/>
+		<DownloadedFiles
+			Include="$(DownloadsDir)/ExCSS.dll"
+			Condition="Exists('$(DownloadsDir)/ExCSS.dll')"
+		/>
+		<DownloadedFiles
+			Include="$(DownloadsDir)/ExCss.$(DebugInfo)"
+			Condition="Exists('$(DownloadsDir)/ExCss.$(DebugInfo)')"
+		/>
+		<DownloadedFiles
+			Include="$(DownloadsDir)/ExCSS.$(DebugInfo)"
+			Condition="Exists('$(DownloadsDir)/ExCSS.$(DebugInfo)')"
+		/>
 		<DownloadedFiles Include="$(DownloadsDir)/Sandwych.Quickgraph.Core.dll" />
 		<DownloadedFiles Include="$(DownloadsDir)/SIL.Machine.dll" />
 		<DownloadedFiles Include="$(DownloadsDir)/SIL.Machine.Morphology.HermitCrab.dll" />

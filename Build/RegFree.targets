@@ -5,9 +5,6 @@
 			>$(MSBuildThisFileDirectory)..\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll</FwBuildTasksAssembly
 		>
 	</PropertyGroup>
-	<PropertyGroup Condition="!Exists('$(FwBuildTasksAssembly)')">
-		<FwBuildTasksAssembly>$(MSBuildThisFileDirectory)FwBuildTasks.dll</FwBuildTasksAssembly>
-	</PropertyGroup>
 	<UsingTask TaskName="RegFree" AssemblyFile="$(FwBuildTasksAssembly)" />
 	<PropertyGroup>
 		<DistFilesDir Condition="'$(OutDir)' != ''">$(OutDir)../../DistFiles</DistFilesDir>

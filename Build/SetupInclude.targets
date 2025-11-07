@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project
-	InitialTargets="Setup"
+	InitialTargets="EnsureFwBuildTasks;Setup"
 	xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
 	ToolsVersion="Current"
 >
@@ -9,8 +9,8 @@
 			>$(MSBuildThisFileDirectory)..\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll</FwBuildTasksAssembly
 		>
 	</PropertyGroup>
-	<PropertyGroup Condition="!Exists('$(FwBuildTasksAssembly)')">
-		<FwBuildTasksAssembly>$(MSBuildThisFileDirectory)FwBuildTasks.dll</FwBuildTasksAssembly>
+	<PropertyGroup>
+		<FwBuildTasksProject>$(MSBuildThisFileDirectory)Src\FwBuildTasks\FwBuildTasks.csproj</FwBuildTasksProject>
 	</PropertyGroup>
 	<PropertyGroup>
 		<IcuVersion>70</IcuVersion>
@@ -84,6 +84,13 @@
 			</PropertyGroup>
 		</Otherwise>
 	</Choose>
+	<Target Name="EnsureFwBuildTasks" Condition="Exists('$(FwBuildTasksProject)')">
+		<MSBuild
+			Projects="$(FwBuildTasksProject)"
+			Targets="Restore;Build"
+			Properties="Configuration=$(Configuration);Platform=AnyCPU"
+		/>
+	</Target>
 	<Target Name="Setup" Condition="Exists('$(FwBuildTasksAssembly)')">
 		<!-- cannot depend on GenerateVersionFiles, because that creates a file in Output/Common which CleanAll deletes -->
 		<!-- This is less pretty then I would like since xbuild doesn't support relational operators in conditions -->

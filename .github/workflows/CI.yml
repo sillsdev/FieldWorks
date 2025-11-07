@@ -40,26 +40,24 @@ jobs:
                       2.1.x
                       3.1.x
                       5.0.x
-                        - name: Add NETFX tools to PATH
-                            shell: powershell
-                            run: |
-                                    'C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.6.1 Tools' | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
-                        - name: Setup MSBuild
-                            uses: microsoft/setup-msbuild@v2
-
-                        - name: Restore packages and prime build
-                            shell: powershell
-                            run: |
-                                    msbuild Build/FieldWorks.proj /t:RestorePackages;CheckDevelopmentPropertiesFile;refreshTargets;WriteNonlocalDevelopmentPropertiesFile /p:Platform=x64 /m
-
-                        - name: Build Debug and run tests
-                            id: build_and_test
-                            shell: powershell
-                            run: |
-                                                $ErrorActionPreference = 'Stop'
-                                                msbuild Build/FieldWorks.proj /t:remakefw-jenkins /p:Platform=x64 /p:action=test /p:desktopNotAvailable=true /m | Tee-Object -FilePath Build/build.log
-                                                if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+            - name: Add NETFX tools to PATH
+              shell: powershell
+              run: |
+                  'C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.6.1 Tools' | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+            - name: Setup MSBuild
+              uses: microsoft/setup-msbuild@v2
+            - name: Restore packages and prime build
+              shell: powershell
+              run: |
+                  msbuild Build/FieldWorks.proj /t:RestorePackages;CheckDevelopmentPropertiesFile;refreshTargets;WriteNonlocalDevelopmentPropertiesFile /p:Platform=x64 /m
+            - name: Build Debug and run tests
+              id: build_and_test
+              shell: powershell
+              run: |
+                  $ErrorActionPreference = 'Stop'
+                  msbuild Build/FieldWorks.proj /t:remakefw-jenkins /p:Platform=x64 /p:action=test /p:desktopNotAvailable=true /m | Tee-Object -FilePath Build/build.log
+                  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
             - name: Scan Debug Build Output
               shell: powershell
