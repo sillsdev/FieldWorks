@@ -133,12 +133,6 @@
 			Platform="$(Platform)"
 			MSBuildArchitecture="$(Platform)"
 			ContinueOnError="ErrorAndContinue"
-		>
-			<Output TaskParameter="ExitCode" PropertyName="RegFreeExitCode" />
-		</RegFree>
-		<Warning
-			Text="RegFree task failed for Views.dll (this may cause runtime issues with COM activation)"
-			Condition="'$(RegFreeExitCode)' != '0' AND '$(RegFreeExitCode)' != ''"
 		/>
 		<Message Text="Finished building Views." />
 	</Target>

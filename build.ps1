@@ -79,12 +79,14 @@ function Initialize-VsDevEnvironment {
 Initialize-VsDevEnvironment -RequestedPlatform $Platform
 
 # Help legacy MSBuild tasks distinguish platform-specific assets.
+# Set this AFTER Initialize-VsDevEnvironment to ensure it's not overwritten
 if ($Platform) {
 	switch ($Platform.ToLowerInvariant()) {
 		'x86' { $env:arch = 'x86' }
 		'x64' { $env:arch = 'x64' }
 		default { $env:arch = $Platform }
 	}
+	Write-Host "Set arch environment variable to: $env:arch" -ForegroundColor Green
 }
 
 function Invoke-MSBuildStep {
