@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>MorphologyEditorDll</AssemblyName>
@@ -9,18 +9,6 @@
     <NoWarn>168,169,219,414,649,1635,1702,1701,0579,0436</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugSymbols>true</DebugSymbols>
-    <Optimize>false</Optimize>
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DefineConstants>TRACE</DefineConstants>
-    <DebugSymbols>true</DebugSymbols>
-    <Optimize>true</Optimize>
-    <DebugType>portable</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -79,5 +67,22 @@
     <None Remove="MGA/bin/**" />
     <Compile Remove="MGA/obj/**" />
     <None Remove="MGA/obj/**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="icons\adhoc Allomorph rule.ico" />
+    <EmbeddedResource Include="icons\adhoc Group.ico" />
+    <EmbeddedResource Include="icons\adhoc Morpheme rule.ico" />
+    <EmbeddedResource Include="icons\Environment.ico" />
+    <EmbeddedResource Include="icons\Exception Feature.ico" />
+    <EmbeddedResource Include="icons\Headed Comp Rule.ico" />
+    <EmbeddedResource Include="icons\Insert Cat.ico" />
+    <EmbeddedResource Include="icons\Insert Complex Feature.ico" />
+    <EmbeddedResource Include="icons\Insert Feature.ico" />
+    <EmbeddedResource Include="icons\Insert Sub-Cat.ico" />
+    <EmbeddedResource Include="icons\Metathesis.ico" />
+    <EmbeddedResource Include="icons\Natural Class.ico" />
+    <EmbeddedResource Include="icons\non-Headed Comp Rule.ico" />
+    <EmbeddedResource Include="icons\Phoneme.ico" />
+    <EmbeddedResource Include="ME.ico" />
   </ItemGroup>
 </Project>

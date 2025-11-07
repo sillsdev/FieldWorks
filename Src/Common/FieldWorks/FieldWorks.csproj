@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>FieldWorks</AssemblyName>
@@ -10,8 +10,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Deterministic>false</Deterministic>
     <PlatformTarget>x64</PlatformTarget>
-    <!-- Disable runtime identifier inference for .NET Framework -->
-    <RuntimeIdentifier></RuntimeIdentifier>
+    <RuntimeIdentifier />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -81,4 +80,15 @@
     <None Remove="FieldWorksTests/**" />
   </ItemGroup>
   <Import Project="BuildInclude.targets" />
+  <ItemGroup>
+    <EmbeddedResource Include="BookAndCube.ico" />
+    <EmbeddedResource Include="BookOnCube.ico" />
+    <EmbeddedResource Include="BookOnCubeVersion.ico" />
+    <EmbeddedResource Include="CubeOnBook.ico" />
+    <EmbeddedResource Include="CubeOnBookVersion.ico" />
+    <EmbeddedResource Include="LargeCubeOnBook.ico" />
+    <EmbeddedResource Include="LargeCubeOnBookVersion.ico" />
+    <EmbeddedResource Include="SmallBookOnCube.ico" />
+    <EmbeddedResource Include="SmallBookOnCubeVersion.ico" />
+  </ItemGroup>
 </Project>

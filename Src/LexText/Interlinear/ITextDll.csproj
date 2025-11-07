@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>ITextDll</AssemblyName>
@@ -8,18 +8,6 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugSymbols>true</DebugSymbols>
-    <Optimize>false</Optimize>
-    <DebugType>portable</DebugType>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DefineConstants>TRACE</DefineConstants>
-    <DebugSymbols>true</DebugSymbols>
-    <Optimize>true</Optimize>
-    <DebugType>portable</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -87,5 +75,20 @@
     <Compile Remove="ITextDllTests/**" />
     <Compile Remove="FlexInterlinModel\FlexInterlinear-generated.cs" />
     <None Remove="ITextDllTests/**" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="icons\Add a Literal Translation.ico" />
+    <EmbeddedResource Include="icons\Add Free Translation.ico" />
+    <EmbeddedResource Include="icons\Add New Text.ico" />
+    <EmbeddedResource Include="icons\AddScripture.ico" />
+    <EmbeddedResource Include="icons\ApprAndMoveNext.ico" />
+    <EmbeddedResource Include="icons\BreakPhrase.ico" />
+    <EmbeddedResource Include="icons\BrowseAndMoveNext.ico" />
+    <EmbeddedResource Include="icons\Find and Replace Text.ico" />
+    <EmbeddedResource Include="icons\Find Dictionary.ico" />
+    <EmbeddedResource Include="icons\Insert Note.ico" />
+    <EmbeddedResource Include="icons\LinkWords.ico" />
+    <EmbeddedResource Include="IText.ico" />
+    <EmbeddedResource Include="ZeroWidth.ico" />
   </ItemGroup>
 </Project>

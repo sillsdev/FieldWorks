@@ -1,3 +1,4 @@
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>ConvertSFM</AssemblyName>
@@ -39,5 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../Sfm2Xml.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="App.ico" />
   </ItemGroup>
 </Project>
