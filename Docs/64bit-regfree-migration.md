@@ -143,7 +143,7 @@ Validation path (first pass)
 - `Directory.Build.props` enforces `<PlatformTarget>x64</PlatformTarget>`
 - `FieldWorks.sln` Win32 configurations removed
 - Native VCXPROJs x86 configurations removed
-- CI enforces `/p:Platform=x64` via `build64.bat`
+- CI enforces `/p:Platform=x64` by invoking `msbuild Build/FieldWorks.proj`
 
 ### Phase 2: Manifest wiring (✅ COMPLETE)
 - `Build/RegFree.targets` generates manifests with COM class/typelib entries

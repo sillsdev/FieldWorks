@@ -265,7 +265,6 @@
 		<!-- Don't delete FieldWorks.targets - that has to be done separately, otherwise we
 		delete the file we just create previously when we run remakefw -->
 		<!--<GeneratedFiles Include="$(fwrt)/Build/FieldWorks.targets"/>-->
-		<GeneratedFiles Include="$(fwrt)/Build/packages.config" />
 		<GeneratedFiles Include="$(fwrt)/Src/**/Collection.cpp" />
 		<GeneratedFiles Include="$(fwrt)/Src/**/asserts.log" />
 		<GeneratedFiles Include="$(fwrt)/Src/Common/ViewsInterfaces/Views.cs" />
@@ -303,7 +302,7 @@
 	<PropertyGroup>
 		<MasterVersionInfo>$(fwrt)/Src/MasterVersionInfo.txt</MasterVersionInfo>
 		<TeamCityUrl>https://build.palaso.org/</TeamCityUrl>
-		<!-- Versions of NuGet packages. These need to match the versions in nuget-common/packages.config -->
+		<!-- Versions of NuGet packages. Keep these in sync with PackageReference versions in the managed projects. -->
 		<ChorusNugetVersion>6.0.0-beta0063</ChorusNugetVersion>
 		<PalasoNugetVersion>17.0.0-beta0072</PalasoNugetVersion>
 		<ParatextNugetVersion>9.4.0.1-beta</ParatextNugetVersion>
@@ -445,7 +444,10 @@
 	<!-- Restore NuGet packages for SDK-style projects -->
 	<Target Name="RestorePackages">
 		<Message Text="Restoring NuGet packages with dotnet restore..." />
-		<Exec Command="dotnet restore &quot;$(fwrt)&quot;" ContinueOnError="false" />
+		<Exec
+			Command="dotnet restore &quot;$(fwrt)&quot; --packages &quot;$(PackagesDir)&quot;"
+			ContinueOnError="false"
+		/>
 	</Target>
 	<Target
 		Name="downloadDlls"
@@ -536,7 +538,7 @@
 			<!-- LCM and related packages -->
 			<!-- If the build is run with /p:UsingLocalLibraryBuild use that for NoSymbols when the package comes from liblcm, libpalaso, or chorus -->
 			<!-- a true value will skip downloading and extracting the .pdb files from the nuget server. -->
-			<!-- If this is used with buildLocalLibraries.sh you should end up with locally built .pdb files -->
+			<!-- When UsingLocalLibraryBuild=Y developer builds copy locally produced .pdb files -->
 			<SILNugetPackages Include="SIL.LCModel">
 				<Version>$(LcmNugetVersion)</Version>
 				<Path>lib/net462/*.*</Path>

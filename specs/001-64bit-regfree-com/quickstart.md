@@ -15,18 +15,17 @@ This guide shows how to build and validate the feature locally.
 
 ### Building
 
-**Using build script (recommended)**:
+**Command line**:
 ```cmd
-cd Build
-build64.bat
+msbuild Build/FieldWorks.proj /t:RestorePackages;CheckDevelopmentPropertiesFile;refreshTargets;WriteNonlocalDevelopmentPropertiesFile /p:Platform=x64
+msbuild Build/FieldWorks.proj /t:remakefw-jenkins /p:Platform=x64 /p:action=test
 ```
 
-**Using MSBuild directly**:
+**Solution only**:
 ```cmd
 msbuild FieldWorks.sln /m /p:Configuration=Debug /p:Platform=x64
 ```
-
-**From Visual Studio**:
+**Visual Studio**:
 - Open FieldWorks.sln
 - Select **x64** platform (only option available)
 - Build solution (F7)
@@ -34,7 +33,7 @@ msbuild FieldWorks.sln /m /p:Configuration=Debug /p:Platform=x64
 ### What's New Through Phase 4
 ✅ **x64 defaults**: Directory.Build.props enforces `<PlatformTarget>x64</PlatformTarget>`
 ✅ **Win32/x86 removed**: Solution and native projects support x64 only
-✅ **CI enforces x64**: build64.bat used throughout CI pipeline
+✅ **CI enforces x64**: workflows call `msbuild Build/FieldWorks.proj /p:Platform=x64`
 ✅ **No COM registration**: Builds and installer do not write to registry
 ✅ **Registration-free COM**: Manifests enable COM activation without registry
 ✅ **Installer packages manifests**: FieldWorks.exe.manifest and dependent assembly manifests (.X.manifest) included
