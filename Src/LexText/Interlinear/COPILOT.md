@@ -10,7 +10,7 @@ status: draft
 Comprehensive interlinear text analysis library providing core functionality for glossing, analyzing, and annotating texts word-by-word. Supports interlinear display (baseline text, morphemes, glosses, word categories, free translation), text analysis workflows, concordance search, complex concordance patterns, BIRD format import/export, and text configuration. Central to FLEx text analysis features. Massive 49.6K line library with multiple specialized subsystems: InterlinDocForAnalysis (main analysis UI), Sandbox (word-level editing), ConcordanceControl (search), ComplexConc* (pattern matching), TextTaggingView (tagging), TreebarControl (navigation), PrintLayout (export). Namespace: SIL.FieldWorks.IText (project name ITextDll).
 
 ## Architecture
-C# library (net462, OutputType=Library) with modular subsystem design. InterlinDocRootSiteBase abstract base for interlinear views. InterlinDocForAnalysis main analysis UI (extends InterlinDocRootSiteBase). Sandbox component for word-level glossing/analysis. ConcordanceControl/ConcordanceWordList for text search. ComplexConc* classes for advanced pattern concordance. TextTaggingView for text tagging/annotation. TreebarControl for text/paragraph navigation. InterlinPrintChild/PrintLayoutView for export. InterlinVc view constructors for rendering. Heavily integrated with LCModel (segments, analyses, glosses), Views rendering, XCore framework.
+C# library (net48, OutputType=Library) with modular subsystem design. InterlinDocRootSiteBase abstract base for interlinear views. InterlinDocForAnalysis main analysis UI (extends InterlinDocRootSiteBase). Sandbox component for word-level glossing/analysis. ConcordanceControl/ConcordanceWordList for text search. ComplexConc* classes for advanced pattern concordance. TextTaggingView for text tagging/annotation. TreebarControl for text/paragraph navigation. InterlinPrintChild/PrintLayoutView for export. InterlinVc view constructors for rendering. Heavily integrated with LCModel (segments, analyses, glosses), Views rendering, XCore framework.
 
 ## Key Components
 - **InterlinDocForAnalysis** (InterlinDocForAnalysis.cs, 2.8K lines): Main interlinear analysis UI
@@ -113,7 +113,7 @@ C# library (net462, OutputType=Library) with modular subsystem design. InterlinD
 - **DoSpellCheck**: Spell checking enabled/disabled
 
 ## Build Information
-- **Project file**: ITextDll.csproj (net462, OutputType=Library)
+- **Project file**: ITextDll.csproj (net48, OutputType=Library)
 - **Test project**: ITextDllTests/
 - **Output**: SIL.FieldWorks.IText.dll
 - **Build**: Via top-level FieldWorks.sln or: `msbuild ITextDll.csproj`
@@ -183,7 +183,7 @@ Loaded by xWorks interlinear text window. InterlinDocForAnalysis instantiated fo
 - **xWorks/**: Application shell
 
 ## References
-- **Project file**: ITextDll.csproj (net462, OutputType=Library)
+- **Project file**: ITextDll.csproj (net48, OutputType=Library)
 - **Key C# files**: InterlinDocRootSiteBase.cs (3.3K), InterlinDocForAnalysis.cs (2.8K), ConcordanceControl.cs (1.9K), BIRDInterlinearImporter.cs (1.8K), ComplexConcControl.cs (770), ChooseAnalysisHandler.cs (747), ComplexConcPatternVc.cs (699), and 100+ more files
 - **Test project**: ITextDllTests/
 - **Total lines of code**: 49644

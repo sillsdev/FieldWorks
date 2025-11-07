@@ -10,7 +10,7 @@ status: draft
 Constituent chart analysis tool for discourse/clause-level text organization. Allows users to arrange words/morphemes from interlinear texts into tables where rows represent clauses and columns represent clause constituents (pre-nuclear, nuclear SVO, post-nuclear). Provides visual discourse analysis framework supporting linguistic research into clause structure, topic/comment, reference tracking. Integrates with interlinear text (IText) displaying words in interlinear format within chart cells. Supports chart templates (column configuration), word movement between columns, clause markers, moved text markers, export functionality. Core business logic (ConstituentChartLogic 6.5K lines) separated from UI (ConstituentChart 2K lines). Library (13.3K lines total).
 
 ## Architecture
-C# library (net462, OutputType=Library) with MVC-like separation. ConstituentChart main UI component (inherits InterlinDocChart, implements IHandleBookmark, IxCoreColleague, IStyleSheet). ConstituentChartLogic testable business logic class. ConstChartBody custom control for chart grid. ConstChartVc view constructor for chart rendering. InterlinRibbon displays source text words for dragging into chart. Chart data stored in LCModel (IDsConstChart, IConstChartRow, IConstituentChartCellPart, IConstChartWordGroup). Export support (DiscourseExporter) for sharing/publishing charts.
+C# library (net48, OutputType=Library) with MVC-like separation. ConstituentChart main UI component (inherits InterlinDocChart, implements IHandleBookmark, IxCoreColleague, IStyleSheet). ConstituentChartLogic testable business logic class. ConstChartBody custom control for chart grid. ConstChartVc view constructor for chart rendering. InterlinRibbon displays source text words for dragging into chart. Chart data stored in LCModel (IDsConstChart, IConstChartRow, IConstituentChartCellPart, IConstChartWordGroup). Export support (DiscourseExporter) for sharing/publishing charts.
 
 ## Key Components
 - **ConstituentChart** (ConstituentChart.cs, 2K lines): Main chart UI component
@@ -111,7 +111,7 @@ C# library (net462, OutputType=Library) with MVC-like separation. ConstituentCha
 - **Display modes**: Interlinear vs simple text in cells
 
 ## Build Information
-- **Project file**: Discourse.csproj (net462, OutputType=Library)
+- **Project file**: Discourse.csproj (net48, OutputType=Library)
 - **Test project**: DiscourseTests/
 - **Output**: SIL.FieldWorks.Discourse.dll
 - **Build**: Via top-level FieldWorks.sln or: `msbuild Discourse.csproj`
@@ -185,7 +185,7 @@ Loaded by reflection from xWorks interlinear text window. ConstituentChart const
 - **xWorks/**: Main application shell
 
 ## References
-- **Project file**: Discourse.csproj (net462, OutputType=Library)
+- **Project file**: Discourse.csproj (net48, OutputType=Library)
 - **Key C# files**: ConstituentChartLogic.cs (6491 lines), ConstituentChart.cs (2033 lines), ConstChartVc.cs (871 lines), MakeCellsMethod.cs (682 lines), ConstChartRowDecorator.cs (602 lines), ConstChartBody.cs (525 lines), InterlinRibbon.cs (478 lines), AdvancedMTDialog.cs (421 lines), DiscourseExporter.cs (374 lines), DiscourseExportDialog.cs (208 lines)
 - **Test project**: DiscourseTests/
 - **Total lines of code**: 13280

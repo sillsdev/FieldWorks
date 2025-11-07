@@ -10,7 +10,7 @@ status: draft
 Centralized resource management for FieldWorks applications. Shared images, icons, localized strings, and UI assets used across xWorks, LexText, and other FieldWorks components. ResourceHelper utility class provides file filter specifications, resource string access, and image loading. Localized string resources: FwStrings (general strings), FwTMStrings (task management strings), HelpTopicPaths (help system paths), ToolBarSystemStrings (toolbar text). Images organized by category (Edit/, File/, Format/, Help/, Tools/, View/, Window/). SearchingAnimation for progress indicators. FwFileExtensions defines standard file extensions. Essential for consistent UI appearance and localization across FieldWorks.
 
 ## Architecture
-C# class library (.NET Framework 4.6.2) with embedded resources. Resource files (.resx) with auto-generated Designer.cs classes for type-safe access. Images/ folder organized by UI category (Edit, File, Format, Help, Tools, View, Window). ResourceHelper main utility class with FileFilterType enum for standardized file dialog filters. Extensive localization support via .resx files. 7458 lines of C# code plus extensive resource files.
+C# class library (.NET Framework 4.8.x) with embedded resources. Resource files (.resx) with auto-generated Designer.cs classes for type-safe access. Images/ folder organized by UI category (Edit, File, Format, Help, Tools, View, Window). ResourceHelper main utility class with FileFilterType enum for standardized file dialog filters. Extensive localization support via .resx files. 7458 lines of C# code plus extensive resource files.
 
 ## Key Components
 - **ResourceHelper** class (ResourceHelper.cs, 32K lines): Resource access utilities
@@ -74,7 +74,7 @@ C# class library (.NET Framework 4.6.2) with embedded resources. Resource files 
 - No runtime configuration; compile-time resource embedding
 
 ## Build Information
-- **Project file**: FwResources.csproj (net462, OutputType=Library)
+- **Project file**: FwResources.csproj (net48, OutputType=Library)
 - **Output**: FwResources.dll (embedded resources)
 - **Build**: Via top-level FieldWorks.sln
 - **Localization**: .resx files compiled into satellite assemblies for different cultures
@@ -131,8 +131,8 @@ No dedicated test project (resource library). Tested via consuming applications.
 - **Localization tools**: Process .resx files for translation
 
 ## References
-- **Project files**: FwResources.csproj (net462)
-- **Target frameworks**: .NET Framework 4.6.2
+- **Project files**: FwResources.csproj (net48)
+- **Target frameworks**: .NET Framework 4.8.x
 - **Key C# files**: ResourceHelper.cs (32K lines), FwFileExtensions.cs, FwStrings.Designer.cs (110K lines), FwTMStrings.Designer.cs (47K lines), HelpTopicPaths.Designer.cs (28K lines), ToolBarSystemStrings.Designer.cs (17K lines), Images.Designer.cs, ResourceHelperImpl.cs, SearchingAnimation.cs
 - **Resource files**: FwStrings.resx (69K), FwTMStrings.resx (37K), HelpTopicPaths.resx (22K), ToolBarSystemStrings.resx, Images.resx, ResourceHelperImpl.resx (104K), SearchingAnimation.resx
 - **Images folder**: Edit/, File/, Format/, Help/, Tools/, View/, Window/ subfolders with icons/images

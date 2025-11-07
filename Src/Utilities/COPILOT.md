@@ -35,7 +35,7 @@ Total: 11 projects, ~52 C# files, 17 data files (XSLT, test data, resources)
 ## Technology Stack
 No direct code at this organizational level. Subfolders use:
 - **Languages**: C# (all projects)
-- **Target frameworks**: .NET Framework 4.6.2 (net462)
+- **Target frameworks**: .NET Framework 4.8.x (net48)
 - **UI frameworks**: WinForms (FixFwData, FixFwDataDll, MessageBoxExLib, Reporting)
 - **Key libraries**:
   - LCModel (FixFwDataDll for data model access)

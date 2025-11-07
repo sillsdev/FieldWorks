@@ -106,7 +106,7 @@ Main application shell and area-based UI framework (~66.9K lines in main folder 
 - **FXT/** - XML export templates used by dictionary export
 
 ## References
-- **Project**: xWorks.csproj (.NET Framework 4.6.2 class library)
+- **Project**: xWorks.csproj (.NET Framework 4.8.x class library)
 - **Test project**: xWorksTests/xWorksTests.csproj
 - **~97 CS files** in main folder (~66.9K lines): FwXApp.cs, FwXWindow.cs, RecordClerk.cs, RecordView hierarchy, DictionaryConfigurationModel.cs, LcmXhtmlGenerator.cs, UploadToWebonaryController.cs, etc.
 - **Resources**: xWorksStrings.resx, DataTreeImages.resx, RecordClerkImages.resx, many dialog .resx files
@@ -311,7 +311,7 @@ Library component. Reference in consuming projects. See Dependencies section for
 ## References
 
 - **Project files**: xWorks.csproj, xWorksTests.csproj
-- **Target frameworks**: net462
+- **Target frameworks**: net48
 - **Key C# files**: DTMenuHandler.cs, DictionaryConfigurationDlg.Designer.cs, DictionaryConfigurationManagerDlg.Designer.cs, DictionaryNodeOptions.cs, DictionaryPublicationDecorator.cs, HeadWordNumbersDlg.cs, IDictionaryListOptionsView.cs, InterestingTextList.cs, LiftExportMessageDlg.Designer.cs, XmlDocConfigureDlg.Designer.cs
 - **XML data/config**: strings-en.xml, strings-es-MX.xml, strings-fr.xml
 - **Source file count**: 181 files

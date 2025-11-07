@@ -10,7 +10,7 @@ status: draft
 Root-level site management infrastructure for hosting FieldWorks views with advanced features. Implements RootSite classes providing top-level container for Views rendering system, view lifecycle management, printing coordination, selection/editing management, and bridge between Windows Forms and native Views architecture. More sophisticated than SimpleRootSite with collector environments for view analysis, testing, and string extraction. Critical foundation for all text display and editing functionality in FieldWorks.
 
 ## Architecture
-C# class library (.NET Framework 4.6.2) with root site infrastructure. CollectorEnv base class and subclasses implement IVwEnv interface for view collection without actual rendering (testing, string extraction, measurement). Provides abstract RootSite base classes extended by SimpleRootSite. Test project (RootSiteTests) validates root site behavior.
+C# class library (.NET Framework 4.8.x) with root site infrastructure. CollectorEnv base class and subclasses implement IVwEnv interface for view collection without actual rendering (testing, string extraction, measurement). Provides abstract RootSite base classes extended by SimpleRootSite. Test project (RootSiteTests) validates root site behavior.
 
 ## Key Components
 - **CollectorEnv** class (CollectorEnv.cs): Base for IVwEnv implementations
@@ -67,7 +67,7 @@ C# class library (.NET Framework 4.6.2) with root site infrastructure. Collector
 No explicit configuration. Behavior determined by view specifications and data.
 
 ## Build Information
-- **Project file**: RootSite.csproj (net462, OutputType=Library)
+- **Project file**: RootSite.csproj (net48, OutputType=Library)
 - **Test project**: RootSiteTests/RootSiteTests.csproj
 - **Output**: RootSite.dll
 - **Build**: Via top-level FieldWorks.sln or: `msbuild RootSite.csproj /p:Configuration=Debug`
@@ -127,8 +127,8 @@ Referenced as library for advanced root site functionality. Extended by SimpleRo
 - **xWorks, LexText**: Applications using root site infrastructure
 
 ## References
-- **Project files**: RootSite.csproj (net462), RootSiteTests/RootSiteTests.csproj
-- **Target frameworks**: .NET Framework 4.6.2
+- **Project files**: RootSite.csproj (net48), RootSiteTests/RootSiteTests.csproj
+- **Target frameworks**: .NET Framework 4.8.x
 - **Key C# files**: CollectorEnv.cs, FwBaseVc.cs, and others
 - **Total lines of code**: 9274
 - **Output**: Output/Debug/RootSite.dll

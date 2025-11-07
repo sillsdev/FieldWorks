@@ -10,7 +10,7 @@ status: reviewed
 Managed C# implementation of ILgCollatingEngine for ICU-based collation. Direct port of C++ LgIcuCollator providing locale-aware string comparison and sort key generation. Enables culturally correct alphabetical ordering for multiple writing systems by wrapping Icu.Net Collator with FieldWorks-specific ILgCollatingEngine interface. Used throughout FLEx for sorting lexicon entries, wordforms, and linguistic data according to writing system collation rules.
 
 ## Architecture
-C# library (net462) with 2 source files (~180 lines total). Single class ManagedLgIcuCollator implementing IL gCollatingEngine COM interface, using Icu.Net library (NuGet) for ICU collation access. Marked [Serializable] and [ComVisible] for COM interop.
+C# library (net48) with 2 source files (~180 lines total). Single class ManagedLgIcuCollator implementing IL gCollatingEngine COM interface, using Icu.Net library (NuGet) for ICU collation access. Marked [Serializable] and [ComVisible] for COM interop.
 
 ## Key Components
 
@@ -37,7 +37,7 @@ C# library (net462) with 2 source files (~180 lines total). Single class Managed
 
 ## Technology Stack
 - **Language**: C#
-- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Target framework**: .NET Framework 4.8.x (net48)
 - **Key libraries**:
   - Icu.Net (NuGet package wrapping ICU C++ libraries for collation)
   - SIL.LCModel.Core (ILgWritingSystemFactory, LgCollatingOptions)
@@ -93,7 +93,7 @@ C# library (net462) with 2 source files (~180 lines total). Single class Managed
 - **Dispose pattern**: Implements IDisposable; Close() releases ICU Collator resources
 
 ## Build Information
-- Project type: C# class library (net462)
+- Project type: C# class library (net48)
 - Build: `msbuild ManagedLgIcuCollator.csproj` or `dotnet build` (from FieldWorks.sln)
 - Output: ManagedLgIcuCollator.dll
 - Dependencies: Icu.Net NuGet package, LCModel.Core, ViewsInterfaces
@@ -215,7 +215,7 @@ C# library (net462) with 2 source files (~180 lines total). Single class Managed
 - **NuGet dependencies**: Icu.Net (ICU collation wrapper)
 - **COM GUID**: e771361c-ff54-4120-9525-98a0b7a9accf
 - **Namespace**: SIL.FieldWorks.Language
-- **Target framework**: net462
+- **Target framework**: net48
 
 ## Auto-Generated Project and File References
 - Project files:

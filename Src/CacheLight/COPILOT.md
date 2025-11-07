@@ -10,7 +10,7 @@ status: draft
 Provides lightweight, in-memory caching implementation for FieldWorks data access without requiring a full database connection. Includes MetaDataCache for model metadata (classes, fields, property types from XML model definitions) and RealDataCache for runtime object caching with support for ISilDataAccess and IVwCacheDa interfaces. Designed for testing scenarios, data import/export operations, and lightweight data access where full LCM is unnecessary.
 
 ## Architecture
-C# class library (.NET Framework 4.6.2) with two primary cache implementations. MetaDataCache loads model definitions from XML files and provides IFwMetaDataCache interface. RealDataCache provides ISilDataAccess and IVwCacheDa interfaces for storing and retrieving object properties in memory using dictionaries keyed by HVO (object ID) and field ID combinations. Includes test project (CacheLightTests) with comprehensive unit tests.
+C# class library (.NET Framework 4.8.x) with two primary cache implementations. MetaDataCache loads model definitions from XML files and provides IFwMetaDataCache interface. RealDataCache provides ISilDataAccess and IVwCacheDa interfaces for storing and retrieving object properties in memory using dictionaries keyed by HVO (object ID) and field ID combinations. Includes test project (CacheLightTests) with comprehensive unit tests.
 
 ## Key Components
 - **MetaDataCache** class (MetaDataCache.cs, 990 lines): XML-based metadata cache
@@ -47,7 +47,7 @@ C# class library (.NET Framework 4.6.2) with two primary cache implementations. 
   - Adds properties: ParaContentsFlid, ParaPropertiesFlid, TextParagraphsFlid (for structured text support)
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (target framework: net462)
+- C# .NET Framework 4.8.x (target framework: net48)
 - System.Xml for XML model parsing
 - System.Collections.Generic for dictionary-based caching
 - System.Runtime.InteropServices for Marshal operations (COM interop support)
@@ -78,7 +78,7 @@ Single-threaded design; not thread-safe. All caches use Dictionary<TKey, TValue>
 - No external configuration files; behavior controlled by code and constructor parameters
 
 ## Build Information
-- C# class library project: CacheLight.csproj (.NET Framework 4.6.2)
+- C# class library project: CacheLight.csproj (.NET Framework 4.8.x)
 - Test project: CacheLightTests/CacheLightTests.csproj
 - Output: CacheLight.dll, CacheLightTests.dll (to Output/Debug or Output/Release)
 - Build via top-level FieldWorks.sln or: `msbuild CacheLight.csproj /p:Configuration=Debug`
@@ -162,8 +162,8 @@ Single-threaded design; not thread-safe. All caches use Dictionary<TKey, TValue>
 - **Utilities/XMLUtils/**: Provides XML utilities used by CacheLight
 
 ## References
-- **Project files**: CacheLight.csproj (net462), CacheLightTests/CacheLightTests.csproj
-- **Target frameworks**: .NET Framework 4.6.2 (net462)
+- **Project files**: CacheLight.csproj (net48), CacheLightTests/CacheLightTests.csproj
+- **Target frameworks**: .NET Framework 4.8.x (net48)
 - **Key dependencies**: SIL.LCModel.Core, SIL.LCModel.Utils, ViewsInterfaces, XMLUtils
 - **Key C# files**: MetaDataCache.cs (990 lines), RealCacheLoader.cs (480 lines), RealDataCache.cs (2135 lines), TsMultiString.cs (65 lines), TsStringfactory.cs (176 lines), AssemblyInfo.cs (6 lines)
 - **Test files**: CacheLightTests/MetaDataCacheTests.cs, CacheLightTests/RealDataCacheTests.cs

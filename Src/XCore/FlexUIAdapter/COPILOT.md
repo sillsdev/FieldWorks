@@ -29,7 +29,7 @@ UI adapter implementation library (~3K lines, 9 C# files) connecting XCore frame
 
 ## Technology Stack
 - **Language**: C#
-- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Target framework**: .NET Framework 4.8.x (net48)
 - **UI framework**: System.Windows.Forms (MenuStrip, ToolStrip, Button controls)
 - **Key libraries**: XCore/xCoreInterfaces (Mediator, IxCoreColleague), Common/UIAdapterInterfaces
 - **Pattern**: Adapter pattern (WinForms ↔ XCore command system)
@@ -116,7 +116,7 @@ Library component. Reference in consuming projects. See Dependencies section for
 ## References
 
 - **Project files**: FlexUIAdapter.csproj
-- **Target frameworks**: net462
+- **Target frameworks**: net48
 - **Key C# files**: AdapterBase.cs, AdapterStrings.Designer.cs, AssemblyInfo.cs, BarAdapterBase.cs, ContextHelper.cs, MenuAdapter.cs, NavBarAdapter.cs, PaneBar.cs, PanelMenu.cs, ToolbarAdapter.cs
 - **Source file count**: 12 files
 - **Data file count**: 2 files

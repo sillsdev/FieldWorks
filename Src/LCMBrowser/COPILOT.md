@@ -10,7 +10,7 @@ status: draft
 Standalone developer/QA tool for browsing and inspecting FieldWorks LCModel database objects. Provides raw data browser interface for exploring LCM cache, object properties, relationships, and custom fields. Displays object trees (LCMClassList), property inspectors (LCMInspectorList), and data model viewer (ModelWnd). Supports GUID search, property selection, object editing (with AllowEdit flag), and FDO file save. Built on SIL.ObjectBrowser base framework with WeifenLuo DockPanel UI. Critical for debugging, QA validation, and understanding LCM data structures. Windows Forms desktop application (5.7K lines).
 
 ## Architecture
-C# Windows Forms application (WinExe, net462) extending SIL.ObjectBrowser base class. LCMBrowserForm main window with docking panels (WeifenLuo.WinFormsUI.Docking). Three primary panels: ModelWnd (model browser), LangProjectWnd (language project inspector), RepositoryWnd (repository inspector). LCMClassList custom control for object tree navigation. LCMInspectorList custom control for property display. ClassPropertySelector dialog for choosing displayed properties. BrowserProjectId for project selection. Integrates with LCModel cache for data access.
+C# Windows Forms application (WinExe, net48) extending SIL.ObjectBrowser base class. LCMBrowserForm main window with docking panels (WeifenLuo.WinFormsUI.Docking). Three primary panels: ModelWnd (model browser), LangProjectWnd (language project inspector), RepositoryWnd (repository inspector). LCMClassList custom control for object tree navigation. LCMInspectorList custom control for property display. ClassPropertySelector dialog for choosing displayed properties. BrowserProjectId for project selection. Integrates with LCModel cache for data access.
 
 ## Key Components
 - **LCMBrowser** (LCMBrowser.cs, 31 lines): Application entry point
@@ -90,7 +90,7 @@ C# Windows Forms application (WinExe, net462) extending SIL.ObjectBrowser base c
 - **DisplayVirtual** (m_mnuDisplayVirtual): Show virtual properties
 
 ## Build Information
-- **Project file**: LCMBrowser.csproj (net462, OutputType=WinExe)
+- **Project file**: LCMBrowser.csproj (net48, OutputType=WinExe)
 - **Output**: LCMBrowser.exe
 - **Build**: Via top-level FieldWorks.sln or: `msbuild LCMBrowser.csproj`
 - **Run**: `LCMBrowser.exe` (prompts for project selection)
@@ -155,10 +155,10 @@ No dedicated test project (developer/QA tool).
 - **Common/FwUtils**: Utilities
 
 ## References
-- **Project file**: LCMBrowser.csproj (net462, WinExe)
+- **Project file**: LCMBrowser.csproj (net48, WinExe)
 - **Key C# files**: LCMBrowserForm.cs (2817 lines), LCMInspectorList.cs (1373 lines), LCMClassList.cs (537 lines), ModelWnd.cs (449 lines), ClassPropertySelector.cs (200 lines), BrowserProjectId.cs (151 lines)
 - **Total lines of code**: 5658
 - **Output**: LCMBrowser.exe (Output/Debug or Output/Release)
-- **Framework**: .NET Framework 4.6.2
+- **Framework**: .NET Framework 4.8.x
 - **UI framework**: Windows Forms + WeifenLuo Docking
 - **Namespace**: LCMBrowser

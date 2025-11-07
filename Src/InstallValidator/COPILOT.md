@@ -10,7 +10,7 @@ status: draft
 Installation prerequisite validation tool verifying FieldWorks installation correctness. Reads installerTestMetadata.csv containing expected file list with MD5 checksums, versions, and dates. Compares expected metadata against actual installed files, generating FlexInstallationReport CSV with results (correct, missing, or incorrect). Identifies installation problems: missing files, wrong versions, corrupted files. Helps verify successful installation and diagnose installation issues. Command-line tool (InstallValidator.exe) with drag-and-drop support (drop CSV on EXE).
 
 ## Architecture
-C# console application (.NET Framework 4.6.2) with single source file (InstallValidator.cs, 120 lines). Main() entry point processes CSV input, computes MD5 checksums for comparison, generates report CSV. Test project InstallValidatorTests validates functionality. Minimal dependencies for reliability.
+C# console application (.NET Framework 4.8.x) with single source file (InstallValidator.cs, 120 lines). Main() entry point processes CSV input, computes MD5 checksums for comparison, generates report CSV. Test project InstallValidatorTests validates functionality. Minimal dependencies for reliability.
 
 ## Key Components
 - **InstallValidator** class (InstallValidator.cs, 120 lines): Installation verification
@@ -33,7 +33,7 @@ C# console application (.NET Framework 4.6.2) with single source file (InstallVa
 ## Dependencies
 
 ### Upstream (consumes)
-- .NET Framework 4.6.2 (System.*, minimal dependencies)
+- .NET Framework 4.8.x (System.*, minimal dependencies)
 - System.Security.Cryptography: MD5 hashing
 - System.Diagnostics: FileVersionInfo
 
@@ -60,7 +60,7 @@ C# console application (.NET Framework 4.6.2) with single source file (InstallVa
 No configuration. Behavior controlled by input CSV.
 
 ## Build Information
-- **Project file**: InstallValidator.csproj (net462, OutputType=Exe)
+- **Project file**: InstallValidator.csproj (net48, OutputType=Exe)
 - **Test project**: InstallValidatorTests/
 - **Output**: InstallValidator.exe
 - **Build**: Via top-level FieldWorks.sln or: `msbuild InstallValidator.csproj`
@@ -115,8 +115,8 @@ No configuration. Behavior controlled by input CSV.
 - Installation infrastructure
 
 ## References
-- **Project files**: InstallValidator.csproj (net462, OutputType=Exe), InstallValidatorTests/
-- **Target frameworks**: .NET Framework 4.6.2
+- **Project files**: InstallValidator.csproj (net48, OutputType=Exe), InstallValidatorTests/
+- **Target frameworks**: .NET Framework 4.8.x
 - **Key C# files**: InstallValidator.cs (120 lines)
 - **Total lines of code**: 120
 - **Output**: InstallValidator.exe (Output/Debug or Output/Release)

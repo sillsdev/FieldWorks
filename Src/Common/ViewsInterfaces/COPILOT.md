@@ -10,7 +10,7 @@ status: draft
 Managed interface definitions for the native Views rendering engine, providing the critical bridge between managed C# code and native C++ Views text rendering system. Declares .NET interfaces corresponding to native COM interfaces (IVwGraphics, IVwSelection, IVwRootBox, IVwEnv, ITsString, ITsTextProps, IVwCacheDa, ISilDataAccess, etc.) enabling managed code to interact with sophisticated text rendering engine. Includes COM wrapper utilities (ComWrapper, ComUtils), managed property store (VwPropertyStoreManaged), display property override factory (DispPropOverrideFactory), COM interface definitions (IPicture, IServiceProvider), and data structures (Rect, ClipFormat enum). Essential infrastructure for all text display and editing in FieldWorks.
 
 ## Architecture
-C# interface library (.NET Framework 4.6.2) with COM interop interface definitions. Pure interface declarations matching native Views COM interfaces, plus helper classes for COM marshaling and object lifetime management. No implementations - actual implementations reside in native Views DLL accessed via COM interop.
+C# interface library (.NET Framework 4.8.x) with COM interop interface definitions. Pure interface declarations matching native Views COM interfaces, plus helper classes for COM marshaling and object lifetime management. No implementations - actual implementations reside in native Views DLL accessed via COM interop.
 
 ## Key Components
 - **ComWrapper** (ComWrapper.cs): COM object lifetime management
@@ -77,7 +77,7 @@ C# interface library (.NET Framework 4.6.2) with COM interop interface definitio
 No configuration. Interface definitions only.
 
 ## Build Information
-- **Project file**: ViewsInterfaces.csproj (net462, OutputType=Library)
+- **Project file**: ViewsInterfaces.csproj (net48, OutputType=Library)
 - **Test project**: ViewsInterfacesTests/ViewsInterfacesTests.csproj
 - **Output**: ViewsInterfaces.dll
 - **Build**: Via top-level FieldWorks.sln or: `msbuild ViewsInterfaces.csproj /p:Configuration=Debug`
@@ -154,8 +154,8 @@ Referenced by all FieldWorks components using Views rendering. Interface library
 - All FieldWorks text display components depend on ViewsInterfaces
 
 ## References
-- **Project files**: ViewsInterfaces.csproj (net462), ViewsInterfacesTests/ViewsInterfacesTests.csproj
-- **Target frameworks**: .NET Framework 4.6.2
+- **Project files**: ViewsInterfaces.csproj (net48), ViewsInterfacesTests/ViewsInterfacesTests.csproj
+- **Target frameworks**: .NET Framework 4.8.x
 - **Key C# files**: ComWrapper.cs, ComUtils.cs, VwPropertyStoreManaged.cs, DispPropOverrideFactory.cs, IPicture.cs, Rect.cs, AssemblyInfo.cs
 - **Total lines of code**: 863
 - **Output**: Output/Debug/ViewsInterfaces.dll

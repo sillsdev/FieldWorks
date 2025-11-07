@@ -10,7 +10,7 @@ status: reviewed
 Managed C# wrapper for IVwWindow interface enabling cross-platform window handle access. Wraps Windows Forms Control (HWND) to provide IVwWindow implementation for native Views engine. Bridges managed UI code (WinForms Controls) with native Views rendering by converting between IntPtr HWNDs and managed Control references, exposing client rectangle geometry. Minimal ~50-line adapter class essential for integrating native Views system into .NET WinForms applications (xWorks, LexText, RootSite-based displays).
 
 ## Architecture
-C# library (net462) with 3 source files (~58 lines total). Single class ManagedVwWindow implementing IVwWindow COM interface, wrapping System.Windows.Forms.Control. Marked with COM GUID 3fb0fcd2-ac55-42a8-b580-73b89a2b6215 for COM registration.
+C# library (net48) with 3 source files (~58 lines total). Single class ManagedVwWindow implementing IVwWindow COM interface, wrapping System.Windows.Forms.Control. Marked with COM GUID 3fb0fcd2-ac55-42a8-b580-73b89a2b6215 for COM registration.
 
 ## Key Components
 
@@ -27,7 +27,7 @@ C# library (net462) with 3 source files (~58 lines total). Single class ManagedV
 
 ## Technology Stack
 - **Language**: C#
-- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Target framework**: .NET Framework 4.8.x (net48)
 - **UI framework**: System.Windows.Forms (Control class)
 - **Key libraries**:
   - Common/ViewsInterfaces (IVwWindow interface, Rect struct)
@@ -75,7 +75,7 @@ C# library (net462) with 3 source files (~58 lines total). Single class ManagedV
 - **No global state**: Each ManagedVwWindow instance is independent
 
 ## Build Information
-- Project type: C# class library (net462)
+- Project type: C# class library (net48)
 - Build: `msbuild ManagedVwWindow.csproj` or `dotnet build` (from FieldWorks.sln)
 - Output: ManagedVwWindow.dll
 - Dependencies: ViewsInterfaces, System.Windows.Forms
@@ -173,7 +173,7 @@ C# library (net462) with 3 source files (~58 lines total). Single class ManagedV
 - **Key interface**: IVwWindow (from ViewsInterfaces)
 - **COM GUID**: 3fb0fcd2-ac55-42a8-b580-73b89a2b6215
 - **Namespace**: SIL.FieldWorks.Views
-- **Target framework**: net462
+- **Target framework**: net48
 - Key C# files:
   - Src/ManagedVwWindow/AssemblyInfo.cs
   - Src/ManagedVwWindow/ManagedVwWindow.cs

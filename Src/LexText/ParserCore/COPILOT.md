@@ -10,7 +10,7 @@ status: reviewed
 Morphological parser infrastructure supporting both HermitCrab and XAmple parsing engines. Implements background parsing scheduler (ParserScheduler/ParserWorker) with priority queue, manages parse result filing (ParseFiler), provides parser model change detection (ParserModelChangeListener), and wraps both HC (HermitCrab via SIL.Machine) and XAmple (legacy C++ parser via COM/managed wrapper) engines. Enables computer-assisted morphological analysis in FLEx by decomposing words into morphemes based on linguistic rules, phonology, morphotactics, and allomorphy defined in the morphology editor.
 
 ## Architecture
-C# library (net462) with 34 source files (~9K lines total). Contains 3 subprojects: ParserCore (main library), XAmpleManagedWrapper (C# wrapper for XAmple DLL), XAmpleCOMWrapper (C++/CLI COM wrapper for XAmple). Supports pluggable parser architecture via IParser interface (HCParser for HermitCrab, XAmpleParser for legacy XAmple).
+C# library (net48) with 34 source files (~9K lines total). Contains 3 subprojects: ParserCore (main library), XAmpleManagedWrapper (C# wrapper for XAmple DLL), XAmpleCOMWrapper (C++/CLI COM wrapper for XAmple). Supports pluggable parser architecture via IParser interface (HCParser for HermitCrab, XAmpleParser for legacy XAmple).
 
 ## Key Components
 
@@ -69,7 +69,7 @@ C# library (net462) with 34 source files (~9K lines total). Contains 3 subprojec
 
 ## Technology Stack
 - **Languages**: C# (main library), C++/CLI (XAmpleCOMWrapper COM interop)
-- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Target framework**: .NET Framework 4.8.x (net48)
 - **Key libraries**:
   - SIL.Machine.Morphology.HermitCrab (HermitCrab parser engine)
   - SIL.LCModel (morphology data model)
@@ -128,7 +128,7 @@ C# library (net462) with 34 source files (~9K lines total). Contains 3 subprojec
 - **PropertyTable**: XCore configuration for parser behavior (passed to ParserScheduler)
 
 ## Build Information
-- Project type: C# class library (net462)
+- Project type: C# class library (net48)
 - Build: `msbuild ParserCore.csproj` or `dotnet build` (from FieldWorks.sln)
 - Output: ParserCore.dll, XAmpleManagedWrapper.dll, XAmpleCOMWrapper.dll (native C++/CLI)
 - Dependencies: SIL.Machine.Morphology.HermitCrab NuGet package
@@ -257,7 +257,7 @@ C# library (net462) with 34 source files (~9K lines total). Contains 3 subprojec
 - **Key classes**: ParserScheduler, ParserWorker, ParseFiler, HCParser, XAmpleParser, ParserModelChangeListener, FwXmlTraceManager, M3ToXAmpleTransformer
 - **Key interfaces**: IParser, IHCLoadErrorLogger, IXAmpleWrapper
 - **Enums**: ParserPriority (5 levels), TaskPhase (6 states), AmpleOptions
-- **Target framework**: net462
+- **Target framework**: net48
 
 ## Auto-Generated Project and File References
 - Project files:

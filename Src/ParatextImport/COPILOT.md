@@ -10,7 +10,7 @@ status: reviewed
 Paratext Scripture import pipeline for FieldWorks (~19K lines). Handles USFM parsing, difference detection, book merging, and undo management for importing Paratext project data into FLEx Scripture. Coordinates UI dialogs, import settings, and LCModel updates while preserving existing content through smart merging.
 
 ## Architecture
-C# library (net462) with 22 source files (~19K lines). Complex import pipeline coordinating USFM parsing, difference detection, book merging, and UI dialogs. Three-layer architecture:
+C# library (net48) with 22 source files (~19K lines). Complex import pipeline coordinating USFM parsing, difference detection, book merging, and UI dialogs. Three-layer architecture:
 1. **Management layer**: ParatextImportManager, ParatextImportUi, UndoImportManager
 2. **Analysis layer**: BookMerger, Cluster, Difference (difference detection and merge logic)
 3. **Adapter layer**: ISCScriptureText wrappers for Paratext SDK abstraction
@@ -60,7 +60,7 @@ Import flow: User selects Paratext project â†’ ParatextSfmImporter parses USFM â
 
 ## Technology Stack
 - **Language**: C#
-- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Target framework**: .NET Framework 4.8.x (net48)
 - **Key libraries**:
   - LCModel (Scripture data model, LcmCache)
   - LCModel.Core (IScrBook, IScrSection, ITsString)
@@ -121,7 +121,7 @@ Import flow: User selects Paratext project â†’ ParatextSfmImporter parses USFM â
 - **No global config files**: Settings persisted in LCModel IScrImportSet objects
 
 ## Build Information
-- **Project type**: C# class library (net462)
+- **Project type**: C# class library (net48)
 - **Build**: `msbuild ParatextImport.csproj` or `dotnet build` (from FieldWorks.sln)
 - **Output**: ParatextImport.dll
 - **Dependencies**: LCModel, LCModel.Core, Common/Controls, Common/FwUtils, Common/RootSites, SIL.Reporting
@@ -249,7 +249,7 @@ Import flow: User selects Paratext project â†’ ParatextSfmImporter parses USFM â
 - **xWorks/** - Import UI commands and workflow integration
 
 ## References
-- **Project**: ParatextImport.csproj (.NET Framework 4.6.2 class library)
+- **Project**: ParatextImport.csproj (.NET Framework 4.8.x class library)
 - **Test project**: ParatextImportTests/ParatextImportTests.csproj
 - **20 CS files** (main), **15 test files**, **~19K lines total**
 - **Key files**: ParatextImportManager.cs, BookMerger.cs, Cluster.cs, Difference.cs, ParatextSfmImporter.cs

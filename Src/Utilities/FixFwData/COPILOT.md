@@ -27,7 +27,7 @@ Simple command-line WinExe wrapper (~120 lines in Program.cs) around SIL.LCModel
 
 ## Technology Stack
 - **Language**: C#
-- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Target framework**: .NET Framework 4.8.x (net48)
 - **Application type**: WinExe (console application with WinForms error handling)
 - **Key libraries**:
   - SIL.LCModel.FixData (FwDataFixer - core repair engine)
@@ -77,7 +77,7 @@ Simple command-line WinExe wrapper (~120 lines in Program.cs) around SIL.LCModel
 
 ## Build Information
 - **Project**: FixFwData.csproj
-- **Type**: WinExe (.NET Framework 4.6.2)
+- **Type**: WinExe (.NET Framework 4.8.x)
 - **Output**: FixFwData.exe
 - **Platform**: AnyCPU
 - **Source files**: Program.cs, Properties/AssemblyInfo.cs (2 files)
@@ -94,7 +94,7 @@ Simple command-line WinExe wrapper (~120 lines in Program.cs) around SIL.LCModel
 ### Classes
 - **NullProgress** (nested in Program)
   - Purpose: Console-based IProgress implementation
-  - Methods: 
+  - Methods:
     - Step(int amount): No-op (no visual progress)
     - Message(string msg): Writes to Console.Out
     - IsCanceling: Always returns false

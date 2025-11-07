@@ -10,7 +10,7 @@ status: draft
 Build-time command-line utility for generating HermitCrab morphological parser configuration files from FieldWorks projects. Reads phonology and morphology data from FLEx project (.fwdata file), uses HCLoader to load linguistic rules, and exports to HermitCrab XML configuration format via XmlLanguageWriter. Enables computational morphological parsing using data defined in FieldWorks. Command syntax: `generatehcconfig <input-project> <output-config>`. Standalone console application (GenerateHCConfig.exe).
 
 ## Architecture
-C# console application (.NET Framework 4.6.2) with 350 lines of code. Program.cs main entry point coordinates FLEx project loading, HermitCrab data extraction, and XML export. Helper classes: ConsoleLogger (console output for LCM operations), NullFdoDirectories (minimal directory implementation), NullThreadedProgress (no-op progress), ProjectIdentifier (project file identification). Uses SIL.Machine.Morphology.HermitCrab and SIL.FieldWorks.WordWorks.Parser for linguistic processing.
+C# console application (.NET Framework 4.8.x) with 350 lines of code. Program.cs main entry point coordinates FLEx project loading, HermitCrab data extraction, and XML export. Helper classes: ConsoleLogger (console output for LCM operations), NullFdoDirectories (minimal directory implementation), NullThreadedProgress (no-op progress), ProjectIdentifier (project file identification). Uses SIL.Machine.Morphology.HermitCrab and SIL.FieldWorks.WordWorks.Parser for linguistic processing.
 
 ## Key Components
 - **Program** class (Program.cs, 83 lines): Main application logic
@@ -70,7 +70,7 @@ C# console application (.NET Framework 4.6.2) with 350 lines of code. Program.cs
 - No user-configurable settings; all via command-line arguments
 
 ## Build Information
-- **Project file**: GenerateHCConfig.csproj (net462, OutputType=Exe)
+- **Project file**: GenerateHCConfig.csproj (net48, OutputType=Exe)
 - **Output**: GenerateHCConfig.exe (console tool)
 - **Build**: Via top-level FieldWorks.sln or: `msbuild GenerateHCConfig.csproj`
 - **Usage**: `GenerateHCConfig.exe <project.fwdata> <output.xml>`
@@ -126,9 +126,9 @@ No dedicated test project. Tested via command-line execution with sample FLEx pr
 - Build process may invoke this utility
 
 ## References
-- **Project files**: GenerateHCConfig.csproj (net462, OutputType=Exe)
+- **Project files**: GenerateHCConfig.csproj (net48, OutputType=Exe)
 - **Configuration**: App.config, BuildInclude.targets
-- **Target frameworks**: .NET Framework 4.6.2
+- **Target frameworks**: .NET Framework 4.8.x
 - **Key C# files**: Program.cs (83 lines), ConsoleLogger.cs, NullFdoDirectories.cs, NullThreadedProgress.cs, ProjectIdentifier.cs
 - **Total lines of code**: 350
 - **Output**: GenerateHCConfig.exe (Output/Debug or Output/Release)

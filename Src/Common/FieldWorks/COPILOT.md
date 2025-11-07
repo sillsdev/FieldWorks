@@ -10,7 +10,7 @@ status: draft
 Core FieldWorks-specific application infrastructure and utilities providing fundamental application services. Includes project management (FieldWorksManager interface, ProjectId for project identification), settings management (FwRestoreProjectSettings for backup restoration), application startup coordination (WelcomeToFieldWorksDlg, FieldWorks main class), busy state handling (ApplicationBusyDialog), Windows installer querying (WindowsInstallerQuery), remote request handling (RemoteRequest), lexical service provider integration (ILexicalProvider, LexicalServiceProvider), and Phonology Assistant integration objects (PaObjects/ namespace). Central to coordinating application lifecycle, managing shared resources, and enabling interoperability across FieldWorks applications.
 
 ## Architecture
-C# Windows executable (WinExe) targeting .NET Framework 4.6.2. Main entry point for FieldWorks application launcher. Contains FieldWorks singleton class managing application lifecycle, project opening/closing, and window management. Includes three specialized namespaces: LexicalProvider/ for lexicon service integration, PaObjects/ for Phonology Assistant data transfer objects, and main SIL.FieldWorks namespace for core infrastructure. Test project (FieldWorksTests) provides unit tests for project ID, PA objects, and welcome dialog.
+C# Windows executable (WinExe) targeting .NET Framework 4.8.x. Main entry point for FieldWorks application launcher. Contains FieldWorks singleton class managing application lifecycle, project opening/closing, and window management. Includes three specialized namespaces: LexicalProvider/ for lexicon service integration, PaObjects/ for Phonology Assistant data transfer objects, and main SIL.FieldWorks namespace for core infrastructure. Test project (FieldWorksTests) provides unit tests for project ID, PA objects, and welcome dialog.
 
 ## Key Components
 - **FieldWorks** class (FieldWorks.cs): Main application singleton
@@ -79,7 +79,7 @@ C# Windows executable (WinExe) targeting .NET Framework 4.6.2. Main entry point 
 - **PaComplexFormInfo** (PaComplexFormInfo.cs): Complex form relationships
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (target framework: net462)
+- C# .NET Framework 4.8.x (target framework: net48)
 - OutputType: WinExe (Windows executable with UI)
 - Windows Forms for UI (System.Windows.Forms)
 - System.Runtime.Serialization for ProjectId serialization
@@ -121,7 +121,7 @@ C# Windows executable (WinExe) targeting .NET Framework 4.6.2. Main entry point 
 - No explicit feature flags detected in source
 
 ## Build Information
-- **Project file**: FieldWorks.csproj (.NET Framework 4.6.2, WinExe)
+- **Project file**: FieldWorks.csproj (.NET Framework 4.8.x, WinExe)
 - **Test project**: FieldWorksTests/FieldWorksTests.csproj
 - **Output**: FieldWorks.exe (main executable), FieldWorks.xml (documentation)
 - **Icon**: BookOnCube.ico (multiple variants: BookOnCube, CubeOnBook, versions, sizes)
@@ -208,8 +208,8 @@ C# Windows executable (WinExe) targeting .NET Framework 4.6.2. Main entry point 
 - **LexText/**: Uses FieldWorks for project management and application lifecycle
 
 ## References
-- **Project files**: FieldWorks.csproj (net462, WinExe), FieldWorksTests/FieldWorksTests.csproj, BuildInclude.targets
-- **Target frameworks**: .NET Framework 4.6.2 (net462)
+- **Project files**: FieldWorks.csproj (net48, WinExe), FieldWorksTests/FieldWorksTests.csproj, BuildInclude.targets
+- **Target frameworks**: .NET Framework 4.8.x (net48)
 - **Key dependencies**: SIL.LCModel, SIL.LCModel.Utils, DesktopAnalytics, System.Windows.Forms
 - **Key C# files**: FieldWorks.cs, FieldWorksManager.cs, ProjectId.cs, ApplicationBusyDialog.cs, WelcomeToFieldWorksDlg.cs, MoveProjectsDlg.cs, FwRestoreProjectSettings.cs, WindowsInstallerQuery.cs, RemoteRequest.cs
 - **LexicalProvider files**: ILexicalProvider.cs, LexicalProviderImpl.cs, LexicalServiceProvider.cs, LexicalProviderManager.cs

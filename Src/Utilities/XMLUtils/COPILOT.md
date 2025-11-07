@@ -34,7 +34,7 @@ Core XML utility library with 1) XmlUtils (~600 lines) static helpers for XML ma
 
 ## Technology Stack
 - **Language**: C#
-- **Target framework**: .NET Framework 4.6.2 (net462)
+- **Target framework**: .NET Framework 4.8.x (net48)
 - **Library type**: Core utility DLL
 - **Key libraries**: System.Xml (XmlDocument, XmlNode, XPath), System.Reflection (dynamic loading)
 - **Used by**: XCore Inventory, configuration systems, plugin loaders throughout FieldWorks
@@ -116,7 +116,7 @@ Library component. Reference in consuming projects. See Dependencies section for
 ## References
 
 - **Project files**: XMLUtils.csproj, XMLUtilsTests.csproj
-- **Target frameworks**: net462
+- **Target frameworks**: net48
 - **Key C# files**: AssemblyInfo.cs, DynamicLoader.cs, DynamicLoaderTests.cs, ResolveDirectory.cs, SILExceptions.cs, XmlUtils.cs, XmlUtilsStrings.Designer.cs, XmlUtilsTest.cs
 - **Source file count**: 8 files
 - **Data file count**: 1 files

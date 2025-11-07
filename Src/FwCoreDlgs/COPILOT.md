@@ -10,7 +10,7 @@ status: draft
 Common dialogs and UI components shared across FieldWorks applications. Comprehensive collection of standardized dialog boxes including backup/restore (BackupProjectSettings, RestoreProjectPresenter), project management (ChooseLangProjectDialog, AddNewUserDlg), writing system configuration (WritingSystemPropertiesDialog, AdvancedScriptRegionVariantView), converter management (AddCnvtrDlg, EncConverters), find/replace (BasicFindDialog, FindReplaceDialog), character context display (CharContextCtrl), archiving (ArchiveWithRamp), and numerous other common UI patterns. Ensures consistent user experience across xWorks, LexText, and other FieldWorks applications. Over 35K lines of dialog and UI code.
 
 ## Architecture
-C# class library (.NET Framework 4.6.2) with Windows Forms dialogs and controls. Extensive collection of ~90 C# files providing reusable UI components. Many dialogs follow MVP (Model-View-Presenter) pattern (e.g., BackupProjectPresenter, RestoreProjectPresenter). Localized strings via resource files (*Strings.Designer.cs, *Resources.Designer.cs). Test project FwCoreDlgsTests validates dialog behavior.
+C# class library (.NET Framework 4.8.x) with Windows Forms dialogs and controls. Extensive collection of ~90 C# files providing reusable UI components. Many dialogs follow MVP (Model-View-Presenter) pattern (e.g., BackupProjectPresenter, RestoreProjectPresenter). Localized strings via resource files (*Strings.Designer.cs, *Resources.Designer.cs). Test project FwCoreDlgsTests validates dialog behavior.
 
 ## Key Components
 - **BackupProjectSettings** (BackupProjectSettings.cs): Backup configuration
@@ -70,7 +70,7 @@ C# class library (.NET Framework 4.6.2) with Windows Forms dialogs and controls.
 - Many dialogs accept configuration objects
 
 ## Build Information
-- **Project file**: FwCoreDlgs.csproj (net462, OutputType=Library)
+- **Project file**: FwCoreDlgs.csproj (net48, OutputType=Library)
 - **Test project**: FwCoreDlgsTests/
 - **Output**: FwCoreDlgs.dll
 - **Build**: Via top-level FieldWorks.sln
@@ -135,8 +135,8 @@ Referenced as library by FieldWorks applications. Dialogs instantiated and shown
 - **xWorks, LexText**: Major consumers
 
 ## References
-- **Project files**: FwCoreDlgs.csproj (net462), FwCoreDlgsTests/
-- **Target frameworks**: .NET Framework 4.6.2
+- **Project files**: FwCoreDlgs.csproj (net48), FwCoreDlgsTests/
+- **Target frameworks**: .NET Framework 4.8.x
 - **Key C# files**: ~90 dialog and control files including BackupProjectSettings.cs, ChooseLangProjectDialog.cs, WritingSystemPropertiesDialog.cs, and many more
 - **Total lines of code**: 35502
 - **Output**: FwCoreDlgs.dll

@@ -10,7 +10,7 @@ status: draft
 Scripture-specific utilities and Paratext integration support for bidirectional data exchange between FieldWorks and Paratext projects. Provides ParatextHelper (IParatextHelper) for Paratext project discovery and management, PT7ScrTextWrapper for Paratext 7 project text access, Paratext7Provider for data provider implementation, ScriptureProvider for scripture text access, and reference comparison utilities (ScrReferencePositionComparer, ScriptureReferenceComparer). Enables importing scripture from Paratext, synchronizing changes, and accessing Paratext stylesheets and parser information.
 
 ## Architecture
-C# class library (.NET Framework 4.6.2) with Paratext integration components. Implements provider pattern for scripture access (ScriptureProvider, Paratext7Provider). Wrapper classes (PT7ScrTextWrapper) adapt Paratext objects to FieldWorks interfaces (IScrText). Comparers for scripture reference ordering and positioning.
+C# class library (.NET Framework 4.8.x) with Paratext integration components. Implements provider pattern for scripture access (ScriptureProvider, Paratext7Provider). Wrapper classes (PT7ScrTextWrapper) adapt Paratext objects to FieldWorks interfaces (IScrText). Comparers for scripture reference ordering and positioning.
 
 ## Key Components
 - **ParatextHelper** class (ParatextHelper.cs): Paratext project access
@@ -82,7 +82,7 @@ C# class library (.NET Framework 4.6.2) with Paratext integration components. Im
 - Import settings controlled via IScrImportSet
 
 ## Build Information
-- **Project file**: ScriptureUtils.csproj (net462, OutputType=Library)
+- **Project file**: ScriptureUtils.csproj (net48, OutputType=Library)
 - **Test project**: ScriptureUtilsTests/ScriptureUtilsTests.csproj
 - **Output**: ScriptureUtils.dll
 - **Build**: Via top-level FieldWorks.sln or: `msbuild ScriptureUtils.csproj /p:Configuration=Debug`
@@ -154,8 +154,8 @@ Referenced as library for Paratext integration and scripture utilities. Used by 
 - Scripture editing components throughout FieldWorks
 
 ## References
-- **Project files**: ScriptureUtils.csproj (net462), ScriptureUtilsTests/ScriptureUtilsTests.csproj
-- **Target frameworks**: .NET Framework 4.6.2
+- **Project files**: ScriptureUtils.csproj (net48), ScriptureUtilsTests/ScriptureUtilsTests.csproj
+- **Target frameworks**: .NET Framework 4.8.x
 - **Key C# files**: ParatextHelper.cs, PT7ScrTextWrapper.cs, Paratext7Provider.cs, ScriptureProvider.cs, ScrReferencePositionComparer.cs, ScriptureReferenceComparer.cs, AssemblyInfo.cs
 - **Total lines of code**: 1670
 - **Output**: Output/Debug/ScriptureUtils.dll

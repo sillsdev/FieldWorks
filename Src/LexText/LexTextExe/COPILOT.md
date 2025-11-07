@@ -10,7 +10,7 @@ status: draft
 Minimal entry point executable for FieldWorks Language Explorer (FLEx). Contains only Main() entry point calling Common/FieldWorks/FieldWorks.StartFwApp() to launch FLEx application. Actual application logic lives in LexTextDll (LexTextApp class) and xWorks (main shell). Icons/resources for FLEx executable branding. Smallest possible entry point (32 lines) delegating to shared FieldWorks infrastructure.
 
 ## Architecture
-C# Windows executable (WinExe, net462) with single entry point class. LexText.Main() calls FieldWorks.StartFwApp() passing command-line arguments. StartFwApp() handles application instantiation, project selection, window creation. LexTextApp (from LexTextDll) provides application-specific logic. Icons (LT.ico, LT.png variants) for executable branding.
+C# Windows executable (WinExe, net48) with single entry point class. LexText.Main() calls FieldWorks.StartFwApp() passing command-line arguments. StartFwApp() handles application instantiation, project selection, window creation. LexTextApp (from LexTextDll) provides application-specific logic. Icons (LT.ico, LT.png variants) for executable branding.
 
 ## Key Components
 - **LexText** (LexText.cs, 32 lines): Application entry point class
@@ -56,7 +56,7 @@ C# Windows executable (WinExe, net462) with single entry point class. LexText.Ma
 Configuration handled by StartFwApp() and LexTextApp. No config in entry point.
 
 ## Build Information
-- **Project file**: LexTextExe.csproj (net462, OutputType=WinExe)
+- **Project file**: LexTextExe.csproj (net48, OutputType=WinExe)
 - **Output**: FieldWorks.exe (FLEx executable)
 - **Build**: Via top-level FieldWorks.sln or: `msbuild LexTextExe.csproj`
 - **Run**: `FieldWorks.exe` (double-click or command line)
@@ -97,7 +97,7 @@ No dedicated test project (minimal entry point, tested via FLEx integration test
 - **Common/Framework**: FwXApp base class
 
 ## References
-- **Project file**: LexTextExe.csproj (net462, OutputType=WinExe)
+- **Project file**: LexTextExe.csproj (net48, OutputType=WinExe)
 - **Key C# files**: LexText.cs (32 lines), AssemblyInfo.cs (12 lines)
 - **Icons**: LT.ico (4.5KB), LT.png (1.8KB), LT64.png (3.3KB), LT128.png (6.8KB)
 - **Total lines of code**: 44

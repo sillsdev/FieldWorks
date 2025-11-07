@@ -10,7 +10,7 @@ status: draft
 Integration plugin connecting FieldWorks FLEx with SIL Pathway publishing solution. Implements IUtility interface allowing FLEx users to export lexicon/dictionary data via Pathway for print/digital publication. Appears as "Pathway" option in FLEx Tools → Configure menu. Handles data export to Pathway-compatible formats, folder management, and Pathway process launching. Provides seamless publishing workflow from FLEx to final output (PDF, ePub, etc.). Small focused plugin (595 lines) bridging FLEx and external Pathway publishing system.
 
 ## Architecture
-C# library (net462, OutputType=Library) implementing IUtility and IFeedbackInfoProvider interfaces. FlexPathwayPlugin main class handles export dialog integration, data preparation, and Pathway invocation. MyFolders static utility class for folder operations (copy, create, naming). Integrates with FwCoreDlgs UtilityDlg framework. Discovered/loaded by FLEx Tools menu via IUtility interface pattern.
+C# library (net48, OutputType=Library) implementing IUtility and IFeedbackInfoProvider interfaces. FlexPathwayPlugin main class handles export dialog integration, data preparation, and Pathway invocation. MyFolders static utility class for folder operations (copy, create, naming). Integrates with FwCoreDlgs UtilityDlg framework. Discovered/loaded by FLEx Tools menu via IUtility interface pattern.
 
 ## Key Components
 - **FlexPathwayPlugin** (FlexPathwayPlugin.cs, 464 lines): Main plugin implementation
@@ -68,7 +68,7 @@ C# library (net462, OutputType=Library) implementing IUtility and IFeedbackInfoP
 - **ExpCss**: Default CSS file name ("main.css")
 
 ## Build Information
-- **Project file**: FlexPathwayPlugin.csproj (net462, OutputType=Library)
+- **Project file**: FlexPathwayPlugin.csproj (net48, OutputType=Library)
 - **Test project**: FlexPathwayPluginTests/
 - **Output**: SIL.FieldWorks.FlexPathwayPlugin.dll
 - **Build**: Via top-level FieldWorks.sln or: `msbuild FlexPathwayPlugin.csproj`
@@ -123,7 +123,7 @@ Loaded by FLEx Tools → Configure menu. FlexPathwayPlugin class instantiated wh
 - **xWorks**: Application framework
 
 ## References
-- **Project file**: FlexPathwayPlugin.csproj (net462, OutputType=Library)
+- **Project file**: FlexPathwayPlugin.csproj (net48, OutputType=Library)
 - **Key C# files**: FlexPathwayPlugin.cs (464 lines), myFolders.cs (119 lines), AssemblyInfo.cs (12 lines)
 - **Test project**: FlexPathwayPluginTests/
 - **Total lines of code**: 595
