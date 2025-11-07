@@ -44,7 +44,7 @@ C# class library (.NET Framework 4.6.2) with UI components for data objects. CmO
 - **FdoUiStrings** (FdoUiStrings.Designer.cs): Localized UI strings
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: Library
 - Windows Forms (System.Windows.Forms)
 - XCore for command routing (IxCoreColleague)

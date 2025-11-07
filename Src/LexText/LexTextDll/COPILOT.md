@@ -46,7 +46,7 @@ C# library (net462, OutputType=Library) with application infrastructure classes.
   - Resource accessor class
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: Library
 - XCore (application framework)
 - LCModel (data model)

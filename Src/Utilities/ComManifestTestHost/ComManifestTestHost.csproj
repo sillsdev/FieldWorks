@@ -8,24 +8,20 @@
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
-
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
-
   <Import Project="BuildInclude.targets" />
 </Project>

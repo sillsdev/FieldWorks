@@ -13,23 +13,23 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
@@ -56,6 +56,9 @@
     <ProjectReference Include="../FlexPathwayPlugin.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="../../../AssemblyInfoForTests.cs" Link="Properties/AssemblyInfoForTests.cs" />
+    <Compile
+      Include="../../../AssemblyInfoForTests.cs"
+      Link="Properties/AssemblyInfoForTests.cs"
+    />
   </ItemGroup>
 </Project>

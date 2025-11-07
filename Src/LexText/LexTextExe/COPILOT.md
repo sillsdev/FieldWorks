@@ -26,7 +26,7 @@ C# Windows executable (WinExe, net462) with single entry point class. LexText.Ma
 - **AssemblyInfo.cs** (12 lines): Assembly metadata
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: WinExe (Windows executable)
 - STAThread (Windows Forms threading model)
 

@@ -12,23 +12,23 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>

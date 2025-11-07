@@ -32,7 +32,7 @@ C# console application (.NET Framework 4.6.2) with 350 lines of code. Program.cs
   - Wraps project file path for LcmCache creation
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: Exe (console application)
 - **SIL.Machine.Morphology.HermitCrab**: HermitCrab parser library
 - **SIL.FieldWorks.WordWorks.Parser**: FieldWorks parser components

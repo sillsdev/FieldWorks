@@ -24,7 +24,7 @@ C# console application (.NET Framework 4.6.2) with single source file (InstallVa
   - Drag-and-drop support: Opens report automatically when invoked via drop
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: Exe (console application)
 - System.Security.Cryptography for MD5 hashing
 - System.Diagnostics for file version info

@@ -61,7 +61,7 @@ C# class library (.NET Framework 4.6.2) with simplified root site implementation
 - **RenderEngineFactory** (RenderEngineFactory.cs): Rendering engine creation
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: Library
 - Windows Forms (UserControl base)
 - COM interop for Views engine (IVwRootSite, IVwRootBox)

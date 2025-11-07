@@ -14,25 +14,25 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DefineConstants>TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>true</Optimize>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DefineConstants>TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>true</Optimize>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
@@ -52,6 +52,9 @@
     <ProjectReference Include="../FxtDll.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="../../../AssemblyInfoForTests.cs" Link="Properties/AssemblyInfoForTests.cs" />
+    <Compile
+      Include="../../../AssemblyInfoForTests.cs"
+      Link="Properties/AssemblyInfoForTests.cs"
+    />
   </ItemGroup>
 </Project>

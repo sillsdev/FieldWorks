@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>ViewsInterfacesTests</AssemblyName>
@@ -10,51 +10,45 @@
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="SIL.LCModel.Core.Tests" Version="11.0.0-*" PrivateAssets="All" />
     <PackageReference Include="SIL.LCModel.Utils.Tests" Version="11.0.0-*" PrivateAssets="All" />
     <PackageReference Include="SIL.TestUtilities" Version="17.0.0-*" />
   </ItemGroup>
-
   <ItemGroup>
-    <Compile Include="../../../AssemblyInfoForTests.cs" Link="Properties/AssemblyInfoForTests.cs" />
+    <Compile
+      Include="../../../AssemblyInfoForTests.cs"
+      Link="Properties/AssemblyInfoForTests.cs"
+    />
   </ItemGroup>
-
   <ItemGroup>
     <Reference Include="System.Drawing" />
     <Reference Include="netstandard" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="../../FwUtils/FwUtilsTests/FwUtilsTests.csproj" />
     <ProjectReference Include="../ViewsInterfaces.csproj" />
   </ItemGroup>
-
 </Project>

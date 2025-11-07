@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>ManagedLgIcuCollatorTests</AssemblyName>
@@ -9,36 +9,30 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG</DefineConstants>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG</DefineConstants>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="SIL.LCModel.Core.Tests" Version="11.0.0-*" PrivateAssets="All" />
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Utils.Tests" Version="11.0.0-*" PrivateAssets="All" />
     <PackageReference Include="SIL.TestUtilities" Version="17.0.0-*" />
   </ItemGroup>
-
   <ItemGroup>
     <Reference Include="netstandard" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="../../Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj" />
     <ProjectReference Include="../../Common/ViewsInterfaces/ViewsInterfaces.csproj" />
     <ProjectReference Include="../ManagedLgIcuCollator.csproj" />
   </ItemGroup>
-
 </Project>

@@ -74,7 +74,7 @@ C# library (net462, OutputType=Library) organizing lexicon/text UI components fo
   - Interface for pattern-based controls
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: Library
 - Windows Forms (dialogs, custom controls)
 - LCModel (data model)

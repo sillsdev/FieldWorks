@@ -14,7 +14,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DefineConstants>TRACE</DefineConstants>
@@ -26,7 +26,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DefineConstants>TRACE</DefineConstants>

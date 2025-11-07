@@ -61,7 +61,7 @@ C# library (net462, OutputType=Library) with lexicon UI components. Slice/Launch
   - Embedded icons/images for lexicon UI
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: Library
 - Windows Forms (dialogs, slices)
 - LCModel (data model)

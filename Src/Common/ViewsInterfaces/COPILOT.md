@@ -42,7 +42,7 @@ C# interface library (.NET Framework 4.6.2) with COM interop interface definitio
   - Note: Full interface declarations in C++ headers; C# side uses COM interop attributes
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: Library
 - COM interop (Runtime.InteropServices)
 - Interfaces for native Views C++ engine

@@ -50,7 +50,7 @@ C# Windows Forms application (WinExe, net462) extending SIL.ObjectBrowser base c
   - Static list in LCMBrowserForm.CFields
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - Windows Forms (WinExe)
 - WeifenLuo.WinFormsUI.Docking (docking panel framework)
 - SIL.ObjectBrowser base framework

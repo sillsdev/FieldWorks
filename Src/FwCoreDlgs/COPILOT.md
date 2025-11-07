@@ -33,7 +33,7 @@ C# class library (.NET Framework 4.6.2) with Windows Forms dialogs and controls.
 - **Numerous specialized dialogs**: AddNewVernLangWarningDlg, AdvancedEncProps, and many more
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: Library
 - Windows Forms (extensive use of Form, Control, UserControl)
 - MVP pattern for complex dialogs

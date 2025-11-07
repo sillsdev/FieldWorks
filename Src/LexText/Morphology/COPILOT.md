@@ -62,7 +62,7 @@ C# library (net462, OutputType=Library) with morphology UI components. Slice/con
   - Embedded icons/images for morphology UI
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: Library
 - Windows Forms (slices, controls, dialogs)
 - LCModel (data model)

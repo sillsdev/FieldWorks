@@ -8,30 +8,25 @@
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG</DefineConstants>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG</DefineConstants>
   </PropertyGroup>
-
   <ItemGroup>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="netstandard" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="../../../Common/ViewsInterfaces/ViewsInterfaces.csproj" />
     <ProjectReference Include="..\..\..\Common\Controls\FwControls\FwControls.csproj" />
   </ItemGroup>
-
 </Project>

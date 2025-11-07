@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>Sfm2XmlTests</AssemblyName>
@@ -10,44 +10,36 @@
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="SIL.TestUtilities" Version="17.0.0-*" />
     <PackageReference Include="Encoding-Converters-Core" Version="0.9.7" />
   </ItemGroup>
-
   <ItemGroup>
     <Reference Include="netstandard" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="../Sfm2Xml.csproj" />
   </ItemGroup>
-
 </Project>

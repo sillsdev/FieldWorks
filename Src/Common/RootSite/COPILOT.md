@@ -33,7 +33,7 @@ C# class library (.NET Framework 4.6.2) with root site infrastructure. Collector
 - **IApp**: Application interface
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: Library
 - Views rendering engine integration (COM interop)
 - Windows Forms integration

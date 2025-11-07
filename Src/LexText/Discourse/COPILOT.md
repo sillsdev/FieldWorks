@@ -68,7 +68,7 @@ C# library (net462, OutputType=Library) with MVC-like separation. ConstituentCha
   - Calculate column widths for text content
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: Library
 - Windows Forms (custom controls)
 - LCModel (data model)

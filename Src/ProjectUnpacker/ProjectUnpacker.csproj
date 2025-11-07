@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>ProjectUnpacker</AssemblyName>
@@ -13,25 +13,25 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DefineConstants>TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>true</Optimize>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DefineConstants>TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>true</Optimize>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="NUnit" Version="4.4.0" />

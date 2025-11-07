@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>LexTextDllTests</AssemblyName>
@@ -9,33 +9,28 @@
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>none</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
   </PropertyGroup>
-
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>none</DebugType>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
     <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
@@ -44,15 +39,12 @@
     <PackageReference Include="SIL.LCModel.Utils.Tests" Version="11.0.0-*" PrivateAssets="All" />
     <PackageReference Include="SIL.TestUtilities" Version="17.0.0-*" />
   </ItemGroup>
-
   <ItemGroup>
     <Reference Include="netstandard" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="../../../Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj" />
     <ProjectReference Include="../../../XCore/xCoreInterfaces/xCoreInterfaces.csproj" />
     <ProjectReference Include="../LexTextDll.csproj" />
   </ItemGroup>
-
 </Project>

@@ -1,0 +1,14 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "FieldWorks (.NET Framework)",
+      "type": "clr",
+      "request": "launch",
+      "program": "${workspaceFolder}\\Output\\Debug\\FieldWorks.exe",
+      "cwd": "${workspaceFolder}\\Output\\Debug",
+      "console": "externalTerminal",
+      "justMyCode": false
+    }
+  ]
+}

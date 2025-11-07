@@ -30,7 +30,7 @@ C# library (net462, OutputType=Library) implementing IUtility and IFeedbackInfoP
   - Regex-based naming: Handles numbered folder suffixes (name1, name2, etc.)
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: Library
 - Windows Forms (MessageBox for errors)
 - Registry API (Microsoft.Win32.Registry) for Pathway path lookup

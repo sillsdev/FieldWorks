@@ -43,7 +43,7 @@ C# interface library (.NET Framework 4.6.2) defining UI adapter contracts. Pure 
 - **UIAdapterInterfacesStrings** (UIAdapterInterfacesStrings.Designer.cs): Localized strings
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: Library
 - Interface definitions only (no UI framework dependency)
 - XCore integration (Mediator references)

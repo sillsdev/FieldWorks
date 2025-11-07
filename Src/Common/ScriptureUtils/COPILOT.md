@@ -45,7 +45,7 @@ C# class library (.NET Framework 4.6.2) with Paratext integration components. Im
   - Standard reference sorting (Genesis before Exodus, etc.)
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: Library
 - Paratext API integration (external dependency)
 - SIL.LCModel.Core.Scripture for scripture data types

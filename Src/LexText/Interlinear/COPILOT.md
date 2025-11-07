@@ -65,7 +65,7 @@ C# library (net462, OutputType=Library) with modular subsystem design. InterlinD
   - Select writing systems for text input
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: Library
 - Windows Forms (custom controls, dialogs)
 - LCModel (data model)

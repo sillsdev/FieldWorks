@@ -47,7 +47,7 @@ C# class library (.NET Framework 4.6.2) implementing Paratext plugin contracts. 
 - **Event args**: FdoLexemeAddedEventArgs, FdoLexiconGlossAddedEventArgs, FdoLexiconSenseAddedEventArgs
 
 ## Technology Stack
-- C# .NET Framework 4.6.2 (net462)
+- C# .NET Framework 4.8.x (net8)
 - OutputType: Library (plugin DLL)
 - **Paratext.LexicalContracts**: Paratext plugin interfaces
 - **SIL.LCModel**: FieldWorks data model access
