@@ -1,33 +1,48 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <UsingTask TaskName="CatenateFiles" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="Clouseau" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="ComputerName" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="CpuArchitecture" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="DownloadFile" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="DownloadFilesFromTeamCity" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="ForceDelete" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="GenerateFwTargets" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="GenerateNUnitReports" AssemblyFile="FwBuildTasks.dll" />
-  <UsingTask TaskName="GenerateTestCoverageReport" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="GetSpecialFolderPath" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="LogMetadata" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="Make" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="Md5Checksum" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="NUnit3" AssemblyFile="SIL.BuildTasks.dll"/>
-  <UsingTask TaskName="ParentDirectory" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="ParseVersionNumbers" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="PathCombine" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="RegFree" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="RegisterForTests" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="SetEnvVar" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="Substitute" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="Unitpp" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="Unzip" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="VerifyFilesIdentical" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="WriteRegistry" AssemblyFile="FwBuildTasks.dll"/>
-  <UsingTask TaskName="Zip" AssemblyFile="FwBuildTasks.dll" />
-
-  <UsingTask TaskName="CheckAdminPrivilege" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Windows_NT'"/>
-  <!-- REVIEW (Hasso) 2022.11: replaceable by SIL.BuildTasks.MakeWixForDirTree? -->
-  <UsingTask TaskName="WxsToWxi" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Windows_NT'" />
+	<PropertyGroup>
+		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'==''"
+			>$(MSBuildThisFileDirectory)..\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll</FwBuildTasksAssembly
+		>
+	</PropertyGroup>
+	<PropertyGroup Condition="!Exists('$(FwBuildTasksAssembly)')">
+		<FwBuildTasksAssembly>$(MSBuildThisFileDirectory)FwBuildTasks.dll</FwBuildTasksAssembly>
+	</PropertyGroup>
+	<UsingTask TaskName="CatenateFiles" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="Clouseau" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="ComputerName" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="CpuArchitecture" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="DownloadFile" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="DownloadFilesFromTeamCity" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="ForceDelete" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="GenerateFwTargets" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="GenerateNUnitReports" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="GenerateTestCoverageReport" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="GetSpecialFolderPath" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="LogMetadata" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="Make" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="Md5Checksum" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="NUnit3" AssemblyFile="SIL.BuildTasks.dll" />
+	<UsingTask TaskName="ParentDirectory" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="ParseVersionNumbers" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="PathCombine" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="RegFree" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="RegisterForTests" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="SetEnvVar" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="Substitute" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="Unitpp" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="Unzip" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="VerifyFilesIdentical" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="WriteRegistry" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="Zip" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask
+		TaskName="CheckAdminPrivilege"
+		AssemblyFile="$(FwBuildTasksAssembly)"
+		Condition="'$(OS)'=='Windows_NT'"
+	/>
+	<!-- REVIEW (Hasso) 2022.11: replaceable by SIL.BuildTasks.MakeWixForDirTree? -->
+	<UsingTask
+		TaskName="WxsToWxi"
+		AssemblyFile="$(FwBuildTasksAssembly)"
+		Condition="'$(OS)'=='Windows_NT'"
+	/>
 </Project>

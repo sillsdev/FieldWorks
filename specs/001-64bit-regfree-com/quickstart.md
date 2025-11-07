@@ -100,16 +100,8 @@ FieldWorks.exe
 
 ### COM Activation Errors
 **"Class not registered"** or **"0x80040154" (REGDB_E_CLASSNOTREG)**:
-- Verify manifest file exists next to executable
-- Check dependent assembly manifests (.X.manifest) exist in same directory
-- Ensure native COM DLLs (Views.dll, FwKernel.dll) are co-located with manifests
-- Rebuild to regenerate manifests: `msbuild Src/Common/FieldWorks/FieldWorks.csproj /t:RegFree`
-- Confirm manifest XML is well-formed and contains expected `<comClass>` entries
 
 **Manifest not found**:
-- Check RegFree target executed in build logs
-- Verify BuildInclude.targets imported in project file
-- Ensure FwBuildTasks.dll exists in Build/ folder
 
 ## Current Phase Status
 

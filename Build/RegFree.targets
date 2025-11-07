@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
-	<UsingTask TaskName="RegFree" AssemblyFile="FwBuildTasks.dll" />
+	<PropertyGroup>
+		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'==''"
+			>$(MSBuildThisFileDirectory)..\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll</FwBuildTasksAssembly
+		>
+	</PropertyGroup>
+	<PropertyGroup Condition="!Exists('$(FwBuildTasksAssembly)')">
+		<FwBuildTasksAssembly>$(MSBuildThisFileDirectory)FwBuildTasks.dll</FwBuildTasksAssembly>
+	</PropertyGroup>
+	<UsingTask TaskName="RegFree" AssemblyFile="$(FwBuildTasksAssembly)" />
 	<PropertyGroup>
 		<DistFilesDir Condition="'$(OutDir)' != ''">$(OutDir)../../DistFiles</DistFilesDir>
 		<DistFilesDir Condition="'$(OutDir)' == ''"

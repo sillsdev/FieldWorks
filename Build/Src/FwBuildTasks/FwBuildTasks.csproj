@@ -4,7 +4,7 @@
     <Description>Additional msbuild tasks for FieldWorks</Description>
     <Product>FwBuildTasks</Product>
     <TargetFramework>net462</TargetFramework>
-    <OutputPath>../..</OutputPath>
+    <OutputPath>$(MSBuildThisFileDirectory)..\..\..\BuildTools\FwBuildTasks\$(Configuration)\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
   <ItemGroup>

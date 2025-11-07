@@ -12,6 +12,7 @@ Build/venv
 Build/*.config
 Build/*.dll
 Build/*.pdb
+BuildTools/FwBuildTasks/
 BuildDir/
 Src/Common/ViewsInterfaces/Views.cs
 DistFiles/Data/
