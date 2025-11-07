@@ -4,7 +4,7 @@
     <RootNamespace>SIL.FieldWorks.Build.Tasks</RootNamespace>
     <Description>Additional msbuild tasks for FieldWorks</Description>
     <Product>FwBuildTasks</Product>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net48</TargetFramework>
     <OutputPath>$(MSBuildThisFileDirectory)..\..\..\BuildTools\FwBuildTasks\$(Configuration)\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <PlatformTarget>x64</PlatformTarget>
