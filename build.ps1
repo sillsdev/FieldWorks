@@ -116,6 +116,18 @@ Invoke-MSBuildStep `
 	-Description 'FwBuildTasks build'
 
 Invoke-MSBuildStep `
+	-Arguments @('Build/FieldWorks.proj', '/t:RestorePackages', "/p:Configuration=$Configuration", "/p:Platform=$Platform") `
+	-Description 'RestorePackages'
+
+Invoke-MSBuildStep `
+	-Arguments @('Build/FieldWorks.proj', '/t:CheckDevelopmentPropertiesFile', "/p:Configuration=$Configuration", "/p:Platform=$Platform") `
+	-Description 'CheckDevelopmentPropertiesFile'
+
+Invoke-MSBuildStep `
+	-Arguments @('Build/FieldWorks.proj', '/t:refreshTargets', "/p:Configuration=$Configuration", "/p:Platform=$Platform") `
+	-Description 'refreshTargets'
+
+Invoke-MSBuildStep `
 	-Arguments (@('Build/FieldWorks.proj', "/t:$Targets", "/p:Configuration=$Configuration", "/p:Platform=$Platform") + $MsBuildArgs) `
 	-Description "FieldWorks target '$Targets'" `
 	-LogPath $LogFile

@@ -34,7 +34,7 @@
 			MSBuildArchitecture="$(Platform)"
 		/>
 	</Target>
-	<Target Name="DebugProcs" DependsOnTargets="initWindows">
+	<Target Name="DebugProcs" DependsOnTargets="initWindows;CopyDlls">
 		<Make
 			Condition="'$(OS)'=='Windows_NT'"
 			Makefile="$(fwrt)\Src\DebugProcs\DebugProcs.mak"
@@ -333,7 +333,6 @@
 		<PalasoFiles Include="System.Drawing.Common.dll" />
 		<PalasoFiles Include="System.Drawing.Common.pdb" />
 		<PalasoFiles Include="System.Memory.dll" />
-		<PalasoFiles Include="System.Resources.Extensions.dll" />
 		<PalasoFiles Include="SIL.Windows.Forms.Keyboarding.dll" />
 		<PalasoFiles Include="SIL.Lexicon.dll" />
 		<PalasoFiles Include="SIL.TestUtilities.dll" />
@@ -904,30 +903,31 @@
 			OverwriteReadOnlyFiles="true"
 			Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'"
 		/>
-		<!-- ICU libs -->
+		<!-- ICU libs - copy directly from NuGet packages -->
 		<Copy
-			SourceFiles="$(DownloadsDir)/lib/win7-$(arch)/icudt.lib"
+			SourceFiles="$(PackagesDir)/Icu4c.Win.Fw.Lib.$(IcuNugetVersion)/build/native/lib/win7-$(arch)/icudt.lib"
 			DestinationFolder="$(fwrt)/Lib"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
 			Condition="'$(OS)'=='Windows_NT'"
 		/>
 		<Copy
-			SourceFiles="$(DownloadsDir)/lib/win7-$(arch)/icuin.lib"
+			SourceFiles="$(PackagesDir)/Icu4c.Win.Fw.Lib.$(IcuNugetVersion)/build/native/lib/win7-$(arch)/icuin.lib"
 			DestinationFolder="$(fwrt)/Lib"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
 			Condition="'$(OS)'=='Windows_NT'"
 		/>
 		<Copy
-			SourceFiles="$(DownloadsDir)/lib/win7-$(arch)/icuuc.lib"
+			SourceFiles="$(PackagesDir)/Icu4c.Win.Fw.Lib.$(IcuNugetVersion)/build/native/lib/win7-$(arch)/icuuc.lib"
 			DestinationFolder="$(fwrt)/Lib"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
 			Condition="'$(OS)'=='Windows_NT'"
 		/>
+		<!-- ICU headers - copy directly from NuGet package -->
 		<ItemGroup>
-			<IcuHeaders Include="$(DownloadsDir)/include/unicode/*.h" />
+			<IcuHeaders Include="$(PackagesDir)/Icu4c.Win.Fw.Lib.$(IcuNugetVersion)/build/native/include/unicode/*.h" />
 		</ItemGroup>
 		<!-- ICU sources -->
 		<Copy
@@ -936,14 +936,14 @@
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
 		/>
-		<!-- Copy ICU dll's and exe's to lib/x64 and lib/x86. The ICU .lib files don't need included. -->
+		<!-- Copy ICU dll's and exe's to lib/x64 and lib/x86 - copy directly from NuGet packages -->
 		<ItemGroup>
-			<IcuFileSet32 Include="$(DownloadsDir)/win7-x86/**/icu*.dll" />
-			<IcuFileSet32 Include="$(DownloadsDir)/win-x86/gennorm2.exe" />
+			<IcuFileSet32 Include="$(PackagesDir)/Icu4c.Win.Fw.Lib.$(IcuNugetVersion)/runtimes/win7-x86/native/icu*.dll" />
+			<IcuFileSet32 Include="$(PackagesDir)/Icu4c.Win.Fw.Bin.$(IcuNugetVersion)/build/win-x86/gennorm2.exe" />
 		</ItemGroup>
 		<ItemGroup>
-			<IcuFileSet64 Include="$(DownloadsDir)/win7-x64/**/icu*.dll" />
-			<IcuFileSet64 Include="$(DownloadsDir)/win-x64/gennorm2.exe" />
+			<IcuFileSet64 Include="$(PackagesDir)/Icu4c.Win.Fw.Lib.$(IcuNugetVersion)/runtimes/win7-x64/native/icu*.dll" />
+			<IcuFileSet64 Include="$(PackagesDir)/Icu4c.Win.Fw.Bin.$(IcuNugetVersion)/build/win-x64/gennorm2.exe" />
 		</ItemGroup>
 		<!-- Include 32-bit ICU, even if arch is x64, so we can provide 32-bit ICU for 32-bit Paratext to use when the tools interact. -->
 		<Copy
@@ -1111,14 +1111,7 @@
 			<NuGottenFiles Include="$(PackagesDir)/System.Numerics.Vectors.4.5.0/lib/net46/System.Numerics.Vectors.dll" />
 			<NuGottenFiles Include="$(PackagesDir)/System.Net.Http.4.3.4/lib/net46/System.Net.Http.dll" />
 			<NuGottenFiles Include="$(PackagesDir)/System.Numerics.Vectors.4.5.0/lib/net46/System.Numerics.Vectors.dll" />
-			<NuGottenFiles
-				Include="$(PackagesDir)/System.Resources.Extensions.8.0.0/lib/netstandard2.0/System.Resources.Extensions.dll"
-				Condition="Exists('$(PackagesDir)/System.Resources.Extensions.8.0.0/lib/netstandard2.0/System.Resources.Extensions.dll')"
-			/>
-			<NuGottenFiles
-				Include="$(PackagesDir)/system.resources.extensions/8.0.0/lib/netstandard2.0/System.Resources.Extensions.dll"
-				Condition="Exists('$(PackagesDir)/system.resources.extensions/8.0.0/lib/netstandard2.0/System.Resources.Extensions.dll')"
-			/>
+			<NuGottenFiles Include="$(PackagesDir)/system.resources.extensions/8.0.0/lib/netstandard2.0/System.Resources.Extensions.dll" />
 			<NuGottenFiles Include="$(PackagesDir)/System.Runtime.CompilerServices.Unsafe.6.0.0/lib/net461/System.Runtime.CompilerServices.Unsafe.dll" />
 			<NuGottenFiles Include="$(PackagesDir)/System.Threading.Tasks.Extensions.4.5.4/lib/net461/System.Threading.Tasks.Extensions.dll" />
 			<NuGottenFiles Include="$(PackagesDir)/System.ValueTuple.4.5.0/lib/net461/System.ValueTuple.dll" />
