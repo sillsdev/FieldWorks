@@ -233,17 +233,17 @@
 	<!-- Generate Src/CommonAssemblyInfo.cs from Src/CommonAssemblyInfoTemplate.cs and Src/MasterVersionInfo.txt -->
 	<!-- Generate Output/Common/bldinc.h from Src/bldinc.h and Src/MasterVersionInfo.txt -->
 	<ItemGroup>
-		<VersionTemplate Include="../Src/CommonAssemblyInfoTemplate.cs" />
-		<VersionSymbols Include="../Src/MasterVersionInfo.txt" />
-		<VersionOutput Include="../Src/CommonAssemblyInfo.cs" />
-		<BldIncTemplate Include="../Src/bldinc.h" />
-		<BldIncOutput Include="../Output/Common/bldinc.h" />
-		<GlobalIncludeTemplate Include="GlobalInclude.properties.template" />
-		<GlobalIncludeOutput Include="GlobalInclude.properties" />
-		<FwParatextLexiconPluginTemplate Include="../Src/FwParatextLexiconPlugin/ParatextLexiconPluginRegistryHelper.template.cs" />
-		<FwParatextLexiconPluginOutput Include="../Src/FwParatextLexiconPlugin/GeneratedParatextLexiconPluginRegistryHelper.cs" />
-		<FwUtilsTemplate Include="../Src/Common/FwUtils/FwUtils.template.cs" />
-		<FwUtilsOutput Include="../Src/Common/FwUtils/GeneratedFwUtils.cs" />
+		<VersionTemplate Include="$(fwrt)\Src\CommonAssemblyInfoTemplate.cs" />
+		<VersionSymbols Include="$(fwrt)\Src\MasterVersionInfo.txt" />
+		<VersionOutput Include="$(fwrt)\Src\CommonAssemblyInfo.cs" />
+		<BldIncTemplate Include="$(fwrt)\Src\bldinc.h" />
+		<BldIncOutput Include="$(fwrt)\Output\Common\bldinc.h" />
+		<GlobalIncludeTemplate Include="$(MSBuildThisFileDirectory)GlobalInclude.properties.template" />
+		<GlobalIncludeOutput Include="$(MSBuildThisFileDirectory)GlobalInclude.properties" />
+		<FwParatextLexiconPluginTemplate Include="$(fwrt)\Src\FwParatextLexiconPlugin\ParatextLexiconPluginRegistryHelper.template.cs" />
+		<FwParatextLexiconPluginOutput Include="$(fwrt)\Src\FwParatextLexiconPlugin\GeneratedParatextLexiconPluginRegistryHelper.cs" />
+		<FwUtilsTemplate Include="$(fwrt)\Src\Common\FwUtils\FwUtils.template.cs" />
+		<FwUtilsOutput Include="$(fwrt)\Src\Common\FwUtils\GeneratedFwUtils.cs" />
 	</ItemGroup>
 	<!--
 	  Don't use Inputs and Outputs on the GenerateVersionFiles Target.  (Substitute won't

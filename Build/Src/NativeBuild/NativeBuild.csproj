@@ -24,6 +24,15 @@
   <Import Project="$(MSBuildThisFileDirectory)..\..\mkall.targets" />
   <Import Project="$(MSBuildThisFileDirectory)..\..\Windows.targets" />
   <Import Project="$(MSBuildThisFileDirectory)..\..\RegFree.targets" />
+  <Import Project="$(MSBuildThisFileDirectory)..\..\Localize.targets" />
+  <!-- Override fwrt after imports - SetupInclude.targets computes it wrong for nested projects -->
+  <PropertyGroup>
+    <fwrt>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\..'))</fwrt>
+    <!-- Also recompute all paths that depend on fwrt -->
+    <DownloadsDir>$(fwrt)/Downloads</DownloadsDir>
+    <PackagesDir>$(fwrt)/packages</PackagesDir>
+    <LcmArtifactsDir>$(DownloadsDir)</LcmArtifactsDir>
+  </PropertyGroup>
   <!-- Override the Build target to call native build instead -->
   <Target Name="Build" DependsOnTargets="allCppNoTest">
     <Message Text="Native C++ components built successfully" Importance="high" />

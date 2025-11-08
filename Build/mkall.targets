@@ -666,15 +666,18 @@
 			Condition="Exists('$(DownloadsDir)/GeckofxHtmlToPdf.exe.config')"
 		/>
 		<!-- Encoding Converters Files -->
+		<!-- Note: encoding-converters-core package doesn't follow standard NuGet runtime conventions
+		     (has extra EcDistFiles folder), so automatic runtime asset copying doesn't work.
+		     Manual copying required until package structure is fixed. -->
 		<Copy
-			SourceFiles="@(ECWindowsFiles -&gt; '$(PackagesDir)/Encoding-Converters-Core.$(ECNugetVersion)/runtimes/win-$(arch)/native/%(Identity)')"
+			SourceFiles="@(ECWindowsFiles -&gt; '$(PackagesDir)/encoding-converters-core/$(ECNugetVersion)/runtimes/EcDistFiles/win-$(arch)/native/%(Identity)')"
 			DestinationFolder="$(dir-outputBase)"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
 			Condition="'$(OS)'=='Windows_NT'"
 		/>
 		<Copy
-			SourceFiles="@(ECPlugins -&gt; '$(PackagesDir)/Encoding-Converters-Core.$(ECNugetVersion)/redist/EC/Plugins/%(Identity)')"
+			SourceFiles="@(ECPlugins -&gt; '$(PackagesDir)/encoding-converters-core/$(ECNugetVersion)/runtimes/EcDistFiles/redist/EC/Plugins/%(Identity)')"
 			DestinationFolder="$(dir-outputBase)/EC/Plugins"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"

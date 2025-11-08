@@ -20,12 +20,12 @@
   <!-- Import build infrastructure -->
   <Import Project="$(MSBuildThisFileDirectory)FwBuildTasks.targets"/>
   <Import Project="$(MSBuildThisFileDirectory)SetupInclude.targets"/>
+  <Import Project="$(MSBuildThisFileDirectory)Localize.targets"/>
   <Import Project="$(MSBuildThisFileDirectory)mkall.targets"/>
   <Import Project="$(MSBuildThisFileDirectory)Windows.targets"/>
   <Import Project="$(MSBuildThisFileDirectory)RegFree.targets"/>
   <Import Project="$(MSBuildThisFileDirectory)Installer.targets" Condition="'$(OS)'=='Windows_NT'"/>
   <Import Project="$(MSBuildThisFileDirectory)LocalLibrary.targets"/>
-  <Import Project="$(MSBuildThisFileDirectory)Localize.targets"/>
 
   <!-- Default Build target: orchestrate full traversal build -->
   <Target Name="Build">
