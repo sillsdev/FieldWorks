@@ -11,6 +11,43 @@
 		Condition="'$(OS)'=='Windows_NT'"
 	/>
 	<UsingTask TaskName="RegFree" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask
+		TaskName="FindXsltcPath"
+		TaskFactory="CodeTaskFactory"
+		AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll"
+	>
+		<ParameterGroup>
+			<CandidatePaths ParameterType="System.String" Required="true" />
+			<XsltcDirectory ParameterType="System.String" Output="true" />
+		</ParameterGroup>
+		<Task>
+			<Reference Include="System" />
+			<Reference Include="System.Core" />
+			<Using Namespace="System" />
+			<Using Namespace="System.IO" />
+			<Code Type="Fragment" Language="cs">
+				<![CDATA[
+				var separators = new[] { ';' };
+				foreach (var raw in CandidatePaths.Split(separators, StringSplitOptions.RemoveEmptyEntries))
+				{
+					var candidate = raw == null ? string.Empty : raw.Trim();
+					if (string.IsNullOrEmpty(candidate))
+					{
+						continue;
+					}
+					var normalized = candidate.TrimEnd('\\', '/');
+					var exePath = Path.Combine(normalized, "xsltc.exe");
+					if (File.Exists(exePath))
+					{
+						XsltcDirectory = normalized;
+						return true;
+					}
+				}
+				return true;
+			]]>
+			</Code>
+		</Task>
+	</UsingTask>
 	<!-- call preparatory Windows targets -->
 	<Target
 		Name="initWindows"
@@ -89,45 +126,66 @@
 		Outputs="$(dir-outputBase)\ApplicationTransforms.dll;$(dir-outputBase)\PresentationTransforms.dll"
 		Condition="'$(action)'!='clean'"
 	>
-		<!-- The WindowsSDK_ExecutablePath_x64 does not contain the xsltc executable, but the x86 path contains one that can build a 64bit assembly -->
+		<!-- Locate xsltc.exe from the Windows SDK / .NET Framework SDK toolchains -->
+		<PropertyGroup>
+			<XsltcCandidatePaths>$(WindowsSDK_ExecutablePath_x86);$(ProgramFiles(x86))\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools;$(ProgramFiles(x86))\Windows Kits\NETFXSDK\4.8\bin\NETFX 4.8 Tools</XsltcCandidatePaths>
+		</PropertyGroup>
+		<FindXsltcPath CandidatePaths="$(XsltcCandidatePaths)">
+			<Output TaskParameter="XsltcDirectory" PropertyName="XsltcPath" />
+		</FindXsltcPath>
+		<PropertyGroup>
+			<SkipXsltCompilation Condition="'$(XsltcPath)'==''">true</SkipXsltCompilation>
+		</PropertyGroup>
+		<Warning
+			Text="xsltc.exe not found in candidate paths: $(XsltcCandidatePaths). XSL assemblies will be skipped. Install the .NET Framework 4.8 SDK (includes xsltc.exe)."
+			Condition="'$(SkipXsltCompilation)'=='true'"
+		/>
 		<Message
-			Text="Building ApplicationTransforms.dll using xsltc.exe from $(WindowsSDK_ExecutablePath_x86)"
+			Text="Building ApplicationTransforms.dll using xsltc.exe from $(XsltcPath)"
 			Importance="high"
+			Condition="'$(SkipXsltCompilation)'!='true'"
 		/>
 		<Message
 			Text="Target platform: $(arch), Output: $(dir-outputBase)\ApplicationTransforms.dll"
 			Importance="high"
+			Condition="'$(SkipXsltCompilation)'!='true'"
 		/>
 		<Exec
-			Command="&quot;$(WindowsSDK_ExecutablePath_x86)\xsltc.exe&quot; /settings:document /platform:$(arch) /out:$(dir-outputBase)\ApplicationTransforms.dll $(ApplicationTransformsPath)\FxtM3MorphologySketch.xsl $(ApplicationTransformsPath)\FxtM3ParserToGAFAWS.xsl $(ApplicationTransformsPath)\FxtM3ParserToToXAmpleGrammar.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleADCtl.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleLex.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl"
+			Command="&quot;$(XsltcPath)\xsltc.exe&quot; /settings:document /platform:$(arch) /out:$(dir-outputBase)\ApplicationTransforms.dll $(ApplicationTransformsPath)\FxtM3MorphologySketch.xsl $(ApplicationTransformsPath)\FxtM3ParserToGAFAWS.xsl $(ApplicationTransformsPath)\FxtM3ParserToToXAmpleGrammar.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleADCtl.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleLex.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl"
 			ContinueOnError="ErrorAndContinue"
 			IgnoreExitCode="true"
+			Condition="'$(SkipXsltCompilation)'!='true'"
 		>
 			<Output TaskParameter="ExitCode" PropertyName="XsltcExitCode1" />
 		</Exec>
 		<Error
 			Text="xsltc.exe crashed (exit code $(XsltcExitCode1) = 0x$([System.Convert]::ToString($(XsltcExitCode1), 16))) while building ApplicationTransforms.dll. This may indicate a problem with the Windows SDK XSLT compiler or the input XSLT files."
-			Condition="'$(XsltcExitCode1)' == '-1073741819'"
+			Condition="'$(SkipXsltCompilation)'!='true' AND '$(XsltcExitCode1)' == '-1073741819'"
 		/>
 		<Error
 			Text="xsltc.exe failed with exit code $(XsltcExitCode1) while building ApplicationTransforms.dll"
-			Condition="'$(XsltcExitCode1)' != '0' AND '$(XsltcExitCode1)' != '-1073741819'"
+			Condition="'$(SkipXsltCompilation)'!='true' AND '$(XsltcExitCode1)' != '0' AND '$(XsltcExitCode1)' != '-1073741819'"
 		/>
-		<Message Text="Building PresentationTransforms.dll using xsltc.exe" Importance="high" />
+		<Message
+			Text="Building PresentationTransforms.dll using xsltc.exe"
+			Importance="high"
+			Condition="'$(SkipXsltCompilation)'!='true'"
+		/>
 		<Exec
-			Command="&quot;$(WindowsSDK_ExecutablePath_x86)\xsltc.exe&quot; /settings:document /platform:$(arch) /out:$(dir-outputBase)\PresentationTransforms.dll $(PresentationTransformsPath)\FormatHCTrace.xsl $(PresentationTransformsPath)\FormatXAmpleParse.xsl $(PresentationTransformsPath)\FormatXAmpleTrace.xsl $(PresentationTransformsPath)\FormatXAmpleWordGrammarDebuggerResult.xsl $(PresentationTransformsPath)\XLingPap1.xsl"
+			Command="&quot;$(XsltcPath)\xsltc.exe&quot; /settings:document /platform:$(arch) /out:$(dir-outputBase)\PresentationTransforms.dll $(PresentationTransformsPath)\FormatHCTrace.xsl $(PresentationTransformsPath)\FormatXAmpleParse.xsl $(PresentationTransformsPath)\FormatXAmpleTrace.xsl $(PresentationTransformsPath)\FormatXAmpleWordGrammarDebuggerResult.xsl $(PresentationTransformsPath)\XLingPap1.xsl"
 			ContinueOnError="ErrorAndContinue"
 			IgnoreExitCode="true"
+			Condition="'$(SkipXsltCompilation)'!='true'"
 		>
 			<Output TaskParameter="ExitCode" PropertyName="XsltcExitCode2" />
 		</Exec>
 		<Error
 			Text="xsltc.exe crashed (exit code $(XsltcExitCode2) = 0x$([System.Convert]::ToString($(XsltcExitCode2), 16))) while building PresentationTransforms.dll. This may indicate a problem with the Windows SDK XSLT compiler or the input XSLT files."
-			Condition="'$(XsltcExitCode2)' == '-1073741819'"
+			Condition="'$(SkipXsltCompilation)'!='true' AND '$(XsltcExitCode2)' == '-1073741819'"
 		/>
 		<Error
 			Text="xsltc.exe failed with exit code $(XsltcExitCode2) while building PresentationTransforms.dll"
-			Condition="'$(XsltcExitCode2)' != '0' AND '$(XsltcExitCode2)' != '-1073741819'"
+			Condition="'$(SkipXsltCompilation)'!='true' AND '$(XsltcExitCode2)' != '0' AND '$(XsltcExitCode2)' != '-1073741819'"
 		/>
 	</Target>
 	<ItemGroup>

@@ -26,7 +26,13 @@
 	<UsingTask TaskName="ParentDirectory" AssemblyFile="$(FwBuildTasksAssembly)" />
 	<UsingTask TaskName="ParseVersionNumbers" AssemblyFile="$(FwBuildTasksAssembly)" />
 	<UsingTask TaskName="PathCombine" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<UsingTask TaskName="RegFree" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<!-- RegFree must run in 64-bit process to load 64-bit native DLLs (FwKernel.dll, Views.dll) -->
+	<UsingTask
+		TaskName="RegFree"
+		AssemblyFile="$(FwBuildTasksAssembly)"
+		Runtime="CLR4"
+		Architecture="x64"
+	/>
 	<UsingTask TaskName="RegisterForTests" AssemblyFile="$(FwBuildTasksAssembly)" />
 	<UsingTask TaskName="SetEnvVar" AssemblyFile="$(FwBuildTasksAssembly)" />
 	<UsingTask TaskName="Substitute" AssemblyFile="$(FwBuildTasksAssembly)" />

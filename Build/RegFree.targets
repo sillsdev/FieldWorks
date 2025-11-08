@@ -55,12 +55,7 @@
 	<ItemGroup>
 		<Fragments Include="$(DistFilesDir)/*.fragment.manifest" />
 	</ItemGroup>
-	<Target
-		Name="CreateManifest"
-		Condition="'$(OS)'=='Windows_NT'"
-		Inputs="@(DependentAssemblies)"
-		Outputs="$(Executable).manifest"
-	>
+	<Target Name="CreateManifest" Condition="'$(OS)'=='Windows_NT'">
 		<RegFree
 			Executable="$(Executable)"
 			DependentAssemblies="@(DependentAssemblies)"
@@ -74,10 +69,7 @@
 		Condition="'$(OS)'=='Windows_NT'"
 		DependsOnTargets="CreateManifest"
 	>
-		<Exec
-			Command="&quot;$(MtExe)&quot; -nologo -manifest &quot;$(Executable).manifest&quot; -outputresource:&quot;$(Executable);#1&quot;"
-			WorkingDirectory="$(OutDir)"
-		/>
+		<Exec Command="&quot;$(MtExe)&quot; -nologo -manifest &quot;$(Executable).manifest&quot; -outputresource:&quot;$(Executable);#1&quot;" />
 	</Target>
 	<Target
 		Name="RegFree"

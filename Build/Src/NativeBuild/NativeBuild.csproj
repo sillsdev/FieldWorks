@@ -17,6 +17,10 @@
   <PropertyGroup>
     <Platform Condition="'$(Platform)'==''">x64</Platform>
     <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
+    <!-- Set fwrt early so NuGet package restore can find packages -->
+    <fwrt>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\..'))</fwrt>
+    <PackagesDir>$(fwrt)/packages</PackagesDir>
+    <RestorePackagesPath>$(PackagesDir)</RestorePackagesPath>
   </PropertyGroup>
   <!-- Import the native build orchestration -->
   <Import Project="$(MSBuildThisFileDirectory)..\..\FwBuildTasks.targets" />
@@ -25,14 +29,21 @@
   <Import Project="$(MSBuildThisFileDirectory)..\..\Windows.targets" />
   <Import Project="$(MSBuildThisFileDirectory)..\..\RegFree.targets" />
   <Import Project="$(MSBuildThisFileDirectory)..\..\Localize.targets" />
-  <!-- Override fwrt after imports - SetupInclude.targets computes it wrong for nested projects -->
+  <!-- Override computed paths after imports - SetupInclude.targets computes them wrong for nested projects -->
   <PropertyGroup>
-    <fwrt>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\..'))</fwrt>
-    <!-- Also recompute all paths that depend on fwrt -->
+    <!-- fwrt and PackagesDir already set above before imports -->
     <DownloadsDir>$(fwrt)/Downloads</DownloadsDir>
-    <PackagesDir>$(fwrt)/packages</PackagesDir>
-    <LcmArtifactsDir>$(DownloadsDir)</LcmArtifactsDir>
+    <!-- Don't override LcmArtifactsDir - let mkall.targets set it from the package -->
   </PropertyGroup>
+  <!-- Reference to sil.lcmodel.core package for contentFiles.
+       We don't use GeneratePathProperty because it requires a full restore,
+       so we compute the path manually in mkall.targets using LcmNugetVersion. -->
+  <ItemGroup>
+    <PackageReference Include="SIL.LCModel.Core" Version="$(LcmNugetVersion)">
+      <IncludeAssets>none</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
   <!-- Override the Build target to call native build instead -->
   <Target Name="Build" DependsOnTargets="allCppNoTest">
     <Message Text="Native C++ components built successfully" Importance="high" />

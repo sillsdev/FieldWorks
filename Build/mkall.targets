@@ -79,12 +79,19 @@
 			BuildArch="'$(Platform)'"
 			WorkingDirectory="$(fwrt)\Src\Kernel"
 		/>
+		<!-- Create stub manifest if needed -->
+		<WriteLinesToFile
+			File="$(dir-outputBase)\FwKernel.X.manifest"
+			Lines="&lt;assembly xmlns=&quot;urn:schemas-microsoft-com:asm.v1&quot; manifestVersion=&quot;1.0&quot;&gt;&lt;/assembly&gt;"
+			Overwrite="false"
+			Condition="'$(OS)'=='Windows_NT' AND !Exists('$(dir-outputBase)\FwKernel.X.manifest')"
+		/>
+		<!-- Generate manifest with explicit x64 platform -->
 		<RegFree
 			Executable="$(dir-outputBase)\FwKernel.dll"
 			Output="$(dir-outputBase)\FwKernel.X.manifest"
+			Platform="x64"
 			Condition="'$(OS)'=='Windows_NT'"
-			Platform="$(Platform)"
-			MSBuildArchitecture="$(Platform)"
 		/>
 		<Message Text="Finished building FwKernel." />
 	</Target>
@@ -101,23 +108,37 @@
 			BuildArch="'$(Platform)'"
 			WorkingDirectory="$(fwrt)\Src\views"
 		/>
-		<Message Text="RegFree processing Views.dll (Platform=$(Platform))" Importance="high" />
+		<Message
+			Text="Generating Views.X.manifest for 64-bit registration-free COM..."
+			Importance="high"
+		/>
+		<!-- Create stub manifest if it doesn't exist (RegFree will populate it) -->
+		<WriteLinesToFile
+			File="$(dir-outputBase)\Views.X.manifest"
+			Lines="&lt;assembly xmlns=&quot;urn:schemas-microsoft-com:asm.v1&quot; manifestVersion=&quot;1.0&quot;&gt;&lt;/assembly&gt;"
+			Overwrite="false"
+			Condition="'$(OS)'=='Windows_NT' AND !Exists('$(dir-outputBase)\Views.X.manifest')"
+		/>
+		<!-- Generate full manifest with COM entries - fail fast on errors -->
 		<RegFree
 			Executable="$(dir-outputBase)\Views.dll"
 			Output="$(dir-outputBase)\Views.X.manifest"
+			Platform="x64"
 			Condition="'$(OS)'=='Windows_NT'"
-			Platform="$(Platform)"
-			MSBuildArchitecture="$(Platform)"
-			ContinueOnError="ErrorAndContinue"
+		/>
+		<!-- Validate manifest was created successfully -->
+		<Error
+			Text="Views.X.manifest not generated - registration-free COM will fail"
+			Condition="'$(OS)'=='Windows_NT' AND !Exists('$(dir-outputBase)\Views.X.manifest')"
 		/>
 		<Message Text="Finished building Views." />
 	</Target>
 	<UsingTask
 		TaskName="LcmGenerate"
-		AssemblyFile="$(LcmArtifactsDir)/SIL.LCModel.Build.Tasks.dll"
+		AssemblyFile="$(LcmBuildTasksDir)/SIL.LCModel.Build.Tasks.dll"
 	/>
 	<ItemGroup>
-		<CellarConstantsInputs Include="$(LcmArtifactsDir)/MasterLCModel.xml" />
+		<CellarConstantsInputs Include="$(LcmModelArtifactsDir)/MasterLCModel.xml" />
 		<CellarConstantsInputs Include="$(fwrt)/Src/Kernel/CellarConstants.vm.h" />
 		<CellarConstantsOutputs Include="$(fwrt)/Output/Common/CellarConstants.h" />
 	</ItemGroup>
@@ -129,11 +150,11 @@
 	>
 		<MakeDir Directories="$(dir-fwoutputCommon)" Condition="'$(action)'!='clean'" />
 		<LcmGenerate
-			XmlFile="$(LcmArtifactsDir)/MasterLCModel.xml"
+			XmlFile="$(LcmModelArtifactsDir)/MasterLCModel.xml"
 			OutputDir="$(dir-fwoutputCommon)"
 			OutputFile="CellarConstants.h"
 			TemplateFile="$(fwrt)/Src/Kernel/CellarConstants.vm.h"
-			WorkingDirectory="$(LcmArtifactsDir)/"
+			WorkingDirectory="$(LcmModelArtifactsDir)/"
 			Condition="'$(action)'!='clean'"
 		/>
 	</Target>
@@ -216,7 +237,7 @@
 		<ChorusNugetVersion>6.0.0-beta0063</ChorusNugetVersion>
 		<PalasoNugetVersion>17.0.0-beta0080</PalasoNugetVersion>
 		<ParatextNugetVersion>9.4.0.1-beta</ParatextNugetVersion>
-		<LcmNugetVersion>11.0.0-beta0140</LcmNugetVersion>
+		<LcmNugetVersion>11.0.0-beta0142</LcmNugetVersion>
 		<IcuNugetVersion>70.1.152</IcuNugetVersion>
 		<HermitCrabNugetVersion>3.7.4</HermitCrabNugetVersion>
 		<IPCFrameworkVersion>1.1.1-beta0001</IPCFrameworkVersion>
@@ -295,6 +316,10 @@
 		<MakeDir Directories="$(DownloadsDir)/lib" />
 		<MakeDir Directories="$(DownloadsDir)/lib/x64" />
 		<MakeDir Directories="$(DownloadsDir)/lib/x86" />
+		<!-- Collect NuGet package files (must be done after DefineNugetPackages dependency) -->
+		<ItemGroup>
+			<SILNugetFiles Include="$(PackagesDir)/$([System.String]::new('%(SILNugetPackages.Identity)').ToLower())/%(SILNugetPackages.Version)/%(SILNugetPackages.Path)" />
+		</ItemGroup>
 		<!-- TODO (Hasso) 2011.11: copy on Condition="'$(UseLocalLibraries)'!='Y'" -->
 		<Message Text="Copying artifacts from Palaso, Chorus, LCM, and related packages to Downloads." />
 		<Copy
@@ -339,10 +364,6 @@
 			Text="GeckofxHtmlToPdf.exe not found - PDF export will not work. Build from https://github.com/sillsdev/geckofxHtmlToPdf and place output in Downloads directory."
 			Condition="!Exists('$(DownloadsDir)/GeckofxHtmlToPdf.exe')"
 		/>
-		<!-- Collect NuGet package files (PDB symbol packages no longer downloaded - SDK handles this) -->
-		<ItemGroup>
-			<SILNugetFiles Include="$(PackagesDir)/$([System.String]::new('%(SILNugetPackages.Identity)').ToLower())/%(SILNugetPackages.Version)/%(SILNugetPackages.Path)" />
-		</ItemGroup>
 	</Target>
 	<Target Name="DefineNugetPackages">
 		<ItemGroup>
@@ -382,15 +403,28 @@
 			<!-- LCM contentFiles (data files, headers, build tasks) that aren't auto-deployed -->
 			<SILNugetPackages Include="SIL.LCModel">
 				<Version>$(LcmNugetVersion)</Version>
-				<Path>contentFiles/**/*.*</Path>
+				<Path>contentFiles/any/any/*.*</Path>
 			</SILNugetPackages>
 			<SILNugetPackages Include="SIL.LCModel.Build.Tasks">
 				<Version>$(LcmNugetVersion)</Version>
 				<Path>tools/net462/*.*</Path>
 			</SILNugetPackages>
+			<!-- Copy contentFiles with explicit patterns to preserve directory structure -->
 			<SILNugetPackages Include="SIL.LCModel.Core">
 				<Version>$(LcmNugetVersion)</Version>
-				<Path>contentFiles/**/*.*</Path>
+				<Path>contentFiles/any/any/*.*</Path>
+			</SILNugetPackages>
+			<SILNugetPackages Include="SIL.LCModel.Core">
+				<Version>$(LcmNugetVersion)</Version>
+				<Path>contentFiles/KernelInterfaces/*.*</Path>
+			</SILNugetPackages>
+			<SILNugetPackages Include="SIL.LCModel.Core">
+				<Version>$(LcmNugetVersion)</Version>
+				<Path>contentFiles/IcuData/data/*.*</Path>
+			</SILNugetPackages>
+			<SILNugetPackages Include="SIL.LCModel.Core">
+				<Version>$(LcmNugetVersion)</Version>
+				<Path>contentFiles/IcuData/icudt70l/*.*</Path>
 			</SILNugetPackages>
 			<!-- Palaso contentFiles (irrKlang, Keyman interop, platform-specific files) -->
 			<SILNugetPackages Include="SIL.Media">
@@ -451,7 +485,18 @@
 		<ChorusArtifactsDir Condition="'$(ChorusArtifactsDir)'==''"
 			>$(DownloadsDir)</ChorusArtifactsDir
 		>
-		<LcmArtifactsDir Condition="'$(LcmArtifactsDir)'==''">$(DownloadsDir)</LcmArtifactsDir>
+		<!-- LCM Core artifacts (native interfaces, ICU data) from sil.lcmodel.core NuGet package -->
+		<LcmArtifactsDir Condition="'$(LcmArtifactsDir)'==''"
+			>$(PackagesDir)/sil.lcmodel.core/$(LcmNugetVersion)/contentFiles</LcmArtifactsDir
+		>
+		<!-- LCM Model artifacts (MasterLCModel.xml, Styles.dtd, templates) from sil.lcmodel NuGet package -->
+		<LcmModelArtifactsDir Condition="'$(LcmModelArtifactsDir)'==''"
+			>$(PackagesDir)/sil.lcmodel/$(LcmNugetVersion)/contentFiles</LcmModelArtifactsDir
+		>
+		<!-- LCM Build Tasks DLL from separate package -->
+		<LcmBuildTasksDir Condition="'$(LcmBuildTasksDir)'==''"
+			>$(PackagesDir)/sil.lcmodel.build.tasks/$(LcmNugetVersion)/tools/net462</LcmBuildTasksDir
+		>
 	</PropertyGroup>
 	<!-- item group for downloads, to allow easy copying -->
 	<!-- wildcards don't work unless the files have already been downloaded once -->
@@ -583,13 +628,13 @@
 			OverwriteReadOnlyFiles="true"
 		/>
 		<Copy
-			SourceFiles="@(LcmDistFiles -&gt; '$(LcmArtifactsDir)/%(Identity)')"
+			SourceFiles="@(LcmDistFiles -&gt; '$(LcmModelArtifactsDir)/%(Identity)')"
 			DestinationFolder="$(fwrt)/DistFiles"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
 		/>
 		<Copy
-			SourceFiles="@(LcmTemplatesFiles -&gt; '$(LcmArtifactsDir)/%(Identity)')"
+			SourceFiles="@(LcmTemplatesFiles -&gt; '$(LcmModelArtifactsDir)/%(Identity)')"
 			DestinationFolder="$(fwrt)/DistFiles/Templates"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
