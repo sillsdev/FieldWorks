@@ -1,36 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
 	<!--
-		Native C++ Build Orchestration and Dependency Management for FieldWorks
-		
-		Modernized for MSBuild Traversal SDK - Legacy code removed
-		
+		Native C++ Build Orchestration for FieldWorks
+
+		This file coordinates building native C++ components (DebugProcs, GenericLib, FwKernel, Views)
+		and their associated test executables. It is called by the MSBuild Traversal SDK via dirs.proj.
+
+		Modern Build Path (MSBuild Traversal SDK):
+		  dirs.proj → Build/FieldWorks.proj (target: allCppNoTest) → This file
+
 		Responsibilities:
 		1. Native C++ component builds (DebugProcs, GenericLib, FwKernel, Views)
 		2. Dependency management (NuGet packages, external artifacts)
 		3. Code generation (CellarConstants)
 		4. Clean/utility targets
-		
-		Note: PDB files are now handled by the SDK automatically.
-		      Symbol package downloads have been removed.
-	-->
-	
-<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
-	<!--
-		Native C++ Build Orchestration for FieldWorks
-		
-		This file coordinates building native C++ components (DebugProcs, GenericLib, FwKernel, Views)
-		and their associated test executables. It is called by the MSBuild Traversal SDK via dirs.proj.
-		
-		Modern Build Path (MSBuild Traversal SDK):
-		  dirs.proj → Build/FieldWorks.proj (target: allCppNoTest) → This file
-		
+
 		Key Targets:
 		  - allCppNoTest: Build core native components (used by traversal SDK)
 		  - Individual targets: DebugProcs, GenericLib, FwKernel, Views, etc.
+
+		Note: PDB files are now handled by the SDK automatically.
+		      Symbol package downloads have been removed.
 	-->
-	
 	<!-- ======================================================================================== -->
 	<!-- Main Native Build Target (Called by Traversal SDK)                                      -->
 	<!-- ======================================================================================== -->
