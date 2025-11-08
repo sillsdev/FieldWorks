@@ -1,31 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
   <!--
-    Build Orchestrator: SDK-style project for FieldWorks build orchestration
+    Build Orchestrator: Build orchestration project for FieldWorks
 
     This project replaces the legacy Build/FieldWorks.proj and provides targets for:
     - Package restoration (RestorePackages)
     - Installer builds (BuildBaseInstaller, BuildPatchInstaller)
     - Full build orchestration
 
-    Unlike the old non-SDK FieldWorks.proj, this is a proper SDK-style project
-    that works with MSBuild Traversal SDK and modern .NET tooling.
+    Uses traditional MSBuild format to avoid SDK package resolution overhead
+    while maintaining clean, modern structure.
   -->
 
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
-    <OutputType>Library</OutputType>
     <Platform Condition="'$(Platform)'==''">x64</Platform>
     <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
-
-    <!-- Suppress actual compilation - this is just a build orchestrator -->
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <EnableDefaultItems>false</EnableDefaultItems>
-    <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
-
-    <!-- Don't produce any output assembly -->
-    <CopyBuildOutputToOutputDirectory>false</CopyBuildOutputToOutputDirectory>
-    <CopyOutputSymbolsToOutputDirectory>false</CopyOutputSymbolsToOutputDirectory>
   </PropertyGroup>
 
   <!-- Import build infrastructure -->
