@@ -134,26 +134,32 @@ To update localizations, liblcm must be cloned locally to the location specified
 		/>
 	</Target>
 	<Target Name="copyLibL10ns">
+		<ItemGroup>
+			<!-- Find the installed L10ns packages regardless of version -->
+			<ChorusL10nsDirs Include="$(fwrt)/packages/sil.chorus.l10ns/*" />
+			<PalasoL10nsDirs Include="$(fwrt)/packages/sil.libpalaso.l10ns/*" />
+		</ItemGroup>
 		<PropertyGroup>
-			<ChorusL10nsNugetDir>$(fwrt)/packages/sil.chorus.l10ns/3.0.1</ChorusL10nsNugetDir>
-			<PalasoL10nsNugetDir>$(fwrt)/packages/sil.libpalaso.l10ns/6.0.0</PalasoL10nsNugetDir>
+			<!-- Use the first (and typically only) version found -->
+			<ChorusL10nsNugetDir>@(ChorusL10nsDirs)</ChorusL10nsNugetDir>
+			<PalasoL10nsNugetDir>@(PalasoL10nsDirs)</PalasoL10nsNugetDir>
 		</PropertyGroup>
 		<Error
-			Text="Chorus L10ns package missing ($(ChorusL10nsNugetDir)) - localization files will not be copied. This is optional for development builds."
-			Condition="!Exists('$(ChorusL10nsNugetDir)')"
+			Text="Chorus L10ns package missing - localization files will not be copied. Install via: dotnet restore"
+			Condition="'$(ChorusL10nsNugetDir)' == ''"
 		/>
 		<Error
-			Text="Palaso L10ns package missing ($(PalasoL10nsNugetDir)) - localization files will not be copied. This is optional for development builds."
-			Condition="!Exists('$(PalasoL10nsNugetDir)')"
+			Text="Palaso L10ns package missing - localization files will not be copied. Install via: dotnet restore"
+			Condition="'$(PalasoL10nsNugetDir)' == ''"
 		/>
 		<ItemGroup>
 			<XliffFiles
 				Include="$(ChorusL10nsNugetDir)/content/**/*.xlf"
-				Condition="Exists('$(ChorusL10nsNugetDir)')"
+				Condition="'$(ChorusL10nsNugetDir)' != ''"
 			/>
 			<XliffFiles
 				Include="$(PalasoL10nsNugetDir)/content/**/*.xlf"
-				Condition="Exists('$(PalasoL10nsNugetDir)')"
+				Condition="'$(PalasoL10nsNugetDir)' != ''"
 			/>
 		</ItemGroup>
 		<Copy
