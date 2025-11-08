@@ -3,6 +3,10 @@
 		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'==''"
 			>$(MSBuildThisFileDirectory)..\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll</FwBuildTasksAssembly
 		>
+		<!-- SIL.BuildTasks.dll location from NuGet package (automatically restored) -->
+		<SILBuildTasksAssembly Condition="'$(SILBuildTasksAssembly)'==''"
+			>$(MSBuildThisFileDirectory)..\packages\SIL.BuildTasks.3.1.2-beta0012\tools\SIL.BuildTasks.dll</SILBuildTasksAssembly
+		>
 	</PropertyGroup>
 	<UsingTask TaskName="CatenateFiles" AssemblyFile="$(FwBuildTasksAssembly)" />
 	<UsingTask TaskName="Clouseau" AssemblyFile="$(FwBuildTasksAssembly)" />
@@ -18,7 +22,7 @@
 	<UsingTask TaskName="LogMetadata" AssemblyFile="$(FwBuildTasksAssembly)" />
 	<UsingTask TaskName="Make" AssemblyFile="$(FwBuildTasksAssembly)" />
 	<UsingTask TaskName="Md5Checksum" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<UsingTask TaskName="NUnit3" AssemblyFile="SIL.BuildTasks.dll" />
+	<UsingTask TaskName="NUnit3" AssemblyFile="$(SILBuildTasksAssembly)" />
 	<UsingTask TaskName="ParentDirectory" AssemblyFile="$(FwBuildTasksAssembly)" />
 	<UsingTask TaskName="ParseVersionNumbers" AssemblyFile="$(FwBuildTasksAssembly)" />
 	<UsingTask TaskName="PathCombine" AssemblyFile="$(FwBuildTasksAssembly)" />

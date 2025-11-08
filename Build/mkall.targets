@@ -440,6 +440,7 @@
 				<Version>$(ChorusNugetVersion)</Version>
 				<Path>lib/net462/*.*</Path>
 			</SILNugetPackages>
+			<!-- SIL.BuildTasks is now a PackageReference in FwBuildTasks.csproj -->
 		</ItemGroup>
 	</Target>
 	<!-- Setup source variables (to enable local development in libpalaso, chorus, and liblcm) -->
@@ -692,8 +693,6 @@
 			>
 		</PropertyGroup>
 		<ItemGroup>
-			<!-- SIL.BuildTasks DLL (needed by Build system, not a runtime dependency) -->
-			<NuGottenForBuildTasks Include="$(PackagesDir)/SIL.BuildTasks.2.6.0-beta0008/tools/SIL.BuildTasks.dll" />
 			<!-- Geckofx native browser engine (managed wrapper + native XULRunner files) -->
 			<NuGottenFiles
 				Include="$(GeckoDir)/lib/net45/*.*"
@@ -701,14 +700,9 @@
 			/>
 			<NuGottenFiles Include="$(GeckoDir)/content/**/*.*" />
 			<!-- NOTE: All other managed DLLs are now handled automatically by PackageReference.
-			     MSBuild's automatic assembly resolution copies them to the output directory. -->
+			     MSBuild's automatic assembly resolution copies them to the output directory.
+			     SIL.BuildTasks is now a PackageReference in FwBuildTasks.csproj. -->
 		</ItemGroup>
-		<Copy
-			SourceFiles="@(NuGottenForBuildTasks)"
-			DestinationFolder="$(MSBuildThisFileDirectory)"
-			SkipUnchangedFiles="true"
-			OverwriteReadOnlyFiles="true"
-		/>
 		<Copy
 			SourceFiles="@(NuGottenFiles)"
 			DestinationFolder="$(dir-outputBase)/%(RecursiveDir)"
