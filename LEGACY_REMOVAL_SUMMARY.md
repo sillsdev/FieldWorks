@@ -85,7 +85,7 @@ Build/native.proj         - Optional wrapper (not used)
 
 ### Binary Tools
 - **Not referenced** in any build target or script
-- **Replaceable:** 
+- **Replaceable:**
   - ReadKey/WriteKey → PowerShell registry cmdlets or .NET APIs
   - md5sums → `Get-FileHash` PowerShell cmdlet
   - mkdir → Native OS command
@@ -98,15 +98,16 @@ Build/native.proj         - Optional wrapper (not used)
 
 ### native.proj
 - **Only mentioned** in documentation, never actually used
-- **Redundant:** dirs.proj already calls native builds via Build/FieldWorks.proj
+- **Redundant:** dirs.proj already calls native builds via NativeBuild SDK project
 
 ## What Was Preserved
 
 ### Essential for Current Build
 - `Build/mkall.targets` - Native C++ build orchestration (modernized, kept)
+- `Build/Orchestrator.proj` - SDK-style entry point for RestorePackages and installer
+- `Build/Src/NativeBuild/NativeBuild.csproj` - SDK-style wrapper for native builds
 - `Bld/*.mak` - Native makefile infrastructure (used by Src/*.mak files)
 - `Src/**/*.mak` - Native C++ makefiles (26 files, future replacement candidate)
-- `Build/FieldWorks.proj` - Entry point for RestorePackages and installer
 - `Build/SetupInclude.targets` - Environment initialization
 
 ### Useful for Developers
@@ -122,7 +123,7 @@ Build/native.proj         - Optional wrapper (not used)
 ### Before Modernization
 - 1243 lines in mkall.targets
 - 36 legacy build files
-- Complex PDB download/copy logic  
+- Complex PDB download/copy logic
 - Multiple redundant build entry points
 - Pre-built binary tools for basic operations
 - Legacy batch script entry points
@@ -178,7 +179,7 @@ Before merging these changes, verify:
 
 1. **Native C++ builds work**
    ```powershell
-   msbuild Build/FieldWorks.proj /t:allCppNoTest /p:Configuration=Debug /p:Platform=x64
+   msbuild Build\Src\NativeBuild\NativeBuild.csproj /p:Configuration=Debug /p:Platform=x64
    ```
 
 2. **Full build works**
@@ -188,7 +189,7 @@ Before merging these changes, verify:
 
 3. **Installer builds work**
    ```powershell
-   msbuild Build/FieldWorks.proj /t:BuildBaseInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release
+   msbuild Build/Orchestrator.proj /t:BuildBaseInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release
    ```
 
 4. **CI passes**

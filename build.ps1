@@ -121,7 +121,7 @@ Write-Host "Configuration: $Configuration, Platform: $Platform" -ForegroundColor
 
 # Restore packages first
 Invoke-MSBuildStep `
-	-Arguments @('Build/FieldWorks.proj', '/t:RestorePackages', "/p:Configuration=$Configuration", "/p:Platform=$Platform") `
+	-Arguments @('Build/Orchestrator.proj', '/t:RestorePackages', "/p:Configuration=$Configuration", "/p:Platform=$Platform") `
 	-Description 'RestorePackages'
 
 # Build using traversal project

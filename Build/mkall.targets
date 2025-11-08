@@ -7,7 +7,7 @@
 		and their associated test executables. It is called by the MSBuild Traversal SDK via dirs.proj.
 
 		Modern Build Path (MSBuild Traversal SDK):
-		  dirs.proj → Build/FieldWorks.proj (target: allCppNoTest) → This file
+		  dirs.proj → Build/Src/NativeBuild/NativeBuild.csproj → This file
 
 		Responsibilities:
 		1. Native C++ component builds (DebugProcs, GenericLib, FwKernel, Views)

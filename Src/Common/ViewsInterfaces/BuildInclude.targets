@@ -27,11 +27,11 @@
 			<FwKernelJsonPath>$(OutputPath)../Common/FwKernelTlb.json</FwKernelJsonPath>
 		</PropertyGroup>
 		<Warning
-			Text="Native artifacts missing ($(ViewsTlbPath), $(FwKernelJsonPath)). Please build native C++ projects first using 'msbuild Build\FieldWorks.proj /t:allCppNoTest' before building ViewsInterfaces."
+			Text="Native artifacts missing ($(ViewsTlbPath), $(FwKernelJsonPath)). Please build native C++ projects first using 'msbuild Build\Src\NativeBuild\NativeBuild.csproj' before building ViewsInterfaces."
 			Condition="!Exists('$(ViewsTlbPath)') OR !Exists('$(FwKernelJsonPath)')"
 		/>
 		<Error
-			Text="Cannot generate Views.cs without native artifacts. Run: msbuild Build\FieldWorks.proj /t:allCppNoTest"
+			Text="Cannot generate Views.cs without native artifacts. Run: msbuild Build\Src\NativeBuild\NativeBuild.csproj"
 			Condition="!Exists('$(ViewsTlbPath)') OR !Exists('$(FwKernelJsonPath)')"
 		/>
 	</Target>

@@ -60,7 +60,7 @@ The `dirs.proj` file defines a declarative build order:
 The build will fail with clear errors if prerequisites are missing:
 ```
 Error: Cannot generate Views.cs without native artifacts.
-Run: msbuild Build\FieldWorks.proj /t:allCppNoTest
+Run: msbuild Build\Src\NativeBuild\NativeBuild.csproj
 ```
 
 ## Context loading
@@ -82,8 +82,8 @@ Run: msbuild Build\FieldWorks.proj /t:allCppNoTest
 - **Direct MSBuild**: `msbuild dirs.proj /p:Configuration=Debug /p:Platform=x64 /m`
 - **Dotnet CLI**: `dotnet build dirs.proj` (requires .NET SDK)
 - **Single project**: `msbuild Src/<Path>/<Project>.csproj` (for quick iterations)
-- **Native only**: `msbuild Build/FieldWorks.proj /t:allCppNoTest` (Phase 2 of traversal)
-- **Installer**: `msbuild Build/FieldWorks.proj /t:BuildBaseInstaller` or `/t:BuildPatchInstaller` (calls traversal internally, requires WiX Toolset)
+- **Native only**: `msbuild Build\Src\NativeBuild\NativeBuild.csproj` (Phase 2 of traversal)
+- **Installer**: See `Build/Installer.targets` for installer build targets (requires WiX Toolset)
 
 ### Configuration Options
 ```powershell
@@ -105,7 +105,7 @@ Run: msbuild Build\FieldWorks.proj /t:allCppNoTest
 **Solution**:
 ```powershell
 # Build native components first
-msbuild Build/FieldWorks.proj /t:allCppNoTest /p:Configuration=Debug /p:Platform=x64
+msbuild Build\Src\NativeBuild\NativeBuild.csproj /p:Configuration=Debug /p:Platform=x64
 
 # Then continue with full build
 .\build.ps1
@@ -133,7 +133,7 @@ msbuild Build/FieldWorks.proj /t:allCppNoTest /p:Configuration=Debug /p:Platform
 git clean -dfx Output/ Obj/
 
 # Then rebuild native first
-msbuild Build/FieldWorks.proj /t:allCppNoTest /p:Configuration=Debug /p:Platform=x64
+msbuild Build\Src\NativeBuild\NativeBuild.csproj /p:Configuration=Debug /p:Platform=x64
 
 # Then full build
 .\build.ps1
@@ -159,7 +159,7 @@ msbuild dirs.proj /p:Configuration=Debug /p:Platform=x64 /p:action=test /m
 ### Building Specific Project Groups
 ```powershell
 # Native C++ only (Phase 2 of traversal)
-msbuild Build/FieldWorks.proj /t:allCppNoTest
+msbuild Build\Src\NativeBuild\NativeBuild.csproj
 
 # Specific phase from dirs.proj (not typically needed)
 # The traversal build handles ordering automatically

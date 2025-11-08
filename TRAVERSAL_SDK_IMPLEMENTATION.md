@@ -60,7 +60,7 @@ Phase 21: Test Projects - Utilities
 ```
 Developer: build.ps1 or build.sh
     ↓
-RestorePackages (via Build/FieldWorks.proj)
+RestorePackages (via Build/Orchestrator.proj)
     ↓
 dirs.proj (Traversal SDK)
     ↓
@@ -72,7 +72,7 @@ Output/Debug/ or Output/Release/
 ### Installer Flow
 
 ```
-msbuild Build/FieldWorks.proj /t:BuildBaseInstaller
+msbuild Build/Orchestrator.proj /t:BuildBaseInstaller
     ↓
 Build/Installer.targets
     ↓
@@ -118,12 +118,12 @@ dotnet build dirs.proj
 
 ```powershell
 # Base installer
-msbuild Build/FieldWorks.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64
-msbuild Build/FieldWorks.proj /t:BuildBaseInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /m
+msbuild Build/Orchestrator.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64
+msbuild Build/Orchestrator.proj /t:BuildBaseInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /m
 
 # Patch installer
-msbuild Build/FieldWorks.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64
-msbuild Build/FieldWorks.proj /t:BuildPatchInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /m
+msbuild Build/Orchestrator.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64
+msbuild Build/Orchestrator.proj /t:BuildPatchInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /m
 ```
 
 ### Special Cases
@@ -133,7 +133,7 @@ msbuild Build/FieldWorks.proj /t:BuildPatchInstaller /p:Configuration=Debug /p:P
 msbuild Src/Common/FwUtils/FwUtils.csproj /p:Configuration=Debug
 
 # Native components only (Phase 2)
-msbuild Build/FieldWorks.proj /t:allCppNoTest /p:Configuration=Debug /p:Platform=x64
+msbuild Build\Src\NativeBuild\NativeBuild.csproj /p:Configuration=Debug /p:Platform=x64
 
 # Clean build
 git clean -dfx Output/ Obj/
@@ -169,7 +169,7 @@ git clean -dfx Output/ Obj/
 
 ### 6. Clear Error Messages
 - **Before**: Cryptic "missing assembly" errors
-- **After**: "Cannot generate Views.cs without native artifacts. Run: msbuild Build/FieldWorks.proj /t:allCppNoTest"
+- **After**: "Cannot generate Views.cs without native artifacts. Run: msbuild Build\Src\NativeBuild\NativeBuild.csproj"
 - **Impact**: Faster troubleshooting
 
 ## Files Changed
@@ -196,7 +196,8 @@ git clean -dfx Output/ Obj/
   - Removed legacy targets: `mkall`, `remakefw*`, `allCsharp`, `allCpp`, test targets
   - Removed PDB download logic (SDK handles this automatically)
   - Removed symbol package downloads (no longer needed)
-- `Build/FieldWorks.proj` - Entry point for RestorePackages and installer targets (modernized)
+- `Build/Orchestrator.proj` - SDK-style entry point for RestorePackages and installer targets
+- `Build/Src/NativeBuild/NativeBuild.csproj` - SDK-style wrapper for native C++ builds
 - `Build/SetupInclude.targets` - Environment setup
 - `Build/*.targets` - Various specialized targets
 
@@ -210,8 +211,8 @@ git clean -dfx Output/ Obj/
 
 ### Removed Parameters
 - `build.ps1 -UseTraversal` - No longer needed (always on)
-- `build.ps1 -Targets xyz` - Use `msbuild Build/FieldWorks.proj /t:xyz` if needed
-- `build.ps1 -Target xyz` - Use `msbuild Build/FieldWorks.proj /t:xyz` if needed
+- `build.ps1 -Targets xyz` - Use `msbuild Build/Orchestrator.proj /t:xyz` if needed
+- `build.ps1 -Target xyz` - Use `msbuild Build/Orchestrator.proj /t:xyz` if needed
 
 ### Removed Targets
 - `mkall` - Use traversal build via `build.ps1` or `dirs.proj`
@@ -231,7 +232,7 @@ git clean -dfx Output/ Obj/
 - **New**: `.\build.ps1`
 
 - **Old**: `.\build.ps1 -Target BuildBaseInstaller`
-- **New**: `msbuild Build/FieldWorks.proj /t:BuildBaseInstaller`
+- **New**: `msbuild Build/Orchestrator.proj /t:BuildBaseInstaller`
 
 ## Non-Breaking Changes
 
@@ -239,8 +240,8 @@ These continue to work exactly as before:
 - `.\build.ps1` - Standard development build
 - `./build.sh` - Standard development build
 - `msbuild Src/path/Project.csproj` - Individual project builds
-- `msbuild Build/FieldWorks.proj /t:allCppNoTest` - Native-only builds
-- `msbuild Build/FieldWorks.proj /t:RestorePackages` - Package restore
+- `msbuild Build\Src\NativeBuild\NativeBuild.csproj` - Native-only builds
+- `msbuild Build/Orchestrator.proj /t:RestorePackages` - Package restore
 
 ## Testing Checklist
 
@@ -253,7 +254,7 @@ These continue to work exactly as before:
 - [ ] Base installer builds successfully
 - [ ] Patch installer builds successfully
 - [ ] Individual project builds work: `msbuild Src/Common/FwUtils/FwUtils.csproj`
-- [ ] Native-only build works: `msbuild Build/FieldWorks.proj /t:allCppNoTest`
+- [ ] Native-only build works: `msbuild Build\Src\NativeBuild\NativeBuild.csproj`
 - [ ] Parallel builds complete without race conditions: `.\build.ps1 -MsBuildArgs @('/m')`
 
 ### Performance Validation

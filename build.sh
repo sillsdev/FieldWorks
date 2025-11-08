@@ -174,7 +174,7 @@ echo ""
 
 # Restore packages first
 run_msbuild_step "$MSBUILD" "RestorePackages" \
-  "Build/FieldWorks.proj" \
+  "Build/Orchestrator.proj" \
   "/t:RestorePackages" \
   "/p:Configuration=$CONFIGURATION" \
   "/p:Platform=$PLATFORM"

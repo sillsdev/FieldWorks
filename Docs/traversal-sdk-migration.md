@@ -88,7 +88,7 @@ msbuild Src/Common/FwUtils/FwUtils.csproj
 ### Native Components Only
 ```powershell
 # Build just C++ components (Phase 2)
-msbuild Build/FieldWorks.proj /t:allCppNoTest
+msbuild Build\Src\NativeBuild\NativeBuild.csproj
 ```
 
 ## Installer Builds
@@ -97,10 +97,10 @@ Installer builds use traversal internally but are invoked via MSBuild targets:
 
 ```powershell
 # Base installer (calls traversal build via Installer.targets)
-msbuild Build/FieldWorks.proj /t:BuildBaseInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release
+msbuild Build/Orchestrator.proj /t:BuildBaseInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release
 
 # Patch installer (calls traversal build via Installer.targets)
-msbuild Build/FieldWorks.proj /t:BuildPatchInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release
+msbuild Build/Orchestrator.proj /t:BuildPatchInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release
 ```
 
 Note: The installer targets in `Build/Installer.targets` have been modernized to call `dirs.proj` instead of the old `remakefw` target.
@@ -123,7 +123,7 @@ msbuild Src/xWorks/xWorks.csproj /p:Configuration=Debug
 
 **Solution**: Build native components first:
 ```powershell
-msbuild Build/FieldWorks.proj /t:allCppNoTest /p:Configuration=Debug /p:Platform=x64
+msbuild Build\Src\NativeBuild\NativeBuild.csproj /p:Configuration=Debug /p:Platform=x64
 .\build.ps1
 ```
 
