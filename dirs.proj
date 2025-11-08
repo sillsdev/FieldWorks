@@ -29,10 +29,7 @@
   </ItemGroup>
 
   <ItemGroup Label="Phase 2: Native C++ Components">
-    <!-- 
-      Native components (DebugProcs, GenericLib, FwKernel, Views) are built via mkall.targets.
-      Alternative: <ProjectReference Include="Build\native.proj" /> for a cleaner interface
-    -->
+    <!-- Native components (DebugProcs, GenericLib, FwKernel, Views) are built via mkall.targets -->
     <ProjectReference Include="Build\FieldWorks.proj" Targets="allCppNoTest" />
   </ItemGroup>
 

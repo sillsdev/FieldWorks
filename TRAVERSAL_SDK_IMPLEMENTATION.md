@@ -202,6 +202,9 @@ git clean -dfx Output/ Obj/
 
 ### Removed Files
 - `agent-build-fw.sh` - Legacy headless build script (no longer needed)
+- `Build/native.proj` - Optional wrapper (not used, removed)
+- `Bin/*.bat` and `Bin/*.cmd` - 29 legacy batch files (mkall.bat, RemakeFw.bat, mk*.bat, etc.)
+  - These were pre-MSBuild build entry points that duplicated functionality in mkall.targets
 
 ## Breaking Changes
 
