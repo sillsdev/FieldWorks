@@ -15,10 +15,14 @@ This guide shows how to build and validate the feature locally.
 
 ### Building
 
-**Command line**:
-```cmd
-msbuild Build/FieldWorks.proj /t:RestorePackages;CheckDevelopmentPropertiesFile;refreshTargets;WriteNonlocalDevelopmentPropertiesFile /p:Platform=x64
-msbuild Build/FieldWorks.proj /t:remakefw-jenkins /p:Platform=x64 /p:action=test
+**Modern build (using Traversal SDK)**:
+```powershell
+.\build.ps1 -Configuration Debug -Platform x64
+```
+
+**With tests**:
+```powershell
+.\build.ps1 -Configuration Debug -Platform x64 -MsBuildArgs @('/m', '/p:action=test')
 ```
 
 **Solution only**:

@@ -192,10 +192,16 @@ git clean -dfx Output/ Obj/
 - `.github/workflows/patch-installer-cd.yml` - Calls installer target directly
 
 ### Preserved Files (Still Needed)
-- `Build/mkall.targets` - Native C++ build orchestration (called by dirs.proj Phase 2)
-- `Build/FieldWorks.proj` - Entry point for RestorePackages and installer targets
+- `Build/mkall.targets` - Native C++ build orchestration (modernized - 210 lines removed)
+  - Removed legacy targets: `mkall`, `remakefw*`, `allCsharp`, `allCpp`, test targets
+  - Removed PDB download logic (SDK handles this automatically)
+  - Removed symbol package downloads (no longer needed)
+- `Build/FieldWorks.proj` - Entry point for RestorePackages and installer targets (modernized)
 - `Build/SetupInclude.targets` - Environment setup
 - `Build/*.targets` - Various specialized targets
+
+### Removed Files
+- `agent-build-fw.sh` - Legacy headless build script (no longer needed)
 
 ## Breaking Changes
 
@@ -203,6 +209,16 @@ git clean -dfx Output/ Obj/
 - `build.ps1 -UseTraversal` - No longer needed (always on)
 - `build.ps1 -Targets xyz` - Use `msbuild Build/FieldWorks.proj /t:xyz` if needed
 - `build.ps1 -Target xyz` - Use `msbuild Build/FieldWorks.proj /t:xyz` if needed
+
+### Removed Targets
+- `mkall` - Use traversal build via `build.ps1` or `dirs.proj`
+- `remakefw` - Use traversal build via `build.ps1` or `dirs.proj`
+- `remakefw-internal` - No longer needed
+- `remakefw-ci` - No longer needed
+- `remakefw-jenkins` - No longer needed
+- `allCsharp` - Managed by traversal SDK
+- `allCpp` - Use `allCppNoTest` target instead
+- `refreshTargets` - Use `GenerateVersionFiles` if needed
 
 ### Changed Workflows
 - **Old**: `.\build.ps1 -UseTraversal`

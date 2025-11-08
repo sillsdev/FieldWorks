@@ -13,22 +13,18 @@
   <Import Project="SetupInclude.targets"/>
 
   <!-- ********************************************************************************** -->
-  <!-- Add all projects below -->
-
-  <Target Name="all" DependsOnTargets="mkall"/>
-
-  <!-- Recreates the FieldWorks.targets (in Setup target) and some generated files -->
-  <Target Name="refreshTargets" DependsOnTargets="GenerateVersionFiles"/>
-
-  <!-- dummy target to perform platform specific initialization -->
+  <!-- Modern Build Targets                                                               -->
+  <!-- ********************************************************************************** -->
+  
+  <!-- Main build target now handled by MSBuild Traversal SDK via dirs.proj -->
+  <!-- This file provides native C++ build orchestration and installer support -->
+  
+  <!-- Dummy target to perform platform specific initialization -->
   <Target Name="init" DependsOnTargets="initWindows"/>
 
-  <Target Name="allCsharp">
-	<Message Text="Try building again, the FieldWorks.targets file should now exist."/>
-  </Target>
-
   <!-- ********************************************************************************** -->
-  <!-- Add individual project targets below this point. -->
+  <!-- Individual project targets below this point                                        -->
+  <!-- ********************************************************************************** -->
 
   <Import Project="Windows.targets"/>
   <Import Project="FieldWorks.targets" Condition="Exists('FieldWorks.targets')"/>
