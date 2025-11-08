@@ -24,9 +24,8 @@
     <ReportAnalyzer>false</ReportAnalyzer>
   </PropertyGroup>
 
-  <ItemGroup Label="Phase 1: Build Tasks (needed for all builds)">
-    <ProjectReference Include="Build\Src\FwBuildTasks\FwBuildTasks.csproj" />
-  </ItemGroup>
+  <!-- Phase 1: Build Tasks - Excluded from traversal build because build.ps1 bootstraps it -->
+  <!-- FwBuildTasks must be built separately before dirs.proj to avoid file locking issues -->
 
   <ItemGroup Label="Phase 2: Native C++ Components">
     <!-- Native components (DebugProcs, GenericLib, FwKernel, Views) are built via NativeBuild SDK project -->
@@ -208,7 +207,8 @@
     <!-- Tests for utility components -->
     <ProjectReference Include="Src\Utilities\SfmToXml\Sfm2XmlTests\Sfm2XmlTests.csproj" />
     <ProjectReference Include="Src\UnicodeCharEditor\UnicodeCharEditorTests\UnicodeCharEditorTests.csproj" />
-    <ProjectReference Include="Src\InstallValidator\InstallValidatorTests\InstallValidatorTests.csproj" />
+    <!-- InstallValidatorTests excluded: it depends on FwBuildTasks types, which causes circular dependency since FwBuildTasks is bootstrapped before traversal -->
+    <!-- <ProjectReference Include="Src\InstallValidator\InstallValidatorTests\InstallValidatorTests.csproj" /> -->
     <ProjectReference Include="Lib\src\ScrChecks\ScrChecksTests\ScrChecksTests.csproj" />
   </ItemGroup>
 

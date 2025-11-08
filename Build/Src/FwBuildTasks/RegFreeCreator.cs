@@ -594,13 +594,17 @@ namespace SIL.FieldWorks.Build.Tasks
 					"/asmv1:assembly/asmv1:assemblyIdentity",
 					depAsmNsManager
 				);
-			Debug.Assert(manifestAsmIdElem != null);
-			asmIdElem.SetAttribute("name", manifestAsmIdElem.GetAttribute("name"));
-			asmIdElem.SetAttribute("version", manifestAsmIdElem.GetAttribute("version"));
-			asmIdElem.SetAttribute("type", manifestAsmIdElem.GetAttribute("type"));
+		Debug.Assert(manifestAsmIdElem != null);
+		asmIdElem.SetAttribute("name", manifestAsmIdElem.GetAttribute("name"));
+		asmIdElem.SetAttribute("version", manifestAsmIdElem.GetAttribute("version"));
+		asmIdElem.SetAttribute("type", manifestAsmIdElem.GetAttribute("type"));
+		// Copy processorArchitecture if present (required for 64-bit manifests)
+		string procArch = manifestAsmIdElem.GetAttribute("processorArchitecture");
+		if (!string.IsNullOrEmpty(procArch))
+		{
+			asmIdElem.SetAttribute("processorArchitecture", procArch);
 		}
-
-		/// ------------------------------------------------------------------------------------
+	}		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Processes one type info. We get the necessary information from the type library
 		/// and also from the registry.

@@ -30,7 +30,13 @@
     <Reference Include="netstandard" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="../../../Build/Src/FwBuildTasks/FwBuildTasks.csproj" />
+    <!-- FwBuildTasks is referenced for assembly access but NOT built (bootstrapped separately by build.ps1) -->
+    <!-- Build=false prevents MSBuild from trying to build this project during traversal -->
+    <ProjectReference Include="../../../Build/Src/FwBuildTasks/FwBuildTasks.csproj">
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <Build>false</Build>
+      <Private>False</Private>
+    </ProjectReference>
     <ProjectReference Include="../InstallValidator.csproj" />
   </ItemGroup>
 </Project>

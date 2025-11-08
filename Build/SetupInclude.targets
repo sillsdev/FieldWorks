@@ -264,7 +264,7 @@
 			Template="@(BldIncTemplate)"
 			Symbols="@(VersionSymbols)"
 			Output="@(BldIncOutput)"
-			Condition="'$(action)'!='clean' And Exists('../Output/Common')"
+			Condition="'$(action)'!='clean'"
 		/>
 		<Substitute
 			Template="@(GlobalIncludeTemplate)"

@@ -32,6 +32,7 @@
     <Reference Include="netstandard" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="../FwBuildTasks/FwBuildTasks.csproj" />
+    <!-- FwBuildTasks ProjectReference removed - it's bootstrapped by build.ps1 before the traversal build -->
+    <!-- <ProjectReference Include="../FwBuildTasks/FwBuildTasks.csproj" /> -->
   </ItemGroup>
 </Project>
