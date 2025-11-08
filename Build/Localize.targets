@@ -144,11 +144,11 @@ To update localizations, liblcm must be cloned locally to the location specified
 			<ChorusL10nsNugetDir>@(ChorusL10nsDirs)</ChorusL10nsNugetDir>
 			<PalasoL10nsNugetDir>@(PalasoL10nsDirs)</PalasoL10nsNugetDir>
 		</PropertyGroup>
-		<Error
+		<Warning
 			Text="Chorus L10ns package missing - localization files will not be copied. Install via: dotnet restore"
 			Condition="'$(ChorusL10nsNugetDir)' == ''"
 		/>
-		<Error
+		<Warning
 			Text="Palaso L10ns package missing - localization files will not be copied. Install via: dotnet restore"
 			Condition="'$(PalasoL10nsNugetDir)' == ''"
 		/>

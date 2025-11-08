@@ -26,7 +26,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
-    <PackageReference Include="icu.net" Version="3.0.0-beta.297" />
+    <PackageReference Include="icu.net" Version="3.0.1" />
     <PackageReference Include="L10NSharp" Version="9.0.0-*" />
     <PackageReference Include="mixpanel-csharp" Version="6.0.0" />
     <PackageReference Include="SharpZipLib" Version="1.4.0" Exclude="Build,Analyzers" />
