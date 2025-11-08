@@ -12,9 +12,7 @@ namespace FwBuildTasks
 {
 	public class Make : ToolTask
 	{
-		public Make()
-		{
-		}
+		public Make() { }
 
 		/// <summary>
 		/// Gets or sets the path to the makefile.
@@ -106,7 +104,7 @@ namespace FwBuildTasks
 				if (File.Exists(Path.Combine(ToolPath, ToolName)))
 					return;
 			}
-			string[] splitPath = path.Split(new char[] {Path.PathSeparator});
+			string[] splitPath = path.Split(new char[] { Path.PathSeparator });
 			foreach (var dir in splitPath)
 			{
 				if (File.Exists(Path.Combine(dir, ToolName)))
@@ -115,8 +113,17 @@ namespace FwBuildTasks
 					return;
 				}
 			}
-			// Fall Back to the install directory
-			ToolPath = Path.Combine(vcInstallDir, "bin");
+			// Fall Back to the install directory (if VCINSTALLDIR is set)
+			if (!String.IsNullOrEmpty(vcInstallDir))
+			{
+				ToolPath = Path.Combine(vcInstallDir, "bin");
+			}
+			else
+			{
+				// VCINSTALLDIR not set - likely not in a VS Developer environment
+				// Let MSBuild try to find the tool in PATH
+				ToolPath = String.Empty;
+			}
 		}
 
 		protected override string GenerateFullPathToTool()
@@ -159,7 +166,9 @@ namespace FwBuildTasks
 		/// </summary>
 		protected override string GetWorkingDirectory()
 		{
-			return String.IsNullOrEmpty(WorkingDirectory) ? base.GetWorkingDirectory() : WorkingDirectory;
+			return String.IsNullOrEmpty(WorkingDirectory)
+				? base.GetWorkingDirectory()
+				: WorkingDirectory;
 		}
 		#endregion
 	}

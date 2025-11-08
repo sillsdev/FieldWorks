@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 
 param(
 	[string]$Configuration = "Debug",
@@ -21,11 +21,16 @@ function Initialize-VsDevEnvironment {
 		[string]$RequestedPlatform
 	)
 
-	if ($env:OS -ne 'Windows_NT' -or $env:VCINSTALLDIR) {
+	if ($env:OS -ne 'Windows_NT') {
 		return
 	}
 
-	Write-Host 'Locating Visual Studio build tools...' -ForegroundColor Yellow
+	if ($env:VCINSTALLDIR) {
+		Write-Host '✓ Visual Studio environment already initialized' -ForegroundColor Green
+		return
+	}
+
+	Write-Host '🔧 Initializing Visual Studio Developer environment...' -ForegroundColor Yellow
 	$vswhereCandidates = @()
 	if ($env:ProgramFiles) {
 		$pfVswhere = Join-Path -Path $env:ProgramFiles -ChildPath 'Microsoft Visual Studio\Installer\vswhere.exe'
@@ -42,12 +47,25 @@ function Initialize-VsDevEnvironment {
 	}
 
 	if (-not $vswhereCandidates) {
-		throw 'Unable to locate vswhere.exe. Run this script from a Developer Command Prompt or install the Visual Studio Build Tools.'
+		Write-Host ''
+		Write-Host '❌ ERROR: Visual Studio 2017+ not found' -ForegroundColor Red
+		Write-Host '   Native C++ builds require Visual Studio with required workloads' -ForegroundColor Red
+		Write-Host ''
+		Write-Host '   Install from: https://visualstudio.microsoft.com/downloads/' -ForegroundColor Yellow
+		Write-Host '   Required workloads:' -ForegroundColor Yellow
+		Write-Host '     - Desktop development with C++' -ForegroundColor Yellow
+		Write-Host '     - .NET desktop development' -ForegroundColor Yellow
+		Write-Host ''
+		throw 'Visual Studio not found'
 	}
 
 	$vsInstallPath = & $vswhereCandidates[0] -latest -requires Microsoft.Component.MSBuild Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -products * -property installationPath
 	if (-not $vsInstallPath) {
-		throw 'vswhere.exe could not find a Visual Studio installation with the VC toolset. Install the required workloads or run from a configured developer prompt.'
+		Write-Host ''
+		Write-Host '❌ ERROR: Visual Studio found but missing required C++ tools' -ForegroundColor Red
+		Write-Host '   Please install the "Desktop development with C++" workload' -ForegroundColor Red
+		Write-Host ''
+		throw 'Visual Studio C++ tools not found'
 	}
 
 	$vsDevCmd = Join-Path -Path $vsInstallPath -ChildPath 'Common7\Tools\VsDevCmd.bat'
@@ -55,12 +73,17 @@ function Initialize-VsDevEnvironment {
 		throw "Unable to locate VsDevCmd.bat under '$vsInstallPath'."
 	}
 
-	$arch = if ($RequestedPlatform -ieq 'x86') { 'x86' } else { 'x64' }
-	Write-Host "Initializing Visual Studio environment (-arch=$arch)..." -ForegroundColor Yellow
+	$arch = if ($RequestedPlatform -ieq 'x86') { 'x86' } else { 'amd64' }
+	$vsVersion = Split-Path (Split-Path (Split-Path (Split-Path $vsInstallPath))) -Leaf
+	Write-Host "   Found Visual Studio $vsVersion at: $vsInstallPath" -ForegroundColor Gray
+	Write-Host "   Setting up environment for $arch..." -ForegroundColor Gray
+
 	$cmdArgs = "`"$vsDevCmd`" -no_logo -arch=$arch -host_arch=$arch && set"
-	$envOutput = & cmd.exe /c $cmdArgs
-	if (-not $envOutput) {
-		throw 'Failed to initialize the Visual Studio developer environment.'
+	$envOutput = & cmd.exe /c $cmdArgs 2>&1
+	if ($LASTEXITCODE -ne 0) {
+		Write-Host ''
+		Write-Host "❌ ERROR: VsDevCmd.bat failed with exit code $LASTEXITCODE" -ForegroundColor Red
+		throw 'Failed to initialize Visual Studio environment'
 	}
 
 	foreach ($line in $envOutput) {
@@ -71,8 +94,14 @@ function Initialize-VsDevEnvironment {
 	}
 
 	if (-not $env:VCINSTALLDIR) {
-		throw 'VSDevCmd completed but VCINSTALLDIR is still missing; ensure Visual Studio C++ tools are installed.'
+		Write-Host ''
+		Write-Host '❌ ERROR: VCINSTALLDIR not set after initialization' -ForegroundColor Red
+		Write-Host '   This usually means the C++ tools are not properly installed' -ForegroundColor Red
+		throw 'Visual Studio C++ environment not configured'
 	}
+
+	Write-Host '✓ Visual Studio environment initialized successfully' -ForegroundColor Green
+	Write-Host "   VCINSTALLDIR: $env:VCINSTALLDIR" -ForegroundColor Gray
 }
 
 Initialize-VsDevEnvironment -RequestedPlatform $Platform
@@ -119,7 +148,13 @@ function Invoke-MSBuildStep {
 Write-Host "Building FieldWorks using MSBuild Traversal SDK (dirs.proj)..." -ForegroundColor Cyan
 Write-Host "Configuration: $Configuration, Platform: $Platform" -ForegroundColor Cyan
 
-# Restore packages first
+# Bootstrap: Build FwBuildTasks first (required by SetupInclude.targets)
+Write-Host "🔧 Bootstrapping: Building FwBuildTasks..." -ForegroundColor Yellow
+Invoke-MSBuildStep `
+	-Arguments @('Build/Src/FwBuildTasks/FwBuildTasks.csproj', '/t:Restore;Build', "/p:Configuration=$Configuration", "/p:Platform=$Platform") `
+	-Description 'FwBuildTasks'
+
+# Restore packages
 Invoke-MSBuildStep `
 	-Arguments @('Build/Orchestrator.proj', '/t:RestorePackages', "/p:Configuration=$Configuration", "/p:Platform=$Platform") `
 	-Description 'RestorePackages'
@@ -131,5 +166,5 @@ Invoke-MSBuildStep `
 	-LogPath $LogFile
 
 Write-Host ""
-Write-Host "✅ Build complete!" -ForegroundColor Green
-Write-Host "Output directory: Output\$Configuration\" -ForegroundColor Cyan
+Write-Host "Build complete!" -ForegroundColor Green
+Write-Host "Output: Output\$Configuration" -ForegroundColor Cyan

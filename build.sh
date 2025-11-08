@@ -120,6 +120,63 @@ set_arch_environment() {
   echo "Set arch environment variable to: $arch"
 }
 
+# Check Visual Studio Developer Environment
+check_vs_environment() {
+  # Check if already initialized
+  if [[ -n "${VCINSTALLDIR:-}" ]]; then
+    echo "✓ Visual Studio Developer environment detected"
+    return 0
+  fi
+
+  # Not Windows? Skip (likely CI on Linux)
+  if [[ ! "$OSTYPE" =~ "msys" && ! "$OSTYPE" =~ "cygwin" ]]; then
+    return 0
+  fi
+
+  # Find if Visual Studio is installed
+  local vs_versions=(2022 2019 2017)
+  local vs_editions=(Community Professional Enterprise BuildTools)
+  local vs_found=""
+
+  for version in "${vs_versions[@]}"; do
+    for edition in "${vs_editions[@]}"; do
+      if [[ -d "/c/Program Files/Microsoft Visual Studio/$version/$edition" ]]; then
+        vs_found="$version $edition"
+        break 2
+      fi
+    done
+  done
+
+  echo ""
+  echo "❌ ERROR: Visual Studio Developer environment not initialized" >&2
+  echo "" >&2
+
+  if [[ -n "$vs_found" ]]; then
+    echo "   Visual Studio $vs_found is installed, but the environment is not set up." >&2
+    echo "" >&2
+    echo "   Please run this script from a Developer Command Prompt:" >&2
+    echo "" >&2
+    echo "   1. Press Windows key and search for 'Developer Command Prompt for VS'" >&2
+    echo "   2. Open 'Developer Command Prompt for VS 2022' (or your VS version)" >&2
+    echo "   3. Navigate to: cd '$PWD'" >&2
+    echo "   4. Run: ./build.sh" >&2
+  else
+    echo "   Visual Studio 2017+ not found." >&2
+    echo "" >&2
+    echo "   Install from: https://visualstudio.microsoft.com/downloads/" >&2
+    echo "   Required workloads:" >&2
+    echo "     - Desktop development with C++" >&2
+    echo "     - .NET desktop development" >&2
+  fi
+
+  echo "" >&2
+  echo "   Alternatively, use PowerShell which can auto-initialize:" >&2
+  echo "   PS> .\\build.ps1" >&2
+  echo "" >&2
+
+  return 1
+}
+
 # Run an MSBuild step with error handling
 run_msbuild_step() {
   local msbuild_exe="$1"
@@ -153,6 +210,11 @@ run_msbuild_step() {
   fi
 }
 
+# Disable Git Bash path translation for MSBuild arguments EARLY
+# This prevents /t: and /p: from being converted to Windows paths
+export MSYS_NO_PATHCONV=1
+export MSYS2_ARG_CONV_EXCL="*"
+
 # Main build sequence
 echo ""
 echo "Building FieldWorks using MSBuild Traversal SDK (dirs.proj)..."
@@ -162,17 +224,27 @@ echo ""
 # Find MSBuild
 MSBUILD=$(find_msbuild)
 
+# Check for Visual Studio Developer environment (required for native C++ builds)
+if ! check_vs_environment; then
+  exit 1
+fi
+
 # Set architecture environment variable for legacy MSBuild tasks
 set_arch_environment "$PLATFORM"
 
-# Disable Git Bash path translation for MSBuild arguments
-# This prevents /t: and /p: from being converted to Windows paths
-export MSYS_NO_PATHCONV=1
-export MSYS2_ARG_CONV_EXCL="*"
+echo ""
+
+# Bootstrap: Build FwBuildTasks first (required by SetupInclude.targets)
+echo "🔧 Bootstrapping: Building FwBuildTasks..."
+run_msbuild_step "$MSBUILD" "FwBuildTasks" \
+  "Build/Src/FwBuildTasks/FwBuildTasks.csproj" \
+  "/t:Restore;Build" \
+  "/p:Configuration=$CONFIGURATION" \
+  "/p:Platform=$PLATFORM"
 
 echo ""
 
-# Restore packages first
+# Restore packages
 run_msbuild_step "$MSBUILD" "RestorePackages" \
   "Build/Orchestrator.proj" \
   "/t:RestorePackages" \
