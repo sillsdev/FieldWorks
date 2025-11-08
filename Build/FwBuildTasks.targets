@@ -9,6 +9,7 @@
 	<UsingTask TaskName="ComputerName" AssemblyFile="$(FwBuildTasksAssembly)" />
 	<UsingTask TaskName="CpuArchitecture" AssemblyFile="$(FwBuildTasksAssembly)" />
 	<UsingTask TaskName="DownloadFile" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="DownloadFilesFromTeamCity" AssemblyFile="$(FwBuildTasksAssembly)" />
 	<UsingTask TaskName="ForceDelete" AssemblyFile="$(FwBuildTasksAssembly)" />
 	<UsingTask TaskName="GenerateFwTargets" AssemblyFile="$(FwBuildTasksAssembly)" />
 	<UsingTask TaskName="GenerateNUnitReports" AssemblyFile="$(FwBuildTasksAssembly)" />

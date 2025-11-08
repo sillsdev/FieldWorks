@@ -303,6 +303,18 @@
 	</Target>
 	<PropertyGroup>
 		<MasterVersionInfo>$(fwrt)/Src/MasterVersionInfo.txt</MasterVersionInfo>
+		<TeamCityUrl Condition="'$(TeamCityUrl)'==''">https://build.palaso.org/</TeamCityUrl>
+		<!-- bt393 is the master branch build of ExCss for Windows development. Update when appropriate. -->
+		<ExCssBuildType Condition="'$(OS)'=='Windows_NT'">bt393</ExCssBuildType>
+		<ExCss Condition="'$(OS)'=='Windows_NT'">ExCss</ExCss>
+		<ExCssBuildTag>.lastSuccessful</ExCssBuildTag>
+		<GeckoFxHtmlToPdfBuildType Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'"
+			>GeckofxHtmlToPdf_GeckofxHtmlToPdfGeckofx60Win32continuous</GeckoFxHtmlToPdfBuildType
+		>
+		<GeckoFxHtmlToPdfBuildType Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'"
+			>GeckofxHtmlToPdf_Win64_continuous</GeckoFxHtmlToPdfBuildType
+		>
+		<GeckoFxHtmlToPdfBuildTag>.lastSuccessful</GeckoFxHtmlToPdfBuildTag>
 		<!-- Versions of NuGet packages. Keep these in sync with PackageReference versions in the managed projects. -->
 		<ChorusNugetVersion>6.0.0-beta0063</ChorusNugetVersion>
 		<PalasoNugetVersion>17.0.0-beta0080</PalasoNugetVersion>
@@ -459,7 +471,34 @@
 			Text="(Palaso, Chorus, and LCM artifacts will be copied to Output from $(PalasoArtifactsDir), $(ChorusArtifactsDir), and $(LcmArtifactsDir), respectively, as  specified in LibraryDevelopment.targets)"
 			Condition="'$(UseLocalLibraries)'=='Y'"
 		/>
-		<Message Text="Using pre-populated downloads directory for ExCss and GeckofxHtmlToPdf artifacts." />
+		<Message
+			Text="Downloading artifacts for $(ExCss)."
+			Condition="'$(OS)'=='Windows_NT' AND '$(TeamCityUrl)'!=''"
+		/>
+		<DownloadFilesFromTeamCity
+			Address="$(TeamCityUrl)"
+			BuildType="$(ExCssBuildType)"
+			Tag="$(ExCssBuildTag)"
+			Artifacts="$(ExCss).dll;$(ExCss).$(DebugInfo)"
+			DownloadsDir="$(DownloadsDir)"
+			Condition="'$(OS)'=='Windows_NT' AND '$(TeamCityUrl)'!=''"
+		/>
+		<Message
+			Text="Downloading artifacts for geckofxHtmlToPdf."
+			Condition="'$(OS)'=='Windows_NT' AND '$(TeamCityUrl)'!=''"
+		/>
+		<DownloadFilesFromTeamCity
+			Address="$(TeamCityUrl)"
+			BuildType="$(GeckoFxHtmlToPdfBuildType)"
+			Tag="$(GeckoFxHtmlToPdfBuildTag)"
+			Artifacts="GeckofxHtmlToPdf.exe;GeckofxHtmlToPdf.exe.config;Args.dll"
+			DownloadsDir="$(DownloadsDir)"
+			Condition="'$(OS)'=='Windows_NT' AND '$(TeamCityUrl)'!=''"
+		/>
+		<Message
+			Text="Using pre-populated downloads directory for ExCss and GeckofxHtmlToPdf artifacts."
+			Condition="'$(TeamCityUrl)'==''"
+		/>
 		<Warning
 			Text="GeckofxHtmlToPdf.exe not found - PDF export will not work. Build from https://github.com/sillsdev/geckofxHtmlToPdf and place output in Downloads directory."
 			Condition="!Exists('$(DownloadsDir)/GeckofxHtmlToPdf.exe')"
@@ -853,6 +892,10 @@
 		<!-- we need to explicitly specify the important files, otherwise they'll be ignored
 		if they don't exist by the time this ItemGroup is read -->
 		<DownloadedFiles Include="$(DownloadsDir)/IPCFramework.dll" />
+		<DownloadedFiles
+			Include="$(DownloadsDir)/Args.dll"
+			Condition="Exists('$(DownloadsDir)/Args.dll')"
+		/>
 		<DownloadedFiles
 			Include="$(DownloadsDir)/ExCss.dll"
 			Condition="Exists('$(DownloadsDir)/ExCss.dll')"
