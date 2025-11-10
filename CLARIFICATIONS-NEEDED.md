@@ -6,7 +6,7 @@ This document consolidates all "NEEDS CLARIFICATION" items from the 5 convergenc
 
 ## Convergence 2: GenerateAssemblyInfo Standardization
 **Plan**: specs/002-convergence-generate-assembly-info/plan.md
-**Status**: All unknowns resolved in initial analysis. No clarifications needed.
+**Status**: Need to rework so that CommonAssemblyInfoTemplate is used for all assemblies and that custom AssemblyInfo.cs files are preserved from before this migration wherever possible.  Revert ones that were deleted / removed.
 
 ---
 
@@ -18,12 +18,17 @@ This document consolidates all "NEEDS CLARIFICATION" items from the 5 convergenc
 
 **Known**:
 - FieldWorks.exe (already has manifest from spec 001)
-- LexTextExe.exe (likely needs manifest)
+- LexTextExe.exe (produces flex) (likely needs manifest)
+- One is the bootstrapper for the other.  We want to collapse the two down into 1.  We need to analyze.
 
 **Need to identify**:
-- Te.exe (translation editor - does this exist?)
-- Other user-facing tools
+- Te.exe (translation editor - does this exist?) - NO, this is dead.
+- Other tools - build 3 exe's from same solution
+  - LCM Browser
+  - Unicode Char Editor
 - Test executables (or do they use shared test host?)
+  - TestViews and TestGeneric (executables that unit test frameworks) that need Registry free COM
+  - This code will die - but not today.  All C++ code will die.
 
 **Action needed**: Please provide complete list of EXE names and paths, or confirm we should discover via automated inventory scan.
 
@@ -44,6 +49,7 @@ This document consolidates all "NEEDS CLARIFICATION" items from the 5 convergenc
   - Cons: Requires test scenarios to exercise all code paths
 
 **Action needed**: Which approach (or combination) do you prefer?
+- Use the makeall.targets to determine which projects use COM by their use of the regfree task.
 
 ---
 
@@ -62,17 +68,15 @@ This document consolidates all "NEEDS CLARIFICATION" items from the 5 convergenc
   - Cons: More complex
 
 **Action needed**: Which strategy aligns with FieldWorks test architecture?
+- Src\AssemblyInfoForTests.cs
+- Src\AssemblyInfoForUiIndependentTests.cs
+- These two files provide the COM and test bootstrapping context for testing.  Use these.
 
 ---
 
 ### D4: Unique COM Dependencies
 **Question**: Do any EXEs have COM dependencies not covered by existing RegFree.targets patterns?
-
-**Context**: Current RegFree.targets uses broad include patterns for Views, FwKernel, etc. Some EXEs may activate additional COM servers (third-party, Windows system components, etc.).
-
-**Action needed**: Confirm if all COM dependencies are internal FieldWorks COM servers, or if external COM components are used and need manifest entries.
-
----
+- Check Keyman.  Otherwise no.
 
 ### D5: Manifest File Organization (NEW)
 **Question**: Should we create per-EXE manifest files or a single shared manifest?
@@ -232,7 +236,7 @@ This document consolidates all "NEEDS CLARIFICATION" items from the 5 convergenc
 - **A. Explicit AnyCPU for clarity** - All libraries that can be AnyCPU state it explicitly
   - Pros: Clear intent, easier to identify platform requirements
   - Cons: Verbose, may be redundant
-  
+
 - **B. Implicit AnyCPU (no PlatformTarget)** - Rely on SDK default for libraries
   - Pros: DRY, minimal project files
   - Cons: Less explicit, harder to identify intentional AnyCPU vs. missing platform specification
@@ -244,6 +248,11 @@ This document consolidates all "NEEDS CLARIFICATION" items from the 5 convergenc
 **Action needed**: Which policy do you prefer for FieldWorks? Note: FieldWorks is currently x64-only after migration, so this may be moot if no libraries should be AnyCPU.
 
 **Follow-up question**: Should **any** FieldWorks libraries be AnyCPU, or should all be x64 for consistency with 64-bit-only migration?
+
+## Convergence 7: SetupIncludeTargets
+There are significant things happening in SetupInclude.targets and mkall.targets.
+We no longer need to generate fieldworks.targets.  Remove all code that is only used to generate that file.  Review both files for custom logic and assess for each piece if there is a standard way of accomplishing the same task.
+
 
 ---
 
