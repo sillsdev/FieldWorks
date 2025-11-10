@@ -114,6 +114,8 @@ This document consolidates all "NEEDS CLARIFICATION" items from the 5 convergenc
 
 **Action needed**: Are there any projects with mixed code? If so, which approach?
 
+Answer: There should be no projects with mixed code. Test projects were separated in a subproject of the project folder and have their own .csproj files. If any specific project looks to have violated that principle bring it to our attention.
+
 ---
 
 ### D3: Centralized vs. Per-Project Exclusion Patterns
@@ -138,6 +140,7 @@ This document consolidates all "NEEDS CLARIFICATION" items from the 5 convergenc
   - Cons: Verbose, 35 projects to update, duplication
 
 **Action needed**: Which approach do you prefer? If centralized, confirm MSBuild syntax works.
+Answer: I prefer the per project approach because there are also other subfolders that need exclusion. There were subprojects in some projects which needed this Compile Remove treatment. That makes me lean to a per project approach because it keeps all the exclusion for a project in one clear location.
 
 ---
 
@@ -165,6 +168,8 @@ This document consolidates all "NEEDS CLARIFICATION" items from the 5 convergenc
 
 **Action needed**: Which scope do you prefer? Conservative is safest for initial convergence.
 
+Answer: The PrivateAssets="All" was added specifically for an assembly in LCM that contained a mix of test utilities which we need and its own test code which we do not use. It should not be applied anywhere else unless build failures prove it necessary.
+
 ---
 
 ### D3: Handling Existing PrivateAssets Values
@@ -189,6 +194,7 @@ This document consolidates all "NEEDS CLARIFICATION" items from the 5 convergenc
 
 **Action needed**: Which approach do you prefer? Recommend **A (Overwrite to "All")** for test frameworks specifically, **C (Skip)** for other packages.
 
+Answer: No action is needed due to the answer in D2. 
 ---
 
 ## Convergence 6: PlatformTarget Redundancy Cleanup
@@ -207,6 +213,8 @@ This document consolidates all "NEEDS CLARIFICATION" items from the 5 convergenc
 
 **Action needed**: Are there any known edge cases in FieldWorks? Should we use conservative heuristic (keep explicit if project has P/Invoke or conditional compilation)?
 
+Answer: Because fieldworks assemblies are not frequently consumed by outside entities and we are not targeting 32bit we should safely be able to make all assemblies in FieldWorks x64
+
 ---
 
 ### D3: Platform vs. PlatformTarget Properties
@@ -222,6 +230,8 @@ This document consolidates all "NEEDS CLARIFICATION" items from the 5 convergenc
 - **C. Only clean up Platform, leave PlatformTarget explicit** - Unusual, but possible
 
 **Action needed**: Which properties should we clean up? Recommend **A (PlatformTarget only)** as Platform is typically solution-managed.
+
+Answer: B
 
 ---
 
@@ -249,10 +259,14 @@ This document consolidates all "NEEDS CLARIFICATION" items from the 5 convergenc
 
 **Follow-up question**: Should **any** FieldWorks libraries be AnyCPU, or should all be x64 for consistency with 64-bit-only migration?
 
+Answer: All x64
+
 ## Convergence 7: SetupIncludeTargets
 There are significant things happening in SetupInclude.targets and mkall.targets.
 We no longer need to generate fieldworks.targets.  Remove all code that is only used to generate that file.  Review both files for custom logic and assess for each piece if there is a standard way of accomplishing the same task.
 
+There are custom msbuild tasks defined in Build/Src which have been used as part of the old build system. We wish to build from the solution now and some build tasks needed to bootstrap a build will use those tasks.
+A careful tracing of the tasks performed by remakefw and its dependencies is necessary to identify all the bootstrapping tasks that will make a FieldWorks build and subsequent execution on a developer machine successful.
 
 ---
 
