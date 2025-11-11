@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
 	<xs:element name="LayoutInventory">
 		<xs:complexType>
@@ -50,6 +50,7 @@
 																<xs:attribute name="menu" type="xs:string" use="optional" />
 																<xs:attribute name="expansion" type="xs:string" use="optional" />
 																<xs:attribute name="abbr" type="xs:string" use="optional" />
+																<xs:attribute name="class" type="xs:string" use="optional" />
 															</xs:complexType>
 														</xs:element>
 													</xs:sequence>

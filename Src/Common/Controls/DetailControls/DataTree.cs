@@ -2137,6 +2137,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			var interestingClasses = new HashSet<int>();
 			int clsid = obj.ClassID;
+			XmlNode classAttr = insertAfter.Attributes["class"];
+			if (classAttr != null)
+			{
+				clsid = m_mdc.GetClassId(classAttr.Value);
+			}
 			while (clsid != 0)
 			{
 				interestingClasses.Add(clsid);
