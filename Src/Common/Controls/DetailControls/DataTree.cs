@@ -1477,7 +1477,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						if (slice.Object != null)
 							guidSlice = slice.Object.Guid;
 						if (slice.GetType() == oldType &&
-							slice.CallerNode == xnCaller &&
+							slice.CallerNode.OuterXml == xnCaller.OuterXml &&
 							slice.ConfigurationNode == xnConfig &&
 							guidSlice == m_currentSliceObjGuid &&
 							slice.Label == sLabel)
@@ -1489,18 +1489,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					}
 				}
 
-				// FWNX-590
-				if (Platform.IsMono)
-					this.VerticalScroll.Value = scrollbarPosition;
-
-				if (m_currentSlice != null)
-				{
-					ScrollControlIntoView(m_currentSlice);
-				}
 			}
 			finally
 			{
 				DeepResumeLayout();
+
+				// Scrolling the control into view needs to be done after we resume the layout.
+				if (m_currentSlice != null)
+				{
+					m_currentSlice.TakeFocus(false);
+					ScrollControlIntoView(m_currentSlice);
+				}
+
 				RefreshListNeeded = false;  // reset our flag.
 				if (wc != null)
 				{
