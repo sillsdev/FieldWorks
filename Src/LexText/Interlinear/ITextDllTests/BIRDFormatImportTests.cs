@@ -418,7 +418,7 @@ namespace SIL.FieldWorks.IText
 			@"<document version='2'>
 			  <interlinear-text guid='5eecc8be-f41b-4433-be94-8950a8ce75e5'>
 				<item type='title' lang='en'>title</item>
-				<item type='comment' lang='en'><run lang='en'>english </run><run lang='fr' style='style1'>french</run></item>
+				<item type='comment' lang='en'><run lang='en'>english</run><run lang='es'> </run><run lang='fr' style='style1'>french</run></item>
 				<paragraphs>
 				</paragraphs>
 				<languages>
@@ -440,13 +440,15 @@ namespace SIL.FieldWorks.IText
 					//The title imported
 					ITsString comment = imported.Description.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle);
 					Assert.True(comment.Text.Equals("english french"));
-					Assert.True(comment.RunCount == 2);
-					Assert.True(comment.get_RunText(0) == "english ");
+					Assert.True(comment.RunCount == 3);
+					Assert.True(comment.get_RunText(0) == "english");
 					Assert.True(comment.get_WritingSystem(0) == wsEn);
 					Assert.True(comment.Style(0) == null);
-					Assert.True(comment.get_RunText(1) == "french");
-					Assert.True(comment.get_WritingSystem(1) == wsFr);
-					Assert.True(comment.Style(1) == "style1");
+					Assert.True(comment.get_RunText(1) == " ");
+					Assert.True(comment.Style(1) == null);
+					Assert.True(comment.get_RunText(2) == "french");
+					Assert.True(comment.get_WritingSystem(2) == wsFr);
+					Assert.True(comment.Style(2) == "style1");
 				}
 			}
 		}
