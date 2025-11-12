@@ -124,27 +124,15 @@ namespace SIL.FieldWorks.XWorks
 				reversalFilePath, progress);
 		}
 
-		public void ExportXhtmlDictionary(string xhtmlPath, RecordClerk clerk, DictionaryPublicationDecorator pubDecorator, int[] entriesToSave,
+		public void ExportXhtmlDocument(string xhtmlPath, RecordClerk clerk, DictionaryPublicationDecorator pubDecorator, int[] entriesToSave, string configType,
 			IThreadedProgress progress)
 		{
 			if (progress != null)
 				progress.Maximum = entriesToSave.Length;
 
 			var dictConfig = new DictionaryConfigurationModel(
-				DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "Dictionary"), m_cache);
+				DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, configType), m_cache);
 			LcmXhtmlGenerator.SavePublishedHtmlWithStyles(entriesToSave, clerk, pubDecorator, int.MaxValue, dictConfig,
-				m_propertyTable, xhtmlPath, progress, true);
-		}
-
-		public void ExportXhtmlReversal(string xhtmlPath, RecordClerk revClerk, DictionaryPublicationDecorator pubDecorator, int[] entriesToSave,
-			IThreadedProgress progress)
-		{
-			if (progress != null)
-				progress.Maximum = entriesToSave.Length;
-
-			var revConfig = new DictionaryConfigurationModel(
-				DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, "ReversalIndex"), m_cache);
-			LcmXhtmlGenerator.SavePublishedHtmlWithStyles(entriesToSave, revClerk, pubDecorator, int.MaxValue, revConfig,
 				m_propertyTable, xhtmlPath, progress, true);
 		}
 
@@ -274,6 +262,61 @@ namespace SIL.FieldWorks.XWorks
 				return retEntries;
 			}
 			return new int[] { };
+		}
+
+		/// <summary>
+		/// Gets the filtered and sorted semantic domains for the Classified Dictionary.
+		/// </summary>
+		/// <param name="pubName">The name of the publication to use. If null, then use the current publication.</param>
+		/// <param name="stopSuppressingListLoading">If true then after we get the domains stop suppressing list loading.</param>
+		public void GetClassifiedDictionaryFilteredAndSortedDomains(string pubName, bool stopSuppressingListLoading,
+			out RecordClerk clerk, out DictionaryPublicationDecorator decorator, out int[] domains)
+		{
+			clerk = GetClassifiedDictionaryClerk();
+			// Use the current publication settings (the current decorator).
+			if (string.IsNullOrEmpty(pubName))
+			{
+				decorator = ConfiguredLcmGenerator.CurrentDecorator(m_propertyTable, m_cache, clerk);
+			}
+			// Use the specified publication settings.
+			else
+			{
+				decorator = ConfiguredLcmGenerator.GetDecorator(m_propertyTable, m_cache, clerk, pubName);
+			}
+
+			// Filters and Sorts the list, then populate the virtual cache with the result.
+			clerk.FilterAndSortList();
+
+			// Gets the domains from the virtual cache with appropriate filtering.
+			domains = decorator.GetEntriesToPublish(m_propertyTable, clerk.VirtualFlid, DictionaryConfigurationListener.ClassifiedType);
+
+			// Stop suppressing list loading if requested.
+			if (stopSuppressingListLoading)
+			{
+				clerk.ListLoadingSuppressed = false;
+			}
+		}
+
+		/// <summary>
+		/// Gets or creates a classified dictionary clerk. Does not update the Gui, change properties, or
+		/// send notifications.
+		/// </summary>
+		public RecordClerk GetClassifiedDictionaryClerk()
+		{
+			var clerk = RecordClerk.FindClerk(m_propertyTable, "SemanticDomainList");
+
+			// If there isn't yet a classified dictionary clerk then create one.
+			if (clerk == null)
+			{
+				// Get the node for the classified dictionary.
+				XWindow.TryGetToolNode("lexicon", "lexiconClassifiedDictionary", m_propertyTable, out XmlNode node);
+				node = node.SelectSingleNode("control");
+				node = node.SelectSingleNode(".//parameters[@clerk]");
+
+				clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, node, false, false);
+				clerk.UpdateFiltersAndSortersIfNeeded(false);
+			}
+			return clerk;
 		}
 
 		/// <summary>

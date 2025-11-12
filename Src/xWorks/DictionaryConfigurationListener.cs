@@ -171,9 +171,9 @@ namespace SIL.FieldWorks.XWorks
 			return area == null ? null : Path.Combine(FwDirectoryFinder.DefaultConfigurations, area);
 		}
 
-		internal const string ReversalIndexConfigurationDirectoryName = "ReversalIndex";
-		internal const string DictionaryConfigurationDirectoryName = "Dictionary";
-		internal const string ClassifiedDictionaryConfigurationDirectoryName = "Classified Dictionary";
+		internal const string RevIndexConfigDirName = "ReversalIndex";
+		internal const string DictConfigDirName = "Dictionary";
+		internal const string ClassifiedDictConfigDirName = "Classified Dictionary";
 
 		/// <summary>
 		/// Get the name of the innermost directory name for configurations for the part of FLEx the user is
@@ -185,13 +185,13 @@ namespace SIL.FieldWorks.XWorks
 			{
 				case "reversalToolBulkEditReversalEntries":
 				case "reversalToolEditComplete":
-					return ReversalIndexConfigurationDirectoryName;
+					return RevIndexConfigDirName;
 				case "lexiconBrowse":
 				case "lexiconDictionary":
 				case "lexiconEdit":
-					return DictionaryConfigurationDirectoryName;
+					return DictConfigDirName;
 				case "lexiconClassifiedDictionary":
-					return ClassifiedDictionaryConfigurationDirectoryName;
+					return ClassifiedDictConfigDirName;
 				default:
 					return null;
 			}
@@ -299,7 +299,7 @@ namespace SIL.FieldWorks.XWorks
 			if (currentConfig != null && currentConfig.StartsWith("publish", StringComparison.Ordinal))
 			{
 				var selectedPublication = currentConfig.Replace("publish", string.Empty);
-				if (innerConfigDir == ReversalIndexConfigurationDirectoryName)
+				if (innerConfigDir == RevIndexConfigDirName)
 				{
 					var languageCode = selectedPublication.Replace("Reversal-", string.Empty);
 					selectedPublication = cache.ServiceLocator.WritingSystemManager.Get(languageCode).DisplayLabel;
@@ -344,12 +344,12 @@ namespace SIL.FieldWorks.XWorks
 		{
 			switch (configDirectory)
 			{
-				case ClassifiedDictionaryConfigurationDirectoryName:
+				case ClassifiedDictConfigDirName:
 					return "SemanticDomainSenses";
-				case ReversalIndexConfigurationDirectoryName:
-										return "AllReversalIndexes";
-				case DictionaryConfigurationDirectoryName:
-										return "Root";
+				case RevIndexConfigDirName:
+					return "AllReversalIndexes";
+				case DictConfigDirName:
+					return "Root";
 				default:
 				{
 					throw new InvalidOperationException("Unknown config directory name: " + configDirectory);
@@ -361,13 +361,13 @@ namespace SIL.FieldWorks.XWorks
 		{
 			switch (configDirectory)
 			{
-				case ClassifiedDictionaryConfigurationDirectoryName:
+				case ClassifiedDictConfigDirName:
 				{
 					return null;
 				}
-				case ReversalIndexConfigurationDirectoryName:
+				case RevIndexConfigDirName:
 					return "ReversalIndexPublicationLayout";
-				case DictionaryConfigurationDirectoryName:
+				case DictConfigDirName:
 					return "DictionaryPublicationLayout";
 				default:
 				{
@@ -405,7 +405,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public static void SetCurrentConfiguration(PropertyTable propertyTable, string currentConfig, bool fUpdate = true)
 		{
-			var pubLayoutPropName = GetInnerConfigDir(currentConfig) == DictionaryConfigurationDirectoryName
+			var pubLayoutPropName = GetInnerConfigDir(currentConfig) == DictConfigDirName
 				? "DictionaryPublicationLayout"
 				: "ReversalIndexPublicationLayout";
 			propertyTable.SetProperty(pubLayoutPropName, currentConfig, fUpdate);

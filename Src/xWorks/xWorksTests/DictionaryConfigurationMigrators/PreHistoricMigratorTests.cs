@@ -2070,7 +2070,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				Label = oldLabel,
 				Parts = new List<ConfigurableDictionaryNode> { node }
 			};
-			m_migrator.m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName;
+			m_migrator.m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.RevIndexConfigDirName;
 			m_migrator.CopyNewDefaultsIntoConvertedModel(oldLayout, model);
 			Assert.AreEqual(newFileName, Path.GetFileNameWithoutExtension(model.FilePath));
 		}
@@ -2331,7 +2331,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		public void ConfigsNeedMigratingFromPre83_ReturnsFalseIfNewReversalConfigsExist()
 		{
 			var newRevIdxConfigLoc = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)),
-				DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+				DictionaryConfigurationListener.RevIndexConfigDirName);
 			Directory.CreateDirectory(newRevIdxConfigLoc);
 			File.AppendAllText(Path.Combine(newRevIdxConfigLoc, "SomeConfig" + DictionaryConfigurationModel.FileExtension), "Foo");
 			Assert.That(!m_migrator.ConfigsNeedMigratingFromPre83(), "If current configs exist no migration should be needed."); // SUT
@@ -2343,7 +2343,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		public void ConfigsNeedMigratingFromPre83_ReturnsFalseIfNewDictionaryConfigsExist()
 		{
 			var newDictConfigLoc = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)),
-				DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+				DictionaryConfigurationListener.DictConfigDirName);
 			Directory.CreateDirectory(newDictConfigLoc);
 			File.AppendAllText(Path.Combine(newDictConfigLoc, "SomeConfig" + DictionaryConfigurationModel.FileExtension), "Foo");
 			Assert.That(!m_migrator.ConfigsNeedMigratingFromPre83(), "If current configs exist no migration should be needed."); // SUT
@@ -2355,7 +2355,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		public void ConfigsNeedMigratingFromPre83_ReturnsFalseIfNoNewConfigsAndNoOldConfigs()
 		{
 			var newDictConfigLoc = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path)),
-				DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+				DictionaryConfigurationListener.DictConfigDirName);
 			Directory.CreateDirectory(newDictConfigLoc);
 			Directory.EnumerateFiles(newDictConfigLoc).ForEach(File.Delete);
 			Assert.That(!m_migrator.ConfigsNeedMigratingFromPre83(), "With no new or old configs no migration should be needed."); // SUT
