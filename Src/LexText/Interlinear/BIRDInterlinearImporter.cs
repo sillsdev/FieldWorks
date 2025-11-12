@@ -412,7 +412,7 @@ namespace SIL.FieldWorks.IText
 				foreach (var run in item.run)
 				{
 					int runWs = GetWsEngine(wsFactory, run.lang).Handle;
-					strBldr.Append(run.Value, StyleUtils.CharStyleTextProps(run.style, runWs));
+					strBldr.Append(run.Value ?? " ", StyleUtils.CharStyleTextProps(run.style, runWs));
 				}
 				return strBldr.GetString();
 			}
