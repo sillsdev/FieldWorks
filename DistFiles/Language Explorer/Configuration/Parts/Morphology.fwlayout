@@ -111,7 +111,7 @@
 				<part ref="InflectionClassesForLexemeForm" visibility="ifdata"/>
 				<part ref="MsEnvFeaturesForLexemeForm" visibility="ifdata"/>
 				<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
-				<part ref="_CustomFieldPlaceholder" customFields="here" class="MoForm"/>
+				<part ref="_CustomFieldPlaceholder" customFields="here"/>
 			</indent>
 		</part>
 	</layout>
@@ -124,7 +124,7 @@
 				<part ref="PhoneEnvBasic" visibility="ifdata"/>
 				<part ref="StemNameForLexemeForm" visibility="ifdata"/>
 				<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
-				<part ref="_CustomFieldPlaceholder" customFields="here" class="MoForm"/>
+				<part ref="_CustomFieldPlaceholder" customFields="here"/>
 			</indent>
 		</part>
 	</layout>
@@ -137,7 +137,7 @@
 				<part ref="RuleFormulaBasic" expansion="expanded" label="Affix Process Rule"/>
 				<part ref="InflectionClassesForLexemeForm" visibility="ifdata"/>
 				<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
-				<part ref="_CustomFieldPlaceholder" customFields="here" class="MoForm"/>
+				<part ref="_CustomFieldPlaceholder" customFields="here"/>
 			</indent>
 		</part>
 	</layout>

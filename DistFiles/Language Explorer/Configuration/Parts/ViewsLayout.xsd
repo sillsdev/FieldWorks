@@ -50,7 +50,6 @@
 																<xs:attribute name="menu" type="xs:string" use="optional" />
 																<xs:attribute name="expansion" type="xs:string" use="optional" />
 																<xs:attribute name="abbr" type="xs:string" use="optional" />
-																<xs:attribute name="class" type="xs:string" use="optional" />
 															</xs:complexType>
 														</xs:element>
 													</xs:sequence>
