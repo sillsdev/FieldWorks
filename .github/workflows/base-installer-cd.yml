@@ -281,6 +281,7 @@ jobs:
         if: ${{ inputs.make_release == 'true' }}
         uses: softprops/action-gh-release@6cbd405e2c4e67a21c47fa9e383d020e4e28b836
         with:
+            target_commitish: ${{ github.event.inputs.fw_ref || github.ref }}
             tag_name: build-${{ env.FW_BUILD_NUMBER }}
             name: "FieldWorks Base Build #${{ env.FW_BUILD_NUMBER }}"
             draft: false
