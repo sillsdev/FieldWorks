@@ -303,6 +303,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
+		/// <summary>
+		/// Check if the value of this slices CallerNode is equal to the value of the CallerNode passed in.
+		/// </summary>
+		/// <returns>true if the values are equal, false if the values are not equal</returns>
+		public bool CallerNodeEqual(XmlNode otherNode)
+		{
+			return CallerNode.OuterXml == otherNode.OuterXml;
+		}
+
 		// Review JohnT: or just make it public? Or make more delegation methods?
 		/// <summary></summary>
 		public virtual Control Control

@@ -1477,7 +1477,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						if (slice.Object != null)
 							guidSlice = slice.Object.Guid;
 						if (slice.GetType() == oldType &&
-							slice.CallerNode.OuterXml == xnCaller.OuterXml &&
+							slice.CallerNodeEqual(xnCaller) &&
 							slice.ConfigurationNode == xnConfig &&
 							guidSlice == m_currentSliceObjGuid &&
 							slice.Label == sLabel)
