@@ -6,7 +6,7 @@ description: "FieldWorks build guidelines and inner-loop tips"
 
 ## Quick Start
 
-FieldWorks uses the **MSBuild Traversal SDK** for declarative build ordering. All builds use `dirs.proj`.
+FieldWorks uses the **MSBuild Traversal SDK** for declarative build ordering. All builds use `FieldWorks.proj`.
 
 ### Windows (PowerShell)
 ```powershell
@@ -36,13 +36,13 @@ FieldWorks uses the **MSBuild Traversal SDK** for declarative build ordering. Al
 - Declarative dependency ordering (110+ projects organized into 21 phases)
 - Automatic parallel builds where safe
 - Better incremental build performance
-- Works with `dotnet build dirs.proj`
+- Works with `dotnet build FieldWorks.proj`
 - Clear error messages when prerequisites missing
 
 ## Build Architecture
 
 ### Traversal Build Phases
-The `dirs.proj` file defines a declarative build order:
+The `FieldWorks.proj` file defines a declarative build order:
 
 1. **Phase 1**: FwBuildTasks (build infrastructure)
 2. **Phase 2**: Native C++ components (via `allCppNoTest` target)
@@ -78,9 +78,9 @@ Run: msbuild Build\Src\NativeBuild\NativeBuild.csproj
   - Generated code out of sync (delete `Src/Common/ViewsInterfaces/Views.cs`)
 
 ### Choose the right path
-- **Full system build**: `.\build.ps1` or `./build.sh` (uses dirs.proj traversal)
-- **Direct MSBuild**: `msbuild dirs.proj /p:Configuration=Debug /p:Platform=x64 /m`
-- **Dotnet CLI**: `dotnet build dirs.proj` (requires .NET SDK)
+- **Full system build**: `.\build.ps1` or `./build.sh` (uses FieldWorks.proj traversal)
+- **Direct MSBuild**: `msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64 /m`
+- **Dotnet CLI**: `dotnet build FieldWorks.proj` (requires .NET SDK)
 - **Single project**: `msbuild Src/<Path>/<Project>.csproj` (for quick iterations)
 - **Native only**: `msbuild Build\Src\NativeBuild\NativeBuild.csproj` (Phase 2 of traversal)
 - **Installer**: See `Build/Installer.targets` for installer build targets (requires WiX Toolset)
@@ -114,10 +114,10 @@ msbuild Build\Src\NativeBuild\NativeBuild.csproj /p:Configuration=Debug /p:Platf
 ### Build Order Issues
 **Symptom**: Project X fails because it can't find assembly from project Y
 
-**Solution**: The traversal build handles this automatically through `dirs.proj`:
+**Solution**: The traversal build handles this automatically through `FieldWorks.proj`:
 - Check that the dependency is listed in an earlier phase than the dependent
-- Verify both projects are included in `dirs.proj`
-- If you find a missing dependency, update `dirs.proj` phase ordering
+- Verify both projects are included in `FieldWorks.proj`
+- If you find a missing dependency, update `FieldWorks.proj` phase ordering
 
 ### Parallel Build Race Conditions
 **Symptom**: Random failures in parallel builds
@@ -125,7 +125,7 @@ msbuild Build\Src\NativeBuild\NativeBuild.csproj /p:Configuration=Debug /p:Platf
 **Solution**:
 - Traversal SDK respects dependencies and avoids races
 - If you encounter race conditions, reduce parallelism: `.\build.ps1 -MsBuildArgs @('/m:1')`
-- Report race conditions so dependencies can be added to `dirs.proj`
+- Report race conditions so dependencies can be added to `FieldWorks.proj`
 
 ### Clean Build Required
 ```powershell
@@ -150,10 +150,10 @@ msbuild Build\Src\NativeBuild\NativeBuild.csproj /p:Configuration=Debug /p:Platf
 ### Direct MSBuild Invocation
 ```powershell
 # Traversal build with MSBuild
-msbuild dirs.proj /p:Configuration=Debug /p:Platform=x64 /m
+msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64 /m
 
 # With tests
-msbuild dirs.proj /p:Configuration=Debug /p:Platform=x64 /p:action=test /m
+msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64 /p:action=test /m
 ```
 
 ### Building Specific Project Groups
@@ -161,21 +161,21 @@ msbuild dirs.proj /p:Configuration=Debug /p:Platform=x64 /p:action=test /m
 # Native C++ only (Phase 2 of traversal)
 msbuild Build\Src\NativeBuild\NativeBuild.csproj
 
-# Specific phase from dirs.proj (not typically needed)
+# Specific phase from FieldWorks.proj (not typically needed)
 # The traversal build handles ordering automatically
 ```
 
 ### Dotnet CLI (Traversal Only)
 ```powershell
-# Works with dirs.proj
-dotnet build dirs.proj
+# Works with FieldWorks.proj
+dotnet build FieldWorks.proj
 
 # Restore packages
-dotnet restore dirs.proj --packages packages/
+dotnet restore FieldWorks.proj --packages packages/
 ```
 
 ## Don't modify build files lightly
-- **`dirs.proj`**: Traversal build order; verify changes don't create circular dependencies
+- **`FieldWorks.proj`**: Traversal build order; verify changes don't create circular dependencies
 - **`Build/mkall.targets`**: Native C++ build orchestration; changes affect all developers
 - **`Build/SetupInclude.targets`**: Environment setup; touch only when absolutely needed
 - **`Directory.Build.props`**: Shared properties for all projects; changes affect everyone
@@ -183,6 +183,6 @@ dotnet restore dirs.proj --packages packages/
 ## References
 - **CI/CD**: `.github/workflows/` for CI steps
 - **Build Infrastructure**: `Build/` for targets/props and build infrastructure
-- **Traversal Project**: `dirs.proj` for declarative build order
+- **Traversal Project**: `FieldWorks.proj` for declarative build order
 - **Shared Properties**: `Directory.Build.props` for all projects
 - **Native Build**: `Build/mkall.targets` for C++ build orchestration

@@ -19,16 +19,16 @@
 The SDK migration faced **~80 compilation errors** across multiple attempts to get the build working. The key success factor was **systematic error resolution** - fixing one category completely before moving to the next. However, analysis reveals **some inconsistencies** in approach across different project types and phases that should be reconciled.
 
 ### Key Success Patterns
-✅ **Automated bulk conversion** (convertToSDK.py) handled 115 projects consistently  
-✅ **Wildcard package versions** (e.g., `11.0.0-*`) for SIL packages prevented version conflicts  
-✅ **Explicit test exclusion** pattern established and applied consistently  
-✅ **x64 enforcement** via Directory.Build.props propagated to all projects  
+✅ **Automated bulk conversion** (convertToSDK.py) handled 115 projects consistently
+✅ **Wildcard package versions** (e.g., `11.0.0-*`) for SIL packages prevented version conflicts
+✅ **Explicit test exclusion** pattern established and applied consistently
+✅ **x64 enforcement** via Directory.Build.props propagated to all projects
 
 ### Divergent Approaches Found
-⚠️ **GenerateAssemblyInfo handling** - Mixed true/false across projects without clear rationale  
-⚠️ **SDK type selection** - Some WPF projects initially used wrong SDK (Microsoft.NET.Sdk vs. WindowsDesktop)  
-⚠️ **Package reference patterns** - Inconsistent use of PrivateAssets and Exclude attributes  
-⚠️ **Platform target** - Some projects have explicit x64, others rely on inherited property  
+⚠️ **GenerateAssemblyInfo handling** - Mixed true/false across projects without clear rationale
+⚠️ **SDK type selection** - Some WPF projects initially used wrong SDK (Microsoft.NET.Sdk vs. WindowsDesktop)
+⚠️ **Package reference patterns** - Inconsistent use of PrivateAssets and Exclude attributes
+⚠️ **Platform target** - Some projects have explicit x64, others rely on inherited property
 
 ---
 
@@ -173,7 +173,7 @@ CS0103: The name 'InitializeComponent' does not exist in the current context
 ```xml
 <!-- Before -->
 <Project Sdk="Microsoft.NET.Sdk">
-  
+
 <!-- After -->
 <Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
   <PropertyGroup>
@@ -193,7 +193,7 @@ CS0103: The name 'InitializeComponent' does not exist in the current context
 
 **Error**:
 ```
-CS0436: The type 'MasterItem' in 'MGA/MasterItem.cs' conflicts with 
+CS0436: The type 'MasterItem' in 'MGA/MasterItem.cs' conflicts with
         the imported type 'MasterItem' in 'MGA, Version=0.0.0.0'
 ```
 
@@ -232,7 +232,7 @@ Projects use different exclusion patterns:
 
 **Error**:
 ```
-CS0535: 'NullThreadedProgress' does not implement interface member 
+CS0535: 'NullThreadedProgress' does not implement interface member
         'IThreadedProgress.Canceling'
 ```
 
@@ -333,7 +333,7 @@ Projects fall into 3 categories:
 - Category 2: Redundant but harmless, explicitly states x64 ⚠️
 - Category 3: Build tools that may run on different platforms (FwBuildTasks) ✅
 
-**Recommendation**: 
+**Recommendation**:
 - Remove explicit `<PlatformTarget>x64</PlatformTarget>` from Category 2 projects
 - Rely on Directory.Build.props for consistency
 - Keep explicit only for special cases (build tools)
@@ -383,7 +383,7 @@ Only some EXE projects import RegFree.targets:
 - ❌ LexText.exe (not yet integrated)
 - ❌ Other utility EXEs
 
-**Recommendation**: 
+**Recommendation**:
 - Identify all EXE projects that use COM
 - Add RegFree.targets import to all of them
 - Document which EXEs need manifests
@@ -409,35 +409,35 @@ Only some EXE projects import RegFree.targets:
 #### Challenge 5.1: Build Order Dependencies
 **Problem**: 110+ projects need correct build order
 
-**Approach**: Implemented MSBuild Traversal SDK with dirs.proj
+**Approach**: Implemented MSBuild Traversal SDK with FieldWorks.proj
 
 **Decision Matrix**:
 
-| Approach | Pros | Cons | Chosen |
-|----------|------|------|--------|
-| Manual MSBuild dependencies | Fine-grained control | Hard to maintain | ❌ |
-| Solution build order | Simple | No declarative dependencies | ❌ |
-| Traversal SDK | Declarative phases | Learning curve | ✅ |
+| Approach                    | Pros                 | Cons                        | Chosen |
+| --------------------------- | -------------------- | --------------------------- | ------ |
+| Manual MSBuild dependencies | Fine-grained control | Hard to maintain            | ❌      |
+| Solution build order        | Simple               | No declarative dependencies | ❌      |
+| Traversal SDK               | Declarative phases   | Learning curve              | ✅      |
 
 **Implementation**:
 ```xml
-<!-- dirs.proj -->
+<!-- FieldWorks.proj -->
 <Project Sdk="Microsoft.Build.Traversal/4.1.0">
   <ItemGroup Label="Phase 1: Build Tasks">
     <ProjectReference Include="Build\Src\FwBuildTasks\FwBuildTasks.csproj" />
   </ItemGroup>
-  
+
   <ItemGroup Label="Phase 2: Native C++">
     <ProjectReference Include="Build\Src\NativeBuild\NativeBuild.csproj" />
   </ItemGroup>
-  
+
   <!-- ... 21 phases total -->
 </Project>
 ```
 
 **Success Factor**: Declarative ordering makes dependencies explicit and maintainable
 
-**Consistency**: ✅ All projects referenced in dirs.proj in correct phase
+**Consistency**: ✅ All projects referenced in FieldWorks.proj in correct phase
 
 **Decision Documentation**: 21 phases documented with clear rationale
 
@@ -606,7 +606,7 @@ Criteria for GenerateAssemblyInfo=true (default):
 - ✅ Wildcards for pre-release (e.g., 11.0.0-*) - SUCCESS
 - ✅ Fixed for stable (e.g., 4.4.0) - No conflicts
 
-**Final Decision**: 
+**Final Decision**:
 - Pre-release packages: Use wildcards (`*`)
 - Stable packages: Use fixed versions
 
@@ -639,7 +639,7 @@ Criteria for GenerateAssemblyInfo=true (default):
 
 **Tried**:
 - ⚠️ Enhanced mkall.targets - Works but complex
-- ✅ MSBuild Traversal SDK with dirs.proj - Declarative, maintainable
+- ✅ MSBuild Traversal SDK with FieldWorks.proj - Declarative, maintainable
 
 **Final Decision**: Full Traversal SDK implementation
 
@@ -751,6 +751,6 @@ The SDK migration was largely successful, with **systematic approaches** yieldin
 
 ---
 
-*Analysis Date: 2025-11-08*  
-*Based on: 93 commits from 8e508dab to HEAD*  
+*Analysis Date: 2025-11-08*
+*Based on: 93 commits from 8e508dab to HEAD*
 *Method: Deep commit analysis + pattern detection + consistency audit*

@@ -78,7 +78,7 @@ Build/native.proj         - Optional wrapper (not used)
 ## Why These Were Safe to Remove
 
 ### Batch Files
-- **Not referenced** in any modern build file (Build/*.targets, Build/*.proj, dirs.proj)
+- **Not referenced** in any modern build file (Build/*.targets, Build/*.proj, FieldWorks.proj)
 - **Not referenced** in CI workflows (.github/workflows/*.yml)
 - **Not referenced** in build scripts (build.ps1, build.sh)
 - **Reason:** These were pre-MSBuild entry points that duplicated functionality now in mkall.targets
@@ -98,7 +98,7 @@ Build/native.proj         - Optional wrapper (not used)
 
 ### native.proj
 - **Only mentioned** in documentation, never actually used
-- **Redundant:** dirs.proj already calls native builds via NativeBuild SDK project
+- **Redundant:** FieldWorks.proj already calls native builds via NativeBuild SDK project
 
 ## What Was Preserved
 
@@ -132,7 +132,7 @@ Build/native.proj         - Optional wrapper (not used)
 - 1033 lines in mkall.targets (-17%)
 - 0 legacy batch files or unused tools
 - PDB handling automatic via SDK
-- Single clean build path: `build.ps1` → `dirs.proj`
+- Single clean build path: `build.ps1` → `FieldWorks.proj`
 - Modern MSBuild tooling only
 - Streamlined dependency management
 
@@ -144,7 +144,7 @@ Build/native.proj         - Optional wrapper (not used)
 **After:** Automatic PDB handling by SDK
 
 **Before:** Multiple ways to build (batch files, scripts, MSBuild)
-**After:** One way: `build.ps1` or `msbuild dirs.proj`
+**After:** One way: `build.ps1` or `msbuild FieldWorks.proj`
 
 ## Future Modernization Opportunities
 

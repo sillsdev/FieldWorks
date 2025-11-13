@@ -13,8 +13,8 @@
     3. Managed C# projects (grouped by dependency layer)
 
     Usage:
-      dotnet build dirs.proj
-      msbuild dirs.proj /p:Configuration=Debug /p:Platform=x64
+      dotnet build FieldWorks.proj
+      msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64
   -->
 
   <PropertyGroup>
@@ -25,7 +25,7 @@
   </PropertyGroup>
 
   <!-- Phase 1: Build Tasks - Excluded from traversal build because build.ps1 bootstraps it -->
-  <!-- FwBuildTasks must be built separately before dirs.proj to avoid file locking issues -->
+  <!-- FwBuildTasks must be built separately before FieldWorks.proj to avoid file locking issues -->
 
   <ItemGroup Label="Phase 2: Native C++ Components">
     <!-- Native components (DebugProcs, GenericLib, FwKernel, Views) are built via NativeBuild SDK project -->

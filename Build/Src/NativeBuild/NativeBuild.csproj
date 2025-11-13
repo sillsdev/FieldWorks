@@ -7,7 +7,7 @@
   <!--
     NativeBuild: Build orchestrator for native C++ component builds
 
-    This project serves as a bridge between the MSBuild Traversal SDK (dirs.proj)
+    This project serves as a bridge between the MSBuild Traversal SDK (FieldWorks.proj)
     and the native build system (mkall.targets). It allows the traversal
     build to properly sequence native component builds before managed projects.
 

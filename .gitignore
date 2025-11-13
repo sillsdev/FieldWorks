@@ -147,3 +147,5 @@ Src/Kernel/*.idh
 .github/machine-specific.md
 build_output.txt
 *.backup
+*.code-workspace
+config.json

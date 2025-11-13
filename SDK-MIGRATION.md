@@ -1,9 +1,9 @@
 # FieldWorks SDK Migration - Comprehensive Summary
 
-**Migration Period**: November 7-8, 2025  
-**Base Commit**: `8e508dab484fafafb641298ed9071f03070f7c8b`  
-**Final Commit**: `3fb3b608cdd2560d20b76165e6983f3215ed22e9`  
-**Total Commits**: 93  
+**Migration Period**: November 7-8, 2025
+**Base Commit**: `8e508dab484fafafb641298ed9071f03070f7c8b`
+**Final Commit**: `3fb3b608cdd2560d20b76165e6983f3215ed22e9`
+**Total Commits**: 93
 **Status**: ✅ **COMPLETE** - All systems operational
 
 ---
@@ -211,23 +211,23 @@ All test projects follow pattern: `<Component>Tests.csproj`
     <PlatformTarget>x64</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
     <DebugType>portable</DebugType>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="SIL.Core" Version="17.0.0-*" />
     <!-- Additional packages -->
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="../RelativePath/Project.csproj" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <!-- Exclude test directories from main assembly -->
     <Compile Remove="ProjectTests/**" />
@@ -274,7 +274,7 @@ All test projects follow pattern: `<Component>Tests.csproj`
 #### **New Build Architecture**
 
 **Core Files**:
-1. **`dirs.proj`** - Main traversal orchestrator (NEW)
+1. **`FieldWorks.proj`** - Main traversal orchestrator (NEW)
    - Defines 21 build phases
    - Declarative dependency ordering
    - 110+ projects organized by dependency layer
@@ -285,9 +285,9 @@ All test projects follow pattern: `<Component>Tests.csproj`
 
 3. **`Build/Src/NativeBuild/NativeBuild.csproj`** - Native build wrapper (NEW)
    - Bridges traversal SDK and native C++ builds
-   - Referenced by dirs.proj Phase 2
+   - Referenced by FieldWorks.proj Phase 2
 
-#### **Build Phases in dirs.proj**
+#### **Build Phases in FieldWorks.proj**
 
 ```
 Phase 1:  FwBuildTasks (build infrastructure)
@@ -335,7 +335,7 @@ Phase 15-21: Test Projects (organized by component layer)
 - **Kept**: `allCppNoTest` target for native-only builds
 
 **`Build/Installer.targets`** - Installer builds:
-- **Added**: `BuildFieldWorks` target that calls `dirs.proj`
+- **Added**: `BuildFieldWorks` target that calls `FieldWorks.proj`
 - **Removed**: Direct `remakefw` calls
 - Now integrates with traversal build system
 
@@ -357,10 +357,10 @@ Phase 15-21: Test Projects (organized by component layer)
 ./build.sh -c Release                 # Release x64
 
 # Direct MSBuild
-msbuild dirs.proj /p:Configuration=Debug /p:Platform=x64 /m
+msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64 /m
 
 # Dotnet CLI
-dotnet build dirs.proj
+dotnet build FieldWorks.proj
 ```
 
 **Installer Builds**:
@@ -829,7 +829,7 @@ All legacy references updated to point to new paths
 - Platform-specific quirks
 
 **After Migration**:
-- Single entry point: `build.ps1`/`build.sh` → `dirs.proj`
+- Single entry point: `build.ps1`/`build.sh` → `FieldWorks.proj`
 - Centralized build logic in traversal SDK
 - Automatic dependency resolution
 - Consistent cross-platform experience
@@ -1023,70 +1023,70 @@ python Build/convert_nunit.py Src
 
 ### Code Changes
 
-| Metric | Count |
-|--------|-------|
-| **Total Commits** | 93 |
-| **Files Changed** | 728 |
-| **C# Files** | 336 |
-| **Project Files** | 119 |
-| **Markdown Docs** | 125 |
-| **Build Files** | 34 (targets, props, proj, scripts) |
-| **Files Removed** | 140 |
-| **Lines Added** | ~15,000 (estimated) |
-| **Lines Removed** | ~18,000 (estimated) |
+| Metric            | Count                              |
+| ----------------- | ---------------------------------- |
+| **Total Commits** | 93                                 |
+| **Files Changed** | 728                                |
+| **C# Files**      | 336                                |
+| **Project Files** | 119                                |
+| **Markdown Docs** | 125                                |
+| **Build Files**   | 34 (targets, props, proj, scripts) |
+| **Files Removed** | 140                                |
+| **Lines Added**   | ~15,000 (estimated)                |
+| **Lines Removed** | ~18,000 (estimated)                |
 
 ### Project Breakdown
 
-| Category | Count |
-|----------|-------|
-| **Total Projects Converted** | 119 |
-| SDK-style Projects | 111 |
-| Native Projects (VCXPROJ) | 8 |
-| Solution Files | 1 |
-| **Production Projects** | 73 |
-| **Test Projects** | 46 |
+| Category                     | Count |
+| ---------------------------- | ----- |
+| **Total Projects Converted** | 119   |
+| SDK-style Projects           | 111   |
+| Native Projects (VCXPROJ)    | 8     |
+| Solution Files               | 1     |
+| **Production Projects**      | 73    |
+| **Test Projects**            | 46    |
 
 ### Issue Resolution
 
-| Error Type | Count | Status |
-|------------|-------|--------|
-| NU1605 (Package downgrade) | 2 | ✅ Fixed |
-| CS0579 (Duplicate attributes) | 8 | ✅ Fixed |
-| CS0103 (XAML missing) | 4 | ✅ Fixed |
-| CS0535 (Interface member) | 1 | ✅ Fixed |
-| CS0436 (Type conflicts) | 50+ | ✅ Fixed |
-| CS0234 (Missing namespace) | 4 | ✅ Fixed |
-| CS0738/CS0535/CS0118 (Interface) | 10+ | ✅ Fixed |
-| NU1503 (C++ NuGet) | 3 | ✅ Suppressed |
-| **TOTAL** | **~80** | **✅ 100% Resolved** |
+| Error Type                       | Count   | Status              |
+| -------------------------------- | ------- | ------------------- |
+| NU1605 (Package downgrade)       | 2       | ✅ Fixed             |
+| CS0579 (Duplicate attributes)    | 8       | ✅ Fixed             |
+| CS0103 (XAML missing)            | 4       | ✅ Fixed             |
+| CS0535 (Interface member)        | 1       | ✅ Fixed             |
+| CS0436 (Type conflicts)          | 50+     | ✅ Fixed             |
+| CS0234 (Missing namespace)       | 4       | ✅ Fixed             |
+| CS0738/CS0535/CS0118 (Interface) | 10+     | ✅ Fixed             |
+| NU1503 (C++ NuGet)               | 3       | ✅ Suppressed        |
+| **TOTAL**                        | **~80** | **✅ 100% Resolved** |
 
 ### Build System
 
-| Metric | Before | After |
-|--------|--------|-------|
-| **Build Entry Points** | 30+ batch files | 1 (build.ps1/sh) |
-| **Build Scripts LOC** | 164 (build.ps1) | 136 (simplified) |
-| **Build Targets** | Scattered | Centralized in dirs.proj |
-| **Dependencies** | Implicit | Explicit (21 phases) |
-| **Parallel Safety** | Manual tuning | Automatic |
-| **Platforms** | x86, x64, AnyCPU | x64 only |
+| Metric                 | Before           | After                          |
+| ---------------------- | ---------------- | ------------------------------ |
+| **Build Entry Points** | 30+ batch files  | 1 (build.ps1/sh)               |
+| **Build Scripts LOC**  | 164 (build.ps1)  | 136 (simplified)               |
+| **Build Targets**      | Scattered        | Centralized in FieldWorks.proj |
+| **Dependencies**       | Implicit         | Explicit (21 phases)           |
+| **Parallel Safety**    | Manual tuning    | Automatic                      |
+| **Platforms**          | x86, x64, AnyCPU | x64 only                       |
 
 ### Test Framework
 
-| Framework | Before | After |
-|-----------|--------|-------|
-| **RhinoMocks** | 6 projects | 0 (Moq 4.20.70) |
-| **NUnit** | Version 3.x | Version 4.4.0 |
-| **Test Adapter** | 4.2.1 | 5.2.0 |
+| Framework        | Before      | After           |
+| ---------------- | ----------- | --------------- |
+| **RhinoMocks**   | 6 projects  | 0 (Moq 4.20.70) |
+| **NUnit**        | Version 3.x | Version 4.4.0   |
+| **Test Adapter** | 4.2.1       | 5.2.0           |
 
 ### Package Versions
 
-| Package | Projects Using | Version |
-|---------|----------------|---------|
-| SIL.Core | 60+ | 17.0.0-* |
-| SIL.LCModel | 40+ | 11.0.0-* |
-| NUnit | 46 (test projects) | 4.4.0 |
-| Moq | 6 | 4.20.70 |
+| Package     | Projects Using     | Version  |
+| ----------- | ------------------ | -------- |
+| SIL.Core    | 60+                | 17.0.0-* |
+| SIL.LCModel | 40+                | 11.0.0-* |
+| NUnit       | 46 (test projects) | 4.4.0    |
+| Moq         | 6                  | 4.20.70  |
 
 ---
 
@@ -1227,11 +1227,11 @@ This section provides detailed analysis of build challenges, decision-making pro
 **Problem**: 119 projects need conversion from legacy to SDK format
 
 **Decision Matrix**:
-| Approach | Pros | Cons | Result |
-|----------|------|------|--------|
-| Manual per-project | Full control, custom handling | Weeks of work, error-prone | ❌ Rejected |
-| Template-based | Fast for similar projects | Doesn't handle edge cases | ❌ Rejected |
-| Automated script | Consistent, fast, auditable | Requires upfront investment | ✅ **Chosen** |
+| Approach           | Pros                          | Cons                        | Result       |
+| ------------------ | ----------------------------- | --------------------------- | ------------ |
+| Manual per-project | Full control, custom handling | Weeks of work, error-prone  | ❌ Rejected   |
+| Template-based     | Fast for similar projects     | Doesn't handle edge cases   | ❌ Rejected   |
+| Automated script   | Consistent, fast, auditable   | Requires upfront investment | ✅ **Chosen** |
 
 **Implementation** (Commit 1: bf82f8dd6):
 - Created `convertToSDK.py` (575 lines)
@@ -1269,7 +1269,7 @@ NU1605: Detected package downgrade: icu.net from 3.0.0-* to 3.0.0-beta.297
 NU1605: Detected package downgrade: System.Resources.Extensions from 8.0.0 to 6.0.0
 ```
 
-**Root Cause**: 
+**Root Cause**:
 - Manual `<PackageReference>` with explicit versions
 - Transitive dependencies required newer versions
 - NuGet resolver detected downgrade
@@ -1294,7 +1294,7 @@ NU1605: Detected package downgrade: System.Resources.Extensions from 8.0.0 to 6.
 <PackageReference Include="NUnit" Version="4.4.0" />
 ```
 
-**Pattern**: 
+**Pattern**:
 - Pre-release/beta: Use wildcards (`*`)
 - Stable releases: Use fixed versions
 - Let transitive dependencies resolve implicitly
@@ -1311,7 +1311,7 @@ NU1605: Detected package downgrade: System.Resources.Extensions from 8.0.0 to 6.
 
 **Error**:
 ```
-NU1102: Unable to find package 'SIL.TestUtilities'. 
+NU1102: Unable to find package 'SIL.TestUtilities'.
         It may not exist or you may need to authenticate.
 ```
 
@@ -1381,7 +1381,7 @@ Current state across 119 projects:
 - Some projects with `false` don't have custom attributes (unnecessary)
 - No clear documented criteria for when to use `false` vs. `true`
 
-**Recommendation**: 
+**Recommendation**:
 ```
 Criteria for GenerateAssemblyInfo=false:
 ✓ Project has custom Company, Copyright, or Trademark
@@ -1435,13 +1435,13 @@ CS0103: The name 'commentLabel' does not exist in the current context
 ```
 
 **SDK Selection Rules Established**:
-| Project Type | SDK | Additional Properties |
-|--------------|-----|----------------------|
-| Class Library | `Microsoft.NET.Sdk` | None |
-| Console App | `Microsoft.NET.Sdk` | `<OutputType>Exe</OutputType>` |
-| WPF Application | `Microsoft.NET.Sdk.WindowsDesktop` | `<UseWPF>true</UseWPF>` |
+| Project Type         | SDK                                | Additional Properties                     |
+| -------------------- | ---------------------------------- | ----------------------------------------- |
+| Class Library        | `Microsoft.NET.Sdk`                | None                                      |
+| Console App          | `Microsoft.NET.Sdk`                | `<OutputType>Exe</OutputType>`            |
+| WPF Application      | `Microsoft.NET.Sdk.WindowsDesktop` | `<UseWPF>true</UseWPF>`                   |
 | WinForms Application | `Microsoft.NET.Sdk.WindowsDesktop` | `<UseWindowsForms>true</UseWindowsForms>` |
-| WPF + WinForms | `Microsoft.NET.Sdk.WindowsDesktop` | Both `UseWPF` and `UseWindowsForms` |
+| WPF + WinForms       | `Microsoft.NET.Sdk.WindowsDesktop` | Both `UseWPF` and `UseWindowsForms`       |
 
 **Consistency**: ✅ All WPF projects now use correct SDK
 
@@ -1455,11 +1455,11 @@ CS0103: The name 'commentLabel' does not exist in the current context
 
 **Error Pattern**:
 ```
-CS0436: The type 'MasterItem' in 'MGA/MasterItem.cs' conflicts with 
+CS0436: The type 'MasterItem' in 'MGA/MasterItem.cs' conflicts with
         the imported type 'MasterItem' in 'MGA, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null'
 ```
 
-**Root Cause**: 
+**Root Cause**:
 - SDK-style projects auto-include all `.cs` files recursively
 - Test folders (e.g., `MGATests/`, `MorphologyEditorDllTests/`) not excluded
 - Files compile into main assembly
@@ -1477,7 +1477,7 @@ CS0436: The type 'MasterItem' in 'MGA/MasterItem.cs' conflicts with
   <!-- Exclude test directories from compilation -->
   <Compile Remove="MorphologyEditorDllTests/**" />
   <None Remove="MorphologyEditorDllTests/**" />
-  
+
   <!-- Also exclude nested test folders -->
   <Compile Remove="MGA/MGATests/**" />
   <None Remove="MGA/MGATests/**" />
@@ -1512,11 +1512,11 @@ Three patterns found across projects:
 
 **Error**:
 ```
-CS0535: 'NullThreadedProgress' does not implement interface member 
+CS0535: 'NullThreadedProgress' does not implement interface member
         'IThreadedProgress.Canceling'
 ```
 
-**Root Cause**: 
+**Root Cause**:
 - SIL.LCModel.Utils packages updated
 - `IThreadedProgress` interface gained new `Canceling` property
 - Existing implementations only had `IsCanceling`
@@ -1568,9 +1568,9 @@ Package Name          → Assembly Name(s)
 ----------------        ------------------
 SIL.Core              → SIL.Core
 SIL.Core.Desktop      → SIL.Core.Desktop  ✓ Straightforward
-ParatextData          → Paratext.LexicalContracts, 
-                        Paratext.LexicalContractsV2, 
-                        ParatextData, 
+ParatextData          → Paratext.LexicalContracts,
+                        Paratext.LexicalContractsV2,
+                        ParatextData,
                         PtxUtils  ✗ Multiple assemblies
 Geckofx60.64          → Geckofx-Core,
                         Geckofx-Winforms  ✗ Different names
@@ -1598,7 +1598,7 @@ Recommendation for script improvement:
 PACKAGE_ASSEMBLY_MAPPINGS = {
     'ParatextData': [
         'Paratext.LexicalContracts',
-        'Paratext.LexicalContractsV2', 
+        'Paratext.LexicalContractsV2',
         'ParatextData',
         'PtxUtils'
     ],
@@ -1626,7 +1626,7 @@ PACKAGE_ASSEMBLY_MAPPINGS = {
 ```
 Removed from FieldWorks.sln:
 - Debug|Win32, Release|Win32
-- Debug|x86, Release|x86  
+- Debug|x86, Release|x86
 - Debug|AnyCPU, Release|AnyCPU
 
 Kept only:
@@ -1663,7 +1663,7 @@ Kept only:
 
 Project categories:
 1. **Implicit (preferred)**: 89 projects - Inherit from Directory.Build.props
-2. **Explicit (redundant)**: 22 projects - Explicitly set x64  
+2. **Explicit (redundant)**: 22 projects - Explicitly set x64
 3. **Build tools (special)**: 8 projects - May use AnyCPU for portability
 
 **Analysis**:
@@ -1700,10 +1700,10 @@ Project categories:
 **Implementation Pattern**:
 ```xml
 <!-- Build/RegFree.targets -->
-<Target Name="GenerateRegistrationFreeManifest" 
-        AfterTargets="Build" 
+<Target Name="GenerateRegistrationFreeManifest"
+        AfterTargets="Build"
         Condition="'$(EnableRegFreeCom)'=='true' and '$(OutputType)'=='WinExe'">
-  
+
   <RegFree Executable="$(TargetPath)"
            Output="$(TargetPath).manifest"
            Platform="win64"
@@ -1729,7 +1729,7 @@ Current state:
 ```
 1. Audit Phase: Search for COM usage
    grep -r "ComImport\|DllImport.*Ole\|CoClass" Src/**/*.cs
-   
+
 2. Identify EXEs using COM
    - FieldWorks.exe ✅ Done
    - LexTextExe.exe ⚠️ Needs manifest
@@ -1751,7 +1751,7 @@ Current state:
 Error generating manifest: Path resolution failed
 ```
 
-**Root Cause**: 
+**Root Cause**:
 - SDK-style projects have different output structure
 - RegFree task used hard-coded paths from legacy projects
 - Path resolution logic needed updates
@@ -1779,32 +1779,32 @@ Error generating manifest: Path resolution failed
 - ❌ Pros: Fine-grained control
 - ❌ Cons: Scattered across project files, hard to visualize, error-prone
 
-**Option 2: Solution Build Order** 
+**Option 2: Solution Build Order**
 - ⚠️ Pros: Simple, works in Visual Studio
 - ❌ Cons: No declarative dependencies, hidden ordering, breaks outside VS
 
-**Option 3: MSBuild Traversal SDK with dirs.proj** - ✅ **CHOSEN**
+**Option 3: MSBuild Traversal SDK with FieldWorks.proj** - ✅ **CHOSEN**
 - ✅ Pros: Declarative phases, explicit dependencies, works everywhere
 - ✅ Pros: Automatic safe parallelism, better incremental builds
 - ⚠️ Cons: Learning curve, requires upfront phase planning
 
 **Implementation** (Commits 66-67):
 ```xml
-<!-- dirs.proj - 21 phases organized by dependency layers -->
+<!-- FieldWorks.proj - 21 phases organized by dependency layers -->
 <Project Sdk="Microsoft.Build.Traversal/4.1.0">
-  
+
   <ItemGroup Label="Phase 1: Build Infrastructure">
     <ProjectReference Include="Build\Src\FwBuildTasks\FwBuildTasks.csproj" />
   </ItemGroup>
-  
+
   <ItemGroup Label="Phase 2: Native C++ Components">
     <ProjectReference Include="Build\Src\NativeBuild\NativeBuild.csproj" />
   </ItemGroup>
-  
+
   <ItemGroup Label="Phase 3: Code Generation">
     <ProjectReference Include="Src\Common\ViewsInterfaces\ViewsInterfaces.csproj" />
   </ItemGroup>
-  
+
   <!-- Phases 4-21: Managed projects organized by dependency layer -->
 </Project>
 ```
@@ -1868,7 +1868,7 @@ Analysis reveals **5 areas** where approaches diverged during the migration. The
 
 **Pattern Distribution**:
 - Pattern A: `<ProjectName>Tests/**` - 45 projects
-- Pattern B: `*Tests/**` - 30 projects  
+- Pattern B: `*Tests/**` - 30 projects
 - Pattern C: Explicit paths like `MGA/MGATests/**` - 44 projects
 
 **Issues**:
@@ -1882,7 +1882,7 @@ Analysis reveals **5 areas** where approaches diverged during the migration. The
 <ItemGroup>
   <Compile Remove="<ProjectName>Tests/**" />
   <None Remove="<ProjectName>Tests/**" />
-  
+
   <!-- For nested test folders, add explicit entries -->
   <Compile Remove="SubFolder/SubFolderTests/**" />
   <None Remove="SubFolder/SubFolderTests/**" />
@@ -2008,11 +2008,11 @@ This section documents key decisions, alternatives considered, and rationale.
 **Question**: How to convert 119 projects to SDK format?
 
 **Alternatives**:
-| Approach | Time Est. | Consistency | Auditability | Chosen |
-|----------|-----------|-------------|--------------|--------|
-| Manual per-project | 2-3 weeks | Low | Low | ❌ |
-| Semi-automated templates | 1 week | Medium | Medium | ❌ |
-| Fully automated script | 2 days + fixes | High | High | ✅ |
+| Approach                 | Time Est.      | Consistency | Auditability | Chosen |
+| ------------------------ | -------------- | ----------- | ------------ | ------ |
+| Manual per-project       | 2-3 weeks      | Low         | Low          | ❌      |
+| Semi-automated templates | 1 week         | Medium      | Medium       | ❌      |
+| Fully automated script   | 2 days + fixes | High        | High         | ✅      |
 
 **Result**: convertToSDK.py handled 95%, manual fixes for 5%
 
@@ -2029,7 +2029,7 @@ This section documents key decisions, alternatives considered, and rationale.
 2. Remove versions entirely - ❌ Loss of control
 3. Wildcards for pre-release (`11.0.0-*`) - ✅ **SUCCESS**
 
-**Rationale**: 
+**Rationale**:
 - Pre-release packages update frequently
 - Wildcards let NuGet pick latest compatible
 - Prevents downgrade conflicts
@@ -2073,13 +2073,13 @@ This section documents key decisions, alternatives considered, and rationale.
 **Question**: Support both x86 and x64, or x64 only?
 
 **Alternatives**:
-| Approach | Complexity | Maintenance | Modern | Chosen |
-|----------|------------|-------------|---------|--------|
-| Support both | High | High | No | ❌ |
-| x64 only | Low | Low | Yes | ✅ |
-| x86 only | Low | Low | No | ❌ |
+| Approach     | Complexity | Maintenance | Modern | Chosen |
+| ------------ | ---------- | ----------- | ------ | ------ |
+| Support both | High       | High        | No     | ❌      |
+| x64 only     | Low        | Low         | Yes    | ✅      |
+| x86 only     | Low        | Low         | No     | ❌      |
 
-**Rationale**: 
+**Rationale**:
 - All target systems support x64
 - Simplifies configurations
 - Eliminates WOW64 issues
@@ -2094,15 +2094,15 @@ This section documents key decisions, alternatives considered, and rationale.
 **Question**: Continue mkall.targets or adopt Traversal SDK?
 
 **Alternatives**:
-| Approach | Maintainability | Features | Learning Curve | Chosen |
-|----------|----------------|----------|----------------|--------|
-| Enhanced mkall.targets | Medium | Basic | Low | ❌ |
-| Traversal SDK | High | Advanced | Medium | ✅ |
-| Custom MSBuild | Low | Custom | High | ❌ |
+| Approach               | Maintainability | Features | Learning Curve | Chosen |
+| ---------------------- | --------------- | -------- | -------------- | ------ |
+| Enhanced mkall.targets | Medium          | Basic    | Low            | ❌      |
+| Traversal SDK          | High            | Advanced | Medium         | ✅      |
+| Custom MSBuild         | Low             | Custom   | High           | ❌      |
 
 **Rationale**:
 - Declarative phase ordering
-- Automatic safe parallelism  
+- Automatic safe parallelism
 - Better incremental builds
 - Future-proof (Microsoft maintained)
 
@@ -2115,33 +2115,33 @@ This section documents key decisions, alternatives considered, and rationale.
 Ranked by impact and repeatability:
 
 #### 1. Automated Conversion (convertToSDK.py)
-**Success Rate**: 95%  
-**Time Saved**: Weeks of manual work  
-**Key**: Intelligent dependency mapping and package detection  
+**Success Rate**: 95%
+**Time Saved**: Weeks of manual work
+**Key**: Intelligent dependency mapping and package detection
 **Repeatability**: ✅ Script can be reused for future migrations
 
 #### 2. Systematic Error Resolution
-**Success Rate**: 100% (80+ errors fixed)  
-**Time Saved**: Days vs. weeks of trial-and-error  
-**Key**: One category at a time, complete before moving on  
+**Success Rate**: 100% (80+ errors fixed)
+**Time Saved**: Days vs. weeks of trial-and-error
+**Key**: One category at a time, complete before moving on
 **Repeatability**: ✅ Process documented, can be applied to any migration
 
 #### 3. Wildcard Package Versions
-**Success Rate**: 100% (eliminated all NU1605)  
-**Time Saved**: Hours of manual version alignment  
-**Key**: Let NuGet resolver handle pre-release versions  
+**Success Rate**: 100% (eliminated all NU1605)
+**Time Saved**: Hours of manual version alignment
+**Key**: Let NuGet resolver handle pre-release versions
 **Repeatability**: ✅ Pattern established, easy to apply
 
 #### 4. Central Property Management (Directory.Build.props)
-**Success Rate**: 100% (x64 enforced everywhere)  
-**Maintenance Reduction**: Single source of truth  
-**Key**: Inheritance over explicit settings  
+**Success Rate**: 100% (x64 enforced everywhere)
+**Maintenance Reduction**: Single source of truth
+**Key**: Inheritance over explicit settings
 **Repeatability**: ✅ Standard MSBuild pattern
 
 #### 5. Explicit Test Exclusions
-**Success Rate**: 100% (eliminated CS0436)  
-**Time Saved**: Hours debugging type conflicts  
-**Key**: SDK auto-includes, must explicitly exclude  
+**Success Rate**: 100% (eliminated CS0436)
+**Time Saved**: Hours debugging type conflicts
+**Key**: SDK auto-includes, must explicitly exclude
 **Repeatability**: ✅ Pattern documented and applied
 
 ---
@@ -2151,33 +2151,33 @@ Ranked by impact and repeatability:
 Understanding what didn't work guides future improvements:
 
 #### 1. Initial "One Size Fits All" GenerateAssemblyInfo
-**Issue**: Set to `false` for all projects without analysis  
-**Rework**: Had to change ~40 projects to `true` after CS0579 errors  
-**Lesson**: Evaluate per-project needs upfront, don't assume  
+**Issue**: Set to `false` for all projects without analysis
+**Rework**: Had to change ~40 projects to `true` after CS0579 errors
+**Lesson**: Evaluate per-project needs upfront, don't assume
 **Time Lost**: ~8 hours of fixes
 
 #### 2. Package-to-Assembly Name Mapping in Script
-**Issue**: Script couldn't handle packages with multiple/different assembly names  
-**Rework**: Manual fixes for ObjectBrowser, ScrChecksTests, others  
-**Lesson**: Need comprehensive mapping table in script  
+**Issue**: Script couldn't handle packages with multiple/different assembly names
+**Rework**: Manual fixes for ObjectBrowser, ScrChecksTests, others
+**Lesson**: Need comprehensive mapping table in script
 **Time Lost**: ~4 hours of manual additions
 
 #### 3. Nested Test Folder Detection
-**Issue**: Forgot about nested test folders (e.g., `MGA/MGATests/`)  
-**Rework**: Added explicit exclusions after CS0436 errors  
-**Lesson**: Recursively search for test folders, don't assume flat structure  
+**Issue**: Forgot about nested test folders (e.g., `MGA/MGATests/`)
+**Rework**: Added explicit exclusions after CS0436 errors
+**Lesson**: Recursively search for test folders, don't assume flat structure
 **Time Lost**: ~2 hours
 
 #### 4. Incomplete RegFree COM Coverage
-**Issue**: Only implemented for FieldWorks.exe initially  
-**Status**: **Still incomplete** - other EXEs not covered  
-**Lesson**: Should have audited all EXE projects for COM usage upfront  
+**Issue**: Only implemented for FieldWorks.exe initially
+**Status**: **Still incomplete** - other EXEs not covered
+**Lesson**: Should have audited all EXE projects for COM usage upfront
 **Time Lost**: Ongoing - needs completion
 
 #### 5. Inconsistent Test Package Attributes
-**Issue**: PrivateAssets not added consistently  
-**Status**: **Still incomplete** - some projects missing  
-**Lesson**: Should have added as part of automated conversion  
+**Issue**: PrivateAssets not added consistently
+**Status**: **Still incomplete** - some projects missing
+**Lesson**: Should have added as part of automated conversion
 **Time Lost**: Ongoing - needs cleanup
 
 ---
@@ -2221,7 +2221,7 @@ This section provides actionable items to complete the migration and prepare for
 **Task 1.1: StandardizeGenerateAssemblyInfo** (4-6 hours)
 ```powershell
 # Audit projects with GenerateAssemblyInfo=false
-$projects = Get-ChildItem -Recurse -Filter "*.csproj" | 
+$projects = Get-ChildItem -Recurse -Filter "*.csproj" |
     Where-Object { (Get-Content $_.FullName) -match "GenerateAssemblyInfo.*false" }
 
 # For each project:
@@ -2256,7 +2256,7 @@ grep -l "DllImport.*ole32\|ComImport\|CoClass\|IDispatch" <EACH_EXE_SOURCE>
 **Projects to Check**:
 - [ ] FieldWorks.exe (✅ Done)
 - [ ] LexTextExe
-- [ ] FxtExe  
+- [ ] FxtExe
 - [ ] MigrateSqlDbs
 - [ ] FixFwData
 - [ ] ConvertSFM
@@ -2452,25 +2452,25 @@ ls -la *MIGRATION*.md *SDK*.md
 
 Before merging to main, verify each category:
 
-| Category | Check | Status | Blocker |
-|----------|-------|--------|---------|
-| **Build** | Clean build succeeds | ⬜ | ✅ Yes |
-| **Build** | Release build succeeds | ⬜ | ✅ Yes |
-| **Build** | Incremental build works | ⬜ | ✅ Yes |
-| **Build** | Parallel build safe | ⬜ | ⚠️ Recommended |
-| **Tests** | All tests build | ⬜ | ✅ Yes |
-| **Tests** | Unit tests pass | ⬜ | ✅ Yes |
-| **Tests** | No regressions | ⬜ | ✅ Yes |
-| **Platform** | x64 only enforced | ⬜ | ✅ Yes |
-| **Platform** | Native projects x64 | ⬜ | ✅ Yes |
-| **COM** | FieldWorks manifest works | ⬜ | ✅ Yes |
-| **COM** | All EXEs surveyed | ⬜ | ✅ Yes |
-| **COM** | Runs without registry | ⬜ | ✅ Yes |
-| **Consistency** | GenerateAssemblyInfo standardized | ⬜ | ⚠️ Recommended |
-| **Consistency** | Test exclusions uniform | ⬜ | ❌ Optional |
-| **Consistency** | PrivateAssets on tests | ⬜ | ⚠️ Recommended |
-| **CI** | All workflows pass | ⬜ | ✅ Yes |
-| **Docs** | Migration docs complete | ⬜ | ✅ Yes |
+| Category        | Check                             | Status | Blocker       |
+| --------------- | --------------------------------- | ------ | ------------- |
+| **Build**       | Clean build succeeds              | ⬜      | ✅ Yes         |
+| **Build**       | Release build succeeds            | ⬜      | ✅ Yes         |
+| **Build**       | Incremental build works           | ⬜      | ✅ Yes         |
+| **Build**       | Parallel build safe               | ⬜      | ⚠️ Recommended |
+| **Tests**       | All tests build                   | ⬜      | ✅ Yes         |
+| **Tests**       | Unit tests pass                   | ⬜      | ✅ Yes         |
+| **Tests**       | No regressions                    | ⬜      | ✅ Yes         |
+| **Platform**    | x64 only enforced                 | ⬜      | ✅ Yes         |
+| **Platform**    | Native projects x64               | ⬜      | ✅ Yes         |
+| **COM**         | FieldWorks manifest works         | ⬜      | ✅ Yes         |
+| **COM**         | All EXEs surveyed                 | ⬜      | ✅ Yes         |
+| **COM**         | Runs without registry             | ⬜      | ✅ Yes         |
+| **Consistency** | GenerateAssemblyInfo standardized | ⬜      | ⚠️ Recommended |
+| **Consistency** | Test exclusions uniform           | ⬜      | ❌ Optional    |
+| **Consistency** | PrivateAssets on tests            | ⬜      | ⚠️ Recommended |
+| **CI**          | All workflows pass                | ⬜      | ✅ Yes         |
+| **Docs**        | Migration docs complete           | ⬜      | ✅ Yes         |
 
 **Legend**:
 - ✅ Yes = Must fix before merge
@@ -2505,15 +2505,15 @@ Based on task priorities and estimates:
 
 ### Risk Assessment
 
-| Risk | Likelihood | Impact | Mitigation |
-|------|------------|--------|------------|
-| Build breaks after cleanup | Low | High | Test after each cleanup step |
-| Tests fail after changes | Medium | High | Run tests frequently |
-| COM breaks without registry | Low | Medium | Test on clean VM before merge |
-| Inconsistencies cause confusion | High | Low | Complete standardization tasks |
-| Performance regression | Low | Medium | Measure build times before/after |
+| Risk                            | Likelihood | Impact | Mitigation                       |
+| ------------------------------- | ---------- | ------ | -------------------------------- |
+| Build breaks after cleanup      | Low        | High   | Test after each cleanup step     |
+| Tests fail after changes        | Medium     | High   | Run tests frequently             |
+| COM breaks without registry     | Low        | Medium | Test on clean VM before merge    |
+| Inconsistencies cause confusion | High       | Low    | Complete standardization tasks   |
+| Performance regression          | Low        | Medium | Measure build times before/after |
 
-**Highest Risk**: Tests failing after test package changes  
+**Highest Risk**: Tests failing after test package changes
 **Mitigation**: Run full test suite after adding PrivateAssets
 
 ---
@@ -2522,23 +2522,23 @@ Based on task priorities and estimates:
 
 Migration is merge-ready when:
 
-✅ **All builds pass** (Debug, Release, Incremental, Parallel)  
-✅ **All critical tests pass** (no regressions)  
-✅ **x64 only enforced** (no x86/Win32 remains)  
-✅ **FieldWorks runs without registry** (manifests work)  
-✅ **All COM EXEs identified** (audit complete)  
-✅ **GenerateAssemblyInfo standardized** (consistent approach)  
-✅ **CI workflows green** (all checks pass)  
+✅ **All builds pass** (Debug, Release, Incremental, Parallel)
+✅ **All critical tests pass** (no regressions)
+✅ **x64 only enforced** (no x86/Win32 remains)
+✅ **FieldWorks runs without registry** (manifests work)
+✅ **All COM EXEs identified** (audit complete)
+✅ **GenerateAssemblyInfo standardized** (consistent approach)
+✅ **CI workflows green** (all checks pass)
 ✅ **Documentation complete** (this file + others)
 
 **Recommended before merge** (can defer if needed):
-⚠️ Test exclusion patterns standardized  
-⚠️ PrivateAssets on all test packages  
+⚠️ Test exclusion patterns standardized
+⚠️ PrivateAssets on all test packages
 ⚠️ All COM EXEs have manifests (not just FieldWorks)
 
 **Optional** (can be follow-up PRs):
-❌ Redundant PlatformTarget removed  
-❌ All cleanup tasks complete  
+❌ Redundant PlatformTarget removed
+❌ All cleanup tasks complete
 ❌ All enhancements implemented
 
 ---
@@ -2596,7 +2596,7 @@ Migration is merge-ready when:
 #### **Issue 2: Full Test Suite Run**
 - **Status**: Individual projects tested, full suite not run
 - **Impact**: Medium - test framework changes need validation
-- **Action**: Run `msbuild dirs.proj /p:action=test` and review results
+- **Action**: Run `msbuild FieldWorks.proj /p:action=test` and review results
 
 #### **Issue 3: Com Manifest Test Host Integration**
 - **Status**: Created but not integrated with test harness
@@ -2610,7 +2610,7 @@ Migration is merge-ready when:
 1. **Run Full Test Suite**
    ```powershell
    .\build.ps1
-   msbuild dirs.proj /p:Configuration=Debug /p:Platform=x64 /p:action=test
+   msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64 /p:action=test
    ```
    - Review failures
    - Fix test-related issues
@@ -2725,7 +2725,7 @@ FieldWorks/
 │   ├── workflows/            # GitHub Actions
 │   └── memory.md             # Build system decisions
 ├── Docs/                     # Technical documentation
-├── dirs.proj                 # Traversal build orchestrator (NEW)
+├── FieldWorks.proj                 # Traversal build orchestrator (NEW)
 ├── Directory.Build.props     # Global MSBuild properties
 ├── FieldWorks.sln            # Main solution (x64 only)
 ├── build.ps1                 # Windows build script (modernized)
@@ -2734,28 +2734,28 @@ FieldWorks/
 
 ### Key Files
 
-| File | Purpose | Status |
-|------|---------|--------|
-| `dirs.proj` | MSBuild Traversal SDK orchestrator | NEW |
-| `Build/Orchestrator.proj` | SDK-style build entry point | NEW (replaces Build/FieldWorks.proj) |
-| `Build/Src/NativeBuild/NativeBuild.csproj` | Native build wrapper | NEW |
-| `Build/RegFree.targets` | Manifest generation | NEW |
-| `Directory.Build.props` | Global properties (x64, net48) | Enhanced |
-| `build.ps1` | Windows build script | Simplified |
-| `build.sh` | Linux build script | Modernized |
+| File                                       | Purpose                            | Status                               |
+| ------------------------------------------ | ---------------------------------- | ------------------------------------ |
+| `FieldWorks.proj`                          | MSBuild Traversal SDK orchestrator | NEW                                  |
+| `Build/Orchestrator.proj`                  | SDK-style build entry point        | NEW (replaces Build/FieldWorks.proj) |
+| `Build/Src/NativeBuild/NativeBuild.csproj` | Native build wrapper               | NEW                                  |
+| `Build/RegFree.targets`                    | Manifest generation                | NEW                                  |
+| `Directory.Build.props`                    | Global properties (x64, net48)     | Enhanced                             |
+| `build.ps1`                                | Windows build script               | Simplified                           |
+| `build.sh`                                 | Linux build script                 | Modernized                           |
 
 ### Migration Documents
 
-| Document | Lines | Purpose |
-|----------|-------|---------|
-| `MIGRATION_ANALYSIS.md` | 413 | Detailed error fixes |
-| `TRAVERSAL_SDK_IMPLEMENTATION.md` | 327 | Traversal SDK architecture |
-| `NON_SDK_ELIMINATION.md` | 121 | Pure SDK achievement |
-| `RHINOMOCKS_TO_MOQ_MIGRATION.md` | 151 | Test framework conversion |
-| `MIGRATION_FIXES_SUMMARY.md` | 207 | Issue breakdown |
-| `Docs/traversal-sdk-migration.md` | 239 | Developer guide |
-| `Docs/64bit-regfree-migration.md` | 209 | 64-bit/reg-free plan |
-| `SDK-MIGRATION.md` (this file) | 2500+ | Comprehensive summary |
+| Document                          | Lines | Purpose                    |
+| --------------------------------- | ----- | -------------------------- |
+| `MIGRATION_ANALYSIS.md`           | 413   | Detailed error fixes       |
+| `TRAVERSAL_SDK_IMPLEMENTATION.md` | 327   | Traversal SDK architecture |
+| `NON_SDK_ELIMINATION.md`          | 121   | Pure SDK achievement       |
+| `RHINOMOCKS_TO_MOQ_MIGRATION.md`  | 151   | Test framework conversion  |
+| `MIGRATION_FIXES_SUMMARY.md`      | 207   | Issue breakdown            |
+| `Docs/traversal-sdk-migration.md` | 239   | Developer guide            |
+| `Docs/64bit-regfree-migration.md` | 209   | 64-bit/reg-free plan       |
+| `SDK-MIGRATION.md` (this file)    | 2500+ | Comprehensive summary      |
 
 ### Build Commands
 
@@ -2766,8 +2766,8 @@ FieldWorks/
 ./build.sh                               # Linux/macOS build
 
 # Direct MSBuild
-msbuild dirs.proj /p:Configuration=Debug /p:Platform=x64 /m
-dotnet build dirs.proj
+msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64 /m
+dotnet build FieldWorks.proj
 
 # Installers
 msbuild Build/Orchestrator.proj /t:RestorePackages
@@ -2798,14 +2798,14 @@ For questions about this migration:
 
 The FieldWorks SDK migration represents a comprehensive modernization of a large, complex codebase:
 
-✅ **119 projects** successfully converted to SDK format  
-✅ **Zero legacy build paths** - fully modern architecture  
-✅ **64-bit only** - simplified platform support  
-✅ **Registration-free COM** - self-contained installation  
-✅ **MSBuild Traversal SDK** - declarative, maintainable builds  
-✅ **Modern test frameworks** - NUnit 4, Moq  
-✅ **140 legacy files removed** - reduced maintenance burden  
-✅ **Comprehensive documentation** - knowledge transfer complete  
+✅ **119 projects** successfully converted to SDK format
+✅ **Zero legacy build paths** - fully modern architecture
+✅ **64-bit only** - simplified platform support
+✅ **Registration-free COM** - self-contained installation
+✅ **MSBuild Traversal SDK** - declarative, maintainable builds
+✅ **Modern test frameworks** - NUnit 4, Moq
+✅ **140 legacy files removed** - reduced maintenance burden
+✅ **Comprehensive documentation** - knowledge transfer complete
 
 **The migration is operationally complete**. All builds work, all systems function, and the codebase is positioned for future growth.
 
@@ -2813,6 +2813,6 @@ The FieldWorks SDK migration represents a comprehensive modernization of a large
 
 ---
 
-*Document Version: 1.0*  
-*Last Updated: 2025-11-08*  
+*Document Version: 1.0*
+*Last Updated: 2025-11-08*
 *Migration Status: ✅ COMPLETE*

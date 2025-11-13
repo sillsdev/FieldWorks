@@ -1,0 +1,25 @@
+# Use a Windows base that matches your host (check Docker Desktop -> Windows containers -> 'docker info')
+# If your host is older (e.g., 1809), change ltsc2022 to ltsc2019.
+FROM mcr.microsoft.com/dotnet/framework/sdk:4.8-windowsservercore-ltsc2022
+
+SHELL ["powershell", "-Command", "$ErrorActionPreference='Stop';"]
+
+# Visual Studio Build Tools for .NET Framework desktop + C++ (incl. ATL/MFC)
+ADD https://aka.ms/vs/17/release/vs_BuildTools.exe C:\\TEMP\\vs_BuildTools.exe
+RUN Start-Process C:\\TEMP\\vs_BuildTools.exe -ArgumentList \
+	'--quiet --wait --norestart --nocache --installPath C:\\BuildTools', \
+	'--add Microsoft.VisualStudio.Workload.ManagedDesktopBuildTools', \
+	'--add Microsoft.VisualStudio.Workload.VCTools', \
+	'--add Microsoft.VisualStudio.Component.VC.ATLMFC', \
+	'--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64', \
+	'--add Microsoft.VisualStudio.Component.Windows10SDK.19041' \
+	-NoNewWindow -PassThru | Wait-Process ; \
+	Remove-Item C:\\TEMP\\vs_BuildTools.exe -Force
+
+# NuGet CLI (optional; restore can also be done via msbuild /t:Restore)
+ADD https://dist.nuget.org/win-x86-commandline/latest/nuget.exe C:\\nuget.exe
+
+# Default NuGet cache location (each container gets a host-mounted, per-agent cache)
+ENV NUGET_PACKAGES=C:\\.nuget\\packages
+
+WORKDIR C:\\

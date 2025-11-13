@@ -173,6 +173,22 @@ Before submitting a PR:
 
 --------------------------------------------------------------------------------
 
+## Multi-agent worktree builds (containers)
+
+CRITICAL: When working in a worktree folder (path contains '\worktrees\agent-'), ALWAYS build inside the matching Docker container. Extract the agent number from the path and use: `docker exec fw-agent-N powershell -NoProfile -c "msbuild <solution> /m /p:Configuration=Debug"`
+
+To identify which container to use: if workspace path is '...\worktrees\agent-2\...', use container 'fw-agent-2'
+
+For agent worktrees, NEVER run msbuild directly on the host. COM/registry operations must happen in the isolated container.
+
+In agent worktrees, prefer using VS Code tasks ('Terminal > Run Task > Restore + Build Debug') which are pre-configured for the correct container.
+
+For the main repository (not in worktrees), build directly with: `.\build.ps1 -Configuration Debug` or `msbuild dirs.proj`
+
+Read-only operations (git, Get-Content, ls, dir) always run on the host, regardless of worktree.
+
+--------------------------------------------------------------------------------
+
 ## Where to make changes
 
 - Core source: Src/ contains the primary C# and C++ projects. Mirror existing patterns for new code.

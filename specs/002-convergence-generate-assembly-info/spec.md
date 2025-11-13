@@ -1,8 +1,8 @@
 # Convergence Path Analysis: GenerateAssemblyInfo Standardization
 
-**Priority**: ⚠️ **HIGH**  
-**Divergent Approach**: Mixed true/false settings without documented criteria  
-**Current State**: 52 projects use `false`, 63 use `true` or default  
+**Priority**: ⚠️ **HIGH**
+**Divergent Approach**: Mixed true/false settings without documented criteria
+**Current State**: 52 projects use `false`, 63 use `true` or default
 **Impact**: Confusion for developers, inconsistent build behavior, maintenance burden
 
 ---
@@ -70,7 +70,7 @@ During the initial SDK conversion (commit 2: f1995dac9), the script set `Generat
 
 ---
 
-### **Path B: Manual-First Approach** 
+### **Path B: Manual-First Approach**
 
 **Philosophy**: Keep manual AssemblyInfo.cs files, use SDK generation sparingly
 
@@ -131,13 +131,13 @@ During the initial SDK conversion (commit 2: f1995dac9), the script set `Generat
 ```
 
 **Rules by Project Type**:
-| Project Type | GenerateAssemblyInfo | Rationale |
-|--------------|---------------------|-----------|
-| WinExe/Exe (Apps) | `false` | Need Company, Copyright, Product |
-| Library (Core) | `true` | Minimal attributes needed |
-| Library (Plugin) | `false` | May need custom attributes |
-| Test Projects | `true` | Attributes not important |
-| Build Tools | `true` | Internal use only |
+| Project Type      | GenerateAssemblyInfo | Rationale                        |
+| ----------------- | -------------------- | -------------------------------- |
+| WinExe/Exe (Apps) | `false`              | Need Company, Copyright, Product |
+| Library (Core)    | `true`               | Minimal attributes needed        |
+| Library (Plugin)  | `false`              | May need custom attributes       |
+| Test Projects     | `true`               | Attributes not important         |
+| Build Tools       | `true`               | Internal use only                |
 
 **Pros**:
 - ✅ Context-appropriate approach
@@ -183,7 +183,7 @@ Otherwise: Use true (SDK default)
   - Create spreadsheet: Project | Has AssemblyInfo.cs | Custom Attributes | Reason for false
   - Check each AssemblyInfo.cs for custom attributes beyond Title/Description/Version
   - Document projects that legitimately need manual control
-  
+
 - [ ] **Task 1.2**: Categorize projects into:
   - Category A: Can convert to `true` (no custom attributes) - Expected: ~30 projects
   - Category B: Must keep `false` (custom attributes) - Expected: ~20 projects
@@ -212,7 +212,7 @@ Otherwise: Use true (SDK default)
     </PropertyGroup>
     ```
   - Build and verify no CS0579 errors
-  
+
 - [ ] **Task 2.2**: For Category B projects (keep false):
   - Keep `<GenerateAssemblyInfo>false</GenerateAssemblyInfo>`
   - Add XML comment explaining why:
@@ -240,15 +240,15 @@ Otherwise: Use true (SDK default)
 ### Phase 3: Documentation (1 hour)
 - [ ] **Task 3.1**: Update Directory.Build.props with comment
   ```xml
-  <!-- 
+  <!--
     GenerateAssemblyInfo Default: true (SDK generates attributes)
-    
+
     Use false only when:
     - Custom Company, Copyright, or Trademark attributes needed
     - Non-standard versioning requirements
     - Conditional compilation in AssemblyInfo.cs
     - Custom CLSCompliant or ComVisible settings
-    
+
     When using false, always add XML comment explaining why.
   -->
   ```
@@ -256,7 +256,7 @@ Otherwise: Use true (SDK default)
 - [ ] **Task 3.2**: Update .github/instructions/managed.instructions.md
   - Add section on GenerateAssemblyInfo decision criteria
   - Include examples of when to use true vs. false
-  
+
 - [ ] **Task 3.3**: Create project template with correct setting
   - Update any project templates to default to `true`
 
@@ -266,23 +266,23 @@ Otherwise: Use true (SDK default)
   .\build.ps1 -Configuration Debug
   .\build.ps1 -Configuration Release
   ```
-  
+
 - [ ] **Task 4.2**: Check for CS0579 errors (duplicate attributes)
   ```powershell
   # Should return empty
   msbuild FieldWorks.sln | Select-String "CS0579"
   ```
-  
+
 - [ ] **Task 4.3**: Verify assembly metadata
   - For converted projects, use reflection to check attributes:
     ```powershell
     [Reflection.Assembly]::LoadFile("Output\Debug\ProjectName.dll").GetCustomAttributes($false)
     ```
   - Ensure Title, Version, etc. are present
-  
+
 - [ ] **Task 4.4**: Run full test suite
   ```powershell
-  msbuild dirs.proj /p:action=test
+  msbuild FieldWorks.proj /p:action=test
   ```
 
 - [ ] **Task 4.5**: Verify installer includes correct metadata
@@ -295,12 +295,12 @@ Otherwise: Use true (SDK default)
   - Verify all projects have explicit GenerateAssemblyInfo setting
   - Verify all `false` settings have explanatory comments
   - Verify no AssemblyInfo.cs files remain for `true` projects
-  
+
 - [ ] **Task 5.2**: Update this document with final statistics
   - Projects converted: X
   - Projects kept with false: Y
   - Reason distribution (chart)
-  
+
 - [ ] **Task 5.3**: Create follow-up issues if needed
   - CI/CD version stamping adjustments
   - Further standardization opportunities
@@ -331,9 +331,9 @@ def analyze_assembly_info(assembly_info_path):
     """Parse AssemblyInfo.cs and identify custom attributes"""
     with open(assembly_info_path, 'r') as f:
         content = f.read()
-    
+
     custom_attrs = []
-    
+
     # Check for custom Company/Copyright/Trademark
     if 'AssemblyCompany' in content and 'SIL' not in content:
         custom_attrs.append('CustomCompany')
@@ -341,28 +341,28 @@ def analyze_assembly_info(assembly_info_path):
         custom_attrs.append('CustomCopyright')
     if 'AssemblyTrademark' in content:
         custom_attrs.append('CustomTrademark')
-    
+
     # Check for conditional compilation
     if '#if' in content or '#ifdef' in content:
         custom_attrs.append('ConditionalCompilation')
-    
+
     # Check for custom CLSCompliant
     if 'CLSCompliant(false)' in content:
         custom_attrs.append('CustomCLSCompliant')
-    
+
     return custom_attrs
 
 def recommend_action(has_assembly_info, custom_attrs, current_value):
     """Determine recommended action based on analysis"""
     if not has_assembly_info and current_value == 'false':
         return 'ConvertToTrue', 'No AssemblyInfo.cs file present'
-    
+
     if has_assembly_info and len(custom_attrs) == 0:
         return 'ConvertToTrue', 'No custom attributes found'
-    
+
     if len(custom_attrs) > 0:
         return 'KeepFalse', f'Custom attributes: {", ".join(custom_attrs)}'
-    
+
     return 'ManualReview', 'Uncertain - needs human review'
 ```
 
@@ -391,27 +391,27 @@ def convert_to_true(csproj_path, assembly_info_path):
     # 1. Update .csproj
     with open(csproj_path, 'r') as f:
         content = f.read()
-    
+
     # Replace false with true
     content = content.replace(
         '<GenerateAssemblyInfo>false</GenerateAssemblyInfo>',
         '<GenerateAssemblyInfo>true</GenerateAssemblyInfo>'
     )
-    
+
     with open(csproj_path, 'w') as f:
         f.write(content)
-    
+
     # 2. Delete AssemblyInfo.cs if no custom attributes
     if assembly_info_path.exists():
         os.remove(assembly_info_path)
-    
+
     print(f"✓ Converted {csproj_path.name} to GenerateAssemblyInfo=true")
 
 def add_explanation_comment(csproj_path, reason):
     """Add XML comment explaining why false is used"""
     with open(csproj_path, 'r') as f:
         lines = f.readlines()
-    
+
     # Find GenerateAssemblyInfo line
     for i, line in enumerate(lines):
         if 'GenerateAssemblyInfo' in line and 'false' in line:
@@ -420,10 +420,10 @@ def add_explanation_comment(csproj_path, reason):
             comment = ' ' * indent + f'<!-- GenerateAssemblyInfo=false because: {reason} -->\n'
             lines.insert(i, comment)
             break
-    
+
     with open(csproj_path, 'w') as f:
         f.writelines(lines)
-    
+
     print(f"✓ Added explanation comment to {csproj_path.name}")
 ```
 
@@ -498,13 +498,13 @@ python validate_generate_assembly_info.py
 
 **Total Effort**: 8-10 hours over 2-3 days
 
-| Phase | Duration | Can Parallelize |
-|-------|----------|----------------|
-| Phase 1: Analysis | 2 hours | No (sequential) |
-| Phase 2: Conversion | 3-4 hours | Yes (per project) |
-| Phase 3: Documentation | 1 hour | Yes (with Phase 2) |
-| Phase 4: Validation | 1-2 hours | No (after Phase 2) |
-| Phase 5: Review | 1 hour | No (final step) |
+| Phase                  | Duration  | Can Parallelize    |
+| ---------------------- | --------- | ------------------ |
+| Phase 1: Analysis      | 2 hours   | No (sequential)    |
+| Phase 2: Conversion    | 3-4 hours | Yes (per project)  |
+| Phase 3: Documentation | 1 hour    | Yes (with Phase 2) |
+| Phase 4: Validation    | 1-2 hours | No (after Phase 2) |
+| Phase 5: Review        | 1 hour    | No (final step)    |
 
 **Suggested Schedule**:
 - Day 1 Morning: Phase 1 (Analysis)
@@ -522,6 +522,6 @@ python validate_generate_assembly_info.py
 
 ---
 
-*Document Version: 1.0*  
-*Last Updated: 2025-11-08*  
+*Document Version: 1.0*
+*Last Updated: 2025-11-08*
 *Status: Ready for Implementation*

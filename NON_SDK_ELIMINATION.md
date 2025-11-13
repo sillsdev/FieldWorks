@@ -14,13 +14,13 @@ The legacy non-SDK `Build/FieldWorks.proj` has been **replaced** with SDK-style 
      - `RestorePackages` - NuGet package restoration
      - `BuildBaseInstaller` - Base installer creation
      - `BuildPatchInstaller` - Patch installer creation
-     - `Build` - Orchestrates full traversal build via `dirs.proj`
+     - `Build` - Orchestrates full traversal build via `FieldWorks.proj`
    - Imports all necessary targets (Installer.targets, mkall.targets, etc.)
    - Works with modern .NET tooling and MSBuild Traversal SDK
 
 2. **`Build/Src/NativeBuild/NativeBuild.csproj`** - New SDK-style native build wrapper
    - SDK-style project wrapping native C++ orchestration
-   - Referenced by `dirs.proj` Phase 2 (instead of calling non-SDK FieldWorks.proj)
+   - Referenced by `FieldWorks.proj` Phase 2 (instead of calling non-SDK FieldWorks.proj)
    - Imports mkall.targets to execute native builds
    - Properly integrates with MSBuild Traversal SDK project references
 
@@ -35,7 +35,7 @@ The legacy non-SDK `Build/FieldWorks.proj` has been **replaced** with SDK-style 
 - `.github/workflows/patch-installer-cd.yml` - Uses `Build/Orchestrator.proj`
 
 #### Build Orchestration
-- `dirs.proj` - Phase 2 now references `Build\Src\NativeBuild\NativeBuild.csproj`
+- `FieldWorks.proj` - Phase 2 now references `Build\Src\NativeBuild\NativeBuild.csproj`
 
 #### Documentation
 - `.github/instructions/build.instructions.md` - All references updated
@@ -95,7 +95,7 @@ But users typically use `build.ps1`/`build.sh`, which handle this transparently.
 
 - [x] Build scripts updated to use Orchestrator.proj
 - [x] CI workflows updated to use Orchestrator.proj
-- [x] dirs.proj references NativeBuild.csproj
+- [x] FieldWorks.proj references NativeBuild.csproj
 - [x] All documentation updated
 - [x] Error messages updated
 - [ ] Verify full build works: `.\build.ps1`

@@ -4,32 +4,32 @@ This document organizes the 93 commits from the SDK migration into logical phase
 
 ## Overview
 
-**Total Commits**: 93  
-**Date Range**: September 26, 2025 - November 8, 2025  
-**Base**: 8e508dab484fafafb641298ed9071f03070f7c8b  
+**Total Commits**: 93
+**Date Range**: September 26, 2025 - November 8, 2025
+**Base**: 8e508dab484fafafb641298ed9071f03070f7c8b
 **Final**: 3fb3b608cdd2560d20b76165e6983f3215ed22e9
 
 ## Commit Categories
 
-| Category | Count | Description |
-|----------|-------|-------------|
-| 🔄 General Changes | 19 | Mixed changes, refactoring |
-| 📚 Documentation Only | 10 | Documentation updates |
-| 🔨 Build Fixes + Code Changes | 8 | Build errors and code fixes |
-| 🧪 NUnit 3→4 Migration | 6 | Test framework upgrade |
-| 🗑️ Legacy Removal | 6 | Removing old files |
-| 🔧 64-bit Only Migration | 6 | x86/Win32 removal |
-| 📦 Mass SDK Conversion | 6 | Bulk project conversions |
-| 📦 Package Updates | 5 | Package version changes |
-| 💾 Checkpoint/Save | 5 | Progress checkpoints |
-| 🎨 Formatting | 5 | Code formatting only |
-| ⚙️ Build Infrastructure | 4 | Build system changes |
-| 🧪 RhinoMocks→Moq | 3 | Mock framework migration |
-| 🔐 Registration-Free COM | 3 | COM manifest work |
-| 🤖 Automation Script | 2 | Python conversion scripts |
-| 🔧 Native C++ Changes | 2 | VCXPROJ modifications |
-| 🏗️ Traversal SDK | 2 | dirs.proj implementation |
-| 🐛 Bug Fixes | 1 | General bug fixes |
+| Category                     | Count | Description                    |
+| ---------------------------- | ----- | ------------------------------ |
+| 🔄 General Changes            | 19    | Mixed changes, refactoring     |
+| 📚 Documentation Only         | 10    | Documentation updates          |
+| 🔨 Build Fixes + Code Changes | 8     | Build errors and code fixes    |
+| 🧪 NUnit 3→4 Migration        | 6     | Test framework upgrade         |
+| 🗑️ Legacy Removal             | 6     | Removing old files             |
+| 🔧 64-bit Only Migration      | 6     | x86/Win32 removal              |
+| 📦 Mass SDK Conversion        | 6     | Bulk project conversions       |
+| 📦 Package Updates            | 5     | Package version changes        |
+| 💾 Checkpoint/Save            | 5     | Progress checkpoints           |
+| 🎨 Formatting                 | 5     | Code formatting only           |
+| ⚙️ Build Infrastructure       | 4     | Build system changes           |
+| 🧪 RhinoMocks→Moq             | 3     | Mock framework migration       |
+| 🔐 Registration-Free COM      | 3     | COM manifest work              |
+| 🤖 Automation Script          | 2     | Python conversion scripts      |
+| 🔧 Native C++ Changes         | 2     | VCXPROJ modifications          |
+| 🏗️ Traversal SDK              | 2     | FieldWorks.proj implementation |
+| 🐛 Bug Fixes                  | 1     | General bug fixes              |
 
 ---
 
@@ -46,7 +46,7 @@ Convert all 119 project files from legacy .NET Framework format to modern SDK-st
 - Updated mkall.targets for dotnet restore
 - 🤖 Automation Script
 
-**Commit 2** (f1995dac9) - Sept 29  
+**Commit 2** (f1995dac9) - Sept 29
 - **MAJOR**: Executed convertToSDK.py - converted 115 projects in one commit
 - 116 files changed, 4577 insertions(+), 25726 deletions(-)
 - 📦 Mass SDK Conversion

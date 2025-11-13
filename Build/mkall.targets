@@ -4,10 +4,10 @@
 		Native C++ Build Orchestration for FieldWorks
 
 		This file coordinates building native C++ components (DebugProcs, GenericLib, FwKernel, Views)
-		and their associated test executables. It is called by the MSBuild Traversal SDK via dirs.proj.
+		and their associated test executables. It is called by the MSBuild Traversal SDK via FieldWorks.proj.
 
 		Modern Build Path (MSBuild Traversal SDK):
-		  dirs.proj → Build/Src/NativeBuild/NativeBuild.csproj → This file
+		  FieldWorks.proj → Build/Src/NativeBuild/NativeBuild.csproj → This file
 
 		Responsibilities:
 		1. Native C++ component builds (DebugProcs, GenericLib, FwKernel, Views)

@@ -30,7 +30,7 @@
   <!-- Default Build target: orchestrate full traversal build -->
   <Target Name="Build">
     <Message Text="Building FieldWorks via MSBuild Traversal SDK" Importance="high" />
-    <MSBuild Projects="$(MSBuildThisFileDirectory)..\dirs.proj" Properties="Configuration=$(Configuration);Platform=$(Platform)" />
+    <MSBuild Projects="$(MSBuildThisFileDirectory)..\FieldWorks.proj" Properties="Configuration=$(Configuration);Platform=$(Platform)" />
   </Target>
 
   <!-- Installer targets are imported from Installer.targets -->

@@ -10,13 +10,13 @@ print_usage() {
   cat <<'EOF'
 Usage: build.sh [options] [-- additional msbuild arguments]
 
-Builds FieldWorks using the MSBuild Traversal SDK (dirs.proj).
+Builds FieldWorks using the MSBuild Traversal SDK (FieldWorks.proj).
 
 This script performs:
   1. Locates MSBuild (Visual Studio 2022/2019/2017 or from PATH)
   2. Sets architecture environment variable for legacy tasks
   3. NuGet package restoration
-  4. Full traversal build via dirs.proj
+  4. Full traversal build via FieldWorks.proj
 
 Options:
   -c, --configuration CONFIG      Build configuration (default: Debug)
@@ -217,7 +217,7 @@ export MSYS2_ARG_CONV_EXCL="*"
 
 # Main build sequence
 echo ""
-echo "Building FieldWorks using MSBuild Traversal SDK (dirs.proj)..."
+echo "Building FieldWorks using MSBuild Traversal SDK (FieldWorks.proj)..."
 echo "Configuration: $CONFIGURATION, Platform: $PLATFORM"
 echo ""
 
@@ -253,7 +253,7 @@ run_msbuild_step "$MSBUILD" "RestorePackages" \
 
 # Build using traversal project
 run_msbuild_step "$MSBUILD" "FieldWorks" \
-  "dirs.proj" \
+  "FieldWorks.proj" \
   "/p:Configuration=$CONFIGURATION" \
   "/p:Platform=$PLATFORM" \
   "${MSBUILD_ARGS[@]}"

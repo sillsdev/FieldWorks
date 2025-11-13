@@ -32,14 +32,14 @@ FieldWorks has migrated to **Microsoft.Build.Traversal SDK** for its build syste
 
 **After:**
 ```bash
-# New way - uses traversal (dirs.proj)
+# New way - uses traversal (FieldWorks.proj)
 ./build.sh
 ./build.sh -c Release
 ```
 
 ## Build Architecture
 
-The build is now organized into 21 phases in `dirs.proj`:
+The build is now organized into 21 phases in `FieldWorks.proj`:
 
 1. **Phase 1**: FwBuildTasks (build infrastructure)
 2. **Phase 2**: Native C++ (DebugProcs, GenericLib, FwKernel, Views)
@@ -103,7 +103,7 @@ msbuild Build/Orchestrator.proj /t:BuildBaseInstaller /p:Configuration=Debug /p:
 msbuild Build/Orchestrator.proj /t:BuildPatchInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release
 ```
 
-Note: The installer targets in `Build/Installer.targets` have been modernized to call `dirs.proj` instead of the old `remakefw` target.
+Note: The installer targets in `Build/Installer.targets` have been modernized to call `FieldWorks.proj` instead of the old `remakefw` target.
 
 ### Individual Project Builds
 You can still build individual projects:
@@ -132,9 +132,9 @@ msbuild Build\Src\NativeBuild\NativeBuild.csproj /p:Configuration=Debug /p:Platf
 **Problem**: Build order issue
 
 **Solution**: The traversal build handles this automatically. If you see this:
-1. Ensure both projects are in `dirs.proj`
+1. Ensure both projects are in `FieldWorks.proj`
 2. Check that Y is in an earlier phase than X
-3. Report the issue so `dirs.proj` can be updated
+3. Report the issue so `FieldWorks.proj` can be updated
 
 ### Build Failures After Git Pull
 
@@ -155,13 +155,13 @@ git clean -dfx Output/ Obj/
 .\build.ps1 -MsBuildArgs @('/m:1')
 ```
 
-Then report the race condition so dependencies can be fixed in `dirs.proj`.
+Then report the race condition so dependencies can be fixed in `FieldWorks.proj`.
 
 ## Benefits
 
 ### Declarative Dependencies
 - 110+ projects organized into 21 clear phases
-- Dependencies expressed in `dirs.proj`, not scattered across targets files
+- Dependencies expressed in `FieldWorks.proj`, not scattered across targets files
 - Easy to understand build order
 
 ### Automatic Parallelism
@@ -175,7 +175,7 @@ Then report the race condition so dependencies can be fixed in `dirs.proj`.
 - Faster iteration during development
 
 ### Modern SDK Support
-- Works with `dotnet build dirs.proj`
+- Works with `dotnet build FieldWorks.proj`
 - Compatible with modern .NET SDK tools
 - Easier CI/CD integration
 
@@ -186,7 +186,7 @@ Then report the race condition so dependencies can be fixed in `dirs.proj`.
 
 ## Technical Details
 
-### dirs.proj Structure
+### FieldWorks.proj Structure
 ```xml
 <Project Sdk="Microsoft.Build.Traversal/4.1.0">
   <!-- Phase 1: Build Infrastructure -->
@@ -210,7 +210,7 @@ Then report the race condition so dependencies can be fixed in `dirs.proj`.
 
 ### Build Flow
 1. **RestorePackages**: Restore NuGet packages (handled by build.ps1)
-2. **Traversal Build**: MSBuild processes dirs.proj
+2. **Traversal Build**: MSBuild processes FieldWorks.proj
    - Phase 1: Build FwBuildTasks (needed for custom tasks)
    - Phase 2: Build native C++ via mkall.targets
    - Phase 3: Generate ViewsInterfaces code from native IDL
@@ -219,10 +219,10 @@ Then report the race condition so dependencies can be fixed in `dirs.proj`.
 3. **Output**: All binaries in `Output/<Configuration>/`
 
 ### Build Infrastructure
-- **`dirs.proj`** - Main build orchestration using Traversal SDK
+- **`FieldWorks.proj`** - Main build orchestration using Traversal SDK
 - **`Build/FieldWorks.proj`** - Entry point for RestorePackages and installer targets
-- **`Build/mkall.targets`** - Native C++ build orchestration (called by dirs.proj Phase 2)
-- **`Build/Installer.targets`** - Installer-specific targets (now calls dirs.proj instead of remakefw)
+- **`Build/mkall.targets`** - Native C++ build orchestration (called by FieldWorks.proj Phase 2)
+- **`Build/Installer.targets`** - Installer-specific targets (now calls FieldWorks.proj instead of remakefw)
 
 ## Migration Checklist for Scripts/CI
 

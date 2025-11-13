@@ -32,7 +32,7 @@ If you only need to build C# projects and already have native artifacts from a p
 
 ```powershell
 # Build only managed projects (skips native C++)
-msbuild dirs.proj /p:Configuration=Debug /p:Platform=x64
+msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64
 ```
 
 ## CI Builds
@@ -76,7 +76,7 @@ Both `build.ps1` and `build.sh` now include:
 1. **Automatic FwBuildTasks bootstrap**: Builds build infrastructure before main build
 2. **Environment validation**: Warns if Developer environment is not detected
 3. **Package restoration**: Restores NuGet packages before build
-4. **Traversal build**: Uses MSBuild Traversal SDK (dirs.proj) for correct dependency ordering
+4. **Traversal build**: Uses MSBuild Traversal SDK (FieldWorks.proj) for correct dependency ordering
 
 ## Visual Studio Requirements
 

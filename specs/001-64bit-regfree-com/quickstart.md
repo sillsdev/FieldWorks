@@ -37,7 +37,7 @@ msbuild FieldWorks.sln /m /p:Configuration=Debug /p:Platform=x64
 ### What's New Through Phase 4
 ✅ **x64 defaults**: Directory.Build.props enforces `<PlatformTarget>x64</PlatformTarget>`
 ✅ **Win32/x86 removed**: Solution and native projects support x64 only
-✅ **CI enforces x64**: workflows call `msbuild dirs.proj /p:Platform=x64`
+✅ **CI enforces x64**: workflows call `msbuild FieldWorks.proj /p:Platform=x64`
 ✅ **No COM registration**: Builds and installer do not write to registry
 ✅ **Registration-free COM**: Manifests enable COM activation without registry
 ✅ **Installer packages manifests**: FieldWorks.exe.manifest and dependent assembly manifests (.X.manifest) included

@@ -145,7 +145,7 @@ function Invoke-MSBuildStep {
 	}
 }
 
-Write-Host "Building FieldWorks using MSBuild Traversal SDK (dirs.proj)..." -ForegroundColor Cyan
+Write-Host "Building FieldWorks using MSBuild Traversal SDK (FieldWorks.proj)..." -ForegroundColor Cyan
 Write-Host "Configuration: $Configuration, Platform: $Platform" -ForegroundColor Cyan
 
 # Bootstrap: Build FwBuildTasks first (required by SetupInclude.targets)
@@ -161,7 +161,7 @@ Invoke-MSBuildStep `
 
 # Build using traversal project
 Invoke-MSBuildStep `
-	-Arguments (@('dirs.proj', "/p:Configuration=$Configuration", "/p:Platform=$Platform") + $MsBuildArgs) `
+	-Arguments (@('FieldWorks.proj', "/p:Configuration=$Configuration", "/p:Platform=$Platform") + $MsBuildArgs) `
 	-Description "FieldWorks" `
 	-LogPath $LogFile
 

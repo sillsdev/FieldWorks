@@ -2,15 +2,15 @@
 
 ## Executive Summary
 
-FieldWorks has been **fully migrated** to Microsoft.Build.Traversal SDK. All legacy build paths have been removed. The entire system now uses declarative, dependency-ordered builds through `dirs.proj`.
+FieldWorks has been **fully migrated** to Microsoft.Build.Traversal SDK. All legacy build paths have been removed. The entire system now uses declarative, dependency-ordered builds through `FieldWorks.proj`.
 
 ## What Was Accomplished
 
 ### ✅ Core Implementation
-1. **Created `dirs.proj`** - 218 lines organizing 110+ projects into 21 build phases
+1. **Created `FieldWorks.proj`** - 218 lines organizing 110+ projects into 21 build phases
 2. **Simplified `build.ps1`** - Removed all legacy code, always uses traversal
 3. **Simplified `build.sh`** - Removed all legacy code, always uses traversal
-4. **Modernized `Build/Installer.targets`** - Replaced `remakefw` with direct `dirs.proj` calls
+4. **Modernized `Build/Installer.targets`** - Replaced `remakefw` with direct `FieldWorks.proj` calls
 5. **Created `Build/native.proj`** - Optional clean wrapper for native C++ builds
 6. **Updated all CI workflows** - Use traversal builds consistently
 
@@ -29,7 +29,7 @@ FieldWorks has been **fully migrated** to Microsoft.Build.Traversal SDK. All leg
 
 ## Architecture Overview
 
-### Build Phases (dirs.proj)
+### Build Phases (FieldWorks.proj)
 
 ```
 Phase 1:  FwBuildTasks (build infrastructure)
@@ -62,7 +62,7 @@ Developer: build.ps1 or build.sh
     ↓
 RestorePackages (via Build/Orchestrator.proj)
     ↓
-dirs.proj (Traversal SDK)
+FieldWorks.proj (Traversal SDK)
     ↓
 Phase 1-21 (Automatic dependency ordering)
     ↓
@@ -80,7 +80,7 @@ BuildFieldWorks target (new)
     ↓
 CleanAll → Initialize → CopyDlls → Setup Tasks
     ↓
-dirs.proj (Traversal SDK)
+FieldWorks.proj (Traversal SDK)
     ↓
 ProductCompile → CustomActions
     ↓
@@ -108,10 +108,10 @@ BuildProductBaseMsi → Installer Output
 ./build.sh -c Release
 
 # Direct MSBuild (any platform)
-msbuild dirs.proj /p:Configuration=Debug /p:Platform=x64 /m
+msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64 /m
 
 # Dotnet CLI (requires .NET SDK)
-dotnet build dirs.proj
+dotnet build FieldWorks.proj
 ```
 
 ### Installer Builds
@@ -144,7 +144,7 @@ git clean -dfx Output/ Obj/
 
 ### 1. Declarative Dependencies
 - **Before**: Scattered across multiple .targets files, hard to track
-- **After**: Clear 21-phase ordering in `dirs.proj`
+- **After**: Clear 21-phase ordering in `FieldWorks.proj`
 - **Impact**: Easy to understand and modify build order
 
 ### 2. Automatic Parallelism
@@ -175,7 +175,7 @@ git clean -dfx Output/ Obj/
 ## Files Changed
 
 ### New Files
-- `dirs.proj` - Main traversal build orchestration
+- `FieldWorks.proj` - Main traversal build orchestration
 - `Build/native.proj` - Optional native C++ build wrapper
 - `Docs/traversal-sdk-migration.md` - Migration guide for developers
 - `TRAVERSAL_SDK_IMPLEMENTATION.md` - This file
@@ -183,7 +183,7 @@ git clean -dfx Output/ Obj/
 ### Modified Files
 - `build.ps1` - Simplified from 164 to 136 lines, removed legacy paths
 - `build.sh` - Modernized with traversal, removed legacy paths
-- `Build/Installer.targets` - Added `BuildFieldWorks` target calling dirs.proj
+- `Build/Installer.targets` - Added `BuildFieldWorks` target calling FieldWorks.proj
 - `Directory.Build.props` - Enhanced with shared traversal properties
 - `.github/instructions/build.instructions.md` - Rewritten for traversal focus
 - `ReadMe.md` - Added build quick start
@@ -215,8 +215,8 @@ git clean -dfx Output/ Obj/
 - `build.ps1 -Target xyz` - Use `msbuild Build/Orchestrator.proj /t:xyz` if needed
 
 ### Removed Targets
-- `mkall` - Use traversal build via `build.ps1` or `dirs.proj`
-- `remakefw` - Use traversal build via `build.ps1` or `dirs.proj`
+- `mkall` - Use traversal build via `build.ps1` or `FieldWorks.proj`
+- `remakefw` - Use traversal build via `build.ps1` or `FieldWorks.proj`
 - `remakefw-internal` - No longer needed
 - `remakefw-ci` - No longer needed
 - `remakefw-jenkins` - No longer needed
@@ -267,7 +267,7 @@ These continue to work exactly as before:
 - [ ] Missing native artifacts - should show clear error message
 - [ ] Corrupt build state - `git clean -dfx Output/ Obj/` recovers
 - [ ] Build order issues - projects in later phases can reference earlier phases
-- [ ] Test execution - `msbuild dirs.proj /p:action=test` runs tests
+- [ ] Test execution - `msbuild FieldWorks.proj /p:action=test` runs tests
 
 ## Risk Mitigation
 
@@ -286,7 +286,7 @@ These continue to work exactly as before:
 1. **Comprehensive testing**: All scenarios validated before merge
 2. **Clear documentation**: Migration guide for developers
 3. **Rollback plan**: Easy to revert if major issues found
-4. **Incremental fixes**: Can adjust dirs.proj phase ordering if needed
+4. **Incremental fixes**: Can adjust FieldWorks.proj phase ordering if needed
 
 ## Success Criteria
 
@@ -313,7 +313,7 @@ These continue to work exactly as before:
 
 ## Conclusion
 
-The FieldWorks build system is now **fully modern** with zero legacy code paths. All 110+ projects build through a single, declarative `dirs.proj` file organized into 21 clear phases. Developers, CI, and installer builds all use the same traversal SDK approach, eliminating confusion and maintenance burden.
+The FieldWorks build system is now **fully modern** with zero legacy code paths. All 110+ projects build through a single, declarative `FieldWorks.proj` file organized into 21 clear phases. Developers, CI, and installer builds all use the same traversal SDK approach, eliminating confusion and maintenance burden.
 
 **Key Takeaway**: Run `.\build.ps1` or `./build.sh` - that's it. Everything else is automatic.
 
@@ -322,5 +322,5 @@ The FieldWorks build system is now **fully modern** with zero legacy code paths.
 - **MSBuild Traversal SDK**: https://github.com/microsoft/MSBuildSdks/tree/main/src/Traversal
 - **Build Instructions**: `.github/instructions/build.instructions.md`
 - **Migration Guide**: `Docs/traversal-sdk-migration.md`
-- **dirs.proj**: Root traversal project with 21 build phases
+- **FieldWorks.proj**: Root traversal project with 21 build phases
 - **Build Scripts**: `build.ps1` (Windows), `build.sh` (Linux/macOS)
