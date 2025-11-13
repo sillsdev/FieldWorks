@@ -224,6 +224,10 @@
     </Compile>
     <Compile Include="ActivationContextHelper.cs" />
     <Compile Include="AlphaOutline.cs" />
+    <Compile Include="AreaConstants.cs" />
+    <Compile Include="EndOfActionManager.cs" />
+    <Compile Include="EndOfActionOrder.cs" />
+    <Compile Include="EventConstants.cs" />
     <Compile Include="FlexHelpProvider.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -238,7 +242,10 @@
     <Compile Include="FwUpdater.cs" />
     <Compile Include="GraphiteFontFeatures.cs" />
     <Compile Include="HelpTopicProviderBase.cs" />
+    <Compile Include="IdleQueue.cs" />
     <Compile Include="ImportExportStep.cs" />
+    <Compile Include="IPublisher.cs" />
+    <Compile Include="ISubscriber.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Benchmark.cs" />
     <Compile Include="CachePair.cs" />
@@ -280,6 +287,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
+    <Compile Include="PropertyConstants.cs" />
+    <Compile Include="Publisher.cs" />
+    <Compile Include="PublisherParameterObject.cs" />
     <Compile Include="PunctuationPatterns.cs" />
     <Compile Include="QuotationMarks.cs" />
     <Compile Include="RecordErrorEventArgs.cs" />
@@ -291,6 +301,7 @@
     </Compile>
     <Compile Include="StartupException.cs" />
     <Compile Include="StringTable.cs" />
+    <Compile Include="Subscriber.cs" />
     <Compile Include="TrackingHelper.cs" />
     <Compile Include="VersionInfoProvider.cs" />
     <Compile Include="WavConverter.cs" />

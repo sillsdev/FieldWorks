@@ -8,6 +8,7 @@
 
 using System;
 using System.Collections.Generic;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Utils;
 using SIL.LCModel;
 using SIL.ObjectModel;
