@@ -94,7 +94,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>  
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <OutputPath>..\..\..\Output\Debug\</OutputPath>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
@@ -450,9 +450,6 @@
     <Compile Include="ReversalIndexEntryChangeHandler.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ReversalIndexEntryFormSlice.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
     <Compile Include="ReversalIndexEntryMenuHandler.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -542,10 +539,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ReversalEntryGoDlg.resx">
       <DependentUpon>ReversalEntryGoDlg.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ReversalIndexEntryFormSlice.resx">
-      <DependentUpon>ReversalIndexEntryFormSlice.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ReversalIndexEntrySlice.resx">

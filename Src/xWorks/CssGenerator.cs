@@ -1922,12 +1922,12 @@ namespace SIL.FieldWorks.XWorks
 			string configDir, cssName;
 			if (reversal)
 			{
-				configDir = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+				configDir = Path.Combine(configSettingsDir, DictionaryConfigurationListener.RevIndexConfigDirName);
 				cssName = "ProjectReversalOverrides.css";
 			}
 			else
 			{
-				configDir = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+				configDir = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictConfigDirName);
 				cssName = "ProjectDictionaryOverrides.css";
 			}
 			return CopyCustomCssToTempFolder(configDir, destinationFolder, cssName);

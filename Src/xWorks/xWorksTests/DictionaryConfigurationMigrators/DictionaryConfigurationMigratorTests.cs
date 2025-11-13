@@ -55,7 +55,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		public void MigrateOldConfigurationsIfNeeded_BringsPreHistoricFileToCurrentVersion()
 		{
 			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
-			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName,
+			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictConfigDirName,
 				"Lexeme" + DictionaryConfigurationModel.FileExtension);
 			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
 			Directory.CreateDirectory(configSettingsDir);
@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			pathsToL10NStrings["group[@id = 'LocalizedAttributes']/"] = localizedPartLabels;
 
 			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
-			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName,
+			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictConfigDirName,
 				"Lexeme" + DictionaryConfigurationModel.FileExtension);
 			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
 			Directory.CreateDirectory(configSettingsDir);
@@ -98,7 +98,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		public void MigrateOldConfigurationsIfNeeded_PreservesOrderOfBibliographies()
 		{
 			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Path.GetDirectoryName(Cache.ProjectId.Path));
-			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName,
+			var newConfigFilePath = Path.Combine(configSettingsDir, DictionaryConfigurationListener.RevIndexConfigDirName,
 				"AllReversalIndexes" + DictionaryConfigurationModel.FileExtension);
 			Assert.False(File.Exists(newConfigFilePath), "should not yet be migrated");
 			Directory.CreateDirectory(configSettingsDir);

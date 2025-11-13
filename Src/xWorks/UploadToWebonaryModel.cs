@@ -64,7 +64,7 @@ namespace SIL.FieldWorks.XWorks
 				if (!string.IsNullOrEmpty(m_selectedConfiguration))
 					return m_selectedConfiguration;
 				var pathToCurrentConfiguration = DictionaryConfigurationListener.GetCurrentConfiguration(PropertyTable,
-					DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+					DictionaryConfigurationListener.DictConfigDirName);
 				var curConfig =  Configurations.Values.FirstOrDefault(config => pathToCurrentConfiguration.Equals(config.FilePath));
 				return curConfig == null ? null : curConfig.Label;
 			}

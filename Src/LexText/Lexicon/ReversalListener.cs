@@ -439,8 +439,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				if (updateAndNotify)
 				{
 					UpdateFiltersAndSortersIfNeeded(updateAndNotify); // Load the index-specific sorter
-					SyncReversalWritingSystem(ri);
 					OnChangeSorter(); // Update the column headers with sort arrows
+					SyncReversalWritingSystem(ri);
 					SetOwningObject(newOwningObj, updateAndNotify); // Reloads and sorts the list.
 					m_propertyTable.SetProperty("ActiveClerkOwningObject", newOwningObj, true);
 					m_propertyTable.SetPropertyPersistence("ActiveClerkOwningObject", false);

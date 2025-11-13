@@ -68,10 +68,12 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// Layout Version Number (last updated by GordonM, 10 June 2016, as part of Etymology cluster update).
+		/// This version number is used to determine if user customized layout files are out of date.
+		/// It should be incremented whenever the layout or part files are changed in a way that
+		/// makes existing customizations invalid.
 		/// </summary>
 		/// <remarks>Note: often we also want to update BrowseViewer.kBrowseViewVersion.</remarks>
-		public static readonly int LayoutVersionNumber = 25;
+		public static readonly int LayoutVersionNumber = 26;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
