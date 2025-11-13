@@ -639,5 +639,54 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 			return filename;
 		}
+
+		/// <summary>
+		/// Gets the Singleton Publisher.
+		/// </summary>
+		public static IPublisher Publisher => Singleton.Instance.Publisher;
+
+		/// <summary>
+		/// Gets the Singleton Subscriber.
+		/// </summary>
+		public static ISubscriber Subscriber => Singleton.Instance.Subscriber;
+
+		/// <summary>
+		/// Gets the Singleton IdleQueue.
+		/// </summary>
+		internal static IdleQueue IdleQueue => Singleton.Instance.IdleQueue;
+	}
+
+	/// <summary>
+	/// Thread safe, lazy loading singleton class.
+	/// </summary>
+	internal sealed class Singleton
+	{
+		private static readonly Lazy<Singleton> lazy =
+			new Lazy<Singleton>(() => new Singleton());
+
+		public static Singleton Instance { get { return lazy.Value; } }
+
+		private Singleton()
+		{
+			Subscriber = new Subscriber();
+			Publisher = new Publisher(Subscriber);
+			IdleQueue = new IdleQueue();
+		}
+
+		internal Publisher Publisher { get; private set; }
+		internal Subscriber Subscriber { get; private set; }
+		internal IdleQueue IdleQueue { get; private set; }
+
+		/// <summary>
+		/// Only used for testing!
+		/// Set the testing Publisher.
+		/// </summary>
+		internal Publisher TestingPublisher { set => Publisher = value; }
+
+		/// <summary>
+		/// Only used for testing!
+		/// Set the testing Subscriber.
+		/// </summary>
+		internal Subscriber TestingSubscriber { set => Subscriber = value; }
 	}
 }
