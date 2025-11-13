@@ -442,7 +442,7 @@ namespace SIL.FieldWorks.XWorks
 					if (activeClerk != null)
 					{
 						var topLevelDomains = activeClerk.VirtualListPublisher.VecProp(activeClerk.OwningObject.Hvo, activeClerk.OwningFlid);
-						return flattenDomains(topLevelDomains, showEmpties);
+						return FlattenDomains(topLevelDomains, showEmpties);
 					}
 
 					break;
@@ -451,7 +451,7 @@ namespace SIL.FieldWorks.XWorks
 			return new int[] { };
 		}
 
-		private int[] flattenDomains(int[] topLevelDomains, bool showEmpties)
+		private int[] FlattenDomains(int[] topLevelDomains, bool showEmpties)
 		{
 			// Recursively get all the entries in the domains and subdomains
 			var result = new List<int>();
@@ -463,7 +463,7 @@ namespace SIL.FieldWorks.XWorks
 					if (showEmpties || VecProp(domain.Hvo, refSenseFlid).Length > 0)
 						result.Add(domainHvo);
 					// Add domain subentries in this domain
-					result.AddRange(flattenDomains(domain.SubPossibilitiesOS.Select(sub => sub.Hvo).ToArray(), showEmpties));
+					result.AddRange(FlattenDomains(domain.SubPossibilitiesOS.Select(sub => sub.Hvo).ToArray(), showEmpties));
 				}
 			}
 
