@@ -452,7 +452,7 @@ namespace SIL.FieldWorks.IText
 				{
 					for (int i = 0; i < item.run.Length; i++)
 					{
-						if (item.run[i] != null)
+						if (item.run[i]?.Value != null)
 						{
 							item.run[i].Value = item.run[i].Value.Normalize(NormalizationForm.FormD);
 						}

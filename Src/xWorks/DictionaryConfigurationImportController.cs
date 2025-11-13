@@ -175,8 +175,8 @@ namespace SIL.FieldWorks.XWorks
 			var configType = NewConfigToImport.Type;
 			var configDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(
 				configType == DictionaryConfigurationModel.ConfigType.Reversal
-					? DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName
-					: DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+					? DictionaryConfigurationListener.RevIndexConfigDirName
+					: DictionaryConfigurationListener.DictConfigDirName);
 			var isCustomizedOriginal = DictionaryConfigurationManagerController.IsConfigurationACustomizedOriginal(NewConfigToImport, configDir, _cache);
 			TrackingHelper.TrackImport("dictionary", "DictionaryConfiguration",
 				ImportHappened ? ImportExportStep.Succeeded : ImportExportStep.Failed,
@@ -339,8 +339,8 @@ namespace SIL.FieldWorks.XWorks
 
 			//Validating the user is not trying to import a Dictionary into a Reversal area or a Reversal into a Dictionary area
 			var configDirectory = Path.GetFileName(_projectConfigDir);
-			if (DictionaryConfigurationListener.DictionaryConfigurationDirectoryName.Equals(configDirectory) && NewConfigToImport.IsReversal
-				|| !DictionaryConfigurationListener.DictionaryConfigurationDirectoryName.Equals(configDirectory) && !NewConfigToImport.IsReversal)
+			if (DictionaryConfigurationListener.DictConfigDirName.Equals(configDirectory) && NewConfigToImport.IsReversal
+				|| !DictionaryConfigurationListener.DictConfigDirName.Equals(configDirectory) && !NewConfigToImport.IsReversal)
 			{
 				_isInvalidConfigFile = true;
 				ClearValuesOnError();
@@ -446,7 +446,7 @@ namespace SIL.FieldWorks.XWorks
 				string invalidConfigFileMsg = string.Empty;
 				if (_isInvalidConfigFile)
 				{
-					var configType = Path.GetFileName(_projectConfigDir) == DictionaryConfigurationListener.DictionaryConfigurationDirectoryName
+					var configType = Path.GetFileName(_projectConfigDir) == DictionaryConfigurationListener.DictConfigDirName
 					? xWorksStrings.ReversalIndex : xWorksStrings.Dictionary;
 					invalidConfigFileMsg = string.Format(xWorksStrings.DictionaryConfigurationMismatch, configType)
 						+ Environment.NewLine;

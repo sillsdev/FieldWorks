@@ -123,7 +123,7 @@ namespace SIL.FieldWorks.XWorks
 				if (string.IsNullOrEmpty(FilePath))
 					return false; // easiest way to avoid a crash; assume something that may not be true!
 				var directory = Path.GetFileName(Path.GetDirectoryName(FilePath));
-				return DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName.Equals(directory);
+				return DictionaryConfigurationListener.RevIndexConfigDirName.Equals(directory);
 			}
 		}
 
@@ -340,9 +340,9 @@ namespace SIL.FieldWorks.XWorks
 		public static DictionaryConfigurationModel GetReversalConfigurationModel(string ws, LcmCache cache, PropertyTable propTable)
 		{
 			var projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(
-				propTable, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+				propTable, DictionaryConfigurationListener.RevIndexConfigDirName);
 			var defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(
-				DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+				DictionaryConfigurationListener.RevIndexConfigDirName);
 			var configurationModels = DictionaryConfigurationController.GetDictionaryConfigurationModels(
 				cache, defaultConfigDir, projectConfigDir);
 
