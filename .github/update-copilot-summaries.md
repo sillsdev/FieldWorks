@@ -309,7 +309,7 @@ VS Code integration:
 Note: Local VS Code tasks resolve the default base branch dynamically via `Build/Agent/GitHelpers.ps1` (Get-DefaultBranchRef) to avoid hardcoded branch names.
 
 Agentic flow prompt:
-- See `.github/prompts/copilot-docs-update.prompt.md` to drive the full detect → propose → validate sequence with clear success criteria and step-by-step instructions.
+- See `.github/prompts/revise-instructions.prompt.md` for the unified detect → propose → validate workflow that covers both instruction files and COPILOT docs.
 
 ## Quality gates for COPILOT.md updates
 

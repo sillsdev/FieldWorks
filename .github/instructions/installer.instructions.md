@@ -1,8 +1,12 @@
 ---
 applyTo: "FLExInstaller/**"
+name: "installer.instructions"
 description: "FieldWorks installer (WiX) development guidelines"
 ---
 # Installer development guidelines (WiX)
+
+## Purpose & Scope
+Guidance for the installer project, packaging configuration, and localization of installer strings.
 
 ## Context loading
 - Only build the installer when changing installer logic or packaging; prefer app/library builds in inner loop.

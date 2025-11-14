@@ -665,7 +665,7 @@ git prune task
   → New documentation file created
 - `.github/prompts/bugfix.prompt.md`
   → New documentation file created
-- `.github/prompts/copilot-docs-update.prompt.md`
+- `.github/prompts/revise-instructions.prompt.md`
   → New documentation file created
 - `.github/prompts/feature-spec.prompt.md`
   → New documentation file created

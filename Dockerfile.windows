@@ -4,22 +4,94 @@ FROM mcr.microsoft.com/dotnet/framework/sdk:4.8-windowsservercore-ltsc2022
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference='Stop';"]
 
-# Visual Studio Build Tools for .NET Framework desktop + C++ (incl. ATL/MFC)
-ADD https://aka.ms/vs/17/release/vs_BuildTools.exe C:\\TEMP\\vs_BuildTools.exe
-RUN Start-Process C:\\TEMP\\vs_BuildTools.exe -ArgumentList \
-	'--quiet --wait --norestart --nocache --installPath C:\\BuildTools', \
-	'--add Microsoft.VisualStudio.Workload.ManagedDesktopBuildTools', \
-	'--add Microsoft.VisualStudio.Workload.VCTools', \
-	'--add Microsoft.VisualStudio.Component.VC.ATLMFC', \
-	'--add Microsoft.VisualStudio.Component.VC.Tools.x86.x64', \
-	'--add Microsoft.VisualStudio.Component.Windows10SDK.19041' \
-	-NoNewWindow -PassThru | Wait-Process ; \
-	Remove-Item C:\\TEMP\\vs_BuildTools.exe -Force
+# Allow paths longer than 260 characters so NuGet/MSBuild can write deep folder structures.
+RUN New-ItemProperty -Path 'HKLM:\\SYSTEM\\CurrentControlSet\\Control\\FileSystem' \
+	-Name LongPathsEnabled -Value 1 -PropertyType DWord -Force | Out-Null
 
-# NuGet CLI (optional; restore can also be done via msbuild /t:Restore)
-ADD https://dist.nuget.org/win-x86-commandline/latest/nuget.exe C:\\nuget.exe
+# Visual Studio Build Tools for .NET Framework desktop + C++ (incl. ATL/MFC)
+RUN New-Item -ItemType Directory -Force -Path C:\\TEMP | Out-Null; \
+	Invoke-WebRequest -Uri 'https://aka.ms/vscollect.exe' -OutFile 'C:\\TEMP\\collect.exe'; \
+	Invoke-WebRequest -Uri 'https://aka.ms/vs/17/release/channel' -OutFile 'C:\\TEMP\\VisualStudio.chman'; \
+	Invoke-WebRequest -Uri 'https://aka.ms/vs/17/release/vs_BuildTools.exe' -OutFile 'C:\\TEMP\\vs_BuildTools.exe'; \
+	$ErrorActionPreference = 'Stop'; \
+	$args = @( \
+	'--quiet', '--wait', '--norestart', '--nocache', \
+	'--installPath', 'C:\\BuildTools', \
+	'--channelUri', 'C:\\TEMP\\VisualStudio.chman', \
+	'--installChannelUri', 'C:\\TEMP\\VisualStudio.chman', \
+	'--add', 'Microsoft.VisualStudio.Workload.ManagedDesktopBuildTools', \
+	'--add', 'Microsoft.VisualStudio.Workload.VCTools', \
+	'--add', 'Microsoft.VisualStudio.Component.VC.ATLMFC', \
+	'--add', 'Microsoft.VisualStudio.Component.VC.Tools.x86.x64', \
+	'--add', 'Microsoft.Net.Component.4.8.1.SDK', \
+	'--add', 'Microsoft.Net.Component.4.8.1.TargetingPack', \
+	'--add', 'Microsoft.Component.VC.Runtime.UCRTSDK', \
+	'--add', 'Microsoft.VisualStudio.Component.Windows11SDK.22621', \
+	'--remove', 'Microsoft.VisualStudio.Component.Windows10SDK.10240', \
+	'--remove', 'Microsoft.VisualStudio.Component.Windows10SDK.10586', \
+	'--remove', 'Microsoft.VisualStudio.Component.Windows10SDK.14393', \
+	'--remove', 'Microsoft.VisualStudio.Component.Windows81SDK' \
+	); \
+	$process = Start-Process -FilePath 'C:\\TEMP\\vs_BuildTools.exe' -ArgumentList $args -NoNewWindow -Wait -PassThru; \
+	Remove-Item 'C:\\TEMP\\vs_BuildTools.exe' -Force; \
+	Write-Host \"VS Build Tools installer exit code: $($process.ExitCode)\"; \
+	if (-not (Test-Path 'C:\\BuildTools')) { \
+	throw \"VS Build Tools installation did not create C:\\BuildTools\" \
+	}; \
+	if ($process.ExitCode -ne 0 -and $process.ExitCode -ne 3010) { \
+	throw \"VS Build Tools installation failed with exit code $($process.ExitCode)\" \
+	}; \
+	Write-Host \"VS Build Tools installed successfully to C:\\BuildTools\"
+
+# .NET Framework 4.8.1 Developer Pack (targeting pack + SDK + reference assemblies)
+RUN Invoke-WebRequest -Uri 'https://download.microsoft.com/download/8/1/8/81877d8b-a9b2-4153-9ad2-63a6441d11dd/NDP481-DevPack-ENU.exe' \
+	-OutFile 'C:\\TEMP\\NDP481-DevPack-ENU.exe'; \
+	Start-Process -FilePath 'C:\\TEMP\\NDP481-DevPack-ENU.exe' -ArgumentList '/q', '/norestart' -Wait; \
+	Remove-Item 'C:\\TEMP\\NDP481-DevPack-ENU.exe' -Force
+
+# WiX Toolset 3.11.x (extract binaries to avoid the .NET 3.5 prerequisite hang in Server Core)
+RUN Invoke-WebRequest -Uri 'https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip' \
+	-OutFile 'C:\\TEMP\\wix311.zip'; \
+	Expand-Archive -LiteralPath 'C:\\TEMP\\wix311.zip' -DestinationPath 'C:\\Wix311' -Force; \
+	Remove-Item 'C:\\TEMP\\wix311.zip' -Force
+ENV WIX=C:\\Wix311
+
+# Install the .NET SDK used for dotnet restore targets (latest .NET 8 LTS)
+RUN Invoke-WebRequest -Uri 'https://dot.net/v1/dotnet-install.ps1' -OutFile 'C:\\TEMP\\dotnet-install.ps1'; \
+	& 'C:\\TEMP\\dotnet-install.ps1' -Channel 8.0 -Quality GA -InstallDir 'C:\\dotnet' -NoPath; \
+	Remove-Item 'C:\\TEMP\\dotnet-install.ps1' -Force
+ENV DOTNET_ROOT=C:\\dotnet
+
+# Make WiX, dotnet CLI, and NETFX tooling globally available on PATH
+RUN $netfxTools = 'C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8.1 Tools'; \
+	if (-not (Test-Path $netfxTools)) { \
+	throw \"NETFX 4.8.1 tools not found at `$netfxTools\" \
+	}; \
+	$paths = @('C:\\Wix311', 'C:\\dotnet', $netfxTools); \
+	$existing = [Environment]::GetEnvironmentVariable('PATH', 'Machine'); \
+	foreach ($p in $paths) { \
+	if ($existing -notlike \"*`$p*\") { \
+	$existing = \"`$existing;`$p\" \
+	} \
+	}; \
+	[Environment]::SetEnvironmentVariable('PATH', $existing, 'Machine')
+
+# Run post-installation setup script to handle all complex path operations
+# (Visual Studio directory structure, BuildTools junction, NuGet cache, NuGet CLI download)
+# Use cmd SHELL to avoid PowerShell command-line parsing issues in Docker
+SHELL ["cmd", "/S", "/C"]
+COPY Post-Install-Setup.ps1 C:/Post-Install-Setup.ps1
+RUN C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy Bypass -File C:\Post-Install-Setup.ps1
 
 # Default NuGet cache location (each container gets a host-mounted, per-agent cache)
 ENV NUGET_PACKAGES=C:\\.nuget\\packages
 
-WORKDIR C:\\
+# Ensure MSBuild locates the VC targets even though VS lives under C:\\BuildTools
+ENV VCTargetsPath=C:/BuildTools/MSBuild/Microsoft/VC/v170
+
+COPY VsDevShell.cmd C:/VsDevShell.cmd
+
+WORKDIR C:/
+
+ENTRYPOINT ["C:\\VsDevShell.cmd"]
+CMD ["powershell", "-NoLogo", "-ExecutionPolicy", "Bypass", "-Command", "while ($true) { Start-Sleep -Seconds 3600 }"]

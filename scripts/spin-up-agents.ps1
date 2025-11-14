@@ -6,20 +6,24 @@ Prereqs:
 - One primary clone on the host (e.g., C:\dev\FieldWorks)
 - PowerShell 5+ (Windows)
 
+IMPORTANT: This script NEVER modifies existing worktrees to prevent data loss.
+- Existing worktrees are preserved as-is (skipped)
+- New worktrees are created from the specified BaseRef
+- If you want to reset a worktree, manually delete it first or use tear-down-agents.ps1
+
 Typical use:
   $env:FW_WORKTREES_ROOT = "C:\dev\FieldWorks\worktrees"
 
   # Create agents based on current branch (default FieldWorks.proj build):
   .\scripts\spin-up-agents.ps1 -RepoRoot "C:\dev\FieldWorks" -Count 3
 
-  # Or specify a different base branch:
+  # Or specify a different base branch (only affects NEW worktrees):
   .\scripts\spin-up-agents.ps1 -RepoRoot "C:\dev\FieldWorks" -Count 3 -BaseRef origin/release/9.3
 
   # To prevent VS Code from opening automatically:
   .\scripts\spin-up-agents.ps1 -RepoRoot "C:\dev\FieldWorks" -Count 3 -SkipOpenVSCode
 
-  # To forcibly clean orphaned worktree directories without prompting:
-  .\scripts\spin-up-agents.ps1 -RepoRoot "C:\dev\FieldWorks" -Count 3 -ForceCleanup
+  # NOTE: -ForceCleanup parameter removed - use tear-down-agents.ps1 instead
 #>
 
 [CmdletBinding()]
@@ -34,7 +38,6 @@ param(
   [switch]$SkipVsCodeSetup,
   [switch]$ForceVsCodeSetup,
   [switch]$SkipOpenVSCode,
-  [switch]$ForceCleanup,
   [string]$ContainerMemory = "4g"
 )
 
@@ -232,22 +235,8 @@ function Ensure-Image {
   }
 }
 
-function Reset-AgentWorktree {
-  param(
-    [Parameter(Mandatory=$true)][string]$WorktreePath,
-    [Parameter(Mandatory=$true)][string]$ResetRef
-  )
-
-  if (-not (Test-Path -LiteralPath $WorktreePath)) { return }
-
-  Push-Location $WorktreePath
-  try {
-    Invoke-GitSafe @('reset','--hard',$ResetRef) -Quiet
-    Invoke-GitSafe @('clean','-xfd') -Quiet
-  } finally {
-    Pop-Location
-  }
-}
+# Reset-AgentWorktree function removed - we never modify existing worktrees
+# Existing worktrees are left untouched to prevent data loss
 
 function Clear-AgentDirectory {
   param(
@@ -298,9 +287,12 @@ function Ensure-Worktree {
     }
 
     if ($isRegistered -and $dirExists -and -not $isEmpty) {
-      # Worktree is registered and has content - reset to requested base
-      Write-Host "Worktree exists and is registered: $target"
-      Reset-AgentWorktree -WorktreePath $target -ResetRef $BaseRef
+      # Worktree exists with content - NEVER modify it to prevent data loss
+      Write-Host "Worktree already exists: $target (skipping - will not modify existing worktree)"
+      Write-Host "  Branch: $branch (current state preserved)"
+      # Skip to end - use existing worktree as-is
+      $resolvedTarget = (Resolve-Path -LiteralPath $target).Path
+      return @{ Branch = $branch; Path = $resolvedTarget; Skipped = $true }
     } elseif ($isRegistered -and (-not $dirExists -or $isEmpty)) {
       # Worktree is registered but directory is missing or empty - repair it
       Write-Host "Repairing worktree $target (directory missing or empty)..."
@@ -308,20 +300,26 @@ function Ensure-Worktree {
       Prune-GitWorktreesNow
       $isRegistered = $false
       $branchWorktree = $null
-    } elseif (-not $isRegistered -and $dirExists) {
-      if (-not $ForceCleanup) {
-        throw "Directory $target exists but is not a registered worktree. Close any VS Code windows, run tear-down with -RemoveWorktrees, or rerun spin-up with -ForceCleanup to reset it."
-      }
+    } elseif (-not $isRegistered -and $dirExists -and -not $isEmpty) {
+      # Directory exists with content but not a worktree - ERROR out
+      throw @"
+Directory $target exists but is not a registered git worktree.
 
-      Write-Host "Directory $target exists but is not registered; reinitializing worktree in place (contents will be reset)."
-      try {
-        Detach-GitWorktreeMetadata -WorktreePath $target | Out-Null
-      } catch {
-        $err = $_
-        Write-Warning "Failed to remove stale git metadata from ${target}: $err"
-      }
+This could indicate:
+1. Leftover files from a previous worktree that wasn't cleaned up properly
+2. Manual files placed in the worktrees directory
+3. A corrupted worktree registration
 
-      Clear-AgentDirectory -AgentPath $target
+To fix this:
+- OPTION 1 (preserve content): Move the directory elsewhere, then rerun this script
+- OPTION 2 (discard content): Delete the directory manually, then rerun this script
+- OPTION 3 (force cleanup): Run: .\scripts\tear-down-agents.ps1 -RemoveWorktrees
+
+NEVER use -ForceCleanup as it will destroy your work without warning.
+"@
+    } elseif (-not $isRegistered -and $dirExists -and $isEmpty) {
+      # Directory exists but empty and not registered - safe to recreate
+      Write-Host "Directory $target exists but is empty; will create worktree here."
     }
 
     # Create worktree if needed
@@ -336,9 +334,8 @@ function Ensure-Worktree {
       $addArgs += $target
 
       if (Test-GitBranchExists -Branch $branch) {
-        Write-Host "Resetting $branch to $BaseRef before reuse..."
-        Reset-GitBranchToRef -Branch $branch -Ref $BaseRef
-        Write-Host "Creating worktree $target with existing branch $branch..."
+        Write-Host "Creating worktree $target with existing branch $branch (preserving current branch state)..."
+        Write-Host "  Note: Branch will remain at its current commit; use 'git merge' or 'git reset' in the worktree if you want to sync with $BaseRef"
         $addArgs += $branch
       } else {
         Write-Host "Creating worktree $target with new branch $branch from $BaseRef..."
@@ -353,10 +350,7 @@ function Ensure-Worktree {
     }
     Ensure-RelativeGitDir -WorktreePath $target -RepoRoot $RepoRoot -WorktreeName "agent-$Index"
     $resolvedTarget = (Resolve-Path -LiteralPath $target).Path
-
-    if (-not $isRegistered) {
-      Reset-AgentWorktree -WorktreePath $resolvedTarget -ResetRef $BaseRef
-    }
+    # Never reset worktrees - new worktrees are created at correct ref, existing ones are preserved
   } finally {
     Pop-Location
   }
@@ -528,7 +522,7 @@ function Write-Tasks {
   $settings['fw.agent.repoRoot'] = $RepoRoot
 
   $colorSettings = $null
-  if ($settings.ContainsKey('workbench.colorCustomizations')) {
+  if (($settings -is [System.Collections.IDictionary]) -and $settings.Contains('workbench.colorCustomizations')) {
     $colorSettings = ConvertTo-OrderedStructure -Value $settings['workbench.colorCustomizations']
   }
   if (-not $colorSettings) { $colorSettings = [ordered]@{} }
@@ -595,6 +589,36 @@ $repoVsCodeSettings = Get-RepoVsCodeSettings -RepoRoot $RepoRoot
 $agents = @()
 for ($i=1; $i -le $Count; $i++) {
   $wt = Ensure-Worktree -Index $i
+
+  if ($wt.Skipped) {
+    Write-Host "Agent-$i - Using existing worktree (no changes made)"
+
+    # Still open VS Code for existing worktrees if requested
+    if (-not $SkipOpenVSCode) {
+      $workspaceTarget = Join-Path $wt.Path "agent-$i.code-workspace"
+      if (-not (Test-Path -LiteralPath $workspaceTarget)) {
+        $workspaceTarget = $wt.Path
+      }
+
+      if (Test-VSCodeWorkspaceOpen -WorkspacePath $workspaceTarget) {
+        Write-Host "VS Code already open for agent-$i; skipping new window launch."
+      } else {
+        Write-Host "Opening VS Code for existing worktree agent-$i..."
+        Open-AgentVsCodeWindow -Index $i -AgentPath $wt.Path -ContainerName "fw-agent-$i"
+      }
+    }
+
+    $agents += [pscustomobject]@{
+      Index = $i
+      Worktree = $wt.Path
+      Branch = $wt.Branch
+      Container = "(existing)"
+      Theme = "(preserved)"
+      Status = "Skipped - existing worktree preserved"
+    }
+    continue
+  }
+
   $ct = Ensure-Container -Index $i -AgentPath $wt.Path -RepoRoot $RepoRoot -WorktreesRoot $WorktreesRoot
   Write-AgentConfig -AgentPath $wt.Path -SolutionRelPath $SolutionRelPath -Container $ct -RepoRoot $RepoRoot
   $colors = Get-AgentColors -Index $i
@@ -617,6 +641,7 @@ for ($i=1; $i -le $Count; $i++) {
     Branch = $wt.Branch
     Container = $ct.Name
     Theme = $colors.Name
+    Status = "Ready"
   }
 }
 

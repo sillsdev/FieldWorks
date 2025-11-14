@@ -438,7 +438,7 @@ git prune task
   - .github/memory.md
   - .github/option3-plan.md
   - .github/prompts/bugfix.prompt.md
-  - .github/prompts/copilot-docs-update.prompt.md
+  - .github/prompts/revise-instructions.prompt.md
   - .github/prompts/feature-spec.prompt.md
   - .github/prompts/speckit.analyze.prompt.md
   - .github/prompts/speckit.checklist.prompt.md

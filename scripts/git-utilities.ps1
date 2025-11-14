@@ -172,13 +172,3 @@ function Test-GitBranchExists {
   return ($output.Count -gt 0)
 }
 
-function Reset-GitBranchToRef {
-  [CmdletBinding()]
-  param(
-    [Parameter(Mandatory=$true)][string]$Branch,
-    [Parameter(Mandatory=$true)][string]$Ref
-  )
-
-  # Ensures the agent branch is a mirror of the desired base ref.
-  Invoke-GitSafe @('branch','-f',$Branch,$Ref) -Quiet
-}

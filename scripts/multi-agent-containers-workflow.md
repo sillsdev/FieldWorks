@@ -62,12 +62,15 @@ The script will:
    - `-OpenVSCode` - launches a VS Code window per agent with `FW_AGENT_CONTAINER` set
 
 The script will:
-- Create worktrees at `...\worktrees\agent-1..N` with branches `agents/agent-1..N`
+- Create NEW worktrees at `...\worktrees\agent-1..N` with branches `agents/agent-1..N` from BaseRef
+- **SKIP existing worktrees** (preserves your work - never resets or modifies existing worktrees)
 - Build or reuse the `fw-build:ltsc2022` Windows image
-- Start containers `fw-agent-1..N` with per-agent NuGet caches
-- Generate `.vscode/tasks.json` wired to the matching container
+- Start containers `fw-agent-1..N` with per-agent NuGet caches (skipped for existing worktrees)
+- Generate `.vscode/tasks.json` wired to the matching container (only for new worktrees)
 - Generate `.vscode/settings.json` with unique colors to keep agent windows visually distinct
 - Optionally open each worktree in a new VS Code window
+
+**IMPORTANT**: This script **NEVER modifies existing worktrees** to prevent data loss. If you want to reset a worktree to a different branch, use `tear-down-agents.ps1 -RemoveWorktrees` first, then re-run spin-up.
 
 3. Work per agent
 
@@ -83,6 +86,16 @@ All registry and COM operations occur inside the container, isolated from your h
   - `git status`, `git commit`, `git push`
   - `gh pr create -H agents/agent-1 -B release/9.3 -t "..." -b "..."`
 - Avoid running Git inside the container for that worktree to prevent file locking.
+
+**Branch reuse behavior**: If `agents/agent-N` branches already exist, spin-up will:
+- Create worktrees attached to the existing branches at their current commits
+- **NOT** reset branches to BaseRef automatically
+- Let you manually sync branches if needed:
+  ```powershell
+  cd worktrees\agent-1
+  git fetch origin
+  git merge origin/release/9.3  # or git reset --hard origin/release/9.3
+  ```
 
 ## Performance and limits
 
@@ -103,6 +116,26 @@ Remove containers, worktrees, agent branches, and per-agent NuGet caches:
   -RepoRoot "C:\dev\FieldWorks" `
   -Count 3 `
   -RemoveWorktrees
+```
+
+**IMPORTANT**: Tear-down will **ERROR and refuse to remove worktrees** that have uncommitted changes to prevent data loss. You'll see:
+```
+Worktree agent-1 has uncommitted changes at: C:\...\worktrees\agent-1
+
+To protect your work, tear-down will NOT remove this worktree.
+```
+
+To proceed, commit or stash your changes first:
+```powershell
+cd worktrees\agent-1
+git add .
+git commit -m "Work in progress"
+# Then re-run tear-down
+```
+
+Only use `-ForceRemoveDirty` if you're **certain** you want to discard uncommitted work:
+```powershell
+.\scripts\tear-down-agents.ps1 -RepoRoot "C:\dev\FieldWorks" -RemoveWorktrees -ForceRemoveDirty
 ```
 
 You can pass `-WorktreesRoot` if you placed worktrees outside the default path; otherwise the script respects `FW_WORKTREES_ROOT` when present.
@@ -152,10 +185,24 @@ docker logs fw-agent-1  # Check container logs
 ```
 
 ### Worktree already exists
-The script safely reuses existing worktrees and containers. To start fresh:
-```powershell
-.\scripts\tear-down-agents.ps1 -RepoRoot "C:\dev\FieldWorks" -Count 3 -RemoveWorktrees
+The script **preserves existing worktrees** and will skip them to prevent data loss. You'll see:
 ```
+Worktree already exists: C:\...\worktrees\agent-1 (skipping - will not modify existing worktree)
+  Branch: agents/agent-1 (current state preserved)
+```
+
+To reset a worktree to a different branch or base ref:
+```powershell
+# Option 1: Remove all worktrees and recreate fresh
+.\scripts\tear-down-agents.ps1 -RepoRoot "C:\dev\FieldWorks" -Count 3 -RemoveWorktrees
+
+# Option 2: Manually delete specific worktree, then re-run spin-up
+Remove-Item -Recurse -Force "C:\...\worktrees\agent-1"
+git worktree prune
+.\scripts\spin-up-agents.ps1 -RepoRoot "C:\dev\FieldWorks" -Count 3
+```
+
+**Never** try to force-reset worktrees - this was removed to prevent accidental data loss.
 
 ### Build fails inside container
 Verify the solution path is correct and accessible:

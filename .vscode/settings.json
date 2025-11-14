@@ -25,10 +25,13 @@
     "Get-ItemProperty": true,
     // Git operations (read-only)
     "git status": true,
+    "git checkout": true,
     "git log": true,
+    "git ls-files": true,
     "git diff": true,
     "git show": true,
     "git branch": true,
+    "git rev-parse": true,
     "git worktree list": true,
     // Docker read-only operations
     "docker ps": true,
@@ -54,5 +57,8 @@
     ".\\scripts\\check-agents.ps1": true
   },
   "cmake.ignoreCMakeListsMissing": true,
-  "dotnet.defaultSolution": "FieldWorks.sln"
+  "dotnet.defaultSolution": "FieldWorks.sln",
+  "terminal.integrated.env.windows": {
+    "PATH": "${workspaceFolder}\\scripts\\toolshims;${env:PATH}"
+  }
 }

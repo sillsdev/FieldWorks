@@ -134,6 +134,27 @@
       "problemMatcher": []
     },
     {
+      "label": "COPILOT: Validate instructions (lint)",
+      "type": "shell",
+      "command": "python scripts/tools/validate_instructions.py",
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
       "label": "COPILOT: Update flow (detect → propose → validate)",
       "dependsOn": [
         "COPILOT: Detect updates needed",
@@ -148,7 +169,7 @@
     {
       "label": "Agents: Spin up",
       "type": "shell",
-      "command": "& { ./scripts/spin-up-agents.ps1 -RepoRoot \"${workspaceFolder}\" -Count ${input:agentCount} }",
+      "command": "& { ./scripts/spin-up-agents.ps1 -RepoRoot \"${workspaceFolder}\" -Count ${input:agentCount}}",
       "detail": "Creates (or reuses) agent worktrees, containers, and VS Code windows.",
       "options": {
         "shell": {

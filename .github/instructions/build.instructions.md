@@ -1,8 +1,12 @@
 ﻿---
 applyTo: "**/*"
+name: "build.instructions"
 description: "FieldWorks build guidelines and inner-loop tips"
 ---
 # Build guidelines and inner-loop tips
+
+## Purpose & Scope
+This file describes the build system and inner-loop tips for developers working on FieldWorks. Use it for top-level build instructions, not for project-specific guidance.
 
 ## Quick Start
 
@@ -63,10 +67,11 @@ Error: Cannot generate Views.cs without native artifacts.
 Run: msbuild Build\Src\NativeBuild\NativeBuild.csproj
 ```
 
-## Context loading
-- Always initialize the environment when using scripts: `source ./environ`.
-- The build system automatically sets up VS Developer Environment if needed.
-- Environment variables (`fwrt`, `Platform`, etc.) are set by `SetupInclude.targets`.
+## Developer environment setup
+
+- On Windows: Use `.\build.ps1` (automatically sets up VS Developer Environment) or open a Developer Command Prompt for Visual Studio before running manual `msbuild` commands.
+- On Linux/macOS: Use `./build.sh` and ensure `msbuild`, `dotnet`, and native build tools are installed.
+- Environment variables (`fwrt`, `Platform`, etc.) are set by `SetupInclude.targets` during build.
 
 ## Deterministic requirements
 

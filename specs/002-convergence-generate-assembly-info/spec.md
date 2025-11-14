@@ -155,155 +155,89 @@ During the initial SDK conversion (commit 2: f1995dac9), the script set `Generat
 
 ---
 
-## Recommendation: Path A (Modern SDK-First)
+## Updated Recommendation: CommonAssemblyInfoTemplate Restoration
 
-**Rationale**:
-1. **Best Practice**: Aligns with .NET SDK ecosystem direction
-2. **Maintainability**: Less code, fewer files to maintain
-3. **Clarity**: Clear exception criteria, well-documented
-4. **Future-Proof**: Compatible with future .NET versions
+Per `CLARIFICATIONS-NEEDED.md`, we are no longer pursuing the SDK-first direction. Instead, the convergence target is:
 
-**Exception Criteria** (final):
-```
-Use GenerateAssemblyInfo=false ONLY when:
-1. Custom Company/Copyright/Trademark needed
-2. Non-standard versioning (not using CI/CD versioning)
-3. Conditional compilation in AssemblyInfo.cs
-4. Custom CLSCompliant/ComVisible per assembly
+1. **Use `CommonAssemblyInfoTemplate` everywhere.** Every managed project must import the shared template so that common attributes (product, company, copyright, trademark, version placeholders) live in one location.
+2. **Disable SDK auto-generation when the template/custom files are present.** Set `<GenerateAssemblyInfo>false</GenerateAssemblyInfo>` (with an explanatory XML comment) to ensure the SDK does not emit duplicate attributes.
+3. **Preserve and restore project-specific `AssemblyInfo` files.** Any project that owned custom attributes before the migration must keep that file. If the file was deleted during the SDK move, restore it from git history and ensure it still compiles.
+4. **Document exceptions.** If a project truly needs no project-specific attributes, explicitly state that decision inside the project file so future edits have context.
 
-Otherwise: Use true (SDK default)
-```
+This recommendation supersedes the earlier Path A guidance and keeps the benefits of a centralized template while protecting bespoke metadata.
+
+---
+
+## Clarification Requirements Summary
+
+- **Template coverage**: `CommonAssemblyInfoTemplate` provides the baseline. Projects should not duplicate those attributes locally.
+- **Custom file policy**: Only remove an `AssemblyInfo` file if it provably never existed before SDK migration and the template fully covers the metadata needs.
+- **Restoration scope**: Projects that lost a custom file during migration must recover it (`git restore --source <pre-migration-sha>`), even if the metadata now appears redundant.
+- **Version stamping alignment**: Centralize `AssemblyVersion`, `FileVersion`, and `InformationalVersion` in `Directory.Build.props` so CI/CD stamping still works when manual generation is disabled.
+
+These requirements drive the implementation plan below.
 
 ---
 
 ## Implementation Checklist
 
 ### Phase 1: Analysis (2 hours)
-- [ ] **Task 1.1**: Audit all 52 projects with `GenerateAssemblyInfo=false`
-  - Create spreadsheet: Project | Has AssemblyInfo.cs | Custom Attributes | Reason for false
-  - Check each AssemblyInfo.cs for custom attributes beyond Title/Description/Version
-  - Document projects that legitimately need manual control
+- [ ] **Task 1.1**: Inventory every managed project and capture:
+  - Whether it currently imports `CommonAssemblyInfoTemplate`
+  - Whether a project-specific `AssemblyInfo*.cs` file exists
+  - Current `GenerateAssemblyInfo` value and any inline comments
 
-- [ ] **Task 1.2**: Categorize projects into:
-  - Category A: Can convert to `true` (no custom attributes) - Expected: ~30 projects
-  - Category B: Must keep `false` (custom attributes) - Expected: ~20 projects
-  - Category C: Uncertain (needs manual review) - Expected: ~2 projects
+- [ ] **Task 1.2**: Diff the inventory against pre-migration history (e.g., `git log -- src/.../AssemblyInfo.cs`) to identify files that were deleted and must be restored.
 
-- [ ] **Task 1.3**: Review Category C manually with team
+- [ ] **Task 1.3**: Categorize projects for remediation:
+  - Category T: Template import present, no custom file ever existed
+  - Category C: Template import present and custom file exists/needs restoration
+  - Category G: Template missing or GenerateAssemblyInfo currently `true` (needs correction)
+
+- [ ] **Task 1.4**: Review any ambiguous cases with the team (e.g., projects that swapped to SDK attributes intentionally) before editing.
 
 **Recommended Tool**: Create audit script
 ```python
 # audit_generate_assembly_info.py
-# Scans all projects, checks AssemblyInfo.cs for custom attributes
-# Outputs CSV: Project, GenerateAssemblyInfo, HasAssemblyInfo, CustomAttributes
+# Scans all projects, detects template imports, and compares against git history
+# Outputs CSV: Project, TemplateImported, HasAssemblyInfoCs, WasAssemblyInfoDeleted, GenerateAssemblyInfoValue
 ```
 
-### Phase 2: Conversion (3-4 hours)
-- [ ] **Task 2.1**: For Category A projects (can convert to true):
-  - Change `<GenerateAssemblyInfo>false</GenerateAssemblyInfo>` to `true`
-  - Delete AssemblyInfo.cs file
-  - If needed, move custom attributes to .csproj:
-    ```xml
-    <PropertyGroup>
-      <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-      <Company>SIL International</Company>
-      <Copyright>Copyright © 2025 SIL International</Copyright>
-      <Product>FieldWorks</Product>
-    </PropertyGroup>
-    ```
-  - Build and verify no CS0579 errors
+### Phase 2: Template Reintegration & Restoration (3-4 hours)
+- [ ] **Task 2.1**: Ensure every project imports `CommonAssemblyInfoTemplate`. Add the `Import` if missing and confirm the relative path works for all project locations.
+- [ ] **Task 2.2**: Force `<GenerateAssemblyInfo>false</GenerateAssemblyInfo>` (with a short XML comment referencing the template) in any project that imports the template or ships a custom AssemblyInfo file.
+- [ ] **Task 2.3**: Restore deleted custom `AssemblyInfo*.cs` files from pre-migration history. Keep original namespaces, `[assembly: ...]` declarations, and conditional compilation blocks.
+- [ ] **Task 2.4**: For fresh projects that never had custom attributes, evaluate whether the template alone is sufficient. If so, keep only the template import; if not, add a minimal per-project AssemblyInfo file with the delta attributes.
+- [ ] **Task 2.5**: Normalize `Compile Include` / `Link` entries so every custom AssemblyInfo file is compiled exactly once (e.g., via `Compile Include="Properties\AssemblyInfo.Project.cs"` or `<Compile Include="$(CommonAssemblyInfoTemplatePath)" Link="..." />`).
 
-- [ ] **Task 2.2**: For Category B projects (keep false):
-  - Keep `<GenerateAssemblyInfo>false</GenerateAssemblyInfo>`
-  - Add XML comment explaining why:
-    ```xml
-    <!-- GenerateAssemblyInfo=false because: Custom Company/Copyright attributes -->
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    ```
-  - Verify AssemblyInfo.cs exists and contains custom attributes
-  - Remove any SDK-generated attributes from AssemblyInfo.cs (if duplicates)
-
-- [ ] **Task 2.3**: For omitted property (default=true):
-  - Explicitly set `<GenerateAssemblyInfo>true</GenerateAssemblyInfo>`
-  - Ensure no AssemblyInfo.cs file exists (or delete it)
-
-**Recommended Tool**: Create conversion script
+**Recommended Tool**: Create conversion + restoration script
 ```python
 # convert_generate_assembly_info.py
-# Input: CSV from Phase 1 with conversion decisions
-# For each project marked "convert to true":
-#   - Update .csproj to set GenerateAssemblyInfo=true
-#   - Delete AssemblyInfo.cs if no custom attributes
-#   - Move common attributes to .csproj if needed
+# New responsibilities:
+#   - Insert the CommonAssemblyInfoTemplate import when missing
+#   - Flip GenerateAssemblyInfo to false with explanatory comments
+#   - Restore deleted AssemblyInfo files via `git show <sha>:<path>`
+#   - Ensure restored files are part of the Compile item group
 ```
 
 ### Phase 3: Documentation (1 hour)
-- [ ] **Task 3.1**: Update Directory.Build.props with comment
-  ```xml
-  <!--
-    GenerateAssemblyInfo Default: true (SDK generates attributes)
-
-    Use false only when:
-    - Custom Company, Copyright, or Trademark attributes needed
-    - Non-standard versioning requirements
-    - Conditional compilation in AssemblyInfo.cs
-    - Custom CLSCompliant or ComVisible settings
-
-    When using false, always add XML comment explaining why.
-  -->
-  ```
-
-- [ ] **Task 3.2**: Update .github/instructions/managed.instructions.md
-  - Add section on GenerateAssemblyInfo decision criteria
-  - Include examples of when to use true vs. false
-
-- [ ] **Task 3.3**: Create project template with correct setting
-  - Update any project templates to default to `true`
+- [ ] **Task 3.1**: Update `Directory.Build.props` with explicit guidance on template usage, version stamping responsibilities, and the requirement to keep GenerateAssemblyInfo disabled when importing the template.
+- [ ] **Task 3.2**: Update `.github/instructions/managed.instructions.md` to describe the “template + custom file” policy and the process for restoring deleted files.
+- [ ] **Task 3.3**: Refresh any project scaffolding or templates so they include the `CommonAssemblyInfoTemplate` import from day one.
 
 ### Phase 4: Validation (1-2 hours)
-- [ ] **Task 4.1**: Build all modified projects
-  ```powershell
-  .\build.ps1 -Configuration Debug
-  .\build.ps1 -Configuration Release
-  ```
-
-- [ ] **Task 4.2**: Check for CS0579 errors (duplicate attributes)
-  ```powershell
-  # Should return empty
-  msbuild FieldWorks.sln | Select-String "CS0579"
-  ```
-
-- [ ] **Task 4.3**: Verify assembly metadata
-  - For converted projects, use reflection to check attributes:
-    ```powershell
-    [Reflection.Assembly]::LoadFile("Output\Debug\ProjectName.dll").GetCustomAttributes($false)
-    ```
-  - Ensure Title, Version, etc. are present
-
-- [ ] **Task 4.4**: Run full test suite
-  ```powershell
-  msbuild FieldWorks.proj /p:action=test
-  ```
-
-- [ ] **Task 4.5**: Verify installer includes correct metadata
-  - Build installer
-  - Check EXE properties in Windows Explorer
-  - Verify Company, Copyright, Product name
+- [ ] **Task 4.1**: Run Debug/Release builds to confirm no CS0579 duplicate attribute warnings remain.
+- [ ] **Task 4.2**: Write a quick validation script that enumerates all project files and asserts:
+  - `CommonAssemblyInfoTemplate` import exists
+  - `GenerateAssemblyInfo` equals `false`
+  - Any project referencing a custom AssemblyInfo file has that file on disk
+- [ ] **Task 4.3**: Spot-check restored assemblies with reflection (`GetCustomAttributes`) to ensure custom metadata reappears.
+- [ ] **Task 4.4**: Execute the standard test suite to confirm nothing in tooling/test harnesses broke due to restored files.
 
 ### Phase 5: Review and Merge (1 hour)
-- [ ] **Task 5.1**: Code review of all changes
-  - Verify all projects have explicit GenerateAssemblyInfo setting
-  - Verify all `false` settings have explanatory comments
-  - Verify no AssemblyInfo.cs files remain for `true` projects
-
-- [ ] **Task 5.2**: Update this document with final statistics
-  - Projects converted: X
-  - Projects kept with false: Y
-  - Reason distribution (chart)
-
-- [ ] **Task 5.3**: Create follow-up issues if needed
-  - CI/CD version stamping adjustments
-  - Further standardization opportunities
+- [ ] **Task 5.1**: During code review, verify template imports, `GenerateAssemblyInfo` settings, and restored files per project.
+- [ ] **Task 5.2**: Capture final counts (number of projects with template-only vs. template+custom) in this spec for future tracking.
+- [ ] **Task 5.3**: File follow-up issues for any projects still pending manual decisions (e.g., unresolved conflicts between old and new attributes).
 
 ---
 
@@ -375,63 +309,42 @@ python audit_generate_assembly_info.py
 
 ---
 
-### Script 2: Conversion Script
+### Script 2: Restoration Script
 **File**: `convert_generate_assembly_info.py`
 
-**Purpose**: Apply conversion decisions to projects
+**Purpose**: Enforce the template policy, toggle GenerateAssemblyInfo, and restore missing files.
 
-**Inputs**: `decisions.csv` (from Script 1, manually reviewed)
+**Inputs**: `decisions.csv` (from Script 1) plus optional map of `<Project, DeletedAssemblyInfoPath, RestoreSha>` entries.
 
-**Outputs**: Modified .csproj files
+**Outputs**: Updated `.csproj` files and recovered `AssemblyInfo` sources.
 
 **Key Logic**:
 ```python
-def convert_to_true(csproj_path, assembly_info_path):
-    """Convert project to GenerateAssemblyInfo=true"""
-    # 1. Update .csproj
-    with open(csproj_path, 'r') as f:
-        content = f.read()
+def ensure_template_import(csproj_xml):
+    if 'CommonAssemblyInfoTemplate' not in csproj_xml:
+        insert_index = csproj_xml.index('</Project>')
+        include = '\n  <Import Project="$(MSBuildThisFileDirectory)..\\CommonAssemblyInfoTemplate.props" />\n'
+        return csproj_xml[:insert_index] + include + csproj_xml[insert_index:]
+    return csproj_xml
 
-    # Replace false with true
-    content = content.replace(
-        '<GenerateAssemblyInfo>false</GenerateAssemblyInfo>',
-        '<GenerateAssemblyInfo>true</GenerateAssemblyInfo>'
-    )
+def enforce_generate_false(tree):
+    prop = tree.find('.//GenerateAssemblyInfo')
+    if prop is None:
+        prop = ET.SubElement(tree.find('.//PropertyGroup'), 'GenerateAssemblyInfo')
+    prop.text = 'false'
+    prop.addprevious(ET.Comment('Using CommonAssemblyInfoTemplate; prevent SDK duplication'))
 
-    with open(csproj_path, 'w') as f:
-        f.write(content)
-
-    # 2. Delete AssemblyInfo.cs if no custom attributes
-    if assembly_info_path.exists():
-        os.remove(assembly_info_path)
-
-    print(f"✓ Converted {csproj_path.name} to GenerateAssemblyInfo=true")
-
-def add_explanation_comment(csproj_path, reason):
-    """Add XML comment explaining why false is used"""
-    with open(csproj_path, 'r') as f:
-        lines = f.readlines()
-
-    # Find GenerateAssemblyInfo line
-    for i, line in enumerate(lines):
-        if 'GenerateAssemblyInfo' in line and 'false' in line:
-            # Insert comment before
-            indent = len(line) - len(line.lstrip())
-            comment = ' ' * indent + f'<!-- GenerateAssemblyInfo=false because: {reason} -->\n'
-            lines.insert(i, comment)
-            break
-
-    with open(csproj_path, 'w') as f:
-        f.writelines(lines)
-
-    print(f"✓ Added explanation comment to {csproj_path.name}")
+def restore_assembly_info(path_on_disk, git_sha):
+    if path_on_disk.exists():
+        return
+    restored = subprocess.check_output(['git', 'show', f'{git_sha}:{path_on_disk.as_posix()}'])
+    path_on_disk.write_bytes(restored)
 ```
 
 **Usage**:
 ```bash
-python convert_generate_assembly_info.py decisions.csv
-# Processes all projects marked for conversion
-# Creates backup of modified files
+python convert_generate_assembly_info.py decisions.csv --restore-map restore.json
+# Adds missing imports, flips GenerateAssemblyInfo, restores deleted files, and reports any projects still lacking metadata
 ```
 
 ---
@@ -439,24 +352,23 @@ python convert_generate_assembly_info.py decisions.csv
 ### Script 3: Validation Script
 **File**: `validate_generate_assembly_info.py`
 
-**Purpose**: Verify conversion correctness
+**Purpose**: Assert that every project now complies with the template policy.
 
-**Inputs**: None (scans repository)
+**Inputs**: None (scans repository).
 
-**Outputs**: Validation report
+**Outputs**: `validation_report.txt` summarizing violations.
 
 **Checks**:
-1. All projects have explicit GenerateAssemblyInfo setting (no omitted)
-2. Projects with `false` have XML comment explaining why
-3. Projects with `false` have AssemblyInfo.cs file
-4. Projects with `true` don't have AssemblyInfo.cs file
-5. No CS0579 duplicate attribute warnings in build log
+1. `CommonAssemblyInfoTemplate` import present in each managed `.csproj`.
+2. `<GenerateAssemblyInfo>false</GenerateAssemblyInfo>` exists with an adjacent comment referencing the template.
+3. Projects enumerated in the audit as having custom attributes have on-disk `AssemblyInfo*.cs` files and corresponding `<Compile Include>` entries.
+4. No project keeps `GenerateAssemblyInfo=true` unless explicitly approved (should be zero).
+5. Build log free of CS0579 warnings.
 
 **Usage**:
 ```bash
 python validate_generate_assembly_info.py
-# Outputs: validation_report.txt
-# Lists any violations found
+# Outputs: validation_report.txt and returns non-zero if any violation is detected
 ```
 
 ---
@@ -464,17 +376,17 @@ python validate_generate_assembly_info.py
 ## Success Metrics
 
 **Before**:
-- ❌ 52 projects with unexplained `false`
-- ❌ No documented criteria
-- ❌ Inconsistent approach
-- ❌ CS0579 errors during migration
+- ❌ `CommonAssemblyInfoTemplate` imported inconsistently (mixed SDK/manual generation)
+- ❌ Custom AssemblyInfo files deleted during migration
+- ❌ Conflicting `GenerateAssemblyInfo` values leading to CS0579 duplicates
+- ❌ Limited traceability for why certain projects deviated
 
 **After**:
-- ✅ Clear criteria documented
-- ✅ All exceptions explained with comments
-- ✅ ~30 projects converted to modern approach
-- ✅ No CS0579 errors
-- ✅ Consistent pattern for future projects
+- ✅ Every managed project imports the template (single source of common attributes)
+- ✅ `GenerateAssemblyInfo=false` everywhere the template/custom files apply, with inline explanation
+- ✅ All historic custom AssemblyInfo files restored or explicitly documented as intentionally absent
+- ✅ CS0579 duplicate attribute errors eliminated
+- ✅ Audit spreadsheet + validation script provide ongoing compliance signal
 
 ---
 
@@ -498,13 +410,13 @@ python validate_generate_assembly_info.py
 
 **Total Effort**: 8-10 hours over 2-3 days
 
-| Phase                  | Duration  | Can Parallelize    |
-| ---------------------- | --------- | ------------------ |
-| Phase 1: Analysis      | 2 hours   | No (sequential)    |
-| Phase 2: Conversion    | 3-4 hours | Yes (per project)  |
-| Phase 3: Documentation | 1 hour    | Yes (with Phase 2) |
-| Phase 4: Validation    | 1-2 hours | No (after Phase 2) |
-| Phase 5: Review        | 1 hour    | No (final step)    |
+| Phase                                       | Duration  | Can Parallelize    |
+| ------------------------------------------- | --------- | ------------------ |
+| Phase 1: Analysis (inventory + history)     | 2 hours   | No (sequential)    |
+| Phase 2: Template reintegration/restoration | 3-4 hours | Yes (per project)  |
+| Phase 3: Documentation updates              | 1 hour    | Yes (with Phase 2) |
+| Phase 4: Validation suite                   | 1-2 hours | No (after Phase 2) |
+| Phase 5: Review & reporting                 | 1 hour    | No (final step)    |
 
 **Suggested Schedule**:
 - Day 1 Morning: Phase 1 (Analysis)
@@ -523,5 +435,5 @@ python validate_generate_assembly_info.py
 ---
 
 *Document Version: 1.0*
-*Last Updated: 2025-11-08*
+*Last Updated: 2025-11-14*
 *Status: Ready for Implementation*

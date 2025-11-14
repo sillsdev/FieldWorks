@@ -74,6 +74,7 @@ _user.mak.lnx
 
 .dotest/
 .depend
+.nuget/
 [Oo]bj/
 Obj_i686/
 Obj_x86_64/

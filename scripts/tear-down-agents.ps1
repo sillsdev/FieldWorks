@@ -1,7 +1,10 @@
 <#
 Stop and remove fw-agent-* containers and optionally clean up agents/* caches.
-Worktrees themselves are preserved for reuse (we still warn about uncommitted changes
-unless -ForceRemoveDirty is specified).
+Worktrees themselves are preserved for reuse.
+
+SAFETY: This script will ERROR and refuse to remove worktrees that have uncommitted
+changes, preventing accidental data loss. Use -ForceRemoveDirty only if you're certain
+you want to discard uncommitted work.
 
 # Examples
 #   .\scripts\tear-down-agents.ps1 -RepoRoot "C:\dev\FieldWorks"
@@ -9,9 +12,10 @@ unless -ForceRemoveDirty is specified).
 #
 #   .\scripts\tear-down-agents.ps1 -RepoRoot "C:\dev\FieldWorks" -RemoveWorktrees -RemoveNuGetCaches
 #     (Also removes agents/agent-* worktrees, git branches, and per-agent NuGet caches.)
+#     (Will ERROR if any worktree has uncommitted changes.)
 #
 #   .\scripts\tear-down-agents.ps1 -RepoRoot "C:\dev\FieldWorks" -RemoveWorktrees -ForceRemoveDirty
-#     (Removes worktrees without prompting even if uncommitted changes exist.)
+#     (⚠️ DANGEROUS: Removes worktrees even with uncommitted changes - DATA LOSS!)
 #>
 
 [CmdletBinding()]
@@ -191,9 +195,22 @@ $removeCaches = $RemoveWorktrees -or $RemoveNuGetCaches
           if (Test-Path -LiteralPath $wtPath) {
             $hasChanges = Test-WorktreeHasUncommittedChanges -WorktreePath $wtPath
             if ($hasChanges -and -not $ForceRemoveDirty) {
-              Write-Warning "Worktree agent-$i has uncommitted changes; content will remain but tracking will be detached (use -ForceRemoveDirty to skip this warning)."
+              throw @"
+Worktree agent-$i has uncommitted changes at: $wtPath
+
+To protect your work, tear-down will NOT remove this worktree.
+
+Options:
+1. Commit or stash your changes in the worktree, then re-run tear-down
+2. Push your changes to a remote branch for safekeeping
+3. Use -ForceRemoveDirty to override (WARNING: This will DELETE uncommitted work)
+
+To check what's uncommitted:
+  cd '$wtPath'
+  git status
+"@
             }
-            Write-Host "Detaching worktree agent-$i while leaving $wtPath on disk."
+            Write-Host "Detaching worktree agent-$i (no uncommitted changes detected)."
           } else {
             Write-Host "Worktree agent-$i not found on disk; only detaching branch metadata."
           }
