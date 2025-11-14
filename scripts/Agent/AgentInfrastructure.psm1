@@ -30,7 +30,22 @@ function Invoke-DockerSafe {
     $ErrorActionPreference = $previousEap
   }
 
+  $combinedOutput = $output -join "`n"
   if ($exitCode -ne 0) {
+    $removalInProgress = $false
+    if ($Arguments.Length -gt 0 -and $Arguments[0] -eq 'rm') {
+      if ($combinedOutput -match 'removal of container .* is already in progress') {
+        $removalInProgress = $true
+      }
+    }
+
+    if ($removalInProgress) {
+      if (-not $Quiet) {
+        Write-Host "docker $($Arguments -join ' ') reported container removal already in progress; continuing."
+      }
+      return
+    }
+
     $message = "docker $($Arguments -join ' ') failed with exit code $exitCode"
     if ($output) { $message += "`n$output" }
     throw $message

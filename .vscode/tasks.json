@@ -3,7 +3,14 @@
   // for the documentation about the tasks.json format
   // "$schema": "https://raw.githubusercontent.com/microsoft/vscode/master/resources/app/schemas/tasks.schema.json",
   "version": "2.0.0",
-  "inputs": [],
+  "inputs": [
+    {
+      "id": "agentCount",
+      "type": "promptString",
+      "description": "Number of agents to spin up",
+      "default": "3"
+    }
+  ],
   "tasks": [
     {
       "label": "Whitespace check (CI parity)",
@@ -137,6 +144,57 @@
       "problemMatcher": [
         "$python"
       ]
+    },
+    {
+      "label": "Agents: Spin up",
+      "type": "shell",
+      "command": "& { ./scripts/spin-up-agents.ps1 -RepoRoot \"${workspaceFolder}\" -Count ${input:agentCount} }",
+      "detail": "Creates (or reuses) agent worktrees, containers, and VS Code windows.",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      }
+    },
+    {
+      "label": "Agents: Teardown containers",
+      "type": "shell",
+      "command": "& { ./scripts/tear-down-agents.ps1 -RepoRoot \"${workspaceFolder}\" }",
+      "detail": "Stops and removes all fw-agent-* containers but leaves worktrees intact.",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      }
+    },
+    {
+      "label": "Agents: Teardown containers + worktrees",
+      "type": "shell",
+      "command": "& { ./scripts/tear-down-agents.ps1 -RepoRoot \"${workspaceFolder}\" -RemoveWorktrees -RemoveNuGetCaches }",
+      "detail": "Stops containers and detaches/removes agent worktrees plus per-agent NuGet caches.",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      }
     }
   ]
 }
