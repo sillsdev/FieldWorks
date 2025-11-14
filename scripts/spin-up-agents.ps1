@@ -49,6 +49,65 @@ Import-Module $vsCodeModule -Force -DisableNameChecking
 
 $script:GitFetched = $false
 
+function ConvertTo-OrderedStructure {
+  param([object]$Value)
+
+  if ($null -eq $Value) { return $null }
+
+  if ($Value -is [System.Collections.IDictionary]) {
+    $ordered = [ordered]@{}
+    foreach ($key in $Value.Keys) {
+      $ordered[$key] = ConvertTo-OrderedStructure -Value $Value[$key]
+    }
+    return $ordered
+  }
+
+  if ($Value -is [pscustomobject]) {
+    $ordered = [ordered]@{}
+    foreach ($prop in $Value.PSObject.Properties) {
+      $ordered[$prop.Name] = ConvertTo-OrderedStructure -Value $prop.Value
+    }
+    return $ordered
+  }
+
+  if (($Value -is [System.Collections.IEnumerable]) -and -not ($Value -is [string])) {
+    $list = @()
+    foreach ($item in $Value) {
+      $list += ,(ConvertTo-OrderedStructure -Value $item)
+    }
+    return $list
+  }
+
+  return $Value
+}
+
+function Get-RepoVsCodeSettings {
+  param([Parameter(Mandatory=$true)][string]$RepoRoot)
+
+  $settingsPath = Join-Path $RepoRoot '.vscode/settings.json'
+  if (-not (Test-Path -LiteralPath $settingsPath)) { return $null }
+
+  $lines = Get-Content -Path $settingsPath
+  $filtered = @()
+  foreach ($line in $lines) {
+    if ($line -match '^\s*//') { continue }
+    $filtered += $line
+  }
+  $clean = ($filtered -join "`n")
+  $clean = [regex]::Replace($clean,'/\*.*?\*/','', [System.Text.RegularExpressions.RegexOptions]::Singleline)
+
+  if ([string]::IsNullOrWhiteSpace($clean)) { return $null }
+
+  try {
+    $parsed = ConvertFrom-Json -InputObject $clean
+  } catch {
+    Write-Warning "Failed to parse .vscode/settings.json: $_"
+    return $null
+  }
+
+  return ConvertTo-OrderedStructure -Value $parsed
+}
+
 # Default BaseRef to current branch if not specified
 if (-not $BaseRef) {
   Push-Location $RepoRoot
@@ -436,7 +495,8 @@ function Write-Tasks {
     [string]$SolutionRelPath,
     [hashtable]$Colors,
     [string]$RepoRoot,
-    [switch]$Force
+    [switch]$Force,
+    [object]$BaseSettings
   )
   $worktreeGitDir = Get-GitDirectory -Path $AgentPath
   Ensure-GitExcludePatterns -GitDir $worktreeGitDir -Patterns @('.vscode/','.fw-agent/','agent-*.code-workspace')
@@ -456,26 +516,38 @@ function Write-Tasks {
   }
 
   # Create workspace file with color customization embedded
+  if ($BaseSettings) {
+    $settings = ConvertTo-OrderedStructure -Value $BaseSettings
+  } else {
+    $settings = [ordered]@{}
+  }
+
+  $settings['fw.agent.solutionPath'] = $SolutionRelPath
+  $settings['fw.agent.containerName'] = $ContainerName
+  $settings['fw.agent.containerPath'] = $ContainerAgentPath
+  $settings['fw.agent.repoRoot'] = $RepoRoot
+
+  $colorSettings = $null
+  if ($settings.ContainsKey('workbench.colorCustomizations')) {
+    $colorSettings = ConvertTo-OrderedStructure -Value $settings['workbench.colorCustomizations']
+  }
+  if (-not $colorSettings) { $colorSettings = [ordered]@{} }
+
+  $colorSettings['titleBar.activeBackground'] = $Colors.Title
+  $colorSettings['titleBar.activeForeground'] = '#ffffff'
+  $colorSettings['titleBar.inactiveBackground'] = $Colors.Title
+  $colorSettings['titleBar.inactiveForeground'] = '#cccccc'
+  $colorSettings['statusBar.background'] = $Colors.Status
+  $colorSettings['statusBar.foreground'] = '#ffffff'
+  $colorSettings['activityBar.background'] = $Colors.Activity
+  $colorSettings['activityBar.foreground'] = '#ffffff'
+  $settings['workbench.colorCustomizations'] = $colorSettings
+
   $workspace = @{
     "folders" = @(
       @{ "path" = "." }
     )
-    "settings" = @{
-      "fw.agent.solutionPath" = $SolutionRelPath
-      "fw.agent.containerName" = $ContainerName
-      "fw.agent.containerPath" = $ContainerAgentPath
-      "fw.agent.repoRoot" = $RepoRoot
-      "workbench.colorCustomizations" = @{
-        "titleBar.activeBackground" = $Colors.Title
-        "titleBar.activeForeground" = "#ffffff"
-        "titleBar.inactiveBackground" = $Colors.Title
-        "titleBar.inactiveForeground" = "#cccccc"
-        "statusBar.background" = $Colors.Status
-        "statusBar.foreground" = "#ffffff"
-        "activityBar.background" = $Colors.Activity
-        "activityBar.foreground" = "#ffffff"
-      }
-    }
+    "settings" = $settings
   }
 
   $workspaceJson = $workspace | ConvertTo-Json -Depth 4
@@ -518,13 +590,15 @@ function Write-AgentConfig {
 
 Ensure-Image -Tag $ImageTag
 
+$repoVsCodeSettings = Get-RepoVsCodeSettings -RepoRoot $RepoRoot
+
 $agents = @()
 for ($i=1; $i -le $Count; $i++) {
   $wt = Ensure-Worktree -Index $i
   $ct = Ensure-Container -Index $i -AgentPath $wt.Path -RepoRoot $RepoRoot -WorktreesRoot $WorktreesRoot
   Write-AgentConfig -AgentPath $wt.Path -SolutionRelPath $SolutionRelPath -Container $ct -RepoRoot $RepoRoot
   $colors = Get-AgentColors -Index $i
-  if (-not $SkipVsCodeSetup) { Write-Tasks -Index $i -AgentPath $wt.Path -ContainerName $ct.Name -ContainerAgentPath $ct.ContainerPath -SolutionRelPath $SolutionRelPath -Colors $colors -RepoRoot $RepoRoot -Force:$ForceVsCodeSetup }
+  if (-not $SkipVsCodeSetup) { Write-Tasks -Index $i -AgentPath $wt.Path -ContainerName $ct.Name -ContainerAgentPath $ct.ContainerPath -SolutionRelPath $SolutionRelPath -Colors $colors -RepoRoot $RepoRoot -Force:$ForceVsCodeSetup -BaseSettings $repoVsCodeSettings }
   if (-not $SkipOpenVSCode) {
     $workspaceTarget = Join-Path $wt.Path "agent-$i.code-workspace"
     if (-not (Test-Path -LiteralPath $workspaceTarget)) {
