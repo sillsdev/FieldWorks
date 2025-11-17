@@ -495,7 +495,7 @@ git prune task
   - Src/LexText/Interlinear/COPILOT.md
   - Src/LexText/LexTextControls/COPILOT.md
   - Src/LexText/LexTextDll/COPILOT.md
-  - Src/LexText/LexTextExe/COPILOT.md
+  - (Removed) Src/LexText/LexTextExe/COPILOT.md — eliminated when FieldWorks.exe became the sole launcher
   - Src/LexText/Lexicon/COPILOT.md
   - Src/LexText/Morphology/COPILOT.md
   - Src/LexText/ParserCore/COPILOT.md
@@ -673,7 +673,7 @@ git prune task
   - Src/LexText/Interlinear/COPILOT.md
   - Src/LexText/LexTextControls/COPILOT.md
   - Src/LexText/LexTextDll/COPILOT.md
-  - Src/LexText/LexTextExe/COPILOT.md
+  - (Removed) Src/LexText/LexTextExe/COPILOT.md — superseded by FieldWorks.exe documentation
   - Src/LexText/Lexicon/COPILOT.md
   - Src/LexText/Morphology/COPILOT.md
   - Src/LexText/ParserCore/COPILOT.md
@@ -1468,13 +1468,13 @@ Co-authored-by: johnml1135 <13733556+johnml1135@users.noreply.github.com>
 
 **Project Files Changed**: 2
   - Src/Common/FieldWorks/FieldWorks.csproj
-  - Src/LexText/LexTextExe/LexTextExe.csproj
+  - (Legacy) Src/LexText/LexTextExe/LexTextExe.csproj — removed once FieldWorks.exe became the unified launcher
 
 **Documentation Files**: 1
   - specs/001-64bit-regfree-com/tasks.md
 
 **Build Files**: 1
-  - Src/LexText/LexTextExe/BuildInclude.targets
+  - (Legacy) Src/LexText/LexTextExe/BuildInclude.targets — deleted along with the stub host
 
 **Category**: 🔐 Registration-Free COM
 
@@ -1495,7 +1495,7 @@ Co-authored-by: johnml1135 <13733556+johnml1135@users.noreply.github.com>
 
 **Project Files Changed**: 2
   - Src/Common/FieldWorks/FieldWorks.csproj
-  - Src/LexText/LexTextExe/LexTextExe.csproj
+  - (Legacy) Src/LexText/LexTextExe/LexTextExe.csproj — removed after FieldWorks.exe became the unified launcher
 
 **Documentation Files**: 1
   - specs/001-64bit-regfree-com/tasks.md
@@ -1578,7 +1578,7 @@ Co-authored-by: johnml1135 <13733556+johnml1135@users.noreply.github.com>
   - Build/Installer.targets
   - Build/RegFree.targets
   - Src/Common/FieldWorks/BuildInclude.targets
-  - Src/LexText/LexTextExe/BuildInclude.targets
+  - (Legacy) Src/LexText/LexTextExe/BuildInclude.targets — removed together with the stub launcher
 
 **Native Projects**: 3
   - Src/Generic/Generic.vcxproj
@@ -1598,7 +1598,7 @@ Co-authored-by: johnml1135 <13733556+johnml1135@users.noreply.github.com>
 - **Stats**:  2 files changed, 10 insertions(+), 5 deletions(-)
 
 **Project Files Changed**: 2
-  - Src/LexText/LexTextExe/LexTextExe.csproj
+  - (Legacy) Src/LexText/LexTextExe/LexTextExe.csproj — deleted after consolidation
   - Src/LexText/Morphology/MorphologyEditorDll.csproj
 
 **Category**: 🔄 General Changes
@@ -1660,7 +1660,7 @@ Co-authored-by: johnml1135 <13733556+johnml1135@users.noreply.github.com>
   - Src/LexText/Interlinear/COPILOT.md
   - Src/LexText/LexTextControls/COPILOT.md
   - Src/LexText/LexTextDll/COPILOT.md
-  - Src/LexText/LexTextExe/COPILOT.md
+  - (Removed) Src/LexText/LexTextExe/COPILOT.md — deleted after FieldWorks.exe absorbed the launcher role
   - Src/LexText/Lexicon/COPILOT.md
   - Src/LexText/Morphology/COPILOT.md
 
@@ -1807,7 +1807,7 @@ Co-authored-by: johnml1135 <13733556+johnml1135@users.noreply.github.com>
   - Src/LexText/Interlinear/COPILOT.md
   - Src/LexText/LexTextControls/COPILOT.md
   - Src/LexText/LexTextDll/COPILOT.md
-  - Src/LexText/LexTextExe/COPILOT.md
+  - (Removed) Src/LexText/LexTextExe/COPILOT.md — consolidated into FieldWorks.exe COPILOT coverage
   - Src/LexText/Lexicon/COPILOT.md
   - Src/LexText/Morphology/COPILOT.md
   - Src/LexText/ParserCore/COPILOT.md

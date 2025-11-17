@@ -95,7 +95,7 @@ C# library (net48, OutputType=Library) organizing lexicon/text UI components for
 - **Lexicon/**: Lexicon editing UI
 - **LexTextDll/**: Business logic
 - **Morphology/**: Morphology features
-- **LexTextExe/**: FLEx application
+- **FieldWorks.exe**: FLEx application host
 - **xWorks**: Application shell
 
 ## Interop & Contracts
@@ -184,7 +184,7 @@ Loaded by Lexicon/, LexTextDll/, and other lexicon UI components. Dialogs instan
 - **Lexicon/**: Main lexicon UI (consumes controls)
 - **LexTextDll/**: Business logic
 - **Morphology/**: Morphology UI
-- **LexTextExe/**: FLEx application
+- **Common/FieldWorks/**: FieldWorks.exe host
 
 ## References
 - **Project file**: LexTextControls.csproj (net48, OutputType=Library)

@@ -79,7 +79,7 @@ C# library (net48, OutputType=Library) with lexicon UI components. Slice/Launche
 
 ### Downstream (consumed by)
 - **xWorks**: Main application shell (loads lexicon editing UI)
-- **LexTextExe/**: FLEx application
+- **FieldWorks.exe**: FLEx application host
 
 ## Interop & Contracts
 - **ILexEntry**: Lexical entry object

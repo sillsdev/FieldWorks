@@ -779,8 +779,8 @@ git prune task
   → New documentation file created
 - `Src/LexText/LexTextDll/COPILOT.md`
   → New documentation file created
-- `Src/LexText/LexTextExe/COPILOT.md`
-  → New documentation file created
+- (Removed) `Src/LexText/LexTextExe/COPILOT.md`
+  → New documentation file created (removed later when FieldWorks.exe absorbed the LexText launcher)
 - `Src/LexText/Lexicon/COPILOT.md`
   → New documentation file created
 - `Src/LexText/Morphology/COPILOT.md`
@@ -1014,7 +1014,7 @@ git prune task
 - `Src/LexText/Interlinear/COPILOT.md`
 - `Src/LexText/LexTextControls/COPILOT.md`
 - `Src/LexText/LexTextDll/COPILOT.md`
-- `Src/LexText/LexTextExe/COPILOT.md`
+- (Removed) `Src/LexText/LexTextExe/COPILOT.md`
 - `Src/LexText/Lexicon/COPILOT.md`
 - `Src/LexText/Morphology/COPILOT.md`
 - `Src/LexText/ParserCore/COPILOT.md`
@@ -2205,10 +2205,12 @@ Co-authored-by: johnml1135 <13733556+johnml1135@users.noreply.github.com>
 - `Src/Common/FieldWorks/FieldWorks.csproj`
   → Added test file exclusions to prevent compilation in main assembly
 - `Src/LexText/LexTextExe/LexTextExe.csproj`
+  → Legacy stub updated in this commit; project has since been removed in favor of FieldWorks.exe
 
 **1 Build Target/Props Files Modified**
 
 - `Src/LexText/LexTextExe/BuildInclude.targets`
+  → Historical include removed once FieldWorks.exe became the single launcher
 
 **1 Documentation Files Modified**
 
@@ -2246,6 +2248,7 @@ Co-authored-by: johnml1135 <13733556+johnml1135@users.noreply.github.com>
 
 - `Src/Common/FieldWorks/FieldWorks.csproj`
 - `Src/LexText/LexTextExe/LexTextExe.csproj`
+  → Legacy stub updated here; project subsequently deleted after FieldWorks.exe absorbed the LexText launcher
 
 **1 Documentation Files Modified**
 
@@ -2375,6 +2378,7 @@ Co-authored-by: johnml1135 <13733556+johnml1135@users.noreply.github.com>
 - `Build/RegFree.targets`
 - `Src/Common/FieldWorks/BuildInclude.targets`
 - `Src/LexText/LexTextExe/BuildInclude.targets`
+  → Legacy include removed after FieldWorks.exe became the unified launcher
 
 **4 Documentation Files Modified**
 
@@ -2408,6 +2412,7 @@ Co-authored-by: johnml1135 <13733556+johnml1135@users.noreply.github.com>
 **2 Project Files Modified**
 
 - `Src/LexText/LexTextExe/LexTextExe.csproj`
+  → Legacy stub project updated here but later deleted after consolidation
 - `Src/LexText/Morphology/MorphologyEditorDll.csproj`
   → Added test file exclusions to prevent compilation in main assembly
 
@@ -2497,7 +2502,7 @@ Co-authored-by: johnml1135 <13733556+johnml1135@users.noreply.github.com>
 - `Src/LexText/Interlinear/COPILOT.md`
 - `Src/LexText/LexTextControls/COPILOT.md`
 - `Src/LexText/LexTextDll/COPILOT.md`
-- `Src/LexText/LexTextExe/COPILOT.md`
+- (Removed) `Src/LexText/LexTextExe/COPILOT.md`
 - `Src/LexText/Lexicon/COPILOT.md`
 - `Src/LexText/Morphology/COPILOT.md`
 
@@ -2723,7 +2728,7 @@ Co-authored-by: johnml1135 <13733556+johnml1135@users.noreply.github.com>
 - `Src/LexText/Interlinear/COPILOT.md`
 - `Src/LexText/LexTextControls/COPILOT.md`
 - `Src/LexText/LexTextDll/COPILOT.md`
-- `Src/LexText/LexTextExe/COPILOT.md`
+- (Removed) `Src/LexText/LexTextExe/COPILOT.md`
 - `Src/LexText/Lexicon/COPILOT.md`
 - `Src/LexText/Morphology/COPILOT.md`
 - `Src/LexText/ParserCore/COPILOT.md`

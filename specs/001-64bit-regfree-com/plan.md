@@ -5,7 +5,7 @@
 
 ## Summary
 
-Migrate FieldWorks to 64‑bit only and enable registration‑free COM activation. Phase 1 limits scope to core apps (FieldWorks.exe, LexText.exe). Technical approach: enforce x64 for host processes (managed and native), extend the existing RegFree build task to generate per‑EXE registration‑free manifests, verify native COM DLL co-location, and run COM‑activating tests under a shared manifest-enabled host. CI builds x64 only and avoids any COM registration.
+Migrate FieldWorks to 64‑bit only and enable registration‑free COM activation. Phase 1 now focuses on the unified FieldWorks.exe launcher (the legacy LexText.exe stub was removed and its UI now lives inside FieldWorks.exe). Technical approach: enforce x64 for host processes (managed and native), extend the existing RegFree build task to generate per‑EXE registration‑free manifests, verify native COM DLL co-location, and run COM‑activating tests under a shared manifest-enabled host. CI builds x64 only and avoids any COM registration.
 
 ## Technical Context
 
@@ -63,9 +63,12 @@ Build/
 └── RegFree.targets               # Extend existing target to generate reg‑free manifests
 
 Src/
-├── Common/FieldWorks/FieldWorks.csproj         # Import RegFree.targets (planned)
-├── LexText/LexTextExe/LexTextExe.csproj        # Import RegFree.targets (planned)
+├── Common/FieldWorks/FieldWorks.csproj         # Imports RegFree.targets (current launcher)
 └── Common/ViewsInterfaces/                     # COM interop definitions (reference only)
+
+Legacy status: the former `Src/LexText/LexTextExe/` host has been decommissioned. All
+LexText UX now runs inside `FieldWorks.exe`, so reg-free manifest coverage funnels
+through that executable.
 
 FLExInstaller/                                  # Validate installer changes (no registration)
 ```

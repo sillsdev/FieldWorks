@@ -1,8 +1,8 @@
 # Convergence Path Analysis: Registration-Free COM Coverage
 
-**Priority**: ⚠️ **HIGH**  
-**Divergent Approach**: Incomplete COM manifest coverage across executables  
-**Current State**: Only FieldWorks.exe has complete manifest generation  
+**Priority**: ⚠️ **HIGH**
+**Divergent Approach**: Incomplete COM manifest coverage across executables
+**Current State**: Only FieldWorks.exe has complete manifest generation
 **Impact**: Other EXEs may fail on systems without COM registration, incomplete self-contained deployment
 
 ---
@@ -11,10 +11,10 @@
 
 ### Statistics
 ```
-Total EXE Projects: 8 identified
+Total EXE/EXE Projects: 10 identified
 - With RegFree manifest: 1 (FieldWorks.exe)
 - With test manifest: 1 (ComManifestTestHost.exe)
-- Unknown COM usage: 6 (needs audit)
+- Without manifests: 8 (user-facing + utility tools)
 - Confirmed no COM: 0 (needs verification)
 ```
 
@@ -22,8 +22,8 @@ Total EXE Projects: 8 identified
 The migration to registration-free COM (commits 44, 47, 90) successfully implemented manifest generation for FieldWorks.exe, but:
 
 - Other EXE projects haven't been audited for COM usage
-- LexTextExe likely uses COM but has no manifest
-- Utility EXEs (MigrateSqlDbs, FixFwData, etc.) may use COM
+- The former LexTextExe (Flex.exe) stub has been removed; FieldWorks.exe is now the sole launcher with a manifest
+- Utility EXEs (LCMBrowser, UnicodeCharEditor, MigrateSqlDbs, FixFwData, etc.) may use COM but have no manifests
 - Without manifests, these EXEs will fail on clean systems
 - Incomplete implementation of self-contained deployment goal
 
@@ -46,40 +46,52 @@ The RegFree COM implementation was done incrementally, starting with the most cr
    - Status: Manifest for testing purposes
    - COM Usage: Test scenarios only
 
-3. **LexTextExe.exe** ⚠️ NEEDS MANIFEST
-   - Location: `Src/LexText/LexTextExe/LexTextExe.csproj`
-   - Status: No manifest
-   - COM Usage: Likely (uses same components as FieldWorks)
-   - Priority: HIGH
+3. **LCMBrowser.exe** ⚠️ NEEDS MANIFEST
+  - Location: `Src/LCMBrowser/LCMBrowser.csproj`
+  - Status: No manifest
+  - COM Usage: Likely (browses LCModel data)
+  - Priority: HIGH
 
-4. **FxtExe.exe** ❓ UNKNOWN
-   - Location: `Src/FXT/FxtExe/FxtExe.csproj`
-   - Status: No manifest
-   - COM Usage: Unknown - needs audit
-   - Priority: MEDIUM
+4. **UnicodeCharEditor.exe** ⚠️ NEEDS MANIFEST
+  - Location: `Src/UnicodeCharEditor/UnicodeCharEditor.csproj`
+  - Status: No manifest
+  - COM Usage: Likely (shares infrastructure with FieldWorks)
+  - Priority: HIGH
 
 5. **MigrateSqlDbs.exe** ❓ LIKELY USES COM
-   - Location: `Src/MigrateSqlDbs/MigrateSqlDbs.csproj`
-   - Status: No manifest
-   - COM Usage: Likely (database operations may use COM)
-   - Priority: MEDIUM
+  - Location: `Src/MigrateSqlDbs/MigrateSqlDbs.csproj`
+  - Status: No manifest
+  - COM Usage: Likely (database operations may use COM)
+  - Priority: MEDIUM
 
 6. **FixFwData.exe** ❓ LIKELY USES COM
-   - Location: `Src/Utilities/FixFwData/FixFwData.csproj`
-   - Status: No manifest
-   - COM Usage: Likely (FLEx data manipulation)
-   - Priority: MEDIUM
+  - Location: `Src/Utilities/FixFwData/FixFwData.csproj`
+  - Status: No manifest
+  - COM Usage: Likely (FLEx data manipulation)
+  - Priority: MEDIUM
 
-7. **ConvertSFM.exe** ❓ UNLIKELY
-   - Location: `Src/Utilities/SfmToXml/ConvertSFM/ConvertSFM.csproj`
-   - Status: No manifest
-   - COM Usage: Unlikely (file conversion utility)
-   - Priority: LOW
+7. **FxtExe.exe** ❓ UNKNOWN
+  - Location: `Src/FXT/FxtExe/FxtExe.csproj`
+  - Status: No manifest
+  - COM Usage: Unknown - needs audit
+  - Priority: MEDIUM
 
-8. **SfmStats.exe** ❓ UNLIKELY
-   - Location: `Src/Utilities/SfmStats/SfmStats.csproj`
-   - Status: No manifest
-   - COM Usage: Unlikely (statistics utility)
+8. **ConvertSFM.exe** ❓ UNLIKELY
+  - Location: `Src/Utilities/SfmToXml/ConvertSFM/ConvertSFM.csproj`
+  - Status: No manifest
+  - COM Usage: Unlikely (file conversion utility)
+  - Priority: LOW
+
+9. **SfmStats.exe** ❓ UNLIKELY
+  - Location: `Src/Utilities/SfmStats/SfmStats.csproj`
+  - Status: No manifest
+  - COM Usage: Unlikely (statistics utility)
+  - Priority: LOW
+
+10. **Converter.exe / ConverterConsole.exe** ❓ UNKNOWN
+   - Location: `Lib/src/Converter/Converter/Converter.csproj` & `Lib/src/Converter/ConvertConsole/ConverterConsole.csproj`
+   - Status: No manifests
+   - COM Usage: Unknown (depends on Views/FwKernel usage)
    - Priority: LOW
 
 ---
@@ -118,13 +130,14 @@ The RegFree COM implementation was done incrementally, starting with the most cr
 **Philosophy**: Add manifests only to high-priority EXEs
 
 **Strategy**:
-1. Audit only LexTextExe (known to be critical)
-2. Add manifest to LexTextExe
+1. Audit the remaining user-facing tools first (LCMBrowser, UnicodeCharEditor)
+2. Add manifests to those EXEs
 3. Document other EXEs as "deferred" with rationale
-4. Plan follow-up work for remaining EXEs
+4. Plan follow-up work for the utilities (MigrateSqlDbs, FixFwData, FxtExe, etc.)
 
 **Tier 1 (Must Have)**:
-- LexTextExe.exe
+- LCMBrowser.exe
+- UnicodeCharEditor.exe
 
 **Tier 2 (Should Have)**:
 - MigrateSqlDbs.exe
@@ -132,6 +145,7 @@ The RegFree COM implementation was done incrementally, starting with the most cr
 
 **Tier 3 (Nice to Have)**:
 - FxtExe.exe
+- ConverterConsole.exe
 
 **Tier 4 (Probably Don't Need)**:
 - ConvertSFM.exe
@@ -188,57 +202,72 @@ The RegFree COM implementation was done incrementally, starting with the most cr
 4. **Low Risk**: Pattern is proven, just needs replication
 
 **Priority Order**:
-1. **LexTextExe** (HIGH) - Critical, likely uses COM
-2. **MigrateSqlDbs** (MEDIUM) - Database utility, likely uses COM
-3. **FixFwData** (MEDIUM) - Data manipulation, likely uses COM
-4. **FxtExe** (MEDIUM) - Unknown, needs audit
-5. **ConvertSFM** (LOW) - File utility, unlikely needs COM
-6. **SfmStats** (LOW) - Statistics, unlikely needs COM
+1. **LCMBrowser** (HIGH) - UI browser for LCModel data, user-facing
+2. **UnicodeCharEditor** (HIGH) - User-facing tool that shares FieldWorks infrastructure
+3. **MigrateSqlDbs** (MEDIUM) - Database utility, likely uses COM
+4. **FixFwData** (MEDIUM) - Data manipulation, likely uses COM
+5. **FxtExe** (MEDIUM) - Unknown, needs audit
+6. **ConverterConsole/Converter** (LOW) - File conversion utilities, likely minimal COM
+7. **ConvertSFM** (LOW) - File utility, unlikely needs COM
+8. **SfmStats** (LOW) - Statistics, unlikely needs COM
 
 ---
 
 ## Implementation Checklist
 
 ### Phase 1: COM Usage Audit (2-3 hours)
-- [ ] **Task 1.1**: Audit LexTextExe for COM usage
+- [ ] **Task 1.1**: Audit LCMBrowser for COM usage
   ```bash
-  cd Src/LexText/LexTextExe
-  grep -r "DllImport.*ole32\|ComImport\|CoClass\|IDispatch\|RCW" *.cs
-  grep -r "using.*Interop\|using.*Runtime.InteropServices" *.cs
+  cd Src/LCMBrowser
+  grep -r "DllImport.*ole32\|ComImport\|CoClass\|IDispatch" *.cs
   ```
-  Expected: **USES COM** (same components as FieldWorks.exe)
-  
-- [ ] **Task 1.2**: Audit MigrateSqlDbs for COM usage
+  Expected: **USES COM** (navigates LCModel data)
+
+- [ ] **Task 1.2**: Audit UnicodeCharEditor for COM usage
+  ```bash
+  cd Src/UnicodeCharEditor
+  grep -r "DllImport.*ole32\|ComImport\|CoClass\|IDispatch" *.cs
+  ```
+  Expected: **LIKELY** (shares FieldWorks infrastructure)
+
+- [ ] **Task 1.3**: Audit MigrateSqlDbs for COM usage
   ```bash
   cd Src/MigrateSqlDbs
   grep -r "DllImport.*ole32\|ComImport\|CoClass" *.cs
   grep -r "FwKernel\|Views\|LgIcu" *.cs
   ```
   Expected: **MAY USE COM** (depends on FW components used)
-  
-- [ ] **Task 1.3**: Audit FixFwData for COM usage
+
+- [ ] **Task 1.4**: Audit FixFwData for COM usage
   ```bash
   cd Src/Utilities/FixFwData
   grep -r "DllImport.*ole32\|ComImport\|CoClass" *.cs
   grep -r "FwKernel\|Views\|LgIcu" *.cs
   ```
   Expected: **MAY USE COM** (data manipulation likely uses COM)
-  
-- [ ] **Task 1.4**: Audit FxtExe for COM usage
+
+- [ ] **Task 1.5**: Audit FxtExe for COM usage
   ```bash
   cd Src/FXT/FxtExe
   grep -r "DllImport.*ole32\|ComImport\|CoClass" *.cs
   ```
   Expected: **UNKNOWN** (needs manual review)
-  
-- [ ] **Task 1.5**: Audit ConvertSFM for COM usage
+
+- [ ] **Task 1.6**: Audit ConverterConsole/Converter for COM usage
+  ```bash
+  cd Lib/src/Converter
+  grep -r "DllImport.*ole32\|ComImport\|CoClass" *.cs
+  ```
+  Expected: **UNKNOWN** (depends on Views infrastructure)
+
+- [ ] **Task 1.7**: Audit ConvertSFM for COM usage
   ```bash
   cd Src/Utilities/SfmToXml/ConvertSFM
   grep -r "DllImport.*ole32\|ComImport\|CoClass" *.cs
   ```
   Expected: **UNLIKELY** (file conversion utility)
-  
-- [ ] **Task 1.6**: Audit SfmStats for COM usage
+
+- [ ] **Task 1.8**: Audit SfmStats for COM usage
   ```bash
   cd Src/Utilities/SfmStats
   grep -r "DllImport.*ole32\|ComImport\|CoClass" *.cs
@@ -266,20 +295,20 @@ For each EXE identified as using COM in Phase 1:
     <Import Project="..\..\Build\RegFree.targets" />
   </Project>
   ```
-  
+
 - [ ] **Task 2.2**: Import BuildInclude.targets in .csproj
   ```xml
   <!-- Add near end of <Project> element -->
   <Import Project="BuildInclude.targets" />
   ```
-  
+
 - [ ] **Task 2.3**: Set EnableRegFreeCom property
   ```xml
   <PropertyGroup>
     <EnableRegFreeCom>true</EnableRegFreeCom>
   </PropertyGroup>
   ```
-  
+
 - [ ] **Task 2.4**: Build and verify manifest generated
   ```powershell
   msbuild <Project>.csproj /p:Configuration=Debug /p:Platform=x64
@@ -288,9 +317,16 @@ For each EXE identified as using COM in Phase 1:
 
 **Per-EXE Checklist**:
 
-#### LexTextExe.exe
-- [ ] Add `Src/LexText/LexTextExe/BuildInclude.targets`
-- [ ] Update `LexTextExe.csproj` to import BuildInclude.targets
+#### LCMBrowser.exe (if uses COM)
+- [ ] Add `Src/LCMBrowser/BuildInclude.targets`
+- [ ] Update `LCMBrowser.csproj` to import BuildInclude.targets
+- [ ] Set `<EnableRegFreeCom>true</EnableRegFreeCom>`
+- [ ] Build and verify manifest generated
+- [ ] Test on clean VM
+
+#### UnicodeCharEditor.exe (if uses COM)
+- [ ] Add `Src/UnicodeCharEditor/BuildInclude.targets`
+- [ ] Update `UnicodeCharEditor.csproj` to import BuildInclude.targets
 - [ ] Set `<EnableRegFreeCom>true</EnableRegFreeCom>`
 - [ ] Build and verify manifest generated
 - [ ] Test on clean VM
@@ -316,6 +352,13 @@ For each EXE identified as using COM in Phase 1:
 - [ ] Build and verify manifest generated
 - [ ] Test on clean VM
 
+#### ConverterConsole/Converter.exe (if uses COM)
+- [ ] Add `Lib/src/Converter/BuildInclude.targets`
+- [ ] Update `ConverterConsole.csproj` / `Converter.csproj` to import BuildInclude.targets
+- [ ] Set `<EnableRegFreeCom>true</EnableRegFreeCom>`
+- [ ] Build and verify manifest generated
+- [ ] Test on clean VM
+
 **Recommended Tool**: Create manifest implementation script
 ```python
 # add_regfree_manifest.py
@@ -334,17 +377,17 @@ For each EXE identified as using COM in Phase 1:
     ```
   - [ ] Verify COM classes present
   - [ ] Verify dependency assemblies listed
-  
+
 - [ ] **Task 3.2**: Test on clean VM (no COM registration)
   - [ ] Set up Windows VM without FieldWorks installed
   - [ ] Copy EXE + manifest + dependencies
   - [ ] Run EXE, verify no `REGDB_E_CLASSNOTREG` errors
   - [ ] Test basic functionality
-  
+
 - [ ] **Task 3.3**: Test on dev machine (with COM registration)
   - [ ] Verify EXE still works (backward compatibility)
   - [ ] Manifest should take precedence over registry
-  
+
 - [ ] **Task 3.4**: Installer integration
   - [ ] Verify manifests included in installer
   - [ ] Test installation on clean VM
@@ -365,39 +408,41 @@ For each EXE identified as using COM in Phase 1:
   - Add completion status for RegFree COM coverage
   - List all EXEs with manifests
   - Document EXEs that don't need manifests and why
-  
+
 - [ ] **Task 4.2**: Update Docs/64bit-regfree-migration.md
   - Mark COM manifest generation as complete
   - Add testing procedures
   - Add troubleshooting section
-  
+
 - [ ] **Task 4.3**: Create COM usage reference document
   ```markdown
   # COM Usage by EXE
-  
-  | EXE | Uses COM | Manifest | COM Components Used |
-  |-----|----------|----------|---------------------|
-  | FieldWorks.exe | Yes | ✅ | FwKernel, Views, ... |
-  | LexTextExe.exe | Yes | ✅ | FwKernel, Views, ... |
-  | MigrateSqlDbs.exe | Yes | ✅ | FwKernel, ... |
-  | FxtExe.exe | No | ❌ | None |
-  | ConvertSFM.exe | No | ❌ | None |
+
+  | EXE                   | Uses COM | Manifest | COM Components Used  |
+  | --------------------- | -------- | -------- | -------------------- |
+  | FieldWorks.exe        | Yes      | ✅        | FwKernel, Views, ... |
+  | LCMBrowser.exe        | TBD      | ❌        | TBA                  |
+  | UnicodeCharEditor.exe | TBD      | ❌        | TBA                  |
+  | MigrateSqlDbs.exe     | TBD      | ❌        | TBA                  |
+  | FixFwData.exe         | TBD      | ❌        | TBA                  |
+  | FxtExe.exe            | TBD      | ❌        | TBA                  |
+  | ConvertSFM.exe        | TBD      | ❌        | TBA                  |
   ```
 
 ### Phase 5: Installer Updates (1 hour)
 - [ ] **Task 5.1**: Update FLExInstaller to include new manifests
   ```xml
   <!-- FLExInstaller/CustomComponents.wxi -->
-  <Component Id="LexTextExeManifest" Guid="...">
-    <File Source="$(var.OutputPath)\LexTextExe.exe.manifest" />
+  <Component Id="LCMBrowserManifest" Guid="...">
+    <File Source="$(var.OutputPath)\LCMBrowser.exe.manifest" />
   </Component>
   ```
-  
+
 - [ ] **Task 5.2**: Build base installer
   ```powershell
   msbuild Build/Orchestrator.proj /t:BuildBaseInstaller /p:config=release
   ```
-  
+
 - [ ] **Task 5.3**: Test installer on clean VM
   - Install FieldWorks
   - Verify all manifests present in install directory
@@ -414,7 +459,7 @@ For each EXE identified as using COM in Phase 1:
 
 **Inputs**: None (scans repository)
 
-**Outputs**: 
+**Outputs**:
 - `com_usage_report.csv` with columns: EXE, Path, UsesCOM, Evidence, Priority
 - `com_usage_detailed.txt` with grep output for each EXE
 
@@ -432,11 +477,11 @@ def detect_com_usage(project_dir):
         'FwKernel_Reference': 0,
         'Views_Reference': 0
     }
-    
+
     for cs_file in glob.glob(f"{project_dir}/**/*.cs", recursive=True):
         with open(cs_file, 'r') as f:
             content = f.read()
-            
+
         if 'DllImport' in content and 'ole32' in content:
             indicators['DllImport_Ole32'] += 1
         if '[ComImport]' in content or '[ComImport(' in content:
@@ -453,7 +498,7 @@ def detect_com_usage(project_dir):
             indicators['FwKernel_Reference'] += 1
         if 'Views.' in content or 'using Views' in content:
             indicators['Views_Reference'] += 1
-    
+
     # Determine if COM is used
     uses_com = (
         indicators['DllImport_Ole32'] > 0 or
@@ -461,7 +506,7 @@ def detect_com_usage(project_dir):
         indicators['CoClass_Attribute'] > 0 or
         (indicators['FwKernel_Reference'] > 5 and indicators['Views_Reference'] > 5)
     )
-    
+
     return uses_com, indicators
 ```
 
@@ -488,7 +533,7 @@ python audit_com_usage.py
 def add_regfree_support(csproj_path):
     """Add RegFree COM support to project"""
     project_dir = os.path.dirname(csproj_path)
-    
+
     # 1. Create BuildInclude.targets
     build_include_path = os.path.join(project_dir, 'BuildInclude.targets')
     with open(build_include_path, 'w') as f:
@@ -498,11 +543,11 @@ def add_regfree_support(csproj_path):
   <Import Project="..\..\Build\RegFree.targets" />
 </Project>
 ''')
-    
+
     # 2. Update .csproj to import BuildInclude.targets
     with open(csproj_path, 'r') as f:
         content = f.read()
-    
+
     # Add EnableRegFreeCom property
     if '<EnableRegFreeCom>' not in content:
         # Find PropertyGroup to add to
@@ -511,17 +556,17 @@ def add_regfree_support(csproj_path):
             insert_pos = content.find('</PropertyGroup>', property_group_match.end())
             property_line = '    <EnableRegFreeCom>true</EnableRegFreeCom>\n  '
             content = content[:insert_pos] + property_line + content[insert_pos:]
-    
+
     # Add Import for BuildInclude.targets
     if '<Import Project="BuildInclude.targets"' not in content:
         # Add before closing </Project>
         insert_pos = content.rfind('</Project>')
         import_line = '\n  <Import Project="BuildInclude.targets" />\n'
         content = content[:insert_pos] + import_line + content[insert_pos:]
-    
+
     with open(csproj_path, 'w') as f:
         f.write(content)
-    
+
     print(f"✓ Added RegFree support to {os.path.basename(csproj_path)}")
 ```
 
@@ -550,14 +595,14 @@ python add_regfree_manifest.py com_usage_decisions.csv
 def validate_manifest(exe_path):
     """Validate that manifest exists and contains expected elements"""
     manifest_path = exe_path + '.manifest'
-    
+
     if not os.path.exists(manifest_path):
         return False, "Manifest file not found"
-    
+
     # Parse XML
     tree = ET.parse(manifest_path)
     root = tree.getroot()
-    
+
     # Check for required elements
     checks = {
         'has_assembly_identity': len(root.findall('.//{urn:schemas-microsoft-com:asm.v1}assemblyIdentity')) > 0,
@@ -565,7 +610,7 @@ def validate_manifest(exe_path):
         'has_com_classes': len(root.findall('.//{urn:schemas-microsoft-com:asm.v1}comClass')) > 0,
         'has_typelibs': len(root.findall('.//{urn:schemas-microsoft-com:asm.v1}typelib')) > 0
     }
-    
+
     if all(checks.values()):
         return True, "Manifest valid"
     else:
@@ -619,13 +664,13 @@ python validate_regfree_manifests.py Output/Debug/*.exe
 
 **Total Effort**: 6-8 hours over 2 days
 
-| Phase | Duration | Can Parallelize |
-|-------|----------|----------------|
-| Phase 1: COM Audit | 2-3 hours | Yes (per EXE) |
-| Phase 2: Implementation | 2-3 hours | Yes (per EXE) |
-| Phase 3: Testing | 2-3 hours | No (requires VM) |
-| Phase 4: Documentation | 1 hour | Yes (with Phase 3) |
-| Phase 5: Installer | 1 hour | No (after Phase 2) |
+| Phase                   | Duration  | Can Parallelize    |
+| ----------------------- | --------- | ------------------ |
+| Phase 1: COM Audit      | 2-3 hours | Yes (per EXE)      |
+| Phase 2: Implementation | 2-3 hours | Yes (per EXE)      |
+| Phase 3: Testing        | 2-3 hours | No (requires VM)   |
+| Phase 4: Documentation  | 1 hour    | Yes (with Phase 3) |
+| Phase 5: Installer      | 1 hour    | No (after Phase 2) |
 
 **Suggested Schedule**:
 - Day 1 Morning: Phase 1 (Audit)
@@ -642,6 +687,6 @@ python validate_regfree_manifests.py Output/Debug/*.exe
 
 ---
 
-*Document Version: 1.0*  
-*Last Updated: 2025-11-08*  
+*Document Version: 1.0*
+*Last Updated: 2025-11-08*
 *Status: Ready for Implementation*

@@ -378,10 +378,9 @@ run: ./build.ps1 -Configuration Debug -Platform x64
 **Divergence**: ⚠️ **INCONSISTENT INTEGRATION**
 
 Only some EXE projects import RegFree.targets:
-- ✅ FieldWorks.exe
+- ✅ FieldWorks.exe (now the sole LexText host)
 - ✅ ComManifestTestHost.exe
-- ❌ LexText.exe (not yet integrated)
-- ❌ Other utility EXEs
+- ❌ Other utility EXEs (e.g., LCMBrowser, UnicodeCharEditor)
 
 **Recommendation**:
 - Identify all EXE projects that use COM
@@ -569,13 +568,11 @@ Criteria for GenerateAssemblyInfo=true (default):
 
 ### 5. RegFree COM Manifest Coverage ⚠️ MEDIUM PRIORITY
 
-**Current State**: Only FieldWorks.exe has complete manifest generation
+**Current State**: FieldWorks.exe (the consolidated FLEx/LexText host) and ComManifestTestHost.exe have working manifests.
 
-**Issue**: Other EXEs using COM may fail without manifests
+**Issue**: The remaining stand-alone EXEs (LCMBrowser, UnicodeCharEditor, MigrateSqlDbs, FixFwData, etc.) still lack manifests and can fail on clean systems.
 
-**Recommendation**: Identify and add manifests to:
-- LexTextExe
-- All utility EXEs that use COM (check for COM imports in code)
+**Recommendation**: Follow `specs/003-convergence-regfree-com-coverage/spec.md` to audit and add manifests to the outstanding EXEs (Tier 1 and Tier 2 first, then lower-priority utilities).
 
 **Action**: Survey all EXE projects, add RegFree.targets import where needed
 

@@ -12,6 +12,8 @@
     <PlatformTarget>x64</PlatformTarget>
     <RuntimeIdentifier />
     <Prefer32Bit>false</Prefer32Bit>
+    <ApplicationIcon>Branding\LT.ico</ApplicationIcon>
+    <EnableRegFreeCom>true</EnableRegFreeCom>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -81,6 +83,12 @@
     <EmbeddedResource Update="Properties\Resources.resx" />
     <Compile Remove="FieldWorksTests/**" />
     <None Remove="FieldWorksTests/**" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Branding\LT.ico" />
+    <None Include="Branding\LT.png" />
+    <None Include="Branding\LT64.png" />
+    <None Include="Branding\LT128.png" />
   </ItemGroup>
   <Import Project="BuildInclude.targets" />
   <ItemGroup>

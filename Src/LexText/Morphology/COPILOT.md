@@ -81,7 +81,7 @@ C# library (net48, OutputType=Library) with morphology UI components. Slice/cont
 
 ### Downstream (consumed by)
 - **xWorks**: Main application shell (Grammar area, morphology tools)
-- **LexTextExe/**: FLEx application
+- **FieldWorks.exe**: FLEx application host
 
 ## Interop & Contracts
 - **IMoAffixAllomorph**: Affix allomorph object

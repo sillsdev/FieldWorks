@@ -17,6 +17,7 @@ FieldWorks has completed a comprehensive modernization effort migrating from leg
 - **111 projects** successfully building with new SDK format
 - **64-bit only** architecture enforcement (x86/Win32 removed)
 - **Registration-free COM** implementation
+- **Unified launcher**: FieldWorks.exe replaced the historical LexText.exe stub across build, installer, and documentation
 - **MSBuild Traversal SDK** for declarative builds
 - **Test framework modernization** (RhinoMocks → Moq, NUnit 3 → NUnit 4)
 - **140 legacy files** removed
@@ -150,7 +151,7 @@ All FieldWorks C# projects have been converted from legacy .NET Framework format
 - LexEdDll (Lexicon Editor)
 - MorphologyEditorDll, MGA
 - ITextDll (Interlinear)
-- LexTextDll, LexTextControls, LexTextExe
+- LexTextDll, LexTextControls
 - ParserCore, ParserUI, XAmpleManagedWrapper
 - Discourse
 - FlexPathwayPlugin
@@ -181,9 +182,8 @@ All FieldWorks C# projects have been converted from legacy .NET Framework format
 - FormLanguageSwitch
 - Converter, ConvertLib, ConverterConsole
 
-#### **8. Applications (3 projects)**
-- `Src/Common/FieldWorks/FieldWorks.csproj` - Main application
-- `Src/LexText/LexTextExe/LexTextExe.csproj` - LexText standalone
+#### **8. Applications (2 projects)**
+- `Src/Common/FieldWorks/FieldWorks.csproj` - Main application (hosts the LexText UI)
 - `Src/FXT/FxtExe/FxtExe.csproj` - FLEx Text processor
 
 #### **9. Test Projects (46 projects)**
@@ -1718,9 +1718,8 @@ Project categories:
 **Consistency Issue**: ⚠️ **INCOMPLETE COVERAGE**
 
 Current state:
-- ✅ FieldWorks.exe - Full manifest, tested, working
+- ✅ FieldWorks.exe - Full manifest, tested, working (now the only FLEx launcher)
 - ✅ ComManifestTestHost.exe - Test host with manifest
-- ⚠️ LexTextExe - Uses COM, NO MANIFEST YET
 - ⚠️ Utility EXEs - Unknown COM usage, not surveyed
 
 **Action Required**: COM Usage Audit
@@ -1732,8 +1731,7 @@ Current state:
 
 2. Identify EXEs using COM
    - FieldWorks.exe ✅ Done
-   - LexTextExe.exe ⚠️ Needs manifest
-   - Check: FxtExe, MigrateSqlDbs, FixFwData, etc.
+   - Check: FxtExe, MigrateSqlDbs, FixFwData, LCMBrowser, UnicodeCharEditor, etc.
 
 3. Add RegFree.targets import to identified EXEs
 
@@ -1962,7 +1960,7 @@ Analysis reveals **5 areas** where approaches diverged during the migration. The
 **Current State**: Only FieldWorks.exe has complete manifest
 
 **Issues**:
-- LexTextExe and other EXEs may use COM
+- Utility EXEs beyond FieldWorks may use COM
 - Without manifests, they'll fail on clean systems
 - Incomplete migration to registration-free
 
@@ -1981,7 +1979,6 @@ grep -l "DllImport.*ole32\|ComImport\|CoClass" <EXE_PROJECT_FILES>
 
 **Known EXEs to Check**:
 - ✅ FieldWorks.exe - Done
-- ⚠️ LexTextExe - Likely needs manifest
 - ⚠️ FxtExe - Unknown
 - ⚠️ MigrateSqlDbs - Likely uses COM
 - ⚠️ FixFwData - Likely uses COM
@@ -2255,13 +2252,14 @@ grep -l "DllImport.*ole32\|ComImport\|CoClass\|IDispatch" <EACH_EXE_SOURCE>
 
 **Projects to Check**:
 - [ ] FieldWorks.exe (✅ Done)
-- [ ] LexTextExe
 - [ ] FxtExe
 - [ ] MigrateSqlDbs
 - [ ] FixFwData
 - [ ] ConvertSFM
 - [ ] SfmStats
 - [ ] ProjectUnpacker
+- [ ] LCMBrowser
+- [ ] UnicodeCharEditor
 
 **Acceptance Criteria**:
 - [ ] All COM-using EXEs identified
@@ -2638,7 +2636,7 @@ Migration is merge-ready when:
    - Eliminate remaining COM registration needs
 
 2. **Additional Executable Manifests**
-   - Generate manifests for LexTextExe
+   - Keep FieldWorks.exe manifest generation validated
    - Generate manifests for utility tools
    - Extend reg-free COM coverage
 

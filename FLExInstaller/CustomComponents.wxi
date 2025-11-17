@@ -54,7 +54,7 @@
 				<Shortcut Id="ApplicationStartSubmenuShortcut"
 					Name="$(var.ApplicationName)"
 					Description="$(var.ApplicationName) $(var.MajorVersion)"
-					Target="[APPFOLDER]Flex.exe"
+					Target="[APPFOLDER]FieldWorks.exe"
 					WorkingDirectory="APPFOLDER"
 					Icon="Application_Icon.ico"/>
 				<Shortcut Id="HelpsShortcut"
@@ -129,6 +129,7 @@
 			<File Id="FieldWorks.exe.manifest" Name="FieldWorks.exe.manifest" Source="!(wix.RootObjectsDir)\FieldWorks.exe.manifest" ReadOnly="yes" Checksum="yes" />
 			<File Id="FwKernel.X.manifest" Name="FwKernel.X.manifest" Source="!(wix.RootObjectsDir)\FwKernel.X.manifest" ReadOnly="yes" Checksum="yes" />
 			<File Id="Views.X.manifest" Name="Views.X.manifest" Source="!(wix.RootObjectsDir)\Views.X.manifest" ReadOnly="yes" Checksum="yes" />
+			<RemoveFile Id="RemoveFlexExe" Name="Flex.exe" On="both" />
 			<ProgId Id="FwBackupFile" Icon="FieldWorks.exe" Description="FieldWorks Backup">
 				<Extension Id="fwbackup" >
 					<Verb Id="open" Command="&amp;Restore" Argument="&quot;%1&quot;" TargetFile="FieldWorks.exe" />

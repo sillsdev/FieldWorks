@@ -105,7 +105,6 @@
     <ProjectReference Include="Src\LexText\Interlinear\ITextDll.csproj" />
     <ProjectReference Include="Src\LexText\Discourse\Discourse.csproj" />
     <ProjectReference Include="Src\LexText\LexTextDll\LexTextDll.csproj" />
-    <ProjectReference Include="Src\LexText\LexTextExe\LexTextExe.csproj" />
   </ItemGroup>
 
   <ItemGroup Label="Phase 12: xWorks and Top-Level Applications">

@@ -19,19 +19,19 @@ This task list is organized by user story. Each task is specific and immediately
 
 - [x] T007 Verify and, if needed, adjust reg-free build target defaults (Platform, fragments) in `Build/RegFree.targets`
 - [x] T008 Ensure FieldWorks EXE triggers reg-free generation by including project BuildInclude if required in `Src/Common/FieldWorks/BuildInclude.targets`
-- [x] T009 Create BuildInclude for LexText EXE mirroring FieldWorks (imports `../../../Build/RegFree.targets`, AfterBuild depends on RegFree) in `Src/LexText/LexTextExe/BuildInclude.targets`
-- [x] T010 Wire LexText EXE to use its BuildInclude (as needed per project import conventions) in `Src/LexText/LexTextExe/LexTextExe.csproj`
+- [x] T009 (Legacy) Ensure the former LexText host mirrored FieldWorks by importing `../../../Build/RegFree.targets` with matching AfterBuild wiring (path `Src/LexText/LexTextExe/BuildInclude.targets`, now removed)
+- [x] T010 (Legacy) Confirm the retired LexText host referenced its BuildInclude so manifest generation matched FieldWorks (project `Src/LexText/LexTextExe/LexTextExe.csproj`, now deleted)
 
 ## Phase 3 — User Story 1 (P1): Build and run without COM registration
 
-Goal: Developers can build and run FieldWorks/LexText on a clean machine without administrator privileges; COM activates via manifests.
+Goal: Developers can build and run FieldWorks (which now hosts the full LexText UI) on a clean machine without administrator privileges; COM activates via manifests.
 
 Independent Test: Build Debug|x64; launch core EXEs on a clean VM with no COM registrations; expect zero class-not-registered errors.
 
 - [x] T011 [P] [US1] Remove x86 PropertyGroups from FieldWorks project in `Src/Common/FieldWorks/FieldWorks.csproj`
-- [x] T012 [P] [US1] Remove x86 PropertyGroups from LexText project in `Src/LexText/LexTextExe/LexTextExe.csproj`
+- [x] T012 [P] [US1] Remove x86 PropertyGroups from the legacy LexText project (`Src/LexText/LexTextExe/LexTextExe.csproj`, eliminated after FieldWorks consolidation)
 - [x] T013 [P] [US1] Ensure FieldWorks manifest generation produces `<file>/<comClass>/<typelib>` entries (broad DLL include or dependent manifests) in `Build/RegFree.targets`
-- [x] T014 [P] [US1] Ensure LexText manifest generation produces `<file>/<comClass>/<typelib>` entries in `Build/RegFree.targets`
+- [x] T014 [P] [US1] Ensure the legacy LexText manifest path produced `<file>/<comClass>/<typelib>` entries in `Build/RegFree.targets` before consolidation under FieldWorks.exe
 - [x] T015 [US1] Run local smoke: build x64 and launch FieldWorks; capture and attach manifest in `Output/Debug/FieldWorks.exe.manifest`
 
 ## Phase 4 — User Story 2 (P2): Ship and run as 64‑bit only
@@ -90,7 +90,7 @@ Independent Test: CI logs show `/p:Platform=x64`; no `regsvr32` invocations; EXE
 
 ## Implementation strategy (MVP first)
 
-MVP is US1: enable reg-free COM and x64-only for FieldWorks.exe and LexText.exe on dev machines. Defer installer (US2) and CI validation (US3) until US1 is fully green.
+MVP is US1: enable reg-free COM and x64-only for FieldWorks.exe (the unified launcher) on dev machines. Defer installer (US2) and CI validation (US3) until US1 is fully green.
 
 ---
 

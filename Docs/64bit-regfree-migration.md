@@ -23,7 +23,7 @@ Non-goals (for this phase)
 
 Plan overview
 A) Enforce64-bit everywhere (managed + native + solution/CI)
-B) Produce and ship registration-free COM manifests for every EXE that activates COM (FieldWorks.exe, LexText.exe, tools/tests that create COM objects)
+B) Produce and ship registration-free COM manifests for every EXE that activates COM (FieldWorks.exe plus any auxiliary tools/tests that create COM objects; the LexText.exe stub was removed and now runs inside FieldWorks.exe)
 C) Remove registration steps from dev build/run and tests; keep `RegFree` manifest generation as the only COM-related build step.
 
 Details
@@ -87,7 +87,7 @@ B) Registration‑free COM (no regsvr32)
  </Target>
  </Project>
  ```
-- Import this target in each EXE csproj that activates COM (e.g., `Src/Common/FieldWorks/FieldWorks.csproj`, `Src/LexText/LexTextExe/LexTextExe.csproj`, tools/test exes). For tests producing executables, include the same target so they also run reg-free.
+- Import this target in each EXE csproj that activates COM (e.g., `Src/Common/FieldWorks/FieldWorks.csproj` and any remaining tooling/test executables). For tests producing executables, include the same target so they also run reg-free.
 
 3) Packaging/runtime layout
 - Keep native COM DLLs in the same directory as the EXE (or reference with `codebase` in the manifest). The `RegFree` task writes `<file name="...">` entries assuming same-dir layout.
@@ -118,8 +118,8 @@ Risks/mitigations
 
 Work items checklist
 1) Update `Directory.Build.props`, solution platforms, and all csproj/vcxproj to remove Win32/AnyCPU host configurations and default to x64.
-2) Extend `Build/RegFree.targets` and wire the RegFree task into FieldWorks.exe, LexText.exe, and supporting hosts.
-3) Add `@(NativeComDlls)` item patterns and validate manifest output (FieldWorks.exe/FLEx.exe manifest spot-checks).
+2) Extend `Build/RegFree.targets` and wire the RegFree task into FieldWorks.exe (the unified launcher) and every remaining COM-activating host (e.g., LCMBrowser.exe, UnicodeCharEditor.exe, test harnesses).
+3) Add `@(NativeComDlls)` item patterns and validate manifest output (FieldWorks.exe manifest spot-checks).
 4) Remove any regsvr32/DllRegisterServer build steps from build scripts and targets.
 5) Update CI to build x64 only; upload manifests and run smoke checks on a clean VM.
 6) Verify build drops and installer payloads keep native COM DLLs beside their EXEs (or referenced via `codebase`).

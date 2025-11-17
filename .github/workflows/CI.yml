@@ -92,7 +92,6 @@ jobs:
                   name: regfree-manifests
                   path: |
                       Output/Debug/FieldWorks.exe.manifest
-                      Output/Debug/Flex.exe.manifest
                   if-no-files-found: warn
 
             # Smoke test: Verify registration-free COM activation (no registry writes)

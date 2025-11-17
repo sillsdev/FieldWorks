@@ -36,3 +36,5 @@ to ensure instruction files follow conventions.
 **MSBuild Traversal SDK**: FieldWorks now uses Microsoft.Build.Traversal SDK with declarative dependency ordering across 110+ projects organized into 21 build phases. This provides automatic parallel builds, better incremental builds, and clearer dependency management.
 
 **64-bit only + Registration-free COM**: FieldWorks now builds and runs as x64-only with registration-free COM activation. No administrator privileges or COM registration required. See [Docs/64bit-regfree-migration.md](Docs/64bit-regfree-migration.md) for details.
+
+**Unified launcher**: FieldWorks.exe is now the single supported executable. The historical `Flex.exe` stub (LexTextExe) has been removed; shortcuts and scripts should invoke `FieldWorks.exe` directly.

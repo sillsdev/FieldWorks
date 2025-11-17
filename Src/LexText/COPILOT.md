@@ -19,7 +19,7 @@ This is an organizational parent folder. Key components are in the subfolders:
 - **Interlinear/**: Interlinear text analysis (ITextDll.csproj)
 - **LexTextControls/**: Shared UI controls (LexTextControls.csproj)
 - **LexTextDll/**: Core business logic (LexTextDll.csproj)
-- **LexTextExe/**: Application entry point (LexTextExe.csproj)
+- **FieldWorks/Common**: Provides the FieldWorks.exe host that now launches the LexText UI (LexTextExe stub removed in 2025)
 - **Lexicon/**: Lexicon editor UI (LexEdDll.csproj)
 - **Morphology/**: Morphological analysis (MorphologyEditorDll.csproj, MGA.csproj)
 - **ParserCore/**: Parser engine (ParserCore.csproj, XAmpleCOMWrapper.vcxproj)
@@ -51,7 +51,7 @@ This folder is organizational only. Interop contracts exist in subfolders:
 No direct threading code at this organizational level. Threading considerations are documented in individual subfolder COPILOT.md files, particularly:
 - **Interlinear/**: UI controls requiring main thread affinity
 - **ParserCore/**: Parser engine threading model
-- **LexTextExe/**: Application-level threading concerns
+- **FieldWorks/Common**: Application-level threading concerns now live in the FieldWorks host
 
 ## Config & Feature Flags
 Configuration is managed at the subfolder level. No centralized config at this organizational level. See individual subfolder COPILOT.md files for component-specific configurations.
@@ -71,7 +71,7 @@ No interfaces or data models at this organizational level. Each subfolder define
 
 ## Entry Points
 No direct entry points at this organizational level. Main entry points are:
-- **LexTextExe/**: Application executable for FLEx lexicon/text features
+- **FieldWorks.exe**: Hosts the LexText UI after the LexTextExe stub was removed
 - **LexTextDll/**: Core library consumed by xWorks main application
 - See individual subfolder COPILOT.md files for component-specific entry points
 
@@ -111,7 +111,7 @@ See individual subfolder COPILOT.md files:
 - Interlinear/COPILOT.md
 - LexTextControls/COPILOT.md
 - LexTextDll/COPILOT.md
-- LexTextExe/COPILOT.md
+- Common/FieldWorks/COPILOT.md (FieldWorks.exe host)
 - Lexicon/COPILOT.md
 - Morphology/COPILOT.md
 - ParserCore/COPILOT.md
@@ -129,7 +129,6 @@ See individual subfolder COPILOT.md files:
   - Src/LexText/LexTextControls/LexTextControlsTests/LexTextControlsTests.csproj
   - Src/LexText/LexTextDll/LexTextDll.csproj
   - Src/LexText/LexTextDll/LexTextDllTests/LexTextDllTests.csproj
-  - Src/LexText/LexTextExe/LexTextExe.csproj
   - Src/LexText/Lexicon/LexEdDll.csproj
   - Src/LexText/Lexicon/LexEdDllTests/LexEdDllTests.csproj
   - Src/LexText/Morphology/MGA/MGA.csproj
@@ -212,7 +211,7 @@ See individual subfolder COPILOT.md files:
 - **Interlinear/**: Interlinear text analysis and glossing (COPILOT.md)
 - **LexTextControls/**: Shared UI controls for lexicon/text features (COPILOT.md)
 - **LexTextDll/**: Core lexicon/text business logic library (COPILOT.md)
-- **LexTextExe/**: FLEx application entry point (COPILOT.md)
+- **FieldWorks/Common**: FieldWorks.exe host (COPILOT.md)
 - **Lexicon/**: Lexicon editing and management UI (COPILOT.md)
 - **Morphology/**: Morphological analysis tools (COPILOT.md)
 - **ParserCore/**: Parser engine core logic (COPILOT.md)

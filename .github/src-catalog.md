@@ -148,8 +148,8 @@ Shared lexicon UI dialog/control library (import wizards, search, configuration,
 ### LexText/LexTextDll
 Thin coordination layer that hosts the LexTextApp, area listeners, help providers, and resources bridging the generic xWorks shell with lexicon/text features.
 
-### LexText/LexTextExe
-Minimal FLEx executable that calls into shared FieldWorks startup helpers; all functional logic lives in LexTextDll and xWorks.
+### LexText/LexTextExe (removed)
+Legacy FLEx executable stub that only forwarded to FieldWorks startup helpers. The launcher was removed in 2025 so FieldWorks.exe now hosts the LexText UI directly.
 
 ### LexText/Lexicon
 Lexicon-editing slices, launchers, menu handlers, FLExBridge hooks, and supporting dialogs that deliver the primary dictionary editing experience.

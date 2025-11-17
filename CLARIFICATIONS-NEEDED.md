@@ -17,9 +17,11 @@ This document consolidates all "NEEDS CLARIFICATION" items from the 5 convergenc
 **Question**: What is the complete list of FieldWorks executables (EXEs) that need COM registration-free manifests?
 
 **Known**:
-- FieldWorks.exe (already has manifest from spec 001)
-- LexTextExe.exe (produces flex) (likely needs manifest)
-- One is the bootstrapper for the other.  We want to collapse the two down into 1.  We need to analyze.
+- FieldWorks.exe (already has manifest from spec 001 and is now the sole supported launcher)
+- LCMBrowser.exe
+- UnicodeCharEditor.exe
+- FXT.exe (FLEx Text processor)
+- Test host executables (e.g., TestViews.exe, TestGeneric.exe) that still exercise COM but are slated for retirement
 
 **Need to identify**:
 - Te.exe (translation editor - does this exist?) - NO, this is dead.
@@ -82,7 +84,7 @@ This document consolidates all "NEEDS CLARIFICATION" items from the 5 convergenc
 **Question**: Should we create per-EXE manifest files or a single shared manifest?
 
 **Options**:
-- **A. Per-EXE manifests** - FieldWorks.exe.manifest, LexTextExe.exe.manifest, etc.
+- **A. Per-EXE manifests** - FieldWorks.exe.manifest, LCMBrowser.exe.manifest, etc.
   - Pros: Each EXE has only COM servers it uses, smaller files
   - Cons: Duplication if many EXEs use same COM servers, maintenance overhead
 - **B. Shared manifest** - Single manifest with all COM servers, copied/linked to each EXE
@@ -194,7 +196,7 @@ Answer: The PrivateAssets="All" was added specifically for an assembly in LCM th
 
 **Action needed**: Which approach do you prefer? Recommend **A (Overwrite to "All")** for test frameworks specifically, **C (Skip)** for other packages.
 
-Answer: No action is needed due to the answer in D2. 
+Answer: No action is needed due to the answer in D2.
 ---
 
 ## Convergence 6: PlatformTarget Redundancy Cleanup

@@ -66,7 +66,7 @@ C# library (net48, OutputType=Library) with application infrastructure classes. 
 - **LexTextControls/**: Dialog controls
 
 ### Downstream (consumed by)
-- **LexTextExe/**: FLEx application entry point
+- **FieldWorks.exe**: FLEx application host (instantiates LexTextApp)
 - **Lexicon/**: Lexicon editing UI
 - **Interlinear/**: Text analysis UI
 - **Morphology/**: Morphology UI
@@ -120,7 +120,7 @@ C# library (net48, OutputType=Library) with application infrastructure classes. 
   - Notes: Simple confirmation dialog
 
 ## Entry Points
-Loaded by LexTextExe (FLEx application). LexTextApp instantiated as main application class.
+Loaded by the FieldWorks.exe host (LexTextExe stub removed). LexTextApp is instantiated as the FLEx application class.
 
 ## Test Index
 - **Test project**: LexTextDllTests/
@@ -128,7 +128,7 @@ Loaded by LexTextExe (FLEx application). LexTextApp instantiated as main applica
 - **Coverage**: Application initialization, area listener logic
 
 ## Usage Hints
-- **LexTextApp**: Main application class instantiated by LexTextExe
+- **LexTextApp**: Main application class instantiated by FieldWorks.exe
 - **AreaListener**: Manages list area configuration (XCore colleague)
 - **FlexHelpTopicProvider**: Provides context-sensitive help
 - **Resources**: LexTextStrings for localized UI strings, ImageHolder for icons
@@ -136,7 +136,7 @@ Loaded by LexTextExe (FLEx application). LexTextApp instantiated as main applica
 - **Business logic elsewhere**: Heavy UI and business logic in Lexicon/, Interlinear/, etc.
 
 ## Related Folders
-- **LexTextExe/**: FLEx application entry point (instantiates LexTextApp)
+- **Common/FieldWorks/**: FieldWorks.exe host
 - **LexTextControls/**: Shared UI controls
 - **Lexicon/**: Lexicon editing UI
 - **Interlinear/**: Text analysis UI

@@ -87,7 +87,7 @@ C# library (net48, OutputType=Library) with MVC-like separation. ConstituentChar
 
 ### Downstream (consumed by)
 - **xWorks**: Interlinear text window (chart as tab)
-- **LexTextExe**: FLEx application
+- **FieldWorks.exe**: FLEx application host
 - **Linguists**: Discourse analysis users
 
 ## Interop & Contracts
@@ -181,7 +181,7 @@ Loaded by reflection from xWorks interlinear text window. ConstituentChart const
 ## Related Folders
 - **Interlinear/**: Interlinear text integration
 - **IText/**: Text infrastructure (InterlinDocChart base)
-- **LexTextExe/**: FLEx application entry point
+- **Common/FieldWorks/**: FieldWorks.exe host
 - **xWorks/**: Main application shell
 
 ## References

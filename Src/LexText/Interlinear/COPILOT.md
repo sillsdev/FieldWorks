@@ -85,7 +85,7 @@ C# library (net48, OutputType=Library) with modular subsystem design. InterlinDo
 
 ### Downstream (consumed by)
 - **xWorks**: Interlinear text window
-- **LexTextExe**: FLEx application
+- **FieldWorks.exe**: FLEx application host
 - **Discourse**: Constituent charts (inherits InterlinDocChart)
 - **Linguists**: Text analysis workflows
 

@@ -96,7 +96,7 @@ CI produces x64‑only artifacts and does not perform COM registration; tests an
 - **FR-007**: Native COM DLLs required at runtime MUST be co‑located with the executable (or referenced via manifest `codebase` entries) so manifests can resolve them.
 - **FR-008**: Manifests MUST include entries for all required CLSIDs, IIDs, and type libraries for COM servers used by the executable’s primary flows.
 
-- **FR-009**: Phase 1 scope is limited to core apps: `FieldWorks.exe` and `LexText.exe`. Other user‑facing tools and test executables are deferred to a later phase.
+- **FR-009**: Phase 1 scope is limited to the unified `FieldWorks.exe` launcher (the legacy `LexText.exe` stub has been removed). Other user‑facing tools and test executables are deferred to a later phase.
 - **FR-010**: Enforce x64 for host processes only. Libraries may remain AnyCPU where compatible and not performing native/COM interop that requires explicit x64; components that bridge to native/COM MUST target x64.
 - **FR-011**: Provide and adopt a shared manifest‑enabled test host to satisfy FR‑006; individual test executables do not need bespoke manifests in Phase 1.
 

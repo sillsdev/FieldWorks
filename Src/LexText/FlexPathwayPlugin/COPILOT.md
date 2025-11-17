@@ -119,7 +119,7 @@ Loaded by FLEx Tools → Configure menu. FlexPathwayPlugin class instantiated wh
 ## Related Folders
 - **FwCoreDlgs**: UtilityDlg framework
 - **Common/FwUtils/Pathway**: Pathway integration utilities
-- **LexTextExe**: FLEx application (hosts plugin)
+- **Common/FieldWorks**: FieldWorks.exe host (launches plugin UI)
 - **xWorks**: Application framework
 
 ## References

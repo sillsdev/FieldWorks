@@ -5,7 +5,7 @@
 
 ## Summary
 
-Complete registration-free COM coverage for all FieldWorks executables beyond the initial FieldWorks.exe implementation. Currently only FieldWorks.exe has a reg-free manifest; 5-7 additional EXEs (LexTextExe, Te, etc.) and test executables may require manifests to eliminate COM registration dependencies. Technical approach: audit all EXEs for COM usage (CoCreateInstance calls, COM interface usage), identify which COM servers they activate, extend existing RegFree.targets build task to generate manifests for all identified EXEs, validate that EXEs launch and function without COM registration on clean machines. Expected outcome: Zero COM registration requirements for any FieldWorks executable in developer, CI, and end-user scenarios.
+Complete registration-free COM coverage for all FieldWorks executables beyond the initial FieldWorks.exe implementation. Currently only FieldWorks.exe has a reg-free manifest; 5-7 additional EXEs (FxtExe, LCMBrowser, UnicodeCharEditor, etc.) and test executables may require manifests to eliminate COM registration dependencies. Technical approach: audit all EXEs for COM usage (CoCreateInstance calls, COM interface usage), identify which COM servers they activate, extend existing RegFree.targets build task to generate manifests for all identified EXEs, validate that EXEs launch and function without COM registration on clean machines. Expected outcome: Zero COM registration requirements for any FieldWorks executable in developer, CI, and end-user scenarios.
 
 ## Technical Context
 
@@ -70,9 +70,12 @@ Build/
 └── GenerateManifest.ps1 # Helper script (may need extension for new EXEs)
 
 Src/
-├── Common/FieldWorks/FieldWorks.csproj # Already imports RegFree.targets (reference)
-├── LexText/LexTextExe/LexTextExe.csproj # Import RegFree.targets (modify)
-├── Te/TeExe/TeExe.csproj               # Import RegFree.targets (NEEDS CLARIFICATION: does this EXE exist?)
+├── Common/FieldWorks/FieldWorks.csproj # Already imports RegFree.targets (reference/pattern)
+├── FXT/FxtExe/FxtExe.csproj            # Needs RegFree.targets import
+├── LCMBrowser/LCMBrowser.csproj        # Needs RegFree.targets import
+├── UnicodeCharEditor/UnicodeCharEditor.csproj # Needs RegFree.targets import
+├── MigrateSqlDbs/MigrateSqlDbs.csproj  # Needs RegFree.targets import
+├── Utilities/FixFwData/FixFwData.csproj # Needs RegFree.targets import
 └── [other EXEs per inventory]          # Import RegFree.targets (list TBD in research)
 
 convergence/
