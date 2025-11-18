@@ -100,15 +100,58 @@ if (Test-Path $dotnetSdkPath) {
     }
 }
 
-# 7. Add PowerShell to PATH
-Write-Host "Adding PowerShell to PATH..."
-$psPath = 'C:\Windows\System32\WindowsPowerShell\v1.0'
-$currentPath = [Environment]::GetEnvironmentVariable('PATH', 'Machine')
-if ($currentPath -notlike "*$psPath*") {
-    [Environment]::SetEnvironmentVariable('PATH', "$currentPath;$psPath", 'Machine')
-    Write-Host "PowerShell added to PATH"
-} else {
-    Write-Host "PowerShell already in PATH"
+# 7. Configure Machine PATH
+Write-Host "Configuring Machine PATH..."
+
+$netfxTools = 'C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8.1 Tools'
+if (-not (Test-Path $netfxTools)) {
+    throw "NETFX 4.8.1 tools not found at $netfxTools"
 }
+
+$msbuildPath = 'C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin'
+if (-not (Test-Path $msbuildPath)) {
+    throw "MSBuild not found at $msbuildPath"
+}
+
+$paths = @(
+    'C:\Windows\System32\WindowsPowerShell\v1.0',
+    'C:\Wix311',
+    'C:\dotnet',
+    $netfxTools,
+    $msbuildPath
+)
+
+$existing = [Environment]::GetEnvironmentVariable('PATH', 'Machine')
+
+foreach ($p in $paths) {
+    if ($existing -notlike "*$p*") {
+        Write-Host "Adding to PATH: $p"
+        $existing = "$existing;$p"
+    } else {
+        Write-Host "Already in PATH: $p"
+    }
+}
+
+[Environment]::SetEnvironmentVariable('PATH', $existing, 'Machine')
+Write-Host "Machine PATH updated successfully"
+
+# 8. Configure Machine Environment Variables
+Write-Host "Configuring Machine Environment Variables..."
+
+$envVars = @{
+    'WIX'            = 'C:\Wix311'
+    'DOTNET_ROOT'    = 'C:\dotnet'
+    'NUGET_PACKAGES' = 'C:\.nuget\packages'
+    'VCTargetsPath'  = 'C:\BuildTools\MSBuild\Microsoft\VC\v170'
+    'VSINSTALLDIR'   = 'C:\BuildTools\'
+    'VCINSTALLDIR'   = 'C:\BuildTools\VC\'
+}
+
+foreach ($key in $envVars.Keys) {
+    $val = $envVars[$key]
+    Write-Host "Setting $key = $val"
+    [Environment]::SetEnvironmentVariable($key, $val, 'Machine')
+}
+Write-Host "Machine Environment Variables updated successfully"
 
 Write-Host "=== Post-Installation Setup Completed Successfully ==="

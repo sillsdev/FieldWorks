@@ -1,14 +1,8 @@
 @echo off
 REM VsDevShell.cmd - Initialize Visual Studio Build Tools environment for Docker container
 
-REM Set the Visual Studio installation path
-set "VSINSTALLDIR=C:\BuildTools\"
-set "VCINSTALLDIR=C:\BuildTools\VC\"
-
-REM Add MSBuild, dotnet, and other essential tools to PATH
-set "PATH=C:\Program Files\dotnet;C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin;%PATH%"
-
 REM Call vcvarsall.bat to set up the build environment
+REM This sets up the complex VC++ environment variables that are hard to replicate manually
 if exist "C:\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" (
     call "C:\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x64
 ) else (

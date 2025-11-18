@@ -54,41 +54,18 @@ RUN Invoke-WebRequest -Uri 'https://github.com/wixtoolset/wix3/releases/download
 	-OutFile 'C:\\TEMP\\wix311.zip'; \
 	Expand-Archive -LiteralPath 'C:\\TEMP\\wix311.zip' -DestinationPath 'C:\\Wix311' -Force; \
 	Remove-Item 'C:\\TEMP\\wix311.zip' -Force
-ENV WIX=C:\\Wix311
 
 # Install the .NET SDK used for dotnet restore targets (latest .NET 8 LTS)
 RUN Invoke-WebRequest -Uri 'https://dot.net/v1/dotnet-install.ps1' -OutFile 'C:\\TEMP\\dotnet-install.ps1'; \
 	& 'C:\\TEMP\\dotnet-install.ps1' -Channel 8.0 -Quality GA -InstallDir 'C:\\dotnet' -NoPath; \
 	Remove-Item 'C:\\TEMP\\dotnet-install.ps1' -Force
-ENV DOTNET_ROOT=C:\\dotnet
-
-# Make WiX, dotnet CLI, MSBuild, and NETFX tooling globally available on PATH
-RUN $netfxTools = 'C:\\Program Files (x86)\\Microsoft SDKs\\Windows\\v10.0A\\bin\\NETFX 4.8.1 Tools'; \
-	if (-not (Test-Path $netfxTools)) { \
-	throw \"NETFX 4.8.1 tools not found at `$netfxTools\" \
-	}; \
-	$msbuildPath = 'C:\\Program Files (x86)\\Microsoft Visual Studio\\2022\\BuildTools\\MSBuild\\Current\\Bin'; \
-	$paths = @('C:\\Wix311', 'C:\\dotnet', $netfxTools, $msbuildPath); \
-	$existing = [Environment]::GetEnvironmentVariable('PATH', 'Machine'); \
-	foreach ($p in $paths) { \
-	if ($existing -notlike \"*`$p*\") { \
-	$existing = \"`$existing;`$p\" \
-	} \
-	}; \
-	[Environment]::SetEnvironmentVariable('PATH', $existing, 'Machine')
 
 # Run post-installation setup script to handle all complex path operations
-# (Visual Studio directory structure, BuildTools junction, NuGet cache, NuGet CLI download)
+# (Visual Studio directory structure, BuildTools junction, NuGet cache, NuGet CLI download, PATH setup, Env Vars)
 # Use cmd SHELL to avoid PowerShell command-line parsing issues in Docker
 SHELL ["cmd", "/S", "/C"]
 COPY Post-Install-Setup.ps1 C:/Post-Install-Setup.ps1
 RUN C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -ExecutionPolicy Bypass -File C:\Post-Install-Setup.ps1
-
-# Default NuGet cache location (each container gets a host-mounted, per-agent cache)
-ENV NUGET_PACKAGES=C:\\.nuget\\packages
-
-# Ensure MSBuild locates the VC targets even though VS lives under C:\\BuildTools
-ENV VCTargetsPath=C:/BuildTools/MSBuild/Microsoft/VC/v170
 
 COPY VsDevShell.cmd C:/VsDevShell.cmd
 
