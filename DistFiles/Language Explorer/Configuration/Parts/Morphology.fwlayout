@@ -97,6 +97,8 @@
 				<part ref="MorphType"/>
 				<part ref="RuleFormula" expansion="expanded" label="Affix Process Rule"/>
 				<part ref="InflectionClasses" visibility="ifdata"/>
+				<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+				<part ref="_CustomFieldPlaceholder" customFields="here" />
 			</indent>
 		</part>
 	</layout>
