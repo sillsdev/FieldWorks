@@ -184,6 +184,23 @@
       }
     },
     {
+      "label": "Agents: Build Docker image",
+      "type": "shell",
+      "command": "& { ./scripts/docker-build-ipv4.ps1 -RegistryHosts @('mcr.microsoft.com') -BuildArgs @('-t','fw-build:ltsc2022','-f','Dockerfile.windows','${workspaceFolder}') }",
+      "detail": "Builds/refreshes the fw-build:ltsc2022 Windows container image used by agent worktrees.",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      }
+    },
+    {
       "label": "Agents: Teardown containers",
       "type": "shell",
       "command": "& { ./scripts/tear-down-agents.ps1 -RepoRoot \"${workspaceFolder}\" }",
