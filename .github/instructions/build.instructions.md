@@ -185,9 +185,31 @@ dotnet restore FieldWorks.proj --packages packages/
 - **`Build/SetupInclude.targets`**: Environment setup; touch only when absolutely needed
 - **`Directory.Build.props`**: Shared properties for all projects; changes affect everyone
 
+## Running Tests
+
+### With MSBuild (current method)
+```powershell
+# Run all tests
+msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64 /p:action=test
+
+# Run specific test target
+msbuild Build\FieldWorks.targets /t:CacheLightTests /p:Configuration=Debug /p:Platform=x64 /p:action=test
+```
+
+Test results: `Output/Debug/<ProjectName>.dll-nunit-output.xml`
+
+### With dotnet test (under development)
+```powershell
+# Future simplified approach
+dotnet test FieldWorks.sln --configuration Debug
+```
+
+See `.github/instructions/testing.instructions.md` for detailed test execution guidance.
+
 ## References
 - **CI/CD**: `.github/workflows/` for CI steps
 - **Build Infrastructure**: `Build/` for targets/props and build infrastructure
 - **Traversal Project**: `FieldWorks.proj` for declarative build order
 - **Shared Properties**: `Directory.Build.props` for all projects
 - **Native Build**: `Build/mkall.targets` for C++ build orchestration
+- **Testing**: `.github/instructions/testing.instructions.md` for test execution

@@ -26,4 +26,16 @@
 	<ItemGroup>
 		<Compile Remove="**/*.template.cs" />
 	</ItemGroup>
+	<!-- Modern test infrastructure for all test projects -->
+	<PropertyGroup Condition="'$(IsTestProject)' == 'true'">
+		<!-- For .NET Framework projects, ensure NuGet package assemblies are copied to output directory -->
+		<!-- This is required for dotnet test to discover test adapters -->
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+	</PropertyGroup>
+	<ItemGroup Condition="'$(IsTestProject)' == 'true'">
+		<!-- Microsoft.NET.Test.Sdk enables 'dotnet test' support (VSTest platform) -->
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+		<!-- NUnit3TestAdapter enables NUnit test discovery for VSTest -->
+		<PackageReference Include="NUnit3TestAdapter" Version="5.2.0" />
+	</ItemGroup>
 </Project>
