@@ -16,6 +16,29 @@ function Get-RepoRoot {
 	return (Resolve-Path (Join-Path $PSScriptRoot "../../..")).Path
 }
 
+function Normalize-FeatureBranchName {
+	param([string]$Branch)
+
+	if (-not $Branch) { return '' }
+
+	$normalized = $Branch -replace '^refs/heads/', ''
+	$normalized = $normalized.Trim()
+
+	$prefixes = @('specs/', 'spec/', 'features/', 'feature/', 'feat/')
+	foreach ($prefix in $prefixes) {
+		if ($normalized.StartsWith($prefix, [System.StringComparison]::OrdinalIgnoreCase)) {
+			$normalized = $normalized.Substring($prefix.Length)
+			break
+		}
+	}
+
+	if ($normalized -like '*/*') {
+		$normalized = $normalized.Split('/')[-1]
+	}
+
+	return $normalized
+}
+
 function Get-CurrentBranch {
 	# First check if SPECIFY_FEATURE environment variable is set
 	if ($env:SPECIFY_FEATURE) {
@@ -82,7 +105,8 @@ function Test-FeatureBranch {
 		return $true
 	}
 
-	if ($Branch -notmatch '^[0-9]{3}-') {
+	$featureName = Normalize-FeatureBranchName -Branch $Branch
+	if ([string]::IsNullOrWhiteSpace($featureName) -or $featureName -notmatch '^[0-9]{3}-') {
 		Write-Output "ERROR: Not on a feature branch. Current branch: $Branch"
 		Write-Output "Feature branches should be named like: 001-feature-name"
 		return $false
@@ -92,7 +116,12 @@ function Test-FeatureBranch {
 
 function Get-FeatureDir {
 	param([string]$RepoRoot, [string]$Branch)
-	Join-Path $RepoRoot "specs/$Branch"
+	$featureName = Normalize-FeatureBranchName -Branch $Branch
+	if ([string]::IsNullOrWhiteSpace($featureName)) {
+		$featureName = $Branch
+	}
+	$relativePath = Join-Path 'specs' $featureName
+	Join-Path $RepoRoot $relativePath
 }
 
 function Get-FeaturePathsEnv {
