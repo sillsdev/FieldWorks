@@ -5,6 +5,9 @@ REM Set the Visual Studio installation path
 set "VSINSTALLDIR=C:\BuildTools\"
 set "VCINSTALLDIR=C:\BuildTools\VC\"
 
+REM Add MSBuild, dotnet, and other essential tools to PATH
+set "PATH=C:\Program Files\dotnet;C:\Program Files (x86)\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin;%PATH%"
+
 REM Call vcvarsall.bat to set up the build environment
 if exist "C:\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" (
     call "C:\BuildTools\VC\Auxiliary\Build\vcvarsall.bat" x64
