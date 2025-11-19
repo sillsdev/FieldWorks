@@ -150,3 +150,9 @@ build_output.txt
 *.backup
 *.code-workspace
 config.json
+
+# Python
+__pycache__/
+.venv/
+venv/
+*.egg-info/

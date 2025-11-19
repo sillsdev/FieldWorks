@@ -6,9 +6,9 @@ $ErrorActionPreference = 'Stop'
 
 Write-Host "=== Starting Post-Installation Setup ==="
 
-# 1. Create Visual Studio directory structure using short path
+# 1. Create Visual Studio directory structure using full path
 Write-Host "Creating Visual Studio directory structure..."
-$vsPath = 'C:\Progra~2\MicrosoftVisualStudio\2022'
+$vsPath = 'C:\Program Files (x86)\Microsoft Visual Studio\2022'
 if (-not (Test-Path $vsPath)) {
     Write-Host "Creating directory: $vsPath"
     New-Item -ItemType Directory -Path $vsPath -Force | Out-Null
@@ -35,7 +35,7 @@ if (-not (Test-Path $junctionPath)) {
 
 # 4. Create NuGet packages cache directory
 Write-Host "Creating NuGet packages cache directory..."
-$nugetPath = 'C:\Progra~2\MicrosoftVisualStudio\Shared\NuGetPackages'
+$nugetPath = 'C:\Program Files (x86)\Microsoft Visual Studio\Shared\NuGetPackages'
 if (-not (Test-Path $nugetPath)) {
     Write-Host "Creating directory: $nugetPath"
     New-Item -ItemType Directory -Path $nugetPath -Force | Out-Null
