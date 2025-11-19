@@ -1,7 +1,7 @@
 ---
 applyTo: "Src/Common/**"
 name: "common.instructions"
-description: "Key conventions and integration points for the Common project." 
+description: "Key conventions and integration points for the Common project."
 ---
 
 # Common Library Guidelines

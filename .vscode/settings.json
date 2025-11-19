@@ -40,7 +40,11 @@
     "docker info": true,
     "docker inspect": true,
     // Docker exec - ONLY for agent containers (safe, isolated)
-    "docker exec fw-agent-": true,
+    "^docker exec fw-agent-.*": true,
+    // scripting
+    "^python scripts/.*": true,
+    "^python -m.*": true,
+    "^.\\scripts\\.*": true,
     // Build operations (host-based for main repo)
     "msbuild": true,
     "dotnet build": true,
