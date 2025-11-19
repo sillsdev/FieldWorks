@@ -1170,18 +1170,21 @@ namespace SIL.FieldWorks.XWorks
 				}
 			}
 
-			// Add Before text, if it is not going to be displayed in a paragraph.
-			if (!eachInAParagraph && !string.IsNullOrEmpty(config.Before))
+			if (!eachInAParagraph && !groupData.IsNullOrEmpty())
 			{
-				var beforeRun = CreateDefaultBeforeAfterBetweenRun(nodeList, config.Before);
-				groupData.DocBody.PrependChild(beforeRun);
-			}
+				// Add Before text, if it is not going to be displayed in a paragraph.
+				if (!string.IsNullOrEmpty(config.Before))
+				{
+					var beforeRun = CreateDefaultBeforeAfterBetweenRun(nodeList, config.Before);
+					groupData.DocBody.PrependChild(beforeRun);
+				}
 
-			// Add After text, if it is not going to be displayed in a paragraph.
-			if (!eachInAParagraph && !string.IsNullOrEmpty(config.After))
-			{
-				var afterRun = CreateDefaultBeforeAfterBetweenRun(nodeList, config.After);
-				groupData.DocBody.Append(afterRun);
+				// Add After text, if it is not going to be displayed in a paragraph.
+				if (!string.IsNullOrEmpty(config.After))
+				{
+					var afterRun = CreateDefaultBeforeAfterBetweenRun(nodeList, config.After);
+					groupData.DocBody.Append(afterRun);
+				}
 			}
 
 			// Don't add an empty paragraph to the groupData fragment.
