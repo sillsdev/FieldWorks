@@ -1,4 +1,4 @@
-# Tasks: FieldWorks 64-bit only + Registration-free COM
+﻿# Tasks: FieldWorks 64-bit only + Registration-free COM
 
 Branch: 001-64bit-regfree-com | Spec: specs/001-64bit-regfree-com/spec.md | Plan: specs/001-64bit-regfree-com/plan.md
 
@@ -107,4 +107,3 @@ All tasks follow the required checklist format: `- [ ] T### [P]? [USn]? Descript
   - US1: Launch core EXEs on clean VM; no COM registration
   - US2: Install Release|x64 on clean machine; launch without COM registration
   - US3: CI logs show x64-only; manifests uploaded; smoke passes
-

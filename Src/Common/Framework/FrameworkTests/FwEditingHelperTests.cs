@@ -1,4 +1,4 @@
-// Copyright (c) 2009-2013 SIL International
+﻿// Copyright (c) 2009-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -32,12 +32,12 @@ namespace SIL.FieldWorks.Common.Framework
 		private Mock<IVwRootSite> m_rootsiteMock = new Mock<IVwRootSite>();
 		private Mock<IVwRootBox> m_rootboxMock = new Mock<IVwRootBox>();
 		private Mock<IVwGraphics> m_vgMock = new Mock<IVwGraphics>();
-		
+
 		private IEditingCallbacks m_callbacks => m_callbacksMock.Object;
 		private IVwRootSite m_rootsite => m_rootsiteMock.Object;
 		private IVwRootBox m_rootbox => m_rootboxMock.Object;
 		private IVwGraphics m_vg => m_vgMock.Object;
-		
+
 		private ITsTextProps m_ttpHyperlink, m_ttpNormal;
 		#endregion
 
@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.Common.Framework
 			m_callbacksMock.Setup(x => x.EditedRootBox).Returns(m_rootbox);
 			m_rootboxMock.Setup(rbox => rbox.Site).Returns(m_rootsite);
 			m_rootboxMock.Object.DataAccess = new Mock<ISilDataAccess>().Object;
-			
+
 			// Setup GetGraphics with out parameters
 			IVwGraphics vgOut = m_vg;
 			Rect rect1 = new Rect();

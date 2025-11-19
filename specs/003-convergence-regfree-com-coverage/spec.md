@@ -1,4 +1,4 @@
-# Convergence Path Analysis: Registration-Free COM Coverage
+﻿# Convergence Path Analysis: Registration-Free COM Coverage
 
 **Priority**: ⚠️ **HIGH**
 **Divergent Approach**: Incomplete COM manifest coverage across executables

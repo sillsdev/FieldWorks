@@ -1,4 +1,4 @@
-# Convergence Path Analysis: Test Exclusion Pattern Standardization
+﻿# Convergence Path Analysis: Test Exclusion Pattern Standardization
 
 **Priority**: ⚠️ **MEDIUM**
 **Divergent Approach**: Three different test exclusion patterns in use

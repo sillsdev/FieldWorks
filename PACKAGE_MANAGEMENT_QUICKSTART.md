@@ -1,4 +1,4 @@
-# PackageReference Management - Quick Start Guide
+﻿# PackageReference Management - Quick Start Guide
 
 This guide shows you how to use the Python automation scripts to modernize DLL handling in FieldWorks.
 
@@ -168,7 +168,7 @@ These scripts implement the phases from `DLL_MODERNIZATION_PLAN.md`:
 python find_projects_using_namespace.py "Icu" \
   --generate-command "icu.net" "3.0.0-beta.297"
 
-# Newtonsoft.Json  
+# Newtonsoft.Json
 python find_projects_using_namespace.py "Newtonsoft.Json" \
   --generate-command "Newtonsoft.Json" "13.0.3"
 

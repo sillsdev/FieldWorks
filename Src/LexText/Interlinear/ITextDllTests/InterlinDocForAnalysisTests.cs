@@ -1,4 +1,4 @@
-// Copyright (c) 2015 SIL International
+﻿// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -301,7 +301,7 @@ namespace SIL.FieldWorks.IText
 			var vwselMock = new Mock<IVwSelection>(MockBehavior.Strict);
 			rootbMock.Setup(x => x.Selection).Returns(vwselMock.Object);
 			rootbMock.Setup(x => x.DataAccess).Returns(Cache.DomainDataByFlid);
-			
+
 			// Setup TextSelInfo with out parameters
 			ITsString tsStringOut = null;
 			int int1Out = 0, int4Out = seg.Hvo, int5Out = SimpleRootSite.kTagUserPrompt, int6Out = Cache.DefaultAnalWs;
@@ -317,10 +317,10 @@ namespace SIL.FieldWorks.IText
 					out int6Out
 				)
 			);
-			
+
 			vwselMock.Setup(x => x.IsValid).Returns(true);
 			vwselMock.Setup(x => x.CLevels(It.IsAny<bool>())).Returns(0);
-			
+
 			// Setup AllSelEndInfo with out parameters
 			int allSelInt1 = 0, allSelInt3 = 0, allSelInt4 = 0, allSelInt5 = 0, allSelInt6 = 0;
 			bool allSelBool = true;

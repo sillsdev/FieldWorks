@@ -1,4 +1,4 @@
-# SDK Migration Summary by Phase
+﻿# SDK Migration Summary by Phase
 
 This document organizes the 93 commits from the SDK migration into logical phases for easier understanding.
 

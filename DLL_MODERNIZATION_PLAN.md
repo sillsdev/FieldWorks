@@ -1,4 +1,4 @@
-# DLL and Dependency Modernization Plan for FieldWorks
+﻿# DLL and Dependency Modernization Plan for FieldWorks
 
 ## Executive Summary
 
@@ -160,7 +160,7 @@ All SIL.* packages should use PackageReference for proper dependency management.
 </Target>
 ```
 
-**Proposed Solution**: 
+**Proposed Solution**:
 1. Add PackageReference to a central project (e.g., a localization project)
 2. Configure contentFiles to automatically deploy to `DistFiles/CommonLocalizations/`
 3. Remove manual copy target

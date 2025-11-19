@@ -1,4 +1,4 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: 8195503dc427843128f1bc3019cf5070cdb71d7bd4d82797e9f069ee3f89b41b
 status: draft
@@ -56,5 +56,3 @@ This appears to be a legacy or placeholder folder. For document conversion funct
 ## References
 - **Contents**: Res/DocConvert.ico (icon file only)
 - **Source files**: None
-
-

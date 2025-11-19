@@ -1,47 +1,37 @@
-# Implementation Plan: PrivateAssets Standardization for Test Packages
+﻿# Implementation Plan: Convergence Path – PrivateAssets on Test Packages
 
-**Branch**: `005-convergence-private-assets` | **Date**: 2025-11-08 | **Spec**: specs/005-convergence-private-assets/spec.md
-**Input**: Feature specification from `/specs/005-convergence-private-assets/spec.md`
+**Branch**: `spec/005-convergence-private-assets` | **Date**: 2025-11-14 | **Spec**: [specs/005-convergence-private-assets/spec.md](specs/005-convergence-private-assets/spec.md)
+**Input**: Feature specification from `specs/005-convergence-private-assets/spec.md`
 
 ## Summary
 
-Standardize PrivateAssets="All" on test framework PackageReferences (NUnit, Moq, FluentAssertions, etc.) across 26 test projects to prevent test dependencies from leaking into consuming projects. Currently inconsistently applied: some test projects have PrivateAssets, others don't, creating potential dependency pollution. Technical approach: audit all test projects for test-related PackageReferences, identify which lack PrivateAssets, generate conversion script to add PrivateAssets="All" to identified packages, validate that builds succeed and test dependencies are properly isolated. Expected outcome: Consistent package isolation across all tests, no test packages appearing in production project dependency graphs, clear pattern for future test projects.
+Standardize `PrivateAssets="All"` on every `SIL.LCModel.*.Tests` PackageReference that ships reusable test utilities so those transitive test dependencies never leak into consumer projects. Research identified **12** managed test projects referencing the three helper packages (`SIL.LCModel.Core.Tests`, `SIL.LCModel.Tests`, `SIL.LCModel.Utils.Tests`); the remaining ~34 test projects do not reference these packages and are intentionally left untouched in this convergence. We will lean on the Convergence python automation (`convergence.py private-assets audit|convert|validate`) to audit the full set, convert only the approved helper packages, and validate via MSBuild + NU1102 scans. All edits run inside the fw-agent container to respect FieldWorks build prerequisites.
+
+**User Story Mapping**
+- **US1 (P1)** — LCM helper packages remain private: covers the audit+conversion loop confined to the three `SIL.LCModel.*.Tests` packages.
+- **US2 (P2)** — Validation + documentation guardrail: captures validation runs, NU1102 scans, and quickstart updates so the workflow can be repeated.
 
 ## Technical Context
 
-**Language/Version**: Python 3.11+ (for automation scripts), MSBuild/C# (.NET Framework 4.8 for project files)
-**Primary Dependencies**: xml.etree.ElementTree (Python standard library for .csproj parsing)
-**Storage**: CSV files for audit results
-**Testing**: pytest for script unit tests, MSBuild for build validation, dependency graph validation
-**Target Platform**: Windows (developer workstations and CI)
-**Project Type**: Build system convergence
-**Performance Goals**: Audit script <15 seconds for 26 projects, conversion script <20 seconds, build time unchanged
-**Constraints**: Must only affect test packages (not production dependencies), must preserve existing PrivateAssets if already set, must not break test execution, must handle both direct and transitive package references appropriately
-**Scale/Scope**: 26 test projects, estimated 4-6 test packages per project (NUnit, NUnit3TestAdapter, Moq, FluentAssertions, etc.)
-
-Open unknowns resolved in research.md:
-- **D1**: Definitive list of test framework packages requiring PrivateAssets — Base list: NUnit, NUnit3TestAdapter, NUnit.Console, Moq, FluentAssertions, xunit.*, Microsoft.NET.Test.Sdk, coverlet.*, MSTest.* (expand in research if others found)
-- **D2**: Whether to apply PrivateAssets to all packages in test projects or only known test frameworks — NEEDS CLARIFICATION: Known frameworks only (conservative) vs. all non-production packages (aggressive)
-- **D3**: Handling of packages with existing PrivateAssets values (e.g., PrivateAssets="Compile") — NEEDS CLARIFICATION: Overwrite to "All" vs. merge vs. skip
+**Language/Version**: Python 3.11 scripts (Convergence framework) plus MSBuild-driven C# project files
+**Primary Dependencies**: `convergence.py` base classes, `xml.etree.ElementTree`, MSBuild traversal (`FieldWorks.proj`), NuGet packages `SIL.LCModel.Core.Tests|Tests|Utils.Tests`
+**Storage**: N/A (reads/writes `.csproj` files in-place)
+**Testing**: `python convergence.py private-assets validate`, `msbuild FieldWorks.sln /m /p:Configuration=Debug`, targeted NU1102 log scan
+**Target Platform**: Windows fw-agent containers (FieldWorks worktree) running VS/MSBuild toolchain
+**Project Type**: Repository automation plus `.csproj` normalization
+**Performance Goals**: Audit + conversion complete in <5 minutes for 46 projects; `convergence.py` sub-commands finish in <1 minute each on dev hardware
+**Constraints**: Do not touch non-LCM package references; preserve existing formatting/order; only edit via scripted conversions; run in containerized agent to avoid host registry dependencies
+**Scale/Scope**: 46 managed test projects evaluated; 12 projects referencing the three `SIL.LCModel.*.Tests` packages are in scope for edits
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-- **Data integrity**: Project files (.csproj) modified (PackageReference attributes). Git-backed. Validation ensures only PrivateAssets added/modified. — **PASS**
-- **Test evidence**: Changes affect package dependency resolution. Must include: (1) Build validation (all projects compile), (2) Test execution (all tests run successfully), (3) Dependency graph verification (test packages not in production graphs). — **REQUIRED** (validation Phase 5)
-- **I18n/script correctness**: No impact on internationalization. — **N/A**
-- **Licensing**: No new dependencies. Test packages already present, only metadata changed. — **PASS**
-- **Stability/performance**: Low-risk change (build-time metadata only). Risk: breaking transitive dependencies if PrivateAssets too aggressive. Mitigation: apply only to known test frameworks, validate test execution. — **PASS** (mitigated)
-
-Proceed to Phase 0 with clarifications needed for D2 and D3.
-
-Post-design re-check (after Phase 1 artifacts added):
-- Data integrity: Git-backed, validated — **PASS**
-- Test evidence: Build + test + dependency graph validation planned — **VERIFY IN TASKS**
-- I18n/script correctness: N/A — **PASS**
-- Licensing: No new deps — **PASS**
-- Stability/performance: Validation mitigates risk — **PASS**
+- **Data integrity**: No runtime/user data touched; only `.csproj` metadata changes. Migration plan therefore limited to git rollback guidance ✅
+- **Test evidence**: `convergence.py ... validate` plus `msbuild FieldWorks.sln /m /p:Configuration=Debug` act as regression gates; failure criteria documented ✅
+- **I18n/script correctness**: Not applicable; no UI/text-rendering paths touched ✅
+- **Licensing**: No new dependencies introduced; merely annotating existing NuGet references ✅
+- **Stability/performance**: Changes reduce consumer dependency surface; risks mitigated by audit + validation scripts ✅
 
 ## Project Structure
 
@@ -49,43 +39,56 @@ Post-design re-check (after Phase 1 artifacts added):
 
 ```text
 specs/005-convergence-private-assets/
-├── spec.md              # Feature specification (existing)
-├── plan.md              # This file (implementation plan)
-├── research.md          # Phase 0 output (package list, edge cases, policy decisions)
-├── data-model.md        # Phase 1 output (TestProjectEntity, PackageReferenceEntity models)
-├── quickstart.md        # Phase 1 output (how to run audit/conversion scripts)
-├── contracts/           # Phase 1 output
-│   ├── audit-cli.md
-│   ├── convert-cli.md
-│   └── validate-cli.md
-└── tasks.md             # Phase 2 output (/speckit.tasks command)
+├── spec.md
+├── plan.md
+├── research.md          # Phase 0 output
+├── data-model.md        # Phase 1 output
+├── quickstart.md        # Phase 1 output
+└── contracts/
+    └── private-assets.openapi.yaml
 ```
 
 ### Source Code (repository root)
 
 ```text
-convergence/
-├── audit_framework.py                    # Base classes (existing)
-├── convergence.py                        # Unified CLI (existing)
-├── convergence_private_assets.py         # New: Extends base classes
-│   ├── class PrivateAssetsAuditor(ConvergenceAuditor)
-│   ├── class PrivateAssetsConverter(ConvergenceConverter)
-│   └── class PrivateAssetsValidator(ConvergenceValidator)
-└── tests/
-    └── test_private_assets.py            # Unit tests
-
 Src/
-└── [26 test .csproj files]               # Target files (modify PackageReference PrivateAssets)
+├── xWorks/xWorksTests/                         # references SIL.LCModel.*.Tests
+├── XCore/xCoreTests/
+├── XCore/xCoreInterfaces/xCoreInterfacesTests/
+├── XCore/SilSidePane/SilSidePaneTests/
+├── UnicodeCharEditor/UnicodeCharEditorTests/
+├── Utilities/XMLUtils/XMLUtilsTests/
+├── Utilities/MessageBoxExLib/MessageBoxExLibTests/
+├── ParatextImport/ParatextImportTests/
+├── LexText/LexTextControls/LexTextControlsTests/
+├── LexText/Discourse/DiscourseTests/
+├── LexText/Morphology/MorphologyEditorDllTests/
+└── ... (see research.md for the full enumerated project list)
 ```
 
-**Structure Decision**: Extend convergence framework with PrivateAssets-specific auditor/converter. Auditor scans test projects for test framework PackageReferences lacking PrivateAssets, converter adds PrivateAssets="All" to identified packages, validator runs build and checks dependency graphs. Use conservative approach: apply only to known test frameworks initially (extensible list in script config).
-
-**NEEDS CLARIFICATION**: 
-1. Whether to apply PrivateAssets to all packages in test projects (aggressive, ensures isolation but may break edge cases) or only to known test frameworks (conservative, safer but may miss some test packages).
-2. How to handle packages with existing PrivateAssets (e.g., PrivateAssets="Compile" for analyzers): overwrite to "All", merge, or skip.
+**Structure Decision**: Treat this as a mono-repo automation effort touching only those `Src/**/Tests` projects that reference the helper packages listed above. Each affected `.csproj` remains in-place; automation iterates over the enumerated directories above, while all other test projects remain untouched to honor the clarified scope.
 
 ## Complexity Tracking
 
-> **Fill ONLY if Constitution Check has violations that must be justified**
+No Constitution violations outstanding; table not required.
 
-No constitution violations. No entries required.
+## Phase 0 – Research Outline
+
+1. Capture authoritative list of `SIL.LCModel.*.Tests` packages and confirm they are the only scope needing `PrivateAssets`.
+2. Document the audit/convert/validate flow plus log artifacts (CSV + console output) to guarantee deterministic runs.
+3. Record msbuild + NU1102 validation expectations and rollback strategy.
+
+See `research.md` for decisions, rationale, and alternatives.
+
+## Phase 1 – Design & Contracts
+
+1. `data-model.md`: Describe `TestProject`, `PackageReference`, and `AuditFinding` entities plus state transitions (Audit → Convert → Validate).
+2. `contracts/private-assets.openapi.yaml`: Model the three CLI operations as service endpoints (audit/convert/validate) for clarity when scripting.
+3. `quickstart.md`: Provide copy/paste commands for audit, convert, validate, including container reminders and verification steps.
+
+## Phase 2 – Implementation Outline (Execution Stops Here)
+
+1. Run `python convergence.py private-assets audit` to regenerate `private_assets_audit.csv` and inspect for only `SIL.LCModel.*.Tests` rows.
+2. Execute `python convergence.py private-assets convert --decisions private_assets_decisions.csv` limited to approved rows; review diffs locally.
+3. Validate via `python convergence.py private-assets validate` followed by `msbuild FieldWorks.sln /m /p:Configuration=Debug` inside `fw-agent-3`.
+4. If validation passes, proceed to `/speckit.tasks` for execution task breakdown.

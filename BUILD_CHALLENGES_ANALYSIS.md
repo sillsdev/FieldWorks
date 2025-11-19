@@ -1,4 +1,4 @@
-# Build Challenges Analysis - SDK Migration Deep Dive
+﻿# Build Challenges Analysis - SDK Migration Deep Dive
 
 **⚠️ NOTE**: This content has been integrated into the main [SDK-MIGRATION.md](SDK-MIGRATION.md) file.
 

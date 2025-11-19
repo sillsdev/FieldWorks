@@ -1,4 +1,4 @@
-Set-StrictMode -Version Latest
+﻿Set-StrictMode -Version Latest
 
 <#
 Shared helpers for invoking git safely and reasoning about worktrees.
@@ -171,4 +171,3 @@ function Test-GitBranchExists {
   $output = @(Invoke-GitSafe @('branch','--list',$Branch) -CaptureOutput)
   return ($output.Count -gt 0)
 }
-

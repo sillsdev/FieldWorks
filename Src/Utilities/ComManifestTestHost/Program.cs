@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Reflection;
 
 namespace SIL.FieldWorks.Test.ComManifestTestHost
@@ -9,11 +9,11 @@ namespace SIL.FieldWorks.Test.ComManifestTestHost
 	/// </summary>
 	/// <remarks>
 	/// Usage: ComManifestTestHost.exe [command-line arguments]
-	/// 
+	///
 	/// This executable includes a registration-free COM manifest that declares all
 	/// FieldWorks COM components. Tests can run under this host to activate COM objects
 	/// without requiring registry entries.
-	/// 
+	///
 	/// The manifest is generated at build time by the RegFree MSBuild task and includes:
 	/// - Native COM DLL references (<file> elements)
 	/// - COM class registrations (<comClass> elements)

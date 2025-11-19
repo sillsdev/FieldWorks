@@ -212,6 +212,6 @@
   </ItemGroup>
 
   <!-- Import shared build properties if they exist -->
-  <Import Project="Directory.Build.props" Condition="Exists('Directory.Build.props')" />
+  <!-- <Import Project="Directory.Build.props" Condition="Exists('Directory.Build.props')" /> -->
 
 </Project>

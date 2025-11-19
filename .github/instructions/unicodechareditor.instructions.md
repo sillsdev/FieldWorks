@@ -1,4 +1,4 @@
----
+﻿---
 applyTo: "Src/UnicodeCharEditor/**"
 name: "unicodechareditor.instructions"
 description: "Auto-generated concise instructions from COPILOT.md for UnicodeCharEditor"
@@ -53,4 +53,4 @@ Workflow: User edits PUA characters → saves to CustomChars.xml → installs to
   - `m_dictCustomChars` - Dictionary<int, PUACharacter> for user overrides from CustomChars.xml
   - `m_dictModifiedChars` - Dictionary<int, PUACharacter> for standard Unicode overrides from UnicodeDataOverrides.txt
   - **PuaListItem** nested class - ListView items with hex code sorting
-  - **PuaListItemComparer** - Sorts 
+  - **PuaListItemComparer** - Sorts

@@ -384,7 +384,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 </DictionaryConfiguration>";
 
 		/*
-		
+
 					*/
 		#endregion DictConfigData
 

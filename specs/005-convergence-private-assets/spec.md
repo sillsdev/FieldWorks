@@ -1,9 +1,16 @@
-# Convergence Path Analysis: PrivateAssets on Test Packages
+﻿# Convergence Path Analysis: PrivateAssets on Test Packages
 
-**Priority**: ⚠️ **MEDIUM**  
-**Framework**: Uses [CONVERGENCE-FRAMEWORK.md](CONVERGENCE-FRAMEWORK.md)  
-**Current State**: Inconsistent use of PrivateAssets attribute on test packages  
+**Priority**: ⚠️ **MEDIUM**
+**Framework**: Uses [CONVERGENCE-FRAMEWORK.md](CONVERGENCE-FRAMEWORK.md)
+**Current State**: Inconsistent use of PrivateAssets attribute on test packages
 **Impact**: Test dependencies may leak to consuming projects, unnecessary package downloads
+
+---
+
+## Clarifications
+
+### Session 2025-11-14
+- Q: Should we apply PrivateAssets="All" to all packages in test projects or only known test frameworks? → A: Apply it only to the mixed LCM test-utility assembly that shares reusable helpers, and leave every other project untouched unless a later build failure proves additional scope is necessary.
 
 ---
 
@@ -11,9 +18,9 @@
 
 ### Statistics
 ```
-Total Test Projects: 46
-- With PrivateAssets="All": ~20 projects (43%)
-- Without PrivateAssets: ~26 projects (57%)
+Total Test Projects inspected: ~46
+In-scope subset (references SIL.LCModel.*.Tests packages): 12 projects
+Out-of-scope subset (no SIL.LCModel.*.Tests reference): Remainder, leave unchanged
 ```
 
 ### Problem Statement
@@ -23,31 +30,30 @@ Test-only packages (NUnit, Moq, TestUtilities) should use `PrivateAssets="All"` 
 - Unnecessary package downloads for library consumers
 - NU1102 warnings about missing test packages
 
-**Current Issue**: Only some test projects use this attribute, creating inconsistency.
+**Current Issue**: Only some test projects referencing the shared LCM helper packages use this attribute, creating inconsistency and leaking helper-specific dependencies downstream.
 
 ---
 
 ## Convergence Path Options
 
-### **Path A: Universal PrivateAssets** ✅ **RECOMMENDED**
+### **Path A: Targeted PrivateAssets** ✅ **RECOMMENDED**
 
-**Philosophy**: All test-only packages must use PrivateAssets="All"
+**Philosophy**: Only the mixed LCM test-utility assemblies (`SIL.LCModel.*.Tests` packages) require immediate enforcement, matching clarification guidance.
 
 **Strategy**:
 ```xml
-<!-- Standard pattern for all test packages -->
-<PackageReference Include="NUnit" Version="4.4.0" PrivateAssets="All" />
-<PackageReference Include="Moq" Version="4.20.70" PrivateAssets="All" />
-<PackageReference Include="SIL.TestUtilities" Version="12.0.0-*" PrivateAssets="All" />
-<PackageReference Include="NUnit3TestAdapter" Version="5.2.0" PrivateAssets="All" />
+<!-- Standard pattern for the targeted LCM helper packages -->
+<PackageReference Include="SIL.LCModel.Core.Tests" Version="12.0.0-*" PrivateAssets="All" />
+<PackageReference Include="SIL.LCModel.Tests" Version="12.0.0-*" PrivateAssets="All" />
+<PackageReference Include="SIL.LCModel.Utils.Tests" Version="12.0.0-*" PrivateAssets="All" />
 ```
 
-**Test Package List**:
-- NUnit
-- NUnit3TestAdapter  
-- Moq
-- SIL.TestUtilities
-- All SIL.LCModel.*.Tests packages
+**Test Package List (in-scope)**:
+- `SIL.LCModel.Core.Tests`
+- `SIL.LCModel.Tests`
+- `SIL.LCModel.Utils.Tests`
+
+**Explicitly out-of-scope for this convergence**: NUnit, adapters, Moq, Microsoft.NET.Test.Sdk, and other third-party packages. They may be revisited in a later convergence if leakage evidence emerges.
 
 **Effort**: 3-4 hours | **Risk**: LOW
 
@@ -66,7 +72,7 @@ Test-only packages (NUnit, Moq, TestUtilities) should use `PrivateAssets="All"` 
 </ItemGroup>
 ```
 
-**Pros**: ✅ Central definition, less duplication  
+**Pros**: ✅ Central definition, less duplication
 **Cons**: ❌ Inflexible (not all tests use all packages), harder to override
 
 **Effort**: 5-6 hours | **Risk**: MEDIUM
@@ -94,13 +100,32 @@ Test-only packages (NUnit, Moq, TestUtilities) should use `PrivateAssets="All"` 
 
 ## Recommendation: Path A
 
-**Rationale**: Simple, explicit, works immediately without complex infrastructure
+**Rationale**: Simple, explicit, works immediately without complex infrastructure while staying narrowly focused on the helper packages that actually ship reusable assets.
+
+---
+
+## User Stories
+
+### US1 (Priority P1): LCM helper packages remain private
+**Statement**: As a FieldWorks developer, I need every `SIL.LCModel.*.Tests` PackageReference inside managed test projects to declare `PrivateAssets="All"` so consumers of those reusable helpers never inherit our internal test frameworks.
+
+**Acceptance Criteria**:
+1. `private_assets_audit.csv` lists zero rows for `SIL.LCModel.*.Tests` packages after conversion.
+2. Git diffs show only the targeted PackageReferences were updated; other packages remain untouched.
+
+### US2 (Priority P2): Validation+documentation guardrail
+**Statement**: As a release engineer, I need automated validation (Convergence `validate` + MSBuild NU1102 scan) and updated quickstart guidance so future teams can re-run the workflow confidently.
+
+**Acceptance Criteria**:
+1. `python convergence.py private-assets validate` succeeds with artifacts captured under `specs/005-convergence-private-assets/validation/`.
+2. `msbuild FieldWorks.sln /m /p:Configuration=Debug` completes with zero NU1102 warnings; log evidence stored.
+3. `quickstart.md` lists the exact commands and artifact locations used.
 
 ---
 
 ## Implementation
 
-**Process**: See [CONVERGENCE-FRAMEWORK.md](CONVERGENCE-FRAMEWORK.md#shared-process-template) for standard 5-phase approach
+**Process**: See [CONVERGENCE-FRAMEWORK.md](CONVERGENCE-FRAMEWORK.md#shared-process-template) for standard 5-phase approach. Scope this convergence strictly to the LCM mixed test-utility assemblies listed above. Other test projects remain unchanged unless future failures require expanding coverage.
 
 ### Convergence-Specific Additions
 
@@ -120,8 +145,7 @@ python convergence.py private-assets audit
 python convergence.py private-assets convert --decisions private_assets_decisions.csv
 ```
 
-**Conversion Logic**:
-- For each test package without PrivateAssets
+- For each `SIL.LCModel.*.Tests` PackageReference without `PrivateAssets`
 - Add `PrivateAssets="All"` attribute
 - Preserve all other attributes (Version, Include, etc.)
 
@@ -131,7 +155,7 @@ python convergence.py private-assets validate
 ```
 
 **Validation Checks**:
-1. All test packages have PrivateAssets="All"
+1. All `SIL.LCModel.*.Tests` PackageReferences have `PrivateAssets="All"`
 2. No NU1102 warnings in build
 3. Test projects still build successfully
 4. Tests still run successfully
@@ -149,30 +173,31 @@ from audit_framework import ConvergenceAuditor, ConvergenceConverter, Convergenc
 
 class PrivateAssetsAuditor(ConvergenceAuditor):
     """Audit PrivateAssets on test packages"""
-    
+
     TEST_PACKAGES = [
-        'NUnit', 'NUnit3TestAdapter', 'Moq', 'SIL.TestUtilities',
-        'xunit', 'xunit.runner.visualstudio', 'MSTest.TestFramework'
+        'SIL.LCModel.Core.Tests',
+        'SIL.LCModel.Tests',
+        'SIL.LCModel.Utils.Tests',
     ]
-    
+
     def analyze_project(self, project_path):
         """Check if project is test project and has proper PrivateAssets"""
         # Only analyze test projects
         if not ('Tests' in project_path.stem or 'Test' in project_path.stem):
             return None
-        
+
         tree = parse_csproj(project_path)
         root = tree.getroot()
-        
+
         # Find all PackageReferences
         missing_private_assets = []
         for package_ref in root.findall('.//PackageReference'):
             include = package_ref.get('Include', '')
             private_assets = package_ref.get('PrivateAssets', '')
-            
+
             if include in self.TEST_PACKAGES and private_assets != 'All':
                 missing_private_assets.append(include)
-        
+
         if missing_private_assets:
             return {
                 'ProjectPath': str(project_path),
@@ -180,24 +205,24 @@ class PrivateAssetsAuditor(ConvergenceAuditor):
                 'MissingPrivateAssets': ','.join(missing_private_assets),
                 'Action': 'AddPrivateAssets'
             }
-        
+
         return None
 
 class PrivateAssetsConverter(ConvergenceConverter):
     """Add PrivateAssets="All" to test packages"""
-    
+
     def convert_project(self, project_path, **kwargs):
         """Add PrivateAssets to test packages"""
         packages = kwargs.get('MissingPrivateAssets', '').split(',')
-        
+
         tree = parse_csproj(project_path)
         root = tree.getroot()
-        
+
         # Update each package
         for package_ref in root.findall('.//PackageReference'):
             if package_ref.get('Include') in packages:
                 package_ref.set('PrivateAssets', 'All')
-        
+
         update_csproj(project_path, tree)
         print(f"✓ Added PrivateAssets to {project_path.name}")
 ```
@@ -207,14 +232,19 @@ class PrivateAssetsConverter(ConvergenceConverter):
 ## Success Metrics
 
 **Before**:
-- ❌ 26 test projects without PrivateAssets
-- ❌ Test dependencies leak to consumers
-- ❌ Potential NU1102 warnings
+- ❌ 12 in-scope test projects reference `SIL.LCModel.*.Tests` without `PrivateAssets` (Initial Estimate)
+- ❌ Helper consumers inherit unnecessary dependencies
+- ❌ NU1102 warnings possible when helpers transitively pull NUnit/Moq
 
 **After**:
-- ✅ All 46 test projects use PrivateAssets="All"
-- ✅ Test dependencies isolated
-- ✅ No NU1102 warnings
+- ✅ Every `SIL.LCModel.*.Tests` reference (all three packages across in-scope projects) declares `PrivateAssets="All"`
+- ✅ Helper packages publish clean dependency graphs
+- ✅ NU1102 warnings eliminated for the targeted packages
+
+**Actual Outcomes (2025-11-19)**:
+- Audit confirmed 100% compliance (0 violations found).
+- Validation passed with zero NU1102 warnings.
+- No code changes were required.
 
 ---
 
@@ -222,15 +252,15 @@ class PrivateAssetsConverter(ConvergenceConverter):
 
 **Total Effort**: 3-4 hours over 0.5 day
 
-| Phase | Duration |
-|-------|----------|
-| Audit | 1 hour |
+| Phase          | Duration  |
+| -------------- | --------- |
+| Audit          | 1 hour    |
 | Implementation | 1-2 hours |
-| Validation | 1 hour |
-| Documentation | 0.5 hour |
+| Validation     | 1 hour    |
+| Documentation  | 0.5 hour  |
 
 ---
 
-*Uses: [CONVERGENCE-FRAMEWORK.md](CONVERGENCE-FRAMEWORK.md)*  
-*Last Updated: 2025-11-08*  
+*Uses: [CONVERGENCE-FRAMEWORK.md](CONVERGENCE-FRAMEWORK.md)*
+*Last Updated: 2025-11-08*
 *Status: Ready for Implementation*

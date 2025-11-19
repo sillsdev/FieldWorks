@@ -1,4 +1,4 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: 5fe2afbb8cb54bb9264efdb2cf2de46021c9343855105809e6ea6ee5be4ad9ee
 status: reviewed
@@ -187,7 +187,7 @@ No executable components; XSLTs loaded at runtime by .NET System.Xml.Xsl process
   - Input: M3 XML test files (ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/)
   - Expected output: XAmple .lex, .ana files
   - Validation: String comparison or XAmple parser invocation
-- **Manual testing**: 
+- **Manual testing**:
   - Run FLEx parser configuration → FXT export → verify XAmple files
   - Try A Word dialog → verify HTML trace display
 - **Test data**: 18+ XML test files in ParserCoreTests cover various morphological scenarios

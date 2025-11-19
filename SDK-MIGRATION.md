@@ -1,4 +1,4 @@
-# FieldWorks SDK Migration - Comprehensive Summary
+﻿# FieldWorks SDK Migration - Comprehensive Summary
 
 **Migration Period**: November 7-8, 2025
 **Base Commit**: `8e508dab484fafafb641298ed9071f03070f7c8b`

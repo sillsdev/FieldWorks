@@ -16,6 +16,12 @@
 		<FwOutput>$(FwRoot)Output\</FwOutput>
 		<FwOutputBase>$(FwOutput)$(Configuration)\</FwOutputBase>
 		<FwObj>$(FwRoot)Obj\</FwObj>
+		<!-- Redirect 'obj' folder to local container storage to bypass Docker volume mount limitations (file locking/renaming failures) during NuGet restore. -->
+		<BaseIntermediateOutputPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">C:\Temp\Obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+		<MSBuildProjectExtensionsPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">$(BaseIntermediateOutputPath)</MSBuildProjectExtensionsPath>
+		<RestoreOutputPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">$(BaseIntermediateOutputPath)</RestoreOutputPath>
+		<RestorePackagesPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">C:\Temp\Packages\</RestorePackagesPath>
+		<RestoreNoCache Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">true</RestoreNoCache>
 		<!-- LCM artifacts directory -->
 		<DownloadsDir Condition="'$(DownloadsDir)'==''">$(FwRoot)Downloads</DownloadsDir>
 		<LcmArtifactsDir Condition="'$(LcmArtifactsDir)'==''">$(DownloadsDir)</LcmArtifactsDir>
@@ -23,6 +29,7 @@
 		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
 		<GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
 	</PropertyGroup>
+
 	<ItemGroup>
 		<Compile Remove="**/*.template.cs" />
 		<!--

@@ -17,6 +17,11 @@ from convergence_platform_target import (
     PlatformTargetConverter,
     PlatformTargetValidator,
 )
+from convergence_private_assets import (
+    PrivateAssetsAuditor,
+    PrivateAssetsConverter,
+    PrivateAssetsValidator,
+)
 
 CONVERGENCES = {
     # 'generate-assembly-info': {
@@ -42,7 +47,13 @@ CONVERGENCES = {
         "converter": PlatformTargetConverter,
         "validator": PlatformTargetValidator,
         "description": "Remove redundant PlatformTarget settings",
-    }
+    },
+    "private-assets": {
+        "auditor": PrivateAssetsAuditor,
+        "converter": PrivateAssetsConverter,
+        "validator": PrivateAssetsValidator,
+        "description": "Enforce PrivateAssets='All' on LCM test packages",
+    },
 }
 
 

@@ -1,4 +1,4 @@
-# SDK Migration Convergence Framework
+﻿# SDK Migration Convergence Framework
 
 **Purpose**: Unified framework for addressing divergent approaches identified during SDK migration
 
@@ -40,8 +40,8 @@ CONVERGENCE-FRAMEWORK.md (this file)
 All convergence efforts follow this consistent structure:
 
 #### Phase 1: Analysis (20% of effort)
-**Inputs**: Current codebase  
-**Outputs**: Audit report with current state + recommendations  
+**Inputs**: Current codebase
+**Outputs**: Audit report with current state + recommendations
 **Activities**:
 1. Scan repository for current patterns
 2. Categorize approaches (A, B, C, etc.)
@@ -59,8 +59,8 @@ All convergence efforts follow this consistent structure:
 ---
 
 #### Phase 2: Implementation (40% of effort)
-**Inputs**: Audit report + convergence decision  
-**Outputs**: Modified project files  
+**Inputs**: Audit report + convergence decision
+**Outputs**: Modified project files
 **Activities**:
 1. Apply convergence pattern to projects
 2. Handle edge cases manually
@@ -77,8 +77,8 @@ All convergence efforts follow this consistent structure:
 ---
 
 #### Phase 3: Validation (20% of effort)
-**Inputs**: Modified projects  
-**Outputs**: Validation report  
+**Inputs**: Modified projects
+**Outputs**: Validation report
 **Activities**:
 1. Build all projects (Debug + Release)
 2. Run validation script
@@ -95,8 +95,8 @@ All convergence efforts follow this consistent structure:
 ---
 
 #### Phase 4: Documentation (10% of effort)
-**Inputs**: Completed changes  
-**Outputs**: Updated documentation  
+**Inputs**: Completed changes
+**Outputs**: Updated documentation
 **Activities**:
 1. Update main docs (SDK-MIGRATION.md, etc.)
 2. Add guidelines for future projects
@@ -113,8 +113,8 @@ All convergence efforts follow this consistent structure:
 ---
 
 #### Phase 5: Ongoing Maintenance (10% of effort)
-**Inputs**: Established pattern  
-**Outputs**: Enforcement mechanisms  
+**Inputs**: Established pattern
+**Outputs**: Enforcement mechanisms
 **Activities**:
 1. Add validation to CI
 2. Create pre-commit hooks
@@ -148,22 +148,22 @@ from abc import ABC, abstractmethod
 
 class ConvergenceAuditor(ABC):
     """Base class for auditing current state"""
-    
+
     def __init__(self, repo_root):
         self.repo_root = Path(repo_root)
         self.projects = []
         self.results = []
-    
+
     def find_projects(self, pattern="**/*.csproj"):
         """Find all project files matching pattern"""
         self.projects = list(self.repo_root.glob(pattern))
         return self.projects
-    
+
     @abstractmethod
     def analyze_project(self, project_path):
         """Analyze a single project - implement in subclass"""
         pass
-    
+
     def run_audit(self):
         """Run audit on all projects"""
         self.find_projects()
@@ -172,32 +172,32 @@ class ConvergenceAuditor(ABC):
             if result:
                 self.results.append(result)
         return self.results
-    
+
     def export_csv(self, output_path):
         """Export results to CSV"""
         if not self.results:
             return
-        
+
         keys = self.results[0].keys()
         with open(output_path, 'w', newline='') as f:
             writer = csv.DictWriter(f, fieldnames=keys)
             writer.writeheader()
             writer.writerows(self.results)
-        
+
         print(f"✓ Audit results exported to {output_path}")
-    
+
     def print_summary(self):
         """Print summary statistics"""
         if not self.results:
             print("No results to summarize")
             return
-        
+
         print(f"\n{'='*60}")
         print(f"AUDIT SUMMARY")
         print(f"{'='*60}")
         print(f"Total Projects Analyzed: {len(self.results)}")
         self.print_custom_summary()
-    
+
     @abstractmethod
     def print_custom_summary(self):
         """Print convergence-specific summary - implement in subclass"""
@@ -206,24 +206,24 @@ class ConvergenceAuditor(ABC):
 
 class ConvergenceConverter(ABC):
     """Base class for converting projects"""
-    
+
     def __init__(self, repo_root):
         self.repo_root = Path(repo_root)
         self.backup_dir = Path("/tmp/convergence_backups")
         self.backup_dir.mkdir(exist_ok=True)
-    
+
     def backup_file(self, file_path):
         """Create backup of file before modification"""
         backup_path = self.backup_dir / file_path.name
         import shutil
         shutil.copy2(file_path, backup_path)
         return backup_path
-    
+
     @abstractmethod
     def convert_project(self, project_path, **kwargs):
         """Convert a single project - implement in subclass"""
         pass
-    
+
     def run_conversions(self, projects_csv, dry_run=False):
         """Run conversions based on CSV decisions"""
         with open(projects_csv, 'r') as f:
@@ -240,16 +240,16 @@ class ConvergenceConverter(ABC):
 
 class ConvergenceValidator(ABC):
     """Base class for validating convergence"""
-    
+
     def __init__(self, repo_root):
         self.repo_root = Path(repo_root)
         self.violations = []
-    
+
     @abstractmethod
     def validate_project(self, project_path):
         """Validate a single project - implement in subclass"""
         pass
-    
+
     def run_validation(self):
         """Run validation on all projects"""
         projects = list(self.repo_root.glob("**/*.csproj"))
@@ -258,18 +258,18 @@ class ConvergenceValidator(ABC):
             if violations:
                 self.violations.extend(violations)
         return self.violations
-    
+
     def print_report(self):
         """Print validation report"""
         if not self.violations:
             print("\n✅ All projects pass validation!")
             return 0
-        
+
         print(f"\n❌ Found {len(self.violations)} violation(s):")
         for violation in self.violations:
             print(f"  - {violation}")
         return 1
-    
+
     def export_report(self, output_path):
         """Export validation report to file"""
         with open(output_path, 'w') as f:
@@ -311,12 +311,12 @@ def set_property_value(tree, property_name, value):
     prop_group = root.find(".//PropertyGroup")
     if prop_group is None:
         prop_group = ET.SubElement(root, "PropertyGroup")
-    
+
     # Find or create property
     prop = prop_group.find(property_name)
     if prop is None:
         prop = ET.SubElement(prop_group, property_name)
-    
+
     prop.text = value
 
 def build_project(project_path, configuration="Debug", platform="x64"):
@@ -351,21 +351,21 @@ from audit_framework import parse_csproj, find_property_value, set_property_valu
 
 class GenerateAssemblyInfoAuditor(ConvergenceAuditor):
     """Audit GenerateAssemblyInfo settings"""
-    
+
     def analyze_project(self, project_path):
         """Analyze GenerateAssemblyInfo setting"""
         tree = parse_csproj(project_path)
         value = find_property_value(tree, "GenerateAssemblyInfo")
-        
+
         # Check for AssemblyInfo.cs
         assembly_info_path = project_path.parent / "AssemblyInfo.cs"
         has_assembly_info = assembly_info_path.exists()
-        
+
         # Analyze custom attributes if exists
         custom_attrs = []
         if has_assembly_info:
             custom_attrs = self._find_custom_attributes(assembly_info_path)
-        
+
         return {
             'ProjectPath': str(project_path),
             'ProjectName': project_path.stem,
@@ -374,12 +374,12 @@ class GenerateAssemblyInfoAuditor(ConvergenceAuditor):
             'CustomAttributes': ','.join(custom_attrs),
             'RecommendedAction': self._recommend_action(value, has_assembly_info, custom_attrs)
         }
-    
+
     def _find_custom_attributes(self, assembly_info_path):
         """Find custom attributes in AssemblyInfo.cs"""
         with open(assembly_info_path, 'r') as f:
             content = f.read()
-        
+
         custom = []
         if 'AssemblyCompany' in content:
             custom.append('Company')
@@ -388,9 +388,9 @@ class GenerateAssemblyInfoAuditor(ConvergenceAuditor):
         if 'AssemblyTrademark' in content:
             custom.append('Trademark')
         # ... more checks
-        
+
         return custom
-    
+
     def _recommend_action(self, value, has_file, custom_attrs):
         """Recommend action based on analysis"""
         if value == 'false' and not custom_attrs:
@@ -401,14 +401,14 @@ class GenerateAssemblyInfoAuditor(ConvergenceAuditor):
             return 'KeepFalse'
         else:
             return 'NoAction'
-    
+
     def print_custom_summary(self):
         """Print summary specific to GenerateAssemblyInfo"""
         actions = {}
         for result in self.results:
             action = result['RecommendedAction']
             actions[action] = actions.get(action, 0) + 1
-        
+
         print("\nRecommended Actions:")
         for action, count in actions.items():
             print(f"  {action}: {count} projects")
@@ -416,11 +416,11 @@ class GenerateAssemblyInfoAuditor(ConvergenceAuditor):
 
 class GenerateAssemblyInfoConverter(ConvergenceConverter):
     """Convert projects to standardized GenerateAssemblyInfo"""
-    
+
     def convert_project(self, project_path, **kwargs):
         """Convert project to GenerateAssemblyInfo=true"""
         action = kwargs.get('RecommendedAction')
-        
+
         if action == 'ConvertToTrue':
             self._convert_to_true(project_path)
         elif action == 'DeleteAssemblyInfo':
@@ -478,7 +478,7 @@ if __name__ == '__main__':
 
 ## Python Script Recommendations
 **Script 1**: Audit - extends ConvergenceAuditor
-**Script 2**: Convert - extends ConvergenceConverter  
+**Script 2**: Convert - extends ConvergenceConverter
 **Script 3**: Validate - extends ConvergenceValidator
 
 ## Success Metrics
@@ -594,35 +594,35 @@ def main():
         action='store_true',
         help='Show what would be done without making changes'
     )
-    
+
     args = parser.parse_args()
-    
+
     if args.convergence == 'all':
         convergences = CONVERGENCES.keys()
     else:
         convergences = [args.convergence]
-    
+
     for convergence_name in convergences:
         print(f"\n{'='*60}")
         print(f"Processing: {convergence_name}")
         print(f"Action: {args.action}")
         print(f"{'='*60}\n")
-        
+
         convergence = CONVERGENCES[convergence_name]
-        
+
         if args.action == 'audit':
             auditor = convergence['auditor'](args.repo)
             auditor.run_audit()
             auditor.export_csv(f'{convergence_name}_audit.csv')
             auditor.print_summary()
-        
+
         elif args.action == 'convert':
             if not args.decisions:
                 print("Error: --decisions CSV file required for convert action")
                 sys.exit(1)
             converter = convergence['converter'](args.repo)
             converter.run_conversions(args.decisions, dry_run=args.dry_run)
-        
+
         elif args.action == 'validate':
             validator = convergence['validator'](args.repo)
             violations = validator.run_validation()
@@ -759,6 +759,6 @@ Each existing convergence doc should be refactored to:
 
 ---
 
-*Framework Version: 1.0*  
-*Last Updated: 2025-11-08*  
+*Framework Version: 1.0*
+*Last Updated: 2025-11-08*
 *Status: Design Complete - Ready for Implementation*

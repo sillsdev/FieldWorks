@@ -1,4 +1,4 @@
-# RhinoMocks to Moq Migration - COMPLETE ✓
+﻿# RhinoMocks to Moq Migration - COMPLETE ✓
 
 ## Summary
 
@@ -132,7 +132,7 @@ Refactored Simulate helper methods to accept `Mock<T>` parameters instead of int
 
 **Chosen Framework:** Moq 4.20.70
 - Modern, actively maintained
-- Wide adoption in .NET community  
+- Wide adoption in .NET community
 - Good documentation and examples
 - Similar API surface to RhinoMocks for basic scenarios
 - Powerful callback and verification features
@@ -147,4 +147,3 @@ To validate the migration:
 ## Status: COMPLETE ✓
 
 All conversion work has been completed. The migration is ready for testing and integration.
-

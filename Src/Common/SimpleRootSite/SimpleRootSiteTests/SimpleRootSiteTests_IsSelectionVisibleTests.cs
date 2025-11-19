@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2013 SIL International
+﻿// Copyright (c) 2006-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -147,22 +147,22 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			bool fIsRange)
 		{
 			var selectionMock = Mock.Get(m_selection);
-			
-			Rect outRcPrimary = new Rect(rcPrimary.left - scrollPos.X, rcPrimary.top - scrollPos.Y, 
+
+			Rect outRcPrimary = new Rect(rcPrimary.left - scrollPos.X, rcPrimary.top - scrollPos.Y,
 				rcPrimary.right - scrollPos.X, rcPrimary.bottom - scrollPos.Y);
 			Rect outRcSecondary = new Rect(0, 0, 0, 0);
 			bool outFSplit = false;
 			bool outFEndBeforeAnchor = fEndBeforeAnchor;
-			
+
 			selectionMock.Setup(s => s.Location(
-				It.IsAny<IVwGraphics>(), 
-				It.IsAny<Rect>(), 
-				It.IsAny<Rect>(), 
-				out outRcPrimary, 
-				out outRcSecondary, 
-				out outFSplit, 
+				It.IsAny<IVwGraphics>(),
+				It.IsAny<Rect>(),
+				It.IsAny<Rect>(),
+				out outRcPrimary,
+				out outRcSecondary,
+				out outFSplit,
 				out outFEndBeforeAnchor));
-			
+
 			selectionMock.Setup(s => s.IsRange).Returns(fIsRange);
 			selectionMock.Setup(s => s.SelType).Returns(VwSelType.kstText);
 			selectionMock.Setup(s => s.EndBeforeAnchor).Returns(fEndBeforeAnchor);
