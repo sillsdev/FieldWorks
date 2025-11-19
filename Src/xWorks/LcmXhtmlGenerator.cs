@@ -672,7 +672,7 @@ namespace SIL.FieldWorks.XWorks
 				}
 				var innerContents = innerBuilder.ToString();
 				if (String.IsNullOrEmpty(innerContents))
-					new StringFragment();
+					return new StringFragment();
 				xw.WriteRaw(innerContents);
 				xw.WriteEndElement(); // </span>
 				xw.Flush();
