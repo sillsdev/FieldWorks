@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>InstallValidatorTests</AssemblyName>
@@ -8,7 +8,6 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <IsTestProject>true</IsTestProject>
-    <PlatformTarget>x64</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
@@ -30,8 +29,8 @@
     <Reference Include="netstandard" />
   </ItemGroup>
   <ItemGroup>
-    <!-- FwBuildTasks is referenced for assembly access but NOT built (bootstrapped separately by build.ps1) -->
-    <!-- Build=false prevents MSBuild from trying to build this project during traversal -->
+    
+    
     <ProjectReference Include="../../../Build/Src/FwBuildTasks/FwBuildTasks.csproj">
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
       <Build>false</Build>

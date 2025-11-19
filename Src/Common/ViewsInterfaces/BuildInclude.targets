@@ -60,6 +60,9 @@
 			Command="idlimport /c &quot;$(IdlImporterXmlPath)&quot; /o &quot;$(MSBuildProjectDirectory)\Views.cs&quot; /i &quot;@(ViewsIdhFiles)&quot; /n SIL.FieldWorks.Common.ViewsInterfaces /u &quot;@(UsingNamespaces)&quot; /r &quot;$(ViewsRefsJson)&quot; &quot;$(ViewsTlbSrc)&quot;"
 			Condition="Exists('$(ViewsTlbSrc)') AND Exists('$(ViewsRefsJson)')"
 		/>
+		<ItemGroup>
+			<Compile Include="Views.cs" />
+		</ItemGroup>
 	</Target>
 	<Target Name="AfterClean" AfterTargets="Clean">
 		<Delete Files="@(OutputFiles)" ContinueOnError="true" />

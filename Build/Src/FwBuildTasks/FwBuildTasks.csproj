@@ -7,6 +7,7 @@
     <TargetFramework>net48</TargetFramework>
     <OutputPath>$(MSBuildThisFileDirectory)..\..\..\BuildTools\FwBuildTasks\$(Configuration)\</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <!-- Must be AnyCPU to run inside both 32-bit and 64-bit MSBuild processes. -->
     <PlatformTarget>AnyCPU</PlatformTarget>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>

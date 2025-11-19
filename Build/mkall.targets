@@ -234,10 +234,10 @@
 		>
 		<GeckoFxHtmlToPdfBuildTag>.lastSuccessful</GeckoFxHtmlToPdfBuildTag>
 		<!-- Versions of NuGet packages. Keep these in sync with PackageReference versions in the managed projects. -->
-		<ChorusNugetVersion>6.0.0-beta0063</ChorusNugetVersion>
+		<ChorusNugetVersion>6.0.0-beta0061</ChorusNugetVersion>
 		<PalasoNugetVersion>17.0.0-beta0080</PalasoNugetVersion>
 		<ParatextNugetVersion>9.4.0.1-beta</ParatextNugetVersion>
-		<LcmNugetVersion>11.0.0-beta0142</LcmNugetVersion>
+		<LcmNugetVersion>11.0.0-beta0143</LcmNugetVersion>
 		<IcuNugetVersion>70.1.152</IcuNugetVersion>
 		<HermitCrabNugetVersion>3.7.4</HermitCrabNugetVersion>
 		<IPCFrameworkVersion>1.1.1-beta0001</IPCFrameworkVersion>

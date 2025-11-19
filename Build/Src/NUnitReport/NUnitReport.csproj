@@ -8,8 +8,7 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <PlatformTarget>x64</PlatformTarget>
-    <RuntimeIdentifier />
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
@@ -31,8 +30,5 @@
     <Reference Include="System.Xml.Linq" />
     <Reference Include="netstandard" />
   </ItemGroup>
-  <ItemGroup>
-    <!-- FwBuildTasks ProjectReference removed - it's bootstrapped by build.ps1 before the traversal build -->
-    <!-- <ProjectReference Include="../FwBuildTasks/FwBuildTasks.csproj" /> -->
-  </ItemGroup>
+  <ItemGroup></ItemGroup>
 </Project>
