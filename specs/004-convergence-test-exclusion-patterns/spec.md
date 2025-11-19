@@ -1,11 +1,28 @@
 # Convergence Path Analysis: Test Exclusion Pattern Standardization
 
-**Priority**: ⚠️ **MEDIUM**  
-**Divergent Approach**: Three different test exclusion patterns in use  
-**Current State**: Mixed patterns across 119 projects  
+**Priority**: ⚠️ **MEDIUM**
+**Divergent Approach**: Three different test exclusion patterns in use
+**Current State**: Mixed patterns across 119 projects
 **Impact**: Maintenance burden, inconsistency, potential for missed test folders
 
 ---
+
+## Clarifications
+
+### Session 2025-11-14
+- Q: How should we handle projects that contain both test and non-test code? → A: Treat any mixed content as a policy violation and flag the project for manual review instead of adding broader exclusions.
+
+## User Stories
+
+1. **US1 – Repository Audit & Escalation (P1)**
+  - *Goal*: As a build engineer, I need a deterministic audit that lists every SDK-style project, its exclusion pattern, missing folders, and any mixed production/test code.
+  - *Acceptance*: Running the audit CLI produces CSV/JSON output plus a `mixed-code.json` file that names the violating projects and pre-populates an issue template for escalation.
+2. **US2 – Deterministic Conversion (P1)**
+  - *Goal*: As a build engineer, I can convert Pattern B/C (or missing exclusion) projects to Pattern A via a scripted batch workflow with dry-run and rollback support.
+  - *Acceptance*: The conversion CLI rewrites only the selected `.csproj` files, logs actions per ConversionJob, halts on mixed-code projects, and updates documentation with the new pattern.
+3. **US3 – Validation & Assembly Guard (P2)**
+  - *Goal*: As a release engineer, I can verify Pattern A compliance by running the validator CLI and reflection-based guard before promoting a build.
+  - *Acceptance*: Running `validate_test_exclusions.py` together with `assembly_guard.py` surfaces pattern drift, mixed code, or leaked test types so the release can be paused until the report is clean.
 
 ## Current State Analysis
 
@@ -171,7 +188,7 @@ During SDK conversion, the script didn't generate test exclusions automatically.
 <ItemGroup>
   <Compile Remove="<ProjectName>Tests/**" />
   <None Remove="<ProjectName>Tests/**" />
-  
+
   <!-- For nested test folders, add explicit entries -->
   <Compile Remove="ComponentName/ComponentNameTests/**" />
   <None Remove="ComponentName/ComponentNameTests/**" />
@@ -298,12 +315,12 @@ During SDK conversion, the script didn't generate test exclusions automatically.
   ```bash
   grep -r "Compile Remove.*Test" Src/**/*.csproj | sort > /tmp/test_exclusions.txt
   ```
-  
+
 - [ ] **Task 1.2**: Categorize projects by pattern
   - Create CSV: Project, Pattern (A/B/C), ExclusionLines
   - Count projects in each category
   - Identify projects with no exclusions (potential issues)
-  
+
 - [ ] **Task 1.3**: Find test folders without exclusions
   ```bash
   find Src -type d -name "*Tests" > /tmp/test_folders.txt
@@ -324,17 +341,20 @@ During SDK conversion, the script didn't generate test exclusions automatically.
   - Identify actual test folder name
   - Replace wildcard with explicit `<ProjectName>Tests/**`
   - Build and verify no CS0436 errors
-  
+  - **Policy**: If a project appears to mix test and non-test code, stop the conversion and flag it for manual review; do not broaden exclusions to compensate.
+
 - [ ] **Task 2.2**: Convert Pattern C projects to Pattern A
   For each project with explicit paths:
   - Keep explicit entries (already in Pattern A format)
   - Ensure consistent format and ordering
   - Add comments if nested folders exist
-  
+
 - [ ] **Task 2.3**: Add missing exclusions
   For any project with test folder but no exclusion:
   - Add standard Pattern A exclusion
   - Build and verify fixes CS0436 errors
+  - Record the fix in the audit output so future runs show `patternType=A`.
+  - Re-run `python audit_test_exclusions.py --output Output/test-exclusions/report.json` so the CSV/JSON artifacts capture the new state before batching additional conversions.
 
 **Example Conversion** (Pattern B → A):
 ```xml
@@ -367,16 +387,16 @@ During SDK conversion, the script didn't generate test exclusions automatically.
   <!-- Directory.Build.props -->
   <!--
     TEST FOLDER EXCLUSION PATTERN
-    
+
     All SDK-style projects auto-include *.cs files recursively.
     Test folders MUST be explicitly excluded to prevent CS0436 errors.
-    
+
     Standard pattern:
     <ItemGroup>
       <Compile Remove="<ProjectName>Tests/**" />
       <None Remove="<ProjectName>Tests/**" />
     </ItemGroup>
-    
+
     For nested test folders, add additional explicit entries:
     <ItemGroup>
       <Compile Remove="Component/ComponentTests/**" />
@@ -384,27 +404,32 @@ During SDK conversion, the script didn't generate test exclusions automatically.
     </ItemGroup>
   -->
   ```
-  
+
 - [ ] **Task 3.2**: Update .github/instructions/managed.instructions.md
   - Add section on test folder exclusion
   - Include examples and common mistakes
   - Link to CS0436 troubleshooting
-  
+
 - [ ] **Task 3.3**: Create project template with standard pattern
-  - Ensure new projects follow Pattern A by default
+  - Ensure new projects follow Pattern A by default by updating the SDK template under `Src/Templates/` (or the canonical scaffolding folder) with the `<ProjectName>Tests/**` block and documenting the expectation in `quickstart.md`.
+
+- [ ] **Task 3.4**: Refresh COPILOT documentation for every touched `Src/**` folder
+  - Update the folder’s `COPILOT.md` to describe the Pattern A expectation and record the new `last-reviewed-tree` reference.
+  - Run the existing COPILOT validation helpers (e.g., `python .github/fill_copilot_frontmatter.py`) so repo guidance stays in sync with the code changes.
 
 ### Phase 4: Validation (1 hour)
 - [ ] **Task 4.1**: Build all modified projects
   ```powershell
   .\build.ps1 -Configuration Debug
   ```
-  
+
 - [ ] **Task 4.2**: Check for CS0436 errors
   ```powershell
   msbuild FieldWorks.sln 2>&1 | Select-String "CS0436"
   # Should return empty
   ```
-  
+  Use the validation tooling to parse these logs so CS0436 hits are surfaced immediately during manual review instead of relying on ad-hoc searches.
+
 - [ ] **Task 4.3**: Verify test folder contents
   ```powershell
   # For each project, check that test folders aren't in output
@@ -412,12 +437,19 @@ During SDK conversion, the script didn't generate test exclusions automatically.
   $types = $dll.GetTypes() | Where-Object { $_.Name -like "*Test*" }
   # Should return empty (no test types in production assembly)
   ```
-  
+
 - [ ] **Task 4.4**: Run validation script
   ```bash
   python validate_test_exclusions.py
   # Reports any missing exclusions or pattern violations
   ```
+
+- [ ] **Task 4.5**: Run the assembly guard script
+  ```powershell
+  pwsh scripts/test_exclusions/assembly_guard.ps1 -Assemblies Output/Debug/**/*.dll
+  # Loads each assembly and fails if any public type name contains 'Test'
+  ```
+  Keep the guard in the human validation checklist so test-only types are caught before artifacts are published.
 
 **Validation Script**:
 ```python
@@ -426,26 +458,11 @@ During SDK conversion, the script didn't generate test exclusions automatically.
 #   1. Check exclusion pattern matches standard
 #   2. Verify all test folders are excluded
 #   3. Report any violations
+#   4. Parse the latest MSBuild log for CS0436 errors and fail on discovery
 ```
 
-### Phase 5: Ongoing Maintenance (ongoing)
-- [ ] **Task 5.1**: Add pre-commit hook
-  ```bash
-  # .git/hooks/pre-commit
-  # Check for unexcluded test folders
-  # Warn if pattern doesn't match standard
-  ```
-  
-- [ ] **Task 5.2**: Add CI check
-  ```yaml
-  # .github/workflows/validate-project-structure.yml
-  - name: Validate test exclusions
-    run: python validate_test_exclusions.py
-  ```
-  
-- [ ] **Task 5.3**: Include in code review checklist
-  - Verify test exclusions present
-  - Verify pattern matches standard
+**Testing Requirements**:
+- Ship unit/CLI tests for `audit_test_exclusions.py`, `convert_test_exclusions.py`, `validate_test_exclusions.py`, and the reflection-based `assembly_guard` helper so Constitution Principle II (Test and Review Discipline) is satisfied for every enforcement tool.
 
 ---
 
@@ -458,9 +475,9 @@ During SDK conversion, the script didn't generate test exclusions automatically.
 
 **Inputs**: None (scans repository)
 
-**Outputs**: 
+**Outputs**:
 - `test_exclusions_audit.csv` with columns: Project, Pattern, TestFolders, ExclusionPresent, Status
-- `test_exclusions_report.txt` with summary and recommendations
+- `test_exclusions_report.json` with summary and recommendations
 
 **Key Logic**:
 ```python
@@ -496,7 +513,7 @@ def check_exclusion_coverage(project, exclusions, test_folders):
             # Explicit exclusion
             folder = excl.replace('<Compile Remove="', '').replace('/**"', '')
             excluded.add(folder)
-    
+
     missing = set(test_folders) - excluded
     return len(missing) == 0, list(missing)
 ```
@@ -525,7 +542,7 @@ def convert_to_pattern_a(csproj_path, project_name, test_folders):
     """Convert project to standard Pattern A"""
     with open(csproj_path, 'r') as f:
         content = f.read()
-    
+
     # Remove existing test exclusions
     # Pattern B
     content = re.sub(
@@ -534,23 +551,23 @@ def convert_to_pattern_a(csproj_path, project_name, test_folders):
         content,
         flags=re.MULTILINE
     )
-    
+
     # Build new standard exclusions
     new_exclusions = []
     for folder in test_folders:
         new_exclusions.append(f'    <Compile Remove="{folder}/**" />')
         new_exclusions.append(f'    <None Remove="{folder}/**" />')
-    
+
     # Insert new exclusions
     exclusion_block = '  <ItemGroup>\n' + '\n'.join(new_exclusions) + '\n  </ItemGroup>\n'
-    
+
     # Find place to insert (before first </Project>)
     insert_pos = content.rfind('</Project>')
     content = content[:insert_pos] + exclusion_block + '\n' + content[insert_pos:]
-    
+
     with open(csproj_path, 'w') as f:
         f.write(content)
-    
+
     print(f"✓ Converted {os.path.basename(csproj_path)} to Pattern A")
 ```
 
@@ -578,6 +595,7 @@ python convert_test_exclusions.py test_exclusions_decisions.csv
 3. All test folders are covered by exclusions
 4. No projects use Pattern B wildcard
 5. Nested test folders have explicit entries
+6. Production assemblies contain no types with names ending in `Test`/`Tests`
 
 **Usage**:
 ```bash
@@ -626,13 +644,13 @@ python validate_test_exclusions.py
 
 **Total Effort**: 3-4 hours over 1 day
 
-| Phase | Duration | Can Parallelize |
-|-------|----------|----------------|
-| Phase 1: Audit | 1 hour | No (data collection) |
-| Phase 2: Standardization | 2-3 hours | Yes (per project) |
-| Phase 3: Documentation | 1 hour | Yes (with Phase 2) |
-| Phase 4: Validation | 1 hour | No (after Phase 2) |
-| Phase 5: Ongoing | N/A | N/A |
+| Phase                    | Duration  | Can Parallelize      |
+| ------------------------ | --------- | -------------------- |
+| Phase 1: Audit           | 1 hour    | No (data collection) |
+| Phase 2: Standardization | 2-3 hours | Yes (per project)    |
+| Phase 3: Documentation   | 1 hour    | Yes (with Phase 2)   |
+| Phase 4: Validation      | 1 hour    | No (after Phase 2)   |
+| Phase 5: Ongoing         | N/A       | N/A                  |
 
 **Suggested Schedule**:
 - Morning: Phase 1 (Audit) + Phase 3 (Documentation)
@@ -648,6 +666,6 @@ python validate_test_exclusions.py
 
 ---
 
-*Document Version: 1.0*  
-*Last Updated: 2025-11-08*  
+*Document Version: 1.0*
+*Last Updated: 2025-11-08*
 *Status: Ready for Implementation*

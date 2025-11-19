@@ -54,6 +54,6 @@
   <ItemGroup>
     <Compile Remove="FwUtilsTests/**" />
     <None Remove="FwUtilsTests/**" />
-    <Compile Remove="**/*.template.cs" />
+    <Compile Remove="FwUtils.template.cs" />
   </ItemGroup>
 </Project>

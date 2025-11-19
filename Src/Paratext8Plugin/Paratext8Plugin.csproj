@@ -38,7 +38,7 @@
     <ProjectReference Include="../Common/ScriptureUtils/ScriptureUtils.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="ParaText8PluginTests/**" />
-    <None Remove="ParaText8PluginTests/**" />
+    <Compile Remove="Paratext8PluginTests/**" />
+    <None Remove="Paratext8PluginTests/**" />
   </ItemGroup>
 </Project>

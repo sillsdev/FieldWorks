@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// class!
 	/// </summary>
 	/// -----------------------------------------------------------------------------------------
-	internal class ConverterTest : UserControl
+	internal class ConverterTester : UserControl
 	{
 		private FwOverrideComboBox outputFontCombo;
 		private OpenFileDialogAdapter ofDlg;
@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		}
 
 		/// <summary></summary>
-		public ConverterTest()
+		public ConverterTester()
 		{
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();

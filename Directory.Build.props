@@ -25,5 +25,14 @@
 	</PropertyGroup>
 	<ItemGroup>
 		<Compile Remove="**/*.template.cs" />
+		<!--
+			Test Exclusion Policy (Pattern A):
+			All test code must be explicitly excluded using the pattern:
+			<Compile Remove="<ProjectName>Tests/**" />
+			<None Remove="<ProjectName>Tests/**" />
+
+			Wildcards (e.g. *Tests/**) are NOT allowed.
+			Nested test folders must also be explicitly excluded.
+		-->
 	</ItemGroup>
 </Project>

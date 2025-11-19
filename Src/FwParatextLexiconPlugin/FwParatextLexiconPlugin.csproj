@@ -44,7 +44,7 @@
     <ProjectReference Include="../LexText/ParserCore/ParserCore.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="**/*.template.cs" />
+    <Compile Remove="ParatextLexiconPluginRegistryHelper.template.cs" />
     <Compile Remove="FwParatextLexiconPluginTests/**" />
     <None Remove="FwParatextLexiconPluginTests/**" />
   </ItemGroup>

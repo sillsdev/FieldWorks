@@ -24,6 +24,59 @@ This file describes conventions, deterministic requirements, and best practices 
 - Use existing patterns for localization, unit tests, and avoid runtime-incompatible behaviors.
 - Keep public APIs stable and documented with XML docs.
 
+## Test exclusion conversion playbook (Pattern A standard)
+- Always prefer explicit `<ProjectName>Tests/**` exclusions. For nested test folders add matching explicit entries (for example `Component/ComponentTests/**`).
+- Audit current state before making changes:
+	```powershell
+	python -m scripts.audit_test_exclusions
+	```
+	Inspect the resulting CSV/JSON plus the generated `Output/test-exclusions/mixed-code.json` and Markdown issue templates under `Output/test-exclusions/escalations/` before touching `.csproj` files.
+- Convert projects in deterministic batches using dry-run mode first:
+	```powershell
+	python -m scripts.convert_test_exclusions --input Output/test-exclusions/report.json --batch-size 15 --dry-run
+	```
+	Remove `--dry-run` once you are satisfied with the diff. The converter rewrites only the targeted SDK-style projects and inserts the explicit `<Compile Remove="…" />` + `<None Remove="…" />` pairs.
+- Typical conversion (Pattern B ➜ Pattern A):
+	```xml
+	<!-- Before -->
+	<ItemGroup>
+		<Compile Remove="*Tests/**" />
+		<None Remove="*Tests/**" />
+	</ItemGroup>
+
+	<!-- After (Pattern A) -->
+	<ItemGroup>
+		<Compile Remove="FrameworkTests/**" />
+		<None Remove="FrameworkTests/**" />
+	</ItemGroup>
+	```
+- After each batch, rerun the audit command so `patternType` values and `ValidationIssue` records stay current, then update `Directory.Build.props` comments and any affected `Src/**/COPILOT.md` files to reflect the new pattern.
+
+## Mixed-code escalation workflow
+- Use `scripts/test_exclusions/escalation_writer.py` outputs (stored under `Output/test-exclusions/escalations/`) to open the pre-filled GitHub issue template for each project. Attach:
+	- The audit/validator excerpts showing the mixed folders.
+	- A short summary of the blocking files and the owning team/contact.
+	- A proposed remediation plan (e.g., split helpers into a dedicated test project).
+- Track the escalation link inside your working notes/PR description so reviewers can confirm every mixed-code violation has an owner before merging conversions.
+
+## Test exclusion validation checklist
+- Run the validator CLI locally for every PR touching exclusions:
+	```powershell
+	python -m scripts.validate_test_exclusions --fail-on-warning --json-report Output/test-exclusions/validator.json
+	```
+	This enforces “Pattern A only”, ensures all detected test folders are excluded, and fails on mixed-code records or CS0436 parsing hits.
+- Use the Agent wrapper when running in CI or automation:
+	```powershell
+	pwsh Build/Agent/validate-test-exclusions.ps1 -FailOnWarning
+	```
+	The wrapper chains the Python validator, MSBuild invocation, and CS0436 log parsing so agent runs match local expectations.
+- Guard against leaked test types before publishing artifacts:
+	```powershell
+	pwsh scripts/test_exclusions/assembly_guard.ps1 -Assemblies "Output/Debug/**/*.dll"
+	```
+	The guard loads each assembly and fails when any type name ends in `Test`/`Tests`. Include the log in release sign-off packages.
+- Document the validation evidence (validator JSON, PowerShell transcript, assembly guard output) in the PR description alongside the rerun audit results.
+
 ## Examples
 ```csharp
 // Minimal example of public API with XML docs

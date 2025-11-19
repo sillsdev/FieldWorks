@@ -92,6 +92,11 @@ Output/
 Output
 Output_i686/
 Output_x86_64/
+__pycache__/
+.venv/
+venv/
+dist/
+*.egg-info/
 Lib/src/unit++/autom4te.cache/
 Lib/src/unit++/configure
 Lib/src/unit++/VS/*/
@@ -150,6 +155,10 @@ build_output.txt
 *.backup
 *.code-workspace
 config.json
+# Test exclusion tooling artifacts
+Output/test-exclusions/
+Output/test-exclusions
+scripts/tests/fixtures/output/
 
 # Python
 __pycache__/
