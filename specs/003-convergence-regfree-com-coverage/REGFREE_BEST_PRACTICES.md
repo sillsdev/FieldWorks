@@ -1,4 +1,4 @@
-# Registration-Free COM Best Practices
+﻿# Registration-Free COM Best Practices
 
 ## Reference
 [Configure .NET Framework-Based COM Components for Registration-Free Activation](https://learn.microsoft.com/en-us/dotnet/framework/interop/configure-net-framework-based-com-components-for-reg?redirectedfrom=MSDN)
@@ -28,13 +28,13 @@ The component manifest is where the clrClass elements live. Crucially, **clrClas
 `xml
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
     <assemblyIdentity name="FwUtils" version="9.3.4.45981" ... />
-    
+
     <!-- clrClass is a child of assembly -->
-    <clrClass 
-        clsid="{...}" 
-        progid="SIL.FieldWorks.Common.FwUtils.ManagedPictureFactory" 
-        threadingModel="Both" 
-        name="SIL.FieldWorks.Common.FwUtils.ManagedPictureFactory" 
+    <clrClass
+        clsid="{...}"
+        progid="SIL.FieldWorks.Common.FwUtils.ManagedPictureFactory"
+        threadingModel="Both"
+        name="SIL.FieldWorks.Common.FwUtils.ManagedPictureFactory"
         runtimeVersion="v4.0.30319">
     </clrClass>
 
@@ -49,7 +49,7 @@ The component manifest is where the clrClass elements live. Crucially, **clrClas
 <assembly ...>
     <file name="FwUtils.dll">
         <!-- Error: clrClass cannot be a child of file -->
-        <clrClass ... /> 
+        <clrClass ... />
     </file>
 </assembly>
 `
