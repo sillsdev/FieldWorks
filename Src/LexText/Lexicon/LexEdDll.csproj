@@ -32,8 +32,8 @@
     <PackageReference Include="SIL.Lift" Version="17.0.0-*" />
     <PackageReference Include="SIL.WritingSystems" Version="17.0.0-*" />
     <PackageReference Include="encoding-converters-core" Version="0.9.7" />
-    <PackageReference Include="SIL.Chorus.App" Version="6.0.0-beta0061" />
-    <PackageReference Include="SIL.Chorus.LibChorus" Version="6.0.0-beta0061" />
+    <PackageReference Include="SIL.Chorus.App" Version="6.0.0-beta0063" />
+    <PackageReference Include="SIL.Chorus.LibChorus" Version="6.0.0-beta0063" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Drawing" />

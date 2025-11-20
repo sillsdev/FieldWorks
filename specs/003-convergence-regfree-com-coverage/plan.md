@@ -1,14 +1,17 @@
 # Implementation Plan: RegFree COM Coverage Completion
+```
+scripts/
+└── regfree/
+    ├── audit_com_usage.py            # COM usage audit CLI
+    ├── add_regfree_manifest.py       # Manifest wiring helper
+    ├── validate_regfree_manifests.py # XML + VM validation harness
+    ├── run-in-vm.ps1                 # Clean VM launcher for EXEs
+    └── common.py / project_map.json  # Shared metadata + configuration
+```
 
-**Branch**: `003-convergence-regfree-com-coverage` | **Date**: 2025-11-08 | **Spec**: specs/003-convergence-regfree-com-coverage/spec.md
-**Input**: Feature specification from `/specs/003-convergence-regfree-com-coverage/spec.md`
+**Structure Decision**: Extend existing `RegFree` MSBuild task in `FwBuildTasks` to support managed assemblies. The task will use .NET Reflection to identify `[ComVisible]` classes and `[Guid]` attributes in managed DLLs, eliminating the need for external Python build dependencies. Each EXE project imports the target and specifies its unique COM dependencies. COM audit script identifies which COM servers each EXE activates. Manifest validation script confirms all identified CLSIDs are present in generated manifests.
 
-## Summary
-
-Complete registration-free COM coverage for all FieldWorks executables beyond the initial FieldWorks.exe implementation. Currently only FieldWorks.exe has a reg-free manifest; 5-7 additional EXEs (FxtExe, LCMBrowser, UnicodeCharEditor, etc.) and test executables may require manifests to eliminate COM registration dependencies. Technical approach: audit all EXEs for COM usage (CoCreateInstance calls, COM interface usage), identify which COM servers they activate, extend existing RegFree.targets build task to generate manifests for all identified EXEs, validate that EXEs launch and function without COM registration on clean machines. Expected outcome: Zero COM registration requirements for any FieldWorks executable in developer, CI, and end-user scenarios.
-
-## Technical Context
-
+**NEEDS CLARIFICATION**: Whether to create per-EXE manifest files or a shared manifest covering all COM servers (shared approach simpler but larger manifest files).
 **Language/Version**: C# (.NET Framework 4.8), C++/C++/CLI (MSVC current toolset), MSBuild (for RegFree.targets extension)
 **Primary Dependencies**: Existing RegFree.targets build task, manifest generation tooling from 001-64bit-regfree-com
 **Storage**: N/A (manifest files generated at build time, co-located with EXEs)
@@ -67,7 +70,9 @@ specs/003-convergence-regfree-com-coverage/
 ```text
 Build/
 ├── RegFree.targets      # Extend to support multiple EXEs (modify existing)
-└── GenerateManifest.ps1 # Helper script (may need extension for new EXEs)
+└── Src/FwBuildTasks/
+    ├── RegFree.cs       # MSBuild task (extended for managed assemblies)
+    └── RegFreeCreator.cs # Manifest generation logic (extended for Reflection)
 
 Src/
 ├── Common/FieldWorks/FieldWorks.csproj # Already imports RegFree.targets (reference/pattern)
@@ -77,11 +82,6 @@ Src/
 ├── MigrateSqlDbs/MigrateSqlDbs.csproj  # Needs RegFree.targets import
 ├── Utilities/FixFwData/FixFwData.csproj # Needs RegFree.targets import
 └── [other EXEs per inventory]          # Import RegFree.targets (list TBD in research)
-
-convergence/
-└── convergence_regfree_com_coverage.py # New: COM audit and validation scripts
-    ├── class COMUsageAuditor(ConvergenceAuditor)
-    └── class ManifestValidator(ConvergenceValidator)
 ```
 
 **Structure Decision**: Extend existing RegFree.targets to be parameterizable per EXE (currently hardcoded for FieldWorks.exe). Each EXE project imports the target and specifies its unique COM dependencies if any differ from the standard pattern. COM audit script identifies which COM servers each EXE activates (via static code analysis or instrumentation). Manifest validation script confirms all identified CLSIDs are present in generated manifests. Smoke tests run on clean VM to catch missing entries.

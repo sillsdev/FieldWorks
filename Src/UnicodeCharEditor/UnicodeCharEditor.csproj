@@ -44,4 +44,5 @@
     <Compile Remove="UnicodeCharEditorTests/**" />
     <None Remove="UnicodeCharEditorTests/**" />
   </ItemGroup>
+  <Import Project="BuildInclude.targets" />
 </Project>

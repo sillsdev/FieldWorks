@@ -44,6 +44,7 @@ namespace SIL.FieldWorks.Build.Tasks
 		public RegFree()
 		{
 			Dlls = new ITaskItem[0];
+			ManagedAssemblies = new ITaskItem[0];
 			Fragments = new ITaskItem[0];
 			AsIs = new ITaskItem[0];
 			NoTypeLib = new ITaskItem[0];
@@ -87,6 +88,13 @@ namespace SIL.FieldWorks.Build.Tasks
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public ITaskItem[] Dlls { get; set; }
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Gets or sets the managed assemblies that should be processed for [ComVisible] classes.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public ITaskItem[] ManagedAssemblies { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -223,6 +231,16 @@ namespace SIL.FieldWorks.Build.Tasks
 
 					// Process type library directly (no registry redirection needed)
 					creator.ProcessTypeLibrary(root, fileName);
+				}
+
+				foreach (string fileName in GetFilesFrom(ManagedAssemblies))
+				{
+					Log.LogMessage(
+						MessageImportance.Low,
+						"\tProcessing managed assembly {0}",
+						Path.GetFileName(fileName)
+					);
+					creator.ProcessManagedAssembly(root, fileName);
 				}
 
 				// Process classes and interfaces from HKCR (where COM is already registered)

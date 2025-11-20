@@ -14,6 +14,7 @@ namespace SIL.FieldWorks.Views
 	/// <summary>
 	/// This class is a Managed port of VwDrawRootBuffered defined in VwRootBox.cpp
 	/// </summary>
+	[ComVisible(true)]
 	[Guid("97199458-10C7-49da-B3AE-EA922EA64859")]
 	public class VwDrawRootBuffered : IVwDrawRootBuffered
 	{

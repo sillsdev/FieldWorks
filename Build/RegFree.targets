@@ -51,15 +51,28 @@
 	<ItemGroup>
 		<NativeComDlls Remove="$(OutDir)*.resources.dll" />
 		<NativeComDlls Remove="$(OutDir)*.ni.dll" />
+		<!-- Exclude DLLs that have their own manifests -->
+		<NativeComDlls Remove="$(OutDir)Views.dll" />
+		<!-- FwKernel.dll is covered by FwKernel.X.manifest, but we need to ensure that manifest is populated.
+		     For now, we assume it is or will be fixed. -->
+		<NativeComDlls Remove="$(OutDir)FwKernel.dll" />
 	</ItemGroup>
 	<ItemGroup>
 		<Fragments Include="$(DistFilesDir)/*.fragment.manifest" />
+	</ItemGroup>
+	<ItemGroup Condition="'@(ManagedComAssemblies)' == ''">
+		<ManagedComAssemblies Include="$(OutDir)*.dll" />
+	</ItemGroup>
+	<ItemGroup>
+		<ManagedComAssemblies Remove="$(OutDir)*.resources.dll" />
+		<ManagedComAssemblies Remove="$(OutDir)*.ni.dll" />
 	</ItemGroup>
 	<Target Name="CreateManifest" Condition="'$(OS)'=='Windows_NT'">
 		<RegFree
 			Executable="$(Executable)"
 			DependentAssemblies="@(DependentAssemblies)"
 			Dlls="@(NativeComDlls)"
+			ManagedAssemblies="@(ManagedComAssemblies)"
 			AsIs="@(Fragments)"
 			Platform="$(Platform)"
 		/>
@@ -76,4 +89,10 @@
 		Condition="'$(OS)'=='Windows_NT'"
 		DependsOnTargets="CreateManifest;AttachManifest"
 	></Target>
+	<Target Name="DebugRegFree" BeforeTargets="CreateManifest">
+		<Message Text="OutDir: $(OutDir)" Importance="high" />
+		<Message Text="NativeComDlls: @(NativeComDlls)" Importance="high" />
+		<Message Text="RegFreeComManifests: @(RegFreeComManifests)" Importance="high" />
+		<Message Text="IsolatedComReferences: @(IsolatedComReferences)" Importance="high" />
+	</Target>
 </Project>

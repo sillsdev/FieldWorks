@@ -5,7 +5,9 @@
     <Description>Additional msbuild tasks for FieldWorks</Description>
     <Product>FwBuildTasks</Product>
     <TargetFramework>net48</TargetFramework>
-    <OutputPath>$(MSBuildThisFileDirectory)..\..\..\BuildTools\FwBuildTasks\$(Configuration)\</OutputPath>
+    <OutputPath>$(FwRoot)BuildTools\FwBuildTasks\$(Configuration)\</OutputPath>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <DefaultItemExcludes>$(DefaultItemExcludes);obj\**</DefaultItemExcludes>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <!-- Must be AnyCPU to run inside both 32-bit and 64-bit MSBuild processes. -->
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -17,6 +19,7 @@
     <PackageReference Include="NUnit3TestAdapter" Version="5.2.0" />
     <PackageReference Include="SIL.BuildTasks" Version="3.1.2-beta0012" />
     <PackageReference Include="SIL.TestUtilities" Version="12.0.0-*" PrivateAssets="All" />
+    <PackageReference Include="System.Reflection.Metadata" Version="9.0.0" />
     <Reference Include="netstandard" />
     <Reference Include="Microsoft.Build.Framework" />
     <Reference Include="System.IO.Compression" />

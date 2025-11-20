@@ -34,7 +34,7 @@ The RegFree COM implementation was done incrementally, starting with the most cr
 
 ## EXE Projects Requiring Analysis
 
-### Confirmed EXE Projects (8 total)
+### Confirmed EXE Projects (10 total)
 
 1. **FieldWorks.exe** ✅ COMPLETE
    - Location: `Src/Common/FieldWorks/FieldWorks.csproj`
@@ -274,7 +274,7 @@ The RegFree COM implementation was done incrementally, starting with the most cr
   ```
   Expected: **UNLIKELY** (statistics utility)
 
-- [ ] **Task 1.7**: Create audit summary spreadsheet
+- [ ] **Task 1.9**: Create audit summary spreadsheet
   - Columns: EXE Name, Uses COM (Y/N), COM Components Used, Priority, Action
   - Document findings with evidence (grep output)
 

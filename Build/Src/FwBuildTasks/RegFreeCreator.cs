@@ -20,6 +20,9 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Reflection.Metadata;
+using System.Reflection.PortableExecutable;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
@@ -268,6 +271,233 @@ namespace SIL.FieldWorks.Build.Tasks
 					fileName
 				);
 			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Processes a managed assembly to find COM-visible classes and add clrClass elements.
+		/// </summary>
+		/// <param name="parent">The parent node.</param>
+		/// <param name="fileName">Name (and path) of the file.</param>
+		/// ------------------------------------------------------------------------------------
+		public void ProcessManagedAssembly(XmlElement parent, string fileName)
+		{
+			_baseDirectory = Path.GetDirectoryName(fileName);
+			_fileName = fileName.ToLower();
+
+			try
+			{
+				_log.LogMessage(
+					MessageImportance.Low,
+					"\tProcessing managed assembly {0}",
+					fileName
+				);
+
+				// Use System.Reflection.Metadata to avoid locking the file and to handle 32/64 bit mismatches
+				using (
+					var fs = new FileStream(
+						fileName,
+						FileMode.Open,
+						FileAccess.Read,
+						FileShare.ReadWrite
+					)
+				)
+				using (var peReader = new PEReader(fs))
+				{
+					if (!peReader.HasMetadata)
+						return;
+
+					var reader = peReader.GetMetadataReader();
+					var file = GetOrCreateFileNode(parent, fileName);
+					string runtimeVersion = reader.MetadataVersion;
+
+					// Check Assembly-level ComVisible
+					bool asmComVisible = true;
+					// Default is true, but check if [assembly: ComVisible(false)] is present
+					if (
+						TryGetComVisible(
+							reader,
+							reader.GetAssemblyDefinition().GetCustomAttributes(),
+							out bool val
+						)
+					)
+					{
+						asmComVisible = val;
+					}
+
+					foreach (var typeHandle in reader.TypeDefinitions)
+					{
+						var typeDef = reader.GetTypeDefinition(typeHandle);
+						var attributes = typeDef.Attributes;
+
+						// Skip if not a class (Class is 0, so check it's not Interface)
+						if ((attributes & TypeAttributes.Interface) != 0)
+							continue;
+
+						// Skip abstract
+						if ((attributes & TypeAttributes.Abstract) != 0)
+							continue;
+
+						// Check visibility (Public only for now, skipping NestedPublic to avoid complexity)
+						var visibility = attributes & TypeAttributes.VisibilityMask;
+						if (visibility != TypeAttributes.Public)
+							continue;
+
+						// Check ComVisible
+						bool isComVisible = asmComVisible;
+						if (
+							TryGetComVisible(
+								reader,
+								typeDef.GetCustomAttributes(),
+								out bool typeVal
+							)
+						)
+						{
+							isComVisible = typeVal;
+						}
+
+						if (!isComVisible)
+							continue;
+
+						// Check for Guid
+						string clsId = GetAttributeStringValue(
+							reader,
+							typeDef.GetCustomAttributes(),
+							"System.Runtime.InteropServices.GuidAttribute"
+						);
+						if (string.IsNullOrEmpty(clsId))
+							continue;
+
+						clsId = "{" + clsId + "}";
+
+						// Check for ProgId
+						string progId = GetAttributeStringValue(
+							reader,
+							typeDef.GetCustomAttributes(),
+							"System.Runtime.InteropServices.ProgIdAttribute"
+						);
+
+						string typeName = GetFullTypeName(reader, typeDef);
+
+						AddOrReplaceClrClass(
+							file,
+							clsId,
+							"Both",
+							typeName,
+							progId,
+							runtimeVersion
+						);
+
+						_log.LogMessage(
+							MessageImportance.Low,
+							string.Format(
+								@"ClrClass: clsid=""{0}"", name=""{1}"", progid=""{2}""",
+								clsId,
+								typeName,
+								progId
+							)
+						);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				_log.LogWarning(
+					"Failed to process managed assembly {0}: {1}",
+					fileName,
+					ex.Message
+				);
+			}
+		}
+
+		private bool TryGetComVisible(
+			MetadataReader reader,
+			CustomAttributeHandleCollection attributes,
+			out bool value
+		)
+		{
+			value = true;
+			foreach (var handle in attributes)
+			{
+				var attr = reader.GetCustomAttribute(handle);
+				if (
+					IsAttribute(
+						reader,
+						attr,
+						"System.Runtime.InteropServices.ComVisibleAttribute"
+					)
+				)
+				{
+					var blobReader = reader.GetBlobReader(attr.Value);
+					if (blobReader.Length >= 5) // Prolog (2) + bool (1) + NamedArgs (2)
+					{
+						blobReader.ReadUInt16(); // Prolog 0x0001
+						value = blobReader.ReadBoolean();
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
+		private string GetAttributeStringValue(
+			MetadataReader reader,
+			CustomAttributeHandleCollection attributes,
+			string attrName
+		)
+		{
+			foreach (var handle in attributes)
+			{
+				var attr = reader.GetCustomAttribute(handle);
+				if (IsAttribute(reader, attr, attrName))
+				{
+					var blobReader = reader.GetBlobReader(attr.Value);
+					if (blobReader.Length > 4)
+					{
+						blobReader.ReadUInt16(); // Prolog
+						return blobReader.ReadSerializedString();
+					}
+				}
+			}
+			return null;
+		}
+
+		private bool IsAttribute(MetadataReader reader, CustomAttribute attr, string fullName)
+		{
+			if (attr.Constructor.Kind == HandleKind.MemberReference)
+			{
+				var memberRef = reader.GetMemberReference(
+					(MemberReferenceHandle)attr.Constructor
+				);
+				if (memberRef.Parent.Kind == HandleKind.TypeReference)
+				{
+					var typeRef = reader.GetTypeReference((TypeReferenceHandle)memberRef.Parent);
+					return GetFullTypeName(reader, typeRef) == fullName;
+				}
+			}
+			else if (attr.Constructor.Kind == HandleKind.MethodDefinition)
+			{
+				var methodDef = reader.GetMethodDefinition(
+					(MethodDefinitionHandle)attr.Constructor
+				);
+				var typeDef = reader.GetTypeDefinition(methodDef.GetDeclaringType());
+				return GetFullTypeName(reader, typeDef) == fullName;
+			}
+			return false;
+		}
+
+		private string GetFullTypeName(MetadataReader reader, TypeDefinition typeDef)
+		{
+			string ns = reader.GetString(typeDef.Namespace);
+			string name = reader.GetString(typeDef.Name);
+			return string.IsNullOrEmpty(ns) ? name : ns + "." + name;
+		}
+
+		private string GetFullTypeName(MetadataReader reader, TypeReference typeRef)
+		{
+			string ns = reader.GetString(typeRef.Namespace);
+			string name = reader.GetString(typeRef.Name);
+			return string.IsNullOrEmpty(ns) ? name : ns + "." + name;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -701,6 +931,43 @@ namespace SIL.FieldWorks.Build.Tasks
 				);
 				_log.LogMessage(MessageImportance.High, e.StackTrace);
 			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Adds a clrClass element.
+		/// </summary>
+		/// <param name="parent">The parent file node.</param>
+		/// <param name="clsId">The CLSID string.</param>
+		/// <param name="threadingModel">The threading model.</param>
+		/// <param name="name">The full name of the class.</param>
+		/// <param name="progId">The prog id (might be <c>null</c>).</param>
+		/// <param name="runtimeVersion">The runtime version.</param>
+		/// ------------------------------------------------------------------------------------
+		private void AddOrReplaceClrClass(
+			XmlElement parent,
+			string clsId,
+			string threadingModel,
+			string name,
+			string progId,
+			string runtimeVersion
+		)
+		{
+			Debug.Assert(clsId.StartsWith("{"));
+
+			clsId = clsId.ToLower();
+
+			// <clrClass clsid="{...}" threadingModel="Both" name="..." runtimeVersion="..." progid="..." />
+			var elem = _doc.CreateElement("clrClass", UrnAsmv1);
+			elem.SetAttribute("clsid", clsId);
+			elem.SetAttribute("threadingModel", threadingModel);
+			elem.SetAttribute("name", name);
+			elem.SetAttribute("runtimeVersion", runtimeVersion);
+
+			if (!string.IsNullOrEmpty(progId))
+				elem.SetAttribute("progid", progId);
+
+			AppendOrReplaceNode(parent, elem, "clsid", clsId);
 		}
 
 		/// ------------------------------------------------------------------------------------
