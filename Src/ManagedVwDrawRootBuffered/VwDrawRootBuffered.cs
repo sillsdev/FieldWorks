@@ -28,7 +28,6 @@ namespace SIL.FieldWorks.Views
 				m_bitmap = new Bitmap(width, height);
 				// create graphics memory buffer
 				m_graphics = Graphics.FromImage(m_bitmap);
-				m_graphics.GetHdc();
 			}
 
 			#region Disposable stuff
@@ -59,7 +58,6 @@ namespace SIL.FieldWorks.Views
 					// dispose managed and unmanaged objects
 					if (m_graphics != null)
 					{
-						m_graphics.ReleaseHdc();
 						m_graphics.Dispose();
 					}
 					if (m_bitmap != null)
@@ -111,67 +109,74 @@ namespace SIL.FieldWorks.Views
 			{
 				memoryBuffer.Graphics.FillRectangle(new SolidBrush(ColorUtil.ConvertBGRtoColor(bkclr)), 0, 0,
 					rcp.Width, rcp.Height);
-				qvg.Initialize(memoryBuffer.Graphics.GetHdc());
-				VwPrepDrawResult xpdr = VwPrepDrawResult.kxpdrAdjust;
-				IVwGraphics qvgDummy = null;
 
+				IntPtr hdcMem = memoryBuffer.Graphics.GetHdc();
+				VwPrepDrawResult xpdr = VwPrepDrawResult.kxpdrAdjust;
 				try
 				{
-					Rect rcDst, rcSrc;
-					while (xpdr == VwPrepDrawResult.kxpdrAdjust)
+					qvg.Initialize(hdcMem);
+					IVwGraphics qvgDummy = null;
+
+					try
 					{
+						Rect rcDst, rcSrc;
+						while (xpdr == VwPrepDrawResult.kxpdrAdjust)
+						{
 
-						pvrs.GetGraphics(prootb, out qvgDummy, out rcSrc, out rcDst);
-						Rectangle temp = rcDst;
-						temp.Offset(-rcp.Left, -rcp.Top);
-						rcDst = temp;
+							pvrs.GetGraphics(prootb, out qvgDummy, out rcSrc, out rcDst);
+							Rectangle temp = rcDst;
+							temp.Offset(-rcp.Left, -rcp.Top);
+							rcDst = temp;
 
-						qvg.XUnitsPerInch = qvgDummy.XUnitsPerInch;
-						qvg.YUnitsPerInch = qvgDummy.YUnitsPerInch;
+							qvg.XUnitsPerInch = qvgDummy.XUnitsPerInch;
+							qvg.YUnitsPerInch = qvgDummy.YUnitsPerInch;
 
-						xpdr = prootb.PrepareToDraw(qvg, rcSrc, rcDst);
-						pvrs.ReleaseGraphics(prootb, qvgDummy);
-						qvgDummy = null;
+							xpdr = prootb.PrepareToDraw(qvg, rcSrc, rcDst);
+							pvrs.ReleaseGraphics(prootb, qvgDummy);
+							qvgDummy = null;
+						}
+
+						if (xpdr != VwPrepDrawResult.kxpdrInvalidate)
+						{
+							pvrs.GetGraphics(prootb, out qvgDummy, out rcSrc, out rcDst);
+
+							Rectangle temp = rcDst;
+							temp.Offset(-rcp.Left, -rcp.Top);
+							rcDst = temp;
+
+							qvg.XUnitsPerInch = qvgDummy.XUnitsPerInch;
+							qvg.YUnitsPerInch = qvgDummy.YUnitsPerInch;
+
+							try
+							{
+								prootb.DrawRoot(qvg, rcSrc, rcDst, fDrawSel);
+							}
+							catch (Exception e)
+							{
+								Console.WriteLine("DrawRoot e = {0} qvg = {1} rcSrc = {2} rcDst = {3} fDrawSel = {4}", e, qvg, rcSrc, rcDst, fDrawSel);
+							}
+							pvrs.ReleaseGraphics(prootb, qvgDummy);
+							qvgDummy = null;
+						}
+
 					}
-
-					if (xpdr != VwPrepDrawResult.kxpdrInvalidate)
+					catch (Exception)
 					{
-						pvrs.GetGraphics(prootb, out qvgDummy, out rcSrc, out rcDst);
-
-						Rectangle temp = rcDst;
-						temp.Offset(-rcp.Left, -rcp.Top);
-						rcDst = temp;
-
-						qvg.XUnitsPerInch = qvgDummy.XUnitsPerInch;
-						qvg.YUnitsPerInch = qvgDummy.YUnitsPerInch;
-
-						try
-						{
-							prootb.DrawRoot(qvg, rcSrc, rcDst, fDrawSel);
-						}
-						catch (Exception e)
-						{
-							Console.WriteLine("DrawRoot e = {0} qvg = {1} rcSrc = {2} rcDst = {3} fDrawSel = {4}", e, qvg, rcSrc, rcDst, fDrawSel);
-						}
-						pvrs.ReleaseGraphics(prootb, qvgDummy);
-						qvgDummy = null;
+						if (qvgDummy != null)
+							pvrs.ReleaseGraphics(prootb, qvgDummy);
+						throw;
 					}
-
 				}
-				catch (Exception)
+				finally
 				{
-					if (qvgDummy != null)
-						pvrs.ReleaseGraphics(prootb, qvgDummy);
 					qvg.ReleaseDC();
-					throw;
+					memoryBuffer.Graphics.ReleaseHdc(hdcMem);
 				}
 
 				if (xpdr != VwPrepDrawResult.kxpdrInvalidate)
 				{
 					screen.DrawImageUnscaled(memoryBuffer.Bitmap, rcp.Left, rcp.Top, rcp.Width, rcp.Height);
 				}
-
-				qvg.ReleaseDC();
 			}
 		}
 
@@ -197,7 +202,8 @@ namespace SIL.FieldWorks.Views
 				{
 					memoryBuffer.Graphics.FillRectangle(new SolidBrush(ColorUtil.ConvertBGRtoColor(bkclr)), rcFill);
 
-					qvg32.Initialize(memoryBuffer.Graphics.GetHdc());
+					IntPtr hdcMem = memoryBuffer.Graphics.GetHdc();
+					qvg32.Initialize(hdcMem);
 					qvg32.XUnitsPerInch = rcDst.right - rcDst.left;
 					qvg32.YUnitsPerInch = rcDst.bottom - rcDst.top;
 
@@ -205,15 +211,13 @@ namespace SIL.FieldWorks.Views
 					{
 						prootb.DrawRoot2(qvg32, rcSrc, rcDst, fDrawSel, ysTop, dysHeight);
 					}
-					catch (Exception)
+					finally
 					{
 						qvg32.ReleaseDC();
-						throw;
+						memoryBuffer.Graphics.ReleaseHdc(hdcMem);
 					}
 
 					screen.DrawImageUnscaled(memoryBuffer.Bitmap, rcp);
-
-					qvg32.ReleaseDC();
 				}
 			}
 		}
@@ -233,7 +237,8 @@ namespace SIL.FieldWorks.Views
 			using (var memoryBuffer = new MemoryBuffer(rcp.Width, rcp.Height))
 			{
 				memoryBuffer.Graphics.FillRectangle(new SolidBrush(ColorUtil.ConvertBGRtoColor(bkclr)), rcFill);
-				qvg32.Initialize(memoryBuffer.Graphics.GetHdc());
+				IntPtr hdcMem = memoryBuffer.Graphics.GetHdc();
+				qvg32.Initialize(hdcMem);
 
 				IVwGraphics qvgDummy = null;
 				try
@@ -255,8 +260,12 @@ namespace SIL.FieldWorks.Views
 				{
 					if (qvgDummy != null)
 						vrs.ReleaseGraphics(rootb, qvgDummy);
-					qvg32.ReleaseDC();
 					throw;
+				}
+				finally
+				{
+					qvg32.ReleaseDC();
+					memoryBuffer.Graphics.ReleaseHdc(hdcMem);
 				}
 
 				Point[] rgptTransform = new Point[3];
@@ -266,8 +275,6 @@ namespace SIL.FieldWorks.Views
 				rgptTransform[2] = new Point(rcpDraw.left, rcpDraw.top); // bottom left of actual drawing maps to top left of rotated drawing.
 
 				screen.DrawImage((Image)memoryBuffer.Bitmap, rgptTransform, new Rectangle(0, 0, rcp.Width, rcp.Height), GraphicsUnit.Pixel);
-
-				qvg32.ReleaseDC();
 			}
 		}
 	}
