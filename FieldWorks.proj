@@ -22,6 +22,7 @@
     <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
     <!-- Suppress warnings about missing projects during restore -->
     <ReportAnalyzer>false</ReportAnalyzer>
+    <BuildAdditionalApps Condition="'$(BuildAdditionalApps)'==''">false</BuildAdditionalApps>
   </PropertyGroup>
 
   <!-- Phase 1: Build Tasks - Excluded from traversal build because build.ps1 bootstraps it -->
@@ -111,7 +112,7 @@
     <!-- Main application shell -->
     <ProjectReference Include="Src\FXT\FxtDll\FxtDll.csproj" />
     <ProjectReference Include="Src\xWorks\xWorks.csproj" />
-    <ProjectReference Include="Src\FXT\FxtExe\FxtExe.csproj" />
+    <ProjectReference Include="Src\FXT\FxtExe\FxtExe.csproj" Condition="'$(BuildAdditionalApps)'=='true'" />
   </ItemGroup>
 
   <ItemGroup Label="Phase 13: Plugins and Extensions">
@@ -125,16 +126,16 @@
   <ItemGroup Label="Phase 14: Utilities and Tools">
     <!-- Standalone utilities -->
     <ProjectReference Include="Src\Utilities\SfmToXml\Sfm2Xml.csproj" />
-    <ProjectReference Include="Src\Utilities\SfmToXml\ConvertSFM\ConvertSFM.csproj" />
-    <ProjectReference Include="Src\Utilities\FixFwData\FixFwData.csproj" />
+    <ProjectReference Include="Src\Utilities\SfmToXml\ConvertSFM\ConvertSFM.csproj" Condition="'$(BuildAdditionalApps)'=='true'" />
+    <ProjectReference Include="Src\Utilities\FixFwData\FixFwData.csproj" Condition="'$(BuildAdditionalApps)'=='true'" />
     <ProjectReference Include="Src\Utilities\FixFwDataDll\FixFwDataDll.csproj" />
-    <ProjectReference Include="Src\UnicodeCharEditor\UnicodeCharEditor.csproj" />
+    <ProjectReference Include="Src\UnicodeCharEditor\UnicodeCharEditor.csproj" Condition="'$(BuildAdditionalApps)'=='true'" />
     <ProjectReference Include="Src\ProjectUnpacker\ProjectUnpacker.csproj" />
-    <ProjectReference Include="Src\MigrateSqlDbs\MigrateSqlDbs.csproj" />
-    <ProjectReference Include="Src\LCMBrowser\LCMBrowser.csproj" />
-    <ProjectReference Include="Src\InstallValidator\InstallValidator.csproj" />
-    <ProjectReference Include="Src\GenerateHCConfig\GenerateHCConfig.csproj" />
-    <ProjectReference Include="Src\Utilities\ComManifestTestHost\ComManifestTestHost.csproj" />
+    <ProjectReference Include="Src\MigrateSqlDbs\MigrateSqlDbs.csproj" Condition="'$(BuildAdditionalApps)'=='true'" />
+    <ProjectReference Include="Src\LCMBrowser\LCMBrowser.csproj" Condition="'$(BuildAdditionalApps)'=='true'" />
+    <ProjectReference Include="Src\InstallValidator\InstallValidator.csproj" Condition="'$(BuildAdditionalApps)'=='true'" />
+    <ProjectReference Include="Src\GenerateHCConfig\GenerateHCConfig.csproj" Condition="'$(BuildAdditionalApps)'=='true'" />
+    <ProjectReference Include="Src\Utilities\ComManifestTestHost\ComManifestTestHost.csproj" Condition="'$(BuildAdditionalApps)'=='true'" />
     <ProjectReference Include="Lib\src\ScrChecks\ScrChecks.csproj" />
     <ProjectReference Include="Lib\src\ObjectBrowser\ObjectBrowser.csproj" />
   </ItemGroup>

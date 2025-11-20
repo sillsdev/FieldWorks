@@ -15,6 +15,7 @@
 // </remarks>
 // ---------------------------------------------------------------------------------------------
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.IO;
@@ -105,6 +106,15 @@ namespace SIL.FieldWorks.Build.Tasks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
+		/// Gets or sets the CLSIDs to exclude from the manifest.
+		/// This is useful when a CLSID is defined in a TypeLib but implemented in a managed assembly
+		/// that provides its own manifest entry.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		public ITaskItem[] ExcludedClsids { get; set; }
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
 		/// Gets or sets manifest fragment files that will be included in the resulting manifest
 		/// file. This can be used to pre-process the manifest files for some rarely changing
 		/// Dlls.
@@ -153,16 +163,20 @@ namespace SIL.FieldWorks.Build.Tasks
 				Path.GetFileName(Executable)
 			);
 
-			StringCollection dllPaths = GetFilesFrom(Dlls);
-			if (dllPaths.Count == 0)
+			var itemsToProcess = new List<ITaskItem>(Dlls);
+			if (itemsToProcess.Count == 0)
 			{
 				string ext = Path.GetExtension(Executable);
 				if (
 					ext != null
 					&& ext.Equals(".dll", StringComparison.InvariantCultureIgnoreCase)
+					&& (ManagedAssemblies == null || !ManagedAssemblies.Any(m => m.ItemSpec.Equals(Executable, StringComparison.OrdinalIgnoreCase)))
 				)
-					dllPaths.Add(Executable);
+				{
+					itemsToProcess.Add(new TaskItem(Executable));
+				}
 			}
+
 			string manifestFile = string.IsNullOrEmpty(Output)
 				? Executable + ".manifest"
 				: Output;
@@ -192,14 +206,19 @@ namespace SIL.FieldWorks.Build.Tasks
 
 				// Process all DLLs using direct type library parsing (no registry redirection needed)
 				var creator = new RegFreeCreator(doc, Log);
-				var filesToRemove = dllPaths
-					.Cast<string>()
-					.Where(fileName => !File.Exists(fileName))
-					.ToList();
-				foreach (var file in filesToRemove)
-					dllPaths.Remove(file);
+				if (ExcludedClsids != null)
+				{
+					creator.AddExcludedClsids(GetFilesFrom(ExcludedClsids));
+				}
+
+				// Remove non-existing files from the list
+				itemsToProcess.RemoveAll(item => !File.Exists(item.ItemSpec));
 
 				string assemblyName = Path.GetFileNameWithoutExtension(manifestFile);
+				if (assemblyName.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+				{
+					assemblyName = Path.GetFileNameWithoutExtension(assemblyName);
+				}
 				Debug.Assert(assemblyName != null);
 				// The C++ test programs won't run if an assemblyIdentity element exists.
 				//if (assemblyName.StartsWith("test"))
@@ -214,24 +233,36 @@ namespace SIL.FieldWorks.Build.Tasks
 					// just ignore
 				}
 				if (string.IsNullOrEmpty(assemblyVersion))
+				{
 					assemblyVersion = "1.0.0.0";
+				}
+				else
+				{
+					// Ensure version has 4 parts for manifest compliance (Major.Minor.Build.Revision)
+					// Some assemblies might have 3-part versions (e.g. 1.1.0) which are invalid in manifests.
+					// We also strip any non-numeric suffix if present, though FileVersion is usually clean.
+					var parts = assemblyVersion.Split('.');
+					if (parts.Length != 4)
+					{
+						var newParts = new string[4];
+						for (int i = 0; i < 4; i++)
+						{
+							// Simple parsing to ensure we only get numbers
+							string part = "0";
+							if (i < parts.Length)
+							{
+								// Take only the leading digits
+								var digits = new string(parts[i].TakeWhile(char.IsDigit).ToArray());
+								if (!string.IsNullOrEmpty(digits))
+									part = digits;
+							}
+							newParts[i] = part;
+						}
+						assemblyVersion = string.Join(".", newParts);
+					}
+				}
 
 				XmlElement root = creator.CreateExeInfo(assemblyName, assemblyVersion, Platform);
-
-				foreach (string fileName in dllPaths)
-				{
-					if (NoTypeLib.Count(f => f.ItemSpec == fileName) != 0)
-						continue;
-
-					Log.LogMessage(
-						MessageImportance.Low,
-						"\tProcessing library {0}",
-						Path.GetFileName(fileName)
-					);
-
-					// Process type library directly (no registry redirection needed)
-					creator.ProcessTypeLibrary(root, fileName);
-				}
 
 				foreach (string fileName in GetFilesFrom(ManagedAssemblies))
 				{
@@ -241,6 +272,26 @@ namespace SIL.FieldWorks.Build.Tasks
 						Path.GetFileName(fileName)
 					);
 					creator.ProcessManagedAssembly(root, fileName);
+				}
+
+				foreach (var item in itemsToProcess)
+				{
+					string fileName = item.ItemSpec;
+					if (NoTypeLib.Count(f => f.ItemSpec == fileName) != 0)
+						continue;
+
+					string server = item.GetMetadata("Server");
+					if (string.IsNullOrEmpty(server))
+						server = null;
+
+					Log.LogMessage(
+						MessageImportance.Low,
+						"\tProcessing library {0}",
+						Path.GetFileName(fileName)
+					);
+
+					// Process type library directly (no registry redirection needed)
+					creator.ProcessTypeLibrary(root, fileName, server);
 				}
 
 				// Process classes and interfaces from HKCR (where COM is already registered)
@@ -277,6 +328,18 @@ namespace SIL.FieldWorks.Build.Tasks
 					creator.AddDependentAssembly(root, assemblyFileName);
 				}
 
+				if (!HasRegFreeContent(doc))
+				{
+					Log.LogMessage(
+						MessageImportance.Low,
+						"\tNo registration-free content found for {0}; manifest will not be emitted.",
+						Path.GetFileName(manifestFile)
+					);
+					if (File.Exists(manifestFile))
+						File.Delete(manifestFile);
+					return true;
+				}
+
 				var settings = new XmlWriterSettings
 				{
 					OmitXmlDeclaration = false,
@@ -301,9 +364,25 @@ namespace SIL.FieldWorks.Build.Tasks
 			return true;
 		}
 
-		private static StringCollection GetFilesFrom(ITaskItem[] source)
+		private static bool HasRegFreeContent(XmlDocument doc)
 		{
-			var result = new StringCollection();
+			if (doc.DocumentElement == null)
+				return false;
+
+			var namespaceManager = new XmlNamespaceManager(doc.NameTable);
+			namespaceManager.AddNamespace("asmv1", "urn:schemas-microsoft-com:asm.v1");
+
+			bool HasNode(string xpath) => doc.SelectSingleNode(xpath, namespaceManager) != null;
+
+			return HasNode("//asmv1:clrClass")
+				|| HasNode("//asmv1:comClass")
+				|| HasNode("//asmv1:typelib")
+				|| HasNode("//asmv1:dependentAssembly");
+		}
+
+		private static List<string> GetFilesFrom(ITaskItem[] source)
+		{
+			var result = new List<string>();
 			if (source == null)
 				return result;
 			foreach (var item in source)

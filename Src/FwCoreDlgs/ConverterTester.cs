@@ -154,7 +154,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			this.components = new System.ComponentModel.Container();
 			System.Windows.Forms.Button selectFileButton;
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConverterTest));
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConverterTester));
 			System.Windows.Forms.Label label2;
 			System.Windows.Forms.Label label3;
 			System.Windows.Forms.HelpProvider helpProvider1;
@@ -235,7 +235,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			helpProvider1.SetShowHelp(this.txtInputFile, ((bool)(resources.GetObject("txtInputFile.ShowHelp"))));
 			this.txtInputFile.TabStop = false;
 			//
-			// ConverterTest
+			// ConverterTester
 			//
 			this.Controls.Add(this.txtInputFile);
 			this.Controls.Add(this.convertButton);
@@ -245,7 +245,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.Controls.Add(label2);
 			this.Controls.Add(this.outputFontCombo);
 			this.Controls.Add(selectFileButton);
-			this.Name = "ConverterTest";
+			this.Name = "ConverterTester";
 			helpProvider1.SetShowHelp(this, ((bool)(resources.GetObject("$this.ShowHelp"))));
 			resources.ApplyResources(this, "$this");
 			this.Load += new System.EventHandler(this.ConverterTest_Load);

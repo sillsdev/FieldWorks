@@ -4,7 +4,8 @@ param(
 	[string]$Configuration = "Debug",
 	[string]$Platform = "x64",
 	[string[]]$MsBuildArgs = @(),
-	[string]$LogFile
+	[string]$LogFile,
+	[switch]$BuildAdditionalApps
 )
 
 $ErrorActionPreference = 'Stop'
@@ -148,6 +149,10 @@ function Invoke-MSBuildStep {
 Write-Host "Building FieldWorks using MSBuild Traversal SDK (FieldWorks.proj)..." -ForegroundColor Cyan
 Write-Host "Configuration: $Configuration, Platform: $Platform" -ForegroundColor Cyan
 
+if ($BuildAdditionalApps) {
+	Write-Host "Including optional FieldWorks executables (BuildAdditionalApps=true)" -ForegroundColor Yellow
+}
+
 # Bootstrap: Build FwBuildTasks first (required by SetupInclude.targets)
 Write-Host "🔧 Bootstrapping: Building FwBuildTasks..." -ForegroundColor Yellow
 Invoke-MSBuildStep `
@@ -161,7 +166,7 @@ Invoke-MSBuildStep `
 
 # Build using traversal project
 Invoke-MSBuildStep `
-	-Arguments (@('FieldWorks.proj', "/p:Configuration=$Configuration", "/p:Platform=$Platform") + $MsBuildArgs) `
+	-Arguments (@('FieldWorks.proj', "/p:Configuration=$Configuration", "/p:Platform=$Platform") + $MsBuildArgs + $(if ($BuildAdditionalApps) { '/p:BuildAdditionalApps=true' } else { @() })) `
 	-Description "FieldWorks" `
 	-LogPath $LogFile
 

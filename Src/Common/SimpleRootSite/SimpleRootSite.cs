@@ -4644,10 +4644,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			SetAccessibleName(Name);
 
-			// Managed object on Linux
-			m_vdrb = Platform.IsMono
-				? new SIL.FieldWorks.Views.VwDrawRootBuffered()
-				: (IVwDrawRootBuffered)VwDrawRootBufferedClass.Create();
+			m_vdrb = new SIL.FieldWorks.Views.VwDrawRootBuffered();
 
 			m_rootb = VwRootBoxClass.Create();
 			m_rootb.RenderEngineFactory = SingletonsContainer.Get<RenderEngineFactory>();

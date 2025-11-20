@@ -46,12 +46,14 @@
 		<DependentAssemblies Include="$(OutDir)Views.X.manifest" />
 	</ItemGroup>
 	<ItemGroup Condition="'@(NativeComDlls)' == ''">
-		<NativeComDlls Include="$(OutDir)*.dll" />
+		<!-- Explicitly list known native COM servers instead of wildcard inclusion -->
+		<NativeComDlls Include="$(OutDir)GraphiteEngine.dll" />
+		<NativeComDlls Include="$(OutDir)UniscribeEngine.dll" />
 	</ItemGroup>
 	<ItemGroup>
 		<NativeComDlls Remove="$(OutDir)*.resources.dll" />
 		<NativeComDlls Remove="$(OutDir)*.ni.dll" />
-		<!-- Exclude DLLs that have their own manifests -->
+		<!-- Exclude DLLs that have their own manifests (redundant if not in include, but safe) -->
 		<NativeComDlls Remove="$(OutDir)Views.dll" />
 		<!-- FwKernel.dll is covered by FwKernel.X.manifest, but we need to ensure that manifest is populated.
 		     For now, we assume it is or will be fixed. -->
@@ -61,18 +63,54 @@
 		<Fragments Include="$(DistFilesDir)/*.fragment.manifest" />
 	</ItemGroup>
 	<ItemGroup Condition="'@(ManagedComAssemblies)' == ''">
-		<ManagedComAssemblies Include="$(OutDir)*.dll" />
+		<!-- Explicitly list managed assemblies that expose COM types -->
+		<ManagedComAssemblies Include="$(OutDir)FwUtils.dll" />
+		<ManagedComAssemblies Include="$(OutDir)SimpleRootSite.dll" />
+		<ManagedComAssemblies Include="$(OutDir)ManagedVwDrawRootBuffered.dll" />
+		<ManagedComAssemblies Include="$(OutDir)ManagedLgIcuCollator.dll" />
+		<ManagedComAssemblies Include="$(OutDir)ManagedVwWindow.dll" />
 	</ItemGroup>
 	<ItemGroup>
 		<ManagedComAssemblies Remove="$(OutDir)*.resources.dll" />
 		<ManagedComAssemblies Remove="$(OutDir)*.ni.dll" />
+		<!-- Exclude native DLLs that are handled separately -->
+		<ManagedComAssemblies Remove="$(OutDir)FwKernel.dll" />
+		<ManagedComAssemblies Remove="$(OutDir)Views.dll" />
+		<!-- Exclude 3rd party DLLs that cause manifest issues and don't need RegFree COM -->
+		<ManagedComAssemblies Remove="$(OutDir)DotNetZip.dll" />
 	</ItemGroup>
-	<Target Name="CreateManifest" Condition="'$(OS)'=='Windows_NT'">
+
+	<!-- Ensure we don't process managed assemblies as native type libraries in the main manifest -->
+	<ItemGroup>
+		<NativeComDlls Remove="@(ManagedComAssemblies)" />
+	</ItemGroup>
+
+	<!-- Phase 1: Generate individual manifests for managed assemblies -->
+	<Target Name="CreateComponentManifests"
+			Inputs="%(ManagedComAssemblies.Identity)"
+			Outputs="$(OutDir)%(ManagedComAssemblies.Filename).manifest">
+		<Message Text="Generating component manifest for %(ManagedComAssemblies.Filename) with Platform=$(Platform)" Importance="high" />
+		<RegFree
+			Executable="%(ManagedComAssemblies.Identity)"
+			Output="$(OutDir)%(ManagedComAssemblies.Filename).manifest"
+			ManagedAssemblies="%(ManagedComAssemblies.Identity)"
+			Platform="$(Platform)"
+			Condition="'$(OS)'=='Windows_NT'"
+		/>
+	</Target>
+
+	<Target Name="CreateManifest" Condition="'$(OS)'=='Windows_NT'" DependsOnTargets="CreateComponentManifests">
+		<ItemGroup>
+			<ManagedComponentManifests Include="@(ManagedComAssemblies -> '$(OutDir)%(Filename).manifest')" />
+			<ManagedComponentManifests Remove="@(ManagedComponentManifests)" Condition="!Exists('%(ManagedComponentManifests.Identity)')" />
+			<!-- Add the generated component manifests as dependencies -->
+			<DependentAssemblies Include="@(ManagedComponentManifests)" />
+		</ItemGroup>
 		<RegFree
 			Executable="$(Executable)"
 			DependentAssemblies="@(DependentAssemblies)"
 			Dlls="@(NativeComDlls)"
-			ManagedAssemblies="@(ManagedComAssemblies)"
+			ManagedAssemblies=""
 			AsIs="@(Fragments)"
 			Platform="$(Platform)"
 		/>

@@ -29,19 +29,34 @@
 	<ItemGroup>
 		<Fragments Include="$(dir-fwdistfiles)/*.fragment.manifest" />
 	</ItemGroup>
+	<ItemGroup>
+		<!-- CLSIDs implemented in managed code that must be excluded from native manifests to avoid SxS duplicates -->
+		<ExcludedClsids Include="{17a2e876-2968-11e0-8046-0019dbf4566e}" /> <!-- ManagedPictureFactory -->
+		<ExcludedClsids Include="{97199458-10C7-49da-B3AE-EA922EA64859}" /> <!-- VwDrawRootBuffered -->
+		<ExcludedClsids Include="{3fb0fcd2-ac55-42a8-b580-73b89a2b6215}" /> <!-- ManagedVwWindow -->
+		<ExcludedClsids Include="{e771361c-ff54-4120-9525-98a0b7a9accf}" /> <!-- ManagedLgIcuCollator -->
+		<ExcludedClsids Include="{830BAF1F-6F84-46EF-B63E-3C1BFDF9E83E}" /> <!-- ViewInputManager -->
+	</ItemGroup>
 	<Target
 		Name="regFreeCpp"
 		DependsOnTargets="FwKernel;Views"
 		AfterTargets="FwKernel;Views"
 		Condition="'$(OS)'=='Windows_NT'"
 	>
+		<ItemGroup>
+			<RegFreeDlls Include="$(dir-fwoutputCommon)\FwKernelTlb.tlb">
+				<Server>FwKernel.dll</Server>
+			</RegFreeDlls>
+			<RegFreeDlls Include="$(dir-outputBase)\Views.dll" />
+		</ItemGroup>
 		<RegFree
 			Executable="$(dir-outputBase)/FwKernel.dll"
 			Output="$(dir-outputBase)/FieldWorks.Tests.manifest"
-			Dlls="$(dir-outputBase)\FwKernel.dll;$(dir-outputBase)\Views.dll"
+			Dlls="@(RegFreeDlls)"
 			Fragments="@(Fragments)"
 			Platform="$(Platform)"
 			MSBuildArchitecture="$(Platform)"
+			ExcludedClsids="@(ExcludedClsids)"
 		/>
 	</Target>
 	<Target Name="DebugProcs" DependsOnTargets="initWindows;CopyDlls">
@@ -86,12 +101,21 @@
 			Overwrite="false"
 			Condition="'$(OS)'=='Windows_NT' AND !Exists('$(dir-outputBase)\FwKernel.X.manifest')"
 		/>
+
+		<ItemGroup>
+			<FwKernelTlb Include="$(dir-fwoutputCommon)\FwKernelTlb.tlb">
+				<Server>FwKernel.dll</Server>
+			</FwKernelTlb>
+		</ItemGroup>
+
 		<!-- Generate manifest with explicit x64 platform -->
 		<RegFree
 			Executable="$(dir-outputBase)\FwKernel.dll"
 			Output="$(dir-outputBase)\FwKernel.X.manifest"
+			Dlls="@(FwKernelTlb)"
 			Platform="x64"
 			Condition="'$(OS)'=='Windows_NT'"
+			ExcludedClsids="@(ExcludedClsids)"
 		/>
 		<Message Text="Finished building FwKernel." />
 	</Target>
@@ -125,6 +149,7 @@
 			Output="$(dir-outputBase)\Views.X.manifest"
 			Platform="x64"
 			Condition="'$(OS)'=='Windows_NT'"
+			ExcludedClsids="@(ExcludedClsids)"
 		/>
 		<!-- Validate manifest was created successfully -->
 		<Error
@@ -234,10 +259,10 @@
 		>
 		<GeckoFxHtmlToPdfBuildTag>.lastSuccessful</GeckoFxHtmlToPdfBuildTag>
 		<!-- Versions of NuGet packages. Keep these in sync with PackageReference versions in the managed projects. -->
-		<ChorusNugetVersion>6.0.0-beta0061</ChorusNugetVersion>
+		<ChorusNugetVersion>6.0.0-beta0063</ChorusNugetVersion>
 		<PalasoNugetVersion>17.0.0-beta0080</PalasoNugetVersion>
 		<ParatextNugetVersion>9.4.0.1-beta</ParatextNugetVersion>
-		<LcmNugetVersion>11.0.0-beta0143</LcmNugetVersion>
+		<LcmNugetVersion>11.0.0-beta0144</LcmNugetVersion>
 		<IcuNugetVersion>70.1.152</IcuNugetVersion>
 		<HermitCrabNugetVersion>3.7.4</HermitCrabNugetVersion>
 		<IPCFrameworkVersion>1.1.1-beta0001</IPCFrameworkVersion>
