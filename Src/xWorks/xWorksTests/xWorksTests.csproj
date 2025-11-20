@@ -28,7 +28,7 @@
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.20.0" />
     <PackageReference Include="DotNetZip" Version="1.16.0" />
     <PackageReference Include="icu.net" Version="3.0.1" />
-  <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="SIL.Core" Version="17.0.0-*" />
     <PackageReference Include="SIL.Core.Desktop" Version="17.0.0-*" />
     <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
@@ -66,5 +66,10 @@
     <ProjectReference Include="../../XCore/xCore.csproj" />
     <ProjectReference Include="../../XCore/xCoreInterfaces/xCoreInterfaces.csproj" />
     <ProjectReference Include="../xWorks.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
 </Project>

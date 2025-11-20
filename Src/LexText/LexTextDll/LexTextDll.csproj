@@ -53,6 +53,9 @@
   <ItemGroup>
     <Compile Remove="LexTextDllTests/**" />
     <None Remove="LexTextDllTests/**" />
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="icons\Add New Analysis.ico" />

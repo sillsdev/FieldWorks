@@ -18,7 +18,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="icu.net" Version="3.0.1" />
-  <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
+    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
   </ItemGroup>
   <ItemGroup>
@@ -30,5 +30,8 @@
   <ItemGroup>
     <Compile Remove="ManagedLgIcuCollatorTests/**" />
     <None Remove="ManagedLgIcuCollatorTests/**" />
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
 </Project>

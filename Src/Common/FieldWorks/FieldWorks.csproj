@@ -29,7 +29,7 @@
     <PackageReference Include="icu.net" Version="3.0.1" />
     <PackageReference Include="L10NSharp" Version="9.0.0-*" />
     <PackageReference Include="mixpanel-csharp" Version="6.0.0" />
-    <PackageReference Include="SharpZipLib" Version="1.4.0" Exclude="Build,Analyzers" />
+    <PackageReference Include="SharpZipLib" Version="1.4.2" Exclude="Build,Analyzers" />
     <PackageReference Include="SIL.Core" Version="17.0.0-*" />
     <PackageReference Include="SIL.Core.Desktop" Version="17.0.0-*" />
     <PackageReference Include="SIL.DesktopAnalytics" Version="4.0.0" />
@@ -41,7 +41,7 @@
     <PackageReference Include="SIL.Windows.Forms" Version="17.0.0-*" />
     <PackageReference Include="SIL.Windows.Forms.Keyboarding" Version="17.0.0-*" />
     <PackageReference Include="SIL.WritingSystems" Version="17.0.0-*" />
-    <PackageReference Include="Geckofx60.64" Version="60.0.54" />
+    <PackageReference Include="Geckofx60.64" Version="60.0.56" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Build.Framework" />

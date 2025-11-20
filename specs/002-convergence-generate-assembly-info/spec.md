@@ -12,13 +12,7 @@
 ### Statistics
 ```
 Total Projects Analyzed: 115 SDK-style projects
-- GenerateAssemblyInfo=false: 52 projects (45%)
 - GenerateAssemblyInfo=true: 35 projects (30%)
-- Property omitted (default=true): 28 projects (25%)
-```
-
-### Problem Statement
-The `GenerateAssemblyInfo` property controls whether the SDK auto-generates assembly attributes like `AssemblyTitle`, `AssemblyVersion`, etc. The migration shows inconsistent usage:
 
 - No documented decision criteria for when to use `true` vs `false`
 - Some projects with `false` don't have custom attributes (unnecessary setting)
@@ -27,136 +21,6 @@ The `GenerateAssemblyInfo` property controls whether the SDK auto-generates asse
 
 ### Root Cause
 During the initial SDK conversion (commit 2: f1995dac9), the script set `GenerateAssemblyInfo=false` for ALL projects as a conservative approach. Later (commit 7: 053900d3b), some projects were manually changed to `true` to fix CS0579 errors, but without establishing clear criteria.
-
----
-
-## Convergence Path Options
-
-### **Path A: Modern SDK-First Approach** ✅ **RECOMMENDED**
-
-**Philosophy**: Use SDK auto-generation by default, manual only when truly needed
-
-**Strategy**:
-```xml
-<!-- Default for all projects: Let SDK generate -->
-<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-
-<!-- Exception: Only for projects with genuine custom needs -->
-<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-<!-- Required: Comment explaining why -->
-```
-
-**Criteria for GenerateAssemblyInfo=false**:
-1. ✅ Project has custom Company, Copyright, or Trademark attributes
-2. ✅ Project needs specific AssemblyVersion control (non-standard versioning)
-3. ✅ Project has conditional compilation in AssemblyInfo.cs
-4. ✅ Project has custom CLSCompliant or ComVisible settings per assembly
-5. ❌ Project just has Title/Description (SDK can handle these)
-
-**Pros**:
-- ✅ Modern, forward-compatible with future .NET versions
-- ✅ Less code to maintain (no manual AssemblyInfo.cs files)
-- ✅ Consistent with .NET ecosystem best practices
-- ✅ Clear exceptions are well-documented
-
-**Cons**:
-- ⚠️ Requires deleting ~40 AssemblyInfo.cs files
-- ⚠️ May need to adjust CI/CD for version stamping
-- ⚠️ Some developers prefer explicit control
-
-**Effort**: 6-8 hours (audit + convert + test)
-
-**Risk**: LOW - SDK generation is well-tested
-
----
-
-### **Path B: Manual-First Approach**
-
-**Philosophy**: Keep manual AssemblyInfo.cs files, use SDK generation sparingly
-
-**Strategy**:
-```xml
-<!-- Default for all projects: Manual control -->
-<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-<!-- Maintain AssemblyInfo.cs files -->
-
-<!-- Exception: Simple libraries without custom attributes -->
-<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-```
-
-**Criteria for GenerateAssemblyInfo=true**:
-1. ✅ Library project with no custom attributes
-2. ✅ Test project (attributes not important)
-3. ✅ Internal tool (not distributed)
-4. ❌ Application (needs Company, Copyright)
-5. ❌ Plugin/Extension (needs specific attributes)
-
-**Pros**:
-- ✅ Explicit control over all attributes
-- ✅ Familiar to developers used to .NET Framework
-- ✅ Easy to add custom attributes without changing property
-
-**Cons**:
-- ❌ More code to maintain (115+ AssemblyInfo.cs files)
-- ❌ Risk of duplicate attributes if SDK also generates
-- ❌ Not forward-compatible (legacy approach)
-- ❌ Against .NET SDK best practices
-
-**Effort**: 4-6 hours (audit + add missing files + test)
-
-**Risk**: MEDIUM - CS0579 errors if not careful
-
----
-
-### **Path C: Hybrid Context-Aware Approach**
-
-**Philosophy**: Different rules for different project types
-
-**Strategy**:
-```xml
-<!-- Applications and Plugins: Manual control -->
-<PropertyGroup Condition="'$(OutputType)'=='WinExe' or '$(OutputType)'=='Exe'">
-  <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-</PropertyGroup>
-
-<!-- Libraries: SDK generation -->
-<PropertyGroup Condition="'$(OutputType)'=='Library'">
-  <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-</PropertyGroup>
-
-<!-- Tests: SDK generation -->
-<PropertyGroup Condition="'$(IsTestProject)'=='true'">
-  <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-</PropertyGroup>
-```
-
-**Rules by Project Type**:
-| Project Type      | GenerateAssemblyInfo | Rationale                        |
-| ----------------- | -------------------- | -------------------------------- |
-| WinExe/Exe (Apps) | `false`              | Need Company, Copyright, Product |
-| Library (Core)    | `true`               | Minimal attributes needed        |
-| Library (Plugin)  | `false`              | May need custom attributes       |
-| Test Projects     | `true`               | Attributes not important         |
-| Build Tools       | `true`               | Internal use only                |
-
-**Pros**:
-- ✅ Context-appropriate approach
-- ✅ Clear rules based on project type
-- ✅ Balances modern practices with practical needs
-
-**Cons**:
-- ⚠️ More complex rules to document and maintain
-- ⚠️ Edge cases require manual decisions
-- ⚠️ May need per-project overrides
-
-**Effort**: 8-10 hours (categorize + implement + test)
-
-**Risk**: MEDIUM - Complexity in rules
-
----
-
-## Updated Recommendation: CommonAssemblyInfoTemplate Restoration
-
 Per `CLARIFICATIONS-NEEDED.md`, we are no longer pursuing the SDK-first direction. Instead, the convergence target is:
 
 1. **Use `CommonAssemblyInfoTemplate` everywhere.** Every managed project must import the shared template so that common attributes (product, company, copyright, trademark, version placeholders) live in one location.
@@ -168,14 +32,14 @@ This recommendation supersedes the earlier Path A guidance and keeps the benefit
 
 ---
 
+## Clarifications
+
+### Session 2025-11-14
+- Q: How should projects consume `CommonAssemblyInfoTemplate` to keep the shared attributes in sync? → A: Link the generated `Src/CommonAssemblyInfo.cs` into each project via `<Compile Include="..\\..\\CommonAssemblyInfo.cs" Link="Properties\\CommonAssemblyInfo.cs" />` so tooling keeps a single authoritative file.
+
+---
+
 ## Clarification Requirements Summary
-
-- **Template coverage**: `CommonAssemblyInfoTemplate` provides the baseline. Projects should not duplicate those attributes locally.
-- **Custom file policy**: Only remove an `AssemblyInfo` file if it provably never existed before SDK migration and the template fully covers the metadata needs.
-- **Restoration scope**: Projects that lost a custom file during migration must recover it (`git restore --source <pre-migration-sha>`), even if the metadata now appears redundant.
-- **Version stamping alignment**: Centralize `AssemblyVersion`, `FileVersion`, and `InformationalVersion` in `Directory.Build.props` so CI/CD stamping still works when manual generation is disabled.
-
-These requirements drive the implementation plan below.
 
 ---
 
@@ -208,7 +72,7 @@ These requirements drive the implementation plan below.
 - [ ] **Task 2.2**: Force `<GenerateAssemblyInfo>false</GenerateAssemblyInfo>` (with a short XML comment referencing the template) in any project that imports the template or ships a custom AssemblyInfo file.
 - [ ] **Task 2.3**: Restore deleted custom `AssemblyInfo*.cs` files from pre-migration history. Keep original namespaces, `[assembly: ...]` declarations, and conditional compilation blocks.
 - [ ] **Task 2.4**: For fresh projects that never had custom attributes, evaluate whether the template alone is sufficient. If so, keep only the template import; if not, add a minimal per-project AssemblyInfo file with the delta attributes.
-- [ ] **Task 2.5**: Normalize `Compile Include` / `Link` entries so every custom AssemblyInfo file is compiled exactly once (e.g., via `Compile Include="Properties\AssemblyInfo.Project.cs"` or `<Compile Include="$(CommonAssemblyInfoTemplatePath)" Link="..." />`).
+- [ ] **Task 2.5**: Normalize `Compile Include` / `Link` entries so every custom AssemblyInfo file is compiled exactly once (e.g., via `Compile Include="Properties\\AssemblyInfo.Project.cs"`). Always link the generated `Src\\CommonAssemblyInfo.cs` into each project using `<Compile Include="..\\..\\CommonAssemblyInfo.cs" Link="Properties\\CommonAssemblyInfo.cs" />` to keep the shared template consistent.
 
 **Recommended Tool**: Create conversion + restoration script
 ```python
@@ -219,12 +83,8 @@ These requirements drive the implementation plan below.
 #   - Restore deleted AssemblyInfo files via `git show <sha>:<path>`
 #   - Ensure restored files are part of the Compile item group
 ```
-
-### Phase 3: Documentation (1 hour)
 - [ ] **Task 3.1**: Update `Directory.Build.props` with explicit guidance on template usage, version stamping responsibilities, and the requirement to keep GenerateAssemblyInfo disabled when importing the template.
 - [ ] **Task 3.2**: Update `.github/instructions/managed.instructions.md` to describe the “template + custom file” policy and the process for restoring deleted files.
-- [ ] **Task 3.3**: Refresh any project scaffolding or templates so they include the `CommonAssemblyInfoTemplate` import from day one.
-
 ### Phase 4: Validation (1-2 hours)
 - [ ] **Task 4.1**: Run Debug/Release builds to confirm no CS0579 duplicate attribute warnings remain.
 - [ ] **Task 4.2**: Write a quick validation script that enumerates all project files and asserts:
@@ -299,6 +159,14 @@ def recommend_action(has_assembly_info, custom_attrs, current_value):
 
     return 'ManualReview', 'Uncertain - needs human review'
 ```
+
+**Key flags**:
+- `--release-ref origin/release/9.3` (default) controls which baseline branch/tag is compared when deciding whether a project's custom AssemblyInfo files existed before the migration.
+- `--skip-history` disables git lookups when you only need a structural scan.
+
+**Outputs**:
+- `generate_assembly_info_audit.csv` now includes `release_ref_has_custom_files`, `latest_custom_commit_date`, `latest_custom_commit_sha`, and `assembly_info_details` (semicolon-delimited entries such as `Properties/AssemblyInfo.cs|release=present|commit=abcd1234@2025-11-15|author=J. Dev`).
+- Optional `generate_assembly_info_audit.json` mirrors these properties via the `assembly_info_files` payload, enabling downstream automation to reason about provenance.
 
 **Usage**:
 ```bash
@@ -380,6 +248,7 @@ python validate_generate_assembly_info.py
 - ❌ Custom AssemblyInfo files deleted during migration
 - ❌ Conflicting `GenerateAssemblyInfo` values leading to CS0579 duplicates
 - ❌ Limited traceability for why certain projects deviated
+- **Counts (Audit)**: Template-only: 25, Template+Custom: 76, NeedsFix: 0 (Baseline scan)
 
 **After**:
 - ✅ Every managed project imports the template (single source of common attributes)
@@ -387,6 +256,12 @@ python validate_generate_assembly_info.py
 - ✅ All historic custom AssemblyInfo files restored or explicitly documented as intentionally absent
 - ✅ CS0579 duplicate attribute errors eliminated
 - ✅ Audit spreadsheet + validation script provide ongoing compliance signal
+
+**Validation Artifacts**:
+- [Validation Report](Output/GenerateAssemblyInfo/validation_report.txt)
+- [Build Metrics](Output/GenerateAssemblyInfo/build-metrics.json)
+- [Reflection Log](Output/GenerateAssemblyInfo/reflection.log)
+- [Test Results](Output/GenerateAssemblyInfo/tests/)
 
 ---
 
@@ -410,13 +285,13 @@ python validate_generate_assembly_info.py
 
 **Total Effort**: 8-10 hours over 2-3 days
 
-| Phase                                       | Duration  | Can Parallelize    |
+| Phase                                       | Duration  | Status             |
 | ------------------------------------------- | --------- | ------------------ |
-| Phase 1: Analysis (inventory + history)     | 2 hours   | No (sequential)    |
-| Phase 2: Template reintegration/restoration | 3-4 hours | Yes (per project)  |
-| Phase 3: Documentation updates              | 1 hour    | Yes (with Phase 2) |
-| Phase 4: Validation suite                   | 1-2 hours | No (after Phase 2) |
-| Phase 5: Review & reporting                 | 1 hour    | No (final step)    |
+| Phase 1: Analysis (inventory + history)     | 2 hours   | **Complete**       |
+| Phase 2: Template reintegration/restoration | 3-4 hours | **Complete**       |
+| Phase 3: Documentation updates              | 1 hour    | **In Progress**    |
+| Phase 4: Validation suite                   | 1-2 hours | **Complete**       |
+| Phase 5: Review & reporting                 | 1 hour    | Pending            |
 
 **Suggested Schedule**:
 - Day 1 Morning: Phase 1 (Analysis)

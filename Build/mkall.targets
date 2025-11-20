@@ -734,7 +734,7 @@
 			<Architecture Condition="'$(Platform)'=='x64'">64</Architecture>
 			<Architecture Condition="'$(Platform)'!='x64'">32</Architecture>
 			<GeckoDir Condition="'$(OS)'=='Windows_NT'"
-				>$(PackagesDir)/Geckofx60.$(Architecture).60.0.54</GeckoDir
+				>$(PackagesDir)/Geckofx60.$(Architecture).60.0.56</GeckoDir
 			>
 		</PropertyGroup>
 		<ItemGroup>

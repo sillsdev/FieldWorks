@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>UnicodeCharEditor</AssemblyName>
@@ -43,6 +43,9 @@
   <ItemGroup>
     <Compile Remove="UnicodeCharEditorTests/**" />
     <None Remove="UnicodeCharEditorTests/**" />
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <Import Project="BuildInclude.targets" />
 </Project>

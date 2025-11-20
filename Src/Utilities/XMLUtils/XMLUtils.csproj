@@ -36,5 +36,8 @@
   <ItemGroup>
     <Compile Remove="XMLUtilsTests/**" />
     <None Remove="XMLUtilsTests/**" />
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
 </Project>

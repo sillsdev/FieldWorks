@@ -36,7 +36,7 @@
     <PackageReference Include="SIL.DesktopAnalytics" Version="4.0.0" />
     <PackageReference Include="encoding-converters-core" Version="0.9.7" />
     <PackageReference Include="Geckofx60.64.Windows" Version="0.19.0" />
-    <PackageReference Include="Geckofx60.64" Version="60.0.54" />
+    <PackageReference Include="Geckofx60.64" Version="60.0.56" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Drawing" />
@@ -72,6 +72,9 @@
   <ItemGroup>
     <Compile Remove="LexTextControlsTests/**" />
     <None Remove="LexTextControlsTests/**" />
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Create Entry.ico" />

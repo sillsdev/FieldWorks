@@ -35,7 +35,7 @@
     <PackageReference Include="SIL.Windows.Forms" Version="17.0.0-*" />
     <PackageReference Include="SIL.Windows.Forms.WritingSystems" Version="17.0.0-*" />
     <PackageReference Include="SIL.WritingSystems" Version="17.0.0-*" />
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.6.1" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
@@ -56,6 +56,9 @@
   <ItemGroup>
     <Compile Remove="FwControlsTests/**" />
     <None Remove="FwControlsTests/**" />
+    <Compile Include="..\..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="resources\HelpButton.ICO" />

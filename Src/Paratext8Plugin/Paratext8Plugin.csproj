@@ -22,8 +22,8 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="ParatextData" Version="9.4.0.1-beta" />
-    <PackageReference Include="SIL.Scripture" Version="15.0.0-beta0117" />
+    <PackageReference Include="ParatextData" Version="9.5.0.20" />
+    <PackageReference Include="SIL.Scripture" Version="16.2.0" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
@@ -40,5 +40,8 @@
   <ItemGroup>
     <Compile Remove="Paratext8PluginTests/**" />
     <None Remove="Paratext8PluginTests/**" />
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
 </Project>

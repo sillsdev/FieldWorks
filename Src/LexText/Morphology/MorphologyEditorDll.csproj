@@ -68,6 +68,9 @@
     <None Remove="MGA/bin/**" />
     <Compile Remove="MGA/obj/**" />
     <None Remove="MGA/obj/**" />
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="icons\adhoc Allomorph rule.ico" />

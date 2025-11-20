@@ -21,6 +21,7 @@ using SIL.Keyboarding;
 using SIL.PlatformUtilities;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
+using LgCharRenderProps = SIL.LCModel.Core.KernelInterfaces.LgCharRenderProps;
 using SIL.Windows.Forms.Keyboarding;
 using SIL.LCModel;
 

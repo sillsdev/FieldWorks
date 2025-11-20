@@ -54,5 +54,8 @@
   <ItemGroup>
     <Compile Remove="DiscourseTests/**" />
     <None Remove="DiscourseTests/**" />
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
 </Project>

@@ -44,5 +44,8 @@
   <ItemGroup>
     <Compile Remove="FlexPathwayPluginTests/**" />
     <None Remove="FlexPathwayPluginTests/**" />
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
 </Project>

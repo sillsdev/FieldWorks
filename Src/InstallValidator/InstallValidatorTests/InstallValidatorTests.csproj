@@ -9,6 +9,7 @@
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <IsTestProject>true</IsTestProject>
     <Prefer32Bit>false</Prefer32Bit>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DebugSymbols>true</DebugSymbols>
@@ -29,13 +30,16 @@
     <Reference Include="netstandard" />
   </ItemGroup>
   <ItemGroup>
-    
-    
     <ProjectReference Include="../../../Build/Src/FwBuildTasks/FwBuildTasks.csproj">
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
       <Build>false</Build>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="../InstallValidator.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
 </Project>

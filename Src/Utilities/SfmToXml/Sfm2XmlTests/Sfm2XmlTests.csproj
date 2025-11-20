@@ -32,4 +32,9 @@
   <ItemGroup>
     <ProjectReference Include="../Sfm2Xml.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
 </Project>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>LCMBrowser</AssemblyName>
@@ -46,4 +46,9 @@
     <ProjectReference Include="../XCore/xCoreInterfaces/xCoreInterfaces.csproj" />
   </ItemGroup>
   <Import Project="BuildInclude.targets" />
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
 </Project>

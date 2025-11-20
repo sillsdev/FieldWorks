@@ -44,6 +44,9 @@
   <ItemGroup>
     <Compile Remove="SilSidePaneTests/**" />
     <None Remove="SilSidePaneTests/**" />
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Arrow_Down.ico" />

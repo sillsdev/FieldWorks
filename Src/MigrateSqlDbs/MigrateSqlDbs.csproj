@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>MigrateSqlDbs</AssemblyName>
@@ -35,5 +35,10 @@
   <ItemGroup>
     <ProjectReference Include="../Common/Controls/FwControls/FwControls.csproj" />
     <ProjectReference Include="../Common/FwUtils/FwUtils.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
 </Project>

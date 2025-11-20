@@ -6,6 +6,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 using SIL.LCModel.Core.KernelInterfaces;
+using LgCharRenderProps = SIL.LCModel.Core.KernelInterfaces.LgCharRenderProps;
 
 namespace SIL.FieldWorks.Common.ViewsInterfaces
 {

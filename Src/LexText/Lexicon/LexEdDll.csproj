@@ -67,6 +67,9 @@
   <ItemGroup>
     <Compile Remove="LexEdDllTests/**" />
     <None Remove="LexEdDllTests/**" />
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="icons\Create Entry.ico" />

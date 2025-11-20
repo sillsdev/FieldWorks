@@ -38,6 +38,9 @@
   <ItemGroup>
     <Compile Remove="MessageBoxExLibTests/**" />
     <None Remove="MessageBoxExLibTests/**" />
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icon_2.ico" />

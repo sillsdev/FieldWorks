@@ -33,7 +33,7 @@
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
     <PackageReference Include="SIL.Windows.Forms" Version="17.0.0-*" />
     <PackageReference Include="SIL.WritingSystems" Version="17.0.0-*" />
-    <PackageReference Include="Geckofx60.64" Version="60.0.54" />
+    <PackageReference Include="Geckofx60.64" Version="60.0.56" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
@@ -62,5 +62,8 @@
   <ItemGroup>
     <Compile Remove="XMLViewsTests/**" />
     <None Remove="XMLViewsTests/**" />
+    <Compile Include="..\..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
 </Project>

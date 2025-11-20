@@ -35,7 +35,7 @@
     <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
     <PackageReference Include="SIL.Windows.Forms" Version="17.0.0-*" />
-    <PackageReference Include="System.ValueTuple" Version="4.5.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.6.1" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Configuration" />
@@ -55,5 +55,8 @@
     <Compile Remove="FwUtilsTests/**" />
     <None Remove="FwUtilsTests/**" />
     <Compile Remove="FwUtils.template.cs" />
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
 </Project>

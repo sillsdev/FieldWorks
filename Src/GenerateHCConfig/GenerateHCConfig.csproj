@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>GenerateHCConfig</AssemblyName>
@@ -36,5 +36,10 @@
   <ItemGroup>
     <ProjectReference Include="../Common/FwUtils/FwUtils.csproj" />
     <ProjectReference Include="../LexText/ParserCore/ParserCore.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
 </Project>

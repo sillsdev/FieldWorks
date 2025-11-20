@@ -23,6 +23,11 @@ This file describes conventions, deterministic requirements, and best practices 
 ## Key Rules
 - Use existing patterns for localization, unit tests, and avoid runtime-incompatible behaviors.
 - Keep public APIs stable and documented with XML docs.
+- **AssemblyInfo Policy**:
+  - All managed projects must link `Src/CommonAssemblyInfo.cs` via `<Compile Include="..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />`.
+  - Set `<GenerateAssemblyInfo>false</GenerateAssemblyInfo>` to prevent SDK duplicate attribute errors.
+  - Restore and maintain project-specific `AssemblyInfo*.cs` files if custom attributes are required.
+  - Use `scripts/GenerateAssemblyInfo/validate_generate_assembly_info.py` to verify compliance.
 
 ## Test exclusion conversion playbook (Pattern A standard)
 - Always prefer explicit `<ProjectName>Tests/**` exclusions. For nested test folders add matching explicit entries (for example `Component/ComponentTests/**`).

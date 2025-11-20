@@ -62,5 +62,8 @@
   <ItemGroup>
     <Compile Remove="FrameworkTests/**" />
     <None Remove="FrameworkTests/**" />
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
 </Project>

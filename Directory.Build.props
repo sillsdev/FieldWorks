@@ -8,6 +8,19 @@
 		<Platforms Condition="'$(Platforms)' == ''">x64</Platforms>
 		<!-- Force 64-bit MSBuild host to avoid crashes loading 64-bit native DLLs in build tasks -->
 		<PreferredToolArchitecture>x64</PreferredToolArchitecture>
+		<!-- Disable determinism to allow wildcard versions in CommonAssemblyInfo.cs -->
+		<Deterministic>false</Deterministic>
+	</PropertyGroup>
+	<PropertyGroup Label="AssemblyInfo Policy">
+		<!--
+			CommonAssemblyInfoTemplate Policy:
+			All managed projects must link Src/CommonAssemblyInfo.cs to ensure consistent versioning and metadata.
+			When linking the template, disable SDK auto-generation to prevent CS0579 duplicate attribute errors.
+
+			Usage:
+			<Compile Include="..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+			<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		-->
 	</PropertyGroup>
 	<PropertyGroup Label="Shared Paths for Traversal Build">
 		<!-- Root directory paths -->
@@ -41,5 +54,17 @@
 			Wildcards (e.g. *Tests/**) are NOT allowed.
 			Nested test folders must also be explicitly excluded.
 		-->
+	</ItemGroup>
+	<!-- Modern test infrastructure for all test projects -->
+	<PropertyGroup Condition="'$(IsTestProject)' == 'true'">
+		<!-- For .NET Framework projects, ensure NuGet package assemblies are copied to output directory -->
+		<!-- This is required for dotnet test to discover test adapters -->
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+	</PropertyGroup>
+	<ItemGroup Condition="'$(IsTestProject)' == 'true'">
+		<!-- Microsoft.NET.Test.Sdk enables 'dotnet test' support (VSTest platform) -->
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+		<!-- NUnit3TestAdapter enables NUnit test discovery for VSTest -->
+		<PackageReference Include="NUnit3TestAdapter" Version="5.2.0" />
 	</ItemGroup>
 </Project>

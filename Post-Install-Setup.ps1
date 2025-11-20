@@ -82,9 +82,10 @@ if (Test-Path $dotnetSdkPath) {
         $workloadLocator = Join-Path $msbuildSdkPath 'Microsoft.NET.SDK.WorkloadAutoImportPropsLocator\Sdk'
         if (-not (Test-Path $workloadLocator)) {
             New-Item -ItemType Directory -Path $workloadLocator -Force | Out-Null
-            # Create empty Sdk.props and Sdk.targets
+            # Create empty Sdk.props, Sdk.targets, and AutoImport.props
             Set-Content -Path (Join-Path $workloadLocator 'Sdk.props') -Value '<?xml version="1.0" encoding="utf-8"?><Project />'
             Set-Content -Path (Join-Path $workloadLocator 'Sdk.targets') -Value '<?xml version="1.0" encoding="utf-8"?><Project />'
+            Set-Content -Path (Join-Path $workloadLocator 'AutoImport.props') -Value '<?xml version="1.0" encoding="utf-8"?><Project />'
         }
 
         # Create stub for WorkloadManifestTargetsLocator (not present in .NET 8.0.100)

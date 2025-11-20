@@ -37,4 +37,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Images\columnChooser.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
 </Project>

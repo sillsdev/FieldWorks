@@ -28,7 +28,7 @@
     <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
-    <PackageReference Include="Geckofx60.64" Version="60.0.54" />
+    <PackageReference Include="Geckofx60.64" Version="60.0.56" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />
@@ -55,6 +55,9 @@
     <None Remove="SilSidePane/**" />
     <Compile Remove="xCoreInterfaces/**" />
     <None Remove="xCoreInterfaces/**" />
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SilSidePane\Resources\Arrow_Down.ico" />

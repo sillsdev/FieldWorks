@@ -1,48 +1,39 @@
-# Implementation Plan: GenerateAssemblyInfo Convergence
+# Implementation Plan: GenerateAssemblyInfo Template Reintegration
 
-**Branch**: `002-convergence-generate-assembly-info` | **Date**: 2025-11-08 | **Spec**: specs/002-convergence-generate-assembly-info/spec.md
+**Branch**: `spec/002-convergence-generate-assembly-info` | **Date**: 2025-11-14 | **Spec**: `specs/002-convergence-generate-assembly-info/spec.md`
 **Input**: Feature specification from `/specs/002-convergence-generate-assembly-info/spec.md`
 
 ## Summary
 
-Standardize GenerateAssemblyInfo property across all 115 SDK-style projects in FieldWorks, establishing clear criteria for when to use SDK-generated metadata (true) vs. manual AssemblyInfo.cs files (false). Currently 52 projects use false and 63 use true with no documented rationale, causing confusion and potential duplicate attribute errors. Technical approach: audit all projects using Python scripts, apply decision criteria based on project characteristics (shared AssemblyInfo, COM visibility, project type), generate conversion recommendations with risk assessment, and provide automated conversion with dry-run validation. Expected outcome: 100% consistency, zero CS0579 errors, clear documentation for future project creation.
+FieldWorks currently mixes SDK-generated and manually managed assembly metadata, causing duplicate attribute warnings and lost custom metadata. This plan audits all 115 managed projects, re-introduces the shared `CommonAssemblyInfoTemplate` by linking `Src/CommonAssemblyInfo.cs`, restores any deleted per-project `AssemblyInfo*.cs`, and enforces `<GenerateAssemblyInfo>false</GenerateAssemblyInfo>` with explanatory comments. Supporting scripts (audit, convert, validate) will automate the remediation, while repository-wide documentation (`Directory.Build.props`, scaffolding templates, managed instructions) is brought up to date and repeatable compliance signals are produced before merge.
+
+**Process Controls**: Phase 2 now generates a `restore_map.json` by diffing git history and requires an "ambiguous project" checkpoint before any conversions land. Later phases re-validate that every historically-present `AssemblyInfo*.cs` exists post-conversion and log follow-up GitHub issues for anything still pending manual action.
 
 ## Technical Context
 
-**Language/Version**: Python 3.11+ (for automation scripts), MSBuild/C# (.NET Framework 4.8 for project files)
-**Primary Dependencies**: xml.etree.ElementTree (Python standard library for .csproj parsing), subprocess (for MSBuild validation)
-**Storage**: CSV files for audit results and conversion decisions (human-reviewable), git for version control
-**Testing**: pytest for script unit tests, MSBuild for solution build validation
-**Target Platform**: Windows (developer workstations and CI)
-**Project Type**: Build system convergence with automated tooling
-**Performance Goals**: Audit script <30 seconds for all 115 projects, conversion script <60 seconds, full solution build time unchanged (±2%)
-**Constraints**: Must not break existing builds, must preserve manual AssemblyInfo.cs where functionally required (shared files, COM GUIDs), must support rollback via git, scripts must be deterministic (same input = same output)
-**Scale/Scope**: 115 SDK-style projects across solution, ~15 projects with shared AssemblyInfo.cs references, ~8 COM-visible assemblies
-
-Open unknowns resolved in research.md:
-- Decision criteria for GenerateAssemblyInfo established (D1)
-- Shared AssemblyInfo.cs pattern detection methodology defined (D2)
-- COM-visible assembly identification approach confirmed (D3)
-- Version stamping and strong naming compatibility verified (D4)
+**Language/Version**: C# (.NET Framework 4.8, SDK-style csproj) plus Python 3.11 scripts for automation
+**Primary Dependencies**: MSBuild 17.x, CommonAssemblyInfoTemplate pipeline (`Src/CommonAssemblyInfoTemplate.cs` → `Src/CommonAssemblyInfo.cs`), git history access, Python stdlib + `xml.etree.ElementTree`
+**Storage**: N/A (metadata lives in source-controlled `.csproj`/`AssemblyInfo.cs` files)
+**Testing**: MSBuild Debug/Release builds, reflection harness to inspect restored attributes, FieldWorks NUnit/regression suites, custom validation script output reviewed in CI, and build-time telemetry for the ±5% guardrail
+**Target Platform**: Windows x64 developer container `fw-agent-1` (Visual Studio 2022 toolset)
+**Project Type**: Large multi-project desktop solution (FieldWorks.sln with 115 managed csproj)
+**Performance Goals**: Zero CS0579 warnings, no net increase in MSBuild wall-clock time beyond ±5%, template regeneration remains under 1s
+**Constraints**: Must run inside fw-agent containers, retain legacy AssemblyInfo namespaces, avoid touching runtime behavior outside metadata, document every exception inline
+**Scale/Scope**: 115 managed projects across `Src/**`, plus Build infrastructure updates and three repository scripts
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-- **Data integrity**: Project files (.csproj) modified but backed by git version control. Validation script ensures no unintended changes beyond GenerateAssemblyInfo property. Backup/rollback via `git checkout` if issues detected. — **PASS** (git-backed)
-- **Test evidence**: Changes affect build metadata generation. Must include: (1) Solution build validation pre/post convergence, (2) Assembly metadata inspection tests, (3) CS0579 error detection in build output. — **REQUIRED** (validation script Phase 5)
-- **I18n/script correctness**: Assembly attributes may include culture-specific strings (AssemblyCulture, NeutralResourcesLanguage). Review projects with explicit culture attributes and ensure SDK generation respects existing patterns or retains manual control. — **REQUIRED** (audit Phase 3)
-- **Licensing**: Python scripts use standard library only (no new dependencies). No third-party libraries introduced. — **PASS**
-- **Stability/performance**: Low-risk change (metadata generation only, no runtime behavior change). Validation ensures no CS0579 errors. Build time impact measured (<2% tolerance). Rollback via git if unexpected issues. — **PASS** (mitigated via validation)
+**Pre-Phase Status**
+- **Data integrity**: Metadata-only change; plan restores any deleted AssemblyInfo files from git history (Tasks 1.2/2.3) ensuring no data loss. PASS
+- **Test evidence**: Validation script + Debug/Release MSBuild runs (Phase 4) cover risk areas; installer build also observed. PASS
+- **I18n/script correctness**: Assembly attributes affect localized product strings; template already centralized; no new rendering paths but reflection spot-checks ensure multilingual correctness. PASS
+- **Licensing**: No new dependencies beyond Python stdlib; LGPL 2.1+ already satisfied. PASS
+- **Stability/performance**: Build-only change; constraints capture ±5% tolerance and require CI validation. PASS
 
-Proceed to Phase 0 with required validations planned for Phase 3 (I18n check) and Phase 5 (test evidence).
-
-Post-design re-check (after Phase 1 artifacts added):
-- Data integrity: Git-backed, validated — **PASS**
-- Test evidence: Validation script includes build check, metadata inspection, error detection — **PASS**
-- I18n/script correctness: Culture attribute handling documented in research.md — **PASS**
-- Licensing: No new deps — **PASS**
-- Stability/performance: Validation gates ensure safety — **PASS**
+**Post-Phase Status (after design)**
+- Same as above with added OpenAPI contract + script quickstart documenting mitigations and execution order. PASS
 
 ## Project Structure
 
@@ -50,43 +41,55 @@ Post-design re-check (after Phase 1 artifacts added):
 
 ```text
 specs/002-convergence-generate-assembly-info/
-├── spec.md              # Feature specification (existing)
-├── plan.md              # This file (implementation plan)
-├── research.md          # Phase 0 output (decision criteria, patterns, edge cases)
-├── data-model.md        # Phase 1 output (ProjectEntity, AuditResult, ConversionDecision models)
-├── quickstart.md        # Phase 1 output (how to run audit/conversion/validation scripts)
-├── contracts/           # Phase 1 output (script CLIs, CSV schemas)
-│   ├── audit-cli.md
-│   ├── convert-cli.md
-│   ├── validate-cli.md
-│   └── csv-schemas.md
-└── tasks.md             # Phase 2 output (/speckit.tasks command - NOT created by /speckit.plan)
+├── plan.md
+├── research.md
+├── data-model.md
+├── quickstart.md
+├── contracts/
+│   └── generate-assembly-info.yaml
+└── tasks.md   # produced by /speckit.tasks (future)
 ```
 
 ### Source Code (repository root)
 
 ```text
-convergence/
-├── audit_framework.py                    # Base classes (existing from CONVERGENCE-FRAMEWORK.md)
-├── convergence.py                        # Unified CLI (existing)
-├── convergence_generate_assembly_info.py # New: Extends base classes for this convergence
-│   ├── class GenerateAssemblyInfoAuditor(ConvergenceAuditor)
-│   ├── class GenerateAssemblyInfoConverter(ConvergenceConverter)
-│   └── class GenerateAssemblyInfoValidator(ConvergenceValidator)
-└── tests/
-    └── test_generate_assembly_info.py    # Unit tests for convergence script
+Src/
+├── Common/
+│   ├── CommonAssemblyInfoTemplate.cs
+│   └── CommonAssemblyInfo.cs      # generated; linked into every project
+├── Common/FieldWorks/FieldWorks.csproj
+├── CacheLight/CacheLight.csproj
+└── ... (112 additional managed projects consuming the template)
 
 Build/
-└── Directory.Build.props                 # Reference point for inherited properties (no changes)
+├── SetupInclude.targets           # generates CommonAssemblyInfo.cs
+└── Src/FwBuildTasks/...           # localization tasks referencing CommonAssemblyInfo
 
-Src/
-└── [115 .csproj files]                   # Target files for convergence (modify GenerateAssemblyInfo property)
+scripts/
+└── GenerateAssemblyInfo/
+    ├── audit_generate_assembly_info.py
+    ├── convert_generate_assembly_info.py
+    └── validate_generate_assembly_info.py
+
+tests/
+└── (existing NUnit suites executed after remediation)
+
+Directory.Build.props
+└── Centralized documentation for template usage and GenerateAssemblyInfo comments
+
+scripts/templates/
+└── Project scaffolding artifacts updated so new csproj files import the restored template automatically
 ```
 
-**Structure Decision**: Extend existing convergence framework (`audit_framework.py` base classes) with convergence-specific implementation in `convergence_generate_assembly_info.py`. This follows the DRY architecture established in CONVERGENCE-FRAMEWORK.md, reuses common utilities (parse_csproj, find_property_value), and integrates with unified CLI (`python convergence.py generate-assembly-info <action>`). Scripts output CSV for human review and support dry-run mode for safe validation before applying changes.
+**Structure Decision**: Reuse existing `Src/**` csproj locations, centralize automation under `scripts/GenerateAssemblyInfo/`, and update Build tooling/validation so template enforcement is consistent across FieldWorks solutions.
 
-## Complexity Tracking
+**Complexity Tracking**
 
-> **Fill ONLY if Constitution Check has violations that must be justified**
+**Final Statistics (Audit)**:
+- Template-only: 25
+- Template+Custom: 76
+- NeedsFix: 0
 
-No constitution violations. No entries required.
+**Validation Enhancements**: Phase 5 now layers structural checks, deterministic MSBuild invocations, a tiny reflection harness that inspects the regenerated assemblies, a full FieldWorks test-suite sweep, and timestamped build logs so the ±5% performance guardrail is enforced with evidence captured in `Output/GenerateAssemblyInfo/`.
+**Escalation Workflow**: The validation report cross-references `restore_map.json` to ensure no historic AssemblyInfo files were lost, while Phase 6 tracks unresolved projects via follow-up GitHub issues linked from the spec’s review section.
+No Constitution violations anticipated; table not required.

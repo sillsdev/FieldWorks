@@ -35,6 +35,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// Base class for hosting a view in an application.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
+	[ComVisible(true)]
 	public class SimpleRootSite : UserControl, IVwRootSite, IRootSite, IxCoreColleague,
 		IEditingCallbacks, IReceiveSequentialMessages, IMessageFilter
 	{
