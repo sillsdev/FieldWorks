@@ -618,94 +618,98 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// check to see if column spec is still valid and useable.
+		/// check to see if column spec is still valid.
 		/// </summary>
-		/// <param name="node"></param>
 		/// <returns>True if we can't prove the column is invalid</returns>
-		internal bool IsValidColumnSpec(XmlNode node)
+		internal bool IsValidColumnSpec(XmlNode colSpec)
+		{
+			if (GetPartFromParentNode(colSpec, ListItemsClass) == null)
+				return false;   // invalid node, don't add.
+			// If it is a Custom Field, check that it is valid and has the correct label
+			if (IsCustomField(colSpec, out var isValid))
+			{
+				return isValid;
+			}
+			return IsValidColumnSpec_Oversimplified(colSpec);
+			/*/
+			//var possibleColumns = PossibleColumnSpecs; // REVIEW (Hasso) 2025.11: why do we need a local copy of this pointer?
+			// first, check to see if we can find some part or child node information
+			// to process. Eg. Custom field column nodes that refer to parts that no longer exist
+			// because the custom field has been removed so the parts cannot be generated
+			if (GetPartFromParentNode(colSpec, ListItemsClass) == null)
+				return false;   // invalid node, don't add.
+			// If it is a Custom Field, check that it is valid and has the correct label
+			if (TryColumnForCustomField(colSpec, ListItemsClass, out var customFieldNode, out var propWs))
+			{
+				return IsValidCustomField(colSpec, customFieldNode, propWs);
+			}
+			if (CheckForBadReversalIndex(colSpec))
+				return false;
+			return true;    // valid as far as we can tell.
+			/**/
+		}
+
+		private bool IsValidColumnSpec_Oversimplified(XmlNode colSpec)
 		{
 			// In the simple case, `node`s label should match a label in PossibleColumnSpecs. There may be more complicated cases.
 			// The existing code sure seems complicated and is entirely untested.
-			var label = XmlUtils.GetLocalizedAttributeValue(node, "label", null) ??
-						   XmlUtils.GetMandatoryAttributeValue(node, "label");
-			var oLabel = XmlUtils.GetAttributeValue(node, "originalLabel");
-			//MenuItem mi = new MenuItem(label, ConfigItemClicked);
-			if (XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "label", label) != null ||
-				XmlViewsUtils.FindNodeWithAttrVal(ColumnSpecs, "originalLabel", label) != null)
-				return PossibleColumnSpecs.Contains(node);
-			//// first, check to see if we can find some part or child node information
-			//// to process. Eg. Custom field column nodes that refer to parts that no longer exist
-			//// because the custom field has been removed so the parts cannot be generated
-			//XmlNode partNode = this.GetPartFromParentNode(node, this.ListItemsClass);
-			//if (partNode == null)
-			//	return false;	// invalid node, don't add.
-			//bool badCustomField = CheckForBadCustomField(possibleColumns, node);
-			//if (badCustomField)
-			//	return false;	// invalid custom field, don't add.
-			//bool badReversalIndex = CheckForBadReversalIndex(possibleColumns, node);
-			//if (badReversalIndex)
-			//	return false;
-			return true;    // valid as far as we can tell.
+			var label = XmlUtils.GetMandatoryAttributeValue(colSpec, "label");
+			var originalLabel = XmlUtils.GetAttributeValue(colSpec, "originalLabel");
+			return (XmlViewsUtils.FindNodeWithAttrVal(PossibleColumnSpecs, "label", label) != null ||
+					XmlViewsUtils.FindNodeWithAttrVal(PossibleColumnSpecs, "label", originalLabel) != null);
 		}
 
 		/// <summary>
-		/// Check for a nonexistent custom field.  (Custom fields can be deleted.)  As a side-effect,
-		/// if the node refers to a valid custom field, the label attribute is adjusted to what we
-		/// want the user to see.
+		/// Check whether the column spec is a custom field, and if so, if it is still valid (Custom fields can be deleted).
+		/// If the node refers to a valid custom field, the label attribute is adjusted to what we want the user to see.
 		/// </summary>
-		/// <param name="possibleColumns"></param>
-		/// <param name="node"></param>
-		/// <returns>true if this node refers to a nonexistent custom field</returns>
-		private bool CheckForBadCustomField(List<XmlNode> possibleColumns, XmlNode node)
+		private bool IsCustomField(XmlNode colSpec, out bool isValidCustomField)
 		{
-			// see if this node is based on a layout. If so, get its part
-			PropWs propWs;
-			XmlNode columnForCustomField = null;
-			if (this.TryColumnForCustomField(node, this.ListItemsClass, out columnForCustomField, out propWs))
+			if (!TryColumnForCustomField(colSpec, ListItemsClass, out var columnForCustomField, out var propWs))
 			{
-				if (columnForCustomField != null)
+				isValidCustomField = false;
+				return false;
+			}
+
+			if (columnForCustomField != null)
+			{
+				var fieldName = XmlUtils.GetAttributeValue(columnForCustomField, "field");
+				var className = XmlUtils.GetAttributeValue(columnForCustomField, "class");
+				if (!string.IsNullOrEmpty(fieldName) && !string.IsNullOrEmpty(className) &&
+					((IFwMetaDataCacheManaged)m_mdc).FieldExists(className, fieldName, false))
 				{
-					string fieldName = XmlUtils.GetAttributeValue(columnForCustomField, "field");
-					string className = XmlUtils.GetAttributeValue(columnForCustomField, "class");
-					if (!String.IsNullOrEmpty(fieldName) && !String.IsNullOrEmpty(className))
-					{
-						if ((m_mdc as IFwMetaDataCacheManaged).FieldExists(className, fieldName, false))
-						{
-							ColumnConfigureDialog.GenerateColumnLabel(node, m_cache);
-							return false;
-						}
-					}
-					return true;
-				}
-				else if (propWs != null)
-				{
-					XmlUtils.AppendAttribute(node, "originalLabel", GetNewLabelFromMatchingCustomField(possibleColumns, propWs.flid));
-					ColumnConfigureDialog.GenerateColumnLabel(node, m_cache);
+					ColumnConfigureDialog.GenerateColumnLabel(colSpec, m_cache);
+					isValidCustomField = true;
 				}
 				else
 				{
-					// it's an invalid custom field.
-					return true;
+					isValidCustomField = false;
 				}
 			}
-			return false;
+			else if (propWs == null)
+			{
+				isValidCustomField = false;
+			}
+			else
+			{
+				XmlUtils.AppendAttribute(colSpec, "originalLabel", GetNewLabelFromMatchingCustomField(propWs.flid));
+				ColumnConfigureDialog.GenerateColumnLabel(colSpec, m_cache);
+				isValidCustomField = true;
+			}
+			return true;
 		}
 
-		private string GetNewLabelFromMatchingCustomField(List<XmlNode> possibleColumns, int flid)
+		private string GetNewLabelFromMatchingCustomField(int flid)
 		{
-			foreach (XmlNode possibleColumn in possibleColumns)
+			foreach (var possibleColumn in PossibleColumnSpecs)
 			{
 				// Desired node may be a child of a child...  (See LT-6447.)
-				PropWs propWs;
-				XmlNode columnForCustomField;
-				if (TryColumnForCustomField(possibleColumn, ListItemsClass, out columnForCustomField, out propWs))
+				if (TryColumnForCustomField(possibleColumn, ListItemsClass, out _, out var propWs))
 				{
 					// the flid of the updated custom field node matches the given flid of the old node.
 					if (propWs != null && propWs.flid == flid)
 					{
-						string label = XmlUtils.GetLocalizedAttributeValue(possibleColumn,
-								"label", null);
-						return label;
+						return XmlUtils.GetLocalizedAttributeValue(possibleColumn, "label", null);
 					}
 				}
 			}
@@ -714,11 +718,11 @@ namespace SIL.FieldWorks.Common.Controls
 
 		/// <summary>
 		/// Check for an invalid reversal index.  (Reversal indexes can be deleted.)
+		/// REVIEW (Hasso) 2025-11: when does a column spec refer to a reversal index?
 		/// </summary>
-		/// <param name="possibleColumns"></param>
 		/// <param name="node"></param>
 		/// <returns>true if this node refers to a nonexistent reversal index.</returns>
-		private bool CheckForBadReversalIndex(List<XmlNode> possibleColumns, XmlNode node)
+		private bool CheckForBadReversalIndex(XmlNode node)
 		{
 			// Look for a child node which is similar to this (value of ws attribute may differ):
 			// <string field="ReversalEntriesText" ws="$ws=es"/>
