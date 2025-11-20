@@ -1878,11 +1878,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// custom field identified during TryColumnForCustomField. Is not currently meaningful
 		/// outside TryColumnForCustomField().
 		/// </summary>
-		XmlNode m_customFieldNode = null;
+		private XmlNode m_customFieldNode = null; // REVIEW (Hasso) 2025.11: this should be replaced by a passed local variable
 
 		/// <summary>
-		/// Determine whether or not the given colSpec refers to a custom field, respective of
-		/// whether or not it is still valid.
+		/// Determine whether the given colSpec refers to a custom field, irrespective of whether it is still valid.
 		/// Uses layout/parts to find custom field specifications.
 		/// </summary>
 		/// <param name="colSpec"></param>
