@@ -103,3 +103,44 @@ Process systematically, removing duplication and condensing.
 - Leaf folders: 90% under 200 lines ✓
 - Zero validation errors ✓
 - No loss of essential technical information ✓
+
+## Learnings from Implementation
+
+### Schema Requirements
+The COPILOT.md validator requires these sections to be present (even if short):
+- Purpose
+- Architecture  
+- Key Components
+- Technology Stack
+- Dependencies
+- Interop & Contracts
+- Threading & Performance
+- Config & Feature Flags
+- Build Information
+- Interfaces and Data Models
+- Entry Points
+- Test Index
+- Usage Hints
+- Related Folders
+- References
+
+### Shortening Strategy for Leaf Folders
+Instead of removing sections, condense them:
+- **Threading & Performance**: "UI thread required" or "Single-threaded" (1 line)
+- **Config & Feature Flags**: "No configuration" or list key settings (1-3 lines)
+- **Build Information**: Just project name and output (1-2 lines)
+- **Entry Points**: List main entry points only (2-5 lines)
+- **Test Index**: Just test project name (1 line)
+- **Usage Hints**: 2-3 key patterns only
+- **Related Folders**: 2-3 most important only
+- **References**: Can use "See planner JSON" to avoid file lists
+- **Auto-Generated sections**: Remove entirely (duplicates earlier content)
+
+### Phase 1 Results (Organizational Folders)
+Successfully reduced 4 organizational parent folders by 75%:
+- Src/Common: 117 → 45 lines
+- Src/LexText: 230 → 45 lines  
+- Src/Utilities: 245 → 42 lines
+- Src/Common/Controls: 101 → 43 lines
+
+Total savings: 445 lines removed (620 → 175 lines)
