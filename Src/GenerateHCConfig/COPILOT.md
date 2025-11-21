@@ -1,8 +1,22 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: 59757c0e914d1f58bd8943ea49adcfcf72cfb9eb5608e3a66ee822925a1aee83
+last-reviewed-tree: 8fa47ada007bed7cb5ba541c2284686df6b9b7a7445f7019eb9b4a44483c5dbb
 status: draft
 ---
+
+<!-- copilot:auto-change-log start -->
+## Change Log (auto)
+
+- Snapshot: HEAD~1
+- Risk: none
+- Files: 0 (code=0, tests=0, resources=0)
+
+### Prompt seeds
+- Update COPILOT.md for Src/GenerateHCConfig. Prioritize Purpose/Architecture sections using planner data.
+- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
+- Finish with verification notes and TODOs for manual testing.
+<!-- copilot:auto-change-log end -->
+
 
 # GenerateHCConfig COPILOT summary
 

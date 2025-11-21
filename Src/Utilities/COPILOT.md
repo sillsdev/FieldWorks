@@ -1,8 +1,21 @@
-﻿---
-last-reviewed: 2025-10-31
-last-reviewed-tree: f9667c38932f4933889671a0f084cfb1ab1cbc79e150143423bba28fa564a88c
-status: reviewed
 ---
+last-reviewed: 2025-11-21
+last-reviewed-tree: df6e92d11431aa3b0f6927f91f8cf7479733e6936e68cf34a24824a1e9b0a730
+status: draft
+---
+
+<!-- copilot:auto-change-log start -->
+## Change Log (auto)
+
+- Snapshot: HEAD~1
+- Risk: none
+- Files: 0 (code=0, tests=0, resources=0)
+
+### Prompt seeds
+- Update COPILOT.md for Src/Utilities. Prioritize Purpose/Architecture sections using planner data.
+- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
+- Finish with verification notes and TODOs for manual testing.
+<!-- copilot:auto-change-log end -->
 
 # Utilities
 

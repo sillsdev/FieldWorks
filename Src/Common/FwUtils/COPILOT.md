@@ -1,8 +1,22 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: 12665002bd1019cf1ba0bc6eca36f65935440d8ff112f4332db5286cef14d500
+last-reviewed-tree: d38944223cf9964a8fc9472851eaee46494f187d59d185c55d16e79acc66ee66
 status: draft
 ---
+
+<!-- copilot:auto-change-log start -->
+## Change Log (auto)
+
+- Snapshot: HEAD~1
+- Risk: none
+- Files: 0 (code=0, tests=0, resources=0)
+
+### Prompt seeds
+- Update COPILOT.md for Src/Common/FwUtils. Prioritize Purpose/Architecture sections using planner data.
+- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
+- Finish with verification notes and TODOs for manual testing.
+<!-- copilot:auto-change-log end -->
+
 
 # FwUtils COPILOT summary
 

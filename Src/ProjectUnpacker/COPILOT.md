@@ -1,8 +1,21 @@
-﻿---
-last-reviewed: 2025-10-31
-last-reviewed-tree: f0aea6564baf195088feb2b81f2480b04e2b1b96601c7036143611032845ee46
-status: reviewed
 ---
+last-reviewed: 2025-11-21
+last-reviewed-tree: d0f70922cbc37871cd0fdc36494727714da3106bdd3128d9d0a0ddf9acabfe42
+status: draft
+---
+
+<!-- copilot:auto-change-log start -->
+## Change Log (auto)
+
+- Snapshot: HEAD~1
+- Risk: none
+- Files: 0 (code=0, tests=0, resources=0)
+
+### Prompt seeds
+- Update COPILOT.md for Src/ProjectUnpacker. Prioritize Purpose/Architecture sections using planner data.
+- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
+- Finish with verification notes and TODOs for manual testing.
+<!-- copilot:auto-change-log end -->
 
 # ProjectUnpacker
 

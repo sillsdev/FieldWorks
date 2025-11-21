@@ -1,8 +1,22 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: 9fa135a9ec9c9f1b89a5f0b5bab75b98da44832ccd5caf43e80446e7ead4233d
+last-reviewed-tree: 13ccafb9b0da2f9f054da0d53fad5912915e018b62b5ac96b9bf00bb5e6f402a
 status: draft
 ---
+
+<!-- copilot:auto-change-log start -->
+## Change Log (auto)
+
+- Snapshot: HEAD~1
+- Risk: none
+- Files: 0 (code=0, tests=0, resources=0)
+
+### Prompt seeds
+- Update COPILOT.md for Src/FXT. Prioritize Purpose/Architecture sections using planner data.
+- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
+- Finish with verification notes and TODOs for manual testing.
+<!-- copilot:auto-change-log end -->
+
 
 # FXT COPILOT summary
 

@@ -1,8 +1,22 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: bd2d6f35a29f37c7bd3b31d265923e8a002993862f71dfa2c5a9b01a8f9d29c3
+last-reviewed-tree: 76886450145052a28b3c1f2b54c499cbc0c7f3879390c5affaf3fac0643f832e
 status: draft
 ---
+
+<!-- copilot:auto-change-log start -->
+## Change Log (auto)
+
+- Snapshot: HEAD~1
+- Risk: none
+- Files: 0 (code=0, tests=0, resources=0)
+
+### Prompt seeds
+- Update COPILOT.md for Src/LexText/Lexicon. Prioritize Purpose/Architecture sections using planner data.
+- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
+- Finish with verification notes and TODOs for manual testing.
+<!-- copilot:auto-change-log end -->
+
 
 # Lexicon (LexEdDll) COPILOT summary
 

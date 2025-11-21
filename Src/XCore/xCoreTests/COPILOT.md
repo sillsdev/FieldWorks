@@ -1,8 +1,22 @@
 ---
 last-reviewed: 2025-11-01
-last-reviewed-tree: 0b658dd47c2b01012c78f055e17a2666d65671afb218a1dab78c3fcfee0a68a1
+last-reviewed-tree: d968a8ce215a359b1d1995cfc33c1f1f08069c660b255ed248c9697b69379a11
 status: production
 ---
+
+<!-- copilot:auto-change-log start -->
+## Change Log (auto)
+
+- Snapshot: HEAD~1
+- Risk: none
+- Files: 0 (code=0, tests=0, resources=0)
+
+### Prompt seeds
+- Update COPILOT.md for Src/XCore/xCoreTests. Prioritize Purpose/Architecture sections using planner data.
+- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
+- Finish with verification notes and TODOs for manual testing.
+<!-- copilot:auto-change-log end -->
+
 
 # xCoreTests
 

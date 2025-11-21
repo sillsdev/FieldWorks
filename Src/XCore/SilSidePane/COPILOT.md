@@ -1,8 +1,22 @@
 ---
 last-reviewed: 2025-11-01
-last-reviewed-tree: a872637d37e3a95e66b9a0bc325c7a1b32b47fbd3c36dd4fdab463b96aca720c
+last-reviewed-tree: 5c0428af86d4d8c6b7829d245dd8bd3a610718aca9563315255e6c5b43a1e58e
 status: production
 ---
+
+<!-- copilot:auto-change-log start -->
+## Change Log (auto)
+
+- Snapshot: HEAD~1
+- Risk: none
+- Files: 0 (code=0, tests=0, resources=0)
+
+### Prompt seeds
+- Update COPILOT.md for Src/XCore/SilSidePane. Prioritize Purpose/Architecture sections using planner data.
+- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
+- Finish with verification notes and TODOs for manual testing.
+<!-- copilot:auto-change-log end -->
+
 
 # SilSidePane
 

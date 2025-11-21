@@ -1,8 +1,22 @@
 ---
 last-reviewed: 2025-11-01
-last-reviewed-tree: 8139d9d97ab82c3dbd6da649e92fbac12e4deb50026946620bb6bd1e7173a4a7
+last-reviewed-tree: 5c1d3914898abc62296c4b5432435b3886ed57aa2e1d45de68feb95398a3c6c8
 status: production
 ---
+
+<!-- copilot:auto-change-log start -->
+## Change Log (auto)
+
+- Snapshot: HEAD~1
+- Risk: none
+- Files: 0 (code=0, tests=0, resources=0)
+
+### Prompt seeds
+- Update COPILOT.md for Src/Utilities/SfmToXml. Prioritize Purpose/Architecture sections using planner data.
+- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
+- Finish with verification notes and TODOs for manual testing.
+<!-- copilot:auto-change-log end -->
+
 
 # SfmToXml
 

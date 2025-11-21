@@ -1,8 +1,22 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: e670f4da389631b90d2583d7a978a855adf912e60e1397eb06af2937e30b1c74
+last-reviewed-tree: 5dbbc7b24d9d7da0683afe68327e42e483e3eeb039f2ad526b2f844fc8921cd6
 status: reviewed
 ---
+
+<!-- copilot:auto-change-log start -->
+## Change Log (auto)
+
+- Snapshot: HEAD~1
+- Risk: none
+- Files: 0 (code=0, tests=0, resources=0)
+
+### Prompt seeds
+- Update COPILOT.md for Src/ManagedVwWindow. Prioritize Purpose/Architecture sections using planner data.
+- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
+- Finish with verification notes and TODOs for manual testing.
+<!-- copilot:auto-change-log end -->
+
 
 # ManagedVwWindow
 

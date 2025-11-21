@@ -1,3 +1,23 @@
+---
+last-reviewed: 2025-11-21
+last-reviewed-tree: ca3afb4763cf119a739ed99e322e35066e1732903f4ea048c315d27aa86c62ff
+status: draft
+---
+
+<!-- copilot:auto-change-log start -->
+## Change Log (auto)
+
+- Snapshot: HEAD~1
+- Risk: none
+- Files: 0 (code=0, tests=0, resources=0)
+
+### Prompt seeds
+- Update COPILOT.md for Src/LexText/ParserUI. Prioritize Purpose/Architecture sections using planner data.
+- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
+- Finish with verification notes and TODOs for manual testing.
+<!-- copilot:auto-change-log end -->
+
+
 ﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: c17511bd9bdcdbda3ea395252447efac41d9c4b5ef7ad360afbd374ff008585b

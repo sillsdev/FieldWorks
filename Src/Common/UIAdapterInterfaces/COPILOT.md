@@ -1,8 +1,22 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: 9fb3484707f47751de0d86f2fc785d5dae8fbd879dac2621e2453e0fbfcfcedd
+last-reviewed-tree: a6f7b672b53b6c5e4e93be09912da26037f2e287b213af0e06f6da32d6155e27
 status: draft
 ---
+
+<!-- copilot:auto-change-log start -->
+## Change Log (auto)
+
+- Snapshot: HEAD~1
+- Risk: none
+- Files: 0 (code=0, tests=0, resources=0)
+
+### Prompt seeds
+- Update COPILOT.md for Src/Common/UIAdapterInterfaces. Prioritize Purpose/Architecture sections using planner data.
+- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
+- Finish with verification notes and TODOs for manual testing.
+<!-- copilot:auto-change-log end -->
+
 
 # UIAdapterInterfaces COPILOT summary
 

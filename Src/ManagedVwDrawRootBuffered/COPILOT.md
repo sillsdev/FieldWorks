@@ -1,8 +1,22 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: e70343c535764f54c8cdff93d336266d5d0a05725940ea0e83cf6264a4c44616
+last-reviewed-tree: bdadc55d0831962324d30020fdc1138f970f046de6b795ce84e404e46dca8ef3
 status: reviewed
 ---
+
+<!-- copilot:auto-change-log start -->
+## Change Log (auto)
+
+- Snapshot: HEAD~1
+- Risk: none
+- Files: 0 (code=0, tests=0, resources=0)
+
+### Prompt seeds
+- Update COPILOT.md for Src/ManagedVwDrawRootBuffered. Prioritize Purpose/Architecture sections using planner data.
+- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
+- Finish with verification notes and TODOs for manual testing.
+<!-- copilot:auto-change-log end -->
+
 
 # ManagedVwDrawRootBuffered
 
