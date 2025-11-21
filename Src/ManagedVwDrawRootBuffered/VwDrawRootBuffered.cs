@@ -18,67 +18,80 @@ namespace SIL.FieldWorks.Views
 	[Guid("97199458-10C7-49da-B3AE-EA922EA64859")]
 	public class VwDrawRootBuffered : IVwDrawRootBuffered
 	{
-		private class MemoryBuffer: IDisposable
+		private class GdiMemoryBuffer : IDisposable
 		{
-			private Graphics m_graphics;
-			private Bitmap m_bitmap;
+			public IntPtr HdcMem { get; private set; }
+			public IntPtr HBitmap { get; private set; }
+			private IntPtr _hOldBitmap;
 
-			public MemoryBuffer(int width, int height)
+			public GdiMemoryBuffer(IntPtr hdcCompatible, int width, int height)
 			{
-				m_bitmap = new Bitmap(width, height);
-				// create graphics memory buffer
-				m_graphics = Graphics.FromImage(m_bitmap);
+				HdcMem = CreateCompatibleDC(hdcCompatible);
+				if (HdcMem == IntPtr.Zero) throw new Exception("CreateCompatibleDC failed");
+
+				HBitmap = CreateCompatibleBitmap(hdcCompatible, width, height);
+				if (HBitmap == IntPtr.Zero) throw new Exception("CreateCompatibleBitmap failed");
+
+				_hOldBitmap = SelectObject(HdcMem, HBitmap);
 			}
 
-			#region Disposable stuff
-			#if DEBUG
-			/// <summary/>
-			~MemoryBuffer()
-			{
-				Dispose(false);
-			}
-			#endif
-
-			/// <summary/>
-			public bool IsDisposed { get; private set; }
-
-			/// <summary/>
 			public void Dispose()
 			{
-				Dispose(true);
-				GC.SuppressFinalize(this);
-			}
-
-			/// <summary/>
-			protected virtual void Dispose(bool fDisposing)
-			{
-				System.Diagnostics.Debug.WriteLineIf(!fDisposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-				if (fDisposing && !IsDisposed)
+				if (HdcMem != IntPtr.Zero)
 				{
-					// dispose managed and unmanaged objects
-					if (m_graphics != null)
-					{
-						m_graphics.Dispose();
-					}
-					if (m_bitmap != null)
-						m_bitmap.Dispose();
+					if (_hOldBitmap != IntPtr.Zero)
+						SelectObject(HdcMem, _hOldBitmap);
+					DeleteDC(HdcMem);
+					HdcMem = IntPtr.Zero;
 				}
-				m_bitmap = null;
-				m_graphics = null;
-				IsDisposed = true;
-			}
-			#endregion
-
-			public Bitmap Bitmap
-			{
-				get { return m_bitmap; }
-			}
-
-			public Graphics Graphics
-			{
-				get { return m_graphics; }
+				if (HBitmap != IntPtr.Zero)
+				{
+					DeleteObject(HBitmap);
+					HBitmap = IntPtr.Zero;
+				}
 			}
 		}
+
+		[StructLayout(LayoutKind.Sequential)]
+		private struct RECT
+		{
+			public int left;
+			public int top;
+			public int right;
+			public int bottom;
+		}
+
+		[DllImport("gdi32.dll", EntryPoint = "CreateCompatibleDC", SetLastError=true)]
+		private static extern IntPtr CreateCompatibleDC([In] IntPtr hdc);
+
+		[DllImport("gdi32.dll", EntryPoint = "CreateCompatibleBitmap")]
+		private static extern IntPtr CreateCompatibleBitmap([In] IntPtr hdc, int nWidth, int nHeight);
+
+		[DllImport("gdi32.dll", EntryPoint = "SelectObject")]
+		private static extern IntPtr SelectObject([In] IntPtr hdc, [In] IntPtr hgdiobj);
+
+		[DllImport("gdi32.dll", EntryPoint = "DeleteObject")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool DeleteObject([In] IntPtr hObject);
+
+		[DllImport("gdi32.dll", EntryPoint = "DeleteDC")]
+		[return: MarshalAs(UnmanagedType.Bool)]
+		private static extern bool DeleteDC([In] IntPtr hdc);
+
+		[DllImport("user32.dll")]
+		private static extern int FillRect(IntPtr hDC, [In] ref RECT lprc, IntPtr hbr);
+
+		[DllImport("gdi32.dll")]
+		private static extern IntPtr CreateSolidBrush(uint crColor);
+
+		[DllImport("gdi32.dll")]
+		private static extern bool BitBlt(IntPtr hdcDest, int nXDest, int nYDest, int nWidth, int nHeight, IntPtr hdcSrc, int nXSrc, int nYSrc, int dwRop);
+
+		[DllImport("gdi32.dll")]
+		private static extern bool PlgBlt(IntPtr hdcDest, Point[] lpPoint, IntPtr hdcSrc, int nXSrc, int nYSrc, int nWidth, int nHeight, IntPtr hbmMask, int xMask, int yMask);
+
+		private const int SRCCOPY = 0x00CC0020;
+		private const uint kclrTransparent = 0xC0000000;
 
 		/// <summary>
 		/// See C++ documentation
@@ -104,22 +117,32 @@ namespace SIL.FieldWorks.Views
 
 			IVwGraphicsWin32 qvg = VwGraphicsWin32Class.Create();
 			Rectangle rcp = rcpDraw;
-			using (Graphics screen = Graphics.FromHdc(hdc))
-			using (var memoryBuffer = new MemoryBuffer(rcp.Width, rcp.Height))
+			using (var memoryBuffer = new GdiMemoryBuffer(hdc, rcp.Width, rcp.Height))
 			{
-				memoryBuffer.Graphics.FillRectangle(new SolidBrush(ColorUtil.ConvertBGRtoColor(bkclr)), 0, 0,
-					rcp.Width, rcp.Height);
-
-				IntPtr hdcMem = memoryBuffer.Graphics.GetHdc();
-				VwPrepDrawResult xpdr = VwPrepDrawResult.kxpdrAdjust;
+				IntPtr hdcMem = memoryBuffer.HdcMem;
 				try
 				{
+					if (bkclr == kclrTransparent)
+					{
+						// if the background color is transparent, copy the current screen area in to the
+						// bitmap buffer as our background
+						BitBlt(hdcMem, 0, 0, rcp.Width, rcp.Height, hdc, rcp.Left, rcp.Top, SRCCOPY);
+					}
+					else
+					{
+						RECT rc = new RECT { left = 0, top = 0, right = rcp.Width, bottom = rcp.Height };
+						IntPtr hBrush = CreateSolidBrush(bkclr);
+						FillRect(hdcMem, ref rc, hBrush);
+						DeleteObject(hBrush);
+					}
+
 					qvg.Initialize(hdcMem);
 					IVwGraphics qvgDummy = null;
 
 					try
 					{
 						Rect rcDst, rcSrc;
+						VwPrepDrawResult xpdr = VwPrepDrawResult.kxpdrAdjust;
 						while (xpdr == VwPrepDrawResult.kxpdrAdjust)
 						{
 
@@ -159,6 +182,11 @@ namespace SIL.FieldWorks.Views
 							qvgDummy = null;
 						}
 
+						if (xpdr != VwPrepDrawResult.kxpdrInvalidate)
+						{
+							// We drew something...now blast it onto the screen.
+							BitBlt(hdc, rcp.Left, rcp.Top, rcp.Width, rcp.Height, hdcMem, 0, 0, SRCCOPY);
+						}
 					}
 					catch (Exception)
 					{
@@ -170,12 +198,6 @@ namespace SIL.FieldWorks.Views
 				finally
 				{
 					qvg.ReleaseDC();
-					memoryBuffer.Graphics.ReleaseHdc(hdcMem);
-				}
-
-				if (xpdr != VwPrepDrawResult.kxpdrInvalidate)
-				{
-					screen.DrawImageUnscaled(memoryBuffer.Bitmap, rcp.Left, rcp.Top, rcp.Width, rcp.Height);
 				}
 			}
 		}
@@ -193,16 +215,25 @@ namespace SIL.FieldWorks.Views
 			bool fDrawSel, IVwGraphics pvg, Rect rcSrc, Rect rcDst, int ysTop, int dysHeight)
 		{
 			IVwGraphicsWin32 qvg32 = VwGraphicsWin32Class.Create();
-			using (Graphics screen = Graphics.FromHdc(hdc))
+			Rectangle rcp = rcpDraw;
+
+			using (var memoryBuffer = new GdiMemoryBuffer(hdc, rcp.Width, rcp.Height))
 			{
-				Rectangle rcp = rcpDraw;
-				Rectangle rcFill = new Rect(0, 0, rcp.Width, rcp.Height);
-
-				using (var memoryBuffer = new MemoryBuffer(rcp.Width, rcp.Height))
+				IntPtr hdcMem = memoryBuffer.HdcMem;
+				try
 				{
-					memoryBuffer.Graphics.FillRectangle(new SolidBrush(ColorUtil.ConvertBGRtoColor(bkclr)), rcFill);
+					if (bkclr == kclrTransparent)
+					{
+						BitBlt(hdcMem, 0, 0, rcp.Width, rcp.Height, hdc, rcp.Left, rcp.Top, SRCCOPY);
+					}
+					else
+					{
+						RECT rc = new RECT { left = 0, top = 0, right = rcp.Width, bottom = rcp.Height };
+						IntPtr hBrush = CreateSolidBrush(bkclr);
+						FillRect(hdcMem, ref rc, hBrush);
+						DeleteObject(hBrush);
+					}
 
-					IntPtr hdcMem = memoryBuffer.Graphics.GetHdc();
 					qvg32.Initialize(hdcMem);
 					qvg32.XUnitsPerInch = rcDst.right - rcDst.left;
 					qvg32.YUnitsPerInch = rcDst.bottom - rcDst.top;
@@ -214,10 +245,12 @@ namespace SIL.FieldWorks.Views
 					finally
 					{
 						qvg32.ReleaseDC();
-						memoryBuffer.Graphics.ReleaseHdc(hdcMem);
 					}
 
-					screen.DrawImageUnscaled(memoryBuffer.Bitmap, rcp);
+					BitBlt(hdc, rcp.Left, rcp.Top, rcp.Width, rcp.Height, hdcMem, 0, 0, SRCCOPY);
+				}
+				finally
+				{
 				}
 			}
 		}
@@ -232,49 +265,63 @@ namespace SIL.FieldWorks.Views
 		{
 			IVwGraphicsWin32 qvg32 = VwGraphicsWin32Class.Create();
 			Rectangle rcp = new Rectangle(rcpDraw.top, rcpDraw.left, rcpDraw.bottom, rcpDraw.right);
-			Rectangle rcFill = new Rect(0, 0, rcp.Width, rcp.Height);
-			using (Graphics screen = Graphics.FromHdc(hdc))
-			using (var memoryBuffer = new MemoryBuffer(rcp.Width, rcp.Height))
-			{
-				memoryBuffer.Graphics.FillRectangle(new SolidBrush(ColorUtil.ConvertBGRtoColor(bkclr)), rcFill);
-				IntPtr hdcMem = memoryBuffer.Graphics.GetHdc();
-				qvg32.Initialize(hdcMem);
 
-				IVwGraphics qvgDummy = null;
+			using (var memoryBuffer = new GdiMemoryBuffer(hdc, rcp.Width, rcp.Height))
+			{
+				IntPtr hdcMem = memoryBuffer.HdcMem;
 				try
 				{
-					Rect rcDst, rcSrc;
-					vrs.GetGraphics(rootb, out qvgDummy, out rcSrc, out rcDst);
-					Rectangle temp = rcDst;
-					temp.Offset(-rcp.Left, -rcp.Top);
-					rcDst = temp;
+					if (bkclr == kclrTransparent)
+					{
+						BitBlt(hdcMem, 0, 0, rcp.Width, rcp.Height, hdc, rcp.Left, rcp.Top, SRCCOPY);
+					}
+					else
+					{
+						RECT rc = new RECT { left = 0, top = 0, right = rcp.Width, bottom = rcp.Height };
+						IntPtr hBrush = CreateSolidBrush(bkclr);
+						FillRect(hdcMem, ref rc, hBrush);
+						DeleteObject(hBrush);
+					}
 
-					qvg32.XUnitsPerInch = qvgDummy.XUnitsPerInch;
-					qvg32.YUnitsPerInch = qvgDummy.YUnitsPerInch;
+					qvg32.Initialize(hdcMem);
 
-					rootb.DrawRoot(qvg32, rcSrc, rcDst, fDrawSel);
-					vrs.ReleaseGraphics(rootb, qvgDummy);
-					qvgDummy = null;
-				}
-				catch (Exception)
-				{
-					if (qvgDummy != null)
+					IVwGraphics qvgDummy = null;
+					try
+					{
+						Rect rcDst, rcSrc;
+						vrs.GetGraphics(rootb, out qvgDummy, out rcSrc, out rcDst);
+						Rectangle temp = rcDst;
+						temp.Offset(-rcp.Left, -rcp.Top);
+						rcDst = temp;
+
+						qvg32.XUnitsPerInch = qvgDummy.XUnitsPerInch;
+						qvg32.YUnitsPerInch = qvgDummy.YUnitsPerInch;
+
+						rootb.DrawRoot(qvg32, rcSrc, rcDst, fDrawSel);
 						vrs.ReleaseGraphics(rootb, qvgDummy);
-					throw;
+						qvgDummy = null;
+					}
+					catch (Exception)
+					{
+						if (qvgDummy != null)
+							vrs.ReleaseGraphics(rootb, qvgDummy);
+						throw;
+					}
+					finally
+					{
+						qvg32.ReleaseDC();
+					}
+
+					Point[] rgptTransform = new Point[3];
+					rgptTransform[0] = new Point(rcpDraw.right, rcpDraw.top); // upper left of actual drawing maps to top right of rotated drawing
+					rgptTransform[1] = new Point(rcpDraw.right, rcpDraw.bottom); // upper right of actual drawing maps to bottom right of rotated drawing.
+					rgptTransform[2] = new Point(rcpDraw.left, rcpDraw.top); // bottom left of actual drawing maps to top left of rotated drawing.
+
+					PlgBlt(hdc, rgptTransform, hdcMem, 0, 0, rcp.Width, rcp.Height, IntPtr.Zero, 0, 0);
 				}
 				finally
 				{
-					qvg32.ReleaseDC();
-					memoryBuffer.Graphics.ReleaseHdc(hdcMem);
 				}
-
-				Point[] rgptTransform = new Point[3];
-				rgptTransform[0] = new Point(rcpDraw.right, rcpDraw.top); // upper left of actual drawing maps to top right of rotated drawing
-
-				rgptTransform[1] = new Point(rcpDraw.right, rcpDraw.bottom); // upper right of actual drawing maps to bottom right of rotated drawing.
-				rgptTransform[2] = new Point(rcpDraw.left, rcpDraw.top); // bottom left of actual drawing maps to top left of rotated drawing.
-
-				screen.DrawImage((Image)memoryBuffer.Bitmap, rgptTransform, new Rectangle(0, 0, rcp.Width, rcp.Height), GraphicsUnit.Pixel);
 			}
 		}
 	}

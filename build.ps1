@@ -256,7 +256,27 @@ function Invoke-MSBuildStep {
 	}
 }
 
+function Check-ConflictingProcesses {
+	$conflicts = @("FieldWorks", "msbuild")
+	foreach ($name in $conflicts) {
+		$process = Get-Process -Name $name -ErrorAction SilentlyContinue
+		if ($process) {
+			Write-Host "$name is currently running." -ForegroundColor Yellow
+			$confirmation = Read-Host "Do you want to close it? (Y/N)"
+			if ($confirmation -match "^[Yy]") {
+				Write-Host "Closing $name..." -ForegroundColor Yellow
+				Stop-Process -Name $name -Force
+				Start-Sleep -Seconds 1
+			} else {
+				Write-Host "Continuing without closing $name." -ForegroundColor Yellow
+			}
+		}
+	}
+}
+
 # --- 3. Execution ---
+
+Check-ConflictingProcesses
 
 Write-Host "Building FieldWorks..." -ForegroundColor Cyan
 Write-Host "Configuration: $Configuration | Platform: $Platform | Parallel: $(-not $Serial) | Tests: $BuildTests" -ForegroundColor Cyan

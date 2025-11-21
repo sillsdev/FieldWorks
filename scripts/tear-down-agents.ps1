@@ -226,6 +226,11 @@ To check what's uncommitted:
             }
           }
 
+          if (Test-Path -LiteralPath $wtPath) {
+            Write-Host "Removing worktree directory $wtPath"
+            Remove-Item -LiteralPath $wtPath -Recurse -Force -ErrorAction SilentlyContinue
+          }
+
           if (Test-GitBranchExists -Branch $branch) {
             Write-Host "Deleting branch $branch"
             Invoke-GitSafe @('branch','-D',$branch) -Quiet

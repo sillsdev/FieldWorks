@@ -38,6 +38,7 @@ param(
   [switch]$SkipVsCodeSetup,
   [switch]$ForceVsCodeSetup,
   [switch]$SkipOpenVSCode,
+  [switch]$NoContainer,
   [string]$ContainerMemory = "4g"
 )
 
@@ -130,7 +131,9 @@ if (-not $BaseRef) {
 }
 
 Assert-Tool git
-Assert-Tool docker "info"
+if (-not $NoContainer) {
+  Assert-Tool docker "info"
+}
 
 . (Join-Path $PSScriptRoot 'git-utilities.ps1')
 
@@ -149,9 +152,10 @@ function Get-AgentColors {
 }
 
 # Verify Windows containers mode
-$info = docker info --format '{{json .}}' | ConvertFrom-Json
-if ($null -eq $info.OSType -or $info.OSType -ne "windows") {
-  Write-Error @"
+if (-not $NoContainer) {
+  $info = docker info --format '{{json .}}' | ConvertFrom-Json
+  if ($null -eq $info.OSType -or $info.OSType -ne "windows") {
+    Write-Error @"
 Docker is in LINUX containers mode (OSType=$($info.OSType)).
 
 To fix:
@@ -165,7 +169,8 @@ The multi-agent workflow requires Windows containers because FieldWorks needs:
 - Visual Studio Build Tools
 - COM/registry isolation
 "@
-  throw "Docker must be in Windows containers mode"
+    throw "Docker must be in Windows containers mode"
+  }
 }
 
 # Normalize paths
@@ -194,6 +199,7 @@ try {
 # Build image if missing or forced
 function Ensure-Image {
   param([string]$Tag)
+  if ($NoContainer) { return }
   $images = Invoke-DockerSafe @('images','--format','{{.Repository}}:{{.Tag}}') -CaptureOutput
   $exists = $images | Where-Object { $_ -eq $Tag }
   if ($RebuildImage -or -not $exists) {
@@ -372,6 +378,10 @@ function Ensure-Container {
   $nugetHost = Join-Path $RepoRoot (".nuget\packages-agent-$Index")
   New-Item -ItemType Directory -Force -Path $nugetHost | Out-Null
 
+  if ($NoContainer) {
+    return @{ Name=$null; NuGetCache=$nugetHost; ContainerPath=$AgentPath; UseContainer=$false }
+  }
+
   $driveMappings = @{}
   foreach ($path in @($AgentPath,$RepoRoot,$WorktreesRoot)) {
     if (-not $path) { continue }
@@ -477,7 +487,7 @@ function Ensure-Container {
     Invoke-DockerSafe $args -Quiet
   }
 
-  return @{ Name=$name; NuGetCache=$nugetHost; ContainerPath=$containerAgentPath }
+  return @{ Name=$name; NuGetCache=$nugetHost; ContainerPath=$containerAgentPath; UseContainer=$true }
 }
 
 function Write-Tasks {
@@ -569,6 +579,8 @@ function Write-AgentConfig {
     "ContainerPath" = $Container.ContainerPath
     "SolutionRelPath" = $SolutionRelPath
     "RepositoryRoot" = $RepoRoot
+    "UseContainer" = $Container.UseContainer
+    "NuGetCachePath" = $Container.NuGetCache
   } | ConvertTo-Json -Depth 4
 
   $configPath = Join-Path $configDir "config.json"
