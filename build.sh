@@ -1,9 +1,19 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# NOTE: This script is primarily intended for use in Git Bash or MSYS2 on Windows.
+# While it can be run on Linux (if msbuild/dotnet is available), the native C++ components
+# and Visual Studio environment setup are Windows-specific.
+# For Linux builds, ensure you have the Mono or .NET SDK environment configured manually.
+
 CONFIGURATION="Debug"
 PLATFORM="x64"
 LOG_FILE=""
+SERIAL=false
+BUILD_TESTS=false
+BUILD_ADDITIONAL_APPS=false
+VERBOSITY="minimal"
+NODE_REUSE="true"
 MSBUILD_ARGS=()
 
 print_usage() {
@@ -20,16 +30,21 @@ This script performs:
 
 Options:
   -c, --configuration CONFIG      Build configuration (default: Debug)
-  -p, --platform PLATFORM         Build platform (default: x64)
+  -p, --platform PLATFORM         Build platform (default: x64, x86 not supported)
+  -s, --serial                    Disable parallel build (default: parallel enabled)
+  -t, --build-tests               Include test projects (default: false)
+  -a, --build-additional-apps     Include optional utility apps (default: false)
+  -v, --verbosity LEVEL           Logging verbosity: quiet, minimal, normal, detailed, diagnostic (default: minimal)
+  --no-node-reuse                 Disable MSBuild node reuse (default: enabled)
   -l, --log-file FILE             Tee final msbuild output to FILE
   -h, --help                      Show this help message
 
 Any arguments after "--" are passed directly to msbuild.
 
 Examples:
-  ./build.sh                                    # Build Debug x64
-  ./build.sh -c Release                         # Build Release x64
-  ./build.sh -- /m /v:detailed                  # Build with parallel and verbose logging
+  ./build.sh                                    # Build Debug x64 parallel, minimal log
+  ./build.sh -c Release -t                      # Build Release x64 with tests
+  ./build.sh -s -v detailed                     # Build serial with detailed log
 EOF
 }
 
@@ -41,7 +56,31 @@ while [[ $# -gt 0 ]]; do
       ;;
     -p|--platform)
       PLATFORM="$2"
+      if [[ "$PLATFORM" == "x86" ]]; then
+        echo "ERROR: x86 build is no longer supported." >&2
+        exit 1
+      fi
       shift 2
+      ;;
+    -s|--serial)
+      SERIAL=true
+      shift
+      ;;
+    -t|--build-tests)
+      BUILD_TESTS=true
+      shift
+      ;;
+    -a|--build-additional-apps)
+      BUILD_ADDITIONAL_APPS=true
+      shift
+      ;;
+    -v|--verbosity)
+      VERBOSITY="$2"
+      shift 2
+      ;;
+    --no-node-reuse)
+      NODE_REUSE="false"
+      shift
       ;;
     -l|--log-file)
       LOG_FILE="$2"
@@ -106,17 +145,11 @@ find_msbuild() {
 # Set architecture environment variable for legacy MSBuild tasks
 set_arch_environment() {
   local platform="$1"
-  case "${platform,,}" in
-    x86)
-      export arch="x86"
-      ;;
-    x64)
-      export arch="x64"
-      ;;
-    *)
-      export arch="$platform"
-      ;;
-  esac
+  if [[ "${platform,,}" == "x86" ]]; then
+    echo "ERROR: x86 build is no longer supported." >&2
+    exit 1
+  fi
+  export arch="x64"
   echo "Set arch environment variable to: $arch"
 }
 
@@ -184,9 +217,9 @@ run_msbuild_step() {
   shift 2
   local args=("$@")
 
-  echo "Running: MSBuild ${args[*]}"
+  echo "Running $description..."
 
-  if [[ -n "$LOG_FILE" && "$description" == "FieldWorks" ]]; then
+  if [[ -n "$LOG_FILE" && "$description" == "FieldWorks Solution" ]]; then
     local log_dir
     log_dir="$(dirname "$LOG_FILE")"
     if [[ -n "$log_dir" && "$log_dir" != "." ]]; then
@@ -215,10 +248,48 @@ run_msbuild_step() {
 export MSYS_NO_PATHCONV=1
 export MSYS2_ARG_CONV_EXCL="*"
 
+# Determine logical core count for CL_MPCount
+if [[ -n "${CL_MPCount:-}" ]]; then
+  MP_COUNT="$CL_MPCount"
+else
+  MP_COUNT=8
+  if [[ -n "${NUMBER_OF_PROCESSORS:-}" ]]; then
+    if [[ "$NUMBER_OF_PROCESSORS" -lt 8 ]]; then
+      MP_COUNT="$NUMBER_OF_PROCESSORS"
+    fi
+  fi
+fi
+
+# Construct MSBuild arguments
+FINAL_ARGS=()
+
+if [[ "$SERIAL" == "false" ]]; then
+  FINAL_ARGS+=("/m")
+fi
+
+FINAL_ARGS+=("/v:$VERBOSITY")
+FINAL_ARGS+=("/nologo")
+FINAL_ARGS+=("/consoleloggerparameters:Summary")
+FINAL_ARGS+=("/nr:$NODE_REUSE")
+FINAL_ARGS+=("/p:Configuration=$CONFIGURATION")
+FINAL_ARGS+=("/p:Platform=$PLATFORM")
+FINAL_ARGS+=("/p:CL_MPCount=$MP_COUNT")
+
+if [[ "$BUILD_TESTS" == "true" ]]; then
+  FINAL_ARGS+=("/p:BuildTests=true")
+fi
+
+if [[ "$BUILD_ADDITIONAL_APPS" == "true" ]]; then
+  FINAL_ARGS+=("/p:BuildAdditionalApps=true")
+fi
+
+# Add user-supplied args
+FINAL_ARGS+=("${MSBUILD_ARGS[@]}")
+
 # Main build sequence
 echo ""
-echo "Building FieldWorks using MSBuild Traversal SDK (FieldWorks.proj)..."
-echo "Configuration: $CONFIGURATION, Platform: $PLATFORM"
+echo "Building FieldWorks..."
+echo "Configuration: $CONFIGURATION | Platform: $PLATFORM | Parallel: $(if [[ "$SERIAL" == "false" ]]; then echo "true"; else echo "false"; fi) | Tests: $BUILD_TESTS"
 echo ""
 
 # Find MSBuild
@@ -235,12 +306,13 @@ set_arch_environment "$PLATFORM"
 echo ""
 
 # Bootstrap: Build FwBuildTasks first (required by SetupInclude.targets)
-echo "🔧 Bootstrapping: Building FwBuildTasks..."
-run_msbuild_step "$MSBUILD" "FwBuildTasks" \
+# Quiet mode for bootstrap
+run_msbuild_step "$MSBUILD" "FwBuildTasks (Bootstrap)" \
   "Build/Src/FwBuildTasks/FwBuildTasks.csproj" \
   "/t:Restore;Build" \
   "/p:Configuration=$CONFIGURATION" \
-  "/p:Platform=$PLATFORM"
+  "/p:Platform=$PLATFORM" \
+  "/v:quiet" "/nologo"
 
 echo ""
 
@@ -249,14 +321,13 @@ run_msbuild_step "$MSBUILD" "RestorePackages" \
   "Build/Orchestrator.proj" \
   "/t:RestorePackages" \
   "/p:Configuration=$CONFIGURATION" \
-  "/p:Platform=$PLATFORM"
+  "/p:Platform=$PLATFORM" \
+  "/v:quiet" "/nologo"
 
 # Build using traversal project
-run_msbuild_step "$MSBUILD" "FieldWorks" \
+run_msbuild_step "$MSBUILD" "FieldWorks Solution" \
   "FieldWorks.proj" \
-  "/p:Configuration=$CONFIGURATION" \
-  "/p:Platform=$PLATFORM" \
-  "${MSBUILD_ARGS[@]}"
+  "${FINAL_ARGS[@]}"
 
 echo ""
 echo "✅ Build complete!"

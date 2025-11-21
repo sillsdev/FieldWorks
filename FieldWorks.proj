@@ -140,7 +140,7 @@
     <ProjectReference Include="Lib\src\ObjectBrowser\ObjectBrowser.csproj" />
   </ItemGroup>
 
-  <ItemGroup Label="Phase 15: Test Projects - Foundation">
+  <ItemGroup Label="Phase 15: Test Projects - Foundation" Condition="'$(BuildTests)'=='true'">
     <!-- Tests for foundation components -->
     <ProjectReference Include="Src\Common\FwUtils\FwUtilsTests\FwUtilsTests.csproj" />
     <ProjectReference Include="Src\Utilities\XMLUtils\XMLUtilsTests\XMLUtilsTests.csproj" />
@@ -149,7 +149,7 @@
     <ProjectReference Include="Src\Common\ViewsInterfaces\ViewsInterfacesTests\ViewsInterfacesTests.csproj" />
   </ItemGroup>
 
-  <ItemGroup Label="Phase 16: Test Projects - UI Components">
+  <ItemGroup Label="Phase 16: Test Projects - UI Components" Condition="'$(BuildTests)'=='true'">
     <!-- Tests for UI components -->
     <ProjectReference Include="Src\Common\SimpleRootSite\SimpleRootSiteTests\SimpleRootSiteTests.csproj" />
     <ProjectReference Include="Src\Common\RootSite\RootSiteTests\RootSiteTests.csproj" />
@@ -167,19 +167,19 @@
     <ProjectReference Include="Src\Common\FieldWorks\FieldWorksTests\FieldWorksTests.csproj" />
   </ItemGroup>
 
-  <ItemGroup Label="Phase 17: Test Projects - XCore">
+  <ItemGroup Label="Phase 17: Test Projects - XCore" Condition="'$(BuildTests)'=='true'">
     <!-- Tests for XCore components -->
     <ProjectReference Include="Src\XCore\xCoreInterfaces\xCoreInterfacesTests\xCoreInterfacesTests.csproj" />
     <ProjectReference Include="Src\XCore\xCoreTests\xCoreTests.csproj" />
   </ItemGroup>
 
-  <ItemGroup Label="Phase 18: Test Projects - Data and FDO">
+  <ItemGroup Label="Phase 18: Test Projects - Data and FDO" Condition="'$(BuildTests)'=='true'">
     <!-- Tests for data components -->
     <ProjectReference Include="Src\FdoUi\FdoUiTests\FdoUiTests.csproj" />
     <ProjectReference Include="Src\CacheLight\CacheLightTests\CacheLightTests.csproj" />
   </ItemGroup>
 
-  <ItemGroup Label="Phase 19: Test Projects - LexText">
+  <ItemGroup Label="Phase 19: Test Projects - LexText" Condition="'$(BuildTests)'=='true'">
     <!-- Tests for LexText components -->
     <ProjectReference Include="Src\LexText\ParserCore\XAmpleManagedWrapper\XAmpleManagedWrapperTests\XAmpleManagedWrapperTests.csproj" />
     <ProjectReference Include="Src\LexText\ParserCore\ParserCoreTests\ParserCoreTests.csproj" />
@@ -193,7 +193,7 @@
     <ProjectReference Include="Src\LexText\LexTextDll\LexTextDllTests\LexTextDllTests.csproj" />
   </ItemGroup>
 
-  <ItemGroup Label="Phase 20: Test Projects - Applications and Plugins">
+  <ItemGroup Label="Phase 20: Test Projects - Applications and Plugins" Condition="'$(BuildTests)'=='true'">
     <!-- Tests for applications and plugins -->
     <ProjectReference Include="Src\FXT\FxtDll\FxtDllTests\FxtDllTests.csproj" />
     <ProjectReference Include="Src\xWorks\xWorksTests\xWorksTests.csproj" />
@@ -203,7 +203,7 @@
     <ProjectReference Include="Src\LexText\FlexPathwayPlugin\FlexPathwayPluginTests\FlexPathwayPluginTests.csproj" />
   </ItemGroup>
 
-  <ItemGroup Label="Phase 21: Test Projects - Utilities">
+  <ItemGroup Label="Phase 21: Test Projects - Utilities" Condition="'$(BuildTests)'=='true'">
     <!-- Tests for utility components -->
     <ProjectReference Include="Src\Utilities\SfmToXml\Sfm2XmlTests\Sfm2XmlTests.csproj" />
     <ProjectReference Include="Src\UnicodeCharEditor\UnicodeCharEditorTests\UnicodeCharEditorTests.csproj" />

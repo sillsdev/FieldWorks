@@ -1,14 +1,73 @@
-﻿[CmdletBinding()]
+﻿<#
+.SYNOPSIS
+	Builds the FieldWorks repository using the MSBuild Traversal SDK.
 
+.DESCRIPTION
+	This script orchestrates the build process for FieldWorks. It handles:
+	1. Initializing the Visual Studio Developer Environment (if needed).
+	2. Bootstrapping build tasks (FwBuildTasks).
+	3. Restoring NuGet packages.
+	4. Building the solution via FieldWorks.proj using MSBuild Traversal.
+
+.PARAMETER Configuration
+	The build configuration (Debug or Release). Default is Debug.
+
+.PARAMETER Platform
+	The target platform. Only x64 is supported. Default is x64.
+
+.PARAMETER Serial
+	If set, disables parallel build execution (/m). Default is false (parallel enabled).
+
+.PARAMETER BuildTests
+	If set, includes test projects in the build. Default is false.
+
+.PARAMETER BuildAdditionalApps
+	If set, includes optional utility applications (e.g. MigrateSqlDbs, LCMBrowser) in the build. Default is false.
+
+.PARAMETER Verbosity
+	Specifies the amount of information to display in the build log.
+	Values: q[uiet], m[inimal], n[ormal], d[etailed], diag[nostic].
+	Default is 'minimal'.
+
+.PARAMETER NodeReuse
+	Enables or disables MSBuild node reuse (/nr). Default is true.
+
+.PARAMETER MsBuildArgs
+	Additional arguments to pass directly to MSBuild.
+
+.PARAMETER LogFile
+	Path to a file where the build output should be logged.
+
+.EXAMPLE
+	.\build.ps1
+	Builds Debug x64 in parallel with minimal logging.
+
+.EXAMPLE
+	.\build.ps1 -Configuration Release -BuildTests
+	Builds Release x64 including test projects.
+
+.EXAMPLE
+	.\build.ps1 -Serial -Verbosity detailed
+	Builds Debug x64 serially with detailed logging.
+#>
+[CmdletBinding()]
 param(
 	[string]$Configuration = "Debug",
 	[string]$Platform = "x64",
+	[switch]$Serial,
+	[switch]$BuildTests,
+	[switch]$BuildAdditionalApps,
+	[string]$Verbosity = "minimal",
+	[bool]$NodeReuse = $true,
 	[string[]]$MsBuildArgs = @(),
-	[string]$LogFile,
-	[switch]$BuildAdditionalApps
+	[string]$LogFile
 )
 
 $ErrorActionPreference = 'Stop'
+
+# --- 1. Environment Setup ---
+
+# Determine MSBuild path
 $msbuildCmdInfo = Get-Command msbuild -ErrorAction SilentlyContinue
 if ($msbuildCmdInfo) {
 	$msbuildCmd = $msbuildCmdInfo.Source
@@ -17,6 +76,7 @@ else {
 	$msbuildCmd = 'msbuild'
 }
 
+# Initialize Visual Studio Environment
 function Initialize-VsDevEnvironment {
 	param(
 		[string]$RequestedPlatform
@@ -74,7 +134,10 @@ function Initialize-VsDevEnvironment {
 		throw "Unable to locate VsDevCmd.bat under '$vsInstallPath'."
 	}
 
-	$arch = if ($RequestedPlatform -ieq 'x86') { 'x86' } else { 'amd64' }
+	if ($RequestedPlatform -eq 'x86') {
+		throw "x86 build is no longer supported."
+	}
+	$arch = 'amd64'
 	$vsVersion = Split-Path (Split-Path (Split-Path (Split-Path $vsInstallPath))) -Leaf
 	Write-Host "   Found Visual Studio $vsVersion at: $vsInstallPath" -ForegroundColor Gray
 	Write-Host "   Setting up environment for $arch..." -ForegroundColor Gray
@@ -109,14 +172,58 @@ Initialize-VsDevEnvironment -RequestedPlatform $Platform
 
 # Help legacy MSBuild tasks distinguish platform-specific assets.
 # Set this AFTER Initialize-VsDevEnvironment to ensure it's not overwritten
-if ($Platform) {
-	switch ($Platform.ToLowerInvariant()) {
-		'x86' { $env:arch = 'x86' }
-		'x64' { $env:arch = 'x64' }
-		default { $env:arch = $Platform }
-	}
-	Write-Host "Set arch environment variable to: $env:arch" -ForegroundColor Green
+if ($Platform -eq 'x86') {
+	throw "x86 build is no longer supported."
 }
+$env:arch = 'x64'
+Write-Host "Set arch environment variable to: $env:arch" -ForegroundColor Green
+
+# --- 2. Build Configuration ---
+
+# Determine logical core count for CL_MPCount
+if ($env:CL_MPCount) {
+	$mpCount = $env:CL_MPCount
+}
+else {
+	# Default to 8 or number of processors if less
+	$mpCount = 8
+	if ($env:NUMBER_OF_PROCESSORS) {
+		$procCount = [int]$env:NUMBER_OF_PROCESSORS
+		if ($procCount -lt 8) { $mpCount = $procCount }
+	}
+}
+
+# Construct MSBuild arguments
+$finalMsBuildArgs = @()
+
+# Parallelism
+if (-not $Serial) {
+	$finalMsBuildArgs += "/m"
+}
+
+# Verbosity & Logging
+$finalMsBuildArgs += "/v:$Verbosity"
+$finalMsBuildArgs += "/nologo"
+$finalMsBuildArgs += "/consoleloggerparameters:Summary"
+
+# Node Reuse
+$finalMsBuildArgs += "/nr:$($NodeReuse.ToString().ToLower())"
+
+# Properties
+$finalMsBuildArgs += "/p:Configuration=$Configuration"
+$finalMsBuildArgs += "/p:Platform=$Platform"
+$finalMsBuildArgs += "/p:CL_MPCount=$mpCount"
+
+if ($BuildTests) {
+	$finalMsBuildArgs += "/p:BuildTests=true"
+}
+
+if ($BuildAdditionalApps) {
+	$finalMsBuildArgs += "/p:BuildAdditionalApps=true"
+}
+
+# Add user-supplied args
+$finalMsBuildArgs += $MsBuildArgs
 
 function Invoke-MSBuildStep {
 	param(
@@ -125,7 +232,10 @@ function Invoke-MSBuildStep {
 		[string]$LogPath
 	)
 
-	Write-Host "Running: $msbuildCmd $($Arguments -join ' ')" -ForegroundColor Cyan
+	# Only print the command once, concisely
+	Write-Host "Running $Description..." -ForegroundColor Cyan
+	# Write-Host "& $msbuildCmd $Arguments" -ForegroundColor DarkGray
+
 	if ($LogPath) {
 		$logDir = Split-Path -Parent $LogPath
 		if ($logDir -and -not (Test-Path $logDir)) {
@@ -146,28 +256,30 @@ function Invoke-MSBuildStep {
 	}
 }
 
-Write-Host "Building FieldWorks using MSBuild Traversal SDK (FieldWorks.proj)..." -ForegroundColor Cyan
-Write-Host "Configuration: $Configuration, Platform: $Platform" -ForegroundColor Cyan
+# --- 3. Execution ---
+
+Write-Host "Building FieldWorks..." -ForegroundColor Cyan
+Write-Host "Configuration: $Configuration | Platform: $Platform | Parallel: $(-not $Serial) | Tests: $BuildTests" -ForegroundColor Cyan
 
 if ($BuildAdditionalApps) {
-	Write-Host "Including optional FieldWorks executables (BuildAdditionalApps=true)" -ForegroundColor Yellow
+	Write-Host "Including optional FieldWorks executables" -ForegroundColor Yellow
 }
 
 # Bootstrap: Build FwBuildTasks first (required by SetupInclude.targets)
-Write-Host "🔧 Bootstrapping: Building FwBuildTasks..." -ForegroundColor Yellow
+# Note: FwBuildTasks is small, so we use minimal args here to keep it quiet and fast
 Invoke-MSBuildStep `
-	-Arguments @('Build/Src/FwBuildTasks/FwBuildTasks.csproj', '/t:Restore;Build', "/p:Configuration=$Configuration", "/p:Platform=$Platform") `
-	-Description 'FwBuildTasks'
+	-Arguments @('Build/Src/FwBuildTasks/FwBuildTasks.csproj', '/t:Restore;Build', "/p:Configuration=$Configuration", "/p:Platform=$Platform", "/v:quiet", "/nologo") `
+	-Description 'FwBuildTasks (Bootstrap)'
 
 # Restore packages
 Invoke-MSBuildStep `
-	-Arguments @('Build/Orchestrator.proj', '/t:RestorePackages', "/p:Configuration=$Configuration", "/p:Platform=$Platform") `
+	-Arguments @('Build/Orchestrator.proj', '/t:RestorePackages', "/p:Configuration=$Configuration", "/p:Platform=$Platform", "/v:quiet", "/nologo") `
 	-Description 'RestorePackages'
 
 # Build using traversal project
 Invoke-MSBuildStep `
-	-Arguments (@('FieldWorks.proj', "/p:Configuration=$Configuration", "/p:Platform=$Platform") + $MsBuildArgs + $(if ($BuildAdditionalApps) { '/p:BuildAdditionalApps=true' } else { @() })) `
-	-Description "FieldWorks" `
+	-Arguments (@('FieldWorks.proj') + $finalMsBuildArgs) `
+	-Description "FieldWorks Solution" `
 	-LogPath $LogFile
 
 Write-Host ""
