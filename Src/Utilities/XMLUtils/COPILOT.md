@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-11-01
-last-reviewed-tree: c4dabaab932c5c8839a003cb0c26dfa70f6ee4c1e70cf1f07e62c6558ec001f7
+last-reviewed-tree: 45264aa52a130d0ada04e62bc7c52a5fca0e5e5cc7994855047cd3f4b2067c7e
 status: production
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/Utilities/XMLUtils. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # XMLUtils
 
@@ -135,21 +131,6 @@ Library component. Reference in consuming projects. See Dependencies section for
 - **Source file count**: 8 files
 - **Data file count**: 1 files
 
-## References (auto-generated hints)
-- Project files:
-  - Utilities/XMLUtils/XMLUtils.csproj
-  - Utilities/XMLUtils/XMLUtilsTests/XMLUtilsTests.csproj
-- Key C# files:
-  - Utilities/XMLUtils/AssemblyInfo.cs
-  - Utilities/XMLUtils/DynamicLoader.cs
-  - Utilities/XMLUtils/ResolveDirectory.cs
-  - Utilities/XMLUtils/SILExceptions.cs
-  - Utilities/XMLUtils/XMLUtilsTests/DynamicLoaderTests.cs
-  - Utilities/XMLUtils/XMLUtilsTests/XmlUtilsTest.cs
-  - Utilities/XMLUtils/XmlUtils.cs
-  - Utilities/XMLUtils/XmlUtilsStrings.Designer.cs
-- Data contracts/transforms:
-  - Utilities/XMLUtils/XmlUtilsStrings.resx
 ## Code Evidence
 *Analysis based on scanning 7 source files*
 

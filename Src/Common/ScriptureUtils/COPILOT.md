@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: cb92de32746951c55376a7c729623b1a056286d6de6d30c6ea3f9784591ca81f
+last-reviewed-tree: 6eff5a0c5e237f35fa511195a7cf7a5bb7ec4c9cf3b6dec768ded6e91032b3f8
 status: draft
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/Common/ScriptureUtils. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # ScriptureUtils COPILOT summary
 

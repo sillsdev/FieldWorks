@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: 9b9e9a2c7971185d92105247849e0b35f2305f8ae237f4ab3be1681a0b974464
+last-reviewed-tree: 7429723c263755549ddf40ff3f313eec90f6ba20928a4451597ffe4e28116b78
 status: reviewed
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/MigrateSqlDbs. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # MigrateSqlDbs
 
@@ -284,6 +280,7 @@ C# WinExe application (net48) with 11 source files (~1.1K lines). Mix of WinForm
   - Src/MigrateSqlDbs/FWVersionTooOld.resx
   - Src/MigrateSqlDbs/MigrateProjects.resx
   - Src/MigrateSqlDbs/Properties/Resources.resx
+
 ## Test Information
 - No dedicated test project found
 - Testing: Manual execution against FW6 SQL Server databases

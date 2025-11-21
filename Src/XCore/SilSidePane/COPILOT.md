@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-11-01
-last-reviewed-tree: a872637d37e3a95e66b9a0bc325c7a1b32b47fbd3c36dd4fdab463b96aca720c
+last-reviewed-tree: 5c0428af86d4d8c6b7829d245dd8bd3a610718aca9563315255e6c5b43a1e58e
 status: production
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/XCore/SilSidePane. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # SilSidePane
 
@@ -115,41 +111,6 @@ Library component. Reference in consuming projects. See Dependencies section for
 - **Source file count**: 26 files
 - **Data file count**: 3 files
 
-## References (auto-generated hints)
-- Project files:
-  - XCore/SilSidePane/SilSidePane.csproj
-  - XCore/SilSidePane/SilSidePaneTests/BuildInclude.targets
-  - XCore/SilSidePane/SilSidePaneTests/SilSidePaneTests.csproj
-- Key C# files:
-  - XCore/SilSidePane/Banner.cs
-  - XCore/SilSidePane/IItemArea.cs
-  - XCore/SilSidePane/Item.cs
-  - XCore/SilSidePane/ListViewItemArea.cs
-  - XCore/SilSidePane/NavPaneOptionsDlg.Designer.cs
-  - XCore/SilSidePane/NavPaneOptionsDlg.cs
-  - XCore/SilSidePane/OutlookBar.cs
-  - XCore/SilSidePane/OutlookBarButton.cs
-  - XCore/SilSidePane/OutlookBarButtonCollection.cs
-  - XCore/SilSidePane/OutlookBarSubButtonPanel.cs
-  - XCore/SilSidePane/OutlookButtonPanel.cs
-  - XCore/SilSidePane/OutlookButtonPanelItemArea.cs
-  - XCore/SilSidePane/Properties/AssemblyInfo.cs
-  - XCore/SilSidePane/Properties/Resources.Designer.cs
-  - XCore/SilSidePane/Properties/Settings.Designer.cs
-  - XCore/SilSidePane/SidePane.cs
-  - XCore/SilSidePane/SidePaneItemAreaStyle.cs
-  - XCore/SilSidePane/SilSidePane.Designer.cs
-  - XCore/SilSidePane/SilSidePaneTests/ItemTests.cs
-  - XCore/SilSidePane/SilSidePaneTests/NavPaneOptionsDlgTests.cs
-  - XCore/SilSidePane/SilSidePaneTests/OutlookBarButtonTests.cs
-  - XCore/SilSidePane/SilSidePaneTests/SidePaneTests.cs
-  - XCore/SilSidePane/SilSidePaneTests/TabTests.cs
-  - XCore/SilSidePane/SilSidePaneTests/TestUtilities.cs
-  - XCore/SilSidePane/StripListItemArea.cs
-- Data contracts/transforms:
-  - XCore/SilSidePane/NavPaneOptionsDlg.resx
-  - XCore/SilSidePane/Properties/Resources.resx
-  - XCore/SilSidePane/SilSidePane.resx
 ## Code Evidence
 *Analysis based on scanning 21 source files*
 

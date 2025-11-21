@@ -1,22 +1,18 @@
+---
+last-reviewed: 2025-11-21
+last-reviewed-tree: 5fe2afbb8cb54bb9264efdb2cf2de46021c9343855105809e6ea6ee5be4ad9ee
+status: draft
+---
+
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/Transforms. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
-
-﻿---
-last-reviewed: 2025-10-31
-last-reviewed-tree: 5fe2afbb8cb54bb9264efdb2cf2de46021c9343855105809e6ea6ee5be4ad9ee
-status: reviewed
----
 
 # Transforms
 
@@ -273,6 +269,7 @@ No executable components; XSLTs loaded at runtime by .NET System.Xml.Xsl process
   - Src/Transforms/Presentation/FormatXAmpleWordGrammarDebuggerResult.xsl
   - Src/Transforms/Presentation/JSFunctions.xsl
   - Src/Transforms/Presentation/XLingPap1.xsl
+
 ## Subfolders
 
 ### Application/ (12 XSLT files)

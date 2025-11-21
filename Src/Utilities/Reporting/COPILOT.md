@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-11-01
-last-reviewed-tree: 4b3215ece83f3cc04a275800cd77b630c2b5418bb20632848b9ce46df61d2e90
+last-reviewed-tree: 6e77190e724389dc36805e7317baffc3b2b0783186bbb258a5dc6c954632c73d
 status: production
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/Utilities/Reporting. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # Reporting
 
@@ -118,17 +114,3 @@ No test project found.
 ## References
 - **SIL.Reporting.ErrorReport**: Main exception reporting class
 - **System.Windows.Forms.Form**: UsageEmailDialog base class
-
-## References (auto-generated hints)
-- Project files:
-  - Utilities/Reporting/Reporting.csproj
-- Key C# files:
-  - Utilities/Reporting/AssemblyInfo.cs
-  - Utilities/Reporting/ErrorReport.cs
-  - Utilities/Reporting/ReportingStrings.Designer.cs
-  - Utilities/Reporting/UsageEmailDialog.cs
-- Data contracts/transforms:
-  - Utilities/Reporting/App.config
-  - Utilities/Reporting/ErrorReport.resx
-  - Utilities/Reporting/ReportingStrings.resx
-  - Utilities/Reporting/UsageEmailDialog.resx

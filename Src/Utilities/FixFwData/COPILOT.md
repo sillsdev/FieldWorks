@@ -1,22 +1,18 @@
+---
+last-reviewed: 2025-11-21
+last-reviewed-tree: 9bd081c8b99fcd3e3e2e644cac0f5e8222648391667a18c1ee1095769390928b
+status: draft
+---
+
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/Utilities/FixFwData. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
-
-﻿---
-last-reviewed: 2025-11-01
-last-reviewed-tree: 6cf055af735fcf5f893126f0d5bf31ba037b8c3ff5eef360f62a7319ca5d5f0e
-status: production
----
 
 # FixFwData
 

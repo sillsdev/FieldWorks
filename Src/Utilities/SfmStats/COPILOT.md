@@ -1,22 +1,18 @@
+---
+last-reviewed: 2025-11-21
+last-reviewed-tree: 21276ebc360840097a54dc037be9cd230a22c03262dc075dd198bfb93941163b
+status: draft
+---
+
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/Utilities/SfmStats. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
-
-﻿---
-last-reviewed: 2025-11-01
-last-reviewed-tree: 9be40fcf0586972031abe58bc18e05fb49c961b114494509a3fb1f1b4dc9df3c
-status: production
----
 
 # SfmStats
 
@@ -107,10 +103,3 @@ No test project found.
 - **Sfm2Xml namespace**: SFM parsing infrastructure
 - **System.IO.File**: File reading
 - **System.Text.Encoding**: Character encoding analysis
-
-## References (auto-generated hints)
-- Project files:
-  - Utilities/SfmStats/SfmStats.csproj
-- Key C# files:
-  - Utilities/SfmStats/Program.cs
-  - Utilities/SfmStats/Properties/AssemblyInfo.cs

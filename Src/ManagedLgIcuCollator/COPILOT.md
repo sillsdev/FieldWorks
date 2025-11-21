@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: 7b43a1753527af6dabab02b8b1fed66cfd6083725f4cd079355f933d9ae58e11
+last-reviewed-tree: 8ca32c9179ae611e3b86361c36a4e081c7bf39be31ec2a0aa462db5ffd3659e6
 status: reviewed
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/ManagedLgIcuCollator. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # ManagedLgIcuCollator
 
@@ -238,6 +234,7 @@ C# library (net48) with 2 source files (~180 lines total). Single class ManagedL
 - Key C# files:
   - Src/ManagedLgIcuCollator/LgIcuCollator.cs
   - Src/ManagedLgIcuCollator/ManagedLgIcuCollatorTests/ManagedLgIcuCollatorTests.cs
+
 ## Test Information
 - Test project: ManagedLgIcuCollatorTests
 - Test file: ManagedLgIcuCollatorTests.cs
