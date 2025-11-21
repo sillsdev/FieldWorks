@@ -17,13 +17,6 @@ status: draft
 - Finish with verification notes and TODOs for manual testing.
 <!-- copilot:auto-change-log end -->
 
-
-﻿---
-last-reviewed: 2025-11-01
-last-reviewed-tree: 9be40fcf0586972031abe58bc18e05fb49c961b114494509a3fb1f1b4dc9df3c
-status: production
----
-
 # SfmStats
 
 ## Purpose

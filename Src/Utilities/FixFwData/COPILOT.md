@@ -17,13 +17,6 @@ status: draft
 - Finish with verification notes and TODOs for manual testing.
 <!-- copilot:auto-change-log end -->
 
-
-﻿---
-last-reviewed: 2025-11-01
-last-reviewed-tree: 6cf055af735fcf5f893126f0d5bf31ba037b8c3ff5eef360f62a7319ca5d5f0e
-status: production
----
-
 # FixFwData
 
 ## Purpose
