@@ -39,20 +39,20 @@ namespace ParatextImport
 
 			Assert.That((int)clonedDiff.RefStart, Is.EqualTo(1001001));
 			Assert.That((int)clonedDiff.RefEnd, Is.EqualTo(1001030));
-			Assert.AreSame(paras[0], clonedDiff.ParaCurr);
-			Assert.AreEqual(1, clonedDiff.IchMinCurr);
-			Assert.AreEqual(99, clonedDiff.IchLimCurr);
-			Assert.AreSame(paras[1], clonedDiff.ParaRev);
-			Assert.AreEqual(11, clonedDiff.IchMinRev);
-			Assert.AreEqual(88, clonedDiff.IchLimRev);
-			//Assert.AreEqual(987654321, clonedDiff.hvoAddedSection);
-			Assert.AreEqual(DifferenceType.PictureDifference, clonedDiff.DiffType);
+			Assert.That(clonedDiff.ParaCurr, Is.SameAs(paras[0]));
+			Assert.That(clonedDiff.IchMinCurr, Is.EqualTo(1));
+			Assert.That(clonedDiff.IchLimCurr, Is.EqualTo(99));
+			Assert.That(clonedDiff.ParaRev, Is.SameAs(paras[1]));
+			Assert.That(clonedDiff.IchMinRev, Is.EqualTo(11));
+			Assert.That(clonedDiff.IchLimRev, Is.EqualTo(88));
+			//Assert.That(clonedDiff.hvoAddedSection, Is.EqualTo(987654321));
+			Assert.That(clonedDiff.DiffType, Is.EqualTo(DifferenceType.PictureDifference));
 			Assert.That(clonedDiff.SubDiffsForParas, Is.Null);
 			Assert.That(clonedDiff.SubDiffsForORCs, Is.Null);
-			Assert.AreEqual("Whatever", clonedDiff.StyleNameCurr);
-			Assert.AreEqual("Whateverelse", clonedDiff.StyleNameRev);
-			Assert.AreEqual("Esperanto", clonedDiff.WsNameCurr);
-			Assert.AreEqual("Latvian", clonedDiff.WsNameRev);
+			Assert.That(clonedDiff.StyleNameCurr, Is.EqualTo("Whatever"));
+			Assert.That(clonedDiff.StyleNameRev, Is.EqualTo("Whateverelse"));
+			Assert.That(clonedDiff.WsNameCurr, Is.EqualTo("Esperanto"));
+			Assert.That(clonedDiff.WsNameRev, Is.EqualTo("Latvian"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -74,18 +74,18 @@ namespace ParatextImport
 
 			//Difference clonedDiff = diffA.Clone();
 
-			//Assert.AreEqual(1001001, clonedDiff.RefStart);
-			//Assert.AreEqual(1001030, clonedDiff.RefEnd);
-			//Assert.AreEqual(DifferenceType.SectionAddedToCurrent, (DifferenceType)clonedDiff.DiffType);
-			//Assert.AreEqual(6, clonedDiff.SectionsCurr[0]);
-			//Assert.AreEqual(7, clonedDiff.SectionsCurr[1]);
-			//Assert.AreEqual(8, clonedDiff.SectionsCurr[2]);
-			//Assert.AreEqual(0, clonedDiff.ParaCurr);
-			//Assert.AreEqual(0, clonedDiff.IchMinCurr);
-			//Assert.AreEqual(0, clonedDiff.IchLimCurr);
-			//Assert.AreEqual(4712, clonedDiff.ParaRev);
-			//Assert.AreEqual(11, clonedDiff.IchMinRev);
-			//Assert.AreEqual(11, clonedDiff.IchLimRev);
+			//Assert.That(clonedDiff.RefStart, Is.EqualTo(1001001));
+			//Assert.That(clonedDiff.RefEnd, Is.EqualTo(1001030));
+			//Assert.That((DifferenceType)clonedDiff.DiffType, Is.EqualTo(DifferenceType.SectionAddedToCurrent));
+			//Assert.That(clonedDiff.SectionsCurr[0], Is.EqualTo(6));
+			//Assert.That(clonedDiff.SectionsCurr[1], Is.EqualTo(7));
+			//Assert.That(clonedDiff.SectionsCurr[2], Is.EqualTo(8));
+			//Assert.That(clonedDiff.ParaCurr, Is.EqualTo(0));
+			//Assert.That(clonedDiff.IchMinCurr, Is.EqualTo(0));
+			//Assert.That(clonedDiff.IchLimCurr, Is.EqualTo(0));
+			//Assert.That(clonedDiff.ParaRev, Is.EqualTo(4712));
+			//Assert.That(clonedDiff.IchMinRev, Is.EqualTo(11));
+			//Assert.That(clonedDiff.IchLimRev, Is.EqualTo(11));
 			//Assert.That(clonedDiff.SubDifferences, Is.Null);
 			//Assert.That(clonedDiff.StyleNameCurr, Is.Null);
 			//Assert.That(clonedDiff.StyleNameRev, Is.Null);
@@ -127,13 +127,13 @@ namespace ParatextImport
 
 			Difference clonedDiff = diff.Clone();
 
-			Assert.AreEqual(2, clonedDiff.SubDiffsForORCs.Count);
-			Assert.AreEqual(1, clonedDiff.SubDiffsForORCs[0].SubDiffsForORCs.Count);
+			Assert.That(clonedDiff.SubDiffsForORCs.Count, Is.EqualTo(2));
+			Assert.That(clonedDiff.SubDiffsForORCs[0].SubDiffsForORCs.Count, Is.EqualTo(1));
 			Assert.That(clonedDiff.SubDiffsForORCs[1].SubDiffsForORCs, Is.Null);
 			Assert.That(clonedDiff.SubDiffsForORCs[0].SubDiffsForORCs[0].SubDiffsForORCs, Is.Null);
 
-			Assert.AreEqual(2, clonedDiff.SubDiffsForParas.Count);
-			Assert.AreEqual(1, clonedDiff.SubDiffsForParas[0].SubDiffsForParas.Count);
+			Assert.That(clonedDiff.SubDiffsForParas.Count, Is.EqualTo(2));
+			Assert.That(clonedDiff.SubDiffsForParas[0].SubDiffsForParas.Count, Is.EqualTo(1));
 			Assert.That(clonedDiff.SubDiffsForParas[1].SubDiffsForParas, Is.Null);
 			Assert.That(clonedDiff.SubDiffsForParas[0].SubDiffsForParas[0].SubDiffsForParas, Is.Null);
 		}

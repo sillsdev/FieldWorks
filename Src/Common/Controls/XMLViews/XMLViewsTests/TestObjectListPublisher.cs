@@ -38,15 +38,15 @@ namespace SIL.FieldWorks.XWorks
 			Notifiee recorder = new Notifiee();
 			publisher.AddNotification(recorder);
 			publisher.CacheVecProp(hvoRoot, values, true);
-			Assert.AreEqual(values.Length, publisher.get_VecSize(hvoRoot, ObjectListFlid), "override of vec size");
-			//Assert.AreEqual(Cache.LangProject.Texts.Count, publisher.get_VecSize(Cache.LangProject.Hvo, LangProjectTags.kflidTexts), "base vec size");
+			Assert.That(publisher.get_VecSize(hvoRoot, ObjectListFlid), Is.EqualTo(values.Length), "override of vec size");
+			//Assert.That(publisher.get_VecSize(Cache.LangProject.Hvo, LangProjectTags.kflidTexts), Is.EqualTo(Cache.LangProject.Texts.Count), "base vec size");
 
-			Assert.AreEqual(23, publisher.get_VecItem(hvoRoot, ObjectListFlid, 0), "override of vec item");
-			Assert.AreEqual(res1.Hvo, publisher.get_VecItem(lexDb.Hvo, LexDbTags.kflidResources, 0), "base vec item");
-			Assert.AreEqual(56, publisher.get_VecItem(hvoRoot, ObjectListFlid, 1), "override of vec item, non-zero index");
+			Assert.That(publisher.get_VecItem(hvoRoot, ObjectListFlid, 0), Is.EqualTo(23), "override of vec item");
+			Assert.That(publisher.get_VecItem(lexDb.Hvo, LexDbTags.kflidResources, 0), Is.EqualTo(res1.Hvo), "base vec item");
+			Assert.That(publisher.get_VecItem(hvoRoot, ObjectListFlid, 1), Is.EqualTo(56), "override of vec item, non-zero index");
 
 			VerifyCurrentValue(hvoRoot, publisher, values, "original value");
-			Assert.AreEqual(lexDb.ResourcesOC.Count(), publisher.VecProp(lexDb.Hvo, LexDbTags.kflidResources).Length, "base VecProp");
+			Assert.That(publisher.VecProp(lexDb.Hvo, LexDbTags.kflidResources).Length, Is.EqualTo(lexDb.ResourcesOC.Count()), "base VecProp");
 
 			recorder.CheckChanges(new ChangeInformationTest[] { new ChangeInformationTest(hvoRoot, ObjectListFlid, 0, values.Length, 0) },
 				"expected PropChanged from caching HVOs");
@@ -72,9 +72,9 @@ namespace SIL.FieldWorks.XWorks
 		private void VerifyCurrentValue(int hvoRoot, ObjectListPublisher publisher, int[] values, string label)
 		{
 			int[] newValues = publisher.VecProp(hvoRoot, ObjectListFlid);
-			Assert.AreEqual(values.Length, newValues.Length, label + "length from VecProp");
+			Assert.That(newValues.Length, Is.EqualTo(values.Length), label + "length from VecProp");
 			for (int i = 0; i < values.Length; i++)
-				Assert.AreEqual(values[i], newValues[i], label + " item " + i +" from VecProp");
+				Assert.That(newValues[i], Is.EqualTo(values[i]), label + " item " + i +" from VecProp");
 		}
 	}
 }

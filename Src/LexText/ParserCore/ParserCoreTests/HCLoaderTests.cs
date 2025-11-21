@@ -1161,7 +1161,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			// Group names of all pattern children must be non-null.
 			foreach (var child in hcPrule.Pattern.Children)
 			{
-				Assert.IsNotNull(((Group<Word,ShapeNode>) child).Name);
+				Assert.That(((Group<Word,ShapeNode>) child).Name, Is.Not.Null);
 			}
 			// Group names of all children must be unique.
 			var namesList = hcPrule.Pattern.Children.Select(child => new{str = ((Group<Word, ShapeNode>)child).Name});

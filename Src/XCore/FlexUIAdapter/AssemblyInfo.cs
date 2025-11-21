@@ -4,4 +4,4 @@
 
 using System.Reflection;
 
-[assembly: AssemblyTitle("Adapter for xCore menus and side pane")]
+// [assembly: AssemblyTitle("Adapter for xCore menus and side pane")] // Sanitized by convert_generate_assembly_info

@@ -208,8 +208,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				list.Init(Cache, m_mediator, m_propertyTable, recordListNode);
 
-				Assert.IsNull(list.OwningObject,
-					"When AllReversalEntriesRecordList is called and the Clerk is null then the OwningObject should not be set, i.e. left as Null");
+				Assert.That(list.OwningObject, Is.Null, "When AllReversalEntriesRecordList is called and the Clerk is null then the OwningObject should not be set, i.e. left as Null");
 			}
 		}
 

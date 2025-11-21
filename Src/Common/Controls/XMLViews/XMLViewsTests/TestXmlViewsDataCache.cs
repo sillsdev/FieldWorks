@@ -26,15 +26,15 @@ namespace XMLViewsTests
 			XMLViewsDataCache xmlCache = new XMLViewsDataCache(Cache.MainCacheAccessor as ISilDataAccessManaged, true, new Dictionary<int, int>());
 			Notifiee recorder = new Notifiee();
 			xmlCache.AddNotification(recorder);
-			Assert.AreEqual(0, xmlCache.get_MultiStringAlt(hvoRoot, kflid, wsEng).Length);
-			Assert.AreEqual(0, recorder.Changes.Count);
+			Assert.That(xmlCache.get_MultiStringAlt(hvoRoot, kflid, wsEng).Length, Is.EqualTo(0));
+			Assert.That(recorder.Changes.Count, Is.EqualTo(0));
 			ITsString test1 = TsStringUtils.MakeString("test1", wsEng);
 			xmlCache.CacheMultiString(hvoRoot, kflid, wsEng, test1);
-			Assert.AreEqual(0, recorder.Changes.Count);
-			Assert.AreEqual(test1, xmlCache.get_MultiStringAlt(hvoRoot, kflid, wsEng));
+			Assert.That(recorder.Changes.Count, Is.EqualTo(0));
+			Assert.That(xmlCache.get_MultiStringAlt(hvoRoot, kflid, wsEng), Is.EqualTo(test1));
 			ITsString test2 = TsStringUtils.MakeString("blah", wsEng);
 			xmlCache.SetMultiStringAlt(hvoRoot, kflid, wsEng, test2);
-			Assert.AreEqual(test2, xmlCache.get_MultiStringAlt(hvoRoot, kflid, wsEng));
+			Assert.That(xmlCache.get_MultiStringAlt(hvoRoot, kflid, wsEng), Is.EqualTo(test2));
 
 
 			recorder.CheckChanges(new[] {new ChangeInformationTest(hvoRoot, kflid, wsEng, 0, 0)},

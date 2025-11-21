@@ -40,13 +40,13 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 1);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 1, 1);
 			m_importer.ProcessSegment("", @"\c");
-			Assert.AreEqual(1, m_importer.Chapter);
+			Assert.That(m_importer.Chapter, Is.EqualTo(1));
 
 			// ************** process v1 verse 1 *********************
 			m_importer.ProcessSegment("verse text", @"\v");
 
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(3, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(3));
 			VerifyBldrRun(0, "1", ScrStyleNames.ChapterNumber);
 			VerifyBldrRun(1, "1", ScrStyleNames.VerseNumber);
 			VerifyBldrRun(2, "verse text", null);
@@ -66,7 +66,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 1);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 1, 1);
 			m_importer.ProcessSegment("", @"\c");
-			Assert.AreEqual(1, m_importer.Chapter);
+			Assert.That(m_importer.Chapter, Is.EqualTo(1));
 
 			// ************** process v1 verse 1 *********************
 			m_importer.ProcessSegment("back trans", @"\v");
@@ -84,7 +84,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 1);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 1, 1);
 			m_importer.ProcessSegment("", @"\c");
-			Assert.AreEqual(1, m_importer.Chapter);
+			Assert.That(m_importer.Chapter, Is.EqualTo(1));
 
 			// ************** process v1 verse 1 *********************
 			m_importer.ProcessSegment("retrotraduccion", @"\v");
@@ -93,33 +93,33 @@ namespace ParatextImport.ImportTests
 			m_importer.FinalizeImport();
 
 			IScrBook book = m_importer.ScrBook;
-			Assert.AreEqual("Vernacular ID Text", book.IdText);
-			Assert.AreEqual(1, book.SectionsOS.Count);
+			Assert.That(book.IdText, Is.EqualTo("Vernacular ID Text"));
+			Assert.That(book.SectionsOS.Count, Is.EqualTo(1));
 			IScrSection section = book.SectionsOS[0];
-			Assert.AreEqual(1, section.ContentOA.ParagraphsOS.Count);
-			Assert.AreEqual(02001001, section.VerseRefMin);
-			Assert.AreEqual(02001001, section.VerseRefMax);
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(section.VerseRefMin, Is.EqualTo(02001001));
+			Assert.That(section.VerseRefMax, Is.EqualTo(02001001));
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11verse text", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("11verse text"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation trans = para.GetBT();
 			// Check default analysis BT
 			ITsString btTss = trans.Translation.AnalysisDefaultWritingSystem;
-			Assert.AreEqual("11back trans", btTss.Text);
-			Assert.AreEqual(3, btTss.RunCount);
-			Assert.AreEqual("back trans", btTss.get_RunText(2));
+			Assert.That(btTss.Text, Is.EqualTo("11back trans"));
+			Assert.That(btTss.RunCount, Is.EqualTo(3));
+			Assert.That(btTss.get_RunText(2), Is.EqualTo("back trans"));
 			ITsTextProps ttpRun3 = btTss.get_Properties(2);
-			Assert.AreEqual(null, ttpRun3.GetStrPropValue((int)FwTextPropType.ktptNamedStyle));
-			Assert.AreEqual(m_wsAnal, ttpRun3.GetIntPropValues((int)FwTextPropType.ktptWs, out _));
+			Assert.That(ttpRun3.GetStrPropValue((int)FwTextPropType.ktptNamedStyle), Is.EqualTo(null));
+			Assert.That(ttpRun3.GetIntPropValues((int)FwTextPropType.ktptWs, out _), Is.EqualTo(m_wsAnal));
 
 			// Check Spanish BT
 			btTss = trans.Translation.get_String(wsSpanish);
-			Assert.AreEqual("11retrotraduccion", btTss.Text);
-			Assert.AreEqual(3, btTss.RunCount);
-			Assert.AreEqual("retrotraduccion", btTss.get_RunText(2));
+			Assert.That(btTss.Text, Is.EqualTo("11retrotraduccion"));
+			Assert.That(btTss.RunCount, Is.EqualTo(3));
+			Assert.That(btTss.get_RunText(2), Is.EqualTo("retrotraduccion"));
 			ttpRun3 = btTss.get_Properties(2);
-			Assert.AreEqual(null, ttpRun3.GetStrPropValue((int)FwTextPropType.ktptNamedStyle));
-			Assert.AreEqual(wsSpanish, ttpRun3.GetIntPropValues((int)FwTextPropType.ktptWs, out _));
+			Assert.That(ttpRun3.GetStrPropValue((int)FwTextPropType.ktptNamedStyle), Is.EqualTo(null));
+			Assert.That(ttpRun3.GetIntPropValues((int)FwTextPropType.ktptWs, out _), Is.EqualTo(wsSpanish));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -146,13 +146,13 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 1);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 1, 1);
 			m_importer.ProcessSegment("", @"\c");
-			Assert.AreEqual(1, m_importer.Chapter);
+			Assert.That(m_importer.Chapter, Is.EqualTo(1));
 
 			// ************** process v1 verse 1 *********************
 			m_importer.ProcessSegment("verse text", @"\v");
 
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(3, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(3));
 			VerifyBldrRun(0, "1", ScrStyleNames.ChapterNumber);
 			VerifyBldrRun(1, "1", ScrStyleNames.VerseNumber);
 			VerifyBldrRun(2, "verse text", null);
@@ -176,7 +176,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 1);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 1, 1);
 			m_importer.ProcessSegment("", @"\c");
-			Assert.AreEqual(1, m_importer.Chapter);
+			Assert.That(m_importer.Chapter, Is.EqualTo(1));
 
 			// ************** process v1 verse 1 *********************
 			m_importer.ProcessSegment("back trans", @"\v");
@@ -194,7 +194,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 1);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 1, 1);
 			m_importer.ProcessSegment("", @"\c");
-			Assert.AreEqual(1, m_importer.Chapter);
+			Assert.That(m_importer.Chapter, Is.EqualTo(1));
 
 			// ************** process v1 verse 1 *********************
 			m_importer.ProcessSegment("retrotraduccion", @"\v");
@@ -205,13 +205,13 @@ namespace ParatextImport.ImportTests
 
 			IScrBook book = m_importer.ScrBook;
 			IStTxtPara para = (IStTxtPara)book.TitleOA.ParagraphsOS[0];
-			Assert.AreEqual("Title secondary\u2028main title", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("Title secondary\u2028main title"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation trans = para.GetBT();
 			// Check default analysis BT
 			ITsString btTss = trans.Translation.AnalysisDefaultWritingSystem;
-			Assert.AreEqual("Title secondary BT\u2028main title BT", btTss.Text);
-			Assert.AreEqual(2, btTss.RunCount);
+			Assert.That(btTss.Text, Is.EqualTo("Title secondary BT\u2028main title BT"));
+			Assert.That(btTss.RunCount, Is.EqualTo(2));
 			AssertEx.RunIsCorrect(btTss, 0, "Title secondary BT",
 				"Title Secondary", m_scr.Cache.DefaultAnalWs);
 			AssertEx.RunIsCorrect(btTss, 1, "\u2028main title BT",
@@ -246,7 +246,7 @@ namespace ParatextImport.ImportTests
 			catch (Exception e)
 			{
 				ScriptureUtilsException sue = e.InnerException as ScriptureUtilsException;
-				Assert.IsFalse(sue.InterleavedImport);
+				Assert.That(sue.InterleavedImport, Is.False);
 			}
 		}
 
@@ -272,14 +272,14 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("Front Section head 1.2", @"\s");
 
 			//// verify state of NormalParaStrBldr
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			VerifyBldrRun(0, "Front Section head 1.1\u2028Front Section head 1.2", null);
 
 			// ************** process a chapter *********************
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 1);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 1, 1);
 			m_importer.ProcessSegment("", @"\c");
-			Assert.AreEqual(1, m_importer.Chapter);
+			Assert.That(m_importer.Chapter, Is.EqualTo(1));
 
 			// ************** process v1 verse 1 *********************
 			m_importer.ProcessSegment("Some verse", @"\v");
@@ -289,7 +289,7 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("Front Section head 2.2", @"\s");
 
 			//// verify state of NormalParaStrBldr
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			VerifyBldrRun(0, "Front Section head 2.1\u2028Front Section head 2.2", null);
 
 			// ************** End of Scripture file *********************
@@ -311,7 +311,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 1);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 1, 1);
 			m_importer.ProcessSegment("", @"\c");
-			Assert.AreEqual(1, m_importer.Chapter);
+			Assert.That(m_importer.Chapter, Is.EqualTo(1));
 
 			// ************** process v1 verse 1 *********************
 			m_importer.ProcessSegment("Algun versiculo", @"\v");
@@ -326,25 +326,25 @@ namespace ParatextImport.ImportTests
 			IScrBook book = m_importer.ScrBook;
 			// Check section 1
 			IStTxtPara para = (IStTxtPara)book.SectionsOS[0].HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("Front Section head 1.1\u2028Front Section head 1.2", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("Front Section head 1.1\u2028Front Section head 1.2"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation trans = para.GetBT();
 			// Check default analysis BT
 			ITsString btTss = trans.Translation.AnalysisDefaultWritingSystem;
-			Assert.AreEqual("Back Section head 1.1\u2028Back Section head 1.2", btTss.Text);
-			Assert.AreEqual(1, btTss.RunCount);
+			Assert.That(btTss.Text, Is.EqualTo("Back Section head 1.1\u2028Back Section head 1.2"));
+			Assert.That(btTss.RunCount, Is.EqualTo(1));
 			AssertEx.RunIsCorrect(btTss, 0,
 				"Back Section head 1.1\u2028Back Section head 1.2", null, Cache.DefaultAnalWs);
 
 			// Check section 2
 			para = (IStTxtPara)book.SectionsOS[1].HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("Front Section head 2.1\u2028Front Section head 2.2", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("Front Section head 2.1\u2028Front Section head 2.2"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			trans = para.GetBT();
 			// Check default analysis BT
 			btTss = trans.Translation.AnalysisDefaultWritingSystem;
-			Assert.AreEqual("Back Section head 2.1\u2028Back Section head 2.2", btTss.Text);
-			Assert.AreEqual(1, btTss.RunCount);
+			Assert.That(btTss.Text, Is.EqualTo("Back Section head 2.1\u2028Back Section head 2.2"));
+			Assert.That(btTss.RunCount, Is.EqualTo(1));
 			AssertEx.RunIsCorrect(btTss, 0,
 				"Back Section head 2.1\u2028Back Section head 2.2", null, m_scr.Cache.DefaultAnalWs);
 		}
@@ -378,7 +378,7 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("Front text for verse26", @"\vt");
 
 			//// verify state of NormalParaStrBldr
-			Assert.AreEqual(5, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(5));
 			VerifyBldrRun(0, "7", ScrStyleNames.ChapterNumber);
 			VerifyBldrRun(1, "25", ScrStyleNames.VerseNumber);
 			VerifyBldrRun(2, "Front text for verse25", null);
@@ -409,13 +409,13 @@ namespace ParatextImport.ImportTests
 			IScrBook book = m_importer.ScrBook;
 			// Check section 1
 			IStTxtPara para = (IStTxtPara)book.SectionsOS[0].ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("725Front text for verse2526Front text for verse26", para.Contents.Text);
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.Contents.Text, Is.EqualTo("725Front text for verse2526Front text for verse26"));
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation trans = para.GetBT();
 			// Check default analysis BT
 			ITsString btTss = trans.Translation.AnalysisDefaultWritingSystem;
-			Assert.AreEqual("726Back text for verse", btTss.Text);
-			Assert.AreEqual(3, btTss.RunCount);
+			Assert.That(btTss.Text, Is.EqualTo("726Back text for verse"));
+			Assert.That(btTss.RunCount, Is.EqualTo(3));
 			AssertEx.RunIsCorrect(btTss, 0,
 				"7", ScrStyleNames.ChapterNumber, m_scr.Cache.DefaultAnalWs);
 			AssertEx.RunIsCorrect(btTss, 1,
@@ -457,14 +457,14 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(2, m_importer.BookNumber);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
 			IScrBook book = m_importer.ScrBook;
-			Assert.AreEqual("EXO", book.BookId);
+			Assert.That(book.BookId, Is.EqualTo("EXO"));
 
 			// ************** process a main title *********************
 			m_importer.ProcessSegment(string.Empty, @"\mt");
-			//Assert.AreEqual(string.Empty, m_importer.ScrBook.Name.get_String(
-			//    m_wsAnal));
+			//Assert.That(m_importer.ScrBook.Name.get_String(
+			//    m_wsAnal), Is.EqualTo(string.Empty));
 
 			// ************** process a chapter *********************
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 0);
@@ -488,20 +488,20 @@ namespace ParatextImport.ImportTests
 			m_importer.FinalizeImport();
 
 			// Check the BT of these two paragraphs
-			Assert.AreEqual(1, para1.TranslationsOC.Count);
+			Assert.That(para1.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation trans1 = para1.GetBT();
 			ITsString tss1 = trans1.Translation.AnalysisDefaultWritingSystem;
-			Assert.AreEqual(5, tss1.RunCount);
+			Assert.That(tss1.RunCount, Is.EqualTo(5));
 			AssertEx.RunIsCorrect(tss1, 0, "1", ScrStyleNames.ChapterNumber, m_wsAnal);
 			AssertEx.RunIsCorrect(tss1, 1, "1", ScrStyleNames.VerseNumber, m_wsAnal);
 			AssertEx.RunIsCorrect(tss1, 2, "BT text for verse one", null, m_wsAnal);
 			AssertEx.RunIsCorrect(tss1, 3, "2", ScrStyleNames.VerseNumber, m_wsAnal);
 			AssertEx.RunIsCorrect(tss1, 4, "BT for text at start of verse 2", null, m_wsAnal);
 
-			Assert.AreEqual(1, para2.TranslationsOC.Count);
+			Assert.That(para2.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation trans2 = para2.GetBT();
 			ITsString tss2 = trans2.Translation.AnalysisDefaultWritingSystem;
-			Assert.AreEqual(1, tss2.RunCount);
+			Assert.That(tss2.RunCount, Is.EqualTo(1));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -576,31 +576,31 @@ namespace ParatextImport.ImportTests
 			m_importer.FinalizeImport();
 
 			// Check the BT
-			Assert.AreEqual(1, paraH1.TranslationsOC.Count);
-			Assert.AreEqual(1, paraC1.TranslationsOC.Count);
-			Assert.AreEqual(1, paraH2.TranslationsOC.Count);
-			Assert.AreEqual(1, paraC2.TranslationsOC.Count);
+			Assert.That(paraH1.TranslationsOC.Count, Is.EqualTo(1));
+			Assert.That(paraC1.TranslationsOC.Count, Is.EqualTo(1));
+			Assert.That(paraH2.TranslationsOC.Count, Is.EqualTo(1));
+			Assert.That(paraC2.TranslationsOC.Count, Is.EqualTo(1));
 
 			ICmTranslation transH1 = paraH1.GetBT();
 			ITsString tssH1 = transH1.Translation.AnalysisDefaultWritingSystem;
-			Assert.AreEqual(1, tssH1.RunCount);
+			Assert.That(tssH1.RunCount, Is.EqualTo(1));
 			AssertEx.RunIsCorrect(tssH1, 0, "Section One", null, m_wsAnal);
 
 			ICmTranslation transC1 = paraC1.GetBT();
 			ITsString tssC1 = transC1.Translation.AnalysisDefaultWritingSystem;
-			Assert.AreEqual(3, tssC1.RunCount);
+			Assert.That(tssC1.RunCount, Is.EqualTo(3));
 			AssertEx.RunIsCorrect(tssC1, 0, "1", ScrStyleNames.ChapterNumber, m_wsAnal);
 			AssertEx.RunIsCorrect(tssC1, 1, "1", ScrStyleNames.VerseNumber, m_wsAnal);
 			AssertEx.RunIsCorrect(tssC1, 2, "BT text for verse one", null, m_wsAnal);
 
 			ICmTranslation transH2 = paraH2.GetBT();
 			ITsString tssH2 = transH2.Translation.AnalysisDefaultWritingSystem;
-			Assert.AreEqual(1, tssH2.RunCount);
+			Assert.That(tssH2.RunCount, Is.EqualTo(1));
 			AssertEx.RunIsCorrect(tssH2, 0, "Section Two", null, m_wsAnal);
 
 			ICmTranslation transC2 = paraC2.GetBT();
 			ITsString tssC2 = transC2.Translation.AnalysisDefaultWritingSystem;
-			Assert.AreEqual(2, tssC2.RunCount);
+			Assert.That(tssC2.RunCount, Is.EqualTo(2));
 			AssertEx.RunIsCorrect(tssC2, 0, "2", ScrStyleNames.VerseNumber, m_wsAnal);
 			AssertEx.RunIsCorrect(tssC2, 1, "BT for text at start of verse 2", null, m_wsAnal);
 		}
@@ -640,10 +640,10 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(2, m_importer.BookNumber);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
 			// verify that a new book was added to the DB
 			IScrBook book = m_importer.ScrBook;
-			Assert.AreEqual("EXO", book.BookId);
+			Assert.That(book.BookId, Is.EqualTo("EXO"));
 
 			// ************** process a main title *********************
 			m_importer.ProcessSegment(string.Empty, @"\mt");
@@ -672,19 +672,18 @@ namespace ParatextImport.ImportTests
 			m_importer.FinalizeImport();
 
 			// Check the BT of these two paragraphs
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation trans1 = para.GetBT();
 			Assert.That(trans1, Is.Not.Null);
 			ITsString tss1 = trans1.Translation.AnalysisDefaultWritingSystem;
-			//Assert.AreEqual(7, tss1.RunCount);
+			//Assert.That(tss1.RunCount, Is.EqualTo(7));
 			AssertEx.RunIsCorrect(tss1, 0, "1", ScrStyleNames.ChapterNumber, m_wsAnal);
 			AssertEx.RunIsCorrect(tss1, 1, "1", ScrStyleNames.VerseNumber, m_wsAnal);
 			AssertEx.RunIsCorrect(tss1, 2, "verse one BT text", null, m_wsAnal);
 
 			Guid guid1 = TsStringUtils.GetGuidFromRun(tss1, 3);
 			IStFootnote footnote = Cache.ServiceLocator.GetInstance<IStFootnoteRepository>().GetObject(guid1);
-			Assert.AreEqual(noteOneTrans.Owner, footnote.ParagraphsOS[0],
-				"The first imported BT footnote should be owned by paragraph in the first footnote but isn't");
+			Assert.That(footnote.ParagraphsOS[0], Is.EqualTo(noteOneTrans.Owner), "The first imported BT footnote should be owned by paragraph in the first footnote but isn't");
 
 			VerifyFootnoteWithTranslation(0, "vernacular text for footnote one",
 				"BT text for footnote one.", "a", ScrStyleNames.NormalFootnoteParagraph);
@@ -721,9 +720,9 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(2, m_importer.BookNumber);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
 			// verify that we didn't create a different book
-			Assert.AreEqual(book.Hvo, m_importer.ScrBook.Hvo);
+			Assert.That(m_importer.ScrBook.Hvo, Is.EqualTo(book.Hvo));
 
 			// begin section (Scripture text)
 			// ************** process a chapter *********************
@@ -772,9 +771,9 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(2, m_importer.BookNumber);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
 			// verify that we didn't create a different book
-			Assert.AreEqual(book.Hvo, m_importer.ScrBook.Hvo);
+			Assert.That(m_importer.ScrBook.Hvo, Is.EqualTo(book.Hvo));
 
 			// begin section (Scripture text)
 			// ************** process a chapter *********************
@@ -798,7 +797,7 @@ namespace ParatextImport.ImportTests
 			m_importer.FinalizeImport();
 
 			// Check the BT of the content paragraph
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation trans1 = para.GetBT();
 			Assert.That(trans1, Is.Not.Null);
 			ITsString tss1 = trans1.Translation.AnalysisDefaultWritingSystem;

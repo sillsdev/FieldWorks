@@ -1,0 +1,193 @@
+openapi: 3.0.0
+info:
+    title: Test Exclusion Tooling API
+    version: 0.1.0
+    description: CLI contracts for audit, conversion, and validation scripts.
+
+paths:
+    /audit:
+        get:
+            summary: Audit repository for test exclusion patterns
+            operationId: audit_test_exclusions
+            parameters:
+                - name: output
+                  in: query
+                  description: Path to JSON report
+                  schema:
+                      type: string
+                      default: Output/test-exclusions/report.json
+                - name: csv-output
+                  in: query
+                  description: Path to CSV report
+                  schema:
+                      type: string
+                      default: Output/test-exclusions/report.csv
+                - name: mixed-code-json
+                  in: query
+                  description: Path to mixed-code escalation JSON
+                  schema:
+                      type: string
+                      default: Output/test-exclusions/mixed-code.json
+                - name: escalations-dir
+                  in: query
+                  description: Directory for escalation templates
+                  schema:
+                      type: string
+                      default: Output/test-exclusions/escalations
+            responses:
+                "0":
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "#/components/schemas/AuditReport"
+
+    /convert:
+        post:
+            summary: Convert projects to Pattern A
+            operationId: convert_test_exclusions
+            parameters:
+                - name: input
+                  in: query
+                  description: Path to input JSON report
+                  schema:
+                      type: string
+                      default: Output/test-exclusions/report.json
+                - name: batch-size
+                  in: query
+                  schema:
+                      type: integer
+                      default: 10
+                - name: dry-run
+                  in: query
+                  schema:
+                      type: boolean
+                      default: false
+                - name: no-verify
+                  in: query
+                  schema:
+                      type: boolean
+                      default: false
+            responses:
+                "0":
+                    description: Success
+
+    /validate:
+        get:
+            summary: Validate repository compliance
+            operationId: validate_test_exclusions
+            parameters:
+                - name: fail-on-warning
+                  in: query
+                  schema:
+                      type: boolean
+                      default: false
+                - name: json-report
+                  in: query
+                  schema:
+                      type: string
+                - name: analyze-log
+                  in: query
+                  description: Path to MSBuild log for CS0436 analysis
+                  schema:
+                      type: string
+            responses:
+                "0":
+                    description: Success
+                "1":
+                    description: Validation failed
+
+components:
+    schemas:
+        AuditReport:
+            type: object
+            properties:
+                generatedAt:
+                    type: string
+                    format: date-time
+                projectCount:
+                    type: integer
+                projects:
+                    type: array
+                    items:
+                        $ref: "#/components/schemas/ProjectScanResult"
+
+        ProjectScanResult:
+            type: object
+            properties:
+                project:
+                    $ref: "#/components/schemas/Project"
+                testFolders:
+                    type: array
+                    items:
+                        $ref: "#/components/schemas/TestFolder"
+                rules:
+                    type: array
+                    items:
+                        $ref: "#/components/schemas/ExclusionRule"
+                issues:
+                    type: array
+                    items:
+                        $ref: "#/components/schemas/ValidationIssue"
+
+        Project:
+            type: object
+            properties:
+                name:
+                    type: string
+                relativePath:
+                    type: string
+                patternType:
+                    type: string
+                    enum: [A, B, C, None]
+                hasMixedCode:
+                    type: boolean
+                status:
+                    type: string
+
+        TestFolder:
+            type: object
+            properties:
+                projectName:
+                    type: string
+                relativePath:
+                    type: string
+                depth:
+                    type: integer
+                containsSource:
+                    type: boolean
+                excluded:
+                    type: boolean
+
+        ExclusionRule:
+            type: object
+            properties:
+                projectName:
+                    type: string
+                pattern:
+                    type: string
+                scope:
+                    type: string
+                    enum: [Compile, None, Both]
+                source:
+                    type: string
+                coversNested:
+                    type: boolean
+
+        ValidationIssue:
+            type: object
+            properties:
+                projectName:
+                    type: string
+                issueType:
+                    type: string
+                severity:
+                    type: string
+                    enum: [Warning, Error]
+                details:
+                    type: string
+                detectedOn:
+                    type: string
+                    format: date-time
+                resolved:
+                    type: boolean

@@ -49,15 +49,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				byte[] fileContents = file.ReadBytes((int)file.BaseStream.Length);
 				int i = 0;
-				Assert.AreEqual(92, fileContents[i++]);
-				Assert.AreEqual(105, fileContents[i++]);
-				Assert.AreEqual(100, fileContents[i++]);
-				Assert.AreEqual(32, fileContents[i++]);
-				Assert.AreEqual(69, fileContents[i++]);
-				Assert.AreEqual(80, fileContents[i++]);
-				Assert.AreEqual(72, fileContents[i++]);
-				Assert.AreEqual(s_cr, fileContents[i++]);
-				Assert.AreEqual(s_lf, fileContents[i++]);
+				Assert.That(fileContents[i++], Is.EqualTo(92));
+				Assert.That(fileContents[i++], Is.EqualTo(105));
+				Assert.That(fileContents[i++], Is.EqualTo(100));
+				Assert.That(fileContents[i++], Is.EqualTo(32));
+				Assert.That(fileContents[i++], Is.EqualTo(69));
+				Assert.That(fileContents[i++], Is.EqualTo(80));
+				Assert.That(fileContents[i++], Is.EqualTo(72));
+				Assert.That(fileContents[i++], Is.EqualTo(s_cr));
+				Assert.That(fileContents[i++], Is.EqualTo(s_lf));
 			}
 		}
 
@@ -78,31 +78,31 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				byte[] fileContents = file.ReadBytes((int)file.BaseStream.Length);
 				int i = 0;
-				Assert.AreEqual(92, fileContents[i++]);
-				Assert.AreEqual(105, fileContents[i++]);
-				Assert.AreEqual(100, fileContents[i++]);
-				Assert.AreEqual(32, fileContents[i++]);
-				Assert.AreEqual(69, fileContents[i++]);
-				Assert.AreEqual(80, fileContents[i++]);
-				Assert.AreEqual(72, fileContents[i++]);
-				Assert.AreEqual(s_cr, fileContents[i++]);
-				Assert.AreEqual(s_lf, fileContents[i++]);
+				Assert.That(fileContents[i++], Is.EqualTo(92));
+				Assert.That(fileContents[i++], Is.EqualTo(105));
+				Assert.That(fileContents[i++], Is.EqualTo(100));
+				Assert.That(fileContents[i++], Is.EqualTo(32));
+				Assert.That(fileContents[i++], Is.EqualTo(69));
+				Assert.That(fileContents[i++], Is.EqualTo(80));
+				Assert.That(fileContents[i++], Is.EqualTo(72));
+				Assert.That(fileContents[i++], Is.EqualTo(s_cr));
+				Assert.That(fileContents[i++], Is.EqualTo(s_lf));
 
-				Assert.AreEqual(92, fileContents[i++]);
-				Assert.AreEqual(109, fileContents[i++]);
-				Assert.AreEqual(116, fileContents[i++]);
-				Assert.AreEqual(32, fileContents[i++]);
-				Assert.AreEqual(116, fileContents[i++]);
-				Assert.AreEqual(101, fileContents[i++]);
-				Assert.AreEqual(115, fileContents[i++]);
-				Assert.AreEqual(116, fileContents[i++]);
-				Assert.AreEqual(s_cr, fileContents[i++]);
-				Assert.AreEqual(s_lf, fileContents[i++]);
+				Assert.That(fileContents[i++], Is.EqualTo(92));
+				Assert.That(fileContents[i++], Is.EqualTo(109));
+				Assert.That(fileContents[i++], Is.EqualTo(116));
+				Assert.That(fileContents[i++], Is.EqualTo(32));
+				Assert.That(fileContents[i++], Is.EqualTo(116));
+				Assert.That(fileContents[i++], Is.EqualTo(101));
+				Assert.That(fileContents[i++], Is.EqualTo(115));
+				Assert.That(fileContents[i++], Is.EqualTo(116));
+				Assert.That(fileContents[i++], Is.EqualTo(s_cr));
+				Assert.That(fileContents[i++], Is.EqualTo(s_lf));
 
-				Assert.AreEqual(92, fileContents[i++]);
-				Assert.AreEqual(112, fileContents[i++]);
-				Assert.AreEqual(s_cr, fileContents[i++]);
-				Assert.AreEqual(s_lf, fileContents[i++]);
+				Assert.That(fileContents[i++], Is.EqualTo(92));
+				Assert.That(fileContents[i++], Is.EqualTo(112));
+				Assert.That(fileContents[i++], Is.EqualTo(s_cr));
+				Assert.That(fileContents[i++], Is.EqualTo(s_lf));
 			}
 		}
 
@@ -123,24 +123,24 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				byte[] fileContents = file.ReadBytes((int)file.BaseStream.Length);
 				int i = 0;
-				Assert.AreEqual(92, fileContents[i++]);
-				Assert.AreEqual(0, fileContents[i++]);
-				Assert.AreEqual(105, fileContents[i++]);
-				Assert.AreEqual(0, fileContents[i++]);
-				Assert.AreEqual(100, fileContents[i++]);
-				Assert.AreEqual(0, fileContents[i++]);
-				Assert.AreEqual(32, fileContents[i++]);
-				Assert.AreEqual(0, fileContents[i++]);
-				Assert.AreEqual(69, fileContents[i++]);
-				Assert.AreEqual(0, fileContents[i++]);
-				Assert.AreEqual(80, fileContents[i++]);
-				Assert.AreEqual(0, fileContents[i++]);
-				Assert.AreEqual(72, fileContents[i++]);
-				Assert.AreEqual(0, fileContents[i++]);
-				Assert.AreEqual(s_cr, fileContents[i++]);
-				Assert.AreEqual(0, fileContents[i++]);
-				Assert.AreEqual(s_lf, fileContents[i++]);
-				Assert.AreEqual(0, fileContents[i++]);
+				Assert.That(fileContents[i++], Is.EqualTo(92));
+				Assert.That(fileContents[i++], Is.EqualTo(0));
+				Assert.That(fileContents[i++], Is.EqualTo(105));
+				Assert.That(fileContents[i++], Is.EqualTo(0));
+				Assert.That(fileContents[i++], Is.EqualTo(100));
+				Assert.That(fileContents[i++], Is.EqualTo(0));
+				Assert.That(fileContents[i++], Is.EqualTo(32));
+				Assert.That(fileContents[i++], Is.EqualTo(0));
+				Assert.That(fileContents[i++], Is.EqualTo(69));
+				Assert.That(fileContents[i++], Is.EqualTo(0));
+				Assert.That(fileContents[i++], Is.EqualTo(80));
+				Assert.That(fileContents[i++], Is.EqualTo(0));
+				Assert.That(fileContents[i++], Is.EqualTo(72));
+				Assert.That(fileContents[i++], Is.EqualTo(0));
+				Assert.That(fileContents[i++], Is.EqualTo(s_cr));
+				Assert.That(fileContents[i++], Is.EqualTo(0));
+				Assert.That(fileContents[i++], Is.EqualTo(s_lf));
+				Assert.That(fileContents[i++], Is.EqualTo(0));
 			}
 		}
 
@@ -161,26 +161,26 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				byte[] fileContents = file.ReadBytes((int)file.BaseStream.Length);
 				int i = 0;
-				Assert.AreEqual(0xff, fileContents[i++]);
-				Assert.AreEqual(0xfe, fileContents[i++]);
-				Assert.AreEqual(92, fileContents[i++]);
-				Assert.AreEqual(0, fileContents[i++]);
-				Assert.AreEqual(105, fileContents[i++]);
-				Assert.AreEqual(0, fileContents[i++]);
-				Assert.AreEqual(100, fileContents[i++]);
-				Assert.AreEqual(0, fileContents[i++]);
-				Assert.AreEqual(32, fileContents[i++]);
-				Assert.AreEqual(0, fileContents[i++]);
-				Assert.AreEqual(69, fileContents[i++]);
-				Assert.AreEqual(0, fileContents[i++]);
-				Assert.AreEqual(80, fileContents[i++]);
-				Assert.AreEqual(0, fileContents[i++]);
-				Assert.AreEqual(72, fileContents[i++]);
-				Assert.AreEqual(0, fileContents[i++]);
-				Assert.AreEqual(s_cr, fileContents[i++]);
-				Assert.AreEqual(0, fileContents[i++]);
-				Assert.AreEqual(s_lf, fileContents[i++]);
-				Assert.AreEqual(0, fileContents[i++]);
+				Assert.That(fileContents[i++], Is.EqualTo(0xff));
+				Assert.That(fileContents[i++], Is.EqualTo(0xfe));
+				Assert.That(fileContents[i++], Is.EqualTo(92));
+				Assert.That(fileContents[i++], Is.EqualTo(0));
+				Assert.That(fileContents[i++], Is.EqualTo(105));
+				Assert.That(fileContents[i++], Is.EqualTo(0));
+				Assert.That(fileContents[i++], Is.EqualTo(100));
+				Assert.That(fileContents[i++], Is.EqualTo(0));
+				Assert.That(fileContents[i++], Is.EqualTo(32));
+				Assert.That(fileContents[i++], Is.EqualTo(0));
+				Assert.That(fileContents[i++], Is.EqualTo(69));
+				Assert.That(fileContents[i++], Is.EqualTo(0));
+				Assert.That(fileContents[i++], Is.EqualTo(80));
+				Assert.That(fileContents[i++], Is.EqualTo(0));
+				Assert.That(fileContents[i++], Is.EqualTo(72));
+				Assert.That(fileContents[i++], Is.EqualTo(0));
+				Assert.That(fileContents[i++], Is.EqualTo(s_cr));
+				Assert.That(fileContents[i++], Is.EqualTo(0));
+				Assert.That(fileContents[i++], Is.EqualTo(s_lf));
+				Assert.That(fileContents[i++], Is.EqualTo(0));
 			}
 		}
 
@@ -194,20 +194,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void EncodeLine_Unicode()
 		{
 			byte[] line = TempSFFileMaker.EncodeLine("abc" + '\u1234', Encoding.Unicode);
-			Assert.AreEqual(12, line.Length);
+			Assert.That(line.Length, Is.EqualTo(12));
 			int i = 0;
-			Assert.AreEqual(97, line[i++]);
-			Assert.AreEqual(0, line[i++]);
-			Assert.AreEqual(98, line[i++]);
-			Assert.AreEqual(0, line[i++]);
-			Assert.AreEqual(99, line[i++]);
-			Assert.AreEqual(0, line[i++]);
-			Assert.AreEqual(0x34, line[i++]);
-			Assert.AreEqual(0x12, line[i++]);
-			Assert.AreEqual(s_cr, line[i++]);
-			Assert.AreEqual(0, line[i++]);
-			Assert.AreEqual(s_lf, line[i++]);
-			Assert.AreEqual(0, line[i++]);
+			Assert.That(line[i++], Is.EqualTo(97));
+			Assert.That(line[i++], Is.EqualTo(0));
+			Assert.That(line[i++], Is.EqualTo(98));
+			Assert.That(line[i++], Is.EqualTo(0));
+			Assert.That(line[i++], Is.EqualTo(99));
+			Assert.That(line[i++], Is.EqualTo(0));
+			Assert.That(line[i++], Is.EqualTo(0x34));
+			Assert.That(line[i++], Is.EqualTo(0x12));
+			Assert.That(line[i++], Is.EqualTo(s_cr));
+			Assert.That(line[i++], Is.EqualTo(0));
+			Assert.That(line[i++], Is.EqualTo(s_lf));
+			Assert.That(line[i++], Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -220,20 +220,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void EncodeLine_BigEndianUnicode()
 		{
 			byte[] line = TempSFFileMaker.EncodeLine("abc" + '\u1234', Encoding.BigEndianUnicode);
-			Assert.AreEqual(12, line.Length);
+			Assert.That(line.Length, Is.EqualTo(12));
 			int i = 0;
-			Assert.AreEqual(0, line[i++]);
-			Assert.AreEqual(97, line[i++]);
-			Assert.AreEqual(0, line[i++]);
-			Assert.AreEqual(98, line[i++]);
-			Assert.AreEqual(0, line[i++]);
-			Assert.AreEqual(99, line[i++]);
-			Assert.AreEqual(0x12, line[i++]);
-			Assert.AreEqual(0x34, line[i++]);
-			Assert.AreEqual(0, line[i++]);
-			Assert.AreEqual(s_cr, line[i++]);
-			Assert.AreEqual(0, line[i++]);
-			Assert.AreEqual(s_lf, line[i++]);
+			Assert.That(line[i++], Is.EqualTo(0));
+			Assert.That(line[i++], Is.EqualTo(97));
+			Assert.That(line[i++], Is.EqualTo(0));
+			Assert.That(line[i++], Is.EqualTo(98));
+			Assert.That(line[i++], Is.EqualTo(0));
+			Assert.That(line[i++], Is.EqualTo(99));
+			Assert.That(line[i++], Is.EqualTo(0x12));
+			Assert.That(line[i++], Is.EqualTo(0x34));
+			Assert.That(line[i++], Is.EqualTo(0));
+			Assert.That(line[i++], Is.EqualTo(s_cr));
+			Assert.That(line[i++], Is.EqualTo(0));
+			Assert.That(line[i++], Is.EqualTo(s_lf));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -246,14 +246,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void EncodeLine_ASCII()
 		{
 			byte[] line = TempSFFileMaker.EncodeLine("abcd", Encoding.ASCII);
-			Assert.AreEqual(6, line.Length);
+			Assert.That(line.Length, Is.EqualTo(6));
 			int i = 0;
-			Assert.AreEqual(97, line[i++]);
-			Assert.AreEqual(98, line[i++]);
-			Assert.AreEqual(99, line[i++]);
-			Assert.AreEqual(100, line[i++]);
-			Assert.AreEqual(s_cr, line[i++]);
-			Assert.AreEqual(s_lf, line[i++]);
+			Assert.That(line[i++], Is.EqualTo(97));
+			Assert.That(line[i++], Is.EqualTo(98));
+			Assert.That(line[i++], Is.EqualTo(99));
+			Assert.That(line[i++], Is.EqualTo(100));
+			Assert.That(line[i++], Is.EqualTo(s_cr));
+			Assert.That(line[i++], Is.EqualTo(s_lf));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -266,16 +266,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void EncodeLine_UTF8()
 		{
 			byte[] line = TempSFFileMaker.EncodeLine("abc" + '\u1234', Encoding.UTF8);
-			Assert.AreEqual(8, line.Length);
+			Assert.That(line.Length, Is.EqualTo(8));
 			int i = 0;
-			Assert.AreEqual(97, line[i++]);
-			Assert.AreEqual(98, line[i++]);
-			Assert.AreEqual(99, line[i++]);
-			Assert.AreEqual(0xe1, line[i++]);
-			Assert.AreEqual(0x88, line[i++]);
-			Assert.AreEqual(0xb4, line[i++]);
-			Assert.AreEqual(s_cr, line[i++]);
-			Assert.AreEqual(s_lf, line[i++]);
+			Assert.That(line[i++], Is.EqualTo(97));
+			Assert.That(line[i++], Is.EqualTo(98));
+			Assert.That(line[i++], Is.EqualTo(99));
+			Assert.That(line[i++], Is.EqualTo(0xe1));
+			Assert.That(line[i++], Is.EqualTo(0x88));
+			Assert.That(line[i++], Is.EqualTo(0xb4));
+			Assert.That(line[i++], Is.EqualTo(s_cr));
+			Assert.That(line[i++], Is.EqualTo(s_lf));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -288,25 +288,25 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void EncodeLine_Backslashes()
 		{
 			byte[] line = TempSFFileMaker.EncodeLine("abc" + @"\\" + "def", Encoding.ASCII);
-			Assert.AreEqual(10, line.Length);
+			Assert.That(line.Length, Is.EqualTo(10));
 			int i = 0;
-			Assert.AreEqual('a', line[i++]);
-			Assert.AreEqual('b', line[i++]);
-			Assert.AreEqual('c', line[i++]);
-			Assert.AreEqual('\\', line[i++]);
-			Assert.AreEqual('\\', line[i++]);
-			Assert.AreEqual('d', line[i++]);
-			Assert.AreEqual('e', line[i++]);
-			Assert.AreEqual('f', line[i++]);
-			Assert.AreEqual(s_cr, line[i++]);
-			Assert.AreEqual(s_lf, line[i++]);
+			Assert.That(line[i++], Is.EqualTo('a'));
+			Assert.That(line[i++], Is.EqualTo('b'));
+			Assert.That(line[i++], Is.EqualTo('c'));
+			Assert.That(line[i++], Is.EqualTo('\\'));
+			Assert.That(line[i++], Is.EqualTo('\\'));
+			Assert.That(line[i++], Is.EqualTo('d'));
+			Assert.That(line[i++], Is.EqualTo('e'));
+			Assert.That(line[i++], Is.EqualTo('f'));
+			Assert.That(line[i++], Is.EqualTo(s_cr));
+			Assert.That(line[i++], Is.EqualTo(s_lf));
 
 			TempSFFileMaker testFileMaker = new TempSFFileMaker();
 			string filename = testFileMaker.CreateFile("EPH", new[] { @"\v 1 c:\abc\def" }, Encoding.UTF8, false);
 			using (TextReader reader = FileUtils.OpenFileForRead(filename, Encoding.UTF8))
 			{
-				Assert.AreEqual(@"\id EPH", reader.ReadLine());
-				Assert.AreEqual(@"\v 1 c:\abc\def", reader.ReadLine());
+				Assert.That(reader.ReadLine(), Is.EqualTo(@"\id EPH"));
+				Assert.That(reader.ReadLine(), Is.EqualTo(@"\v 1 c:\abc\def"));
 			}
 		}
 	}

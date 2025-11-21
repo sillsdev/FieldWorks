@@ -69,7 +69,7 @@ namespace SILUBS.ScriptureChecks
 			//for (int iTok = 0; iTok < m_errors[iError].toks.Count; iTok++)
 			//{
 			//    ITextToken tok = m_errors[iError].toks[iTok];
-			//    Assert.AreEqual(tokenText[iTok], tok.Text);
+			//    Assert.That(tok.Text, Is.EqualTo(tokenText[iTok]));
 			//    if (iTok > 0 && (tok.TextType == TextType.VerseNumber ||
 			//        tok.TextType == TextType.ChapterNumber))
 			//    {
@@ -85,16 +85,16 @@ namespace SILUBS.ScriptureChecks
 			//    else
 			//    {
 			//        bldr.Append(tok.Text.Substring(offset, length));
-			//        Assert.AreEqual(m_errors[iError].toks.Count -1, iTok, "We've now found enough characters, so there should be no more tokens");
+			//        Assert.That(iTok, Is.EqualTo(m_errors[iError].toks.Count -1), "We've now found enough characters, so there should be no more tokens");
 			//    }
 			//}
-			//Assert.AreEqual(problemData, bldr.ToString());
+			//Assert.That(bldr.ToString(), Is.EqualTo(problemData));
 
-			Assert.AreEqual(tokenText, m_errors[iError].Tts.FirstToken.Text);
-			Assert.AreEqual(problemData, m_errors[iError].Tts.Text);
-			Assert.AreEqual(offset, m_errors[iError].Tts.Offset);
-			Assert.AreEqual(m_check.CheckId, m_errors[iError].CheckId);
-			Assert.AreEqual(errorMessage, m_errors[iError].Tts.Message);
+			Assert.That(m_errors[iError].Tts.FirstToken.Text, Is.EqualTo(tokenText));
+			Assert.That(m_errors[iError].Tts.Text, Is.EqualTo(problemData));
+			Assert.That(m_errors[iError].Tts.Offset, Is.EqualTo(offset));
+			Assert.That(m_errors[iError].CheckId, Is.EqualTo(m_check.CheckId));
+			Assert.That(m_errors[iError].Tts.Message, Is.EqualTo(errorMessage));
 		}
 		#endregion
 

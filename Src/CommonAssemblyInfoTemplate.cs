@@ -13,6 +13,7 @@ with appropriate values, typically version numbers, by a custom build task
 Other directives are merely here because we want them to be the same for all FieldWorks projects.
 ----------------------------------------------------------------------------------------------*/
 using System.Reflection;
+using System.Runtime.InteropServices;
 
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SIL")]
@@ -20,13 +21,16 @@ using System.Reflection;
 [assembly: AssemblyCopyright("Copyright (c) 2002-$YEAR SIL International")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
+[assembly: ComVisible(false)]
 
 // Note: the BuildNumber should not have a default value in this file (because it is not in the substitutions file)
 // Format: Major.Minor.Revision.BuildNumber
 [assembly: AssemblyFileVersion("$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.$BUILDNUMBER")]
 // Format: Major.Minor.Revision.BuildNumber Day Alpha/Beta/RC
-[assembly: AssemblyInformationalVersion("$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.$BUILDNUMBER $NUMBEROFDAYS $!FWBETAVERSION")]
+[assembly: AssemblyInformationalVersion(
+	"$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.$BUILDNUMBER $NUMBEROFDAYS $!FWBETAVERSION"
+)]
 // Format: Major.Minor.Revision.BuildNumber?
-[assembly: AssemblyVersion("$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.*")]
+[assembly: AssemblyVersion("$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.0")]
 // Format: The build number of the base build (used to select patches for automatic updates)
 [assembly: AssemblyMetadataAttribute("BaseBuildNumber", "$BASEBUILDNUMBER")]

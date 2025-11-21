@@ -6,8 +6,8 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("Discourse")]
+// [assembly: AssemblyTitle("Discourse")] // Sanitized by convert_generate_assembly_info
 
-[assembly: ComVisible(false)]
+// [assembly: ComVisible(false)] // Sanitized by convert_generate_assembly_info
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("DiscourseTests")]

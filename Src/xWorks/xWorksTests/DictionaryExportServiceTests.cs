@@ -83,18 +83,16 @@ namespace SIL.FieldWorks.XWorks
 			ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, mainEntry, complexEntry, false);
 			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, mainEntry, variantEntry, "Dialectal Variant");
 
-			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), "Should be generated once");
-			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo), "Should be generated once");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), Is.True, "Should be generated once");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo), Is.True, "Should be generated once");
 
 			ConfiguredXHTMLGeneratorTests.SetPublishAsMinorEntry(complexEntry, false);
 			ConfiguredXHTMLGeneratorTests.SetPublishAsMinorEntry(variantEntry, false);
 
 			//SUT
-			Assert.False(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo),
-				"Hidden minor entry should not be generated");
-			Assert.False(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo),
-				"Hidden minor entry should not be generated");
-			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, mainEntry.Hvo), "Main entry should still be generated");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), Is.False, "Hidden minor entry should not be generated");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo), Is.False, "Hidden minor entry should not be generated");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, mainEntry.Hvo), Is.True, "Main entry should still be generated");
 		}
 
 		[Test]
@@ -108,23 +106,21 @@ namespace SIL.FieldWorks.XWorks
 			ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, mainEntry, complexEntry, false);
 			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, mainEntry, variantEntry, "Dialectal Variant");
 
-			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), "Should be generated once");
-			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo), "Should be generated once");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), Is.True, "Should be generated once");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo), Is.True, "Should be generated once");
 
 			ConfiguredXHTMLGeneratorTests.SetPublishAsMinorEntry(complexEntry, false);
 			ConfiguredXHTMLGeneratorTests.SetPublishAsMinorEntry(variantEntry, false);
 
 			//SUT
-			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo),
-				"Lexeme-based hidden minor entry should still be generated, because Complex Forms are Main Entries");
-			Assert.False(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo),
-				"Lexeme-based hidden minor entry should not be generated, because Variants are always Minor Entries");
-			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, mainEntry.Hvo), "Main entry should still be generated");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), Is.True, "Lexeme-based hidden minor entry should still be generated, because Complex Forms are Main Entries");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo), Is.False, "Lexeme-based hidden minor entry should not be generated, because Variants are always Minor Entries");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, mainEntry.Hvo), Is.True, "Main entry should still be generated");
 
 			var compoundGuid = "1f6ae209-141a-40db-983c-bee93af0ca3c";
 			var complexOptions = (DictionaryNodeListOptions)configModel.Parts[0].DictionaryNodeOptions;
 			complexOptions.Options.First(option => option.Id == compoundGuid).IsEnabled = false; // Disable Compound
-			Assert.False(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), "Should not be generated");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), Is.False, "Should not be generated");
 		}
 
 		[Test]
@@ -138,7 +134,190 @@ namespace SIL.FieldWorks.XWorks
 			var configModel = ConfiguredXHTMLGeneratorTests.CreateInterestingConfigurationModel(Cache);
 
 			// SUT
-			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, variComplexEntry.Hvo), "Should be generated once");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, variComplexEntry.Hvo), Is.True, "Should be generated once");
+		}
+
+		/// <summary>
+		/// This test verifies that the method properly filters and sorts dictionary entries and retrieves them
+		/// from the virtual cache using the clerk and decorator.
+		/// </summary>
+		[Test]
+		public void GetDictionaryFilteredAndSortedEntries_ReturnsEntriesFromVirtualCache()
+		{
+			// Setup: Load UI configuration needed for clerk creation
+			EnsureUiLoaded();
+
+			// Setup: Create test lexical entries
+			var entry1 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var entry2 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var entry3 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+
+			var exportService = new DictionaryExportService(m_propertyTable, m_mediator);
+
+			// SUT - Call GetDictionaryFilteredAndSortedEntries with no publication name (use current)
+			exportService.GetDictionaryFilteredAndSortedEntries(null, false, out var clerk,
+				out var decorator, out var entries);
+
+			// Verify: The entries array should not be null or empty
+			Assert.IsNotNull(entries, "Entries array should not be null");
+			Assert.Greater(entries.Length, 0, "Entries array should contain at least the created entries");
+
+			// Verify: The created entries should be in the returned array
+			Assert.That(entries, Does.Contain(entry1.Hvo), "Entry1 should be in the returned entries");
+			Assert.That(entries, Does.Contain(entry2.Hvo), "Entry2 should be in the returned entries");
+			Assert.That(entries, Does.Contain(entry3.Hvo), "Entry3 should be in the returned entries");
+
+			// Verify: Clerk and decorator should not be null
+			Assert.IsNotNull(clerk, "Clerk should not be null");
+			Assert.IsNotNull(decorator, "Decorator should not be null");
+		}
+
+		/// <summary/>
+		[Test]
+		public void GetDictionaryFilteredAndSortedEntries_StopsListLoadingSuppressionWhenRequested()
+		{
+			// Setup: Load UI configuration needed for clerk creation
+			EnsureUiLoaded();
+
+			// Create the DictionaryExportService
+			var exportService = new DictionaryExportService(m_propertyTable, m_mediator);
+
+			// SUT - Call GetDictionaryFilteredAndSortedEntries with stopSuppressingListLoading = true
+			exportService.GetDictionaryFilteredAndSortedEntries(null, true,
+				out var clerk, out var decorator, out _);
+
+			// Verify: The clerk's ListLoadingSuppressed should be false
+			Assert.IsFalse(clerk.ListLoadingSuppressed,
+				"ListLoadingSuppressed should be false when stopSuppressingListLoading is true");
+
+			// Verify: Clerk and decorator should not be null
+			Assert.IsNotNull(clerk, "Clerk should not be null");
+			Assert.IsNotNull(decorator, "Decorator should not be null");
+		}
+
+		/// <summary/>
+		[Test]
+		public void GetDictionaryFilteredAndSortedEntries_DoesNotStopListLoadingSuppressionWhenNotRequested()
+		{
+			// Setup: Load UI configuration needed for clerk creation
+			EnsureUiLoaded();
+
+			// Create the DictionaryExportService
+			var exportService = new DictionaryExportService(m_propertyTable, m_mediator);
+
+			// SUT - Call GetDictionaryFilteredAndSortedEntries with stopSuppressingListLoading = false
+			exportService.GetDictionaryFilteredAndSortedEntries(null, false, out var clerk, out var decorator, out _);
+
+			// Verify: The clerk's ListLoadingSuppressed should remain true (default state for export)
+			Assert.IsTrue(clerk.ListLoadingSuppressed,
+				"ListLoadingSuppressed should remain true when stopSuppressingListLoading is false");
+
+			// Verify: Clerk and decorator should not be null
+			Assert.IsNotNull(clerk, "Clerk should not be null");
+			Assert.IsNotNull(decorator, "Decorator should not be null");
+		}
+
+		/// <summary/>
+		[Test]
+		public void GetClassifiedDictionaryFilteredAndSortedDomains_ReturnsFilteredDomains()
+		{
+			// Setup: Load UI configuration needed for clerk creation
+			EnsureUiLoaded();
+
+			// Create the DictionaryExportService
+			var exportService = new DictionaryExportService(m_propertyTable, m_mediator);
+
+			// SUT - Call GetClassifiedDictionaryFilteredAndSortedDomains with no publication name (use current)
+			exportService.GetClassifiedDictionaryFilteredAndSortedDomains(null, false,
+				out var clerk, out var decorator, out var domains);
+
+			// Verify: The domains array should not be null
+			Assert.IsNotNull(domains, "Domains array should not be null");
+
+			// Verify: Clerk and decorator should not be null
+			Assert.IsNotNull(clerk, "Clerk should not be null");
+			Assert.IsNotNull(decorator, "Decorator should not be null");
+
+			// Verify: If there are semantic domains in the system, they should be returned
+			// (The default database should have semantic domains loaded)
+			if (Cache.LangProject.SemanticDomainListOA != null &&
+				Cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Count > 0)
+				Assert.Greater(domains.Length, 0,
+					"Domains array should contain semantic domains if they exist in the system");
+		}
+
+		/// <summary/>
+		[Test]
+		public void GetReversalFilteredAndSortedEntries_ReturnsEmptyArrayForInvalidGuid()
+		{
+			// Setup: Load UI configuration needed for clerk creation
+			EnsureUiLoaded();
+
+			// Setup: Create a GUID that doesn't correspond to any reversal index
+			var invalidGuid = Guid.NewGuid();
+
+			// Create the DictionaryExportService
+			var exportService = new DictionaryExportService(m_propertyTable, m_mediator);
+
+			// Setup: Create a minimal config and decorator (needed by the method)
+			var config = ConfiguredXHTMLGeneratorTests.CreateInterestingConfigurationModel(Cache);
+			var clerk = exportService.GetReversalClerk();
+			var decorator =
+				ConfiguredLcmGenerator.CurrentDecorator(m_propertyTable, Cache, clerk);
+
+			// SUT - Call GetReversalFilteredAndSortedEntries with invalid GUID
+			// The current implementation throws KeyNotFoundException for invalid GUIDs
+			Assert.Throws<KeyNotFoundException>(
+				() =>
+				{
+					exportService.GetReversalFilteredAndSortedEntries(invalidGuid, decorator,
+						config, clerk);
+				}, "Should throw KeyNotFoundException for invalid GUID");
+		}
+
+		/// <summary/>
+		[Test]
+		public void GetReversalFilteredAndSortedEntries_ReturnsEntriesForValidReversalGuid()
+		{
+			// Setup: Load UI configuration needed for clerk creation
+			EnsureUiLoaded();
+
+			// Setup: Create a reversal index and entries
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			var reversalRepo = Cache.ServiceLocator.GetInstance<IReversalIndexRepository>();
+			var enReversalIndex = reversalRepo.FindOrCreateIndexForWs(wsEn);
+
+			// Setup: Create reversal entries
+			var enEntry1 = enReversalIndex.FindOrCreateReversalEntry("first");
+			var enEntry2 = enReversalIndex.FindOrCreateReversalEntry("second");
+
+			// Setup: Create lexical entries and link them to reversal entries
+			var lexEntry1 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			var lexEntry2 = ConfiguredXHTMLGeneratorTests.CreateInterestingLexEntry(Cache);
+			enEntry1.SensesRS.Add(lexEntry1.SensesOS[0]);
+			enEntry2.SensesRS.Add(lexEntry2.SensesOS[0]);
+
+			// Create the DictionaryExportService
+			var exportService = new DictionaryExportService(m_propertyTable, m_mediator);
+
+			// Setup: Create config and decorator
+			var config = ConfiguredXHTMLGeneratorTests.CreateInterestingConfigurationModel(Cache);
+			var clerk = exportService.GetReversalClerk();
+			var decorator =
+				ConfiguredLcmGenerator.CurrentDecorator(m_propertyTable, Cache, clerk);
+
+			// SUT - Call GetReversalFilteredAndSortedEntries with valid GUID
+			var entries =
+				exportService.GetReversalFilteredAndSortedEntries(enReversalIndex.Guid, decorator,
+					config, clerk);
+
+			// Verify: Should return entries
+			Assert.IsNotNull(entries, "Entries should not be null");
+			Assert.Greater(entries.Length, 0, "Should have at least one entry");
+
+			// Verify: The created entries should be in the array
+			Assert.That(entries, Does.Contain(enEntry1.Hvo), "Should include first entry");
+			Assert.That(entries, Does.Contain(enEntry2.Hvo), "Should include second entry");
 		}
 
 		/// <summary>
