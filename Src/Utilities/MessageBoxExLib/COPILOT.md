@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-11-01
-last-reviewed-tree: fd48d4d12ff66731f0299c2c03fb169e6418ec5e4c698429feacecf10f3ce67e
+last-reviewed-tree: 0e6c1fb90b9acd157bd784e82d4850c6ae2209a41ebb28982ba1d71c0e51be99
 status: production
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/Utilities/MessageBoxExLib. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # MessageBoxExLib
 

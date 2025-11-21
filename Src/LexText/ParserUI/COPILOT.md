@@ -1,22 +1,18 @@
+---
+last-reviewed: 2025-11-21
+last-reviewed-tree: ca3afb4763cf119a739ed99e322e35066e1732903f4ea048c315d27aa86c62ff
+status: draft
+---
+
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/LexText/ParserUI. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
-
-﻿---
-last-reviewed: 2025-10-31
-last-reviewed-tree: c17511bd9bdcdbda3ea395252447efac41d9c4b5ef7ad360afbd374ff008585b
-status: reviewed
----
 
 # ParserUI
 
@@ -350,6 +346,7 @@ C# library (net48) with 28 source files (~5.9K lines). Mix of WinForms (TryAWord
   - LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults/bilikesziStep03.xml
   - LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults/bilikesziStep04.xml
   - LexText/ParserUI/ParserUITests/WordGrammarDebuggingInputsAndResults/bilikesziStep05.xml
+
 ## Test Information
 - Test project: ParserUITests (if present)
 - Manual testing: Launch TryAWordDlg via Tools→Parser→Try A Word menu in FLEx, enter wordform, click "Try It", verify parse results display and trace HTML renders correctly in Gecko browser

@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-11-01
-last-reviewed-tree: 2e44e70b55e127e774e0b3bb925e15cc49637efb7b222758f1e3f8f503ae8a68
+last-reviewed-tree: 064a59bc4e8258fbf731ef92c4d440eebf44dd7da2d0e4963a5ba4fe942ec067
 status: production
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/XCore/FlexUIAdapter. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # FlexUIAdapter
 
@@ -135,25 +131,6 @@ Library component. Reference in consuming projects. See Dependencies section for
 - **Source file count**: 12 files
 - **Data file count**: 2 files
 
-## References (auto-generated hints)
-- Project files:
-  - XCore/FlexUIAdapter/FlexUIAdapter.csproj
-- Key C# files:
-  - XCore/FlexUIAdapter/AdapterBase.cs
-  - XCore/FlexUIAdapter/AdapterStrings.Designer.cs
-  - XCore/FlexUIAdapter/AssemblyInfo.cs
-  - XCore/FlexUIAdapter/BarAdapterBase.cs
-  - XCore/FlexUIAdapter/ContextHelper.cs
-  - XCore/FlexUIAdapter/MenuAdapter.cs
-  - XCore/FlexUIAdapter/NavBarAdapter.cs
-  - XCore/FlexUIAdapter/PaneBar.cs
-  - XCore/FlexUIAdapter/PanelButton.cs
-  - XCore/FlexUIAdapter/PanelMenu.cs
-  - XCore/FlexUIAdapter/SidebarAdapter.cs
-  - XCore/FlexUIAdapter/ToolbarAdapter.cs
-- Data contracts/transforms:
-  - XCore/FlexUIAdapter/AdapterStrings.resx
-  - XCore/FlexUIAdapter/PaneBar.resx
 ## Code Evidence
 *Analysis based on scanning 11 source files*
 

@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: da3213290cbbe94b8b2357b2e73e481d0722d4b550c1340d5d74acb2c256cff9
+last-reviewed-tree: ad7aed3bda62551a83bc3f56b57f0314b51383b65607f0ee3a031e4e26c6d8e4
 status: reviewed
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/views. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # views
 
@@ -131,68 +127,6 @@ Library component. Reference in consuming projects. See Dependencies section for
 - **Source file count**: 130 files
 - **Data file count**: 1 files
 
-## References (auto-generated hints)
-- Project files:
-  - Src/views/Test/TestViews.vcxproj
-  - Src/views/lib/VwGraphicsReplayer/VwGraphicsReplayer.csproj
-  - Src/views/views.vcxproj
-- Key C# files:
-  - Src/views/lib/VwGraphicsReplayer/AssemblyInfo.cs
-  - Src/views/lib/VwGraphicsReplayer/VwGraphicsReplayer.cs
-- Key C++ files:
-  - Src/views/ExplicitInstantiation.cpp
-  - Src/views/Test/Collection.cpp
-  - Src/views/Test/testViews.cpp
-  - Src/views/ViewsExtra_GUIDs.cpp
-  - Src/views/ViewsGlobals.cpp
-  - Src/views/Views_GUIDs.cpp
-  - Src/views/VwAccessRoot.cpp
-  - Src/views/VwEnv.cpp
-  - Src/views/VwInvertedViews.cpp
-  - Src/views/VwLayoutStream.cpp
-  - Src/views/VwLazyBox.cpp
-  - Src/views/VwNotifier.cpp
-  - Src/views/VwOverlay.cpp
-  - Src/views/VwPattern.cpp
-  - Src/views/VwPrintContext.cpp
-  - Src/views/VwPropertyStore.cpp
-  - Src/views/VwRootBox.cpp
-  - Src/views/VwSelection.cpp
-  - Src/views/VwSimpleBoxes.cpp
-  - Src/views/VwSynchronizer.cpp
-  - Src/views/VwTableBox.cpp
-  - Src/views/VwTextBoxes.cpp
-  - Src/views/VwTextStore.cpp
-  - Src/views/VwTxtSrc.cpp
-  - Src/views/dlldatax.c
-- Key headers:
-  - Src/views/Main.h
-  - Src/views/Test/BasicVc.h
-  - Src/views/Test/DummyBaseVc.h
-  - Src/views/Test/DummyRootsite.h
-  - Src/views/Test/MockLgWritingSystem.h
-  - Src/views/Test/MockLgWritingSystemFactory.h
-  - Src/views/Test/MockRenderEngineFactory.h
-  - Src/views/Test/RenderEngineTestBase.h
-  - Src/views/Test/TestGraphiteEngine.h
-  - Src/views/Test/TestInsertDiffPara.h
-  - Src/views/Test/TestLayoutPage.h
-  - Src/views/Test/TestLazyBox.h
-  - Src/views/Test/TestLgCollatingEngine.h
-  - Src/views/Test/TestLgLineBreaker.h
-  - Src/views/Test/TestNotifier.h
-  - Src/views/Test/TestTsPropsBldr.h
-  - Src/views/Test/TestTsStrBldr.h
-  - Src/views/Test/TestTsString.h
-  - Src/views/Test/TestTsTextProps.h
-  - Src/views/Test/TestUndoStack.h
-  - Src/views/Test/TestUniscribeEngine.h
-  - Src/views/Test/TestVirtualHandlers.h
-  - Src/views/Test/TestVwEnv.h
-  - Src/views/Test/TestVwGraphics.h
-  - Src/views/Test/TestVwOverlay.h
-- Data contracts/transforms:
-  - Src/views/Test/VirtualsCm.xml
 ## COM Interfaces (IDL files)
 - **Views.idh**, **ViewsTlb.idl**, **ViewsPs.idl** - COM interface definitions
 - **Render.idh** - Rendering interfaces

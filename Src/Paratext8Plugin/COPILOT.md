@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: 68897dd419050f2e9c0f59ed91a75f5770ebd5aef2a9185ea42583a6d9d208d9
+last-reviewed-tree: 6a49e787206a05cc0f1f25e52b960410d3922c982f322c92e892575d6216836d
 status: reviewed
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/Paratext8Plugin. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # Paratext8Plugin
 
@@ -271,6 +267,7 @@ C# library (net48) with 7 source files (~546 lines). Implements MEF-based plugin
   - Src/Paratext8Plugin/Pt8VerseWrapper.cs
 - Data contracts/transforms:
   - Src/Paratext8Plugin/ParaText8PluginTests/App.config
+
 ## Test Information
 - Test project: ParaText8PluginTests
 - Test file: ParatextDataIntegrationTests.cs (includes MockScriptureProvider for test isolation)

@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: 977cb1ce93764b5209ed7283c33b95492c2d9129a7d7e8665fcf91d75e4646ac
+last-reviewed-tree: 502aff976dc0df125c9c0a36a8ec3d95a2bb1f3d898e43c8cca93afe2b01fd03
 status: reviewed
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/XCore. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # XCore
 
@@ -134,69 +130,6 @@ Library component. Reference in consuming projects. See Dependencies section for
 - **Source file count**: 91 files
 - **Data file count**: 35 files
 
-## References (auto-generated hints)
-- Project files:
-  - Src/XCore/FlexUIAdapter/FlexUIAdapter.csproj
-  - Src/XCore/SilSidePane/SilSidePane.csproj
-  - Src/XCore/SilSidePane/SilSidePaneTests/BuildInclude.targets
-  - Src/XCore/SilSidePane/SilSidePaneTests/SilSidePaneTests.csproj
-  - Src/XCore/xCore.csproj
-  - Src/XCore/xCoreInterfaces/xCoreInterfaces.csproj
-  - Src/XCore/xCoreInterfaces/xCoreInterfacesTests/xCoreInterfacesTests.csproj
-  - Src/XCore/xCoreTests/BuildInclude.targets
-  - Src/XCore/xCoreTests/xCoreTests.csproj
-- Key C# files:
-  - Src/XCore/AdapterMenuItem.cs
-  - Src/XCore/AreaManager.cs
-  - Src/XCore/AssemblyInfo.cs
-  - Src/XCore/CollapsingSplitContainer.Designer.cs
-  - Src/XCore/CollapsingSplitContainer.cs
-  - Src/XCore/FlexUIAdapter/AdapterBase.cs
-  - Src/XCore/FlexUIAdapter/AdapterStrings.Designer.cs
-  - Src/XCore/FlexUIAdapter/AssemblyInfo.cs
-  - Src/XCore/FlexUIAdapter/BarAdapterBase.cs
-  - Src/XCore/FlexUIAdapter/ContextHelper.cs
-  - Src/XCore/FlexUIAdapter/MenuAdapter.cs
-  - Src/XCore/FlexUIAdapter/NavBarAdapter.cs
-  - Src/XCore/FlexUIAdapter/PaneBar.cs
-  - Src/XCore/FlexUIAdapter/PanelButton.cs
-  - Src/XCore/FlexUIAdapter/PanelMenu.cs
-  - Src/XCore/FlexUIAdapter/SidebarAdapter.cs
-  - Src/XCore/FlexUIAdapter/ToolbarAdapter.cs
-  - Src/XCore/HtmlControl.cs
-  - Src/XCore/HtmlViewer.cs
-  - Src/XCore/IconHolder.cs
-  - Src/XCore/ImageCollection.cs
-  - Src/XCore/ImageContent.cs
-  - Src/XCore/ImageDialog.cs
-  - Src/XCore/IncludeXml.cs
-  - Src/XCore/Inventory.cs
-- Data contracts/transforms:
-  - Src/XCore/AdapterMenuItem.resx
-  - Src/XCore/CollapsingSplitContainer.resx
-  - Src/XCore/FlexUIAdapter/AdapterStrings.resx
-  - Src/XCore/FlexUIAdapter/PaneBar.resx
-  - Src/XCore/HtmlControl.resx
-  - Src/XCore/HtmlViewer.resx
-  - Src/XCore/IconHolder.resx
-  - Src/XCore/ImageContent.resx
-  - Src/XCore/ImageDialog.resx
-  - Src/XCore/MultiPane.resx
-  - Src/XCore/NotifyWindow.resx
-  - Src/XCore/PaneBarContainer.resx
-  - Src/XCore/RecordBar.resx
-  - Src/XCore/SilSidePane/NavPaneOptionsDlg.resx
-  - Src/XCore/SilSidePane/Properties/Resources.resx
-  - Src/XCore/SilSidePane/SilSidePane.resx
-  - Src/XCore/Ticker.resx
-  - Src/XCore/xCoreInterfaces/xCoreInterfaces.resx
-  - Src/XCore/xCoreInterfaces/xCoreInterfacesTests/Properties/Resources.resx
-  - Src/XCore/xCoreInterfaces/xCoreInterfacesTests/settingsBackup/Settings.xml
-  - Src/XCore/xCoreInterfaces/xCoreInterfacesTests/settingsBackup/db_TestLocal_Settings.xml
-  - Src/XCore/xCoreStrings.resx
-  - Src/XCore/xCoreTests/CreateOverrideTestData.xml
-  - Src/XCore/xCoreTests/IncludeXmlTestSource.xml
-  - Src/XCore/xCoreTests/IncludeXmlTestSourceB.xml
 ## Subfolders (detailed docs in individual COPILOT.md files)
 - **xCoreInterfaces/** - Core interfaces: IxCoreColleague, IUIAdapter, IxCoreContentControl, etc.
 - **FlexUIAdapter/** - FLEx-specific UI adapter implementations

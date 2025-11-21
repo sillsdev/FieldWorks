@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: bb638469b95784020f72451e340085917d03c08131c070e65da65e14d5f18bb1
+last-reviewed-tree: aabfae3eb78cb8b4b91e19f7ae790467f34a684e9b51255fc952d305a1a96223
 status: reviewed
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/XCore/xCoreInterfaces. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # xCoreInterfaces
 
@@ -119,41 +115,6 @@ Library component. Reference in consuming projects. See Dependencies section for
 - **Source file count**: 26 files
 - **Data file count**: 4 files
 
-## References (auto-generated hints)
-- Project files:
-  - XCore/xCoreInterfaces/xCoreInterfaces.csproj
-  - XCore/xCoreInterfaces/xCoreInterfacesTests/xCoreInterfacesTests.csproj
-- Key C# files:
-  - XCore/xCoreInterfaces/AssemblyInfo.cs
-  - XCore/xCoreInterfaces/BaseContextHelper.cs
-  - XCore/xCoreInterfaces/Choice.cs
-  - XCore/xCoreInterfaces/ChoiceGroup.cs
-  - XCore/xCoreInterfaces/Command.cs
-  - XCore/xCoreInterfaces/IFeedbackInfoProvider.cs
-  - XCore/xCoreInterfaces/IImageCollection.cs
-  - XCore/xCoreInterfaces/IPaneBar.cs
-  - XCore/xCoreInterfaces/IPersistenceProvider.cs
-  - XCore/xCoreInterfaces/IPropertyRetriever.cs
-  - XCore/xCoreInterfaces/IUIAdapter.cs
-  - XCore/xCoreInterfaces/IdleQueue.cs
-  - XCore/xCoreInterfaces/IxCoreColleague.cs
-  - XCore/xCoreInterfaces/List.cs
-  - XCore/xCoreInterfaces/Mediator.cs
-  - XCore/xCoreInterfaces/MessageSequencer.cs
-  - XCore/xCoreInterfaces/PersistenceProvider.cs
-  - XCore/xCoreInterfaces/PropertyTable.cs
-  - XCore/xCoreInterfaces/ReadOnlyPropertyTable.cs
-  - XCore/xCoreInterfaces/RecordFilterListProvider.cs
-  - XCore/xCoreInterfaces/xCoreInterfaces.Designer.cs
-  - XCore/xCoreInterfaces/xCoreInterfacesTests/Properties/AssemblyInfo.cs
-  - XCore/xCoreInterfaces/xCoreInterfacesTests/Properties/Resources.Designer.cs
-  - XCore/xCoreInterfaces/xCoreInterfacesTests/PropertyTableTests.cs
-  - XCore/xCoreInterfaces/xCoreInterfacesTests/TestMessageSequencer.cs
-- Data contracts/transforms:
-  - XCore/xCoreInterfaces/xCoreInterfaces.resx
-  - XCore/xCoreInterfaces/xCoreInterfacesTests/Properties/Resources.resx
-  - XCore/xCoreInterfaces/xCoreInterfacesTests/settingsBackup/Settings.xml
-  - XCore/xCoreInterfaces/xCoreInterfacesTests/settingsBackup/db_TestLocal_Settings.xml
 ## Test Infrastructure
 - **xCoreInterfacesTests/** subfolder
 - Tests for: Mediator, PropertyTable, ChoiceGroup, Command

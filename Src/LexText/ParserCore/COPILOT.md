@@ -1,22 +1,18 @@
+---
+last-reviewed: 2025-11-21
+last-reviewed-tree: a27deb8a34df07ceee65bb7e2b8d7fb0107a22c6ac63372832cc9d49be2feecd
+status: draft
+---
+
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/LexText/ParserCore. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
-
-﻿---
-last-reviewed: 2025-10-31
-last-reviewed-tree: 47db0e38023bc4ba08f01c91edc6237e54598b77737bc15cad40098f645273a5
-status: reviewed
----
 
 # ParserCore
 
@@ -338,6 +334,7 @@ C# library (net48) with 34 source files (~9K lines total). Contains 3 subproject
   - LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/StemName3ParserFxtResult.xml
   - LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/TestAffixAllomorphFeatsParserFxtResult.xml
   - LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/emi-flexFxtResult.xml
+
 ## Test Information
 - Test projects: ParserCoreTests (18 test files, ~2.7K lines), XAmpleManagedWrapperTests
 - Run: `dotnet test` or Test Explorer in Visual Studio
