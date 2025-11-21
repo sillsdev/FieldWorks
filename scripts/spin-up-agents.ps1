@@ -361,7 +361,7 @@ NEVER use -ForceCleanup as it will destroy your work without warning.
     Pop-Location
   }
 
-  return @{ Branch = $branch; Path = $resolvedTarget }
+  return @{ Branch = $branch; Path = $resolvedTarget; Skipped = $false }
 }
 
 # Start or reuse a container per agent
