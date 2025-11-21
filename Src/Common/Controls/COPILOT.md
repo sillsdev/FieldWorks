@@ -4,6 +4,20 @@ last-reviewed-tree: fdae501772b950a2e7a28d6e152f92acc3e30232c1ad975008e1526be404
 status: draft
 ---
 
+<!-- copilot:auto-change-log start -->
+## Change Log (auto)
+
+- Snapshot: HEAD~1
+- Risk: none
+- Files: 0 (code=0, tests=0, resources=0)
+
+### Prompt seeds
+- Update COPILOT.md for Src/Common/Controls. Prioritize Purpose/Architecture sections using planner data.
+- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
+- Finish with verification notes and TODOs for manual testing.
+<!-- copilot:auto-change-log end -->
+
+
 # Controls COPILOT summary
 
 ## Purpose
