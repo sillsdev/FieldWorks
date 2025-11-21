@@ -45,6 +45,13 @@ REQUIRED_HEADINGS = [
     "References",
 ]
 
+ORGANIZATIONAL_REQUIRED_HEADINGS = [
+    "Purpose",
+    "Subfolder Map",
+    "When Updating This Folder",
+    "Related Guidance",
+]
+
 REFERENCE_EXTS = {
     ".cs",
     ".cpp",
@@ -173,6 +180,14 @@ def split_sections(text: str):
     return sections
 
 
+def is_organizational_doc(sections):
+    return (
+        "Subfolder Map" in sections
+        and "When Updating This Folder" in sections
+        and "Related Guidance" in sections
+    )
+
+
 def extract_references(reference_section: str):
     refs = []
     for line in reference_section.splitlines():
@@ -241,13 +256,18 @@ def validate_file(path: Path, repo_index: dict, verbose=False):
             result["ok"] = False
 
     sections = split_sections(body)
-    for h in REQUIRED_HEADINGS:
+    organizational = is_organizational_doc(sections)
+    required_headings = (
+        ORGANIZATIONAL_REQUIRED_HEADINGS if organizational else REQUIRED_HEADINGS
+    )
+
+    for h in required_headings:
         if h not in sections:
             result["headings_missing"].append(h)
     if result["headings_missing"]:
         result["ok"] = False
 
-    for h in REQUIRED_HEADINGS:
+    for h in required_headings:
         if h in sections:
             if maybe_placeholder(sections[h]):
                 result["empty_sections"].append(h)
@@ -255,14 +275,16 @@ def validate_file(path: Path, repo_index: dict, verbose=False):
         for h in result["empty_sections"]:
             result["warnings"].append(f"Section '{h}' is empty or placeholder text")
 
-    refs = extract_references(sections.get("References", ""))
-    for r in refs:
-        base = os.path.basename(r)
-        if base not in repo_index:
-            result["references_missing"].append(r)
-    # references_missing doesn't necessarily fail; treat as warning unless all missing
-    if refs and len(result["references_missing"]) == len(refs):
-        result["ok"] = False
+    refs = []
+    if not organizational:
+        refs = extract_references(sections.get("References", ""))
+        for r in refs:
+            base = os.path.basename(r)
+            if base not in repo_index:
+                result["references_missing"].append(r)
+        # references_missing doesn't necessarily fail; treat as warning unless all missing
+        if refs and len(result["references_missing"]) == len(refs):
+            result["ok"] = False
 
     if verbose:
         print(f"Checked {path}")
@@ -281,6 +303,11 @@ def main():
         "--only-changed",
         action="store_true",
         help="Validate only changed COPILOT.md files",
+    )
+    ap.add_argument(
+        "--paths",
+        nargs="*",
+        help="Specific COPILOT.md paths to validate (relative to repo root)",
     )
     ap.add_argument(
         "--base",
@@ -302,7 +329,13 @@ def main():
     repo_index = index_repo_files(root)
 
     paths_to_check = []
-    if args.only_changed:
+    if args.paths:
+        for rel in args.paths:
+            candidate = Path(rel)
+            if not candidate.is_absolute():
+                candidate = root / rel
+            paths_to_check.append(candidate)
+    elif args.only_changed:
         changed = git_changed_files(
             root, base=args.base, head=args.head, since=args.since
         )

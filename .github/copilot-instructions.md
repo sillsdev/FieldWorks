@@ -48,12 +48,14 @@
 - Chat modes constrain role-specific behavior (managed/native/installer/technical-writer) and should be referenced when invoking Copilot agents.
 
 ## COPILOT.md Maintenance
-1. Detect folders needing updates: `python .github/detect_copilot_needed.py --strict [--base origin/<branch>]`.
-2. Scaffold or normalize via `python .github/scaffold_copilot_markdown.py --status <draft|verified>`.
-3. Apply the three-pass workflow in `.github/update-copilot-summaries.md` (Comprehension, Contracts, Synthesis) with concrete references to source files.
-4. Keep `last-reviewed-tree` in sync using `python .github/fill_copilot_frontmatter.py --status <status> --ref HEAD` when done.
-5. Run `python .github/check_copilot_docs.py --only-changed --fail --verbose` before committing.
-6. When a folder guide grows beyond ~200 lines, create a concise `.github/instructions/<folder>.instructions.md` that summarizes the essentials.
+1. **Detect** stale folders: `python .github/detect_copilot_needed.py --strict --base origin/<branch> --json .cache/copilot/detect.json`.
+2. **Plan** diffs + reference groups: `python .github/plan_copilot_updates.py --detect-json .cache/copilot/detect.json --out .cache/copilot/diff-plan.json`.
+3. **Scaffold** (optional) when a file drifts from the canonical layout: `python .github/scaffold_copilot_markdown.py --folders Src/<Folder>`.
+4. **Apply** the auto change-log from the planner: `python .github/copilot_apply_updates.py --plan .cache/copilot/diff-plan.json --folders Src/<Folder>`.
+5. **Edit narrative sections** using the planner JSON (change counts, commit log, `reference_groups`), keeping human guidance short and linking to subfolder docs where possible.
+6. **Validate** with `python .github/check_copilot_docs.py --only-changed --fail` (or use `--paths Src/Foo/COPILOT.md` for targeted checks).
+7. When documentation exceeds ~200 lines or acts as a parent index, migrate to `.github/templates/organizational-copilot.template.md` plus `.github/instructions/organizational-folders.instructions.md`.
+8. Run `.github/prompts/copilot-folder-review.prompt.md` with the updated plan slice to simulate Copilot review before committing.
 
 ## CI & Validation Requirements
 - GitHub Actions workflows live under `.github/workflows/`; keep them passing.

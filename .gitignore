@@ -166,3 +166,5 @@ __pycache__/
 venv/
 *.egg-info/
 CrashLog.txt
+.cache/
+.cache/copilot/

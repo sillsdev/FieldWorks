@@ -16,7 +16,7 @@
 	- Split oversized content into multiple files whose `applyTo` patterns map cleanly to repo paths.
 3. **Update `Src/**/COPILOT.md` content**
 	- If scaffolding is stale, run `python .github/scaffold_copilot_markdown.py --status <status> [--ref <commit>]` to restore headings and frontmatter.
-	- Follow the three-pass workflow in `.github/update-copilot-summaries.md` (Comprehension → Contracts → Synthesis) and pull details directly from source files.
+	- Follow the detect → plan → validate workflow in `Docs/copilot-refresh.md` (Comprehension → Contracts → Synthesis guidance) and pull details directly from source files.
 	- When a COPILOT exceeds ~200 lines, summarize it into a new `.github/instructions/<folder>.instructions.md` so Copilot reviews stay concise.
 4. **Validate**
 	- Execute `python scripts/tools/update_instructions.py` (inventory + manifest + validator).

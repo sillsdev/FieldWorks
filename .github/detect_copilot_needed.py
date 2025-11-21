@@ -29,6 +29,7 @@ import subprocess
 from pathlib import Path
 from typing import Dict, Optional, Tuple
 
+from copilot_change_utils import compute_risk_score, summarize_paths
 from copilot_tree_hash import compute_folder_tree_hash
 
 CODE_EXTS = {
@@ -182,6 +183,9 @@ def main():
         else:
             reasons.append("folder missing at head ref")
 
+        counts = summarize_paths(files)
+        risk_level = compute_risk_score(counts)
+
         if current_hash and recorded_hash and current_hash == recorded_hash:
             up_to_date = True
         else:
@@ -201,6 +205,8 @@ def main():
             "current_tree": current_hash,
             "status": "OK" if up_to_date else "STALE",
             "reasons": reasons,
+            "change_counts": counts,
+            "risk_score": risk_level,
         }
         if hash_error:
             entry["hash_error"] = hash_error
@@ -225,7 +231,10 @@ def main():
             detail = "hash aligned"
         else:
             detail = ", ".join(e["reasons"]) if e["reasons"] else "hash mismatch"
-        print(f"- {e['folder']}: {e['status']} ({detail})")
+        extras = ""
+        if e.get("risk_score"):
+            extras = f"; risk={e['risk_score']}"
+        print(f"- {e['folder']}: {e['status']} ({detail}{extras})")
 
     if validation_failures:
         print("\nValidation failures from check_copilot_docs.py:")
@@ -233,7 +242,11 @@ def main():
             print(vf)
 
     if args.json_out:
-        with open(args.json_out, "w", encoding="utf-8") as f:
+        json_path = Path(args.json_out)
+        if not json_path.is_absolute():
+            json_path = Path.cwd() / json_path
+        json_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(json_path, "w", encoding="utf-8") as f:
             json.dump({"impacted": results}, f, indent=2)
 
     if args.strict and issues:
