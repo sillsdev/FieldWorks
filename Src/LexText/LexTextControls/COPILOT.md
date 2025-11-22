@@ -118,89 +118,28 @@ C# library (net48, OutputType=Library) organizing lexicon/text UI components for
 - **IFwExtension**: Extension interface
 
 ## Threading & Performance
-- **UI thread**: All operations on UI thread
-- **Search**: Fast incremental search in dialogs
-- **Import**: Large imports may take time (progress reporting)
+UI thread operations. Fast incremental search. Large imports with progress reporting.
 
 ## Config & Feature Flags
-- **Homograph numbering**: Configurable via ConfigureHomographDlg
-- **Writing systems**: Configurable per field
-- **Import settings**: LexImportWizard configuration
+Homograph numbering (ConfigureHomographDlg), writing systems (per field), import settings (LexImportWizard).
 
 ## Build Information
-- **Project file**: LexTextControls.csproj (net48, OutputType=Library)
-- **Test project**: LexTextControlsTests/
-- **Output**: SIL.FieldWorks.LexTextControls.dll
-- **Build**: Via top-level FieldWorks.sln or: `msbuild LexTextControls.csproj`
-- **Run tests**: `dotnet test LexTextControlsTests/`
+Build via FieldWorks.sln or `msbuild LexTextControls.csproj`. Test project: LexTextControlsTests. Output: SIL.FieldWorks.LexTextControls.dll.
 
 ## Interfaces and Data Models
-
-- **BaseGoDlg** (BaseGoDlg.cs)
-  - Purpose: Abstract base for "Go To" search dialogs
-  - Subclasses: EntryGoDlg, ReverseGoDlg
-  - Features: Incremental search, entry navigation
-  - Notes: 947 lines of common search infrastructure
-
-- **InsertEntryDlg** (InsertEntryDlg.cs)
-  - Purpose: Insert/find lexical entries dialog
-  - Inputs: Search string
-  - Outputs: Selected ILexEntry
-  - Notes: Used throughout lexicon editing
-
-- **AddAllomorphDlg** (AddAllomorphDlg.cs)
-  - Purpose: Add allomorph to entry
-  - Inputs: ILexEntry, morpheme type
-  - Outputs: New IMoForm (allomorph)
-  - Notes: Supports prefix, suffix, stem, etc.
-
-- **LexImportWizard** (LexImportWizard*.cs)
-  - Purpose: Multi-step lexicon import wizard
-  - Inputs: Import file (LIFT, Toolbox, etc.)
-  - Outputs: Imported entries in LCModel
-  - Notes: 10K+ lines for comprehensive import
-
-- **FeatureStructureTreeView** (FeatureStructureTreeView.cs)
-  - Purpose: Display/edit feature structures
-  - Inputs: IFsFeatureStructure
-  - Outputs: Modified feature structure
-  - Notes: Tree view for phonological/grammatical features
-
-- **PopupTreeManager family**:
-  - InflectionClassPopupTreeManager: Choose inflection class
-  - InflectionFeaturePopupTreeManager: Choose grammatical features
-  - PhonologicalFeaturePopupTreeManager: Choose phonological features
-  - PopupTree base: Generic popup tree infrastructure
+BaseGoDlg (search base), InsertEntryDlg (entry finder), AddAllomorphDlg (allomorph adder), LexImportWizard (10K+ lines import), FeatureStructureTreeView (feature editor), PopupTreeManager family (hierarchical choosers).
 
 ## Entry Points
-Loaded by Lexicon/, LexTextDll/, and other lexicon UI components. Dialogs instantiated as needed.
+Library loaded by Lexicon/, LexTextDll/. Dialogs instantiated on demand (InsertEntryDlg, BaseGoDlg subclasses, LexImportWizard, etc.).
 
 ## Test Index
-- **Test project**: LexTextControlsTests/
-- **Run tests**: `dotnet test LexTextControlsTests/`
-- **Coverage**: Dialog logic, search engines, import wizards
+Test project: LexTextControlsTests. Run via `dotnet test` or Test Explorer.
 
 ## Usage Hints
-- **InsertEntryDlg**: Used for entry insertion throughout FLEx
-- **BaseGoDlg subclasses**: Quick navigation dialogs (Ctrl+G)
-- **AddAllomorphDlg**: Add allomorphs in lexicon editing
-- **LexImportWizard**: File → Import → Lexicon
-- **FeatureStructureTreeView**: Edit phonological/grammatical features
-- **PopupTreeManager**: Hierarchical selection UI pattern
-- **Shared library**: Reused across Lexicon/, LexTextDll/, Morphology/
-- **Large codebase**: 48.1K lines, 100+ files
+InsertEntryDlg (entry insertion), BaseGoDlg subclasses (Ctrl+G navigation), LexImportWizard (File → Import), FeatureStructureTreeView (feature editing). Reused across Lexicon/, LexTextDll/, Morphology/.
 
 ## Related Folders
-- **Lexicon/**: Main lexicon UI (consumes controls)
-- **LexTextDll/**: Business logic
-- **Morphology/**: Morphology UI
-- **Common/FieldWorks/**: FieldWorks.exe host
+Lexicon (main UI), LexTextDll (business logic), Morphology (morphology UI), Common/FieldWorks (host).
 
 ## References
-- **Project file**: LexTextControls.csproj (net48, OutputType=Library)
-- **Key C# files**: InsertEntryDlg.cs (1.7K), LexImportWizard family (10K+ combined), BaseGoDlg.cs (947), FeatureStructureTreeView.cs (386), AddNewSenseDlg.cs (372), CombineImportDlg.cs (348), EntryGoDlg.cs (236), AddWritingSystemButton.cs (229), EntryObjects.cs (208), AddAllomorphDlg.cs (197), and 90+ more files
-- **Test project**: LexTextControlsTests/
-- **Total lines of code**: 48129
-- **Output**: SIL.FieldWorks.LexTextControls.dll
-- **Namespace**: Various (SIL.FieldWorks.LexText, SIL.FieldWorks.LexText.Controls, etc.)
-- **Subsystems**: Search dialogs, Entry insertion, Allomorph management, Import wizards, Feature editing, Popup trees, Homograph configuration
+Project file: LexTextControls.csproj (net48). Key files (48129 lines, 100+ files): InsertEntryDlg.cs (1.7K), LexImportWizard family (10K+), BaseGoDlg.cs (947), FeatureStructureTreeView.cs (386), PopupTreeManager family. See `.cache/copilot/diff-plan.json` for details.

@@ -70,156 +70,28 @@ C# library (net48) with 2 source files (~283 lines total). Single class VwDrawRo
 - **IVwSynchronizer**: Checks IsExpandingLazyItems to skip rendering during lazy item expansion
 
 ## Threading & Performance
-- **Thread affinity**: Must run on UI thread (GDI+ and HDC operations require UI thread)
-- **Performance characteristics**:
-  - **Double buffering**: Eliminates flicker by rendering to off-screen bitmap before copying to screen
-  - **BitBlt speed**: Very fast native GDI operation (~nanoseconds for typical view sizes)
-  - **Bitmap allocation**: GDI+ Bitmap created per draw (not cached); overhead mitigated by fast allocation
-  - **Memory**: Bitmap size = width × height × 4 bytes (ARGB); typical views 800×600 = 1.9 MB
-- **Rendering flow**:
-  1. Create off-screen Bitmap matching target rectangle size
-  2. Acquire HDC from Bitmap's Graphics (via GetHdc())
-  3. IVwRootBox.DrawRoot() renders to off-screen HDC
-  4. BitBlt copies bitmap to screen HDC (single fast blit)
-  5. Dispose bitmap and graphics (automatic via MemoryBuffer.Dispose)
-- **Optimization**: Synchronizer check skips expensive rendering during lazy item expansion
-- **No caching**: Bitmap created/disposed per DrawTheRoot() call; no persistent off-screen buffer
-- **GC pressure**: Moderate (Bitmap allocation per render); mitigated by deterministic disposal
+UI thread only. Double buffering eliminates flicker; BitBlt very fast. Bitmap allocated/disposed per draw (no caching).
 
 ## Config & Feature Flags
-- **fDrawSel parameter**: Controls selection rendering
-  - true: Render selection highlighting (typical for active views)
-  - false: Skip selection rendering (e.g., printing, background rendering)
-- **bkclr parameter**: Background color for bitmap fill before rendering
-  - Format: RGB as uint (0x00BBGGRR)
-  - Applied via Clear(Color.FromArgb(bkclr)) before Views rendering
-- **Synchronizer check**: IVwSynchronizer.IsExpandingLazyItems gate
-  - If true, skips rendering (returns early to avoid half-rendered state)
-  - Ensures consistent display during lazy box expansion
-- **No global configuration**: Behavior fully controlled by DrawTheRoot() parameters
-- **Deterministic cleanup**: MemoryBuffer implements IDisposable with finalizer for robust resource cleanup
+fDrawSel (selection rendering), bkclr (background color), synchronizer check (lazy item expansion gate). Behavior controlled by DrawTheRoot() parameters.
 
 ## Build Information
-- Project type: C# class library (net48)
-- Build: `msbuild ManagedVwDrawRootBuffered.csproj` or `dotnet build` (from FieldWorks.sln)
-- Output: ManagedVwDrawRootBuffered.dll
-- Dependencies: ViewsInterfaces, LCModel.Core, System.Drawing (GDI+)
-- COM attributes: [ComVisible], GUID for COM registration
+Build via FieldWorks.sln or `msbuild`. Output: ManagedVwDrawRootBuffered.dll. COM-visible with GUID.
 
 ## Interfaces and Data Models
-
-### Interfaces
-- **IVwDrawRootBuffered** (path: Src/Common/ViewsInterfaces/)
-  - Purpose: Double-buffered rendering contract for Views engine
-  - Inputs: IVwRootBox (content to render), IntPtr hdc (target DC), Rect (draw area), uint bkclr (background), bool fDrawSel (selection flag), IVwRootSite (callbacks)
-  - Outputs: None (side effect: renders to target HDC)
-  - Method: DrawTheRoot(...)
-  - Notes: COM-visible, called by native Views C++ engine
-
-### Data Models
-- **MemoryBuffer** (nested class in VwDrawRootBuffered.cs)
-  - Purpose: RAII wrapper for off-screen GDI+ Bitmap and Graphics
-  - Shape: Bitmap (GDI+ Bitmap), Graphics (GDI+ Graphics with HDC acquired via GetHdc())
-  - Lifecycle: Created in DrawTheRoot(), disposed after BitBlt
-  - Notes: Implements IDisposable with finalizer; ensures HDC release via ReleaseHdc()
-
-### Structures
-- **Rect** (from ViewsInterfaces)
-  - Purpose: Drawing rectangle specification
-  - Shape: int left, int top, int right, int bottom
-  - Usage: Defines bitmap size and target blit area
-
-### P/Invoke Signatures
-- **BitBlt** (gdi32.dll)
-  - Signature: `bool BitBlt(IntPtr hdcDest, int nXDest, int nYDest, int nWidth, int nHeight, IntPtr hdcSrc, int nXSrc, int nYSrc, int dwRop)`
-  - Purpose: Fast pixel copy from source DC to destination DC
-  - ROP: SRCCOPY (0x00CC0020) for direct pixel transfer
+IVwDrawRootBuffered (COM interface), MemoryBuffer (RAII bitmap wrapper), Rect (draw area), BitBlt P/Invoke (gdi32.dll).
 
 ## Entry Points
-- **COM instantiation**: Created by native Views engine via COM GUID 97199458-10C7-49da-B3AE-EA922EA64859
-- **Invocation**: Native Views C++ code calls IVwDrawRootBuffered.DrawTheRoot() during paint operations
-- **Typical call chain**:
-  1. User action triggers window repaint (scroll, selection, data change)
-  2. RootSite.OnPaint() → IVwRootBox.Draw()
-  3. Native Views checks if buffered drawer registered
-  4. Calls VwDrawRootBuffered.DrawTheRoot() (via COM)
-  5. Buffered rendering executes, BitBlt to screen
-- **Registration**: RootSite registers IVwDrawRootBuffered instance with IVwRootBox during initialization
-- **Not directly called from C# code**: Invoked by native Views engine as callback
+COM instantiation via GUID 97199458-10C7-49da-B3AE-EA922EA64859. Native Views calls DrawTheRoot() during paint. RootSite registers instance.
 
 ## Test Index
-- **No dedicated unit tests**: Integration tested via RootSite and Views rendering
-- **Integration test coverage** (via Common/RootSite tests):
-  - Buffered rendering eliminates flicker during scroll
-  - Selection rendering with fDrawSel=true
-  - Background color fill with various bkclr values
-  - Synchronizer gate during lazy item expansion
-- **Manual testing scenarios**:
-  - Scroll large lexicon list → smooth rendering, no flicker
-  - Select text in interlinear view → selection highlights correctly
-  - Resize window → views redraw smoothly
-  - Print preview → renders without selection (fDrawSel=false)
-- **Visual validation**: Compare with/without buffered rendering (legacy C++ VwDrawRootBuffered vs managed)
-- **Test approach**: End-to-end UI testing in FLEx application
-- **No automated unit tests**: Difficult to unit test GDI+ rendering without full Views infrastructure
+No dedicated unit tests. Integration tested via RootSite and Views rendering. Manual testing in FLEx validates flicker elimination.
 
 ## Usage Hints
-- **Typical usage** (RootSite initialization):
-  ```csharp
-  // Register buffered drawer with root box
-  var bufferedDrawer = new VwDrawRootBuffered();
-  rootBox.DrawingErrors = bufferedDrawer;  // or specific registration method
-  ```
-- **Not for direct invocation**: Native Views engine calls DrawTheRoot() automatically during paint
-- **Debugging tips**:
-  - Set breakpoint in DrawTheRoot() to diagnose rendering issues
-  - Check IsExpandingLazyItems if rendering appears incomplete
-  - Verify bitmap size matches target rectangle (width/height must be positive)
-- **Performance tuning**:
-  - Ensure views are invalidated minimally (only changed regions)
-  - Use lazy boxes to defer rendering of off-screen content
-  - Monitor bitmap allocation rate (should match repaint rate)
-- **Common pitfalls**:
-  - Forgetting to release HDC (MemoryBuffer.Dispose handles this automatically)
-  - Creating VwDrawRootBuffered on non-UI thread (GDI+ requires UI thread)
-  - Not registering buffered drawer with root box (results in direct rendering, potential flicker)
-- **Flicker elimination**: Double buffering prevents:
-  - Partial updates during complex rendering
-  - Flash during scroll operations
-  - Selection artifacts during text editing
-- **Extension**: Cannot be easily extended; core rendering logic is final
-- **Replacement**: C# port replaces C++ VwDrawRootBuffered; functionally equivalent
+RootSite registers buffered drawer with root box. Not for direct invocation (Views calls automatically). Eliminates flicker during scroll/selection.
 
 ## Related Folders
-- **views/**: Native Views C++ engine, calls IVwDrawRootBuffered for managed buffering
-- **ManagedVwWindow/**: Window management hosting Views with buffered rendering
-- **Common/RootSite/**: RootSite base classes using buffered drawer
-- **Common/SimpleRootSite/**: SimpleRootSite subclasses using buffered rendering
-- **Common/ViewsInterfaces/**: Defines IVwDrawRootBuffered, IVwRootBox interfaces
+views (native Views engine), ManagedVwWindow (window hosting), Common/RootSite (base classes), Common/ViewsInterfaces (interfaces).
 
 ## References
-- **Source files**: 2 C# files (~283 lines): VwDrawRootBuffered.cs, AssemblyInfo.cs
-- **Project file**: ManagedVwDrawRootBuffered.csproj
-- **Key class**: VwDrawRootBuffered (implements IVwDrawRootBuffered, nested MemoryBuffer)
-- **Key interface**: IVwDrawRootBuffered (from ViewsInterfaces)
-- **COM GUID**: 97199458-10C7-49da-B3AE-EA922EA64859
-- **Namespace**: SIL.FieldWorks.Views
-- **Target framework**: net48
-
-## Auto-Generated Project and File References
-- Project files:
-  - Src/ManagedVwDrawRootBuffered/ManagedVwDrawRootBuffered.csproj
-- Key C# files:
-  - Src/ManagedVwDrawRootBuffered/AssemblyInfo.cs
-  - Src/ManagedVwDrawRootBuffered/VwDrawRootBuffered.cs
-
-## Test Information
-- No dedicated test project found in this folder
-- Integration tested via RootSite tests (Common/RootSite tests exercise buffered rendering)
-- Manual testing: Any FLEx view with text (lexicon, interlinear, browse views) uses buffered rendering to eliminate flicker during scroll/selection
-
-## Code Evidence
-*Analysis based on scanning 2 source files*
-
-- **Classes found**: 1 public classes
-- **Namespaces**: SIL.FieldWorks.Views
+Project file: ManagedVwDrawRootBuffered.csproj (net48). Key files (283 lines): VwDrawRootBuffered.cs, AssemblyInfo.cs. COM GUID: 97199458-10C7-49da-B3AE-EA922EA64859. See `.cache/copilot/diff-plan.json` for details.

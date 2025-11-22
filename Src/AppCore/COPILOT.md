@@ -98,124 +98,28 @@ C++ native header-only library. Headers and implementation files are designed to
 No COM/PInvoke boundaries. Pure native C++ code consumed via `#include` directives. Provides RAII wrappers around Windows GDI HANDLEs to ensure proper cleanup via destructors. Debug builds track GDI resource allocations (s_cDCs, s_cFonts) to detect leaks via static counters.
 
 ## Threading & Performance
-Thread-agnostic code. GDI resources (DCs, fonts, brushes) have thread affinity and require careful handling in multi-threaded scenarios; AppCore does not enforce thread safety. Smart wrapper classes use RAII for deterministic cleanup within a single thread. Performance notes: AfGdi tracking adds overhead in debug builds via counters and optional logging; release builds should disable tracking. ColorTable maintains global singleton (g_ct) initialized at startup.
+Thread-agnostic; GDI resources have thread affinity. RAII wrappers ensure cleanup. Debug tracking adds overhead; global ColorTable singleton.
 
 ## Config & Feature Flags
-Debug-only resource tracking controlled by static flags:
-- `AfGdi::s_fShowDCs`: When true, logs DC allocation/deallocation to debug output
-- `AfGdi::s_fShowFonts`: When true, logs font allocation/deallocation to debug output
-No runtime configuration files.
+Debug flags: AfGdi::s_fShowDCs, AfGdi::s_fShowFonts for allocation logging. No runtime config.
 
 ## Build Information
-- No standalone project file; this is a header-only library consumed via include paths
-- Build using the top-level FieldWorks.sln (Visual Studio/MSBuild)
-- Consumer projects (Kernel.vcxproj, views.vcxproj) reference AppCore via NMakeIncludeSearchPath
-- Do not attempt to build AppCore in isolation; it is included directly into consumer C++ projects
+Header-only library consumed via include paths. Build using FieldWorks.sln. Consumer projects reference via NMakeIncludeSearchPath.
 
 ## Interfaces and Data Models
-
-- **AfGfx** (AfGfx.h/cpp)
-  - Purpose: Static utility class providing Windows GDI helper functions
-  - Inputs: HDC, COLORREF, Rect, HBITMAP, resource IDs
-  - Outputs: Modified DC state, drawn graphics, created GDI objects
-  - Notes: All methods are static; acts as namespace for GDI utilities
-
-- **AfGdi** (AfGfx.h)
-  - Purpose: Tracked wrappers for GDI resource lifecycle with leak detection
-  - Inputs: Same parameters as native Windows GDI APIs
-  - Outputs: GDI HANDLEs (HDC, HFONT, HBRUSH, HPEN, HRGN)
-  - Notes: Debug builds maintain counters (s_cDCs, s_cFonts); check at shutdown for leaks
-
-- **SmartDc** (AfGfx.h)
-  - Purpose: RAII wrapper for device context automatic cleanup
-  - Inputs: Constructor takes HWND or creates compatible DC
-  - Outputs: Provides HDC via conversion operator; releases DC in destructor
-  - Notes: Non-copyable; use for automatic GetDC/ReleaseDC pairing
-
-- **SmartPalette** (AfGfx.h)
-  - Purpose: RAII wrapper for palette selection with automatic restore
-  - Inputs: HDC, HPALETTE
-  - Outputs: Selects and realizes palette; restores previous palette in destructor
-  - Notes: Non-copyable; use when temporarily changing palette
-
-- **Smart GDI object wrappers** (AfGfx.h)
-  - FontWrap, BrushWrap, PenWrap, RgnWrap, ClipRgnWrap
-  - Purpose: RAII wrappers for SelectObject/RestoreObject pairing
-  - Inputs: HDC, HGDIOBJ (font, brush, pen, region)
-  - Outputs: Selects object; restores previous object in destructor
-  - Notes: Non-copyable; use for automatic GDI object restoration
-
-- **FwStyledText::ComputeInheritance** (FwStyledText.h/cpp)
-  - Purpose: Merges base and override text properties to compute effective properties
-  - Inputs: ITsTextProps* pttpBase, ITsTextProps* pttpOverride
-  - Outputs: ITsTextProps** ppttpEffect (computed effective properties)
-  - Notes: Implements inheritance logic for text properties (soft/hard formatting)
-
-- **FwStyledText::DecodeFontPropsString** (FwStyledText.h/cpp)
-  - Purpose: Parses BSTR font property string into structured data
-  - Inputs: BSTR bstr (encoded font properties), bool fExplicit
-  - Outputs: Vectors of WsStyleInfo, ChrpInheritance, writing system IDs
-  - Notes: Complex parsing logic for writing system-specific font properties
-
-- **FwStyledText::EncodeFontPropsString** (FwStyledText.h/cpp)
-  - Purpose: Encodes structured font properties into BSTR format
-  - Inputs: Vector<WsStyleInfo> vesi, bool fForPara
-  - Outputs: StrUni (encoded font property string)
-  - Notes: Inverse of DecodeFontPropsString; produces compact encoding
-
-- **ChrpInheritance** (FwStyledText.h)
-  - Purpose: Tracks inheritance state of character rendering properties
-  - Inputs: Constructed from base and override ITsTextProps
-  - Outputs: Fields indicate kxInherited/kxExplicit/kxConflicting for each property
-  - Notes: Used by formatting dialogs to show soft vs. hard formatting
-
-- **WsStyleInfo** (FwStyledText.h)
-  - Purpose: Stores per-writing-system style information
-  - Inputs: Writing system ID, font properties (name, size, bold, italic, etc.)
-  - Outputs: Structured representation used in encoding/decoding
-  - Notes: Part of complex writing system style inheritance system
-
-- **ColorTable** (AfColorTable.h/cpp)
-  - Purpose: Manages application color table with 40 predefined colors
-  - Inputs: Color index (0-39), COLORREF values
-  - Outputs: COLORREF, string resource IDs, palette entries
-  - Notes: Global singleton g_ct; palette created in constructor for legacy hardware
-
-- **ColorTable::RealizePalette** (AfColorTable.h/cpp)
-  - Purpose: Maps logical palette to system palette for quality drawing
-  - Inputs: HDC
-  - Outputs: HPALETTE (old palette, or NULL if device doesn't support palettes)
-  - Notes: Only relevant for legacy hardware with <16-bit color depth
+AfGfx (GDI utilities), AfGdi (tracked wrappers), Smart RAII wrappers (SmartDc, SmartPalette, FontWrap, etc.), FwStyledText (property inheritance), ColorTable (40 color palette).
 
 ## Entry Points
-- Included via `#include "AfGfx.h"`, `#include "FwStyledText.h"`, `#include "AfColorTable.h"` in consumer C++ code
-- Primary consumer: views/Main.h includes Res/AfAppRes.h for resource IDs
-- Kernel and views projects reference AppCore via NMakeIncludeSearchPath
-- ColorTable global singleton `g_ct` available after static initialization
+Included via #include directives. Primary consumer: views/Main.h. Global ColorTable singleton g_ct.
 
 ## Test Index
-No tests found in this folder. Tests may be in consumer projects (views, Kernel) or separate test assemblies.
+No tests in this folder. Tests may be in consumer projects (views, Kernel).
 
 ## Usage Hints
-- Include AfGfx.h for Windows GDI utilities and RAII wrappers
-- Include FwStyledText.h for writing system style inheritance and font property encoding/decoding
-- Include AfColorTable.h for access to predefined color table and global `g_ct` singleton
-- Use smart wrappers (SmartDc, SmartPalette, FontWrap, etc.) for automatic GDI resource cleanup
-- Enable `AfGdi::s_fShowDCs` or `AfGdi::s_fShowFonts` in debug builds to log resource allocation
-- Check `AfGdi::s_cDCs` and `AfGdi::s_cFonts` counters at shutdown to detect GDI leaks
-- Use `g_ct` global ColorTable to map color indices to RGB values and string resource IDs
-- Use FwStyledText namespace functions to compute style inheritance for multi-writing-system text
+Include AfGfx.h (GDI utilities), FwStyledText.h (style inheritance), AfColorTable.h (color table). Use smart wrappers for automatic cleanup.
 
 ## Related Folders
-- **views/**: Primary consumer; includes AfAppRes.h for resource IDs
-- **Kernel/**: References AppCore in include search paths; provides low-level infrastructure
-- **Generic/**: Peer utilities folder; provides base types, vectors, smart pointers
+views (primary consumer), Kernel (low-level infrastructure), Generic (base types).
 
 ## References
-- **Project files**: None (header-only library)
-- **Key C++ files**: AfColorTable.cpp (195 lines), AfGfx.cpp (1340 lines), FwStyledText.cpp (1483 lines)
-- **Key headers**: AfColorTable.h (110 lines), AfDef.h (196 lines), AfGfx.h (702 lines), FwStyledText.h (218 lines), Res/AfAppRes.h (454 lines)
-- **Total lines of code**: 4698
-- **Include search paths**: Referenced by Kernel.vcxproj and views.vcxproj (..\AppCore)
-- **Consumer references**: Src/views/Main.h includes "../../../Src/AppCore/Res/AfAppRes.h"
-- **Global singleton**: ColorTable g_ct (declared extern in AfColorTable.h, defined in AfColorTable.cpp)
+Header-only library (4698 lines). Key files: AfColorTable.cpp, AfGfx.cpp, FwStyledText.cpp, AfGfx.h, FwStyledText.h, Res/AfAppRes.h. Global singleton: ColorTable g_ct. See `.cache/copilot/diff-plan.json` for details.
