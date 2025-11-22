@@ -108,44 +108,13 @@ C# library (net48) with 34 source files (~9K lines total). Contains 3 subproject
 - **Event contracts**: ParserUpdateEventArgs for task progress events
 
 ## Threading & Performance
-- **Threading model**:
-  - ParserScheduler: Single background worker thread (ParserWorker) with synchronized priority queue
-  - Thread creation: Managed via System.Threading.Thread in ParserScheduler
-  - Synchronization: lock() statements for queue access, Interlocked for counters
-  - UI thread: Results delivered via events on UI thread (IdleQueue marshaling)
-- **Background processing**:
-  - ParserWorker executes on background thread
-  - TryAWord work: High priority for immediate user feedback
-  - BulkParse work: Lower priority batch processing
-  - Grammar reload: Highest priority (blocks other work)
-- **Priority queue**: 5 levels (ReloadGrammarAndLexicon=0, TryAWord=1, High=2, Medium=3, Low=4)
-- **Performance considerations**:
-  - Parser instantiation: Expensive, reused across multiple parse operations
-  - Model change detection: ParserModelChangeListener monitors PropChanged events to avoid unnecessary reloads
-  - Bulk operations: Batched to reduce overhead
-- **Thread affinity**: XAmple COM components require STA threading model
+Single background thread (ParserWorker) with 5-level priority queue. Results delivered to UI thread via IdleQueue. XAmple requires STA threading.
 
 ## Config & Feature Flags
-- **Parser selection**: MorphologicalDataOA.ActiveParser setting determines HCParser vs XAmpleParser
-- **Parser options** (HCParser):
-  - GuessRoots: Enable/disable root guessing for unknown morphemes
-  - MergeAnalyses: Merge duplicate analyses in results
-- **XAmple options** (legacy): AmpleOptions enum (TraceOff, TraceMorphs, TraceAnalysis, etc.)
-- **Trace output**:
-  - FwXmlTraceManager: XML trace file generation for HermitCrab diagnostics
-  - TraceWord/TraceWordXml methods for debugging parse failures
-- **Data directory**: Configurable dataDir parameter for parser workspace and temp files
-- **PropertyTable**: XCore configuration for parser behavior (passed to ParserScheduler)
+Parser selection via MorphologicalDataOA.ActiveParser (HCParser vs XAmpleParser). Options: GuessRoots, MergeAnalyses (HC); AmpleOptions (XAmple). FwXmlTraceManager for trace generation.
 
 ## Build Information
-- Project type: C# class library (net48)
-- Build: `msbuild ParserCore.csproj` or `dotnet build` (from FieldWorks.sln)
-- Output: ParserCore.dll, XAmpleManagedWrapper.dll, XAmpleCOMWrapper.dll (native C++/CLI)
-- Dependencies: SIL.Machine.Morphology.HermitCrab NuGet package
-- Subprojects:
-  - ParserCore: Main C# library
-  - XAmpleManagedWrapper: C# COM wrapper for XAmple (legacy)
-  - XAmpleCOMWrapper: C++/CLI COM component for XAmple (legacy)
+C# library (net48). Build via `msbuild ParserCore.csproj`. Output: ParserCore.dll, XAmpleManagedWrapper.dll, XAmpleCOMWrapper.dll (C++/CLI).
 
 ## Interfaces and Data Models
 
@@ -232,106 +201,15 @@ C# library (net48) with 34 source files (~9K lines total). Contains 3 subproject
 - **Test approach**: Unit tests with in-memory LCModel cache, XML-based parser transform tests
 
 ## Usage Hints
-- **Choosing parser**: Set MorphologicalDataOA.ActiveParser to "HC" (HermitCrab) or "XAmple" (legacy)
-  - HermitCrab: Modern, actively maintained, supports complex phonological rules
-  - XAmple: Legacy, limited maintenance, COM interop complexity
-- **Background parsing**: Use ParserScheduler for all parse operations
-  - Schedule work via ScheduleWork(IParserWork) or convenience methods
-  - Monitor progress via ParserUpdateEventArgs events
-  - Priority levels control work ordering
-- **Interactive testing**: TryAWord dialog (in ParserUI) uses TryAWordWork for immediate feedback
-- **Bulk operations**: BulkUpdateOfWordforms() for batch parsing of corpus
-- **Model changes**: ParserModelChangeListener automatically detects morphology/phonology changes
-  - Parser reloads grammar/lexicon when ModelChanged flag set
-  - Avoid manual Update() calls; let listener manage reload lifecycle
-- **Trace debugging**: Use TraceWord/TraceWordXml methods to diagnose parse failures
-  - FwXmlTraceManager generates detailed XML trace files
-  - Trace output shows rule application, phonological processes, feature matching
-- **Extension point**: Implement IParser interface for new parser engines
-  - Follow HCParser or XAmpleParser patterns
-  - Register via ActiveParser setting
-- **Common pitfalls**:
-  - Don't instantiate HCParser/XAmpleParser directly; use ParserWorker/ParserScheduler
-  - XAmple COM requires STA threading; don't call from worker threads directly
-  - Grammar reload is expensive; rely on ParserModelChangeListener to minimize reloads
+Use ParserScheduler for all operations. Set ActiveParser ("HC" or "XAmple"). ParserModelChangeListener handles automatic reload. Use TraceWord methods for debugging.
 
 ## Related Folders
-- **LexText/ParserUI/**: Parser UI components (TryAWord dialog, parser configuration), consumes ParserScheduler
-- **LexText/Interlinear/**: Automatic text analysis, consumes ParseFiler and ParserWorker
-- **LexText/Morphology/**: Morphology editor defining rules consumed by parsers, triggers ParserModelChangeListener
-- **LexText/Lexicon/**: Lexicon data (lexemes, allomorphs) consumed by parsers
+- **ParserUI/**: Parser UI dialogs
+- **Interlinear/**: Text analysis
+- **Morphology/**: Morphology editor
 
 ## References
-- **Source files**: 34 C# files (~9K lines), 4 C++ files (XAmpleCOMWrapper), 18 XML test data files
-- **Project files**: ParserCore.csproj, ParserCoreTests/ParserCoreTests.csproj, XAmpleManagedWrapper/XAmpleManagedWrapper.csproj, XAmpleManagedWrapper/XAmpleManagedWrapperTests/XAmpleManagedWrapperTests.csproj, XAmpleCOMWrapper/XAmpleCOMWrapper.vcxproj
-- **Key classes**: ParserScheduler, ParserWorker, ParseFiler, HCParser, XAmpleParser, ParserModelChangeListener, FwXmlTraceManager, M3ToXAmpleTransformer
-- **Key interfaces**: IParser, IHCLoadErrorLogger, IXAmpleWrapper
-- **Enums**: ParserPriority (5 levels), TaskPhase (6 states), AmpleOptions
-- **Target framework**: net48
-
-## Auto-Generated Project and File References
-- Project files:
-  - LexText/ParserCore/ParserCore.csproj
-  - LexText/ParserCore/ParserCoreTests/ParserCoreTests.csproj
-  - LexText/ParserCore/XAmpleCOMWrapper/XAmpleCOMWrapper.vcxproj
-  - LexText/ParserCore/XAmpleManagedWrapper/BuildInclude.targets
-  - LexText/ParserCore/XAmpleManagedWrapper/XAmpleManagedWrapper.csproj
-  - LexText/ParserCore/XAmpleManagedWrapper/XAmpleManagedWrapperTests/XAmpleManagedWrapperTests.csproj
-- Key C# files:
-  - LexText/ParserCore/AssemblyInfo.cs
-  - LexText/ParserCore/FwXmlTraceManager.cs
-  - LexText/ParserCore/HCLoader.cs
-  - LexText/ParserCore/HCParser.cs
-  - LexText/ParserCore/IHCLoadErrorLogger.cs
-  - LexText/ParserCore/IParser.cs
-  - LexText/ParserCore/InvalidAffixProcessException.cs
-  - LexText/ParserCore/InvalidReduplicationFormException.cs
-  - LexText/ParserCore/M3ToXAmpleTransformer.cs
-  - LexText/ParserCore/ParseFiler.cs
-  - LexText/ParserCore/ParseResult.cs
-  - LexText/ParserCore/ParserCoreStrings.Designer.cs
-  - LexText/ParserCore/ParserCoreTests/HCLoaderTests.cs
-  - LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTests.cs
-  - LexText/ParserCore/ParserCoreTests/ParseFilerProcessingTests.cs
-  - LexText/ParserCore/ParserCoreTests/ParseWorkerTests.cs
-  - LexText/ParserCore/ParserCoreTests/ParserReportTests.cs
-  - LexText/ParserCore/ParserCoreTests/XAmpleParserTests.cs
-  - LexText/ParserCore/ParserModelChangeListener.cs
-  - LexText/ParserCore/ParserReport.cs
-  - LexText/ParserCore/ParserScheduler.cs
-  - LexText/ParserCore/ParserWorker.cs
-  - LexText/ParserCore/ParserXmlWriterExtensions.cs
-  - LexText/ParserCore/TaskReport.cs
-  - LexText/ParserCore/XAmpleManagedWrapper/AmpleOptions.cs
-- Key C++ files:
-  - LexText/ParserCore/XAmpleCOMWrapper/XAmpleCOMWrapper.cpp
-  - LexText/ParserCore/XAmpleCOMWrapper/XAmpleWrapper.cpp
-  - LexText/ParserCore/XAmpleCOMWrapper/XAmpleWrapperCore.cpp
-  - LexText/ParserCore/XAmpleCOMWrapper/stdafx.cpp
-- Key headers:
-  - LexText/ParserCore/XAmpleCOMWrapper/Resource.h
-  - LexText/ParserCore/XAmpleCOMWrapper/XAmpleWrapperCore.h
-  - LexText/ParserCore/XAmpleCOMWrapper/stdafx.h
-  - LexText/ParserCore/XAmpleCOMWrapper/xamplewrapper.h
-- Data contracts/transforms:
-  - LexText/ParserCore/ParserCoreStrings.resx
-  - LexText/ParserCore/ParserCoreTests/Failures.xml
-  - LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/Abaza-OrderclassPlay.xml
-  - LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/CliticEnvsParserFxtResult.xml
-  - LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/CliticParserFxtResult.xml
-  - LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/CompundRulesWithExceptionFeatures.xml
-  - LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/ConceptualIntroTestParserFxtResult.xml
-  - LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/IrregularlyInflectedFormsParserFxtResult.xml
-  - LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/LatinParserFxtResult.xml
-  - LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/M3FXTCircumfixDump.xml
-  - LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/M3FXTCircumfixInfixDump.xml
-  - LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/M3FXTDump.xml
-  - LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/M3FXTFullRedupDump.xml
-  - LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/M3FXTStemNameDump.xml
-  - LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/OrizabaParserFxtResult.xml
-  - LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/QuechuaMYLFxtResult.xml
-  - LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/RootCliticEnvParserFxtResult.xml
-  - LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/StemName3ParserFxtResult.xml
+34 C# files, 4 C++ files (XAmpleCOMWrapper). Key: ParserScheduler, ParserWorker, ParseFiler, HCParser, XAmpleParser. See `.cache/copilot/diff-plan.json` for file listings.
   - LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/TestAffixAllomorphFeatsParserFxtResult.xml
   - LexText/ParserCore/ParserCoreTests/M3ToXAmpleTransformerTestsDataFiles/emi-flexFxtResult.xml
 
