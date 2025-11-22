@@ -78,54 +78,22 @@ C# library (net48, OutputType=Library) with MVC-like separation. ConstituentChar
   - Calculate column widths for text content
 
 ## Technology Stack
-- C# .NET Framework 4.8.x (net8)
-- OutputType: Library
-- Windows Forms (custom controls)
-- LCModel (data model)
-- IText (interlinear integration)
-- XCore (application framework)
+C# .NET Framework 4.8.x, Windows Forms, LCModel, IText interlinear integration, XCore framework.
 
 ## Dependencies
-
-### Upstream (consumes)
-- **LCModel**: Data model (IDsConstChart, IConstChartRow, IConstituentChartCellPart, IConstChartWordGroup, IConstChartMovedTextMarker, IConstChartClauseMarker)
-- **IText**: Interlinear text support (InterlinDocChart base, IInterlinRibbon)
-- **XCore**: Application framework (IxCoreColleague, Mediator)
-- **Common/FwUtils**: Utilities
-- **FwCoreDlgControls**: Dialog controls
-- **Common/Controls/Widgets**: Custom widgets
-
-### Downstream (consumed by)
-- **xWorks**: Interlinear text window (chart as tab)
-- **FieldWorks.exe**: FLEx application host
-- **Linguists**: Discourse analysis users
+Consumes: LCModel (chart data model), IText (InterlinDocChart base), XCore, Common utilities. Used by: xWorks interlinear text window.
 
 ## Interop & Contracts
-- **IDsConstChart**: LCModel chart object (rows, columns, cells)
-- **IConstChartRow**: Chart row (clause)
-- **IConstituentChartCellPart**: Cell content (word group, marker)
-- **IConstChartWordGroup**: Group of words in cell
-- **IConstChartMovedTextMarker**: Moved text indicator
-- **IConstChartClauseMarkerRepository**: Clause boundary markers
-- **InterlinDocChart**: Base class for interlinear integration
-- **IHandleBookmark**: Bookmark support
-- **IxCoreColleague**: XCore colleague pattern
+IDsConstChart/IConstChartRow/IConstituentChartCellPart for LCModel chart data. InterlinDocChart base, IxCoreColleague for XCore.
 
 ## Threading & Performance
-- **UI thread**: All operations on UI thread
-- **Lazy loading**: Rows/cells loaded on demand
-- **Chart caching**: Template/column config cached in memory
+UI thread operations. Lazy loading for rows/cells.
 
 ## Config & Feature Flags
-- **Chart templates**: ICmPossibility defining column structure (pre-nuclear, nuclear, post-nuclear)
-- **Display modes**: Interlinear vs simple text in cells
+Chart templates (ICmPossibility) define column structure. Interlinear vs simple text display modes.
 
 ## Build Information
-- **Project file**: Discourse.csproj (net48, OutputType=Library)
-- **Test project**: DiscourseTests/
-- **Output**: SIL.FieldWorks.Discourse.dll
-- **Build**: Via top-level FieldWorks.sln or: `msbuild Discourse.csproj`
-- **Run tests**: `dotnet test DiscourseTests/`
+Discourse.csproj (net48, Library). Test project: DiscourseTests/. Output: SIL.FieldWorks.Discourse.dll.
 
 ## Interfaces and Data Models
 
@@ -169,35 +137,16 @@ C# library (net48, OutputType=Library) with MVC-like separation. ConstituentChar
   - IConstChartClauseMarker: Clause boundary/dependency marker
 
 ## Entry Points
-Loaded by reflection from xWorks interlinear text window. ConstituentChart constructor called when user opens chart tab.
+Loaded from xWorks interlinear text window. ConstituentChart constructor called when user opens chart tab.
 
 ## Test Index
-- **Test project**: DiscourseTests/
-- **Run tests**: `dotnet test DiscourseTests/`
-- **Coverage**: ConstituentChartLogic business logic, cell creation, row management
+DiscourseTests/ covers ConstituentChartLogic business logic, cell creation, row management.
 
 ## Usage Hints
-- **Open chart**: In FLEx, open text in interlinear view, select Chart tab
-- **Select template**: Choose chart template (column configuration) from dropdown
-- **Move words**: Drag words from ribbon to chart cells, or use MoveHere buttons
-- **Create rows**: Right-click to add rows (clauses)
-- **Clause markers**: Insert markers for clause boundaries, dependencies
-- **Moved text**: Mark displaced constituents with moved text markers
-- **Export**: Use export dialog to publish chart
-- **Templates**: Configure chart templates in Lists (Chart Template)
-- **Columns**: Templates define column structure (pre-nuclear, nuclear SVO, post-nuclear)
-- **Business logic**: ConstituentChartLogic class separated for testability
+Open via FLEx Texts → Interlinear → Chart tab. Select template, drag words from ribbon to cells, add rows via right-click, insert clause/moved text markers, export charts. ConstituentChartLogic separated for testability.
 
 ## Related Folders
-- **Interlinear/**: Interlinear text integration
-- **IText/**: Text infrastructure (InterlinDocChart base)
-- **Common/FieldWorks/**: FieldWorks.exe host
-- **xWorks/**: Main application shell
+Interlinear/ (InterlinDocChart base), xWorks/ (host application).
 
 ## References
-- **Project file**: Discourse.csproj (net48, OutputType=Library)
-- **Key C# files**: ConstituentChartLogic.cs (6491 lines), ConstituentChart.cs (2033 lines), ConstChartVc.cs (871 lines), MakeCellsMethod.cs (682 lines), ConstChartRowDecorator.cs (602 lines), ConstChartBody.cs (525 lines), InterlinRibbon.cs (478 lines), AdvancedMTDialog.cs (421 lines), DiscourseExporter.cs (374 lines), DiscourseExportDialog.cs (208 lines)
-- **Test project**: DiscourseTests/
-- **Total lines of code**: 13280
-- **Output**: SIL.FieldWorks.Discourse.dll
-- **Namespace**: SIL.FieldWorks.Discourse
+Discourse.csproj (net48). Key files: ConstituentChartLogic.cs (6.5K lines), ConstituentChart.cs (2K lines), ConstChartVc.cs (871 lines). 13.3K lines total. See `.cache/copilot/diff-plan.json` for complete file listing.
