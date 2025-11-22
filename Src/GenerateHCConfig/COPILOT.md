@@ -43,103 +43,37 @@ C# console application (.NET Framework 4.8.x) with 350 lines of code. Program.cs
 
 ## Technology Stack
 - C# .NET Framework 4.8.x (net8)
-- OutputType: Exe (console application)
-- **SIL.Machine.Morphology.HermitCrab**: HermitCrab parser library
-- **SIL.FieldWorks.WordWorks.Parser**: FieldWorks parser components
-- **SIL.LCModel**: FieldWorks data model access (LcmCache)
-- Console application (no GUI)
 
 ## Dependencies
-
-### Upstream (consumes)
-- **SIL.LCModel**: Language and Culture Model (LcmCache, project loading)
-- **SIL.Machine.Morphology.HermitCrab**: HermitCrab parser (Language, XmlLanguageWriter)
-- **SIL.Machine.Annotations**: Annotation framework
-- **SIL.FieldWorks.WordWorks.Parser**: FieldWorks parser (HCLoader)
-- **Common/FwUtils**: Utilities (FwRegistryHelper, FwUtils.InitializeIcu)
-- **SIL.WritingSystems**: Writing system support (Sldr)
-
-### Downstream (consumed by)
-- **Build process**: May be used during FLEx builds
-- **Developers/linguists**: Generate HermitCrab configs from FLEx projects for external parsers
-- HermitCrab parser tools consuming generated XML
+- Upstream: Language and Culture Model (LcmCache, project loading)
+- Downstream: May be used during FLEx builds
 
 ## Interop & Contracts
 - **Command-line interface**: `generatehcconfig <input-project> <output-config>`
-- **Exit codes**: 0 = success, 1 = error (file not found, project locked, migration needed)
-- **HermitCrab XML format**: Output compatible with HermitCrab morphological parser
 
 ## Threading & Performance
 - **Single-threaded**: Console application
-- **Read-only**: DisableDataMigration=true prevents writes
-- **Performance**: Project loading time depends on FLEx project size
 
 ## Config & Feature Flags
 - **App.config**: Application configuration
-- **LcmSettings**: DisableDataMigration=true for read-only access
-- No user-configurable settings; all via command-line arguments
 
 ## Build Information
 - **Project file**: GenerateHCConfig.csproj (net48, OutputType=Exe)
-- **Output**: GenerateHCConfig.exe (console tool)
-- **Build**: Via top-level FieldWorks.sln or: `msbuild GenerateHCConfig.csproj`
-- **Usage**: `GenerateHCConfig.exe <project.fwdata> <output.xml>`
 
 ## Interfaces and Data Models
-
-- **Program.Main()** (Program.cs)
-  - Purpose: Command-line entry point for HC config generation
-  - Inputs: args[0] = FLEx project path (.fwdata), args[1] = output HC config path (.xml)
-  - Outputs: Exit code 0 (success) or 1 (error); HC XML config file
-  - Notes: Validates inputs, loads project, calls HCLoader, writes XML
-
-- **HCLoader.Load()** (from WordWorks.Parser)
-  - Purpose: Extract HermitCrab language data from LcmCache
-  - Inputs: LcmCache cache, ILogger logger
-  - Outputs: Language object (HermitCrab)
-  - Notes: Converts FLEx phonology/morphology to HermitCrab structures
-
-- **XmlLanguageWriter.Save()** (from HermitCrab)
-  - Purpose: Serialize HermitCrab Language to XML configuration
-  - Inputs: Language language, string outputPath
-  - Outputs: XML file written
-  - Notes: HermitCrab-compatible XML format
-
-- **ConsoleLogger** (ConsoleLogger.cs)
-  - Purpose: Log LCM operations to console
-  - Inputs: Log messages from LcmCache
-  - Outputs: Console output
-  - Notes: Provides feedback during project loading
-
-- **Error handling**:
-  - LcmFileLockedException: Project open in another app
-  - LcmDataMigrationForbiddenException: Project needs migration in FLEx
-  - File not found: Project file doesn't exist
+ConsoleLogger.
 
 ## Entry Points
 - **GenerateHCConfig.exe**: Command-line executable
-- **Main()**: Program entry point
 
 ## Test Index
 No dedicated test project. Tested via command-line execution with sample FLEx projects.
 
 ## Usage Hints
 - **Command**: `GenerateHCConfig.exe MyProject.fwdata output.xml`
-- **Prerequisites**: FLEx project file (.fwdata) must exist and be up-to-date (no migration needed)
-- **Read-only**: Does not modify FLEx project (DisableDataMigration=true)
-- **Error messages**: Clear errors for common issues (file not found, project locked, migration needed)
-- **Use case**: Export FLEx phonology/morphology data to HermitCrab for external morphological parsing
-- **HermitCrab**: Output XML compatible with HermitCrab morphological parser framework
 
 ## Related Folders
 - **WordWorks/Parser**: Contains HCLoader for data extraction
-- Build process may invoke this utility
 
 ## References
-- **Project files**: GenerateHCConfig.csproj (net48, OutputType=Exe)
-- **Configuration**: App.config, BuildInclude.targets
-- **Target frameworks**: .NET Framework 4.8.x
-- **Key C# files**: Program.cs (83 lines), ConsoleLogger.cs, NullFdoDirectories.cs, NullThreadedProgress.cs, ProjectIdentifier.cs
-- **Total lines of code**: 350
-- **Output**: GenerateHCConfig.exe (Output/Debug or Output/Release)
-- **Namespace**: GenerateHCConfig
+See `.cache/copilot/diff-plan.json` for file details.

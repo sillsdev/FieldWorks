@@ -64,76 +64,25 @@ C++ native library (header-only templates and implementation files). Heavy use o
 
 ## Technology Stack
 - C++ native code
-- COM (Component Object Model) infrastructure
-- Template metaprogramming (extensive use)
-- Windows API (primary platform)
-- Cross-platform support (conditional compilation)
 
 ## Dependencies
-
-### Upstream (consumes)
-- **Windows APIs**: COM, file I/O, registry
-- **Standard C++ library**: Basic types, string
-- Minimal external dependencies (self-contained low-level library)
-
-### Downstream (consumed by)
-- **Kernel/**: Core services built on Generic
-- **views/**: Native rendering engine using collections and smart pointers
-- **All FieldWorks native C++ components**: Universal dependency
+- Upstream: COM, file I/O, registry
+- Downstream: Core services built on Generic
 
 ## Interop & Contracts
 - **IUnknown**: COM interface base
-- **IDispatch**: Automation interface support
-- **ISupportErrorInfo**: Rich error information
-- COM ABI compatibility (binary interface standard)
 
 ## Threading & Performance
 - **COM threading**: Collections and smart pointers follow COM threading rules
-- **Reference counting**: ComSmartPtr ensures proper COM lifetime management
-- **Template overhead**: Compile-time; runtime efficient
-- **Performance**: Low-level optimized collections
 
 ## Config & Feature Flags
 - **FwSettings**: Application settings management
-- Conditional compilation for platform differences (#ifdef WIN32, etc.)
 
 ## Build Information
 - **No project file**: Header-only templates built into consuming projects
-- **Compiled components**: Some .cpp files compiled into libraries
-- **Build**: Included via consuming projects' build systems
-- **Headers**: Included by Kernel, views, and other native components
 
 ## Interfaces and Data Models
-
-- **ComSmartPtr<T>** (ComSmartPtr.h)
-  - Purpose: Automatic COM interface pointer lifetime management
-  - Inputs: Interface pointer (any COM interface)
-  - Outputs: Smart pointer with automatic AddRef/Release
-  - Notes: Template class; use ComSmartPtr<IFoo> fooPtr;
-
-- **ComHashMap<K,V>** (ComHashMap.h)
-  - Purpose: Hash map collection for COM environments
-  - Inputs: Key type K, Value type V
-  - Outputs: Hash-based key-value storage
-  - Notes: Template class; efficient lookup
-
-- **ComVector<T>** (ComVector.h)
-  - Purpose: Dynamic array for COM-compatible objects
-  - Inputs: Element type T
-  - Outputs: Resizable array
-  - Notes: Template class; like std::vector
-
-- **DataStream** (DataStream.h)
-  - Purpose: Abstract binary I/O stream
-  - Inputs: Binary data
-  - Outputs: Serialized/deserialized data
-  - Notes: Base class for FileStrm and other streams
-
-- **DispatchImpl** (DispatchImpl.h)
-  - Purpose: Helper for implementing IDispatch
-  - Inputs: Type info, method descriptors
-  - Outputs: Working IDispatch implementation
-  - Notes: Simplifies COM automation
+DataStream, DispatchImpl.
 
 ## Entry Points
 Header files included by consuming projects. No standalone executable.
@@ -143,21 +92,9 @@ No dedicated test project for Generic. Tested via consuming components (Kernel, 
 
 ## Usage Hints
 - **ComSmartPtr**: Always use for COM interface pointers to avoid leaks
-- **ComHashMap/ComVector**: Use instead of STL in COM contexts for compatibility
-- **DataStream**: Use for binary serialization/deserialization
-- **FwSettings**: Centralized settings access
-- Template-heavy: Long compile times but efficient runtime
-- Header-only templates: Include appropriate headers in consuming projects
 
 ## Related Folders
 - **Kernel/**: Core services using Generic
-- **views/**: Rendering engine using Generic collections
-- **DebugProcs/**: Debug utilities complement Generic
 
 ## References
-- **Key headers**: ComSmartPtr.h (7K), ComHashMap.h (14K), ComMultiMap.h (9K), ComVector.h (21K), DataStream.h (5K), FileStrm.h (3K), DispatchImpl.h (6.5K), FwSettings.h (3K), and many more
-- **Implementation files**: ComHashMap_i.cpp (50K), ComMultiMap_i.cpp (27K), ComVector.cpp (11K), DataStream.cpp (18K), FileStrm.cpp (27K), FwSettings.cpp (14.5K), and others
-- **Total files**: 112 C++/H files
-- **Total lines of code**: 44373
-- **Output**: Compiled into consuming libraries/DLLs
-- **Platform**: Primarily Windows (COM-centric), some cross-platform support
+See `.cache/copilot/diff-plan.json` for file details.
