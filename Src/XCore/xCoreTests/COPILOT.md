@@ -33,45 +33,29 @@ Test suite (~500 lines) for XCore framework validation. Tests Inventory XML proc
   - XML override merging, attribute replacement, node insertion
 
 ## Technology Stack
-- **Language**: C#
-- **Target framework**: .NET Framework 4.8.x (net48)
-- **Test framework**: NUnit
-- **Systems under test**: Mediator, PropertyTable, Inventory, DynamicLoader
-- **Test approach**: Unit tests with mock objects
+Language - C#
 
 ## Dependencies
-- **XCore/**: Mediator, PropertyTable, Inventory (systems under test)
-- **XCore/xCoreInterfaces/**: IxCoreColleague, ChoiceGroup
-- **NUnit**: Test framework
-- **Consumer**: Build/CI systems
+- Upstream: Core libraries
+- Downstream: Applications
 
 ## Interop & Contracts
-- **IncludeXmlTests**: Tests XML `<include>` directive (recursive includes, path resolution)
-- **InventoryTests**: Tests plugin loading (DynamicLoader.CreateObject, assembly loading)
-- **CreateOverrideTests**: Tests configuration override merging
-- **Test isolation**: Mock objects for Mediator, PropertyTable dependencies
+- IncludeXmlTests: Tests XML `<include>` directive (recursive includes, path resolution)
 
 ## Threading & Performance
-- **Test execution**: Single-threaded NUnit test runner
-- **Performance tests**: None (functional correctness only)
-- **Test data**: Small XML snippets, mock objects (fast execution)
+- Test execution: Single-threaded NUnit test runner
 
 ## Config & Feature Flags
-- **Test XML files**: Embedded test data for Inventory/include tests
-- **No external config**: All test data in code or embedded resources
-- **Test isolation**: Each test independent, no shared state
+- Test XML files: Embedded test data for Inventory/include tests
 
 ## Build Information
 - C# test project
-- Build via: `dotnet build xCoreTests.csproj`
-- Run tests: `dotnet test xCoreTests.csproj`
 
 ## Interfaces and Data Models
-See code analysis sections above for key interfaces and data models. Additional interfaces may be documented in source files.
+See Key Components section above.
 
 ## Entry Points
 - Test fixtures for XCore components
-- Validation of framework behavior
 
 ## Test Index
 Test projects: xCoreTests. 2 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
@@ -80,21 +64,10 @@ Test projects: xCoreTests. 2 test files. Run via: `dotnet test` or Test Explorer
 Test project. Run tests to validate functionality. See Test Index section for details.
 
 ## Related Folders
-- **XCore/** - Framework being tested
-- **XCore/xCoreInterfaces/** - Interfaces being tested
-- **XCore/FlexUIAdapter/** - May have related tests
+- XCore/ - Framework being tested
 
 ## References
-
-- **Project files**: xCoreTests.csproj
-- **Target frameworks**: net48
-- **Key C# files**: IncludeXmlTests.cs, InventoryTests.cs, Resources.Designer.cs
-- **XML data/config**: CreateOverrideTestData.xml, IncludeXmlTestSource.xml, IncludeXmlTestSourceB.xml, basicTest.xml, includeTest.xml
-- **Source file count**: 3 files
-- **Data file count**: 12 files
+See `.cache/copilot/diff-plan.json` for file details.
 
 ## Code Evidence
 *Analysis based on scanning 2 source files*
-
-- **Classes found**: 3 public classes
-- **Namespaces**: XCore

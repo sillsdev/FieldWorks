@@ -41,22 +41,14 @@ Side pane navigation control library (~3K lines) implementing hierarchical sideb
 - **PanelPosition**: Enum (top, bottom)
 
 ## Technology Stack
-- **Language**: C#
-- **Target framework**: .NET Framework 4.8.x (net48)
-- **UI framework**: System.Windows.Forms (UserControl, custom GDI+ painting)
-- **Key features**: Custom button rendering, drag-drop, context menus
-- **Display modes**: Button, list, strip-list layouts
+Language - C#
 
 ## Dependencies
-- **System.Windows.Forms**: UserControl, custom painting
-- **Consumer**: xWorks (FwXWindow), LexText (area navigation)
+- Upstream: Core libraries
+- Downstream: Applications
 
 ## Interop & Contracts
-- **SidePane control**: Embeddable UserControl for navigation
-- **Tab/Item hierarchy**: Tab contains Items (tools/views)
-- **Events**: ItemClicked event for navigation handling
-- **Drag-drop**: Tab reordering via mouse drag
-- **NavPaneOptionsDlg**: Customization dialog (show/hide tabs, reorder)
+- SidePane control: Embeddable UserControl for navigation
 
 ## Threading & Performance
 Threading model: UI thread marshaling.
@@ -66,30 +58,12 @@ No explicit configuration or feature flags detected.
 
 ## Build Information
 - C# class library project
-- Build via: `dotnet build SilSidePane.csproj`
-- Reusable navigation control
 
 ## Interfaces and Data Models
-
-- **Item** (class)
-  - Path: `Item.cs`
-  - Public class implementation
-
-- **SidePane** (class)
-  - Path: `SidePane.cs`
-  - Public class implementation
-
-- **Tab** (class)
-  - Path: `Tab.cs`
-  - Public class implementation
-
-- **SidePaneItemAreaStyle** (enum)
-  - Path: `SidePaneItemAreaStyle.cs`
+Item, SidePane, Tab, SidePaneItemAreaStyle.
 
 ## Entry Points
 - Side pane control for application navigation
-- Configuration dialog for pane options
-- Banner and item area components
 
 ## Test Index
 Test projects: SilSidePaneTests. 6 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
@@ -98,21 +72,10 @@ Test projects: SilSidePaneTests. 6 test files. Run via: `dotnet test` or Test Ex
 Library component. Reference in consuming projects. See Dependencies section for integration points.
 
 ## Related Folders
-- **XCore/** - Framework hosting side pane
-- **Common/Controls/** - Base control infrastructure
-- **xWorks/** - Uses side pane for navigation
-- **LexText/** - Uses side pane for area selection
+- XCore/ - Framework hosting side pane
 
 ## References
-
-- **Project files**: SilSidePane.csproj, SilSidePaneTests.csproj
-- **Target frameworks**: net48
-- **Key C# files**: Banner.cs, IItemArea.cs, Item.cs, NavPaneOptionsDlg.Designer.cs, OutlookBarButtonCollection.cs, SidePane.cs, SidePaneItemAreaStyle.cs, SilSidePane.Designer.cs, StripListItemArea.cs, Tab.cs
-- **Source file count**: 26 files
-- **Data file count**: 3 files
+See `.cache/copilot/diff-plan.json` for file details.
 
 ## Code Evidence
 *Analysis based on scanning 21 source files*
-
-- **Classes found**: 12 public classes
-- **Namespaces**: SIL.SilSidePane

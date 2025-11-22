@@ -58,23 +58,14 @@ Core interface definitions (~7.8K lines) for XCore framework. Provides Mediator 
 - **List** (List.cs) - Generic list utilities
 
 ## Technology Stack
-- **Language**: C#
-- **Target framework**: .NET Framework 4.8.x (net48)
-- **Library type**: Pure interface definitions + core implementations
-- **Key libraries**: Minimal dependencies (SIL.Utils, System assemblies)
-- **Pattern**: Mediator, Command, Observer (property change notification)
+Language - C#
 
 ## Dependencies
-- **Upstream**: Minimal - SIL.Utils, System assemblies (pure interface definitions)
-- **Downstream consumers**: XCore/ (Inventory, XWindow), XCore/FlexUIAdapter/, xWorks/, LexText/, all XCore-based apps
+- Upstream: Core libraries
+- Downstream: Applications
 
 ## Interop & Contracts
-- **Mediator**: BroadcastMessage(), SendMessage() for command routing
-- **IxCoreColleague**: Plugin interface (HandleMessage, PropertyValue methods)
-- **PropertyTable**: GetValue<T>(), SetProperty() with change notification
-- **ChoiceGroup/Choice**: XML-driven menu/toolbar definitions
-- **IUIAdapter**: UI adapter interface for framework independence
-- **IdleQueue**: AddTask() for idle-time processing
+- Mediator: BroadcastMessage(), SendMessage() for command routing
 
 ## Threading & Performance
 TBD - populate from code. See auto-generated hints below.
@@ -86,12 +77,10 @@ TBD - populate from code. See auto-generated hints below.
 TBD - populate from code. See auto-generated hints below.
 
 ## Interfaces and Data Models
-TBD - populate from code. See auto-generated hints below.
+See Key Components section above.
 
 ## Entry Points
 - Framework interface contracts
-- Command and choice abstractions
-- UI component interfaces
 
 ## Test Index
 Test projects: xCoreInterfacesTests. 3 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
@@ -100,28 +89,13 @@ Test projects: xCoreInterfacesTests. 3 test files. Run via: `dotnet test` or Tes
 Library component. Reference in consuming projects. See Dependencies section for integration points.
 
 ## Related Folders
-- **XCore/** - Framework implementing these interfaces
-- **XCore/FlexUIAdapter/** - Implements UI interfaces
-- **Common/UIAdapterInterfaces/** - Related adapter interfaces
-- **xWorks/** - Uses XCore interfaces
-- **LexText/** - Uses XCore interfaces
+- XCore/ - Framework implementing these interfaces
 
 ## References
-
-- **Project files**: xCoreInterfaces.csproj, xCoreInterfacesTests.csproj
-- **Target frameworks**: net48
-- **Key C# files**: AssemblyInfo.cs, BaseContextHelper.cs, ChoiceGroup.cs, IFeedbackInfoProvider.cs, IImageCollection.cs, IUIAdapter.cs, Mediator.cs, PropertyTable.cs, ReadOnlyPropertyTable.cs, RecordFilterListProvider.cs
-- **XML data/config**: Settings.xml, db_TestLocal_Settings.xml
-- **Source file count**: 26 files
-- **Data file count**: 4 files
+See `.cache/copilot/diff-plan.json` for file details.
 
 ## Test Infrastructure
-- **xCoreInterfacesTests/** subfolder
-- Tests for: Mediator, PropertyTable, ChoiceGroup, Command
+- xCoreInterfacesTests/ subfolder
 
 ## Code Evidence
 *Analysis based on scanning 23 source files*
-
-- **Classes found**: 20 public classes
-- **Interfaces found**: 15 public interfaces
-- **Namespaces**: XCore
