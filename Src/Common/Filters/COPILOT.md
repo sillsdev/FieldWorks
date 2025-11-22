@@ -102,129 +102,29 @@ C# class library (.NET Framework 4.8.x) with filtering and sorting components. R
 - Uses marshaling for COM interop scenarios (ICmObject from LCModel)
 
 ## Threading & Performance
-- Single-threaded in-memory filtering and sorting
-- RecordSorter supports progress reporting (IReportsSortProgress) for responsiveness during long sorts
-- Filter bar optimization: Limits unique value enumeration to ~30 items to avoid performance issues
-- Performance note: All filtering currently done in-memory (see RecordFilter.cs comments for future query-based filtering)
+Single-threaded in-memory filtering/sorting. RecordSorter supports progress reporting for responsiveness.
 
 ## Config & Feature Flags
-- No external configuration files
-- Filter definitions can be persisted to/from XML
-- Filter bar behavior configurable via XML cell definitions
+Filter definitions persist to/from XML. Filter bar behavior configurable via XML cell definitions.
 
 ## Build Information
-- **Project file**: Filters.csproj (.NET Framework 4.8.x, OutputType=Library)
-- **Test project**: FiltersTests/FiltersTests.csproj
-- **Output**: Filters.dll (to Output/Debug or Output/Release)
-- **Build**: Via top-level FieldWorks.sln or: `msbuild Filters.csproj /p:Configuration=Debug`
-- **Run tests**: `dotnet test FiltersTests/FiltersTests.csproj` or Visual Studio Test Explorer
+C# library (net48). Build via `msbuild Filters.csproj`. Output: Filters.dll.
 
 ## Interfaces and Data Models
-
-- **IMatcher** (RecordFilter.cs)
-  - Purpose: Contract for string matching strategies
-  - Inputs: ITsString (formatted text string), int ws (writing system)
-  - Outputs: bool (true if matches)
-  - Notes: Implemented by ExactMatcher, BeginMatcher, EndMatcher, AnywhereMatcher, RegExpMatcher, etc.
-
-- **IStringFinder** (RecordFilter.cs)
-  - Purpose: Extracts strings from objects for matching
-  - Inputs: LcmCache cache, int hvo (object ID)
-  - Outputs: ITsString (extracted string value)
-  - Notes: Used by FilterBarCellFilter to get cell values from XML-defined cell specifications
-
-- **IReportsSortProgress** (RecordFilter.cs)
-  - Purpose: Progress reporting during long sort operations
-  - Inputs: int nTotal (total items), int nCompleted (completed items)
-  - Outputs: void (progress callbacks)
-  - Notes: Allows UI to show progress bar and remain responsive
-
-- **IManyOnePathSortItem** (IManyOnePathSortItem.cs)
-  - Purpose: Contract for items with multiple sort paths (many-to-one relationships)
-  - Inputs: N/A (properties)
-  - Outputs: Multiple sort key paths for hierarchical sorting
-  - Notes: Enables complex multi-level sorts across object relationships
-
-- **RecordFilter.Matches** (RecordFilter.cs)
-  - Purpose: Tests whether object passes filter
-  - Inputs: LcmCache cache, int hvo (object ID)
-  - Outputs: bool (true if object passes filter)
-  - Notes: Abstract method implemented by subclasses (AndFilter, FilterBarCellFilter, etc.)
-
-- **AndFilter** (RecordFilter.cs)
-  - Purpose: Combines multiple filters with logical AND
-  - Inputs: Array of RecordFilter instances
-  - Outputs: bool (true if all filters match)
-  - Notes: Used to combine filter bar cell filters or layered filters
-
-- **FilterBarCellFilter** (RecordFilter.cs)
-  - Purpose: Filter for one column in filter bar
-  - Inputs: IStringFinder (value extractor), IMatcher (matching strategy)
-  - Outputs: bool via Matches() method
-  - Notes: Combines string finder and matcher for column-based filtering
-
-- **IntMatcher** (IntMatcher.cs)
-  - Purpose: Matches integer properties
-  - Inputs: int target value
-  - Outputs: bool (true if integer matches)
-  - Notes: Used with IntFinder for integer property filtering
-
-- **RangeIntMatcher** (IntMatcher.cs)
-  - Purpose: Matches integers within range
-  - Inputs: int min, int max
-  - Outputs: bool (true if value in range)
-  - Notes: Inclusive range matching
-
-- **DateTimeMatcher** (DateTimeMatcher.cs)
-  - Purpose: Matches date/time properties with various comparison modes
-  - Inputs: DateMatchType (Before, After, On, Between, NotSet), DateTime value(s)
-  - Outputs: bool (true if date matches criteria)
-  - Notes: Supports single date or range comparisons
-
-- **BadSpellingMatcher** (BadSpellingMatcher.cs)
-  - Purpose: Identifies strings with spelling errors
-  - Inputs: Spelling checker service
-  - Outputs: bool (true if spelling errors detected)
-  - Notes: Integrates with FieldWorks spelling infrastructure
-
-- **RecordSorter** (RecordSorter.cs)
-  - Purpose: Sorts filtered object lists
-  - Inputs: List of objects, sort specifications
-  - Outputs: Sorted list
-  - Notes: Implements IComparer; supports progress reporting via IReportsSortProgress
-
-- **MatchRangePair** struct (RecordFilter.cs)
-  - Purpose: Represents text match range (start and end positions)
-  - Inputs: int ich Min (start), int ichLim (end)
-  - Outputs: Struct with match positions
-  - Notes: Used in pattern matching and highlighting
+IMatcher (ExactMatcher, BeginMatcher, RegExpMatcher, etc.), IStringFinder (extract values), RecordFilter base class, AndFilter, FilterBarCellFilter. Matchers: IntMatcher, RangeIntMatcher, DateTimeMatcher, BadSpellingMatcher. RecordSorter for sorting.
 
 ## Entry Points
-- Referenced as library in consuming projects for filtering and sorting
-- RecordFilter subclasses instantiated for specific filter scenarios
-- Matchers instantiated based on user filter bar selections or search criteria
-- RecordSorter used to order filtered results before display
+Library for filtering/sorting. RecordFilter subclasses for filter scenarios. Matchers based on filter bar selections. RecordSorter for ordering results.
 
 ## Test Index
-- **Test project**: FiltersTests (FiltersTests.csproj)
-- **Test files**: DateTimeMatcherTests.cs, FindResultsSorterTests.cs, RangeIntMatcherTests.cs, TestPersistence.cs, WordformFiltersTests.cs
-- **Run tests**: `dotnet test FiltersTests/FiltersTests.csproj` or Visual Studio Test Explorer
-- **Coverage**: Unit tests for matchers, date/time filtering, sorting, filter persistence
+FiltersTests project. Tests matchers, date/time filtering, sorting, persistence.
 
 ## Usage Hints
-- Extend RecordFilter to create custom filters; implement Matches() method
-- Use AndFilter to combine multiple filters (e.g., filter bar + base filter)
-- Implement IMatcher for custom matching strategies (pattern matching, custom logic)
-- Implement IStringFinder to extract values from custom object properties
-- Use RecordSorter with IReportsSortProgress for responsive long sorts
-- Filter bar: XML cell definitions + StringFinder + Matcher → FilterBarCellFilter
-- Check RecordFilter.cs header comments for design rationale and future plans (query-based filtering)
+Extend RecordFilter (implement Matches()). Use AndFilter to combine filters. Implement IMatcher for custom matching. RecordSorter with IReportsSortProgress for long sorts.
 
 ## Related Folders
-- **Common/FwUtils/**: Utilities used by filters
-- **Common/ViewsInterfaces/**: View interfaces (IVwCacheDa) used by filters
-- **xWorks/**: Major consumer using filtering for data tree and browse searches
-- **LexText/**: Uses filtering in lexicon searches and browse views
+- **xWorks/**: Data tree and browse filtering
+- **LexText/**: Lexicon searches
 
 ## References
 - **Project files**: Filters.csproj (net48, OutputType=Library), FiltersTests/FiltersTests.csproj
