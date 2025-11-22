@@ -75,59 +75,22 @@ C# library (net48, OutputType=Library) with modular subsystem design. InterlinDo
   - Select writing systems for text input
 
 ## Technology Stack
-- C# .NET Framework 4.8.x (net8)
-- OutputType: Library
-- Windows Forms (custom controls, dialogs)
-- LCModel (data model)
-- Views (rendering engine)
-- XCore (application framework)
+C# .NET Framework 4.8.x, Windows Forms, LCModel, Views rendering engine, XCore framework.
 
 ## Dependencies
-
-### Upstream (consumes)
-- **LCModel**: Data model (IText, IStText, ISegment, IAnalysis, IWfiGloss, IWfiAnalysis, IWfiWordform)
-- **Views**: Rendering engine (IVwRootSite, IVwViewConstructor)
-- **XCore**: Application framework (Mediator, IxCoreColleague)
-- **Common/RootSites**: SimpleRootSite base
-- **Common/ViewsInterfaces**: COM views interfaces
-- **Common/FwUtils**: Utilities
-- **FwCoreDlgControls**: Dialog controls
-
-### Downstream (consumed by)
-- **xWorks**: Interlinear text window
-- **FieldWorks.exe**: FLEx application host
-- **Discourse**: Constituent charts (inherits InterlinDocChart)
-- **Linguists**: Text analysis workflows
+Consumes: LCModel (IText/ISegment/IAnalysis), Views, XCore, SimpleRootSite, Common utilities. Used by: xWorks interlinear window, Discourse (InterlinDocChart).
 
 ## Interop & Contracts
-- **IText**: LCModel text object (paragraphs, segments)
-- **IStText**: Structured text (paragraphs)
-- **ISegment**: Text segment (analyses)
-- **IAnalysis**: Word analysis (WfiWordform/WfiAnalysis/WfiGloss/PunctuationForm)
-- **IWfiWordform**: Word form
-- **IWfiAnalysis**: Morphological analysis
-- **IWfiGloss**: Word gloss
-- **InterlinDocRootSiteBase**: Base class for interlinear views
-- **IInterlinConfigurable**: Configuration interface
-- **IxCoreColleague**: XCore colleague pattern
+IText/IStText/ISegment/IAnalysis for text data model. InterlinDocRootSiteBase base class. IInterlinConfigurable for configuration.
 
 ## Threading & Performance
-- **UI thread**: All operations on UI thread
-- **Lazy loading**: Segments/analyses loaded on demand
-- **Rendering optimization**: Views engine caching
-- **Large texts**: May have performance challenges with very long texts
+UI thread operations. Lazy loading for segments/analyses. Views engine caching. Large texts may have performance challenges.
 
 ## Config & Feature Flags
-- **AddWordsToLexicon mode**: Glossing vs browsing (ksPropertyAddWordsToLexicon)
-- **Interlinear line configuration**: Which lines to display (baseline, morphemes, glosses, categories, translation)
-- **DoSpellCheck**: Spell checking enabled/disabled
+AddWordsToLexicon mode (glossing vs browsing), interlinear line configuration (baseline/morphemes/glosses/categories/translation), DoSpellCheck flag.
 
 ## Build Information
-- **Project file**: ITextDll.csproj (net48, OutputType=Library)
-- **Test project**: ITextDllTests/
-- **Output**: SIL.FieldWorks.IText.dll
-- **Build**: Via top-level FieldWorks.sln or: `msbuild ITextDll.csproj`
-- **Run tests**: `dotnet test ITextDllTests/`
+ITextDll.csproj (net48, Library). Test project: ITextDllTests/. Output: SIL.FieldWorks.IText.dll.
 
 ## Interfaces and Data Models
 
@@ -166,37 +129,16 @@ C# library (net48, OutputType=Library) with modular subsystem design. InterlinDo
   - IWfiGloss: Gloss with category, definition
 
 ## Entry Points
-Loaded by xWorks interlinear text window. InterlinDocForAnalysis instantiated for text analysis views.
+InterlinDocForAnalysis loaded by xWorks interlinear text window for text analysis views.
 
 ## Test Index
-- **Test project**: ITextDllTests/
-- **Run tests**: `dotnet test ITextDllTests/`
-- **Coverage**: Interlinear logic, concordance, BIRD import, analysis handling
+ITextDllTests/ covers interlinear logic, concordance, BIRD import, analysis handling.
 
 ## Usage Hints
-- **Open text**: In FLEx, Texts & Words → Analyze tab
-- **Analyze words**: Click words to open Sandbox for glossing
-- **Approve analyses**: Checkmark icon approves analysis
-- **Concordance**: Search for word/morpheme occurrences across texts
-- **Complex concordance**: Advanced pattern search (e.g., find sequences, morpheme features)
-- **Configure lines**: Choose which interlinear lines to display (Tools → Configure)
-- **BIRD import**: Import analyzed texts from BIRD XML format
-- **Tagging**: Tag text portions for discourse/syntactic annotation
-- **Print/Export**: Use print layout for formatted output
-- **Navigation**: Use treebar to navigate paragraphs/segments
-- **Large library**: 49.6K lines covering comprehensive interlinear functionality
+Access via FLEx Texts & Words → Analyze tab. Click words for Sandbox glossing, use concordance for searches, configure interlinear lines via Tools menu, import BIRD XML, tag text portions, print/export with layout tools. Massive 49.6K line library with comprehensive subsystems (Sandbox, Concordance, ComplexConc patterns, BIRD import, Tagging, Print layout).
 
 ## Related Folders
-- **Discourse/**: Constituent charts (inherits InterlinDocChart)
-- **LexTextControls/**: Shared controls
-- **LexTextDll/**: Business logic
-- **xWorks/**: Application shell
+Discourse/ (InterlinDocChart), LexTextControls/, LexTextDll/, xWorks/.
 
 ## References
-- **Project file**: ITextDll.csproj (net48, OutputType=Library)
-- **Key C# files**: InterlinDocRootSiteBase.cs (3.3K), InterlinDocForAnalysis.cs (2.8K), ConcordanceControl.cs (1.9K), BIRDInterlinearImporter.cs (1.8K), ComplexConcControl.cs (770), ChooseAnalysisHandler.cs (747), ComplexConcPatternVc.cs (699), and 100+ more files
-- **Test project**: ITextDllTests/
-- **Total lines of code**: 49644
-- **Output**: SIL.FieldWorks.IText.dll
-- **Namespace**: SIL.FieldWorks.IText
-- **Subsystems**: Interlinear display, Sandbox editing, Concordance search, Complex concordance patterns, BIRD import, Text tagging, Print layout, Navigation
+ITextDll.csproj (net48). Key files: InterlinDocRootSiteBase.cs (3.3K), InterlinDocForAnalysis.cs (2.8K), ConcordanceControl.cs (1.9K), BIRDInterlinearImporter.cs (1.8K), 100+ files total (49.6K lines). See `.cache/copilot/diff-plan.json` for complete file listing.
