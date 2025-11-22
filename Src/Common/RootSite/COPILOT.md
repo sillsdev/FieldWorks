@@ -44,102 +44,37 @@ C# class library (.NET Framework 4.8.x) with root site infrastructure. Collector
 
 ## Technology Stack
 - C# .NET Framework 4.8.x (net8)
-- OutputType: Library
-- Views rendering engine integration (COM interop)
-- Windows Forms integration
 
 ## Dependencies
-
-### Upstream (consumes)
-- **views**: Native C++ rendering engine
-- **Common/ViewsInterfaces**: View interfaces (IVwEnv, IVwGraphics)
-- **SIL.LCModel**: Data model
-- **SIL.LCModel.Application**: Application services
-- **Windows Forms**: UI framework
-
-### Downstream (consumed by)
-- **Common/SimpleRootSite**: Extends RootSite classes
-- **xWorks**: Complex view hosting
-- **LexText**: Lexicon views
-- All components requiring advanced view management
+- Upstream: Native C++ rendering engine
+- Downstream: Extends RootSite classes
 
 ## Interop & Contracts
 - **IVwEnv**: Environment interface for view construction
-- **COM interop**: Bridges to native Views engine
-- **Marshaling**: Cross-boundary calls to native code
 
 ## Threading & Performance
 - UI thread requirements for view operations
-- Performance considerations for view measurement and collection
-- CollectorEnv avoids rendering overhead for testing/analysis
 
 ## Config & Feature Flags
 No explicit configuration. Behavior determined by view specifications and data.
 
 ## Build Information
 - **Project file**: RootSite.csproj (net48, OutputType=Library)
-- **Test project**: RootSiteTests/RootSiteTests.csproj
-- **Output**: RootSite.dll
-- **Build**: Via top-level FieldWorks.sln or: `msbuild RootSite.csproj /p:Configuration=Debug`
-- **Run tests**: `dotnet test RootSiteTests/RootSiteTests.csproj`
 
 ## Interfaces and Data Models
-
-- **CollectorEnv** (CollectorEnv.cs)
-  - Purpose: Base class for IVwEnv implementations that collect view information without rendering
-  - Inputs: View specifications, data objects
-  - Outputs: Collected strings, measurements, test results
-  - Notes: Subclasses override methods for specific collection purposes
-
-- **IVwEnv** (implemented by CollectorEnv)
-  - Purpose: Environment interface for view construction
-  - Inputs: Display specifications, property tags, objects
-  - Outputs: View structure information
-  - Notes: Core interface for view construction; CollectorEnv provides non-rendering implementation
-
-- **StringCollectorEnv** (CollectorEnv.cs)
-  - Purpose: Collects plain strings from view construction
-  - Inputs: View specifications
-  - Outputs: Concatenated string representation of view
-  - Notes: Useful for testing, exporting, accessibility
-
-- **TsStringCollectorEnv** (CollectorEnv.cs)
-  - Purpose: Collects formatted ITsString objects preserving formatting
-  - Inputs: View specifications
-  - Outputs: Formatted text with properties
-  - Notes: Maintains text formatting information
-
-- **TestCollectorEnv** (CollectorEnv.cs)
-  - Purpose: Tests whether view construction produces blank/empty output
-  - Inputs: View specifications
-  - Outputs: Boolean indicating blank status
-  - Notes: Optimization for conditionally displaying views
+CollectorEnv, IVwEnv, StringCollectorEnv, TsStringCollectorEnv, TestCollectorEnv.
 
 ## Entry Points
-Referenced as library for advanced root site functionality. Extended by SimpleRootSite and used by applications requiring sophisticated view management.
+Referenced as library for advanced root site functionality. Extended by SimpleRootSite and used by applications requiring sophisticated view managemen
 
 ## Test Index
 - **Test project**: RootSiteTests
-- **Run tests**: `dotnet test RootSiteTests/RootSiteTests.csproj`
-- **Coverage**: Root site behavior, CollectorEnv subclasses
 
 ## Usage Hints
 - Extend RootSite classes for custom view hosting
-- Use CollectorEnv subclasses for view analysis without rendering
-- StringCollectorEnv for extracting text from views
-- TestCollectorEnv to check if view would be blank
-- More advanced than SimpleRootSite; use SimpleRootSite for standard scenarios
 
 ## Related Folders
 - **Common/SimpleRootSite**: Simplified root site extending this infrastructure
-- **Common/ViewsInterfaces**: Interfaces implemented by RootSite
-- **views/**: Native rendering engine
-- **xWorks, LexText**: Applications using root site infrastructure
 
 ## References
-- **Project files**: RootSite.csproj (net48), RootSiteTests/RootSiteTests.csproj
-- **Target frameworks**: .NET Framework 4.8.x
-- **Key C# files**: CollectorEnv.cs, FwBaseVc.cs, and others
-- **Total lines of code**: 9274
-- **Output**: Output/Debug/RootSite.dll
-- **Namespace**: SIL.FieldWorks.Common.RootSites
+See `.cache/copilot/diff-plan.json` for file details.
