@@ -89,12 +89,7 @@ C# Windows executable (WinExe) targeting .NET Framework 4.8.x. Main entry point 
 - **PaComplexFormInfo** (PaComplexFormInfo.cs): Complex form relationships
 
 ## Technology Stack
-- C# .NET Framework 4.8.x (target framework: net48)
-- OutputType: WinExe (Windows executable with UI)
-- Windows Forms for UI (System.Windows.Forms)
-- System.Runtime.Serialization for ProjectId serialization
-- Windows Installer API integration (WindowsInstallerQuery)
-- Inter-process communication for multi-instance coordination
+C# .NET Framework 4.8.x (WinExe), Windows Forms, System.Runtime.Serialization, Windows Installer API, inter-process communication.
 
 ## Dependencies
 
@@ -120,114 +115,28 @@ C# Windows executable (WinExe) targeting .NET Framework 4.8.x. Main entry point 
 - **COM/P/Invoke**: Windows Installer API via WindowsInstallerQuery
 
 ## Threading & Performance
-- **UI thread marshaling**: FieldWorksManager.ExecuteAsync() uses ThreadHelper.InvokeAsync for UI thread invocation
-- **Synchronization**: Application lifecycle methods coordinate across multiple FwApp instances
-- **Performance**: Singleton pattern (FieldWorks class) ensures single instance per process
-- **Dialog responsiveness**: ApplicationBusyDialog provides cancellation and progress feedback
+UI thread marshaling via ThreadHelper.InvokeAsync; lifecycle synchronization across FwApp instances; singleton per process.
 
 ## Config & Feature Flags
-- **App.config**: Application configuration file
-- **BuildInclude.targets**: MSBuild custom targets for build configuration
-- No explicit feature flags detected in source
+App.config, BuildInclude.targets; no explicit feature flags detected.
 
 ## Build Information
-- **Project file**: FieldWorks.csproj (.NET Framework 4.8.x, WinExe)
-- **Test project**: FieldWorksTests/FieldWorksTests.csproj
-- **Output**: FieldWorks.exe (main executable), FieldWorks.xml (documentation)
-- **Icon**: BookOnCube.ico (multiple variants: BookOnCube, CubeOnBook, versions, sizes)
-- **Build**: Via top-level FieldWorks.sln or: `msbuild FieldWorks.csproj /p:Configuration=Debug`
-- **Run tests**: `dotnet test FieldWorksTests/FieldWorksTests.csproj` or Visual Studio Test Explorer
-- **Auto-generate binding redirects**: Enabled for assembly version resolution
+Build via FieldWorks.sln or `msbuild FieldWorks.csproj`. Test project: FieldWorksTests. Output: FieldWorks.exe, FieldWorks.xml.
 
 ## Interfaces and Data Models
-
-- **IFieldWorksManager** (implemented by FieldWorksManager)
-  - Purpose: Pass-through facade for FieldWorks application access
-  - Inputs: FwApp instances, Forms, Actions
-  - Outputs: LcmCache, window creation, async execution
-  - Notes: Ensures single FieldWorks instance per process
-
-- **IProjectIdentifier** (implemented by ProjectId)
-  - Purpose: Contract for project identification
-  - Inputs: Project name, type
-  - Outputs: Project identity for opening/management
-  - Notes: Supports serialization for inter-process communication
-
-- **ProjectId** (ProjectId.cs)
-  - Purpose: Represents FW project identification (existing or potential)
-  - Inputs: name (string), type (BackendProviderType or inferred)
-  - Outputs: Serializable project identity
-  - Notes: Implements ISerializable for marshaling across process boundaries
-
-- **FieldWorksManager.ChooseLangProject** (FieldWorksManager.cs)
-  - Purpose: User selects language project; opens in existing or new process
-  - Inputs: FwApp app, Form dialogOwner
-  - Outputs: Opens project in appropriate FieldWorks process
-  - Notes: Coordinates multi-instance scenarios via RemoteRequest
-
-- **ILexicalProvider, ILexicalServiceProvider** (LexicalProvider/ILexicalProvider.cs)
-  - Purpose: Contracts for lexicon service integration
-  - Inputs: Lexical queries (entries, senses, glosses)
-  - Outputs: LexicalEntry, LexSense, LexGloss data
-  - Notes: Enables external tools to query FW lexicon
-
-- **PaObjects namespace classes** (PaObjects/*.cs)
-  - Purpose: Data transfer objects for Phonology Assistant integration
-  - Inputs: FW lexical data (entries, senses, pronunciations, variants)
-  - Outputs: Serializable objects for PA consumption
-  - Notes: Facilitates data exchange between FieldWorks and Phonology Assistant
-
-- **ApplicationBusyDialog** (ApplicationBusyDialog.cs)
-  - Purpose: Modal or modeless busy indicator during long operations
-  - Inputs: WaitFor option (Cancel, NoCancel, TimeLimit, Cancelled)
-  - Outputs: User interaction (cancel request) or timeout
-  - Notes: Provides responsiveness during database/file operations
-
-- **WindowsInstallerQuery** (WindowsInstallerQuery.cs)
-  - Purpose: Query Windows Installer for installed FieldWorks components
-  - Inputs: Product codes, component identifiers
-  - Outputs: Installation status, versions
-  - Notes: Used for upgrade/installation checks
+IFieldWorksManager (pass-through facade), IProjectIdentifier (project identity), ProjectId (serializable project ID), ILexicalProvider/ILexicalServiceProvider (lexicon service contracts), PaObjects namespace (Phonology Assistant DTOs), ApplicationBusyDialog (busy indicator), WindowsInstallerQuery (installer checks).
 
 ## Entry Points
-- **Main executable**: FieldWorks.exe (OutputType=WinExe)
-- **FieldWorks singleton**: Application entry point managing lifecycle
-- **FieldWorksManager**: Facade for external access to FieldWorks instance
-- **WelcomeToFieldWorksDlg**: Startup dialog for project selection (Open, New, Import)
-- **ILexicalProvider**: Service interface for external lexical queries
+FieldWorks.exe (WinExe); FieldWorks singleton (lifecycle), FieldWorksManager (facade), WelcomeToFieldWorksDlg (startup).
 
 ## Test Index
-- **Test project**: FieldWorksTests (FieldWorksTests.csproj)
-- **Test files**: FieldWorksTests.cs, PaObjectsTests.cs, ProjectIDTests.cs, WelcomeToFieldWorksDlgTests.cs
-- **Run tests**: `dotnet test FieldWorksTests/FieldWorksTests.csproj` or Visual Studio Test Explorer
-- **Coverage**: Unit tests for ProjectId serialization, PA objects, welcome dialog, core infrastructure
+Test project: FieldWorksTests. Run via `dotnet test` or Test Explorer.
 
 ## Usage Hints
-- **Launch FieldWorks**: Run FieldWorks.exe; WelcomeToFieldWorksDlg appears for project selection
-- **Access from code**: Use FieldWorksManager facade to interact with FieldWorks singleton
-- **Open project programmatically**: Use FieldWorksManager.ChooseLangProject() or OpenNewWindowForApp()
-- **Lexical service integration**: Implement ILexicalProvider for external tool access to FW lexicon
-- **PA integration**: Use PaObjects namespace for data exchange with Phonology Assistant
-- **Multi-instance coordination**: ProjectId and RemoteRequest handle opening projects in existing processes
+Run FieldWorks.exe for startup dialog. Use FieldWorksManager facade for programmatic access. Implement ILexicalProvider for external lexicon queries.
 
 ## Related Folders
-- **Common/Framework/**: Application framework (FwApp, IFwMainWnd) used by FieldWorks
-- **Common/FwUtils/**: FieldWorks utilities (IFieldWorksManager, ThreadHelper) consumed by FieldWorks
-- **XCore/**: Framework components integrating FieldWorks infrastructure
-- **xWorks/**: Main FLEx application consumer of FieldWorks infrastructure
-- **LexText/**: Uses FieldWorks for project management and application lifecycle
+Common/Framework (FwApp base), Common/FwUtils (utilities), XCore (framework), xWorks (main consumer), LexText (project management).
 
 ## References
-- **Project files**: FieldWorks.csproj (net48, WinExe), FieldWorksTests/FieldWorksTests.csproj, BuildInclude.targets
-- **Target frameworks**: .NET Framework 4.8.x (net48)
-- **Key dependencies**: SIL.LCModel, SIL.LCModel.Utils, DesktopAnalytics, System.Windows.Forms
-- **Key C# files**: FieldWorks.cs, FieldWorksManager.cs, ProjectId.cs, ApplicationBusyDialog.cs, WelcomeToFieldWorksDlg.cs, MoveProjectsDlg.cs, FwRestoreProjectSettings.cs, WindowsInstallerQuery.cs, RemoteRequest.cs
-- **LexicalProvider files**: ILexicalProvider.cs, LexicalProviderImpl.cs, LexicalServiceProvider.cs, LexicalProviderManager.cs
-- **PaObjects files**: PaLexEntry.cs, PaLexSense.cs, PaCmPossibility.cs, PaMediaFile.cs, PaMultiString.cs, PaRemoteRequest.cs, PaVariant.cs, PaVariantOfInfo.cs, PaWritingSystem.cs, PaLexPronunciation.cs, PaLexicalInfo.cs, PaComplexFormInfo.cs
-- **Designer files**: ApplicationBusyDialog.Designer.cs, MoveProjectsDlg.Designer.cs, WelcomeToFieldWorksDlg.Designer.cs
-- **Resources**: ApplicationBusyDialog.resx, MoveProjectsDlg.resx, WelcomeToFieldWorksDlg.resx, Properties/Resources.resx
-- **Icons**: BookOnCube.ico, CubeOnBook.ico, variants (Large, Small, Version)
-- **Configuration**: App.config
-- **Total lines of code**: 8685
-- **Output**: Output/Debug/FieldWorks.exe, Output/Debug/FieldWorks.xml
-- **Namespace**: SIL.FieldWorks, SIL.FieldWorks.LexicalProvider, SIL.FieldWorks.PaObjects
+Project files: FieldWorks.csproj (net48, WinExe), FieldWorksTests, BuildInclude.targets. Key files (8685 lines): FieldWorks.cs, FieldWorksManager.cs, ProjectId.cs, LexicalProvider/, PaObjects/. See `.cache/copilot/diff-plan.json` for file details.
