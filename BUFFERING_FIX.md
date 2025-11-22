@@ -36,9 +36,9 @@ Keeps the bitmap cached in `m_hdcMem` for potential `ReDrawLastDraw` calls:
 // Clean up any previous cached bitmap and DC
 if (m_hdcMem)
 {
-    HBITMAP hbmpOld = (HBITMAP)::GetCurrentObject(m_hdcMem, OBJ_BITMAP);
-    if (hbmpOld)
-        AfGdi::DeleteObjectBitmap(hbmpOld);  // Delete the cached bitmap
+    HBITMAP hbmpCached = (HBITMAP)::GetCurrentObject(m_hdcMem, OBJ_BITMAP);
+    if (hbmpCached)
+        AfGdi::DeleteObjectBitmap(hbmpCached);  // Delete the previous cached bitmap
     AfGdi::DeleteDC(m_hdcMem);
     m_hdcMem = 0;
 }
@@ -47,7 +47,7 @@ if (m_hdcMem)
 m_hdcMem = AfGdi::CreateCompatibleDC(hdc);
 HBITMAP hbmp = AfGdi::CreateCompatibleBitmap(hdc, width, height);
 HBITMAP hbmpOld = AfGdi::SelectObjectBitmap(m_hdcMem, hbmp);
-AfGdi::DeleteObjectBitmap(hbmpOld);  // Delete the stock bitmap
+// Don't delete hbmpOld - it's the stock bitmap from the new DC
 
 // ... draw to m_hdcMem ...
 
@@ -63,7 +63,7 @@ Uses local DC/bitmap since rotation makes caching impractical:
 HDC hdcMem = AfGdi::CreateCompatibleDC(hdc);
 HBITMAP hbmp = AfGdi::CreateCompatibleBitmap(hdc, width, height);
 HBITMAP hbmpOld = AfGdi::SelectObjectBitmap(hdcMem, hbmp);
-AfGdi::DeleteObjectBitmap(hbmpOld);  // Delete the stock bitmap
+// Don't delete hbmpOld - it's the stock bitmap from the new DC
 
 // ... draw to hdcMem ...
 
@@ -71,7 +71,8 @@ AfGdi::DeleteObjectBitmap(hbmpOld);  // Delete the stock bitmap
 ::PlgBlt(hdc, ..., hdcMem, ...);
 
 // Clean up local resources
-AfGdi::DeleteObjectBitmap(hbmp);
+AfGdi::SelectObjectBitmap(hdcMem, hbmpOld, AfGdi::OLD); // Restore stock bitmap
+AfGdi::DeleteObjectBitmap(hbmp);  // Delete our custom bitmap
 AfGdi::DeleteDC(hdcMem);
 ```
 
@@ -80,16 +81,18 @@ This method already had the correct pattern - it was used as a reference for the
 
 ## Key Points
 
-1. **Stock bitmap deletion**: When a new DC is created, it comes with a default 1x1 stock bitmap. After selecting our custom bitmap, we delete this stock bitmap because we won't need it.
+1. **Stock bitmap handling**: When a new DC is created, it comes with a default 1x1 stock bitmap. When we select our custom bitmap, the stock bitmap is returned but we **do not** delete it. Stock GDI objects should not be deleted by applications. Instead:
+   - For cached DCs (`DrawTheRoot`): Leave the custom bitmap selected; it will be deleted on next draw or in destructor
+   - For local DCs (`DrawTheRootRotated`, `DrawTheRootAt`): Restore the stock bitmap before deleting the DC
 
 2. **Resource ownership**: 
-   - `DrawTheRoot`: Keeps the bitmap in `m_hdcMem` for caching
-   - `DrawTheRootRotated`: Uses local resources and cleans them up
-   - `DrawTheRootAt`: Uses local resources and cleans them up
+   - `DrawTheRoot`: Keeps the custom bitmap selected in `m_hdcMem` for caching
+   - `DrawTheRootRotated`: Uses local DC, restores stock bitmap, deletes custom bitmap and DC
+   - `DrawTheRootAt`: Uses local DC, restores stock bitmap, deletes custom bitmap and DC
 
-3. **Exception safety**: Added proper cleanup in catch blocks for `DrawTheRootRotated` to prevent leaks on exceptions.
+3. **Exception safety**: Added proper cleanup in catch blocks for `DrawTheRootRotated` to prevent leaks on exceptions. The stock bitmap is restored and the custom bitmap is deleted before rethrowing.
 
-4. **ReDrawLastDraw**: This optimization re-blits the cached bitmap when the form is disabled, avoiding a full redraw. It requires `m_hdcMem` to be persistent.
+4. **ReDrawLastDraw**: This optimization re-blits the cached bitmap when the form is disabled, avoiding a full redraw. It requires `m_hdcMem` to be persistent with a valid custom bitmap selected.
 
 ## Testing
 The fix should be tested by:
