@@ -1,0 +1,1142 @@
+COPILOT.md Structure Verification Report
+================================================================================
+
+Src/AppCore/COPILOT.md
+  Lines: 104
+  Headings: 19
+  Type: Leaf
+  Status: Leaf: 104 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # AppCore COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ### Upstream (consumes)
+    ### Downstream (consumed by)
+    ## Interop & Contracts
+    ... and 9 more
+
+Src/CacheLight/COPILOT.md
+  Lines: 113
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 113 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # CacheLight COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/Cellar/COPILOT.md
+  Lines: 58
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 58 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # Cellar COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/Common/COPILOT.md
+  Lines: 37
+  Headings: 6
+  Type: Organizational
+  Status: Organizational: 37 lines (condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # Common Overview
+    ## Purpose
+    ## Subfolder Map
+    ## When Updating This Folder
+    ## Related Guidance
+
+Src/Common/Controls/COPILOT.md
+  Lines: 32
+  Headings: 6
+  Type: Leaf
+  Status: Leaf: 32 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # Controls Overview
+    ## Purpose
+    ## Subfolder Map
+    ## When Updating This Folder
+    ## Related Guidance
+
+Src/Common/FieldWorks/COPILOT.md
+  Lines: 119
+  Headings: 19
+  Type: Leaf
+  Status: Leaf: 119 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # FieldWorks COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ### Upstream (consumes)
+    ### Downstream (consumed by)
+    ## Interop & Contracts
+    ... and 9 more
+
+Src/Common/Filters/COPILOT.md
+  Lines: 117
+  Headings: 19
+  Type: Leaf
+  Status: Leaf: 117 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # Filters COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ### Upstream (consumes)
+    ### Downstream (consumed by)
+    ## Interop & Contracts
+    ... and 9 more
+
+Src/Common/Framework/COPILOT.md
+  Lines: 102
+  Headings: 19
+  Type: Leaf
+  Status: Leaf: 102 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # Framework COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ### Upstream (consumes)
+    ### Downstream (consumed by)
+    ## Interop & Contracts
+    ... and 9 more
+
+Src/Common/FwUtils/COPILOT.md
+  Lines: 65
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 65 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # FwUtils COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/Common/RootSite/COPILOT.md
+  Lines: 61
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 61 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # RootSite COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/Common/ScriptureUtils/COPILOT.md
+  Lines: 73
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 73 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # ScriptureUtils COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/Common/SimpleRootSite/COPILOT.md
+  Lines: 127
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 127 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # SimpleRootSite COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/Common/UIAdapterInterfaces/COPILOT.md
+  Lines: 71
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 71 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # UIAdapterInterfaces COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/Common/ViewsInterfaces/COPILOT.md
+  Lines: 107
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 107 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # ViewsInterfaces COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/DbExtend/COPILOT.md
+  Lines: 58
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 58 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # DbExtend COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/DebugProcs/COPILOT.md
+  Lines: 77
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 77 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # DebugProcs COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/DocConvert/COPILOT.md
+  Lines: 44
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 44 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # DocConvert COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/FXT/COPILOT.md
+  Lines: 66
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 66 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # FXT COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/FdoUi/COPILOT.md
+  Lines: 72
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 72 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # FdoUi COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/FwCoreDlgs/COPILOT.md
+  Lines: 61
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 61 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # FwCoreDlgs COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/FwParatextLexiconPlugin/COPILOT.md
+  Lines: 75
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 75 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # FwParatextLexiconPlugin COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/FwResources/COPILOT.md
+  Lines: 66
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 66 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # FwResources COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/GenerateHCConfig/COPILOT.md
+  Lines: 60
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 60 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # GenerateHCConfig COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/Generic/COPILOT.md
+  Lines: 81
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 81 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # Generic COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/InstallValidator/COPILOT.md
+  Lines: 52
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 52 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # InstallValidator COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/Kernel/COPILOT.md
+  Lines: 65
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 65 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # Kernel COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/LCMBrowser/COPILOT.md
+  Lines: 100
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 100 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # LCMBrowser COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/LexText/COPILOT.md
+  Lines: 37
+  Headings: 6
+  Type: Organizational
+  Status: Organizational: 37 lines (condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # LexText Overview
+    ## Purpose
+    ## Subfolder Map
+    ## When Updating This Folder
+    ## Related Guidance
+
+Src/LexText/Discourse/COPILOT.md
+  Lines: 127
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 127 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # Discourse COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/LexText/FlexPathwayPlugin/COPILOT.md
+  Lines: 58
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 58 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # FlexPathwayPlugin COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/LexText/Interlinear/COPILOT.md
+  Lines: 120
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 120 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # Interlinear (ITextDll) COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/LexText/LexTextControls/COPILOT.md
+  Lines: 124
+  Headings: 19
+  Type: Leaf
+  Status: Leaf: 124 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # LexTextControls COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ### Upstream (consumes)
+    ### Downstream (consumed by)
+    ## Interop & Contracts
+    ... and 9 more
+
+Src/LexText/LexTextDll/COPILOT.md
+  Lines: 74
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 74 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # LexTextDll COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/LexText/Lexicon/COPILOT.md
+  Lines: 112
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 112 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # Lexicon (LexEdDll) COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/LexText/Morphology/COPILOT.md
+  Lines: 110
+  Headings: 17
+  Type: Leaf
+  Status: Leaf: 110 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # Morphology COPILOT summary
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
+
+Src/LexText/ParserCore/COPILOT.md
+  Lines: 186
+  Headings: 27
+  Type: Leaf
+  Status: Leaf: 186 lines with 6 verbose sections (may need condensing)
+  Condensed: ✗
+  Sections:
+    ## Change Log (auto)
+    # ParserCore
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ### Parser Infrastructure
+    ### Parser Implementations
+    ### Model Change Detection
+    ### Data Structures
+    ### XAmple Support (Legacy)
+    ... and 17 more
+
+Src/LexText/ParserUI/COPILOT.md
+  Lines: 118
+  Headings: 24
+  Type: Leaf
+  Status: Leaf: 118 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # ParserUI
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ### Try A Word Dialog
+    ### Parser Reports
+    ### Import Word Set
+    ### Parser Configuration
+    ### Parser Coordination
+    ... and 14 more
+
+Src/ManagedLgIcuCollator/COPILOT.md
+  Lines: 101
+  Headings: 20
+  Type: Leaf
+  Status: Leaf: 101 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # ManagedLgIcuCollator
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ### Collation Engine
+    ### Sort Key Comparison
+    ### Lazy Initialization
+    ## Technology Stack
+    ## Dependencies
+    ... and 10 more
+
+Src/ManagedVwDrawRootBuffered/COPILOT.md
+  Lines: 76
+  Headings: 19
+  Type: Leaf
+  Status: Leaf: 76 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # ManagedVwDrawRootBuffered
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ### Buffered Drawing Engine
+    ### Memory Buffer Management
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ... and 9 more
+
+Src/ManagedVwWindow/COPILOT.md
+  Lines: 73
+  Headings: 18
+  Type: Leaf
+  Status: Leaf: 73 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # ManagedVwWindow
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ### Window Wrapper
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ... and 8 more
+
+Src/MigrateSqlDbs/COPILOT.md
+  Lines: 134
+  Headings: 21
+  Type: Leaf
+  Status: Leaf: 134 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # MigrateSqlDbs
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ### Migration Entry Point
+    ### User Dialogs
+    ### Migration Logic (ImportFrom6_0)
+    ### LDML Writing System Migration
+    ## Technology Stack
+    ... and 11 more
+
+Src/Paratext8Plugin/COPILOT.md
+  Lines: 144
+  Headings: 21
+  Type: Leaf
+  Status: Leaf: 144 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # Paratext8Plugin
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ### Paratext Provider
+    ### Scripture Text Wrappers
+    ### Parser State
+    ### Alert System
+    ## Technology Stack
+    ... and 11 more
+
+Src/ParatextImport/COPILOT.md
+  Lines: 154
+  Headings: 21
+  Type: Leaf
+  Status: Leaf: 154 lines with 6 verbose sections (may need condensing)
+  Condensed: ✗
+  Sections:
+    ## Change Log (auto)
+    # ParatextImport
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ### Import Management
+    ### Difference Detection and Merging
+    ### Wrapper Interfaces (Legacy Adaptation)
+    ### Support Classes
+    ## Technology Stack
+    ... and 11 more
+
+Src/ProjectUnpacker/COPILOT.md
+  Lines: 83
+  Headings: 19
+  Type: Leaf
+  Status: Leaf: 83 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # ProjectUnpacker
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ### Unpacker (static class)
+    ### RegistryData (class)
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ... and 9 more
+
+Src/Transforms/COPILOT.md
+  Lines: 129
+  Headings: 19
+  Type: Leaf
+  Status: Leaf: 129 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # Transforms
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ### Application/ (Parser Integration - 12 XSLT files)
+    ### Presentation/ (Display Formatting - 7 XSLT files)
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ... and 9 more
+
+Src/UnicodeCharEditor/COPILOT.md
+  Lines: 158
+  Headings: 21
+  Type: Leaf
+  Status: Leaf: 158 lines with 6 verbose sections (may need condensing)
+  Condensed: ✗
+  Sections:
+    ## Change Log (auto)
+    # UnicodeCharEditor
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ### Main Application
+    ### Character Editor UI
+    ### ICU Data Installation
+    ### Supporting Infrastructure
+    ## Technology Stack
+    ... and 11 more
+
+Src/Utilities/COPILOT.md
+  Lines: 34
+  Headings: 6
+  Type: Organizational
+  Status: Organizational: 34 lines (condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # Utilities Overview
+    ## Purpose
+    ## Subfolder Map
+    ## When Updating This Folder
+    ## Related Guidance
+
+Src/Utilities/FixFwData/COPILOT.md
+  Lines: 72
+  Headings: 21
+  Type: Leaf
+  Status: Leaf: 72 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # FixFwData
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ### Program.cs (~120 lines)
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ... and 11 more
+
+Src/Utilities/FixFwDataDll/COPILOT.md
+  Lines: 139
+  Headings: 22
+  Type: Leaf
+  Status: Leaf: 139 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # FixFwDataDll
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ### ErrorFixer.cs (~180 lines)
+    ### FixErrorsDlg.cs (~100 lines)
+    ### FwData.cs
+    ### WriteAllObjectsUtility.cs
+    ## Technology Stack
+    ... and 12 more
+
+Src/Utilities/MessageBoxExLib/COPILOT.md
+  Lines: 82
+  Headings: 23
+  Type: Leaf
+  Status: Leaf: 82 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # MessageBoxExLib
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ### MessageBoxEx.cs (~200 lines)
+    ### MessageBoxExForm.cs (~700 lines)
+    ### Supporting Types (~50 lines total)
+    ## Technology Stack
+    ## Dependencies
+    ... and 13 more
+
+Src/Utilities/Reporting/COPILOT.md
+  Lines: 60
+  Headings: 20
+  Type: Leaf
+  Status: Leaf: 60 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # Reporting
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ### ErrorReport.cs (~900 lines)
+    ### UsageEmailDialog.cs (~350 lines)
+    ### ReportingStrings.Designer.cs (~400 lines)
+    ## Technology Stack
+    ## Dependencies
+    ... and 10 more
+
+Src/Utilities/SfmStats/COPILOT.md
+  Lines: 53
+  Headings: 18
+  Type: Leaf
+  Status: Leaf: 53 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # SfmStats
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ### Program.cs (~299 lines)
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ... and 8 more
+
+Src/Utilities/SfmToXml/COPILOT.md
+  Lines: 59
+  Headings: 19
+  Type: Leaf
+  Status: Leaf: 59 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # SfmToXml
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ### Sfm2Xml Library (~7K lines)
+    ### ConvertSFM.exe (~2K lines)
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ... and 9 more
+
+Src/Utilities/XMLUtils/COPILOT.md
+  Lines: 60
+  Headings: 21
+  Type: Leaf
+  Status: Leaf: 60 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # XMLUtils
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ### XmlUtils.cs (~600 lines)
+    ### DynamicLoader.cs (~400 lines)
+    ### Supporting Classes (~500 lines)
+    ## Technology Stack
+    ## Dependencies
+    ... and 11 more
+
+Src/XCore/COPILOT.md
+  Lines: 74
+  Headings: 22
+  Type: Organizational
+  Status: Organizational: 74 lines (condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # XCore
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ### Core Framework (main folder)
+    ### UI Components
+    ### Supporting Infrastructure
+    ## Technology Stack
+    ## Dependencies
+    ... and 12 more
+
+Src/XCore/FlexUIAdapter/COPILOT.md
+  Lines: 56
+  Headings: 20
+  Type: Leaf
+  Status: Leaf: 56 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # FlexUIAdapter
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ### Adapter Classes (~3K lines)
+    ### Supporting (~200 lines)
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ... and 10 more
+
+Src/XCore/SilSidePane/COPILOT.md
+  Lines: 59
+  Headings: 20
+  Type: Leaf
+  Status: Leaf: 59 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # SilSidePane
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ### Core Classes (~2K lines)
+    ### Supporting (~1K lines)
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ... and 10 more
+
+Src/XCore/xCoreInterfaces/COPILOT.md
+  Lines: 77
+  Headings: 22
+  Type: Leaf
+  Status: Leaf: 77 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # xCoreInterfaces
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ### Core Patterns
+    ### UI Abstractions
+    ### Supporting Services
+    ## Technology Stack
+    ## Dependencies
+    ... and 12 more
+
+Src/XCore/xCoreTests/COPILOT.md
+  Lines: 52
+  Headings: 19
+  Type: Leaf
+  Status: Leaf: 52 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # xCoreTests
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ### Test Classes (~500 lines)
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ... and 9 more
+
+Src/views/COPILOT.md
+  Lines: 90
+  Headings: 28
+  Type: Leaf
+  Status: Leaf: 90 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # views
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ### Box Hierarchy (VwSimpleBoxes.h, VwTextBoxes.h, VwTableBox.h)
+    ### Root and Environment
+    ### Selection and Interaction
+    ### Text Storage and Access (VwTextStore.cpp/h, VwTxtSrc.cpp/h)
+    ### Property Management (VwPropertyStore.cpp/h)
+    ... and 18 more
+
+Src/xWorks/COPILOT.md
+  Lines: 101
+  Headings: 22
+  Type: Leaf
+  Status: Leaf: 101 lines (likely condensed)
+  Condensed: ✓
+  Sections:
+    ## Change Log (auto)
+    # xWorks
+    ## Purpose
+    ## Architecture
+    ## Key Components
+    ### Key Classes
+    ### Key Interfaces
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ... and 12 more
+
