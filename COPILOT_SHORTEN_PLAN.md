@@ -247,3 +247,59 @@ Total savings: 445 lines removed (620 → 175 lines)
 
 ### Completion Status
 ✅ **ALL 61 FILES COMPLETE** - All COPILOT.md files have been systematically reviewed, condensed, and validated per the strategy documented above.
+
+---
+
+## Phase 5: Post-9.3 Code Changes Review
+
+Analysis of git commits between current branch and release/9.3 identified 30 folders with code changes that may need COPILOT.md updates to reflect new functionality, architecture changes, or added components.
+
+### Folders Prioritized by Change Volume (Needs Review)
+
+**High Priority** - Substantial changes (>30 files changed):
+- [ ] Src/Common/ (141 files changed) - Extensive updates across multiple subfolders
+- [ ] Src/LexText/ (100 files changed) - Major changes requiring detailed review
+- [ ] Src/xWorks/ (40 files changed) - Significant application-level changes
+- [ ] Src/FwCoreDlgs/ (39 files changed) - Core dialog changes
+- [ ] Src/Utilities/ (32 files changed) - Multiple utility subfolder changes
+
+**Medium Priority** - Moderate changes (10-30 files):
+- [ ] Src/XCore/ (25 files changed) - Framework changes
+- [ ] Src/ParatextImport/ (20 files changed) - Import pipeline updates
+- [ ] Src/FXT/ (11 files changed) - Transform tool changes
+
+**Lower Priority** - Focused changes (4-9 files):
+- [ ] Src/FwParatextLexiconPlugin/ (8 files changed)
+- [ ] Src/views/ (7 files changed)
+- [ ] Src/CacheLight/ (6 files changed)
+- [ ] Src/UnicodeCharEditor/ (5 files changed)
+- [ ] Src/ManagedVwWindow/ (5 files changed)
+- [ ] Src/Paratext8Plugin/ (4 files changed)
+- [ ] Src/ManagedLgIcuCollator/ (4 files changed)
+- [ ] Src/InstallValidator/ (4 files changed)
+- [ ] Src/Generic/ (4 files changed)
+- [ ] Src/FdoUi/ (4 files changed)
+
+**Minimal Priority** - Small focused changes (1-3 files):
+- [ ] Src/ManagedVwDrawRootBuffered/ (3 files changed)
+- [ ] Src/LCMBrowser/ (3 files changed)
+- [ ] Src/GenerateHCConfig/ (3 files changed)
+- [ ] Src/ProjectUnpacker/ (2 files changed)
+- [ ] Src/MigrateSqlDbs/ (2 files changed)
+- [ ] Src/FwResources/ (2 files changed)
+- [ ] Src/Kernel/ (1 file changed)
+- [ ] Src/DebugProcs/ (1 file changed)
+
+### Review Process for Each Folder
+1. Run detection script: `python .github/detect_copilot_needed.py --strict --folders Src/<Folder>`
+2. If impacted, plan updates: `python .github/plan_copilot_updates.py --folders Src/<Folder> --out .cache/copilot/<folder>-plan.json`
+3. Review the plan and git log to understand code changes
+4. Apply automated updates: `python .github/copilot_apply_updates.py --plan .cache/copilot/<folder>-plan.json`
+5. Manually update narrative sections (Purpose, Key Components, Architecture) to reflect new code
+6. Validate: `python .github/check_copilot_docs.py --paths Src/<Folder>/COPILOT.md --fail`
+
+### Notes
+- Focus on High Priority folders first (Common, LexText, xWorks, FwCoreDlgs, Utilities)
+- Many folders may already have accurate COPILOT.md despite code changes (e.g., bug fixes, refactoring)
+- Use git log to determine if changes are substantive enough to warrant narrative updates
+- The condensing phase (Phases 1-4) is complete; this phase focuses on accuracy/currency of content
