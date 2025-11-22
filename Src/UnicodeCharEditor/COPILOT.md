@@ -104,108 +104,19 @@ Workflow: User edits PUA characters → saves to CustomChars.xml → installs to
 - **Help system**: IHelpTopicProvider for F1 help integration
 
 ## Threading & Performance
-- **UI thread**: All UI operations on main thread (WinForms single-threaded model)
-- **Synchronous operations**: File I/O and ICU data installation synchronous
-- **Performance characteristics**:
-  - Unicode data loading: Fast (<1 second for UnicodeData.txt ~1.5MB)
-  - CustomChars.xml load/save: Fast (<100ms for typical PUA definitions)
-  - ICU data installation: Moderate (1-3 seconds, modifies 3 files)
-  - File locking retry: Can add seconds if ICU files locked by other processes
-- **Dictionary lookups**: Dictionary<int, PUACharacter> for O(1) character access
-  - m_dictCustomChars: User-defined PUA overrides
-  - m_dictModifiedChars: Standard Unicode overrides
-- **ListView sorting**: PuaListItemComparer sorts by numeric codepoint (efficient)
-- **No background threading**: All operations on UI thread with progress feedback via UI updates
-- **File locking handling**: Spawns child process with --cleanup to retry on IcuLockedException
-- **No caching**: Unicode data loaded fresh on startup (~1 second overhead)
+UI thread for all operations (WinForms single-threaded). Synchronous file I/O. Spawns child process for locked file retry.
 
 ## Config & Feature Flags
-- **Command-line mode switches**:
-  - `--install`: Headless installation (no GUI), installs CustomChars.xml to ICU
-  - `--log`: Enable LogFile.IsLogging (writes to UnicodeCharEditor.log)
-  - `--verbose`: Enable LogFile.IsVerbose (detailed logging)
-  - `--cleanup <processId>`: Internal mode for locked file retry (spawned by installer)
-- **CustomChars.xml location**: %LOCALAPPDATA%\SIL\FieldWorks\CustomChars.xml
-  - Created on first save, persists user PUA definitions
-- **ICU data folder**: Discovered via registry (FwRegistryHelper)
-  - Typical: Program Files\SIL\FieldWorks\Icu*\data\
-- **UnicodeDataOverrides.txt**: Optional file for standard Unicode property overrides
-  - Allows modifying non-PUA characters (advanced use)
-- **Backup files**: PUAInstaller creates .bak files before modifying ICU data
-  - UndoFiles struct tracks backups for rollback on error
-- **Error handling**: ErrorCodes enum for application errors, IcuErrorCodes for ICU-specific
-- **Help topics**: HelpTopicPaths.resx for F1 help mapping
+Command-line switches: --install (headless), --log, --verbose, --cleanup. CustomChars.xml in %LOCALAPPDATA%\SIL\FieldWorks\. ICU data folder via registry.
 
 ## Build Information
-- **Project type**: C# WinExe (Windows GUI application)
-- **Build**: `msbuild UnicodeCharEditor.csproj` or via FieldWorks.sln
-- **Output**: UnicodeCharEditor.exe (standalone executable)
-- **Dependencies**:
-  - LCModel.Core.Text (PUACharacter)
-  - Common/FwUtils (FW utilities)
-  - SIL.Utils
-  - CommandLineParser (NuGet)
-  - System.Windows.Forms
-- **Test project**: UnicodeCharEditorTests/UnicodeCharEditorTests.csproj (1 test file)
-- **Resources**: 3 .resx files (CharEditorWindow, CustomCharDlg, HelpTopicPaths)
-- **Config**: App.config (assembly bindings, settings)
-- **Deployment**: Included in FLEx installer, accessible via Tools menu or standalone execution
+C# WinExe. Build via `msbuild UnicodeCharEditor.csproj`. Output: UnicodeCharEditor.exe.
 
 ## Interfaces and Data Models
-
-### Interfaces
-- **IHelpTopicProvider** (from Common/FwUtils)
-  - Purpose: F1 help integration
-  - Implementation: CharEditorWindow provides help topics for context-sensitive help
-  - Methods: GetHelpTopic() returns help topic key
-
-### Data Models
-- **PUACharacter** (from LCModel.Core.Text)
-  - Purpose: Represents Private Use Area character with Unicode properties
-  - Properties: CodePoint (int), GeneralCategory, CombiningClass, Decomposition, Name, etc.
-  - Usage: Serialized to/from CustomChars.xml
-
-- **PuaListItem** (nested class in CharEditorWindow)
-  - Purpose: ListView item wrapper for PUA characters
-  - Properties: Character, Text (hex representation)
-  - Sorting: Via PuaListItemComparer by numeric codepoint
-
-- **UndoFiles** (struct in PUAInstaller)
-  - Purpose: Track ICU data file backups for rollback
-  - Properties: UnicodeDataBakPath, NfkcBakPath, NfcBakPath
-  - Usage: Created before ICU modification, restored on error
-
-### Exceptions
-- **IcuLockedException**: Thrown when ICU data files locked by another process
-- **UceException**: General UnicodeCharEditor exception (base class)
-- **PuaException**: PUA-specific exception
-
-### Enums
-- **ErrorCodes**: Application error codes (Success, FileAccessError, InvalidArgument, etc.)
-- **IcuErrorCodes**: ICU-specific error codes (mapped from ICU return values)
+IHelpTopicProvider for F1 help. PUACharacter (from LCModel.Core.Text) for PUA definitions. Exceptions: IcuLockedException, UceException, PuaException.
 
 ## Entry Points
-- **GUI mode** (default): `UnicodeCharEditor.exe`
-  - Launches CharEditorWindow
-  - User edits PUA characters, saves to CustomChars.xml
-  - Manual install via File→Install or automatic on save
-- **Command-line install**: `UnicodeCharEditor.exe --install`
-  - Headless mode: Installs CustomChars.xml to ICU without GUI
-  - Used by FLEx installer or automated scripts
-  - Exit code indicates success/failure
-- **Logging mode**: `UnicodeCharEditor.exe --log --verbose`
-  - Enables detailed logging to UnicodeCharEditor.log
-  - Useful for troubleshooting installation issues
-- **Cleanup mode** (internal): `UnicodeCharEditor.exe --cleanup <processId>`
-  - Spawned by PUAInstaller when ICU files locked
-  - Waits for parent process to exit, retries installation
-- **Invocation from FLEx**: Tools→Unicode Character Editor
-  - Launches UnicodeCharEditor.exe as separate process
-- **Typical workflows**:
-  - Create PUA character: Add entry, set properties, save, install
-  - Modify existing: Edit in list, change properties, save
-  - Remove character: Delete from list, save, install
-  - Batch install: Edit offline, run with --install flag
+GUI mode: `UnicodeCharEditor.exe`. Command-line: `--install` (headless), `--log --verbose` (logging). Invoked from FLEx via Tools→Unicode Character Editor.
 
 ## Test Index
 - **Test project**: UnicodeCharEditorTests/UnicodeCharEditorTests.csproj
@@ -264,47 +175,8 @@ Workflow: User edits PUA characters → saves to CustomChars.xml → installs to
 - **Backup**: CustomChars.xml backed up automatically before installation
 
 ## Related Folders
-- **LCModel.Core/** - PUACharacter class definition, Unicode utilities
-- **Common/FwUtils/** - Registry access, help topic provider interface
-- **Kernel/** - May consume installed PUA character definitions
+- **LCModel.Core/**: PUACharacter class
+- **Common/FwUtils/**: Registry access
 
 ## References
-- **Project**: UnicodeCharEditor.csproj (.NET Framework 4.8.x WinExe)
-- **Test project**: UnicodeCharEditorTests/UnicodeCharEditorTests.csproj
-- **16 CS files** (~4.1K lines): Program.cs, CharEditorWindow.cs, CustomCharDlg.cs, PUAInstaller.cs, LogFile.cs, exceptions, enums
-- **Resources**: CharEditorWindow.resx, CustomCharDlg.resx, HelpTopicPaths.resx
-- **Config**: App.config
-
-## Auto-Generated Project and File References
-- Project files:
-  - Src/UnicodeCharEditor/BuildInclude.targets
-  - Src/UnicodeCharEditor/UnicodeCharEditor.csproj
-  - Src/UnicodeCharEditor/UnicodeCharEditorTests/UnicodeCharEditorTests.csproj
-- Key C# files:
-  - Src/UnicodeCharEditor/CharEditorWindow.Designer.cs
-  - Src/UnicodeCharEditor/CharEditorWindow.cs
-  - Src/UnicodeCharEditor/CustomCharDlg.cs
-  - Src/UnicodeCharEditor/ErrorCodes.cs
-  - Src/UnicodeCharEditor/HelpTopicPaths.Designer.cs
-  - Src/UnicodeCharEditor/IcuErrorCodes.cs
-  - Src/UnicodeCharEditor/IcuLockedException.cs
-  - Src/UnicodeCharEditor/LogFile.cs
-  - Src/UnicodeCharEditor/PUAInstaller.cs
-  - Src/UnicodeCharEditor/Program.cs
-  - Src/UnicodeCharEditor/Properties/AssemblyInfo.cs
-  - Src/UnicodeCharEditor/Properties/Resources.Designer.cs
-  - Src/UnicodeCharEditor/Properties/Settings.Designer.cs
-  - Src/UnicodeCharEditor/PuaException.cs
-  - Src/UnicodeCharEditor/UceException.cs
-  - Src/UnicodeCharEditor/UnicodeCharEditorTests/PUAInstallerTests.cs
-- Data contracts/transforms:
-  - Src/UnicodeCharEditor/App.config
-  - Src/UnicodeCharEditor/CharEditorWindow.resx
-  - Src/UnicodeCharEditor/CustomCharDlg.resx
-  - Src/UnicodeCharEditor/HelpTopicPaths.resx
-  - Src/UnicodeCharEditor/Properties/Resources.resx
-
-## Test Infrastructure
-- **UnicodeCharEditorTests/** subfolder with 1 test file
-- **PUAInstallerTests** - Tests for ICU data installation logic
-- Run via: `dotnet test` or Visual Studio Test Explorer
+16 C# files (~4.1K lines). Key: Program.cs, CharEditorWindow.cs, PUAInstaller.cs. See `.cache/copilot/diff-plan.json` for file listings.
