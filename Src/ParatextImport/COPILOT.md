@@ -28,63 +28,17 @@ C# library (net48) with 22 source files (~19K lines). Complex import pipeline co
 Import flow: User selects Paratext project → ParatextSfmImporter parses USFM → BookMerger detects differences → User reviews/resolves differences → Import updates LCModel Scripture → UndoImportManager tracks changes for rollback.
 
 ## Key Components
-
-### Import Management
-- **ParatextImportManager** (ParatextImportManager.cs) - Central coordinator for Paratext imports
-  - Entry point: `ImportParatext(Form mainWnd, LcmCache cache, IScrImportSet importSettings, ...)` - Static entry point called via reflection
-  - `ImportSf()` - Main import workflow with undo task wrapping
-  - `CompleteImport(ScrReference firstImported)` - Post-import finalization
-  - Manages UndoImportManager, settings, and UI coordination
-- **ParatextImportUi** (ParatextImportUi.cs) - UI presentation and dialogs
-- **ParatextSfmImporter** (ParatextSfmImporter.cs) - USFM/SFM file parsing and import logic
-
-### Difference Detection and Merging
-- **BookMerger** (BookMerger.cs) - Scripture book comparison and merge engine
-  - `DetectDifferences(IScrBook bookCurr, IScrBook bookRev, ...)` - Identify changes between versions
-  - `MakeParaCorrelationInfo(...)` - Calculate paragraph correlation factors
-  - Uses **ParaCorrelationInfo** for tracking paragraph mappings
-- **Cluster** (Cluster.cs) - Groups related differences for user review
-  - `ClusterType` enum: AddedVerses, MissingVerses, OrphanedVerses, etc.
-  - **ClusterListHelper**, **OverlapInfo**, **SectionHeadCorrelationHelper** - Cluster analysis utilities
-- **Difference** (Difference.cs) - Individual Scripture change representation
-  - `DifferenceType` enum: SectionHeadAddedToCurrent, TextDifference, VerseMoved, etc.
-  - **DifferenceList**, **Comparison** - Difference collections and analysis
-- **DiffLocation** (DiffLocation.cs) - Scripture reference and location tracking
-
-### Wrapper Interfaces (Legacy Adaptation)
-- **ISCScriptureText** (ISCScriptureText.cs) - Abstracts Paratext text access
-- **ISCTextSegment** (ISCTextSegment.cs) - Individual text segment interface
-- **ISCTextEnum** (ISCTextEnum.cs) - Enumeration over text segments
-- **IBookVersionAgent** (IBookVersionAgent.cs) - Book version comparison contract
-- **SCScriptureText**, **SCTextSegment**, **SCTextEnum** (SC*.cs) - Implementations wrapping Paratext SDK
-
-### Support Classes
-- **ImportedBooks** (ImportedBooks.cs) - Tracks which books were imported in session
-- **ImportStyleProxy** (ImportStyleProxy.cs) - Style mapping and proxy creation
-- **ScrAnnotationInfo** (ScrAnnotationInfo.cs) - Scripture annotation metadata
-- **ScrObjWrapper** (ScrObjWrapper.cs) - Wraps LCModel Scripture objects for comparison
-- **UndoImportManager** (UndoImportManager.cs) - Import rollback tracking
-- **ReplaceInFilterFixer** (ReplaceInFilterFixer.cs) - Filter updates during import
-- **ParatextLoadException** (ParatextLoadException.cs) - Import-specific exceptions
-- **ParatextImportExtensions** (ParatextImportExtensions.cs) - Extension methods for import
+- **ParatextImportManager**: Central coordinator, ImportParatext() entry point, manages UndoImportManager
+- **BookMerger/Cluster/Difference**: Detects differences, groups for review, represents individual changes
+- **ISCScriptureText interfaces**: Abstracts Paratext SDK access (ISCTextSegment, ISCTextEnum, IBookVersionAgent)
+- **Support classes**: ImportedBooks, ImportStyleProxy, ScrObjWrapper, UndoImportManager
 
 ## Technology Stack
-- **Language**: C#
-- **Target framework**: .NET Framework 4.8.x (net48)
-- **Key libraries**:
-  - LCModel (Scripture data model, LcmCache)
-  - LCModel.Core (IScrBook, IScrSection, ITsString)
-  - Common/Controls (UI dialogs, progress indicators)
-  - Common/FwUtils (IApp, utilities)
-  - Common/RootSites (UI integration)
-  - SIL.Reporting (logging)
-- **External integration**: Paratext SDK (wrapped via ISCScriptureText interfaces)
-- **Resource files**: .resx for localized strings
+C# (net48). Key libraries: LCModel, LCModel.Core, Common/Controls, Paratext SDK (wrapped via ISCScriptureText interfaces).
 
 ## Dependencies
-- **Upstream**: LCModel.Core (Scripture, Text, KernelInterfaces), LCModel (cache, domain services, infrastructure), Common/Controls (UI), Common/FwUtils (utilities, IApp), Common/RootSites (UI integration), SIL.Reporting (logging)
-- **Downstream consumers**: xWorks (import commands), LexText applications (Scripture import), Common/ScriptureUtils (ParatextHelper coordination)
-- **External**: Paratext SDK (not bundled - USFM/project access via wrappers)
+**Upstream**: LCModel, Common/Controls, Paratext SDK
+**Downstream**: xWorks, LexText applications, Common/ScriptureUtils
 
 ## Interop & Contracts
 - **Paratext SDK abstraction**: ISCScriptureText, ISCTextSegment, ISCTextEnum interfaces
@@ -136,38 +90,7 @@ ParatextImportManager.ImportParatext() called via reflection from File→Import�
 - **Coverage**: USFM parsing, difference detection, merge logic, style handling, undo tracking
 
 ## Usage Hints
-- **Typical import workflow**:
-  1. Ensure Paratext project exists and is accessible
-  2. In FLEx: File→Import→Paratext Project
-  3. Select project and books to import
-  4. Review detected differences (additions, changes, deletions)
-  5. Resolve conflicts (choose Paratext version, FLEx version, or manual merge)
-  6. Complete import (updates Scripture data in LCModel)
-- **Difference types**: 33+ types categorized for review
-  - Additions: SectionHeadAddedToCurrent, VersesAddedToCurrent
-  - Deletions: SectionHeadMissingInCurrent, VersesMissingInCurrent
-  - Changes: TextDifference, VerseNumberDifference
-  - Moves: VerseMoved, SectionHeadMoved
-- **Cluster grouping**: Related differences grouped for efficient review
-  - AddedVerses cluster: All added verses in a range
-  - MissingVerses cluster: All missing verses in a range
-  - OrphanedVerses cluster: Verses without clear correlation
-- **Undo/rollback**: Import wrapped in single UndoTask
-  - Edit→Undo after import rolls back all changes atomically
-- **Performance tips**:
-  - Import large books (Psalms, Isaiah) in smaller batches if slow
-  - Review differences carefully; auto-merge can have unexpected results
-  - Use "Accept all" cautiously; review conflicts manually
-- **Common pitfalls**:
-  - Paratext project not accessible: Verify Paratext installation and permissions
-  - Style mapping errors: Ensure FW styles exist for USFM markers
-  - Merge conflicts: Manual resolution required for ambiguous changes
-  - Large imports: Can take minutes for books with heavy edits
-- **Debugging tips**:
-  - Enable logging (SIL.Reporting) for detailed difference detection traces
-  - Use ParatextImportNoUi tests for reproducing issues without UI
-  - Mock ISCScriptureText for testing without Paratext SDK
-- **Extension points**: Implement ISCScriptureText for custom scripture sources
+File→Import→Paratext Project, select books, review 33+ difference types (additions/deletions/changes/moves), resolve conflicts, complete import. Import wrapped in single UndoTask for rollback.
 
 ## Related Folders
 - **Common/ScriptureUtils/**: Paratext integration

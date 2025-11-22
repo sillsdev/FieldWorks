@@ -652,23 +652,23 @@ Src/LexText/Morphology/COPILOT.md
     ... and 7 more
 
 Src/LexText/ParserCore/COPILOT.md
-  Lines: 186
-  Headings: 27
+  Lines: 125
+  Headings: 21
   Type: Leaf
-  Status: Leaf: 186 lines with 6 verbose sections (may need condensing)
-  Condensed: ✗
+  Status: Leaf: 125 lines (likely condensed)
+  Condensed: ✓
   Sections:
     ## Change Log (auto)
     # ParserCore
     ## Purpose
     ## Architecture
     ## Key Components
-    ### Parser Infrastructure
-    ### Parser Implementations
-    ### Model Change Detection
-    ### Data Structures
-    ### XAmple Support (Legacy)
-    ... and 17 more
+    ## Technology Stack
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 11 more
 
 Src/LexText/ParserUI/COPILOT.md
   Lines: 118
@@ -785,23 +785,23 @@ Src/Paratext8Plugin/COPILOT.md
     ... and 11 more
 
 Src/ParatextImport/COPILOT.md
-  Lines: 154
-  Headings: 21
+  Lines: 81
+  Headings: 17
   Type: Leaf
-  Status: Leaf: 154 lines with 6 verbose sections (may need condensing)
-  Condensed: ✗
+  Status: Leaf: 81 lines (likely condensed)
+  Condensed: ✓
   Sections:
     ## Change Log (auto)
     # ParatextImport
     ## Purpose
     ## Architecture
     ## Key Components
-    ### Import Management
-    ### Difference Detection and Merging
-    ### Wrapper Interfaces (Legacy Adaptation)
-    ### Support Classes
     ## Technology Stack
-    ... and 11 more
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
 
 Src/ProjectUnpacker/COPILOT.md
   Lines: 83
@@ -842,23 +842,23 @@ Src/Transforms/COPILOT.md
     ... and 9 more
 
 Src/UnicodeCharEditor/COPILOT.md
-  Lines: 158
-  Headings: 21
+  Lines: 87
+  Headings: 17
   Type: Leaf
-  Status: Leaf: 158 lines with 6 verbose sections (may need condensing)
-  Condensed: ✗
+  Status: Leaf: 87 lines (likely condensed)
+  Condensed: ✓
   Sections:
     ## Change Log (auto)
     # UnicodeCharEditor
     ## Purpose
     ## Architecture
     ## Key Components
-    ### Main Application
-    ### Character Editor UI
-    ### ICU Data Installation
-    ### Supporting Infrastructure
     ## Technology Stack
-    ... and 11 more
+    ## Dependencies
+    ## Interop & Contracts
+    ## Threading & Performance
+    ## Config & Feature Flags
+    ... and 7 more
 
 Src/Utilities/COPILOT.md
   Lines: 34
