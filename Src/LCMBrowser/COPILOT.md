@@ -60,51 +60,22 @@ C# Windows Forms application (WinExe, net48) extending SIL.ObjectBrowser base cl
   - Static list in LCMBrowserForm.CFields
 
 ## Technology Stack
-- C# .NET Framework 4.8.x (net8)
-- Windows Forms (WinExe)
-- WeifenLuo.WinFormsUI.Docking (docking panel framework)
-- SIL.ObjectBrowser base framework
-- LCModel for data access
-- ICU and SLDR (writing system support)
+C# .NET Framework 4.8.x, Windows Forms (WinExe), WeifenLuo.WinFormsUI.Docking, SIL.ObjectBrowser, LCModel, ICU/SLDR.
 
 ## Dependencies
-
-### Upstream (consumes)
-- **LCModel**: Core data access (LcmCache, ICmObjectRepository, ILangProject)
-- **SIL.ObjectBrowser**: Base browser framework (ObjectBrowser, InspectorWnd)
-- **Common/FwUtils**: Utilities (FwRegistryHelper, FwUtils)
-- **Common/Framework/DetailControls**: Detail control support
-- **FdoUi**: UI helpers (CmObjectUi integration)
-- **WeifenLuo.WinFormsUI.Docking**: Docking panel UI
-- **SIL.WritingSystems**: Writing system support (SLDR)
-
-### Downstream (consumed by)
-- **Developers**: Browse/debug LCM data during development
-- **QA**: Validate data integrity, inspect object relationships
-- **Support**: Troubleshoot data issues in field
+Consumes: LCModel (LcmCache, ICmObjectRepository), SIL.ObjectBrowser, FwUtils, FdoUi, WeifenLuo.WinFormsUI.Docking. Used by: developers, QA, support (debugging/troubleshooting tool).
 
 ## Interop & Contracts
-- **LcmCache**: Read/write access to LCModel database
-- **ICmObjectRepository**: Object retrieval by GUID/class
-- **ILangProject**: Root project object access
-- **FwAppArgs**: Project selection via BrowserProjectId
+LcmCache (read/write), ICmObjectRepository (GUID/class retrieval), ILangProject, FwAppArgs (BrowserProjectId).
 
 ## Threading & Performance
-- **STAThread**: Required for Windows Forms
-- **UI thread**: All LCM access on UI thread (not multi-threaded)
-- **Lazy loading**: Tree/list views load data on demand
+STAThread, UI thread only. Lazy loading for tree/list views.
 
 ## Config & Feature Flags
-- **AllowEdit** (m_mnuToolsAllowEdit): Enable/disable object editing (default: disabled for safety)
-- **ShowCmObjectProperties** (Settings.Default.ShowCmObjectProperties): Show base CmObject properties
-- **DisplayVirtual** (m_mnuDisplayVirtual): Show virtual properties
+AllowEdit (default: disabled for safety), ShowCmObjectProperties, DisplayVirtual.
 
 ## Build Information
-- **Project file**: LCMBrowser.csproj (net48, OutputType=WinExe)
-- **Output**: LCMBrowser.exe
-- **Build**: Via top-level FieldWorks.sln or: `msbuild LCMBrowser.csproj`
-- **Run**: `LCMBrowser.exe` (prompts for project selection)
-- **Dependencies**: WeifenLuo.WinFormsUI.Docking.dll (included)
+LCMBrowser.csproj (net48, WinExe), output: LCMBrowser.exe. Run: `LCMBrowser.exe` (prompts for project).
 
 ## Interfaces and Data Models
 
@@ -138,37 +109,16 @@ C# Windows Forms application (WinExe, net48) extending SIL.ObjectBrowser base cl
   - Notes: OnGuidSearchActivated() handler
 
 ## Entry Points
-- **LCMBrowser.exe**: Main executable
-- **Main()**: Entry point with ICU/SLDR initialization
-- **LCMBrowserForm**: Main window
+LCMBrowser.exe (Main() with ICU/SLDR init), LCMBrowserForm main window.
 
 ## Test Index
-No dedicated test project (developer/QA tool).
+No test project (developer/QA tool).
 
 ## Usage Hints
-- **Launch**: Run LCMBrowser.exe, select project from dialog
-- **Navigate**: Use ModelWnd to explore classes, LCMClassList to browse objects
-- **Inspect**: Select object in tree to view properties in LCMInspectorList
-- **GUID search**: Enter GUID in toolbar search box to jump to object
-- **Property selection**: Use "Select Properties" menu to customize displayed properties per class
-- **Edit mode**: Enable "Allow Edit" menu (use with caution; can corrupt data)
-- **Save**: Use "Save File" menu to persist changes
-- **Virtual properties**: Toggle "Display Virtual" to show computed properties
-- **CmObject properties**: Toggle toolbar button to show/hide base CmObject fields
-- **Docking**: Drag panels to rearrange workspace
-- **Developer tool**: Not for end users; for development/QA/debugging
+Launch LCMBrowser.exe, select project. Navigate via ModelWnd (classes) and LCMClassList (objects). GUID search in toolbar. "Select Properties" menu for customization. Enable "Allow Edit" with caution. Developer/QA/debugging tool only.
 
 ## Related Folders
-- **LCModel**: Data model being browsed
-- **SIL.ObjectBrowser**: Base framework
-- **FdoUi**: UI integration
-- **Common/FwUtils**: Utilities
+LCModel (data model), SIL.ObjectBrowser (base framework), FdoUi, FwUtils.
 
 ## References
-- **Project file**: LCMBrowser.csproj (net48, WinExe)
-- **Key C# files**: LCMBrowserForm.cs (2817 lines), LCMInspectorList.cs (1373 lines), LCMClassList.cs (537 lines), ModelWnd.cs (449 lines), ClassPropertySelector.cs (200 lines), BrowserProjectId.cs (151 lines)
-- **Total lines of code**: 5658
-- **Output**: LCMBrowser.exe (Output/Debug or Output/Release)
-- **Framework**: .NET Framework 4.8.x
-- **UI framework**: Windows Forms + WeifenLuo Docking
-- **Namespace**: LCMBrowser
+LCMBrowser.csproj (net48, WinExe), 5.7K lines. Key files: LCMBrowserForm.cs (2.8K), LCMInspectorList.cs (1.4K), LCMClassList.cs (537). See `.cache/copilot/diff-plan.json` for file inventory.
