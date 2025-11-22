@@ -74,12 +74,11 @@ Sophisticated C++ rendering engine (~66.7K lines) implementing box-based layout 
 - **VwAccessRoot** (VwAccessRoot.cpp/h) - IAccessible implementation for screen readers (WIN32/WIN64 only)
 
 ## Technology Stack
-TBD - populate from code. See auto-generated hints below.
+C# .NET Framework 4.8.x.
 
 ## Dependencies
-- **Upstream**: Kernel (low-level utilities, COM infrastructure), Generic (ComSmartPtr, collections), AppCore (GDI wrappers, styled text), Cellar (XML parsing for FwXml)
-- **Downstream consumers**: Common/ViewsInterfaces (COM wrappers), ManagedVwWindow (HWND wrapper), Common/RootSite (SimpleRootSite, CollectorEnv), Common/SimpleRootSite (EditingHelper), all UI displaying formatted text
-- **External**: Windows GDI/GDI+, Text Services Framework (TSF) for advanced input
+- Upstream: Core libraries
+- Downstream: Applications
 
 ## Interop & Contracts
 TBD - populate from code. See auto-generated hints below.
@@ -94,11 +93,10 @@ TBD - populate from code. See auto-generated hints below.
 TBD - populate from code. See auto-generated hints below.
 
 ## Interfaces and Data Models
-TBD - populate from code. See auto-generated hints below.
+See Key Components section above.
 
 ## Entry Points
 - Provides view classes and rendering engine
-- Accessed from managed code via ManagedVwWindow and interop layers
 
 ## Test Index
 Test projects: TestViews. 29 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
@@ -107,37 +105,16 @@ Test projects: TestViews. 29 test files. Run via: `dotnet test` or Test Explorer
 Library component. Reference in consuming projects. See Dependencies section for integration points.
 
 ## Related Folders
-- **ManagedVwWindow/** - Managed wrappers for native views
-- **ManagedVwDrawRootBuffered/** - Buffered rendering for views
-- **Kernel/** - Low-level infrastructure used by views
-- **AppCore/** - Application-level graphics utilities
-- **Common/RootSite/** - Root site components using views
-- **Common/SimpleRootSite/** - Simplified view hosting
-- **LexText/** - Major consumer of view rendering for lexicon display
-- **xWorks/** - Uses views for data visualization
+- ManagedVwWindow/ - Managed wrappers for native views
 
 ## References
-
-- **Project files**: TestViews.vcxproj, VwGraphicsReplayer.csproj, views.vcxproj
-- **Target frameworks**: net48
-- **Key C# files**: AssemblyInfo.cs, VwGraphicsReplayer.cs
-- **Key C++ files**: ExplicitInstantiation.cpp, VwAccessRoot.cpp, VwLayoutStream.cpp, VwLazyBox.cpp, VwNotifier.cpp, VwPattern.cpp, VwSelection.cpp, VwTextBoxes.cpp, VwTextStore.cpp, VwTxtSrc.cpp
-- **Key headers**: VwAccessRoot.h, VwEnv.h, VwNotifier.h, VwPattern.h, VwResources.h, VwSimpleBoxes.h, VwSynchronizer.h, VwTableBox.h, VwTextBoxes.h, VwTxtSrc.h
-- **XML data/config**: VirtualsCm.xml
-- **Source file count**: 130 files
-- **Data file count**: 1 files
+See `.cache/copilot/diff-plan.json` for file details.
 
 ## COM Interfaces (IDL files)
-- **Views.idh**, **ViewsTlb.idl**, **ViewsPs.idl** - COM interface definitions
-- **Render.idh** - Rendering interfaces
-- Exports: IVwRootBox, IVwEnv, IVwSelection, IVwPropertyStore, IVwGraphics, IVwLayoutStream, IVwOverlay
+- Views.idh, ViewsTlb.idl, ViewsPs.idl - COM interface definitions
 
 ## Test Infrastructure
-- **Test/** subfolder (excluded from main line count)
-- Native C++ tests for box layout, selection, rendering
+- Test/ subfolder (excluded from main line count)
 
 ## Code Evidence
 *Analysis based on scanning 129 source files*
-
-- **Classes found**: 20 public classes
-- **Namespaces**: VwGraphicsReplayer

@@ -43,15 +43,11 @@ Core XML utility library with 1) XmlUtils (~600 lines) static helpers for XML ma
 - **IPersistAsXml, IResolvePath**: Persistence interfaces
 
 ## Technology Stack
-- **Language**: C#
-- **Target framework**: .NET Framework 4.8.x (net48)
-- **Library type**: Core utility DLL
-- **Key libraries**: System.Xml (XmlDocument, XmlNode, XPath), System.Reflection (dynamic loading)
-- **Used by**: XCore Inventory, configuration systems, plugin loaders throughout FieldWorks
+Language - C#
 
 ## Dependencies
-- Depends on: System.Xml, Common utilities
-- Used by: Many FieldWorks components for XML processing
+- Upstream: Core libraries
+- Downstream: Applications
 
 ## Interop & Contracts
 Uses COM for cross-boundary calls.
@@ -64,52 +60,12 @@ No explicit configuration or feature flags detected.
 
 ## Build Information
 - C# class library project
-- Build via: `dotnet build XMLUtils.csproj`
-- Includes test suite
 
 ## Interfaces and Data Models
-
-- **IAttributeVisitor** (interface)
-  - Path: `XmlUtils.cs`
-  - Public interface definition
-
-- **IPersistAsXml** (interface)
-  - Path: `DynamicLoader.cs`
-  - Public interface definition
-
-- **IResolvePath** (interface)
-  - Path: `ResolveDirectory.cs`
-  - Public interface definition
-
-- **ConfigurationException** (class)
-  - Path: `SILExceptions.cs`
-  - Public class implementation
-
-- **DynamicLoader** (class)
-  - Path: `DynamicLoader.cs`
-  - Public class implementation
-
-- **ReplaceSubstringInAttr** (class)
-  - Path: `XmlUtils.cs`
-  - Public class implementation
-
-- **RuntimeConfigurationException** (class)
-  - Path: `SILExceptions.cs`
-  - Public class implementation
-
-- **SimpleResolver** (class)
-  - Path: `ResolveDirectory.cs`
-  - Public class implementation
-
-- **XmlUtils** (class)
-  - Path: `XmlUtils.cs`
-  - Public class implementation
+IAttributeVisitor, IPersistAsXml, IResolvePath, ConfigurationException, DynamicLoader, ReplaceSubstringInAttr, RuntimeConfigurationException, SimpleResolver, XmlUtils.
 
 ## Entry Points
 - XML utility methods
-- Dynamic loader for plugins
-- Path resolution utilities
-- Custom exceptions
 
 ## Test Index
 Test projects: XMLUtilsTests. 2 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
@@ -118,22 +74,10 @@ Test projects: XMLUtilsTests. 2 test files. Run via: `dotnet test` or Test Explo
 Library component. Reference in consuming projects. See Dependencies section for integration points.
 
 ## Related Folders
-- **Utilities/SfmToXml/** - Uses XML utilities
-- **Cellar/** - XML serialization using these utilities
-- **Transforms/** - XSLT processing with XML utilities
-- **FXT/** - Transform tool using XML utilities
+- Utilities/SfmToXml/ - Uses XML utilities
 
 ## References
-
-- **Project files**: XMLUtils.csproj, XMLUtilsTests.csproj
-- **Target frameworks**: net48
-- **Key C# files**: AssemblyInfo.cs, DynamicLoader.cs, DynamicLoaderTests.cs, ResolveDirectory.cs, SILExceptions.cs, XmlUtils.cs, XmlUtilsStrings.Designer.cs, XmlUtilsTest.cs
-- **Source file count**: 8 files
-- **Data file count**: 1 files
+See `.cache/copilot/diff-plan.json` for file details.
 
 ## Code Evidence
 *Analysis based on scanning 7 source files*
-
-- **Classes found**: 10 public classes
-- **Interfaces found**: 4 public interfaces
-- **Namespaces**: SIL.Utils
