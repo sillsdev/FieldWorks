@@ -28,60 +28,17 @@ C# WinForms application (net48, WinExe) with 16 source files (~4.1K lines). Sing
 Workflow: User edits PUA characters → saves to CustomChars.xml → installs to ICU data files → FieldWorks apps use updated character properties for normalization/display.
 
 ## Key Components
-
-### Main Application
-- **Program** (Program.cs) - Entry point with command-line parsing
-  - `-i, --install` switch - Install CustomChars.xml data to ICU folder without GUI
-  - `-l, --log` switch - Enable logging to file
-  - `-v, --verbose` switch - Enable verbose logging
-  - `-c, --cleanup <processId>` - Clean up locked ICU files (background process)
-  - Uses CommandLineParser library for argument handling
-
-### Character Editor UI
-- **CharEditorWindow** (CharEditorWindow.cs) - Main form implementing IHelpTopicProvider
-  - `m_dictCustomChars` - Dictionary<int, PUACharacter> for user overrides from CustomChars.xml
-  - `m_dictModifiedChars` - Dictionary<int, PUACharacter> for standard Unicode overrides from UnicodeDataOverrides.txt
-  - **PuaListItem** nested class - ListView items with hex code sorting
-  - **PuaListItemComparer** - Sorts by Unicode codepoint value
-  - `ReadDataFromUnicodeFiles()` - Loads Unicode base data
-  - `ReadCustomCharData()` - Loads CustomChars.xml
-  - `WriteCustomCharData()` - Saves modifications to CustomChars.xml
-- **CustomCharDlg** (CustomCharDlg.cs) - Dialog for editing individual character properties
-
-### ICU Data Installation
-- **PUAInstaller** (PUAInstaller.cs) - Installs CustomChars.xml into ICU data files
-  - `Install(string icuDir, string customCharsFile)` - Main installation method
-  - **UndoFiles** struct - Tracks backup files for rollback
-  - Handles file locking via cleanup child process spawning
-  - Modifies ICU's UnicodeData.txt, nfkc.txt, nfc.txt files
-
-### Supporting Infrastructure
-- **LogFile** (LogFile.cs) - File-based logging with `IsLogging`, `IsVerbose` properties
-- **IcuLockedException** (IcuLockedException.cs) - Exception for ICU file access failures
-- **UceException**, **PuaException** (UceException.cs, PuaException.cs) - Application-specific exceptions
-- **ErrorCodes** enum (ErrorCodes.cs) - Application error code enumeration
-- **IcuErrorCodes** enum (IcuErrorCodes.cs) - ICU-specific error codes
-- **ErrorCodesExtensionMethods** - Extension methods for error code handling
+- **Program**: Entry point with command-line parsing (-i install, -l log, -v verbose, -c cleanup)
+- **CharEditorWindow/CustomCharDlg**: Main form and character editor dialog for PUA character management
+- **PUAInstaller**: Installs CustomChars.xml into ICU data files (UnicodeData.txt, nfkc.txt, nfc.txt)
+- **LogFile, exceptions**: Infrastructure for logging and error handling
 
 ## Technology Stack
-- **Language**: C#
-- **Target framework**: .NET Framework 4.8.x (net48)
-- **Application type**: WinExe (Windows GUI application with command-line support)
-- **UI framework**: System.Windows.Forms (WinForms)
-- **Key libraries**:
-  - LCModel.Core.Text (PUACharacter class, Unicode utilities)
-  - Common/FwUtils (FwRegistryHelper, IHelpTopicProvider, MessageBoxUtils)
-  - SIL.Utils
-  - CommandLineParser (NuGet package for command-line parsing)
-  - System.Windows.Forms (WinForms controls)
-- **External data files**: ICU UnicodeData.txt, nfkc.txt, nfc.txt (Unicode normalization data)
-- **User data**: CustomChars.xml (stored in local settings folder)
-- **Platform**: Windows-only (file system paths, registry access)
+C# WinForms (net48, WinExe). Key libraries: LCModel.Core.Text (PUACharacter), Common/FwUtils, CommandLineParser. External data: ICU UnicodeData.txt, CustomChars.xml.
 
 ## Dependencies
-- **Upstream**: LCModel.Core.Text (PUACharacter, Unicode utilities), Common/FwUtils (FwRegistryHelper, IHelpTopicProvider, MessageBoxUtils), SIL.Utils, CommandLineParser (NuGet), System.Windows.Forms
-- **Downstream consumers**: All FieldWorks applications that use ICU for Unicode normalization and character properties
-- **External data**: ICU data folder (UnicodeData.txt, nfkc.txt, nfc.txt), CustomChars.xml (user data in local settings)
+**Upstream**: LCModel.Core.Text, Common/FwUtils, CommandLineParser
+**Downstream**: All FieldWorks applications (via ICU Unicode normalization)
 
 ## Interop & Contracts
 - **ICU data file modification**: PUAInstaller modifies ICU text files
@@ -140,39 +97,7 @@ GUI mode: `UnicodeCharEditor.exe`. Command-line: `--install` (headless), `--log 
 - **Test data**: Sample CustomChars.xml files for various scenarios
 
 ## Usage Hints
-- **Typical workflow**:
-  1. Launch: Tools→Unicode Character Editor in FLEx (or standalone UnicodeCharEditor.exe)
-  2. Add PUA character: Click "Add", enter codepoint (e.g., E000 for U+E000)
-  3. Set properties: General category, combining class, decomposition, name
-  4. Save: File→Save (writes CustomChars.xml)
-  5. Install: File→Install (modifies ICU data files)
-  6. Restart FLEx to use updated character properties
-- **Private Use Area ranges**:
-  - U+E000–U+F8FF: BMP Private Use Area (main range for custom characters)
-  - U+F0000–U+FFFFD, U+100000–U+10FFFD: Supplementary planes (less common)
-- **Common properties**:
-  - **General Category**: Lo (Other Letter) for linguistic symbols
-  - **Combining Class**: 0 (base), 1-254 (combining marks), 255 (special)
-  - **Decomposition**: Optional canonical or compatibility decomposition
-  - **Name**: Descriptive name for the character
-- **Command-line installation**:
-  ```cmd
-  UnicodeCharEditor.exe --install --log
-  ```
-  - Installs without GUI, logs to UnicodeCharEditor.log
-- **Troubleshooting**:
-  - **ICU files locked**: Close all FLEx instances, retry installation
-  - **Changes not applied**: Restart FLEx after installation
-  - **CustomChars.xml not found**: Save at least once to create file
-- **Common pitfalls**:
-  - Forgetting to install after editing (changes only saved to XML, not ICU)
-  - Not restarting FLEx (ICU data loaded at startup)
-  - Using non-PUA codepoints (can break Unicode compliance)
-  - Invalid decomposition (must reference valid Unicode codepoints)
-- **Advanced usage**:
-  - UnicodeDataOverrides.txt: Override standard Unicode properties (expert users only)
-  - Batch editing: Edit CustomChars.xml directly, run --install
-- **Backup**: CustomChars.xml backed up automatically before installation
+Launch via Tools→Unicode Character Editor, add PUA characters (U+E000–U+F8FF), set properties, save to CustomChars.xml, install to ICU data files, restart FLEx. Command-line: `UnicodeCharEditor.exe --install --log`.
 
 ## Related Folders
 - **LCModel.Core/**: PUACharacter class
