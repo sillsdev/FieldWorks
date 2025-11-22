@@ -4889,10 +4889,10 @@ STDMETHODIMP VwDrawRootBuffered::DrawTheRoot(IVwRootBox * prootb, HDC hdc, RECT 
 	// Clean up any previous cached bitmap and DC
 	if (m_hdcMem)
 	{
-		HBITMAP hbmpOld = (HBITMAP)::GetCurrentObject(m_hdcMem, OBJ_BITMAP);
-		if (hbmpOld)
+		HBITMAP hbmpCached = (HBITMAP)::GetCurrentObject(m_hdcMem, OBJ_BITMAP);
+		if (hbmpCached)
 		{
-			BOOL fSuccess = AfGdi::DeleteObjectBitmap(hbmpOld);
+			BOOL fSuccess = AfGdi::DeleteObjectBitmap(hbmpCached);
 			Assert(fSuccess);
 		}
 		BOOL fSuccess = AfGdi::DeleteDC(m_hdcMem);
@@ -4906,9 +4906,8 @@ STDMETHODIMP VwDrawRootBuffered::DrawTheRoot(IVwRootBox * prootb, HDC hdc, RECT 
 	Assert(hbmp);
 	HBITMAP hbmpOld = AfGdi::SelectObjectBitmap(m_hdcMem, hbmp);
 	Assert(hbmpOld && hbmpOld != HGDI_ERROR);
-	// Delete the stock bitmap that was initially selected in the memory DC
-	BOOL fSuccess = AfGdi::DeleteObjectBitmap(hbmpOld);
-	Assert(fSuccess);
+	// We don't delete hbmpOld (the stock bitmap from the DC)
+	// The new bitmap (hbmp) will stay selected in m_hdcMem for caching
 	
 	if (bkclr == kclrTransparent)
 		// if the background color is transparent, copy the current screen area in to the
@@ -5018,9 +5017,8 @@ STDMETHODIMP VwDrawRootBuffered:: DrawTheRootRotated(IVwRootBox * prootb, HDC hd
 	Assert(hbmp);
 	HBITMAP hbmpOld = AfGdi::SelectObjectBitmap(hdcMem, hbmp);
 	Assert(hbmpOld && hbmpOld != HGDI_ERROR);
-	// Delete the stock bitmap that was initially selected in the memory DC
-	BOOL fSuccess = AfGdi::DeleteObjectBitmap(hbmpOld);
-	Assert(fSuccess);
+	// We don't delete hbmpOld (the stock bitmap from the DC)
+	// We'll restore it before cleanup
 	
 	if (bkclr == kclrTransparent)
 		// if the background color is transparent, copy the current screen area in to the
@@ -5062,6 +5060,7 @@ STDMETHODIMP VwDrawRootBuffered:: DrawTheRootRotated(IVwRootBox * prootb, HDC hd
 		CheckHr(qvg->ReleaseDC());
 		
 		// Clean up GDI resources before rethrowing
+		AfGdi::SelectObjectBitmap(hdcMem, hbmpOld, AfGdi::OLD);
 		AfGdi::DeleteObjectBitmap(hbmp);
 		AfGdi::DeleteDC(hdcMem);
 		throw;
@@ -5079,7 +5078,8 @@ STDMETHODIMP VwDrawRootBuffered:: DrawTheRootRotated(IVwRootBox * prootb, HDC hd
 	::PlgBlt(hdc, rgptTransform, hdcMem, 0, 0, rcp.Width(), rcp.Height(), 0, 0, 0);
 
 	// Clean up memory DC and bitmap
-	fSuccess = AfGdi::DeleteObjectBitmap(hbmp);
+	AfGdi::SelectObjectBitmap(hdcMem, hbmpOld, AfGdi::OLD);
+	BOOL fSuccess = AfGdi::DeleteObjectBitmap(hbmp);
 	Assert(fSuccess);
 	fSuccess = AfGdi::DeleteDC(hdcMem);
 	Assert(fSuccess);
