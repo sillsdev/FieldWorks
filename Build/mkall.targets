@@ -455,7 +455,7 @@
 			<SILNugetPackages Include="SIL.WritingSystems.Tests"><Version>$(PalasoNugetVersion)</Version><Path>lib/net462/*.*</Path><NoSymbols>$(UsingLocalLibraryBuild)</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="System.Buffers"><Version>4.6.0</Version><Path>lib/net462/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="System.Drawing.Common"><Version>9.0.0</Version><Path>lib/net462/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
-			<SILNugetPackages Include="System.Memory"><Version>4.5.4</Version><Path>lib/net461/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
+			<SILNugetPackages Include="System.Memory"><Version>4.5.5</Version><Path>lib/net461/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="System.Resources.Extensions"><Version>4.6.0</Version><Path>lib/netstandard2.0/*.*</Path><NoSymbols>true</NoSymbols></SILNugetPackages>
 			<SILNugetPackages Include="L10NSharp"><Version>9.0.0-beta0001</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
 			<SILNugetPackages Include="L10NSharp.Windows.Forms"><Version>9.0.0-beta0001</Version><Path>lib/net461/*.*</Path></SILNugetPackages>
