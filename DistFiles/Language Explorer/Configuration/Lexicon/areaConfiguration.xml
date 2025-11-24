@@ -388,7 +388,7 @@
 									<!-- NOTE: AllVariantEntryRefPropertyTargets can also have LexEntry items, since it is a ghost field -->
 								</part>
 								<part id="LexEntry-Jt-AllPossibleAllomorphs" type="jtview">
-									<seq class="LexEntry" field="AlternateForms" firstOnly="true" layout="empty">
+									<seq class="LexEntry" field="AllAllomorphs" firstOnly="true" layout="empty">
 										<int class="MoForm" field="Self"/>
 									</seq>
 									<!-- NOTE: AllPossibleAllomorphs can also have LexEntry items, since it is a ghost field -->
