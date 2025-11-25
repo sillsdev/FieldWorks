@@ -305,6 +305,14 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new ArgumentNullException();
 			}
+			// Prefer == over Equals when there are duplicate custom nodes.
+			foreach(TreeNode treeNode in treeNodeCollection)
+			{
+				if (nodeToMatch == treeNode.Tag)
+				{
+					return treeNode;
+				}
+			}
 			foreach(TreeNode treeNode in treeNodeCollection)
 			{
 				if(nodeToMatch.Equals(treeNode.Tag))
