@@ -56,10 +56,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Specifications of columns to display
 		/// </summary>
 		protected List<XmlNode> m_columns = new List<XmlNode>();
-		/// <summary>
-		/// Specs of columns that COULD be displayed, but which have not been selected.
-		/// </summary>
-		protected List<XmlNode> m_possibleColumns;
+
 		/// <summary>// Top-level fake property for list of objects.</summary>
 		protected int m_fakeFlid = 0;
 		/// <summary>// Controls appearance of column for check boxes.</summary>
@@ -216,7 +213,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (doc == null) // nothing saved, or saved info won't parse
 			{
 				// default: the columns that have 'width' specified.
-				foreach(XmlNode node in m_possibleColumns)
+				foreach(XmlNode node in PossibleColumnSpecs)
 				{
 					if (XmlUtils.GetOptionalAttributeValue(node, "visibility", "always") == "always")
 						m_columns.Add(node);
@@ -224,7 +221,7 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 			else
 			{
-				var newPossibleColumns = new List<XmlNode>(m_possibleColumns);
+				var newPossibleColumns = new List<XmlNode>(PossibleColumnSpecs);
 				foreach (XmlNode node in doc.DocumentElement.SelectNodes("//column"))
 				{
 
@@ -577,9 +574,7 @@ namespace SIL.FieldWorks.Common.Controls
 			XmlVc vc = null;
 			if (ListItemsClass != 0)
 				vc = this;
-			m_possibleColumns = PartGenerator.GetGeneratedChildren(m_xnSpec.SelectSingleNode("columns"),
-						 m_xbv.Cache, vc, (int)ListItemsClass);
-			return m_possibleColumns;
+			return PossibleColumnSpecs = PartGenerator.GetGeneratedChildren(m_xnSpec.SelectSingleNode("columns"), m_xbv.Cache, vc, (int)ListItemsClass);
 		}
 
 		int m_listItemsClass = 0;
@@ -631,6 +626,7 @@ namespace SIL.FieldWorks.Common.Controls
 				return isValid;
 			}
 			// In the simple case, `node`s label should match a label in PossibleColumnSpecs. There may be more complicated cases.
+			// TODO (Hasso) 2025.11: 'layout' (madatory?) and 'field' (optional) would be better attributes to match.
 			var label = XmlUtils.GetLocalizedAttributeValue(colSpec, "label", null) ??
 						XmlUtils.GetMandatoryAttributeValue(colSpec, "label");
 			var originalLabel = XmlUtils.GetLocalizedAttributeValue(colSpec, "originalLabel", null) ??
@@ -790,13 +786,10 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 		}
 
-		internal List<XmlNode> PossibleColumnSpecs
-		{
-			get
-			{
-				return m_possibleColumns;
-			}
-		}
+		/// <summary>
+		/// Specs of columns that COULD be displayed, but which have not been selected.
+		/// </summary>
+		protected internal List<XmlNode> PossibleColumnSpecs { get; set; }
 
 		internal ISortItemProvider SortItemProvider
 		{

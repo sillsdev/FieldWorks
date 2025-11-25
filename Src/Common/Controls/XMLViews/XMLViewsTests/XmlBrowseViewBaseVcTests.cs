@@ -1,12 +1,12 @@
-// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2025 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using NUnit.Framework;
+using SIL.FieldWorks.Common.Controls;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml;
-using NUnit.Framework;
-using SIL.FieldWorks.Common.Controls;
 
 namespace XMLViewsTests
 {
@@ -168,7 +168,6 @@ namespace XMLViewsTests
 
 			var columnDoc = new XmlDocument();
 			columnDoc.LoadXml(testColumns);
-			columnDoc.SelectNodes("column");
 			var testVc = new XmlBrowseViewBaseVc
 			{
 				ColumnSpecs = new List<XmlNode>(columnDoc.DocumentElement.GetElementsByTagName("column").OfType<XmlNode>())
@@ -182,17 +181,41 @@ namespace XMLViewsTests
 		[Test]
 		public void IsValidColumnSpec_ValidReturnsTrue()
 		{
-			// set up PossibleColumnSpecs
-			// Pass a valid node
-			Assert.IsTrue(false);
+			var vc = new XmlBrowseViewBaseVc { PossibleColumnSpecs = new List<XmlNode>(), ListItemsClass = -1 /* can't be 0 */ };
+			var possibleColumns = new XmlDocument();
+			possibleColumns.LoadXml("<columns><column label='Ref'/><column label='Other'/></columns>");
+			foreach (XmlNode node in possibleColumns.DocumentElement.GetElementsByTagName("column"))
+			{
+				vc.PossibleColumnSpecs.Add(node);
+			}
+
+			var savedColumns = new XmlDocument();
+			savedColumns.LoadXml("<root><column label='Ref'/><column label='Other (Best Ana)' originalLabel='Other'/></root>");
+
+			// SUT
+			foreach (XmlNode node in savedColumns.DocumentElement.GetElementsByTagName("column"))
+			{
+				Assert.IsTrue(vc.IsValidColumnSpec(node), $"Should have found this node to be valid: {node.OuterXml}");
+			}
 		}
 
 		[Test]
 		public void IsValidColumnSpec_InvalidReturnsFalse()
 		{
-			// set up PossibleColumnSpecs
-			// Pass an invalid node
-			Assert.IsFalse(true);
+			var vc = new XmlBrowseViewBaseVc { PossibleColumnSpecs = new List<XmlNode>(), ListItemsClass = -1 /* can't be 0 */ };
+			var possibleColumns = new XmlDocument();
+			possibleColumns.LoadXml("<columns><column label='Ref'/><column label='Other'/></columns>");
+			foreach (XmlNode node in possibleColumns.DocumentElement.GetElementsByTagName("column"))
+			{
+				vc.PossibleColumnSpecs.Add(node);
+			}
+
+			var savedColumns = new XmlDocument();
+			savedColumns.LoadXml("<root><column label='DoesNotExist' originalLabel='MayHaveExistedBefore'/></root>");
+			var invalidColumn = savedColumns.DocumentElement.SelectSingleNode("column");
+
+			// SUT
+			Assert.IsFalse(vc.IsValidColumnSpec(invalidColumn), $"Should have found this node to be invalid: {invalidColumn.OuterXml}");
 		}
 	}
 }
