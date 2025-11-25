@@ -2051,6 +2051,11 @@ namespace SIL.FieldWorks.XWorks
 					{
 						var childNodeList = BuildNodeList(nodeList, child);
 						bldr.Append(GenerateContentForFieldByReflection(item, childNodeList, publicationDecorator, settings, info));
+						if (child.CSSClassNameOverride == "headword-classified")
+						{
+							bldr.Append(senseNumberSpan);
+							senseNumberSpan = settings.ContentGenerator.CreateFragment(); // clear it so it will not be added again
+						}
 					}
 				}
 			}
