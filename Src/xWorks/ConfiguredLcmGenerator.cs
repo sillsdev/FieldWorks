@@ -2040,7 +2040,8 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryPublicationDecorator publicationDecorator, object item, bool isThisSenseNumbered,
 			GeneratorSettings settings, bool isSameGrammaticalInfo, SenseInfo info, bool first)
 		{
-			var senseNumberSpan = GenerateSenseNumberSpanIfNeeded(nodeList, isThisSenseNumbered, ref info, settings);
+			var senseNumberSpan = GenerateSenseNumberSpanIfNeeded(nodeList, isThisSenseNumbered,
+				item as ILexSense, publicationDecorator, ref info, settings);
 			var bldr = settings.ContentGenerator.CreateFragment();
 			var config = nodeList.Last();
 			if (config.ReferencedOrDirectChildren != null)
@@ -2365,14 +2366,15 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static IFragment GenerateSenseNumberSpanIfNeeded(List<ConfigurableDictionaryNode> nodeList,
-			bool isThisSenseNumbered, ref SenseInfo info, GeneratorSettings settings)
+			bool isThisSenseNumbered, ILexSense sense, DictionaryPublicationDecorator decorator,
+			ref SenseInfo info, GeneratorSettings settings)
 		{
 			if (!isThisSenseNumbered)
 				return settings.ContentGenerator.CreateFragment();
 
 			var senseOptions = nodeList.Last().DictionaryNodeOptions as DictionaryNodeSenseOptions;
 
-			var formattedSenseNumber = GetSenseNumber(senseOptions.NumberingStyle, ref info);
+			var formattedSenseNumber = GetSenseNumber(senseOptions.NumberingStyle, sense, decorator, ref info);
 			info.HomographConfig = settings.Cache.ServiceLocator.GetInstance<HomographConfiguration>();
 			var senseNumberWs = string.IsNullOrEmpty(info.HomographConfig.WritingSystem) ? "en" : info.HomographConfig.WritingSystem;
 			if (string.IsNullOrEmpty(formattedSenseNumber))
@@ -2380,21 +2382,42 @@ namespace SIL.FieldWorks.XWorks
 			return settings.ContentGenerator.GenerateSenseNumber(nodeList, settings, formattedSenseNumber, senseNumberWs);
 		}
 
-		private static string GetSenseNumber(string numberingStyle, ref SenseInfo info)
+		private static string GetSenseNumber(string numberingStyle, ILexSense sense,
+			DictionaryPublicationDecorator publicationDecorator, ref SenseInfo info)
 		{
 			string nextNumber;
+			var senseCount = info.SenseCounter;
+			// Try to get the outline number if there is a publication decorator
+			if (publicationDecorator != null && sense != null)
+			{
+				var senseCollectionFlid = 0;
+				var mdc = (IFwMetaDataCacheManaged)sense.Cache.MetaDataCacheAccessor;
+				// get flid for the senses field of the owner
+				if (sense.Owner is ILexSense)
+					senseCollectionFlid = mdc.GetFieldId("LexSense", "Senses", false);
+				else if (sense.Owner is ILexEntry)
+					senseCollectionFlid = mdc.GetFieldId("LexEntry", "Senses", false);
+				if (senseCollectionFlid > 0)
+				{
+					var senseNumber = sense.Cache.GetOutlineNumber(sense, senseCollectionFlid, false, true, publicationDecorator);
+					if (!string.IsNullOrEmpty(senseNumber))
+					{
+						senseCount = int.Parse(senseNumber.Split('.').Last());
+					}
+				}
+			}
 			switch (numberingStyle)
 			{
 				case "%a":
 				case "%A":
-					nextNumber = GetAlphaSenseCounter(numberingStyle, info.SenseCounter);
+					nextNumber = GetAlphaSenseCounter(numberingStyle, senseCount);
 					break;
 				case "%i":
 				case "%I":
-					nextNumber = GetRomanSenseCounter(numberingStyle, info.SenseCounter);
+					nextNumber = GetRomanSenseCounter(numberingStyle, senseCount);
 					break;
 				default: // handles %d and %O. We no longer support "%z" (1  b  iii) because users can hand-configure its equivalent
-					nextNumber = info.SenseCounter.ToString();
+					nextNumber = senseCount.ToString();
 					// Use the digits from the CustomHomographNumbers if they are defined
 					if (info.HomographConfig.CustomHomographNumbers.Count == 10)
 					{
