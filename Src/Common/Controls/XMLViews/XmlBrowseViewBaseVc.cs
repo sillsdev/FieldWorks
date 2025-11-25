@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2017 SIL International
+// Copyright (c) 2005-2025 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -630,37 +630,17 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				return isValid;
 			}
-			return IsValidColumnSpec_Oversimplified(colSpec);
-			/*/
-			//var possibleColumns = PossibleColumnSpecs; // REVIEW (Hasso) 2025.11: why do we need a local copy of this pointer?
-			// first, check to see if we can find some part or child node information
-			// to process. Eg. Custom field column nodes that refer to parts that no longer exist
-			// because the custom field has been removed so the parts cannot be generated
-			if (GetPartFromParentNode(colSpec, ListItemsClass) == null)
-				return false;   // invalid node, don't add.
-			// If it is a Custom Field, check that it is valid and has the correct label
-			if (TryColumnForCustomField(colSpec, ListItemsClass, out var customFieldNode, out var propWs))
-			{
-				return IsValidCustomField(colSpec, customFieldNode, propWs);
-			}
-			if (CheckForBadReversalIndex(colSpec))
-				return false;
-			return true;    // valid as far as we can tell.
-			/**/
-		}
-
-		private bool IsValidColumnSpec_Oversimplified(XmlNode colSpec)
-		{
 			// In the simple case, `node`s label should match a label in PossibleColumnSpecs. There may be more complicated cases.
-			// The existing code sure seems complicated and is entirely untested.
-			var label = XmlUtils.GetMandatoryAttributeValue(colSpec, "label");
-			var originalLabel = XmlUtils.GetAttributeValue(colSpec, "originalLabel");
-			return (XmlViewsUtils.FindNodeWithAttrVal(PossibleColumnSpecs, "label", label) != null ||
-					XmlViewsUtils.FindNodeWithAttrVal(PossibleColumnSpecs, "label", originalLabel) != null);
+			var label = XmlUtils.GetLocalizedAttributeValue(colSpec, "label", null) ??
+						XmlUtils.GetMandatoryAttributeValue(colSpec, "label");
+			var originalLabel = XmlUtils.GetLocalizedAttributeValue(colSpec, "originalLabel", null) ??
+								XmlUtils.GetAttributeValue(colSpec, "originalLabel");
+			return XmlViewsUtils.FindNodeWithAttrVal(PossibleColumnSpecs, "label", label) != null ||
+					XmlViewsUtils.FindNodeWithAttrVal(PossibleColumnSpecs, "label", originalLabel) != null;
 		}
 
 		/// <summary>
-		/// Check whether the column spec is a custom field, and if so, if it is still valid (Custom fields can be deleted).
+		/// Check whether the column spec is a custom field, and if so, if it is still valid (Custom Fields can be deleted).
 		/// If the node refers to a valid custom field, the label attribute is adjusted to what we want the user to see.
 		/// </summary>
 		private bool IsCustomField(XmlNode colSpec, out bool isValidCustomField)
@@ -714,37 +694,6 @@ namespace SIL.FieldWorks.Common.Controls
 				}
 			}
 			return "";
-		}
-
-		/// <summary>
-		/// Check for an invalid reversal index.  (Reversal indexes can be deleted.)
-		/// REVIEW (Hasso) 2025-11: when does a column spec refer to a reversal index?
-		/// </summary>
-		/// <param name="node"></param>
-		/// <returns>true if this node refers to a nonexistent reversal index.</returns>
-		private bool CheckForBadReversalIndex(XmlNode node)
-		{
-			// Look for a child node which is similar to this (value of ws attribute may differ):
-			// <string field="ReversalEntriesText" ws="$ws=es"/>
-			XmlNode child = XmlUtils.FindNode(node, "string");
-			if (child != null &&
-				XmlUtils.GetOptionalAttributeValue(child, "field") == "ReversalEntriesText")
-			{
-				string sWs = StringServices.GetWsSpecWithoutPrefix(child);
-				if (sWs != null && sWs != "reversal")
-				{
-					if (!m_cache.ServiceLocator.WritingSystemManager.Exists(sWs))
-						return true;	// invalid writing system
-					// Check whether we have a reversal index for the given writing system.
-					foreach (var idx in m_cache.LangProject.LexDbOA.ReversalIndexesOC)
-					{
-						if (idx.WritingSystem == sWs)
-							return false;
-					}
-					return true;
-				}
-			}
-			return false;
 		}
 		#endregion Construction and initialization
 
