@@ -105,6 +105,19 @@ namespace SIL.FieldWorks.XWorks
 		#region Helper Methods
 
 		/// <summary>
+		/// Creates a part of speech with the specified name and abbreviation
+		/// </summary>
+		private IPartOfSpeech CreatePartOfSpeech(string name, string abbr)
+		{
+			var factory = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>();
+			var pos = factory.Create();
+			Cache.LangProject.PartsOfSpeechOA.PossibilitiesOS.Add(pos);
+			pos.Name.set_String(m_wsEn, name);
+			pos.Abbreviation.set_String(m_wsEn, abbr);
+			return pos;
+		}
+
+		/// <summary>
 		/// Creates a semantic domain with the specified abbreviation, name, and senses.
 		/// Uses analysis writing system (English).
 		/// </summary>
@@ -158,9 +171,10 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Builds the configuration for semantic domain with senses
+		/// Builds the configuration for semantic domain with senses, optionally including grammatical info
 		/// </summary>
-		private static ConfigurableDictionaryNode BuildSemanticDomainConfig(bool includeSubsenses = false)
+		private static ConfigurableDictionaryNode BuildSemanticDomainConfig(bool includeSubsenses = false,
+			bool includeGrammaticalInfo = false, bool numberSingleSense = false)
 		{
 			var abbrNode = new ConfigurableDictionaryNode
 			{
@@ -188,7 +202,27 @@ namespace SIL.FieldWorks.XWorks
 				DictionaryNodeOptions = CXGTests.GetWsOptionsForLanguages(new[] { "analysis" })
 			};
 
-			var senseChildren = new List<ConfigurableDictionaryNode> { headwordNode, glossNode };
+			var senseChildren = new List<ConfigurableDictionaryNode> { headwordNode };
+
+			// Add grammatical info if requested
+			if (includeGrammaticalInfo)
+			{
+				var posNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "MLPartOfSpeech",
+					CSSClassNameOverride = "partofspeech",
+					DictionaryNodeOptions = CXGTests.GetWsOptionsForLanguages(new[] { "analysis" })
+				};
+				var gramInfoNode = new ConfigurableDictionaryNode
+				{
+					FieldDescription = "MorphoSyntaxAnalysisRA",
+					CSSClassNameOverride = "morphosyntaxanalysis",
+					Children = new List<ConfigurableDictionaryNode> { posNode }
+				};
+				senseChildren.Add(gramInfoNode);
+			}
+
+			senseChildren.Add(glossNode);
 
 			// Add subsense node if requested
 			if (includeSubsenses)
@@ -216,7 +250,9 @@ namespace SIL.FieldWorks.XWorks
 				DictionaryNodeOptions = new DictionaryNodeSenseOptions
 				{
 					NumberingStyle = "%d",
-					DisplayEachSenseInAParagraph = true
+					DisplayEachSenseInAParagraph = true,
+					ShowSharedGrammarInfoFirst = includeGrammaticalInfo,
+					NumberEvenASingleSense = numberSingleSense
 				},
 				Children = senseChildren
 			};
@@ -386,6 +422,49 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(abbrXpath, 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(nameXpath, 1);
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseXpath, 0);
+		}
+
+		[Test]
+		public void GenerateXHTMLForSemanticDomain_GramInfoBeforeSenseNumber_WhenOnlySecondSenseInDomain()
+		{
+			// Arrange - Create a part of speech
+			var noun = CreatePartOfSpeech("noun", "n");
+
+			// Create entry with two senses
+			var entry = CXGTests.CreateInterestingLexEntry(Cache, "testword", "first sense gloss");
+			
+			// Add second sense
+			var secondSense = Cache.ServiceLocator.GetInstance<ILexSenseFactory>().Create();
+			entry.SensesOS.Add(secondSense);
+			secondSense.Gloss.set_String(m_wsEn, TsStringUtils.MakeString("second sense gloss", m_wsEn));
+			
+			// Set grammatical info on second sense only
+			var msa = Cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+			entry.MorphoSyntaxAnalysesOC.Add(msa);
+			msa.PartOfSpeechRA = noun;
+			secondSense.MorphoSyntaxAnalysisRA = msa;
+
+			// Create semantic domain with only the second sense
+			var domain = CreateSemanticDomainWithSenses("1.1", "Universe", secondSense);
+			var config = BuildSemanticDomainConfig(includeGrammaticalInfo: true, numberSingleSense: true);
+			var publication = CreateTestPublication("Test Publication");
+			entry.DoNotPublishInRC.Clear();
+			var decorator = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.DomainDataByFlid,
+				Cache.ServiceLocator.GetInstance<Virtuals>().LexDbEntries, publication);
+			// SUT
+			var result = ConfiguredLcmGenerator.GenerateContentForEntry(domain, config, decorator, DefaultSettings).ToString();
+
+			// Verify content headword, then grammatical info, sense number, and gloss
+			// The sense should be numbered as '2' since it's the second sense of the entry
+			const string headwordXpath = senseXpath + "/span[@class='headword-classified'][1]//span[@lang='fr']/a[text()='testword']";
+			const string gramInfoXpath = senseXpath + "/span[@class='morphosyntaxanalysis']/span[@class='partofspeech']/span[@lang='en' and text()='n']";
+			const string senseNumberXpath = senseXpath + "/span[@class='sensenumber' and text()='2']";
+			const string glossXpath = senseXpath + "/span[@class='definitionorgloss']//span[@lang='en' and text()='second sense gloss']";
+
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(headwordXpath, 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(gramInfoXpath, 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(senseNumberXpath, 1);
+			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(glossXpath, 1);
 		}
 
 		#endregion Tests
