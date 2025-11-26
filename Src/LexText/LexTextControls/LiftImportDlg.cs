@@ -244,7 +244,7 @@ namespace SIL.FieldWorks.LexText.Controls
 							File.Move(filePath, Path.Combine(sWritingSystems, file));
 					}
 				}
-				var sTempOrigFile = Path.Combine(sLIFTtempFolder, sOrigFile.Substring(sLIFTfolder.Length + 1));
+				var sTempOrigFile = Path.Combine(sLIFTtempFolder, Path.GetFileName(sOrigFile));
 				string sFilename;
 				//Do a LIFT Migration to the current version of LIFT if it is needed.
 				bool fMigrationNeeded = Migrator.IsMigrationNeeded(sTempOrigFile);
