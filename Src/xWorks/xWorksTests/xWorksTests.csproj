@@ -187,8 +187,8 @@
     <Reference Include="FwUtilsTests, Version=7.0.1.13090, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
     </Reference>
-    <Reference Include="DotNetZip">
-      <HintPath>..\..\..\Output\Debug\DotNetZip.dll</HintPath>
+    <Reference Include="ProDotNetZip">
+      <HintPath>..\..\..\Output\Debug\ProDotNetZip.dll</HintPath>
     </Reference>
     <Reference Include="LexEdDll, Version=8.0.4.12240, Culture=neutral, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>

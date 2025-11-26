@@ -578,7 +578,6 @@
 			<NuGottenFiles Include="$(GeckoDir)/content/**/*.*"/>
 			<NuGottenFiles Include="$(PackagesDir)/Analytics.3.6.0/lib/net461/Analytics.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/DocumentFormat.OpenXml.2.20.0/lib/net46/DocumentFormat.OpenXml.dll"/>
-			<NuGottenFiles Include="$(PackagesDir)/DotNetZip.1.16.0/lib/net40/*.*"/>
 			<NuGottenFiles Include="$(PackagesDir)/icu.net.3.0.0-beta.297/lib/netstandard2.0/icu.net.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/Markdig.Signed.0.30.0/lib/net452/Markdig.Signed.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/Microsoft.Extensions.DependencyModel.2.0.4/lib/net451/Microsoft.Extensions.DependencyModel.dll"/>
@@ -596,6 +595,7 @@
 			<NuGottenFiles Include="$(PackagesDir)/ParatextData.$(ParatextNugetVersion)/lib/netstandard2.0/Paratext.LexicalContractsV2.dll" />
 			<NuGottenFiles Include="$(PackagesDir)/ParatextData.$(ParatextNugetVersion)/lib/netstandard2.0/ParatextData.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/ParatextData.$(ParatextNugetVersion)/lib/netstandard2.0/PtxUtils.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/ProDotNetZip.1.20.0/lib/netstandard2.0/*.*"/>
 			<NuGottenFiles Include="$(PackagesDir)/SIL.DesktopAnalytics.4.0.0/lib/net461/DesktopAnalytics.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/SIL.ParatextShared.7.4.0.1/runtimes/$(OsDir)/lib/net40/FormattedEditor.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/SIL.ParatextShared.7.4.0.1/runtimes/$(OsDir)/lib/net40/HelpSystem.dll"/>
@@ -609,6 +609,8 @@
 			<NuGottenFiles Include="$(PackagesDir)/System.Numerics.Vectors.4.5.0/lib/net46/System.Numerics.Vectors.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/System.Resources.Extensions.4.6.0/lib/netstandard2.0/System.Resources.Extensions.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/System.Runtime.CompilerServices.Unsafe.6.0.0/lib/net461/System.Runtime.CompilerServices.Unsafe.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/System.Security.Permissions.8.0.0/lib/net462/System.Security.Permissions.dll"/>
+			<NuGottenFiles Include="$(PackagesDir)/System.Text.Encoding.CodePages.8.0.0/lib/net462/System.Text.Encoding.CodePages.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/System.Threading.Tasks.Extensions.4.5.4/lib/net461/System.Threading.Tasks.Extensions.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/System.ValueTuple.4.5.0/lib/net461/System.ValueTuple.dll"/>
 		</ItemGroup>
