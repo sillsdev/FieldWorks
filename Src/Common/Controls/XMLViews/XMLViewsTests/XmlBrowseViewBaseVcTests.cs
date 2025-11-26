@@ -179,6 +179,35 @@ namespace XMLViewsTests
 		}
 
 		[Test]
+		public void IsValidColumnSpec_HasLayout_TODO()
+		{
+			var vc = new XmlBrowseViewBaseVc { PossibleColumnSpecs = new List<XmlNode>(), ListItemsClass = -1 /* can't be 0 */ };
+			var possibleColumns = new XmlDocument();
+			possibleColumns.LoadXml(@"<columns>
+	<column label='Name' width='13%' layout='Name' ws='$ws=best analysis' field='Name'/>
+	<column label='Abbreviation' width='10%' layout='Abbreviation' ws='$ws=best analysis' field='Abbreviation'/>
+	<column label='Values' width='24%' multipara='true' layout='TypeOrValues' visibility='menu'/>
+</columns>");
+			foreach (XmlNode node in possibleColumns.DocumentElement.GetElementsByTagName("column"))
+			{
+				vc.PossibleColumnSpecs.Add(node);
+			}
+
+			var validColumns = new XmlDocument();
+			validColumns.LoadXml(@"<root version='18'>
+	<column label='Name' width='13%' layout='Name' ws='$ws=best analysis' field='Name'/>
+	<column width='10%' layout='Abbreviation' ws='$ws=en' field='Abbreviation' originalWs='best analysis' originalLabel='Abbreviation' label='Abreviatura (Eng)'/>
+	<column width='10%' layout='Abbreviation' ws='$ws=es' field='Abbreviation' originalWs='best analysis' originalLabel='Abbreviation' label='Abreviatura (Spa)'/>
+</root>");
+
+			// SUT
+			foreach (XmlNode node in validColumns.DocumentElement.GetElementsByTagName("column"))
+			{
+				Assert.IsTrue(vc.IsValidColumnSpec(node), $"Should have found this node to be valid: {node.OuterXml}");
+			}
+		}
+
+		[Test]
 		public void IsValidColumnSpec_ValidReturnsTrue()
 		{
 			var vc = new XmlBrowseViewBaseVc { PossibleColumnSpecs = new List<XmlNode>(), ListItemsClass = -1 /* can't be 0 */ };
