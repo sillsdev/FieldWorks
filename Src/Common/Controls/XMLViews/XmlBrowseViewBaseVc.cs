@@ -224,7 +224,6 @@ namespace SIL.FieldWorks.Common.Controls
 				var newPossibleColumns = new List<XmlNode>(PossibleColumnSpecs);
 				foreach (XmlNode node in doc.DocumentElement.SelectNodes("//column"))
 				{
-
 					// if there is a corresponding possible column, remove it from the newPossibleColumns list.
 					var possible = newPossibleColumns.Find(n =>
 						XmlUtils.GetOptionalAttributeValue(n, "label", "") ==
@@ -586,20 +585,21 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// check to see if column spec is still valid.
+		/// Check to see if column spec is still valid. If it is a custom field, update the label if necessary.
 		/// </summary>
-		/// <returns>True if we can't prove the column is invalid</returns>
 		internal bool IsValidColumnSpec(XmlNode colSpec)
 		{
 			if (GetPartFromParentNode(colSpec, ListItemsClass) == null)
-				return false;   // invalid node, don't add.
-			// If it is a Custom Field, check that it is valid and has the correct label
+			{
+				return false;
+			}
+			// If it is a Custom Field, check that it is valid and has the correct label.
 			if (IsCustomField(colSpec, out var isValid))
 			{
 				return isValid;
 			}
 			// In the simple case, `node`s label should match a label in PossibleColumnSpecs. There may be more complicated cases.
-			// TODO (Hasso) 2025.11: 'layout' (madatory?) and 'field' (optional) would be better attributes to match.
+			// ENHANCE (Hasso) 2025.11: 'layout' (mandatory?) and 'field' (optional) would be better attributes to match, but that would require more test setup.
 			var label = XmlUtils.GetLocalizedAttributeValue(colSpec, "label", null) ??
 						XmlUtils.GetMandatoryAttributeValue(colSpec, "label");
 			var originalLabel = XmlUtils.GetLocalizedAttributeValue(colSpec, "originalLabel", null) ??

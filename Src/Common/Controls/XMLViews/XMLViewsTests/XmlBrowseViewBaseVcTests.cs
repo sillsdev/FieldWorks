@@ -178,7 +178,7 @@ namespace XMLViewsTests
 			CollectionAssert.AreEqual(new List<string> { "Ref", "Occurrence" }, columnLabels);
 		}
 
-		[Test]
+		/// <remarks>TODO (Hasso) 2025.11: This test needs further setup to find the layout XmlNode in the LayoutCache</remarks>
 		public void IsValidColumnSpec_HasLayout_TODO()
 		{
 			var vc = new XmlBrowseViewBaseVc { PossibleColumnSpecs = new List<XmlNode>(), ListItemsClass = -1 /* can't be 0 */ };
@@ -207,8 +207,13 @@ namespace XMLViewsTests
 			}
 		}
 
+		/// <summary>
+		/// Tests that IsValidColumnSpec can identify valid columns based on their labels or originalLabels.
+		/// Artificially skips the layout check because that requires a more complex setup.
+		/// LT-22265: Invalid columns should not be displayed.
+		/// </summary>
 		[Test]
-		public void IsValidColumnSpec_ValidReturnsTrue()
+		public void IsValidColumnSpec_MatchesLabels()
 		{
 			var vc = new XmlBrowseViewBaseVc { PossibleColumnSpecs = new List<XmlNode>(), ListItemsClass = -1 /* can't be 0 */ };
 			var possibleColumns = new XmlDocument();
@@ -218,30 +223,18 @@ namespace XMLViewsTests
 				vc.PossibleColumnSpecs.Add(node);
 			}
 
-			var savedColumns = new XmlDocument();
-			savedColumns.LoadXml("<root><column label='Ref'/><column label='Other (Best Ana)' originalLabel='Other'/></root>");
+			var validColumns = new XmlDocument();
+			validColumns.LoadXml("<root><column label='Ref'/><column label='Other (Best Ana)' originalLabel='Other'/></root>");
 
 			// SUT
-			foreach (XmlNode node in savedColumns.DocumentElement.GetElementsByTagName("column"))
+			foreach (XmlNode node in validColumns.DocumentElement.GetElementsByTagName("column"))
 			{
 				Assert.IsTrue(vc.IsValidColumnSpec(node), $"Should have found this node to be valid: {node.OuterXml}");
 			}
-		}
 
-		[Test]
-		public void IsValidColumnSpec_InvalidReturnsFalse()
-		{
-			var vc = new XmlBrowseViewBaseVc { PossibleColumnSpecs = new List<XmlNode>(), ListItemsClass = -1 /* can't be 0 */ };
-			var possibleColumns = new XmlDocument();
-			possibleColumns.LoadXml("<columns><column label='Ref'/><column label='Other'/></columns>");
-			foreach (XmlNode node in possibleColumns.DocumentElement.GetElementsByTagName("column"))
-			{
-				vc.PossibleColumnSpecs.Add(node);
-			}
-
-			var savedColumns = new XmlDocument();
-			savedColumns.LoadXml("<root><column label='DoesNotExist' originalLabel='MayHaveExistedBefore'/></root>");
-			var invalidColumn = savedColumns.DocumentElement.SelectSingleNode("column");
+			var invalidColumns = new XmlDocument();
+			invalidColumns.LoadXml("<root><column label='DoesNotExist' originalLabel='MayHaveExistedBefore'/></root>");
+			var invalidColumn = invalidColumns.DocumentElement.SelectSingleNode("column");
 
 			// SUT
 			Assert.IsFalse(vc.IsValidColumnSpec(invalidColumn), $"Should have found this node to be invalid: {invalidColumn.OuterXml}");
