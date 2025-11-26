@@ -51,12 +51,6 @@ namespace SIL.FieldWorks.Common.Controls
 		#endregion Constants
 
 		#region Data Members
-
-		/// <summary>
-		/// Specifications of columns to display
-		/// </summary>
-		protected List<XmlNode> m_columns = new List<XmlNode>();
-
 		/// <summary>// Top-level fake property for list of objects.</summary>
 		protected int m_fakeFlid = 0;
 		/// <summary>// Controls appearance of column for check boxes.</summary>
@@ -73,8 +67,7 @@ namespace SIL.FieldWorks.Common.Controls
 		protected int m_dxmpCheckBorderWidth = 72000 / 96;
 		/// <summary></summary>
 		protected XmlBrowseViewBase m_xbv;
-		/// <summary></summary>
-		protected ISortItemProvider m_sortItemProvider;
+
 		IPicture m_PreviewArrowPic;
 		IPicture m_PreviewRTLArrowPic;
 		int m_icolOverrideAllowEdit = -1; // index of column to force allow editing in.
@@ -216,7 +209,7 @@ namespace SIL.FieldWorks.Common.Controls
 				foreach(XmlNode node in PossibleColumnSpecs)
 				{
 					if (XmlUtils.GetOptionalAttributeValue(node, "visibility", "always") == "always")
-						m_columns.Add(node);
+						ColumnSpecs.Add(node);
 				}
 			}
 			else
@@ -231,14 +224,14 @@ namespace SIL.FieldWorks.Common.Controls
 					if (possible != null)
 						newPossibleColumns.Remove(possible);
 					if (IsValidColumnSpec(node))
-						m_columns.Add(node);
+						ColumnSpecs.Add(node);
 				}
 
 				foreach (var node in newPossibleColumns)
 				{
 					// add any possible columns that were not in the saved list and are common
 					if (XmlUtils.GetOptionalAttributeValue(node, "common", "false") == "true")
-						m_columns.Add(node);
+						ColumnSpecs.Add(node);
 				}
 			}
 			m_fakeFlid = fakeFlid;
@@ -747,34 +740,18 @@ namespace SIL.FieldWorks.Common.Controls
 			return headerLabelList;
 		}
 
-		internal virtual List<XmlNode> ColumnSpecs
-		{
-			get
-			{
-				return m_columns;
-			}
-			set
-			{
-				m_columns = value;
-			}
-		}
+		/// <summary>
+		/// Specifications of columns to display
+		/// </summary>
+		protected internal virtual List<XmlNode> ColumnSpecs { get; set; } = new List<XmlNode>();
 
 		/// <summary>
 		/// Specs of columns that COULD be displayed, but which have not been selected.
 		/// </summary>
 		protected internal List<XmlNode> PossibleColumnSpecs { get; set; }
 
-		internal ISortItemProvider SortItemProvider
-		{
-			get
-			{
-				return m_sortItemProvider;
-			}
-			set
-			{
-				m_sortItemProvider = value;
-			}
-		}
+		/// <summary></summary>
+		protected internal ISortItemProvider SortItemProvider { get; set; }
 
 		/// <summary>
 		/// Use this to store a suitable preview arrow if we will be displaying previews.
@@ -892,7 +869,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			// Make a table.
 			VwLength[] rglength = m_xbv.GetColWidthInfo();
-			int colCount = m_columns.Count;
+			int colCount = ColumnSpecs.Count;
 			if (m_fShowSelected)
 				colCount++;
 
@@ -954,12 +931,12 @@ namespace SIL.FieldWorks.Common.Controls
 			int cAdjCol = m_fShowSelected ? 0 : 1;
 			if (m_fShowColumnsRTL)
 			{
-				for (int icol = m_columns.Count; icol > 0; --icol)
+				for (int icol = ColumnSpecs.Count; icol > 0; --icol)
 					AddTableCell(vwenv, hvo, index, hvoRoot, icolActive, cAdjCol, icol);
 			}
 			else
 			{
-				for (int icol = 1; icol <= m_columns.Count; ++icol)
+				for (int icol = 1; icol <= ColumnSpecs.Count; ++icol)
 					AddTableCell(vwenv, hvo, index, hvoRoot, icolActive, cAdjCol, icol);
 			}
 			vwenv.CloseTableRow();
@@ -993,7 +970,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void AddTableCell(IVwEnv vwenv, int hvo, int index, int hvoRoot, int icolActive, int cAdjCol, int icol)
 		{
-			XmlNode node = m_columns[icol - 1];
+			XmlNode node = ColumnSpecs[icol - 1];
 			// Figure out the underlying Right-To-Left value.
 			bool fRightToLeft = false;
 			// Figure out if this column's writing system is audio.
@@ -1095,7 +1072,7 @@ namespace SIL.FieldWorks.Common.Controls
 				fParaOpened = true;
 			}
 
-			if (m_sortItemProvider == null)
+			if (SortItemProvider == null)
 			{
 				try
 				{
@@ -1118,7 +1095,7 @@ namespace SIL.FieldWorks.Common.Controls
 				int hvoDum, tag, ihvo;
 				vwenv.GetOuterObject(level - 2, out hvoDum, out tag, out ihvo);
 				Debug.Assert(tag == m_fakeFlid);
-				IManyOnePathSortItem item = m_sortItemProvider.SortItemAt(ihvo);
+				IManyOnePathSortItem item = SortItemProvider.SortItemAt(ihvo);
 				if (item != null)
 				DisplayCell(item, node, hvo, vwenv);	// (Original) cell contents
 			}

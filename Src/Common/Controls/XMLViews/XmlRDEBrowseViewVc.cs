@@ -398,7 +398,7 @@ namespace SIL.FieldWorks.Common.Controls
 			{
 				// If the column that suppresses the "no" special behavior is present, we don't want the "no" child.
 				// That includes if a ws-specific column which includes that label is present.
-				foreach (var col in m_columns)
+				foreach (var col in ColumnSpecs)
 				{
 					if (XmlUtils.GetOptionalAttributeValue(col, @"label").Contains(suppressNoForColumn))
 						return true;
@@ -445,7 +445,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			// Make a table
 			VwLength[] rglength = m_xbv.GetColWidthInfo();
-			int colCount = m_columns.Count;
+			int colCount = ColumnSpecs.Count;
 			if (m_fShowSelected)
 				colCount++;
 
@@ -476,12 +476,12 @@ namespace SIL.FieldWorks.Common.Controls
 			// Make the cells.
 			if (m_fShowColumnsRTL)
 			{
-				for (int i = m_columns.Count; i > 0; --i)
+				for (int i = ColumnSpecs.Count; i > 0; --i)
 					AddEditCell(vwenv, cda, i);
 			}
 			else
 			{
-				for (int i = 1; i <= m_columns.Count; ++i)
+				for (int i = 1; i <= ColumnSpecs.Count; ++i)
 					AddEditCell(vwenv, cda, i);
 			}
 			vwenv.CloseTableRow();
@@ -491,7 +491,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void AddEditCell(IVwEnv vwenv, IVwCacheDa cda, int i)
 		{
-			XmlNode node = m_columns[i - 1];
+			XmlNode node = ColumnSpecs[i - 1];
 			// Make a cell and embed an editable virtual string for the column.
 			var editable = XmlUtils.GetOptionalBooleanAttributeValue(node, "editable", true);
 			if (!editable)
