@@ -8,6 +8,7 @@ using System.Xml;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
 using System.Reflection; // for check-box icons.
 using SIL.FieldWorks.Common.FwUtils;
@@ -746,7 +747,7 @@ namespace SIL.FieldWorks.Common.Controls
 		protected internal virtual List<XmlNode> ColumnSpecs { get; set; } = new List<XmlNode>();
 
 		/// <summary>
-		/// Specs of columns that COULD be displayed, but which have not been selected.
+		/// Specs of columns that COULD be displayed, regardless of whether they have been selected.
 		/// </summary>
 		protected internal List<XmlNode> PossibleColumnSpecs { get; set; }
 
@@ -1837,16 +1838,12 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		internal bool RemoveInvalidColumns()
 		{
-			return false;
-			//List<XmlNode> invalidColumns = new List<XmlNode>();
-			//for (int i = 0; i < m_columns.Count; ++i)
-			//{
-			//	if (!IsValidColumnSpec(m_columns[i]))
-			//		invalidColumns.Add(m_columns[i]);
-			//}
-			//for (int i = 0; i < invalidColumns.Count; ++i)
-			//	m_columns.Remove(invalidColumns[i]);
-			//return invalidColumns.Count > 0;
+			var invalidColumns = ColumnSpecs.Where(colSpec => !IsValidColumnSpec(colSpec)).ToList();
+			foreach (var colSpec in invalidColumns)
+			{
+				ColumnSpecs.Remove(colSpec);
+			}
+			return invalidColumns.Count > 0;
 		}
 	}
 }
