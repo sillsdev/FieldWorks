@@ -45,11 +45,12 @@ namespace SIL.FieldWorks.XWorks.LexText
 		};
 
 		/// <summary/>
-		public FlexStylesXmlAccessor(ILexDb lexicon, bool loadDocument = false, string sourceDocument = null)
+		public FlexStylesXmlAccessor(ILexDb lexicon, bool loadDocument = false, string sourceDocument = null, bool validating = false)
 			: base(lexicon.Cache)
 		{
 			m_sourceDocumentPath = sourceDocument;
 			m_lexicon = lexicon;
+			m_validating = validating;
 			if (loadDocument)
 			{
 				m_sourceStyles = LoadDoc(sourceDocument);
