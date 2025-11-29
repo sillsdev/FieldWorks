@@ -45,12 +45,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 		};
 
 		/// <summary/>
-		public FlexStylesXmlAccessor(ILexDb lexicon, bool loadDocument = false, string sourceDocument = null, bool validating = false)
+		public FlexStylesXmlAccessor(ILexDb lexicon, bool loadDocument = false, string sourceDocument = null)
 			: base(lexicon.Cache)
 		{
 			m_sourceDocumentPath = sourceDocument;
 			m_lexicon = lexicon;
-			m_validating = validating;
 			if (loadDocument)
 			{
 				m_sourceStyles = LoadDoc(sourceDocument);
@@ -243,6 +242,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			writer.WriteAttributeString("userlevel", style.UserLevel.ToString());
 			writer.WriteAttributeString("context", GetStyleContext(style));
 			writer.WriteAttributeString("type", GetStyleType(style));
+			writer.WriteAttributeString("structure", GetStyleStructure(style));
 
 			if (GetStyleType(style) == "character" && style.InheritsFrom != null)
 			{
@@ -266,6 +266,18 @@ namespace SIL.FieldWorks.XWorks.LexText
 					return "paragraph";
 			}
 			return style.RealStyle.Type.ToString();
+		}
+
+		private static string GetStyleStructure(ExportStyleInfo style)
+		{
+			switch (style.RealStyle.Structure)
+			{
+				case StructureValues.Heading:
+					return "heading";
+				case StructureValues.Body:
+					return "body";
+			}
+			return style.RealStyle.Structure.ToString();
 		}
 
 		///<remarks>The first letter for the context is supposed to be lower case</remarks>

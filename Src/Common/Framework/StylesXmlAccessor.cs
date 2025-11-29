@@ -65,11 +65,6 @@ namespace SIL.FieldWorks.Common.Framework
 		protected Dictionary<string, ReservedStyleInfo> m_htReservedStyles = new Dictionary<string, ReservedStyleInfo>();
 
 		/// <summary>
-		/// We are validating the XML before loading.
-		/// </summary>
-		protected bool m_validating = false;
-
-		/// <summary>
 		/// This indicates if the style file being imported contains ALL styles, or if it should be considered a partial set.
 		/// If it is a partial set we don't want to delete the missing styles.
 		/// </summary>
@@ -815,11 +810,6 @@ namespace SIL.FieldWorks.Common.Framework
 				style.Structure != structure ||
 				!CompatibleFunction(style.Function, function))
 			{
-				if (style.IsBuiltIn && m_validating)
-					// We are validating before deleting styles.
-					// Ignore any problems with built in styles because they will be deleted.
-					// This is needed to make the unit tests work.
-					return true;
 				if (style.IsBuiltIn)
 					ReportInvalidInstallation(String.Format(
 						FrameworkStrings.ksCannotRedefineFactoryStyle, style.Name, ResourceFileName));

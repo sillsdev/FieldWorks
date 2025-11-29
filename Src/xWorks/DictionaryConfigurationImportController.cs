@@ -193,7 +193,7 @@ namespace SIL.FieldWorks.XWorks
 			// Test for errors before deleting styles (LT-20393).
 			NonUndoableUnitOfWorkHelper.DoSomehow(_cache.ActionHandlerAccessor, () =>
 			{
-				new FlexStylesXmlAccessor(_cache.LangProject.LexDbOA, true, importStylesLocation, true);
+				new FlexStylesXmlAccessor(_cache.LangProject.LexDbOA, true, importStylesLocation);
 			});
 			var stylesToRemove = _cache.LangProject.StylesOC.Where(style => !UnsupportedStyles.Contains(style.Name));
 
