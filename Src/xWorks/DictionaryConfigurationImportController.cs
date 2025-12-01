@@ -142,6 +142,7 @@ namespace SIL.FieldWorks.XWorks
 				if (_view == null) // _view is sometimes null in unit tests, and it's helpful to know what exactly went wrong.
 					throw new Exception(xWorksStrings.kstidCannotImport, e);
 #endif
+				MessageBox.Show(xWorksStrings.kstidCannotImport + " (" + e.Message + ")");
 				_view.explanationLabel.Text = xWorksStrings.kstidCannotImport;
 			}
 
@@ -189,6 +190,11 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ImportStyles(string importStylesLocation)
 		{
+			// Test for errors before deleting styles (LT-20393).
+			NonUndoableUnitOfWorkHelper.DoSomehow(_cache.ActionHandlerAccessor, () =>
+			{
+				new FlexStylesXmlAccessor(_cache.LangProject.LexDbOA, true, importStylesLocation);
+			});
 			var stylesToRemove = _cache.LangProject.StylesOC.Where(style => !UnsupportedStyles.Contains(style.Name));
 
 			// For LT-18267, record basedon and next properties of styles not
