@@ -118,7 +118,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Load the mappings for a Paratext 6/7 project into the specified list. (no-op)
-		/// We never use this method; for tests, we use <c>Rhino.Mocks.MockRepository</c>
+		/// We never use this method; for tests, we use <c>Moq</c>
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public void LoadProjectMappings(IScrImportSet importSettings)

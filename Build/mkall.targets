@@ -271,7 +271,7 @@
 		<ChorusNugetVersion>6.0.0-beta0063</ChorusNugetVersion>
 		<PalasoNugetVersion>17.0.0-beta0080</PalasoNugetVersion>
 		<ParatextNugetVersion>9.4.0.1-beta</ParatextNugetVersion>
-		<LcmNugetVersion>11.0.0-beta0144</LcmNugetVersion>
+		<LcmNugetVersion>11.0.0-beta0145</LcmNugetVersion>
 		<IcuNugetVersion>70.1.152</IcuNugetVersion>
 		<HermitCrabNugetVersion>3.7.4</HermitCrabNugetVersion>
 		<IPCFrameworkVersion>1.1.1-beta0001</IPCFrameworkVersion>
