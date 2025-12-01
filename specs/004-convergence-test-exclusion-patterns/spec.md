@@ -415,7 +415,7 @@ During SDK conversion, the script didn't generate test exclusions automatically.
 
 - [ ] **Task 3.4**: Refresh COPILOT documentation for every touched `Src/**` folder
   - Update the folder’s `COPILOT.md` to describe the Pattern A expectation and record the new `last-reviewed-tree` reference.
-  - Run the existing COPILOT validation helpers (e.g., `python .github/fill_copilot_frontmatter.py`) so repo guidance stays in sync with the code changes.
+  - Run the current COPILOT validation helper (`python .github/check_copilot_docs.py --only-changed --fail`) so repo guidance stays in sync with the code changes.
 
 ### Phase 4: Validation (1 hour)
 - [ ] **Task 4.1**: Build all modified projects

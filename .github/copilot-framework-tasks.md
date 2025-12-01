@@ -56,7 +56,7 @@ See: `.github/option3-plan.md` for details.
 
 ## Notes
 - Keep instructions concise and domain-scoped (use `applyTo` when appropriate).
-- Follow the canonical COPILOT skeleton in `.github/update-copilot-summaries.md` and its three-pass workflow; remove scaffold leftovers when editing docs.
+- Follow the canonical COPILOT skeleton described in `Docs/copilot-refresh.md` (detect → plan → validate workflow) and remove scaffold leftovers when editing docs.
 - Prefer fast inner-loop build/test paths for agents; reserve installer builds for when necessary.
 
 

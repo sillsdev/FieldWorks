@@ -1,25 +1,27 @@
 #!/usr/bin/env python3
-"""
-scaffold_copilot_markdown.py - Prepare or normalize COPILOT.md files to match the canonical structure.
+"""Normalize COPILOT.md files so Copilot agents receive predictable structure.
 
-Behavior:
-- Detect impacted Src/<Folder> from git diff (same logic as detect_copilot_needed.py, or via --folders).
-- For each folder:
-    - Ensure frontmatter exists (status/last-reviewed/last-reviewed-tree).
-    - Normalize ordering of canonical sections.
-    - Insert placeholder sections when missing.
-    - Regenerate "References (auto-generated hints)" with current filesystem hints.
-- Never delete unknown sections; they are appended after canonical sections.
+Key behaviors (aligned with the detect → plan → draft workflow):
+
+* Detect impacted `Src/<Folder>` entries from git diff, or honor `--folders` / `--all`.
+* Ensure the YAML frontmatter includes `last-reviewed`, `last-reviewed-tree`, and `status`,
+    refreshing the tree hash with the latest git data.
+* Create and order the canonical section list so humans keep narrative content short.
+* Drop legacy "References (auto-generated hints)" blocks and insert the fenced
+    `<!-- copilot:auto-change-log -->` placeholder when missing.
+* Leave any unknown/custom sections intact by appending them after the canonical list.
 
 Usage examples:
-    python .github/scaffold_copilot_markdown.py --base origin/release/9.3
-    python .github/scaffold_copilot_markdown.py --folders Src/Common/Controls Src/Cellar
-    python .github/scaffold_copilot_markdown.py --all
+
+```powershell
+python .github/scaffold_copilot_markdown.py --base origin/release/9.3
+python .github/scaffold_copilot_markdown.py --folders Src/Common/Controls Src/Cellar
+python .github/scaffold_copilot_markdown.py --all
+```
 """
 from __future__ import annotations
 
 import argparse
-import os
 import subprocess
 from collections import OrderedDict
 from pathlib import Path
@@ -27,6 +29,7 @@ from typing import Dict, Iterable, List, Optional, Tuple
 
 import datetime as dt
 
+from copilot_doc_utils import ensure_auto_change_log_block, remove_legacy_auto_hint
 from copilot_tree_hash import compute_folder_tree_hash
 
 REQUIRED_HEADINGS = [
@@ -47,25 +50,7 @@ REQUIRED_HEADINGS = [
     "References",
 ]
 
-FILE_GROUPS = {
-    "Project files": {".csproj", ".vcxproj", ".props", ".targets"},
-    "Key C# files": {".cs"},
-    "Key C++ files": {".cpp", ".cc", ".c"},
-    "Key headers": {".h", ".hpp", ".ixx"},
-    "Data contracts/transforms": {
-        ".xml",
-        ".xsl",
-        ".xslt",
-        ".xsd",
-        ".dtd",
-        ".xaml",
-        ".resx",
-        ".config",
-    },
-}
-
-AUTO_HINT_HEADING = "## References (auto-generated hints)"
-PLACEHOLDER_TEXT = "TBD - populate from code. See auto-generated hints below."
+PLACEHOLDER_TEXT = "TBD - populate from code. Use planner output for context."
 
 
 def run(cmd: List[str], cwd: Optional[str] = None) -> str:
@@ -217,12 +202,7 @@ class CopilotDoc:
             for heading, lines in sections.items()
         )
 
-    def _strip_auto_hints(self):
-        if "References (auto-generated hints)" in self.sections:
-            self.sections.pop("References (auto-generated hints)")
-
     def ensure_canonical_sections(self):
-        self._strip_auto_hints()
         new_sections: "OrderedDict[str, str]" = OrderedDict()
         for heading in REQUIRED_HEADINGS:
             if heading in self.sections:
@@ -234,7 +214,7 @@ class CopilotDoc:
             new_sections[heading] = content
         self.sections = new_sections
 
-    def render(self, auto_hint_block: str) -> str:
+    def render(self) -> str:
         document = []
         document.append(render_frontmatter(self.frontmatter))
         document.append(f"{self.title}\n\n")
@@ -242,43 +222,7 @@ class CopilotDoc:
             # Ensure each block ends with a blank line
             block = content.rstrip() + "\n\n"
             document.append(block)
-            if heading == "References" and auto_hint_block:
-                document.append(auto_hint_block)
         return "".join(document).rstrip() + "\n"
-
-
-def list_files_for_references(
-    folder: Path, limit_per_group: int = 25
-) -> Dict[str, List[str]]:
-    groups: Dict[str, List[str]] = {k: [] for k in FILE_GROUPS}
-    skip = {"obj", "bin", "packages", "output", "downloads"}
-    for dirpath, dirnames, filenames in os.walk(folder):
-        rel_parts = {p.lower() for p in Path(dirpath).parts}
-        if rel_parts & skip:
-            continue
-        for filename in filenames:
-            ext = os.path.splitext(filename)[1].lower()
-            for group_name, exts in FILE_GROUPS.items():
-                if ext in exts:
-                    rel = Path(dirpath, filename).relative_to(folder.parent.parent)
-                    groups[group_name].append(str(rel).replace("\\", "/"))
-                    break
-    for key in groups:
-        groups[key] = sorted(groups[key])[:limit_per_group]
-    return groups
-
-
-def format_auto_hint_block(groups: Dict[str, Iterable[str]]) -> str:
-    lines: List[str] = [f"{AUTO_HINT_HEADING}"]
-    for group_name, items in groups.items():
-        items = list(items)
-        if not items:
-            continue
-        lines.append(f"- {group_name}:")
-        for item in items:
-            lines.append(f"  - {item}")
-    lines.append("")
-    return "\n".join(lines)
 
 
 def ensure_copilot_doc(
@@ -296,8 +240,10 @@ def ensure_copilot_doc(
         tree_hash = None
     doc = CopilotDoc(original, folder.name, tree_hash, status=status)
     doc.ensure_canonical_sections()
-    auto_hint_block = format_auto_hint_block(list_files_for_references(folder))
-    return doc.render(auto_hint_block), tree_hash
+    rendered = doc.render()
+    rendered, _ = remove_legacy_auto_hint(rendered)
+    rendered, _ = ensure_auto_change_log_block(rendered)
+    return rendered, tree_hash
 
 
 def main() -> int:

@@ -15,7 +15,7 @@ This checklist operationalizes the multi-phase plan to align FieldWorks guidance
 
 ## Phase 3 — COPILOT.md Modernization
 - [ ] Introduce per-folder `copilot.instructions.md` (or equivalent) with `applyTo` for targeted guidance while retaining narrative `COPILOT.md`.
-- [ ] Extend `.github/update-copilot-summaries.md` workflow to enforce required sections and length caps.
+- [ ] Extend `Docs/copilot-refresh.md` workflow to enforce required sections and length caps.
 - [ ] Add VS Code tasks / scripts to scaffold new folder instruction files from templates.
 
 ## Phase 4 — Discoverability & Linting

@@ -9,7 +9,7 @@ Use these entry points to load context efficiently without scanning the entire r
 - Installer: `FLExInstaller/`
 - Test data: `TestLangProj/`
 - Localization: `crowdin.json`, `DistFiles/CommonLocalizations/`
-- Documentation discipline: `.github/update-copilot-summaries.md` (three-pass workflow, COPILOT skeleton)
+- Documentation discipline: `Docs/copilot-refresh.md` (detect → plan workflow, COPILOT skeleton)
 
 Tips
 - Prefer top-level scripts or FieldWorks.sln over ad-hoc project builds
