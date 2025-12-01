@@ -1700,6 +1700,7 @@ namespace SIL.FieldWorks.XWorks
 
 				// These flids for List fields indicate lists that use fixed guids for their
 				// (predefined) items.
+				m_flidsForGuids.Add(LangProjectTags.kflidPartsOfSpeech, true);
 				m_flidsForGuids.Add(LangProjectTags.kflidTranslationTags, true);
 				m_flidsForGuids.Add(LangProjectTags.kflidAnthroList, true);
 				m_flidsForGuids.Add(LangProjectTags.kflidSemanticDomainList, true);
