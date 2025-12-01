@@ -1319,34 +1319,34 @@ namespace SIL.FieldWorks.XWorks
 			Assert.AreEqual(MoFormTags.kClassId, m_bv.ListItemsClass);
 			// check that clerk list has also changed.
 			Assert.AreEqual(MoFormTags.kClassId, m_bv.SortItemProvider.ListItemsClass);
-			// make sure the list size includes all allomorphs, and all entries that don't have allomorphs.
-			Assert.AreEqual(clerk.ListSize, allomorphs.Count + entriesWithoutAllomorphs.Count);
+			// make sure the list size includes all allomorphs and lexemes.
+			Assert.AreEqual(clerk.ListSize, allomorphs.Count + entriesWithoutAllomorphs.Count + 1);
 
-			// make sure we're on the first allomorph of the entry we changed from
-			Assert.AreEqual(firstAllomorph.Hvo, clerk.CurrentObject.Hvo);
+			// make sure we're on the first allomorph (e.g. the LexemeForm) of the entry we changed from
+			Assert.AreEqual(firstEntryWithAllomorph.LexemeFormOA.Hvo, clerk.CurrentObject.Hvo);
 			// change the first allomorphs's IsAbstract to something else
-			Assert.AreEqual(false, firstAllomorph.IsAbstract);
+			Assert.AreEqual(false, firstEntryWithAllomorph.LexemeFormOA.IsAbstract);
 			m_bv.OnUncheckAll();
-			m_bv.SetCheckedItems(new List<int>(new int[] { firstAllomorph.Hvo }));
+			m_bv.SetCheckedItems(new List<int>(new int[] { firstEntryWithAllomorph.LexemeFormOA.Hvo }));
 			listChoiceControl.SelectedItem = item; // change to 'yes'
 
 			int cAllomorphs = firstEntryWithAllomorph.AlternateFormsOS.Count;
 			m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
 			m_bulkEditBar.ClickApply();
 			// make sure we changed the list option and didn't add another separate allomorph.
-			Assert.AreEqual(Convert.ToBoolean(item.Value), firstAllomorph.IsAbstract);
+			Assert.AreEqual(Convert.ToBoolean(item.Value), firstEntryWithAllomorph.LexemeFormOA.IsAbstract);
 			Assert.AreEqual(cAllomorphs, firstEntryWithAllomorph.AlternateFormsOS.Count);
-			Assert.AreEqual(clerk.ListSize, allomorphs.Count + entriesWithoutAllomorphs.Count);
+			Assert.AreEqual(clerk.ListSize, allomorphs.Count + entriesWithoutAllomorphs.Count + 1);
 
 			// now try previewing and setting IsAbstract on an entry that does not have an allomorph.
 			cAllomorphs = firstEntryWithoutAllomorph.AlternateFormsOS.Count;
 			Assert.AreEqual(0, cAllomorphs);
-			clerk.JumpToRecord(firstEntryWithoutAllomorph.Hvo);
+			clerk.JumpToRecord(firstEntryWithoutAllomorph.LexemeFormOA.Hvo);
 			((MockFwXWindow)m_window).ProcessPendingItems();
-			Assert.AreEqual(firstEntryWithoutAllomorph.Hvo, clerk.CurrentObject.Hvo);
+			Assert.AreEqual(firstEntryWithoutAllomorph.LexemeFormOA.Hvo, clerk.CurrentObject.Hvo);
 			int currentIndex = clerk.CurrentIndex;
 			m_bv.OnUncheckAll();
-			m_bv.SetCheckedItems(new List<int>(new int[] { firstEntryWithoutAllomorph.Hvo }));
+			m_bv.SetCheckedItems(new List<int>(new int[] { firstEntryWithoutAllomorph.LexemeFormOA.Hvo }));
 
 			m_bulkEditBar.ClickPreview(); // make sure we don't crash clicking preview button.
 			m_bulkEditBar.ClickApply();
@@ -1367,14 +1367,14 @@ namespace SIL.FieldWorks.XWorks
 			m_bulkEditBar.ClickApply();
 			// make sure there still isn't a new allomorph.
 			Assert.AreEqual(0, firstEntryWithoutAllomorph.AlternateFormsOS.Count);
-			Assert.AreEqual(clerk.ListSize, allomorphs.Count + entriesWithoutAllomorphs.Count);
+			Assert.AreEqual(clerk.ListSize, allomorphs.Count + entriesWithoutAllomorphs.Count + 1);
 
 			// refresh list, and make sure the clerk now has the same entry.
 			this.MasterRefresh();
 			clerk = (m_bv.Parent as RecordBrowseViewForTests).Clerk;
-			Assert.AreEqual(firstEntryWithoutAllomorph.Hvo, clerk.CurrentObject.Hvo);
+			Assert.AreEqual(firstEntryWithoutAllomorph.LexemeFormOA.Hvo, clerk.CurrentObject.Hvo);
 			// also make sure the total count of the list has not changed.
-			Assert.AreEqual(clerk.ListSize, allomorphs.Count + entriesWithoutAllomorphs.Count);
+			Assert.AreEqual(clerk.ListSize, allomorphs.Count + entriesWithoutAllomorphs.Count + 1);
 		}
 
 		/// <summary>

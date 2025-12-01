@@ -633,6 +633,7 @@ namespace LCMBrowser
 							type = "SIL.FieldWorks.Common.FwUtils.GenDate";
 							break;
 						case "ReferenceAtomic":
+						case "ReferenceAtom":
 							type = "ICmPossibility";
 							break;
 						case "ReferenceCollection":
