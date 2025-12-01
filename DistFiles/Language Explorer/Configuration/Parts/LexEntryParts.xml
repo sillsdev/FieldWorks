@@ -343,22 +343,22 @@
 			<string field="ImportResidue" ws="analysis"/>
 		</part>
 		<part id="LexEntry-Jt-Allomorph" type="jtview">
-			<seq field="AlternateForms" layout="Allomorph"/>
+			<seq field="AllAllomorphs" layout="Allomorph"/>
 		</part>
 		<part id="LexEntry-Jt-AllomorphStemNames" type="jtview">
-			<seq field="AlternateForms" layout="AllomorphStemNames"/>
+			<seq field="AllAllomorphs" layout="AllomorphStemNames"/>
 		</part>
 		<part id="LexEntry-Jt-IsAbstractFormForAllomorph" type="jtview">
-			<seq field="AlternateForms" layout="IsAbstractFormForAllomorph"/>
+			<seq field="AllAllomorphs" layout="IsAbstractFormForAllomorph"/>
 		</part>
 		<part id="LexEntry-Jt-MorphTypeForAllomorph" type="JtView">
-			<seq field="AlternateForms" layout="MorphTypeForAllomorph"/>
+			<seq field="AllAllomorphs" layout="MorphTypeForAllomorph"/>
 		</part>
 		<part id="LexEntry-Jt-EnvironmentsForLexemeForm" type="JtView">
 			<obj field="LexemeForm" layout="Environments"/>
 		</part>
 		<part id="LexEntry-Jt-EnvironmentsForAllomorphs" type="JtView">
-			<seq field="AlternateForms" layout="Environments"/>
+			<seq field="AllAllomorphs" layout="Environments"/>
 		</part>
 		<part id="LexEntry-Jt-PublishInForEntries" type="JtView">
 			<seq field="PublishIn" layout="Name" />
