@@ -1,22 +1,18 @@
+---
+last-reviewed: 2025-11-21
+last-reviewed-tree: 9bd081c8b99fcd3e3e2e644cac0f5e8222648391667a18c1ee1095769390928b
+status: draft
+---
+
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/Utilities/FixFwData. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
-
-﻿---
-last-reviewed: 2025-11-01
-last-reviewed-tree: 6cf055af735fcf5f893126f0d5bf31ba037b8c3ff5eef360f62a7319ca5d5f0e
-status: production
----
 
 # FixFwData
 
@@ -40,61 +36,22 @@ Simple command-line WinExe wrapper (~120 lines in Program.cs) around SIL.LCModel
 - **NullProgress**: IProgress implementation that writes messages to Console.Out, doesn't support cancellation
 
 ## Technology Stack
-- **Language**: C#
-- **Target framework**: .NET Framework 4.8.x (net48)
-- **Application type**: WinExe (console application with WinForms error handling)
-- **Key libraries**:
-  - SIL.LCModel.FixData (FwDataFixer - core repair engine)
-  - SIL.LCModel.Utils (IProgress interface)
-  - SIL.Reporting (ErrorReport for crash reporting)
-  - SIL.Windows.Forms (WinFormsExceptionHandler, HotSpotProvider)
-- **Platform**: Windows-only (WinForms dependencies)
+C# .NET Framework 4.8.x WinExe. Key libraries: SIL.LCModel.FixData (FwDataFixer repair engine), SIL.Reporting (ErrorReport), SIL.Windows.Forms (exception handling). Windows-only.
 
 ## Dependencies
-- **SIL.LCModel.FixData**: FwDataFixer class (core repair logic)
-- **SIL.Reporting**: ErrorReport
-- **SIL.LCModel.Utils**: IProgress
-- **SIL.Windows.Forms**: HotSpotProvider, WinFormsExceptionHandler
-- **Consumer**: Administrators, support staff for data repair
+Consumes: SIL.LCModel.FixData (FwDataFixer), SIL.Reporting, SIL.LCModel.Utils (IProgress). Used by: Administrators/support staff for data repair.
 
 ## Interop & Contracts
-- **Command-line interface**: `FixFwData.exe <filepath>`
-  - Input: Single argument - path to FW project file (.fwdata or .fwdb)
-  - Output: Console messages (errors found/fixed), exit code
-  - Exit codes: 0 = success (no errors or all fixed), 1 = errors occurred
-- **FwDataFixer contract**: Calls FixErrorsAndSave(logger, counter)
-  - logger callback: `void(string description, bool errorFixed)` - Reports each error
-  - counter callback: `int()` - Returns total error count
-- **Console output**: All error messages and progress written to stdout
-- **Error reporting**: flex_errors@sil.org configured for crash reports
-- **No file format dependencies**: FwDataFixer handles all project file formats
+Command-line: `FixFwData.exe <filepath>`. Input: FW project file path. Output: Console messages, exit code (0=success, 1=errors). FwDataFixer.FixErrorsAndSave() with logger/counter callbacks. Error reporting to flex_errors@sil.org.
 
 ## Threading & Performance
-- **Single-threaded**: All operations on main thread
-- **Synchronous**: FwDataFixer.FixErrorsAndSave() runs synchronously
-- **Performance characteristics**:
-  - File loading: Depends on file size (seconds to minutes for large projects)
-  - Error scanning: O(n) where n = number of objects in project
-  - Error fixing: Depends on error count and complexity
-  - Typical runtime: 1-5 minutes for small projects, 10-30 minutes for large
-- **Console output**: Incremental (errors logged as found)
-- **No progress UI**: NullProgress writes to console but provides no visual progress
-- **Memory**: Loads entire project into memory (can be GBs for large projects)
+Single-threaded synchronous operation. Typical runtime: 1-5 minutes (small projects), 10-30 minutes (large). Loads entire project into memory (can be GBs).
 
 ## Config & Feature Flags
-- **Command-line argument**: File path (required, no flags/options)
-- **Error email**: Hardcoded to flex_errors@sil.org (for crash reports)
-- **No configuration file**: All behavior hardcoded
-- **WinForms exception handling**: SetUpErrorHandling() configures UnhandledException handlers
-- **NullProgress settings**: No cancellation support (IsCanceling always returns false)
-- **Exit code behavior**: 0 = success, 1 = errors (standard convention)
+File path argument required (no flags). Error email hardcoded to flex_errors@sil.org. No configuration file. Exit code: 0=success, 1=errors.
 
 ## Build Information
-- **Project**: FixFwData.csproj
-- **Type**: WinExe (.NET Framework 4.8.x)
-- **Output**: FixFwData.exe
-- **Platform**: AnyCPU
-- **Source files**: Program.cs, Properties/AssemblyInfo.cs (2 files)
+FixFwData.csproj (net48, WinExe). Output: FixFwData.exe. Source: Program.cs, Properties/AssemblyInfo.cs (2 files).
 
 ## Interfaces and Data Models
 
@@ -123,74 +80,16 @@ Simple command-line WinExe wrapper (~120 lines in Program.cs) around SIL.LCModel
   - Implementation: Returns count of logged errors
 
 ## Entry Points
-- **Command-line execution**: `FixFwData.exe "C:\path\to\project.fwdata"`
-  - Typical use: Data recovery when FLEx won't open a project
-  - Returns exit code for scripting/automation
-- **Main(string[] args)**: Program entry point
-  - Validates argument count (exactly 1 required)
-  - Creates FwDataFixer instance
-  - Calls FixErrorsAndSave() with logger/counter callbacks
-  - Returns exit code based on errorsOccurred flag
-- **Common scenarios**:
-  - User reports "FLEx won't open my project"
-  - Support staff: Run FixFwData.exe to diagnose/repair
-  - Automated recovery scripts
-  - Pre-migration data cleanup
-- **Output redirection**: Can redirect console output to log file
-  - Example: `FixFwData.exe project.fwdata > repair.log 2>&1`
+Command-line: `FixFwData.exe "C:\path\to\project.fwdata"`. Main() validates argument, creates FwDataFixer, calls FixErrorsAndSave() with logger/counter callbacks, returns exit code. Used for data recovery when FLEx won't open projects.
 
 ## Test Index
-No test project found.
+No test project.
 
 ## Usage Hints
-- **Basic usage**: `FixFwData.exe "C:\Users\...\MyProject.fwdata"`
-  - Must provide full path to project file
-  - Enclose path in quotes if it contains spaces
-  - Check exit code: 0 = success, 1 = errors
-- **Typical workflow**:
-  1. User reports corrupt project (FLEx won't open)
-  2. Support staff asks for project file
-  3. Run FixFwData.exe on project file
-  4. Review console output for errors found/fixed
-  5. If exit code 0, project should be openable
-  6. If exit code 1, review error messages, may need manual intervention
-- **Console output interpretation**:
-  - "Error fixed" = FwDataFixer repaired the issue
-  - Error count at end = total issues found
-  - No errors = "No errors found" message
-- **Common pitfalls**:
-  - Forgetting to provide file path argument (error message)
-  - Running on wrong file type (.fwbackup instead of .fwdata)
-  - Insufficient disk space for repair operations
-  - File locked by another process (FLEx must be closed)
-- **Troubleshooting**:
-  - "File not found": Check path, quotes
-  - "Access denied": Check file permissions
-  - Long runtime: Normal for large projects (patience required)
-  - No output: Check if process hung (task manager)
-- **Scripting example**:
-  ```batch
-  FixFwData.exe "project.fwdata" > repair.log
-  if %ERRORLEVEL% EQU 0 (
-      echo Repair successful
-  ) else (
-      echo Errors occurred, see repair.log
-  )
-  ```
+Usage: `FixFwData.exe "path"` (enclose in quotes if spaces). Exit code: 0=success, 1=errors. Typical workflow: User reports corrupt project → support staff runs tool → review console output → retry opening in FLEx. Console output shows "Error fixed" messages and error count. Output redirectable: `FixFwData.exe project.fwdata > repair.log 2>&1`. Runtime: 1-5 minutes (small), 10-30 minutes (large). Ensure FLEx closed (file lock), sufficient disk space. Scripting: check %ERRORLEVEL%.
 
 ## Related Folders
-- **Utilities/FixFwDataDll/**: Core data repair library (would contain FwDataFixer if not in LCModel)
-- **SIL.LCModel.FixData**: External library with FwDataFixer
-- **MigrateSqlDbs/**: Legacy FW6→FW7 migration (related data repair scenario)
+Utilities/FixFwDataDll/ (core repair library), MigrateSqlDbs/ (legacy migration).
 
 ## References
-- **SIL.LCModel.FixData.FwDataFixer**: Main repair engine
-- **SIL.LCModel.Utils.IProgress**: Progress reporting interface
-- **SIL.Windows.Forms.Reporting.WinFormsExceptionHandler**: Error handling
-
-## Auto-Generated Project and File References
-- Project files:
-  - Utilities/FixFwData/FixFwData.csproj
-- Key C# files:
-  - Utilities/FixFwData/Program.cs
-  - Utilities/FixFwData/Properties/AssemblyInfo.cs
+FixFwData.csproj (net48, WinExe). Uses SIL.LCModel.FixData.FwDataFixer (repair engine). Program.cs (~120 lines), NullProgress nested class (console IProgress). See `.cache/copilot/diff-plan.json` for complete file listing.

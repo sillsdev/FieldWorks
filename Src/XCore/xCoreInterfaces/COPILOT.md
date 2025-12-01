@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: bb638469b95784020f72451e340085917d03c08131c070e65da65e14d5f18bb1
+last-reviewed-tree: aabfae3eb78cb8b4b91e19f7ae790467f34a684e9b51255fc952d305a1a96223
 status: reviewed
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/XCore/xCoreInterfaces. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # xCoreInterfaces
 
@@ -62,23 +58,14 @@ Core interface definitions (~7.8K lines) for XCore framework. Provides Mediator 
 - **List** (List.cs) - Generic list utilities
 
 ## Technology Stack
-- **Language**: C#
-- **Target framework**: .NET Framework 4.8.x (net48)
-- **Library type**: Pure interface definitions + core implementations
-- **Key libraries**: Minimal dependencies (SIL.Utils, System assemblies)
-- **Pattern**: Mediator, Command, Observer (property change notification)
+Language - C#
 
 ## Dependencies
-- **Upstream**: Minimal - SIL.Utils, System assemblies (pure interface definitions)
-- **Downstream consumers**: XCore/ (Inventory, XWindow), XCore/FlexUIAdapter/, xWorks/, LexText/, all XCore-based apps
+- Upstream: Core libraries
+- Downstream: Applications
 
 ## Interop & Contracts
-- **Mediator**: BroadcastMessage(), SendMessage() for command routing
-- **IxCoreColleague**: Plugin interface (HandleMessage, PropertyValue methods)
-- **PropertyTable**: GetValue<T>(), SetProperty() with change notification
-- **ChoiceGroup/Choice**: XML-driven menu/toolbar definitions
-- **IUIAdapter**: UI adapter interface for framework independence
-- **IdleQueue**: AddTask() for idle-time processing
+- Mediator: BroadcastMessage(), SendMessage() for command routing
 
 ## Threading & Performance
 TBD - populate from code. See auto-generated hints below.
@@ -90,12 +77,10 @@ TBD - populate from code. See auto-generated hints below.
 TBD - populate from code. See auto-generated hints below.
 
 ## Interfaces and Data Models
-TBD - populate from code. See auto-generated hints below.
+See Key Components section above.
 
 ## Entry Points
 - Framework interface contracts
-- Command and choice abstractions
-- UI component interfaces
 
 ## Test Index
 Test projects: xCoreInterfacesTests. 3 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
@@ -104,63 +89,13 @@ Test projects: xCoreInterfacesTests. 3 test files. Run via: `dotnet test` or Tes
 Library component. Reference in consuming projects. See Dependencies section for integration points.
 
 ## Related Folders
-- **XCore/** - Framework implementing these interfaces
-- **XCore/FlexUIAdapter/** - Implements UI interfaces
-- **Common/UIAdapterInterfaces/** - Related adapter interfaces
-- **xWorks/** - Uses XCore interfaces
-- **LexText/** - Uses XCore interfaces
+- XCore/ - Framework implementing these interfaces
 
 ## References
+See `.cache/copilot/diff-plan.json` for file details.
 
-- **Project files**: xCoreInterfaces.csproj, xCoreInterfacesTests.csproj
-- **Target frameworks**: net48
-- **Key C# files**: AssemblyInfo.cs, BaseContextHelper.cs, ChoiceGroup.cs, IFeedbackInfoProvider.cs, IImageCollection.cs, IUIAdapter.cs, Mediator.cs, PropertyTable.cs, ReadOnlyPropertyTable.cs, RecordFilterListProvider.cs
-- **XML data/config**: Settings.xml, db_TestLocal_Settings.xml
-- **Source file count**: 26 files
-- **Data file count**: 4 files
-
-## References (auto-generated hints)
-- Project files:
-  - XCore/xCoreInterfaces/xCoreInterfaces.csproj
-  - XCore/xCoreInterfaces/xCoreInterfacesTests/xCoreInterfacesTests.csproj
-- Key C# files:
-  - XCore/xCoreInterfaces/AssemblyInfo.cs
-  - XCore/xCoreInterfaces/BaseContextHelper.cs
-  - XCore/xCoreInterfaces/Choice.cs
-  - XCore/xCoreInterfaces/ChoiceGroup.cs
-  - XCore/xCoreInterfaces/Command.cs
-  - XCore/xCoreInterfaces/IFeedbackInfoProvider.cs
-  - XCore/xCoreInterfaces/IImageCollection.cs
-  - XCore/xCoreInterfaces/IPaneBar.cs
-  - XCore/xCoreInterfaces/IPersistenceProvider.cs
-  - XCore/xCoreInterfaces/IPropertyRetriever.cs
-  - XCore/xCoreInterfaces/IUIAdapter.cs
-  - XCore/xCoreInterfaces/IdleQueue.cs
-  - XCore/xCoreInterfaces/IxCoreColleague.cs
-  - XCore/xCoreInterfaces/List.cs
-  - XCore/xCoreInterfaces/Mediator.cs
-  - XCore/xCoreInterfaces/MessageSequencer.cs
-  - XCore/xCoreInterfaces/PersistenceProvider.cs
-  - XCore/xCoreInterfaces/PropertyTable.cs
-  - XCore/xCoreInterfaces/ReadOnlyPropertyTable.cs
-  - XCore/xCoreInterfaces/RecordFilterListProvider.cs
-  - XCore/xCoreInterfaces/xCoreInterfaces.Designer.cs
-  - XCore/xCoreInterfaces/xCoreInterfacesTests/Properties/AssemblyInfo.cs
-  - XCore/xCoreInterfaces/xCoreInterfacesTests/Properties/Resources.Designer.cs
-  - XCore/xCoreInterfaces/xCoreInterfacesTests/PropertyTableTests.cs
-  - XCore/xCoreInterfaces/xCoreInterfacesTests/TestMessageSequencer.cs
-- Data contracts/transforms:
-  - XCore/xCoreInterfaces/xCoreInterfaces.resx
-  - XCore/xCoreInterfaces/xCoreInterfacesTests/Properties/Resources.resx
-  - XCore/xCoreInterfaces/xCoreInterfacesTests/settingsBackup/Settings.xml
-  - XCore/xCoreInterfaces/xCoreInterfacesTests/settingsBackup/db_TestLocal_Settings.xml
 ## Test Infrastructure
-- **xCoreInterfacesTests/** subfolder
-- Tests for: Mediator, PropertyTable, ChoiceGroup, Command
+- xCoreInterfacesTests/ subfolder
 
 ## Code Evidence
 *Analysis based on scanning 23 source files*
-
-- **Classes found**: 20 public classes
-- **Interfaces found**: 15 public interfaces
-- **Namespaces**: XCore
