@@ -695,6 +695,8 @@ namespace SIL.FieldWorks.XWorks
 			if (fieldOwner is ISenseOrEntry senseOrEntry)
 			{
 				senseOrEntry.SpecificItemAndFieldName(fieldName, out specificObject, out specificFieldName);
+				// Replace "SenseOEntry" with the correct class.
+				fieldOwnerClassName = (specificObject is ILexEntry) ? "LexEntry" : "LexSense";
 			}
 			else if(fieldOwner is ICmObject owner)
 			{
