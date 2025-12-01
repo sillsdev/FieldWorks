@@ -15,6 +15,7 @@
 # Note that when using the JetBrains backend, language servers are not used and this list is correspondingly ignored.
 languages:
 - csharp
+- cpp
 
 # the encoding used by text files in the project
 # For a list of possible encodings, see https://docs.python.org/3.11/library/codecs.html#standard-encodings
@@ -28,7 +29,14 @@ ignore_all_files_in_gitignore: true
 # same syntax as gitignore, so you can use * and **
 # Was previously called `ignored_dirs`, please update your config if you are using that.
 # Added (renamed) on 2025-04-07
-ignored_paths: []
+ignored_paths:
+- Output/**
+- Obj/**
+- packages/**
+- Lib/**
+- DistFiles/Icu70/**
+- Downloads/**
+- .cache/**
 
 # whether the project is in read-only mode
 # If set to true, all editing tools will be disabled and attempts to use them will result in an error
@@ -37,7 +45,7 @@ read_only: false
 
 # list of tool names to exclude. We recommend not excluding any tools, see the readme for more details.
 # Below is the complete list of tools for convenience.
-# To make sure you have the latest list of tools, and to view their descriptions, 
+# To make sure you have the latest list of tools, and to view their descriptions,
 # execute `uv run scripts/print_tool_overview.py`.
 #
 #  * `activate_project`: Activates a project by name.
@@ -69,16 +77,17 @@ read_only: false
 #  * `restart_language_server`: Restarts the language server, may be necessary when edits not through Serena happen.
 #  * `search_for_pattern`: Performs a search for a pattern in the project.
 #  * `summarize_changes`: Provides instructions for summarizing the changes made to the codebase.
-#  * `switch_modes`: Activates modes by providing a list of their names
-#  * `think_about_collected_information`: Thinking tool for pondering the completeness of collected information.
-#  * `think_about_task_adherence`: Thinking tool for determining whether the agent is still on track with the current task.
-#  * `think_about_whether_you_are_done`: Thinking tool for determining whether the task is truly completed.
-#  * `write_memory`: Writes a named memory (for future reference) to Serena's project-specific memory store.
-excluded_tools: []
-
 # initial prompt for the project. It will always be given to the LLM upon activating the project
 # (contrary to the memories, which are loaded on demand).
-initial_prompt: ""
+initial_prompt: |
+  FieldWorks (FLEx) is a Windows-first linguistics suite by SIL International.
+  Key build facts:
+  - Uses MSBuild Traversal SDK via FieldWorks.proj (21 ordered phases, 110+ projects)
+  - Native C++ (Phase 2) must build before managed code (Phases 3+)
+  - Build command: .\build.ps1 or msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64 /m
+  - Check .github/instructions/*.instructions.md for coding guidelines (managed, native, testing, etc.)
+  - Per-folder COPILOT.md files describe component contracts and dependencies
 
 project_name: "FieldWorks"
+excluded_tools: []
 included_optional_tools: []

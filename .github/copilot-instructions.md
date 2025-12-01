@@ -39,6 +39,7 @@
 | Build/test rules | `.github/instructions/build.instructions.md`, `.github/instructions/testing.instructions.md` |
 | Managed / Native / Installer guidance | `.github/instructions/managed.instructions.md`, `.github/instructions/native.instructions.md`, `.github/instructions/installer.instructions.md` |
 | Security & PowerShell rules | `.github/instructions/security.instructions.md`, `.github/instructions/powershell.instructions.md` |
+| **Serena MCP (symbol tools)** | `.github/instructions/serena.instructions.md` |
 | Prompts & specs | `.github/prompts/*.prompt.md`, `.github/spec-templates/`, `.github/recipes/` |
 | Chat modes | `.github/chatmodes/*.chatmode.md` |
 
