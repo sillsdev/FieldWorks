@@ -1,0 +1,613 @@
+{
+  "generated": true,
+  "items": [
+    {
+      "path": ".github/copilot-instructions.md",
+      "kind": "repo-wide",
+      "size": "6512",
+      "lines": "98"
+    },
+    {
+      "path": ".github/instructions/appcore.instructions.md",
+      "kind": "path-specific",
+      "size": "2737",
+      "lines": "48",
+      "applyTo": "Src/AppCore/**\"",
+      "description": "Auto-generated concise instructions from COPILOT.md for AppCore\""
+    },
+    {
+      "path": ".github/instructions/build.instructions.md",
+      "kind": "path-specific",
+      "size": "6965",
+      "lines": "193"
+    },
+    {
+      "path": ".github/instructions/cmake-vcpkg.instructions.md",
+      "kind": "path-specific",
+      "size": "1035",
+      "lines": "14",
+      "applyTo": "'**/*.cmake, **/CMakeLists.txt, **/*.cpp, **/*.h, **/*.hpp'\"",
+      "description": "'C++ project configuration and package management'\""
+    },
+    {
+      "path": ".github/instructions/common.instructions.md",
+      "kind": "path-specific",
+      "size": "645",
+      "lines": "20",
+      "applyTo": "Src/Common/**\"",
+      "description": "Key conventions and integration points for the Common project.\""
+    },
+    {
+      "path": ".github/instructions/csharp.instructions.md",
+      "kind": "path-specific",
+      "size": "5905",
+      "lines": "118",
+      "applyTo": "'**/*.cs'\"",
+      "description": "'Guidelines for building C# applications'\""
+    },
+    {
+      "path": ".github/instructions/fieldworks.instructions.md",
+      "kind": "path-specific",
+      "size": "2607",
+      "lines": "45",
+      "applyTo": "Src/Common/FieldWorks/**\"",
+      "description": "Auto-generated concise instructions from COPILOT.md for FieldWorks\""
+    },
+    {
+      "path": ".github/instructions/filters.instructions.md",
+      "kind": "path-specific",
+      "size": "2824",
+      "lines": "45",
+      "applyTo": "Src/Common/Filters/**\"",
+      "description": "Auto-generated concise instructions from COPILOT.md for Filters\""
+    },
+    {
+      "path": ".github/instructions/fixfwdatadll.instructions.md",
+      "kind": "path-specific",
+      "size": "2721",
+      "lines": "60",
+      "applyTo": "Src/Utilities/FixFwDataDll/**\"",
+      "description": "Auto-generated concise instructions from COPILOT.md for FixFwDataDll\""
+    },
+    {
+      "path": ".github/instructions/installer.instructions.md",
+      "kind": "path-specific",
+      "size": "1237",
+      "lines": "27",
+      "applyTo": "FLExInstaller/**\"",
+      "description": "FieldWorks installer (WiX) development guidelines\""
+    },
+    {
+      "path": ".github/instructions/lextext.instructions.md",
+      "kind": "path-specific",
+      "size": "2438",
+      "lines": "60",
+      "applyTo": "Src/LexText/**\"",
+      "description": "Auto-generated concise instructions from COPILOT.md for LexText\""
+    },
+    {
+      "path": ".github/instructions/managed.instructions.md",
+      "kind": "path-specific",
+      "size": "2067",
+      "lines": "42",
+      "applyTo": "**/*.{cs,xaml,config,resx}\"",
+      "description": "FieldWorks managed (.NET/C#) development guidelines\""
+    },
+    {
+      "path": ".github/instructions/managedlgicucollator.instructions.md",
+      "kind": "path-specific",
+      "size": "3102",
+      "lines": "49",
+      "applyTo": "Src/ManagedLgIcuCollator/**\"",
+      "description": "Auto-generated concise instructions from COPILOT.md for ManagedLgIcuCollator\""
+    },
+    {
+      "path": ".github/instructions/managedvwdrawrootbuffered.instructions.md",
+      "kind": "path-specific",
+      "size": "3505",
+      "lines": "46",
+      "applyTo": "Src/ManagedVwDrawRootBuffered/**\"",
+      "description": "Auto-generated concise instructions from COPILOT.md for ManagedVwDrawRootBuffered\""
+    },
+    {
+      "path": ".github/instructions/migratesqldbs.instructions.md",
+      "kind": "path-specific",
+      "size": "3160",
+      "lines": "45",
+      "applyTo": "Src/MigrateSqlDbs/**\"",
+      "description": "Auto-generated concise instructions from COPILOT.md for MigrateSqlDbs\""
+    },
+    {
+      "path": ".github/instructions/native.instructions.md",
+      "kind": "path-specific",
+      "size": "1902",
+      "lines": "40",
+      "applyTo": "**/*.{cpp,h,hpp,cc,ixx,def}\"",
+      "description": "FieldWorks native (C++/C++-CLI) development guidelines\""
+    },
+    {
+      "path": ".github/instructions/paratext8plugin.instructions.md",
+      "kind": "path-specific",
+      "size": "3082",
+      "lines": "48",
+      "applyTo": "Src/Paratext8Plugin/**\"",
+      "description": "Auto-generated concise instructions from COPILOT.md for Paratext8Plugin\""
+    },
+    {
+      "path": ".github/instructions/paratextimport.instructions.md",
+      "kind": "path-specific",
+      "size": "2864",
+      "lines": "54",
+      "applyTo": "Src/ParatextImport/**\"",
+      "description": "Auto-generated concise instructions from COPILOT.md for ParatextImport\""
+    },
+    {
+      "path": ".github/instructions/parsercore.instructions.md",
+      "kind": "path-specific",
+      "size": "3141",
+      "lines": "45",
+      "applyTo": "Src/LexText/ParserCore/**\"",
+      "description": "Auto-generated concise instructions from COPILOT.md for ParserCore\""
+    },
+    {
+      "path": ".github/instructions/parserui.instructions.md",
+      "kind": "path-specific",
+      "size": "3365",
+      "lines": "44",
+      "applyTo": "Src/LexText/ParserUI/**\"",
+      "description": "Auto-generated concise instructions from COPILOT.md for ParserUI\""
+    },
+    {
+      "path": ".github/instructions/powershell.instructions.md",
+      "kind": "path-specific",
+      "size": "1163",
+      "lines": "30",
+      "applyTo": "**/*.ps1\"",
+      "description": "PowerShell best practices for scripts used in FieldWorks (dev scripts & CI helpers)\""
+    },
+    {
+      "path": ".github/instructions/projectunpacker.instructions.md",
+      "kind": "path-specific",
+      "size": "2807",
+      "lines": "54",
+      "applyTo": "Src/ProjectUnpacker/**\"",
+      "description": "Auto-generated concise instructions from COPILOT.md for ProjectUnpacker\""
+    },
+    {
+      "path": ".github/instructions/repo.instructions.md",
+      "kind": "path-specific",
+      "size": "865",
+      "lines": "18",
+      "applyTo": "**/*\"",
+      "description": "High-level repository rules that assist Copilot coding agent and Copilot code review.\""
+    },
+    {
+      "path": ".github/instructions/security.instructions.md",
+      "kind": "path-specific",
+      "size": "816",
+      "lines": "21",
+      "applyTo": "**/*\"",
+      "description": "Security expectations and OWASP-derived rules for code changes in FieldWorks\""
+    },
+    {
+      "path": ".github/instructions/sfmtoxml.instructions.md",
+      "kind": "path-specific",
+      "size": "2504",
+      "lines": "61",
+      "applyTo": "Src/Utilities/SfmToXml/**\"",
+      "description": "Auto-generated concise instructions from COPILOT.md for SfmToXml\""
+    },
+    {
+      "path": ".github/instructions/testing.instructions.md",
+      "kind": "path-specific",
+      "size": "1226",
+      "lines": "34",
+      "applyTo": "**/*.{cs,cpp,h}\"",
+      "description": "FieldWorks testing guidelines (unit/integration)\""
+    },
+    {
+      "path": ".github/instructions/transforms.instructions.md",
+      "kind": "path-specific",
+      "size": "2867",
+      "lines": "51",
+      "applyTo": "Src/Transforms/**\"",
+      "description": "Auto-generated concise instructions from COPILOT.md for Transforms\""
+    },
+    {
+      "path": ".github/instructions/unicodechareditor.instructions.md",
+      "kind": "path-specific",
+      "size": "2745",
+      "lines": "56",
+      "applyTo": "Src/UnicodeCharEditor/**\"",
+      "description": "Auto-generated concise instructions from COPILOT.md for UnicodeCharEditor\""
+    },
+    {
+      "path": ".github/instructions/utilities.instructions.md",
+      "kind": "path-specific",
+      "size": "2798",
+      "lines": "60",
+      "applyTo": "Src/Utilities/**\"",
+      "description": "Auto-generated concise instructions from COPILOT.md for Utilities\""
+    },
+    {
+      "path": ".github/instructions/xworks.instructions.md",
+      "kind": "path-specific",
+      "size": "2670",
+      "lines": "58",
+      "applyTo": "Src/xWorks/**\"",
+      "description": "Auto-generated concise instructions from COPILOT.md for xWorks\""
+    },
+    {
+      "path": "Src/AppCore/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "14101",
+      "lines": "223"
+    },
+    {
+      "path": "Src/CacheLight/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "11706",
+      "lines": "173"
+    },
+    {
+      "path": "Src/Cellar/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "7203",
+      "lines": "120"
+    },
+    {
+      "path": "Src/Common/Controls/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "5076",
+      "lines": "91"
+    },
+    {
+      "path": "Src/Common/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "6316",
+      "lines": "106"
+    },
+    {
+      "path": "Src/Common/FieldWorks/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "14141",
+      "lines": "223"
+    },
+    {
+      "path": "Src/Common/Filters/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "13073",
+      "lines": "228"
+    },
+    {
+      "path": "Src/Common/Framework/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "10866",
+      "lines": "197"
+    },
+    {
+      "path": "Src/Common/FwUtils/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "4955",
+      "lines": "104"
+    },
+    {
+      "path": "Src/Common/RootSite/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "6301",
+      "lines": "135"
+    },
+    {
+      "path": "Src/Common/ScriptureUtils/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "8093",
+      "lines": "162"
+    },
+    {
+      "path": "Src/Common/SimpleRootSite/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "9755",
+      "lines": "192"
+    },
+    {
+      "path": "Src/Common/UIAdapterInterfaces/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "6625",
+      "lines": "138"
+    },
+    {
+      "path": "Src/Common/ViewsInterfaces/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "8169",
+      "lines": "162"
+    },
+    {
+      "path": "Src/DbExtend/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "5442",
+      "lines": "120"
+    },
+    {
+      "path": "Src/DebugProcs/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "8007",
+      "lines": "160"
+    },
+    {
+      "path": "Src/DocConvert/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "1752",
+      "lines": "60"
+    },
+    {
+      "path": "Src/FdoUi/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "7675",
+      "lines": "159"
+    },
+    {
+      "path": "Src/FwCoreDlgs/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "6738",
+      "lines": "143"
+    },
+    {
+      "path": "Src/FwParatextLexiconPlugin/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "8856",
+      "lines": "160"
+    },
+    {
+      "path": "Src/FwResources/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "7617",
+      "lines": "141"
+    },
+    {
+      "path": "Src/FXT/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "7534",
+      "lines": "157"
+    },
+    {
+      "path": "Src/GenerateHCConfig/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "7095",
+      "lines": "135"
+    },
+    {
+      "path": "Src/Generic/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "7511",
+      "lines": "153"
+    },
+    {
+      "path": "Src/InstallValidator/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "6159",
+      "lines": "123"
+    },
+    {
+      "path": "Src/Kernel/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "7055",
+      "lines": "131"
+    },
+    {
+      "path": "Src/LCMBrowser/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "8514",
+      "lines": "164"
+    },
+    {
+      "path": "Src/LexText/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "11463",
+      "lines": "220"
+    },
+    {
+      "path": "Src/LexText/Discourse/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "10684",
+      "lines": "193"
+    },
+    {
+      "path": "Src/LexText/FlexPathwayPlugin/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "6836",
+      "lines": "133"
+    },
+    {
+      "path": "Src/LexText/Interlinear/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "10473",
+      "lines": "192"
+    },
+    {
+      "path": "Src/LexText/Lexicon/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "9488",
+      "lines": "169"
+    },
+    {
+      "path": "Src/LexText/LexTextControls/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "9747",
+      "lines": "196"
+    },
+    {
+      "path": "Src/LexText/LexTextDll/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "7462",
+      "lines": "152"
+    },
+    {
+      "path": "Src/LexText/LexTextExe/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "4821",
+      "lines": "106"
+    },
+    {
+      "path": "Src/LexText/Morphology/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "9262",
+      "lines": "168"
+    },
+    {
+      "path": "Src/LexText/ParserCore/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "22386",
+      "lines": "331"
+    },
+    {
+      "path": "Src/LexText/ParserUI/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "23813",
+      "lines": "342"
+    },
+    {
+      "path": "Src/ManagedLgIcuCollator/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "14045",
+      "lines": "231"
+    },
+    {
+      "path": "Src/ManagedVwDrawRootBuffered/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "12896",
+      "lines": "214"
+    },
+    {
+      "path": "Src/ManagedVwWindow/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "10792",
+      "lines": "199"
+    },
+    {
+      "path": "Src/MigrateSqlDbs/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "17059",
+      "lines": "282"
+    },
+    {
+      "path": "Src/Paratext8Plugin/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "15821",
+      "lines": "270"
+    },
+    {
+      "path": "Src/ParatextImport/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "17566",
+      "lines": "296"
+    },
+    {
+      "path": "Src/ProjectUnpacker/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "12901",
+      "lines": "247"
+    },
+    {
+      "path": "Src/Transforms/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "17286",
+      "lines": "300"
+    },
+    {
+      "path": "Src/UnicodeCharEditor/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "16131",
+      "lines": "299"
+    },
+    {
+      "path": "Src/Utilities/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "13103",
+      "lines": "234"
+    },
+    {
+      "path": "Src/Utilities/FixFwData/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "8631",
+      "lines": "182"
+    },
+    {
+      "path": "Src/Utilities/FixFwDataDll/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "10692",
+      "lines": "226"
+    },
+    {
+      "path": "Src/Utilities/MessageBoxExLib/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "9702",
+      "lines": "183"
+    },
+    {
+      "path": "Src/Utilities/Reporting/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "5837",
+      "lines": "120"
+    },
+    {
+      "path": "Src/Utilities/SfmStats/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "4400",
+      "lines": "102"
+    },
+    {
+      "path": "Src/Utilities/SfmToXml/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "7710",
+      "lines": "241"
+    },
+    {
+      "path": "Src/Utilities/XMLUtils/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "5213",
+      "lines": "144"
+    },
+    {
+      "path": "Src/views/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "9264",
+      "lines": "195"
+    },
+    {
+      "path": "Src/XCore/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "10843",
+      "lines": "197"
+    },
+    {
+      "path": "Src/XCore/FlexUIAdapter/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "5432",
+      "lines": "147"
+    },
+    {
+      "path": "Src/XCore/SilSidePane/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "5684",
+      "lines": "143"
+    },
+    {
+      "path": "Src/XCore/xCoreInterfaces/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "7693",
+      "lines": "152"
+    },
+    {
+      "path": "Src/XCore/xCoreTests/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "4807",
+      "lines": "111"
+    },
+    {
+      "path": "Src/xWorks/COPILOT.md",
+      "kind": "folder-summary",
+      "size": "16263",
+      "lines": "381"
+    }
+  ]
+}

@@ -1,0 +1,93 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build Debug",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${config:fw.agent.repoRoot}\\scripts\\Agent\\Invoke-AgentTask.ps1",
+        "-Action",
+        "Build",
+        "-Configuration",
+        "Debug",
+        "-Platform",
+        "x64",
+        "-WorktreePath",
+        "${workspaceFolder}"
+      ],
+      "problemMatcher": [
+        "$msCompile"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Build Release",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${config:fw.agent.repoRoot}\\scripts\\Agent\\Invoke-AgentTask.ps1",
+        "-Action",
+        "Build",
+        "-Configuration",
+        "Release",
+        "-Platform",
+        "x64",
+        "-WorktreePath",
+        "${workspaceFolder}"
+      ],
+      "problemMatcher": [
+        "$msCompile"
+      ]
+    },
+    {
+      "label": "Clean",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${config:fw.agent.repoRoot}\\scripts\\Agent\\Invoke-AgentTask.ps1",
+        "-Action",
+        "Clean",
+        "-Configuration",
+        "Debug",
+        "-Platform",
+        "x64",
+        "-WorktreePath",
+        "${workspaceFolder}"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "Test (vstest.console)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "${config:fw.agent.repoRoot}\\scripts\\Agent\\Invoke-AgentTask.ps1",
+        "-Action",
+        "Test",
+        "-WorktreePath",
+        "${workspaceFolder}"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}

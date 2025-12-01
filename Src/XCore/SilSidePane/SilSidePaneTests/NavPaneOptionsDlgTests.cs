@@ -68,7 +68,7 @@ namespace SIL.SilSidePane
 				dialog.Show();
 				dialog.btn_Cancel.PerformClick();
 				(_tabs as ICollection).CopyTo(tabsAfterDialog, 0);
-				Assert.AreEqual(tabsBeforeDialog, tabsAfterDialog, "Opening and Canceling dialog should not have changed the tabs");
+				Assert.That(tabsAfterDialog, Is.EqualTo(tabsBeforeDialog), "Opening and Canceling dialog should not have changed the tabs");
 			}
 		}
 
@@ -85,14 +85,14 @@ namespace SIL.SilSidePane
 				dialog.btn_OK.PerformClick();
 
 				(_tabs as ICollection).CopyTo(tabsAfterDialog, 0);
-				Assert.AreEqual(tabsBeforeDialog, tabsAfterDialog, "Opening and OKing dialog should not have changed the tabs");
+				Assert.That(tabsAfterDialog, Is.EqualTo(tabsBeforeDialog), "Opening and OKing dialog should not have changed the tabs");
 			}
 		}
 
 		[Test]
 		public void CanHideATab()
 		{
-			Assert.IsTrue(_tab1.Visible, "tab1 should be visible before hiding");
+			Assert.That(_tab1.Visible, Is.True, "tab1 should be visible before hiding");
 
 			using (var dialog = new NavPaneOptionsDlg(_tabs))
 			{
@@ -100,14 +100,14 @@ namespace SIL.SilSidePane
 				dialog.tabListBox.SetItemChecked(0, false);
 				dialog.btn_OK.PerformClick();
 
-				Assert.IsFalse(_tab1.Visible, "tab1 should have been hidden");
+				Assert.That(_tab1.Visible, Is.False, "tab1 should have been hidden");
 			}
 		}
 
 		[Test]
 		public void HideATabHasNoEffectIfCancel()
 		{
-			Assert.IsTrue(_tab1.Visible, "tab1 should be visible before hiding");
+			Assert.That(_tab1.Visible, Is.True, "tab1 should be visible before hiding");
 
 			using (var dialog = new NavPaneOptionsDlg(_tabs))
 			{
@@ -115,7 +115,7 @@ namespace SIL.SilSidePane
 				dialog.tabListBox.SetItemChecked(0, false);
 				dialog.btn_Cancel.PerformClick();
 
-				Assert.IsTrue(_tab1.Visible, "tab1 should still be visible since we clicked Cancel");
+				Assert.That(_tab1.Visible, Is.True, "tab1 should still be visible since we clicked Cancel");
 			}
 		}
 
@@ -134,7 +134,7 @@ namespace SIL.SilSidePane
 				dialog.btn_Down.PerformClick();
 
 				(_tabs as ICollection).CopyTo(tabsAfterDialog, 0);
-				Assert.AreEqual(tabsAfterDialog_expected, tabsAfterDialog, "Reordering a tab down did not work");
+				Assert.That(tabsAfterDialog, Is.EqualTo(tabsAfterDialog_expected), "Reordering a tab down did not work");
 			}
 		}
 
@@ -153,7 +153,7 @@ namespace SIL.SilSidePane
 				dialog.btn_Up.PerformClick();
 
 				(_tabs as ICollection).CopyTo(tabsAfterDialog, 0);
-				Assert.AreEqual(tabsAfterDialog_expected, tabsAfterDialog, "Reordering a tab up did not work");
+				Assert.That(tabsAfterDialog, Is.EqualTo(tabsAfterDialog_expected), "Reordering a tab up did not work");
 			}
 		}
 
@@ -164,7 +164,7 @@ namespace SIL.SilSidePane
 			{
 				dialog.Show();
 				dialog.tabListBox.SetSelected(0, true); // select top-most tab
-				Assert.False(dialog.btn_Up.Enabled, "Up button should be disabled");
+				Assert.That(dialog.btn_Up.Enabled, Is.False, "Up button should be disabled");
 			}
 		}
 
@@ -175,7 +175,7 @@ namespace SIL.SilSidePane
 			{
 				dialog.Show();
 				dialog.tabListBox.SetSelected(2, true); // select bottom-most tab
-				Assert.False(dialog.btn_Down.Enabled, "Down button should be disabled");
+				Assert.That(dialog.btn_Down.Enabled, Is.False, "Down button should be disabled");
 			}
 		}
 
@@ -191,8 +191,8 @@ namespace SIL.SilSidePane
 			{
 				dialog.Show();
 				Assert.That(dialog.tabListBox.SelectedItem, Is.Null, "This test doesn't make sense if a tab is selected");
-				Assert.False(dialog.btn_Down.Enabled, "Down button should be disabled when no tab is selected");
-				Assert.False(dialog.btn_Up.Enabled, "Up button should be disabled when no tab is selected");
+				Assert.That(dialog.btn_Down.Enabled, Is.False, "Down button should be disabled when no tab is selected");
+				Assert.That(dialog.btn_Up.Enabled, Is.False, "Up button should be disabled when no tab is selected");
 			}
 		}
 
@@ -217,9 +217,9 @@ namespace SIL.SilSidePane
 				dialog.btn_Down.PerformClick();
 				dialog.btn_Reset.PerformClick(); // Reset should restore things
 
-				Assert.IsTrue(dialog.tabListBox.GetItemChecked(2), "tab should be checked again after Reset");
+				Assert.That(dialog.tabListBox.GetItemChecked(2), Is.True, "tab should be checked again after Reset");
 				(_tabs as ICollection).CopyTo(tabsAfterDialog, 0);
-				Assert.AreEqual(tabsBeforeDialog, tabsAfterDialog, "tab order should be restored by Reset");
+				Assert.That(tabsAfterDialog, Is.EqualTo(tabsBeforeDialog), "tab order should be restored by Reset");
 			}
 		}
 
@@ -239,8 +239,8 @@ namespace SIL.SilSidePane
 				// Click Reset
 				dialog.btn_Reset.PerformClick();
 				Assert.That(dialog.tabListBox.SelectedItem, Is.Null, "This test doesn't make sense if a tab is selected");
-				Assert.False(dialog.btn_Down.Enabled, "Down button should be disabled when no tab is selected");
-				Assert.False(dialog.btn_Up.Enabled, "Up button should be disabled when no tab is selected");
+				Assert.That(dialog.btn_Down.Enabled, Is.False, "Down button should be disabled when no tab is selected");
+				Assert.That(dialog.btn_Up.Enabled, Is.False, "Up button should be disabled when no tab is selected");
 			}
 		}
 
@@ -263,8 +263,7 @@ namespace SIL.SilSidePane
 				dialog.btn_Down.PerformClick();
 
 				for (int i = 0; i < _tabs.Count; i++)
-					Assert.IsFalse(dialog.tabListBox.GetItemChecked(i),
-						"tab at index {0} should have remained unchecked when tabs are reordered", i);
+					Assert.That(dialog.tabListBox.GetItemChecked(i), Is.False, "tab at index {0} should have remained unchecked when tabs are reordered", i);
 			}
 		}
 	}

@@ -37,7 +37,7 @@ namespace ParatextImport.ImportTests
 			m_styleSheet = new LcmStyleSheet();
 			// ReSharper disable once UnusedVariable - Force load of styles
 			var scr = Cache.LangProject.TranslatedScriptureOA;
-			Assert.IsTrue(Cache.LangProject.StylesOC.Count > 0);
+			Assert.That(Cache.LangProject.StylesOC.Count > 0, Is.True);
 			m_styleSheet.Init(Cache, Cache.LangProject.Hvo, LangProjectTags.kflidStyles);
 		}
 
@@ -63,7 +63,7 @@ namespace ParatextImport.ImportTests
 		public void BasicTest()
 		{
 			int cStylesOrig = m_styleSheet.CStyles;
-			Assert.IsTrue(cStylesOrig > 10);
+			Assert.That(cStylesOrig > 10, Is.True);
 			Assert.That(m_styleSheet.GetStyleRgch(0, "Section Head"), Is.Not.Null);
 			Assert.That(m_styleSheet.GetStyleRgch(0, "Verse Number"), Is.Not.Null);
 
@@ -73,48 +73,48 @@ namespace ParatextImport.ImportTests
 			int wsAnal = Cache.DefaultAnalWs;
 			ImportStyleProxy proxy1 = new ImportStyleProxy("Section Head",
 				StyleType.kstParagraph, wsVern, ContextValues.Text, m_styleSheet);
-			Assert.IsFalse(proxy1.IsUnknownMapping, "Section Head style should exist in DB");
+			Assert.That(proxy1.IsUnknownMapping, Is.False, "Section Head style should exist in DB");
 
 			ImportStyleProxy proxy2 = new ImportStyleProxy("Verse Number",
 				StyleType.kstCharacter, wsVern, ContextValues.Text, m_styleSheet);
-			Assert.IsFalse(proxy2.IsUnknownMapping, "Verse Number style should exist in DB");
+			Assert.That(proxy2.IsUnknownMapping, Is.False, "Verse Number style should exist in DB");
 
 			string proxy3Name = "Tom Bogle";
 			ImportStyleProxy proxy3 = new ImportStyleProxy(proxy3Name,
 				StyleType.kstParagraph, wsVern, m_styleSheet); //defaults to Text context
-			Assert.IsTrue(proxy3.IsUnknownMapping, "Tom Bogle style shouldn't exist in DB");
+			Assert.That(proxy3.IsUnknownMapping, Is.True, "Tom Bogle style shouldn't exist in DB");
 
 			string proxy4Name = "Todd Jones";
 			ImportStyleProxy proxy4 = new ImportStyleProxy(proxy4Name,
 				StyleType.kstCharacter, wsVern, m_styleSheet); //defaults to Text context
-			Assert.IsTrue(proxy4.IsUnknownMapping, "Todd Jones style shouldn't exist in DB");
+			Assert.That(proxy4.IsUnknownMapping, Is.True, "Todd Jones style shouldn't exist in DB");
 
 			// verify basic proxy info - name, context, structure, function, styletype, endmarker
-			Assert.AreEqual("Section Head", proxy1.StyleId);
-			Assert.AreEqual(ContextValues.Text, proxy1.Context);
-			Assert.AreEqual(StructureValues.Heading, proxy1.Structure);
-			Assert.AreEqual(StyleType.kstParagraph, proxy1.StyleType);
+			Assert.That(proxy1.StyleId, Is.EqualTo("Section Head"));
+			Assert.That(proxy1.Context, Is.EqualTo(ContextValues.Text));
+			Assert.That(proxy1.Structure, Is.EqualTo(StructureValues.Heading));
+			Assert.That(proxy1.StyleType, Is.EqualTo(StyleType.kstParagraph));
 			Assert.That(proxy1.EndMarker, Is.Null);
 
-			Assert.AreEqual(ContextValues.Text, proxy2.Context);
-			Assert.AreEqual(StructureValues.Body, proxy2.Structure);
-			Assert.AreEqual(FunctionValues.Verse, proxy2.Function);
-			Assert.AreEqual(StyleType.kstCharacter, proxy2.StyleType);
+			Assert.That(proxy2.Context, Is.EqualTo(ContextValues.Text));
+			Assert.That(proxy2.Structure, Is.EqualTo(StructureValues.Body));
+			Assert.That(proxy2.Function, Is.EqualTo(FunctionValues.Verse));
+			Assert.That(proxy2.StyleType, Is.EqualTo(StyleType.kstCharacter));
 			Assert.That(proxy2.EndMarker, Is.Null);
 
-			Assert.AreEqual(ContextValues.Text, proxy3.Context);
+			Assert.That(proxy3.Context, Is.EqualTo(ContextValues.Text));
 			// getting the text props will cause the style to be created in the database
 			ITsTextProps props = proxy3.TsTextProps;
 			IStStyle dbStyle = m_styleSheet.FindStyle(proxy3Name);
-			Assert.AreEqual(ScrStyleNames.NormalParagraph, dbStyle.BasedOnRA.Name);
-			Assert.AreEqual(StyleType.kstParagraph, proxy3.StyleType);
+			Assert.That(dbStyle.BasedOnRA.Name, Is.EqualTo(ScrStyleNames.NormalParagraph));
+			Assert.That(proxy3.StyleType, Is.EqualTo(StyleType.kstParagraph));
 			Assert.That(proxy3.EndMarker, Is.Null);
 
-			Assert.AreEqual(ContextValues.Text, proxy4.Context);
+			Assert.That(proxy4.Context, Is.EqualTo(ContextValues.Text));
 			props = proxy4.TsTextProps;
 			dbStyle = m_styleSheet.FindStyle(proxy4Name);
 			Assert.That(dbStyle.BasedOnRA, Is.Null);
-			Assert.AreEqual(StyleType.kstCharacter, proxy4.StyleType);
+			Assert.That(proxy4.StyleType, Is.EqualTo(StyleType.kstCharacter));
 			Assert.That(proxy4.EndMarker, Is.Null);
 
 			// use SetFormat to add formatting props to unmapped proxy3
@@ -132,18 +132,16 @@ namespace ParatextImport.ImportTests
 			// previously unmapped style to the stylesheet, so that proxy becomes mapped
 			// Next two calls force creation of new styles
 			Assert.That(proxy3.TsTextProps, Is.Not.Null); // has benefit of SetFormat
-			Assert.IsFalse(proxy3.IsUnknownMapping,
-				"Tom Bogle style should be created when getting TsTextProps");
-			Assert.IsFalse(proxy4.IsUnknownMapping,
-				"Todd Jones style should be created when getting ParaProps");
+			Assert.That(proxy3.IsUnknownMapping, Is.False, "Tom Bogle style should be created when getting TsTextProps");
+			Assert.That(proxy4.IsUnknownMapping, Is.False, "Todd Jones style should be created when getting ParaProps");
 			// verify that two new styles were added to the style sheet
-			Assert.AreEqual(cStylesOrig + 2, m_styleSheet.CStyles);
+			Assert.That(m_styleSheet.CStyles, Is.EqualTo(cStylesOrig + 2));
 
 			// verify that the added styles have the appropriate context, etc
 			IStStyle style = m_styleSheet.FindStyle("Tom Bogle");
-			Assert.AreEqual(ContextValues.Text, (ContextValues)style.Context);
-			Assert.AreEqual(StructureValues.Body, (StructureValues)style.Structure);
-			Assert.AreEqual(FunctionValues.Prose, (FunctionValues)style.Function);
+			Assert.That((ContextValues)style.Context, Is.EqualTo(ContextValues.Text));
+			Assert.That((StructureValues)style.Structure, Is.EqualTo(StructureValues.Body));
+			Assert.That((FunctionValues)style.Function, Is.EqualTo(FunctionValues.Prose));
 
 			// Test the styletype override from stylesheet
 			// We will attempt to construct a paragraph style proxy,
@@ -151,15 +149,14 @@ namespace ParatextImport.ImportTests
 			//  character will override
 			ImportStyleProxy proxy = new ImportStyleProxy("Chapter Number",
 				StyleType.kstParagraph, wsVern, m_styleSheet); //override as char style
-			Assert.AreEqual(StyleType.kstCharacter, proxy.StyleType,
-				"Should override as character style");
+			Assert.That(proxy.StyleType, Is.EqualTo(StyleType.kstCharacter), "Should override as character style");
 
 			// verify TagType, EndMarker info
 			proxy = new ImportStyleProxy("Xnote", // This style doesn't exist in DB
 				StyleType.kstParagraph, wsVern, ContextValues.Note, m_styleSheet);
 			proxy.EndMarker = "Xnote*";
-			Assert.AreEqual(ContextValues.Note, proxy.Context);
-			Assert.AreEqual("Xnote*", proxy.EndMarker);
+			Assert.That(proxy.Context, Is.EqualTo(ContextValues.Note));
+			Assert.That(proxy.EndMarker, Is.EqualTo("Xnote*"));
 
 			// Verify that proxy doesn't attempt to create style when context is EndMarker
 			proxy = new ImportStyleProxy("Xnote*",
@@ -167,9 +164,9 @@ namespace ParatextImport.ImportTests
 			int cStylesX = m_styleSheet.CStyles;
 			// These calls should not add new style
 			Assert.That(proxy.TsTextProps, Is.Null); //no props returned
-			Assert.AreEqual(ContextValues.EndMarker, proxy.Context);
-			Assert.IsTrue(proxy.IsUnknownMapping, "Xnote* should not exist");
-			Assert.AreEqual(cStylesX, m_styleSheet.CStyles);
+			Assert.That(proxy.Context, Is.EqualTo(ContextValues.EndMarker));
+			Assert.That(proxy.IsUnknownMapping, Is.True, "Xnote* should not exist");
+			Assert.That(m_styleSheet.CStyles, Is.EqualTo(cStylesX));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -188,13 +185,13 @@ namespace ParatextImport.ImportTests
 			int wsVern = Cache.DefaultVernWs;
 			ImportStyleProxy proxy = new ImportStyleProxy("MyNewStyle",
 				StyleType.kstParagraph, wsVern, ContextValues.General, m_styleSheet);
-			Assert.IsTrue(proxy.IsUnknownMapping, "MyNewStyle style not should exist in DB");
+			Assert.That(proxy.IsUnknownMapping, Is.True, "MyNewStyle style not should exist in DB");
 
 			// Besides returning the props, retrieval of TsTextProps forces creation of a real style
 			// in stylesheet
 			ITsTextProps ttps = proxy.TsTextProps;
-			Assert.IsFalse(proxy.IsUnknownMapping, "style should be created when getting ParaProps");
-			Assert.AreEqual(nStylesOrig + 1, m_styleSheet.CStyles);
+			Assert.That(proxy.IsUnknownMapping, Is.False, "style should be created when getting ParaProps");
+			Assert.That(m_styleSheet.CStyles, Is.EqualTo(nStylesOrig + 1));
 
 			// get the hvo of the new style
 			int hvoStyle = -1;
@@ -205,13 +202,13 @@ namespace ParatextImport.ImportTests
 					hvoStyle = m_styleSheet.get_NthStyle(i);
 				}
 			}
-			Assert.IsTrue(hvoStyle != -1, "Style 'MyNewStyle' should exist in DB");
+			Assert.That(hvoStyle != -1, Is.True, "Style 'MyNewStyle' should exist in DB");
 
 			// Now delete the new style
 			m_styleSheet.Delete(hvoStyle);
 
 			// Verify the deletion
-			Assert.AreEqual(nStylesOrig, m_styleSheet.CStyles);
+			Assert.That(m_styleSheet.CStyles, Is.EqualTo(nStylesOrig));
 			Assert.That(m_styleSheet.GetStyleRgch(0, "MyNewStyle"), Is.Null,
 				"Should get null because style is not there");
 		}
@@ -232,8 +229,8 @@ namespace ParatextImport.ImportTests
 
 			ImportStyleProxy proxy1 = new ImportStyleProxy("\u0041\u0304",
 				StyleType.kstParagraph, Cache.DefaultVernWs, ContextValues.Text, m_styleSheet);
-			Assert.IsFalse(proxy1.IsUnknownMapping, "style should exist in DB");
-			Assert.AreEqual(cStylesOrig, m_styleSheet.CStyles);
+			Assert.That(proxy1.IsUnknownMapping, Is.False, "style should exist in DB");
+			Assert.That(m_styleSheet.CStyles, Is.EqualTo(cStylesOrig));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -252,8 +249,8 @@ namespace ParatextImport.ImportTests
 
 			ImportStyleProxy proxy1 = new ImportStyleProxy("\u0100",
 				StyleType.kstParagraph, Cache.DefaultVernWs, ContextValues.Text, m_styleSheet);
-			Assert.IsFalse(proxy1.IsUnknownMapping, "style should exist in DB");
-			Assert.AreEqual(cStylesOrig, m_styleSheet.CStyles);
+			Assert.That(proxy1.IsUnknownMapping, Is.False, "style should exist in DB");
+			Assert.That(m_styleSheet.CStyles, Is.EqualTo(cStylesOrig));
 		}
 		#endregion
 	}

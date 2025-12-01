@@ -12,6 +12,7 @@ Build/venv
 Build/*.config
 Build/*.dll
 Build/*.pdb
+BuildTools/FwBuildTasks/
 BuildDir/
 Src/Common/ViewsInterfaces/Views.cs
 DistFiles/Data/
@@ -73,6 +74,7 @@ _user.mak.lnx
 
 .dotest/
 .depend
+.nuget/
 [Oo]bj/
 Obj_i686/
 Obj_x86_64/
@@ -90,6 +92,11 @@ Output/
 Output
 Output_i686/
 Output_x86_64/
+__pycache__/
+.venv/
+venv/
+dist/
+*.egg-info/
 Lib/src/unit++/autom4te.cache/
 Lib/src/unit++/configure
 Lib/src/unit++/VS/*/
@@ -116,6 +123,7 @@ Src/DebugProcs/libDebugProcs
 Src/Generic/libGeneric
 Src/Language/libLanguage
 xulrunner/*
+**/bin/Debug
 
 DistFiles/ReleaseData/
 # Locally configurable project to run FieldWorks
@@ -142,3 +150,19 @@ DistFiles/Templates/SemDom.xml
 
 Src/Kernel/FwKernelTlb.idl
 Src/Kernel/*.idh
+.github/machine-specific.md
+build_output.txt
+*.backup
+*.code-workspace
+config.json
+# Test exclusion tooling artifacts
+Output/test-exclusions/
+Output/test-exclusions
+scripts/tests/fixtures/output/
+
+# Python
+__pycache__/
+.venv/
+venv/
+*.egg-info/
+CrashLog.txt

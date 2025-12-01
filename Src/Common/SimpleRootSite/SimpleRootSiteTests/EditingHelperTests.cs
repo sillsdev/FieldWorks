@@ -111,7 +111,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_basicView.RootBox.MakeRangeSelection(sel0, sel1, true);
 
 			// Copy the selection and then paste it at the start of the view.
-			Assert.IsTrue(m_basicView.EditingHelper.CopySelection());
+			Assert.That(m_basicView.EditingHelper.CopySelection(), Is.True);
 			// Install a simple selection at the start of the view.
 			m_basicView.RootBox.MakeSimpleSel(true, true, false, true);
 
@@ -119,7 +119,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_basicView.EditingHelper.PasteClipboard();
 
 			// We expect the contents to remain unchanged.
-			Assert.AreEqual(2, m_cache.get_VecSize(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas));
+			Assert.That(m_cache.get_VecSize(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas), Is.EqualTo(2));
 			Assert.That(m_basicView.RequestedSelectionAtEndOfUow, Is.Null);
 		}
 
@@ -155,7 +155,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_basicView.RootBox.MakeRangeSelection(sel0, sel1, true);
 
 			// Copy the selection and then paste it at the start of the view.
-			Assert.IsTrue(m_basicView.EditingHelper.CopySelection());
+			Assert.That(m_basicView.EditingHelper.CopySelection(), Is.True);
 			// Install a simple selection at the start of the view.
 			m_basicView.RootBox.MakeSimpleSel(true, true, false, true);
 
@@ -163,11 +163,11 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_basicView.EditingHelper.PasteClipboard();
 
 			// We expect the contents to change.
-			Assert.AreEqual(4, m_cache.get_VecSize(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas));
-			Assert.AreEqual(hvoTitlePara2 + 1, m_cache.get_VecItem(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 0));
-			Assert.AreEqual(hvoTitlePara2 + 2, m_cache.get_VecItem(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 1));
-			Assert.AreEqual(hvoTitlePara1, m_cache.get_VecItem(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 2));
-			Assert.AreEqual(hvoTitlePara2, m_cache.get_VecItem(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 3));
+			Assert.That(m_cache.get_VecSize(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas), Is.EqualTo(4));
+			Assert.That(m_cache.get_VecItem(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 0), Is.EqualTo(hvoTitlePara2 + 1));
+			Assert.That(m_cache.get_VecItem(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 1), Is.EqualTo(hvoTitlePara2 + 2));
+			Assert.That(m_cache.get_VecItem(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 2), Is.EqualTo(hvoTitlePara1));
+			Assert.That(m_cache.get_VecItem(hvoTitle, SimpleRootsiteTestsConstants.kflidTextParas, 3), Is.EqualTo(hvoTitlePara2));
 
 			Assert.That(m_basicView.RequestedSelectionAtEndOfUow, Is.Not.Null);
 			// WANTTESTPORT: (Common) FWR-1649 Check properties of RequestedSelectionAtEndOfUow
@@ -193,12 +193,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetSelection(0, 0, 0, 0, 1, 6, 6, true);
 			IVwSelection vwsel = m_SelectionHelper.SetSelection(true);
 			Assert.That(vwsel, Is.Not.Null, "No selection made");
-			Assert.IsTrue(m_basicView.IsSelectionVisible(null), "Selection is not visible");
+			Assert.That(m_basicView.IsSelectionVisible(null), Is.True, "Selection is not visible");
 			m_basicView.EditingHelper.GoToNextPara();
 
 			// We expect that the selection will be at the start of the next paragraph.
 			SelectionHelper selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
-			Assert.IsFalse(selectionHelper.IsRange);
+			Assert.That(selectionHelper.IsRange, Is.False);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, selectionHelper, 0,
 				2, 0, 0, false, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 0,
 				SimpleRootsiteTestsConstants.kflidTextParas, 0, 0);
@@ -223,12 +223,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetSelection(0, 0, 1, 0, 2, 6, 6, true);
 			IVwSelection vwsel = m_SelectionHelper.SetSelection(true);
 			Assert.That(vwsel, Is.Not.Null, "No selection made");
-			Assert.IsTrue(m_basicView.IsSelectionVisible(null), "Selection is not visible");
+			Assert.That(m_basicView.IsSelectionVisible(null), Is.True, "Selection is not visible");
 			m_basicView.EditingHelper.GoToNextPara();
 
 			// We expect that the selection will be at the start of the next paragraph.
 			SelectionHelper selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
-			Assert.IsFalse(selectionHelper.IsRange);
+			Assert.That(selectionHelper.IsRange, Is.False);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, selectionHelper, 0,
 				0, 0, 0, false, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1,
 				SimpleRootsiteTestsConstants.kflidTextParas, 0, 0);
@@ -261,12 +261,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetSelection(0, 1, 0, 0, 2, 0, 0, true);
 			IVwSelection vwsel = m_SelectionHelper.SetSelection(true);
 			Assert.That(vwsel, Is.Not.Null, "No selection made");
-			Assert.IsTrue(m_basicView.IsSelectionVisible(null), "Selection is not visible");
+			Assert.That(m_basicView.IsSelectionVisible(null), Is.True, "Selection is not visible");
 			m_basicView.EditingHelper.GoToNextPara();
 
 			// We expect that the selection will be at the start of the book title.
 			SelectionHelper selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
-			Assert.IsFalse(selectionHelper.IsRange);
+			Assert.That(selectionHelper.IsRange, Is.False);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, selectionHelper, 0,
 				0, 0, 0, false, 2, SimpleRootsiteTestsConstants.kflidDocTitle, 0, 0,
 				SimpleRootsiteTestsConstants.kflidTextParas, 0, 0);
@@ -290,12 +290,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetSelection(0, 0, 0, 0, 0, 0, 0, true);
 			IVwSelection vwsel = m_SelectionHelper.SetSelection(true);
 			Assert.That(vwsel, Is.Not.Null, "No selection made");
-			Assert.IsTrue(m_basicView.IsSelectionVisible(null), "Selection is not visible");
+			Assert.That(m_basicView.IsSelectionVisible(null), Is.True, "Selection is not visible");
 			m_basicView.EditingHelper.GoToNextPara();
 
 			// We expect that the selection will be at the start of the second footnote's marker.
 			SelectionHelper selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
-			Assert.IsFalse(selectionHelper.IsRange);
+			Assert.That(selectionHelper.IsRange, Is.False);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, selectionHelper, 0,
 				0, 0, 0, false, 1, -1, -1, -1, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1);
 		}
@@ -318,12 +318,12 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			SetSelection(0, 1, 1, 0, 2, 6, 0, true);
 			IVwSelection vwsel = m_SelectionHelper.SetSelection(true);
 			Assert.That(vwsel, Is.Not.Null, "No selection made");
-			Assert.IsTrue(m_basicView.IsSelectionVisible(null), "Selection is not visible");
+			Assert.That(m_basicView.IsSelectionVisible(null), Is.True, "Selection is not visible");
 			m_basicView.EditingHelper.GoToNextPara();
 
 			// We expect that the selection will be unchanged.
 			SelectionHelper selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
-			Assert.IsTrue(selectionHelper.IsRange);
+			Assert.That(selectionHelper.IsRange, Is.True);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, selectionHelper, 0,
 				2, 6, 0, true, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 1,
 				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
@@ -361,7 +361,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			// We expect that the selection will be at the start of the second paragraph in
 			// the selected range.
 			SelectionHelper selectionHelper = SelectionHelper.GetSelectionInfo(null, m_basicView);
-			Assert.IsFalse(selectionHelper.IsRange);
+			Assert.That(selectionHelper.IsRange, Is.False);
 			CheckSelectionHelperValues(SelectionHelper.SelLimitType.Anchor, selectionHelper, 0,
 				0, 0, 0, false, 2, SimpleRootsiteTestsConstants.kflidDocFootnotes, 0, 0,
 				SimpleRootsiteTestsConstants.kflidTextParas, 1, 0);
@@ -411,7 +411,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			{
 				ITsString str = editingHelper.CallGetTextFromClipboard();
 
-				Assert.AreEqual("\u091C\u092E\u094D\u200D\u092E\u0947\u0906", str.Text);
+				Assert.That(str.Text, Is.EqualTo("\u091C\u092E\u094D\u200D\u092E\u0947\u0906"));
 			}
 		}
 
@@ -439,13 +439,13 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			var tss = m_basicView.EditingHelper.GetTsStringFromClipboard(wsManager);
 			Assert.That(tss, Is.Not.Null, "Couldn't get TsString from clipboard");
-			Assert.AreEqual(2, tss.RunCount);
-			Assert.AreEqual("Gogomer ", tss.get_RunText(0));
-			Assert.AreEqual("cucumber", tss.get_RunText(1));
+			Assert.That(tss.RunCount, Is.EqualTo(2));
+			Assert.That(tss.get_RunText(0), Is.EqualTo("Gogomer "));
+			Assert.That(tss.get_RunText(1), Is.EqualTo("cucumber"));
 
 			var newDataObj = ClipboardUtils.GetDataObject();
 			Assert.That(newDataObj, Is.Not.Null, "Couldn't get DataObject from clipboard");
-			Assert.AreEqual("Gogomer cucumber", newDataObj.GetData("Text"));
+			Assert.That(newDataObj.GetData("Text"), Is.EqualTo("Gogomer cucumber"));
 		}
 		/// <summary>
 		/// Verifies that data is normalized NFC when placed on clipboard.
@@ -464,7 +464,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			EditingHelper.SetTsStringOnClipboard(tss, false, wsManager);
 			var newDataObj = ClipboardUtils.GetDataObject();
 			Assert.That(newDataObj, Is.Not.Null, "Couldn't get DataObject from clipboard");
-			Assert.AreEqual(originalInput, newDataObj.GetData("Text"));
+			Assert.That(newDataObj.GetData("Text"), Is.EqualTo(originalInput));
 		}
 	}
 

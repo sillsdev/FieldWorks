@@ -164,7 +164,7 @@ namespace SIL.FieldWorks.Filters
 			{
 				var record = sortedRecords[i] as IManyOnePathSortItem;
 				var entry = Cache.ServiceLocator.GetObject(record.KeyObject) as ILexEntry;
-				Assert.AreEqual(strings[i], entry.CitationForm.get_String(Cache.DefaultAnalWs).Text);
+				Assert.That(entry.CitationForm.get_String(Cache.DefaultAnalWs).Text, Is.EqualTo(strings[i]));
 			}
 		}
 

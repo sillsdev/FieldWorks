@@ -5,6 +5,6 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("FixFwData")]
-[assembly: AssemblyDescription("Command line program to fix some problems in FieldWorks XML data files")]
-[assembly: ComVisible(false)]
+// [assembly: AssemblyTitle("FixFwData")] // Sanitized by convert_generate_assembly_info
+// [assembly: AssemblyDescription("Command line program to fix some problems in FieldWorks XML data files")] // Sanitized by convert_generate_assembly_info
+// [assembly: ComVisible(false)] // Sanitized by convert_generate_assembly_info

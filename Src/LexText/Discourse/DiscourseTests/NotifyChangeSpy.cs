@@ -34,12 +34,12 @@ namespace SIL.FieldWorks.Discourse
 
 		//public void AssertHasNotification(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		//{
-		//    Assert.IsTrue(m_calls.Contains(new NotifyChangeInfo(hvo, tag, ivMin, cvIns, cvDel)));
+		//    Assert.That(m_calls.Contains(new NotifyChangeInfo(hvo, tag, ivMin, cvIns, cvDel)), Is.True);
 		//}
 
 		//public void AssertHasExactlyOneNotification(int hvo, int tag, int ivMin, int cvIns, int cvDel)
 		//{
-		//    Assert.AreEqual(1, m_calls.Count);
+		//    Assert.That(m_calls.Count, Is.EqualTo(1));
 		//    AssertHasNotification(hvo, tag, ivMin, cvIns, cvDel);
 		//}
 

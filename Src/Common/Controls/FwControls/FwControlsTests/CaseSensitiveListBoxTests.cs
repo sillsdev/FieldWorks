@@ -32,16 +32,16 @@ namespace SIL.FieldWorks.Common.Controls
 				lb.Items.Add("bLAh");
 				lb.Items.Add("Blah");
 				lb.Items.Add("Blah");
-				Assert.AreEqual(1, lb.FindString("b"));
-				Assert.AreEqual(1, lb.FindString("bl"));
-				Assert.AreEqual(2, lb.FindString("bL"));
-				Assert.AreEqual(0, lb.FindString("B"));
-				Assert.AreEqual(3, lb.FindString("Bl"));
-				Assert.AreEqual(ListBox.NoMatches, lb.FindString("blAH"));
-				Assert.AreEqual(0, lb.FindString("B\u00e1".Normalize(NormalizationForm.FormC)));
-				Assert.AreEqual(0, lb.FindString("B\u00e1".Normalize(NormalizationForm.FormD)));
-				Assert.AreEqual(0, lb.FindString("B\u00e1".Normalize(NormalizationForm.FormKC)));
-				Assert.AreEqual(0, lb.FindString("B\u00e1".Normalize(NormalizationForm.FormKD)));
+				Assert.That(lb.FindString("b"), Is.EqualTo(1));
+				Assert.That(lb.FindString("bl"), Is.EqualTo(1));
+				Assert.That(lb.FindString("bL"), Is.EqualTo(2));
+				Assert.That(lb.FindString("B"), Is.EqualTo(0));
+				Assert.That(lb.FindString("Bl"), Is.EqualTo(3));
+				Assert.That(lb.FindString("blAH"), Is.EqualTo(ListBox.NoMatches));
+				Assert.That(lb.FindString("B\u00e1".Normalize(NormalizationForm.FormC)), Is.EqualTo(0));
+				Assert.That(lb.FindString("B\u00e1".Normalize(NormalizationForm.FormD)), Is.EqualTo(0));
+				Assert.That(lb.FindString("B\u00e1".Normalize(NormalizationForm.FormKC)), Is.EqualTo(0));
+				Assert.That(lb.FindString("B\u00e1".Normalize(NormalizationForm.FormKD)), Is.EqualTo(0));
 			}
 		}
 
@@ -60,16 +60,16 @@ namespace SIL.FieldWorks.Common.Controls
 				lb.Items.Add("bLAh");
 				lb.Items.Add("Blah");
 				lb.Items.Add("Blah");
-				Assert.AreEqual(ListBox.NoMatches, lb.FindStringExact("b"));
-				Assert.AreEqual(1, lb.FindStringExact("blah"));
-				Assert.AreEqual(2, lb.FindStringExact("bLAh"));
-				Assert.AreEqual(3, lb.FindStringExact("Blah"));
-				Assert.AreEqual(ListBox.NoMatches, lb.FindStringExact("blAH"));
-				Assert.AreEqual(ListBox.NoMatches, lb.FindStringExact("cabbage"));
-				Assert.AreEqual(0, lb.FindStringExact("B\u00e1".Normalize(NormalizationForm.FormC)));
-				Assert.AreEqual(0, lb.FindStringExact("B\u00e1".Normalize(NormalizationForm.FormD)));
-				Assert.AreEqual(0, lb.FindStringExact("B\u00e1".Normalize(NormalizationForm.FormKC)));
-				Assert.AreEqual(0, lb.FindStringExact("B\u00e1".Normalize(NormalizationForm.FormKD)));
+				Assert.That(lb.FindStringExact("b"), Is.EqualTo(ListBox.NoMatches));
+				Assert.That(lb.FindStringExact("blah"), Is.EqualTo(1));
+				Assert.That(lb.FindStringExact("bLAh"), Is.EqualTo(2));
+				Assert.That(lb.FindStringExact("Blah"), Is.EqualTo(3));
+				Assert.That(lb.FindStringExact("blAH"), Is.EqualTo(ListBox.NoMatches));
+				Assert.That(lb.FindStringExact("cabbage"), Is.EqualTo(ListBox.NoMatches));
+				Assert.That(lb.FindStringExact("B\u00e1".Normalize(NormalizationForm.FormC)), Is.EqualTo(0));
+				Assert.That(lb.FindStringExact("B\u00e1".Normalize(NormalizationForm.FormD)), Is.EqualTo(0));
+				Assert.That(lb.FindStringExact("B\u00e1".Normalize(NormalizationForm.FormKC)), Is.EqualTo(0));
+				Assert.That(lb.FindStringExact("B\u00e1".Normalize(NormalizationForm.FormKD)), Is.EqualTo(0));
 			}
 		}
 	}

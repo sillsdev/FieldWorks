@@ -151,15 +151,15 @@ namespace LexTextDllTests
 
 			// Verify
 			// The above routine no longer handles display nodes
-			//Assert.AreEqual(cdispNodesBefore + 1, fakeUIDisplay.List.Count, "Didn't add a display node.");
+			//Assert.That(fakeUIDisplay.List.Count, Is.EqualTo(cdispNodesBefore + 1), "Didn't add a display node.");
 			var ctoolNodesAfter = node.SelectNodes(toolXPath).Count;
-			Assert.AreEqual(ctoolNodesBefore + 1, ctoolNodesAfter, "Didn't add a tool node.");
+			Assert.That(ctoolNodesAfter, Is.EqualTo(ctoolNodesBefore + 1), "Didn't add a tool node.");
 			var cclerkNodesAfter = node.SelectNodes(clerkXPath).Count;
-			Assert.AreEqual(cclerkNodesBefore + 1, cclerkNodesAfter, "Didn't add a clerk node.");
+			Assert.That(cclerkNodesAfter, Is.EqualTo(cclerkNodesBefore + 1), "Didn't add a clerk node.");
 			var ccommandNodesAfter = node.SelectNodes(commandXPath).Count;
-			Assert.AreEqual(ccommandNodesBefore + 1, ccommandNodesAfter, "Didn't add a command node.");
+			Assert.That(ccommandNodesAfter, Is.EqualTo(ccommandNodesBefore + 1), "Didn't add a command node.");
 			var ccontextNodesAfter = node.SelectNodes(contextXPath).Count;
-			Assert.AreEqual(ccontextNodesBefore + 1, ccontextNodesAfter, "Didn't add a context menu node.");
+			Assert.That(ccontextNodesAfter, Is.EqualTo(ccontextNodesBefore + 1), "Didn't add a context menu node.");
 		}
 	}
 }

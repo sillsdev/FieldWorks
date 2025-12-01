@@ -217,7 +217,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			sb.AppendLine(sExpectedResultFile);
 			sb.Append("Actual file was ");
 			sb.AppendLine(sActualResultFile);
-			Assert.AreEqual(sExpected, sActual, sb.ToString());
+			Assert.That(sActual, Is.EqualTo(sExpected).Within(sb.ToString()));
 		}
 	}
 }

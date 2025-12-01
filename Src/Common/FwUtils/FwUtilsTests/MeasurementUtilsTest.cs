@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void FormatMeasurement_Positive_Point()
 		{
-			Assert.AreEqual("2 pt", MeasurementUtils.FormatMeasurement(2000, MsrSysType.Point));
+			Assert.That(MeasurementUtils.FormatMeasurement(2000, MsrSysType.Point), Is.EqualTo("2 pt"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -39,7 +39,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void FormatMeasurement_Positive_Centimeter()
 		{
-			Assert.AreEqual("9 cm", MeasurementUtils.FormatMeasurement(255118, MsrSysType.Cm));
+			Assert.That(MeasurementUtils.FormatMeasurement(255118, MsrSysType.Cm), Is.EqualTo("9 cm"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void FormatMeasurement_Positive_Inches()
 		{
-			Assert.AreEqual("3.2\"", MeasurementUtils.FormatMeasurement(230400, MsrSysType.Inch));
+			Assert.That(MeasurementUtils.FormatMeasurement(230400, MsrSysType.Inch), Is.EqualTo("3.2\""));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void FormatMeasurement_Positive_Millimeters()
 		{
-			Assert.AreEqual("101.6 mm", MeasurementUtils.FormatMeasurement(288000, MsrSysType.Mm));
+			Assert.That(MeasurementUtils.FormatMeasurement(288000, MsrSysType.Mm), Is.EqualTo("101.6 mm"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void FormatMeasurement_Negative_Point()
 		{
-			Assert.AreEqual("-28.35 pt", MeasurementUtils.FormatMeasurement(-28346, MsrSysType.Point));
+			Assert.That(MeasurementUtils.FormatMeasurement(-28346, MsrSysType.Point), Is.EqualTo("-28.35 pt"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void FormatMeasurement_Negative_Centimeter()
 		{
-			Assert.AreEqual("-9 cm", MeasurementUtils.FormatMeasurement(-255118, MsrSysType.Cm));
+			Assert.That(MeasurementUtils.FormatMeasurement(-255118, MsrSysType.Cm), Is.EqualTo("-9 cm"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void FormatMeasurement_Negative_Inches()
 		{
-			Assert.AreEqual("-3.2\"", MeasurementUtils.FormatMeasurement(-230400, MsrSysType.Inch));
+			Assert.That(MeasurementUtils.FormatMeasurement(-230400, MsrSysType.Inch), Is.EqualTo("-3.2\""));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -105,7 +105,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void FormatMeasurement_Negative_Millimeters()
 		{
-			Assert.AreEqual("-101.6 mm", MeasurementUtils.FormatMeasurement(-288000, MsrSysType.Mm));
+			Assert.That(MeasurementUtils.FormatMeasurement(-288000, MsrSysType.Mm), Is.EqualTo("-101.6 mm"));
 		}
 		#endregion
 
@@ -118,8 +118,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void ExtractMeasurement_Positive_Point()
 		{
-			Assert.AreEqual(2000, (int)Math.Round(
-				MeasurementUtils.ExtractMeasurementInMillipoints("2 pt", MsrSysType.Mm, -1)));
+			Assert.That((int)Math.Round(
+				MeasurementUtils.ExtractMeasurementInMillipoints("2 pt", MsrSysType.Mm, -1)), Is.EqualTo(2000));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -130,8 +130,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void ExtractMeasurement_Positive_Centimeter()
 		{
-			Assert.AreEqual(255118, (int)Math.Round(
-				MeasurementUtils.ExtractMeasurementInMillipoints("9 cm", MsrSysType.Point, -1)));
+			Assert.That((int)Math.Round(
+				MeasurementUtils.ExtractMeasurementInMillipoints("9 cm", MsrSysType.Point, -1)), Is.EqualTo(255118));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -142,10 +142,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void ExtractMeasurement_Positive_Inches()
 		{
-			Assert.AreEqual(230400, (int)Math.Round(
-				MeasurementUtils.ExtractMeasurementInMillipoints("3.2\"", MsrSysType.Point, -1)));
-			Assert.AreEqual(3600, (int)Math.Round(
-				MeasurementUtils.ExtractMeasurementInMillipoints("0.05 in", MsrSysType.Point, -1)));
+			Assert.That((int)Math.Round(
+				MeasurementUtils.ExtractMeasurementInMillipoints("3.2\"", MsrSysType.Point, -1)), Is.EqualTo(230400));
+			Assert.That((int)Math.Round(
+				MeasurementUtils.ExtractMeasurementInMillipoints("0.05 in", MsrSysType.Point, -1)), Is.EqualTo(3600));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -156,8 +156,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void ExtractMeasurement_Positive_Millimeters()
 		{
-			Assert.AreEqual(288000, (int)Math.Round(
-				MeasurementUtils.ExtractMeasurementInMillipoints("101.6 mm", MsrSysType.Point, -1)));
+			Assert.That((int)Math.Round(
+				MeasurementUtils.ExtractMeasurementInMillipoints("101.6 mm", MsrSysType.Point, -1)), Is.EqualTo(288000));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -168,8 +168,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void ExtractMeasurement_Negative_Point()
 		{
-			Assert.AreEqual(-28346, (int)Math.Round(
-				MeasurementUtils.ExtractMeasurementInMillipoints("-28.346 pt", MsrSysType.Inch, -1)));
+			Assert.That((int)Math.Round(
+				MeasurementUtils.ExtractMeasurementInMillipoints("-28.346 pt", MsrSysType.Inch, -1)), Is.EqualTo(-28346));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -180,8 +180,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void ExtractMeasurement_Negative_Centimeter()
 		{
-			Assert.AreEqual(-255118, (int)Math.Round(
-				MeasurementUtils.ExtractMeasurementInMillipoints("-9 cm", MsrSysType.Point, -1)));
+			Assert.That((int)Math.Round(
+				MeasurementUtils.ExtractMeasurementInMillipoints("-9 cm", MsrSysType.Point, -1)), Is.EqualTo(-255118));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -192,10 +192,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void ExtractMeasurement_Negative_Inches()
 		{
-			Assert.AreEqual(-230400, (int)Math.Round(
-				MeasurementUtils.ExtractMeasurementInMillipoints("-3.2\"", MsrSysType.Point, -1)));
-			Assert.AreEqual(-230400, (int)Math.Round(
-				MeasurementUtils.ExtractMeasurementInMillipoints("-3.2 in", MsrSysType.Point, -1)));
+			Assert.That((int)Math.Round(
+				MeasurementUtils.ExtractMeasurementInMillipoints("-3.2\"", MsrSysType.Point, -1)), Is.EqualTo(-230400));
+			Assert.That((int)Math.Round(
+				MeasurementUtils.ExtractMeasurementInMillipoints("-3.2 in", MsrSysType.Point, -1)), Is.EqualTo(-230400));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -206,8 +206,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void ExtractMeasurement_Negative_Millimeters()
 		{
-			Assert.AreEqual(-288000, (int)Math.Round(
-				MeasurementUtils.ExtractMeasurementInMillipoints("-101.6 mm", MsrSysType.Point, -1)));
+			Assert.That((int)Math.Round(
+				MeasurementUtils.ExtractMeasurementInMillipoints("-101.6 mm", MsrSysType.Point, -1)), Is.EqualTo(-288000));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -218,12 +218,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void ExtractMeasurement_WeirdSpaces()
 		{
-			Assert.AreEqual(288000, (int)Math.Round(
-				MeasurementUtils.ExtractMeasurementInMillipoints("101.6mm", MsrSysType.Point, -1)));
-			Assert.AreEqual(255118, (int)Math.Round(
-				MeasurementUtils.ExtractMeasurementInMillipoints(" 9 cm", MsrSysType.Point, -1)));
-			Assert.AreEqual(144000, (int)Math.Round(
-				MeasurementUtils.ExtractMeasurementInMillipoints("2 in ", MsrSysType.Point, -1)));
+			Assert.That((int)Math.Round(
+				MeasurementUtils.ExtractMeasurementInMillipoints("101.6mm", MsrSysType.Point, -1)), Is.EqualTo(288000));
+			Assert.That((int)Math.Round(
+				MeasurementUtils.ExtractMeasurementInMillipoints(" 9 cm", MsrSysType.Point, -1)), Is.EqualTo(255118));
+			Assert.That((int)Math.Round(
+				MeasurementUtils.ExtractMeasurementInMillipoints("2 in ", MsrSysType.Point, -1)), Is.EqualTo(144000));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -234,14 +234,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void ExtractMeasurement_NoUnits()
 		{
-			Assert.AreEqual(2000, (int)Math.Round(
-				MeasurementUtils.ExtractMeasurementInMillipoints("2", MsrSysType.Point, -1)));
-			Assert.AreEqual(288000, (int)Math.Round(
-				MeasurementUtils.ExtractMeasurementInMillipoints("101.6", MsrSysType.Mm, -1)));
-			Assert.AreEqual(255118, (int)Math.Round(
-				MeasurementUtils.ExtractMeasurementInMillipoints("9", MsrSysType.Cm, -1)));
-			Assert.AreEqual(144000, (int)Math.Round(
-				MeasurementUtils.ExtractMeasurementInMillipoints("2", MsrSysType.Inch, -1)));
+			Assert.That((int)Math.Round(
+				MeasurementUtils.ExtractMeasurementInMillipoints("2", MsrSysType.Point, -1)), Is.EqualTo(2000));
+			Assert.That((int)Math.Round(
+				MeasurementUtils.ExtractMeasurementInMillipoints("101.6", MsrSysType.Mm, -1)), Is.EqualTo(288000));
+			Assert.That((int)Math.Round(
+				MeasurementUtils.ExtractMeasurementInMillipoints("9", MsrSysType.Cm, -1)), Is.EqualTo(255118));
+			Assert.That((int)Math.Round(
+				MeasurementUtils.ExtractMeasurementInMillipoints("2", MsrSysType.Inch, -1)), Is.EqualTo(144000));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -253,8 +253,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void ExtractMeasurement_Bogus_DoubleNegative()
 		{
 			// double negative
-			Assert.AreEqual(999,
-				MeasurementUtils.ExtractMeasurementInMillipoints("--4\"", MsrSysType.Point, 999));
+			Assert.That(MeasurementUtils.ExtractMeasurementInMillipoints("--4\"", MsrSysType.Point, 999), Is.EqualTo(999));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -266,8 +265,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void ExtractMeasurement_Bogus_Units()
 		{
 			// bogus units
-			Assert.AreEqual(999,
-				MeasurementUtils.ExtractMeasurementInMillipoints("4.5 mc", MsrSysType.Point, 999));
+			Assert.That(MeasurementUtils.ExtractMeasurementInMillipoints("4.5 mc", MsrSysType.Point, 999), Is.EqualTo(999));
 		}
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -278,8 +276,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void ExtractMeasurement_Bogus_WrongDecimalPointSymbol()
 		{
 			// wrong decimal point symbol
-			Assert.AreEqual(999,
-				MeasurementUtils.ExtractMeasurementInMillipoints("4>4", MsrSysType.Point, 999));
+			Assert.That(MeasurementUtils.ExtractMeasurementInMillipoints("4>4", MsrSysType.Point, 999), Is.EqualTo(999));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -291,8 +288,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void ExtractMeasurement_Bogus_TooManyDecimalPointSymbols()
 		{
 			// too many decimal point symbols
-			Assert.AreEqual(999,
-				MeasurementUtils.ExtractMeasurementInMillipoints("4.0.1", MsrSysType.Point, 999));
+			Assert.That(MeasurementUtils.ExtractMeasurementInMillipoints("4.0.1", MsrSysType.Point, 999), Is.EqualTo(999));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -304,8 +300,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void ExtractMeasurement_Bogus_InternalSpace()
 		{
 			// internal space
-			Assert.AreEqual(999,
-				MeasurementUtils.ExtractMeasurementInMillipoints("4 1", MsrSysType.Point, 999));
+			Assert.That(MeasurementUtils.ExtractMeasurementInMillipoints("4 1", MsrSysType.Point, 999), Is.EqualTo(999));
 		}
 		#endregion
 	}

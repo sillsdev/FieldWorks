@@ -45,7 +45,7 @@ namespace FlexPathwayPluginTests
 			string expected = "Dictionary1";
 			string actual;
 			actual = MyFolders.GetNewName(directory, name);
-			Assert.AreEqual(expected, actual);
+			Assert.That(actual, Is.EqualTo(expected));
 		}
 
 		/// <summary>
@@ -61,7 +61,7 @@ namespace FlexPathwayPluginTests
 			string expected = "Dictionary2";
 			string actual;
 			actual = MyFolders.GetNewName(directory, name);
-			Assert.AreEqual(expected, actual);
+			Assert.That(actual, Is.EqualTo(expected));
 			Directory.Delete(existingDirectory);
 		}
 
@@ -80,7 +80,7 @@ namespace FlexPathwayPluginTests
 			string dst = Path.Combine(_TestPath, "CopyDst");
 			const string applicationName = "FieldWorks";
 			MyFolders.Copy(src, dst, "", applicationName);
-			Assert.AreEqual(true, File.Exists(Path.Combine(dst, name)));
+			Assert.That(File.Exists(Path.Combine(dst, name)), Is.EqualTo(true));
 			Directory.Delete(src, true);
 			Directory.Delete(dst, true);
 		}
@@ -110,7 +110,7 @@ namespace FlexPathwayPluginTests
 				Directory.Delete(dst);
 			const string applicationName = "FieldWorks";
 			MyFolders.Copy(src, dst, subFolder, applicationName);
-			Assert.AreEqual(false, Directory.Exists(Path.Combine(dst, subFolder)), "Folder exists when it should have been filtered");
+			Assert.That(Directory.Exists(Path.Combine(dst, subFolder)), Is.EqualTo(false), "Folder exists when it should have been filtered");
 			Directory.Delete(src, true);
 			Directory.Delete(dst, true);
 		}
@@ -125,7 +125,7 @@ namespace FlexPathwayPluginTests
 			string directory = Path.Combine(_TestPath, name);
 			const string applicationName = "FieldWorks";
 			MyFolders.CreateDirectory(directory, applicationName);
-			Assert.AreEqual(true, Directory.Exists(directory), "Folder does not exists");
+			Assert.That(Directory.Exists(directory), Is.EqualTo(true), "Folder does not exists");
 			Directory.Delete(directory);
 		}
 	}

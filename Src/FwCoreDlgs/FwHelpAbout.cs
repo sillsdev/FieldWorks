@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Label lblFwVersion;
 		private TextBox txtCopyright;
 
-		/// <summary>The assembly of the product-specific EXE (e.g., TE.exe or FLEx.exe).
+		/// <summary>The assembly of the product-specific EXE (e.g., TE.exe or the unified FieldWorks.exe that now hosts FLEx).
 		/// .Net callers should set this.</summary>
 		public Assembly ProductExecutableAssembly { get; set; }
 		#endregion

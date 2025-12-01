@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.Discourse
 			UndoableUnitOfWorkHelper.Do("RibbonLayoutUndo", "RibbonLayoutRedo",
 										Cache.ActionHandlerAccessor, () => glosses = GetParaAnalyses(m_firstPara));
 
-			Assert.Greater(glosses.Length, 0);
+			Assert.That(glosses.Length, Is.GreaterThan(0));
 			var firstGloss = new List<AnalysisOccurrence> { glosses[0] };
 
 			// SUT#3 This changes some internal data! Use a UOW.
@@ -98,7 +98,7 @@ namespace SIL.FieldWorks.Discourse
 
 			int widthOne = m_ribbon.RootBox.Width;
 			int heightOne = m_ribbon.RootBox.Height;
-			Assert.IsTrue(widthOne > widthEmpty, "adding a wordform should make the root box wider");
+			Assert.That(widthOne > widthEmpty, Is.True, "adding a wordform should make the root box wider");
 
 			var glossList = new List<AnalysisOccurrence>();
 			glossList.AddRange(glosses);
@@ -109,10 +109,10 @@ namespace SIL.FieldWorks.Discourse
 			m_ribbon.CallLayout();
 			int widthMany = m_ribbon.RootBox.Width;
 			int heightMany = m_ribbon.RootBox.Height;
-			Assert.IsTrue(widthMany > widthOne, "adding more wordforms should make the root box wider");
+			Assert.That(widthMany > widthOne, Is.True, "adding more wordforms should make the root box wider");
 			// In a real view they might not be exactly equal due to subscripts and the like, but our
 			// text and anaysis are very simple.
-			Assert.AreEqual(heightOne, heightMany, "ribbon should not wrap!");
+			Assert.That(heightMany, Is.EqualTo(heightOne), "ribbon should not wrap!");
 		}
 
 		[Test]
@@ -131,7 +131,7 @@ namespace SIL.FieldWorks.Discourse
 			m_ribbon.MakeRoot();
 			m_ribbon.RootBox.Reconstruct(); // forces it to really be constructed
 			m_ribbon.CallOnLoad(new EventArgs());
-			Assert.AreEqual(new [] { glosses[0] }, m_ribbon.SelectedOccurrences, "should have selection even before any click");
+			Assert.That(m_ribbon.SelectedOccurrences, Is.EqualTo(new [] { glosses[0] }), "should have selection even before any click");
 
 			Rectangle rcSrc, rcDst;
 			m_ribbon.CallGetCoordRects(out rcSrc, out rcDst);
@@ -139,10 +139,10 @@ namespace SIL.FieldWorks.Discourse
 			// SUT #2?!
 			m_ribbon.RootBox.MouseDown(labelOffset, 1, rcSrc, rcDst);
 			m_ribbon.RootBox.MouseUp(labelOffset, 1, rcSrc, rcDst);
-			Assert.AreEqual(new[] { glosses[0] }, m_ribbon.SelectedOccurrences);
+			Assert.That(m_ribbon.SelectedOccurrences, Is.EqualTo(new[] { glosses[0] }));
 
 			Rectangle location = m_ribbon.GetSelLocation();
-			Assert.IsTrue(m_ribbon.RootBox.Selection.IsRange, "single click selection should expand to range");
+			Assert.That(m_ribbon.RootBox.Selection.IsRange, Is.True, "single click selection should expand to range");
 			int offset = location.Width + labelOffset;
 
 			// SUT #3?!
@@ -150,13 +150,13 @@ namespace SIL.FieldWorks.Discourse
 			// (about 15 pixels) and at the left of the view.
 			m_ribbon.RootBox.MouseDown(offset + 15, 5, rcSrc, rcDst);
 			m_ribbon.RootBox.MouseUp(offset + 15, 5, rcSrc, rcDst);
-			Assert.AreEqual(new[] { glosses[0], glosses[1] }, m_ribbon.SelectedOccurrences);
+			Assert.That(m_ribbon.SelectedOccurrences, Is.EqualTo(new[] { glosses[0], glosses[1] }));
 
 			// SUT #4?!
 			// And a shift-click back near the start should go back to just one of them.
 			m_ribbon.RootBox.MouseDownExtended(1, 1, rcSrc, rcDst);
 			m_ribbon.RootBox.MouseUp(1, 1, rcSrc, rcDst);
-			Assert.AreEqual(new[] { glosses[0] }, m_ribbon.SelectedOccurrences);
+			Assert.That(m_ribbon.SelectedOccurrences, Is.EqualTo(new[] { glosses[0] }));
 		}
 		#endregion
 	}
