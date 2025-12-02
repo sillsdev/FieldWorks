@@ -37,18 +37,18 @@ if ($SkipIfExists -and (Test-Path $netfxMarker)) {
     Write-Host ".NET Framework 4.8.1 Developer Pack installed"
 }
 
-# 2. WiX Toolset 3.11.x
-Write-Host "`n--- WiX Toolset 3.11.x ---"
-$wixDir = 'C:\Wix311'
+# 2. WiX Toolset 3.14.1
+Write-Host "`n--- WiX Toolset 3.14.1 ---"
+$wixDir = 'C:\Wix314'
 if ($SkipIfExists -and (Test-Path $wixDir)) {
     Write-Host "WiX Toolset already installed at $wixDir, skipping"
 } else {
-    Write-Host "Downloading WiX Toolset 3.11.x..."
-    Invoke-WebRequest -Uri 'https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip' `
-        -OutFile 'C:\TEMP\wix311.zip'
+    Write-Host "Downloading WiX Toolset 3.14.1..."
+    Invoke-WebRequest -Uri 'https://github.com/wixtoolset/wix3/releases/download/wix3141rtm/wix314-binaries.zip' `
+        -OutFile 'C:\TEMP\wix314.zip'
     Write-Host "Extracting WiX Toolset..."
-    Expand-Archive -LiteralPath 'C:\TEMP\wix311.zip' -DestinationPath $wixDir -Force
-    Remove-Item 'C:\TEMP\wix311.zip' -Force
+    Expand-Archive -LiteralPath 'C:\TEMP\wix314.zip' -DestinationPath $wixDir -Force
+    Remove-Item 'C:\TEMP\wix314.zip' -Force
     Write-Host "WiX Toolset installed to $wixDir"
 }
 

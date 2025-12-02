@@ -47,10 +47,10 @@ jobs:
       credentials:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Build FieldWorks
         run: |
           cd Build
@@ -80,13 +80,13 @@ The Docker image includes:
 - **.NET Framework 4.8 SDK**
 - **Visual Studio 2022 Build Tools** with:
   - ManagedDesktopBuildTools workload
-  - VCTools workload  
+  - VCTools workload
   - VC.ATLMFC component
   - VC.Tools.x86.x64 component
   - .NET 4.8.1 SDK and Targeting Pack
   - Windows 11 SDK 22621
 - **.NET 8 SDK** (for modern dotnet operations)
-- **WiX Toolset 3.11.x** (for installer creation)
+- **WiX Toolset 3.14.1** (for installer creation)
 - **NuGet CLI**
 - **MSBuild** (via Build Tools)
 

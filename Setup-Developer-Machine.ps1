@@ -90,17 +90,17 @@ if (-not (Test-Path $toolsBase)) {
 }
 
 # Check what's already installed
-$wixInstalled = (Test-Path 'C:\Wix311') -or (Test-Path "$toolsBase\Wix311") -or (Get-Command candle.exe -ErrorAction SilentlyContinue)
+$wixInstalled = (Test-Path 'C:\Wix314') -or (Test-Path "$toolsBase\Wix314") -or (Get-Command candle.exe -ErrorAction SilentlyContinue)
 
-# WiX Toolset 3.11.x
+# WiX Toolset 3.14.1
 if ($wixInstalled -and -not $Force) {
     Write-Host "[OK] WiX Toolset already installed" -ForegroundColor Green
 } else {
-    if ($PSCmdlet.ShouldProcess("WiX Toolset 3.11.x", "Install")) {
-        Write-Host "Installing WiX Toolset 3.11.x..." -ForegroundColor Cyan
-        $wixPath = "$toolsBase\Wix311"
-        $tempZip = "$env:TEMP\wix311.zip"
-        Invoke-WebRequest -Uri 'https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip' -OutFile $tempZip
+    if ($PSCmdlet.ShouldProcess("WiX Toolset 3.14.1", "Install")) {
+        Write-Host "Installing WiX Toolset 3.14.1..." -ForegroundColor Cyan
+        $wixPath = "$toolsBase\Wix314"
+        $tempZip = "$env:TEMP\wix314.zip"
+        Invoke-WebRequest -Uri 'https://github.com/wixtoolset/wix3/releases/download/wix3141rtm/wix314-binaries.zip' -OutFile $tempZip
         Expand-Archive -LiteralPath $tempZip -DestinationPath $wixPath -Force
         Remove-Item $tempZip -Force
         Write-Host "[OK] WiX Toolset installed to $wixPath" -ForegroundColor Green
@@ -123,7 +123,7 @@ Write-Host "`n--- Configuring PATH ---" -ForegroundColor Yellow
 $pathsToAdd = @()
 
 # WiX
-$wixPath = if (Test-Path 'C:\Wix311') { 'C:\Wix311' } elseif (Test-Path "$toolsBase\Wix311") { "$toolsBase\Wix311" } else { $null }
+$wixPath = if (Test-Path 'C:\Wix314') { 'C:\Wix314' } elseif (Test-Path "$toolsBase\Wix314") { "$toolsBase\Wix314" } else { $null }
 if ($wixPath) { $pathsToAdd += $wixPath }
 
 # Update PATH

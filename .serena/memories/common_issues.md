@@ -93,5 +93,5 @@ Expand-Archive "$env:TEMP\omnisharp.zip" -DestinationPath "C:\OmniSharp" -Force
 
 ### WiX Tools Missing
 **Symptom**: Installer build fails with candle/light errors
-**Cause**: WiX Toolset 3.11.x not installed
+**Cause**: WiX Toolset 3.14.1 not installed
 **Solution**: Install WiX Toolset from https://wixtoolset.org/

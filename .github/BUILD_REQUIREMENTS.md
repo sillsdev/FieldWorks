@@ -84,4 +84,4 @@ Both `build.ps1` and `build.sh` now include:
 - **Required Workloads:**
   - .NET desktop development
   - Desktop development with C++
-- **Optional:** WiX Toolset 3.11.x (only for installer builds)
+- **Optional:** WiX Toolset 3.14.1 (only for installer builds)

@@ -107,7 +107,7 @@ if (-not (Test-Path $msbuildPath)) {
 
 $paths = @(
     'C:\Windows\System32\WindowsPowerShell\v1.0',
-    'C:\Wix311',
+    'C:\Wix314',
     'C:\dotnet',
     'C:\dotnet9',
     'C:\clangd\bin',
@@ -133,7 +133,7 @@ Write-Host "Machine PATH updated successfully"
 Write-Host "Configuring Machine Environment Variables..."
 
 $envVars = @{
-    'WIX'            = 'C:\Wix311'
+    'WIX'            = 'C:\Wix314'
     'DOTNET_ROOT'    = 'C:\dotnet'
     'NUGET_PACKAGES' = 'C:\.nuget\packages'
     'VCTargetsPath'  = 'C:\BuildTools\MSBuild\Microsoft\VC\v170'

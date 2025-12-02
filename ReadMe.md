@@ -1,4 +1,12 @@
-Developer documentation for FieldWorks can be found here: (https://github.com/sillsdev/FwDocumentation/wiki)
+## Getting Started
+
+New to FieldWorks development? Start here:
+
+- **[Contributing Guide](docs/CONTRIBUTING.md)** - How to set up your development environment and contribute code
+- **[Visual Studio Setup](docs/visual-studio-setup.md)** - Detailed VS 2022 configuration
+- **[Core Developer Setup](docs/core-developer-setup.md)** - Additional setup for team members
+
+> **Note**: We are migrating documentation from the [FwDocumentation wiki](https://github.com/sillsdev/FwDocumentation/wiki) into this repository. Some wiki content may be more recent until migration is complete.
 
 ## Developer Machine Setup
 
