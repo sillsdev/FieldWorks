@@ -1,4 +1,5 @@
-# Reusable workflow to run msbuild tasks on Windows
+# Reusable workflow to setup Windows build environment and run msbuild tasks
+# This workflow ensures all dependencies from Dockerfile.windows are available
 # Call with: uses: ./.github/workflows/copilot-setup-steps.yml
 name: "Copilot: Windows setup steps"
 on:
@@ -20,6 +21,72 @@ jobs:
             - name: Checkout repo
               uses: actions/checkout@v4
 
+            # Setup Visual Studio Build Tools with required workloads
+            # Based on Dockerfile.windows requirements
+            - name: Setup MSBuild (Visual Studio Build Tools)
+              uses: microsoft/setup-msbuild@v2
+
+            - name: Setup .NET Framework 4.8.1 SDK
+              shell: pwsh
+              run: |
+                  Write-Host "Verifying .NET Framework 4.8.1 SDK availability..."
+                  # GitHub Actions windows-latest runners come with .NET Framework 4.8.1 SDK pre-installed
+                  # Verify the targeting pack is available
+                  $targetingPack = "${env:ProgramFiles(x86)}\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8.1"
+                  if (Test-Path $targetingPack) {
+                    Write-Host ".NET Framework 4.8.1 targeting pack found at: $targetingPack"
+                  } else {
+                    Write-Warning ".NET Framework 4.8.1 targeting pack not found. Build may fail if project targets 4.8.1"
+                  }
+
+            - name: Setup Windows SDK
+              shell: pwsh
+              run: |
+                  Write-Host "Verifying Windows SDK availability..."
+                  # GitHub Actions windows-latest runners come with Windows 10/11 SDK pre-installed
+                  $sdkPath = "${env:ProgramFiles(x86)}\Windows Kits\10"
+                  if (Test-Path $sdkPath) {
+                    Write-Host "Windows SDK found at: $sdkPath"
+                    # List available SDK versions
+                    $sdkVersions = Get-ChildItem "$sdkPath\Include" -Directory | Select-Object -ExpandProperty Name
+                    Write-Host "Available SDK versions: $($sdkVersions -join ', ')"
+                  } else {
+                    Write-Warning "Windows SDK not found at expected location"
+                  }
+
+            - name: Setup WiX Toolset
+              shell: pwsh
+              run: |
+                  Write-Host "Setting up WiX Toolset 3.11..."
+                  # Check if WiX is already installed
+                  $wixPath = "${env:ProgramFiles(x86)}\WiX Toolset v3.11\bin"
+                  if (Test-Path $wixPath) {
+                    Write-Host "WiX Toolset already installed at: $wixPath"
+                  } else {
+                    Write-Host "Downloading WiX Toolset 3.11 binaries..."
+                    $wixZip = "$env:TEMP\wix311-binaries.zip"
+                    $wixDir = "C:\wix311"
+                    Invoke-WebRequest -Uri 'https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip' -OutFile $wixZip
+                    Expand-Archive -Path $wixZip -DestinationPath $wixDir -Force
+                    Remove-Item $wixZip -Force
+                    Write-Host "WiX Toolset extracted to: $wixDir"
+                    # Add to PATH for this workflow
+                    echo "$wixDir" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+                  }
+
+            - name: Setup .NET SDK (for dotnet restore)
+              uses: actions/setup-dotnet@v4
+              with:
+                  dotnet-version: '8.0.x'
+
+            - name: Verify NuGet availability
+              shell: pwsh
+              run: |
+                  Write-Host "Verifying NuGet CLI availability..."
+                  # GitHub Actions runners come with nuget.exe pre-installed
+                  $nugetVersion = nuget help | Select-Object -First 1
+                  Write-Host "NuGet: $nugetVersion"
+
             - name: Find MSBuild (vswhere)
               id: find-msbuild
               shell: pwsh
@@ -40,6 +107,7 @@ jobs:
                     # fallback: try common Program Files paths
                     $candidates = @(
                       "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe",
+                      "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\MSBuild.exe",
                       "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe",
                       "${env:ProgramFiles}\MSBuild\14.0\Bin\MSBuild.exe"
                     )
