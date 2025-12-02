@@ -273,6 +273,74 @@
           ]
         }
       }
+    },
+    {
+      "label": "Environment: Verify dependencies",
+      "type": "shell",
+      "command": ".\\Build\\Agent\\Verify-FwDependencies.ps1 -IncludeOptional",
+      "detail": "Checks that all required build dependencies are available (VS, MSBuild, .NET, WiX, etc.)",
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Environment: Setup build environment",
+      "type": "shell",
+      "command": ".\\Build\\Agent\\Setup-FwBuildEnv.ps1 -Verify",
+      "detail": "Configures VS/MSBuild environment variables for the current session",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Environment: Setup Serena MCP",
+      "type": "shell",
+      "command": ".\\Build\\Agent\\Setup-Serena.ps1",
+      "detail": "Verifies Serena MCP configuration and language server availability",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Environment: Full verification",
+      "dependsOn": [
+        "Environment: Verify dependencies",
+        "Environment: Setup build environment",
+        "Environment: Setup Serena MCP"
+      ],
+      "dependsOrder": "sequence",
+      "detail": "Runs all environment verification steps in order"
     }
   ]
 }

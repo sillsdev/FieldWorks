@@ -1,6 +1,39 @@
-# Reusable workflow to setup Windows build environment and run msbuild tasks
-# This workflow ensures all dependencies from Dockerfile.windows are available
-# Call with: uses: ./.github/workflows/copilot-setup-steps.yml
+# Reusable workflow to setup Windows build environment for Copilot coding agents
+# Optimized for windows-latest which already includes most FieldWorks dependencies.
+#
+# ============================================================================
+# EXPECTED FROM windows-latest (DO NOT RE-INSTALL):
+# ============================================================================
+# - Visual Studio 2022 Enterprise (with Desktop & C++ workloads)
+# - MSBuild (via VS 2022)
+# - .NET Framework 4.8.1 SDK & Targeting Pack
+# - Windows SDK (10.0.17763+, 19041, 22621, 26100)
+# - WiX Toolset 3.14.x
+# - NuGet CLI
+# - .NET SDK 8.x and 9.x
+# - LLVM/clangd (for Serena C++ language server)
+# - Python 3.x (for Serena)
+# - vcpkg
+# - Git, CMake, Ninja
+#
+# See: https://github.com/actions/runner-images/blob/main/images/windows/Windows2022-Readme.md
+#
+# ============================================================================
+# LOCAL TESTING:
+# ============================================================================
+# The setup scripts can be run locally to verify your environment:
+#
+#   # Verify dependencies
+#   .\Build\Agent\Verify-FwDependencies.ps1 -IncludeOptional
+#
+#   # Setup build environment
+#   .\Build\Agent\Setup-FwBuildEnv.ps1 -Verify
+#
+#   # Setup Serena (optional)
+#   .\Build\Agent\Setup-Serena.ps1 -SkipLanguageServerCheck
+#
+# ============================================================================
+
 name: "Copilot: Windows setup steps"
 on:
     workflow_call:
@@ -9,138 +42,98 @@ on:
                 required: false
                 type: string
                 description: 'Arguments to pass to msbuild (e.g., "FieldWorks.sln /t:RunTests /p:Configuration=Debug")'
-        # optional secrets or other inputs may be added
+            skip_serena:
+                required: false
+                type: boolean
+                default: false
+                description: 'Skip Serena MCP setup (for builds that do not need code intelligence)'
 
 jobs:
     windows-setup:
         runs-on: windows-latest
         outputs:
-            msbuild-path: ${{ steps.find-msbuild.outputs.msbuild-path }}
+            msbuild-path: ${{ steps.setup-env.outputs.msbuild-path }}
+            vs-install-path: ${{ steps.setup-env.outputs.vs-install-path }}
 
         steps:
             - name: Checkout repo
               uses: actions/checkout@v4
 
-            # Setup Visual Studio Build Tools with required workloads
-            # Based on Dockerfile.windows requirements
-            - name: Setup MSBuild (Visual Studio Build Tools)
+            # ================================================================
+            # CACHING - speeds up repeat runs significantly
+            # ================================================================
+            - name: Cache NuGet packages
+              uses: actions/cache@v4
+              with:
+                  path: ~/.nuget/packages
+                  key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/packages.config', '**/Directory.Packages.props') }}
+                  restore-keys: |
+                      nuget-${{ runner.os }}-
+
+            - name: Cache Serena language servers
+              if: inputs.skip_serena != true
+              uses: actions/cache@v4
+              with:
+                  path: |
+                      ~/.cache/serena
+                      ~/AppData/Local/serena
+                  key: serena-lsp-${{ runner.os }}-v1
+                  restore-keys: |
+                      serena-lsp-${{ runner.os }}-
+
+            # ================================================================
+            # ENVIRONMENT SETUP
+            # Scripts are in Build/Agent/ and can be run locally for testing
+            # ================================================================
+            - name: Setup MSBuild PATH
               uses: microsoft/setup-msbuild@v2
 
-            - name: Setup .NET Framework 4.8.1 SDK
-              shell: pwsh
-              run: |
-                  Write-Host "Verifying .NET Framework 4.8.1 SDK availability..."
-                  # GitHub Actions windows-latest runners come with .NET Framework 4.8.1 SDK pre-installed
-                  # Verify the targeting pack is available
-                  $targetingPack = "${env:ProgramFiles(x86)}\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8.1"
-                  if (Test-Path $targetingPack) {
-                    Write-Host ".NET Framework 4.8.1 targeting pack found at: $targetingPack"
-                  } else {
-                    Write-Warning ".NET Framework 4.8.1 targeting pack not found. Build may fail if project targets 4.8.1"
-                  }
-
-            - name: Setup Windows SDK
-              shell: pwsh
-              run: |
-                  Write-Host "Verifying Windows SDK availability..."
-                  # GitHub Actions windows-latest runners come with Windows 10/11 SDK pre-installed
-                  $sdkPath = "${env:ProgramFiles(x86)}\Windows Kits\10"
-                  if (Test-Path $sdkPath) {
-                    Write-Host "Windows SDK found at: $sdkPath"
-                    # List available SDK versions
-                    $sdkVersions = Get-ChildItem "$sdkPath\Include" -Directory | Select-Object -ExpandProperty Name
-                    Write-Host "Available SDK versions: $($sdkVersions -join ', ')"
-                  } else {
-                    Write-Warning "Windows SDK not found at expected location"
-                  }
-
-            - name: Setup WiX Toolset
-              shell: pwsh
-              run: |
-                  Write-Host "Setting up WiX Toolset 3.11..."
-                  # Check if WiX is already installed
-                  $wixPath = "${env:ProgramFiles(x86)}\WiX Toolset v3.11\bin"
-                  if (Test-Path $wixPath) {
-                    Write-Host "WiX Toolset already installed at: $wixPath"
-                  } else {
-                    Write-Host "Downloading WiX Toolset 3.11 binaries..."
-                    $wixZip = "$env:TEMP\wix311-binaries.zip"
-                    $wixDir = "C:\wix311"
-                    Invoke-WebRequest -Uri 'https://github.com/wixtoolset/wix3/releases/download/wix3112rtm/wix311-binaries.zip' -OutFile $wixZip
-                    Expand-Archive -Path $wixZip -DestinationPath $wixDir -Force
-                    Remove-Item $wixZip -Force
-                    Write-Host "WiX Toolset extracted to: $wixDir"
-                    # Add to PATH for this workflow
-                    echo "$wixDir" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-                  }
-
-            - name: Setup .NET SDK (for dotnet restore)
-              uses: actions/setup-dotnet@v4
+            - name: Setup uv (Python package manager for Serena)
+              if: inputs.skip_serena != true
+              uses: astral-sh/setup-uv@v4
               with:
-                  dotnet-version: '8.0.x'
+                  version: "latest"
 
-            - name: Verify NuGet availability
+            - name: Configure FieldWorks build environment
+              id: setup-env
               shell: pwsh
               run: |
-                  Write-Host "Verifying NuGet CLI availability..."
-                  # GitHub Actions runners come with nuget.exe pre-installed
-                  $nugetVersion = nuget help | Select-Object -First 1
-                  Write-Host "NuGet: $nugetVersion"
+                  # Run testable script with GitHub Actions output
+                  .\Build\Agent\Setup-FwBuildEnv.ps1 -OutputGitHubEnv -Verify
 
-            - name: Find MSBuild (vswhere)
-              id: find-msbuild
+            - name: Verify pre-installed dependencies
               shell: pwsh
               run: |
-                  # Try to find msbuild in Visual Studio using vswhere; fallback to common paths
-                  $vsWhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
-                  if (Test-Path $vsWhere) {
-                    $ms = & $vsWhere -latest -requires Microsoft.Component.MSBuild -products * -property installationPath
-                    if ($ms) {
-                      $msbuild = Join-Path $ms 'MSBuild\Current\Bin\MSBuild.exe'
-                      if (-not (Test-Path $msbuild)) {
-                        # older path
-                        $msbuild = Join-Path $ms 'MSBuild\15.0\Bin\MSBuild.exe'
-                      }
-                    }
-                  }
-                  if (-not $msbuild) {
-                    # fallback: try common Program Files paths
-                    $candidates = @(
-                      "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\BuildTools\MSBuild\Current\Bin\MSBuild.exe",
-                      "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\Enterprise\MSBuild\Current\Bin\MSBuild.exe",
-                      "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2019\BuildTools\MSBuild\Current\Bin\MSBuild.exe",
-                      "${env:ProgramFiles}\MSBuild\14.0\Bin\MSBuild.exe"
-                    )
-                    foreach ($c in $candidates) {
-                      if (Test-Path $c) { $msbuild = $c; break }
-                    }
-                  }
-                  if (-not $msbuild) {
-                    Write-Error "MSBuild not found on runner. Consider installing Visual Studio Build Tools in the runner image or use a self-hosted Windows runner."
-                    exit 1
-                  } else {
-                    Add-Content -Path $env:GITHUB_OUTPUT -Value "msbuild-path=$msbuild"
-                    Write-Host "Found MSBuild at $msbuild"
-                  }
+                  # Run testable script with strict checking
+                  .\Build\Agent\Verify-FwDependencies.ps1 -FailOnMissing
 
-            - name: Run msbuild (if args provided)
+            # ================================================================
+            # SERENA MCP SETUP - for Copilot coding agent code intelligence
+            # ================================================================
+            - name: "Serena: Setup and verify"
+              if: inputs.skip_serena != true
+              shell: pwsh
+              timeout-minutes: 10
+              run: |
+                  # Run testable script with GitHub Actions output
+                  .\Build\Agent\Setup-Serena.ps1 -OutputGitHubEnv -SkipLanguageServerCheck
+
+            # ================================================================
+            # BUILD (optional)
+            # ================================================================
+            - name: Initialize VS Developer Environment
+              if: inputs.msbuild_args != '' && inputs.msbuild_args != null
+              uses: ilammy/msvc-dev-cmd@v1
+              with:
+                  arch: x64
+
+            - name: Run msbuild
               if: inputs.msbuild_args != '' && inputs.msbuild_args != null
               shell: pwsh
               run: |
-                  $msbuildPath = "${{ steps.find-msbuild.outputs.msbuild-path }}"
-                  if (-not $msbuildPath) {
-                    Write-Error "MSBuild path not found"
-                    exit 2
-                  }
-                  Write-Host "Running MSBuild: $msbuildPath ${{ inputs.msbuild_args }}"
-                  $args = @()
-                  if ("${{ inputs.msbuild_args }}".Trim() -ne "") {
-                    # Split on spaces, preserving quoted substrings
-                    $args = [System.Management.Automation.PSParser]::Tokenize(${{ toJson(inputs.msbuild_args) }}, [ref]$null) | Where-Object { $_.Type -eq 'String' -or $_.Type -eq 'CommandArgument' } | ForEach-Object { $_.Content }
-                  }
-                  & $msbuildPath @args
+                  Write-Host "Running: msbuild ${{ inputs.msbuild_args }}" -ForegroundColor Cyan
+                  msbuild ${{ inputs.msbuild_args }}
                   if ($LASTEXITCODE -ne 0) {
-                    Write-Error "MSBuild failed with exit code $LASTEXITCODE"
-                    exit $LASTEXITCODE
+                      throw "MSBuild failed with exit code $LASTEXITCODE"
                   }
                   Write-Host "Build completed successfully!" -ForegroundColor Green

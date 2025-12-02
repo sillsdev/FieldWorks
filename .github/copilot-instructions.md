@@ -7,7 +7,7 @@
 ## Repository Snapshot
 - Product: FieldWorks (FLEx) — Windows-first linguistics suite maintained by SIL International.
 - Languages & tech: C#, C++/CLI, native C++, WiX, PowerShell, XML, JSON, XAML/WinForms.
-- Tooling: Visual Studio 2022 (Desktop workloads), MSBuild Traversal (`FieldWorks.proj`), WiX 3.11, NUnit-style tests, Crowdin localization.
+- Tooling: Visual Studio 2022 (Desktop workloads), MSBuild Traversal (`FieldWorks.proj`), WiX 3.14.x, NUnit-style tests, Crowdin localization.
 - Docs: `ReadMe.md` → https://github.com/sillsdev/FwDocumentation/wiki for deep dives; `.github/src-catalog.md` + per-folder `COPILOT.md` describe Src/ layout.
 
 ## Core Rules
@@ -18,7 +18,8 @@
 - Stay within documented tooling—no surprise dependencies or scripts without updating instructions.
 
 ## Build & Test Essentials
-- Prerequisites: install VS 2022 Desktop workloads, WiX 3.11.x, Git, LLVM/clangd + standalone OmniSharp (for Serena C++/C# support), and optional Crowdin CLI only when needed.
+- Prerequisites: install VS 2022 Desktop workloads, WiX 3.14.x (pre-installed on windows-latest), Git, LLVM/clangd + standalone OmniSharp (for Serena C++/C# support), and optional Crowdin CLI only when needed.
+- Verify your environment: `.\Build\Agent\Verify-FwDependencies.ps1 -IncludeOptional`
 - Common commands:
   ```powershell
   # Full traversal build (Debug/x64 defaults)
@@ -40,6 +41,7 @@
 | Managed / Native / Installer guidance | `.github/instructions/managed.instructions.md`, `.github/instructions/native.instructions.md`, `.github/instructions/installer.instructions.md` |
 | Security & PowerShell rules | `.github/instructions/security.instructions.md`, `.github/instructions/powershell.instructions.md` |
 | **Serena MCP (symbol tools)** | `.github/instructions/serena.instructions.md` |
+| **Environment setup scripts** | `Build/Agent/Setup-FwBuildEnv.ps1`, `Build/Agent/Verify-FwDependencies.ps1`, `Build/Agent/Setup-Serena.ps1` |
 | Prompts & specs | `.github/prompts/*.prompt.md`, `.github/spec-templates/`, `.github/recipes/` |
 | Chat modes | `.github/chatmodes/*.chatmode.md` |
 

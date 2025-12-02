@@ -58,7 +58,11 @@
     // Agent workflow scripts
     ".\\scripts\\spin-up-agents.ps1": true,
     ".\\scripts\\tear-down-agents.ps1": true,
-    ".\\scripts\\check-agents.ps1": true
+    ".\\scripts\\check-agents.ps1": true,
+    // Environment setup scripts
+    ".\\Build\\Agent\\Setup-FwBuildEnv.ps1": true,
+    ".\\Build\\Agent\\Verify-FwDependencies.ps1": true,
+    ".\\Build\\Agent\\Setup-Serena.ps1": true
   },
   "cmake.ignoreCMakeListsMissing": true,
   "dotnet.defaultSolution": "FieldWorks.sln",
