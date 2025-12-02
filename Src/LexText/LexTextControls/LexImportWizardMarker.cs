@@ -222,7 +222,11 @@ namespace SIL.FieldWorks.LexText.Controls
 								break;
 							}
 						}
-						cbFunction.Text = name;
+
+						if (cbFunction.Items.Count > 0)
+						{
+							cbFunction.Text = name;
+						}
 					}
 				}
 			}
@@ -740,7 +744,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			rbAbbrAbbr.Enabled = enable;
 			// see if the function controls should be enabled
 			if (field != null)
-				enable = field.IsRef;
+				enable = (field.IsRef && (cbFunction.Items.Count > 0));
 			lblFunction.Enabled = enable;
 			cbFunction.Enabled = enable;
 			if (lblFunction.Enabled == false)
@@ -756,8 +760,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (field == null)
 				return;
 
-			EnableControlsFromField(field);
 			FillLexicalRefTypesCombo(field);
+			EnableControlsFromField(field);
 			ShowInfo(field);
 		}
 
@@ -937,8 +941,11 @@ namespace SIL.FieldWorks.LexText.Controls
 				if (m_refFuncString.Length > 0)
 					pos = cbFunction.FindString(m_refFuncString);
 
-				cbFunction.SelectedIndex = pos >= 0 ? pos : 0;
-				cbFunction.Text = cbFunction.SelectedItem as string;
+				if (cbFunction.Items.Count > 0)
+				{
+					cbFunction.SelectedIndex = pos >= 0 ? pos : 0;
+					cbFunction.Text = cbFunction.SelectedItem as string;
+				}
 			}
 			// The radio buttons for abbr and Name are set when initialized - so don't reset them
 		}
