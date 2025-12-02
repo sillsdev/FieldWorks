@@ -7,8 +7,9 @@ Prereqs:
 - PowerShell 5+ (Windows)
 
 IMPORTANT: This script NEVER modifies existing worktrees to prevent data loss.
-- Existing worktrees are preserved as-is (skipped)
+- Existing worktrees are preserved as-is (code not changed)
 - New worktrees are created from the specified BaseRef
+- Containers are always ensured to be running (created/started as needed)
 - If you want to reset a worktree, manually delete it first or use tear-down-agents.ps1
 
 Typical use:
@@ -645,7 +646,10 @@ for ($i=1; $i -le $Count; $i++) {
   $wt = Ensure-Worktree -Index $i
 
   if ($wt.Skipped) {
-    Write-Host "Agent-$i - Using existing worktree (no changes made)"
+    Write-Host "Agent-$i - Using existing worktree (no changes made to worktree)"
+
+    # Ensure container is running even for existing worktrees
+    $ct = Ensure-Container -Index $i -AgentPath $wt.Path -RepoRoot $RepoRoot -WorktreesRoot $WorktreesRoot
 
     # Still open VS Code for existing worktrees if requested
     if (-not $SkipOpenVSCode) {
@@ -658,7 +662,7 @@ for ($i=1; $i -le $Count; $i++) {
         Write-Host "VS Code already open for agent-$i; skipping new window launch."
       } else {
         Write-Host "Opening VS Code for existing worktree agent-$i..."
-        Open-AgentVsCodeWindow -Index $i -AgentPath $wt.Path -ContainerName "fw-agent-$i"
+        Open-AgentVsCodeWindow -Index $i -AgentPath $wt.Path -ContainerName $ct.Name
       }
     }
 
@@ -666,9 +670,9 @@ for ($i=1; $i -le $Count; $i++) {
       Index = $i
       Worktree = $wt.Path
       Branch = $wt.Branch
-      Container = "(existing)"
+      Container = $ct.Name
       Theme = "(preserved)"
-      Status = "Skipped - existing worktree preserved"
+      Status = "Existing worktree - container ensured"
     }
     continue
   }
