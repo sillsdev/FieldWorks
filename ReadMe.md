@@ -1,5 +1,18 @@
 Developer documentation for FieldWorks can be found here: (https://github.com/sillsdev/FwDocumentation/wiki)
 
+## Developer Machine Setup
+
+For first-time setup on a Windows development machine:
+
+```powershell
+# Run as Administrator (or User for user-level PATH)
+.\Setup-Developer-Machine.ps1
+```
+
+This installs WiX Toolset, LLVM/clangd, OmniSharp, and configures PATH. Prerequisites:
+- Visual Studio 2022 with .NET desktop and C++ desktop workloads
+- Git for Windows
+
 ## Building FieldWorks
 
 FieldWorks uses the **MSBuild Traversal SDK** for declarative, dependency-ordered builds:

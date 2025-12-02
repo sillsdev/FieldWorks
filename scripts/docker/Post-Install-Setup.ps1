@@ -41,16 +41,7 @@ if (-not (Test-Path $nugetPath)) {
     New-Item -ItemType Directory -Path $nugetPath -Force | Out-Null
 }
 
-# 5. Download NuGet CLI
-Write-Host "Downloading NuGet CLI..."
-if (-not (Test-Path 'C:\nuget.exe')) {
-    Invoke-WebRequest -Uri 'https://dist.nuget.org/win-x86-commandline/latest/nuget.exe' -OutFile 'C:\nuget.exe'
-    Write-Host "NuGet CLI downloaded successfully"
-} else {
-    Write-Host "NuGet CLI already exists"
-}
-
-# 6. Configure MSBuild to find .NET SDK
+# 5. Configure MSBuild to find .NET SDK
 Write-Host "Configuring MSBuild .NET SDK resolver..."
 $msbuildSdkPath = 'C:\BuildTools\MSBuild\Sdks'
 # Find the latest .NET SDK version installed
@@ -101,7 +92,7 @@ if (Test-Path $dotnetSdkPath) {
     }
 }
 
-# 7. Configure Machine PATH
+# 6. Configure Machine PATH
 Write-Host "Configuring Machine PATH..."
 
 $netfxTools = 'C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8.1 Tools'
@@ -118,6 +109,8 @@ $paths = @(
     'C:\Windows\System32\WindowsPowerShell\v1.0',
     'C:\Wix311',
     'C:\dotnet',
+    'C:\dotnet9',
+    'C:\clangd\bin',
     $netfxTools,
     $msbuildPath
 )
@@ -136,7 +129,7 @@ foreach ($p in $paths) {
 [Environment]::SetEnvironmentVariable('PATH', $existing, 'Machine')
 Write-Host "Machine PATH updated successfully"
 
-# 8. Configure Machine Environment Variables
+# 7. Configure Machine Environment Variables
 Write-Host "Configuring Machine Environment Variables..."
 
 $envVars = @{

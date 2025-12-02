@@ -93,3 +93,34 @@ mcp_oraios_serena_find_symbol(name_path="LexTextApp/Initialize", include_body=tr
 ## Activation
 
 Serena tools are available via `activate_symbol_management_tools`, `activate_file_search_and_listing_tools`, etc. The tools activate automatically when you call them through the `mcp_oraios_serena_*` prefix.
+
+## Language Server Auto-Download
+
+Serena **automatically downloads** the required language servers on first startup:
+
+| Language | Server | Notes |
+|----------|--------|-------|
+| C# (`csharp`) | Microsoft.CodeAnalysis.LanguageServer (Roslyn) | Downloads from Azure NuGet; **may fail on some ISPs due to IPv6 issues** |
+| C# (`csharp_omnisharp`) | OmniSharp | **Recommended** - downloads from GitHub (more reliable) |
+| C++ (`cpp`) | clangd v19.1.2 | Auto-downloads on Windows/Mac; Linux requires `apt install clangd` |
+
+> **No manual installation needed** - Serena downloads language servers to its cache on first use.
+> First startup may take a few minutes while downloading (~200MB for C#, ~50MB for clangd).
+
+**Current FieldWorks default**: `csharp_omnisharp` + `cpp` (see `.serena/project.yml`)
+
+**Troubleshooting**: If `get_symbols_overview` fails with "language server manager is not initialized":
+1. Check network connectivity - first startup downloads from Azure NuGet and GitHub
+2. If you see `[WinError 10054]` errors, switch to `csharp_omnisharp` (IPv6 routing issue)
+3. Restart VS Code to retry language server initialization
+4. Check `Docs/mcp.md` for detailed troubleshooting (including T-Mobile IPv6 workaround)
+
+## Multiple Worktrees
+
+When using git worktrees (e.g., agent worktrees), each has its own `.serena/project.yml`.
+If `get_current_config` shows multiple projects named "FieldWorks", you may have:
+- User-level Serena (`%APPDATA%\Code\User\mcp.json`) auto-discovering projects
+- Plus workspace-level Serena from `mcp.json`
+
+**Fix**: Remove `oraios/serena` from user-level MCP config; use only workspace-level.
+See `Docs/mcp.md` for details.

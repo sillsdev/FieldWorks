@@ -64,6 +64,28 @@ python .github/check_copilot_docs.py --paths Src/<Folder>/COPILOT.md
 
 ## Environment Issues
 
+### Serena Language Server Not Initializing
+**Symptom**: `mcp_oraios_serena_get_symbols_overview` returns "language server manager is not initialized"
+**Cause**: Language servers (OmniSharp for C#, clangd for C++) not installed or not on PATH
+**Important**: VS Code's C# extension (ms-dotnettools.csharp 2.x) uses Roslyn, NOT OmniSharp. Serena requires standalone OmniSharp.
+**Solution**:
+```powershell
+# Verify prerequisites
+dotnet --version      # Should return .NET SDK version
+clangd --version      # Should return clangd version (for C++)
+OmniSharp --version   # Must be standalone OmniSharp, NOT VS Code's
+
+# Install clangd if missing
+winget install LLVM.LLVM
+
+# Install standalone OmniSharp (REQUIRED - VS Code's C# extension won't work)
+Invoke-WebRequest -Uri "https://github.com/OmniSharp/omnisharp-roslyn/releases/download/v1.39.12/omnisharp-win-x64-net6.0.zip" -OutFile "$env:TEMP\omnisharp.zip"
+Expand-Archive "$env:TEMP\omnisharp.zip" -DestinationPath "C:\OmniSharp" -Force
+[Environment]::SetEnvironmentVariable("PATH", "$([Environment]::GetEnvironmentVariable('PATH', 'User'));C:\OmniSharp", "User")
+
+# Restart VS Code/terminal after installation
+```
+
 ### MSBuild Not Found
 **Symptom**: `msbuild` command not recognized
 **Cause**: Not running in VS Developer environment

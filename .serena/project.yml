@@ -8,13 +8,22 @@
 # Note:
 #   - For C, use cpp
 #   - For JavaScript, use typescript
+# Language Server Details (Serena AUTO-DOWNLOADS these on first startup):
+#   - csharp: Uses Microsoft.CodeAnalysis.LanguageServer (Roslyn) - same engine as VS Code's C# extension
+#     Downloads from Azure NuGet feed; also downloads .NET 9 runtime if needed
+#     ⚠️ KNOWN ISSUE: Fails on T-Mobile Home Internet due to IPv6 routing issues to Azure blob storage
+#   - csharp_omnisharp: Uses OmniSharp (alternative) - also auto-downloads
+#   - cpp: Uses clangd (auto-downloads v19.1.2 on Windows/Mac; Linux needs `apt install clangd`)
 # Special requirements:
 #   - csharp: Requires the presence of a .sln file in the project folder.
 # When using multiple languages, the first language server that supports a given file will be used for that file.
 # The first language is the default language and the respective language server will be used as a fallback.
 # Note that when using the JetBrains backend, language servers are not used and this list is correspondingly ignored.
+#
+# T-Mobile IPv6 workaround: Use csharp_omnisharp instead of csharp if you see Azure NuGet download errors.
+# The issue is that Python urllib prefers IPv6, and T-Mobile's IPv6 routing to Azure blob storage is broken.
 languages:
-- csharp
+- csharp_omnisharp
 - cpp
 
 # the encoding used by text files in the project

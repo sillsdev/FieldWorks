@@ -1,0 +1,72 @@
+{
+  "servers": {
+    "github": {
+      "type": "stdio",
+      "command": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "./scripts/mcp/start-github-server.ps1",
+        "-RepoSlug",
+        "sillsdev/FieldWorks"
+      ],
+      "env": {
+        "GITHUB_TOKEN": "${env:GITHUB_TOKEN}"
+      }
+    },
+    "serena": {
+      "type": "stdio",
+      "command": "powershell.exe",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy",
+        "Bypass",
+        "-File",
+        "./scripts/mcp/start-serena-server.ps1",
+        "-ProjectPath",
+        "."
+      ],
+      "env": {
+        "SERENA_API_KEY": "${env:SERENA_API_KEY}"
+      },
+      "alwaysAllow": [
+        "activate_project",
+        "check_onboarding_performed",
+        "create_text_file",
+        "delete_lines",
+        "delete_memory",
+        "execute_shell_command",
+        "find_file",
+        "find_referencing_code_snippets",
+        "find_referencing_symbols",
+        "find_symbol",
+        "get_current_config",
+        "get_symbols_overview",
+        "initial_instructions",
+        "insert_after_symbol",
+        "insert_at_line",
+        "insert_before_symbol",
+        "list_dir",
+        "list_memories",
+        "onboarding",
+        "prepare_for_new_conversation",
+        "read_file",
+        "read_memory",
+        "remove_project",
+        "replace_lines",
+        "replace_symbol_body",
+        "rename_symbol",
+        "restart_language_server",
+        "search_for_pattern",
+        "summarize_changes",
+        "think_about_collected_information",
+        "think_about_task_adherence",
+        "think_about_whether_you_are_done",
+        "write_memory",
+        "edit_memory"
+      ]
+    }
+  }
+}

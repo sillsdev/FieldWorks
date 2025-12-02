@@ -594,6 +594,48 @@ function Write-AgentConfig {
   Ensure-GitExcludePatterns -GitDir $worktreeGitDir -Patterns @('.fw-agent/','agent-*.code-workspace')
 }
 
+function Update-SerenaProjectName {
+  <#
+  .SYNOPSIS
+  Updates the Serena project.yml to have a unique project_name for this agent worktree.
+  This prevents Serena from confusing multiple worktrees that share the same codebase.
+  #>
+  param(
+    [Parameter(Mandatory=$true)][int]$Index,
+    [Parameter(Mandatory=$true)][string]$AgentPath
+  )
+
+  $projectYml = Join-Path $AgentPath ".serena\project.yml"
+  if (-not (Test-Path -LiteralPath $projectYml)) {
+    Write-Host "No .serena/project.yml found in $AgentPath; skipping Serena config update."
+    return
+  }
+
+  $content = Get-Content -Path $projectYml -Raw
+  $uniqueName = "FieldWorks-Agent-$Index"
+
+  # Check if already has the correct unique name
+  if ($content -match "project_name:\s*[`"']?$([regex]::Escape($uniqueName))[`"']?") {
+    Write-Host "Serena project_name already set to '$uniqueName'"
+    return
+  }
+
+  # Replace project_name line with unique name
+  # Handles: project_name: "FieldWorks", project_name: 'FieldWorks', project_name: FieldWorks
+  $newContent = $content -replace 'project_name:\s*[`"'']?FieldWorks(-Agent-\d+)?[`"'']?', "project_name: `"$uniqueName`""
+
+  if ($newContent -ne $content) {
+    Set-Content -Path $projectYml -Value $newContent -NoNewline
+    Write-Host "Updated Serena project_name to '$uniqueName' in $projectYml"
+
+    # Add to git exclude so this local change doesn't show as modified
+    $worktreeGitDir = Get-GitDirectory -Path $AgentPath
+    Ensure-GitExcludePatterns -GitDir $worktreeGitDir -Patterns @('.serena/project.yml')
+  } else {
+    Write-Warning "Could not find project_name in $projectYml to update"
+  }
+}
+
 Ensure-Image -Tag $ImageTag
 
 $repoVsCodeSettings = Get-RepoVsCodeSettings -RepoRoot $RepoRoot
@@ -633,6 +675,7 @@ for ($i=1; $i -le $Count; $i++) {
 
   $ct = Ensure-Container -Index $i -AgentPath $wt.Path -RepoRoot $RepoRoot -WorktreesRoot $WorktreesRoot
   Write-AgentConfig -AgentPath $wt.Path -SolutionRelPath $SolutionRelPath -Container $ct -RepoRoot $RepoRoot
+  Update-SerenaProjectName -Index $i -AgentPath $wt.Path
   $colors = Get-AgentColors -Index $i
   if (-not $SkipVsCodeSetup) { Write-Tasks -Index $i -AgentPath $wt.Path -ContainerName $ct.Name -ContainerAgentPath $ct.ContainerPath -SolutionRelPath $SolutionRelPath -Colors $colors -RepoRoot $RepoRoot -Force:$ForceVsCodeSetup -BaseSettings $repoVsCodeSettings }
   if (-not $SkipOpenVSCode) {

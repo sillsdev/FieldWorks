@@ -18,7 +18,7 @@
 - Stay within documented tooling—no surprise dependencies or scripts without updating instructions.
 
 ## Build & Test Essentials
-- Prerequisites: install VS 2022 Desktop workloads, WiX 3.11.x, Git, and optional Crowdin CLI only when needed.
+- Prerequisites: install VS 2022 Desktop workloads, WiX 3.11.x, Git, LLVM/clangd + standalone OmniSharp (for Serena C++/C# support), and optional Crowdin CLI only when needed.
 - Common commands:
   ```powershell
   # Full traversal build (Debug/x64 defaults)
