@@ -114,8 +114,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = new Mock<Mediator>().Object;
-			respellUndoaction.DoIt(mediator);
+			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
+			respellUndoaction.DoIt(m_mediator);
 
 			Assert.That(
 				para.Contents.Text,
@@ -146,8 +146,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = new Mock<Mediator>().Object;
-			respellUndoaction.DoIt(mediator);
+			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
+			respellUndoaction.DoIt(m_mediator);
 
 			Assert.That(
 				para.Contents.Text,
@@ -186,8 +186,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.CopyAnalyses = true; // in the dialog this is always true?
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = new Mock<Mediator>().Object;
-			respellUndoaction.DoIt(mediator);
+			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
+			respellUndoaction.DoIt(m_mediator);
 
 			Assert.That(
 				para.SegmentsOS[0].AnalysesRS[2].Analysis.MorphBundlesOS.Count,
@@ -243,8 +243,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = new Mock<Mediator>().Object;
-			respellUndoaction.DoIt(mediator);
+			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
+			respellUndoaction.DoIt(m_mediator);
 
 			Assert.That(
 				para.Contents.Text,
@@ -280,8 +280,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = new Mock<Mediator>().Object;
-			respellUndoaction.DoIt(mediator);
+			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
+			respellUndoaction.DoIt(m_mediator);
 
 			Assert.That(
 				para.Contents.Text,
@@ -336,8 +336,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = new Mock<Mediator>().Object;
-			respellUndoaction.DoIt(mediator);
+			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
+			respellUndoaction.DoIt(m_mediator);
 
 			Assert.That(
 				para.Contents.Text,
@@ -411,8 +411,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.PreserveCase = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = new Mock<Mediator>().Object;
-			respellUndoaction.DoIt(mediator);
+			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
+			respellUndoaction.DoIt(m_mediator);
 
 			Assert.That(
 				para.Contents.Text,

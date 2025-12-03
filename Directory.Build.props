@@ -37,6 +37,13 @@
 			- Force consistent version to ensure binding redirects work
 		-->
 		<PackageReference Include="System.Memory" Version="4.6.3" />
+		<!--
+			Microsoft.Bcl.HashCode version conflict resolution:
+			- System.Resources.Extensions 9.0.0 uses BinaryFormat which requires HashCode
+			- Some packages expect version 1.0.0.0, but 6.0.x is available
+			- Force consistent version to ensure binding redirects are generated
+		-->
+		<PackageReference Include="Microsoft.Bcl.HashCode" Version="6.0.0" />
 	</ItemGroup>
 	<PropertyGroup Label="AssemblyInfo Policy">
 		<!--
