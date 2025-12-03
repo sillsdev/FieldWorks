@@ -180,8 +180,13 @@ function Invoke-BuildInContainer {
 	# Execute in container using VsDevShell.cmd to initialize VS environment (vcvarsall.bat x64)
 	# VsDevShell.cmd runs vcvarsall.bat x64 and then executes the command passed as arguments
 	# Use cmd /S /C to properly invoke the batch file, then PowerShell for the build
+
+	# Execute in container with real-time output streaming
+	# Use -i (interactive) without -t (tty) to allow output to flow through PowerShell
+	# Direct invocation (not Start-Process) streams stdout/stderr in real-time
+
 	$psCmd = "cd '$containerWorkDir'; .\build.ps1 $($innerArgs -join ' ')"
-	docker exec -it $containerName cmd /S /C "C:\scripts\VsDevShell.cmd powershell -NoProfile -Command `"$psCmd`""
+	& docker exec -i $containerName cmd /S /C "C:\scripts\VsDevShell.cmd powershell -NoProfile -Command `"$psCmd`""
 	$exitCode = $LASTEXITCODE
 
 	if ($exitCode -ne 0) {
