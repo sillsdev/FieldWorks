@@ -16,6 +16,7 @@
 - Keep localization via `.resx` and respect `crowdin.json`; never hardcode translatable strings.
 - Avoid COM/registry edits without a test plan and container-safe execution (see `scripts/spin-up-agents.ps1`).
 - Stay within documented tooling—no surprise dependencies or scripts without updating instructions.
+- **Terminal commands**: If auto-approved, run commands individually, not chained with `;` or `&`. Separate `run_in_terminal` calls auto-approve faster and avoid security blocks.
 
 ## Build & Test Essentials
 - Prerequisites: install VS 2022 Desktop workloads, WiX 3.14.x (pre-installed on windows-latest), Git, LLVM/clangd + standalone OmniSharp (for Serena C++/C# support), and optional Crowdin CLI only when needed.

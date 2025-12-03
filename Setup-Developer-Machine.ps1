@@ -259,6 +259,18 @@ $pathsToAdd = @()
 $wixPath = if (Test-Path 'C:\Wix314') { 'C:\Wix314' } elseif (Test-Path "$toolsBase\Wix314") { "$toolsBase\Wix314" } else { $null }
 if ($wixPath) { $pathsToAdd += $wixPath }
 
+# VSTest (Visual Studio 2022)
+$vsWhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+if (Test-Path $vsWhere) {
+    $vsInstall = & $vsWhere -latest -property installationPath 2>$null
+    if ($vsInstall) {
+        $vstestPath = Join-Path $vsInstall 'Common7\IDE\CommonExtensions\Microsoft\TestWindow'
+        if (Test-Path (Join-Path $vstestPath 'vstest.console.exe')) {
+            $pathsToAdd += $vstestPath
+        }
+    }
+}
+
 # Update PATH
 $pathScope = if ($useUserPath) { 'User' } else { 'Machine' }
 $currentPath = [Environment]::GetEnvironmentVariable('PATH', $pathScope)

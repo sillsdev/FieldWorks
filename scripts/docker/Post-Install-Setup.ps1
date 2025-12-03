@@ -112,7 +112,8 @@ $paths = @(
     'C:\dotnet9',
     'C:\clangd\bin',
     $netfxTools,
-    $msbuildPath
+    $msbuildPath,
+    'C:\BuildTools\Common7\IDE\CommonExtensions\Microsoft\TestWindow'
 )
 
 $existing = [Environment]::GetEnvironmentVariable('PATH', 'Machine')

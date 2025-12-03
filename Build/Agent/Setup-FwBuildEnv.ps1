@@ -189,6 +189,25 @@ if (-not $foundNetfx) {
 }
 
 # ----------------------------------------------------------------------------
+# Find VSTest
+# ----------------------------------------------------------------------------
+Write-Host ""
+Write-Host "--- Locating VSTest ---" -ForegroundColor Cyan
+
+$vstestPath = $null
+if ($results.VSPath) {
+    $potentialPath = Join-Path $results.VSPath 'Common7\IDE\CommonExtensions\Microsoft\TestWindow'
+    if (Test-Path (Join-Path $potentialPath 'vstest.console.exe')) {
+        $vstestPath = $potentialPath
+        Add-ToPath -Path $vstestPath | Out-Null
+    }
+}
+
+if (-not $vstestPath) {
+    Write-Status "vstest.console.exe not found" -Status "WARN"
+}
+
+# ----------------------------------------------------------------------------
 # Output results
 # ----------------------------------------------------------------------------
 Write-Host ""

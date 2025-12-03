@@ -360,6 +360,22 @@ $finalMsBuildArgs += "/p:Configuration=$Configuration"
 $finalMsBuildArgs += "/p:Platform=$Platform"
 $finalMsBuildArgs += "/p:CL_MPCount=$mpCount"
 
+# MSB3568: Suppress "Duplicate resource name" warnings from .resx files.
+# These occur when the Visual Studio WinForms Designer saves duplicate metadata entries
+# (e.g., >>controlName.Name, >>controlName.Type) due to merges or designer quirks.
+# The duplicates are harmless at runtime (ResourceManager overwrites with identical values).
+#
+# To fix properly (removes duplicates from .resx files):
+#   1. Open the affected form (e.g., PicturePropertiesDialog.cs) in Visual Studio Designer
+#   2. Make a trivial change (move a control 1px and back)
+#   3. Save the form - the Designer re-serializes and removes duplicates
+#   OR manually delete duplicate <data name=">>..."> blocks from the .resx XML files.
+#
+# Suppressed in quiet/minimal verbosity to reduce build log noise.
+if ($Verbosity -match '^(quiet|minimal|q|m)$') {
+	$finalMsBuildArgs += "/p:NoWarn=MSB3568"
+}
+
 if ($BuildTests) {
 	$finalMsBuildArgs += "/p:BuildTests=true"
 }

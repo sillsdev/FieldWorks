@@ -527,10 +527,15 @@ function Write-Tasks {
     $settings = [ordered]@{}
   }
 
+  # Agent-specific settings
   $settings['fw.agent.solutionPath'] = $SolutionRelPath
   $settings['fw.agent.containerName'] = $ContainerName
   $settings['fw.agent.containerPath'] = $ContainerAgentPath
   $settings['fw.agent.repoRoot'] = $RepoRoot
+
+  # Disable C# Dev Kit auto-build - agents build explicitly via docker exec tasks
+  # This prevents the host from trying to build when the container should handle it
+  $settings['dotnet.automaticallyBuildProjects'] = $false
 
   $colorSettings = $null
   if (($settings -is [System.Collections.IDictionary]) -and $settings.Contains('workbench.colorCustomizations')) {
@@ -546,6 +551,8 @@ function Write-Tasks {
   $colorSettings['statusBar.foreground'] = '#ffffff'
   $colorSettings['activityBar.background'] = $Colors.Activity
   $colorSettings['activityBar.foreground'] = '#ffffff'
+  $colorSettings['activityBar.inactiveForeground'] = '#ffffffaa'
+  $colorSettings['activityBar.activeBorder'] = '#ffffff'
   $settings['workbench.colorCustomizations'] = $colorSettings
 
   $workspace = @{
@@ -651,6 +658,13 @@ for ($i=1; $i -le $Count; $i++) {
     # Ensure container is running even for existing worktrees
     $ct = Ensure-Container -Index $i -AgentPath $wt.Path -RepoRoot $RepoRoot -WorktreesRoot $WorktreesRoot
 
+    # Always update VS Code workspace file (inherits settings from main repo)
+    # Use -Force:$ForceVsCodeSetup to control whether tasks.json is overwritten
+    $colors = Get-AgentColors -Index $i
+    if (-not $SkipVsCodeSetup) {
+      Write-Tasks -Index $i -AgentPath $wt.Path -ContainerName $ct.Name -ContainerAgentPath $ct.ContainerPath -SolutionRelPath $SolutionRelPath -Colors $colors -RepoRoot $RepoRoot -Force:$ForceVsCodeSetup -BaseSettings $repoVsCodeSettings
+    }
+
     # Still open VS Code for existing worktrees if requested
     if (-not $SkipOpenVSCode) {
       $workspaceTarget = Join-Path $wt.Path "agent-$i.code-workspace"
@@ -671,8 +685,8 @@ for ($i=1; $i -le $Count; $i++) {
       Worktree = $wt.Path
       Branch = $wt.Branch
       Container = $ct.Name
-      Theme = "(preserved)"
-      Status = "Existing worktree - container ensured"
+      Theme = $colors.Name
+      Status = "Existing worktree - settings synced"
     }
     continue
   }
