@@ -27,6 +27,12 @@
 .PARAMETER BuildTests
 	If set, includes test projects in the build. Default is false.
 
+.PARAMETER RunTests
+	If set, runs tests after building. Implies -BuildTests. Uses VSTest via Run-VsTests.ps1.
+
+.PARAMETER TestFilter
+	Optional VSTest filter expression (e.g., "TestCategory!=Slow"). Only used with -RunTests.
+
 .PARAMETER BuildAdditionalApps
 	If set, includes optional utility applications (e.g. MigrateSqlDbs, LCMBrowser) in the build. Default is false.
 
@@ -57,6 +63,10 @@
 	Builds Release x64 including test projects.
 
 .EXAMPLE
+	.\build.ps1 -RunTests
+	Builds Debug x64 including test projects and runs all tests.
+
+.EXAMPLE
 	.\build.ps1 -Serial -Verbosity detailed
 	Builds Debug x64 serially with detailed logging.
 
@@ -79,6 +89,8 @@ param(
 	[string]$Platform = "x64",
 	[switch]$Serial,
 	[switch]$BuildTests,
+	[switch]$RunTests,
+	[string]$TestFilter,
 	[switch]$BuildAdditionalApps,
 	[string]$Verbosity = "minimal",
 	[bool]$NodeReuse = $true,
@@ -156,16 +168,14 @@ function Invoke-BuildInContainer {
 	# Always add -NoDocker to prevent infinite recursion
 	$innerArgs += '-NoDocker'
 
-	# Build the PowerShell command to run after VS environment is initialized
-	$psCmd = "cd '$containerWorkDir'; .\build.ps1 $($innerArgs -join ' ')"
+	$innerCmd = "cd '$containerWorkDir'; .\build.ps1 $($innerArgs -join ' ')"
 
 	Write-Host "   Container working dir: $containerWorkDir" -ForegroundColor DarkGray
 	Write-Host "   Container command: .\build.ps1 $($innerArgs -join ' ')" -ForegroundColor DarkGray
 	Write-Host "" -ForegroundColor Gray
 
-	# Execute in container using VsDevShell.cmd to initialize VS environment (vcvarsall.bat x64)
-	# VsDevShell.cmd runs vcvarsall.bat x64 and then executes the command passed as arguments
-	docker exec -it $containerName C:\scripts\VsDevShell.cmd powershell -NoProfile -Command $psCmd
+	# Execute in container
+	docker exec -it $containerName powershell -NoProfile -Command $innerCmd
 	$exitCode = $LASTEXITCODE
 
 	if ($exitCode -ne 0) {
@@ -462,3 +472,28 @@ Invoke-MSBuildStep `
 Write-Host ""
 Write-Host "Build complete!" -ForegroundColor Green
 Write-Host "Output: Output\$Configuration" -ForegroundColor Cyan
+
+# --- 4. Test Execution (Optional) ---
+if ($RunTests) {
+	Write-Host ""
+	Write-Host "Running tests..." -ForegroundColor Cyan
+
+	$testScript = Join-Path $PSScriptRoot "Build\Agent\Run-VsTests.ps1"
+	if (-not (Test-Path $testScript)) {
+		Write-Warning "Test runner script not found: $testScript"
+		Write-Warning "Run tests manually with: .\Build\Agent\Run-VsTests.ps1 -All"
+	} else {
+		$testArgs = @{
+			OutputDir = "Output\$Configuration"
+			All = $true
+		}
+		if ($TestFilter) {
+			$testArgs.Filter = $TestFilter
+		}
+
+		& $testScript @testArgs
+		if ($LASTEXITCODE -ne 0) {
+			Write-Warning "Some tests failed. Check output above for details."
+		}
+	}
+}

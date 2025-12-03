@@ -29,6 +29,34 @@ This file outlines conventions and patterns for native C++/C++-CLI code used in 
 - Enforce RAII and prefer checked operations for buffer management.
 - Keep interop marshaling rules well documented and ensure managed tests exist for early validation.
 
+## Native C++ Tests
+
+### Test Framework
+Native C++ tests use the **Unit++** framework (legacy). Test projects:
+- `Src/Generic/Test/` → `testGenericLib.exe`
+- `Src/views/Test/` → `TestViews.exe`
+
+### Building Tests
+Build from VS Developer Command Prompt:
+```cmd
+cd Src\Generic\Test
+nmake /nologo BUILD_CONFIG=Debug BUILD_TYPE=d BUILD_ROOT=%CD%\..\..\..\  BUILD_ARCH=x64 /f testGenericLib.mak
+```
+
+### vcxproj Project Structure
+The vcxproj files are "Makefile" projects (`ConfigurationType=Makefile`) that:
+- Wrap nmake invocations via `NMakeBuildCommandLine`
+- Require environment variables: `BUILD_ROOT`, `BUILD_CONFIG`, `BUILD_TYPE`, `BUILD_ARCH`
+- Cannot be built via plain `msbuild` without VS toolchain in PATH
+
+### Test Dependencies
+- Main native libraries (Generic.lib, DebugProcs.dll) must be built first
+- ICU 70 DLLs required at runtime
+- `Bin/CollectUnit++Tests.cmd` generates test registration code
+
+### Future Direction
+Migration to GoogleTest is planned for better IDE integration. See `specs/007-test-modernization-vstest/native-migration-plan.md`.
+
 ## Examples
 ```cpp
 // Prefer RAII

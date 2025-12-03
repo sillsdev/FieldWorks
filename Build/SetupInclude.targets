@@ -204,6 +204,12 @@
 		>
 			<Output TaskParameter="Value" PropertyName="excludedCategories" />
 		</CreateProperty>
+		<PropertyGroup>
+			<VSTestTestCaseFilter Condition="'$(excludedCategories)' != ''">TestCategory!=$([System.String]::Copy('$(excludedCategories)').Replace(',', '&amp;TestCategory!='))</VSTestTestCaseFilter>
+			<!-- Optional: Enable code coverage by passing /p:EnableCoverage=true -->
+			<VSTestCoverageArg Condition="'$(EnableCoverage)' == 'true'"> /EnableCodeCoverage</VSTestCoverageArg>
+			<VSTestCoverageArg Condition="'$(EnableCoverage)' != 'true'"></VSTestCoverageArg>
+		</PropertyGroup>
 		<!-- Set some environment variables needed by make (or nmake) -->
 		<SetEnvVar
 			Variable="PATH"

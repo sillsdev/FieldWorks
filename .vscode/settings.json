@@ -68,5 +68,12 @@
   "dotnet.defaultSolution": "FieldWorks.sln",
   "terminal.integrated.env.windows": {
     "PATH": "${workspaceFolder}\\scripts\\toolshims;${env:PATH}"
-  }
+  },
+  // C# Dev Kit test settings
+  "dotnet.unitTests.runSettingsPath": "${workspaceFolder}/Test.runsettings",
+  // Enable VSTest discovery for test explorer
+  "dotnet.unitTests.enableVsTestDiscovery": true,
+  // Auto-build works because Src/Directory.Build.props sets OutputPath to Output/$(Configuration)/
+  // This means dotnet build outputs to the same location as ./build.ps1
+  "dotnet.automaticallyBuildProjects": true,
 }

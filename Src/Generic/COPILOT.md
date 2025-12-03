@@ -88,7 +88,37 @@ DataStream, DispatchImpl.
 Header files included by consuming projects. No standalone executable.
 
 ## Test Index
-No dedicated test project for Generic. Tested via consuming components (Kernel, views, etc.).
+Test project: `Src/Generic/Test/` produces `testGenericLib.exe` using Unit++ framework.
+
+### Building Tests
+Requires VS Developer Command Prompt:
+```cmd
+cd Src\Generic\Test
+nmake /nologo BUILD_CONFIG=Debug BUILD_TYPE=d BUILD_ROOT=%CD%\..\..\..\  BUILD_ARCH=x64 /f testGenericLib.mak
+```
+
+### Running Tests
+```cmd
+cd Output\Debug
+testGenericLib.exe
+```
+
+### Test Files
+- `testGeneric.cpp` - Main test entry point
+- `testGenericLib.h` - Test suite header
+- `TestSmartBstr.h` - SmartBstr tests
+- `TestUtil.h` - Utility function tests
+- `TestUtilXml.h` - XML utility tests
+- `TestUtilString.h` - String utility tests
+- `TestErrorHandling.h` - Error handling tests
+- `TestFwSettings.h` - FwSettings tests
+- `Collection.cpp` - Auto-generated test registration (created by CollectUnit++Tests.cmd)
+
+### Dependencies
+- Generic.lib (this library)
+- DebugProcs.dll
+- unit++.lib (test framework)
+- ICU 70 DLLs (icuin70.dll, icuuc70.dll)
 
 ## Usage Hints
 - **ComSmartPtr**: Always use for COM interface pointers to avoid leaks

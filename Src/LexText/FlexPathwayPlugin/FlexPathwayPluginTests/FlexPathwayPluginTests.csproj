@@ -27,7 +27,6 @@
     <PackageReference Include="SIL.LCModel.Core.Tests" Version="11.0.0-*" PrivateAssets="All" />
     <PackageReference Include="SIL.LCModel.Utils.Tests" Version="11.0.0-*" PrivateAssets="All" />
     <PackageReference Include="SIL.TestUtilities" Version="17.0.0-*" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="9.0.9" />
   </ItemGroup>
   <ItemGroup>
     <None Include="../../../AppForTests.config" Link="App.config">

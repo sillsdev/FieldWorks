@@ -149,9 +149,7 @@ namespace SIL.FieldWorks.LexText.Controls
 						  ((closed.FeatureRA.Name.AnalysisDefaultWritingSystem.Text == "person") &&
 							(closed.ValueRA.Name.AnalysisDefaultWritingSystem.Text == "first person"))))
 					{
-						Assert.Fail("Unexpected value found: {0}:{1}",
-							closed.FeatureRA.Name.AnalysisDefaultWritingSystem.Text,
-							closed.ValueRA.Name.AnalysisDefaultWritingSystem.Text);
+						Assert.Fail($"Unexpected value found: {closed.FeatureRA.Name.AnalysisDefaultWritingSystem.Text}:{closed.ValueRA.Name.AnalysisDefaultWritingSystem.Text}");
 					}
 				}
 			}

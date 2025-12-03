@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.IText
 			{
 				treeView.ExpandToBooks();
 				Assert.That(m_bookNode.Nodes.Count, Is.EqualTo(1), "The only node under Book should be the dummy node");
-				Assert.IsInstanceOf<int>(m_bookNode.Tag, "Placeholder int Tag should not have been replaced");
+				Assert.That(m_bookNode.Tag, Is.InstanceOf<int>(), "Placeholder int Tag should not have been replaced");
 				var subNode = m_bookNode.Nodes[0];
 				Assert.That(subNode.Text, Is.EqualTo(TextsTriStateTreeView.ksDummyName), "Incorrect Text");
 				Assert.That(subNode.Name, Is.EqualTo(TextsTriStateTreeView.ksDummyName), "Incorrect Name");
@@ -47,7 +47,7 @@ namespace SIL.FieldWorks.IText
 			{
 				m_bookNode.Expand();
 				Assert.That(m_bookNode.Nodes.Count, Is.EqualTo(2), "Both Verses and Footnote should have been added");
-				Assert.IsInstanceOf<DummyBook>(m_bookNode.Tag, "The Tag should have been replaced with a Book");
+				Assert.That(m_bookNode.Tag, Is.InstanceOf<DummyBook>(), "The Tag should have been replaced with a Book");
 				Assert.That(m_bookNode.Nodes[0].Text, Is.EqualTo(ksVersesText), "The Verses node should be first");
 				Assert.That(m_bookNode.Nodes[1].Text, Is.EqualTo(ksFootnoteText), "The Footnote node should be second");
 			}

@@ -417,7 +417,7 @@ namespace SIL.FieldWorks.CacheLightTests
 				ids = MarshalEx.NativeToArray<int>(flids, testFlidSize);
 				Assert.That(ids.Length, Is.EqualTo(testFlidSize), "Wrong size of fields returned.");
 				foreach (var flid in ids)
-					Assert.That(flid > 0, "Wrong flid value: " + flid, Is.True);
+					Assert.That(flid > 0, Is.True, "Wrong flid value: " + flid);
 			}
 			testFlidSize = flidSize;
 			using (var flids = MarshalEx.ArrayToNative<int>(testFlidSize))
@@ -426,7 +426,7 @@ namespace SIL.FieldWorks.CacheLightTests
 				ids = MarshalEx.NativeToArray<int>(flids, testFlidSize);
 				Assert.That(ids.Length, Is.EqualTo(testFlidSize), "Wrong size of fields returned.");
 				foreach (var flid in ids)
-					Assert.That(flid > 0, "Wrong flid value: " + flid, Is.True);
+					Assert.That(flid > 0, Is.True, "Wrong flid value: " + flid);
 			}
 			testFlidSize = flidSize + 1;
 			using (var flids = MarshalEx.ArrayToNative<int>(testFlidSize))
@@ -438,7 +438,7 @@ namespace SIL.FieldWorks.CacheLightTests
 				{
 					var flid = ids[iflid];
 					if (iflid < ids.Length - 1)
-						Assert.That(flid > 0, "Wrong flid value: " + flid, Is.True);
+						Assert.That(flid > 0, Is.True, "Wrong flid value: " + flid);
 					else
 						Assert.That(flid, Is.EqualTo(0), "Wrong value for flid beyond actual length.");
 				}

@@ -221,7 +221,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(_controller.RenameConfiguration(new ListViewItem { Tag = configB }, dupLabelArgs), Is.False, "Duplicate should return 'incomplete'");
 
 			Assert.That(configA.Label, Is.EqualTo(dupLabelArgs.Label), "The first config should have been given the specified name");
-			Assert.That(configB.Label, Is.Not.EqualTo(dupLabelArgs.Label).Within("The second config should not have been given the same name"));
+			Assert.That(configB.Label, Is.Not.EqualTo(dupLabelArgs.Label), "The second config should not have been given the same name");
 		}
 
 		[Test]
@@ -290,7 +290,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(configToRename.FilePath, Is.EqualTo(DictionaryConfigurationManagerController.FormatFilePath(_controller._projectConfigDir, "configuration3_3")), "The file path should be based on the label");
 			foreach (var config in conflictingConfigs)
 			{
-				Assert.That(Path.GetFileName(config.FilePath), Is.Not.EqualTo(Path.GetFileName(newFilePath)).Within("File name should be unique"));
+				Assert.That(Path.GetFileName(config.FilePath), Is.Not.EqualTo(Path.GetFileName(newFilePath)), "File name should be unique");
 			}
 		}
 

@@ -74,7 +74,7 @@ Sophisticated C++ rendering engine (~66.7K lines) implementing box-based layout 
 - **VwAccessRoot** (VwAccessRoot.cpp/h) - IAccessible implementation for screen readers (WIN32/WIN64 only)
 
 ## Technology Stack
-C# .NET Framework 4.8.x.
+Native C++ with COM interfaces. Uses nmake build system with Visual Studio toolchain.
 
 ## Dependencies
 - Upstream: Core libraries
@@ -99,7 +99,37 @@ See Key Components section above.
 - Provides view classes and rendering engine
 
 ## Test Index
-Test projects: TestViews. 29 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+Test project: `Src/views/Test/` produces `TestViews.exe` using Unit++ framework.
+
+### Building Tests
+Requires VS Developer Command Prompt:
+```cmd
+cd Src\views\Test
+nmake /nologo BUILD_CONFIG=Debug BUILD_TYPE=d BUILD_ROOT=%CD%\..\..\..\  BUILD_ARCH=x64 /f testViews.mak
+```
+
+### Running Tests
+```cmd
+cd Output\Debug
+TestViews.exe
+```
+
+### Test Files (29 test files)
+- `testViews.cpp` - Main test entry point
+- `testViews.h` - Test suite header
+- `TestVwRootBox.h` - VwRootBox tests
+- `TestVwParagraph.h` - Paragraph box tests
+- `TestVwSelection.h` - Selection tests
+- `TestVwEnv.h` - Display environment tests
+- `TestVwGraphics.h` - Graphics tests
+- `TestTsString.h` - TsString tests
+- `TestTsTextProps.h` - Text properties tests
+- And many more...
+
+### Dependencies
+- Generic.lib, Views.dll, FwKernel.dll
+- unit++.lib (test framework)
+- ICU 70 DLLs
 
 ## Usage Hints
 Library component. Reference in consuming projects. See Dependencies section for integration points.

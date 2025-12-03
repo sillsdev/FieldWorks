@@ -159,7 +159,7 @@ namespace SIL.FieldWorks.Discourse
 			{
 				if (item.Length > 0 && (item[0] is string) && name == (string)(item[0]))
 				{
-					Assert.That(item.Length - 1, Is.EqualTo(cargs).Within(name + " event should have " + cargs + " arguments"));
+					Assert.That(item.Length - 1, Is.EqualTo(cargs), name + " event should have " + cargs + " arguments");
 					return item;
 				}
 			}

@@ -31,7 +31,7 @@
   # Targeted native rebuild
   msbuild Build\Src\NativeBuild\NativeBuild.csproj /p:Configuration=Debug /p:Platform=x64
   ```
-- Tests: follow `.github/instructions/testing.instructions.md`; use VS Test Explorer, `dotnet test`, or `nunit3-console` depending on the project.
+- Tests: follow `.github/instructions/testing.instructions.md`; use VS Test Explorer or `vstest.console.exe` for managed tests.
 - Installer edits must follow `.github/instructions/installer.instructions.md` plus WiX validation before PR.
 
 ## Workflow Shortcuts

@@ -31,4 +31,7 @@
     <Reference Include="netstandard" />
   </ItemGroup>
   <ItemGroup></ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FwBuildTasks\FwBuildTasks.csproj" />
+  </ItemGroup>
 </Project>
