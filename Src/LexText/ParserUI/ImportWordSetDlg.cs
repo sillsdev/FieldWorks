@@ -14,6 +14,7 @@ using System.Windows.Forms;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel;
 using SIL.FieldWorks.Resources;
 using XCore;
@@ -211,10 +212,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			CreateWordsetFromFiles(m_paths);
 
-			//starting up the parser without the user asking for that pain is a bit over ambitious at the moment:
-			//m_mediator.SendMessage("StartParser", null);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.FilterListChanged, null)); // let record clerk know the list of filters has changed.
 
-			m_mediator.SendMessage("FilterListChanged", null); // let record clerk know the list of filters has changed.
 			DialogResult = DialogResult.OK;
 		}
 
