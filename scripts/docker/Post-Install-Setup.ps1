@@ -59,7 +59,15 @@ if (Test-Path $dotnetSdkPath) {
         $sdks = @(
             'Microsoft.NET.Sdk',
             'Microsoft.NET.Sdk.Web',
-            'Microsoft.NET.Sdk.Worker'
+            'Microsoft.NET.Sdk.Worker',
+            'Microsoft.NET.Sdk.WindowsDesktop',  # Required for WinForms/WPF projects
+            # SourceLink SDKs (for source control metadata in PDBs)
+            'Microsoft.Build.Tasks.Git',
+            'Microsoft.SourceLink.Common',
+            'Microsoft.SourceLink.GitHub',
+            'Microsoft.SourceLink.GitLab',
+            'Microsoft.SourceLink.AzureRepos.Git',
+            'Microsoft.SourceLink.Bitbucket.Git'
         )
         foreach ($sdk in $sdks) {
             $source = Join-Path $dotnetSdkPath $sdk
@@ -73,19 +81,28 @@ if (Test-Path $dotnetSdkPath) {
         $workloadLocator = Join-Path $msbuildSdkPath 'Microsoft.NET.SDK.WorkloadAutoImportPropsLocator\Sdk'
         if (-not (Test-Path $workloadLocator)) {
             New-Item -ItemType Directory -Path $workloadLocator -Force | Out-Null
-            # Create empty Sdk.props, Sdk.targets, and AutoImport.props
-            Set-Content -Path (Join-Path $workloadLocator 'Sdk.props') -Value '<?xml version="1.0" encoding="utf-8"?><Project />'
-            Set-Content -Path (Join-Path $workloadLocator 'Sdk.targets') -Value '<?xml version="1.0" encoding="utf-8"?><Project />'
-            Set-Content -Path (Join-Path $workloadLocator 'AutoImport.props') -Value '<?xml version="1.0" encoding="utf-8"?><Project />'
+            # Create empty Sdk.props, Sdk.targets, and AutoImport.props with proper XML
+            $emptyProject = @'
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" />
+'@
+            Set-Content -Path (Join-Path $workloadLocator 'Sdk.props') -Value $emptyProject -Encoding UTF8
+            Set-Content -Path (Join-Path $workloadLocator 'Sdk.targets') -Value $emptyProject -Encoding UTF8
+            Set-Content -Path (Join-Path $workloadLocator 'AutoImport.props') -Value $emptyProject -Encoding UTF8
         }
 
         # Create stub for WorkloadManifestTargetsLocator (not present in .NET 8.0.100)
         $manifestLocator = Join-Path $msbuildSdkPath 'Microsoft.NET.SDK.WorkloadManifestTargetsLocator\Sdk'
         if (-not (Test-Path $manifestLocator)) {
             New-Item -ItemType Directory -Path $manifestLocator -Force | Out-Null
-            # Create empty Sdk.props and Sdk.targets
-            Set-Content -Path (Join-Path $manifestLocator 'Sdk.props') -Value '<?xml version="1.0" encoding="utf-8"?><Project />'
-            Set-Content -Path (Join-Path $manifestLocator 'Sdk.targets') -Value '<?xml version="1.0" encoding="utf-8"?><Project />'
+            # Create empty Sdk.props, Sdk.targets, and WorkloadManifest.targets with proper XML
+            $emptyProject = @'
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" />
+'@
+            Set-Content -Path (Join-Path $manifestLocator 'Sdk.props') -Value $emptyProject -Encoding UTF8
+            Set-Content -Path (Join-Path $manifestLocator 'Sdk.targets') -Value $emptyProject -Encoding UTF8
+            Set-Content -Path (Join-Path $manifestLocator 'WorkloadManifest.targets') -Value $emptyProject -Encoding UTF8
         }
 
         Write-Host ".NET SDK symbolic links created"

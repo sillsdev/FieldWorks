@@ -168,14 +168,20 @@ function Invoke-BuildInContainer {
 	# Always add -NoDocker to prevent infinite recursion
 	$innerArgs += '-NoDocker'
 
-	$innerCmd = "cd '$containerWorkDir'; .\build.ps1 $($innerArgs -join ' ')"
-
 	Write-Host "   Container working dir: $containerWorkDir" -ForegroundColor DarkGray
 	Write-Host "   Container command: .\build.ps1 $($innerArgs -join ' ')" -ForegroundColor DarkGray
 	Write-Host "" -ForegroundColor Gray
 
-	# Execute in container
-	docker exec -it $containerName powershell -NoProfile -Command $innerCmd
+	# Clean container-local intermediate files to ensure fresh build state
+	# (C:\Temp\Obj is container-local storage, separate from the mounted Obj/ folder)
+	Write-Host "   Cleaning container intermediate files..." -ForegroundColor DarkGray
+	docker exec $containerName powershell -NoProfile -Command "if (Test-Path 'C:\Temp\Obj') { Remove-Item -Recurse -Force 'C:\Temp\Obj' -ErrorAction SilentlyContinue }" 2>$null
+
+	# Execute in container using VsDevShell.cmd to initialize VS environment (vcvarsall.bat x64)
+	# VsDevShell.cmd runs vcvarsall.bat x64 and then executes the command passed as arguments
+	# Use cmd /S /C to properly invoke the batch file, then PowerShell for the build
+	$psCmd = "cd '$containerWorkDir'; .\build.ps1 $($innerArgs -join ' ')"
+	docker exec -it $containerName cmd /S /C "C:\scripts\VsDevShell.cmd powershell -NoProfile -Command `"$psCmd`""
 	$exitCode = $LASTEXITCODE
 
 	if ($exitCode -ne 0) {

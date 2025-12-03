@@ -4,6 +4,20 @@
 	xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
 	ToolsVersion="Current"
 >
+	<!--
+		Container Build Restrictions:
+		Release builds are blocked in containers because:
+		1. mt.exe cannot embed manifests into EXEs on mounted volumes (Windows container limitation)
+		2. Clouseau IDisposable validation is skipped to avoid file locking issues
+		3. Container builds use external manifests which may not match installer expectations
+		4. Official releases should be built on host machines or CI with full toolchain access
+		Debug builds work fine in containers for development and testing.
+	-->
+	<Target Name="BlockContainerReleaseBuilds"
+		BeforeTargets="Setup"
+		Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true' AND ('$(Configuration)' == 'Release' OR '$(config)' == 'Release' OR '$(config-capital)' == 'Release')">
+		<Error Text="Release builds are not supported in Docker containers.%0A%0AReason: Windows containers cannot embed manifests into executables on mounted volumes,%0Aand container builds skip Clouseau validation. This could result in:%0A  - Missing embedded manifests (RegFree COM may fail)%0A  - Unvalidated IDisposable patterns (potential memory leaks)%0A%0ASolutions:%0A  1. Use Debug configuration for container builds: /p:Configuration=Debug%0A  2. Build releases on the host machine or CI runner%0A  3. Use the installer build pipeline for official releases" />
+	</Target>
 	<PropertyGroup>
 		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'==''"
 			>$(MSBuildThisFileDirectory)..\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll</FwBuildTasksAssembly
@@ -92,6 +106,11 @@
 			Condition="!Exists('$(FwBuildTasksAssembly)')"
 			Text="Missing FieldWorks build tasks assembly: $(FwBuildTasksAssembly). Build Build/Src/FwBuildTasks/FwBuildTasks.csproj first."
 		/>
+		<!-- Block Release builds in containers to prevent accidental official releases -->
+		<Error
+			Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true' AND '$(Configuration)' == 'Release'"
+			Text="Release builds are not supported in containers. Container builds are for development and testing only. Reason: (1) mt.exe cannot embed manifests into executables on mounted volumes, (2) container builds use external manifests which are not suitable for distribution, (3) official releases must be built on the host machine or CI to ensure proper signing and packaging. Use Configuration=Debug for container builds."
+		/>
 		<!-- cannot depend on GenerateVersionFiles, because that creates a file in Output/Common which CleanAll deletes -->
 		<!-- This is less pretty then I would like since xbuild doesn't support relational operators in conditions -->
 		<PropertyGroup Condition="'$(OS)'=='Windows_NT'">
@@ -102,8 +121,17 @@
 		<CpuArchitecture>
 			<Output TaskParameter="Value" PropertyName="arch" />
 		</CpuArchitecture>
-		<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="$(fwrt)\Obj">
+		<!-- Use local storage for intermediate files in containers to avoid mount I/O conflicts -->
+		<CreateProperty Condition="'$(OS)'=='Windows_NT' AND '$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'" Value="$(fwrt)\Obj">
 			<Output TaskParameter="Value" PropertyName="dir-fwobj" />
+		</CreateProperty>
+		<CreateProperty Condition="'$(OS)'=='Windows_NT' AND '$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'" Value="C:\Temp\Obj">
+			<Output TaskParameter="Value" PropertyName="dir-fwobj" />
+		</CreateProperty>
+		<!-- Skip Clouseau in containers: Assembly.LoadFrom locks DLLs, causing copy failures in parallel builds.
+		     Clouseau validation still runs on host builds and CI. -->
+		<CreateProperty Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'" Value="true">
+			<Output TaskParameter="Value" PropertyName="SkipClouseau" />
 		</CreateProperty>
 		<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="$(fwrt)\Output">
 			<Output TaskParameter="Value" PropertyName="dir-fwoutput" />

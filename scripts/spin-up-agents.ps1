@@ -40,7 +40,8 @@ param(
   [switch]$ForceVsCodeSetup,
   [switch]$SkipOpenVSCode,
   [switch]$NoContainer,
-  [string]$ContainerMemory = "4g"
+  # 8GB needed for full managed build; 4GB causes OutOfMemoryException during MSBuild
+  [string]$ContainerMemory = "8g"
 )
 
 Set-StrictMode -Version Latest

@@ -124,7 +124,8 @@ ECHO=@echo
 COPYFILE=copy
 DELETEFILE=del
 TYPEFILE=type
-MD=$(BUILD_ROOT)\bin\mkdir.exe -p
+# Use native wrapper for Docker container compatibility (mkdir.exe fails with long mount paths)
+MD=$(BUILD_ROOT)\bin\mkdir-wrapper.cmd
 DELNODE=rmdir /s /q
 FIXCOMHEADER=$(BUILD_ROOT)\bin\FixGenComHeaderFile.exe
 

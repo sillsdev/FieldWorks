@@ -12,6 +12,9 @@
 		<Deterministic>false</Deterministic>
 		<!-- Required for projects with non-string resources (images, icons, etc.) in .NET SDK style projects -->
 		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+		<!-- Disable implicit SourceLink/Git in containers - BuildTools doesn't include Microsoft.Build.Tasks.Git SDK.
+		     This only affects embedded source URLs in PDBs; local debugging still works via file paths. -->
+		<SuppressImplicitGitSourceLink Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">true</SuppressImplicitGitSourceLink>
 	</PropertyGroup>
 
 	<!-- Required for non-string resources (images, icons) in .NET Framework SDK-style projects -->
@@ -53,10 +56,27 @@
 		<FwOutput>$(FwRoot)Output\</FwOutput>
 		<FwOutputBase>$(FwOutput)$(Configuration)\</FwOutputBase>
 		<FwObj>$(FwRoot)Obj\</FwObj>
-		<!-- Redirect 'obj' folder to local container storage to bypass Docker volume mount limitations (file locking/renaming failures) during NuGet restore. -->
-		<BaseIntermediateOutputPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">C:\Temp\Obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-		<MSBuildProjectExtensionsPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">$(BaseIntermediateOutputPath)</MSBuildProjectExtensionsPath>
-		<RestoreOutputPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">$(BaseIntermediateOutputPath)</RestoreOutputPath>
+		<!--
+			Unified Intermediate Output Policy:
+			All SDK-style projects use the root Obj/ folder (gitignored) instead of per-project obj/ folders.
+			This prevents conflicts between host and container builds when worktrees are mounted.
+			- Host builds: $(FwRoot)Obj/<ProjectName>/
+			- Container builds: C:\Temp\Obj/<ProjectName>/ (local storage, not mounted)
+
+			Note: WPF markup compilation creates temp projects like "ProjectName_abc123_wpftmp".
+			We detect this via the _wpftmp suffix and use the original project's intermediate directory
+			by checking if MSBuildProjectName contains '_wpftmp' and using the parent directory's name instead.
+		-->
+		<_IsWpfTempProject>false</_IsWpfTempProject>
+		<_IsWpfTempProject Condition="$(MSBuildProjectName.Contains('_wpftmp'))">true</_IsWpfTempProject>
+		<!-- For WPF temp projects, derive the real name from the project file path's directory name -->
+		<_RealProjectName Condition="'$(_IsWpfTempProject)' != 'true'">$(MSBuildProjectName)</_RealProjectName>
+		<_RealProjectName Condition="'$(_IsWpfTempProject)' == 'true'">$([System.IO.Path]::GetFileName($([System.IO.Path]::GetDirectoryName($(MSBuildProjectFullPath)))))</_RealProjectName>
+		<BaseIntermediateOutputPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'">$(FwRoot)Obj\$(_RealProjectName)\</BaseIntermediateOutputPath>
+		<BaseIntermediateOutputPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">C:\Temp\Obj\$(_RealProjectName)\</BaseIntermediateOutputPath>
+		<MSBuildProjectExtensionsPath>$(BaseIntermediateOutputPath)</MSBuildProjectExtensionsPath>
+		<RestoreOutputPath>$(BaseIntermediateOutputPath)</RestoreOutputPath>
+		<!-- Container-specific: use local package cache to avoid mount I/O issues -->
 		<RestorePackagesPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">C:\Temp\Packages\</RestorePackagesPath>
 		<RestoreNoCache Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">true</RestoreNoCache>
 		<!-- LCM artifacts directory -->

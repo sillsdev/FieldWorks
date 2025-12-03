@@ -63,13 +63,9 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 		/// <summary/>
 		private void Dispose(bool disposing)
 		{
+			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + " ******");
 			if (Interlocked.CompareExchange(ref _isDisposed, 1, 0) == 0)
 			{
-				System.Diagnostics.Debug.WriteLineIf(
-					!disposing,
-					"****** Missing Dispose() call for " + GetType().Name + " ******"
-				);
-
 				// Dispose managed resources (if there are any).
 				if (disposing) { }
 
