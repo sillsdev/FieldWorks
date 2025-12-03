@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 SIL International
+// Copyright (c) 2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -129,17 +129,17 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
 				styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Headword",
-					ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, true, 2, true);
-				var testStyle = styleFactory.Create(Cache.LangProject.StylesOC, "TestStyle", ContextValues.InternalConfigureView, StructureValues.Undefined,
-					FunctionValues.Line, true, 2, false);
+					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, true, 2, true);
+				var testStyle = styleFactory.Create(Cache.LangProject.StylesOC, "TestStyle", ContextValues.InternalConfigureView, StructureValues.Body,
+					FunctionValues.Prose, true, 2, false);
 				testStyle.Usage.set_String(Cache.DefaultAnalWs, "Test Style");
-				var normalStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Normal", ContextValues.InternalConfigureView, StructureValues.Undefined,
-					FunctionValues.Line, false, 2, true);
+				var normalStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Normal", ContextValues.InternalConfigureView, StructureValues.Body,
+					FunctionValues.Prose, false, 2, true);
 				var propsBldr = TsStringUtils.MakePropsBldr();
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, 0x2BACCA); // arbitrary color to create para element
 				normalStyle.Rules = propsBldr.GetTextProps();
 				var senseStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Sense",
-					ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, false, 2, true);
+					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, false, 2, true);
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, 0x2BACCA); // arbitrary color to create para element
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
 				propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, "Arial");
@@ -148,15 +148,15 @@ namespace SIL.FieldWorks.XWorks
 				propsBldr.SetStrPropValue((int)FwTextPropType.ktptBulNumFontInfo, "");
 				senseStyle.Rules = propsBldr.GetTextProps();
 				senseStyle.BasedOnRA = normalStyle;
-				var styleWithNamedColors = styleFactory.Create(Cache.LangProject.StylesOC, "Nominal", ContextValues.InternalConfigureView, StructureValues.Undefined,
-					FunctionValues.Line, false, 2, false);
+				var styleWithNamedColors = styleFactory.Create(Cache.LangProject.StylesOC, "Nominal", ContextValues.InternalConfigureView, StructureValues.Body,
+					FunctionValues.Prose, false, 2, false);
 				styleWithNamedColors.BasedOnRA = normalStyle;
 				propsBldr = TsStringUtils.MakePropsBldr();
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
 				styleWithNamedColors.Rules = propsBldr.GetTextProps();
-				var styleWithCustomColors = styleFactory.Create(Cache.LangProject.StylesOC, "Abnormal", ContextValues.InternalConfigureView, StructureValues.Undefined,
-					FunctionValues.Line, false, 2, false);
+				var styleWithCustomColors = styleFactory.Create(Cache.LangProject.StylesOC, "Abnormal", ContextValues.InternalConfigureView, StructureValues.Body,
+					FunctionValues.Prose, false, 2, false);
 				styleWithCustomColors.BasedOnRA = normalStyle;
 				propsBldr = TsStringUtils.MakePropsBldr();
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, CustomRedBGR);
@@ -303,20 +303,20 @@ namespace SIL.FieldWorks.XWorks
 				// Set up state of flex before the import happens.
 				var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
 				bulletStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Bulleted List",
-					ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, false, 2, true);
+					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, false, 2, true);
 				numberStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Numbered List",
-					ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, false, 2, true);
+					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, false, 2, true);
 
-				dictionaryHeadwordStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Headword", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, true, 2, true);
+				dictionaryHeadwordStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Headword", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, true, 2, true);
 
 				// Create a style that we can link to before the import happens. It's not
 				// important what it's named, just that it also exists in the exported zip
 				// file made by Setup().
 				nominalStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Nominal",
-					ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, false, 2, false);
+					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, false, 2, false);
 
 				homographStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Homograph-Number",
-					ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, true, 2, true);
+					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, true, 2, true);
 
 				// Style linking to later examine
 				homographStyle.BasedOnRA = dictionaryHeadwordStyle;
@@ -694,7 +694,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Set up state of flex before the import happens.
 				var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
-				styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Sense", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, false, 2, true);
+				styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Sense", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, false, 2, true);
 			});
 			Assert.That(Cache.LangProject.StylesOC.Count, Is.EqualTo(1), "Setup problem. Unexpected number of styles before doing any import activity.");
 			_controller.PrepareImport(_zipFile);
