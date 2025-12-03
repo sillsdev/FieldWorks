@@ -158,11 +158,10 @@ $results += Test-Dependency -Name "WiX Toolset" -Required "Optional" -Check {
     if ($candle) {
         return "candle.exe found in PATH"
     }
-    # Check common installation paths
+    # Check common installation paths (prefer 3.14.x, fallback to 3.11.x for backward compatibility)
     $wixPaths = @(
         "${env:ProgramFiles(x86)}\WiX Toolset v3.14\bin\candle.exe",
-        "${env:ProgramFiles(x86)}\WiX Toolset v3.11\bin\candle.exe",
-        "C:\Wix311\candle.exe"
+        "${env:ProgramFiles(x86)}\WiX Toolset v3.11\bin\candle.exe"
     )
     foreach ($p in $wixPaths) {
         if (Test-Path $p) {

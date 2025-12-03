@@ -4,10 +4,16 @@
 
 .DESCRIPTION
 	This script orchestrates the build process for FieldWorks. It handles:
-	1. Initializing the Visual Studio Developer Environment (if needed).
-	2. Bootstrapping build tasks (FwBuildTasks).
-	3. Restoring NuGet packages.
-	4. Building the solution via FieldWorks.proj using MSBuild Traversal.
+	1. Auto-detecting worktrees and respawning inside Docker containers.
+	2. Initializing the Visual Studio Developer Environment (if needed).
+	3. Bootstrapping build tasks (FwBuildTasks).
+	4. Restoring NuGet packages.
+	5. Building the solution via FieldWorks.proj using MSBuild Traversal.
+
+	When running in a worktree (e.g., fw-worktrees/agent-1), the script will
+	automatically detect if a corresponding Docker container (fw-agent-1) is
+	running and respawn the build inside the container for proper COM/registry
+	isolation. Use -NoDocker to bypass this behavior.
 
 .PARAMETER Configuration
 	The build configuration (Debug or Release). Default is Debug.
@@ -38,6 +44,10 @@
 .PARAMETER LogFile
 	Path to a file where the build output should be logged.
 
+.PARAMETER NoDocker
+	If set, bypasses automatic Docker container detection and runs locally.
+	Use this when you want to build directly on the host even in a worktree.
+
 .EXAMPLE
 	.\build.ps1
 	Builds Debug x64 in parallel with minimal logging.
@@ -49,10 +59,23 @@
 .EXAMPLE
 	.\build.ps1 -Serial -Verbosity detailed
 	Builds Debug x64 serially with detailed logging.
+
+.EXAMPLE
+	.\build.ps1 -NoDocker
+	Builds locally even when in a worktree with an available container.
+
+.NOTES
+	FieldWorks is x64-only. The x86 platform is no longer supported.
+
+	Worktree builds automatically use Docker containers when available for
+	proper COM/registry isolation. The container must be started first using
+	scripts/spin-up-agents.ps1.
 #>
 [CmdletBinding()]
 param(
 	[string]$Configuration = "Debug",
+	# x64-only build (x86 is no longer supported)
+	[ValidateSet('x64')]
 	[string]$Platform = "x64",
 	[switch]$Serial,
 	[switch]$BuildTests,
@@ -60,10 +83,127 @@ param(
 	[string]$Verbosity = "minimal",
 	[bool]$NodeReuse = $true,
 	[string[]]$MsBuildArgs = @(),
-	[string]$LogFile
+	[string]$LogFile,
+	[switch]$NoDocker
 )
 
 $ErrorActionPreference = 'Stop'
+
+# --- 0. Docker Container Auto-Detection for Worktrees ---
+
+function Test-InsideContainer {
+	# Check if we're already running inside a container
+	# The container has C:\BuildTools and specific environment markers
+	return (Test-Path 'C:\BuildTools') -or ($env:FW_CONTAINER -eq 'true')
+}
+
+function Get-WorktreeAgentNumber {
+	# Detect if we're in a worktree path like "fw-worktrees/agent-N" or "worktrees/agent-N"
+	$currentPath = (Get-Location).Path
+	if ($currentPath -match '[/\\](?:fw-)?worktrees[/\\]agent-(\d+)') {
+		return [int]$Matches[1]
+	}
+	return $null
+}
+
+function Test-DockerContainerRunning {
+	param([string]$ContainerName)
+
+	$dockerCmd = Get-Command docker -ErrorAction SilentlyContinue
+	if (-not $dockerCmd) { return $false }
+
+	try {
+		$status = docker inspect --format '{{.State.Running}}' $ContainerName 2>$null
+		return $status -eq 'true'
+	}
+	catch {
+		return $false
+	}
+}
+
+function Invoke-BuildInContainer {
+	param(
+		[int]$AgentNumber,
+		[hashtable]$BuildParams
+	)
+
+	$containerName = "fw-agent-$AgentNumber"
+	Write-Host "🐳 Detected worktree agent-$AgentNumber with running container '$containerName'" -ForegroundColor Cyan
+	Write-Host "   Respawning build inside Docker container for COM/registry isolation..." -ForegroundColor Gray
+
+	# Get the container's working directory (already set to the mapped worktree path)
+	$containerWorkDir = docker inspect --format '{{.Config.WorkingDir}}' $containerName 2>$null
+	if (-not $containerWorkDir) {
+		# Fallback: compute the mapped path (C:\fw-mounts\<drive>\path\to\worktree)
+		$currentPath = (Get-Location).Path
+		$drive = $currentPath.Substring(0, 1).ToUpper()
+		$pathWithoutDrive = $currentPath.Substring(3)  # Skip "C:\"
+		$containerWorkDir = "C:\fw-mounts\$drive\$pathWithoutDrive"
+	}
+
+	# Build the command to run inside container
+	$innerArgs = @()
+	if ($BuildParams.Configuration -ne 'Debug') { $innerArgs += "-Configuration $($BuildParams.Configuration)" }
+	if ($BuildParams.Serial) { $innerArgs += '-Serial' }
+	if ($BuildParams.BuildTests) { $innerArgs += '-BuildTests' }
+	if ($BuildParams.BuildAdditionalApps) { $innerArgs += '-BuildAdditionalApps' }
+	if ($BuildParams.Verbosity -ne 'minimal') { $innerArgs += "-Verbosity $($BuildParams.Verbosity)" }
+	if (-not $BuildParams.NodeReuse) { $innerArgs += '-NodeReuse:$false' }
+	if ($BuildParams.MsBuildArgs.Count -gt 0) {
+		$quotedArgs = $BuildParams.MsBuildArgs | ForEach-Object { "`"$_`"" }
+		$innerArgs += "-MsBuildArgs @($($quotedArgs -join ','))"
+	}
+	# Always add -NoDocker to prevent infinite recursion
+	$innerArgs += '-NoDocker'
+
+	# Build the PowerShell command to run after VS environment is initialized
+	$psCmd = "cd '$containerWorkDir'; .\build.ps1 $($innerArgs -join ' ')"
+
+	Write-Host "   Container working dir: $containerWorkDir" -ForegroundColor DarkGray
+	Write-Host "   Container command: .\build.ps1 $($innerArgs -join ' ')" -ForegroundColor DarkGray
+	Write-Host "" -ForegroundColor Gray
+
+	# Execute in container using VsDevShell.cmd to initialize VS environment (vcvarsall.bat x64)
+	# VsDevShell.cmd runs vcvarsall.bat x64 and then executes the command passed as arguments
+	docker exec -it $containerName C:\scripts\VsDevShell.cmd powershell -NoProfile -Command $psCmd
+	$exitCode = $LASTEXITCODE
+
+	if ($exitCode -ne 0) {
+		throw "Container build failed with exit code $exitCode"
+	}
+
+	Write-Host ""
+	Write-Host "✓ Container build completed successfully" -ForegroundColor Green
+	exit 0
+}
+
+# Check for worktree + container scenario (unless -NoDocker or already in container)
+if (-not $NoDocker -and -not (Test-InsideContainer)) {
+	$agentNum = Get-WorktreeAgentNumber
+	if ($null -ne $agentNum) {
+		$containerName = "fw-agent-$agentNum"
+		if (Test-DockerContainerRunning -ContainerName $containerName) {
+			# Respawn inside container
+			$buildParams = @{
+				Configuration = $Configuration
+				Serial = $Serial.IsPresent
+				BuildTests = $BuildTests.IsPresent
+				BuildAdditionalApps = $BuildAdditionalApps.IsPresent
+				Verbosity = $Verbosity
+				NodeReuse = $NodeReuse
+				MsBuildArgs = $MsBuildArgs
+			}
+			Invoke-BuildInContainer -AgentNumber $agentNum -BuildParams $buildParams
+			# Invoke-BuildInContainer exits, so we won't reach here
+		}
+		else {
+			Write-Host "⚠️  Worktree agent-$agentNum detected but container '$containerName' is not running" -ForegroundColor Yellow
+			Write-Host "   Building locally (use 'scripts/spin-up-agents.ps1' to start containers)" -ForegroundColor Yellow
+			Write-Host "   Or use -NoDocker to suppress this warning" -ForegroundColor DarkGray
+			Write-Host ""
+		}
+	}
+}
 
 # --- 1. Environment Setup ---
 
@@ -134,9 +274,7 @@ function Initialize-VsDevEnvironment {
 		throw "Unable to locate VsDevCmd.bat under '$vsInstallPath'."
 	}
 
-	if ($RequestedPlatform -eq 'x86') {
-		throw "x86 build is no longer supported."
-	}
+	# x64-only build (x86 is no longer supported)
 	$arch = 'amd64'
 	$vsVersion = Split-Path (Split-Path (Split-Path (Split-Path $vsInstallPath))) -Leaf
 	Write-Host "   Found Visual Studio $vsVersion at: $vsInstallPath" -ForegroundColor Gray
@@ -172,9 +310,7 @@ Initialize-VsDevEnvironment -RequestedPlatform $Platform
 
 # Help legacy MSBuild tasks distinguish platform-specific assets.
 # Set this AFTER Initialize-VsDevEnvironment to ensure it's not overwritten
-if ($Platform -eq 'x86') {
-	throw "x86 build is no longer supported."
-}
+# x64-only build (x86 is no longer supported)
 $env:arch = 'x64'
 Write-Host "Set arch environment variable to: $env:arch" -ForegroundColor Green
 
@@ -257,19 +393,40 @@ function Invoke-MSBuildStep {
 }
 
 function Check-ConflictingProcesses {
-	$conflicts = @("FieldWorks", "msbuild")
+	$conflicts = @("FieldWorks", "msbuild", "cl", "link", "nmake")
+	$isContainer = Test-InsideContainer
+
 	foreach ($name in $conflicts) {
-		$process = Get-Process -Name $name -ErrorAction SilentlyContinue
-		if ($process) {
-			Write-Host "$name is currently running." -ForegroundColor Yellow
-			$confirmation = Read-Host "Do you want to close it? (Y/N)"
-			if ($confirmation -match "^[Yy]") {
-				Write-Host "Closing $name..." -ForegroundColor Yellow
-				Stop-Process -Name $name -Force
-				Start-Sleep -Seconds 1
-			} else {
-				Write-Host "Continuing without closing $name." -ForegroundColor Yellow
+		$processes = Get-Process -Name $name -ErrorAction SilentlyContinue
+		if ($processes) {
+			$count = @($processes).Count
+			if ($isContainer) {
+				# In a container, automatically kill stale processes (no user interaction)
+				Write-Host "🧹 Cleaning up $count stale $name process(es) in container..." -ForegroundColor Yellow
+				$processes | Stop-Process -Force -ErrorAction SilentlyContinue
+				Start-Sleep -Milliseconds 500
 			}
+			else {
+				# On host, ask user
+				Write-Host "$name is currently running ($count process(es))." -ForegroundColor Yellow
+				$confirmation = Read-Host "Do you want to close it? (Y/N)"
+				if ($confirmation -match "^[Yy]") {
+					Write-Host "Closing $name..." -ForegroundColor Yellow
+					$processes | Stop-Process -Force
+					Start-Sleep -Seconds 1
+				} else {
+					Write-Host "Continuing without closing $name." -ForegroundColor Yellow
+				}
+			}
+		}
+	}
+
+	# In container, also kill any orphaned VBCSCompiler instances
+	if ($isContainer) {
+		$vbcs = Get-Process -Name "VBCSCompiler" -ErrorAction SilentlyContinue
+		if ($vbcs) {
+			Write-Host "🧹 Cleaning up VBCSCompiler process(es)..." -ForegroundColor Yellow
+			$vbcs | Stop-Process -Force -ErrorAction SilentlyContinue
 		}
 	}
 }

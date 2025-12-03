@@ -34,7 +34,7 @@ Required workloads:
 - .NET desktop development
 - Desktop development with C++ (including ATL/MFC)
 
-#### WiX Toolset 3.14.1 (for installer building)
+#### WiX Toolset 3.14.x (for installer building)
 
 Run the automated setup script:
 
@@ -43,6 +43,8 @@ Run the automated setup script:
 ```
 
 Or install manually from [WiX releases](https://github.com/wixtoolset/wix3/releases/tag/wix3141rtm).
+
+See [Installer Build Guide](installer-build-guide.md) for building installers locally.
 
 ### 2. Clone the Repository
 

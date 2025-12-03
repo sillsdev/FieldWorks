@@ -1,4 +1,4 @@
-# Data Migrations Guide
+﻿# Data Migrations Guide
 
 This document describes the principles for creating and maintaining data migrations in FieldWorks. Data migrations are essential for evolving the data model while preserving existing user data.
 
@@ -37,7 +37,7 @@ In `Src/FDO/MasterFieldWorksModel.xml`:
 
 1. **Change the version number** (e.g., 7000065 to 7000066):
    ```xml
-   <EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+   <EntireModel xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 version="7000066"
                 xsi:noNamespaceSchemaLocation="MasterFieldWorksModel.xsd">
    ```
@@ -99,10 +99,10 @@ public class DataMigration7000066Tests : DataMigrationTestsBase
     {
         // Arrange
         var dtoRepos = CreateDtoRepository(7000065);
-        
+
         // Act
         m_dataMigrationManager.PerformMigration(dtoRepos, 7000066);
-        
+
         // Assert
         Assert.AreEqual(7000066, dtoRepos.CurrentModelVersion);
         // Add specific assertions for your migration
@@ -122,10 +122,10 @@ internal class DataMigration7000066 : IDataMigration
     {
         // Step 1: Verify version
         DataMigrationServices.CheckVersionNumber(domainObjectDtoRepository, 7000065);
-        
+
         // Step 2: Perform the migration
         // ... your migration code here ...
-        
+
         // Step 3: Update version
         DataMigrationServices.IncrementVersionNumber(domainObjectDtoRepository);
     }

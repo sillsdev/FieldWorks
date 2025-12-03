@@ -5,6 +5,7 @@
 # Usage:
 #   .\Setup-Developer-Machine.ps1                    # Install everything
 #   .\Setup-Developer-Machine.ps1 -SkipVSCheck       # Skip Visual Studio check
+#   .\Setup-Developer-Machine.ps1 -InstallerDeps     # Also clone installer helper repos
 #   .\Setup-Developer-Machine.ps1 -WhatIf            # Show what would be installed
 #
 # Prerequisites (must be installed manually):
@@ -19,7 +20,8 @@
 [CmdletBinding(SupportsShouldProcess)]
 param(
     [switch]$SkipVSCheck,       # Skip Visual Studio installation check
-    [switch]$Force              # Force reinstall even if already present
+    [switch]$Force,             # Force reinstall even if already present
+    [switch]$InstallerDeps      # Clone/link installer helper repositories
 )
 
 $ErrorActionPreference = 'Stop'
@@ -116,6 +118,137 @@ Write-Host "[INFO] Serena language servers (C# Roslyn, clangd) auto-download on 
 
 #endregion
 
+#region Installer Dependencies (Optional)
+
+if ($InstallerDeps) {
+    Write-Host "`n--- Setting Up Installer Dependencies ---" -ForegroundColor Yellow
+
+    # Detect if we're in a git worktree
+    $gitDir = git rev-parse --git-dir 2>$null
+    $isWorktree = $gitDir -and (Test-Path "$gitDir/commondir")
+
+    # Determine the shared repos location
+    # For worktrees: use parent's parent (e.g., fw-worktrees -> repos)
+    # For regular clones: use parent directory
+    if ($isWorktree) {
+        $repoRoot = Split-Path -Parent (Split-Path -Parent $scriptDir)
+        Write-Host "[INFO] Git worktree detected. Helper repos will be cloned to: $repoRoot" -ForegroundColor Gray
+    } else {
+        $repoRoot = Split-Path -Parent $scriptDir
+        Write-Host "[INFO] Standard clone. Helper repos will be cloned to subdirectories." -ForegroundColor Gray
+    }
+
+    # Helper repo definitions: name, git URL, target subdirectory in FW repo
+    $helperRepos = @(
+        @{ Name = "FwHelps"; Url = "https://github.com/sillsdev/FwHelps.git"; SubDir = "DistFiles/Helps" },
+        @{ Name = "PatchableInstaller"; Url = "https://github.com/sillsdev/genericinstaller.git"; SubDir = "PatchableInstaller" },
+        @{ Name = "FwLocalizations"; Url = "https://github.com/sillsdev/FwLocalizations.git"; SubDir = "Localizations" }
+    )
+
+    foreach ($repo in $helperRepos) {
+        $targetPath = Join-Path $scriptDir $repo.SubDir
+
+        # Check if it's already a valid git repo with correct remote, or a junction
+        $isJunction = (Test-Path $targetPath) -and ((Get-Item $targetPath -Force).Attributes -band [IO.FileAttributes]::ReparsePoint)
+        $isValidGitRepo = $false
+        if ((Test-Path $targetPath) -and (Test-Path "$targetPath/.git")) {
+            $remote = git -C $targetPath remote get-url origin 2>$null
+            $isValidGitRepo = $remote -and ($remote -like "*$($repo.Name)*" -or $remote -like "*$($repo.Url)*")
+        }
+
+        if ($isJunction -or $isValidGitRepo) {
+            Write-Host "[OK] $($repo.SubDir) already exists" -ForegroundColor Green
+            continue
+        }
+
+        # Remove invalid/empty directory if it exists
+        if (Test-Path $targetPath) {
+            Write-Host "[WARN] Removing invalid $($repo.SubDir) directory..." -ForegroundColor Yellow
+            Remove-Item $targetPath -Recurse -Force
+        }
+
+        if ($isWorktree) {
+            # Clone to shared location and create junction
+            $sharedPath = Join-Path $repoRoot $repo.Name
+
+            if (-not (Test-Path $sharedPath)) {
+                if ($PSCmdlet.ShouldProcess($repo.Name, "Clone to $sharedPath")) {
+                    Write-Host "Cloning $($repo.Name) to shared location..." -ForegroundColor Cyan
+                    $oldErrorAction = $ErrorActionPreference
+                    $ErrorActionPreference = 'Continue'
+                    git clone $repo.Url $sharedPath 2>&1 | Out-Host
+                    $cloneExitCode = $LASTEXITCODE
+                    $ErrorActionPreference = $oldErrorAction
+                    if ($cloneExitCode -ne 0) {
+                        Write-Host "[ERROR] Failed to clone $($repo.Name)" -ForegroundColor Red
+                        continue
+                    }
+                }
+            } else {
+                Write-Host "[OK] $($repo.Name) already cloned at $sharedPath" -ForegroundColor Green
+            }
+
+            # Create junction to the shared clone
+            if ((Test-Path $sharedPath) -and $PSCmdlet.ShouldProcess($repo.SubDir, "Create junction to $sharedPath")) {
+                $parentDir = Split-Path -Parent $targetPath
+                if (-not (Test-Path $parentDir)) {
+                    New-Item -ItemType Directory -Path $parentDir -Force | Out-Null
+                }
+                New-Item -ItemType Junction -Path $targetPath -Target $sharedPath -Force | Out-Null
+                Write-Host "[OK] Created junction: $($repo.SubDir) -> $sharedPath" -ForegroundColor Green
+            }
+        } else {
+            # Standard clone: clone directly into subdirectory
+            if ($PSCmdlet.ShouldProcess($repo.Name, "Clone to $targetPath")) {
+                Write-Host "Cloning $($repo.Name)..." -ForegroundColor Cyan
+                $parentDir = Split-Path -Parent $targetPath
+                if (-not (Test-Path $parentDir)) {
+                    New-Item -ItemType Directory -Path $parentDir -Force | Out-Null
+                }
+                git clone $repo.Url $targetPath 2>&1 | Out-Null
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Host "[OK] Cloned $($repo.Name) to $targetPath" -ForegroundColor Green
+                } else {
+                    Write-Host "[ERROR] Failed to clone $($repo.Name)" -ForegroundColor Red
+                }
+            }
+        }
+    }
+
+    # Special case: liblcm goes inside Localizations
+    $lcmTarget = Join-Path $scriptDir "Localizations/LCM"
+    $localizationsPath = Join-Path $scriptDir "Localizations"
+    if ((Test-Path $localizationsPath) -and -not (Test-Path $lcmTarget)) {
+        if ($isWorktree) {
+            $sharedLcm = Join-Path $repoRoot "liblcm"
+            if (-not (Test-Path $sharedLcm)) {
+                if ($PSCmdlet.ShouldProcess("liblcm", "Clone to $sharedLcm")) {
+                    Write-Host "Cloning liblcm to shared location..." -ForegroundColor Cyan
+                    git clone https://github.com/sillsdev/liblcm.git $sharedLcm 2>&1 | Out-Null
+                }
+            }
+            if (Test-Path $sharedLcm) {
+                if ($PSCmdlet.ShouldProcess("Localizations/LCM", "Create junction to $sharedLcm")) {
+                    New-Item -ItemType Junction -Path $lcmTarget -Target $sharedLcm -Force | Out-Null
+                    Write-Host "[OK] Created junction: Localizations/LCM -> $sharedLcm" -ForegroundColor Green
+                }
+            }
+        } else {
+            if ($PSCmdlet.ShouldProcess("liblcm", "Clone to $lcmTarget")) {
+                Write-Host "Cloning liblcm..." -ForegroundColor Cyan
+                git clone https://github.com/sillsdev/liblcm.git $lcmTarget 2>&1 | Out-Null
+                if ($LASTEXITCODE -eq 0) {
+                    Write-Host "[OK] Cloned liblcm to $lcmTarget" -ForegroundColor Green
+                }
+            }
+        }
+    } elseif (Test-Path $lcmTarget) {
+        Write-Host "[OK] Localizations/LCM already exists" -ForegroundColor Green
+    }
+}
+
+#endregion
+
 #region PATH Configuration
 
 Write-Host "`n--- Configuring PATH ---" -ForegroundColor Yellow
@@ -201,4 +334,5 @@ Write-Host "  1. Restart VS Code (or your terminal) for PATH changes to take eff
 Write-Host "  2. Clone the repository: git clone https://github.com/sillsdev/FieldWorks"
 Write-Host "  3. Build: .\build.ps1"
 Write-Host ""
+Write-Host "To build installers, run: .\Setup-Developer-Machine.ps1 -InstallerDeps" -ForegroundColor Gray
 Write-Host "For Serena MCP support, see Docs/mcp.md" -ForegroundColor Gray

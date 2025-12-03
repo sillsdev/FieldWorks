@@ -1,4 +1,4 @@
-# FieldWorks Docker Build Environment
+﻿# FieldWorks Docker Build Environment
 
 This directory contains the Dockerfile and supporting files to create a Windows Docker image with all dependencies required to build FieldWorks.
 

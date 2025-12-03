@@ -360,18 +360,10 @@
 			</PropertyGroup>
 		</Otherwise>
 	</Choose>
-	<Choose>
-		<When Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'">
-			<PropertyGroup>
-				<useNUnit-x86>true</useNUnit-x86>
-			</PropertyGroup>
-		</When>
-		<Otherwise>
-			<PropertyGroup>
-				<useNUnit-x86>false</useNUnit-x86>
-			</PropertyGroup>
-		</Otherwise>
-	</Choose>
+	<!-- x64-only build on Windows (x86 is no longer supported) -->
+	<PropertyGroup>
+		<useNUnit-x86>false</useNUnit-x86>
+	</PropertyGroup>
 	<PropertyGroup>
 		<!--
 			Property for running on build agents. The environment variable BUILDAGENT_SUBKEY

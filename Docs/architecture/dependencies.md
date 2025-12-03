@@ -1,4 +1,4 @@
-# Dependencies on Other Repositories
+﻿# Dependencies on Other Repositories
 
 FieldWorks depends on several external libraries and related repositories. This document describes those dependencies and how to work with them.
 
@@ -61,7 +61,7 @@ git clone https://github.com/sillsdev/chorus.git
 
 4. **Add the CopyPackage target** to each dependency's `Directory.Build.targets`:
    ```xml
-   <Target Name="CopyPackage" AfterTargets="Pack" 
+   <Target Name="CopyPackage" AfterTargets="Pack"
            Condition="'$(LOCAL_NUGET_REPO)'!='' AND '$(IsPackable)'=='true'">
      <Copy SourceFiles="$(PackageOutputPath)/$(PackageId).$(PackageVersion).nupkg"
            DestinationFolder="$(LOCAL_NUGET_REPO)"/>
