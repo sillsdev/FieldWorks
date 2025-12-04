@@ -2948,7 +2948,7 @@ namespace LexTextControlsTests
 			Assert.That(hvo, Is.Not.EqualTo(0), "The first entry has a value in the \"Long Text\" custom field.");
 			var text = Cache.ServiceLocator.ObjectRepository.GetObject(hvo) as IStText;
 			Assert.That(text, Is.Not.Null);
-			Assert.That(text.ParagraphsOS.Count, Is.EqualTo(cpara), $"The first Long Text field should have {cpara} paragraphs.");
+			Assert.That(text.ParagraphsOS.Count, Is.EqualTo(cpara), String.Format("The first Long Text field should have {0} paragraphs.", cpara));
 			Assert.That(text.ParagraphsOS[0].StyleName, Is.EqualTo("Bulleted List"));
 			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");

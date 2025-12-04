@@ -1,4 +1,4 @@
-// ---------------------------------------------------------------------------------------------
+	// ---------------------------------------------------------------------------------------------
 // Copyright (c) 2008-2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
@@ -7,8 +7,8 @@
 // Responsibility: TE Team
 // ---------------------------------------------------------------------------------------------
 using System;
-using System.Reflection;
 using NUnit.Framework;
+using System.Reflection;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Scripture;
 
@@ -178,29 +178,17 @@ namespace SILUBS.ScriptureChecks
 		[Test]
 		public void CheckForMissingVerses_Singles()
 		{
-			ITextToken[] versesFound = new ITextToken[7]
-			{
-				new DummyTextToken("0"),
-				null,
-				new DummyTextToken("2"),
-				new DummyTextToken("003"),
-				null,
-				new DummyTextToken("05"),
-				null,
-			};
+			ITextToken[] versesFound = new ITextToken[7] {
+				new DummyTextToken("0"), null, new DummyTextToken("2"),
+				new DummyTextToken("003"), null, new DummyTextToken("05"), null };
 
 			object[] args = new object[] { versesFound, 2, 5 };
 
-			BindingFlags flags =
-				BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod;
+			BindingFlags flags = BindingFlags.NonPublic |
+				BindingFlags.Instance | BindingFlags.InvokeMethod;
 
-			typeof(ChapterVerseCheck).InvokeMember(
-				"CheckForMissingVerses",
-				flags,
-				null,
-				m_check,
-				args
-			);
+			typeof(ChapterVerseCheck).InvokeMember("CheckForMissingVerses",
+				flags, null, m_check, args);
 
 			Assert.That(m_errors.Count, Is.EqualTo(3));
 
@@ -226,34 +214,19 @@ namespace SILUBS.ScriptureChecks
 		[Test]
 		public void CheckForMissingVerses_Ranges()
 		{
-			ITextToken[] versesFound = new ITextToken[12]
-			{
-				new DummyTextToken("0"),
-				null,
-				null,
-				new DummyTextToken("003"),
-				null,
-				null,
-				null,
-				new DummyTextToken("7"),
-				new DummyTextToken("8"),
-				new DummyTextToken("09"),
-				null,
-				null,
-			};
+			ITextToken[] versesFound = new ITextToken[12] {
+				new DummyTextToken("0"), null, null,
+				new DummyTextToken("003"), null, null, null,
+				new DummyTextToken("7"), new DummyTextToken("8"),
+				new DummyTextToken("09"), null, null };
 
 			object[] args = new object[] { versesFound, 2, 5 };
 
-			BindingFlags flags =
-				BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.InvokeMethod;
+			BindingFlags flags = BindingFlags.NonPublic |
+				BindingFlags.Instance | BindingFlags.InvokeMethod;
 
-			typeof(ChapterVerseCheck).InvokeMember(
-				"CheckForMissingVerses",
-				flags,
-				null,
-				m_check,
-				args
-			);
+			typeof(ChapterVerseCheck).InvokeMember("CheckForMissingVerses",
+				flags, null, m_check, args);
 
 			Assert.That(m_errors.Count, Is.EqualTo(3));
 
@@ -285,36 +258,26 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "HAG");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("3-15", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.ChapterNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-23", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("3-15",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.ChapterNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-23",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
@@ -338,48 +301,26 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Verse Bridge", "\u200F-\u200f");
 
 			// \u0660-\u0669 are Arabic-Indic digits, \u200F is the RTL Mark.
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("\u0661", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("\u0661", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("\u0662", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken(
-					"\u0663\u200F-\u200f\u0661\u0665",
-					TextType.VerseNumber,
-					false,
-					false,
-					"Paragraph"
-				)
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("\u0662", TextType.ChapterNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken(
-					"\u0661\u200F-\u200f\u0662\u0663",
-					TextType.VerseNumber,
-					false,
-					false,
-					"Paragraph"
-				)
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("\u0661",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("\u0661",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("\u0662",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("\u0663\u200F-\u200f\u0661\u0665",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("\u0662",
+				TextType.ChapterNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("\u0661\u200F-\u200f\u0662\u0663",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
@@ -402,52 +343,28 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Verse Bridge", "\u200F-\u200f");
 
 			// \u0660-\u0669 are Arabic-Indic digits, \u200F is the RTL Mark.
-			DummyTextToken badToken1 = new DummyTextToken(
-				"\u0661",
-				TextType.ChapterNumber,
-				true,
-				false,
-				"Paragraph"
-			);
+			DummyTextToken badToken1 = new DummyTextToken("\u0661",
+				TextType.ChapterNumber, true, false, "Paragraph");
 			m_dataSource.m_tokens.Add(badToken1);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken(
-					"3\u200F-\u200f15",
-					TextType.VerseNumber,
-					false,
-					false,
-					"Paragraph"
-				)
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.ChapterNumber, false, false, "Paragraph")
-			);
-			DummyTextToken badToken2 = new DummyTextToken(
-				"1\u200f-\u200f2\u0663",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("3\u200F-\u200f15",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.ChapterNumber, false, false, "Paragraph"));
+			DummyTextToken badToken2 = new DummyTextToken("1\u200f-\u200f2\u0663",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(badToken2);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 			Assert.That(m_errors.Count, Is.EqualTo(2));
 			CheckError(0, badToken1.Text, 0, badToken1.Text, "Invalid chapter number");
@@ -472,52 +389,28 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Verse Bridge", "\u200F-\u200f");
 
 			// \u0660-\u0669 are Arabic-Indic digits, \u200F is the RTL Mark.
-			DummyTextToken badToken1 = new DummyTextToken(
-				"1",
-				TextType.ChapterNumber,
-				true,
-				false,
-				"Paragraph"
-			);
+			DummyTextToken badToken1 = new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph");
 			m_dataSource.m_tokens.Add(badToken1);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("\u0661", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("\u0662", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken(
-					"\u0663\u200F-\u200f\u0661\u0665",
-					TextType.VerseNumber,
-					false,
-					false,
-					"Paragraph"
-				)
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("\u0662", TextType.ChapterNumber, false, false, "Paragraph")
-			);
-			DummyTextToken badToken2 = new DummyTextToken(
-				"\u0661\u200F-\u200f\u06623",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("\u0661",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("\u0662",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("\u0663\u200F-\u200f\u0661\u0665",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("\u0662",
+				TextType.ChapterNumber, false, false, "Paragraph"));
+			DummyTextToken badToken2 = new DummyTextToken("\u0661\u200F-\u200f\u06623",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(badToken2);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 			Assert.That(m_errors.Count, Is.EqualTo(2));
 			CheckError(0, badToken1.Text, 0, badToken1.Text, "Invalid chapter number");
@@ -541,26 +434,17 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 			m_dataSource.SetParameterValue("Verse Bridge", "-");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-2", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			DummyTextToken badToken = new DummyTextToken(
-				"3\u200f-\u200f25",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-2",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			DummyTextToken badToken = new DummyTextToken("3\u200f-\u200f25",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(badToken);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 			Assert.That(m_errors.Count, Is.EqualTo(1));
 			CheckError(0, badToken.Text, 0, badToken.Text, "Invalid verse number");
@@ -581,26 +465,17 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "JUD");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-24", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			DummyTextToken badToken = new DummyTextToken(
-				"2a5",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-24",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			DummyTextToken badToken = new DummyTextToken("2a5",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(badToken);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 			Assert.That(m_errors.Count, Is.EqualTo(1));
 			CheckError(0, badToken.Text, 0, badToken.Text, "Invalid verse number");
@@ -622,20 +497,13 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 			m_dataSource.SetParameterValue("Verse Bridge", "~");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			DummyTextToken badToken = new DummyTextToken(
-				"1-25",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			DummyTextToken badToken = new DummyTextToken("1-25",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(badToken);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 			Assert.That(m_errors.Count, Is.EqualTo(1));
 			CheckError(0, badToken.Text, 0, badToken.Text, "Invalid verse number");
@@ -656,43 +524,26 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "NAM");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			ITextToken TempTok = new DummyTextToken(
-				"1-15",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			ITextToken TempTok = new DummyTextToken("1-15",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.ChapterNumber, false, false, "Paragraph")
-			);
-			ITextToken TempTok2 = new DummyTextToken(
-				"1-13",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.ChapterNumber, false, false, "Paragraph"));
+			ITextToken TempTok2 = new DummyTextToken("1-13",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok2);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("3", TextType.ChapterNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-19", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("3",
+				TextType.ChapterNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-19",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 			Assert.That(m_errors.Count, Is.EqualTo(0));
 
@@ -721,33 +572,24 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
 			// Missing chapter number 1
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("3-15", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.ChapterNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-23", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("3-15",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.ChapterNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-23",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
@@ -765,53 +607,31 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "HAG");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("0", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("3-15", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.ChapterNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-23", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("0",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("3-15",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.ChapterNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-23",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
 			Assert.That(m_errors.Count, Is.EqualTo(2));
-			CheckError(
-				0,
-				m_dataSource.m_tokens[0].Text,
-				0,
-				m_dataSource.m_tokens[0].Text,
-				"Invalid chapter number"
-			);
-			CheckError(
-				1,
-				m_dataSource.m_tokens[0].Text,
-				1,
-				String.Empty,
-				"Missing chapter number 1"
-			);
+			CheckError(0, m_dataSource.m_tokens[0].Text, 0, m_dataSource.m_tokens[0].Text, "Invalid chapter number");
+			CheckError(1, m_dataSource.m_tokens[0].Text, 1, String.Empty, "Missing chapter number 1");
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -827,53 +647,31 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "HAG");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("01", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("002", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("3-15", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.ChapterNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-23", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("01",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("002",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("3-15",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.ChapterNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-23",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
 			Assert.That(m_errors.Count, Is.EqualTo(2));
-			CheckError(
-				0,
-				m_dataSource.m_tokens[0].Text,
-				0,
-				m_dataSource.m_tokens[0].Text,
-				"Invalid chapter number"
-			);
-			CheckError(
-				1,
-				m_dataSource.m_tokens[3].Text,
-				0,
-				m_dataSource.m_tokens[3].Text,
-				"Invalid verse number"
-			);
+			CheckError(0, m_dataSource.m_tokens[0].Text, 0, m_dataSource.m_tokens[0].Text, "Invalid chapter number");
+			CheckError(1, m_dataSource.m_tokens[3].Text, 0, m_dataSource.m_tokens[3].Text, "Invalid verse number");
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -892,27 +690,20 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "HAG");
 			m_dataSource.SetParameterValue("Chapter Number", "1");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("3-15", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("3-15",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
 			Assert.That(m_errors.Count, Is.EqualTo(0));
@@ -933,50 +724,31 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "HAG");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("3-15", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("3-15",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			// Missing chapter number 2
-			ITextToken TempTok = new DummyTextToken(
-				"1-23",
-				TextType.VerseNumber,
-				true,
-				false,
-				"Paragraph"
-			);
+			ITextToken TempTok = new DummyTextToken("1-23",
+				TextType.VerseNumber, true, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
 			Assert.That(m_errors.Count, Is.EqualTo(2));
 			CheckError(0, TempTok.Text, 0, TempTok.Text, "Duplicate verse numbers");
-			CheckError(
-				1,
-				m_dataSource.m_tokens[0].Text,
-				1,
-				String.Empty,
-				"Missing chapter number 2"
-			);
+			CheckError(1, m_dataSource.m_tokens[0].Text, 1, String.Empty, "Missing chapter number 2");
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -992,38 +764,23 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "HAG");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-15", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-15",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			// Missing chapter number 2
-			ITextToken TempTok = new DummyTextToken(
-				"1-23",
-				TextType.VerseNumber,
-				true,
-				false,
-				"Paragraph"
-			);
+			ITextToken TempTok = new DummyTextToken("1-23",
+				TextType.VerseNumber, true, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
 			Assert.That(m_errors.Count, Is.EqualTo(2));
 			CheckError(0, TempTok.Text, 0, TempTok.Text, "Duplicate verse numbers");
-			CheckError(
-				1,
-				m_dataSource.m_tokens[0].Text,
-				1,
-				String.Empty,
-				"Missing chapter number 2"
-			);
+			CheckError(1, m_dataSource.m_tokens[0].Text, 1, String.Empty, "Missing chapter number 2");
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -1042,38 +799,25 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "HAG");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("3-15", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("3-15",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			// Missing entire chapter 2
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 			Assert.That(m_errors.Count, Is.EqualTo(1));
-			CheckError(
-				0,
-				m_dataSource.m_tokens[0].Text,
-				1,
-				String.Empty,
-				"Missing chapter number 2"
-			);
+			CheckError(0, m_dataSource.m_tokens[0].Text, 1, String.Empty, "Missing chapter number 2");
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -1093,20 +837,16 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
 			// error sequence - chapter 1 with verse, chapter 2 no verse, chapter 3 with verse
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("3", TextType.ChapterNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("3",
+				TextType.ChapterNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-18", TextType.VerseNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-18",
+				TextType.VerseNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 			Assert.That(m_errors.Count, Is.EqualTo(2));
@@ -1131,37 +871,26 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
 			// error sequence - chapter 1 & 2 with verse, chapter 2 duplicated
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-15", TextType.VerseNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-15",
+				TextType.VerseNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.ChapterNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.ChapterNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-23", TextType.VerseNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-23",
+				TextType.VerseNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 
-			DummyTextToken dupChapter = new DummyTextToken(
-				"2",
-				TextType.ChapterNumber,
-				true,
-				false,
-				"Paragraph"
-			);
+			DummyTextToken dupChapter = new DummyTextToken("2",
+				TextType.ChapterNumber, true, false, "Paragraph");
 			m_dataSource.m_tokens.Add(dupChapter);
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
@@ -1186,29 +915,23 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
 			// error sequence - chapter 1 skipped, chapter 2 & 3 fully present
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.ChapterNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.ChapterNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-17", TextType.VerseNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-17",
+				TextType.VerseNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("3", TextType.ChapterNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("3",
+				TextType.ChapterNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-18", TextType.VerseNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-18",
+				TextType.VerseNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 			Assert.That(m_errors.Count, Is.EqualTo(1));
@@ -1232,59 +955,33 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "HAG");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			// Missing verse 2
-			ITextToken TempTok = new DummyTextToken(
-				"3-14",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			ITextToken TempTok = new DummyTextToken("3-14",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			// Missing verse 15
-			ITextToken TempTok2 = new DummyTextToken(
-				"2",
-				TextType.ChapterNumber,
-				true,
-				false,
-				"Paragraph"
-			);
+			ITextToken TempTok2 = new DummyTextToken("2",
+				TextType.ChapterNumber, true, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok2);
 			// Missing verse 1
-			ITextToken TempTok3 = new DummyTextToken(
-				"2-22",
-				TextType.VerseNumber,
-				true,
-				false,
-				"Paragraph"
-			);
+			ITextToken TempTok3 = new DummyTextToken("2-22",
+				TextType.VerseNumber, true, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok3);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			// Missing verse 23
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 			Assert.That(m_errors.Count, Is.EqualTo(4));
-			CheckError(
-				0,
-				m_dataSource.m_tokens[1].Text,
-				1,
-				String.Empty,
-				"Missing verse number 2"
-			);
+			CheckError(0, m_dataSource.m_tokens[1].Text, 1, String.Empty, "Missing verse number 2");
 			CheckError(1, TempTok.Text, 4, String.Empty, "Missing verse number 15");
 			CheckError(2, TempTok2.Text, 1, String.Empty, "Missing verse number 1");
 			CheckError(3, TempTok3.Text, 4, String.Empty, "Missing verse number 23");
@@ -1305,52 +1002,32 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "HAG");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("3-15", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			ITextToken TempTok = new DummyTextToken(
-				"5",
-				TextType.ChapterNumber,
-				true,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("3-15",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			ITextToken TempTok = new DummyTextToken("5",
+				TextType.ChapterNumber, true, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-23", TextType.VerseNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-23",
+				TextType.VerseNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
 			Assert.That(m_errors.Count, Is.EqualTo(2));
 			CheckError(0, TempTok.Text, 0, TempTok.Text, "Chapter number out of range");
-			CheckError(
-				1,
-				m_dataSource.m_tokens[0].Text,
-				1,
-				String.Empty,
-				"Missing chapter number 2"
-			);
+			CheckError(1, m_dataSource.m_tokens[0].Text, 1, String.Empty, "Missing chapter number 2");
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -1368,46 +1045,28 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "HAG");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2-15", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			ITextToken TempTok = new DummyTextToken(
-				"16",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2-15",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			ITextToken TempTok = new DummyTextToken("16",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.ChapterNumber, false, false, "Paragraph")
-			);
-			ITextToken TempTok2 = new DummyTextToken(
-				"1-24",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.ChapterNumber, false, false, "Paragraph"));
+			ITextToken TempTok2 = new DummyTextToken("1-24",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok2);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
 			Assert.That(m_errors.Count, Is.EqualTo(2));
@@ -1431,41 +1090,27 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "HAG");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2-15", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			ITextToken TempTok = new DummyTextToken(
-				"aa",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2-15",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			ITextToken TempTok = new DummyTextToken("aa",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.ChapterNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-23", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.ChapterNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-23",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
 			Assert.That(m_errors.Count, Is.EqualTo(1));
@@ -1487,49 +1132,31 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "HAG");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			// Missing verses 2-5
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("6-15", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			ITextToken TempTok = new DummyTextToken(
-				"1-20",
-				TextType.VerseNumber,
-				true,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("6-15",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			ITextToken TempTok = new DummyTextToken("1-20",
+				TextType.VerseNumber, true, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			// Missing verses 21-23
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
 			Assert.That(m_errors.Count, Is.EqualTo(2));
 
-			CheckError(
-				0,
-				m_dataSource.m_tokens[1].Text,
-				1,
-				String.Empty,
-				"Missing verse numbers 2-5"
-			);
+			CheckError(0, m_dataSource.m_tokens[1].Text, 1, String.Empty, "Missing verse numbers 2-5");
 			CheckError(1, TempTok.Text, 4, String.Empty, "Missing verse numbers 21-23");
 		}
 
@@ -1549,67 +1176,41 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
 			// Chapter 1
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			// Duplicate verse number 1
-			ITextToken TempTok = new DummyTextToken(
-				"1",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			ITextToken TempTok = new DummyTextToken("1",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2-15", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2-15",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			// Chapter 2
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-23", TextType.VerseNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-23",
+				TextType.VerseNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			// Duplicate verse number 13
-			ITextToken TempTok2 = new DummyTextToken(
-				"13",
-				TextType.VerseNumber,
-				true,
-				false,
-				"Paragraph"
-			);
+			ITextToken TempTok2 = new DummyTextToken("13",
+				TextType.VerseNumber, true, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok2);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			// Duplicate verse numbers 21-23
-			ITextToken TempTok3 = new DummyTextToken(
-				"21-23",
-				TextType.VerseNumber,
-				true,
-				false,
-				"Paragraph"
-			);
+			ITextToken TempTok3 = new DummyTextToken("21-23",
+				TextType.VerseNumber, true, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok3);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
@@ -1635,76 +1236,46 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "HAG");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("3", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			ITextToken TempTok = new DummyTextToken(
-				"2",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("3",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			ITextToken TempTok = new DummyTextToken("2",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("4-15", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.ChapterNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-9", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("12-23", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			ITextToken TempTok2 = new DummyTextToken(
-				"10-11",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("4-15",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.ChapterNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-9",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("12-23",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			ITextToken TempTok2 = new DummyTextToken("10-11",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok2);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
 			Assert.That(m_errors.Count, Is.EqualTo(2));
 
-			CheckError(
-				0,
-				TempTok.Text,
-				0,
-				TempTok.Text,
-				"Verse number out of order; expected verse 4"
-			);
+			CheckError(0, TempTok.Text, 0, TempTok.Text, "Verse number out of order; expected verse 4");
 			CheckError(1, TempTok2.Text, 0, TempTok2.Text, "Verse numbers out of order");
 		}
 
@@ -1722,52 +1293,32 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "HAG");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2-15", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.ChapterNumber, false, false, "Paragraph")
-			);
-			ITextToken TempTok = new DummyTextToken(
-				"1-14",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2-15",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.ChapterNumber, false, false, "Paragraph"));
+			ITextToken TempTok = new DummyTextToken("1-14",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			ITextToken TempTok2 = new DummyTextToken(
-				"1515",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			ITextToken TempTok2 = new DummyTextToken("1515",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok2);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("17-23", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("17-23",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
 			Assert.That(m_errors.Count, Is.EqualTo(2));
@@ -1792,75 +1343,40 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "HAG");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2a", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken(
-					"First part of verse two",
-					TextType.Verse,
-					false,
-					false,
-					"Paragraph"
-				)
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken(
-					"Section Head Text",
-					TextType.Other,
-					true,
-					false,
-					"Section Head"
-				)
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2b", TextType.VerseNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken(
-					"Second part of verse two",
-					TextType.Verse,
-					false,
-					false,
-					"Paragraph"
-				)
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("3-15", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.ChapterNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-22", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("23a", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("23b", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2a",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("First part of verse two",
+				TextType.Verse, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("Section Head Text",
+				TextType.Other, true, false, "Section Head"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2b",
+				TextType.VerseNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("Second part of verse two",
+				TextType.Verse, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("3-15",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.ChapterNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-22",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("23a",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("23b",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 			Assert.That(m_errors.Count, Is.EqualTo(0));
@@ -1882,166 +1398,100 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "HAG");
 
 			// Currently we don't catch any of these invalid cases...
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1a-3", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("4-6b", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("7-8a", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("9-10", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("11-13", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("14b-15", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1a-3",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("4-6b",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("7-8a",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("9-10",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("11-13",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("14b-15",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 
 			// These cases are valid...
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2a", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2b", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("3-4b", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("5", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2a",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2b",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("3-4b",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("5",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 
 			// These cases are not valid (should produce errors)...
-			ITextToken TempTok = new DummyTextToken(
-				"6a",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			ITextToken TempTok = new DummyTextToken("6a",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("7", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			ITextToken TempTok2 = new DummyTextToken(
-				"8b",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("7",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			ITextToken TempTok2 = new DummyTextToken("8b",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok2);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			ITextToken TempTok3 = new DummyTextToken(
-				"9b",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			ITextToken TempTok3 = new DummyTextToken("9b",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok3);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			ITextToken TempTok4 = new DummyTextToken(
-				"10a",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			ITextToken TempTok4 = new DummyTextToken("10a",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok4);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			ITextToken TempTok5 = new DummyTextToken(
-				"11b",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			ITextToken TempTok5 = new DummyTextToken("11b",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok5);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			ITextToken TempTok6 = new DummyTextToken(
-				"12-13a",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			ITextToken TempTok6 = new DummyTextToken("12-13a",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok6);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("14", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("15-23", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("14",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("15-23",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
 			Assert.That(m_errors.Count, Is.EqualTo(6));
@@ -2069,52 +1519,32 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "HAG");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("3-15", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.ChapterNumber, false, false, "Paragraph")
-			);
-			ITextToken tempTok1 = new DummyTextToken(
-				"1-23a",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("3-15",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.ChapterNumber, false, false, "Paragraph"));
+			ITextToken tempTok1 = new DummyTextToken("1-23a",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(tempTok1);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			ITextToken tempTok2 = new DummyTextToken(
-				"23c",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			ITextToken tempTok2 = new DummyTextToken("23c",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(tempTok2);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
 			Assert.That(m_errors.Count, Is.EqualTo(2));
@@ -2149,37 +1579,24 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "HAG");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("3-15", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-23", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("3-15",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-23",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
 			Assert.That(m_errors.Count, Is.EqualTo(1));
-			CheckError(
-				0,
-				m_dataSource.m_tokens[0].Text,
-				0,
-				String.Empty,
-				"Missing verse number 1"
-			);
+			CheckError(0, m_dataSource.m_tokens[0].Text, 0, String.Empty, "Missing verse number 1");
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -2207,62 +1624,37 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "HAG");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("3-15", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			ITextToken TempTok = new DummyTextToken(
-				"2",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("3-15",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			ITextToken TempTok = new DummyTextToken("2",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			ITextToken TempTok2 = new DummyTextToken(
-				"3-23",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			ITextToken TempTok2 = new DummyTextToken("3-23",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok2);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
 			Assert.That(m_errors.Count, Is.EqualTo(3));
 
 			CheckError(0, TempTok.Text, 0, TempTok.Text, "Unexpected verse number");
 			CheckError(1, TempTok2.Text, 0, TempTok2.Text, "Unexpected verse numbers");
-			CheckError(
-				2,
-				m_dataSource.m_tokens[0].Text,
-				1,
-				String.Empty,
-				"Missing chapter number 2"
-			);
+			CheckError(2, m_dataSource.m_tokens[0].Text, 1, String.Empty, "Missing chapter number 2");
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -2281,58 +1673,37 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "HAG");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken(" 1", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2-15", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			ITextToken TempTok = new DummyTextToken(
-				"2-22 ",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken(" 1",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2-15",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			ITextToken TempTok = new DummyTextToken("2-22 ",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("23", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("23",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
 			Assert.That(m_errors.Count, Is.EqualTo(2));
 
-			CheckError(
-				0,
-				m_dataSource.m_tokens[1].Text,
-				0,
-				m_dataSource.m_tokens[1].Text,
-				"Space found in verse number"
-			);
+			CheckError(0, m_dataSource.m_tokens[1].Text, 0, m_dataSource.m_tokens[1].Text,
+				"Space found in verse number");
 			CheckError(1, TempTok.Text, 0, TempTok.Text, "Space found in verse bridge");
 		}
 
@@ -2351,103 +1722,51 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "HAG");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			ITextToken TempTok = new DummyTextToken(
-				"zv",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			ITextToken TempTok = new DummyTextToken("zv",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2-13", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("14z7a", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("text", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("15", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("more text", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2-13",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("14z7a",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("text",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("15",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("more text",
+				TextType.Verse, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			ITextToken TempTok2 = new DummyTextToken(
-				"1",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			ITextToken TempTok2 = new DummyTextToken("1",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok2);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			ITextToken TempTok3 = new DummyTextToken(
-				"u-r-an-idot",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			ITextToken TempTok3 = new DummyTextToken("u-r-an-idot",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok3);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("23", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("23",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
 			Assert.That(m_errors.Count, Is.EqualTo(7));
 
 			CheckError(0, TempTok.Text, 0, TempTok.Text, "Invalid verse number");
-			CheckError(
-				1,
-				m_dataSource.m_tokens[5].Text,
-				0,
-				m_dataSource.m_tokens[5].Text,
-				"Verse number out of range"
-			);
-			CheckError(
-				2,
-				m_dataSource.m_tokens[5].Text,
-				0,
-				m_dataSource.m_tokens[5].Text,
-				"Invalid verse number"
-			);
-			CheckError(
-				3,
-				m_dataSource.m_tokens[0].Text,
-				1,
-				String.Empty,
-				"Missing verse number 1"
-			);
-			CheckError(
-				4,
-				m_dataSource.m_tokens[3].Text,
-				4,
-				String.Empty,
-				"Missing verse number 14"
-			);
+			CheckError(1, m_dataSource.m_tokens[5].Text, 0, m_dataSource.m_tokens[5].Text, "Verse number out of range");
+			CheckError(2, m_dataSource.m_tokens[5].Text, 0, m_dataSource.m_tokens[5].Text, "Invalid verse number");
+			CheckError(3, m_dataSource.m_tokens[0].Text, 1, String.Empty, "Missing verse number 1");
+			CheckError(4, m_dataSource.m_tokens[3].Text, 4, String.Empty, "Missing verse number 14");
 			CheckError(5, TempTok3.Text, 0, TempTok3.Text, "Invalid verse number");
 			CheckError(6, TempTok2.Text, 1, String.Empty, "Missing verse numbers 2-22");
 		}
@@ -2467,35 +1786,23 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "HAG");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2-15", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
-			ITextToken TempTok = new DummyTextToken(
-				"jfuo",
-				TextType.ChapterNumber,
-				true,
-				false,
-				"Paragraph"
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("2-15",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
+			ITextToken TempTok = new DummyTextToken("jfuo",
+				TextType.ChapterNumber, true, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-23", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-23",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
 			Assert.That(m_errors.Count, Is.EqualTo(2));
@@ -2519,46 +1826,25 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "HAG");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-14", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-14",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			// Missing verse 15, Missing chapter 2
-			ITextToken TempTok = new DummyTextToken(
-				"1-23",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			ITextToken TempTok = new DummyTextToken("1-23",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
 			Assert.That(m_errors.Count, Is.EqualTo(3));
 
 			CheckError(0, TempTok.Text, 0, TempTok.Text, "Duplicate verse numbers");
-			CheckError(
-				1,
-				m_dataSource.m_tokens[1].Text,
-				4,
-				String.Empty,
-				"Missing verse number 15"
-			);
-			CheckError(
-				2,
-				m_dataSource.m_tokens[0].Text,
-				1,
-				String.Empty,
-				"Missing chapter number 2"
-			);
+			CheckError(1, m_dataSource.m_tokens[1].Text, 4, String.Empty, "Missing verse number 15");
+			CheckError(2, m_dataSource.m_tokens[0].Text, 1, String.Empty, "Missing chapter number 2");
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -2577,24 +1863,16 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
 			// Missing chapter 1 (ignored)
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-27", TextType.VerseNumber, false, false, "Paragraph")
-			);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-27",
+				TextType.VerseNumber, false, false, "Paragraph"));
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			// Missing chapter 2
-			ITextToken TempTok = new DummyTextToken(
-				"1-26",
-				TextType.VerseNumber,
-				false,
-				false,
-				"Paragraph"
-			);
+			ITextToken TempTok = new DummyTextToken("1-26",
+				TextType.VerseNumber, false, false, "Paragraph");
 			m_dataSource.m_tokens.Add(TempTok);
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 			// Missing chapters 3-5
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
@@ -2603,13 +1881,7 @@ namespace SILUBS.ScriptureChecks
 			CheckError(0, TempTok.Text, 0, TempTok.Text, "Duplicate verse numbers");
 
 			for (int i = 2; i < 6; i++)
-				CheckError(
-					i - 1,
-					m_dataSource.m_tokens[0].Text,
-					0,
-					String.Empty,
-					string.Format("Missing chapter number {0}", i)
-				);
+				CheckError(i - 1, m_dataSource.m_tokens[0].Text, 0, String.Empty, string.Format("Missing chapter number {0}", i));
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -2625,33 +1897,27 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "2TH");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-12", TextType.VerseNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.ChapterNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-12",
+				TextType.VerseNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.VerseNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.ChapterNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2-17", TextType.VerseNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.VerseNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("3", TextType.ChapterNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("2-17",
+				TextType.VerseNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-18", TextType.VerseNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("3",
+				TextType.ChapterNumber, true, false, "Paragraph"));
+
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-18",
+				TextType.VerseNumber, true, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
@@ -2671,49 +1937,39 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "2TH");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-12", TextType.VerseNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken(" ", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-12",
+				TextType.VerseNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.ChapterNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken(" ",
+				TextType.Verse, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.VerseNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.ChapterNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken(Environment.NewLine, TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.VerseNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2-17", TextType.VerseNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken(Environment.NewLine,
+				TextType.Verse, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("\t", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("2-17",
+				TextType.VerseNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("3", TextType.ChapterNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("\t",
+				TextType.Verse, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-18", TextType.VerseNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("3",
+				TextType.ChapterNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken(" ", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-18",
+				TextType.VerseNumber, true, false, "Paragraph"));
+
+			m_dataSource.m_tokens.Add(new DummyTextToken(" ",
+				TextType.Verse, true, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
@@ -2734,43 +1990,35 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "2TH");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
+
 			// no chapter one - assumed
 			// no verse one - assumed
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2-12", TextType.VerseNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("2-12",
+				TextType.VerseNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.ChapterNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.ChapterNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-17", TextType.VerseNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-17",
+				TextType.VerseNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("3", TextType.ChapterNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("3",
+				TextType.ChapterNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-18", TextType.VerseNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-18",
+				TextType.VerseNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
@@ -2790,46 +2038,37 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "2TH");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
+
 			// no chapter one - assumed
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.VerseNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.VerseNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2-12", TextType.VerseNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("2-12",
+				TextType.VerseNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.ChapterNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.ChapterNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-17", TextType.VerseNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-17",
+				TextType.VerseNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("3", TextType.ChapterNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("3",
+				TextType.ChapterNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1-18", TextType.VerseNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1-18",
+				TextType.VerseNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
@@ -2849,54 +2088,43 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.SetParameterValue("Book ID", "2TH");
 			m_dataSource.SetParameterValue("Chapter Number", "0");
 
+
 			// no verse one - assumed
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("1", TextType.ChapterNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("1",
+				TextType.ChapterNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2-12", TextType.VerseNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("2-12",
+				TextType.VerseNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2", TextType.ChapterNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("2",
+				TextType.ChapterNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2-17", TextType.VerseNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("2-17",
+				TextType.VerseNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("3", TextType.ChapterNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("3",
+				TextType.ChapterNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("2-18", TextType.VerseNumber, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("2-18",
+				TextType.VerseNumber, true, false, "Paragraph"));
 
-			m_dataSource.m_tokens.Add(
-				new DummyTextToken("verse body", TextType.Verse, true, false, "Paragraph")
-			);
+			m_dataSource.m_tokens.Add(new DummyTextToken("verse body",
+				TextType.Verse, true, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 

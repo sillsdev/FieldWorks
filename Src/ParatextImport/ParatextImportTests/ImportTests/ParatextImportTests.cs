@@ -3173,7 +3173,9 @@ namespace ParatextImport.ImportTests
 			ILcmOwningSequence<IStPara> footnoteParas = footnote.ParagraphsOS;
 			Assert.That(footnoteParas.Count, Is.EqualTo(1));
 			para = (IStTxtPara)footnote.ParagraphsOS[0];
-			Assert.That(para.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps(ScrStyleNames.NormalFootnoteParagraph)));
+			Assert.AreEqual
+				(StyleUtils.ParaStyleTextProps(ScrStyleNames.NormalFootnoteParagraph),
+				para.StyleRules);
 			Assert.That(para.Contents.RunCount, Is.EqualTo(3));
 			AssertEx.RunIsCorrect(((IStTxtPara)footnoteParas[0]).Contents, 0,
 				"beginning of footnote", null, m_wsVern);

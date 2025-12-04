@@ -9,6 +9,7 @@ using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
+using Rhino.Mocks;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
@@ -17,7 +18,6 @@ using SilEncConverters40;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.DomainServices;
-using Moq;
 
 namespace ParatextImport
 {
@@ -1052,9 +1052,8 @@ namespace ParatextImport
 			// Save settings before enumerating, which will get the styles hooked up in the mapping list
 			m_settings.SaveSettings();
 
-			var mockConverters = new Mock<IEncConverters>();
-			mockConverters.Setup(x => x["UPPERCASE"]).Returns(new DummyEncConverter());
-			m_converters = mockConverters.Object;
+			m_converters = MockRepository.GenerateStub<IEncConverters>();
+			m_converters.Stub(x => x["UPPERCASE"]).Return(new DummyEncConverter());
 			ISCTextEnum textEnum = GetTextEnum(ImportDomain.Main,
 				new ScrReference(40, 0, 0, ScrVers.English),
 				new ScrReference(40, 1, 2, ScrVers.English));
@@ -1169,9 +1168,8 @@ namespace ParatextImport
 			// Save settings before enumerating, which will get the styles hooked up in the mapping list
 			m_settings.SaveSettings();
 
-			var mockConverters = new Mock<IEncConverters>();
-			mockConverters.Setup(x => x["UPPERCASE"]).Returns(new DummyEncConverter());
-			m_converters = mockConverters.Object;
+			m_converters = MockRepository.GenerateStub<IEncConverters>();
+			m_converters.Stub(x => x["UPPERCASE"]).Return(new DummyEncConverter());
 			ISCTextEnum textEnum = GetTextEnum(ImportDomain.Main,
 				new ScrReference(40, 0, 0, ScrVers.English),
 				new ScrReference(40, 1, 2, ScrVers.English));
@@ -1238,9 +1236,8 @@ namespace ParatextImport
 			// Save settings before enumerating, which will get the styles hooked up in the mapping list
 			m_settings.SaveSettings();
 
-			var mockConverters = new Mock<IEncConverters>();
-			mockConverters.Setup(x => x["UPPERCASE"]).Returns(new DummyEncConverter());
-			m_converters = mockConverters.Object;
+			m_converters = MockRepository.GenerateStub<IEncConverters>();
+			m_converters.Stub(x => x["UPPERCASE"]).Return(new DummyEncConverter());
 			ISCTextEnum textEnum = GetTextEnum(ImportDomain.BackTrans,
 				new ScrReference(40, 0, 0, ScrVers.English),
 				new ScrReference(40, 1, 2, ScrVers.English));
@@ -1403,9 +1400,6 @@ namespace ParatextImport
 			Assert.That(textSeg.Text, Is.EqualTo(@" verse one text "));
 			Assert.That(textSeg.FirstReference.Chapter, Is.EqualTo(1));
 			Assert.That(textSeg.FirstReference.Verse, Is.EqualTo(1));
-			Assert.That(textSeg.FirstReference.Segment, Is.EqualTo(1));
-			Assert.That(textSeg.LastReference.Verse, Is.EqualTo(1));
-			Assert.That(textSeg.LastReference.Segment, Is.EqualTo(1));
 
 			textSeg = textEnum.Next();
 			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 5");
@@ -1418,8 +1412,6 @@ namespace ParatextImport
 			Assert.That(textSeg.Text, Is.EqualTo(@" verse two text "));
 			Assert.That(textSeg.FirstReference.Chapter, Is.EqualTo(1));
 			Assert.That(textSeg.FirstReference.Verse, Is.EqualTo(2));
-			Assert.That(textSeg.LastReference.Chapter, Is.EqualTo(1));
-			Assert.That(textSeg.LastReference.Verse, Is.EqualTo(2));
 
 			textSeg = textEnum.Next();
 			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 7");
@@ -1917,7 +1909,143 @@ namespace ParatextImport
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Jira number for this is TE-147
+		/// Test the GetBooksForFile method with a single book per a file
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void BooksInFile()
+		{
+			string file1 = m_fileOs.MakeSfFile("MAT",
+				new string[] { @"\c 1", @"\v 1" });
+			m_settings.AddFile(file1, ImportDomain.Main, null, null);
+
+			// three books in file
+			string file2 = m_fileOs.MakeSfFile("GAL",
+				new string[] { @"\c 1", @"\v 1", @"\id EPH", @"\c 1", @"\v 1", @"\id PHP", @"\c 1", @"\v 1" });
+			m_settings.AddFile(file2, ImportDomain.Main, null, null);
+
+			// check file with one book
+			ImportFileSource source = m_settings.GetImportFiles(ImportDomain.Main);
+			IEnumerator sourceEnum = source.GetEnumerator();
+			sourceEnum.MoveNext();
+			ScrImportFileInfo info = (ScrImportFileInfo)sourceEnum.Current;
+			List<int> bookList1 = info.BooksInFile;
+			Assert.That(bookList1.Count, Is.EqualTo(1));
+			Assert.That(bookList1[0], Is.EqualTo(40));
+
+			// check file with three books
+			sourceEnum.MoveNext();
+			info = (ScrImportFileInfo)sourceEnum.Current;
+			List<int> bookList2 = info.BooksInFile;
+			Assert.That(bookList2.Count, Is.EqualTo(3));
+			Assert.That(bookList2[0], Is.EqualTo(48));
+			Assert.That(bookList2[1], Is.EqualTo(49));
+			Assert.That(bookList2[2], Is.EqualTo(50));
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Jira number for this is TE-1475
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void SfSpaceDelimitedInlineBackslashMarkers()
+		{
+			string filename = m_fileOs.MakeSfFile("EPH",
+				new string[] { @"\c 1", @"\v 1 This don't work\f Footnote.\fe." });
+			m_settings.AddFile(filename, ImportDomain.Main, null, null);
+			Assert.That(m_settings.GetMappingListForDomain(ImportDomain.Main).Count, Is.EqualTo(3));
+			m_settings.SetMapping(MappingSet.Main, new ImportMappingInfo(@"\f ", @"\fe", false,
+				MappingTargetType.TEStyle, MarkerDomain.Footnote, "Note General Paragraph", null));
+			Assert.That(m_settings.GetMappingListForDomain(ImportDomain.Main).Count, Is.EqualTo(4));
+			ImportMappingInfo mapping = m_settings.MappingForMarker(@"\f ", MappingSet.Main);
+			Assert.That(mapping.BeginMarker, Is.EqualTo(@"\f "));
+			Assert.That(mapping.EndMarker, Is.EqualTo(@"\fe"));
+			Assert.That(mapping.IsInline, Is.EqualTo(true));
+
+			ISCTextEnum textEnum = GetTextEnum(ImportDomain.Main,
+				new ScrReference(49, 0, 0, ScrVers.English), new ScrReference(49, 1, 1, ScrVers.English));
+
+			ISCTextSegment textSeg = textEnum.Next();
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 1");
+			Assert.That(textSeg.Marker, Is.EqualTo(@"\id"));
+			Assert.That(textSeg.Text, Is.EqualTo("EPH "));
+
+			textSeg = textEnum.Next();
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 2");
+			Assert.That(textSeg.Marker, Is.EqualTo(@"\c"));
+			Assert.That(textSeg.Text, Is.EqualTo(@" "));
+
+			textSeg = textEnum.Next();
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 3");
+			Assert.That(textSeg.Marker, Is.EqualTo(@"\v"));
+			Assert.That(textSeg.Text, Is.EqualTo(" This don't work"));
+
+			textSeg = textEnum.Next();
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 4");
+			Assert.That(textSeg.Marker, Is.EqualTo(@"\f "));
+			Assert.That(textSeg.Text, Is.EqualTo("Footnote."));
+
+			textSeg = textEnum.Next();
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 5");
+			Assert.That(textSeg.Marker, Is.EqualTo(@"\fe"));
+			Assert.That(textSeg.Text, Is.EqualTo(". "));
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Jira number for this is TE-1350
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		[Test]
+		public void SfDroppedSpaceAfterEndingBackslashMarkers()
+		{
+			// FYI: this data intentionally includes a spurious space following "don't" and
+			// another following "Footnote."
+			string filename = m_fileOs.MakeSfFile("EPH",
+				new string[] { @"\c 1", @"\v 1 This don't \f Footnote. \fe work." });
+			m_settings.AddFile(filename, ImportDomain.Main, null, null);
+			Assert.That(m_settings.GetMappingListForDomain(ImportDomain.Main).Count, Is.EqualTo(3));
+			m_settings.SetMapping(MappingSet.Main, new ImportMappingInfo(@"\f ", @"\fe", false,
+				MappingTargetType.TEStyle, MarkerDomain.Footnote, "Note General Paragraph", null));
+			Assert.That(m_settings.GetMappingListForDomain(ImportDomain.Main).Count, Is.EqualTo(4));
+			ImportMappingInfo mapping = m_settings.MappingForMarker(@"\f ", MappingSet.Main);
+			Assert.That(mapping.BeginMarker, Is.EqualTo(@"\f "));
+			Assert.That(mapping.EndMarker, Is.EqualTo(@"\fe"));
+			Assert.That(mapping.IsInline, Is.EqualTo(true));
+
+			ISCTextEnum textEnum = GetTextEnum(ImportDomain.Main,
+				new ScrReference(49, 0, 0, ScrVers.English), new ScrReference(49, 1, 1, ScrVers.English));
+
+			ISCTextSegment textSeg = textEnum.Next();
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 1");
+			Assert.That(textSeg.Marker, Is.EqualTo(@"\id"));
+			Assert.That(textSeg.Text, Is.EqualTo("EPH "));
+
+			textSeg = textEnum.Next();
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 2");
+			Assert.That(textSeg.Marker, Is.EqualTo(@"\c"));
+			Assert.That(textSeg.Text, Is.EqualTo(@" "));
+
+			textSeg = textEnum.Next();
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 3");
+			Assert.That(textSeg.Marker, Is.EqualTo(@"\v"));
+			Assert.That(textSeg.Text, Is.EqualTo(" This don't "));
+
+			textSeg = textEnum.Next();
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 4");
+			Assert.That(textSeg.Marker, Is.EqualTo(@"\f "));
+			Assert.That(textSeg.Text, Is.EqualTo("Footnote. "));
+
+			textSeg = textEnum.Next();
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment 5");
+			Assert.That(textSeg.Marker, Is.EqualTo(@"\fe"));
+			Assert.That(textSeg.Text, Is.EqualTo(" work. "));
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Test character styles embedded in footnotes
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]

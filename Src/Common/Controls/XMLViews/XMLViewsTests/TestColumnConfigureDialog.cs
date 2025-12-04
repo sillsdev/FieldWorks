@@ -88,7 +88,7 @@ namespace XMLViewsTests
 				window.Show();
 				window.optionsList.Items[0].Selected = true;
 				window.addButton.PerformClick();
-				Assert.That("analysis", Is.EqualTo(((WsComboItem)window.wsCombo.SelectedItem).Id), "Default analysis should be selected for 'analysis vernacular' ws");
+				Assert.That(((WsComboItem)window.wsCombo.SelectedItem).Id, Is.EqualTo("analysis"), "Default analysis should be selected for 'analysis vernacular' ws");
 			}
 		}
 		#endregion
