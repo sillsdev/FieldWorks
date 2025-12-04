@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: cb92de32746951c55376a7c729623b1a056286d6de6d30c6ea3f9784591ca81f
+last-reviewed-tree: 6eff5a0c5e237f35fa511195a7cf7a5bb7ec4c9cf3b6dec768ded6e91032b3f8
 status: draft
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/Common/ScriptureUtils. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # ScriptureUtils COPILOT summary
 
@@ -59,118 +55,38 @@ C# class library (.NET Framework 4.8.x) with Paratext integration components. Im
   - Standard reference sorting (Genesis before Exodus, etc.)
 
 ## Technology Stack
-- C# .NET Framework 4.8.x (net8)
-- OutputType: Library
-- Paratext API integration (external dependency)
-- SIL.LCModel.Core.Scripture for scripture data types
+C# .NET Framework 4.8.x, Paratext API integration, SIL.LCModel.Core.Scripture.
 
 ## Dependencies
-
-### Upstream (consumes)
-- **Paratext libraries**: External Paratext API for project access
-- **SIL.LCModel**: Data model (IScrImportSet, scripture domain objects)
-- **SIL.LCModel.DomainServices**: Domain service layer
-- **SIL.LCModel.Core.Scripture**: Scripture data types and interfaces (IScriptureProvider*, BCVRef)
-- **SIL.Reporting**: Error reporting
-
-### Downstream (consumed by)
-- **Scripture editing components**: Use Paratext integration
-- **Import/export tools**: ParatextImport uses these utilities
-- **Interlinear tools**: Access scripture via providers
-- Any FieldWorks component requiring Paratext integration
+- Upstream: Paratext libraries, SIL.LCModel, SIL.LCModel.Core.Scripture
+- Downstream: ParatextImport, Scripture editing, Interlinear tools
 
 ## Interop & Contracts
-- **IParatextHelper**: Contract for Paratext project management
-- **IScrText**: Contract abstracting scripture text sources
-- **IScriptureProvider* interfaces**: Stylesheet, parser, book set providers
-- Adapts external Paratext API to FieldWorks interfaces
+IParatextHelper, IScrText, IScriptureProvider* interfaces adapt Paratext API to FieldWorks.
 
 ## Threading & Performance
-- Single-threaded access to Paratext projects
-- File I/O for Paratext project discovery and access
-- Performance depends on Paratext project size and file system
+Single-threaded Paratext access, performance depends on project size and file I/O.
 
 ## Config & Feature Flags
-- No explicit configuration
-- Paratext project paths determined by Paratext installation
-- Import settings controlled via IScrImportSet
+No explicit config, Paratext paths determined by installation, import settings via IScrImportSet.
 
 ## Build Information
-- **Project file**: ScriptureUtils.csproj (net48, OutputType=Library)
-- **Test project**: ScriptureUtilsTests/ScriptureUtilsTests.csproj
-- **Output**: ScriptureUtils.dll
-- **Build**: Via top-level FieldWorks.sln or: `msbuild ScriptureUtils.csproj /p:Configuration=Debug`
-- **Run tests**: `dotnet test ScriptureUtilsTests/ScriptureUtilsTests.csproj`
+ScriptureUtils.csproj (net48) → ScriptureUtils.dll.
 
 ## Interfaces and Data Models
-
-- **IParatextHelper** (ParatextHelper.cs)
-  - Purpose: Contract for accessing Paratext projects and utilities
-  - Inputs: Project identifiers, import settings
-  - Outputs: Project lists, IScrText instances, mappings
-  - Notes: Implemented by ParatextHelper
-
-- **IScrText** (ParatextHelper.cs)
-  - Purpose: Abstraction of scripture text source (Paratext project or other)
-  - Inputs: N/A (properties)
-  - Outputs: Stylesheet, parser, book set, project metadata
-  - Notes: Implemented by PT7ScrTextWrapper for Paratext 7 projects
-
-- **PT7ScrTextWrapper** (PT7ScrTextWrapper.cs)
-  - Purpose: Adapts Paratext 7 ScrText objects to IScrText interface
-  - Inputs: Paratext 7 ScrText object
-  - Outputs: IScrText interface implementation
-  - Notes: Bridge between Paratext API and FieldWorks
-
-- **Paratext7Provider** (Paratext7Provider.cs)
-  - Purpose: Provider for Paratext data access
-  - Inputs: Project references
-  - Outputs: Scripture data from Paratext projects
-  - Notes: Implements provider pattern for data exchange
-
-- **ScriptureProvider** (ScriptureProvider.cs)
-  - Purpose: Base provider for scripture text access
-  - Inputs: Scripture references
-  - Outputs: Scripture text and metadata
-  - Notes: Base class for specific providers
-
-- **ScrReferencePositionComparer** (ScrReferencePositionComparer.cs)
-  - Purpose: Compares scripture references by position within text
-  - Inputs: Two scripture references
-  - Outputs: Comparison result (-1, 0, 1)
-  - Notes: Used for document order sorting
-
-- **ScriptureReferenceComparer** (ScriptureReferenceComparer.cs)
-  - Purpose: Compares scripture references by canonical book order
-  - Inputs: Two scripture references
-  - Outputs: Comparison result (-1, 0, 1)
-  - Notes: Standard reference sorting (Genesis < Exodus < Matthew < etc.)
+IParatextHelper, IScrText, PT7ScrTextWrapper, Paratext7Provider, ScriptureProvider, ScrReferencePositionComparer, ScriptureReferenceComparer.
 
 ## Entry Points
-Referenced as library for Paratext integration and scripture utilities. Used by import tools and scripture editing components.
+Library for Paratext integration, used by import and scripture editing.
 
 ## Test Index
-- **Test project**: ScriptureUtilsTests
-- **Run tests**: `dotnet test ScriptureUtilsTests/ScriptureUtilsTests.csproj`
-- **Coverage**: Paratext integration, reference comparison
+ScriptureUtilsTests validates Paratext integration and reference comparison.
 
 ## Usage Hints
-- Use IParatextHelper to discover and access Paratext projects
-- PT7ScrTextWrapper adapts Paratext objects to FieldWorks interfaces
-- Use ScriptureReferenceComparer for canonical sorting of references
-- Use ScrReferencePositionComparer for document order sorting
-- Requires Paratext to be installed for full functionality
+Use IParatextHelper for project discovery, PT7ScrTextWrapper for adaptation, comparers for reference sorting.
 
 ## Related Folders
-- **ParatextImport/**: Uses ScriptureUtils for importing Paratext data
-- **Paratext8Plugin/**: Newer Paratext 8 integration (parallel infrastructure)
-- **SIL.LCModel**: Scripture data model
-- Scripture editing components throughout FieldWorks
+ParatextImport, Paratext8Plugin, SIL.LCModel.
 
 ## References
-- **Project files**: ScriptureUtils.csproj (net48), ScriptureUtilsTests/ScriptureUtilsTests.csproj
-- **Target frameworks**: .NET Framework 4.8.x
-- **Key C# files**: ParatextHelper.cs, PT7ScrTextWrapper.cs, Paratext7Provider.cs, ScriptureProvider.cs, ScrReferencePositionComparer.cs, ScriptureReferenceComparer.cs, AssemblyInfo.cs
-- **Total lines of code**: 1670
-- **Output**: Output/Debug/ScriptureUtils.dll
-- **Namespace**: SIL.FieldWorks.Common.ScriptureUtils
+See `.cache/copilot/diff-plan.json` for file details.

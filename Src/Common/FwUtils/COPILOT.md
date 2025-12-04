@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: 12665002bd1019cf1ba0bc6eca36f65935440d8ff112f4332db5286cef14d500
+last-reviewed-tree: d38944223cf9964a8fc9472851eaee46494f187d59d185c55d16e79acc66ee66
 status: draft
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/Common/FwUtils. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # FwUtils COPILOT summary
 
@@ -52,67 +48,37 @@ C# class library (.NET Framework 4.8.x) with ~80 utility classes covering divers
 
 ## Technology Stack
 - C# .NET Framework 4.8.x (net8)
-- OutputType: Library
-- Windows Registry API
-- System.Xml for XML serialization
-- Image processing libraries
-- Audio conversion libraries
 
 ## Dependencies
-
-### Upstream (consumes)
-- .NET Framework 4.8.x
-- Windows Registry API
-- System.Xml
-- Minimal external dependencies (self-contained utilities)
-
-### Downstream (consumed by)
-- All Common subprojects (Framework, Filters, Controls, etc.)
-- All FieldWorks applications (xWorks, LexText, etc.)
-- Foundational library used throughout FieldWorks
+- Upstream: Core libraries
+- Downstream: Applications
 
 ## Interop & Contracts
 - IFwRegistryHelper: Contract for registry access
-- COM interop helpers (ActivationContextHelper)
-- P/Invoke for Windows APIs
 
 ## Threading & Performance
 - ThreadHelper: UI thread marshaling utilities
-- Benchmark, TimeRecorder: Performance measurement
-- Threading utilities for cross-thread operations
 
 ## Config & Feature Flags
 - FwApplicationSettings: Application-level settings
-- FwRegistrySettings: Registry-based configuration
-- No feature flags; behavior controlled by settings
 
 ## Build Information
-- **Project file**: FwUtils.csproj (net48, OutputType=Library)
-- **Test project**: FwUtilsTests/FwUtilsTests.csproj
-- **Output**: FwUtils.dll
-- **Build**: Via top-level FieldWorks.sln or: `msbuild FwUtils.csproj /p:Configuration=Debug`
-- **Run tests**: `dotnet test FwUtilsTests/FwUtilsTests.csproj`
+- Project file: FwUtils.csproj (net48, OutputType=Library)
 
 ## Interfaces and Data Models
-See utility classes for specific interfaces and data models. Contains numerous helper classes and extension methods.
+See Key Components section above.
 
 ## Entry Points
 Referenced as library by all FieldWorks components. No executable entry point.
 
 ## Test Index
-- **Test project**: FwUtilsTests
-- **Run tests**: `dotnet test FwUtilsTests/FwUtilsTests.csproj`
+- Test project: FwUtilsTests
 
 ## Usage Hints
 Reference FwUtils in consuming projects for utility functions. Use utility classes as static helpers or instantiate as needed.
 
 ## Related Folders
-- **All Common subfolders**: Use FwUtils for utility functions
-- **All FieldWorks applications**: Depend on FwUtils
+- All Common subfolders: Use FwUtils for utility functions
 
 ## References
-- **Project files**: FwUtils.csproj (net48), FwUtilsTests/FwUtilsTests.csproj
-- **Target frameworks**: .NET Framework 4.8.x
-- **Total lines of code**: ~19000
-- **Output**: Output/Debug/FwUtils.dll
-- **Namespace**: SIL.FieldWorks.Common.FwUtils
+See `.cache/copilot/diff-plan.json` for file details.
