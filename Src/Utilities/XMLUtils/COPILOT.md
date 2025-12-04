@@ -4,6 +4,20 @@ last-reviewed-tree: c4dabaab932c5c8839a003cb0c26dfa70f6ee4c1e70cf1f07e62c6558ec0
 status: production
 ---
 
+<!-- copilot:auto-change-log start -->
+## Change Log (auto)
+
+- Snapshot: HEAD~1
+- Risk: none
+- Files: 0 (code=0, tests=0, resources=0)
+
+### Prompt seeds
+- Update COPILOT.md for Src/Utilities/XMLUtils. Prioritize Purpose/Architecture sections using planner data.
+- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
+- Finish with verification notes and TODOs for manual testing.
+<!-- copilot:auto-change-log end -->
+
+
 # XMLUtils
 
 ## Purpose
