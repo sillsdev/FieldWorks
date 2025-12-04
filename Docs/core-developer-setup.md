@@ -31,6 +31,9 @@ Required for building the installer:
 # Run Setup-Developer-Machine.ps1 to install automatically
 .\Setup-Developer-Machine.ps1
 
+# Also set up installer helper repositories
+.\Setup-Developer-Machine.ps1 -InstallerDeps
+
 # Or install manually:
 # Download from https://github.com/wixtoolset/wix3/releases/tag/wix3141rtm
 # Extract to C:\Wix314 or another location
@@ -56,6 +59,9 @@ candle.exe -?
 
 # Check Git
 git --version
+
+# Verify installer build prerequisites
+.\Build\Agent\Setup-InstallerBuild.ps1 -ValidateOnly
 ```
 
 ## Additional Setup

@@ -492,6 +492,42 @@
       "dependsOrder": "sequence",
       "detail": "Runs all environment verification steps in order"
     },
+    {
+      "label": "Installer: Validate prerequisites",
+      "type": "shell",
+      "command": ".\\Build\\Agent\\Setup-InstallerBuild.ps1 -ValidateOnly",
+      "detail": "Validates WiX, VS, and helper repos for installer builds",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Installer: Setup for patch builds",
+      "type": "shell",
+      "command": ".\\Build\\Agent\\Setup-InstallerBuild.ps1 -SetupPatch",
+      "detail": "Downloads base build artifacts needed for patch installer builds",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      },
+      "problemMatcher": []
+    },
     // ==================== Container/Agent Tasks ====================
     // These tasks use Invoke-AgentTask.ps1 for container-aware builds
     {
@@ -584,6 +620,13 @@
       "problemMatcher": [],
       "group": "test",
       "detail": "Run tests using container-aware agent task with vstest.console"
+    },
+    {
+      "label": "Container: Test VS Environment",
+      "type": "shell",
+      "command": ".\\scripts\\Agent\\Test-ContainerEnv.ps1",
+      "problemMatcher": [],
+      "detail": "Verify Visual Studio build tools are available in the container"
     }
   ]
 }

@@ -2569,7 +2569,7 @@ namespace SIL.FieldWorks
 							retry = (dlg.ShowDialog() == DialogResult.Retry);
 						}
 					}
-					catch (FailedFwRestoreException e)
+					catch (FailedFwRestoreException)
 					{
 						MessageBoxUtils.Show(Properties.Resources.ksRestoringOldFwBackupFailed, Properties.Resources.ksFailed);
 					}
@@ -2806,8 +2806,6 @@ namespace SIL.FieldWorks
 				// not even be one that was migrated. But it will probably work for most users.
 				if (newDir.ToLowerInvariant() != oldDir.ToLowerInvariant())
 					return;
-					// TODO-Linux: Help is not implemented in Mono
-					const string helpTopic = "/User_Interface/Menus/File/Project_Properties/Review_the_location_of_Linked_Files.htm";
 				DialogResult res = MessageBox.Show(Properties.Resources.ksProjectLinksStillOld,
 						Properties.Resources.ksReviewLocationOfLinkedFiles,
 						MessageBoxButtons.YesNo, MessageBoxIcon.None,
@@ -3745,7 +3743,7 @@ namespace SIL.FieldWorks
 						HandleLinkRequest(appArgs);
 						return s_projectId;
 					}
-					catch (Exception e)
+					catch (Exception)
 					{
 						//This is not good.
 					}

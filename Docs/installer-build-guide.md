@@ -4,6 +4,18 @@ This guide explains how to build FieldWorks installers locally and describes the
 
 > **Note:** FieldWorks is **x64-only**. The x86 (32-bit) platform is no longer supported.
 
+## Quick Start
+
+Use the installer setup script to validate your environment:
+
+```powershell
+# Validate prerequisites (no changes)
+.\Build\Agent\Setup-InstallerBuild.ps1 -ValidateOnly
+
+# Full setup including patch build artifacts
+.\Build\Agent\Setup-InstallerBuild.ps1 -SetupPatch
+```
+
 ## Prerequisites
 
 ### Required Software
@@ -14,7 +26,21 @@ This guide explains how to build FieldWorks installers locally and describes the
 3. **MSBuild** (included with VS 2022)
 4. **.NET Framework 4.8.1 SDK** (included with VS 2022)
 
+### One-Time Setup
+
+Run the developer machine setup script to install WiX and configure your environment:
+
+```powershell
+# Install WiX and configure PATH/environment variables
+.\Setup-Developer-Machine.ps1
+
+# Also clone installer helper repositories
+.\Setup-Developer-Machine.ps1 -InstallerDeps
+```
+
 ### Repository Setup
+
+If not using `Setup-Developer-Machine.ps1 -InstallerDeps`, clone manually:
 
 ```powershell
 # Clone main repository

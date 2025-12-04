@@ -30,8 +30,6 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private readonly IDictConfigViewer m_viewer;
 
-		private Inventory m_layouts;
-		private Inventory m_parts;
 		protected Dictionary<string, DictConfigItem> m_configList;
 
 		protected string m_originalView;

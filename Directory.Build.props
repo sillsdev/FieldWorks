@@ -3,6 +3,28 @@
 		<!-- Suppress NU1903 security warning for DotNetZip -->
 		<!-- This is a known issue with an old version; upgrade not currently feasible -->
 		<NoWarn>$(NoWarn);NU1903</NoWarn>
+		<!--
+			CS0649: Field 'field' is never assigned to, and will always have its default value null
+			This is common in WinForms designer-generated code where 'components' field is
+			declared but only assigned if InitializeComponent adds components to it.
+			The null check in Dispose() handles this correctly.
+		-->
+		<NoWarn>$(NoWarn);CS0649</NoWarn>
+		<!--
+			Global TreatWarningsAsErrors Policy:
+			All C# projects treat warnings as errors to maintain code quality.
+			Projects should NOT override this. If a specific warning is unavoidable,
+			add it to NoWarn above with a comment explaining why.
+
+			Note: Some MSBuild warnings cannot be suppressed and appear during build:
+			- MSB3277/MSB3243: External NuGet package version conflicts (ParatextData, ParatextShared)
+			  These are informational only - binding redirects in App.config handle runtime resolution.
+			- "Missing Palaso native files": Windows-only interop DLLs (Keyman, irrKlang, Interop.WIA)
+			  Expected in Docker containers where these optional native dependencies aren't needed.
+			  Full functionality requires a native Windows build environment.
+			These warnings do NOT fail the build.
+		-->
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<!-- Default all managed projects to x64 unless explicitly overridden -->
 		<PlatformTarget Condition="'$(PlatformTarget)' == ''">x64</PlatformTarget>
 		<Platforms Condition="'$(Platforms)' == ''">x64</Platforms>
@@ -44,6 +66,14 @@
 			- Force consistent version to ensure binding redirects are generated
 		-->
 		<PackageReference Include="Microsoft.Bcl.HashCode" Version="6.0.0" />
+		<!--
+			Localization package references:
+			These packages contain XLIFF translation files used by Build/Localize.targets.
+			Adding them globally ensures they're restored to packages/ for the build process.
+			ExcludeAssets prevents them from adding compile-time or runtime dependencies.
+		-->
+		<PackageReference Include="SIL.Chorus.L10ns" Version="3.0.1" ExcludeAssets="all" />
+		<PackageReference Include="SIL.LibPalaso.L10ns" Version="17.0.0-*" ExcludeAssets="all" />
 	</ItemGroup>
 	<PropertyGroup Label="AssemblyInfo Policy">
 		<!--
@@ -67,8 +97,9 @@
 			Unified Intermediate Output Policy:
 			All SDK-style projects use the root Obj/ folder (gitignored) instead of per-project obj/ folders.
 			This prevents conflicts between host and container builds when worktrees are mounted.
-			- Host builds: $(FwRoot)Obj/<ProjectName>/
-			- Container builds: C:\Temp\Obj/<ProjectName>/ (local storage, not mounted)
+			Configuration is included in the path to prevent stale artifacts when switching Debug/Release.
+			- Host builds: $(FwRoot)Obj/$(Configuration)/<ProjectName>/
+			- Container builds: C:\Temp\Obj/$(Configuration)/<ProjectName>/ (local storage, not mounted)
 
 			Note: WPF markup compilation creates temp projects like "ProjectName_abc123_wpftmp".
 			We detect this via the _wpftmp suffix and use the original project's intermediate directory
@@ -79,8 +110,8 @@
 		<!-- For WPF temp projects, derive the real name from the project file path's directory name -->
 		<_RealProjectName Condition="'$(_IsWpfTempProject)' != 'true'">$(MSBuildProjectName)</_RealProjectName>
 		<_RealProjectName Condition="'$(_IsWpfTempProject)' == 'true'">$([System.IO.Path]::GetFileName($([System.IO.Path]::GetDirectoryName($(MSBuildProjectFullPath)))))</_RealProjectName>
-		<BaseIntermediateOutputPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'">$(FwRoot)Obj\$(_RealProjectName)\</BaseIntermediateOutputPath>
-		<BaseIntermediateOutputPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">C:\Temp\Obj\$(_RealProjectName)\</BaseIntermediateOutputPath>
+		<BaseIntermediateOutputPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'">$(FwRoot)Obj\$(Configuration)\$(_RealProjectName)\</BaseIntermediateOutputPath>
+		<BaseIntermediateOutputPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">C:\Temp\Obj\$(Configuration)\$(_RealProjectName)\</BaseIntermediateOutputPath>
 		<MSBuildProjectExtensionsPath>$(BaseIntermediateOutputPath)</MSBuildProjectExtensionsPath>
 		<RestoreOutputPath>$(BaseIntermediateOutputPath)</RestoreOutputPath>
 		<!-- Container-specific: use local package cache to avoid mount I/O issues -->
@@ -106,6 +137,37 @@
 			Nested test folders must also be explicitly excluded.
 		-->
 	</ItemGroup>
+
+	<!--
+		Stale obj/ Folder Policy:
+		Since SDK migration, intermediate output uses centralized locations:
+		- Host builds: $(FwRoot)Obj/$(Configuration)/<ProjectName>/
+		- Container builds: C:\Temp\Obj/$(Configuration)/<ProjectName>/
+
+		Old per-project obj/ folders (Src/**/obj/) should not exist.
+		If they do, build.ps1 automatically removes them before building.
+
+		IMPORTANT: Do NOT use ItemGroup Remove patterns here to exclude stale files.
+		The SDK's GenerateTargetFrameworkMonikerAttribute target adds files AFTER
+		Directory.Build.props is evaluated, so such patterns are ineffective.
+		The cleanup in build.ps1 is the correct solution.
+
+		If you encounter CS0579 duplicate attribute errors, run:
+		  Get-ChildItem -Path Src -Filter obj -Directory -Recurse | Remove-Item -Recurse -Force
+		Or simply run .\build.ps1 which does this automatically.
+	-->
+	<!--
+		WPF/XAML Compilation Memory Optimization:
+		XAML compilation can cause OOM errors in memory-constrained builds (containers, parallel builds).
+		These settings help reduce memory pressure:
+		- XamlDebuggingInformation: Disable extra debugging info in Release (smaller assemblies)
+		- UseRidGraph: Use RID graph directly instead of creating temp projects
+	-->
+	<PropertyGroup Condition="'$(UseWPF)' == 'true'">
+		<XamlDebuggingInformation Condition="'$(Configuration)' == 'Release'">false</XamlDebuggingInformation>
+		<UseRidGraph>true</UseRidGraph>
+	</PropertyGroup>
+
 	<!-- Modern test infrastructure for all test projects -->
 	<PropertyGroup Condition="'$(IsTestProject)' == 'true'">
 		<!-- For .NET Framework projects, ensure NuGet package assemblies are copied to output directory -->

@@ -165,7 +165,7 @@
 	<ItemGroup>
 		<CellarConstantsInputs Include="$(LcmModelArtifactsDir)/MasterLCModel.xml" />
 		<CellarConstantsInputs Include="$(fwrt)/Src/Kernel/CellarConstants.vm.h" />
-		<CellarConstantsOutputs Include="$(fwrt)/Output/Common/CellarConstants.h" />
+		<CellarConstantsOutputs Include="$(dir-fwoutputCommon)/CellarConstants.h" />
 	</ItemGroup>
 	<Target
 		Name="GenerateCellarConstants"
@@ -186,12 +186,12 @@
 	<Target
 		Name="CopyCellarBaseConstants"
 		Inputs="$(fwrt)/Src/Kernel/CellarBaseConstants.h"
-		Outputs="$(fwrt)/Output/Common/CellarBaseConstants.h"
+		Outputs="$(dir-fwoutputCommon)/CellarBaseConstants.h"
 	>
 		<MakeDir Directories="$(dir-fwoutputCommon)" Condition="'$(action)'!='clean'" />
 		<Copy
 			SourceFiles="$(fwrt)/Src/Kernel/CellarBaseConstants.h"
-			DestinationFolder="$(fwrt)/Output/Common"
+			DestinationFolder="$(dir-fwoutputCommon)"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
 			Condition="'$(action)'!='clean'"
@@ -696,6 +696,22 @@
 				Condition="Exists('%(Identity)')"
 			/>
 		</ItemGroup>
+		<!--
+			Expected Warning: "Missing Palaso native files"
+			These are Windows-only native interop DLLs for optional features:
+			- Keyman*Interop.dll, KeymanLink.dll: Keyman keyboard integration
+			- irrKlang.NET4.dll: Audio playback via irrKlang engine
+			- Interop.WIA.dll: Windows Image Acquisition for scanning
+			- NDesk.DBus.dll.config: Linux D-Bus configuration (not needed on Windows)
+
+			This warning is EXPECTED in Docker containers and CI environments where:
+			1. These optional native dependencies aren't installed
+			2. The NuGet packages don't include all platform-specific files
+			3. Full functionality requires a complete Windows development environment
+
+			The warning does NOT fail the build. Features using these DLLs will gracefully
+			degrade or show appropriate error messages at runtime if the files are missing.
+		-->
 		<Warning
 			Text="Missing Palaso native files (skipping): @(PalasoFiles)"
 			Condition="'@(ExistingPalasoFiles)'!='' AND '@(PalasoFiles)'!='@(ExistingPalasoFiles)'"

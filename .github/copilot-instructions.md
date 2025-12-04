@@ -16,7 +16,7 @@
 - Keep localization via `.resx` and respect `crowdin.json`; never hardcode translatable strings.
 - Avoid COM/registry edits without a test plan and container-safe execution (see `scripts/spin-up-agents.ps1`).
 - Stay within documented tooling—no surprise dependencies or scripts without updating instructions.
-- **Terminal commands**: If auto-approved, run commands individually, not chained with `;` or `&`. Separate `run_in_terminal` calls auto-approve faster and avoid security blocks.
+- **Terminal commands**: For auto-approval, avoid pipes (`|`), semicolons (`;`), `&&`, and `2>&1`. Check `scripts/Agent/` for wrapper scripts that handle complex operations.
 
 ## Build & Test Essentials
 - Prerequisites: install VS 2022 Desktop workloads, WiX 3.14.x (pre-installed on windows-latest), Git, LLVM/clangd + standalone OmniSharp (for Serena C++/C# support), and optional Crowdin CLI only when needed.
@@ -34,6 +34,7 @@
   ```
 - Tests: follow `.github/instructions/testing.instructions.md`; use VS Test Explorer or `vstest.console.exe` for managed tests.
 - Installer edits must follow `.github/instructions/installer.instructions.md` plus WiX validation before PR.
+- Installer builds: use `.\Build\Agent\Setup-InstallerBuild.ps1 -ValidateOnly` to check prerequisites, `-SetupPatch` for patch builds.
 
 ## Workflow Shortcuts
 | Task | Reference |
@@ -42,7 +43,7 @@
 | Managed / Native / Installer guidance | `.github/instructions/managed.instructions.md`, `.github/instructions/native.instructions.md`, `.github/instructions/installer.instructions.md` |
 | Security & PowerShell rules | `.github/instructions/security.instructions.md`, `.github/instructions/powershell.instructions.md` |
 | **Serena MCP (symbol tools)** | `.github/instructions/serena.instructions.md` |
-| **Environment setup scripts** | `Build/Agent/Setup-FwBuildEnv.ps1`, `Build/Agent/Verify-FwDependencies.ps1`, `Build/Agent/Setup-Serena.ps1` |
+| **Agent wrapper scripts** | `scripts/Agent/` - build, test, git and container helpers for auto-approval |
 | Prompts & specs | `.github/prompts/*.prompt.md`, `.github/spec-templates/`, `.github/recipes/` |
 | Chat modes | `.github/chatmodes/*.chatmode.md` |
 
@@ -80,10 +81,33 @@
   - Analyzer/lint warnings addressed.
 
 ## Containers & Agent Worktrees
-- Paths containing `\worktrees\agent-<N>` must build inside Docker container `fw-agent-<N>`: `docker exec fw-agent-<N> powershell -NoProfile -c "msbuild <solution> /m /p:Configuration=Debug"`.
-- Never run MSBuild directly on the host for agent worktrees; COM/registry access must stay containerized.
-- Prefer VS Code tasks (Restore + Build Debug) inside worktrees; only use host for read-only git/file operations.
-- For the main repo checkout, run `.\build.ps1 -Configuration Debug` or `msbuild dirs.proj` directly.
+- Paths containing `\worktrees\agent-<N>` automatically build inside Docker container `fw-agent-<N>`.
+- **Just run `.\build.ps1` or `.\test.ps1`** - they auto-detect worktrees and respawn in the container.
+- For the main repo checkout, scripts run directly on the host.
+- Use `-NoDocker` only if you need to bypass container detection.
+
+### Build & Test Commands (ALWAYS use the scripts)
+```powershell
+# Build (auto-detects container for worktrees)
+.\build.ps1
+.\build.ps1 -Configuration Release
+.\build.ps1 -BuildTests
+
+# Test (auto-detects container for worktrees)
+.\test.ps1
+.\test.ps1 -TestFilter "TestCategory!=Slow"
+.\test.ps1 -TestProject "Src/Common/FwUtils/FwUtilsTests"
+.\test.ps1 -NoBuild  # Skip build, use existing binaries
+
+# Both scripts automatically:
+# - Detect worktree paths (worktrees/agent-N)
+# - Check if container fw-agent-N is running
+# - Respawn inside container if available
+# - Clean stale obj/ folders and conflicting processes
+# - Set up VS environment
+```
+
+**DO NOT** use raw `docker exec` or `msbuild` directly - let the scripts handle it.
 
 ## Where to Make Changes
 - Source: `Src/` contains managed/native projects—mirror existing patterns and keep tests near the code (`Src/<Component>.Tests`).

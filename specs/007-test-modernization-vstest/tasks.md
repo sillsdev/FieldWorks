@@ -267,6 +267,32 @@
 - [x] T021 Update `Src/Common/COPILOT.md` (and other relevant `COPILOT.md` files) to reflect the new test runner infrastructure and VSTest usage.
       *Updated: `.github/instructions/testing.instructions.md` and `.github/copilot-instructions.md`*
 
+### Phase 6: Build Quality - Treat Warnings as Errors
+*Goal: Enforce warning-free builds across all projects while documenting unavoidable external package warnings.*
+
+- [x] T056 [Build] Document MSB3277/MSB3243 warnings as informational (not suppressible)
+      - MSB3277: SIL.Scripture version conflict (ParatextData depends on 17.0.0, FW uses 16.1.0)
+      - MSB3243: Utilities assembly conflict (unsigned ParatextShared assembly)
+      - These are caused by external NuGet packages and cannot be fixed without upstream changes
+      - Added documentation in `Directory.Build.props` explaining these are expected
+
+- [x] T057 [Build] Remove failed warning suppression attempt
+      - Removed `<MSBuildWarningsAsMessages>` from `Directory.Build.props` (doesn't work for these warnings)
+      - Note: `<NoWarn>MSB3277;MSB3243</NoWarn>` was never added (only works for C# compiler warnings)
+
+- [x] T058 [Build] Establish global TreatWarningsAsErrors policy
+      - Verified `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` is set in `Directory.Build.props`
+      - Added XML comment documenting the policy and expected MSBuild warnings
+
+- [x] T059 [Build] Remove redundant per-project TreatWarningsAsErrors settings
+      - Removed `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` from 101 individual project files
+      - Projects now inherit the global setting from `Directory.Build.props`
+
+- [x] T060 [Build] Fix L10ns package detection in Localize.targets
+      - Used `$([System.IO.Directory]::GetDirectories())` instead of wildcard expansion
+      - Wildcard expansion fails on Docker bind mounts; explicit API call works
+      - L10ns package warnings resolved
+
 ## Dependencies
 
 1. **Setup (T001-T003)** must complete before **Foundational (T004-T009)**.

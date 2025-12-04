@@ -41,6 +41,20 @@
       <IncludeAssets>none</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <!--
+      Localization package references:
+      These packages contain XLIFF translation files used by Build/Localize.targets.
+      They must be explicitly referenced here because NativeBuild.csproj is a traditional
+      MSBuild project, not an SDK-style project, so it doesn't inherit from Directory.Build.props.
+    -->
+    <PackageReference Include="SIL.Chorus.L10ns" Version="3.0.1">
+      <IncludeAssets>none</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="SIL.LibPalaso.L10ns" Version="17.0.0">
+      <IncludeAssets>none</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
   <!-- Override the Build target to call native build instead -->
   <Target Name="Build" DependsOnTargets="allCppNoTest">

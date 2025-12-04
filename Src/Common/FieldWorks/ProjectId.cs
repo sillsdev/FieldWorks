@@ -88,8 +88,6 @@ namespace SIL.FieldWorks
 		}
 		#endregion
 
-		private static string s_localHostName;
-
 		#region Properties
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

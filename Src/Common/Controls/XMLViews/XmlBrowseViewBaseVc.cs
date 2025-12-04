@@ -101,7 +101,9 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private static bool s_haveShownDefaultColumnMessage;
 
+#pragma warning disable CS0414 // Field is assigned but never used - retained for potential future use
 		private bool m_fMultiColumnPreview = false;
+#pragma warning restore CS0414
 		#endregion Data Members
 
 		#region Construction and initialization
@@ -208,7 +210,6 @@ namespace SIL.FieldWorks.Common.Controls
 			SortItemProvider = xbv.SortItemProvider;
 			ComputePossibleColumns();
 			XmlDocument doc = null;
-			string target = null;
 			if (!string.IsNullOrEmpty(savedCols))
 			{
 				doc = GetSavedColumns(savedCols, m_xbv.Mediator, m_xbv.m_bv.PropTable, ColListId);

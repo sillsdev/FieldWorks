@@ -187,7 +187,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// set to null we don't keep a rootsite around.
 		/// </summary>
 		private static WeakReference g_focusRootSite = new WeakReference(null);
-		private IContainer components;
+		private IContainer components = null;
 		/// <summary>True to allow layouts to take place, false otherwise (We use this instead
 		/// of SuspendLayout because SuspendLayout didn't work)</summary>
 		protected bool m_fAllowLayout = true;
@@ -294,7 +294,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// message with the previous language value when we want to set our own that we know.
 		/// If the user causes this message, we do want to change language/keyboard, but not
 		/// if OnGotFocus causes the message.</summary>
+		/// <remarks>Field is assigned in OnSetFocus but not yet read - reserved for future use.</remarks>
+#pragma warning disable CS0414 // Field is assigned but never read
 		private bool m_fHandlingOnGotFocus = false;
+#pragma warning restore CS0414
 
 		/// <summary>
 		/// This tells the rootsite whether to attempt to construct the rootbox automatically

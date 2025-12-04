@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
-using Rhino.Mocks;
+using Moq;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
@@ -96,7 +96,7 @@ namespace SIL.FieldWorks.IText
 				using (var sandbox = new SandboxBase(Cache, m_mediator, m_propertyTable, null, lineChoices, wa.Hvo))
 				{
 					sut.SetSandboxForTesting(sandbox);
-					var mockList = MockRepository.GenerateMock<IComboList>();
+					var mockList = new Mock<IComboList>();
 					sut.SetComboListForTesting(mockList);
 					sut.SetMorphForTesting(0);
 					sut.LoadMorphItems();
@@ -119,8 +119,8 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void MakeCombo_SelectionIsInvalid_Throws()
 		{
-			var vwsel = MockRepository.GenerateMock<IVwSelection>();
-			vwsel.Stub(s => s.IsValid).Return(false);
+			var vwsel = new Mock<IVwSelection>();
+			vwsel.Setup(s => s.IsValid).Returns(false);
 			Assert.That(() => SandboxBase.InterlinComboHandler.MakeCombo(null, vwsel, null, true), Throws.ArgumentException);
 		}
 
@@ -130,22 +130,22 @@ namespace SIL.FieldWorks.IText
 			// Mock the various model objects to avoid having to create entries,
 			// senses, texts, analysis and morph bundles when we really just need to test
 			// the behaviour around a specific set of conditions
-			var glossString = MockRepository.GenerateStub<IMultiUnicode>();
+			var glossString = new Mock<IMultiUnicode>().Object;
 			glossString.Stub(g => g.get_String(Cache.DefaultAnalWs))
 				.Return(TsStringUtils.MakeString("hello", Cache.DefaultAnalWs));
-			var formString = MockRepository.GenerateStub<IMultiString>();
+			var formString = new Mock<IMultiString>().Object;
 			formString.Stub(f => f.get_String(Cache.DefaultVernWs))
 				.Return(TsStringUtils.MakeString("hi", Cache.DefaultVernWs));
-			var sense = MockRepository.GenerateStub<ILexSense>();
-			sense.Stub(s => s.Gloss).Return(glossString);
-			var bundle = MockRepository.GenerateStub<IWfiMorphBundle>();
-			bundle.Stub(b => b.Form).Return(formString);
-			bundle.Stub(b => b.DefaultSense).Return(sense);
+			var sense = new Mock<ILexSense>().Object;
+			sense.Setup(s => s.Gloss).Returns(glossString);
+			var bundle = new Mock<IWfiMorphBundle>().Object;
+			bundle.Setup(b => b.Form).Returns(formString);
+			bundle.Setup(b => b.DefaultSense).Returns(sense);
 			var bundleList = MockRepository.GenerateStub<ILcmOwningSequence<IWfiMorphBundle>>();
-			bundleList.Stub(x => x.Count).Return(1);
+			bundleList.Setup(x => x.Count).Returns(1);
 			bundleList[0] = bundle;
-			var wfiAnalysis = MockRepository.GenerateStub<IWfiAnalysis>();
-			wfiAnalysis.Stub(x => x.MorphBundlesOS).Return(bundleList);
+			var wfiAnalysis = new Mock<IWfiAnalysis>().Object;
+			wfiAnalysis.Setup(x => x.MorphBundlesOS).Returns(bundleList);
 			// SUT
 			var result = ChooseAnalysisHandler.MakeAnalysisStringRep(wfiAnalysis, Cache, false,
 				Cache.DefaultVernWs);

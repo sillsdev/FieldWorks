@@ -119,7 +119,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					}
 				}
 			}
-			catch (FileNotFoundException ex)
+			catch (FileNotFoundException)
 			{
 				throw;
 			}

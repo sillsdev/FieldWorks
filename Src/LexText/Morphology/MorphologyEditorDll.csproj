@@ -1,12 +1,10 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>MorphologyEditorDll</AssemblyName>
     <RootNamespace>SIL.FieldWorks.XWorks.MorphologyEditor</RootNamespace>
     <TargetFramework>net48</TargetFramework>
-    <OutputType>Library</OutputType>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>168,169,219,414,649,1635,1702,1701,0579,0436</NoWarn>
+    <OutputType>Library</OutputType>    <NoWarn>168,169,219,414,649,1635,1702,1701,0579,0436</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <Prefer32Bit>false</Prefer32Bit>
@@ -61,13 +59,10 @@
   <ItemGroup>
     <Compile Remove="MorphologyEditorDllTests/**" />
     <None Remove="MorphologyEditorDllTests/**" />
-    <Compile Remove="MGA/MGATests/**" />
-    <None Remove="MGA/MGATests/**" />
-    <Compile Remove="MGA/AssemblyInfo.cs" />
-    <Compile Remove="MGA/bin/**" />
-    <None Remove="MGA/bin/**" />
-    <Compile Remove="MGA/obj/**" />
-    <None Remove="MGA/obj/**" />
+    <!-- MGA is a separate project (MGA.csproj), exclude all its files -->
+    <Compile Remove="MGA/**" />
+    <None Remove="MGA/**" />
+    <EmbeddedResource Remove="MGA/**" />
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>

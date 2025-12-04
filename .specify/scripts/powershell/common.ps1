@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env pwsh
+#!/usr/bin/env pwsh
 # Common PowerShell functions analogous to common.sh
 
 function Get-RepoRoot {
@@ -60,31 +60,6 @@ function Get-CurrentBranch {
 	return "main"
 }
 
-function Normalize-FeatureBranchName {
-	param([string]$Branch)
-
-	if (-not $Branch) {
-		return ''
-	}
-
-	$normalized = $Branch -replace '^refs/heads/', ''
-	$normalized = $normalized.Trim()
-
-	$prefixes = @('specs/', 'spec/', 'speckit/', 'feature/', 'features/', 'feat/')
-	foreach ($prefix in $prefixes) {
-		if ($normalized.StartsWith($prefix, [System.StringComparison]::OrdinalIgnoreCase)) {
-			$normalized = $normalized.Substring($prefix.Length)
-			break
-		}
-	}
-
-	if ($normalized -like '*/*') {
-		$normalized = $normalized.Split('/')[-1]
-	}
-
-	return $normalized
-}
-
 function Test-HasGit {
 	try {
 		git rev-parse --show-toplevel 2>$null | Out-Null
@@ -101,29 +76,15 @@ function Test-FeatureBranch {
 		[bool]$HasGit = $true
 	)
 
-	$allowedPrefixesPattern = '^(spec|specs|feature|speckit)/'
-
-	# For non-git repos, we cannot rename branches automatically; just warn and continue.
+	# For non-git repos, we can't enforce branch naming but still provide output
 	if (-not $HasGit) {
-		if ($Branch -notmatch $allowedPrefixesPattern) {
-			Write-Warning "[specify] Branch '$Branch' does not include a supported prefix (spec/, specs/, feature/, speckit/). Defaulting to legacy behavior because repository is not managed by git."
-			$normalizedBranch = $Branch
-		}
+		Write-Warning "[specify] Warning: Git repository not detected; skipped branch validation"
+		return $true
 	}
 
-	if ($HasGit -and $Branch -notmatch $allowedPrefixesPattern) {
-		Write-Output "ERROR: Feature branches must use one of these prefixes: spec/, specs/, feature/, speckit/. Current branch: $Branch"
-		Write-Output "Rename via: git checkout -b specs/005-your-feature && git branch -D $Branch"
-		return $false
-	}
-
-	if (-not $normalizedBranch) {
-		$normalizedBranch = Normalize-FeatureBranchName $Branch
-	}
-
-	if ($normalizedBranch -notmatch '^[0-9]{3}-') {
-		Write-Output "ERROR: Normalized feature branch '$normalizedBranch' must begin with a 3-digit identifier (e.g., 005-feature-name)."
-		Write-Output "Rename the branch to specs/$normalizedBranch"
+	if ($Branch -notmatch '^[0-9]{3}-') {
+		Write-Output "ERROR: Not on a feature branch. Current branch: $Branch"
+		Write-Output "Feature branches should be named like: 001-feature-name"
 		return $false
 	}
 	return $true
@@ -131,25 +92,18 @@ function Test-FeatureBranch {
 
 function Get-FeatureDir {
 	param([string]$RepoRoot, [string]$Branch)
-	$featureName = Normalize-FeatureBranchName -Branch $Branch
-	if ([string]::IsNullOrWhiteSpace($featureName)) {
-		$featureName = $Branch
-	}
-	$relativePath = Join-Path 'specs' $featureName
-	Join-Path $RepoRoot $relativePath
+	Join-Path $RepoRoot "specs/$Branch"
 }
 
 function Get-FeaturePathsEnv {
 	$repoRoot = Get-RepoRoot
 	$currentBranch = Get-CurrentBranch
 	$hasGit = Test-HasGit
-	$normalizedBranch = Normalize-FeatureBranchName $currentBranch
 	$featureDir = Get-FeatureDir -RepoRoot $repoRoot -Branch $currentBranch
 
 	[PSCustomObject]@{
 		REPO_ROOT      = $repoRoot
 		CURRENT_BRANCH = $currentBranch
-		FEATURE_NAME   = $normalizedBranch
 		HAS_GIT        = $hasGit
 		FEATURE_DIR    = $featureDir
 		FEATURE_SPEC   = Join-Path $featureDir 'spec.md'
@@ -176,7 +130,7 @@ function Test-FileExists {
 
 function Test-DirHasFiles {
 	param([string]$Path, [string]$Description)
-	if ((Test-Path -Path $Path -PathType Container) -and (Get-ChildItem -Path $Path -ErrorAction SilentlyContinue | Where-Object { -not $_.PSIsDirectory } | Select-Object -First 1)) {
+	if ((Test-Path -Path $Path -PathType Container) -and (Get-ChildItem -Path $Path -ErrorAction SilentlyContinue | Where-Object { -not $_.PSIsContainer } | Select-Object -First 1)) {
 		Write-Output "  ✓ $Description"
 		return $true
 	}
@@ -185,3 +139,4 @@ function Test-DirHasFiles {
 		return $false
 	}
 }
+

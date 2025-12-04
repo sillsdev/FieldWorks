@@ -134,10 +134,18 @@ To update localizations, liblcm must be cloned locally to the location specified
 		/>
 	</Target>
 	<Target Name="copyLibL10ns">
-		<ItemGroup>
-			<!-- Find the installed L10ns packages regardless of version -->
-			<ChorusL10nsDirs Include="$(fwrt)/packages/sil.chorus.l10ns/*" />
-			<PalasoL10nsDirs Include="$(fwrt)/packages/sil.libpalaso.l10ns/*" />
+		<PropertyGroup>
+			<!-- Get packages directory path with proper separators -->
+			<L10nsPackagesDir>$([System.IO.Path]::Combine('$(fwrt)', 'packages'))</L10nsPackagesDir>
+			<ChorusL10nsBaseDir>$(L10nsPackagesDir)\sil.chorus.l10ns</ChorusL10nsBaseDir>
+			<PalasoL10nsBaseDir>$(L10nsPackagesDir)\sil.libpalaso.l10ns</PalasoL10nsBaseDir>
+		</PropertyGroup>
+		<ItemGroup Condition="Exists('$(ChorusL10nsBaseDir)')">
+			<!-- Use GetDirectories to find version subdirectories -->
+			<ChorusL10nsDirs Include="$([System.IO.Directory]::GetDirectories('$(ChorusL10nsBaseDir)'))" />
+		</ItemGroup>
+		<ItemGroup Condition="Exists('$(PalasoL10nsBaseDir)')">
+			<PalasoL10nsDirs Include="$([System.IO.Directory]::GetDirectories('$(PalasoL10nsBaseDir)'))" />
 		</ItemGroup>
 		<PropertyGroup>
 			<!-- Use the first (and typically only) version found -->

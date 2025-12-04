@@ -81,6 +81,34 @@ Run: msbuild Build\Src\NativeBuild\NativeBuild.csproj
 - On Linux/macOS: Use `./build.sh` and ensure `msbuild`, `dotnet`, and native build tools are installed.
 - Environment variables (`fwrt`, `Platform=x64`, etc.) are set by `SetupInclude.targets` during build.
 
+## Worktree and Container Policy
+
+FieldWorks uses **git worktrees** for parallel development and **Docker containers** for build isolation:
+
+| Location | Build Method | Reason |
+|----------|--------------|--------|
+| Main repo checkout | Host via `.\build.ps1` | Direct access to COM/registry |
+| Worktree (`worktrees/agent-N`) | Container via `.\build.ps1` | COM/registry isolation |
+
+**`.\build.ps1` and `.\test.ps1` handle this automatically:**
+- Detects worktree paths matching `worktrees/agent-N`
+- Checks if container `fw-agent-N` is running
+- Respawns build inside container if available
+- Use `-NoDocker` to override and build on host
+
+### Intermediate Output Locations
+
+Intermediate files go to **centralized locations** (not per-project `obj/` folders):
+- **Host builds**: `$(FwRoot)Obj/<ProjectName>/`
+- **Container builds**: `C:\Temp\Obj/<ProjectName>/`
+
+This prevents conflicts when the same worktree is mounted in a container.
+
+**Automatic Cleanup**: `.\build.ps1` removes any stale per-project `obj/` folders before building. If you see CS0579 duplicate attribute errors, simply run `.\build.ps1` or manually:
+```powershell
+Get-ChildItem -Path Src -Filter obj -Directory -Recurse | Remove-Item -Recurse -Force
+```
+
 ## Deterministic requirements
 
 ### Inner loop (Developer Workflow)

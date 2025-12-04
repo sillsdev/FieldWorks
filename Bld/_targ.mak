@@ -24,11 +24,8 @@ PS_IDL_MAIN=$(COM_OUT_DIR)\$(PS_MAIN).idl
 PS_H_MAIN=$(COM_OUT_DIR)\$(PS_MAIN).h
 PS_DEF_MAIN=$(COM_INT_DIR)\$(PS_MAIN).def
 
-!IF "$(BUILD_OUTPUT)"==""
-CL_OPTS_PS=/c /Ox /W0 /I"$(BUILD_ROOT)\Output\Common\Raw" /I"$(COM_OUT_DIR_RAW)" $(CL_OPTS_PS) /DWIN32 /D_WIN32_WINNT=0x0500 /DREGISTER_PROXY_DLL
-!ELSE
-CL_OPTS_PS=/c /Ox /W0 /I"$(BUILD_OUTPUT)\Common\Raw" /I"$(COM_OUT_DIR_RAW)" $(CL_OPTS_PS) /DWIN32 /D_WIN32_WINNT=0x0500 /DREGISTER_PROXY_DLL
-!ENDIF
+# Use COM_OUT_DIR_RAW variable instead of hardcoded paths for configuration-aware builds
+CL_OPTS_PS=/c /Ox /W0 /I"$(COM_OUT_DIR_RAW)" $(CL_OPTS_PS) /DWIN32 /D_WIN32_WINNT=0x0500 /DREGISTER_PROXY_DLL
 !ENDIF
 
 !IF "$(PS_DLL_MAIN)"!=""
@@ -243,12 +240,8 @@ $(PS_DLL_MAIN): $(PS_H_MAIN) $(PS_DEF_MAIN) $(PS_OBJ)
 {$(COM_OUT_DIR_RAW)}.c{$(COM_INT_DIR)}.obj:
 	cl $(CL_OPTS_PS) /Fo"$(COM_INT_DIR)/" $<
 
-
-{$(BUILD_ROOT)\Output\Common\Raw}.c{$(COM_INT_DIR)}.obj:
-	cl $(CL_OPTS_PS) /Fo"$(COM_INT_DIR)/" $<
-
-{$(BUILD_OUTPUT)\Common\Raw}.c{$(COM_INT_DIR)}.obj:
-	cl $(CL_OPTS_PS) /Fo"$(COM_INT_DIR)/" $<
+# Legacy pattern rules removed - COM_OUT_DIR_RAW now covers all cases
+# (configuration-aware path eliminates need for separate BUILD_ROOT/BUILD_OUTPUT rules)
 
 # Modified 9-MAY-200@ RandyR: Removed 'description' and ordinal numbers for exported methods,
 # since the .Net compiler isn't happy with them.

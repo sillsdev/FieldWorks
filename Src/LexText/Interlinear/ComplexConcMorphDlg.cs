@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.IText
 		private ImageList m_imageList;
 		private CheckBox m_categoryNotCheckBox;
 
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 
 		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;

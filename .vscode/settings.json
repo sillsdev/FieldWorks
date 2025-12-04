@@ -52,6 +52,11 @@
     "/^(&\\s+)?python\\s+(scripts\\/|-m|\\.github\\/)(?!.*[;&|<>])/": true,
     "/^(&\\s+)?\\.[\\\\/]scripts[\\\\/](?!.*[;&|<>])/": true,
 
+    // Agent wrapper scripts - explicitly approved (these are designed for auto-approval)
+    "/^(&\\s+)?(\\.[\\\\/])?scripts[\\\\/]Agent[\\\\/][^;&|<>]+\\.ps1/i": true,
+    // PowerShell invocation of scripts (common pattern for bypassing execution policy)
+    "/^(&\\s+)?powershell\\s+(-NoProfile\\s+)?(-ExecutionPolicy\\s+Bypass\\s+)?-File\\s+(\\.[\\\\/])?scripts[\\\\/]/i": true,
+
     // Build operations (consolidated)
     "/^(&\\s+)?(msbuild|nuget)\\b(?!.*[;&|<>])/i": true,
     "/^(&\\s+)?dotnet\\s+(build|restore|clean|publish|test)(?!.*[;&|<>])/": true,

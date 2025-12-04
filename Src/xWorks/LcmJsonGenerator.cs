@@ -32,7 +32,6 @@ namespace SIL.FieldWorks.XWorks
 	{
 		private LcmCache Cache { get; }
 		private readonly ThreadLocal<StringBuilder> m_runBuilder = new ThreadLocal<StringBuilder>(()=> new StringBuilder());
-		private Collator m_headwordWsCollator;
 		public LcmJsonGenerator(LcmCache cache)
 		{
 			Cache = cache;

@@ -1941,7 +1941,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (poss == null)
 			{
 				var cmLocationFactory = m_cache.ServiceLocator.GetInstance<ICmLocationFactory>();
-				ICmObject possParent = null;
 				if (!String.IsNullOrEmpty(parent) && dict.ContainsKey(parent))
 				{
 					var parentLocation = (ICmLocation)dict[parent];

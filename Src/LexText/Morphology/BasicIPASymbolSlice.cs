@@ -123,7 +123,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				XElement features = s_ipaInfoDocument.XPathSelectElement(sXPath);
 				if (features != null)
 				{
-					bool fCreatedNewFS = false;
 					foreach (XElement feature in features.Elements("FeatureValuePair"))
 					{
 						var sFeature = (string) feature.Attribute("feature");
@@ -138,7 +137,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						if (phoneme.FeaturesOA == null)
 						{
 							phoneme.FeaturesOA = m_cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
-							fCreatedNewFS = true;
 						}
 						IFsClosedValue value = m_cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
 						phoneme.FeaturesOA.FeatureSpecsOC.Add(value);

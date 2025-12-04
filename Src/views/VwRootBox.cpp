@@ -4906,6 +4906,7 @@ STDMETHODIMP VwDrawRootBuffered::DrawTheRoot(IVwRootBox * prootb, HDC hdc, RECT 
 	Assert(hbmp);
 	HBITMAP hbmpOld = AfGdi::SelectObjectBitmap(m_hdcMem, hbmp);
 	Assert(hbmpOld && hbmpOld != HGDI_ERROR);
+	(void)hbmpOld; // Suppress C4189 warning in Release builds (variable only used in Assert)
 	// We don't delete hbmpOld (the stock bitmap from the DC)
 	// The new bitmap (hbmp) will stay selected in m_hdcMem for caching
 

@@ -25,7 +25,6 @@ namespace SIL.FieldWorks.XWorks
 	class SemanticDomainRdeTreeBarHandler : PossibilityTreeBarHandler
 	{
 		private PaneBar m_titleBar;
-		private Panel m_headerPanel;
 		private FwTextBox m_textSearch;
 		private FwCancelSearchButton m_btnCancelSearch;
 		private SearchTimer m_searchTimer;

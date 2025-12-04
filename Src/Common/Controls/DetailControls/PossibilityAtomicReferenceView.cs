@@ -159,8 +159,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// </summary>
 	public class PossibilityAtomicReferenceVc : AtomicReferenceVc
 	{
-		private string m_textStyle;
-
 		public PossibilityAtomicReferenceVc(LcmCache cache, int flid, string displayNameProperty)
 			: base(cache, flid, displayNameProperty)
 		{
