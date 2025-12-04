@@ -1,4 +1,4 @@
-// Copyright (c) 2021-2021 SIL International
+﻿// Copyright (c) 2021-2021 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -118,12 +118,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			var result = FwUpdater.Parse(xElt, baseURL);
 
-			Assert.AreEqual(version, result.Version.ToString());
-			Assert.AreEqual($"{baseURL}{key}", result.URL);
-			Assert.AreEqual(baseBuild, result.BaseBuild);
-			Assert.AreEqual(FwUpdate.Typ.Patch, result.InstallerType);
-			Assert.AreEqual(arch == 64, result.Is64Bit, $"Arch: {arch}");
-			Assert.AreEqual(mbSize, result.Size);
+			Assert.That(result.Version.ToString(), Is.EqualTo(version));
+			Assert.That(result.URL, Is.EqualTo($"{baseURL}{key}"));
+			Assert.That(result.BaseBuild, Is.EqualTo(baseBuild));
+			Assert.That(result.InstallerType, Is.EqualTo(FwUpdate.Typ.Patch));
+			Assert.That(result.Is64Bit, Is.EqualTo(arch == 64), $"Arch: {arch}");
+			Assert.That(result.Size, Is.EqualTo(mbSize));
 		}
 
 		[TestCase("https://test.s3.amazonaws.com/", "9.0.15.1", 316, 64, true, 536111222, 512)]
@@ -135,12 +135,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			var result = FwUpdater.Parse(xElt, baseURL);
 
-			Assert.AreEqual(version, result.Version.ToString());
-			Assert.AreEqual($"{baseURL}{key}", result.URL);
-			Assert.AreEqual(baseBuild, result.BaseBuild);
-			Assert.AreEqual(isOnline ? FwUpdate.Typ.Online : FwUpdate.Typ.Offline, result.InstallerType);
-			Assert.AreEqual(arch == 64, result.Is64Bit, $"Arch: {arch}");
-			Assert.AreEqual(mbSize, result.Size);
+			Assert.That(result.Version.ToString(), Is.EqualTo(version));
+			Assert.That(result.URL, Is.EqualTo($"{baseURL}{key}"));
+			Assert.That(result.BaseBuild, Is.EqualTo(baseBuild));
+			Assert.That(result.InstallerType, Is.EqualTo(isOnline ? FwUpdate.Typ.Online : FwUpdate.Typ.Offline));
+			Assert.That(result.Is64Bit, Is.EqualTo(arch == 64), $"Arch: {arch}");
+			Assert.That(result.Size, Is.EqualTo(mbSize));
 		}
 
 		[TestCase("jobs/FieldWorks-Win-all-Release-Patch/761/FieldWorks_9.1.1.7.6.1_b12_x64.msp")]
@@ -151,7 +151,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var xElt = XElement.Parse(Contents(key));
 
 			var result = FwUpdater.Parse(xElt, "https://test.s3.amazonaws.com/");
-			Assert.Null(result);
+			Assert.That(result, Is.Null);
 		}
 
 		[TestCase("https://downloads.languagetechnology.org/", "9.0.14.10", 367, 64, 217055232, 207)]
@@ -164,12 +164,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			var result = FwUpdater.Parse(xElt, baseURL);
 
-			Assert.AreEqual(version, result.Version.ToString());
-			Assert.AreEqual($"{baseURL}{key}", result.URL);
-			Assert.AreEqual(baseBuild, result.BaseBuild);
-			Assert.AreEqual(FwUpdate.Typ.Patch, result.InstallerType);
-			Assert.AreEqual(arch == 64, result.Is64Bit, $"Arch: {arch}");
-			Assert.AreEqual(mbSize, result.Size);
+			Assert.That(result.Version.ToString(), Is.EqualTo(version));
+			Assert.That(result.URL, Is.EqualTo($"{baseURL}{key}"));
+			Assert.That(result.BaseBuild, Is.EqualTo(baseBuild));
+			Assert.That(result.InstallerType, Is.EqualTo(FwUpdate.Typ.Patch));
+			Assert.That(result.Is64Bit, Is.EqualTo(arch == 64), $"Arch: {arch}");
+			Assert.That(result.Size, Is.EqualTo(mbSize));
 		}
 
 		[TestCase("https://downloads.languagetechnology.org/", "9.0.15.1", 316, 64, true, 536111222, 512)]
@@ -181,12 +181,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			var result = FwUpdater.Parse(xElt, baseURL);
 
-			Assert.AreEqual(version, result.Version.ToString());
-			Assert.AreEqual($"{baseURL}{key}", result.URL);
-			Assert.AreEqual(baseBuild, result.BaseBuild);
-			Assert.AreEqual(isOnline ? FwUpdate.Typ.Online : FwUpdate.Typ.Offline, result.InstallerType);
-			Assert.AreEqual(arch == 64, result.Is64Bit, $"Arch: {arch}");
-			Assert.AreEqual(mbSize, result.Size);
+			Assert.That(result.Version.ToString(), Is.EqualTo(version));
+			Assert.That(result.URL, Is.EqualTo($"{baseURL}{key}"));
+			Assert.That(result.BaseBuild, Is.EqualTo(baseBuild));
+			Assert.That(result.InstallerType, Is.EqualTo(isOnline ? FwUpdate.Typ.Online : FwUpdate.Typ.Offline));
+			Assert.That(result.Is64Bit, Is.EqualTo(arch == 64), $"Arch: {arch}");
+			Assert.That(result.Size, Is.EqualTo(mbSize));
 		}
 
 		[TestCase("fieldworks/9.1.1/FieldWorks9.1.1_Offline_x64.exe")]
@@ -196,7 +196,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var xElt = XElement.Parse(Contents(key));
 
 			var result = FwUpdater.Parse(xElt, "https://test.s3.amazonaws.com/");
-			Assert.Null(result);
+			Assert.That(result, Is.Null);
 		}
 
 		[TestCase(@"C:\ProgramData\SIL\FieldWorks\DownloadedUpdates\", "9.0.15.1", 64, true)]
@@ -207,11 +207,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			var result = FwUpdater.Parse(filename, baseURL);
 
-			Assert.AreEqual(version, result.Version.ToString());
-			Assert.AreEqual($"{baseURL}{filename}", result.URL);
-			Assert.AreEqual(0, result.BaseBuild, "not important at this point");
-			Assert.AreEqual(isOnline ? FwUpdate.Typ.Online : FwUpdate.Typ.Offline, result.InstallerType);
-			Assert.AreEqual(arch == 64, result.Is64Bit, $"Arch: {arch}");
+			Assert.That(result.Version.ToString(), Is.EqualTo(version));
+			Assert.That(result.URL, Is.EqualTo($"{baseURL}{filename}"));
+			Assert.That(result.BaseBuild, Is.EqualTo(0), "not important at this point");
+			Assert.That(result.InstallerType, Is.EqualTo(isOnline ? FwUpdate.Typ.Online : FwUpdate.Typ.Offline));
+			Assert.That(result.Is64Bit, Is.EqualTo(arch == 64), $"Arch: {arch}");
 		}
 
 		[Test]
@@ -586,7 +586,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(result.LCModelVersion, Is.EqualTo("1.0"));
 			Assert.That(result.LIFTModelVersion, Is.EqualTo("2.0"));
 			Assert.That(result.FlexBridgeDataVersion, Is.EqualTo("3.0"));
-			Assert.False(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath(false)), "Local update XML should have been deleted");
+			Assert.That(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath(false)), Is.False, "Local update XML should have been deleted");
 		}
 
 		[Test]
@@ -618,7 +618,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(result.LCModelVersion, Is.EqualTo("1.0"));
 			Assert.That(result.LIFTModelVersion, Is.EqualTo("2.0"));
 			Assert.That(result.FlexBridgeDataVersion, Is.EqualTo("3.0"));
-			Assert.False(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath(false)), "Local update XML should have been deleted");
+			Assert.That(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath(false)), Is.False, "Local update XML should have been deleted");
 		}
 
 		[Test]
@@ -648,11 +648,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// SUT
 			FwUpdater.DeleteOldUpdateFiles(result);
 
-			Assert.False(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath(false)), "Local update XML should have been deleted");
-			Assert.False(FileUtils.FileExists(earlierBaseFileName), "Earlier Base should have been deleted");
-			Assert.True(FileUtils.FileExists(updateFileName), "The Update File should NOT have been deleted");
-			Assert.False(FileUtils.FileExists(patchForDifferentBase), "Patch For Different Base should have been deleted");
-			Assert.False(FileUtils.FileExists(otherFileName), "Other File should have been deleted");
+			Assert.That(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath(false)), Is.False, "Local update XML should have been deleted");
+			Assert.That(FileUtils.FileExists(earlierBaseFileName), Is.False, "Earlier Base should have been deleted");
+			Assert.That(FileUtils.FileExists(updateFileName), Is.True, "The Update File should NOT have been deleted");
+			Assert.That(FileUtils.FileExists(patchForDifferentBase), Is.False, "Patch For Different Base should have been deleted");
+			Assert.That(FileUtils.FileExists(otherFileName), Is.False, "Other File should have been deleted");
 		}
 
 		[Test]
@@ -692,14 +692,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// SUT
 			FwUpdater.DeleteOldUpdateFiles(result);
 
-			Assert.False(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath(false)), "Local update XML should have been deleted");
-			Assert.False(FileUtils.FileExists(earlierPatchFileName), "Earlier Patch should have been deleted");
-			Assert.False(FileUtils.FileExists(earlierBaseFileName), "Earlier Base should have been deleted");
-			Assert.False(FileUtils.FileExists(onlineBaseFileName), "The Online Base File should have been deleted");
-			Assert.True(FileUtils.FileExists(offlineBaseFileName), "The Offline Base File should NOT have been deleted");
-			Assert.True(FileUtils.FileExists(updateFileName), "The Update File should NOT have been deleted");
-			Assert.False(FileUtils.FileExists(patchForDifferentBase), "Patch For Different Base should have been deleted");
-			Assert.False(FileUtils.FileExists(otherFileName), "Other File should have been deleted");
+			Assert.That(FileUtils.FileExists(FwUpdater.LocalUpdateInfoFilePath(false)), Is.False, "Local update XML should have been deleted");
+			Assert.That(FileUtils.FileExists(earlierPatchFileName), Is.False, "Earlier Patch should have been deleted");
+			Assert.That(FileUtils.FileExists(earlierBaseFileName), Is.False, "Earlier Base should have been deleted");
+			Assert.That(FileUtils.FileExists(onlineBaseFileName), Is.False, "The Online Base File should have been deleted");
+			Assert.That(FileUtils.FileExists(offlineBaseFileName), Is.True, "The Offline Base File should NOT have been deleted");
+			Assert.That(FileUtils.FileExists(updateFileName), Is.True, "The Update File should NOT have been deleted");
+			Assert.That(FileUtils.FileExists(patchForDifferentBase), Is.False, "Patch For Different Base should have been deleted");
+			Assert.That(FileUtils.FileExists(otherFileName), Is.False, "Other File should have been deleted");
 		}
 
 		[Test]

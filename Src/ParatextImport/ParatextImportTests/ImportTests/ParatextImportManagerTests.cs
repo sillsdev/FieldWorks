@@ -597,13 +597,12 @@ namespace ParatextImport.ImportTests
 
 			m_importMgr.CallImportWithUndoTask(al);
 
-			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "No new ScrDrafts should have been created");
-			Assert.AreEqual(origActCount, Cache.ActionHandlerAccessor.UndoableSequenceCount,
-				"Should have undone the creation of the book");
-			Assert.AreEqual(cBooksOrig, m_scr.ScriptureBooksOS.Count);
+			Assert.That(m_importMgr.NewSavedVersions.Count, Is.EqualTo(0), "No new ScrDrafts should have been created");
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(origActCount), "Should have undone the creation of the book");
+			Assert.That(m_scr.ScriptureBooksOS.Count, Is.EqualTo(cBooksOrig));
 			Assert.That(m_scr.FindBook(1), Is.Null, "Partially-imported Genesis should have been discarded.");
-			Assert.AreEqual(cNotesOrig, notes.Count);
-			Assert.AreEqual(0, m_importMgr.m_cDisplayImportedBooksDlgCalled);
+			Assert.That(notes.Count, Is.EqualTo(cNotesOrig));
+			Assert.That(m_importMgr.m_cDisplayImportedBooksDlgCalled, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -636,14 +635,14 @@ namespace ParatextImport.ImportTests
 			m_importMgr.SimulateAcceptAllBooks = true;
 			m_importMgr.CallImportWithUndoTask(al);
 
-			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount, "Should have 1 extra undo sequence (import of JUD) after Undo cancels incomplete book");
-			Assert.AreEqual(cBooksOrig, m_scr.ScriptureBooksOS.Count);
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(origActCount + 1), "Should have 1 extra undo sequence (import of JUD) after Undo cancels incomplete book");
+			Assert.That(m_scr.ScriptureBooksOS.Count, Is.EqualTo(cBooksOrig));
 			var curJude = m_scr.FindBook(65);
-			Assert.AreEqual(hvoJudeOrig, curJude.Hvo, "Content should have been merged into Jude.");
-			Assert.AreEqual(curJude.Hvo, m_scr.ScriptureBooksOS.ToHvoArray()[1]);
+			Assert.That(curJude.Hvo, Is.EqualTo(hvoJudeOrig), "Content should have been merged into Jude.");
+			Assert.That(m_scr.ScriptureBooksOS.ToHvoArray()[1], Is.EqualTo(curJude.Hvo));
 			Assert.That(m_scr.FindBook(66), Is.Null, "Partially-imported Revelation should have been discarded.");
 			Assert.That(m_importMgr.UndoManager.ImportedVersion, Is.Null);
-			Assert.AreEqual(1, m_importMgr.m_cDisplayImportedBooksDlgCalled);
+			Assert.That(m_importMgr.m_cDisplayImportedBooksDlgCalled, Is.EqualTo(1));
 		}
 		#endregion
 
@@ -677,14 +676,14 @@ namespace ParatextImport.ImportTests
 			m_importMgr.SimulateAcceptAllBooks = true;
 			m_importMgr.CallImportWithUndoTask(al);
 
-			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount, "Should have 1 extra undo action after Undo cancels incomplete book");
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(origActCount + 1), "Should have 1 extra undo action after Undo cancels incomplete book");
 
-			Assert.AreEqual(cBooksOrig, m_scr.ScriptureBooksOS.Count);
-			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "Import should have merged with existing book");
+			Assert.That(m_scr.ScriptureBooksOS.Count, Is.EqualTo(cBooksOrig));
+			Assert.That(m_importMgr.NewSavedVersions.Count, Is.EqualTo(0), "Import should have merged with existing book");
 			IScrBook restoredJude = m_scr.FindBook(65);
-			Assert.AreEqual(hvoJudeOrig, restoredJude.Hvo);
-			Assert.AreEqual(restoredJude.Hvo, m_scr.ScriptureBooksOS.ToHvoArray()[1]);
-			Assert.AreEqual(1, m_importMgr.m_cDisplayImportedBooksDlgCalled);
+			Assert.That(restoredJude.Hvo, Is.EqualTo(hvoJudeOrig));
+			Assert.That(m_scr.ScriptureBooksOS.ToHvoArray()[1], Is.EqualTo(restoredJude.Hvo));
+			Assert.That(m_importMgr.m_cDisplayImportedBooksDlgCalled, Is.EqualTo(1));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -700,8 +699,7 @@ namespace ParatextImport.ImportTests
 			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
 
 			IScrBook phm = m_scr.FindBook(57);
-			Assert.AreEqual(phm.Hvo, m_scr.ScriptureBooksOS.ToHvoArray()[0],
-				"This test is invalid if Philemon isn't the first book in Scripture in the test DB.");
+			Assert.That(m_scr.ScriptureBooksOS.ToHvoArray()[0], Is.EqualTo(phm.Hvo), "This test is invalid if Philemon isn't the first book in Scripture in the test DB.");
 			int cBooksOrig = m_scr.ScriptureBooksOS.Count;
 
 			List<SegmentInfo> al = new List<SegmentInfo>(1);
@@ -710,13 +708,12 @@ namespace ParatextImport.ImportTests
 
 			m_importMgr.CallImportWithUndoTask(al);
 
-			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "New ScrDrafts should have been purged");
-			Assert.AreEqual(origActCount, Cache.ActionHandlerAccessor.UndoableSequenceCount,
-				"Should have undone the creation of the book");
-			Assert.AreEqual(cBooksOrig, m_scr.ScriptureBooksOS.Count);
-			Assert.AreEqual(phm.Hvo, m_scr.FindBook(57).Hvo);
-			Assert.AreEqual(57, m_scr.ScriptureBooksOS[0].CanonicalNum);
-			Assert.AreEqual(0, m_importMgr.m_cDisplayImportedBooksDlgCalled);
+			Assert.That(m_importMgr.NewSavedVersions.Count, Is.EqualTo(0), "New ScrDrafts should have been purged");
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(origActCount), "Should have undone the creation of the book");
+			Assert.That(m_scr.ScriptureBooksOS.Count, Is.EqualTo(cBooksOrig));
+			Assert.That(m_scr.FindBook(57).Hvo, Is.EqualTo(phm.Hvo));
+			Assert.That(m_scr.ScriptureBooksOS[0].CanonicalNum, Is.EqualTo(57));
+			Assert.That(m_importMgr.m_cDisplayImportedBooksDlgCalled, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -751,38 +748,37 @@ namespace ParatextImport.ImportTests
 
 			m_importMgr.CallImportWithUndoTask(al);
 
-			Assert.AreEqual(1, m_importMgr.NewSavedVersions.Count, "Exactly one new version should have been created");
-			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount,
-				"Should have one extra undo action after Undo cancels incomplete book");
-			Assert.AreEqual("&Undo Import", Cache.ActionHandlerAccessor.GetUndoText());
-			Assert.AreEqual(cBooksOrig, m_scr.ScriptureBooksOS.Count);
-			Assert.AreEqual(hvoJudeOrig, m_scr.FindBook(65).Hvo);
-			Assert.AreEqual(1, scrHead1Para1.TranslationsOC.Count);
+			Assert.That(m_importMgr.NewSavedVersions.Count, Is.EqualTo(1), "Exactly one new version should have been created");
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(origActCount + 1), "Should have one extra undo action after Undo cancels incomplete book");
+			Assert.That(Cache.ActionHandlerAccessor.GetUndoText(), Is.EqualTo("&Undo Import"));
+			Assert.That(m_scr.ScriptureBooksOS.Count, Is.EqualTo(cBooksOrig));
+			Assert.That(m_scr.FindBook(65).Hvo, Is.EqualTo(hvoJudeOrig));
+			Assert.That(scrHead1Para1.TranslationsOC.Count, Is.EqualTo(1));
 			foreach (ICmTranslation trans in scrHead1Para1.TranslationsOC)
 			{
-				Assert.AreEqual("Section head BT", trans.Translation.AnalysisDefaultWritingSystem.Text);
+				Assert.That(trans.Translation.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Section head BT"));
 			}
 
 			Assert.That(m_importMgr.UndoManager.ImportedVersion, Is.Null);
 			IScrDraft backupSv = m_importMgr.UndoManager.BackupVersion;
-			Assert.AreEqual(1, backupSv.BooksOS.Count);
-			Assert.AreEqual(65, backupSv.BooksOS[0].CanonicalNum);
+			Assert.That(backupSv.BooksOS.Count, Is.EqualTo(1));
+			Assert.That(backupSv.BooksOS[0].CanonicalNum, Is.EqualTo(65));
 
 			// Test ability to Undo and get back to where we were.
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
 			Cache.ActionHandlerAccessor.Undo();
-			Assert.AreEqual(origActCount, Cache.ActionHandlerAccessor.UndoableSequenceCount);
-			Assert.AreEqual("Undo doing stuff", Cache.ActionHandlerAccessor.GetUndoText());
-			Assert.AreEqual(cBooksOrig, m_scr.ScriptureBooksOS.Count);
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(origActCount));
+			Assert.That(Cache.ActionHandlerAccessor.GetUndoText(), Is.EqualTo("Undo doing stuff"));
+			Assert.That(m_scr.ScriptureBooksOS.Count, Is.EqualTo(cBooksOrig));
 			jude = m_scr.FindBook(65);
-			Assert.AreEqual(hvoJudeOrig, jude.Hvo);
+			Assert.That(jude.Hvo, Is.EqualTo(hvoJudeOrig));
 			scrHead1Para1 = GetFirstScriptureSectionHeadParaInBook(jude);
-			Assert.AreEqual(1, scrHead1Para1.TranslationsOC.Count);
+			Assert.That(scrHead1Para1.TranslationsOC.Count, Is.EqualTo(1));
 			Assert.That(scrHead1Para1.GetBT().Translation.AnalysisDefaultWritingSystem.Text, Is.Null);
 
 			// Backed up version should be gone.
-			Assert.IsFalse(backupSv.IsValidObject);
-			Assert.AreEqual(0, m_importMgr.m_cDisplayImportedBooksDlgCalled);
+			Assert.That(backupSv.IsValidObject, Is.False);
+			Assert.That(m_importMgr.m_cDisplayImportedBooksDlgCalled, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -799,7 +795,7 @@ namespace ParatextImport.ImportTests
 			m_settings.ImportBackTranslation = true;
 			MockScrObjWrapper.s_fSimulateCancel = false;
 			int wsEn = Cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("en");
-			Assert.Greater(wsEn, 0, "Couldn't find Id of English WS in test DB.");
+			Assert.That(0, Is.GreaterThan(wsEn), "Couldn't find Id of English WS in test DB.");
 
 			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
 
@@ -814,14 +810,14 @@ namespace ParatextImport.ImportTests
 
 			m_importMgr.CallImportWithUndoTask(al);
 
-			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "No new version should have been created");
-			Assert.AreEqual(origActCount, Cache.ActionHandlerAccessor.UndoableSequenceCount);
-			Assert.AreEqual(cBooksOrig, m_scr.ScriptureBooksOS.Count);
+			Assert.That(m_importMgr.NewSavedVersions.Count, Is.EqualTo(0), "No new version should have been created");
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(origActCount));
+			Assert.That(m_scr.ScriptureBooksOS.Count, Is.EqualTo(cBooksOrig));
 			Assert.That(m_scr.FindBook(1), Is.Null);
 			Assert.That(m_importMgr.UndoManager.ImportedVersion, Is.Null);
 			Assert.That(m_importMgr.UndoManager.BackupVersion, Is.Null);
-			Assert.AreEqual(0, m_importMgr.m_cDisplayImportedBooksDlgCalled);
-			Assert.IsFalse(Cache.ActionHandlerAccessor.CanRedo());
+			Assert.That(m_importMgr.m_cDisplayImportedBooksDlgCalled, Is.EqualTo(0));
+			Assert.That(Cache.ActionHandlerAccessor.CanRedo(), Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -863,21 +859,20 @@ namespace ParatextImport.ImportTests
 			m_importMgr.SimulateAcceptAllBooks = true;
 			m_importMgr.CallImportWithUndoTask(al);
 
-			Assert.AreEqual(1, m_importMgr.NewSavedVersions.Count, "One new version should have been created");
-			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount,
-				"Should have one extra undo action after Undo cancels incomplete book");
-			Assert.AreEqual("&Undo Import", Cache.ActionHandlerAccessor.GetUndoText());
-			Assert.AreEqual(cBooksOrig + 1, m_scr.ScriptureBooksOS.Count);
+			Assert.That(m_importMgr.NewSavedVersions.Count, Is.EqualTo(1), "One new version should have been created");
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(origActCount + 1), "Should have one extra undo action after Undo cancels incomplete book");
+			Assert.That(Cache.ActionHandlerAccessor.GetUndoText(), Is.EqualTo("&Undo Import"));
+			Assert.That(m_scr.ScriptureBooksOS.Count, Is.EqualTo(cBooksOrig + 1));
 			Assert.That(m_scr.FindBook(1), Is.Not.Null);
-			Assert.AreEqual(hvoJudeOrig, m_scr.FindBook(65).Hvo);
+			Assert.That(m_scr.FindBook(65).Hvo, Is.EqualTo(hvoJudeOrig));
 
 			Assert.That(m_importMgr.UndoManager.ImportedVersion, Is.Null);
 			IScrDraft backupSv = m_importMgr.UndoManager.BackupVersion;
 			Assert.That(backupSv, Is.Not.Null);
-			Assert.AreEqual(1, backupSv.BooksOS.Count);
-			Assert.AreEqual(65, backupSv.BooksOS[0].CanonicalNum);
+			Assert.That(backupSv.BooksOS.Count, Is.EqualTo(1));
+			Assert.That(backupSv.BooksOS[0].CanonicalNum, Is.EqualTo(65));
 
-			Assert.AreEqual(1, m_importMgr.m_cDisplayImportedBooksDlgCalled);
+			Assert.That(m_importMgr.m_cDisplayImportedBooksDlgCalled, Is.EqualTo(1));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -920,12 +915,12 @@ namespace ParatextImport.ImportTests
 			m_importMgr.SimulateAcceptAllBooks = true;
 			m_importMgr.CallImportWithUndoTask(al);
 
-			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "No new versions should have been created");
+			Assert.That(m_importMgr.NewSavedVersions.Count, Is.EqualTo(0), "No new versions should have been created");
 
 			Assert.That(m_importMgr.UndoManager.ImportedVersion, Is.Null);
-			Assert.IsFalse(draftNewBooks.IsValidObject);
+			Assert.That(draftNewBooks.IsValidObject, Is.False);
 
-			Assert.AreEqual(1, m_importMgr.m_cDisplayImportedBooksDlgCalled);
+			Assert.That(m_importMgr.m_cDisplayImportedBooksDlgCalled, Is.EqualTo(1));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -975,10 +970,10 @@ namespace ParatextImport.ImportTests
 			m_importMgr.SimulateAcceptAllBooks = true;
 			m_importMgr.CallImportWithUndoTask(al);
 
-			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "No new versions should have been created");
+			Assert.That(m_importMgr.NewSavedVersions.Count, Is.EqualTo(0), "No new versions should have been created");
 
 			Assert.That(m_importMgr.UndoManager.ImportedVersion, Is.Null);
-			Assert.AreEqual(1, m_importMgr.m_cDisplayImportedBooksDlgCalled);
+			Assert.That(m_importMgr.m_cDisplayImportedBooksDlgCalled, Is.EqualTo(1));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1032,21 +1027,21 @@ namespace ParatextImport.ImportTests
 			m_importMgr.SimulateAcceptAllBooks = true;
 			m_importMgr.CallImportWithUndoTask(al);
 
-			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "No new versions should have been created");
+			Assert.That(m_importMgr.NewSavedVersions.Count, Is.EqualTo(0), "No new versions should have been created");
 
 			Assert.That(m_importMgr.UndoManager.ImportedVersion, Is.Null);
 
 			IScrDraft backupSv = m_importMgr.UndoManager.BackupVersion;
-			Assert.AreEqual(draftReplacedBooks, backupSv);
-			Assert.AreEqual(2, backupSv.BooksOS.Count);
-			Assert.AreEqual(1, backupSv.BooksOS[0].CanonicalNum);
-			Assert.AreEqual(replacedBook1, backupSv.BooksOS[0], "No original book in scripture, so backup should not change");
+			Assert.That(backupSv, Is.EqualTo(draftReplacedBooks));
+			Assert.That(backupSv.BooksOS.Count, Is.EqualTo(2));
+			Assert.That(backupSv.BooksOS[0].CanonicalNum, Is.EqualTo(1));
+			Assert.That(backupSv.BooksOS[0], Is.EqualTo(replacedBook1), "No original book in scripture, so backup should not change");
 
-			Assert.AreEqual(65, backupSv.BooksOS[1].CanonicalNum);
-			Assert.AreEqual(replacedBook2, backupSv.BooksOS[1], "Imported book should have merged with original");
-			Assert.AreEqual(jude, m_scr.FindBook(65), "Scripture should contain the merged book");
+			Assert.That(backupSv.BooksOS[1].CanonicalNum, Is.EqualTo(65));
+			Assert.That(backupSv.BooksOS[1], Is.EqualTo(replacedBook2), "Imported book should have merged with original");
+			Assert.That(m_scr.FindBook(65), Is.EqualTo(jude), "Scripture should contain the merged book");
 
-			Assert.AreEqual(1, m_importMgr.m_cDisplayImportedBooksDlgCalled);
+			Assert.That(m_importMgr.m_cDisplayImportedBooksDlgCalled, Is.EqualTo(1));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1089,9 +1084,9 @@ namespace ParatextImport.ImportTests
 			m_importMgr.ResetOriginalDrafts();
 			m_importMgr.SimulateAcceptAllBooks = true;
 			m_importMgr.CallImportWithUndoTask(al);
-			Assert.AreEqual(origScrDraftsCount, m_scr.ArchivedDraftsOC.Count, "Number of ScrDrafts shouldn't change");
-			Assert.AreEqual(65, draftReplacedBooks.BooksOS[0].CanonicalNum);
-			Assert.AreEqual(0, draftNewBooks.BooksOS.Count);
+			Assert.That(m_scr.ArchivedDraftsOC.Count, Is.EqualTo(origScrDraftsCount), "Number of ScrDrafts shouldn't change");
+			Assert.That(draftReplacedBooks.BooksOS[0].CanonicalNum, Is.EqualTo(65));
+			Assert.That(draftNewBooks.BooksOS.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1139,12 +1134,12 @@ namespace ParatextImport.ImportTests
 			m_importMgr.ResetOriginalDrafts();
 			m_importMgr.SimulateAcceptAllBooks = true;
 			m_importMgr.CallImportWithUndoTask(al);
-			Assert.AreEqual(origScrDraftsCount, m_scr.ArchivedDraftsOC.Count, "Number of ScrDrafts shouldn't change");
-			Assert.AreEqual(2, draftReplacedBooks.BooksOS.Count);
-			Assert.AreEqual(replacedBook, draftReplacedBooks.BooksOS[0]);
-			Assert.AreEqual(65, draftReplacedBooks.BooksOS[1].CanonicalNum);
-			Assert.AreEqual(1, draftNewBooks.BooksOS.Count);
-			Assert.AreEqual(newBook, draftNewBooks.BooksOS[0]);
+			Assert.That(m_scr.ArchivedDraftsOC.Count, Is.EqualTo(origScrDraftsCount), "Number of ScrDrafts shouldn't change");
+			Assert.That(draftReplacedBooks.BooksOS.Count, Is.EqualTo(2));
+			Assert.That(draftReplacedBooks.BooksOS[0], Is.EqualTo(replacedBook));
+			Assert.That(draftReplacedBooks.BooksOS[1].CanonicalNum, Is.EqualTo(65));
+			Assert.That(draftNewBooks.BooksOS.Count, Is.EqualTo(1));
+			Assert.That(draftNewBooks.BooksOS[0], Is.EqualTo(newBook));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1192,12 +1187,12 @@ namespace ParatextImport.ImportTests
 			m_importMgr.ResetOriginalDrafts();
 			m_importMgr.SimulateAcceptAllBooks = true;
 			m_importMgr.CallImportWithUndoTask(al);
-			Assert.AreEqual(origScrDraftsCount, m_scr.ArchivedDraftsOC.Count, "Number of ScrDrafts shouldn't change");
-			Assert.AreEqual(1, draftReplacedBooks.BooksOS.Count);
-			Assert.AreEqual(65, draftReplacedBooks.BooksOS[0].CanonicalNum);
-			Assert.AreNotEqual(replacedBook, draftReplacedBooks.BooksOS[0], "Original book should NOT be the same");
-			Assert.AreEqual(1, draftNewBooks.BooksOS.Count);
-			Assert.AreEqual(newBook, draftNewBooks.BooksOS[0]);
+			Assert.That(m_scr.ArchivedDraftsOC.Count, Is.EqualTo(origScrDraftsCount), "Number of ScrDrafts shouldn't change");
+			Assert.That(draftReplacedBooks.BooksOS.Count, Is.EqualTo(1));
+			Assert.That(draftReplacedBooks.BooksOS[0].CanonicalNum, Is.EqualTo(65));
+			Assert.That(draftReplacedBooks.BooksOS[0], Is.Not.EqualTo(replacedBook), "Original book should NOT be the same");
+			Assert.That(draftNewBooks.BooksOS.Count, Is.EqualTo(1));
+			Assert.That(draftNewBooks.BooksOS[0], Is.EqualTo(newBook));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1236,15 +1231,15 @@ namespace ParatextImport.ImportTests
 			Assert.That(scrHead1Para1, Is.Not.Null, "This test is invalid if there is no Scripture section in Jude in the test DB.");
 			string scrHead1Para1TextOrig = scrHead1Para1.Contents.Text;
 			int scrHead1Para1OrigTransCount = scrHead1Para1.TranslationsOC.Count;
-			Assert.AreEqual(1, scrHead1Para1OrigTransCount);
+			Assert.That(scrHead1Para1OrigTransCount, Is.EqualTo(1));
 			Assert.That(scrHead1Para1.GetBT().Translation.AnalysisDefaultWritingSystem.Text, Is.Null);
 
 			int cBooksOrig = m_scr.ScriptureBooksOS.Count;
 
 			int wsEn = Cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("en");
-			Assert.Greater(wsEn, 0, "Couldn't find Id of English WS in test DB.");
+			Assert.That(0, Is.GreaterThan(wsEn), "Couldn't find Id of English WS in test DB.");
 			int wsEs = Cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("es");
-			Assert.Greater(wsEs, 0, "Couldn't find Id of Spanish WS in test DB.");
+			Assert.That(0, Is.GreaterThan(wsEs), "Couldn't find Id of Spanish WS in test DB.");
 
 			List<SegmentInfo> al = new List<SegmentInfo>(3);
 			// process a \id segment to import an existing a book
@@ -1255,32 +1250,31 @@ namespace ParatextImport.ImportTests
 
 			m_importMgr.CallImportWithUndoTask(al);
 
-			Assert.AreEqual(1, m_importMgr.NewSavedVersions.Count, "We should only have a backup saved version, no imported version.");
-			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount,
-				"Should have one extra undo action.");
-			Assert.AreEqual(cBooksOrig, m_scr.ScriptureBooksOS.Count);
-			Assert.AreEqual(philemon.Hvo, m_scr.FindBook(57).Hvo, "Imported BT should not replace current version");
-			Assert.AreEqual(jude.Hvo, m_scr.FindBook(65).Hvo, "Imported BT should not replace current version");
+			Assert.That(m_importMgr.NewSavedVersions.Count, Is.EqualTo(1), "We should only have a backup saved version, no imported version.");
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(origActCount + 1), "Should have one extra undo action.");
+			Assert.That(m_scr.ScriptureBooksOS.Count, Is.EqualTo(cBooksOrig));
+			Assert.That(m_scr.FindBook(57).Hvo, Is.EqualTo(philemon.Hvo), "Imported BT should not replace current version");
+			Assert.That(m_scr.FindBook(65).Hvo, Is.EqualTo(jude.Hvo), "Imported BT should not replace current version");
 
-			Assert.AreEqual(0, m_importMgr.m_cDisplayImportedBooksDlgCalled);
+			Assert.That(m_importMgr.m_cDisplayImportedBooksDlgCalled, Is.EqualTo(0));
 
-			Assert.AreEqual(2, m_importMgr.UndoManager.BackupVersion.BooksOS.Count);
-			Assert.AreEqual(57, m_importMgr.UndoManager.BackupVersion.BooksOS[0].CanonicalNum);
-			Assert.AreEqual(65, m_importMgr.UndoManager.BackupVersion.BooksOS[1].CanonicalNum);
+			Assert.That(m_importMgr.UndoManager.BackupVersion.BooksOS.Count, Is.EqualTo(2));
+			Assert.That(m_importMgr.UndoManager.BackupVersion.BooksOS[0].CanonicalNum, Is.EqualTo(57));
+			Assert.That(m_importMgr.UndoManager.BackupVersion.BooksOS[1].CanonicalNum, Is.EqualTo(65));
 			Assert.That(m_importMgr.UndoManager.ImportedVersion, Is.Null);
-			Assert.AreEqual("&Undo Import", Cache.ActionHandlerAccessor.GetUndoText());
-			Assert.IsTrue(Cache.ActionHandlerAccessor.CanUndo());
+			Assert.That(Cache.ActionHandlerAccessor.GetUndoText(), Is.EqualTo("&Undo Import"));
+			Assert.That(Cache.ActionHandlerAccessor.CanUndo(), Is.True);
 
 			Cache.ActionHandlerAccessor.Undo();
 
-			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "The backup saved version should be gone.");
+			Assert.That(m_importMgr.NewSavedVersions.Count, Is.EqualTo(0), "The backup saved version should be gone.");
 
 			IScrBook judeAfterUndo = m_scr.FindBook(65);
-			Assert.AreEqual(jude.Hvo, judeAfterUndo.Hvo);
+			Assert.That(judeAfterUndo.Hvo, Is.EqualTo(jude.Hvo));
 
 			IStTxtPara undoneScrHead1Para1 = ((IStTxtPara)judeAfterUndo.SectionsOS[iScrHead1].HeadingOA.ParagraphsOS[0]);
-			Assert.AreEqual(scrHead1Para1TextOrig, undoneScrHead1Para1.Contents.Text);
-			Assert.AreEqual(scrHead1Para1OrigTransCount, undoneScrHead1Para1.TranslationsOC.Count);
+			Assert.That(undoneScrHead1Para1.Contents.Text, Is.EqualTo(scrHead1Para1TextOrig));
+			Assert.That(undoneScrHead1Para1.TranslationsOC.Count, Is.EqualTo(scrHead1Para1OrigTransCount));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1297,8 +1291,7 @@ namespace ParatextImport.ImportTests
 			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
 
 			IScrBook phm = m_scr.FindBook(57);
-			Assert.AreEqual(phm.Hvo, m_scr.ScriptureBooksOS.ToHvoArray()[0],
-				"This test is invalid if Philemon isn't the first book in Scripture in the test DB.");
+			Assert.That(m_scr.ScriptureBooksOS.ToHvoArray()[0], Is.EqualTo(phm.Hvo), "This test is invalid if Philemon isn't the first book in Scripture in the test DB.");
 			int cBooksOrig = m_scr.ScriptureBooksOS.Count;
 
 			List<SegmentInfo> al = new List<SegmentInfo>(1);
@@ -1309,13 +1302,12 @@ namespace ParatextImport.ImportTests
 
 			m_importMgr.CallImportWithUndoTask(al);
 
-			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "New ScrDrafts should have been purged (TE-7040)");
-			Assert.AreEqual(origActCount, Cache.ActionHandlerAccessor.UndoableSequenceCount,
-				"Should have undone the creation of the book");
-			Assert.AreEqual(cBooksOrig, m_scr.ScriptureBooksOS.Count);
-			Assert.AreEqual(phm.Hvo, m_scr.FindBook(57).Hvo);
-			Assert.AreEqual(57, m_scr.ScriptureBooksOS[0].CanonicalNum);
-			Assert.AreEqual(0, m_importMgr.m_cDisplayImportedBooksDlgCalled);
+			Assert.That(m_importMgr.NewSavedVersions.Count, Is.EqualTo(0), "New ScrDrafts should have been purged (TE-7040)");
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(origActCount), "Should have undone the creation of the book");
+			Assert.That(m_scr.ScriptureBooksOS.Count, Is.EqualTo(cBooksOrig));
+			Assert.That(m_scr.FindBook(57).Hvo, Is.EqualTo(phm.Hvo));
+			Assert.That(m_scr.ScriptureBooksOS[0].CanonicalNum, Is.EqualTo(57));
+			Assert.That(m_importMgr.m_cDisplayImportedBooksDlgCalled, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1345,11 +1337,10 @@ namespace ParatextImport.ImportTests
 
 			m_importMgr.CallImportWithUndoTask(al);
 
-			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "New ScrDrafts should have been purged.");
-			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount,
-				"One action to add/remove the backup saved version.");
-			Assert.AreEqual(cBooksOrig, m_scr.ScriptureBooksOS.Count);
-			Assert.AreEqual(0, m_importMgr.m_cDisplayImportedBooksDlgCalled);
+			Assert.That(m_importMgr.NewSavedVersions.Count, Is.EqualTo(0), "New ScrDrafts should have been purged.");
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(origActCount + 1), "One action to add/remove the backup saved version.");
+			Assert.That(m_scr.ScriptureBooksOS.Count, Is.EqualTo(cBooksOrig));
+			Assert.That(m_importMgr.m_cDisplayImportedBooksDlgCalled, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1365,8 +1356,7 @@ namespace ParatextImport.ImportTests
 			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
 
 			IScrBook phm = m_scr.FindBook(57);
-			Assert.AreEqual(phm.Hvo, m_scr.ScriptureBooksOS.ToHvoArray()[0],
-				"This test is invalid if Philemon isn't the first book in Scripture in the test DB.");
+			Assert.That(m_scr.ScriptureBooksOS.ToHvoArray()[0], Is.EqualTo(phm.Hvo), "This test is invalid if Philemon isn't the first book in Scripture in the test DB.");
 
 			List<SegmentInfo> al = new List<SegmentInfo>(1);
 			// process a \id segment to import an existing a book
@@ -1374,10 +1364,9 @@ namespace ParatextImport.ImportTests
 
 			m_importMgr.CallImportWithUndoTask(al);
 
-			Assert.AreEqual(origActCount, Cache.ActionHandlerAccessor.UndoableSequenceCount,
-				"Should have undone the creation of the book");
-			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "New ScrDrafts should have been purged");
-			Assert.AreEqual(0, m_importMgr.m_cDisplayImportedBooksDlgCalled);
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(origActCount), "Should have undone the creation of the book");
+			Assert.That(m_importMgr.NewSavedVersions.Count, Is.EqualTo(0), "New ScrDrafts should have been purged");
+			Assert.That(m_importMgr.m_cDisplayImportedBooksDlgCalled, Is.EqualTo(0));
 		}
 
 		// TODO (TE-7097 / JohnT): disabled, since fixing setup is difficult, and the edge case
@@ -1410,11 +1399,10 @@ namespace ParatextImport.ImportTests
 		//    m_scr.ScriptureBooksOS.RemoveAt(0); // adios to Genesis
 
 		//    IScrBook james = m_scr.FindBook(59);
-		//    Assert.AreEqual(james.Hvo, m_scr.ScriptureBooksOS.HvoArray[3],
-		//        "This test is invalid if James isn't the second book in Scripture in the test DB.");
+		//    Assert.That(m_scr.ScriptureBooksOS.HvoArray[3], Is.EqualTo(james.Hvo), //        "This test is invalid if James isn't the second book in Scripture in the test DB.");
 		//    int cBooksAfterDeletingGenesis = m_scr.ScriptureBooksOS.Count;
-		//    Assert.IsTrue(cBooksAfterDeletingGenesis > 4,
-		//        "This test is invalid if the test DB has fewer than 3 books (originally).");
+		//    Assert.That(cBooksAfterDeletingGenesis > 4,
+		//        "This test is invalid if the test DB has fewer than 3 books (originally).", Is.True);
 
 		//    // process a \id segment to import an existing book (James)
 		//    MockScrObjWrapper.s_fSimulateCancel = true;
@@ -1423,12 +1411,10 @@ namespace ParatextImport.ImportTests
 
 		//    m_importMgr.CallImportWithUndoTask(m_settings, al);
 
-		//    Assert.AreEqual(origSeqCount + 2, Cache.ActionHandlerAccessor.UndoableSequenceCount,
-		//        "Should have two new undo sequences: one for the import of GEN-LEV and one for the removal of GEN.");
-		//    Assert.AreEqual(cBooksAfterDeletingGenesis, m_scr.ScriptureBooksOS.Count);
-		//    Assert.AreEqual(james.Hvo, m_scr.FindBook(59).Hvo);
-		//    Assert.AreEqual(59, m_scr.ScriptureBooksOS[3].CanonicalNum,
-		//        "James should still be in the right place in Scripture.");
+		//    Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(origSeqCount + 2), //        "Should have two new undo sequences: one for the import of GEN-LEV and one for the removal of GEN.");
+		//    Assert.That(m_scr.ScriptureBooksOS.Count, Is.EqualTo(cBooksAfterDeletingGenesis));
+		//    Assert.That(m_scr.FindBook(59).Hvo, Is.EqualTo(james.Hvo));
+		//    Assert.That(m_scr.ScriptureBooksOS[3].CanonicalNum, Is.EqualTo(59), //        "James should still be in the right place in Scripture.");
 		//}
 
 		/// ------------------------------------------------------------------------------------
@@ -1464,11 +1450,9 @@ namespace ParatextImport.ImportTests
 				AddBookToMockedScripture(iBookId - 1, "Book name");
 				uow.RollBack = false;
 			}
-			Assert.AreEqual(2, m_scr.ScriptureBooksOS.Count);
-			Assert.AreEqual(iBookId - 1, m_scr.ScriptureBooksOS[0].CanonicalNum,
-				"Books are not in correct order.");
-			Assert.AreEqual(iBookId, m_scr.ScriptureBooksOS[1].CanonicalNum,
-				"Books are not in correct order.");
+			Assert.That(m_scr.ScriptureBooksOS.Count, Is.EqualTo(2));
+			Assert.That(m_scr.ScriptureBooksOS[0].CanonicalNum, Is.EqualTo(iBookId - 1), "Books are not in correct order.");
+			Assert.That(m_scr.ScriptureBooksOS[1].CanonicalNum, Is.EqualTo(iBookId), "Books are not in correct order.");
 		}
 		#endregion
 
@@ -1501,10 +1485,10 @@ namespace ParatextImport.ImportTests
 
 			m_importMgr.CallImportWithUndoTask(al);
 
-			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "We should not have a backup saved version.");
-			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount, "Should have 1 extra undo action.");
-			Assert.AreEqual("&Undo Import", Cache.ActionHandlerAccessor.GetUndoText());
-			Assert.AreEqual(1, m_importMgr.m_cDisplayImportedBooksDlgCalled);
+			Assert.That(m_importMgr.NewSavedVersions.Count, Is.EqualTo(0), "We should not have a backup saved version.");
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(origActCount + 1), "Should have 1 extra undo action.");
+			Assert.That(Cache.ActionHandlerAccessor.GetUndoText(), Is.EqualTo("&Undo Import"));
+			Assert.That(m_importMgr.m_cDisplayImportedBooksDlgCalled, Is.EqualTo(1));
 		}
 		#endregion
 
@@ -1540,26 +1524,26 @@ namespace ParatextImport.ImportTests
 
 			m_importMgr.CallImportWithUndoTask(al);
 
-			Assert.AreEqual(0, m_importMgr.NewSavedVersions.Count, "We should have an imported version but not a backup saved version.");
-			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount, "Should have one extra undo action.");
-			Assert.AreEqual("&Undo Import", Cache.ActionHandlerAccessor.GetUndoText());
-			Assert.AreEqual(cBooksOrig, m_scr.ScriptureBooksOS.Count);
+			Assert.That(m_importMgr.NewSavedVersions.Count, Is.EqualTo(0), "We should have an imported version but not a backup saved version.");
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(origActCount + 1), "Should have one extra undo action.");
+			Assert.That(Cache.ActionHandlerAccessor.GetUndoText(), Is.EqualTo("&Undo Import"));
+			Assert.That(m_scr.ScriptureBooksOS.Count, Is.EqualTo(cBooksOrig));
 			//verify that the original book of Jude has not been replaced
-			Assert.AreEqual(jude.Hvo, m_scr.FindBook(65).Hvo, "Imported BT should not replace current version");
+			Assert.That(m_scr.FindBook(65).Hvo, Is.EqualTo(jude.Hvo), "Imported BT should not replace current version");
 			IStTxtPara sh1Para = ((IStTxtPara)jude.SectionsOS[0].HeadingOA.ParagraphsOS[0]);
-			Assert.AreNotEqual("Section head", sh1Para.Contents.Text, "Import should not have affected orginal.");
+			Assert.That(sh1Para.Contents.Text, Is.Not.EqualTo("Section head"), "Import should not have affected orginal.");
 			if (sh1Para.TranslationsOC.Count == 1)
 			{
 				// Make sure the original BT of the first section in Jude was not changed
 				foreach (ICmTranslation trans in sh1Para.TranslationsOC)
 				{
-					Assert.AreNotEqual("Section head BT", trans.Translation.AnalysisDefaultWritingSystem.Text);
+					Assert.That(trans.Translation.AnalysisDefaultWritingSystem.Text, Is.Not.EqualTo("Section head BT"));
 				}
 			}
 
 			Assert.That(m_importMgr.UndoManager.ImportedVersion, Is.Null);
 			Assert.That(m_importMgr.UndoManager.BackupVersion, Is.Null);
-			Assert.AreEqual(1, m_importMgr.m_cDisplayImportedBooksDlgCalled);
+			Assert.That(m_importMgr.m_cDisplayImportedBooksDlgCalled, Is.EqualTo(1));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1595,7 +1579,7 @@ namespace ParatextImport.ImportTests
 			Assert.That(scrHead1Para1, Is.Not.Null, "This test is invalid if there is no Scripture section in Jude in the test DB.");
 			string scrHead1Para1TextOrig = scrHead1Para1.Contents.Text;
 			int scrHead1Para1OrigTransCount = scrHead1Para1.TranslationsOC.Count;
-			Assert.AreEqual(1, scrHead1Para1OrigTransCount, "This test is invalid if the first paragraph of the first Scripture section head in Jude has a backtranslation in the test DB.");
+			Assert.That(scrHead1Para1OrigTransCount, Is.EqualTo(1), "This test is invalid if the first paragraph of the first Scripture section head in Jude has a backtranslation in the test DB.");
 
 			int cBooksOrig = m_scr.ScriptureBooksOS.Count;
 
@@ -1606,33 +1590,32 @@ namespace ParatextImport.ImportTests
 
 			m_importMgr.CallImportWithUndoTask(al);
 
-			Assert.AreEqual(1, m_importMgr.NewSavedVersions.Count, "We should only have a backup saved version, no imported version.");
-			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount,
-				"Should have 1 extra undo actions.");
-			Assert.AreEqual("&Undo Import", Cache.ActionHandlerAccessor.GetUndoText());
-			Assert.AreEqual(cBooksOrig, m_scr.ScriptureBooksOS.Count);
-			Assert.AreEqual(jude.Hvo, m_scr.FindBook(65).Hvo, "Imported BT should not replace current version");
+			Assert.That(m_importMgr.NewSavedVersions.Count, Is.EqualTo(1), "We should only have a backup saved version, no imported version.");
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(origActCount + 1), "Should have 1 extra undo actions.");
+			Assert.That(Cache.ActionHandlerAccessor.GetUndoText(), Is.EqualTo("&Undo Import"));
+			Assert.That(m_scr.ScriptureBooksOS.Count, Is.EqualTo(cBooksOrig));
+			Assert.That(m_scr.FindBook(65).Hvo, Is.EqualTo(jude.Hvo), "Imported BT should not replace current version");
 			IStTxtPara sh1Para = ((IStTxtPara)jude.SectionsOS[iScrHead1].HeadingOA.ParagraphsOS[0]);
-			Assert.AreEqual(scrHead1Para1TextOrig, sh1Para.Contents.Text, "Import should not have affected orginal vernacular.");
+			Assert.That(sh1Para.Contents.Text, Is.EqualTo(scrHead1Para1TextOrig), "Import should not have affected orginal vernacular.");
 			if (sh1Para.TranslationsOC.Count == 1)
 			{
 				// Make sure the original BT of the first section in Jude was changed
 				foreach (ICmTranslation trans in sh1Para.TranslationsOC)
-					Assert.AreEqual("Section head BT", trans.Translation.AnalysisDefaultWritingSystem.Text);
+					Assert.That(trans.Translation.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Section head BT"));
 			}
 
 			Assert.That(m_importMgr.UndoManager.ImportedVersion, Is.Null);
 
 			IScrDraft backupSv = m_importMgr.UndoManager.BackupVersion;
 			Assert.That(backupSv, Is.Not.Null);
-			Assert.AreEqual(1, backupSv.BooksOS.Count);
+			Assert.That(backupSv.BooksOS.Count, Is.EqualTo(1));
 			IScrBook backupJude = backupSv.BooksOS[0];
-			Assert.AreEqual(65, backupJude.CanonicalNum);
+			Assert.That(backupJude.CanonicalNum, Is.EqualTo(65));
 			IStTxtPara bkpScrHead1Para1 = ((IStTxtPara)backupJude.SectionsOS[iScrHead1].HeadingOA.ParagraphsOS[0]);
-			Assert.AreEqual(scrHead1Para1TextOrig, bkpScrHead1Para1.Contents.Text);
-			Assert.AreEqual(scrHead1Para1OrigTransCount, bkpScrHead1Para1.TranslationsOC.Count);
+			Assert.That(bkpScrHead1Para1.Contents.Text, Is.EqualTo(scrHead1Para1TextOrig));
+			Assert.That(bkpScrHead1Para1.TranslationsOC.Count, Is.EqualTo(scrHead1Para1OrigTransCount));
 
-			Assert.AreEqual(0, m_importMgr.m_cDisplayImportedBooksDlgCalled);
+			Assert.That(m_importMgr.m_cDisplayImportedBooksDlgCalled, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1669,14 +1652,14 @@ namespace ParatextImport.ImportTests
 			Assert.That(scrHead1Para1, Is.Not.Null, "This test is invalid if there is no Scripture section in Jude in the test DB.");
 			string scrHead1Para1TextOrig = scrHead1Para1.Contents.Text;
 			int scrHead1Para1OrigTransCount = scrHead1Para1.TranslationsOC.Count;
-			Assert.AreEqual(1, scrHead1Para1OrigTransCount, "This test is invalid if the first paragraph of the first Scripture section head in Jude has a backtranslation in the test DB.");
+			Assert.That(scrHead1Para1OrigTransCount, Is.EqualTo(1), "This test is invalid if the first paragraph of the first Scripture section head in Jude has a backtranslation in the test DB.");
 
 			int cBooksOrig = m_scr.ScriptureBooksOS.Count;
 
 			int wsEn = Cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("en");
-			Assert.Greater(wsEn, 0, "Couldn't find Id of English WS in test DB.");
+			Assert.That(0, Is.GreaterThan(wsEn), "Couldn't find Id of English WS in test DB.");
 			int wsEs = Cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("es");
-			Assert.Greater(wsEs, 0, "Couldn't find Id of Spanish WS in test DB.");
+			Assert.That(0, Is.GreaterThan(wsEs), "Couldn't find Id of Spanish WS in test DB.");
 
 			List<SegmentInfo> al = new List<SegmentInfo>(3);
 			// process a \id segment to import an existing a book
@@ -1687,21 +1670,20 @@ namespace ParatextImport.ImportTests
 
 			m_importMgr.CallImportWithUndoTask(al);
 
-			Assert.AreEqual(1, m_importMgr.NewSavedVersions.Count, "We should only have a backup saved version, no imported version.");
-			Assert.AreEqual(origActCount + 1, Cache.ActionHandlerAccessor.UndoableSequenceCount,
-				"Should have 1 extra undo actions.");
-			Assert.AreEqual("&Undo Import", Cache.ActionHandlerAccessor.GetUndoText());
-			Assert.AreEqual(cBooksOrig, m_scr.ScriptureBooksOS.Count);
-			Assert.AreEqual(jude.Hvo, m_scr.FindBook(65).Hvo, "Imported BT should not replace current version");
+			Assert.That(m_importMgr.NewSavedVersions.Count, Is.EqualTo(1), "We should only have a backup saved version, no imported version.");
+			Assert.That(Cache.ActionHandlerAccessor.UndoableSequenceCount, Is.EqualTo(origActCount + 1), "Should have 1 extra undo actions.");
+			Assert.That(Cache.ActionHandlerAccessor.GetUndoText(), Is.EqualTo("&Undo Import"));
+			Assert.That(m_scr.ScriptureBooksOS.Count, Is.EqualTo(cBooksOrig));
+			Assert.That(m_scr.FindBook(65).Hvo, Is.EqualTo(jude.Hvo), "Imported BT should not replace current version");
 			IStTxtPara sh1Para = ((IStTxtPara)jude.SectionsOS[iScrHead1].HeadingOA.ParagraphsOS[0]);
-			Assert.AreEqual(scrHead1Para1TextOrig, sh1Para.Contents.Text, "Import should not have affected orginal vernacular.");
+			Assert.That(sh1Para.Contents.Text, Is.EqualTo(scrHead1Para1TextOrig), "Import should not have affected orginal vernacular.");
 			if (sh1Para.TranslationsOC.Count == 1)
 			{
 				// Make sure the original BT of the first section in Jude was changed
 				foreach (ICmTranslation trans in sh1Para.TranslationsOC)
 				{
-					Assert.AreEqual("English Section head BT", trans.Translation.get_String(wsEn).Text);
-					Assert.AreEqual("Spanish Section head BT", trans.Translation.get_String(wsEs).Text);
+					Assert.That(trans.Translation.get_String(wsEn).Text, Is.EqualTo("English Section head BT"));
+					Assert.That(trans.Translation.get_String(wsEs).Text, Is.EqualTo("Spanish Section head BT"));
 				}
 			}
 
@@ -1709,14 +1691,14 @@ namespace ParatextImport.ImportTests
 
 			IScrDraft backupSv = m_importMgr.UndoManager.BackupVersion;
 			Assert.That(backupSv, Is.Not.Null);
-			Assert.AreEqual(1, backupSv.BooksOS.Count);
+			Assert.That(backupSv.BooksOS.Count, Is.EqualTo(1));
 			IScrBook backupJude = backupSv.BooksOS[0];
-			Assert.AreEqual(65, backupJude.CanonicalNum);
+			Assert.That(backupJude.CanonicalNum, Is.EqualTo(65));
 			IStTxtPara bkpScrHead1Para1 = ((IStTxtPara)backupJude.SectionsOS[iScrHead1].HeadingOA.ParagraphsOS[0]);
-			Assert.AreEqual(scrHead1Para1TextOrig, bkpScrHead1Para1.Contents.Text);
-			Assert.AreEqual(scrHead1Para1OrigTransCount, bkpScrHead1Para1.TranslationsOC.Count);
+			Assert.That(bkpScrHead1Para1.Contents.Text, Is.EqualTo(scrHead1Para1TextOrig));
+			Assert.That(bkpScrHead1Para1.TranslationsOC.Count, Is.EqualTo(scrHead1Para1OrigTransCount));
 
-			Assert.AreEqual(0, m_importMgr.m_cDisplayImportedBooksDlgCalled);
+			Assert.That(m_importMgr.m_cDisplayImportedBooksDlgCalled, Is.EqualTo(0));
 		}
 		#endregion
 
@@ -1737,8 +1719,7 @@ namespace ParatextImport.ImportTests
 				if (!section.IsIntro && section.VerseRefStart == targetRef)
 				{
 					scrHead1Para1 = ((IScrTxtPara)section.HeadingOA.ParagraphsOS[0]);
-					Assert.AreEqual(ScrStyleNames.SectionHead,
-						scrHead1Para1.StyleRules.GetStrPropValue((int)FwTextPropType.ktptNamedStyle));
+					Assert.That(scrHead1Para1.StyleRules.GetStrPropValue((int)FwTextPropType.ktptNamedStyle), Is.EqualTo(ScrStyleNames.SectionHead));
 					break;
 				}
 			}

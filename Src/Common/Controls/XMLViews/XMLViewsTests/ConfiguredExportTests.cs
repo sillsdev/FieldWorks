@@ -73,9 +73,9 @@ namespace XMLViewsTests
 					Dictionary<string, string> mapChars;
 					ISet<string> ignoreSet;
 					var data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet);
-					Assert.AreEqual(mapChars.Count, 2, "Too many characters found equivalents");
-					Assert.AreEqual(mapChars["a"], "az");
-					Assert.AreEqual(mapChars["ch"], "c");
+					Assert.That(2, Is.EqualTo(mapChars.Count), "Too many characters found equivalents");
+					Assert.That("az", Is.EqualTo(mapChars["a"]));
+					Assert.That("c", Is.EqualTo(mapChars["ch"]));
 				}
 			}
 		}
@@ -96,12 +96,12 @@ namespace XMLViewsTests
 					Dictionary<string, string> mapChars;
 					ISet<string> ignoreSet;
 					var data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet);
-					Assert.AreEqual(data.Count, 0, "Header created for two wedges");
-					Assert.AreEqual(mapChars.Count, 3, "Too many characters found equivalents");
-					Assert.AreEqual(mapChars["az"], "b");
-					Assert.AreEqual(mapChars["AZ"], "b");
+					Assert.That(0, Is.EqualTo(data.Count), "Header created for two wedges");
+					Assert.That(3, Is.EqualTo(mapChars.Count), "Too many characters found equivalents");
+					Assert.That("b", Is.EqualTo(mapChars["az"]));
+					Assert.That("b", Is.EqualTo(mapChars["AZ"]));
 					// Rules following the '/' rule should not be skipped LT-18309
-					Assert.AreEqual(mapChars["gz"], "f");
+					Assert.That("f", Is.EqualTo(mapChars["gz"]));
 				}
 			}
 		}
@@ -126,8 +126,8 @@ namespace XMLViewsTests
 					// The second test catches the real world scenario, GetDigraphs is actually called many times, but the first time
 					// is the only one that should trigger the algorithm, afterward the information is cached in the exporter.
 					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet));
-					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
-					Assert.AreEqual(ignoreSet.Count, 1, "Ignorable character not parsed from rule");
+					Assert.That(0, Is.EqualTo(mapChars.Count), "Too many characters found equivalents");
+					Assert.That(1, Is.EqualTo(ignoreSet.Count), "Ignorable character not parsed from rule");
 				}
 			}
 		}
@@ -149,9 +149,9 @@ namespace XMLViewsTests
 					ISet<string> ignoreSet = null;
 					ISet<string> data = null;
 					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet));
-					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
-					Assert.AreEqual(ignoreSet.Count, 1, "Ignorable character not parsed from rule");
-					Assert.IsTrue(ignoreSet.Contains('\uA78C'.ToString(CultureInfo.InvariantCulture)));
+					Assert.That(0, Is.EqualTo(mapChars.Count), "Too many characters found equivalents");
+					Assert.That(1, Is.EqualTo(ignoreSet.Count), "Ignorable character not parsed from rule");
+					Assert.That(ignoreSet.Contains('\uA78C'.ToString(CultureInfo.InvariantCulture)), Is.True);
 				}
 			}
 		}
@@ -173,9 +173,9 @@ namespace XMLViewsTests
 					ISet<string> ignoreSet = null;
 					ISet<string> data = null;
 					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet));
-					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
-					Assert.AreEqual(ignoreSet.Count, 1, "Ignorable character not parsed from rule");
-					Assert.IsTrue(ignoreSet.Contains('\uA78C'.ToString(CultureInfo.InvariantCulture)));
+					Assert.That(0, Is.EqualTo(mapChars.Count), "Too many characters found equivalents");
+					Assert.That(1, Is.EqualTo(ignoreSet.Count), "Ignorable character not parsed from rule");
+					Assert.That(ignoreSet.Contains('\uA78C'.ToString(CultureInfo.InvariantCulture)), Is.True);
 				}
 			}
 		}
@@ -197,9 +197,9 @@ namespace XMLViewsTests
 					ISet<string> ignoreSet = null;
 					ISet<string> data = null;
 					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet));
-					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
-					Assert.AreEqual(ignoreSet.Count, 2, "Ignorable character not parsed from rule");
-					CollectionAssert.AreEquivalent(ignoreSet, new [] {"!", "?"});
+					Assert.That(0, Is.EqualTo(mapChars.Count), "Too many characters found equivalents");
+					Assert.That(2, Is.EqualTo(ignoreSet.Count), "Ignorable character not parsed from rule");
+					Assert.That(ignoreSet, Is.EquivalentTo(new [] {"!", "?"}));
 				}
 			}
 		}
@@ -221,9 +221,9 @@ namespace XMLViewsTests
 					ISet<string> ignoreSet = null;
 					ISet<string> data = null;
 					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet));
-					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
-					Assert.AreEqual(ignoreSet.Count, 3, "Ignorable character not parsed from rule");
-					CollectionAssert.AreEquivalent(ignoreSet, new[] { "eb-", "oba-", "ba-" });
+					Assert.That(0, Is.EqualTo(mapChars.Count), "Too many characters found equivalents");
+					Assert.That(3, Is.EqualTo(ignoreSet.Count), "Ignorable character not parsed from rule");
+					Assert.That(ignoreSet, Is.EquivalentTo(new[] { "eb-", "oba-", "ba-" }));
 				}
 			}
 		}
@@ -245,9 +245,9 @@ namespace XMLViewsTests
 					ISet<string> ignoreSet = null;
 					ISet<string> data = null;
 					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet));
-					Assert.AreEqual(mapChars.Count, 0, "Too many characters found equivalents");
-					Assert.AreEqual(ignoreSet.Count, 2, "Ignorable character not parsed from rule");
-					CollectionAssert.AreEquivalent(ignoreSet, new[] { "!", "?" });
+					Assert.That(0, Is.EqualTo(mapChars.Count), "Too many characters found equivalents");
+					Assert.That(2, Is.EqualTo(ignoreSet.Count), "Ignorable character not parsed from rule");
+					Assert.That(ignoreSet, Is.EquivalentTo(new[] { "!", "?" }));
 				}
 			}
 		}
@@ -269,9 +269,9 @@ namespace XMLViewsTests
 					ISet<string> ignoreSet = null;
 					ISet<string> data = null;
 					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet));
-					Assert.AreEqual(data.Count, 0, "No characters should be generated by a before 2 rule");
-					Assert.AreEqual(mapChars.Count, 0, "The rule should have been ignored, no characters ought to have been mapped");
-					Assert.AreEqual(ignoreSet.Count, 0, "Ignorable character incorrectly parsed from rule");
+					Assert.That(0, Is.EqualTo(data.Count), "No characters should be generated by a before 2 rule");
+					Assert.That(0, Is.EqualTo(mapChars.Count), "The rule should have been ignored, no characters ought to have been mapped");
+					Assert.That(0, Is.EqualTo(ignoreSet.Count), "Ignorable character incorrectly parsed from rule");
 				}
 			}
 		}
@@ -293,7 +293,7 @@ namespace XMLViewsTests
 					ISet<string> ignoreSet = null;
 					ISet<string> data = null;
 					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet));
-					Assert.AreEqual(data.Count, 2, "The [before 1] rule should have added one additional character");
+					Assert.That(2, Is.EqualTo(data.Count), "The [before 1] rule should have added one additional character");
 				}
 			}
 		}
@@ -315,9 +315,9 @@ namespace XMLViewsTests
 					ISet<string> ignoreSet = null;
 					ISet<string> data = null;
 					Assert.DoesNotThrow(() => data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet));
-					Assert.AreEqual(data.Count, 1, "Wrong number of character mappings found");
-					Assert.AreEqual(mapChars.Count, 2, "Wrong number of character mappings found");
-					Assert.AreEqual(ignoreSet.Count, 0, "Ignorable character incorrectly parsed from rule");
+					Assert.That(1, Is.EqualTo(data.Count), "Wrong number of character mappings found");
+					Assert.That(2, Is.EqualTo(mapChars.Count), "Wrong number of character mappings found");
+					Assert.That(0, Is.EqualTo(ignoreSet.Count), "Ignorable character incorrectly parsed from rule");
 				}
 			}
 		}
@@ -338,9 +338,9 @@ namespace XMLViewsTests
 					Dictionary<string, string> mapChars;
 					ISet<string> ignoreSet;
 					var data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet);
-					Assert.AreEqual(mapChars.Count, 2, "Too many characters found equivalents");
-					Assert.AreEqual(mapChars["a"], "az");
-					Assert.AreEqual(mapChars["ch"], "c");
+					Assert.That(2, Is.EqualTo(mapChars.Count), "Too many characters found equivalents");
+					Assert.That("az", Is.EqualTo(mapChars["a"]));
+					Assert.That("c", Is.EqualTo(mapChars["ch"]));
 				}
 			}
 		}
@@ -361,8 +361,8 @@ namespace XMLViewsTests
 					Dictionary<string, string> mapChars;
 					ISet<string> ignoreSet;
 					var data = exporter.GetDigraphs(ws, out mapChars, out ignoreSet);
-					Assert.AreEqual(data.Count, 2, "Two Digraphs should be returned");
-					Assert.AreEqual(mapChars["ñ"], "ñe");
+					Assert.That(2, Is.EqualTo(data.Count), "Two Digraphs should be returned");
+					Assert.That("ñe", Is.EqualTo(mapChars["ñ"]));
 				}
 			}
 		}
@@ -452,7 +452,7 @@ namespace XMLViewsTests
 				{
 					exporter.Initialize(Cache, m_propertyTable, writer, null, "xhtml", null, "dicBody");
 					exporter.GetDigraphs(ws, out var mapChars, out _);
-					Assert.AreEqual(mapChars.Count, 0, "No equivalents expected");
+					Assert.That(0, Is.EqualTo(mapChars.Count), "No equivalents expected");
 				}
 			}
 		}

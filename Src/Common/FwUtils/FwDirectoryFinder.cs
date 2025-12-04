@@ -9,13 +9,13 @@
 // </remarks>
 
 using System;
-using System.IO;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
 using System.Security;
 using Microsoft.Win32;
-using SIL.LCModel;
 using SIL.FieldWorks.Resources;
+using SIL.LCModel;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 
@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static string FlexExe
 		{
-			get { return ExeOrDllPath("Flex.exe"); }
+			get { return ExeOrDllPath("FieldWorks.exe"); }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -143,7 +143,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 				return Path.Combine(ExeOrDllDirectory, file);
 			}
 
-			return Path.Combine(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), file);
+			return Path.Combine(
+				Path.GetDirectoryName(Assembly.GetEntryAssembly().Location),
+				file
+			);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -161,8 +164,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Debug.Assert(subDirectory != null);
 
 			string retval = subDirectory.Trim();
-			if (retval.Length > 0 && (retval[0] == Path.DirectorySeparatorChar
-				|| retval[0] == Path.AltDirectorySeparatorChar))
+			if (
+				retval.Length > 0
+				&& (
+					retval[0] == Path.DirectorySeparatorChar
+					|| retval[0] == Path.AltDirectorySeparatorChar
+				)
+			)
 			{
 				// remove leading directory separator from subdirectory
 				retval = retval.Substring(1);
@@ -288,22 +296,32 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <exception cref="ApplicationException">If the desired directory could not be found.
 		/// </exception>
 		/// ------------------------------------------------------------------------------------
-		private static string GetDirectory(RegistryKey registryKey, string registryValue,
-			string defaultDir)
+		private static string GetDirectory(
+			RegistryKey registryKey,
+			string registryValue,
+			string defaultDir
+		)
 		{
-			string rootDir = (registryKey == null) ? null : registryKey.GetValue(registryValue, null) as string;
+			string rootDir =
+				(registryKey == null)
+					? null
+					: registryKey.GetValue(registryValue, null) as string;
 
 			if (string.IsNullOrEmpty(rootDir) && !string.IsNullOrEmpty(defaultDir))
 				rootDir = defaultDir;
 			if (string.IsNullOrEmpty(rootDir))
 			{
 				throw new ApplicationException(
-					ResourceHelper.GetResourceString("kstidInvalidInstallation"));
+					ResourceHelper.GetResourceString("kstidInvalidInstallation")
+				);
 			}
 			// Hundreds of callers of this method are using Path.Combine with the results.
 			// Combine only works with a root directory if it is followed by \ (e.g., c:\)
 			// so we don't want to trim the \ in this situation.
-			string dir = rootDir.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+			string dir = rootDir.TrimEnd(
+				Path.DirectorySeparatorChar,
+				Path.AltDirectorySeparatorChar
+			);
 			return dir.Length > 2 ? dir : dir + Path.DirectorySeparatorChar;
 		}
 
@@ -320,14 +338,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			get
 			{
-				string defaultDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), CompanyName,
-					$"FieldWorks {FwUtils.SuiteVersion}");
+				string defaultDir = Path.Combine(
+					Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+					CompanyName,
+					$"FieldWorks {FwUtils.SuiteVersion}"
+				);
 				return GetDirectory("RootCodeDir", defaultDir);
 			}
 		}
 
 		private const string ksRootDataDir = "RootDataDir";
 		private const string ksFieldWorks = "FieldWorks";
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the directory where FieldWorks data was installed (i.e. under AppData).
@@ -335,8 +357,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <exception cref="ApplicationException">If an installation directory could not be
 		/// found.</exception>
 		/// ------------------------------------------------------------------------------------
-		public static string DataDirectory => GetDirectory(ksRootDataDir,
-			Path.Combine(LcmFileHelper.CommonApplicationData, CompanyName, ksFieldWorks));
+		public static string DataDirectory =>
+			GetDirectory(
+				ksRootDataDir,
+				Path.Combine(LcmFileHelper.CommonApplicationData, CompanyName, ksFieldWorks)
+			);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -346,9 +371,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <exception cref="ApplicationException">If an installation directory could not be
 		/// found.</exception>
 		/// ------------------------------------------------------------------------------------
-		public static string DataDirectoryLocalMachine => GetDirectoryLocalMachine(ksRootDataDir,
-			Path.Combine(LcmFileHelper.CommonApplicationData, CompanyName, ksFieldWorks));
-
+		public static string DataDirectoryLocalMachine =>
+			GetDirectoryLocalMachine(
+				ksRootDataDir,
+				Path.Combine(LcmFileHelper.CommonApplicationData, CompanyName, ksFieldWorks)
+			);
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -382,11 +409,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// We'll assume the executing assembly is $FW/Output/Debug/FwUtils.dll,
 				// and the source dir is $FW/Src.
 				var dir = ExeOrDllDirectory;
-				dir = Path.GetDirectoryName(dir);		// strip the parent directory name (Debug)
-				dir = Path.GetDirectoryName(dir);		// strip the parent directory again (Output)
+				dir = Path.GetDirectoryName(dir); // strip the parent directory name (Debug)
+				dir = Path.GetDirectoryName(dir); // strip the parent directory again (Output)
 				dir = Path.Combine(dir, "Src");
 				if (!Directory.Exists(dir))
-					throw new ApplicationException("Could not find the Src directory.  Was expecting it at: " + dir);
+					throw new ApplicationException(
+						"Could not find the Src directory.  Was expecting it at: " + dir
+					);
 				m_srcdir = dir;
 
 				return m_srcdir;
@@ -405,7 +434,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 				string directory = GetCodeSubDirectory(@"Editorial Checks");
 				if (!Directory.Exists(directory))
 				{
-					string msg = ResourceHelper.GetResourceString("kstidUnableToFindEditorialChecks");
+					string msg = ResourceHelper.GetResourceString(
+						"kstidUnableToFindEditorialChecks"
+					);
 					throw new ApplicationException(string.Format(msg, directory));
 				}
 				return directory;
@@ -429,14 +460,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 				try
 				{
 #endif
-				string directory = EditorialChecksDirectory;
-				string checksDll = Path.Combine(directory, "ScrChecks.dll");
-				if (!File.Exists(checksDll))
-				{
-					string msg = ResourceHelper.GetResourceString("kstidUnableToFindEditorialChecks");
-					throw new ApplicationException(string.Format(msg, directory));
-				}
-				return checksDll;
+					string directory = EditorialChecksDirectory;
+					string checksDll = Path.Combine(directory, "ScrChecks.dll");
+					if (!File.Exists(checksDll))
+					{
+						string msg = ResourceHelper.GetResourceString(
+							"kstidUnableToFindEditorialChecks"
+						);
+						throw new ApplicationException(string.Format(msg, directory));
+					}
+					return checksDll;
 #if RELEASE
 				}
 				catch (ApplicationException e)
@@ -461,7 +494,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Gets the directory where FieldWorks updates are downloaded (\ProgramData\DownloadedUpdates)
 		/// </summary>
 		/// <exception cref="ApplicationException">If an installation directory could not be found.</exception>
-		public static string DownloadedUpdates => Path.Combine(DataDirectoryLocalMachine, "DownloadedUpdates");
+		public static string DownloadedUpdates =>
+			Path.Combine(DataDirectoryLocalMachine, "DownloadedUpdates");
 
 		private const string ksProjects = "Projects";
 
@@ -500,7 +534,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public static string ProjectsDirectoryLocalMachine
 		{
-			get { return GetDirectoryLocalMachine(ksProjectsDir, Path.Combine(DataDirectoryLocalMachine, ksProjects)); }
+			get
+			{
+				return GetDirectoryLocalMachine(
+					ksProjectsDir,
+					Path.Combine(DataDirectoryLocalMachine, ksProjects)
+				);
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -512,7 +552,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static bool IsSubFolderOfProjectsDirectory(string path)
 		{
-			return !string.IsNullOrEmpty(path) && Path.GetDirectoryName(path) == ProjectsDirectory;
+			return !string.IsNullOrEmpty(path)
+				&& Path.GetDirectoryName(path) == ProjectsDirectory;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -523,7 +564,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static string UserAppDataFolder(string appName)
 		{
-			string path = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+			string path = Environment.GetFolderPath(
+				Environment.SpecialFolder.LocalApplicationData
+			);
 			return Path.Combine(Path.Combine(path, CompanyName), appName);
 		}
 
@@ -540,7 +583,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// ------------------------------------------------------------------------------------
 		public static string CommonAppDataFolder(string appName)
 		{
-			return Path.Combine(Path.Combine(LcmFileHelper.CommonApplicationData, CompanyName), appName);
+			return Path.Combine(
+				Path.Combine(LcmFileHelper.CommonApplicationData, CompanyName),
+				appName
+			);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -557,16 +603,24 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// NOTE: SpecialFolder.MyDocuments returns $HOME on Linux
 				string myDocs = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 				// FWNX-501: use slightly different default path on Linux
-				string defaultDir = Platform.IsUnix ?
-					Path.Combine(myDocs, "Documents/fieldworks/backups") :
-					Path.Combine(Path.Combine(myDocs, "My FieldWorks"), "Backups");
+				string defaultDir = Platform.IsUnix
+					? Path.Combine(myDocs, "Documents/fieldworks/backups")
+					: Path.Combine(Path.Combine(myDocs, "My FieldWorks"), "Backups");
 
-				using (RegistryKey registryKey = FwRegistryHelper.FieldWorksRegistryKey.OpenSubKey("ProjectBackup"))
+				using (
+					RegistryKey registryKey = FwRegistryHelper.FieldWorksRegistryKey.OpenSubKey(
+						"ProjectBackup"
+					)
+				)
 					return GetDirectory(registryKey, "DefaultBackupDirectory", defaultDir);
 			}
 			set
 			{
-				using (RegistryKey key = FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey("ProjectBackup"))
+				using (
+					RegistryKey key = FwRegistryHelper.FieldWorksRegistryKey.CreateSubKey(
+						"ProjectBackup"
+					)
+				)
 				{
 					if (key != null)
 						key.SetValue("DefaultBackupDirectory", value);

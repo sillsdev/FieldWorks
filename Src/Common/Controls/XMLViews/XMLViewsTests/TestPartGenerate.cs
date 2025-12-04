@@ -82,18 +82,18 @@ namespace XMLViewsTests
 			PartGenerator generator = new PartGenerator(Cache, source);
 
 			string[] fields = generator.FieldNames;
-			Assert.AreEqual(7, fields.Length);
-			Assert.IsTrue(StringArrayIncludes(fields, "CitationForm"));
-			Assert.IsTrue(StringArrayIncludes(fields, "Bibliography"));
-			Assert.IsTrue(StringArrayIncludes(fields, "Comment"));
-			Assert.IsTrue(StringArrayIncludes(fields, "LiteralMeaning"));
-			Assert.IsTrue(StringArrayIncludes(fields, "Restrictions"));
-			Assert.IsTrue(StringArrayIncludes(fields, "SummaryDefinition"));
-			Assert.IsTrue(StringArrayIncludes(fields, "MyRestrictions"));
+			Assert.That(fields.Length, Is.EqualTo(7));
+			Assert.That(StringArrayIncludes(fields, "CitationForm"), Is.True);
+			Assert.That(StringArrayIncludes(fields, "Bibliography"), Is.True);
+			Assert.That(StringArrayIncludes(fields, "Comment"), Is.True);
+			Assert.That(StringArrayIncludes(fields, "LiteralMeaning"), Is.True);
+			Assert.That(StringArrayIncludes(fields, "Restrictions"), Is.True);
+			Assert.That(StringArrayIncludes(fields, "SummaryDefinition"), Is.True);
+			Assert.That(StringArrayIncludes(fields, "MyRestrictions"), Is.True);
 
 			XmlNode[] results = generator.Generate();
 
-			Assert.AreEqual(7, results.Length);
+			Assert.That(results.Length, Is.EqualTo(7));
 
 			XmlDocument docExpected = new XmlDocument();
 
@@ -106,7 +106,7 @@ namespace XMLViewsTests
 				+"</column>");
 			XmlNode expected = TestXmlViewsUtils.GetRootNode(docExpected, "column");
 
-			Assert.IsTrue(SomeNodeMatches(results, expected), "CitationForm field is wrong");
+			Assert.That(SomeNodeMatches(results, expected), Is.True, "CitationForm field is wrong");
 
 			XmlDocument docExpected2 = new XmlDocument();
 			docExpected2.LoadXml(
@@ -116,7 +116,7 @@ namespace XMLViewsTests
 				+"</seq> "
 				+"</column>");
 			XmlNode expected2 = TestXmlViewsUtils.GetRootNode(docExpected2, "column");
-			Assert.IsTrue(SomeNodeMatches(results, expected2), "Bibliography field is wrong");
+			Assert.That(SomeNodeMatches(results, expected2), Is.True, "Bibliography field is wrong");
 
 			XmlDocument docExpected3 = new XmlDocument();
 			docExpected3.LoadXml(
@@ -126,7 +126,7 @@ namespace XMLViewsTests
 				+"</seq> "
 				+"</column>");
 			XmlNode expected3 = TestXmlViewsUtils.GetRootNode(docExpected3, "column");
-			Assert.IsTrue(SomeNodeMatches(results, expected3), "generated MyRestrictions field is wrong");
+			Assert.That(SomeNodeMatches(results, expected3), Is.True, "generated MyRestrictions field is wrong");
 		}
 
 		/// <summary>
@@ -150,13 +150,13 @@ namespace XMLViewsTests
 			PartGenerator generator = new PartGenerator(Cache, source);
 
 			string[] fields = generator.FieldNames;
-			Assert.AreEqual(1, fields.Length);
-			Assert.IsTrue(StringArrayIncludes(fields, "MyRestrictions"));
+			Assert.That(fields.Length, Is.EqualTo(1));
+			Assert.That(StringArrayIncludes(fields, "MyRestrictions"), Is.True);
 
 			XmlNode[] results = generator.Generate();
 
 			// SampleCm.xml has three ML attrs on LexEntry
-			Assert.AreEqual(1, results.Length);
+			Assert.That(results.Length, Is.EqualTo(1));
 
 			XmlDocument docExpected3 = new XmlDocument();
 			docExpected3.LoadXml(
@@ -166,7 +166,7 @@ namespace XMLViewsTests
 				+"</seq> "
 				+"</column>");
 			XmlNode expected3 = TestXmlViewsUtils.GetRootNode(docExpected3, "column");
-			Assert.IsTrue(SomeNodeMatches(results, expected3));
+			Assert.That(SomeNodeMatches(results, expected3), Is.True);
 		}
 
 		// Return true if there is a node in nodes between min and (lim -1)
@@ -211,15 +211,15 @@ namespace XMLViewsTests
 
 			List<XmlNode> nodes = PartGenerator.GetGeneratedChildren(source, Cache);
 
-			Assert.AreEqual(1+7+1+7+2, nodes.Count);
-			Assert.AreEqual("dummy1", nodes[0].Name);
-			Assert.AreEqual("dummy2", nodes[1+7].Name);
-			Assert.AreEqual("dummy3", nodes[1+7+1+7].Name);
-			Assert.AreEqual("dummy4", nodes[1+7+1+7+1].Name);
-			Assert.IsTrue(NameAndLabelOccur(nodes, 1, 1+7, "column", "CitationForm"));
-			Assert.IsTrue(NameAndLabelOccur(nodes, 1, 1+7, "column", "Bibliography"));
-			Assert.IsTrue(NameAndLabelOccur(nodes, 1+7+1, 1+7+1+7, "dummyG", "CitationForm"));
-			Assert.IsTrue(NameAndLabelOccur(nodes, 1+7+1, 1+7+1+7, "dummyG", "MyRestrictions"));
+			Assert.That(nodes.Count, Is.EqualTo(1+7+1+7+2));
+			Assert.That(nodes[0].Name, Is.EqualTo("dummy1"));
+			Assert.That(nodes[1+7].Name, Is.EqualTo("dummy2"));
+			Assert.That(nodes[1+7+1+7].Name, Is.EqualTo("dummy3"));
+			Assert.That(nodes[1+7+1+7+1].Name, Is.EqualTo("dummy4"));
+			Assert.That(NameAndLabelOccur(nodes, 1, 1+7, "column", "CitationForm"), Is.True);
+			Assert.That(NameAndLabelOccur(nodes, 1, 1+7, "column", "Bibliography"), Is.True);
+			Assert.That(NameAndLabelOccur(nodes, 1+7+1, 1+7+1+7, "dummyG", "CitationForm"), Is.True);
+			Assert.That(NameAndLabelOccur(nodes, 1+7+1, 1+7+1+7, "dummyG", "MyRestrictions"), Is.True);
 		}
 	}
 }

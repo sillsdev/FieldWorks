@@ -30,8 +30,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				using (ImagePicture i = ImagePicture.FromImage(testImage))
 				{
-					Assert.AreEqual(new HiMetric(width, i.DpiX).Value, i.Width, "A1");
-					Assert.AreEqual(new HiMetric(height, i.DpiY).Value, i.Height, "A2");
+					Assert.That(i.Width, Is.EqualTo(new HiMetric(width, i.DpiX).Value), "A1");
+					Assert.That(i.Height, Is.EqualTo(new HiMetric(height, i.DpiY).Value), "A2");
 				}
 			}
 		}
@@ -49,10 +49,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			HiMetric h1 = new HiMetric(pixels, dpi);
 			HiMetric h2 = new HiMetric(h1.Value);
-			Assert.IsTrue(h2.Value == h1.Value, "A1");
-			Assert.IsTrue(h2.GetPixels(dpi) == h1.GetPixels(dpi), "A2");
+			Assert.That(h2.Value == h1.Value, Is.True, "A1");
+			Assert.That(h2.GetPixels(dpi) == h1.GetPixels(dpi), Is.True, "A2");
 
-			Assert.IsTrue(h2.GetPixels(dpi) == pixels, "A3");
+			Assert.That(h2.GetPixels(dpi) == pixels, Is.True, "A3");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -68,10 +68,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			HiMetric h1 = new HiMetric(pixels, dpi);
 			HiMetric h2 = new HiMetric(h1.Value);
-			Assert.IsTrue(h2.Value == h1.Value, "A1");
-			Assert.IsTrue(h2.GetPixels(dpi) == h1.GetPixels(dpi), "A2");
+			Assert.That(h2.Value == h1.Value, Is.True, "A1");
+			Assert.That(h2.GetPixels(dpi) == h1.GetPixels(dpi), Is.True, "A2");
 
-			Assert.IsTrue(h2.GetPixels(dpi) == pixels, "A3");
+			Assert.That(h2.GetPixels(dpi) == pixels, Is.True, "A3");
 		}
 	}
 }

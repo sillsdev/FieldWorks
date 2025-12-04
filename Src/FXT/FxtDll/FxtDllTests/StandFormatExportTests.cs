@@ -72,8 +72,7 @@ namespace SIL.FieldWorks.Common.FXT
 						testResult = testResult.Substring(iBegin);
 					testResult = testResult.Replace("\r\n", "\n");
 				}
-				Assert.AreEqual(expected, testResult,
-					"FXT Output Differs. If you have done a model change, you can update the 'correct answer' xml files by runing fw\\bin\\FxtAnswersUpdate.bat.");
+				Assert.That(testResult, Is.EqualTo(expected), "FXT Output Differs. If you have done a model change, you can update the 'correct answer' xml files by runing fw\\bin\\FxtAnswersUpdate.bat.");
 			}
 		}
 

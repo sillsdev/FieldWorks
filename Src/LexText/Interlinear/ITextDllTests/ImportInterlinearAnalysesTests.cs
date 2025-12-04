@@ -99,7 +99,7 @@ namespace SIL.FieldWorks.IText
 		private static void AssertMorphemeFormMatchesWordform(IWfiWordform wfiWord, IWfiAnalysis wfiAnalysis, int wsWordform)
 		{
 			var morphBundle = wfiAnalysis.MorphBundlesOS.FirstOrDefault();
-			Assert.NotNull(morphBundle, "expected a morphbundle");
+			Assert.That(morphBundle, Is.Not.Null, "expected a morphbundle");
 			Assert.That(morphBundle.Form.get_String(wsWordform).Text,
 				Is.EqualTo(wfiWord.Form.get_String(wsWordform).Text));
 		}
@@ -645,8 +645,8 @@ namespace SIL.FieldWorks.IText
 				// make sure nothing has changed:
 				Assert.That(Cache.LanguageProject.Texts.Count, Is.EqualTo(1));
 				Assert.That(imported.ContentsOA.ParagraphsOS.Count, Is.EqualTo(1));
-				Assert.AreEqual(paraContents.Text, importedPara.Contents.Text, "Imported Para contents differ from original");
-				Assert.IsTrue(paraContents.Equals(importedPara.Contents), "Ws mismatch between imported and original paragraph");
+				Assert.That(importedPara.Contents.Text, Is.EqualTo(paraContents.Text), "Imported Para contents differ from original");
+				Assert.That(paraContents.Equals(importedPara.Contents), Is.True, "Ws mismatch between imported and original paragraph");
 				Assert.That(importedWordForm.Form.get_String(wsf.get_Engine("en").Handle).Text,
 					Is.EqualTo("supercalifragilisticexpialidocious"));
 				// assert that nothing else was created
@@ -786,8 +786,8 @@ namespace SIL.FieldWorks.IText
 				// make sure nothing has changed:
 				Assert.That(Cache.LanguageProject.Texts.Count, Is.EqualTo(1));
 				Assert.That(imported.ContentsOA.ParagraphsOS.Count, Is.EqualTo(1));
-				Assert.AreEqual(paraContents.Text, importedPara.Contents.Text, "Imported Para contents differ from original");
-				Assert.IsTrue(paraContents.Equals(importedPara.Contents), "Ws mismatch between imported and original paragraph");
+				Assert.That(importedPara.Contents.Text, Is.EqualTo(paraContents.Text), "Imported Para contents differ from original");
+				Assert.That(paraContents.Equals(importedPara.Contents), Is.True, "Ws mismatch between imported and original paragraph");
 				Assert.That(importedWord.Form.get_String(wsf.get_Engine("en").Handle).Text,
 					Is.EqualTo("supercalifragilisticexpialidocious"));
 
@@ -865,8 +865,8 @@ namespace SIL.FieldWorks.IText
 				// make sure nothing else has changed:
 				Assert.That(Cache.LanguageProject.Texts.Count, Is.EqualTo(1));
 				Assert.That(imported.ContentsOA.ParagraphsOS.Count, Is.EqualTo(1));
-				Assert.AreEqual(paraContents.Text, importedPara.Contents.Text, "Imported Para contents differ from original");
-				Assert.IsTrue(paraContents.Equals(importedPara.Contents), "Ws mismatch between imported and original paragraph");
+				Assert.That(importedPara.Contents.Text, Is.EqualTo(paraContents.Text), "Imported Para contents differ from original");
+				Assert.That(paraContents.Equals(importedPara.Contents), Is.True, "Ws mismatch between imported and original paragraph");
 				Assert.That(skippedWord.Form.get_String(wsf.get_Engine("en").Handle).Text,
 					Is.EqualTo("supercalifragilisticexpialidocious"));
 				Assert.That(skippedWord.Guid, Is.EqualTo(word.Guid));
@@ -948,8 +948,8 @@ namespace SIL.FieldWorks.IText
 				// make sure nothing else has changed:
 				Assert.That(Cache.LanguageProject.Texts.Count, Is.EqualTo(1));
 				Assert.That(imported.ContentsOA.ParagraphsOS.Count, Is.EqualTo(1));
-				Assert.AreEqual(paraContents.Text, importedPara.Contents.Text, "Imported Para contents differ from original");
-				Assert.IsTrue(paraContents.Equals(importedPara.Contents), "Ws mismatch between imported and original paragraph");
+				Assert.That(importedPara.Contents.Text, Is.EqualTo(paraContents.Text), "Imported Para contents differ from original");
+				Assert.That(paraContents.Equals(importedPara.Contents), Is.True, "Ws mismatch between imported and original paragraph");
 				Assert.That(skippedWord.Form.get_String(wsf.get_Engine("en").Handle).Text,
 					Is.EqualTo("supercalifragilisticexpialidocious"));
 				Assert.That(skippedWord.Guid, Is.EqualTo(word.Guid));
@@ -1024,8 +1024,8 @@ namespace SIL.FieldWorks.IText
 				// make sure nothing else has changed:
 				Assert.That(Cache.LanguageProject.Texts.Count, Is.EqualTo(1));
 				Assert.That(imported.ContentsOA.ParagraphsOS.Count, Is.EqualTo(1));
-				Assert.AreEqual(paraContents.Text, importedPara.Contents.Text, "Imported Para contents differ from original");
-				Assert.IsTrue(paraContents.Equals(importedPara.Contents), "Ws mismatch between imported and original paragraph");
+				Assert.That(importedPara.Contents.Text, Is.EqualTo(paraContents.Text), "Imported Para contents differ from original");
+				Assert.That(paraContents.Equals(importedPara.Contents), Is.True, "Ws mismatch between imported and original paragraph");
 				Assert.That(importedWordForm.Form.get_String(wsf.get_Engine("en").Handle).Text,
 					Is.EqualTo("supercalifragilisticexpialidocious"));
 				// The wordform should be reused, but with a new analysis

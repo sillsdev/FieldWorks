@@ -1,13 +1,8 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Xml.Serialization;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace SIL.FieldWorks.FwCoreDlgs
@@ -23,7 +18,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		///</summary>
 		public BackupProjectSettings()
 		{
-			DestinationFolder = DirectoryFinder.DefaultBackupDirectory;
+			DestinationFolder = FwDirectoryFinder.DefaultBackupDirectory;
 		}
 
 		/// <summary>

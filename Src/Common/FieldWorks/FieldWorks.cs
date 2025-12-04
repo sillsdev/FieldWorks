@@ -165,6 +165,10 @@ namespace SIL.FieldWorks
 				if (string.IsNullOrEmpty(firefoxPath))
 				{
 					firefoxPath = Path.Combine(exePath, "Firefox");
+					if (!Directory.Exists(firefoxPath) && Directory.Exists(Path.Combine(exePath, "Firefox64")))
+					{
+						firefoxPath = Path.Combine(exePath, "Firefox64");
+					}
 				}
 				Xpcom.Initialize(firefoxPath);
 				GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
@@ -913,7 +917,7 @@ namespace SIL.FieldWorks
 
 		/// <summary>
 		/// Ensure a valid folder for LangProject.LinkedFilesRootDir.  When moving projects
-		/// between systems, the stored value may become hopelessly invalid.  See FWNX-1005
+		/// between systems, the stored value may become hopelessly invalid. See FWNX-1005
 		/// for an example of the havoc than can ensue.
 		/// </summary>
 		/// <remarks>This method gets called when we open the FDO cache.</remarks>
@@ -1270,6 +1274,17 @@ namespace SIL.FieldWorks
 			// Be very, very careful about changing stuff here. Code here MUST not throw exceptions,
 			// even when the application is in a crashed state. For example, error reporting failed
 			// before I added the static registry keys, because getting App.SettingsKey failed somehow.
+#if DEBUG
+			try
+			{
+				File.WriteAllText("CrashLog.txt", error.ToString());
+			}
+			catch
+			{
+				// Ignore failure to write log
+			}
+#endif
+
 			var appKey = FwRegistryHelper.FieldWorksRegistryKey;
 			if (parent?.App != null && parent.App == s_flexApp && s_flexAppKey != null)
 				appKey = s_flexAppKey;
@@ -2603,7 +2618,7 @@ namespace SIL.FieldWorks
 				try
 				{
 					var versionInfoProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), false);
-					var backupSettings = new BackupProjectSettings(cache, restoreSettings.Settings,
+					var backupSettings = new LCModel.DomainServices.BackupRestore.BackupProjectSettings(cache, restoreSettings.Settings,
 						FwDirectoryFinder.DefaultBackupDirectory, versionInfoProvider.MajorVersion);
 					backupSettings.DestinationFolder = FwDirectoryFinder.DefaultBackupDirectory;
 
@@ -3144,7 +3159,7 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Shutdowns the specified application. The application will be disposed of immediately.
-		/// If no other applications are running, then FieldWorks will also be shutdown.
+		/// If no other applications are running, then FieldWorks will also be shut down.
 		/// </summary>
 		/// <param name="app">The application to shut down.</param>
 		/// <param name="fSaveSettings">True to have the application save its settings,
@@ -3277,7 +3292,7 @@ namespace SIL.FieldWorks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tries to find an existing FieldWorks process that is running the specified project.
+		/// Tries to find another FieldWorks process that is running the specified project.
 		/// See the class comment on FwLinkArgs for details on how all the parts of hyperlinking work.
 		/// </summary>
 		/// <param name="project">The project we want to conect to.</param>
