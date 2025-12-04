@@ -31,6 +31,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>The IVwCacheDa object</summary>
 		protected IVwCacheDa m_IVwCacheDa;
 
+		/// <summary>
+		/// One-time cleanup after all tests in this fixture complete.
+		/// Forces GC to run and wait for finalizers to prevent crashes during VSTest cleanup.
+		/// </summary>
+		[OneTimeTearDown]
+		public void FixtureTearDown()
+		{
+			// Force garbage collection and wait for finalizers to complete.
+			// This ensures COM objects are released while native DLLs are still loaded.
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
+			GC.Collect();
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Setup done before each test.
@@ -51,6 +65,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[TearDown]
 		public void TestTeardown()
 		{
+			// Release COM objects to prevent access violations during VSTest cleanup.
+			// The native VwCacheDa must be released before the process exits, otherwise
+			// the CLR finalizer thread may try to release it after native DLLs are unloaded.
+			if (m_IVwCacheDa != null)
+			{
+				// Clear any cached data first
+				m_IVwCacheDa.ClearAllData();
+
+				// Release the COM object reference
+				Marshal.ReleaseComObject(m_IVwCacheDa);
+				m_IVwCacheDa = null;
+				m_ISilDataAccess = null;
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -552,7 +579,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					default:
 						continue;
 				}
-				Assert.That(m_ISilDataAccess.get_IsPropInCache(hvo, tag, (int)cpt, 12345), Is.EqualTo(flag).Within(string.Format("IsPropInCache for property type '{0}' failed;", cpt)));
+				Assert.That(m_ISilDataAccess.get_IsPropInCache(hvo, tag, (int)cpt, 12345), Is.EqualTo(flag), $"IsPropInCache for property type '{cpt}' failed;");
 			}
 		}
 

@@ -454,7 +454,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					VerifyNoRedundantChildren(model.SharedItems);
 					foreach(var si in model.SharedItems)
-						Assert.That(si.Parent, Is.Not.Null, "Shared item {0} is an orphan", si.Label);
+						Assert.That(si.Parent, Is.Not.Null, $"Shared item {si.Label} is an orphan");
 				}
 			}
 		}
@@ -1028,7 +1028,7 @@ namespace SIL.FieldWorks.XWorks
 				schemas.Add("", reader);
 				var document = XDocument.Load(xmlFile);
 				document.Validate(schemas, (sender, args) =>
-					Assert.Fail("Model saved at {0} did not validate against schema: {1}", xmlFile, args.Message));
+					Assert.Fail($"Model saved at {xmlFile} did not validate against schema: {args.Message}"));
 			}
 		}
 

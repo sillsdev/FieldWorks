@@ -128,7 +128,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			var wordGrp = m_logic.CallFindWordGroup(list);
 			Assert.That(wordGrp, Is.Not.Null, message);
-			Assert.That(wordGrp.Hvo, Is.EqualTo(testWordGrp.Hvo).Within(message));
+			Assert.That(wordGrp.Hvo, Is.EqualTo(testWordGrp.Hvo), message);
 		}
 
 		/// <summary>

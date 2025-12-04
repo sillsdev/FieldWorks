@@ -114,8 +114,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = new Mock<Mediator>().Object;
-			respellUndoaction.DoIt(mediator);
+			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
+			respellUndoaction.DoIt(m_mediator);
 
 			Assert.That(
 				para.Contents.Text,
@@ -146,8 +146,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = new Mock<Mediator>().Object;
-			respellUndoaction.DoIt(mediator);
+			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
+			respellUndoaction.DoIt(m_mediator);
 
 			Assert.That(
 				para.Contents.Text,
@@ -186,8 +186,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.CopyAnalyses = true; // in the dialog this is always true?
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = new Mock<Mediator>().Object;
-			respellUndoaction.DoIt(mediator);
+			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
+			respellUndoaction.DoIt(m_mediator);
 
 			Assert.That(
 				para.SegmentsOS[0].AnalysesRS[2].Analysis.MorphBundlesOS.Count,
@@ -243,8 +243,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = new Mock<Mediator>().Object;
-			respellUndoaction.DoIt(mediator);
+			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
+			respellUndoaction.DoIt(m_mediator);
 
 			Assert.That(
 				para.Contents.Text,
@@ -280,8 +280,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = new Mock<Mediator>().Object;
-			respellUndoaction.DoIt(mediator);
+			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
+			respellUndoaction.DoIt(m_mediator);
 
 			Assert.That(
 				para.Contents.Text,
@@ -336,8 +336,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = new Mock<Mediator>().Object;
-			respellUndoaction.DoIt(mediator);
+			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
+			respellUndoaction.DoIt(m_mediator);
 
 			Assert.That(
 				para.Contents.Text,
@@ -411,8 +411,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.PreserveCase = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = new Mock<Mediator>().Object;
-			respellUndoaction.DoIt(mediator);
+			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
+			respellUndoaction.DoIt(m_mediator);
 
 			Assert.That(
 				para.Contents.Text,
@@ -1499,12 +1499,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		{
 			Assert.That(
 				m_cache.GetIntProperty(cba, kflidBeginOffset),
-				Is.EqualTo(begin).Within(message + " beginOffset")
-			);
+				Is.EqualTo(begin), message + " beginOffset");
 			Assert.That(
 				m_cache.GetIntProperty(cba, kflidEndOffset),
-				Is.EqualTo(end).Within(message + " endOffset")
-			);
+				Is.EqualTo(end), message + " endOffset");
 		}
 
 		/// <summary>
@@ -1573,12 +1571,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 							IWfiMorphBundle bundle = analysis.MorphBundlesOS[iMorph];
 							Assert.That(
 								bundle.SenseRA.Gloss.AnalysisDefaultWritingSystem,
-								Is.EqualTo(mgloss).Within(message + " morph gloss")
-							);
+								Is.EqualTo(mgloss), message + " morph gloss");
 							Assert.That(
 								bundle.MorphRA.Form.VernacularDefaultWritingSystem,
-								Is.EqualTo(form).Within(message + " morph form")
-							);
+								Is.EqualTo(form), message + " morph form");
 						}
 						return; // found what we want, mustn't hit the Fail below!
 					}

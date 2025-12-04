@@ -455,6 +455,8 @@ namespace FwBuildTasks
 						"<Project xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\" ToolsVersion=\"{0}\">",
 						toolsVersion
 					);
+					writer.WriteLine("\t<Import Project=\"FwBuildTasks.targets\" />");
+					writer.WriteLine("\t<Import Project=\"SetupInclude.targets\" />");
 					writer.WriteLine();
 					foreach (var project in m_mapProjFile.Keys)
 					{
@@ -579,45 +581,36 @@ namespace FwBuildTasks
 						);
 						// <Clouseau> verification task
 						writer.WriteLine(
-							$"\t\t<Clouseau Condition=\"'$(Configuration)' == 'Debug'\" AssemblyPathname=\"$(dir-outputBase)/{GetAssemblyNameForProject(project)}\"/>"
+							$"\t\t<Clouseau Condition=\"'$(Configuration)' == 'Debug' And '$(SkipClouseau)' != 'true'\" AssemblyPathname=\"$(dir-outputBase)/{GetAssemblyNameForProject(project)}\"/>"
 						);
 
 						if (isTestProject)
 						{
-							// <NUnit3> task
+							// <Exec> task for VSTest
 							writer.WriteLine(
 								$"\t\t<Message Text=\"Running unit tests for {project}\" />"
 							);
-							writer.WriteLine("\t\t<NUnit3 Condition=\"'$(action)'=='test'\"");
+							// Ensure TestResults directory exists
 							writer.WriteLine(
-								$"\t\t\tAssemblies=\"$(dir-outputBase)/{project}.dll\""
+								"\t\t<MakeDir Condition=\"'$(action)'=='test'\" Directories=\"$(dir-outputBase)/TestResults\" />"
 							);
+							writer.WriteLine("\t\t<Exec Condition=\"'$(action)'=='test'\"");
+							// TRX output to TestResults/ directory with project-specific filename
+							// Coverage can be enabled via $(EnableCoverage)=true property (adds /EnableCodeCoverage via $(VSTestCoverageArg))
 							writer.WriteLine(
-								"\t\t\tToolPath=\"$(PackagesDir)/NUnit.ConsoleRunner.3.12.0/tools\""
+								$"\t\t\tCommand=\"vstest.console.exe &quot;$(dir-outputBase)/{project}.dll&quot; /Settings:&quot;$(fwrt)/Test.runsettings&quot; /Logger:&quot;trx;LogFileName={project}.trx&quot; /ResultsDirectory:&quot;$(dir-outputBase)/TestResults&quot; /Platform:$(Platform) /TestCaseFilter:&quot;$(VSTestTestCaseFilter)&quot;$(VSTestCoverageArg)\""
 							);
 							writer.WriteLine("\t\t\tWorkingDirectory=\"$(dir-outputBase)\"");
-							writer.WriteLine(
-								$"\t\t\tOutputXmlFile=\"$(dir-outputBase)/{project}.dll-nunit-output.xml\""
-							);
-							writer.WriteLine("\t\t\tForce32Bit=\"$(useNUnit-x86)\"");
-							writer.WriteLine("\t\t\tExcludeCategory=\"$(excludedCategories)\"");
-							// Don't continue on error. NUnit returns 0 even if there are failed tests.
-							// A non-zero return code means a configuration error or that NUnit crashed
-							// - we shouldn't ignore those.
-							//writer.WriteLine("\t\t\tContinueOnError=\"true\"");
-							writer.WriteLine("\t\t\tFudgeFactor=\"$(timeoutFudgeFactor)\"");
-							writer.WriteLine($"\t\t\tTimeout=\"{TimeoutForProject(project)}\">");
-							writer.WriteLine(
-								"\t\t\t<Output TaskParameter=\"FailedSuites\" ItemName=\"FailedSuites\"/>"
-							);
-							writer.WriteLine("\t\t</NUnit3>");
+							writer.WriteLine($"\t\t\tTimeout=\"{TimeoutForProject(project)}\"");
+							writer.WriteLine("\t\t/>");
+
 							writer.WriteLine(
 								$"\t\t<Message Text=\"Finished building {project}.\" Condition=\"'$(action)'!='test'\"/>"
 							);
 							writer.WriteLine(
 								$"\t\t<Message Text=\"Finished building {project} and running tests.\" Condition=\"'$(action)'=='test'\"/>"
 							);
-							// Generate dotCover task
+							// Generate dotCover task (legacy coverage approach)
 							GenerateDotCoverTask(
 								writer,
 								new[] { project },

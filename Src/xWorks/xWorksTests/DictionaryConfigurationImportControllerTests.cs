@@ -675,7 +675,7 @@ namespace SIL.FieldWorks.XWorks
 			var mdc = Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
 			var flid = mdc.GetFieldId2(classWithCustomField, customFieldLabel, false);
 			Assert.That(mdc.IsCustom(flid), Is.True);
-			Assert.That(expectedType, Is.EqualTo(mdc.GetDstClsId(flid)), "The {0} custom field was not the correct type.", customFieldLabel);
+			Assert.That(expectedType, Is.EqualTo(mdc.GetDstClsId(flid)), $"The {customFieldLabel} custom field was not the correct type.");
 		}
 
 		private void VerifyCustomFieldAbsent(string customFieldLabel, int classWithCustomField)

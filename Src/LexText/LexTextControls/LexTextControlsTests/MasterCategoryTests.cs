@@ -398,8 +398,8 @@ namespace LexTextControlsTests
 		private static void CheckMSA(string expectedText, int expectedWs, IMultiStringAccessor actual)
 		{
 			var actualText = TsStringUtils.NormalizeToNFC(actual.GetAlternativeOrBestTss(expectedWs, out var actualWs).Text);
-			Assert.That(actualText, Is.EqualTo(expectedText).Within($"WS Handle\n{expectedWs} requested\n{actualWs} returned"));
-			Assert.That(actualWs, Is.EqualTo(expectedWs).Within(expectedText));
+			Assert.That(actualText, Is.EqualTo(expectedText), $"WS Handle\n{expectedWs} requested\n{actualWs} returned");
+			Assert.That(actualWs, Is.EqualTo(expectedWs), expectedText);
 		}
 	}
 }

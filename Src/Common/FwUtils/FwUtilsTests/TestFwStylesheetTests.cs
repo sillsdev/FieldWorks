@@ -116,7 +116,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var wsf = new WritingSystemManager();
 			ILgWritingSystem ws = wsf.get_Engine("de");
 			int hvoGermanWs = ws.Handle;
-			Assert.That(hvoGermanWs > 0, "Should have gotten an hvo for the German WS", Is.True);
+			Assert.That(hvoGermanWs > 0, Is.True, "Should have gotten an hvo for the German WS");
 
 			// Array of 1 struct, contains writing system and font size to override
 			List<FontOverride> fontOverrides = new List<FontOverride>(1);
@@ -164,15 +164,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var wsf = new WritingSystemManager();
 			ILgWritingSystem wsIngles = wsf.get_Engine("en");
 			int hvoInglesWs = wsIngles.Handle;
-			Assert.That(hvoInglesWs > 0, "Should have gotten an HVO for the English WS", Is.True);
+			Assert.That(hvoInglesWs > 0, Is.True, "Should have gotten an HVO for the English WS");
 
 			ILgWritingSystem wsFrench = wsf.get_Engine("fr");
 			int hvoFrenchWs = wsFrench.Handle;
-			Assert.That(hvoFrenchWs > 0, "Should have gotten an HVO for the French WS", Is.True);
+			Assert.That(hvoFrenchWs > 0, Is.True, "Should have gotten an HVO for the French WS");
 
 			ILgWritingSystem wsGerman = wsf.get_Engine("de");
 			int hvoGermanWs = wsGerman.Handle;
-			Assert.That(hvoGermanWs > 0, "Should have gotten an HVO for the German WS", Is.True);
+			Assert.That(hvoGermanWs > 0, Is.True, "Should have gotten an HVO for the German WS");
 
 			Assert.That(hvoFrenchWs != hvoGermanWs, Is.True, "Should have gotten different HVOs for each WS");
 			Assert.That(hvoInglesWs != hvoGermanWs, Is.True, "Should have gotten different HVOs for each WS");

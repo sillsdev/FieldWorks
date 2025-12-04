@@ -80,7 +80,7 @@ namespace SIL.FieldWorks.Discourse
 			const int count = 0; // LtR calls should not pass through the Decorator.
 
 			// SUT
-			Assert.That(m_spy.TotalCalls, Is.EqualTo(count).Within(String.Format("Should be {0} calls before flushing.", count)));
+			Assert.That(m_spy.TotalCalls, Is.EqualTo(count), $"Should be {count} calls before flushing.");
 			m_spy.FlushDecorator();
 
 			// Verification
@@ -106,12 +106,12 @@ namespace SIL.FieldWorks.Discourse
 			const int expectedCount = 7; // OpenParagraph() makes 3 calls
 
 			// SUT
-			Assert.That(m_spy.TotalCalls, Is.EqualTo(expectedCount).Within(String.Format("Should be {0} calls before flushing.", expectedCount)));
+			Assert.That(m_spy.TotalCalls, Is.EqualTo(expectedCount), $"Should be {expectedCount} calls before flushing.");
 			m_spy.FlushDecorator();
 
 			// Verification
 			Assert.That(m_spy.TotalCalls, Is.EqualTo(0), "Shouldn't be any calls.");
-			Assert.That(m_spy.TotalCallsByFlushDecorator, Is.EqualTo(expectedCount).Within(String.Format("Should be {0} calls during flush.", expectedCount)));
+			Assert.That(m_spy.TotalCallsByFlushDecorator, Is.EqualTo(expectedCount), $"Should be {expectedCount} calls during flush.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -138,12 +138,12 @@ namespace SIL.FieldWorks.Discourse
 			const int expectedCount = 6;
 
 			// SUT
-			Assert.That(m_spy.TotalCalls, Is.EqualTo(expectedCount).Within(String.Format("Should be {0} calls before flushing.", expectedCount)));
+			Assert.That(m_spy.TotalCalls, Is.EqualTo(expectedCount), $"Should be {expectedCount} calls before flushing.");
 			m_spy.FlushDecorator();
 
 			// Verification
 			Assert.That(m_spy.TotalCalls, Is.EqualTo(0), "Shouldn't be any calls.");
-			Assert.That(m_spy.TotalCallsByFlushDecorator, Is.EqualTo(expectedCount).Within(String.Format("Should be {0} calls during flush.", expectedCount)));
+			Assert.That(m_spy.TotalCallsByFlushDecorator, Is.EqualTo(expectedCount), $"Should be {expectedCount} calls during flush.");
 			var tpt = (int)m_spy.CalledMethodsAfterFlushDecorator[m_spy.m_cCallsBeforeFlush + 1].ParamArray[0];
 			Assert.That(tpt, Is.EqualTo((int)FwTextPropType.ktptBorderLeading), "Decorator should have changed this TextPropType to Leading from Trailing.");
 		}
@@ -172,12 +172,12 @@ namespace SIL.FieldWorks.Discourse
 			const int expectedCount = 6;
 
 			// SUT
-			Assert.That(m_spy.TotalCalls, Is.EqualTo(expectedCount).Within(String.Format("Should be {0} calls before flushing.", expectedCount)));
+			Assert.That(m_spy.TotalCalls, Is.EqualTo(expectedCount), $"Should be {expectedCount} calls before flushing.");
 			m_spy.FlushDecorator();
 
 			// Verification
 			Assert.That(m_spy.TotalCalls, Is.EqualTo(0), "Shouldn't be any calls.");
-			Assert.That(m_spy.TotalCallsByFlushDecorator, Is.EqualTo(expectedCount).Within(String.Format("Should be {0} calls during flush.", expectedCount)));
+			Assert.That(m_spy.TotalCallsByFlushDecorator, Is.EqualTo(expectedCount), $"Should be {expectedCount} calls during flush.");
 			var tpt = (int)m_spy.CalledMethodsAfterFlushDecorator[m_spy.m_cCallsBeforeFlush + 1].ParamArray[0];
 			Assert.That(tpt, Is.EqualTo((int)FwTextPropType.ktptBorderLeading), "Decorator should have changed this TextPropType to Leading from Trailing.");
 		}
