@@ -335,9 +335,15 @@
 	</ItemGroup>
 	<!-- Restore NuGet packages for SDK-style projects -->
 	<Target Name="RestorePackages">
-		<Message Text="Restoring NuGet packages with dotnet restore..." />
+		<Message Text="Restoring NuGet packages..." />
+		<!--
+			Restore via FieldWorks.sln to ensure all projects get restored.
+			DisableWarnForInvalidRestoreProjects=true suppresses NU1503 warnings for
+			vcxproj files (C++ projects don't use NuGet restore, which is expected).
+			See: https://stackoverflow.com/a/76173374
+		-->
 		<Exec
-			Command="dotnet restore &quot;$(fwrt)\FieldWorks.sln&quot; --packages &quot;$(PackagesDir)&quot;"
+			Command='dotnet restore "$(fwrt)\FieldWorks.sln" --packages "$(PackagesDir)" /p:NoWarn=NU1903 /p:DisableWarnForInvalidRestoreProjects=true'
 			ContinueOnError="false"
 		/>
 	</Target>
@@ -712,12 +718,14 @@
 			The warning does NOT fail the build. Features using these DLLs will gracefully
 			degrade or show appropriate error messages at runtime if the files are missing.
 		-->
-		<Warning
+		<Message
 			Text="Missing Palaso native files (skipping): @(PalasoFiles)"
+			Importance="low"
 			Condition="'@(ExistingPalasoFiles)'!='' AND '@(PalasoFiles)'!='@(ExistingPalasoFiles)'"
 		/>
-		<Warning
+		<Message
 			Text="Missing Chorus application files (skipping): @(ChorusFiles)"
+			Importance="low"
 			Condition="'@(ExistingChorusFiles)'!='' AND '@(ChorusFiles)'!='@(ExistingChorusFiles)'"
 		/>
 		<!-- Copy native Keyman/irrKlang/Interop.WIA files from Palaso packages -->

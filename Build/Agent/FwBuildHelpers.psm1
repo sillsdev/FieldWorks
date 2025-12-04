@@ -211,10 +211,12 @@ function Stop-ConflictingProcesses {
     .SYNOPSIS
         Stops processes that could interfere with builds/tests.
     .DESCRIPTION
-        Kills msbuild, cl, link, nmake, VBCSCompiler processes in the current session.
+        Kills msbuild, cl, link, nmake, dotnet, VBCSCompiler processes in the current session.
         Only affects processes in the current user session, not other users or containers.
+        The dotnet processes are particularly important because they can hold locks on
+        FwBuildTasks.dll and other assemblies, causing MSB3026/MSB3027 file copy failures.
     #>
-    $conflicts = @("FieldWorks", "msbuild", "cl", "link", "nmake")
+    $conflicts = @("FieldWorks", "msbuild", "cl", "link", "nmake", "dotnet")
     $currentSessionId = (Get-Process -Id $PID).SessionId
 
     foreach ($name in $conflicts) {

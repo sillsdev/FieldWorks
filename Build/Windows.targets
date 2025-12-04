@@ -134,8 +134,10 @@
 		<PropertyGroup>
 			<SkipXsltCompilation Condition="'$(XsltcPath)'==''">true</SkipXsltCompilation>
 		</PropertyGroup>
-		<Warning
-			Text="xsltc.exe not found in candidate paths: $(XsltcCandidatePaths). XSL assemblies will be skipped. Install the .NET Framework 4.8 SDK (includes xsltc.exe)."
+		<!-- Informational only - xsltc.exe is optional for XSL precompilation -->
+		<Message
+			Text="xsltc.exe not found (XSL assemblies will be skipped). Install .NET Framework 4.8 SDK if needed."
+			Importance="low"
 			Condition="'$(SkipXsltCompilation)'=='true'"
 		/>
 		<Message

@@ -11,18 +11,28 @@
 		-->
 		<NoWarn>$(NoWarn);CS0649</NoWarn>
 		<!--
+			MSB3277/MSB3243: External NuGet package version conflicts (ParatextData, SIL.Scripture)
+			These are informational only - binding redirects in App.config handle runtime resolution.
+			Demote from Warning to Message to reduce build noise.
+		-->
+		<MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3277;MSB3243</MSBuildWarningsAsMessages>
+		<!--
+			MSB3568: Duplicate resource name in .resx files
+			Old WinForms designer files have duplicate entries due to localization/designer quirks.
+			MSBuild ignores the duplicates (uses first), so this is harmless noise.
+		-->
+		<MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3568</MSBuildWarningsAsMessages>
+		<!--
 			Global TreatWarningsAsErrors Policy:
 			All C# projects treat warnings as errors to maintain code quality.
 			Projects should NOT override this. If a specific warning is unavoidable,
 			add it to NoWarn above with a comment explaining why.
 
-			Note: Some MSBuild warnings cannot be suppressed and appear during build:
-			- MSB3277/MSB3243: External NuGet package version conflicts (ParatextData, ParatextShared)
-			  These are informational only - binding redirects in App.config handle runtime resolution.
-			- "Missing Palaso native files": Windows-only interop DLLs (Keyman, irrKlang, Interop.WIA)
-			  Expected in Docker containers where these optional native dependencies aren't needed.
-			  Full functionality requires a native Windows build environment.
-			These warnings do NOT fail the build.
+			Note: Some informational messages still appear during build (demoted from warnings):
+			- LNK4099: Missing PDB for pre-built libraries (graphite2.lib)
+			- "Missing Palaso native files": Optional Windows-only interop DLLs (Keyman, irrKlang)
+			- "xsltc.exe not found": Optional .NET Framework SDK tool
+			These do NOT fail the build and are informational only.
 		-->
 		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
 		<!-- Default all managed projects to x64 unless explicitly overridden -->

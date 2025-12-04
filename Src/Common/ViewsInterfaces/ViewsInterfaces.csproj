@@ -27,6 +27,13 @@
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
   </ItemGroup>
   <ItemGroup>
+    <!-- Build-order dependency: Native C++ must complete before ViewsInterfaces can generate Views.cs -->
+    <ProjectReference Include="..\..\..\Build\Src\NativeBuild\NativeBuild.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Private>false</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="Accessibility" />
     <Reference Include="System.Drawing" />
     <Reference Include="netstandard" />
