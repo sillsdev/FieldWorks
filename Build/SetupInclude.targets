@@ -34,6 +34,33 @@
 		>
 		<fwrt Condition="'$(fwrt)' == ''">$(MSBuildThisFileDirectory)..</fwrt>
 	</PropertyGroup>
+	<!--
+		Configuration Synchronization:
+		There are two configuration properties that must stay in sync:
+		- Configuration: Standard MSBuild property used by .NET/managed projects (Debug, Release)
+		- config: Legacy property used by native C++ makefiles (debug, release, bounds, profile)
+
+		To prevent mismatches (e.g., Configuration=Debug with config=release), we:
+		1. Default config from Configuration if not explicitly set
+		2. Validate they match when both are specified
+	-->
+	<PropertyGroup>
+		<!-- If config is not set, derive it from Configuration (default to Debug if neither set) -->
+		<config Condition="'$(config)' == '' AND '$(Configuration)' != ''">$(Configuration)</config>
+		<config Condition="'$(config)' == ''">Debug</config>
+	</PropertyGroup>
+	<Target Name="ValidateConfigurationSync"
+		BeforeTargets="Setup"
+		Condition="'$(Configuration)' != '' AND '$(config)' != ''">
+		<!-- Normalize both to compare (handle case differences) -->
+		<PropertyGroup>
+			<_ConfigLower>$(Configuration.ToLowerInvariant())</_ConfigLower>
+			<_configLower>$(config.ToLowerInvariant())</_configLower>
+		</PropertyGroup>
+		<Error
+			Condition="'$(_ConfigLower)' != '$(_configLower)'"
+			Text="Configuration mismatch detected!%0A%0A  Configuration = $(Configuration)%0A  config = $(config)%0A%0AThese must match to ensure managed and native builds use the same output paths.%0A%0ASolutions:%0A  1. Use only /p:Configuration=Release (config will be derived automatically)%0A  2. Or explicitly set both to match: /p:Configuration=Release /p:config=Release" />
+	</Target>
 	<!-- config is generally either Debug or Release, but might be Bounds or Profile. -->
 	<!-- if the user gives it lowercase, fix it to be capitalized -->
 	<Choose>
