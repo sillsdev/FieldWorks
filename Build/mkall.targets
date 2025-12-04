@@ -520,6 +520,9 @@
 			>$(DownloadsDir)</ChorusArtifactsDir
 		>
 		<!-- LCM Core artifacts (native interfaces, ICU data) from sil.lcmodel.core NuGet package -->
+		<LcmArtifactsDir Condition="'$(LcmArtifactsDir)'=='' AND '$(PkgSIL_LCModel_Core)'!=''"
+			>$(PkgSIL_LCModel_Core)/contentFiles</LcmArtifactsDir
+		>
 		<LcmArtifactsDir Condition="'$(LcmArtifactsDir)'==''"
 			>$(PackagesDir)/sil.lcmodel.core/$(LcmNugetVersion)/contentFiles</LcmArtifactsDir
 		>
