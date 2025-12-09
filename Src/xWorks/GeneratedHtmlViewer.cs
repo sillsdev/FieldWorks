@@ -19,6 +19,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -299,6 +300,8 @@ namespace SIL.FieldWorks.XWorks
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(EventConstants.SaveAsWebpage, SaveAsWebpage);
+
 				if (components != null)
 					components.Dispose();
 				if (m_mediator != null)
@@ -363,11 +366,11 @@ namespace SIL.FieldWorks.XWorks
 			m_htmlControl.Forward();
 			// N.B. no need to increment m_iURLCounter because OnBeforeNavigate does it
 		}
-		public bool OnSaveAsWebpage(object parameterObj)
+		private void SaveAsWebpage(object parameterObj)
 		{
 			var param = parameterObj as Tuple<string, string, string>;
 			if (param == null)
-				return false; // we sure can't handle it; should we throw?
+				return; // we sure can't handle it; should we throw?
 			string whatToSave = param.Item1;
 			string outPath = param.Item2;
 			string xsltFiles = param.Item3;
@@ -375,48 +378,47 @@ namespace SIL.FieldWorks.XWorks
 			if (!Directory.Exists(directory))
 			{
 				// can't copy to a directory that doesn't exist
-				return false;
+				return;
 			}
-				switch (whatToSave)
-				{
-					case "GrammarSketchXLingPaper":
-							if (File.Exists(m_sAlsoSaveFileName))
-							{
-								string inputFile = m_sAlsoSaveFileName;
-								if (!string.IsNullOrEmpty(xsltFiles))
-								{
-									string newFileName = Path.GetFileNameWithoutExtension(outPath);
-									string tempFileName = Path.Combine(Path.GetTempPath(), newFileName);
-									string outputFile = tempFileName;
-									string[] rgsXslts = xsltFiles.Split(new[] { ';' });
-									int cXslts = rgsXslts.GetLength(0);
-									for (int i = 0; i < cXslts; ++i)
-									{
-										outputFile = outputFile + (i + 1);
-										XslCompiledTransform transform = GetTransformFromFile(Path.Combine(ExportTemplatePath, rgsXslts[i]));
-										var xmlReaderSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
-										using (var writer = new StreamWriter(outputFile + ".xml"))
-										using (var reader = XmlReader.Create(inputFile, xmlReaderSettings))
-											transform.Transform(reader, null, writer);
-										inputFile = outputFile + ".xml";
-									}
-								}
-								CopyFile(inputFile, outPath);
-								return true;
-							}
-						break;
-					default:
-						if (File.Exists(m_sHtmlFileName))
+			switch (whatToSave)
+			{
+				case "GrammarSketchXLingPaper":
+					if (File.Exists(m_sAlsoSaveFileName))
+					{
+						string inputFile = m_sAlsoSaveFileName;
+						if (!string.IsNullOrEmpty(xsltFiles))
 						{
-							CopyFile(m_sHtmlFileName, outPath);
-							// This task is too fast on Linux/Mono (FWNX-1191).  Wait half a second...
-							// (I would like a more principled fix, but have spent too much time on this issue already.)
-							System.Threading.Thread.Sleep(500);
-							return true;
+							string newFileName = Path.GetFileNameWithoutExtension(outPath);
+							string tempFileName = Path.Combine(Path.GetTempPath(), newFileName);
+							string outputFile = tempFileName;
+							string[] rgsXslts = xsltFiles.Split(new[] { ';' });
+							int cXslts = rgsXslts.GetLength(0);
+							for (int i = 0; i < cXslts; ++i)
+							{
+								outputFile = outputFile + (i + 1);
+								XslCompiledTransform transform = GetTransformFromFile(Path.Combine(ExportTemplatePath, rgsXslts[i]));
+								var xmlReaderSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
+								using (var writer = new StreamWriter(outputFile + ".xml"))
+								using (var reader = XmlReader.Create(inputFile, xmlReaderSettings))
+									transform.Transform(reader, null, writer);
+								inputFile = outputFile + ".xml";
+							}
 						}
-						break;
+						CopyFile(inputFile, outPath);
+						return;
+					}
+					break;
+				default:
+					if (File.Exists(m_sHtmlFileName))
+					{
+						CopyFile(m_sHtmlFileName, outPath);
+						// This task is too fast on Linux/Mono (FWNX-1191).  Wait half a second...
+						// (I would like a more principled fix, but have spent too much time on this issue already.)
+						System.Threading.Thread.Sleep(500);
+						return;
+					}
+					break;
 			}
-			return false;
 		}
 
 		private void CopyFile(string sFileName, string outPath)
@@ -783,6 +785,8 @@ namespace SIL.FieldWorks.XWorks
 			//add our current state to the history system
 			string toolName = m_propertyTable.GetStringProperty("currentContentControl", "");
 			m_mediator.SendMessage("AddContextToHistory", new FwLinkArgs(toolName, Guid.Empty), false);
+
+			Subscriber.Subscribe(EventConstants.SaveAsWebpage, SaveAsWebpage);
 		}
 #if notnow
 		void Browser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
