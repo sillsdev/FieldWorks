@@ -641,6 +641,8 @@ namespace SIL.FieldWorks.IText
 			{
 				foreach (var phrase in paragraph.phrases)
 				{
+					if (phrase.WordsContent.Words == null)
+						continue;
 					foreach (var word in phrase.WordsContent.Words)
 					{
 						strBldr.Append(word.Items[0].Value);
