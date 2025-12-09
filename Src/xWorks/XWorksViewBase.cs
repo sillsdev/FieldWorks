@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.FdoUi;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -540,7 +541,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ReloadListsArea()
 		{
-			m_mediator.SendMessage("ReloadAreaTools", "lists");
+			Publisher.Publish(new PublisherParameterObject(EventConstants.ReloadAreaTools, "lists"));
 		}
 
 		private void DoDeleteCustomListCmd(ICmPossibilityList curList)

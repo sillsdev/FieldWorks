@@ -14,6 +14,7 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.DomainImpl;
@@ -373,7 +374,7 @@ namespace SIL.FieldWorks.XWorks
 						SaveModel();
 						MasterRefreshRequired = false; // We're reloading the whole app, that's refresh enough
 						View.Close();
-						mediator.SendMessage("ReloadAreaTools", "lists");
+						Publisher.Publish(new PublisherParameterObject(EventConstants.ReloadAreaTools, "lists"));
 					};
 					SetManagerTypeInfo(dialog);
 					dialog.ShowDialog(View as Form);
