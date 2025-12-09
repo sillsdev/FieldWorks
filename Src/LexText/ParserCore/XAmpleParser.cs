@@ -285,10 +285,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				if (msaAsLexEntry.EntryRefsOS.Count > 0)
 				{
 					ILexEntryRef lexEntryRef = msaAsLexEntry.EntryRefsOS[msaTuple.Item2];
-					ILexSense sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
-					var inflType = lexEntryRef.VariantEntryTypesRS[0] as ILexEntryInflType;
-					morph = new ParseMorph(form, sense.MorphoSyntaxAnalysisRA, inflType);
-					return true;
+					if (lexEntryRef != null && lexEntryRef.ComponentLexemesRS.Count() > 0)
+					{
+						// make sure there is at least one component lexeme (LT-22328)
+						ILexSense sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
+						var inflType = lexEntryRef.VariantEntryTypesRS[0] as ILexEntryInflType;
+						morph = new ParseMorph(form, sense.MorphoSyntaxAnalysisRA, inflType);
+						return true;
+					}
 				}
 			}
 
