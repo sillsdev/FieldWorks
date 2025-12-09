@@ -13,6 +13,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string CreateFirstRecord = "CreateFirstRecord";
 		public const string DeleteRecord = "DeleteRecord";
 		public const string DictionaryConfigured = "DictionaryConfigured";
+		public const string FilterListChanged = "FilterListChanged";
 		public const string FollowLink = "FollowLink";
 		public const string GetContentControlParameters = "GetContentControlParameters";
 		public const string HandleLocalHotlink = "HandleLocalHotlink";
