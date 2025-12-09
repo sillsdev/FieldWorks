@@ -18,6 +18,7 @@ using Gecko.DOM;
 using SIL.CommandLineProcessing;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -1403,7 +1404,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					if (progressDlg.IsCanceling)
 					{
-						m_mediator.SendMessage("SetToolFromName", "lexiconEdit");
+						Publisher.Publish(new PublisherParameterObject(EventConstants.SetToolFromName, "lexiconEdit"));
 					}
 					else
 					{

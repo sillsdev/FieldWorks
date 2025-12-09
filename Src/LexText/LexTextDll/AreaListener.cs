@@ -127,6 +127,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(EventConstants.SetToolFromName, SetToolFromName);
 				Subscriber.Unsubscribe(EventConstants.ReloadAreaTools, ReloadAreaTools);
 
 				// Dispose managed resources here.
@@ -150,6 +151,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			mediator.AddColleague(this);
 			m_ctotalLists = 0;
 			m_ccustomLists = 0;
+			Subscriber.Subscribe(EventConstants.SetToolFromName, SetToolFromName);
 			Subscriber.Subscribe(EventConstants.ReloadAreaTools, ReloadAreaTools);
 		}
 
@@ -982,7 +984,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// used by the link listener
 		/// </summary>
 		/// <returns></returns>
-		public bool OnSetToolFromName(object toolName)
+		private void SetToolFromName(object toolName)
 		{
 			CheckDisposed();
 
@@ -1012,11 +1014,10 @@ namespace SIL.FieldWorks.XWorks.LexText
 				if (area != null)
 				{
 					m_propertyTable.SetProperty("ToolForAreaNamed_" + area, toolName, true);
-			}
+				}
 			}
 			m_propertyTable.SetProperty("currentContentControlParameters", node.SelectSingleNode("control"), true);
 			m_propertyTable.SetProperty("currentContentControl", toolName, true);
-			return true;
 		}
 
 		private static bool IsToolInArea(string toolName, string area, XmlNode windowConfiguration)

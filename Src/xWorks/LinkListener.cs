@@ -10,6 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.FieldWorks.FdoUi;
@@ -519,7 +520,7 @@ namespace SIL.FieldWorks.XWorks
 						true);
 					m_propertyTable.SetPropertyPersistence("SuspendLoadingRecordUntilOnJumpToRecord", false);
 				}
-				m_mediator.SendMessage("SetToolFromName", m_lnkActive.ToolName);
+				Publisher.Publish(new PublisherParameterObject(EventConstants.SetToolFromName, m_lnkActive.ToolName));
 				// Note: It can be Guid.Empty in cases where it was never set,
 				// or more likely, when the HVO was set to -1.
 				if (m_lnkActive.TargetGuid != Guid.Empty)
