@@ -11,6 +11,7 @@ using System.ComponentModel;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.IText;
 using SIL.FieldWorks.LexText.Controls;
@@ -72,6 +73,8 @@ namespace SIL.FieldWorks.XWorks.LexText
 			InitializeMessageDialogs(progressDlg);
 			if (progressDlg != null)
 				progressDlg.Message = LexTextStrings.ksLoading_;
+
+			Subscriber.Subscribe(EventConstants.SFMImport, SFMImport);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -159,8 +162,9 @@ namespace SIL.FieldWorks.XWorks.LexText
 			if (disposing)
 			{
 				// Dispose managed resources here.
-				if (m_messageBoxExManager != null)
-					m_messageBoxExManager.Dispose();
+				m_messageBoxExManager?.Dispose();
+
+				Subscriber.Unsubscribe(EventConstants.SFMImport, SFMImport);
 			}
 
 			// Dispose unmanaged resources here, whether disposing is true or false.
@@ -276,7 +280,18 @@ namespace SIL.FieldWorks.XWorks.LexText
 			return true;
 		}
 
+		// Method that handles the menu handling for SFM Import.
+		// Triggered from (DistFiles\Language Explorer\Configuration\Main.xml)
 		public bool OnSFMImport(object parameters)
+		{
+			SFMImport(parameters);
+			return true;
+		}
+
+		/// <summary>
+		/// Method to handle published messages for SFMImport
+		/// </summary>
+		private void SFMImport(object _)
 		{
 			Form formActive = ActiveForm;
 			FwXWindow wndActive = (FwXWindow)formActive;
@@ -285,7 +300,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 				((IFwExtension)importWizard).Init(Cache, wndActive.Mediator, wndActive.PropTable);
 				importWizard.ShowDialog(formActive);
 			}
-			return true;
 		}
 
 		/// <summary>
