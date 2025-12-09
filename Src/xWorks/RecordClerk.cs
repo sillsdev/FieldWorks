@@ -38,6 +38,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -1984,6 +1985,8 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		void RemoveNotification()
 		{
+			Subscriber.Unsubscribe(EventConstants.FilterListChanged, FilterListChanged);
+
 			// We need the list to get the cache.
 			if (m_list == null || m_list.IsDisposed || Cache == null || Cache.IsDisposed || Cache.DomainDataByFlid == null)
 				return;
@@ -2068,6 +2071,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		virtual public void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true)
 		{
+			// RecordClerk only needs to handle changes if RecordClerk is being used in GUI
+			Subscriber.Subscribe(EventConstants.FilterListChanged, FilterListChanged);
+
 			m_fIsActiveInGui = true;
 			CheckDisposed();
 
@@ -2187,7 +2193,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// update the contents of the filter list.
 		/// </summary>
-		protected void OnFilterListChanged(object argument)
+		private void FilterListChanged(object argument)
 		{
 			//review: I (JH) couldn't find where/if this method is called.
 			if (m_filterProvider != null)
