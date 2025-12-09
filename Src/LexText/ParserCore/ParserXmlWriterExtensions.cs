@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					if (entry.EntryRefsOS.Count > 0)
 					{
 						ILexEntryRef lexEntryRef = entry.EntryRefsOS[msaTuple.Item2];
-						ILexSense sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
+						ILexSense sense = XAmpleParser.GetMainOrFirstSenseOfVariant(lexEntryRef);
 						WriteStemMsaXmlElement(writer, (IMoStemMsa) sense.MorphoSyntaxAnalysisRA, entry.VariantEntryRefs);
 					}
 					break;
@@ -339,7 +339,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						ILexEntryRef lexEntryRef = entry.EntryRefsOS[msaTuple.Item2];
 						ITsIncStrBldr sbGlossPrepend;
 						ITsIncStrBldr sbGlossAppend;
-						ILexSense sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
+						ILexSense sense = XAmpleParser.GetMainOrFirstSenseOfVariant(lexEntryRef);
 						CoreWritingSystemDefinition glossWs = cache.ServiceLocator.WritingSystemManager.Get(cache.DefaultAnalWs);
 						MorphServices.JoinGlossAffixesOfInflVariantTypes(lexEntryRef.VariantEntryTypesRS,
 							glossWs, out sbGlossPrepend, out sbGlossAppend);

@@ -288,7 +288,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					if (lexEntryRef != null && lexEntryRef.ComponentLexemesRS.Count() > 0)
 					{
 						// make sure there is at least one component lexeme (LT-22328)
-						ILexSense sense = MorphServices.GetMainOrFirstSenseOfVariant(lexEntryRef);
+						ILexSense sense = GetMainOrFirstSenseOfVariant(lexEntryRef);
 						var inflType = lexEntryRef.VariantEntryTypesRS[0] as ILexEntryInflType;
 						morph = new ParseMorph(form, sense.MorphoSyntaxAnalysisRA, inflType);
 						return true;
@@ -301,6 +301,71 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			return true;
 		}
 
+		// This is a modified version of MorphServices.GetMainOrFirstSenseOfVariant() that
+		// allows it to find the sense of a variant of a variant.
+		// I (Andy Black) tried to fix it in LCM but was not able to get any Unit Tests to run.
+		// So in order to help the user reporting LT-22315, I'm going with this solution.
+		public static ILexSense GetMainOrFirstSenseOfVariant(ILexEntryRef variantRef)
+		{
+			var mainEntryOrSense = variantRef.ComponentLexemesRS[0] as IVariantComponentLexeme; ;
+			if (mainEntryOrSense != null)
+			{
+				// find first gloss
+				ILexEntry mainEntry;
+				ILexSense mainOrFirstSense;
+				XAmpleParser.GetMainEntryAndSenseStack(mainEntryOrSense, out mainEntry, out mainOrFirstSense);
+				return mainOrFirstSense;
+			}
+			else
+			{
+				var componentLexeme = variantRef.ComponentLexemesRS[0];
+				if (componentLexeme != null && componentLexeme is ILexEntry)
+				{
+					ILexEntry entry = (ILexEntry)componentLexeme;
+					if (entry.SensesOS.Count > 0)
+					{
+						return GetMainOrFirstSenseOfVariant(entry.EntryRefsOS[0]);
+					}
+				}
+			}
+			return null;
+		}
+
+		// This is a modified version of MorphServices.GetMainEntryAndSenseStack() that
+		// allows it to find the sense of a variant of a variant.
+		// I (Andy Black) tried to fix it in LCM but was not able to get any Unit Tests to run.
+		// So in order to help the user reporting LT-22315, I'm going with this solution.
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="mainEntryOrSense"></param>
+		/// <param name="mainEntry"></param>
+		/// <param name="mainOrFirstSense"></param>
+		public static void GetMainEntryAndSenseStack(IVariantComponentLexeme mainEntryOrSense, out ILexEntry mainEntry, out ILexSense mainOrFirstSense)
+		{
+			if (mainEntryOrSense is ILexEntry entry)
+			{
+				mainEntry = entry;
+				if (entry.SensesOS.Count == 0)
+				{
+					mainOrFirstSense = GetMainOrFirstSenseOfVariant(entry.EntryRefsOS[0]);
+				}
+				else
+				{
+					mainOrFirstSense = mainEntry.SensesOS[0];
+				}
+			}
+			else if (mainEntryOrSense is ILexSense sense)
+			{
+				mainOrFirstSense = sense;
+				mainEntry = mainOrFirstSense.Entry;
+			}
+			else
+			{
+				mainEntry = null;
+				mainOrFirstSense = null;
+			}
+		}
 		private static Tuple<int, int> ProcessMsaHvo(string msaHvo)
 		{
 			string[] msaHvoParts = msaHvo.Split('.');
