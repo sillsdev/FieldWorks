@@ -19,6 +19,7 @@ using SIL.FieldWorks.Common.Widgets;
 using XCore;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.IText
@@ -1326,7 +1327,7 @@ namespace SIL.FieldWorks.IText
 				link.PropertyTableEntries.Add(new Property("InterlinearTab",
 					InterlinearTab.ToString()));
 				Clerk.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
-				m_mediator.SendMessage("AddContextToHistory", link, false);
+				Publisher.Publish(new PublisherParameterObject(EventConstants.AddContextToHistory, link));
 			}
 		}
 

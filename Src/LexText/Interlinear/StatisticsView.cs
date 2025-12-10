@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -85,7 +86,7 @@ namespace SIL.FieldWorks.IText
 			mediator.AddColleague(this);
 			//add our current state to the history system
 			string toolName = _propertyTable.GetStringProperty("currentContentControl", "");
-			mediator.SendMessage("AddContextToHistory", new FwLinkArgs(toolName, Guid.Empty), false);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.AddContextToHistory, new FwLinkArgs(toolName, Guid.Empty)));
 		}
 
 		private void RebuildStatisticsTable()

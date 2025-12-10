@@ -20,6 +20,7 @@ using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using System.Drawing.Printing;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.FwCoreDlgControls;
@@ -797,7 +798,7 @@ namespace SIL.FieldWorks.XWorks
 			Guid guid = Guid.Empty;
 			if (clerk.CurrentObject != null)
 				guid = clerk.CurrentObject.Guid;
-			m_mediator.SendMessage("AddContextToHistory", new FwLinkArgs(toolName, guid), false);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.AddContextToHistory, new FwLinkArgs(toolName, guid)));
 
 			SelectAndScrollToCurrentRecord();
 			base.ShowRecord();

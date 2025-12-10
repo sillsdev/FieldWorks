@@ -784,7 +784,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//add our current state to the history system
 			string toolName = m_propertyTable.GetStringProperty("currentContentControl", "");
-			m_mediator.SendMessage("AddContextToHistory", new FwLinkArgs(toolName, Guid.Empty), false);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.AddContextToHistory, new FwLinkArgs(toolName, Guid.Empty)));
 
 			Subscriber.Subscribe(EventConstants.SaveAsWebpage, SaveAsWebpage);
 		}
