@@ -208,8 +208,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				return;
 			}
 
-			m_mediator.SendMessage("StopParser", null);
-
+			Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser));
 			CreateWordsetFromFiles(m_paths);
 
 			Publisher.Publish(new PublisherParameterObject(EventConstants.FilterListChanged, null)); // let record clerk know the list of filters has changed.
