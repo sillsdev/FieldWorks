@@ -14,6 +14,7 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.DomainImpl;
@@ -305,6 +306,17 @@ namespace SIL.FieldWorks.XWorks
 			{
 				throw new ArgumentNullException();
 			}
+			// Prefer ReferenceEquals over Equals when there are duplicate custom nodes.
+			// You can have duplicate custom nodes when a node is an IEntryOrSense
+			// and both LexEntry and LexSense have a custom field with the same name.
+			// This fixes the configuration outline problem in LT-18913.
+			foreach (TreeNode treeNode in treeNodeCollection)
+			{
+				if (ReferenceEquals(nodeToMatch, treeNode.Tag))
+				{
+					return treeNode;
+				}
+			}
 			foreach(TreeNode treeNode in treeNodeCollection)
 			{
 				if(nodeToMatch.Equals(treeNode.Tag))
@@ -362,7 +374,7 @@ namespace SIL.FieldWorks.XWorks
 						SaveModel();
 						MasterRefreshRequired = false; // We're reloading the whole app, that's refresh enough
 						View.Close();
-						mediator.SendMessage("ReloadAreaTools", "lists");
+						Publisher.Publish(new PublisherParameterObject(EventConstants.ReloadAreaTools, "lists"));
 					};
 					SetManagerTypeInfo(dialog);
 					dialog.ShowDialog(View as Form);

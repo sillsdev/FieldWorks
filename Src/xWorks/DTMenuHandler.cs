@@ -1078,12 +1078,6 @@ namespace SIL.FieldWorks.XWorks
 				int ihvo = cache.DomainDataByFlid.GetObjIndex(obj.Hvo, (int)flid, slice.Object.Hvo);
 				if (ihvo > 0)
 				{
-					// The slice might be invalidated by the MoveOwningSequence, so we get its
-					// values first.  See LT-6670.
-					XmlNode caller = slice.CallerNode;
-					XmlNode config = slice.ConfigurationNode;
-					int clid = slice.Object.ClassID;
-					Control parent = slice.Parent;
 					// We found it in the sequence, and it isn't already the first.
 					UndoableUnitOfWorkHelper.Do(xWorksStrings.UndoMoveItem, xWorksStrings.RedoMoveItem, cache.ActionHandlerAccessor,
 					()=>cache.DomainDataByFlid.MoveOwnSeq(obj.Hvo, (int)flid, ihvo, ihvo,
@@ -1166,12 +1160,6 @@ namespace SIL.FieldWorks.XWorks
 				int ihvo = cache.DomainDataByFlid.GetObjIndex(hvoOwner, (int)flid, slice.Object.Hvo);
 				if (ihvo >= 0 && ihvo + 1 < chvo)
 				{
-					// The slice might be invalidated by the MoveOwningSequence, so we get its
-					// values first.  See LT-6670.
-					XmlNode caller = slice.CallerNode;
-					XmlNode config = slice.ConfigurationNode;
-					int clid = slice.Object.ClassID;
-					Control parent = slice.Parent;
 					// We found it in the sequence, and it isn't already the last.
 					// Quoting from VwOleDbDa.cpp, "Insert the selected records before the
 					// DstStart object".  This means we need + 2 instead of + 1 for the
@@ -1681,7 +1669,7 @@ namespace SIL.FieldWorks.XWorks
 				menus.Add(menuId);
 				if (slice is MultiStringSlice)
 					menus.Add("mnuDataTree-MultiStringSlice");
-				else
+				if(menus.TrueForAll(item => item != "mnuDataTree-MultiStringSlice" && item != "mnuDataTree-Object"))
 					menus.Add("mnuDataTree-Object");
 				window.ShowContextMenu(menus.ToArray(),
 					new Point(Cursor.Position.X, Cursor.Position.Y),

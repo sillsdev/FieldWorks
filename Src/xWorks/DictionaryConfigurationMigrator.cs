@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.XWorks
 					if (m_logger.HasContent)
 					{
 						var configurationDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable,
-							DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+							DictionaryConfigurationListener.DictConfigDirName);
 						Directory.CreateDirectory(configurationDir);
 						File.AppendAllText(Path.Combine(configurationDir, "ConfigMigrationLog.txt"), m_logger.Content);
 					}
@@ -146,8 +146,8 @@ namespace SIL.FieldWorks.XWorks
 		internal static List<DictionaryConfigurationModel> GetConfigsNeedingMigration(LcmCache cache, int targetVersion)
 		{
 			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(cache.ProjectId.ProjectFolder);
-			var dictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
-			var reversalIndexConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+			var dictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictConfigDirName);
+			var reversalIndexConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.RevIndexConfigDirName);
 			var projectConfigPaths = new List<string>(ConfigFilesInDir(dictionaryConfigLoc));
 			projectConfigPaths.AddRange(ConfigFilesInDir(reversalIndexConfigLoc));
 			return projectConfigPaths.Select(path => new DictionaryConfigurationModel(path, null))

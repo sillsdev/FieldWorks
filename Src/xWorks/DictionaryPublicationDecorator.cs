@@ -417,9 +417,9 @@ namespace SIL.FieldWorks.XWorks
 			// LT-16426: Listener here needs to return a non-localized version or all non-English dictionaries will be empty!
 			switch (dictionaryType)
 			{
-				case "Dictionary":
+				case DictionaryConfigurationListener.DictionaryType:
 					return VecProp(Cache.LangProject.LexDbOA.Hvo, virtualFlid);
-				case "Reversal Index":
+				case DictionaryConfigurationListener.ReversalType:
 				{
 					var reversalIndexGuid = ReversalIndexEntryUi.GetObjectGuidIfValid(propertyTable, "ReversalIndexGuid");
 					if (reversalIndexGuid != Guid.Empty)
@@ -432,8 +432,42 @@ namespace SIL.FieldWorks.XWorks
 					}
 					break;
 				}
+				case DictionaryConfigurationListener.ClassifiedType:
+				{
+					// Determine if the 'show empty categories' option is set.
+					var showEmpties = propertyTable.GetBoolProperty("ShowFailingItems-lexiconClassifiedDictionary", false);
+					// Return the semantic domain entries in the classified dictionary record list
+					// get the current record list
+					var activeClerk = propertyTable.GetValue<RecordClerk>("ActiveClerk");
+					if (activeClerk != null)
+					{
+						var topLevelDomains = activeClerk.VirtualListPublisher.VecProp(activeClerk.OwningObject.Hvo, activeClerk.OwningFlid);
+						return FlattenDomains(topLevelDomains, showEmpties);
+					}
+
+					break;
+				}
 			}
 			return new int[] { };
+		}
+
+		private int[] FlattenDomains(int[] topLevelDomains, bool showEmpties)
+		{
+			// Recursively get all the entries in the domains and subdomains
+			var result = new List<int>();
+			foreach (var domainHvo in topLevelDomains)
+			{
+				if (Cache.ServiceLocator.GetObject(domainHvo) is ICmSemanticDomain domain)
+				{
+					var refSenseFlid = Cache.MetaDataCacheAccessor.GetFieldId2(CmSemanticDomainTags.kClassId, "ReferringSenses", false);
+					if (showEmpties || VecProp(domain.Hvo, refSenseFlid).Length > 0)
+						result.Add(domainHvo);
+					// Add domain subentries in this domain
+					result.AddRange(FlattenDomains(domain.SubPossibilitiesOS.Select(sub => sub.Hvo).ToArray(), showEmpties));
+				}
+			}
+
+			return result.ToArray();
 		}
 
 		public override int[] VecProp(int hvo, int tag)

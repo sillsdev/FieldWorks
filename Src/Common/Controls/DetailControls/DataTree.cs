@@ -1477,7 +1477,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						if (slice.Object != null)
 							guidSlice = slice.Object.Guid;
 						if (slice.GetType() == oldType &&
-							slice.CallerNode == xnCaller &&
+							slice.CallerNodeEqual(xnCaller) &&
 							slice.ConfigurationNode == xnConfig &&
 							guidSlice == m_currentSliceObjGuid &&
 							slice.Label == sLabel)
@@ -1489,18 +1489,18 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					}
 				}
 
-				// FWNX-590
-				if (Platform.IsMono)
-					this.VerticalScroll.Value = scrollbarPosition;
-
-				if (m_currentSlice != null)
-				{
-					ScrollControlIntoView(m_currentSlice);
-				}
 			}
 			finally
 			{
 				DeepResumeLayout();
+
+				// Scrolling the control into view needs to be done after we resume the layout.
+				if (m_currentSlice != null)
+				{
+					m_currentSlice.TakeFocus(false);
+					ScrollControlIntoView(m_currentSlice);
+				}
+
 				RefreshListNeeded = false;  // reset our flag.
 				if (wc != null)
 				{
@@ -2805,6 +2805,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 							break;
 						case CellarPropertyType.String:
 							if (realSda.get_StringProp(obj.Hvo, flid).Length == 0)
+								return NodeTestResult.kntrNothing;
+							break;
+						case CellarPropertyType.Boolean:
+							if (realSda.get_BooleanProp(obj.Hvo, flid) == false)
+								return NodeTestResult.kntrNothing;
+							break;
+						case CellarPropertyType.Integer:
+							// 'Show Minor Entry' is displayed as a checkbox.
+							if (flid == LexEntryRefTags.kflidHideMinorEntry && realSda.get_IntProp(obj.Hvo, flid) != 0)
 								return NodeTestResult.kntrNothing;
 							break;
 						case CellarPropertyType.Unicode:

@@ -730,17 +730,8 @@ namespace XCore
 					using (new WaitCursor(Form.ActiveForm))
 					{
 						Logger.WriteEvent("Start: " + msgString);
-						m_mediator.SendMessage("ProgressReset", this);
 						m_mediator.SendMessage(msgString, this);
-						// The "ExitApplication" command disposes us,
-						// so that we don't even have a
-						// mediator at this point.
-						// And, now the MasterRefresh does as well ... <sigh>
-						if (m_mediator != null)
-						{
-							m_mediator.SendMessage("ProgressReset", this);
-							Logger.WriteEvent("Done: " + msgString);
-						}
+						Logger.WriteEvent("Done: " + msgString);
 					}
 				}
 			}

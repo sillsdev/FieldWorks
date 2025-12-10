@@ -26,6 +26,7 @@ no exception: Create an infl affix slot with no affixes in it and then use this 
 */
 
 using System;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel;

@@ -68,10 +68,13 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// Layout Version Number (last updated by ArielR, Oct 28, 2025, for adding PictureLicense column to Browse view).
+		/// This version number is used to determine if user customized layout files are out of date.
+		/// It should be incremented whenever the layout or part files are changed in a way that
+		/// makes existing customizations invalid.
+		/// Layout Version Number (last updated by ArielR, Dec 2025, for adding PictureLicense column to Browse view).
 		/// </summary>
 		/// <remarks>Note: often we also want to update BrowseViewer.kBrowseViewVersion.</remarks>
-		public static readonly int LayoutVersionNumber = 26;
+		public static readonly int LayoutVersionNumber = 27;
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

@@ -10,6 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.FieldWorks.FdoUi;
@@ -144,6 +145,8 @@ namespace SIL.FieldWorks.XWorks
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(EventConstants.AddContextToHistory, AddContextToHistory);
+
 				// Dispose managed resources here.
 				if (m_mediator != null)
 				{
@@ -189,6 +192,8 @@ namespace SIL.FieldWorks.XWorks
 			mediator.AddColleague(this);
 			m_propertyTable.SetProperty("LinkListener", this, true);
 			m_propertyTable.SetPropertyPersistence("LinkListener", false);
+
+			Subscriber.Subscribe(EventConstants.AddContextToHistory, AddContextToHistory);
 		}
 
 		/// <summary>
@@ -259,7 +264,7 @@ namespace SIL.FieldWorks.XWorks
 		///
 		/// </summary>
 		/// <returns></returns>
-		public bool OnAddContextToHistory(object _link)
+		private void AddContextToHistory(object _link)
 		{
 			CheckDisposed();
 
@@ -268,7 +273,7 @@ namespace SIL.FieldWorks.XWorks
 			if (lnk.EssentiallyEquals(m_currentContext))
 			{
 				//Debug.WriteLineIf(RuntimeSwitches.linkListenerSwitch.TraceInfo, "   Link equals current context.", RuntimeSwitches.linkListenerSwitch.DisplayName);
-				return true;
+				return;
 			}
 			if (m_currentContext != null &&
 				//not where we just came from via a "Back" call
@@ -309,7 +314,6 @@ namespace SIL.FieldWorks.XWorks
 			}
 
 			m_currentContext = lnk;
-			return true;
 		}
 
 		private void Push(LinkedList<FwLinkArgs> stack, FwLinkArgs context)
@@ -519,7 +523,7 @@ namespace SIL.FieldWorks.XWorks
 						true);
 					m_propertyTable.SetPropertyPersistence("SuspendLoadingRecordUntilOnJumpToRecord", false);
 				}
-				m_mediator.SendMessage("SetToolFromName", m_lnkActive.ToolName);
+				Publisher.Publish(new PublisherParameterObject(EventConstants.SetToolFromName, m_lnkActive.ToolName));
 				// Note: It can be Guid.Empty in cases where it was never set,
 				// or more likely, when the HVO was set to -1.
 				if (m_lnkActive.TargetGuid != Guid.Empty)

@@ -343,22 +343,22 @@
 			<string field="ImportResidue" ws="analysis"/>
 		</part>
 		<part id="LexEntry-Jt-Allomorph" type="jtview">
-			<seq field="AlternateForms" layout="Allomorph"/>
+			<seq field="AllAllomorphs" layout="Allomorph"/>
 		</part>
 		<part id="LexEntry-Jt-AllomorphStemNames" type="jtview">
-			<seq field="AlternateForms" layout="AllomorphStemNames"/>
+			<seq field="AllAllomorphs" layout="AllomorphStemNames"/>
 		</part>
 		<part id="LexEntry-Jt-IsAbstractFormForAllomorph" type="jtview">
-			<seq field="AlternateForms" layout="IsAbstractFormForAllomorph"/>
+			<seq field="AllAllomorphs" layout="IsAbstractFormForAllomorph"/>
 		</part>
 		<part id="LexEntry-Jt-MorphTypeForAllomorph" type="JtView">
-			<seq field="AlternateForms" layout="MorphTypeForAllomorph"/>
+			<seq field="AllAllomorphs" layout="MorphTypeForAllomorph"/>
 		</part>
 		<part id="LexEntry-Jt-EnvironmentsForLexemeForm" type="JtView">
 			<obj field="LexemeForm" layout="Environments"/>
 		</part>
 		<part id="LexEntry-Jt-EnvironmentsForAllomorphs" type="JtView">
-			<seq field="AlternateForms" layout="Environments"/>
+			<seq field="AllAllomorphs" layout="Environments"/>
 		</part>
 		<part id="LexEntry-Jt-PublishInForEntries" type="JtView">
 			<seq field="PublishIn" layout="Name" />
@@ -423,25 +423,25 @@
 		</part>
 		<!-- Entry -> Allomorph custom field path parts -->
 		<part id="LexEntry-Jt-CustomMultiStringForAllomorph_$fieldName" type="jtview">
-			<seq field="AlternateForms" layout="CustomMultiStringForAllomorph_$fieldName"/>
+			<seq field="AllAllomorphs" layout="CustomMultiStringForAllomorph_$fieldName"/>
 		</part>
 		<part id="LexEntry-Jt-CustomSimpleStringForAllomorph_$fieldName" type="jtview">
-			<seq field="AlternateForms" layout="CustomSimpleStringForAllomorph_$fieldName"/>
+			<seq field="AllAllomorphs" layout="CustomSimpleStringForAllomorph_$fieldName"/>
 		</part>
 		<part id="LexEntry-Jt-CustomIntegerForAllomorph_$fieldName" type="jtview">
-			<seq field="AlternateForms" layout="CustomIntegerForAllomorph_$fieldName"/>
+			<seq field="AllAllomorphs" layout="CustomIntegerForAllomorph_$fieldName"/>
 		</part>
 		<part id="LexEntry-Jt-CustomGenDateForAllomorph_$fieldName" type="jtview">
-			<seq field="AlternateForms" layout="CustomGenDateForAllomorph_$fieldName"/>
+			<seq field="AllAllomorphs" layout="CustomGenDateForAllomorph_$fieldName"/>
 		</part>
 		<part id="LexEntry-Jt-CustomStTextForAllomorph_$fieldName" type="jtview">
-			<seq field="AlternateForms" layout="CustomStTextForAllomorph_$fieldName"/>
+			<seq field="AllAllomorphs" layout="CustomStTextForAllomorph_$fieldName"/>
 		</part>
 		<part id="LexEntry-Jt-CustomPossVectorForAllomorph_$fieldName" type="jtview">
-			<seq field="AlternateForms" layout="CustomPossVectorForAllomorph_$fieldName"/>
+			<seq field="AllAllomorphs" layout="CustomPossVectorForAllomorph_$fieldName"/>
 		</part>
 		<part id="LexEntry-Jt-CustomPossAtomForAllomorph_$fieldName" type="jtview">
-			<seq field="AlternateForms" layout="CustomPossAtomForAllomorph_$fieldName"/>
+			<seq field="AllAllomorphs" layout="CustomPossAtomForAllomorph_$fieldName"/>
 		</part>
 		<part id="LexEntry-Jt-Example" type="jtview">
 			<seq class="LexEntry" field="AllSenses" layout="Example"/>
@@ -1006,7 +1006,7 @@
 		</part>
 		<part id="LexEtymology-Jt-EtymologyLanguage" type="jtview">
 			<para>
-				<seq field="Language" layout="Abbreviation" sep="; "/>
+				<seq field="Language" layout="Name" sep="; "/>
 			</para>
 		</part>
 		<part id="LexEtymology-Jt-EtymologyLanguageNotes" type="jtview">

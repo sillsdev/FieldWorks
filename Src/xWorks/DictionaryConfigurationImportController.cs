@@ -142,6 +142,7 @@ namespace SIL.FieldWorks.XWorks
 				if (_view == null) // _view is sometimes null in unit tests, and it's helpful to know what exactly went wrong.
 					throw new Exception(xWorksStrings.kstidCannotImport, e);
 #endif
+				MessageBox.Show(xWorksStrings.kstidCannotImport + " (" + e.Message + ")");
 				_view.explanationLabel.Text = xWorksStrings.kstidCannotImport;
 			}
 
@@ -175,8 +176,8 @@ namespace SIL.FieldWorks.XWorks
 			var configType = NewConfigToImport.Type;
 			var configDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(
 				configType == DictionaryConfigurationModel.ConfigType.Reversal
-					? DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName
-					: DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+					? DictionaryConfigurationListener.RevIndexConfigDirName
+					: DictionaryConfigurationListener.DictConfigDirName);
 			var isCustomizedOriginal = DictionaryConfigurationManagerController.IsConfigurationACustomizedOriginal(NewConfigToImport, configDir, _cache);
 			TrackingHelper.TrackImport("dictionary", "DictionaryConfiguration",
 				ImportHappened ? ImportExportStep.Succeeded : ImportExportStep.Failed,
@@ -189,6 +190,11 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ImportStyles(string importStylesLocation)
 		{
+			// Test for errors before deleting styles (LT-20393).
+			NonUndoableUnitOfWorkHelper.DoSomehow(_cache.ActionHandlerAccessor, () =>
+			{
+				new FlexStylesXmlAccessor(_cache.LangProject.LexDbOA, true, importStylesLocation);
+			});
 			var stylesToRemove = _cache.LangProject.StylesOC.Where(style => !UnsupportedStyles.Contains(style.Name));
 
 			// For LT-18267, record basedon and next properties of styles not
@@ -339,8 +345,8 @@ namespace SIL.FieldWorks.XWorks
 
 			//Validating the user is not trying to import a Dictionary into a Reversal area or a Reversal into a Dictionary area
 			var configDirectory = Path.GetFileName(_projectConfigDir);
-			if (DictionaryConfigurationListener.DictionaryConfigurationDirectoryName.Equals(configDirectory) && NewConfigToImport.IsReversal
-				|| !DictionaryConfigurationListener.DictionaryConfigurationDirectoryName.Equals(configDirectory) && !NewConfigToImport.IsReversal)
+			if (DictionaryConfigurationListener.DictConfigDirName.Equals(configDirectory) && NewConfigToImport.IsReversal
+				|| !DictionaryConfigurationListener.DictConfigDirName.Equals(configDirectory) && !NewConfigToImport.IsReversal)
 			{
 				_isInvalidConfigFile = true;
 				ClearValuesOnError();
@@ -446,7 +452,7 @@ namespace SIL.FieldWorks.XWorks
 				string invalidConfigFileMsg = string.Empty;
 				if (_isInvalidConfigFile)
 				{
-					var configType = Path.GetFileName(_projectConfigDir) == DictionaryConfigurationListener.DictionaryConfigurationDirectoryName
+					var configType = Path.GetFileName(_projectConfigDir) == DictionaryConfigurationListener.DictConfigDirName
 					? xWorksStrings.ReversalIndex : xWorksStrings.Dictionary;
 					invalidConfigFileMsg = string.Format(xWorksStrings.DictionaryConfigurationMismatch, configType)
 						+ Environment.NewLine;

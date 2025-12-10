@@ -22,6 +22,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.FwUtils.Pathway;
 using SIL.FieldWorks.Common.FXT;
 using SIL.FieldWorks.Common.RootSites;
@@ -39,6 +40,7 @@ using SIL.Windows.Forms;
 using XCore;
 using PropertyTable = XCore.PropertyTable;
 using ReflectionHelper = SIL.LCModel.Utils.ReflectionHelper;
+using DCL = SIL.FieldWorks.XWorks.DictionaryConfigurationListener;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -796,20 +798,12 @@ namespace SIL.FieldWorks.XWorks
 								break;
 							case FxtTypes.kftConfigured:
 							case FxtTypes.kftReversal:
-							progressDlg.Minimum = 0;
-							progressDlg.Maximum = 1; // max will be set by the task, since only it knows how many entries it will export
-							progressDlg.AllowCancel = true;
-							progressDlg.RunTask(true, ExportConfiguredXhtml, outPath);
-							break;
 							case FxtTypes.kftClassifiedDict:
 								progressDlg.Minimum = 0;
-								progressDlg.Maximum = m_seqView.ObjectCount;
+								progressDlg.Maximum = 1; // max will be set by the task, since only it knows how many entries it will export
 								progressDlg.AllowCancel = true;
-
-								IVwStylesheet vss = m_seqView.RootBox == null ? null : m_seqView.RootBox.Stylesheet;
-								progressDlg.RunTask(true, ExportConfiguredDocView,
-									outPath, fxtPath, ft, vss);
-								break;
+								progressDlg.RunTask(true, ExportConfiguredXhtml, outPath);
+							break;
 							case FxtTypes.kftTranslatedLists:
 								progressDlg.Minimum = 0;
 								progressDlg.Maximum = m_translatedLists.Count;
@@ -943,6 +937,32 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <summary>
+		/// When there is filtering applied to semantic domains in the classified dictionary,
+		/// we need to get the list of domains while on the main thread if needed.
+		/// </summary>
+		private void GetClassifiedDictionaryDomains(DictionaryExportService exportService, out RecordClerk clerk,
+			out DictionaryPublicationDecorator decorator, out int[] domains)
+		{
+			if (btnExport.InvokeRequired)
+			{
+				RecordClerk invokeClerk = null;
+				DictionaryPublicationDecorator invokeDecorator = null;
+				int[] invokeDomains = null;
+				btnExport.Invoke(() =>
+				{
+					exportService.GetClassifiedDictionaryFilteredAndSortedDomains(null, true, out invokeClerk, out invokeDecorator, out invokeDomains);
+				});
+				clerk = invokeClerk;
+				domains = invokeDomains;
+				decorator = invokeDecorator;
+			}
+			else
+			{
+				exportService.GetClassifiedDictionaryFilteredAndSortedDomains(null, true, out clerk, out decorator, out domains);
+			}
+		}
+
 		private object ExportWordOpenXml(IThreadedProgress progress, object[] args)
 		{
 			if (args.Length < 1)
@@ -1000,11 +1020,18 @@ namespace SIL.FieldWorks.XWorks
 				return null;
 			var xhtmlPath = (string)args[0];
 			var exportService = new DictionaryExportService(m_propertyTable, m_mediator);
-			switch (m_rgFxtTypes[FxtIndex((string)m_exportItems[0].Tag)].m_ft)
+			var exportType = m_rgFxtTypes[FxtIndex((string)m_exportItems[0].Tag)].m_ft;
+			switch (exportType)
 			{
 				case FxtTypes.kftConfigured:
 					GetDictionaryEntries(exportService, out var clerk, out var pubDecorator, out var entriesToSave);
-					exportService.ExportXhtmlDictionary(xhtmlPath, clerk, pubDecorator, entriesToSave, progress);
+					exportService.ExportXhtmlDocument(xhtmlPath, clerk, pubDecorator, entriesToSave,
+						DCL.DictConfigDirName, progress);
+					break;
+				case FxtTypes.kftClassifiedDict:
+					GetClassifiedDictionaryDomains(exportService, out var classifiedClerk, out var classifiedDecorator, out var domainsToSave);
+					exportService.ExportXhtmlDocument(xhtmlPath, classifiedClerk, classifiedDecorator, domainsToSave,
+						DCL.ClassifiedDictConfigDirName, progress);
 					break;
 				case FxtTypes.kftReversal:
 					var reversalGuidStr = m_propertyTable.GetStringProperty("ReversalIndexGuid", null);
@@ -1018,7 +1045,7 @@ namespace SIL.FieldWorks.XWorks
 
 						var revClerk = exportService.GetReversalClerk();
 						GetReversalEntries(reversalGuid, exportService, revConfig, revClerk, out pubDecorator, out entriesToSave);
-						exportService.ExportXhtmlReversal(xhtmlPath, revClerk, pubDecorator, entriesToSave, progress);
+						exportService.ExportXhtmlDocument(xhtmlPath, revClerk, pubDecorator, entriesToSave, DCL.RevIndexConfigDirName, progress);
 					}
 					break;
 			}
@@ -1032,7 +1059,7 @@ namespace SIL.FieldWorks.XWorks
 			var sXslts = (string)args[2];
 			m_progressDlg = progress;
 			var parameter = new Tuple<string, string, string>(sDataType, outPath, sXslts);
-			m_mediator.SendMessage("SaveAsWebpage", parameter);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.SaveAsWebpage, parameter));
 			m_progressDlg.Step(1000);
 			return null;
 		}
@@ -1674,6 +1701,7 @@ namespace SIL.FieldWorks.XWorks
 
 				// These flids for List fields indicate lists that use fixed guids for their
 				// (predefined) items.
+				m_flidsForGuids.Add(LangProjectTags.kflidPartsOfSpeech, true);
 				m_flidsForGuids.Add(LangProjectTags.kflidTranslationTags, true);
 				m_flidsForGuids.Add(LangProjectTags.kflidAnthroList, true);
 				m_flidsForGuids.Add(LangProjectTags.kflidSemanticDomainList, true);

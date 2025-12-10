@@ -898,6 +898,9 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>Configure {0}</value>
     <comment>{0} is a type of configuration, like Dictionary or Reversal Index</comment>
   </data>
+  <data name="ClassifiedDictionary" xml:space="preserve">
+    <value>Classified Dictionary</value>
+  </data>
   <data name="Dictionary" xml:space="preserve">
     <value>Dictionary</value>
   </data>

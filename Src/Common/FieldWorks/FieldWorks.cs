@@ -29,6 +29,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FdoUi;
@@ -185,18 +186,6 @@ namespace SIL.FieldWorks
 				s_appSettings.DeleteCorruptedSettingsFilesIfPresent();
 				s_appSettings.UpgradeIfNecessary();
 
-				if (s_appSettings.Update == null && Platform.IsWindows)
-				{
-					s_appSettings.Update = new UpdateSettings
-					{
-						Behavior = DialogResult.Yes == FlexibleMessageBox.Show(
-								Properties.Resources.AutomaticUpdatesMessage, Properties.Resources.AutomaticUpdatesCaption, MessageBoxButtons.YesNo,
-								options: FlexibleMessageBoxOptions.AlwaysOnTop)
-							? UpdateSettings.Behaviors.Download
-							: UpdateSettings.Behaviors.DoNotCheck
-					};
-				}
-
 				var reportingSettings = s_appSettings.Reporting;
 				if (reportingSettings == null)
 				{
@@ -232,6 +221,20 @@ namespace SIL.FieldWorks
 					SetGlobalExceptionHandler();
 					SetupErrorReportInformation();
 					InitializeLocalizationManager();
+
+					// Initialize update settings for users who don't have them. After InitializeLocalizationManager because it displays strings (LT-22306)
+					if (s_appSettings.Update == null && Platform.IsWindows)
+					{
+						s_appSettings.Update = new UpdateSettings
+						{
+							Behavior = DialogResult.Yes == FlexibleMessageBox.Show(
+									Properties.Resources.AutomaticUpdatesMessage, Properties.Resources.AutomaticUpdatesCaption, MessageBoxButtons.YesNo,
+									options: FlexibleMessageBoxOptions.AlwaysOnTop)
+								? UpdateSettings.Behaviors.Download
+								: UpdateSettings.Behaviors.DoNotCheck
+						};
+						s_appSettings.Save();
+					}
 
 					// Invoke does nothing directly, but causes BroadcastEventWindow to be initialized
 					// on this thread to prevent race conditions on shutdown.See TE-975
@@ -1828,7 +1831,7 @@ namespace SIL.FieldWorks
 									s_projectId = projectToTry; // Window is open on this project, we must not try to initialize it again.
 									if (Form.ActiveForm is IxWindow mainWindow)
 									{
-										mainWindow.Mediator.SendMessage("SFMImport", null);
+										Publisher.Publish(new PublisherParameterObject(EventConstants.SFMImport));
 									}
 									else
 									{
@@ -3566,10 +3569,13 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static void SetupErrorReportInformation()
 		{
+			var version = Version;
 			var entryAssembly = Assembly.GetEntryAssembly();
-			var version = entryAssembly == null
-				? Version
-				: new VersionInfoProvider(entryAssembly, true).ApplicationVersion;
+			if (entryAssembly != null)
+			{
+				var vip =  new VersionInfoProvider(entryAssembly, true);
+				version = $"{vip.ApplicationVersion} (Base build: {vip.BaseBuildNumber})";
+			}
 			if (version != null)
 			{
 				// The property "Version" would be overwritten when Palaso adds the standard properties

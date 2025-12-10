@@ -94,14 +94,14 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				var projectPath = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
 
 				m_logger.WriteLine("Migrating dictionary configurations");
-				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.DictionaryConfigurationDirectoryName;
+				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.DictConfigDirName;
 				Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
 				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
 					"Undo Migrate old Dictionary Configurations", "Redo Migrate old Dictionary Configurations",
 					Cache.ActionHandlerAccessor, PerformMigrationUOW);
 				m_logger.WriteLine(string.Format("Migrating Reversal Index configurations, if any - {0}",
 					DateTime.Now.ToLongTimeString()));
-				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName;
+				m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.RevIndexConfigDirName;
 				Directory.CreateDirectory(Path.Combine(projectPath, m_configDirSuffixBeingMigrated));
 				UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
 					"Undo Migrate old Reversal Configurations", "Redo Migrate old Reversal Configurations",
@@ -113,7 +113,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		/// <remarks>Must be called in an UndoableUnitOfWork.</remarks>
 		private void PerformMigrationUOW()
 		{
-			var tool = m_configDirSuffixBeingMigrated == DictionaryConfigurationListener.DictionaryConfigurationDirectoryName
+			var tool = m_configDirSuffixBeingMigrated == DictionaryConfigurationListener.DictConfigDirName
 				? "lexiconDictionary"
 				: "reversalToolEditComplete";
 			var configureLayouts = GetConfigureLayoutsNodeForTool(tool);
@@ -143,12 +143,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		{
 			// If the project already has up-to-date configurations then we don't need to migrate
 			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
-			var newDictionaryConfigLoc = Path.Combine(configSettingsDir, DCL.DictionaryConfigurationDirectoryName);
+			var newDictionaryConfigLoc = Path.Combine(configSettingsDir, DCL.DictConfigDirName);
 			if (DCM.ConfigFilesInDir(newDictionaryConfigLoc).Any())
 			{
 				return false;
 			}
-			var newReversalIndexConfigLoc = Path.Combine(configSettingsDir, DCL.ReversalIndexConfigurationDirectoryName);
+			var newReversalIndexConfigLoc = Path.Combine(configSettingsDir, DCL.RevIndexConfigDirName);
 			if (DCM.ConfigFilesInDir(newReversalIndexConfigLoc).Any())
 			{
 				return false;
@@ -192,8 +192,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var projectPath = Path.Combine(LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder), m_configDirSuffixBeingMigrated);
 			var alphaConfigsPath = Path.Combine(FwDirectoryFinder.FlexFolder, AlphaConfigFolder);
 
-			var newDictionaryConfigLoc = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DCL.DictionaryConfigurationDirectoryName);
-			var newReversalConfigLoc = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DCL.ReversalIndexConfigurationDirectoryName);
+			var newDictionaryConfigLoc = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DCL.DictConfigDirName);
+			var newReversalConfigLoc = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DCL.RevIndexConfigDirName);
 			const string defaultLexemeName = DCM.LexemeFileName + extension;
 			const string defaultRootName = DCM.RootFileName + extension;
 			const string defaultReversalName = DCM.ReversalFileName + extension;

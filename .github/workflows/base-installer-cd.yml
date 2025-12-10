@@ -1,8 +1,17 @@
 name: Base Installer
+
+# Builds the FieldWorks Base Installers (On- and Offline) (x64).
+# If `make_release` is true:
+#  - Uploads installers to https://flex-updates.s3.amazonaws.com/?prefix=jobs/FieldWorks-Win-all-Release-Base.
+#  - Tags the repository.
+#  - Creates a GitHub Release of the artifacts required for creating a patch installer on this base.
+# Saves the build log as an artifact of the workflow run.
+# Note: FW_BUILD_NUMBER is higher than GITHUB_RUN_NUMBER because it needs to be higher than the build number on artifacts from our previous system.
+
 on:
   schedule:
-    # Runs every day at 02:30 UTC (which is 6:30pm PST / 7:30pm PDT)
-    - cron: "30 2 * * *"
+    # Runs every Monday at 02:30 UTC (which is 6:30pm PST / 7:30pm PDT Sunday evening)
+    - cron: "30 2 * * 1"
   workflow_dispatch:
     inputs:
       fw_ref:
@@ -46,11 +55,11 @@ jobs:
       - name: Compute build number
         id: build_number
         run: |
-          $lastJenkins = 1097  # The last base build from jenkins
+          $lastJenkins = 1100  # The last base build from jenkins, rounded to the next hundred
           $githubRun = $env:GITHUB_RUN_NUMBER
           $combined = $lastJenkins + $githubRun
           echo "Calculated build number: $combined"
-          echo "RELEASE_BASE_BUILD_NUMBER=$combined" >> $env:GITHUB_ENV
+          echo "FW_BUILD_NUMBER=$combined" >> $env:GITHUB_ENV
 
       - name: Checkout Files
         uses: actions/checkout@v4
@@ -94,14 +103,14 @@ jobs:
           fetch-depth: 0
           path: 'Localizations/LCM'
 
-      - name: Download 461 targeting pack
+      - name: Download .NET 461 targeting pack
         uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9 # 1.6.0
         id: downloadfile  # Remember to give an ID if you need the output filename
         with:
             url: "https://download.microsoft.com/download/F/1/D/F1DEB8DB-D277-4EF9-9F48-3A65D4D8F965/NDP461-DevPack-KB3105179-ENU.exe"
             target: public/
 
-      - name: Install targeting pack
+      - name: Install .NET 461 targeting pack
         shell: cmd
         working-directory: public
         run: NDP461-DevPack-KB3105179-ENU.exe /q
@@ -130,7 +139,7 @@ jobs:
         working-directory: Build
         run: build64.bat /t:WriteNonlocalDevelopmentPropertiesFile
 
-      - name: Build Debug and run tests
+      - name: Build and run tests
         id: build_installer
         shell: powershell
         run: |
@@ -140,7 +149,7 @@ jobs:
           cd BuildDir
           md5sum *.exe > md5.txt
 
-      - name: Scan Debug Build Output
+      - name: Scan Build Output
         shell: powershell
         working-directory: Build
         run: |
@@ -237,7 +246,7 @@ jobs:
           $offlineFile = Split-Path $offlineExe -Leaf
           $onlineFile = Split-Path $onlineExe -Leaf
           
-          $s3BasePath = "jobs/FieldWorks-Win-all-Release-Base/$($env:RELEASE_BASE_BUILD_NUMBER)"
+          $s3BasePath = "jobs/FieldWorks-Win-all-Release-Base/$($env:FW_BUILD_NUMBER)"
           $offlineS3Key = "$s3BasePath/$offlineFile"
           $onlineS3Key = "$s3BasePath/$onlineFile"
           
@@ -268,12 +277,13 @@ jobs:
             "proc_runner_zip=$(("${{ github.workspace }}/ProcRunner.zip") -replace '\\','/')" >> $env:GITHUB_OUTPUT
 
 
-      - name: Create Release and Upload artifacts
+      - name: Tag, Create Release, and Upload artifacts
         if: ${{ inputs.make_release == 'true' }}
         uses: softprops/action-gh-release@6cbd405e2c4e67a21c47fa9e383d020e4e28b836
         with:
-            tag_name: build-${{ env.RELEASE_BASE_BUILD_NUMBER }}
-            name: "FieldWorks Base Build #${{ env.RELEASE_BASE_BUILD_NUMBER }}"
+            target_commitish: ${{ github.event.inputs.fw_ref || github.ref }}
+            tag_name: build-${{ env.FW_BUILD_NUMBER }}
+            name: "FieldWorks Base Build #${{ env.FW_BUILD_NUMBER }}"
             draft: false
             prerelease: true
             fail_on_unmatched_files: true

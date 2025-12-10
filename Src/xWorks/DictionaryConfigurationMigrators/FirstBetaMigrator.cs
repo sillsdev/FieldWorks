@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var foundOne = string.Format("{0}: Configuration was found in need of migration. - {1}",
 				appVersion, DateTime.Now.ToString("yyyy MMM d h:mm:ss"));
 			var configSettingsDir = LcmFileHelper.GetConfigSettingsDir(Cache.ProjectId.ProjectFolder);
-			var dictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+			var dictionaryConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.DictConfigDirName);
 			var stemPath = Path.Combine(dictionaryConfigLoc, "Stem" + DictionaryConfigurationModel.FileExtension);
 			var lexemePath = Path.Combine(dictionaryConfigLoc, "Lexeme" + DictionaryConfigurationModel.FileExtension);
 			if (File.Exists(stemPath) && !File.Exists(lexemePath))
@@ -66,8 +66,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 		internal DictionaryConfigurationModel LoadBetaDefaultForAlphaConfig(DictionaryConfigurationModel config)
 		{
-			var dictionaryFolder = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
-			var reversalFolder = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+			var dictionaryFolder = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DictionaryConfigurationListener.DictConfigDirName);
+			var reversalFolder = Path.Combine(FwDirectoryFinder.DefaultConfigurations, DictionaryConfigurationListener.RevIndexConfigDirName);
 
 			string configPath;
 			// There is only one default config for reversals
@@ -339,7 +339,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		/// <param name="configSettingsDir"></param>
 		private static void RenameReversalConfigFiles(string configSettingsDir)
 		{
-			var reversalIndexConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+			var reversalIndexConfigLoc = Path.Combine(configSettingsDir, DictionaryConfigurationListener.RevIndexConfigDirName);
 			var dictConfigFiles = new List<string>(DCM.ConfigFilesInDir(reversalIndexConfigLoc));
 			string newFName = string.Empty;
 			string wsValue = string.Empty;

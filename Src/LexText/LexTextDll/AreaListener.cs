@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel;
 using SIL.Reporting;
 using System.Xml;
@@ -125,6 +127,9 @@ namespace SIL.FieldWorks.XWorks.LexText
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(EventConstants.SetToolFromName, SetToolFromName);
+				Subscriber.Unsubscribe(EventConstants.ReloadAreaTools, ReloadAreaTools);
+
 				// Dispose managed resources here.
 				if (m_mediator != null)
 					m_mediator.RemoveColleague(this);
@@ -146,6 +151,8 @@ namespace SIL.FieldWorks.XWorks.LexText
 			mediator.AddColleague(this);
 			m_ctotalLists = 0;
 			m_ccustomLists = 0;
+			Subscriber.Subscribe(EventConstants.SetToolFromName, SetToolFromName);
+			Subscriber.Subscribe(EventConstants.ReloadAreaTools, ReloadAreaTools);
 		}
 
 		private DateTime m_lastToolChange = DateTime.MinValue;
@@ -859,9 +866,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// <summary>
 		/// This is called by CustomListDlg to get a new/modified list to show up in the tools list.
 		/// </summary>
-		/// <param name="areaId"></param>
-		/// <returns></returns>
-		public bool OnReloadAreaTools(object areaId)
+		private void ReloadAreaTools(object areaId)
 		{
 			CheckDisposed();
 
@@ -889,7 +894,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 					app.ReplaceMainWindow(win);
 					break;
 			}
-			return true;
 		}
 
 		/// <summary>
@@ -980,7 +984,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// used by the link listener
 		/// </summary>
 		/// <returns></returns>
-		public bool OnSetToolFromName(object toolName)
+		private void SetToolFromName(object toolName)
 		{
 			CheckDisposed();
 
@@ -1010,11 +1014,10 @@ namespace SIL.FieldWorks.XWorks.LexText
 				if (area != null)
 				{
 					m_propertyTable.SetProperty("ToolForAreaNamed_" + area, toolName, true);
-			}
+				}
 			}
 			m_propertyTable.SetProperty("currentContentControlParameters", node.SelectSingleNode("control"), true);
 			m_propertyTable.SetProperty("currentContentControl", toolName, true);
-			return true;
 		}
 
 		private static bool IsToolInArea(string toolName, string area, XmlNode windowConfiguration)

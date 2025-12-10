@@ -97,6 +97,8 @@
 				<part ref="MorphType"/>
 				<part ref="RuleFormula" expansion="expanded" label="Affix Process Rule"/>
 				<part ref="InflectionClasses" visibility="ifdata"/>
+				<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+				<part ref="_CustomFieldPlaceholder" customFields="here" />
 			</indent>
 		</part>
 	</layout>
@@ -109,8 +111,10 @@
 				<part ref="PhoneEnvBasic" visibility="ifdata"/>
 				<part ref="AsPosition" visibility="always"/>
 				<part ref="InflectionClassesForLexemeForm" visibility="ifdata"/>
-		<part ref="MsEnvFeaturesForLexemeForm" visibility="ifdata"/>
-	  </indent>
+				<part ref="MsEnvFeaturesForLexemeForm" visibility="ifdata"/>
+				<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+				<part ref="_CustomFieldPlaceholder" customFields="here"/>
+			</indent>
 		</part>
 	</layout>
 
@@ -121,6 +125,8 @@
 				<part ref="MorphTypeBasic" visibility="ifdata"/>
 				<part ref="PhoneEnvBasic" visibility="ifdata"/>
 				<part ref="StemNameForLexemeForm" visibility="ifdata"/>
+				<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+				<part ref="_CustomFieldPlaceholder" customFields="here"/>
 			</indent>
 		</part>
 	</layout>
@@ -132,6 +138,8 @@
 				<part ref="MorphTypeBasic" visibility="ifdata"/>
 				<part ref="RuleFormulaBasic" expansion="expanded" label="Affix Process Rule"/>
 				<part ref="InflectionClassesForLexemeForm" visibility="ifdata"/>
+				<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+				<part ref="_CustomFieldPlaceholder" customFields="here"/>
 			</indent>
 		</part>
 	</layout>

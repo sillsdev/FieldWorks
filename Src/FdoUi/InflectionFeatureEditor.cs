@@ -256,7 +256,7 @@ namespace SIL.FieldWorks.FdoUi
 			// Remember which item was selected so we can later 'doit'.
 			var hvoNode = e.Node as HvoTreeNode;
 			m_notSure = (string)hvoNode?.Tag == "NotSure";
-			if (hvoNode == null || hvoNode.Hvo == 0)
+			if (hvoNode == null || hvoNode.Hvo == 0 || m_notSure)
 			{
 				m_selectedHvo = 0;
 				m_selectedLabel = "";
@@ -363,14 +363,6 @@ namespace SIL.FieldWorks.FdoUi
 				}
 				var entry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(kvp.Key);
 				var sensesToChange = kvp.Value;
-				if (m_notSure)
-				{
-					foreach (var ls in sensesToChange)
-					{
-						ls.MorphoSyntaxAnalysisRA = null;
-					}
-					continue;
-				}
 				IMoStemMsa msmTarget = entry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>()
 					.FirstOrDefault(msm => MsaMatchesTarget(msm, fsTarget));
 
@@ -398,7 +390,7 @@ namespace SIL.FieldWorks.FdoUi
 						InitMsa(msmTarget, msm.PartOfSpeechRA.Hvo);
 					}
 				}
-				if (msmTarget == null)
+				if (msmTarget == null && pos != null)
 				{
 					// Nothing we can reuse...make a new one.
 					msmTarget = m_cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();

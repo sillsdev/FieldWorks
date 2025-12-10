@@ -82,7 +82,7 @@
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>  
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <OutputPath>..\..\..\..\Output\Debug\</OutputPath>
     <BaseAddress>285212672</BaseAddress>
@@ -263,6 +263,7 @@
     <Compile Include="FwCancelSearchButton.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="IWritingSystemChooser.cs" />
     <Compile Include="SemanticDomainsChooser.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -392,6 +393,7 @@
     <Compile Include="StringSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="StringSliceUtils.cs" />
     <Compile Include="StTextSlice.cs">
       <SubType>UserControl</SubType>
     </Compile>

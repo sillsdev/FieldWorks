@@ -22,13 +22,15 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.DomainImpl;
+using SIL.LCModel.Utils;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks.LexEd
 {
 	/// <summary>
 	/// A slice to show the IReversalIndexEntry objects.
 	/// </summary>
-	public class ReversalIndexEntrySlice : ViewPropertySlice, IVwNotifyChange
+	public class ReversalIndexEntrySlice : ViewPropertySlice, IVwNotifyChange, IWritingSystemChooser
 	{
 		/// <summary>
 		/// Use this to do the Add/RemoveNotifications.
@@ -44,11 +46,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		}
 
 		/// <summary>
-		/// Constructor.
+		/// This constructor by default relies on FinishInit to set the control later so we pass null for
+		/// the base class argument for the RootSite control
+		/// This is preferred because we need to use PartRef() in the construction of the view to support
+		/// the writing system options and the XmlNode for the ref isn't set at construction time.
 		/// </summary>
-		/// <param name="obj"></param>
 		public ReversalIndexEntrySlice(ICmObject obj) :
-			base(new ReversalIndexEntrySliceView(obj.Hvo), obj, obj.Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalIndexEntryBackRefs)
+			base(null, obj, obj.Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalIndexEntryBackRefs)
 		{
 		}
 
@@ -103,7 +107,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		public override void FinishInit()
 		{
 			CheckDisposed();
-			ReversalIndexEntrySliceView ctrl = new ReversalIndexEntrySliceView(Object.Hvo)
+			ReversalIndexEntrySliceView ctrl = new ReversalIndexEntrySliceView(Object.Hvo, () => StringSliceUtils.GetVisibleWSSPropertyValue(PartRef(),
+				Cache.LanguageProject.AnalysisWritingSystems))
 			{
 				Cache = m_propertyTable.GetValue<LcmCache>("cache")
 			};
@@ -121,8 +126,64 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			if (ctrl.RootBox == null)
 				ctrl.MakeRoot();
+			InternalInitialize();
 		}
 
+		/// <summary>
+		/// Populate the writing system options for the slice.
+		/// </summary>
+		/// <param name="parameter">The parameter.</param>
+		/// <param name="display">The display.</param>
+		/// <returns></returns>
+		public bool OnDisplayWritingSystemOptionsForSlice(object parameter, ref UIListDisplayProperties display)
+		{
+			CheckDisposed();
+			display.List.Clear();
+			m_propertyTable.SetProperty(display.PropertyName, StringSliceUtils.GetVisibleWSSPropertyValue(PartRef(),
+				Cache.LanguageProject.AnalysisWritingSystems), false);
+			AddWritingSystemListWithIcuLocales(display, Cache.LanguageProject.AnalysisWritingSystems);
+			return true;//we handled this, no need to ask anyone else.
+		}
+
+		/// <summary>
+		/// stores the list values in terms of icu locale
+		/// </summary>
+		/// <param name="display"></param>
+		/// <param name="list"></param>
+		private void AddWritingSystemListWithIcuLocales(UIListDisplayProperties display, IEnumerable<CoreWritingSystemDefinition> list)
+		{
+			var active = StringSliceUtils.GetVisibleWSSPropertyValue(PartRef(),
+				Cache.LanguageProject.AnalysisWritingSystems).Split(',');
+			foreach (var ws in list)
+			{
+				// generally enable all items, but if only one is checked that one is disabled;
+				// it can't be turned off.
+				bool enabled = (active.Length != 1 || ws.Id != active[0]);
+				display.List.Add(ws.DisplayLabel, ws.Id, null, null, enabled);
+			}
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Called when property changed.
+		/// </summary>
+		/// <param name="name">The name.</param>
+		/// ------------------------------------------------------------------------------------
+		public virtual void OnPropertyChanged(string name)
+		{
+			CheckDisposed();
+
+			switch (name)
+			{
+				case "SelectedWritingSystemHvosForCurrentContextMenu":
+					var singlePropertySequenceValue = m_propertyTable.GetStringProperty("SelectedWritingSystemHvosForCurrentContextMenu", null);
+					ReplacePartWithNewAttribute("visibleWritingSystems", singlePropertySequenceValue);
+					// The control needs to know about this change.
+					var ctrl = Control as ReversalIndexEntrySliceView;
+					ctrl?.ResetEntries();
+					break;
+			}
+		}
 		#endregion ReversalIndexEntrySlice class info
 
 		#region IVwNotifyChange methods
@@ -203,15 +264,16 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			protected int m_hvoObj;
 			protected ILexSense m_sense;
 			protected List<IReversalIndex> m_usedIndices = new List<IReversalIndex>();
-
+			private readonly Func<string> getVisibleWritingSystems;
 			#endregion // Data members
 
-			public ReversalIndexEntrySliceView(int hvo)
+			public ReversalIndexEntrySliceView(int hvo, Func<string> getVisibleWss)
 			{
 				components = new Container();
 				m_hvoObj = hvo;
 				m_dummyId = kDummyEntry;
 				RightMouseClickedEvent += ReversalIndexEntrySliceView_RightMouseClickedEvent;
+				getVisibleWritingSystems = getVisibleWss;
 			}
 
 			/// <summary>
@@ -337,12 +399,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				List<int> currentEntries = new List<int>();
 				int countIndices = m_sdaRev.get_VecSize(m_sense.Hvo, kFlidIndices);
 				int hvoReal = 0;
-				var writingSystemsModified = new HashSet<int>();
+				var addedEntries = false;
 				for (int i = 0; i < countIndices; ++i)
 				{
 					int hvoIndex = m_sdaRev.get_VecItem(m_sense.Hvo, kFlidIndices, i);
 					IReversalIndex revIndex = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().GetObject(hvoIndex);
-					writingSystemsModified.Add(m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(revIndex.WritingSystem));
+					if(!getVisibleWritingSystems().Split(',').Contains(revIndex.WritingSystem))
+						continue;
 					int countRealEntries = m_sdaRev.get_VecSize(hvoIndex, kFlidEntries) - 1; // Skip the dummy entry at the end.
 					// Go through it from the far end, since we may be deleting empty items.
 					for (int j = countRealEntries - 1; j >= 0; --j)
@@ -357,13 +420,14 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						// If it exists, then add it to the currentEntries array.
 						// If it does not exist, we have to create it, and add it to the currentEntries array.
 						List<string> rgsFromDummy = new List<string>();
-						if (GetReversalFormsAndCheckExisting(currentEntries, hvoIndex,
+						if (RemoveOrConfirmExistingEntries(currentEntries, hvoIndex,
 							m_cache.ServiceLocator.WritingSystemManager.GetWsFromStr(revIndex.WritingSystem), j, hvoEntry, rgsFromDummy))
 						{
 							continue;
 						}
 						// At this point, we need to find or create one or more entries. The hvo returned may be the hvo of a subentry.
 						int hvo = FindOrCreateReversalEntry(revIndex, rgsFromDummy, m_cache);
+						addedEntries = true;
 						currentEntries.Add(hvo);
 						if (hvoEntry == hvoDummy)
 							hvoReal = hvo;
@@ -371,29 +435,34 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				}
 				// Reset the sense's ref. property to all the ids in the currentEntries array.
 				currentEntries.Reverse();
-				int[] ids = currentEntries.ToArray();
 				var removedEntries = new List<int>();
 				if (!m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().IsValidObjectId(m_sense.Hvo))
 					return 0; // our object has been deleted while we weren't looking!
-				int countEntries = m_cache.DomainDataByFlid.get_VecSize(m_sense.Hvo, Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalIndexEntryBackRefs);
+				// Get the entries for just the visible writing systems.
+				int[] contents;
+				int chvoMax = m_cache.DomainDataByFlid.get_VecSize(m_sense.Hvo, Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalIndexEntryBackRefs);
+				using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(chvoMax))
+				{
+					m_cache.DomainDataByFlid.VecProp(m_sense.Hvo,
+						Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalIndexEntryBackRefs, chvoMax, out chvoMax, arrayPtr);
+					contents = MarshalEx.NativeToArray<int>(arrayPtr, chvoMax);
+				}
+
+				var reversalList = (IEnumerable<int>)new List<int>(contents);
+				reversalList = reversalList.Where(i => !IsEntryInHiddenWs(i));
 				// Check the current state and don't save (or create an Undo stack item) if
 				// nothing has changed.
-				bool fChanged = ids.Length != countEntries;
-				for (int i = 0; i < countEntries; ++i)
+				foreach(var reversalEntry in reversalList)
 				{
-					int id = m_cache.DomainDataByFlid.get_VecItem(m_sense.Hvo, Cache.ServiceLocator.GetInstance<Virtuals>().LexSenseReversalIndexEntryBackRefs, i);
-					if (ids.IndexOf(id) != i)
-					{
-						fChanged = true;
-						if (!ids.Contains(id))
-							removedEntries.Add(id);
-					}
+					if(!currentEntries.Contains(reversalEntry))
+						removedEntries.Add(reversalEntry);
 				}
-				if (fChanged)
+				// if there are any changes at all, we have to do the add and remove operations.
+				if (removedEntries.Any() || addedEntries)
 				{
 					// Add the sense to the reversal index entry
 					m_cache.DomainDataByFlid.BeginUndoTask(LexEdStrings.ksUndoSetRevEntries, LexEdStrings.ksRedoSetRevEntries);
-					foreach (var id in ids)
+					foreach (var id in currentEntries)
 					{
 						IReversalIndexEntry rie = Cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().GetObject(id);
 						if (!rie.SensesRS.Contains(m_sense))
@@ -417,13 +486,29 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				return hvoReal;
 			}
 
+			private bool IsEntryInHiddenWs(int hvo)
+			{
+				if (hvo <= 0)
+				{
+					return false;
+				}
+				var entry = Cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().GetObject(hvo);
+				if (entry == null || getVisibleWritingSystems == null)
+				{
+					Debug.Assert(entry != null & getVisibleWritingSystems != null, "Method call not valid under current conditions");
+					return false;
+				}
+
+				return !getVisibleWritingSystems().Split(',').Contains(entry.ReversalIndex.WritingSystem);
+			}
+
 			/// <summary>
 			/// Get the reversal index entry form(s), and check whether these are empty (link is
 			/// being deleted) or the same as before (link is unchanged).  In either of these
-			/// two cases, do what is needed and return true.  Otherwise return false (linked
+			/// two cases, do what is needed and return true.  Otherwise, return false (linked
 			/// entry must be found or created).
 			/// </summary>
-			private bool GetReversalFormsAndCheckExisting(List<int> currentEntries, int hvoIndex,
+			private bool RemoveOrConfirmExistingEntries(List<int> currentEntries, int hvoIndex,
 				int wsIndex, int irieSense, int hvoEntry, List<string> rgsFromDummy)
 			{
 				string fromDummyCache = null;
@@ -650,7 +735,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				foreach (IReversalIndexEntry ide in m_sense.ReferringReversalIndexEntries)
 					entries.Add(ide);
 
-				foreach (CoreWritingSystemDefinition ws in m_cache.ServiceLocator.WritingSystems.AnalysisWritingSystems)
+				foreach (CoreWritingSystemDefinition ws in StringSliceUtils.GetVisibleWritingSystems(getVisibleWritingSystems(), Cache.LangProject.AnalysisWritingSystems))
 				{
 					IReversalIndex idx = null;
 					foreach (IReversalIndex idxInner in m_cache.LanguageProject.LexDbOA.ReversalIndexesOC)
@@ -1518,5 +1603,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 #endregion
 		}
 #endregion //ISilDataAccess decorator class
+
+		public IEnumerable<CoreWritingSystemDefinition> GetVisibleWritingSystems()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
