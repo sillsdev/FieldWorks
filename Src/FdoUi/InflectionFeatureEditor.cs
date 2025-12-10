@@ -363,47 +363,83 @@ namespace SIL.FieldWorks.FdoUi
 				}
 				var entry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(kvp.Key);
 				var sensesToChange = kvp.Value;
-				IMoStemMsa msmTarget = entry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>()
-					.FirstOrDefault(msm => MsaMatchesTarget(msm, fsTarget));
-
-				if (msmTarget == null)
-				{
-					// See if we can reuse an existing MoStemMsa by changing it.
-					// This is possible if it is used only by senses in the list, or not used at all.
-					var otherSenses = new HashSet<ILexSense>();
-					var senses = new HashSet<ILexSense>(entry.AllSenses.ToArray());
-					if (senses.Count != sensesToChange.Count)
-					{
-						otherSenses = new HashSet<ILexSense>(senses.Where(ls => !sensesToChange.Contains(ls)));
-					}
-
-					var msm = entry.MorphoSyntaxAnalysesOC
-						.OfType<IMoStemMsa>() // filter only IMoStemMsa
-						.FirstOrDefault(msa => !otherSenses.Any(ls => ls.MorphoSyntaxAnalysisRA == msa));
-
-					if (msm != null)
-					{
-						// Can reuse this one! Nothing we don't want to change uses it.
-						// Adjust its POS as well as its inflection feature, just to be sure.
-						// Ensure that we don't change the POS!  See LT-6835.
-						msmTarget = msm;
-						InitMsa(msmTarget, msm.PartOfSpeechRA.Hvo);
-					}
-				}
-				if (msmTarget == null)
-				{
-					// Nothing we can reuse...make a new one.
-					msmTarget = m_cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
-					entry.MorphoSyntaxAnalysesOC.Add(msmTarget);
-					InitMsa(msmTarget, pos.Hvo);
-				}
-				// Finally! Make the senses we want to change use it.
 				foreach (var ls in sensesToChange)
 				{
+					IFsFeatStruc newFsTarget = fsTarget;
+					IMoStemMsa moStemMsa = ls.MorphoSyntaxAnalysisRA as IMoStemMsa;
+					if (moStemMsa != null && newFsTarget.ContainsBlank())
+					{
+						newFsTarget = FillInBlanks(newFsTarget, moStemMsa.MsFeaturesOA);
+					}
+					IMoStemMsa msmTarget = GetMsmTarget(newFsTarget, entry, sensesToChange, pos);
 					ls.MorphoSyntaxAnalysisRA = msmTarget;
 				}
 			}
 			m_cache.DomainDataByFlid.EndUndoTask();
+		}
+
+		IFsFeatStruc FillInBlanks(IFsFeatStruc pattern, IFsFeatStruc values)
+		{
+			IFsFeatStruc copy = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
+			IPartOfSpeech pos = pattern.Owner as IPartOfSpeech;
+			pos.ReferenceFormsOC.Add(copy);
+			pattern.SetCloneProperties(copy);
+			var newCopy = copy.FillInBlanks(values);
+			if (newCopy == null)
+			{
+				// Only had empty blanks.
+				pos.ReferenceFormsOC.Remove(copy);
+				return null;
+			}
+			foreach (var fs in pos.ReferenceFormsOC)
+			{
+				if (fs != copy && fs.IsEquivalent(copy))
+				{
+					// Use existing fs instead of new copy.
+					pos.ReferenceFormsOC.Remove(copy);
+					return fs;
+				}
+			}
+			return copy;
+		}
+
+		private IMoStemMsa GetMsmTarget(IFsFeatStruc fsTarget, ILexEntry entry, HashSet<ILexSense> sensesToChange, IPartOfSpeech pos)
+		{
+			IMoStemMsa msmTarget = entry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>()
+	.FirstOrDefault(msm => MsaMatchesTarget(msm, fsTarget));
+
+			if (msmTarget == null)
+			{
+				// See if we can reuse an existing MoStemMsa by changing it.
+				// This is possible if it is used only by senses in the list, or not used at all.
+				var otherSenses = new HashSet<ILexSense>();
+				var senses = new HashSet<ILexSense>(entry.AllSenses.ToArray());
+				if (senses.Count != sensesToChange.Count)
+				{
+					otherSenses = new HashSet<ILexSense>(senses.Where(ls => !sensesToChange.Contains(ls)));
+				}
+
+				var msm = entry.MorphoSyntaxAnalysesOC
+					.OfType<IMoStemMsa>() // filter only IMoStemMsa
+					.FirstOrDefault(msa => !otherSenses.Any(ls => ls.MorphoSyntaxAnalysisRA == msa));
+
+				if (msm != null)
+				{
+					// Can reuse this one! Nothing we don't want to change uses it.
+					// Adjust its POS as well as its inflection feature, just to be sure.
+					// Ensure that we don't change the POS!  See LT-6835.
+					msmTarget = msm;
+					InitMsa(msmTarget, msm.PartOfSpeechRA.Hvo, fsTarget);
+				}
+			}
+			if (msmTarget == null)
+			{
+				// Nothing we can reuse...make a new one.
+				msmTarget = m_cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+				entry.MorphoSyntaxAnalysesOC.Add(msmTarget);
+				InitMsa(msmTarget, pos.Hvo, fsTarget);
+			}
+			return msmTarget;
 		}
 
 		/// <summary>
@@ -428,10 +464,9 @@ namespace SIL.FieldWorks.FdoUi
 			throw new NotImplementedException();
 		}
 
-		private void InitMsa(IMoStemMsa msmTarget, int hvoPos)
+		private void InitMsa(IMoStemMsa msmTarget, int hvoPos, IFsFeatStruc newFeatures)
 		{
 			msmTarget.PartOfSpeechRA = m_cache.ServiceLocator.GetObject(hvoPos) as IPartOfSpeech;//var newFeatures = (IFsFeatStruc)m_cache.ServiceLocator.GetObject(m_selectedHvo);
-			var newFeatures = m_selectedHvo == 0 ? null : (IFsFeatStruc)m_cache.ServiceLocator.GetObject(m_selectedHvo);
 			if (newFeatures == null)
 			{
 				msmTarget.MsFeaturesOA = null;

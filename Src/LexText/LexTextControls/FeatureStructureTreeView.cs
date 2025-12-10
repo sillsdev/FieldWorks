@@ -139,6 +139,9 @@ namespace SIL.FieldWorks.LexText.Controls
 					{
 						AddNode(val, newNode);
 					}
+					FeatureTreeNode unknownNode = new FeatureTreeNode(closed.Name.BestAnalysisAlternative.Text + ":???",
+						(int)ImageKind.radio, (int)ImageKind.radio, 0, FeatureTreeNodeInfo.NodeKind.SymFeatValue);
+					InsertNode(unknownNode, newNode);
 				}
 			}
 			var complex = defn as IFsComplexFeature;
