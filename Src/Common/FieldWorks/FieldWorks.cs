@@ -465,7 +465,7 @@ namespace SIL.FieldWorks
 		private static void WarnUserAboutFailedLiftImportIfNecessary(FwApp fwApp)
 		{
 			var mainWindow = fwApp.ActiveMainWindow as IFwMainWnd;
-			mainWindow?.Mediator.SendMessage("WarnUserAboutFailedLiftImportIfNecessary", null);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.WarnUserAboutFailedLiftImportIfNecessary, null));
 		}
 
 		private static bool IsSharedXmlBackendNeeded(ProjectId projectId)
