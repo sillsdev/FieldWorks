@@ -29,6 +29,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FdoUi;
@@ -1830,7 +1831,7 @@ namespace SIL.FieldWorks
 									s_projectId = projectToTry; // Window is open on this project, we must not try to initialize it again.
 									if (Form.ActiveForm is IxWindow mainWindow)
 									{
-										mainWindow.Mediator.SendMessage("SFMImport", null);
+										Publisher.Publish(new PublisherParameterObject(EventConstants.SFMImport));
 									}
 									else
 									{
