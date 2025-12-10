@@ -23,6 +23,7 @@ using System.Windows.Forms;
 using System.Xml;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -82,6 +83,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			m_sda = m_cache.MainCacheAccessor;
 			m_sda.AddNotification(this);
+
+			Subscriber.Subscribe(EventConstants.StopParser, StopParser);
 		}
 
 		/// <summary>
@@ -360,6 +363,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(EventConstants.StopParser, StopParser);
+
 				// other clients may now parse
 				// Dispose managed resources here.
 				if (m_timer != null)
@@ -953,12 +958,18 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true;	//we handled this.
 		}
 
+		// Handler for the 'Stop Parser' menu item.
+		// Triggered from (DistFiles\Language Explorer\Configuration\Words\areaConfiguration.xml)
 		public bool OnStopParser(object argument)
 		{
-			CheckDisposed();
-
-			DisconnectFromParser();
+			StopParser(argument);
 			return true;	//we handled this.
+		}
+
+		private void StopParser(object _)
+		{
+			CheckDisposed();
+			DisconnectFromParser();
 		}
 
 		// used by Try a Word to get the parser running

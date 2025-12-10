@@ -16,6 +16,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks.LexText;
@@ -858,8 +859,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		private void StopParser()
 		{
-			if (_mediator != null)
-				_mediator.SendMessage("StopParser", null);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser));
 		}
 
 		/// <summary>
