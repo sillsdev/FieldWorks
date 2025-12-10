@@ -43,12 +43,12 @@ namespace SIL.FieldWorks.XWorks
 			return SecurityElement.Escape(string.Join(", ", new[] { copyright, license }.Where(txt => !string.IsNullOrEmpty(txt))));
 		}
 
-		private static MetadataForLicenseWithImage MetadataFromFile(this LCModel.ICmPicture picture)
+		private static Metadata MetadataFromFile(this LCModel.ICmPicture picture)
 		{
 			var path = picture.PictureFileRA?.AbsoluteInternalPath;
 			try
 			{
-				return MetadataForLicenseWithImage.FromFile(path);
+				return Metadata.FromFile(path);
 			}
 			catch (Exception e)
 			{
