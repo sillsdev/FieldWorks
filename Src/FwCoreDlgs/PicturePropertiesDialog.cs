@@ -9,6 +9,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using SIL.Code;
+using SIL.Core.ClearShare;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
