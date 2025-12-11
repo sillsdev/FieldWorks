@@ -1430,7 +1430,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="args"></param>
 		/// <returns></returns>
-		public void SaveScrollPosition(object args)
+		internal void SaveScrollPosition(object args)
 		{
 			CheckDisposed();
 
