@@ -464,7 +464,6 @@ namespace SIL.FieldWorks
 
 		private static void WarnUserAboutFailedLiftImportIfNecessary(FwApp fwApp)
 		{
-			var mainWindow = fwApp.ActiveMainWindow as IFwMainWnd;
 			Publisher.Publish(new PublisherParameterObject(EventConstants.WarnUserAboutFailedLiftImportIfNecessary, null));
 		}
 
