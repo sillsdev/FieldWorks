@@ -492,7 +492,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				bool conflictOccurred = DetectLiftConflicts(liftFolder, savedState);
 				var app = _propertyTable.GetValue<LexTextApp>("App");
-				var newAppWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
+				RefreshCacheWindowAndAll(app, fullProjectFileName);
 				if (conflictOccurred)
 				{
 					// Send a message for the reopened instance to display the message viewer (used to be conflict report),
