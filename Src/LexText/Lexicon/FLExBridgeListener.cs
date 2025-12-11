@@ -89,6 +89,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			_propertyTable.SetPropertyPersistence("FLExBridgeListener", false);
 			_parentForm = _propertyTable.GetValue<Form>("window");
 			mediator.AddColleague(this);
+
+			Subscriber.Subscribe(EventConstants.WarnUserAboutFailedLiftImportIfNecessary, WarnUserAboutFailedLiftImportIfNecessary);
 		}
 
 		public int Priority
@@ -501,7 +503,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return true; // We dealt with it.
 		}
 
-		public bool OnWarnUserAboutFailedLiftImportIfNecessary(object param)
+		private void WarnUserAboutFailedLiftImportIfNecessary(object param)
 		{
 			var liftFolder = GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
 			if(LiftImportFailureServices.GetFailureStatus(liftFolder) != ImportFailureStatus.NoImportNeeded)
@@ -510,7 +512,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 									 LexEdStrings.LiftSRFailureDetectedOnStartupTitle,
 									 MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
-			return true;
 		}
 
 		private string GetFullProjectFileName()
@@ -1545,6 +1546,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			if (fDisposing)
 			{
+				Subscriber.Unsubscribe(EventConstants.WarnUserAboutFailedLiftImportIfNecessary, WarnUserAboutFailedLiftImportIfNecessary);
+
 				// dispose managed and unmanaged objects
 				FLExBridgeHelper.FLExJumpUrlChanged -= JumpToFlexObject;
 				if (_mediator != null) // Fixes LT-14201
