@@ -91,6 +91,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			mediator.AddColleague(this);
 
 			Subscriber.Subscribe(EventConstants.WarnUserAboutFailedLiftImportIfNecessary, WarnUserAboutFailedLiftImportIfNecessary);
+			Subscriber.Subscribe(EventConstants.ViewLiftMessages, ViewLiftMessages);
 		}
 
 		public int Priority
@@ -491,12 +492,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				bool conflictOccurred = DetectLiftConflicts(liftFolder, savedState);
 				var app = _propertyTable.GetValue<LexTextApp>("App");
-				var newAppWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
+				RefreshCacheWindowAndAll(app, fullProjectFileName);
 				if (conflictOccurred)
 				{
 					// Send a message for the reopened instance to display the message viewer (used to be conflict report),
 					// we have been disposed by now
-					newAppWindow.Mediator.SendMessage("ViewLiftMessages", null);
+					Publisher.Publish(new PublisherParameterObject(EventConstants.ViewLiftMessages, null));
 				}
 			}
 
@@ -671,6 +672,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate.</returns>
 		public bool OnViewLiftMessages(object commandObject)
 		{
+			ViewLiftMessages(commandObject);
+			return true;
+		}
+
+		private void ViewLiftMessages(object commandObject)
+		{
 			FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(
 				GetFullProjectFileName(),
@@ -682,7 +689,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				FLExBridgeHelper.FLExJumpUrlChanged -= JumpToFlexObject;
 				ReportDuplicateBridge();
 			}
-			return true;
 		}
 
 		/// <summary>Callback to refresh the Message Slice after OnView[Lift]Messages</summary>
@@ -834,7 +840,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 									// TODO: send a message for the reopened instance to display the message report, we have been disposed by now
 									// TODO: Need a new message for Lift conflicts.
 									// TODO: Even more importantly, the URLs in the lift notes files aren't compatible with what comes in for regular FW conflict reports
-									//newAppWindow.Mediator.SendMessage("ViewLiftMessages", null);
 								}
 				*/
 			}
@@ -1547,6 +1552,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (fDisposing)
 			{
 				Subscriber.Unsubscribe(EventConstants.WarnUserAboutFailedLiftImportIfNecessary, WarnUserAboutFailedLiftImportIfNecessary);
+				Subscriber.Unsubscribe(EventConstants.ViewLiftMessages, ViewLiftMessages);
 
 				// dispose managed and unmanaged objects
 				FLExBridgeHelper.FLExJumpUrlChanged -= JumpToFlexObject;
