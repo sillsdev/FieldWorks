@@ -19,7 +19,7 @@
 		<ConfigurationItem name="Senses" isEnabled="true" field="ReferringSenses" style="Classified-Item" styleType="paragraph" cssClassNameOverride="senses">
 			<!-- &#xA0; is NBSP -->
 			<SenseOptions numberStyle="Dictionary-SenseNumber" numberBefore="" numberingStyle="" numberAfter=".&#xA0;" numberSingleSense="false" showSingleGramInfoFirst="true" displayEachSenseInParagraph="true" />
-			<ConfigurationItem name="Headword" between="" after=" " style="Dictionary-Headword" isEnabled="true" field="OwningEntry" subField="MLHeadWord" cssClassNameOverride="headword">
+			<ConfigurationItem name="Headword" between="" after=" " style="Dictionary-Headword" isEnabled="true" field="OwningEntry" subField="MLHeadWord" cssClassNameOverride="headword-classified">
 				<WritingSystemOptions writingSystemType="vernacular" displayWSAbreviation="false">
 					<Option id="vernacular" isEnabled="true"/>
 				</WritingSystemOptions>
