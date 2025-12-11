@@ -402,8 +402,8 @@ namespace SIL.FieldWorks.IText
 				(item.analysisStatus != analysisStatusTypes.humanApproved))
 				return true;
 			return false;
-    }
-    
+		}
+
 		private static ITsString GetItemValue(item item, ILgWritingSystemFactory wsFactory)
 		{
 			if (item.run != null)

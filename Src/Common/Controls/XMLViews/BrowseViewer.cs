@@ -2962,8 +2962,8 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		// Note: often we also want to update LayoutCache.LayoutVersionNumber.
-		// (last updated by Jason Naylor, Nov 16, 2016, for ExtendedNote Bulk editing)
-		internal const int kBrowseViewVersion = 18;
+		// (last updated by Ariel Rorabaugh, Oct 28, 2025, for adding PictureLicense column to Browse view)
+		internal const int kBrowseViewVersion = 19;
 
 		/// <summary>
 		/// Column has been added or removed, update all child windows.

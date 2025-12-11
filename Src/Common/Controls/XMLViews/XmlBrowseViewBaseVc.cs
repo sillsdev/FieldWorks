@@ -302,6 +302,10 @@ namespace SIL.FieldWorks.Common.Controls
 						case 17:
 							savedCols = FixVersion18Columns(savedCols);
 							savedCols = savedCols.Replace("root version=\"17\"", "root version=\"18\"");
+							goto case 18;
+						case 18:
+							savedCols = FixVersion19Columns(savedCols);
+							savedCols = savedCols.Replace("root version=\"18\"", "root version=\"19\"");
 							propertyTable.SetProperty(colListId, savedCols, true);
 							doc.LoadXml(savedCols);
 							break;
@@ -326,6 +330,29 @@ namespace SIL.FieldWorks.Common.Controls
 				doc = null;
 			}
 			return doc;
+		}
+
+		/// <summary>
+		/// Handles the changes we made to add PictureLicense and PictureCreator to browse columns in 9.3
+		/// 9.3 (version 19, Dec 11, 2025).
+		/// </summary>
+		/// <param name="savedColsInput"></param>
+		/// <returns></returns>
+		internal static string FixVersion19Columns(string savedColsInput)
+		{
+			var savedCols = savedColsInput;
+			savedCols = AppendAttrValue(savedCols, "PictureLicenseForSense", "label", "Picture-License");
+			savedCols = AppendAttrValue(savedCols, "PictureLicenseForSense", "multipara", "true");
+			savedCols = AppendAttrValue(savedCols, "PictureLicenseForSense", "ws", "$ws=analysis vernacular");
+			savedCols = AppendAttrValue(savedCols, "PictureLicenseForSense", "editable", "false");
+			savedCols = AppendAttrValue(savedCols, "PictureLicenseForSense", "visibility", "dialog");
+
+			savedCols = AppendAttrValue(savedCols, "PictureCreatorForSense", "label", "Picture-Creator");
+			savedCols = AppendAttrValue(savedCols, "PictureCreatorForSense", "multipara", "true");
+			savedCols = AppendAttrValue(savedCols, "PictureCreatorForSense", "ws", "$ws=analysis vernacular");
+			savedCols = AppendAttrValue(savedCols, "PictureCreatorForSense", "editable", "false");
+			savedCols = AppendAttrValue(savedCols, "PictureCreatorForSense", "visibility", "dialog");
+			return savedCols;
 		}
 
 		/// <summary>
