@@ -22,6 +22,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.FwUtils.Pathway;
 using SIL.FieldWorks.Common.FXT;
 using SIL.FieldWorks.Common.RootSites;
@@ -1058,7 +1059,7 @@ namespace SIL.FieldWorks.XWorks
 			var sXslts = (string)args[2];
 			m_progressDlg = progress;
 			var parameter = new Tuple<string, string, string>(sDataType, outPath, sXslts);
-			m_mediator.SendMessage("SaveAsWebpage", parameter);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.SaveAsWebpage, parameter));
 			m_progressDlg.Step(1000);
 			return null;
 		}

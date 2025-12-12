@@ -225,7 +225,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>If node is a HeadWord node.</summary>
-		internal bool IsHeadWord { get { return CSSClassNameOverride == "headword" || CSSClassNameOverride == "mainheadword"; } }
+		internal bool IsHeadWord => CSSClassNameOverride == "headword" || CSSClassNameOverride == "mainheadword" || CSSClassNameOverride == "headword-classified";
 
 		/// <summary>If node is a Main Entry node.</summary>
 		internal bool IsMainEntry

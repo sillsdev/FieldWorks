@@ -232,7 +232,7 @@
 
 		<!-- Versions of NuGet packages. These need to match the versions in nuget-common/packages.config -->
 		<ChorusNugetVersion>6.0.0-beta0063</ChorusNugetVersion>
-		<PalasoNugetVersion>17.0.0-beta0072</PalasoNugetVersion>
+		<PalasoNugetVersion>17.0.0-beta0089</PalasoNugetVersion>
 		<ParatextNugetVersion>9.4.0.1-beta</ParatextNugetVersion>
 		<LcmNugetVersion>11.0.0-beta0148</LcmNugetVersion>
 		<IcuNugetVersion>70.1.123</IcuNugetVersion>

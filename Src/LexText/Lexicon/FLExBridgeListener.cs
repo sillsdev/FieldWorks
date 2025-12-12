@@ -16,6 +16,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks.LexText;
@@ -88,6 +89,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			_propertyTable.SetPropertyPersistence("FLExBridgeListener", false);
 			_parentForm = _propertyTable.GetValue<Form>("window");
 			mediator.AddColleague(this);
+
+			Subscriber.Subscribe(EventConstants.WarnUserAboutFailedLiftImportIfNecessary, WarnUserAboutFailedLiftImportIfNecessary);
+			Subscriber.Subscribe(EventConstants.ViewLiftMessages, ViewLiftMessages);
+			Subscriber.Subscribe(EventConstants.ViewMessages, ViewMessages);
 		}
 
 		public int Priority
@@ -338,12 +343,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				bool conflictOccurred = DetectMainConflicts(projectFolder, savedState);
 				var app = _propertyTable.GetValue<LexTextApp>("App");
-				var newAppWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
+				RefreshCacheWindowAndAll(app, fullProjectFileName);
 				if (conflictOccurred)
 				{
 					// Send a message for the reopened instance to display the message viewer (used to be conflict report),
 					// we have been disposed by now
-					newAppWindow.Mediator.SendMessage("ViewMessages", null);
+					Publisher.Publish(new PublisherParameterObject(EventConstants.ViewMessages, null));
 				}
 			}
 			else //Re-lock project if we aren't trying to close the app
@@ -488,19 +493,19 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				bool conflictOccurred = DetectLiftConflicts(liftFolder, savedState);
 				var app = _propertyTable.GetValue<LexTextApp>("App");
-				var newAppWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
+				RefreshCacheWindowAndAll(app, fullProjectFileName);
 				if (conflictOccurred)
 				{
 					// Send a message for the reopened instance to display the message viewer (used to be conflict report),
 					// we have been disposed by now
-					newAppWindow.Mediator.SendMessage("ViewLiftMessages", null);
+					Publisher.Publish(new PublisherParameterObject(EventConstants.ViewLiftMessages, null));
 				}
 			}
 
 			return true; // We dealt with it.
 		}
 
-		public bool OnWarnUserAboutFailedLiftImportIfNecessary(object param)
+		private void WarnUserAboutFailedLiftImportIfNecessary(object param)
 		{
 			var liftFolder = GetLiftRepositoryFolderFromFwProjectFolder(Cache.ProjectId.ProjectFolder);
 			if(LiftImportFailureServices.GetFailureStatus(liftFolder) != ImportFailureStatus.NoImportNeeded)
@@ -509,7 +514,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 									 LexEdStrings.LiftSRFailureDetectedOnStartupTitle,
 									 MessageBoxButtons.OK, MessageBoxIcon.Warning);
 			}
-			return true;
 		}
 
 		private string GetFullProjectFileName()
@@ -625,8 +629,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		/// <param name="commandObject">Includes the XML command element of the OnViewMessages message</param>
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate.</returns>
-		/// <remarks>If you change the name of this method, you need to check for calls to SendMessage("ViewMessages").</remarks>
 		public bool OnViewMessages(object commandObject)
+		{
+			ViewMessages(commandObject);
+			return true;
+		}
+
+		private void ViewMessages(object commandObject)
 		{
 			FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + LcmFileHelper.ksFwDataXmlFileExtension),
@@ -638,7 +647,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				FLExBridgeHelper.FLExJumpUrlChanged -= JumpToFlexObject;
 				ReportDuplicateBridge();
 			}
-			return true;
 		}
 
 		#endregion View Messages (for full FLEx data only) messages
@@ -669,6 +677,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate.</returns>
 		public bool OnViewLiftMessages(object commandObject)
 		{
+			ViewLiftMessages(commandObject);
+			return true;
+		}
+
+		private void ViewLiftMessages(object commandObject)
+		{
 			FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(
 				GetFullProjectFileName(),
@@ -680,7 +694,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				FLExBridgeHelper.FLExJumpUrlChanged -= JumpToFlexObject;
 				ReportDuplicateBridge();
 			}
-			return true;
 		}
 
 		/// <summary>Callback to refresh the Message Slice after OnView[Lift]Messages</summary>
@@ -832,7 +845,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 									// TODO: send a message for the reopened instance to display the message report, we have been disposed by now
 									// TODO: Need a new message for Lift conflicts.
 									// TODO: Even more importantly, the URLs in the lift notes files aren't compatible with what comes in for regular FW conflict reports
-									//newAppWindow.Mediator.SendMessage("ViewLiftMessages", null);
 								}
 				*/
 			}
@@ -858,8 +870,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		private void StopParser()
 		{
-			if (_mediator != null)
-				_mediator.SendMessage("StopParser", null);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser));
 		}
 
 		/// <summary>
@@ -1545,6 +1556,10 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			if (fDisposing)
 			{
+				Subscriber.Unsubscribe(EventConstants.WarnUserAboutFailedLiftImportIfNecessary, WarnUserAboutFailedLiftImportIfNecessary);
+				Subscriber.Unsubscribe(EventConstants.ViewLiftMessages, ViewLiftMessages);
+				Subscriber.Unsubscribe(EventConstants.ViewMessages, ViewMessages);
+
 				// dispose managed and unmanaged objects
 				FLExBridgeHelper.FLExJumpUrlChanged -= JumpToFlexObject;
 				if (_mediator != null) // Fixes LT-14201
