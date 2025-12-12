@@ -139,9 +139,10 @@ namespace SIL.FieldWorks.LexText.Controls
 					{
 						AddNode(val, newNode);
 					}
-					FeatureTreeNode unknownNode = new FeatureTreeNode(closed.Name.BestAnalysisAlternative.Text + ":???",
+					FeatureTreeNode unknownNode = new FeatureTreeNode(LexTextControls.ksPreserveExistingValues,
 						(int)ImageKind.radio, (int)ImageKind.radio, 0, FeatureTreeNodeInfo.NodeKind.SymFeatValue);
 					InsertNode(unknownNode, newNode);
+					HandleCheckBoxNodes(null, unknownNode);
 				}
 			}
 			var complex = defn as IFsComplexFeature;
@@ -330,7 +331,8 @@ namespace SIL.FieldWorks.LexText.Controls
 						sibling = (FeatureTreeNode)sibling.NextNode;
 					}
 				}
-				tv.Invalidate();
+				if (tv != null)
+					tv.Invalidate();
 			}
 //			m_lastSelectedTreeNode = tn;
 		}

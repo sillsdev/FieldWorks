@@ -435,6 +435,9 @@
   <data name="ksNoneOfTheAbove" xml:space="preserve">
     <value>None of the above</value>
   </data>
+  <data name="ksPreserveExistingValues" xml:space="preserve">
+    <value>Preserve existing values</value>
+  </data>
   <data name="ksNoSensesInEntry" xml:space="preserve">
     <value>No senses in entry</value>
   </data>
