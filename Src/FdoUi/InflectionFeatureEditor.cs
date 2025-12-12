@@ -449,7 +449,7 @@ namespace SIL.FieldWorks.FdoUi
 					InitMsa(msmTarget, msm.PartOfSpeechRA.Hvo, fsTarget);
 				}
 			}
-			if (msmTarget == null)
+			if (msmTarget == null && pos != null)
 			{
 				// Nothing we can reuse...make a new one.
 				msmTarget = m_cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
