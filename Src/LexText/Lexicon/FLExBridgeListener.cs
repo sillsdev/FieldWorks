@@ -92,6 +92,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			Subscriber.Subscribe(EventConstants.WarnUserAboutFailedLiftImportIfNecessary, WarnUserAboutFailedLiftImportIfNecessary);
 			Subscriber.Subscribe(EventConstants.ViewLiftMessages, ViewLiftMessages);
+			Subscriber.Subscribe(EventConstants.ViewMessages, ViewMessages);
 		}
 
 		public int Priority
@@ -342,12 +343,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				bool conflictOccurred = DetectMainConflicts(projectFolder, savedState);
 				var app = _propertyTable.GetValue<LexTextApp>("App");
-				var newAppWindow = RefreshCacheWindowAndAll(app, fullProjectFileName);
+				RefreshCacheWindowAndAll(app, fullProjectFileName);
 				if (conflictOccurred)
 				{
 					// Send a message for the reopened instance to display the message viewer (used to be conflict report),
 					// we have been disposed by now
-					newAppWindow.Mediator.SendMessage("ViewMessages", null);
+					Publisher.Publish(new PublisherParameterObject(EventConstants.ViewMessages, null));
 				}
 			}
 			else //Re-lock project if we aren't trying to close the app
@@ -628,8 +629,13 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		/// <param name="commandObject">Includes the XML command element of the OnViewMessages message</param>
 		/// <returns>true if the message was handled, false if there was an error or the call was deemed inappropriate.</returns>
-		/// <remarks>If you change the name of this method, you need to check for calls to SendMessage("ViewMessages").</remarks>
 		public bool OnViewMessages(object commandObject)
+		{
+			ViewMessages(commandObject);
+			return true;
+		}
+
+		private void ViewMessages(object commandObject)
 		{
 			FLExBridgeHelper.FLExJumpUrlChanged += JumpToFlexObject;
 			var success = FLExBridgeHelper.LaunchFieldworksBridge(Path.Combine(Cache.ProjectId.ProjectFolder, Cache.ProjectId.Name + LcmFileHelper.ksFwDataXmlFileExtension),
@@ -641,7 +647,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 				FLExBridgeHelper.FLExJumpUrlChanged -= JumpToFlexObject;
 				ReportDuplicateBridge();
 			}
-			return true;
 		}
 
 		#endregion View Messages (for full FLEx data only) messages
@@ -1553,6 +1558,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				Subscriber.Unsubscribe(EventConstants.WarnUserAboutFailedLiftImportIfNecessary, WarnUserAboutFailedLiftImportIfNecessary);
 				Subscriber.Unsubscribe(EventConstants.ViewLiftMessages, ViewLiftMessages);
+				Subscriber.Unsubscribe(EventConstants.ViewMessages, ViewMessages);
 
 				// dispose managed and unmanaged objects
 				FLExBridgeHelper.FLExJumpUrlChanged -= JumpToFlexObject;
