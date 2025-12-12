@@ -332,55 +332,57 @@ namespace SIL.FieldWorks.FdoUi
 				fsTarget = Cache.ServiceLocator.GetInstance<IFsFeatStrucRepository>().GetObject(m_selectedHvo);
 			int i = 0;
 			//REVIEW: Should these really be the same Undo/Redo strings as for InflectionClassEditor.cs?
-			m_cache.DomainDataByFlid.BeginUndoTask(FdoUiStrings.ksUndoBEInflClass, FdoUiStrings.ksRedoBEInflClass);
-			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
-			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
-			foreach(int hvoSense in itemsToChange)
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(FdoUiStrings.ksUndoBEInflClass, FdoUiStrings.ksRedoBEInflClass,
+				m_cache.ActionHandlerAccessor, () =>
 			{
-				i++;
-				if (i % interval == 0)
+				// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
+				int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
+				foreach (int hvoSense in itemsToChange)
 				{
-					state.PercentDone = i * 20 / itemsToChange.Count();
-					state.Breath();
-				}
-				var ls = m_cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
-				IFsFeatStruc newFsTarget = fsTarget;
-				if (fsTarget != null && fsTarget.ContainsBlank())
-				{
-					// Create a new fsTarget by filling in fsTarget's blanks using the lex sense's feature structure.
-					newFsTarget = FillInBlanks(fsTarget, ls);
-				}
-				if (!IsItemEligible(m_cache.DomainDataByFlid, hvoSense, possiblePOS, newFsTarget))
-					continue;
-				int hvoEntry = ls.EntryID;
-				if (!sensesByEntry.ContainsKey(hvoEntry))
-					sensesByEntry[hvoEntry] = new HashSet<ILexSense>();
-				sensesByEntry[hvoEntry].Add(ls);
-			}
-			i = 0;
-			interval = Math.Min(100, Math.Max(sensesByEntry.Count / 50, 1));
-			foreach (var kvp in sensesByEntry)
-			{
-				i++;
-				if (i % interval == 0)
-				{
-					state.PercentDone = i * 80 / sensesByEntry.Count + 20;
-					state.Breath();
-				}
-				var entry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(kvp.Key);
-				var sensesToChange = kvp.Value;
-				foreach (var ls in sensesToChange)
-				{
+					i++;
+					if (i % interval == 0)
+					{
+						state.PercentDone = i * 20 / itemsToChange.Count();
+						state.Breath();
+					}
+					var ls = m_cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
 					IFsFeatStruc newFsTarget = fsTarget;
 					if (fsTarget != null && fsTarget.ContainsBlank())
 					{
+						// Create a new fsTarget by filling in fsTarget's blanks using the lex sense's feature structure.
 						newFsTarget = FillInBlanks(fsTarget, ls);
 					}
-					IMoStemMsa msmTarget = GetMsmTarget(newFsTarget, entry, sensesToChange, pos);
-					ls.MorphoSyntaxAnalysisRA = msmTarget;
+					if (!IsItemEligible(m_cache.DomainDataByFlid, hvoSense, possiblePOS, newFsTarget))
+						continue;
+					int hvoEntry = ls.EntryID;
+					if (!sensesByEntry.ContainsKey(hvoEntry))
+						sensesByEntry[hvoEntry] = new HashSet<ILexSense>();
+					sensesByEntry[hvoEntry].Add(ls);
 				}
-			}
-			m_cache.DomainDataByFlid.EndUndoTask();
+				i = 0;
+				interval = Math.Min(100, Math.Max(sensesByEntry.Count / 50, 1));
+				foreach (var kvp in sensesByEntry)
+				{
+					i++;
+					if (i % interval == 0)
+					{
+						state.PercentDone = i * 80 / sensesByEntry.Count + 20;
+						state.Breath();
+					}
+					var entry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(kvp.Key);
+					var sensesToChange = kvp.Value;
+					foreach (var ls in sensesToChange)
+					{
+						IFsFeatStruc newFsTarget = fsTarget;
+						if (fsTarget != null && fsTarget.ContainsBlank())
+						{
+							newFsTarget = FillInBlanks(fsTarget, ls);
+						}
+						IMoStemMsa msmTarget = GetMsmTarget(newFsTarget, entry, sensesToChange, pos);
+						ls.MorphoSyntaxAnalysisRA = msmTarget;
+					}
+				}
+			});
 		}
 
 		IFsFeatStruc FillInBlanks(IFsFeatStruc pattern, ILexSense ls)
