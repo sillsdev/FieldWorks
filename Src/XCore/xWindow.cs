@@ -15,6 +15,7 @@ using System.Windows.Forms.VisualStyles;
 using System.Xml;
 using Microsoft.Win32;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel.Utils;
 using SIL.Utils;
 
@@ -1929,8 +1930,7 @@ namespace XCore
 		{
 			CheckDisposed();
 
-			if (Mediator != null)
-				Mediator.SendMessage("StopParser", null);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser));
 			this.Close();
 
 			return true;
