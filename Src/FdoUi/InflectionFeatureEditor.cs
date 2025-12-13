@@ -30,7 +30,7 @@ namespace SIL.FieldWorks.FdoUi
 	/// sort of makes sense to put it here as a class that is quite specific to a particular
 	/// part of the model.
 	/// </summary>
-	public class InflectionFeatureEditor : IBulkEditSpecControl, IDisposable
+	public class InflectionFeatureEditor : IBulkEditSpecControl, ITextChangedNotification, IDisposable
 	{
 		Mediator m_mediator;
 		TreeCombo m_tree;
@@ -580,6 +580,25 @@ namespace SIL.FieldWorks.FdoUi
 				}
 			}
 			return possiblePOS;
+		}
+
+		public void ControlTextChanged()
+		{
+			// Look for fs named m_tree.Text in ReferenceFormsOC.
+			// Don't look in IFsFeatStrucRepository.
+			foreach (var pos in Cache.LangProject.AllPartsOfSpeech)
+			{
+				foreach (var fs in pos.ReferenceFormsOC)
+				{
+					if (fs.ShortName == m_tree.Text)
+					{
+						m_selectedHvo = fs.Hvo;
+						m_selectedLabel = m_tree.Text;
+						return;
+					}
+				}
+			}
+			m_tree.Text = "";
 		}
 	}
 }
