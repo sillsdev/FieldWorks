@@ -2362,6 +2362,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Preserve existing values.
+        /// </summary>
+        internal static string ksPreserveExistingValues {
+            get {
+                return ResourceManager.GetString("ksPreserveExistingValues", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Preview Import Summary.
         /// </summary>
         internal static string ksPreviewImportSummary {

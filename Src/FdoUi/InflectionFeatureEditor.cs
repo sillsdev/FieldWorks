@@ -17,6 +17,7 @@ using System.Linq;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Utils;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.FdoUi
 {
@@ -326,84 +327,136 @@ namespace SIL.FieldWorks.FdoUi
 			HashSet<int> possiblePOS = GetPossiblePartsOfSpeech();
 			// Make a Dictionary from HVO of entry to list of modified senses.
 			var sensesByEntry = new Dictionary<int, HashSet<ILexSense>>();
-			int i = 0;
-			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
-			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
-			foreach(int hvoSense in itemsToChange)
-			{
-				i++;
-				if (i % interval == 0)
-				{
-					state.PercentDone = i * 20 / itemsToChange.Count();
-					state.Breath();
-				}
-				if (!IsItemEligible(m_cache.DomainDataByFlid, hvoSense, possiblePOS))
-					continue;
-				var ls = m_cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
-				var msa = ls.MorphoSyntaxAnalysisRA;
-				int hvoEntry = ls.EntryID;
-				if (!sensesByEntry.ContainsKey(hvoEntry))
-					sensesByEntry[hvoEntry] = new HashSet<ILexSense>();
-				sensesByEntry[hvoEntry].Add(ls);
-			}
-			//REVIEW: Should these really be the same Undo/Redo strings as for InflectionClassEditor.cs?
-			m_cache.DomainDataByFlid.BeginUndoTask(FdoUiStrings.ksUndoBEInflClass, FdoUiStrings.ksRedoBEInflClass);
-			i = 0;
-			interval = Math.Min(100, Math.Max(sensesByEntry.Count / 50, 1));
 			IFsFeatStruc fsTarget = null;
 			if (m_selectedHvo != 0)
 				fsTarget = Cache.ServiceLocator.GetInstance<IFsFeatStrucRepository>().GetObject(m_selectedHvo);
-			foreach (var kvp in sensesByEntry)
+			int i = 0;
+			//REVIEW: Should these really be the same Undo/Redo strings as for InflectionClassEditor.cs?
+			UndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(FdoUiStrings.ksUndoBEInflClass, FdoUiStrings.ksRedoBEInflClass,
+				m_cache.ActionHandlerAccessor, () =>
 			{
-				i++;
-				if (i % interval == 0)
+				// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
+				int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
+				foreach (int hvoSense in itemsToChange)
 				{
-					state.PercentDone = i * 80 / sensesByEntry.Count + 20;
-					state.Breath();
-				}
-				var entry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(kvp.Key);
-				var sensesToChange = kvp.Value;
-				IMoStemMsa msmTarget = entry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>()
-					.FirstOrDefault(msm => MsaMatchesTarget(msm, fsTarget));
-
-				if (msmTarget == null)
-				{
-					// See if we can reuse an existing MoStemMsa by changing it.
-					// This is possible if it is used only by senses in the list, or not used at all.
-					var otherSenses = new HashSet<ILexSense>();
-					var senses = new HashSet<ILexSense>(entry.AllSenses.ToArray());
-					if (senses.Count != sensesToChange.Count)
+					i++;
+					if (i % interval == 0)
 					{
-						otherSenses = new HashSet<ILexSense>(senses.Where(ls => !sensesToChange.Contains(ls)));
+						state.PercentDone = i * 20 / itemsToChange.Count();
+						state.Breath();
 					}
-
-					var msm = entry.MorphoSyntaxAnalysesOC
-						.OfType<IMoStemMsa>() // filter only IMoStemMsa
-						.FirstOrDefault(msa => !otherSenses.Any(ls => ls.MorphoSyntaxAnalysisRA == msa));
-
-					if (msm != null)
+					var ls = m_cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvoSense);
+					IFsFeatStruc newFsTarget = fsTarget;
+					if (fsTarget != null && fsTarget.ContainsBlank())
 					{
-						// Can reuse this one! Nothing we don't want to change uses it.
-						// Adjust its POS as well as its inflection feature, just to be sure.
-						// Ensure that we don't change the POS!  See LT-6835.
-						msmTarget = msm;
-						InitMsa(msmTarget, msm.PartOfSpeechRA.Hvo);
+						// Create a new fsTarget by filling in fsTarget's blanks using the lex sense's feature structure.
+						newFsTarget = FillInBlanks(fsTarget, ls);
+					}
+					if (!IsItemEligible(m_cache.DomainDataByFlid, hvoSense, possiblePOS, newFsTarget))
+						continue;
+					int hvoEntry = ls.EntryID;
+					if (!sensesByEntry.ContainsKey(hvoEntry))
+						sensesByEntry[hvoEntry] = new HashSet<ILexSense>();
+					sensesByEntry[hvoEntry].Add(ls);
+				}
+				i = 0;
+				interval = Math.Min(100, Math.Max(sensesByEntry.Count / 50, 1));
+				foreach (var kvp in sensesByEntry)
+				{
+					i++;
+					if (i % interval == 0)
+					{
+						state.PercentDone = i * 80 / sensesByEntry.Count + 20;
+						state.Breath();
+					}
+					var entry = m_cache.ServiceLocator.GetInstance<ILexEntryRepository>().GetObject(kvp.Key);
+					var sensesToChange = kvp.Value;
+					foreach (var ls in sensesToChange)
+					{
+						IFsFeatStruc newFsTarget = fsTarget;
+						if (fsTarget != null && fsTarget.ContainsBlank())
+						{
+							newFsTarget = FillInBlanks(fsTarget, ls);
+						}
+						IMoStemMsa msmTarget = GetMsmTarget(newFsTarget, entry, sensesToChange, pos);
+						ls.MorphoSyntaxAnalysisRA = msmTarget;
 					}
 				}
-				if (msmTarget == null && pos != null)
+			});
+		}
+
+		IFsFeatStruc FillInBlanks(IFsFeatStruc pattern, ILexSense ls)
+		{
+			IFsFeatStruc copy = Cache.ServiceLocator.GetInstance<IFsFeatStrucFactory>().Create();
+			IPartOfSpeech pos = pattern.Owner as IPartOfSpeech;
+			pos.ReferenceFormsOC.Add(copy);
+			pattern.SetCloneProperties(copy);
+			IMoMorphSynAnalysis msa = ls.MorphoSyntaxAnalysisRA;
+			IFsFeatStruc values = null;
+			if (msa is IMoStemMsa moStemMsa)
+			{
+				values = moStemMsa.MsFeaturesOA;
+			}
+			if (msa is IMoInflAffMsa moInflAffMsa)
+			{
+				values = moInflAffMsa.InflFeatsOA;
+			}
+			var newCopy = copy.FillInBlanks(values);
+			if (newCopy == null)
+			{
+				// Only had empty blanks.
+				pos.ReferenceFormsOC.Remove(copy);
+				return null;
+			}
+			foreach (var fs in pos.ReferenceFormsOC)
+			{
+				if (fs != copy && fs.IsEquivalent(copy))
 				{
-					// Nothing we can reuse...make a new one.
-					msmTarget = m_cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
-					entry.MorphoSyntaxAnalysesOC.Add(msmTarget);
-					InitMsa(msmTarget, pos.Hvo);
-				}
-				// Finally! Make the senses we want to change use it.
-				foreach (var ls in sensesToChange)
-				{
-					ls.MorphoSyntaxAnalysisRA = msmTarget;
+					// Use existing fs instead of new copy.
+					pos.ReferenceFormsOC.Remove(copy);
+					return fs;
 				}
 			}
-			m_cache.DomainDataByFlid.EndUndoTask();
+			return copy;
+		}
+
+		private IMoStemMsa GetMsmTarget(IFsFeatStruc fsTarget, ILexEntry entry, HashSet<ILexSense> sensesToChange, IPartOfSpeech pos)
+		{
+			IMoStemMsa msmTarget = entry.MorphoSyntaxAnalysesOC.OfType<IMoStemMsa>()
+	.FirstOrDefault(msm => MsaMatchesTarget(msm, fsTarget));
+
+			if (msmTarget == null)
+			{
+				// See if we can reuse an existing MoStemMsa by changing it.
+				// This is possible if it is used only by senses in the list, or not used at all.
+				var otherSenses = new HashSet<ILexSense>();
+				var senses = new HashSet<ILexSense>(entry.AllSenses.ToArray());
+				if (senses.Count != sensesToChange.Count)
+				{
+					otherSenses = new HashSet<ILexSense>(senses.Where(ls => !sensesToChange.Contains(ls)));
+				}
+
+				var msm = entry.MorphoSyntaxAnalysesOC
+					.OfType<IMoStemMsa>() // filter only IMoStemMsa
+					.FirstOrDefault(msa => !otherSenses.Any(ls => ls.MorphoSyntaxAnalysisRA == msa));
+
+				if (msm != null)
+				{
+					// Can reuse this one! Nothing we don't want to change uses it.
+					// Adjust its POS as well as its inflection feature, just to be sure.
+					// Ensure that we don't change the POS!  See LT-6835.
+					msmTarget = msm;
+					InitMsa(msmTarget, msm.PartOfSpeechRA.Hvo, fsTarget);
+				}
+			}
+			if (msmTarget == null && pos != null)
+			{
+				// Nothing we can reuse...make a new one.
+				msmTarget = m_cache.ServiceLocator.GetInstance<IMoStemMsaFactory>().Create();
+				entry.MorphoSyntaxAnalysesOC.Add(msmTarget);
+				InitMsa(msmTarget, pos.Hvo, fsTarget);
+			}
+			return msmTarget;
 		}
 
 		/// <summary>
@@ -428,10 +481,9 @@ namespace SIL.FieldWorks.FdoUi
 			throw new NotImplementedException();
 		}
 
-		private void InitMsa(IMoStemMsa msmTarget, int hvoPos)
+		private void InitMsa(IMoStemMsa msmTarget, int hvoPos, IFsFeatStruc newFeatures)
 		{
 			msmTarget.PartOfSpeechRA = m_cache.ServiceLocator.GetObject(hvoPos) as IPartOfSpeech;//var newFeatures = (IFsFeatStruc)m_cache.ServiceLocator.GetObject(m_selectedHvo);
-			var newFeatures = m_selectedHvo == 0 ? null : (IFsFeatStruc)m_cache.ServiceLocator.GetObject(m_selectedHvo);
 			if (newFeatures == null)
 			{
 				msmTarget.MsFeaturesOA = null;
@@ -480,25 +532,44 @@ namespace SIL.FieldWorks.FdoUi
 		{
 			CheckDisposed();
 
-			ITsString tss = TsStringUtils.MakeString(m_selectedLabel, m_cache.DefaultAnalWs);
+			IFsFeatStruc fsTarget = null;
+			if (m_selectedHvo != 0)
+				fsTarget = Cache.ServiceLocator.GetInstance<IFsFeatStrucRepository>().GetObject(m_selectedHvo);
 			// Build a Set of parts of speech that can take this class.
 			HashSet<int> possiblePOS = GetPossiblePartsOfSpeech();
 			int i = 0;
 			// Report progress 50 times or every 100 items, whichever is more (but no more than once per item!)
 			int interval = Math.Min(100, Math.Max(itemsToChange.Count() / 50, 1));
-			foreach (int hvo in itemsToChange)
+			// FillInBlanks can add feature structures to IPartOfSpeech.ReferenceFormsOC.
+			// These feature structures don't hurt anything, so we make the work non-undoable.
+			NonUndoableUnitOfWorkHelper.Do(m_cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 			{
-				i++;
-				if (i % interval == 0)
+				foreach (int hvo in itemsToChange)
 				{
-					state.PercentDone = i * 100 / itemsToChange.Count();
-					state.Breath();
+					i++;
+					if (i % interval == 0)
+					{
+						state.PercentDone = i * 100 / itemsToChange.Count();
+						state.Breath();
+					}
+					ITsString tss = TsStringUtils.MakeString(m_selectedLabel, m_cache.DefaultAnalWs);
+					IFsFeatStruc newFsTarget = fsTarget;
+					if (fsTarget != null && fsTarget.ContainsBlank())
+					{
+						// Create a new fsTarget by filling in fsTarget's blanks using the lex sense's feature structure.
+						ILexSense ls = Cache.ServiceLocator.GetInstance<ILexSenseRepository>().GetObject(hvo);
+						newFsTarget = FillInBlanks(fsTarget, ls);
+						string fsLabel = newFsTarget == null ? "" : newFsTarget.ShortName;
+						tss = TsStringUtils.MakeString(fsLabel, m_cache.DefaultAnalWs);
+					}
+					bool fEnable = IsItemEligible(m_sda, hvo, possiblePOS, newFsTarget);
+					if (fEnable)
+					{
+						m_sda.SetString(hvo, tagFakeFlid, tss);
+					}
+					m_sda.SetInt(hvo, tagEnable, (fEnable ? 1 : 0));
 				}
-				bool fEnable = IsItemEligible(m_sda, hvo, possiblePOS);
-				if (fEnable)
-					m_sda.SetString(hvo, tagFakeFlid, tss);
-				m_sda.SetInt(hvo, tagEnable, (fEnable ? 1 : 0));
-			}
+			});
 		}
 
 		/// <summary>
@@ -519,7 +590,7 @@ namespace SIL.FieldWorks.FdoUi
 			}
 		}
 
-		private bool IsItemEligible(ISilDataAccess sda, int hvo, HashSet<int> possiblePOS)
+		private bool IsItemEligible(ISilDataAccess sda, int hvo, HashSet<int> possiblePOS, IFsFeatStruc fsTarget)
 		{
 			bool fEnable = false;
 			int hvoMsa = sda.get_ObjectProp(hvo, LexSenseTags.kflidMorphoSyntaxAnalysis);
@@ -528,14 +599,15 @@ namespace SIL.FieldWorks.FdoUi
 			if (hvoMsa != 0)
 			{
 				int clsid = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvoMsa).ClassID;
+
 				if (clsid == MoStemMsaTags.kClassId)
 				{
 					int pos = sda.get_ObjectProp(hvoMsa, MoStemMsaTags.kflidPartOfSpeech);
 					if (m_notSure || (pos != 0 && possiblePOS.Contains(pos)))
 					{
 						// Only show it as a change if it is different
-						int hvoFeature = sda.get_ObjectProp(hvoMsa, MoStemMsaTags.kflidMsFeatures);
-						fEnable = hvoFeature != m_selectedHvo;
+						IMoStemMsa msa = m_cache.ServiceLocator.GetInstance<IMoStemMsaRepository>().GetObject(hvoMsa);
+						fEnable = !EquivalentFs(fsTarget, msa?.MsFeaturesOA);
 					}
 				}
 				if (clsid == MoInflAffMsaTags.kClassId)
@@ -544,12 +616,21 @@ namespace SIL.FieldWorks.FdoUi
 					if (m_notSure || (pos != 0 && possiblePOS.Contains(pos)))
 					{
 						// Only show it as a change if it is different
-						int hvoFeature = sda.get_ObjectProp(hvoMsa, MoInflAffMsaTags.kflidInflFeats);
-						fEnable = hvoFeature != m_selectedHvo;
+						IMoInflAffMsa msa = m_cache.ServiceLocator.GetInstance<IMoInflAffMsaRepository>().GetObject(hvoMsa);
+						fEnable = !EquivalentFs(fsTarget, msa?.InflFeatsOA);
 					}
 				}
 			}
 			return fEnable;
+		}
+
+		private bool EquivalentFs(IFsFeatStruc fs1, IFsFeatStruc fs2)
+		{
+			if (fs1 == null)
+				return fs1 == fs2;
+			if (fs2 == null)
+				return false;
+			return fs1.IsEquivalent(fs2);
 		}
 
 		private IPartOfSpeech GetPOS()
