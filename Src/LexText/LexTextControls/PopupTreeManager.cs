@@ -520,16 +520,16 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			CheckDisposed();
 
-			if (item != null)
-			{
-				// We do NOT want to simulate a mouse click because that will cause the
-				// text box in the combo to be focused. We may be updating this from a PropChanged
-				// that should not set focus.
-				popupTree.SelectByAction = TreeViewAction.Unknown;
-				popupTree.SelectedNode = item;
-				if (m_treeCombo != null)
-					m_treeCombo.SetComboText(item);
-			}
+			if (item == null)
+				item = m_kEmptyNode;
+
+			// We do NOT want to simulate a mouse click because that will cause the
+			// text box in the combo to be focused. We may be updating this from a PropChanged
+			// that should not set focus.
+			popupTree.SelectByAction = TreeViewAction.Unknown;
+			popupTree.SelectedNode = item;
+			if (m_treeCombo != null)
+				m_treeCombo.SetComboText(item);
 		}
 
 		/// <summary>
