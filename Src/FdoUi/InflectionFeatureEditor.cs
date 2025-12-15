@@ -586,6 +586,7 @@ namespace SIL.FieldWorks.FdoUi
 		{
 			// Look for fs named m_tree.Text in ReferenceFormsOC.
 			// Don't look in IFsFeatStrucRepository.
+			int count = 0;
 			foreach (var pos in Cache.LangProject.AllPartsOfSpeech)
 			{
 				foreach (var fs in pos.ReferenceFormsOC)
@@ -594,11 +595,24 @@ namespace SIL.FieldWorks.FdoUi
 					{
 						m_selectedHvo = fs.Hvo;
 						m_selectedLabel = m_tree.Text;
-						return;
+						count += 1;
 					}
 				}
 			}
-			m_tree.Text = "";
+			if (count > 1)
+			{
+				// Two parts of speech have the same feature structure.
+				// Make the user choose which one they want.
+				m_selectedHvo = 0;
+				m_selectedLabel = "";
+				m_tree.Text = "";
+			}
+			if (count == 0)
+			{
+				// Couldn't find the feature structure.
+				// Make the user choose.
+				m_tree.Text = "";
+			}
 		}
 	}
 }
