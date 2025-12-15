@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.FdoUi
 	/// sort of makes sense to put it here as a class that is quite specific to a particular
 	/// part of the model.
 	/// </summary>
-	public class InflectionFeatureEditor : IBulkEditSpecControl, IDisposable
+	public class InflectionFeatureEditor : IBulkEditSpecControl, ITextChangedNotification, IDisposable
 	{
 		Mediator m_mediator;
 		TreeCombo m_tree;
@@ -661,6 +661,39 @@ namespace SIL.FieldWorks.FdoUi
 				}
 			}
 			return possiblePOS;
+		}
+
+		public void ControlTextChanged()
+		{
+			// Look for fs named m_tree.Text in ReferenceFormsOC.
+			// Don't look in IFsFeatStrucRepository.
+			int count = 0;
+			foreach (var pos in Cache.LangProject.AllPartsOfSpeech)
+			{
+				foreach (var fs in pos.ReferenceFormsOC)
+				{
+					if (fs.ShortName == m_tree.Text)
+					{
+						m_selectedHvo = fs.Hvo;
+						m_selectedLabel = m_tree.Text;
+						count += 1;
+					}
+				}
+			}
+			if (count > 1)
+			{
+				// Two parts of speech have the same feature structure.
+				// Make the user choose which one they want.
+				m_selectedHvo = 0;
+				m_selectedLabel = "";
+				m_tree.Text = "";
+			}
+			if (count == 0)
+			{
+				// Couldn't find the feature structure.
+				// Make the user choose.
+				m_tree.Text = "";
+			}
 		}
 	}
 }
