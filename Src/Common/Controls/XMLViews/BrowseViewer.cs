@@ -3947,7 +3947,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_bv = bv;
 
 			// Store location for restore after Reconstruct. (LT-8336)
-			m_bv.BrowseView.OnSaveScrollPosition(null); // says it's called through Mediator, but not that I can see!
+			m_bv.BrowseView.SaveScrollPosition(null);
 
 			// Figure out if highlighted row is visible or not
 			m_irow = m_bv.SelectedIndex;

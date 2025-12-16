@@ -3123,13 +3123,10 @@ namespace SIL.FieldWorks.XWorks
 
 		private void m_list_AboutToReload(object sender, EventArgs e)
 		{
-			// This used to be a BroadcastMessage, but now broadcast is deferred.
-			// To keep the same logic it's now using the SendMessageToAllNow.  This
-			// is different from SendMessage as it is sent to all even if handled.
-			// To avoid hitting the " For now, we'll not try to be concerned about restoring scroll position
+			// For now, we'll not try to be concerned about restoring scroll position
 			// in a context where we're reloading after suppressing a reload.
 			if (!m_fReloadingDueToMissingObject)
-				m_mediator.SendMessageToAllNow("SaveScrollPosition", this);
+				Publisher.Publish(new PublisherParameterObject(EventConstants.SaveScrollPosition, this));
 		}
 
 		private void m_list_DoneReload(object sender, EventArgs e)
