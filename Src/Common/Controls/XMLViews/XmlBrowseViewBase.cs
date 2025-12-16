@@ -1137,6 +1137,7 @@ namespace SIL.FieldWorks.Common.Controls
 			if (disposing)
 			{
 				Subscriber.Unsubscribe(EventConstants.SaveScrollPosition, SaveScrollPosition);
+				Subscriber.Unsubscribe(EventConstants.RestoreScrollPosition, RestoreScrollPosition);
 
 				if (m_bv != null && !m_bv.IsDisposed && m_bv.SpecialCache != null)
 					m_bv.SpecialCache.RemoveNotification(this);
@@ -1489,7 +1490,6 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// Called through mediator by reflection. (Maybe?)
 		/// This routine attempts to restore the scroll position previously saved by SaveScrollPosition.
 		/// Specifically, it attempts to scroll to a position such that the top of the object at index
 		/// m_iTopOfScreenObjectForScrollPosition is m_dyTopOfScreenOffset pixels below the top of the
@@ -1497,11 +1497,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="args"></param>
 		/// <returns></returns>
-		public bool OnRestoreScrollPosition(object args)
+		internal void RestoreScrollPosition(object args)
 		{
 			CheckDisposed();
 
-			return RestoreScrollPosition(m_iTopOfScreenObjectForScrollPosition);
+			RestoreScrollPosition(m_iTopOfScreenObjectForScrollPosition);
 		}
 
 		/// <summary>
@@ -2106,6 +2106,7 @@ namespace SIL.FieldWorks.Common.Controls
 			SetSelectedRowHighlighting();//read the property table
 
 			Subscriber.Subscribe(EventConstants.SaveScrollPosition, SaveScrollPosition);
+			Subscriber.Subscribe(EventConstants.RestoreScrollPosition, RestoreScrollPosition);
 		}
 
 		#endregion XCore Colleague overrides

@@ -4050,7 +4050,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (m_bv != null && m_bv.BrowseView != null && m_bv.BrowseView.RootBox != null)
 					m_bv.BrowseView.RootBox.Reconstruct(); // Otherwise every cell redraws individually!
 
-				m_bv.BrowseView.OnRestoreScrollPosition(null);
+				m_bv.BrowseView.RestoreScrollPosition(null);
 
 				if (m_fHiliteWasVisible && m_irow >= 0 && m_irow < m_bv.AllItems.Count)
 				{
