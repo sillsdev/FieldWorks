@@ -3131,11 +3131,8 @@ namespace SIL.FieldWorks.XWorks
 
 		private void m_list_DoneReload(object sender, EventArgs e)
 		{
-			// This used to be a BroadcastMessage, but now broadcast is deferred.
-			// To keep the same logic it's now using the SendMessageToAllNow.  This
-			// is different from SendMessage as it is sent to all even if handled.
 			if (!m_fReloadingDueToMissingObject)
-				m_mediator.SendMessageToAllNow("RestoreScrollPosition", this);
+				Publisher.Publish(new PublisherParameterObject(EventConstants.RestoreScrollPosition, this));
 		}
 
 		internal ListUpdateHelper UpdateHelper { get; set; }
