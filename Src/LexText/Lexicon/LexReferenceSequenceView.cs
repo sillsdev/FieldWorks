@@ -6,6 +6,8 @@ using SIL.LCModel;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls;
+using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
 
 namespace SIL.FieldWorks.XWorks.LexEd
@@ -83,7 +85,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			{
 				if (m_displayParent != null && hvoObj == m_displayParent.Hvo)
 					// We need to handle this the same way as the delete command in the slice menu.
-					m_mediator.SendMessage("DataTreeDelete", null);
+					Publisher.Publish(new PublisherParameterObject(EventConstants.DataTreeDelete, null));
 				else
 					DeleteObjectFromVector(sel, cvsli, hvoObj, LexEdStrings.ksUndoDeleteRef, LexEdStrings.ksRedoDeleteRef);
 			}
