@@ -1509,8 +1509,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			if (!string.IsNullOrEmpty(e.JumpUrl))
 			{
 				var args = new LocalLinkArgs { Link = e.JumpUrl };
-				if (_mediator != null)
-					_mediator.SendMessage("HandleLocalHotlink", args);
+				Publisher.Publish(new PublisherParameterObject(EventConstants.HandleLocalHotlink, args));
 			}
 		}
 
