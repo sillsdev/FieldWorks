@@ -574,6 +574,15 @@ namespace SIL.FieldWorks.IText {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Edit Lexical Entry....
+        /// </summary>
+        internal static string ksEditLexicalEntry_ {
+            get {
+                return ResourceManager.GetString("ksEditLexicalEntry_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit Morph Breaks....
         /// </summary>
         internal static string ksEditMorphBreaks_ {

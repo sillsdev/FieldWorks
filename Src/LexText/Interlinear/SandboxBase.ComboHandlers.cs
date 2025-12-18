@@ -1818,6 +1818,13 @@ namespace SIL.FieldWorks.IText
 				ITsTextProps disabledItemProperties = null;
 				if (m_sandbox.IsMorphFormLineEmpty)
 					disabledItemProperties = DisabledItemProperties();
+				if (GetLexEntry() != null)
+				{
+					AddItemToComboList(ITextStrings.ksEditLexicalEntry_,
+						new EventHandler(OnSelectEditLexicalEntry),
+						disabledItemProperties,
+						disabledItemProperties == null);
+				}
 				AddItemToComboList(ITextStrings.ksCreateNewEntry_,
 					new EventHandler(OnSelectCreateNewEntry),
 					disabledItemProperties,
@@ -2581,6 +2588,19 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 
+			private void OnSelectEditLexicalEntry(object sender, EventArgs args)
+			{
+				ILexEntry lexEntry = GetLexEntry();
+				m_sandbox.Mediator.SendMessage("JumpToPopupLexEntry", lexEntry.Hvo);
+			}
+
+			private ILexEntry GetLexEntry()
+			{
+				IWfiMorphBundle bundle = m_caches.RealObject(m_hvoMorph) as IWfiMorphBundle;
+				if (bundle?.MorphRA?.Owner != null)
+					return bundle.MorphRA.Owner as ILexEntry;
+				return null;
+			}
 			private void OnSelectAllomorphOf(object sender, EventArgs args)
 			{
 				try
