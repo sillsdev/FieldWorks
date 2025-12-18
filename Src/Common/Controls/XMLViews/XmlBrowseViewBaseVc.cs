@@ -1,4 +1,4 @@
-// Copyright (c) 2005-2017 SIL International
+// Copyright (c) 2005-2025 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,6 +8,7 @@ using System.Xml;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows.Forms;
 using System.Reflection; // for check-box icons.
 using SIL.FieldWorks.Common.FwUtils;
@@ -51,15 +52,6 @@ namespace SIL.FieldWorks.Common.Controls
 		#endregion Constants
 
 		#region Data Members
-
-		/// <summary>
-		/// Specifications of columns to display
-		/// </summary>
-		protected List<XmlNode> m_columns = new List<XmlNode>();
-		/// <summary>
-		/// Specs of columns that COULD be displayed, but which have not been selected.
-		/// </summary>
-		protected List<XmlNode> m_possibleColumns;
 		/// <summary>// Top-level fake property for list of objects.</summary>
 		protected int m_fakeFlid = 0;
 		/// <summary>// Controls appearance of column for check boxes.</summary>
@@ -76,8 +68,7 @@ namespace SIL.FieldWorks.Common.Controls
 		protected int m_dxmpCheckBorderWidth = 72000 / 96;
 		/// <summary></summary>
 		protected XmlBrowseViewBase m_xbv;
-		/// <summary></summary>
-		protected ISortItemProvider m_sortItemProvider;
+
 		IPicture m_PreviewArrowPic;
 		IPicture m_PreviewRTLArrowPic;
 		int m_icolOverrideAllowEdit = -1; // index of column to force allow editing in.
@@ -216,18 +207,17 @@ namespace SIL.FieldWorks.Common.Controls
 			if (doc == null) // nothing saved, or saved info won't parse
 			{
 				// default: the columns that have 'width' specified.
-				foreach(XmlNode node in m_possibleColumns)
+				foreach(XmlNode node in PossibleColumnSpecs)
 				{
 					if (XmlUtils.GetOptionalAttributeValue(node, "visibility", "always") == "always")
-						m_columns.Add(node);
+						ColumnSpecs.Add(node);
 				}
 			}
 			else
 			{
-				var newPossibleColumns = new List<XmlNode>(m_possibleColumns);
+				var newPossibleColumns = new List<XmlNode>(PossibleColumnSpecs);
 				foreach (XmlNode node in doc.DocumentElement.SelectNodes("//column"))
 				{
-
 					// if there is a corresponding possible column, remove it from the newPossibleColumns list.
 					var possible = newPossibleColumns.Find(n =>
 						XmlUtils.GetOptionalAttributeValue(n, "label", "") ==
@@ -235,14 +225,14 @@ namespace SIL.FieldWorks.Common.Controls
 					if (possible != null)
 						newPossibleColumns.Remove(possible);
 					if (IsValidColumnSpec(node))
-						m_columns.Add(node);
+						ColumnSpecs.Add(node);
 				}
 
 				foreach (var node in newPossibleColumns)
 				{
 					// add any possible columns that were not in the saved list and are common
 					if (XmlUtils.GetOptionalAttributeValue(node, "common", "false") == "true")
-						m_columns.Add(node);
+						ColumnSpecs.Add(node);
 				}
 			}
 			m_fakeFlid = fakeFlid;
@@ -577,9 +567,7 @@ namespace SIL.FieldWorks.Common.Controls
 			XmlVc vc = null;
 			if (ListItemsClass != 0)
 				vc = this;
-			m_possibleColumns = PartGenerator.GetGeneratedChildren(m_xnSpec.SelectSingleNode("columns"),
-						 m_xbv.Cache, vc, (int)ListItemsClass);
-			return m_possibleColumns;
+			return PossibleColumnSpecs = PartGenerator.GetGeneratedChildren(m_xnSpec.SelectSingleNode("columns"), m_xbv.Cache, vc, (int)ListItemsClass);
 		}
 
 		int m_listItemsClass = 0;
@@ -618,123 +606,84 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// check to see if column spec is still valid and useable.
+		/// Check to see if column spec is still valid. If it is a custom field, update the label if necessary.
 		/// </summary>
-		/// <param name="node"></param>
-		/// <returns></returns>
-		internal bool IsValidColumnSpec(XmlNode node)
+		internal bool IsValidColumnSpec(XmlNode colSpec)
 		{
-			List<XmlNode> possibleColumns = this.PossibleColumnSpecs;
-			// first, check to see if we can find some part or child node information
-			// to process. Eg. Custom field column nodes that refer to parts that no longer exist
-			// because the custom field has been removed so the parts cannot be generated
-			XmlNode partNode = this.GetPartFromParentNode(node, this.ListItemsClass);
-			if (partNode == null)
-				return false;	// invalid node, don't add.
-			bool badCustomField = CheckForBadCustomField(possibleColumns, node);
-			if (badCustomField)
-				return false;	// invalid custom field, don't add.
-			bool badReversalIndex = CheckForBadReversalIndex(possibleColumns, node);
-			if (badReversalIndex)
+			if (GetPartFromParentNode(colSpec, ListItemsClass) == null)
+			{
 				return false;
-			return true;	// valid as far as we can tell.
+			}
+			// If it is a Custom Field, check that it is valid and has the correct label.
+			if (IsCustomField(colSpec, out var isValid))
+			{
+				return isValid;
+			}
+			// In the simple case, `node`s label should match a label in PossibleColumnSpecs. There may be more complicated cases.
+			// ENHANCE (Hasso) 2025.11: 'layout' (mandatory?) and 'field' (optional) would be better attributes to match, but that would require more test setup.
+			var label = XmlUtils.GetLocalizedAttributeValue(colSpec, "label", null) ??
+						XmlUtils.GetMandatoryAttributeValue(colSpec, "label");
+			var originalLabel = XmlUtils.GetLocalizedAttributeValue(colSpec, "originalLabel", null) ??
+								XmlUtils.GetAttributeValue(colSpec, "originalLabel");
+			return XmlViewsUtils.FindNodeWithAttrVal(PossibleColumnSpecs, "label", label) != null ||
+					XmlViewsUtils.FindNodeWithAttrVal(PossibleColumnSpecs, "label", originalLabel) != null;
 		}
 
 		/// <summary>
-		/// Check for a nonexistent custom field.  (Custom fields can be deleted.)  As a side-effect,
-		/// if the node refers to a valid custom field, the label attribute is adjusted to what we
-		/// want the user to see.
+		/// Check whether the column spec is a custom field, and if so, if it is still valid (Custom Fields can be deleted).
+		/// If the node refers to a valid custom field, the label attribute is adjusted to what we want the user to see.
 		/// </summary>
-		/// <param name="possibleColumns"></param>
-		/// <param name="node"></param>
-		/// <returns>true if this node refers to a nonexistent custom field</returns>
-		private bool CheckForBadCustomField(List<XmlNode> possibleColumns, XmlNode node)
+		private bool IsCustomField(XmlNode colSpec, out bool isValidCustomField)
 		{
-			// see if this node is based on a layout. If so, get its part
-			PropWs propWs;
-			XmlNode columnForCustomField = null;
-			if (this.TryColumnForCustomField(node, this.ListItemsClass, out columnForCustomField, out propWs))
+			if (!TryColumnForCustomField(colSpec, ListItemsClass, out var columnForCustomField, out var propWs))
 			{
-				if (columnForCustomField != null)
+				isValidCustomField = false;
+				return false;
+			}
+
+			if (columnForCustomField != null)
+			{
+				var fieldName = XmlUtils.GetAttributeValue(columnForCustomField, "field");
+				var className = XmlUtils.GetAttributeValue(columnForCustomField, "class");
+				if (!string.IsNullOrEmpty(fieldName) && !string.IsNullOrEmpty(className) &&
+					((IFwMetaDataCacheManaged)m_mdc).FieldExists(className, fieldName, false))
 				{
-					string fieldName = XmlUtils.GetAttributeValue(columnForCustomField, "field");
-					string className = XmlUtils.GetAttributeValue(columnForCustomField, "class");
-					if (!String.IsNullOrEmpty(fieldName) && !String.IsNullOrEmpty(className))
-					{
-						if ((m_mdc as IFwMetaDataCacheManaged).FieldExists(className, fieldName, false))
-						{
-							ColumnConfigureDialog.GenerateColumnLabel(node, m_cache);
-							return false;
-						}
-					}
-					return true;
-				}
-				else if (propWs != null)
-				{
-					XmlUtils.AppendAttribute(node, "originalLabel", GetNewLabelFromMatchingCustomField(possibleColumns, propWs.flid));
-					ColumnConfigureDialog.GenerateColumnLabel(node, m_cache);
+					ColumnConfigureDialog.GenerateColumnLabel(colSpec, m_cache);
+					isValidCustomField = true;
 				}
 				else
 				{
-					// it's an invalid custom field.
-					return true;
+					isValidCustomField = false;
 				}
 			}
-			return false;
+			else if (propWs == null)
+			{
+				isValidCustomField = false;
+			}
+			else
+			{
+				XmlUtils.AppendAttribute(colSpec, "originalLabel", GetNewLabelFromMatchingCustomField(propWs.flid));
+				ColumnConfigureDialog.GenerateColumnLabel(colSpec, m_cache);
+				isValidCustomField = true;
+			}
+			return true;
 		}
 
-
-
-		private string GetNewLabelFromMatchingCustomField(List<XmlNode> possibleColumns, int flid)
+		private string GetNewLabelFromMatchingCustomField(int flid)
 		{
-			foreach (XmlNode possibleColumn in possibleColumns)
+			foreach (var possibleColumn in PossibleColumnSpecs)
 			{
 				// Desired node may be a child of a child...  (See LT-6447.)
-				PropWs propWs;
-				XmlNode columnForCustomField;
-				if (TryColumnForCustomField(possibleColumn, ListItemsClass, out columnForCustomField, out propWs))
+				if (TryColumnForCustomField(possibleColumn, ListItemsClass, out _, out var propWs))
 				{
 					// the flid of the updated custom field node matches the given flid of the old node.
 					if (propWs != null && propWs.flid == flid)
 					{
-						string label = XmlUtils.GetLocalizedAttributeValue(possibleColumn,
-								"label", null);
-						return label;
+						return XmlUtils.GetLocalizedAttributeValue(possibleColumn, "label", null);
 					}
 				}
 			}
 			return "";
-		}
-
-		/// <summary>
-		/// Check for an invalid reversal index.  (Reversal indexes can be deleted.)
-		/// </summary>
-		/// <param name="possibleColumns"></param>
-		/// <param name="node"></param>
-		/// <returns>true if this node refers to a nonexistent reversal index.</returns>
-		private bool CheckForBadReversalIndex(List<XmlNode> possibleColumns, XmlNode node)
-		{
-			// Look for a child node which is similar to this (value of ws attribute may differ):
-			// <string field="ReversalEntriesText" ws="$ws=es"/>
-			XmlNode child = XmlUtils.FindNode(node, "string");
-			if (child != null &&
-				XmlUtils.GetOptionalAttributeValue(child, "field") == "ReversalEntriesText")
-			{
-				string sWs = StringServices.GetWsSpecWithoutPrefix(child);
-				if (sWs != null && sWs != "reversal")
-				{
-					if (!m_cache.ServiceLocator.WritingSystemManager.Exists(sWs))
-						return true;	// invalid writing system
-					// Check whether we have a reversal index for the given writing system.
-					foreach (var idx in m_cache.LangProject.LexDbOA.ReversalIndexesOC)
-					{
-						if (idx.WritingSystem == sWs)
-							return false;
-					}
-					return true;
-				}
-			}
-			return false;
 		}
 		#endregion Construction and initialization
 
@@ -819,37 +768,18 @@ namespace SIL.FieldWorks.Common.Controls
 			return headerLabelList;
 		}
 
-		internal virtual List<XmlNode> ColumnSpecs
-		{
-			get
-			{
-				return m_columns;
-			}
-			set
-			{
-				m_columns = value;
-			}
-		}
+		/// <summary>
+		/// Specifications of columns to display
+		/// </summary>
+		protected internal virtual List<XmlNode> ColumnSpecs { get; set; } = new List<XmlNode>();
 
-		internal List<XmlNode> PossibleColumnSpecs
-		{
-			get
-			{
-				return m_possibleColumns;
-			}
-		}
+		/// <summary>
+		/// Specs of columns that COULD be displayed, regardless of whether they have been selected.
+		/// </summary>
+		protected internal List<XmlNode> PossibleColumnSpecs { get; set; }
 
-		internal ISortItemProvider SortItemProvider
-		{
-			get
-			{
-				return m_sortItemProvider;
-			}
-			set
-			{
-				m_sortItemProvider = value;
-			}
-		}
+		/// <summary></summary>
+		protected internal ISortItemProvider SortItemProvider { get; set; }
 
 		/// <summary>
 		/// Use this to store a suitable preview arrow if we will be displaying previews.
@@ -967,7 +897,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			// Make a table.
 			VwLength[] rglength = m_xbv.GetColWidthInfo();
-			int colCount = m_columns.Count;
+			int colCount = ColumnSpecs.Count;
 			if (m_fShowSelected)
 				colCount++;
 
@@ -1029,12 +959,12 @@ namespace SIL.FieldWorks.Common.Controls
 			int cAdjCol = m_fShowSelected ? 0 : 1;
 			if (m_fShowColumnsRTL)
 			{
-				for (int icol = m_columns.Count; icol > 0; --icol)
+				for (int icol = ColumnSpecs.Count; icol > 0; --icol)
 					AddTableCell(vwenv, hvo, index, hvoRoot, icolActive, cAdjCol, icol);
 			}
 			else
 			{
-				for (int icol = 1; icol <= m_columns.Count; ++icol)
+				for (int icol = 1; icol <= ColumnSpecs.Count; ++icol)
 					AddTableCell(vwenv, hvo, index, hvoRoot, icolActive, cAdjCol, icol);
 			}
 			vwenv.CloseTableRow();
@@ -1068,7 +998,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void AddTableCell(IVwEnv vwenv, int hvo, int index, int hvoRoot, int icolActive, int cAdjCol, int icol)
 		{
-			XmlNode node = m_columns[icol - 1];
+			XmlNode node = ColumnSpecs[icol - 1];
 			// Figure out the underlying Right-To-Left value.
 			bool fRightToLeft = false;
 			// Figure out if this column's writing system is audio.
@@ -1170,7 +1100,7 @@ namespace SIL.FieldWorks.Common.Controls
 				fParaOpened = true;
 			}
 
-			if (m_sortItemProvider == null)
+			if (SortItemProvider == null)
 			{
 				try
 				{
@@ -1193,7 +1123,7 @@ namespace SIL.FieldWorks.Common.Controls
 				int hvoDum, tag, ihvo;
 				vwenv.GetOuterObject(level - 2, out hvoDum, out tag, out ihvo);
 				Debug.Assert(tag == m_fakeFlid);
-				IManyOnePathSortItem item = m_sortItemProvider.SortItemAt(ihvo);
+				IManyOnePathSortItem item = SortItemProvider.SortItemAt(ihvo);
 				if (item != null)
 				DisplayCell(item, node, hvo, vwenv);	// (Original) cell contents
 			}
@@ -1935,14 +1865,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		internal bool RemoveInvalidColumns()
 		{
-			List<XmlNode> invalidColumns = new List<XmlNode>();
-			for (int i = 0; i < m_columns.Count; ++i)
+			var invalidColumns = ColumnSpecs.Where(colSpec => !IsValidColumnSpec(colSpec)).ToList();
+			foreach (var colSpec in invalidColumns)
 			{
-				if (!IsValidColumnSpec(m_columns[i]))
-					invalidColumns.Add(m_columns[i]);
+				ColumnSpecs.Remove(colSpec);
 			}
-			for (int i = 0; i < invalidColumns.Count; ++i)
-				m_columns.Remove(invalidColumns[i]);
 			return invalidColumns.Count > 0;
 		}
 	}

@@ -30,12 +30,16 @@ Bin/_setLatestBuildConfig.bat
 Bin/_setroot.bat
 Lib/debug/DebugProcs.lib
 Lib/debug/Generic.lib
+Lib/debug/graphite2.lib
 Lib/debug/System.Buffers.dll
 Lib/debug/System.ValueTuple.dll
 Lib/debug/unit++.*
 Lib/release/DebugProcs.lib
 Lib/release/Generic.lib
-Lib/release/unit++.lib
+Lib/release/graphite2.lib
+Lib/release/System.Buffers.dll
+Lib/release/System.ValueTuple.dll
+Lib/release/unit++.*
 DistFiles/Parts/Generated.fwlayout
 Lib/src/Ethnologue/GeneratedEthnologue.cs
 Src/FwParatextLexiconPlugin/GeneratedParatextLexiconPluginRegistryHelper.cs
@@ -94,6 +98,8 @@ Lib/src/unit++/autom4te.cache/
 Lib/src/unit++/configure
 Lib/src/unit++/VS/*/
 Lib/src/Enchant/fieldworks-enchant-1.6.1/
+Src/Kernel/FwKernelTlb.idl
+Src/Kernel/*.idh
 Src/Kernel/libFwKernel
 Src/views/libViews
 Src/views/libVwGraphics
@@ -125,9 +131,6 @@ DistFiles/ReleaseData/
 !Lib/Windows/Debug
 !Lib/Windows/Release
 
-Lib/debug/graphite2.lib
-Lib/release/graphite2.lib
-
 Lib/icu*.lib
 DistFiles/Icu*/data
 DistFiles/Icu*/icudt*l
@@ -139,6 +142,3 @@ DistFiles/Templates/GOLDEtic.xml
 DistFiles/Templates/NewLangProj.fwdata
 DistFiles/Templates/POS.xml
 DistFiles/Templates/SemDom.xml
-
-Src/Kernel/FwKernelTlb.idl
-Src/Kernel/*.idh
