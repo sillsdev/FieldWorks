@@ -91,6 +91,8 @@ namespace SIL.FieldWorks.XWorks
 		protected LcmStyleSheet m_StyleSheet;
 
 		protected FwApp m_app; // protected so the test mock can get to it.
+
+		private PopupToolWindow m_popupLexEntryWindow;
 		#endregion
 
 		/// <summary>
@@ -1221,9 +1223,20 @@ namespace SIL.FieldWorks.XWorks
 			XmlNode node;
 			if (XWindow.TryGetToolNode("lexicon", "lexiconEditPopup", m_propertyTable, out node))
 			{
-				var popup = new PopupToolWindow();
-				popup.Owner = this;
-				popup.Init(m_mediator, m_propertyTable, node.SelectSingleNode("control"));
+				if (m_popupLexEntryWindow == null || m_popupLexEntryWindow.IsDisposed)
+				{
+					m_popupLexEntryWindow = new PopupToolWindow
+					{
+						Owner = this
+					};
+					m_popupLexEntryWindow.Init(m_mediator, m_propertyTable, node.SelectSingleNode("control"));
+				}
+				if (m_popupLexEntryWindow.WindowState == FormWindowState.Minimized)
+				{
+					m_popupLexEntryWindow.WindowState = FormWindowState.Normal;
+				}
+				m_popupLexEntryWindow.BringToFront();
+				m_popupLexEntryWindow.Activate();
 				Mediator.BroadcastMessage("JumpToRecord", command);
 			}
 			return true;

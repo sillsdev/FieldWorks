@@ -108,7 +108,9 @@ namespace SIL.FieldWorks.XWorks
 			m_mainView.DocumentCompleted += EnableRecordDocView;
 			if (cmo != null && cmo.Hvo > 0)
 			{
-				var configurationFile = DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable);
+				// Set innerConfigDir for popup lexical entry editor.
+				string innerConfigDir = (cmo is ILexEntry)? DictionaryConfigurationListener.DictConfigDirName : null;
+				var configurationFile = DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, innerConfigDir);
 				if (String.IsNullOrEmpty(configurationFile))
 				{
 					m_mainView.DocumentText = String.Format("<html><body><p>{0}</p></body></html>",
