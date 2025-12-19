@@ -1,5 +1,5 @@
+using SIL.LCModel;
 using SIL.Utils;
-using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using XCore;
@@ -30,18 +30,12 @@ namespace SIL.FieldWorks.XWorks
 			this.AccessibleName = "A Popup Tool Window";
 			this.AccessibleRole = System.Windows.Forms.AccessibleRole.Window;
 			this.AutoScaleMode = AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(400, 400);
+			this.ClientSize = new System.Drawing.Size(700, 700);
 			this.KeyPreview = true;
 			this.Name = "PopupToolWindow";
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
 			this.Text = "Popup Tool Window";
 			this.WindowState = System.Windows.Forms.FormWindowState.Normal;
-			// this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.XWindow_KeyDown);
-			// this.Resize += new System.EventHandler(this.XWindow_Resize);
-			// this.Closing += new System.ComponentModel.CancelEventHandler(this.XWindow_Closing);
-			// this.Move += new System.EventHandler(this.XWindow_Move);
-			// this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.XWindow_KeyUp);
-			// this.Activated += new System.EventHandler(this.XWindow_Activated);
 			this.ResumeLayout(false);
 		}
 
@@ -65,8 +59,9 @@ namespace SIL.FieldWorks.XWorks
 			return new IxCoreColleague[] { this };
 		}
 
-		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode contentClassNode)
+		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode toolNode)
 		{
+			XmlNode contentClassNode = toolNode.SelectSingleNode("control");
 			XmlNode dynLoaderNode = contentClassNode.SelectSingleNode("dynamicloaderinfo");
 			string contentAssemblyPath = XmlUtils.GetMandatoryAttributeValue(dynLoaderNode, "assemblyPath");
 			string contentClass = XmlUtils.GetMandatoryAttributeValue(dynLoaderNode, "class");
@@ -91,6 +86,10 @@ namespace SIL.FieldWorks.XWorks
 			m_mainContentControl.BringToFront();
 			m_mainContentControl.Visible = true;
 			m_mainContentControl.Select();
+			if (toolNode.Attributes["label"] != null)
+			{
+				this.Text = toolNode.Attributes["label"].Value;
+			}
 			this.Show();
 			this.BringToFront();
 			this.Activate();

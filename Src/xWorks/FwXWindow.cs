@@ -1220,8 +1220,8 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		protected bool OnJumpToPopupLexEntry(object command)
 		{
-			XmlNode node;
-			if (XWindow.TryGetToolNode("lexicon", "lexiconEditPopup", m_propertyTable, out node))
+			XmlNode toolNode;
+			if (XWindow.TryGetToolNode("lexicon", "lexiconEditPopup", m_propertyTable, out toolNode))
 			{
 				if (m_popupLexEntryWindow == null || m_popupLexEntryWindow.IsDisposed)
 				{
@@ -1229,7 +1229,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						Owner = this
 					};
-					m_popupLexEntryWindow.Init(m_mediator, m_propertyTable, node.SelectSingleNode("control"));
+					m_popupLexEntryWindow.Init(m_mediator, m_propertyTable, toolNode);
 				}
 				if (m_popupLexEntryWindow.WindowState == FormWindowState.Minimized)
 				{
