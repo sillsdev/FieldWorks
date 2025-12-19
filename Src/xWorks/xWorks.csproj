@@ -156,8 +156,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Output\Debug\DocumentFormat.OpenXml.dll</HintPath>
     </Reference>
-    <Reference Include="DotNetZip">
-      <HintPath>..\..\packages\DotNetZip.1.13.7\lib\net40\DotNetZip.dll</HintPath>
+    <Reference Include="ProDotNetZip">
+      <HintPath>..\..\Output\Debug\ProDotNetZip.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="NAudio, Version=1.10.0.0, Culture=neutral, processorArchitecture=MSIL">
