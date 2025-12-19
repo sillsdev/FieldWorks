@@ -595,7 +595,7 @@
 			<NuGottenFiles Include="$(PackagesDir)/ParatextData.$(ParatextNugetVersion)/lib/netstandard2.0/Paratext.LexicalContractsV2.dll" />
 			<NuGottenFiles Include="$(PackagesDir)/ParatextData.$(ParatextNugetVersion)/lib/netstandard2.0/ParatextData.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/ParatextData.$(ParatextNugetVersion)/lib/netstandard2.0/PtxUtils.dll"/>
-			<NuGottenFiles Include="$(PackagesDir)/ProDotNetZip.1.20.0/lib/netstandard2.0/*.*"/>
+			<NuGottenFiles Include="$(PackagesDir)/ProDotNetZip.1.20.0/lib/netstandard2.0/ProDotNetZip.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/SIL.DesktopAnalytics.4.0.0/lib/net461/DesktopAnalytics.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/SIL.ParatextShared.7.4.0.1/runtimes/$(OsDir)/lib/net40/FormattedEditor.dll"/>
 			<NuGottenFiles Include="$(PackagesDir)/SIL.ParatextShared.7.4.0.1/runtimes/$(OsDir)/lib/net40/HelpSystem.dll"/>
