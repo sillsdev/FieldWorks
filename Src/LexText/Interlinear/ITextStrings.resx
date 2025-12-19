@@ -151,6 +151,9 @@
     <value>Conversion map error</value>
     <comment>caption for error message box</comment>
   </data>
+  <data name="ksEditLexicalEntry_" xml:space="preserve">
+    <value>Edit Lexical Entry...</value>
+  </data>
   <data name="ksCreateNewEntry_" xml:space="preserve">
     <value>Create New Entry...</value>
   </data>
