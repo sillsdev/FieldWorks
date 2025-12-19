@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2025 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -242,7 +242,12 @@ namespace SIL.FieldWorks.XWorks.LexText
 			writer.WriteAttributeString("userlevel", style.UserLevel.ToString());
 			writer.WriteAttributeString("context", GetStyleContext(style));
 			writer.WriteAttributeString("type", GetStyleType(style));
-			writer.WriteAttributeString("structure", GetStyleStructure(style));
+
+			var styleStructure = GetStyleStructure(style);
+			if (styleStructure != null)
+			{
+				writer.WriteAttributeString("structure", styleStructure);
+			}
 
 			if (GetStyleType(style) == "character" && style.InheritsFrom != null)
 			{
@@ -276,8 +281,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 					return "heading";
 				case StructureValues.Body:
 					return "body";
+				case StructureValues.Undefined:
+					return null;
+				default:
+					throw new ArgumentOutOfRangeException(style.RealStyle.Structure.ToString());
 			}
-			return style.RealStyle.Structure.ToString();
 		}
 
 		///<remarks>The first letter for the context is supposed to be lower case</remarks>

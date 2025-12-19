@@ -1,5 +1,8 @@
+// Copyright (c) 20014-2025 SIL International
+// This software is licensed under the LGPL, version 2.1 or later
+// (http://www.gnu.org/licenses/lgpl-2.1.html)
+
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 

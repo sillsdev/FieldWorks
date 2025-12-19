@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2018 SIL International
+// Copyright (c) 2007-2025 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -591,9 +591,9 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		private string GetBasedOn(XmlAttributeCollection attributes, string styleName)
 		{
-			if (m_htReservedStyles.ContainsKey(styleName))
+			if (m_htReservedStyles.TryGetValue(styleName, out var styleInfo))
 			{
-				return m_htReservedStyles[styleName].basedOn;
+				return styleInfo.basedOn;
 			}
 			XmlNode basedOn = attributes.GetNamedItem("basedOn");
 			return (basedOn == null) ? null : basedOn.Value.Replace("_", " ");
@@ -612,9 +612,9 @@ namespace SIL.FieldWorks.Common.Framework
 		private ContextValues GetContext(XmlAttributeCollection attributes,
 			string styleName)
 		{
-			if (m_htReservedStyles.ContainsKey(styleName))
+			if (m_htReservedStyles.TryGetValue(styleName, out var styleInfo))
 			{
-				return m_htReservedStyles[styleName].context;
+				return styleInfo.context;
 			}
 
 			string sContext = attributes.GetNamedItem("context").Value;
@@ -626,9 +626,7 @@ namespace SIL.FieldWorks.Common.Framework
 			}
 			catch (Exception ex)
 			{
-				Debug.Assert(false, "Unrecognized context attribute for style " + styleName +
-					" in " + ResourceFileName + ": " + sContext);
-				throw new Exception(ResourceHelper.GetResourceString("kstidInvalidInstallation"));
+				throw new Exception($"Unrecognized context attribute for style {styleName} in {ResourceFileName}: {sContext}", ex);
 			}
 		}
 
@@ -645,16 +643,13 @@ namespace SIL.FieldWorks.Common.Framework
 		private StructureValues GetStructure(XmlAttributeCollection attributes,
 			string styleName)
 		{
-			if (m_htReservedStyles.ContainsKey(styleName))
+			if (m_htReservedStyles.TryGetValue(styleName, out var styleInfo))
 			{
-				return m_htReservedStyles[styleName].structure;
+				return styleInfo.structure;
 			}
 
-			XmlNode node = attributes.GetNamedItem("structure");
-			string sStructure = (node != null) ? node.Value : null;
-
-			if (sStructure == null)
-				return StructureValues.Undefined;
+			var node = attributes.GetNamedItem("structure");
+			var sStructure = node?.Value;
 
 			switch(sStructure)
 			{
@@ -662,10 +657,10 @@ namespace SIL.FieldWorks.Common.Framework
 					return StructureValues.Heading;
 				case "body":
 					return StructureValues.Body;
+				case null:
+					return StructureValues.Undefined;
 				default:
-					Debug.Assert(false, "Unrecognized structure attribute for style " + styleName +
-						" in " + ResourceFileName + ": " + sStructure);
-					throw new Exception(ResourceHelper.GetResourceString("kstidInvalidInstallation"));
+					throw new ArgumentOutOfRangeException($"Unrecognized structure attribute for style {styleName} in {ResourceFileName}: {sStructure}");
 			}
 		}
 
@@ -682,13 +677,13 @@ namespace SIL.FieldWorks.Common.Framework
 		private FunctionValues GetFunction(XmlAttributeCollection attributes,
 			string styleName)
 		{
-			if (m_htReservedStyles.ContainsKey(styleName))
+			if (m_htReservedStyles.TryGetValue(styleName, out var styleInfo))
 			{
-				return m_htReservedStyles[styleName].function;
+				return styleInfo.function;
 			}
 
-			XmlNode node = attributes.GetNamedItem("use");
-			string sFunction = (node != null) ? node.Value : null;
+			var node = attributes.GetNamedItem("use");
+			var sFunction = node?.Value;
 			if (sFunction == null)
 				return FunctionValues.Prose;
 
@@ -716,9 +711,7 @@ namespace SIL.FieldWorks.Common.Framework
 				case "stanzabreak":
 					return FunctionValues.StanzaBreak;
 				default:
-					Debug.Assert(false, "Unrecognized use attribute for style " + styleName +
-						" in " + ResourceFileName + ": " + sFunction);
-					throw new Exception(ResourceHelper.GetResourceString("kstidInvalidInstallation"));
+					throw new ArgumentOutOfRangeException($"Unrecognized use attribute for style {styleName} in {ResourceFileName}: {sFunction}");
 			}
 		}
 
@@ -736,9 +729,11 @@ namespace SIL.FieldWorks.Common.Framework
 		public StyleType GetType(XmlAttributeCollection attributes, string styleName,
 			ContextValues context)
 		{
-			if (m_htReservedStyles.ContainsKey(styleName))
-				return m_htReservedStyles[styleName].styleType;
-			string sType = attributes.GetNamedItem("type").Value;
+			if (m_htReservedStyles.TryGetValue(styleName, out var styleInfo))
+			{
+				return styleInfo.styleType;
+			}
+			var sType = attributes.GetNamedItem("type").Value;
 			ValidateContext(context, styleName);
 			switch(sType)
 			{
@@ -748,9 +743,7 @@ namespace SIL.FieldWorks.Common.Framework
 				case "character":
 					return StyleType.kstCharacter;
 				default:
-					Debug.Assert(false, "Unrecognized type attribute for style " + styleName +
-						" in " + ResourceFileName + ": " + sType);
-					throw new Exception(ResourceHelper.GetResourceString("kstidInvalidInstallation"));
+					throw new ArgumentOutOfRangeException($"Unrecognized type attribute for style {styleName} in {ResourceFileName}: {sType}");
 			}
 		}
 
