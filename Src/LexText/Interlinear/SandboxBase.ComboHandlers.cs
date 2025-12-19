@@ -2597,9 +2597,7 @@ namespace SIL.FieldWorks.IText
 			private ILexEntry GetLexEntry()
 			{
 				IWfiMorphBundle bundle = m_caches.RealObject(m_hvoMorph) as IWfiMorphBundle;
-				if (bundle?.MorphRA?.Owner != null)
-					return bundle.MorphRA.Owner as ILexEntry;
-				return null;
+				return bundle?.MorphRA?.Owner as ILexEntry;
 			}
 			private void OnSelectAllomorphOf(object sender, EventArgs args)
 			{

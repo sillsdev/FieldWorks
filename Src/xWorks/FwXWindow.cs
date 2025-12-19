@@ -1238,6 +1238,7 @@ namespace SIL.FieldWorks.XWorks
 				m_popupLexEntryWindow.BringToFront();
 				m_popupLexEntryWindow.Activate();
 				Mediator.BroadcastMessage("JumpToRecord", command);
+				Mediator.BroadcastMessage("FocusFirstPossibleSlice", null);
 			}
 			return true;
 		}

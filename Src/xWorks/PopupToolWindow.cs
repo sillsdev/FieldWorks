@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.XWorks
 			mainControl.SuspendLayout();
 			m_mainContentControl = mainControl;
 			m_mainContentControl.Dock = DockStyle.Fill;
-			m_mainContentControl.AccessibleDescription = "XXXXXXXXXXXX";
+			m_mainContentControl.AccessibleDescription = contentClass;
 			m_mainContentControl.AccessibleName = contentClass;
 			m_mainContentControl.TabStop = true;
 			m_mainContentControl.TabIndex = 1;
