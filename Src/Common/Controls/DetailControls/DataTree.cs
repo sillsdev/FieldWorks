@@ -1497,7 +1497,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// Scrolling the control into view needs to be done after we resume the layout.
 				if (m_currentSlice != null)
 				{
-					m_currentSlice.TakeFocus(false);
 					ScrollControlIntoView(m_currentSlice);
 				}
 
