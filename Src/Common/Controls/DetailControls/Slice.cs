@@ -2853,7 +2853,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// Persist in the parent part (might not be the immediate parent node)
 			Inventory.GetInventory("layouts", m_cache.ProjectId.Name)
 				.PersistOverrideElement(PartParent(fieldRef));
-			ContainingDataTree.RefreshList(true);
+			ContainingDataTree.RefreshList(true, true);
 		}
 
 		/// <summary>
