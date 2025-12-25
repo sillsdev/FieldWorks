@@ -359,9 +359,12 @@
 		</part>
 		<part id="MoForm-Jt-Environments" type="JtView">
 			<ifnot is="MoAffixProcess">
-				<seq field="PhoneEnv" layout="StringRepresentation"/>
+              <seq field="PhoneEnv" sep=", " flat="true"/>
 			</ifnot>
-		</part>
+            <if is="MoAffixProcess">
+              <lit>n/a</lit>
+            </if>
+        </part>
 		<part id="MoForm-Jt-InflectionClassForLexemeForm" type="JtView">
 			<if is="MoAffixForm">
 				<seq field="InflectionClasses" layout="Name"/>
