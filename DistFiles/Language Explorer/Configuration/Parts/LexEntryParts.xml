@@ -371,7 +371,7 @@
           <obj field="LexemeForm" layout="RequiredFeatures"/>
         </part>
 		<part id="LexEntry-Jt-RequiredFeatures" type="JtView">
-			<seq field="AlternateForms" layout="RequiredFeatures"/>
+            <seq field="AllAllomorphs" layout="RequiredFeatures"/>
 		</part>
 		<part id="LexEntry-Jt-HomographNumberForEntry" type="jtview">
 			<int field="HomographNumber"/>

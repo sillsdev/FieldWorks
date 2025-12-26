@@ -27,6 +27,7 @@ using SIL.FieldWorks.Resources;
 using SIL.ObjectModel;
 using SIL.LCModel.Utils;
 using SIL.Utils;
+using System.Xml.Schema;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -3541,7 +3542,8 @@ namespace SIL.FieldWorks.Common.Controls
 				if (val == hvoParent)
 					return true;
 			}
-			return false;
+			// e.g. sHvo = "0"
+			return sHvo.Equals(val.ToString());
 		}
 
 		/// <summary>

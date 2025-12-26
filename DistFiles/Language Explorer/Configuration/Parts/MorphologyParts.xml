@@ -366,25 +366,39 @@
             </if>
         </part>
 		<part id="MoForm-Jt-InflectionClassForLexemeForm" type="JtView">
+            <!-- Must always have exactly one value for allomorph columns to align properly. -->
 			<if is="MoAffixForm">
-				<seq field="InflectionClasses" layout="Name"/>
+				<seq field="InflectionClasses" sep=", " flat="true"/>
 			</if>
 			<ifnot is="MoAffixForm">
 				<lit>n/a</lit>
 			</ifnot>
 		</part>
 		<part id="MoForm-Jt-InflectionClassForAffix" type="JtView">
+            <!-- Must always have exactly one value for allomorph columns to align properly. -->
 			<if is="MoAffixForm">
-				<seq field="InflectionClasses" layout="Name"/>
+				<seq field="InflectionClasses" sep=", " flat="true"/>
 			</if>
-		</part>
+            <ifnot is="MoAffixForm">
+                <lit>n/a</lit>
+            </ifnot>
+        </part>
 		<part id="MoForm-Jt-RequiredFeatures" type="JtView">
+            <!-- Must always have exactly one value for allomorph columns to align properly. -->
 			<if is="MoAffixAllomorph">
-                <obj field="MsEnvFeatures" layout="empty">
-                  <string field="LongNameTSS"/>
-                </obj>
-			</if>
-		</part>
+                <ifnot field="MsEnvFeatures" hvoequals="0">
+                    <obj field="MsEnvFeatures" layout="empty">
+                        <string field="LongNameTSS"/>
+                    </obj>
+                </ifnot>
+                <if field="MsEnvFeatures" hvoequals="0">
+                    <lit></lit>
+                </if>
+            </if>
+            <ifnot is="MoAffixAllomorph">
+                <lit>n/a</lit>
+            </ifnot>
+        </part>
 		<part id="MoForm-Jt-SimpleForm" type="JtView">
 			<string field="Form" ws="vernacular"/>
 		</part>
