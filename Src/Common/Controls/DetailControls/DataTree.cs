@@ -1399,12 +1399,16 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// True to not recycle any slices.
 		/// False to try and recycle them.
 		/// </param>
+		/// <param name="restoreFocusSlice"> True to restore the focus slices.</param>
 		/// <remarks>
 		/// If the DataTree's slices call this method, they should use 'false',
 		/// or they will be disposed when this call returns to them.
+		/// Update 12/2025: Passing 'false' for 'differentObject' still appears to dispose
+		/// all the existing slices and create new ones. It does this when called from
+		/// Slice.MoveField() and possibly from other or all situations.
 		/// </remarks>
 		/// ------------------------------------------------------------------------------------
-		public virtual void RefreshList(bool differentObject)
+		public void RefreshList(bool differentObject, bool restoreFocusSlice = false)
 		{
 			CheckDisposed();
 			if (m_fDoNotRefresh)
@@ -1497,7 +1501,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// Scrolling the control into view needs to be done after we resume the layout.
 				if (m_currentSlice != null)
 				{
-					m_currentSlice.TakeFocus(false);
+					if (restoreFocusSlice)
+					{
+						m_currentSlice.TakeFocus(false);
+					}
 					ScrollControlIntoView(m_currentSlice);
 				}
 
