@@ -109,7 +109,6 @@ namespace SIL.FieldWorks.Common.Controls
 				return;
 			}
 
-
 			XmlNode listDelimitNode; // has the list seps attrs like 'sep'
 			XmlNode specialAttrsNode;  // has the more exotic ones like 'excludeHvo'
 			listDelimitNode = specialAttrsNode = dispInfo.MainNode;

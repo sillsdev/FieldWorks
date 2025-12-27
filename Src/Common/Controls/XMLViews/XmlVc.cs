@@ -27,7 +27,6 @@ using SIL.FieldWorks.Resources;
 using SIL.ObjectModel;
 using SIL.LCModel.Utils;
 using SIL.Utils;
-using System.Xml.Schema;
 
 namespace SIL.FieldWorks.Common.Controls
 {

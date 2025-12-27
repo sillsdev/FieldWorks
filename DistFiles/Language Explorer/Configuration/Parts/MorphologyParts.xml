@@ -358,11 +358,12 @@
 			<obj field="MorphType" layout="SimpleName"/>
 		</part>
 		<part id="MoForm-Jt-Environments" type="JtView">
-			<ifnot is="MoAffixProcess">
-              <seq field="PhoneEnv" sep=", " flat="true"/>
+            <!-- Must always have exactly one value for allomorph columns to align properly. -->
+            <ifnot is="MoAffixProcess">
+                <seq field="PhoneEnv" sep=", " flat="true"/>
 			</ifnot>
             <if is="MoAffixProcess">
-              <lit>n/a</lit>
+                <lit>n/a</lit>
             </if>
         </part>
 		<part id="MoForm-Jt-InflectionClassForLexemeForm" type="JtView">
