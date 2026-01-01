@@ -332,8 +332,7 @@ namespace SIL.FieldWorks.IText
 				}
 				offset += phraseText.Length;
 				var oldText = (bldr.Text ?? "").Trim();
-				if (oldText.Length > 0 && !TsStringUtils.IsEndOfSentenceChar(oldText[oldText.Length - 1],
-					Icu.Character.UCharCategory.OTHER_PUNCTUATION))
+				if (oldText.Length > 0 && !EndsWithEOS(oldText))
 				{
 					// 'segment' does not end with recognizable EOS character. Add our special one.
 					bldr.Replace(bldr.Length, bldr.Length, "\x00A7", null);
@@ -344,6 +343,25 @@ namespace SIL.FieldWorks.IText
 				bldr.ReplaceTsString(bldr.Length, bldr.Length, phraseText);
 				newTextPara.Contents = bldr.GetString();
 			}
+		}
+
+		private static bool EndsWithEOS(string text)
+		{
+			// Would CollectSegments in ParagraphParser detect the end of a segment at the end of text?
+			if (TsStringUtils.IsEndOfSentenceChar(text[text.Length - 1],
+					Icu.Character.UCharCategory.OTHER_PUNCTUATION))
+			{
+				return true;
+			}
+			// Ignore trailing quotes (e.g. "abc.").
+			if (text.Length > 1 &&
+				text[text.Length - 1] == '\"' &&
+				TsStringUtils.IsEndOfSentenceChar(text[text.Length - 2],
+					Icu.Character.UCharCategory.OTHER_PUNCTUATION))
+			{
+				return true;
+			}
+			return false;
 		}
 
 		private static ILgWritingSystem GetWsEngine(ILgWritingSystemFactory wsFactory, string langCode)
