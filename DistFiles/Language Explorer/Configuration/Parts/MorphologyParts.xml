@@ -360,8 +360,10 @@
 		<part id="MoForm-Jt-Environments" type="JtView">
             <!-- Must always have exactly one value for allomorph columns to align properly. -->
             <ifnot is="MoAffixProcess">
-                <seq field="PhoneEnv" sep=", " flat="true"/>
-			</ifnot>
+                <para>
+                    <seq field="InflectionClasses" layout="Name" sep="; "/>
+                </para>
+            </ifnot>
             <if is="MoAffixProcess">
                 <lit>n/a</lit>
             </if>
@@ -369,7 +371,9 @@
 		<part id="MoForm-Jt-InflectionClassForLexemeForm" type="JtView">
             <!-- Must always have exactly one value for allomorph columns to align properly. -->
 			<if is="MoAffixForm">
-				<seq field="InflectionClasses" sep=", " flat="true"/>
+                <para>
+                    <seq field="InflectionClasses" layout="Name" sep="; "/>
+                </para>
 			</if>
 			<ifnot is="MoAffixForm">
 				<lit>n/a</lit>
@@ -378,7 +382,9 @@
 		<part id="MoForm-Jt-InflectionClassForAffix" type="JtView">
             <!-- Must always have exactly one value for allomorph columns to align properly. -->
 			<if is="MoAffixForm">
-				<seq field="InflectionClasses" sep=", " flat="true"/>
+                <para>
+                    <seq field="InflectionClasses" layout="Name" sep="; "/>
+                </para>
 			</if>
             <ifnot is="MoAffixForm">
                 <lit>n/a</lit>

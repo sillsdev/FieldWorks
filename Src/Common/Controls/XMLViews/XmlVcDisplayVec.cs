@@ -102,13 +102,6 @@ namespace SIL.FieldWorks.Common.Controls
 				return;
 			}
 
-			var flat = XmlUtils.GetOptionalBooleanAttributeValue(dispInfo.MainNode, "flat", false);
-			if (flat)
-			{
-				DisplayFlat(dispInfo);
-				return;
-			}
-
 			XmlNode listDelimitNode; // has the list seps attrs like 'sep'
 			XmlNode specialAttrsNode;  // has the more exotic ones like 'excludeHvo'
 			listDelimitNode = specialAttrsNode = dispInfo.MainNode;
@@ -309,25 +302,6 @@ namespace SIL.FieldWorks.Common.Controls
 			}
 
 			// end of Display method
-		}
-
-		private void DisplayFlat(MainCallerDisplayCommand dispInfo)
-		{
-			var chvo = m_sda.get_VecSize(m_hvo, m_flid);
-			int[] rghvo = GetVector(m_sda, m_hvo, m_flid);
-			var xattrSeparator = dispInfo.MainNode.Attributes["sep"];
-			string sSep = !string.IsNullOrEmpty(xattrSeparator.Value) ? xattrSeparator.Value : " ";
-			var bldr = TsStringUtils.MakeIncStrBldr();
-			for (var ihvo = 0; ihvo < chvo; ++ihvo)
-			{
-				var obj = m_cache.ServiceLocator.GetObject(rghvo[ihvo]);
-				bldr.Append(obj.ShortName);
-				if (ihvo + 1 < chvo)
-				{
-					bldr.Append(sSep);
-				}
-			}
-			m_vwEnv.AddString(bldr.GetString());
 		}
 
 		private void AddItemEmbellishments(XmlNode listDelimitNode, bool fNumber, int hvo, int ihvo, XmlAttribute xaNum, ITsTextProps ttpNum, bool fDelayNumber, ref ITsString tssDelayedNumber)
