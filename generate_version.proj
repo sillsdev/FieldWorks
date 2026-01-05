@@ -1,0 +1,7 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <fwrt>$(MSBuildProjectDirectory)</fwrt>
+  </PropertyGroup>
+  <Import Project="Build/FwBuildTasks.targets" />
+  <Import Project="Build/SetupInclude.targets" />
+</Project>

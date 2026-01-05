@@ -6,9 +6,9 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using SIL.Acknowledgements;
 
-[assembly: AssemblyTitle("Interlinear text")]
+// [assembly: AssemblyTitle("Interlinear text")] // Sanitized by convert_generate_assembly_info
 
-[assembly: System.Runtime.InteropServices.ComVisible(false)]
+// [assembly: System.Runtime.InteropServices.ComVisible(false)] // Sanitized by convert_generate_assembly_info
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("ITextDllTests")]
 [assembly: Acknowledgement("Dragula", Copyright = "Nicolás Bevacqua", Url = "https://github.com/bevacqua/dragula", LicenseUrl = "https://opensource.org/licenses/MIT")]
 [assembly: Acknowledgement("CsvHelper", Copyright = "© 2009-2022 Josh Close", Url = "https://joshclose.github.io/CsvHelper/", LicenseUrl = "https://opensource.org/licenses/MS-PL")]

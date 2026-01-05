@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.Common.Controls
 	/// Summary description for DropDownContainer.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
-	public class DropDownContainer : Form, IFWDisposable
+	public class DropDownContainer : Form
 	{
 		/// <summary>Handles AfterDropDownClose events.</summary>
 		public delegate void AfterDropDownClosedHandler(DropDownContainer dropDownContainer,

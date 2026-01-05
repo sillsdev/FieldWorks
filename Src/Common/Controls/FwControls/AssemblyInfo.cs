@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("FieldWorks controls")]
+// [assembly: AssemblyTitle("FieldWorks controls")] // Sanitized by convert_generate_assembly_info
 
-[assembly: System.Runtime.InteropServices.ComVisible(false)]
+// [assembly: System.Runtime.InteropServices.ComVisible(false)] // Sanitized by convert_generate_assembly_info
 [assembly: InternalsVisibleTo("FwControlsTests")]

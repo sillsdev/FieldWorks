@@ -116,7 +116,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassA", "Prop1", false);
 			SilDataAccess.SetObjProp(hvo, tag, hvoObj);
 			var hvoObj2 = SilDataAccess.get_ObjectProp(hvo, tag);
-			Assert.AreEqual(hvoObj, hvoObj2, "Wrong hvoObj in cache.");
+			Assert.That(hvoObj2, Is.EqualTo(hvoObj), "Wrong hvoObj in cache.");
 		}
 		/// <summary>
 		/// Test Int Property get, when no set has been done.
@@ -143,20 +143,20 @@ namespace SIL.FieldWorks.CacheLightTests
 			const int tag = (int)CmObjectFields.kflidCmObject_Class;
 			SilDataAccess.SetInt(hvo, tag, clid);
 			var clid1 = SilDataAccess.get_IntProp(hvo, tag);
-			Assert.AreEqual(clid, clid1, "Wrong clid in cache.");
+			Assert.That(clid1, Is.EqualTo(clid), "Wrong clid in cache.");
 
 			// See if the int is there via another method.
 			// It should be there.
 			bool isInCache;
 			var clid2 = VwCacheDa.get_CachedIntProp(hvo, tag, out isInCache);
-			Assert.IsTrue(isInCache, "Int not in cache.");
-			Assert.AreEqual(clid1, clid2, "Clids are not the same.");
+			Assert.That(isInCache, Is.True, "Int not in cache.");
+			Assert.That(clid2, Is.EqualTo(clid1), "Clids are not the same.");
 
 			// See if the int is there via another method.
 			// It should not be there.
 			var ownerHvo = VwCacheDa.get_CachedIntProp(hvo, (int)CmObjectFields.kflidCmObject_Owner, out isInCache);
-			Assert.IsFalse(isInCache, "Int is in cache.");
-			Assert.AreEqual(0, ownerHvo, "Wrong owner.");
+			Assert.That(isInCache, Is.False, "Int is in cache.");
+			Assert.That(ownerHvo, Is.EqualTo(0), "Wrong owner.");
 		}
 		/// <summary>
 		/// Test Int Property get, when no set has been done.
@@ -189,11 +189,11 @@ namespace SIL.FieldWorks.CacheLightTests
 			var uid = Guid.NewGuid();
 			SilDataAccess.SetGuid(hvo, tag, uid);
 			var uid2 = SilDataAccess.get_GuidProp(hvo, tag);
-			Assert.AreEqual(uid, uid2, "Wrong uid in cache.");
+			Assert.That(uid2, Is.EqualTo(uid), "Wrong uid in cache.");
 
 			// Test the reverse method.
 			var hvo2 = SilDataAccess.get_ObjFromGuid(uid2);
-			Assert.AreEqual(hvo, hvo2, "Wrong hvo in cache for Guid.");
+			Assert.That(hvo2, Is.EqualTo(hvo), "Wrong hvo in cache for Guid.");
 		}
 		/// <summary>
 		/// Test Guid Property get, when no set has been done.
@@ -226,7 +226,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			const bool excludeOriginal = true;
 			SilDataAccess.SetBoolean(hvo, tag, excludeOriginal);
 			var excludeOriginal1 = SilDataAccess.get_BooleanProp(hvo, tag);
-			Assert.AreEqual(excludeOriginal, excludeOriginal1, "Wrong bool in cache.");
+			Assert.That(excludeOriginal1, Is.EqualTo(excludeOriginal), "Wrong bool in cache.");
 		}
 		/// <summary>
 		/// Test Guid Property get, when no set has been done.
@@ -258,22 +258,22 @@ namespace SIL.FieldWorks.CacheLightTests
 			const string ec = "ZPI";
 			SilDataAccess.set_UnicodeProp(hvo, tag, ec);
 			var ec2 = SilDataAccess.get_UnicodeProp(hvo, tag);
-			Assert.AreEqual(ec, ec2, "Wrong Unicode string in cache.");
+			Assert.That(ec2, Is.EqualTo(ec), "Wrong Unicode string in cache.");
 
 			// Set its 'UnicodeProp4' property, using non-bstr method.
 			const string ecNew = "ZPR";
 			SilDataAccess.SetUnicode(hvo, tag, ecNew, ecNew.Length);
 			int len;
 			SilDataAccess.UnicodePropRgch(hvo, tag, null, 0, out len);
-			Assert.AreEqual(ecNew.Length, len);
+			Assert.That(len, Is.EqualTo(ecNew.Length));
 			using (var arrayPtr = MarshalEx.StringToNative(len + 1, true))
 			{
 				int cch;
 				SilDataAccess.UnicodePropRgch(hvo, tag, arrayPtr, len + 1, out cch);
 				var ecNew2 = MarshalEx.NativeToString(arrayPtr, cch, true);
-				Assert.AreEqual(ecNew, ecNew2);
-				Assert.AreEqual(ecNew2.Length, cch);
-				Assert.IsTrue(SilDataAccess.IsDirty());
+				Assert.That(ecNew2, Is.EqualTo(ecNew));
+				Assert.That(cch, Is.EqualTo(ecNew2.Length));
+				Assert.That(SilDataAccess.IsDirty(), Is.True);
 			}
 		}
 
@@ -308,14 +308,14 @@ namespace SIL.FieldWorks.CacheLightTests
 			const string ec = "ZPI";
 			SilDataAccess.set_UnicodeProp(hvo, tag, ec);
 			var ec2 = SilDataAccess.get_UnicodeProp(hvo, tag);
-			Assert.AreEqual(ec, ec2, "Wrong Unicode string in cache.");
+			Assert.That(ec2, Is.EqualTo(ec), "Wrong Unicode string in cache.");
 
 			// Set its 'UnicodeProp4' property, using non-bstr method.
 			const string ecNew = "ZPR";
 			SilDataAccess.SetUnicode(hvo, tag, ecNew, ecNew.Length);
 			int len;
 			SilDataAccess.UnicodePropRgch(hvo, tag, null, 0, out len);
-			Assert.AreEqual(ecNew.Length, len);
+			Assert.That(len, Is.EqualTo(ecNew.Length));
 			using (var arrayPtr = MarshalEx.StringToNative(len, true))
 			{
 				int cch;
@@ -340,7 +340,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassF", "Int64Prop5", false);
 			SilDataAccess.SetInt64(hvo, tag, dob);
 			var dob2 = SilDataAccess.get_Int64Prop(hvo, tag);
-			Assert.AreEqual(dob, dob2, "Wrong DOB in cache.");
+			Assert.That(dob2, Is.EqualTo(dob), "Wrong DOB in cache.");
 		}
 		/// <summary>
 		/// Test In64 Property get, when no set has been done.
@@ -372,7 +372,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassD", "TimeProp6", false);
 			SilDataAccess.SetTime(hvo, tag, doc);
 			var doc2 = SilDataAccess.get_TimeProp(hvo, tag);
-			Assert.AreEqual(doc, doc2, "Wrong creation in cache.");
+			Assert.That(doc2, Is.EqualTo(doc), "Wrong creation in cache.");
 		}
 		/// <summary>
 		/// Test Time Property get, when no set has been done.
@@ -405,7 +405,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			var tag = SilDataAccess.MetaDataCache.GetFieldId("ClassG", "TextPropsProp7", false);
 			SilDataAccess.SetUnknown(hvo, tag, props);
 			var props2 = (ITsTextProps)SilDataAccess.get_UnknownProp(hvo, tag);
-			Assert.AreEqual(props, props2, "Wrong text props in cache.");
+			Assert.That(props2, Is.EqualTo(props), "Wrong text props in cache.");
 		}
 
 		/// <summary>
@@ -476,9 +476,9 @@ namespace SIL.FieldWorks.CacheLightTests
 				SilDataAccess.SetBinary(hvo, tag, prgb, prgb.Length);
 				SilDataAccess.BinaryPropRgb(hvo, tag, arrayPtr, 3, out chvo);
 				var prgbNew = MarshalEx.NativeToArray<byte>(arrayPtr, chvo);
-				Assert.AreEqual(prgb.Length, prgbNew.Length);
+				Assert.That(prgbNew.Length, Is.EqualTo(prgb.Length));
 				for (var i = 0; i < prgbNew.Length; i++)
-					Assert.AreEqual(prgb[i], prgbNew[i]);
+					Assert.That(prgbNew[i], Is.EqualTo(prgb[i]));
 			}
 		}
 
@@ -532,7 +532,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			SilDataAccess.SetString(hvo, tag, tsString);
 
 			var tsStringNew = SilDataAccess.get_StringProp(hvo, tag);
-			Assert.AreEqual(tsString, tsStringNew);
+			Assert.That(tsStringNew, Is.EqualTo(tsString));
 		}
 
 		/// <summary>
@@ -565,7 +565,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			SilDataAccess.SetMultiStringAlt(hvo, tag, 1, tss);
 
 			var tssNew = SilDataAccess.get_MultiStringAlt(hvo, tag, 1);
-			Assert.AreEqual(tss, tssNew);
+			Assert.That(tssNew, Is.EqualTo(tss));
 		}
 
 		/// <summary>
@@ -586,7 +586,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			SilDataAccess.SetMultiStringAlt(hvo, tag, 2, tss);
 
 			var tsms = SilDataAccess.get_MultiStringProp(hvo, tag);
-			Assert.AreEqual(tsms.StringCount, 2);
+			Assert.That(2, Is.EqualTo(tsms.StringCount));
 		}
 
 		/// <summary>
@@ -628,8 +628,8 @@ namespace SIL.FieldWorks.CacheLightTests
 		public void MakeNewObjectTest_UnownedObject()
 		{
 			int hvoNew = SilDataAccess.MakeNewObject(1, 0, -1, 0);
-			Assert.IsTrue(SilDataAccess.get_IsValidObject(hvoNew));
-			Assert.AreEqual(1, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Class));
+			Assert.That(SilDataAccess.get_IsValidObject(hvoNew), Is.True);
+			Assert.That(SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Class), Is.EqualTo(1));
 		}
 
 		/// <summary>
@@ -642,11 +642,11 @@ namespace SIL.FieldWorks.CacheLightTests
 			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassA");
 			var flid = SilDataAccess.MetaDataCache.GetFieldId2(1, "AtomicProp97", false);
 			int hvoNew = SilDataAccess.MakeNewObject(clid, hvoOwner, flid, -2);
-			Assert.IsTrue(SilDataAccess.get_IsValidObject(hvoNew));
-			Assert.AreEqual(flid, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_OwnFlid));
-			Assert.AreEqual(hvoOwner, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Owner));
-			Assert.AreEqual(clid, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Class));
-			Assert.AreEqual(hvoNew, SilDataAccess.get_ObjectProp(hvoOwner, flid));
+			Assert.That(SilDataAccess.get_IsValidObject(hvoNew), Is.True);
+			Assert.That(SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_OwnFlid), Is.EqualTo(flid));
+			Assert.That(SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Owner), Is.EqualTo(hvoOwner));
+			Assert.That(SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Class), Is.EqualTo(clid));
+			Assert.That(SilDataAccess.get_ObjectProp(hvoOwner, flid), Is.EqualTo(hvoNew));
 		}
 
 		/// <summary>
@@ -664,18 +664,18 @@ namespace SIL.FieldWorks.CacheLightTests
 			hvoNewObjects[1] = SilDataAccess.MakeNewObject(clid, hvoOwner, flid, 1);
 			hvoNewObjects[3] = SilDataAccess.MakeNewObject(clid, hvoOwner, flid, 10);
 			hvoNewObjects[4] = SilDataAccess.MakeNewObject(clid, hvoOwner, flid, 0);
-			Assert.AreEqual(5, SilDataAccess.get_VecSize(hvoOwner, flid));
+			Assert.That(SilDataAccess.get_VecSize(hvoOwner, flid), Is.EqualTo(5));
 			int prevOwnOrd = -1;
 			for (int i = 0; i < 5; i++)
 			{
 				int hvoNew = SilDataAccess.get_VecItem(hvoOwner, flid, i);
-				Assert.IsTrue(SilDataAccess.get_IsValidObject(hvoNew));
-				Assert.AreEqual(flid, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_OwnFlid));
-				Assert.AreEqual(hvoOwner, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Owner));
+				Assert.That(SilDataAccess.get_IsValidObject(hvoNew), Is.True);
+				Assert.That(SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_OwnFlid), Is.EqualTo(flid));
+				Assert.That(SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Owner), Is.EqualTo(hvoOwner));
 				int ownOrd = SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_OwnOrd);
-				Assert.IsTrue(prevOwnOrd < ownOrd);
+				Assert.That(prevOwnOrd < ownOrd, Is.True);
 				prevOwnOrd = ownOrd;
-				Assert.AreEqual(clid, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Class));
+				Assert.That(SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Class), Is.EqualTo(clid));
 			}
 		}
 
@@ -689,12 +689,12 @@ namespace SIL.FieldWorks.CacheLightTests
 			var clid = SilDataAccess.MetaDataCache.GetClassId("ClassC");
 			var flid = SilDataAccess.MetaDataCache.GetFieldId2(1, "CollectionProp99", false);
 			int hvoNew = SilDataAccess.MakeNewObject(clid, hvoOwner, flid, -1);
-			Assert.IsTrue(SilDataAccess.get_IsValidObject(hvoNew));
-			Assert.AreEqual(flid, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_OwnFlid));
-			Assert.AreEqual(hvoOwner, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Owner));
-			Assert.AreEqual(clid, SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Class));
-			Assert.AreEqual(1, SilDataAccess.get_VecSize(hvoOwner, flid));
-			Assert.AreEqual(hvoNew, SilDataAccess.get_VecItem(hvoOwner, flid, 0));
+			Assert.That(SilDataAccess.get_IsValidObject(hvoNew), Is.True);
+			Assert.That(SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_OwnFlid), Is.EqualTo(flid));
+			Assert.That(SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Owner), Is.EqualTo(hvoOwner));
+			Assert.That(SilDataAccess.get_ObjectProp(hvoNew, (int)CmObjectFields.kflidCmObject_Class), Is.EqualTo(clid));
+			Assert.That(SilDataAccess.get_VecSize(hvoOwner, flid), Is.EqualTo(1));
+			Assert.That(SilDataAccess.get_VecItem(hvoOwner, flid, 0), Is.EqualTo(hvoNew));
 		}
 	}
 }

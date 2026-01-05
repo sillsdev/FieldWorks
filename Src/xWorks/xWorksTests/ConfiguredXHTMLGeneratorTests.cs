@@ -458,7 +458,7 @@ namespace SIL.FieldWorks.XWorks
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings).ToString();
-			Assert.IsEmpty(result, "Should not have generated anything for a disabled node");
+			Assert.That(result, Is.Empty, "Should not have generated anything for a disabled node");
 		}
 
 		[Test]
@@ -678,7 +678,7 @@ namespace SIL.FieldWorks.XWorks
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entryOne, mainEntryNode, null, settings).ToString();
-			Assert.IsEmpty(result, "With only one subnode that is disabled, there should be nothing generated!");
+			Assert.That(result, Is.Empty, "With only one subnode that is disabled, there should be nothing generated!");
 		}
 
 		[Test]
@@ -4652,7 +4652,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			//SUT
-			Assert.IsTrue(ConfiguredLcmGenerator.IsListItemSelectedForExport(variantsNode, variantForm.VisibleVariantEntryRefs.First(), variantForm));
+			Assert.That(ConfiguredLcmGenerator.IsListItemSelectedForExport(variantsNode, variantForm.VisibleVariantEntryRefs.First(), variantForm), Is.True);
 		}
 
 		/// <summary>
@@ -4676,7 +4676,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 
 			//SUT
-			Assert.IsTrue(ConfiguredLcmGenerator.IsListItemSelectedForExport(minorEntryNode, minorEntry));
+			Assert.That(ConfiguredLcmGenerator.IsListItemSelectedForExport(minorEntryNode, minorEntry), Is.True);
 		}
 
 		[Test]
@@ -4707,7 +4707,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			//SUT
-			Assert.IsFalse(ConfiguredLcmGenerator.IsListItemSelectedForExport(rcfsNode, variantForm.VisibleVariantEntryRefs.First(), variantForm));
+			Assert.That(ConfiguredLcmGenerator.IsListItemSelectedForExport(rcfsNode, variantForm.VisibleVariantEntryRefs.First(), variantForm), Is.False);
 		}
 
 		[Test]
@@ -4732,7 +4732,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			//SUT
-			Assert.IsTrue(ConfiguredLcmGenerator.IsListItemSelectedForExport(variantsNode, mainEntry.VisibleComplexFormBackRefs.First(), mainEntry));
+			Assert.That(ConfiguredLcmGenerator.IsListItemSelectedForExport(variantsNode, mainEntry.VisibleComplexFormBackRefs.First(), mainEntry), Is.True);
 		}
 
 		[Test]
@@ -4757,7 +4757,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			//SUT
-			Assert.IsTrue(ConfiguredLcmGenerator.IsListItemSelectedForExport(variantsNode, mainEntry.Subentries.First(), mainEntry));
+			Assert.That(ConfiguredLcmGenerator.IsListItemSelectedForExport(variantsNode, mainEntry.Subentries.First(), mainEntry), Is.True);
 		}
 
 		[Test]
@@ -4789,7 +4789,7 @@ namespace SIL.FieldWorks.XWorks
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
 
 			//SUT
-			Assert.IsFalse(ConfiguredLcmGenerator.IsListItemSelectedForExport(rcfsNode, mainEntry.VisibleComplexFormBackRefs.First(), mainEntry));
+			Assert.That(ConfiguredLcmGenerator.IsListItemSelectedForExport(rcfsNode, mainEntry.VisibleComplexFormBackRefs.First(), mainEntry), Is.False);
 		}
 
 		[Test]
@@ -4819,8 +4819,8 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { entryReferenceNode }
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
-			Assert.IsTrue(ConfiguredLcmGenerator.IsListItemSelectedForExport(entryReferenceNode, mainEntry.MinimalLexReferences.First(), mainEntry));
-			Assert.IsTrue(ConfiguredLcmGenerator.IsListItemSelectedForExport(entryReferenceNode, referencedEntry.MinimalLexReferences.First(), referencedEntry));
+			Assert.That(ConfiguredLcmGenerator.IsListItemSelectedForExport(entryReferenceNode, mainEntry.MinimalLexReferences.First(), mainEntry), Is.True);
+			Assert.That(ConfiguredLcmGenerator.IsListItemSelectedForExport(entryReferenceNode, referencedEntry.MinimalLexReferences.First(), referencedEntry), Is.True);
 		}
 
 		/// <summary>
@@ -4859,8 +4859,8 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { entryReferenceNode }
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
-			Assert.IsFalse(ConfiguredLcmGenerator.IsListItemSelectedForExport(entryReferenceNode, mainEntry.MinimalLexReferences.First(), mainEntry));
-			Assert.IsTrue(ConfiguredLcmGenerator.IsListItemSelectedForExport(entryReferenceNode, referencedEntry.MinimalLexReferences.First(), referencedEntry));
+			Assert.That(ConfiguredLcmGenerator.IsListItemSelectedForExport(entryReferenceNode, mainEntry.MinimalLexReferences.First(), mainEntry), Is.False);
+			Assert.That(ConfiguredLcmGenerator.IsListItemSelectedForExport(entryReferenceNode, referencedEntry.MinimalLexReferences.First(), referencedEntry), Is.True);
 		}
 
 		/// <summary>
@@ -4899,8 +4899,8 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { entryReferenceNode }
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
-			Assert.IsTrue(ConfiguredLcmGenerator.IsListItemSelectedForExport(entryReferenceNode, mainEntry.MinimalLexReferences.First(), mainEntry));
-			Assert.IsFalse(ConfiguredLcmGenerator.IsListItemSelectedForExport(entryReferenceNode, referencedEntry.MinimalLexReferences.First(), referencedEntry));
+			Assert.That(ConfiguredLcmGenerator.IsListItemSelectedForExport(entryReferenceNode, mainEntry.MinimalLexReferences.First(), mainEntry), Is.True);
+			Assert.That(ConfiguredLcmGenerator.IsListItemSelectedForExport(entryReferenceNode, referencedEntry.MinimalLexReferences.First(), referencedEntry), Is.False);
 		}
 
 		/// <summary>
@@ -4939,8 +4939,8 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { entryReferenceNode }
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(mainEntryNode);
-			Assert.IsTrue(ConfiguredLcmGenerator.IsListItemSelectedForExport(entryReferenceNode, mainEntry.MinimalLexReferences.First(), mainEntry));
-			Assert.IsTrue(ConfiguredLcmGenerator.IsListItemSelectedForExport(entryReferenceNode, referencedEntry.MinimalLexReferences.First(), referencedEntry));
+			Assert.That(ConfiguredLcmGenerator.IsListItemSelectedForExport(entryReferenceNode, mainEntry.MinimalLexReferences.First(), mainEntry), Is.True);
+			Assert.That(ConfiguredLcmGenerator.IsListItemSelectedForExport(entryReferenceNode, referencedEntry.MinimalLexReferences.First(), referencedEntry), Is.True);
 		}
 
 		[Test]
@@ -4980,8 +4980,8 @@ namespace SIL.FieldWorks.XWorks
 				Children = new List<ConfigurableDictionaryNode> { entryReferenceNode }
 			};
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(new List<ConfigurableDictionaryNode> { mainEntryNode });
-			Assert.IsFalse(ConfiguredLcmGenerator.IsListItemSelectedForExport(entryReferenceNode, mainEntry.MinimalLexReferences.First(), mainEntry));
-			Assert.IsFalse(ConfiguredLcmGenerator.IsListItemSelectedForExport(entryReferenceNode, referencedEntry.MinimalLexReferences.First(), referencedEntry));
+			Assert.That(ConfiguredLcmGenerator.IsListItemSelectedForExport(entryReferenceNode, mainEntry.MinimalLexReferences.First(), mainEntry), Is.False);
+			Assert.That(ConfiguredLcmGenerator.IsListItemSelectedForExport(entryReferenceNode, referencedEntry.MinimalLexReferences.First(), referencedEntry), Is.False);
 		}
 
 		[Test]
@@ -5444,7 +5444,7 @@ namespace SIL.FieldWorks.XWorks
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, settings).ToString();
-			Assert.IsEmpty(result);
+			Assert.That(result, Is.Empty);
 		}
 
 		/// <summary>LT-21573: PictureFileRA can be null after an incomplete SFM import</summary>
@@ -5579,7 +5579,7 @@ namespace SIL.FieldWorks.XWorks
 					AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 1);
 				// that src starts with a string, and escaping any Windows path separators
 				AssertRegex(result, string.Format("src=\"{0}[^\"]*\"", pictureRelativePath.Replace(@"\", @"\\")), 1);
-				Assert.IsTrue(File.Exists(Path.Combine(tempFolder.Name, "pictures", filePath)));
+				Assert.That(File.Exists(Path.Combine(tempFolder.Name, "pictures", filePath)), Is.True);
 			}
 			finally
 			{
@@ -5616,7 +5616,7 @@ namespace SIL.FieldWorks.XWorks
 					AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(pictureWithComposedPath, 1);
 				// that src starts with a string, and escaping any Windows path separators
 				AssertRegex(result, string.Format("src=\"{0}[^\"]*\"", pictureRelativePath.Replace(@"\", @"\\")), 1);
-				Assert.IsFalse(File.Exists(Path.Combine(tempFolder.Name, "pictures", filePath)));
+				Assert.That(File.Exists(Path.Combine(tempFolder.Name, "pictures", filePath)), Is.False);
 			}
 			finally
 			{
@@ -5678,7 +5678,7 @@ namespace SIL.FieldWorks.XWorks
 					AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath(pictureStartsWith, 2);
 				// that src contains a string
 				AssertRegex(result, string.Format("src=\"[^\"]*{0}[^\"]*\"", filenameWithoutExtension), 2);
-				Assert.AreEqual(2, Directory.EnumerateFiles(Path.Combine(tempFolder.FullName, "pictures")).Count(), "Wrong number of pictures copied.");
+				Assert.That(Directory.EnumerateFiles(Path.Combine(tempFolder.FullName, "pictures")).Count(), Is.EqualTo(2), "Wrong number of pictures copied.");
 			}
 			finally
 			{
@@ -5869,7 +5869,7 @@ namespace SIL.FieldWorks.XWorks
 				// that src starts with string, and escaping Windows directory separators
 				AssertRegex(result, string.Format("src=\"{0}[^\"]*\"", pictureRelativePath.Replace(@"\", @"\\")), 2);
 				// The second file reference should not have resulted in a copy
-				Assert.AreEqual(Directory.EnumerateFiles(Path.Combine(tempFolder.FullName, "pictures")).Count(), 1, "Wrong number of pictures copied.");
+				Assert.That(Directory.EnumerateFiles(Path.Combine(tempFolder.FullName, "pictures")).Count(), Is.EqualTo(1), "Wrong number of pictures copied.");
 			}
 			finally
 			{
@@ -6020,7 +6020,7 @@ namespace SIL.FieldWorks.XWorks
 				// Set custom field data
 				Cache.MainCacheAccessor.SetString(testEntry.Hvo, customField.Flid, TsStringUtils.MakeString(customData, wsEn));
 				//SUT
-				Assert.AreEqual(ConfiguredLcmGenerator.PropertyType.PrimitiveType, ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(customFieldNode, Cache));
+				Assert.That(ConfiguredLcmGenerator.GetPropertyTypeForConfigurationNode(customFieldNode, Cache), Is.EqualTo(ConfiguredLcmGenerator.PropertyType.PrimitiveType));
 			}
 		}
 
@@ -7256,7 +7256,7 @@ namespace SIL.FieldWorks.XWorks
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings).ToString();
 			const string refTypeXpath = "//span[@class='subentries']/span[@class='subentry']/span[@class='complexformtypes']";
 			AssertThatXmlIn.String(result).HasNoMatchForXpath(refTypeXpath);
-			StringAssert.DoesNotContain(complexRefAbbr, result);
+			Assert.That(result, Does.Not.Contain(complexRefAbbr));
 		}
 
 		[Test]
@@ -7570,7 +7570,7 @@ namespace SIL.FieldWorks.XWorks
 			var settings = new ConfiguredLcmGenerator.GeneratorSettings(Cache, m_propertyTable, false, false, null);
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(variantEntry, model, null, settings).ToString();
-			Assert.IsEmpty(result);
+			Assert.That(result, Is.Empty);
 			// try with HideMinorEntry off
 			variantEntryRef.HideMinorEntry = 0;
 			result = ConfiguredLcmGenerator.GenerateContentForEntry(variantEntry, model, null, settings).ToString();
@@ -7581,7 +7581,7 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath("/div[@class='lexentry']/span[@class='headword']", 1);
 			variantEntryRef.HideMinorEntry = 1;
 			result = ConfiguredLcmGenerator.GenerateContentForEntry(variantEntry, model, null, settings).ToString();
-			Assert.IsEmpty(result);
+			Assert.That(result, Is.Empty);
 		}
 
 		// Variant: Continue to generate the reference even if we are hiding the minor entry (useful for preview).
@@ -7797,7 +7797,7 @@ namespace SIL.FieldWorks.XWorks
 			var complexOptions = (DictionaryNodeListOptions)mainEntryNode.DictionaryNodeOptions;
 			complexOptions.Options[0].IsEnabled = false;
 			result = ConfiguredLcmGenerator.GenerateContentForMainEntry(idiom, mainEntryNode, null, settings, 1).ToString();
-			Assert.IsEmpty(result);
+			Assert.That(result, Is.Empty);
 		}
 
 		/// <remarks>Note that the "Unspecified" Types mentioned here are truly unspecified, not the specified Type "Unspecified Form Type"</remarks>
@@ -7869,26 +7869,26 @@ namespace SIL.FieldWorks.XWorks
 			if (isMinorEntryShowing)
 				AssertThatXmlIn.String(result).HasSpecifiedNumberOfMatchesForXpath("/div[@class='lexentry']/span[@class='headword']", 1);
 			else
-				Assert.IsEmpty(result);
+				Assert.That(result, Is.Empty);
 		}
 
 		[Test]
 		public void IsCollectionType()
 		{
 			var assembly = Assembly.Load(ConfiguredLcmGenerator.AssemblyFile);
-			Assert.True(ConfiguredLcmGenerator.IsCollectionType(typeof(IEnumerable<>)));
-			Assert.True(ConfiguredLcmGenerator.IsCollectionType(typeof(ILcmOwningSequence<>)));
-			Assert.True(ConfiguredLcmGenerator.IsCollectionType(typeof(ILcmReferenceCollection<>)));
+			Assert.That(ConfiguredLcmGenerator.IsCollectionType(typeof(IEnumerable<>)), Is.True);
+			Assert.That(ConfiguredLcmGenerator.IsCollectionType(typeof(ILcmOwningSequence<>)), Is.True);
+			Assert.That(ConfiguredLcmGenerator.IsCollectionType(typeof(ILcmReferenceCollection<>)), Is.True);
 			var twoParamImplOfIFdoVector =
 				assembly.GetType("SIL.LCModel.DomainImpl.ScrTxtPara").GetNestedType("OwningSequenceWrapper`2", BindingFlags.NonPublic);
-			Assert.True(ConfiguredLcmGenerator.IsCollectionType(twoParamImplOfIFdoVector));
-			Assert.True(ConfiguredLcmGenerator.IsCollectionType(typeof(ILcmVector)), "Custom fields containing list items may no longer work.");
+			Assert.That(ConfiguredLcmGenerator.IsCollectionType(twoParamImplOfIFdoVector), Is.True);
+			Assert.That(ConfiguredLcmGenerator.IsCollectionType(typeof(ILcmVector)), Is.True, "Custom fields containing list items may no longer work.");
 
 			// Strings and MultiStrings, while enumerable, are not collections as we define them for the purpose of publishing data as XHTML
-			Assert.False(ConfiguredLcmGenerator.IsCollectionType(typeof(string)));
-			Assert.False(ConfiguredLcmGenerator.IsCollectionType(typeof(ITsString)));
-			Assert.False(ConfiguredLcmGenerator.IsCollectionType(typeof(IMultiStringAccessor)));
-			Assert.False(ConfiguredLcmGenerator.IsCollectionType(assembly.GetType("SIL.LCModel.DomainImpl.VirtualStringAccessor")));
+			Assert.That(ConfiguredLcmGenerator.IsCollectionType(typeof(string)), Is.False);
+			Assert.That(ConfiguredLcmGenerator.IsCollectionType(typeof(ITsString)), Is.False);
+			Assert.That(ConfiguredLcmGenerator.IsCollectionType(typeof(IMultiStringAccessor)), Is.False);
+			Assert.That(ConfiguredLcmGenerator.IsCollectionType(assembly.GetType("SIL.LCModel.DomainImpl.VirtualStringAccessor")), Is.False);
 		}
 
 		[Test]
@@ -7968,23 +7968,23 @@ namespace SIL.FieldWorks.XWorks
 			var pubTest = new DictionaryPublicationDecorator(Cache, (ISilDataAccessManaged)Cache.MainCacheAccessor, flidVirtual, typeTest);
 			//SUT
 			var hvosMain = new List<int>(pubMain.GetEntriesToPublish(m_propertyTable, flidVirtual));
-			Assert.AreEqual(5, hvosMain.Count, "there are five entries in the main publication");
-			Assert.IsTrue(hvosMain.Contains(entryCorps.Hvo), "corps is shown in the main publication");
-			Assert.IsTrue(hvosMain.Contains(entryBras.Hvo), "bras is shown in the main publication");
-			Assert.IsTrue(hvosMain.Contains(bizarroVariant.Hvo), "bizarre is shown in the main publication");
-			Assert.IsFalse(hvosMain.Contains(entryOreille.Hvo), "oreille is not shown in the main publication");
-			Assert.IsTrue(hvosMain.Contains(entryEntry.Hvo), "entry is shown in the main publication");
-			Assert.IsTrue(hvosMain.Contains(entryMainsubentry.Hvo), "mainsubentry is shown in the main publication");
-			Assert.IsFalse(hvosMain.Contains(entryTestsubentry.Hvo), "testsubentry is not shown in the main publication");
+			Assert.That(hvosMain.Count, Is.EqualTo(5), "there are five entries in the main publication");
+			Assert.That(hvosMain.Contains(entryCorps.Hvo), Is.True, "corps is shown in the main publication");
+			Assert.That(hvosMain.Contains(entryBras.Hvo), Is.True, "bras is shown in the main publication");
+			Assert.That(hvosMain.Contains(bizarroVariant.Hvo), Is.True, "bizarre is shown in the main publication");
+			Assert.That(hvosMain.Contains(entryOreille.Hvo), Is.False, "oreille is not shown in the main publication");
+			Assert.That(hvosMain.Contains(entryEntry.Hvo), Is.True, "entry is shown in the main publication");
+			Assert.That(hvosMain.Contains(entryMainsubentry.Hvo), Is.True, "mainsubentry is shown in the main publication");
+			Assert.That(hvosMain.Contains(entryTestsubentry.Hvo), Is.False, "testsubentry is not shown in the main publication");
 			var hvosTest = new List<int>(pubTest.GetEntriesToPublish(m_propertyTable, flidVirtual));
-			Assert.AreEqual(4, hvosTest.Count, "there are four entries in the test publication");
-			Assert.IsTrue(hvosTest.Contains(entryCorps.Hvo), "corps is shown in the test publication");
-			Assert.IsFalse(hvosTest.Contains(entryBras.Hvo), "bras is not shown in the test publication");
-			Assert.IsFalse(hvosTest.Contains(bizarroVariant.Hvo), "bizarre is not shown in the test publication");
-			Assert.IsTrue(hvosTest.Contains(entryOreille.Hvo), "oreille is shown in the test publication");
-			Assert.IsTrue(hvosTest.Contains(entryEntry.Hvo), "entry is shown in the test publication");
-			Assert.IsFalse(hvosTest.Contains(entryMainsubentry.Hvo), "mainsubentry is shown in the test publication");
-			Assert.IsTrue(hvosTest.Contains(entryTestsubentry.Hvo), "testsubentry is shown in the test publication");
+			Assert.That(hvosTest.Count, Is.EqualTo(4), "there are four entries in the test publication");
+			Assert.That(hvosTest.Contains(entryCorps.Hvo), Is.True, "corps is shown in the test publication");
+			Assert.That(hvosTest.Contains(entryBras.Hvo), Is.False, "bras is not shown in the test publication");
+			Assert.That(hvosTest.Contains(bizarroVariant.Hvo), Is.False, "bizarre is not shown in the test publication");
+			Assert.That(hvosTest.Contains(entryOreille.Hvo), Is.True, "oreille is shown in the test publication");
+			Assert.That(hvosTest.Contains(entryEntry.Hvo), Is.True, "entry is shown in the test publication");
+			Assert.That(hvosTest.Contains(entryMainsubentry.Hvo), Is.False, "mainsubentry is shown in the test publication");
+			Assert.That(hvosTest.Contains(entryTestsubentry.Hvo), Is.True, "testsubentry is shown in the test publication");
 
 			var variantFormNode = new ConfigurableDictionaryNode
 			{
@@ -8791,8 +8791,7 @@ namespace SIL.FieldWorks.XWorks
 				var secondHeadwordLoc = xhtml.IndexOf(secondAHeadword, StringComparison.Ordinal);
 				var thirdHeadwordLoc = xhtml.IndexOf(bHeadword, StringComparison.Ordinal);
 				// The headwords should show up in the xhtml in the given order (firstA, secondA, b)
-				Assert.True(firstHeadwordLoc != -1 && firstHeadwordLoc < secondHeadwordLoc && secondHeadwordLoc < thirdHeadwordLoc,
-					"Entries generated out of order: first at {0}, second at {1}, third at {2}", firstHeadwordLoc, secondHeadwordLoc, thirdHeadwordLoc);
+				Assert.That(firstHeadwordLoc != -1 && firstHeadwordLoc < secondHeadwordLoc && secondHeadwordLoc < thirdHeadwordLoc, Is.True, "Entries generated out of order: first at {0}, second at {1}, third at {2}", firstHeadwordLoc, secondHeadwordLoc, thirdHeadwordLoc);
 			}
 			finally
 			{
@@ -9175,7 +9174,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					Assert.DoesNotThrow(() => actualPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(entries, clerk, null, model, m_propertyTable));
 				}
-				Assert.AreNotEqual(preferredPath, actualPath, "Should have saved to a different path.");
+				Assert.That(actualPath, Is.Not.EqualTo(preferredPath).Within("Should have saved to a different path."));
 			}
 			finally
 			{
@@ -9201,7 +9200,7 @@ namespace SIL.FieldWorks.XWorks
 				var previewXhtmlContent = File.ReadAllText(xhtmlPath);
 				// ReSharper disable once AssignNullToNotNullAttribute -- Justification: XHTML is always saved in a directory
 				var fileName = "ProjectDictionaryOverrides.css";
-				StringAssert.Contains(fileName, previewXhtmlContent, "Custom css file should added in the XHTML file");
+				Assert.That(previewXhtmlContent, Does.Contain(fileName), "Custom css file should added in the XHTML file");
 			}
 			finally
 			{
@@ -9622,22 +9621,22 @@ namespace SIL.FieldWorks.XWorks
 			var idxWhole = manResult.IndexOf(whSpan, StringComparison.Ordinal);
 			var idxPart = manResult.IndexOf(ptSpan, StringComparison.Ordinal);
 			var idxAntonymName = manResult.IndexOf(antNameSpan, StringComparison.Ordinal);
-			Assert.Less(0, idxAntonymAbbr, "Antonym abbreviation relation should exist for homme (man)");
-			Assert.Less(0, idxWhole, "Whole relation should exist for homme (man)");
-			Assert.AreEqual(-1, idxPart, "Part relation should not exist for homme (man)");
-			Assert.Less(idxWhole, idxAntonymAbbr, "Whole relation should come before Antonym relation for homme (man)");
-			Assert.Less(idxAntonymAbbr, idxAntonymName, "Antonym name should exist after Antonym abbreviation");
+			Assert.That(0, Is.LessThan(idxAntonymAbbr), "Antonym abbreviation relation should exist for homme (man)");
+			Assert.That(0, Is.LessThan(idxWhole), "Whole relation should exist for homme (man)");
+			Assert.That(idxPart, Is.EqualTo(-1), "Part relation should not exist for homme (man)");
+			Assert.That(idxWhole, Is.LessThan(idxAntonymAbbr), "Whole relation should come before Antonym relation for homme (man)");
+			Assert.That(idxAntonymAbbr, Is.LessThan(idxAntonymName), "Antonym name should exist after Antonym abbreviation");
 			var idxFemme = manResult.IndexOf(femmeSpan, StringComparison.Ordinal);
 			var idxGarcon = manResult.IndexOf(garçonSpan, StringComparison.Ordinal);
 			var idxBete = manResult.IndexOf(bêteSpan, StringComparison.Ordinal);
 			var idxTruc = manResult.IndexOf(trucSpan, StringComparison.Ordinal);
 			// LT-15764 The Antonyms are now sorted by Headword
-			Assert.Less(idxAntonymAbbr, idxBete);
-			Assert.Less(idxBete, idxFemme);
-			Assert.Less(idxFemme, idxGarcon);
-			Assert.Less(idxGarcon, idxTruc);
-			Assert.Less(idxAntonymAbbr, idxAntonymName, "Antonym name should come after Antonym abbreviation");
-			Assert.Less(idxAntonymName, idxBete, "Target entry should come after Antonym name");
+			Assert.That(idxAntonymAbbr, Is.LessThan(idxBete));
+			Assert.That(idxBete, Is.LessThan(idxFemme));
+			Assert.That(idxFemme, Is.LessThan(idxGarcon));
+			Assert.That(idxGarcon, Is.LessThan(idxTruc));
+			Assert.That(idxAntonymAbbr, Is.LessThan(idxAntonymName), "Antonym name should come after Antonym abbreviation");
+			Assert.That(idxAntonymName, Is.LessThan(idxBete), "Target entry should come after Antonym name");
 
 			// Ignore if usingSubfield. Justification: Part-Whole direction is miscalculated for field=Entry, subfield=MinimalLexReferences (LT-17571)
 			if (!usingSubfield)
@@ -9648,11 +9647,11 @@ namespace SIL.FieldWorks.XWorks
 				idxWhole = familyResult.IndexOf(whSpan, StringComparison.Ordinal);
 				idxPart = familyResult.IndexOf(ptSpan, StringComparison.Ordinal);
 				idxAntonymName = familyResult.IndexOf(antNameSpan, StringComparison.Ordinal);
-				Assert.Less(0, idxAntonymAbbr, "Antonym abbreviation relation should exist for famille");
-				Assert.AreEqual(-1, idxWhole, "Whole relation should not exist for famille");
-				Assert.Less(0, idxPart, "Part relation should exist for famille");
-				Assert.Less(idxAntonymAbbr, idxPart, "Antonym abbreviation relation should come before Part relation for famille");
-				Assert.Less(idxAntonymAbbr, idxAntonymName, "Antonym name should come after Antonym abbreviation");
+				Assert.That(0, Is.LessThan(idxAntonymAbbr), "Antonym abbreviation relation should exist for famille");
+				Assert.That(idxWhole, Is.EqualTo(-1), "Whole relation should not exist for famille");
+				Assert.That(0, Is.LessThan(idxPart), "Part relation should exist for famille");
+				Assert.That(idxAntonymAbbr, Is.LessThan(idxPart), "Antonym abbreviation relation should come before Part relation for famille");
+				Assert.That(idxAntonymAbbr, Is.LessThan(idxAntonymName), "Antonym name should come after Antonym abbreviation");
 
 				// SUT: Ensure that both directions of part-whole are kept separate
 				var girlResult = ConfiguredLcmGenerator.GenerateContentForEntry(girlEntry, mainEntryNode, null, settings).ToString();
@@ -9661,11 +9660,11 @@ namespace SIL.FieldWorks.XWorks
 				idxWhole = girlResult.IndexOf(whSpan, StringComparison.Ordinal);
 				idxPart = girlResult.IndexOf(ptSpan, StringComparison.Ordinal);
 				idxAntonymName = girlResult.IndexOf(antNameSpan, StringComparison.Ordinal);
-				Assert.AreEqual(-1, idxAntonymAbbr, "Antonym abbreviation relation should not exist for fille (girl)");
-				Assert.Less(0, idxWhole, "Whole relation should exist for fille (girl)");
-				Assert.Less(0, idxPart, "Part relation should exist for fille (girl)");
-				Assert.Less(idxWhole, idxPart, "Whole relation should come before Part relation for fille (girl)");
-				Assert.AreEqual(-1, idxAntonymName, "Antonym name relation should not exist for fille (girl)");
+				Assert.That(idxAntonymAbbr, Is.EqualTo(-1), "Antonym abbreviation relation should not exist for fille (girl)");
+				Assert.That(0, Is.LessThan(idxWhole), "Whole relation should exist for fille (girl)");
+				Assert.That(0, Is.LessThan(idxPart), "Part relation should exist for fille (girl)");
+				Assert.That(idxWhole, Is.LessThan(idxPart), "Whole relation should come before Part relation for fille (girl)");
+				Assert.That(idxAntonymName, Is.EqualTo(-1), "Antonym name relation should not exist for fille (girl)");
 			}
 
 			var individualResult = ConfiguredLcmGenerator.GenerateContentForEntry(individualEntry, mainEntryNode, null, settings).ToString();
@@ -9674,10 +9673,10 @@ namespace SIL.FieldWorks.XWorks
 			idxWhole = individualResult.IndexOf(whSpan, StringComparison.Ordinal);
 			idxPart = individualResult.IndexOf(ptSpan, StringComparison.Ordinal);
 			idxAntonymName = individualResult.IndexOf(antNameSpan, StringComparison.Ordinal);
-			Assert.Less(0, idxAntonymAbbr, "Antonym abbreviation relation should exist for individuel");
-			Assert.AreEqual(-1, idxWhole, "Whole relation should not exist for individuel");
-			Assert.AreEqual(-1, idxPart, "Part relation should not exist for individuel");
-			Assert.Less(idxAntonymAbbr, idxAntonymName, "Antonym name relation should exist for individuel");
+			Assert.That(0, Is.LessThan(idxAntonymAbbr), "Antonym abbreviation relation should exist for individuel");
+			Assert.That(idxWhole, Is.EqualTo(-1), "Whole relation should not exist for individuel");
+			Assert.That(idxPart, Is.EqualTo(-1), "Part relation should not exist for individuel");
+			Assert.That(idxAntonymAbbr, Is.LessThan(idxAntonymName), "Antonym name relation should exist for individuel");
 		}
 
 		/// <summary>
@@ -10076,7 +10075,7 @@ namespace SIL.FieldWorks.XWorks
 			var actual = typeof(LcmXhtmlGenerator)
 				.GetMethod("GetIndexLettersOfSortWord", BindingFlags.NonPublic | BindingFlags.Static)
 				.Invoke(null, new object[] { sortWord, onlyFirstLetter });
-			Assert.AreEqual(expected, actual, $"{onlyFirstLetter} {sortWord}");
+			Assert.That(actual, Is.EqualTo(expected).Within($"{onlyFirstLetter} {sortWord}"));
 		}
 
 		[Test]
@@ -10099,8 +10098,8 @@ namespace SIL.FieldWorks.XWorks
 			LcmXhtmlGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo }, settings, currentPage, adjacentPage, 2,
 				out current, out adjacent);
 			Assert.That(adjacent, Is.Null, "The Adjacent page should have been consumed into the current page");
-			Assert.AreEqual(0, current.Item1, "Current page should start at 0");
-			Assert.AreEqual(2, current.Item2, "Current page should end at 2");
+			Assert.That(current.Item1, Is.EqualTo(0), "Current page should start at 0");
+			Assert.That(current.Item2, Is.EqualTo(2), "Current page should end at 2");
 		}
 
 		[Test]
@@ -10123,8 +10122,8 @@ namespace SIL.FieldWorks.XWorks
 			LcmXhtmlGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo }, settings, currentPage, adjPage, 2,
 				out current, out adjacent);
 			Assert.That(adjacent, Is.Null, "The Adjacent page should have been consumed into the current page");
-			Assert.AreEqual(0, current.Item1, "Current page should start at 0");
-			Assert.AreEqual(2, current.Item2, "Current page should end at 2");
+			Assert.That(current.Item1, Is.EqualTo(0), "Current page should start at 0");
+			Assert.That(current.Item2, Is.EqualTo(2), "Current page should end at 2");
 		}
 
 		[Test]
@@ -10150,10 +10149,10 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			LcmXhtmlGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo, fourthEntry.Hvo }, settings, currentPage, adjPage, 1,
 				out current, out adjacent);
-			Assert.AreEqual(0, current.Item1, "Current page should start at 0");
-			Assert.AreEqual(3, current.Item2, "Current page should end at 3");
-			Assert.AreEqual(4, adjacent.Item1, "Adjacent page should start at 4");
-			Assert.AreEqual(4, adjacent.Item2, "Adjacent page should end at 4");
+			Assert.That(current.Item1, Is.EqualTo(0), "Current page should start at 0");
+			Assert.That(current.Item2, Is.EqualTo(3), "Current page should end at 3");
+			Assert.That(adjacent.Item1, Is.EqualTo(4), "Adjacent page should start at 4");
+			Assert.That(adjacent.Item2, Is.EqualTo(4), "Adjacent page should end at 4");
 		}
 
 		[Test]
@@ -10179,10 +10178,10 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			LcmXhtmlGenerator.GenerateAdjustedPageButtons(new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo, fourthEntry.Hvo }, settings, currentPage, adjPage, 1,
 				out current, out adjacent);
-			Assert.AreEqual(2, current.Item1, "Current page should start at 2");
-			Assert.AreEqual(4, current.Item2, "Current page should end at 4");
-			Assert.AreEqual(0, adjacent.Item1, "Adjacent page should start at 0");
-			Assert.AreEqual(1, adjacent.Item2, "Adjacent page should end at 1");
+			Assert.That(current.Item1, Is.EqualTo(2), "Current page should start at 2");
+			Assert.That(current.Item2, Is.EqualTo(4), "Current page should end at 4");
+			Assert.That(adjacent.Item1, Is.EqualTo(0), "Adjacent page should start at 0");
+			Assert.That(adjacent.Item2, Is.EqualTo(1), "Adjacent page should end at 1");
 		}
 
 		[Test]
@@ -10231,7 +10230,7 @@ namespace SIL.FieldWorks.XWorks
 				// SUT
 				var entries = LcmXhtmlGenerator.GenerateNextFewEntries(pubEverything, new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo, fourthEntry.Hvo }, configPath,
 					settings, currentPage, adjPage, 1, out current, out adjacent);
-				Assert.AreEqual(1, entries.Count, "No entries generated");
+				Assert.That(entries.Count, Is.EqualTo(1), "No entries generated");
 				Assert.That(entries[0].ToString(), Does.Contain(thirdEntry.HeadWord.Text));
 			}
 			finally
@@ -10286,7 +10285,7 @@ namespace SIL.FieldWorks.XWorks
 				// SUT
 				var entries = LcmXhtmlGenerator.GenerateNextFewEntries(pubEverything, new[] { firstEntry.Hvo, secondEntry.Hvo, thirdEntry.Hvo, fourthEntry.Hvo }, configPath,
 					settings, currentPage, adjPage, 2, out current, out adjacent);
-				Assert.AreEqual(2, entries.Count, "Not enough entries generated");
+				Assert.That(entries.Count, Is.EqualTo(2), "Not enough entries generated");
 				Assert.That(entries[0].ToString(), Does.Contain(thirdEntry.HeadWord.Text));
 				Assert.That(entries[1].ToString(), Does.Contain(fourthEntry.HeadWord.Text));
 				Assert.That(adjacent, Is.Null);
@@ -10354,10 +10353,10 @@ namespace SIL.FieldWorks.XWorks
 			var headword = TsStringUtils.MakeString("자ㄱㄴ시", wsKo); // Korean NFD
 			entry.CitationForm.set_String(wsKo, headword);
 			Assert.That(entry.CitationForm.get_String(wsKo).get_IsNormalizedForm(FwNormalizationMode.knmNFD), "Should be NFDecomposed in memory");
-			Assert.AreEqual(6, headword.Text.Length);
+			Assert.That(headword.Text.Length, Is.EqualTo(6));
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, node, null, DefaultSettings).ToString();
 			var tsResult = TsStringUtils.MakeString(result, Cache.DefaultAnalWs);
-			Assert.False(TsStringUtils.IsNullOrEmpty(tsResult), "Results should have been generated");
+			Assert.That(TsStringUtils.IsNullOrEmpty(tsResult), Is.False, "Results should have been generated");
 			Assert.That(tsResult.get_IsNormalizedForm(FwNormalizationMode.knmNFC), "Resulting XHTML should be NFComposed");
 		}
 

@@ -1,38 +1,277 @@
 {
   // See https://go.microsoft.com/fwlink/?LinkId=733558
   // for the documentation about the tasks.json format
+  // "$schema": "https://raw.githubusercontent.com/microsoft/vscode/master/resources/app/schemas/tasks.schema.json",
   "version": "2.0.0",
+  "inputs": [
+    {
+      "id": "agentCount",
+      "type": "promptString",
+      "description": "Number of agents to spin up",
+      "default": "3"
+    },
+    {
+      "id": "copilotFolders",
+      "type": "promptString",
+      "description": "Space-separated Src/<Folder> entries to refresh",
+      "default": "Src/Common"
+    }
+  ],
   "tasks": [
     {
-      "label": "build recent",
+      "label": "Whitespace check (CI parity)",
       "type": "shell",
-      "command": "Build/build-recent",
+      "command": "./Build/Agent/check-and-fix-whitespace.ps1",
+      "detail": "Runs git log --check from nearest origin/release/* (or origin default), then runs the fixer to normalize whitespace.",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      }
+    },
+    {
+      "label": "Commit messages check (CI parity)",
+      "type": "shell",
+      "command": "./Build/Agent/commit-messages.ps1",
+      "detail": "Installs gitlint and lints commits since the nearest origin/release/* (or origin default).",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      }
+    },
+    {
+      "label": "local CI check",
+      "dependsOn": [
+        "Commit messages check (CI parity)",
+        "Whitespace check (CI parity)"
+      ],
+      "dependsOrder": "sequence",
+      "detail": "Runs commit message lint and whitespace checks in the same order as CI"
+    },
+    {
+      "label": "git: prune remote branches",
+      "type": "shell",
+      "command": "git fetch --prune",
+      "detail": "Remove stale remote-tracking branches that were deleted on the server.",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "COPILOT: Detect updates needed",
+      "type": "shell",
+      "command": "& { . ./Build/Agent/GitHelpers.ps1; $base = Get-DefaultBranchRef; python .github/detect_copilot_needed.py --base $base --strict }",
       "group": {
-        "kind": "build",
-        "isDefault": true
+        "kind": "test",
+        "isDefault": false
       },
-      "problemMatcher": [
-        "$msCompile"
-      ]
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      },
+      "problemMatcher": []
     },
     {
-      "label": "remakefw",
+      "label": "COPILOT: Propose updates for changed folders",
       "type": "shell",
-      "command": "cd Build && build.bat /t:remakefw",
-      "linux": {
-        "command": ". environ && cd Build && ./build /t:remakefw"
-      },
+      "command": "& { . ./Build/Agent/GitHelpers.ps1; $base = Get-DefaultBranchRef; python .github/scaffold_copilot_markdown.py --base $base }",
       "group": "build",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "COPILOT: Validate COPILOT docs (changed only)",
+      "type": "shell",
+      "command": "& { . ./Build/Agent/GitHelpers.ps1; $base = Get-DefaultBranchRef; python .github/check_copilot_docs.py --only-changed --base $base --fail }",
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "COPILOT: Validate instructions (lint)",
+      "type": "shell",
+      "command": "python scripts/tools/validate_instructions.py",
+      "group": {
+        "kind": "test",
+        "isDefault": false
+      },
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "COPILOT: Update flow (detect → propose → validate)",
+      "dependsOn": [
+        "COPILOT: Detect updates needed",
+        "COPILOT: Propose updates for changed folders",
+        "COPILOT: Validate COPILOT docs (changed only)"
+      ],
+      "dependsOrder": "sequence",
       "problemMatcher": [
-        "$msCompile"
+        "$python"
       ]
     },
     {
-      "label": "remakefw + test",
+      "label": "COPILOT: Plan all folders",
       "type": "shell",
-      "command": "cd Build && build.bat /t:remakefw /p:Action=Test",
-      "linux": {
-        "command": ". environ && cd Build && ./build /t:remakefw /p:Action=Test"
+      "command": "& { . ./Build/Agent/GitHelpers.ps1; $base = Get-DefaultBranchRef; python .github/plan_copilot_updates.py --all --fallback-base $base --out .cache/copilot/diff-plan.json }",
+      "detail": "Scans every Src/** folder and writes .cache/copilot/diff-plan.json for Copilot usage.",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      }
+    },
+    {
+      "label": "COPILOT: Apply auto change-log (subset)",
+      "type": "shell",
+      "command": "python .github/copilot_apply_updates.py --plan .cache/copilot/diff-plan.json --folders ${input:copilotFolders}",
+      "detail": "Regenerates the auto change-log block inside the selected COPILOT.md folders.",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      }
+    },
+    {
+      "label": "Agents: Spin up",
+      "type": "shell",
+      "command": "& { ./scripts/spin-up-agents.ps1 -RepoRoot \"${workspaceFolder}\" -Count ${input:agentCount}}",
+      "detail": "Creates (or reuses) agent worktrees, containers, and VS Code windows.",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      }
+    },
+    {
+      "label": "Agents: Build Docker image",
+      "type": "shell",
+      "command": "& { ./scripts/docker-build-ipv4.ps1 -RegistryHosts @('mcr.microsoft.com') -BuildArgs @('-t','fw-build:ltsc2022','-f','Dockerfile.windows','${workspaceFolder}') }",
+      "detail": "Builds/refreshes the fw-build:ltsc2022 Windows container image used by agent worktrees.",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      }
+    },
+    {
+      "label": "Agents: Teardown containers",
+      "type": "shell",
+      "command": "& { ./scripts/tear-down-agents.ps1 -RepoRoot \"${workspaceFolder}\" }",
+      "detail": "Stops and removes all fw-agent-* containers but leaves worktrees intact.",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      }
+    },
+    {
+      "label": "Agents: Teardown containers + worktrees",
+      "type": "shell",
+      "command": "& { ./scripts/tear-down-agents.ps1 -RepoRoot \"${workspaceFolder}\" -RemoveWorktrees -RemoveNuGetCaches }",
+      "detail": "Stops containers and detaches/removes agent worktrees plus per-agent NuGet caches.",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
       }
     }
   ]

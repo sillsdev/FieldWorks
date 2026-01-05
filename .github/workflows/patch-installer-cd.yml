@@ -15,42 +15,42 @@ on:
   workflow_dispatch:
     inputs:
       fw_ref:
-        description: 'Commit-ish (branch, tag, SHA) to checkout for the main repository'
+        description: "Commit-ish (branch, tag, SHA) to checkout for the main repository"
         required: false
-        default: ''
+        default: ""
       helps_ref:
-        description: 'Commit-ish for helps repository'
+        description: "Commit-ish for helps repository"
         required: false
-        default: 'develop'
+        default: "develop"
       installer_ref:
-        description: 'Commit-ish for PatchableInstaller repository'
+        description: "Commit-ish for PatchableInstaller repository"
         required: false
-        default: 'master'
+        default: "master"
       localizations_ref:
-        description: 'Commit-ish for localization repository'
+        description: "Commit-ish for localization repository"
         required: false
-        default: 'develop'
+        default: "develop"
       lcm_ref:
-        description: 'Commit-ish for liblcm repository'
+        description: "Commit-ish for liblcm repository"
         required: false
-        default: 'master'
-# default should be changed to the most recent base release for the release cycle.
-# After 9.3 is stable, base_release can be computed from base_build_number, but they need to be independent for bootstrapping patches
-# on Jenkins-built bases.
+        default: "master"
+      # default should be changed to the most recent base release for the release cycle.
+      # After 9.3 is stable, base_release can be computed from base_build_number, but they need to be independent for bootstrapping patches
+      # on Jenkins-built bases.
       base_release:
-        description: 'The github release for the base build artifacts (separate only for bootstrapping; should be removed after 9.3 is the stable)'
-        default: 'build-1351' # When updating this, update base_build_number and their fallbacks below, too.
+        description: "The github release for the base build artifacts (separate only for bootstrapping; should be removed after 9.3 is the stable)"
+        default: "build-1351" # When updating this, update base_build_number and their fallbacks below, too.
       base_build_number:
-        description: 'The base build number'
+        description: "The base build number"
         required: false
         default: '1351'
       make_release:
-        description: 'Should the release be pushed to s3 - use false for test builds'
+        description: "Should the release be pushed to s3 - use false for test builds"
         required: false
-        default: 'true'
+        default: "true"
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -87,43 +87,43 @@ jobs:
         uses: actions/checkout@v4
         id: helps-checkout
         with:
-          repository: 'sillsdev/FwHelps'
+          repository: "sillsdev/FwHelps"
           ref: ${{ github.event.inputs.helps_ref || 'develop' }}
           fetch-depth: 0
-          path: 'DistFiles/Helps'
+          path: "DistFiles/Helps"
 
       - name: Checkout PatchableInstaller
         uses: actions/checkout@v4
         id: installer-checkout
         with:
-          repository: 'sillsdev/genericinstaller'
+          repository: "sillsdev/genericinstaller"
           ref: ${{ github.event.inputs.installer_ref || 'master' }}
           fetch-depth: 0
-          path: 'PatchableInstaller'
+          path: "PatchableInstaller"
 
       - name: Checkout Localizations
         uses: actions/checkout@v4
         id: loc-checkout
         with:
-          repository: 'sillsdev/FwLocalizations'
+          repository: "sillsdev/FwLocalizations"
           ref: ${{ github.event.inputs.localizations_ref || 'develop' }}
           fetch-depth: 0
-          path: 'Localizations'
+          path: "Localizations"
       - name: Checkout liblcm
         uses: actions/checkout@v4
         id: liblcm-checkout
         with:
-          repository: 'sillsdev/liblcm'
+          repository: "sillsdev/liblcm"
           ref: ${{ github.event.inputs.lcm_ref || 'master' }}
           fetch-depth: 0
-          path: 'Localizations/LCM'
+          path: "Localizations/LCM"
 
       - name: Download .NET 461 targeting pack
         uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9 # 1.6.0
-        id: downloadfile  # Remember to give an ID if you need the output filename
+        id: downloadfile # Remember to give an ID if you need the output filename
         with:
-            url: "https://download.microsoft.com/download/F/1/D/F1DEB8DB-D277-4EF9-9F48-3A65D4D8F965/NDP461-DevPack-KB3105179-ENU.exe"
-            target: public/
+          url: "https://download.microsoft.com/download/F/1/D/F1DEB8DB-D277-4EF9-9F48-3A65D4D8F965/NDP461-DevPack-KB3105179-ENU.exe"
+          target: public/
 
       - name: Install .NET 461 targeting pack
         shell: cmd
@@ -133,7 +133,7 @@ jobs:
       - name: Setup dotnet
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: | 
+          dotnet-version: |
             3.1.x
             5.0.x
 
@@ -148,7 +148,15 @@ jobs:
           choco install wixtoolset --version 3.11.2 --allow-downgrade --force
           echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         if: github.event_name != 'pull_request'
-        
+
+      - name: Add NETFX tools to PATH
+        shell: powershell
+        run: |
+          'C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.6.1 Tools' | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
       - name: Import Base Build Artifacts
         shell: pwsh
         run: |
@@ -186,8 +194,9 @@ jobs:
       # Write out the properties file (a first build on a system requires a prompt response otherwise)
       # and set an OS feature in the registry that will allow Wix v3 to use temporary files without error
       - name: Prepare for build
-        working-directory: Build
+        shell: powershell
         run: |
+          $ErrorActionPreference = 'Stop'
           # Define paths and the key/value to set
           $regPaths = @(
               "HKLM:\SOFTWARE\Microsoft\.NETFramework\AppContext",
@@ -195,26 +204,26 @@ jobs:
           )
           $valueName = "Switch.System.DisableTempFileCollectionDirectoryFeature"
           $expectedValue = "true"
-          
+
           foreach ($path in $regPaths) {
               Write-Host "Adding or updating registry value in $path..."
               if (-not (Test-Path $path)) {
-                New-Item -Path $path -Force | Out-Null
+                  New-Item -Path $path -Force | Out-Null
               }
               New-ItemProperty -Path $path -Name $valueName -Value $expectedValue -Type String -Force
           }
-          
-          .\build64.bat /t:WriteNonlocalDevelopmentPropertiesFile
 
       - name: Build Debug and run tests
         id: build_installer
         shell: powershell
         run: |
+          $ErrorActionPreference = 'Stop'
           Get-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\.NETFramework\AppContext"
-          cd Build
-          .\build64.bat /t:BuildPatchInstaller  "/property:config=release;action=test;desktopNotAvailable=true" /v:d /bl ^| tee-object -FilePath build.log
-          cd ..
-          cd BuildDir
+          # Build patch installer (uses traversal build internally via Installer.targets)
+          msbuild Build/Orchestrator.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64
+          msbuild Build/Orchestrator.proj /t:BuildPatchInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /p:action=test /p:desktopNotAvailable=true /m /v:d /bl | Tee-Object -FilePath Build/build.log
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          Set-Location BuildDir
 
       - name: Scan Debug Build Output
         shell: powershell
@@ -223,11 +232,11 @@ jobs:
           $results = Select-String -Path "build.log" -Pattern "^\s*[1-9][0-9]* Error\(s\)"
           if ($results) {
               foreach ($result in $results) {
-                  Write-Host "Found errors in build.log $($result.LineNumber): $($result.Line)" -ForegroundColor red 
+                  Write-Host "Found errors in build.log $($result.LineNumber): $($result.Line)" -ForegroundColor red
               }
               exit 1
           } else {
-              Write-Host "No errors found" -ForegroundColor green 
+              Write-Host "No errors found" -ForegroundColor green
               exit 0
           }
 
@@ -235,21 +244,21 @@ jobs:
         id: find_patch
         shell: pwsh
         run: |
-            $patch = Get-ChildItem -Path BuildDir -Filter "FieldWorks_*.msp" | Select-Object -First 1
-            if (-not $patch) { throw "Patch (.msp) file not found in BuildDir" }
+          $patch = Get-ChildItem -Path BuildDir -Filter "FieldWorks_*.msp" | Select-Object -First 1
+          if (-not $patch) { throw "Patch (.msp) file not found in BuildDir" }
 
-            $patchPath = $patch.FullName
-            "patch_file=$patchPath" >> $env:GITHUB_OUTPUT
+          $patchPath = $patch.FullName
+          "patch_file=$patchPath" >> $env:GITHUB_OUTPUT
 
       - name: Sign Patch
         if: github.event_name != 'pull_request'
         uses: sillsdev/codesign/trusted-signing-action@v3
         with:
-            credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
-            files-folder: BuildDir
-            files-folder-filter: '*.msp'
-            description:  'FieldWorks Patch Installer'
-            description-url: 'https://software.sil.org/fieldworks/'
+          credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
+          files-folder: BuildDir
+          files-folder-filter: "*.msp"
+          description: "FieldWorks Patch Installer"
+          description-url: "https://software.sil.org/fieldworks/"
 
       - name: Configure AWS credentials
         # Use inputs if defined but default to true

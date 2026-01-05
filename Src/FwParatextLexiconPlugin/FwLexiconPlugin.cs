@@ -107,7 +107,7 @@ namespace SIL.FieldWorks.ParatextLexiconPlugin
 		/// <param name="projectId">The project identifier.</param>
 		/// <param name="langId">The language identifier.</param>
 		/// <returns></returns>
-		public Lexicon GetLexicon(string scrTextName, string projectId, string langId)
+		public Paratext.LexicalContracts.Lexicon GetLexicon(string scrTextName, string projectId, string langId)
 		{
 			return GetFdoLexicon(scrTextName, projectId, langId);
 		}

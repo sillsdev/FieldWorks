@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+  <assemblyIdentity name="FieldWorks.RegFree" version="1.0.0.0" type="win32" processorArchitecture="amd64"/>
+  <file name="FwKernel.dll">
+    <comClass clsid="{CF0F1C0B-0E44-4C1E-9912-2048ED12C2B4}" threadingModel="Apartment" progid="SIL.Views.ActionHandler" description="ActionHandler"/>
+  </file>
+  <file name="Views.dll">
+    <comClass clsid="{D888DB98-83A9-4592-AAD2-F18F6F74AB87}" threadingModel="Apartment" progid="SIL.Text.VwGraphicsWin32" description="VwGraphicsWin32"/>
+    <comClass clsid="{94FBFA34-21E5-4A1E-B576-BA5D76CC051A}" threadingModel="Apartment" progid="SIL.Language1.LgLineBreaker" description="LgLineBreaker"/>
+    <comClass clsid="{1287735C-3CAD-41CD-986C-39D7C0DF0314}" threadingModel="Apartment" progid="SIL.Language1.UniscribeEngine" description="UniscribeEngine"/>
+    <comClass clsid="{62EBEEBF-14EA-43D9-A27A-EF013E14145A}" threadingModel="Apartment" progid="SIL.Language1.GraphiteEngine" description="GraphiteEngine"/>
+    <comClass clsid="{81EE73B1-BE31-49CF-BC02-6030113AC56F}" threadingModel="Apartment" progid="SIL.Views.VwCacheDa" description="VwCacheDa"/>
+    <comClass clsid="{5BEEFFC6-E88C-4258-A269-D58390A1F2C9}" threadingModel="Apartment" progid="SIL.Views.VwUndoDa" description="VwUndoDa"/>
+    <comClass clsid="{7C0C6A3C-38B3-4266-AF94-A3A1CBAAD1FC}" threadingModel="Apartment" progid="SIL.Views.VwRootBox" description="VwRootBox"/>
+    <comClass clsid="{73BCAB14-2537-4B7D-B1C7-7E3DD7A089AD}" threadingModel="Apartment" progid="SIL.Views.VwInvertedRootBox" description="VwInvertedRootBox"/>
+    <comClass clsid="{CB59916A-C532-4A57-8CB4-6E1508B4DEC1}" threadingModel="Apartment" progid="SIL.Views.VwPropertyStore" description="VwPropertyStore"/>
+    <comClass clsid="{73F5DB01-3D2A-11D4-8078-0000C0FB81B5}" threadingModel="Apartment" progid="SIL.Views.VwOverlay" description="VwOverlay"/>
+    <comClass clsid="{5E9FB977-66AE-4C16-A036-1D40E7713573}" threadingModel="Apartment" progid="SIL.Views.VwPrintContext" description="VwPrintContextWin32"/>
+    <comClass clsid="{6C659C76-3991-48DD-93F7-DA65847D4863}" threadingModel="Apartment" progid="SIL.Views.VwPattern" description="VwPattern"/>
+    <comClass clsid="{01D1C8A7-1222-49C9-BFE6-30A84CE76A40}" threadingModel="Apartment" progid="SIL.Views.VwMappedTxtSrc" description="VwMappedTxtSrc"/>
+    <comClass clsid="{DAF01E81-3026-4480-8783-EEA04CD2EC80}" threadingModel="Apartment" progid="SIL.Views.VwStringTextSource" description="VwStringTextSource"/>
+    <comClass clsid="{4ADA9157-67F8-499B-88CE-D63DF918DF83}" threadingModel="Apartment" progid="SIL.Views.VwSearchKiller" description="VwSearchKiller"/>
+    <comClass clsid="{97199458-10C7-49DA-B3AE-EA922EA64859}" threadingModel="Apartment" progid="SIL.Views.VwDrawRootBuffered" description="VwDrawRootBuffered"/>
+    <comClass clsid="{5E149A49-CAEE-4823-97F7-BB9DED2A62BC}" threadingModel="Apartment" progid="SIL.Views.VwSynchronizer" description="VwSynchronizer"/>
+    <comClass clsid="{0D9900D2-1693-481F-AA70-7EA64F264EC4}" threadingModel="Apartment" progid="SIL.Language1.LgUnicodeCollater" description="LgUnicodeCollater"/>
+    <comClass clsid="{1CD09E06-6978-4969-A1FC-462723587C32}" threadingModel="Apartment" progid="SIL.Views.VwLayoutStream" description="VwLayoutStream"/>
+    <comClass clsid="{17A2E876-2968-11E0-8046-0019DBF4566E}" threadingModel="Both" progid="SIL.FieldWorks.Common.FwUtils.ManagedPictureFactory" description="PictureFactory"/>
+    <comClass clsid="{CCE2A7ED-464C-4EC7-A0B0-E3C1F6B94C5A}" threadingModel="Apartment" progid="SIL.Views.VwStylesheet" description="VwStylesheet"/>
+    <comClass clsid="{F3359BD1-EFA1-49E6-A82E-E55893FE63E0}" threadingModel="Both" progid="FieldWorks.TsStrFactory" description="TsStrFactory"/>
+    <comClass clsid="{396D737F-3BFD-4BDA-A8CA-8242098EF798}" threadingModel="Both" progid="FieldWorks.TsPropsFactory" description="TsPropsFactory"/>
+    <comClass clsid="{426038D4-2E52-4329-B697-FB926FF7538C}" threadingModel="Both" progid="FieldWorks.TsStrBldr" description="TsStrBldr"/>
+    <comClass clsid="{BD8EFD5A-2ACC-40AC-B73B-051344525B5B}" threadingModel="Both" progid="FieldWorks.TsIncStrBldr" description="TsIncStrBldr"/>
+    <comClass clsid="{F1EF76ED-BE04-11D3-8D9A-005004DEFEC4}" threadingModel="Both" progid="FieldWorks.TsPropsBldr" description="TsPropsBldr"/>
+    <comClass clsid="{24636FD1-DB8D-4B2C-B4C0-44C2592CA482}" threadingModel="Apartment" progid="SIL.Kernel.DebugReport" description="DebugReport"/>
+  </file>
+</assembly>

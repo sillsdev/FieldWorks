@@ -87,15 +87,15 @@ namespace SIL.FieldWorks.Filters
 			xml = DynamicLoader.PersistObject(grs, "sorter");
 			XmlDocument doc = new XmlDocument();
 			doc.LoadXml(xml);
-			Assert.AreEqual("sorter", doc.DocumentElement.Name);
+			Assert.That(doc.DocumentElement.Name, Is.EqualTo("sorter"));
 			object obj = DynamicLoader.RestoreObject(doc.DocumentElement);
 			try
 			{
-				Assert.IsInstanceOf<GenRecordSorter>(obj);
+				Assert.That(obj, Is.InstanceOf<GenRecordSorter>());
 				GenRecordSorter grsOut = obj as GenRecordSorter;
 				IComparer compOut = grsOut.Comparer;
-				Assert.IsTrue(compOut is IcuComparer);
-				Assert.AreEqual("fr", (compOut as IcuComparer).WsCode);
+				Assert.That(compOut is IcuComparer, Is.True);
+				Assert.That((compOut as IcuComparer).WsCode, Is.EqualTo("fr"));
 			}
 			finally
 			{
@@ -121,19 +121,19 @@ namespace SIL.FieldWorks.Filters
 			xml = DynamicLoader.PersistObject(asorter, "sorter");
 			XmlDocument doc = new XmlDocument();
 			doc.LoadXml(xml);
-			Assert.AreEqual("sorter", doc.DocumentElement.Name);
+			Assert.That(doc.DocumentElement.Name, Is.EqualTo("sorter"));
 			object obj = DynamicLoader.RestoreObject(doc.DocumentElement);
 			m_objectsToDispose.Add(obj);
-			Assert.IsInstanceOf<AndSorter>(obj);
+			Assert.That(obj, Is.InstanceOf<AndSorter>());
 			ArrayList sortersOut = (obj as AndSorter).Sorters;
 			GenRecordSorter grsOut1 = sortersOut[0] as GenRecordSorter;
 			GenRecordSorter grsOut2 = sortersOut[1] as GenRecordSorter;
 			IComparer compOut1 = grsOut1.Comparer;
 			IComparer compOut2 = grsOut2.Comparer;
-			Assert.IsTrue(compOut1 is IcuComparer);
-			Assert.IsTrue(compOut2 is IcuComparer);
-			Assert.AreEqual("fr", (compOut1 as IcuComparer).WsCode);
-			Assert.AreEqual("en", (compOut2 as IcuComparer).WsCode);
+			Assert.That(compOut1 is IcuComparer, Is.True);
+			Assert.That(compOut2 is IcuComparer, Is.True);
+			Assert.That((compOut1 as IcuComparer).WsCode, Is.EqualTo("fr"));
+			Assert.That((compOut2 as IcuComparer).WsCode, Is.EqualTo("en"));
 		}
 
 		/// <summary>
@@ -288,33 +288,33 @@ namespace SIL.FieldWorks.Filters
 
 			OwnIntPropFinder ownIntFinderOut = rangeIntFilterOut.Finder as OwnIntPropFinder;
 			Assert.That(ownIntFinderOut, Is.Not.Null);
-			Assert.AreEqual(551, ownIntFinderOut.Flid);
+			Assert.That(ownIntFinderOut.Flid, Is.EqualTo(551));
 
 			RangeIntMatcher rangeIntMatchOut = rangeIntFilterOut.Matcher as RangeIntMatcher;
 			Assert.That(rangeIntMatchOut, Is.Not.Null);
-			Assert.AreEqual(5, rangeIntMatchOut.Min);
-			Assert.AreEqual(23, rangeIntMatchOut.Max);
-			Assert.IsTrue(tssLabel.Equals(rangeIntMatchOut.Label));
+			Assert.That(rangeIntMatchOut.Min, Is.EqualTo(5));
+			Assert.That(rangeIntMatchOut.Max, Is.EqualTo(23));
+			Assert.That(tssLabel.Equals(rangeIntMatchOut.Label), Is.True);
 
 			NotEqualIntMatcher notEqualMatchOut = GetMatcher(andFilter, 1) as NotEqualIntMatcher;
 			Assert.That(notEqualMatchOut, Is.Not.Null);
-			Assert.AreEqual(77, notEqualMatchOut.NotEqualValue);
+			Assert.That(notEqualMatchOut.NotEqualValue, Is.EqualTo(77));
 
 			ExactMatcher exactMatchOut = GetMatcher(andFilter, 2) as ExactMatcher;
 			Assert.That(exactMatchOut, Is.Not.Null);
-			Assert.AreEqual("hello", exactMatchOut.Pattern.Pattern.Text);
+			Assert.That(exactMatchOut.Pattern.Pattern.Text, Is.EqualTo("hello"));
 
 			BeginMatcher beginMatchOut = GetMatcher(andFilter, 3) as BeginMatcher;
 			Assert.That(beginMatchOut, Is.Not.Null);
-			Assert.AreEqual("goodbye", beginMatchOut.Pattern.Pattern.Text);
+			Assert.That(beginMatchOut.Pattern.Pattern.Text, Is.EqualTo("goodbye"));
 
 			EndMatcher endMatchOut = GetMatcher(andFilter, 4) as EndMatcher;
 			Assert.That(endMatchOut, Is.Not.Null);
-			Assert.AreEqual("exit", endMatchOut.Pattern.Pattern.Text);
+			Assert.That(endMatchOut.Pattern.Pattern.Text, Is.EqualTo("exit"));
 
 			AnywhereMatcher anywhereMatchOut = GetMatcher(andFilter, 5) as AnywhereMatcher;
 			Assert.That(anywhereMatchOut, Is.Not.Null);
-			Assert.AreEqual("whatever", anywhereMatchOut.Pattern.Pattern.Text);
+			Assert.That(anywhereMatchOut.Pattern.Pattern.Text, Is.EqualTo("whatever"));
 
 			BlankMatcher blankMatchOut = GetMatcher(andFilter, 6) as BlankMatcher;
 			Assert.That(blankMatchOut, Is.Not.Null);
@@ -326,35 +326,35 @@ namespace SIL.FieldWorks.Filters
 			Assert.That(invertMatchOut, Is.Not.Null);
 
 			OwnMlPropFinder mlPropFinderOut = GetFinder(andFilter, 2) as OwnMlPropFinder;
-			Assert.AreEqual(m_sda, mlPropFinderOut.DataAccess);
-			Assert.AreEqual(788, mlPropFinderOut.Flid);
-			Assert.AreEqual(23, mlPropFinderOut.Ws);
+			Assert.That(mlPropFinderOut.DataAccess, Is.EqualTo(m_sda));
+			Assert.That(mlPropFinderOut.Flid, Is.EqualTo(788));
+			Assert.That(mlPropFinderOut.Ws, Is.EqualTo(23));
 
 			OwnMonoPropFinder monoPropFinderOut = GetFinder(andFilter, 3) as OwnMonoPropFinder;
-			Assert.AreEqual(m_sda, monoPropFinderOut.DataAccess);
-			Assert.AreEqual(954, monoPropFinderOut.Flid);
+			Assert.That(monoPropFinderOut.DataAccess, Is.EqualTo(m_sda));
+			Assert.That(monoPropFinderOut.Flid, Is.EqualTo(954));
 
 			OneIndirectMlPropFinder oneIndMlPropFinderOut =
 				GetFinder(andFilter, 4) as OneIndirectMlPropFinder;
-			Assert.AreEqual(m_sda, oneIndMlPropFinderOut.DataAccess);
-			Assert.AreEqual(221, oneIndMlPropFinderOut.FlidVec);
-			Assert.AreEqual(222, oneIndMlPropFinderOut.FlidString);
-			Assert.AreEqual(27, oneIndMlPropFinderOut.Ws);
+			Assert.That(oneIndMlPropFinderOut.DataAccess, Is.EqualTo(m_sda));
+			Assert.That(oneIndMlPropFinderOut.FlidVec, Is.EqualTo(221));
+			Assert.That(oneIndMlPropFinderOut.FlidString, Is.EqualTo(222));
+			Assert.That(oneIndMlPropFinderOut.Ws, Is.EqualTo(27));
 
 			MultiIndirectMlPropFinder mimlPropFinderOut =
 				GetFinder(andFilter, 5) as MultiIndirectMlPropFinder;
-			Assert.AreEqual(m_sda, mimlPropFinderOut.DataAccess);
-			Assert.AreEqual(444, mimlPropFinderOut.VecFlids[0]);
-			Assert.AreEqual(555, mimlPropFinderOut.VecFlids[1]);
-			Assert.AreEqual(666, mimlPropFinderOut.FlidString);
-			Assert.AreEqual(87, mimlPropFinderOut.Ws);
+			Assert.That(mimlPropFinderOut.DataAccess, Is.EqualTo(m_sda));
+			Assert.That(mimlPropFinderOut.VecFlids[0], Is.EqualTo(444));
+			Assert.That(mimlPropFinderOut.VecFlids[1], Is.EqualTo(555));
+			Assert.That(mimlPropFinderOut.FlidString, Is.EqualTo(666));
+			Assert.That(mimlPropFinderOut.Ws, Is.EqualTo(87));
 
 			OneIndirectAtomMlPropFinder oneIndAtomFinderOut =
 				GetFinder(andFilter, 6) as OneIndirectAtomMlPropFinder;
-			Assert.AreEqual(m_sda, oneIndAtomFinderOut.DataAccess);
-			Assert.AreEqual(543, oneIndAtomFinderOut.FlidAtom);
-			Assert.AreEqual(345, oneIndAtomFinderOut.FlidString);
-			Assert.AreEqual(43, oneIndAtomFinderOut.Ws);
+			Assert.That(oneIndAtomFinderOut.DataAccess, Is.EqualTo(m_sda));
+			Assert.That(oneIndAtomFinderOut.FlidAtom, Is.EqualTo(543));
+			Assert.That(oneIndAtomFinderOut.FlidString, Is.EqualTo(345));
+			Assert.That(oneIndAtomFinderOut.Ws, Is.EqualTo(43));
 
 			// 7, 8 are duplicates
 
@@ -363,8 +363,8 @@ namespace SIL.FieldWorks.Filters
 
 			ProblemAnnotationFilter pafOut = andFilter.Filters[10] as ProblemAnnotationFilter;
 			Assert.That(pafOut, Is.Not.Null);
-			Assert.AreEqual(5002, pafOut.ClassIds[0]);
-			Assert.AreEqual(5016, pafOut.ClassIds[1]);
+			Assert.That(pafOut.ClassIds[0], Is.EqualTo(5002));
+			Assert.That(pafOut.ClassIds[1], Is.EqualTo(5016));
 		}
 
 		[Test]
@@ -379,7 +379,7 @@ namespace SIL.FieldWorks.Filters
 			// And check all the pieces...
 			PropertyRecordSorter prsOut = DynamicLoader.RestoreObject(doc.DocumentElement) as PropertyRecordSorter;
 			prsOut.Cache = Cache;
-			Assert.AreEqual("longName", prsOut.PropertyName);
+			Assert.That(prsOut.PropertyName, Is.EqualTo("longName"));
 		}
 
 		[Test]
@@ -399,12 +399,12 @@ namespace SIL.FieldWorks.Filters
 			m_objectsToDispose.Add(sfCompOut);
 			sfCompOut.Cache = Cache;
 
-			Assert.IsTrue(sfCompOut.Finder is OwnMonoPropFinder);
-			Assert.IsTrue(sfCompOut.SubComparer is ReverseComparer);
-			Assert.IsTrue(sfCompOut.SortedFromEnd);
+			Assert.That(sfCompOut.Finder is OwnMonoPropFinder, Is.True);
+			Assert.That(sfCompOut.SubComparer is ReverseComparer, Is.True);
+			Assert.That(sfCompOut.SortedFromEnd, Is.True);
 
 			ReverseComparer rcOut = sfCompOut.SubComparer as ReverseComparer;
-			Assert.IsTrue(rcOut.SubComp is IntStringComparer);
+			Assert.That(rcOut.SubComp is IntStringComparer, Is.True);
 		}
 	}
 

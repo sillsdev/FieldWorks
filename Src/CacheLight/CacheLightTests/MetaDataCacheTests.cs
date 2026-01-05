@@ -362,7 +362,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void GetDstClsNameTest()
 		{
-			Assert.AreEqual("ClassL", m_metaDataCache.GetDstClsName(59005), "Wrong class name");
+			Assert.That(m_metaDataCache.GetDstClsName(59005), Is.EqualTo("ClassL"), "Wrong class name");
 		}
 
 		/// <summary>
@@ -371,7 +371,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void GetOwnClsNameTest()
 		{
-			Assert.AreEqual("ClassG", m_metaDataCache.GetOwnClsName(15068), "Wrong class name");
+			Assert.That(m_metaDataCache.GetOwnClsName(15068), Is.EqualTo("ClassG"), "Wrong class name");
 		}
 
 		/// <summary>
@@ -380,7 +380,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void GetOwnClsIdTest()
 		{
-			Assert.AreEqual(15, m_metaDataCache.GetOwnClsId(15068), "Wrong class implementor.");
+			Assert.That(m_metaDataCache.GetOwnClsId(15068), Is.EqualTo(15), "Wrong class implementor.");
 		}
 
 		/// <summary>
@@ -389,7 +389,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void GetDstClsIdTest()
 		{
-			Assert.AreEqual(49, m_metaDataCache.GetDstClsId(59003), "Wrong class Signature.");
+			Assert.That(m_metaDataCache.GetDstClsId(59003), Is.EqualTo(49), "Wrong class Signature.");
 		}
 
 		/// <summary>
@@ -415,32 +415,32 @@ namespace SIL.FieldWorks.CacheLightTests
 			{
 				m_metaDataCache.GetFieldIds(testFlidSize, flids);
 				ids = MarshalEx.NativeToArray<int>(flids, testFlidSize);
-				Assert.AreEqual(testFlidSize, ids.Length, "Wrong size of fields returned.");
+				Assert.That(ids.Length, Is.EqualTo(testFlidSize), "Wrong size of fields returned.");
 				foreach (var flid in ids)
-					Assert.IsTrue(flid > 0, "Wrong flid value: " + flid);
+					Assert.That(flid > 0, "Wrong flid value: " + flid, Is.True);
 			}
 			testFlidSize = flidSize;
 			using (var flids = MarshalEx.ArrayToNative<int>(testFlidSize))
 			{
 				m_metaDataCache.GetFieldIds(testFlidSize, flids);
 				ids = MarshalEx.NativeToArray<int>(flids, testFlidSize);
-				Assert.AreEqual(testFlidSize, ids.Length, "Wrong size of fields returned.");
+				Assert.That(ids.Length, Is.EqualTo(testFlidSize), "Wrong size of fields returned.");
 				foreach (var flid in ids)
-					Assert.IsTrue(flid > 0, "Wrong flid value: " + flid);
+					Assert.That(flid > 0, "Wrong flid value: " + flid, Is.True);
 			}
 			testFlidSize = flidSize + 1;
 			using (var flids = MarshalEx.ArrayToNative<int>(testFlidSize))
 			{
 				m_metaDataCache.GetFieldIds(testFlidSize, flids);
 				ids = MarshalEx.NativeToArray<int>(flids, testFlidSize);
-				Assert.AreEqual(testFlidSize, ids.Length, "Wrong size of fields returned.");
+				Assert.That(ids.Length, Is.EqualTo(testFlidSize), "Wrong size of fields returned.");
 				for (var iflid = 0; iflid < ids.Length; ++iflid)
 				{
 					var flid = ids[iflid];
 					if (iflid < ids.Length - 1)
-						Assert.IsTrue(flid > 0, "Wrong flid value: " + flid);
+						Assert.That(flid > 0, "Wrong flid value: " + flid, Is.True);
 					else
-						Assert.AreEqual(0, flid, "Wrong value for flid beyond actual length.");
+						Assert.That(flid, Is.EqualTo(0), "Wrong value for flid beyond actual length.");
 				}
 			}
 		}
@@ -451,7 +451,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void GetFieldNameTest()
 		{
-			Assert.AreEqual("MultiUnicodeProp12", m_metaDataCache.GetFieldName(2003));
+			Assert.That(m_metaDataCache.GetFieldName(2003), Is.EqualTo("MultiUnicodeProp12"));
 		}
 
 		/// <summary>
@@ -487,7 +487,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void GetFieldWsIsZeroTest()
 		{
-			Assert.AreEqual(0, m_metaDataCache.GetFieldWs(59003), "Writing system not zero.");
+			Assert.That(m_metaDataCache.GetFieldWs(59003), Is.EqualTo(0), "Writing system not zero.");
 		}
 
 		/// <summary>
@@ -499,35 +499,25 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void GetFieldTypeTest()
 		{
-			Assert.AreEqual(CellarPropertyType.Boolean, (CellarPropertyType)m_metaDataCache.GetFieldType(2027),
-				"Wrong field data type for Boolean data.");
+			Assert.That((CellarPropertyType)m_metaDataCache.GetFieldType(2027), Is.EqualTo(CellarPropertyType.Boolean), "Wrong field data type for Boolean data.");
 
-			Assert.AreEqual(CellarPropertyType.Integer, (CellarPropertyType)m_metaDataCache.GetFieldType(26002),
-				"Wrong field data type for Integer data.");
+			Assert.That((CellarPropertyType)m_metaDataCache.GetFieldType(26002), Is.EqualTo(CellarPropertyType.Integer), "Wrong field data type for Integer data.");
 
-			Assert.AreEqual(CellarPropertyType.Time, (CellarPropertyType)m_metaDataCache.GetFieldType(2005),
-				"Wrong field data type for Time data.");
+			Assert.That((CellarPropertyType)m_metaDataCache.GetFieldType(2005), Is.EqualTo(CellarPropertyType.Time), "Wrong field data type for Time data.");
 
-			Assert.AreEqual(CellarPropertyType.Guid, (CellarPropertyType)m_metaDataCache.GetFieldType(8002),
-				"Wrong field data type for Guid data.");
+			Assert.That((CellarPropertyType)m_metaDataCache.GetFieldType(8002), Is.EqualTo(CellarPropertyType.Guid), "Wrong field data type for Guid data.");
 
-			Assert.AreEqual(CellarPropertyType.GenDate, (CellarPropertyType)m_metaDataCache.GetFieldType(13004),
-				"Wrong field data type for GenDate data.");
+			Assert.That((CellarPropertyType)m_metaDataCache.GetFieldType(13004), Is.EqualTo(CellarPropertyType.GenDate), "Wrong field data type for GenDate data.");
 
-			Assert.AreEqual(CellarPropertyType.Binary, (CellarPropertyType)m_metaDataCache.GetFieldType(15002),
-				"Wrong field data type for Binary data.");
+			Assert.That((CellarPropertyType)m_metaDataCache.GetFieldType(15002), Is.EqualTo(CellarPropertyType.Binary), "Wrong field data type for Binary data.");
 
-			Assert.AreEqual(CellarPropertyType.String, (CellarPropertyType)m_metaDataCache.GetFieldType(97008),
-				"Wrong field data type for String data.");
+			Assert.That((CellarPropertyType)m_metaDataCache.GetFieldType(97008), Is.EqualTo(CellarPropertyType.String), "Wrong field data type for String data.");
 
-			Assert.AreEqual(CellarPropertyType.MultiString, (CellarPropertyType)m_metaDataCache.GetFieldType(97021),
-				"Wrong field data type for MultiString data.");
+			Assert.That((CellarPropertyType)m_metaDataCache.GetFieldType(97021), Is.EqualTo(CellarPropertyType.MultiString), "Wrong field data type for MultiString data.");
 
-			Assert.AreEqual(CellarPropertyType.Unicode, (CellarPropertyType)m_metaDataCache.GetFieldType(1001),
-				"Wrong field data type for Unicode data.");
+			Assert.That((CellarPropertyType)m_metaDataCache.GetFieldType(1001), Is.EqualTo(CellarPropertyType.Unicode), "Wrong field data type for Unicode data.");
 
-			Assert.AreEqual(CellarPropertyType.MultiUnicode, (CellarPropertyType)m_metaDataCache.GetFieldType(7001),
-				"Wrong field data type for MultiUnicode data.");
+			Assert.That((CellarPropertyType)m_metaDataCache.GetFieldType(7001), Is.EqualTo(CellarPropertyType.MultiUnicode), "Wrong field data type for MultiUnicode data.");
 		}
 
 		/// <summary>
@@ -538,23 +528,23 @@ namespace SIL.FieldWorks.CacheLightTests
 		{
 			// Exact match
 			bool isValid = m_metaDataCache.get_IsValidClass(59004, 0);
-			Assert.IsTrue(isValid, "Object of type BaseClass should be able to be assigned to a field whose signature is BaseClass");
+			Assert.That(isValid, Is.True, "Object of type BaseClass should be able to be assigned to a field whose signature is BaseClass");
 
 			// Prevent use of base class when specific subclass is expected
 			isValid = m_metaDataCache.get_IsValidClass(59003, 0);
-			Assert.IsFalse(isValid, "Object of type BaseClass should NOT be able to be assigned to a field whose signature is ClassB");
+			Assert.That(isValid, Is.False, "Object of type BaseClass should NOT be able to be assigned to a field whose signature is ClassB");
 
 			// Mismatch
 			isValid = m_metaDataCache.get_IsValidClass(59003, 45);
-			Assert.IsFalse(isValid, "Object of type ClassL2 should NOT be able to be assigned to a field whose signature is ClassB");
+			Assert.That(isValid, Is.False, "Object of type ClassL2 should NOT be able to be assigned to a field whose signature is ClassB");
 
 			// Allow subclass when base class is expected
 			isValid = m_metaDataCache.get_IsValidClass(59005, 45);
-			Assert.IsTrue(isValid, "Object of type ClassL2 should be able to be assigned to a field whose signature is ClassL");
+			Assert.That(isValid, Is.True, "Object of type ClassL2 should be able to be assigned to a field whose signature is ClassL");
 
 			// Prevent assignment of object to field that is expecting a basic type
 			isValid = m_metaDataCache.get_IsValidClass(28002, 97);
-			Assert.IsFalse(isValid, "Can put a ClassJ into a basic (Unicode) field?");
+			Assert.That(isValid, Is.False, "Can put a ClassJ into a basic (Unicode) field?");
 		}
 
 		/// <summary>
@@ -583,8 +573,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void GetClassNameTest()
 		{
-			Assert.AreEqual("ClassB", m_metaDataCache.GetClassName(49),
-				"Wrong class name for ClassB.");
+			Assert.That(m_metaDataCache.GetClassName(49), Is.EqualTo("ClassB"), "Wrong class name for ClassB.");
 		}
 
 		/// <summary>
@@ -593,8 +582,8 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void GetAbstractTest()
 		{
-			Assert.IsFalse(m_metaDataCache.GetAbstract(49), "ClassB is a concrete class.");
-			Assert.IsTrue(m_metaDataCache.GetAbstract(0), "BaseClass is an abstract class.");
+			Assert.That(m_metaDataCache.GetAbstract(49), Is.False, "ClassB is a concrete class.");
+			Assert.That(m_metaDataCache.GetAbstract(0), Is.True, "BaseClass is an abstract class.");
 		}
 
 		/// <summary>
@@ -603,7 +592,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void GetBaseClsIdTest()
 		{
-			Assert.AreEqual(7, m_metaDataCache.GetBaseClsId(49), "Wrong base class id for ClassB.");
+			Assert.That(m_metaDataCache.GetBaseClsId(49), Is.EqualTo(7), "Wrong base class id for ClassB.");
 		}
 
 		/// <summary>
@@ -621,8 +610,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void GetBaseClsNameTest()
 		{
-			Assert.AreEqual("ClassK", m_metaDataCache.GetBaseClsName(49),
-				"Wrong base class id for ClassB.");
+			Assert.That(m_metaDataCache.GetBaseClsName(49), Is.EqualTo("ClassK"), "Wrong base class id for ClassB.");
 		}
 
 		/// <summary>
@@ -648,7 +636,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			{
 				m_metaDataCache.GetClassIds(countAllClasses, clids);
 				ids = MarshalEx.NativeToArray<int>(clids, countAllClasses);
-				Assert.AreEqual(countAllClasses, ids.Length, "Wrong number of classes returned.");
+				Assert.That(ids.Length, Is.EqualTo(countAllClasses), "Wrong number of classes returned.");
 			}
 			countAllClasses = 2;
 			using (var clids = MarshalEx.ArrayToNative<int>(countAllClasses))
@@ -656,7 +644,7 @@ namespace SIL.FieldWorks.CacheLightTests
 				// Check ClassL (all of its direct subclasses).
 				m_metaDataCache.GetClassIds(countAllClasses, clids);
 				ids = MarshalEx.NativeToArray<int>(clids, 2);
-				Assert.AreEqual(countAllClasses, ids.Length, "Wrong number of classes returned.");
+				Assert.That(ids.Length, Is.EqualTo(countAllClasses), "Wrong number of classes returned.");
 			}
 		}
 
@@ -672,19 +660,19 @@ namespace SIL.FieldWorks.CacheLightTests
 				countAllFlidsOut = m_metaDataCache.GetFields(0, true, (int)CellarPropertyTypeFilter.All, 0, flids);
 				var countAllFlids = countAllFlidsOut;
 				countAllFlidsOut = m_metaDataCache.GetFields(0, true, (int)CellarPropertyTypeFilter.All, countAllFlidsOut, flids);
-				Assert.AreEqual(countAllFlids, countAllFlidsOut, "Wrong number of fields returned for BaseClass.");
+				Assert.That(countAllFlidsOut, Is.EqualTo(countAllFlids), "Wrong number of fields returned for BaseClass.");
 			}
 			using (var flids = MarshalEx.ArrayToNative<int>(500))
 			{
 				countAllFlidsOut = m_metaDataCache.GetFields(49, true, (int)CellarPropertyTypeFilter.All, 0, flids);
 				countAllFlidsOut = m_metaDataCache.GetFields(49, true, (int)CellarPropertyTypeFilter.All, countAllFlidsOut, flids);
-				Assert.AreEqual(8, countAllFlidsOut, "Wrong number of fields returned for 49.");
+				Assert.That(countAllFlidsOut, Is.EqualTo(8), "Wrong number of fields returned for 49.");
 			}
 			using (var flids = MarshalEx.ArrayToNative<int>(500))
 			{
 				countAllFlidsOut = m_metaDataCache.GetFields(49, true, (int)CellarPropertyTypeFilter.AllReference, 0, flids);
 				countAllFlidsOut = m_metaDataCache.GetFields(49, true, (int)CellarPropertyTypeFilter.AllReference, countAllFlidsOut, flids);
-				Assert.AreEqual(1, countAllFlidsOut, "Wrong number of fields returned for 49.");
+				Assert.That(countAllFlidsOut, Is.EqualTo(1), "Wrong number of fields returned for 49.");
 			}
 		}
 
@@ -720,7 +708,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		public void GetClassId_Valid()
 		{
 			var clid = m_metaDataCache.GetClassId("ClassD");
-			Assert.AreEqual(2, clid, "Wrong class Id.");
+			Assert.That(clid, Is.EqualTo(2), "Wrong class Id.");
 		}
 
 		/// <summary>
@@ -739,7 +727,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		public void GetFieldId_SansSuperClass()
 		{
 			var flid = m_metaDataCache.GetFieldId("ClassD", "MultiUnicodeProp12", false);
-			Assert.AreEqual(2003, flid, "Wrong field Id.");
+			Assert.That(flid, Is.EqualTo(2003), "Wrong field Id.");
 		}
 
 		/// <summary>
@@ -749,7 +737,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		public void GetFieldId_WithSuperClass()
 		{
 			var flid = m_metaDataCache.GetFieldId("ClassL2", "Whatever", true);
-			Assert.AreEqual(35001, flid, "Wrong field Id.");
+			Assert.That(flid, Is.EqualTo(35001), "Wrong field Id.");
 		}
 
 		/// <summary>
@@ -758,7 +746,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void GetFieldId_SansSuperClass_Nonexistent()
 		{
-			Assert.AreEqual(0, m_metaDataCache.GetFieldId("BaseClass", "Monkeyruski", false));
+			Assert.That(m_metaDataCache.GetFieldId("BaseClass", "Monkeyruski", false), Is.EqualTo(0));
 		}
 
 		/// <summary>
@@ -768,7 +756,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		public void GetFieldId_WithSuperClass_Nonexistent()
 		{
 			var flid = m_metaDataCache.GetFieldId("ClassL2", "Flurskuiwert", true);
-			Assert.AreEqual(0, flid, "Wrong field Id.");
+			Assert.That(flid, Is.EqualTo(0), "Wrong field Id.");
 		}
 
 		/// <summary>
@@ -778,7 +766,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		public void GetFieldId2_SansSuperClass()
 		{
 			var flid = m_metaDataCache.GetFieldId2(2, "MultiUnicodeProp12", false);
-			Assert.AreEqual(2003, flid, "Wrong field Id.");
+			Assert.That(flid, Is.EqualTo(2003), "Wrong field Id.");
 		}
 
 		/// <summary>
@@ -788,7 +776,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		public void GetFieldId2_WithSuperClass()
 		{
 			var flid = m_metaDataCache.GetFieldId2(45, "Whatever", true);
-			Assert.AreEqual(35001, flid, "Wrong field Id.");
+			Assert.That(flid, Is.EqualTo(35001), "Wrong field Id.");
 		}
 
 		/// <summary>
@@ -797,7 +785,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void GetFieldId2_SansSuperClass_Nonexistent()
 		{
-			Assert.AreEqual(0, m_metaDataCache.GetFieldId2(1, "MultiUnicodeProp12", false));
+			Assert.That(m_metaDataCache.GetFieldId2(1, "MultiUnicodeProp12", false), Is.EqualTo(0));
 		}
 
 		/// <summary>
@@ -806,7 +794,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void GetFieldId2_WithSuperClass_Nonexistent()
 		{
-			Assert.AreEqual(0, m_metaDataCache.GetFieldId2(45, "MultiUnicodeProp12", true));
+			Assert.That(m_metaDataCache.GetFieldId2(45, "MultiUnicodeProp12", true), Is.EqualTo(0));
 		}
 
 		/// <summary>
@@ -820,7 +808,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			{
 				// Check ClassB.
 				m_metaDataCache.GetDirectSubclasses(45, 10, out countDirectSubclasses, clids);
-				Assert.AreEqual(0, countDirectSubclasses, "Wrong number of subclasses returned.");
+				Assert.That(countDirectSubclasses, Is.EqualTo(0), "Wrong number of subclasses returned.");
 			}
 		}
 
@@ -835,15 +823,15 @@ namespace SIL.FieldWorks.CacheLightTests
 			{
 				// Check ClassL (all of its direct subclasses).
 				m_metaDataCache.GetDirectSubclasses(35, 10, out countDirectSubclasses, clids);
-				Assert.AreEqual(2, countDirectSubclasses, "Wrong number of subclasses returned.");
+				Assert.That(countDirectSubclasses, Is.EqualTo(2), "Wrong number of subclasses returned.");
 				var ids = MarshalEx.NativeToArray<int>(clids, 10);
 				for (var i = 0; i < ids.Length; ++i)
 				{
 					var clid = ids[i];
 					if (i < 2)
-						Assert.IsTrue(((clid == 28) || (clid == 45)), "Clid should be 28 or 49 for direct subclasses of ClassL.");
+						Assert.That(((clid == 28) || (clid == 45)), Is.True, "Clid should be 28 or 49 for direct subclasses of ClassL.");
 					else
-						Assert.AreEqual(0, clid, "Clid should be 0 from here on.");
+						Assert.That(clid, Is.EqualTo(0), "Clid should be 0 from here on.");
 				}
 			}
 		}
@@ -856,7 +844,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		{
 			int countAllClasses;
 			m_metaDataCache.GetDirectSubclasses(35, 0, out countAllClasses, null);
-			Assert.AreEqual(2, countAllClasses, "Wrong number of subclasses returned.");
+			Assert.That(countAllClasses, Is.EqualTo(2), "Wrong number of subclasses returned.");
 		}
 
 		/// <summary>
@@ -870,7 +858,7 @@ namespace SIL.FieldWorks.CacheLightTests
 				// Check ClassC.
 				int countAllSubclasses;
 				m_metaDataCache.GetAllSubclasses(26, 10, out countAllSubclasses, clids);
-				Assert.AreEqual(1, countAllSubclasses, "Wrong number of subclasses returned.");
+				Assert.That(countAllSubclasses, Is.EqualTo(1), "Wrong number of subclasses returned.");
 			}
 		}
 
@@ -885,7 +873,7 @@ namespace SIL.FieldWorks.CacheLightTests
 				// Check ClassL (all of its direct subclasses).
 				int countAllSubclasses;
 				m_metaDataCache.GetAllSubclasses(35, 10, out countAllSubclasses, clids);
-				Assert.AreEqual(3, countAllSubclasses, "Wrong number of subclasses returned.");
+				Assert.That(countAllSubclasses, Is.EqualTo(3), "Wrong number of subclasses returned.");
 			}
 		}
 
@@ -901,7 +889,7 @@ namespace SIL.FieldWorks.CacheLightTests
 				// Check ClassL (but get it and only 1 of its subclasses).
 				int countAllSubclasses;
 				m_metaDataCache.GetAllSubclasses(35, 2, out countAllSubclasses, clids);
-				Assert.AreEqual(2, countAllSubclasses, "Wrong number of subclasses returned.");
+				Assert.That(countAllSubclasses, Is.EqualTo(2), "Wrong number of subclasses returned.");
 			}
 		}
 
@@ -917,7 +905,7 @@ namespace SIL.FieldWorks.CacheLightTests
 				// Check BaseClass.
 				int countAllSubclasses;
 				m_metaDataCache.GetAllSubclasses(0, countAllClasses, out countAllSubclasses, clids);
-				Assert.AreEqual(countAllClasses, countAllSubclasses, "Wrong number of subclasses returned.");
+				Assert.That(countAllSubclasses, Is.EqualTo(countAllClasses), "Wrong number of subclasses returned.");
 			}
 		}
 	}
@@ -945,18 +933,16 @@ namespace SIL.FieldWorks.CacheLightTests
 			m_metaDataCache.AddVirtualProp(className, fieldName, flid, (int)type);
 			// Check its flid.
 			var newFlid = m_metaDataCache.GetFieldId(className, fieldName, false);
-			Assert.AreEqual(flid, newFlid, "Wrong field Id.");
+			Assert.That(newFlid, Is.EqualTo(flid), "Wrong field Id.");
 			// Check its data type.
-			Assert.AreEqual(type, (CellarPropertyType)m_metaDataCache.GetFieldType(flid), "Wrong field type.");
+			Assert.That((CellarPropertyType)m_metaDataCache.GetFieldType(flid), Is.EqualTo(type), "Wrong field type.");
 			// Check to see it is virtual.
 			var isVirtual = m_metaDataCache.get_IsVirtual(flid);
-			Assert.IsTrue(isVirtual, "Wrong field virtual setting.");
+			Assert.That(isVirtual, Is.True, "Wrong field virtual setting.");
 			// Check the clid it was supposed to be placed in.
 			var clid = m_metaDataCache.GetClassId(className);
-			Assert.AreEqual(clid, m_metaDataCache.GetOwnClsId(flid),
-				"Wrong clid for new virtual field.");
-			Assert.AreEqual(fieldName, m_metaDataCache.GetFieldName(flid),
-				"Wrong field name for new virtual field.");
+			Assert.That(m_metaDataCache.GetOwnClsId(flid), Is.EqualTo(clid), "Wrong clid for new virtual field.");
+			Assert.That(m_metaDataCache.GetFieldName(flid), Is.EqualTo(fieldName), "Wrong field name for new virtual field.");
 		}
 
 		/// <summary>
@@ -966,7 +952,7 @@ namespace SIL.FieldWorks.CacheLightTests
 		[Test]
 		public void get_IsVirtualTest()
 		{
-			Assert.IsFalse(m_metaDataCache.get_IsVirtual(1001), "Wrong field virtual setting.");
+			Assert.That(m_metaDataCache.get_IsVirtual(1001), Is.False, "Wrong field virtual setting.");
 		}
 
 		/// <summary>

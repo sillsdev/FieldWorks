@@ -21,6 +21,7 @@ using SIL.Keyboarding;
 using SIL.PlatformUtilities;
 using SIL.Reporting;
 using SIL.LCModel.Utils;
+using LgCharRenderProps = SIL.LCModel.Core.KernelInterfaces.LgCharRenderProps;
 using SIL.Windows.Forms.Keyboarding;
 using SIL.LCModel;
 
@@ -1022,7 +1023,7 @@ namespace SIL.FieldWorks.Common.RootSites
 						// state it gets updated to by the complex delete, before we try to insert, so here we split this
 						// into two undo tasks. Eventually we merge the two units of work so they look like a single Undo task.
 						if (fWasComplex && rootb.DataAccess.GetActionHandler() != null)
-							rootb.DataAccess.GetActionHandler().BreakUndoTask(Resources.ksUndoTyping, Resources.ksRedoTyping);
+							rootb.DataAccess.GetActionHandler().BreakUndoTask(Properties.Resources.ksUndoTyping, Properties.Resources.ksRedoTyping);
 						CallOnTyping(input, modifiers);
 						if (fWasComplex && rootb.DataAccess.GetActionHandler() != null)
 							MergeLastTwoUnitsOfWork();
@@ -1087,7 +1088,7 @@ namespace SIL.FieldWorks.Common.RootSites
 					{
 						if (!(ex1 is ArgumentOutOfRangeException))
 							continue;
-						MessageBox.Show(ex1.Message, Resources.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						MessageBox.Show(ex1.Message, Properties.Resources.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 						Callbacks.EditedRootBox.Reconstruct();	// Restore the actual value visually.
 						fNotified = true;
 						break;
@@ -3199,7 +3200,7 @@ namespace SIL.FieldWorks.Common.RootSites
 			}
 			catch (ExternalException e)
 			{
-				MessageBox.Show(Resources.ksCopyFailed+e.Message);
+				MessageBox.Show(Properties.Resources.ksCopyFailed + e.Message);
 			}
 		}
 
@@ -3278,12 +3279,12 @@ namespace SIL.FieldWorks.Common.RootSites
 				// The copy succeeded (otherwise we would have got an exception and wouldn't be
 				// here), now delete the range of text that has been copied to the
 				// clipboard.
-				DeleteSelectionTask(Resources.ksUndoCut, Resources.ksRedoCut);
+				DeleteSelectionTask(Properties.Resources.ksUndoCut, Properties.Resources.ksRedoCut);
 				return true;
 			}
 			catch (Exception ex)
 			{
-				MessageBox.Show(string.Format(Resources.ksCutFailed, ex.Message), Resources.ksCutFailedCaption,
+				MessageBox.Show(string.Format(Properties.Resources.ksCutFailed, ex.Message), Properties.Resources.ksCutFailedCaption,
 					MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				return false;
 			}
