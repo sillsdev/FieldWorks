@@ -6,9 +6,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using ECInterfaces;
+using SilEncConverters40;
 using SIL.LCModel;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
@@ -458,6 +460,7 @@ namespace ParatextImport
 			IEncConverter converter = null;
 			if (!string.IsNullOrEmpty(ws.LegacyMapping))
 			{
+				EnsureEncConvertersInitialized();
 				try
 				{
 					converter = m_encConverters[ws.LegacyMapping];
@@ -478,6 +481,24 @@ namespace ParatextImport
 			}
 			m_wsIdToConverterMap[wsId] = converter;
 			return converter;
+		}
+
+		private void EnsureEncConvertersInitialized()
+		{
+			if (m_encConverters != null)
+				return;
+
+			try
+			{
+				m_encConverters = new EncConverters();
+			}
+			catch (DirectoryNotFoundException ex)
+			{
+				string message = string.Format(ScriptureUtilsException.GetResourceString(
+					"kstidEncConverterInitError"), ex.Message);
+				throw new EncodingConverterException(message,
+					"/Beginning_Tasks/Import_Standard_Format/Unable_to_Import/Encoding_converter_not_found.htm");
+			}
 		}
 
 		/// ------------------------------------------------------------------------------------

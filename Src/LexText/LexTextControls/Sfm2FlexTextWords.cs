@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 using Sfm2Xml;
+using ECInterfaces;
 using SilEncConverters40;
 using SIL.LCModel.Core.WritingSystems;
 
@@ -126,7 +127,7 @@ namespace SIL.FieldWorks.LexText.Controls
 	public class Sfm2FlexTextBase<TMapping> where TMapping : Sfm2FlexTextMappingBase
 	{
 		protected Dictionary<string, TMapping> m_mappings = new Dictionary<string, TMapping>();
-		protected EncConverters m_encConverters;
+		protected IEncConverters m_encConverters;
 		protected ByteReader m_reader;
 		protected WritingSystemManager m_wsManager;
 		protected XmlWriter m_writer;
@@ -139,6 +140,12 @@ namespace SIL.FieldWorks.LexText.Controls
 		public Sfm2FlexTextBase(IList<string> docStructure)
 		{
 			m_docStructure = docStructure;
+		}
+
+		protected Sfm2FlexTextBase(IList<string> docStructure, IEncConverters encConverters)
+			: this(docStructure)
+		{
+			m_encConverters = encConverters;
 		}
 
 		public byte[] Convert(ByteReader reader, List<TMapping> mappings, WritingSystemManager wsManager)
