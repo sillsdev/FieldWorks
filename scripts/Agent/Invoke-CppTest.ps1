@@ -3,11 +3,9 @@
     Build and/or run native C++ test executables.
 
 .DESCRIPTION
-    Container-aware script for building and running native C++ tests.
+    Script for building and running native C++ tests.
     Supports both MSBuild (new vcxproj) and nmake (legacy makefile) builds.
     Auto-approvable by Copilot agents.
-    When running inside a container, the script clones the worktree to a container-local path to avoid
-    bind-mount file execution issues; host and container builds must not share the same folder.
 
 .PARAMETER Action
     What to do: Build, Run, or BuildAndRun (default).
@@ -25,14 +23,13 @@
     Path to the worktree root. Defaults to current directory.
 
 .PARAMETER UseLocalClone
-    When running inside a container, copy the worktree into a container-local path and build/run there
-    to avoid bind-mount filesystem issues. Enabled by default inside containers.
+    Deprecated. Container execution is no longer supported; native tests always run locally.
 
 .PARAMETER LocalCloneRoot
-    Root directory for the container-local clone (default: C:\fw-local).
+    Deprecated. Container execution is no longer supported.
 
 .PARAMETER SyncLocalClone
-    Force a resync of the container-local clone from the bind-mounted worktree before building.
+    Deprecated. Container execution is no longer supported.
 
 .EXAMPLE
     .\Invoke-CppTest.ps1 -TestProject TestGeneric
@@ -92,59 +89,9 @@ if (-not (Test-Path $helpersPath)) {
 }
 Import-Module $helpersPath -Force
 
-$insideContainer = Test-InsideContainer
-if ($insideContainer) {
-    $env:DOTNET_RUNNING_IN_CONTAINER = 'true'
-}
-else {
-    Remove-Item Env:DOTNET_RUNNING_IN_CONTAINER -ErrorAction SilentlyContinue
-}
-
-# =============================================================================
-# Docker Container Auto-Detection for Worktrees
-# =============================================================================
-
-if (-not $NoDocker -and -not $insideContainer) {
-    $agentNum = Get-WorktreeAgentNumber
-    if ($null -ne $agentNum) {
-        $containerName = "fw-agent-$agentNum"
-        if (Test-DockerContainerRunning -ContainerName $containerName) {
-            # Build arguments for container execution
-            # We need to reconstruct the arguments
-            $containerArgs = New-ContainerArgumentString -Parameters @{
-                Action = $Action
-                TestProject = $TestProject
-                Configuration = $Configuration
-                BuildSystem = $BuildSystem
-                UseLocalClone = $UseLocalClone
-                LocalCloneRoot = $LocalCloneRoot
-                SyncLocalClone = $SyncLocalClone
-                TimeoutSeconds = $TimeoutSeconds
-                TestArguments = $TestArguments
-                LogPath = $LogPath
-            } -Defaults @{
-                Action = 'BuildAndRun'
-                TestProject = 'TestGeneric'
-                Configuration = 'Debug'
-                BuildSystem = 'MSBuild'
-                UseLocalClone = $true
-                LocalCloneRoot = 'C:\fw-local'
-                SyncLocalClone = $false
-                TimeoutSeconds = 300
-                TestArguments = $null
-                LogPath = $null
-            }
-
-            Invoke-InContainer -ScriptName "scripts/Agent/Invoke-CppTest.ps1" -Arguments $containerArgs -AgentNumber $agentNum
-            exit $LASTEXITCODE
-        }
-        else {
-            Write-Host "[WARN] Worktree agent-$agentNum detected but container '$containerName' is not running" -ForegroundColor Yellow
-            Write-Host "   Running tests locally (use 'scripts/spin-up-agents.ps1' to start containers)" -ForegroundColor Yellow
-            Write-Host ""
-        }
-    }
-}
+# Container execution has been removed; native tests always run locally.
+$insideContainer = $false
+Remove-Item Env:DOTNET_RUNNING_IN_CONTAINER -ErrorAction SilentlyContinue
 
 # =============================================================================
 # Environment Setup
@@ -174,38 +121,6 @@ if (-not $WorktreePath) {
 }
 $WorktreePath = (Resolve-Path $WorktreePath).Path
 $sourceWorktreePath = $WorktreePath
-
-# Use a container-local clone to avoid bind-mount execution issues
-if ($insideContainer -and $UseLocalClone) {
-    $agentNum = Get-WorktreeAgentNumber
-    $cloneName = if ($null -ne $agentNum) { "agent-$agentNum" } else { Split-Path $WorktreePath -Leaf }
-    $localClonePath = Join-Path $LocalCloneRoot $cloneName
-
-    Write-Host "[INFO] Using container-local clone for native tests: $localClonePath" -ForegroundColor Yellow
-    Write-Host "[INFO] Host and container builds must not share the same folder; container runs use the local clone." -ForegroundColor Yellow
-    $needsSync = $SyncLocalClone -or -not (Test-Path $localClonePath)
-    if ($needsSync) {
-        if (-not (Test-Path $localClonePath)) {
-            New-Item -Path $localClonePath -ItemType Directory -Force | Out-Null
-        }
-
-        Write-Host "[INFO] Syncing worktree to container-local path (excluding Output/Obj/.git/packages/.cache/.serena)..." -ForegroundColor Yellow
-        $robocopyArgs = @(
-            $WorktreePath,
-            $localClonePath,
-            '/MIR',
-            '/XD', 'Output', 'Obj', '.git', 'packages', '.cache', '.serena'
-        )
-        robocopy @robocopyArgs | Out-Null
-        $rc = $LASTEXITCODE
-        if ($rc -gt 7) {
-            throw "Robocopy sync failed with exit code $rc"
-        }
-        Write-Host "[OK] Local clone sync complete." -ForegroundColor Green
-    }
-
-    $WorktreePath = $localClonePath
-}
 
 # Track both the original mount path and the active path (local clone when enabled)
 $activeWorktreePath = $WorktreePath
@@ -306,13 +221,8 @@ function Ensure-TestViewsPrerequisites {
 }
 
 function Sync-ContainerViewsAutopch {
-    if (-not $insideContainer) { return }
-    $containerViewsDir = Join-Path (Join-Path 'C:\Temp\Obj' $Configuration) "Views\autopch"
-    if (-not (Test-Path $containerViewsDir)) { return }
-    $worktreeViewsDir = Join-Path $WorktreePath "Obj\$Configuration\Views\autopch"
-    New-Item -Path $worktreeViewsDir -ItemType Directory -Force | Out-Null
-    Write-Host "[INFO] Syncing Views autopch objects from container Obj to worktree Obj..." -ForegroundColor Yellow
-    Copy-Item -Path (Join-Path $containerViewsDir '*') -Destination $worktreeViewsDir -Recurse -Force
+    # No-op: container execution has been removed.
+    return
 }
 
 function Invoke-Build {

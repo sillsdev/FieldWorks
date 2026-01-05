@@ -247,8 +247,15 @@ try {
         Write-Host "  vstest.console.exe $($vstestArgs -join ' ')" -ForegroundColor DarkGray
         Write-Host ""
 
-        $vstestOutput = & $vstestPath $vstestArgs 2>&1 | Tee-Object -Variable testOutput
-        $script:testExitCode = $LASTEXITCODE
+        $previousEap = $ErrorActionPreference
+        $ErrorActionPreference = 'Continue'
+        try {
+            $vstestOutput = & $vstestPath $vstestArgs 2>&1 | Tee-Object -Variable testOutput
+            $script:testExitCode = $LASTEXITCODE
+        }
+        finally {
+            $ErrorActionPreference = $previousEap
+        }
 
         if ($script:testExitCode -ne 0) {
             $outputText = ($testOutput | Out-String)
