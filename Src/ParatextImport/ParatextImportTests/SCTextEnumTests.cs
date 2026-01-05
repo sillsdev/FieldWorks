@@ -9,7 +9,7 @@ using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
-using Rhino.Mocks;
+using Moq;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
@@ -1052,8 +1052,9 @@ namespace ParatextImport
 			// Save settings before enumerating, which will get the styles hooked up in the mapping list
 			m_settings.SaveSettings();
 
-			m_converters = MockRepository.GenerateStub<IEncConverters>();
-			m_converters.Stub(x => x["UPPERCASE"]).Return(new DummyEncConverter());
+			var mockConverters = new Mock<IEncConverters>();
+			mockConverters.Setup(x => x["UPPERCASE"]).Returns(new DummyEncConverter());
+			m_converters = mockConverters.Object;
 			ISCTextEnum textEnum = GetTextEnum(ImportDomain.Main,
 				new ScrReference(40, 0, 0, ScrVers.English),
 				new ScrReference(40, 1, 2, ScrVers.English));
@@ -1168,8 +1169,9 @@ namespace ParatextImport
 			// Save settings before enumerating, which will get the styles hooked up in the mapping list
 			m_settings.SaveSettings();
 
-			m_converters = MockRepository.GenerateStub<IEncConverters>();
-			m_converters.Stub(x => x["UPPERCASE"]).Return(new DummyEncConverter());
+			var mockConverters = new Mock<IEncConverters>();
+			mockConverters.Setup(x => x["UPPERCASE"]).Returns(new DummyEncConverter());
+			m_converters = mockConverters.Object;
 			ISCTextEnum textEnum = GetTextEnum(ImportDomain.Main,
 				new ScrReference(40, 0, 0, ScrVers.English),
 				new ScrReference(40, 1, 2, ScrVers.English));
@@ -1236,8 +1238,9 @@ namespace ParatextImport
 			// Save settings before enumerating, which will get the styles hooked up in the mapping list
 			m_settings.SaveSettings();
 
-			m_converters = MockRepository.GenerateStub<IEncConverters>();
-			m_converters.Stub(x => x["UPPERCASE"]).Return(new DummyEncConverter());
+			var mockConverters = new Mock<IEncConverters>();
+			mockConverters.Setup(x => x["UPPERCASE"]).Returns(new DummyEncConverter());
+			m_converters = mockConverters.Object;
 			ISCTextEnum textEnum = GetTextEnum(ImportDomain.BackTrans,
 				new ScrReference(40, 0, 0, ScrVers.English),
 				new ScrReference(40, 1, 2, ScrVers.English));

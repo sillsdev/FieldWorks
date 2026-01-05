@@ -105,8 +105,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = MockRepository.GenerateStub<Mediator>();
-			respellUndoaction.DoIt(mediator);
+			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
+			respellUndoaction.DoIt(m_mediator);
 
 			Assert.That(para.Contents.Text, Is.EqualTo(ksParaText.Replace(ksWordToReplace, ksNewWord)));
 			Assert.That(m_actionHandler.UndoableSequenceCount, Is.EqualTo(2));
@@ -128,8 +128,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = MockRepository.GenerateStub<Mediator>();
-			respellUndoaction.DoIt(mediator);
+			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
+			respellUndoaction.DoIt(m_mediator);
 
 			Assert.That(para.Contents.Text, Is.EqualTo(ksParaText.Replace(ksWordToReplace, ksNewWord)));
 			Assert.That(m_actionHandler.UndoableSequenceCount, Is.EqualTo(2));
@@ -155,8 +155,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.CopyAnalyses = true; // in the dialog this is always true?
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = MockRepository.GenerateStub<Mediator>();
-			respellUndoaction.DoIt(mediator);
+			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
+			respellUndoaction.DoIt(m_mediator);
 
 			Assert.That(para.SegmentsOS[0].AnalysesRS[2].Analysis.MorphBundlesOS.Count, Is.EqualTo(0), "Unexpected morph bundle contents for 'be'");
 			Assert.That(para.SegmentsOS[0].AnalysesRS[3].Analysis.MorphBundlesOS.Count, Is.EqualTo(2), "Wrong morph bundle count for 'multimorphemic'");
@@ -187,8 +187,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = MockRepository.GenerateStub<Mediator>();
-			respellUndoaction.DoIt(mediator);
+			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
+			respellUndoaction.DoIt(m_mediator);
 
 			Assert.That(para.Contents.Text, Is.EqualTo(ksParaText.Replace(ksWordToReplace, ksNewWord)));
 			Assert.That(m_actionHandler.UndoableSequenceCount, Is.EqualTo(2));
@@ -216,8 +216,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = MockRepository.GenerateStub<Mediator>();
-			respellUndoaction.DoIt(mediator);
+			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
+			respellUndoaction.DoIt(m_mediator);
 
 			Assert.That(para.Contents.Text, Is.EqualTo(ksParaText.Replace(ksWordToReplace, ksNewWord)));
 			Assert.That(para.SegmentsOS[0].AnalysesRS[0] is IWfiGloss, Is.True);
@@ -256,8 +256,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = MockRepository.GenerateStub<Mediator>();
-			respellUndoaction.DoIt(mediator);
+			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
+			respellUndoaction.DoIt(m_mediator);
 
 			Assert.That(para.Contents.Text, Is.EqualTo(ksParaText.Replace(ksWordToReplace, ksNewWord)));
 			Assert.That(para.SegmentsOS[0].AnalysesRS[0] is IWfiGloss, Is.True);
@@ -310,8 +310,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.PreserveCase = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			Mediator mediator = MockRepository.GenerateStub<Mediator>();
-			respellUndoaction.DoIt(mediator);
+			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
+			respellUndoaction.DoIt(m_mediator);
 
 			Assert.That(para.Contents.Text, Is.EqualTo(ksParaText.Replace(ksWordToReplace, ksNewWord)));
 			Assert.That(m_actionHandler.UndoableSequenceCount, Is.EqualTo(2));
