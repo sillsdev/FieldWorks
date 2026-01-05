@@ -24,6 +24,13 @@ FieldWorks is **Windows-first** and **x64-only**. Use the repo scripts so build 
 - Avoid ad-hoc `msbuild`/`dotnet build` invocations unless you are explicitly debugging build infrastructure.
 - Do not change COM/registry behavior without an explicit plan and tests.
 
+## Warnings policy
+- Treat *compiler* warnings as errors by default (fix warnings; don’t suppress them).
+- Keep warning output **visible**. Avoid “make it quiet” changes that hide warnings without resolving the cause.
+- Some MSBuild warnings are expected today due to external dependencies (notably `MSB3277`/`MSB3243` assembly version conflicts). These warnings are documented as informational in `Directory.Build.props`.
+	- Do **not** attempt to suppress these with warning filters; if the dependency landscape changes, update the documentation and reassess.
+- Other MSBuild warnings (for example `MSB3245`/`MSB3246` unresolved references / bad images) are **actionable**: fix the underlying reference or generation issue rather than suppressing the warning.
+
 ## Why build.ps1
 FieldWorks uses an MSBuild traversal (`FieldWorks.proj`) with ordered phases.
 
@@ -53,3 +60,6 @@ Prefer re-running `.\build.ps1` first (it performs cleanup needed for this repo)
 - Traversal order: `FieldWorks.proj`
 - Build infrastructure: `Build/`
 - Tests: `.github/instructions/testing.instructions.md`
+
+## CLARIFICATIONS_NEEDED
+- Confirm whether any MSBuild warning codes other than `MSB3277`/`MSB3243` are considered acceptable, and under what conditions.

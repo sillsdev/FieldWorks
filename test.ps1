@@ -213,11 +213,18 @@ try {
         # Build VSTest Arguments
         # =============================================================================
 
+        $resultsDir = Join-Path $outputDir "TestResults"
+        if (-not (Test-Path $resultsDir)) {
+            New-Item -Path $resultsDir -ItemType Directory -Force | Out-Null
+        }
+
+        $runSettingsPath = Join-Path $PSScriptRoot "Test.runsettings"
+
         $vstestArgs = @()
         $vstestArgs += $testDlls
         $vstestArgs += "/Platform:x64"
-        $vstestArgs += "/Settings:`"$PSScriptRoot\Test.runsettings`""
-        $vstestArgs += "/ResultsDirectory:`"$outputDir\TestResults`""
+        $vstestArgs += "/Settings:$runSettingsPath"
+        $vstestArgs += "/ResultsDirectory:$resultsDir"
 
         # Logger configuration - verbosity goes with the console logger
         $verbosityMap = @{
@@ -231,7 +238,7 @@ try {
         $vstestArgs += "/Logger:console;verbosity=$vstestVerbosity"
 
         if ($TestFilter) {
-            $vstestArgs += "/TestCaseFilter:`"$TestFilter`""
+            $vstestArgs += "/TestCaseFilter:$TestFilter"
         }
 
         if ($ListTests) {
@@ -255,6 +262,15 @@ try {
         }
         finally {
             $ErrorActionPreference = $previousEap
+        }
+
+        $vstestLogPath = Join-Path $resultsDir "vstest.console.log"
+        try {
+            $testOutput | Out-File -FilePath $vstestLogPath -Encoding UTF8
+            Write-Host "VSTest output log: $vstestLogPath" -ForegroundColor Gray
+        }
+        catch {
+            Write-Host "[WARN] Failed to write VSTest output log to $vstestLogPath" -ForegroundColor Yellow
         }
 
         if ($script:testExitCode -ne 0) {

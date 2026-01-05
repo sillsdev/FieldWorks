@@ -14,12 +14,12 @@
 ## Phase 2: Foundational Implementation (CI/Build)
 *Goal: Replace the legacy NUnit runner with VSTest in the build system (User Story 1).*
 
-- [x] T004 [US1] Modify `Build/FieldWorks.targets` to remove the legacy `<NUnit3>` task invocation.
-- [x] T005 [US1] Modify `Build/FieldWorks.targets` to add `Exec` task invoking `vstest.console.exe`.
-- [x] T006 [US1] Implement logic in `FieldWorks.targets` to translate NUnit category filters to VSTest `/TestCaseFilter` syntax.
-- [x] T007 [US1] Configure VSTest invocation to output TRX results to `Output/$(Configuration)/TestResults/`.
-- [x] T008 [US1] Add support for optional `-Coverage` switch in `FieldWorks.targets` (passing `/EnableCodeCoverage` to VSTest).
-- [x] T009 [US1] Verify traversal build order is preserved and tests execute in parallel.
+- [x] T004 [US1] Remove the legacy NUnit runner invocation from supported build/test entrypoints.
+- [x] T005 [US1] Invoke `vstest.console.exe` for managed tests via `test.ps1`.
+- [x] T006 [US1] Translate NUnit category filters to VSTest `/TestCaseFilter` syntax in `test.ps1`.
+- [x] T007 [US1] Output TRX results to `Output/<Configuration>/TestResults/`.
+- [x] T008 [US1] Support optional coverage (`/EnableCodeCoverage`) via a `test.ps1` switch.
+- [x] T009 [US1] Preserve traversal build ordering; allow parallel test execution.
 
 ## Phase 3: VS Code Integration
 *Goal: Ensure tests are discoverable and runnable in VS Code (User Story 2).*
@@ -180,6 +180,11 @@
       - **Root cause**: Hardcoded path to main repo instead of worktree path
       - **Pre-existing**: Path is not dynamically resolved
 
+- [ ] T061 [Env] EncConverters repository path not worktree-safe
+      - Symptom: many tests fail in setup with `DirectoryNotFoundException` for `...DistFiles\SIL\Repository\mappingRegistry.xml`
+      - Affects (at least): FwCoreDlgsTests, LexTextControlsTests, ITextDllTests, ParatextImportTests
+      - **Goal**: make the repository path resolve relative to the current worktree (or ensure the expected repository folder exists before constructing `EncConverters`)
+
 ##### Test Assertion Failures (Pre-existing Logic Bugs)
 - [ ] T047 [Logic] DetailControlsTests (5 failures)
       - Assertion failures: `Expected: 1 But was: 0` in multiple tests
@@ -197,26 +202,29 @@
       - **Root cause**: Test setup doesn't properly initialize editing helper
       - **Pre-existing**: Null check missing or test setup incomplete
 
-- [ ] T050 [Logic] ParatextImportTests (105 failures)
+- [x] T049 [Logic] FrameworkTests now passes (0 failures)
+      - Latest run: 27 passed
+
+- [ ] T050 [Logic] ParatextImportTests (184 failures)
       - Assertion failures: `Subdifferences should have been created. Expected: greater than 2 But was: 0`
       - **Root cause**: Import diff logic not generating expected subdifferences
       - **Pre-existing**: May be test data or logic regression
 
-- [ ] T051 [Logic] ITextDllTests (5 failures)
+- [ ] T051 [Logic] ITextDllTests (1 failure)
       - Various test assertion failures
       - **Pre-existing**: Need individual analysis
 
-- [ ] T052 [Logic] LexTextControlsTests (1 failure)
+- [ ] T052 [Logic] LexTextControlsTests (10 failures)
       - Test assertion failure
       - **Pre-existing**: Need individual analysis
 
-- [ ] T053 [Logic] ScriptureUtilsTests (3 failures)
+- [ ] T053 [Logic] ScriptureUtilsTests (2 failures)
       - Test assertion failures
       - **Pre-existing**: Need individual analysis
 
-- [ ] T054 [Logic] xWorksTests (12 failures)
+- [ ] T054 [Logic] xWorksTests (10 failures)
       - Various test assertion failures
-      - **Pre-existing**: Need individual analysis; 1168 tests pass
+      - **Pre-existing**: Need individual analysis; 1170 tests pass
 
 #### Native C++ Test Issues (Pre-existing)
 - [x] T022 [Native] Fix TestViews.exe crash (0xC0000005 access violation)
@@ -228,29 +236,37 @@
 | Test DLL | Passed | Failed | Skipped | Status |
 |----------|--------|--------|---------|--------|
 | CacheLightTests | 90 | 0 | 0 | ✅ Working |
+| DetailControlsTests | 23 | 5 | 1 | ⚠️ Pre-existing |
 | DiscourseTests | 225 | 0 | 0 | ✅ Working |
 | FdoUiTests | 3 | 0 | 0 | ✅ Working |
 | FieldWorksTests | 34 | 0 | 1 | ✅ Working |
 | FiltersTests | 25 | 0 | 1 | ✅ Working |
 | FlexPathwayPluginTests | 19 | 0 | 0 | ✅ Working |
+| FrameworkTests | 27 | 0 | 0 | ✅ Working |
 | FwControlsTests | 34 | 0 | 0 | ✅ Working |
 | FwCoreDlgControlsTests | 36 | 0 | 0 | ✅ Working |
-| FwCoreDlgsTests | 52 | 12 | 0 | 🔧 Fixed (was 356 fail) |
-| FwParatextLexiconPluginTests | 31 | 0 | 0 | ✅ Working |
-| FwUtilsTests | 182 | 0 | 5 | ✅ Working |
+| FwCoreDlgsTests | 334 | 12 | 4 | ⚠️ Pre-existing |
+| FwParatextLexiconPluginTests | 30 | 1 | 0 | ⚠️ Pre-existing |
+| FwUtilsTests | 311 | 0 | 5 | ✅ Working |
 | FxtDllTests | 2 | 0 | 0 | ✅ Working |
+| ITextDllTests | 200 | 1 | 3 | ⚠️ Pre-existing |
 | LexEdDllTests | 17 | 0 | 0 | ✅ Working |
+| LexTextControlsTests | 75 | 10 | 3 | ⚠️ Pre-existing |
 | LexTextDllTests | 1 | 0 | 0 | ✅ Working |
+| ManagedLgIcuCollatorTests | 8 | 2 | 0 | ⚠️ Pre-existing |
 | ManagedVwWindowTests | 2 | 0 | 0 | ✅ Working |
-| MessageBoxExLibTests | 1 | 0 | 0 | ✅ Working |
-| MGATests | 9 | 0 | 0 | 🔧 Fixed (was 6 fail) |
-| Paratext8PluginTests | 0 | 0 | 1 | ✅ Working |
-| ParserCoreTests | 54 | 0 | 1 | ✅ Working |
+| MessageBoxExLibTests | 0 | 0 | 0 | ⚠️ No tests discovered |
+| MGATests | 9 | 0 | 0 | ✅ Working |
+| MorphologyEditorDllTests | 0 | 7 | 0 | ⚠️ Pre-existing |
+| Paratext8PluginTests | 0 | 0 | 1 | ⚠️ Skipped only |
+| ParatextImportTests | 457 | 184 | 40 | ⚠️ Pre-existing |
+| ParserCoreTests | 51 | 3 | 1 | ⚠️ Pre-existing |
 | ParserUITests | 16 | 0 | 0 | ✅ Working |
 | RootSiteTests | 56 | 0 | 1 | ✅ Working |
+| ScriptureUtilsTests | 21 | 2 | 3 | ⚠️ Pre-existing |
 | Sfm2XmlTests | 1 | 0 | 0 | ✅ Working |
-| SIL.LCModel.Utils.Tests | 302 | 0 | 2 | ✅ Working |
-| SilSidePaneTests | 146 | 0 | 0 | 🔧 Fixed (was 5 fail) |
+| SIL.WritingSystems.Tests | 0 | 0 | 0 | ⚠️ No tests discovered |
+| SilSidePaneTests | 146 | 0 | 0 | ✅ Working |
 | SimpleRootSiteTests | 103 | 0 | 0 | ✅ Working |
 | ViewsInterfacesTests | 9 | 0 | 0 | ✅ Working |
 | WidgetsTests | 19 | 0 | 0 | ✅ Working |
@@ -258,6 +274,9 @@
 | xCoreInterfacesTests | 18 | 0 | 1 | ✅ Working |
 | xCoreTests | 17 | 0 | 0 | ✅ Working |
 | XMLUtilsTests | 34 | 0 | 0 | ✅ Working |
+| XMLViewsTests | 103 | 0 | 0 | ✅ Working |
+| UnicodeCharEditorTests | 0 | 2 | 0 | ⚠️ Pre-existing |
+| xWorksTests | 1170 | 10 | 7 | ⚠️ Pre-existing |
 | XMLViewsTests | 103 | 0 | 0 | ✅ Working |
 | xWorksTests | 1168 | 12 | 7 | ⚠️ Pre-existing |
 | DetailControlsTests | 23 | 5 | 1 | ⚠️ Pre-existing |
@@ -273,10 +292,9 @@
 | SIL.LCModel.Tests | 0 | 1701 | 0 | ❌ External |
 
 **Summary**:
-- ✅ **29 test DLLs fully working** (2,658 tests pass)
-- 🔧 **3 test DLLs fixed** (MGATests: 9 pass, SilSidePaneTests: 146 pass, FwCoreDlgsTests: 52 pass)
-- ⚠️ **9 test DLLs have pre-existing failures** (logic bugs, not migration related)
-- ❌ **2 external NuGet package test DLLs** (should not be run with FW tests)
+- ⚠️ **12 test DLLs currently have failures** (see counts above)
+- ⚠️ **2 test DLLs have no tests discovered** (should be fixed or excluded intentionally)
+- ⚠️ **1 test DLL is skipped-only** (verify whether this is expected)
 
 ### Phase 5e: Test Infrastructure Improvements (Future)
 *Optional improvements for test reliability.*
