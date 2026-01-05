@@ -368,9 +368,9 @@ C:\Temp\Obj\ViewsInterfaces\ViewsInterfaces.csproj.nuget.g.props
     <SourceRoot Include="C:\fw-mounts\C\Users\johnm\Documents\repos\fw-worktrees\agent-2\packages\" />
   </ItemGroup>
   <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' " xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <None Include="$(NuGetPackageRoot)\sil.lcmodel.core\11.0.0-beta0147\contentFiles\any\any\SIL.LCModel.Core.dll.config" Condition="Exists('$(NuGetPackageRoot)\sil.lcmodel.core\11.0.0-beta0147\contentFiles\any\any\SIL.LCModel.Core.dll.config')">
+    <None Include="$(NuGetPackageRoot)\sil.lcmodel.core\11.0.0-beta0148\contentFiles\any\any\SIL.LCModel.Core.dll.config" Condition="Exists('$(NuGetPackageRoot)\sil.lcmodel.core\11.0.0-beta0148\contentFiles\any\any\SIL.LCModel.Core.dll.config')">
       <NuGetPackageId>SIL.LCModel.Core</NuGetPackageId>
-      <NuGetPackageVersion>11.0.0-beta0147</NuGetPackageVersion>
+      <NuGetPackageVersion>11.0.0-beta0148</NuGetPackageVersion>
       <NuGetItemType>None</NuGetItemType>
       <Pack>false</Pack>
       <Private>False</Private>
@@ -380,9 +380,9 @@ C:\Temp\Obj\ViewsInterfaces\ViewsInterfaces.csproj.nuget.g.props
   <!--<ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">-->
   <!--
 ============================================================================================================================================
-  <Import Project="$(NuGetPackageRoot)\sil.lcmodel.core\11.0.0-beta0147\build\SIL.LCModel.Core.props" Condition="Exists('$(NuGetPackageRoot)\sil.lcmodel.core\11.0.0-beta0147\build\SIL.LCModel.Core.props')">
+  <Import Project="$(NuGetPackageRoot)\sil.lcmodel.core\11.0.0-beta0148\build\SIL.LCModel.Core.props" Condition="Exists('$(NuGetPackageRoot)\sil.lcmodel.core\11.0.0-beta0148\build\SIL.LCModel.Core.props')">
 
-C:\fw-mounts\C\Users\johnm\Documents\repos\fw-worktrees\agent-2\packages\sil.lcmodel.core\11.0.0-beta0147\build\SIL.LCModel.Core.props
+C:\fw-mounts\C\Users\johnm\Documents\repos\fw-worktrees\agent-2\packages\sil.lcmodel.core\11.0.0-beta0148\build\SIL.LCModel.Core.props
 ============================================================================================================================================
 -->
   <PropertyGroup xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
@@ -403,9 +403,9 @@ C:\Temp\Obj\ViewsInterfaces\ViewsInterfaces.csproj.nuget.g.props
 -->
   <!--</ImportGroup>-->
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' " xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <PkgSIL_LCModel_Build_Tasks Condition=" '$(PkgSIL_LCModel_Build_Tasks)' == '' ">C:\fw-mounts\C\Users\johnm\Documents\repos\fw-worktrees\agent-2\packages\sil.lcmodel.build.tasks\11.0.0-beta0147</PkgSIL_LCModel_Build_Tasks>
+    <PkgSIL_LCModel_Build_Tasks Condition=" '$(PkgSIL_LCModel_Build_Tasks)' == '' ">C:\fw-mounts\C\Users\johnm\Documents\repos\fw-worktrees\agent-2\packages\sil.lcmodel.build.tasks\11.0.0-beta0148</PkgSIL_LCModel_Build_Tasks>
     <PkgIcu4c_Win_Fw_Lib Condition=" '$(PkgIcu4c_Win_Fw_Lib)' == '' ">C:\fw-mounts\C\Users\johnm\Documents\repos\fw-worktrees\agent-2\packages\icu4c.win.fw.lib\70.1.152</PkgIcu4c_Win_Fw_Lib>
-    <PkgSIL_LCModel_Core Condition=" '$(PkgSIL_LCModel_Core)' == '' ">C:\fw-mounts\C\Users\johnm\Documents\repos\fw-worktrees\agent-2\packages\sil.lcmodel.core\11.0.0-beta0147</PkgSIL_LCModel_Core>
+    <PkgSIL_LCModel_Core Condition=" '$(PkgSIL_LCModel_Core)' == '' ">C:\fw-mounts\C\Users\johnm\Documents\repos\fw-worktrees\agent-2\packages\sil.lcmodel.core\11.0.0-beta0148</PkgSIL_LCModel_Core>
     <PkgSIL_IdlImporter Condition=" '$(PkgSIL_IdlImporter)' == '' ">C:\fw-mounts\C\Users\johnm\Documents\repos\fw-worktrees\agent-2\packages\sil.idlimporter\4.0.0-beta0052</PkgSIL_IdlImporter>
   </PropertyGroup>
   <!--
@@ -11924,9 +11924,9 @@ C:\Temp\Obj\ViewsInterfaces\ViewsInterfaces.csproj.nuget.g.targets
 -->
   <!--
 ============================================================================================================================================
-  <Import Project="$(NuGetPackageRoot)\sil.lcmodel.core\11.0.0-beta0147\build\SIL.LCModel.Core.targets" Condition="Exists('$(NuGetPackageRoot)\sil.lcmodel.core\11.0.0-beta0147\build\SIL.LCModel.Core.targets')">
+  <Import Project="$(NuGetPackageRoot)\sil.lcmodel.core\11.0.0-beta0148\build\SIL.LCModel.Core.targets" Condition="Exists('$(NuGetPackageRoot)\sil.lcmodel.core\11.0.0-beta0148\build\SIL.LCModel.Core.targets')">
 
-C:\fw-mounts\C\Users\johnm\Documents\repos\fw-worktrees\agent-2\packages\sil.lcmodel.core\11.0.0-beta0147\build\SIL.LCModel.Core.targets
+C:\fw-mounts\C\Users\johnm\Documents\repos\fw-worktrees\agent-2\packages\sil.lcmodel.core\11.0.0-beta0148\build\SIL.LCModel.Core.targets
 ============================================================================================================================================
 -->
   <Target Name="CopyConfigFiles" BeforeTargets="Build" Condition="!$(TargetFramework.StartsWith('netstandard'))" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">

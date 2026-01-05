@@ -168,11 +168,11 @@
       - **Root cause**: These are tests FROM the SIL.LCModel NuGet package, not FieldWorks tests
       - They require DependencyModel 2.0.4 which conflicts with FieldWorks' 9.0.9
       - **Recommendation**: Exclude from FieldWorks test runs; these are tested in the liblcm repo
-      - Location: `packages/sil.lcmodel.core.tests/11.0.0-beta0147/`
+      - Location: `packages/sil.lcmodel.core.tests/11.0.0-beta0148/`
 
 - [ ] T041 [External] SIL.LCModel.Tests (1701 failures)
       - Same as T040 - external package tests with incompatible DependencyModel version
-      - Location: `packages/sil.lcmodel.tests/11.0.0-beta0147/`
+      - Location: `packages/sil.lcmodel.tests/11.0.0-beta0148/`
 
 ##### Hardcoded Path Issues
 - [ ] T046 [Resources] UnicodeCharEditorTests (2 failures)
