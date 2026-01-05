@@ -33,9 +33,36 @@ namespace FwBuildTasks
 		public string BuildRoot { get; set; }
 
 		/// <summary>
+		/// Optional override for build output root (BUILD_OUTPUT in makefiles).
+		/// Used to redirect final outputs off bind mounts in containers.
+		/// </summary>
+		public string BuildOutput { get; set; }
+
+		/// <summary>
+		/// Optional override for final output directory (OUT_DIR in makefiles).
+		/// When provided, this takes precedence over the makefile's default OUT_DIR.
+		/// </summary>
+		public string OutDir { get; set; }
+
+		/// <summary>
 		/// The build architecture (x86 or x64)
 		/// </summary>
 		public string BuildArch { get; set; }
+
+		/// <summary>
+		/// Gets or sets the intermediate output directory.
+		/// When specified, this overrides the makefile's default INT_DIR.
+		/// Used for container builds where intermediate files should go to local storage.
+		/// </summary>
+		public string IntDir { get; set; }
+
+		/// <summary>
+		/// Gets or sets the object output directory.
+		/// When specified, this overrides the makefile's default OBJ_DIR.
+		/// Takes precedence over IntDir since OBJ_DIR is the parent of INT_DIR.
+		/// Used for container builds where intermediate files should go to local storage.
+		/// </summary>
+		public string ObjDir { get; set; }
 
 		/// <summary>
 		/// Gets or sets the target inside the Makefile.
@@ -141,6 +168,10 @@ namespace FwBuildTasks
 				bldr.AppendSwitchIfNotNull("BUILD_TYPE=", BuildType);
 				bldr.AppendSwitchIfNotNull("BUILD_ROOT=", BuildRoot);
 				bldr.AppendSwitchIfNotNull("BUILD_ARCH=", BuildArch);
+				bldr.AppendSwitchIfNotNull("BUILD_OUTPUT=", BuildOutput);
+				bldr.AppendSwitchIfNotNull("OUT_DIR=", OutDir);
+				bldr.AppendSwitchIfNotNull("OBJ_DIR=", ObjDir);
+				bldr.AppendSwitchIfNotNull("INT_DIR=", IntDir);
 				bldr.AppendSwitchIfNotNull("-C", Path.GetDirectoryName(Makefile));
 				if (String.IsNullOrEmpty(Target))
 					bldr.AppendSwitch("all");
@@ -154,6 +185,10 @@ namespace FwBuildTasks
 				bldr.AppendSwitchIfNotNull("BUILD_TYPE=", BuildType);
 				bldr.AppendSwitchIfNotNull("BUILD_ROOT=", BuildRoot);
 				bldr.AppendSwitchIfNotNull("BUILD_ARCH=", BuildArch);
+				bldr.AppendSwitchIfNotNull("BUILD_OUTPUT=", BuildOutput);
+				bldr.AppendSwitchIfNotNull("OUT_DIR=", OutDir);
+				bldr.AppendSwitchIfNotNull("OBJ_DIR=", ObjDir);
+				bldr.AppendSwitchIfNotNull("INT_DIR=", IntDir);
 				bldr.AppendSwitchIfNotNull("/f ", Makefile);
 				if (!String.IsNullOrEmpty(Target))
 					bldr.AppendSwitch(Target);

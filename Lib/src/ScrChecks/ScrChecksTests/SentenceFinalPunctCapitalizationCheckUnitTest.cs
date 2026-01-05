@@ -1,18 +1,17 @@
 // Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
+// DISABLED: SentenceFinalPunctCapitalizationCheck class no longer exists in ScrChecks
+#if false
 using System;
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 using System.Diagnostics;
 using System.IO;
-using SILUBS.SharedScrUtils;
 
 namespace SILUBS.ScriptureChecks
 {
-#if DEBUG
 	[TestFixture]
 	public class SentenceFinalPunctCapitalizationCheckUnitTest
 	{
@@ -123,5 +122,5 @@ namespace SILUBS.ScriptureChecks
 			Test(new string[] { }, @"\p \v 1 The E.U. headquarters.");
 		}
 	}
-#endif
 }
+#endif

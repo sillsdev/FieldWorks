@@ -5,9 +5,7 @@
     <RootNamespace>Sfm2XmlTests</RootNamespace>
     <TargetFramework>net48</TargetFramework>
     <OutputType>Library</OutputType>
-    <IsTestProject>true</IsTestProject>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <IsTestProject>true</IsTestProject>    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
@@ -23,6 +21,10 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
+    <PackageReference Include="SIL.LCModel.Core.Tests" Version="11.0.0-*" PrivateAssets="All" />
+    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
+    <PackageReference Include="SIL.LCModel.Utils.Tests" Version="11.0.0-*" PrivateAssets="All" />
     <PackageReference Include="SIL.TestUtilities" Version="17.0.0-*" />
     <PackageReference Include="Encoding-Converters-Core" Version="0.9.7" />
   </ItemGroup>
@@ -31,6 +33,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="../Sfm2Xml.csproj" />
+    <ProjectReference Include="../../../Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\CommonAssemblyInfo.cs">

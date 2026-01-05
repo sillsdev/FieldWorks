@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	{
 		#region Data members
 
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 
 		private const double BytesPerMiB = 1024 * 1024;
 		private const double BytesPerGiB = 1024 * BytesPerMiB;

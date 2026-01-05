@@ -11,6 +11,9 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Core.Scripture;
 using XCore;
+// Alias to disambiguate from SIL.FieldWorks.IText namespace
+using LcmIText = SIL.LCModel.IText;
+using LcmITextRepository = SIL.LCModel.ITextRepository;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -801,32 +804,32 @@ namespace SIL.FieldWorks.XWorks
 	}
 
 
-	internal class MockTextRepository : ITextRepository
+	internal class MockTextRepository : LcmITextRepository
 	{
 
-		public List<IText> m_texts = new List<IText>();
+		public List<LcmIText> m_texts = new List<LcmIText>();
 
 		public IEnumerable<ICmObject> AllInstances(int classId)
 		{
 			throw new NotImplementedException();
 		}
 
-		public IText GetObject(ICmObjectId id)
+		public LcmIText GetObject(ICmObjectId id)
 		{
 			throw new NotImplementedException();
 		}
 
-		public IText GetObject(Guid id)
+		public LcmIText GetObject(Guid id)
 		{
 			throw new NotImplementedException();
 		}
 
-		public bool TryGetObject(Guid guid, out IText obj)
+		public bool TryGetObject(Guid guid, out LcmIText obj)
 		{
 			throw new NotImplementedException();
 		}
 
-		public IText GetObject(int hvo)
+		public LcmIText GetObject(int hvo)
 		{
 			foreach (var st in m_texts)
 				if (st.Hvo == hvo)
@@ -835,12 +838,12 @@ namespace SIL.FieldWorks.XWorks
 			return null; // make compiler happy.
 		}
 
-		public bool TryGetObject(int hvo, out IText obj)
+		public bool TryGetObject(int hvo, out LcmIText obj)
 		{
 			throw new NotImplementedException();
 		}
 
-		public IEnumerable<IText> AllInstances()
+		public IEnumerable<LcmIText> AllInstances()
 		{
 			return m_texts.ToArray();
 		}
@@ -851,7 +854,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 	}
 
-	internal class MockText : MockCmObject, IText
+	internal class MockText : MockCmObject, LcmIText
 	{
 		public MockText()
 		{

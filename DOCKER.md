@@ -109,6 +109,106 @@ The Docker image is automatically rebuilt when:
 
 The build workflow can also be manually triggered via GitHub Actions UI.
 
+## Worktree Build Isolation
+
+When using Docker containers with git worktrees (e.g., `fw-agent-N` containers), the worktree directory is bind-mounted into the container. This creates potential conflicts between:
+
+- **Host builds**: IDE services like Serena/OmniSharp, main repo builds
+- **Container builds**: Worktree builds running inside Docker
+
+### Container-Local Build Output
+
+To avoid file locking conflicts, container builds use **container-local paths** for intermediate and output files:
+
+| Artifact | Host Path | Container Path |
+|----------|-----------|----------------|
+| FwBuildTasks.dll | `BuildTools/FwBuildTasks/<Config>/` | `C:\Temp\BuildTools\FwBuildTasks\<Config>\` |
+| Intermediate files | `Obj/<Project>/` | `C:\Temp\Obj/<Project>/` |
+| NuGet packages | `packages/` | `C:\NuGetCache\packages\` (named volume) |
+
+This isolation is automatic:
+- `DOTNET_RUNNING_IN_CONTAINER` controls intermediate output paths
+- `NUGET_PACKAGES` environment variable controls NuGet package location
+- Containers use `--isolation=hyperv` to fix Windows Docker MoveFile bug
+
+### NuGet Cache: Hybrid Architecture
+
+Container builds use a **hybrid caching strategy** that separates shared and isolated caches:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│ SHARED (Docker Named Volume: fw-nuget-cache @ C:\NuGetCache)    │
+│   ├── packages/      - global-packages (download once, shared)  │
+│   └── http-cache/    - HTTP cache (feed metadata, shared)       │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+        ┌─────────────────────┼─────────────────────┐
+        │                     │                     │
+        ▼                     ▼                     ▼
+┌───────────────┐    ┌───────────────┐    ┌───────────────┐
+│  fw-agent-1   │    │  fw-agent-2   │    │  fw-agent-3   │
+│  C:\Temp\     │    │  C:\Temp\     │    │  C:\Temp\     │
+│  NuGetScratch │    │  NuGetScratch │    │  NuGetScratch │
+│  (isolated)   │    │  (isolated)   │    │  (isolated)   │
+└───────────────┘    └───────────────┘    └───────────────┘
+```
+
+**Why hybrid?**
+| Cache | Shared? | Reason |
+|-------|---------|--------|
+| global-packages | ✅ YES | Read-only after extraction, ~2-3GB saved vs duplicating |
+| http-cache | ✅ YES | Cached HTTP responses, rarely written |
+| temp (NuGetScratch) | ❌ NO | Active file operations during extraction, must be isolated |
+
+**Why Hyper-V isolation?** Windows Docker has a known bug ([moby/moby#38256](https://github.com/moby/moby/issues/38256)) where `MoveFile()` operations fail with process isolation. NuGet uses `MoveFile()` to atomically move packages from temp to global-packages. **Hyper-V isolation fixes this bug** with negligible performance impact (~1 second container startup difference).
+
+**Parallel build safety:**
+- Different package versions: ✅ Safe (each version gets its own subfolder)
+- Same version, staggered timing: ✅ Safe (second agent finds cached package)
+- Same version, simultaneous: ⚠️ Low risk (Hyper-V + filesystem atomicity usually handles it)
+
+**First-run behavior:**
+If the shared volume is empty, the first restore in any container downloads all packages.
+Subsequent containers/builds find packages already in the shared cache.
+
+**Managing the cache:**
+```powershell
+# View volume info
+docker volume inspect fw-nuget-cache
+
+# Remove volume (forces full re-download on next build)
+.\scripts\tear-down-agents.ps1 -RepoRoot "C:\dev\FieldWorks" -RemoveNuGetVolume
+
+# Seed cache from host packages (faster than fresh download)
+docker exec fw-agent-1 powershell -Command "Copy-Item -Path 'C:\fw-mounts\C\...\packages\*' -Destination 'C:\NuGetCache\packages\' -Recurse -Force"
+```
+
+### How It Works
+
+1. MSBuild `.targets` files check for `DOTNET_RUNNING_IN_CONTAINER`
+2. Container builds output to `C:\Temp\` (not bind-mounted)
+3. Host services continue accessing files on the bind mount without conflicts
+4. Both host and container can build simultaneously
+
+### Files with Container-Aware Paths
+
+- `Directory.Build.props` - intermediate output paths
+- `Build/FwBuildTasks.targets` - build task output paths
+- `Build/Src/NativeBuild/NativeBuild.csproj` - respects NUGET_PACKAGES env var
+- `Build/mkall.targets` - PackagesDir respects NUGET_PACKAGES env var
+- `Build/Localize.targets`
+- `Build/RegFree.targets`
+
+### Localization packages and worktrees
+
+- Container/worktree builds intentionally skip copying `sil.chorus.l10ns` and `sil.libpalaso.l10ns` content (only host release builds need those artifacts). The copy step is gated by `DOTNET_RUNNING_IN_CONTAINER` to avoid unnecessary cache seeding in agents. Host Release builds in the main repo should run with a fully restored `packages/` folder so localization files are included.
+- Package version strategy: we standardized on the newer Palaso/Chorus line (e.g., `17.0.0-beta0089`) to match mkall/native copy expectations. Host builds must restore those versions in `Build/nuget-common/packages.config`; agent/worktree builds still skip localization copy, but share the same package versions for consistency.
+- `Build/Windows.targets`
+- `Build/SetupInclude.targets`
+- `Build/Src/FwBuildTasks/FwBuildTasks.csproj`
+- `Build/Src/FwBuildTasks/Directory.Build.props`
+- `nuget.config` - documents package cache policy
+
 ## Troubleshooting
 
 ### Container startup is slow

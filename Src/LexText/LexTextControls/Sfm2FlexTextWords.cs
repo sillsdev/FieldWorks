@@ -154,7 +154,6 @@ namespace SIL.FieldWorks.LexText.Controls
 						m_mappings[mapping.Marker] = mapping;
 					string marker;
 					byte[] data;
-					byte[] badData;
 					while (GetNextSfmMarkerAndData(out marker, out data))
 					{
 						TMapping mapping;

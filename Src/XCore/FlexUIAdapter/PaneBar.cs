@@ -124,7 +124,7 @@ namespace XCore
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
-		private Container components;
+		private IContainer components = null;
 
 
 		#endregion Data members

@@ -9,8 +9,8 @@
 using System;
 using System.IO;
 using System.Xml;
+using Moq;
 using NUnit.Framework;
-using NMock;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.PublishingSolution;
 using SIL.FieldWorks.Common.FwUtils;
@@ -25,7 +25,7 @@ namespace FlexDePluginTests
 	public class FlexPathwayPluginTest : FlexPathwayPlugin
 	{
 		/// <summary>Mock help provider</summary>
-		private IMock helpProvider;
+		private Mock<IHelpTopicProvider> helpProvider;
 
 		/// <summary>Location of test files</summary>
 		protected string _TestPath;
@@ -61,8 +61,8 @@ namespace FlexDePluginTests
 		public void DialogTest()
 		{
 			FlexPathwayPlugin target = new FlexPathwayPlugin();
-			helpProvider = new DynamicMock(typeof (IHelpTopicProvider));
-			using (UtilityDlg expected = new UtilityDlg((IHelpTopicProvider)helpProvider.MockInstance))
+			helpProvider = new Mock<IHelpTopicProvider>();
+			using (UtilityDlg expected = new UtilityDlg(helpProvider.Object))
 				target.Dialog = expected;
 		}
 
@@ -116,8 +116,8 @@ namespace FlexDePluginTests
 		public void OnSelectionTest()
 		{
 			FlexPathwayPlugin target = new FlexPathwayPlugin();
-			helpProvider = new DynamicMock(typeof(IHelpTopicProvider));
-			using (UtilityDlg exportDialog = new UtilityDlg((IHelpTopicProvider)helpProvider.MockInstance))
+			helpProvider = new Mock<IHelpTopicProvider>();
+			using (UtilityDlg exportDialog = new UtilityDlg(helpProvider.Object))
 			{
 				target.Dialog = exportDialog;
 				target.OnSelection();
@@ -132,8 +132,8 @@ namespace FlexDePluginTests
 		public void LoadUtilitiesTest()
 		{
 			FlexPathwayPlugin target = new FlexPathwayPlugin();
-			helpProvider = new DynamicMock(typeof(IHelpTopicProvider));
-			using (UtilityDlg exportDialog = new UtilityDlg((IHelpTopicProvider)helpProvider.MockInstance))
+			helpProvider = new Mock<IHelpTopicProvider>();
+			using (UtilityDlg exportDialog = new UtilityDlg(helpProvider.Object))
 			{
 				target.Dialog = exportDialog;
 				target.LoadUtilities();
@@ -148,8 +148,8 @@ namespace FlexDePluginTests
 		public void ExportToolTest()
 		{
 			FlexPathwayPlugin target = new FlexPathwayPlugin();
-			helpProvider = new DynamicMock(typeof(IHelpTopicProvider));
-			using (UtilityDlg exportDialog = new UtilityDlg((IHelpTopicProvider)helpProvider.MockInstance))
+			helpProvider = new Mock<IHelpTopicProvider>();
+			using (UtilityDlg exportDialog = new UtilityDlg(helpProvider.Object))
 			{
 				target.Dialog = exportDialog;
 				string areaChoice = "lexicon";

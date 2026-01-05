@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
 	<PropertyGroup>
-		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'==''"
+		<!-- Use container-local path for FwBuildTasks when running in Docker to avoid bind-mount conflicts -->
+		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'=='' AND '$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'"
 			>$(MSBuildThisFileDirectory)..\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll</FwBuildTasksAssembly
+		>
+		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'=='' AND '$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'"
+			>C:\Temp\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll</FwBuildTasksAssembly
 		>
 	</PropertyGroup>
 	<UsingTask TaskName="CopyLocale" AssemblyFile="$(FwBuildTasksAssembly)" />
@@ -15,6 +19,10 @@
 	<UsingTask TaskName="XliffToLists" AssemblyFile="$(FwBuildTasksAssembly)" />
 	<UsingTask TaskName="XmlToPo" AssemblyFile="$(FwBuildTasksAssembly)" />
 	<UsingTask TaskName="Zip" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<PropertyGroup>
+		<!-- Worktree/container builds skip localization package copy; host Release builds still include it -->
+		<SkipWorktreeL10n Condition="'$(SkipWorktreeL10n)'=='' AND '$(DOTNET_RUNNING_IN_CONTAINER)'=='true'">true</SkipWorktreeL10n>
+	</PropertyGroup>
 	<!-- Localize strings-en.xml, lists, and all resx files -->
 	<Target Name="localize" DependsOnTargets="localize-source;localize-binaries" />
 	<Target
@@ -134,39 +142,54 @@ To update localizations, liblcm must be cloned locally to the location specified
 		/>
 	</Target>
 	<Target Name="copyLibL10ns">
-		<ItemGroup>
-			<!-- Find the installed L10ns packages regardless of version -->
-			<ChorusL10nsDirs Include="$(fwrt)/packages/sil.chorus.l10ns/*" />
-			<PalasoL10nsDirs Include="$(fwrt)/packages/sil.libpalaso.l10ns/*" />
+		<Message
+			Text="Skipping lib localization copy for container/worktree build. Host Release builds should run with full packages restored."
+			Importance="low"
+			Condition="'$(SkipWorktreeL10n)'=='true'"
+		/>
+		<PropertyGroup Condition="'$(SkipWorktreeL10n)'!='true'">
+			<!-- Get packages directory path with proper separators -->
+			<L10nsPackagesDir>$([System.IO.Path]::Combine('$(fwrt)', 'packages'))</L10nsPackagesDir>
+			<ChorusL10nsBaseDir>$(L10nsPackagesDir)\sil.chorus.l10ns</ChorusL10nsBaseDir>
+			<PalasoL10nsBaseDir>$(L10nsPackagesDir)\sil.libpalaso.l10ns</PalasoL10nsBaseDir>
+		</PropertyGroup>
+		<ItemGroup Condition="'$(SkipWorktreeL10n)'!='true' AND Exists('$(ChorusL10nsBaseDir)')">
+			<!-- Use GetDirectories to find version subdirectories -->
+			<ChorusL10nsDirs Include="$([System.IO.Directory]::GetDirectories('$(ChorusL10nsBaseDir)'))" />
 		</ItemGroup>
-		<PropertyGroup>
+		<ItemGroup Condition="'$(SkipWorktreeL10n)'!='true' AND Exists('$(PalasoL10nsBaseDir)')">
+			<PalasoL10nsDirs Include="$([System.IO.Directory]::GetDirectories('$(PalasoL10nsBaseDir)'))" />
+		</ItemGroup>
+		<PropertyGroup Condition="'$(SkipWorktreeL10n)'!='true'">
 			<!-- Use the first (and typically only) version found -->
 			<ChorusL10nsNugetDir>@(ChorusL10nsDirs)</ChorusL10nsNugetDir>
 			<PalasoL10nsNugetDir>@(PalasoL10nsDirs)</PalasoL10nsNugetDir>
 		</PropertyGroup>
 		<Warning
 			Text="Chorus L10ns package missing - localization files will not be copied. Install via: dotnet restore"
-			Condition="'$(ChorusL10nsNugetDir)' == ''"
+			Condition="'$(SkipWorktreeL10n)'!='true' AND '$(ChorusL10nsNugetDir)' == ''"
 		/>
 		<Warning
 			Text="Palaso L10ns package missing - localization files will not be copied. Install via: dotnet restore"
-			Condition="'$(PalasoL10nsNugetDir)' == ''"
+			Condition="'$(SkipWorktreeL10n)'!='true' AND '$(PalasoL10nsNugetDir)' == ''"
 		/>
-		<ItemGroup>
-			<XliffFiles
-				Include="$(ChorusL10nsNugetDir)/content/**/*.xlf"
-				Condition="'$(ChorusL10nsNugetDir)' != ''"
-			/>
-			<XliffFiles
-				Include="$(PalasoL10nsNugetDir)/content/**/*.xlf"
-				Condition="'$(PalasoL10nsNugetDir)' != ''"
-			/>
-		</ItemGroup>
+		<CreateItem
+			Include="@(ChorusL10nsDirs-&gt;'%(Identity)\content\**\*.xlf')"
+			Condition="'$(SkipWorktreeL10n)'!='true' AND '@(ChorusL10nsDirs)' != ''"
+		>
+			<Output TaskParameter="Include" ItemName="XliffFiles" />
+		</CreateItem>
+		<CreateItem
+			Include="@(PalasoL10nsDirs-&gt;'%(Identity)\content\**\*.xlf')"
+			Condition="'$(SkipWorktreeL10n)'!='true' AND '@(PalasoL10nsDirs)' != ''"
+		>
+			<Output TaskParameter="Include" ItemName="XliffFiles" />
+		</CreateItem>
 		<Copy
 			SourceFiles="@(XliffFiles)"
 			DestinationFiles="@(XliffFiles-&gt;'$(LibL10nsDirectory)/%(Filename)%(Extension)')"
 			SkipUnchangedFiles="true"
-			Condition="'@(XliffFiles)' != ''"
+			Condition="'$(SkipWorktreeL10n)'!='true' AND '@(XliffFiles)' != ''"
 		/>
 	</Target>
 	<!-- Each downloaded translation needs the following post-processing:

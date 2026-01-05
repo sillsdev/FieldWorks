@@ -52,6 +52,11 @@
     "/^(&\\s+)?python\\s+(scripts\\/|-m|\\.github\\/)(?!.*[;&|<>])/": true,
     "/^(&\\s+)?\\.[\\\\/]scripts[\\\\/](?!.*[;&|<>])/": true,
 
+    // Agent wrapper scripts - explicitly approved (these are designed for auto-approval)
+    "/^(&\\s+)?(\\.[\\\\/])?scripts[\\\\/]Agent[\\\\/][^;&|<>]+\\.ps1/i": true,
+    // PowerShell invocation of scripts (common pattern for bypassing execution policy)
+    "/^(&\\s+)?powershell\\s+(-NoProfile\\s+)?(-ExecutionPolicy\\s+Bypass\\s+)?-File\\s+(\\.[\\\\/])?scripts[\\\\/]/i": true,
+
     // Build operations (consolidated)
     "/^(&\\s+)?(msbuild|nuget)\\b(?!.*[;&|<>])/i": true,
     "/^(&\\s+)?dotnet\\s+(build|restore|clean|publish|test)(?!.*[;&|<>])/": true,
@@ -75,7 +80,64 @@
   "dotnet.unitTests.runSettingsPath": "${workspaceFolder}/Test.runsettings",
   // Enable VSTest discovery for test explorer
   "dotnet.unitTests.enableVsTestDiscovery": true,
+  // Exclude external NuGet package tests (SIL.LCModel.Tests, etc.)
+  // These test liblcm internals, not FieldWorks code, and have dependency conflicts
+  "dotnet.unitTests.testCaseFilter": "FullyQualifiedName!~SIL.LCModel.Tests&FullyQualifiedName!~SIL.LCModel.Core.Tests&FullyQualifiedName!~SIL.LCModel.Utils.Tests",
   // Auto-build works because Src/Directory.Build.props sets OutputPath to Output/$(Configuration)/
   // This means dotnet build outputs to the same location as ./build.ps1
-  "dotnet.automaticallyBuildProjects": true
+  "dotnet.automaticallyBuildProjects": true,
+  // Git Graph extension settings
+  "git-graph.dialog.merge.noFastForward": false,
+  "git-graph.dialog.merge.squashCommits": false,
+
+  // ============================================================================
+  // TASK AUTO-APPROVAL
+  // Tasks are auto-approved if they match these patterns (by task label).
+  // Tasks not listed require manual confirmation.
+  // ============================================================================
+  "chat.tools.tasks.allowedTasks": [
+    // Build tasks (safe - only produce artifacts)
+    "Build",
+    "Build Release",
+
+    // Test tasks (safe - no external changes)
+    "Test",
+    "Test (no build)",
+
+    // CI parity checks (read-only validation)
+    "CI: Whitespace check",
+    "CI: Commit messages",
+    "CI: Full local check",
+
+    // Git read-only operations
+    "Git: Prune remote branches",
+
+    // COPILOT documentation checks (read-only)
+    "COPILOT: Detect updates needed",
+    "COPILOT: Validate docs",
+    "COPILOT: Validate instructions",
+    "COPILOT: Plan all folders",
+
+    // Environment verification (read-only)
+    "Setup: Verify dependencies",
+    "Setup: Defender exclusions (preview)",
+    "Setup: Serena MCP",
+    "Setup: Full environment check",
+    "Installer: Validate prerequisites",
+
+    // Container environment check (read-only)
+    "Container: Test VS environment"
+  ]
+  // ============================================================================
+  // TASKS REQUIRING MANUAL APPROVAL (not in allowedTasks):
+  // - Test (with filter)           (has user input prompt)
+  // - Test (specific project)      (has user input prompt)
+  // - Agents: Spin up              (creates containers/worktrees, resource heavy)
+  // - Agents: Build Docker image   (long-running, downloads GBs)
+  // - Agents: Teardown containers  (destructive)
+  // - Agents: Teardown all         (very destructive)
+  // - COPILOT: Propose updates     (modifies files)
+  // - COPILOT: Apply change-log    (modifies files)
+  // - Installer: Setup for patch   (downloads artifacts)
+  // ============================================================================
 }

@@ -6,15 +6,17 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 {
 	partial class ListOptionsView
 	{
-		/// <summary> 
+		/// <summary>
 		/// Required designer variable.
 		/// </summary>
+#pragma warning disable CS0414 // Field is assigned but its value is never used
 		private System.ComponentModel.IContainer components = null;
+#pragma warning restore CS0414
 
 		#region Component Designer generated code
 
-		/// <summary> 
-		/// Required method for Designer support - do not modify 
+		/// <summary>
+		/// Required method for Designer support - do not modify
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent()
@@ -28,9 +30,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.labelListView = new System.Windows.Forms.Label();
 			this.checkBoxDisplayOption2 = new System.Windows.Forms.CheckBox();
 			this.SuspendLayout();
-			// 
+			//
 			// listView
-			// 
+			//
 			resources.ApplyResources(this.listView, "listView");
 			this.listView.CheckBoxes = true;
 			this.listView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -41,42 +43,42 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 			this.listView.Name = "listView";
 			this.listView.UseCompatibleStateImageBehavior = false;
 			this.listView.View = System.Windows.Forms.View.Details;
-			// 
+			//
 			// invisibleHeaderToSetColWidth
-			// 
+			//
 			resources.ApplyResources(this.invisibleHeaderToSetColWidth, "invisibleHeaderToSetColWidth");
-			// 
+			//
 			// buttonUp
-			// 
+			//
 			resources.ApplyResources(this.buttonUp, "buttonUp");
 			this.buttonUp.Name = "buttonUp";
 			this.buttonUp.UseVisualStyleBackColor = true;
-			// 
+			//
 			// buttonDown
-			// 
+			//
 			resources.ApplyResources(this.buttonDown, "buttonDown");
 			this.buttonDown.Name = "buttonDown";
 			this.buttonDown.UseVisualStyleBackColor = true;
-			// 
+			//
 			// checkBoxDisplayOption
-			// 
+			//
 			resources.ApplyResources(this.checkBoxDisplayOption, "checkBoxDisplayOption");
 			this.checkBoxDisplayOption.Name = "checkBoxDisplayOption";
 			this.checkBoxDisplayOption.UseVisualStyleBackColor = true;
-			// 
+			//
 			// labelListView
-			// 
+			//
 			resources.ApplyResources(this.labelListView, "labelListView");
 			this.labelListView.Name = "labelListView";
-			// 
+			//
 			// checkBoxDisplayOption2
-			// 
+			//
 			resources.ApplyResources(this.checkBoxDisplayOption2, "checkBoxDisplayOption2");
 			this.checkBoxDisplayOption2.Name = "checkBoxDisplayOption2";
 			this.checkBoxDisplayOption2.UseVisualStyleBackColor = true;
-			// 
+			//
 			// ListOptionsView
-			// 
+			//
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this.checkBoxDisplayOption2);

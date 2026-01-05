@@ -55,7 +55,6 @@ namespace SIL.FieldWorks.XWorks
 			{"kuntSquiggle", "squiggle"}
 		};
 
-		private LcmCache _cache;
 		private ReadOnlyPropertyTable _propertyTable;
 		private Dictionary<string, List<StyleRule>> _styleDictionary = new Dictionary<string, List<StyleRule>>();
 		private Dictionary<string, string> _uniqueNodeNames = new Dictionary<string, string>();

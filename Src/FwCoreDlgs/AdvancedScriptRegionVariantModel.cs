@@ -14,7 +14,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	public class AdvancedScriptRegionVariantModel
 	{
 		private FwWritingSystemSetupModel _model;
-		private ScriptListItem _currentScriptListItem;
 		private ScriptListItem _script;
 		private RegionListItem _region;
 		private static readonly ScriptSubtag _privateUseQaaaScript = new ScriptSubtag("Qaaa", "Private Use Script"); // TODO (Hasso): 2021.12: ensure helps list this

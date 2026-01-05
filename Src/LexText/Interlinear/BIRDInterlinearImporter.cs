@@ -713,7 +713,7 @@ namespace SIL.FieldWorks.IText
 			{
 				writingSystem = wsFactory.get_Engine(lang.lang);
 			}
-			catch (ArgumentException e)
+			catch (ArgumentException)
 			{
 				CoreWritingSystemDefinition ws;
 				WritingSystemServices.FindOrCreateSomeWritingSystem(cache, FwDirectoryFinder.TemplateDirectory, lang.lang,
@@ -746,7 +746,6 @@ namespace SIL.FieldWorks.IText
 			}
 			IAnalysis wordForm = matchingWf;
 			var wsFact = cache.WritingSystemFactory;
-			ILgWritingSystem wsMainVernWs = null;
 			IWfiMorphBundle bundle = null;
 
 			if (wordForm != null)

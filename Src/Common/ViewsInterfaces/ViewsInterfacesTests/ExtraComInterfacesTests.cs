@@ -72,6 +72,7 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 	}
 
 
+#if false // Disabled: ILgWritingSystemFactoryBuilder interface no longer exists - this was experimental Mono-specific code
 	/// <summary/>
 	[TestFixture]
 	[Ignore("experimental Mono dependent")]
@@ -89,4 +90,5 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 			Assert.That(() => myref.ShutdownAllFactories(), Throws.TypeOf<COMException>());
 		}
 	}
+#endif
 }

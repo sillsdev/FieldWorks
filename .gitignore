@@ -41,6 +41,7 @@ Lib/release/graphite2.lib
 Lib/release/System.Buffers.dll
 Lib/release/System.ValueTuple.dll
 Lib/release/unit++.*
+Lib/release/unit++.pdb
 DistFiles/Parts/Generated.fwlayout
 Lib/src/Ethnologue/GeneratedEthnologue.cs
 Src/FwParatextLexiconPlugin/GeneratedParatextLexiconPluginRegistryHelper.cs
@@ -75,6 +76,7 @@ _user.mak.lnx
 .project
 *.VC.db
 *.VC.opendb
+*.invalid
 
 .dotest/
 .depend

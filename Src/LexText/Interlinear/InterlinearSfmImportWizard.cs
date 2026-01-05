@@ -381,7 +381,6 @@ namespace SIL.FieldWorks.IText
 				{
 					if (mapping.Destination == InterlinDestination.Ignored)
 						continue; // may well have no WS, in any case, we don't care whether it's in our list.
-					bool creationCancelled = false;
 					var ws = (CoreWritingSystemDefinition) m_cache.WritingSystemFactory.get_Engine(mapping.WritingSystem);
 					if (mapping.Destination == InterlinDestination.Baseline || mapping.Destination == InterlinDestination.Wordform)
 					{

@@ -20,12 +20,19 @@ namespace FwBuildTasks
 		[Required]
 		public string ToolsVersion { get; set; }
 
+		/// <summary>
+		/// Optional explicit path to the FieldWorks root directory.
+		/// If not provided, will be discovered from the assembly location.
+		/// Required when FwBuildTasks.dll is in a container-local path.
+		/// </summary>
+		public string FwRoot { get; set; }
+
 		public override bool Execute()
 		{
 			try
 			{
 				Log.LogMessage(MessageImportance.Normal, "Starting GenerateFwTargets task...");
-				var gen = new CollectTargets(Log, ToolsVersion);
+				var gen = new CollectTargets(Log, ToolsVersion, FwRoot);
 				gen.Generate();
 				Log.LogMessage(
 					MessageImportance.Normal,
@@ -78,12 +85,21 @@ namespace FwBuildTasks
 		private Dictionary<string, int> m_timeoutMap;
 		private string ToolsVersion { get; set; }
 
-		public CollectTargets(TaskLoggingHelper log, string toolsVersion)
+		public CollectTargets(TaskLoggingHelper log, string toolsVersion, string fwRoot = null)
 		{
 			ToolsVersion = toolsVersion;
 			Log = log;
-			// Get the parent directory of the running program.  We assume that
-			// this is the root of the FieldWorks repository tree.
+
+			// Use explicit FwRoot if provided (required for container builds where the
+			// assembly is in a container-local path like C:\Temp\BuildTools\...)
+			if (!string.IsNullOrEmpty(fwRoot))
+			{
+				m_fwroot = fwRoot;
+				Log.LogMessage(MessageImportance.Normal, "Using explicit FwRoot: {0}", m_fwroot);
+				return;
+			}
+
+			// Fallback: discover from assembly location (works when assembly is in BuildTools\FwBuildTasks\)
 			var fwrt = BuildUtils.GetAssemblyFolder();
 			while (
 				!Directory.Exists(Path.Combine(fwrt, "Build"))
@@ -671,25 +687,7 @@ namespace FwBuildTasks
 					writer.Flush();
 					writer.Close();
 				}
-				Console.WriteLine("Created {0}", targetsFile);
-
-				// Always output the generated file content for debugging
-				if (File.Exists(targetsFile))
-				{
-					Log.LogMessage(MessageImportance.High, "Generated targets file content:");
-					try
-					{
-						var content = File.ReadAllText(targetsFile);
-						Log.LogMessage(MessageImportance.High, content);
-					}
-					catch (Exception readEx)
-					{
-						Log.LogError(
-							"Failed to read targets file for debugging: {0}",
-							readEx.Message
-						);
-					}
-				}
+				Log.LogMessage(MessageImportance.Normal, "Created {0}", targetsFile);
 			}
 			catch (Exception e)
 			{

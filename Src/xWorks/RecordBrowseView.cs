@@ -40,7 +40,9 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
+#pragma warning disable CS0649 // Field is never assigned to
 		private readonly System.ComponentModel.Container components;
+#pragma warning restore CS0649
 		#endregion // Data members
 
 		#region Construction and disposal

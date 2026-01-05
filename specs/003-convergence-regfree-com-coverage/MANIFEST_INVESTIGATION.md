@@ -78,7 +78,7 @@ AddOrReplaceClrClass(file, clsId, "Both", typeName, progId, runtimeVersion);
 This logic produces the invalid XML structure:
 ```xml
 <assembly ...>
-  <file name="DotNetZip.dll">
+  <file name="ProDotNetZip.dll">
     <clrClass ... /> <!-- INVALID HERE -->
   </file>
 </assembly>

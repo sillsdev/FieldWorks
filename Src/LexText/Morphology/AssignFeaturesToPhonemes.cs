@@ -19,7 +19,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	/// ----------------------------------------------------------------------------------------
 	public partial class AssignFeaturesToPhonemes : RecordBrowseView
 	{
-		private MEImages m_images;
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Initializes a new instance of the <see cref="AssignFeaturesToPhonemes"/> class.

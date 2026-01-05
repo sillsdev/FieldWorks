@@ -37,6 +37,18 @@
 		<ExcludedClsids Include="{e771361c-ff54-4120-9525-98a0b7a9accf}" /> <!-- ManagedLgIcuCollator -->
 		<ExcludedClsids Include="{830BAF1F-6F84-46EF-B63E-3C1BFDF9E83E}" /> <!-- ViewInputManager -->
 	</ItemGroup>
+	<PropertyGroup Condition="'$(DOTNET_RUNNING_IN_CONTAINER)'=='true'">
+		<NativeStageRoot>C:\Temp\fw-native</NativeStageRoot>
+		<NativeStageConfig>$(NativeStageRoot)\$(config-capital)</NativeStageConfig>
+		<NativeStageLib>$(NativeStageConfig)\Lib</NativeStageLib>
+		<NativeStageOutput>$(NativeStageConfig)\Output</NativeStageOutput>
+		<NativeMakeOutDir>$(NativeStageOutput)</NativeMakeOutDir>
+		<NativeMakeLibOutDir>$(NativeStageLib)</NativeMakeLibOutDir>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(DOTNET_RUNNING_IN_CONTAINER)'!='true'">
+		<NativeMakeOutDir></NativeMakeOutDir>
+		<NativeMakeLibOutDir></NativeMakeLibOutDir>
+	</PropertyGroup>
 	<Target
 		Name="regFreeCpp"
 		DependsOnTargets="FwKernel;Views"
@@ -44,15 +56,13 @@
 		Condition="'$(OS)'=='Windows_NT'"
 	>
 		<ItemGroup>
-			<RegFreeDlls Include="$(dir-fwoutputCommon)\FwKernelTlb.tlb">
-				<Server>FwKernel.dll</Server>
-			</RegFreeDlls>
-			<RegFreeDlls Include="$(dir-outputBase)\Views.dll" />
+			<RegFreeDeps Include="$(dir-outputBase)\FwKernel.X.manifest" />
+			<RegFreeDeps Include="$(dir-outputBase)\Views.X.manifest" />
 		</ItemGroup>
 		<RegFree
 			Executable="$(dir-outputBase)/FwKernel.dll"
 			Output="$(dir-outputBase)/FieldWorks.Tests.manifest"
-			Dlls="@(RegFreeDlls)"
+			DependentAssemblies="@(RegFreeDeps)"
 			Fragments="@(Fragments)"
 			Platform="$(Platform)"
 			MSBuildArchitecture="$(Platform)"
@@ -61,23 +71,47 @@
 	</Target>
 	<Target Name="DebugProcs" DependsOnTargets="initWindows;CopyDlls">
 		<Make
-			Condition="'$(OS)'=='Windows_NT'"
+			Condition="'$(OS)'=='Windows_NT' AND '$(SkipNative)'!='true'"
 			Makefile="$(fwrt)\Src\DebugProcs\DebugProcs.mak"
 			Configuration="$(config-capital)"
 			BuildRoot="$(fwrt)"
 			BuildArch="x64"
+			OutDir="$(NativeMakeOutDir)"
+			ObjDir="$(dir-fwobj)"
 			WorkingDirectory="$(fwrt)\Src\DebugProcs"
+		/>
+		<ItemGroup Condition="'$(DOTNET_RUNNING_IN_CONTAINER)'=='true'">
+			<StageDebugProcsFiles Include="$(NativeStageOutput)\**\*.*" />
+		</ItemGroup>
+		<Copy
+			Condition="'$(DOTNET_RUNNING_IN_CONTAINER)'=='true'"
+			SourceFiles="@(StageDebugProcsFiles)"
+			DestinationFiles="@(StageDebugProcsFiles->'$(dir-fwoutput)\\$(config-capital)\\%(RecursiveDir)%(Filename)%(Extension)')"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
 		/>
 		<Message Text="Finished building DebugProcs." />
 	</Target>
 	<Target Name="GenericLib" DependsOnTargets="DebugProcs">
 		<Make
-			Condition="'$(OS)'=='Windows_NT'"
+			Condition="'$(OS)'=='Windows_NT' AND '$(SkipNative)'!='true'"
 			Makefile="$(fwrt)\Src\Generic\GenericLib.mak"
 			Configuration="$(config-capital)"
 			BuildRoot="$(fwrt)"
 			BuildArch="x64"
+			OutDir="$(NativeMakeLibOutDir)"
+			ObjDir="$(dir-fwobj)"
 			WorkingDirectory="$(fwrt)\Src\Generic"
+		/>
+		<ItemGroup Condition="'$(DOTNET_RUNNING_IN_CONTAINER)'=='true'">
+			<StageGenericLibFiles Include="$(NativeStageLib)\**\*.*" />
+		</ItemGroup>
+		<Copy
+			Condition="'$(DOTNET_RUNNING_IN_CONTAINER)'=='true'"
+			SourceFiles="@(StageGenericLibFiles)"
+			DestinationFiles="@(StageGenericLibFiles->'$(dir-fwoutputlibBase)\\%(RecursiveDir)%(Filename)%(Extension)')"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
 		/>
 		<Message Text="Finished building GenericLib." />
 	</Target>
@@ -87,12 +121,24 @@
 	>
 		<Message Text="FwKernel make-target='$(make-target)'" />
 		<Make
-			Condition="'$(OS)'=='Windows_NT'"
+			Condition="'$(OS)'=='Windows_NT' AND '$(SkipNative)'!='true'"
 			Makefile="$(fwrt)\Src\Kernel\FwKernel.mak"
 			Configuration="$(config-capital)"
 			BuildRoot="$(fwrt)"
 			BuildArch="x64"
+			OutDir="$(NativeMakeOutDir)"
+			ObjDir="$(dir-fwobj)"
 			WorkingDirectory="$(fwrt)\Src\Kernel"
+		/>
+		<ItemGroup Condition="'$(DOTNET_RUNNING_IN_CONTAINER)'=='true'">
+			<StageFwKernelFiles Include="$(NativeStageOutput)\**\*.*" />
+		</ItemGroup>
+		<Copy
+			Condition="'$(DOTNET_RUNNING_IN_CONTAINER)'=='true'"
+			SourceFiles="@(StageFwKernelFiles)"
+			DestinationFiles="@(StageFwKernelFiles->'$(dir-fwoutput)\\$(config-capital)\\%(RecursiveDir)%(Filename)%(Extension)')"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
 		/>
 		<!-- Create stub manifest if needed -->
 		<WriteLinesToFile
@@ -125,12 +171,24 @@
 	</Target>
 	<Target Name="Views" DependsOnTargets="GenericLib;FwKernel;GenerateCellarConstants">
 		<Make
-			Condition="'$(OS)'=='Windows_NT'"
+			Condition="'$(OS)'=='Windows_NT' AND '$(SkipNative)'!='true'"
 			Makefile="$(fwrt)\Src\views\Views.mak"
 			Configuration="$(config-capital)"
 			BuildRoot="$(fwrt)"
 			BuildArch="x64"
+			OutDir="$(NativeMakeOutDir)"
+			ObjDir="$(dir-fwobj)"
 			WorkingDirectory="$(fwrt)\Src\views"
+		/>
+		<ItemGroup Condition="'$(DOTNET_RUNNING_IN_CONTAINER)'=='true'">
+			<StageViewsFiles Include="$(NativeStageOutput)\**\*.*" />
+		</ItemGroup>
+		<Copy
+			Condition="'$(DOTNET_RUNNING_IN_CONTAINER)'=='true'"
+			SourceFiles="@(StageViewsFiles)"
+			DestinationFiles="@(StageViewsFiles->'$(dir-fwoutput)\\$(config-capital)\\%(RecursiveDir)%(Filename)%(Extension)')"
+			SkipUnchangedFiles="true"
+			OverwriteReadOnlyFiles="true"
 		/>
 		<Message
 			Text="Generating Views.X.manifest for 64-bit registration-free COM..."
@@ -143,10 +201,23 @@
 			Overwrite="false"
 			Condition="'$(OS)'=='Windows_NT' AND !Exists('$(dir-outputBase)\Views.X.manifest')"
 		/>
+		<!--
+			Define DLLs for Views manifest generation:
+			- ViewsTlb.tlb: The type library containing COM interface definitions
+			- Views.dll: The actual COM server implementing the interfaces
+			Note: We need to pass the TLB file explicitly because Views.dll may not
+			have the type library embedded in a way that RegFree can extract.
+		-->
+		<ItemGroup>
+			<ViewsRegFreeDlls Include="$(dir-fwoutputCommon)\ViewsTlb.tlb">
+				<Server>Views.dll</Server>
+			</ViewsRegFreeDlls>
+		</ItemGroup>
 		<!-- Generate full manifest with COM entries - fail fast on errors -->
 		<RegFree
 			Executable="$(dir-outputBase)\Views.dll"
 			Output="$(dir-outputBase)\Views.X.manifest"
+			Dlls="@(ViewsRegFreeDlls)"
 			Platform="x64"
 			Condition="'$(OS)'=='Windows_NT'"
 			ExcludedClsids="@(ExcludedClsids)"
@@ -165,7 +236,7 @@
 	<ItemGroup>
 		<CellarConstantsInputs Include="$(LcmModelArtifactsDir)/MasterLCModel.xml" />
 		<CellarConstantsInputs Include="$(fwrt)/Src/Kernel/CellarConstants.vm.h" />
-		<CellarConstantsOutputs Include="$(fwrt)/Output/Common/CellarConstants.h" />
+		<CellarConstantsOutputs Include="$(dir-fwoutputCommon)/CellarConstants.h" />
 	</ItemGroup>
 	<Target
 		Name="GenerateCellarConstants"
@@ -186,12 +257,12 @@
 	<Target
 		Name="CopyCellarBaseConstants"
 		Inputs="$(fwrt)/Src/Kernel/CellarBaseConstants.h"
-		Outputs="$(fwrt)/Output/Common/CellarBaseConstants.h"
+		Outputs="$(dir-fwoutputCommon)/CellarBaseConstants.h"
 	>
 		<MakeDir Directories="$(dir-fwoutputCommon)" Condition="'$(action)'!='clean'" />
 		<Copy
 			SourceFiles="$(fwrt)/Src/Kernel/CellarBaseConstants.h"
-			DestinationFolder="$(fwrt)/Output/Common"
+			DestinationFolder="$(dir-fwoutputCommon)"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
 			Condition="'$(action)'!='clean'"
@@ -267,16 +338,11 @@
 			>GeckofxHtmlToPdf_Win64_continuous</GeckoFxHtmlToPdfBuildType
 		>
 		<GeckoFxHtmlToPdfBuildTag>.lastSuccessful</GeckoFxHtmlToPdfBuildTag>
-		<!-- Versions of NuGet packages. Keep these in sync with PackageReference versions in the managed projects. -->
-		<ChorusNugetVersion>6.0.0-beta0063</ChorusNugetVersion>
-		<PalasoNugetVersion>17.0.0-beta0080</PalasoNugetVersion>
-		<ParatextNugetVersion>9.4.0.1-beta</ParatextNugetVersion>
-		<LcmNugetVersion>11.0.0-beta0145</LcmNugetVersion>
-		<IcuNugetVersion>70.1.152</IcuNugetVersion>
-		<HermitCrabNugetVersion>3.7.4</HermitCrabNugetVersion>
-		<IPCFrameworkVersion>1.1.1-beta0001</IPCFrameworkVersion>
 		<DownloadsDir>$(fwrt)/Downloads</DownloadsDir>
-		<PackagesDir>$(fwrt)/packages</PackagesDir>
+		<!-- PackagesDir: Use NUGET_PACKAGES env var if set (for container builds), else local packages folder.
+		     Container builds set NUGET_PACKAGES to avoid bind mount issues with NuGet's atomic file operations. -->
+		<PackagesDir Condition="'$(NUGET_PACKAGES)' != ''">$(NUGET_PACKAGES)</PackagesDir>
+		<PackagesDir Condition="'$(NUGET_PACKAGES)' == ''">$(fwrt)/packages</PackagesDir>
 	</PropertyGroup>
 	<ItemGroup>
 		<!-- NOTE: Most managed DLLs are now handled automatically by PackageReference.
@@ -333,11 +399,38 @@
 		<LcmIcuNrmFiles Include="IcuData/icudt$(IcuVersion)l/nfkc_fw.nrm" />
 		<LcmMissingFiles Include="SIL.LCModel.dll.config" />
 	</ItemGroup>
-	<!-- Restore NuGet packages for SDK-style projects -->
+	<!-- Restore NuGet packages -->
 	<Target Name="RestorePackages">
-		<Message Text="Restoring NuGet packages with dotnet restore..." />
+		<Message Text="Restoring NuGet packages..." />
+		<!-- Restore legacy packages.config dependencies required by mkall before traversal restore -->
+		<PropertyGroup>
+			<NuGetExePath Condition="'$(NuGetExePath)'==''">$(PackagesDir)\nuget.exe</NuGetExePath>
+			<NuGetExeUri Condition="'$(NuGetExeUri)'==''">https://dist.nuget.org/win-x86-commandline/latest/nuget.exe</NuGetExeUri>
+		</PropertyGroup>
+		<MakeDir Directories="$(PackagesDir)" />
 		<Exec
-			Command="dotnet restore &quot;$(fwrt)\FieldWorks.sln&quot; --packages &quot;$(PackagesDir)&quot;"
+			Command='powershell -NoProfile -ExecutionPolicy Bypass -Command "if (-not (Test-Path \"$(NuGetExePath)\")) { Write-Host \"Downloading nuget.exe to $(NuGetExePath)\"; Invoke-WebRequest -UseBasicParsing -Uri $(NuGetExeUri) -OutFile \"$(NuGetExePath)\" }"'
+			ContinueOnError="false"
+		/>
+		<Exec
+			Command='"$(NuGetExePath)" restore "$(fwrt)\Build\nuget-common\packages.config" -PackagesDirectory "$(PackagesDir)" -NonInteractive'
+			ContinueOnError="false"
+		/>
+		<!--
+			Restore via FieldWorks.sln to ensure all projects get restored.
+			DisableWarnForInvalidRestoreProjects=true suppresses NU1503 warnings for
+			vcxproj files (C++ projects don't use NuGet restore, which is expected).
+			See: https://stackoverflow.com/a/76173374
+
+			NOTE: We do NOT use the - -packages flag here. Package location is controlled by:
+			- nuget.config (globalPackagesFolder) for host builds -> packages/
+			- NUGET_PACKAGES env var for container builds -> Docker named volume at C:\.nuget\packages
+
+			Container builds use Docker named volumes (not bind mounts) because NuGet's
+			MoveFile() operations fail on Windows bind mounts. See DOCKER.md for details.
+		-->
+		<Exec
+			Command='dotnet restore "$(fwrt)\FieldWorks.sln" /p:NoWarn=NU1903 /p:DisableWarnForInvalidRestoreProjects=true /p:Configuration=$(Configuration) /p:Platform=$(Platform)'
 			ContinueOnError="false"
 		/>
 	</Target>
@@ -696,12 +789,30 @@
 				Condition="Exists('%(Identity)')"
 			/>
 		</ItemGroup>
-		<Warning
+		<!--
+			Expected Warning: "Missing Palaso native files"
+			These are Windows-only native interop DLLs for optional features:
+			- Keyman*Interop.dll, KeymanLink.dll: Keyman keyboard integration
+			- irrKlang.NET4.dll: Audio playback via irrKlang engine
+			- Interop.WIA.dll: Windows Image Acquisition for scanning
+			- NDesk.DBus.dll.config: Linux D-Bus configuration (not needed on Windows)
+
+			This warning is EXPECTED in Docker containers and CI environments where:
+			1. These optional native dependencies aren't installed
+			2. The NuGet packages don't include all platform-specific files
+			3. Full functionality requires a complete Windows development environment
+
+			The warning does NOT fail the build. Features using these DLLs will gracefully
+			degrade or show appropriate error messages at runtime if the files are missing.
+		-->
+		<Message
 			Text="Missing Palaso native files (skipping): @(PalasoFiles)"
+			Importance="low"
 			Condition="'@(ExistingPalasoFiles)'!='' AND '@(PalasoFiles)'!='@(ExistingPalasoFiles)'"
 		/>
-		<Warning
+		<Message
 			Text="Missing Chorus application files (skipping): @(ChorusFiles)"
+			Importance="low"
 			Condition="'@(ExistingChorusFiles)'!='' AND '@(ChorusFiles)'!='@(ExistingChorusFiles)'"
 		/>
 		<!-- Copy native Keyman/irrKlang/Interop.WIA files from Palaso packages -->

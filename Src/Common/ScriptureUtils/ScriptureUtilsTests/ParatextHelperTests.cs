@@ -6,12 +6,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
+using Utilities;
 using Paratext;
 using Paratext.LexicalClient;
 using SIL.FieldWorks.Test.ProjectUnpacker;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
-using SIL.PlatformUtilities;
 
 namespace SIL.FieldWorks.Common.ScriptureUtils
 {
@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// ------------------------------------------------------------------------------------
 		public string ProjectsDirectory
 		{
-			get { return Platform.IsUnix ? "~/MyParatextProjects/" : @"c:\My Paratext Projects\"; }
+			get { return SIL.PlatformUtilities.Platform.IsUnix ? "~/MyParatextProjects/" : @"c:\My Paratext Projects\"; }
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -118,7 +118,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Load the mappings for a Paratext 6/7 project into the specified list. (no-op)
-		/// We never use this method; for tests, we use <c>Rhino.Mocks.MockRepository</c>
+		/// We never use this method; for tests, we use <c>Moq</c>
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public void LoadProjectMappings(IScrImportSet importSettings)
@@ -251,10 +251,64 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		public void Setup()
 		{
 			m_ptHelper = new MockParatextHelper();
+			AppDomain.CurrentDomain.SetData(ScriptureProvider.TestProviderDataKey, new TestScriptureProvider(m_ptHelper));
 			ParatextHelper.Manager.SetParatextHelperAdapter(m_ptHelper);
 		}
 
 		/// <summary/>
+	internal class TestScriptureProvider : ScriptureProvider.IScriptureProvider
+	{
+		private readonly MockParatextHelper m_helper;
+
+		public TestScriptureProvider(MockParatextHelper helper)
+		{
+			m_helper = helper;
+		}
+
+		public string SettingsDirectory => string.Empty;
+
+		public IEnumerable<string> NonEditableTexts => Enumerable.Empty<string>();
+
+		public IEnumerable<string> ScrTextNames => m_helper.Projects.Select(p => p.Name);
+
+		public void Initialize()
+		{
+		}
+
+		public void RefreshScrTexts()
+		{
+		}
+
+		public IEnumerable<IScrText> ScrTexts()
+		{
+			return m_helper.Projects;
+		}
+
+		public IScrText Get(string project)
+		{
+			return m_helper.Projects.FirstOrDefault(p => p.Name == project);
+		}
+
+		public IScrText MakeScrText(string paratextProjectId)
+		{
+			return new PT7ScrTextWrapper(new ScrText { Name = paratextProjectId });
+		}
+
+		public ScriptureProvider.IScriptureProviderParserState GetParserState(IScrText ptProjectText, IVerseRef ptCurrBook)
+		{
+			throw new NotSupportedException();
+		}
+
+		public IVerseRef MakeVerseRef(int bookNum, int i, int i1)
+		{
+			return new PT7VerseRefWrapper(new VerseRef(bookNum, i, i1));
+		}
+
+		public Version MaximumSupportedVersion => new Version(7, 0);
+
+		public bool IsInstalled => true;
+	}
+
 		[TearDown]
 		public void TearDown()
 		{

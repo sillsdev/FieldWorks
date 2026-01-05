@@ -308,7 +308,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				if (m_isSuggestingLicense)
 				{
 					// The user didn't select a license; don't save one
-					imageToolbox.ImageInfo.Metadata.License = new NullLicense();
+					imageToolbox.ImageInfo.Metadata.License = null;
 					imageToolbox.ImageInfo.Metadata.HasChanges = false;
 				}
 				if (!m_rbLeave.Checked && !ValidateDestinationFolder(m_txtDestination.Text))

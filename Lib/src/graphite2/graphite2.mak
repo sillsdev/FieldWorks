@@ -3,13 +3,20 @@
 # BUILD_ROOT: d:\FieldWorks
 # BUILD_TYPE: d, r, p
 # BUILD_CONFIG: Debug, Release, Profile
+# INT_DIR: (optional) override intermediate output directory for container builds
 #
+
+# NUL is used for directory existence checks (if exist "path/$(NUL)")
+NUL=nul
 
 GR2_BASE=$(BUILD_ROOT)\Lib\src\graphite2
 GR2_SRC=$(GR2_BASE)\src
 GR2_INC=$(GR2_BASE)\include
 OUT_DIR=$(BUILD_ROOT)\Lib\$(BUILD_CONFIG)
+# INT_DIR can be overridden from command line (e.g., for container builds)
+!IFNDEF INT_DIR
 INT_DIR=$(GR2_BASE)\Obj\$(BUILD_CONFIG)
+!ENDIF
 GR2_LIB=$(OUT_DIR)\graphite2.lib
 
 INCLUDE=$(INCLUDE);$(GR2_SRC);$(GR2_INC)

@@ -3,7 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using NUnit.Framework;
-using Rhino.Mocks;
+using Moq;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
@@ -96,8 +96,8 @@ namespace SIL.FieldWorks.IText
 				using (var sandbox = new SandboxBase(Cache, m_mediator, m_propertyTable, null, lineChoices, wa.Hvo))
 				{
 					sut.SetSandboxForTesting(sandbox);
-					var mockList = MockRepository.GenerateMock<IComboList>();
-					sut.SetComboListForTesting(mockList);
+					var mockList = new Mock<IComboList>();
+					sut.SetComboListForTesting(mockList.Object);
 					sut.SetMorphForTesting(0);
 					sut.LoadMorphItems();
 					Assert.That(sut.NeedSelectSame(), Is.True);
@@ -119,9 +119,9 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void MakeCombo_SelectionIsInvalid_Throws()
 		{
-			var vwsel = MockRepository.GenerateMock<IVwSelection>();
-			vwsel.Stub(s => s.IsValid).Return(false);
-			Assert.That(() => SandboxBase.InterlinComboHandler.MakeCombo(null, vwsel, null, true), Throws.ArgumentException);
+			var vwsel = new Mock<IVwSelection>();
+			vwsel.Setup(s => s.IsValid).Returns(false);
+			Assert.That(() => SandboxBase.InterlinComboHandler.MakeCombo(null, vwsel.Object, null, true), Throws.ArgumentException);
 		}
 
 		[Test]
@@ -130,29 +130,29 @@ namespace SIL.FieldWorks.IText
 			// Mock the various model objects to avoid having to create entries,
 			// senses, texts, analysis and morph bundles when we really just need to test
 			// the behaviour around a specific set of conditions
-			var glossString = MockRepository.GenerateStub<IMultiUnicode>();
-			glossString.Stub(g => g.get_String(Cache.DefaultAnalWs))
-				.Return(TsStringUtils.MakeString("hello", Cache.DefaultAnalWs));
-			var formString = MockRepository.GenerateStub<IMultiString>();
-			formString.Stub(f => f.get_String(Cache.DefaultVernWs))
-				.Return(TsStringUtils.MakeString("hi", Cache.DefaultVernWs));
-			var sense = MockRepository.GenerateStub<ILexSense>();
-			sense.Stub(s => s.Gloss).Return(glossString);
-			var bundle = MockRepository.GenerateStub<IWfiMorphBundle>();
-			bundle.Stub(b => b.Form).Return(formString);
-			bundle.Stub(b => b.DefaultSense).Return(sense);
-			var bundleList = MockRepository.GenerateStub<ILcmOwningSequence<IWfiMorphBundle>>();
-			bundleList.Stub(x => x.Count).Return(1);
-			bundleList[0] = bundle;
-			var wfiAnalysis = MockRepository.GenerateStub<IWfiAnalysis>();
-			wfiAnalysis.Stub(x => x.MorphBundlesOS).Return(bundleList);
+			var glossStringMock = new Mock<IMultiUnicode>();
+			glossStringMock.Setup(g => g.get_String(Cache.DefaultAnalWs))
+				.Returns(TsStringUtils.MakeString("hello", Cache.DefaultAnalWs));
+			var formStringMock = new Mock<IMultiString>();
+			formStringMock.Setup(f => f.get_String(Cache.DefaultVernWs))
+				.Returns(TsStringUtils.MakeString("hi", Cache.DefaultVernWs));
+			var senseMock = new Mock<ILexSense>();
+			senseMock.Setup(s => s.Gloss).Returns(glossStringMock.Object);
+			var bundleMock = new Mock<IWfiMorphBundle>();
+			bundleMock.Setup(b => b.Form).Returns(formStringMock.Object);
+			bundleMock.Setup(b => b.DefaultSense).Returns(senseMock.Object);
+			var bundleListMock = new Mock<ILcmOwningSequence<IWfiMorphBundle>>();
+			bundleListMock.Setup(x => x.Count).Returns(1);
+			bundleListMock.Setup(x => x[0]).Returns(bundleMock.Object);
+			var wfiAnalysisMock = new Mock<IWfiAnalysis>();
+			wfiAnalysisMock.Setup(x => x.MorphBundlesOS).Returns(bundleListMock.Object);
 			// SUT
-			var result = ChooseAnalysisHandler.MakeAnalysisStringRep(wfiAnalysis, Cache, false,
+			var result = ChooseAnalysisHandler.MakeAnalysisStringRep(wfiAnalysisMock.Object, Cache, false,
 				Cache.DefaultVernWs);
 			// Verify that the form value of the IWfiMorphBundle is displayed (test verification)
 			Assert.That(result.Text, Does.Contain("hi"));
 			// Verify that the sense reference in the bundle is null (key condition for the test)
-			Assert.That(bundle.SenseRA, Is.Null);
+			Assert.That(bundleMock.Object.SenseRA, Is.Null);
 			// Verify that the gloss for the DefaultSense is displayed (key test data)
 			Assert.That(result.Text, Does.Contain("hello"));
 		}

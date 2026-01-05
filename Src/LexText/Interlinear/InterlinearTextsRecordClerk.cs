@@ -19,8 +19,6 @@ namespace SIL.FieldWorks.IText
 {
 	public class InterlinearTextsRecordClerk : RecordClerk
 	{
-		private LcmStyleSheet m_stylesheet;
-
 		// The following is used in the process of selecting the ws for a new text.  See LT-6692.
 		private int m_wsPrevText;
 		public int PrevTextWs

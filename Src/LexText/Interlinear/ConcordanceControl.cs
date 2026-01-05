@@ -791,7 +791,7 @@ namespace SIL.FieldWorks.IText
 			{
 				return m_cache.ServiceLocator.GetObject(m_hvoMatch);
 			}
-			catch (KeyNotFoundException e)
+			catch (KeyNotFoundException)
 			{
 			}
 			// LT-13503 It is just possible that we are deleting the last remaining analysis of a wordform

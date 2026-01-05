@@ -9,6 +9,10 @@ description: "FieldWorks managed (.NET/C#) development guidelines"
 ## Purpose & Scope
 This file describes conventions, deterministic requirements, and best practices for managed (.NET/C#) development in FieldWorks.
 
+## Platform Support
+- **Windows only**: FieldWorks targets .NET Framework 4.8 on Windows x64.
+- **Mono is deprecated**: Mono/Linux support was removed. When you encounter `Platform.IsMono` checks, `TODO-Linux` comments, or other Mono-specific code, remove it when practical. Do not add new Mono-specific code paths.
+
 ## Context loading
 - Review `.github/src-catalog.md` and `Src/<Folder>/COPILOT.md` for component responsibilities and entry points.
 - Follow localization patterns (use .resx resources; avoid hardcoded UI strings). Crowdin sync is configured via `crowdin.json`.

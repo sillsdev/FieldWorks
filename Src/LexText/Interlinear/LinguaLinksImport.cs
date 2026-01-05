@@ -44,7 +44,6 @@ namespace SIL.FieldWorks.IText
 		private string m_sErrorMsg;
 		private LanguageMapping[] m_languageMappings;
 		private LanguageMapping m_current;
-		private int m_version; // of FLExText being imported. 0 if no version found.
 		private EncConverters m_converters;
 		private string m_nextInput;
 		private string m_sTempDir;
@@ -581,7 +580,7 @@ namespace SIL.FieldWorks.IText
 			{
 				wsEngine = wsFact.get_Engine(langCode);
 			}
-			catch (ArgumentException e)
+			catch (ArgumentException)
 			{
 				Debug.Assert(false, "We hit the non-existant ws in AdjustPunctStringForCharacter().");
 				return false;

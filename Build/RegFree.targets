@@ -1,8 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
 	<PropertyGroup>
-		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'==''"
+		<!-- Use container-local path for FwBuildTasks when running in Docker to avoid bind-mount conflicts -->
+		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'=='' AND '$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'"
 			>$(MSBuildThisFileDirectory)..\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll</FwBuildTasksAssembly
+		>
+		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'=='' AND '$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'"
+			>C:\Temp\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll</FwBuildTasksAssembly
 		>
 	</PropertyGroup>
 	<UsingTask TaskName="RegFree" AssemblyFile="$(FwBuildTasksAssembly)" />
@@ -76,7 +80,7 @@
 		<ManagedComAssemblies Remove="$(OutDir)FwKernel.dll" />
 		<ManagedComAssemblies Remove="$(OutDir)Views.dll" />
 		<!-- Exclude 3rd party DLLs that cause manifest issues and don't need RegFree COM -->
-		<ManagedComAssemblies Remove="$(OutDir)DotNetZip.dll" />
+		<ManagedComAssemblies Remove="$(OutDir)ProDotNetZip.dll" />
 	</ItemGroup>
 
 	<!-- Ensure we don't process managed assemblies as native type libraries in the main manifest -->
@@ -116,7 +120,7 @@
 	</Target>
 	<Target
 		Name="AttachManifest"
-		Condition="'$(OS)'=='Windows_NT' AND '$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'"
+		Condition="'$(OS)'=='Windows_NT' AND '$(Configuration)' == 'Release' AND '$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'"
 		DependsOnTargets="CreateManifest"
 	>
 		<Exec Command="&quot;$(MtExe)&quot; -nologo -manifest &quot;$(Executable).manifest&quot; -outputresource:&quot;$(Executable);#1&quot;" />
@@ -126,10 +130,10 @@
 	     This is sufficient for Debug builds and testing. Release builds are blocked in SetupInclude.targets. -->
 	<Target
 		Name="AttachManifestContainerSkip"
-		Condition="'$(OS)'=='Windows_NT' AND '$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'"
+		Condition="'$(OS)'=='Windows_NT' AND ('$(Configuration)' == 'Debug' OR '$(DOTNET_RUNNING_IN_CONTAINER)' == 'true')"
 		DependsOnTargets="CreateManifest"
 	>
-		<Message Text="Container build: Skipping manifest embedding (using external .manifest file instead)" Importance="high" />
+		<Message Text="Debug/Container build: Skipping manifest embedding (using external .manifest file instead)" Importance="high" />
 	</Target>
 	<Target
 		Name="RegFree"

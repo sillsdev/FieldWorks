@@ -19,7 +19,15 @@
     <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
     <!-- Set fwrt early so NuGet package restore can find packages -->
     <fwrt>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\..'))</fwrt>
-    <PackagesDir>$(fwrt)/packages</PackagesDir>
+    <!--
+      NuGet Package Location Policy:
+      - Host builds: Use nuget.config globalPackagesFolder (packages/)
+      - Container builds: Use NUGET_PACKAGES env var (C:\.nuget\packages)
+      The NUGET_PACKAGES env var takes precedence over RestorePackagesPath.
+      See nuget.config for full documentation.
+    -->
+    <PackagesDir Condition="'$(NUGET_PACKAGES)' != ''">$(NUGET_PACKAGES)</PackagesDir>
+    <PackagesDir Condition="'$(NUGET_PACKAGES)' == ''">$(fwrt)/packages</PackagesDir>
     <RestorePackagesPath>$(PackagesDir)</RestorePackagesPath>
   </PropertyGroup>
   <!-- Import the native build orchestration -->
@@ -41,9 +49,31 @@
       <IncludeAssets>none</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <!--
+      Localization package references:
+      These packages contain XLIFF translation files used by Build/Localize.targets.
+      They must be explicitly referenced here because NativeBuild.csproj is a traditional
+      MSBuild project, not an SDK-style project, so it doesn't inherit from Directory.Build.props.
+    -->
+    <PackageReference Include="SIL.Chorus.L10ns" Version="3.0.1">
+      <IncludeAssets>none</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="SIL.LibPalaso.L10ns" Version="17.0.0">
+      <IncludeAssets>none</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <!-- ICU library (needed for mkall.targets copy steps) -->
+    <PackageReference Include="icu4c.win.fw.lib" Version="$(IcuNugetVersion)">
+      <IncludeAssets>none</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
   <!-- Override the Build target to call native build instead -->
-  <Target Name="Build" DependsOnTargets="allCppNoTest">
+  <Target
+    Name="Build"
+    DependsOnTargets="allCppNoTest"
+  >
     <Message Text="Native C++ components built successfully" Importance="high" />
   </Target>
   <!-- Ensure Clean works -->

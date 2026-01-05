@@ -97,6 +97,6 @@ initial_prompt: |
   - Check .github/instructions/*.instructions.md for coding guidelines (managed, native, testing, etc.)
   - Per-folder COPILOT.md files describe component contracts and dependencies
 
-project_name: "FieldWorks"
+# project_name: Intentionally left out so that the folder name will be used and worktrees will not conflict
 excluded_tools: []
 included_optional_tools: []

@@ -19,6 +19,7 @@
 		<Error Text="Release builds are not supported in Docker containers.%0A%0AReason: Windows containers cannot embed manifests into executables on mounted volumes,%0Aand container builds skip Clouseau validation. This could result in:%0A  - Missing embedded manifests (RegFree COM may fail)%0A  - Unvalidated IDisposable patterns (potential memory leaks)%0A%0ASolutions:%0A  1. Use Debug configuration for container builds: /p:Configuration=Debug%0A  2. Build releases on the host machine or CI runner%0A  3. Use the installer build pipeline for official releases" />
 	</Target>
 	<PropertyGroup>
+		<!-- FwBuildTasks is bootstrapped by build.ps1 into BuildTools/FwBuildTasks/<Configuration>/ regardless of host/container -->
 		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'==''"
 			>$(MSBuildThisFileDirectory)..\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll</FwBuildTasksAssembly
 		>
@@ -34,6 +35,33 @@
 		>
 		<fwrt Condition="'$(fwrt)' == ''">$(MSBuildThisFileDirectory)..</fwrt>
 	</PropertyGroup>
+	<!--
+		Configuration Synchronization:
+		There are two configuration properties that must stay in sync:
+		- Configuration: Standard MSBuild property used by .NET/managed projects (Debug, Release)
+		- config: Legacy property used by native C++ makefiles (debug, release, bounds, profile)
+
+		To prevent mismatches (e.g., Configuration=Debug with config=release), we:
+		1. Default config from Configuration if not explicitly set
+		2. Validate they match when both are specified
+	-->
+	<PropertyGroup>
+		<!-- If config is not set, derive it from Configuration (default to Debug if neither set) -->
+		<config Condition="'$(config)' == '' AND '$(Configuration)' != ''">$(Configuration)</config>
+		<config Condition="'$(config)' == ''">Debug</config>
+	</PropertyGroup>
+	<Target Name="ValidateConfigurationSync"
+		BeforeTargets="Setup"
+		Condition="'$(Configuration)' != '' AND '$(config)' != ''">
+		<!-- Normalize both to compare (handle case differences) -->
+		<PropertyGroup>
+			<_ConfigLower>$(Configuration.ToLowerInvariant())</_ConfigLower>
+			<_configLower>$(config.ToLowerInvariant())</_configLower>
+		</PropertyGroup>
+		<Error
+			Condition="'$(_ConfigLower)' != '$(_configLower)'"
+			Text="Configuration mismatch detected!%0A%0A  Configuration = $(Configuration)%0A  config = $(config)%0A%0AThese must match to ensure managed and native builds use the same output paths.%0A%0ASolutions:%0A  1. Use only /p:Configuration=Release (config will be derived automatically)%0A  2. Or explicitly set both to match: /p:Configuration=Release /p:config=Release" />
+	</Target>
 	<!-- config is generally either Debug or Release, but might be Bounds or Profile. -->
 	<!-- if the user gives it lowercase, fix it to be capitalized -->
 	<Choose>
@@ -101,9 +129,9 @@
 			</PropertyGroup>
 		</Otherwise>
 	</Choose>
-	<Target Name="Setup">
+	<Target Name="Setup" Condition="'$(SkipSetupTargets)' != 'true'">
 		<Error
-			Condition="!Exists('$(FwBuildTasksAssembly)')"
+			Condition="!Exists('$(FwBuildTasksAssembly)') AND '$(MSBuildProjectName)' != 'FwBuildTasks' AND '$(SkipFwBuildTasksAssemblyCheck)' != 'true'"
 			Text="Missing FieldWorks build tasks assembly: $(FwBuildTasksAssembly). Build Build/Src/FwBuildTasks/FwBuildTasks.csproj first."
 		/>
 		<!-- Block Release builds in containers to prevent accidental official releases -->
@@ -111,13 +139,14 @@
 			Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true' AND '$(Configuration)' == 'Release'"
 			Text="Release builds are not supported in containers. Container builds are for development and testing only. Reason: (1) mt.exe cannot embed manifests into executables on mounted volumes, (2) container builds use external manifests which are not suitable for distribution, (3) official releases must be built on the host machine or CI to ensure proper signing and packaging. Use Configuration=Debug for container builds."
 		/>
-		<!-- cannot depend on GenerateVersionFiles, because that creates a file in Output/Common which CleanAll deletes -->
+		<!-- cannot depend on GenerateVersionFiles, because that creates a file in Output/$(Configuration)/Common which CleanAll deletes -->
 		<!-- This is less pretty then I would like since xbuild doesn't support relational operators in conditions -->
 		<PropertyGroup Condition="'$(OS)'=='Windows_NT'">
 			<ToolsVersion>Current</ToolsVersion>
 		</PropertyGroup>
-		<!-- refresh the FieldWorks.targets file that gets loaded -->
-		<GenerateFwTargets ToolsVersion="$(ToolsVersion)" />
+		<!-- refresh the FieldWorks.targets file that gets loaded
+			 Pass FwRoot explicitly for container builds where FwBuildTasks.dll is in C:\Temp\BuildTools\ -->
+		<GenerateFwTargets ToolsVersion="$(ToolsVersion)" FwRoot="$(fwrt)" Condition="'$(SkipGenerateFwTargets)' != 'true'" />
 		<CpuArchitecture>
 			<Output TaskParameter="Value" PropertyName="arch" />
 		</CpuArchitecture>
@@ -139,7 +168,10 @@
 		<PathCombine BasePath="$(dir-fwoutput)" SubPath="$(config-capital)">
 			<Output TaskParameter="Value" PropertyName="dir-outputBase" />
 		</PathCombine>
-		<PathCombine BasePath="$(dir-fwoutput)" SubPath="Common">
+		<!-- dir-fwoutputCommon: Configuration-specific path for generated COM artifacts.
+		     These files contain preprocessor-conditional code (DEBUG-dependent) and MUST be
+		     separated per configuration to avoid stale artifact issues when switching Debug/Release. -->
+		<PathCombine BasePath="$(dir-outputBase)" SubPath="Common">
 			<Output TaskParameter="Value" PropertyName="dir-fwoutputCommon" />
 		</PathCombine>
 		<CreateProperty Value="$(dir-outputBase)">
@@ -268,13 +300,15 @@
 		<MakeDir Directories="$(dir-fwobj);$(dir-outputBase);$(dir-fwoutputCommon)" />
 	</Target>
 	<!-- Generate Src/CommonAssemblyInfo.cs from Src/CommonAssemblyInfoTemplate.cs and Src/MasterVersionInfo.txt -->
-	<!-- Generate Output/Common/bldinc.h from Src/bldinc.h and Src/MasterVersionInfo.txt -->
+	<!-- Generate Output/$(Configuration)/Common/bldinc.h from Src/bldinc.h and Src/MasterVersionInfo.txt -->
 	<ItemGroup>
 		<VersionTemplate Include="$(fwrt)\Src\CommonAssemblyInfoTemplate.cs" />
 		<VersionSymbols Include="$(fwrt)\Src\MasterVersionInfo.txt" />
 		<VersionOutput Include="$(fwrt)\Src\CommonAssemblyInfo.cs" />
 		<BldIncTemplate Include="$(fwrt)\Src\bldinc.h" />
-		<BldIncOutput Include="$(fwrt)\Output\Common\bldinc.h" />
+		<!-- Note: Cannot use $(dir-fwoutputCommon) here because it's set in Setup target (runtime),
+		     but ItemGroups are evaluated at parse time. Use expanded path instead. -->
+		<BldIncOutput Include="$(fwrt)\Output\$(Configuration)\Common\bldinc.h" />
 		<GlobalIncludeTemplate Include="$(MSBuildThisFileDirectory)GlobalInclude.properties.template" />
 		<GlobalIncludeOutput Include="$(MSBuildThisFileDirectory)GlobalInclude.properties" />
 		<FwParatextLexiconPluginTemplate Include="$(fwrt)\Src\FwParatextLexiconPlugin\ParatextLexiconPluginRegistryHelper.template.cs" />

@@ -34,10 +34,10 @@ namespace SIL.FieldWorks.IText
 		protected TextsTriStateTreeView m_treeTexts;
 		/// <summary>Label for the tree view.</summary>
 		protected Label m_treeViewLabel;
-		//		private IContainer components;
+		//		private IContainer components = null;
 		/// <remarks>protected because of testing</remarks>
 		protected Button m_btnOK;
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 		#endregion
 
 		#region Constructor/Destructor

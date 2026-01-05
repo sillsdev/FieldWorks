@@ -46,6 +46,16 @@ Or install manually from [WiX releases](https://github.com/wixtoolset/wix3/relea
 
 See [Installer Build Guide](installer-build-guide.md) for building installers locally.
 
+#### Windows Defender Exclusions (Recommended)
+
+FieldWorks builds can be significantly slowed by Windows Defender real-time scanning. To configure exclusions, run the following in an **Administrator PowerShell**:
+
+```powershell
+.\Build\Agent\Setup-DefenderExclusions.ps1
+```
+
+This adds exclusions for build outputs, NuGet caches, Docker paths, and development tools. Use `-DryRun` to preview changes without applying them.
+
 ### 2. Clone the Repository
 
 Clone the FieldWorks repository using HTTPS or SSH:

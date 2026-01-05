@@ -16,7 +16,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public System.Windows.Forms.ImageList smallImages;
 		public System.Windows.Forms.ImageList smallCommandImages;
 		private System.Windows.Forms.Button button1;
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 
 		/// -----------------------------------------------------------------------------------
 		/// <summary>

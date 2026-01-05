@@ -50,7 +50,7 @@ namespace SIL.FieldWorks.IText
 		private ImageList m_imageList;
 		private CheckBox m_categoryNotCheckBox;
 
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 
 		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;

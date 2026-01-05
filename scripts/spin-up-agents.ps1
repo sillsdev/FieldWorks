@@ -50,42 +50,15 @@ $ErrorActionPreference = "Stop"
 $agentModule = Join-Path $PSScriptRoot 'Agent\AgentInfrastructure.psm1'
 Import-Module $agentModule -Force -DisableNameChecking
 
+$configModule = Join-Path $PSScriptRoot 'Agent\AgentConfiguration.psm1'
+Import-Module $configModule -Force -DisableNameChecking
+
 $vsCodeModule = Join-Path $PSScriptRoot 'Agent\VsCodeControl.psm1'
 Import-Module $vsCodeModule -Force -DisableNameChecking
 
 $script:GitFetched = $false
 
-function ConvertTo-OrderedStructure {
-  param([object]$Value)
-
-  if ($null -eq $Value) { return $null }
-
-  if ($Value -is [System.Collections.IDictionary]) {
-    $ordered = [ordered]@{}
-    foreach ($key in $Value.Keys) {
-      $ordered[$key] = ConvertTo-OrderedStructure -Value $Value[$key]
-    }
-    return $ordered
-  }
-
-  if ($Value -is [pscustomobject]) {
-    $ordered = [ordered]@{}
-    foreach ($prop in $Value.PSObject.Properties) {
-      $ordered[$prop.Name] = ConvertTo-OrderedStructure -Value $prop.Value
-    }
-    return $ordered
-  }
-
-  if (($Value -is [System.Collections.IEnumerable]) -and -not ($Value -is [string])) {
-    $list = @()
-    foreach ($item in $Value) {
-      $list += ,(ConvertTo-OrderedStructure -Value $item)
-    }
-    return $list
-  }
-
-  return $Value
-}
+# ConvertTo-OrderedStructure is now in AgentConfiguration.psm1
 
 function Get-RepoVsCodeSettings {
   param([Parameter(Mandatory=$true)][string]$RepoRoot)
@@ -139,19 +112,7 @@ if (-not $NoContainer) {
 
 . (Join-Path $PSScriptRoot 'git-utilities.ps1')
 
-# Color palette for agent workspaces (distinct, high-contrast colors)
-function Get-AgentColors {
-  param([int]$Index)
-  $colors = @(
-    @{ Title="#1e3a8a"; Status="#1e40af"; Activity="#1e3a8a"; Name="Blue" },       # Deep blue
-    @{ Title="#15803d"; Status="#16a34a"; Activity="#15803d"; Name="Green" },     # Forest green
-    @{ Title="#9333ea"; Status="#a855f7"; Activity="#9333ea"; Name="Purple" },    # Purple
-    @{ Title="#c2410c"; Status="#ea580c"; Activity="#c2410c"; Name="Orange" },    # Orange
-    @{ Title="#be123c"; Status="#e11d48"; Activity="#be123c"; Name="Rose" }      # Rose/Red
-  )
-  $idx = ($Index - 1) % $colors.Count
-  return $colors[$idx]
-}
+# Get-AgentColors is now in AgentConfiguration.psm1
 
 # Verify Windows containers mode
 if (-not $NoContainer) {
@@ -178,12 +139,7 @@ The multi-agent workflow requires Windows containers because FieldWorks needs:
 # Normalize paths
 $RepoRoot = (Resolve-Path $RepoRoot).Path
 Assert-VolumeSupportsBindMount -Path $RepoRoot
-if (-not $PSBoundParameters.ContainsKey('WorktreesRoot')) {
-  if ($env:FW_WORKTREES_ROOT) { $WorktreesRoot = $env:FW_WORKTREES_ROOT } else { $WorktreesRoot = Join-Path $RepoRoot "worktrees" }
-}
-# Create worktrees root directory
-New-Item -ItemType Directory -Force -Path $WorktreesRoot | Out-Null
-$WorktreesRoot = (Resolve-Path $WorktreesRoot).Path
+$WorktreesRoot = Resolve-WorktreesRoot -WorktreesRoot $WorktreesRoot -RepoRoot $RepoRoot -Create
 Assert-VolumeSupportsBindMount -Path $WorktreesRoot
 
 $repoGitDir = Get-GitDirectory -Path $RepoRoot
@@ -376,12 +332,16 @@ function Ensure-Container {
   )
   $name = "fw-agent-$Index"
 
-  # Per-agent NuGet cache folder on host
-  $nugetHost = Join-Path $RepoRoot (".nuget\packages-agent-$Index")
-  New-Item -ItemType Directory -Force -Path $nugetHost | Out-Null
+  # NuGet cache strategy for containers:
+  # Use a NAMED VOLUME for all NuGet operations (packages, http-cache, temp)
+  # Named volumes have proper NTFS semantics and don't suffer from the MoveFile() bug
+  # that affects bind mounts on Windows Docker (moby/moby#38256)
+  #
+  # For non-container builds, use nuget.config globalPackagesFolder (packages/ in repo)
 
   if ($NoContainer) {
-    return @{ Name=$null; NuGetCache=$nugetHost; ContainerPath=$AgentPath; UseContainer=$false }
+    # Non-container mode uses repo-local packages/ folder via nuget.config
+    return @{ Name=$null; NuGetCache=$null; ContainerPath=$AgentPath; UseContainer=$false }
   }
 
   $driveMappings = @{}
@@ -460,6 +420,26 @@ function Ensure-Container {
     $containerExists = $false
   }
 
+  # NuGet cache strategy: HYBRID approach with shared and isolated caches
+  # Named volume for packages/http-cache (shared), container-local for temp (isolated)
+  #
+  # Why hybrid?
+  # - packages/http-cache are read-only after initial write, safe to share across agents
+  # - temp is actively written during extraction, MUST be isolated per container
+  # - Hyper-V isolation (--isolation=hyperv) fixes MoveFile() bug for temp->packages moves
+  #
+  # Structure:
+  #   Named volume (fw-nuget-cache @ C:\NuGetCache):
+  #     ├── packages/      - SHARED global packages (download once, all agents read)
+  #     └── http-cache/    - SHARED HTTP cache (feed metadata)
+  #   Container-local (C:\Temp):
+  #     └── NuGetScratch/  - ISOLATED per container (extraction temp files)
+  #
+  # First-run note: If shared volume is empty, first restore downloads all packages.
+  # Subsequent containers/builds find packages already cached.
+  $nugetVolumeName = Get-NuGetVolumeName
+  $nugetMountPath = Get-NuGetMountPath
+
   if ($containerExists) {
     if (-not $containerRunning) {
       Write-Host "Starting existing container $name..."
@@ -468,28 +448,53 @@ function Ensure-Container {
       Write-Host "Container $name already running."
     }
   } else {
+    # Ensure the named volume exists
+    New-NuGetVolume | Out-Null
+
     $args = @(
       "run","-d",
       "--name",$name,
-      "--isolation=process",
+      "--isolation=hyperv",  # Hyper-V fixes Windows Docker MoveFile() bug (moby/moby#38256)
       "--memory",$ContainerMemory,
       "--workdir",$containerAgentPath
     )
 
+    # Bind mounts for source code (read/write from host)
     foreach ($entry in $driveMappings.GetEnumerator()) {
       $args += @("-v","$($entry.Key):$($entry.Value)")
     }
 
+    # Named volume for NuGet (avoids MoveFile bug)
+    $args += @("-v","${nugetVolumeName}:${nugetMountPath}")
+
+    # Hybrid NuGet caching strategy:
+    # - SHARED on named volume: packages/ and http-cache/ (download once, all agents reuse)
+    # - ISOLATED per container: TEMP/TMP (container-local C:\Temp for NuGetScratch)
+    #
+    # Why this split?
+    # - global-packages: Read-only after extraction, safe to share
+    # - http-cache: Cached HTTP responses, rarely written, safe to share
+    # - temp (NuGetScratch): Active extraction operations, MUST be isolated
+    #
+    # The MoveFile bug (moby/moby#38256) affects temp->global-packages moves.
+    # Hyper-V isolation fixes this. Container-local temp avoids any shared-temp race conditions.
+    #
+    # Note: FW_CONTAINER=true is baked into the image (Post-Install-Setup.ps1)
+    $containerPackagesPath = Get-NuGetPackagesPath
+    $containerHttpCachePath = Get-NuGetHttpCachePath
+    $containerTempPath = Get-ContainerTempPath
     $args += @(
-      "-v","${nugetHost}:C:\.nuget\packages",
-      "-e","NUGET_PACKAGES=C:\.nuget\packages",
+      "-e","NUGET_PACKAGES=$containerPackagesPath",
+      "-e","NUGET_HTTP_CACHE_PATH=$containerHttpCachePath",
+      "-e","TEMP=$containerTempPath",
+      "-e","TMP=$containerTempPath",
       $ImageTag,
-      "powershell","-NoLogo","-ExecutionPolicy","Bypass","-Command",'while ($true) { Start-Sleep -Seconds 3600 }'
+      "powershell","-NoLogo","-ExecutionPolicy","Bypass","-Command","New-Item -ItemType Directory -Force -Path '$containerPackagesPath','$containerHttpCachePath','$containerTempPath' | Out-Null; while (`$true) { Start-Sleep -Seconds 3600 }"
     )
     Invoke-DockerSafe $args -Quiet
   }
 
-  return @{ Name=$name; NuGetCache=$nugetHost; ContainerPath=$containerAgentPath; UseContainer=$true }
+  return @{ Name=$name; NuGetCache="$nugetMountPath\packages"; ContainerPath=$containerAgentPath; UseContainer=$true }
 }
 
 function Write-Tasks {
@@ -658,6 +663,9 @@ for ($i=1; $i -le $Count; $i++) {
 
     # Ensure container is running even for existing worktrees
     $ct = Ensure-Container -Index $i -AgentPath $wt.Path -RepoRoot $RepoRoot -WorktreesRoot $WorktreesRoot
+
+    # Always update agent config (container paths, NuGet cache, etc.)
+    Write-AgentConfig -AgentPath $wt.Path -SolutionRelPath $SolutionRelPath -Container $ct -RepoRoot $RepoRoot
 
     # Always update VS Code workspace file (inherits settings from main repo)
     # Use -Force:$ForceVsCodeSetup to control whether tasks.json is overwritten

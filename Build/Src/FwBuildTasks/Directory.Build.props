@@ -1,6 +1,8 @@
 <Project>
 	<Import Project="$([MSBuild]::GetPathOfFileAbove('Directory.Build.props', '$(MSBuildThisFileDirectory)../'))" />
 	<PropertyGroup>
-		<BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)..\..\..\Obj\Build\Src\FwBuildTasks\</BaseIntermediateOutputPath>
+		<!-- Use container-local intermediate path when running in Docker to avoid bind-mount conflicts -->
+		<BaseIntermediateOutputPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'">$(MSBuildThisFileDirectory)..\..\..\Obj\Build\Src\FwBuildTasks\</BaseIntermediateOutputPath>
+		<BaseIntermediateOutputPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">C:\Temp\Obj\Build\Src\FwBuildTasks\</BaseIntermediateOutputPath>
 	</PropertyGroup>
 </Project>

@@ -5,7 +5,9 @@
     <Description>Additional msbuild tasks for FieldWorks</Description>
     <Product>FwBuildTasks</Product>
     <TargetFramework>net48</TargetFramework>
-    <OutputPath>$(FwRoot)BuildTools\FwBuildTasks\$(Configuration)\</OutputPath>
+    <!-- Use container-local output path when in Docker to avoid bind-mount conflicts with host Serena/OmniSharp -->
+    <OutputPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'">$(FwRoot)BuildTools\FwBuildTasks\$(Configuration)\</OutputPath>
+    <OutputPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">C:\Temp\BuildTools\FwBuildTasks\$(Configuration)\</OutputPath>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <DefaultItemExcludes>$(DefaultItemExcludes);obj\**</DefaultItemExcludes>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -14,7 +16,7 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.14.8" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="18.0.2" />
     <PackageReference Include="NUnit" Version="4.4.0" PrivateAssets="All" />
     <PackageReference Include="NUnit3TestAdapter" Version="5.2.0" PrivateAssets="All" />
     <PackageReference Include="SIL.BuildTasks" Version="3.1.2-beta0012" />

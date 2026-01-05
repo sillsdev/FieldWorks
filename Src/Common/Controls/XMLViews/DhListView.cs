@@ -23,7 +23,9 @@ namespace SIL.FieldWorks.Common.Controls
 		private BrowseViewer m_bv;
 		private ImageList m_imgList;
 		private bool m_fInAdjustWidth = false; // used to ignore recursive calls to AdjustWidth.
+#pragma warning disable CS0414 // Field is assigned but never used - retained for column drag/drop state tracking
 		private bool m_fColumnDropped = false;	// set this after we've drag and dropped a column
+#pragma warning restore CS0414
 		bool m_suppressColumnWidthChanges;
 		private ToolTip m_tooltip;
 

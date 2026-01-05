@@ -1,9 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
 	<PropertyGroup>
-		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'==''"
+		<BuildNativeTests Condition="'$(BuildNativeTests)'==''">false</BuildNativeTests>
+		<!-- Use container-local path for FwBuildTasks when running in Docker to avoid bind-mount conflicts -->
+		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'=='' AND '$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'"
 			>$(MSBuildThisFileDirectory)..\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll</FwBuildTasksAssembly
 		>
+		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'=='' AND '$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'"
+			>C:\Temp\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll</FwBuildTasksAssembly
+		>
+	</PropertyGroup>
+	<!--
+		Native Intermediate Output Policy:
+		Mirrors the managed project policy in Directory.Build.props.
+		- Host builds: $(fwrt)Obj/<Configuration>/<LibraryName>/
+		- Container builds: C:\Temp\Obj/<Configuration>/<LibraryName>/
+		This prevents conflicts when worktrees are bind-mounted into containers.
+	-->
+	<PropertyGroup Label="Native Intermediate Output">
+		<NativeIntDirBase Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'">$(fwrt)Obj\$(config-capital)\</NativeIntDirBase>
+		<NativeIntDirBase Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">C:\Temp\Obj\$(config-capital)\</NativeIntDirBase>
 	</PropertyGroup>
 	<UsingTask
 		TaskName="CheckAdminPrivilege"
@@ -60,13 +76,13 @@
 		DependsOnTargets="clean-graphite2Windows"
 	></Target>
 	<ItemGroup>
-		<UnitSources Include="$(fwrt)\Lib\src\unit++\*.*" Condition="'$(OS)'=='Windows_NT'" />
+		<UnitSources Include="$(fwrt)\Lib\src\unit++\*.*" Condition="'$(OS)'=='Windows_NT' AND '$(BuildNativeTests)'=='true'" />
 	</ItemGroup>
 	<Target
 		Name="Unit++"
 		Inputs="@(UnitSources)"
 		Outputs="$(fwrt)\Lib\$(config-lower)\unit++.lib"
-		Condition="'$(OS)'=='Windows_NT'"
+		Condition="'$(OS)'=='Windows_NT' AND '$(BuildNativeTests)'=='true'"
 	>
 		<MSBuild
 			Projects="$(fwrt)\Lib\src\unit++\VS\unit++.vcxproj"
@@ -124,6 +140,9 @@
 		Outputs="$(dir-outputBase)\ApplicationTransforms.dll;$(dir-outputBase)\PresentationTransforms.dll"
 		Condition="'$(action)'!='clean'"
 	>
+		<PropertyGroup>
+			<TransformOutputDirectory>$(dir-outputBase)\Transforms</TransformOutputDirectory>
+		</PropertyGroup>
 		<!-- Locate xsltc.exe from the Windows SDK / .NET Framework SDK toolchains -->
 		<PropertyGroup>
 			<XsltcCandidatePaths>$(WindowsSDK_ExecutablePath_x86);$(ProgramFiles(x86))\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools;$(ProgramFiles(x86))\Windows Kits\NETFXSDK\4.8\bin\NETFX 4.8 Tools</XsltcCandidatePaths>
@@ -134,8 +153,10 @@
 		<PropertyGroup>
 			<SkipXsltCompilation Condition="'$(XsltcPath)'==''">true</SkipXsltCompilation>
 		</PropertyGroup>
-		<Warning
-			Text="xsltc.exe not found in candidate paths: $(XsltcCandidatePaths). XSL assemblies will be skipped. Install the .NET Framework 4.8 SDK (includes xsltc.exe)."
+		<!-- Informational only - xsltc.exe is optional for XSL precompilation -->
+		<Message
+			Text="xsltc.exe not found (XSL assemblies will be skipped). Install .NET Framework 4.8 SDK if needed."
+			Importance="low"
 			Condition="'$(SkipXsltCompilation)'=='true'"
 		/>
 		<Message
@@ -163,6 +184,24 @@
 		<Error
 			Text="xsltc.exe failed with exit code $(XsltcExitCode1) while building ApplicationTransforms.dll"
 			Condition="'$(SkipXsltCompilation)'!='true' AND '$(XsltcExitCode1)' != '0' AND '$(XsltcExitCode1)' != '-1073741819'"
+		/>
+		<MakeDir Directories="$(TransformOutputDirectory)\Application;$(TransformOutputDirectory)\Presentation" Condition="'$(SkipXsltCompilation)'=='true'" />
+		<Message
+			Text="xsltc.exe unavailable; copying XSL files to $(TransformOutputDirectory) for runtime loading."
+			Importance="low"
+			Condition="'$(SkipXsltCompilation)'=='true'"
+		/>
+		<Copy
+			SourceFiles="@(ApplicationTransforms)"
+			DestinationFiles="@(ApplicationTransforms->'$(TransformOutputDirectory)\Application\%(Filename)%(Extension)')"
+			SkipUnchangedFiles="true"
+			Condition="'$(SkipXsltCompilation)'=='true'"
+		/>
+		<Copy
+			SourceFiles="@(PresentationTransforms)"
+			DestinationFiles="@(PresentationTransforms->'$(TransformOutputDirectory)\Presentation\%(Filename)%(Extension)')"
+			SkipUnchangedFiles="true"
+			Condition="'$(SkipXsltCompilation)'=='true'"
 		/>
 		<Message
 			Text="Building PresentationTransforms.dll using xsltc.exe"
@@ -199,6 +238,7 @@
 			Makefile="$(fwrt)\Lib\src\graphite2\graphite2.mak"
 			Configuration="$(config-capital)"
 			BuildRoot="$(fwrt)"
+			IntDir="$(NativeIntDirBase)graphite2"
 			WorkingDirectory="$(fwrt)\Lib\src\graphite2"
 		/>
 		<Message Text="Finished building graphite2." />
@@ -208,6 +248,7 @@
 			Makefile="$(fwrt)\Lib\src\graphite2\graphite2.mak"
 			Configuration="$(config-capital)"
 			BuildRoot="$(fwrt)"
+			IntDir="$(NativeIntDirBase)graphite2"
 			Target="clean"
 			WorkingDirectory="$(fwrt)\Lib\src\graphite2"
 		/>

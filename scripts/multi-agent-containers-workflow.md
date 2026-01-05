@@ -213,5 +213,6 @@ docker exec fw-agent-1 powershell -c "Test-Path 'Build\FW.sln'"
 ## Notes
 
 - The repo root is bind-mounted at the same absolute path inside each container to keep Git worktree pointers valid (even if you rarely use Git inside containers).
-- Each container has a separate NuGet cache at `C:\.nuget\packages` mapped to a per-agent host folder to avoid cross-agent churn.
-- Containers run indefinitely (sleep 1 year) so they persist across reboots; use `docker start fw-agent-N` to restart after host reboot.
+- **NuGet caching (hybrid)**: Containers use a named Docker volume (`fw-nuget-cache`) with shared `packages/` and `http-cache/` folders. TEMP is container-local (`C:\Temp`) for isolation. See `DOCKER.md` for details.
+- Containers use **Hyper-V isolation** to fix the Windows Docker `MoveFile()` bug that affected NuGet package extraction.
+- Containers run indefinitely (sleep 1 hour loop) so they persist across reboots; use `docker start fw-agent-N` to restart after host reboot.

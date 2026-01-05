@@ -33,7 +33,14 @@ if ([string]::IsNullOrWhiteSpace($env:GITHUB_TOKEN)) {
   throw "GITHUB_TOKEN is not set. Create a personal access token with repo scope and export it before starting the MCP server."
 }
 
-$launcher = Resolve-Executable -Name 'npx'
+$launcher = Resolve-Executable -Name 'npx.cmd'
+if (-not $launcher) {
+  $launcher = Resolve-Executable -Name 'npx'
+}
+if ($launcher -like '*.ps1') {
+  $cmdLauncher = Resolve-Executable -Name 'npx.cmd'
+  if ($cmdLauncher) { $launcher = $cmdLauncher }
+}
 if (-not $launcher) {
   throw "npx was not found on PATH. Install Node.js 18+ and ensure npx is available."
 }
@@ -43,7 +50,7 @@ if ($ServerArgs -and $ServerArgs.Count -gt 0) {
   $arguments += $ServerArgs
 }
 
-Write-Host "Starting GitHub MCP server for $RepoSlug using $PackageName..."
+Write-Verbose "Starting GitHub MCP server for $RepoSlug using $PackageName..."
 & $launcher @arguments
 $exitCode = $LASTEXITCODE
 exit $exitCode

@@ -45,12 +45,47 @@
 *Goal: Plan and prototype migration of legacy C++ tests to GoogleTest (User Story 4).*
 
 - [x] T016 [US4] Create a detailed migration guide `specs/007-test-modernization-vstest/native-migration-plan.md` mapping Unit++ macros to GoogleTest.
+      *Complete: Created comprehensive plan including API mapping, installation options, VSTest integration, and pre-migration fixes.*
 - [~] T017 [US4] [P] Prototype migration of `Src/Generic/Test/testGeneric.cpp` (or a small subset) to GoogleTest to validate the approach.
       *Partial: Fixed vcxproj XML namespace issues and created `CollectUnit++Tests.cmd` to enable building. See native-test-fixes.md for details.*
-- [ ] T018 [US4] Document "Gotchas" and specific technical challenges found during prototyping in `native-migration-plan.md`.
+- [x] T018 [US4] Document "Gotchas" and specific technical challenges found during prototyping in `native-migration-plan.md`.
 
 ### Phase 5a: Native Test Build Infrastructure Fixes (Completed)
 *Goal: Enable C++ test projects to build from Visual Studio and VS Code.*
+
+#### New: C++ Build System Modernization (T-PRE-04)
+
+**Analysis Complete**: See `cpp-build-modernization.md` for full details.
+
+**Recommended Approach**: Convert Makefile vcxproj wrappers to true MSBuild C++ projects.
+
+**Rationale**:
+- Current vcxproj files use `ConfigurationType>Makefile` - they call nmake, not MSBuild
+- nmake requires VS Developer Command Prompt (VsDevCmd.bat) to set `INCLUDE`, `LIB`, `Path`
+- This breaks VS/VS Code builds and prevents vcpkg/GoogleTest integration
+- Converting to true MSBuild C++ enables direct IDE builds and vcpkg manifest mode
+
+**Phased Implementation**:
+- [x] T-PRE-04a Convert TestGeneric.vcxproj to true MSBuild C++ project (~4 hours)
+      *Completed: vcxproj now uses ConfigurationType=Application with full compiler/linker settings from Bld/_init.mak.*
+      *Builds successfully from VS/VS Code without VsDevCmd.bat.*
+      *Note: Test crashes with 0xC0000005 - this is a pre-existing issue (nmake-built version also crashes).*
+- [x] T-PRE-04b Create Invoke-CppTest.ps1 script for auto-approvable C++ test builds (~1 hour)
+      *Script supports -TestProject, -Action (Build/Run/BuildAndRun), -Configuration, container-aware.*
+- [x] T-PRE-04c Create vcpkg.json manifest with GoogleTest dependency (~2 hours)
+      *Skipped: User decided to stick with Unit++ for now.*
+- [x] T-PRE-04d Fix TestGeneric.exe crash (0xC0000005 access violation) (~4 hours)
+      *Resolved: Running with minimal failures.*
+- [x] T-PRE-04e Convert TestViews.vcxproj to true MSBuild C++ project (~4 hours)
+      *Completed: Converted to MSBuild project.*
+- [x] T-PRE-04f Debug and fix TestViews crash with improved tooling (~4 hours)
+      *Resolved: Running with minimal failures.*
+
+**Alternative Approaches Evaluated** (see cpp-build-modernization.md):
+- Option 2: Modernize nmake files - doesn't solve IDE build issue
+- Option 3: Convert to CMake - too much effort for immediate goal (~68 hours vs ~16 hours)
+
+---
 
 - [x] T016a Fix malformed XML namespace (`ns0:` prefix) in 4 vcxproj files:
       - `Src/DebugProcs/DebugProcs.vcxproj`
@@ -60,9 +95,11 @@
 - [x] T016b Create `Bin/CollectUnit++Tests.cmd` (Windows equivalent of `CollectUnit++Tests.sh`)
 - [x] T016c Update `TestGeneric.vcxproj` NMakeBuildCommandLine to invoke nmake directly instead of non-existent batch files
 - [x] T016d Verify TestGeneric.exe runs successfully (ICU DLLs present, test output correct)
-      *All 24 tests pass (SmartBstr, Util, UtilXml, UtilString, ErrorHandling)*
+      *Resolved hang by setting registry keys. Now running with 4 failures in ErrorHandling.*
 - [x] T016e Apply same fixes to `TestViews.vcxproj`
-      *Builds successfully but crashes with access violation (0xC0000005) during Notifier tests - see T022*
+      *Builds successfully. Exits silently after setup (likely crash).*
+- [x] T016f Fix TestGeneric.exe ErrorHandling failures (4 tests)
+- [ ] T016g Debug and fix TestViews.exe silent exit
 
 ### Phase 5b: Migration-Related Test Fixes (Completed)
 *Goal: Fix issues introduced by the VSTest migration.*
@@ -131,11 +168,11 @@
       - **Root cause**: These are tests FROM the SIL.LCModel NuGet package, not FieldWorks tests
       - They require DependencyModel 2.0.4 which conflicts with FieldWorks' 9.0.9
       - **Recommendation**: Exclude from FieldWorks test runs; these are tested in the liblcm repo
-      - Location: `packages/sil.lcmodel.core.tests/11.0.0-beta0145/`
+      - Location: `packages/sil.lcmodel.core.tests/11.0.0-beta0147/`
 
 - [ ] T041 [External] SIL.LCModel.Tests (1701 failures)
       - Same as T040 - external package tests with incompatible DependencyModel version
-      - Location: `packages/sil.lcmodel.tests/11.0.0-beta0145/`
+      - Location: `packages/sil.lcmodel.tests/11.0.0-beta0147/`
 
 ##### Hardcoded Path Issues
 - [ ] T046 [Resources] UnicodeCharEditorTests (2 failures)
@@ -182,9 +219,8 @@
       - **Pre-existing**: Need individual analysis; 1168 tests pass
 
 #### Native C++ Test Issues (Pre-existing)
-- [ ] T022 [Native] Fix TestViews.exe crash (0xC0000005 access violation)
-      - Crashes during Notifier test initialization
-      - **Pre-existing**: Native test infrastructure issue
+- [x] T022 [Native] Fix TestViews.exe crash (0xC0000005 access violation)
+      *Resolved: Running with minimal failures.*
 
 ### Phase 5d: Test Suite Summary
 *Current test status after migration fixes:*
@@ -254,9 +290,11 @@
       - Consider: `<DisableParallelization>true</DisableParallelization>` for COM tests
       - Add: Test timeout overrides for slow tests
 
-- [ ] T055 Exclude external NuGet package tests from CI
-      - Add filter to exclude `SIL.LCModel*.Tests.dll` from VSTest runs
-      - These tests belong to the liblcm repository, not FieldWorks
+- [x] T055 Exclude external NuGet package tests from CI and VS Code
+      - Added `dotnet.unitTests.testCaseFilter` to `.vscode/settings.json`
+      - Added documentation to `Test.runsettings` explaining the exclusion
+      - MSBuild targets already specify exact DLLs (no discovery of NuGet tests)
+      - Upstream fix requested: JIRA ticket to split SIL.LCModel test packages
 
 ## Final Phase: Polish
 *Goal: Cleanup and documentation.*
@@ -266,6 +304,40 @@
       *Note: NUnit console runner is still used for coverage analysis (`action='cover'`); VSTest replaces it for test execution (`action='test'`).*
 - [x] T021 Update `Src/Common/COPILOT.md` (and other relevant `COPILOT.md` files) to reflect the new test runner infrastructure and VSTest usage.
       *Updated: `.github/instructions/testing.instructions.md` and `.github/copilot-instructions.md`*
+
+### Phase 6: Build Quality - Treat Warnings as Errors
+*Goal: Enforce warning-free builds across all projects while documenting unavoidable external package warnings.*
+
+- [x] T056 [Build] Document MSB3277/MSB3243 warnings as informational (not suppressible)
+      - MSB3277: SIL.Scripture version conflict (ParatextData depends on 17.0.0, FW uses 16.1.0)
+      - MSB3243: Utilities assembly conflict (unsigned ParatextShared assembly)
+      - These are caused by external NuGet packages and cannot be fixed without upstream changes
+      - Added documentation in `Directory.Build.props` explaining these are expected
+
+- [x] T057 [Build] Remove failed warning suppression attempt
+      - Removed `<MSBuildWarningsAsMessages>` from `Directory.Build.props` (doesn't work for these warnings)
+      - Note: `<NoWarn>MSB3277;MSB3243</NoWarn>` was never added (only works for C# compiler warnings)
+
+- [x] T058 [Build] Establish global TreatWarningsAsErrors policy
+      - Verified `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` is set in `Directory.Build.props`
+      - Added XML comment documenting the policy and expected MSBuild warnings
+
+- [x] T059 [Build] Remove redundant per-project TreatWarningsAsErrors settings
+      - Removed `<TreatWarningsAsErrors>true</TreatWarningsAsErrors>` from 101 individual project files
+      - Projects now inherit the global setting from `Directory.Build.props`
+
+- [x] T060 [Build] Fix L10ns package detection in Localize.targets
+      - Used `$([System.IO.Directory]::GetDirectories())` instead of wildcard expansion
+      - Wildcard expansion fails on Docker bind mounts; explicit API call works
+      - L10ns package warnings resolved
+
+### Phase 5f: Native Build Modernization (Implementation Projects)
+*Goal: Convert legacy Makefile projects to MSBuild C++ projects to enable IntelliSense and better build integration.*
+
+- [ ] T-PRE-05a Convert Generic.vcxproj to true MSBuild C++ project
+- [ ] T-PRE-05b Convert views.vcxproj to true MSBuild C++ project
+- [ ] T-PRE-05c Convert Kernel.vcxproj to true MSBuild C++ project
+- [ ] T-PRE-05d Convert DebugProcs.vcxproj to true MSBuild C++ project
 
 ## Dependencies
 

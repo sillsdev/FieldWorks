@@ -16,8 +16,9 @@ Description:
 // Version: bldinc.h holds the current copyright and it is created by executing
 // bin\mkverrsc.exe from within the bin\mkcle.bat file. The major and minor version
 // numbers are hard-coded in mkcle.bat.
+// Note: bldinc.h is found via the /I$(COM_OUT_DIR) include path set in _rule.mak
 #if WIN32
-#include "../../../Output/Common/bldinc.h"
+#include "bldinc.h"
 #endif
 
 #ifndef IDC_STATIC

@@ -1,0 +1,24 @@
+<Project>
+	<PropertyGroup>
+		<_TransformRoot Condition="'$(_TransformRoot)'==''">$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)'))</_TransformRoot>
+		<_TransformOutputBase Condition="'$(_TransformOutputBase)'=='' and '$(dir-outputBase)'!=''">$(dir-outputBase)</_TransformOutputBase>
+		<_TransformOutputBase Condition="'$(_TransformOutputBase)'==''">$([System.IO.Path]::Combine('$(_TransformRoot)','Output','$(Configuration)'))\</_TransformOutputBase>
+		<_OrchestratorProj>$([System.IO.Path]::Combine('$(_TransformRoot)','Build','Orchestrator.proj'))</_OrchestratorProj>
+	</PropertyGroup>
+
+	<Target Name="EnsureTransformsForManagedBuilds"
+		BeforeTargets="ResolveAssemblyReferences"
+		Condition="!$([System.String]::IsNullOrEmpty('$(_TransformRoot)')) and '$(BuildingTransforms)'!='true' and '$(OS)'=='Windows_NT' and $([System.IO.Path]::GetFullPath('$(MSBuildProjectFullPath)'))!='$(_OrchestratorProj)'">
+		<PropertyGroup>
+			<_ApplicationTransforms>$(_TransformOutputBase)ApplicationTransforms.dll</_ApplicationTransforms>
+			<_PresentationTransforms>$(_TransformOutputBase)PresentationTransforms.dll</_PresentationTransforms>
+			<_TransformsMissing Condition="!Exists('$(_ApplicationTransforms)') or !Exists('$(_PresentationTransforms)')">true</_TransformsMissing>
+		</PropertyGroup>
+
+		<MSBuild
+			Projects="$(_OrchestratorProj)"
+			Targets="BuildWindowsXslAssemblies"
+			Properties="Configuration=$(Configuration);Platform=$(Platform);BuildingTransforms=true"
+			Condition="Exists('$(_OrchestratorProj)') and '$(_TransformsMissing)'=='true'" />
+	</Target>
+</Project>

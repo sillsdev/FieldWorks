@@ -50,10 +50,26 @@ Changes affecting COM registration or the Windows registry must:
 - Work inside Docker containers (see `scripts/spin-up-agents.ps1`)
 - Never assume host machine registry state
 
+### NuGet Package Cache (Hybrid Architecture)
+Containers use a hybrid caching strategy:
+- **SHARED** (on named volume `fw-nuget-cache`):
+  - `C:\NuGetCache\packages\` - global-packages (download once, all agents read)
+  - `C:\NuGetCache\http-cache\` - HTTP cache (feed metadata)
+- **ISOLATED** (container-local):
+  - `C:\Temp\` - temp/NuGetScratch (extraction operations)
+
+Host builds use `packages/` in the repo (via `nuget.config`).
+
+Containers use **Hyper-V isolation** to fix the Windows Docker `MoveFile()` bug ([moby/moby#38256](https://github.com/moby/moby/issues/38256)). See `DOCKER.md` and `.cache/NUGET_CONTAINER_CACHE_ANALYSIS.md` for details.
+
 ### Localization
 - Use `.resx` files for localizable strings
 - Never hardcode user-facing text
 - Respect `crowdin.json` integration
+
+## ⚠️ Terminal Commands
+
+Commands with pipes (`|`), `&&`, or `2>&1` require manual approval. Use `scripts/Agent/` wrapper scripts instead—see `.github/instructions/terminal.instructions.md` for the transformation table.
 
 ## File Guidance
 

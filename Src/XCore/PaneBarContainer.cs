@@ -37,7 +37,6 @@ namespace XCore
 		private Control m_mainControl;
 		private Size m_parentSizeHint;
 		private string m_defaultPrintPaneId = "";
-		private int instanceID;
 
 		#endregion Data Members
 

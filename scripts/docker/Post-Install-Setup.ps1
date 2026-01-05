@@ -20,7 +20,10 @@ if (-not (Test-Path 'C:\BuildTools')) {
     throw 'BuildTools directory not found at C:\BuildTools'
 }
 
-# 3. Create junction to BuildTools
+# 3. Create junction to BuildTools (if not exists)
+# Note: The base image may have a partial VS installation at this path.
+# VsDevShell.cmd handles environment setup, so the junction is mainly for tools
+# that expect VS at the standard location.
 Write-Host "Creating BuildTools junction..."
 $junctionPath = Join-Path $vsPath 'BuildTools'
 if (-not (Test-Path $junctionPath)) {
@@ -30,7 +33,7 @@ if (-not (Test-Path $junctionPath)) {
         throw "Failed to create junction with exit code $LASTEXITCODE"
     }
 } else {
-    Write-Host "Junction already exists: $junctionPath"
+    Write-Host "Junction/directory already exists: $junctionPath (using VsDevShell.cmd for env setup)"
 }
 
 # 4. Create NuGet packages cache directory
@@ -122,6 +125,11 @@ if (-not (Test-Path $msbuildPath)) {
     throw "MSBuild not found at $msbuildPath"
 }
 
+# Find the installed MSVC tools version for PATH
+$vcToolsBase = 'C:\BuildTools\VC\Tools\MSVC'
+$vcToolsVersionDir = Get-ChildItem $vcToolsBase -Directory | Sort-Object Name -Descending | Select-Object -First 1
+$vcToolsBinPath = Join-Path $vcToolsVersionDir.FullName 'bin\Hostx64\x64'
+
 $paths = @(
     'C:\Windows\System32\WindowsPowerShell\v1.0',
     'C:\Wix314',
@@ -130,7 +138,8 @@ $paths = @(
     'C:\clangd\bin',
     $netfxTools,
     $msbuildPath,
-    'C:\BuildTools\Common7\IDE\CommonExtensions\Microsoft\TestWindow'
+    'C:\BuildTools\Common7\IDE\CommonExtensions\Microsoft\TestWindow',
+    $vcToolsBinPath  # Contains CL.exe, LINK.exe, etc.
 )
 
 $existing = [Environment]::GetEnvironmentVariable('PATH', 'Machine')
@@ -150,13 +159,27 @@ Write-Host "Machine PATH updated successfully"
 # 7. Configure Machine Environment Variables
 Write-Host "Configuring Machine Environment Variables..."
 
+# Find the installed MSVC tools version (e.g., 14.44.35207)
+$vcToolsBase = 'C:\BuildTools\VC\Tools\MSVC'
+$vcToolsVersion = Get-ChildItem $vcToolsBase -Directory | Sort-Object Name -Descending | Select-Object -First 1
+if (-not $vcToolsVersion) {
+    throw "No MSVC tools version found in $vcToolsBase"
+}
+$vcToolsInstallDir = "$($vcToolsVersion.FullName)\"
+Write-Host "Found MSVC tools version: $($vcToolsVersion.Name)"
+
 $envVars = @{
-    'WIX'            = 'C:\Wix314'
-    'DOTNET_ROOT'    = 'C:\dotnet'
-    'NUGET_PACKAGES' = 'C:\.nuget\packages'
-    'VCTargetsPath'  = 'C:\BuildTools\MSBuild\Microsoft\VC\v170'
-    'VSINSTALLDIR'   = 'C:\BuildTools\'
-    'VCINSTALLDIR'   = 'C:\BuildTools\VC\'
+    'FW_CONTAINER'     = 'true'  # Signals to build.ps1 we're inside a FieldWorks container
+    'WIX'              = 'C:\Wix314'
+    'DOTNET_ROOT'      = 'C:\dotnet'
+    'NUGET_PACKAGES'   = 'C:\.nuget\packages'
+    # VCTargetsPath must end with backslash for MSBuild C++ platform resolution
+    'VCTargetsPath'    = 'C:\BuildTools\MSBuild\Microsoft\VC\v170\'
+    'VSINSTALLDIR'     = 'C:\BuildTools\'
+    'VCINSTALLDIR'     = 'C:\BuildTools\VC\'
+    # VCToolsInstallDir points to the specific MSVC version with CL.exe
+    'VCToolsInstallDir' = $vcToolsInstallDir
+    'VCToolsVersion'   = $vcToolsVersion.Name
 }
 
 foreach ($key in $envVars.Keys) {
