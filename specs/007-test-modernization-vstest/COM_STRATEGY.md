@@ -15,7 +15,7 @@ Instead of looking up CLSIDs in the Windows Registry (`HKCR\CLSID\...`), the Win
 ## Build Strategy: Debug vs. Release
 To ensure consistency between Host and Container environments (and to work around a Windows Container bug with `mt.exe`), the build strategy is keyed off the **Configuration**.
 
-| Feature | Debug Build (Host & Container) | Release Build (Host Only) |
+| Feature | Debug Build (Host & Docker) | Release Build (Host Only) |
 | :--- | :--- | :--- |
 | **Manifest Location** | **External** (`.manifest` file on disk) | **Embedded** (Resource #1) |
 | **Tooling** | `RegFree.targets` generates the file but **skips** `mt.exe` embedding. | `mt.exe` embeds the manifest into the DLL/EXE. |
