@@ -68,7 +68,7 @@ An end user (or admin) wants to install the product on a machine without interne
 ### Edge Cases
 
 - **Build Environment**: What happens if the build machine lacks the specific .NET SDK version required by WiX v6? (Build should fail with a clear error message).
-- **Upgrade**: What happens when installing the new v6-based installer over an old v3-based installation? (Should upgrade seamlessly or prompt for uninstall).
+- **Upgrade**: The installer MUST perform a **Major Upgrade** (Seamless Upgrade), automatically removing the previous version before installing the new one.
 - **Localization**: What happens if a specific locale build fails? (The entire build process should report the error).
 
 ## Requirements *(mandatory)*
@@ -83,6 +83,9 @@ An end user (or admin) wants to install the product on a machine without interne
 - **FR-006**: The GitHub Actions workflow MUST be updated to install WiX v6 and execute the new build targets.
 - **FR-007**: Custom actions currently provided by genericinstaller MUST be re-implemented or migrated to be compatible with WiX v6.
 - **FR-008**: The build process MUST support passing parameters (overrides) via MSBuild properties to customize the installer, replacing the old batch file parameter mechanism.
+- **FR-009**: The build process MUST support code signing of the generated MSI and Bundle artifacts, configurable via environment variables (e.g., for certificate path/password).
+- **FR-010**: The installer UI MUST be ported from the existing custom implementation to maintain the "Dual Directory" selection (App + Project Data) and custom feature tree behavior.
+- **FR-011**: The build process MUST automatically download required prerequisites (e.g., .NET runtimes, C++ redistributables) during the build phase using MSBuild targets, rather than relying on pre-existing files.
 
 ### Success Criteria
 
@@ -103,3 +106,14 @@ An end user (or admin) wants to install the product on a machine without interne
 - **Installer Bundle**: The executable that manages prerequisites and the MSI installation.
 - **MSI Package**: The core product installer containing files and registry keys.
 - **Build Target**: The MSBuild definition that orchestrates the WiX build process.
+
+## Clarifications
+
+### Session 2025-12-11
+- Q: How should the installer handle upgrades from the previous v3-based version? → A: Seamless Upgrade (MajorUpgrade).
+- Q: Should the build process support code signing of the installer artifacts? → A: Yes, via Environment Variables.
+- Q: How should installer prerequisites (e.g., .NET runtimes) be handled during the build? → A: Yes, via MSBuild Targets (auto-download).
+
+- Q: How should the custom installer UI (Dual Directory selection, etc.) be handled in WiX v6? → A: Port Existing Custom UI.
+
+
