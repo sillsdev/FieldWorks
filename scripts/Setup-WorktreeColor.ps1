@@ -16,15 +16,21 @@
 param(
 	# VS Code expands ${workspaceFile} when running inside a .code-workspace.
 	# When opening a folder, this is typically empty.
-	[string]$VSCodeWorkspaceFile = ""
+	[string]$VSCodeWorkspaceFile = "",
+
+	# Apply: write/remove the worktree-local workspace file for the current repoRoot.
+	# Launch: pick a worktree (if multiple) and open it in a new VS Code window.
+	[ValidateSet("Apply", "Launch")]
+	[string]$Action = "Apply",
+
+	# Optional explicit worktree path (skips picker). Useful for scripting.
+	[string]$WorktreePath = ""
 )
 
 $ErrorActionPreference = "Stop"
 
 # Get the repo root (parent of scripts/)
 $repoRoot = (Get-Item $PSScriptRoot).Parent.FullName
-$worktreeWorkspacePath = Join-Path $repoRoot "fw.worktree.code-workspace"
-$gitPath = Join-Path $repoRoot ".git"
 
 function Normalize-PathForComparison([string]$path) {
 	if ([string]::IsNullOrWhiteSpace($path)) {
@@ -34,28 +40,117 @@ function Normalize-PathForComparison([string]$path) {
 		# Avoid Resolve-Path here because the workspace file may not exist yet.
 		return ([System.IO.Path]::GetFullPath($path)).ToLowerInvariant()
 	}
- catch {
+	catch {
 		return $path.ToLowerInvariant()
 	}
 }
 
-$normalizedPassedWorkspaceFile = Normalize-PathForComparison $VSCodeWorkspaceFile
-$normalizedWorktreeWorkspacePath = Normalize-PathForComparison $worktreeWorkspacePath
-$isWorktreeWorkspaceLoaded = ($normalizedPassedWorkspaceFile -ne "") -and ($normalizedPassedWorkspaceFile -eq $normalizedWorktreeWorkspacePath)
-
-# Check if we are in a worktree or main repo
-$isWorktree = $false
-if (Test-Path $gitPath -PathType Leaf) {
-	# .git is a file in worktrees (pointing to the main repo gitdir)
-	$isWorktree = $true
-}
-elseif (Test-Path $gitPath -PathType Container) {
-	# .git is a directory in the main repo
-	$isWorktree = $false
-}
-else {
+function Get-IsWorktree([string]$rootPath) {
+	$gitPath = Join-Path $rootPath ".git"
+	if (Test-Path $gitPath -PathType Leaf) {
+		# .git is a file in worktrees (pointing to the main repo gitdir)
+		return $true
+	}
+	if (Test-Path $gitPath -PathType Container) {
+		# .git is a directory in the main repo
+		return $false
+	}
 	Write-Warning "No .git found at $gitPath. Assuming not a worktree."
-	$isWorktree = $false
+	return $false
+}
+
+function Get-WorktreeWorkspacePath([string]$rootPath) {
+	return (Join-Path $rootPath "fw.worktree.code-workspace")
+}
+
+function Get-GitWorktrees([string]$anyRepoRoot) {
+	# git worktree list --porcelain format example:
+	# worktree C:/path
+	# HEAD <sha>
+	# branch refs/heads/foo
+	#
+	# worktree C:/path2
+	$lines = @()
+	try {
+		$lines = & git -C $anyRepoRoot worktree list --porcelain 2>$null
+	}
+	catch {
+		throw "Failed to run 'git worktree list'. Is git available on PATH?"
+	}
+
+	if ($null -eq $lines -or $lines.Count -eq 0) {
+		return @()
+	}
+
+	$worktrees = New-Object System.Collections.Generic.List[object]
+	$current = $null
+
+	foreach ($line in $lines) {
+		if ([string]::IsNullOrWhiteSpace($line)) {
+			if ($null -ne $current -and -not [string]::IsNullOrWhiteSpace($current.Path)) {
+				$worktrees.Add($current)
+			}
+			$current = $null
+			continue
+		}
+
+		if ($line.StartsWith("worktree ")) {
+			if ($null -ne $current -and -not [string]::IsNullOrWhiteSpace($current.Path)) {
+				$worktrees.Add($current)
+			}
+			$current = [pscustomobject]@{
+				Path = $line.Substring("worktree ".Length)
+				Branch = ""
+			}
+			continue
+		}
+
+		if ($null -eq $current) {
+			continue
+		}
+
+		if ($line.StartsWith("branch ")) {
+			$current.Branch = $line.Substring("branch ".Length)
+			continue
+		}
+
+		if ($line -eq "detached") {
+			$current.Branch = "(detached)"
+			continue
+		}
+	}
+
+	if ($null -ne $current -and -not [string]::IsNullOrWhiteSpace($current.Path)) {
+		$worktrees.Add($current)
+	}
+
+	return $worktrees.ToArray()
+}
+
+function Pick-Worktree([object[]]$worktrees) {
+	if ($null -eq $worktrees -or $worktrees.Count -eq 0) {
+		throw "No worktrees found."
+	}
+
+	if ($worktrees.Count -eq 1) {
+		return $worktrees[0]
+	}
+
+	Write-Host "Select a worktree:" 
+	for ($i = 0; $i -lt $worktrees.Count; $i++) {
+		$w = $worktrees[$i]
+		$branch = if ([string]::IsNullOrWhiteSpace($w.Branch)) { "" } else { " [$($w.Branch)]" }
+		Write-Host ("  {0}) {1}{2}" -f ($i + 1), $w.Path, $branch)
+	}
+
+	while ($true) {
+		$raw = Read-Host ("Enter selection (1-{0})" -f $worktrees.Count)
+		[int]$idx = 0
+		if ([int]::TryParse($raw, [ref]$idx) -and $idx -ge 1 -and $idx -le $worktrees.Count) {
+			return $worktrees[$idx - 1]
+		}
+		Write-Warning "Invalid selection."
+	}
 }
 
 function Ensure-PSObjectProperty($obj, $name) {
@@ -115,8 +210,11 @@ $managedKeys = @(
 	"activityBar.inactiveForeground"
 )
 
-if ($isWorktree) {
-	# --- APPLY COLORS ---
+function Write-WorktreeWorkspaceFile([
+	Parameter(Mandatory = $true)][string]$targetRoot,
+	[Parameter(Mandatory = $true)][bool]$isWorkspaceLoaded
+) {
+	$worktreeWorkspacePath = Get-WorktreeWorkspacePath $targetRoot
 
 	# Choose color from a fixed palette (Loading.io: lloyds)
 	# Source: https://loading.io/color/feature/lloyds
@@ -133,7 +231,7 @@ if ($isWorktree) {
 	)
 
 	$md5 = [System.Security.Cryptography.MD5]::Create()
-	$hashBytes = $md5.ComputeHash([System.Text.Encoding]::UTF8.GetBytes($repoRoot))
+	$hashBytes = $md5.ComputeHash([System.Text.Encoding]::UTF8.GetBytes($targetRoot))
 	$colorHex = $palette[($hashBytes[0] % $palette.Length)]
 	$rgb = Parse-HexRgb $colorHex
 	$r = $rgb.r; $g = $rgb.g; $b = $rgb.b
@@ -144,7 +242,7 @@ if ($isWorktree) {
 	# For inactive foreground, use slightly transparent version of text color
 	$inactiveColor = if ($textColor -eq "#000000") { "#00000099" } else { "#FFFFFF99" }
 
-	Write-Host "Worktree detected. Applying color $colorHex to $repoRoot"
+	Write-Host "Worktree detected. Applying color $colorHex to $targetRoot"
 
 	$colorCustomizations = New-Object PSObject
 	$colorCustomizations | Add-Member -MemberType NoteProperty -Name "titleBar.activeBackground" -Value $colorHex -Force
@@ -157,12 +255,12 @@ if ($isWorktree) {
 	$colorCustomizations | Add-Member -MemberType NoteProperty -Name "activityBar.foreground" -Value $textColor -Force
 	$colorCustomizations | Add-Member -MemberType NoteProperty -Name "activityBar.inactiveForeground" -Value $inactiveColor -Force
 
-	# Build worktree-local workspace file (based on fw.code-workspace)
+	# Build worktree-local workspace file
 	$worktreeWorkspace = New-Object PSObject
 	if ($baseWorkspace.PSObject.Properties["folders"]) {
 		$worktreeWorkspace | Add-Member -MemberType NoteProperty -Name "folders" -Value $baseWorkspace.folders
 	}
- else {
+	else {
 		$worktreeWorkspace | Add-Member -MemberType NoteProperty -Name "folders" -Value @(@{ path = "." })
 	}
 
@@ -181,43 +279,76 @@ if ($isWorktree) {
 	}
 
 	# Marker flag: true only when this task is running inside the generated workspace file
-	$settings | Add-Member -MemberType NoteProperty -Name "fieldworks.workspaceLoaded" -Value $isWorktreeWorkspaceLoaded -Force
+	$settings | Add-Member -MemberType NoteProperty -Name "fieldworks.workspaceLoaded" -Value $isWorkspaceLoaded -Force
 
 	$worktreeWorkspace | Add-Member -MemberType NoteProperty -Name "settings" -Value $settings
 
-	$worktreeWorkspace | ConvertTo-Json -Depth 10 | Set-Content $worktreeWorkspacePath
+	$worktreeWorkspace | ConvertTo-Json -Depth 10 | Set-Content -Encoding UTF8 $worktreeWorkspacePath
 	Write-Host "Wrote worktree-local workspace file: $worktreeWorkspacePath"
 
-	if (-not $isWorktreeWorkspaceLoaded) {
-		# Try to open the workspace file in VS Code
+	return $worktreeWorkspacePath
+}
+
+switch ($Action) {
+	"Launch" {
+		$worktrees = Get-GitWorktrees $repoRoot
+		if ($worktrees.Count -eq 0) {
+			throw "No worktrees found in this repo."
+		}
+
+		$selected = $null
+		if (-not [string]::IsNullOrWhiteSpace($WorktreePath)) {
+			$selected = [pscustomobject]@{ Path = $WorktreePath; Branch = "" }
+		}
+		else {
+			$selected = Pick-Worktree $worktrees
+		}
+
+		$targetRoot = $selected.Path
+		if (-not (Test-Path $targetRoot -PathType Container)) {
+			throw "Selected worktree path does not exist: $targetRoot"
+		}
+
+		if (-not (Get-IsWorktree $targetRoot)) {
+			throw "Selected path does not look like a git worktree (expected .git file): $targetRoot"
+		}
+
+		$workspaceFile = Write-WorktreeWorkspaceFile -targetRoot $targetRoot -isWorkspaceLoaded:$false
+
 		$codeCmd = "code"
-		$workspaceArg = $worktreeWorkspacePath
 		try {
-			Write-Host "Opening workspace in VS Code.."
-			# Close the existing VS Code instance with the same folder
-			$existingProcess = Get-Process code 2>$null | Where-Object { $_.MainWindowTitle -like "*$(Split-Path $repoRoot -Leaf)*" }
-			if ($existingProcess) {
-				Stop-Process -Id $existingProcess.Id -Force
-			}
-			& $codeCmd $workspaceArg
+			Write-Host "Opening worktree in a new VS Code window..."
+			& $codeCmd "--new-window" $workspaceFile
 		}
 		catch {
-			Write-Warning "Could not launch VS Code automatically. Please open $worktreeWorkspacePath manually."
+			Write-Warning "Could not launch VS Code automatically. Please open $workspaceFile manually."
 		}
+		break
 	}
- catch {
-		Write-Warning "Could not launch VS Code automatically. Please open $worktreeWorkspacePath manually."
-	}
-}
-else {
-	Write-Host "Workspace is already loaded. Not opening a new VS Code window."
-}
 
-} else {
-	# --- CLEAR COLORS ---
-	Write-Host "Main repo (or non-worktree) detected. Clearing managed colors."
+	"Apply" {
+		$targetRoot = if (-not [string]::IsNullOrWhiteSpace($WorktreePath)) { $WorktreePath } else { $repoRoot }
+		$worktreeWorkspacePath = Get-WorktreeWorkspacePath $targetRoot
 
-	if (Test-Path $worktreeWorkspacePath) {
-		Remove-Item -Path $worktreeWorkspacePath -Force
+		$normalizedPassedWorkspaceFile = Normalize-PathForComparison $VSCodeWorkspaceFile
+		$normalizedWorktreeWorkspacePath = Normalize-PathForComparison $worktreeWorkspacePath
+		$isWorktreeWorkspaceLoaded = ($normalizedPassedWorkspaceFile -ne "") -and ($normalizedPassedWorkspaceFile -eq $normalizedWorktreeWorkspacePath)
+
+		if (Get-IsWorktree $targetRoot) {
+			[void](Write-WorktreeWorkspaceFile -targetRoot $targetRoot -isWorkspaceLoaded:$isWorktreeWorkspaceLoaded)
+			if (-not $isWorktreeWorkspaceLoaded) {
+				Write-Host "Workspace file created. To apply colors, open: $worktreeWorkspacePath"
+			}
+			else {
+				Write-Host "Worktree workspace is loaded; colors should be active."
+			}
+		}
+		else {
+			Write-Host "Main repo (or non-worktree) detected. Clearing managed colors."
+			if (Test-Path $worktreeWorkspacePath) {
+				Remove-Item -Path $worktreeWorkspacePath -Force
+			}
+		}
+		break
 	}
 }

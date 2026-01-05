@@ -74,6 +74,22 @@
         "panel": "shared"
       }
     },
+    {
+      "label": "Worktree: Open (picker)",
+      "type": "shell",
+      "command": "./scripts/Setup-WorktreeColor.ps1 -Action Launch",
+      "detail": "Pick a git worktree and open it in a new VS Code window with colorization",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
     // ==================== Build Tasks ====================
     {
       "label": "dotnet: build",
