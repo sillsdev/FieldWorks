@@ -462,20 +462,72 @@ function Write-WorktreeWorkspaceFile(
 		$worktreeWorkspace | Add-Member -MemberType NoteProperty -Name "folders" -Value @(@{ path = "." })
 	}
 
-	# Merge repo settings into the generated workspace so opening via *.code-workspace
-	# preserves the same VS Code experience as opening the folder directly.
+	# Merge repo/workspace settings into the generated workspace so opening via *.code-workspace
+	# preserves the same VS Code experience as opening the folder/workspace directly.
+	#
+	# IMPORTANT:
+	# - We prefer the existing generated workspace file (if present) to avoid overwriting
+	#   previously-merged settings on subsequent runs.
+	# - If VS Code provides a workspace file path (${workspaceFile}), prefer its settings.
+	# - Otherwise, fall back to the invoking repo's .vscode/settings.json (not the target
+	#   worktree's), so all worktrees inherit the same base settings.
+	#
 	# (Some settings do not apply at "workspace-folder" scope in multi-root workspaces.)
-	$repoSettingsPath = Join-Path $targetRoot ".vscode\\settings.json"
-	$repoSettings = $null
-	try {
-		$repoSettings = ConvertFrom-JsoncFile $repoSettingsPath
-	}
-	catch {
-		Write-Warning "Failed to parse $repoSettingsPath; continuing without merging repo settings."
-		$repoSettings = $null
+	$repoSettingsSource = $null
+	$existingWorkspaceSettings = $null
+
+	# 1) Capture settings from an existing generated worktree workspace file (overlay).
+	if (Test-Path $worktreeWorkspacePath -PathType Leaf) {
+		try {
+			$existingWorkspace = ConvertFrom-JsoncFile $worktreeWorkspacePath
+			if ($null -ne $existingWorkspace -and $existingWorkspace.PSObject.Properties["settings"]) {
+				$existingWorkspaceSettings = $existingWorkspace.settings
+			}
+		}
+		catch {
+			Write-Warning "Failed to parse existing workspace file $worktreeWorkspacePath; continuing."
+			$existingWorkspaceSettings = $null
+		}
 	}
 
-	$settings = if ($null -ne $repoSettings) { ConvertTo-PSObject $repoSettings } else { ConvertTo-PSObject $baseWorkspace.settings }
+	# 2) If VS Code told us which workspace file is loaded, use its settings as the base.
+	if (-not [string]::IsNullOrWhiteSpace($VSCodeWorkspaceFile) -and (Test-Path $VSCodeWorkspaceFile -PathType Leaf)) {
+		try {
+			$loadedWorkspace = ConvertFrom-JsoncFile $VSCodeWorkspaceFile
+			if ($null -ne $loadedWorkspace -and $loadedWorkspace.PSObject.Properties["settings"]) {
+				$repoSettingsSource = $loadedWorkspace.settings
+			}
+		}
+		catch {
+			Write-Warning "Failed to parse VS Code workspace file $VSCodeWorkspaceFile; continuing."
+			$repoSettingsSource = $null
+		}
+	}
+
+	# 3) Fall back to invoking repo's folder settings as the base.
+	if ($null -eq $repoSettingsSource) {
+		$repoSettingsPath = Join-Path $repoRoot ".vscode\\settings.json"
+		try {
+			$repoSettings = ConvertFrom-JsoncFile $repoSettingsPath
+			if ($null -ne $repoSettings) {
+				$repoSettingsSource = $repoSettings
+			}
+		}
+		catch {
+			Write-Warning "Failed to parse $repoSettingsPath; continuing without merging repo settings."
+			$repoSettingsSource = $null
+		}
+	}
+
+	# Start with base settings (repo/workspace settings if available), then overlay any existing
+	# generated-workspace settings to preserve user tweaks.
+	$settings = if ($null -ne $repoSettingsSource) { ConvertTo-PSObject $repoSettingsSource } else { ConvertTo-PSObject $baseWorkspace.settings }
+	if ($null -ne $existingWorkspaceSettings) {
+		$overlay = ConvertTo-PSObject $existingWorkspaceSettings
+		foreach ($p in $overlay.PSObject.Properties) {
+			$settings | Add-Member -MemberType NoteProperty -Name $p.Name -Value $p.Value -Force
+		}
+	}
 	$existingColorCustomizations = $null
 	if ($settings.PSObject.Properties["workbench.colorCustomizations"]) {
 		$existingColorCustomizations = $settings."workbench.colorCustomizations"

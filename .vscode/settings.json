@@ -61,8 +61,9 @@
     "/^(&\\s+)?\\.[\\\\/]Build[\\\\/]Agent[\\\\/](?!.*[;&|<>])/": true,
 
     // Context7 tools (consolidated - safe documentation lookups)
-    "/^(&\\s+)?context7\s+(get-library-docs|resolve-library-id|search-code|search-repositories)(?!.*[;&|<>])/i": true,
-    "/^(&\\s+)?context7\s+(avalonia|wpf|dotnet|csharp|msbuild|wix|powershell|git|nunit|vstest)(?!.*[;&|<>])/i": true,
+    "/^(&\\s+)?context7\\s+(get-library-docs|resolve-library-id|search-code|search-repositories)(?!.*[;&|<>])/i": true,
+    "/^(&\\s+)?context7\\s+(avalonia|wpf|dotnet|csharp|msbuild|wix|powershell|git|nunit|vstest)(?!.*[;&|<>])/i": true
+  },
   "cmake.ignoreCMakeListsMissing": true,
   "dotnet.defaultSolution": "FieldWorks.sln",
   "terminal.integrated.env.windows": {
