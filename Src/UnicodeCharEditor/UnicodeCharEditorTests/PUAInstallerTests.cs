@@ -318,7 +318,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 
 			if (string.IsNullOrEmpty(icuZipPath))
 			{
-				Assert.Ignore(
+				Assume.That(false,
 					$"PUAInstallerTests requires ICU data zip '{icuZipFileName}', but it was not found. " +
 					$"Looked in DistFiles relative to SourceDirectory and optional env var FW_ICU_ZIP. " +
 					$"These tests modify ICU data and are long-running acceptance tests.");

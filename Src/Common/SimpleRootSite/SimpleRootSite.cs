@@ -4688,6 +4688,20 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (DesignMode || m_rootb == null)
 				return;
 
+			// Ensure we no longer receive PropChanged notifications after disposal.
+			// In some test scenarios (and occasionally during shutdown), notifications can arrive
+			// after the control has been disposed unless we explicitly unregister.
+			try
+			{
+				var notifyChange = this as IVwNotifyChange;
+				if (notifyChange != null)
+					(m_rootb.DataAccess as ISilDataAccess)?.RemoveNotification(notifyChange);
+			}
+			catch
+			{
+				// Best-effort: shutdown paths can be fragile and we don't want to throw during Dispose.
+			}
+
 			if (m_Timer != null)
 				m_Timer.Stop();
 			// Can't flash IP, if the root box is toast.

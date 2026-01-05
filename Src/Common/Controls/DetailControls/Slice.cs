@@ -1144,7 +1144,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				//				|| (fUseChildrenOfNode && XmlUtils.GetOptionalAttributeValue(node, "expansion") == "expanded")
 				//				|| (XmlUtils.GetOptionalAttributeValue(caller, "expansion") == "expanded")
 				//				|| Expansion == DataTree.TreeItemState.ktisCollapsedEmpty)
-				bool fExpand = XmlUtils.GetOptionalAttributeValue(node, "expansion") != "doNotExpand";
+				bool fExpand = XmlUtils.GetOptionalAttributeValue(node, "expansion") == "expanded";
 				if (fUsePersistentExpansion && m_mediator != null) // mediator null only in testing?
 				{
 					Expansion = DataTree.TreeItemState.ktisCollapsed; // Needs to be an expandable state to have ExpansionStateKey.

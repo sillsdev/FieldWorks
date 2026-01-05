@@ -368,8 +368,16 @@ namespace SIL.FieldWorks
 
 			if (!SysPath.IsPathRooted(name))
 			{
-				string sProjName = (SysPath.GetExtension(name) == ext) ? SysPath.GetFileNameWithoutExtension(name) : name;
-				name = SysPath.Combine(SysPath.Combine(FwDirectoryFinder.ProjectsDirectory, sProjName), name);
+				var relativeDir = SysPath.GetDirectoryName(name);
+				if (string.IsNullOrEmpty(relativeDir))
+				{
+					string sProjName = (SysPath.GetExtension(name) == ext) ? SysPath.GetFileNameWithoutExtension(name) : name;
+					name = SysPath.Combine(SysPath.Combine(FwDirectoryFinder.ProjectsDirectory, sProjName), name);
+				}
+				else
+				{
+					name = SysPath.Combine(FwDirectoryFinder.ProjectsDirectory, name);
+				}
 			}
 			// If the file doesn't have the expected extension and exists with the extension or
 			// does not exist without it, we add the expected extension.

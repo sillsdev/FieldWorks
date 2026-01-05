@@ -624,6 +624,7 @@ namespace SIL.FieldWorks.XWorks
 				Assert.That(m_bv.AllItems.Count, Is.EqualTo(1));
 				// Set sorter on a sense field and make sure unchecking one entry unchecks them all
 				m_bv.SetSort("Grammatical Category");
+				ProcessPendingItems();
 				int numOfEntryRows = m_bv.AllItems.Count;
 				// we expect to have more than one Entry rows when sorted on a sense field
 				Assert.That(1, Is.LessThan(numOfEntryRows));
@@ -2026,21 +2027,18 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		///
 		/// </summary>
-		[Ignore("no need to test again.")]
 		[Test]
 		public override void CheckboxBehavior_AllItemsShouldBeInitiallyCheckedPlusRefreshBehavior()
 		{
 			// no need to test again, when subclass has already done so.
 		}
 
-		[Ignore("no need to test again.")]
 		[Test]
 		public override void CheckboxBehavior_ChangingFilterShouldRestoreSelectedStateOfItemsThatBecomeVisible_Selected()
 		{
 			// no need to test again, when subclass has already done so.
 		}
 
-		[Ignore("no need to test again.")]
 		[Test]
 		public override void CheckboxBehavior_ChangingFilterShouldRestoreSelectedStateOfItemsThatBecomeVisible_Unselected()
 		{

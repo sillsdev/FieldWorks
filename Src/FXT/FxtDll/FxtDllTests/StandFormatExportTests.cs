@@ -29,7 +29,6 @@ namespace SIL.FieldWorks.Common.FXT
 		}
 
 		[Test]
-		[Ignore("TestLangProj export tests need upgrading.")]
 		public void MDF()
 		{
 			string sFxtPath = Path.Combine(m_testDir, "mdf.xml");
@@ -37,7 +36,6 @@ namespace SIL.FieldWorks.Common.FXT
 			DoDump("TestLangProj", "MDF", sFxtPath, sAnswerFile);
 		}
 		[Test]
-		[Ignore("TestLangProj export tests need upgrading.")]
 		public void RootBasedMDF()
 		{
 			string sFxtPath = Path.Combine(m_testDir, "RootBasedMDF.xml");
@@ -45,16 +43,17 @@ namespace SIL.FieldWorks.Common.FXT
 			DoDump("TestLangProj", "RootBasedMDF", sFxtPath, sAnswerFile);
 		}
 		[Test]
-		[Ignore("TestLangProj export tests need upgrading.")]
 		public void TwoTimesSpeedTest()
 		{
 			string sFxtPath = Path.Combine(m_testDir, "mdf.xml");
 			XDumper dumper = PrepareDumper("TestLangProj",sFxtPath, false);
-			PerformDump(dumper, @"C:\first.txt", "TestLangProj", "first");
-			PerformDump(dumper, @"C:\second.txt", "TestLangProj", "second");
+			var firstPath = Path.Combine(Path.GetTempPath(), "fxt-first.txt");
+			var secondPath = Path.Combine(Path.GetTempPath(), "fxt-second.txt");
+			PerformDump(dumper, firstPath, "TestLangProj", "first");
+			PerformDump(dumper, secondPath, "TestLangProj", "second");
 			string sAnswerFile = Path.Combine(m_sExpectedResultsPath, "TLPStandardFormatMDF.sfm");
-			CheckFilesEqual(sAnswerFile, @"C:\first.txt");
-			CheckFilesEqual(@"C:\first.txt", @"C:\second.txt");
+			CheckFilesEqual(sAnswerFile, firstPath);
+			CheckFilesEqual(firstPath, secondPath);
 		}
 
 		public void CheckFilesEqual(string sAnswerPath, string outputPath)

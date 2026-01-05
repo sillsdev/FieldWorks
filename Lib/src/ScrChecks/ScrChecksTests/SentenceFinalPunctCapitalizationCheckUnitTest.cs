@@ -2,18 +2,38 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 // DISABLED: SentenceFinalPunctCapitalizationCheck class no longer exists in ScrChecks
-#if false
+
 using System;
 using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
+using NUnit.Framework;
 
 namespace SILUBS.ScriptureChecks
 {
 	[TestFixture]
+	[Ignore("Obsolete: SentenceFinalPunctCapitalizationCheck no longer exists in ScrChecks.")]
 	public class SentenceFinalPunctCapitalizationCheckUnitTest
+	{
+		[Test]
+		public void ObsoleteCheck_Disabled()
+		{
+			Assert.Ignore(
+				"Obsolete: SentenceFinalPunctCapitalizationCheck was removed/refactored; " +
+				"legacy implementation tests remain behind RUN_LW_LEGACY_TESTS."
+			);
+		}
+	}
+
+}
+
+#if RUN_LW_LEGACY_TESTS
+
+namespace SILUBS.ScriptureChecks
+{
+	[TestFixture]
+	public class SentenceFinalPunctCapitalizationCheckUnitTest_Legacy
 	{
 		UnitTestChecksDataSource source = new UnitTestChecksDataSource();
 

@@ -431,7 +431,7 @@ namespace SIL.FieldWorks.Build.Tasks
 							fileNode = GetOrCreateFileNode(parent, fileName);
 						}
 						AddOrReplaceClrClass(
-							parent,
+							fileNode,
 							clsId,
 							"Both",
 							typeName,

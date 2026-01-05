@@ -44,6 +44,12 @@
       <DOTNET_EnableCrashReport>0</DOTNET_EnableCrashReport>
       <!-- Suppress Windows Error Reporting (WER) dialogs -->
       <DOTNET_WER>0</DOTNET_WER>
+
+      <!-- Suppress FieldWorks assertion dialogs (native + managed) -->
+      <AssertUiEnabled>false</AssertUiEnabled>
+
+      <!-- Prefer a failing test over a modal dialog or silent continue -->
+      <AssertExceptionEnabled>true</AssertExceptionEnabled>
     </EnvironmentVariables>
   </RunConfiguration>
 

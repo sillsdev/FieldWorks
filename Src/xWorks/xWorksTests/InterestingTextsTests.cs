@@ -99,12 +99,12 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_lastTextsChangedArgs, Is.Not.Null);
 		}
 		[Test]
-		[Ignore("Temporary until we figure out propchanged for unowned Texts.")]
 		public void AddAndRemoveScripture()
 		{
 			List<IStText> expectedScripture;
 			List<IStText> expected;
-			InterestingTextList testObj = SetupTwoMockTextsAndOneScriptureSection(true, out expectedScripture, out expected);
+			MockTextRepository mockTextRep;
+			InterestingTextList testObj = SetupTwoMockTextsAndOneScriptureSection(true, out expectedScripture, out expected, out mockTextRep);
 			MakeMockScriptureSection();
 			testObj.PropChanged(m_sections[1].Hvo, ScrSectionTags.kflidContent, 0, 1, 0);
 			testObj.PropChanged(m_sections[1].Hvo, ScrSectionTags.kflidHeading, 0, 1, 0);
@@ -162,16 +162,16 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(testObj.ScriptureTexts.Count(), Is.EqualTo(0), "by now we've removed all ScriptureTexts");
 
 			((MockStText)expected[1]).IsValidObject = false;
+			RemoveText(mockTextRep, testObj, 1);
 			expected.RemoveAt(1);
-			//testObj.PropChanged(1, LangProjectTags.kflidTexts, 0, 0, 1);
 			VerifyList(expected, testObj.InterestingTexts, "deleted texts are removed (LangProject.Texts)");
 			VerifyTextsChangedArgs(1, 0, 1);
 		}
 
 		private InterestingTextList SetupTwoMockTextsAndOneScriptureSection(bool fIncludeScripture, out List<IStText> expectedScripture,
-			out List<IStText> expected)
+			out List<IStText> expected, out MockTextRepository mockTextRep)
 		{
-			MockTextRepository mockTextRep = MakeMockTextRepoWithTwoMockTexts();
+			mockTextRep = MakeMockTextRepoWithTwoMockTexts();
 			MakeMockScriptureSection();
 			m_propertyTable.SetProperty(InterestingTextList.PersistPropertyName, InterestingTextList.MakeIdList(
 				new ICmObject[] { m_sections[0].ContentOA, m_sections[0].HeadingOA }), true);
@@ -212,12 +212,12 @@ namespace SIL.FieldWorks.XWorks
 		/// that here Scripture is not to be included.
 		/// </summary>
 		[Test]
-		[Ignore("Temporary until we figure out propchanged for unowned Texts.")]
 		public void ShouldIncludeScripture()
 		{
 			List<IStText> expectedScripture;
 			List<IStText> expected;
-			var testObj = SetupTwoMockTextsAndOneScriptureSection(false, out expectedScripture, out expected);
+			MockTextRepository mockTextRep;
+			var testObj = SetupTwoMockTextsAndOneScriptureSection(false, out expectedScripture, out expected, out mockTextRep);
 			Assert.That(testObj.IsInterestingText(expectedScripture[1]), Is.False, "in this mode no Scripture is interesting");
 
 			// Invalidating a Scripture book should NOT generate PropChanged etc. when Scripture is not included.
@@ -231,8 +231,8 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_lastTextsChangedArgs, Is.Null, "should NOT get change notification deleting Scripture when not included");
 
 			((MockStText)expected[1]).IsValidObject = false;
+			RemoveText(mockTextRep, testObj, 1);
 			expected.RemoveAt(1);
-			//testObj.PropChanged(1, LangProjectTags.kflidTexts, 0, 0, 1);
 			VerifyList(expected, testObj.InterestingTexts, "deleted texts are removed (LangProject.Texts)");
 			VerifyTextsChangedArgs(1, 0, 1); // but, we still get PropChanged when deleting non-Scripture texts.
 		}

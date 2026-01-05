@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
@@ -1371,8 +1372,24 @@ namespace ParatextImport.ImportTests
 			DummyScrObjWrapper sow = (DummyScrObjWrapper)ReflectionHelper.GetProperty(m_importer, "SOWrapper");
 			sow.m_fIncludeMyPicturesFolderInExternalFolders = true;
 
+			// We want to test Windows "rooted" paths without a drive letter (e.g., "\\junk.jpg"),
+			// which resolve to the *current drive root*. Writing to the real drive root can require
+			// elevated permissions, so we create a temporary SUBST-like drive mapping via DefineDosDevice.
+			string originalCurrentDirectory = Environment.CurrentDirectory;
+			string tempDriveTarget = null;
+			char tempDriveLetter = '\0';
 			try
 			{
+				tempDriveTarget = Path.Combine(Path.GetTempPath(), "FwParatextImportTests", "RootedNoDriveLetter", Guid.NewGuid().ToString("N"));
+				Directory.CreateDirectory(tempDriveTarget);
+
+				tempDriveLetter = GetUnusedDriveLetter();
+				string deviceName = tempDriveLetter + ":";
+				if (!DefineDosDevice(DDD_NO_BROADCAST_SYSTEM, deviceName, tempDriveTarget))
+					Assert.Fail("Unable to define temporary drive mapping for rooted path test.");
+
+				string driveRoot = deviceName + @"\";
+				Environment.CurrentDirectory = driveRoot;
 				using (DummyFileMaker filemaker = new DummyFileMaker(Path.Combine(Path.GetPathRoot(Environment.CurrentDirectory), "j~u~n~k.jpg"), false))
 				{
 					String str1 = "P0|" + filemaker.Filename + "|P2|P3|P4";
@@ -1380,10 +1397,37 @@ namespace ParatextImport.ImportTests
 					Assert.That(str2.ToLowerInvariant(), Is.EqualTo(str1.ToLowerInvariant()));
 				}
 			}
-			catch(System.UnauthorizedAccessException)
+			finally
 			{
-				Assert.Ignore("This test needs write access to the root of the drive where the source code lives.");
+				Environment.CurrentDirectory = originalCurrentDirectory;
+				if (tempDriveLetter != '\0')
+				{
+					string deviceName = tempDriveLetter + ":";
+					DefineDosDevice(DDD_REMOVE_DEFINITION | DDD_EXACT_MATCH_ON_REMOVE | DDD_NO_BROADCAST_SYSTEM, deviceName, tempDriveTarget);
+				}
+				if (!string.IsNullOrEmpty(tempDriveTarget) && Directory.Exists(tempDriveTarget))
+					Directory.Delete(tempDriveTarget, true);
 			}
+		}
+
+		private const int DDD_RAW_TARGET_PATH = 0x00000001;
+		private const int DDD_REMOVE_DEFINITION = 0x00000002;
+		private const int DDD_EXACT_MATCH_ON_REMOVE = 0x00000004;
+		private const int DDD_NO_BROADCAST_SYSTEM = 0x00000008;
+
+		[System.Runtime.InteropServices.DllImport("kernel32.dll", CharSet = System.Runtime.InteropServices.CharSet.Unicode, SetLastError = true)]
+		private static extern bool DefineDosDevice(int dwFlags, string lpDeviceName, string lpTargetPath);
+
+		private static char GetUnusedDriveLetter()
+		{
+			var used = new HashSet<char>(System.IO.DriveInfo.GetDrives().Select(d => char.ToUpperInvariant(d.Name[0])));
+			for (char c = 'Z'; c >= 'D'; c--)
+			{
+				if (!used.Contains(c))
+					return c;
+			}
+			Assert.Ignore("No unused drive letter available for temporary mapping.");
+			return '\0';
 		}
 
 		/// ------------------------------------------------------------------------------------

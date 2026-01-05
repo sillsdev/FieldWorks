@@ -180,6 +180,10 @@ CrashLog.txt
 TestResults/
 *.trx
 
+# WPF markup compilation temp projects
+*_wpftmp.csproj
+*_wpftmp.vbproj
+
 # WiX v6
 *.wixpdb
 

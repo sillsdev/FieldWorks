@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 
 using NUnit.Framework;
@@ -24,6 +25,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// Summary description for StVcTests.
 	/// </summary>
 	[TestFixture]
+	[Apartment(ApartmentState.STA)]
 	public class StVcTests : ScrInMemoryLcmTestBase
 	{
 		#region Dummy Footnote view
@@ -401,6 +403,10 @@ namespace SIL.FieldWorks.Common.RootSites
 				footnoteView.Visible = true;
 				form.Controls.Add(footnoteView);
 				form.Show();
+
+				// Ensure the root box exists and is laid out before we try to create selections.
+				footnoteView.MakeRoot();
+				footnoteView.CallLayout();
 
 				try
 				{

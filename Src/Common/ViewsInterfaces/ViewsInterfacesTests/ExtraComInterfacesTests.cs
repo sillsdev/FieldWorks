@@ -72,23 +72,21 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 	}
 
 
-#if false // Disabled: ILgWritingSystemFactoryBuilder interface no longer exists - this was experimental Mono-specific code
-	/// <summary/>
+	/// <summary>
+	/// Historical/experimental test that depended on Mono-specific COM interfaces.
+	/// The referenced ILgWritingSystemFactoryBuilder interface no longer exists.
+	/// </summary>
 	[TestFixture]
-	[Ignore("experimental Mono dependent")]
-	public class ReleaseComObjectTests // can't derive from BaseTest because of dependencies
+	[Ignore("Obsolete: ILgWritingSystemFactoryBuilder interface no longer exists (historical Mono-specific experiment).")]
+	public class ReleaseComObjectTests
 	{
-		/// <summary/>
 		[Test]
-		public void ComRelease()
+		public void ObsoleteInterface_Disabled()
 		{
-			ILgWritingSystemFactoryBuilder lefBuilder = LgWritingSystemFactoryBuilderClass.Create();
-			ILgWritingSystemFactoryBuilder myref = lefBuilder;
-			Assert.That(Marshal.IsComObject(lefBuilder), Is.EqualTo(true), "#1");
-			Assert.That(Marshal.ReleaseComObject(lefBuilder), Is.EqualTo(0), "#2");
-			lefBuilder = null;
-			Assert.That(() => myref.ShutdownAllFactories(), Throws.TypeOf<COMException>());
+			Assert.Ignore(
+				"Obsolete: ILgWritingSystemFactoryBuilder interface no longer exists; " +
+				"legacy COM-release test is kept for reference only."
+			);
 		}
 	}
-#endif
 }

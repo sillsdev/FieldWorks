@@ -263,8 +263,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var rule = new StyleRule { Value = "a" };
 			rule.Declarations.Properties.AddRange(new [] {
-				new Property("text-decoration") { Term = new PrimitiveTerm(UnitType.Attribute, "inherit") },
-				new Property("color") { Term = new PrimitiveTerm(UnitType.Attribute, "inherit") }
+				new Property("text-decoration") { Term = new PrimitiveTerm(UnitType.Ident, "none") },
+				// ExCSS 2.0.2 crashes on 'inherit' here; 'unset' behaves like 'inherit' for inherited properties.
+				new Property("color") { Term = new PrimitiveTerm(UnitType.Ident, "unset") }
 			});
 			styleSheet.Rules.Add(rule);
 		}
@@ -278,9 +279,9 @@ namespace SIL.FieldWorks.XWorks
 			var rule = new StyleRule { Value = "*[dir='ltr'], *[dir='rtl']" };
 			rule.Declarations.Properties.AddRange(new []
 			{
-				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "isolate") },
-				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "-ms-isolate") },
-				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Attribute, "-moz-isolate") }
+				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Ident, "isolate") },
+				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Ident, "-ms-isolate") },
+				new Property("unicode-bidi") { Term = new PrimitiveTerm(UnitType.Ident, "-moz-isolate") }
 			});
 			styleSheet.Rules.Add(rule);
 		}

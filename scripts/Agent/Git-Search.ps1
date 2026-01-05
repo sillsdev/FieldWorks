@@ -68,6 +68,15 @@ param(
     [int]$TailLines = 0,
 
     [int]$Context = 3
+
+    ,
+
+    [ValidateSet('oneline', 'fuller')]
+    [string]$LogStyle = 'oneline'
+
+    ,
+
+    [int]$MaxCount = 20
 )
 
 $ErrorActionPreference = 'Stop'
@@ -170,7 +179,15 @@ switch ($Action) {
     }
 
     'log' {
-        $args = @('log', '--oneline', '-n', '20')
+        if ($LogStyle -eq 'fuller') {
+            $args = @('log', '--pretty=fuller')
+        } else {
+            $args = @('log', '--oneline')
+        }
+
+        if ($MaxCount -gt 0) {
+            $args += @('-n', $MaxCount)
+        }
         if ($Ref -and $Ref -ne 'HEAD') { $args += $Ref }
         if ($Path) { $args += '--'; $args += $Path }
         $lines = Invoke-GitCommand $args

@@ -411,22 +411,30 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		public void IntegrationTest()
 		{
 			// clean and create the output directory
-			const string outputDir = @"C:\WorkingFiles\XliffGoldEtic";
+			var outputDir = Path.Combine(Path.GetTempPath(), "FieldWorks", "GoldEticToXliffTests", Guid.NewGuid().ToString("N"));
 			TaskTestUtils.RecreateDirectory(outputDir);
+
+			var sourceXml = TaskTestUtils.FindExistingFileInAncestorDirectories(
+				TestContext.CurrentContext.TestDirectory,
+				Path.Combine("DistFiles", "Templates", "GOLDEtic.xml"));
 
 			Assert.That(new GoldEticToXliff
 			{
-				SourceXml = @"..\..\..\..\DistFiles\Templates\GOLDEtic.xml",
+				SourceXml = sourceXml,
 				XliffOutputDir = outputDir
 			}.Execute(), Is.True);
 
-			var outputFiles = Directory.GetFiles(outputDir).Where(f => !f.EndsWith(".en.xlf")).ToArray();
+			var outputFiles = Directory.GetFiles(outputDir, "*.xlf").ToArray();
+			Assert.That(outputFiles.Length, Is.GreaterThan(0), "Expected at least one XLIFF file in the output directory");
 
 			Assert.That(new XliffToGoldEtic
 			{
 				XliffSourceFiles = outputFiles,
-				OutputXml = Path.Combine(outputDir, "..", "GOLDEticRoundtripped.xml")
+				OutputXml = Path.Combine(outputDir, "GOLDEticRoundtripped.xml")
 			}.Execute(), Is.True);
+
+			Assert.That(File.Exists(Path.Combine(outputDir, "GOLDEticRoundtripped.xml")), Is.True);
+			Assert.That(XDocument.Load(Path.Combine(outputDir, "GOLDEticRoundtripped.xml")).Root, Is.Not.Null);
 		}
 	}
 }

@@ -2,24 +2,40 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 // DISABLED: Tests are for obsolete dialog API - FwWritingSystemSetupDlg was refactored to use FwWritingSystemSetupModel
-#if false
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
 
 using NUnit.Framework;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.FwUtils.Attributes;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
-using SIL.WritingSystems;
-
 
 namespace SIL.FieldWorks.FwCoreDlgs
 {
+	[TestFixture]
+	[Ignore("Obsolete: FwWritingSystemSetupDlg API was refactored to FwWritingSystemSetupModel.")]
+	public class FwWritingSystemSetupDlgTests
+	{
+		[Test]
+		public void ObsoleteDialogApi_Disabled()
+		{
+			Assert.Ignore(
+				"Obsolete: legacy dialog API tests are archived behind RUN_LW_LEGACY_TESTS " +
+				"and need a rewrite against FwWritingSystemSetupModel."
+			);
+		}
+	}
+}
+
+#if RUN_LW_LEGACY_TESTS
+namespace SIL.FieldWorks.FwCoreDlgs
+{
+	using System;
+	using System.Collections.Generic;
+	using System.Linq;
+	using System.Windows.Forms;
+	using SIL.FieldWorks.Common.FwUtils;
+	using SIL.FieldWorks.Common.FwUtils.Attributes;
+	using SIL.LCModel;
+	using SIL.LCModel.Core.WritingSystems;
+	using SIL.LCModel.DomainServices;
+	using SIL.LCModel.Infrastructure;
+	using SIL.WritingSystems;
 	#region Dummy WritingSystemPropertiesDlg
 	/// <summary>
 	///
