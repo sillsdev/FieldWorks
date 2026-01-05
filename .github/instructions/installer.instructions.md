@@ -10,7 +10,8 @@ Guidance for the installer project, packaging configuration, and localization of
 
 ## Context loading
 - Only build the installer when changing installer logic or packaging; prefer app/library builds in inner loop.
-- Review `FLExInstaller/` and related `.wxs/.wixproj` files; confirm WiX 3.11.x tooling.
+- Review `FLExInstaller/` and related `.wxs/.wixproj` files; confirm WiX 3.14.x tooling.
+- See `Docs/installer-build-guide.md` for local build instructions and CI workflow details.
 
 ## Deterministic requirements
 - Versioning: Maintain consistent ProductCode/UpgradeCode policies; ensure patches use higher build numbers than bases.

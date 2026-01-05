@@ -30,7 +30,7 @@ namespace SIL.SilSidePane
 			var itemAreas = TestUtilities.GetPrivateField(_sidePane, "_itemAreas") as Dictionary<Tab, IItemArea>;
 			Assert.That(itemAreas, Is.Not.Null);
 			foreach (var area in itemAreas.Values)
-				Assert.IsInstanceOf<ToolStrip>(area);
+				Assert.That(area, Is.InstanceOf<ToolStrip>());
 		}
 		#endregion ButtonItemArea
 	}
@@ -56,7 +56,7 @@ namespace SIL.SilSidePane
 			var itemAreas = TestUtilities.GetPrivateField(_sidePane, "_itemAreas") as Dictionary<Tab, IItemArea>;
 			Assert.That(itemAreas, Is.Not.Null);
 			foreach (var area in itemAreas.Values)
-				Assert.IsInstanceOf<ListView>(area);
+				Assert.That(area, Is.InstanceOf<ListView>());
 		}
 		#endregion ListItemArea
 	}
@@ -82,7 +82,7 @@ namespace SIL.SilSidePane
 			var itemAreas = TestUtilities.GetPrivateField(_sidePane, "_itemAreas") as Dictionary<Tab, IItemArea>;
 			Assert.That(itemAreas, Is.Not.Null);
 			foreach (var area in itemAreas.Values)
-				Assert.IsInstanceOf<ToolStrip>(area);
+				Assert.That(area, Is.InstanceOf<ToolStrip>());
 		}
 		#endregion StripListItemArea
 	}
@@ -126,7 +126,7 @@ namespace SIL.SilSidePane
 			var itemAreas = TestUtilities.GetPrivateField(_sidePane, "_itemAreas") as Dictionary<Tab, IItemArea>;
 			Assert.That(itemAreas, Is.Not.Null);
 			foreach (var area in itemAreas.Values)
-				Assert.IsInstanceOf<ToolStrip>(area);
+				Assert.That(area, Is.InstanceOf<ToolStrip>());
 		}
 	}
 

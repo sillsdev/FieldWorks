@@ -1,129 +1,129 @@
 <?xml version='1.0' encoding='utf-8'?>
-<ns0:Project xmlns:ns0="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="Current">
-  <ns0:ItemGroup Label="ProjectConfigurations">
-    <ns0:ProjectConfiguration Include="Debug|x64">
-      <ns0:Configuration>Debug</ns0:Configuration>
-      <ns0:Platform>x64</ns0:Platform>
-    </ns0:ProjectConfiguration>
-    <ns0:ProjectConfiguration Include="Release|x64">
-      <ns0:Configuration>Release</ns0:Configuration>
-      <ns0:Platform>x64</ns0:Platform>
-    </ns0:ProjectConfiguration>
-  </ns0:ItemGroup>
-  <ns0:PropertyGroup Label="Globals">
-    <ns0:ProjectGuid>{1D4CC42D-BC16-4EC3-A89B-173798828F56}</ns0:ProjectGuid>
-    <ns0:RootNamespace>TestViews</ns0:RootNamespace>
-    <ns0:SccProjectName>
-    </ns0:SccProjectName>
-    <ns0:SccLocalPath>
-    </ns0:SccLocalPath>
-    <ns0:SccProvider>
-    </ns0:SccProvider>
-    <ns0:Keyword>MakeFileProj</ns0:Keyword>
-    <ns0:WindowsTargetPlatformVersion>10.0</ns0:WindowsTargetPlatformVersion>
-  </ns0:PropertyGroup>
-  <ns0:Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <ns0:PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ns0:ConfigurationType>Makefile</ns0:ConfigurationType>
-    <ns0:PlatformToolset>v143</ns0:PlatformToolset>
-  </ns0:PropertyGroup>
-  <ns0:PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ns0:ConfigurationType>Makefile</ns0:ConfigurationType>
-    <ns0:PlatformToolset>v143</ns0:PlatformToolset>
-  </ns0:PropertyGroup>
-  <ns0:Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ns0:ImportGroup Label="ExtensionSettings">
-  </ns0:ImportGroup>
-  <ns0:ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
-    <ns0:Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <ns0:Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ns0:ImportGroup>
-  <ns0:ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
-    <ns0:Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <ns0:Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ns0:ImportGroup>
-  <ns0:PropertyGroup Label="UserMacros" />
-  <ns0:PropertyGroup>
-    <ns0:_ProjectFileVersion>10.0.30319.1</ns0:_ProjectFileVersion>
-    <ns0:NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\bin\mkvw-tst.bat DONTRUN</ns0:NMakeBuildCommandLine>
-    <ns0:NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\bin\mkvw-tst.bat DONTRUN cc</ns0:NMakeReBuildCommandLine>
-    <ns0:NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\bin\mkvw-tst.bat DONTRUN ec</ns0:NMakeCleanCommandLine>
-    <ns0:NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\..\output\debug\TestViews.exe</ns0:NMakeOutput>
-    <ns0:NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">WIN64;$(NMakePreprocessorDefinitions)</ns0:NMakePreprocessorDefinitions>
-    <ns0:NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)..\..\..\Src\views;$(ProjectDir)..\..\Views;$(ProjectDir)..\..\Views\Lib;$(ProjectDir)..\..\Kernel;$(ProjectDir)..\..\Generic;$(ProjectDir)..\..\..\Lib\src\unit++;$(ProjectDir)..\..\..\Output\Common;$(ProjectDir)..\..\..\Output\Common\Raw;$(NMakeIncludeSearchPath)</ns0:NMakeIncludeSearchPath>
-    <ns0:NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeForcedIncludes)</ns0:NMakeForcedIncludes>
-    <ns0:NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeAssemblySearchPath)</ns0:NMakeAssemblySearchPath>
-    <ns0:NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeForcedUsingAssemblies)</ns0:NMakeForcedUsingAssemblies>
-    <ns0:NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-    <ns0:NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-    <ns0:NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-    <ns0:NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TestViews.exe</ns0:NMakeOutput>
-    <ns0:NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakePreprocessorDefinitions)</ns0:NMakePreprocessorDefinitions>
-    <ns0:NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeIncludeSearchPath)</ns0:NMakeIncludeSearchPath>
-    <ns0:NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeForcedIncludes)</ns0:NMakeForcedIncludes>
-    <ns0:NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeAssemblySearchPath)</ns0:NMakeAssemblySearchPath>
-    <ns0:NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeForcedUsingAssemblies)</ns0:NMakeForcedUsingAssemblies>
-  </ns0:PropertyGroup>
-  <ns0:PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ns0:IncludePath>..\..\Kernel\test;$(IncludePath)</ns0:IncludePath>
-  </ns0:PropertyGroup>
-  <ns0:PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <ns0:IncludePath>..\..\Kernel\test;$(IncludePath)</ns0:IncludePath>
-  </ns0:PropertyGroup>
-  <ns0:ItemDefinitionGroup>
-  </ns0:ItemDefinitionGroup>
-  <ns0:ItemGroup>
-    <ns0:ClCompile Include="Collection.cpp" />
-    <ns0:ClCompile Include="testViews.cpp" />
-  </ns0:ItemGroup>
-  <ns0:ItemGroup>
-    <ns0:ClInclude Include="BasicVc.h" />
-    <ns0:ClInclude Include="DummyBaseVc.h" />
-    <ns0:ClInclude Include="DummyRootsite.h" />
-    <ns0:ClInclude Include="MockLgWritingSystem.h" />
-    <ns0:ClInclude Include="MockLgWritingSystemFactory.h" />
-    <ns0:ClInclude Include="MockRenderEngineFactory.h" />
-    <ns0:ClInclude Include="RenderEngineTestBase.h" />
-    <ns0:ClInclude Include="resource.h" />
-    <ns0:ClInclude Include="TestAutoLoad.h" />
-    <ns0:ClInclude Include="TestGraphiteEngine.h" />
-    <ns0:ClInclude Include="TestInsertDiffPara.h" />
-    <ns0:ClInclude Include="TestLayoutPage.h" />
-    <ns0:ClInclude Include="TestLazyBox.h" />
-    <ns0:ClInclude Include="TestLgCollatingEngine.h" />
-    <ns0:ClInclude Include="TestLgLineBreaker.h" />
-    <ns0:ClInclude Include="TestTsPropsBldr.h" />
-    <ns0:ClInclude Include="TestTsStrBldr.h" />
-    <ns0:ClInclude Include="TestTsString.h" />
-    <ns0:ClInclude Include="TestTsTextProps.h" />
-    <ns0:ClInclude Include="TestUndoStack.h" />
-    <ns0:ClInclude Include="TestNotifier.h" />
-    <ns0:ClInclude Include="TestUniscribeEngine.h" />
-    <ns0:ClInclude Include="testViews.h" />
-    <ns0:ClInclude Include="TestVirtualHandlers.h" />
-    <ns0:ClInclude Include="TestVwEnv.h" />
-    <ns0:ClInclude Include="TestVwGraphics.h" />
-    <ns0:ClInclude Include="TestVwOverlay.h" />
-    <ns0:ClInclude Include="TestVwParagraph.h" />
-    <ns0:ClInclude Include="TestVwPattern.h" />
-    <ns0:ClInclude Include="TestVwRootBox.h" />
-    <ns0:ClInclude Include="TestVwSelection.h" />
-    <ns0:ClInclude Include="TestVwSync.h" />
-    <ns0:ClInclude Include="TestVwTableBox.h" />
-    <ns0:ClInclude Include="TestVwTextBoxes.h" />
-    <ns0:ClInclude Include="TestVwTextStore.h" />
-    <ns0:ClInclude Include="TestVwTxtSrc.h" />
-    <ns0:ClInclude Include="TestVwUndoDa.h" />
-  </ns0:ItemGroup>
-  <ns0:ItemGroup>
-    <ns0:None Include="Makefile" />
-    <ns0:None Include="NiceGuy.bmp" />
-    <ns0:None Include="testViews.mak" />
-  </ns0:ItemGroup>
-  <ns0:ItemGroup>
-    <ns0:ResourceCompile Include="TestViews.rc" />
-  </ns0:ItemGroup>
-  <ns0:Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ns0:ImportGroup Label="ExtensionTargets">
-  </ns0:ImportGroup>
-</ns0:Project>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="Current">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{1D4CC42D-BC16-4EC3-A89B-173798828F56}</ProjectGuid>
+    <RootNamespace>TestViews</RootNamespace>
+    <SccProjectName>
+    </SccProjectName>
+    <SccLocalPath>
+    </SccLocalPath>
+    <SccProvider>
+    </SccProvider>
+    <Keyword>MakeFileProj</Keyword>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">nmake /nologo BUILD_CONFIG=Debug BUILD_TYPE=d BUILD_ROOT=$(ProjectDir)..\..\..\  BUILD_ARCH=x64 /f testViews.mak</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">nmake /nologo BUILD_CONFIG=Debug BUILD_TYPE=d BUILD_ROOT=$(ProjectDir)..\..\..\  BUILD_ARCH=x64 /f testViews.mak clean all</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">nmake /nologo BUILD_CONFIG=Debug BUILD_TYPE=d BUILD_ROOT=$(ProjectDir)..\..\..\  BUILD_ARCH=x64 /f testViews.mak clean</NMakeCleanCommandLine>
+    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)..\..\..\Output\Debug\TestViews.exe</NMakeOutput>
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">WIN64;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)..\..\..\Src\views;$(ProjectDir)..\..\Views;$(ProjectDir)..\..\Views\Lib;$(ProjectDir)..\..\Kernel;$(ProjectDir)..\..\Generic;$(ProjectDir)..\..\..\Lib\src\unit++;$(ProjectDir)..\..\..\Output\Common;$(ProjectDir)..\..\..\Output\Common\Raw;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TestViews.exe</NMakeOutput>
+    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
+    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>..\..\Kernel\test;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IncludePath>..\..\Kernel\test;$(IncludePath)</IncludePath>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="Collection.cpp" />
+    <ClCompile Include="testViews.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BasicVc.h" />
+    <ClInclude Include="DummyBaseVc.h" />
+    <ClInclude Include="DummyRootsite.h" />
+    <ClInclude Include="MockLgWritingSystem.h" />
+    <ClInclude Include="MockLgWritingSystemFactory.h" />
+    <ClInclude Include="MockRenderEngineFactory.h" />
+    <ClInclude Include="RenderEngineTestBase.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="TestAutoLoad.h" />
+    <ClInclude Include="TestGraphiteEngine.h" />
+    <ClInclude Include="TestInsertDiffPara.h" />
+    <ClInclude Include="TestLayoutPage.h" />
+    <ClInclude Include="TestLazyBox.h" />
+    <ClInclude Include="TestLgCollatingEngine.h" />
+    <ClInclude Include="TestLgLineBreaker.h" />
+    <ClInclude Include="TestTsPropsBldr.h" />
+    <ClInclude Include="TestTsStrBldr.h" />
+    <ClInclude Include="TestTsString.h" />
+    <ClInclude Include="TestTsTextProps.h" />
+    <ClInclude Include="TestUndoStack.h" />
+    <ClInclude Include="TestNotifier.h" />
+    <ClInclude Include="TestUniscribeEngine.h" />
+    <ClInclude Include="testViews.h" />
+    <ClInclude Include="TestVirtualHandlers.h" />
+    <ClInclude Include="TestVwEnv.h" />
+    <ClInclude Include="TestVwGraphics.h" />
+    <ClInclude Include="TestVwOverlay.h" />
+    <ClInclude Include="TestVwParagraph.h" />
+    <ClInclude Include="TestVwPattern.h" />
+    <ClInclude Include="TestVwRootBox.h" />
+    <ClInclude Include="TestVwSelection.h" />
+    <ClInclude Include="TestVwSync.h" />
+    <ClInclude Include="TestVwTableBox.h" />
+    <ClInclude Include="TestVwTextBoxes.h" />
+    <ClInclude Include="TestVwTextStore.h" />
+    <ClInclude Include="TestVwTxtSrc.h" />
+    <ClInclude Include="TestVwUndoDa.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile" />
+    <None Include="NiceGuy.bmp" />
+    <None Include="testViews.mak" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="TestViews.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

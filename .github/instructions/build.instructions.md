@@ -8,17 +8,19 @@ description: "FieldWorks build guidelines and inner-loop tips"
 ## Purpose & Scope
 This file describes the build system and inner-loop tips for developers working on FieldWorks. Use it for top-level build instructions, not for project-specific guidance.
 
+> **Note:** FieldWorks is **x64-only**. The x86 (32-bit) platform is no longer supported.
+
 ## Quick Start
 
 FieldWorks uses the **MSBuild Traversal SDK** for declarative build ordering. All builds use `FieldWorks.proj`.
 
 ### Windows (PowerShell)
 ```powershell
-# Full build with automatic dependency ordering
+# Full build with automatic dependency ordering (x64 only)
 .\build.ps1
 
-# Specific configuration
-.\build.ps1 -Configuration Release -Platform x64
+# Specific configuration (x64 is the only supported platform)
+.\build.ps1 -Configuration Release
 
 # With parallel builds and detailed logging
 .\build.ps1 -MsBuildArgs @('/m', '/v:detailed')
@@ -45,6 +47,12 @@ FieldWorks uses the **MSBuild Traversal SDK** for declarative build ordering. Al
 
 ## Build Architecture
 
+### x64-Only Build
+FieldWorks builds exclusively for 64-bit Windows (x64). The build system hardcodes x64 architecture:
+- All native C++ code is compiled for x64
+- All managed assemblies target AnyCPU but run in 64-bit mode
+- The installer only produces x64 packages
+
 ### Traversal Build Phases
 The `FieldWorks.proj` file defines a declarative build order:
 
@@ -69,9 +77,9 @@ Run: msbuild Build\Src\NativeBuild\NativeBuild.csproj
 
 ## Developer environment setup
 
-- On Windows: Use `.\build.ps1` (automatically sets up VS Developer Environment) or open a Developer Command Prompt for Visual Studio before running manual `msbuild` commands.
+- On Windows: Use `.\build.ps1` (automatically sets up VS Developer x64 Environment) or open a Developer Command Prompt for Visual Studio (x64) before running manual `msbuild` commands.
 - On Linux/macOS: Use `./build.sh` and ensure `msbuild`, `dotnet`, and native build tools are installed.
-- Environment variables (`fwrt`, `Platform`, etc.) are set by `SetupInclude.targets` during build.
+- Environment variables (`fwrt`, `Platform=x64`, etc.) are set by `SetupInclude.targets` during build.
 
 ## Deterministic requirements
 

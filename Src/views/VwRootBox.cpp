@@ -1,4 +1,4 @@
-/*--------------------------------------------------------------------*//*:Ignore this sentence.
+﻿/*--------------------------------------------------------------------*//*:Ignore this sentence.
 Copyright (c) 1999-2019 SIL International
 This software is licensed under the LGPL, version 2.1 or later
 (http://www.gnu.org/licenses/lgpl-2.1.html)
@@ -4885,7 +4885,7 @@ STDMETHODIMP VwDrawRootBuffered::DrawTheRoot(IVwRootBox * prootb, HDC hdc, RECT 
 	IVwGraphicsWin32Ptr qvg32;
 	Rect rcp(rcpDraw);
 	CheckHr(qvg->QueryInterface(IID_IVwGraphicsWin32, (void **) &qvg32));
-	
+
 	// Clean up any previous cached bitmap and DC
 	if (m_hdcMem)
 	{
@@ -4899,7 +4899,7 @@ STDMETHODIMP VwDrawRootBuffered::DrawTheRoot(IVwRootBox * prootb, HDC hdc, RECT 
 		Assert(fSuccess);
 		m_hdcMem = 0;
 	}
-	
+
 	// Create a new memory DC and bitmap for double buffering
 	m_hdcMem = AfGdi::CreateCompatibleDC(hdc);
 	HBITMAP hbmp = AfGdi::CreateCompatibleBitmap(hdc, rcp.Width(), rcp.Height());
@@ -4908,7 +4908,7 @@ STDMETHODIMP VwDrawRootBuffered::DrawTheRoot(IVwRootBox * prootb, HDC hdc, RECT 
 	Assert(hbmpOld && hbmpOld != HGDI_ERROR);
 	// We don't delete hbmpOld (the stock bitmap from the DC)
 	// The new bitmap (hbmp) will stay selected in m_hdcMem for caching
-	
+
 	if (bkclr == kclrTransparent)
 		// if the background color is transparent, copy the current screen area in to the
 		// bitmap buffer as our background
@@ -4979,7 +4979,7 @@ STDMETHODIMP VwDrawRootBuffered::DrawTheRoot(IVwRootBox * prootb, HDC hdc, RECT 
 		throw;
 	}
 	CheckHr(qvg->ReleaseDC());
-	
+
 	if (xpdr != kxpdrInvalidate)
 	{
 		// We drew something...now blast it onto the screen.
@@ -5009,7 +5009,7 @@ STDMETHODIMP VwDrawRootBuffered:: DrawTheRootRotated(IVwRootBox * prootb, HDC hd
 	rcp.bottom = rcpDraw.right;
 	rcp.right = rcpDraw.bottom;
 	CheckHr(qvg->QueryInterface(IID_IVwGraphicsWin32, (void **) &qvg32));
-	
+
 	// For rotated views, use a local DC/bitmap since rotation makes caching for ReDrawLastDraw impractical
 	// Create a temporary memory DC and bitmap for double buffering
 	HDC hdcMem = AfGdi::CreateCompatibleDC(hdc);
@@ -5019,7 +5019,7 @@ STDMETHODIMP VwDrawRootBuffered:: DrawTheRootRotated(IVwRootBox * prootb, HDC hd
 	Assert(hbmpOld && hbmpOld != HGDI_ERROR);
 	// We don't delete hbmpOld (the stock bitmap from the DC)
 	// We'll restore it before cleanup
-	
+
 	if (bkclr == kclrTransparent)
 		// if the background color is transparent, copy the current screen area in to the
 		// bitmap buffer as our background
@@ -5058,7 +5058,7 @@ STDMETHODIMP VwDrawRootBuffered:: DrawTheRootRotated(IVwRootBox * prootb, HDC hd
 		if (qvgDummy)
 			CheckHr(pvrs->ReleaseGraphics(prootb, qvgDummy));
 		CheckHr(qvg->ReleaseDC());
-		
+
 		// Clean up GDI resources before rethrowing
 		AfGdi::SelectObjectBitmap(hdcMem, hbmpOld, AfGdi::OLD);
 		AfGdi::DeleteObjectBitmap(hbmp);
@@ -5066,7 +5066,7 @@ STDMETHODIMP VwDrawRootBuffered:: DrawTheRootRotated(IVwRootBox * prootb, HDC hd
 		throw;
 	}
 	CheckHr(qvg->ReleaseDC());
-	
+
 	POINT rgptTransform[3];
 	rgptTransform[0].x = rcpDraw.right; // upper left of actual drawing maps to top right of rotated drawing
 	rgptTransform[0].y = rcpDraw.top;

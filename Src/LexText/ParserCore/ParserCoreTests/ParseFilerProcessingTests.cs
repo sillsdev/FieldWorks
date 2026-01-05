@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			IWfiWordform wf = FindOrCreateWordform(form);
 			int actualSize = wf.AnalysesOC.Count;
 			string msg = String.Format("Wrong number of {0} analyses for: {1}", isStarting ? "starting" : "ending", form);
-			Assert.That(actualSize, Is.EqualTo(expectedSize).Within(msg));
+			Assert.That(actualSize, Is.EqualTo(expectedSize), msg);
 			return wf;
 		}
 
@@ -89,7 +89,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		{
 			int actualSize = analysis.EvaluationsRC.Count;
 			string msg = String.Format("Wrong number of {0} evaluations for analysis: {1} ({2})", isStarting ? "starting" : "ending", analysis.Hvo, additionalMessage);
-			Assert.That(actualSize, Is.EqualTo(expectedSize).Within(msg));
+			Assert.That(actualSize, Is.EqualTo(expectedSize), msg);
 		}
 
 		protected void ExecuteIdleQueue()

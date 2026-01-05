@@ -31,7 +31,6 @@
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
     <PackageReference Include="SIL.LCModel.Utils.Tests" Version="11.0.0-*" PrivateAssets="All" />
     <PackageReference Include="SIL.TestUtilities" Version="17.0.0-*" />
-    <PackageReference Include="System.Resources.Extensions" Version="8.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />

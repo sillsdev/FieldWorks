@@ -1390,12 +1390,12 @@ namespace SIL.FieldWorks.IText
 					Assert.That(firstText.MediaFilesOA.MediaURIsOC.First().Guid, Is.EqualTo(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF")), "First text should remain unchanged.");
 					Assert.That(firstText.MediaFilesOA.MediaURIsOC.First().MediaURI, Is.EqualTo(@"file:\\test.wav"), "First text should remain unchanged.");
 
-					Assert.That(secondText.Guid, Is.Not.EqualTo(new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA")).Within("Second text should have a unique Guid."));
+					Assert.That(secondText.Guid, Is.Not.EqualTo(new Guid("AAAAAAAA-AAAA-AAAA-AAAA-AAAAAAAAAAAA")), "Second text should have a unique Guid.");
 					Assert.That(secondText.ContentsOA.ParagraphsOS.Count, Is.EqualTo(1), "Second text not imported properly.");
 					Assert.That(secondText.ContentsOA[0].SegmentsOS.Count, Is.EqualTo(1), "Second text not imported properly.");
 					VerifyMediaLink(secondText);
-					Assert.That(secondText.MediaFilesOA.Guid, Is.Not.EqualTo(mediaContainerGuid).Within("Second text's media container should have a unique Guid."));
-					Assert.That(secondText.MediaFilesOA.MediaURIsOC.First().Guid, Is.Not.EqualTo(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF")).Within("Second text's media URI should have a unique Guid."));
+					Assert.That(secondText.MediaFilesOA.Guid, Is.Not.EqualTo(mediaContainerGuid), "Second text's media container should have a unique Guid.");
+					Assert.That(secondText.MediaFilesOA.MediaURIsOC.First().Guid, Is.Not.EqualTo(new Guid("FFFFFFFF-FFFF-FFFF-FFFF-FFFFFFFFFFFF")), "Second text's media URI should have a unique Guid.");
 					Assert.That(secondText.MediaFilesOA.MediaURIsOC.First().MediaURI, Is.EqualTo(@"file:\\retest.wav"), "URI was not imported correctly.");
 				}
 			}

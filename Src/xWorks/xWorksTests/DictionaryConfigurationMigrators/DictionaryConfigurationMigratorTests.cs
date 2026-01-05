@@ -180,10 +180,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var newModel = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { newMain } };
 
 			// Verify valid starting point
-			Assert.That(oldModel.Parts[0].Children[0].Before, Is.Not.EqualTo("{").Within("Invalid preconditions"));
-			Assert.That(oldModel.Parts[0].Children[0].After, Is.Not.EqualTo("}").Within("Invalid preconditions"));
-			Assert.That(oldModel.Parts[0].Children[0].Between, Is.Not.EqualTo(",").Within("Invalid preconditions"));
-			Assert.That(oldModel.Parts[0].Children[0].Style, Is.Not.EqualTo("Stylish").Within("Invalid preconditions"));
+			Assert.That(oldModel.Parts[0].Children[0].Before, Is.Not.EqualTo("{"), "Invalid preconditions");
+			Assert.That(oldModel.Parts[0].Children[0].After, Is.Not.EqualTo("}"), "Invalid preconditions");
+			Assert.That(oldModel.Parts[0].Children[0].Between, Is.Not.EqualTo(","), "Invalid preconditions");
+			Assert.That(oldModel.Parts[0].Children[0].Style, Is.Not.EqualTo("Stylish"), "Invalid preconditions");
 			Assert.That(oldModel.Parts[0].Children[0].IsEnabled, Is.True, "Invalid preconditions");
 
 			DictionaryConfigurationMigrator.LoadConfigWithCurrentDefaults(oldModel, newModel); // SUT

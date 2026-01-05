@@ -3832,7 +3832,7 @@ namespace SIL.FieldWorks.XWorks
 			const string regexBefore = @"^\.senses:before\{";
 			const string regexAfter = @"^\.senses:after\{";
 
-			Assert.That(cssInline, Is.Not.EqualTo(cssPara).Within("The css should change depending on senses showing in a paragraph"));
+			Assert.That(cssInline, Is.Not.EqualTo(cssPara), "The css should change depending on senses showing in a paragraph");
 			VerifyRegex(cssInline, regexBefore, "The css for inline senses should have a senses:before rule");
 			VerifyRegex(cssInline, regexAfter, "The css for inline senses should have a senses:after rule");
 			Assert.That(Regex.IsMatch(cssPara, regexBefore, RegexOptions.Multiline), Is.False, "The css for paragraphed senses should not have a senses:before rule");

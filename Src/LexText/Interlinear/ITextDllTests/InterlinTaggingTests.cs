@@ -197,7 +197,7 @@ namespace SIL.FieldWorks.IText
 		{
 			var item = item1 as ToolStripMenuItem;
 			Assert.That(item, Is.Not.Null, "menu item should be ToolStripMenuItem");
-			Assert.That(item.Checked, Is.EqualTo(fIsChecked).Within(item.Text + " should be " + (fIsChecked ? "checked" : "unchecked")));
+			Assert.That(item.Checked, Is.EqualTo(fIsChecked), item.Text + " should be " + (fIsChecked ? "checked" : "unchecked"));
 		}
 
 		/// <summary>

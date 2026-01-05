@@ -8,7 +8,35 @@
       "program": "${workspaceFolder}\\Output\\Debug\\FieldWorks.exe",
       "cwd": "${workspaceFolder}\\Output\\Debug",
       "console": "externalTerminal",
+      "justMyCode": false,
+      "preLaunchTask": "Build Debug"
+    },
+    {
+      "name": "Debug NUnit Tests",
+      "type": "clr",
+      "request": "launch",
+      "preLaunchTask": "Build Debug",
+      "program": "dotnet",
+      "args": [
+        "test",
+        "${workspaceFolder}/${input:testProject}",
+        "--no-build",
+        "--settings",
+        "${workspaceFolder}/Test.runsettings",
+        "-c",
+        "Debug"
+      ],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
       "justMyCode": false
+    }
+  ],
+  "inputs": [
+    {
+      "id": "testProject",
+      "type": "promptString",
+      "description": "Path to test project (e.g., Src/CacheLight/CacheLightTests/CacheLightTests.csproj)",
+      "default": "Src/CacheLight/CacheLightTests/CacheLightTests.csproj"
     }
   ]
 }
