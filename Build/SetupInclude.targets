@@ -139,6 +139,16 @@
 		DependsOnTargets="CheckGitType"
 		Condition="'$(SkipSetupTargets)' != 'true'"
 	>
+		<PropertyGroup
+			Condition="!Exists('$(FwBuildTasksAssembly)') AND '$(MSBuildProjectName)' != 'FwBuildTasks' AND '$(SkipFwBuildTasksAssemblyCheck)' != 'true'"
+		>
+			<FwBuildTasksProject>$(fwrt)\Build\Src\FwBuildTasks\FwBuildTasks.csproj</FwBuildTasksProject>
+			<FwBuildTasksOutputPath>$(fwrt)\BuildTools\FwBuildTasks\$(Configuration)</FwBuildTasksOutputPath>
+		</PropertyGroup>
+		<Exec
+			Command="msbuild &quot;$(FwBuildTasksProject)&quot; /restore /t:Build /p:Configuration=$(Configuration) /p:FwBuildTasksOutputPath=&quot;$(FwBuildTasksOutputPath)&quot; /p:SkipSetupTargets=true /p:SkipFwBuildTasksAssemblyCheck=true /p:BuildingTransforms=true /m:1 /nr:false"
+			Condition="!Exists('$(FwBuildTasksAssembly)') AND '$(MSBuildProjectName)' != 'FwBuildTasks' AND '$(SkipFwBuildTasksAssemblyCheck)' != 'true'"
+		/>
 		<Error
 			Condition="!Exists('$(FwBuildTasksAssembly)') AND '$(MSBuildProjectName)' != 'FwBuildTasks' AND '$(SkipFwBuildTasksAssemblyCheck)' != 'true'"
 			Text="Missing FieldWorks build tasks assembly: $(FwBuildTasksAssembly). Build Build/Src/FwBuildTasks/FwBuildTasks.csproj first."

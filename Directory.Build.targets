@@ -18,7 +18,7 @@
 		<MSBuild
 			Projects="$(_OrchestratorProj)"
 			Targets="BuildWindowsXslAssemblies"
-			Properties="Configuration=$(Configuration);Platform=$(Platform);BuildingTransforms=true"
+			Properties="Configuration=$(Configuration);Platform=$(Platform);BuildingTransforms=true;dir-outputBase=$(_TransformOutputBase)"
 			Condition="Exists('$(_OrchestratorProj)') and '$(_TransformsMissing)'=='true'" />
 	</Target>
 </Project>

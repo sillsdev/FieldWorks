@@ -34,15 +34,13 @@ Required workloads:
 - .NET desktop development
 - Desktop development with C++ (including ATL/MFC)
 
-#### WiX Toolset 3.14.x (for installer building)
+#### WiX Toolset (v6 via NuGet restore) (for installer building)
 
-Run the automated setup script:
+Installer builds use SDK-style `.wixproj` projects and restore WiX v6 tooling via NuGet during the build.
 
 ```powershell
 .\Setup-Developer-Machine.ps1
 ```
-
-Or install manually from [WiX releases](https://github.com/wixtoolset/wix3/releases/tag/wix3141rtm).
 
 See [Installer Build Guide](installer-build-guide.md) for building installers locally.
 

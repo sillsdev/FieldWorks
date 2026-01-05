@@ -1,5 +1,9 @@
 @echo off
-REM Call out to the buildMsi.bat and buildExe.bat to build and sign each part
-REM This is used if being run on a developer machine, or on a CI runner that has native signing
-REM If you need to pass signing off to a separate step, like in GHA, then you can call each batch separately
-(call buildMsi.bat %*) && ( call buildExe.bat %*)
+echo.
+echo [ERROR] Legacy WiX 3 batch build script.
+echo This repository builds installers with WiX Toolset v6 using MSBuild (.wixproj).
+echo Use one of these instead:
+echo   - .\build.ps1
+echo   - msbuild Build\Orchestrator.proj /t:BuildInstaller
+echo.
+exit /b 1

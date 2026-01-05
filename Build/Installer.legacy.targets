@@ -62,7 +62,8 @@
 		<DataDirSuffix>$(BinDirSuffix)_Data</DataDirSuffix>
 		<FontDirSuffix>$(BinDirSuffix)_Font</FontDirSuffix>
 		<L10nDirSuffix>$(BinDirSuffix)_L10n</L10nDirSuffix>
-		<InstallerDir>$(fwrt)\PatchableInstaller</InstallerDir>
+		<!-- Legacy targets file (WiX 3-era). FieldWorks installer sources now live under FLExInstaller/. -->
+		<InstallerDir>$(fwrt)\FLExInstaller</InstallerDir>
 		<OverridesDestDir>$(InstallerDir)\Common</OverridesDestDir>
 		<InstallerResourcesDir>$(InstallerDir)\resources</InstallerResourcesDir>
 	</PropertyGroup>
@@ -140,7 +141,7 @@
 		/>
 		<Message Text="FieldWorks build complete." Importance="High" />
 	</Target>
-	<!-- Remove residue from the PatchableInstaller repository -->
+	<!-- Legacy cleanup target (external template repo no longer exists in this repo). -->
 	<Target Name="CleanInstaller">
 		<ItemGroup>
 			<OutputSubdirs Include="bin;obj" />

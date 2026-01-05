@@ -15,14 +15,49 @@
     <FontDirSuffix Condition="'$(FontDirSuffix)'==''">$(BinDirSuffix)_Font</FontDirSuffix>
 
     <IcuVersion Condition="'$(IcuVersion)'==''">70</IcuVersion>
+
+    <!-- Installer identity defaults (can be overridden by MSBuild properties). -->
+    <ApplicationName Condition="'$(ApplicationName)'==''">FieldWorks</ApplicationName>
+    <SafeApplicationName Condition="'$(SafeApplicationName)'==''">FieldWorks</SafeApplicationName>
+    <Manufacturer Condition="'$(Manufacturer)'==''">SIL International</Manufacturer>
+    <SafeManufacturer Condition="'$(SafeManufacturer)'==''">SIL</SafeManufacturer>
+    <BundleId Condition="'$(BundleId)'==''">$(SafeManufacturer).$(SafeApplicationName)</BundleId>
+    <UpgradeCode Condition="'$(UpgradeCode)'==''">1092269F-9EA1-419B-8685-90203F83E254</UpgradeCode>
+    <BuildVersionSegment Condition="'$(BuildVersionSegment)'==''">1</BuildVersionSegment>
+    <Year Condition="'$(Year)'==''">$([System.DateTime]::Now.Year)</Year>
   </PropertyGroup>
 
-  <Target Name="BuildInstaller" DependsOnTargets="DownloadPrerequisites;BuildProcRunner;StageInstallerInputs">
+  <Target Name="VersionNumbers" DependsOnTargets="GenerateVersionFiles">
+    <ParseVersionNumbers VersionInfo="@(VersionSymbols)">
+      <Output TaskParameter="Major" PropertyName="MajorVersionSegment" />
+      <Output TaskParameter="Minor" PropertyName="MinorVersionSegment" />
+      <Output TaskParameter="Revision" PropertyName="PatchVersionSegment" />
+    </ParseVersionNumbers>
+  </Target>
+
+  <Target Name="InstallerVersionNumbers" DependsOnTargets="VersionNumbers">
+    <PropertyGroup>
+      <MajorVersion>$(MajorVersionSegment)</MajorVersion>
+      <MinorVersion>$(MajorVersionSegment).$(MinorVersionSegment)</MinorVersion>
+      <PatchVersion>$(MinorVersion).$(PatchVersionSegment)</PatchVersion>
+      <VersionNumber>$(PatchVersion).$(BuildVersionSegment)</VersionNumber>
+      <TruncatedVersion>$(MinorVersion)</TruncatedVersion>
+    </PropertyGroup>
+    <Message Text="Installer VersionNumber: $(VersionNumber) (TruncatedVersion: $(TruncatedVersion))" Importance="high" />
+  </Target>
+
+  <Target Name="BuildInstaller" DependsOnTargets="DownloadPrerequisites;BuildProcRunner;StageInstallerInputs;InstallerVersionNumbers">
     <Message Text="Building Installer..." Importance="high" />
     <MSBuild
       Projects="$(MSBuildProjectDirectory)\..\FLExInstaller\FieldWorks.Bundle.wixproj"
       Targets="Restore;Build"
-      Properties="Configuration=$(Configuration);Platform=x64;AppBuildDir=$(AppBuildDir);BinDirSuffix=$(BinDirSuffix);DataDirSuffix=$(DataDirSuffix)"
+      Properties="Configuration=$(Configuration);Platform=x64;AppBuildDir=$(AppBuildDir);BinDirSuffix=$(BinDirSuffix);DataDirSuffix=$(DataDirSuffix);ApplicationName=$(ApplicationName);SafeApplicationName=$(SafeApplicationName);Manufacturer=$(Manufacturer);SafeManufacturer=$(SafeManufacturer);BundleId=$(BundleId);UpgradeCode=$(UpgradeCode);VersionNumber=$(VersionNumber);TruncatedVersion=$(TruncatedVersion);Year=$(Year);MajorVersion=$(MajorVersion)"
+    />
+
+    <MSBuild
+      Projects="$(MSBuildProjectDirectory)\..\FLExInstaller\FieldWorks.OfflineBundle.wixproj"
+      Targets="Restore;Build"
+      Properties="Configuration=$(Configuration);Platform=x64;AppBuildDir=$(AppBuildDir);BinDirSuffix=$(BinDirSuffix);DataDirSuffix=$(DataDirSuffix);ApplicationName=$(ApplicationName);SafeApplicationName=$(SafeApplicationName);Manufacturer=$(Manufacturer);SafeManufacturer=$(SafeManufacturer);BundleId=$(BundleId);UpgradeCode=$(UpgradeCode);VersionNumber=$(VersionNumber);TruncatedVersion=$(TruncatedVersion);Year=$(Year);MajorVersion=$(MajorVersion)"
     />
   </Target>
 

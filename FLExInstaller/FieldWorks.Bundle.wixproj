@@ -1,19 +1,46 @@
-<Project Sdk="WixToolset.Sdk/6.0.0">
+<Project Sdk="WixToolset.Sdk/6.0.2">
   <PropertyGroup>
     <OutputName>FieldWorksBundle</OutputName>
     <OutputType>Bundle</OutputType>
     <TargetFramework>net48</TargetFramework>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+
+    <!-- Prefer explicit package paths when resolving WixExtension items; otherwise MSBuild's ReferencePaths can
+         accidentally bind to older extension DLLs if multiple versions exist under ./packages. -->
+    <WixExtensionSearchPaths>{RawFileName};{HintPathFromItem};$(ReferencePaths)</WixExtensionSearchPaths>
+  </PropertyGroup>
+
+  <!--
+    Faster Debug builds:
+    - By default, avoid embedding payloads into the bundle container in Debug.
+      This dramatically reduces bundle build time (especially for OfflineBundle).
+    - Override with /p:FastBundleBuild=0 when you need a fully self-contained Debug bundle.
+  -->
+  <PropertyGroup>
+    <FastBundleBuild Condition="'$(FastBundleBuild)' == '' and '$(Configuration)' == 'Debug'">1</FastBundleBuild>
+    <FastBundleBuild Condition="'$(FastBundleBuild)' == ''">0</FastBundleBuild>
   </PropertyGroup>
 
   <PropertyGroup>
-    <DefineConstants>ApplicationName=FieldWorks Language Explorer;TruncatedVersion=9.9;VersionNumber=9.9.1.1;UpgradeCode=1092269F-9EA1-419B-8685-90203F83E254;Year=2024;Manufacturer=SIL International;SafeApplicationName=FieldWorks;$(DefineConstants)</DefineConstants>
+    <!-- Defaults for local dev, overridden by Installer.targets -->
+    <ApplicationName Condition="'$(ApplicationName)' == ''">FieldWorks</ApplicationName>
+    <SafeApplicationName Condition="'$(SafeApplicationName)' == ''">FieldWorks</SafeApplicationName>
+    <Manufacturer Condition="'$(Manufacturer)' == ''">SIL International</Manufacturer>
+    <SafeManufacturer Condition="'$(SafeManufacturer)' == ''">SIL</SafeManufacturer>
+    <BundleId Condition="'$(BundleId)' == ''">$(SafeManufacturer).$(SafeApplicationName)</BundleId>
+    <UpgradeCode Condition="'$(UpgradeCode)' == ''">1092269F-9EA1-419B-8685-90203F83E254</UpgradeCode>
+    <Year Condition="'$(Year)' == ''">$([System.DateTime]::Now.Year)</Year>
+    <MajorVersion Condition="'$(MajorVersion)' == ''">9</MajorVersion>
+    <TruncatedVersion Condition="'$(TruncatedVersion)' == ''">$(MajorVersion).0</TruncatedVersion>
+    <VersionNumber Condition="'$(VersionNumber)' == ''">$(TruncatedVersion).0.1</VersionNumber>
+
+    <DefineConstants>ApplicationName=$(ApplicationName);SafeApplicationName=$(SafeApplicationName);TruncatedVersion=$(TruncatedVersion);VersionNumber=$(VersionNumber);BundleId=$(BundleId);UpgradeCode=$(UpgradeCode);Year=$(Year);Manufacturer=$(Manufacturer);SafeManufacturer=$(SafeManufacturer);FastBundleBuild=$(FastBundleBuild);$(DefineConstants)</DefineConstants>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="WixToolset.Bal.wixext" Version="6.0.0" />
-    <PackageReference Include="WixToolset.Util.wixext" Version="6.0.0" />
-    <PackageReference Include="WixToolset.NetFx.wixext" Version="6.0.0" />
+    <PackageReference Include="WixToolset.Bal.wixext" Version="6.0.2" />
+    <PackageReference Include="WixToolset.Util.wixext" Version="6.0.2" />
+    <PackageReference Include="WixToolset.NetFx.wixext" Version="6.0.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,12 +55,32 @@
 
     <MakeDir Directories="$(_BundleSourceDir)" />
 
+    <!--
+      WixStdBA theme resources are bound by file name. Stage flat-named copies into the culture output folder
+      so ThemeFile/LocalizationFile/LogoFile can be simple names and the theme can resolve ImageFile paths.
+    -->
+    <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)\..\Build\Agent\Preprocess-WixIncludes.ps1&quot; -InputPath &quot;Shared\Base\BundleTheme.xml&quot; -OutputPath &quot;$(_BundleCultureDir)\BundleTheme.xml&quot; -BaseDirectory &quot;$(MSBuildProjectDirectory)&quot;" />
+    <Copy SourceFiles="Shared\Base\BundleTheme.wxl" DestinationFiles="$(_BundleCultureDir)\BundleTheme.wxl" />
+    <Copy SourceFiles="Shared\resources\logo.png" DestinationFiles="$(_BundleCultureDir)\fw-logo.png" />
+    <Copy SourceFiles="Shared\resources\bg.png" DestinationFiles="$(_BundleCultureDir)\bg.png" />
+    <Copy SourceFiles="Shared\resources\header-bg.png" DestinationFiles="$(_BundleCultureDir)\header-bg.png" />
+    <Copy SourceFiles="Shared\resources\License.htm" DestinationFiles="$(_BundleCultureDir)\License.htm" />
+
     <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -Command &quot;if (!(Test-Path -LiteralPath '$(_BundleSourceDir)\\vcredist_vc8_$(Platform).exe')) { Invoke-WebRequest -Uri 'https://download.microsoft.com/download/5/D/8/5D8C65CB-C849-4025-8E95-C3966CAFD8AE/vcredist_$(Platform).exe' -OutFile '$(_BundleSourceDir)\\vcredist_vc8_$(Platform).exe' }&quot;" />
     <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -Command &quot;if (!(Test-Path -LiteralPath '$(_BundleSourceDir)\\vcredist_vc10_$(Platform).exe')) { Invoke-WebRequest -Uri 'https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_$(Platform).exe' -OutFile '$(_BundleSourceDir)\\vcredist_vc10_$(Platform).exe' }&quot;" />
     <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -Command &quot;if (!(Test-Path -LiteralPath '$(_BundleSourceDir)\\vcredist_vc11_$(Platform).exe')) { Invoke-WebRequest -Uri 'https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_$(Platform).exe' -OutFile '$(_BundleSourceDir)\\vcredist_vc11_$(Platform).exe' }&quot;" />
     <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -Command &quot;if (!(Test-Path -LiteralPath '$(_BundleSourceDir)\\vcredist_vc12_$(Platform).exe')) { Invoke-WebRequest -Uri 'https://download.microsoft.com/download/0/5/6/056DCDA9-D667-4E27-8001-8A0C6971D6B1/vcredist_$(Platform).exe' -OutFile '$(_BundleSourceDir)\\vcredist_vc12_$(Platform).exe' }&quot;" />
     <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -Command &quot;if (!(Test-Path -LiteralPath '$(_BundleSourceDir)\\vc_redist_2015to2019_$(Platform).exe')) { Invoke-WebRequest -Uri 'https://download.visualstudio.microsoft.com/download/pr/36e45907-8554-4390-ba70-9f6306924167/97CC5066EB3C7246CF89B735AE0F5A5304A7EE33DC087D65D9DFF3A1A73FE803/VC_redist.$(Platform).exe' -OutFile '$(_BundleSourceDir)\\vc_redist_2015to2019_$(Platform).exe' }&quot;" Condition="'$(Platform)'=='x64'" />
     <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -Command &quot;if (!(Test-Path -LiteralPath '$(_BundleSourceDir)\\vc_redist_2015to2019_$(Platform).exe')) { Invoke-WebRequest -Uri 'https://download.visualstudio.microsoft.com/download/pr/888b4c07-c602-499a-9efb-411188496ce7/F3A86393234099BEDD558FD35AB538A6E4D9D4F99AD5ADFA13F603D4FF8A42DC/VC_redist.$(Platform).exe' -OutFile '$(_BundleSourceDir)\\vc_redist_2015to2019_$(Platform).exe' }&quot;" Condition="'$(Platform)'=='x86'" />
+  </Target>
+
+  <Target Name="EnsureBundleNotRunning" BeforeTargets="CopyFilesToOutputDirectory">
+    <PropertyGroup>
+      <_BundleExeName>$(OutputName)</_BundleExeName>
+    </PropertyGroup>
+
+    <Message Text="Checking for running $(_BundleExeName).exe processes that may lock $(TargetPath)" Importance="high" />
+    <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -Command &quot;$targetPath = '$(TargetPath)'; $isLocked = $false; if (Test-Path -LiteralPath $targetPath) { try { $fs = [System.IO.File]::Open($targetPath, [System.IO.FileMode]::Open, [System.IO.FileAccess]::ReadWrite, [System.IO.FileShare]::None); $fs.Close(); } catch { $isLocked = $true; Write-Output ('Bundle output is locked: {0}' -f $targetPath); } }; $procs = @(Get-Process -Name '$(_BundleExeName)' -ErrorAction SilentlyContinue); if ($procs.Count -eq 0) { Write-Output 'No running bundle processes found.' } else { foreach ($p in $procs) { Write-Output ('Found process Id={0} Name={1} Title={2}' -f $p.Id,$p.ProcessName,$p.MainWindowTitle) } }; if ($isLocked) { Write-Output 'Close the running bundle (or run elevated) and retry.'; exit 1 } else { exit 0 }&quot;" />
   </Target>
 
   <ItemGroup>

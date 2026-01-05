@@ -155,9 +155,9 @@ namespace SIL.FieldWorks
 			var newPath = $"{pathName}{Path.PathSeparator}{Environment.GetEnvironmentVariable("PATH")}";
 			Environment.SetEnvironmentVariable("PATH", newPath);
 			Icu.Wrapper.ConfineIcuVersions(70);
+			FwRegistryHelper.Initialize();
 			// Initialize ICU before anything touches it so icu.net does not warn about missing Init().
 			FwUtils.InitializeIcu();
-			FwRegistryHelper.Initialize();
 
 			try
 			{

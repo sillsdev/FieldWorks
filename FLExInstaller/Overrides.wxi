@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Include>
+<Include xmlns="http://wixtoolset.org/schemas/v4/wxs">
 	<!-- Set the projects dir to what the user had chosen before.
 		(WiX Note: later registry searches replace results of earlier searches, so the current version's directory is preferred over the previous version's.)
 		Look for FieldWorks\8 in the 32-bit registry space since FieldWorks 8 was only 32-bit. -->
 	<Property Id="REGDATAFOLDER">
-		<RegistrySearch Id="LegacyDataFolder" Root="HKLM" Key="SOFTWARE\SIL\FieldWorks\8" Name="[DATAFOLDERREGSZNAME]" Type="directory" Win64="no"/>
+		<RegistrySearch Id="LegacyDataFolder" Root="HKLM" Key="SOFTWARE\SIL\FieldWorks\8" Name="[DATAFOLDERREGSZNAME]" Type="directory" Bitness="always32"/>
 		<RegistrySearch Id="RegistryDataFolder" Root="HKLM" Key="SOFTWARE\[REGISTRYKEY]" Name="[DATAFOLDERREGSZNAME]" Type="directory"/>
 	</Property>
 	<Property Id="REGISTRYKEY" Value="SIL\$(var.SafeApplicationName)\$(var.MajorVersion)"/>
@@ -13,6 +13,6 @@
 	<SetProperty Id="OVRAPPFOLDER" Value="[$(var.PFDir)]\SIL\$(var.SafeApplicationName) $(var.MajorVersion)\" Before="AppSearch"/>
 	<SetProperty Id="OVRHARVESTDATAFOLDER" Value="[CommonAppDataFolder]SIL" Before="AppSearch"/>
 	<SetProperty Id="OVRDATAFOLDER" Value="[CommonAppDataFolder]SIL\FieldWorks\Projects" Before="AppSearch"/>
-	<SetProperty Id="QtExecCmdLine" Value="&quot;cmd&quot; /c (set ICU_DATA=[OVRHARVESTDATAFOLDER]\Icu70) &amp; &quot;[APPFOLDER]\UnicodeCharEditor.exe&quot; -i" Before="InstallFinalize" Sequence="execute"/>
-	<CustomAction Id="LaunchUnicodeCharEditor" BinaryKey="WixCA" DllEntry="CAQuietExec" Execute="immediate" Return="check"/>
+	<SetProperty Id="LaunchUnicodeCharEditor" Value="&quot;cmd&quot; /c (set ICU_DATA=[OVRHARVESTDATAFOLDER]\Icu70) &amp; &quot;[APPFOLDER]\UnicodeCharEditor.exe&quot; -i" Before="InstallFinalize" Sequence="execute"/>
+	<CustomAction Id="LaunchUnicodeCharEditor" BinaryRef="Wix4UtilCA_X64" DllEntry="WixQuietExec" Execute="immediate" Return="check"/>
 </Include>

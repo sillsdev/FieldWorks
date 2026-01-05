@@ -379,6 +379,15 @@
 			Command='dotnet restore "$(fwrt)\FieldWorks.sln" /p:NoWarn=NU1903 /p:DisableWarnForInvalidRestoreProjects=true /p:Configuration=$(Configuration) /p:Platform=$(Platform)'
 			ContinueOnError="false"
 		/>
+		<!--
+			Some traversal-built projects are not included in FieldWorks.sln.
+			Restore them explicitly so builds don't fail with NETSDK1004 (missing project.assets.json).
+		-->
+		<Exec
+			Command='dotnet restore "$(fwrt)\Src\InstallValidator\InstallerArtifactsTests\InstallerArtifactsTests.csproj" /p:NoWarn=NU1903 /p:DisableWarnForInvalidRestoreProjects=true /p:Configuration=$(Configuration) /p:Platform=$(Platform)'
+			ContinueOnError="false"
+			Condition="Exists('$(fwrt)\\Src\\InstallValidator\\InstallerArtifactsTests\\InstallerArtifactsTests.csproj')"
+		/>
 	</Target>
 	<Target
 		Name="downloadDlls"

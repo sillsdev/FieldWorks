@@ -12,19 +12,32 @@ To build the installer, run the following command from the repository root:
 
 ```powershell
 # Build the installer (Debug configuration)
-msbuild FieldWorks.proj /t:BuildInstaller
+./build.ps1 -BuildInstaller
+
+# Or run MSBuild directly (matches build.ps1 -BuildInstaller)
+msbuild Build/Orchestrator.proj /t:BuildInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release
 
 # Build Release version
-msbuild FieldWorks.proj /t:BuildInstaller /p:Configuration=Release
+./build.ps1 -BuildInstaller -Configuration Release
+
+# Or run MSBuild directly
+msbuild Build/Orchestrator.proj /t:BuildInstaller /p:Configuration=Release /p:Platform=x64 /p:config=release
 ```
 
 ## Artifacts
 
-The build produces the following artifacts in `Output/Installer`:
+The build produces artifacts under `FLExInstaller/bin/<platform>/<configuration>/` (bundle outputs are culture-specific under `en-US/`).
 
 - `FieldWorks.msi`: The main MSI package.
-- `FieldWorks.exe`: The bootstrapper bundle (includes prerequisites).
-- `FieldWorks.wixpdb`: Debug symbols for the installer.
+- `FieldWorksBundle.exe`: The bootstrapper bundle (includes prerequisites).
+- `*.wixpdb`: Debug symbols for MSI/bundle.
+
+### Artifact checklist (x64/Debug)
+
+- [ ] `FLExInstaller/bin/x64/Debug/en-US/FieldWorks.msi`
+- [ ] `FLExInstaller/bin/x64/Debug/en-US/FieldWorks.wixpdb`
+- [ ] `FLExInstaller/bin/x64/Debug/FieldWorksBundle.exe`
+- [ ] `FLExInstaller/bin/x64/Debug/FieldWorksBundle.wixpdb`
 
 ## Troubleshooting
 

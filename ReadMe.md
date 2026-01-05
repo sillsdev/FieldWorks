@@ -17,9 +17,11 @@ For first-time setup on a Windows development machine:
 .\Setup-Developer-Machine.ps1
 ```
 
-This installs WiX Toolset, LLVM/clangd, OmniSharp, and configures PATH. Prerequisites:
+This configures a dev machine for builds and tests (verifies prerequisites and configures PATH). Prerequisites:
 - Visual Studio 2022 with .NET desktop and C++ desktop workloads
 - Git for Windows
+
+Installer builds use **WiX Toolset v6 via NuGet restore** (SDK-style `.wixproj`); no WiX 3.x install (candle/light/heat on PATH) is required.
 
 ## Building FieldWorks
 
@@ -32,6 +34,20 @@ FieldWorks uses the **MSBuild Traversal SDK** for declarative, dependency-ordere
 ```
 
 For detailed build instructions, see [.github/instructions/build.instructions.md](.github/instructions/build.instructions.md).
+
+## Building Installers (WiX v6)
+
+```powershell
+# Build the installer (Debug)
+.\build.ps1 -BuildInstaller
+
+# Build the installer (Release)
+.\build.ps1 -BuildInstaller -Configuration Release
+```
+
+Installer artifacts are produced under `FLExInstaller/bin/x64/<Config>/` (MSI under `en-US/`).
+
+For more details, see [specs/001-wix-v6-migration/quickstart.md](specs/001-wix-v6-migration/quickstart.md).
 
 ## Model Context Protocol helpers
 

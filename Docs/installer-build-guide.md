@@ -21,8 +21,7 @@ Use the installer setup script to validate your environment:
 ### Required Software
 
 1. **Visual Studio 2022** with Desktop workloads (C++ and .NET)
-2. **WiX Toolset 3.14.x** - [Download from wixtoolset.org](https://wixtoolset.org/releases/)
-   - After installation, verify: `where.exe candle.exe` shows WiX bin directory
+2. **WiX Toolset v6** via `WixToolset.Sdk` (restored via NuGet as part of the build)
 3. **MSBuild** (included with VS 2022)
 4. **.NET Framework 4.8.1 SDK** (included with VS 2022)
 
@@ -49,7 +48,6 @@ cd fieldworks
 
 # Clone required helper repositories
 git clone https://github.com/sillsdev/FwHelps.git DistFiles/Helps
-git clone https://github.com/sillsdev/genericinstaller.git PatchableInstaller
 git clone https://github.com/sillsdev/FwLocalizations.git Localizations
 git clone https://github.com/sillsdev/liblcm.git Localizations/LCM
 ```
@@ -66,14 +64,12 @@ git clone https://github.com/sillsdev/liblcm.git Localizations/LCM
 msbuild Build/Orchestrator.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64
 
 # Build base installer (x64 only)
-msbuild Build/Orchestrator.proj /t:BuildBaseInstaller /p:Configuration=Release /p:Platform=x64 /p:config=release /m /v:n
+msbuild Build/Orchestrator.proj /t:BuildInstaller /p:Configuration=Release /p:Platform=x64 /p:config=release /m /v:n
 ```
 
 ### Output Location
 
-After successful build:
-- Offline installer: `BuildDir/FieldWorks_*_Offline_x64.exe`
-- Online installer: `BuildDir/FieldWorks_*_Online_x64.exe`
+After successful build, artifacts are produced by the WiX SDK projects under `FLExInstaller/bin/<platform>/<configuration>/` (bundle outputs are culture-specific under `en-US/`).
 
 ## Building a Patch Installer
 
@@ -81,7 +77,7 @@ After successful build:
 
 You need base build artifacts from a prior base build:
 - `BuildDir.zip` - Extract to `BuildDir/`
-- `ProcRunner.zip` - Extract to `PatchableInstaller/ProcRunner/ProcRunner/bin/Release/net48/`
+- `ProcRunner.zip` - Extract to `FLExInstaller/Shared/ProcRunner/ProcRunner/bin/Release/net48/`
 
 These can be downloaded from GitHub Releases (e.g., `build-1188`).
 
@@ -111,7 +107,7 @@ The automated build process is defined in two GitHub Actions workflows:
 - Manual: `workflow_dispatch` with optional parameters
 
 **Key Steps:**
-1. Checkout main repo and helper repositories (FwHelps, genericinstaller, FwLocalizations, liblcm)
+1. Checkout main repo and helper repositories (FwHelps, FwLocalizations, liblcm)
 2. Install .NET 4.8.1 targeting pack
 3. Setup MSBuild environment
 4. Build base installer using `msbuild Build/Orchestrator.proj /t:BuildBaseInstaller`
@@ -148,16 +144,17 @@ The automated build process is defined in two GitHub Actions workflows:
 
 ### WiX Version
 
-Both workflows use **WiX 3.14.x** pre-installed on `windows-latest` GitHub runners.
+Workflows should use **WiX Toolset v6** via `WixToolset.Sdk` restored from NuGet.
 
 ## Troubleshooting
 
-### "candle.exe not found"
+### WiX tool resolution failures
 
-**Cause**: WiX Toolset not installed or not in PATH.
+**Cause**: NuGet restore/build tools not fully restored, or missing VS build prerequisites.
 
 **Fix**:
-1. Install WiX 3.14.x from [wixtoolset.org](https://wixtoolset.org/releases/)
+1. Ensure `msbuild Build/Orchestrator.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64` succeeds.
+2. Re-run `\Build\Agent\Setup-InstallerBuild.ps1 -ValidateOnly` and resolve any reported issues.
 2. Add WiX bin directory to PATH: `C:\Program Files (x86)\WiX Toolset v3.14\bin`
 
 ### "Build artifacts missing"

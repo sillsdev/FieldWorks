@@ -33,7 +33,7 @@
 
 .NOTES
     For full developer machine setup, run Setup-Developer-Machine.ps1 first.
-    WiX 3.14.x is required - install via Setup-Developer-Machine.ps1 or manually.
+    Installers are built with WiX Toolset v6 (SDK-style .wixproj) restored via NuGet.
 #>
 
 [CmdletBinding()]
@@ -58,35 +58,30 @@ $warnings = @()
 
 #region WiX Toolset Validation
 
-Write-Host "--- Checking WiX Toolset ---" -ForegroundColor Yellow
+Write-Host "--- Checking WiX Toolset (v6 via NuGet) ---" -ForegroundColor Yellow
 
-$candle = Get-Command candle.exe -ErrorAction SilentlyContinue
-if ($candle) {
-    $wixVersion = & candle.exe -? 2>&1 | Select-String "version" | Select-Object -First 1
-    if ($wixVersion -match "3\.14") {
-        Write-Host "[OK] WiX Toolset 3.14.x found: $($candle.Source)" -ForegroundColor Green
-    } elseif ($wixVersion -match "3\.1[1-3]") {
-        Write-Host "[WARN] WiX Toolset $wixVersion found (3.14.x recommended)" -ForegroundColor Yellow
-        $warnings += "WiX 3.14.x is recommended for CI compatibility"
-    } else {
-        Write-Host "[OK] WiX Toolset found: $($candle.Source)" -ForegroundColor Green
-    }
+$installerProject = Join-Path $repoRoot "FLExInstaller\FieldWorks.Installer.wixproj"
+$bundleProject = Join-Path $repoRoot "FLExInstaller\FieldWorks.Bundle.wixproj"
+
+if (Test-Path $installerProject) {
+    Write-Host "[OK] Installer project: $installerProject" -ForegroundColor Green
 } else {
-    Write-Host "[MISSING] WiX Toolset not found in PATH" -ForegroundColor Red
-    Write-Host "         Install via: .\Setup-Developer-Machine.ps1" -ForegroundColor Red
-    Write-Host "         Or download from: https://github.com/wixtoolset/wix3/releases" -ForegroundColor Red
-    $issues += "WiX Toolset not installed"
+    $issues += "Missing installer project: $installerProject"
 }
 
-# Check WIX environment variable
-$wixEnv = $env:WIX
-if ($wixEnv -and (Test-Path $wixEnv)) {
-    Write-Host "[OK] WIX environment variable: $wixEnv" -ForegroundColor Green
-} elseif ($candle) {
-    $wixPath = Split-Path -Parent $candle.Source
-    Write-Host "[INFO] WIX env var not set, but candle.exe found in PATH" -ForegroundColor Gray
+if (Test-Path $bundleProject) {
+    Write-Host "[OK] Bundle project: $bundleProject" -ForegroundColor Green
 } else {
-    $warnings += "WIX environment variable not set"
+    $issues += "Missing bundle project: $bundleProject"
+}
+
+Write-Host "[INFO] WiX v6 tools are restored during build (no candle.exe/light.exe required)" -ForegroundColor Gray
+
+$heatFromRepoPackages = Join-Path $repoRoot "packages\wixtoolset.heat\6.0.0\tools\net472\x64\heat.exe"
+if (Test-Path $heatFromRepoPackages) {
+    Write-Host "[OK] Heat.exe (WixToolset.Heat v6) found: $heatFromRepoPackages" -ForegroundColor Green
+} else {
+    Write-Host "[INFO] Heat.exe (WixToolset.Heat) not found yet; it will be restored on first installer build" -ForegroundColor Gray
 }
 
 #endregion
@@ -156,7 +151,6 @@ Write-Host "`n--- Checking Helper Repositories ---" -ForegroundColor Yellow
 
 $helperRepos = @(
     @{ Name = "FwHelps"; Path = "DistFiles/Helps"; Required = $true },
-    @{ Name = "PatchableInstaller"; Path = "PatchableInstaller"; Required = $true },
     @{ Name = "FwLocalizations"; Path = "Localizations"; Required = $true },
     @{ Name = "liblcm"; Path = "Localizations/LCM"; Required = $true }
 )
@@ -243,7 +237,7 @@ if ($SetupPatch) {
     Write-Host "`n--- Setting Up Patch Build Prerequisites ---" -ForegroundColor Yellow
 
     $buildDir = Join-Path $repoRoot "BuildDir"
-    $procRunnerDir = Join-Path $repoRoot "PatchableInstaller\ProcRunner\ProcRunner\bin\Release\net48"
+    $procRunnerDir = Join-Path $repoRoot "FLExInstaller\Shared\ProcRunner\ProcRunner\bin\Release\net48"
     $artifactsDir = Join-Path $repoRoot "base-artifacts"
 
     # Check if artifacts already exist

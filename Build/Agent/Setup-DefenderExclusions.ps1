@@ -162,11 +162,6 @@ $pathExclusions = @(
     (Join-Path $UserProfile "AppData\Local\FieldWorksTools"),  # WiX, etc. on dev machines
 
     # -------------------------------------------------------------------------
-    # WiX Toolset
-    # -------------------------------------------------------------------------
-    "C:\Wix314",                                        # WiX on CI
-
-    # -------------------------------------------------------------------------
     # Temp folders (package extraction)
     # -------------------------------------------------------------------------
     (Join-Path $UserProfile "AppData\Local\Temp"),      # User temp folder
@@ -207,9 +202,8 @@ $processExclusions = @(
     # -------------------------------------------------------------------------
     # WiX Toolset (installer builds)
     # -------------------------------------------------------------------------
-    "candle.exe",                                       # WiX compiler
-    "light.exe",                                        # WiX linker
-    "heat.exe",                                         # WiX harvester
+    "wix.exe",                                          # WiX v6 toolset driver (SDK build)
+    "heat.exe",                                         # WixToolset.Heat (v6) harvester
 
     # -------------------------------------------------------------------------
     # Test runners

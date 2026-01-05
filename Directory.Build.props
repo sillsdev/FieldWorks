@@ -40,6 +40,15 @@
 		<Deterministic>false</Deterministic>
 		<!-- Required for projects with non-string resources (images, icons, etc.) in .NET SDK style projects -->
 		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+
+		<!--
+			C# language version policy:
+			- Default .NET Framework TFMs to C# 8 so we can use modern syntax safely.
+			- Keep nullable reference types disabled for now to avoid repo-wide warning churn under TreatWarningsAsErrors.
+			  Projects can opt in explicitly when ready.
+		-->
+		<LangVersion Condition="'$(MSBuildProjectExtension)' == '.csproj' AND '$(LangVersion)' == ''">8.0</LangVersion>
+		<Nullable Condition="'$(MSBuildProjectExtension)' == '.csproj' AND '$(Nullable)' == ''">disable</Nullable>
 	</PropertyGroup>
 
 	<!-- Required for non-string resources (images, icons) in .NET Framework SDK-style projects -->

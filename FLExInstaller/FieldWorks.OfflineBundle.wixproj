@@ -1,0 +1,91 @@
+<Project Sdk="WixToolset.Sdk/6.0.2">
+  <PropertyGroup>
+    <OutputName>FieldWorksOfflineBundle</OutputName>
+    <OutputType>Bundle</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+
+    <!-- Prefer explicit package paths when resolving WixExtension items; otherwise MSBuild's ReferencePaths can
+         accidentally bind to older extension DLLs if multiple versions exist under ./packages. -->
+    <WixExtensionSearchPaths>{RawFileName};{HintPathFromItem};$(ReferencePaths)</WixExtensionSearchPaths>
+  </PropertyGroup>
+
+  <!--
+    Faster Debug builds:
+    - By default, avoid embedding payloads into the bundle container in Debug.
+      This dramatically reduces bundle build time.
+    - Override with /p:FastBundleBuild=0 when you need a fully self-contained Debug bundle.
+  -->
+  <PropertyGroup>
+    <FastBundleBuild Condition="'$(FastBundleBuild)' == '' and '$(Configuration)' == 'Debug'">1</FastBundleBuild>
+    <FastBundleBuild Condition="'$(FastBundleBuild)' == ''">0</FastBundleBuild>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Defaults for local dev, overridden by Installer.targets -->
+    <ApplicationName Condition="'$(ApplicationName)' == ''">FieldWorks</ApplicationName>
+    <SafeApplicationName Condition="'$(SafeApplicationName)' == ''">FieldWorks</SafeApplicationName>
+    <Manufacturer Condition="'$(Manufacturer)' == ''">SIL International</Manufacturer>
+    <SafeManufacturer Condition="'$(SafeManufacturer)' == ''">SIL</SafeManufacturer>
+    <BundleId Condition="'$(BundleId)' == ''">$(SafeManufacturer).$(SafeApplicationName)</BundleId>
+    <UpgradeCode Condition="'$(UpgradeCode)' == ''">1092269F-9EA1-419B-8685-90203F83E254</UpgradeCode>
+    <Year Condition="'$(Year)' == ''">$([System.DateTime]::Now.Year)</Year>
+    <MajorVersion Condition="'$(MajorVersion)' == ''">9</MajorVersion>
+    <TruncatedVersion Condition="'$(TruncatedVersion)' == ''">$(MajorVersion).0</TruncatedVersion>
+    <VersionNumber Condition="'$(VersionNumber)' == ''">$(TruncatedVersion).0.1</VersionNumber>
+
+    <DefineConstants>ApplicationName=$(ApplicationName);SafeApplicationName=$(SafeApplicationName);TruncatedVersion=$(TruncatedVersion);VersionNumber=$(VersionNumber);BundleId=$(BundleId);UpgradeCode=$(UpgradeCode);Year=$(Year);Manufacturer=$(Manufacturer);SafeManufacturer=$(SafeManufacturer);FastBundleBuild=$(FastBundleBuild);$(DefineConstants)</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WixToolset.Bal.wixext" Version="6.0.2" />
+    <PackageReference Include="WixToolset.Util.wixext" Version="6.0.2" />
+    <PackageReference Include="WixToolset.NetFx.wixext" Version="6.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Shared\Base\OfflineBundle.wxs" />
+  </ItemGroup>
+
+  <Target Name="StageOfflineBundlePayloads" BeforeTargets="CoreCompile">
+    <PropertyGroup>
+      <_BundleCultureDir>$(MSBuildProjectDirectory)\bin\$(Platform)\$(Configuration)\en-US</_BundleCultureDir>
+      <_BundleSourceDir>$(_BundleCultureDir)\SourceDir</_BundleSourceDir>
+      <_LibsDir>$(MSBuildProjectDirectory)\libs</_LibsDir>
+    </PropertyGroup>
+
+    <MakeDir Directories="$(_BundleSourceDir)" />
+
+    <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -File &quot;$(MSBuildProjectDirectory)\..\Build\Agent\Preprocess-WixIncludes.ps1&quot; -InputPath &quot;Shared\Base\BundleTheme.xml&quot; -OutputPath &quot;$(_BundleCultureDir)\BundleTheme.xml&quot; -BaseDirectory &quot;$(MSBuildProjectDirectory)&quot;" />
+    <Copy SourceFiles="Shared\Base\BundleTheme.wxl" DestinationFiles="$(_BundleCultureDir)\BundleTheme.wxl" />
+    <Copy SourceFiles="Shared\resources\logo.png" DestinationFiles="$(_BundleCultureDir)\fw-logo.png" />
+    <Copy SourceFiles="Shared\resources\bg.png" DestinationFiles="$(_BundleCultureDir)\bg.png" />
+    <Copy SourceFiles="Shared\resources\header-bg.png" DestinationFiles="$(_BundleCultureDir)\header-bg.png" />
+    <Copy SourceFiles="Shared\resources\License.htm" DestinationFiles="$(_BundleCultureDir)\License.htm" />
+
+    <!-- Offline prerequisites are sourced from the repo-local FLExInstaller\libs folder and embedded into the bundle. -->
+    <Copy SourceFiles="$(_LibsDir)\ndp48-x86-x64-allos-enu.exe" DestinationFiles="$(_BundleSourceDir)\ndp48-x86-x64-allos-enu.exe" />
+    <Copy SourceFiles="$(_LibsDir)\vcredist_2008_$(Platform).exe" DestinationFiles="$(_BundleSourceDir)\vcredist_2008_$(Platform).exe" />
+    <Copy SourceFiles="$(_LibsDir)\vcredist_2010_$(Platform).exe" DestinationFiles="$(_BundleSourceDir)\vcredist_2010_$(Platform).exe" />
+    <Copy SourceFiles="$(_LibsDir)\vcredist_2012_$(Platform).exe" DestinationFiles="$(_BundleSourceDir)\vcredist_2012_$(Platform).exe" />
+    <Copy SourceFiles="$(_LibsDir)\vcredist_2013_$(Platform).exe" DestinationFiles="$(_BundleSourceDir)\vcredist_2013_$(Platform).exe" />
+    <Copy SourceFiles="$(_LibsDir)\vcredist_2015-19_$(Platform).exe" DestinationFiles="$(_BundleSourceDir)\vcredist_2015-19_$(Platform).exe" />
+  </Target>
+
+  <Target Name="EnsureBundleNotRunning" BeforeTargets="CopyFilesToOutputDirectory">
+    <PropertyGroup>
+      <_BundleExeName>$(OutputName)</_BundleExeName>
+    </PropertyGroup>
+
+    <Message Text="Checking for running $(_BundleExeName).exe processes that may lock $(TargetPath)" Importance="high" />
+    <Exec Command="powershell.exe -NoProfile -ExecutionPolicy Bypass -Command &quot;$targetPath = '$(TargetPath)'; $isLocked = $false; if (Test-Path -LiteralPath $targetPath) { try { $fs = [System.IO.File]::Open($targetPath, [System.IO.FileMode]::Open, [System.IO.FileAccess]::ReadWrite, [System.IO.FileShare]::None); $fs.Close(); } catch { $isLocked = $true; Write-Output ('Bundle output is locked: {0}' -f $targetPath); } }; $procs = @(Get-Process -Name '$(_BundleExeName)' -ErrorAction SilentlyContinue); if ($procs.Count -eq 0) { Write-Output 'No running bundle processes found.' } else { foreach ($p in $procs) { Write-Output ('Found process Id={0} Name={1} Title={2}' -f $p.Id,$p.ProcessName,$p.MainWindowTitle) } }; if ($isLocked) { Write-Output 'Close the running bundle (or run elevated) and retry.'; exit 1 } else { exit 0 }&quot;" />
+  </Target>
+
+  <ItemGroup>
+    <ProjectReference Include="FieldWorks.Installer.wixproj" />
+  </ItemGroup>
+
+  <Target Name="SignBundle" AfterTargets="Build" Condition="'$(SignOutput)'=='true'">
+    <Exec Command="call Shared\Base\signingProxy.bat &quot;$(OutputPath)$(OutputName).exe&quot;" />
+  </Target>
+</Project>

@@ -13,7 +13,7 @@ A developer wants to build the installer locally to verify changes or create a r
 
 **Why this priority**: This is the core development workflow. Without a working build, no other testing or deployment is possible.
 
-**Independent Test**: Run the build command (e.g., msbuild FieldWorks.proj /t:BuildInstaller) on a clean developer machine and verify that a valid .exe or .msi is produced.
+**Independent Test**: Run the installer build on a clean developer machine (e.g., `./build.ps1 -BuildInstaller`, or `msbuild Build/Orchestrator.proj /t:BuildInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release`) and verify that a valid .exe or .msi is produced.
 
 **Acceptance Scenarios**:
 

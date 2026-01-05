@@ -42,6 +42,16 @@
 .PARAMETER MsBuildArgs
     Additional arguments to pass directly to MSBuild.
 
+.PARAMETER InstallerOnly
+    Only used with -BuildInstaller. Skips rebuilding FieldWorks and only builds the WiX installer/bundles,
+    reusing existing binaries under Output/<Configuration>. For safety, this requires a build stamp from a
+    prior full build in the same configuration.
+
+.PARAMETER ForceInstallerOnly
+    Only used with -InstallerOnly. Forces installer-only builds even when the git HEAD or dirty state
+    differs from the last full-build stamp, or when there are uncommitted changes outside FLExInstaller/.
+    Use only when you are sure the current Output/<Configuration> binaries are still what you want to package.
+
 .PARAMETER LogFile
     Path to a file where the build output should be logged.
 
@@ -87,7 +97,9 @@ param(
     [int]$TailLines,
     [switch]$SkipRestore,
     [switch]$SkipNative,
-    [switch]$BuildInstaller
+    [switch]$BuildInstaller,
+    [switch]$InstallerOnly,
+    [switch]$ForceInstallerOnly
 )
 
 $ErrorActionPreference = "Stop"
@@ -117,6 +129,67 @@ $cleanupArgs = @{
 }
 
 $testExitCode = 0
+
+function Get-RepoStamp {
+    $gitHead = & git rev-parse HEAD
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to determine git HEAD (git rev-parse HEAD)."
+    }
+    $gitHead = ($gitHead | Out-String).Trim()
+
+    $gitStatus = & git status --porcelain
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to determine git dirty state (git status --porcelain)."
+    }
+    $gitStatusText = ($gitStatus | Out-String)
+    $isDirty = -not [string]::IsNullOrWhiteSpace($gitStatusText)
+
+    # For installer-only iteration, we want to allow local edits under FLExInstaller/**
+    # while still blocking when *product* inputs have changed (e.g., Src/**).
+    $isDirtyOutsideInstaller = $false
+    if ($isDirty) {
+        $lines = @()
+        foreach ($line in ($gitStatusText -split "`r?`n")) {
+            $trimmed = $line.TrimEnd()
+            if ([string]::IsNullOrWhiteSpace($trimmed)) {
+                continue
+            }
+            $lines += $trimmed
+        }
+
+        foreach ($statusLine in $lines) {
+            if ($statusLine.Length -lt 4) {
+                continue
+            }
+
+            # Porcelain format: XY<space>PATH (or XY<space>OLD -> NEW)
+            $pathPart = $statusLine.Substring(3).Trim()
+            if ($pathPart -like "* -> *") {
+                $pathPart = ($pathPart.Split(@(" -> "), 2, [System.StringSplitOptions]::None)[1]).Trim()
+            }
+
+            if (-not ($pathPart -like "FLExInstaller/*")) {
+                $isDirtyOutsideInstaller = $true
+                break
+            }
+        }
+    }
+
+    return [pscustomobject]@{
+        GitHead = $gitHead
+        IsDirty = $isDirty
+        IsDirtyOutsideInstaller = $isDirtyOutsideInstaller
+    }
+}
+
+function Get-BuildStampPath {
+    param(
+        [Parameter(Mandatory = $true)][string]$RepoRoot,
+        [Parameter(Mandatory = $true)][string]$ConfigurationName
+    )
+    $outputDir = Join-Path $RepoRoot ("Output\\{0}" -f $ConfigurationName)
+    return Join-Path $outputDir "BuildStamp.json"
+}
 
 try {
     Invoke-WithFileLockRetry -Context "FieldWorks build" -IncludeOmniSharp -Action {
@@ -238,16 +311,63 @@ try {
             Write-Host "Skipping package restore (-SkipRestore)" -ForegroundColor Yellow
         }
 
-        # Build using traversal project
-        Invoke-MSBuild `
-            -Arguments (@($projectPath) + $finalMsBuildArgs) `
-            -Description "FieldWorks Solution" `
-            -LogPath $LogFile `
-            -TailLines $TailLines
+        if ($InstallerOnly) {
+            if (-not $BuildInstaller) {
+                throw "-InstallerOnly requires -BuildInstaller."
+            }
 
-        Write-Host ""
-        Write-Host "[OK] Build complete!" -ForegroundColor Green
-        Write-Host "Output: Output\$Configuration" -ForegroundColor Cyan
+            $stampPath = Get-BuildStampPath -RepoRoot $PSScriptRoot -ConfigurationName $Configuration
+            if (-not (Test-Path $stampPath)) {
+                throw "-InstallerOnly requested but no build stamp was found at '$stampPath'. Run a full build once (without -InstallerOnly) to create it."
+            }
+
+            $stamp = Get-Content -LiteralPath $stampPath -Raw | ConvertFrom-Json
+            $current = Get-RepoStamp
+
+            $stampConfig = $stamp.Configuration
+            $stampPlatform = $stamp.Platform
+            if (($stampConfig -ne $Configuration) -or ($stampPlatform -ne $Platform)) {
+                throw "-InstallerOnly stamp mismatch: stamp is Configuration='$stampConfig' Platform='$stampPlatform' but this run is Configuration='$Configuration' Platform='$Platform'. Run a full build in this configuration/platform."
+            }
+
+            $headChanged = ($stamp.GitHead -ne $current.GitHead)
+            if ((-not $ForceInstallerOnly) -and ($headChanged -or $current.IsDirtyOutsideInstaller)) {
+                throw "-InstallerOnly refused: product inputs may have changed since the last full build stamp. Run a full build, or use -ForceInstallerOnly if you are sure Output\\$Configuration is still correct."
+            }
+
+            Write-Host ""
+            Write-Host "Skipping product build (-InstallerOnly). Reusing Output\\$Configuration." -ForegroundColor Yellow
+        }
+        else {
+            # Build using traversal project
+            Invoke-MSBuild `
+                -Arguments (@($projectPath) + $finalMsBuildArgs) `
+                -Description "FieldWorks Solution" `
+                -LogPath $LogFile `
+                -TailLines $TailLines
+
+            $stampDir = Join-Path $PSScriptRoot ("Output\\{0}" -f $Configuration)
+            if (-not (Test-Path $stampDir)) {
+                New-Item -Path $stampDir -ItemType Directory -Force | Out-Null
+            }
+
+            $repoStamp = Get-RepoStamp
+            $stampObject = [pscustomobject]@{
+                Configuration = $Configuration
+                Platform = $Platform
+                GitHead = $repoStamp.GitHead
+                IsDirty = $repoStamp.IsDirty
+                IsDirtyOutsideInstaller = $repoStamp.IsDirtyOutsideInstaller
+                TimestampUtc = (Get-Date).ToUniversalTime().ToString('o')
+            }
+
+            $stampPath = Get-BuildStampPath -RepoRoot $PSScriptRoot -ConfigurationName $Configuration
+            $stampObject | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath $stampPath -Encoding UTF8
+
+            Write-Host ""
+            Write-Host "[OK] Build complete!" -ForegroundColor Green
+            Write-Host "Output: Output\$Configuration" -ForegroundColor Cyan
+        }
 
         if ($BuildInstaller) {
             Write-Host ""

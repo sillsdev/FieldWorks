@@ -1,7 +1,7 @@
 <Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
      xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
 
-  <Package Name="$(var.ApplicationName) $(var.MajorVersion) Packages"
+  <Package Name="$(var.SafeApplicationName)"
            ProductCode="$(var.ProductCode)"
            UpgradeCode="$(var.UpgradeCode)"
            Language="1033"
@@ -12,22 +12,23 @@
            Scope="perMachine">
 
     <SummaryInformation Keywords="Installer"
-                        Description="$(var.ApplicationName) $(var.MajorVersion).$(var.MinorVersion) Installer"
+              Description="$(var.SafeApplicationName) Installer"
                         Codepage="1252" />
 
-    <MajorUpgrade DowngradeErrorMessage="A later version of $(var.ApplicationName) is already installed."
-                  AllowSameVersionUpgrades="no" />
+    <MajorUpgrade AllowSameVersionUpgrades="yes"
+            DowngradeErrorMessage="A newer version of $(var.SafeApplicationName) is already installed. Uninstall it first (or run the bundle to replace the existing installation)."
+            Schedule="afterInstallInitialize" />
 
-    <Icon Id="Installer_Icon.ico" SourceFile="$(var.ProjectDir)Shared\resources\Installer.ico" />
-    <Icon Id="Application_Icon.ico" SourceFile="$(var.ProjectDir)Shared\resources\App.ico" />
+    <Icon Id="Application_Icon.ico" SourceFile="$(var.ProjectDir)..\resources\App.ico" />
 
     <Property Id="BUNDLE_ID_GUID" Value="DefaultValue"/>
     <Property Id="FULL_VERSION_NUMBER" Value="$(var.VersionNumber)"/>
-    <Property Id="ARPPRODUCTICON" Value="Installer_Icon.ico" />
-    <Property Id="ARPNOREMOVE" Value="1" />
-    <Property Id="DISPLAYNAME" Value="$(var.ApplicationName) $(var.MajorVersion)" />
+    <Property Id="ARPPRODUCTICON" Value="Application_Icon.ico" />
+    <Property Id="ARPSYSTEMCOMPONENT" Value="1" />
+    <Property Id="DISPLAYNAME" Value="$(var.SafeApplicationName)" />
 
-    <?include ../Common/Overrides.wxi?>
+    <?include ../../Overrides.wxi?>
+    <?include ../../Fonts.wxi?>
 
     <Binary Id="MyCustomActionsDll" SourceFile="$(var.CustomActions.TargetDir)CustomActions.CA.dll" />
 
@@ -43,7 +44,7 @@
       <RegistrySearch Id="RegSearchDataFolder" Root="HKLM" Key="SOFTWARE\[REGISTRYKEY]" Name="[DATAFOLDERREGSZNAME]" Type="raw" />
     </Property>
 
-    <CustomAction Id="SetDefDataFolder" Property="DEFDATAFOLDER" Value="[WindowsVolume]My$(var.SafeApplicationName)DataFolder" />
+    <CustomAction Id="SetDefDataFolder" Property="DEFDATAFOLDER" Value="[CommonAppDataFolder]SIL\$(var.SafeApplicationName)\Projects" />
     <Property Id="DATAFOLDERFOUND" Value="unset" />
     <CustomAction Id="VerifyDataPath" Return="check" Execute="immediate" BinaryRef="MyCustomActionsDll" DllEntry="VerifyDataDirPath" />
 
@@ -62,7 +63,7 @@
     <CustomAction Id="CheckPatchValue" Property="ISPATCH" Value="True" />
 
     <InstallExecuteSequence>
-      <Custom Action="CloseApplications" Before="AppSearch" />
+      <Custom Action="CloseApplications" Before="AppSearch" Condition="NOT (REMOVE=&quot;ALL&quot;)" />
       <Custom Action="DeleteRegistryVersionNumber" Before="RemoveRegistryValues" Condition="(NOT UPGRADINGPRODUCTCODE) AND (REMOVE=&quot;ALL&quot;)" />
       <Custom Action="CheckPatchValue" Before="CheckUpgradeValue" Condition="PATCHNEWSUMMARYSUBJECT=&quot;Small Update Patch&quot;" />
       <Custom Action="CheckUpgradeValue" After="InstallFinalize" Condition="WIX_UPGRADE_DETECTED" />
@@ -82,7 +83,11 @@
       <Custom Action="UseOvrHarvestDataFolder" After="AppSearch" Condition="OVRHARVESTDATAFOLDER" />
     </InstallUISequence>
 
+    <?if $(var.FastInstallerBuild) = 1 ?>
+    <MediaTemplate EmbedCab="yes" MaximumUncompressedMediaSize="2" />
+    <?else?>
     <MediaTemplate EmbedCab="yes" />
+    <?endif?>
     <Property Id="DiskPrompt" Value="$(var.ApplicationName) $(var.MajorVersion).$(var.MinorVersion) Installation [1]" />
 
     <WixVariable Id="WixUIBannerBmp" Value="$(var.ProjectDir)Shared\resources\bannrbmp.bmp" />
@@ -149,14 +154,16 @@
     </StandardDirectory>
 
     <StandardDirectory Id="$(var.PFDir)">
-      <Directory Id="APPFOLDER" Name="$(var.SafeApplicationName)$(var.MajorVersion)">
-        <Component Id="RegKeyValues" Guid="*">
-          <RegistryKey Root="HKLM" Key="SOFTWARE\[REGISTRYKEY]" ForceDeleteOnUninstall="yes">
-            <RegistryValue Name="[APPFOLDERREGSZNAME]" Type="string" Value="[APPFOLDER]" />
-            <RegistryValue Name="$(var.SafeApplicationName)Version" Type="string" Value="$(var.VersionNumber)" />
-          </RegistryKey>
-        </Component>
-        <Component Id="Vapor" Guid="3C4B8E68-6147-482F-B7ED-17C485024AEF" KeyPath="yes" />
+      <Directory Id="SILFolder" Name="SIL">
+        <Directory Id="APPFOLDER" Name="$(var.ApplicationName) $(var.MajorVersion)">
+          <Component Id="RegKeyValues" Guid="*">
+            <RegistryKey Root="HKLM" Key="SOFTWARE\[REGISTRYKEY]" ForceDeleteOnUninstall="yes">
+              <RegistryValue Name="[APPFOLDERREGSZNAME]" Type="string" Value="[APPFOLDER]" />
+              <RegistryValue Name="$(var.SafeApplicationName)Version" Type="string" Value="$(var.VersionNumber)" />
+            </RegistryKey>
+          </Component>
+          <Component Id="Vapor" Guid="3C4B8E68-6147-482F-B7ED-17C485024AEF" KeyPath="yes" />
+        </Directory>
       </Directory>
     </StandardDirectory>
 
@@ -191,6 +198,8 @@
              Display="expand" Level="1" AllowAdvertise="no" InstallDefault="source">
       <ComponentRef Id="Vapor" />
       <ComponentGroupRef Id="HarvestedAppFiles" />
+      <ComponentGroupRef Id="HarvestedL10nFiles" />
+      <ComponentGroupRef Id="Fonts" />
       <ComponentRef Id="RegKeyValues" />
       <ComponentRef Id="RegKeySettingsDir" />
       <ComponentRef Id="HarvestDataDir" />

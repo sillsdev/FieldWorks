@@ -52,6 +52,30 @@
       "type": "promptString",
       "description": "Branch name for worktree (e.g., spec/my-branch or release/9.3)",
       "default": ""
+    },
+    {
+      "id": "installerSnapshotOut",
+      "type": "promptString",
+      "description": "Snapshot output path (file or directory)",
+      "default": "Output/InstallerEvidence/Snapshots"
+    },
+    {
+      "id": "installerSnapshotName",
+      "type": "promptString",
+      "description": "Snapshot name (used in filename when output is a directory)",
+      "default": "manual"
+    },
+    {
+      "id": "installerSnapshotBefore",
+      "type": "promptString",
+      "description": "Path to BEFORE snapshot JSON",
+      "default": ""
+    },
+    {
+      "id": "installerSnapshotAfter",
+      "type": "promptString",
+      "description": "Path to AFTER snapshot JSON",
+      "default": ""
     }
   ],
   "tasks": [
@@ -418,6 +442,45 @@
       "type": "shell",
       "command": ".\\Build\\Agent\\Setup-InstallerBuild.ps1 -SetupPatch",
       "detail": "Download base build artifacts for patch installers",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Installer Evidence: Snapshot",
+      "type": "shell",
+      "command": "./scripts/Agent/Collect-InstallerSnapshot.ps1 -OutputPath '${input:installerSnapshotOut}' -Name '${input:installerSnapshotName}'",
+      "detail": "Collect a machine snapshot (registry/files/uninstall entries) for installer evidence",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Installer Evidence: Compare snapshots",
+      "type": "shell",
+      "command": "./scripts/Agent/Compare-InstallerSnapshots.ps1 -BeforeSnapshotPath '${input:installerSnapshotBefore}' -AfterSnapshotPath '${input:installerSnapshotAfter}'",
+      "detail": "Compare two snapshot JSON files and print a diff report",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Installer Check: Bundle (Debug, x64)",
+      "type": "shell",
+      "command": "./scripts/Agent/Invoke-InstallerCheck.ps1 -InstallerType Bundle -Configuration Debug -Platform x64",
+      "detail": "Run snapshot -> install bundle -> snapshot -> diff (writes evidence under Output/InstallerEvidence/<RunId>)",
       "options": {
         "shell": {
           "executable": "powershell.exe",

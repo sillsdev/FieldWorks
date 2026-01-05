@@ -207,6 +207,7 @@
     <!-- Tests for utility components -->
     <ProjectReference Include="Src\Utilities\SfmToXml\Sfm2XmlTests\Sfm2XmlTests.csproj" />
     <ProjectReference Include="Src\UnicodeCharEditor\UnicodeCharEditorTests\UnicodeCharEditorTests.csproj" />
+    <ProjectReference Include="Src\InstallValidator\InstallerArtifactsTests\InstallerArtifactsTests.csproj" />
     <!-- InstallValidatorTests excluded: it depends on FwBuildTasks types, which causes circular dependency since FwBuildTasks is bootstrapped before traversal -->
     <!-- <ProjectReference Include="Src\InstallValidator\InstallValidatorTests\InstallValidatorTests.csproj" /> -->
     <ProjectReference Include="Lib\src\ScrChecks\ScrChecksTests\ScrChecksTests.csproj" />
