@@ -44,7 +44,7 @@
 
 	<!-- Required for non-string resources (images, icons) in .NET Framework SDK-style projects -->
 	<!-- System.Resources.Extensions 9.0.0 requires net462 or higher - use explicit version check -->
-	<ItemGroup Condition="'$(TargetFramework)' == 'net48' OR '$(TargetFramework)' == 'net472' OR '$(TargetFramework)' == 'net471' OR '$(TargetFramework)' == 'net47' OR '$(TargetFramework)' == 'net462'">
+	<ItemGroup Condition="('$(TargetFramework)' == 'net48' OR '$(TargetFramework)' == 'net472' OR '$(TargetFramework)' == 'net471' OR '$(TargetFramework)' == 'net47' OR '$(TargetFramework)' == 'net462') AND '$(MSBuildProjectExtension)' == '.csproj'">
 		<PackageReference Include="System.Resources.Extensions" Version="9.0.0" />
 		<!--
 			DependencyModel version conflict resolution:

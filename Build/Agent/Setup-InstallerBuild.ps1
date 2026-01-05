@@ -335,7 +335,7 @@ if ($issues.Count -eq 0) {
         Write-Host "  msbuild Build/Orchestrator.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64" -ForegroundColor Cyan
         Write-Host ""
         Write-Host "  # Build base installer" -ForegroundColor Gray
-        Write-Host "  msbuild Build/Orchestrator.proj /t:BuildBaseInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /m /v:n" -ForegroundColor Cyan
+        Write-Host "  msbuild Build/Orchestrator.proj /t:BuildInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /m /v:n" -ForegroundColor Cyan
         Write-Host ""
 
         if ($SetupPatch) {
@@ -353,7 +353,7 @@ if ($issues.Count -eq 0) {
         Write-Host '  cmd /c "call ""C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat"" -arch=amd64 >nul && msbuild Build/Orchestrator.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64"' -ForegroundColor Cyan
         Write-Host ""
         Write-Host "  # Build base installer" -ForegroundColor Gray
-        Write-Host '  cmd /c "call ""C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat"" -arch=amd64 >nul && msbuild Build/Orchestrator.proj /t:BuildBaseInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /m /v:n"' -ForegroundColor Cyan
+        Write-Host '  cmd /c "call ""C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat"" -arch=amd64 >nul && msbuild Build/Orchestrator.proj /t:BuildInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /m /v:n"' -ForegroundColor Cyan
         Write-Host ""
 
         if ($SetupPatch) {

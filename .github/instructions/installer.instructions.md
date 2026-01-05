@@ -22,7 +22,7 @@ Guidance for the installer project, packaging configuration, and localization of
 .\Build\Agent\Setup-InstallerBuild.ps1 -SetupPatch
 
 # Build base installer
-msbuild Build/Orchestrator.proj /t:BuildBaseInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /m
+msbuild Build/Orchestrator.proj /t:BuildInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /m
 
 # Build patch installer (after -SetupPatch)
 msbuild Build/Orchestrator.proj /t:BuildPatchInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /m

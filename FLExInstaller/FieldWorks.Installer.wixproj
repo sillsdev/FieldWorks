@@ -4,6 +4,9 @@
     <OutputType>Package</OutputType>
     <TargetFramework>net48</TargetFramework>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+
+    <!-- Installer validation: harvested inputs include many versionless resource/data files that trigger ICE60. -->
+    <SuppressIces>ICE60</SuppressIces>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -12,17 +15,36 @@
     <BinDirSuffix Condition="'$(BinDirSuffix)' == ''">objects\FieldWorks</BinDirSuffix>
     <DataDirSuffix Condition="'$(DataDirSuffix)' == ''">objects\FieldWorks_Data</DataDirSuffix>
 
+    <!-- WiX preprocessor defaults (can be overridden by MSBuild properties) -->
+    <ApplicationName Condition="'$(ApplicationName)' == ''">FieldWorks Language Explorer</ApplicationName>
+    <SafeApplicationName Condition="'$(SafeApplicationName)' == ''">FieldWorks</SafeApplicationName>
+    <Manufacturer Condition="'$(Manufacturer)' == ''">SIL International</Manufacturer>
+    <SafeManufacturer Condition="'$(SafeManufacturer)' == ''">SIL</SafeManufacturer>
+    <MajorVersion Condition="'$(MajorVersion)' == ''">9</MajorVersion>
+    <MinorVersion Condition="'$(MinorVersion)' == ''">9</MinorVersion>
+    <VersionNumber Condition="'$(VersionNumber)' == ''">9.9.1.1</VersionNumber>
+    <UpgradeCode Condition="'$(UpgradeCode)' == ''">1092269F-9EA1-419B-8685-90203F83E254</UpgradeCode>
+    <ProductCode Condition="'$(ProductCode)' == ''">*</ProductCode>
+
+    <!-- StandardDirectory IDs depend on platform; installers are x64-only. -->
+    <PFDir Condition="'$(PFDir)' == '' and '$(Platform)' == 'x64'">ProgramFiles64Folder</PFDir>
+    <PFDir Condition="'$(PFDir)' == ''">ProgramFilesFolder</PFDir>
+    <CFDir Condition="'$(CFDir)' == '' and '$(Platform)' == 'x64'">CommonFiles64Folder</CFDir>
+    <CFDir Condition="'$(CFDir)' == ''">CommonFilesFolder</CFDir>
+
     <MasterBuildDir>$(AppBuildDir)\$(BinDirSuffix)</MasterBuildDir>
     <MasterDataDir>$(AppBuildDir)\$(DataDirSuffix)</MasterDataDir>
 
-    <DefineConstants>MASTERBUILDDIR=$(MasterBuildDir);MASTERDATADIR=$(MasterDataDir);$(DefineConstants)</DefineConstants>
+    <DefineConstants>ApplicationName=$(ApplicationName);SafeApplicationName=$(SafeApplicationName);Manufacturer=$(Manufacturer);SafeManufacturer=$(SafeManufacturer);MajorVersion=$(MajorVersion);MinorVersion=$(MinorVersion);VersionNumber=$(VersionNumber);ProductCode=$(ProductCode);UpgradeCode=$(UpgradeCode);PFDir=$(PFDir);CFDir=$(CFDir);MASTERBUILDDIR=$(MasterBuildDir);MASTERDATADIR=$(MasterDataDir);$(DefineConstants)</DefineConstants>
+
+    <_MasterBuildDirFull>$([MSBuild]::NormalizePath($(MSBuildProjectDirectory), $(MasterBuildDir)))</_MasterBuildDirFull>
+    <_MasterDataDirFull>$([MSBuild]::NormalizePath($(MSBuildProjectDirectory), $(MasterDataDir)))</_MasterDataDirFull>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="WixToolset.UI.wixext" Version="6.0.0" />
     <PackageReference Include="WixToolset.Util.wixext" Version="6.0.0" />
     <PackageReference Include="WixToolset.NetFx.wixext" Version="6.0.0" />
-    <PackageReference Include="WixToolset.Heat.wixext" Version="6.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,28 +59,41 @@
   </ItemGroup>
 
   <ItemGroup>
-    <HarvestDirectory Include="$(MasterBuildDir)">
-      <ComponentGroupName>HarvestedAppFiles</ComponentGroupName>
-      <DirectoryRefId>APPFOLDER</DirectoryRefId>
-      <PreprocessorVariable>var.MASTERBUILDDIR</PreprocessorVariable>
-      <Transforms>Shared\Base\KeyPathFix.xsl</Transforms>
-      <SuppressCom>true</SuppressCom>
-      <SuppressRegistry>true</SuppressRegistry>
-      <SuppressRootDirectory>true</SuppressRootDirectory>
-    </HarvestDirectory>
-    <HarvestDirectory Include="$(MasterDataDir)">
-      <ComponentGroupName>HarvestedDataFiles</ComponentGroupName>
-      <DirectoryRefId>HARVESTDATAFOLDER</DirectoryRefId>
-      <PreprocessorVariable>var.MASTERDATADIR</PreprocessorVariable>
-      <Transforms>Shared\Base\KeyPathFix.xsl</Transforms>
-      <SuppressCom>true</SuppressCom>
-      <SuppressRegistry>true</SuppressRegistry>
-      <SuppressRootDirectory>true</SuppressRootDirectory>
-    </HarvestDirectory>
   </ItemGroup>
+
+  <Target Name="HarvestAppAndData" BeforeTargets="CoreCompile">
+    <PropertyGroup>
+      <_HarvestDir>$(IntermediateOutputPath)Harvest\</_HarvestDir>
+      <_BaseDir>$(MSBuildProjectDirectory)\Shared\Base</_BaseDir>
+      <_WixExe>$(WixBinDir)x64\wix.exe</_WixExe>
+    </PropertyGroup>
+
+    <MakeDir Directories="$(_HarvestDir)" />
+
+    <!-- Use WiX v3 heat.exe to harvest, then convert output to WiX v4 for wix.exe build. -->
+    <Exec
+      WorkingDirectory="$(_BaseDir)"
+      Command="heat.exe dir &quot;$(_MasterBuildDirFull)&quot; -cg HarvestedAppFiles -gg -scom -sreg -sfrag -srd -sw5150 -sw5151 -dr APPFOLDER -var var.MASTERBUILDDIR -t KeyPathFix.xsl -out &quot;$(_HarvestDir)AppHarvest.wxs&quot;"
+    />
+    <Exec
+      WorkingDirectory="$(_BaseDir)"
+      Command="heat.exe dir &quot;$(_MasterDataDirFull)&quot; -cg HarvestedDataFiles -gg -scom -sreg -sfrag -srd -sw5150 -sw5151 -dr HARVESTDATAFOLDER -var var.MASTERDATADIR -t KeyPathFix.xsl -out &quot;$(_HarvestDir)DataHarvest.wxs&quot;"
+    />
+    <Exec
+      Condition="Exists('$(_WixExe)')"
+      Command="&quot;$(_WixExe)&quot; convert &quot;$(_HarvestDir)AppHarvest.wxs&quot; &quot;$(_HarvestDir)DataHarvest.wxs&quot;"
+      IgnoreExitCode="true"
+    />
+
+    <ItemGroup>
+      <Compile Include="$(_HarvestDir)AppHarvest.wxs" />
+      <Compile Include="$(_HarvestDir)DataHarvest.wxs" />
+    </ItemGroup>
+  </Target>
 
   <ItemGroup>
     <ProjectReference Include="Shared\CustomActions\CustomActions\CustomActions.csproj" />
+    <ProjectReference Include="Shared\ProcRunner\ProcRunner\ProcRunner.csproj" />
   </ItemGroup>
 
   <Target Name="SignInstaller" AfterTargets="Build" Condition="'$(SignOutput)'=='true'">

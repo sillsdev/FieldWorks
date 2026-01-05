@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Include>
+
+<Include xmlns="http://wixtoolset.org/schemas/v4/wxs">
 	<Feature Id='DataFiles' Title='Default Data' Description='Default data files distributed with the application.'
-		Level='1' ConfigurableDirectory='DATAFOLDER' AllowAdvertise="no" InstallDefault="source" Absent='allow' TypicalDefault="install" >
+		Level='1' ConfigurableDirectory='DATAFOLDER' AllowAdvertise="no" InstallDefault="source" TypicalDefault="install" >
 	  <ComponentGroupRef Id="HarvestedDataFiles" />
 	</Feature>
 
-	<Feature Id='DesktopShortcut' Title='Desktop Shortcut' Description='Creates a shortcut on the desktop.' Level='3' ConfigurableDirectory='APPFOLDER' AllowAdvertise="no" InstallDefault="source" Absent='allow' TypicalDefault="install" >
+	<Feature Id='DesktopShortcut' Title='Desktop Shortcut' Description='Creates a shortcut on the desktop.' Level='3' ConfigurableDirectory='APPFOLDER' AllowAdvertise="no" InstallDefault="source" TypicalDefault="install" >
 		<ComponentRef Id='ApplicationShortcutDesktop'/>
 	</Feature>
 
-	<Feature Id='MenuShortcut' Title='Start Menu Shortcut' Description='Creates a shortcut in the Start menu.' Level='3' ConfigurableDirectory='APPFOLDER' AllowAdvertise="no" InstallDefault="source" Absent='allow' TypicalDefault="install" >
+	<Feature Id='MenuShortcut' Title='Start Menu Shortcut' Description='Creates a shortcut in the Start menu.' Level='3' ConfigurableDirectory='APPFOLDER' AllowAdvertise="no" InstallDefault="source" TypicalDefault="install" >
 		<ComponentRef Id='ApplicationShortcutMenu' />
 	</Feature>
 
-	<!--<Feature Id='Fonts' Title='Related Fonts' Description='Installing fonts used by the application.' Level='3' AllowAdvertise="no" InstallDefault="source" Absent='allow' TypicalDefault="install" >
+	<!--<Feature Id='Fonts' Title='Related Fonts' Description='Installing fonts used by the application.' Level='3' AllowAdvertise="no" InstallDefault="source" TypicalDefault="install" >
 	  <ComponentRef Id='Font1'/>
 	  <ComponentRef Id='Font2'/>
 	  <ComponentRef Id='Font3'/>

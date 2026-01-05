@@ -18,9 +18,9 @@
     <MajorUpgrade DowngradeErrorMessage="A later version of $(var.ApplicationName) is already installed."
                   AllowSameVersionUpgrades="no" />
 
-    <Icon Id="Installer_Icon.ico" SourceFile="..\resources\Installer.ico" />
-    <Icon Id="Application_Icon.ico" SourceFile="..\resources\App.ico" />
-    
+    <Icon Id="Installer_Icon.ico" SourceFile="$(var.ProjectDir)Shared\resources\Installer.ico" />
+    <Icon Id="Application_Icon.ico" SourceFile="$(var.ProjectDir)Shared\resources\App.ico" />
+
     <Property Id="BUNDLE_ID_GUID" Value="DefaultValue"/>
     <Property Id="FULL_VERSION_NUMBER" Value="$(var.VersionNumber)"/>
     <Property Id="ARPPRODUCTICON" Value="Installer_Icon.ico" />
@@ -29,7 +29,7 @@
 
     <?include ../Common/Overrides.wxi?>
 
-    <Binary Id="MyCustomActionsDll" SourceFile="../CustomActions/CustomActions/bin/Release/CustomActions.CA.dll" />
+    <Binary Id="MyCustomActionsDll" SourceFile="$(var.CustomActions.TargetDir)CustomActions.CA.dll" />
 
     <CustomAction Id="CheckApplicationPath" Return="check" Execute="immediate" BinaryRef="MyCustomActionsDll" DllEntry="CheckAppPath" />
     <CustomAction Id="DeleteRegistryVersionNumber" Return="check" Execute="immediate" BinaryRef="MyCustomActionsDll" DllEntry="DeleteVersionNumberFromRegistry" />
@@ -46,12 +46,12 @@
     <CustomAction Id="SetDefDataFolder" Property="DEFDATAFOLDER" Value="[WindowsVolume]My$(var.SafeApplicationName)DataFolder" />
     <Property Id="DATAFOLDERFOUND" Value="unset" />
     <CustomAction Id="VerifyDataPath" Return="check" Execute="immediate" BinaryRef="MyCustomActionsDll" DllEntry="VerifyDataDirPath" />
-    
-    <SetProperty Id="REGISTRYKEY" Value="$(var.SafeApplicationName)\$(var.MajorVersion)" Before="AppSearch">not REGISTRYKEY</SetProperty>
-    <SetProperty Id="APPFOLDERREGSZNAME" Value="Program_Files_Directory_$(var.SafeApplicationName)" Before="AppSearch">not APPFOLDERREGSZNAME</SetProperty>
-    <SetProperty Id="DATAFOLDERREGSZNAME" Value="Settings_Directory" Before="AppSearch">not DATAFOLDERREGSZNAME</SetProperty>
-    <SetProperty Id="HARVESTDATAFOLDERREGSZNAME" Value="Data_Directory" Before="AppSearch">not HARVESTDATAFOLDERREGSZNAME</SetProperty>
-    
+
+    <SetProperty Id="REGISTRYKEY" Value="$(var.SafeApplicationName)\$(var.MajorVersion)" Before="AppSearch" Condition="not REGISTRYKEY" />
+    <SetProperty Id="APPFOLDERREGSZNAME" Value="Program_Files_Directory_$(var.SafeApplicationName)" Before="AppSearch" Condition="not APPFOLDERREGSZNAME" />
+    <SetProperty Id="DATAFOLDERREGSZNAME" Value="Settings_Directory" Before="AppSearch" Condition="not DATAFOLDERREGSZNAME" />
+    <SetProperty Id="HARVESTDATAFOLDERREGSZNAME" Value="Data_Directory" Before="AppSearch" Condition="not HARVESTDATAFOLDERREGSZNAME" />
+
     <CustomAction Id="UseDefDataFolder" Property="DATAFOLDER" Value="[DEFDATAFOLDER]" />
     <CustomAction Id="UseOvrDataFolder" Property="DATAFOLDER" Value="[OVRDATAFOLDER]" />
     <CustomAction Id="UseRegDataFolder" Property="DATAFOLDER" Value="[REGDATAFOLDER]" />
@@ -63,32 +63,32 @@
 
     <InstallExecuteSequence>
       <Custom Action="CloseApplications" Before="AppSearch" />
-      <Custom Action="DeleteRegistryVersionNumber" Before="RemoveRegistryValues">(NOT UPGRADINGPRODUCTCODE) AND (REMOVE="ALL")</Custom>
-      <Custom Action="CheckPatchValue" Before="CheckUpgradeValue">PATCHNEWSUMMARYSUBJECT="Small Update Patch"</Custom>
-      <Custom Action="CheckUpgradeValue" After="InstallFinalize">WIX_UPGRADE_DETECTED</Custom>
+      <Custom Action="DeleteRegistryVersionNumber" Before="RemoveRegistryValues" Condition="(NOT UPGRADINGPRODUCTCODE) AND (REMOVE=&quot;ALL&quot;)" />
+      <Custom Action="CheckPatchValue" Before="CheckUpgradeValue" Condition="PATCHNEWSUMMARYSUBJECT=&quot;Small Update Patch&quot;" />
+      <Custom Action="CheckUpgradeValue" After="InstallFinalize" Condition="WIX_UPGRADE_DETECTED" />
       <?include ../Common/CustomActionSteps.wxi?>
     </InstallExecuteSequence>
 
     <InstallUISequence>
       <Custom Action="SetDefDataFolder" After="FindRelatedProducts" />
       <Custom Action="VerifyDataPath" After="SetDefDataFolder" />
-      <Custom Action="UseDefAppFolder" After="AppSearch">(NOT REGAPPFOLDER) and (NOT OVRAPPFOLDER)</Custom>
-      <Custom Action="UseOvrAppFolder" After="AppSearch">(NOT REGAPPFOLDER) and (OVRAPPFOLDER)</Custom>
-      <Custom Action="UseRegAppFolder" After="AppSearch">REGAPPFOLDER</Custom>
-      <Custom Action="UseDefDataFolder" After="AppSearch">(NOT REGDATAFOLDER) and (NOT OVRDATAFOLDER)</Custom>
-      <Custom Action="UseOvrDataFolder" After="AppSearch">(NOT REGDATAFOLDER) and (OVRDATAFOLDER)</Custom>
-      <Custom Action="UseRegDataFolder" After="AppSearch">REGDATAFOLDER</Custom>
-      <Custom Action="UseDefHarvestDataFolder" After="AppSearch">NOT OVRHARVESTDATAFOLDER</Custom>
-      <Custom Action="UseOvrHarvestDataFolder" After="AppSearch">OVRHARVESTDATAFOLDER</Custom>
+      <Custom Action="UseDefAppFolder" After="AppSearch" Condition="(NOT REGAPPFOLDER) and (NOT OVRAPPFOLDER)" />
+      <Custom Action="UseOvrAppFolder" After="AppSearch" Condition="(NOT REGAPPFOLDER) and (OVRAPPFOLDER)" />
+      <Custom Action="UseRegAppFolder" After="AppSearch" Condition="REGAPPFOLDER" />
+      <Custom Action="UseDefDataFolder" After="AppSearch" Condition="(NOT REGDATAFOLDER) and (NOT OVRDATAFOLDER)" />
+      <Custom Action="UseOvrDataFolder" After="AppSearch" Condition="(NOT REGDATAFOLDER) and (OVRDATAFOLDER)" />
+      <Custom Action="UseRegDataFolder" After="AppSearch" Condition="REGDATAFOLDER" />
+      <Custom Action="UseDefHarvestDataFolder" After="AppSearch" Condition="NOT OVRHARVESTDATAFOLDER" />
+      <Custom Action="UseOvrHarvestDataFolder" After="AppSearch" Condition="OVRHARVESTDATAFOLDER" />
     </InstallUISequence>
 
     <MediaTemplate EmbedCab="yes" />
     <Property Id="DiskPrompt" Value="$(var.ApplicationName) $(var.MajorVersion).$(var.MinorVersion) Installation [1]" />
 
-    <WixVariable Id="WixUIBannerBmp" Value="..\resources\bannrbmp.bmp" />
-    <WixVariable Id="WixUIDialogBmp" Value="..\resources\MsiBackground.bmp" />
+    <WixVariable Id="WixUIBannerBmp" Value="$(var.ProjectDir)Shared\resources\bannrbmp.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="$(var.ProjectDir)Shared\resources\MsiBackground.bmp" />
 
-    <SetProperty Id="DEFAPPFOLDER" Value="[$(var.PFDir)]$(var.SafeApplicationName)$(var.MajorVersion)\" Before="AppSearch">not DEFAPPFOLDER</SetProperty>
+    <SetProperty Id="DEFAPPFOLDER" Value="[$(var.PFDir)]$(var.SafeApplicationName)$(var.MajorVersion)\" Before="AppSearch" Condition="not DEFAPPFOLDER" />
     <CustomAction Id="UseDefAppFolder" Property="APPFOLDER" Value="[DEFAPPFOLDER]" />
     <CustomAction Id="UseOvrAppFolder" Property="APPFOLDER" Value="[OVRAPPFOLDER]" />
     <CustomAction Id="UseRegAppFolder" Property="APPFOLDER" Value="[REGAPPFOLDER]" />
@@ -100,9 +100,7 @@
       <RegistrySearch Id="RegistryAppBool" Root="HKLM" Key="SOFTWARE\[REGISTRYKEY]" Name="[APPFOLDERREGSZNAME]" Type="raw" />
     </Property>
 
-    <SetProperty Id="EXPLANATIONTEXT" After="AppSearch" Value="Since this is an upgrade of an existing $(var.ApplicationName) $(var.MajorVersion) installation, you can't change the location of the data folder.">
-      <![CDATA[DATAFOLDERFOUND = "AlreadyExisting"]]>
-    </SetProperty>
+    <SetProperty Id="EXPLANATIONTEXT" After="AppSearch" Value="Since this is an upgrade of an existing $(var.ApplicationName) $(var.MajorVersion) installation, you can't change the location of the data folder." Condition="DATAFOLDERFOUND = &quot;AlreadyExisting&quot;" />
 
     <Property Id="WIXUI_INSTALLDIR" Value="APPFOLDER" />
     <Property Id="WIXUI_PROJECTSDIR" Value="DATAFOLDER" />
@@ -133,59 +131,64 @@
           </RegistryKey>
         </Component>
       </Directory>
-      <Directory Id="FontsFolder" />
-      <StandardDirectory Id="DesktopFolder">
-        <Component Id="ApplicationShortcutDesktop" Guid="*">
-          <Shortcut Id="ApplicationDesktopShortcut"
-                    Name="$(var.ApplicationName) $(var.MajorVersion)"
-                    Description="$(var.ApplicationName) $(var.MajorVersion)"
-                    Target="[APPFOLDER]$(var.SafeApplicationName).exe"
-                    WorkingDirectory="APPFOLDER"
-                    Icon="Application_Icon.ico" />
-          <RemoveFolder Id="DesktopFolder" On="uninstall" />
-          <RegistryValue Root="HKCU" Key="Software\$(var.SafeApplicationName)$(var.MajorVersion)" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+    </StandardDirectory>
+
+    <StandardDirectory Id="FontsFolder" />
+
+    <StandardDirectory Id="DesktopFolder">
+      <Component Id="ApplicationShortcutDesktop" Guid="*">
+        <Shortcut Id="ApplicationDesktopShortcut"
+                  Name="$(var.ApplicationName) $(var.MajorVersion)"
+                  Description="$(var.ApplicationName) $(var.MajorVersion)"
+                  Target="[APPFOLDER]$(var.SafeApplicationName).exe"
+                  WorkingDirectory="APPFOLDER"
+                  Icon="Application_Icon.ico" />
+        <RemoveFolder Id="DesktopFolder" On="uninstall" />
+        <RegistryValue Root="HKCU" Key="Software\$(var.SafeApplicationName)$(var.MajorVersion)" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </StandardDirectory>
+
+    <StandardDirectory Id="$(var.PFDir)">
+      <Directory Id="APPFOLDER" Name="$(var.SafeApplicationName)$(var.MajorVersion)">
+        <Component Id="RegKeyValues" Guid="*">
+          <RegistryKey Root="HKLM" Key="SOFTWARE\[REGISTRYKEY]" ForceDeleteOnUninstall="yes">
+            <RegistryValue Name="[APPFOLDERREGSZNAME]" Type="string" Value="[APPFOLDER]" />
+            <RegistryValue Name="$(var.SafeApplicationName)Version" Type="string" Value="$(var.VersionNumber)" />
+          </RegistryKey>
         </Component>
-      </StandardDirectory>
-      <StandardDirectory Id="$(var.PFDir)">
-        <Directory Id="APPFOLDER" Name="$(var.SafeApplicationName)$(var.MajorVersion)">
-          <Component Id="RegKeyValues" Guid="*">
-            <RegistryKey Root="HKLM" Key="SOFTWARE\[REGISTRYKEY]" ForceDeleteOnUninstall="yes">
-              <RegistryValue Name="[APPFOLDERREGSZNAME]" Type="string" Value="[APPFOLDER]" />
-              <RegistryValue Name="$(var.SafeApplicationName)Version" Type="string" Value="$(var.VersionNumber)" />
-            </RegistryKey>
-          </Component>
-          <Component Id="Vapor" Guid="3C4B8E68-6147-482F-B7ED-17C485024AEF" KeyPath="yes" />
-        </Directory>
-        <StandardDirectory Id="$(var.CFDir)">
-          <Directory Id="CompanyCommonFilesFolder" Name="$(var.SafeManufacturer)">
-            <Component Id="ProcRunner" Guid="*" Permanent="yes" UninstallWhenSuperseded="yes" NeverOverwrite="no">
-              <File Id="ProcRunnerFile" Name="ProcRunner_5.0.exe" Source="../ProcRunner/ProcRunner/bin/Release/net48/ProcRunner_5.0.exe" KeyPath="yes" />
-            </Component>
-          </Directory>
-        </StandardDirectory>
-      </StandardDirectory>
-      <StandardDirectory Id="ProgramMenuFolder">
-        <Component Id="ApplicationShortcutMenu" Guid="*">
-          <Shortcut Id="ApplicationStartMenuShortcut"
-                    Name="$(var.ApplicationName) $(var.MajorVersion)"
-                    Description="$(var.ApplicationName) $(var.MajorVersion)"
-                    Target="[APPFOLDER]$(var.SafeApplicationName).exe"
-                    WorkingDirectory="APPFOLDER"
-                    Icon="Application_Icon.ico" />
-          <Shortcut Id="UninstallProduct"
-                    Name="Uninstall $(var.ApplicationName)"
-                    Target="[SystemFolder]msiexec.exe"
-                    Arguments="/x [ProductCode]"
-                    Description="Uninstalls $(var.ApplicationName)" />
-          <RegistryValue Root="HKCU" Key="Software\Microsoft\$(var.SafeApplicationName)$(var.MajorVersion)" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+        <Component Id="Vapor" Guid="3C4B8E68-6147-482F-B7ED-17C485024AEF" KeyPath="yes" />
+      </Directory>
+    </StandardDirectory>
+
+    <StandardDirectory Id="$(var.CFDir)">
+      <Directory Id="CompanyCommonFilesFolder" Name="$(var.SafeManufacturer)">
+        <Component Id="ProcRunner" Guid="*" Permanent="yes" NeverOverwrite="no">
+          <File Id="ProcRunnerFile" Name="ProcRunner_5.0.exe" Source="$(var.ProjectDir)Shared\ProcRunner\ProcRunner\bin\x64\$(var.Configuration)\net48\ProcRunner_5.0.exe" KeyPath="yes" />
         </Component>
-      </StandardDirectory>
+      </Directory>
+    </StandardDirectory>
+
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Component Id="ApplicationShortcutMenu" Guid="*">
+        <Shortcut Id="ApplicationStartMenuShortcut"
+                  Name="$(var.ApplicationName) $(var.MajorVersion)"
+                  Description="$(var.ApplicationName) $(var.MajorVersion)"
+                  Target="[APPFOLDER]$(var.SafeApplicationName).exe"
+                  WorkingDirectory="APPFOLDER"
+                  Icon="Application_Icon.ico" />
+        <Shortcut Id="UninstallProduct"
+                  Name="Uninstall $(var.ApplicationName)"
+                  Target="[SystemFolder]msiexec.exe"
+                  Arguments="/x [ProductCode]"
+                  Description="Uninstalls $(var.ApplicationName)" />
+        <RegistryValue Root="HKCU" Key="Software\Microsoft\$(var.SafeApplicationName)$(var.MajorVersion)" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
     </StandardDirectory>
 
     <?include ../Common/CustomComponents.wxi?>
 
     <Feature Id="Complete" Title="$(var.ApplicationName) $(var.MajorVersion).$(var.MinorVersion)" Description="The complete package."
-             Display="expand" Level="1" AllowAdvertise="no" InstallDefault="source" Absent="disallow">
+             Display="expand" Level="1" AllowAdvertise="no" InstallDefault="source">
       <ComponentRef Id="Vapor" />
       <ComponentGroupRef Id="HarvestedAppFiles" />
       <ComponentRef Id="RegKeyValues" />

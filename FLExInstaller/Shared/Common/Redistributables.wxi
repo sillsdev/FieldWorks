@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Include>
-	<Fragment>
+	<Fragment xmlns="http://wixtoolset.org/schemas/v4/wxs">
 	<PackageGroup Id="vcredists">
 		<PackageGroupRef Id="redist_vc8" />
 		<PackageGroupRef Id="redist_vc10" />

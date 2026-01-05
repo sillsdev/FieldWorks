@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Theme xmlns="http://wixtoolset.org/schemas/thmutil/2010">
+<Theme xmlns="http://wixtoolset.org/schemas/v4/thmutil">
     <Window Width="494" Height="390" HexStyle="100a0000" FontId="0">#(loc.Caption)</Window>
     <Font Id="0" Height="-12" Weight="500" Foreground="000000" Background="FFFFFF">Segoe UI</Font>
     <Font Id="1" Height="-32" Weight="500" Foreground="FFFFFF" Background="3d2004">Segoe UI</Font>
@@ -9,7 +9,7 @@
     <Font Id="5" Height="-12" Weight="500" Foreground="000000" Background="FFFFFF">Segoe UI</Font>
     <Font Id="6" Height="-14" Weight="500" Foreground="fdf1af" Background="3d2004" Underline="yes">Segoe UI</Font>
     <Font Id="7" Height="-13" Weight="500" Foreground="000000" Background="FFFFFF">Segoe UI</Font>
-	
+
     <Page Name="Help">
         <Text X="11" Y="80" Width="-11" Height="30" FontId="2" DisablePrefix="yes">#(loc.HelpHeader)</Text>
         <Text X="11" Y="112" Width="-11" Height="-35" FontId="3" DisablePrefix="yes">#(loc.HelpText)</Text>
@@ -56,7 +56,7 @@
     <Page Name="Failure">
 		<Image X="0" Y="0" Width="494" Height="301" ImageFile="logo.png"/>
         <Text X="0" Y="200" Width="494" Height="45" FontId="1" DisablePrefix="yes" Center="yes">#(loc.FailureHeader)</Text>
-        <Hypertext Name="FailureLogFileLink" X="11" Y="200" Width="-11" Height="80" FontId="3" TabStop="yes" HideWhenDisabled="yes">#(loc.FailureHyperlinkLogText)</Hypertext>		
+        <Hypertext Name="FailureLogFileLink" X="11" Y="200" Width="-11" Height="80" FontId="3" TabStop="yes" HideWhenDisabled="yes">#(loc.FailureHyperlinkLogText)</Hypertext>
         <Text Name="FailureRestartText" X="-11" Y="280" Width="400" Height="20" FontId="3" HideWhenDisabled="yes" DisablePrefix="yes">#(loc.FailureRestartText)</Text>
         <Button Name="FailureRestartButton" X="-91" Y="-11" Width="75" Height="23" TabStop="yes" FontId="0" HideWhenDisabled="yes">#(loc.FailureRestartButton)</Button>
         <Button Name="FailureCloseButton" X="-11" Y="-11" Width="75" Height="23" TabStop="yes" FontId="0">#(loc.FailureCloseButton)</Button>

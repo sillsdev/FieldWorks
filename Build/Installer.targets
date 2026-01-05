@@ -1,12 +1,99 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
+    <fwrt Condition="'$(fwrt)'==''">$([MSBuild]::NormalizePath('$(MSBuildProjectDirectory)\..'))</fwrt>
     <WixLibsDir Condition="'$(WixLibsDir)'==''">$(MSBuildProjectDirectory)\..\FLExInstaller\libs</WixLibsDir>
     <DownloadsDir Condition="'$(DownloadsDir)'==''">$(MSBuildProjectDirectory)\..\Downloads</DownloadsDir>
+
+    <!-- Where we stage the files that the WiX projects harvest/compile. -->
+    <AppBuildDir Condition="'$(AppBuildDir)'==''">$(fwrt)\BuildDir\FieldWorks_InstallerInput_$(Configuration)_$(Platform)</AppBuildDir>
+    <OutputDirForConfig Condition="'$(OutputDirForConfig)'==''">$(fwrt)\Output\$(Configuration)</OutputDirForConfig>
+
+    <!-- Match legacy installer folder conventions expected by WiX authoring. -->
+    <BinDirSuffix Condition="'$(BinDirSuffix)'==''">objects\FieldWorks</BinDirSuffix>
+    <DataDirSuffix Condition="'$(DataDirSuffix)'==''">objects\FieldWorks_Data</DataDirSuffix>
+    <L10nDirSuffix Condition="'$(L10nDirSuffix)'==''">$(BinDirSuffix)_L10n</L10nDirSuffix>
+    <FontDirSuffix Condition="'$(FontDirSuffix)'==''">$(BinDirSuffix)_Font</FontDirSuffix>
+
+    <IcuVersion Condition="'$(IcuVersion)'==''">70</IcuVersion>
   </PropertyGroup>
 
-  <Target Name="BuildInstaller" DependsOnTargets="DownloadPrerequisites;BuildProcRunner">
+  <Target Name="BuildInstaller" DependsOnTargets="DownloadPrerequisites;BuildProcRunner;StageInstallerInputs">
     <Message Text="Building Installer..." Importance="high" />
-    <MSBuild Projects="$(MSBuildProjectDirectory)\..\FLExInstaller\FieldWorks.Bundle.wixproj" Targets="Restore;Build" Properties="Configuration=$(Configuration);Platform=x64" />
+    <MSBuild
+      Projects="$(MSBuildProjectDirectory)\..\FLExInstaller\FieldWorks.Bundle.wixproj"
+      Targets="Restore;Build"
+      Properties="Configuration=$(Configuration);Platform=x64;AppBuildDir=$(AppBuildDir);BinDirSuffix=$(BinDirSuffix);DataDirSuffix=$(DataDirSuffix)"
+    />
+  </Target>
+
+  <Target Name="StageInstallerInputs">
+    <Message Text="Staging installer inputs to $(AppBuildDir)" Importance="high" />
+
+    <PropertyGroup>
+      <StagedBinDir>$(AppBuildDir)\$(BinDirSuffix)</StagedBinDir>
+      <StagedDataDir>$(AppBuildDir)\$(DataDirSuffix)</StagedDataDir>
+      <StagedL10nDir>$(AppBuildDir)\$(L10nDirSuffix)</StagedL10nDir>
+      <StagedFontDir>$(AppBuildDir)\$(FontDirSuffix)</StagedFontDir>
+    </PropertyGroup>
+
+    <RemoveDir Directories="$(AppBuildDir)" Condition="Exists('$(AppBuildDir)')" />
+    <MakeDir Directories="$(StagedBinDir);$(StagedDataDir);$(StagedL10nDir);$(StagedFontDir)" />
+
+    <ItemGroup>
+      <FontFiles Include="$(fwrt)\DistFiles\Fonts\Raw\Quivira.otf" />
+      <FontFiles Include="$(DownloadsDir)\Fonts\**\*.ttf" />
+      <FontDocumentation Include="$(DownloadsDir)\Fonts\*\*.txt" />
+      <FontDocumentation Include="$(DownloadsDir)\Fonts\*\documentation\*" />
+      <IcuDataFiles Include="$(fwrt)\DistFiles\Icu$(IcuVersion)\**\*" />
+
+      <!-- If you change this list, also update Localizations/ReadMe.md. -->
+      <L10nFiles Include="$(OutputDirForConfig)\ar\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\az\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\bn\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\de\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\es\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\fa\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\fr\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\hi\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\hu\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\id\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\km\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\ko\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\ms\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\my\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\ne\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\pt\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\ru\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\rw\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\sw\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\ta\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\te\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\th\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\tr\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\ur\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\vi\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\zh-CN\**\*" />
+      <L10nFiles Include="$(OutputDirForConfig)\zlm\**\*" />
+
+      <!-- Binary + content files installed under Program Files. -->
+      <BinFiles Include="$(OutputDirForConfig)\**\*" Exclude="@(L10nFiles)" />
+      <!-- %(RecursiveDir) needs to include the locale folder name (e.g., ar\, zh-CN\). -->
+      <L10nFilesWithRecursiveDirs Include="$(OutputDirForConfig)\**\*" Exclude="@(BinFiles)" />
+      <BinFiles Include="$(fwrt)\DistFiles\**\*" />
+      <BinFiles Include="$(fwrt)\License.htm" />
+
+      <!-- Exclude common dev/test artifacts that shouldn't ship. -->
+      <DevTestArtifacts Include="$(OutputDirForConfig)\*Tests.*" />
+      <DevTestArtifacts Include="$(OutputDirForConfig)\test*" />
+      <DevTestArtifacts Include="$(OutputDirForConfig)\*.vrs" />
+      <BinFiles Remove="@(DevTestArtifacts)" />
+    </ItemGroup>
+
+    <Copy SourceFiles="@(FontFiles)" OverwriteReadOnlyFiles="true" DestinationFolder="$(StagedFontDir)" />
+    <Copy SourceFiles="@(FontDocumentation)" OverwriteReadOnlyFiles="true" DestinationFolder="$(StagedBinDir)\Fonts\%(RecursiveDir)" />
+    <Copy SourceFiles="@(IcuDataFiles)" OverwriteReadOnlyFiles="true" DestinationFolder="$(StagedDataDir)\Icu$(IcuVersion)\%(RecursiveDir)" />
+    <Copy SourceFiles="@(L10nFilesWithRecursiveDirs)" OverwriteReadOnlyFiles="true" DestinationFolder="$(StagedL10nDir)\%(RecursiveDir)" />
+    <Copy SourceFiles="@(BinFiles)" OverwriteReadOnlyFiles="true" DestinationFolder="$(StagedBinDir)\%(RecursiveDir)" />
   </Target>
 
   <Target Name="BuildProcRunner">
@@ -21,47 +108,47 @@
     <MakeDir Directories="$(WixLibsDir)" Condition="!Exists('$(WixLibsDir)')" />
     <!-- .NET 4.8 -->
     <DownloadFile
-      SourceUrl="https://go.microsoft.com/fwlink/?linkid=2088631"
-      DestinationFolder="$(WixLibsDir)"
-      DestinationFileName="ndp48-x86-x64-allos-enu.exe"
+      Address="https://go.microsoft.com/fwlink/?linkid=2088631"
+      DownloadsDir="$(WixLibsDir)"
+      LocalFilename="ndp48-x86-x64-allos-enu.exe"
       Condition="!Exists('$(WixLibsDir)\ndp48-x86-x64-allos-enu.exe')"
     />
     <!-- VC++ Redists -->
     <DownloadFile
-      SourceUrl="https://download.microsoft.com/download/5/D/8/5D8C65CB-C849-4025-8E95-C3966CAFD8AE/vcredist_x64.exe"
-      DestinationFolder="$(WixLibsDir)"
-      DestinationFileName="vcredist_2008_x64.exe"
+      Address="https://download.microsoft.com/download/5/D/8/5D8C65CB-C849-4025-8E95-C3966CAFD8AE/vcredist_x64.exe"
+      DownloadsDir="$(WixLibsDir)"
+      LocalFilename="vcredist_2008_x64.exe"
       Condition="!Exists('$(WixLibsDir)\vcredist_2008_x64.exe')"
     />
     <DownloadFile
-      SourceUrl="https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe"
-      DestinationFolder="$(WixLibsDir)"
-      DestinationFileName="vcredist_2010_x64.exe"
+      Address="https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe"
+      DownloadsDir="$(WixLibsDir)"
+      LocalFilename="vcredist_2010_x64.exe"
       Condition="!Exists('$(WixLibsDir)\vcredist_2010_x64.exe')"
     />
     <DownloadFile
-      SourceUrl="https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x64.exe"
-      DestinationFolder="$(WixLibsDir)"
-      DestinationFileName="vcredist_2012_x64.exe"
+      Address="https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x64.exe"
+      DownloadsDir="$(WixLibsDir)"
+      LocalFilename="vcredist_2012_x64.exe"
       Condition="!Exists('$(WixLibsDir)\vcredist_2012_x64.exe')"
     />
     <DownloadFile
-      SourceUrl="https://download.microsoft.com/download/0/5/6/056DCDA9-D667-4E27-8001-8A0C6971D6B1/vcredist_x64.exe"
-      DestinationFolder="$(WixLibsDir)"
-      DestinationFileName="vcredist_2013_x64.exe"
+      Address="https://download.microsoft.com/download/0/5/6/056DCDA9-D667-4E27-8001-8A0C6971D6B1/vcredist_x64.exe"
+      DownloadsDir="$(WixLibsDir)"
+      LocalFilename="vcredist_2013_x64.exe"
       Condition="!Exists('$(WixLibsDir)\vcredist_2013_x64.exe')"
     />
     <DownloadFile
-      SourceUrl="https://download.visualstudio.microsoft.com/download/pr/36e45907-8554-4390-ba70-9f6306924167/97CC5066EB3C7246CF89B735AE0F5A5304A7EE33DC087D65D9DFF3A1A73FE803/VC_redist.x64.exe"
-      DestinationFolder="$(WixLibsDir)"
-      DestinationFileName="vcredist_2015-19_x64.exe"
+      Address="https://download.visualstudio.microsoft.com/download/pr/36e45907-8554-4390-ba70-9f6306924167/97CC5066EB3C7246CF89B735AE0F5A5304A7EE33DC087D65D9DFF3A1A73FE803/VC_redist.x64.exe"
+      DownloadsDir="$(WixLibsDir)"
+      LocalFilename="vcredist_2015-19_x64.exe"
       Condition="!Exists('$(WixLibsDir)\vcredist_2015-19_x64.exe')"
     />
     <!-- FLEx Bridge -->
     <DownloadFile
-      SourceUrl="https://software.sil.org/downloads/r/fieldworks/FlexBridge_Offline_4.2.0.exe"
-      DestinationFolder="$(WixLibsDir)"
-      DestinationFileName="FLExBridge_Offline.exe"
+      Address="https://software.sil.org/downloads/r/fieldworks/FlexBridge_Offline_4.2.0.exe"
+      DownloadsDir="$(WixLibsDir)"
+      LocalFilename="FLExBridge_Offline.exe"
       Condition="!Exists('$(WixLibsDir)\FLExBridge_Offline.exe')"
     />
   </Target>
@@ -69,33 +156,33 @@
   <Target Name="DownloadAndUnzipFonts">
     <MakeDir Directories="$(DownloadsDir)" Condition="!Exists('$(DownloadsDir)')" />
     <DownloadFile
-      SourceUrl="http://www.quivira-font.com/files/Quivira.otf"
-      DestinationFolder="$(MSBuildProjectDirectory)\..\DistFiles\Fonts\Raw"
+      Address="http://www.quivira-font.com/files/Quivira.otf"
+      DownloadsDir="$(MSBuildProjectDirectory)\..\DistFiles\Fonts\Raw"
       Condition="!Exists('$(MSBuildProjectDirectory)\..\DistFiles\Fonts\Raw\Quivira.otf')"
       ContinueOnError="true"
     />
     <DownloadFile
-      SourceUrl="https://software.sil.org/downloads/r/andika/Andika-6.101.zip"
-      DestinationFolder="$(DownloadsDir)"
-      DestinationFileName="Andika-6.101.zip"
+      Address="https://software.sil.org/downloads/r/andika/Andika-6.101.zip"
+      DownloadsDir="$(DownloadsDir)"
+      LocalFilename="Andika-6.101.zip"
       Condition="!Exists('$(DownloadsDir)\Andika-6.101.zip')"
     />
     <DownloadFile
-      SourceUrl="https://software.sil.org/downloads/r/charis/CharisSIL-6.101.zip"
-      DestinationFolder="$(DownloadsDir)"
-      DestinationFileName="CharisSIL-6.101.zip"
+      Address="https://software.sil.org/downloads/r/charis/CharisSIL-6.101.zip"
+      DownloadsDir="$(DownloadsDir)"
+      LocalFilename="CharisSIL-6.101.zip"
       Condition="!Exists('$(DownloadsDir)\CharisSIL-6.101.zip')"
     />
     <DownloadFile
-      SourceUrl="https://software.sil.org/downloads/r/doulos/DoulosSIL-6.101.zip"
-      DestinationFolder="$(DownloadsDir)"
-      DestinationFileName="DoulosSIL-6.101.zip"
+      Address="https://software.sil.org/downloads/r/doulos/DoulosSIL-6.101.zip"
+      DownloadsDir="$(DownloadsDir)"
+      LocalFilename="DoulosSIL-6.101.zip"
       Condition="!Exists('$(DownloadsDir)\DoulosSIL-6.101.zip')"
     />
     <DownloadFile
-      SourceUrl="https://software.sil.org/downloads/r/gentium/GentiumPlus-6.101.zip"
-      DestinationFolder="$(DownloadsDir)"
-      DestinationFileName="GentiumPlus-6.101.zip"
+      Address="https://software.sil.org/downloads/r/gentium/GentiumPlus-6.101.zip"
+      DownloadsDir="$(DownloadsDir)"
+      LocalFilename="GentiumPlus-6.101.zip"
       Condition="!Exists('$(DownloadsDir)\GentiumPlus-6.101.zip')"
     />
 
@@ -103,8 +190,8 @@
       <ZippedFonts Include="Andika-6.101;CharisSIL-6.101;DoulosSIL-6.101;GentiumPlus-6.101" />
     </ItemGroup>
     <Unzip
-      SourceFiles="$(DownloadsDir)\%(ZippedFonts.Identity).zip"
-      DestinationFolder="$(DownloadsDir)\Fonts"
+      ZipFilename="$(DownloadsDir)\%(ZippedFonts.Identity).zip"
+      ToDir="$(DownloadsDir)\Fonts"
       Condition="!Exists('$(DownloadsDir)\Fonts\%(ZippedFonts.Identity)')"
     />
   </Target>

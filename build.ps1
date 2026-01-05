@@ -86,7 +86,8 @@ param(
     [string]$LogFile,
     [int]$TailLines,
     [switch]$SkipRestore,
-    [switch]$SkipNative
+    [switch]$SkipNative,
+    [switch]$BuildInstaller
 )
 
 $ErrorActionPreference = "Stop"
@@ -247,6 +248,16 @@ try {
         Write-Host ""
         Write-Host "[OK] Build complete!" -ForegroundColor Green
         Write-Host "Output: Output\$Configuration" -ForegroundColor Cyan
+
+        if ($BuildInstaller) {
+            Write-Host ""
+            Write-Host "Building Installer..." -ForegroundColor Cyan
+            Invoke-MSBuild `
+                -Arguments @('Build/Orchestrator.proj', '/t:BuildInstaller', "/p:Configuration=$Configuration", "/p:Platform=$Platform") `
+                -Description 'Installer Build'
+
+            Write-Host "[OK] Installer build complete!" -ForegroundColor Green
+        }
     }
 
     # =============================================================================

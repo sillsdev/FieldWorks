@@ -48,6 +48,7 @@ Src/FwParatextLexiconPlugin/GeneratedParatextLexiconPluginRegistryHelper.cs
 Src/Common/FwUtils/GeneratedFwUtils.cs
 Src/CommonAssemblyInfo.cs
 Src/LangInst/InstallLanguageTests/timing.txt
+FlexInstaller/libs/*.exe
 x64
 
 # other files
