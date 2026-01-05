@@ -1,23 +1,23 @@
-// Copyright (c) 2014-2025 SIL International
+// Copyright (c) 2014-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.Extensions;
+using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.FwCoreDlgControls;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using SIL.Extensions;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel;
-using SIL.FieldWorks.Common.Framework;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Utils;
-using SIL.FieldWorks.FwCoreDlgControls;
-using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.XWorks.LexText
 {
@@ -275,7 +275,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 				case StyleType.kstParagraph:
 					return "paragraph";
 			}
-			return style.RealStyle.Type.ToString();
+			throw new ArgumentOutOfRangeException($"Unrecognized type attribute for style {style.Name} ({style.RealStyle.Name}): {style.RealStyle.Type}");
 		}
 
 		private static string GetStyleStructure(ExportStyleInfo style)
