@@ -4,9 +4,8 @@
     <AssemblyName>MorphologyEditorDll</AssemblyName>
     <RootNamespace>SIL.FieldWorks.XWorks.MorphologyEditor</RootNamespace>
     <TargetFramework>net48</TargetFramework>
-    <OutputType>Library</OutputType>    <NoWarn>168,169,219,414,649,1635,1702,1701,0579,0436</NoWarn>
+    <OutputType>Library</OutputType>    <NoWarn>168,169,219,414,649,1635,1702,1701,0436</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <GenerateTargetFrameworkAttribute>false</GenerateTargetFrameworkAttribute>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">

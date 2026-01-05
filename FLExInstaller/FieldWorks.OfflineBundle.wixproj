@@ -44,6 +44,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <WixExtension Include="WixToolset.BootstrapperApplications.wixext" />
+    <WixExtension Include="WixToolset.Util.wixext" />
+    <WixExtension Include="WixToolset.NetFx.wixext" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Include="Shared\Base\OfflineBundle.wxs" />
   </ItemGroup>
 

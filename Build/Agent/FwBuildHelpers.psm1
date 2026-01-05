@@ -195,27 +195,38 @@ function Invoke-WithFileLockRetry {
 function Remove-StaleObjFolders {
     <#
     .SYNOPSIS
-        Removes stale per-project obj/ folders from Src/.
+        Removes stale per-project obj/ folders from source trees.
     .DESCRIPTION
         Since SDK migration, intermediate output uses centralized Obj/ folder.
         Old per-project obj/ folders cause CS0579 duplicate attribute errors.
     #>
     param([Parameter(Mandatory)][string]$RepoRoot)
 
-    $srcPath = Join-Path $RepoRoot "Src"
-    try {
-        # Use .NET enumeration for performance (faster than Get-ChildItem -Recurse)
-        $staleObjFolders = [System.IO.Directory]::GetDirectories($srcPath, "obj", [System.IO.SearchOption]::AllDirectories)
-        if ($staleObjFolders.Length -gt 0) {
-            Write-Host "Removing stale per-project obj/ folders ($($staleObjFolders.Length) found)..." -ForegroundColor Yellow
-            foreach ($folder in $staleObjFolders) {
-                Remove-Item -Path $folder -Recurse -Force -ErrorAction SilentlyContinue
-            }
-            Write-Host "[OK] Stale obj/ folders cleaned" -ForegroundColor Green
+    $scanRoots = @(
+        (Join-Path $RepoRoot "Src"),
+        (Join-Path $RepoRoot "Lib"),
+        (Join-Path $RepoRoot "FLExInstaller")
+    )
+
+    foreach ($root in $scanRoots) {
+        if (-not (Test-Path $root -PathType Container)) {
+            continue
         }
-    }
-    catch {
-        # Ignore enumeration errors (access denied, etc.)
+
+        try {
+            # Use .NET enumeration for performance (faster than Get-ChildItem -Recurse)
+            $staleObjFolders = [System.IO.Directory]::GetDirectories($root, "obj", [System.IO.SearchOption]::AllDirectories)
+            if ($staleObjFolders.Length -gt 0) {
+                Write-Host "Removing stale per-project obj/ folders under '$root' ($($staleObjFolders.Length) found)..." -ForegroundColor Yellow
+                foreach ($folder in $staleObjFolders) {
+                    Remove-Item -Path $folder -Recurse -Force -ErrorAction SilentlyContinue
+                }
+                Write-Host "[OK] Stale obj/ folders cleaned under '$root'" -ForegroundColor Green
+            }
+        }
+        catch {
+            # Ignore enumeration errors (access denied, etc.)
+        }
     }
 
     # Check for stale Output/Common/ (pre-configuration-aware build artifacts)

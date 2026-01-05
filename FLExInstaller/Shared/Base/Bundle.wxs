@@ -62,8 +62,6 @@
                   SourceFile="$(var.FieldWorks.Installer.TargetPath)"
                   Visible="no"
                   Vital="yes">
-			<!-- Treat MSI cancel (1602 / ERROR_INSTALL_USEREXIT) as bundle cancellation, not failure. -->
-			<ExitCode Value="1602" Behavior="cancel" />
       </MsiPackage>
     </PackageGroup>
   </Fragment>
