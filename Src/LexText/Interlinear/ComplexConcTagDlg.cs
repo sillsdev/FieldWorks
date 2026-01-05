@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -138,7 +138,6 @@ namespace SIL.FieldWorks.IText
 			//
 			this.m_tagComboBox.AdjustStringHeight = true;
 			this.m_tagComboBox.BackColor = System.Drawing.SystemColors.Window;
-			this.m_tagComboBox.DropDownWidth = 120;
 			this.m_tagComboBox.DroppedDown = false;
 			this.m_tagComboBox.HasBorder = true;
 			resources.ApplyResources(this.m_tagComboBox, "m_tagComboBox");
