@@ -1107,7 +1107,7 @@ namespace SIL.FieldWorks.XWorks
 				var currentPage = GetTopCurrentPageButton(browser.Document.Body);
 				if (configuration == null || configuration.WritingSystem != currReversalWs)
 				{
-					var newConfig = Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable),
+					var newConfig = Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable, reversalentry),
 						writingSystem.Id + DictionaryConfigurationModel.FileExtension);
 					m_propertyTable.SetProperty("ReversalIndexPublicationLayout", File.Exists(newConfig) ? newConfig : null, true);
 				} else if (m_updateContentLater)
@@ -1128,7 +1128,7 @@ namespace SIL.FieldWorks.XWorks
 				var configuration = File.Exists(currentConfig) ? new DictionaryConfigurationModel(currentConfig, Cache) : null;
 				if (configuration == null)
 				{
-					var newConfig = Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable),
+					var newConfig = Path.Combine(DictionaryConfigurationListener.GetProjectConfigurationDirectory(m_propertyTable, semanticDomain),
 						ClassifiedDictConfig);
 					m_propertyTable.SetProperty("SemanticDomainListLayout", File.Exists(newConfig) ? newConfig : null, true);
 				}

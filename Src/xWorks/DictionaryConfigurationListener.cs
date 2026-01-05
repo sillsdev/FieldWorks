@@ -142,9 +142,9 @@ namespace SIL.FieldWorks.XWorks
 		/// Get the project-specific directory for holding configurations for the part of FLEx the user is
 		/// working in, such as Dictionary or Reversal Index.
 		/// </summary>
-		internal static string GetProjectConfigurationDirectory(PropertyTable propertyTable)
+		internal static string GetProjectConfigurationDirectory(PropertyTable propertyTable, ICmObject obj = null)
 		{
-			var lastDirectoryPart = GetInnermostConfigurationDirectory(propertyTable);
+			var lastDirectoryPart = GetInnermostConfigurationDirectory(propertyTable, obj);
 			return GetProjectConfigurationDirectory(propertyTable, lastDirectoryPart);
 		}
 
@@ -159,9 +159,9 @@ namespace SIL.FieldWorks.XWorks
 		/// Get the directory for the shipped default configurations for the part of FLEx the user is
 		/// working in, such as Dictionary or Reversal Index.
 		/// </summary>
-		internal static string GetDefaultConfigurationDirectory(PropertyTable propertyTable)
+		internal static string GetDefaultConfigurationDirectory(PropertyTable propertyTable, ICmObject obj = null)
 		{
-			var lastDirectoryPart = GetInnermostConfigurationDirectory(propertyTable);
+			var lastDirectoryPart = GetInnermostConfigurationDirectory(propertyTable, obj);
 			return GetDefaultConfigurationDirectory(lastDirectoryPart);
 		}
 
@@ -179,7 +179,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Get the name of the innermost directory name for configurations for the part of FLEx the user is
 		/// working in, such as Dictionary or Reversal Index.
 		/// </summary>
-		private static string GetInnermostConfigurationDirectory(IPropertyRetriever propertyTable)
+		private static string GetInnermostConfigurationDirectory(IPropertyRetriever propertyTable, ICmObject obj = null)
 		{
 			switch(propertyTable.GetStringProperty("currentContentControl", null))
 			{
@@ -193,6 +193,11 @@ namespace SIL.FieldWorks.XWorks
 				case "lexiconClassifiedDictionary":
 					return ClassifiedDictConfigDirName;
 				default:
+					if (obj is ILexEntry)
+					{
+						// For popup lexical entry editor (LT-22345).
+						return DictConfigDirName;
+					}
 					return null;
 			}
 		}
