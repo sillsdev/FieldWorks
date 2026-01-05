@@ -1,6 +1,10 @@
 @echo off
 REM Usage: regen_midl.cmd [Configuration]
 REM   Configuration: Debug or Release (default: Debug)
+REM This batch file sets the configuration parameter for the MIDL (Microsoft Interface Definition Language) regeneration process.
+REM It expects one argument which represents the build configuration (e.g., Debug, Release) to be used when regenerating MIDL files.
+REM The configuration is stored in the CONFIG environment variable for use in subsequent build steps.
+REM Usage: regen_midl.cmd <configuration>
 setlocal
 set CONFIG=%~1
 if "%CONFIG%"=="" set CONFIG=Debug

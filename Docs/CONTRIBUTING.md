@@ -54,7 +54,7 @@ FieldWorks builds can be significantly slowed by Windows Defender real-time scan
 .\Build\Agent\Setup-DefenderExclusions.ps1
 ```
 
-This adds exclusions for build outputs, NuGet caches, Docker paths, and development tools. Use `-DryRun` to preview changes without applying them.
+This adds exclusions for build outputs, NuGet caches and development tools. Use `-DryRun` to preview changes without applying them.
 
 ### 2. Clone the Repository
 

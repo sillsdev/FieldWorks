@@ -22,15 +22,6 @@
 .PARAMETER WorktreePath
     Path to the worktree root. Defaults to current directory.
 
-.PARAMETER UseLocalClone
-    Deprecated. Container execution is no longer supported; native tests always run locally.
-
-.PARAMETER LocalCloneRoot
-    Deprecated. Container execution is no longer supported.
-
-.PARAMETER SyncLocalClone
-    Deprecated. Container execution is no longer supported.
-
 .EXAMPLE
     .\Invoke-CppTest.ps1 -TestProject TestGeneric
     Build and run TestGeneric using MSBuild.
@@ -59,19 +50,11 @@ param(
 
     [string]$WorktreePath,
 
-    [switch]$UseLocalClone = $true,
-
-    [string]$LocalCloneRoot = 'C:\fw-local',
-
-    [switch]$SyncLocalClone,
-
     [int]$TimeoutSeconds = 300,
 
     [string[]]$TestArguments,
 
-    [string]$LogPath,
-
-    [switch]$NoDocker
+    [string]$LogPath
 )
 
 Set-StrictMode -Version Latest
@@ -88,10 +71,6 @@ if (-not (Test-Path $helpersPath)) {
     exit 1
 }
 Import-Module $helpersPath -Force
-
-# Container execution has been removed; native tests always run locally.
-$insideContainer = $false
-Remove-Item Env:DOTNET_RUNNING_IN_CONTAINER -ErrorAction SilentlyContinue
 
 # =============================================================================
 # Environment Setup
@@ -189,7 +168,6 @@ function Build-NativeArtifacts {
     $cmd = "cd /d `"$WorktreePath`" && $msbuild $($args -join ' ')"
     cmd /c $cmd
     if ($LASTEXITCODE -ne 0) { throw "Native build failed with exit code $LASTEXITCODE" }
-    Sync-ContainerViewsAutopch
 }
 
 function Build-ViewsInterfacesArtifacts {
@@ -218,11 +196,6 @@ function Ensure-TestViewsPrerequisites {
     Write-Host "[INFO] Missing native artifacts or generated headers required for TestViews." -ForegroundColor Yellow
     Build-NativeArtifacts
     Build-ViewsInterfacesArtifacts
-}
-
-function Sync-ContainerViewsAutopch {
-    # No-op: container execution has been removed.
-    return
 }
 
 function Invoke-Build {
@@ -266,11 +239,6 @@ function Invoke-Build {
 
         $msbuildOutArgs = @()
         $localOutDir = $null
-        if ($insideContainer) {
-            # Build into container-local storage to avoid mount corruption for native binaries
-            $localOutDir = "C:\Temp\fw-native\$TestProject\$Configuration\"
-            $msbuildOutArgs += "/p:OutDir=$localOutDir"
-        }
 
         $msbuildArgs = @(
             $config.VcxprojPath,

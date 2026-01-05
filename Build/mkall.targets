@@ -37,15 +37,7 @@
 		<ExcludedClsids Include="{e771361c-ff54-4120-9525-98a0b7a9accf}" /> <!-- ManagedLgIcuCollator -->
 		<ExcludedClsids Include="{830BAF1F-6F84-46EF-B63E-3C1BFDF9E83E}" /> <!-- ViewInputManager -->
 	</ItemGroup>
-	<PropertyGroup Condition="'$(DOTNET_RUNNING_IN_CONTAINER)'=='true'">
-		<NativeStageRoot>C:\Temp\fw-native</NativeStageRoot>
-		<NativeStageConfig>$(NativeStageRoot)\$(config-capital)</NativeStageConfig>
-		<NativeStageLib>$(NativeStageConfig)\Lib</NativeStageLib>
-		<NativeStageOutput>$(NativeStageConfig)\Output</NativeStageOutput>
-		<NativeMakeOutDir>$(NativeStageOutput)</NativeMakeOutDir>
-		<NativeMakeLibOutDir>$(NativeStageLib)</NativeMakeLibOutDir>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(DOTNET_RUNNING_IN_CONTAINER)'!='true'">
+	<PropertyGroup>
 		<NativeMakeOutDir></NativeMakeOutDir>
 		<NativeMakeLibOutDir></NativeMakeLibOutDir>
 	</PropertyGroup>
@@ -80,16 +72,6 @@
 			ObjDir="$(dir-fwobj)"
 			WorkingDirectory="$(fwrt)\Src\DebugProcs"
 		/>
-		<ItemGroup Condition="'$(DOTNET_RUNNING_IN_CONTAINER)'=='true'">
-			<StageDebugProcsFiles Include="$(NativeStageOutput)\**\*.*" />
-		</ItemGroup>
-		<Copy
-			Condition="'$(DOTNET_RUNNING_IN_CONTAINER)'=='true'"
-			SourceFiles="@(StageDebugProcsFiles)"
-			DestinationFiles="@(StageDebugProcsFiles->'$(dir-fwoutput)\\$(config-capital)\\%(RecursiveDir)%(Filename)%(Extension)')"
-			SkipUnchangedFiles="true"
-			OverwriteReadOnlyFiles="true"
-		/>
 		<Message Text="Finished building DebugProcs." />
 	</Target>
 	<Target Name="GenericLib" DependsOnTargets="DebugProcs">
@@ -102,16 +84,6 @@
 			OutDir="$(NativeMakeLibOutDir)"
 			ObjDir="$(dir-fwobj)"
 			WorkingDirectory="$(fwrt)\Src\Generic"
-		/>
-		<ItemGroup Condition="'$(DOTNET_RUNNING_IN_CONTAINER)'=='true'">
-			<StageGenericLibFiles Include="$(NativeStageLib)\**\*.*" />
-		</ItemGroup>
-		<Copy
-			Condition="'$(DOTNET_RUNNING_IN_CONTAINER)'=='true'"
-			SourceFiles="@(StageGenericLibFiles)"
-			DestinationFiles="@(StageGenericLibFiles->'$(dir-fwoutputlibBase)\\%(RecursiveDir)%(Filename)%(Extension)')"
-			SkipUnchangedFiles="true"
-			OverwriteReadOnlyFiles="true"
 		/>
 		<Message Text="Finished building GenericLib." />
 	</Target>
@@ -129,16 +101,6 @@
 			OutDir="$(NativeMakeOutDir)"
 			ObjDir="$(dir-fwobj)"
 			WorkingDirectory="$(fwrt)\Src\Kernel"
-		/>
-		<ItemGroup Condition="'$(DOTNET_RUNNING_IN_CONTAINER)'=='true'">
-			<StageFwKernelFiles Include="$(NativeStageOutput)\**\*.*" />
-		</ItemGroup>
-		<Copy
-			Condition="'$(DOTNET_RUNNING_IN_CONTAINER)'=='true'"
-			SourceFiles="@(StageFwKernelFiles)"
-			DestinationFiles="@(StageFwKernelFiles->'$(dir-fwoutput)\\$(config-capital)\\%(RecursiveDir)%(Filename)%(Extension)')"
-			SkipUnchangedFiles="true"
-			OverwriteReadOnlyFiles="true"
 		/>
 		<!-- Create stub manifest if needed -->
 		<WriteLinesToFile
@@ -179,16 +141,6 @@
 			OutDir="$(NativeMakeOutDir)"
 			ObjDir="$(dir-fwobj)"
 			WorkingDirectory="$(fwrt)\Src\views"
-		/>
-		<ItemGroup Condition="'$(DOTNET_RUNNING_IN_CONTAINER)'=='true'">
-			<StageViewsFiles Include="$(NativeStageOutput)\**\*.*" />
-		</ItemGroup>
-		<Copy
-			Condition="'$(DOTNET_RUNNING_IN_CONTAINER)'=='true'"
-			SourceFiles="@(StageViewsFiles)"
-			DestinationFiles="@(StageViewsFiles->'$(dir-fwoutput)\\$(config-capital)\\%(RecursiveDir)%(Filename)%(Extension)')"
-			SkipUnchangedFiles="true"
-			OverwriteReadOnlyFiles="true"
 		/>
 		<Message
 			Text="Generating Views.X.manifest for 64-bit registration-free COM..."
@@ -339,10 +291,8 @@
 		>
 		<GeckoFxHtmlToPdfBuildTag>.lastSuccessful</GeckoFxHtmlToPdfBuildTag>
 		<DownloadsDir>$(fwrt)/Downloads</DownloadsDir>
-		<!-- PackagesDir: Use NUGET_PACKAGES env var if set (for container builds), else local packages folder.
-		     Container builds set NUGET_PACKAGES to avoid bind mount issues with NuGet's atomic file operations. -->
-		<PackagesDir Condition="'$(NUGET_PACKAGES)' != ''">$(NUGET_PACKAGES)</PackagesDir>
-		<PackagesDir Condition="'$(NUGET_PACKAGES)' == ''">$(fwrt)/packages</PackagesDir>
+		<!-- PackagesDir: Use local packages folder. -->
+		<PackagesDir>$(fwrt)/packages</PackagesDir>
 	</PropertyGroup>
 	<ItemGroup>
 		<!-- NOTE: Most managed DLLs are now handled automatically by PackageReference.
@@ -424,10 +374,6 @@
 
 			NOTE: We do NOT use the - -packages flag here. Package location is controlled by:
 			- nuget.config (globalPackagesFolder) for host builds -> packages/
-			- NUGET_PACKAGES env var for container builds -> Docker named volume at C:\.nuget\packages
-
-			Container builds use Docker named volumes (not bind mounts) because NuGet's
-			MoveFile() operations fail on Windows bind mounts. See DOCKER.md for details.
 		-->
 		<Exec
 			Command='dotnet restore "$(fwrt)\FieldWorks.sln" /p:NoWarn=NU1903 /p:DisableWarnForInvalidRestoreProjects=true /p:Configuration=$(Configuration) /p:Platform=$(Platform)'
@@ -797,7 +743,7 @@
 			- Interop.WIA.dll: Windows Image Acquisition for scanning
 			- NDesk.DBus.dll.config: Linux D-Bus configuration (not needed on Windows)
 
-			This warning is EXPECTED in Docker containers and CI environments where:
+			This warning is EXPECTED in CI environments where:
 			1. These optional native dependencies aren't installed
 			2. The NuGet packages don't include all platform-specific files
 			3. Full functionality requires a complete Windows development environment

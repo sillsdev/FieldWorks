@@ -62,8 +62,8 @@
 - [ ] Ensure docs reference `.editorconfig` and `.github/commit-guidelines.md`
 
 ### Phase 4: Platform Docs (P3)
-- [ ] Create `docs/linux/build-linux.md` from wiki (with CONFIRMATION_NEEDED)
-- [ ] Create `docs/linux/vagrant.md` from wiki (with CONFIRMATION_NEEDED)
+- [x] Create `docs/linux/build-linux.md` from wiki (No)
+- [x] Create `docs/linux/vagrant.md` from wiki (No)
 
 ### Phase 5: Validation
 - [ ] Run link checker on all docs

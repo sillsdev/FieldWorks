@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
 	<PropertyGroup>
-		<!-- Use container-local path for FwBuildTasks when running in Docker to avoid bind-mount conflicts -->
-		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'=='' AND '$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'"
+		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'==''"
 			>$(MSBuildThisFileDirectory)..\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll</FwBuildTasksAssembly
-		>
-		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'=='' AND '$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'"
-			>C:\Temp\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll</FwBuildTasksAssembly
 		>
 	</PropertyGroup>
 	<UsingTask TaskName="RegFree" AssemblyFile="$(FwBuildTasksAssembly)" />
@@ -120,25 +116,15 @@
 	</Target>
 	<Target
 		Name="AttachManifest"
-		Condition="'$(OS)'=='Windows_NT' AND '$(Configuration)' == 'Release' AND '$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'"
+		Condition="'$(OS)'=='Windows_NT'"
 		DependsOnTargets="CreateManifest"
 	>
 		<Exec Command="&quot;$(MtExe)&quot; -nologo -manifest &quot;$(Executable).manifest&quot; -outputresource:&quot;$(Executable);#1&quot;" />
 	</Target>
-	<!-- In containers, mt.exe cannot modify files on mounted volumes due to Windows container limitations.
-	     The manifest is still generated as an external file (.exe.manifest) which Windows will use automatically.
-	     This is sufficient for Debug builds and testing. Release builds are blocked in SetupInclude.targets. -->
-	<Target
-		Name="AttachManifestContainerSkip"
-		Condition="'$(OS)'=='Windows_NT' AND ('$(Configuration)' == 'Debug' OR '$(DOTNET_RUNNING_IN_CONTAINER)' == 'true')"
-		DependsOnTargets="CreateManifest"
-	>
-		<Message Text="Debug/Container build: Skipping manifest embedding (using external .manifest file instead)" Importance="high" />
-	</Target>
 	<Target
 		Name="RegFree"
 		Condition="'$(OS)'=='Windows_NT'"
-		DependsOnTargets="CreateManifest;AttachManifest;AttachManifestContainerSkip"
+		DependsOnTargets="CreateManifest;AttachManifest"
 	></Target>
 	<Target Name="DebugRegFree" BeforeTargets="CreateManifest">
 		<Message Text="OutDir: $(OutDir)" Importance="high" />

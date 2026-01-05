@@ -13,7 +13,7 @@ description: "PowerShell best practices for scripts used in FieldWorks (dev scri
 - Use `pwsh`/PowerShell Core syntax where possible and `Set-StrictMode -Version Latest`.
 - Use `Write-Host` sparingly; prefer `Write-Output` and `Write-Error` for correct streams.
 - Use `-ErrorAction Stop` in helper functions when errors should abort execution.
-- **No Unicode icons or emojis** in output messages (e.g., `✓`, `✗`, `⚠`, `🔧`). Use plain ASCII text like `[OK]`, `[FAIL]`, `[WARN]`, `ERROR:` instead. Unicode causes encoding issues in Docker containers and CI logs.
+- **No Unicode icons or emojis** in output messages (e.g., `✓`, `✗`, `⚠`, `🔧`). Use plain ASCII text like `[OK]`, `[FAIL]`, `[WARN]`, `ERROR:` instead. Unicode causes encoding issues in CI logs.
 
 ## Security
 - Avoid embedding secrets in scripts; read from env vars and prefer platform secret stores.
@@ -29,7 +29,6 @@ description: "PowerShell best practices for scripts used in FieldWorks (dev scri
 - Pipes (`|`)
 - Semicolons (`;`) or `&&`
 - Redirection (`2>&1`)
-- Nested quotes in `docker exec`
 
 **ALWAYS use `scripts/Agent/` wrapper scripts for these operations.** Do not attempt raw commands.
 

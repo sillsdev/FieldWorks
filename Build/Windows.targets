@@ -2,24 +2,16 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
 	<PropertyGroup>
 		<BuildNativeTests Condition="'$(BuildNativeTests)'==''">false</BuildNativeTests>
-		<!-- Use container-local path for FwBuildTasks when running in Docker to avoid bind-mount conflicts -->
-		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'=='' AND '$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'"
+		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'==''"
 			>$(MSBuildThisFileDirectory)..\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll</FwBuildTasksAssembly
-		>
-		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'=='' AND '$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'"
-			>C:\Temp\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll</FwBuildTasksAssembly
 		>
 	</PropertyGroup>
 	<!--
 		Native Intermediate Output Policy:
 		Mirrors the managed project policy in Directory.Build.props.
-		- Host builds: $(fwrt)Obj/<Configuration>/<LibraryName>/
-		- Container builds: C:\Temp\Obj/<Configuration>/<LibraryName>/
-		This prevents conflicts when worktrees are bind-mounted into containers.
 	-->
 	<PropertyGroup Label="Native Intermediate Output">
-		<NativeIntDirBase Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'">$(fwrt)Obj\$(config-capital)\</NativeIntDirBase>
-		<NativeIntDirBase Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">C:\Temp\Obj\$(config-capital)\</NativeIntDirBase>
+		<NativeIntDirBase>$(fwrt)Obj\$(config-capital)\</NativeIntDirBase>
 	</PropertyGroup>
 	<UsingTask
 		TaskName="CheckAdminPrivilege"

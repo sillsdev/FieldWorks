@@ -3,7 +3,7 @@
   // See: https://go.microsoft.com/fwlink/?LinkId=733558
   //
   // Design principles:
-  // - Use ./build.ps1 and ./test.ps1 (they auto-detect worktrees/containers)
+  // - Use ./build.ps1 and ./test.ps1 (they auto-detect worktrees)
   // - Avoid hardcoded paths that vary by machine
   // - Tasks with inputs can't be auto-run by agents
   // - Keep task names concise for easier discovery
@@ -92,19 +92,6 @@
     },
     // ==================== Build Tasks ====================
     {
-      "label": "dotnet: build",
-      "type": "shell",
-      "command": "./build.ps1",
-      "detail": "Override: build FieldWorks via build.ps1 (required build order & custom tasks)",
-      "options": {
-        "shell": {
-          "executable": "powershell.exe",
-          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
-        }
-      },
-      "problemMatcher": "$msCompile"
-    },
-    {
       "label": "Build",
       "type": "shell",
       "command": "./build.ps1",
@@ -112,7 +99,7 @@
         "kind": "build",
         "isDefault": true
       },
-      "detail": "Build FieldWorks (auto-detects worktree/container)",
+      "detail": "Build FieldWorks (auto-detects worktree)",
       "options": {
         "shell": {
           "executable": "powershell.exe",
@@ -138,19 +125,6 @@
 
     // ==================== Test Tasks ====================
     {
-      "label": "dotnet: test",
-      "type": "shell",
-      "command": "./test.ps1",
-      "detail": "Override: run FieldWorks tests via test.ps1 (handles build/test conventions)",
-      "options": {
-        "shell": {
-          "executable": "powershell.exe",
-          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
-        }
-      },
-      "problemMatcher": "$msCompile"
-    },
-    {
       "label": "Test",
       "type": "shell",
       "command": "./test.ps1",
@@ -158,7 +132,7 @@
         "kind": "test",
         "isDefault": true
       },
-      "detail": "Run all tests (auto-detects worktree/container)",
+      "detail": "Run all tests (auto-detects worktree)",
       "options": {
         "shell": {
           "executable": "powershell.exe",
@@ -440,74 +414,6 @@
       "type": "shell",
       "command": "python .github/copilot_apply_updates.py --plan .cache/copilot/diff-plan.json --folders ${input:copilotFolders}",
       "detail": "Apply auto change-log to selected folders (modifies files)",
-      "options": {
-        "shell": {
-          "executable": "powershell.exe",
-          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
-        }
-      },
-      "problemMatcher": []
-    },
-
-    // ==================== Agent/Container Management ====================
-    // These require manual approval - resource intensive or destructive
-    {
-      "label": "Agents: Spin up",
-      "type": "shell",
-      "command": "./scripts/spin-up-agents.ps1 -RepoRoot '${workspaceFolder}' -Count ${input:agentCount}",
-      "detail": "Create agent worktrees and containers (resource heavy)",
-      "options": {
-        "shell": {
-          "executable": "powershell.exe",
-          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
-        }
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Agents: Build Docker image",
-      "type": "shell",
-      "command": "./scripts/docker-build-ipv4.ps1 -RegistryHosts @('mcr.microsoft.com') -BuildArgs @('-t','fw-build:ltsc2022','-f','Dockerfile.windows','${workspaceFolder}')",
-      "detail": "Build fw-build:ltsc2022 container image (downloads GBs)",
-      "options": {
-        "shell": {
-          "executable": "powershell.exe",
-          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
-        }
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Agents: Teardown containers",
-      "type": "shell",
-      "command": "./scripts/tear-down-agents.ps1 -RepoRoot '${workspaceFolder}'",
-      "detail": "Stop and remove fw-agent-* containers (keeps worktrees)",
-      "options": {
-        "shell": {
-          "executable": "powershell.exe",
-          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
-        }
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Agents: Teardown all",
-      "type": "shell",
-      "command": "./scripts/tear-down-agents.ps1 -RepoRoot '${workspaceFolder}' -RemoveWorktrees -RemoveNuGetVolume",
-      "detail": "Remove containers, worktrees, and NuGet volume (destructive)",
-      "options": {
-        "shell": {
-          "executable": "powershell.exe",
-          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
-        }
-      },
-      "problemMatcher": []
-    },
-    {
-      "label": "Container: Test VS environment",
-      "type": "shell",
-      "command": ".\\scripts\\Agent\\Invoke-InContainer.ps1 -Script test-vsenv",
-      "detail": "Verify VS build tools are available in container",
       "options": {
         "shell": {
           "executable": "powershell.exe",

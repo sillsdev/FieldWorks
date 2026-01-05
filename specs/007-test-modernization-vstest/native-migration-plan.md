@@ -62,7 +62,6 @@ The Unit++ framework is located at `Lib/src/unit++/` and provides:
 - **Build output location is brittle**: Unit++ builds and runs only from a fully hydrated repo layout; missing ICU 70 DLLs (`icuin70.dll`, `icuuc70.dll`) in `Output/<Config>` trigger crashes before tests start.
 - **Generated registration is mandatory**: `CollectUnit++Tests.cmd` must run to regenerate `Collection.cpp`; skipping it leaves stale test registries and results in empty/incorrect suites.
 - **Makefile projects require VS env**: NMake invocations still need `VsDevCmd.bat` to populate `INCLUDE/LIB/PATH` until the vcxproj conversion is complete.
-- **Bind mounts are fragile in containers**: Running native tests inside the agent container should use the local-clone flow (`C:\fw-local\<agent>`) to avoid Windows Docker bind-mount file locking; `Invoke-CppTest.ps1` now defaults to this in containers.
 - **Access violations are pre-existing**: Both `TestGeneric.exe` and `TestViews.exe` can crash with 0xC0000005 even when built via nmake; migration work must assume these crashes are legacy defects, not introduced by GoogleTest changes.
 
 ## Migration Strategy

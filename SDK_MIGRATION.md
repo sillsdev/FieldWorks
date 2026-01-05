@@ -94,7 +94,6 @@ The migration occurred in multiple coordinated phases:
 #### **Phase 8: Convergence & Infrastructure** (Commits 94-115)
 - **Convergence Specs**: Implemented Specs 002, 003, 004, 006
 - **RegFree Overhaul**: Managed assembly support, tooling suite
-- **Infrastructure**: Local multi-agent capability, Docker fixes
 - **Critical Fixes**: GDI double-buffering for black screen regression
 
 ### Key Success Factors
@@ -382,18 +381,6 @@ msbuild Build\Src\NativeBuild\NativeBuild.csproj /p:Configuration=Debug /p:Platf
 4. **Modern Tooling Support**: Works with dotnet CLI, VS Code, Rider
 5. **Clear Error Messages**: "Cannot generate Views.cs without native artifacts. Run: msbuild Build\Src\NativeBuild\NativeBuild.csproj"
 6. **Simplified Scripts**: Single code path, easier maintenance
-
-### Local Multi-Agent Infrastructure
-
-**Status**: ✅ Complete - Supports parallel development
-
-**Features**:
-- **Docker Integration**: `fw-build:ltsc2022` container for consistent build environment
-- **Worktree Management**: `scripts/spin-up-agents.ps1` creates isolated worktrees
-- **Session Data**: VS Code session data copied to worktrees for seamless context switching
-- **Resource Efficiency**: Shared NuGet cache, optimized container usage
-
----
 
 ## 64-bit and Reg-Free COM
 

@@ -1,3 +1,0 @@
-# Minimal dependencies for the MCP Python server
-fastmcp>=0.2.0
-modelcontext-protocol>=0.1.0

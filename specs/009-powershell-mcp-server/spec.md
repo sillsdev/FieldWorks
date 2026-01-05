@@ -3,7 +3,7 @@
 **Feature Branch**: `009-powershell-mcp-server`
 **Created**: 2025-12-08
 **Status**: Draft
-**Input**: User description: "Create a universal powershell MCP server to utilize the best powershell commands effectively. Also, refine MCP usage and auto-approves so that other commands (such as git, serena, python, docker) are all called from the optimal locations with minimal user requests while ensuring safe usage."
+**Input**: User description: "Create a universal powershell MCP server to utilize the best powershell commands effectively. Also, refine MCP usage and auto-approves so that other commands (such as git, serena, python) are all called from the optimal locations with minimal user requests while ensuring safe usage."
 
 ## Clarifications
 

@@ -122,22 +122,10 @@ $pathExclusions = @(
     # -------------------------------------------------------------------------
     (Join-Path $UserProfile ".nuget"),                  # Global NuGet cache
     (Join-Path $UserProfile ".nuget\packages"),         # Global packages folder
-    "C:\.nuget",                                        # Container NuGet path
     (Join-Path $UserProfile "AppData\Local\NuGet"),     # NuGet local data (http-cache, plugins-cache)
     (Join-Path $UserProfile "AppData\Local\NuGet\v3-cache"),  # HTTP cache
     (Join-Path $UserProfile "AppData\Local\NuGet\plugins-cache"),  # Plugins cache
     (Join-Path $UserProfile "AppData\Local\Temp\NuGetScratch"),    # NuGet temp/scratch
-
-    # -------------------------------------------------------------------------
-    # Docker
-    # -------------------------------------------------------------------------
-    "C:\ProgramData\Docker",                            # Docker data
-    "C:\ProgramData\Docker\windowsfilter",              # Windows container layers (CRITICAL for image pulls)
-    "C:\ProgramData\Docker\image",                      # Docker image metadata
-    "C:\ProgramData\Docker\containers",                 # Running container data
-    "C:\Program Files\Docker",                          # Docker installation
-    (Join-Path $UserProfile ".docker"),                 # Docker user config
-    (Join-Path $UserProfile "AppData\Local\Docker"),    # Docker local data
 
     # -------------------------------------------------------------------------
     # VS Code
@@ -176,22 +164,12 @@ $pathExclusions = @(
     # -------------------------------------------------------------------------
     # WiX Toolset
     # -------------------------------------------------------------------------
-    "C:\Wix314",                                        # WiX on containers/CI
-
-    # -------------------------------------------------------------------------
-    # Container-specific paths (VS Build Tools, .NET SDK, clangd)
-    # -------------------------------------------------------------------------
-    "C:\BuildTools",                                    # VS Build Tools in container
-    "C:\dotnet",                                        # .NET SDK in container
-    "C:\dotnet9",                                       # .NET 9 Runtime (Serena C# server)
-    "C:\clangd",                                        # clangd in container
+    "C:\Wix314",                                        # WiX on CI
 
     # -------------------------------------------------------------------------
     # Temp folders (package extraction)
     # -------------------------------------------------------------------------
     (Join-Path $UserProfile "AppData\Local\Temp"),      # User temp folder
-    "C:\Temp",                                          # Container temp (includes C:\Temp\Obj)
-    "C:\TEMP",                                          # Container temp (case variant)
     "C:\Windows\Temp",                                  # System temp folder
 
     # -------------------------------------------------------------------------
@@ -267,29 +245,6 @@ $processExclusions = @(
     "ServiceHub.RoslynCodeAnalysisService.exe",         # Roslyn analysis
     "ServiceHub.ThreadedWaitDialog.exe",
     "Microsoft.ServiceHub.Controller.exe",
-
-    # -------------------------------------------------------------------------
-    # Docker
-    # -------------------------------------------------------------------------
-    "docker.exe",
-    "dockerd.exe",
-    "com.docker.backend.exe",
-    "com.docker.build.exe",                             # Docker build process
-    "com.docker.service.exe",
-    "Docker Desktop.exe",
-    "docker-language-server-windows-amd64.exe",         # VS Code Docker extension
-
-    # -------------------------------------------------------------------------
-    # Windows Containers (Hyper-V isolation)
-    # -------------------------------------------------------------------------
-    "vmcompute.exe",                                    # Hyper-V compute service
-    "vmwp.exe",                                         # VM worker process
-    "CExecSvc.exe",                                     # Container execution service
-    "hcsdiag.exe",                                      # Host compute diagnostics
-    "containerd.exe",                                   # Container daemon
-    "hcsshim.exe",                                      # Host compute shim
-    "smss.exe",                                         # Windows Session Manager (container)
-    "wininit.exe",                                      # Windows initialization
 
     # -------------------------------------------------------------------------
     # Other common dev tools

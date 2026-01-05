@@ -7,12 +7,11 @@ description: "FieldWorks testing guidelines (unit/integration)"
 
 ## Purpose & Scope
 Guidance for writing and running deterministic unit and integration tests for FieldWorks.
-**CRITICAL**: Always use the provided PowerShell scripts (`test.ps1`, `build.ps1`) to run tests. These scripts handle containerization, environment setup, and dependency management automatically.
+**CRITICAL**: Always use the provided PowerShell scripts (`test.ps1`, `build.ps1`) to run tests. These scripts environment setup, and dependency management automatically.
 
 ## Core Rules
 1.  **Always use scripts**: Never run `vstest.console.exe`, `nmake`, or `msbuild` directly for testing unless debugging the build system itself.
-2.  **Containerization**: The scripts automatically detect if you are in a worktree and respawn inside the Docker container. This is required for COM/Registry isolation.
-3.  **Build First**: Ensure tests are built before running. `test.ps1` builds by default unless `-NoBuild` is passed.
+2.  **Build First**: Ensure tests are built before running. `test.ps1` builds by default unless `-NoBuild` is passed.
 
 ## Running Tests (Managed)
 
@@ -64,7 +63,7 @@ Tests are built automatically by `test.ps1`. To build explicitly without running
 The testing infrastructure relies on shared PowerShell modules for consistency:
 -   **`test.ps1`**: Main entry point. Dispatches to VSTest (managed) or `Invoke-CppTest.ps1` (native).
 -   **`scripts/Agent/Invoke-CppTest.ps1`**: Backend for native C++ tests (MSBuild/NMake).
--   **`Build/Agent/FwBuildHelpers.psm1`**: Shared logic for container detection, VS environment, and process cleanup.
+-   **`Build/Agent/FwBuildHelpers.psm1`**: Shared logic for VS environment, and process cleanup.
 
 ## Debugging & Logs
 -   **Logs**: Build logs are written to `Output/Build.log` (if configured) or standard output.
@@ -77,7 +76,6 @@ The testing infrastructure relies on shared PowerShell modules for consistency:
 -   **Determinism**: Tests must be hermetic. Avoid external state.
 
 ## Troubleshooting
--   **"Class not registered"**: You are likely running outside the container. Use `.\test.ps1`.
 -   **"File not found"**: Ensure you built with `-BuildTests` (or let `test.ps1` do it).
 -   **Native Crash**: Native tests are fragile. Use `printf` debugging if the debugger is unavailable.
 

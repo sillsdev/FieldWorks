@@ -40,9 +40,6 @@
 		<Deterministic>false</Deterministic>
 		<!-- Required for projects with non-string resources (images, icons, etc.) in .NET SDK style projects -->
 		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
-		<!-- Disable implicit SourceLink/Git in containers - BuildTools doesn't include Microsoft.Build.Tasks.Git SDK.
-		     This only affects embedded source URLs in PDBs; local debugging still works via file paths. -->
-		<SuppressImplicitGitSourceLink Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">true</SuppressImplicitGitSourceLink>
 	</PropertyGroup>
 
 	<!-- Required for non-string resources (images, icons) in .NET Framework SDK-style projects -->
@@ -102,10 +99,8 @@
 		<!--
 			Unified Intermediate Output Policy:
 			All SDK-style projects use the root Obj/ folder (gitignored) instead of per-project obj/ folders.
-			This prevents conflicts between host and container builds when worktrees are mounted.
 			Configuration is included in the path to prevent stale artifacts when switching Debug/Release.
 			- Host builds: $(FwRoot)Obj/$(Configuration)/<ProjectName>/
-			- Container builds: C:\Temp\Obj/$(Configuration)/<ProjectName>/ (local storage, not mounted)
 
 			Note: WPF markup compilation creates temp projects like "ProjectName_abc123_wpftmp".
 			We detect this via the _wpftmp suffix and use the original project's intermediate directory
@@ -116,16 +111,13 @@
 		<!-- For WPF temp projects, derive the real name from the project file path's directory name -->
 		<_RealProjectName Condition="'$(_IsWpfTempProject)' != 'true'">$(MSBuildProjectName)</_RealProjectName>
 		<_RealProjectName Condition="'$(_IsWpfTempProject)' == 'true'">$([System.IO.Path]::GetFileName($([System.IO.Path]::GetDirectoryName($(MSBuildProjectFullPath)))))</_RealProjectName>
-		<BaseIntermediateOutputPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'">$(FwRoot)Obj\$(Configuration)\$(_RealProjectName)\</BaseIntermediateOutputPath>
-		<BaseIntermediateOutputPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">C:\Temp\Obj\$(Configuration)\$(_RealProjectName)\</BaseIntermediateOutputPath>
+		<BaseIntermediateOutputPath>$(FwRoot)Obj\$(Configuration)\$(_RealProjectName)\</BaseIntermediateOutputPath>
 		<MSBuildProjectExtensionsPath>$(BaseIntermediateOutputPath)</MSBuildProjectExtensionsPath>
 		<RestoreOutputPath>$(BaseIntermediateOutputPath)</RestoreOutputPath>
 		<!--
-			NuGet Package Location Policy:
-			- Host builds: Use nuget.config globalPackagesFolder (packages/)
-			- Container builds: Use NUGET_PACKAGES env var (C:\.nuget\packages)
+			NuGet Package Location Policy: Use nuget.config globalPackagesFolder (packages/)
 			Do NOT set RestorePackagesPath here - it conflicts with the NUGET_PACKAGES env var.
-			The env var takes precedence and provides proper isolation between containers.
+			The env var takes precedence.
 			See nuget.config for full documentation.
 		-->
 		<!-- LCM artifacts directory -->
@@ -151,9 +143,7 @@
 
 	<!--
 		Stale obj/ Folder Policy:
-		Since SDK migration, intermediate output uses centralized locations:
-		- Host builds: $(FwRoot)Obj/$(Configuration)/<ProjectName>/
-		- Container builds: C:\Temp\Obj/$(Configuration)/<ProjectName>/
+		Since SDK migration, intermediate output uses centralized location: $(FwRoot)Obj/$(Configuration)/<ProjectName>/
 
 		Old per-project obj/ folders (Src/**/obj/) should not exist.
 		If they do, build.ps1 automatically removes them before building.
@@ -169,7 +159,7 @@
 	-->
 	<!--
 		WPF/XAML Compilation Memory Optimization:
-		XAML compilation can cause OOM errors in memory-constrained builds (containers, parallel builds).
+		XAML compilation can cause OOM errors in memory-constrained builds (parallel builds).
 		These settings help reduce memory pressure:
 		- XamlDebuggingInformation: Disable extra debugging info in Release (smaller assemblies)
 		- UseRidGraph: Use RID graph directly instead of creating temp projects

@@ -258,7 +258,7 @@ function Get-VSTestPath {
     if (-not $programFilesX86) { $programFilesX86 = "C:\Program Files (x86)" }
 
     $vstestCandidates = @(
-        # BuildTools (Docker containers)
+        # BuildTools
         "$programFilesX86\Microsoft Visual Studio\2022\BuildTools\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe",
         "C:\BuildTools\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe",
         # TestAgent (sometimes installed separately)

@@ -8,7 +8,7 @@ This document explains how Copilot agents (coding and chat modes) should operate
 
 - Run on Windows (`windows-latest` runners or local VS Code worktrees).
 - Always build through the traversal script: `.\build.ps1` (sets configuration, cleans stale obj, enforces native-first order).
-- Always test through `.\test.ps1` (dispatches managed/natives tests, honors containers, applies VS test settings).
+- Always test through `.\test.ps1` (dispatches managed/natives tests, applies VS test settings).
 - Use `scripts/Agent/*.ps1` wrappers whenever a command would normally need pipes/filters (`Git-Search`, `Read-FileContent`, etc.).
 - Keep localization in `.resx` and respect `crowdin.json`; do not introduce new ad-hoc localization flows.
 
@@ -39,10 +39,6 @@ This document explains how Copilot agents (coding and chat modes) should operate
 ### COM and Registry
 - FieldWorks relies on registration-free COM. Do not register COM components globally or edit the Windows registry unless a spec explicitly directs it.
 - Update manifests through the established build targets (`Build/RegFree.targets`) and document changes in the relevant `COPILOT.md`.
-
-### Worktrees & Containers
-- The repo supports multiple worktrees (`scripts/spin-up-agents.ps1`). Each worktree has its own `.serena/project.yml`.
-- When running in VS Code, use the recommended tasks under `.vscode/tasks.json` (already wired to `build.ps1`/`test.ps1`).
 
 ## Governance & Safety
 

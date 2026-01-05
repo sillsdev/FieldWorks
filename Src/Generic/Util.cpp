@@ -2568,7 +2568,7 @@ StrUni DirectoryFinder::FwRootDataDir()
 #if defined(_WIN32) || defined(_M_X64)
 	StrUni stuResult;
 
-	// Check environment variable first (Docker/CI friendly)
+	// Check environment variable first (CI friendly)
 	wchar_t* envPath = nullptr;
 	size_t envLen = 0;
 	if (_wdupenv_s(&envPath, &envLen, L"FW_ROOT_DATA_DIR") == 0 && envPath && *envPath)
@@ -2628,7 +2628,7 @@ StrUni DirectoryFinder::FwRootCodeDir()
 #if defined(_WIN32) || defined(_M_X64)
 	StrUni stuResult;
 
-	// Check environment variable first (Docker/CI friendly)
+	// Check environment variable first (CI friendly)
 	wchar_t* envPath = nullptr;
 	size_t envLen = 0;
 	if (_wdupenv_s(&envPath, &envLen, L"FW_ROOT_CODE_DIR") == 0 && envPath && *envPath)

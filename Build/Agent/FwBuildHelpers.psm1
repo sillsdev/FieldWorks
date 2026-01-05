@@ -4,7 +4,6 @@
 
 .DESCRIPTION
     This module provides common functionality for build.ps1 and test.ps1:
-    - Docker container detection and execution for worktrees
     - Worktree path detection
     - VS environment initialization
     - Conflicting process cleanup

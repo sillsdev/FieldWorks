@@ -15,7 +15,7 @@ Instead of looking up CLSIDs in the Windows Registry (`HKCR\CLSID\...`), the Win
 ## Build Strategy: Debug vs. Release
 To ensure consistency between Host and Container environments (and to work around a Windows Container bug with `mt.exe`), the build strategy is keyed off the **Configuration**.
 
-| Feature | Debug Build (Host & Docker) | Release Build (Host Only) |
+| Feature | Debug Build | Release Build |
 | :--- | :--- | :--- |
 | **Manifest Location** | **External** (`.manifest` file on disk) | **Embedded** (Resource #1) |
 | **Tooling** | `RegFree.targets` generates the file but **skips** `mt.exe` embedding. | `mt.exe` embeds the manifest into the DLL/EXE. |
@@ -34,12 +34,9 @@ To solve this, FieldWorks uses `SIL.FieldWorks.Common.FwUtils.ActivationContextH
 *   **Usage:** Tests that require COM must instantiate this helper, pointing it to the relevant manifest (usually `FieldWorks.Tests.manifest` or similar).
 
 ### Best Practices for Tests
-1.  **Always Build and Run in the Same Environment:**
-    *   If running in Docker: **Build in Docker**. This ensures external manifests are generated and used.
-    *   If running on Host: **Build on Host**.
-2.  **Do Not Register COM:**
+1.  **Do Not Register COM:**
     *   Avoid running `regsvr32`. It masks manifest issues and leads to "it works on my machine" failures.
-3.  **Verify Manifest Generation:**
+2.  **Verify Manifest Generation:**
     *   Ensure `Views.X.manifest` and `FwKernel.X.manifest` exist in `Output/Debug`.
     *   Ensure `FieldWorks.Tests.manifest` (or the project-specific manifest) correctly references them.
 
@@ -53,5 +50,5 @@ To solve this, FieldWorks uses `SIL.FieldWorks.Common.FwUtils.ActivationContextH
 * Latest commit (“Build: stabilize container/native pipeline and test stack”) includes: fixing native corruption and COM activation (Views.dll/TestViews.exe, VwSelection), container/native staging, and reg-free friendly build output isolation. No explicit addition of LexText/xWorks to the reg-free manifest pipeline.
 
 ## Troubleshooting
-*   **System.BadImageFormatException (0x800700C1):** Usually means the process is 64-bit but tried to load a 32-bit DLL, OR the COM loader couldn't find the DLL specified in the manifest. In Docker, this often means the manifest is missing or the path is wrong.
+*   **System.BadImageFormatException (0x800700C1):** Usually means the process is 64-bit but tried to load a 32-bit DLL, OR the COM loader couldn't find the DLL specified in the manifest.
 *   **Class Not Registered (0x80040154):** The manifest is not active, or the CLSID is missing from the manifest. Check `ActivationContextHelper` usage and confirm the COM-visible type and GUID are present in the generated manifest (e.g., `LexTextDll.manifest`, `FieldWorks.exe.manifest`).

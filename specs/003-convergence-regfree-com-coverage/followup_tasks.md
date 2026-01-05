@@ -31,7 +31,7 @@ The current implementation violates the core principle of Registration-Free COM:
 
 1.  **Non-Deterministic Builds**: The content of the generated manifest depends on the state of the build machine's registry. Two machines could produce different manifests.
 2.  **Circular Dependency**: The build requires the DLLs to be registered to generate the manifest that allows them to run *without* registration.
-3.  **CI/CD Failure**: Clean build agents (like GitHub Actions or Docker containers) cannot generate valid manifests because they don't have the components registered.
+3.  **CI/CD Failure**: Clean build agents (like GitHub Actions) cannot generate valid manifests because they don't have the components registered.
 
 ## Plan
 

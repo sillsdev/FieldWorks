@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
 	<PropertyGroup>
-		<!-- Use container-local path for FwBuildTasks when running in Docker to avoid bind-mount conflicts -->
-		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'=='' AND '$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'"
-			>$(MSBuildThisFileDirectory)..\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll</FwBuildTasksAssembly
-		>
-		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'=='' AND '$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'"
-			>C:\Temp\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll</FwBuildTasksAssembly
-		>
+		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'==''">
+			$(MSBuildThisFileDirectory)..\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll
+		</FwBuildTasksAssembly>
 	</PropertyGroup>
 	<UsingTask TaskName="CopyLocale" AssemblyFile="$(FwBuildTasksAssembly)" />
 	<UsingTask TaskName="GoldEticToXliff" AssemblyFile="$(FwBuildTasksAssembly)" />
@@ -19,10 +15,6 @@
 	<UsingTask TaskName="XliffToLists" AssemblyFile="$(FwBuildTasksAssembly)" />
 	<UsingTask TaskName="XmlToPo" AssemblyFile="$(FwBuildTasksAssembly)" />
 	<UsingTask TaskName="Zip" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<PropertyGroup>
-		<!-- Worktree/container builds skip localization package copy; host Release builds still include it -->
-		<SkipWorktreeL10n Condition="'$(SkipWorktreeL10n)'=='' AND '$(DOTNET_RUNNING_IN_CONTAINER)'=='true'">true</SkipWorktreeL10n>
-	</PropertyGroup>
 	<!-- Localize strings-en.xml, lists, and all resx files -->
 	<Target Name="localize" DependsOnTargets="localize-source;localize-binaries" />
 	<Target
@@ -143,7 +135,7 @@ To update localizations, liblcm must be cloned locally to the location specified
 	</Target>
 	<Target Name="copyLibL10ns">
 		<Message
-			Text="Skipping lib localization copy for container/worktree build. Host Release builds should run with full packages restored."
+			Text="Skipping lib localization copy for worktree build. Host Release builds should run with full packages restored."
 			Importance="low"
 			Condition="'$(SkipWorktreeL10n)'=='true'"
 		/>

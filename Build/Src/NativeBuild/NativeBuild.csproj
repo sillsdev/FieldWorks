@@ -20,9 +20,7 @@
     <!-- Set fwrt early so NuGet package restore can find packages -->
     <fwrt>$([System.IO.Path]::GetFullPath('$(MSBuildThisFileDirectory)..\..\..'))</fwrt>
     <!--
-      NuGet Package Location Policy:
-      - Host builds: Use nuget.config globalPackagesFolder (packages/)
-      - Container builds: Use NUGET_PACKAGES env var (C:\.nuget\packages)
+      NuGet Package Location Policy: Use nuget.config globalPackagesFolder (packages/)
       The NUGET_PACKAGES env var takes precedence over RestorePackagesPath.
       See nuget.config for full documentation.
     -->

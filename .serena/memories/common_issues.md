@@ -24,21 +24,6 @@ msbuild Build\Src\NativeBuild\NativeBuild.csproj /p:Configuration=Debug /p:Platf
 **Cause**: Build order not respected
 **Solution**: Use traversal build (`.\build.ps1`) which respects `FieldWorks.proj` phases
 
-## Container/Worktree Issues
-
-### Agent Worktree Build Fails on Host
-**Symptom**: COM/registry errors when building `worktrees\agent-N` paths
-**Cause**: Agent worktrees require containerized builds
-**Solution**:
-```powershell
-docker exec fw-agent-N powershell -NoProfile -c "msbuild FieldWorks.sln /m /p:Configuration=Debug"
-```
-
-### Container Can't Access NuGet Packages
-**Symptom**: Package restore fails inside container
-**Cause**: Volume mounts or network issues
-**Solution**: Check `scripts/spin-up-agents.ps1` for proper mount configuration
-
 ## Test Issues
 
 ### Tests Fail with "SIL.FieldWorks" Assembly Errors

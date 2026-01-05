@@ -328,7 +328,6 @@
 
 - [x] T060 [Build] Fix L10ns package detection in Localize.targets
       - Used `$([System.IO.Directory]::GetDirectories())` instead of wildcard expansion
-      - Wildcard expansion fails on Docker bind mounts; explicit API call works
       - L10ns package warnings resolved
 
 ### Phase 5f: Native Build Modernization (Implementation Projects)

@@ -11,7 +11,6 @@
         This avoids file-lock conflicts when the build tasks assembly is already loaded by MSBuild nodes
         (common when building the full solution in an IDE).
       - build.ps1 bootstrapping passes FwBuildTasksOutputPath to publish the tasks into BuildTools.
-      - In containers, build.ps1 may pass a container-local path.
     -->
     <OutputPath Condition="'$(FwBuildTasksOutputPath)' != ''">$(FwBuildTasksOutputPath)</OutputPath>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>

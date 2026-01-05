@@ -101,7 +101,7 @@ $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $repoRoot = Resolve-Path "$scriptDir\..\.."
 
 # Set FW_ROOT_CODE_DIR and FW_ROOT_DATA_DIR for DirectoryFinder fallback
-# This avoids registry dependencies in Docker/CI
+# This avoids registry dependencies in CI
 $distFiles = Join-Path $repoRoot "DistFiles"
 Set-EnvVar -Name "FW_ROOT_CODE_DIR" -Value $distFiles
 Set-EnvVar -Name "FW_ROOT_DATA_DIR" -Value $distFiles

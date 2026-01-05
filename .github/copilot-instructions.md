@@ -22,7 +22,6 @@ See `.github/AI_GOVERNANCE.md` for the documentation taxonomy and “source of t
 
 ## Build & Test Essentials
 - Prerequisites: install VS 2022 Desktop workloads, WiX 3.14.x (pre-installed on windows-latest), Git, LLVM/clangd + standalone OmniSharp (for Serena C++/C# support), and optional Crowdin CLI only when needed.
-- Docker is available for clean-slate reproduction if needed (see `DOCKER.md`), but standard development uses VS Code worktrees on the host.
 - Verify your environment: `.\Build\Agent\Verify-FwDependencies.ps1 -IncludeOptional`
 - Common commands:
   ```powershell

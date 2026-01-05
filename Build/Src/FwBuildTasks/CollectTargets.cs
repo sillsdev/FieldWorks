@@ -20,19 +20,12 @@ namespace FwBuildTasks
 		[Required]
 		public string ToolsVersion { get; set; }
 
-		/// <summary>
-		/// Optional explicit path to the FieldWorks root directory.
-		/// If not provided, will be discovered from the assembly location.
-		/// Required when FwBuildTasks.dll is in a container-local path.
-		/// </summary>
-		public string FwRoot { get; set; }
-
 		public override bool Execute()
 		{
 			try
 			{
 				Log.LogMessage(MessageImportance.Normal, "Starting GenerateFwTargets task...");
-				var gen = new CollectTargets(Log, ToolsVersion, FwRoot);
+				var gen = new CollectTargets(Log, ToolsVersion);
 				gen.Generate();
 				Log.LogMessage(
 					MessageImportance.Normal,
@@ -85,21 +78,12 @@ namespace FwBuildTasks
 		private Dictionary<string, int> m_timeoutMap;
 		private string ToolsVersion { get; set; }
 
-		public CollectTargets(TaskLoggingHelper log, string toolsVersion, string fwRoot = null)
+		public CollectTargets(TaskLoggingHelper log, string toolsVersion)
 		{
 			ToolsVersion = toolsVersion;
 			Log = log;
-
-			// Use explicit FwRoot if provided (required for container builds where the
-			// assembly is in a container-local path like C:\Temp\BuildTools\...)
-			if (!string.IsNullOrEmpty(fwRoot))
-			{
-				m_fwroot = fwRoot;
-				Log.LogMessage(MessageImportance.Normal, "Using explicit FwRoot: {0}", m_fwroot);
-				return;
-			}
-
-			// Fallback: discover from assembly location (works when assembly is in BuildTools\FwBuildTasks\)
+			// Get the parent directory of the running program.  We assume that
+			// this is the root of the FieldWorks repository tree.
 			var fwrt = BuildUtils.GetAssemblyFolder();
 			while (
 				!Directory.Exists(Path.Combine(fwrt, "Build"))

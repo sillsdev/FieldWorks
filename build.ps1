@@ -177,10 +177,6 @@ try {
         # Properties
         $finalMsBuildArgs += "/p:Configuration=$Configuration"
         $finalMsBuildArgs += "/p:Platform=$Platform"
-        if ($insideContainer) {
-            # Disable shared compilation in containers to prevent file locks on bind mounts
-            $finalMsBuildArgs += "/p:UseSharedCompilation=false"
-        }
         if ($SkipNative) {
             $finalMsBuildArgs += "/p:SkipNative=true"
         }
@@ -261,7 +257,7 @@ try {
         Write-Host ""
         Write-Host "Running tests..." -ForegroundColor Cyan
 
-        $testArgs = @("-Configuration", $Configuration, "-NoBuild", "-NoDocker")
+        $testArgs = @("-Configuration", $Configuration, "-NoBuild")
         if ($TestFilter) {
             $testArgs += @("-TestFilter", $TestFilter)
         }
