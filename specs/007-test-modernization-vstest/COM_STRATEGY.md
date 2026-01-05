@@ -43,6 +43,15 @@ To solve this, FieldWorks uses `SIL.FieldWorks.Common.FwUtils.ActivationContextH
     *   Ensure `Views.X.manifest` and `FwKernel.X.manifest` exist in `Output/Debug`.
     *   Ensure `FieldWorks.Tests.manifest` (or the project-specific manifest) correctly references them.
 
+## Current implementation status (2025-12)
+* `FieldWorks.exe.manifest` (Debug) currently references `FwKernel.X.manifest`, `Views.X.manifest`, and managed component manifests for `FwUtils`, `SimpleRootSite`, `ManagedLgIcuCollator`, and `ManagedVwWindow`. After wiring, `xWorks.dll` and `LexTextDll.dll` are also fed into `ManagedComAssemblies`; manifests will include them only when COM-visible types are present.
+* `Views.X.manifest` contains the CLSID `{24636FD1-DB8D-4B2C-B4C0-44C2592CA482}` (DebugReport) for native COM; this is not the LexTextApp CLSID.
+* `LexTextDll.dll`: `LexTextApp` is now marked `[ComVisible(true)]` with a stable GUID (`E03DB914-31F2-4B9C-8E3A-2E0F1091F5B1`) and `ClassInterface(None)`, allowing RegFree to emit a managed COM entry for it.
+* Build wiring: `Src/Common/FieldWorks/BuildInclude.targets` imports `Build/RegFree.targets` and explicitly appends `FwUtils`, `SimpleRootSite`, `ManagedLgIcuCollator`, `ManagedVwWindow`, `xWorks`, and `LexTextDll` to `ManagedComAssemblies`, so the RegFree task will output manifests for any of these that have COM-visible types.
+
+## Recent commit signals
+* Latest commit (“Build: stabilize container/native pipeline and test stack”) includes: fixing native corruption and COM activation (Views.dll/TestViews.exe, VwSelection), container/native staging, and reg-free friendly build output isolation. No explicit addition of LexText/xWorks to the reg-free manifest pipeline.
+
 ## Troubleshooting
 *   **System.BadImageFormatException (0x800700C1):** Usually means the process is 64-bit but tried to load a 32-bit DLL, OR the COM loader couldn't find the DLL specified in the manifest. In Docker, this often means the manifest is missing or the path is wrong.
-*   **Class Not Registered (0x80040154):** The manifest is not active, or the CLSID is missing from the manifest. Check `ActivationContextHelper` usage.
+*   **Class Not Registered (0x80040154):** The manifest is not active, or the CLSID is missing from the manifest. Check `ActivationContextHelper` usage and confirm the COM-visible type and GUID are present in the generated manifest (e.g., `LexTextDll.manifest`, `FieldWorks.exe.manifest`).

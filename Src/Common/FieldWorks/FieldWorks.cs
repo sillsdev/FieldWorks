@@ -155,7 +155,8 @@ namespace SIL.FieldWorks
 			var newPath = $"{pathName}{Path.PathSeparator}{Environment.GetEnvironmentVariable("PATH")}";
 			Environment.SetEnvironmentVariable("PATH", newPath);
 			Icu.Wrapper.ConfineIcuVersions(70);
-			// ICU will be initialized further down (by calling FwUtils.InitializeIcu())
+			// Initialize ICU before anything touches it so icu.net does not warn about missing Init().
+			FwUtils.InitializeIcu();
 			FwRegistryHelper.Initialize();
 
 			try
@@ -282,8 +283,6 @@ namespace SIL.FieldWorks
 					// in native code do not have icons if we just use this method. This is caused
 					// by a bug in XP.
 					Application.EnableVisualStyles();
-
-					FwUtils.InitializeIcu();
 
 					// initialize the SLDR
 					Sldr.Initialize();
@@ -3518,10 +3517,10 @@ namespace SIL.FieldWorks
 
 			KeyboardController.Shutdown();
 
+			GracefullyShutDown();
+
 			if (Sldr.IsInitialized)
 				Sldr.Cleanup();
-
-			GracefullyShutDown();
 
 			if (s_threadHelper != null)
 				s_threadHelper.Dispose();

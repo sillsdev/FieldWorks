@@ -8,6 +8,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Deterministic>false</Deterministic>
     <ApplicationIcon>Branding\LT.ico</ApplicationIcon>
+    <NoWin32Manifest>true</NoWin32Manifest>
     <EnableRegFreeCom>true</EnableRegFreeCom>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <UseDevTraceConfig Condition="'$(UseDevTraceConfig)'=='' and '$(FW_TRACE_LOG)'!=''">true</UseDevTraceConfig>

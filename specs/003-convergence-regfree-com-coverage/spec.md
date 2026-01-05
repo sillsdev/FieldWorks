@@ -12,15 +12,17 @@
 ### Statistics
 ```
 Total EXE/EXE Projects: 10 identified
-- With RegFree manifest: 1 (FieldWorks.exe)
+- With RegFree manifest: 1 (FieldWorks.exe) - **VERIFIED & FIXED**
 - With test manifest: 1 (ComManifestTestHost.exe)
 - Without manifests: 8 (user-facing + utility tools)
 - Confirmed no COM: 0 (needs verification)
 ```
 
 ### Problem Statement
-The migration to registration-free COM (commits 44, 47, 90) successfully implemented manifest generation for FieldWorks.exe, but:
+The migration to registration-free COM (commits 44, 47, 90) implemented manifest generation for FieldWorks.exe.
+**Update (2025-11-20):** A regression was identified where the .NET SDK embedded a default manifest that overrode the RegFree manifest, causing startup crashes. This has been fixed by adding `<NoWin32Manifest>true</NoWin32Manifest>` to `FieldWorks.csproj` and ensuring managed COM assemblies are explicitly listed in `BuildInclude.targets`.
 
+Remaining issues:
 - Other EXE projects haven't been audited for COM usage
 - The former LexTextExe (Flex.exe) stub has been removed; FieldWorks.exe is now the sole launcher with a manifest
 - Utility EXEs (LCMBrowser, UnicodeCharEditor, MigrateSqlDbs, FixFwData, etc.) may use COM but have no manifests
@@ -28,7 +30,7 @@ The migration to registration-free COM (commits 44, 47, 90) successfully impleme
 - Incomplete implementation of self-contained deployment goal
 
 ### Root Cause
-The RegFree COM implementation was done incrementally, starting with the most critical EXE (FieldWorks.exe). The plan was to audit other EXEs afterward, but this was not completed during the migration. No systematic COM usage audit was performed.
+The RegFree COM implementation was done incrementally. The recent crash in `FieldWorks.exe` was due to a conflict between SDK-generated manifests and our custom RegFree manifests, which is now resolved. No systematic COM usage audit was performed for other EXEs.
 
 ---
 

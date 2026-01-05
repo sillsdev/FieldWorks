@@ -11,6 +11,7 @@ using System.Media;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.IO;
+using Icu;
 using Icu.Collation;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
@@ -191,6 +192,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// ICU_DATA should point to the directory that contains nfc_fw.nrm and nfkc_fw.nrm
 			// (i.e. icudt54l).
 			CustomIcu.InitIcuDataDir();
+
+			var initResult = Wrapper.Init();
+			if (initResult != ErrorCode.ZERO_ERROR && initResult != ErrorCode.NoErrors)
+			{
+				Trace.WriteLine($"ICU initialization returned {initResult}");
+			}
 		}
 
 		/// <summary>

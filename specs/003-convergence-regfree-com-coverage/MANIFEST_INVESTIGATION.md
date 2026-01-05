@@ -1,5 +1,8 @@
 # Registration-Free COM Manifest Investigation
 
+## Status: RESOLVED (2025-11-20)
+The investigation concluded that the "monolithic" manifest approach for managed assemblies was indeed the cause of the SxS errors. The build system has been updated to generate separate component manifests for managed assemblies (`FwUtils`, `LexTextDll`, etc.) and reference them via `<dependency>` elements in `FieldWorks.exe.manifest`. This aligns with the "Correct Structure" described below.
+
 ## 1. Problem Description
 
 The FieldWorks application (`FieldWorks.exe`) fails to start with a Side-by-Side (SxS) configuration error (Event ID 72).

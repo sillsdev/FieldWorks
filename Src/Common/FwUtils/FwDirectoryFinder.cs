@@ -325,6 +325,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 			return dir.Length > 2 ? dir : dir + Path.DirectorySeparatorChar;
 		}
 
+		private static string GetDevDistFilesPath()
+		{
+			string assemblyDir = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+			// Check if we are in Output/Debug or Output/Release
+			// DistFiles is at ../../DistFiles
+			string distFiles = Path.GetFullPath(Path.Combine(assemblyDir, "..", "..", "DistFiles"));
+			if (Directory.Exists(distFiles))
+				return distFiles;
+			return null;
+		}
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Gets the directory where FieldWorks code was installed (usually
@@ -343,6 +354,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 					CompanyName,
 					$"FieldWorks {FwUtils.SuiteVersion}"
 				);
+
+				string devDistFiles = GetDevDistFilesPath();
+				if (devDistFiles != null)
+					defaultDir = devDistFiles;
+
 				return GetDirectory("RootCodeDir", defaultDir);
 			}
 		}
@@ -357,11 +373,22 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <exception cref="ApplicationException">If an installation directory could not be
 		/// found.</exception>
 		/// ------------------------------------------------------------------------------------
-		public static string DataDirectory =>
-			GetDirectory(
-				ksRootDataDir,
-				Path.Combine(LcmFileHelper.CommonApplicationData, CompanyName, ksFieldWorks)
-			);
+		public static string DataDirectory
+		{
+			get
+			{
+				string defaultDir = Path.Combine(LcmFileHelper.CommonApplicationData, CompanyName, ksFieldWorks);
+
+				string devDistFiles = GetDevDistFilesPath();
+				if (devDistFiles != null)
+					defaultDir = devDistFiles;
+
+				return GetDirectory(
+					ksRootDataDir,
+					defaultDir
+				);
+			}
+		}
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
