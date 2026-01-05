@@ -153,13 +153,13 @@ function Pick-Worktree([object[]]$worktrees) {
 	}
 }
 
-function Ensure-PSObjectProperty($obj, $name) {
+function Add-PSObjectPropertyIfMissing($obj, $name) {
 	if (-not $obj.PSObject.Properties[$name]) {
 		$obj | Add-Member -MemberType NoteProperty -Name $name -Value (New-Object PSObject)
 	}
 }
 
-function Ensure-PSObject($val) {
+function ConvertTo-PSObject($val) {
 	if ($null -eq $val) {
 		return (New-Object PSObject)
 	}
@@ -173,7 +173,7 @@ function Ensure-PSObject($val) {
 	return $val
 }
 
-function Parse-HexRgb($hex) {
+function ConvertFrom-HexRgb($hex) {
 	$h = $hex.Trim()
 	if ($h.StartsWith("#")) {
 		$h = $h.Substring(1)
@@ -196,9 +196,9 @@ $baseWorkspace = New-Object PSObject
 $baseWorkspace | Add-Member -MemberType NoteProperty -Name "folders" -Value @(@{ path = "." })
 $baseWorkspace | Add-Member -MemberType NoteProperty -Name "settings" -Value (New-Object PSObject)
 
-$baseWorkspace = Ensure-PSObject $baseWorkspace
-Ensure-PSObjectProperty $baseWorkspace "settings"
-$baseSettings = Ensure-PSObject $baseWorkspace.settings
+$baseWorkspace = ConvertTo-PSObject $baseWorkspace
+Add-PSObjectPropertyIfMissing $baseWorkspace "settings"
+$baseSettings = ConvertTo-PSObject $baseWorkspace.settings
 $baseWorkspace.settings = $baseSettings
 
 # Define the keys we manage
@@ -210,8 +210,8 @@ $managedKeys = @(
 	"activityBar.inactiveForeground"
 )
 
-function Write-WorktreeWorkspaceFile([
-	Parameter(Mandatory = $true)][string]$targetRoot,
+function Write-WorktreeWorkspaceFile(
+	[Parameter(Mandatory = $true)][string]$targetRoot,
 	[Parameter(Mandatory = $true)][bool]$isWorkspaceLoaded
 ) {
 	$worktreeWorkspacePath = Get-WorktreeWorkspacePath $targetRoot
@@ -233,7 +233,7 @@ function Write-WorktreeWorkspaceFile([
 	$md5 = [System.Security.Cryptography.MD5]::Create()
 	$hashBytes = $md5.ComputeHash([System.Text.Encoding]::UTF8.GetBytes($targetRoot))
 	$colorHex = $palette[($hashBytes[0] % $palette.Length)]
-	$rgb = Parse-HexRgb $colorHex
+	$rgb = ConvertFrom-HexRgb $colorHex
 	$r = $rgb.r; $g = $rgb.g; $b = $rgb.b
 
 	# Determine text color (contrast)
@@ -264,8 +264,8 @@ function Write-WorktreeWorkspaceFile([
 		$worktreeWorkspace | Add-Member -MemberType NoteProperty -Name "folders" -Value @(@{ path = "." })
 	}
 
-	$settings = Ensure-PSObject $baseWorkspace.settings
-	$settings | Add-Member -MemberType NoteProperty -Name "workbench.colorCustomizations" -Value (Ensure-PSObject $settings."workbench.colorCustomizations") -Force
+	$settings = ConvertTo-PSObject $baseWorkspace.settings
+	$settings | Add-Member -MemberType NoteProperty -Name "workbench.colorCustomizations" -Value (ConvertTo-PSObject $settings."workbench.colorCustomizations") -Force
 
 	foreach ($key in $managedKeys) {
 		# Remove any existing managed keys to keep behavior deterministic

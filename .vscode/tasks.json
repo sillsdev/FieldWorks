@@ -46,6 +46,12 @@
       "type": "promptString",
       "description": "Path to test project (e.g., Src/Common/FwUtils/FwUtilsTests)",
       "default": ""
+    },
+    {
+      "id": "worktreeBranch",
+      "type": "promptString",
+      "description": "Branch name for worktree (e.g., spec/my-branch or release/9.3)",
+      "default": ""
     }
   ],
   "tasks": [
@@ -79,6 +85,38 @@
       "type": "shell",
       "command": "./scripts/Setup-WorktreeColor.ps1 -Action Launch",
       "detail": "Pick a git worktree and open it in a new VS Code window with colorization",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Worktree: Create/Open from branch",
+      "type": "shell",
+      "command": "./scripts/Worktree-CreateFromBranch.ps1 -BranchName \"${input:worktreeBranch}\"",
+      "detail": "Create/open a worktree under ../<repo>.worktrees/<branch> and open it in a new VS Code window (colorized)",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Worktree: Rename to branch",
+      "type": "shell",
+      "command": "./scripts/Rename-WorktreeToBranch.ps1",
+      "detail": "Rename (move) the current worktree folder to ../<repo>.worktrees/<current_branch>",
       "options": {
         "shell": {
           "executable": "powershell.exe",
