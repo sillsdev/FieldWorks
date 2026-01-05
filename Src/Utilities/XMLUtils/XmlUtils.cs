@@ -892,11 +892,27 @@ namespace SIL.Utils
 
 			public override Uri ResolveUri(Uri baseUri, string relativeUri)
 			{
+				// If the include/import already specifies an absolute URI, honor it.
+				if (!string.IsNullOrEmpty(relativeUri) && Uri.TryCreate(relativeUri, UriKind.Absolute, out var absoluteUri))
+					return absoluteUri;
+
+				// If the include/import is an absolute file path (e.g., C:\foo\bar.xsl), normalize it.
+				if (!string.IsNullOrEmpty(relativeUri) && Path.IsPathRooted(relativeUri))
+					return new Uri(Path.GetFullPath(relativeUri));
+
 				if (!string.IsNullOrEmpty(m_baseDirectory) && (baseUri == null || !baseUri.IsAbsoluteUri))
 				{
 					var combined = Path.Combine(m_baseDirectory, relativeUri ?? string.Empty);
-					var normalized = Path.GetFullPath(combined);
-					return new Uri(normalized);
+					try
+					{
+						var normalized = Path.GetFullPath(combined);
+						return new Uri(normalized);
+					}
+					catch (NotSupportedException)
+					{
+						// Fall back to default resolution if the combined path isn't a valid filesystem path.
+						return base.ResolveUri(baseUri, relativeUri);
+					}
 				}
 
 				return base.ResolveUri(baseUri, relativeUri);

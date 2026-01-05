@@ -35,6 +35,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		private const string kChar3S = "D7FD"; // keep in sync with kChar3.
 		const int kChar4 = 0xDDDDD;	// unused char. (0xEEEEE fails in running genprops)
 
+		private bool m_icuDataInitialized;
+		private string m_icuZipPath;
+
 		string m_sCustomCharsFile;
 		string m_sCustomCharsBackup;
 
@@ -45,7 +48,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		public void Setup()
 		{
 			FwRegistryHelper.Initialize();
-			Assert.That(InitializeIcuData(), Is.True);
+			m_icuDataInitialized = InitializeIcuData(out m_icuZipPath);
 			m_sCustomCharsFile = Path.Combine(CustomIcu.DefaultDataDirectory, "CustomChars.xml");
 			m_sCustomCharsBackup = Path.Combine(CustomIcu.DefaultDataDirectory, "TestBackupForCustomChars.xml");
 			if (File.Exists(m_sCustomCharsFile))
@@ -62,7 +65,9 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 		[OneTimeTearDown]
 		public void Teardown()
 		{
-			RestoreIcuData(m_sCustomCharsFile, m_sCustomCharsBackup);
+			if (!m_icuDataInitialized)
+				return;
+			RestoreIcuData(m_sCustomCharsFile, m_sCustomCharsBackup, m_icuZipPath);
 		}
 
 
@@ -292,26 +297,43 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			inst.InstallPUACharacters(sCustomCharsFile);
 		}
 
-		private static bool InitializeIcuData()
+		private static bool InitializeIcuData(out string icuZipPath)
+		{
+			icuZipPath = null;
+			var icuZipFileName = string.Format("Icu{0}.zip", CustomIcu.Version);
+			var envOverride = Environment.GetEnvironmentVariable("FW_ICU_ZIP");
+			if (!string.IsNullOrEmpty(envOverride) && File.Exists(envOverride))
+			{
+				icuZipPath = envOverride;
+			}
+			else
+			{
+				// Use DistFiles relative to source directory for worktree/dev builds,
+				// not the installed DataDirectory which may point to a different repo.
+				var baseDir = Path.Combine(Path.GetDirectoryName(FwDirectoryFinder.SourceDirectory), "DistFiles");
+				var candidate = Path.Combine(baseDir, icuZipFileName);
+				if (File.Exists(candidate))
+					icuZipPath = candidate;
+			}
+
+			if (string.IsNullOrEmpty(icuZipPath))
+			{
+				Assert.Ignore(
+					$"PUAInstallerTests requires ICU data zip '{icuZipFileName}', but it was not found. " +
+					$"Looked in DistFiles relative to SourceDirectory and optional env var FW_ICU_ZIP. " +
+					$"These tests modify ICU data and are long-running acceptance tests.");
+			}
+
+			return InitializeIcuDataFromZip(icuZipPath);
+		}
+
+		private static bool InitializeIcuDataFromZip(string icuZipPath)
 		{
 			var icuDir = CustomIcu.DefaultDataDirectory;
 			ZipInputStream zipIn = null;
 			try
 			{
-				try
-				{
-					// Use DistFiles relative to source directory for worktree/dev builds,
-					// not the installed DataDirectory which may point to a different repo.
-					var baseDir = Path.Combine(Path.GetDirectoryName(FwDirectoryFinder.SourceDirectory), "DistFiles");
-					zipIn = new ZipInputStream(File.OpenRead(Path.Combine(baseDir, string.Format("Icu{0}.zip", CustomIcu.Version))));
-				}
-				catch (Exception e1)
-				{
-					Assert.Fail("Something is wrong with the file you chose." + Environment
-					.NewLine +
-						" The file could not be opened. " + Environment.NewLine + Environment.NewLine +
-						"   The error message was: '" + e1.Message);
-				}
+				zipIn = new ZipInputStream(File.OpenRead(icuZipPath));
 				if (zipIn == null)
 					return false;
 				Wrapper.Cleanup();
@@ -319,8 +341,10 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 				{
 					string subdir = Path.GetFileName(dir);
 					if (subdir.Equals(string.Format("icudt{0}l", CustomIcu.Version),
-					StringComparison.OrdinalIgnoreCase))
+						StringComparison.OrdinalIgnoreCase))
+					{
 						Directory.Delete(dir, true);
+					}
 				}
 				ZipEntry entry;
 				while ((entry = zipIn.GetNextEntry()) != null)
@@ -384,13 +408,14 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			}
 		}
 
-		private static void RestoreIcuData(string sCustomCharsFile, string sCustomCharsBackup)
+		private static void RestoreIcuData(string sCustomCharsFile, string sCustomCharsBackup, string icuZipPath)
 		{
 			if (File.Exists(sCustomCharsFile))
 				File.Delete(sCustomCharsFile);
 			if (File.Exists(sCustomCharsBackup))
 				File.Move(sCustomCharsBackup, sCustomCharsFile);
-			InitializeIcuData();
+			if (!string.IsNullOrEmpty(icuZipPath) && File.Exists(icuZipPath))
+				InitializeIcuDataFromZip(icuZipPath);
 			if (File.Exists(sCustomCharsFile))
 			{
 				var inst = new PUAInstaller();

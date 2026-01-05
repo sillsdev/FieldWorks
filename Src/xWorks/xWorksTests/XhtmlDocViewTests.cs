@@ -63,8 +63,8 @@ namespace SIL.FieldWorks.XWorks
 					docView.SplitPublicationsByConfiguration(
 						Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS,
 						tempConfigFile.Path, out pubsInConfig, out pubsNotInConfig);
-					Assert.That(testPubName.Text, Does.Contain(pubsInConfig));
-					Assert.That(testPubName.Text, Does.Not.Contain(pubsNotInConfig));
+						Assert.That(pubsInConfig, Does.Contain(testPubName.Text));
+						Assert.That(pubsNotInConfig, Does.Not.Contain(testPubName.Text));
 				}
 			}
 		}
@@ -98,8 +98,8 @@ namespace SIL.FieldWorks.XWorks
 					docView.SplitPublicationsByConfiguration(
 						Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS,
 						tempConfigFile.Path, out pubsInConfig, out pubsNotInConfig);
-					Assert.That(testPubName.Text, Does.Not.Contain(pubsInConfig));
-					Assert.That(testPubName.Text, Does.Contain(pubsNotInConfig));
+						Assert.That(pubsInConfig, Does.Not.Contain(testPubName.Text));
+						Assert.That(pubsNotInConfig, Does.Contain(testPubName.Text));
 				}
 			}
 		}
@@ -129,8 +129,8 @@ namespace SIL.FieldWorks.XWorks
 					docView.SplitPublicationsByConfiguration(
 						Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS,
 						tempConfigFile.Path, out inConfig, out outConfig);
-					Assert.That(testPubName.Text, Does.Contain(inConfig));
-					Assert.That(testPubName.Text, Does.Not.Contain(outConfig));
+						Assert.That(inConfig, Does.Contain(testPubName.Text));
+						Assert.That(outConfig, Does.Not.Contain(testPubName.Text));
 				}
 			}
 		}
@@ -156,8 +156,8 @@ namespace SIL.FieldWorks.XWorks
 					// SUT
 					docView.SplitConfigurationsByPublication(configurations,
 																		  "TestPub", out configsWithPub, out configsWithoutPub);
-					Assert.That(tempConfigFile.Path, Does.Contain(configsWithPub.Values));
-					Assert.That(tempConfigFile.Path, Does.Not.Contain(configsWithoutPub.Values));
+						Assert.That(configsWithPub.Values, Does.Contain(tempConfigFile.Path));
+						Assert.That(configsWithoutPub.Values, Does.Not.Contain(tempConfigFile.Path));
 				}
 			}
 		}
@@ -187,7 +187,7 @@ namespace SIL.FieldWorks.XWorks
 					// SUT
 					docView.SplitConfigurationsByPublication(configurations,
 																		  xWorksStrings.AllEntriesPublication, out configsWithPub, out configsWithoutPub);
-					Assert.That(tempConfigFile.Path, Does.Contain(configsWithPub.Values));
+					Assert.That(configsWithPub.Values, Does.Contain(tempConfigFile.Path));
 					Assert.That(configsWithoutPub.Values, Is.Empty, tempConfigFile.Path);
 				}
 			}
@@ -223,8 +223,8 @@ namespace SIL.FieldWorks.XWorks
 					// SUT
 					docView.SplitConfigurationsByPublication(configurations,
 																		  "TestPub", out configsWithPub, out configsWithoutPub);
-					Assert.That(tempConfigFile.Path, Does.Not.Contain(configsWithPub.Values));
-					Assert.That(tempConfigFile.Path, Does.Contain(configsWithoutPub.Values));
+					Assert.That(configsWithPub.Values, Does.Not.Contain(tempConfigFile.Path));
+					Assert.That(configsWithoutPub.Values, Does.Contain(tempConfigFile.Path));
 				}
 			}
 		}
@@ -255,8 +255,8 @@ namespace SIL.FieldWorks.XWorks
 					// SUT
 					docView.SplitConfigurationsByPublication(configurations,
 																		  "TestPub", out configsWithPub, out configsWithoutPub);
-					Assert.That(tempConfigFile.Path, Does.Contain(configsWithPub.Values));
-					Assert.That(tempConfigFile.Path, Does.Not.Contain(configsWithoutPub.Values));
+					Assert.That(configsWithPub.Values, Does.Contain(tempConfigFile.Path));
+					Assert.That(configsWithoutPub.Values, Does.Not.Contain(tempConfigFile.Path));
 				}
 			}
 		}

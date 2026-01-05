@@ -1,32 +1,28 @@
 # C# Test Passing Plan
-**Branch:** `fix_csharp_tests`
-**Last Updated:** 2025-12-08
+**Branch:** `007-test-modernization-vstest`
+**Last Updated:** 2025-12-16
 
 ## Current Status
 
-- ✅ Build succeeds in container (Debug/x64)
-- ✅ `FwUtilsTests` run in container
-- ❌ 1 failing test (`FlexBridgeDataVersion`) due to missing version metadata
-- 🚧 Other assemblies not yet rerun post-container-build; disabled tests remain `#if false`
+- ✅ Build succeeds (Debug/x64)
+- ✅ Full managed test run passes: `./test.ps1 -NoBuild`
+	- Total: 4048
+	- Passed: 3973
+	- Skipped: 75
+	- Failed: 0
 
-## Current Blocker (post-container run)
+## Current Blocker
 
-- `FlexBridgeListenerTests.FlexBridgeDataVersion` expects a non-empty version string. In container the value is empty/null → assertion fails. Likely depends on ProgramData update metadata not seeded in test env.
+- None.
 
 ## Plan / Next Actions
 
-1) **Stabilize `FlexBridgeDataVersion`**
-- Find the data source the helper reads (likely `C:\ProgramData\SIL\FieldWorks\DownloadedUpdates\LastCheckUpdateInfo.xml` or similar).
-- Provide a deterministic test fixture (seed file or mock) for the version string so the test no longer depends on external install/update state.
-- Decide expected behavior when no metadata exists (either assert empty is acceptable or ensure fixture supplies data).
+1) **Keep the fast green loop**
+- Build test binaries when needed: `./build.ps1 -BuildTests`
+- Validate without rebuilding: `./test.ps1 -NoBuild`
 
-2) **Re-enable and fix skipped tests (`#if false`)**
-- `SentenceFinalPunctCapitalizationCheckUnitTest.cs` — missing class; decide implement vs delete.
-- `FwWritingSystemSetupDlgTests.cs` — rewrite against `FwWritingSystemSetupModel`.
-- `RestoreProjectPresenterTests.cs` — update for current backup/restore API.
-
-3) **Broaden container test coverage after (1)**
-- Run next assemblies in-container (xWorksTests, LexTextControlsTests, DetailControlsTests, etc.) once the FwUtils blocker is resolved, to surface any additional issues.
+2) **Optional: reduce skipped tests**
+- Review the 75 skipped tests and determine which are intentional OS-conditional skips vs gaps worth addressing.
 
 4) **Warnings (optional/cleanup)**
 - LNK4099 from graphite2 PDBs and managed compiler warnings remain low-priority; no test impact.

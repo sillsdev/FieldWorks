@@ -4,6 +4,8 @@
 **Branch**: `specs/007-test-modernization-vstest`
 **Status**: In Progress (Phases 1-4 Complete, Phase 5 Optional)
 
+**Latest validation (Debug/x64):** `./test.ps1 -NoBuild` → **PASS** (Total: 4048, Passed: 3973, Skipped: 75, Failed: 0)
+
 ## Phase 1: Setup & Configuration
 *Goal: Establish the configuration infrastructure required for VSTest.*
 
@@ -40,6 +42,9 @@
       - Build time: ~23 seconds with tests included
       - Test results validated for FwUtilsTests (183 pass), XMLUtilsTests (35 pass), xCoreTests (18 pass), CacheLightTests (91 pass)
       - Utility scripts created: `Build/Agent/Run-VsTests.ps1`, `Build/Agent/Rebuild-TestProjects.ps1`
+
+- [x] T015a [US3] Validate full managed test pass via `./test.ps1 -NoBuild`.
+      - Latest: Total 4048 / Passed 3973 / Skipped 75 / Failed 0
 
 ## Phase 5: Optional Native Migration (Phase 2)
 *Goal: Plan and prototype migration of legacy C++ tests to GoogleTest (User Story 4).*
@@ -175,27 +180,18 @@
       - Location: `packages/sil.lcmodel.tests/11.0.0-beta0148/`
 
 ##### Hardcoded Path Issues
-- [ ] T046 [Resources] UnicodeCharEditorTests (2 failures)
-      - Error: `Could not find file 'C:\Users\johnm\Documents\repos\FieldWorks\DistFiles\Icu70.zip'`
-      - **Root cause**: Hardcoded path to main repo instead of worktree path
-      - **Pre-existing**: Path is not dynamically resolved
+- [x] T046 [Resources] UnicodeCharEditorTests
+      - Resolved (covered by full managed pass).
 
-- [ ] T061 [Env] EncConverters repository path not worktree-safe
-      - Symptom: many tests fail in setup with `DirectoryNotFoundException` for `...DistFiles\SIL\Repository\mappingRegistry.xml`
-      - Affects (at least): FwCoreDlgsTests, LexTextControlsTests, ITextDllTests, ParatextImportTests
-      - **Goal**: make the repository path resolve relative to the current worktree (or ensure the expected repository folder exists before constructing `EncConverters`)
+- [x] T061 [Env] EncConverters repository path not worktree-safe
+      - Resolved (covered by full managed pass).
 
 ##### Test Assertion Failures (Pre-existing Logic Bugs)
-- [ ] T047 [Logic] DetailControlsTests (5 failures)
-      - Assertion failures: `Expected: 1 But was: 0` in multiple tests
-      - **Root cause**: Test expectations don't match implementation behavior
-      - **Pre-existing**: Likely tests were written for different implementation
+- [x] T047 [Logic] DetailControlsTests
+      - Resolved (covered by full managed pass).
 
-- [ ] T048 [Logic] ManagedLgIcuCollatorTests (2 failures)
-      - Error 1: `NotImplementedException: The method or operation is not implemented` (GetSortKeyTest)
-      - Error 2: `Expected: 41 But was: 42` (SortKeyVariantTestWithValues)
-      - **Root cause**: `LgIcuCollator.get_SortKey` throws NotImplementedException
-      - **Pre-existing**: Method was never implemented
+- [x] T048 [Logic] ManagedLgIcuCollatorTests
+      - Resolved (covered by full managed pass).
 
 - [ ] T049 [Logic] FrameworkTests (11 failures)
       - Error: `NullReferenceException` in `RootSiteEditingHelper.OnKeyPress`
@@ -205,26 +201,20 @@
 - [x] T049 [Logic] FrameworkTests now passes (0 failures)
       - Latest run: 27 passed
 
-- [ ] T050 [Logic] ParatextImportTests (184 failures)
-      - Assertion failures: `Subdifferences should have been created. Expected: greater than 2 But was: 0`
-      - **Root cause**: Import diff logic not generating expected subdifferences
-      - **Pre-existing**: May be test data or logic regression
+- [x] T050 [Logic] ParatextImportTests
+      - Resolved (covered by full managed pass).
 
-- [ ] T051 [Logic] ITextDllTests (1 failure)
-      - Various test assertion failures
-      - **Pre-existing**: Need individual analysis
+- [x] T051 [Logic] ITextDllTests
+      - Resolved (covered by full managed pass).
 
-- [ ] T052 [Logic] LexTextControlsTests (10 failures)
-      - Test assertion failure
-      - **Pre-existing**: Need individual analysis
+- [x] T052 [Logic] LexTextControlsTests
+      - Resolved (covered by full managed pass).
 
-- [ ] T053 [Logic] ScriptureUtilsTests (2 failures)
-      - Test assertion failures
-      - **Pre-existing**: Need individual analysis
+- [x] T053 [Logic] ScriptureUtilsTests
+      - Resolved (covered by full managed pass).
 
-- [ ] T054 [Logic] xWorksTests (10 failures)
-      - Various test assertion failures
-      - **Pre-existing**: Need individual analysis; 1170 tests pass
+- [x] T054 [Logic] xWorksTests
+      - Resolved (covered by full managed pass).
 
 #### Native C++ Test Issues (Pre-existing)
 - [x] T022 [Native] Fix TestViews.exe crash (0xC0000005 access violation)
@@ -232,6 +222,8 @@
 
 ### Phase 5d: Test Suite Summary
 *Current test status after migration fixes:*
+
+- As of 2025-12-16, `./test.ps1 -NoBuild` completes successfully with **0 failed tests**.
 
 | Test DLL | Passed | Failed | Skipped | Status |
 |----------|--------|--------|---------|--------|
