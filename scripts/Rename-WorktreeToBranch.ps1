@@ -11,7 +11,10 @@
 #>
 
 [CmdletBinding()]
-param()
+param(
+	# Print the actions that would be taken, but do not move anything.
+	[switch]$DryRun
+)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
@@ -67,9 +70,8 @@ function Get-WorktreesRoot([string]$mainRepoRoot) {
 }
 
 function Convert-BranchToRelativePath([string]$branch) {
-	$segments = $branch -split '[\\/]'
-	$segments = $segments | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
-	if ($segments.Count -eq 0) {
+	$segments = @($branch -split '[\\/]' | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+	if ($segments.Length -eq 0) {
 		throw "Invalid branch name: '$branch'"
 	}
 	return $segments
@@ -88,11 +90,11 @@ function ConvertTo-CanonicalPath([string]$path) {
 }
 
 function Get-GitWorktrees([string]$mainRepoRoot) {
-	$lines = & git -C $mainRepoRoot worktree list --porcelain 2>$null
+	$lines = @(& git -C $mainRepoRoot worktree list --porcelain 2>$null)
 	if ($LASTEXITCODE -ne 0) {
 		throw "Failed to list git worktrees."
 	}
-	if ($null -eq $lines -or $lines.Count -eq 0) {
+	if ($null -eq $lines -or $lines.Length -eq 0) {
 		return @()
 	}
 
@@ -173,6 +175,11 @@ New-Item -ItemType Directory -Path (Split-Path $desiredPath -Parent) -Force | Ou
 Write-Host "Moving worktree..."
 Write-Host "  From: $currentWorktreeRoot"
 Write-Host "  To:   $desiredPath"
+
+if ($DryRun) {
+	Write-Host "[DRYRUN] Would run: git worktree move <current> <desired>"
+	return
+}
 
 & git -C $mainRepoRoot worktree move $currentWorktreeRoot $desiredPath
 if ($LASTEXITCODE -ne 0) {

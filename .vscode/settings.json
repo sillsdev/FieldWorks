@@ -6,6 +6,7 @@
     "speckit.tasks": true,
     "speckit.implement": true
   },
+  "resharper.solution.autoOpenLastSolution": true,
   "chat.tools.terminal.autoApprove": {
     // ============================================================================
     // SECURITY NOTE: Commands are matched against the ENTIRE command string.

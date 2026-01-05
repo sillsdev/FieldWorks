@@ -12,8 +12,11 @@
 
 [CmdletBinding()]
 param(
-	[Parameter(Mandatory = $true)]
-	[string]$BranchName
+	[Parameter(Mandatory = $false)]
+	[string]$BranchName = "",
+
+	# Print the actions that would be taken, but do not create/move/open anything.
+	[switch]$DryRun
 )
 
 Set-StrictMode -Version Latest
@@ -100,9 +103,8 @@ function ConvertTo-CanonicalPath([string]$path) {
 
 function Convert-BranchToRelativePath([string]$branch) {
 	# Allow feature/foo to become ...\feature\foo
-	$segments = $branch -split '[\\/]'
-	$segments = $segments | Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
-	if ($segments.Count -eq 0) {
+	$segments = @($branch -split '[\\/]' | Where-Object { -not [string]::IsNullOrWhiteSpace($_) })
+	if ($segments.Length -eq 0) {
 		throw "Invalid branch name: '$branch'"
 	}
 	return $segments
@@ -115,11 +117,11 @@ function Get-WorktreesRoot([string]$mainRepoRoot) {
 }
 
 function Get-GitWorktrees([string]$mainRepoRoot) {
-	$lines = & git -C $mainRepoRoot worktree list --porcelain 2>$null
+	$lines = @(& git -C $mainRepoRoot worktree list --porcelain 2>$null)
 	if ($LASTEXITCODE -ne 0) {
 		throw "Failed to list git worktrees."
 	}
-	if ($null -eq $lines -or $lines.Count -eq 0) {
+	if ($null -eq $lines -or $lines.Length -eq 0) {
 		return @()
 	}
 
@@ -165,6 +167,68 @@ function Get-GitWorktrees([string]$mainRepoRoot) {
 	return $worktrees.ToArray()
 }
 
+function Get-BranchChoices([string]$mainRepoRoot) {
+	# Return a single flat list: local branches first, then remotes.
+	# Each group is already sorted newest-first by git.
+	$localLines = @(& git -C $mainRepoRoot for-each-ref --sort=-committerdate --format="%(refname:short)`t%(committerdate:iso8601)" refs/heads 2>$null)
+	if ($LASTEXITCODE -ne 0) {
+		throw "Failed to list local branches."
+	}
+	$remoteLines = @(& git -C $mainRepoRoot for-each-ref --sort=-committerdate --format="%(refname:short)`t%(committerdate:iso8601)" refs/remotes/origin 2>$null)
+	if ($LASTEXITCODE -ne 0) {
+		throw "Failed to list remote branches."
+	}
+
+	$choices = New-Object System.Collections.Generic.List[object]
+
+	foreach ($line in $localLines) {
+		if ([string]::IsNullOrWhiteSpace($line)) { continue }
+		$parts = $line -split "`t", 2
+		$name = $parts[0]
+		if ([string]::IsNullOrWhiteSpace($name)) { continue }
+		$when = if ($parts.Length -gt 1) { $parts[1] } else { "" }
+		$choices.Add([pscustomobject]@{ Kind = "local"; Name = $name; Display = $name; Date = $when })
+	}
+
+	foreach ($line in $remoteLines) {
+		if ([string]::IsNullOrWhiteSpace($line)) { continue }
+		$parts = $line -split "`t", 2
+		$name = $parts[0]
+		if ([string]::IsNullOrWhiteSpace($name)) { continue }
+		# Skip origin/HEAD -> origin/main pointer.
+		if ($name -eq "origin/HEAD") { continue }
+		$when = if ($parts.Length -gt 1) { $parts[1] } else { "" }
+		$display = $name
+		if ($display.StartsWith("origin/")) { $display = $display.Substring("origin/".Length) }
+		$choices.Add([pscustomobject]@{ Kind = "remote"; Name = $name; Display = $display; Date = $when })
+	}
+
+	return $choices.ToArray()
+}
+
+function Select-Branch([object[]]$choices) {
+	if ($null -eq $choices -or $choices.Length -eq 0) {
+		throw "No branches found."
+	}
+
+	Write-Host "Select a branch (local first, then origin/*; newest first within each):"
+	for ($i = 0; $i -lt $choices.Length; $i++) {
+		$c = $choices[$i]
+		$kind = if ($c.Kind -eq "local") { "L" } else { "R" }
+		$when = if ([string]::IsNullOrWhiteSpace($c.Date)) { "" } else { " ($($c.Date))" }
+		Write-Host ("  {0}) [{1}] {2}{3}" -f ($i + 1), $kind, $c.Display, $when)
+	}
+
+	while ($true) {
+		$raw = Read-Host ("Enter selection (1-{0})" -f $choices.Length)
+		[int]$idx = 0
+		if ([int]::TryParse($raw, [ref]$idx) -and $idx -ge 1 -and $idx -le $choices.Length) {
+			return $choices[$idx - 1]
+		}
+		Write-Warning "Invalid selection."
+	}
+}
+
 function ConvertTo-CanonicalWorktreeBranch([string]$branchRef) {
 	if ([string]::IsNullOrWhiteSpace($branchRef)) {
 		return ""
@@ -186,7 +250,7 @@ function Set-VsCodeWindowForegroundIfOpen([string]$worktreePath, [string]$branch
 	$needles = @($folderName, $branchName) | Where-Object { -not [string]::IsNullOrWhiteSpace($_) } | Select-Object -Unique
 
 	$procs = @(Get-Process -Name "Code" -ErrorAction SilentlyContinue | Where-Object { $_.MainWindowHandle -ne 0 })
-	if ($procs.Count -eq 0) {
+	if ($procs.Length -eq 0) {
 		return $false
 	}
 
@@ -204,7 +268,7 @@ function Set-VsCodeWindowForegroundIfOpen([string]$worktreePath, [string]$branch
 		}
 	}
 
-	if ($windowMatches.Count -eq 0) {
+	if ($windowMatches.Length -eq 0) {
 		return $false
 	}
 
@@ -231,8 +295,16 @@ public static class Win32 {
 	}
 }
 
-$branch = ConvertTo-CanonicalBranchName $BranchName
 $mainRepoRoot = Get-MainRepoRoot $scriptRepoRoot
+
+$branchChoice = $null
+if ([string]::IsNullOrWhiteSpace($BranchName)) {
+	$choices = Get-BranchChoices $mainRepoRoot
+	$branchChoice = Select-Branch $choices
+	$BranchName = if ($branchChoice.Kind -eq "remote") { $branchChoice.Display } else { $branchChoice.Name }
+}
+
+$branch = ConvertTo-CanonicalBranchName $BranchName
 
 $worktreesRoot = Get-WorktreesRoot $mainRepoRoot
 $desiredPath = $worktreesRoot
@@ -292,36 +364,55 @@ else {
 		$hasRemote = Test-BranchExists -mainRepoRoot $mainRepoRoot -ref $remoteRef
 	}
 
-	if ($hasLocal) {
-		Write-Host "Creating worktree at $desiredPath for existing local branch '$branch'..."
-		& git -C $mainRepoRoot worktree add $desiredPath $branch
-	}
-	elseif ($hasRemote) {
-		Write-Host "Creating worktree at $desiredPath for remote branch 'origin/$branch'..."
-		& git -C $mainRepoRoot worktree add -b $branch $desiredPath "origin/$branch"
+	if ($DryRun) {
+		if ($hasLocal) {
+			Write-Host "[DRYRUN] Would create worktree at $desiredPath for existing local branch '$branch'."
+		}
+		elseif ($hasRemote) {
+			Write-Host "[DRYRUN] Would create worktree at $desiredPath for remote branch 'origin/$branch' (and create local branch '$branch')."
+		}
+		else {
+			Write-Host "[DRYRUN] Would create new branch '$branch' and worktree at $desiredPath."
+		}
+		$targetWorktreePath = $desiredPath
 	}
 	else {
-		Write-Host "Branch '$branch' not found; creating new branch and worktree at $desiredPath..."
-		& git -C $mainRepoRoot worktree add -b $branch $desiredPath
-	}
+		if ($hasLocal) {
+			Write-Host "Creating worktree at $desiredPath for existing local branch '$branch'..."
+			& git -C $mainRepoRoot worktree add $desiredPath $branch
+		}
+		elseif ($hasRemote) {
+			Write-Host "Creating worktree at $desiredPath for remote branch 'origin/$branch'..."
+			& git -C $mainRepoRoot worktree add -b $branch $desiredPath "origin/$branch"
+		}
+		else {
+			Write-Host "Branch '$branch' not found; creating new branch and worktree at $desiredPath..."
+			& git -C $mainRepoRoot worktree add -b $branch $desiredPath
+		}
 
-	if ($LASTEXITCODE -ne 0) {
-		throw "git worktree add failed."
+		if ($LASTEXITCODE -ne 0) {
+			throw "git worktree add failed."
+		}
 	}
 
 	$targetWorktreePath = $desiredPath
 }
 
-if (-not (Test-Path $targetWorktreePath -PathType Container)) {
+if (-not $DryRun -and -not (Test-Path $targetWorktreePath -PathType Container)) {
 	throw "Target worktree path does not exist: $targetWorktreePath"
 }
 
 # If VS Code is already open for this worktree, try to focus it.
-if (Set-VsCodeWindowForegroundIfOpen -worktreePath $targetWorktreePath -branchName $branch) {
+if (-not $DryRun -and (Set-VsCodeWindowForegroundIfOpen -worktreePath $targetWorktreePath -branchName $branch)) {
 	return
 }
 
 # Open a new VS Code window for the worktree workspace file (colorized).
+if ($DryRun) {
+	Write-Host "[DRYRUN] Would open VS Code on: $targetWorktreePath"
+	return
+}
+
 if (-not (Test-Path $colorizeScript -PathType Leaf)) {
 	throw "Missing colorize script: $colorizeScript"
 }

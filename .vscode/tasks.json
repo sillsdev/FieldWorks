@@ -113,10 +113,58 @@
       }
     },
     {
+      "label": "Worktree: Create/Open from branch (picker in terminal)",
+      "type": "shell",
+      "command": "./scripts/Worktree-CreateFromBranch.ps1",
+      "detail": "Create/open a worktree by selecting a branch in the terminal picker (local first, then origin/*)",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Worktree: Create/Open from branch (dry run)",
+      "type": "shell",
+      "command": "./scripts/Worktree-CreateFromBranch.ps1 -BranchName \"${input:worktreeBranch}\" -DryRun",
+      "detail": "Dry run: show where the worktree would be created/opened (no git changes, no VS Code launch)",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
       "label": "Worktree: Rename to branch",
       "type": "shell",
       "command": "./scripts/Rename-WorktreeToBranch.ps1",
       "detail": "Rename (move) the current worktree folder to ../<repo>.worktrees/<current_branch>",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Worktree: Rename to branch (dry run)",
+      "type": "shell",
+      "command": "./scripts/Rename-WorktreeToBranch.ps1 -DryRun",
+      "detail": "Dry run: show where the current worktree would be moved (no changes)",
       "options": {
         "shell": {
           "executable": "powershell.exe",

@@ -6,7 +6,7 @@
 
     Uses the VS Code workspace (.code-workspace) paradigm for worktree overrides:
     - Base workspace configuration is embedded in this script
-    - Writes a worktree-local workspace file: fw.worktree.code-workspace (git-ignored)
+	- Writes a worktree-local workspace file: <branch>.code-workspace (git-ignored)
 
     - If in a Git Worktree: Applies colors to Title Bar, Status Bar, and Activity Bar.
     - If in Main Repo: Removes these color customizations.
@@ -59,8 +59,60 @@ function Get-IsWorktree([string]$rootPath) {
 	return $false
 }
 
-function Get-WorktreeWorkspacePath([string]$rootPath) {
+function Get-WorktreeWorkspaceLegacyPath([string]$rootPath) {
 	return (Join-Path $rootPath "fw.worktree.code-workspace")
+}
+
+function Get-GitBranchName([string]$repoRoot) {
+	# Prefer symbolic-ref so detached HEAD doesn't return the literal string "HEAD".
+	try {
+		$branch = @(& git -C $repoRoot symbolic-ref --quiet --short HEAD 2>$null)
+		if ($LASTEXITCODE -eq 0 -and $branch.Length -gt 0 -and -not [string]::IsNullOrWhiteSpace($branch[0])) {
+			return $branch[0].Trim()
+		}
+	}
+	catch {
+		# Fall through to detached handling
+	}
+
+	# Detached HEAD: use short SHA so the workspace file name is stable and informative.
+	try {
+		$sha = @(& git -C $repoRoot rev-parse --short HEAD 2>$null)
+		if ($LASTEXITCODE -eq 0 -and $sha.Length -gt 0 -and -not [string]::IsNullOrWhiteSpace($sha[0])) {
+			return ("detached-{0}" -f $sha[0].Trim())
+		}
+	}
+	catch {
+		# ignore
+	}
+
+	return "detached"
+}
+
+function ConvertTo-SafeWorkspaceFileStem([string]$name) {
+	if ([string]::IsNullOrWhiteSpace($name)) {
+		return "fw.worktree"
+	}
+	$stem = $name.Trim()
+
+	# Prevent accidental subfolders (e.g. feature/foo) and other invalid filename chars.
+	$stem = $stem -replace "[\\/]", "-"
+	$stem = $stem -replace "\s+", "-"
+	foreach ($ch in [System.IO.Path]::GetInvalidFileNameChars()) {
+		$escaped = [Regex]::Escape([string]$ch)
+		$stem = $stem -replace $escaped, "-"
+	}
+	$stem = $stem.Trim(' ', '.', '-')
+	if ([string]::IsNullOrWhiteSpace($stem)) {
+		return "fw.worktree"
+	}
+	return $stem
+}
+
+function Get-WorktreeWorkspacePath([string]$rootPath) {
+	$branchName = Get-GitBranchName $rootPath
+	$fileStem = ConvertTo-SafeWorkspaceFileStem $branchName
+	return (Join-Path $rootPath ("{0}.code-workspace" -f $fileStem))
 }
 
 function Get-GitWorktrees([string]$anyRepoRoot) {
@@ -72,13 +124,14 @@ function Get-GitWorktrees([string]$anyRepoRoot) {
 	# worktree C:/path2
 	$lines = @()
 	try {
-		$lines = & git -C $anyRepoRoot worktree list --porcelain 2>$null
+		# Wrap in @() so a single line still becomes an array under StrictMode.
+		$lines = @(& git -C $anyRepoRoot worktree list --porcelain 2>$null)
 	}
 	catch {
 		throw "Failed to run 'git worktree list'. Is git available on PATH?"
 	}
 
-	if ($null -eq $lines -or $lines.Count -eq 0) {
+	if ($null -eq $lines -or $lines.Length -eq 0) {
 		return @()
 	}
 
@@ -128,25 +181,26 @@ function Get-GitWorktrees([string]$anyRepoRoot) {
 }
 
 function Pick-Worktree([object[]]$worktrees) {
-	if ($null -eq $worktrees -or $worktrees.Count -eq 0) {
+	$worktrees = @($worktrees)
+	if ($null -eq $worktrees -or $worktrees.Length -eq 0) {
 		throw "No worktrees found."
 	}
 
-	if ($worktrees.Count -eq 1) {
+	if ($worktrees.Length -eq 1) {
 		return $worktrees[0]
 	}
 
-	Write-Host "Select a worktree:" 
-	for ($i = 0; $i -lt $worktrees.Count; $i++) {
+	Write-Host "Select a worktree:"
+	for ($i = 0; $i -lt $worktrees.Length; $i++) {
 		$w = $worktrees[$i]
 		$branch = if ([string]::IsNullOrWhiteSpace($w.Branch)) { "" } else { " [$($w.Branch)]" }
 		Write-Host ("  {0}) {1}{2}" -f ($i + 1), $w.Path, $branch)
 	}
 
 	while ($true) {
-		$raw = Read-Host ("Enter selection (1-{0})" -f $worktrees.Count)
+		$raw = Read-Host ("Enter selection (1-{0})" -f $worktrees.Length)
 		[int]$idx = 0
-		if ([int]::TryParse($raw, [ref]$idx) -and $idx -ge 1 -and $idx -le $worktrees.Count) {
+		if ([int]::TryParse($raw, [ref]$idx) -and $idx -ge 1 -and $idx -le $worktrees.Length) {
 			return $worktrees[$idx - 1]
 		}
 		Write-Warning "Invalid selection."
@@ -215,6 +269,7 @@ function Write-WorktreeWorkspaceFile(
 	[Parameter(Mandatory = $true)][bool]$isWorkspaceLoaded
 ) {
 	$worktreeWorkspacePath = Get-WorktreeWorkspacePath $targetRoot
+	$legacyWorkspacePath = Get-WorktreeWorkspaceLegacyPath $targetRoot
 
 	# Choose color from a fixed palette (Loading.io: lloyds)
 	# Source: https://loading.io/color/feature/lloyds
@@ -265,7 +320,11 @@ function Write-WorktreeWorkspaceFile(
 	}
 
 	$settings = ConvertTo-PSObject $baseWorkspace.settings
-	$settings | Add-Member -MemberType NoteProperty -Name "workbench.colorCustomizations" -Value (ConvertTo-PSObject $settings."workbench.colorCustomizations") -Force
+	$existingColorCustomizations = $null
+	if ($settings.PSObject.Properties["workbench.colorCustomizations"]) {
+		$existingColorCustomizations = $settings."workbench.colorCustomizations"
+	}
+	$settings | Add-Member -MemberType NoteProperty -Name "workbench.colorCustomizations" -Value (ConvertTo-PSObject $existingColorCustomizations) -Force
 
 	foreach ($key in $managedKeys) {
 		# Remove any existing managed keys to keep behavior deterministic
@@ -286,13 +345,24 @@ function Write-WorktreeWorkspaceFile(
 	$worktreeWorkspace | ConvertTo-Json -Depth 10 | Set-Content -Encoding UTF8 $worktreeWorkspacePath
 	Write-Host "Wrote worktree-local workspace file: $worktreeWorkspacePath"
 
+	# Best-effort cleanup of legacy workspace filename.
+	if ($legacyWorkspacePath -ne $worktreeWorkspacePath -and (Test-Path $legacyWorkspacePath -PathType Leaf)) {
+		try {
+			Remove-Item -Path $legacyWorkspacePath -Force
+			Write-Host "Removed legacy workspace file: $legacyWorkspacePath"
+		}
+		catch {
+			Write-Warning "Failed to remove legacy workspace file: $legacyWorkspacePath"
+		}
+	}
+
 	return $worktreeWorkspacePath
 }
 
 switch ($Action) {
 	"Launch" {
-		$worktrees = Get-GitWorktrees $repoRoot
-		if ($worktrees.Count -eq 0) {
+		$worktrees = @(Get-GitWorktrees $repoRoot)
+		if ($worktrees.Length -eq 0) {
 			throw "No worktrees found in this repo."
 		}
 
@@ -329,6 +399,7 @@ switch ($Action) {
 	"Apply" {
 		$targetRoot = if (-not [string]::IsNullOrWhiteSpace($WorktreePath)) { $WorktreePath } else { $repoRoot }
 		$worktreeWorkspacePath = Get-WorktreeWorkspacePath $targetRoot
+		$legacyWorkspacePath = Get-WorktreeWorkspaceLegacyPath $targetRoot
 
 		$normalizedPassedWorkspaceFile = Normalize-PathForComparison $VSCodeWorkspaceFile
 		$normalizedWorktreeWorkspacePath = Normalize-PathForComparison $worktreeWorkspacePath
@@ -345,8 +416,9 @@ switch ($Action) {
 		}
 		else {
 			Write-Host "Main repo (or non-worktree) detected. Clearing managed colors."
-			if (Test-Path $worktreeWorkspacePath) {
-				Remove-Item -Path $worktreeWorkspacePath -Force
+			# Only remove the legacy file here; branch-named workspaces live only in worktrees.
+			if (Test-Path $legacyWorkspacePath -PathType Leaf) {
+				Remove-Item -Path $legacyWorkspacePath -Force
 			}
 		}
 		break
