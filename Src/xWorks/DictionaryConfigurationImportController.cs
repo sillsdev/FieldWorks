@@ -1,4 +1,4 @@
-// Copyright (c) 2017 SIL International
+// Copyright (c) 2017-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,7 +10,6 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using DesktopAnalytics;
 using Ionic.Zip;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
@@ -21,8 +20,8 @@ using SIL.FieldWorks.XWorks.LexText;
 using SIL.Lift.Migration;
 using SIL.Lift.Parsing;
 using SIL.Linq;
-using SIL.Reporting;
 using SIL.LCModel.Utils;
+using XCore;
 using File = System.IO.File;
 
 
@@ -33,7 +32,8 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class DictionaryConfigurationImportController
 	{
-		private LcmCache _cache;
+		private readonly LcmCache _cache;
+		private readonly PropertyTable _propertyTable;
 		private string _projectConfigDir;
 		/// <summary>
 		/// Registered configurations that we know about.
@@ -102,10 +102,12 @@ namespace SIL.FieldWorks.XWorks
 		};
 
 		/// <summary/>
-		public DictionaryConfigurationImportController(LcmCache cache, string projectConfigDir,
+		public DictionaryConfigurationImportController(LcmCache cache,
+			PropertyTable propertyTable, string projectConfigDir,
 			List<DictionaryConfigurationModel> configurations)
 		{
 			_cache = cache;
+			_propertyTable = propertyTable;
 			_projectConfigDir = projectConfigDir;
 			_configurations = configurations;
 		}
@@ -142,7 +144,7 @@ namespace SIL.FieldWorks.XWorks
 				if (_view == null) // _view is sometimes null in unit tests, and it's helpful to know what exactly went wrong.
 					throw new Exception(xWorksStrings.kstidCannotImport, e);
 #endif
-				MessageBox.Show(xWorksStrings.kstidCannotImport + " (" + e.Message + ")");
+				new SilErrorReportingAdapter(_view, _propertyTable).ReportNonFatalExceptionWithMessage(e, xWorksStrings.kstidCannotImport);
 				_view.explanationLabel.Text = xWorksStrings.kstidCannotImport;
 			}
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2017 SIL International
+// Copyright (c) 2017-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -79,10 +79,10 @@ namespace SIL.FieldWorks.XWorks
 				Directory.Delete(_reversalProjectConfigPath, true);
 			FileUtils.EnsureDirectoryExists(_reversalProjectConfigPath);
 
-			_controller = new DictionaryConfigurationImportController(Cache, _projectConfigPath,
+			_controller = new DictionaryConfigurationImportController(Cache, null, _projectConfigPath,
 				new List<DictionaryConfigurationModel>());
 
-			_reversalController = new DictionaryConfigurationImportController(Cache, _reversalProjectConfigPath,
+			_reversalController = new DictionaryConfigurationImportController(Cache, null, _reversalProjectConfigPath,
 				new List<DictionaryConfigurationModel>());
 
 			// Set up data for import testing.
@@ -130,10 +130,10 @@ namespace SIL.FieldWorks.XWorks
 				var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
 				styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Headword",
 					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, true, 2, true);
-				var testStyle = styleFactory.Create(Cache.LangProject.StylesOC, "TestStyle", ContextValues.InternalConfigureView, StructureValues.Body,
+				var testStyle = styleFactory.Create(Cache.LangProject.StylesOC, "TestStyle", ContextValues.InternalConfigureView, StructureValues.Undefined,
 					FunctionValues.Prose, true, 2, false);
 				testStyle.Usage.set_String(Cache.DefaultAnalWs, "Test Style");
-				var normalStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Normal", ContextValues.InternalConfigureView, StructureValues.Body,
+				var normalStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Normal", ContextValues.InternalConfigureView, StructureValues.Undefined,
 					FunctionValues.Prose, false, 2, true);
 				var propsBldr = TsStringUtils.MakePropsBldr();
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, 0x2BACCA); // arbitrary color to create para element
@@ -155,7 +155,7 @@ namespace SIL.FieldWorks.XWorks
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
 				styleWithNamedColors.Rules = propsBldr.GetTextProps();
-				var styleWithCustomColors = styleFactory.Create(Cache.LangProject.StylesOC, "Abnormal", ContextValues.InternalConfigureView, StructureValues.Body,
+				var styleWithCustomColors = styleFactory.Create(Cache.LangProject.StylesOC, "Abnormal", ContextValues.InternalConfigureView, StructureValues.Heading,
 					FunctionValues.Prose, false, 2, false);
 				styleWithCustomColors.BasedOnRA = normalStyle;
 				propsBldr = TsStringUtils.MakePropsBldr();

@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2025 SIL International
+// Copyright (c) 2007-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -763,9 +763,9 @@ namespace SIL.FieldWorks.Common.Framework
 		/// -------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determine whether the given style is compatible with the given type, context, structure, and function.
-		/// If the style is a factory style, and the context, structure, and function can't be adjusted to match, report an invalid installation.
-		/// If the style is NOT a factory style, and the context, structure, and function don't all match, rename it to prevent collisions.
-		/// If the style is not a factory style, but it is compatible, it is the CLIENT's responsibility to make adjustments.
+		/// If the style is compatible, adjust the context and function as needed.
+		/// If the style is a factory style, and the type, context, structure, or function can't be adjusted to match, report an invalid installation.
+		/// If the style is NOT a factory style, and the type, context, structure, or function are incompatible, rename it to prevent collisions.
 		/// </summary>
 		/// <param name="style">Style to check.</param>
 		/// <param name="type">Style type we want</param>
@@ -777,26 +777,6 @@ namespace SIL.FieldWorks.Common.Framework
 		public bool EnsureCompatibleFactoryStyle(IStStyle style, StyleType type,
 			ContextValues context, StructureValues structure, FunctionValues function)
 		{
-			// If this is a bult-in style, but the context or function has changed, update them.
-			if (style.IsBuiltIn &&
-				(style.Context != context ||
-				style.Function != function) &&
-				IsValidInternalStyleContext(style, context))
-			{   // For now, at least, this method only deals with context changes. Theoretically,
-				// we could in the future have a function, type, or structure change that would
-				// require some special action.
-				ChangeFactoryStyleToInternal(style, context); // only overridden in TeStylesXmlAccessor so far
-				if (style.Type != type)
-					style.Type = type;
-				// Structure and function are probably meaningless for internal styles, but just
-				// to be sure...
-				if (style.Structure != structure)
-					style.Structure = structure;
-				if (style.Function != function)
-					style.Function = function;
-				return true;
-			}
-
 			// Handle an incompatible Style by renaming a conflicting User style or reporting an invalid installation for an incompatible built-in style.
 			if (style.Type != type ||
 				!CompatibleContext(style.Context, context) ||
@@ -828,23 +808,6 @@ namespace SIL.FieldWorks.Common.Framework
 			if (style.Function != function)
 				style.Function = function;
 			return true;
-		}
-
-		/// -------------------------------------------------------------------------------------
-		/// <summary>
-		/// If the proposed context for a style is internal or internalMappable, make sure the
-		/// program actually expects and supports this context for this style.
-		/// </summary>
-		/// <param name="style">The style being updated</param>
-		/// <param name="proposedContext">The proposed context for the style</param>
-		/// <returns><c>true</c>if the proposed context is internal or internal mappable and
-		/// the program recognizes it as a valid</returns>
-		/// -------------------------------------------------------------------------------------
-		public virtual bool IsValidInternalStyleContext(IStStyle style,
-			ContextValues proposedContext)
-		{
-			// By default we don't recognize any style as 'internal'. TE overrides.
-			return false;
 		}
 
 		/// -------------------------------------------------------------------------------------
