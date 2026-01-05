@@ -5,7 +5,7 @@
     Chooses a color from a fixed 8-color palette based on the workspace path hash.
 
     Uses the VS Code workspace (.code-workspace) paradigm for worktree overrides:
-    - Reads the tracked base workspace file: fw.code-workspace
+    - Base workspace configuration is embedded in this script
     - Writes a worktree-local workspace file: fw.worktree.code-workspace (git-ignored)
 
     - If in a Git Worktree: Applies colors to Title Bar, Status Bar, and Activity Bar.
@@ -13,12 +13,34 @@
     Intended to be run as a "folderOpen" task in VS Code.
 #>
 
+param(
+    # VS Code expands ${workspaceFile} when running inside a .code-workspace.
+    # When opening a folder, this is typically empty.
+    [string]$VSCodeWorkspaceFile = ""
+)
+
 $ErrorActionPreference = "Stop"
 
 # Get the repo root (parent of scripts/)
 $repoRoot = (Get-Item $PSScriptRoot).Parent.FullName
 $worktreeWorkspacePath = Join-Path $repoRoot "fw.worktree.code-workspace"
 $gitPath = Join-Path $repoRoot ".git"
+
+function Normalize-PathForComparison([string]$path) {
+    if ([string]::IsNullOrWhiteSpace($path)) {
+        return ""
+    }
+    try {
+        # Avoid Resolve-Path here because the workspace file may not exist yet.
+        return ([System.IO.Path]::GetFullPath($path)).ToLowerInvariant()
+    } catch {
+        return $path.ToLowerInvariant()
+    }
+}
+
+$normalizedPassedWorkspaceFile = Normalize-PathForComparison $VSCodeWorkspaceFile
+$normalizedWorktreeWorkspacePath = Normalize-PathForComparison $worktreeWorkspacePath
+$isWorktreeWorkspaceLoaded = ($normalizedPassedWorkspaceFile -ne "") -and ($normalizedPassedWorkspaceFile -eq $normalizedWorktreeWorkspacePath)
 
 # Check if we are in a worktree or main repo
 $isWorktree = $false
@@ -64,7 +86,11 @@ function Parse-HexRgb($hex) {
     $r = [Convert]::ToInt32($h.Substring(0, 2), 16)
     $g = [Convert]::ToInt32($h.Substring(2, 2), 16)
     $b = [Convert]::ToInt32($h.Substring(4, 2), 16)
-    return @{ r = $r; g = $g; b = $b }
+    return @{
+        r = $r
+        g = $g
+        b = $b
+    }
 }
 
 # Base workspace configuration (embedded)
@@ -150,11 +176,27 @@ if ($isWorktree) {
         $settings."workbench.colorCustomizations" | Add-Member -MemberType NoteProperty -Name $prop.Name -Value $prop.Value -Force
     }
 
+    # Marker flag: true only when this task is running inside the generated workspace file
+    $settings | Add-Member -MemberType NoteProperty -Name "fieldworks.workspaceLoaded" -Value $isWorktreeWorkspaceLoaded -Force
+
     $worktreeWorkspace | Add-Member -MemberType NoteProperty -Name "settings" -Value $settings
 
     $worktreeWorkspace | ConvertTo-Json -Depth 10 | Set-Content $worktreeWorkspacePath
     Write-Host "Wrote worktree-local workspace file: $worktreeWorkspacePath"
-    Write-Host "Tip: Open it via VS Code: File -> Open Workspace from File..."
+
+    if (-not $isWorktreeWorkspaceLoaded) {
+        # Try to open the workspace file in VS Code
+        $codeCmd = "code"
+        $workspaceArg = $worktreeWorkspacePath
+        try {
+            Write-Host "Opening workspace in VS Code..."
+            & $codeCmd $workspaceArg
+        } catch {
+            Write-Warning "Could not launch VS Code automatically. Please open $worktreeWorkspacePath manually."
+        }
+    } else {
+        Write-Host "Workspace is already loaded. Not opening a new VS Code window."
+    }
 
 } else {
     # --- CLEAR COLORS ---

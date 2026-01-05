@@ -53,7 +53,7 @@
     {
       "label": "Setup: Colorize Worktree",
       "type": "shell",
-      "command": "./scripts/Setup-WorktreeColor.ps1",
+      "command": "./scripts/Setup-WorktreeColor.ps1 -VSCodeWorkspaceFile \"${workspaceFile}\"",
       "detail": "Sets a unique window color based on the worktree path",
       "runOptions": {
         "runOn": "folderOpen"
