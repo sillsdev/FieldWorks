@@ -185,9 +185,8 @@ try {
             $finalMsBuildArgs += "/p:SkipNative=true"
         }
         $finalMsBuildArgs += "/p:CL_MPCount=$mpCount"
-f ($env:FW_TRACE_LOG) {
-                $finalMsBuildArgs += "/p:FW_TRACE_LOG=`"$($env:FW_TRACE_LOG)`""
-            }
+        if ($env:FW_TRACE_LOG) {
+            $finalMsBuildArgs += "/p:FW_TRACE_LOG=`"$($env:FW_TRACE_LOG)`""
         }
 
         if ($BuildTests -or $RunTests) {
@@ -216,8 +215,9 @@ f ($env:FW_TRACE_LOG) {
         }
 
         # Bootstrap: Build FwBuildTasks first (required by SetupInclude.targets)
+        $fwBuildTasksOutputDir = Join-Path $PSScriptRoot "BuildTools/FwBuildTasks/$Configuration/"
         Invoke-MSBuild `
-            -Arguments @('Build/Src/FwBuildTasks/FwBuildTasks.csproj', '/t:Restore;Build', "/p:Configuration=$Configuration", "/p:Platform=$Platform", "/p:SkipFwBuildTasksAssemblyCheck=true", "/p:SkipFwBuildTasksUsingTask=true", "/p:SkipGenerateFwTargets=true", "/p:SkipSetupTargets=true", "/v:quiet", "/nologo") `
+            -Arguments @('Build/Src/FwBuildTasks/FwBuildTasks.csproj', '/t:Restore;Build', "/p:Configuration=$Configuration", "/p:Platform=$Platform", "/p:FwBuildTasksOutputPath=$fwBuildTasksOutputDir", "/p:SkipFwBuildTasksAssemblyCheck=true", "/p:SkipFwBuildTasksUsingTask=true", "/p:SkipGenerateFwTargets=true", "/p:SkipSetupTargets=true", "/v:quiet", "/nologo") `
             -Description 'FwBuildTasks (Bootstrap)'
 
         if (-not (Test-Path $fwTasksSourcePath)) {

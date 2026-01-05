@@ -28,6 +28,20 @@
       "default": ""
     },
     {
+      "id": "testConfiguration",
+      "type": "pickString",
+      "description": "Test configuration (matches test.ps1 -Configuration)",
+      "options": ["Debug", "Release"],
+      "default": "Debug"
+    },
+    {
+      "id": "testVerbosity",
+      "type": "pickString",
+      "description": "Test verbosity (matches test.ps1 -Verbosity)",
+      "options": ["quiet", "minimal", "normal", "detailed"],
+      "default": "normal"
+    },
+    {
       "id": "testProject",
       "type": "promptString",
       "description": "Path to test project (e.g., Src/Common/FwUtils/FwUtilsTests)",
@@ -62,6 +76,19 @@
     },
     // ==================== Build Tasks ====================
     {
+      "label": "dotnet: build",
+      "type": "shell",
+      "command": "./build.ps1",
+      "detail": "Override: build FieldWorks via build.ps1 (required build order & custom tasks)",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
       "label": "Build",
       "type": "shell",
       "command": "./build.ps1",
@@ -95,6 +122,19 @@
 
     // ==================== Test Tasks ====================
     {
+      "label": "dotnet: test",
+      "type": "shell",
+      "command": "./test.ps1",
+      "detail": "Override: run FieldWorks tests via test.ps1 (handles build/test conventions)",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
       "label": "Test",
       "type": "shell",
       "command": "./test.ps1",
@@ -112,9 +152,23 @@
       "problemMatcher": "$msCompile"
     },
     {
+      "label": "Test (list tests)",
+      "type": "shell",
+      "command": "./test.ps1 -ListTests -NoBuild -Configuration ${input:testConfiguration} -Verbosity ${input:testVerbosity}",
+      "group": "test",
+      "detail": "List tests via test.ps1 (requires existing built test assemblies)",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
       "label": "Test (with filter)",
       "type": "shell",
-      "command": "./test.ps1 -TestFilter '${input:testFilter}'",
+      "command": "./test.ps1 -TestFilter '${input:testFilter}' -Configuration ${input:testConfiguration} -Verbosity ${input:testVerbosity}",
       "group": "test",
       "detail": "Run tests with a filter expression",
       "options": {
@@ -128,7 +182,7 @@
     {
       "label": "Test (specific project)",
       "type": "shell",
-      "command": "./test.ps1 -TestProject '${input:testProject}'",
+      "command": "./test.ps1 -TestProject '${input:testProject}' -Configuration ${input:testConfiguration} -Verbosity ${input:testVerbosity}",
       "group": "test",
       "detail": "Run tests from a specific project",
       "options": {
@@ -142,9 +196,37 @@
     {
       "label": "Test (no build)",
       "type": "shell",
-      "command": "./test.ps1 -NoBuild",
+      "command": "./test.ps1 -NoBuild -Configuration ${input:testConfiguration} -Verbosity ${input:testVerbosity}",
       "group": "test",
       "detail": "Run tests without rebuilding (uses existing binaries)",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Test (native)",
+      "type": "shell",
+      "command": "./test.ps1 -Native -Configuration ${input:testConfiguration}",
+      "group": "test",
+      "detail": "Run native tests via test.ps1 (dispatches to scripts/Agent/Invoke-CppTest.ps1)",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Test (native, no build)",
+      "type": "shell",
+      "command": "./test.ps1 -Native -NoBuild -Configuration ${input:testConfiguration}",
+      "group": "test",
+      "detail": "Run native tests via test.ps1 without rebuilding",
       "options": {
         "shell": {
           "executable": "powershell.exe",

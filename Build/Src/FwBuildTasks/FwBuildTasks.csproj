@@ -5,9 +5,15 @@
     <Description>Additional msbuild tasks for FieldWorks</Description>
     <Product>FwBuildTasks</Product>
     <TargetFramework>net48</TargetFramework>
-    <!-- Use container-local output path when in Docker to avoid bind-mount conflicts with host Serena/OmniSharp -->
-    <OutputPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'">$(FwRoot)BuildTools\FwBuildTasks\$(Configuration)\</OutputPath>
-    <OutputPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">C:\Temp\BuildTools\FwBuildTasks\$(Configuration)\</OutputPath>
+    <!--
+      Output policy:
+      - By default, build outputs to the project bin folder.
+        This avoids file-lock conflicts when the build tasks assembly is already loaded by MSBuild nodes
+        (common when building the full solution in an IDE).
+      - build.ps1 bootstrapping passes FwBuildTasksOutputPath to publish the tasks into BuildTools.
+      - In containers, build.ps1 may pass a container-local path.
+    -->
+    <OutputPath Condition="'$(FwBuildTasksOutputPath)' != ''">$(FwBuildTasksOutputPath)</OutputPath>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <DefaultItemExcludes>$(DefaultItemExcludes);obj\**</DefaultItemExcludes>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>

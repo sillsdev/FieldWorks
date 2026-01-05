@@ -24,9 +24,9 @@
 	<UsingTask
 		TaskName="CheckAdminPrivilege"
 		AssemblyFile="$(FwBuildTasksAssembly)"
-		Condition="'$(OS)'=='Windows_NT'"
+		Condition="'$(OS)'=='Windows_NT' AND '$(SkipFwBuildTasksUsingTask)' != 'true' AND Exists('$(FwBuildTasksAssembly)')"
 	/>
-	<UsingTask TaskName="RegFree" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="RegFree" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true' AND Exists('$(FwBuildTasksAssembly)')" />
 	<UsingTask
 		TaskName="FindXsltcPath"
 		TaskFactory="CodeTaskFactory"
