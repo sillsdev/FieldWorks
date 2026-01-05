@@ -368,20 +368,14 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Given one of the original list items, and the spec of the column we want to sort by,
 		/// add to collector whatever ManyOnePathSortItems are appropriate.
 		/// </summary>
-		/// <param name="hvo">The hvo.</param>
-		/// <param name="colSpec">The col spec.</param>
-		/// <param name="collector">The collector.</param>
-		/// <param name="mdc">The MDC.</param>
-		/// <param name="sda">The sda.</param>
-		/// <param name="layouts">The layouts.</param>
 		/// ------------------------------------------------------------------------------------
 		public static void CollectBrowseItems(int hvo, XmlNode colSpec, ArrayList collector,
-			IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts)
+			LcmCache cache, IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts)
 		{
 			XmlNode topNode = XmlBrowseViewBaseVc.GetColumnNode(colSpec, hvo, sda, layouts);
 
 			// Todo: handle various cases here, mostly drill-down to <seq> or <obj>
-			CollectBrowseItems(hvo, topNode, collector, mdc, sda, layouts, null, null, null);
+			CollectBrowseItems(hvo, topNode, collector, cache, mdc, sda, layouts, null, null, null);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -389,18 +383,9 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Main (recursive) part of CollectBrowseItems. Given that hvo is to be displayed using node,
 		/// figure what objects to put in the list.
 		/// </summary>
-		/// <param name="hvo">The hvo.</param>
-		/// <param name="node">The node.</param>
-		/// <param name="collector">The collector.</param>
-		/// <param name="mdc">The MDC.</param>
-		/// <param name="sda">The sda.</param>
-		/// <param name="layouts">The layouts.</param>
-		/// <param name="caller">The caller.</param>
-		/// <param name="hvos">The hvos.</param>
-		/// <param name="flids">The flids.</param>
 		/// ------------------------------------------------------------------------------------
 		static void CollectBrowseItems(int hvo, XmlNode node, ArrayList collector,
-			IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts, XmlNode caller, int[] hvos, int[] flids)
+			LcmCache cache, IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts, XmlNode caller, int[] hvos, int[] flids)
 		{
 			switch(node.Name)
 			{
@@ -425,7 +410,7 @@ namespace SIL.FieldWorks.Common.Controls
 					collector.Add(new ManyOnePathSortItem(hvo, hvos, flids));
 					return;
 				}
-				CollectBrowseItems(hvoDst, dstNode, collector, mdc, sda, layouts, null, AppendInt(hvos, hvo), AppendInt(flids, flid));
+				CollectBrowseItems(hvoDst, dstNode, collector, cache, mdc, sda, layouts, null, AppendInt(hvos, hvo), AppendInt(flids, flid));
 			}
 				break;
 			case "seq":
@@ -459,7 +444,7 @@ namespace SIL.FieldWorks.Common.Controls
 						// As a fall-back, skip this object.
 						continue;
 					}
-					CollectBrowseItems(hvoDst, dstNode, collector, mdc, sda, layouts, null, AppendInt(hvos, hvo), AppendInt(flids, flid));
+					CollectBrowseItems(hvoDst, dstNode, collector, cache, mdc, sda, layouts, null, AppendInt(hvos, hvo), AppendInt(flids, flid));
 				}
 			}
 				break;
@@ -475,7 +460,7 @@ namespace SIL.FieldWorks.Common.Controls
 			case "layout":
 				// These are grouping nodes. In general this terminates things. However, if there is only
 				// one thing embedded apart from comments and properties, we can proceed.
-				XmlNode mainChild = FindMainChild(node);
+				XmlNode mainChild = FindMainChild(node, hvo, cache);
 				if (mainChild == null)
 				{
 					// no single non-trivial child, keep our current object
@@ -483,7 +468,7 @@ namespace SIL.FieldWorks.Common.Controls
 					return;
 				}
 				// Recurse with same object, but process the 'main child'.
-				CollectBrowseItems(hvo, mainChild, collector, mdc, sda, layouts, caller, hvos, flids);
+				CollectBrowseItems(hvo, mainChild, collector, cache, mdc, sda, layouts, caller, hvos, flids);
 				break;
 
 			default:
@@ -495,23 +480,44 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Finds the main child.
+		/// Returns null if there is more than one child.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
-		static private XmlNode FindMainChild(XmlNode node)
+		static private XmlNode FindMainChild(XmlNode node, int hvo, LcmCache cache)
 		{
 			XmlNode mainChild = null;
+			int count = 0;
 			foreach (XmlNode child in node.ChildNodes)
 			{
 				if (child is XmlComment || child.Name == "properties")
 					continue;
-				if (mainChild != null)
+				if (cache != null && child.Name == "if")
 				{
-					// multiple main children, stop here.
+					if (!XmlVc.ConditionPasses(child, hvo, cache))
+					{
+						// Act as if the node is not present.
+						continue;
+					}
+					mainChild = FindMainChild(child, hvo, cache);
+				}
+				else if (cache != null && child.Name == "ifnot")
+				{
+					if (XmlVc.ConditionPasses(child, hvo, cache))
+					{
+						// Act as if the node is not present.
+						continue;
+					}
+					mainChild = FindMainChild(child, hvo, cache);
+				}
+				else
+				{
+					mainChild = child;
+				}
+				count++;
+				if (count > 1)
+				{
 					return null;
 				}
-				mainChild = child;
 			}
 			return mainChild;
 		}
@@ -1049,6 +1055,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="bvi">The bvi.</param>
 		/// <param name="colSpec">The col spec.</param>
+		/// <param name="cache">The LcmCache.</param>
 		/// <param name="mdc">The MDC.</param>
 		/// <param name="sda">The sda.</param>
 		/// <param name="layouts">The layouts.</param>
@@ -1057,44 +1064,27 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
 		public static XmlNode GetNodeToUseForColumn(IManyOnePathSortItem bvi, XmlNode colSpec,
-			IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts, out int hvo, List<XmlNode> collectOuterStructParts)
+			LcmCache cache, IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts, out int hvo, List<XmlNode> collectOuterStructParts)
 		{
-			return GetDisplayCommandForColumn(bvi, colSpec, mdc, sda, layouts, out hvo, collectOuterStructParts).Node;
+			return GetDisplayCommandForColumn(bvi, colSpec, cache, mdc, sda, layouts, out hvo, collectOuterStructParts).Node;
 		}
 
 		/// <summary>
 		/// This returns a NodeDisplayCommand containing thd node for GetNodeToUseForColumn. However, it distinguishes whether to
 		/// display the children of this node or the node itself by returning the appropriate kind of NodeDisplayCommand.
 		/// </summary>
-		/// <param name="bvi"></param>
-		/// <param name="colSpec"></param>
-		/// <param name="mdc"></param>
-		/// <param name="sda"></param>
-		/// <param name="layouts"></param>
-		/// <param name="hvo"></param>
-		/// <param name="collectOuterStructParts"></param>
-		/// <returns></returns>
 		public static NodeDisplayCommand GetDisplayCommandForColumn(IManyOnePathSortItem bvi, XmlNode colSpec,
-			IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts, out int hvo, List<XmlNode> collectOuterStructParts)
+			LcmCache cache, IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts, out int hvo, List<XmlNode> collectOuterStructParts)
 		{
 			XmlNode topNode = XmlBrowseViewBaseVc.GetColumnNode(colSpec, bvi.PathObject(0), sda, layouts);
-			return GetDisplayCommandForColumn1(bvi, topNode, mdc, sda, layouts, 0, out hvo, collectOuterStructParts);
+			return GetDisplayCommandForColumn1(bvi, topNode, cache, mdc, sda, layouts, 0, out hvo, collectOuterStructParts);
 		}
 
 		/// <summary>
 		/// Recursive implementation method for GetDisplayCommandForColumn.
 		/// </summary>
-		/// <param name="bvi"></param>
-		/// <param name="node"></param>
-		/// <param name="mdc"></param>
-		/// <param name="sda"></param>
-		/// <param name="layouts"></param>
-		/// <param name="depth"></param>
-		/// <param name="hvo"></param>
-		/// <param name="collectOuterStructParts"></param>
-		/// <returns></returns>
 		static NodeDisplayCommand GetDisplayCommandForColumn1(IManyOnePathSortItem bvi, XmlNode node,
-			IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts, int depth,
+			LcmCache cache, IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts, int depth,
 			out int hvo, List<XmlNode> collectOuterStructParts)
 		{
 			hvo = bvi.PathObject(depth); // default
@@ -1129,7 +1119,7 @@ namespace SIL.FieldWorks.Common.Controls
 				// At this point we have to mimic the process that XmlVc uses to come up with the
 				// node that will be used to process the destination item.
 				XmlNode dstNode = GetNodeForRelatedObject(hvoDst, null, node, layouts, sda);
-				return GetDisplayCommandForColumn1(bvi, dstNode, mdc, sda, layouts, depth + 1, out hvo, collectOuterStructParts);
+				return GetDisplayCommandForColumn1(bvi, dstNode, cache, mdc, sda, layouts, depth + 1, out hvo, collectOuterStructParts);
 			}
 			case "para":
 			case "span":
@@ -1137,12 +1127,12 @@ namespace SIL.FieldWorks.Common.Controls
 			case "concpara":
 			case "innerpile":
 			{
-				XmlNode mainChild = FindMainChild(node);
+				XmlNode mainChild = FindMainChild(node,hvo, cache);
 				if (mainChild == null)
 					return new NodeDisplayCommand(node); // can't usefully go further.
 				if (collectOuterStructParts != null)
 					collectOuterStructParts.Add(node);
-				return GetDisplayCommandForColumn1(bvi, mainChild, mdc, sda, layouts, depth, out hvo, collectOuterStructParts);
+				return GetDisplayCommandForColumn1(bvi, mainChild, cache, mdc, sda, layouts, depth, out hvo, collectOuterStructParts);
 			}
 				// Review JohnT: In XmlVc, "part" is the one thing that calls ProcessChildren with non-null caller.
 				// this should make some difference here, but I can't figure what yet, or come up with a test that fails.
@@ -1165,10 +1155,10 @@ namespace SIL.FieldWorks.Common.Controls
 				// Also, expecially in the case of 'layout', they may result from unification, and be meaningless
 				// except for their children; in any case, the children are all we want to process.
 				// This is the main reason we return a command, not just a node: this case has to return the subclass.
-				XmlNode mainChild = FindMainChild(node);
+				XmlNode mainChild = FindMainChild(node, hvo, cache);
 				if (mainChild == null)
 					return new NodeChildrenDisplayCommand(node); // can't usefully go further.
-				return GetDisplayCommandForColumn1(bvi, mainChild, mdc, sda, layouts, depth, out hvo, collectOuterStructParts);
+				return GetDisplayCommandForColumn1(bvi, mainChild, cache, mdc, sda, layouts, depth, out hvo, collectOuterStructParts);
 			}
 			case "column":
 			case "layout":
@@ -1178,10 +1168,10 @@ namespace SIL.FieldWorks.Common.Controls
 				// Also, expecially in the case of 'layout', they may result from unification, and be meaningless
 				// except for their children; in any case, the children are all we want to process.
 				// This is the main reason we return a command, not just a node: this case has to return the subclass.
-				XmlNode mainChild = FindMainChild(node);
+				XmlNode mainChild = FindMainChild(node, hvo, cache);
 				if (mainChild == null)
 					return new NodeChildrenDisplayCommand(node); // can't usefully go further.
-				return GetDisplayCommandForColumn1(bvi, mainChild, mdc, sda, layouts, depth, out hvo, collectOuterStructParts);
+				return GetDisplayCommandForColumn1(bvi, mainChild, cache, mdc, sda, layouts, depth, out hvo, collectOuterStructParts);
 			}
 			default:
 				// If we can't find anything clever to do, we display the object at the

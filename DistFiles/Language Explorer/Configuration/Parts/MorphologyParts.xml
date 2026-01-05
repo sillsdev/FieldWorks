@@ -358,30 +358,54 @@
 			<obj field="MorphType" layout="SimpleName"/>
 		</part>
 		<part id="MoForm-Jt-Environments" type="JtView">
-			<ifnot is="MoAffixProcess">
-				<seq field="PhoneEnv" layout="StringRepresentation"/>
-			</ifnot>
-		</part>
+            <!-- Must always have exactly one value for allomorph columns to align properly. -->
+            <ifnot is="MoAffixProcess">
+                <para>
+                    <seq field="PhoneEnv" layout="StringRepresentation" sep="; "/>
+                </para>
+            </ifnot>
+            <if is="MoAffixProcess">
+                <lit>n/a</lit>
+            </if>
+        </part>
 		<part id="MoForm-Jt-InflectionClassForLexemeForm" type="JtView">
+            <!-- Must always have exactly one value for allomorph columns to align properly. -->
 			<if is="MoAffixForm">
-				<seq field="InflectionClasses" layout="Name"/>
+                <para>
+                    <seq field="InflectionClasses" layout="Name" sep="; "/>
+                </para>
 			</if>
 			<ifnot is="MoAffixForm">
 				<lit>n/a</lit>
 			</ifnot>
 		</part>
 		<part id="MoForm-Jt-InflectionClassForAffix" type="JtView">
+            <!-- Must always have exactly one value for allomorph columns to align properly. -->
 			<if is="MoAffixForm">
-				<seq field="InflectionClasses" layout="Name"/>
+                <para>
+                    <seq field="InflectionClasses" layout="Name" sep="; "/>
+                </para>
 			</if>
-		</part>
+            <ifnot is="MoAffixForm">
+                <lit>n/a</lit>
+            </ifnot>
+        </part>
 		<part id="MoForm-Jt-RequiredFeatures" type="JtView">
+            <!-- Must always have exactly one value for allomorph columns to align properly. -->
 			<if is="MoAffixAllomorph">
-                <obj field="MsEnvFeatures" layout="empty">
-                  <string field="LongNameTSS"/>
-                </obj>
-			</if>
-		</part>
+                <ifnot field="MsEnvFeatures" hvoequals="0">
+                    <obj field="MsEnvFeatures" layout="empty">
+                        <string field="LongNameTSS"/>
+                    </obj>
+                </ifnot>
+                <if field="MsEnvFeatures" hvoequals="0">
+                    <lit></lit>
+                </if>
+            </if>
+            <ifnot is="MoAffixAllomorph">
+                <lit>n/a</lit>
+            </ifnot>
+        </part>
 		<part id="MoForm-Jt-SimpleForm" type="JtView">
 			<string field="Form" ws="vernacular"/>
 		</part>

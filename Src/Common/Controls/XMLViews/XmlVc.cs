@@ -3541,7 +3541,8 @@ namespace SIL.FieldWorks.Common.Controls
 				if (val == hvoParent)
 					return true;
 			}
-			return false;
+			// e.g. sHvo = "0"
+			return sHvo.Equals(val.ToString());
 		}
 
 		/// <summary>

@@ -1372,7 +1372,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			List<XmlNode> outerParts = new List<XmlNode>();
 			int hvoToDisplay;
-			NodeDisplayCommand dispCommand = XmlViewsUtils.GetDisplayCommandForColumn(item, node, m_mdc,
+			NodeDisplayCommand dispCommand = XmlViewsUtils.GetDisplayCommandForColumn(item, node, m_cache, m_mdc,
 				m_sda, m_layouts, out hvoToDisplay, outerParts);
 			// See if the column has a writing system established for it.
 			try

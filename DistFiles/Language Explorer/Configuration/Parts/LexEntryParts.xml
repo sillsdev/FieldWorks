@@ -364,14 +364,13 @@
 			<seq field="PublishIn" layout="Name" />
 		</part>
 		<part id="LexEntry-Jt-InflectionClassForAffix" type="jtview">
-			<obj field="LexemeForm" layout="InflectionClassForLexemeForm"/>
-			<seq field="AlternateForms" layout="InflectionClassForAffix"/>
+			<seq field="AllAllomorphs" layout="InflectionClassForAffix"/>
 		</part>
         <part id="LexEntry-Jt-RequiredFeaturesForLexemeForm" type="JtView">
           <obj field="LexemeForm" layout="RequiredFeatures"/>
         </part>
 		<part id="LexEntry-Jt-RequiredFeatures" type="JtView">
-			<seq field="AlternateForms" layout="RequiredFeatures"/>
+            <seq field="AllAllomorphs" layout="RequiredFeatures"/>
 		</part>
 		<part id="LexEntry-Jt-HomographNumberForEntry" type="jtview">
 			<int field="HomographNumber"/>
