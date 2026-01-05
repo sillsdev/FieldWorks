@@ -77,6 +77,7 @@ _user.mak.lnx
 *.VC.db
 *.VC.opendb
 *.invalid
+*.code-workspace
 
 .dotest/
 .depend
@@ -160,6 +161,7 @@ build_output.txt
 *.backup
 *.code-workspace
 config.json
+
 # Test exclusion tooling artifacts
 Output/test-exclusions/
 Output/test-exclusions

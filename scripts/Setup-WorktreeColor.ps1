@@ -2,8 +2,12 @@
 .SYNOPSIS
     Sets a unique window color for the current VS Code workspace/worktree.
 .DESCRIPTION
-    Generates a color based on the workspace path hash and writes it to
-    .vscode/settings.json.
+    Chooses a color from a fixed 8-color palette based on the workspace path hash.
+
+    Uses the VS Code workspace (.code-workspace) paradigm for worktree overrides:
+    - Reads the tracked base workspace file: fw.code-workspace
+    - Writes a worktree-local workspace file: fw.worktree.code-workspace (git-ignored)
+
     - If in a Git Worktree: Applies colors to Title Bar, Status Bar, and Activity Bar.
     - If in Main Repo: Removes these color customizations.
     Intended to be run as a "folderOpen" task in VS Code.
@@ -13,8 +17,8 @@ $ErrorActionPreference = "Stop"
 
 # Get the repo root (parent of scripts/)
 $repoRoot = (Get-Item $PSScriptRoot).Parent.FullName
-$vscodeDir = Join-Path $repoRoot ".vscode"
-$settingsPath = Join-Path $vscodeDir "settings.json"
+$baseWorkspacePath = Join-Path $repoRoot "fw.code-workspace"
+$worktreeWorkspacePath = Join-Path $repoRoot "fw.worktree.code-workspace"
 $gitPath = Join-Path $repoRoot ".git"
 
 # Check if we are in a worktree or main repo
@@ -30,43 +34,74 @@ if (Test-Path $gitPath -PathType Leaf) {
     $isWorktree = $false
 }
 
-# Ensure .vscode exists if we need to write
-if ($isWorktree -and -not (Test-Path $vscodeDir)) {
-    New-Item -ItemType Directory -Path $vscodeDir -Force | Out-Null
-}
-
-# Load existing settings
-$settings = $null
-if (Test-Path $settingsPath) {
+function Read-JsonFileOrNull($path) {
+    if (-not (Test-Path $path)) {
+        return $null
+    }
     try {
-        $content = Get-Content $settingsPath -Raw
-        if (-not [string]::IsNullOrWhiteSpace($content)) {
-            $settings = $content | ConvertFrom-Json
+        $content = Get-Content $path -Raw
+        if ([string]::IsNullOrWhiteSpace($content)) {
+            return $null
         }
+        return $content | ConvertFrom-Json
     } catch {
-        Write-Warning "Could not parse existing settings.json. Starting fresh."
+        Write-Warning "Could not parse JSON at '$path'. Ignoring it."
+        return $null
     }
 }
 
-if ($null -eq $settings) {
-    $settings = New-Object PSObject
-}
-
-# Ensure workbench.colorCustomizations exists
-if (-not $settings.PSObject.Properties["workbench.colorCustomizations"]) {
-    $settings | Add-Member -MemberType NoteProperty -Name "workbench.colorCustomizations" -Value (New-Object PSObject)
-}
-
-$colors = $settings."workbench.colorCustomizations"
-# Handle case where it might be a Hashtable (from fresh parse)
-if ($colors -is [System.Collections.Hashtable]) {
-    $newColors = New-Object PSObject
-    foreach ($key in $colors.Keys) {
-        $newColors | Add-Member -MemberType NoteProperty -Name $key -Value $colors[$key]
+function Ensure-PSObjectProperty($obj, $name) {
+    if (-not $obj.PSObject.Properties[$name]) {
+        $obj | Add-Member -MemberType NoteProperty -Name $name -Value (New-Object PSObject)
     }
-    $settings."workbench.colorCustomizations" = $newColors
-    $colors = $newColors
 }
+
+function Ensure-PSObject($val) {
+    if ($null -eq $val) {
+        return (New-Object PSObject)
+    }
+    if ($val -is [System.Collections.Hashtable]) {
+        $obj = New-Object PSObject
+        foreach ($key in $val.Keys) {
+            $obj | Add-Member -MemberType NoteProperty -Name $key -Value $val[$key]
+        }
+        return $obj
+    }
+    return $val
+}
+
+function Merge-ObjectProperties($baseObj, $overrideObj) {
+    foreach ($prop in $overrideObj.PSObject.Properties) {
+        $baseObj | Add-Member -MemberType NoteProperty -Name $prop.Name -Value $prop.Value -Force
+    }
+}
+
+function Parse-HexRgb($hex) {
+    $h = $hex.Trim()
+    if ($h.StartsWith("#")) {
+        $h = $h.Substring(1)
+    }
+    if ($h.Length -ne 6) {
+        throw "Expected 6-digit hex color, got '$hex'"
+    }
+    $r = [Convert]::ToInt32($h.Substring(0, 2), 16)
+    $g = [Convert]::ToInt32($h.Substring(2, 2), 16)
+    $b = [Convert]::ToInt32($h.Substring(4, 2), 16)
+    return @{ r = $r; g = $g; b = $b }
+}
+
+# Load base workspace (tracked)
+$baseWorkspace = Read-JsonFileOrNull $baseWorkspacePath
+if ($null -eq $baseWorkspace) {
+    $baseWorkspace = New-Object PSObject
+    $baseWorkspace | Add-Member -MemberType NoteProperty -Name "folders" -Value @(@{ path = "." })
+    $baseWorkspace | Add-Member -MemberType NoteProperty -Name "settings" -Value (New-Object PSObject)
+}
+
+$baseWorkspace = Ensure-PSObject $baseWorkspace
+Ensure-PSObjectProperty $baseWorkspace "settings"
+$baseSettings = Ensure-PSObject $baseWorkspace.settings
+$baseWorkspace.settings = $baseSettings
 
 # Define the keys we manage
 $managedKeys = @(
@@ -80,11 +115,25 @@ $managedKeys = @(
 if ($isWorktree) {
     # --- APPLY COLORS ---
 
-    # Generate color from path hash
+    # Choose color from a fixed palette (Loading.io: lloyds)
+    # Source: https://loading.io/color/feature/lloyds
+    # Note: The palette on the page has 9 colors; we use the 8 brand colors and exclude the neutral "#1e1e1e".
+    $palette = @(
+        "#d81f2a", # red
+        "#ff9900", # orange
+        "#e0d86e", # yellow
+        "#9ea900", # green
+        "#6ec9e0", # light blue
+        "#007ea3", # blue
+        "#9e4770", # magenta
+        "#631d76"  # purple
+    )
+
     $md5 = [System.Security.Cryptography.MD5]::Create()
     $hashBytes = $md5.ComputeHash([System.Text.Encoding]::UTF8.GetBytes($repoRoot))
-    $r = $hashBytes[0]; $g = $hashBytes[1]; $b = $hashBytes[2]
-    $colorHex = "#{0:X2}{1:X2}{2:X2}" -f $r, $g, $b
+    $colorHex = $palette[($hashBytes[0] % $palette.Length)]
+    $rgb = Parse-HexRgb $colorHex
+    $r = $rgb.r; $g = $rgb.g; $b = $rgb.b
 
     # Determine text color (contrast)
     $luminance = (0.299 * $r + 0.587 * $g + 0.114 * $b)
@@ -94,33 +143,50 @@ if ($isWorktree) {
 
     Write-Host "Worktree detected. Applying color $colorHex to $repoRoot"
 
-    # Helper to set property
-    function Set-Color($name, $val) {
-        $colors | Add-Member -MemberType NoteProperty -Name $name -Value $val -Force
+    $colorCustomizations = New-Object PSObject
+    $colorCustomizations | Add-Member -MemberType NoteProperty -Name "titleBar.activeBackground" -Value $colorHex -Force
+    $colorCustomizations | Add-Member -MemberType NoteProperty -Name "titleBar.activeForeground" -Value $textColor -Force
+    $colorCustomizations | Add-Member -MemberType NoteProperty -Name "titleBar.inactiveBackground" -Value $colorHex -Force
+    $colorCustomizations | Add-Member -MemberType NoteProperty -Name "titleBar.inactiveForeground" -Value $inactiveColor -Force
+    $colorCustomizations | Add-Member -MemberType NoteProperty -Name "statusBar.background" -Value $colorHex -Force
+    $colorCustomizations | Add-Member -MemberType NoteProperty -Name "statusBar.foreground" -Value $textColor -Force
+    $colorCustomizations | Add-Member -MemberType NoteProperty -Name "activityBar.background" -Value $colorHex -Force
+    $colorCustomizations | Add-Member -MemberType NoteProperty -Name "activityBar.foreground" -Value $textColor -Force
+    $colorCustomizations | Add-Member -MemberType NoteProperty -Name "activityBar.inactiveForeground" -Value $inactiveColor -Force
+
+    # Build worktree-local workspace file (based on fw.code-workspace)
+    $worktreeWorkspace = New-Object PSObject
+    if ($baseWorkspace.PSObject.Properties["folders"]) {
+        $worktreeWorkspace | Add-Member -MemberType NoteProperty -Name "folders" -Value $baseWorkspace.folders
+    } else {
+        $worktreeWorkspace | Add-Member -MemberType NoteProperty -Name "folders" -Value @(@{ path = "." })
     }
 
-    Set-Color "titleBar.activeBackground" $colorHex
-    Set-Color "titleBar.activeForeground" $textColor
-    Set-Color "titleBar.inactiveBackground" $colorHex
-    Set-Color "titleBar.inactiveForeground" $inactiveColor
+    $settings = Ensure-PSObject $baseWorkspace.settings
+    $settings | Add-Member -MemberType NoteProperty -Name "workbench.colorCustomizations" -Value (Ensure-PSObject $settings."workbench.colorCustomizations") -Force
 
-    Set-Color "statusBar.background" $colorHex
-    Set-Color "statusBar.foreground" $textColor
+    foreach ($key in $managedKeys) {
+        # Remove any existing managed keys to keep behavior deterministic
+        if ($settings."workbench.colorCustomizations".PSObject.Properties[$key]) {
+            $settings."workbench.colorCustomizations".PSObject.Properties.Remove($key)
+        }
+    }
 
-    Set-Color "activityBar.background" $colorHex
-    Set-Color "activityBar.foreground" $textColor
-    Set-Color "activityBar.inactiveForeground" $inactiveColor
+    foreach ($prop in $colorCustomizations.PSObject.Properties) {
+        $settings."workbench.colorCustomizations" | Add-Member -MemberType NoteProperty -Name $prop.Name -Value $prop.Value -Force
+    }
+
+    $worktreeWorkspace | Add-Member -MemberType NoteProperty -Name "settings" -Value $settings
+
+    $worktreeWorkspace | ConvertTo-Json -Depth 10 | Set-Content $worktreeWorkspacePath
+    Write-Host "Wrote worktree-local workspace file: $worktreeWorkspacePath"
+    Write-Host "Tip: Open it via VS Code: File -> Open Workspace from File..."
 
 } else {
     # --- CLEAR COLORS ---
     Write-Host "Main repo (or non-worktree) detected. Clearing managed colors."
 
-    foreach ($key in $managedKeys) {
-        if ($colors.PSObject.Properties[$key]) {
-            $colors.PSObject.Properties.Remove($key)
-        }
+    if (Test-Path $worktreeWorkspacePath) {
+        Remove-Item -Path $worktreeWorkspacePath -Force
     }
 }
-
-# Save settings
-$settings | ConvertTo-Json -Depth 10 | Set-Content $settingsPath
