@@ -51,6 +51,8 @@ See `.github/AI_GOVERNANCE.md` for the documentation taxonomy and “source of t
 - Instruction files live under `.github/instructions/` with `applyTo`, `name`, and `description` frontmatter only; keep content ≤ 200 lines with Purpose/Scope, Key Rules, Examples.
 - Chat modes constrain role-specific behavior (managed/native/installer/technical-writer) and should be referenced when invoking Copilot agents.
 
+**Context7 Guidance:** When requesting API references, code examples, or library-specific patterns, consult Context7 first (for example, call `resolve-library-id` then `get-library-docs` or `search-code`). Prefer the Context7 libraries listed in `.vscode/context7-configuration.json` and include the resolved library ID in your prompt when possible. Context7 lookups are considered safe and are configured for auto-approval in this workspace.
+
 ## COPILOT.md Maintenance
 1. **Detect** stale folders: `python .github/detect_copilot_needed.py --strict --base origin/<branch> --json .cache/copilot/detect.json`.
 2. **Plan** diffs + reference groups: `python .github/plan_copilot_updates.py --detect-json .cache/copilot/detect.json --out .cache/copilot/diff-plan.json`.
