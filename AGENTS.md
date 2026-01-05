@@ -47,13 +47,8 @@ Native C++ (Phase 2) must build before managed code (Phases 3+). The traversal b
 ### COM/Registry Isolation
 FieldWorks uses **Registration-Free COM** (manifest-only) for most components.
 - Registry isolation is generally not required for standard builds.
-- Worktrees run on the host by default.
 
-### NuGet Package Cache (Host Isolation)
-Worktrees running on the host use a shared package cache but isolated scratch folders:
-- **SHARED**: `C:\ProgramData\FieldWorks\NuGetCache` (packages/http-cache)
-- **ISOLATED**: `.nuget-scratch` and `.temp` inside the worktree folder
-
+### NuGet Package Cache
 Host builds use `packages/` in the repo (via `nuget.config`) unless overridden by environment variables.
 
 ### Localization
@@ -64,6 +59,10 @@ Host builds use `packages/` in the repo (via `nuget.config`) unless overridden b
 ## ⚠️ Terminal Commands
 
 Commands with pipes (`|`), `&&`, or `2>&1` require manual approval. Use `scripts/Agent/` wrapper scripts instead—see `.github/instructions/terminal.instructions.md` for the transformation table.
+
+## Worktrees
+
+Use VS Code's native worktree support (Source Control view -> Worktrees) to manage multiple branches. This allows you to work on different features in isolation without switching branches in the main window.
 
 ## File Guidance
 

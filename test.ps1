@@ -4,13 +4,8 @@
 
 .DESCRIPTION
     This script orchestrates test execution for FieldWorks. It handles:
-    1. Auto-detecting worktrees and respawning inside Docker containers.
-    2. Initializing the Visual Studio Developer Environment (if needed).
-    3. Running tests via VSTest.console.exe.
-
-    When running in a worktree (e.g., fw-worktrees/agent-1), the script will
-    automatically detect if a corresponding Docker container (fw-agent-1) is
-    running and respawn inside the container for proper COM/registry isolation.
+    1. Initializing the Visual Studio Developer Environment (if needed).
+    2. Running tests via VSTest.console.exe.
 
 .PARAMETER Configuration
     The build configuration to test (Debug or Release). Default is Debug.
@@ -152,7 +147,7 @@ try {
 
         if (-not $NoBuild) {
             Write-Host "Building before running tests..." -ForegroundColor Cyan
-            & "$PSScriptRoot\build.ps1" -Configuration $Configuration -BuildTests -NoDocker
+            & "$PSScriptRoot\build.ps1" -Configuration $Configuration -BuildTests
             if ($LASTEXITCODE -ne 0) {
                 Write-Host "[ERROR] Build failed. Fix build errors before running tests." -ForegroundColor Red
                 $script:testExitCode = $LASTEXITCODE

@@ -35,6 +35,31 @@
     }
   ],
   "tasks": [
+    // ==================== Setup Tasks ====================
+    {
+      "label": "Setup: Colorize Worktree",
+      "type": "shell",
+      "command": "./scripts/Setup-WorktreeColor.ps1",
+      "detail": "Sets a unique window color based on the worktree path",
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      },
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      }
+    },
     // ==================== Build Tasks ====================
     {
       "label": "Build",

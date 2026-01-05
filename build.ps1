@@ -4,16 +4,10 @@
 
 .DESCRIPTION
     This script orchestrates the build process for FieldWorks. It handles:
-    1. Auto-detecting worktrees and respawning inside Docker containers.
-    2. Initializing the Visual Studio Developer Environment (if needed).
-    3. Bootstrapping build tasks (FwBuildTasks).
-    4. Restoring NuGet packages.
-    5. Building the solution via FieldWorks.proj using MSBuild Traversal.
-
-    When running in a worktree (e.g., fw-worktrees/agent-1), the script will
-    automatically detect if a corresponding Docker container (fw-agent-1) is
-    running and respawn the build inside the container for proper COM/registry
-    isolation. Use -NoDocker to bypass this behavior.
+    1. Initializing the Visual Studio Developer Environment (if needed).
+    2. Bootstrapping build tasks (FwBuildTasks).
+    3. Restoring NuGet packages.
+    4. Building the solution via FieldWorks.proj using MSBuild Traversal.
 
 .PARAMETER Configuration
     The build configuration (Debug or Release). Default is Debug.
@@ -91,7 +85,6 @@ param(
     [string[]]$MsBuildArgs = @(),
     [string]$LogFile,
     [int]$TailLines,
-    [switch]$UseDocker,
     [switch]$SkipRestore,
     [switch]$SkipNative
 )
@@ -146,16 +139,8 @@ try {
             throw "Project path '$Project' was not found. Pass a path relative to the repo root or an absolute path."
         }
 
-        if ($insideContainer) {
-            $fwTasksOut = 'C:\Temp\BuildTools\FwBuildTasks\Debug'
-            if (Test-Path $fwTasksOut) {
-                Write-Host "Cleaning stale FwBuildTasks output in container..." -ForegroundColor Yellow
-                Remove-Item -Path $fwTasksOut -Recurse -Force -ErrorAction SilentlyContinue
-            }
-        } else {
-            # Clean stale per-project obj/ folders (Host only - containers use C:\Temp\Obj)
-            Remove-StaleObjFolders -RepoRoot $PSScriptRoot
-        }
+        # Clean stale per-project obj/ folders
+        Remove-StaleObjFolders -RepoRoot $PSScriptRoot
 
         # =============================================================================
         # Build Configuration
@@ -200,11 +185,7 @@ try {
             $finalMsBuildArgs += "/p:SkipNative=true"
         }
         $finalMsBuildArgs += "/p:CL_MPCount=$mpCount"
-
-        $traceConfigArg = $MsBuildArgs | Where-Object { $_ -match "UseDevTraceConfig" }
-        if (-not $traceConfigArg -and $Configuration -ieq "Debug") {
-            $finalMsBuildArgs += "/p:UseDevTraceConfig=true"
-            if ($env:FW_TRACE_LOG) {
+f ($env:FW_TRACE_LOG) {
                 $finalMsBuildArgs += "/p:FW_TRACE_LOG=`"$($env:FW_TRACE_LOG)`""
             }
         }

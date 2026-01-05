@@ -15,7 +15,7 @@
 
 ## Baseline & Tracking
 1. **Inventory warnings without failing the build (all managed tests)**
-   - Run from the repo root (worktree auto-respawns into container): `msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64 /p:TreatWarningsAsErrors=false /m /t:allCsharp "/flp:logfile=warnings.log;warningsonly"`.
+   - Run from the repo root: `msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64 /p:TreatWarningsAsErrors=false /m /t:allCsharp "/flp:logfile=warnings.log;warningsonly"`.
    - The warnings-only log is written to the repo root as `warnings.log`. Per-project reruns can emit `warnings-<project>.log` using the same `/flp` pattern.
 2. **Bucket by project and warning code**
    - Parse `warnings.log` to a CSV (project, code, file, line, message).
@@ -53,7 +53,7 @@
 3. Update `warnings.log` to confirm the cluster is cleared before moving to the next.
 
 ## Validation
-- After all clusters are addressed, run `./build.ps1` (container auto-detect) to confirm zero warnings in tests with warnings-as-errors enabled.
+- After all clusters are addressed, run `./build.ps1` to confirm zero warnings in tests with warnings-as-errors enabled.
 - Follow with `./test.ps1 -NoBuild` to ensure runtime behavior is unchanged.
 
 ## Reporting

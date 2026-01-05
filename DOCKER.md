@@ -119,9 +119,9 @@ By default, worktree builds run directly on the host ("NoDocker" mode). Isolatio
 
 This ensures that concurrent builds on the host do not conflict on temporary files or file locks.
 
-### Docker Container Isolation (Optional)
+### Docker Container Isolation (Manual/CI)
 
-When using Docker containers (via `-UseDocker`), each container is **fully isolated**:
+When running builds inside Docker containers (e.g. in CI or manual `docker run`), each container is **fully isolated**:
 
 - **No Shared Volumes**: Each container has its own internal `C:\NuGetCache` and `C:\Temp`.
 - **No Cross-Talk**: Containers do not share package caches or scratch folders.

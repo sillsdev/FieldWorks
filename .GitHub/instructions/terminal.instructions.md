@@ -19,7 +19,6 @@ Commands with pipes (`|`), `&&`, or `2>&1` require manual approval. Use `scripts
 | `git diff ref -- path` | `.\scripts\Agent\Git-Search.ps1 -Action diff -Ref "ref" -Path "path"` |
 | `Get-Content file \| Select -First N` | `.\scripts\Agent\Read-FileContent.ps1 -Path "file" -HeadLines N` |
 | `Get-Content file \| Select-String pat` | `.\scripts\Agent\Read-FileContent.ps1 -Path "file" -Pattern "pat"` |
-| `docker exec container ...` | `.\scripts\Agent\Invoke-InContainer.ps1 -Script name` |
 
 ## Scripts
 
@@ -27,7 +26,5 @@ Commands with pipes (`|`), `&&`, or `2>&1` require manual approval. Use `scripts
 |--------|---------|
 | `Git-Search.ps1` | git show/diff/log/grep/blame |
 | `Read-FileContent.ps1` | File reading with filtering |
-| `Invoke-InContainer.ps1` | Run scripts in containers |
-| `Invoke-AgentTask.ps1` | Container-aware build/test |
 
 **Build/test**: Run `.\build.ps1` or `.\test.ps1` directly—they're auto-approvable.

@@ -14,12 +14,13 @@
 - Prefer `./build.ps1` or `FieldWorks.sln` builds; avoid ad-hoc project builds that skip traversal ordering.
 - Run tests relevant to your change before pushing; do not assume CI coverage.
 - Keep localization via `.resx` and respect `crowdin.json`; never hardcode translatable strings.
-- Avoid COM/registry edits without a test plan and container-safe execution (see `scripts/spin-up-agents.ps1`).
+- Avoid COM/registry edits without a test plan.
 - Stay within documented tooling—no surprise dependencies or scripts without updating instructions.
-- **Terminal commands**: **ALWAYS use `scripts/Agent/` wrapper scripts** for git, file reading, or container operations requiring pipes/filters. See `.github/instructions/terminal.instructions.md` for the transformation table.
+- **Terminal commands**: **ALWAYS use `scripts/Agent/` wrapper scripts** for git or file reading requiring pipes/filters. See `.github/instructions/terminal.instructions.md` for the transformation table.
 
 ## Build & Test Essentials
 - Prerequisites: install VS 2022 Desktop workloads, WiX 3.14.x (pre-installed on windows-latest), Git, LLVM/clangd + standalone OmniSharp (for Serena C++/C# support), and optional Crowdin CLI only when needed.
+- Docker is available for clean-slate reproduction if needed (see `DOCKER.md`), but standard development uses VS Code worktrees on the host.
 - Verify your environment: `.\Build\Agent\Verify-FwDependencies.ps1 -IncludeOptional`
 - Common commands:
   ```powershell
@@ -44,7 +45,7 @@
 | Managed / Native / Installer guidance | `.github/instructions/managed.instructions.md`, `.github/instructions/native.instructions.md`, `.github/instructions/installer.instructions.md` |
 | Security & PowerShell rules | `.github/instructions/security.instructions.md`, `.github/instructions/powershell.instructions.md` |
 | **Serena MCP (symbol tools)** | `.github/instructions/serena.instructions.md` |
-| **Agent wrapper scripts** | `scripts/Agent/` - build, test, git and container helpers for auto-approval |
+| **Agent wrapper scripts** | `scripts/Agent/` - build, test, and git helpers for auto-approval |
 | Prompts & specs | `.github/prompts/*.prompt.md`, `.github/spec-templates/`, `.github/recipes/` |
 | Chat modes | `.github/chatmodes/*.chatmode.md` |
 
@@ -81,38 +82,25 @@
   - Installer/config changes validated with WiX tooling.
   - Analyzer/lint warnings addressed.
 
-## Containers & Agent Worktrees
-- Paths containing `\worktrees\agent-<N>` automatically build inside Docker container `fw-agent-<N>`.
-- **Just run `.\build.ps1` or `.\test.ps1`** - they auto-detect worktrees and respawn in the container.
-- For the main repo checkout, scripts run directly on the host.
-- Use `-NoDocker` only if you need to bypass container detection.
-- **NuGet caching (hybrid)**: Host builds use `packages/`, containers use a hybrid strategy:
-  - SHARED: `C:\NuGetCache\packages` + `http-cache` on named volume `fw-nuget-cache`
-  - ISOLATED: `C:\Temp` for NuGetScratch (per-container)
-- Containers use **Hyper-V isolation** to fix the Windows Docker `MoveFile()` bug. See `DOCKER.md` for details.
-
 ### Build & Test Commands (ALWAYS use the scripts)
 ```powershell
-# Build (auto-detects container for worktrees)
+# Build
 .\build.ps1
 .\build.ps1 -Configuration Release
 .\build.ps1 -BuildTests
 
-# Test (auto-detects container for worktrees)
+# Test
 .\test.ps1
 .\test.ps1 -TestFilter "TestCategory!=Slow"
 .\test.ps1 -TestProject "Src/Common/FwUtils/FwUtilsTests"
 .\test.ps1 -NoBuild  # Skip build, use existing binaries
 
 # Both scripts automatically:
-# - Detect worktree paths (worktrees/agent-N)
-# - Check if container fw-agent-N is running
-# - Respawn inside container if available
 # - Clean stale obj/ folders and conflicting processes
 # - Set up VS environment
 ```
 
-**DO NOT** use raw `docker exec` or `msbuild` directly - let the scripts handle it.
+**DO NOT** use raw `msbuild` directly - let the scripts handle it.
 
 ## Where to Make Changes
 - Source: `Src/` contains managed/native projects—mirror existing patterns and keep tests near the code (`Src/<Component>.Tests`).
