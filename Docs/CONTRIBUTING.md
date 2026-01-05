@@ -126,7 +126,7 @@ git config merge.renameLimit 10000
 
 - **Write tests**: For any new functionality and when modifying existing code, write NUnit tests. This helps others not introduce problems and assists in maintaining existing functionality.
 
-- **Follow coding standards**: Please review our [Coding Standards](../.github/instructions/coding-standard.instructions.md). Note that our coding format is different from the default style in Visual Studio.
+- **Follow formatting and commit conventions**: Use `.editorconfig` for formatting and see [commit message guidelines](../.github/commit-guidelines.md) for CI-enforced commit rules.
 
 - **Make sure tests pass**: Ensure all tests pass before submitting. Tests are directly integrated into our build system.
 

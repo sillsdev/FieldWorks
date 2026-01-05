@@ -31,12 +31,6 @@ FieldWorks uses the **MSBuild Traversal SDK** for declarative, dependency-ordere
 .\build.ps1 -Configuration Release
 ```
 
-**Linux/macOS (Bash):**
-```bash
-./build.sh                     # Debug build
-./build.sh -c Release
-```
-
 For detailed build instructions, see [.github/instructions/build.instructions.md](.github/instructions/build.instructions.md).
 
 ## Model Context Protocol helpers
@@ -47,10 +41,10 @@ requirements and troubleshooting tips.
 
 ## Copilot instruction files
 
-We maintain both a human-facing `.github/copilot-instructions.md` and a set of
-short `*.instructions.md` files under `.github/instructions/` for Copilot code review.
-Use `scripts/tools/validate_instructions.py` locally or the `Validate instructions` CI job
-to ensure instruction files follow conventions.
+We maintain a human-facing `.github/copilot-instructions.md` plus a small curated set of
+`*.instructions.md` files under `.github/instructions/` for prescriptive constraints.
+
+See [.github/AI_GOVERNANCE.md](.github/AI_GOVERNANCE.md) for the documentation taxonomy and “source of truth” rules.
 
 ## Recent Changes
 

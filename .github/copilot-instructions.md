@@ -4,6 +4,8 @@
 - Give Copilot agents a fast, reliable playbook for FieldWorks—what the repo contains, how to build/test, and how to keep documentation accurate.
 - Assume nothing beyond this file and linked instructions; only search the repo when a referenced step fails or is missing.
 
+See `.github/AI_GOVERNANCE.md` for the documentation taxonomy and “source of truth” rules.
+
 ## Repository Snapshot
 - Product: FieldWorks (FLEx) — Windows-first linguistics suite maintained by SIL International.
 - Languages & tech: C#, C++/CLI, native C++, WiX, PowerShell, XML, JSON, XAML/WinForms.
@@ -11,7 +13,7 @@
 - Docs: `ReadMe.md` → https://github.com/sillsdev/FwDocumentation/wiki for deep dives; `.github/src-catalog.md` + per-folder `COPILOT.md` describe Src/ layout.
 
 ## Core Rules
-- Prefer `./build.ps1` or `FieldWorks.sln` builds; avoid ad-hoc project builds that skip traversal ordering.
+- Prefer `./build.ps1`; avoid ad-hoc project builds that skip traversal ordering.
 - Run tests relevant to your change before pushing; do not assume CI coverage.
 - Keep localization via `.resx` and respect `crowdin.json`; never hardcode translatable strings.
 - Avoid COM/registry edits without a test plan.
@@ -27,11 +29,8 @@
   # Full traversal build (Debug/x64 defaults)
   .\build.ps1
 
-  # Direct MSBuild
-  msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64 /m
-
-  # Targeted native rebuild
-  msbuild Build\Src\NativeBuild\NativeBuild.csproj /p:Configuration=Debug /p:Platform=x64
+  # Run tests
+  .\test.ps1
   ```
 - Tests: follow `.github/instructions/testing.instructions.md`; use VS Test Explorer or `vstest.console.exe` for managed tests.
 - Installer edits must follow `.github/instructions/installer.instructions.md` plus WiX validation before PR.
@@ -44,14 +43,13 @@
 | Debugging | `.github/instructions/debugging.instructions.md` |
 | Managed / Native / Installer guidance | `.github/instructions/managed.instructions.md`, `.github/instructions/native.instructions.md`, `.github/instructions/installer.instructions.md` |
 | Security & PowerShell rules | `.github/instructions/security.instructions.md`, `.github/instructions/powershell.instructions.md` |
-| **Serena MCP (symbol tools)** | `.github/instructions/serena.instructions.md` |
+| Guidance governance | `.github/AI_GOVERNANCE.md` |
 | **Agent wrapper scripts** | `scripts/Agent/` - build, test, and git helpers for auto-approval |
 | Prompts & specs | `.github/prompts/*.prompt.md`, `.github/spec-templates/`, `.github/recipes/` |
 | Chat modes | `.github/chatmodes/*.chatmode.md` |
 
 ## Instruction & Prompt Expectations
 - Instruction files live under `.github/instructions/` with `applyTo`, `name`, and `description` frontmatter only; keep content ≤ 200 lines with Purpose/Scope, Key Rules, Examples.
-- Use `.github/prompts/revise-instructions.prompt.md` for any instruction or COPILOT refresh; it covers detect → propose → validate.
 - Chat modes constrain role-specific behavior (managed/native/installer/technical-writer) and should be referenced when invoking Copilot agents.
 
 ## COPILOT.md Maintenance
@@ -61,7 +59,7 @@
 4. **Apply** the auto change-log from the planner: `python .github/copilot_apply_updates.py --plan .cache/copilot/diff-plan.json --folders Src/<Folder>`.
 5. **Edit narrative sections** using the planner JSON (change counts, commit log, `reference_groups`), keeping human guidance short and linking to subfolder docs where possible.
 6. **Validate** with `python .github/check_copilot_docs.py --only-changed --fail` (or use `--paths Src/Foo/COPILOT.md` for targeted checks).
-7. When documentation exceeds ~200 lines or acts as a parent index, migrate to `.github/templates/organizational-copilot.template.md` plus `.github/instructions/organizational-folders.instructions.md`.
+7. When documentation exceeds ~200 lines or acts as a parent index, migrate to `.github/templates/organizational-copilot.template.md` and keep the parent doc as a navigation index.
 8. Run `.github/prompts/copilot-folder-review.prompt.md` with the updated plan slice to simulate Copilot review before committing.
 
 ## CI & Validation Requirements
@@ -116,6 +114,4 @@
 - [ ] Record uncertainties with `FIXME(<topic>)` and resolve them when evidence is available.
 - [ ] Refer back to this guide whenever you need repo-wide ground truth.
 
-## Maintaining Instruction Tooling
-- Run `python scripts/tools/update_instructions.py` after editing instruction files to refresh `inventory.yml`, regenerate `manifest.json`, and execute the structural validator.
-- Use the VS Code tasks (`COPILOT: Detect updates needed`, `COPILOT: Propose updates for changed folders`, `COPILOT: Validate COPILOT docs`) or ship the same commands via terminal for consistency.
+

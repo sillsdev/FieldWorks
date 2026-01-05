@@ -394,19 +394,6 @@
       "problemMatcher": []
     },
     {
-      "label": "COPILOT: Validate instructions",
-      "type": "shell",
-      "command": "python scripts/tools/validate_instructions.py",
-      "detail": "Lint instruction files",
-      "options": {
-        "shell": {
-          "executable": "powershell.exe",
-          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
-        }
-      },
-      "problemMatcher": []
-    },
-    {
       "label": "COPILOT: Plan all folders",
       "type": "shell",
       "command": "& { . ./Build/Agent/GitHelpers.ps1; $base = Get-DefaultBranchRef; python .github/plan_copilot_updates.py --all --fallback-base $base --out .cache/copilot/diff-plan.json }",

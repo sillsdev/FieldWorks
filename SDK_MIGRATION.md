@@ -323,10 +323,7 @@ Phase 15-21: Test Projects (organized by component layer)
 - Initializes VS Developer environment
 - Supports `/m` parallel builds
 
-**`build.sh`** (Linux/macOS Bash):
-- Modernized to use traversal SDK
-- Consistent cross-platform experience
-- Automatic package restoration
+**Note**: `build.sh` is not supported in this repo (FieldWorks is Windows-first). Use `.\build.ps1`.
 
 **Removed Parameters**:
 - `-UseTraversal` (now always on)
@@ -358,10 +355,6 @@ Phase 15-21: Test Projects (organized by component layer)
 # Windows
 .\build.ps1                           # Debug x64
 .\build.ps1 -Configuration Release    # Release x64
-
-# Linux/macOS
-./build.sh                            # Debug x64
-./build.sh -c Release                 # Release x64
 
 # Direct MSBuild
 msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64 /m
@@ -862,10 +855,10 @@ All legacy references updated to point to new paths
 - Platform-specific quirks
 
 **After Migration**:
-- Single entry point: `build.ps1`/`build.sh` → `FieldWorks.proj`
+- Single entry point: `build.ps1` → `FieldWorks.proj`
 - Centralized build logic in traversal SDK
 - Automatic dependency resolution
-- Consistent cross-platform experience
+- Consistent build experience via traversal ordering
 
 ---
 
@@ -2508,7 +2501,7 @@ Migration is merge-ready when:
 #### **Build Validation** ✅
 - [x] Clean build completes: `.\build.ps1`
 - [x] Release build completes: `.\build.ps1 -Configuration Release`
-- [x] Linux build completes: `./build.sh`
+- [x] Linux build: N/A (FieldWorks is Windows-first; `build.sh` is not supported)
 - [x] Incremental builds work correctly
 - [x] Parallel builds safe: `.\build.ps1 -MsBuildArgs @('/m')`
 - [x] Native-only build: `msbuild Build\Src\NativeBuild\NativeBuild.csproj`
@@ -2685,7 +2678,7 @@ FieldWorks/
 ├── Directory.Build.props     # Global MSBuild properties
 ├── FieldWorks.sln            # Main solution (x64 only)
 ├── build.ps1                 # Windows build script (modernized)
-└── build.sh                  # Linux/macOS build script (modernized)
+└── test.ps1                  # Test runner script
 ```
 
 ### Key Files
@@ -2698,7 +2691,7 @@ FieldWorks/
 | `Build/RegFree.targets`                    | Manifest generation                | NEW                                  |
 | `Directory.Build.props`                    | Global properties (x64, net48)     | Enhanced                             |
 | `build.ps1`                                | Windows build script               | Simplified                           |
-| `build.sh`                                 | Linux build script                 | Modernized                           |
+| `test.ps1`                                 | Test runner script                 | Existing                             |
 
 ### Migration Documents
 
@@ -2719,7 +2712,6 @@ FieldWorks/
 # Standard Development
 .\build.ps1                              # Debug x64 build
 .\build.ps1 -Configuration Release       # Release x64 build
-./build.sh                               # Linux/macOS build
 
 # Direct MSBuild
 msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64 /m

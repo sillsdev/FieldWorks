@@ -41,7 +41,7 @@ git checkout -b feature/my-feature-name
 
 ### Step 2: Make Your Changes
 
-1. Write your code following the [Coding Standards](../../.github/instructions/coding-standard.instructions.md)
+1. Write your code following `.editorconfig` and the repo conventions in `.github/copilot-instructions.md`
 2. Write or update tests for your changes
 3. Ensure all tests pass locally
 4. Commit with clear, descriptive messages
@@ -88,7 +88,7 @@ When reviewing, check for:
 - **Performance**: Are there any performance implications?
 - **Documentation**: Is the code well-documented?
 
-See [Code Review Guidelines](../../.github/instructions/code-review.instructions.md) for detailed review criteria.
+Follow the checklist in the PR template and ensure relevant tests are run.
 
 ## Merge Requirements
 
@@ -185,6 +185,6 @@ git push -u origin revert/feature-name
 ## See Also
 
 - [CONTRIBUTING.md](../CONTRIBUTING.md) - Getting started with contributions
-- [Coding Standards](../../.github/instructions/coding-standard.instructions.md) - Code style guidelines
-- [Code Review Guidelines](../../.github/instructions/code-review.instructions.md) - What reviewers look for
+- [Commit message guidelines](../../.github/commit-guidelines.md) - CI-enforced commit rules
+- [Copilot guidance governance](../../.github/AI_GOVERNANCE.md) - Where docs and rules live
 - [Release Process](release-process.md) - How releases are managed

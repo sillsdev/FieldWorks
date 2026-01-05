@@ -197,7 +197,7 @@ Convert all C++ projects to CMake, which generates platform-appropriate build fi
 
 ### Existing Infrastructure
 
-The `.github/instructions/cmake-vcpkg.instructions.md` file mentions vcpkg manifest mode and CMake, suggesting **future plans exist**. However:
+There is no current in-repo guidance or infrastructure indicating an active CMake/vcpkg migration. Evidence:
 - No `vcpkg.json` manifest exists yet
 - No `CMakeLists.txt` files in Src/ (only in `Lib/src/graphite2` and `Lib/src/unit++`)
 - No `CMakePresets.json` exists
