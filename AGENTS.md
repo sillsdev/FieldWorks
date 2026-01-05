@@ -45,22 +45,16 @@ dotnet test Src/<Component>.Tests/<Component>.Tests.csproj
 Native C++ (Phase 2) must build before managed code (Phases 3+). The traversal build in `FieldWorks.proj` handles this automatically.
 
 ### COM/Registry Isolation
-Changes affecting COM registration or the Windows registry must:
-- Include appropriate tests
-- Work inside Docker containers (see `scripts/spin-up-agents.ps1`)
-- Never assume host machine registry state
+FieldWorks uses **Registration-Free COM** (manifest-only) for most components.
+- Registry isolation is generally not required for standard builds.
+- Worktrees run on the host by default.
 
-### NuGet Package Cache (Hybrid Architecture)
-Containers use a hybrid caching strategy:
-- **SHARED** (on named volume `fw-nuget-cache`):
-  - `C:\NuGetCache\packages\` - global-packages (download once, all agents read)
-  - `C:\NuGetCache\http-cache\` - HTTP cache (feed metadata)
-- **ISOLATED** (container-local):
-  - `C:\Temp\` - temp/NuGetScratch (extraction operations)
+### NuGet Package Cache (Host Isolation)
+Worktrees running on the host use a shared package cache but isolated scratch folders:
+- **SHARED**: `C:\ProgramData\FieldWorks\NuGetCache` (packages/http-cache)
+- **ISOLATED**: `.nuget-scratch` and `.temp` inside the worktree folder
 
-Host builds use `packages/` in the repo (via `nuget.config`).
-
-Containers use **Hyper-V isolation** to fix the Windows Docker `MoveFile()` bug ([moby/moby#38256](https://github.com/moby/moby/issues/38256)). See `DOCKER.md` and `.cache/NUGET_CONTAINER_CACHE_ANALYSIS.md` for details.
+Host builds use `packages/` in the repo (via `nuget.config`) unless overridden by environment variables.
 
 ### Localization
 - Use `.resx` files for localizable strings

@@ -10,6 +10,7 @@
     <ApplicationIcon>Branding\LT.ico</ApplicationIcon>
     <EnableRegFreeCom>true</EnableRegFreeCom>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <UseDevTraceConfig Condition="'$(UseDevTraceConfig)'=='' and '$(FW_TRACE_LOG)'!=''">true</UseDevTraceConfig>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -85,6 +86,13 @@
     <None Include="Branding\LT.png" />
     <None Include="Branding\LT64.png" />
     <None Include="Branding\LT128.png" />
+    <None Include="FieldWorks.Diagnostics.config" Condition="'$(UseDevTraceConfig)'!='true'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="FieldWorks.Diagnostics.dev.config" Condition="'$(UseDevTraceConfig)'=='true'">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <TargetPath>FieldWorks.Diagnostics.config</TargetPath>
+    </None>
   </ItemGroup>
   <Import Project="BuildInclude.targets" />
   <ItemGroup>

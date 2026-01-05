@@ -37,8 +37,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public DebugProcs()
 		{
 #if DEBUG
-			m_DebugReport = DebugReportClass.Create();
-			m_DebugReport.SetSink(this);
+			try
+			{
+				m_DebugReport = DebugReportClass.Create();
+				m_DebugReport.SetSink(this);
+			}
+			catch (COMException ex)
+			{
+				Debug.WriteLine($"DebugProcs: DebugReport COM activation failed ({ex.Message})");
+				m_DebugReport = null;
+			}
+			catch (Exception ex)
+			{
+				Debug.WriteLine($"DebugProcs: unexpected failure wiring DebugReport ({ex.Message})");
+				m_DebugReport = null;
+			}
 #endif
 		}
 

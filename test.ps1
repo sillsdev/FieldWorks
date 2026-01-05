@@ -31,9 +31,6 @@
     Test output verbosity: q[uiet], m[inimal], n[ormal], d[etailed].
     Default is 'normal'.
 
-.PARAMETER NoDocker
-    If set, bypasses automatic Docker container detection and runs locally.
-
 .EXAMPLE
     .\test.ps1
     Runs all tests in Debug configuration (builds first if needed).
@@ -52,9 +49,6 @@
 
 .NOTES
     FieldWorks is x64-only. Tests run in 64-bit mode.
-
-    Worktree tests automatically use Docker containers when available for
-    proper COM/registry isolation.
 #>
 [CmdletBinding()]
 param(
@@ -65,7 +59,6 @@ param(
     [switch]$ListTests,
     [ValidateSet('quiet', 'minimal', 'normal', 'detailed', 'q', 'm', 'n', 'd')]
     [string]$Verbosity = "normal",
-    [switch]$NoDocker,
     [switch]$Native
 )
 
@@ -82,61 +75,21 @@ if (-not (Test-Path $helpersPath)) {
 }
 Import-Module $helpersPath -Force
 
-$insideContainer = Test-InsideContainer
-if (-not $insideContainer) {
-    Stop-ConflictingProcesses -CrossContainers -IncludeOmniSharp
-}
-
-# =============================================================================
-# Docker Container Auto-Detection for Worktrees
-# =============================================================================
-
-if (-not $NoDocker -and -not $insideContainer) {
-    $agentNum = Get-WorktreeAgentNumber
-    if ($null -ne $agentNum) {
-        $containerName = "fw-agent-$agentNum"
-        if (Test-DockerContainerRunning -ContainerName $containerName) {
-            # Build arguments for container execution
-            $containerArgs = New-ContainerArgumentString -Parameters @{
-                Configuration = $Configuration
-                TestFilter = $TestFilter
-                TestProject = $TestProject
-                NoBuild = $NoBuild.IsPresent
-                ListTests = $ListTests.IsPresent
-                Verbosity = $Verbosity
-                Native = $Native.IsPresent
-            } -Defaults @{
-                Configuration = 'Debug'
-                Verbosity = 'normal'
-            }
-
-            Invoke-InContainer -ScriptName "test.ps1" -Arguments $containerArgs -AgentNumber $agentNum
-            exit 0
-        }
-        else {
-            Write-Host "[WARN] Worktree agent-$agentNum detected but container '$containerName' is not running" -ForegroundColor Yellow
-            Write-Host "   Running tests locally (use 'scripts/spin-up-agents.ps1' to start containers)" -ForegroundColor Yellow
-            Write-Host ""
-        }
-    }
-}
+Stop-ConflictingProcesses -IncludeOmniSharp
 
 # =============================================================================
 # Environment Setup
 # =============================================================================
 
-$allSessionsKill = Test-InsideContainer
-$crossContainerKill = -not $allSessionsKill
 $cleanupArgs = @{
-    AllSessions = $allSessionsKill
-    CrossContainers = $crossContainerKill
     IncludeOmniSharp = $true
+    RepoRoot = $PSScriptRoot
 }
 
 $testExitCode = 0
 
 try {
-    Invoke-WithFileLockRetry -Context "FieldWorks test run" -AllSessions:$allSessionsKill -CrossContainers:$crossContainerKill -IncludeOmniSharp -Action {
+    Invoke-WithFileLockRetry -Context "FieldWorks test run" -IncludeOmniSharp -Action {
         # Initialize VS environment
         Initialize-VsDevEnvironment
         Test-CvtresCompatibility
@@ -148,8 +101,7 @@ try {
         Stop-ConflictingProcesses @cleanupArgs
 
         # Clean stale obj folders (only if not building, as build.ps1 does it too)
-        # Skip in containers as they use C:\Temp\Obj
-        if ($NoBuild -and -not $insideContainer) {
+        if ($NoBuild) {
             Remove-StaleObjFolders -RepoRoot $PSScriptRoot
         }
 

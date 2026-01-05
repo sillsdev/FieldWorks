@@ -24,9 +24,6 @@
 
 $moduleRoot = $PSScriptRoot
 
-# Container helpers (detection, path resolution, execution)
-Import-Module (Join-Path $moduleRoot "FwContainerHelpers.psm1") -Force
-
 # Build environment (VS setup, MSBuild, VSTest)
 Import-Module (Join-Path $moduleRoot "FwBuildEnvironment.psm1") -Force
 
@@ -34,48 +31,33 @@ Import-Module (Join-Path $moduleRoot "FwBuildEnvironment.psm1") -Force
 # Process Management Functions
 # =============================================================================
 
-function Stop-ContainerBuildProcesses {
-    param(
-        [string]$ContainerName
-    )
-
-    if (-not $ContainerName) { return }
-
-    $cleanupCommand = @"
-        `$processNames = @('dotnet', 'msbuild', 'VBCSCompiler', 'vstest.console', 'testhost', 'FieldWorks', 'cl', 'link', 'lib', 'nmake', 'cvtres', 'rc', 'midl', 'tracker', 'vctip', 'ml64')
-        foreach (`$name in `$processNames) {
-            Get-Process -Name `$name -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
-        }
-        Start-Sleep -Milliseconds 300
-"@
-
-    Write-Host "Closing build processes in container '$ContainerName'..." -ForegroundColor Yellow
-    docker exec $ContainerName powershell -NoProfile -Command $cleanupCommand 2>$null
-}
-
 function Stop-ConflictingProcesses {
     <#
     .SYNOPSIS
         Stops processes that could interfere with builds/tests.
     .DESCRIPTION
         Kills build- and test-related processes that can hold locks on artifacts
-        such as FwBuildTasks.dll. Defaults to the current session; optionally
-        kills across sessions when running inside containers. When invoked on the
-        host, can also preemptively clean running agent containers to avoid
-        cross-locks on shared temp locations.
+        such as FwBuildTasks.dll. Defaults to the current session.
+
+        Implements "Smart Kill" strategy:
+        1. Identifies processes by name (msbuild, dotnet, etc.)
+        2. Filters by current session ID
+        3. If RepoRoot is provided, filters by:
+           - Command line containing RepoRoot path
+           - Loaded modules (DLLs) within RepoRoot path
+
+        This allows concurrent builds in different worktrees to coexist without
+        killing each other's MSBuild nodes.
     #>
     param(
-        [switch]$AllSessions,
-        [switch]$CrossContainers,
         [string[]]$AdditionalProcessNames = @(),
-        [switch]$IncludeOmniSharp
+        [switch]$IncludeOmniSharp,
+        [string]$RepoRoot
     )
 
     $conflicts = @(
-        # Managed build/test hosts
-        "dotnet", "msbuild", "VBCSCompiler", "vstest.console", "testhost", "FieldWorks",
-        # Native toolchain
-        "cl", "link", "lib", "nmake", "cvtres", "rc", "midl", "tracker", "vctip", "ml64"
+        # Managed build/test hosts (Persistent lockers)
+        "dotnet", "msbuild", "VBCSCompiler", "vstest.console", "testhost", "FieldWorks"
     )
 
     if ($IncludeOmniSharp) {
@@ -94,8 +76,42 @@ function Stop-ConflictingProcesses {
         Get-Process -Name $name -ErrorAction SilentlyContinue
     }
 
-    if (-not $AllSessions) {
-        $processes = $processes | Where-Object { $_.SessionId -eq $currentSessionId }
+    # Always filter by current session
+    $processes = $processes | Where-Object { $_.SessionId -eq $currentSessionId }
+
+    # Filter by RepoRoot (Smart Kill) - only kill processes locking files in this repo
+    if ($RepoRoot) {
+        $processesToKill = @()
+        $RepoRoot = $RepoRoot.TrimEnd('\').TrimEnd('/')
+
+        foreach ($p in $processes) {
+            if ($p.Id -eq $PID) { continue } # Don't kill self
+
+            $isRelated = $false
+
+            # 1. Check Command Line (fast)
+            try {
+                $cim = Get-CimInstance Win32_Process -Filter "ProcessId = $($p.Id)" -ErrorAction SilentlyContinue
+                if ($cim.CommandLine -and $cim.CommandLine.IndexOf($RepoRoot, [System.StringComparison]::OrdinalIgnoreCase) -ge 0) {
+                    $isRelated = $true
+                }
+            } catch {}
+
+            # 2. Check Modules (slower, but catches MSBuild nodes holding DLLs)
+            if (-not $isRelated) {
+                try {
+                    # Check if any loaded module is within the RepoRoot
+                    if ($p.Modules | Where-Object { $_.FileName -and $_.FileName.StartsWith($RepoRoot, [System.StringComparison]::OrdinalIgnoreCase) }) {
+                        $isRelated = $true
+                    }
+                } catch {}
+            }
+
+            if ($isRelated) {
+                $processesToKill += $p
+            }
+        }
+        $processes = $processesToKill
     }
 
     if ($processes) {
@@ -107,16 +123,6 @@ function Stop-ConflictingProcesses {
         }
 
         Start-Sleep -Milliseconds 500
-    }
-
-    if ($CrossContainers -and -not (Test-InsideContainer)) {
-        $agentNum = Get-WorktreeAgentNumber
-        if ($null -ne $agentNum) {
-            $containerName = "fw-agent-$agentNum"
-            if (Test-DockerContainerRunning -ContainerName $containerName) {
-                Stop-ContainerBuildProcesses -ContainerName $containerName
-            }
-        }
     }
 }
 
@@ -154,8 +160,6 @@ function Invoke-WithFileLockRetry {
     param(
         [Parameter(Mandatory)][ScriptBlock]$Action,
         [Parameter(Mandatory)][string]$Context,
-        [switch]$AllSessions,
-        [switch]$CrossContainers,
         [switch]$IncludeOmniSharp,
         [int]$MaxAttempts = 2
     )
@@ -170,7 +174,7 @@ function Invoke-WithFileLockRetry {
             if ($attempt -lt $MaxAttempts -and (Test-IsFileLockError -ErrorRecord $_)) {
                 $nextAttempt = $attempt + 1
                 Write-Host "[WARN] $Context hit a file lock. Cleaning and retrying (attempt $nextAttempt of $MaxAttempts)..." -ForegroundColor Yellow
-                Stop-ConflictingProcesses -AllSessions:$AllSessions -CrossContainers:$CrossContainers -IncludeOmniSharp:$IncludeOmniSharp
+                Stop-ConflictingProcesses -IncludeOmniSharp:$IncludeOmniSharp
                 Start-Sleep -Seconds 2
                 $retry = $true
             }
@@ -298,13 +302,6 @@ function Test-GitTrackedFile {
 
 # Re-export functions from sub-modules plus local functions
 Export-ModuleMember -Function @(
-    # From FwContainerHelpers.psm1
-    'Test-InsideContainer',
-    'Get-WorktreeAgentNumber',
-    'Test-DockerContainerRunning',
-    'Get-ContainerWorkDir',
-    'Invoke-InContainer',
-    'New-ContainerArgumentString',
     # From FwBuildEnvironment.psm1
     'Initialize-VsDevEnvironment',
     'Get-MSBuildPath',

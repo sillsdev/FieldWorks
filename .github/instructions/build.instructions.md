@@ -81,20 +81,17 @@ Run: msbuild Build\Src\NativeBuild\NativeBuild.csproj
 - On Linux/macOS: Use `./build.sh` and ensure `msbuild`, `dotnet`, and native build tools are installed.
 - Environment variables (`fwrt`, `Platform=x64`, etc.) are set by `SetupInclude.targets` during build.
 
-## Worktree and Container Policy
+## Concurrent Builds & Smart Kill
 
-FieldWorks uses **git worktrees** for parallel development and **Docker containers** for build isolation:
+FieldWorks supports concurrent builds in **git worktrees** (e.g., VS Code Background Agents) on the same machine.
 
-| Location | Build Method | Reason |
-|----------|--------------|--------|
-| Main repo checkout | Host via `.\build.ps1` | Direct access to COM/registry |
-| Worktree (`worktrees/agent-N`) | Container via `.\build.ps1` | COM/registry isolation |
+To prevent conflicts where one build kills another's MSBuild nodes (which hold file locks on `FwBuildTasks.dll`), `build.ps1` uses a **Smart Kill** strategy:
+1.  **Scope**: Only kills processes in the current user session.
+2.  **Filter**: Only kills processes (msbuild, dotnet, vstest) that:
+    - Have the current worktree path in their command line.
+    - Have loaded a DLL from the current worktree.
 
-**`.\build.ps1` and `.\test.ps1` handle this automatically:**
-- Detects worktree paths matching `worktrees/agent-N`
-- Checks if container `fw-agent-N` is running
-- Respawns build inside container if available
-- Use `-NoDocker` to override and build on host
+**Result**: You can run `.\build.ps1` in `worktrees/agent-1` and `worktrees/agent-2` simultaneously without interference.
 
 ### Intermediate Output Locations
 

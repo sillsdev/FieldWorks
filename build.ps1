@@ -56,10 +56,6 @@
     Useful for CI/agent scenarios where you want to see recent output without piping.
     The full output is still written to LogFile if specified.
 
-.PARAMETER NoDocker
-    If set, bypasses automatic Docker container detection and runs locally.
-    Use this when you want to build directly on the host even in a worktree.
-
 .EXAMPLE
     .\build.ps1
     Builds Debug x64 in parallel with minimal logging.
@@ -76,16 +72,8 @@
     .\build.ps1 -Serial -Verbosity detailed
     Builds Debug x64 serially with detailed logging.
 
-.EXAMPLE
-    .\build.ps1 -NoDocker
-    Builds locally even when in a worktree with an available container.
-
 .NOTES
     FieldWorks is x64-only. The x86 platform is no longer supported.
-
-    Worktree builds automatically use Docker containers when available for
-    proper COM/registry isolation. The container must be started first using
-    scripts/spin-up-agents.ps1.
 #>
 [CmdletBinding()]
 param(
@@ -97,20 +85,20 @@ param(
     [switch]$RunTests,
     [string]$TestFilter,
     [switch]$BuildAdditionalApps,
+    [string]$Project = "FieldWorks.proj",
     [string]$Verbosity = "minimal",
     [bool]$NodeReuse = $true,
     [string[]]$MsBuildArgs = @(),
     [string]$LogFile,
     [int]$TailLines,
-    [switch]$NoDocker,
+    [switch]$UseDocker,
     [switch]$SkipRestore,
     [switch]$SkipNative
 )
 
 $ErrorActionPreference = "Stop"
 
-# =============================================================================
-# Import Shared Module
+# ===========ed Module
 # =============================================================================
 
 $helpersPath = Join-Path $PSScriptRoot "Build/Agent/FwBuildHelpers.psm1"
@@ -120,81 +108,24 @@ if (-not (Test-Path $helpersPath)) {
 }
 Import-Module $helpersPath -Force
 
-$insideContainer = Test-InsideContainer
-if (-not $insideContainer) {
-    Stop-ConflictingProcesses -CrossContainers -IncludeOmniSharp
-}
+Stop-ConflictingProcesses -IncludeOmniSharp
 
-$fwTasksSourcePath = if ($insideContainer) {
-    "C:\Temp\BuildTools\FwBuildTasks\$Configuration\FwBuildTasks.dll"
-} else {
-    Join-Path $PSScriptRoot "BuildTools/FwBuildTasks/$Configuration/FwBuildTasks.dll"
-}
+$fwTasksSourcePath = Join-Path $PSScriptRoot "BuildTools/FwBuildTasks/$Configuration/FwBuildTasks.dll"
 $fwTasksDropPath = Join-Path $PSScriptRoot "BuildTools/FwBuildTasks/$Configuration/FwBuildTasks.dll"
-
-# =============================================================================
-# Docker Container Auto-Detection for Worktrees
-# =============================================================================
-
-if (-not $NoDocker -and -not $insideContainer) {
-    $agentNum = Get-WorktreeAgentNumber
-    if ($null -ne $agentNum) {
-        $containerName = "fw-agent-$agentNum"
-        if (Test-DockerContainerRunning -ContainerName $containerName) {
-            # Build arguments for container execution
-            $containerArgs = New-ContainerArgumentString -Parameters @{
-                Configuration = $Configuration
-                Serial = $Serial.IsPresent
-                BuildTests = $BuildTests.IsPresent
-                RunTests = $RunTests.IsPresent
-                TestFilter = $TestFilter
-                BuildAdditionalApps = $BuildAdditionalApps.IsPresent
-                Verbosity = $Verbosity
-                NodeReuse = $NodeReuse
-                LogFile = $LogFile
-                TailLines = $TailLines
-                SkipRestore = $SkipRestore.IsPresent
-                SkipNative = $SkipNative.IsPresent
-            } -Defaults @{
-                Configuration = 'Debug'
-                Verbosity = 'minimal'
-                NodeReuse = $true
-                TailLines = 0
-            }
-
-            # Handle MsBuildArgs array separately if present
-            if ($MsBuildArgs.Count -gt 0) {
-                $quotedArgs = $MsBuildArgs | ForEach-Object { "'$($_ -replace "'", "''")'" }
-                $containerArgs += " -MsBuildArgs @($($quotedArgs -join ','))"
-            }
-
-            Invoke-InContainer -ScriptName "build.ps1" -Arguments $containerArgs -AgentNumber $agentNum
-            exit 0
-        }
-        else {
-            Write-Host "[WARN] Worktree agent-$agentNum detected but container '$containerName' is not running" -ForegroundColor Yellow
-            Write-Host "   Building locally (use 'scripts/spin-up-agents.ps1' to start containers)" -ForegroundColor Yellow
-            Write-Host ""
-        }
-    }
-}
 
 # =============================================================================
 # Environment Setup
 # =============================================================================
 
-$allSessionsKill = Test-InsideContainer
-$crossContainerKill = -not $allSessionsKill
 $cleanupArgs = @{
-    AllSessions = $allSessionsKill
-    CrossContainers = $crossContainerKill
     IncludeOmniSharp = $true
+    RepoRoot = $PSScriptRoot
 }
 
 $testExitCode = 0
 
 try {
-    Invoke-WithFileLockRetry -Context "FieldWorks build" -AllSessions:$allSessionsKill -CrossContainers:$crossContainerKill -IncludeOmniSharp -Action {
+    Invoke-WithFileLockRetry -Context "FieldWorks build" -IncludeOmniSharp -Action {
         # Initialize Visual Studio Developer environment
         Initialize-VsDevEnvironment
         Test-CvtresCompatibility
@@ -205,6 +136,15 @@ try {
 
         # Stop conflicting processes before the build
         Stop-ConflictingProcesses @cleanupArgs
+
+        $projectPath = $Project
+        $rootedProjectPath = Join-Path $PSScriptRoot $Project
+        if (-not (Test-Path $projectPath) -and (Test-Path $rootedProjectPath)) {
+            $projectPath = $rootedProjectPath
+        }
+        if (-not (Test-Path $projectPath)) {
+            throw "Project path '$Project' was not found. Pass a path relative to the repo root or an absolute path."
+        }
 
         if ($insideContainer) {
             $fwTasksOut = 'C:\Temp\BuildTools\FwBuildTasks\Debug'
@@ -261,6 +201,14 @@ try {
         }
         $finalMsBuildArgs += "/p:CL_MPCount=$mpCount"
 
+        $traceConfigArg = $MsBuildArgs | Where-Object { $_ -match "UseDevTraceConfig" }
+        if (-not $traceConfigArg -and $Configuration -ieq "Debug") {
+            $finalMsBuildArgs += "/p:UseDevTraceConfig=true"
+            if ($env:FW_TRACE_LOG) {
+                $finalMsBuildArgs += "/p:FW_TRACE_LOG=`"$($env:FW_TRACE_LOG)`""
+            }
+        }
+
         if ($BuildTests -or $RunTests) {
             $finalMsBuildArgs += "/p:BuildTests=true"
             $finalMsBuildArgs += "/p:BuildNativeTests=true"
@@ -279,6 +227,7 @@ try {
 
         Write-Host ""
         Write-Host "Building FieldWorks..." -ForegroundColor Cyan
+        Write-Host "Project: $projectPath" -ForegroundColor Cyan
         Write-Host "Configuration: $Configuration | Platform: $Platform | Parallel: $(-not $Serial) | Tests: $($BuildTests -or $RunTests)" -ForegroundColor Cyan
 
         if ($BuildAdditionalApps) {
@@ -313,7 +262,7 @@ try {
 
         # Build using traversal project
         Invoke-MSBuild `
-            -Arguments (@('FieldWorks.proj') + $finalMsBuildArgs) `
+            -Arguments (@($projectPath) + $finalMsBuildArgs) `
             -Description "FieldWorks Solution" `
             -LogPath $LogFile `
             -TailLines $TailLines
