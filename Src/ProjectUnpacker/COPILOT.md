@@ -1,22 +1,18 @@
+---
+last-reviewed: 2025-11-21
+last-reviewed-tree: d0f70922cbc37871cd0fdc36494727714da3106bdd3128d9d0a0ddf9acabfe42
+status: draft
+---
+
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/ProjectUnpacker. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
-
-﻿---
-last-reviewed: 2025-10-31
-last-reviewed-tree: f0aea6564baf195088feb2b81f2480b04e2b1b96601c7036143611032845ee46
-status: reviewed
----
 
 # ProjectUnpacker
 
@@ -80,182 +76,29 @@ C# test utility library (net48) with 3 source files (~427 lines). Single static 
 - **No COM interop**: Pure managed code
 
 ## Threading & Performance
-- **Thread safety**: Not thread-safe; test fixtures typically run single-threaded
-- **Synchronous operations**: All extraction and registry access synchronous
-- **Performance characteristics**:
-  - ZIP extraction: Fast for small projects (<1 second), slower for large (~6.8MB ZippedParatextPrj takes ~2-3 seconds)
-  - Registry access: Fast (milliseconds)
-  - Cleanup: RemoveFiles() recursively deletes directories (fast for typical test projects)
-- **Resource overhead**: Embedded .resx files increase assembly size (~6.9MB total for 3 ZIP files)
-- **Temporary files**: Extracted to system temp directory, cleaned up via CleanUp() or test teardown
-- **No caching**: Each ResourceUnpacker instance extracts fresh copy
-- **Typical usage pattern**: SetUp extracts, TearDown cleans up
+Synchronous operations. ZIP extraction fast for small projects (~1s), slower for large (~2-3s for 6.8MB). Test-only, single-threaded usage.
 
 ## Config & Feature Flags
-- **Registry-based configuration**: Paratext project folder from registry
-  - PTProjectDirectory: Reads from `SOFTWARE\ScrChecks\1.0\Settings_Directory`
-  - Supports Paratext 7 and 8 registry locations
-- **Test resource selection**: Caller specifies which embedded .resx to extract
-  - "ZippedParatextPrj" for standard project
-  - "ZippedParaPrjWithMissingFiles" for error case testing
-  - "ZippedTEVTitusWithUnmappedStyle" for style handling tests
-- **Extraction destination**: Configurable via PrepareProjectFiles(folder, resource)
-  - Default: PtProjectTestFolder (derived from registry + "Test" suffix)
-- **Cleanup behavior**: Manual via CleanUp() or automatic in test TearDown
-- **No global state**: Each ResourceUnpacker instance independent
-- **Windows-specific**: Registry dependency limits to Windows platform
+Registry-based Paratext folder configuration. Three embedded test resources: ZippedParatextPrj, ZippedParaPrjWithMissingFiles, ZippedTEVTitusWithUnmappedStyle. Windows-specific.
 
 ## Build Information
-- **Project type**: C# class library (net48)
-- **Build**: `msbuild ProjectUnpacker.csproj` or `dotnet build` (from FieldWorks.sln)
-- **Output**: ProjectUnpacker.dll (test utility library)
-- **Dependencies**:
-  - ICSharpCode.SharpZipLib.Zip (NuGet package for ZIP extraction)
-  - Microsoft.Win32 (registry access)
-  - NUnit.Framework (test infrastructure)
-  - Common/FwUtils
-  - SIL.PlatformUtilities
-- **Embedded resources**: 3 .resx files (~6.9MB total) embedded in assembly
-- **Target consumers**: Test projects only (ParatextImportTests, etc.)
-- **Not deployed**: Test-only artifact, not included in production installer
+C# library (net48). Build via `msbuild ProjectUnpacker.csproj`. Output: ProjectUnpacker.dll (test-only utility). 3 embedded .resx files (~6.9MB).
 
 ## Interfaces and Data Models
-
-### Classes
-- **Unpacker** (static class, path: Src/ProjectUnpacker/Unpacker.cs)
-  - Purpose: Extract embedded test project ZIPs to temporary directories
-  - Methods:
-    - PrepareProjectFiles(string folder, string resource): Extract resource to folder
-    - UnpackFile(string resource, string destination): Internal ZIP extraction
-    - RemoveFiles(string directory): Recursive cleanup
-  - Properties:
-    - PTProjectDirectory: Paratext project folder from registry
-    - PTSettingsRegKey: Registry key path for Paratext settings
-    - PtProjectTestFolder: Computed test folder path
-  - Notes: All static members, no instantiation required
-
-- **ResourceUnpacker** (nested class)
-  - Purpose: RAII wrapper for single resource extraction
-  - Constructor: ResourceUnpacker(string resource, string folder) - Extracts on construction
-  - Properties: UnpackedDestinationPath (string) - Returns extraction path
-  - Methods: CleanUp() - Removes extracted files
-  - Usage: Create in test SetUp, call CleanUp() in TearDown
-
-- **RegistryData** (class, path: Src/ProjectUnpacker/RegistryData.cs)
-  - Purpose: Capture/restore registry state for Paratext tests
-  - Constructor: RegistryData(string subKey, string name, object value)
-  - Properties: RegistryHive, RegistryView, SubKey, Name, Value
-  - Methods: ToString() - Debug representation
-  - Usage: Save registry value before test, restore after
-
-### Data Models (Embedded Resources)
-- **ZippedParatextPrj.resx** - Standard Paratext project (~6.8MB ZIP)
-- **ZippedParaPrjWithMissingFiles.resx** - Incomplete project for error testing (~92KB)
-- **ZippedTEVTitusWithUnmappedStyle.resx** - TE Vern/Titus with style issues (~9.6KB)
+Unpacker static class with PrepareProjectFiles(), RemoveFiles(). ResourceUnpacker nested class for RAII extraction. RegistryData for registry capture/restore.
 
 ## Entry Points
-- **Test fixture usage** (typical pattern):
-  ```csharp
-  [TestFixture]
-  public class ParatextImportTests
-  {
-      private Unpacker.ResourceUnpacker m_unpacker;
-
-      [SetUp]
-      public void Setup()
-      {
-          m_unpacker = new Unpacker.ResourceUnpacker("ZippedParatextPrj", Unpacker.PtProjectTestFolder);
-          // m_unpacker.UnpackedDestinationPath now contains extracted project
-      }
-
-      [TearDown]
-      public void TearDown()
-      {
-          m_unpacker.CleanUp();
-      }
-
-      [Test]
-      public void ImportParatextProject_Success()
-      {
-          // Test uses files from m_unpacker.UnpackedDestinationPath
-      }
-  }
-  ```
-- **Static method access**: Unpacker.PrepareProjectFiles() for one-off extraction
-- **Registry state management**:
-  ```csharp
-  var savedValue = new RegistryData(keyPath, valueName, currentValue);
-  // Modify registry for test
-  // Restore: Registry.SetValue(savedValue.SubKey, savedValue.Name, savedValue.Value)
-  ```
-- **Common consumers**:
-  - ParatextImportTests: Extract Paratext projects for import testing
-  - MigrateSqlDbs tests: Provide test project data
-  - Any test requiring Paratext/FLEx project files
+Test fixture pattern: Create ResourceUnpacker in [SetUp], use UnpackedDestinationPath in tests, CleanUp() in [TearDown]. Static Unpacker.PrepareProjectFiles() for one-off extraction.
 
 ## Test Index
-- **No dedicated tests**: ProjectUnpacker is test infrastructure, not tested itself
-- **Integration testing**: Exercised by test projects that consume it
-  - ParatextImportTests: Primary consumer, validates extraction and project loading
-  - Tests verify: ZIP extraction works, files accessible, cleanup removes all files
-- **Manual validation**:
-  - Run ParatextImportTests with breakpoint after SetUp
-  - Verify extracted files exist in m_unpacker.UnpackedDestinationPath
-  - Verify CleanUp() removes all files in TearDown
-- **Test data validation**:
-  - ZippedParatextPrj: Should extract to valid Paratext project structure
-  - ZippedParaPrjWithMissingFiles: Should extract partial project (expected missing files)
-  - ZippedTEVTitusWithUnmappedStyle: Should extract with unmapped style markers
-- **Implicit testing**: Any test using Unpacker verifies its correctness
+No dedicated tests. Test infrastructure exercised by ParatextImportTests and other consumers.
 
 ## Usage Hints
-- **Basic usage** (test fixture pattern):
-  1. Create ResourceUnpacker in [SetUp]: `m_unpacker = new Unpacker.ResourceUnpacker("ZippedParatextPrj", folder)`
-  2. Use extracted files in tests: `var projectPath = m_unpacker.UnpackedDestinationPath`
-  3. Clean up in [TearDown]: `m_unpacker.CleanUp()`
-- **Resource selection**:
-  - "ZippedParatextPrj": Standard complete Paratext project
-  - "ZippedParaPrjWithMissingFiles": Incomplete project for error handling tests
-  - "ZippedTEVTitusWithUnmappedStyle": TE Vern/Titus with style issues
-- **Registry management**:
-  - Save before test: `var saved = new RegistryData(key, name, Registry.GetValue(...))`
-  - Restore after test: `Registry.SetValue(saved.SubKey, saved.Name, saved.Value)`
-- **Folder selection**:
-  - Use Unpacker.PtProjectTestFolder for default test location
-  - Or specify custom folder for isolation
-- **Common pitfalls**:
-  - Forgetting CleanUp(): Leaves files in temp directory (disk space leak)
-  - Parallel tests: Multiple tests extracting to same folder (use unique folder per fixture)
-  - Large ZIP: ZippedParatextPrj is ~6.8MB (extraction takes 2-3 seconds)
-- **Debugging tips**:
-  - Set breakpoint after ResourceUnpacker construction
-  - Inspect UnpackedDestinationPath in debugger
-  - Manually browse extracted files to verify structure
-- **Performance**: Extract once per fixture (SetUp/TearDown), not per test
-- **Windows-only**: Registry dependency limits to Windows platform
+Create ResourceUnpacker in [SetUp], use UnpackedDestinationPath, CleanUp() in [TearDown]. Three resources: ZippedParatextPrj (standard), ZippedParaPrjWithMissingFiles (error handling), ZippedTEVTitusWithUnmappedStyle (style issues).
 
 ## Related Folders
-- **ParatextImport/** - Main consumer for Paratext test projects
-- **Common/ScriptureUtils/** - May use for Paratext integration tests
-- **MigrateSqlDbs/** - Could use for migration test scenarios
+- **ParatextImport/**: Main consumer
+- **Common/ScriptureUtils/**: Paratext integration tests
 
 ## References
-- **Project**: ProjectUnpacker.csproj (.NET Framework 4.8.x library)
-- **3 CS files**: Unpacker.cs (~300 lines), RegistryData.cs (~60 lines), AssemblyInfo.cs
-- **3 embedded resources**: ZippedParatextPrj.resx, ZippedParaPrjWithMissingFiles.resx, ZippedTEVTitusWithUnmappedStyle.resx
-
-## Auto-Generated Project and File References
-- Project files:
-  - Src/ProjectUnpacker/ProjectUnpacker.csproj
-- Key C# files:
-  - Src/ProjectUnpacker/AssemblyInfo.cs
-  - Src/ProjectUnpacker/RegistryData.cs
-  - Src/ProjectUnpacker/Unpacker.cs
-- Data contracts/transforms:
-  - Src/ProjectUnpacker/ZippedParaPrjWithMissingFiles.resx
-  - Src/ProjectUnpacker/ZippedParatextPrj.resx
-  - Src/ProjectUnpacker/ZippedTEVTitusWithUnmappedStyle.resx
-## Test Data Resources (embedded .resx)
-- **ZippedParatextPrj.resx** - Standard Paratext project ZIP
-- **ZippedParaPrjWithMissingFiles.resx** - Test case for missing file handling
-- **ZippedTEVTitusWithUnmappedStyle.resx** - TE Vern/Titus project with style issues
+3 C# files (~427 lines). Key: Unpacker.cs, RegistryData.cs. 3 embedded .resx files. See `.cache/copilot/diff-plan.json` for file listings.

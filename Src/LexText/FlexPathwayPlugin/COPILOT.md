@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: c60ca6ba1d083a8ada4b2ab901bad3555e80a90472d5a83e877acf54fc3c354b
+last-reviewed-tree: 0b46a07bacc1ebfb88a3f7245988715314fcbb60b0bad599b15fb69ae99807b8
 status: draft
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/LexText/FlexPathwayPlugin. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # FlexPathwayPlugin COPILOT summary
 
@@ -45,103 +41,37 @@ C# library (net48, OutputType=Library) implementing IUtility and IFeedbackInfoPr
 
 ## Technology Stack
 - C# .NET Framework 4.8.x (net8)
-- OutputType: Library
-- Windows Forms (MessageBox for errors)
-- Registry API (Microsoft.Win32.Registry) for Pathway path lookup
-- File I/O (System.IO)
 
 ## Dependencies
-
-### Upstream (consumes)
-- **FwCoreDlgs**: UtilityDlg framework
-- **Common/FwUtils/Pathway**: Pathway integration utilities
-- **LCModel**: Data access (LcmCache)
-- **XCore**: Mediator pattern
-- **Common/RootSites**: Root site support
-- **FwResources**: Resources
-- **SIL Pathway** (external): Publishing solution (invoked via Process.Start)
-
-### Downstream (consumed by)
-- **FLEx**: Tools → Configure → Pathway menu option
-- **Users**: Dictionary publishing workflow
+- Upstream: Core libraries
+- Downstream: Applications
 
 ## Interop & Contracts
-- **IUtility**: FLEx utility interface (Label, Dialog, OnSelection(), Process())
-- **IFeedbackInfoProvider**: Support feedback interface
-- **UtilityDlg**: Dialog integration (exposes Mediator, Cache, FeedbackInfoProvider)
-- **Pathway.exe**: External process invocation (SIL Pathway publishing tool)
-- **Registry**: Reads Pathway installation path from registry
+- IUtility: FLEx utility interface (Label, Dialog, OnSelection(), Process())
 
 ## Threading & Performance
-- **UI thread**: All operations on UI thread
-- **Process invocation**: Launches Pathway.exe as separate process
-- **I/O operations**: Folder copy, file operations (synchronous)
+- UI thread: All operations on UI thread
 
 ## Config & Feature Flags
-- **Registry**: Pathway installation path in Windows registry
-- **ExpCss**: Default CSS file name ("main.css")
+- Registry: Pathway installation path in Windows registry
 
 ## Build Information
-- **Project file**: FlexPathwayPlugin.csproj (net48, OutputType=Library)
-- **Test project**: FlexPathwayPluginTests/
-- **Output**: SIL.FieldWorks.FlexPathwayPlugin.dll
-- **Build**: Via top-level FieldWorks.sln or: `msbuild FlexPathwayPlugin.csproj`
-- **Run tests**: `dotnet test FlexPathwayPluginTests/`
-- **Discovery**: Loaded by FLEx via IUtility interface (reflection or explicit reference)
+- Project file: FlexPathwayPlugin.csproj (net48, OutputType=Library)
 
 ## Interfaces and Data Models
-
-- **FlexPathwayPlugin** (FlexPathwayPlugin.cs)
-  - Purpose: Pathway export utility implementation
-  - Interface: IUtility (Label, Dialog, OnSelection(), Process())
-  - Interface: IFeedbackInfoProvider (feedback for support)
-  - Inputs: UtilityDlg (provides Mediator, LcmCache)
-  - Outputs: Exports data, launches Pathway.exe
-  - Notes: Appears as "Pathway" in FLEx Tools menu
-
-- **IUtility interface**:
-  - Label: Display name for Tools menu ("Pathway")
-  - Dialog: UtilityDlg setter for accessing FLEx infrastructure
-  - OnSelection(): Called when utility selected in dialog
-  - Process(): Execute utility's main functionality
-
-- **MyFolders** (myFolders.cs)
-  - Purpose: Folder management utilities
-  - Key methods: Copy(src, dst, dirFilter, appName), GetNewName(directory, name), CreateDirectory(outPath, appName)
-  - Inputs: Source/destination paths, filter patterns
-  - Outputs: Folder operations (copy, create), unique names
-  - Notes: Static utility class, error handling with MessageBox
+FlexPathwayPlugin, MyFolders.
 
 ## Entry Points
 Loaded by FLEx Tools → Configure menu. FlexPathwayPlugin class instantiated when user selects Pathway utility.
 
 ## Test Index
-- **Test project**: FlexPathwayPluginTests/
-- **Run tests**: `dotnet test FlexPathwayPluginTests/`
-- **Coverage**: Pathway export logic, folder utilities
+- Test project: FlexPathwayPluginTests/
 
 ## Usage Hints
-- **Access**: In FLEx, Tools → Configure → select "Pathway" utility
-- **Requirement**: SIL Pathway must be installed separately
-- **Workflow**: Select Pathway utility → configure export → Process() exports data → launches Pathway.exe
-- **Registry**: Plugin reads Pathway installation path from Windows registry
-- **Output**: Exported data prepared in configured folder, Pathway opens for publishing
-- **Formats**: Pathway supports PDF, ePub, Word, InDesign, etc. (handled by Pathway, not plugin)
-- **Folder management**: MyFolders utilities handle temp folder creation, unique naming
-- **Error handling**: MessageBox for folder permission errors
+- Access: In FLEx, Tools → Configure → select "Pathway" utility
 
 ## Related Folders
-- **FwCoreDlgs**: UtilityDlg framework
-- **Common/FwUtils/Pathway**: Pathway integration utilities
-- **Common/FieldWorks**: FieldWorks.exe host (launches plugin UI)
-- **xWorks**: Application framework
+- FwCoreDlgs: UtilityDlg framework
 
 ## References
-- **Project file**: FlexPathwayPlugin.csproj (net48, OutputType=Library)
-- **Key C# files**: FlexPathwayPlugin.cs (464 lines), myFolders.cs (119 lines), AssemblyInfo.cs (12 lines)
-- **Test project**: FlexPathwayPluginTests/
-- **Total lines of code**: 595
-- **Output**: SIL.FieldWorks.FlexPathwayPlugin.dll
-- **Namespace**: SIL.PublishingSolution
-- **External dependency**: SIL Pathway (separate installation, invoked via Process.Start)
-- **Interface**: IUtility, IFeedbackInfoProvider
+See `.cache/copilot/diff-plan.json` for file details.

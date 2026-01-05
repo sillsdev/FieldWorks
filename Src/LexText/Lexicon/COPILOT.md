@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: bd2d6f35a29f37c7bd3b31d265923e8a002993862f71dfa2c5a9b01a8f9d29c3
+last-reviewed-tree: 76886450145052a28b3c1f2b54c499cbc0c7f3879390c5affaf3fac0643f832e
 status: draft
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/LexText/Lexicon. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # Lexicon (LexEdDll) COPILOT summary
 
@@ -75,48 +71,22 @@ C# library (net48, OutputType=Library) with lexicon UI components. Slice/Launche
   - Embedded icons/images for lexicon UI
 
 ## Technology Stack
-- C# .NET Framework 4.8.x (net8)
-- OutputType: Library
-- Windows Forms (dialogs, slices)
-- LCModel (data model)
-- XCore (framework)
-- FLExBridge (external collaboration tool, invoked via Process.Start)
+C# .NET Framework 4.8.x, Windows Forms, LCModel, XCore, FLExBridge (external process).
 
 ## Dependencies
-
-### Upstream (consumes)
-- **LCModel**: Data model (ILexEntry, ILexSense, ILexReference, ILexEntryRef, ILexRefType)
-- **XCore**: Application framework (Mediator, IxCoreColleague)
-- **LexTextControls/**: Shared lexicon controls
-- **Common/FwUtils**: Utilities
-- **FLExBridge** (external): Collaboration tool (invoked as separate process)
-
-### Downstream (consumed by)
-- **xWorks**: Main application shell (loads lexicon editing UI)
-- **FieldWorks.exe**: FLEx application host
+Consumes: LCModel (ILexEntry, ILexSense, ILexReference), XCore (Mediator, IxCoreColleague), LexTextControls, FLExBridge.exe (invoked via Process.Start). Used by: xWorks, FieldWorks.exe.
 
 ## Interop & Contracts
-- **ILexEntry**: Lexical entry object
-- **ILexSense**: Lexical sense
-- **ILexReference**: Lexical reference (relationships between entries)
-- **ILexEntryRef**: Entry reference (complex forms, variants)
-- **FLExBridge.exe**: External collaboration tool (invoked via Process.Start)
-- **IxCoreColleague**: XCore colleague pattern (FLExBridgeListener)
+ILexEntry, ILexSense, ILexReference, ILexEntryRef, FLExBridge.exe (Process.Start), IxCoreColleague (FLExBridgeListener).
 
 ## Threading & Performance
-- **UI thread**: All operations on UI thread
-- **FLExBridge**: External process invocation (Send/Receive)
+UI thread for all operations. FLExBridge: external process invocation.
 
 ## Config & Feature Flags
-- **FLExBridge integration**: Enabled via FLExBridgeListener
-- **Homograph numbering**: Configured separately (HomographResetter recalculates)
+FLExBridge integration (FLExBridgeListener), homograph numbering (HomographResetter).
 
 ## Build Information
-- **Project file**: LexEdDll.csproj (net48, OutputType=Library)
-- **Test project**: LexEdDllTests/
-- **Output**: SIL.FieldWorks.XWorks.LexEd.dll
-- **Build**: Via top-level FieldWorks.sln or: `msbuild LexEdDll.csproj`
-- **Run tests**: `dotnet test LexEdDllTests/`
+LexEdDll.csproj (net48), output: SIL.FieldWorks.XWorks.LexEd.dll. Tests: `dotnet test LexEdDllTests/`.
 
 ## Interfaces and Data Models
 
@@ -152,32 +122,16 @@ C# library (net48, OutputType=Library) with lexicon UI components. Slice/Launche
   - DeleteEntriesSensesWithoutInterlinearization: Cleanup unused entries/senses
 
 ## Entry Points
-Loaded by xWorks main application shell. Slices/launchers instantiated by data entry framework.
+Loaded by xWorks. Slices/launchers instantiated by data entry framework.
 
 ## Test Index
-- **Test project**: LexEdDllTests/
-- **Run tests**: `dotnet test LexEdDllTests/`
-- **Coverage**: FLExBridge integration, entry handlers, reference management
+LexEdDllTests project. Run: `dotnet test LexEdDllTests/`.
 
 ## Usage Hints
-- **Lexicon editing**: Entry slices, sense editing, reference management
-- **FLExBridge**: File → Send/Receive Project (collaboration workflow)
-- **Context menus**: Right-click entries for menu operations (LexEntryMenuHandler)
-- **Example sentences**: Tools → Find Example Sentences (FindExampleSentenceDlg)
-- **References**: Lexical reference slices for synonyms, antonyms, etc.
-- **Collaboration**: FLExBridge integration for team collaboration (Send/Receive)
-- **Utilities**: CircularRefBreaker, HomographResetter for data maintenance
+Lexicon editing via entry slices. FLExBridge: File → Send/Receive. Context menus: right-click entries. Example sentences: Tools → Find Example Sentences. Lexical reference slices for relationships.
 
 ## Related Folders
-- **LexTextControls/**: Shared lexicon controls (InsertEntryDlg, etc.)
-- **LexTextDll/**: Application infrastructure
-- **xWorks/**: Main application shell
+LexTextControls (shared controls), LexTextDll (infrastructure), xWorks (main shell).
 
 ## References
-- **Project file**: LexEdDll.csproj (net48, OutputType=Library)
-- **Key C# files**: FLExBridgeListener.cs (1.9K), LexEdStrings.Designer.cs (2K), LexReferenceMultiSlice.cs (1.2K), EntrySequenceReferenceLauncher.cs (656), LexEntryMenuHandler.cs (591), FindExampleSentenceDlg.cs (308), LexEntryInflTypeConverter.cs (231), and 70+ more files
-- **Resources**: LexEdStrings.resx (35.8KB), ImageHolder.resx (10KB), LexEntryImages.resx (10.8KB)
-- **Test project**: LexEdDllTests/
-- **Total lines of code**: 15727
-- **Output**: SIL.FieldWorks.XWorks.LexEd.dll
-- **Namespace**: Various (SIL.FieldWorks.XWorks.LexEd, etc.)
+LexEdDll.csproj (net48), 15.7K lines. Key files: FLExBridgeListener.cs (1.9K), LexEdStrings.Designer.cs (2K), LexReferenceMultiSlice.cs (1.2K). See `.cache/copilot/diff-plan.json` for file inventory.
