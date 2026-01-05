@@ -17,7 +17,6 @@ $ErrorActionPreference = "Stop"
 
 # Get the repo root (parent of scripts/)
 $repoRoot = (Get-Item $PSScriptRoot).Parent.FullName
-$baseWorkspacePath = Join-Path $repoRoot "fw.code-workspace"
 $worktreeWorkspacePath = Join-Path $repoRoot "fw.worktree.code-workspace"
 $gitPath = Join-Path $repoRoot ".git"
 
@@ -32,22 +31,6 @@ if (Test-Path $gitPath -PathType Leaf) {
 } else {
     Write-Warning "No .git found at $gitPath. Assuming not a worktree."
     $isWorktree = $false
-}
-
-function Read-JsonFileOrNull($path) {
-    if (-not (Test-Path $path)) {
-        return $null
-    }
-    try {
-        $content = Get-Content $path -Raw
-        if ([string]::IsNullOrWhiteSpace($content)) {
-            return $null
-        }
-        return $content | ConvertFrom-Json
-    } catch {
-        Write-Warning "Could not parse JSON at '$path'. Ignoring it."
-        return $null
-    }
 }
 
 function Ensure-PSObjectProperty($obj, $name) {
@@ -70,12 +53,6 @@ function Ensure-PSObject($val) {
     return $val
 }
 
-function Merge-ObjectProperties($baseObj, $overrideObj) {
-    foreach ($prop in $overrideObj.PSObject.Properties) {
-        $baseObj | Add-Member -MemberType NoteProperty -Name $prop.Name -Value $prop.Value -Force
-    }
-}
-
 function Parse-HexRgb($hex) {
     $h = $hex.Trim()
     if ($h.StartsWith("#")) {
@@ -90,13 +67,10 @@ function Parse-HexRgb($hex) {
     return @{ r = $r; g = $g; b = $b }
 }
 
-# Load base workspace (tracked)
-$baseWorkspace = Read-JsonFileOrNull $baseWorkspacePath
-if ($null -eq $baseWorkspace) {
-    $baseWorkspace = New-Object PSObject
-    $baseWorkspace | Add-Member -MemberType NoteProperty -Name "folders" -Value @(@{ path = "." })
-    $baseWorkspace | Add-Member -MemberType NoteProperty -Name "settings" -Value (New-Object PSObject)
-}
+# Base workspace configuration (embedded)
+$baseWorkspace = New-Object PSObject
+$baseWorkspace | Add-Member -MemberType NoteProperty -Name "folders" -Value @(@{ path = "." })
+$baseWorkspace | Add-Member -MemberType NoteProperty -Name "settings" -Value (New-Object PSObject)
 
 $baseWorkspace = Ensure-PSObject $baseWorkspace
 Ensure-PSObjectProperty $baseWorkspace "settings"
