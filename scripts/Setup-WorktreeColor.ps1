@@ -245,6 +245,149 @@ function ConvertFrom-HexRgb($hex) {
 	}
 }
 
+function Remove-JsonComments([string]$text) {
+	if ([string]::IsNullOrEmpty($text)) {
+		return ""
+	}
+
+	$sb = New-Object System.Text.StringBuilder
+	$inString = $false
+	$escapeNext = $false
+	$inLineComment = $false
+	$inBlockComment = $false
+
+	for ($i = 0; $i -lt $text.Length; $i++) {
+		$ch = $text[$i]
+		$next = if ($i + 1 -lt $text.Length) { $text[$i + 1] } else { [char]0 }
+
+		if ($inLineComment) {
+			if ($ch -eq "`n") {
+				$inLineComment = $false
+				[void]$sb.Append($ch)
+			}
+			continue
+		}
+
+		if ($inBlockComment) {
+			if ($ch -eq '/' -and $next -eq '*') {
+				# Nested block comment start; treat as content of comment.
+				continue
+			}
+			if ($ch -eq '*' -and $next -eq '/') {
+				$inBlockComment = $false
+				$i++
+			}
+			continue
+		}
+
+		if ($inString) {
+			[void]$sb.Append($ch)
+			if ($escapeNext) {
+				$escapeNext = $false
+				continue
+			}
+			if ($ch -eq '\\') {
+				$escapeNext = $true
+				continue
+			}
+			if ($ch -eq '"') {
+				$inString = $false
+			}
+			continue
+		}
+
+		# Not in string
+		if ($ch -eq '"') {
+			$inString = $true
+			[void]$sb.Append($ch)
+			continue
+		}
+
+		if ($ch -eq '/' -and $next -eq '/') {
+			$inLineComment = $true
+			$i++
+			continue
+		}
+
+		if ($ch -eq '/' -and $next -eq '*') {
+			$inBlockComment = $true
+			$i++
+			continue
+		}
+
+	[void]$sb.Append($ch)
+	}
+
+	return $sb.ToString()
+}
+
+function Remove-JsonTrailingCommas([string]$text) {
+	if ([string]::IsNullOrEmpty($text)) {
+		return ""
+	}
+
+	$sb = New-Object System.Text.StringBuilder
+	$inString = $false
+	$escapeNext = $false
+
+	for ($i = 0; $i -lt $text.Length; $i++) {
+		$ch = $text[$i]
+		if ($inString) {
+			[void]$sb.Append($ch)
+			if ($escapeNext) {
+				$escapeNext = $false
+				continue
+			}
+			if ($ch -eq '\\') {
+				$escapeNext = $true
+				continue
+			}
+			if ($ch -eq '"') {
+				$inString = $false
+			}
+			continue
+		}
+
+		if ($ch -eq '"') {
+			$inString = $true
+			[void]$sb.Append($ch)
+			continue
+		}
+
+		if ($ch -eq ',') {
+			$j = $i + 1
+			while ($j -lt $text.Length) {
+				$look = $text[$j]
+				if ($look -eq ' ' -or $look -eq "`t" -or $look -eq "`r" -or $look -eq "`n") {
+					$j++
+					continue
+				}
+				break
+			}
+			if ($j -lt $text.Length) {
+				$nextNonWs = $text[$j]
+				if ($nextNonWs -eq '}' -or $nextNonWs -eq ']') {
+					continue
+				}
+			}
+		}
+
+		[void]$sb.Append($ch)
+	}
+
+	return $sb.ToString()
+}
+
+function ConvertFrom-JsoncFile([string]$path) {
+	if (-not (Test-Path $path -PathType Leaf)) {
+		return $null
+	}
+	$raw = Get-Content -LiteralPath $path -Raw -Encoding UTF8
+	$noComments = Remove-JsonComments $raw
+	$clean = Remove-JsonTrailingCommas $noComments
+	return ($clean | ConvertFrom-Json)
+}
+
 # Base workspace configuration (embedded)
 $baseWorkspace = New-Object PSObject
 $baseWorkspace | Add-Member -MemberType NoteProperty -Name "folders" -Value @(@{ path = "." })
@@ -319,7 +462,20 @@ function Write-WorktreeWorkspaceFile(
 		$worktreeWorkspace | Add-Member -MemberType NoteProperty -Name "folders" -Value @(@{ path = "." })
 	}
 
-	$settings = ConvertTo-PSObject $baseWorkspace.settings
+	# Merge repo settings into the generated workspace so opening via *.code-workspace
+	# preserves the same VS Code experience as opening the folder directly.
+	# (Some settings do not apply at "workspace-folder" scope in multi-root workspaces.)
+	$repoSettingsPath = Join-Path $targetRoot ".vscode\\settings.json"
+	$repoSettings = $null
+	try {
+		$repoSettings = ConvertFrom-JsoncFile $repoSettingsPath
+	}
+	catch {
+		Write-Warning "Failed to parse $repoSettingsPath; continuing without merging repo settings."
+		$repoSettings = $null
+	}
+
+	$settings = if ($null -ne $repoSettings) { ConvertTo-PSObject $repoSettings } else { ConvertTo-PSObject $baseWorkspace.settings }
 	$existingColorCustomizations = $null
 	if ($settings.PSObject.Properties["workbench.colorCustomizations"]) {
 		$existingColorCustomizations = $settings."workbench.colorCustomizations"
