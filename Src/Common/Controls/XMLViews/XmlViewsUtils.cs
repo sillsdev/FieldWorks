@@ -368,13 +368,13 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Given one of the original list items, and the spec of the column we want to sort by,
 		/// add to collector whatever ManyOnePathSortItems are appropriate.
 		/// </summary>
-		/// <param name="hvo">The hvo.</param>
-		/// <param name="colSpec">The col spec.</param>
-		/// <param name="collector">The collector.</param>
-		/// <param name="cache">The LcmCache.</param>
-		/// <param name="mdc">The MDC.</param>
-		/// <param name="sda">The sda.</param>
-		/// <param name="layouts">The layouts.</param>
+		/// <param name="hvo"></param>
+		/// <param name="colSpec"></param>
+		/// <param name="collector"></param>
+		/// <param name="cache"></param>
+		/// <param name="mdc"></param>
+		/// <param name="sda"></param>
+		/// <param name="layouts"></param>
 		/// ------------------------------------------------------------------------------------
 		public static void CollectBrowseItems(int hvo, XmlNode colSpec, ArrayList collector,
 			LcmCache cache, IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts)
@@ -497,10 +497,11 @@ namespace SIL.FieldWorks.Common.Controls
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Finds the main child.
+		/// Returns null if there is more than one child.
 		/// </summary>
-		/// <param name="node">The node.</param>
-		/// <param name="hvo">The object id.</param>
-		/// <param name="cache">The LcmCache.</param>
+		/// <param name="node"></param>
+		/// <param name="hvo"></param>
+		/// <param name="cache"></param>
 		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
 		static private XmlNode FindMainChild(XmlNode node, int hvo, LcmCache cache)
