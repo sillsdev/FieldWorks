@@ -72,7 +72,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void WithPath()
 		{
-			Assert.That("pnppl", Is.EqualTo(m_table.GetString("MyPineapple", "InPng/InMyYard")));
+			Assert.That(m_table.GetString("MyPineapple", "InPng/InMyYard"), Is.EqualTo("pnppl"));
 		}
 
 		/// <summary />
@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			//the leading '/' here will lead to a double slash,
 			//	something like strings//group,
 			//meaning that this can be found in any group.
-			Assert.That("pnppl", Is.EqualTo(m_table.GetStringWithXPath("MyPineapple", "/group/")));
+			Assert.That(m_table.GetStringWithXPath("MyPineapple", "/group/"), Is.EqualTo("pnppl"));
 		}
 
 		/// <summary />
@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void WithRootXPathFragment()
 		{
 			// Give the path of groups explicitly in a compact form.
-			Assert.That("pnppl", Is.EqualTo(m_table.GetString("MyPineapple", "InPng/InMyYard")));
+			Assert.That(m_table.GetString("MyPineapple", "InPng/InMyYard"), Is.EqualTo("pnppl"));
 		}
 
 		/// <summary />
@@ -103,7 +103,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			XmlNode node = doc.FirstChild;
 			string[] strings = m_table.GetStringsFromStringListNode(node);
 			Assert.That(strings.Length, Is.EqualTo(2));
-			Assert.That("pnppl", Is.EqualTo(strings[1]));
+			Assert.That(strings[1], Is.EqualTo("pnppl"));
 		}
 
 		/// <summary />
