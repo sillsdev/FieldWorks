@@ -368,13 +368,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Given one of the original list items, and the spec of the column we want to sort by,
 		/// add to collector whatever ManyOnePathSortItems are appropriate.
 		/// </summary>
-		/// <param name="hvo"></param>
-		/// <param name="colSpec"></param>
-		/// <param name="collector"></param>
-		/// <param name="cache"></param>
-		/// <param name="mdc"></param>
-		/// <param name="sda"></param>
-		/// <param name="layouts"></param>
 		/// ------------------------------------------------------------------------------------
 		public static void CollectBrowseItems(int hvo, XmlNode colSpec, ArrayList collector,
 			LcmCache cache, IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts)
@@ -390,16 +383,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Main (recursive) part of CollectBrowseItems. Given that hvo is to be displayed using node,
 		/// figure what objects to put in the list.
 		/// </summary>
-		/// <param name="hvo">The hvo.</param>
-		/// <param name="node">The node.</param>
-		/// <param name="collector">The collector.</param>
-		/// <param name="cache">The LcmCache.</param>
-		/// <param name="mdc">The MDC.</param>
-		/// <param name="sda">The sda.</param>
-		/// <param name="layouts">The layouts.</param>
-		/// <param name="caller">The caller.</param>
-		/// <param name="hvos">The hvos.</param>
-		/// <param name="flids">The flids.</param>
 		/// ------------------------------------------------------------------------------------
 		static void CollectBrowseItems(int hvo, XmlNode node, ArrayList collector,
 			LcmCache cache, IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts, XmlNode caller, int[] hvos, int[] flids)
@@ -499,10 +482,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Finds the main child.
 		/// Returns null if there is more than one child.
 		/// </summary>
-		/// <param name="node"></param>
-		/// <param name="hvo"></param>
-		/// <param name="cache"></param>
-		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
 		static private XmlNode FindMainChild(XmlNode node, int hvo, LcmCache cache)
 		{
@@ -1094,15 +1073,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// This returns a NodeDisplayCommand containing thd node for GetNodeToUseForColumn. However, it distinguishes whether to
 		/// display the children of this node or the node itself by returning the appropriate kind of NodeDisplayCommand.
 		/// </summary>
-		/// <param name="bvi"></param>
-		/// <param name="colSpec"></param>
-		/// <param name="cache"></param>
-		/// <param name="mdc"></param>
-		/// <param name="sda"></param>
-		/// <param name="layouts"></param>
-		/// <param name="hvo"></param>
-		/// <param name="collectOuterStructParts"></param>
-		/// <returns></returns>
 		public static NodeDisplayCommand GetDisplayCommandForColumn(IManyOnePathSortItem bvi, XmlNode colSpec,
 			LcmCache cache, IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts, out int hvo, List<XmlNode> collectOuterStructParts)
 		{
@@ -1113,16 +1083,6 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Recursive implementation method for GetDisplayCommandForColumn.
 		/// </summary>
-		/// <param name="bvi"></param>
-		/// <param name="node"></param>
-		/// <param name="cache"></param>
-		/// <param name="mdc"></param>
-		/// <param name="sda"></param>
-		/// <param name="layouts"></param>
-		/// <param name="depth"></param>
-		/// <param name="hvo"></param>
-		/// <param name="collectOuterStructParts"></param>
-		/// <returns></returns>
 		static NodeDisplayCommand GetDisplayCommandForColumn1(IManyOnePathSortItem bvi, XmlNode node,
 			LcmCache cache, IFwMetaDataCache mdc, ISilDataAccess sda, LayoutCache layouts, int depth,
 			out int hvo, List<XmlNode> collectOuterStructParts)
