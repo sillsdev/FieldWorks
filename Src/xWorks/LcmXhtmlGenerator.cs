@@ -204,7 +204,7 @@ namespace SIL.FieldWorks.XWorks
 				throw new ArgumentException("pubDecorator");
 			}
 			var configDir = Path.GetDirectoryName(configuration.FilePath);
-			var projectPath = DictionaryConfigurationListener.GetProjectConfigurationDirectory(propertyTable);
+			var projectPath = DictionaryConfigurationListener.GetProjectConfigurationDirectory(propertyTable, entry);
 			var previewCssPath = Path.Combine(projectPath, "Preview.css");
 			var projType = new DirectoryInfo(configDir).Name;
 			var cssName = projType == "Dictionary" ? "ProjectDictionaryOverrides.css" : "ProjectReversalOverrides.css";

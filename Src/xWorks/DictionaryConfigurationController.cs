@@ -354,8 +354,8 @@ namespace SIL.FieldWorks.XWorks
 
 			_previewEntry = previewEntry ?? GetDefaultEntryForType(DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(propertyTable), cache);
 			View = view;
-			_projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(propertyTable);
-			_defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(propertyTable);
+			_projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(propertyTable, previewEntry);
+			_defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(propertyTable, previewEntry);
 			LoadDictionaryConfigurations();
 			LoadLastDictionaryConfiguration();
 			PopulateTreeView();
