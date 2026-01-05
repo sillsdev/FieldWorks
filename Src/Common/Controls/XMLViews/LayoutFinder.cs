@@ -293,7 +293,7 @@ namespace SIL.FieldWorks.Common.Controls
 		public void CollectItems(int hvo, ArrayList collector)
 		{
 			int start = collector.Count;
-			XmlViewsUtils.CollectBrowseItems(hvo, m_colSpec, collector, m_mdc, m_sda, m_layouts);
+			XmlViewsUtils.CollectBrowseItems(hvo, m_colSpec, collector, m_cache, m_mdc, m_sda, m_layouts);
 		}
 
 		private string[] StringsFor(int hvo, XmlNode layout, int wsForce)

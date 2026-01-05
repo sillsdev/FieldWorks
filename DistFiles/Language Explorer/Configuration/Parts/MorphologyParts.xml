@@ -361,7 +361,7 @@
             <!-- Must always have exactly one value for allomorph columns to align properly. -->
             <ifnot is="MoAffixProcess">
                 <para>
-                    <seq field="InflectionClasses" layout="Name" sep="; "/>
+                    <seq field="PhoneEnv" layout="StringRepresentation" sep="; "/>
                 </para>
             </ifnot>
             <if is="MoAffixProcess">
