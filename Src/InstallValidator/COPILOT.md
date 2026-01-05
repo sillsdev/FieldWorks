@@ -4,6 +4,20 @@ last-reviewed-tree: 9bb37d4844749c3d47b182f3d986f342994d9876216b65e0d3e2791f9ec9
 status: draft
 ---
 
+<!-- copilot:auto-change-log start -->
+## Change Log (auto)
+
+- Snapshot: HEAD~1
+- Risk: none
+- Files: 0 (code=0, tests=0, resources=0)
+
+### Prompt seeds
+- Update COPILOT.md for Src/InstallValidator. Prioritize Purpose/Architecture sections using planner data.
+- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
+- Finish with verification notes and TODOs for manual testing.
+<!-- copilot:auto-change-log end -->
+
+
 # InstallValidator COPILOT summary
 
 ## Purpose

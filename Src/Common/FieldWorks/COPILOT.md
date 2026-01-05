@@ -4,6 +4,20 @@ last-reviewed-tree: 02736fd2ef91849ac9b0a8f07f2043ff2e3099bbab520031f8b27b4fe42a
 status: draft
 ---
 
+<!-- copilot:auto-change-log start -->
+## Change Log (auto)
+
+- Snapshot: HEAD~1
+- Risk: none
+- Files: 0 (code=0, tests=0, resources=0)
+
+### Prompt seeds
+- Update COPILOT.md for Src/Common/FieldWorks. Prioritize Purpose/Architecture sections using planner data.
+- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
+- Finish with verification notes and TODOs for manual testing.
+<!-- copilot:auto-change-log end -->
+
+
 # FieldWorks COPILOT summary
 
 ## Purpose
