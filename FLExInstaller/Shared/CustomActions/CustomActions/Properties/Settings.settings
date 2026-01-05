@@ -1,0 +1,9 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="CustomActions.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="ClosePrompt" Type="System.Drawing.Point" Scope="Application">
+      <Value Profile="(Default)">50, 50</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+	<Fragment>
+	<PackageGroup Id="vcredists">
+		<PackageGroupRef Id="redist_vc8" />
+		<PackageGroupRef Id="redist_vc10" />
+		<PackageGroupRef Id="redist_vc11" />
+		<PackageGroupRef Id="redist_vc12" />
+		<PackageGroupRef Id="redist_vc15to19" />
+	</PackageGroup>
+	</Fragment>
+</Include>
+<!--
+ATL x86 https://download.microsoft.com/download/A/5/3/A53B40CA-F75C-4678-852A-3C15EA82F186/vcredist_x86.exe
+ATL x64 https://download.microsoft.com/download/A/5/3/A53B40CA-F75C-4678-852A-3C15EA82F186/vcredist_x64.exe
+-->

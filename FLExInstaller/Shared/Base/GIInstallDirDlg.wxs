@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  <copyright file="InstallDirDlg.wxs" company="Outercurve Foundation">
+    Copyright (c) 2004, Outercurve Foundation.
+    This software is released under Microsoft Reciprocal License (MS-RL).
+    The license and further copyright text can be found in the file
+    License.htm in the ..\resources directory
+  </copyright>
+-->
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+    <Fragment>
+        <UI>
+            <Dialog Id="GIInstallDirDlg" Width="370" Height="270" Title="!(loc.InstallDirDlg_Title)">
+                <Control Id="Next" Type="PushButton" X="236" Y="243" Width="56" Height="17" Default="yes" Text="!(loc.WixUINext)" />
+                <Control Id="Back" Type="PushButton" X="180" Y="243" Width="56" Height="17" Text="!(loc.WixUIBack)" />
+                <Control Id="Cancel" Type="PushButton" X="304" Y="243" Width="56" Height="17" Cancel="yes" Text="!(loc.WixUICancel)">
+                    <Publish Event="SpawnDialog" Value="CancelDlg">1</Publish>
+                </Control>
+
+                <Control Id="Description" Type="Text" X="25" Y="23" Width="280" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.InstallDirDlgDescription)" />
+                <Control Id="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Transparent="yes" NoPrefix="yes" Text="!(loc.InstallDirDlgTitle)" />
+                <Control Id="BannerBitmap" Type="Bitmap" X="0" Y="0" Width="370" Height="44" TabSkip="no" Text="!(loc.InstallDirDlgBannerBitmap)" />
+                <Control Id="BannerLine" Type="Line" X="0" Y="44" Width="370" Height="0" />
+                <Control Id="BottomLine" Type="Line" X="0" Y="234" Width="370" Height="0" />
+
+                <Control Id="AppFolderLabel" Type="Text" X="20" Y="60" Width="290" Height="15" NoPrefix="yes" Text="!(loc.InstallDirDlgFolderLabel)" />
+                <Control Id="AppFolder" Type="PathEdit" X="20" Y="80" Width="320" Height="18" Property="WIXUI_INSTALLDIR" Indirect="yes" >
+					<Condition Action="enable"><![CDATA[APPFOLDERFOUND = "NotFound"]]></Condition>
+					<Condition Action="disable"><![CDATA[APPFOLDERFOUND <> "NotFound"]]></Condition>
+				</Control>
+                <Control Id="ChangeAppFolder" Type="PushButton" X="20" Y="100" Width="56" Height="17" Text="!(loc.InstallDirDlgChange)" >
+					<Condition Action="enable"><![CDATA[APPFOLDERFOUND = "NotFound"]]></Condition>
+					<Condition Action="disable"><![CDATA[APPFOLDERFOUND <> "NotFound"]]></Condition>
+				</Control>
+
+                <Control Id="ProjFolderLabel" Type="Text" X="20" Y="140" Width="290" Height="15" NoPrefix="yes" Text="!(loc.InstallDirDlgDataFolderLabel)" />
+                <Control Id="ProjFolder" Type="PathEdit" X="20" Y="160" Width="320" Height="18" Property="WIXUI_PROJECTSDIR" Indirect="yes" >
+					<Condition Action="enable"><![CDATA[DATAFOLDERFOUND <> "AlreadyExisting"]]></Condition>
+					<Condition Action="disable"><![CDATA[DATAFOLDERFOUND = "AlreadyExisting"]]></Condition>
+				</Control>
+                <Control Id="ChangeProjFolder" Type="PushButton" X="20" Y="180" Width="56" Height="17" Text="!(loc.InstallDirDlgChange2)" >				
+					<Condition Action="enable"><![CDATA[DATAFOLDERFOUND <> "AlreadyExisting"]]></Condition>
+					<Condition Action="disable"><![CDATA[DATAFOLDERFOUND = "AlreadyExisting"]]></Condition>
+				</Control>
+				<Control Id="ProjFolderExplanation" Type="Text" X="96" Y="180" Width="244" Height="30" NoPrefix="yes" Text="[EXPLANATIONTEXT]"/>
+            </Dialog>
+        </UI>
+    </Fragment>
+</Wix>

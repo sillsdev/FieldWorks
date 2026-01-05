@@ -1,0 +1,67 @@
+<Project Sdk="WixToolset.Sdk/6.0.0">
+  <PropertyGroup>
+    <OutputName>FieldWorks</OutputName>
+    <OutputType>Package</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Defaults for local dev, overridden by Installer.targets -->
+    <AppBuildDir Condition="'$(AppBuildDir)' == ''">..\BuildDir\FieldWorks_9.9_Build_x64</AppBuildDir>
+    <BinDirSuffix Condition="'$(BinDirSuffix)' == ''">objects\FieldWorks</BinDirSuffix>
+    <DataDirSuffix Condition="'$(DataDirSuffix)' == ''">objects\FieldWorks_Data</DataDirSuffix>
+
+    <MasterBuildDir>$(AppBuildDir)\$(BinDirSuffix)</MasterBuildDir>
+    <MasterDataDir>$(AppBuildDir)\$(DataDirSuffix)</MasterDataDir>
+
+    <DefineConstants>MASTERBUILDDIR=$(MasterBuildDir);MASTERDATADIR=$(MasterDataDir);$(DefineConstants)</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WixToolset.UI.wixext" Version="6.0.0" />
+    <PackageReference Include="WixToolset.Util.wixext" Version="6.0.0" />
+    <PackageReference Include="WixToolset.NetFx.wixext" Version="6.0.0" />
+    <PackageReference Include="WixToolset.Heat.wixext" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Shared\Base\Framework.wxs" />
+    <Compile Include="Shared\Base\WixUI_DialogFlow.wxs" />
+    <Compile Include="Shared\Base\GIInstallDirDlg.wxs" />
+    <Compile Include="Shared\Base\GIProgressDlg.wxs" />
+    <Compile Include="Shared\Base\GIWelcomeDlg.wxs" />
+    <Compile Include="Shared\Base\GICustomizeDlg.wxs" />
+    <Compile Include="Shared\Base\GISetupTypeDlg.wxs" />
+    <EmbeddedResource Include="Shared\Base\WixUI_en-us.wxl" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <HarvestDirectory Include="$(MasterBuildDir)">
+      <ComponentGroupName>HarvestedAppFiles</ComponentGroupName>
+      <DirectoryRefId>APPFOLDER</DirectoryRefId>
+      <PreprocessorVariable>var.MASTERBUILDDIR</PreprocessorVariable>
+      <Transforms>Shared\Base\KeyPathFix.xsl</Transforms>
+      <SuppressCom>true</SuppressCom>
+      <SuppressRegistry>true</SuppressRegistry>
+      <SuppressRootDirectory>true</SuppressRootDirectory>
+    </HarvestDirectory>
+    <HarvestDirectory Include="$(MasterDataDir)">
+      <ComponentGroupName>HarvestedDataFiles</ComponentGroupName>
+      <DirectoryRefId>HARVESTDATAFOLDER</DirectoryRefId>
+      <PreprocessorVariable>var.MASTERDATADIR</PreprocessorVariable>
+      <Transforms>Shared\Base\KeyPathFix.xsl</Transforms>
+      <SuppressCom>true</SuppressCom>
+      <SuppressRegistry>true</SuppressRegistry>
+      <SuppressRootDirectory>true</SuppressRootDirectory>
+    </HarvestDirectory>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="Shared\CustomActions\CustomActions\CustomActions.csproj" />
+  </ItemGroup>
+
+  <Target Name="SignInstaller" AfterTargets="Build" Condition="'$(SignOutput)'=='true'">
+    <Exec Command="call Shared\Base\signingProxy.bat &quot;$(OutputPath)$(OutputName).msi&quot;" />
+  </Target>
+</Project>

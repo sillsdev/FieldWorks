@@ -1,0 +1,31 @@
+<Project Sdk="WixToolset.Sdk/6.0.0">
+  <PropertyGroup>
+    <OutputName>FieldWorksBundle</OutputName>
+    <OutputType>Bundle</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DefineConstants>ApplicationName=FieldWorks Language Explorer;TruncatedVersion=9.9;VersionNumber=9.9.1.1;UpgradeCode=1092269F-9EA1-419B-8685-90203F83E254;Year=2024;Manufacturer=SIL International;SafeApplicationName=FieldWorks;$(DefineConstants)</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WixToolset.Bal.wixext" Version="6.0.0" />
+    <PackageReference Include="WixToolset.Util.wixext" Version="6.0.0" />
+    <PackageReference Include="WixToolset.NetFx.wixext" Version="6.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Shared\Base\Bundle.wxs" />
+    <EmbeddedResource Include="Shared\Base\BundleTheme.wxl" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="FieldWorks.Installer.wixproj" />
+  </ItemGroup>
+
+  <Target Name="SignBundle" AfterTargets="Build" Condition="'$(SignOutput)'=='true'">
+    <Exec Command="call Shared\Base\signingProxy.bat &quot;$(OutputPath)$(OutputName).exe&quot;" />
+  </Target>
+</Project>

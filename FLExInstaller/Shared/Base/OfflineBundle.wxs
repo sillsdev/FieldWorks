@@ -1,0 +1,284 @@
+<?xml version="1.0"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+		xmlns:bal="http://schemas.microsoft.com/wix/BalExtension"
+		xmlns:util="http://schemas.microsoft.com/wix/UtilExtension"
+		xmlns:netfx="http://schemas.microsoft.com/wix/NetFxExtension"
+		xmlns:dep="http://schemas.microsoft.com/wix/DependencyExtension">
+	<Bundle
+			Name='$(var.ApplicationName) $(var.TruncatedVersion)'
+			Version='$(var.VersionNumber)'
+			UpgradeCode='$(var.UpgradeCode)'
+			Tag='$(var.SafeApplicationName)Bundle'
+			IconSourceFile='..\resources\Installer.ico'
+			Copyright='Copyright © $(var.Year), $(var.Manufacturer)'
+			Manufacturer='$(var.Manufacturer)'>
+		<bal:Condition Message="XP is no longer supported."> (VersionNT &gt;= v6.0) </bal:Condition>
+		<BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.HyperlinkLicense">
+			<Payload SourceFile="..\resources\License.htm" />
+		</BootstrapperApplicationRef>
+		<!--<RelatedBundle Id='$(var.UpgradeCode)' Action='Detect'/>-->
+		<WixVariable Id="WixStdbaLicenseUrl" Value="License.htm" />
+		<WixVariable Id="WixStdbaLogo" Value="..\resources\bundle_background.bmp" />
+		<WixVariable Id="WixStdbaThemeXml" Value="BundleTheme.xml" />
+		<WixVariable Id="WixStdbaThemeWxl" Value="BundleTheme.wxl" />
+		<Chain>
+			<PackageGroupRef Id="NetFx48Redist" />
+			<PackageGroupRef Id="vcredists" />
+			<RollbackBoundary />
+			<PackageGroupRef Id='AppPackageGroup'/>
+		</Chain>
+	</Bundle>
+	<Fragment Id='AppFragment'>
+		<PackageGroup Id='AppPackageGroup'>
+			<MsiPackage Id='AppMsiPackage'
+					DisplayName='$(var.ApplicationName) $(var.VersionNumber)'
+					DisplayInternalUI='yes'
+					ForcePerMachine='yes'
+					InstallCondition='1'
+					SourceFile='$(var.SafeApplicationName)_$(var.VersionNumber).msi'
+					Visible='yes'
+					Vital='yes'>
+			</MsiPackage>
+		</PackageGroup>
+	</Fragment>
+	<!-- .NET 4.8 -->
+	<?define NetFx48MinRelease = 528049 ?>
+	<Fragment>
+		<util:RegistrySearch Root="HKLM" Key="SOFTWARE\Microsoft\Net Framework Setup\NDP\v4\Full" Value="Release" Variable="Netfx4FullRelease" />
+		<util:RegistrySearch Root="HKLM" Key="SOFTWARE\Microsoft\Net Framework Setup\NDP\v4\Full" Value="Release" Variable="Netfx4x64FullRelease" Win64="yes" />
+		<WixVariable Id="NetFx48OrLaterDetectCondition" Overridable="yes"
+		  Value="(Netfx4FullRelease &gt;= $(var.NetFx48MinRelease)) AND (NOT VersionNT64 OR (Netfx4x64FullRelease &gt;= $(var.NetFx48MinRelease)))" />
+		<WixVariable Id="NetFx48RedistInstallCondition" Value="" Overridable="yes" />
+
+		<PackageGroup Id="NetFx48Redist">
+		  <ExePackage Id="NetFx48Redist"
+			  InstallCommand="/q /norestart /ChainingPackage &quot;[WixBundleName]&quot; /log &quot;[NetFx48FullLog].html&quot;"
+			  RepairCommand="/q /norestart /repair /ChainingPackage &quot;[WixBundleName]&quot; /log &quot;[NetFx48FullLog].html&quot;"
+			  UninstallCommand="/uninstall /q /norestart /ChainingPackage &quot;[WixBundleName]&quot; /log &quot;[NetFx48FullLog].html&quot;"
+			  PerMachine="yes"
+			  DetectCondition="!(wix.NetFx48OrLaterDetectCondition)"
+			  InstallCondition="!(wix.NetFx48RedistInstallCondition)"
+			  Vital="yes"
+			  Permanent="yes"
+			  Protocol="netfx4"
+			  LogPathVariable="NetFx48FullLog"
+			  Compressed="yes"
+			  SourceFile="..\libs\ndp48-x86-x64-allos-enu.exe">
+			<ExitCode Behavior="forceReboot" Value="1641" />
+			<ExitCode Behavior="forceReboot" Value="3010" />
+			<ExitCode Behavior="error" Value="5100" />
+			<ExitCode Behavior="error" Value="1603" />
+			<ExitCode Behavior="success" Value="0" />
+		  </ExePackage>
+		</PackageGroup>
+	</Fragment>
+	<?if $(sys.BUILDARCH)="x86"?>
+	<Fragment>
+	<Property Id="CRVSINSTALLED">
+	</Property>
+		<util:RegistrySearch Root="HKLM"
+					Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\{9BE518E6-ECC6-35A9-88E4-87755C07200F}"
+					Variable="CPP2008Redist"
+					Result="exists"/>
+		<PackageGroup Id="redist_vc8">
+			<ExePackage Id="vc8" Cache="no" PerMachine="yes" Vital="yes" Compressed="yes" Permanent="yes"
+				Name="vcredist_2008_x86.exe"
+				SourceFile="..\libs\vcredist_2008_x86.exe"
+				InstallCommand="/Q /norestart"
+				DetectCondition="CPP2008Redist">
+				<ExitCode Value="1638" Behavior="success"/> <!-- Don't fail if newer version is installed -->
+			</ExePackage>
+		</PackageGroup>
+	</Fragment>
+	<Fragment>
+		<util:RegistrySearch Root="HKLM"
+					Key="SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x86"
+					Variable="CPP2010Redist"
+					Value="Installed"
+					Result="value"/>
+		<!-- KB2565063 is the MFC Security Update. The VC2008 redist has a similar security update, but I don't know how to check for it. -->
+		<util:RegistrySearch Root="HKLM"
+					Key="SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x86\KB2565063"
+					Variable="CPP2010RedistSecurity"
+					Value="Present"
+					Result="value"/>
+		<PackageGroup Id="redist_vc10">
+			<ExePackage Id="vc10" Cache="no" PerMachine="yes" Vital="yes" Compressed="yes" Permanent="yes"
+				SourceFile="..\libs\vcredist_2010_x86.exe"
+				InstallCommand="/quiet /norestart"
+				DetectCondition="CPP2010Redist AND CPP2010RedistSecurity">
+				<ExitCode Value="1638" Behavior="success"/> <!-- Don't fail if newer version is installed -->
+			</ExePackage>
+		</PackageGroup>
+	</Fragment>
+	<Fragment>
+		<util:RegistrySearch Root="HKLM"
+					Key="SOFTWARE\Microsoft\VisualStudio\11.0\VC\Runtimes\x86"
+					Variable="CPP2012Redist"
+					Value="Installed"
+					Result="value"/>
+		<PackageGroup Id="redist_vc11">
+			<ExePackage Id="vc11" Cache="no" PerMachine="yes" Vital="yes" Compressed="yes" Permanent="yes"
+				SourceFile="..\libs\vcredist_2012_x86.exe"
+				InstallCommand="/quiet /norestart"
+				DetectCondition="CPP2012Redist">
+				<ExitCode Value="1638" Behavior="success"/> <!-- Don't fail if newer version is installed -->
+			</ExePackage>
+		</PackageGroup>
+	</Fragment>
+	<Fragment>
+		<util:RegistrySearch Root="HKLM"
+					Key="SOFTWARE\Microsoft\VisualStudio\12.0\VC\Runtimes\x86"
+					Variable="CPP2013Redist"
+					Value="Installed"
+					Result="value"/>
+		<PackageGroup Id="redist_vc12">
+			<ExePackage Id="vc12" Cache="no" PerMachine="yes" Vital="yes" Compressed="yes" Permanent="yes"
+				SourceFile="..\libs\vcredist_2013_x86.exe"
+				InstallCommand="/quiet /norestart"
+				DetectCondition="CPP2013Redist">
+				<ExitCode Value="1638" Behavior="success"/> <!-- Don't fail if newer version is installed -->
+			</ExePackage>
+		</PackageGroup>
+	</Fragment>
+	<Fragment>
+		<!-- Visual C++ runtimes 2015, 2015, and 2015-19 are all "version 14" in the registry, so we need to check subversion numbers.
+			The Bld number has increased monotonically through version 2015-22, so it is safe to check only that number before installing this version. -->
+		<util:RegistrySearch Root="HKLM"
+					Key="SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\X86"
+					Variable="CPP14RedistBld"
+					Value="Bld"
+					Result="value"/>
+		<WixVariable Id="CPP14DetectCondition" Overridable="yes" Value="CPP14RedistBld &gt;= 30040" />
+		<PackageGroup Id="redist_vc15to19">
+			<ExePackage Id="vc14" Cache="no" PerMachine="yes" Vital="yes" Compressed="yes" Permanent="yes"
+				Name="vcredist_x86.exe"
+				SourceFile="..\libs\vcredist_2015-19_x86.exe"
+				InstallCommand="/quiet /norestart"
+				DetectCondition="!(wix.CPP14DetectCondition)">
+				<ExitCode Value="1638" Behavior="success"/> <!-- Don't fail if newer version is installed -->
+			</ExePackage>
+		</PackageGroup>
+	</Fragment>
+	<?elseif $(sys.BUILDARCH)="x64"?>
+	<!-- Some 64-bit runtimes register themselves in the 32-bit space.
+		Check for Runtimes\X64 or similar under each space; if either exists, the 64-bit redistributable is installed. -->
+	<Fragment>
+		<util:RegistrySearch Root="HKLM"
+					Key="Software\Microsoft\Windows\CurrentVersion\Uninstall\{5FCE6D76-F5DC-37AB-B2B8-22AB8CEDB1D4}"
+					Variable="CPP2008Redist"
+					Result="exists"
+					Win64="yes"/>
+		<PackageGroup Id="redist_vc8">
+			<ExePackage Id="vc8" Cache="no" PerMachine="yes" Vital="yes" Compressed="yes" Permanent="yes"
+				SourceFile="..\libs\vcredist_2008_x64.exe"
+				InstallCommand="/Q /norestart"
+				DetectCondition="CPP2008Redist">
+				<ExitCode Value="1638" Behavior="success"/> <!-- Don't fail if newer version is installed -->
+			</ExePackage>
+		</PackageGroup>
+	</Fragment>
+	<Fragment>
+		<util:RegistrySearch Root="HKLM"
+					Key="SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x64"
+					Variable="CPP2010Redist64"
+					Value="Installed"
+					Result="value"
+					Win64="yes"/>
+		<!-- KB2565063 is the MFC Security Update. The VC2008 redist has a similar security update, but I don't know how to check for it. -->
+		<util:RegistrySearch Root="HKLM"
+					Key="SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x64\KB2565063"
+					Variable="CPP2010Redist64Security"
+					Value="Present"
+					Result="value"
+					Win64="yes"/>
+		<util:RegistrySearch Root="HKLM"
+					Key="SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x64"
+					Variable="CPP2010Redist32"
+					Value="Installed"
+					Result="value"
+					Win64="no"/>
+		<util:RegistrySearch Root="HKLM"
+					Key="SOFTWARE\Microsoft\VisualStudio\10.0\VC\VCRedist\x64\KB2565063"
+					Variable="CPP2010Redist32Security"
+					Value="Present"
+					Result="value"
+					Win64="no"/>
+		<PackageGroup Id="redist_vc10">
+			<ExePackage Id="vc10" Cache="no" PerMachine="yes" Vital="yes" Compressed="yes" Permanent="yes"
+				SourceFile="..\libs\vcredist_2010_x64.exe"
+				InstallCommand="/quiet /norestart"
+				DetectCondition="(CPP2010Redist32 AND CPP2010Redist32Security) OR (CPP2010Redist64 AND CPP2010Redist64Security)">
+				<ExitCode Value="1638" Behavior="success"/> <!-- Don't fail if newer version is installed -->
+			</ExePackage>
+		</PackageGroup>
+	</Fragment>
+	<Fragment>
+		<util:RegistrySearch Root="HKLM"
+					Key="SOFTWARE\Microsoft\VisualStudio\11.0\VC\Runtimes\x64"
+					Variable="CPP2012Redist64"
+					Value="Installed"
+					Result="value"
+					Win64="yes"/>
+		<util:RegistrySearch Root="HKLM"
+					Key="SOFTWARE\Microsoft\VisualStudio\11.0\VC\Runtimes\x64"
+					Variable="CPP2012Redist32"
+					Value="Installed"
+					Result="value"
+					Win64="no"/>
+		<PackageGroup Id="redist_vc11">
+			<ExePackage Id="vc11" Cache="no" PerMachine="yes" Vital="yes" Compressed="yes" Permanent="yes"
+				SourceFile="..\libs\vcredist_2012_x64.exe"
+				InstallCommand="/quiet /norestart"
+				DetectCondition="(CPP2012Redist32) OR (CPP2012Redist64)">
+				<ExitCode Value="1638" Behavior="success"/> <!-- Don't fail if newer version is installed -->
+			</ExePackage>
+		</PackageGroup>
+	</Fragment>
+	<Fragment>
+		<util:RegistrySearch Root="HKLM"
+					Key="SOFTWARE\Microsoft\VisualStudio\12.0\VC\Runtimes\x64"
+					Variable="CPP2013Redist64"
+					Value="Installed"
+					Result="value"
+					Win64="yes"/>
+		<util:RegistrySearch Root="HKLM"
+					Key="SOFTWARE\Microsoft\VisualStudio\12.0\VC\Runtimes\x64"
+					Variable="CPP2013Redist32"
+					Value="Installed"
+					Result="value"
+					Win64="no"/>
+		<PackageGroup Id="redist_vc12">
+			<ExePackage Id="vc12" Cache="no" PerMachine="yes" Vital="yes" Compressed="yes" Permanent="yes"
+				SourceFile="..\libs\vcredist_2013_x64.exe"
+				InstallCommand="/quiet /norestart"
+				DetectCondition="(CPP2013Redist32) OR (CPP2013Redist64)">
+				<ExitCode Value="1638" Behavior="success"/> <!-- Don't fail if newer version is installed -->
+			</ExePackage>
+		</PackageGroup>
+	</Fragment>
+	<Fragment>
+		<!-- Visual Studio 14, unlike previous versions, registers itself in the 64-bit space in addition to WOW6432Node. -->
+		<!-- Visual C++ runtimes 2015, 2015, and 2015-19 are all "version 14" in the registry, so we need to check subversion numbers.
+			The Bld number has increased monotonically through version 2015-22, so it is safe to check only that number before installing this version. -->
+		<util:RegistrySearch Root="HKLM"
+					Key="SOFTWARE\Microsoft\VisualStudio\14.0\VC\Runtimes\X64"
+					Variable="CPP14RedistBld"
+					Value="Bld"
+					Result="value"
+					Win64="yes"/>
+		<WixVariable Id="CPP14DetectCondition" Overridable="yes" Value="CPP14RedistBld &gt;= 30040" />
+		<PackageGroup Id="redist_vc15to19">
+			<ExePackage Id="vc14" Cache="no" PerMachine="yes" Vital="yes" Compressed="yes" Permanent="yes"
+				SourceFile="..\libs\vcredist_2015-19_x64.exe"
+				InstallCommand="/quiet /norestart"
+				DetectCondition="!(wix.CPP14DetectCondition)">
+				<ExitCode Value="1638" Behavior="success"/> <!-- Don't fail if newer version is installed -->
+			</ExePackage>
+		</PackageGroup>
+	</Fragment>
+	<?else?>
+		<?error Unsupported value of sys.BUILDARCH=$(sys.BUILDARCH)?>
+	<?endif?>
+	<?include ../Common/Redistributables.wxi?>
+</Wix>

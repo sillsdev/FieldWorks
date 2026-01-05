@@ -8,37 +8,37 @@
 
 **Goal**: Initialize the new WiX v6 project structure and migrate shared code from `genericinstaller`.
 
-- [ ] T001 Create `FLExInstaller/Shared` directory structure
-- [ ] T002 Copy `PatchableInstaller/BaseInstallerBuild` content to `FLExInstaller/Shared/Base`
-- [ ] T003 Copy `PatchableInstaller/CustomActions` content to `FLExInstaller/Shared/CustomActions`
-- [ ] T036 Copy `PatchableInstaller/ProcRunner` content to `FLExInstaller/Shared/ProcRunner`
-- [ ] T004 Create `FLExInstaller/FieldWorks.Installer.wixproj` (SDK-style)
-- [ ] T005 Create `FLExInstaller/FieldWorks.Bundle.wixproj` (SDK-style)
-- [ ] T006 Create `Build/Installer.targets` skeleton
+- [x] T001 Create `FLExInstaller/Shared` directory structure
+- [x] T002 Copy `PatchableInstaller/BaseInstallerBuild` content to `FLExInstaller/Shared/Base`
+- [x] T003 Copy `PatchableInstaller/CustomActions` content to `FLExInstaller/Shared/CustomActions`
+- [x] T036 Copy `PatchableInstaller/ProcRunner` content to `FLExInstaller/Shared/ProcRunner`
+- [x] T004 Create `FLExInstaller/FieldWorks.Installer.wixproj` (SDK-style)
+- [x] T005 Create `FLExInstaller/FieldWorks.Bundle.wixproj` (SDK-style)
+- [x] T006 Create `Build/Installer.targets` skeleton
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
 **Goal**: Convert core WiX source files and Custom Actions to be compatible with WiX v6.
 
-- [ ] T007 [P] Convert `FLExInstaller/*.wxs` and `*.wxl` files to WiX v6 syntax using `wix convert`
-- [ ] T008 [P] Convert `FLExInstaller/Shared/Base/*.wxs` and `*.wxl` files to WiX v6 syntax
-- [ ] T009 [P] Update Custom Actions project to target .NET 4.8
-- [ ] T037 [P] Update `ProcRunner` project to target .NET 4.8
-- [ ] T010 Implement `DownloadPrerequisites` target in `Build/Installer.targets` (FR-011)
-- [ ] T038 Configure `HarvestDirectory` in `FieldWorks.Installer.wixproj` to replace `heat.exe`
-- [ ] T011 Port `GIInstallDirDlg.wxs` (Dual Directory UI) to WiX v6
-- [ ] T012 Port `GICustomizeDlg.wxs` (Custom Feature Tree) to WiX v6
-- [ ] T013 Verify `WixUI_DialogFlow.wxs` compatibility with `WixToolset.UI.wixext`
+- [x] T007 [P] Convert `FLExInstaller/*.wxs` and `*.wxl` files to WiX v6 syntax using `wix convert`
+- [x] T008 [P] Convert `FLExInstaller/Shared/Base/*.wxs` and `*.wxl` files to WiX v6 syntax
+- [x] T009 [P] Update Custom Actions project to target .NET 4.8
+- [x] T037 [P] Update `ProcRunner` project to target .NET 4.8
+- [x] T010 Implement `DownloadPrerequisites` target in `Build/Installer.targets` (FR-011)
+- [x] T038 Configure `HarvestDirectory` in `FieldWorks.Installer.wixproj` to replace `heat.exe`
+- [x] T011 Port `GIInstallDirDlg.wxs` (Dual Directory UI) to WiX v6
+- [x] T012 Port `GICustomizeDlg.wxs` (Custom Feature Tree) to WiX v6
+- [x] T013 Verify `WixUI_DialogFlow.wxs` compatibility with `WixToolset.UI.wixext`
 
 ## Phase 3: User Story 1 - Developer Builds Installer (P1)
 
 **Goal**: Enable developers to build the installer locally using MSBuild.
 
-- [ ] T014 [US1] Implement `BuildInstaller` target in `Build/Installer.targets`
-- [ ] T015 [US1] Configure `FieldWorks.Installer.wixproj` to reference `Shared` components
-- [ ] T016 [US1] Configure `FieldWorks.Bundle.wixproj` to reference the MSI
-- [ ] T017 [US1] Implement Code Signing logic in `FieldWorks.Installer.wixproj` (FR-009)
-- [ ] T018 [US1] Implement Code Signing logic in `FieldWorks.Bundle.wixproj` (FR-009)
+- [x] T014 [US1] Implement `BuildInstaller` target in `Build/Installer.targets`
+- [x] T015 [US1] Configure `FieldWorks.Installer.wixproj` to reference `Shared` components
+- [x] T016 [US1] Configure `FieldWorks.Bundle.wixproj` to reference the MSI
+- [x] T017 [US1] Implement Code Signing logic in `FieldWorks.Installer.wixproj` (FR-009)
+- [x] T018 [US1] Implement Code Signing logic in `FieldWorks.Bundle.wixproj` (FR-009)
 - [ ] T019 [US1] Verify local build produces `FieldWorks.msi` and `FieldWorks.exe`
 
 ## Phase 4: User Story 2 - CI Builds Installer (P1)

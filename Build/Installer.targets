@@ -1,647 +1,111 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
-	<!-- ########################################################################################################## -->
-	<!-- ### Configuration properties - Review and edit these values as needed.                                 ### -->
-	<!-- ########################################################################################################## -->
-	<PropertyGroup>
-		<ApplicationName>FieldWorks Language Explorer</ApplicationName>
-		<SafeApplicationName>FieldWorks</SafeApplicationName>
-		<!-- should not contain any spaces or illegal filename characters -->
-		<Manufacturer>SIL International</Manufacturer>
-		<SafeManufacturer>SIL</SafeManufacturer>
-	</PropertyGroup>
-	<!-- Installers use release builds, we require the config property to be set, this sets the Configuration for use in this file.
-	(this will get used by CallTarget as well as DependsOnTargets but not MSBuild) -->
-	<PropertyGroup>
-		<Configuration>Release</Configuration>
-	</PropertyGroup>
-	<!-- ########################################################################################################## -->
-	<!-- ### UPGRADE CODE GUID definition : This value must be THE SAME for every version of this product.      ### -->
-	<!-- ### Each product should have its own upgrade code.  This allows installers and patches to upgrade      ### -->
-	<!-- ### one another because they share a common upgrade code. DON'T EVEN THINK about changing this.        ### -->
-	<!-- ########################################################################################################## -->
-	<PropertyGroup>
-		<UpgradeCodeGuid>1092269F-9EA1-419B-8685-90203F83E254</UpgradeCodeGuid>
-	</PropertyGroup>
-	<!-- ########################################################################################################## -->
-	<!-- ### CompGGS definition : Component Generation GUID Seed. It's a WiX thing...                           ### -->
-	<!-- ### Each product should have its own CompGGS value.                                                    ### -->
-	<!-- ########################################################################################################## -->
-	<PropertyGroup>
-		<CompGGS>0F585175-1649-46D2-A5B7-A79E47809361</CompGGS>
-	</PropertyGroup>
-	<Target Name="VersionNumbers" DependsOnTargets="GenerateVersionFiles">
-		<ParseVersionNumbers VersionInfo="@(VersionSymbols)">
-			<Output TaskParameter="Major" PropertyName="MajorVersionSegment" />
-			<Output TaskParameter="Minor" PropertyName="MinorVersionSegment" />
-			<Output TaskParameter="Revision" PropertyName="PatchVersionSegment" />
-		</ParseVersionNumbers>
-	</Target>
-	<!-- Property definitions -->
-	<Target Name="InstallerVersionNumbers" DependsOnTargets="VersionNumbers">
-		<PropertyGroup>
-			<!-- set default values for trailing version numbers -->
-			<!-- REVIEW (Hasso): is the base build number required to be 1 for WiX, too? Mismatched numbers is confusing, and having to maintain two numbers
-				has caused us to need a followup change for a patching bug fix (LT-22298) -->
-			<BuildVersionSegment Condition="'$(BuildVersionSegment)'==''">1</BuildVersionSegment>
-			<!-- 1 is the base build number. It may be a NAnt thing... -->
-			<MajorVersion>$(MajorVersionSegment)</MajorVersion>
-			<MinorVersion>$(MajorVersion).$(MinorVersionSegment)</MinorVersion>
-			<PatchVersion>$(MinorVersion).$(PatchVersionSegment)</PatchVersion>
-			<BuildVersion>$(PatchVersion).$(BuildVersionSegment)</BuildVersion>
-			<!-- Build Directories -->
-			<AppBuildDir>$(InstallersBaseDir)/$(SafeApplicationName)_$(MinorVersion)_Build_$(Platform)</AppBuildDir>
-		</PropertyGroup>
-		<Message Text="BuildVersion: $(BuildVersion)" Importance="high" />
-	</Target>
-	<!-- Build Directories -->
-	<PropertyGroup>
-		<InstallersBaseDir>$(fwrt)/BuildDir</InstallersBaseDir>
-		<AppBuildMasterDir>$(InstallersBaseDir)/$(SafeApplicationName)_Build_Master_$(Platform)</AppBuildMasterDir>
-		<BinDirSuffix>objects/$(SafeApplicationName)</BinDirSuffix>
-		<DataDirSuffix>$(BinDirSuffix)_Data</DataDirSuffix>
-		<FontDirSuffix>$(BinDirSuffix)_Font</FontDirSuffix>
-		<L10nDirSuffix>$(BinDirSuffix)_L10n</L10nDirSuffix>
-		<InstallerDir>$(fwrt)\PatchableInstaller</InstallerDir>
-		<OverridesDestDir>$(InstallerDir)\Common</OverridesDestDir>
-		<InstallerResourcesDir>$(InstallerDir)\resources</InstallerResourcesDir>
-	</PropertyGroup>
-	<!-- ########################################################################################################## -->
-	<!-- ### Top Level Targets                                                                                  ### -->
-	<!-- ########################################################################################################## -->
-	<Target
-		Name="BuildBaseInstaller"
-		DependsOnTargets="RequirePlatform;DownloadAndUnzipFonts;DownloadBundledInstallers;CleanMasterOutputDir"
-	>
-		<MSBuild
-			Projects="$(MSBuildProjectFullPath)"
-			Properties="BuildingBaseInstaller=true"
-			Targets="BuildProductMain;BuildProductBaseMsi;CopyBuildToMaster"
-		/>
-	</Target>
-	<Target
-		Name="BuildPatchInstaller"
-		DependsOnTargets="RequirePlatform;DownloadAndUnzipFonts;BuildProductMain;BuildProductPatchMsp"
-	/>
-	<!-- ########################################################################################################## -->
-	<!-- ### Build Targets                                                                                      ### -->
-	<!-- ########################################################################################################## -->
-	<Target
-		Name="BuildProductMain"
-		DependsOnTargets="MakeInstallBuildFolders;BuildProduct;Localize;CopyFilesToInstall"
-	/>
-	<Target Name="BuildProduct" DependsOnTargets="CleanInstaller;ProductCompile" />
-	<Target Name="RequirePlatform">
-		<!-- x64-only build (x86 is no longer supported) -->
-		<Error
-			Text="The Platform property must be set to x64. x86 is no longer supported."
-			Condition="'$(Platform)' != 'x64'"
-		/>
-		<Error
-			Text="Installer must be run for release builds [config=$(config)]"
-			Condition="'$(config)' != 'release'"
-		/>
-	</Target>
-	<!--
-		Removing files breaks the ability to patch and requires a new Base build to update.
-		To improve our user experience we may want to delay making a new Base build so this target adds zero byte files to
-		replace files that were removed (for instance during a library update).
-		A base build should warn if we have 'RemovedSinceLastBase' items to help us remember to clear these out.
-	-->
-	<Target Name="RescuePatching">
-		<ItemGroup>
-			<!-- <RemovedSinceLastBase Include="$(dir-outputBase)/Helps/WW-ConceptualIntro/ConceptualIntroduction.htm" /> -->
-		</ItemGroup>
-		<WriteLinesToFile
-			File="%(RemovedSinceLastBase.FullPath)"
-			Lines=""
-			Condition="@(RemovedSinceLastBase-&gt;Count()) != 0"
-		/>
-	</Target>
-	<!-- ########################################################################################################## -->
-	<!-- ### Compile Targets                                                                                    ### -->
-	<!-- ########################################################################################################## -->
-	<Target Name="ProductCompile" DependsOnTargets="BuildFieldWorks;RescuePatching">
-		<MSBuild
-			Projects="$(InstallerDir)/CustomActions/CustomActions.sln"
-			Targets="CustomActions"
-			Properties="Configuration=Release;Platform=x86"
-		/>
-	</Target>
-	<!-- Modern traversal build for installer (replaces legacy remakefw) -->
-	<Target
-		Name="BuildFieldWorks"
-		DependsOnTargets="CleanAll;Initialize;CopyDlls;setRegistryValues;GeneratePartsAndLayoutFiles"
-	>
-		<Message Text="Building FieldWorks using MSBuild Traversal SDK..." Importance="High" />
-		<MSBuild
-			Projects="$(fwrt)/FieldWorks.proj"
-			Properties="Configuration=$(Configuration);Platform=$(Platform);action=$(action);desktopNotAvailable=$(desktopNotAvailable)"
-		/>
-		<Message Text="FieldWorks build complete." Importance="High" />
-	</Target>
-	<!-- Remove residue from the PatchableInstaller repository -->
-	<Target Name="CleanInstaller">
-		<ItemGroup>
-			<OutputSubdirs Include="bin;obj" />
-			<CustomizableDirs Include="$(OverridesDestDir)" />
-			<CustomizableDirs Include="$(InstallerResourcesDir)" />
-		</ItemGroup>
-		<ForceDelete Files="@(OutputSubdirs -&gt; '$(InstallerDir)/CustomActions/CustomActions/%(Identity)')" />
-		<!-- git clean removes only files in the working directory and its subdirectories -->
-		<Exec WorkingDirectory="%(CustomizableDirs.Identity)" Command="git clean -xdf" />
-		<Exec WorkingDirectory="%(CustomizableDirs.Identity)" Command="git checkout ." />
-	</Target>
-	<!-- ########################################################################################################## -->
-	<!-- ### Build Folders and Copy Targets                                                                     ### -->
-	<!-- ########################################################################################################## -->
-	<Target Name="CleanMasterOutputDir">
-		<ForceDelete Files="$(AppBuildMasterDir)" />
-	</Target>
-	<Target Name="MakeInstallBuildFolders">
-		<MakeDir Directories="$(InstallersBaseDir)" Condition="!Exists('$(InstallersBaseDir)')" />
-		<ForceDelete Files="$(AppBuildDir)" />
-	</Target>
-	<Target Name="CopyFilesToInstall" DependsOnTargets="InstallerVersionNumbers">
-		<!-- copy in new stuff -->
-		<PropertyGroup>
-			<OutputDirForConfig>$(fwrt)\Output\$(Configuration)</OutputDirForConfig>
-		</PropertyGroup>
-		<ItemGroup>
-			<DeveloperFiles Include="$(fwrt)\**\.gitignore" />
-			<DeveloperFiles Include="$(fwrt)\**\*~" />
-			<DeveloperFiles Include="$(fwrt)\DistFiles\CommonLocalizations\README.md" />
-			<DeveloperFiles Include="$(fwrt)\DistFiles\DropTEC.exe" />
-			<DeveloperFiles Include="$(fwrt)\DistFiles\Fonts\Raw\**\*" />
-			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\.git\**\*" />
-			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\OcmFrame\**\*" />
-			<!-- directory used only on Linux -->
-			<!-- No longer want TE helps, but they are not yet removed from the Helps repo. -->
-			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\FieldWorks_Translation_Editor_Help.chm" />
-			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\Using_Styles.chm" />
-			<!-- TE-specific per LT-18363 -->
-			<DeveloperFiles Include="$(fwrt)\DistFiles\Helps\Translation Editor\**\*" />
-			<!-- End: No longer want TE helps, but they are not yet removed from the Helps repo. -->
-			<DeveloperFiles Include="$(fwrt)\DistFiles\Icu54.zip" />
-			<!-- Exclude old demo movies. The current movies are online. -->
-			<DeveloperFiles Include="$(fwrt)\DistFiles\Language Explorer\Movies\**\*" />
-			<DeveloperFiles Include="$(fwrt)\DistFiles\libxample32.so" />
-			<!-- Linux file -->
-			<DeveloperFiles Include="$(fwrt)\DistFiles\libxample64.so" />
-			<!-- Linux file -->
-			<DeveloperFiles Include="$(fwrt)\DistFiles\Linux\**\*" />
-			<DeveloperFiles Include="$(fwrt)\DistFiles\Projects\**\*" />
-			<DeveloperFiles Include="$(fwrt)\DistFiles\ReleaseData\**\*" />
-			<!-- Sample Projects -->
-			<DeveloperFiles Include="$(fwrt)\DistFiles\SFconv.exe" />
-			<DeveloperFiles Include="$(fwrt)\DistFiles\TECkit\**\*" />
-			<DeveloperFiles Include="$(fwrt)\DistFiles\TxtConv.exe" />
-			<DeveloperFiles Include="$(fwrt)\DistFiles\Windows\**\*" />
-			<DevTestArtifacts Include="$(OutputDirForConfig)\*Tests.*" />
-			<DevTestArtifacts Include="$(OutputDirForConfig)\test*" />
-			<DevTestArtifacts Include="$(OutputDirForConfig)\*.vrs" />
-			<!-- versification files from some unit tests -->
-			<DevTestArtifacts Include="$(OutputDirForConfig)\Castle.Core.dll" />
-			<DevTestArtifacts Include="$(OutputDirForConfig)\Moq.dll" />
-			<DevTestArtifacts Include="$(OutputDirForConfig)\System.Threading.Tasks.Extensions.dll" />
-			<FontFiles Include="$(fwrt)\DistFiles\Fonts\Raw\Quivira.otf" />
-			<FontFiles Include="$(DownloadsDir)\Fonts\**\*.ttf" />
-			<FontDocumentation Include="$(DownloadsDir)\Fonts\*\*.txt" />
-			<FontDocumentation Include="$(DownloadsDir)\Fonts\*\documentation\*" />
-			<IcuDataFiles Include="$(fwrt)\DistFiles\Icu$(IcuVersion)\**\*" />
-			<InstallerResources Include="$(fwrt)\License.htm" />
-			<!-- allow users to view the license before installing -->
-			<InstallerResources Include="$(fwrt)\resources\App.ico" />
-			<InstallerResources Include="$(fwrt)\resources\Installer.ico" />
-			<!-- If you change this list, you must also update those listed at $(fwrt)\Localizations\ReadMe.md -->
-			<L10nFiles Include="$(OutputDirForConfig)\ar\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\az\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\bn\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\de\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\es\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\fa\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\fr\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\hi\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\hu\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\id\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\km\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\ko\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\ms\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\my\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\ne\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\pt\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\ru\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\rw\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\sw\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\ta\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\te\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\th\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\tr\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\ur\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\vi\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\zh-CN\**\*" />
-			<L10nFiles Include="$(OutputDirForConfig)\zlm\**\*" />
-			<!-- no need to install the following; most are installed by merge modules -->
-			<MergeModules Include="$(OutputDirForConfig)\asserts.log" />
-			<MergeModules Include="$(OutputDirForConfig)\basicTest.xml" />
-			<MergeModules Include="$(OutputDirForConfig)\CacheLight.*" />
-			<MergeModules Include="$(OutputDirForConfig)\CC\**\*" />
-			<MergeModules Include="$(OutputDirForConfig)\CC32.dll" />
-			<MergeModules Include="$(OutputDirForConfig)\CcEC.dll" />
-			<MergeModules Include="$(OutputDirForConfig)\DebugProcs.*" />
-			<MergeModules Include="$(OutputDirForConfig)\DefaultIcon.ico" />
-			<MergeModules
-				Include="$(OutputDirForConfig)\EC\**\*"
-				Exclude="$(OutputDirForConfig)\EC\Plugins\IcuEC 4.0.0.0 Plugin Details.xml"
-			/>
-			<MergeModules Include="$(OutputDirForConfig)\ECInterfaces.dll" />
-			<MergeModules Include="$(OutputDirForConfig)\ECInterfaces.tlb" />
-			<MergeModules Include="$(OutputDirForConfig)\EncConvertersAppDataMover40*" />
-			<MergeModules Include="$(OutputDirForConfig)\FieldWorks.vshost.*" />
-			<MergeModules Include="$(OutputDirForConfig)\FormsTester.*" />
-			<MergeModules Include="$(OutputDirForConfig)\Good.xml" />
-			<MergeModules Include="$(OutputDirForConfig)\IcuConvEC.dll" />
-			<!-- Installed by EC merge modules-->
-			<MergeModules Include="$(OutputDirForConfig)\IcuEC.dll" />
-			<!-- Installed by EC merge modules-->
-			<MergeModules Include="$(OutputDirForConfig)\IcuRegexEC.dll" />
-			<!-- Installed by EC merge modules-->
-			<MergeModules Include="$(OutputDirForConfig)\IcuTranslitEC.dll" />
-			<!-- Installed by EC merge modules-->
-			<MergeModules Include="$(OutputDirForConfig)\includeTest.xml" />
-			<MergeModules Include="$(OutputDirForConfig)\listitems.bmp" />
-			<MergeModules Include="$(OutputDirForConfig)\MigrateSqlDbs.pdb" />
-			<MergeModules Include="$(OutputDirForConfig)\Perl*" />
-			<MergeModules Include="$(OutputDirForConfig)\PerlExpressionEC.dll" />
-			<MergeModules Include="$(OutputDirForConfig)\PhonEnvValidatorTest" />
-			<MergeModules Include="$(OutputDirForConfig)\ProjectUnpacker.*" />
-			<MergeModules Include="$(OutputDirForConfig)\PyScript*" />
-			<MergeModules Include="$(OutputDirForConfig)\Python*" />
-			<!-- REVIEW (Hasso) 2018.04: not sure if this is files or a folder -->
-			<MergeModules Include="$(OutputDirForConfig)\Python\**\*" />
-			<!-- REVIEW (Hasso) 2018.04: not sure if this is files or a folder -->
-			<MergeModules Include="$(OutputDirForConfig)\ScrChecks.dll" />
-			<!-- this will be taken from DistFiles\Editorial Checks -->
-			<MergeModules Include="$(OutputDirForConfig)\ScrChecks.pdb" />
-			<!-- this will be taken from DistFiles\Editorial Checks -->
-			<MergeModules Include="$(OutputDirForConfig)\SilEncConverters40.dll" />
-			<MergeModules Include="$(OutputDirForConfig)\SilEncConverters40.tlb" />
-			<MergeModules Include="$(OutputDirForConfig)\Temp\**\*" />
-			<MergeModules Include="$(OutputDirForConfig)\TLP*" />
-			<MergeModules Include="$(OutputDirForConfig)\UIAutomationProvider.dll" />
-			<MergeModules Include="$(OutputDirForConfig)\UIAutomationTypes.dll" />
-			<MergeModules Include="$(OutputDirForConfig)\whitepixel.bmp" />
-			<MergeModules Include="$(OutputDirForConfig)\xCoreInterfaces.XmlSerializers.*" />
-			<!-- Binary files (and other files installed in the ProgramFiles\SIL\FieldWorks # directory -->
-			<BinFiles Include="$(OutputDirForConfig)\**\*" Exclude="@(L10nFiles)" />
-			<!-- %(RecursiveDir) is only the "**\" portion. This hack recollects L10nFiles with the 2-letter language code as the recursive directory. -->
-			<L10nFilesWithRecursiveDirs
-				Include="$(OutputDirForConfig)\**\*"
-				Exclude="@(BinFiles)"
-			/>
-			<!-- Now that we've used BinFiles to exclude all non-l10n files from L10nFilesWithRecursiveDirs,
-				we can remove MergeModules, etc., from BinFiles (MergeModules belong in neither ItemGroup). -->
-			<BinFiles Remove="@(DevTestArtifacts)" />
-			<BinFiles Remove="@(MergeModules)" />
-			<BinFiles
-				Include="$(fwrt)\DistFiles\**\*"
-				Exclude="@(DeveloperFiles);@(IcuDataFiles)"
-			/>
-			<BinFiles Include="$(fwrt)\License.htm" />
-			<!-- install the license -->
-			<!-- Files with special install locations or steps -->
-			<CustomInstallFiles Include="$(OutputDirForConfig)\FieldWorks.exe" />
-			<!-- easier to add firewall extension if it isn't harvested -->
-			<CustomInstallFiles Include="$(OutputDirForConfig)\FieldWorks.exe.manifest" />
-			<!-- must be co-located with EXE for reg-free COM -->
-			<CustomInstallFiles Include="$(OutputDirForConfig)\*.X.manifest" />
-			<!-- dependent assembly manifests for reg-free COM -->
-			<CustomInstallFiles Include="$(fwrt)\DistFiles\vs_piaredist.exe" />
-			<!-- Installed in Program Files\Common Files -->
-			<BinFiles Remove="@(CustomInstallFiles)" />
-			<!-- Files used to customize the generic patchable installer -->
-			<OverrideFiles Include="$(fwrt)\FLExInstaller\*.wxi" />
-		</ItemGroup>
-		<Copy
-			SourceFiles="@(FontFiles)"
-			OverwriteReadonlyFiles="true"
-			DestinationFolder="$(AppBuildDir)/$(FontDirSuffix)"
-		/>
-		<Copy
-			SourceFiles="@(FontDocumentation)"
-			OverwriteReadonlyFiles="true"
-			DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/Fonts/%(RecursiveDir)"
-		/>
-		<Copy
-			SourceFiles="@(IcuDataFiles)"
-			OverwriteReadonlyFiles="true"
-			DestinationFolder="$(AppBuildDir)/$(DataDirSuffix)/Icu$(IcuVersion)/%(RecursiveDir)"
-		/>
-		<Copy
-			SourceFiles="@(InstallerResources)"
-			OverwriteReadonlyFiles="true"
-			DestinationFolder="$(InstallerResourcesDir)"
-		/>
-		<Copy
-			SourceFiles="@(L10nFilesWithRecursiveDirs)"
-			OverwriteReadonlyFiles="true"
-			DestinationFolder="$(AppBuildDir)/$(L10nDirSuffix)/%(RecursiveDir)"
-		/>
-		<Copy
-			SourceFiles="@(BinFiles)"
-			OverwriteReadonlyFiles="true"
-			DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/%(RecursiveDir)"
-		/>
-		<Copy
-			SourceFiles="@(CustomInstallFiles)"
-			OverwriteReadonlyFiles="true"
-			DestinationFolder="$(AppBuildDir)/$(BinDirSuffix)/.."
-		/>
-		<Copy
-			SourceFiles="@(OverrideFiles)"
-			OverwriteReadonlyFiles="true"
-			DestinationFolder="$(OverridesDestDir)"
-		/>
-		<CallTarget Targets="HarvestL10n;ConvertHarvestsToWxi;WriteFilesMetadata" />
-	</Target>
-	<Target Name="HarvestL10n">
-		<!-- If this is the BASE installer, harvest once and generate component GUID's early because they don't meet the critera for late generation -->
-		<MSBuild
-			Projects="$(MSBuildProjectFullPath)"
-			Targets="HarvestAllL10ns"
-			Condition="'$(BuildingBaseInstaller)'=='true'"
-			Properties="PatchPrefix=MASTER;GuidGenArg=-gg;L10nSrcDir=$(AppBuildDir)\$(L10nDirSuffix);L10nWxiDir=$(OverridesDestDir)/Master;FixKeyPath=true"
-		/>
-		<!-- If this is the PATCH installer, harvest Master and Update sets and generate component GUID's late so they don't mismatch -->
-		<MSBuild
-			Projects="$(MSBuildProjectFullPath)"
-			Targets="HarvestAllL10ns"
-			Condition="'$(BuildingBaseInstaller)'!='true'"
-			Properties="PatchPrefix=MASTER;GuidGenArg=-ag;L10nSrcDir=$(AppBuildMasterDir)\$(L10nDirSuffix);L10nWxiDir=$(OverridesDestDir)/Master;FixKeyPath=false"
-		/>
-		<MSBuild
-			Projects="$(MSBuildProjectFullPath)"
-			Targets="HarvestAllL10ns"
-			Condition="'$(BuildingBaseInstaller)'!='true'"
-			Properties="PatchPrefix=UPDATE;GuidGenArg=-ag;L10nSrcDir=$(AppBuildDir)\$(L10nDirSuffix);L10nWxiDir=$(OverridesDestDir)/Update;FixKeyPath=false"
-		/>
-	</Target>
-	<Target Name="HarvestAllL10ns">
-		<Message Text="Harvesting $(PatchPrefix) L10n" />
-		<MakeDir Directories="$(L10nWxiDir)" Condition="!Exists('$(L10nWxiDir)')" />
-		<ItemGroup>
-			<LocaleDirs Include="$([System.IO.Directory]::GetDirectories(&quot;$(L10nSrcDir)&quot;))" />
-		</ItemGroup>
-		<MSBuild
-			Projects="$(MSBuildProjectFullPath)"
-			Targets="HarvestOneL10n"
-			Properties="LocaleDir=%(LocaleDirs.Identity);TargetLocale=%(Filename)"
-		/>
-	</Target>
-	<Target Name="HarvestOneL10n">
-		<PropertyGroup>
-			<!-- Substring keeps Chinese the same length as everyone else (and '-' is an illegal character in some places) -->
-			<!-- "The nail that sticks up gets hammered down" (Japanese proverb) -->
-			<SafeTargetLocale Condition="'$(TargetLocale)'=='zh-CN'"
-				>$(TargetLocale.Substring(0,2))</SafeTargetLocale
-			>
-			<SafeTargetLocale Condition="'$(TargetLocale)'!='zh-CN'"
-				>$(TargetLocale)</SafeTargetLocale
-			>
-			<!-- KeyPathFix changes KeyPath="yes" to KeyPath="no" so we can overwrite later versions of files, if necessary. -->
-			<!-- See https://github.com/sillsdev/genericinstaller's README for details. -->
-			<KeyPathFixArg Condition="'$(FixKeyPath)'=='true'"
-				>-t $(InstallerDir)/BaseInstallerBuild/KeyPathFix.xsl</KeyPathFixArg
-			>
-			<CommonHeatArgs>$(GuidGenArg) -scom -sreg -sfrag -srd -sw5150 -sw5151 $(KeyPathFixArg)</CommonHeatArgs>
-		</PropertyGroup>
-		<Exec Command="heat.exe dir $(LocaleDir) $(CommonHeatArgs) -cg $(SafeTargetLocale)Localization -dr $(SafeTargetLocale)L10NFOLDER -var wix.$(PatchPrefix)$(SafeTargetLocale)L10NDIR -out $(L10nWxiDir)\$(SafeTargetLocale)Harvest.wxs" />
-	</Target>
-	<!-- Write a table of files' metadata that can be used to verify that each file has been installed or patched correctly. -->
-	<Target Name="WriteFilesMetadata" DependsOnTargets="InstallerVersionNumbers">
-		<PropertyGroup>
-			<MetadataLog>$(AppBuildDir)\$(BinDirSuffix)\installerTestMetadata.csv</MetadataLog>
-		</PropertyGroup>
-		<ItemGroup>
-			<FLExExeToHash Include="$(fwrt)\Output\$(Configuration)\FieldWorks.exe" />
-			<BinFilesToHash
-				Include="$(AppBuildDir)\$(BinDirSuffix)\**\*"
-				Exclude="$(MetadataLog)"
-			/>
-			<L10nFilesToHash Include="$(AppBuildDir)\$(L10nDirSuffix)\**\*" />
-		</ItemGroup>
-		<WriteLinesToFile
-			File="$(MetadataLog)"
-			Overwrite="true"
-			Lines="Metadata for $(ApplicationName) $(BuildVersion)"
-		/>
-		<LogMetadata
-			LogFile="$(MetadataLog)"
-			Files="@(FLExExeToHash)"
-			PathPrefixToDrop="$(fwrt)\Output\$(Configuration)\"
-		/>
-		<LogMetadata
-			LogFile="$(MetadataLog)"
-			Files="@(BinFilesToHash)"
-			PathPrefixToDrop="$(AppBuildDir)\$(BinDirSuffix)\"
-			WriteHeaders="false"
-		/>
-		<LogMetadata
-			LogFile="$(MetadataLog)"
-			Files="@(L10nFilesToHash)"
-			PathPrefixToDrop="$(AppBuildDir)\$(L10nDirSuffix)\"
-			WriteHeaders="false"
-		/>
-	</Target>
-	<Target Name="ConvertHarvestsToWxi">
-		<ItemGroup>
-			<HarvestedWxsFiles Include="$(OverridesDestDir)\Master\*.wxs" />
-			<HarvestedWxsFiles Include="$(OverridesDestDir)\Update\*.wxs" />
-		</ItemGroup>
-		<WxsToWxi SourceFile="%(HarvestedWxsFiles.Identity)" />
-		<ForceDelete Files="@(HarvestedWxsFiles)" />
-	</Target>
-	<Target Name="CopyBuildToMaster">
-		<ItemGroup>
-			<ObjectFiles Include="$(AppBuildDir)/**/*" />
-		</ItemGroup>
-		<Copy
-			SourceFiles="@(ObjectFiles)"
-			DestinationFolder="$(AppBuildMasterDir)/%(RecursiveDir)"
-		/>
-	</Target>
-	<Target Name="DownloadBundledInstallers" Condition="'$(disableDownloads)'!='true'">
-		<!-- x64-only build: only download x64 redistributables -->
-		<PropertyGroup>
-			<WixLibsDir>$(InstallerDir)/libs/</WixLibsDir>
-		</PropertyGroup>
-		<!-- .NET 4.8 (universal installer supports both architectures) -->
-		<DownloadFile
-			Address="https://go.microsoft.com/fwlink/?linkid=2088631"
-			LocalFilename="ndp48-x86-x64-allos-enu.exe"
-			Condition="!Exists('$(WixLibsDir)/ndp48-x86-x64-allos-enu.exe')"
-			DownloadsDir="$(WixLibsDir)"
-		/>
-		<!-- 64-bit VC redistributables (x86 no longer needed) -->
-		<DownloadFile
-			Address="https://download.microsoft.com/download/5/D/8/5D8C65CB-C849-4025-8E95-C3966CAFD8AE/vcredist_x64.exe"
-			LocalFilename="vcredist_2008_x64.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2008_x64.exe')"
-			DownloadsDir="$(WixLibsDir)"
-		/>
-		<!-- VisualC++ 9 runtime (VS 2008) -->
-		<DownloadFile
-			Address="https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe"
-			LocalFilename="vcredist_2010_x64.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2010_x64.exe')"
-			DownloadsDir="$(WixLibsDir)"
-		/>
-		<!-- VisualC++ 10 runtime (VS 2010) -->
-		<DownloadFile
-			Address="https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x64.exe"
-			LocalFilename="vcredist_2012_x64.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2012_x64.exe')"
-			DownloadsDir="$(WixLibsDir)"
-		/>
-		<!-- VisualC++ 11 runtime (VS 2012) -->
-		<DownloadFile
-			Address="https://download.microsoft.com/download/0/5/6/056DCDA9-D667-4E27-8001-8A0C6971D6B1/vcredist_x64.exe"
-			LocalFilename="vcredist_2013_x64.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2013_x64.exe')"
-			DownloadsDir="$(WixLibsDir)"
-		/>
-		<!-- VisualC++ 12 runtime (VS 2013) -->
-		<DownloadFile
-			Address="https://download.visualstudio.microsoft.com/download/pr/36e45907-8554-4390-ba70-9f6306924167/97CC5066EB3C7246CF89B735AE0F5A5304A7EE33DC087D65D9DFF3A1A73FE803/VC_redist.x64.exe"
-			LocalFilename="vcredist_2015-19_x64.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2015-19_x64.exe')"
-			DownloadsDir="$(WixLibsDir)"
-		/>
-		<!-- VisualC++ 14.1 runtime (VS 2015-2019) -->
-		<!-- FLEx Bridge -->
-		<DownloadFile
-			Address="https://software.sil.org/downloads/r/fieldworks/FlexBridge_Offline_4.2.0.exe"
-			LocalFilename="FLExBridge_Offline.exe"
-			Condition="!Exists('$(WixLibsDir)/FLExBridge_Offline.exe')"
-			DownloadsDir="$(WixLibsDir)"
-		/>
-		<!-- TODO: always download to get the latest version -->
-	</Target>
-	<Target Name="DownloadAndUnzipFonts" Condition="'$(disableDownloads)'!='true'">
-		<MakeDir Directories="$(DownloadsDir)" Condition="!Exists('$(DownloadsDir)')" />
-		<!-- Note: we are downloading quivira but also leaving it checked in in case the website disappears. -->
-		<DownloadFile
-			Address="http://www.quivira-font.com/files/Quivira.otf"
-			DownloadsDir="$(fwrt)/DistFiles/Fonts/Raw"
-			ContinueOnError="true"
-		/>
-		<!-- TODO (Hasso) 2018.07: download latest version from wirl (LT-19288) -->
-		<DownloadFile
-			Address="https://software.sil.org/downloads/r/andika/Andika-6.101.zip"
-			DownloadsDir="$(DownloadsDir)"
-			Condition="!Exists('$(DownloadsDir)/Andika-6.101.zip')"
-		/>
-		<DownloadFile
-			Address="https://software.sil.org/downloads/r/charis/CharisSIL-6.101.zip"
-			DownloadsDir="$(DownloadsDir)"
-			Condition="!Exists('$(DownloadsDir)/CharisSIL-6.101.zip')"
-		/>
-		<DownloadFile
-			Address="https://software.sil.org/downloads/r/doulos/DoulosSIL-6.101.zip"
-			DownloadsDir="$(DownloadsDir)"
-			Condition="!Exists('$(DownloadsDir)/DoulosSIL-6.101.zip')"
-		/>
-		<DownloadFile
-			Address="https://software.sil.org/downloads/r/gentium/GentiumPlus-6.101.zip"
-			DownloadsDir="$(DownloadsDir)"
-			Condition="!Exists('$(DownloadsDir)/GentiumPlus-6.101.zip')"
-		/>
-		<ItemGroup>
-			<ZippedFonts Include="Andika-6.101;CharisSIL-6.101;DoulosSIL-6.101;GentiumPlus-6.101" />
-		</ItemGroup>
-		<Unzip
-			ZipFilename="$(DownloadsDir)/%(ZippedFonts.Identity).zip"
-			ToDir="$(DownloadsDir)/Fonts"
-			Condition="!Exists('$(DownloadsDir)/Fonts/%(ZippedFonts.Identity)')"
-		/>
-	</Target>
-	<!-- ########################################################################################################## -->
-	<!-- ### Build Wix Product Targets                                                                          ### -->
-	<!-- ########################################################################################################## -->
-	<PropertyGroup>
-		<Arch Condition="'$(Platform)' != 'x64'">x86</Arch>
-		<!-- Handle x86 and WIN32 -->
-		<Arch Condition="'$(Platform)' == 'x64'">x64</Arch>
-		<Base Condition="'$(BASE_BUILD_NUMBER)' != ''">b$(BASE_BUILD_NUMBER)_</Base>
-	</PropertyGroup>
-	<Target Name="BuildProductBaseMsi" DependsOnTargets="InstallerVersionNumbers">
-		<Warning
-			Text="RemovedSinceLastBase should be cleared out before making a new base build."
-			Condition="'@(RemovedSinceLastBase)' != ''"
-		/>
-		<Message
-			Text="Building FieldWorks Base Msi for $(Arch)"
-			Condition="'$(action)'!='test'"
-		/>
-		<MSBuild.ExtensionPack.Framework.Guid TaskAction="Create">
-			<Output TaskParameter="FormattedGuidString" PropertyName="ProductIdGuid" />
-		</MSBuild.ExtensionPack.Framework.Guid>
-		<Message Text="Generated GUID '$(ProductIdGuid)'" />
-		<PropertyGroup>
-			<MsiFile>$(SafeApplicationName)_$(PatchVersionSegment).msi</MsiFile>
-			<BaseBuildDir>$(InstallerDir)/BaseInstallerBuild</BaseBuildDir>
-			<BaseBuildArgs>"$(ApplicationName)" $(SafeApplicationName) $(BuildVersion) $(ProductIdGuid) $(UpgradeCodeGuid) "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(CopyrightYear) "$(Manufacturer)" $(SafeManufacturer) $(Arch)</BaseBuildArgs>
-		</PropertyGroup>
-		<!-- Suppress ICE30 because we and Encoding Converters MM both install Geckofx, resulting in an ICE warning for double ref counting -->
-		<Exec
-			WorkingDirectory="$(BaseBuildDir)"
-			Command="buildBaseInstaller.bat $(BaseBuildArgs)"
-			EnvironmentVariables="SuppressICE=-sice:ICE30"
-		/>
-		<ItemGroup>
-			<InstallerFiles Include="$(BaseBuildDir)/**/$(SafeApplicationName)_*.exe" />
-			<InstallerFiles Include="$(BaseBuildDir)/**/$(SafeApplicationName)_*.msi" />
-		</ItemGroup>
-		<Move
-			SourceFiles="@(InstallerFiles)"
-			DestinationFiles="@(InstallerFiles -&gt; '$(InstallersBaseDir)\%(Filename)_$(Arch)%(Extension)')"
-		/>
-		<WriteLinesToFile
-			File="$(AppBuildDir)/version"
-			Overwrite="true"
-			Lines="$(BuildVersion)"
-		/>
-		<WriteLinesToFile
-			File="$(AppBuildDir)/ProductIdGuid"
-			Overwrite="true"
-			Lines="$(ProductIdGuid)"
-		/>
-	</Target>
-	<Target Name="BuildProductPatchMsp" DependsOnTargets="InstallerVersionNumbers">
-		<!-- TODO: work on Patch process -->
-		<ReadLinesFromFile File="$(AppBuildMasterDir)/version">
-			<Output TaskParameter="Lines" PropertyName="BaseVersion" />
-		</ReadLinesFromFile>
-		<ReadLinesFromFile File="$(AppBuildMasterDir)/ProductIdGuid">
-			<Output TaskParameter="Lines" PropertyName="ProductIdGuid" />
-		</ReadLinesFromFile>
-		<PropertyGroup>
-			<MspFile>$(SafeApplicationName)_$(BuildVersion).msp</MspFile>
-			<PatchDir>$(InstallerDir)/CreateUpdatePatch</PatchDir>
-			<PatchArgs>"$(ApplicationName)" $(SafeApplicationName) $(BaseVersion) $(BuildVersion) "$(AppBuildMasterDir)/$(BinDirSuffix)" "$(AppBuildDir)/$(BinDirSuffix)" "$(AppBuildMasterDir)/$(DataDirSuffix)" "$(AppBuildDir)/$(DataDirSuffix)" $(ProductIdGuid) $(UpgradeCodeGuid) $(CompGGS) "$(Manufacturer)" $(SafeManufacturer) $(Arch)</PatchArgs>
-		</PropertyGroup>
-		<!-- Suppress ICE30 because we and Encoding Converters MM both install Geckofx, resulting in an ICE warning for double ref counting -->
-		<Exec
-			WorkingDirectory="$(PatchDir)"
-			Command="buildPatch.bat $(PatchArgs)"
-			EnvironmentVariables="SuppressICE=-sice:ICE30"
-		/>
-		<ItemGroup>
-			<PatchFiles Include="$(PatchDir)/**/*.msp" />
-		</ItemGroup>
-		<Move
-			SourceFiles="@(PatchFiles)"
-			DestinationFiles="@(PatchFiles -&gt; '$(InstallersBaseDir)\%(Filename)_$(Base)$(Arch)%(Extension)')"
-		/>
-	</Target>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <WixLibsDir Condition="'$(WixLibsDir)'==''">$(MSBuildProjectDirectory)\..\FLExInstaller\libs</WixLibsDir>
+    <DownloadsDir Condition="'$(DownloadsDir)'==''">$(MSBuildProjectDirectory)\..\Downloads</DownloadsDir>
+  </PropertyGroup>
+
+  <Target Name="BuildInstaller" DependsOnTargets="DownloadPrerequisites;BuildProcRunner">
+    <Message Text="Building Installer..." Importance="high" />
+    <MSBuild Projects="$(MSBuildProjectDirectory)\..\FLExInstaller\FieldWorks.Bundle.wixproj" Targets="Restore;Build" Properties="Configuration=$(Configuration);Platform=x64" />
+  </Target>
+
+  <Target Name="BuildProcRunner">
+    <MSBuild Projects="$(MSBuildProjectDirectory)\..\FLExInstaller\Shared\ProcRunner\ProcRunner\ProcRunner.csproj" Targets="Restore;Build" Properties="Configuration=Release" />
+  </Target>
+
+  <Target Name="DownloadPrerequisites" DependsOnTargets="DownloadBundledInstallers;DownloadAndUnzipFonts">
+    <Message Text="Prerequisites downloaded." Importance="high" />
+  </Target>
+
+  <Target Name="DownloadBundledInstallers">
+    <MakeDir Directories="$(WixLibsDir)" Condition="!Exists('$(WixLibsDir)')" />
+    <!-- .NET 4.8 -->
+    <DownloadFile
+      SourceUrl="https://go.microsoft.com/fwlink/?linkid=2088631"
+      DestinationFolder="$(WixLibsDir)"
+      DestinationFileName="ndp48-x86-x64-allos-enu.exe"
+      Condition="!Exists('$(WixLibsDir)\ndp48-x86-x64-allos-enu.exe')"
+    />
+    <!-- VC++ Redists -->
+    <DownloadFile
+      SourceUrl="https://download.microsoft.com/download/5/D/8/5D8C65CB-C849-4025-8E95-C3966CAFD8AE/vcredist_x64.exe"
+      DestinationFolder="$(WixLibsDir)"
+      DestinationFileName="vcredist_2008_x64.exe"
+      Condition="!Exists('$(WixLibsDir)\vcredist_2008_x64.exe')"
+    />
+    <DownloadFile
+      SourceUrl="https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe"
+      DestinationFolder="$(WixLibsDir)"
+      DestinationFileName="vcredist_2010_x64.exe"
+      Condition="!Exists('$(WixLibsDir)\vcredist_2010_x64.exe')"
+    />
+    <DownloadFile
+      SourceUrl="https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x64.exe"
+      DestinationFolder="$(WixLibsDir)"
+      DestinationFileName="vcredist_2012_x64.exe"
+      Condition="!Exists('$(WixLibsDir)\vcredist_2012_x64.exe')"
+    />
+    <DownloadFile
+      SourceUrl="https://download.microsoft.com/download/0/5/6/056DCDA9-D667-4E27-8001-8A0C6971D6B1/vcredist_x64.exe"
+      DestinationFolder="$(WixLibsDir)"
+      DestinationFileName="vcredist_2013_x64.exe"
+      Condition="!Exists('$(WixLibsDir)\vcredist_2013_x64.exe')"
+    />
+    <DownloadFile
+      SourceUrl="https://download.visualstudio.microsoft.com/download/pr/36e45907-8554-4390-ba70-9f6306924167/97CC5066EB3C7246CF89B735AE0F5A5304A7EE33DC087D65D9DFF3A1A73FE803/VC_redist.x64.exe"
+      DestinationFolder="$(WixLibsDir)"
+      DestinationFileName="vcredist_2015-19_x64.exe"
+      Condition="!Exists('$(WixLibsDir)\vcredist_2015-19_x64.exe')"
+    />
+    <!-- FLEx Bridge -->
+    <DownloadFile
+      SourceUrl="https://software.sil.org/downloads/r/fieldworks/FlexBridge_Offline_4.2.0.exe"
+      DestinationFolder="$(WixLibsDir)"
+      DestinationFileName="FLExBridge_Offline.exe"
+      Condition="!Exists('$(WixLibsDir)\FLExBridge_Offline.exe')"
+    />
+  </Target>
+
+  <Target Name="DownloadAndUnzipFonts">
+    <MakeDir Directories="$(DownloadsDir)" Condition="!Exists('$(DownloadsDir)')" />
+    <DownloadFile
+      SourceUrl="http://www.quivira-font.com/files/Quivira.otf"
+      DestinationFolder="$(MSBuildProjectDirectory)\..\DistFiles\Fonts\Raw"
+      Condition="!Exists('$(MSBuildProjectDirectory)\..\DistFiles\Fonts\Raw\Quivira.otf')"
+      ContinueOnError="true"
+    />
+    <DownloadFile
+      SourceUrl="https://software.sil.org/downloads/r/andika/Andika-6.101.zip"
+      DestinationFolder="$(DownloadsDir)"
+      DestinationFileName="Andika-6.101.zip"
+      Condition="!Exists('$(DownloadsDir)\Andika-6.101.zip')"
+    />
+    <DownloadFile
+      SourceUrl="https://software.sil.org/downloads/r/charis/CharisSIL-6.101.zip"
+      DestinationFolder="$(DownloadsDir)"
+      DestinationFileName="CharisSIL-6.101.zip"
+      Condition="!Exists('$(DownloadsDir)\CharisSIL-6.101.zip')"
+    />
+    <DownloadFile
+      SourceUrl="https://software.sil.org/downloads/r/doulos/DoulosSIL-6.101.zip"
+      DestinationFolder="$(DownloadsDir)"
+      DestinationFileName="DoulosSIL-6.101.zip"
+      Condition="!Exists('$(DownloadsDir)\DoulosSIL-6.101.zip')"
+    />
+    <DownloadFile
+      SourceUrl="https://software.sil.org/downloads/r/gentium/GentiumPlus-6.101.zip"
+      DestinationFolder="$(DownloadsDir)"
+      DestinationFileName="GentiumPlus-6.101.zip"
+      Condition="!Exists('$(DownloadsDir)\GentiumPlus-6.101.zip')"
+    />
+
+    <ItemGroup>
+      <ZippedFonts Include="Andika-6.101;CharisSIL-6.101;DoulosSIL-6.101;GentiumPlus-6.101" />
+    </ItemGroup>
+    <Unzip
+      SourceFiles="$(DownloadsDir)\%(ZippedFonts.Identity).zip"
+      DestinationFolder="$(DownloadsDir)\Fonts"
+      Condition="!Exists('$(DownloadsDir)\Fonts\%(ZippedFonts.Identity)')"
+    />
+  </Target>
 </Project>

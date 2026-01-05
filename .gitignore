@@ -177,3 +177,9 @@ CrashLog.txt
 # VSTest Artifacts
 TestResults/
 *.trx
+
+# WiX v6
+*.wixpdb
+
+# Standard .NET
+bin/
