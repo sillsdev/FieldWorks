@@ -209,9 +209,8 @@ namespace SIL.FieldWorks.XWorks.LexText
 		}
 
 		/// <summary>
-		/// Currently the reading is handled by CreateStyles
+		/// Currently, the reading is handled by CreateStyles
 		/// </summary>
-		/// <param name="reader"></param>
 		public void ReadXml(XmlReader reader)
 		{
 			throw new NotImplementedException();
@@ -254,6 +253,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			{
 				writer.WriteAttributeString("use", styleFunction);
 			}
+
 			if (GetStyleType(style) == "character" && style.InheritsFrom != null)
 			{
 				// LT-18267 Character styles put their basedOn in a different place

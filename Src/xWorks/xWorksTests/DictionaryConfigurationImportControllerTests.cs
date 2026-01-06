@@ -12,7 +12,6 @@ using NUnit.Framework;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
@@ -31,7 +30,6 @@ namespace SIL.FieldWorks.XWorks
 		private DictionaryConfigurationImportController _reversalController;
 		private string _projectConfigPath;
 		private string _reversalProjectConfigPath;
-		private readonly string _defaultConfigPath = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary");
 		private const string configLabel = "importexportConfiguration";
 		private const string reversalConfigLabel = "importexportReversalConfiguration";
 		private const string configFilename = "importexportConfigurationFile.fwdictconfig";

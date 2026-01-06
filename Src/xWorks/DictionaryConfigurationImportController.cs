@@ -144,8 +144,11 @@ namespace SIL.FieldWorks.XWorks
 				if (_view == null) // _view is sometimes null in unit tests, and it's helpful to know what exactly went wrong.
 					throw new Exception(xWorksStrings.kstidCannotImport, e);
 #endif
+				// TODO: var message = $"{xWorksStrings.kstidCannotImport} See the log for details.";
 				new SilErrorReportingAdapter(_view, _propertyTable).ReportNonFatalExceptionWithMessage(e, xWorksStrings.kstidCannotImport);
 				_view.explanationLabel.Text = xWorksStrings.kstidCannotImport;
+				_view.DialogResult = DialogResult.None;
+				// TODO (Hasso) 2026.01: should we also disable the Browse and Import buttons?
 			}
 
 			// We have re-loaded the model from disk to preserve custom field state so the Label must be set here
@@ -220,6 +223,7 @@ namespace SIL.FieldWorks.XWorks
 			// Import styles
 			NonUndoableUnitOfWorkHelper.DoSomehow(_cache.ActionHandlerAccessor, () =>
 			{
+				// REVIEW (Hasso) 2026.01: do we really need to re-import styles?
 				// ReSharper disable once UnusedVariable -- The FlexStylesXmlAccessor constructor does the work of importing.
 				var stylesAccessor = new FlexStylesXmlAccessor(_cache.LangProject.LexDbOA, true, importStylesLocation);
 
