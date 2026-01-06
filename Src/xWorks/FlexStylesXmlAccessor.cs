@@ -209,9 +209,8 @@ namespace SIL.FieldWorks.XWorks.LexText
 		}
 
 		/// <summary>
-		/// Currently the reading is handled by CreateStyles
+		/// Currently, the reading is handled by CreateStyles
 		/// </summary>
-		/// <param name="reader"></param>
 		public void ReadXml(XmlReader reader)
 		{
 			throw new NotImplementedException();
@@ -242,12 +241,17 @@ namespace SIL.FieldWorks.XWorks.LexText
 			writer.WriteAttributeString("userlevel", style.UserLevel.ToString());
 			writer.WriteAttributeString("context", GetStyleContext(style));
 			writer.WriteAttributeString("type", GetStyleType(style));
-			writer.WriteAttributeString("function", style.RealStyle.Function.ToString().ToLowerInvariant()); // ENHANCE (Hasso) 2026.01: skip this if it's Prose
 
 			var styleStructure = GetStyleStructure(style);
 			if (styleStructure != null)
 			{
 				writer.WriteAttributeString("structure", styleStructure);
+			}
+
+			var styleFunction = style.RealStyle.Function.ToString().ToLowerInvariant();
+			if (styleFunction != "prose")
+			{
+				writer.WriteAttributeString("use", styleFunction);
 			}
 
 			if (GetStyleType(style) == "character" && style.InheritsFrom != null)
