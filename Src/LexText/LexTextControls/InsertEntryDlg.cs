@@ -1350,6 +1350,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (DialogResult == DialogResult.Retry)
 					{
 						m_mediator.SendMessage("JumpToPopupLexEntry", m_entry.Hvo);
+						DialogResult = DialogResult.OK;
 					}
 					break;
 				}
