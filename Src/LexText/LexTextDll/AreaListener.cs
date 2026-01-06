@@ -292,6 +292,10 @@ namespace SIL.FieldWorks.XWorks.LexText
 					string value = XmlUtils.GetAttributeValue(node, "value", "???");
 					string imageName = XmlUtils.GetAttributeValue(node, "icon"); //can be null
 					XmlNode controlElement = node.SelectSingleNode("control");
+					if (value == "lexiconEditPopup")
+					{
+						continue;
+					}
 					display.List.Add(label, value, imageName, controlElement);
 				}
 			}

@@ -246,9 +246,9 @@ namespace SIL.FieldWorks.XWorks
 		/// Returns the path to the current Dictionary or ReversalIndex configuration file, based on client specification or the current tool
 		/// Guarantees that the path is set to an existing configuration file, which may cause a redisplay of the XHTML view.
 		/// </summary>
-		public static string GetCurrentConfiguration(PropertyTable propertyTable, string innerConfigDir = null)
+		public static string GetCurrentConfiguration(PropertyTable propertyTable, string innerConfigDir = null, ICmObject obj = null)
 		{
-			return GetCurrentConfiguration(propertyTable, true, innerConfigDir);
+			return GetCurrentConfiguration(propertyTable, true, innerConfigDir, obj);
 		}
 
 		private static void SetConfigureHomographParameters(string currentConfig, LcmCache cache)
@@ -275,7 +275,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Returns the path to the current Dictionary or ReversalIndex configuration file, based on client specification or the current tool
 		/// Guarantees that the path is set to an existing configuration file, which may cause a redisplay of the XHTML view if fUpdate is true.
 		/// </summary>
-		public static string GetCurrentConfiguration(PropertyTable propertyTable, bool fUpdate, string innerConfigDir = null)
+		public static string GetCurrentConfiguration(PropertyTable propertyTable, bool fUpdate, string innerConfigDir = null, ICmObject obj = null)
 		{
 			// Since this is used in the display of the title and XWorksViews sometimes tries to display the title
 			// before full initialization (if this view is the one being displayed on startup) test the propertyTable before continuing.
@@ -283,7 +283,7 @@ namespace SIL.FieldWorks.XWorks
 				return null;
 			if (innerConfigDir == null)
 			{
-				innerConfigDir = GetInnermostConfigurationDirectory(propertyTable) ??
+				innerConfigDir = GetInnermostConfigurationDirectory(propertyTable, obj) ??
 								 ReversalIndexServices.RevIndexDir;
 			}
 			var pubLayoutPropName = GetPropNameForConfigType(innerConfigDir);
