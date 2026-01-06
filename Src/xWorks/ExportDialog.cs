@@ -982,16 +982,19 @@ namespace SIL.FieldWorks.XWorks
 				foreach (var reversal in m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances())
 				{
 					var revConfig = DictionaryConfigurationModel.GetReversalConfigurationModel(reversal.WritingSystem, m_cache, m_propertyTable);
-					GetReversalEntries(reversal.Guid, exportService, revConfig, revClerk, out pubDecorator, out entriesToSave);
-
-					if (entriesToSave.Length > 0)
+					if (revConfig != null)
 					{
-						exportService.ExportWordReversal(filePath, reversal.WritingSystem, entriesToSave,
-							revClerk, pubDecorator, revConfig, progress);
-					}
+						GetReversalEntries(reversal.Guid, exportService, revConfig, revClerk, out pubDecorator, out entriesToSave);
 
-					// If we just sorted for the original reversal, then keep it's sorted objects to restore later.
-					exportService.UpdateSortedObjects(revClerk, reversal.Guid, false);
+						if (entriesToSave.Length > 0)
+						{
+							exportService.ExportWordReversal(filePath, reversal.WritingSystem, entriesToSave,
+								revClerk, pubDecorator, revConfig, progress);
+						}
+
+						// If we just sorted for the original reversal, then keep it's sorted objects to restore later.
+						exportService.UpdateSortedObjects(revClerk, reversal.Guid, false);
+					}
 				}
 			}
 			finally
@@ -1042,10 +1045,12 @@ namespace SIL.FieldWorks.XWorks
 						// Get the reversal configuration.
 						var ri = m_cache.ServiceLocator.GetObject(reversalGuid) as IReversalIndex;
 						var revConfig = DictionaryConfigurationModel.GetReversalConfigurationModel(ri.WritingSystem, m_cache, m_propertyTable);
-
-						var revClerk = exportService.GetReversalClerk();
-						GetReversalEntries(reversalGuid, exportService, revConfig, revClerk, out pubDecorator, out entriesToSave);
-						exportService.ExportXhtmlDocument(xhtmlPath, revClerk, pubDecorator, entriesToSave, DCL.RevIndexConfigDirName, progress);
+						if (revConfig != null)
+						{
+							var revClerk = exportService.GetReversalClerk();
+							GetReversalEntries(reversalGuid, exportService, revConfig, revClerk, out pubDecorator, out entriesToSave);
+							exportService.ExportXhtmlDocument(xhtmlPath, revClerk, pubDecorator, entriesToSave, DCL.RevIndexConfigDirName, progress);
+						}
 					}
 					break;
 			}

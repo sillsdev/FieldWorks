@@ -74,12 +74,14 @@ namespace SIL.FieldWorks.XWorks
 					{
 						var revConfig = DictionaryConfigurationModel.GetReversalConfigurationModel(
 								ri.WritingSystem, m_cache, m_propertyTable);
+						if (revConfig != null)
+						{
+							int count = CountReversalIndexEntries(ri, revClerk, decorator, revConfig);
+							retDict.Add(ri.ShortName, count);
 
-						int count = CountReversalIndexEntries(ri, revClerk, decorator, revConfig);
-						retDict.Add(ri.ShortName, count);
-
-						// If we just sorted for the original reversal, then keep it's sorted objects to restore later.
-						UpdateSortedObjects(revClerk, reversal.Guid, false);
+							// If we just sorted for the original reversal, then keep it's sorted objects to restore later.
+							UpdateSortedObjects(revClerk, reversal.Guid, false);
+						}
 					}
 				}
 			}
@@ -342,8 +344,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				var origRevWs = (m_cache.ServiceLocator.GetObject(m_origRevOwningObjectGuid) as IReversalIndex).WritingSystem;
 				var origRevConfig = DictionaryConfigurationModel.GetReversalConfigurationModel(origRevWs, m_cache, m_propertyTable);
-				revClerk.ChangeOwningObject(m_origRevOwningObjectGuid, false, origRevConfig);
-				(revClerk.SortItemProvider as RecordList).SortedObjects = m_origSortedObjects;
+				if (origRevConfig != null)
+				{
+					revClerk.ChangeOwningObject(m_origRevOwningObjectGuid, false, origRevConfig);
+					(revClerk.SortItemProvider as RecordList).SortedObjects = m_origSortedObjects;
+				}
 			}
 		}
 
