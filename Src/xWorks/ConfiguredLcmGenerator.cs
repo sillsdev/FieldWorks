@@ -2134,8 +2134,6 @@ namespace SIL.FieldWorks.XWorks
 					{
 						if (child.Label == "Copyright & License")
 						{
-							var childNodeList = BuildNodeList(nodeList, child);
-
 							MemberInfo property;
 							var extensionType = GetExtensionMethodType(child.FieldDescription);
 							property = extensionType.GetMethod(
