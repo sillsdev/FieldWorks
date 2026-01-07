@@ -942,7 +942,7 @@ namespace SIL.FieldWorks.XWorks
 
 		/// <summary/>
 		/// <param name="pictureGuid">This is used as an id in the xhtml and must be unique.</param>
-		public IFragment AddImage(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string classAttribute, string srcAttribute, string pictureGuid)
+		public IFragment AddImage(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string classAttribute, string srcAttribute, string pictureGuid, string license)
 		{
 			var bldr = new StringBuilder();
 			var fragment = new StringFragment(bldr);
@@ -952,6 +952,7 @@ namespace SIL.FieldWorks.XWorks
 				xw.WriteAttributeString("class", classAttribute);
 				xw.WriteAttributeString("src", srcAttribute);
 				xw.WriteAttributeString("id", "g" + pictureGuid);
+				xw.WriteAttributeString("title", license);
 				WriteNodeId(xw, config, settings);
 				xw.WriteEndElement();
 				xw.Flush();

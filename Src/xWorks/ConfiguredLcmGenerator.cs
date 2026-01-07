@@ -625,7 +625,7 @@ namespace SIL.FieldWorks.XWorks
 					fileProperty = propertyValue as ICmFile;
 					fileOwner = field as ICmObject;
 					return fileProperty != null && fileOwner != null
-						? GenerateContentForPicture(fileProperty, nodeList, fileOwner, settings)
+						? GenerateContentForPicture(fileProperty, nodeList, fileOwner, settings, field)
 						: GenerateContentForPictureCaption(propertyValue, nodeList, settings);
 
 				case PropertyType.CmPossibility:
@@ -981,7 +981,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static IFragment GenerateContentForPicture(ICmFile pictureFile, List<ConfigurableDictionaryNode> nodeList,
-			ICmObject owner, GeneratorSettings settings)
+			ICmObject owner, GeneratorSettings settings, object field)
 		{
 			var srcAttribute = GenerateSrcAttributeFromFilePath(pictureFile, settings.UseRelativePaths ? "pictures" : null, settings);
 			if (!string.IsNullOrEmpty(srcAttribute))
@@ -990,7 +990,9 @@ namespace SIL.FieldWorks.XWorks
 				// An XHTML id attribute must be unique but the ICmfile is used for all references to the same file within the project.
 				// The ICmPicture that owns the file does have unique guid so we use that.
 				var ownerGuid = owner.Guid.ToString();
-				return settings.ContentGenerator.AddImage(nodeList.Last(), settings, className, srcAttribute, ownerGuid);
+
+				string license = GeneratePictureLicenseContent(field, nodeList);
+				return settings.ContentGenerator.AddImage(nodeList.Last(), settings, className, srcAttribute, ownerGuid, license);
 			}
 			return settings.ContentGenerator.CreateFragment();
 		}
@@ -2117,6 +2119,37 @@ namespace SIL.FieldWorks.XWorks
 				writer.Flush();
 				return bldr;
 			}
+		}
+
+		private static string GeneratePictureLicenseContent(object item, List<ConfigurableDictionaryNode> nodeList)
+		{
+			foreach (ConfigurableDictionaryNode node in nodeList)
+			{
+				// The Copyright & License node is a child of the Pictures node.
+				// It uses an extension method, so in order to get the copyright info,
+				// we need to get the extension method in question, and then get its value.
+				if (node.Label == "Pictures")
+				{
+					foreach (var child in node.ReferencedOrDirectChildren)
+					{
+						if (child.Label == "Copyright & License")
+						{
+							var childNodeList = BuildNodeList(nodeList, child);
+
+							MemberInfo property;
+							var extensionType = GetExtensionMethodType(child.FieldDescription);
+							property = extensionType.GetMethod(
+								GetExtensionMethodName(child.FieldDescription),
+								BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+							// GetValueFromMember returns an "object" type, but for Copyright & License,
+							// the object is a string, so we can safely cast it here.
+							return (string)GetValueFromMember(property, item);
+						}
+					}
+				}
+			}
+
+			return String.Empty;
 		}
 
 		private static IFragment GenerateCollectionItemContent(List<ConfigurableDictionaryNode> nodeList,

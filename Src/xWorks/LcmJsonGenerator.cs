@@ -344,7 +344,7 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public IFragment AddImage(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string classAttribute, string srcAttribute, string pictureGuid)
+		public IFragment AddImage(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string classAttribute, string srcAttribute, string pictureGuid, string license)
 		{
 			var bldr = new StringBuilder();
 			var fragment = new StringFragment();
@@ -357,6 +357,8 @@ namespace SIL.FieldWorks.XWorks
 				xw.WriteValue("g" + pictureGuid);
 				xw.WritePropertyName("src");
 				xw.WriteValue(srcAttribute.Replace("\\", "/")); // expecting relative paths only
+				xw.WritePropertyName("copyrightLicense");
+				xw.WriteValue(license);
 				xw.Flush();
 				return fragment;
 			}
