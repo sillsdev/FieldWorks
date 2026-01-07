@@ -2,47 +2,43 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading;
-using System.Windows.Forms;
-using System.Xml;
 using Microsoft.Win32;
 using SIL.Extensions;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
-using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.UIAdapters;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgControls;
-using StyleInfo = SIL.FieldWorks.FwCoreDlgControls.StyleInfo;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks.Archiving;
+using SIL.IO;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using SIL.IO;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 using SIL.Reporting;
 using SIL.Utils;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Windows.Forms;
+using System.Xml;
 using XCore;
-using SIL.LCModel.Application.ApplicationServices;
-using NAudio.Utils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
+using StyleInfo = SIL.FieldWorks.FwCoreDlgControls.StyleInfo;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -1220,6 +1216,17 @@ namespace SIL.FieldWorks.XWorks
 		/// ------------------------------------------------------------------------------------
 		protected bool OnJumpToPopupLexEntry(object command)
 		{
+			switch (m_propertyTable.GetStringProperty("currentContentControl", null))
+			{
+				case "lexiconBrowse":
+				case "lexiconDictionary":
+				case "lexiconEdit":
+					// Use existing lexicon entry editor.
+					Mediator.BroadcastMessage("JumpToRecord", command);
+					Mediator.BroadcastMessage("FocusFirstPossibleSlice", null);
+					return true;
+			}
+
 			XmlNode toolNode;
 			if (XWindow.TryGetToolNode("lexicon", "lexiconEditPopup", m_propertyTable, out toolNode))
 			{
