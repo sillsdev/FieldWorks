@@ -1218,8 +1218,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			switch (m_propertyTable.GetStringProperty("currentContentControl", null))
 			{
-				case "lexiconBrowse":
-				case "lexiconDictionary":
 				case "lexiconEdit":
 					// Use existing lexicon entry editor.
 					Mediator.BroadcastMessage("JumpToRecord", command);
