@@ -56,7 +56,7 @@ namespace SIL.FieldWorks.XWorks
 		void BeginObjectProperty(IFragmentWriter writer, ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, bool isBlockProperty, string getCollectionItemClassAttribute);
 		void EndObject(IFragmentWriter writer);
 		void WriteProcessedContents(IFragmentWriter writer, ConfigurableDictionaryNode config, IFragment contents);
-		IFragment AddImage(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string classAttribute, string srcAttribute, string pictureGuid);
+		IFragment AddImage(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string classAttribute, string srcAttribute, string pictureGuid, string license);
 		IFragment AddImageCaption(ConfigurableDictionaryNode config, IFragment captionContent);
 		IFragment GenerateSenseNumber(List<ConfigurableDictionaryNode> nodeList, ConfiguredLcmGenerator.GeneratorSettings settings, string formattedSenseNumber, string senseNumberWs);
 		IFragment AddLexReferences(List<ConfigurableDictionaryNode> nodeList, bool generateLexType, IFragment lexTypeContent, string className, IFragment referencesContent, bool typeBefore);

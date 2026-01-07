@@ -1770,7 +1770,7 @@ namespace SIL.FieldWorks.XWorks
 				((WordFragmentWriter)writer).Insert(contents);
 			}
 		}
-		public IFragment AddImage(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string classAttribute, string srcAttribute, string pictureGuid)
+		public IFragment AddImage(ConfigurableDictionaryNode config, ConfiguredLcmGenerator.GeneratorSettings settings, string classAttribute, string srcAttribute, string pictureGuid, string license)
 		{
 			DocFragment imageFrag = new DocFragment();
 			string partId = AddImagePartToPackage(srcAttribute);
