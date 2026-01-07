@@ -337,6 +337,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Gets the reversal configuration model for the specified writing system.
 		/// </summary>
+		/// <returns>Can return null if there is not a configuration model associated with the writing system.</returns>
 		public static DictionaryConfigurationModel GetReversalConfigurationModel(string ws, LcmCache cache, PropertyTable propTable)
 		{
 			var projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(
@@ -346,9 +347,8 @@ namespace SIL.FieldWorks.XWorks
 			var configurationModels = DictionaryConfigurationController.GetDictionaryConfigurationModels(
 				cache, defaultConfigDir, projectConfigDir);
 
-			return configurationModels.First(config => config.WritingSystem == ws);
+			return configurationModels.FirstOrDefault(config => config.WritingSystem == ws);
 		}
-
 	}
 
 	/// <summary>
