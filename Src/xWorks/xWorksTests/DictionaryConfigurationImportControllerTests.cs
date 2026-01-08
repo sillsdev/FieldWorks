@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.XWorks
 			_zipFile = Path.GetTempFileName();
 			_reversalZipFile = Path.GetTempFileName() + 1;
 
-			// Add a test style to the cache
+			// Add test styles to the cache
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
@@ -208,7 +208,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(_controller.NewConfigToImport.Label, Is.EqualTo(configLabel), "Failed to process data to be imported");
 			Assert.That(_controller._originalConfigLabel, Is.EqualTo(configLabel),
 				"Failed to describe original label from data to import.");
-			Assert.That(_controller.ImportHappened, Is.False, "Import hasn't actually happened yet, so don't claim it has");
+			Assert.That(_controller.StyleImportHappened, Is.False, "Import hasn't actually happened yet, so don't claim it has");
 		}
 
 		[Test]
@@ -249,7 +249,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(_controller.NewConfigToImport.FilePath,
 				Is.EqualTo(Path.Combine(_projectConfigPath, "importexportConfiguration.fwdictconfig")),
 				"FilePath of imported config was not set as expected.");
-			Assert.That(_controller.ImportHappened, Is.True, "Alert that import has happened");
+			Assert.That(_controller.StyleImportHappened, Is.True, "Alert that import has happened");
 		}
 
 		[Test]
@@ -539,16 +539,16 @@ namespace SIL.FieldWorks.XWorks
 		{
 			_controller.PrepareImport(_zipFile);
 			_controller.DoImport();
-			Assert.That(_controller.ImportHappened, Is.True, "Unit test not set up correctly.");
+			Assert.That(_controller.StyleImportHappened, Is.True, "Unit test not set up correctly.");
 			// SUT 1
 			_controller.PrepareImport(_zipFile);
-			Assert.That(_controller.ImportHappened, Is.False, "The import dialog and controller isn't really meant to be used this way, but don't let it be so that ImportHappened can be true yet NewConfigToImport is only just freshly prepared and not imported yet.");
+			Assert.That(_controller.StyleImportHappened, Is.False, "The import dialog and controller isn't really meant to be used this way, but don't let it be so that ImportHappened can be true yet NewConfigToImport is only just freshly prepared and not imported yet.");
 
 			_controller.DoImport();
-			Assert.That(_controller.ImportHappened, Is.True, "Unit test not set up correctly.");
+			Assert.That(_controller.StyleImportHappened, Is.True, "Unit test not set up correctly.");
 			// SUT 2
 			_controller.PrepareImport("nonexistent.zip");
-			Assert.That(_controller.ImportHappened, Is.False, "Also should be false in this case since NewConfigToImport==null");
+			Assert.That(_controller.StyleImportHappened, Is.False, "Also should be false in this case since NewConfigToImport==null");
 		}
 
 		[Test]
