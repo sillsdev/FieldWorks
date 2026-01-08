@@ -1,4 +1,4 @@
-// Copyright (c) 2015-2018 SIL International
+// Copyright (c) 2015-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -14,9 +14,7 @@ using SIL.LCModel;
 
 namespace SIL.FieldWorks.Common.Framework
 {
-	/// <summary>
-	/// Partial test of the StylesXmlAccessor. More tests for this class are in TeStylesXmlAccessorTests.cs.
-	/// </summary>
+	/// <summary/>
 	[TestFixture]
 	public class StylesXmlAccessorTests : MemoryOnlyBackendProviderRestoredForEachTestTestBase
 	{
@@ -164,7 +162,7 @@ namespace SIL.FieldWorks.Common.Framework
 		}
 
 		/// <summary>
-		/// When an
+		/// When a new factory style has the same name as an existing user style, we need to rename the user style.
 		/// </summary>
 		[Test]
 		public void FindOrCreateStyle_HandlesConflictingUserStyles()

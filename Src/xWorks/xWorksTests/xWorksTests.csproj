@@ -292,6 +292,7 @@
     <Compile Include="DeleteCustomListTests.cs" />
     <Compile Include="DictConfigModelExtTests.cs" />
     <Compile Include="DictionaryConfigManagerTests.cs" />
+    <Compile Include="FlexStylesXmlAccessorTests.cs" />
     <Compile Include="HeadwordNumbersControllerTests.cs" />
     <Compile Include="DictionaryConfigurationControllerTests.cs" />
     <Compile Include="DictionaryConfigurationImportControllerTests.cs" />

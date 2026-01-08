@@ -188,7 +188,7 @@ You should be able to restart it normally.</value>
 Please reapply your style change</value>
   </data>
   <data name="kstidInvalidInstallation" xml:space="preserve">
-    <value>FieldWorks software is not installed correctly. Please insert your FieldWorks CD or re-run the Installer and repair your installation.</value>
+    <value>FieldWorks software is not installed correctly. Please re-run the Installer and repair your installation.</value>
   </data>
   <data name="kstidOpenProjError" xml:space="preserve">
     <value>An error has occurred while opening project {0}: {1}</value>
