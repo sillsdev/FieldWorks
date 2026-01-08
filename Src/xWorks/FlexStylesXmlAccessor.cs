@@ -214,7 +214,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			writer.WriteAttributeString("version", GetVersion(m_sourceStyles).ToString());
 			foreach (var style in StyleCollection)
 			{
-				if (DictionaryConfigurationImportController.UnsupportedStyles.Contains(style.Name))
+				if (UnserializableStyles.Contains(style.Name))
 					continue;
 				var exportStyle = new ExportStyleInfo(style, style.Rules);
 				WriteStyleXml(exportStyle, writer);
@@ -335,11 +335,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 				}
 			}
 			writer.WriteEndElement(); // font
-			IEnumerable<Tuple<string, string>> paragraphProps = CollectParagraphProps(style, basedOnStyle, nextStyle);
-			if (paragraphProps.Any())
+			if (style.IsParagraphStyle)
 			{
+				// Generate the paragraph info (the paragraph element is required for paragraph styles even if it has no attributes)
 				writer.WriteStartElement("paragraph");
-				foreach (var prop in paragraphProps)
+				foreach (var prop in CollectParagraphProps(style, basedOnStyle, nextStyle))
 				{
 					writer.WriteAttributeString(prop.Item1, prop.Item2);
 				}
@@ -347,25 +347,19 @@ namespace SIL.FieldWorks.XWorks.LexText
 				//Bullet/Number FontInfo
 				try
 				{
-					IEnumerable<Tuple<string, string>> bulNumParaProperty = CollectBulletProps(style.BulletInfo);
-					foreach (var prop in bulNumParaProperty)
+					foreach (var prop in CollectBulletProps(style.BulletInfo))
 					{
 						string propName = prop.Item1;
 						if (BulletPropertyMap.ContainsKey(propName.ToLower()))
 							propName = BulletPropertyMap[propName.ToLower()];
 						writer.WriteAttributeString(propName, prop.Item2);
 					}
-					// Generate the font info (the font element is required by the DTD even if it has no attributes)
 					writer.WriteStartElement("BulNumFontInfo");
-					IEnumerable<Tuple<string, string>> bulletFontInfoProperties = CollectFontProps(style.BulletInfo.FontInfo);
-					if (bulletFontInfoProperties.Any())
+					foreach (var prop in CollectFontProps(style.BulletInfo.FontInfo))
 					{
-						foreach (var prop in bulletFontInfoProperties)
-						{
-							writer.WriteAttributeString(prop.Item1, prop.Item2);
-						}
+						writer.WriteAttributeString(prop.Item1, prop.Item2);
 					}
-					writer.WriteEndElement(); // bullet
+					writer.WriteEndElement(); // BulNumFontInfo
 				}
 				catch{}
 				writer.WriteEndElement(); // paragraph
