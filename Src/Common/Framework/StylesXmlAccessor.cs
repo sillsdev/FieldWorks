@@ -217,8 +217,10 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Load all styles from the XML file and create styles in the database for them.
 		/// </summary>
 		/// <param name="progressDlg">The progress dialog.</param>
-		/// <param name="parameters">The parameters. First parameter is the style objects
-		/// (a FdoOwningCollection&lt;IStStyle&gt;), second is the styles (an XmlNode).</param>
+		/// <param name="parameters">The parameters.
+		/// <para>First is the style objects existing in the database (a FdoOwningCollection&lt;IStStyle&gt;)</para>
+		/// <para>Second is the styles to import (an XmlNode).</para>
+		/// <para>Third is a bool: true to delete stiles that are missing from the import; false to keep them.</para></param>
 		/// ------------------------------------------------------------------------------------
 		protected object CreateStyles(IProgress progressDlg, params object[] parameters)
 		{
@@ -275,7 +277,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Create a set of Scripture styles based on the given XML node.
+		/// Create a set of styles based on the given XML node.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		protected void CreateStyles()

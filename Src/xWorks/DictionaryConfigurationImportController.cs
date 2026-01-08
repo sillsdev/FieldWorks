@@ -64,8 +64,8 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal IEnumerable<string> _customFieldsToImport;
 
-		/// <summary>Did the configuration get imported.</summary>
-		public bool ImportHappened;
+		/// <summary>Did the Styles zipped with the configuration get imported.</summary>
+		public bool StyleImportHappened;
 
 		/// <summary>
 		/// Label of configuration in file being imported. May be different than final label used, such as if a configuration already exists with that label.
@@ -123,6 +123,7 @@ namespace SIL.FieldWorks.XWorks
 
 			ImportCustomFields(_importLiftLocation);
 
+			// REVIEW (Hasso) 2026.01: should this be calculated closer to where it is used?
 			// If the configuration to import has the same label as an existing configuration in the project folder
 			// then overwrite the existing configuration.
 			var existingConfigurationInTheWay = _configurations.FirstOrDefault(config => config.Label == NewConfigToImport.Label &&
@@ -136,19 +137,21 @@ namespace SIL.FieldWorks.XWorks
 			try
 			{
 				ImportStyles(_importStylesLocation);
-				ImportHappened = true;
+				StyleImportHappened = true;
 			}
 			catch (InstallationException e) // This is the exception thrown if the dtd guid in the style file doesn't match our program
 			{
 #if DEBUG
 				if (_view == null) // _view is sometimes null in unit tests, and it's helpful to know what exactly went wrong.
-					throw new Exception(xWorksStrings.kstidCannotImport, e);
+					throw new Exception(xWorksStrings.kstidCannotImportStyles, e);
 #endif
-				// TODO: var message = $"{xWorksStrings.kstidCannotImport} See the log for details.";
-				new SilErrorReportingAdapter(_view, _propertyTable).ReportNonFatalExceptionWithMessage(e, xWorksStrings.kstidCannotImport);
-				_view.explanationLabel.Text = xWorksStrings.kstidCannotImport;
+				new SilErrorReportingAdapter(_view, _propertyTable).ReportNonFatalExceptionWithMessage(e, xWorksStrings.kstidCannotImportStyles
+					+ " Ignore the inner exception; scroll to the bottom to see the log.");
+				_view.explanationLabel.Text = xWorksStrings.kstidCannotImportStyles;
+				// Keep the dialog open so the user can see the error message, but make the user close the dialog before trying again (to refresh)
 				_view.DialogResult = DialogResult.None;
-				// TODO (Hasso) 2026.01: should we also disable the Browse and Import buttons?
+				_view.browseButton.Enabled = false;
+				_view.importButton.Enabled = false;
 			}
 
 			// We have re-loaded the model from disk to preserve custom field state so the Label must be set here
@@ -185,7 +188,7 @@ namespace SIL.FieldWorks.XWorks
 					: DictionaryConfigurationListener.DictConfigDirName);
 			var isCustomizedOriginal = DictionaryConfigurationManagerController.IsConfigurationACustomizedOriginal(NewConfigToImport, configDir, _cache);
 			TrackingHelper.TrackImport("dictionary", "DictionaryConfiguration",
-				ImportHappened ? ImportExportStep.Succeeded : ImportExportStep.Failed,
+				StyleImportHappened ? ImportExportStep.Succeeded : ImportExportStep.Failed,
 				new Dictionary<string, string>
 				{
 					{ "configType", configType.ToString() },
@@ -306,7 +309,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (string.IsNullOrEmpty(configurationZipPath))
 			{
-				ImportHappened = false;
+				StyleImportHappened = false;
 				NewConfigToImport = null;
 				_originalConfigLabel = null;
 				_temporaryImportConfigLocation = null;
@@ -356,7 +359,7 @@ namespace SIL.FieldWorks.XWorks
 			_isInvalidConfigFile = false;
 
 			// Reset flag
-			ImportHappened = false;
+			StyleImportHappened = false;
 
 			_newPublications =
 				DictionaryConfigurationModel.PublicationsInXml(_temporaryImportConfigLocation).Except(NewConfigToImport.Publications);
@@ -382,7 +385,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ClearValuesOnError()
 		{
-			ImportHappened = false;
+			StyleImportHappened = false;
 			NewConfigToImport = null;
 			_originalConfigLabel = null;
 			_temporaryImportConfigLocation = null;

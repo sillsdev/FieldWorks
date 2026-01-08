@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			{
 				m_sourceStyles = LoadDoc(sourceDocument);
 				if (!string.IsNullOrEmpty(sourceDocument))
-					CreateStyles(new Common.FwUtils.ConsoleProgress(), new object[] { m_cache.LangProject.StylesOC, m_sourceStyles, false});
+					CreateStyles(new Common.FwUtils.ConsoleProgress(), m_cache.LangProject.StylesOC, m_sourceStyles, false);
 			}
 		}
 
@@ -190,17 +190,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 		public void SetPropsToFactorySettings(StyleInfo styleInfo)
 		{
 			ResetProps(styleInfo);
-		}
-
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Loads the settings file and checks the DTD version.
-		/// </summary>
-		/// <returns>The root node</returns>
-		/// ------------------------------------------------------------------------------------
-		protected override XmlNode LoadDoc(string xmlLocation = null)
-		{
-			return base.LoadDoc(m_sourceDocumentPath);
 		}
 
 		public XmlSchema GetSchema()

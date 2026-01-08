@@ -10,7 +10,6 @@ using SIL.LCModel.Core.Text;
 using SIL.LCModel.Infrastructure;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Xml.Serialization;
 using SIL.TestUtilities;
 

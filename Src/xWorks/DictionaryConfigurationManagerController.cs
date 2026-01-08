@@ -637,8 +637,6 @@ namespace SIL.FieldWorks.XWorks
 				importController.DisplayView(importDialog);
 			}
 
-			if (!importController.ImportHappened)
-				return;
 			CloseDialogAndRefreshProject();
 		}
 
