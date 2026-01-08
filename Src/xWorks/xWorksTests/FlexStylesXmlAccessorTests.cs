@@ -43,11 +43,10 @@ namespace SIL.FieldWorks.XWorks
 				testStyle.Usage.set_String(Cache.DefaultAnalWs, "Test Style");
 				var normalStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Normal", ContextValues.InternalConfigureView, StructureValues.Undefined,
 					FunctionValues.Prose, false, 2, true);
-				var propsBldr = TsStringUtils.MakePropsBldr();
-				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, 0x2BACCA); // arbitrary color to create para element
-				normalStyle.Rules = propsBldr.GetTextProps();
+				// 'Normal' style has a no properties, but it must still create a paragraph element to be valid.
 				var senseStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Sense",
 					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, false, 2, true);
+				var propsBldr = TsStringUtils.MakePropsBldr();
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, 0x2BACCA); // arbitrary color to create para element
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
 				propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, "Arial");
@@ -56,6 +55,10 @@ namespace SIL.FieldWorks.XWorks
 				propsBldr.SetStrPropValue((int)FwTextPropType.ktptBulNumFontInfo, "");
 				senseStyle.Rules = propsBldr.GetTextProps();
 				senseStyle.BasedOnRA = normalStyle;
+				// Chapter Number has a unique Function (@use)
+				styleFactory.Create(Cache.LangProject.StylesOC, "Chapter Number", ContextValues.Text, StructureValues.Body,
+					FunctionValues.Chapter, true, 0, true);
+				// Verse Number is unserializable because it is superscript (this may change in the future)
 				var verseNumberStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Verse Number", ContextValues.Text, StructureValues.Body,
 					FunctionValues.Verse, true, 0, true);
 				propsBldr = TsStringUtils.MakePropsBldr();
@@ -106,10 +109,9 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.String(xmlResult).HasSpecifiedNumberOfMatchesForXpath(
 				"//tag[@id='TestStyle' and @userlevel='2' and @context='internalConfigureView' and @type='character' and @guid][usage[@wsId='en' and text()='Test Style'] and font]",
 				1);
-			// Normal (paragraph with font backcolor and paragraph background)
+			// Normal (paragraph with empty font and paragraph)
 			AssertThatXmlIn.String(xmlResult).HasSpecifiedNumberOfMatchesForXpath(
-				"//tag[@id='Normal' and @userlevel='2' and @context='internalConfigureView' and @type='paragraph' and @guid]" +
-				"[font[@backcolor='(202,172,43)'] and paragraph[@background='(202,172,43)']]",
+				"//tag[@id='Normal' and @userlevel='2' and @context='internalConfigureView' and @type='paragraph' and @guid and font and paragraph]",
 				1);
 			// Dictionary-Sense (paragraph with font attributes and paragraph containing BulNumFontInfo)
 			AssertThatXmlIn.String(xmlResult).HasSpecifiedNumberOfMatchesForXpath(
@@ -120,7 +122,7 @@ namespace SIL.FieldWorks.XWorks
 				1);
 			// Verse Number (character style in 'text' context with use 'verse')
 			AssertThatXmlIn.String(xmlResult).HasSpecifiedNumberOfMatchesForXpath(
-				@"//tag[@id='Verse_Number' and @userlevel='0' and @context='text' and @type='character' and @structure='body' and @use='verse' and @guid][font]",
+				@"//tag[@id='Chapter_Number' and @userlevel='0' and @context='text' and @type='character' and @structure='body' and @use='chapter' and @guid][font]",
 				1);
 			// Nominal (named-color 'red' expected; paragraph basedOn Normal with numeric RGB background)
 			AssertThatXmlIn.String(xmlResult).HasSpecifiedNumberOfMatchesForXpath(
