@@ -242,8 +242,18 @@ namespace SIL.FieldWorks.XWorks.LexText
 			writer.WriteAttributeString("userlevel", style.UserLevel.ToString());
 			writer.WriteAttributeString("context", GetStyleContext(style));
 			writer.WriteAttributeString("type", GetStyleType(style));
-			writer.WriteAttributeString("structure", GetStyleStructure(style));
 
+			var styleStructure = GetStyleStructure(style);
+			if (styleStructure != null)
+			{
+				writer.WriteAttributeString("structure", styleStructure);
+			}
+
+			var styleFunction = style.RealStyle.Function.ToString().ToLowerInvariant();
+			if (styleFunction != "prose")
+			{
+				writer.WriteAttributeString("use", styleFunction);
+			}
 			if (GetStyleType(style) == "character" && style.InheritsFrom != null)
 			{
 				// LT-18267 Character styles put their basedOn in a different place
@@ -276,6 +286,8 @@ namespace SIL.FieldWorks.XWorks.LexText
 					return "heading";
 				case StructureValues.Body:
 					return "body";
+				case StructureValues.Undefined:
+					return null;
 			}
 			return style.RealStyle.Structure.ToString();
 		}
