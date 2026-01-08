@@ -190,11 +190,6 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ImportStyles(string importStylesLocation)
 		{
-			// Test for errors before deleting styles (LT-20393).
-			NonUndoableUnitOfWorkHelper.DoSomehow(_cache.ActionHandlerAccessor, () =>
-			{
-				new FlexStylesXmlAccessor(_cache.LangProject.LexDbOA, true, importStylesLocation);
-			});
 			var stylesToRemove = _cache.LangProject.StylesOC.Where(style => !UnsupportedStyles.Contains(style.Name));
 
 			// For LT-18267, record basedon and next properties of styles not
