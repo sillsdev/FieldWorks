@@ -198,18 +198,46 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ImportStyles(string importStylesLocation)
 		{
-			var stylesToRemove = _cache.LangProject.StylesOC.Where(style => !UnsupportedStyles.Contains(style.Name));
+			var stylesToRemove = _cache.LangProject.StylesOC.Where(style => !UnsupportedStyles.Contains(style.Name)).ToArray();
 
-			// For LT-18267, record basedon and next properties of styles not
+			// For LT-18267, record basedOn and next properties of styles not
 			// being exported, so they can be reconnected to the imported
 			// styles of the same name.
-			var preimportStyleLinks = _cache.LangProject.StylesOC.Where(style => UnsupportedStyles.Contains(style.Name)).ToDictionary(
+			var preImportStyleLinks = _cache.LangProject.StylesOC.Where(style => UnsupportedStyles.Contains(style.Name)).ToDictionary(
 				style => style.Name,
-				style => new
+				style => new Tuple<string, string>(
+					style.BasedOnRA?.Name,
+					style.NextRA?.Name
+				));
+			RemoveStylesAndSave(stylesToRemove);
+			try
+			{
+				// Import styles
+				NonUndoableUnitOfWorkHelper.DoSomehow(_cache.ActionHandlerAccessor, () =>
 				{
-					BasedOn = style.BasedOnRA == null ? null : style.BasedOnRA.Name,
-					Next = style.NextRA == null ? null : style.NextRA.Name
+					// ReSharper disable once ObjectCreationAsStatement -- The FlexStylesXmlAccessor constructor does the work of importing.
+					new FlexStylesXmlAccessor(_cache.LangProject.LexDbOA, true, importStylesLocation);
+					ReconnectStyles(preImportStyleLinks);
 				});
+			}
+			catch (InstallationException e)
+			{
+				// If we fail to import the styles, remove any that were imported, then restore the ones we removed (LT-20393).
+				RemoveStylesAndSave(_cache.LangProject.StylesOC.Where(style => !UnsupportedStyles.Contains(style.Name)));
+				NonUndoableUnitOfWorkHelper.DoSomehow(_cache.ActionHandlerAccessor, () =>
+				{
+					foreach (var style in stylesToRemove)
+					{
+						_cache.LangProject.StylesOC.Add(style);
+						ReconnectStyles(preImportStyleLinks);
+					}
+				});
+				throw;
+			}
+		}
+
+		private void RemoveStylesAndSave(IEnumerable<IStStyle> stylesToRemove)
+		{
 			NonUndoableUnitOfWorkHelper.DoSomehow(_cache.ActionHandlerAccessor, () =>
 			{
 				// Before importing styles, remove all the current styles, except
@@ -223,23 +251,17 @@ namespace SIL.FieldWorks.XWorks
 			// Be sure that the Remove action is committed and saved to disk before we re-import styles with the same guid.
 			// If we don't then the changes won't be noticed as the Styles will be marked as transient and won't be saved.
 			_cache.ActionHandlerAccessor.Commit();
-			// Import styles
-			NonUndoableUnitOfWorkHelper.DoSomehow(_cache.ActionHandlerAccessor, () =>
+		}
+
+		private void ReconnectStyles(Dictionary<string, Tuple<string, string>> preImportStyleLinks)
+		{
+			var postImportStylesToReconnect = _cache.LangProject.StylesOC.Where(style => UnsupportedStyles.Contains(style.Name));
+
+			postImportStylesToReconnect.ForEach(styleToReconnect =>
 			{
-				// REVIEW (Hasso) 2026.01: do we really need to re-import styles?
-				// ReSharper disable once UnusedVariable -- The FlexStylesXmlAccessor constructor does the work of importing.
-				var stylesAccessor = new FlexStylesXmlAccessor(_cache.LangProject.LexDbOA, true, importStylesLocation);
-
-				var postimportStylesToReconnect = _cache.LangProject.StylesOC.Where(style => UnsupportedStyles.Contains(style.Name));
-
-				postimportStylesToReconnect.ForEach(postimportStyleToRewire =>
-				{
-					var correspondingPreImportStyleInfo = preimportStyleLinks[postimportStyleToRewire.Name];
-
-					postimportStyleToRewire.BasedOnRA = _cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == correspondingPreImportStyleInfo.BasedOn);
-
-					postimportStyleToRewire.NextRA = _cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == correspondingPreImportStyleInfo.Next);
-				});
+				var correspondingPreImportStyleInfo = preImportStyleLinks[styleToReconnect.Name];
+				styleToReconnect.BasedOnRA = _cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == correspondingPreImportStyleInfo.Item1);
+				styleToReconnect.NextRA = _cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == correspondingPreImportStyleInfo.Item2);
 			});
 		}
 
