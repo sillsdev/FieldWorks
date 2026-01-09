@@ -617,7 +617,7 @@
 			<seq field="AllSenses" layout="ReversalEntriesForSense"/>
 		</part>
 		<part id="LexEntry-Jt-ReversalEntriesForSenseEdit" type="jtview">
-			<seq field="AllSenses" layout="ReversalEntriesForSenseEdit"/>
+			<seq field="Senses" layout="ReversalEntriesForSenseEdit"/>
 		</part>
 	<!-- ========================================================================= -->
 		<part id="LexEntry-Jt-MsasOfSenses" type="jtview">
