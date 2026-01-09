@@ -332,8 +332,9 @@ namespace SIL.FieldWorks.IText
 				}
 				offset += phraseText.Length;
 				var oldText = (bldr.Text ?? "").Trim();
-				if (oldText.Length > 0 && !TsStringUtils.IsEndOfSentenceChar(oldText[oldText.Length - 1],
-					Icu.Character.UCharCategory.OTHER_PUNCTUATION))
+				LcmCache cache = newTextPara.Cache;
+				ITsString tsString = TsStringUtils.MakeString(oldText, cache.DefaultVernWs);
+				if (oldText.Length > 0 && !ParagraphParser.EndsWithEOS(tsString, cache))
 				{
 					// 'segment' does not end with recognizable EOS character. Add our special one.
 					bldr.Replace(bldr.Length, bldr.Length, "\x00A7", null);
