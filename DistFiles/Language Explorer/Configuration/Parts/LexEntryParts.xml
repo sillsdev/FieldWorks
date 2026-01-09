@@ -465,55 +465,55 @@
 		</part>
 		<!-- By default let ChildPartGenerator look for missing part layouts under LexSense -->
 		<part id="LexEntry-Jt-$fieldName" type="jtview">
-			<seq class="LexEntry" field="Senses" layout="$fieldName"/>
+			<seq class="LexEntry" field="AllSenses" layout="$fieldName"/>
 		</part>
 		<!-- Entry -> Sense custom field path parts -->
 		<part id="LexEntry-Jt-CustomMultiStringForSense_$fieldName" type="jtview">
-			<seq field="Senses" layout="CustomMultiStringForSense_$fieldName"/>
+			<seq field="AllSenses" layout="CustomMultiStringForSense_$fieldName"/>
 		</part>
 		<part id="LexEntry-Jt-CustomSimpleStringForSense_$fieldName" type="jtview">
-			<seq field="Senses" layout="CustomSimpleStringForSense_$fieldName"/>
+			<seq field="AllSenses" layout="CustomSimpleStringForSense_$fieldName"/>
 		</part>
 		<part id="LexEntry-Jt-CustomIntegerForSense_$fieldName" type="jtview">
-			<seq field="Senses" layout="CustomIntegerForSense_$fieldName"/>
+			<seq field="AllSenses" layout="CustomIntegerForSense_$fieldName"/>
 		</part>
 		<part id="LexEntry-Jt-CustomGenDateForSense_$fieldName" type="jtview">
-			<seq field="Senses" layout="CustomGenDateForSense_$fieldName"/>
+			<seq field="AllSenses" layout="CustomGenDateForSense_$fieldName"/>
 		</part>
 		<part id="LexEntry-Jt-CustomStTextForSense_$fieldName" type="jtview">
-			<seq field="Senses" layout="CustomStTextForSense_$fieldName"/>
+			<seq field="AllSenses" layout="CustomStTextForSense_$fieldName"/>
 		</part>
 		<part id="LexEntry-Jt-CustomPossVectorForSense_$fieldName" type="jtview">
-			<seq field="Senses" layout="CustomPossVectorForSense_$fieldName"/>
+			<seq field="AllSenses" layout="CustomPossVectorForSense_$fieldName"/>
 		</part>
 		<part id="LexEntry-Jt-CustomPossAtomForSense_$fieldName" type="jtview">
-			<seq field="Senses" layout="CustomPossAtomForSense_$fieldName"/>
+			<seq field="AllSenses" layout="CustomPossAtomForSense_$fieldName"/>
 		</part>
 		<!-- Entry -> Sense -> Example Sentence custom field path parts -->
 		<part id="LexEntry-Jt-CustomMultiStringForExample_$fieldName" type="jtview">
-			<seq field="Senses" layout="CustomMultiStringForExample_$fieldName"/>
+			<seq field="AllSenses" layout="CustomMultiStringForExample_$fieldName"/>
 		</part>
 		<part id="LexEntry-Jt-CustomSimpleStringForExample_$fieldName" type="jtview">
-			<seq field="Senses" layout="CustomSimpleStringForExample_$fieldName"/>
+			<seq field="AllSenses" layout="CustomSimpleStringForExample_$fieldName"/>
 		</part>
 		<part id="LexEntry-Jt-CustomIntegerForExample_$fieldName" type="jtview">
-			<seq field="Senses" layout="CustomIntegerForExample_$fieldName"/>
+			<seq field="AllSenses" layout="CustomIntegerForExample_$fieldName"/>
 		</part>
 		<part id="LexEntry-Jt-CustomGenDateForExample_$fieldName" type="jtview">
-			<seq field="Senses" layout="CustomGenDateForExample_$fieldName"/>
+			<seq field="AllSenses" layout="CustomGenDateForExample_$fieldName"/>
 		</part>
 		<part id="LexEntry-Jt-CustomStTextForExample_$fieldName" type="jtview">
-			<seq field="Senses" layout="CustomStTextForExample_$fieldName"/>
+			<seq field="AllSenses" layout="CustomStTextForExample_$fieldName"/>
 		</part>
 		<part id="LexEntry-Jt-CustomPossVectorForExample_$fieldName" type="jtview">
-			<seq field="Senses" layout="CustomPossVectorForExample_$fieldName"/>
+			<seq field="AllSenses" layout="CustomPossVectorForExample_$fieldName"/>
 		</part>
 		<part id="LexEntry-Jt-CustomPossAtomForExample_$fieldName" type="jtview">
-			<seq field="Senses" layout="CustomPossAtomForExample_$fieldName"/>
+			<seq field="AllSenses" layout="CustomPossAtomForExample_$fieldName"/>
 		</part>
 
 		<part id="LexEntry-Jt-SenseHeadwordForSense" type="jtview">
-			<seq field="Senses" layout="SenseHeadwordForSense"/>
+			<seq field="AllSenses" layout="SenseHeadwordForSense"/>
 		</part>
 		<part id="LexEntry-Jt-GrammaticalInfoFullForSense" type="jtview">
 			<seq field="AllSenses" layout="GrammaticalInfoFullForSense"/>
@@ -537,13 +537,13 @@
 			<seq field="AllSenses" layout="OutlineForSense"/>
 		</part>
 		<part id="LexEntry-Jt-PictureCaptionForSense" type="jtview">
-			<seq field="Senses" layout="PictureCaptionForSense"/>
+			<seq field="AllSenses" layout="PictureCaptionForSense"/>
 		</part>
 		<part id="LexEntry-Jt-PictureFileNameForSense" type="jtview">
-			<seq field="Senses" layout="PictureFileNameForSense"/>
+			<seq field="AllSenses" layout="PictureFileNameForSense"/>
 		</part>
 		<part id="LexEntry-Jt-StatusForSense" type="jtview">
-			<seq field="Senses" layout="StatusForSense"/>
+			<seq field="AllSenses" layout="StatusForSense"/>
 		</part>
 		<part id="LexEntry-Jt-AnthropologyNoteForSense" type="jtview">
 			<seq field="AllSenses" layout="AnthropologyNoteForSense"/>
@@ -585,28 +585,28 @@
 			<seq field="AllSenses" layout="SourceForSense"/>
 		</part>
 		<part id="LexEntry-Jt-AnthropologyCategoriesForSense" type="jtview">
-			<seq field="Senses" layout="AnthropologyCategoriesForSense"/>
+			<seq field="AllSenses" layout="AnthropologyCategoriesForSense"/>
 		</part>
 		<part id="LexEntry-Jt-AcademicDomainsForSense" type="jtview">
-			<seq field="Senses" layout="AcademicDomainsForSense"/>
+			<seq field="AllSenses" layout="AcademicDomainsForSense"/>
 		</part>
 		<part id="LexEntry-Jt-SenseTypeForSense" type="jtview">
-			<seq field="Senses" layout="SenseTypeForSense"/>
+			<seq field="AllSenses" layout="SenseTypeForSense"/>
 		</part>
 		<part id="LexEntry-Jt-UsagesForSense" type="jtview">
-			<seq field="Senses" layout="UsagesForSense"/>
+			<seq field="AllSenses" layout="UsagesForSense"/>
 		</part>
 		<part id="LexEntry-Jt-TranslationsOfExamplesForSense" type="jtview">
-			<seq field="Senses" layout="TranslationsOfExamplesForSense"/>
+			<seq field="AllSenses" layout="TranslationsOfExamplesForSense"/>
 		</part>
 		<part id="LexEntry-Jt-LexicalRelationsForSense" type="jtview">
-			<seq field="Senses" layout="LexicalRelationsForSense"/>
+			<seq field="AllSenses" layout="LexicalRelationsForSense"/>
 		</part>
 		<part id="LexEntry-Jt-InflectionClassForStem" type="jtview">
-			<seq field="Senses" layout="InflectionClassForStem"/>
+			<seq field="AllSenses" layout="InflectionClassForStem"/>
 		</part>
 		<part id="LexEntry-Jt-InflectionFeaturesForSense" type="jtview">
-			<seq field="Senses" layout="InflectionFeaturesForSense"/>
+			<seq field="AllSenses" layout="InflectionFeaturesForSense"/>
 		</part>
 
 		<part id="LexEntry-Jt-DomainsOfSensesForSense" type="jtview">
@@ -624,7 +624,7 @@
 				<properties>
 					<editable value="false" />
 				</properties>
-				<seq field="Senses" layout="MsaInPara" />
+				<seq field="AllSenses" layout="MsaInPara" />
 			</div>
 		</part>
 		<part id="LexEntry-Jt-MsasOfSensesAbbr" type="jtview">
@@ -632,7 +632,7 @@
 				<properties>
 					<editable value="false" />
 				</properties>
-				<seq field="Senses" layout="MsaInParaAbbr" />
+				<seq field="AllSenses" layout="MsaInParaAbbr" />
 			</div>
 		</part>
 		<part id="LexEntry-Jt-CrossRefName" type="jtview">
