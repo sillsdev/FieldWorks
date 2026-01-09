@@ -3034,6 +3034,33 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Batch {0} failed after {1} retries ({2}). Upload aborted..
+        /// </summary>
+        internal static string UploadBatchFailedAfterRetries {
+            get {
+                return ResourceManager.GetString("UploadBatchFailedAfterRetries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Batch {0} timed out ({1}). Retrying (attempt {2} of {3}) in {4} seconds....
+        /// </summary>
+        internal static string UploadBatchRetrying {
+            get {
+                return ResourceManager.GetString("UploadBatchRetrying", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Batch {0} succeeded after {1} attempt(s)..
+        /// </summary>
+        internal static string UploadBatchSucceededAfterRetry {
+            get {
+                return ResourceManager.GetString("UploadBatchSucceededAfterRetry", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Server deleting project files{0}{1}.
         /// </summary>
         internal static string UploadToWebonary_DeletingProjFiles {

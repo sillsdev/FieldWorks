@@ -1304,4 +1304,16 @@ See USFM documentation for help.</value>
   <data name="ParsingDev" xml:space="preserve">
     <value>Parsing Dev</value>
   </data>
+  <data name="UploadBatchRetrying" xml:space="preserve">
+    <value>Batch {0} timed out ({1}). Retrying (attempt {2} of {3}) in {4} seconds...</value>
+    <comment>Status message when retrying a failed batch upload. {0} is batch number, {1} is HTTP status code, {2} is current attempt, {3} is max retries, {4} is wait time in seconds.</comment>
+  </data>
+  <data name="UploadBatchSucceededAfterRetry" xml:space="preserve">
+    <value>Batch {0} succeeded after {1} attempt(s).</value>
+    <comment>Status message when a batch succeeds after one or more retries. {0} is batch number, {1} is number of attempts.</comment>
+  </data>
+  <data name="UploadBatchFailedAfterRetries" xml:space="preserve">
+    <value>Batch {0} failed after {1} retries ({2}). Upload aborted.</value>
+    <comment>Error message when a batch fails after all retry attempts. {0} is batch number, {1} is max retries, {2} is HTTP status code.</comment>
+  </data>
 </root>
