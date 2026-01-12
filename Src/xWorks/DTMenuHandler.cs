@@ -1010,8 +1010,18 @@ namespace SIL.FieldWorks.XWorks
 		{
 			Slice current = m_dataEntryForm.CurrentSlice;
 			Debug.Assert(current != null, "No slice was current");
-			if (current != null)
-				current.HandleMergeCommand(true);
+			if (current == null)
+			{
+				return false;
+			}
+			Command command = cmd as Command;
+			string className = command?.ConfigurationNode?.FirstChild?.Attributes["className"]?.Value;
+			if (className == "LexSense" && current.Object?.ClassName != "LexSense")
+			{
+				// Lexicon Edit Popup must match the class (LT-22352).
+				return false;
+			}
+			current.HandleMergeCommand(true);
 			return true;	//we handled this.
 		}
 
