@@ -2159,6 +2159,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot import Styles. See the log for details..
+        /// </summary>
+        internal static string kstidCannotImportStyles {
+            get {
+                return ResourceManager.GetString("kstidCannotImportStyles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Choose filename for export.
         /// </summary>
         internal static string kstidChooseExportFile {

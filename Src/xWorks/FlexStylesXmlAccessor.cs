@@ -1,23 +1,23 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.Extensions;
+using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.FwCoreDlgControls;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using SIL.Extensions;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel;
-using SIL.FieldWorks.Common.Framework;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Utils;
-using SIL.FieldWorks.FwCoreDlgControls;
-using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.XWorks.LexText
 {
@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			{
 				m_sourceStyles = LoadDoc(sourceDocument);
 				if (!string.IsNullOrEmpty(sourceDocument))
-					CreateStyles(new Common.FwUtils.ConsoleProgress(), new object[] { m_cache.LangProject.StylesOC, m_sourceStyles, false});
+					CreateStyles(new Common.FwUtils.ConsoleProgress(), m_cache.LangProject.StylesOC, m_sourceStyles, false);
 			}
 		}
 
@@ -192,26 +192,14 @@ namespace SIL.FieldWorks.XWorks.LexText
 			ResetProps(styleInfo);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Loads the settings file and checks the DTD version.
-		/// </summary>
-		/// <returns>The root node</returns>
-		/// ------------------------------------------------------------------------------------
-		protected override XmlNode LoadDoc(string xmlLocation = null)
-		{
-			return base.LoadDoc(m_sourceDocumentPath);
-		}
-
 		public XmlSchema GetSchema()
 		{
 			throw new NotImplementedException();
 		}
 
 		/// <summary>
-		/// Currently the reading is handled by CreateStyles
+		/// Currently, the reading is handled by CreateStyles
 		/// </summary>
-		/// <param name="reader"></param>
 		public void ReadXml(XmlReader reader)
 		{
 			throw new NotImplementedException();
@@ -242,7 +230,18 @@ namespace SIL.FieldWorks.XWorks.LexText
 			writer.WriteAttributeString("userlevel", style.UserLevel.ToString());
 			writer.WriteAttributeString("context", GetStyleContext(style));
 			writer.WriteAttributeString("type", GetStyleType(style));
-			writer.WriteAttributeString("structure", GetStyleStructure(style));
+
+			var styleStructure = GetStyleStructure(style);
+			if (styleStructure != null)
+			{
+				writer.WriteAttributeString("structure", styleStructure);
+			}
+
+			var styleFunction = style.RealStyle.Function.ToString().ToLowerInvariant();
+			if (styleFunction != "prose")
+			{
+				writer.WriteAttributeString("use", styleFunction);
+			}
 
 			if (GetStyleType(style) == "character" && style.InheritsFrom != null)
 			{
@@ -265,7 +264,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 				case StyleType.kstParagraph:
 					return "paragraph";
 			}
-			return style.RealStyle.Type.ToString();
+			throw new ArgumentOutOfRangeException($"Unrecognized type attribute for style {style.Name} ({style.RealStyle.Name}): {style.RealStyle.Type}");
 		}
 
 		private static string GetStyleStructure(ExportStyleInfo style)
@@ -276,8 +275,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 					return "heading";
 				case StructureValues.Body:
 					return "body";
+				case StructureValues.Undefined:
+					return null;
+				default:
+					throw new ArgumentOutOfRangeException(style.RealStyle.Structure.ToString());
 			}
-			return style.RealStyle.Structure.ToString();
 		}
 
 		///<remarks>The first letter for the context is supposed to be lower case</remarks>

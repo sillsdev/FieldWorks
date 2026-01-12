@@ -1178,6 +1178,10 @@ See USFM documentation for help.</value>
     <value>Cannot import. Choose another file.</value>
     <comment>explanation text on import dialog</comment>
   </data>
+  <data name="kstidCannotImportStyles" xml:space="preserve">
+    <value>Cannot import Styles. See the log for details.</value>
+    <comment>explanation text on import dialog</comment>
+  </data>
   <data name="kstidImportingConfig" xml:space="preserve">
     <value>Importing view named '{0}'.</value>
     <comment>Parameter is the name of a dictionary configuration</comment>
