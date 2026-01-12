@@ -39,11 +39,11 @@ on:
 # on Jenkins-built bases.
       base_release:
         description: 'The github release for the base build artifacts (separate only for bootstrapping; should be removed after 9.3 is the stable)'
-        default: 'build-1351' # When updating this, update base_build_number and their fallbacks below, too.
+        default: 'build-1379' # When updating this, update base_build_number and their fallbacks below, too.
       base_build_number:
         description: 'The base build number'
         required: false
-        default: '1351'
+        default: '1379'
       make_release:
         description: 'Should the release be pushed to s3 - use false for test builds'
         required: false
@@ -62,7 +62,7 @@ jobs:
       LcmRootDir: ${{ github.workspace }}/Localizations/LCM
       FILESTOSIGNLATER: ./signExternally
       GH_TOKEN: ${{ github.token }}
-      BASE_BUILD_NUMBER: ${{ inputs.base_build_number || '1351' }}
+      BASE_BUILD_NUMBER: ${{ inputs.base_build_number || '1379' }}
     name: Build Debug and run Tests
     runs-on: windows-latest
     steps:
@@ -152,7 +152,7 @@ jobs:
       - name: Import Base Build Artifacts
         shell: pwsh
         run: |
-          $release = "${{ inputs.base_release || 'build-1351' }}"
+          $release = "${{ inputs.base_release || 'build-1379' }}"
           $repo    = "${{ github.repository }}"
 
           Write-Host "Downloading artifacts for release $release from $repo"
