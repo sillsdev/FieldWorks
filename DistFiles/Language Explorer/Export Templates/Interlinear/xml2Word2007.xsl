@@ -649,7 +649,7 @@
   This gets invoked only for the items of the first morph of the word. We find all the corresponding items
   in the other morphs (and this one) and output them as a matrix row.
   The homograph number item is omitted because we don't want a separate row for these.-->
-  <xsl:template match="item[@type!='hn' and @type!='variantTypes' and @type!='glsAppend']" mode="rows" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math">
+  <xsl:template match="item[@type!='hn' and @type!='variantTypes' and @type!='glsAppend' and @type!='glsPrepend']" mode="rows" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:m="http://schemas.openxmlformats.org/officeDocument/2006/math">
 	<m:mr>
 		<xsl:variable name="myType" select="@type"/>
 		<xsl:variable name="myLang" select="@lang"/>
@@ -721,6 +721,8 @@
   </xsl:template>
   <xsl:template match="morph/item[@type='glsAppend']">
   </xsl:template>
+  <xsl:template match="morph/item[@type='glsPrepend']">
+  </xsl:template>
 
   <!-- This mode occurs within the 'cf' item to display the homograph number from the following item.-->
   <xsl:template match="morph/item[@type='hn']" mode="hn">
@@ -730,6 +732,9 @@
 	<xsl:apply-templates/>
   </xsl:template>
   <xsl:template match="morph/item[@type='glsAppend']" mode="glsAppend">
+	<xsl:apply-templates/>
+  </xsl:template>
+  <xsl:template match="morph/item[@type='glsPrepend']" mode="glsPrepend">
 	<xsl:apply-templates/>
   </xsl:template>
 
@@ -802,14 +807,17 @@
 			<w:rtl/>
 		  </xsl:if>
 		</w:rPr>
+		<xsl:variable name="glsPrepend" select="preceding-sibling::item[1][@type='glsPrepend']"/>
+		<xsl:if test="$glsPrepend">
+		  <m:t>
+			<xsl:apply-templates select="$glsPrepend" mode="glsPrepend"/>
+		  </m:t>
+		</xsl:if>
 		<m:t>
 		  <xsl:apply-templates/>
 		</m:t>
 		<xsl:variable name="glsAppend" select="following-sibling::item[1][@type='glsAppend']"/>
 		<xsl:if test="$glsAppend">
-		  <w:rPr>
-			<w:rStyle w:val="Interlin Variant Types"/>
-		  </w:rPr>
 		  <m:t>
 			<xsl:apply-templates select="$glsAppend" mode="glsAppend"/>
 		  </m:t>
