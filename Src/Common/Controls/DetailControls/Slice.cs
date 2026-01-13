@@ -122,6 +122,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
+			if (ParentForm?.Name == "PopupToolWindow")
+			{
+				return null;
+			}
 			return ContainingDataTree.GetSliceContextMenu(this, true);
 		}
 

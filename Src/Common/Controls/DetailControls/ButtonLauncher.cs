@@ -292,6 +292,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		protected virtual void OnClick(Object sender, EventArgs arguments)
 		{
 			bool fValid;
+			if (ParentForm?.Name == "PopupToolWindow")
+			{
+				MessageBox.Show(DetailControlsStrings.ksPopupMenusDisabled);
+				return;
+			}
 			if (m_obj == null && ObjectCreator != null)
 			{
 				m_obj = ObjectCreator();
