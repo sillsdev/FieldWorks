@@ -154,6 +154,7 @@ namespace SIL.FieldWorks.XWorks
 		private void publicationBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			var selectedPublication = publicationBox.SelectedItem.ToString();
+			Model.SelectedPublication = selectedPublication;
 			PopulateConfigurationsListByPublication(selectedPublication);
 			PopulateReversalsCheckboxListByPublication(selectedPublication);
 			UpdateEntriesToBePublishedLabel();
