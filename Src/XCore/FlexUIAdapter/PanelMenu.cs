@@ -74,6 +74,12 @@ namespace XCore
 
 		private void PanelMenu_Click(object sender, EventArgs e)
 		{
+			PaneBar paneBar = Parent.Parent as PaneBar;
+			if (paneBar?.ParentForm?.Name == "PopupToolWindow")
+			{
+				MessageBox.Show(AdapterStrings.ksPopupMenusDisabled);
+				return;
+			}
 			Point location = this.Parent.PointToScreen(this.Location);
 			location.Y += Height;
 			m_menuBarAdapter.ShowContextMenu(m_group,

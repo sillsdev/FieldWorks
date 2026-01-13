@@ -2,6 +2,19 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.FieldWorks.Common.Controls;
+using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Infrastructure;
+using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
+using SIL.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -13,18 +26,6 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.LCModel.Core.Cellar;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.FieldWorks.Common.Controls;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
-using SIL.LCModel.Infrastructure;
-using SIL.LCModel.Utils;
-using SIL.PlatformUtilities;
-using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
@@ -4168,6 +4169,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			//If it has not, then this will still point to the "auto menu handler"
 			Debug.Assert(ShowContextMenuEvent != null, "this should always be set to something");
 			CurrentSlice = e.Slice;
+			if (CurrentSlice?.ParentForm?.Name == "PopupToolWindow")
+			{
+				MessageBox.Show(DetailControlsStrings.ksPopupMenusDisabled);
+				return;
+			}
 			var args = new SliceMenuRequestArgs(e.Slice, false);
 			// TODO: ShowContextMenuEvent returns a ContextMenu that we should dispose. However,
 			// we can't do that right here (because that destroys the menu before being shown).
