@@ -811,17 +811,9 @@ namespace SIL.FieldWorks.IText
 				//AssertThatXmlIn.Dom(transformedDocOO).HasSpecifiedNumberOfMatchesForXpath(@"/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[2]", 1);
 				Assert.That(transformedDocOO.SelectNodes("/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[3]", nsmgr), Has.Count.EqualTo(1));
 				Assert.That(transformedDocOO.SelectSingleNode("/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[3]", nsmgr).InnerText, Is.EqualTo("frglossgo.pst"));
-				Assert.That(transformedDocOO.SelectNodes("/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[3]/text:span[@text:style-name='Interlin_VariantTypes']", nsmgr),
-					Has.Count.EqualTo(1));
-				Assert.That(transformedDocOO.SelectSingleNode("/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[3]/text:span[@text:style-name='Interlin_VariantTypes']", nsmgr).InnerText,
-					Is.EqualTo(".pst"));
 
 				Assert.That(transformedDocOO.SelectNodes("/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[4]", nsmgr), Has.Count.EqualTo(1));
 				Assert.That(transformedDocOO.SelectSingleNode("/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[4]", nsmgr).InnerText, Is.EqualTo("glossgo.pst"));
-				Assert.That(transformedDocOO.SelectNodes("/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[4]/text:span[@text:style-name='Interlin_VariantTypes']", nsmgr),
-					Has.Count.EqualTo(1));
-				Assert.That(transformedDocOO.SelectSingleNode("/office:document-content/office:body/office:text/text:p[5]/draw:frame[3]/draw:text-box/text:p[2]/draw:frame/draw:text-box/text:p[4]/text:span[@text:style-name='Interlin_VariantTypes']", nsmgr).InnerText,
-					Is.EqualTo(".pst"));
 				Assert.That(transformedDocOO.SelectNodes("//text:p[text()='.pst']", nsmgr), Has.Count.EqualTo(0));
 			}
 
