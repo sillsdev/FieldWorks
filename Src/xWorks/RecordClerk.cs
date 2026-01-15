@@ -654,6 +654,9 @@ namespace SIL.FieldWorks.XWorks
 			get { return m_fIsActiveInGui; }
 		}
 
+		private bool m_updateStatusBar;
+		private bool m_useRecordTreeBar;
+
 		/// <summary>
 		/// determine if we're in the (given) tool
 		/// </summary>
@@ -1051,12 +1054,22 @@ namespace SIL.FieldWorks.XWorks
 			return false;
 		}
 
+		public bool OnJumpToPopupRecord(object argument)
+		{
+			return JumpToRecord(argument, true);
+		}
+
+		public bool OnJumpToRecord(object argument)
+		{
+			return JumpToRecord(argument);
+		}
+
 		/// <summary>
 		/// display the given record
 		/// </summary>
 		/// <param name="argument">the hvo of the record</param>
 		/// <returns></returns>
-		public bool OnJumpToRecord(object argument)
+		bool JumpToRecord(object argument, bool popup = false)
 		{
 			CheckDisposed();
 
@@ -1101,7 +1114,10 @@ namespace SIL.FieldWorks.XWorks
 							// update issue reported in (LT-2448). However, that message only works in the context of a
 							// BrowseViewer, not a document view (e.g. Dictionary) (see LT-7298). So, I've
 							// tested OnChangeFilterClearAll, and it seems to solve both problems now.
-							OnChangeFilterClearAll(null);
+							if (!popup)
+							{
+								OnChangeFilterClearAll(null);
+							}
 							m_activeMenuBarFilter = null;
 							index = IndexOfObjOrChildOrParent(hvoTarget);
 						}
@@ -2027,8 +2043,22 @@ namespace SIL.FieldWorks.XWorks
 				var oldActiveClerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
 				if (oldActiveClerk != this)
 				{
+					var oldUseRecordTreeBar = m_propertyTable.GetValue<Boolean>("UseRecordTreeBar");
+					m_propertyTable.SetProperty("OldUseRecordTreeBar", oldUseRecordTreeBar, true);
+					m_propertyTable.SetPropertyPersistence("OldUseRecordTreeBar", false);
+					m_propertyTable.SetProperty("UseRecordTreeBar", m_useRecordTreeBar, true);
+					m_propertyTable.SetPropertyPersistence("UseRecordTreeBar", false);
+
+					var oldUpdateStatusBar = m_propertyTable.GetValue<Boolean>("UpdateStatusBar");
+					m_propertyTable.SetProperty("OldUpdateStatusBar", oldUpdateStatusBar, true);
+					m_propertyTable.SetPropertyPersistence("OldUpdateStatusBar", false);
+					m_propertyTable.SetProperty("UpdateStatusBar", m_updateStatusBar, true);
+					m_propertyTable.SetPropertyPersistence("UpdateStatusBar", false);
+
 					if (oldActiveClerk != null)
 						oldActiveClerk.BecomeInactive();
+					m_propertyTable.SetProperty("OldActiveClerk", oldActiveClerk, true);
+					m_propertyTable.SetPropertyPersistence("OldActiveClerk", false);
 					m_propertyTable.SetProperty("ActiveClerk", this, true);
 					m_propertyTable.SetPropertyPersistence("ActiveClerk", false);
 					// We are adding this property so that EntryDlgListener can get access to the owning object
@@ -2076,6 +2106,9 @@ namespace SIL.FieldWorks.XWorks
 
 			m_fIsActiveInGui = true;
 			CheckDisposed();
+
+			m_useRecordTreeBar = useRecordTreeBar;
+			m_updateStatusBar = updateStatusBar;
 
 			if (m_recordBarHandler != null)
 			{
