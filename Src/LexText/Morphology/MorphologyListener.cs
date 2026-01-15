@@ -184,6 +184,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			Cache.DomainDataByFlid.AddNotification(this);
 			if (IsVernacularSpellingEnabled())
 				OnEnableVernacularSpelling();
+			else
+				WfiWordformServices.DisableVernacularSpellingDictionary(Cache);
 		}
 
 		public IxCoreColleague[] GetMessageTargets()
