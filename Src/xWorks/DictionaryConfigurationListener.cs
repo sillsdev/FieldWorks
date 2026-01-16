@@ -181,7 +181,12 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private static string GetInnermostConfigurationDirectory(IPropertyRetriever propertyTable, ICmObject obj = null)
 		{
-			switch(propertyTable.GetStringProperty("currentContentControl", null))
+			if (obj is ILexEntry)
+			{
+				// For popup lexical entry editor (LT-22345).
+				return DictConfigDirName;
+			}
+			switch (propertyTable.GetStringProperty("currentContentControl", null))
 			{
 				case "reversalToolBulkEditReversalEntries":
 				case "reversalToolEditComplete":
@@ -193,11 +198,6 @@ namespace SIL.FieldWorks.XWorks
 				case "lexiconClassifiedDictionary":
 					return ClassifiedDictConfigDirName;
 				default:
-					if (obj is ILexEntry)
-					{
-						// For popup lexical entry editor (LT-22345).
-						return DictConfigDirName;
-					}
 					return null;
 			}
 		}
