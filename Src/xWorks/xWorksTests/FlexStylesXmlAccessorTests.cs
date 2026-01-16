@@ -47,7 +47,6 @@ namespace SIL.FieldWorks.XWorks
 				var senseStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Sense",
 					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, false, 2, true);
 				var propsBldr = TsStringUtils.MakePropsBldr();
-				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, 0x2BACCA); // arbitrary color to create para element
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
 				propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, "Arial");
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptFontSize,
@@ -75,7 +74,7 @@ namespace SIL.FieldWorks.XWorks
 					FunctionValues.Prose, false, 2, false);
 				styleWithCustomColors.BasedOnRA = normalStyle;
 				propsBldr = TsStringUtils.MakePropsBldr();
-				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, CustomRedBGR);
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, 0x2BACCA);
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, CustomRedBGR);
 				styleWithCustomColors.Rules = propsBldr.GetTextProps();
 			});
@@ -116,8 +115,8 @@ namespace SIL.FieldWorks.XWorks
 			// Dictionary-Sense (paragraph with font attributes and paragraph containing BulNumFontInfo)
 			AssertThatXmlIn.String(xmlResult).HasSpecifiedNumberOfMatchesForXpath(
 				"//tag[@id='Dictionary-Sense' and @userlevel='2' and @context='internalConfigureView' and @type='paragraph' and @structure='body' and @guid]" +
-				"[font[@size='23 pt' and @family='Arial' and @backcolor='(202,172,43)' and @color='red'] and " +
-				"paragraph[@background='(202,172,43)' and @basedOn='Normal' and @bulNumScheme='None' and @bulNumStartAt='0' and BulNumFontInfo[@size='10 pt' and " +
+				"[font[@size='23 pt' and @family='Arial' and @color='red'] and " +
+				"paragraph[@basedOn='Normal' and @bulNumScheme='None' and @bulNumStartAt='0' and BulNumFontInfo[@size='10 pt' and " +
 				"@family='<default font>' and @bold='false' and @italic='false' and @color='black' and @underlineColor='black' and @underline='none']]]",
 				1);
 			// Verse Number (character style in 'text' context with use 'verse')
@@ -132,7 +131,7 @@ namespace SIL.FieldWorks.XWorks
 			// Abnormal (custom color expected as RGB tuples)
 			AssertThatXmlIn.String(xmlResult).HasSpecifiedNumberOfMatchesForXpath(
 				"//tag[@id='Abnormal' and @userlevel='2' and @context='internalConfigureView' and @type='paragraph' and @structure='heading' and @guid]" +
-				"[font[@backcolor='(254,0,0)' and @color='(254,0,0)'] and paragraph[@background='(254,0,0)' and @basedOn='Normal']]",
+				"[font[@backcolor='(202,172,43)' and @color='(254,0,0)'] and paragraph[@background='(202,172,43)' and @basedOn='Normal']]",
 				1);
 		}
 	}
