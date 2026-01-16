@@ -1,5 +1,6 @@
 using SIL.LCModel;
 using SIL.Utils;
+using System;
 using System.Windows.Forms;
 using System.Xml;
 using XCore;
@@ -14,6 +15,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get { return m_mainContentControl; }
 		}
+
+		private PropertyTable m_propertyTable;
+		private RecordClerk m_recordClerk;
 
 		public PopupToolWindow()
 		{
@@ -36,7 +40,28 @@ namespace SIL.FieldWorks.XWorks
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
 			this.Text = "Popup Tool Window";
 			this.WindowState = System.Windows.Forms.FormWindowState.Normal;
+			this.Deactivate += new System.EventHandler(PopupToolWindow_Deactivate);
+			this.Activated += new System.EventHandler(PopupToolWindow_Activated);
 			this.ResumeLayout(false);
+		}
+
+		private void PopupToolWindow_Deactivate(object sender, EventArgs e)
+		{
+			var oldActiveClerk = m_propertyTable.GetValue<RecordClerk>("OldActiveClerk");
+			var oldUseRecordTreeBar = m_propertyTable.GetValue<Boolean>("OldUseRecordTreeBar");
+			var oldOldUpdateStatusBar = m_propertyTable.GetValue<Boolean>("OldUpdateStatusBar");
+			if (oldActiveClerk != null)
+			{
+				oldActiveClerk.ActivateUI(oldUseRecordTreeBar, oldOldUpdateStatusBar);
+			}
+		}
+
+		private void PopupToolWindow_Activated(object sender, EventArgs e)
+		{
+			if (m_recordClerk != null)
+			{
+				m_recordClerk.ActivateUI(false);
+			}
 		}
 
 		private IxCoreColleague MainContentControlAsIxCoreColleague
@@ -61,6 +86,7 @@ namespace SIL.FieldWorks.XWorks
 
 		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode toolNode)
 		{
+			m_propertyTable = propertyTable;
 			XmlNode contentClassNode = toolNode.SelectSingleNode("control");
 			XmlNode dynLoaderNode = contentClassNode.SelectSingleNode("dynamicloaderinfo");
 			string contentAssemblyPath = XmlUtils.GetMandatoryAttributeValue(dynLoaderNode, "assemblyPath");
@@ -93,6 +119,7 @@ namespace SIL.FieldWorks.XWorks
 			this.Show();
 			this.BringToFront();
 			this.Activate();
+			m_recordClerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
 		}
 	}
 }
