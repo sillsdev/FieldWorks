@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 SIL International
+// Copyright (c) 2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -6,6 +6,9 @@ using System.IO;
 using NUnit.Framework;
 using SIL.TestUtilities;
 using Sfm2Xml;
+using System.Text;
+using System.Linq;
+using System.Xml;
 
 namespace Sfm2XmlTests
 {
@@ -75,6 +78,66 @@ namespace Sfm2XmlTests
 			converter.Convert(sfmFile, mappingFile, outputFile);
 			AssertThatXmlIn.File(outputFile).HasSpecifiedNumberOfMatchesForXpath("//Entry", 2);
 			AssertThatXmlIn.File(outputFile).HasSpecifiedNumberOfMatchesForXpath("//Entry/Subentry", 1);
+		}
+
+		[Test]
+		public void ConverterNormalizesTextToNfd()
+		{
+			// NFC form: é (U+00E9)
+			const string composed = "\u00E9";
+
+			// SFM input containing NFC text
+			string sfmString = $@"\lx {composed}
+\ps n
+\ge test";
+
+			// Reuse the same mapping as other tests
+			const string mappingString = @"<sfmMapping version='6.1'>
+<settings>
+<meaning app='fw.sil.org'/>
+</settings>
+<languages>
+<langDef id='English' xml:lang='en'/>
+<langDef id='Vernacular' xml:lang='fr'/>
+</languages>
+<hierarchy>
+<level name='Entry' partOf='records' beginFields='lx'/>
+<level name='Sense' partOf='Entry' beginFields='ge ps'/>
+</hierarchy>
+<fieldDescriptions>
+<field sfm='lx' name='Lexeme Form' type='string' lang='Vernacular'/>
+<field sfm='ps' name='Category' type='string' lang='English'/>
+<field sfm='ge' name='Gloss' type='string' lang='English'/>
+</fieldDescriptions>
+</sfmMapping>";
+
+			var sfmFile = Path.GetTempFileName();
+			var mappingFile = Path.GetTempFileName();
+			var outputFile = Path.GetTempFileName();
+
+			File.WriteAllText(sfmFile, sfmString);
+			File.WriteAllText(mappingFile, mappingString);
+
+			var converter = new Converter(null);
+			converter.Convert(sfmFile, mappingFile, outputFile);
+
+			// Extract the lexeme text from output XML
+			var doc = new XmlDocument();
+			doc.Load(outputFile);
+
+			var lexemeNode = doc.SelectSingleNode("//lx | //LexemeForm | //Lexeme");
+			Assert.NotNull(lexemeNode, "Lexeme node was not found in output XML");
+
+			string outputText = lexemeNode.InnerText;
+
+			// Assert normalization
+			Assert.IsTrue(IsNfd(outputText),
+				$"Expected NFD normalization, but got: {string.Join(" ", outputText.Select(c => $"U+{(int)c:X4}"))}");
+		}
+
+		private static bool IsNfd(string s)
+		{
+			return s == s.Normalize(NormalizationForm.FormD);
 		}
 	}
 }
