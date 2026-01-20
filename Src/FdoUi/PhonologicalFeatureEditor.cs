@@ -657,6 +657,9 @@ namespace SIL.FieldWorks.FdoUi
 	/// </summary>
 	public class BulkEditBarPhonologicalFeatures : BulkEditBar
 	{
+		private string m_currentFeatDefnAbbr = null;
+		private int m_currentSelectedHvo = 0;
+
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Create one
@@ -755,6 +758,40 @@ namespace SIL.FieldWorks.FdoUi
 				}
 			}
 		}
+
+		/// <summary>
+		/// UpdateColumnList() will Dispose all the BulkEditItems and re-create them.  The
+		/// currently displayed PhonologicalFeatureEditor stores it's SelectedHvo. Store it
+		/// here so we can restore it after the new one is created.
+		/// </summary>
+		protected override void PreUpdateColumnList()
+		{
+			BulkEditItem bei = m_beItems[m_itemIndex];
+			if (bei.BulkEditControl is PhonologicalFeatureEditor phonFeatEditor)
+			{
+				m_currentFeatDefnAbbr = phonFeatEditor.FeatDefnAbbr;
+				m_currentSelectedHvo = phonFeatEditor.SelectedHvo;
+			}
+		}
+
+		/// <summary>
+		/// UpdateColumnList() will Dispose all the BulkEditItems and re-create them.  The
+		/// currently displayed PhonologicalFeatureEditor stores it's SelectedHvo. Restore it
+		/// here after the new one is created.
+		/// </summary>
+		protected override void PostUpdateColumnList()
+		{
+			BulkEditItem bei = m_beItems[m_itemIndex];
+			if (bei.BulkEditControl is PhonologicalFeatureEditor phonFeatEditor &&
+				phonFeatEditor.FeatDefnAbbr == m_currentFeatDefnAbbr)
+			{
+				phonFeatEditor.SelectedHvo = m_currentSelectedHvo;
+			}
+
+			m_currentFeatDefnAbbr = null;
+			m_currentSelectedHvo = 0;
+		}
+
 		protected override void Dispose(bool disposing)
 		{
 			if (IsDisposed)
