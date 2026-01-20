@@ -431,19 +431,37 @@ namespace SIL.FieldWorks.LexText.Controls
 			UndoableUnitOfWorkHelper.Do(ParserUIStrings.ksUndoClearParserAnalyses,
 				ParserUIStrings.ksRedoClearParserAnalyses, m_cache.ActionHandlerAccessor, () =>
 			{
-				foreach (IWfiAnalysis analysis in wf.AnalysesOC.ToArray())
+				ClearWordformAnalyses(wf);
+				// Clear lower-case version of wf.
+				var vernWs = wf.Form.BestVernacularAlternative.get_WritingSystemAt(0);
+				var cf = new CaseFunctions(m_cache.ServiceLocator.WritingSystemManager.Get(vernWs));
+				string word = wf.Form.BestVernacularAlternative.Text;
+				string lcWord = cf.ToLower(word);
+				if (lcWord != word)
 				{
-					ICmAgentEvaluation[] parserEvals = analysis.EvaluationsRC.Where(evaluation => !evaluation.Human).ToArray();
-					foreach (ICmAgentEvaluation parserEval in parserEvals)
-						analysis.EvaluationsRC.Remove(parserEval);
-
-					if (analysis.EvaluationsRC.Count == 0)
-						wf.AnalysesOC.Remove(analysis);
-
-					wf.Checksum = 0;
+					if (m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(
+						TsStringUtils.MakeString(lcWord, vernWs), true, out IWfiWordform lcWf))
+					{
+						ClearWordformAnalyses(lcWf);
+					}
 				}
 			});
 			return true;    //we handled this.
+		}
+
+		private void ClearWordformAnalyses(IWfiWordform wf)
+		{
+			foreach (IWfiAnalysis analysis in wf.AnalysesOC.ToArray())
+			{
+				ICmAgentEvaluation[] parserEvals = analysis.EvaluationsRC.Where(evaluation => !evaluation.Human).ToArray();
+				foreach (ICmAgentEvaluation parserEval in parserEvals)
+					analysis.EvaluationsRC.Remove(parserEval);
+
+				if (analysis.EvaluationsRC.Count == 0)
+					wf.AnalysesOC.Remove(analysis);
+
+				wf.Checksum = 0;
+			}
 		}
 
 		#endregion ClearSelectedWordParserAnalyses handlers
