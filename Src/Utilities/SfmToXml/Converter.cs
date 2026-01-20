@@ -1896,6 +1896,8 @@ namespace Sfm2Xml
 			result = result.Replace("<", "&lt;");
 			result = result.Replace(">", "&gt;");
 
+			// We need to normalize result to NFD because the internal list data is NFD. See LT-18927.
+			result = result.Normalize(NormalizationForm.FormD);
 			return result;
 		}
 
