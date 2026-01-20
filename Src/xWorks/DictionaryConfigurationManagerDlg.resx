@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -743,7 +743,7 @@
     <value>527, 406</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
-    <value>Manage Dictionary Views</value>
+    <value>Manage Publication Views</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
     <value>DictionaryConfigurationManagerDlg</value>
