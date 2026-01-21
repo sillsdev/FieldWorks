@@ -65,12 +65,12 @@ namespace SIL.FieldWorks.Common.Framework
 		protected Dictionary<string, ReservedStyleInfo> m_htReservedStyles = new Dictionary<string, ReservedStyleInfo>();
 
 		/// <summary>
-		/// The following style names are known to have unserializable features (lists, super- and subscript). We will avoid wiping out default styles
+		/// The following style names are known to have unserializable features (borders, super- and subscript). We will avoid wiping out default styles
 		/// of these types when importing.
 		/// </summary>
 		public static readonly HashSet<string> UnserializableStyles = new HashSet<string>
 		{
-			"Bulleted List", "Numbered List", "Homograph-Number", "Verse Number"
+			"Homograph-Number", "Verse Number"
 		};
 
 		/// <summary>

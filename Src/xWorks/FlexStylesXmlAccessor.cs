@@ -337,7 +337,8 @@ namespace SIL.FieldWorks.XWorks.LexText
 			writer.WriteEndElement(); // font
 			if (style.IsParagraphStyle)
 			{
-				// Generate the paragraph info (the paragraph element is required for paragraph styles even if it has no attributes)
+				// Generate the paragraph info (the paragraph element is required for paragraph styles even if it has no attributes;
+				// only Normal should have an empty paragraph element; all other styles should have at least basedOn)
 				writer.WriteStartElement("paragraph");
 				foreach (var prop in CollectParagraphProps(style, basedOnStyle, nextStyle))
 				{
