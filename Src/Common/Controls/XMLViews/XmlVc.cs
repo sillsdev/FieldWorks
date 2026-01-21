@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2022 SIL International
+// Copyright (c) 2003-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -26,7 +26,9 @@ using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Resources;
 using SIL.ObjectModel;
 using SIL.LCModel.Utils;
+using SIL.Reporting;
 using SIL.Utils;
+using ConfigurationException = SIL.Utils.ConfigurationException;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -4818,40 +4820,33 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Interpret an underline type string as an FwUnderlineType.
 		/// Note that currently this routine is duplicated in Framework/StylesXmlAccessor (due to avoiding assembly references). Keep in sync.
 		/// </summary>
-		/// <param name="strVal"></param>
-		/// <returns></returns>
-		static public int InterpretUnderlineType(string strVal)
+		public static int InterpretUnderlineType(string strVal)
 		{
-			int val = (int)FwUnderlineType.kuntSingle; // default
 			switch (strVal)
 			{
 				case "single":
 				case null:
-					val = (int)FwUnderlineType.kuntSingle;
-					break;
+					return (int)FwUnderlineType.kuntSingle;
 				case "none":
-					val = (int)FwUnderlineType.kuntNone;
-					break;
+					return (int)FwUnderlineType.kuntNone;
 				case "double":
-					val = (int)FwUnderlineType.kuntDouble;
-					break;
+					return (int)FwUnderlineType.kuntDouble;
 				case "dotted":
-					val = (int)FwUnderlineType.kuntDotted;
-					break;
+					return (int)FwUnderlineType.kuntDotted;
 				case "dashed":
-					val = (int)FwUnderlineType.kuntDashed;
-					break;
+					return (int)FwUnderlineType.kuntDashed;
 				case "squiggle":
-					val = (int)FwUnderlineType.kuntSquiggle;
-					break;
+					return (int)FwUnderlineType.kuntSquiggle;
 				case "strikethrough":
-					val = (int)FwUnderlineType.kuntStrikethrough;
-					break;
+					return (int)FwUnderlineType.kuntStrikethrough;
 				default:
-					Debug.Assert(false, "Expected value single, none, double, dotted, dashed, strikethrough, or squiggle");
+					var message = $"Invalid underline style '{strVal}'. Valid values are single, none, double, dotted, dashed, strikethrough, or squiggle";
+					Logger.WriteEvent(message);
+					Debug.Fail(message);
 					break;
 			}
-			return val;
+			// REVIEW (Hasso) 2026.01: why isn't the default none?
+			return (int)FwUnderlineType.kuntSingle; // default
 		}
 
 		static int MillipointVal(XmlNode node)

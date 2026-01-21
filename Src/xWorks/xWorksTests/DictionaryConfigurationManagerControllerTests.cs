@@ -15,6 +15,7 @@ using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.XWorks.LexText;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.TestUtilities;
@@ -712,7 +713,7 @@ namespace SIL.FieldWorks.XWorks
 			AssertThatXmlIn.File(styleSheetFile).HasSpecifiedNumberOfMatchesForXpath("/Styles/markup/tag[" + attributeTests + "]", 1);
 
 			// Verify that each known unsupported style is excluded from the export
-			foreach (var unsupported in DictionaryConfigurationImportController.UnsupportedStyles)
+			foreach (var unsupported in FlexStylesXmlAccessor.UnserializableStyles)
 			{
 				AssertThatXmlIn.File(styleSheetFile).HasNoMatchForXpath("/Styles/markup/tag[@id='" + unsupported.Replace(' ', '_') + "']");
 			}

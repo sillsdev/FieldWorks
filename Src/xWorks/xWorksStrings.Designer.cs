@@ -2159,7 +2159,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot import Styles. See the log for details..
+        ///   Looks up a localized string similar to Cannot import Styles..
         /// </summary>
         internal static string kstidCannotImportStyles {
             get {
@@ -2272,6 +2272,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string kstidPublicationsWillBeAdded {
             get {
                 return ResourceManager.GetString("kstidPublicationsWillBeAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to See the log for details..
+        /// </summary>
+        internal static string kstidSeeLogForDetails {
+            get {
+                return ResourceManager.GetString("kstidSeeLogForDetails", resourceCulture);
             }
         }
         
