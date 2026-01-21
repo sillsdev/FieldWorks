@@ -153,7 +153,16 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						newHvo = m_analysisMsas[imorph];
 						if (oldHvo == newHvo)
 							continue;
-						mb.MsaRA = newHvo == 0 ? null : m_msaRepos.GetObject(newHvo);
+						// Set the MSA if we have one. Note that it is (pathologically) possible that the user has done
+						// something in another window to destroy the MSA we remember, so don't try to set it if so.
+						if (newHvo != 0 && m_sdaMain.get_IsValidObject(newHvo))
+						{
+							mb.MsaRA = m_msaRepos.GetObject(newHvo);
+						}
+						else
+						{
+							mb.MsaRA = null;
+						}
 						isDirty = true;
 					}
 				}
