@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -11,25 +11,19 @@ namespace SIL.FieldWorks.XWorks.Archiving
 	public static class ArchivingExtensions
 	{
 		/// <summary>
-		/// Combines the functionality fo StringBuilder.AppendFormat and StringBuilder.AppendLine.
-		/// Also allows for the delimiter to be specified.  If the delimiter is null, Environment.NewLine
-		/// will be used.
+		/// Appends a formatted line to the StringBuilder, preceded by a delimiter if the StringBuilder already has content.
+		/// Allows specifying a custom delimiter; defaults to Environment.NewLine.
 		/// </summary>
-		/// <param name="sb"></param>
-		/// <param name="format"></param>
-		/// <param name="args"></param>
-		/// <param name="delimiter"></param>
-		public static void AppendLineFormat(this StringBuilder sb, string format, object[] args, string delimiter)
+		public static StringBuilder AppendLineFormat(this StringBuilder sb, string format, object[] args, string delimiter = null)
 		{
 			if (delimiter == null) delimiter = Environment.NewLine;
 			if (sb.Length != 0) sb.Append(delimiter);
-			sb.AppendFormat(format, args);
+			return sb.AppendFormat(format, args);
 		}
 
 		/// <summary>
 		/// Finds the ISO3 code for the given writing system.
 		/// </summary>
-		/// <param name="ws"></param>
 		/// <returns>The ISO3 code, or <value>mis</value> if the code is not found.</returns>
 		public static string GetIso3Code(this CoreWritingSystemDefinition ws)
 		{
