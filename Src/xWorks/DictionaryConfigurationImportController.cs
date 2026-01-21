@@ -12,7 +12,6 @@ using System.Xml.Linq;
 using System.Xml.XPath;
 using Ionic.Zip;
 using SIL.FieldWorks.Common.Controls.FileDialog;
-using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -20,7 +19,6 @@ using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.XWorks.LexText;
 using SIL.Lift.Migration;
 using SIL.Lift.Parsing;
-using SIL.Linq;
 using SIL.LCModel.Utils;
 using XCore;
 using File = System.IO.File;
@@ -138,10 +136,11 @@ namespace SIL.FieldWorks.XWorks
 					throw new Exception(xWorksStrings.kstidCannotImportStyles, e);
 #endif
 				// If an InstallationException is thrown in a Release build, it usually has its real message replaced with instructions to reinstall FW.
-				// Tell the user where to find the real message.
+				// Tell the user where to find the real message. Other exceptions do not get their messages replaced or result in log messages.
 				new SilErrorReportingAdapter(_view, _propertyTable).ReportNonFatalExceptionWithMessage(e, xWorksStrings.kstidCannotImportStyles
-					+ " Ignore the inner exception; scroll to the bottom to see the log.");
-				_view.explanationLabel.Text = xWorksStrings.kstidCannotImportStyles;
+					+ " If the inner exception is an Installation exception, ignore it and scroll to the bottom to see the log.");
+				_view.explanationLabel.Text = xWorksStrings.kstidCannotImportStyles + Environment.NewLine + Environment.NewLine +
+											  (e is InstallationException ? xWorksStrings.kstidSeeLogForDetails : e.Message);
 				// Keep the dialog open so the user can see the error message, but make the user close the dialog before trying again (to refresh)
 				_view.DialogResult = DialogResult.None;
 				_view.browseButton.Enabled = false;
@@ -438,7 +437,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				customFieldStatus = xWorksStrings.kstidCustomFieldsWillBeAdded + Environment.NewLine + string.Join(", ", _customFieldsToImport);
 			}
-			// TODO (Hasso): WSs
+			// TODO (Hasso) 2026-01: WSs
 			_view.explanationLabel.Text = string.Format("{0}{1}{2}{1}{3}{1}{4}",
 				mainStatus, Environment.NewLine + Environment.NewLine, publicationStatus, customFieldStatus,
 				xWorksStrings.DictionaryConfigurationDictionaryConfigurationUser_StyleOverwriteWarning);

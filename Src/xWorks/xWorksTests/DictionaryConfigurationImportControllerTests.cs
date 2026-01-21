@@ -355,63 +355,6 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(bulletTestStyle.NextRA, Is.EqualTo(nominalImportedStyle), "Failed to rewire next to new imported style.");
 		}
 
-		// TODO (Hoasso) 2026.01: add tests for: bad XML structure (like these already are); combine into a single parameterized test?
-		/// <summary>
-		/// LT-20393. Attempting to import an invalid style should not cause styles to be deleted.
-		/// </summary>
-		[Test]
-		public void ImportStyles_CatchesErrors_MissingParagraphElement()
-		{
-			// Set up valid styles before import
-			IStStyle unrelatedStyle = null;
-			IStStyle linkedStyle = null;
-			IStStyle sameNameAsBadStyle = null;
-			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
-			{
-				var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
-				unrelatedStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Unrelated Style",
-					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, true, 2, true);
-				var propsBldr = TsStringUtils.MakePropsBldr();
-				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
-				unrelatedStyle.Rules = propsBldr.GetTextProps();
-
-				sameNameAsBadStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Paragraph-Style",
-					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, false, 2, true);
-				propsBldr = TsStringUtils.MakePropsBldr();
-				propsBldr.SetIntPropValues((int)FwTextPropType.ktptSpaceBefore, (int)FwTextPropVar.ktpvMilliPoint, 8000);
-				sameNameAsBadStyle.Rules = propsBldr.GetTextProps();
-
-				linkedStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Based on Paragraph Style",
-					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, false, 2, true);
-				linkedStyle.BasedOnRA = sameNameAsBadStyle;
-			});
-			// Create and import an XML file with an invalid style
-			using (var styleFile = new TempFile( // TODO (Hasso) 2026.01: fill out the rest of the XML
-				$@"<tag id='{sameNameAsBadStyle.Name}' guid='{sameNameAsBadStyle.Guid}' userlevel='0' context='general' type='paragraph'>
-  <font />
-</tag>"))
-			{
-				// SUT
-				Assert.Throws<InstallationException>(() => _controller.ImportStyles(styleFile.Path),
-					"For legacy reasons, the import code throws installation exceptions.");
-			}
-
-			// Verify that the styles are still there.
-			Assert.That(Cache.LangProject.StylesOC.Count, Is.EqualTo(3), "The number of styles should not have changed");
-			var foundUnrelatedStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Unrelated Style");
-			Assert.That(foundUnrelatedStyle, Is.Not.Null, "Should have found 'Unrelated Style'");
-			Assert.That(foundUnrelatedStyle.Rules.GetIntPropValues((int)FwTextPropType.ktptBackColor, out _), Is.EqualTo(NamedRedBGR), "colour should be the same");
-			Assert.That(foundUnrelatedStyle.Guid, Is.EqualTo(unrelatedStyle.Guid), "'Unrelated Style' GUID should be the same");
-			var foundSameNameAsBadStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Paragraph-Style");
-			Assert.That(foundSameNameAsBadStyle, Is.Not.Null, "Should have found 'Paragraph-Style'");
-			Assert.That(foundSameNameAsBadStyle.Rules.GetIntPropValues((int)FwTextPropType.ktptSpaceBefore, out _), Is.EqualTo(8000), "space before should be the same");
-			Assert.That(foundSameNameAsBadStyle.Guid, Is.EqualTo(sameNameAsBadStyle.Guid), "'Paragraph-Style' GUID should be the same");
-			var foundLinkedStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Based on Paragraph Style");
-			Assert.That(foundLinkedStyle, Is.Not.Null, "Should have found 'Based on Paragraph Style'");
-			Assert.That(foundLinkedStyle.Guid, Is.EqualTo(linkedStyle.Guid), "'Based on Paragraph Style' GUID should be the same");
-			Assert.That(foundLinkedStyle.BasedOnRA, Is.EqualTo(foundSameNameAsBadStyle), "link should be preserved");
-		}
-
 		/// <summary>
 		/// LT-20393. Attempting to import an invalid style should not cause styles to be deleted.
 		/// </summary>
@@ -428,7 +371,7 @@ namespace SIL.FieldWorks.XWorks
 			// Set up valid styles before import
 			IStStyle unrelatedStyle = null;
 			IStStyle linkedStyle = null;
-			IStStyle sameNameAsBadStyle = null;
+			IStStyle styleWithSameNameAsBadStyle = null;
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
@@ -438,20 +381,20 @@ namespace SIL.FieldWorks.XWorks
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
 				unrelatedStyle.Rules = propsBldr.GetTextProps();
 
-				sameNameAsBadStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Testable Style",
+				styleWithSameNameAsBadStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Testable Style",
 					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, true, 2, true);
 				propsBldr = TsStringUtils.MakePropsBldr();
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 18);
-				sameNameAsBadStyle.Rules = propsBldr.GetTextProps();
+				styleWithSameNameAsBadStyle.Rules = propsBldr.GetTextProps();
 
 				linkedStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Based on Testable Style",
 					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, true, 2, true);
-				linkedStyle.BasedOnRA = sameNameAsBadStyle;
+				linkedStyle.BasedOnRA = styleWithSameNameAsBadStyle;
 			});
 			// Create and import an XML file with an invalid style
 			using (var styleFile = new TempFile($@"<?xml version='1.0' encoding='utf-8'?>
 <Styles DTDver='1610190E-D7A3-42D7-8B48-C0C49320435F' label='Flex Dictionary' date='2026-01-16'>
-  <markup version='e5238df8-6fcb-4350-9c85-db9c9726381b'>{string.Format(xmlToImport, sameNameAsBadStyle.Name)}</markup>
+  <markup version='e5238df8-6fcb-4350-9c85-db9c9726381b'>{string.Format(xmlToImport, styleWithSameNameAsBadStyle.Name)}</markup>
 </Styles>"))
 			{
 				// SUT
@@ -467,7 +410,7 @@ namespace SIL.FieldWorks.XWorks
 			var foundSameNameAsBadStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Testable Style");
 			Assert.That(foundSameNameAsBadStyle, Is.Not.Null, "Should have found 'Testable Style'");
 			Assert.That(foundSameNameAsBadStyle.Rules.GetIntPropValues((int)FwTextPropType.ktptFontSize, out _), Is.EqualTo(18), "font size should be the same");
-			Assert.That(foundSameNameAsBadStyle.Guid, Is.EqualTo(sameNameAsBadStyle.Guid), "'Testable Style' GUID should be the same");
+			Assert.That(foundSameNameAsBadStyle.Guid, Is.EqualTo(styleWithSameNameAsBadStyle.Guid), "'Testable Style' GUID should be the same");
 			var foundLinkedStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Based on Testable Style");
 			Assert.That(foundLinkedStyle, Is.Not.Null, "Should have found 'Based on Testable Style'");
 			Assert.That(foundLinkedStyle.Guid, Is.EqualTo(linkedStyle.Guid), "'Based on Testable Style' GUID should be the same");
@@ -480,7 +423,6 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void ImportStyles_ToleratesMissingStructureAndUse()
 		{
-			// TODO (Hasso) 2026.01: implement
 			// Set up valid styles before import
 			IStStyle headingStyle = null;
 			IStStyle normalStyle = null;
@@ -504,11 +446,11 @@ namespace SIL.FieldWorks.XWorks
 					FunctionValues.Chapter, true, 0, true);
 				propsBldr = TsStringUtils.MakePropsBldr();
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptItalic, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
+				chapterStyle.Rules = propsBldr.GetTextProps();
 				DictionaryConfigurationManagerController.PrepareStylesheetExport(Cache);
 			});
 
-
-			// Create and import an XML file with a style missing structure and use attributes
+			// Create and import an XML file with styles missing structure and use attributes
 			using (var styleFile = new TempFile($@"<?xml version='1.0' encoding='utf-8'?>
 <Styles DTDver='1610190E-D7A3-42D7-8B48-C0C49320435F' label='Flex Dictionary' date='2026-01-16'>
   <markup version='e5238df8-6fcb-4350-9c85-db9c9726381b'>
