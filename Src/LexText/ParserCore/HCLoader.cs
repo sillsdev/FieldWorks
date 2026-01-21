@@ -641,7 +641,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 							else
 							{
 								ILexSense sense = (ILexSense)component;
-								LoadLexEntryOfVariant(stratum, inflType, (IMoStemMsa)sense.MorphoSyntaxAnalysisRA, allos, entry.ShortName);
+								if (sense != null && sense.MorphoSyntaxAnalysisRA is IMoStemMsa)
+									LoadLexEntryOfVariant(stratum, inflType, (IMoStemMsa)sense.MorphoSyntaxAnalysisRA, allos, entry.ShortName);
 							}
 						}
 					}
