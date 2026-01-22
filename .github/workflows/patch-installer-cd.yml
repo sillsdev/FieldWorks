@@ -8,7 +8,7 @@ name: Patch Installer
 
 on:
   push:
-    branches: ["release/9.3"]
+    branches: ["main"]
   schedule:
     # Runs every Monday at 03:30 UTC (which is 8:30pm MST/PDT Sunday evening)
     - cron: "30 3 * * 1"
