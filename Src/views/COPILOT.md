@@ -87,7 +87,30 @@ TBD - populate from code. See auto-generated hints below.
 TBD - populate from code. See auto-generated hints below.
 
 ## Config & Feature Flags
-TBD - populate from code. See auto-generated hints below.
+- **Views_RenderTiming** trace switch: Enable render stage timing diagnostics via `FieldWorks.Diagnostics.dev.config`
+  - Level 3 (Info): Log timing for Layout, PrepareToDraw, DrawRoot stages
+  - Uses `VwRenderTrace.h` RAII timer infrastructure (see Tracing Infrastructure below)
+
+## Tracing Infrastructure (VwRenderTrace.h)
+Provides performance tracing for render stages via RAII timer pattern:
+
+```cpp
+#include "VwRenderTrace.h"
+{
+    RENDER_TRACE_TIMER("Layout"); // Times block, logs on destruction
+    // ... layout code ...
+}
+```
+
+**Components**:
+- `VwRenderTraceTimer` - RAII class using QueryPerformanceCounter
+- `RENDER_TRACE_ENABLED` - Compile-time trace enable flag
+- `RENDER_TRACE_TIMER(stage)` - Stage timing macro
+- Output format: `[RENDER] Stage=Layout Duration=12.345ms`
+
+**Configuration**: Enable `Views_RenderTiming` switch in diagnostics config.
+
+See `specs/001-render-speedup/` for full render benchmark harness documentation.
 
 ## Build Information
 TBD - populate from code. See auto-generated hints below.

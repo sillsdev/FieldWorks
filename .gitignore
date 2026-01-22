@@ -98,6 +98,8 @@ _UpgradeReport_Files/
 /Release/
 Output/
 Output
+Output/RenderBenchmarks/
+Output/RenderBenchmarks/**
 Output_i686/
 Output_x86_64/
 __pycache__/

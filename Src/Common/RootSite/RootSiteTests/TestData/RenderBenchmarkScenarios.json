@@ -1,0 +1,34 @@
+{
+  "scenarios": [
+    {
+      "id": "simple",
+      "description": "Minimal lexical entry with one sense, one definition",
+      "tags": ["baseline", "minimal"],
+      "expectedSnapshotPath": "TestData/RenderSnapshots/simple.png"
+    },
+    {
+      "id": "medium",
+      "description": "Entry with 3 senses, multiple definitions, example sentences",
+      "tags": ["typical", "multi-sense"],
+      "expectedSnapshotPath": "TestData/RenderSnapshots/medium.png"
+    },
+    {
+      "id": "complex",
+      "description": "Entry with 10+ senses, subsenses, extensive cross-references",
+      "tags": ["stress", "multi-sense", "cross-refs"],
+      "expectedSnapshotPath": "TestData/RenderSnapshots/complex.png"
+    },
+    {
+      "id": "deep-nested",
+      "description": "Entry with deeply nested subsenses (5+ levels)",
+      "tags": ["nested", "hierarchy", "stress"],
+      "expectedSnapshotPath": "TestData/RenderSnapshots/deep-nested.png"
+    },
+    {
+      "id": "custom-field-heavy",
+      "description": "Entry with many custom fields of various types",
+      "tags": ["custom-fields", "extensibility"],
+      "expectedSnapshotPath": "TestData/RenderSnapshots/custom-field-heavy.png"
+    }
+  ]
+}

@@ -1,0 +1,219 @@
+openapi: 3.0.3
+info:
+  title: Render Benchmark Harness API
+  version: 1.0.0
+  description: Local-only API for running render benchmarks and retrieving results.
+servers:
+  - url: http://localhost
+paths:
+  /scenarios:
+    get:
+      summary: List benchmark scenarios
+      responses:
+        '200':
+          description: Scenario list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/RenderScenario'
+  /runs:
+    post:
+      summary: Start a benchmark run
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BenchmarkRunRequest'
+      responses:
+        '202':
+          description: Run accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BenchmarkRunReceipt'
+    get:
+      summary: List benchmark runs
+      responses:
+        '200':
+          description: Run list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BenchmarkRunSummary'
+  /runs/{runId}:
+    get:
+      summary: Get a benchmark run
+      parameters:
+        - in: path
+          name: runId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Benchmark run details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BenchmarkRun'
+  /runs/{runId}/trace:
+    get:
+      summary: Download trace diagnostics for a run
+      parameters:
+        - in: path
+          name: runId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Trace file contents
+          content:
+            text/plain:
+              schema:
+                type: string
+  /validate:
+    post:
+      summary: Validate pixel-perfect rendering for a scenario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PixelPerfectRequest'
+      responses:
+        '200':
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PixelPerfectResult'
+components:
+  schemas:
+    RenderScenario:
+      type: object
+      required: [id, description, expectedSnapshotId]
+      properties:
+        id:
+          type: string
+        description:
+          type: string
+        entrySource:
+          type: string
+        expectedSnapshotId:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+    BenchmarkRunRequest:
+      type: object
+      required: [scenarioIds]
+      properties:
+        scenarioIds:
+          type: array
+          items:
+            type: string
+        includeTrace:
+          type: boolean
+          default: false
+        includeSnapshots:
+          type: boolean
+          default: true
+    BenchmarkRunReceipt:
+      type: object
+      required: [runId, status]
+      properties:
+        runId:
+          type: string
+        status:
+          type: string
+          enum: [pending, running]
+    BenchmarkRunSummary:
+      type: object
+      required: [runId, runAt, status]
+      properties:
+        runId:
+          type: string
+        runAt:
+          type: string
+          format: date-time
+        status:
+          type: string
+          enum: [pending, running, completed, failed]
+    BenchmarkRun:
+      type: object
+      required: [runId, runAt, configuration, environmentId, results]
+      properties:
+        runId:
+          type: string
+        runAt:
+          type: string
+          format: date-time
+        configuration:
+          type: string
+        environmentId:
+          type: string
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/BenchmarkResult'
+        summary:
+          $ref: '#/components/schemas/AnalysisSummary'
+    BenchmarkResult:
+      type: object
+      required: [scenarioId, coldRenderMs, warmRenderMs, pixelPerfectPass]
+      properties:
+        scenarioId:
+          type: string
+        coldRenderMs:
+          type: number
+        warmRenderMs:
+          type: number
+        variancePercent:
+          type: number
+        pixelPerfectPass:
+          type: boolean
+    PixelPerfectRequest:
+      type: object
+      required: [scenarioId, snapshotId]
+      properties:
+        scenarioId:
+          type: string
+        snapshotId:
+          type: string
+    PixelPerfectResult:
+      type: object
+      required: [scenarioId, snapshotId, pass]
+      properties:
+        scenarioId:
+          type: string
+        snapshotId:
+          type: string
+        pass:
+          type: boolean
+    AnalysisSummary:
+      type: object
+      required: [topContributors, recommendations]
+      properties:
+        topContributors:
+          type: array
+          items:
+            $ref: '#/components/schemas/Contributor'
+        recommendations:
+          type: array
+          items:
+            type: string
+    Contributor:
+      type: object
+      required: [stage, sharePercent]
+      properties:
+        stage:
+          type: string
+        sharePercent:
+          type: number
