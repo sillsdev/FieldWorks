@@ -313,8 +313,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					ConstraintFailure failure;
 					m_env.CheckConstraints(PhEnvironmentTags.kflidStringRepresentation, true, out failure, /* adjust the squiggly line */ true);
 					// This will make the record list update to the new value.
-					if(refresh)
+					if (refresh)
+					{
+#pragma warning disable 618 // suppress obsolete warning
 						Mediator.BroadcastMessage("Refresh", null);
+#pragma warning restore 618
+					}
 				}
 				finally
 				{

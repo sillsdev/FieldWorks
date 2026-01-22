@@ -137,7 +137,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						clerk.RemoveItemsFor(currentEntry.Hvo);
 					// Note: PropChanged should happen on the old owner and the new while completing the unit of work.
 					// Have to jump to a main entry, as RecordClerk doesn't know anything about subentries.
+#pragma warning disable 618 // suppress obsolete warning
 					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", newOwner.MainEntry.Hvo);
+#pragma warning restore 618
 				}
 			}
 			return true;

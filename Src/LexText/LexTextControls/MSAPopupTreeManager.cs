@@ -494,7 +494,9 @@ namespace SIL.FieldWorks.LexText.Controls
 						// NOTE: We use PostMessage here, rather than SendMessage which
 						// disposes of the PopupTree before we and/or our parents might
 						// be finished using it (cf. LT-2563).
+#pragma warning disable 618 // suppress obsolete warning
 						m_mediator.PostMessage("FollowLink", new FwLinkArgs("posEdit", dlg.SelectedPOS.Guid));
+#pragma warning restore 618
 						if (m_parentOfPopupMgr != null && m_parentOfPopupMgr.Modal)
 						{
 							// Close the dlg that opened the master POS dlg,

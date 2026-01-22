@@ -540,7 +540,9 @@ namespace SIL.FieldWorks.XWorks
 					// Allow this to happen after the processing of the tool change above by using the Broadcast
 					// method on the mediator, the SendMessage would process it before the above msg and it would
 					// use the wrong RecordList.  (LT-3260)
+#pragma warning disable 618 // suppress obsolete warning
 					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", obj.Hvo);
+#pragma warning restore 618
 				}
 
 				foreach (Property property in m_lnkActive.PropertyTableEntries)
@@ -550,9 +552,11 @@ namespace SIL.FieldWorks.XWorks
 					//the persistence or ownership of the property...at the moment the only values we're putting
 					//in there are strings or bools
 				}
+#pragma warning disable 618 // suppress obsolete warning
 				m_mediator.BroadcastMessageUntilHandled("LinkFollowed", m_lnkActive);
+#pragma warning restore 618
 			}
-			catch(Exception err)
+			catch (Exception err)
 			{
 				// Stop suspension of loading records.
 				m_propertyTable.SetProperty("SuspendLoadingRecordUntilOnJumpToRecord", "",

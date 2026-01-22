@@ -869,7 +869,11 @@ namespace SIL.FieldWorks.XWorks
 				changed |= SaveCustomFieldsToDB();
 			}
 			if (changed)	// only fire the 'big gun' if something has actually changed
+			{
+#pragma warning disable 618 // suppress obsolete warning
 				m_mediator.BroadcastMessage("MasterRefresh", null);
+#pragma warning restore 618
+			}
 			DialogResult = DialogResult.OK;
 		}
 

@@ -1820,7 +1820,9 @@ namespace SIL.FieldWorks.XWorks
 			// scroll to the right index if it hasn't already done so.
 			if (!fSkipRecordNavigation)
 			{
+#pragma warning disable 618 // suppress obsolete warning
 				m_mediator.BroadcastMessage("RecordNavigation", rni);
+#pragma warning restore 618
 			}
 		}
 
@@ -2435,7 +2437,9 @@ namespace SIL.FieldWorks.XWorks
 				//in order to maintain the LT-11401 fix we directly use the mediator here and pass true in the
 				//second parameter so that we don't save the record and lose the undo history. -naylor 2011-11-03
 				var rni = new RecordNavigationInfo(this, true, SkipShowRecord, suppressFocusChange);
+#pragma warning disable 618 // suppress obsolete warning
 				m_mediator.BroadcastMessage("RecordNavigation", rni);
+#pragma warning restore 618
 				return;
 			}
 			try
@@ -2587,7 +2591,9 @@ namespace SIL.FieldWorks.XWorks
 				m_suppressSaveOnChangeRecord = false;
 			}
 
+#pragma warning disable 618 // suppress obsolete warning
 			m_mediator.BroadcastMessage("FocusFirstPossibleSlice", null);
+#pragma warning restore 618
 			return result;
 		}
 
@@ -2721,9 +2727,11 @@ namespace SIL.FieldWorks.XWorks
 				m_suppressSaveOnChangeRecord = false;
 			}
 
+#pragma warning disable 618 // suppress obsolete warning
 			if (newObj != null)
 				m_mediator.BroadcastMessage("UpdateItemCheckedState", newObj);
 			m_mediator.BroadcastMessage("FocusFirstPossibleSlice", null);
+#pragma warning restore 618
 			return result;
 		}
 
@@ -2872,7 +2880,9 @@ namespace SIL.FieldWorks.XWorks
 				string persistFilter = DynamicLoader.PersistObject(Filter, "filter");
 				m_propertyTable.SetProperty(GetFilterPropertyTableId(), persistFilter, PropertyTable.SettingsGroup.LocalSettings, true);
 				// adjust menu bar items according to current state of Filter, where needed.
+#pragma warning disable 618 // suppress obsolete warning
 				m_mediator.BroadcastMessage("AdjustFilterSelection", Filter);
+#pragma warning restore 618
 				UpdateFilterStatusBarPanel();
 				if (m_list.Filter != null)
 					Logger.WriteEvent("Filter changed: "+m_list.Filter);

@@ -1220,8 +1220,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				case "lexiconEdit":
 					// Use existing lexicon entry editor.
+#pragma warning disable 618 // suppress obsolete warning
 					Mediator.BroadcastMessage("JumpToRecord", command);
 					Mediator.BroadcastMessage("FocusFirstPossibleSlice", null);
+#pragma warning restore 618
 					return true;
 			}
 
@@ -1242,8 +1244,10 @@ namespace SIL.FieldWorks.XWorks
 				}
 				m_popupLexEntryWindow.BringToFront();
 				m_popupLexEntryWindow.Activate();
+#pragma warning disable 618 // suppress obsolete warning
 				Mediator.BroadcastMessage("JumpToPopupRecord", command);
 				Mediator.BroadcastMessage("FocusFirstPossibleSlice", null);
+#pragma warning restore 618
 			}
 			return true;
 		}

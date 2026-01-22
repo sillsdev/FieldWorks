@@ -54,8 +54,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (Cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(tsString, out wordform))
 			{
 				var fwLink = new FwLinkArgs("Analyses", wordform.Guid);
+#pragma warning disable 618 // suppress obsolete warning
 				Mediator.PostMessage("FollowLink", fwLink);
-			} else
+#pragma warning restore 618
+			}
+			else
 			{
 				// This should never happen.
 				MessageBox.Show("Unknown word " + parseReport.Word);

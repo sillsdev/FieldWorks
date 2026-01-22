@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -104,7 +104,11 @@ namespace SIL.FieldWorks.LexText.Controls
 				Debug.Assert(cache != null);
 				dlg.SetDlgInfo(cache, null, m_mediator, m_propertyTable);
 				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+#pragma warning disable 618 // suppress obsolete warning
 					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", dlg.SelectedObject.Hvo);
+#pragma warning restore 618
+				}
 			}
 			return true;
 		}

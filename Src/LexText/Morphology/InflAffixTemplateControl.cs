@@ -316,7 +316,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			Command command = (XCore.Command)commandObject;
 			string tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
 			var inflMsa = m_obj as IMoInflAffMsa;
+#pragma warning disable 618 // suppress obsolete warning
 			m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, inflMsa.Owner.Guid));
+#pragma warning restore 618
 			return true; // handled this
 		}
 

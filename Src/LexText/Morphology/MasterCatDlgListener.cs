@@ -85,7 +85,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					case DialogResult.Yes:
 						// This is the equivalent functionality, but is deferred processing.
 						// This is done so that the JumpToRecord can be processed last.
+#pragma warning disable 618 // suppress obsolete warning
 						m_mediator.BroadcastMessageUntilHandled("JumpToRecord", dlg.SelectedPOS.Hvo);
+#pragma warning restore 618
 						break;
 				}
 			}

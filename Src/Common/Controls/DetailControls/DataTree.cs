@@ -3853,7 +3853,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Guid guid = GetGuidForJumpToTool((Command) commandObject, false, out tool);
 			if (guid != Guid.Empty)
 			{
+#pragma warning disable 618 // suppress obsolete warning
 				m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, guid));
+#pragma warning restore 618
 				((Command)commandObject).TargetId = Guid.Empty;	// clear the target for future use.
 				return true;
 			}
@@ -3893,7 +3895,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new Property("LinkSetupInfo", linkSetupInfo));
 			additionalProps.Add(new Property("HvoOfAnthroItem", hvo.ToString(CultureInfo.InvariantCulture)));
+#pragma warning disable 618 // suppress obsolete warning
 			m_mediator.PostMessage("FollowLink", link);
+#pragma warning restore 618
 		}
 
 		/// <summary>

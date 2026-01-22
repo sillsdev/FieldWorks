@@ -95,7 +95,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 							});
 					// Note: PropChanged should happen on the old owner and the new in the 'Add" method call.
 					// Have to jump to a main PartOfSpeech, as RecordClerk doesn't know anything about subcategories.
+#pragma warning disable 618 // suppress obsolete warning
 					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", newOwner.MainPossibility.Hvo);
+#pragma warning restore 618
 				}
 			}
 
@@ -163,7 +165,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 						()=> survivor.MergeObject(currentPOS, false));
 					// Note: PropChanged should happen on the old owner and the new in the 'Add" method call.
 					// Have to jump to a main PartOfSpeech, as RecordClerk doesn't know anything about subcategories.
+#pragma warning disable 618 // suppress obsolete warning
 					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", survivor.MainPossibility.Hvo);
+#pragma warning restore 618
 				}
 			}
 

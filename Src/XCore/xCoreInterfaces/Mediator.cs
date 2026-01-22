@@ -759,7 +759,8 @@ namespace XCore
 		/// this does not care if anyone claims to have "handled" the message.
 		/// It will keep sending messages to everyone.
 		/// </summary>
-		/// <param name="methodName"></param>
+		[Obsolete("Use the the FwUtils Publisher and Subscriber classes instead.", false)]
+		[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
 		public void BroadcastString(string methodName, string stringParam)
 		{
 			CheckDisposed();
@@ -968,28 +969,6 @@ namespace XCore
 			return result;
 		}
 
-		/// <summary>
-		/// This method is a replacement message for the SendMessage when the return value isn't
-		/// actually used.  It allows those messages to be defered for a different message (later).
-		/// </summary>
-		/// <param name="messageName"></param>
-		/// <param name="parameter"></param>
-		public void SendMessageDefered(string messageName, object parameter)
-		{
-			CheckDisposed();
-
-			if (!ProcessMessages)
-				return;
-
-#if DEBUG
-			if(messageName.Substring(0,2) == "On")
-				Debug.Fail("The convention is to send messages without the 'On' prefix. " +
-					"That is added by the message sending code.");
-#endif
-			AddQueueItem(new QueueItem("On" + messageName, new Type[] {typeof(object)},
-				new Object[] { parameter }, true, false));
-		}
-
 #if TESTING_PCDEFERED
 		/// <summary>
 		///
@@ -1023,6 +1002,8 @@ namespace XCore
 		/// <param name="messageName"></param>
 		/// <param name="parameter"></param>
 		/// ------------------------------------------------------------------------------------
+		[Obsolete("Use the the FwUtils Publisher and Subscriber classes instead.", false)]
+		[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
 		public void PostMessage(string messageName, object parameter)
 		{
 			CheckDisposed();
@@ -1033,7 +1014,7 @@ namespace XCore
 			m_idleQueue.Add(IdleQueuePriority.Medium, PostMessageOnIdle, new PendingMessageItem(messageName, parameter), false);
 		}
 
-		bool PostMessageOnIdle(object parameter)
+		private bool PostMessageOnIdle(object parameter)
 		{
 			var pmi = (PendingMessageItem) parameter;
 			SendMessage(pmi.m_message, pmi.m_parameter);
@@ -1049,6 +1030,8 @@ namespace XCore
 		/// <param name="parameter"></param>
 		/// <returns><c>true</c> if the message was handled, otherwise <c>false</c></returns>
 		/// ------------------------------------------------------------------------------------
+		[Obsolete("Use the the FwUtils Publisher and Subscriber classes instead.", false)]
+		[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
 		public bool BroadcastMessage(string messageName, object parameter)
 		{
 			CheckDisposed();
@@ -1081,6 +1064,8 @@ namespace XCore
 		/// <param name="messageName"></param>
 		/// <param name="parameter"></param>
 		/// <returns></returns>
+		[Obsolete("Use the the FwUtils Publisher and Subscriber classes instead.", false)]
+		[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
 		public bool BroadcastMessageUntilHandled(string messageName, object parameter)
 		{
 			CheckDisposed();
@@ -1125,6 +1110,8 @@ namespace XCore
 		}
 
 		/// <returns>true if the message was canceled, otherwise false.</returns>
+		[Obsolete("Use the the FwUtils Publisher and Subscriber classes instead.", false)]
+		[System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
 		public bool SendCancellableMessage(string messageName, object parameter)
 		{
 			CheckDisposed();

@@ -331,7 +331,11 @@ namespace SIL.FieldWorks.LexText.Controls
 		public void HandleJump()
 		{
 			if (m_link != null)
+			{
+#pragma warning disable 618 // suppress obsolete warning
 				m_mediator.PostMessage("FollowLink", m_link);
+#pragma warning restore 618
+			}
 		}
 
 		void m_bvList_SelectionChanged(object sender, FwObjectSelectionEventArgs e)

@@ -2221,7 +2221,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					else
 					{
 						// If possible, jump to the newly inserted sub item.
+#pragma warning disable 618 // suppress obsolete warning
 						if (m_mediator.BroadcastMessageUntilHandled("JumpToRecord", uiObj.Object.Hvo))
+#pragma warning restore 618
 							return insertionPosition;
 						// If we haven't found a slice...common now, because there's rarely a need to expand anything...
 						// and some slice was added, focus it.

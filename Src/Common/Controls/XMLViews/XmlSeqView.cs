@@ -366,7 +366,9 @@ namespace SIL.FieldWorks.Common.Controls
 		public bool OnJumpToRecord(object argument)
 		{
 			CheckDisposed();
+#pragma warning disable 618 // suppress obsolete warning
 			Mediator.BroadcastMessage("CheckJump", argument);
+#pragma warning restore 618
 			return false; // I don't want to be seen as handling this!
 		}
 

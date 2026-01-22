@@ -355,7 +355,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					}
 				}
 				IReversalIndexEntry rie = cache.ServiceLocator.GetObject(hvo) as IReversalIndexEntry;
+#pragma warning disable 618 // suppress obsolete warning
 				m_mediator.PostMessage("FollowLink", new FwLinkArgs("reversalToolEditComplete", rie.MainEntry.Guid));
+#pragma warning restore 618
 			}
 
 			/// <summary>
