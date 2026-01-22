@@ -150,6 +150,7 @@ namespace SIL.FieldWorks.XWorks
 					m_dataEntryForm.CurrentSliceChanged -= m_dataEntryForm_CurrentSliceChanged;
 					m_dataEntryForm.Dispose();
 				}
+				m_menuHandler?.Dispose();
 				if (!string.IsNullOrEmpty(m_titleField))
 					Cache.DomainDataByFlid.RemoveNotification(this);
 			}

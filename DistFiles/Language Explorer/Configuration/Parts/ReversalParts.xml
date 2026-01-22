@@ -7,10 +7,7 @@
 				class="SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntryChangeHandler"/>
 		</part>
 		<part id="ReversalIndexEntry-Detail-ReversalForm" type="Detail">
-			<slice attr="ReversalForm" field="ReversalForm" label="Reversal Form" editor="CustomWithParams"
-				assemblyPath="LexEdDll.dll"
-				class="SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntryFormSlice"
-				menu="mnuDataTree-Help"/>
+			<slice field="ReversalForm" label="Reversal Form" editor="string" ws="reversal" menu="mnuDataTree-Help"/>
 		</part>
 		<part id="ReversalIndexEntry-Jt-ReversalForm" type="JtView">
 			<string field="ReversalForm" ws="reversal"/>

@@ -435,6 +435,9 @@
   <data name="ksNoneOfTheAbove" xml:space="preserve">
     <value>None of the above</value>
   </data>
+  <data name="ksPreserveExistingValues" xml:space="preserve">
+    <value>Preserve existing values</value>
+  </data>
   <data name="ksNoSensesInEntry" xml:space="preserve">
     <value>No senses in entry</value>
   </data>
@@ -924,7 +927,7 @@ Each feature has two values (+ and -).</value>
     <value>Variant not found?</value>
   </data>
   <data name="ksAddVariant" xml:space="preserve">
-    <value>&amp;Add Variant</value>
+    <value>&amp;Link Selected</value>
   </data>
   <data name="ksUseEntry" xml:space="preserve">
     <value>&amp;Use Entry</value>
@@ -969,13 +972,13 @@ If you see this message again, exit the import wizard (saving your settings) and
     <comment>{0} and {1} will often, but not always, be the same.</comment>
   </data>
   <data name="ksRedoAddVariant" xml:space="preserve">
-    <value>Redo Add Variant</value>
+    <value>Redo Link Selected</value>
   </data>
   <data name="ksRedoCreateVarEntry" xml:space="preserve">
     <value>Redo Create Variant Entry</value>
   </data>
   <data name="ksUndoAddVariant" xml:space="preserve">
-    <value>Undo Add Variant</value>
+    <value>Undo Link Selected</value>
   </data>
   <data name="ksUndoCreateVarEntry" xml:space="preserve">
     <value>Undo Create Variant Entry</value>
@@ -1192,7 +1195,7 @@ Sorry, in this browser, opening the file via hyperlink presents a security risk.
     <value>The following custom fields were added to the project:</value>
   </data>
   <data name="ksStemNamesAdded" xml:space="preserve">
-    <value>The following Stem Names were added to the project:</value>
+    <value>The following Stem Allomorph Labels were added to the project:</value>
   </data>
   <data name="ksCannotMakeDesiredLink" xml:space="preserve">
     <value>Cannot make desired link for \{0} {1}</value>

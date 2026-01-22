@@ -111,6 +111,8 @@
 	<column layout="SummaryDefinitionForEntry" label="Summary Definition" transduce="LexEntry.SummaryDefinition" ws="$ws=analysis" visibility="dialog"/>
 	<column layout="PictureCaptionForSense" label="Picture-Caption"  multipara="true" editable="false" visibility="dialog" ws="$ws=vernacular analysis" />
 	<column layout="PictureFileNameForSense" label="Picture-FileName"  multipara="true" editable="false" visibility="dialog" />
+	<column layout="PictureLicenseForSense" label="Picture-License"  multipara="true" ws="$ws=analysis vernacular" editable="false" visibility="dialog" />
+	<column layout="PictureCreatorForSense" label="Picture-Creator"  multipara="true" ws="$ws=analysis vernacular" editable="false" visibility="dialog" />
 	<column layout="ScientificNameForSense" label="Scientific Names" multipara="true" ws="$ws=analysis" transduce="LexSense.ScientificName" visibility="dialog" />
 	<column layout="DiscourseNoteForSense" label="Discourse Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.DiscourseNote" visibility="dialog" />
 	<column layout="AnthropologyNoteForSense" label="Anthropology Notes" multipara="true" ws="$ws=analysis" transduce="LexSense.AnthroNote" visibility="dialog" />
@@ -210,8 +212,8 @@
 	<column layout="ExampleTranslationType" label="Example Translation Types" multipara="true" visibility="dialog"
 		ghostListField="LexDb.AllExampleTranslationTargets"
 		field="CmTranslation.Type" bulkEdit="atomicFlatListItem" bulkDelete="false" list="LangProject.TranslationTags"/>
-	<column layout="StemNameForEntry" label="Stem Name" visibility="dialog"/>
-	<column layout="AllomorphStemNames" displayWs="best analysis" multipara="true" label="Stem Name (Allomorph)" sortmethod="MorphSortKey"
+	<column layout="StemNameForEntry" label="Stem Allomorph Label" visibility="dialog"/>
+	<column layout="AllomorphStemNames" displayWs="best analysis" multipara="true" label="Stem Allomorph Label (Allomorph)" sortmethod="MorphSortKey"
 	 ghostListField="LexDb.AllPossibleAllomorphs" visibility="dialog"/>
 	<!-- removed as per LT-9899
 	<column layout="InflectionClassForEntry" label="Inflection Classes (Entry)" visibility="dialog"/>

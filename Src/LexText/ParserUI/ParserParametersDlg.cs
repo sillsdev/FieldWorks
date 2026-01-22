@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2017 SIL International
+// Copyright (c) 2003-2025 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -16,13 +16,14 @@ using System.Xml;
 using System.Data;
 using System.Xml.Linq;
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.LCModel;
 
 namespace SIL.FieldWorks.LexText.Controls
 {
 	/// <summary>
 	/// Summary description for ParserParametersDlg.
 	/// </summary>
-	public class ParserParametersDlg : Form
+	public class ParserParametersDlg : ParserParametersBase
 	{
 		private const string HelpTopic = "khtpParserParamters";
 
@@ -32,6 +33,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		private const string NoDefaultCompounding = "NoDefaultCompounding";
 		private const string AcceptUnspecifiedGraphemes = "AcceptUnspecifiedGraphemes";
 		private const string GuessRoots = "GuessRoots";
+		private const string MergeAnalyses = "MergeAnalyses";
+		private const string Strata = "Strata";
 
 		private const string XAmple = "XAmple";
 		private const string MaxNulls = "MaxNulls";
@@ -44,14 +47,10 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		#region Data members
 
-		/// <summary>
-		/// member strings
-		/// </summary>
-		private string m_sXmlParameters;
-
 		private readonly IHelpTopicProvider m_helpTopicProvider;
 		private Label m_label1;
 		private Label m_label2;
+		private Button m_btnHCMaxCompoundRuleApps;
 		private Button m_btnOk;
 		private Button m_btnCancel;
 		private Button m_btnHelp;
@@ -62,6 +61,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		private DataSet m_dsParserParameters;
 
+		private ILcmOwningSequence<IMoCompoundRule> m_compoundRules;
 		#endregion Data members
 
 		private ParserParametersDlg()
@@ -73,36 +73,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		public ParserParametersDlg(IHelpTopicProvider helpTopicProvider) : this()
 		{
 			m_helpTopicProvider = helpTopicProvider;
-		}
-
-		/// <summary>
-		///Get or set the parser parameters XML text
-		///</summary>
-		public string XmlRep
-		{
-			get
-			{
-				CheckDisposed();
-
-				return m_sXmlParameters;
-			}
-			set
-			{
-				CheckDisposed();
-
-				m_sXmlParameters = value;
-			}
-		}
-
-		/// <summary>
-		/// Check to see if the object has been disposed.
-		/// All public Properties and Methods should call this
-		/// before doing anything else.
-		/// </summary>
-		public void CheckDisposed()
-		{
-			if (IsDisposed)
-				throw new ObjectDisposedException(String.Format("'{0}' in use after being disposed.", GetType().Name));
 		}
 
 		/// <summary>
@@ -136,6 +106,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ParserParametersDlg));
 			this.m_label1 = new System.Windows.Forms.Label();
 			this.m_label2 = new System.Windows.Forms.Label();
+			this.m_btnHCMaxCompoundRuleApps = new System.Windows.Forms.Button();
 			this.m_btnOk = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_dataGrid1 = new System.Windows.Forms.DataGrid();
@@ -155,6 +126,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			//
 			resources.ApplyResources(this.m_label2, "m_label2");
 			this.m_label2.Name = "m_label2";
+			//
+			// btnHCMaxCompoundRuleApps
+			//
+			resources.ApplyResources(this.m_btnHCMaxCompoundRuleApps, "m_btnHCMaxCompoundRuleApps");
+			this.m_btnHCMaxCompoundRuleApps.Name = "m_btnHCMaxCompoundRuleApps";
+			this.m_btnHCMaxCompoundRuleApps.Click += new System.EventHandler(this.btnHCMaxCompoundRuleApps_Click);
 			//
 			// btnOK
 			//
@@ -205,6 +182,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.Controls.Add(this.m_btnHelp);
 			this.Controls.Add(this.m_dataGrid1);
 			this.Controls.Add(this.m_btnCancel);
+			this.Controls.Add(this.m_btnHCMaxCompoundRuleApps);
 			this.Controls.Add(this.m_btnOk);
 			this.Controls.Add(this.m_label2);
 			this.Controls.Add(this.m_label1);
@@ -228,10 +206,19 @@ namespace SIL.FieldWorks.LexText.Controls
 			XElement newParserParamsElem = XElement.Parse(m_dsParserParameters.GetXml());
 			XElement oldParserParamsElem = XElement.Parse(XmlRep);
 			newParserParamsElem.Add(oldParserParamsElem.Element("ActiveParser"));
+			newParserParamsElem.Add(oldParserParamsElem.Element("CompoundRules"));
 			XmlRep = newParserParamsElem.ToString();
 			ValidateValues(newParserParamsElem);
 		}
 
+		private void btnHCMaxCompoundRuleApps_Click(object sender, EventArgs e)
+		{
+			// create and show compound rule max apps dialog
+			var dlg = new HCMaxCompoundRulesDlg();
+			dlg.SetDlgInfo("MaxApps", XmlRep, m_compoundRules, m_helpTopicProvider);
+			dlg.ShowDialog(this);
+			XmlRep = dlg.XmlRep;
+		}
 		private void ValidateValues(XElement elem)
 		{
 			EnforceValidValue(elem, XAmple, MaxNulls, 0, 10, false);
@@ -243,6 +230,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			EnforceValidValue(elem, XAmple, MaxAnalysesToReturn, -1, 10000, true);
 
 			EnforceValidValue(elem, HC, DelReapps, 0, 10, false);
+			// For Hermit Crab, the maximum number of roots/stems allowed is between one and ten.
+			// The default is two in order to allow for compounding (which requires there be at least two roots/stems).
+			EnforceValidValue(elem, HC, MaxRoots, 1, 10, false);
 		}
 
 		private void EnforceValidValue(XElement elem, string parser, string item, int min, int max, bool useMinIfZero)
@@ -266,16 +256,10 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
-		private void ReportChangeOfValue(string item, int value, int newValue, int min, int max)
-		{
-			string sMessage = String.Format(ParserUIStrings.ksChangedValueReport, item, value, newValue, min, max);
-			MessageBox.Show(sMessage, ParserUIStrings.ksChangeValueDialogTitle, MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
-		}
-
 		/// <summary>
 		/// Set up the dlg in preparation to showing it.
 		/// </summary>
-		public void SetDlgInfo(string title, string parserParameters)
+		public void SetDlgInfo(string title, string parserParameters, ILcmOwningSequence<IMoCompoundRule> compoundRules)
 		{
 			CheckDisposed();
 
@@ -294,7 +278,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			PopulateDataGrid(m_dataGrid1, XAmple);
 			PopulateDataGrid(m_dataGrid2, HC);
 			m_dataGrid2.TableStyles[0].GridColumnStyles[2].Width = 130;
-			m_dataGrid2.TableStyles[0].GridColumnStyles[3].Width = 160;
+			m_dataGrid2.TableStyles[0].GridColumnStyles[4].Width = 160;
+			m_dataGrid2.TableStyles[0].GridColumnStyles[6].Width = 90;
+			m_dataGrid2.TableStyles[0].GridColumnStyles[7].Width = 400;
+
+			m_compoundRules = compoundRules;
+			if (m_compoundRules?.Count > 0)
+				m_btnHCMaxCompoundRuleApps.Enabled = true;
+			else
+				m_btnHCMaxCompoundRuleApps.Enabled= false;
 		}
 
 		private void LoadParserData(DataSet dsParserParameters)
@@ -311,12 +303,18 @@ namespace SIL.FieldWorks.LexText.Controls
 				hcElem.Add(new XElement(DelReapps, 0));
 			if (hcElem.Element(NoDefaultCompounding) == null)
 				hcElem.Add(new XElement(NoDefaultCompounding, false));
+			if (hcElem.Element(MaxRoots) == null)
+				hcElem.Add(new XElement(MaxRoots, 2));
 			if (hcElem.Element(NotOnClitics) == null)
 				hcElem.Add(new XElement(NotOnClitics, true));
 			if (hcElem.Element(AcceptUnspecifiedGraphemes) == null)
 				hcElem.Add(new XElement(AcceptUnspecifiedGraphemes, false));
 			if (hcElem.Element(GuessRoots) == null)
 				hcElem.Add(new XElement(GuessRoots, true));
+			if (hcElem.Element(MergeAnalyses) == null)
+				hcElem.Add(new XElement(MergeAnalyses, true));
+			if (hcElem.Element(Strata) == null)
+				hcElem.Add(new XElement(Strata, ""));
 
 			using (XmlReader reader = parserParamsElem.CreateReader())
 				dsParserParameters.ReadXml(reader, XmlReadMode.IgnoreSchema);
@@ -331,6 +329,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			dataGrid.TableStyles.Add(new DataGridTableStyle { MappingName = parser, RowHeadersVisible = false, AllowSorting = false });
 			foreach (DataGridBoolColumn col in dataGrid.TableStyles[0].GridColumnStyles.OfType<DataGridBoolColumn>())
 				col.AllowNull = false;
+			foreach (DataGridTextBoxColumn col in dataGrid.TableStyles[0].GridColumnStyles.OfType<DataGridTextBoxColumn>())
+			{
+				TextBox textBox1 = col.TextBox;
+				textBox1.Multiline = true;
+				textBox1.ScrollBars = ScrollBars.Vertical;
+				textBox1.WordWrap = true;
+				dataGrid.TableStyles[0].PreferredRowHeight = 50;
+			}
 		}
 
 		private DataView CreateDataView(DataTable table)
@@ -357,8 +363,11 @@ namespace SIL.FieldWorks.LexText.Controls
 			tblHC.Columns.Add(DelReapps, typeof(int));
 			tblHC.Columns.Add(NotOnClitics, typeof(bool));
 			tblHC.Columns.Add(NoDefaultCompounding, typeof(bool));
+			tblHC.Columns.Add(MaxRoots, typeof(int));
 			tblHC.Columns.Add(AcceptUnspecifiedGraphemes, typeof(bool));
 			tblHC.Columns.Add(GuessRoots, typeof(bool));
+			tblHC.Columns.Add(MergeAnalyses, typeof(bool));
+			tblHC.Columns.Add(Strata, typeof(string));
 			return tblHC;
 		}
 	}

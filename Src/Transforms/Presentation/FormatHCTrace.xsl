@@ -2,6 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html" version="4.0" encoding="UTF-8" indent="yes" media-type="text/html; charset=utf-8"/>
 	<xsl:include href="FormatCommon.xsl"/>
+	<xsl:include href="JSFunctions.xsl"/>
 	<!--
 ================================================================
 Format the xml returned from XAmple parse for user display.
@@ -57,13 +58,7 @@ Main template
 		<html>
 			<head>
 				<meta charset="UTF-8" />
-				<xsl:call-template name="Script"/>
-				<style type="text/css">
-					.interblock {
-						display: -moz-inline-box;
-						display: inline-block;
-						vertical-align: top;
-					}</style>
+				<xsl:call-template name="TraceScript"/>
 			</head>
 			<body style="font-family:Times New Roman">
 				<h1>
@@ -80,6 +75,11 @@ Main template
 					<xsl:text>.</xsl:text>
 				</h1>
 				<xsl:call-template name="ResultSection"/>
+				<h2>
+					<xsl:text>Parse time: </xsl:text>
+					<xsl:value-of select="@parseTime"/>
+					<xsl:text> seconds.</xsl:text>
+				</h2>
 				<xsl:if test="$prmShowTrace = 'true'">
 					<xsl:call-template name="TraceSection"/>
 				</xsl:if>
@@ -102,8 +102,8 @@ Main template
 			<xsl:otherwise>
 				<xsl:variable name="analysisAffixes" select="$traceRoot/MorphologicalRuleAnalysisTrace[MorphologicalRule/@type = 'affix']"/>
 				<xsl:variable name="synthesisAffixes" select="$traceRoot/MorphologicalRuleSynthesisTrace[MorphologicalRule/@type = 'affix']"/>
-				<xsl:variable name="analysisCompoundRules" select="$traceRoot/MorphologicalRuleAnalysisTrace[MorphologicalRule/@type = 'compound']"/>
-				<xsl:variable name="synthesisCompoundRules" select="$traceRoot/MorphologicalRuleSynthesisTrace[MorphologicalRule/@type = 'compound']"/>
+				<xsl:variable name="analysisCompoundRules" select="$traceRoot/CompoundingRuleAnalysisTrace[MorphologicalRule/@type = 'compound'] | $traceRoot/MorphologicalRuleAnalysisTrace[MorphologicalRule/@type = 'compound']"/>
+				<xsl:variable name="synthesisCompoundRules" select="$traceRoot/CompoundingRuleSynthesisTrace[MorphologicalRule/@type = 'compound'] | $traceRoot/MorphologicalRuleSynthesisTrace[MorphologicalRule/@type = 'compound']"/>
 				<xsl:variable name="synthesizedWords" select="$traceRoot/LexLookupTrace/WordSynthesisTrace"/>
 				<xsl:variable name="parseCompleteTraces" select="$traceRoot/ParseCompleteTrace"/>
 				<xsl:variable name="parseNodes" select="$analysisAffixes | $synthesisAffixes | $analysisCompoundRules | $synthesisCompoundRules | $synthesizedWords | $parseCompleteTraces"/>
@@ -417,178 +417,6 @@ ShowMsaInfo
 	</xsl:template>
 	<!--
 		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-		Script
-		Output the JavaScript script to handle dynamic "tree"
-		Parameters: none
-		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-	-->
-	<xsl:template name="Script">
-		<script language="JavaScript" id="clientEventHandlersJS">
-			<xsl:text disable-output-escaping="yes">
-	function ButtonShowDetails()
-	{
-	if (TraceSection.style.display == 'none')
-	{
-	  TraceSection.style.display = 'block';
-	  ShowDetailsButton.value = "Hide Details";
-	}
-	else
-	{
-	  TraceSection.style.display = 'none';
-	  ShowDetailsButton.value = "Show Details";
-	}
-	}
-	// Center the mouse position in the browser
-	function CenterNodeInBrowser(node)
-	{
-	var posx = 0;
-	var posy = 0;
-	if (!e) var e = window.event;
-	if (e.pageX || e.pageY)
-	{
-		posx = e.pageX;
-		posy = e.pageY;
-	}
-	else if (e.clientX || e.clientY)
-	{
-		posx = e.clientX + document.body.scrollLeft;
-		posy = e.clientY + document.body.scrollTop;
-	}
-	// posx and posy contain the mouse position relative to the document
-	curY = findPosY(node);
-	offset = document.body.clientHeight/2;
-	window.scrollTo(0, curY-offset); // scroll to about the middle if possible
-	}
-	// findPosX() and findPosY() are from http://www.quirksmode.org/js/findpos.html
-	function findPosX(obj)
-{
-	var curleft = 0;
-	if (obj.offsetParent)
-	{
-		while (obj.offsetParent)
-		{
-			curleft += obj.offsetLeft
-			obj = obj.offsetParent;
-		}
-	}
-	else if (obj.x)
-		curleft += obj.x;
-	return curleft;
-}
-
-function findPosY(obj)
-{
-	var curtop = 0;
-	if (obj.offsetParent)
-	{
-		while (obj.offsetParent)
-		{
-			curtop += obj.offsetTop
-			obj = obj.offsetParent;
-		}
-	}
-	else if (obj.y)
-		curtop += obj.y;
-	return curtop;
-}
-
-// nextSibling function that skips over textNodes.
-function NextNonTextSibling(node)
-{
-	while(node.nextSibling.nodeName == "#text")
-		node = node.nextSibling;
-
-	return node.nextSibling;
-}
-
-// This script based on the one given in http://www.codeproject.com/jscript/dhtml_treeview.asp.
-function Toggle(node, path, imgOffset)
-{
-
-	Images = new Array('beginminus.gif', 'beginplus.gif', 'lastminus.gif', 'lastplus.gif', 'minus.gif', 'plus.gif', 'singleminus.gif', 'singleplus.gif',
-										 'beginminusRTL.gif', 'beginplusRTL.gif', 'lastminusRTL.gif', 'lastplusRTL.gif', 'minusRTL.gif', 'plusRTL.gif', 'singleminusRTL.gif', 'singleplusRTL.gif');
-	// Unfold the branch if it isn't visible
-
-	if (NextNonTextSibling(node).style.display == 'none')
-	{
-		// Change the image (if there is an image)
-		if (node.childNodes.length > 0)
-		{
-			if (node.childNodes.item(0).nodeName == "IMG")
-			{
-				var str = node.childNodes.item(0).src;
-				var pos = str.indexOf(Images[1 + imgOffset]); // beginplus.gif
-				if (pos >= 0)
-				{
-					node.childNodes.item(0).src = path + Images[0 + imgOffset]; // "beginminus.gif";
-				}
-				else
-				{
-					pos = str.indexOf(Images[7 + imgOffset]); // "singleplus.gif");
-					if (pos >= 0)
-					{
-						node.childNodes.item(0).src = path + Images[6 + imgOffset]; // "singleminus.gif";
-					}
-					else
-					{
-						pos = str.indexOf(Images[3 + imgOffset]); // "lastplus.gif");
-						if (pos >= 0)
-						{
-							node.childNodes.item(0).src = path + Images[2 + imgOffset]; // "lastminus.gif";
-						}
-						else
-						{
-							node.childNodes.item(0).src = path + Images[4 + imgOffset]; // "minus.gif";
-						}
-					}
-				}
-			}
-		}
-		NextNonTextSibling(node).style.display = 'block';
-		CenterNodeInBrowser(node);
-	}
-	// Collapse the branch if it IS visible
-	else
-	{
-		// Change the image (if there is an image)
-		if (node.childNodes.length > 0)
-		{
-			if (node.childNodes.item(0).nodeName == "IMG")
-				var str = node.childNodes.item(0).src;
-				var pos = str.indexOf(Images[0 + imgOffset]); // "beginminus.gif");
-				if (pos >= 0)
-				{
-					node.childNodes.item(0).src = path + Images[1 + imgOffset]; // "beginplus.gif";
-				}
-				else
-				{
-					pos = str.indexOf(Images[6 + imgOffset]); // "singleminus.gif");
-					if (pos >= 0)
-					{
-						node.childNodes.item(0).src = path + Images[7 + imgOffset]; // "singleplus.gif";
-					}
-					else
-					{
-						pos = str.indexOf(Images[2 + imgOffset]); // "lastminus.gif");
-						if (pos >= 0)
-						{
-							node.childNodes.item(0).src = path + Images[3 + imgOffset]; // "lastplus.gif";
-						}
-						else
-						{
-							node.childNodes.item(0).src = path + Images[5 + imgOffset]; // "plus.gif";
-						}
-					}
-				}
-	}
-	NextNonTextSibling(node).style.display = 'none';
-}
-}
-			</xsl:text>
-		</script>
-	</xsl:template>
-	<!--
-		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		ShowAnyFailure
 		Show any test failure message; reword message as appropriate
 		Parameters: none
@@ -611,7 +439,7 @@ function Toggle(node, path, imgOffset)
 					<xsl:text>&#xa0;&#xa0;(Reason: This is a duplicate parse and has been pruned.)</xsl:text>
 				</span>
 			</xsl:when>
-			<xsl:when test="name() != 'WordSynthesisTrace' and $moreToShow != 'Y'">
+			<xsl:otherwise>
 				<xsl:for-each select="FailureReason">
 					<span style="unicode-bidi:embed">
 						<xsl:attribute name="style">
@@ -746,12 +574,12 @@ function Toggle(node, path, imgOffset)
 									</xsl:attribute>
 									<xsl:value-of select="Allomorph/LongName"/>
 								</span>
-								<xsl:text>' has a stem name of '</xsl:text>
+								<xsl:text>' has a stem allomorph label of '</xsl:text>
 								<xsl:value-of select="StemName"/>
-								<xsl:text>', therefore it requires some inflectional affixes with inflection features for that stem name, but there aren't any such inflectional affixes.</xsl:text>
+								<xsl:text>', therefore it requires some inflectional affixes with inflection features for that stem allomorph label, but there aren't any such inflectional affixes.</xsl:text>
 							</xsl:when>
 							<xsl:when test="@type = 'excludedStemName'">
-								<xsl:text>The parse contains inflectional features that match the stem name '</xsl:text>
+								<xsl:text>The parse contains inflectional features that match the stem allomorph label '</xsl:text>
 								<xsl:value-of select="StemName"/>
 								<xsl:text>', which was specified by another allomorph in the stem/root entry '</xsl:text>
 								<span>
@@ -810,12 +638,17 @@ function Toggle(node, path, imgOffset)
 								<xsl:text>.</xsl:text>
 							</xsl:when>
 							<xsl:when test="@type = 'fromStemName'">
-								<xsl:text>The stem/root does not have the stem name '</xsl:text>
+								<xsl:text>The stem/root does not have the stem allomorph label '</xsl:text>
 								<xsl:value-of select="StemName"/>
 								<xsl:text>'.</xsl:text>
 							</xsl:when>
 							<xsl:when test="@type = 'mprFeatures'">
 								<xsl:call-template name="ShowMprFeatureFailure">
+									<xsl:with-param name="reason" select="."/>
+								</xsl:call-template>
+							</xsl:when>
+							<xsl:when test="@type = 'missingProdRestrict'">
+								<xsl:call-template name="ShowCompoundingRuleFailure">
 									<xsl:with-param name="reason" select="."/>
 								</xsl:call-template>
 							</xsl:when>
@@ -832,7 +665,7 @@ function Toggle(node, path, imgOffset)
 								<xsl:text>Further derivation is required after a non-final template.</xsl:text>
 							</xsl:when>
 							<xsl:when test="@type = 'noTemplatesApplied'">
-								<xsl:text>Applicable affix templates were found, but none were applied.</xsl:text>
+								<xsl:text>No affix templates succeeded during synthesis.</xsl:text>
 							</xsl:when>
 							<xsl:when test="@type = 'pos'">
 								<xsl:text>The parse's part of speech '</xsl:text>
@@ -854,7 +687,7 @@ function Toggle(node, path, imgOffset)
 						<xsl:text>)</xsl:text>
 					</span>
 				</xsl:for-each>
-			</xsl:when>
+			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
 	<!--
@@ -1039,7 +872,7 @@ ShowMorph
 						</xsl:choose>
 					</td>
 				</tr>
-				<xsl:if test="name()='MorphologicalRuleAnalysisTrace' or name()='MorphologicalRuleSynthesisTrace'">
+				<xsl:if test="name()='MorphologicalRuleAnalysisTrace' or name()='MorphologicalRuleSynthesisTrace' or name()='CompoundingRuleAnalysisTrace' or name()='CompoundingRuleSynthesisTrace'">
 					<xsl:if test="$curTemplate">
 						<tr>
 							<td>
@@ -1240,6 +1073,13 @@ ShowMorph
 		</table>
 	</xsl:template>
 
+	<!--
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		ShowMprFeatureFailure
+		Show why inflection classes or exception "features" failed
+		Parameters: reason
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
 	<xsl:template name="ShowMprFeatureFailure">
 		<xsl:param name="reason"/>
 		<xsl:variable name="featureTypeStr">
@@ -1282,6 +1122,56 @@ ShowMorph
 		<xsl:value-of select="$featureTypeStr"/>
 		<xsl:text>: </xsl:text>
 		<xsl:for-each select="$reason/ConstrainingMprFeatrues/MprFeature">
+			<xsl:value-of select="."/>
+			<xsl:call-template name="OutputListPunctuation">
+				<xsl:with-param name="sConjunction">
+					<xsl:choose>
+						<xsl:when test="$reason/MatchType = 'required'">
+							<xsl:text> and </xsl:text>
+						</xsl:when>
+						<xsl:when test="$reason/MatchType = 'excluded'">
+							<xsl:text> or </xsl:text>
+						</xsl:when>
+					</xsl:choose>
+				</xsl:with-param>
+				<xsl:with-param name="sFinalPunctuation" select="'.'"/>
+			</xsl:call-template>
+		</xsl:for-each>
+	</xsl:template>
+
+	<!--
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		ShowCompoundingRuleFailure
+		Show why a compounding rule failed due to exception "features"
+		Parameters: reason
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
+	<xsl:template name="ShowCompoundingRuleFailure">
+		<xsl:param name="reason"/>
+		<xsl:variable name="featureTypeStr" select="'exception features'"/>
+		<xsl:choose>
+			<xsl:when test="count($reason/StemProdRestricts/*) &gt; 0">
+				<xsl:text>The stem has the following </xsl:text>
+				<xsl:value-of select="$featureTypeStr"/>
+				<xsl:text>: </xsl:text>
+				<xsl:for-each select="$reason/StemProdRestricts">
+					<xsl:value-of select="."/>
+					<xsl:call-template name="OutputListPunctuation">
+						<xsl:with-param name="sConjunction" select="' and '"/>
+						<xsl:with-param name="sFinalPunctuation" select="','"/>
+					</xsl:call-template>
+				</xsl:for-each>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:text>The stem does not have any </xsl:text>
+				<xsl:value-of select="$featureTypeStr"/>
+				<xsl:text>,</xsl:text>
+			</xsl:otherwise>
+		</xsl:choose>
+		<xsl:text> but this rule only applies when the stem has at least one of the following </xsl:text>
+		<xsl:value-of select="$featureTypeStr"/>
+		<xsl:text>: </xsl:text>
+		<xsl:for-each select="$reason/RuleProdRestricts">
 			<xsl:value-of select="."/>
 			<xsl:call-template name="OutputListPunctuation">
 				<xsl:with-param name="sConjunction">
@@ -1350,8 +1240,8 @@ ShowMorph
 
 		<xsl:variable name="analysisAffixes" select="$traceRoot/MorphologicalRuleAnalysisTrace[MorphologicalRule/@type = 'affix']"/>
 		<xsl:variable name="synthesisAffixes" select="$traceRoot/MorphologicalRuleSynthesisTrace[MorphologicalRule/@type = 'affix']"/>
-		<xsl:variable name="analysisCompoundRules" select="$traceRoot/MorphologicalRuleAnalysisTrace[MorphologicalRule/@type = 'compound']"/>
-		<xsl:variable name="synthesisCompoundRules" select="$traceRoot/MorphologicalRuleSynthesisTrace[MorphologicalRule/@type = 'compound']"/>
+		<xsl:variable name="analysisCompoundRules" select="$traceRoot/CompoundingRuleAnalysisTrace[MorphologicalRule/@type = 'compound'] | $traceRoot/MorphologicalRuleAnalysisTrace[MorphologicalRule/@type = 'compound']"/>
+		<xsl:variable name="synthesisCompoundRules" select="$traceRoot/CompoundingRuleSynthesisTrace[MorphologicalRule/@type = 'compound'] | $traceRoot/MorphologicalRuleSynthesisTrace[MorphologicalRule/@type = 'compound']"/>
 		<xsl:variable name="synthesizedWords" select="$traceRoot/LexLookupTrace/WordSynthesisTrace"/>
 		<xsl:variable name="parseCompleteTraces" select="$traceRoot/ParseCompleteTrace"/>
 

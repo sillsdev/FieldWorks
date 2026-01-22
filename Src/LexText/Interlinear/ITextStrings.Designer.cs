@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.IText {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class ITextStrings {
@@ -205,7 +205,7 @@ namespace SIL.FieldWorks.IText {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to You already have this interlinear text in your project. Would you like to merge it?.
+        ///   Looks up a localized string similar to You already have the text &apos;{0}&apos; in your project. Would you like to merge it?.
         /// </summary>
         internal static string ksAskMergeInterlinearText {
             get {
@@ -570,6 +570,15 @@ namespace SIL.FieldWorks.IText {
         internal static string ksDeleteThisWordform {
             get {
                 return ResourceManager.GetString("ksDeleteThisWordform", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Lexical Entry....
+        /// </summary>
+        internal static string ksEditLexicalEntry_ {
+            get {
+                return ResourceManager.GetString("ksEditLexicalEntry_", resourceCulture);
             }
         }
         

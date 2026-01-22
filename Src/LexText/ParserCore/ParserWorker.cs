@@ -26,6 +26,7 @@ no exception: Create an infl affix slot with no affixes in it and then use this 
 */
 
 using System;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel;
@@ -33,6 +34,7 @@ using SIL.LCModel.Infrastructure;
 using SIL.ObjectModel;
 using XCore;
 using SIL.LCModel.DomainServices;
+using System.Xml.Linq;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -111,7 +113,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			{
 				// Assume that the user used the correct case.
 				string normForm = CustomIcu.GetIcuNormalizer(FwNormalizationMode.knmNFD).Normalize(sForm);
+				var stopWatch = System.Diagnostics.Stopwatch.StartNew();
 				task.Details = fDoTrace ? m_parser.TraceWordXml(normForm, sSelectTraceMorphs) : m_parser.ParseWordXml(normForm);
+				stopWatch.Stop();
+				double seconds = stopWatch.ElapsedMilliseconds / 1000.0;
+				task.Details.Element("Wordform")?.Add(new XAttribute("parseTime", seconds.ToString("0.000")));
 			}
 		}
 

@@ -253,6 +253,7 @@
 		</command>
 		<!-- This is on the popup menu, and is for non-record level objects. -->
 		<command id="CmdDeleteSelectedObject" label="Delete selected {0}" message="DeleteSelectedItem"/>
+        <command id="CmdDuplicateSelectedObject" label="Duplicate selected {0}" message="DuplicateSelectedItem"/>
 		<command id="CmdAlwaysVisible" label="Always visible" message="ShowFieldAlwaysVisible"/>
 		<command id="CmdIfData" label="Normally hidden, unless non-empty" message="ShowFieldIfData"/>
 		<command id="CmdNormallyHidden" label="Normally hidden" message="ShowFieldNormallyHidden"/>
@@ -654,6 +655,7 @@
 			<item command="CmdEnvironmentsJumpToDefault"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdDeleteSelectedObject"/>
+            <item command="CmdDuplicateSelectedObject"/>
 		</menu>
 
 		<menu id="mnuBrowseView">
@@ -674,6 +676,7 @@
 			<item command="CmdEnvironmentsJumpToDefault"/>
 			<item label="-" translate="do not translate"/>
 			<item command="CmdDeleteSelectedObject"/>
+            <item command="CmdDuplicateSelectedObject"/>
 		</menu>
 		<!-- The following commands are involked/displayed on a right click on a slice on at Possibility list item.
 
@@ -876,6 +879,7 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 		<panel id="ProgressBar" width="Contents" minwidth="150" assemblyPath="FwControls.dll" class="SIL.FieldWorks.Common.Controls.StatusBarProgressPanel"/>
 		<panel id="Sort" width="Contents" minwidth="40" assemblyPath="FwControls.dll" class="SIL.FieldWorks.Common.Controls.StatusBarTextBox"/>
 		<panel id="Filter" width="Contents" minwidth="40" assemblyPath="FwControls.dll" class="SIL.FieldWorks.Common.Controls.StatusBarTextBox"/>
+        <panel id="ParsingDev" width="Contents" minwidth="40" assemblyPath="FwControls.dll" class="SIL.FieldWorks.Common.Controls.StatusBarTextBox"/>
 		<panel id="RecordNumber" width="Contents" minwidth="40"/>
 	</statusbar>
 	<!-- ********************************************************** -->

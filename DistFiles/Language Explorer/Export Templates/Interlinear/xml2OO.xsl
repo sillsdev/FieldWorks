@@ -182,7 +182,7 @@ version="1.0">
 		</draw:frame>
 	</xsl:template>
 
-  <xsl:template match="item[@type!='hn' and @type!='variantTypes' and @type!='glsAppend']" mode="rowItems">
+  <xsl:template match="item[@type!='hn' and @type!='variantTypes' and @type!='glsAppend' and @type!='glsPrepend']" mode="rowItems">
 	  <text:p>
 		  <xsl:if test="@type='txt'">
 			<xsl:attribute name="text:style-name">Interlin_Morph_<xsl:value-of select="@lang"/></xsl:attribute>
@@ -209,6 +209,8 @@ version="1.0">
   </xsl:template>
   <xsl:template match="morph/item[@type='glsAppend']">
   </xsl:template>
+  <xsl:template match="morph/item[@type='glsPrepend']">
+  </xsl:template>
 
   <!-- This mode occurs within the 'cf' item to display the homograph number from the following item.-->
   <xsl:template match="morph/item[@type='hn']" mode="hn">
@@ -218,7 +220,10 @@ version="1.0">
 	<text:span text:style-name="Interlin_VariantTypes"><xsl:apply-templates/></text:span>
   </xsl:template>
   <xsl:template match="morph/item[@type='glsAppend']" mode="glsAppend">
-	<text:span text:style-name="Interlin_VariantTypes"><xsl:apply-templates/></text:span>
+	<xsl:apply-templates/>
+  </xsl:template>
+  <xsl:template match="morph/item[@type='glsPrepend']" mode="glsPrepend">
+	<xsl:apply-templates/>
   </xsl:template>
 
   <xsl:template match="morph/item[@type='cf']" mode="rowItems">
@@ -240,11 +245,15 @@ version="1.0">
   <xsl:template match="morph/item[@type='gls']" mode="rowItems">
 		<text:p>
 			<xsl:attribute name="text:style-name">Interlin_Morpheme_Gloss_<xsl:value-of select="@lang"/></xsl:attribute>
+			<xsl:variable name="glsPrepend" select="preceding-sibling::item[1][@type='glsPrepend']"/>
+			<xsl:if test="$glsPrepend">
+				<xsl:apply-templates select="$glsPrepend" mode="glsPrepend"/>
+			</xsl:if>
 			<xsl:apply-templates/>
-	  <xsl:variable name="glsAppend" select="following-sibling::item[1][@type='glsAppend']"/>
-	  <xsl:if test="$glsAppend">
-		<xsl:apply-templates select="$glsAppend" mode="glsAppend"/>
-	  </xsl:if>
+			<xsl:variable name="glsAppend" select="following-sibling::item[1][@type='glsAppend']"/>
+			<xsl:if test="$glsAppend">
+				<xsl:apply-templates select="$glsAppend" mode="glsAppend"/>
+			</xsl:if>
 		</text:p>
   </xsl:template>
 

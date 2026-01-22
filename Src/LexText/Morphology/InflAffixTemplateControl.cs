@@ -20,6 +20,7 @@ using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.Utils;
 using XCore;
+using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.XWorks.MorphologyEditor
 {
@@ -31,6 +32,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		ICmObject m_obj;		// item clicked
 		IMoInflAffixSlot m_slot;		// slot to which chosen MSA belongs
 		IMoInflAffixTemplate m_template;
+		IMoInflAffixSlot m_newSlot;
+		int m_flid;
+		int m_ihvo;
 		string m_sStem;
 		string m_sSlotChooserTitle;
 		string m_sSlotChooserInstructionalText;
@@ -348,6 +352,42 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return true;	//we handled this.
 		}
 
+		public bool OnInflTemplateMoveUpInflAffixMsa(object cmd)
+		{
+			return MoveInflAffixMsa(true);
+		}
+		public bool OnInflTemplateMoveDownInflAffixMsa(object cmd)
+		{
+			return MoveInflAffixMsa(false);
+		}
+
+		private bool MoveInflAffixMsa(bool up)
+		{
+			CheckDisposed();
+
+			var inflMsa = m_obj as IMoInflAffMsa;
+			if (inflMsa == null)
+				return true; // play it safe
+			if (!MoveableMSA(inflMsa, up))
+				return true;
+			UndoableUnitOfWorkHelper.Do(MEStrings.ksUndoRemovingAffix, MEStrings.ksRedoRemovingAffix,
+				Cache.ActionHandlerAccessor,
+				() =>
+				{
+					List<ICmObject> vals = m_slot.Affixes.ToList<ICmObject>();
+					int pos = vals.IndexOf(inflMsa);
+					vals.RemoveAt(pos);
+					if (up)
+						vals.Insert(pos - 1, inflMsa);
+					else
+						vals.Insert(pos + 1, inflMsa);
+					int flid = Cache.DomainDataByFlid.MetaDataCache.GetFieldId2(m_slot.ClassID, "Affixes", true);
+					VirtualOrderingServices.SetVO(m_slot, flid, vals);
+				});
+			m_rootb.Reconstruct();  // work around because <choice> is not smart enough to remember its dependencies
+			return true;    //we handled this.
+		}
+
 		private bool OtherInflAffixMsasExist(ILexEntry lex, IMoInflAffMsa inflMsa)
 		{
 			bool fOtherInflAffixMsasExist = false;  // assume we won't find an existing infl affix msa
@@ -572,23 +612,39 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					{
 						HandleInsertAroundStem(fBefore, chosenSlot, out flid, out ihvo);
 					}
+					m_flid = flid;
+					m_ihvo = ihvo;
 					m_rootb.Reconstruct(); // Ensure that the table gets redrawn
-					if (chooser.LinkExecuted)
-					{
-						// Select the header of the newly added slot in case the user wants to edit it.
-						// See LT-8209.
-						SelLevInfo[] rgvsli = new SelLevInfo[1];
-						rgvsli[0].hvo = chosenSlot.Hvo;
-						rgvsli[0].ich = -1;
-						rgvsli[0].ihvo = ihvo;
-						rgvsli[0].tag = flid;
-						m_rootb.MakeTextSelInObj(0, 1, rgvsli, 0, null, true, true, true, false, true);
-					}
 #if CausesDebugAssertBecauseOnlyWorksOnStTexts
 					RefreshDisplay();
 #endif
 				}
 			}
+		}
+
+		public bool OnSelectNewSlot(object commandObject)
+		{
+			IMoInflAffixSlot newSlot = commandObject as IMoInflAffixSlot;
+			if (newSlot != null)
+			{
+				// Select the header of the newly added slot in case the user wants to edit it.
+				// See LT-8209.
+				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(
+					Cache.ActionHandlerAccessor,
+					() =>
+					{
+						int defAnalWs = m_cache.ServiceLocator.WritingSystems.DefaultAnalysisWritingSystem.Handle;
+						newSlot.Name.set_String(defAnalWs, TsStringUtils.MakeString(m_sNewSlotName, defAnalWs));
+					});
+				SelLevInfo[] rgvsli = new SelLevInfo[1];
+				rgvsli[0].hvo = newSlot.Hvo;
+				rgvsli[0].ich = -1;
+				rgvsli[0].ihvo = m_ihvo;
+				rgvsli[0].tag = m_flid;
+				this.FindParentSlice().TakeFocus();
+				m_rootb.MakeTextSelInObj(0, 1, rgvsli, 0, null, true, true, true, false, true);
+			}
+			return true;
 		}
 
 		private bool GetIsPrefixSlot(bool fBefore)
@@ -1028,7 +1084,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						slot.Name.BestAnalysisAlternative.Text == null ||
 						slot.Name.BestAnalysisAlternative.Text.StartsWith(m_sUnnamedSlotName))
 					{
-						string sValue = m_sUnnamedSlotName;
+						int len = m_sUnnamedSlotName.Length;
+						string sValue = slot.Name.BestAnalysisAlternative.Text.Substring(len);
 						int i;
 						try
 						{
@@ -1171,6 +1228,34 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				return DetermineMsaContextMenuItemLabel(sLabel);
 			else
 				return null;
+		}
+
+		/// <summary>
+		///
+		/// </summary>
+		/// <param name="sLabel"></param>
+		/// <returns></returns>
+		internal ITsString MenuLabelForInflTemplateMoveInflAffixMsa(string sLabel, bool up, out bool fEnabled)
+		{
+			CheckDisposed();
+			fEnabled = MoveableMSA(m_obj as IMoInflAffMsa, up);
+			if (m_obj.ClassID == MoInflAffMsaTags.kClassId)
+				return DetermineMsaContextMenuItemLabel(sLabel);
+			else
+				return null;
+		}
+
+		internal bool MoveableMSA(IMoInflAffMsa msa, bool up)
+		{
+			if (m_slot == null || !m_slot.IsValidObject)
+				return false;
+			List<ICmObject> vals = m_slot.Affixes.ToList<ICmObject>();
+			int pos = vals.IndexOf(msa);
+			if (up && pos == 0)
+				return false; // Cannot move up.
+			if (!up && pos == vals.Count - 1)
+				return false; // Cannot move down.
+			return true;
 		}
 
 		/// <summary>

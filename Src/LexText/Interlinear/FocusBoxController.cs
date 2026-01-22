@@ -14,6 +14,7 @@ using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.FdoUi;
 using SIL.LCModel.Utils;
 using XCore;
@@ -129,8 +130,8 @@ namespace SIL.FieldWorks.IText
 			int color = (int)CmObjectUi.RGB(DefaultBackColor);
 			//if this sandbox is presenting a wordform with multiple possible analyses then set the
 			//bg color indicator
-			if (selected.Analysis.Analysis == null && selected.Analysis.Wordform != null &&
-				SandboxBase.GetHasMultipleRelevantAnalyses(selected.Analysis.Wordform))
+			if (selected.Analysis.Wordform != null &&
+				SandboxBase.GetHasMultipleRelevantAnalyses(selected.Analysis.Wordform, IsParsingDevMode()))
 			{
 				color = InterlinVc.MultipleApprovedGuessColor;
 			}
@@ -152,6 +153,13 @@ namespace SIL.FieldWorks.IText
 			this.ResumeLayout();
 
 			SetSandboxSize();
+		}
+
+		internal bool IsParsingDevMode()
+		{
+			if (InterlinDoc?.GetMaster() == null)
+				return false;
+			return InterlinDoc.GetMaster().IsParsingDevMode();
 		}
 
 		internal virtual IAnalysisControlInternal CreateNewSandbox(AnalysisOccurrence selected)
@@ -309,7 +317,19 @@ namespace SIL.FieldWorks.IText
 		{
 			if (IsDisposed)
 				return false; // result is not currently used, not sure what it should be.
-			InterlinWordControl.MakeDefaultSelection();
+			if (InterlinWordControl != null)
+			{
+				InterlinWordControl.MakeDefaultSelection();
+			}
+			else
+			{
+				// It wasn't ready yet. Try once more later.
+				m_mediator.IdleQueue.Add(IdleQueuePriority.Medium, _ =>
+				{
+					InterlinWordControl?.MakeDefaultSelection();
+					return true;
+				});
+			}
 			return true;
 		}
 

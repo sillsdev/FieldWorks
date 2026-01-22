@@ -650,7 +650,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					if (CheckFeatureStructure(tn.Nodes))
 						return true;
 				}
-				else if (tn.Chosen && (0 != tn.Hvo))
+				else if (tn.Chosen && (0 != tn.Hvo || tn.Kind == FeatureTreeNodeInfo.NodeKind.SymFeatValue))
 				{
 					return true;
 				}
@@ -671,7 +671,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				if (tn.Nodes.Count > 0)
 					UpdateFeatureStructure(tn.Nodes);
-				else if (tn.Chosen && (0 != tn.Hvo))
+				else if (tn.Chosen && (0 != tn.Hvo || tn.Kind == FeatureTreeNodeInfo.NodeKind.SymFeatValue))
 				{
 					var fs = m_fs;
 					IFsFeatureSpecification val = null;
@@ -726,7 +726,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					break;
 				case FeatureTreeNodeInfo.NodeKind.SymFeatValue:
 					var closed = val as IFsClosedValue;
-					if (closed != null)
+					if (closed != null && node.Hvo != 0)
 						closed.ValueRA = m_cache.ServiceLocator.GetInstance<IFsSymFeatValRepository>().GetObject(node.Hvo);
 					break;
 			}

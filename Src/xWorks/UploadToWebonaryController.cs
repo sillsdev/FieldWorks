@@ -17,9 +17,9 @@ using System.Windows.Forms;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SIL.Code;
+using SIL.Windows.Forms.ClearShare;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.PlatformUtilities;
-using SIL.Windows.Forms.ClearShare;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -31,7 +31,6 @@ namespace SIL.FieldWorks.XWorks
 		private readonly LcmCache m_cache;
 		private readonly PropertyTable m_propertyTable;
 		private readonly DictionaryExportService m_exportService;
-		private DictionaryExportService.PublicationActivator m_publicationActivator;
 		/// <summary>
 		/// This action creates the WebClient for accessing webonary. Protected to enable a mock client for unit testing.
 		/// </summary>
@@ -42,7 +41,6 @@ namespace SIL.FieldWorks.XWorks
 			m_cache = cache;
 			m_propertyTable = propertyTable;
 			m_exportService = new DictionaryExportService(propertyTable, mediator);
-			m_publicationActivator = new DictionaryExportService.PublicationActivator(propertyTable);
 		}
 
 		public bool IsSortingOnAlphaHeaders()
@@ -55,9 +53,6 @@ namespace SIL.FieldWorks.XWorks
 		protected virtual void Dispose(bool disposing)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposing, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			if (disposing && m_publicationActivator != null)
-				m_publicationActivator.Dispose();
-			m_publicationActivator = null;
 		}
 
 		public void Dispose()
@@ -72,22 +67,17 @@ namespace SIL.FieldWorks.XWorks
 		}
 		#endregion Disposal
 
-		public int CountDictionaryEntries(DictionaryConfigurationModel config)
+		public int CountDictionaryEntries(DictionaryConfigurationModel config, string pubName)
 		{
-			return m_exportService.CountDictionaryEntries(config);
+			return m_exportService.CountDictionaryEntries(config, pubName);
 		}
 
 		/// <summary>
 		/// Table of reversal indexes and their counts.
 		/// </summary>
-		public SortedDictionary<string,int> GetCountsOfReversalIndexes(IEnumerable<string> requestedIndexes)
+		public SortedDictionary<string,int> GetCountsOfReversalIndexes(IEnumerable<string> requestedIndexes, string pubName)
 		{
-			return m_exportService.GetCountsOfReversalIndexes(requestedIndexes);
-		}
-
-		public void ActivatePublication(string publication)
-		{
-			m_publicationActivator.ActivatePublication(publication);
+			return m_exportService.GetCountsOfReversalIndexes(requestedIndexes, pubName);
 		}
 
 		private JObject GenerateDictionaryMetadataContent(UploadToWebonaryModel model, int[] entryIds,
@@ -202,6 +192,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		internal virtual bool UseJsonApi => !string.IsNullOrEmpty(Environment.GetEnvironmentVariable("WEBONARY_API"));
+		internal virtual bool ForTesting => false;
 
 		internal bool UploadFileToWebonary(string signedUrl, string fileName, IUploadToWebonaryView view)
 		{
@@ -293,15 +284,81 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private bool PostEntriesToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view, List<JArray> entries, bool isReversal)
+		private bool PostEntriesToWebonary(UploadToWebonaryModel model,
+			IUploadToWebonaryView view, List<JArray> entries, bool isReversal)
 		{
 			var allPostsSucceeded = true;
-			foreach (var entryBatch in entries)
+			for (var i = 0; i < entries.Count; i++)
 			{
-				allPostsSucceeded &= PostEntriesToWebonary(model, view, "post/entry", entryBatch, isReversal);
+				var entryBatch = entries[i];
+				allPostsSucceeded &= PostEntriesToWebonaryWithRetry(model, view, "post/entry",
+					entryBatch, isReversal, i + 1);
+
+				if (!allPostsSucceeded)
+					break; // Stop on first failure
 			}
 
 			return allPostsSucceeded;
+		}
+
+		/// <summary>
+		///     Posts entries to Webonary with retry logic for 504 Gateway Timeout errors.
+		///     Uses exponential backoff: starting at a half second, doubling the wait time after each retry.
+		/// </summary>
+		private bool PostEntriesToWebonaryWithRetry(UploadToWebonaryModel model,
+			IUploadToWebonaryView view,
+			string apiEndpoint, JContainer postContent, bool isReversal, int batchNumber)
+		{
+			const int maxRetries = 4;
+			var retryDelay = 500; // Start with half second
+
+			for (var attempt = 1; attempt <= maxRetries; attempt++)
+				try
+				{
+					var success = PostEntriesToWebonary(model, view, apiEndpoint, postContent,
+						isReversal);
+					if (success && attempt > 1)
+						view.UpdateStatus(
+							string.Format(xWorksStrings.UploadBatchSucceededAfterRetry,
+								batchNumber, attempt),
+							WebonaryStatusCondition.None);
+					return success;
+				}
+				catch (WebonaryClient.WebonaryException e)
+				{
+					// Only retry on 504 Gateway Timeout or 503 Service Unavailable
+					if (e.StatusCode == HttpStatusCode.GatewayTimeout ||
+						e.StatusCode == HttpStatusCode.ServiceUnavailable)
+					{
+						if (attempt < maxRetries)
+						{
+							view.UpdateStatus(string.Format(xWorksStrings.UploadBatchRetrying,
+									batchNumber,
+									e.StatusCode, attempt, maxRetries, retryDelay / 1000),
+								WebonaryStatusCondition.None);
+
+							Thread.Sleep(retryDelay);
+							retryDelay *= 2; // Exponential backoff
+						}
+						else
+						{
+							// Final attempt failed
+							view.UpdateStatus(string.Format(
+								xWorksStrings.UploadBatchFailedAfterRetries, batchNumber,
+								maxRetries, e.StatusCode), WebonaryStatusCondition.Error);
+							UpdateViewWithWebonaryException(view, e);
+							return false;
+						}
+					}
+					else
+					{
+						// For other errors, don't retry
+						UpdateViewWithWebonaryException(view, e);
+						return false;
+					}
+				}
+
+			return false; // Should never reach here
 		}
 
 		private bool PostEntriesToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view, string apiEndpoint, JContainer postContent, bool isReversal)
@@ -440,6 +497,7 @@ namespace SIL.FieldWorks.XWorks
 				});
 			var tempDirectoryForExport = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 			Directory.CreateDirectory(tempDirectoryForExport);
+			var revClerk = m_exportService.GetReversalClerk();
 			try
 			{
 				var deleteResponse =
@@ -457,9 +515,11 @@ namespace SIL.FieldWorks.XWorks
 						tempDirectoryForExport);
 				view.UpdateStatus(xWorksStrings.ksPreparingDataForWebonary,
 					WebonaryStatusCondition.None);
+
+				// Export Dictionary.
 				int[] entryIds;
-				var entries = m_exportService.ExportConfiguredJson(tempDirectoryForExport,
-					configuration, out entryIds);
+				var entries = m_exportService.ExportJsonDictionary(tempDirectoryForExport,
+					configuration, model.SelectedPublication, out entryIds);
 				view.UpdateStatus(String.Format(xWorksStrings.ExportingEntriesToWebonary, model.SelectedPublication, model.SelectedConfiguration), WebonaryStatusCondition.None);
 				var metadataContent = GenerateDictionaryMetadataContent(model, entryIds,
 					templateFileNames, tempDirectoryForExport);
@@ -467,22 +527,29 @@ namespace SIL.FieldWorks.XWorks
 					WebonaryStatusCondition.None);
 				var allRequestsSucceeded = PostEntriesToWebonary(model, view, entries, false);
 
-				var reversalClerk = RecordClerk.FindClerk(m_propertyTable, "AllReversalEntries");
+				// Export Reversals
+				var decorator = ConfiguredLcmGenerator.GetDecorator(m_propertyTable, m_cache, revClerk, model.SelectedPublication);
+				var allReversalIndexes = m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances();
+				m_exportService.StoreReversalData(revClerk, ForTesting);
 				foreach (var selectedReversal in model.SelectedReversals)
 				{
+					var revConfig = model.Reversals[selectedReversal];
 					view.UpdateStatus(string.Format(xWorksStrings.ExportingReversalsToWebonary, selectedReversal), WebonaryStatusCondition.None);
-					var writingSystem = model.Reversals[selectedReversal].WritingSystem;
-					// Set the ReversalIndexPublicationLayout to the correct reversal so that sorting will find the right saved settings
-					m_propertyTable.SetProperty("ReversalIndexPublicationLayout", model.Reversals[selectedReversal].FilePath, false);
-					entries = m_exportService.ExportConfiguredReversalJson(
-						tempDirectoryForExport, writingSystem, out entryIds,
-						model.Reversals[selectedReversal]);
+					var writingSystem = revConfig.WritingSystem;
+					var revIndex = allReversalIndexes.First(index => index.WritingSystem == writingSystem);
+					var entriesToSave = m_exportService.GetReversalFilteredAndSortedEntries(revIndex.Guid, decorator, revConfig, revClerk);
+
+					entries = m_exportService.ExportJsonReversal(entriesToSave, decorator,
+						tempDirectoryForExport, writingSystem, out entryIds, revConfig);
 					allRequestsSucceeded &= PostEntriesToWebonary(model, view, entries, true);
 					var reversalLetters =
 						LcmJsonGenerator.GenerateReversalLetterHeaders(model.SiteName,
-							writingSystem, entryIds, m_cache, reversalClerk);
+							writingSystem, entryIds, m_cache, revClerk);
 					AddReversalHeadword(metadataContent, writingSystem, reversalLetters);
 					view.UpdateStatus(string.Format(xWorksStrings.ExportingReversalsToWebonaryCompleted, selectedReversal), WebonaryStatusCondition.None);
+
+					// If we just sorted for the original reversal, then keep it's sorted objects to restore later.
+					m_exportService.UpdateSortedObjects(revClerk, revIndex.Guid, ForTesting);
 				}
 
 				allRequestsSucceeded &=
@@ -511,6 +578,13 @@ namespace SIL.FieldWorks.XWorks
 			}
 			finally
 			{
+				// Restore data.
+				m_exportService.RestoreReversalData(revClerk, ForTesting);
+
+				// If the reversal clerk was created as part of the export, then we need to stop suppressing
+				// list loading, or the 'Bulk Edit Reversal Entries' view may be blank the first time viewed.
+				revClerk.ListLoadingSuppressed = false;
+
 				view.UploadCompleted();
 			}
 		}

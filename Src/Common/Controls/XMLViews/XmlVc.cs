@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2022 SIL International
+// Copyright (c) 2003-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -26,7 +26,9 @@ using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Resources;
 using SIL.ObjectModel;
 using SIL.LCModel.Utils;
+using SIL.Reporting;
 using SIL.Utils;
+using ConfigurationException = SIL.Utils.ConfigurationException;
 
 namespace SIL.FieldWorks.Common.Controls
 {
@@ -1617,13 +1619,13 @@ namespace SIL.FieldWorks.Common.Controls
 						}
 					case "if":
 						{
-							if (ConditionPasses(vwenv, frag, hvo, m_cache, m_sda, caller))
+							if (ConditionPasses(vwenv, frag, hvo, m_cache, m_sda, caller, m_stackHvo))
 								ProcessChildren(frag, vwenv, hvo, caller);
 							break;
 						}
 					case "ifnot":
 						{
-							if (!ConditionPasses(vwenv, frag, hvo, m_cache, m_sda, caller))
+							if (!ConditionPasses(vwenv, frag, hvo, m_cache, m_sda, caller, m_stackHvo))
 								ProcessChildren(frag, vwenv, hvo, caller);
 							break;
 						}
@@ -1878,11 +1880,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// custom field identified during TryColumnForCustomField. Is not currently meaningful
 		/// outside TryColumnForCustomField().
 		/// </summary>
-		XmlNode m_customFieldNode = null;
+		private XmlNode m_customFieldNode = null; // REVIEW (Hasso) 2025.11: this should be replaced by a passed local variable
 
 		/// <summary>
-		/// Determine whether or not the given colSpec refers to a custom field, respective of
-		/// whether or not it is still valid.
+		/// Determine whether the given colSpec refers to a custom field, irrespective of whether it is still valid.
 		/// Uses layout/parts to find custom field specifications.
 		/// </summary>
 		/// <param name="colSpec"></param>
@@ -3270,8 +3271,10 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache">The cache.</param>
 		/// <param name="sda">The sda.</param>
 		/// <param name="caller">the 'part ref' node that invoked the current part. May be null if XML does not use it.</param>
+		/// <param name="stackHvo">The stack of hvos that have been recorded by savehvo.</param>
 		/// <returns></returns>
-		public static bool ConditionPasses(IVwEnv vwenv, XmlNode frag, int hvo, LcmCache cache, ISilDataAccess sda, XmlNode caller)
+		public static bool ConditionPasses(IVwEnv vwenv, XmlNode frag, int hvo, LcmCache cache,
+			ISilDataAccess sda, XmlNode caller, Stack<int> stackHvo = null)
 		{
 			GetActualTarget(frag, ref hvo, sda);	// modify the hvo if needed
 
@@ -3279,7 +3282,7 @@ namespace SIL.FieldWorks.Common.Controls
 				return false;
 			if (!LengthConditionsPass(vwenv, frag, hvo, sda))
 				return false;
-			if (!ValueEqualityConditionsPass(vwenv, frag, hvo, cache, sda, caller))
+			if (!ValueEqualityConditionsPass(vwenv, frag, hvo, cache, sda, caller, stackHvo))
 				return false;
 			if (!BidiConditionPasses(frag, cache))
 				return false;
@@ -3319,15 +3322,16 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="cache">The cache.</param>
 		/// <param name="sda">The sda.</param>
 		/// <param name="caller">The caller.</param>
+		/// <param name="stackHvo">The stack of hvos recorded by savehvo.</param>
 		/// <returns></returns>
 		static private bool ValueEqualityConditionsPass(IVwEnv vwenv, XmlNode frag, int hvo, LcmCache cache,
-			ISilDataAccess sda, XmlNode caller)
+			ISilDataAccess sda, XmlNode caller, Stack<int> stackHvo)
 		{
 			if (!StringEqualsConditionPasses(vwenv, frag, hvo, sda))
 				return false;
 			if (!StringAltEqualsConditionPasses(vwenv, frag, hvo, cache, sda, caller))
 				return false;
-			if (!BoolEqualsConditionPasses(vwenv, frag, hvo, sda))
+			if (!BoolEqualsConditionPasses(vwenv, frag, hvo, cache, sda, stackHvo))
 				return false;
 			if (!IntEqualsConditionPasses(vwenv, frag, hvo, sda))
 				return false;
@@ -3362,8 +3366,12 @@ namespace SIL.FieldWorks.Common.Controls
 			return sda.get_IntProp(hvo, flid);
 		}
 
-		static private bool GetBoolValueFromCache(IVwEnv vwenv, XmlNode frag, int hvo, ISilDataAccess sda)
+		static private bool GetBoolValueFromCache(IVwEnv vwenv, XmlNode frag, int hvo,
+			LcmCache cache, ISilDataAccess sda, Stack<int> stackHvo)
 		{
+			string funcName = XmlUtils.GetOptionalAttributeValue(frag, "func");
+			if (funcName != null)
+				return (bool)EvaluateFunction(funcName, hvo, stackHvo, cache);
 			int flid = GetFlidAndHvo(vwenv, frag, ref hvo, sda);
 			if (flid == -1 || hvo == 0)
 				return false; // This is rather arbitrary...objects missing, what should each test do?
@@ -3535,7 +3543,8 @@ namespace SIL.FieldWorks.Common.Controls
 				if (val == hvoParent)
 					return true;
 			}
-			return false;
+			// e.g. sHvo = "0"
+			return sHvo.Equals(val.ToString());
 		}
 
 		/// <summary>
@@ -3571,14 +3580,17 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <param name="vwenv">The vwenv.</param>
 		/// <param name="frag">The frag.</param>
 		/// <param name="hvo">The hvo.</param>
+		/// <param name="cache">The cache.</param>
 		/// <param name="sda">The sda.</param>
+		/// <param name="stackHvo">The stack of hvos recorded by savehvo.</param>
 		/// <returns></returns>
-		static private bool BoolEqualsConditionPasses(IVwEnv vwenv, XmlNode frag, int hvo, ISilDataAccess sda)
+		private static bool BoolEqualsConditionPasses(IVwEnv vwenv, XmlNode frag, int hvo,
+			LcmCache cache, ISilDataAccess sda, Stack<int> stackHvo)
 		{
 			string boolValue = XmlUtils.GetOptionalAttributeValue(frag, "boolequals", "notFound");	// must be either 'true' or 'false'.
 			if (boolValue != "notFound")
 			{
-				return GetBoolValueFromCache(vwenv, frag, hvo, sda) == (boolValue == "true"?true:false);
+				return GetBoolValueFromCache(vwenv, frag, hvo, cache, sda, stackHvo) == (boolValue == "true"?true:false);
 			}
 			return true;
 		}
@@ -3836,6 +3848,58 @@ namespace SIL.FieldWorks.Common.Controls
 				return false;
 			}
 			return true;
+		}
+
+		private static object EvaluateFunction(string funcName, int hvo, Stack<int> stackHvo, LcmCache cache)
+		{
+			var obj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(hvo);
+			if (funcName == "TemplateSlotOutOfScope")
+			{
+				IMoInflAffixSlot slot = obj as IMoInflAffixSlot;
+				IMoInflAffixTemplate template = null;
+				if (stackHvo != null && stackHvo.Count > 0)
+				{
+					int templateHvo = stackHvo.Peek();
+					var templateObj = cache.ServiceLocator.GetInstance<ICmObjectRepository>().GetObject(templateHvo);
+					template = templateObj as IMoInflAffixTemplate;
+				}
+				return TemplateSlotOutOfScope(slot, template);
+			}
+			return false;
+		}
+
+		/// <summary>
+		/// Determine if slot is out of scope of the template in stackHvo.
+		/// </summary>
+		private static bool TemplateSlotOutOfScope(IMoInflAffixSlot slot, IMoInflAffixTemplate template)
+		{
+			// If there is no slot or template, return false.
+			if (slot == null || template == null)
+				return false;
+			// Get the slot from the template with the same name as slot.
+			IPartOfSpeech partOfSpeech = template.Owner as IPartOfSpeech;
+			IMoInflAffixSlot inScopeSlot = GetPOSSlot(partOfSpeech, slot.Name.BestAnalysisVernacularAlternative.Text);
+			// If the slots are different, then slot is out of scope.
+			return slot != inScopeSlot;
+		}
+
+		/// <summary>
+		/// Get the slot named 'name' in the scope of partOfSpeech.
+		/// If there is more than one slot, return the first one.
+		/// </summary>
+		public static IMoInflAffixSlot GetPOSSlot(IPartOfSpeech partOfSpeech, string name)
+		{
+			while (partOfSpeech != null)
+			{
+				foreach (IMoInflAffixSlot slot in partOfSpeech.AllAffixSlots)
+				{
+					// NB: BestAnalysisVernacularAlternative always returns something.
+					if (slot.Name.BestAnalysisVernacularAlternative.Text == name)
+						return slot;
+				}
+				partOfSpeech = partOfSpeech.Owner as IPartOfSpeech;
+			}
+			return null;
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -4756,40 +4820,33 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Interpret an underline type string as an FwUnderlineType.
 		/// Note that currently this routine is duplicated in Framework/StylesXmlAccessor (due to avoiding assembly references). Keep in sync.
 		/// </summary>
-		/// <param name="strVal"></param>
-		/// <returns></returns>
-		static public int InterpretUnderlineType(string strVal)
+		public static int InterpretUnderlineType(string strVal)
 		{
-			int val = (int)FwUnderlineType.kuntSingle; // default
 			switch (strVal)
 			{
 				case "single":
 				case null:
-					val = (int)FwUnderlineType.kuntSingle;
-					break;
+					return (int)FwUnderlineType.kuntSingle;
 				case "none":
-					val = (int)FwUnderlineType.kuntNone;
-					break;
+					return (int)FwUnderlineType.kuntNone;
 				case "double":
-					val = (int)FwUnderlineType.kuntDouble;
-					break;
+					return (int)FwUnderlineType.kuntDouble;
 				case "dotted":
-					val = (int)FwUnderlineType.kuntDotted;
-					break;
+					return (int)FwUnderlineType.kuntDotted;
 				case "dashed":
-					val = (int)FwUnderlineType.kuntDashed;
-					break;
+					return (int)FwUnderlineType.kuntDashed;
 				case "squiggle":
-					val = (int)FwUnderlineType.kuntSquiggle;
-					break;
+					return (int)FwUnderlineType.kuntSquiggle;
 				case "strikethrough":
-					val = (int)FwUnderlineType.kuntStrikethrough;
-					break;
+					return (int)FwUnderlineType.kuntStrikethrough;
 				default:
-					Debug.Assert(false, "Expected value single, none, double, dotted, dashed, strikethrough, or squiggle");
+					var message = $"Invalid underline style '{strVal}'. Valid values are single, none, double, dotted, dashed, strikethrough, or squiggle";
+					Logger.WriteEvent(message);
+					Debug.Fail(message);
 					break;
 			}
-			return val;
+			// REVIEW (Hasso) 2026.01: why isn't the default none?
+			return (int)FwUnderlineType.kuntSingle; // default
 		}
 
 		static int MillipointVal(XmlNode node)

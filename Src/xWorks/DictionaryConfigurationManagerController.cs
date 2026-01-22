@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2017 SIL International
+// Copyright (c) 2014-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -18,7 +18,6 @@ using SIL.Linq;
 using SIL.WritingSystems;
 using XCore;
 using SIL.LCModel.Core.WritingSystems;
-using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.XWorks.LexText;
@@ -632,15 +631,14 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			}
 
-			var importController = new DictionaryConfigurationImportController(_cache, _projectConfigDir, _configurations);
+			var importController = new DictionaryConfigurationImportController(_cache, _propertyTable, _projectConfigDir, _configurations);
 			using (var importDialog = new DictionaryConfigurationImportDlg(_propertyTable.GetValue<IHelpTopicProvider>("HelpTopicProvider")) { HelpTopic = _view.HelpTopic })
 			{
 				importController.DisplayView(importDialog);
 			}
 
-			if (!importController.ImportHappened)
-				return;
-			CloseDialogAndRefreshProject();
+			if (importController.StyleImportHappened)
+				CloseDialogAndRefreshProject();
 		}
 
 		private void CloseDialogAndRefreshProject()

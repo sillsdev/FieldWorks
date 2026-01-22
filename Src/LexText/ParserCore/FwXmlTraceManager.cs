@@ -13,6 +13,7 @@ using SIL.Machine.FeatureModel;
 using SIL.Machine.Annotations;
 using System.Collections.Generic;
 using System.Text;
+using SIL.Machine.Rules;
 
 namespace SIL.FieldWorks.WordWorks.Parser
 {
@@ -89,6 +90,40 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		public void MorphologicalRuleNotUnapplied(IMorphologicalRule rule, int subruleIndex, Word input)
 		{
+		}
+
+		public void CompoundingRuleNotUnapplied(IMorphologicalRule rule, int subruleIndex, Word input, FailureReason reason, object obj)
+		{
+			var trace = new XElement("CompoundingRuleAnalysisTrace",
+				CreateMorphologicalRuleElement(rule));
+			var crule = rule as CompoundingRule;
+			if (crule != null)
+			{
+				var stremProdRestricts = obj as MprFeatureSet;
+				if (stremProdRestricts != null)
+				{
+					trace.Add(new XElement("FailureReason", new XAttribute("type", "missingProdRestrict"),
+						new XElement("StemProdRestricts", stremProdRestricts.Select(f => new XElement("MprFeature", f))),
+						new XElement("RuleProdRestricts", crule.NonHeadProdRestrictionsMprFeatures.Select(f => new XElement("MprFeature", f)))));
+				}
+			}
+			trace.Add(new XElement("Output", "*None*"));
+			((XElement)input.CurrentTrace).Add(trace);
+		}
+
+		public void CompoundingRuleNotApplied(IMorphologicalRule rule, int subruleIndex, Word input, FailureReason reason, object failureObj)
+		{
+			var trace = new XElement("CompoundingRuleSynthesisTrace",
+				CreateMorphologicalRuleElement(rule));
+			var crule = rule as CompoundingRule;
+			if (crule != null)
+			{
+				trace.Add(new XElement("FailureReason", new XAttribute("type", "missingProdRestrict"),
+					new XElement("StemProdRestricts", input.MprFeatures.Select(f => new XElement("MprFeature", f))),
+					new XElement("RuleProdRestricts", crule.HeadProdRestrictionsMprFeatures.Select(f => new XElement("MprFeature", f)))));
+			}
+			trace.Add(new XElement("Output", "*None*"));
+			((XElement)input.CurrentTrace).Add(trace);
 		}
 
 		public void LexicalLookup(Stratum stratum, Word input)
@@ -407,11 +442,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private static string ToBracketedString(IEnumerable<ShapeNode> nodes, CharacterDefinitionTable table)
 		{
+			// This should be in defined as Shape.ToBracketedString in HermitCrab.
 			StringBuilder stringBuilder = new StringBuilder();
 			foreach (ShapeNode node in nodes)
 			{
 				string text = table.GetMatchingStrReps(node).FirstOrDefault();
-				if (text != null)
+				if (text != null && !IsDeleted(node))
 				{
 					if (text.Length > 1)
 						text = "(" + text + ")";
@@ -420,6 +456,18 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			}
 
 			return stringBuilder.ToString();
+		}
+
+		private static bool IsDeleted(ShapeNode node)
+		{
+			// ShapeNode.IsDeleted is copied here since it is inaccessible from FieldWorks.
+			Annotation<ShapeNode> ann = node.Annotation;
+			if (ann.FeatureStruct.TryGetValue<SymbolicFeatureValue>(HCFeatureSystem.Deletion, out var value))
+			{
+				return (FeatureSymbol)value == HCFeatureSystem.Deleted;
+			}
+
+			return false;
 		}
 
 		private XElement CreateMorphemeElement(Morpheme morpheme)

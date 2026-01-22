@@ -408,6 +408,51 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		[Test]
+		public void TestEmbeddedRuns()
+		{
+			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
+			var wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+
+			const string xml =
+			@"<document version='2'>
+			  <interlinear-text guid='5eecc8be-f41b-4433-be94-8950a8ce75e5'>
+				<item type='title' lang='en'>title</item>
+				<item type='comment' lang='en'><run lang='en'>english</run><run lang='es'> </run><run lang='fr' style='style1'>french</run></item>
+				<paragraphs>
+				</paragraphs>
+				<languages>
+					<language lang='fr' font='Times New Roman' vernacular='true'/>
+					<language lang='en' font='Times New Roman' />
+				</languages>
+			</interlinear-text>
+			</document>";
+
+			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
+			LCModel.IText text = null;
+			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
+				using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
+				{
+					firstEntry.MoveNext();
+					var imported = firstEntry.Current;
+					//The title imported
+					ITsString comment = imported.Description.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle);
+					Assert.True(comment.Text.Equals("english french"));
+					Assert.True(comment.RunCount == 3);
+					Assert.True(comment.get_RunText(0) == "english");
+					Assert.True(comment.get_WritingSystem(0) == wsEn);
+					Assert.True(comment.Style(0) == null);
+					Assert.True(comment.get_RunText(1) == " ");
+					Assert.True(comment.Style(1) == null);
+					Assert.True(comment.get_RunText(2) == "french");
+					Assert.True(comment.get_WritingSystem(2) == wsFr);
+					Assert.True(comment.Style(2) == "style1");
+				}
+			}
+		}
+
 		#endregion ScrElements
 
 		[Test]
@@ -757,14 +802,54 @@ namespace SIL.FieldWorks.IText
 		}
 
 		[Test]
+		public void TestMultilingualNote()
+		{
+			const string EnglishNote = "English note.";
+			const string FrenchNote = "French note.";
+			const string xml = "<document version=\"2\">" +
+								"<interlinear-text guid=\"bcabf849-473c-4902-957b-8de378248b7f\">" +
+								"<item type=\"title\" lang=\"en\">My Green Mat</item>" +
+								"<item type=\"comment\" lang=\"en\">This is a story about a green mat as told by my language assistant.</item>" +
+								"<paragraphs><paragraph guid=\"a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb2\">" +
+								"<phrases><phrase guid=\"b405f3c0-58e1-4492-8a40-e955774a6911\">" +
+								"<words><word guid=\"45e6f056-98ac-45d6-858e-59450993f268\">" +
+								"<item type=\"txt\" lang=\"qaa-x-kal\">pus</item>" +
+								"</word></words><item type=\"note\" lang=\"en\" groupid=\"1\">" + EnglishNote + "</item>" +
+								"<item type =\"note\" lang=\"fr\" groupid=\"1\">" + FrenchNote + "</item>" +
+								"</phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			int wsFr = Cache.WritingSystemFactory.GetWsFromStr("fr");
+			int wsEng = Cache.WritingSystemFactory.GetWsFromStr("en");
+			LLIMergeExtension li = new LLIMergeExtension(Cache, null, null);
+			LCModel.IText text = null;
+			using (var firstStream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				bool result = li.ImportInterlinear(new DummyProgressDlg(), firstStream, 0, ref text);
+				IStTxtPara para = text.ContentsOA.ParagraphsOS[0] as IStTxtPara;
+				Assert.AreEqual(1, para.SegmentsOS[0].NotesOS.Count);
+				Assert.AreEqual(EnglishNote, para.SegmentsOS[0].NotesOS[0].Content.get_String(wsEng).Text);
+				Assert.AreEqual(FrenchNote, para.SegmentsOS[0].NotesOS[0].Content.get_String(wsFr).Text);
+			}
+		}
+
+		[Test]
 		public void OneOfEachElementTypeTest()
 		{
 			string title = "atrocious";
 			string abbr = "atroc";
+			string source = "source";
+			string description = "description";
+			string dateCreated = "2006-08-23 19:31:09.500";
+			string dateModified = "2006-09-14 13:46:01.247";
 			//an interliner text example xml string
 			string xml = "<document><interlinear-text>" +
 			"<item type=\"title\" lang=\"en\">" + title + "</item>" +
 			"<item type=\"title-abbreviation\" lang=\"en\">" + abbr + "</item>" +
+			"<item type=\"source\" lang=\"en\">" + source + "</item>" +
+			"<item type=\"comment\" lang=\"en\">" + description + "</item>" +
+			"<item type=\"text-is-translation\" lang=\"en\">true</item>" +
+			"<item type=\"date-created\" lang=\"en\">" + dateCreated + "</item>" +
+			"<item type=\"date-modified\" lang=\"en\">" + dateModified + "</item>" +
 			"<paragraphs><paragraph><phrases><phrase>" +
 			"<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
 			"<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
@@ -785,6 +870,209 @@ namespace SIL.FieldWorks.IText
 					Assert.True(imported.Name.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle).Text.Equals(title));
 					//The title abbreviation imported
 					Assert.True(imported.Abbreviation.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle).Text.Equals(abbr));
+					//The source imported
+					Assert.True(imported.Source.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle).Text.Equals(source));
+					//The description imported
+					Assert.True(imported.Description.get_String(Cache.WritingSystemFactory.get_Engine("en").Handle).Text.Equals(description));
+					//The isTranslated imported
+					Assert.True(imported.IsTranslated);
+					//The Dates imported
+					string importedDateCreated = imported.DateCreated.ToLCMTimeFormatWithMillisString();
+					Assert.True(importedDateCreated.Equals(dateCreated));
+					string importedDateModified = imported.DateModified.ToLCMTimeFormatWithMillisString();
+					Assert.True(importedDateModified.Equals(dateModified));
+				}
+			}
+		}
+
+		[Test]
+		public void TestGenres()
+		{
+			string title = "atrocious";
+			string textGuid = "a122d9bb-2d43-4e4c-b74f-6fe44d1c6cb3";
+			string genre1Guid = "b405f3c0-58e1-4492-8a40-e955774a6912";
+			string genre2Guid = "45e6f056-98ac-45d6-858e-59450993f269";
+			string genre1Name = "genre1";
+			string genre2Name = "genre2";
+			//an interliner text example xml string
+			string xml = "<document><interlinear-text guid=\"" + textGuid + "\">" +
+			"<item type=\"title\" lang=\"en\">" + title + "</item>" +
+			"<item type=\"genre\" guid=\"" + genre1Guid + "\" lang=\"en\">" + genre1Name + "</item>" +
+			"<item type=\"genre\" guid=\"" + genre2Guid + "\" lang=\"en\">" + genre2Name + "</item>" +
+			"<objects>" +
+			"</objects>\n" +
+			"<paragraphs><paragraph><phrases><phrase>" +
+			"<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
+			"<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
+			"<words><word><item type=\"txt\" lang=\"en\">supercalifragilisticexpialidocious</item>" +
+			"<item type=\"gls\" lang=\"pt\">absurdo</item></word>" +
+			"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				Cache.LanguageProject.GenreListOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
+			});
+			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
+			LCModel.IText text = null;
+			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
+				using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
+				{
+					firstEntry.MoveNext();
+					var imported = firstEntry.Current;
+					Assert.AreEqual(2, imported.GenresRC.Count);
+					Assert.AreEqual(genre1Guid, imported.GenresRC.First().Guid.ToString());
+					Assert.AreEqual(genre1Name, imported.GenresRC.First().Name.BestAnalysisAlternative.Text);
+					Assert.AreEqual(genre2Guid, imported.GenresRC.Last().Guid.ToString());
+					Assert.AreEqual(genre2Name, imported.GenresRC.Last().Name.BestAnalysisAlternative.Text);
+					ILcmOwningSequence<ICmPossibility> genres = imported.Cache.LanguageProject.GenreListOA.PossibilitiesOS;
+					Assert.AreEqual(2, genres.Count);
+					Assert.AreEqual(genre1Guid, genres.First().Guid.ToString());
+					Assert.AreEqual(genre1Name, genres.First().Name.BestAnalysisAlternative.Text);
+					Assert.AreEqual(genre2Guid, genres.Last().Guid.ToString());
+					Assert.AreEqual(genre2Name, genres.Last().Name.BestAnalysisAlternative.Text);
+				}
+			}
+		}
+
+		[Test]
+		public void TestExistingWordCategory()
+		{
+			string title = "atrocious";
+			string abbr = "atroc";
+			//an interliner text example xml string
+			string xml = "<document><interlinear-text>" +
+			"<paragraphs><paragraph><phrases><phrase>" +
+			"<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
+			"<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
+			"<words><word><item type=\"txt\" lang=\"en\">supercalifragilisticexpialidocious</item>" +
+			"<item type=\"gls\" lang=\"pt\">absurdo</item>" +
+			"<item type=\"pos\" lang=\"en\">N</item></word>" +
+			"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			// Create a category to find.
+			IPartOfSpeech cat = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor,
+				() =>
+				{
+					cat = Cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
+					Cache.LanguageProject.PartsOfSpeechOA.PossibilitiesOS.Add(cat);
+					cat.Name.set_String(Cache.DefaultAnalWs, "N");
+				});
+			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
+			LCModel.IText text = null;
+			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
+				using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
+				{
+					firstEntry.MoveNext();
+					var imported = firstEntry.Current;
+					ISegment segment = imported.ContentsOA[0].SegmentsOS[0];
+					// Verify that we found the category.
+					Assert.That(segment.AnalysesRS[0].Analysis.CategoryRA, Is.EqualTo(cat));
+				}
+			}
+		}
+
+		[Test]
+		public void TestApprovedMorphemes()
+		{
+			string title = "atrocious";
+			string abbr = "atroc";
+			//an interliner text example xml string
+			string xml = "<document><interlinear-text>" +
+			"<paragraphs><paragraph><phrases><phrase>" +
+			"<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
+			"<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
+			"<words><word><item type=\"txt\" lang=\"en\">supercalifragilisticexpialidocious</item>" +
+			"<morphemes analysisStatus='humanApproved'>" +
+			"<morph><item type=\"txt\" lang=\"en\">supercali-</item>" +
+			"<item type=\"gls\" lang=\"pt\">superlative</item></morph>" +
+			"</morphemes>" +
+			"<item type=\"gls\" lang=\"pt\">absurdo</item></word>" +
+			"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
+			LCModel.IText text = null;
+			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
+				using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
+				{
+					firstEntry.MoveNext();
+					var imported = firstEntry.Current;
+					ISegment segment = imported.ContentsOA[0].SegmentsOS[0];
+					// Verify that we found the morphemes.
+					Assert.That(segment.AnalysesRS.Count, Is.EqualTo(1));
+					Assert.That(segment.AnalysesRS[0].Analysis.MorphBundlesOS.Count, Is.EqualTo(1));
+				}
+			}
+		}
+
+		[Test]
+		public void TestGuessedMorphemes()
+		{
+			string title = "atrocious";
+			string abbr = "atroc";
+			//an interliner text example xml string
+			string xml = "<document><interlinear-text>" +
+			"<paragraphs><paragraph><phrases><phrase>" +
+			"<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
+			"<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
+			"<words><word><item type=\"txt\" lang=\"en\">supercalifragilisticexpialidocious2</item>" +
+			"<morphemes analysisStatus='guess'>" +
+			"<morph><item type=\"txt\" lang=\"en\">supercali2-</item>" +
+			"<item type=\"gls\" lang=\"pt\">superlative</item></morph>" +
+			"</morphemes></word>" +
+			"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
+			LCModel.IText text = null;
+			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
+				using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
+				{
+					firstEntry.MoveNext();
+					var imported = firstEntry.Current;
+					ISegment segment = imported.ContentsOA[0].SegmentsOS[0];
+					// Verify that we ignored the guessed morphemes.
+					Assert.That(segment.AnalysesRS.Count, Is.EqualTo(0));
+				}
+			}
+		}
+
+
+		[Test]
+		public void TestNewWordCategory()
+		{
+			string title = "atrocious";
+			string abbr = "atroc";
+			//an interliner text example xml string
+			string xml = "<document><interlinear-text>" +
+			"<paragraphs><paragraph><phrases><phrase>" +
+			"<item type=\"reference-number\" lang=\"en\">1 Musical</item>" +
+			"<item type=\"note\" lang=\"pt\">origem: mary poppins</item>" +
+			"<words><word><item type=\"txt\" lang=\"en\">supercalifragilisticexpialidocious</item>" +
+			"<item type=\"gls\" lang=\"pt\">absurdo</item>" +
+			"<item type=\"pos\" lang=\"en\">X</item></word>" +
+			"</words></phrase></phrases></paragraph></paragraphs></interlinear-text></document>";
+
+			LinguaLinksImport li = new LinguaLinksImport(Cache, null, null);
+			LCModel.IText text = null;
+			using (var stream = new MemoryStream(Encoding.ASCII.GetBytes(xml.ToCharArray())))
+			{
+				li.ImportInterlinear(new DummyProgressDlg(), stream, 0, ref text);
+				using (var firstEntry = Cache.LanguageProject.Texts.GetEnumerator())
+				{
+					firstEntry.MoveNext();
+					var imported = firstEntry.Current;
+					ISegment segment = imported.ContentsOA[0].SegmentsOS[0];
+					// Verify that we created a category.
+					Assert.True(segment.AnalysesRS[0].Analysis.CategoryRA.Name.BestAnalysisAlternative.Text.Equals("X"));
+					Assert.True(segment.AnalysesRS[0].Analysis.CategoryRA.Abbreviation.BestAnalysisAlternative.Text.Equals("X"));
 				}
 			}
 		}
@@ -1139,7 +1427,7 @@ namespace SIL.FieldWorks.IText
 				NumTimesDlgShown = 0;
 			}
 
-			protected override DialogResult ShowPossibleMergeDialog(IThreadedProgress progress)
+			protected override DialogResult ShowPossibleMergeDialog(IThreadedProgress progress, string textName)
 			{
 				NumTimesDlgShown++;
 				return DialogResult.Yes;
@@ -1158,7 +1446,7 @@ namespace SIL.FieldWorks.IText
 				NumTimesDlgShown = 0;
 			}
 
-			protected override DialogResult ShowPossibleMergeDialog(IThreadedProgress progress)
+			protected override DialogResult ShowPossibleMergeDialog(IThreadedProgress progress, string textName)
 			{
 				NumTimesDlgShown++;
 				return DialogResult.No;

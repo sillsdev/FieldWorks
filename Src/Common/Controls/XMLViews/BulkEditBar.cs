@@ -417,6 +417,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
+			PreUpdateColumnList();
 			// ClickCopy.ClickCopyTabPageSettings/SaveSettings()/CommitClickChanges()
 			// could possibly change m_hvoSelected when we're not ready, so save current.
 			// see comment on LT-4768 below.
@@ -437,6 +438,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_operationsTabControl_SelectedIndexChanged(this, new EventArgs());
 			m_hvoSelected = oldSelected;
 			ResumeRecordListRowChanges();
+			PostUpdateColumnList();
 		}
 
 		/// <summary>
@@ -1746,6 +1748,26 @@ namespace SIL.FieldWorks.Common.Controls
 			BulkEditItem bei = m_beItems[m_itemIndex];
 			bei.BulkEditControl.FakeDoit(ItemsToChange(false), XMLViewsDataCache.ktagAlternateValue,
 										 XMLViewsDataCache.ktagItemEnabled, state);
+		}
+
+		/// <summary>
+		/// UpdateColumnList() will Dispose all the BulkEditItems and re-create them. So any
+		/// derived class that needs to do something before or after that should override the Pre
+		/// or Post method.
+		/// </summary>
+		protected virtual void PreUpdateColumnList()
+		{
+
+		}
+
+		/// <summary>
+		/// UpdateColumnList() will Dispose all the BulkEditItems and re-create them. So any
+		/// derived class that needs to do something before or after that should override the Pre
+		/// or Post method.
+		/// </summary>
+		protected virtual void PostUpdateColumnList()
+		{
+
 		}
 
 		internal void ClearPreview()

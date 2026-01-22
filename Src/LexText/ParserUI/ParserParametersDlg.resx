@@ -173,8 +173,32 @@
   <data name="&gt;&gt;m_label2.ZOrder" xml:space="preserve">
 	<value>6</value>
   </data>
+  <data name="m_btnHCMaxCompoundRuleApps.Location" type="System.Drawing.Point, System.Drawing">
+      <value>347, 270</value>
+  </data>
+  <data name="m_btnHCMaxCompoundRuleApps.Size" type="System.Drawing.Size, System.Drawing">
+      <value>250, 30</value>
+  </data>
+  <data name="m_btnHCMaxCompoundRuleApps.TabIndex" type="System.Int32, mscorlib">
+      <value>10</value>
+  </data>
+  <data name="m_btnHCMaxCompoundRuleApps.Text" xml:space="preserve">
+      <value>Set max applications of HC Compound rules</value>
+  </data>
+  <data name="&gt;&gt;m_btnHCMaxCompoundRuleApps.Name" xml:space="preserve">
+      <value>m_btnHCMaxCompoundRuleApps</value>
+  </data>
+  <data name="&gt;&gt;m_btnHCMaxCompoundRuleApps.Type" xml:space="preserve">
+      <value>System.Windows.Forms.Button, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;m_btnHCMaxCompoundRuleApps.Parent" xml:space="preserve">
+      <value>$this</value>
+  </data>
+  <data name="&gt;&gt;m_btnHCMaxCompoundRuleApps.ZOrder" xml:space="preserve">
+      <value>8</value>
+  </data>
   <data name="m_btnOk.Location" type="System.Drawing.Point, System.Drawing">
-	<value>347, 253</value>
+	<value>347, 353</value>
   </data>
   <data name="m_btnOk.Size" type="System.Drawing.Size, System.Drawing">
 	<value>75, 23</value>
@@ -198,7 +222,7 @@
 	<value>5</value>
   </data>
   <data name="m_btnCancel.Location" type="System.Drawing.Point, System.Drawing">
-	<value>428, 253</value>
+	<value>428, 353</value>
   </data>
   <data name="m_btnCancel.Size" type="System.Drawing.Size, System.Drawing">
 	<value>75, 23</value>
@@ -246,7 +270,7 @@
 	<value>3</value>
   </data>
   <data name="m_btnHelp.Location" type="System.Drawing.Point, System.Drawing">
-	<value>509, 253</value>
+	<value>509, 353</value>
   </data>
   <data name="m_btnHelp.Size" type="System.Drawing.Size, System.Drawing">
 	<value>75, 23</value>
@@ -276,7 +300,7 @@
 	<value>8, 165</value>
   </data>
   <data name="m_dataGrid2.Size" type="System.Drawing.Size, System.Drawing">
-	<value>576, 72</value>
+	<value>976, 100</value>
   </data>
   <data name="m_dataGrid2.TabIndex" type="System.Int32, mscorlib">
 	<value>8</value>
@@ -327,7 +351,7 @@
 	<value>5, 13</value>
   </data>
   <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-	<value>594, 288</value>
+	<value>1000, 388</value>
   </data>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
 	<value>

@@ -42,7 +42,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			DuplicateGrapheme,
 			InvalidEnvironment,
 			InvalidRedupForm,
-			InvalidRewriteRule
+			InvalidRewriteRule,
+			InvalidStrata,
+			UnmatchedReduplicationIndexedClass
 		}
 
 		private class TestHCLoadErrorLogger : IHCLoadErrorLogger
@@ -86,8 +88,23 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			public void InvalidRewriteRule(IPhRegularRule rule, string reason)
 			{
-				m_loadErrors.Add(Tuple.Create(LoadErrorType.InvalidRedupForm, (ICmObject) rule));
+				m_loadErrors.Add(Tuple.Create(LoadErrorType.InvalidRewriteRule, (ICmObject)rule));
 			}
+
+			public void InvalidStrata(string strata, string reason)
+			{
+				m_loadErrors.Add(Tuple.Create(LoadErrorType.InvalidStrata, (ICmObject)null));
+			}
+
+			public void OutOfScopeSlot(IMoInflAffixSlot slot, IMoInflAffixTemplate template, string reason)
+			{
+				throw new NotImplementedException();
+			}
+			public void UnmatchedReduplicationIndexedClass(IMoForm form, string reason, string patterns)
+			{
+				m_loadErrors.Add(Tuple.Create(LoadErrorType.UnmatchedReduplicationIndexedClass, (ICmObject)form));
+			}
+
 		}
 
 		private readonly List<Tuple<LoadErrorType, ICmObject>> m_loadErrors = new List<Tuple<LoadErrorType, ICmObject>>();
@@ -585,6 +602,30 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			LoadLanguage();
 
 			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(0));
+
+			// now check for missing indexed class which is removed but with an logged error message
+			// LT-18767
+			// case 1: the form has the indexed class, but the environment does not
+			var env = allo.PhoneEnvRC.ElementAt(0);
+			allo.PhoneEnvRC.Remove(env);
+			allo.PhoneEnvRC.Add(AddEnvironment("/_[C^1]"));
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(1));
+			Assert.That(m_loadErrors.Count == 1);
+			var err = m_loadErrors.ElementAt(0);
+			Assert.That(err.Item1 == LoadErrorType.UnmatchedReduplicationIndexedClass);
+
+			// case 2: the environment has the indexed class, but the form does not
+			env = allo.PhoneEnvRC.ElementAt(0);
+			allo.PhoneEnvRC.Remove(env);
+			allo.PhoneEnvRC.Add(AddEnvironment("/_[C^2][V^1]"));
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(1));
+			Assert.That(m_loadErrors.Count == 1);
+			err = m_loadErrors.ElementAt(0);
+			Assert.That(err.Item1 == LoadErrorType.UnmatchedReduplicationIndexedClass);
 		}
 
 		[Test]
@@ -903,6 +944,27 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(subrule.HeadLhs.Select(p => p.ToString()), Is.EqualTo(new[] {AnyPlus}));
 			Assert.That(subrule.NonHeadLhs.Select(p => p.ToString()), Is.EqualTo(new[] {AnyPlus}));
 			Assert.That(subrule.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] {"<nonhead>", "+", "<head>"}));
+
+			// test for exception "features"
+			compoundRule.LeftMsaOA.ProdRestrictRC.Add(AddExceptionFeature("Left prod restrict"));
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(1));
+			hcCompoundRule = (CompoundingRule)m_lang.Strata[0].MorphologicalRules[0];
+
+			Assert.That(hcCompoundRule.HeadProdRestrictionsMprFeatures.Count, Is.EqualTo(0));
+			Assert.That(hcCompoundRule.NonHeadProdRestrictionsMprFeatures.Count, Is.EqualTo(1));
+			Assert.That(hcCompoundRule.NonHeadProdRestrictionsMprFeatures.ElementAt(0).Name, Is.EqualTo("Left prod restrict"));
+
+			compoundRule.RightMsaOA.ProdRestrictRC.Add(AddExceptionFeature("Right prod restrict"));
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(1));
+			hcCompoundRule = (CompoundingRule)m_lang.Strata[0].MorphologicalRules[0];
+
+			Assert.That(hcCompoundRule.NonHeadProdRestrictionsMprFeatures.Count, Is.EqualTo(1));
+			Assert.That(hcCompoundRule.HeadProdRestrictionsMprFeatures.Count, Is.EqualTo(1));
+			Assert.That(hcCompoundRule.HeadProdRestrictionsMprFeatures.ElementAt(0).Name, Is.EqualTo("Right prod restrict"));
 		}
 
 		[Test]
@@ -943,6 +1005,28 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Assert.That(subrule.NonHeadLhs.Select(p => p.ToString()), Is.EqualTo(new[] {AnyPlus}));
 			Assert.That(subrule.Rhs.Select(a => a.ToString()), Is.EqualTo(new[] {"<head>", "+", "<nonhead>"}));
 			Assert.That(subrule.OutMprFeatures.Select(mf => mf.ToString()), Is.EquivalentTo(new[] {"inflClass"}));
+
+			// test for exception "features"
+			compoundRule.LeftMsaOA.ProdRestrictRC.Add(AddExceptionFeature("Left prod restrict"));
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(2));
+			hcCompoundRule = (CompoundingRule)m_lang.Strata[0].MorphologicalRules[0];
+
+			Assert.That(hcCompoundRule.HeadProdRestrictionsMprFeatures.Count, Is.EqualTo(0));
+			Assert.That(hcCompoundRule.NonHeadProdRestrictionsMprFeatures.Count, Is.EqualTo(1));
+			Assert.That(hcCompoundRule.NonHeadProdRestrictionsMprFeatures.ElementAt(0).Name, Is.EqualTo("Left prod restrict"));
+
+			compoundRule.RightMsaOA.ProdRestrictRC.Add(AddExceptionFeature("Right prod restrict"));
+			LoadLanguage();
+
+			Assert.That(m_lang.Strata[0].MorphologicalRules.Count, Is.EqualTo(2));
+			hcCompoundRule = (CompoundingRule)m_lang.Strata[0].MorphologicalRules[0];
+
+			Assert.That(hcCompoundRule.NonHeadProdRestrictionsMprFeatures.Count, Is.EqualTo(1));
+			Assert.That(hcCompoundRule.HeadProdRestrictionsMprFeatures.Count, Is.EqualTo(1));
+			Assert.That(hcCompoundRule.HeadProdRestrictionsMprFeatures.ElementAt(0).Name, Is.EqualTo("Right prod restrict"));
+
 		}
 
 		[Test]

@@ -7,7 +7,6 @@
 	<ItemGroup>
 		<ViewsIdhFiles Include="$([System.IO.Path]::Combine($(MSBuildProjectDirectory), '../../views/Render.idh'))"/>
 		<ViewsIdhFiles Include="$([System.IO.Path]::Combine($(MSBuildProjectDirectory), '../../views/Views.idh'))"/>
-		<ViewsIdhFiles Include="$([System.IO.Path]::Combine($(MSBuildProjectDirectory), '../../CommonCOMDlgs/CmnFwDlgs.idh'))"/>
 	</ItemGroup>
 	<ItemGroup>
 		<ViewsInputs Include="@(ViewsIdhFiles)" />

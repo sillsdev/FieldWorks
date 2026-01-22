@@ -898,6 +898,9 @@ If you are not the one designated user who adds fields, or you are making some o
     <value>Configure {0}</value>
     <comment>{0} is a type of configuration, like Dictionary or Reversal Index</comment>
   </data>
+  <data name="ClassifiedDictionary" xml:space="preserve">
+    <value>Classified Dictionary</value>
+  </data>
   <data name="Dictionary" xml:space="preserve">
     <value>Dictionary</value>
   </data>
@@ -1175,6 +1178,14 @@ See USFM documentation for help.</value>
     <value>Cannot import. Choose another file.</value>
     <comment>explanation text on import dialog</comment>
   </data>
+  <data name="kstidCannotImportStyles" xml:space="preserve">
+    <value>Cannot import Styles.</value>
+    <comment>explanation text on import dialog</comment>
+  </data>
+  <data name="kstidSeeLogForDetails" xml:space="preserve">
+    <value>See the log for details.</value>
+    <comment>explanation text on import dialog. The application keeps a log of user activity to help diagnose errors.</comment>
+  </data>
   <data name="kstidImportingConfig" xml:space="preserve">
     <value>Importing view named '{0}'.</value>
     <comment>Parameter is the name of a dictionary configuration</comment>
@@ -1297,5 +1308,20 @@ See USFM documentation for help.</value>
   </data>
   <data name="PictureOptionsView_MaxWidthLabel" xml:space="preserve">
     <value>Max Width (inches):</value>
+  </data>
+  <data name="ParsingDev" xml:space="preserve">
+    <value>Parsing Dev</value>
+  </data>
+  <data name="UploadBatchRetrying" xml:space="preserve">
+    <value>Batch {0} timed out ({1}). Retrying (attempt {2} of {3}) in {4} seconds...</value>
+    <comment>Status message when retrying a failed batch upload. {0} is batch number, {1} is HTTP status code, {2} is current attempt, {3} is max retries, {4} is wait time in seconds.</comment>
+  </data>
+  <data name="UploadBatchSucceededAfterRetry" xml:space="preserve">
+    <value>Batch {0} succeeded after {1} attempt(s).</value>
+    <comment>Status message when a batch succeeds after one or more retries. {0} is batch number, {1} is number of attempts.</comment>
+  </data>
+  <data name="UploadBatchFailedAfterRetries" xml:space="preserve">
+    <value>Batch {0} failed after {1} retries ({2}). Upload aborted.</value>
+    <comment>Error message when a batch fails after all retry attempts. {0} is batch number, {1} is max retries, {2} is HTTP status code.</comment>
   </data>
 </root>

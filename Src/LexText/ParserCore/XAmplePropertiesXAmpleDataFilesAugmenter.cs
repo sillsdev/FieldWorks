@@ -149,7 +149,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 						list.Name.BestAnalysisAlternative.Text
 						== customListName
 				);
-			BuildAllomorphPropertyMapper(allomorphHvoPropertyMapper, customList);
+			BuildAllomorphPropertyMapper(allomorphHvoPropertyMapper, customList, customListName);
 			BuildMorphemePropertyMapper(morphemePropertyMapper, customList);
 			// Add allomorph properties
 			var lexWithAlloProps = allomorphHvoPropertyMapper.Aggregate(
@@ -178,7 +178,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 		private static void BuildAllomorphPropertyMapper(
 			Dictionary<string, string> allomorphHvoPropertyMapper,
-			ICmPossibilityList customList)
+			ICmPossibilityList customList, string customListName)
 		{
 			foreach (var prop in customList.PossibilitiesOS)
 			{
@@ -186,15 +186,27 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				foreach (ICmObject obj in refObjs)
 				{
 					var sHvo = obj.Hvo.ToString();
-					if (!allomorphHvoPropertyMapper.ContainsKey(sHvo))
+					var hvoMatch = " {" + sHvo + "}";
+					if (!allomorphHvoPropertyMapper.ContainsKey(hvoMatch))
 					{
-						var hvoMatch = " {" + sHvo + "}";
-						var replaceWith =
-							hvoMatch + " " + prop.Name.AnalysisDefaultWritingSystem.Text;
+						var replaceWith = hvoMatch + " " + prop.Name.AnalysisDefaultWritingSystem.Text;
 						allomorphHvoPropertyMapper.Add(hvoMatch, replaceWith);
+					} else
+					{
+						// Append the new value to the existing value.
+						allomorphHvoPropertyMapper[hvoMatch] += " " + prop.Name.AnalysisDefaultWritingSystem.Text;
 					}
 				}
 			}
+		}
+
+		private static string LexEntryName(ICmObject obj)
+		{
+			if (obj.ClassName == "MoAffixAllomorph")
+			{
+				return ((IMoAffixAllomorph)obj).LongName;
+			}
+			return "***";
 		}
 
 		private static void BuildMorphemePropertyMapper(
@@ -211,12 +223,12 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					foreach (ILexSense sense in entry.SensesOS)
 					{
 						var sHvo = sense.MorphoSyntaxAnalysisRA.Hvo.ToString();
-						var hvoMatch = "\\lx " + sHvo;
+						var hvoMatch = "\\lx " + sHvo + "\r";
 						if (!morphemePropertyMapper.ContainsKey(hvoMatch))
 						{
 							var replaceWith =
 								hvoMatch
-								+ "\r\n\\mp "
+								+ "\n\\mp "
 								+ prop.Name.AnalysisDefaultWritingSystem.Text
 								+ "\r\n";
 							morphemePropertyMapper.Add(hvoMatch, replaceWith);

@@ -161,7 +161,7 @@ namespace SIL.FieldWorks.XWorks
 			var doc = new XmlDocument();
 			doc.LoadXml(entryClerk);
 			XmlNode clerkNode = doc.SelectSingleNode("//tools/tool[@label='Dictionary']//parameters[@area='lexicon']");
-			RecordClerk clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false);
+			RecordClerk clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false, false);
 			clerk.SortName = "Headword";
 			return clerk;
 		}
@@ -240,8 +240,8 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
 			Console.WriteLine(result);
-			AssertThatXmlIn.String(result.mainDocPart.RootElement.OuterXml).HasSpecifiedNumberOfMatchesForXpath(
-				"/w:document/w:body/w:p/w:r/w:t[text()='gloss']",
+			AssertThatXmlIn.String(result.DocBody.OuterXml).HasSpecifiedNumberOfMatchesForXpath(
+				"/w:body/w:p/w:r/w:t[text()='gloss']",
 				1,
 				WordNamespaceManager);
 		}
@@ -275,8 +275,8 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
 			Console.WriteLine(result);
-			AssertThatXmlIn.String(result?.mainDocPart.RootElement?.OuterXml).HasSpecifiedNumberOfMatchesForXpath(
-				"/w:document/w:body/w:p/w:r/w:br[@w:type='textWrapping']",
+			AssertThatXmlIn.String(result?.DocBody?.OuterXml).HasSpecifiedNumberOfMatchesForXpath(
+				"/w:body/w:p/w:r/w:br[@w:type='textWrapping']",
 				2,
 				WordNamespaceManager);
 		}
@@ -327,8 +327,8 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
 
-			Assert.True(result.mainDocPart.RootElement.OuterXml.Contains("Gloss[lang=en]"));
-			Assert.True(result.mainDocPart.RootElement.OuterXml.Contains("Gloss2[lang=en]"));
+			Assert.True(result.DocBody.OuterXml.Contains("Gloss[lang=en]"));
+			Assert.True(result.DocBody.OuterXml.Contains("Gloss2[lang=en]"));
 		}
 
 		[Test]
@@ -385,7 +385,7 @@ namespace SIL.FieldWorks.XWorks
 			// 3. Sense number:					2
 			// 4. Sense number after text:		AFT
 			const string senseNumberTwoRun = "<w:t xml:space=\"preserve\">BEF</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Sense Number[lang=en]\" /></w:rPr><w:t xml:space=\"preserve\">2</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"Sense Number-Context[lang=en]\" /></w:rPr><w:t xml:space=\"preserve\">AFT</w:t></w:r>";
-			Assert.True(result.mainDocPart.RootElement.OuterXml.Contains(senseNumberTwoRun));
+			Assert.True(result.DocBody.OuterXml.Contains(senseNumberTwoRun));
 		}
 
 		[Test]
@@ -438,7 +438,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
-			var outXml = result.mainDocPart.RootElement.OuterXml;
+			var outXml = result.DocBody.OuterXml;
 
 			// Before text 'BE1' is before sense number '1' for 'gloss'.
 			const string beforeFirstSense =
@@ -520,7 +520,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
-			var outXml = result.mainDocPart.RootElement.OuterXml;
+			var outXml = result.DocBody.OuterXml;
 
 			// Before text 'BE3' is after the sense number '1' and before the english abbreviation, which is before 'gloss'.
 			const string beforeAbbreviation =
@@ -576,7 +576,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
-			var outXml = result.mainDocPart.RootElement.OuterXml;
+			var outXml = result.DocBody.OuterXml;
 
 			// The property before text 'BE4' is first, followed by the style that is applied to the property, 'DisplayNameBase'.
 			const string beforeAndStyle = "<w:t xml:space=\"preserve\">BE4</w:t></w:r><w:r><w:rPr><w:rStyle w:val=\"DisplayNameBase[lang=en]\" /></w:rPr>";
@@ -641,7 +641,7 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
-			var outXml = result.mainDocPart.RootElement.OuterXml;
+			var outXml = result.DocBody.OuterXml;
 			// Verify that AREYOUCRAZY appears only once in the output.
 			var betweenCount = Regex.Matches(outXml, "AREYOUCRAZY").Count;
 
@@ -688,8 +688,8 @@ namespace SIL.FieldWorks.XWorks
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
 
 			// Assert that the references to the paragraph styles use the display names, not the style names.
-			Assert.True(result.mainDocPart.RootElement.OuterXml.Contains(MainEntryParagraphDisplayName));
-			Assert.True(result.mainDocPart.RootElement.OuterXml.Contains(SensesParagraphDisplayName));
+			Assert.True(result.DocBody.OuterXml.Contains(MainEntryParagraphDisplayName));
+			Assert.True(result.DocBody.OuterXml.Contains(SensesParagraphDisplayName));
 		}
 
 		[Test]
@@ -751,8 +751,8 @@ namespace SIL.FieldWorks.XWorks
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
 
 			// There should be 5 paragraphs, one for the main entry, one for each sense, and one for each subsense.
-			AssertThatXmlIn.String(result.mainDocPart.RootElement.OuterXml).HasSpecifiedNumberOfMatchesForXpath(
-				"/w:document/w:body/w:p",
+			AssertThatXmlIn.String(result.DocBody.OuterXml).HasSpecifiedNumberOfMatchesForXpath(
+				"/w:body/w:p",
 				5,
 				WordNamespaceManager);
 		}
@@ -815,7 +815,7 @@ namespace SIL.FieldWorks.XWorks
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
 
 			// There should be two instances of the bulletId and one instance for each of the numberId's.
-			string resultStr = result.mainDocPart.RootElement.OuterXml;
+			string resultStr = result.DocBody.OuterXml;
 			int count1 = Regex.Matches(resultStr, "<w:numId w:val=\"1\" />").Count;
 			int count2 = Regex.Matches(resultStr, "<w:numId w:val=\"2\" />").Count;
 			int count3 = Regex.Matches(resultStr, "<w:numId w:val=\"3\" />").Count;
@@ -888,13 +888,13 @@ namespace SIL.FieldWorks.XWorks
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(testEntry, mainEntryNode, null, DefaultSettings, 0) as DocFragment;
 
 			// There should be 3 paragraph styles, one for the main entry, one for the sense, and one for the continuation of the main entry.
-			AssertThatXmlIn.String(result.mainDocPart.RootElement.OuterXml).HasSpecifiedNumberOfMatchesForXpath(
-				"/w:document/w:body/w:p/w:pPr/w:pStyle",
+			AssertThatXmlIn.String(result.DocBody.OuterXml).HasSpecifiedNumberOfMatchesForXpath(
+				"/w:body/w:p/w:pPr/w:pStyle",
 				3,
 				WordNamespaceManager);
 
 			// Assert that the continuation paragraph uses the continuation style.
-			Assert.True(result.mainDocPart.RootElement.OuterXml.Contains(MainEntryParagraphDisplayName + WordStylesGenerator.EntryStyleContinue));
+			Assert.True(result.DocBody.OuterXml.Contains(MainEntryParagraphDisplayName + WordStylesGenerator.EntryStyleContinue));
 		}
 
 		[Test]

@@ -5,6 +5,7 @@
 using System.Diagnostics;
 using System.Linq;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FwCoreDlgs;
@@ -102,7 +103,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_dlg.ProgressBar.Step = 1;
 
 			// stop parser if it's running.
-			m_dlg.Mediator.SendMessage("StopParser", null);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser));
 
 			NonUndoableUnitOfWorkHelper.Do(cache.ActionHandlerAccessor, () =>
 			{
@@ -122,6 +123,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					m_dlg.ProgressBar.PerformStep();
 				}
 			});
+
+			// Interlin display may be affected.
+			m_dlg.Mediator.SendMessage("RefreshInterlin", null);
 		}
 
 		#endregion IUtility implementation

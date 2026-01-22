@@ -2,24 +2,24 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
+using SIL.Extensions;
 using SIL.FieldWorks.Common.FwUtils;
-using SIL.LCModel;
-using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.IText.FlexInterlinModel;
+using SIL.LCModel;
 using SIL.LCModel.Application.ApplicationServices;
 using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
-using SIL.Extensions;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Windows.Forms;
 
 namespace SIL.FieldWorks.IText
 {
@@ -75,6 +75,7 @@ namespace SIL.FieldWorks.IText
 			Interlineartext interlinText = textParams.InterlinText;
 			LcmCache cache = textParams.Cache;
 			IThreadedProgress progress = textParams.Progress;
+			IDictionary<string, INote> groupNote = new Dictionary<string, INote>();
 			if (s_importOptions.CheckAndAddLanguages == null)
 				s_importOptions.CheckAndAddLanguages = CheckAndAddLanguagesInternal;
 
@@ -87,13 +88,14 @@ namespace SIL.FieldWorks.IText
 			//handle the header(info or meta) information
 			SetTextMetaAndMergeMedia(cache, interlinText, wsFactory, newText, false);
 
+			if (newText.ContentsOA == null)
+			{
+				// Create ContentsOA even if there are no paragraphs.
+				newText.ContentsOA = cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
+			}
 			//create all the paragraphs
 			foreach (var paragraph in interlinText.paragraphs)
 			{
-				if (newText.ContentsOA == null)
-				{
-					newText.ContentsOA = cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
-				}
 				IStTxtPara newTextPara = newText.ContentsOA.AddNewTextPara("");
 				int offset = 0;
 				if (paragraph.phrases == null)
@@ -125,7 +127,7 @@ namespace SIL.FieldWorks.IText
 					ITsString phraseText = null;
 					bool textInFile = false;
 					//Add all of the data from <item> elements into the segment.
-					AddSegmentItemData(cache, wsFactory, phrase, newSegment, ref textInFile, ref phraseText);
+					AddSegmentItemData(cache, wsFactory, phrase, newSegment, groupNote, ref textInFile, ref phraseText);
 					bool lastWasWord = false;
 					if (phrase.WordsContent != null && phrase.WordsContent.Words != null)
 					{
@@ -197,6 +199,7 @@ namespace SIL.FieldWorks.IText
 			Interlineartext interlinText = textParams.InterlinText;
 			LcmCache cache = textParams.Cache;
 			IThreadedProgress progress = textParams.Progress;
+			IDictionary<string, INote> groupNote = new Dictionary<string, INote>();
 			if (s_importOptions.CheckAndAddLanguages == null)
 				s_importOptions.CheckAndAddLanguages = CheckAndAddLanguagesInternal;
 
@@ -288,7 +291,7 @@ namespace SIL.FieldWorks.IText
 					ITsString phraseText = null;
 					bool textInFile = false;
 					//Add all of the data from <item> elements into the segment.
-					AddSegmentItemData(cache, wsFactory, phrase, newSegment, ref textInFile, ref phraseText);
+					AddSegmentItemData(cache, wsFactory, phrase, newSegment, groupNote, ref textInFile, ref phraseText);
 
 					bool lastWasWord = false;
 					if (phrase.WordsContent != null && phrase.WordsContent.Words != null)
@@ -301,7 +304,7 @@ namespace SIL.FieldWorks.IText
 							if (!textInFile)
 								UpdatePhraseTextForWordItems(wsFactory, ref phraseText, word,
 									ref lastWasWord, space);
-							MergeWordToSegment(newSegment, word, newContents.MainWritingSystem);
+							AddWordToSegment(newSegment, word, newContents.MainWritingSystem);
 						}
 					}
 					UpdateParagraphTextForPhrase(newTextPara, ref offset, phraseText);
@@ -329,8 +332,9 @@ namespace SIL.FieldWorks.IText
 				}
 				offset += phraseText.Length;
 				var oldText = (bldr.Text ?? "").Trim();
-				if (oldText.Length > 0 && !TsStringUtils.IsEndOfSentenceChar(oldText[oldText.Length - 1],
-					Icu.Character.UCharCategory.OTHER_PUNCTUATION))
+				LcmCache cache = newTextPara.Cache;
+				ITsString tsString = TsStringUtils.MakeString(oldText, cache.DefaultVernWs);
+				if (oldText.Length > 0 && !ParagraphParser.EndsWithEOS(tsString, cache))
 				{
 					// 'segment' does not end with recognizable EOS character. Add our special one.
 					bldr.Replace(bldr.Length, bldr.Length, "\x00A7", null);
@@ -366,8 +370,7 @@ namespace SIL.FieldWorks.IText
 						isWord = true;
 						goto case "punct";
 					case "punct":
-						ITsString wordString = TsStringUtils.MakeString(item.Value,
-							GetWsEngine(wsFactory, item.lang).Handle);
+						ITsString wordString = GetItemValue(item, wsFactory);
 						if (phraseText == null)
 						{
 							phraseText = wordString;
@@ -394,6 +397,30 @@ namespace SIL.FieldWorks.IText
 			}
 		}
 
+		private static bool IsGuess(Morphemes item)
+		{
+			if (item != null && item.analysisStatusSpecified &&
+				(item.analysisStatus != analysisStatusTypes.humanApproved))
+				return true;
+			return false;
+		}
+
+		private static ITsString GetItemValue(item item, ILgWritingSystemFactory wsFactory)
+		{
+			if (item.run != null)
+			{
+				ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
+				foreach (var run in item.run)
+				{
+					int runWs = GetWsEngine(wsFactory, run.lang).Handle;
+					strBldr.Append(run.Value ?? " ", StyleUtils.CharStyleTextProps(run.style, runWs));
+				}
+				return strBldr.GetString();
+			}
+			int itemWs = GetWsEngine(wsFactory, item.lang).Handle;
+			return TsStringUtils.MakeString(item.Value, itemWs);
+		}
+
 		/// <summary>
 		/// Add all the data from items in the FLExText file into their proper spots in the segment.
 		/// </summary>
@@ -403,7 +430,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="newSegment"></param>
 		/// <param name="textInFile">This reference boolean indicates if there was a text item in the phrase</param>
 		/// <param name="phraseText">This reference string will be filled with the contents of the "txt" item in the phrase if it is there</param>
-		private static void AddSegmentItemData(LcmCache cache, ILgWritingSystemFactory wsFactory, Phrase phrase, ISegment newSegment, ref bool textInFile, ref ITsString phraseText)
+		private static void AddSegmentItemData(LcmCache cache, ILgWritingSystemFactory wsFactory, Phrase phrase, ISegment newSegment, IDictionary<string, INote> groupNote, ref bool textInFile, ref ITsString phraseText)
 		{
 			if (phrase.Items != null)
 			{
@@ -412,27 +439,40 @@ namespace SIL.FieldWorks.IText
 					switch (item.type)
 					{
 						case "reference-label":
-							newSegment.Reference = TsStringUtils.MakeString(item.Value,
-								GetWsEngine(wsFactory, item.lang).Handle);
+							newSegment.Reference = GetItemValue(item, wsFactory);
 							break;
 						case "gls":
-							newSegment.FreeTranslation.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
+							newSegment.FreeTranslation.set_String(GetWsEngine(wsFactory, item.lang).Handle, GetItemValue(item, wsFactory));
 							break;
 						case "lit":
-							newSegment.LiteralTranslation.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
+							newSegment.LiteralTranslation.set_String(GetWsEngine(wsFactory, item.lang).Handle, GetItemValue(item, wsFactory));
 							break;
 						case "note":
 							int ws = GetWsEngine(wsFactory, item.lang).Handle;
 							INote newNote = newSegment.NotesOS.FirstOrDefault(note => note.Content.get_String(ws).Text == item.Value);
 							if (newNote == null)
 							{
-								newNote = cache.ServiceLocator.GetInstance<INoteFactory>().Create();
-								newSegment.NotesOS.Add(newNote);
-								newNote.Content.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
+								// In the file note items with the same group id are different translations of the same note. Read them into the same INote.
+								string groupid = item.groupid;
+								if (!String.IsNullOrEmpty(groupid) && groupNote.ContainsKey(groupid))
+								{
+									newNote = groupNote[groupid];
+								}
+								else
+								{
+									newNote = cache.ServiceLocator.GetInstance<INoteFactory>().Create();
+									newSegment.NotesOS.Add(newNote);
+									// Save note for groupid.
+									if (!String.IsNullOrEmpty(groupid))
+									{
+										groupNote[groupid] = newNote;
+									}
+								}
+								newNote.Content.set_String(GetWsEngine(wsFactory, item.lang).Handle, GetItemValue(item, wsFactory));
 							}
 							break;
 						case "txt":
-							phraseText = TsStringUtils.MakeString(item.Value, GetWsEngine(wsFactory, item.lang).Handle);
+							phraseText = GetItemValue(item, wsFactory);
 							textInFile = true;
 							break;
 						case "segnum":
@@ -447,8 +487,7 @@ namespace SIL.FieldWorks.IText
 								var customId = mdc.GetFieldId2(classId, item.type, true);
 								if (customId != 0)
 								{
-									var customWs = GetWsEngine(wsFactory, item.lang).Handle;
-									var customTierText = TsStringUtils.MakeString(item.Value, customWs);
+									var customTierText = GetItemValue(item, wsFactory);
 									cache.MainCacheAccessor.SetString(newSegment.Hvo, customId, customTierText);
 								}
 							}
@@ -495,30 +534,6 @@ namespace SIL.FieldWorks.IText
 			cache.LanguageProject.PeopleOA.PossibilitiesOS.Add(newPerson);
 			newPerson.Name.set_String(cache.DefaultVernWs, speaker);
 			return newPerson;
-		}
-
-		private static void MergeWordToSegment(ISegment newSegment, Word word, int mainWritingSystem)
-		{
-			if (!string.IsNullOrEmpty(word.guid))
-			{
-				ICmObject repoObj;
-				newSegment.Cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(word.guid),
-					out repoObj);
-				var modelWord = repoObj as IAnalysis;
-				if (modelWord != null)
-				{
-					UpgradeToWordGloss(word, ref modelWord);
-					newSegment.AnalysesRS.Add(modelWord);
-				}
-				else
-				{
-					AddWordToSegment(newSegment, word, mainWritingSystem);
-				}
-			}
-			else
-			{
-				AddWordToSegment(newSegment, word, mainWritingSystem);
-			}
 		}
 
 		private static bool SomeLanguageSpecifiesVernacular(Interlineartext interlinText)
@@ -627,6 +642,8 @@ namespace SIL.FieldWorks.IText
 			{
 				foreach (var phrase in paragraph.phrases)
 				{
+					if (phrase.WordsContent.Words == null)
+						continue;
 					foreach (var word in phrase.WordsContent.Words)
 					{
 						strBldr.Append(word.Items[0].Value);
@@ -714,7 +731,6 @@ namespace SIL.FieldWorks.IText
 			//use the items under the word to determine what kind of thing to add to the segment
 			var cache = newSegment.Cache;
 			var analysis = CreateWordformWithWfiAnalysis(cache, word, mainWritingSystem);
-
 			// Add to segment
 			if (analysis != null)
 			{
@@ -741,24 +757,25 @@ namespace SIL.FieldWorks.IText
 				return null;
 
 			// Fill in morphemes, lex. entries, lex. gloss, and lex.gram.info
-			if (word.morphemes != null && word.morphemes.morphs.Length > 0)
+			if (word.morphemes != null && word.morphemes.morphs.Length > 0 &&
+				word.morphemes.analysisStatus == analysisStatusTypes.humanApproved)
 			{
 				var lex_entry_repo = cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 				var msa_repo = cache.ServiceLocator.GetInstance<IMoMorphSynAnalysisRepository>();
 				foreach (var morpheme in word.morphemes.morphs)
 				{
-					var itemDict = new Dictionary<string, Tuple<string, string>>();
+					var itemDict = new Dictionary<string, Tuple<string, ITsString>>();
 					if (wordForm.Analysis == null)
 						break;
 
 					foreach (var item in morpheme.items)
-						itemDict[item.type] = new Tuple<string, string>(item.lang, item.Value);
+						itemDict[item.type] = new Tuple<string, ITsString>(item.lang, GetItemValue(item, wsFact));
 
 					if (itemDict.ContainsKey("txt")) // Morphemes
 					{
 						var ws = GetWsEngine(wsFact, itemDict["txt"].Item1).Handle;
 						var morphForm = itemDict["txt"].Item2;
-						var wf = TsStringUtils.MakeString(morphForm, ws);
+						var wf = morphForm;
 
 						// Otherwise create a new bundle and add it to analysis
 						bundle = cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>()
@@ -769,46 +786,162 @@ namespace SIL.FieldWorks.IText
 
 					if (itemDict.ContainsKey("cf")) // Lex. Entries
 					{
+						// NB: "cf" records the lexeme, not the headword/citation form (in spite of the name).
 						int ws_cf = GetWsEngine(wsFact, itemDict["cf"].Item1).Handle;
 						ILexEntry entry = null;
 						var entries = lex_entry_repo.AllInstances().Where(
-							m => StringServices.CitationFormWithAffixTypeStaticForWs(m, ws_cf, string.Empty) == itemDict["cf"].Item2);
-						if (entries.Count() == 1)
+							m => DecorateFormWithAffixMarkers(m.LexemeFormOA?.MorphTypeRA, m.LexemeFormOA?.Form?.get_String(ws_cf)?.Text) == itemDict["cf"].Item2.Text);
+
+						// Filter entries by homograph number.
+						// If the lexeme and the headword are different,
+						// then there may be more than one entry with the given homograph number.
+						// This is because homograph numbers distinguish headwords rather than lexemes.
+						// If there is no "hn" entry, then the hn is 0.
+						string hn = "0";
+						if (itemDict.ContainsKey("hn")) // Homograph Number
+						{
+							hn = itemDict["hn"].Item2.Text;
+						}
+						var hnEntries = entries.Where(m => m.HomographNumber.ToString() == hn);
+						if (hnEntries.Count() > 0)
+						{
+							entries = hnEntries;
+						}
+
+						if (itemDict.ContainsKey("gls")) // Lex. Gloss
+						{
+							// Filter senses by gloss.
+							int ws_gls = GetWsEngine(wsFact, itemDict["gls"].Item1).Handle;
+							IList<ILexSense> senses = new List<ILexSense>();
+							foreach (var e in entries)
+							{
+								senses.AddRange(e.SensesOS.Where(s => s.Gloss.get_String(ws_gls).Text == itemDict["gls"].Item2.Text));
+							}
+							if (senses.Count() > 1 && itemDict.ContainsKey("msa"))
+							{
+								// Filter senses by MSA.
+								IList<ILexSense> msaSenses = senses.Where(s => s.MorphoSyntaxAnalysisRA?.InterlinearAbbr == itemDict["msa"].Item2.Text).ToList();
+								if (msaSenses.Count() > 0)
+								{
+									senses = msaSenses;
+								}
+							}
+							// Record sense.
+							if (senses.Count() > 0)
+							{
+								bundle.SenseRA = senses.FirstOrDefault();
+								entry = bundle.SenseRA.Entry;
+							}
+						}
+
+						if (entry == null && entries.Count() > 0)
 						{
 							entry = entries.First();
 						}
-						else if (itemDict.ContainsKey("hn")) // Homograph Number
-						{
-							entry = entries.FirstOrDefault(m => m.HomographNumber.ToString() == itemDict["hn"].Item2);
-						}
+
+						// Record morpheme.
 						if (entry != null)
 						{
-							bundle.MorphRA = entry.LexemeFormOA;
-
-							if (itemDict.ContainsKey("gls")) // Lex. Gloss
+							if (itemDict.ContainsKey("txt"))
 							{
-								int ws_gls = GetWsEngine(wsFact, itemDict["gls"].Item1).Handle;
-								ILexSense sense = entry.SensesOS.FirstOrDefault(s => s.Gloss.get_String(ws_gls).Text == itemDict["gls"].Item2);
-								if (sense != null)
-								{
-									bundle.SenseRA = sense;
-								}
+								// Try allomorph first.
+								var ws_txt = GetWsEngine(wsFact, itemDict["txt"].Item1).Handle;
+								bundle.MorphRA = entry.AllAllomorphs.Where(
+									m => DecorateFormWithAffixMarkers(m.MorphTypeRA, m.Form.get_String(ws_txt).Text) == itemDict["txt"].Item2.Text).FirstOrDefault();
+							}
+							if (bundle.MorphRA == null)
+							{
+								bundle.MorphRA = entry.LexemeFormOA;
 							}
 						}
 					}
 
 					if (itemDict.ContainsKey("msa")) // Lex. Gram. Info
 					{
-						IMoMorphSynAnalysis match = msa_repo.AllInstances().FirstOrDefault(m => m.InterlinearAbbr == itemDict["msa"].Item2);
-						if (match != null)
+						if (bundle.SenseRA != null && bundle.SenseRA.MorphoSyntaxAnalysisRA?.InterlinearAbbr == itemDict["msa"].Item2.Text)
 						{
-							bundle.MsaRA = match;
+							bundle.MsaRA = bundle.SenseRA.MorphoSyntaxAnalysisRA;
+						}
+						else
+						{
+							IMoMorphSynAnalysis match = msa_repo.AllInstances().FirstOrDefault(m => m.InterlinearAbbr == itemDict["msa"].Item2.Text);
+							if (match != null)
+							{
+								bundle.MsaRA = match;
+							}
 						}
 					}
 				}
 			}
 
+			// Try to fill in category.
+			if (word.Items != null && wordForm.Analysis != null)
+			{
+				// Look for an existing category that matches a "pos".
+				bool hasPOS = false;
+				foreach (var item in word.Items)
+				{
+					if (wordForm.Analysis.CategoryRA != null)
+					{
+						// Category filled in.
+						break;
+					}
+					if (item.type == "pos")
+					{
+						hasPOS = true;
+						ILgWritingSystem writingSystem = GetWsEngine(cache.WritingSystemFactory, item.lang);
+						if (writingSystem != null)
+						{
+							foreach (var cat in cache.LanguageProject.AllPartsOfSpeech)
+							{
+								if (MatchesCatNameOrAbbreviation(writingSystem.Handle, item.Value, cat))
+								{
+									wordForm.Analysis.CategoryRA = cat;
+									break;
+								}
+							}
+						}
+					}
+				}
+				if (hasPOS && wordForm.Analysis.CategoryRA == null)
+				{
+					// Create a new category.
+					IPartOfSpeech cat = cache.ServiceLocator.GetInstance<IPartOfSpeechFactory>().Create();
+					cache.LanguageProject.PartsOfSpeechOA.PossibilitiesOS.Add(cat);
+					foreach (var item in word.Items)
+					{
+						if (item.type == "pos")
+						{
+							ILgWritingSystem writingSystem = GetWsEngine(cache.WritingSystemFactory, item.lang);
+							if (writingSystem != null)
+							{
+								cat.Name.set_String(writingSystem.Handle, GetItemValue(item, cache.WritingSystemFactory));
+								cat.Abbreviation.set_String(writingSystem.Handle, GetItemValue(item, cache.WritingSystemFactory));
+							}
+						}
+					}
+					wordForm.Analysis.CategoryRA = cat;
+				}
+			}
+
 			return wordForm;
+		}
+
+		// Based on StringServices.DecorateFormWithAffixMarkers.
+		private static string DecorateFormWithAffixMarkers(IMoMorphType mmt, string form)
+		{
+			if (mmt == null || form == null)
+				return form;
+			// Add pre- post markers, if any.
+			if (!String.IsNullOrEmpty(mmt.Prefix))
+			{
+				form = mmt.Prefix + form;
+			}
+			if (!String.IsNullOrEmpty(mmt.Postfix))
+			{
+				form = form + mmt.Postfix;
+			}
+			return form;
 		}
 
 		private static bool FindOrCreateWfiAnalysis(LcmCache cache, Word word,
@@ -820,9 +953,23 @@ namespace SIL.FieldWorks.IText
 			// First, collect all expected forms and glosses from the Word
 			var expectedForms = new Dictionary<int, string>(); // wsHandle -> expected value
 			var expectedGlosses = new Dictionary<int, string>(); // wsHandle -> expected gloss
+			var expectedCats = new Dictionary<int, string>(); // wsHandle -> expected cat
 			IAnalysis candidateForm = null;
 			ITsString wordForm = null;
 			ITsString punctForm = null;
+
+			if (!String.IsNullOrEmpty(word.guid))
+			{
+				// Base candidateForm on guid rather than "txt" when available.
+				// This works better for upper case versions of lower case words.
+				ICmObject repoObj;
+				cache.ServiceLocator.ObjectRepository.TryGetObject(new Guid(word.guid), out repoObj);
+				var modelWord = repoObj as IAnalysis;
+				if (modelWord != null)
+				{
+					candidateForm = modelWord.Wordform;
+				}
+			}
 
 			foreach (var wordItem in word.Items)
 			{
@@ -871,7 +1018,17 @@ namespace SIL.FieldWorks.IText
 
 						expectedGlosses[ws.Handle] = wordItem.Value;
 						break;
+
+					case "pos":
+						expectedCats[ws.Handle] = wordItem.Value;
+						break;
 				}
+			}
+			if (word.morphemes != null && word.morphemes.analysisStatus != analysisStatusTypes.humanApproved)
+			{
+				// If the morphemes were guessed then the glosses and cats were also guessed.
+				expectedGlosses.Clear();
+				expectedCats.Clear();
 			}
 
 			if (candidateForm == null || !MatchPrimaryFormAndAddMissingAlternatives(candidateForm, expectedForms, mainWritingSystem))
@@ -890,29 +1047,64 @@ namespace SIL.FieldWorks.IText
 			analysis = candidateWordform;
 			// If no glosses or morphemes are expected the wordform itself is the match
 			if (expectedGlosses.Count == 0
-				&& (word.morphemes == null || word.morphemes.morphs.Length == 0))
+				&& (word.morphemes == null || word.morphemes.morphs.Length == 0 ||
+					word.morphemes.analysisStatus != analysisStatusTypes.humanApproved))
 			{
 				analysis = GetMostSpecificAnalysisForWordForm(candidateWordform);
 				return true;
 			}
 
+			analysis = FindMatchingAnalysis(cache, candidateWordform, word, expectedGlosses, expectedCats);
+			if (analysis != null)
+			{
+				return true;
+			}
+
+			if (wordForm.Text.ToLower() != wordForm.Text)
+			{
+				// Try lowercase.
+				var lcCandidateForm = cache.ServiceLocator
+								.GetInstance<IWfiWordformRepository>()
+								.GetMatchingWordform(wordForm.get_WritingSystemAt(0), wordForm.Text.ToLower());
+				if (lcCandidateForm is IWfiWordform lcCandidateWordform)
+				{
+					analysis = FindMatchingAnalysis(cache, lcCandidateWordform, word, expectedGlosses, expectedCats);
+					if (analysis != null)
+					{
+						return true;
+					}
+				}
+			}
+
+			// No matching analysis found with all expected gloss and morpheme data
+			analysis = AddEmptyAnalysisToWordform(cache, candidateWordform);
+			return false;
+		}
+
+		private static IAnalysis FindMatchingAnalysis(LcmCache cache, IWfiWordform candidateWordform, Word word,
+			Dictionary<int, string> expectedGlosses, Dictionary<int, string> expectedCats)
+		{
+			IAnalysis analysis = null;
+			var wsFact = cache.WritingSystemFactory;
 			// Look for an analysis that has the correct morphemes and a matching gloss
 			foreach (var wfiAnalysis in candidateWordform.AnalysesOC)
 			{
 				var morphemeMatch = true;
 				// verify that the analysis has a Morph Bundle with the expected morphemes from the import
-				if (word.morphemes != null && wfiAnalysis.MorphBundlesOS.Count == word.morphemes?.morphs.Length)
+				if (word.morphemes != null && wfiAnalysis.MorphBundlesOS.Count == word.morphemes?.morphs.Length &&
+					!IsGuess(word.morphemes))
 				{
 					analysis = GetMostSpecificAnalysisForWordForm(wfiAnalysis);
-					for(var i = 0; i < wfiAnalysis.MorphBundlesOS.Count; ++i)
+					for (var i = 0; i < wfiAnalysis.MorphBundlesOS.Count; ++i)
 					{
-						var extantMorphForm = wfiAnalysis.MorphBundlesOS[i].Form;
+						var morphBundle = wfiAnalysis.MorphBundlesOS[i];
+						var extantMorphForm = morphBundle.Form;
 						var importMorphForm = word.morphemes.morphs[i].items.FirstOrDefault(item => item.type == "txt");
 						var importFormWs = GetWsEngine(wsFact, importMorphForm?.lang);
 						// compare the import item to the extant morph form
 						if (importMorphForm == null || extantMorphForm == null ||
 							TsStringUtils.IsNullOrEmpty(extantMorphForm.get_String(importFormWs.Handle)) ||
-							!extantMorphForm.get_String(importFormWs.Handle).Text.Normalize()
+							!DecorateFormWithAffixMarkers(morphBundle.MorphRA?.MorphTypeRA, extantMorphForm.get_String(importFormWs.Handle).Text).Normalize()
 								.Equals(importMorphForm.Value?.Normalize()))
 						{
 							morphemeMatch = false;
@@ -923,18 +1115,14 @@ namespace SIL.FieldWorks.IText
 
 				if (morphemeMatch)
 				{
-					var matchingGloss = wfiAnalysis.MeaningsOC.FirstOrDefault(g => VerifyGlossesMatch(g, expectedGlosses));
+					var matchingGloss = wfiAnalysis.MeaningsOC.FirstOrDefault(g => VerifyGlossesMatch(g, expectedGlosses, expectedCats));
 					if (matchingGloss != null)
 					{
-						analysis = matchingGloss;
-						return true;
+						return matchingGloss;
 					}
 				}
 			}
-
-			// No matching analysis found with all expected gloss and morpheme data
-			analysis = AddEmptyAnalysisToWordform(cache, candidateWordform);
-			return false;
+			return null;
 		}
 
 		private static IAnalysis GetMostSpecificAnalysisForWordForm(IAnalysis candidateWordform)
@@ -1031,7 +1219,8 @@ namespace SIL.FieldWorks.IText
 
 		// Helper method to verify that all expected glosses match the stored glosses
 		private static bool VerifyGlossesMatch(IWfiGloss wfiGloss,
-			Dictionary<int, string> expectedGlosses)
+			Dictionary<int, string> expectedGlosses,
+			Dictionary<int, string> expectedCats)
 		{
 			foreach (var expectedGloss in expectedGlosses)
 			{
@@ -1042,8 +1231,26 @@ namespace SIL.FieldWorks.IText
 				if (storedGloss == null || storedGloss.Text != expectedValue)
 					return false; // Mismatch found
 			}
+			foreach (var expectedCat in expectedCats)
+			{
+				if (!MatchesCatNameOrAbbreviation(expectedCat.Key, expectedCat.Value, wfiGloss.Analysis?.CategoryRA))
+					return false;
+			}
 
 			return true;
+		}
+
+		private static bool MatchesCatNameOrAbbreviation(int ws, string text, IPartOfSpeech cat)
+		{
+			if (cat == null)
+				return false;
+			ITsString name = cat.Name.get_String(ws);
+			if (name != null && name.Text == text)
+				return true;
+			ITsString abbr = cat.Abbreviation.get_String(ws);
+			if (abbr != null && abbr.Text == text)
+				return true;
+			return false;
 		}
 
 		/// <summary>
@@ -1101,7 +1308,7 @@ namespace SIL.FieldWorks.IText
 						analysisTree = new AnalysisTree(wfiGloss);
 					}
 					analysisTree.Gloss.Form.set_String(wsNewGloss, wordGlossItem.Value);
-					if (word.morphemes?.analysisStatus != analysisStatusTypes.guess)
+					if (!IsGuess(word.morphemes))
 						// Make sure this analysis is marked as user-approved (green check mark)
 						cache.LangProject.DefaultUserAgent.SetEvaluation(
 							analysisTree.WfiAnalysis, Opinions.approves);
@@ -1116,14 +1323,13 @@ namespace SIL.FieldWorks.IText
 						var wsWord = GetWsEngine(wsFact, wordItem.lang).Handle;
 						analysisTree.WfiAnalysis.MorphBundlesOS.Add(morphemeBundle);
 						morphemeBundle.Form.set_String(wsWord, wordItem.Value);
-
 					}
 
 					processedGlossLangs.Add(wordGlossItem.lang);
 				}
 			}
 
-			if (wordForm != null && word.morphemes?.analysisStatus == analysisStatusTypes.guess)
+			if (wordForm != null && IsGuess(word.morphemes))
 				// Ignore gloss if morphological analysis was only a guess.
 				wordForm = wordForm.Wordform;
 		}
@@ -1140,25 +1346,27 @@ namespace SIL.FieldWorks.IText
 		private static void SetTextMetaAndMergeMedia(LcmCache cache, Interlineartext interlinText, ILgWritingSystemFactory wsFactory,
 			LCModel.IText newText, bool merging)
 		{
-			if (interlinText.Items != null) // apparently it is null if there are no items.
+			InterlinearObjects objects = new InterlinearObjects();
+
+			// Set top-level metadata properties.
+			SetObjectPropertyValues(newText, interlinText.Items, objects.GetXmlPropertyMap("Text"), cache);
+
+			// Create objects except for links.
+			if (interlinText.objects != null)
 			{
-				foreach (var item in interlinText.Items)
+				foreach (var obj in interlinText.objects)
 				{
-					switch (item.type)
-					{
-						case "title":
-							newText.Name.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
-							break;
-						case "title-abbreviation":
-							newText.Abbreviation.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
-							break;
-						case "source":
-							newText.Source.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
-							break;
-						case "comment":
-							newText.Description.set_String(GetWsEngine(wsFactory, item.lang).Handle, item.Value);
-							break;
-					}
+					CreateFullObject(obj, objects, cache);
+				}
+			}
+
+			// Create links after all objects have been created.
+			CreateItemLinks(interlinText.guid, interlinText.Items, objects, cache);
+			if (interlinText.objects != null)
+			{
+				foreach (var obj in interlinText.objects)
+				{
+					CreateItemLinks(obj.guid, obj.item, objects, cache);
 				}
 			}
 
@@ -1196,5 +1404,288 @@ namespace SIL.FieldWorks.IText
 				}
 			}
 		}
+
+		/// <summary>
+		/// Create object and fill in item properties.
+		/// </summary>
+		private static void CreateFullObject(Interlineartext.Object obj, InterlinearObjects objects, LcmCache cache)
+		{
+			Guid guid = new Guid(obj.guid);
+			ICmObjectRepository repository = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+			if (!repository.TryGetObject(guid, out ICmObject icmObject))
+			{
+				icmObject = CreateObject(obj, objects, cache);
+				Dictionary<string, string> xmlPropertyMap = objects.GetXmlPropertyMap(obj.type);
+				SetObjectPropertyValues(icmObject, obj.item, xmlPropertyMap, cache);
+			}
+		}
+
+		private static void SetObjectPropertyValues(ICmObject icmObject, item[] items, Dictionary<string, string> xmlPropertyMap, LcmCache cache)
+		{
+			if (items == null) return;
+			Type objType = icmObject.GetType();
+			/// Set item properties.
+			foreach (var item in items)
+			{
+				if (item.guid != null)
+				{
+					continue;
+				}
+				if (item.type == "owner" && icmObject is ICmPossibility possibility)
+				{
+					// Add possibility to a possibility list rooted in LanguageProject.
+					foreach (PropertyInfo langPropInfo in cache.LanguageProject.GetType().GetProperties())
+					{
+						string langPropName = langPropInfo.Name;
+						if (langPropName.EndsWith("OA"))
+							langPropName = langPropName.Substring(0, langPropName.Length - 2);
+						if (langPropName == item.Value)
+						{
+							var langPropValue = langPropInfo.GetValue(cache.LanguageProject);
+							if (langPropValue is ICmPossibilityList possibilityList)
+							{
+								possibilityList.PossibilitiesOS.Add(possibility);
+							}
+						}
+					}
+					continue;
+				}
+				object value = null;
+				string propName = null;
+				if (xmlPropertyMap.ContainsKey(item.type))
+					propName = xmlPropertyMap[item.type];
+				else if (item.type == "date-created")
+					propName = "DateCreated";
+				else if (item.type == "date-modified")
+					propName = "DateModified";
+				PropertyInfo propInfo = objType.GetProperty(propName);
+				object currentValue = propInfo.GetValue(icmObject, null);
+				if (currentValue is bool)
+				{
+					value = item.Value.ToLower() == "true";
+				}
+				else if (currentValue is DateTime)
+				{
+					value = DateTime.Parse(item.Value, null, System.Globalization.DateTimeStyles.AssumeUniversal);
+				}
+				else if (currentValue is IMultiString)
+				{
+					// value is an ITsString.
+					value = GetItemValue(item, cache.WritingSystemFactory);
+				}
+				else if (currentValue is IMultiUnicode)
+				{
+					// value is an ITsString.
+					value = GetItemValue(item, cache.WritingSystemFactory);
+				}
+				else if (currentValue is int)
+				{
+					int intValue = 0;
+					if (int.TryParse(item.Value, out intValue))
+						value = intValue;
+				}
+				SetPropertyValue(icmObject, propName, value);
+			}
+		}
+
+		/// <summary>
+		/// Create object.
+		/// </summary>
+		private static ICmObject CreateObject(Interlineartext.Object obj, InterlinearObjects objects, LcmCache cache)
+		{
+			string objType = objects.XmlTypeMap[obj.type];
+			switch (objType)
+			{
+				case "CmAnthroItem":
+					return cache.ServiceLocator.GetInstance<ICmAnthroItemFactory>().Create(new Guid(obj.guid));
+				case "CmLocation":
+					return cache.ServiceLocator.GetInstance<ICmLocationFactory>().Create(new Guid(obj.guid));
+				case "CmPerson":
+					return cache.ServiceLocator.GetInstance<ICmPersonFactory>().Create(new Guid(obj.guid));
+				case "CmPossibility":
+					return cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(new Guid(obj.guid));
+				case "RnGenericRec":
+					IRnGenericRec record = cache.ServiceLocator.GetInstance<IRnGenericRecFactory>().Create(new Guid(obj.guid));
+					cache.LanguageProject.ResearchNotebookOA.RecordsOC.Add(record);
+					return record;
+				case "RnRoledPartic":
+					return cache.ServiceLocator.GetInstance<IRnRoledParticFactory>().Create(new Guid(obj.guid));
+			}
+			return null;
+		}
+
+		private static void CreateItemLinks(string objGuid, item[] items, InterlinearObjects objects, LcmCache cache)
+		{
+			if (items != null)
+			{
+				foreach (var item in items)
+				{
+					if (item.guid != null)
+					{
+						CreateLink(objGuid, item.type, item.guid, item.lang, item.Value, objects, cache);
+					}
+				}
+			}
+		}
+
+
+		/// <summary>
+		/// Create given link.
+		/// </summary>
+		private static void CreateLink(string objGuid, string xmlPropName, string valueGuid, string lang, string valueName, InterlinearObjects objects, LcmCache cache)
+		{
+			ICmObjectRepository repository = cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+			ICmObject obj = repository.GetObject(new Guid(objGuid));
+			Dictionary<string, string> xmlPropertyMap = objects.InvertMap(objects.GetPropertyMap(obj.GetType().Name));
+			string propName = (xmlPropName == "owner") ? "Owner" : xmlPropertyMap[xmlPropName];
+			ICmObject value = null;
+			if (!repository.TryGetObject(new Guid(valueGuid), out value))
+			{
+				value = CreateObjectByName(obj, propName, lang, valueName, valueGuid, cache);
+			}
+			SetPropertyValue(obj, propName, value);
+		}
+
+		private static ICmObject CreateObjectByName(ICmObject obj, string propName, string lang, string valueName, string valueGuid, LcmCache cache)
+		{
+			ICmPossibilityList possibilityList = null;
+			string possibilityType = "ICmPossibility";
+			switch (propName)
+			{
+				case "AnthroCodesRC":
+					{
+						possibilityList = cache.LanguageProject.AnthroListOA;
+						possibilityType = "ICmAnthroItem";
+						break;
+					}
+				case "GenresRC":
+					{
+						possibilityList = cache.LanguageProject.GenreListOA;
+						break;
+					}
+				case "ParticipantsRC":
+				case "ResearchersRC":
+				case "Source":
+					{
+						possibilityList = cache.LanguageProject.PeopleOA;
+						possibilityType = "ICmPerson";
+						break;
+					}
+				case "RoleRA":
+					{
+						possibilityList = cache.LanguageProject.RolesOA;
+						break;
+					}
+				case "LocationsRC":
+					{
+						possibilityList = cache.LanguageProject.LocationsOA;
+						possibilityType = "ICmLocation";
+						break;
+					}
+			}
+			if (possibilityList == null)
+			{
+				return null;
+			}
+			// Look for an existing possibility with the given name.
+			int ws = GetWsEngine(cache.WritingSystemFactory, lang).Handle;
+			foreach (var candidate in possibilityList.ReallyReallyAllPossibilities)
+			{
+				ITsString name = candidate.Name.BestAnalysisAlternative;
+				if (name.Text == valueName && name.get_WritingSystemAt(0) == ws)
+				{
+					// Should we set the candidate's guid to valueGuid?
+					return candidate;
+				}
+			}
+			// Create a new possibility.
+			ICmPossibility newPossibility = null;
+			Guid guid = new Guid(valueGuid);
+			switch (possibilityType)
+			{
+				case "ICmAnthroItem":
+					newPossibility = cache.ServiceLocator.GetInstance<ICmAnthroItemFactory>().Create(guid);
+					break;
+				case "ICmLocation":
+					newPossibility = cache.ServiceLocator.GetInstance<ICmLocationFactory>().Create(guid);
+					break;
+				case "ICmPerson":
+					newPossibility = cache.ServiceLocator.GetInstance<ICmPersonFactory>().Create(guid);
+					break;
+				case "ICmPossibility":
+					newPossibility = cache.ServiceLocator.GetInstance<ICmPossibilityFactory>().Create(guid);
+					break;
+			}
+			if (newPossibility != null)
+			{
+				newPossibility.Name.set_String(ws, valueName);
+				possibilityList.PossibilitiesOS.Add(newPossibility);
+			}
+			return newPossibility;
+		}
+
+		/// <summary>
+		/// Set object property to value.
+		private static void SetPropertyValue(ICmObject obj, string propName, object value)
+		{
+			if (value == null)
+				return;
+			if (propName == "Owner")
+			{
+				// We store Owner but set SubPossibilitiesOS.
+				SetPropertyValue((ICmObject)value, "SubPossibilitiesOS", obj);
+				return;
+			}
+			if (propName == "AssociatedNotebookRecord")
+			{
+				SetPropertyValue((ICmObject)value, "TextRA", obj);
+				return;
+			}
+			PropertyInfo propInfo = obj.GetType().GetProperty(propName);
+			object currentValue = propInfo.GetValue(obj, null);
+			if (currentValue == null)
+			{
+				propInfo.SetValue(obj, value);
+				return;
+			}
+
+			Type currentValueType = currentValue.GetType();
+			if (value.GetType().IsInstanceOfType(currentValueType))
+			{
+				propInfo.SetValue(obj, value);
+			}
+			else if (currentValueType.IsGenericType &&
+				(currentValueType.GetGenericTypeDefinition().Name == "LcmOwningCollection`1" ||
+				 currentValueType.GetGenericTypeDefinition().Name == "LcmOwningSequence`1" ||
+				 currentValueType.GetGenericTypeDefinition().Name == "LcmReferenceCollection`1" ||
+				 currentValueType.GetGenericTypeDefinition().Name == "LcmReferenceSequence`1"))
+			{
+				Type itemType = currentValueType.GetGenericArguments()[0];
+				if (itemType.IsAssignableFrom(value.GetType()))
+				{
+					var addMethod = currentValueType.GetMethod("Add");
+					addMethod?.Invoke(currentValue, new[] { value });
+				}
+			}
+			else if (currentValue is IMultiString multiString)
+			{
+				if (value is ITsString itsString)
+				{
+					multiString.set_String(itsString.get_WritingSystemAt(0), itsString);
+				}
+			}
+			else if (currentValue is IMultiUnicode multiUnicode)
+			{
+				if (value is ITsString itsString)
+				{
+					multiUnicode.set_String(itsString.get_WritingSystemAt(0), itsString.Text);
+				}
+			}
+			else
+			{
+				propInfo.SetValue(obj, value);
+			}
+		}
+
 	}
 }

@@ -221,9 +221,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				{
 					Cache.DomainDataByFlid.BeginUndoTask(LexTextControls.ksUndoInsertPhonologicalFeature,
 									 LexTextControls.ksRedoInsertPhonologicalFeature);
-					foreach (var cmBaseAnnotation in m_annotations)
+					foreach (var cmBaseAnnotation in m_annotations.ToList())
 					{
-						cmBaseAnnotation.Delete();
+						if (cmBaseAnnotation.IsValidObject)
+							cmBaseAnnotation.Delete();
+						else
+							m_annotations.Remove(cmBaseAnnotation);
 					}
 					Cache.DomainDataByFlid.EndUndoTask();
 				}

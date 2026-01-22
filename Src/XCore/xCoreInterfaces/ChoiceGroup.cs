@@ -519,7 +519,7 @@ namespace XCore
 		protected void Populate(XmlNode node)
 		{
 			Debug.Assert( node != null);
-			XmlNodeList items =node.SelectNodes("item | menu | group");
+			XmlNodeList items = node.SelectNodes("item | menu | group");
 			foreach (XmlNode childNode in items)
 			{
 				switch (childNode.Name)
@@ -620,7 +620,6 @@ namespace XCore
 
 		public void HandleItemClick(ListPropertyChoice choice)
 		{
-			m_mediator.SendMessage("ProgressReset", this);
 			switch (Behavior)
 			{
 			case "singlePropertyAtomicValue":
@@ -636,8 +635,6 @@ namespace XCore
 				Trace.Fail("The behavior '" + Behavior + "' is not supported or for some other reason was unexpected here(check capitalization).");
 				break;
 			}
-			m_mediator.SendMessage("ProgressReset", this);
-
 		}
 
 		private string CommandMessage

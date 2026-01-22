@@ -12,6 +12,7 @@ using System.Xml.Serialization;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.DomainImpl;
+using XCore;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -122,7 +123,7 @@ namespace SIL.FieldWorks.XWorks
 				if (string.IsNullOrEmpty(FilePath))
 					return false; // easiest way to avoid a crash; assume something that may not be true!
 				var directory = Path.GetFileName(Path.GetDirectoryName(FilePath));
-				return DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName.Equals(directory);
+				return DictionaryConfigurationListener.RevIndexConfigDirName.Equals(directory);
 			}
 		}
 
@@ -331,6 +332,22 @@ namespace SIL.FieldWorks.XWorks
 		public override string ToString()
 		{
 			return Label;
+		}
+
+		/// <summary>
+		/// Gets the reversal configuration model for the specified writing system.
+		/// </summary>
+		/// <returns>Can return null if there is not a configuration model associated with the writing system.</returns>
+		public static DictionaryConfigurationModel GetReversalConfigurationModel(string ws, LcmCache cache, PropertyTable propTable)
+		{
+			var projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(
+				propTable, DictionaryConfigurationListener.RevIndexConfigDirName);
+			var defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(
+				DictionaryConfigurationListener.RevIndexConfigDirName);
+			var configurationModels = DictionaryConfigurationController.GetDictionaryConfigurationModels(
+				cache, defaultConfigDir, projectConfigDir);
+
+			return configurationModels.FirstOrDefault(config => config.WritingSystem == ws);
 		}
 	}
 

@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.LexText.Controls {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class LexTextControls {
@@ -358,7 +358,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to &amp;Add Variant.
+        ///   Looks up a localized string similar to &amp;Link Selected.
         /// </summary>
         internal static string ksAddVariant {
             get {
@@ -2362,6 +2362,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Preserve existing values.
+        /// </summary>
+        internal static string ksPreserveExistingValues {
+            get {
+                return ResourceManager.GetString("ksPreserveExistingValues", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Preview Import Summary.
         /// </summary>
         internal static string ksPreviewImportSummary {
@@ -2443,7 +2452,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Redo Add Variant.
+        ///   Looks up a localized string similar to Redo Link Selected.
         /// </summary>
         internal static string ksRedoAddVariant {
             get {
@@ -2857,7 +2866,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following Stem Names were added to the project:.
+        ///   Looks up a localized string similar to The following Stem Allomorph Labels were added to the project:.
         /// </summary>
         internal static string ksStemNamesAdded {
             get {
@@ -3001,7 +3010,7 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Undo Add Variant.
+        ///   Looks up a localized string similar to Undo Link Selected.
         /// </summary>
         internal static string ksUndoAddVariant {
             get {

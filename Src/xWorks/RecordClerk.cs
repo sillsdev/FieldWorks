@@ -38,6 +38,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -339,6 +340,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="viewConfiguration"></param>
 		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode viewConfiguration)
 		{
+			Init(mediator, propertyTable, viewConfiguration, true);
+		}
+
+		public virtual void Init(Mediator mediator, PropertyTable propertyTable, XmlNode viewConfiguration, bool updateAndNotify)
+		{
 			CheckDisposed();
 
 			XmlNode clerkConfiguration = ToolConfiguration.GetClerkNodeFromToolParamsNode(viewConfiguration);
@@ -356,7 +362,7 @@ namespace SIL.FieldWorks.XWorks
 			m_relationToRelatedClerk = XmlUtils.GetOptionalAttributeValue(clerkConfiguration, "relationToRelatedClerk");
 
 			TryRestoreSorter(clerkConfiguration, cache);
-			TryRestoreFilter(clerkConfiguration, cache);
+			TryRestoreFilter(clerkConfiguration, cache, updateAndNotify);
 			m_list.ListChanged += OnListChanged;
 			m_list.AboutToReload += m_list_AboutToReload;
 			m_list.DoneReload += m_list_DoneReload;
@@ -453,31 +459,22 @@ namespace SIL.FieldWorks.XWorks
 			return m_list.RestoreFrom(pathname);
 		}
 
-		private string SortNamePropertyTableId
+		private string GetSortNamePropertyTableId(DictionaryConfigurationModel dictConfig = null)
 		{
-			get
-			{
-				CheckDisposed();
-				return m_list.PropertyTableId("sortName");
-			}
+			CheckDisposed();
+			return m_list.PropertyTableId("sortName", dictConfig);
 		}
 
-		private string FilterPropertyTableId
+		private string GetFilterPropertyTableId(DictionaryConfigurationModel dictConfig = null)
 		{
-			get
-			{
-				CheckDisposed();
-				return m_list.PropertyTableId("filter");
-			}
+			CheckDisposed();
+			return m_list.PropertyTableId("filter", dictConfig);
 		}
 
-		private string SorterPropertyTableId
+		private string GetSorterPropertyTableId(DictionaryConfigurationModel dictConfig = null)
 		{
-			get
-			{
-				CheckDisposed();
-				return m_list.PropertyTableId("sorter");
-			}
+			CheckDisposed();
+			return m_list.PropertyTableId("sorter", dictConfig);
 		}
 
 		/// <summary>
@@ -487,10 +484,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="cache"></param>
 		/// <returns><c>true</c> if we changed or initialized a new filter,
 		/// <c>false</c> if the one installed matches the one we had stored to persist.</returns>
-		protected virtual bool TryRestoreFilter(XmlNode clerkConfiguration, LcmCache cache)
+		protected virtual bool TryRestoreFilter(XmlNode clerkConfiguration, LcmCache cache,
+			bool updateAndNotify, DictionaryConfigurationModel dictConfig = null)
 		{
 			RecordFilter filter = null;
-			string persistFilter = m_propertyTable.GetStringProperty(FilterPropertyTableId, null, PropertyTable.SettingsGroup.LocalSettings);
+			string persistFilter = m_propertyTable.GetStringProperty(GetFilterPropertyTableId(dictConfig), null, PropertyTable.SettingsGroup.LocalSettings);
 			if (m_list.Filter != null)
 			{
 				// if the persisted object string of the existing filter matches the one in the property table
@@ -522,8 +520,16 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (m_list.Filter == filter)
 				return false;
-			// Use OnChangeFilter so that column headers get updated (LT-21962).
-			OnChangeFilter(new FilterChangeEventArgs(filter, m_list.Filter));
+
+			if (updateAndNotify)
+			{
+				// Use OnChangeFilter so that column headers get updated (LT-21962).
+				OnChangeFilter(new FilterChangeEventArgs(filter, m_list.Filter));
+			}
+			else
+			{
+				m_list.Filter = filter;
+			}
 			m_list.TransferOwnership(filter as IDisposable);
 			return true;
 		}
@@ -535,11 +541,11 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="cache"></param>
 		/// <returns><c>true</c> if we changed or initialized a new sorter,
 		/// <c>false</c>if the one installed matches the one we had stored to persist.</returns>
-		protected virtual bool TryRestoreSorter(XmlNode clerkConfiguration, LcmCache cache)
+		protected virtual bool TryRestoreSorter(XmlNode clerkConfiguration, LcmCache cache, DictionaryConfigurationModel dictConfig = null)
 		{
-			SortName = m_propertyTable.GetStringProperty(SortNamePropertyTableId, null, PropertyTable.SettingsGroup.LocalSettings);
+			SortName = m_propertyTable.GetStringProperty(GetSortNamePropertyTableId(dictConfig), null, PropertyTable.SettingsGroup.LocalSettings);
 
-			string persistSorter = m_propertyTable.GetStringProperty(SorterPropertyTableId, null, PropertyTable.SettingsGroup.LocalSettings);
+			string persistSorter = m_propertyTable.GetStringProperty(GetSorterPropertyTableId(dictConfig), null, PropertyTable.SettingsGroup.LocalSettings);
 			if (m_list.Sorter != null)
 			{
 				// if the persisted object string of the existing sorter matches the one in the property table
@@ -602,13 +608,18 @@ namespace SIL.FieldWorks.XWorks
 		/// Compares the state of the filters and sorters to persisted values in property table
 		/// and re-establishes them from the property table if they have changed.
 		/// </summary>
+		/// <param name="updateAndNotify">If true: Gui and properties should be updated, and notifications sent.</param>
 		/// <returns>true if we restored either a sorter or a filter.</returns>
-		internal protected bool UpdateFiltersAndSortersIfNeeded()
+		internal protected bool UpdateFiltersAndSortersIfNeeded(bool updateAndNotify, DictionaryConfigurationModel dictConfig = null)
 		{
-			bool fRestoredSorter = TryRestoreSorter(m_clerkConfiguration, Cache);
-			bool fRestoredFilter = TryRestoreFilter(m_clerkConfiguration, Cache);
-			UpdateFilterStatusBarPanel();
-			UpdateSortStatusBarPanel();
+			bool fRestoredSorter = TryRestoreSorter(m_clerkConfiguration, Cache, dictConfig);
+			bool fRestoredFilter = TryRestoreFilter(m_clerkConfiguration, Cache, updateAndNotify, dictConfig);
+			if (updateAndNotify)
+			{
+				UpdateFilterStatusBarPanel();
+				UpdateSortStatusBarPanel();
+				UpdateParsingDevStatusBarPanel();
+			}
 			return fRestoredSorter || fRestoredFilter;
 		}
 
@@ -642,6 +653,9 @@ namespace SIL.FieldWorks.XWorks
 		{
 			get { return m_fIsActiveInGui; }
 		}
+
+		private bool m_updateStatusBar;
+		private bool m_useRecordTreeBar;
 
 		/// <summary>
 		/// determine if we're in the (given) tool
@@ -911,15 +925,7 @@ namespace SIL.FieldWorks.XWorks
 			//NB: we need to be careful
 			//not to broadcast any record changes until we are actually initialize enough
 			//to deal with the resulting request that will come from those widgets.
-
-
-			//if we are not dependent on some other selection, then select the first record.
-			//			if (m_clerkProvidingRootObject ==null)
-			//				this.OnFirstRecord(this);
-
-			//BroadcastChange();
-
-			UpdateOwningObject();
+			UpdateOwningObject(false);
 		}
 
 		#region XCORE Message Handlers
@@ -1048,12 +1054,22 @@ namespace SIL.FieldWorks.XWorks
 			return false;
 		}
 
+		public bool OnJumpToPopupRecord(object argument)
+		{
+			return JumpToRecord(argument, true);
+		}
+
+		public bool OnJumpToRecord(object argument)
+		{
+			return JumpToRecord(argument);
+		}
+
 		/// <summary>
 		/// display the given record
 		/// </summary>
 		/// <param name="argument">the hvo of the record</param>
 		/// <returns></returns>
-		public bool OnJumpToRecord(object argument)
+		bool JumpToRecord(object argument, bool popup = false)
 		{
 			CheckDisposed();
 
@@ -1098,7 +1114,10 @@ namespace SIL.FieldWorks.XWorks
 							// update issue reported in (LT-2448). However, that message only works in the context of a
 							// BrowseViewer, not a document view (e.g. Dictionary) (see LT-7298). So, I've
 							// tested OnChangeFilterClearAll, and it seems to solve both problems now.
-							OnChangeFilterClearAll(null);
+							if (!popup)
+							{
+								OnChangeFilterClearAll(null);
+							}
 							m_activeMenuBarFilter = null;
 							index = IndexOfObjOrChildOrParent(hvoTarget);
 						}
@@ -1345,11 +1364,6 @@ namespace SIL.FieldWorks.XWorks
 			UpdateOwningObject(true);
 		}
 
-		private void UpdateOwningObject()
-		{
-			UpdateOwningObject(false);
-		}
-
 		private void UpdateOwningObject(bool fUpdateOwningObjectOnlyIfChanged)
 		{
 			//if we're not dependent on another clerk, then we don't ever change our owning object.
@@ -1369,11 +1383,11 @@ namespace SIL.FieldWorks.XWorks
 					if (rni != null)
 						luh.SkipShowRecord = rni.SkipShowRecord;
 					if (!fUpdateOwningObjectOnlyIfChanged)
-						m_list.OwningObject = newObj;
+						m_list.SetOwningObject(newObj, true);
 					if (old != newObj)
 					{
 						if (fUpdateOwningObjectOnlyIfChanged)
-							m_list.OwningObject = newObj;
+							m_list.SetOwningObject(newObj, true);
 					}
 				}
 				if (old != newObj)
@@ -1987,6 +2001,8 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		void RemoveNotification()
 		{
+			Subscriber.Unsubscribe(EventConstants.FilterListChanged, FilterListChanged);
+
 			// We need the list to get the cache.
 			if (m_list == null || m_list.IsDisposed || Cache == null || Cache.IsDisposed || Cache.DomainDataByFlid == null)
 				return;
@@ -2027,8 +2043,22 @@ namespace SIL.FieldWorks.XWorks
 				var oldActiveClerk = m_propertyTable.GetValue<RecordClerk>("ActiveClerk");
 				if (oldActiveClerk != this)
 				{
+					var oldUseRecordTreeBar = m_propertyTable.GetValue<Boolean>("UseRecordTreeBar");
+					m_propertyTable.SetProperty("OldUseRecordTreeBar", oldUseRecordTreeBar, true);
+					m_propertyTable.SetPropertyPersistence("OldUseRecordTreeBar", false);
+					m_propertyTable.SetProperty("UseRecordTreeBar", m_useRecordTreeBar, true);
+					m_propertyTable.SetPropertyPersistence("UseRecordTreeBar", false);
+
+					var oldUpdateStatusBar = m_propertyTable.GetValue<Boolean>("UpdateStatusBar");
+					m_propertyTable.SetProperty("OldUpdateStatusBar", oldUpdateStatusBar, true);
+					m_propertyTable.SetPropertyPersistence("OldUpdateStatusBar", false);
+					m_propertyTable.SetProperty("UpdateStatusBar", m_updateStatusBar, true);
+					m_propertyTable.SetPropertyPersistence("UpdateStatusBar", false);
+
 					if (oldActiveClerk != null)
 						oldActiveClerk.BecomeInactive();
+					m_propertyTable.SetProperty("OldActiveClerk", oldActiveClerk, true);
+					m_propertyTable.SetPropertyPersistence("OldActiveClerk", false);
 					m_propertyTable.SetProperty("ActiveClerk", this, true);
 					m_propertyTable.SetPropertyPersistence("ActiveClerk", false);
 					// We are adding this property so that EntryDlgListener can get access to the owning object
@@ -2071,8 +2101,14 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		virtual public void ActivateUI(bool useRecordTreeBar, bool updateStatusBar = true)
 		{
+			// RecordClerk only needs to handle changes if RecordClerk is being used in GUI
+			Subscriber.Subscribe(EventConstants.FilterListChanged, FilterListChanged);
+
 			m_fIsActiveInGui = true;
 			CheckDisposed();
+
+			m_useRecordTreeBar = useRecordTreeBar;
+			m_updateStatusBar = updateStatusBar;
 
 			if (m_recordBarHandler != null)
 			{
@@ -2088,6 +2124,7 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			UpdateFilterStatusBarPanel();
 			UpdateSortStatusBarPanel();
+			UpdateParsingDevStatusBarPanel();
 		}
 
 		/// <summary>
@@ -2189,7 +2226,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// update the contents of the filter list.
 		/// </summary>
-		protected void OnFilterListChanged(object argument)
+		private void FilterListChanged(object argument)
 		{
 			//review: I (JH) couldn't find where/if this method is called.
 			if (m_filterProvider != null)
@@ -2274,7 +2311,7 @@ namespace SIL.FieldWorks.XWorks
 					{
 						m_list.CurrentIndex = FindClosestValidIndex(idx, cobj);
 					}
-					m_mediator.SendMessage("StopParser", null);	// stop parser if it's running.
+					Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser));
 				}
 				finally
 				{
@@ -2538,7 +2575,7 @@ namespace SIL.FieldWorks.XWorks
 				UndoableUnitOfWorkHelper.Do(string.Format(xWorksStrings.ksUndoInsert, command.UndoRedoTextInsert),
 					string.Format(xWorksStrings.ksRedoInsert, command.UndoRedoTextInsert), Cache.ActionHandlerAccessor, () =>
 				{
-					result = m_list.CreateAndInsert(className);
+					result = m_list.CreateAndInsert(className, out _);
 				});
 			}
 			catch (ApplicationException ae)
@@ -2614,6 +2651,83 @@ namespace SIL.FieldWorks.XWorks
 			return result;
 		}
 
+		/// <summary>
+		/// see if it makes sense to provide the "duplicate XXX" command now
+		/// </summary>
+		/// <param name="commandObject"></param>
+		/// <param name="display"></param>
+		/// <returns></returns>
+		public virtual bool OnDisplayDuplicateSelectedItem(object commandObject, ref UIItemDisplayProperties display)
+		{
+			CheckDisposed();
+
+			string className = Cache.MetaDataCacheAccessor.GetClassName(m_list.ListItemsClass);
+			if (m_list.CurrentObject == null ||
+				!m_list.IsCurrentObjectValid() ||
+				!m_list.CanInsertClass(m_list.CurrentObject.ClassName) ||
+				!(m_list.CurrentObject is ICloneableCmObject))
+			{
+				display.Visible = display.Enabled = false;
+			}
+			else
+			{
+				display.Text = string.Format(display.Text, GetTypeNameForUi(m_list.CurrentObject));
+			}
+
+			return true;
+		}
+
+		/// <summary>
+		/// Duplicate selected item in a non-possibilities list.
+		/// </summary>
+		public bool OnDuplicateSelectedItem(object argument)
+		{
+			CheckDisposed();
+
+			if (!Editable)
+				return false;
+
+			if (m_list.CurrentObject == null ||
+				!m_list.IsCurrentObjectValid() ||
+				!m_list.CanInsertClass(m_list.CurrentObject.ClassName) ||
+				!(m_list.CurrentObject is ICloneableCmObject))
+				return false;
+
+			SaveOnChangeRecord();
+
+			var command = (Command)argument;
+			ICmObject selectedObject = m_list.CurrentObject;
+			string className = selectedObject.ClassName;
+			bool result = false;
+			m_suppressSaveOnChangeRecord = true;
+			ICmObject newObj = null;
+
+			try
+			{
+				UndoableUnitOfWorkHelper.Do(string.Format(xWorksStrings.ksUndoDuplicate, className),
+											string.Format(xWorksStrings.ksRedoDuplicate, className),
+											Cache.ActionHandlerAccessor, () =>
+					{
+						result = m_list.CreateAndInsert(className, out newObj);
+						((ICloneableCmObject)selectedObject).SetCloneProperties(newObj);
+					});
+			}
+			catch (ApplicationException ae)
+			{
+				throw new ApplicationException("Could not duplicate the item requested by the command " + command.ConfigurationNode, ae);
+			}
+			finally
+			{
+				m_suppressSaveOnChangeRecord = false;
+			}
+
+			if (newObj != null)
+				m_mediator.BroadcastMessage("UpdateItemCheckedState", newObj);
+			m_mediator.BroadcastMessage("FocusFirstPossibleSlice", null);
+			return result;
+		}
+
+
 		#endregion
 
 		/// <summary>
@@ -2683,16 +2797,21 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		public ICmObject OwningObject
 		{
-			set
-			{
-				CheckDisposed();
-				m_list.OwningObject = value;
-			}
 			get
 			{
 				CheckDisposed();
 				return m_list.OwningObject;
 			}
+		}
+
+		/// <summary>
+		/// Sets the owning object.
+		/// </summary>
+		/// <param name="updateAndNotify">If true: Gui and properties should be updated, and notifications sent.</param>
+		public void SetOwningObject(ICmObject value, bool updateAndNotify)
+		{
+			CheckDisposed();
+			m_list.SetOwningObject(value, updateAndNotify);
 		}
 
 		/// <summary>
@@ -2751,7 +2870,7 @@ namespace SIL.FieldWorks.XWorks
 				m_list.OnChangeFilter(args);
 				// Remember the active filter for this list.
 				string persistFilter = DynamicLoader.PersistObject(Filter, "filter");
-				m_propertyTable.SetProperty(FilterPropertyTableId, persistFilter, PropertyTable.SettingsGroup.LocalSettings, true);
+				m_propertyTable.SetProperty(GetFilterPropertyTableId(), persistFilter, PropertyTable.SettingsGroup.LocalSettings, true);
 				// adjust menu bar items according to current state of Filter, where needed.
 				m_mediator.BroadcastMessage("AdjustFilterSelection", Filter);
 				UpdateFilterStatusBarPanel();
@@ -2851,6 +2970,29 @@ namespace SIL.FieldWorks.XWorks
 			return listIsFiltered ? xWorksStrings.Filtered : "";
 		}
 
+		public void UpdateParsingDevStatusBarPanel()
+		{
+			if (!IsControllingTheRecordTreeBar)
+				return; // none of our business!
+			bool fIgnore = m_propertyTable.GetBoolProperty("IgnoreStatusPanel", false);
+			if (fIgnore)
+				return;
+
+			var b = m_propertyTable.GetValue<StatusBarTextBox>("ParsingDev");
+			if (b == null) //Other xworks apps may not have this panel
+				return;
+			if (Id == "interlinearTexts"  && m_propertyTable.GetBoolProperty("ParsingDevMode", false, PropertyTable.SettingsGroup.LocalSettings))
+			{
+				b.BackBrush = System.Drawing.Brushes.Tan;
+				b.TextForReal = xWorksStrings.ParsingDev;
+			}
+			else
+			{
+				b.BackBrush = System.Drawing.Brushes.Transparent;
+				b.TextForReal = "";
+			}
+		}
+
 		private void UpdateSortStatusBarPanel()
 		{
 			if (!IsControllingTheRecordTreeBar)
@@ -2938,12 +3080,12 @@ namespace SIL.FieldWorks.XWorks
 			m_isDefaultSort = isDefaultSort;
 
 			SortName = sortName;
-			m_propertyTable.SetProperty(SortNamePropertyTableId, SortName, PropertyTable.SettingsGroup.LocalSettings, true);
+			m_propertyTable.SetProperty(GetSortNamePropertyTableId(), SortName, PropertyTable.SettingsGroup.LocalSettings, true);
 
 			m_list.ChangeSorter(sorter);
 			// Remember how we're sorted.
 			string persistSorter = DynamicLoader.PersistObject(Sorter, "sorter");
-			m_propertyTable.SetProperty(SorterPropertyTableId, persistSorter, PropertyTable.SettingsGroup.LocalSettings, true);
+			m_propertyTable.SetProperty(GetSorterPropertyTableId(), persistSorter, PropertyTable.SettingsGroup.LocalSettings, true);
 
 			UpdateSortStatusBarPanel();
 		}
@@ -3014,22 +3156,16 @@ namespace SIL.FieldWorks.XWorks
 
 		private void m_list_AboutToReload(object sender, EventArgs e)
 		{
-			// This used to be a BroadcastMessage, but now broadcast is deferred.
-			// To keep the same logic it's now using the SendMessageToAllNow.  This
-			// is different from SendMessage as it is sent to all even if handled.
-			// To avoid hitting the " For now, we'll not try to be concerned about restoring scroll position
+			// For now, we'll not try to be concerned about restoring scroll position
 			// in a context where we're reloading after suppressing a reload.
 			if (!m_fReloadingDueToMissingObject)
-				m_mediator.SendMessageToAllNow("SaveScrollPosition", this);
+				Publisher.Publish(new PublisherParameterObject(EventConstants.SaveScrollPosition, this));
 		}
 
 		private void m_list_DoneReload(object sender, EventArgs e)
 		{
-			// This used to be a BroadcastMessage, but now broadcast is deferred.
-			// To keep the same logic it's now using the SendMessageToAllNow.  This
-			// is different from SendMessage as it is sent to all even if handled.
 			if (!m_fReloadingDueToMissingObject)
-				m_mediator.SendMessageToAllNow("RestoreScrollPosition", this);
+				Publisher.Publish(new PublisherParameterObject(EventConstants.RestoreScrollPosition, this));
 		}
 
 		internal ListUpdateHelper UpdateHelper { get; set; }
@@ -3043,6 +3179,25 @@ namespace SIL.FieldWorks.XWorks
 			if (source == null)
 				return null;
 			return source.OccurrenceFromHvo(hvo);
+		}
+
+		/// <summary>
+		/// Filters and Sorts the list, then populates the virtual cache with the result. Does not
+		/// update the Gui, change properties, or send notifications.</param>
+		/// </summary>
+		public void FilterAndSortList()
+		{
+			m_list.FilterAndSortList();
+		}
+
+		/// <summary>
+		/// Change the owner object for a ReversalClerk. Unfortunately ReversalClerk is in a different dll
+		/// that we don't have access to, so this virtual method is overriden to provide the functionality.
+		/// </summary>
+		/// <exception cref="NotImplementedException"></exception>
+		public virtual void ChangeOwningObject(Guid newGuid, bool updateAndNotify, DictionaryConfigurationModel dictConfig = null)
+		{
+			throw new NotImplementedException("ChangeOwningObject should not be called for the RecordClerk class.");
 		}
 
 		/// <summary>
@@ -3383,12 +3538,12 @@ namespace SIL.FieldWorks.XWorks
 			m_list.Sorter = sorter;
 		}
 
-		protected override bool TryRestoreFilter(XmlNode clerkConfiguration, LcmCache cache)
+		protected override bool TryRestoreFilter(XmlNode clerkConfiguration, LcmCache cache, bool updateAndNotify, DictionaryConfigurationModel dictConfig = null)
 		{
 			return false;
 		}
 
-		protected override bool TryRestoreSorter(XmlNode clerkConfiguration, LcmCache cache)
+		protected override bool TryRestoreSorter(XmlNode clerkConfiguration, LcmCache cache, DictionaryConfigurationModel dictConfig = null)
 		{
 			return false;
 		}
@@ -3429,7 +3584,8 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class RecordClerkFactory
 	{
-		static public RecordClerk CreateClerk(Mediator mediator, PropertyTable propertyTable, XmlNode configurationNode, bool loadList)
+		/// <param name="updateAndNotify">If true: Gui and properties should be updated, and notifications sent.</param>
+		static public RecordClerk CreateClerk(Mediator mediator, PropertyTable propertyTable, XmlNode configurationNode, bool loadList, bool updateAndNotify)
 		{
 			/*
 				<dynamicloaderinfo/>
@@ -3442,7 +3598,7 @@ namespace SIL.FieldWorks.XWorks
 				newClerk = new RecordClerk();
 			else
 				newClerk = (RecordClerk) DynamicLoader.CreateObject(customClerkNode);
-			newClerk.Init(mediator, propertyTable, configurationNode);
+			newClerk.Init(mediator, propertyTable, configurationNode, updateAndNotify);
 			if (loadList)
 			{
 				// The clerk will have been created with list loading suppressed, but now we

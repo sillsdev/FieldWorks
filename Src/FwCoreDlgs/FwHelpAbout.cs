@@ -65,64 +65,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_sAvailableMemoryFmt = edtAvailableMemory.Text;
 			m_sTitleFmt = Text;
 			m_sAvailableDiskSpaceFmt = edtAvailableDiskSpace.Text;
-
-			if (Platform.IsUnix)
-			{
-				// Link to System Monitor
-
-				// Hide memory and disk usage fields and show a link to
-				// Gnome System Monitor in their place.
-
-				lblAvailableMemory.Visible = false;
-				edtAvailableMemory.Visible = false;
-				lblAvailableDiskSpace.Visible = false;
-				edtAvailableDiskSpace.Visible = false;
-
-				var systemMonitorLink = new LinkLabel
-				{
-					Text = FwCoreDlgs.kstidMemoryDiskUsageInformation,
-					Visible = true,
-					Name = "systemMonitorLink",
-					TabStop = true,
-					Top = lblAvailableMemory.Top,
-					Left = lblAvailableMemory.Left,
-					Width = edtAvailableMemory.Right - lblAvailableMemory.Left,
-				};
-				systemMonitorLink.LinkClicked += HandleSystemMonitorLinkClicked;
-				Controls.Add(systemMonitorLink);
-
-				// Package information
-
-				int oldHeight = this.Height;
-				this.Height += 200;
-				var packageVersionLabel = new Label { Text = "Package versions:", Top = oldHeight - 20, Width = this.Width - 10 };
-				var versionInformation = new TextBox
-				{
-					Height = 200 - 30,
-					Top = oldHeight,
-					Multiline = true,
-					ReadOnly = true,
-					Width = this.Width - 10,
-					ScrollBars = ScrollBars.Vertical
-				};
-				this.Controls.Add(packageVersionLabel);
-				this.Controls.Add(versionInformation);
-
-				foreach (var info in LinuxPackageUtils.FindInstalledPackages("fieldworks")
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-applications"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-enc-converters"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("flexbridge"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("fieldworks-l10n-*"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("mono*-sil"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("libgdiplus*-sil"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("gtk-sharp*-sil"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("mono-basic*-sil"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("xchm"))
-					.Concat<KeyValuePair<string, string>>(LinuxPackageUtils.FindInstalledPackages("pathway")))
-				{
-					versionInformation.AppendText(String.Format("{0} {1}{2}", info.Key, info.Value, Environment.NewLine));
-				}
-			}
 		}
 
 		/// <summary>

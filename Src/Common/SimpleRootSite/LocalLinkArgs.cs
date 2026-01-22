@@ -1,16 +1,11 @@
-﻿// Copyright (c) 2015 SIL International
+// Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
 	/// <summary>
-	/// This class is used for the communication between VwBaseVc.DoHotLinkAction and LinkListener.OnHandleLocalHotlink.
+	/// This class is used for the communication between VwBaseVc.DoHotLinkAction and LinkListener.HandleLocalHotlink.
 	/// </summary>
 	public class LocalLinkArgs
 	{

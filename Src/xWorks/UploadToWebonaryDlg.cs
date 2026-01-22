@@ -111,9 +111,9 @@ namespace SIL.FieldWorks.XWorks
 				return;
 			}
 
-			var countOfDictionaryEntries = m_controller.CountDictionaryEntries(GetSelectedDictionaryModel());
+			var countOfDictionaryEntries = m_controller.CountDictionaryEntries(GetSelectedDictionaryModel(), Model.SelectedPublication);
 
-			var reversalCounts = m_controller.GetCountsOfReversalIndexes(GetSelectedReversals());
+			var reversalCounts = m_controller.GetCountsOfReversalIndexes(GetSelectedReversals(), Model.SelectedPublication);
 			string middle = "";
 			foreach (var reversalIndex in reversalCounts.Keys)
 			{
@@ -154,7 +154,7 @@ namespace SIL.FieldWorks.XWorks
 		private void publicationBox_SelectedIndexChanged(object sender, EventArgs e)
 		{
 			var selectedPublication = publicationBox.SelectedItem.ToString();
-			m_controller.ActivatePublication(selectedPublication);
+			Model.SelectedPublication = selectedPublication;
 			PopulateConfigurationsListByPublication(selectedPublication);
 			PopulateReversalsCheckboxListByPublication(selectedPublication);
 			UpdateEntriesToBePublishedLabel();

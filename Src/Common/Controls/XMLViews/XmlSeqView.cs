@@ -539,7 +539,7 @@ namespace SIL.FieldWorks.Common.Controls
 			int rootHvo, int mainFlid, int[] selectedObjects)
 		{
 			var printDecorator = new ObjectListPublisher(oldSda, mainFlid);
-			printDecorator.CacheVecProp(rootHvo, selectedObjects);
+			printDecorator.CacheVecProp(rootHvo, selectedObjects, true);
 			return printDecorator;
 		}
 

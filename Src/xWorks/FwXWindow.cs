@@ -2,46 +2,43 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading;
-using System.Windows.Forms;
-using System.Xml;
 using Microsoft.Win32;
 using SIL.Extensions;
-using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.UIAdapters;
+using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.FwCoreDlgControls;
-using StyleInfo = SIL.FieldWorks.FwCoreDlgControls.StyleInfo;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.Resources;
 using SIL.FieldWorks.XWorks.Archiving;
+using SIL.IO;
 using SIL.LCModel;
 using SIL.LCModel.Application;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
-using SIL.IO;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 using SIL.Reporting;
 using SIL.Utils;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Windows.Forms;
+using System.Xml;
 using XCore;
-using SIL.LCModel.Application.ApplicationServices;
-using NAudio.Utils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
+using StyleInfo = SIL.FieldWorks.FwCoreDlgControls.StyleInfo;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -90,6 +87,8 @@ namespace SIL.FieldWorks.XWorks
 		protected LcmStyleSheet m_StyleSheet;
 
 		protected FwApp m_app; // protected so the test mock can get to it.
+
+		private PopupToolWindow m_popupLexEntryWindow;
 		#endregion
 
 		/// <summary>
@@ -1176,12 +1175,12 @@ namespace SIL.FieldWorks.XWorks
 
 			var publications = cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS.Select(p => p.Name.BestAnalysisAlternative.Text).ToList();
 
-			var projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(propertyTable, DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
-			var defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+			var projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(propertyTable, DictionaryConfigurationListener.DictConfigDirName);
+			var defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(DictionaryConfigurationListener.DictConfigDirName);
 			var configurations = DictionaryConfigurationController.GetDictionaryConfigurationLabels(cache, defaultConfigDir, projectConfigDir);
 			// Now collect all the reversal configurations into the reversals variable
-			projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(propertyTable, DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
-			defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName);
+			projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(propertyTable, DictionaryConfigurationListener.RevIndexConfigDirName);
+			defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(DictionaryConfigurationListener.RevIndexConfigDirName);
 			var reversals = DictionaryConfigurationController.GetDictionaryConfigurationLabels(cache, defaultConfigDir, projectConfigDir);
 
 			// show dialog
@@ -1195,7 +1194,6 @@ namespace SIL.FieldWorks.XWorks
 			using (var dialog = new UploadToWebonaryDlg(controller, model, propertyTable))
 			{
 				dialog.ShowDialog();
-				mediator.SendMessage("Refresh", null);
 			}
 		}
 
@@ -1208,6 +1206,45 @@ namespace SIL.FieldWorks.XWorks
 		protected bool OnFileProjectProperties(object command)
 		{
 			LaunchProjPropertiesDlg();
+			return true;
+		}
+
+		/// ------------------------------------------------------------------------------------
+		/// <summary>
+		/// Create a popup window to edit the given lexical entry.
+		/// </summary>
+		/// ------------------------------------------------------------------------------------
+		protected bool OnJumpToPopupLexEntry(object command)
+		{
+			switch (m_propertyTable.GetStringProperty("currentContentControl", null))
+			{
+				case "lexiconEdit":
+					// Use existing lexicon entry editor.
+					Mediator.BroadcastMessage("JumpToRecord", command);
+					Mediator.BroadcastMessage("FocusFirstPossibleSlice", null);
+					return true;
+			}
+
+			XmlNode toolNode;
+			if (XWindow.TryGetToolNode("lexicon", "lexiconEditPopup", m_propertyTable, out toolNode))
+			{
+				if (m_popupLexEntryWindow == null || m_popupLexEntryWindow.IsDisposed)
+				{
+					m_popupLexEntryWindow = new PopupToolWindow
+					{
+						Owner = this
+					};
+					m_popupLexEntryWindow.Init(m_mediator, m_propertyTable, toolNode);
+				}
+				if (m_popupLexEntryWindow.WindowState == FormWindowState.Minimized)
+				{
+					m_popupLexEntryWindow.WindowState = FormWindowState.Normal;
+				}
+				m_popupLexEntryWindow.BringToFront();
+				m_popupLexEntryWindow.Activate();
+				Mediator.BroadcastMessage("JumpToPopupRecord", command);
+				Mediator.BroadcastMessage("FocusFirstPossibleSlice", null);
+			}
 			return true;
 		}
 
@@ -2051,7 +2088,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <remarks>LT-20371</remarks>
 		public bool OnImportTranslatedGramCats(object commandObject)
 		{
-			if(DialogResult.OK == MessageBox.Show(xWorksStrings.ImportTranslatedGramCatsPrompt,
+			if (DialogResult.OK == MessageBox.Show(xWorksStrings.ImportTranslatedGramCatsPrompt,
 				xWorksStrings.ImportTranslatedGramCats, MessageBoxButtons.OKCancel))
 			{
 				using (new WaitCursor(ActiveForm ?? this, true))
@@ -2060,7 +2097,8 @@ namespace SIL.FieldWorks.XWorks
 					doc.Load(Path.Combine(FwDirectoryFinder.TemplateDirectory, "GOLDEtic.xml"));
 					MasterCategory.UpdatePOSStrings(Cache, doc);
 				}
-			}	return true;
+			}
+			return true;
 		}
 
 		#endregion // XCore Message Handlers
@@ -2096,7 +2134,7 @@ namespace SIL.FieldWorks.XWorks
 			// into a situation where the main window was disposed of while the parser
 			// thread was trying to execute com calls on the UI thread and using the
 			// main form as the Invoke point.
-			m_mediator.SendMessageToAllNow("StopParser", null);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.StopParser));
 			base.XWindow_Closing(sender, e);
 		}
 

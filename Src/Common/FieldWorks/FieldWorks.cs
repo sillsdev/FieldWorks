@@ -23,11 +23,13 @@ using System.Windows.Forms;
 using DesktopAnalytics;
 using Gecko;
 using L10NSharp;
+using L10NSharp.Windows.Forms;
 using Microsoft.Win32;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ScriptureUtils;
 using SIL.FieldWorks.FdoUi;
@@ -184,18 +186,6 @@ namespace SIL.FieldWorks
 				s_appSettings.DeleteCorruptedSettingsFilesIfPresent();
 				s_appSettings.UpgradeIfNecessary();
 
-				if (s_appSettings.Update == null && Platform.IsWindows)
-				{
-					s_appSettings.Update = new UpdateSettings
-					{
-						Behavior = DialogResult.Yes == FlexibleMessageBox.Show(
-								Properties.Resources.AutomaticUpdatesMessage, Properties.Resources.AutomaticUpdatesCaption, MessageBoxButtons.YesNo,
-								options: FlexibleMessageBoxOptions.AlwaysOnTop)
-							? UpdateSettings.Behaviors.Download
-							: UpdateSettings.Behaviors.DoNotCheck
-					};
-				}
-
 				var reportingSettings = s_appSettings.Reporting;
 				if (reportingSettings == null)
 				{
@@ -231,6 +221,20 @@ namespace SIL.FieldWorks
 					SetGlobalExceptionHandler();
 					SetupErrorReportInformation();
 					InitializeLocalizationManager();
+
+					// Initialize update settings for users who don't have them. After InitializeLocalizationManager because it displays strings (LT-22306)
+					if (s_appSettings.Update == null && Platform.IsWindows)
+					{
+						s_appSettings.Update = new UpdateSettings
+						{
+							Behavior = DialogResult.Yes == FlexibleMessageBox.Show(
+									Properties.Resources.AutomaticUpdatesMessage, Properties.Resources.AutomaticUpdatesCaption, MessageBoxButtons.YesNo,
+									options: FlexibleMessageBoxOptions.AlwaysOnTop)
+								? UpdateSettings.Behaviors.Download
+								: UpdateSettings.Behaviors.DoNotCheck
+						};
+						s_appSettings.Save();
+					}
 
 					// Invoke does nothing directly, but causes BroadcastEventWindow to be initialized
 					// on this thread to prevent race conditions on shutdown.See TE-975
@@ -460,8 +464,7 @@ namespace SIL.FieldWorks
 
 		private static void WarnUserAboutFailedLiftImportIfNecessary(FwApp fwApp)
 		{
-			var mainWindow = fwApp.ActiveMainWindow as IFwMainWnd;
-			mainWindow?.Mediator.SendMessage("WarnUserAboutFailedLiftImportIfNecessary", null);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.WarnUserAboutFailedLiftImportIfNecessary, null));
 		}
 
 		private static bool IsSharedXmlBackendNeeded(ProjectId projectId)
@@ -1827,7 +1830,7 @@ namespace SIL.FieldWorks
 									s_projectId = projectToTry; // Window is open on this project, we must not try to initialize it again.
 									if (Form.ActiveForm is IxWindow mainWindow)
 									{
-										mainWindow.Mediator.SendMessage("SFMImport", null);
+										Publisher.Publish(new PublisherParameterObject(EventConstants.SFMImport));
 									}
 									else
 									{
@@ -3565,10 +3568,13 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		private static void SetupErrorReportInformation()
 		{
+			var version = Version;
 			var entryAssembly = Assembly.GetEntryAssembly();
-			var version = entryAssembly == null
-				? Version
-				: new VersionInfoProvider(entryAssembly, true).ApplicationVersion;
+			if (entryAssembly != null)
+			{
+				var vip =  new VersionInfoProvider(entryAssembly, true);
+				version = $"{vip.ApplicationVersion} (Base build: {vip.BaseBuildNumber})";
+			}
 			if (version != null)
 			{
 				// The property "Version" would be overwritten when Palaso adds the standard properties
@@ -3579,15 +3585,6 @@ namespace SIL.FieldWorks
 			ErrorReporter.AddProperty("MachineName", Environment.MachineName);
 			ErrorReporter.AddProperty("OSVersion", Environment.OSVersion.ToString());
 			ErrorReporter.AddProperty("OSRelease", ErrorReport.GetOperatingSystemLabel());
-			if (Platform.IsUnix)
-			{
-				var packageVersions = LinuxPackageUtils.FindInstalledPackages("fieldworks-applications*");
-				if (packageVersions.Count() > 0)
-				{
-					var packageVersion = packageVersions.First();
-					ErrorReporter.AddProperty("PackageVersion", string.Format("{0} {1}", packageVersion.Key, packageVersion.Value));
-				}
-			}
 			ulong mem = MiscUtils.GetPhysicalMemoryBytes() / 1048576;
 			ErrorReporter.AddProperty("PhysicalMemory", mem + " Mb");
 			var processArch = Environment.Is64BitProcess ? 64 : 32;
@@ -3649,7 +3646,7 @@ namespace SIL.FieldWorks
 				var versionObj = Assembly.LoadFrom(Path.Combine(fieldWorksFolder ?? string.Empty, "Chorus.exe")).GetName().Version;
 				var version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
 				// First create localization manager for Chorus with english
-				LocalizationManager.Create("en",
+				LocalizationManagerWinforms.Create("en",
 					"Chorus", "Chorus", version, installedL10nBaseDir, userL10nBaseDir, null, "flex_localization@sil.org", new [] { "Chorus", "LibChorus" });
 				// Now that we have one manager initialized check and see if the users UI language has
 				// localizations available
@@ -3657,12 +3654,12 @@ namespace SIL.FieldWorks
 				if (LocalizationManager.GetUILanguages(true).Any(lang => lang.TwoLetterISOLanguageName == uiCulture))
 				{
 					// If it is switch to using that instead of english
-					LocalizationManager.SetUILanguage(uiCulture, true);
+					LocalizationManagerWinforms.SetUILanguage(uiCulture, true);
 				}
 
 				versionObj = Assembly.GetAssembly(typeof(ErrorReport)).GetName().Version;
 				version = $"{versionObj.Major}.{versionObj.Minor}.{versionObj.Build}";
-				LocalizationManager.Create(LocalizationManager.UILanguageId, "Palaso", "Palaso", version, installedL10nBaseDir,
+				LocalizationManagerWinforms.Create(LocalizationManager.UILanguageId, "Palaso", "Palaso", version, installedL10nBaseDir,
 					userL10nBaseDir, null, "flex_localization@sil.org", new [] { "SIL.Windows.Forms" });
 			}
 			catch (Exception e)
@@ -3677,7 +3674,7 @@ namespace SIL.FieldWorks
 			var langFromCache = cache.ServiceLocator.WritingSystemManager.UserWritingSystem.Id;
 			if (langFromCache != LocalizationManager.UILanguageId)
 			{
-				LocalizationManager.SetUILanguage(langFromCache, true);
+				LocalizationManagerWinforms.SetUILanguage(langFromCache, true);
 			}
 		}
 

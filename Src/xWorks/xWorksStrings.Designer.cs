@@ -178,6 +178,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Classified Dictionary.
+        /// </summary>
+        internal static string ClassifiedDictionary {
+            get {
+                return ResourceManager.GetString("ClassifiedDictionary", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Click to jump to {0}..
         /// </summary>
         internal static string ClickToJumpTo {
@@ -2150,6 +2159,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot import Styles..
+        /// </summary>
+        internal static string kstidCannotImportStyles {
+            get {
+                return ResourceManager.GetString("kstidCannotImportStyles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Choose filename for export.
         /// </summary>
         internal static string kstidChooseExportFile {
@@ -2254,6 +2272,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string kstidPublicationsWillBeAdded {
             get {
                 return ResourceManager.GetString("kstidPublicationsWillBeAdded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to See the log for details..
+        /// </summary>
+        internal static string kstidSeeLogForDetails {
+            get {
+                return ResourceManager.GetString("kstidSeeLogForDetails", resourceCulture);
             }
         }
         
@@ -2615,6 +2642,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string NotVisibleLabel {
             get {
                 return ResourceManager.GetString("NotVisibleLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Parsing Dev.
+        /// </summary>
+        internal static string ParsingDev {
+            get {
+                return ResourceManager.GetString("ParsingDev", resourceCulture);
             }
         }
         
@@ -3012,6 +3048,33 @@ namespace SIL.FieldWorks.XWorks {
         internal static string UpdatingTheDisplay {
             get {
                 return ResourceManager.GetString("UpdatingTheDisplay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Batch {0} failed after {1} retries ({2}). Upload aborted..
+        /// </summary>
+        internal static string UploadBatchFailedAfterRetries {
+            get {
+                return ResourceManager.GetString("UploadBatchFailedAfterRetries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Batch {0} timed out ({1}). Retrying (attempt {2} of {3}) in {4} seconds....
+        /// </summary>
+        internal static string UploadBatchRetrying {
+            get {
+                return ResourceManager.GetString("UploadBatchRetrying", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Batch {0} succeeded after {1} attempt(s)..
+        /// </summary>
+        internal static string UploadBatchSucceededAfterRetry {
+            get {
+                return ResourceManager.GetString("UploadBatchSucceededAfterRetry", resourceCulture);
             }
         }
         

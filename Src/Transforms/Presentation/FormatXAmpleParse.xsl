@@ -2,6 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:output method="html" version="4.0" encoding="UTF-8" indent="yes" media-type="text/html; charset=utf-8"/>
 	<xsl:include href="FormatCommon.xsl"/>
+	<xsl:include href="JSFunctions.xsl"/>
 	<!--
 ================================================================
 Format the xml returned from XAmple parse for user display.
@@ -51,14 +52,7 @@ Main template
 		<html>
 			<head>
 				<meta charset="UTF-8" />
-				<style type="text/css">
-					.interblock {
-						display: -moz-inline-box;
-						display:
-						inline-block;
-						vertical-align: top;
-
-					}</style>
+				<xsl:call-template name="FindScript"/>
 			</head>
 			<body style="font-family:Times New Roman">
 				<h1>
@@ -75,6 +69,11 @@ Main template
 					<xsl:text>.</xsl:text>
 				</h1>
 				<xsl:call-template name="ResultSection"/>
+				<h2>
+					<xsl:text>Parse time: </xsl:text>
+					<xsl:value-of select="@parseTime"/>
+					<xsl:text> seconds.</xsl:text>
+				</h2>
 			</body>
 		</html>
 	</xsl:template>

@@ -431,6 +431,12 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 					case "InflTemplateRemoveInflAffixMsa":
 						tssLabel = m_inflAffixTemplateCtrl.MenuLabelForInflTemplateRemoveInflAffixMsa(sLabel);
 						break;
+					case "InflTemplateMoveUpInflAffixMsa":
+						tssLabel = m_inflAffixTemplateCtrl.MenuLabelForInflTemplateMoveInflAffixMsa(sLabel, true, out fEnabled);
+						break;
+					case "InflTemplateMoveDownInflAffixMsa":
+						tssLabel = m_inflAffixTemplateCtrl.MenuLabelForInflTemplateMoveInflAffixMsa(sLabel, false, out fEnabled);
+						break;
 					case "JumpToTool":
 						tssLabel = m_inflAffixTemplateCtrl.MenuLabelForJumpToTool(sLabel);
 						break;

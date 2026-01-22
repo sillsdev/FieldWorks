@@ -19,12 +19,15 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.FieldWorks.Resources;
 using SIL.Utils;
 using XCore;
+using SIL.FieldWorks.FwCoreDlgs;
+using Gecko;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -124,6 +127,9 @@ namespace SIL.FieldWorks.XWorks
 
 		private readonly Dictionary<string, XslCompiledTransform> m_transforms = new Dictionary<string, XslCompiledTransform>();
 
+		private ContextMenu m_ContextMenu;
+		private FindDialog findDlg = null;
+
 		#endregion // Data Members
 
 		#region Properties
@@ -212,8 +218,19 @@ namespace SIL.FieldWorks.XWorks
 		{
 			m_htmlControl = new HtmlControl {Dock = DockStyle.Fill};
 			m_htmlControl.HCBeforeNavigate += OnBeforeNavigate;
+			m_htmlControl.Browser.DomKeyPress += new EventHandler<DomKeyEventArgs>(OnDomKeyPress);
+			m_ContextMenu = new ContextMenu();
+			m_ContextMenu.MenuItems.Add("Find", new EventHandler(Find_Click));
+			m_htmlControl.ContextMenu = this.m_ContextMenu;
 
 			ResetURLCount();
+		}
+
+		private void Find_Click(object sender, EventArgs e)
+		{
+			findDlg = new FindDialog(m_htmlControl.Browser);
+			findDlg.FormClosing += new FormClosingEventHandler(FindDialog_FormClosing);
+			findDlg.Show(this);
 		}
 
 		private void ReadParameters()
@@ -283,6 +300,8 @@ namespace SIL.FieldWorks.XWorks
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(EventConstants.SaveAsWebpage, SaveAsWebpage);
+
 				if (components != null)
 					components.Dispose();
 				if (m_mediator != null)
@@ -347,11 +366,11 @@ namespace SIL.FieldWorks.XWorks
 			m_htmlControl.Forward();
 			// N.B. no need to increment m_iURLCounter because OnBeforeNavigate does it
 		}
-		public bool OnSaveAsWebpage(object parameterObj)
+		private void SaveAsWebpage(object parameterObj)
 		{
 			var param = parameterObj as Tuple<string, string, string>;
 			if (param == null)
-				return false; // we sure can't handle it; should we throw?
+				return; // we sure can't handle it; should we throw?
 			string whatToSave = param.Item1;
 			string outPath = param.Item2;
 			string xsltFiles = param.Item3;
@@ -359,48 +378,47 @@ namespace SIL.FieldWorks.XWorks
 			if (!Directory.Exists(directory))
 			{
 				// can't copy to a directory that doesn't exist
-				return false;
+				return;
 			}
-				switch (whatToSave)
-				{
-					case "GrammarSketchXLingPaper":
-							if (File.Exists(m_sAlsoSaveFileName))
-							{
-								string inputFile = m_sAlsoSaveFileName;
-								if (!string.IsNullOrEmpty(xsltFiles))
-								{
-									string newFileName = Path.GetFileNameWithoutExtension(outPath);
-									string tempFileName = Path.Combine(Path.GetTempPath(), newFileName);
-									string outputFile = tempFileName;
-									string[] rgsXslts = xsltFiles.Split(new[] { ';' });
-									int cXslts = rgsXslts.GetLength(0);
-									for (int i = 0; i < cXslts; ++i)
-									{
-										outputFile = outputFile + (i + 1);
-										XslCompiledTransform transform = GetTransformFromFile(Path.Combine(ExportTemplatePath, rgsXslts[i]));
-										var xmlReaderSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
-										using (var writer = new StreamWriter(outputFile + ".xml"))
-										using (var reader = XmlReader.Create(inputFile, xmlReaderSettings))
-											transform.Transform(reader, null, writer);
-										inputFile = outputFile + ".xml";
-									}
-								}
-								CopyFile(inputFile, outPath);
-								return true;
-							}
-						break;
-					default:
-						if (File.Exists(m_sHtmlFileName))
+			switch (whatToSave)
+			{
+				case "GrammarSketchXLingPaper":
+					if (File.Exists(m_sAlsoSaveFileName))
+					{
+						string inputFile = m_sAlsoSaveFileName;
+						if (!string.IsNullOrEmpty(xsltFiles))
 						{
-							CopyFile(m_sHtmlFileName, outPath);
-							// This task is too fast on Linux/Mono (FWNX-1191).  Wait half a second...
-							// (I would like a more principled fix, but have spent too much time on this issue already.)
-							System.Threading.Thread.Sleep(500);
-							return true;
+							string newFileName = Path.GetFileNameWithoutExtension(outPath);
+							string tempFileName = Path.Combine(Path.GetTempPath(), newFileName);
+							string outputFile = tempFileName;
+							string[] rgsXslts = xsltFiles.Split(new[] { ';' });
+							int cXslts = rgsXslts.GetLength(0);
+							for (int i = 0; i < cXslts; ++i)
+							{
+								outputFile = outputFile + (i + 1);
+								XslCompiledTransform transform = GetTransformFromFile(Path.Combine(ExportTemplatePath, rgsXslts[i]));
+								var xmlReaderSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
+								using (var writer = new StreamWriter(outputFile + ".xml"))
+								using (var reader = XmlReader.Create(inputFile, xmlReaderSettings))
+									transform.Transform(reader, null, writer);
+								inputFile = outputFile + ".xml";
+							}
 						}
-						break;
+						CopyFile(inputFile, outPath);
+						return;
+					}
+					break;
+				default:
+					if (File.Exists(m_sHtmlFileName))
+					{
+						CopyFile(m_sHtmlFileName, outPath);
+						// This task is too fast on Linux/Mono (FWNX-1191).  Wait half a second...
+						// (I would like a more principled fix, but have spent too much time on this issue already.)
+						System.Threading.Thread.Sleep(500);
+						return;
+					}
+					break;
 			}
-			return false;
 		}
 
 		private void CopyFile(string sFileName, string outPath)
@@ -625,6 +643,11 @@ namespace SIL.FieldWorks.XWorks
 				argumentList.RemoveParam("prmGlossFontSize", "");
 				argumentList.AddParam("prmGlossFontSize", "", GetNormalStyleFontSize(wsContainer.DefaultAnalysisWritingSystem.Handle));
 			}
+			if (argumentList.GetParam("prmSDateTime", "") != null)
+			{
+				argumentList.RemoveParam("prmSDateTime", "");
+				argumentList.AddParam("prmSDateTime", "", DateTime.Now.ToString("dddd, MMM dd yyyy, hh:mm:ss"));
+			}
 
 			var xmlReaderSettings = new XmlReaderSettings { DtdProcessing = DtdProcessing.Parse };
 			using (var writer = new StreamWriter(outputFile))
@@ -761,7 +784,9 @@ namespace SIL.FieldWorks.XWorks
 
 			//add our current state to the history system
 			string toolName = m_propertyTable.GetStringProperty("currentContentControl", "");
-			m_mediator.SendMessage("AddContextToHistory", new FwLinkArgs(toolName, Guid.Empty), false);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.AddContextToHistory, new FwLinkArgs(toolName, Guid.Empty)));
+
+			Subscriber.Subscribe(EventConstants.SaveAsWebpage, SaveAsWebpage);
 		}
 #if notnow
 		void Browser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
@@ -991,6 +1016,139 @@ namespace SIL.FieldWorks.XWorks
 
 			display.Enabled = false;
 			return true;	// we handled this, no need to ask anyone else.
+		}
+		private void OnDomKeyPress(object sender, DomKeyEventArgs e)
+		{
+			var ctrl = e.CtrlKey;
+			if (ctrl && (char)e.KeyChar == 'f')
+			{
+				Find_Click(sender, e);
+			}
+			else if (e.KeyCode == (uint)Keys.Escape)
+			{
+				// we use escape to close the find dialog
+				findDlg?.Close();
+			}
+		}
+		private void FindDialog_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			using (var executor = new AutoJSContext(m_htmlControl.Browser.Window))
+			{
+				// Javascript query to execute in the browser
+				var browserJsQuery = "cleanUpHighlights()";
+				executor.EvaluateScript(browserJsQuery);
+			}
+		}
+
+		public class FindDialog : BasicFindDialog
+		{
+			//private string results = "";
+			private int resultIndex = 0;
+			private int resultCount = 0;
+			GeckoWebBrowser geckoBrowser;
+			internal const string CurrentSelectedEntryClass = "currentSelectedEntry";
+			CheckBox matchCase = new CheckBox();
+			public FindDialog(GeckoWebBrowser geckoBrowser)
+			{
+				this.geckoBrowser = geckoBrowser;
+				string content = geckoBrowser.Text;
+				FindNext += FindNextInBrowser;
+				FindPrev += FindPrevInBrowser;
+				SearchTextChanged += (sender, args) =>
+				{
+					InvokeSearch(args.SearchText, matchCase.Checked);
+				};
+				AddMatchCaseCheckBox();
+			}
+
+			private void AddMatchCaseCheckBox()
+			{
+				matchCase.Checked = false;
+				matchCase.Text = "Match case";
+				Height = Height + 20;
+				matchCase.Location = new Point(Location.X + 10, Location.Y + 50);
+				var label = Controls[2];
+				label.Location = new Point(label.Location.X, label.Location.Y + 30);
+				Controls.Add(matchCase);
+				matchCase.CheckedChanged += new System.EventHandler(matchCase_CheckedChanged);
+			}
+			private void matchCase_CheckedChanged(object sender, EventArgs e)
+			{
+				InvokeSearch(SearchText, matchCase.Checked);
+				using (var executor = new AutoJSContext(geckoBrowser.Window))
+				{
+					// Javascript query to execute in the browser
+					// assume the resultIndex changed
+					var browserJsQuery = "scrollToStoredPosition(0)";
+					executor.EvaluateScript(browserJsQuery);
+					UpdateSearchCountDisplay();
+				}
+			}
+
+			private void FindPrevInBrowser(object sender, IBasicFindView view)
+			{
+				FindInBrowser(false);
+			}
+
+			private void FindNextInBrowser(object sender, IBasicFindView view)
+			{
+				FindInBrowser(true);
+			}
+
+			private void FindInBrowser(bool forward)
+			{
+				if (geckoBrowser == null)
+					return;
+				int originalResultIndex = resultIndex;
+				using (var executor = new AutoJSContext(geckoBrowser.Window))
+				{
+					bool nodeIsVisible = false;
+					while (!nodeIsVisible)
+					{
+						if (forward)
+						{
+							resultIndex = resultIndex++ < resultCount - 1 ? resultIndex : 0;
+						}
+						else
+						{
+							resultIndex = resultIndex-- > 0 ? resultIndex : resultCount - 1;
+						}
+						// Javascript query to execute in the browser
+						var browserJsQuery = "scrollToStoredPosition(" + resultIndex + ", " + forward.ToString().ToLower() + ")";
+						var found = executor.EvaluateScript(browserJsQuery);
+						nodeIsVisible = found.ToBoolean();
+						UpdateSearchCountDisplay();
+						if (resultIndex == originalResultIndex)
+						{
+							MessageBox.Show("No visible match found.");
+							break;
+						}
+					}
+				}
+			}
+
+			private void UpdateSearchCountDisplay()
+			{
+				if (resultCount > 0)
+					StatusText = $"{resultIndex + 1} of {resultCount} Results";
+				else
+					StatusText = "0 Results";
+			}
+			private void InvokeSearch(string searchText, bool matchCase)
+			{
+				if (geckoBrowser == null)
+					throw new ApplicationException();
+				using (var executor = new AutoJSContext(geckoBrowser.Window))
+				{
+					// Javascript query to execute in the browser
+					// finds every text element matching the search string and returns the number of occurences
+					var browserJsQuery = "findAndHighlightText('" + searchText + "'," + matchCase.ToString().ToLower() + ");";
+					var matchCount = executor.EvaluateScript(browserJsQuery);
+					resultCount = (int)matchCount.U32;
+				}
+				resultIndex = 0;
+				UpdateSearchCountDisplay();
+			}
 		}
 		public bool OnDisplayExport(object commandObject,
 			ref UIItemDisplayProperties display)

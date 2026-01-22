@@ -1,4 +1,4 @@
-// Copyright (c) 2017 SIL International
+// Copyright (c) 2017-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -10,7 +10,6 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
-using DesktopAnalytics;
 using Ionic.Zip;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.FieldWorks.Common.FwUtils;
@@ -20,9 +19,8 @@ using SIL.FieldWorks.LexText.Controls;
 using SIL.FieldWorks.XWorks.LexText;
 using SIL.Lift.Migration;
 using SIL.Lift.Parsing;
-using SIL.Linq;
-using SIL.Reporting;
 using SIL.LCModel.Utils;
+using XCore;
 using File = System.IO.File;
 
 
@@ -33,7 +31,8 @@ namespace SIL.FieldWorks.XWorks
 	/// </summary>
 	public class DictionaryConfigurationImportController
 	{
-		private LcmCache _cache;
+		private readonly LcmCache _cache;
+		private readonly PropertyTable _propertyTable;
 		private string _projectConfigDir;
 		/// <summary>
 		/// Registered configurations that we know about.
@@ -64,8 +63,8 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		internal IEnumerable<string> _customFieldsToImport;
 
-		/// <summary>Did the configuration get imported.</summary>
-		public bool ImportHappened;
+		/// <summary>Did the Styles zipped with the configuration get imported.</summary>
+		public bool StyleImportHappened;
 
 		/// <summary>
 		/// Label of configuration in file being imported. May be different than final label used, such as if a configuration already exists with that label.
@@ -92,20 +91,13 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		private bool _isInvalidConfigFile;
 
-		/// <summary>
-		/// The following style names are known to have unsupported features. We will avoid wiping out default styles of these types when
-		/// importing a view.
-		/// </summary>
-		public static readonly HashSet<string> UnsupportedStyles = new HashSet<string>
-		{
-			"Bulleted List", "Numbered List", "Homograph-Number"
-		};
-
 		/// <summary/>
-		public DictionaryConfigurationImportController(LcmCache cache, string projectConfigDir,
+		public DictionaryConfigurationImportController(LcmCache cache,
+			PropertyTable propertyTable, string projectConfigDir,
 			List<DictionaryConfigurationModel> configurations)
 		{
 			_cache = cache;
+			_propertyTable = propertyTable;
 			_projectConfigDir = projectConfigDir;
 			_configurations = configurations;
 		}
@@ -121,6 +113,7 @@ namespace SIL.FieldWorks.XWorks
 
 			ImportCustomFields(_importLiftLocation);
 
+			// REVIEW (Hasso) 2026.01: should this be calculated closer to where it is used?
 			// If the configuration to import has the same label as an existing configuration in the project folder
 			// then overwrite the existing configuration.
 			var existingConfigurationInTheWay = _configurations.FirstOrDefault(config => config.Label == NewConfigToImport.Label &&
@@ -134,15 +127,24 @@ namespace SIL.FieldWorks.XWorks
 			try
 			{
 				ImportStyles(_importStylesLocation);
-				ImportHappened = true;
+				StyleImportHappened = true;
 			}
-			catch (InstallationException e) // This is the exception thrown if the dtd guid in the style file doesn't match our program
+			catch (Exception e)
 			{
 #if DEBUG
 				if (_view == null) // _view is sometimes null in unit tests, and it's helpful to know what exactly went wrong.
-					throw new Exception(xWorksStrings.kstidCannotImport, e);
+					throw new Exception(xWorksStrings.kstidCannotImportStyles, e);
 #endif
-				_view.explanationLabel.Text = xWorksStrings.kstidCannotImport;
+				// If an InstallationException is thrown in a Release build, it usually has its real message replaced with instructions to reinstall FW.
+				// Tell the user where to find the real message. Other exceptions do not get their messages replaced or result in log messages.
+				new SilErrorReportingAdapter(_view, _propertyTable).ReportNonFatalExceptionWithMessage(e, xWorksStrings.kstidCannotImportStyles
+					+ " If the inner exception is an Installation exception, ignore it and scroll to the bottom to see the log.");
+				_view.explanationLabel.Text = xWorksStrings.kstidCannotImportStyles + Environment.NewLine + Environment.NewLine +
+											  (e is InstallationException ? xWorksStrings.kstidSeeLogForDetails : e.Message);
+				// Keep the dialog open so the user can see the error message, but make the user close the dialog before trying again (to refresh)
+				_view.DialogResult = DialogResult.None;
+				_view.browseButton.Enabled = false;
+				_view.importButton.Enabled = false;
 			}
 
 			// We have re-loaded the model from disk to preserve custom field state so the Label must be set here
@@ -175,11 +177,11 @@ namespace SIL.FieldWorks.XWorks
 			var configType = NewConfigToImport.Type;
 			var configDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(
 				configType == DictionaryConfigurationModel.ConfigType.Reversal
-					? DictionaryConfigurationListener.ReversalIndexConfigurationDirectoryName
-					: DictionaryConfigurationListener.DictionaryConfigurationDirectoryName);
+					? DictionaryConfigurationListener.RevIndexConfigDirName
+					: DictionaryConfigurationListener.DictConfigDirName);
 			var isCustomizedOriginal = DictionaryConfigurationManagerController.IsConfigurationACustomizedOriginal(NewConfigToImport, configDir, _cache);
 			TrackingHelper.TrackImport("dictionary", "DictionaryConfiguration",
-				ImportHappened ? ImportExportStep.Succeeded : ImportExportStep.Failed,
+				StyleImportHappened ? ImportExportStep.Succeeded : ImportExportStep.Failed,
 				new Dictionary<string, string>
 				{
 					{ "configType", configType.ToString() },
@@ -187,49 +189,12 @@ namespace SIL.FieldWorks.XWorks
 				});
 		}
 
-		private void ImportStyles(string importStylesLocation)
+		internal void ImportStyles(string importStylesLocation)
 		{
-			var stylesToRemove = _cache.LangProject.StylesOC.Where(style => !UnsupportedStyles.Contains(style.Name));
-
-			// For LT-18267, record basedon and next properties of styles not
-			// being exported, so they can be reconnected to the imported
-			// styles of the same name.
-			var preimportStyleLinks = _cache.LangProject.StylesOC.Where(style => UnsupportedStyles.Contains(style.Name)).ToDictionary(
-				style => style.Name,
-				style => new
-				{
-					BasedOn = style.BasedOnRA == null ? null : style.BasedOnRA.Name,
-					Next = style.NextRA == null ? null : style.NextRA.Name
-				});
 			NonUndoableUnitOfWorkHelper.DoSomehow(_cache.ActionHandlerAccessor, () =>
 			{
-				// Before importing styles, remove all the current styles, except
-				// for styles that we don't support and so we don't expect will
-				// be imported.
-				foreach (var style in stylesToRemove)
-				{
-					_cache.LangProject.StylesOC.Remove(style);
-				}
-			});
-			// Be sure that the Remove action is committed and saved to disk before we re-import styles with the same guid.
-			// If we don't then the changes won't be noticed as the Styles will be marked as transient and won't be saved.
-			_cache.ActionHandlerAccessor.Commit();
-			// Import styles
-			NonUndoableUnitOfWorkHelper.DoSomehow(_cache.ActionHandlerAccessor, () =>
-			{
-				// ReSharper disable once UnusedVariable -- The FlexStylesXmlAccessor constructor does the work of importing.
-				var stylesAccessor = new FlexStylesXmlAccessor(_cache.LangProject.LexDbOA, true, importStylesLocation);
-
-				var postimportStylesToReconnect = _cache.LangProject.StylesOC.Where(style => UnsupportedStyles.Contains(style.Name));
-
-				postimportStylesToReconnect.ForEach(postimportStyleToRewire =>
-				{
-					var correspondingPreImportStyleInfo = preimportStyleLinks[postimportStyleToRewire.Name];
-
-					postimportStyleToRewire.BasedOnRA = _cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == correspondingPreImportStyleInfo.BasedOn);
-
-					postimportStyleToRewire.NextRA = _cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == correspondingPreImportStyleInfo.Next);
-				});
+				// ReSharper disable once ObjectCreationAsStatement -- The FlexStylesXmlAccessor constructor does the work of importing.
+				new FlexStylesXmlAccessor(_cache.LangProject.LexDbOA, true, importStylesLocation);
 			});
 		}
 
@@ -291,19 +256,15 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Prepare this controller to import from a dictionary configuration zip file.
 		///
-		/// TODO Validate the XML first and/or handle failure to create DictionaryConfigurationModel object.
-		/// TODO Handle if zip has no .fwdictconfig file.
-		/// TODO Handle if file is not a zip, or a corrupted zip file.
+		/// TODO Validate the XML first or handle failure to create DictionaryConfigurationModel object.
+		/// ENHANCE (Hasso) 2026.01: validate styles before importing.
+		/// ENHANCE (Hasso) 2026.01: clean up temp files on failure or completion.
 		/// </summary>
 		internal void PrepareImport(string configurationZipPath)
 		{
 			if (string.IsNullOrEmpty(configurationZipPath))
 			{
-				ImportHappened = false;
-				NewConfigToImport = null;
-				_originalConfigLabel = null;
-				_temporaryImportConfigLocation = null;
-				_newPublications = null;
+				ClearValuesOnError();
 				return;
 			}
 
@@ -339,8 +300,8 @@ namespace SIL.FieldWorks.XWorks
 
 			//Validating the user is not trying to import a Dictionary into a Reversal area or a Reversal into a Dictionary area
 			var configDirectory = Path.GetFileName(_projectConfigDir);
-			if (DictionaryConfigurationListener.DictionaryConfigurationDirectoryName.Equals(configDirectory) && NewConfigToImport.IsReversal
-				|| !DictionaryConfigurationListener.DictionaryConfigurationDirectoryName.Equals(configDirectory) && !NewConfigToImport.IsReversal)
+			if (DictionaryConfigurationListener.DictConfigDirName.Equals(configDirectory) && NewConfigToImport.IsReversal
+				|| !DictionaryConfigurationListener.DictConfigDirName.Equals(configDirectory) && !NewConfigToImport.IsReversal)
 			{
 				_isInvalidConfigFile = true;
 				ClearValuesOnError();
@@ -349,7 +310,7 @@ namespace SIL.FieldWorks.XWorks
 			_isInvalidConfigFile = false;
 
 			// Reset flag
-			ImportHappened = false;
+			StyleImportHappened = false;
 
 			_newPublications =
 				DictionaryConfigurationModel.PublicationsInXml(_temporaryImportConfigLocation).Except(NewConfigToImport.Publications);
@@ -375,7 +336,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ClearValuesOnError()
 		{
-			ImportHappened = false;
+			StyleImportHappened = false;
 			NewConfigToImport = null;
 			_originalConfigLabel = null;
 			_temporaryImportConfigLocation = null;
@@ -446,7 +407,7 @@ namespace SIL.FieldWorks.XWorks
 				string invalidConfigFileMsg = string.Empty;
 				if (_isInvalidConfigFile)
 				{
-					var configType = Path.GetFileName(_projectConfigDir) == DictionaryConfigurationListener.DictionaryConfigurationDirectoryName
+					var configType = Path.GetFileName(_projectConfigDir) == DictionaryConfigurationListener.DictConfigDirName
 					? xWorksStrings.ReversalIndex : xWorksStrings.Dictionary;
 					invalidConfigFileMsg = string.Format(xWorksStrings.DictionaryConfigurationMismatch, configType)
 						+ Environment.NewLine;
@@ -476,7 +437,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				customFieldStatus = xWorksStrings.kstidCustomFieldsWillBeAdded + Environment.NewLine + string.Join(", ", _customFieldsToImport);
 			}
-
+			// TODO (Hasso) 2026-01: WSs
 			_view.explanationLabel.Text = string.Format("{0}{1}{2}{1}{3}{1}{4}",
 				mainStatus, Environment.NewLine + Environment.NewLine, publicationStatus, customFieldStatus,
 				xWorksStrings.DictionaryConfigurationDictionaryConfigurationUser_StyleOverwriteWarning);

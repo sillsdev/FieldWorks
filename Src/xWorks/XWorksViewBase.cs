@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.FdoUi;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -193,7 +194,7 @@ namespace SIL.FieldWorks.XWorks
 
 		internal RecordClerk CreateClerk(bool loadList)
 		{
-			var clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, m_configurationParameters, loadList);
+			var clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, m_configurationParameters, loadList, true);
 			clerk.Editable = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParameters, "allowInsertDeleteRecord", true);
 			return clerk;
 		}
@@ -540,7 +541,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void ReloadListsArea()
 		{
-			m_mediator.SendMessage("ReloadAreaTools", "lists");
+			Publisher.Publish(new PublisherParameterObject(EventConstants.ReloadAreaTools, "lists"));
 		}
 
 		private void DoDeleteCustomListCmd(ICmPossibilityList curList)

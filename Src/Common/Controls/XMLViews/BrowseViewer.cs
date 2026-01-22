@@ -2,6 +2,20 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.RootSites;
+using SIL.FieldWorks.Common.ViewsInterfaces;
+using SIL.FieldWorks.Filters;
+using SIL.FieldWorks.Resources;
+using SIL.LCModel;
+using SIL.LCModel.Application;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
+using SIL.PlatformUtilities;
+using SIL.Reporting;
+using SIL.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -11,20 +25,6 @@ using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.LCModel.Core.WritingSystems;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.ViewsInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
-using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel;
-using SIL.LCModel.Application;
-using SIL.LCModel.DomainServices;
-using SIL.FieldWorks.Filters;
-using SIL.FieldWorks.Resources;
-using SIL.Reporting;
-using SIL.LCModel.Utils;
-using SIL.PlatformUtilities;
-using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.Common.Controls
@@ -326,6 +326,19 @@ namespace SIL.FieldWorks.Common.Controls
 			base.OnGotFocus(e);
 			if (m_xbv != null && !m_xbv.Focused)
 				m_xbv.Focus();
+		}
+
+		/// <summary>
+		/// Update the selected cache for the given item.
+		/// </summary>
+		public void OnUpdateItemCheckedState(object obj)
+		{
+			if (obj is ICmObject)
+			{
+				int hvoItem = ((ICmObject)obj).Hvo;
+				int currentValue = GetCheckState(hvoItem);
+				SetItemCheckedState(hvoItem, currentValue, false);
+			}
 		}
 
 		/// <summary>
@@ -2949,8 +2962,8 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		// Note: often we also want to update LayoutCache.LayoutVersionNumber.
-		// (last updated by Jason Naylor, Nov 16, 2016, for ExtendedNote Bulk editing)
-		internal const int kBrowseViewVersion = 18;
+		// (last updated by Ariel Rorabaugh, Oct 28, 2025, for adding PictureLicense column to Browse view)
+		internal const int kBrowseViewVersion = 19;
 
 		/// <summary>
 		/// Column has been added or removed, update all child windows.
@@ -3934,7 +3947,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_bv = bv;
 
 			// Store location for restore after Reconstruct. (LT-8336)
-			m_bv.BrowseView.OnSaveScrollPosition(null); // says it's called through Mediator, but not that I can see!
+			m_bv.BrowseView.SaveScrollPosition(null);
 
 			// Figure out if highlighted row is visible or not
 			m_irow = m_bv.SelectedIndex;
@@ -4037,7 +4050,7 @@ namespace SIL.FieldWorks.Common.Controls
 				if (m_bv != null && m_bv.BrowseView != null && m_bv.BrowseView.RootBox != null)
 					m_bv.BrowseView.RootBox.Reconstruct(); // Otherwise every cell redraws individually!
 
-				m_bv.BrowseView.OnRestoreScrollPosition(null);
+				m_bv.BrowseView.RestoreScrollPosition(null);
 
 				if (m_fHiliteWasVisible && m_irow >= 0 && m_irow < m_bv.AllItems.Count)
 				{

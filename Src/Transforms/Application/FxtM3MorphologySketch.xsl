@@ -753,7 +753,7 @@ Main template
 																</th>
 															</xsl:if>
 															<xsl:if test="$stemNames">
-																<th>From Stem Name</th>
+																<th>From Stem Allomorph Label</th>
 															</xsl:if>
 															<xsl:if test="$fromInflFeats">
 																<th>From inflection features</th>
@@ -776,7 +776,7 @@ Main template
 																<th>From inflection features</th>
 															</xsl:if>
 															<xsl:if test="$stemNames">
-																<th>From Stem Name</th>
+																<th>From Stem Allomorph Label</th>
 															</xsl:if>
 															<xsl:if test="$fromExceptionFeatures">
 																<th>
@@ -1023,6 +1023,8 @@ Main template
 						</p>
 						<xsl:variable name="idLeftMsaPOS" select="key('MsaID',LeftMsa/@dst)/@PartOfSpeech"/>
 						<xsl:variable name="idRightMsaPOS" select="key('MsaID',RightMsa/@dst)/@PartOfSpeech"/>
+						<xsl:variable name="leftMsaProdRestricts" select="key('MsaID',LeftMsa/@dst)/ProdRestrict"/>
+						<xsl:variable name="rightMsaProdRestricts" select="key('MsaID',RightMsa/@dst)/ProdRestrict"/>
 						<xsl:choose>
 							<xsl:when test="$idLeftMsaPOS!=0 and $idRightMsaPOS!=0">
 								<chart type="tLeftOffset">
@@ -1042,6 +1044,18 @@ Main template
 										<xsl:value-of select="key('POSID',$idRightMsaPOS)/Abbreviation"/>
 									</genericRef>
 								</chart>
+								<xsl:if test="$leftMsaProdRestricts">
+									<xsl:call-template name="OutputProdRestrictsOfCompoundRule">
+										<xsl:with-param name="sHead" select="'left'"/>
+										<xsl:with-param name="msaProdRestricts" select="$leftMsaProdRestricts"/>
+									</xsl:call-template>
+								</xsl:if>
+								<xsl:if test="$rightMsaProdRestricts">
+									<xsl:call-template name="OutputProdRestrictsOfCompoundRule">
+										<xsl:with-param name="sHead" select="'right'"/>
+										<xsl:with-param name="msaProdRestricts" select="$rightMsaProdRestricts"/>
+									</xsl:call-template>
+								</xsl:if>
 							</xsl:when>
 							<xsl:otherwise>
 								<xsl:if test="$idLeftMsaPOS=0">
@@ -1244,7 +1258,7 @@ Main template
 									</xsl:call-template>
 								</p>
 							</xsl:if>
-							<xsl:variable name="stems" select="$MorphoSyntaxAnalyses/MoStemMsa[ProdRestrict/@dst=$prodRest]"/>
+							<xsl:variable name="stems" select="$MorphoSyntaxAnalyses/MoStemMsa[ProdRestrict/@dst=$prodRest and key('LexEntryMsa', @Id)]"/>
 							<xsl:choose>
 								<xsl:when test="$stems">
 									<xsl:variable name="iCount" select="count($stems)"/>
@@ -1528,14 +1542,14 @@ Main template
 						</xsl:if>
 						<xsl:if test="$MoStemNames">
 							<section2 id="sAllomorphyStemNames" type="tH2">
-								<secTitle>Stem Names</secTitle>
+								<secTitle>Stem Allomorph Labels</secTitle>
 								<p>
 									<xsl:text>This analysis of </xsl:text>
 									<xsl:value-of select="$sLangName"/>
 									<xsl:if test="$PhEnvironments or $MoInflClasses">
 										<xsl:text> also </xsl:text>
 									</xsl:if>
-									<xsl:text> has stem allomorphy that is conditioned by one or more sets of inflection features.  Each stem name has one or more sets of inflection features associated with it.  When a stem allomorph is tagged with a stem name, then the word containing that stem allomorph must have the inflection features contained in at least one of the feature sets of that stem name.</xsl:text>
+									<xsl:text> has stem allomorphy that is conditioned by one or more sets of inflection features.  Each stem allomorph label has one or more sets of inflection features associated with it.  When a stem allomorph is tagged with a stem allomorph label, then the word containing that stem allomorph must have the inflection features contained in at least one of the feature sets of that stem allomorph label.</xsl:text>
 								</p>
 								<xsl:for-each select="$POSes[StemNames/MoStemName]">
 									<p>
@@ -1552,13 +1566,13 @@ Main template
 												</xsl:with-param>
 											</xsl:call-template>
 										</genericRef>
-										<xsl:text> has the stem name</xsl:text>
+										<xsl:text> has the stem allomorph label</xsl:text>
 										<xsl:if test="count(StemNames/MoStemName) &gt; 1">s</xsl:if>
 										<xsl:text> shown in the following table.  </xsl:text>
 										<xsl:if test="SubPossibilities">
 											<xsl:call-template name="OutputListOfSubcategories">
 												<xsl:with-param name="sText1">
-													<xsl:text>  Any stem names shown here are valid for not only the </xsl:text>
+													<xsl:text>  Any stem allomorph labels shown here are valid for not only the </xsl:text>
 												</xsl:with-param>
 												<xsl:with-param name="pos" select="."/>
 											</xsl:call-template>
@@ -1566,7 +1580,7 @@ Main template
 									</p>
 									<table type="tLeftOffset" border="1">
 										<tr>
-											<th>Name</th>
+											<th>Label</th>
 											<th>Description</th>
 											<th>Feature Sets</th>
 											<th>Stem count</th>
@@ -2392,12 +2406,12 @@ Main template
 					</xsl:if>
 					<xsl:if test="string-length($sUnusedStemNamesStems) &gt; 0 or string-length($sUnusedStemNamesAffixes) &gt; 0 or string-length($sStemNamesWithoutFeatureSets) &gt; 0">
 						<section2 id="sResidueStemNames" type="tH2">
-							<secTitle>Stem Names</secTitle>
+							<secTitle>Stem Allomorph Labels</secTitle>
 							<xsl:if test="string-length($sUnusedStemNamesStems) &gt; 0">
 								<p>
 									<xsl:text>This analysis of </xsl:text>
 									<xsl:value-of select="$sLangName"/>
-									<xsl:text> has the following stem names which have been defined but are never used in any lexical entry.</xsl:text>
+									<xsl:text> has the following stem allomorph labels which have been defined but are never used in any lexical entry.</xsl:text>
 								</p>
 								<table type="tLeftOffset">
 									<xsl:call-template name="OutputUnusedItems">
@@ -2410,12 +2424,12 @@ Main template
 								<p>
 									<xsl:text>This analysis of </xsl:text>
 									<xsl:value-of select="$sLangName"/>
-									<xsl:text> has the following stem names which have features for which there are no inflectional affixes which bear the feature and </xsl:text>
+									<xsl:text> has the following stem allomorph labels which have features for which there are no inflectional affixes which bear the feature and </xsl:text>
 									<xsl:text>for which there are no derivationial affixes whose resulting stem bears the feature.</xsl:text>
 								</p>
 								<table type="tLeftOffset" border="1">
 									<tr>
-										<th>Stem Name</th>
+										<th>Stem Allomorph Label</th>
 										<th>Features</th>
 									</tr>
 									<xsl:call-template name="OutputUnusedStemNameFeatures">
@@ -2427,7 +2441,7 @@ Main template
 								<p>
 									<xsl:text>This analysis of </xsl:text>
 									<xsl:value-of select="$sLangName"/>
-									<xsl:text> has the following stem names which do not have any feature sets defined.</xsl:text>
+									<xsl:text> has the following stem allomorph labels which do not have any feature sets defined.</xsl:text>
 								</p>
 								<table type="tLeftOffset">
 									<xsl:call-template name="OutputUnusedItems">
@@ -2436,7 +2450,7 @@ Main template
 									</xsl:call-template>
 								</table>
 							</xsl:if>
-							<p>See section <sectionRef sec="sAllomorphyStemNames"/> for more information on these stem names.</p>
+							<p>See section <sectionRef sec="sAllomorphyStemNames"/> for more information on these stem allomorph labels.</p>
 						</section2>
 					</xsl:if>
 				</section1>
@@ -5507,6 +5521,54 @@ OutputPOSAsNameWithRef
 		</xsl:choose>
 	</xsl:template>
 	<!--
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+		OutputProdRestrictsOfCompoundRule
+		display information for productivity restrictions in compound rules
+		Parameters: sHead = lft or roght head
+		msaProdRestricts = the set of productivity restrictions
+		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	-->
+	<xsl:template name="OutputProdRestrictsOfCompoundRule">
+		<xsl:param name="sHead"/>
+		<xsl:param name="msaProdRestricts"/>
+		<p>
+			<xsl:text>The </xsl:text>
+			<xsl:value-of select="$sHead"/>
+			<xsl:text> stem must be marked with </xsl:text>
+			<xsl:variable name="iProdCount" select="count($msaProdRestricts)"/>
+			<xsl:choose>
+				<xsl:when test="$iProdCount &gt; 1">
+					<xsl:text>at least one of the following exception"features": </xsl:text>
+					<xsl:for-each select="$msaProdRestricts">
+						<xsl:text>'</xsl:text>
+						<genericRef gref="sProductivityRestriction{@dst}">
+							<xsl:value-of select="key('ExceptionFeaturesID', @dst)/Name"/>
+						</genericRef>
+						<xsl:text>'</xsl:text>
+						<xsl:choose>
+							<xsl:when test="position() &lt; $iProdCount - 1">
+								<xsl:text>, </xsl:text>
+							</xsl:when>
+							<xsl:when test="position() = $iProdCount -1">
+								<xsl:text> and </xsl:text>
+							</xsl:when>
+							<xsl:when test="position() = $iProdCount">
+								<xsl:text>.</xsl:text>
+							</xsl:when>
+						</xsl:choose>
+					</xsl:for-each>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:text>the '</xsl:text>
+					<genericRef gref="sProductivityRestriction{$msaProdRestricts/@dst}">
+						<xsl:value-of select="key('ExceptionFeaturesID', $msaProdRestricts/@dst)/Name"/>
+					</genericRef>
+					<xsl:text>' exception "feature."</xsl:text>
+				</xsl:otherwise>
+			</xsl:choose>
+		</p>
+	</xsl:template>
+	<!--
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 OutputSlotsAndFillersForPOS
 	display information for slots and their fillers of a POS
@@ -6855,13 +6917,15 @@ ProcessSlotNames
 		<xsl:choose>
 			<xsl:when test="$bVernRightToLeft='1'">
 				<xsl:for-each select="$Slots">
-					<xsl:sort select="@ord" order="descending"/>
+					<!-- no need to sort; the input to this transform has them in order
+						<xsl:sort select="@ord" order="descending"/>-->
 					<xsl:call-template name="ProcessSlotName"/>
 				</xsl:for-each>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:for-each select="$Slots">
-					<xsl:sort select="@ord"/>
+					<!-- no need to sort; the input to this transform has them in order
+						<xsl:sort select="@ord" order="descending"/>-->
 					<xsl:call-template name="ProcessSlotName"/>
 				</xsl:for-each>
 			</xsl:otherwise>

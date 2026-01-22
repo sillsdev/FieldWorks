@@ -1,4 +1,4 @@
-// Copyright (c) 2007-2018 SIL International
+// Copyright (c) 2007-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -22,6 +22,7 @@ using SIL.FieldWorks.FwCoreDlgControls;
 using SIL.FieldWorks.Resources;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
+using SIL.Reporting;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.Common.Framework
@@ -46,7 +47,6 @@ namespace SIL.FieldWorks.Common.Framework
 		protected List<string> m_userModifiedStyles = new List<string>();
 		/// <summary>Collection of styles in the DB</summary>
 		protected ILcmOwningCollection<IStStyle> m_databaseStyles;
-		Dictionary<IStStyle, IStStyle> m_replacedStyles = new Dictionary<IStStyle, IStStyle>();
 
 		/// <summary>Dictionary of style names to StStyle objects representing the initial
 		/// collection of styles in the DB</summary>
@@ -63,6 +63,15 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Maps from style name to ReservedStyleInfo.
 		/// </summary>
 		protected Dictionary<string, ReservedStyleInfo> m_htReservedStyles = new Dictionary<string, ReservedStyleInfo>();
+
+		/// <summary>
+		/// The following style names are known to have unserializable features (borders, super- and subscript). We will avoid wiping out default styles
+		/// of these types when importing.
+		/// </summary>
+		public static readonly HashSet<string> UnserializableStyles = new HashSet<string>
+		{
+			"Homograph-Number", "Verse Number"
+		};
 
 		/// <summary>
 		/// This indicates if the style file being imported contains ALL styles, or if it should be considered a partial set.
@@ -217,8 +226,10 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Load all styles from the XML file and create styles in the database for them.
 		/// </summary>
 		/// <param name="progressDlg">The progress dialog.</param>
-		/// <param name="parameters">The parameters. First parameter is the style objects
-		/// (a FdoOwningCollection&lt;IStStyle&gt;), second is the styles (an XmlNode).</param>
+		/// <param name="parameters">The parameters.
+		/// <para>First is the style objects existing in the database (a FdoOwningCollection&lt;IStStyle&gt;)</para>
+		/// <para>Second is the styles to import (an XmlNode).</para>
+		/// <para>Third is a bool: true to delete stiles that are missing from the import; false to keep them.</para></param>
 		/// ------------------------------------------------------------------------------------
 		protected object CreateStyles(IProgress progressDlg, params object[] parameters)
 		{
@@ -275,7 +286,7 @@ namespace SIL.FieldWorks.Common.Framework
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Create a set of Scripture styles based on the given XML node.
+		/// Create a set of styles based on the given XML node.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		protected void CreateStyles()
@@ -511,7 +522,7 @@ namespace SIL.FieldWorks.Common.Framework
 			bool fUsingExistingStyle = false;
 			// EnsureCompatibleFactoryStyle will rename an incompatible user style to prevent collisions,
 			// but it is our responsibility to update the GUID on a compatible user style.
-			if (m_htOrigStyles.TryGetValue(styleName, out style) && EnsureCompatibleFactoryStyle(style, styleType, context, structure, function))
+			if (m_htOrigStyles.TryGetValue(styleName, out style) && EnsureCompatibleFactoryStyle(style, styleType, context, structure, function, factoryGuid))
 			{
 				// A style with the same name already exists in the project.
 				// It may be a user style or a factory style, but it has compatible context, structure, and function.
@@ -591,9 +602,9 @@ namespace SIL.FieldWorks.Common.Framework
 		/// ------------------------------------------------------------------------------------
 		private string GetBasedOn(XmlAttributeCollection attributes, string styleName)
 		{
-			if (m_htReservedStyles.ContainsKey(styleName))
+			if (m_htReservedStyles.TryGetValue(styleName, out var styleInfo))
 			{
-				return m_htReservedStyles[styleName].basedOn;
+				return styleInfo.basedOn;
 			}
 			XmlNode basedOn = attributes.GetNamedItem("basedOn");
 			return (basedOn == null) ? null : basedOn.Value.Replace("_", " ");
@@ -612,9 +623,9 @@ namespace SIL.FieldWorks.Common.Framework
 		private ContextValues GetContext(XmlAttributeCollection attributes,
 			string styleName)
 		{
-			if (m_htReservedStyles.ContainsKey(styleName))
+			if (m_htReservedStyles.TryGetValue(styleName, out var styleInfo))
 			{
-				return m_htReservedStyles[styleName].context;
+				return styleInfo.context;
 			}
 
 			string sContext = attributes.GetNamedItem("context").Value;
@@ -626,9 +637,7 @@ namespace SIL.FieldWorks.Common.Framework
 			}
 			catch (Exception ex)
 			{
-				Debug.Assert(false, "Unrecognized context attribute for style " + styleName +
-					" in " + ResourceFileName + ": " + sContext);
-				throw new Exception(ResourceHelper.GetResourceString("kstidInvalidInstallation"));
+				throw new Exception($"Unrecognized context attribute for style {styleName} in {ResourceFileName}: {sContext}", ex);
 			}
 		}
 
@@ -645,16 +654,13 @@ namespace SIL.FieldWorks.Common.Framework
 		private StructureValues GetStructure(XmlAttributeCollection attributes,
 			string styleName)
 		{
-			if (m_htReservedStyles.ContainsKey(styleName))
+			if (m_htReservedStyles.TryGetValue(styleName, out var styleInfo))
 			{
-				return m_htReservedStyles[styleName].structure;
+				return styleInfo.structure;
 			}
 
-			XmlNode node = attributes.GetNamedItem("structure");
-			string sStructure = (node != null) ? node.Value : null;
-
-			if (sStructure == null)
-				return StructureValues.Undefined;
+			var node = attributes.GetNamedItem("structure");
+			var sStructure = node?.Value;
 
 			switch(sStructure)
 			{
@@ -662,10 +668,10 @@ namespace SIL.FieldWorks.Common.Framework
 					return StructureValues.Heading;
 				case "body":
 					return StructureValues.Body;
+				case null:
+					return StructureValues.Undefined;
 				default:
-					Debug.Assert(false, "Unrecognized structure attribute for style " + styleName +
-						" in " + ResourceFileName + ": " + sStructure);
-					throw new Exception(ResourceHelper.GetResourceString("kstidInvalidInstallation"));
+					throw new ArgumentOutOfRangeException($"Unrecognized structure attribute for style {styleName} in {ResourceFileName}: {sStructure}");
 			}
 		}
 
@@ -682,13 +688,13 @@ namespace SIL.FieldWorks.Common.Framework
 		private FunctionValues GetFunction(XmlAttributeCollection attributes,
 			string styleName)
 		{
-			if (m_htReservedStyles.ContainsKey(styleName))
+			if (m_htReservedStyles.TryGetValue(styleName, out var styleInfo))
 			{
-				return m_htReservedStyles[styleName].function;
+				return styleInfo.function;
 			}
 
-			XmlNode node = attributes.GetNamedItem("use");
-			string sFunction = (node != null) ? node.Value : null;
+			var node = attributes.GetNamedItem("use");
+			var sFunction = node?.Value;
 			if (sFunction == null)
 				return FunctionValues.Prose;
 
@@ -716,9 +722,7 @@ namespace SIL.FieldWorks.Common.Framework
 				case "stanzabreak":
 					return FunctionValues.StanzaBreak;
 				default:
-					Debug.Assert(false, "Unrecognized use attribute for style " + styleName +
-						" in " + ResourceFileName + ": " + sFunction);
-					throw new Exception(ResourceHelper.GetResourceString("kstidInvalidInstallation"));
+					throw new ArgumentOutOfRangeException($"Unrecognized use attribute for style {styleName} in {ResourceFileName}: {sFunction}");
 			}
 		}
 
@@ -736,9 +740,11 @@ namespace SIL.FieldWorks.Common.Framework
 		public StyleType GetType(XmlAttributeCollection attributes, string styleName,
 			ContextValues context)
 		{
-			if (m_htReservedStyles.ContainsKey(styleName))
-				return m_htReservedStyles[styleName].styleType;
-			string sType = attributes.GetNamedItem("type").Value;
+			if (m_htReservedStyles.TryGetValue(styleName, out var styleInfo))
+			{
+				return styleInfo.styleType;
+			}
+			var sType = attributes.GetNamedItem("type").Value;
 			ValidateContext(context, styleName);
 			switch(sType)
 			{
@@ -748,9 +754,7 @@ namespace SIL.FieldWorks.Common.Framework
 				case "character":
 					return StyleType.kstCharacter;
 				default:
-					Debug.Assert(false, "Unrecognized type attribute for style " + styleName +
-						" in " + ResourceFileName + ": " + sType);
-					throw new Exception(ResourceHelper.GetResourceString("kstidInvalidInstallation"));
+					throw new ArgumentOutOfRangeException($"Unrecognized type attribute for style {styleName} in {ResourceFileName}: {sType}");
 			}
 		}
 
@@ -766,54 +770,46 @@ namespace SIL.FieldWorks.Common.Framework
 		#endregion
 
 		#region Style upgrade stuff
-
 		/// -------------------------------------------------------------------------------------
 		/// <summary>
 		/// Determine whether the given style is compatible with the given type, context, structure, and function.
-		/// If the style is a factory style, and the context, structure, and function can't be adjusted to match, report an invalid installation.
-		/// If the style is NOT a factory style, and the context, structure, and function don't all match, rename it to prevent collisions.
-		/// If the style is not a factory style, but it is compatible, it is the CLIENT's responsibility to make adjustments.
+		/// If the style is compatible, adjust the context and function as needed.
+		/// If the style is a factory style, and the type, context, structure, or function can't be adjusted to match, report an invalid installation.
+		/// If the style is NOT a factory style, and the type, context, structure, or function are incompatible, rename it to prevent collisions.
 		/// </summary>
 		/// <param name="style">Style to check.</param>
 		/// <param name="type">Style type we want</param>
 		/// <param name="context">The context we want</param>
 		/// <param name="structure">The structure we want</param>
 		/// <param name="function">The function we want</param>
+		/// <param name="guid">The GUID we want (to determine whether the style we want is another version of the style to check
+		/// or if we are checking two different styles).</param>
 		/// <returns>True if the style can be used as-is or redefined as requested; False otherwise</returns>
 		/// -------------------------------------------------------------------------------------
 		public bool EnsureCompatibleFactoryStyle(IStStyle style, StyleType type,
-			ContextValues context, StructureValues structure, FunctionValues function)
+			ContextValues context, StructureValues structure, FunctionValues function, Guid guid)
 		{
-			// If this is a bult-in style, but the context or function has changed, update them.
-			if (style.IsBuiltIn &&
-				(style.Context != context ||
-				style.Function != function) &&
-				IsValidInternalStyleContext(style, context))
-			{   // For now, at least, this method only deals with context changes. Theoretically,
-				// we could in the future have a function, type, or structure change that would
-				// require some special action.
-				ChangeFactoryStyleToInternal(style, context); // only overridden in TeStylesXmlAccessor so far
-				if (style.Type != type)
-					style.Type = type;
-				// Structure and function are probably meaningless for internal styles, but just
-				// to be sure...
-				if (style.Structure != structure)
-					style.Structure = structure;
-				if (style.Function != function)
-					style.Function = function;
-				return true;
+			if (style.Guid == guid)
+			{
+				// Prior to FW 9.3.5, Structure and Function were not exported.
+				// If either is the default value after import, assume it was lost on export; use what's built in.
+				if (structure == StructureValues.Undefined)
+					structure = style.Structure;
+				if (function == FunctionValues.Prose)
+					function = style.Function;
 			}
 
 			// Handle an incompatible Style by renaming a conflicting User style or reporting an invalid installation for an incompatible built-in style.
 			if (style.Type != type ||
 				!CompatibleContext(style.Context, context) ||
 				style.Structure != structure ||
-				!CompatibleFunction(style.Function, function))
+				style.Function != function)
 			{
 				if (style.IsBuiltIn)
+				{
 					ReportInvalidInstallation(String.Format(
 						FrameworkStrings.ksCannotRedefineFactoryStyle, style.Name, ResourceFileName));
-
+				}
 				// If style is in use, add it to the list so we can search through all
 				// paragraphs and replace it with a new renamed style (and rename the style
 				// itself, too);
@@ -835,23 +831,6 @@ namespace SIL.FieldWorks.Common.Framework
 			if (style.Function != function)
 				style.Function = function;
 			return true;
-		}
-
-		/// -------------------------------------------------------------------------------------
-		/// <summary>
-		/// If the proposed context for a style is internal or internalMappable, make sure the
-		/// program actually expects and supports this context for this style.
-		/// </summary>
-		/// <param name="style">The style being updated</param>
-		/// <param name="proposedContext">The proposed context for the style</param>
-		/// <returns><c>true</c>if the proposed context is internal or internal mappable and
-		/// the program recognizes it as a valid</returns>
-		/// -------------------------------------------------------------------------------------
-		public virtual bool IsValidInternalStyleContext(IStStyle style,
-			ContextValues proposedContext)
-		{
-			// By default we don't recognize any style as 'internal'. TE overrides.
-			return false;
 		}
 
 		/// -------------------------------------------------------------------------------------
@@ -897,21 +876,6 @@ namespace SIL.FieldWorks.Common.Framework
 				return true;
 			// A (character) style having a specific Context can be made General
 			return (proposedContext == ContextValues.General);
-		}
-
-		/// -------------------------------------------------------------------------------------
-		/// <summary>
-		/// Detemine whether the newly proposed function for a style is compatible with its
-		/// current function.
-		/// </summary>
-		/// <param name="currFunction">The existing function of the style</param>
-		/// <param name="proposedFunction">The function we want</param>
-		/// <returns><c>true </c>if the passed in function can be upgraded as requested;
-		/// <c>false</c> otherwise.</returns>
-		/// -------------------------------------------------------------------------------------
-		public virtual bool CompatibleFunction(FunctionValues currFunction, FunctionValues proposedFunction)
-		{
-			return (currFunction == proposedFunction);
 		}
 
 		/// -------------------------------------------------------------------------------------
@@ -1234,41 +1198,34 @@ namespace SIL.FieldWorks.Common.Framework
 		/// Interpret an underline type string as an FwUnderlineType.
 		/// Note that this is a duplicate of the routine on XmlVc (due to avoiding assembly references). Keep in sync.
 		/// </summary>
-		/// <param name="strVal"></param>
-		/// <returns></returns>
 		/// ------------------------------------------------------------------------------------
 		public static int InterpretUnderlineType(string strVal)
 		{
-			int val = (int)FwUnderlineType.kuntSingle; // default
 			switch(strVal)
 			{
 				case "single":
 				case null:
-					val = (int)FwUnderlineType.kuntSingle;
-					break;
+					return (int)FwUnderlineType.kuntSingle;
 				case "none":
-					val = (int)FwUnderlineType.kuntNone;
-					break;
+					return (int)FwUnderlineType.kuntNone;
 				case "double":
-					val = (int)FwUnderlineType.kuntDouble;
-					break;
+					return (int)FwUnderlineType.kuntDouble;
 				case "dotted":
-					val = (int)FwUnderlineType.kuntDotted;
-					break;
+					return (int)FwUnderlineType.kuntDotted;
 				case "dashed":
-					val = (int)FwUnderlineType.kuntDashed;
-					break;
+					return (int)FwUnderlineType.kuntDashed;
 				case "squiggle":
-					val = (int)FwUnderlineType.kuntSquiggle;
-					break;
+					return (int)FwUnderlineType.kuntSquiggle;
 				case "strikethrough":
-					val = (int)FwUnderlineType.kuntStrikethrough;
-					break;
+					return (int)FwUnderlineType.kuntStrikethrough;
 				default:
-					Debug.Assert(false, "Expected value single, none, double, dotted, dashed, strikethrough, or squiggle");
+					var message = $"Invalid underline style '{strVal}'. Valid values are single, none, double, dotted, dashed, strikethrough, or squiggle";
+					Logger.WriteEvent(message);
+					Debug.Fail(message);
 					break;
 			}
-			return val;
+			// REVIEW (Hasso) 2026.01: why isn't the default none?
+			return (int)FwUnderlineType.kuntSingle; // default
 		}
 
 		/// ------------------------------------------------------------------------------------

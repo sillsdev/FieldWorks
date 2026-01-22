@@ -283,14 +283,14 @@ namespace SIL.FieldWorks.IText
 			var wordform = m_owner.GetWordformOfAnalysis();
 
 			// Add the analyses, and recursively the other items.
-			var guess_services = new AnalysisGuessServices(m_cache);
+			var guess_services = new AnalysisGuessServices(m_cache, IsParsingDevMode());
 			var sorted_analyses = guess_services.GetSortedAnalysisGuesses(wordform, m_occurrence, false);
 			foreach (var wa in sorted_analyses)
 			{
 				Opinions o = wa.GetAgentOpinion(
 					m_cache.LangProject.DefaultUserAgent);
-				// skip any analysis the user has disapproved.
-				if (o != Opinions.disapproves)
+				// skip any analysis the user has disapproved unless we are in parsing dev mode.
+				if (IsParsingDevMode() || o != Opinions.disapproves)
 				{
 					AddAnalysisItems(wa);
 					AddSeparatorLine();
@@ -320,6 +320,13 @@ namespace SIL.FieldWorks.IText
 			//add the "new word gloss" option
 
 			AddItem(wa, MakeSimpleString(ITextStrings.ksNewWordGloss), false, WfiGlossTags.kClassId);
+		}
+
+		private bool IsParsingDevMode()
+		{
+			if (Owner?.InterlinDoc?.GetMaster() == null)
+				return false;
+			return Owner.InterlinDoc.GetMaster().IsParsingDevMode();
 		}
 
 		protected ITsString MakeSimpleString(String str)
@@ -386,6 +393,17 @@ namespace SIL.FieldWorks.IText
 				lim = -1;
 				increment = -1;
 			}
+
+			if (wa?.Cache?.LanguageProject != null)
+			{
+				Opinions uao = wa.GetAgentOpinion(wa.Cache.LangProject.DefaultUserAgent);
+				Opinions pao = wa.GetAgentOpinion(wa.Cache.LangProject.DefaultParserAgent);
+				AddOpinion(tsb, uao, InterlinVc.ApprovedGuessColor);
+				AddOpinion(tsb, pao, InterlinVc.MachineGuessColor);
+				tsb.Replace(tsb.Length, tsb.Length, " ", null);
+				tsb.SetProperties(tsb.Length - 1, tsb.Length, formTextProperties);
+			}
+
 			for (int i = start; i != lim; i += increment)
 			{
 				var mb = wa.MorphBundlesOS[i];
@@ -454,6 +472,28 @@ namespace SIL.FieldWorks.IText
 				ichFrom = 0;
 			tsb.Replace(ichFrom, tsb.Length, "", null);
 			return tsb.GetString();
+		}
+
+		private static void AddOpinion(ITsStrBldr tsb, Opinions opinion, int backColor)
+		{
+			int foreColor = (int)CmObjectUi.RGB(Color.Black);
+			int width = 1;
+			if (opinion == Opinions.approves)
+				tsb.Replace(tsb.Length, tsb.Length, "\u2714", null); // bold check mark
+			else if (opinion == Opinions.noopinion)
+			{
+				// Use two spaces to create a blank of about the same width as a check mark.
+				tsb.Replace(tsb.Length, tsb.Length, "  ", null);
+				width = 2;
+			}
+			else if (opinion == Opinions.disapproves)
+			{
+				tsb.Replace(tsb.Length, tsb.Length, "X", null);
+				foreColor = (int)CmObjectUi.RGB(Color.Red);
+			}
+			tsb.SetStrPropValue(tsb.Length - width, tsb.Length, (int)FwTextPropType.ktptFontFamily, "Segoe UI Symbol");
+			tsb.SetIntPropValues(tsb.Length - width, tsb.Length, (int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, foreColor);
+			tsb.SetIntPropValues(tsb.Length - width, tsb.Length, (int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, backColor);
 		}
 
 		/// <summary>

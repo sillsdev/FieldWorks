@@ -93,7 +93,7 @@ namespace SIL.FieldWorks.XWorks
 			var doc = new XmlDocument();
 			doc.LoadXml(entryClerk);
 			XmlNode clerkNode = doc.SelectSingleNode("//tools/tool[@label='Dictionary']//parameters[@area='lexicon']");
-			RecordClerk clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false);
+			RecordClerk clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, clerkNode, false, false);
 			clerk.SortName = "Headword";
 			return clerk;
 		}
@@ -298,7 +298,7 @@ namespace SIL.FieldWorks.XWorks
 			//SUT
 			var result = ConfiguredLcmGenerator.GenerateContentForEntry(entry, mainEntryNode, null, settings, 0).ToString();
 			var expectedResults = @"{""xhtmlTemplate"": ""lexentry"",""guid"":""g" + entry.Guid + @""",""letterHead"": ""c"",""sortIndex"": 0,
-				""pictures"": [{""guid"":""g" + sensePic.Guid + @""",""src"":""pictures/test_auth_copy_license.jpg"",
+				""pictures"": [{""guid"":""g" + sensePic.Guid + @""",""src"":""pictures/test_auth_copy_license.jpg"", ""copyrightLicense"":"""",
 				""sensenumber"": [{""lang"":""en"",""value"":""1""}],""caption"": [{""lang"":""en"",""value"":""caption""}]}]}";
 			var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 			VerifyJson(result, expected);
@@ -982,8 +982,8 @@ namespace SIL.FieldWorks.XWorks
 
 				// Bug: The second filename should be different after the export with relative path settings (fix later)
 				var expectedResults = @"{""xhtmlTemplate"": ""lexentry"",""guid"":""g" + testEntry.Guid + @""",""letterHead"": ""c"",""sortIndex"": 0,
-					""pictures"": [{""guid"":""g" + sensePic.Guid + @""",""src"":""pictures/" + fileName + @"""},
-					{""guid"":""g" + sensePic2.Guid + @""",""src"":""pictures/" + fileName + @"""}],}";
+					""pictures"": [{""guid"":""g" + sensePic.Guid + @""",""src"":""pictures/" + fileName + @""", ""copyrightLicense"":"""",},
+					{""guid"":""g" + sensePic2.Guid + @""",""src"":""pictures/" + fileName + @""", ""copyrightLicense"":""""}],}";
 				var expected = (JObject)JsonConvert.DeserializeObject(expectedResults, new JsonSerializerSettings { Formatting = Formatting.None });
 				VerifyJson(result, expected);
 			}

@@ -7,6 +7,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using System.Xml;
 using Gecko;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using XCore;
@@ -107,7 +108,8 @@ namespace SIL.FieldWorks.XWorks
 			m_mainView.DocumentCompleted += EnableRecordDocView;
 			if (cmo != null && cmo.Hvo > 0)
 			{
-				var configurationFile = DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable);
+				// Pass in cmo for popup lexical entry editor.
+				var configurationFile = DictionaryConfigurationListener.GetCurrentConfiguration(m_propertyTable, null, cmo);
 				if (String.IsNullOrEmpty(configurationFile))
 				{
 					m_mainView.DocumentText = String.Format("<html><body><p>{0}</p></body></html>",
@@ -115,7 +117,7 @@ namespace SIL.FieldWorks.XWorks
 					return;
 				}
 				var configuration = new DictionaryConfigurationModel(configurationFile, Cache);
-				var xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new [] { cmo.Hvo }, null, configuration, m_propertyTable);
+				var xhtmlPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(new [] { cmo.Hvo }, Clerk, null, configuration, m_propertyTable);
 				m_mainView.Url = new Uri(xhtmlPath);
 				m_mainView.Refresh(WebBrowserRefreshOption.Completely);
 			}

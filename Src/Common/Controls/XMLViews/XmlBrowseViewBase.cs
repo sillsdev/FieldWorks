@@ -14,6 +14,7 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using XCore;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.Utils;
 
@@ -1135,6 +1136,9 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(EventConstants.SaveScrollPosition, SaveScrollPosition);
+				Subscriber.Unsubscribe(EventConstants.RestoreScrollPosition, RestoreScrollPosition);
+
 				if (m_bv != null && !m_bv.IsDisposed && m_bv.SpecialCache != null)
 					m_bv.SpecialCache.RemoveNotification(this);
 			}
@@ -1403,7 +1407,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			CheckDisposed();
 
-			OnSaveScrollPosition(args);
+			SaveScrollPosition(args);
 			return false; // other things may wish to prepare too.
 		}
 
@@ -1418,7 +1422,6 @@ namespace SIL.FieldWorks.Common.Controls
 		}
 
 		/// <summary>
-		/// Called through mediator by reflection.
 		/// Save the current scroll position for later restoration, in a form that will survive
 		/// having the view contents replaced by a lazy box (that is, it's not good enough to
 		/// just save AutoScrollPosition.y, we need enough information to create a selection
@@ -1428,7 +1431,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// </summary>
 		/// <param name="args"></param>
 		/// <returns></returns>
-		public bool OnSaveScrollPosition(object args)
+		internal void SaveScrollPosition(object args)
 		{
 			CheckDisposed();
 
@@ -1440,7 +1443,7 @@ namespace SIL.FieldWorks.Common.Controls
 				// haven't even made our root box we can't have a meaningful scroll position to
 				// save.
 				m_iTopOfScreenObjectForScrollPosition = -1; // in case we can't figure one.
-				return false;
+				return;
 			}
 			try
 			{
@@ -1452,7 +1455,7 @@ namespace SIL.FieldWorks.Common.Controls
 					sel = this.RootBox.MakeSelAt(1, 0, rcSrcRoot, rcDstRoot, false);
 					m_iTopOfScreenObjectForScrollPosition = -1; // in case we can't figure one.
 					if (sel == null)
-						return false;
+						return;
 					// This gets us the index of the object at the top of the screen in the list of
 					// objects we are browsing.
 					int hvoObj, tag, cpropPrevious; // dummies
@@ -1468,7 +1471,7 @@ namespace SIL.FieldWorks.Common.Controls
 					if (sel == null)
 					{
 						m_iTopOfScreenObjectForScrollPosition = -1; // in case we can't figure one.
-						return false;
+						return;
 					}
 
 					//sel = RootBox.MakeSelInObj(0, 1, rgvsli, 0, false);
@@ -1483,25 +1486,22 @@ namespace SIL.FieldWorks.Common.Controls
 			catch
 			{
 				m_iTopOfScreenObjectForScrollPosition = -1; // in case we can't figure one.
-				return false;
 			}
-			return true; // indicates success
 		}
 
 		/// <summary>
-		/// Called through mediator by reflection. (Maybe?)
-		/// This routine attempts to restore the scroll position previously saved by OnSaveScrollPosition.
+		/// This routine attempts to restore the scroll position previously saved by SaveScrollPosition.
 		/// Specifically, it attempts to scroll to a position such that the top of the object at index
 		/// m_iTopOfScreenObjectForScrollPosition is m_dyTopOfScreenOffset pixels below the top of the
 		/// client area (or above, if m_dyTopOfScreenOffset is negative).
 		/// </summary>
 		/// <param name="args"></param>
 		/// <returns></returns>
-		public bool OnRestoreScrollPosition(object args)
+		internal void RestoreScrollPosition(object args)
 		{
 			CheckDisposed();
 
-			return RestoreScrollPosition(m_iTopOfScreenObjectForScrollPosition);
+			RestoreScrollPosition(m_iTopOfScreenObjectForScrollPosition);
 		}
 
 		/// <summary>
@@ -2104,6 +2104,9 @@ namespace SIL.FieldWorks.Common.Controls
 			Debug.Assert(m_nodeSpec == configurationParameters, "XmlBrowseViewBase.Init (XCore version): Mis-matched configuration parameters.");
 
 			SetSelectedRowHighlighting();//read the property table
+
+			Subscriber.Subscribe(EventConstants.SaveScrollPosition, SaveScrollPosition);
+			Subscriber.Subscribe(EventConstants.RestoreScrollPosition, RestoreScrollPosition);
 		}
 
 		#endregion XCore Colleague overrides

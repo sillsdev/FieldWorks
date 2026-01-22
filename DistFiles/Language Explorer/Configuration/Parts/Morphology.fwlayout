@@ -43,18 +43,22 @@
 	<layout class="MoStemMsa" type="detail" name="Category">
 		<part ref="Category"/>
 		<part ref="InflectionClass"/>
+		<part ref="ProdRestrict" visibility="ifdata"/>
 	</layout>
 	<layout class="MoStemMsa" type="detail" name="CategoryDisabled">
 		<part ref="CategoryDisabled"/>
 		<part ref="InflectionClassDisabled"/>
+		<part ref="ProdRestrictDisabled" visibility="ifdata"/>
 	</layout>
 	<layout class="MoStemMsa" type="detail" name="Result">
 		<part ref="Category"/>
 		<part ref="InflectionClass"/>
+		<part ref="ProdRestrict" visibility="ifdata"/>
 	</layout>
 	<layout class="MoStemMsa" type="detail" name="ResultDisabled">
 		<part ref="CategoryDisabled"/>
 		<part ref="InflectionClassDisabled"/>
+		<part ref="ProdRestrictDisabled" visibility="ifdata"/>
 	</layout>
 
 
@@ -93,41 +97,49 @@
 				<part ref="MorphType"/>
 				<part ref="RuleFormula" expansion="expanded" label="Affix Process Rule"/>
 				<part ref="InflectionClasses" visibility="ifdata"/>
+				<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+				<part ref="_CustomFieldPlaceholder" customFields="here" />
 			</indent>
 		</part>
 	</layout>
 
 	<layout class="MoAffixAllomorph" type="detail" name="AsLexemeFormBasic">
 		<part ref="AsLexemeForm" label="Lexeme Form" expansion="expanded">
-			<indent>
+			<indent indent="true">
 				<part ref="IsAbstractBasic" label="Is Abstract Form" visibility="never" /> <!-- could use 'ifTrue' if we had it -->
 				<part ref="MorphTypeBasic" visibility="ifdata"/>
 				<part ref="PhoneEnvBasic" visibility="ifdata"/>
 				<part ref="AsPosition" visibility="always"/>
 				<part ref="InflectionClassesForLexemeForm" visibility="ifdata"/>
-		<part ref="MsEnvFeaturesForLexemeForm" visibility="ifdata"/>
-	  </indent>
+				<part ref="MsEnvFeaturesForLexemeForm" visibility="ifdata"/>
+				<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+				<part ref="_CustomFieldPlaceholder" customFields="here"/>
+			</indent>
 		</part>
 	</layout>
 
 	<layout class="MoStemAllomorph" type="detail" name="AsLexemeFormBasic">
 		<part ref="AsLexemeForm" label="Lexeme Form" expansion="expanded">
-			<indent>
+			<indent indent="true">
 				<part ref="IsAbstractBasic" label="Is Abstract Form" visibility="never" /> <!-- could use 'ifTrue' if we had it -->
 				<part ref="MorphTypeBasic" visibility="ifdata"/>
 				<part ref="PhoneEnvBasic" visibility="ifdata"/>
 				<part ref="StemNameForLexemeForm" visibility="ifdata"/>
+				<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+				<part ref="_CustomFieldPlaceholder" customFields="here"/>
 			</indent>
 		</part>
 	</layout>
 
 	<layout class="MoAffixProcess" type="detail" name="AsLexemeFormBasic">
 		<part ref="AsLexemeForm" shouldNotMerge="true" label="Lexeme Form" expansion="expanded">
-			<indent>
+			<indent indent="true">
 				<part ref="IsAbstractBasic" label="Is Abstract Form" visibility="never" /> <!-- could use 'ifTrue' if we had it -->
 				<part ref="MorphTypeBasic" visibility="ifdata"/>
 				<part ref="RuleFormulaBasic" expansion="expanded" label="Affix Process Rule"/>
 				<part ref="InflectionClassesForLexemeForm" visibility="ifdata"/>
+				<!-- Special part to indicate where custom fields should be inserted at.  Handled in Common.Framework.DetailControls.DataTree -->
+				<part ref="_CustomFieldPlaceholder" customFields="here"/>
 			</indent>
 		</part>
 	</layout>
@@ -171,9 +183,9 @@
 			</indent>
 		</part>
 
-		<part ref="StemNamesSection" expansion="expanded" label="Stem Names" menu="mnuDataTree-POS-StemNames" >
+		<part ref="StemNamesSection" expansion="expanded" label="Stem Allomorph Labels" menu="mnuDataTree-POS-StemNames" >
 			<indent>
-				<part ref="StemNames" expansion="expanded" label="Stem Names" menu="mnuDataTree-POS-StemNames"/>
+				<part ref="StemNames" expansion="expanded" label="Stem Allomoprh Labels" menu="mnuDataTree-POS-StemNames"/>
 			</indent>
 		</part>
 
@@ -205,7 +217,7 @@
 	</layout>
 
 	<layout class="MoStemName" type="detail" name="EditStemName">
-		<part ref="NameAllA" label="Stem Name" menu="mnuDataTree-POS-StemName"/>
+		<part ref="NameAllA" label="Stem Allomorph Label" menu="mnuDataTree-POS-StemName"/>
 		<part ref="AbbreviationAllA"/>
 		<part ref="DescriptionAllA"/>
 		<part ref="StemNameRegionsSection" expansion="expanded" label="Feature Sets" menu="mnuDataTree-MoStemName-Regions" >
@@ -453,27 +465,31 @@
 		</part>
 	</layout>
 
-   <layout class="MoInflClass" type="detail" name="SubClassesAllA">
-	  <part ref="NameAllA" label="Subclass Name" menu="mnuDataTree-POS-InflectionClass"/>
-	  <part ref="AbbreviationAllA"/>
-	  <part ref="DescriptionAllA"/>
-	  <part ref="SubClassesSection" label="Subclasses" menu="mnuDataTree-POS-InflectionClass-Subclasses">
-		 <indent indent="true">
-			<part ref="SubClasses" label="Subclasses"/>
-		 </indent>
-	  </part>
-   </layout>
+	<layout class="MoInflClass" type="detail" name="SubClassesAllA">
+		<part ref="NameAllA" label="Subclass Name" menu="mnuDataTree-POS-InflectionClass"/>
+		<part ref="AbbreviationAllA"/>
+		<part ref="DescriptionAllA"/>
+		<indent indent="true">
+			<part ref="SubClassesSection" label="Subclasses" menu="mnuDataTree-POS-InflectionClass-Subclasses">
+				<indent>
+					<part ref="SubClasses" label="Subclasses"/>
+				</indent>
+			</part>
+		</indent>
+	</layout>
 
-   <layout class="MoInflClass" type="detail" name="EditInflectionClass">
-	  <part ref="NameAllA" label="Inflection Class Name"  menu="mnuDataTree-POS-InflectionClass"/>
-	  <part ref="AbbreviationAllA"/>
-	  <part ref="DescriptionAllA"/>
-	  <part ref="SubClassesSection" label="Subclasses" menu="mnuDataTree-POS-InflectionClass-Subclasses">
-		  <indent indent="true">
-			 <part ref="SubClasses" label="Subclasses"/>
-		  </indent>
-	 </part>
-  </layout>
+	<layout class="MoInflClass" type="detail" name="EditInflectionClass">
+		<part ref="NameAllA" label="Inflection Class Name"  menu="mnuDataTree-POS-InflectionClass"/>
+		<part ref="AbbreviationAllA"/>
+		<part ref="DescriptionAllA"/>
+		<indent indent="true">
+			<part ref="SubClassesSection" label="Subclasses" menu="mnuDataTree-POS-InflectionClass-Subclasses">
+				<indent>
+					<part ref="SubClasses" label="Subclasses"/>
+				</indent>
+			</part>
+		</indent>
+	</layout>
    <layout class="MoInflClass" type="detail" name="SubClasses">
 	  <part ref="SubclassesAllA" label="Subclass" >
 		 </part>

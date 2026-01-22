@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows.Forms;
 using System.Xml;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -74,7 +75,7 @@ namespace SIL.FieldWorks.IText
 			string name = XmlUtils.GetAttributeValue(configurationParameters, "clerk");
 			var clerk = RecordClerk.FindClerk(_propertyTable, name);
 			m_clerk = (clerk == null || clerk is TemporaryRecordClerk) ?
-				(InterlinearTextsRecordClerk)RecordClerkFactory.CreateClerk(mediator, _propertyTable, configurationParameters, true) :
+				(InterlinearTextsRecordClerk)RecordClerkFactory.CreateClerk(mediator, _propertyTable, configurationParameters, true, true) :
 				(InterlinearTextsRecordClerk)clerk;
 			// There's no record bar for it to control, but it should control the staus bar (e.g., it should update if we change
 			// the set of selected texts).
@@ -85,7 +86,7 @@ namespace SIL.FieldWorks.IText
 			mediator.AddColleague(this);
 			//add our current state to the history system
 			string toolName = _propertyTable.GetStringProperty("currentContentControl", "");
-			mediator.SendMessage("AddContextToHistory", new FwLinkArgs(toolName, Guid.Empty), false);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.AddContextToHistory, new FwLinkArgs(toolName, Guid.Empty)));
 		}
 
 		private void RebuildStatisticsTable()

@@ -4,6 +4,7 @@
 
 using System;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel;

@@ -625,7 +625,7 @@ namespace SIL.FieldWorks.XWorks
 					fileProperty = propertyValue as ICmFile;
 					fileOwner = field as ICmObject;
 					return fileProperty != null && fileOwner != null
-						? GenerateContentForPicture(fileProperty, nodeList, fileOwner, settings)
+						? GenerateContentForPicture(fileProperty, nodeList, fileOwner, settings, field)
 						: GenerateContentForPictureCaption(propertyValue, nodeList, settings);
 
 				case PropertyType.CmPossibility:
@@ -682,26 +682,25 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		/// <summary>
-		/// Gets the value of the requested custom field associated with the fieldOwner object
+		/// Gets the value of the requested field associated with the fieldOwner object
 		/// </summary>
-		/// <returns>true if the custom field was valid and false otherwise</returns>
-		/// <remarks>propertyValue can be null if the custom field is valid but no value is stored for the owning object</remarks>
+		/// <returns>true if the field was valid and false otherwise</returns>
+		/// <remarks>propertyValue can be null if the field is valid but no value is stored for the owning object</remarks>
 		private static bool GetPropValueForModelField(object fieldOwner, ConfigurableDictionaryNode config,
-			LcmCache cache, ISilDataAccess decorator, string customFieldName, ref object propertyValue, string cfOwnerClassName = null)
+			LcmCache cache, ISilDataAccess decorator, string fieldName, ref object propertyValue, string cfOwnerClassName = null)
 		{
-			var customFieldOwnerClassName = cfOwnerClassName;
+			var fieldOwnerClassName = cfOwnerClassName;
+			var specificFieldName = fieldName;
 			ICmObject specificObject;
 			if (fieldOwner is ISenseOrEntry senseOrEntry)
 			{
-				// assign the customFieldOwnerClassName if it was not passed in
-				customFieldOwnerClassName = customFieldOwnerClassName ?? senseOrEntry.Item.ClassName;
-				specificObject = senseOrEntry.Item;
+				senseOrEntry.SpecificItemAndFieldName(fieldName, out specificObject, out specificFieldName);
+				// Replace "SenseOEntry" with the correct class.
+				fieldOwnerClassName = (specificObject is ILexEntry) ? "LexEntry" : "LexSense";
 			}
 			else if(fieldOwner is ICmObject owner)
 			{
 				specificObject = owner;
-				// assign the customFieldOwnerClassName if it was not passed in
-				customFieldOwnerClassName = customFieldOwnerClassName ?? specificObject.ClassName;
 				senseOrEntry = null;
 			}
 			else
@@ -709,23 +708,27 @@ namespace SIL.FieldWorks.XWorks
 				// throw an argument exception if the field owner is not a valid type
 				throw new ArgumentException("The field owner is not a valid type", nameof(fieldOwner));
 			}
+
+			// assign the fieldOwnerClassName if it was not passed in
+			fieldOwnerClassName = fieldOwnerClassName ?? specificObject.ClassName;
+
 			if (decorator == null)
 				decorator = cache.DomainDataByFlid;
-			int customFieldFlid = GetCustomFieldFlid(config, cache, customFieldOwnerClassName, customFieldName);
-			if (customFieldFlid == 0)
+			int fieldFlid = GetCustomFieldFlid(config, cache, fieldOwnerClassName, specificFieldName);
+			if (fieldFlid == 0)
 				return false;
 
-			var customFieldType = cache.MetaDataCacheAccessor.GetFieldType(customFieldFlid);
+			var fieldType = cache.MetaDataCacheAccessor.GetFieldType(fieldFlid);
 			if (senseOrEntry != null)
 			{
-				if (!((IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor).GetFields(senseOrEntry.Item.ClassID,
-					true, (int)CellarPropertyTypeFilter.All).Contains(customFieldFlid))
+				if (!((IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor).GetFields(specificObject.ClassID,
+					true, (int)CellarPropertyTypeFilter.All).Contains(fieldFlid))
 				{
 					return false;
 				}
 			}
 
-			switch (customFieldType)
+			switch (fieldType)
 			{
 				case (int)CellarPropertyType.ReferenceCollection:
 				case (int)CellarPropertyType.OwningCollection:
@@ -735,11 +738,11 @@ namespace SIL.FieldWorks.XWorks
 					{
 						var sda = decorator;
 						// This method returns the hvo of the object pointed to
-						var chvo = sda.get_VecSize(specificObject.Hvo, customFieldFlid);
+						var chvo = sda.get_VecSize(specificObject.Hvo, fieldFlid);
 						int[] contents;
 						using (var arrayPtr = MarshalEx.ArrayToNative<int>(chvo))
 						{
-							sda.VecProp(specificObject.Hvo, customFieldFlid, chvo, out chvo, arrayPtr);
+							sda.VecProp(specificObject.Hvo, fieldFlid, chvo, out chvo, arrayPtr);
 							contents = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
 						}
 						// Convert the contents to IEnumerable<T>
@@ -763,36 +766,36 @@ namespace SIL.FieldWorks.XWorks
 				case (int)CellarPropertyType.OwningAtomic:
 					{
 						// This method returns the hvo of the object pointed to
-						propertyValue = decorator.get_ObjectProp(specificObject.Hvo, customFieldFlid);
+						propertyValue = decorator.get_ObjectProp(specificObject.Hvo, fieldFlid);
 						// if the hvo is invalid set propertyValue to null otherwise get the object
 						propertyValue = (int)propertyValue > 0 ? cache.LangProject.Services.GetObject((int)propertyValue) : null;
 						break;
 					}
 				case (int)CellarPropertyType.GenDate:
 					{
-						propertyValue = new GenDate(decorator.get_IntProp(specificObject.Hvo, customFieldFlid));
+						propertyValue = new GenDate(decorator.get_IntProp(specificObject.Hvo, fieldFlid));
 						break;
 					}
 
 				case (int)CellarPropertyType.Time:
 					{
-						propertyValue = SilTime.ConvertFromSilTime(decorator.get_TimeProp(specificObject.Hvo, customFieldFlid));
+						propertyValue = SilTime.ConvertFromSilTime(decorator.get_TimeProp(specificObject.Hvo, fieldFlid));
 						break;
 					}
 				case (int)CellarPropertyType.MultiUnicode:
 				case (int)CellarPropertyType.MultiString:
 					{
-						propertyValue = decorator.get_MultiStringProp(specificObject.Hvo, customFieldFlid);
+						propertyValue = decorator.get_MultiStringProp(specificObject.Hvo, fieldFlid);
 						break;
 					}
 				case (int)CellarPropertyType.String:
 					{
-						propertyValue = decorator.get_StringProp(specificObject.Hvo, customFieldFlid);
+						propertyValue = decorator.get_StringProp(specificObject.Hvo, fieldFlid);
 						break;
 					}
 				case (int)CellarPropertyType.Integer:
 					{
-						propertyValue = decorator.get_IntProp(specificObject.Hvo, customFieldFlid);
+						propertyValue = decorator.get_IntProp(specificObject.Hvo, fieldFlid);
 						break;
 					}
 			}
@@ -978,7 +981,7 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static IFragment GenerateContentForPicture(ICmFile pictureFile, List<ConfigurableDictionaryNode> nodeList,
-			ICmObject owner, GeneratorSettings settings)
+			ICmObject owner, GeneratorSettings settings, object field)
 		{
 			var srcAttribute = GenerateSrcAttributeFromFilePath(pictureFile, settings.UseRelativePaths ? "pictures" : null, settings);
 			if (!string.IsNullOrEmpty(srcAttribute))
@@ -987,7 +990,9 @@ namespace SIL.FieldWorks.XWorks
 				// An XHTML id attribute must be unique but the ICmfile is used for all references to the same file within the project.
 				// The ICmPicture that owns the file does have unique guid so we use that.
 				var ownerGuid = owner.Guid.ToString();
-				return settings.ContentGenerator.AddImage(nodeList.Last(), settings, className, srcAttribute, ownerGuid);
+
+				string license = GeneratePictureLicenseContent(field, nodeList);
+				return settings.ContentGenerator.AddImage(nodeList.Last(), settings, className, srcAttribute, ownerGuid, license);
 			}
 			return settings.ContentGenerator.CreateFragment();
 		}
@@ -2039,7 +2044,8 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryPublicationDecorator publicationDecorator, object item, bool isThisSenseNumbered,
 			GeneratorSettings settings, bool isSameGrammaticalInfo, SenseInfo info, bool first)
 		{
-			var senseNumberSpan = GenerateSenseNumberSpanIfNeeded(nodeList, isThisSenseNumbered, ref info, settings);
+			var senseNumberSpan = GenerateSenseNumberSpanIfNeeded(nodeList, isThisSenseNumbered,
+				item as ILexSense, publicationDecorator, ref info, settings);
 			var bldr = settings.ContentGenerator.CreateFragment();
 			var config = nodeList.Last();
 			if (config.ReferencedOrDirectChildren != null)
@@ -2050,6 +2056,11 @@ namespace SIL.FieldWorks.XWorks
 					{
 						var childNodeList = BuildNodeList(nodeList, child);
 						bldr.Append(GenerateContentForFieldByReflection(item, childNodeList, publicationDecorator, settings, info));
+						if (child.CSSClassNameOverride == "headword-classified")
+						{
+							bldr.Append(senseNumberSpan);
+							senseNumberSpan = settings.ContentGenerator.CreateFragment(); // clear it so it will not be added again
+						}
 					}
 				}
 			}
@@ -2108,6 +2119,35 @@ namespace SIL.FieldWorks.XWorks
 				writer.Flush();
 				return bldr;
 			}
+		}
+
+		private static string GeneratePictureLicenseContent(object item, List<ConfigurableDictionaryNode> nodeList)
+		{
+			foreach (ConfigurableDictionaryNode node in nodeList)
+			{
+				// The Copyright & License node is a child of the Pictures node.
+				// It uses an extension method, so in order to get the copyright info,
+				// we need to get the extension method in question, and then get its value.
+				if (node.Label == "Pictures")
+				{
+					foreach (var child in node.ReferencedOrDirectChildren)
+					{
+						if (child.Label == "Copyright & License")
+						{
+							MemberInfo property;
+							var extensionType = GetExtensionMethodType(child.FieldDescription);
+							property = extensionType.GetMethod(
+								GetExtensionMethodName(child.FieldDescription),
+								BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+							// GetValueFromMember returns an "object" type, but for Copyright & License,
+							// the object is a string, so we can safely cast it here.
+							return (string)GetValueFromMember(property, item);
+						}
+					}
+				}
+			}
+
+			return String.Empty;
 		}
 
 		private static IFragment GenerateCollectionItemContent(List<ConfigurableDictionaryNode> nodeList,
@@ -2359,14 +2399,15 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		private static IFragment GenerateSenseNumberSpanIfNeeded(List<ConfigurableDictionaryNode> nodeList,
-			bool isThisSenseNumbered, ref SenseInfo info, GeneratorSettings settings)
+			bool isThisSenseNumbered, ILexSense sense, DictionaryPublicationDecorator decorator,
+			ref SenseInfo info, GeneratorSettings settings)
 		{
 			if (!isThisSenseNumbered)
 				return settings.ContentGenerator.CreateFragment();
 
 			var senseOptions = nodeList.Last().DictionaryNodeOptions as DictionaryNodeSenseOptions;
 
-			var formattedSenseNumber = GetSenseNumber(senseOptions.NumberingStyle, ref info);
+			var formattedSenseNumber = GetSenseNumber(senseOptions.NumberingStyle, sense, decorator, ref info);
 			info.HomographConfig = settings.Cache.ServiceLocator.GetInstance<HomographConfiguration>();
 			var senseNumberWs = string.IsNullOrEmpty(info.HomographConfig.WritingSystem) ? "en" : info.HomographConfig.WritingSystem;
 			if (string.IsNullOrEmpty(formattedSenseNumber))
@@ -2374,21 +2415,42 @@ namespace SIL.FieldWorks.XWorks
 			return settings.ContentGenerator.GenerateSenseNumber(nodeList, settings, formattedSenseNumber, senseNumberWs);
 		}
 
-		private static string GetSenseNumber(string numberingStyle, ref SenseInfo info)
+		private static string GetSenseNumber(string numberingStyle, ILexSense sense,
+			DictionaryPublicationDecorator publicationDecorator, ref SenseInfo info)
 		{
 			string nextNumber;
+			var senseCount = info.SenseCounter;
+			// Try to get the outline number if there is a publication decorator
+			if (publicationDecorator != null && sense != null)
+			{
+				var senseCollectionFlid = 0;
+				var mdc = (IFwMetaDataCacheManaged)sense.Cache.MetaDataCacheAccessor;
+				// get flid for the senses field of the owner
+				if (sense.Owner is ILexSense)
+					senseCollectionFlid = mdc.GetFieldId("LexSense", "Senses", false);
+				else if (sense.Owner is ILexEntry)
+					senseCollectionFlid = mdc.GetFieldId("LexEntry", "Senses", false);
+				if (senseCollectionFlid > 0)
+				{
+					var senseNumber = sense.Cache.GetOutlineNumber(sense, senseCollectionFlid, false, true, publicationDecorator);
+					if (!string.IsNullOrEmpty(senseNumber))
+					{
+						senseCount = int.Parse(senseNumber.Split('.').Last());
+					}
+				}
+			}
 			switch (numberingStyle)
 			{
 				case "%a":
 				case "%A":
-					nextNumber = GetAlphaSenseCounter(numberingStyle, info.SenseCounter);
+					nextNumber = GetAlphaSenseCounter(numberingStyle, senseCount);
 					break;
 				case "%i":
 				case "%I":
-					nextNumber = GetRomanSenseCounter(numberingStyle, info.SenseCounter);
+					nextNumber = GetRomanSenseCounter(numberingStyle, senseCount);
 					break;
 				default: // handles %d and %O. We no longer support "%z" (1  b  iii) because users can hand-configure its equivalent
-					nextNumber = info.SenseCounter.ToString();
+					nextNumber = senseCount.ToString();
 					// Use the digits from the CustomHomographNumbers if they are defined
 					if (info.HomographConfig.CustomHomographNumbers.Count == 10)
 					{
@@ -2681,7 +2743,12 @@ namespace SIL.FieldWorks.XWorks
 			}
 			if (propertyValue is IMultiStringAccessor)
 			{
-				return GenerateContentForStrings((IMultiStringAccessor)propertyValue, nodeList, settings, guid);
+				string reversalWs = null;
+				if (field is IReversalIndexEntry revIndexEntry && revIndexEntry.Owner is IReversalIndex revIndex)
+				{
+					reversalWs = revIndex.WritingSystem;
+				}
+				return GenerateContentForStrings((IMultiStringAccessor)propertyValue, nodeList, settings, guid, reversalWs);
 			}
 
 			if (propertyValue is int)
@@ -2765,7 +2832,7 @@ namespace SIL.FieldWorks.XWorks
 		/// DictionaryWritingSystemOptions of the configuration that also has data in the given IMultiStringAccessor
 		/// </summary>
 		private static IFragment GenerateContentForStrings(IMultiStringAccessor multiStringAccessor,
-			List<ConfigurableDictionaryNode> nodeList, GeneratorSettings settings, Guid guid)
+			List<ConfigurableDictionaryNode> nodeList, GeneratorSettings settings, Guid guid, string reversalWs = null)
 		{
 			var wsOptions = nodeList.Last().DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
 			if (wsOptions == null)
@@ -2784,7 +2851,18 @@ namespace SIL.FieldWorks.XWorks
 				{
 					continue;
 				}
-				var wsId = WritingSystemServices.GetMagicWsIdFromName(option.Id);
+
+				int wsId = 0;
+				if (option.Id == "reversal")
+				{
+					wsId = settings.Cache.WritingSystemFactory.GetWsFromStr(reversalWs);
+				}
+
+				if (wsId == 0)
+				{
+					wsId = WritingSystemServices.GetMagicWsIdFromName(option.Id);
+				}
+
 				// The string for the specific wsId in the option, or the best string option in the accessor if the wsId is magic
 				ITsString bestString;
 				if (wsId == 0)
@@ -3329,22 +3407,23 @@ namespace SIL.FieldWorks.XWorks
 			return wsOptions.Options[0].Id;
 		}
 
-		public static DictionaryPublicationDecorator GetPublicationDecoratorAndEntries(PropertyTable propertyTable, out int[] entriesToSave, string dictionaryType)
+		/// <summary>
+		/// Creates a decorator for the current publication using the given clerk.
+		/// </summary>
+		public static DictionaryPublicationDecorator CurrentDecorator(PropertyTable propertyTable, LcmCache cache, RecordClerk clerk)
 		{
-			var cache = propertyTable.GetValue<LcmCache>("cache");
-			if (cache == null)
-			{
-				throw new ArgumentException(@"PropertyTable had no cache", "mediator");
-			}
-			var clerk = propertyTable.GetValue<RecordClerk>("ActiveClerk", null);
-			if (clerk == null)
-			{
-				throw new ArgumentException(@"PropertyTable had no clerk", "mediator");
-			}
-
-			ICmPossibility currentPublication;
 			var currentPublicationString = propertyTable.GetStringProperty("SelectedPublication", xWorksStrings.AllEntriesPublication);
-			if (currentPublicationString == xWorksStrings.AllEntriesPublication)
+			return GetDecorator(propertyTable, cache, clerk, currentPublicationString);
+		}
+
+		/// <summary>
+		/// Creates a decorator for the provided publication name, using the given clerk.
+		/// </summary>
+		/// <param name="pubName">Name of the publication.</param>
+		public static DictionaryPublicationDecorator GetDecorator(PropertyTable propertyTable, LcmCache cache, RecordClerk clerk, string pubName)
+		{
+			ICmPossibility currentPublication;
+			if (pubName == xWorksStrings.AllEntriesPublication)
 			{
 				currentPublication = null;
 			}
@@ -3352,11 +3431,10 @@ namespace SIL.FieldWorks.XWorks
 			{
 				currentPublication =
 					(from item in cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS
-					 where item.Name.UserDefaultWritingSystem.Text == currentPublicationString
+					 where item.Name.UserDefaultWritingSystem.Text == pubName
 					 select item).FirstOrDefault();
 			}
 			var decorator = new DictionaryPublicationDecorator(cache, clerk.VirtualListPublisher, clerk.VirtualFlid, currentPublication);
-			entriesToSave = decorator.GetEntriesToPublish(propertyTable, clerk.VirtualFlid, dictionaryType);
 			return decorator;
 		}
 

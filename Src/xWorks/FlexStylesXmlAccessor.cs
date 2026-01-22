@@ -1,23 +1,23 @@
-// Copyright (c) 2014-2018 SIL International
+// Copyright (c) 2014-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using SIL.Extensions;
+using SIL.FieldWorks.Common.Framework;
+using SIL.FieldWorks.FwCoreDlgControls;
+using SIL.LCModel;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
+using SIL.LCModel.DomainServices;
+using SIL.LCModel.Utils;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-using SIL.Extensions;
-using SIL.LCModel.Core.Text;
-using SIL.LCModel;
-using SIL.FieldWorks.Common.Framework;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Utils;
-using SIL.FieldWorks.FwCoreDlgControls;
-using SIL.LCModel.DomainServices;
 
 namespace SIL.FieldWorks.XWorks.LexText
 {
@@ -54,7 +54,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			{
 				m_sourceStyles = LoadDoc(sourceDocument);
 				if (!string.IsNullOrEmpty(sourceDocument))
-					CreateStyles(new Common.FwUtils.ConsoleProgress(), new object[] { m_cache.LangProject.StylesOC, m_sourceStyles, false});
+					CreateStyles(new Common.FwUtils.ConsoleProgress(), m_cache.LangProject.StylesOC, m_sourceStyles, false);
 			}
 		}
 
@@ -192,26 +192,14 @@ namespace SIL.FieldWorks.XWorks.LexText
 			ResetProps(styleInfo);
 		}
 
-		/// ------------------------------------------------------------------------------------
-		/// <summary>
-		/// Loads the settings file and checks the DTD version.
-		/// </summary>
-		/// <returns>The root node</returns>
-		/// ------------------------------------------------------------------------------------
-		protected override XmlNode LoadDoc(string xmlLocation = null)
-		{
-			return base.LoadDoc(m_sourceDocumentPath);
-		}
-
 		public XmlSchema GetSchema()
 		{
 			throw new NotImplementedException();
 		}
 
 		/// <summary>
-		/// Currently the reading is handled by CreateStyles
+		/// Currently, the reading is handled by CreateStyles
 		/// </summary>
-		/// <param name="reader"></param>
 		public void ReadXml(XmlReader reader)
 		{
 			throw new NotImplementedException();
@@ -226,7 +214,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			writer.WriteAttributeString("version", GetVersion(m_sourceStyles).ToString());
 			foreach (var style in StyleCollection)
 			{
-				if (DictionaryConfigurationImportController.UnsupportedStyles.Contains(style.Name))
+				if (UnserializableStyles.Contains(style.Name))
 					continue;
 				var exportStyle = new ExportStyleInfo(style, style.Rules);
 				WriteStyleXml(exportStyle, writer);
@@ -242,6 +230,18 @@ namespace SIL.FieldWorks.XWorks.LexText
 			writer.WriteAttributeString("userlevel", style.UserLevel.ToString());
 			writer.WriteAttributeString("context", GetStyleContext(style));
 			writer.WriteAttributeString("type", GetStyleType(style));
+
+			var styleStructure = GetStyleStructure(style);
+			if (styleStructure != null)
+			{
+				writer.WriteAttributeString("structure", styleStructure);
+			}
+
+			var styleFunction = style.RealStyle.Function.ToString().ToLowerInvariant();
+			if (styleFunction != "prose")
+			{
+				writer.WriteAttributeString("use", styleFunction);
+			}
 
 			if (GetStyleType(style) == "character" && style.InheritsFrom != null)
 			{
@@ -264,7 +264,22 @@ namespace SIL.FieldWorks.XWorks.LexText
 				case StyleType.kstParagraph:
 					return "paragraph";
 			}
-			return style.RealStyle.Type.ToString();
+			throw new ArgumentOutOfRangeException($"Unrecognized type attribute for style {style.Name} ({style.RealStyle.Name}): {style.RealStyle.Type}");
+		}
+
+		private static string GetStyleStructure(ExportStyleInfo style)
+		{
+			switch (style.RealStyle.Structure)
+			{
+				case StructureValues.Heading:
+					return "heading";
+				case StructureValues.Body:
+					return "body";
+				case StructureValues.Undefined:
+					return null;
+				default:
+					throw new ArgumentOutOfRangeException(style.RealStyle.Structure.ToString());
+			}
 		}
 
 		///<remarks>The first letter for the context is supposed to be lower case</remarks>
@@ -320,11 +335,12 @@ namespace SIL.FieldWorks.XWorks.LexText
 				}
 			}
 			writer.WriteEndElement(); // font
-			IEnumerable<Tuple<string, string>> paragraphProps = CollectParagraphProps(style, basedOnStyle, nextStyle);
-			if (paragraphProps.Any())
+			if (style.IsParagraphStyle)
 			{
+				// Generate the paragraph info (the paragraph element is required for paragraph styles even if it has no attributes;
+				// only Normal should have an empty paragraph element; all other styles should have at least basedOn)
 				writer.WriteStartElement("paragraph");
-				foreach (var prop in paragraphProps)
+				foreach (var prop in CollectParagraphProps(style, basedOnStyle, nextStyle))
 				{
 					writer.WriteAttributeString(prop.Item1, prop.Item2);
 				}
@@ -332,25 +348,19 @@ namespace SIL.FieldWorks.XWorks.LexText
 				//Bullet/Number FontInfo
 				try
 				{
-					IEnumerable<Tuple<string, string>> bulNumParaProperty = CollectBulletProps(style.BulletInfo);
-					foreach (var prop in bulNumParaProperty)
+					foreach (var prop in CollectBulletProps(style.BulletInfo))
 					{
 						string propName = prop.Item1;
 						if (BulletPropertyMap.ContainsKey(propName.ToLower()))
 							propName = BulletPropertyMap[propName.ToLower()];
 						writer.WriteAttributeString(propName, prop.Item2);
 					}
-					// Generate the font info (the font element is required by the DTD even if it has no attributes)
 					writer.WriteStartElement("BulNumFontInfo");
-					IEnumerable<Tuple<string, string>> bulletFontInfoProperties = CollectFontProps(style.BulletInfo.FontInfo);
-					if (bulletFontInfoProperties.Any())
+					foreach (var prop in CollectFontProps(style.BulletInfo.FontInfo))
 					{
-						foreach (var prop in bulletFontInfoProperties)
-						{
-							writer.WriteAttributeString(prop.Item1, prop.Item2);
-						}
+						writer.WriteAttributeString(prop.Item1, prop.Item2);
 					}
-					writer.WriteEndElement(); // bullet
+					writer.WriteEndElement(); // BulNumFontInfo
 				}
 				catch{}
 				writer.WriteEndElement(); // paragraph

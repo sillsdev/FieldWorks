@@ -23,6 +23,7 @@ using System.Windows.Forms;
 using System.Xml;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -82,6 +83,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			m_sda = m_cache.MainCacheAccessor;
 			m_sda.AddNotification(this);
+
+			Subscriber.Subscribe(EventConstants.StopParser, StopParser);
 		}
 
 		/// <summary>
@@ -122,23 +125,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				CheckDisposed();
 				m_parserConnection = value;
-			}
-		}
-
-		/// <summary>
-		/// Send the newly selected wordform on to the parser.
-		/// </summary>
-		public void OnPropertyChanged(string propertyName)
-		{
-			CheckDisposed();
-
-			if (m_parserConnection != null && propertyName == "ActiveClerkSelectedObject")
-			{
-				var wordform = m_propertyTable.GetValue<ICmObject>(propertyName) as IWfiWordform;
-				if (wordform != null)
-				{
-					UpdateWordform(wordform, ParserPriority.High);
-				}
 			}
 		}
 
@@ -377,6 +363,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(EventConstants.StopParser, StopParser);
+
 				// other clients may now parse
 				// Dispose managed resources here.
 				if (m_timer != null)
@@ -443,19 +431,37 @@ namespace SIL.FieldWorks.LexText.Controls
 			UndoableUnitOfWorkHelper.Do(ParserUIStrings.ksUndoClearParserAnalyses,
 				ParserUIStrings.ksRedoClearParserAnalyses, m_cache.ActionHandlerAccessor, () =>
 			{
-				foreach (IWfiAnalysis analysis in wf.AnalysesOC.ToArray())
+				ClearWordformAnalyses(wf);
+				// Clear lower-case version of wf.
+				var vernWs = wf.Form.BestVernacularAlternative.get_WritingSystemAt(0);
+				var cf = new CaseFunctions(m_cache.ServiceLocator.WritingSystemManager.Get(vernWs));
+				string word = wf.Form.BestVernacularAlternative.Text;
+				string lcWord = cf.ToLower(word);
+				if (lcWord != word)
 				{
-					ICmAgentEvaluation[] parserEvals = analysis.EvaluationsRC.Where(evaluation => !evaluation.Human).ToArray();
-					foreach (ICmAgentEvaluation parserEval in parserEvals)
-						analysis.EvaluationsRC.Remove(parserEval);
-
-					if (analysis.EvaluationsRC.Count == 0)
-						wf.AnalysesOC.Remove(analysis);
-
-					wf.Checksum = 0;
+					if (m_cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(
+						TsStringUtils.MakeString(lcWord, vernWs), true, out IWfiWordform lcWf))
+					{
+						ClearWordformAnalyses(lcWf);
+					}
 				}
 			});
 			return true;    //we handled this.
+		}
+
+		private void ClearWordformAnalyses(IWfiWordform wf)
+		{
+			foreach (IWfiAnalysis analysis in wf.AnalysesOC.ToArray())
+			{
+				ICmAgentEvaluation[] parserEvals = analysis.EvaluationsRC.Where(evaluation => !evaluation.Human).ToArray();
+				foreach (ICmAgentEvaluation parserEval in parserEvals)
+					analysis.EvaluationsRC.Remove(parserEval);
+
+				if (analysis.EvaluationsRC.Count == 0)
+					wf.AnalysesOC.Remove(analysis);
+
+				wf.Checksum = 0;
+			}
 		}
 
 		#endregion ClearSelectedWordParserAnalyses handlers
@@ -970,12 +976,18 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true;	//we handled this.
 		}
 
+		// Handler for the 'Stop Parser' menu item.
+		// Triggered from (DistFiles\Language Explorer\Configuration\Words\areaConfiguration.xml)
 		public bool OnStopParser(object argument)
 		{
-			CheckDisposed();
-
-			DisconnectFromParser();
+			StopParser(argument);
 			return true;	//we handled this.
+		}
+
+		private void StopParser(object _)
+		{
+			CheckDisposed();
+			DisconnectFromParser();
 		}
 
 		// used by Try a Word to get the parser running

@@ -396,41 +396,41 @@ namespace SIL.FieldWorks.FdoUi
 		/// <returns></returns>
 		public static CmObjectUi CreateNewUiObject(Mediator mediator, PropertyTable propertyTable, int classId, int hvoOwner, int flid, int insertionPosition)
 		{
-			var cache = propertyTable.GetValue<LcmCache>("cache");
-			switch (classId)
+			try
 			{
-				default:
-					return DefaultCreateNewUiObject(mediator, classId, hvoOwner, flid, insertionPosition, cache);
-				case CmPossibilityTags.kClassId:
-					return CmPossibilityUi.CreateNewUiObject(propertyTable, classId, hvoOwner, flid, insertionPosition);
-				case PartOfSpeechTags.kClassId:
-					return PartOfSpeechUi.CreateNewUiObject(mediator, propertyTable, classId, hvoOwner, flid, insertionPosition);
-				case FsFeatDefnTags.kClassId:
-					return FsFeatDefnUi.CreateNewUiObject(mediator, propertyTable, classId, hvoOwner, flid, insertionPosition);
-				case LexSenseTags.kClassId:
-					return LexSenseUi.CreateNewUiObject(propertyTable, classId, hvoOwner, flid, insertionPosition);
-				case LexPronunciationTags.kClassId:
-					return LexPronunciationUi.CreateNewUiObject(propertyTable, classId, hvoOwner, flid, insertionPosition);
+				// Don't postpone PropChanged (cf. LT-22095).
+				mediator?.SendMessage("PostponePropChanged", false);
+				var cache = propertyTable.GetValue<LcmCache>("cache");
+				switch (classId)
+				{
+					default:
+						return DefaultCreateNewUiObject(mediator, classId, hvoOwner, flid, insertionPosition, cache);
+					case CmPossibilityTags.kClassId:
+						return CmPossibilityUi.CreateNewUiObject(propertyTable, classId, hvoOwner, flid, insertionPosition);
+					case PartOfSpeechTags.kClassId:
+						return PartOfSpeechUi.CreateNewUiObject(mediator, propertyTable, classId, hvoOwner, flid, insertionPosition);
+					case FsFeatDefnTags.kClassId:
+						return FsFeatDefnUi.CreateNewUiObject(mediator, propertyTable, classId, hvoOwner, flid, insertionPosition);
+					case LexSenseTags.kClassId:
+						return LexSenseUi.CreateNewUiObject(propertyTable, classId, hvoOwner, flid, insertionPosition);
+					case LexPronunciationTags.kClassId:
+						return LexPronunciationUi.CreateNewUiObject(propertyTable, classId, hvoOwner, flid, insertionPosition);
+				}
+			}
+			finally
+			{
+				mediator?.SendMessage("PostponePropChanged", true);
 			}
 		}
 
 		internal static CmObjectUi DefaultCreateNewUiObject(Mediator mediator, int classId, int hvoOwner, int flid, int insertionPosition, LcmCache cache)
 		{
 			CmObjectUi newUiObj = null;
-			try
+			UndoableUnitOfWorkHelper.Do(FdoUiStrings.ksUndoInsert, FdoUiStrings.ksRedoInsert, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
 			{
-				// Don't postpone PropChanged (cf. LT-22095).
-				mediator?.SendMessage("PostponePropChanged", false);
-				UndoableUnitOfWorkHelper.Do(FdoUiStrings.ksUndoInsert, FdoUiStrings.ksRedoInsert, cache.ServiceLocator.GetInstance<IActionHandler>(), () =>
-				{
-					int newHvo = cache.DomainDataByFlid.MakeNewObject(classId, hvoOwner, flid, insertionPosition);
-					newUiObj = MakeUi(cache, newHvo, classId);
-				});
-			}
-			finally
-			{
-				mediator?.SendMessage("PostponePropChanged", true);
-			}
+				int newHvo = cache.DomainDataByFlid.MakeNewObject(classId, hvoOwner, flid, insertionPosition);
+				newUiObj = MakeUi(cache, newHvo, classId);
+			});
 			return newUiObj;
 		}
 
@@ -1155,7 +1155,11 @@ namespace SIL.FieldWorks.FdoUi
 					mergeCandidates.Sort();
 					dlg.SetDlgInfo(m_cache, m_mediator, m_propertyTable, wp, dObj, mergeCandidates, guiControl, helpTopic);
 					if (DialogResult.OK == dlg.ShowDialog(mainWindow))
+					{
 						ReallyMergeUnderlyingObject(dlg.Hvo, fLoseNoTextData);
+						// Refresh in case "Sense Number" was 0 in the target and non-0 in the source (LT-22155).
+						m_mediator.SendMessage("MasterRefresh", null);
+					}
 				}
 			}
 		}

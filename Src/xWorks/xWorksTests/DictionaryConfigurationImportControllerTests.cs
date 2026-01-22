@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017 SIL International
+// Copyright (c) 2017-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -9,13 +9,15 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
+using SIL.IO;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.KernelInterfaces;
-using SIL.FieldWorks.Common.FwUtils;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
-using SIL.LCModel.Utils;
+using FileUtils = SIL.LCModel.Utils.FileUtils;
+
 // ReSharper disable InconsistentNaming
 
 namespace SIL.FieldWorks.XWorks
@@ -31,13 +33,14 @@ namespace SIL.FieldWorks.XWorks
 		private DictionaryConfigurationImportController _reversalController;
 		private string _projectConfigPath;
 		private string _reversalProjectConfigPath;
-		private readonly string _defaultConfigPath = Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary");
 		private const string configLabel = "importexportConfiguration";
 		private const string reversalConfigLabel = "importexportReversalConfiguration";
 		private const string configFilename = "importexportConfigurationFile.fwdictconfig";
 		private const string reversalConfigFilename = "importexportReversalConfigurationFile.fwdictconfig";
 		private const int CustomRedBGR = 0x0000FE;
 		private readonly int NamedRedBGR = (int)ColorUtil.ConvertColorToBGR(Color.Red);
+		private readonly int NamedGreenBGR = (int)ColorUtil.ConvertColorToBGR(Color.Green);
+		private readonly int NamedBlueBGR = (int)ColorUtil.ConvertColorToBGR(Color.Blue);
 
 		/// <summary>
 		/// Zip file to import during testing.
@@ -79,10 +82,10 @@ namespace SIL.FieldWorks.XWorks
 				Directory.Delete(_reversalProjectConfigPath, true);
 			FileUtils.EnsureDirectoryExists(_reversalProjectConfigPath);
 
-			_controller = new DictionaryConfigurationImportController(Cache, _projectConfigPath,
+			_controller = new DictionaryConfigurationImportController(Cache, null, _projectConfigPath,
 				new List<DictionaryConfigurationModel>());
 
-			_reversalController = new DictionaryConfigurationImportController(Cache, _reversalProjectConfigPath,
+			_reversalController = new DictionaryConfigurationImportController(Cache, null, _reversalProjectConfigPath,
 				new List<DictionaryConfigurationModel>());
 
 			// Set up data for import testing.
@@ -124,23 +127,23 @@ namespace SIL.FieldWorks.XWorks
 			_zipFile = Path.GetTempFileName();
 			_reversalZipFile = Path.GetTempFileName() + 1;
 
-			// Add a test style to the cache
+			// Add test styles to the cache
 			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
 			{
 				var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
 				styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Headword",
-					ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, true, 2, true);
+					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, true, 2, true);
 				var testStyle = styleFactory.Create(Cache.LangProject.StylesOC, "TestStyle", ContextValues.InternalConfigureView, StructureValues.Undefined,
-					FunctionValues.Line, true, 2, false);
+					FunctionValues.Prose, true, 2, false);
 				testStyle.Usage.set_String(Cache.DefaultAnalWs, "Test Style");
 				var normalStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Normal", ContextValues.InternalConfigureView, StructureValues.Undefined,
-					FunctionValues.Line, false, 2, true);
+					FunctionValues.Prose, false, 2, true);
 				var propsBldr = TsStringUtils.MakePropsBldr();
-				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, 0x2BACCA); // arbitrary color to create para element
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, 0x2BACCA); // arbitrary color
 				normalStyle.Rules = propsBldr.GetTextProps();
 				var senseStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Sense",
-					ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, false, 2, true);
-				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, 0x2BACCA); // arbitrary color to create para element
+					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, false, 2, true);
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, 0x2BACCA); // arbitrary color
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
 				propsBldr.SetStrPropValue((int)FwTextPropType.ktptFontFamily, "Arial");
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptFontSize,
@@ -148,22 +151,25 @@ namespace SIL.FieldWorks.XWorks
 				propsBldr.SetStrPropValue((int)FwTextPropType.ktptBulNumFontInfo, "");
 				senseStyle.Rules = propsBldr.GetTextProps();
 				senseStyle.BasedOnRA = normalStyle;
-				var styleWithNamedColors = styleFactory.Create(Cache.LangProject.StylesOC, "Nominal", ContextValues.InternalConfigureView, StructureValues.Undefined,
-					FunctionValues.Line, false, 2, false);
+				var styleWithNamedColors = styleFactory.Create(Cache.LangProject.StylesOC, "Nominal", ContextValues.InternalConfigureView, StructureValues.Body,
+					FunctionValues.Prose, false, 2, false);
 				styleWithNamedColors.BasedOnRA = normalStyle;
 				propsBldr = TsStringUtils.MakePropsBldr();
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
 				styleWithNamedColors.Rules = propsBldr.GetTextProps();
-				var styleWithCustomColors = styleFactory.Create(Cache.LangProject.StylesOC, "Abnormal", ContextValues.InternalConfigureView, StructureValues.Undefined,
-					FunctionValues.Line, false, 2, false);
+				var styleWithCustomColors = styleFactory.Create(Cache.LangProject.StylesOC, "Abnormal", ContextValues.InternalConfigureView, StructureValues.Heading,
+					FunctionValues.Prose, false, 2, false);
 				styleWithCustomColors.BasedOnRA = normalStyle;
 				propsBldr = TsStringUtils.MakePropsBldr();
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, CustomRedBGR);
 				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, CustomRedBGR);
 				styleWithCustomColors.Rules = propsBldr.GetTextProps();
-				DictionaryConfigurationManagerController.ExportConfiguration(configurationToExport, _zipFile, Cache);
-				DictionaryConfigurationManagerController.ExportConfiguration(configurationReversalToExport, _reversalZipFile, Cache);
+				lock(Cache) // Probably not the best mutex, but this should avoid two tests trying to write styles at once.
+				{
+					DictionaryConfigurationManagerController.ExportConfiguration(configurationToExport, _zipFile, Cache);
+					DictionaryConfigurationManagerController.ExportConfiguration(configurationReversalToExport, _reversalZipFile, Cache);
+				}
 				Cache.LangProject.StylesOC.Clear();
 			});
 			Assert.That(File.Exists(_zipFile), "Unit test not set up right");
@@ -210,7 +216,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(_controller.NewConfigToImport.Label, Is.EqualTo(configLabel), "Failed to process data to be imported");
 			Assert.That(_controller._originalConfigLabel, Is.EqualTo(configLabel),
 				"Failed to describe original label from data to import.");
-			Assert.That(_controller.ImportHappened, Is.False, "Import hasn't actually happened yet, so don't claim it has");
+			Assert.That(_controller.StyleImportHappened, Is.False, "Import hasn't actually happened yet, so don't claim it has");
 		}
 
 		[Test]
@@ -251,7 +257,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(_controller.NewConfigToImport.FilePath,
 				Is.EqualTo(Path.Combine(_projectConfigPath, "importexportConfiguration.fwdictconfig")),
 				"FilePath of imported config was not set as expected.");
-			Assert.That(_controller.ImportHappened, Is.True, "Alert that import has happened");
+			Assert.That(_controller.StyleImportHappened, Is.True, "Alert that import has happened");
 		}
 
 		[Test]
@@ -303,20 +309,20 @@ namespace SIL.FieldWorks.XWorks
 				// Set up state of flex before the import happens.
 				var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
 				bulletStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Bulleted List",
-					ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, false, 2, true);
+					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, false, 2, true);
 				numberStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Numbered List",
-					ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, false, 2, true);
+					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, false, 2, true);
 
-				dictionaryHeadwordStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Headword", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, true, 2, true);
+				dictionaryHeadwordStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Headword", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, true, 2, true);
 
 				// Create a style that we can link to before the import happens. It's not
 				// important what it's named, just that it also exists in the exported zip
 				// file made by Setup().
 				nominalStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Nominal",
-					ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, false, 2, false);
+					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, false, 2, false);
 
 				homographStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Homograph-Number",
-					ContextValues.InternalConfigureView, StructureValues.Undefined, FunctionValues.Line, true, 2, true);
+					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, true, 2, true);
 
 				// Style linking to later examine
 				homographStyle.BasedOnRA = dictionaryHeadwordStyle;
@@ -347,6 +353,159 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(homographTestStyle.BasedOnRA, Is.EqualTo(dictionaryHeadwordImportedStyle), "Failed to rewire basedon to new Dictionary-Headword style. LT-18267");
 			var nominalImportedStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Nominal");
 			Assert.That(bulletTestStyle.NextRA, Is.EqualTo(nominalImportedStyle), "Failed to rewire next to new imported style.");
+		}
+
+		/// <summary>
+		/// LT-20393. Attempting to import an invalid style should not cause styles to be deleted.
+		/// </summary>
+		[TestCase(@"<tag id='Malformed Style' guid='bcc696ef-0740-440d-abb2-323544b5a851' userlevel='2' context='internalConfigureView' type='character' structure='body'>
+	</tag>", typeof(NullReferenceException), TestName = "Missing required Font element")]
+		[TestCase(@"<tag id='{0}' guid='bcc696ef-0740-440d-abb2-323544b5a851' userlevel='0' context='general' type='character' structure='heading'>
+	  <font />
+	</tag>", typeof(InstallationException), TestName = "Incompatible Structure (heading, not body)")]
+		[TestCase(@"<tag id='Plain_Paragraph' guid='24dfbd48-09f7-4fa1-9ca6-3b210d03068d' userlevel='2' context='internalConfigureView' type='paragraph'>
+	  <font size='12' />
+	</tag>", typeof(InstallationException), TestName = "Paragraph missing Paragraph Element")]
+		public void ImportStyles_CatchesErrors(string xmlToImport, Type exceptionType)
+		{
+			// Set up valid styles before import
+			IStStyle unrelatedStyle = null;
+			IStStyle linkedStyle = null;
+			IStStyle styleWithSameNameAsBadStyle = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
+				unrelatedStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Unrelated Style",
+					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, true, 2, true);
+				var propsBldr = TsStringUtils.MakePropsBldr();
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
+				unrelatedStyle.Rules = propsBldr.GetTextProps();
+
+				styleWithSameNameAsBadStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Testable Style",
+					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, true, 2, true);
+				propsBldr = TsStringUtils.MakePropsBldr();
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptFontSize, (int)FwTextPropVar.ktpvMilliPoint, 18);
+				styleWithSameNameAsBadStyle.Rules = propsBldr.GetTextProps();
+
+				linkedStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Based on Testable Style",
+					ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, true, 2, true);
+				linkedStyle.BasedOnRA = styleWithSameNameAsBadStyle;
+			});
+			// Create and import an XML file with an invalid style
+			using (var styleFile = new TempFile($@"<?xml version='1.0' encoding='utf-8'?>
+<Styles DTDver='1610190E-D7A3-42D7-8B48-C0C49320435F' label='Flex Dictionary' date='2026-01-16'>
+  <markup version='e5238df8-6fcb-4350-9c85-db9c9726381b'>{string.Format(xmlToImport, styleWithSameNameAsBadStyle.Name)}</markup>
+</Styles>"))
+			{
+				// SUT
+				Assert.Throws(exceptionType, () => _controller.ImportStyles(styleFile.Path));
+			}
+
+			// Verify that the styles are still there.
+			Assert.That(Cache.LangProject.StylesOC.Count, Is.EqualTo(3), "The number of styles should not have changed");
+			var foundUnrelatedStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Unrelated Style");
+			Assert.That(foundUnrelatedStyle, Is.Not.Null, "Should have found 'Unrelated Style'");
+			Assert.That(foundUnrelatedStyle.Rules.GetIntPropValues((int)FwTextPropType.ktptBackColor, out _), Is.EqualTo(NamedRedBGR), "colour should be the same");
+			Assert.That(foundUnrelatedStyle.Guid, Is.EqualTo(unrelatedStyle.Guid), "'Unrelated Style' GUID should be the same");
+			var foundSameNameAsBadStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Testable Style");
+			Assert.That(foundSameNameAsBadStyle, Is.Not.Null, "Should have found 'Testable Style'");
+			Assert.That(foundSameNameAsBadStyle.Rules.GetIntPropValues((int)FwTextPropType.ktptFontSize, out _), Is.EqualTo(18), "font size should be the same");
+			Assert.That(foundSameNameAsBadStyle.Guid, Is.EqualTo(styleWithSameNameAsBadStyle.Guid), "'Testable Style' GUID should be the same");
+			var foundLinkedStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Based on Testable Style");
+			Assert.That(foundLinkedStyle, Is.Not.Null, "Should have found 'Based on Testable Style'");
+			Assert.That(foundLinkedStyle.Guid, Is.EqualTo(linkedStyle.Guid), "'Based on Testable Style' GUID should be the same");
+			Assert.That(foundLinkedStyle.BasedOnRA, Is.EqualTo(foundSameNameAsBadStyle), "link should be preserved");
+		}
+
+		/// <summary>
+		/// Prior to FW 9.3.5, the structure and use attributes were not included in the style export. This should not prevent import.
+		/// </summary>
+		[Test]
+		public void ImportStyles_ToleratesMissingStructureAndUse()
+		{
+			// Set up valid styles before import
+			IStStyle headingStyle = null;
+			IStStyle normalStyle = null;
+			IStStyle styleWithNamedColors = null;
+			IStStyle chapterStyle = null;
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+			{
+				var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
+				headingStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Letter-Heading",
+					ContextValues.InternalConfigureView, StructureValues.Heading, FunctionValues.Prose, true, 2, true);
+				normalStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Normal", ContextValues.InternalConfigureView, StructureValues.Undefined,
+					FunctionValues.Prose, false, 2, true);
+				styleWithNamedColors = styleFactory.Create(Cache.LangProject.StylesOC, "Nominal", ContextValues.InternalConfigureView, StructureValues.Body,
+					FunctionValues.Prose, false, 2, true);
+				styleWithNamedColors.BasedOnRA = normalStyle;
+				var propsBldr = TsStringUtils.MakePropsBldr();
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptBackColor, (int)FwTextPropVar.ktpvDefault, NamedRedBGR);
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptForeColor, (int)FwTextPropVar.ktpvDefault, NamedGreenBGR);
+				styleWithNamedColors.Rules = propsBldr.GetTextProps();
+				chapterStyle = styleFactory.Create(Cache.LangProject.StylesOC, "Chapter Number", ContextValues.Text, StructureValues.Body,
+					FunctionValues.Chapter, true, 0, true);
+				propsBldr = TsStringUtils.MakePropsBldr();
+				propsBldr.SetIntPropValues((int)FwTextPropType.ktptItalic, (int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
+				chapterStyle.Rules = propsBldr.GetTextProps();
+				DictionaryConfigurationManagerController.PrepareStylesheetExport(Cache);
+			});
+
+			// Create and import an XML file with styles missing structure and use attributes
+			using (var styleFile = new TempFile($@"<?xml version='1.0' encoding='utf-8'?>
+<Styles DTDver='1610190E-D7A3-42D7-8B48-C0C49320435F' label='Flex Dictionary' date='2026-01-16'>
+  <markup version='e5238df8-6fcb-4350-9c85-db9c9726381b'>
+	<tag id='{headingStyle.Name}' guid='{headingStyle.Guid}' userlevel='2' context='internalConfigureView' type='character'>
+	  <font bold='true' />
+	</tag>
+	<tag id='{normalStyle.Name}' guid='{normalStyle.Guid}' userlevel='2' context='internalConfigureView' type='paragraph'>
+	  <font />
+	  <paragraph spaceBefore='9 pt' />
+	</tag>
+	<tag id='{styleWithNamedColors.Name}' guid='{styleWithNamedColors.Guid}' userlevel='2' context='internalConfigureView' type='paragraph'>
+	  <font backcolor='green' color='blue' />
+	  <paragraph background='(0,128,0)' basedOn='{normalStyle.Name}' /><!--'(0,128,0)' is 'Green', '(0,255,0)' is 'Lime'.-->
+	</tag>
+	<tag id='{chapterStyle.Name}' guid='{chapterStyle.Guid}' userlevel='0' context='text' type='character'>
+	  <font />
+	</tag>
+  </markup>
+</Styles>"))
+			{
+				// SUT
+				_controller.ImportStyles(styleFile.Path);
+			}
+
+			// Verify that styles have been imported but that structure and use have been preserved
+			Assert.That(Cache.LangProject.StylesOC.Count, Is.EqualTo(4), "No styles should have been added or deleted; only updated.");
+			var foundHeadingStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Dictionary-Letter-Heading");
+			Assert.That(foundHeadingStyle, Is.Not.Null, "Should have found 'Dictionary-Letter-Heading'");
+			Assert.That(foundHeadingStyle.Structure, Is.EqualTo(StructureValues.Heading),
+				"Structure value for 'Dictionary-Letter-Heading' should have been preserved despite being missing from the XML");
+			Assert.That(foundHeadingStyle.Function, Is.EqualTo(FunctionValues.Prose), "Function value for Dictionary-Letter-Heading should be the default");
+			Assert.That(foundHeadingStyle.Rules.IntPropCount, Is.EqualTo(1), "The imported Dictionary-Letter-Heading should have one property");
+			Assert.That(foundHeadingStyle.Rules.GetIntPropValues((int)FwTextPropType.ktptBold, out _), Is.EqualTo((int)FwTextToggleVal.kttvInvert), "should be bold after import");
+			var foundNormalStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Normal");
+			Assert.That(foundNormalStyle, Is.Not.Null, "Should have found 'Normal'");
+			Assert.That(foundNormalStyle.Structure, Is.EqualTo(StructureValues.Undefined), "Structure value for 'Normal' should be the default");
+			Assert.That(foundNormalStyle.Function, Is.EqualTo(FunctionValues.Prose), "Function value for 'Normal' should be the default");
+			Assert.That(foundNormalStyle.Rules.IntPropCount, Is.EqualTo(1), "The imported Normal style should have one property");
+			Assert.That(foundNormalStyle.Rules.GetIntPropValues((int)FwTextPropType.ktptSpaceBefore, out _), Is.EqualTo(9000), "Space before should be 9k milliPt");
+			var foundStyleWithNamedColors = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Nominal");
+			Assert.That(foundStyleWithNamedColors, Is.Not.Null, "Should have found 'Nominal'");
+			Assert.That(foundStyleWithNamedColors.Structure, Is.EqualTo(StructureValues.Body),
+				"Structure value for 'Nominal' should have been preserved despite being missing from the XML");
+			Assert.That(foundStyleWithNamedColors.Function, Is.EqualTo(FunctionValues.Prose), "Function value for 'Nominal' should be the default");
+			Assert.That(foundStyleWithNamedColors.Rules.IntPropCount, Is.EqualTo(2), "The imported Nominal style should have two properties");
+			Assert.That(foundStyleWithNamedColors.Rules.GetIntPropValues((int)FwTextPropType.ktptBackColor, out _), Is.EqualTo(NamedGreenBGR), "Background color should be Green");
+			Assert.That(foundStyleWithNamedColors.Rules.GetIntPropValues((int)FwTextPropType.ktptForeColor, out _), Is.EqualTo(NamedBlueBGR), "Foreground color should be Blue");
+			Assert.That(foundStyleWithNamedColors.BasedOnRA, Is.EqualTo(foundNormalStyle), "'Nominal' should be based on 'Normal' before & after import");
+			var foundChapterStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Chapter Number");
+			Assert.That(foundChapterStyle, Is.Not.Null, "Should have found 'Chapter Number'");
+			Assert.That(foundChapterStyle.Structure, Is.EqualTo(StructureValues.Body),
+				"Structure value for 'Chapter Number' should have been preserved despite being missing from the XML");
+			Assert.That(foundChapterStyle.Function, Is.EqualTo(FunctionValues.Chapter),
+				"Function value for 'Chapter Number' should have been preserved despite being missing from the XML");
+			Assert.That(foundChapterStyle.Rules.IntPropCount, Is.EqualTo(0), "The imported Chapter Number style should have no properties");
 		}
 
 		[Test]
@@ -541,16 +700,16 @@ namespace SIL.FieldWorks.XWorks
 		{
 			_controller.PrepareImport(_zipFile);
 			_controller.DoImport();
-			Assert.That(_controller.ImportHappened, Is.True, "Unit test not set up correctly.");
+			Assert.That(_controller.StyleImportHappened, Is.True, "Unit test not set up correctly.");
 			// SUT 1
 			_controller.PrepareImport(_zipFile);
-			Assert.That(_controller.ImportHappened, Is.False, "The import dialog and controller isn't really meant to be used this way, but don't let it be so that ImportHappened can be true yet NewConfigToImport is only just freshly prepared and not imported yet.");
+			Assert.That(_controller.StyleImportHappened, Is.False, "The import dialog and controller isn't really meant to be used this way, but don't let it be so that ImportHappened can be true yet NewConfigToImport is only just freshly prepared and not imported yet.");
 
 			_controller.DoImport();
-			Assert.That(_controller.ImportHappened, Is.True, "Unit test not set up correctly.");
+			Assert.That(_controller.StyleImportHappened, Is.True, "Unit test not set up correctly.");
 			// SUT 2
 			_controller.PrepareImport("nonexistent.zip");
-			Assert.That(_controller.ImportHappened, Is.False, "Also should be false in this case since NewConfigToImport==null");
+			Assert.That(_controller.StyleImportHappened, Is.False, "Also should be false in this case since NewConfigToImport==null");
 		}
 
 		[Test]
@@ -694,7 +853,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Set up state of flex before the import happens.
 				var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
-				styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Sense", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Line, false, 2, true);
+				styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Sense", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, false, 2, true);
 			});
 			Assert.AreEqual(1, Cache.LangProject.StylesOC.Count, "Setup problem. Unexpected number of styles before doing any import activity.");
 			_controller.PrepareImport(_zipFile);

@@ -272,7 +272,7 @@ namespace SIL.FieldWorks.FdoUi.Dialogs
 			int kflidEntriesFound = 8999950; // some arbitrary number not conflicting with real flids.
 			var sda = new ObjectListPublisher(cache.DomainDataByFlid as ISilDataAccessManaged, kflidEntriesFound);
 			int hvoRoot = RootHvo;
-			sda.CacheVecProp(hvoRoot, rghvoEntries.ToArray());
+			sda.CacheVecProp(hvoRoot, rghvoEntries.ToArray(), true);
 			//TODO: Make this method return a GeckoBrowser control, and generate the content here.
 			// The name of this property must match the property used by the publishFound layout.
 			sda.SetOwningPropInfo(LexDbTags.kflidClass, "LexDb", "EntriesFound");

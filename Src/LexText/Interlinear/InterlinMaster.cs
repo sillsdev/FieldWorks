@@ -19,6 +19,7 @@ using SIL.FieldWorks.Common.Widgets;
 using XCore;
 using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.Utils;
 
 namespace SIL.FieldWorks.IText
@@ -721,6 +722,7 @@ namespace SIL.FieldWorks.IText
 			m_mediator = mediator;
 			// InitBase will do this, but we need it in place before calling SetInitialTabPage().
 			m_propertyTable = propertyTable;
+			SetParsingDevMode(IsParsingDevMode());
 
 			// Making the tab control currently requires this first...
 			if (!fHideTitlePane)
@@ -880,6 +882,15 @@ namespace SIL.FieldWorks.IText
 		{
 			base.OnValidating(e);
 			SaveWorkInProgress();
+		}
+
+		public void OnRefreshInterlin(object argument)
+		{
+			// Reset data.
+			RootStText = null;
+			m_idcAnalyze.ResetAnalysisCache();
+			// Refresh the display.
+			Clerk.JumpToIndex(Clerk.CurrentIndex);
 		}
 
 		protected override void ShowRecord()
@@ -1246,6 +1257,39 @@ namespace SIL.FieldWorks.IText
 			return true; // We handled this
 		}
 
+		public bool OnDisplaySetParsingDevMode(object commandObject,
+			ref UIItemDisplayProperties display)
+		{
+			var cmd = (Command)commandObject;
+			bool value = cmd.GetParameter("value") == "true";
+			display.Checked = IsParsingDevMode() == value;
+			return true;
+		}
+
+		public bool OnSetParsingDevMode(object argument)
+		{
+			var cmd = (Command)argument;
+			string value = cmd.GetParameter("value");
+			SetParsingDevMode(value == "true");
+			Clerk.UpdateParsingDevStatusBarPanel();
+			// Refresh the display.
+			SaveBookMark();
+			RootStText = null;
+			m_idcAnalyze.ResetAnalysisCache();
+			Clerk.JumpToIndex(Clerk.CurrentIndex);
+			return true; // we handled this
+		}
+
+		public void SetParsingDevMode(bool value)
+		{
+			m_propertyTable.SetProperty("ParsingDevMode", value, PropertyTable.SettingsGroup.LocalSettings, false);
+		}
+
+		public bool IsParsingDevMode()
+		{
+			return m_propertyTable.GetBoolProperty("ParsingDevMode", false, PropertyTable.SettingsGroup.LocalSettings);
+		}
+
 		/// <summary>
 		/// Use this to determine whether the last selected tab page which was
 		/// persisted in the PropertyTable, pertains to an interlinear document.
@@ -1283,7 +1327,7 @@ namespace SIL.FieldWorks.IText
 				link.PropertyTableEntries.Add(new Property("InterlinearTab",
 					InterlinearTab.ToString()));
 				Clerk.SelectedRecordChanged(true, true); // make sure we update the record count in the Status bar.
-				m_mediator.SendMessage("AddContextToHistory", link, false);
+				Publisher.Publish(new PublisherParameterObject(EventConstants.AddContextToHistory, link));
 			}
 		}
 

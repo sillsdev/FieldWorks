@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2021 SIL International
+// Copyright (c) 2014-2025 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -29,6 +29,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private ParserModelChangeListener m_changeListener;
 		private bool m_forceUpdate;
 		private bool m_guessRoots;
+		private bool m_mergeAnalyses;
 
 		internal const string CRuleID = "ID";
 		internal const string FormID = "ID";
@@ -53,6 +54,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_changeListener = new ParserModelChangeListener(m_cache);
 			m_forceUpdate = true;
 			m_guessRoots = true;
+			m_mergeAnalyses = true;
 		}
 
 		#region IParser implementation
@@ -143,6 +145,9 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_morpher = null;
 
 			int delReapps = 0;
+			// For Hermit Crab, the maximum number of roots/stems allowed is between one and ten.
+			// The default is two in order to allow for compounding (which requires there be at least two roots/stems).
+			int maxStemCount = 2;
 			string loadErrorsFile = Path.Combine(m_outputDirectory, m_cache.ProjectId.Name + "HCLoadErrors.xml");
 			using (XmlWriter writer = XmlWriter.Create(loadErrorsFile))
 			using (new WorkerThreadReadHelper(m_cache.ServiceLocator.GetInstance<IWorkerThreadReadHandler>()))
@@ -153,12 +158,20 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				XElement parserParamsElem = XElement.Parse(m_cache.LanguageProject.MorphologicalDataOA.ParserParameters);
 				XElement delReappsElem = parserParamsElem.Elements("HC").Elements("DelReapps").FirstOrDefault();
 				XElement guessRootsElem = parserParamsElem.Elements("HC").Elements("GuessRoots").FirstOrDefault();
+				XElement mergeAnalysesElem = parserParamsElem.Elements("HC").Elements("MergeAnalyses").FirstOrDefault();
+				XElement maxRootsElem = parserParamsElem.Elements("HC").Elements("MaxRoots").FirstOrDefault();
 				if (delReappsElem != null)
 					delReapps = (int) delReappsElem;
 				if (guessRootsElem != null)
 					m_guessRoots = (bool) guessRootsElem;
+				if (mergeAnalysesElem != null)
+					m_mergeAnalyses = (bool) mergeAnalysesElem;
+				if (maxRootsElem != null)
+					maxStemCount = int.Parse(maxRootsElem.Value);
 			}
 			m_morpher = new Morpher(m_traceManager, m_language) { DeletionReapplications = delReapps };
+			m_morpher.MaxStemCount = maxStemCount;
+			m_morpher.MergeEquivalentAnalyses = m_mergeAnalyses;
 		}
 
 		private XDocument ParseToXml(string form, bool tracing, IEnumerable<int> selectTraceMorphs)
@@ -651,6 +664,32 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				m_xmlWriter.WriteAttributeString("type", "invalid-rewrite-rule");
 				m_xmlWriter.WriteElementString("Rule", rule.Name.BestAnalysisVernacularAlternative.Text);
 				m_xmlWriter.WriteElementString("Reason", reason);
+				m_xmlWriter.WriteEndElement();
+			}
+
+			public void InvalidStrata(string strata, string reason)
+			{
+				m_xmlWriter.WriteStartElement("LoadError");
+				m_xmlWriter.WriteAttributeString("type", "invalid-strata");
+				m_xmlWriter.WriteElementString("Reason", reason);
+				m_xmlWriter.WriteEndElement();
+			}
+
+			public void OutOfScopeSlot(IMoInflAffixSlot slot, IMoInflAffixTemplate template, string reason)
+			{
+				m_xmlWriter.WriteStartElement("LoadError");
+				m_xmlWriter.WriteAttributeString("type", "out-of-scope-slot");
+				m_xmlWriter.WriteElementString("Reason", reason);
+				m_xmlWriter.WriteEndElement();
+			}
+			public void UnmatchedReduplicationIndexedClass(IMoForm form, string reason, string pattern)
+			{
+				m_xmlWriter.WriteStartElement("LoadError");
+				m_xmlWriter.WriteAttributeString("type", "unmatched-redup-indexed-class");
+				m_xmlWriter.WriteElementString("Form", form.Form.VernacularDefaultWritingSystem.Text);
+				m_xmlWriter.WriteElementString("Pattern", pattern);
+				m_xmlWriter.WriteElementString("Reason", reason);
+				m_xmlWriter.WriteElementString("Hvo", form.Hvo.ToString(CultureInfo.InvariantCulture));
 				m_xmlWriter.WriteEndElement();
 			}
 		}

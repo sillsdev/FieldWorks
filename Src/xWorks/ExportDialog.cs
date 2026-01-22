@@ -22,6 +22,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Controls.FileDialog;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.FwUtils.Pathway;
 using SIL.FieldWorks.Common.FXT;
 using SIL.FieldWorks.Common.RootSites;
@@ -39,7 +40,7 @@ using SIL.Windows.Forms;
 using XCore;
 using PropertyTable = XCore.PropertyTable;
 using ReflectionHelper = SIL.LCModel.Utils.ReflectionHelper;
-using Newtonsoft.Json;
+using DCL = SIL.FieldWorks.XWorks.DictionaryConfigurationListener;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -797,20 +798,12 @@ namespace SIL.FieldWorks.XWorks
 								break;
 							case FxtTypes.kftConfigured:
 							case FxtTypes.kftReversal:
-							progressDlg.Minimum = 0;
-							progressDlg.Maximum = 1; // max will be set by the task, since only it knows how many entries it will export
-							progressDlg.AllowCancel = true;
-							progressDlg.RunTask(true, ExportConfiguredXhtml, outPath);
-							break;
 							case FxtTypes.kftClassifiedDict:
 								progressDlg.Minimum = 0;
-								progressDlg.Maximum = m_seqView.ObjectCount;
+								progressDlg.Maximum = 1; // max will be set by the task, since only it knows how many entries it will export
 								progressDlg.AllowCancel = true;
-
-								IVwStylesheet vss = m_seqView.RootBox == null ? null : m_seqView.RootBox.Stylesheet;
-								progressDlg.RunTask(true, ExportConfiguredDocView,
-									outPath, fxtPath, ft, vss);
-								break;
+								progressDlg.RunTask(true, ExportConfiguredXhtml, outPath);
+							break;
 							case FxtTypes.kftTranslatedLists:
 								progressDlg.Minimum = 0;
 								progressDlg.Maximum = m_translatedLists.Count;
@@ -892,17 +885,135 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
+		/// <summary>
+		/// When there is filtering applied to the entries, and the user is viewing reversals instead of the main
+		/// dictionary, then we need to get the list of entries while on the main thread. LT-21960
+		/// </summary>
+		private void GetDictionaryEntries(DictionaryExportService exportService, out RecordClerk clerk,
+			out DictionaryPublicationDecorator decorator, out int[] entries)
+		{
+			if (btnExport.InvokeRequired)
+			{
+				RecordClerk invokeClerk = null;
+				DictionaryPublicationDecorator invokeDecorator = null;
+				int[] invokeEntries = null;
+				btnExport.Invoke(() =>
+				{
+					exportService.GetDictionaryFilteredAndSortedEntries(null, true, out invokeClerk, out invokeDecorator, out invokeEntries);
+				});
+				clerk = invokeClerk;
+				entries = invokeEntries;
+				decorator = invokeDecorator;
+			}
+			else
+			{
+				exportService.GetDictionaryFilteredAndSortedEntries(null, true, out clerk, out decorator, out entries);
+			}
+		}
+
+		/// <summary>
+		/// When there is filtering applied to the entries, and the user is viewing the main dictionary
+		/// instead of a reversal, then we need to get the list of entries while on the main thread. LT-21960
+		/// </summary>
+		private void GetReversalEntries(Guid reversalGuid, DictionaryExportService exportService, DictionaryConfigurationModel revConfig,
+			RecordClerk revClerk, out DictionaryPublicationDecorator pubDecorator, out int[] entriesToSave)
+		{
+			// For Export use the current publication settings (the current decorator).
+			pubDecorator = ConfiguredLcmGenerator.CurrentDecorator(m_propertyTable, m_cache, revClerk);
+
+			if (btnExport.InvokeRequired)
+			{
+				var decorator = pubDecorator;
+				int[] entries = null;
+				btnExport.Invoke(() =>
+				{
+					entries = exportService.GetReversalFilteredAndSortedEntries(reversalGuid, decorator, revConfig, revClerk);
+				});
+				entriesToSave = entries;
+			}
+			else
+			{
+				entriesToSave = exportService.GetReversalFilteredAndSortedEntries(reversalGuid, pubDecorator, revConfig, revClerk);
+			}
+		}
+
+		/// <summary>
+		/// When there is filtering applied to semantic domains in the classified dictionary,
+		/// we need to get the list of domains while on the main thread if needed.
+		/// </summary>
+		private void GetClassifiedDictionaryDomains(DictionaryExportService exportService, out RecordClerk clerk,
+			out DictionaryPublicationDecorator decorator, out int[] domains)
+		{
+			if (btnExport.InvokeRequired)
+			{
+				RecordClerk invokeClerk = null;
+				DictionaryPublicationDecorator invokeDecorator = null;
+				int[] invokeDomains = null;
+				btnExport.Invoke(() =>
+				{
+					exportService.GetClassifiedDictionaryFilteredAndSortedDomains(null, true, out invokeClerk, out invokeDecorator, out invokeDomains);
+				});
+				clerk = invokeClerk;
+				domains = invokeDomains;
+				decorator = invokeDecorator;
+			}
+			else
+			{
+				exportService.GetClassifiedDictionaryFilteredAndSortedDomains(null, true, out clerk, out decorator, out domains);
+			}
+		}
+
 		private object ExportWordOpenXml(IThreadedProgress progress, object[] args)
 		{
 			if (args.Length < 1)
 				return null;
 			var filePath = (string)args[0];
 			var exportService = new DictionaryExportService(m_propertyTable, m_mediator);
-			exportService.ExportDictionaryForWord(filePath, null, progress);
-			foreach (var reversal in m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances())
+
+			// Export the main dictionary.
+			GetDictionaryEntries(exportService, out var clerk, out var pubDecorator, out var entriesToSave);
+			exportService.ExportWordDictionary(filePath, entriesToSave, clerk, pubDecorator, progress);
+
+			// Export all the reversals.
+			var revClerk = exportService.GetReversalClerk();
+			try
 			{
-				exportService.ExportReversalForWord(filePath, reversal.WritingSystem);
+				exportService.StoreReversalData(revClerk, false);
+				foreach (var reversal in m_cache.ServiceLocator.GetInstance<IReversalIndexRepository>().AllInstances())
+				{
+					var revConfig = DictionaryConfigurationModel.GetReversalConfigurationModel(reversal.WritingSystem, m_cache, m_propertyTable);
+					if (revConfig != null)
+					{
+						GetReversalEntries(reversal.Guid, exportService, revConfig, revClerk, out pubDecorator, out entriesToSave);
+
+						if (entriesToSave.Length > 0)
+						{
+							exportService.ExportWordReversal(filePath, reversal.WritingSystem, entriesToSave,
+								revClerk, pubDecorator, revConfig, progress);
+						}
+
+						// If we just sorted for the original reversal, then keep it's sorted objects to restore later.
+						exportService.UpdateSortedObjects(revClerk, reversal.Guid, false);
+					}
+				}
 			}
+			finally
+			{
+				// Restore data.
+				if (btnExport.InvokeRequired)
+				{
+					btnExport.Invoke(() => { exportService.RestoreReversalData(revClerk, false); });
+				}
+				else
+				{
+					exportService.RestoreReversalData(revClerk, false);
+				}
+
+				// If the reversal clerk was created as part of the export, then we need to stop suppressing
+				// list loading, or the 'Bulk Edit Reversal Entries' view may be blank the first time viewed.
+				revClerk.ListLoadingSuppressed = false;
+			}
+
 			return null;
 		}
 
@@ -911,13 +1022,36 @@ namespace SIL.FieldWorks.XWorks
 			if(args.Length < 1)
 				return null;
 			var xhtmlPath = (string)args[0];
-			switch (m_rgFxtTypes[FxtIndex((string)m_exportItems[0].Tag)].m_ft)
+			var exportService = new DictionaryExportService(m_propertyTable, m_mediator);
+			var exportType = m_rgFxtTypes[FxtIndex((string)m_exportItems[0].Tag)].m_ft;
+			switch (exportType)
 			{
 				case FxtTypes.kftConfigured:
-					new DictionaryExportService(m_propertyTable, m_mediator).ExportDictionaryContent(xhtmlPath, progress: progress);
+					GetDictionaryEntries(exportService, out var clerk, out var pubDecorator, out var entriesToSave);
+					exportService.ExportXhtmlDocument(xhtmlPath, clerk, pubDecorator, entriesToSave,
+						DCL.DictConfigDirName, progress);
+					break;
+				case FxtTypes.kftClassifiedDict:
+					GetClassifiedDictionaryDomains(exportService, out var classifiedClerk, out var classifiedDecorator, out var domainsToSave);
+					exportService.ExportXhtmlDocument(xhtmlPath, classifiedClerk, classifiedDecorator, domainsToSave,
+						DCL.ClassifiedDictConfigDirName, progress);
 					break;
 				case FxtTypes.kftReversal:
-					new DictionaryExportService(m_propertyTable, m_mediator).ExportReversalContent(xhtmlPath, progress: progress);
+					var reversalGuidStr = m_propertyTable.GetStringProperty("ReversalIndexGuid", null);
+					if (!string.IsNullOrEmpty(reversalGuidStr))
+					{
+						var reversalGuid = new Guid(reversalGuidStr);
+
+						// Get the reversal configuration.
+						var ri = m_cache.ServiceLocator.GetObject(reversalGuid) as IReversalIndex;
+						var revConfig = DictionaryConfigurationModel.GetReversalConfigurationModel(ri.WritingSystem, m_cache, m_propertyTable);
+						if (revConfig != null)
+						{
+							var revClerk = exportService.GetReversalClerk();
+							GetReversalEntries(reversalGuid, exportService, revConfig, revClerk, out pubDecorator, out entriesToSave);
+							exportService.ExportXhtmlDocument(xhtmlPath, revClerk, pubDecorator, entriesToSave, DCL.RevIndexConfigDirName, progress);
+						}
+					}
 					break;
 			}
 			return null;
@@ -930,7 +1064,7 @@ namespace SIL.FieldWorks.XWorks
 			var sXslts = (string)args[2];
 			m_progressDlg = progress;
 			var parameter = new Tuple<string, string, string>(sDataType, outPath, sXslts);
-			m_mediator.SendMessage("SaveAsWebpage", parameter);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.SaveAsWebpage, parameter));
 			m_progressDlg.Step(1000);
 			return null;
 		}
@@ -1572,6 +1706,7 @@ namespace SIL.FieldWorks.XWorks
 
 				// These flids for List fields indicate lists that use fixed guids for their
 				// (predefined) items.
+				m_flidsForGuids.Add(LangProjectTags.kflidPartsOfSpeech, true);
 				m_flidsForGuids.Add(LangProjectTags.kflidTranslationTags, true);
 				m_flidsForGuids.Add(LangProjectTags.kflidAnthroList, true);
 				m_flidsForGuids.Add(LangProjectTags.kflidSemanticDomainList, true);

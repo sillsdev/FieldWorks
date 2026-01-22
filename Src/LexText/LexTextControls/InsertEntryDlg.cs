@@ -57,6 +57,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private ListBox.ObjectCollection m_MGAGlossListBoxItems;
 
 		private Button m_btnOK;
+		private Button m_btnCreateAndEdit;
 		private Button m_btnCancel;
 		private Label m_formLabel;
 		private FwTextBox m_tbLexicalForm;	// text box used if one vernacular ws
@@ -361,8 +362,15 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				CheckDisposed();
 				m_msaGroupBox.StemPOS = value;
+				// If the user changes the POS, then the inflection data may be invalid.
+				InflectionClass = null;
+				InflectionFeatures = null;
 			}
 		}
+
+		public IMoInflClass InflectionClass { get; set; }
+
+		public IFsFeatStruc InflectionFeatures { get; set; }
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
@@ -710,6 +718,58 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 		}
 
+		public void SetMsa(IMoMorphSynAnalysis msa)
+		{
+			if (msa == null)
+				return;
+			switch (msa)
+			{
+				case IMoStemMsa stemMsa:
+					POS = stemMsa.PartOfSpeechRA;
+					InflectionClass = stemMsa.InflectionClassRA;
+					InflectionFeatures = stemMsa.MsFeaturesOA;
+					break;
+				case IMoDerivStepMsa derivStepMsa:
+					POS = derivStepMsa.PartOfSpeechRA;
+					InflectionClass = derivStepMsa.InflectionClassRA;
+					InflectionFeatures = derivStepMsa.MsFeaturesOA;
+					break;
+				case IMoInflAffMsa affixMsa:
+					POS = affixMsa.PartOfSpeechRA;
+					break;
+			}
+		}
+
+		/// <summary>
+		/// Set the msa of the lex sense of lexEntry to the saved msa values.
+		/// This is useful when a lexical entry is created from a novel root guess.
+		/// </summary>
+		/// <param name="lexEntry"></param>
+		private void SetEntryMsa(ILexEntry lexEntry)
+		{
+			ILexSense lexSense = lexEntry.SensesOS[0];
+			IMoMorphSynAnalysis msa = lexSense.MorphoSyntaxAnalysisRA;
+			switch (msa)
+			{
+				// POS is handled by m_msaGroupBox.
+				case IMoStemMsa stemMsa:
+					if (InflectionClass != null)
+						stemMsa.InflectionClassRA = InflectionClass;
+					if (InflectionFeatures != null)
+						stemMsa.MsFeaturesOA = InflectionFeatures;
+					break;
+				case IMoDerivStepMsa derivStepMsa:
+					if (InflectionClass != null)
+						derivStepMsa.InflectionClassRA = InflectionClass;
+					if (InflectionFeatures != null)
+						derivStepMsa.MsFeaturesOA = InflectionFeatures;
+					break;
+				case IMoInflAffMsa affixMsa:
+					break;
+			}
+		}
+
+
 		private LabeledMultiStringControl ReplaceTextBoxWithMultiStringBox(FwTextBox tb, int wsType,
 			IVwStylesheet stylesheet)
 		{
@@ -1011,6 +1071,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(InsertEntryDlg));
 			this.m_btnOK = new System.Windows.Forms.Button();
+			this.m_btnCreateAndEdit = new System.Windows.Forms.Button();
 			this.m_btnCancel = new System.Windows.Forms.Button();
 			this.m_formLabel = new System.Windows.Forms.Label();
 			this.m_tbLexicalForm = new SIL.FieldWorks.Common.Widgets.FwTextBox();
@@ -1042,6 +1103,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			resources.ApplyResources(this.m_btnOK, "m_btnOK");
 			this.m_btnOK.DialogResult = System.Windows.Forms.DialogResult.OK;
 			this.m_btnOK.Name = "m_btnOK";
+			//
+			// m_btnCreateAndEdit repurposes Retry
+			//
+			resources.ApplyResources(this.m_btnCreateAndEdit, "m_btnCreateAndEdit");
+			this.m_btnCreateAndEdit.DialogResult = System.Windows.Forms.DialogResult.Retry;
+			this.m_btnCreateAndEdit.Name = "m_btnCreateAndEdit";
 			//
 			// m_btnCancel
 			//
@@ -1203,6 +1270,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			this.Controls.Add(this.m_btnHelp);
 			this.Controls.Add(this.m_btnCancel);
 			this.Controls.Add(this.m_btnOK);
+			this.Controls.Add(this.m_btnCreateAndEdit);
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "InsertEntryDlg";
@@ -1246,6 +1314,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					break;
 				}
 				case DialogResult.OK:
+				case DialogResult.Retry:
 				{
 					// In the beginning, Larry specified the gloss to not be required.
 					// Then, Andy changed it to be required.
@@ -1278,6 +1347,11 @@ namespace SIL.FieldWorks.LexText.Controls
 						return;
 					}
 					CreateNewEntry();
+					if (DialogResult == DialogResult.Retry)
+					{
+						m_mediator.SendMessage("JumpToPopupLexEntry", m_entry.Hvo);
+						DialogResult = DialogResult.OK;
+					}
 					break;
 				}
 			}
@@ -1404,6 +1478,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					ler.ComplexEntryTypesRS.Add(m_complexType);
 				ler.RefType = LexEntryRefTags.krtComplexForm;
 			}
+			SetEntryMsa(newEntry);
 			return newEntry;
 		}
 

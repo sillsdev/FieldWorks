@@ -181,10 +181,10 @@
 			</slice>
 		</part>
 		<part id="MoDerivAffMsa-Detail-FromStemName" type="Detail">
-			<slice field="FromStemName" label="From Stem Name" editor="defaultAtomicReference" menu="mnuDataTree-Help">
+			<slice field="FromStemName" label="From Stem Allomorph Label" editor="defaultAtomicReference" menu="mnuDataTree-Help">
 				<deParams ws="best analorvern"/>
-				<chooserInfo flidTextParam="5031003" text="The following stem names are available for the category {0}.">
-					<chooserLink type="goto" label="Edit the Stem Names for {0}" tool="posEdit"/>
+				<chooserInfo flidTextParam="5031003" text="The following stem allomorph labels are available for the category {0}.">
+					<chooserLink type="goto" label="Edit the Stem Allomorph Labels for {0}" tool="posEdit"/>
 				</chooserInfo>
 			</slice>
 		</part>
@@ -231,9 +231,16 @@
 			<part ref="PhoneEnv" label="Environments" visibility="ifData"/>
 		</part>
 
-		<part id="MoForm-Detail-IsAbstractBasic" type="Detail">
+      <!-- IsAbstract At Entry section -->
+      <part id="MoForm-Detail-IsAbstractBasic" type="Detail">
 			<slice field="IsAbstract" label="IsAbstract" editor="Checkbox"/>
 		</part>
+
+      <!-- IsAbstract in Allomorph section -->
+      <part id="MoForm-Detail-IsAbstract" type="Detail">
+        <slice field="IsAbstract" label="IsAbstract" editor="Checkbox"
+               helpTopicID="khtpField-lexiconEdit-AlternateFormsSection-IsAbstract"/>
+      </part>
 
 		<part id="MoForm-Detail-PhoneEnvBasic" type="Detail">
 			<slice field="PhoneEnv" label="Environments" editor="phoneEnvReference" menu="mnuDataTree-Environments-Insert" helpTopicID="khtpField-LexEntry-Environments">
@@ -351,30 +358,54 @@
 			<obj field="MorphType" layout="SimpleName"/>
 		</part>
 		<part id="MoForm-Jt-Environments" type="JtView">
-			<ifnot is="MoAffixProcess">
-				<seq field="PhoneEnv" layout="StringRepresentation"/>
-			</ifnot>
-		</part>
+            <!-- Must always have exactly one value for allomorph columns to align properly. -->
+            <ifnot is="MoAffixProcess">
+                <para>
+                    <seq field="PhoneEnv" layout="StringRepresentation" sep="; "/>
+                </para>
+            </ifnot>
+            <if is="MoAffixProcess">
+                <lit>n/a</lit>
+            </if>
+        </part>
 		<part id="MoForm-Jt-InflectionClassForLexemeForm" type="JtView">
+            <!-- Must always have exactly one value for allomorph columns to align properly. -->
 			<if is="MoAffixForm">
-				<seq field="InflectionClasses" layout="Name"/>
+                <para>
+                    <seq field="InflectionClasses" layout="Name" sep="; "/>
+                </para>
 			</if>
 			<ifnot is="MoAffixForm">
 				<lit>n/a</lit>
 			</ifnot>
 		</part>
 		<part id="MoForm-Jt-InflectionClassForAffix" type="JtView">
+            <!-- Must always have exactly one value for allomorph columns to align properly. -->
 			<if is="MoAffixForm">
-				<seq field="InflectionClasses" layout="Name"/>
+                <para>
+                    <seq field="InflectionClasses" layout="Name" sep="; "/>
+                </para>
 			</if>
-		</part>
+            <ifnot is="MoAffixForm">
+                <lit>n/a</lit>
+            </ifnot>
+        </part>
 		<part id="MoForm-Jt-RequiredFeatures" type="JtView">
+            <!-- Must always have exactly one value for allomorph columns to align properly. -->
 			<if is="MoAffixAllomorph">
-                <obj field="MsEnvFeatures" layout="empty">
-                  <string field="LongNameTSS"/>
-                </obj>
-			</if>
-		</part>
+                <ifnot field="MsEnvFeatures" hvoequals="0">
+                    <obj field="MsEnvFeatures" layout="empty">
+                        <string field="LongNameTSS"/>
+                    </obj>
+                </ifnot>
+                <if field="MsEnvFeatures" hvoequals="0">
+                    <lit></lit>
+                </if>
+            </if>
+            <ifnot is="MoAffixAllomorph">
+                <lit>n/a</lit>
+            </ifnot>
+        </part>
 		<part id="MoForm-Jt-SimpleForm" type="JtView">
 			<string field="Form" ws="vernacular"/>
 		</part>
@@ -448,19 +479,19 @@
 			<obj field="MorphType" layout="pubPostfix"/>
 		</part>
 		<part id="MoStemAllomorph-Detail-StemName" type="Detail">
-			<slice field="StemName" label="Stem Name" editor="defaultAtomicReference" menu="mnuDataTree-Help"
+			<slice field="StemName" label="Stem Allomorph Label" editor="defaultAtomicReference" menu="mnuDataTree-Help"
 				   helpTopicID="khtpField-lexiconEdit-AlternateFormsSection-MoStemAllomorph-StemName">
 				<deParams ws="best analorvern"/>
-				<chooserInfo text="The following stem names are available for the currently chosen categories.">
-					<chooserLink type="goto" label="Edit the Stem Names for categories" tool="posEdit"/>
+				<chooserInfo text="The following stem allomorph labels are available for the currently chosen categories.">
+					<chooserLink type="goto" label="Edit the Stem Allomorph Labels for categories" tool="posEdit"/>
 				</chooserInfo>
 			</slice>
 		</part>
 		<part id="MoStemAllomorph-Detail-StemNameForLexemeForm" type="Detail">
-			<slice field="StemName" label="Stem Name" editor="defaultAtomicReference" menu="mnuDataTree-Help"  helpTopicID="khtpField-LexemeForm-StemName">
+			<slice field="StemName" label="Stem Allomorph Label" editor="defaultAtomicReference" menu="mnuDataTree-Help"  helpTopicID="khtpField-LexemeForm-StemName">
 				<deParams ws="best analorvern"/>
-				<chooserInfo text="The following stem names are available for the currently chosen categories.">
-					<chooserLink type="goto" label="Edit the Stem Names for categories" tool="posEdit"/>
+				<chooserInfo text="The following stem allomorph labels are available for the currently chosen categories.">
+					<chooserLink type="goto" label="Edit the Stem Allomorph Labels for categories" tool="posEdit"/>
 				</chooserInfo>
 			</slice>
 		</part>
@@ -660,6 +691,11 @@
 				</chooserInfo>
 			</slice>
 		</part>
+		<part id="MoStemMsa-Detail-ProdRestrictDisabled" type="Detail">
+			<slice field="ProdRestrict" label='Exception "Features"' textStyle="Disabled Text" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.AdhocCoProhibVectorReferenceDisabledSlice" menu="mnuDataTree-Help">
+				<deParams displayProperty="LongName" ws="vernacular"/>
+			</slice>
+		</part>
 		<part id="MoStemMsa-Detail-PartOfSpeech" type="Detail">
 			<slice field="PartOfSpeech" label="Category" editor="atomicreferencepos" menu="mnuDataTree-Help">
 				<deParams ws="best analorvern"/>
@@ -729,7 +765,16 @@
 				</if>
 			</if>
 		</part>
-	</bin>
+        <!-- The following is a hack to keep Categories columns from disappearing (LT-22171).
+             These field are technically part of PartOfSpeech, but the display code is expecting CmPossibility.
+        -->
+        <part id="CmPossibility-Jt-inflClassesBest" type="jtview">
+          <seq field="InflectionClasses" layout="NameBest"/>
+        </part>
+        <part id="CmPossibility-Jt-defaultInflClassBest" type="jtview">
+          <obj field="DefaultInflectionClass" layout="NameBest"/>
+        </part>
+    </bin>
 	<bin class="MoMorphSynAnalysis">
 		<part id="MoMorphSynAnalysis-Detail-MainEdit" type="Detail">
 			<!-- Implements what should be the first thing shown for all MSA classes,
@@ -941,7 +986,19 @@
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
 						<lit translate="do not translate">(</lit>
 					</if>
-					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+					<if func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+					  <span>
+						<properties>
+						  <forecolor value="orange"/>
+						</properties>
+						<string target="owner" class="PartOfSpeech" field="Abbreviation" ws="analysis"/>
+						<lit>:</lit>
+						<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+					  </span>
+					</if>
+					<ifnot func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+					  <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+					</ifnot>
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
 						<lit translate="do not translate">)</lit>
 					</if>
@@ -987,8 +1044,20 @@
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
 						<lit translate="do not translate">(</lit>
 					</if>
-					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
-					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
+                    <if func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <span>
+                        <properties>
+                          <forecolor value="orange"/>
+                        </properties>
+                        <string target="owner" class="PartOfSpeech" field="Abbreviation" ws="analysis"/>
+                        <lit>:</lit>
+                        <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                      </span>
+                    </if>
+                    <ifnot func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                    </ifnot>
+                    <if class="MoInflAffixSlot" field="Optional" boolequals="true">
 						<lit translate="do not translate">)</lit>
 					</if>
 					<lit>&#xA0;&#xA0;</lit>
@@ -1033,8 +1102,20 @@
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
 						<lit translate="do not translate">&#x200E;)&#xA0;&#xA0;</lit>
 					</if>
-					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
-					<if class="MoInflAffixSlot" field="Optional" boolequals="false">
+                    <if func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <span>
+                        <properties>
+                          <forecolor value="orange"/>
+                        </properties>
+                        <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                        <lit>:</lit>
+                        <string target="owner" class="PartOfSpeech" field="Abbreviation" ws="analysis"/>
+                      </span>
+                    </if>
+                    <ifnot func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                    </ifnot>
+                    <if class="MoInflAffixSlot" field="Optional" boolequals="false">
 						<lit translate="do not translate">&#x200F;&#xA0;&#xA0;-</lit>
 					</if>
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
@@ -1084,8 +1165,20 @@
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
 						<lit translate="do not translate">&#x200E;)-&#xA0;&#xA0;</lit>
 					</if>
-					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
-					<if class="MoInflAffixSlot" field="Optional" boolequals="false">
+                    <if func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <span>
+                        <properties>
+                          <forecolor value="orange"/>
+                        </properties>
+                        <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                        <lit>:</lit>
+                        <string target="owner" class="PartOfSpeech" field="Abbreviation" ws="analysis"/>
+                      </span>
+                    </if>
+                    <ifnot func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                    </ifnot>
+                    <if class="MoInflAffixSlot" field="Optional" boolequals="false">
 						<lit translate="do not translate">&#x200F;&#xA0;&#xA0;</lit>
 					</if>
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
@@ -1135,8 +1228,20 @@
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
 						<lit translate="do not translate">(</lit>
 					</if>
-					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
-					<if class="MoInflAffixSlot" field="Optional" boolequals="false">
+                    <if func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <span>
+                        <properties>
+                          <forecolor value="orange"/>
+                        </properties>
+                        <string target="owner" class="PartOfSpeech" field="Abbreviation" ws="analysis"/>
+                        <lit>:</lit>
+                        <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                      </span>
+                    </if>
+                    <ifnot func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                    </ifnot>
+                    <if class="MoInflAffixSlot" field="Optional" boolequals="false">
 						<lit translate="do not translate">-&#xA0;&#xA0;</lit>
 					</if>
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
@@ -1186,8 +1291,20 @@
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
 						<lit translate="do not translate">&#xA0;&#xA0;-(</lit>
 					</if>
-					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
-					<if class="MoInflAffixSlot" field="Optional" boolequals="false">
+                    <if func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <span>
+                        <properties>
+                          <forecolor value="orange"/>
+                        </properties>
+                        <string target="owner" class="PartOfSpeech" field="Abbreviation" ws="analysis"/>
+                        <lit>:</lit>
+                        <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                      </span>
+                    </if>
+                    <ifnot func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                    </ifnot>
+                    <if class="MoInflAffixSlot" field="Optional" boolequals="false">
 						<lit translate="do not translate">&#xA0;&#xA0;</lit>
 					</if>
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
@@ -1237,8 +1354,20 @@
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
 						<lit translate="do not translate">&#xA0;&#xA0;-(</lit>
 					</if>
-					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
-					<if class="MoInflAffixSlot" field="Optional" boolequals="false">
+                    <if func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <span>
+                        <properties>
+                          <forecolor value="orange"/>
+                        </properties>
+                        <string target="owner" class="PartOfSpeech" field="Abbreviation" ws="analysis"/>
+                        <lit>:</lit>
+                        <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                      </span>
+                    </if>
+                    <ifnot func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                    </ifnot>
+                    <if class="MoInflAffixSlot" field="Optional" boolequals="false">
 						<lit translate="do not translate">&#xA0;&#xA0;</lit>
 					</if>
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
@@ -1288,8 +1417,20 @@
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
 						<lit translate="do not translate">&#xA0;&#xA0;(</lit>
 					</if>
-					<string class="MoInflAffixSlot" field="Name" ws="analysis"/>
-					<if class="MoInflAffixSlot" field="Optional" boolequals="false">
+                    <if func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <span>
+                        <properties>
+                          <forecolor value="orange"/>
+                        </properties>
+                        <string target="owner" class="PartOfSpeech" field="Abbreviation" ws="analysis"/>
+                        <lit>:</lit>
+                        <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                      </span>
+                    </if>
+                    <ifnot func="TemplateSlotOutOfScope" class="MoInflAffixSlot" boolequals="true">
+                      <string class="MoInflAffixSlot" field="Name" ws="analysis"/>
+                    </ifnot>
+                    <if class="MoInflAffixSlot" field="Optional" boolequals="false">
 						<lit translate="do not translate">-&#xA0;&#xA0;</lit>
 					</if>
 					<if class="MoInflAffixSlot" field="Optional" boolequals="true">
@@ -1380,7 +1521,7 @@
 		</part>
 		<part id="MoInflAffixTemplate-Detail-TemplateTable" type="Detail">
 			<slice id="TemplateTable" label="Table" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.InflAffixTemplateSlice" layout="TemplateTablex" menu="mnuDataTree-Help" helpTopicID="khtpField-MoInflAffixTemplate-Table">
-				<deParams menu="mnuInflAffixTemplate-TemplateTable"/>
+			  <deParams menu="mnuInflAffixTemplate-TemplateTable"/>
 			</slice>
 		</part>
 		<part id="MoInflAffixTemplate-Detail-Message" type="detail" paramType="JtLayoutsOfThisClass">
@@ -1408,68 +1549,70 @@
 			<slice field="Disabled" label="Active" editor="checkboxwithrefresh" editable="true" toggleValue="true" menu="mnuDataTree-Help"/>
 		</part>
 		<part id="MoInflAffixTemplate-Jt-TemplateTabley" type="jtview">
+		  <savehvo>
 			<table columns="%ColumnCount">
 				<properties>
 					<borderbottom value="3"/>
 				</properties>
-					<if field="Disabled" boolequals="true">
-						<row>
-							<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="PrefixSlotNameDisabled"/>
-							<cell>
-								<properties>
-									<bold value="on"/>
-									<bordertrailing value="3"/>
-									<forecolor value="GrayText"/>
-								</properties>
-								<para>
-									<lit>&#xA0;&#xA0;</lit>
-									<commandIcon visibility="focused"/>
-									<lit>STEM</lit>
-									<lit>&#xA0;&#xA0;</lit>
-								</para>
-							</cell>
-							<seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SuffixSlotNameDisabled"/>
-						</row>
-						<row>
-							<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="SlotContentsDisabled"/>
-							<cell>
-								<properties>
-									<bordertrailing value="3"/>
-								</properties>
-								<lit/>
-							</cell>
-							<seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SlotContentsDisabled"/>
-						</row>
-					</if>
-					<if field="Disabled" boolequals="false">
-						<row>
-							<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="PrefixSlotName"/>
+                <if field="Disabled" boolequals="true">
+					<row>
+						<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="PrefixSlotNameDisabled"/>
 						<cell>
 							<properties>
 								<bold value="on"/>
 								<bordertrailing value="3"/>
+								<forecolor value="GrayText"/>
 							</properties>
-							<para>
-								<lit>&#xA0;&#xA0;</lit>
-								<commandIcon visibility="focused"/>
-								<lit>STEM</lit>
-								<lit>&#xA0;&#xA0;</lit>
-							</para>
-						</cell>
-						<seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SuffixSlotName"/>
-						</row>
-						<row>
-							<seq class="MoInflAffixTemplate" field="PrefixSlots" layout="SlotContents"/>
-							<cell>
-								<properties>
-									<bordertrailing value="3"/>
-								</properties>
-								<lit/>
-							</cell>
-							<seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SlotContents"/>
-						</row>
-					</if>
+					<para>
+					  <lit>&#xA0;&#xA0;</lit>
+					  <commandIcon visibility="focused"/>
+					  <lit>STEM</lit>
+					  <lit>&#xA0;&#xA0;</lit>
+					</para>
+				  </cell>
+				  <seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SuffixSlotNameDisabled"/>
+				</row>
+				<row>
+				  <seq class="MoInflAffixTemplate" field="PrefixSlots" layout="SlotContentsDisabled"/>
+				  <cell>
+					<properties>
+					  <bordertrailing value="3"/>
+					</properties>
+					<lit/>
+				  </cell>
+				  <seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SlotContentsDisabled"/>
+				</row>
+			  </if>
+			  <if field="Disabled" boolequals="false">
+				<row>
+				  <seq class="MoInflAffixTemplate" field="PrefixSlots" layout="PrefixSlotName"/>
+				  <cell>
+					<properties>
+					  <bold value="on"/>
+					  <bordertrailing value="3"/>
+					</properties>
+					<para>
+					  <lit>&#xA0;&#xA0;</lit>
+					  <commandIcon visibility="focused"/>
+					  <lit>STEM</lit>
+					  <lit>&#xA0;&#xA0;</lit>
+					</para>
+				  </cell>
+				  <seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SuffixSlotName"/>
+				</row>
+				<row>
+				  <seq class="MoInflAffixTemplate" field="PrefixSlots" layout="SlotContents"/>
+				  <cell>
+					<properties>
+					  <bordertrailing value="3"/>
+					</properties>
+					<lit/>
+				  </cell>
+				  <seq class="MoInflAffixTemplate" field="SuffixSlots" layout="SlotContents"/>
+				</row>
+			  </if>
 			</table>
+		  </savehvo>
 		</part>
 		<!-- the display is inherently Left-To-Right: RTL vernacular scripts require reversed handling of the columns -->
 		<!-- see LT-4317 for the bug report -->
@@ -2000,6 +2143,14 @@
 		</part>
 		<part id="MoBinaryCompoundRule-Detail-LeftMsa" type="Detail">
 			<obj field="LeftMsa" label="Left MSA" layout="LeftMsa"/>
+		</part>
+		<part id="MoBinaryCompoundRule-Detail-ProdRestrict" type="Detail">
+			<slice field="ProdRestrict" label='Exception "Features"' editor="possVectorReference" menu="mnuDataTree-Help">
+				<deParams ws="best analorvern"/>
+				<chooserInfo text='The following exception "features" are available.'>
+					<chooserLink type="goto" label='Edit the Exception "Features"' tool="ProdRestrictEdit"/>
+				</chooserInfo>
+			</slice>
 		</part>
 		<part id="MoBinaryCompoundRule-Detail-RightMsa" type="Detail">
 			<obj field="RightMsa" label="Right MSA" layout="RightMsa"/>
@@ -2551,7 +2702,13 @@
 		<part id="PhNaturalClass-Detail-DescriptionAllA" type="Detail">
 			<slice field="Description" label="Description" editor="multistring" ws="all analysis"/>
 		</part>
-	</bin>
+        <!-- The following is a hack to keep the Phoneme/Features column from disappearing (LT-22171).
+             The Segments field is technically part of PhNCSegments, but the display code is expecting PhNaturalClass.
+        -->
+        <part id="PhNaturalClass-Jt-Segments" type="JtView">
+          <seq field="Segments" layout="shortname" />
+        </part>
+    </bin>
 	<bin class="PhNCSegments">
 		<part id="PhNCSegments-Detail-Segments" type="Detail">
 			<slice field="Segments" label="Phonemes" editor="defaultVectorReference">
@@ -2788,7 +2945,7 @@
 			<slice editor="summary" layout="Edit" editable="no" weight="heavy" menu="mnuDataTree-Help" header="true"/>
 		</part>
 		<part id="PhMetathesisRule-Detail-RuleFormula" type="detail">
-			<slice id="RuleFormula" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.MetaRuleFormulaSlice" menu="mnuDataTree-Help" helpTopicID="khtpField-PhMetathesisRule-RuleFormula"/>
+			<slice id="RuleFormula" editor="Custom" assemblyPath="MorphologyEditorDll.dll" class="SIL.FieldWorks.XWorks.MorphologyEditor.MetaRuleFormulaSlice" menu="mnuDataTree-Help" helpTopicID="khtpChoose-Grammar-PhonFeats-MetaRuleFormulaControl"/>
 		</part>
 	</bin>
 

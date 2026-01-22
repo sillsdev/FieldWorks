@@ -18,6 +18,7 @@ using SIL.FieldWorks.FdoUi;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
+using Gecko.WebIDL;
 
 namespace SIL.FieldWorks.IText
 {
@@ -373,8 +374,15 @@ namespace SIL.FieldWorks.IText
 			if (m_loader != null)
 			{
 				CheckDisposed();
-				m_loader.ResetGuessCache();
+				m_loader.ResetGuessCache(IsParsingDevMode());
 			}
+		}
+
+		internal bool IsParsingDevMode()
+		{
+			if (RootSite?.GetMaster() == null)
+				return false;
+			return RootSite.GetMaster().IsParsingDevMode();
 		}
 
 		internal AnalysisGuessServices GuessServices
@@ -383,7 +391,7 @@ namespace SIL.FieldWorks.IText
 			{
 				if (m_loader != null && m_loader.GuessServices != null)
 					return m_loader.GuessServices;
-				return new AnalysisGuessServices(m_cache);
+				return new AnalysisGuessServices(m_cache, IsParsingDevMode());
 			}
 		}
 
@@ -421,7 +429,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		public static int ApprovedGuessColor
 		{
-			get { return (int)CmObjectUi.RGB(200, 255, 255); }
+			get { return (int)CmObjectUi.RGB(150, 255, 255); }
 		}
 
 		/// <summary>
@@ -437,7 +445,7 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		public static int MachineGuessColor
 		{
-			get { return (int)CmObjectUi.RGB(254, 240, 206); }
+			get { return (int)CmObjectUi.RGB(234, 220, 186); }
 		}
 
 		/// <summary/>
@@ -541,10 +549,32 @@ namespace SIL.FieldWorks.IText
 			UsingGuess = true;
 		}
 
-		private void SetGuessing(IVwEnv vwenv)
+		private int GetGuessColor(ICmObject obj)
 		{
-			SetGuessing(vwenv, ApprovedGuessColor);
-			UsingGuess = true;
+			IWfiAnalysis wa;
+			if (IsParsingDevMode())
+			{
+				// Parser approval takes precedence over User approval.
+				wa = (obj is IWfiGloss) ? ((IWfiGloss)obj).Analysis : obj as IWfiAnalysis;
+				if (wa != null)
+				{
+					Opinions opinion = wa.GetAgentOpinion(wa.Cache.LangProject.DefaultParserAgent);
+					if (opinion == Opinions.approves)
+						return MachineGuessColor;
+				}
+				return ApprovedGuessColor;
+			}
+			// User approval takes precedence over Parser approval.
+			if (obj is IWfiGloss)
+				return ApprovedGuessColor;
+			wa = obj as IWfiAnalysis;
+			if (wa != null)
+			{
+				Opinions opinion = wa.GetAgentOpinion(wa.Cache.LangProject.DefaultUserAgent);
+				if (opinion == Opinions.approves)
+					return ApprovedGuessColor;
+			}
+			return MachineGuessColor;
 		}
 
 		public bool UsingGuess { get; set; }
@@ -824,7 +854,6 @@ namespace SIL.FieldWorks.IText
 		/// <param name="vwenv"></param>
 		protected virtual void AddWordBundleInternal(int hvo, IVwEnv vwenv)
 		{
-			SetupAndOpenInnerPile(vwenv);
 			// we assume we're in the context of a segment with analyses here.
 			// we'll need this info down in DisplayAnalysisAndCloseInnerPile()
 			int hvoSeg;
@@ -832,7 +861,27 @@ namespace SIL.FieldWorks.IText
 			int index;
 			vwenv.GetOuterObject(vwenv.EmbeddingLevel - 1, out hvoSeg, out tagDummy, out index);
 			var analysisOccurrence = new AnalysisOccurrence(m_segRepository.GetObject(hvoSeg), index);
+			SetBorderColor(vwenv, analysisOccurrence);
+			SetupAndOpenInnerPile(vwenv);
 			DisplayAnalysisAndCloseInnerPile(vwenv, analysisOccurrence, true);
+		}
+		private void SetBorderColor(IVwEnv vwenv, AnalysisOccurrence analysisOccurrence)
+		{
+			var coRepository = m_cache.ServiceLocator.GetInstance<ICmObjectRepository>();
+			var wag = (IAnalysis)coRepository.GetObject(analysisOccurrence.Analysis.Hvo);
+			int width = 0;
+			int color = (int)ColorUtil.ConvertColorToBGR(Color.Black);
+			if (IsParsingDevMode() && wag.ClassID != WfiWordformTags.kClassId && !(wag is IPunctuationForm))
+			{
+				// Show how the analysis was approved by setting the border color.
+				width = 3000;
+				color = GetGuessColor(wag.Analysis);
+			}
+			vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTop, (int)FwTextPropVar.ktpvMilliPoint, width);
+			vwenv.set_IntProperty((int)FwTextPropType.ktptBorderBottom, (int)FwTextPropVar.ktpvMilliPoint, width);
+			vwenv.set_IntProperty((int)FwTextPropType.ktptBorderLeading, (int)FwTextPropVar.ktpvMilliPoint, width);
+			vwenv.set_IntProperty((int)FwTextPropType.ktptBorderTrailing, (int)FwTextPropVar.ktpvMilliPoint, width);
+			vwenv.set_IntProperty((int)FwTextPropType.ktptBorderColor, (int)FwTextPropVar.ktpvDefault, color);
 		}
 
 		/// <summary>
@@ -1783,7 +1832,7 @@ namespace SIL.FieldWorks.IText
 						if (word != null)
 						{
 							//test if there are multiple analyses that a user might choose from
-							if (SandboxBase.GetHasMultipleRelevantAnalyses(word))
+							if (SandboxBase.GetHasMultipleRelevantAnalyses(word, m_this.IsParsingDevMode()))
 							{
 								m_this.SetGuessing(m_vwenv, MultipleApprovedGuessColor); //There are multiple options, set the color
 							}
@@ -1822,11 +1871,7 @@ namespace SIL.FieldWorks.IText
 						// Display the morpheme bundles.
 						if (m_hvoDefault != m_hvoWordBundleAnalysis)
 						{
-							// Real analysis isn't what we're displaying, so morph breakdown
-							// is a guess. Is it a human-approved guess?
-							bool isHumanGuess = m_this.GuessCache.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid) !=
-																			(int) AnalysisGuessServices.OpinionAgent.Parser;
-							m_this.SetGuessing(m_vwenv, isHumanGuess ? ApprovedGuessColor : MachineGuessColor);
+							m_this.SetGuessing(m_vwenv, m_this.GetGuessColor(m_defaultObj));
 							// Let the exporter know that this is a guessed analysis.
 							m_vwenv.set_StringProperty(ktagAnalysisStatus, "guess");
 						}
@@ -1842,7 +1887,7 @@ namespace SIL.FieldWorks.IText
 						if (m_hvoWordBundleAnalysis == m_hvoWordform)
 						{
 							// Real analysis is just word, one we're displaying is a default
-							m_this.SetGuessing(m_vwenv);
+							m_this.SetGuessing(m_vwenv, m_this.GetGuessColor(m_defaultObj));
 							// Let the exporter know that this is a guessed analysis.
 							m_vwenv.set_StringProperty(ktagAnalysisStatus, "guess");
 						}
@@ -1866,15 +1911,19 @@ namespace SIL.FieldWorks.IText
 				case WfiAnalysisTags.kClassId:
 					if (m_hvoDefault != m_hvoWordBundleAnalysis)
 					{
-						// Real analysis isn't what we're displaying, so morph breakdown
-						// is a guess. Is it a human-approved guess?
-						bool isHumanGuess = m_this.GuessCache.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid) !=
-																		(int)AnalysisGuessServices.OpinionAgent.Parser;
-						m_this.SetGuessing(m_vwenv, isHumanGuess ? ApprovedGuessColor : MachineGuessColor);
+						m_this.SetGuessing(m_vwenv, m_this.GetGuessColor(m_defaultObj));
 					}
 					var wa = (IWfiAnalysis) m_defaultObj;
 					if (wa.MeaningsOC.Count == 0)
 					{
+						ITsString rootGlossName = GetRootGlossName(wa);
+						if (m_hvoDefault != m_hvoWordBundleAnalysis && rootGlossName != null)
+						{
+							// Display our best guess for the gloss.
+							m_this.SetColor(m_vwenv, m_this.LabelRGBFor(choiceIndex));
+							m_vwenv.AddString(rootGlossName);
+							break;
+						}
 						// There's no gloss, display something indicating it is missing.
 						m_this.SetColor(m_vwenv, m_this.LabelRGBFor(choiceIndex));
 						m_vwenv.AddString(m_this.m_tssMissingAnalysis);
@@ -1899,13 +1948,42 @@ namespace SIL.FieldWorks.IText
 					}
 					else
 					{
-						m_this.SetGuessing(m_vwenv);
+						m_this.SetGuessing(m_vwenv, m_this.GetGuessColor(m_defaultObj));
 						m_vwenv.AddObj(m_hvoDefault, m_this, kfragLineChoices + choiceIndex);
 					}
 					break;
 				default:
 					throw new Exception("Invalid type found in Segment analysis");
 				}
+			}
+
+			private ITsString GetRootGlossName(IWfiAnalysis wa)
+			{
+				// This is modeled after SandboxBase.SyncMonomorphemicGlossAndPos.
+				ITsString rootGloss = null;
+				foreach (IWfiMorphBundle morphBundle in wa.MorphBundlesOS)
+				{
+					// Get the sense for morphBundle.
+					ILexSense sense = morphBundle.SenseRA;
+					if (sense == null && morphBundle.MorphRA != null)
+					{
+						ILexEntry lexEntry = morphBundle.MorphRA.Owner as ILexEntry;
+						if (lexEntry != null && lexEntry.SensesOS.Count > 0)
+						{
+							sense = lexEntry.SensesOS[0];
+						}
+					}
+					if (sense?.Gloss?.BestAnalysisAlternative == null)
+						continue;
+					// Consider the sense's gloss.
+					IMoMorphSynAnalysis msa = sense.MorphoSyntaxAnalysisRA;
+					bool fStem = msa is IMoStemMsa;
+					// If we have only one morpheme, treat it as the stem from which we will copy the gloss.
+					// otherwise, use the first stem we find, if any.
+					if ((fStem && rootGloss == null) || wa.MorphBundlesOS.Count == 1)
+						rootGloss = sense.Gloss.BestAnalysisAlternative;
+				}
+				return rootGloss;
 			}
 
 			private void DisplayWordPOS(int choiceIndex)
@@ -1919,23 +1997,83 @@ namespace SIL.FieldWorks.IText
 				case WfiAnalysisTags.kClassId:
 					if (m_hvoDefault != m_hvoWordBundleAnalysis)
 					{
-						// Real analysis isn't what we're displaying, so POS is a guess.
-						bool isHumanApproved = m_this.GuessCache.get_IntProp(m_hvoDefault, InterlinViewDataCache.OpinionAgentFlid)
-																			!= (int)AnalysisGuessServices.OpinionAgent.Parser;
-
-						m_this.SetGuessing(m_vwenv, isHumanApproved ? ApprovedGuessColor : MachineGuessColor);
+						m_this.SetGuessing(m_vwenv, m_this.GetGuessColor(m_defaultObj));
+						var wa = (IWfiAnalysis) m_defaultObj;
+						int hvoPos = wa.CategoryRA != null ? wa.CategoryRA.Hvo : 0;
+						if (hvoPos == 0)
+						{
+							ITsString rootPOSName = GetRootPOSName(wa);
+							if (rootPOSName != null)
+							{
+								// Display our best guess for the gloss.
+								m_this.SetColor(m_vwenv, m_this.LabelRGBFor(choiceIndex));
+								m_vwenv.AddString(rootPOSName);
+								break;
+							}
+						}
 					}
 					m_this.AddAnalysisPos(m_vwenv, m_hvoDefault, m_hvoWordBundleAnalysis, choiceIndex);
 					break;
 				case WfiGlossTags.kClassId:
 					m_hvoWfiAnalysis = m_defaultObj.Owner.Hvo;
 					if (m_hvoWordBundleAnalysis == m_hvoWordform) // then our analysis is a guess
-						m_this.SetGuessing(m_vwenv);
+						m_this.SetGuessing(m_vwenv, m_this.GetGuessColor(m_defaultObj));
 					m_vwenv.AddObj(m_hvoWfiAnalysis, m_this, kfragAnalysisCategoryChoices + choiceIndex);
 					break;
 				default:
 					throw new Exception("Invalid type found in Segment analysis");
 				}
+			}
+
+			private ITsString GetRootPOSName(IWfiAnalysis wa)
+			{
+				// This is modeled after SandboxBase.SyncMonomorphemicGlossAndPos.
+				IPartOfSpeech stemPOS = null;
+				IPartOfSpeech derivedPOS = null;
+				foreach (IWfiMorphBundle morphBundle in wa.MorphBundlesOS)
+				{
+					// Get the sense for morphBundle.
+					ILexSense sense = morphBundle.SenseRA;
+					if (sense == null && morphBundle.MorphRA != null)
+					{
+						if (morphBundle.MorphRA.Owner is ILexEntry lexEntry && lexEntry.SensesOS.Count > 0)
+						{
+							sense = lexEntry.SensesOS[0];
+						}
+					}
+					if (sense == null)
+						continue;
+					// Consider the sense's part of speech.
+					IMoMorphSynAnalysis msa = sense.MorphoSyntaxAnalysisRA;
+					bool fStem = msa is IMoStemMsa;
+					if (fStem)
+					{
+						IPartOfSpeech POS = (msa as IMoStemMsa).PartOfSpeechRA;
+						if (POS != stemPOS && stemPOS != null)
+						{
+							// found conflicting stems
+							return null;
+						}
+						else
+							stemPOS = POS;
+					}
+					else if (msa is IMoDerivAffMsa)
+					{
+						if (derivedPOS != null)
+							return null; // more than one DA
+						else
+							derivedPOS = (msa as IMoDerivAffMsa).ToPartOfSpeechRA;
+					}
+				}
+				if (stemPOS == null)
+					return null;
+
+				IPartOfSpeech lexPOS = derivedPOS ?? stemPOS;
+				if (lexPOS == null)
+					return null;
+				if (lexPOS.Abbreviation.BestAnalysisAlternative.Length > 0)
+					return lexPOS.Abbreviation.BestAnalysisAlternative;
+				return lexPOS.Name.BestAnalysisAlternative;
 			}
 		}
 
@@ -2288,7 +2426,7 @@ namespace SIL.FieldWorks.IText
 
 		internal virtual IParaDataLoader CreateParaLoader()
 		{
-			return new InterlinViewCacheLoader(new AnalysisGuessServices(m_cache), GuessCache);
+			return new InterlinViewCacheLoader(new AnalysisGuessServices(m_cache, IsParsingDevMode()), GuessCache, RootSite);
 		}
 
 		internal void RecordGuessIfNotKnown(AnalysisOccurrence selected)
@@ -2409,7 +2547,7 @@ namespace SIL.FieldWorks.IText
 	{
 		void LoadParaData(IStTxtPara para);
 		void LoadSegmentData(ISegment seg);
-		void ResetGuessCache();
+		void ResetGuessCache(bool parsingDevMode);
 		bool UpdatingOccurrence(IAnalysis oldAnalysis, IAnalysis newAnalysis);
 		void RecordGuessIfNotKnown(AnalysisOccurrence occurrence);
 		IAnalysis GetGuessForWordform(IWfiWordform wf, int ws);
@@ -2421,10 +2559,11 @@ namespace SIL.FieldWorks.IText
 	{
 		private InterlinViewDataCache m_guessCache;
 		public InterlinViewCacheLoader(AnalysisGuessServices guessServices,
-			InterlinViewDataCache guessCache)
+			InterlinViewDataCache guessCache, InterlinDocRootSiteBase rootSite)
 		{
 			GuessServices = guessServices;
 			m_guessCache = guessCache;
+			RootSite = rootSite;
 		}
 
 		/// <summary>
@@ -2432,6 +2571,8 @@ namespace SIL.FieldWorks.IText
 		/// </summary>
 		public AnalysisGuessServices GuessServices { get; private set; }
 		public InterlinViewDataCache GuessCache { get { return m_guessCache; }  }
+
+		public InterlinDocRootSiteBase RootSite;
 
 		#region IParaDataLoader Members
 
@@ -2492,7 +2633,12 @@ namespace SIL.FieldWorks.IText
 
 			// we don't provide guesses for glosses
 			if (occurrence.Analysis is IWfiGloss)
+			{
+				if (IsParsingDevMode())
+					// Trigger redisplay.
+					SetObjProp(occurrence, InterlinViewDataCache.AnalysisMostApprovedFlid, 0);
 				return;
+			}
 			// next get the best guess for wordform or analysis
 
 			IAnalysis wag = occurrence.Analysis;
@@ -2507,6 +2653,13 @@ namespace SIL.FieldWorks.IText
 			{
 				SetObjProp(occurrence, InterlinViewDataCache.AnalysisMostApprovedFlid, 0);
 			}
+		}
+
+		internal bool IsParsingDevMode()
+		{
+			if (RootSite?.GetMaster() == null)
+				return false;
+			return RootSite.GetMaster().IsParsingDevMode();
 		}
 
 		public IAnalysis GetGuessForWordform(IWfiWordform wf, int ws)
@@ -2533,10 +2686,11 @@ namespace SIL.FieldWorks.IText
 		#region IParaDataLoader Members
 
 
-		public void ResetGuessCache()
+		public void ResetGuessCache(bool parsingDevMode)
 		{
 			// recreate the guess services, so they will use the latest FDO data.
 			GuessServices.ClearGuessData();
+			GuessServices.PrioritizeParser = parsingDevMode;
 			// clear the cache for the guesses, so it won't have any stale data.
 			m_guessCache.ClearPropFromCache(InterlinViewDataCache.AnalysisMostApprovedFlid);
 		}
@@ -2564,10 +2718,10 @@ namespace SIL.FieldWorks.IText
 		private HashSet<AnalysisOccurrence> m_annotationsChanged = new HashSet<AnalysisOccurrence>();
 		private HashSet<AnalysisOccurrence> m_annotationsUnchanged = new HashSet<AnalysisOccurrence>();
 		private AnalysisOccurrence m_currentAnnotation;
-		HashSet<int> m_analysesWithNewGuesses = new HashSet<int>();
+		HashSet<int> m_wordformsWithNewGuesses = new HashSet<int>();
 
-		public ParaDataUpdateTracker(AnalysisGuessServices guessServices, InterlinViewDataCache guessCache) :
-			base(guessServices, guessCache)
+		public ParaDataUpdateTracker(AnalysisGuessServices guessServices, InterlinViewDataCache guessCache, InterlinDocRootSiteBase rootSite) :
+			base(guessServices, guessCache, rootSite)
 		{
 		}
 
@@ -2577,9 +2731,9 @@ namespace SIL.FieldWorks.IText
 			base.NoteCurrentAnnotation(occurrence);
 		}
 
-		public void NoteChangedAnalysis(int hvo)
+		public void NoteChangedWordform(int hvo)
 		{
-			m_analysesWithNewGuesses.Add(hvo);
+			m_wordformsWithNewGuesses.Add(hvo);
 		}
 
 		private void MarkCurrentAnnotationAsChanged()
@@ -2600,7 +2754,7 @@ namespace SIL.FieldWorks.IText
 				// Include occurrences that are unchanged but might add a yellow background.
 				foreach (var unchangedAnnotation in m_annotationsUnchanged)
 				{
-					if (m_analysesWithNewGuesses.Contains(unchangedAnnotation.Analysis.Hvo))
+					if (m_wordformsWithNewGuesses.Contains(unchangedAnnotation.Analysis.Wordform.Hvo))
 					{
 						m_annotationsChanged.Add(unchangedAnnotation);
 					}
@@ -2616,7 +2770,7 @@ namespace SIL.FieldWorks.IText
 			{
 				base.SetObjProp(occurrence, flid, newObjValue);
 				m_annotationsChanged.Add(occurrence);
-				m_analysesWithNewGuesses.Add(occurrence.Analysis.Hvo);
+				m_wordformsWithNewGuesses.Add(occurrence.Analysis.Wordform.Hvo);
 				MarkCurrentAnnotationAsChanged();
 			}
 			else

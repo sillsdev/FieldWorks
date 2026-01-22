@@ -49,11 +49,12 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			return className == "ReversalIndexEntry";
 		}
 
-		public override bool CreateAndInsert(string className)
+		public override bool CreateAndInsert(string className, out ICmObject newObj)
 		{
 			if (className != "ReversalIndexEntry")
-				return base.CreateAndInsert(className);
+				return base.CreateAndInsert(className, out newObj);
 			m_newItem = m_cache.ServiceLocator.GetInstance<IReversalIndexEntryFactory>().Create();
+			newObj = m_newItem;
 			var ri = (IReversalIndex)m_owningObject;
 			ri.EntriesOC.Add(m_newItem);
 			var extensions = m_cache.ActionHandlerAccessor as IActionHandlerExtensions;
@@ -119,9 +120,18 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			ReloadList();
 		}
 
-		protected override string PropertyTableId(string sorterOrFilter)
+		protected override string PropertyTableId(string sorterOrFilter, DictionaryConfigurationModel revConfig = null)
 		{
-			var reversalPub = m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", null);
+			string reversalPub = null;
+			if (revConfig != null)
+			{
+				reversalPub = revConfig.FilePath;
+			}
+			else
+			{
+				reversalPub = m_propertyTable.GetStringProperty("ReversalIndexPublicationLayout", null);
+			}
+
 			if (reversalPub == null)
 				return null; // there is no current Reversal Index; don't try to find Properties (sorter & filter) for a nonexistant Reversal Index
 			var reversalLang = reversalPub.Substring(reversalPub.IndexOf('-') + 1); // strip initial "publishReversal-"

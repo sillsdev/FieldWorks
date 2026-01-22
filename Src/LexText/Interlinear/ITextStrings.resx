@@ -151,6 +151,9 @@
     <value>Conversion map error</value>
     <comment>caption for error message box</comment>
   </data>
+  <data name="ksEditLexicalEntry_" xml:space="preserve">
+    <value>Edit Lexical Entry...</value>
+  </data>
   <data name="ksCreateNewEntry_" xml:space="preserve">
     <value>Create New Entry...</value>
   </data>
@@ -833,7 +836,7 @@ Click "Cancel" to abort this import.</value>
     <value>{0} texts will be imported from this SFM file.</value>
   </data>
   <data name="ksAskMergeInterlinearText" xml:space="preserve">
-    <value>You already have this interlinear text in your project. Would you like to merge it?</value>
+    <value>You already have the text '{0}' in your project. Would you like to merge it?</value>
   </data>
   <data name="ksAskMergeInterlinearTextTitle" xml:space="preserve">
     <value>Duplicate text found.</value>
@@ -985,5 +988,8 @@ Click "Cancel" to abort this import.</value>
   </data>
   <data name="ksConcordanceExportTitle" xml:space="preserve">
     <value>Export Concordance Results</value>
+  </data>
+  <data name="ComplexConcControl_ResultsMayBeIncomplete" xml:space="preserve">
+    <value>Results may be incomplete.</value>
   </data>
 </root>

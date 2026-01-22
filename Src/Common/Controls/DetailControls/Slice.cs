@@ -11,16 +11,16 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.Xml;
-using SIL.LCModel.Core.Cellar;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
-using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
-using SIL.LCModel;
-using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.FdoUi;
 using SIL.FieldWorks.LexText.Controls;
+using SIL.LCModel;
+using SIL.LCModel.Core.Cellar;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
 using SIL.PlatformUtilities;
 using SIL.Utils;
@@ -122,6 +122,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
+			if (ParentForm?.Name == "PopupToolWindow")
+			{
+				return null;
+			}
 			return ContainingDataTree.GetSliceContextMenu(this, true);
 		}
 
@@ -303,6 +307,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 		}
 
+		/// <summary>
+		/// Check if the value of this slices CallerNode is equal to the value of the CallerNode passed in.
+		/// </summary>
+		/// <returns>true if the values are equal, false if the values are not equal</returns>
+		public bool CallerNodeEqual(XmlNode otherNode)
+		{
+			return CallerNode.OuterXml == otherNode.OuterXml;
+		}
+
 		// Review JohnT: or just make it public? Or make more delegation methods?
 		/// <summary></summary>
 		public virtual Control Control
@@ -471,7 +484,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public Slice(Control ctrlT)
 			: this()
 		{
-			Control = ctrlT;
+			if(ctrlT != Control)
+				Control = ctrlT;
 #if _DEBUG
 			Control.CheckForIllegalCrossThreadCalls = true;
 #endif
@@ -1079,7 +1093,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		/// <summary></summary>
 		public virtual void GenerateChildren(XmlNode node, XmlNode caller, ICmObject obj, int indent,
-			ref int insPos, ArrayList path, bool fUsePersistentExpansion)
+			ref int insPos, ArrayList path, ObjSeqHashMap reuseMap, bool fUsePersistentExpansion)
 		{
 			CheckDisposed();
 
@@ -1101,14 +1115,14 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (indentNode != null)
 			{
 				// Similarly pretest for children of caller, to see whether anything is produced.
-				ContainingDataTree.ApplyLayout(obj, this, indentNode, indent + ExtraIndent(indentNode), insPos, path,
+				ContainingDataTree.ApplyLayout(obj, this, indentNode, indent + ExtraIndent(indentNode), insPos, path, reuseMap,
 					true, out ntr);
 				//fUseChildrenOfNode = false;
 			}
 			else
 			{
 				int insPosT = insPos; // don't modify the real one in this test call.
-				ntr = ContainingDataTree.ProcessPartChildren(node, path, obj, this, indent + ExtraIndent(node), ref insPosT,
+				ntr = ContainingDataTree.ProcessPartChildren(node, path, reuseMap, obj, this, indent + ExtraIndent(node), ref insPosT,
 					true, null, false, node);
 				//fUseChildrenOfNode = true;
 			}
@@ -1144,7 +1158,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					// Record the expansion state and generate the children.
 					Expansion = DataTree.TreeItemState.ktisExpanded;
-					CreateIndentedNodes(caller, obj, indent, ref insPos, path, node);
+					CreateIndentedNodes(caller, obj, indent, ref insPos, path, reuseMap, node);
 				}
 				else
 				{
@@ -1156,7 +1170,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		/// <summary></summary>
 		public virtual void CreateIndentedNodes(XmlNode caller, ICmObject obj, int indent, ref int insPos,
-			ArrayList path, XmlNode node)
+			ArrayList path, ObjSeqHashMap reuseMap, XmlNode node)
 		{
 			CheckDisposed();
 
@@ -1170,10 +1184,10 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				DataTree.NodeTestResult ntr;
 				insPos = ContainingDataTree.ApplyLayout(obj, this, indentNode, indent + ExtraIndent(indentNode),
-					insPos, path, false, out ntr);
+					insPos, path, reuseMap, false, out ntr);
 			}
 			else
-				ContainingDataTree.ProcessPartChildren(node, path, obj, this, indent + ExtraIndent(node), ref insPos,
+				ContainingDataTree.ProcessPartChildren(node, path, reuseMap, obj, this, indent + ExtraIndent(node), ref insPos,
 					false, parameter, false, caller);
 		}
 
@@ -1592,7 +1606,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				if (Key.Length > 1)
 					caller = Key[Key.Length - 2] as XmlNode;
 				int insPos = iSlice + 1;
-				CreateIndentedNodes(caller, m_obj, Indent, ref insPos, new ArrayList(Key), m_configurationNode);
+				CreateIndentedNodes(caller, m_obj, Indent, ref insPos, new ArrayList(Key), new ObjSeqHashMap(), m_configurationNode);
 
 				Expansion = DataTree.TreeItemState.ktisExpanded;
 				if (m_propertyTable != null)
@@ -1885,7 +1899,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 
-			HandleInsertCommand(fieldName, className, null, null);
+			HandleInsertCommand(fieldName, className, null, null, out _);
 		}
 
 		/// <summary>
@@ -1915,9 +1929,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// this class (or a subclass), look for a containing object that is.</param>
 		/// <param name="recomputeVirtual">if non-null, this is a virtual property that should be updated for all
 		/// moved objects and their descendents of the specified class (string has form class.property)</param>
-		public virtual void HandleInsertCommand(string fieldName, string className, string ownerClassName, string recomputeVirtual)
+		public virtual void HandleInsertCommand(string fieldName, string className, string ownerClassName,
+			string recomputeVirtual, out ICmObject newObject)
 		{
 			CheckDisposed();
+
+			newObject = null;
 
 			int newObjectClassId = m_cache.DomainDataByFlid.MetaDataCache.GetClassId(className);
 			if (newObjectClassId == 0)
@@ -1938,7 +1955,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				Hide();
 			// First see whether THIS slice can do it. This helps us insert in the right position for things like
 			// subsenses.
-			if (InsertObjectIfPossible(newObjectClassId, ownerClassId, fieldName, this, recomputeVirtual))
+			if (InsertObjectIfPossible(newObjectClassId, ownerClassId, fieldName, this, recomputeVirtual, out newObject))
 				return;
 			// The previous call may have done the insert, but failed to recognize it due to disposing of the slice
 			// during a PropChanged operation.  See LT-9005.
@@ -1949,7 +1966,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			int index = IndexInContainer;
 			for (int i = index - 1; i >= 0; i--)
 			{
-				if (InsertObjectIfPossible(newObjectClassId, ownerClassId, fieldName, ContainingDataTree.Slices[i], recomputeVirtual))
+				if (InsertObjectIfPossible(newObjectClassId, ownerClassId, fieldName, ContainingDataTree.Slices[i], recomputeVirtual, out newObject))
 					return;
 			}
 
@@ -1959,7 +1976,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			{
 				Debug.WriteLine(String.Format("HandleInsertCommand({0}, {1}, {2}, {3}) -- slice = {4}",
 					fieldName, className, ownerClassName ?? "nullOwner", recomputeVirtual, slice));
-				if (InsertObjectIfPossible(newObjectClassId, ownerClassId, fieldName, slice, recomputeVirtual))
+				if (InsertObjectIfPossible(newObjectClassId, ownerClassId, fieldName, slice, recomputeVirtual, out newObject))
 					break;
 				if (IsDisposed)
 					break;
@@ -1971,8 +1988,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// not that it was actually inserted. It may, or may not, have been inserted in this case.
 		/// 'false' means no suitable place was found, so the calling code can try other locations.
 		/// </returns>
-		private bool InsertObjectIfPossible(int newObjectClassId, int ownerClassId, string fieldName, Slice slice, string recomputeVirtual)
+		private bool InsertObjectIfPossible(int newObjectClassId, int ownerClassId, string fieldName, Slice slice,
+			string recomputeVirtual, out ICmObject newObject)
 		{
+			newObject = null;
+
 			if ((ownerClassId > 0 && IsOrInheritsFrom((slice.Object.ClassID), ownerClassId)) // For adding senses using the simple edit mode, no matter where the cursor is.
 				|| slice.Object == Object
 				//|| slice.Object == ContainingDataTree.Root)
@@ -1996,7 +2016,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				}
 				else
 				{
-					insertionPosition = slice.InsertObject(flid, newObjectClassId);
+					insertionPosition = slice.InsertObject(flid, newObjectClassId, out newObject);
 				}
 				if (insertionPosition < 0)
 					return insertionPosition == -2;		// -2 keeps dlg for adding subPOSes from firing for each slice when cancelled.
@@ -2015,7 +2035,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			return false;
 		}
 
-		static internal int InsertObjectIntoVirtualBackref(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
+		internal static int InsertObjectIntoVirtualBackref(LcmCache cache, Mediator mediator, PropertyTable propertyTable,
 			int hvoSlice, int clidNewObj, int flid)
 		{
 			var metadata = cache.ServiceLocator.GetInstance<IFwMetaDataCacheManaged>();
@@ -2065,9 +2085,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// </summary>
 		/// <returns>-1 if unsuccessful -2 if unsuccessful and no further attempts should be made,
 		/// otherwise, index of new object (0 if collection)</returns>
-		int InsertObject(int flid, int newObjectClassId)
+		int InsertObject(int flid, int newObjectClassId, out ICmObject newObject)
 		{
 			CheckDisposed();
+
+			newObject = null;
 
 			bool fAbstract = m_cache.DomainDataByFlid.MetaDataCache.GetAbstract(newObjectClassId);
 			if (fAbstract)
@@ -2160,6 +2182,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 					// calling CreateNewUiObject so that we could do a better job of picking the slice to focus
 					// after an insert which disposes 'this'. Or perhaps we could improve the refresh list process
 					// so that it more successfully restores the current item without disposing of all the slices.
+					newObject = uiObj?.Object;
 					if (IsDisposed)
 						return -1;
 					if (uiObj == null)
@@ -2232,24 +2255,35 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			for (int islice = IndexInContainer + 1; islice < cslice; ++islice)
 			{
 				var slice = ContainingDataTree.Slices[islice];
+				// Stop if we get past the children of the current object.
+				if (!EmbeddedSlice(slice))
+					break;
 				if (slice.Object.Hvo == hvo)
 				{
 					if (slice.Expansion == DataTree.TreeItemState.ktisCollapsed)
 						slice.TreeNode.ToggleExpansion(islice);
 					return slice;
 				}
-				// Stop if we get past the children of the current object.
-				if (slice.Indent <= Indent)
-					break;
 			}
 			return null;
+		}
+
+		private bool EmbeddedSlice(Slice slice)
+		{
+			foreach (object obj in Key)
+			{
+				var node = obj as XmlNode;
+				if (IsRefPartNode(node) && !slice.Key.Contains(node))
+					return false;
+			}
+			return true;
 		}
 
 
 		/// <summary>
 		/// Return true if the target array starts with the objects in the match array.
 		/// </summary>
-		static internal bool StartsWith(object[] target, object[] match)
+		internal static bool StartsWith(object[] target, object[] match)
 		{
 			if (match.Length > target.Length)
 				return false;
@@ -2676,7 +2710,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				string undoMsg = String.Format("Undo {0}", label);
 				string redoMsg = String.Format("Redo {0}", label);
 				UndoableUnitOfWorkHelper.Do(undoMsg, redoMsg, m_cache.ActionHandlerAccessor,
-					() => { ((ICloneableCmObject)origObj).SetCloneProperties(newObj); });
+					() => {
+						((ICloneableCmObject)origObj).SetCloneProperties(newObj);
+					});
 			}
 			else
 			{
@@ -2779,7 +2815,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Updates the display of a slice, if an hvo and tag it cares about has changed in some way.
 		/// </summary>
 		/// <returns>true, if it the slice updated its display</returns>
-		internal protected virtual bool UpdateDisplayIfNeeded(int hvo, int tag)
+		protected internal virtual bool UpdateDisplayIfNeeded(int hvo, int tag)
 		{
 			CheckDisposed();
 
@@ -2789,42 +2825,90 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		private void MoveField(Direction dir)
 		{
 			CheckDisposed();
-			if (ContainingDataTree.ShowingAllFields)
+			XmlNode swapWith;
+			XmlNode fieldRef = MoveableFieldReferenceForSlice();
+
+			if (fieldRef == null)
 			{
-				XmlNode swapWith;
-				XmlNode fieldRef = FieldReferenceForSlice();
+				Debug.Fail("Could not identify field to move on slice.");
+				return;
+			}
 
-				if (fieldRef == null)
-				{
-					Debug.Fail("Could not identify field to move on slice.");
-					return;
-				}
+			if (dir == Direction.Up)
+			{
+				swapWith = PrevSliceSiblingPart(fieldRef);
+			}
+			else
+			{
+				swapWith = NextSliceSiblingPart(fieldRef);
+			}
 
+			var parent = fieldRef.ParentNode;
+			// Reorder in the parent node in the xml
+			if (parent != null)
+			{
+				parent.RemoveChild(fieldRef);
 				if (dir == Direction.Up)
+					parent.InsertBefore(fieldRef, swapWith);
+				else
+					parent.InsertAfter(fieldRef, swapWith);
+			}
+
+			// Persist in the parent part (might not be the immediate parent node)
+			Inventory.GetInventory("layouts", m_cache.ProjectId.Name)
+				.PersistOverrideElement(PartParent(fieldRef));
+			ContainingDataTree.RefreshList(true, true);
+		}
+
+		/// <summary>
+		/// Get the sibling for the current slice in the given dir.
+		/// </summary>
+		internal Slice GetSibling(Direction dir)
+		{
+			int islice = IndexInContainer;
+			int cslice = ContainingDataTree.Slices.Count;
+			int increment = (dir == Direction.Down ? 1 : -1);
+			int depth = GetMoveableDepth();
+			XmlNode fieldRef = MoveableFieldReferenceForSlice();
+			while (true)
+			{
+				islice += increment;
+				if (dir == Direction.Down)
 				{
-					swapWith = PrevPartSibling(fieldRef);
+					if (islice >= cslice) break;
 				}
 				else
 				{
-					swapWith = NextPartSibling(fieldRef);
+					if (islice < 0) break;
 				}
-
-				var parent = fieldRef.ParentNode;
-				// Reorder in the parent node in the xml
-				if (parent != null)
-				{
-					parent.RemoveChild(fieldRef);
-					if (dir == Direction.Up)
-						parent.InsertBefore(fieldRef, swapWith);
-					else
-						parent.InsertAfter(fieldRef, swapWith);
-				}
-
-				// Persist in the parent part (might not be the immediate parent node)
-				Inventory.GetInventory("layouts", m_cache.ProjectId.Name)
-					.PersistOverrideElement(PartParent(fieldRef));
-				ContainingDataTree.RefreshList(true);
+				var slice = ContainingDataTree.Slices[islice];
+				int sliceDepth = slice.GetMoveableDepth();
+				// Skip over our children.
+				if (sliceDepth > depth)
+					continue;
+				// Stop if we get past the children of our parent.
+				if (sliceDepth < depth)
+					break;
+				XmlNode sliceFieldRef = slice.MoveableFieldReferenceForSlice();
+				if (sliceFieldRef == fieldRef)
+					// Skip slices with the same fieldRef as self.
+					// This happens with nested headers.
+					continue;
+				return slice;
 			}
+			return null;
+		}
+
+		private int GetMoveableDepth()
+		{
+			int count = 0;
+			foreach (object obj in Key)
+			{
+				var node = obj as XmlNode;
+				if (IsMoveableNode(node))
+					count++;
+			}
+			return count;
 		}
 
 		/// <summary>
@@ -2843,11 +2927,77 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				{
 					continue;
 				}
-
 				fieldRef = node;
 			}
 
 			return fieldRef;
+		}
+
+		/// <summary>
+		/// Get the last moveable field reference for slice.
+		/// </summary>
+		private XmlNode MoveableFieldReferenceForSlice()
+		{
+			XmlNode fieldRef = null;
+			foreach (object obj in Key)
+			{
+				var node = obj as XmlNode;
+				if (IsMoveableNode(node))
+				{
+					fieldRef = node;
+				}
+			}
+
+			return fieldRef;
+		}
+
+		/// <summary>
+		/// Can this node be moved?
+		/// </summary>
+		private bool IsMoveableNode(XmlNode node)
+		{
+			if (!IsRefPartNode(node))
+				return false;
+			if (node.PreviousSibling != null)
+				// node has siblings, so it can be moved.
+				return true;
+			// This is the first node in a (possibly singleton) sequence.
+			// Sometimes the first node represents the sequence as a whole (e.g. "Variant Type").
+			// In this case, it is not moveable at this level, but where it is invoked (e.g. ref="EntryRefs").
+			// Other times, the sequence as a whole is represented by a header (e.g. "Category Info." is represented by "Grammatical Info. Details").
+			// In this case, the first node is moveable.
+			// We look at the reference part nodes above node to determine whether the node is moveable.
+			bool found = false;
+			for (int i = Key.Length - 1; i >= 0; i--)
+			{
+				XmlNode keyNode = Key[i] as XmlNode;
+				if (!IsRefPartNode(keyNode)) continue;
+				if (keyNode == node)
+				{
+					found = true;
+					continue;
+				}
+				if (!found) continue;
+				// keyNode is a ref part node above node.
+				string keyNodeLabel = XmlUtils.GetOptionalAttributeValue(keyNode, "label", null);
+				if (keyNodeLabel != null)
+					// keyNode represents the sequence as a whole.
+					// So node represents itself and can be moved at this level.
+					// Example: node label="Category Info.", keyNodeLabel="Grammatical Info. Details".
+					return true;
+				if (keyNode.PreviousSibling != null || keyNode.NextSibling != null)
+					// node represents the sequence as a whole.
+					// So it does not represent itself and cannot be moved at this level.
+					// Example: node label="Variant Type", keyNode ref="EntryRefs".
+					return false;
+			}
+			return true;
+		}
+
+		private bool IsRefPartNode(XmlNode node)
+		{
+			return node != null && node.Name == "part"
+					&& XmlUtils.GetOptionalAttributeValue(node, "ref", null) != null;
 		}
 
 		protected void SetFieldVisibility(string visibility)
@@ -2921,10 +3071,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <summary>
 		/// extract the "part ref" node from the slice.Key
 		/// </summary>
-		protected internal XmlNode PartRef()
+		protected internal virtual XmlNode PartRef()
 		{
-			int indexInKey;
-			return PartRef(out indexInKey);
+			return PartRef(out _);
 		}
 
 		private XmlNode PartRef(out int indexInKey)
@@ -2965,13 +3114,47 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private bool CheckValidMove(UIItemDisplayProperties display, Direction dir)
 		{
-			XmlNode lastPartRef = FieldReferenceForSlice();
+			XmlNode lastPartRef = MoveableFieldReferenceForSlice();
 
 			if (lastPartRef == null)
 				return false;
 			return dir == Direction.Up
-				? PrevPartSibling(lastPartRef) != null
-				: NextPartSibling(lastPartRef) != null;
+				? PrevSliceSiblingPart(lastPartRef) != null
+				: NextSliceSiblingPart(lastPartRef) != null;
+		}
+
+		private XmlNode PrevSliceSiblingPart(XmlNode partRef)
+		{
+			Slice targetSlice = GetSibling(Direction.Up);
+			XmlNode targetNode = targetSlice?.MoveableFieldReferenceForSlice();
+			if (targetNode == null)
+				return null;
+
+			XmlNode prev = PrevPartSibling(partRef);
+			while (prev != null)
+			{
+				if (prev == targetNode)
+					return prev;
+				prev = PrevPartSibling(prev);
+			}
+			return null;
+		}
+
+		private XmlNode NextSliceSiblingPart(XmlNode partRef)
+		{
+			Slice targetSlice = GetSibling(Direction.Down);
+			XmlNode targetNode = targetSlice?.MoveableFieldReferenceForSlice();
+			if (targetNode == null)
+				return null;
+
+			XmlNode next = NextPartSibling(partRef);
+			while (next != null)
+			{
+				if (next == targetNode)
+					return next;
+				next = NextPartSibling(next);
+			}
+			return null;
 		}
 
 		private XmlNode PrevPartSibling(XmlNode partRef)
@@ -3013,7 +3196,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public bool OnDisplayMoveFieldUp(object args, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
-			display.Enabled = ContainingDataTree.ShowingAllFields && CheckValidMove(display, Direction.Up);
+			display.Enabled = CheckValidMove(display, Direction.Up);
 
 			return true;
 		}
@@ -3022,7 +3205,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public bool OnDisplayMoveFieldDown(object args, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
-			display.Enabled = ContainingDataTree.ShowingAllFields && CheckValidMove(display, Direction.Down);
+			display.Enabled = CheckValidMove(display, Direction.Down);
 			return true;
 		}
 

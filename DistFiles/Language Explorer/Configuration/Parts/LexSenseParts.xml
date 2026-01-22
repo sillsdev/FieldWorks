@@ -214,12 +214,12 @@
 			<obj class="LexSense" field="MorphoSyntaxAnalysis" layout="empty">
 				<if is="MoStemMsa">
 					<obj class="MoStemMsa" field="MsFeatures" layout="empty">
-						<string field="LongNameTSS"/>
+						<string field="ShortNameTSS"/>
 					</obj>
 				</if>
 				<if is="MoInflAffMsa">
 					<obj class="MoInflAffMsa" field="InflFeats" layout="empty">
-						<string field="LongNameTSS"/>
+						<string field="ShortNameTSS"/>
 					</obj>
 				</if>
 				<ifnot is="MoStemMsa">
@@ -270,6 +270,20 @@
 			<seq field="Pictures" layout="empty">
 				<para>
 					<string field="PathNameTSS" ws="$ws=analysis"/>
+				</para>
+			</seq>
+		</part>
+		<part id="LexSense-Jt-PictureLicenseForSense" type="jtview">
+			<seq field="Pictures" layout="empty">
+				<para>
+					<string field="LicenseTSS" ws="$ws=analysis vernacular"/>
+				</para>
+			</seq>
+		</part>
+		<part id="LexSense-Jt-PictureCreatorForSense" type="jtview">
+			<seq field="Pictures" layout="empty">
+				<para>
+					<string field="CreatorTSS" ws="$ws=analysis vernacular"/>
 				</para>
 			</seq>
 		</part>
@@ -437,7 +451,7 @@
 		</part>
 		<part id="LexSense-Detail-ReversalEntries" type="detail">
 			<slice field="ReferringReversalIndexEntries" label="Reversal Entries" editor="Custom" assemblyPath="LexEdDll.dll"
-				class="SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice" menu="mnuDataTree-Help"
+				class="SIL.FieldWorks.XWorks.LexEd.ReversalIndexEntrySlice" menu="mnuDataTree-MultiStringSlice"
 				tooltip="Translation equivalent used in the finder list (Reversal Index)."/>
 		</part>
 		<part id="LexSense-Detail-SenseType" type="Detail">

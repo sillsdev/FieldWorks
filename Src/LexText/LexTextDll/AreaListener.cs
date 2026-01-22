@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.LCModel;
 using SIL.Reporting;
 using System.Xml;
@@ -125,6 +127,9 @@ namespace SIL.FieldWorks.XWorks.LexText
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(EventConstants.SetToolFromName, SetToolFromName);
+				Subscriber.Unsubscribe(EventConstants.ReloadAreaTools, ReloadAreaTools);
+
 				// Dispose managed resources here.
 				if (m_mediator != null)
 					m_mediator.RemoveColleague(this);
@@ -146,6 +151,8 @@ namespace SIL.FieldWorks.XWorks.LexText
 			mediator.AddColleague(this);
 			m_ctotalLists = 0;
 			m_ccustomLists = 0;
+			Subscriber.Subscribe(EventConstants.SetToolFromName, SetToolFromName);
+			Subscriber.Subscribe(EventConstants.ReloadAreaTools, ReloadAreaTools);
 		}
 
 		private DateTime m_lastToolChange = DateTime.MinValue;
@@ -276,7 +283,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			if (display.List.Count > 0)
 				return true;
 			var windowConfiguration = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
-			XmlNodeList nodes = windowConfiguration.SelectNodes(GetToolXPath(areaId));
+			XmlNodeList nodes = windowConfiguration.SelectNodes(XWindow.GetToolXPath(areaId));
 			if (nodes != null)
 			{
 				foreach (XmlNode node in nodes)
@@ -285,6 +292,10 @@ namespace SIL.FieldWorks.XWorks.LexText
 					string value = XmlUtils.GetAttributeValue(node, "value", "???");
 					string imageName = XmlUtils.GetAttributeValue(node, "icon"); //can be null
 					XmlNode controlElement = node.SelectSingleNode("control");
+					if (value == "lexiconEditPopup")
+					{
+						continue;
+					}
 					display.List.Add(label, value, imageName, controlElement);
 				}
 			}
@@ -350,7 +361,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			}
 			else
 			{
-				var nodes = windowConfiguration.SelectNodes(GetToolXPath("lists"));
+				var nodes = windowConfiguration.SelectNodes(XWindow.GetToolXPath("lists"));
 				if (nodes == null)
 				{
 					return true;
@@ -549,7 +560,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			// We have to update this because other things besides 'tools' need to get set.
 			UpdateMediatorConfig(windowConfig);
 
-			var nodes = windowConfig.SelectNodes(GetToolXPath("lists"));
+			var nodes = windowConfig.SelectNodes(XWindow.GetToolXPath("lists"));
 			if (nodes != null)
 				m_ctotalLists = nodes.Count;
 			m_ccustomLists = customLists.Count;
@@ -648,7 +659,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			if (x == null)
 				x = FindToolParamNode(windowConfig, curList);
 			// REVIEW: I'm not sure where the created RecordClerk gets disposed
-			RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, x, true);
+			RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, x, true, true);
 		}
 
 		private void AddCommandToConfigForList(ICmPossibilityList curList, XmlNode windowConfig)
@@ -682,14 +693,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 
 		#region Static XPaths
 
-		private static string GetToolXPath(string areaId)
-		{
-			if(areaId == null)
-				return "//item/parameters/tools/tool";
-
-			return "//item[@value='"+areaId + "']/parameters/tools/tool";
-		}
-
 		private static string GetListToolsXPath()
 		{
 			return "//item[@value='lists']/parameters/tools";
@@ -721,17 +724,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 					XmlNode xn = node.SelectSingleNode("control/parameters/control/parameters");
 					return xn;
 				}
-			}
-			return null;
-		}
-
-		private XmlNode FindToolNode(XmlNode windowConfig, string areaName, string toolName)
-		{
-			foreach (XmlNode node in windowConfig.SelectNodes(GetToolXPath(areaName)))
-			{
-				string value = XmlUtils.GetAttributeValue(node, "value");
-				if (value == toolName)
-					return node;
 			}
 			return null;
 		}
@@ -878,9 +870,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// <summary>
 		/// This is called by CustomListDlg to get a new/modified list to show up in the tools list.
 		/// </summary>
-		/// <param name="areaId"></param>
-		/// <returns></returns>
-		public bool OnReloadAreaTools(object areaId)
+		private void ReloadAreaTools(object areaId)
 		{
 			CheckDisposed();
 
@@ -908,7 +898,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 					app.ReplaceMainWindow(win);
 					break;
 			}
-			return true;
 		}
 
 		/// <summary>
@@ -958,12 +947,12 @@ namespace SIL.FieldWorks.XWorks.LexText
 				throw new ConfigurationException("There must be a property named " + property + " in the <defaultProperties> section of the configuration file.");
 
 			XmlNode node;
-			if (!TryGetToolNode(areaName, toolName, out node))
+			if (!XWindow.TryGetToolNode(areaName, toolName, m_propertyTable, out node))
 			{
 				// the tool must be obsolete, so just get the default tool for this area
 				var windowConfiguration = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
 				toolName = windowConfiguration.SelectSingleNode("//defaultProperties/property[@name='" + property + "']/@value").InnerText;
-				if (!TryGetToolNode(areaName, toolName, out node))
+				if (!XWindow.TryGetToolNode(areaName, toolName, m_propertyTable, out node))
 					throw new ConfigurationException("There must be a property named " + property + " in the <defaultProperties> section of the configuration file.");
 			}
 			return node;
@@ -983,21 +972,11 @@ namespace SIL.FieldWorks.XWorks.LexText
 			string tool = param.Item2;
 			XmlNode[] result = param.Item3;
 			XmlNode node;
-			if (TryGetToolNode(area, tool, out node))
+			if (XWindow.TryGetToolNode(area, tool, m_propertyTable, out node))
 			{
 				result[0] = node.SelectSingleNode("control");
 			}
 			return true; // whatever happened, we did the best that can be done.
-		}
-
-		private bool TryGetToolNode(string areaName, string toolName, out XmlNode node)
-		{
-			string xpath = GetToolXPath(areaName) + "[@value = '" + XmlUtils.MakeSafeXmlAttribute(toolName) + "']";
-			var windowConfiguration = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
-			node = windowConfiguration.SelectSingleNode(xpath);
-			if (node == null)
-				node = FindToolNode(windowConfiguration, areaName, toolName);
-			return node != null;
 		}
 
 		protected string GetCurrentAreaName()
@@ -1009,12 +988,12 @@ namespace SIL.FieldWorks.XWorks.LexText
 		/// used by the link listener
 		/// </summary>
 		/// <returns></returns>
-		public bool OnSetToolFromName(object toolName)
+		private void SetToolFromName(object toolName)
 		{
 			CheckDisposed();
 
 			XmlNode node;
-			if (!TryGetToolNode(null, (string)toolName, out node))
+			if (!XWindow.TryGetToolNode(null, (string)toolName, m_propertyTable, out node))
 				throw new ApplicationException (String.Format(LexTextStrings.CannotFindToolNamed0, toolName));
 
 			var windowConfiguration = m_propertyTable.GetValue<XmlNode>("WindowConfiguration");
@@ -1039,16 +1018,15 @@ namespace SIL.FieldWorks.XWorks.LexText
 				if (area != null)
 				{
 					m_propertyTable.SetProperty("ToolForAreaNamed_" + area, toolName, true);
-			}
+				}
 			}
 			m_propertyTable.SetProperty("currentContentControlParameters", node.SelectSingleNode("control"), true);
 			m_propertyTable.SetProperty("currentContentControl", toolName, true);
-			return true;
 		}
 
 		private static bool IsToolInArea(string toolName, string area, XmlNode windowConfiguration)
 		{
-			XmlNodeList nodes = windowConfiguration.SelectNodes(GetToolXPath(area));
+			XmlNodeList nodes = windowConfiguration.SelectNodes(XWindow.GetToolXPath(area));
 			if (nodes != null)
 			{
 				foreach (XmlNode node in nodes)

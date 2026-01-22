@@ -26,7 +26,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	/// <summary>
 	/// Summary description for ViewPropertyItem.
 	/// </summary>
-	public class MultiStringSlice : ViewPropertySlice
+	public class MultiStringSlice : ViewPropertySlice, IWritingSystemChooser
 	{
 		public MultiStringSlice(ICmObject obj, int flid, int ws, int wsOptional, bool forceIncludeEnglish, bool editable, bool spellCheck)
 		{
@@ -108,53 +108,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// Gets a list of the visible writing systems stored in our layout part ref override.
 		/// </summary>
 		/// <returns></returns>
-		IEnumerable<CoreWritingSystemDefinition> GetVisibleWritingSystems()
+		public IEnumerable<CoreWritingSystemDefinition> GetVisibleWritingSystems()
 		{
-			string singlePropertySequenceValue = GetVisibleWSSPropertyValue();
-			return GetVisibleWritingSystems(singlePropertySequenceValue);
-		}
-
-		/// <summary>
-		/// Get the visible writing systems list in terms of a singlePropertySequenceValue string.
-		/// if it hasn't been defined yet, we'll use the WritingSystemOptions for default.
-		/// </summary>
-		/// <returns></returns>
-		public string GetVisibleWSSPropertyValue()
-		{
-			XmlNode partRef = PartRef();
-			string singlePropertySequenceValue = XmlUtils.GetOptionalAttributeValue(partRef, "visibleWritingSystems", null);
-			if (singlePropertySequenceValue == null)
-			{
-				// Encode a sinqlePropertySequenceValue property value using only current WritingSystemOptions.
-				var wssOptions = ((LabeledMultiStringView) Control).GetWritingSystemOptions(false).ToArray();
-				singlePropertySequenceValue = EncodeWssToDisplayPropertyValue(wssOptions);
-			}
-			return singlePropertySequenceValue;
-		}
-
-		/// <summary>
-		/// convert the given writing systems into a property containing comma-delimited icuLocales.
-		/// </summary>
-		/// <param name="wss"></param>
-		/// <returns></returns>
-		private static string EncodeWssToDisplayPropertyValue(IEnumerable<CoreWritingSystemDefinition> wss)
-		{
-			var wsIds = (from ws in wss
-						 select ws.Id).ToArray();
-			return ChoiceGroup.EncodeSinglePropertySequenceValue(wsIds);
-		}
-
-		/// <summary>
-		/// Get the writing systems we should actually display right now. That is, from the ones
-		/// that are currently possible, select any we've previously configured to show.
-		/// </summary>
-		private IEnumerable<CoreWritingSystemDefinition> GetVisibleWritingSystems(string singlePropertySequenceValue)
-		{
-			string[] wsIds = ChoiceGroup.DecodeSinglePropertySequenceValue(singlePropertySequenceValue);
-			var wsIdSet = new HashSet<string>(wsIds);
-			return from ws in WritingSystemOptionsForDisplay
-				   where wsIdSet.Contains(ws.Id)
-				   select ws;
+			var singlePropertySequenceValue = StringSliceUtils.GetVisibleWSSPropertyValue(PartRef(),
+				((LabeledMultiStringView) Control).GetWritingSystemOptions(false));
+			return StringSliceUtils.GetVisibleWritingSystems(singlePropertySequenceValue, WritingSystemOptionsForDisplay);
 		}
 
 		public override void Install(DataTree parent)
@@ -293,7 +251,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			CheckDisposed();
 			display.List.Clear();
-			m_propertyTable.SetProperty(display.PropertyName, GetVisibleWSSPropertyValue(), false);
+			m_propertyTable.SetProperty(display.PropertyName, StringSliceUtils.GetVisibleWSSPropertyValue(PartRef(),
+				((LabeledMultiStringView) Control).GetWritingSystemOptions(false)), false);
 			AddWritingSystemListWithIcuLocales(display, WritingSystemOptionsForDisplay);
 			return true;//we handled this, no need to ask anyone else.
 		}
@@ -305,7 +264,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// <param name="list"></param>
 		private void AddWritingSystemListWithIcuLocales(UIListDisplayProperties display, IEnumerable<CoreWritingSystemDefinition> list)
 		{
-			string[] active = GetVisibleWSSPropertyValue().Split(',');
+			var active = StringSliceUtils.GetVisibleWSSPropertyValue(PartRef(),
+				((LabeledMultiStringView) Control).GetWritingSystemOptions(false)).Split(',');
 			foreach (var ws in list)
 			{
 				// generally enable all items, but if only one is checked that one is disabled;
@@ -338,13 +298,13 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		private void PersistAndRedisplayWssToDisplayForPart(IEnumerable<CoreWritingSystemDefinition> wssToDisplay)
 		{
-			PersistAndRedisplayWssToDisplayForPart(EncodeWssToDisplayPropertyValue(wssToDisplay));
+			PersistAndRedisplayWssToDisplayForPart(StringSliceUtils.EncodeWssToDisplayPropertyValue(wssToDisplay));
 		}
 
 		private void PersistAndRedisplayWssToDisplayForPart(string singlePropertySequenceValue)
 		{
 			ReplacePartWithNewAttribute("visibleWritingSystems", singlePropertySequenceValue);
-			var wssToDisplay = GetVisibleWritingSystems(singlePropertySequenceValue);
+			var wssToDisplay = StringSliceUtils.GetVisibleWritingSystems(singlePropertySequenceValue, WritingSystemOptionsForDisplay);
 			if (Key.Length > 0)
 			{
 				XmlNode lastKey = Key[Key.Length - 1] as XmlNode;

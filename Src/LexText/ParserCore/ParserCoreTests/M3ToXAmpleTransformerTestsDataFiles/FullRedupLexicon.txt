@@ -557,7 +557,7 @@
 \lx 6257
 \g Adjectivizer
 \c W/W
-\o 1
+\o -1
 \wc derivPfx
 \a ul {6259}
 \eType infix

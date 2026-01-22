@@ -38,7 +38,7 @@
 \lx 15110
 \g InfAbs
 \c W/W
-\o 1
+\o -1
 \wc derivCircumPfx
 \a a {15112}
 \a o {15113}

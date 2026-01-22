@@ -275,6 +275,9 @@
   <data name="khtpTryAWord" xml:space="preserve">
     <value>User_Interface/Menus/Parser/Try_a_word.htm</value>
   </data>
+  <data name="khtpHCMaxCompoundRules" xml:space="preserve">
+    <value>User_Interface/Menus/Parser/MaxApps_dialog_box.htm</value>
+  </data>
   <data name="khtpField-LexEntry-CitationForm" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/Citation_Form_field.htm</value>
   </data>
@@ -1522,31 +1525,31 @@
     <value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Feature_Set_field_Category_Edit.htm</value>
   </data>
   <data name="khtpField-LexemeForm-StemName" xml:space="preserve">
-    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/stem_name_field_lex_form.htm</value>
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Entry_level_fields/stem_allomorph_label_field_lex_form.htm</value>
   </data>
   <data name="khtpField-MoStemAllomorph-StemName" xml:space="preserve">
-    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_flds/Stem_Name_fld_Allomorph.htm</value>
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_flds/Stem_Allomorph_Label_fld_Allomorph.htm</value>
   </data>
   <data name="khtpField-MoStemName-Abbreviation" xml:space="preserve">
-    <value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Abbreviation_field_Stem_Name.htm</value>
+    <value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Abbreviation_field_Stem_Allomorph_Label.htm</value>
   </data>
   <data name="khtpField-MoStemName-Description" xml:space="preserve">
-    <value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Description_field_Stem_Name.htm</value>
+    <value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Description_field_Stem_Allomorph_Label.htm</value>
   </data>
   <data name="khtpField-MoStemName-Name" xml:space="preserve">
-    <value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Stem_Name_field.htm</value>
+    <value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Stem_Allomorph_Labels_field.htm</value>
   </data>
   <data name="khtpField-PartOfSpeech-StemNameRegionsSection" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Feature_Sets_field_Category_Edit.htm</value>
   </data>
   <data name="khtpField-PartOfSpeech-StemNamesSection" xml:space="preserve">
-    <value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Stem_Names_field.htm</value>
+    <value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Stem_Allomorph_Labels_field.htm</value>
   </data>
   <data name="khtpChoose-AnyAllNoneItems" xml:space="preserve">
     <value>Basic_Tasks/Filtering_data/Using_Choose_Items_dialog_box.htm</value>
   </data>
   <data name="khtpChoose-lexiconEdit-StemName" xml:space="preserve">
-    <value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_a_Stem_Name.htm</value>
+    <value>Using_Tools/Lexicon_tools/Lexicon_Edit/Choose_a_Stem_Allomorph_Label.htm</value>
   </data>
   <data name="khtpLexOptions" xml:space="preserve">
     <value>User_Interface/Menus/Tools/Options/Options_overview.htm</value>
@@ -1682,13 +1685,13 @@
     <value>User_Interface/Menus/Tools/Configure_Dictionary/Configure_Dictionary.htm</value>
   </data>
   <data name="khtpField-MoDerivAffMsa-FromStemName" xml:space="preserve">
-    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/From_Stem_Name_field.htm</value>
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/From_Stem_Allomorph_Label_field.htm</value>
   </data>
   <data name="khtpField-MoInflAffMsa-FromStemName" xml:space="preserve">
-    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/From_Stem_Name_field.htm</value>
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/From_Stem_Allomorph_Label_field.htm</value>
   </data>
   <data name="khtpField-MoStemMsa-FromStemName" xml:space="preserve">
-    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/From_Stem_Name_field.htm</value>
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Grammatical_Info_Details_fields/From_Stem_Allomorph_Label_field.htm</value>
   </data>
   <data name="khtpChoose-lexiconEdit-InfixPositions" xml:space="preserve">
     <value>Using_Tools/Lexicon_tools/Lexicon_Edit/choose_infix_positions.htm</value>
@@ -1988,7 +1991,7 @@
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_flds/Stem_Allomorph_fld.htm</value>
   </data>
   <data name="khtpField-lexiconEdit-AlternateFormsSection-MoStemAllomorph-StemName" xml:space="preserve">
-    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_flds/Stem_Name_fld_Allomorph.htm</value>
+    <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_flds/Stem_Allomorph_Label_fld_Allomorph.htm</value>
   </data>
   <data name="khtpField-lexiconEdit-AlternateFormsSection-PhoneEnv" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Lexicon/Lexicon_Edit_fields/Alternate_Forms_level_flds/Environments_fld_allomorph.htm</value>
@@ -3020,7 +3023,7 @@
   </data>
   <data name="khtpField-posEdit-FsFeatStruc-RegionFeatures" xml:space="preserve">
     <value>User_Interface/Field_Descriptions/Grammar/Category_Edit_fields/Feature_Set_field_Category_Edit.htm</value>
-    <comment>Grammar Stem name Feature set</comment>
+    <comment>Grammar Stem Allomorph Label Feature set</comment>
   </data>
   <data name="khtpGetStartedWithSendReceive" xml:space="preserve">
     <value>Basic_Tasks/Collaborating_with_Others/Get_Started_with_Send_Receive.htm</value>
@@ -3315,5 +3318,8 @@
   </data>
   <data name="khtpBulkEditSenseType" xml:space="preserve">
     <value>Using_Tools/Lexicon_tools/Bulk_Edit_Entries/Bulk_Edit_Entries_overview.htm</value>
+  </data>
+  <data name="khtpField-compoundRuleAdvancedEdit-MoStemMsa-ProdRestrict" xml:space="preserve">
+    <value>User_Interface/Field_Descriptions/Grammar/Compound_Rules_fields/Exception_Features_field_Comp_Rules.htm</value>
   </data>
 </root>
