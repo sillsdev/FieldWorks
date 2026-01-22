@@ -1,9 +1,9 @@
 name: Flex CI
 on:
   push:
-    branches: ["release/**", "develop", "master", "feature/PubSub"]
+    branches: ["release/**", "main", "feature/PubSub"]
   pull_request:
-    branches: ["release/**", "develop", "master", "feature/PubSub"]
+    branches: ["release/**", "main", "feature/PubSub"]
   workflow_dispatch:
 
 concurrency:
