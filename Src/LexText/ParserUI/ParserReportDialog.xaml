@@ -133,7 +133,7 @@
 							</DataTemplate>
 						</DataGridTemplateColumn.CellTemplate>
 					</DataGridTemplateColumn>
-					<DataGridTextColumn Binding="{Binding ErrorMessage}" Width="100">
+					<DataGridTextColumn Binding="{Binding ErrorMessage}">
 						<DataGridTextColumn.ElementStyle>
 							<Style TargetType="{x:Type TextBlock}"
 							   BasedOn="{StaticResource {x:Type TextBlock}}">
@@ -185,13 +185,13 @@
 				</DataGrid.Columns>
 			</DataGrid>
 		</ScrollViewer>
-		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Height="40">
+		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left">
 			<Button Content="{x:Static local:ParserUIStrings.ksSaveReport}"
                     ToolTip="{x:Static local:ParserUIStrings.ksSaveReportToolTip}"
 					IsEnabled="{Binding CanSaveReport}"
-                    Click="SaveParserReport" Width="100" Margin="5"/>
-			<Label x:Name="commentLabel" Height="27"/>
-			<Label Content="{Binding DisplayComment, Mode=OneWay}" Height="27"/>
+                    Click="SaveParserReport" Margin="5"/>
+			<Label x:Name="commentLabel" VerticalContentAlignment="Center"/>
+			<Label Content="{Binding DisplayComment, Mode=OneWay}" VerticalContentAlignment="Center"/>
 		</StackPanel>
 	</Grid>
 </Window>
