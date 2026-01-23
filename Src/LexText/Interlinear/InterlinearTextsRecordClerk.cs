@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2015-2017 SIL International
+// Copyright (c) 2015-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows.Forms;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -229,7 +230,7 @@ namespace SIL.FieldWorks.IText
 			{
 				// Tell the user we're turning off the filter, and then do it.
 				MessageBox.Show(ITextStrings.ksTurningOffFilter, ITextStrings.ksNote, MessageBoxButtons.OK);
-				m_mediator.SendMessage("RemoveFilters", this);
+				Publisher.Publish(new PublisherParameterObject(EventConstants.RemoveFilters, this));
 				m_activeMenuBarFilter = null;
 			}
 			SaveOnChangeRecord(); // commit any changes before we create a new text.
