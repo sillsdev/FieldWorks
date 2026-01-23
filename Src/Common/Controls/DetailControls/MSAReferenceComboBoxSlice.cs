@@ -288,7 +288,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// a pending Windows message.  See LT-9713 and LT-9714.
 				if (ContainingDataTree.DoNotRefresh != fOldDoNotRefresh)
 				{
+#pragma warning disable 618 // suppress obsolete warning
 					Mediator.BroadcastMessage("DelayedRefreshList", fOldDoNotRefresh);
+#pragma warning restore 618
 				}
 			}
 		}

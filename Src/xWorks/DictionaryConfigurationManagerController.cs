@@ -646,7 +646,9 @@ namespace SIL.FieldWorks.XWorks
 			_view.Close();
 			if(ConfigurationViewImported != null)
 				ConfigurationViewImported();
+#pragma warning disable 618 // suppress obsolete warning
 			_mediator.BroadcastMessage("MasterRefresh", null);
+#pragma warning restore 618
 		}
 
 		public bool IsConfigurationACustomizedOriginal(DictionaryConfigurationModel configuration)

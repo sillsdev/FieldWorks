@@ -451,7 +451,9 @@ namespace SIL.FieldWorks.Common.Controls
 			if (ReadOnlySelect)
 			{
 				// We should NOT have focus! See if someone can take it back.
+#pragma warning disable 618 // suppress obsolete warning
 				m_bv.Mediator.BroadcastMessage("BrowseViewStoleFocus", this);
+#pragma warning restore 618
 			}
 		}
 

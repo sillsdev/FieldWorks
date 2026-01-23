@@ -251,7 +251,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 			// Do merciful import.
 			ImportLiftCommon(FlexLiftMerger.MergeStyle.MsKeepBoth);
 			_propertyTable.SetProperty("LastBridgeUsed", "LiftBridge", PropertyTable.SettingsGroup.LocalSettings, true);
+#pragma warning disable 618 // suppress obsolete warning
 			_mediator.BroadcastMessage("MasterRefresh", null);
+#pragma warning restore 618
 
 			return true;
 		}
@@ -699,7 +701,9 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// <summary>Callback to refresh the Message Slice after OnView[Lift]Messages</summary>
 		private void BroadcastMasterRefresh()
 		{
+#pragma warning disable 618 // suppress obsolete warning
 			_mediator.BroadcastMessage("MasterRefresh", null);
+#pragma warning restore 618
 		}
 
 		#endregion View Messages (for full FLEx data only) messages

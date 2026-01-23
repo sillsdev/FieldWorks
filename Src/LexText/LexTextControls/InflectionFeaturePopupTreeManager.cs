@@ -114,7 +114,9 @@ namespace SIL.FieldWorks.LexText.Controls
 							case DialogResult.Yes:
 							{
 								// go to m_highestPOS in editor
+#pragma warning disable 618 // suppress obsolete warning
 								m_mediator.PostMessage("FollowLink", new FwLinkArgs("posEdit", dlg.HighestPOS.Guid));
+#pragma warning restore 618
 								if (ParentForm != null && ParentForm.Modal)
 								{
 									// Close the dlg that opened the popup tree,

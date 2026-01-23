@@ -148,7 +148,9 @@ namespace SIL.FieldWorks.LexText.Controls
 			cmo = CmObjectUi.GetSelfOrParentOfClass(cmo, parentClassId);
 			if (cmo == null)
 				return; // do nothing
+#pragma warning disable 618 // suppress obsolete warning
 			m_mediator.PostMessage("FollowLink", new FwLinkArgs(sTool, cmo.Guid));
+#pragma warning restore 618
 		}
 
 		/// <summary>

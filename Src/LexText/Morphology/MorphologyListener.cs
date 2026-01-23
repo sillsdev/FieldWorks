@@ -403,7 +403,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			List<Property> additionalProps = link.PropertyTableEntries;
 			additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new Property("LinkSetupInfo", "TeReviewUndecidedSpelling"));
+#pragma warning disable 618 // suppress obsolete warning
 			m_mediator.PostMessage("FollowLink", link);
+#pragma warning restore 618
 			return true;
 		}
 
@@ -421,7 +423,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			List<Property> additionalProps = link.PropertyTableEntries;
 			additionalProps.Add(new Property("SuspendLoadListUntilOnChangeFilter", link.ToolName));
 			additionalProps.Add(new Property("LinkSetupInfo", "TeCorrectSpelling"));
+#pragma warning disable 618 // suppress obsolete warning
 			m_mediator.PostMessage("FollowLink", link);
+#pragma warning restore 618
 			return true;
 		}
 
@@ -438,7 +442,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			{
 				dlg.SetDlgInfo(Cache, null, m_mediator, m_propertyTable);
 				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+#pragma warning disable 618 // suppress obsolete warning
 					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", dlg.SelectedObject.Hvo);
+#pragma warning restore 618
+				}
 			}
 			return true;
 		}
@@ -473,7 +481,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (command.TargetId != Guid.Empty)
 			{
 				var tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
+#pragma warning disable 618 // suppress obsolete warning
 				m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, command.TargetId));
+#pragma warning restore 618
 				command.TargetId = Guid.Empty;	// clear the target for future use.
 				return true;
 			}
@@ -779,7 +789,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			if (guid != Guid.Empty)
 			{
 				var tool = XmlUtils.GetMandatoryAttributeValue(cmd.Parameters[0], "tool");
+#pragma warning disable 618 // suppress obsolete warning
 				m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, guid));
+#pragma warning restore 618
 				return true;
 			}
 			return false;

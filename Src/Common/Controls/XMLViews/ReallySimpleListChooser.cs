@@ -1654,7 +1654,9 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (m_mediator != null && m_linkJump != null)
 			{
+#pragma warning disable 618 // suppress obsolete warning
 				m_mediator.PostMessage("FollowLink", m_linkJump);
+#pragma warning restore 618
 				return true;
 			}
 			else
@@ -1674,7 +1676,9 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if (mediator != null && m_linkJump != null)
 			{
+#pragma warning disable 618 // suppress obsolete warning
 				mediator.PostMessage("FollowLink", m_linkJump);
+#pragma warning restore 618
 				return true;
 			}
 			else

@@ -447,7 +447,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			if (recOwner.Owner is IRnResearchNbk)
 			{
 				// If possible, jump to the newly promoted record.
+#pragma warning disable 618 // suppress obsolete warning
 				mediator.BroadcastMessageUntilHandled("JumpToRecord", rec.Hvo);
+#pragma warning restore 618
 			}
 			return true;
 		}

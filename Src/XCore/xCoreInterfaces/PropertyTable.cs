@@ -580,7 +580,9 @@ namespace XCore
 
 			if (Mediator != null)
 			{
+#pragma warning disable 618 // suppress obsolete warning
 				Mediator.BroadcastString("OnPropertyChanged", propertyName);
+#pragma warning restore 618
 			}
 		}
 

@@ -127,7 +127,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 						pos.AffixSlotsOC.Add(slot);
 						slot.Optional = m_fOptional;
 					});
+#pragma warning disable 618 // suppress obsolete warning
 			m_mediator.BroadcastMessage("SelectNewSlot", slot);
+#pragma warning restore 618
 			// Enhance JohnT: usually the newly created slot will also get inserted into a template.
 			// Ideally we would make both part of the same UOW. However the code is in two distinct DLLs (see MorphologyEditor.dll).
 			return ObjectLabel.CreateObjectLabel(m_cache, slot, "");

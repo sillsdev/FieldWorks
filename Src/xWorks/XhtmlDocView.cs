@@ -904,7 +904,9 @@ namespace SIL.FieldWorks.XWorks
 					return false;
 
 				var fwLink = new FwLinkArgs(tool, Guid.Empty);
+#pragma warning disable 618 // suppress obsolete warning
 				m_mediator.PostMessage("FollowLink", fwLink);
+#pragma warning restore 618
 				return true;
 			}
 			return false;

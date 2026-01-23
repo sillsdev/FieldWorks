@@ -225,7 +225,11 @@ namespace SIL.FieldWorks.LexText.Controls
 				dlg.SetDlgInfo(cache, null, m_mediator, m_propertyTable);
 				dlg.SetHelpTopic("khtpFindLexicalEntry");
 				if (dlg.ShowDialog() == DialogResult.OK)
+				{
+#pragma warning disable 618 // suppress obsolete warning
 					m_mediator.BroadcastMessageUntilHandled("JumpToRecord", dlg.SelectedObject.Hvo);
+#pragma warning restore 618
+				}
 			}
 			return true;
 		}

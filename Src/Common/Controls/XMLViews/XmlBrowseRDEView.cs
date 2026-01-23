@@ -924,7 +924,9 @@ namespace SIL.FieldWorks.Common.Controls
 
 		private void JumpToToolFor(ICmObject target)
 		{
+#pragma warning disable 618 // suppress obsolete warning
 			m_mediator.PostMessage("FollowLink", new FwLinkArgs("lexiconEdit", target.Guid));
+#pragma warning restore 618
 		}
 		/// ------------------------------------------------------------------------------------
 		/// <summary>

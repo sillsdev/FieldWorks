@@ -2276,7 +2276,9 @@ namespace XCore
 
 			m_widgetUpdateTimer.Enabled = false;
 
+#pragma warning disable 618 // suppress obsolete warning
 			if (m_mediator.SendCancellableMessage("ConsideringClosing", this))
+#pragma warning restore 618
 			{
 				e.Cancel = true;
 				m_widgetUpdateTimer.Enabled = true;

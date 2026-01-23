@@ -4765,7 +4765,9 @@ namespace SIL.FieldWorks.IText
 					List<Property> additionalProps = fwLink.PropertyTableEntries;
 					if (!String.IsNullOrEmpty(concordOn))
 						additionalProps.Add(new Property("ConcordOn", concordOn));
+#pragma warning disable 618 // suppress obsolete warning
 					m_mediator.PostMessage("FollowLink", fwLink);
+#pragma warning restore 618
 					return true;
 				}
 			}

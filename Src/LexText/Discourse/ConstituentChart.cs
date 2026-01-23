@@ -859,7 +859,9 @@ namespace SIL.FieldWorks.Discourse
 				list.PossibilitiesOS.Add(newKid);
 				RecordList.SetUpConstChartTemplateTemplate(newKid);
 				Cache.DomainDataByFlid.EndUndoTask();
+#pragma warning disable 618 // suppress obsolete warning
 				m_mediator.PostMessage("FollowLink", new FwLinkArgs("charttempEdit", newKid.Guid));
+#pragma warning restore 618
 				selection.SelectedItem = m_template;
 				return;
 			}

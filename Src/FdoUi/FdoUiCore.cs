@@ -643,7 +643,9 @@ namespace SIL.FieldWorks.FdoUi
 			var command = (Command) commandObject;
 			string tool = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "tool");
 			var guid = GuidForJumping(commandObject);
+#pragma warning disable 618 // suppress obsolete warning
 			m_mediator.PostMessage("FollowLink", new FwLinkArgs(tool, guid));
+#pragma warning restore 618
 			return true;
 		}
 
