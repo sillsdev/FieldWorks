@@ -1,9 +1,11 @@
 using SIL.FieldWorks.Common.FwUtils;
+using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
-using System.Diagnostics;
 using System;
+using System.Diagnostics;
+using System.Drawing;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -17,18 +19,32 @@ namespace SIL.FieldWorks.LexText.Controls
 		public Mediator Mediator { get; set; }
 		public LcmCache Cache { get; set; }
 
+		private readonly PropertyTable m_propertyTable;
+
 		public ParserReportDialog()
 		{
 			InitializeComponent();
 		}
 
-		public ParserReportDialog(ParserReportViewModel parserReport, Mediator mediator, LcmCache cache)
+		public ParserReportDialog(ParserReportViewModel parserReport, Mediator mediator, LcmCache cache, PropertyTable propertyTable)
 		{
 			InitializeComponent();
 			Mediator = mediator;
 			Cache = cache;
+			m_propertyTable = propertyTable;
 			DataContext = parserReport;
 			commentLabel.Content = ParserUIStrings.ksComment + ":";
+			SetFont();
+		}
+
+		public void SetFont()
+		{
+			Font font = FontHeightAdjuster.GetFontForNormalStyle(Cache.DefaultVernWs, Cache.WritingSystemFactory, m_propertyTable);
+			if (font != null)
+			{
+				FontFamily = new System.Windows.Media.FontFamily(font.FontFamily.Name);
+				FontSize = font.Size;
+			}
 		}
 
 		public void SaveParserReport(object sender, RoutedEventArgs e)
@@ -86,7 +102,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (sender is DataGrid dataGrid)
 			{
 				if (dataGrid.SelectedItem is ParserReportViewModel selectedItem)
-					ParserListener.ShowParserReport(selectedItem, Mediator, Cache);
+					Mediator.SendMessage("ShowParserReport", selectedItem);
 			}
 			else
 				Debug.Fail("Type of Contents of DataGrid changed, adjust double click code.");

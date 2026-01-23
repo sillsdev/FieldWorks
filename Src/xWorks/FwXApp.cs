@@ -101,6 +101,7 @@ namespace SIL.FieldWorks.XWorks
 			if (activeWnd != null)
 			{
 				// Refresh it last, so its saved settings get restored.
+				activeWnd.Mediator.BroadcastMessage("RefreshPopupWindows", null);
 				activeWnd.FinishRefresh();
 				activeWnd.Refresh();
 				activeWnd.Activate();
