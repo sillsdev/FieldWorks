@@ -106,7 +106,7 @@
 	<layout class="MoAffixAllomorph" type="detail" name="AsLexemeFormBasic">
 		<part ref="AsLexemeForm" label="Lexeme Form" expansion="expanded">
 			<indent indent="true">
-				<part ref="IsAbstractBasic" label="Is Abstract Form" visibility="never" /> <!-- could use 'ifTrue' if we had it -->
+				<part ref="AllomorphStatus" label="Status" visibility="never" />
 				<part ref="MorphTypeBasic" visibility="ifdata"/>
 				<part ref="PhoneEnvBasic" visibility="ifdata"/>
 				<part ref="AsPosition" visibility="always"/>

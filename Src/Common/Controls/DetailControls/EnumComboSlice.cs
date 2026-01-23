@@ -20,6 +20,7 @@ using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.PlatformUtilities;
 using SIL.Utils;
+using SIL.LCModel.Core.Cellar;
 
 namespace SIL.FieldWorks.Common.Framework.DetailControls
 {
@@ -166,9 +167,32 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		{
 			if (!Object.IsValidObject)
 				return; // If the object is not valid our data needs to be refreshed, skip until data is valid again
-			int currentValue = m_cache.DomainDataByFlid.get_IntProp(Object.Hvo, m_flid);
+			int currentValue = GetPropValue();
 			//nb: we are assuming that an enumerations start with 0
 			m_combo.SelectedIndex = currentValue;
+		}
+
+		private int GetPropValue()
+		{
+			var type = m_cache.MetaDataCacheAccessor.GetFieldType(m_flid);
+			if (type == (int)CellarPropertyType.Boolean)
+			{
+				return m_cache.DomainDataByFlid.get_BooleanProp(Object.Hvo, m_flid) ? 1 : 0;
+			}
+			return m_cache.DomainDataByFlid.get_IntProp(Object.Hvo, m_flid);
+		}
+
+		private void SetPropValue(int value)
+		{
+			var type = m_cache.MetaDataCacheAccessor.GetFieldType(m_flid);
+			if (type == (int)CellarPropertyType.Boolean)
+			{
+				m_cache.DomainDataByFlid.SetBoolean(Object.Hvo, m_flid, value == 1);
+			}
+			else
+			{
+				m_cache.DomainDataByFlid.SetInt(Object.Hvo, m_flid, value);
+			}
 		}
 
 		/// <summary>
@@ -183,7 +207,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return; // don't want to update things while the user is manipulating the list. (See FWR-1728.)
 			if (!Object.IsValidObject)
 				return; // If the object is not valid our data needs to be refreshed, skip until data is valid again
-			int oldValue = m_cache.DomainDataByFlid.get_IntProp(Object.Hvo, m_flid);
+			int oldValue = GetPropValue();
 			int newValue = m_combo.SelectedIndex;
 			// No sense in setting it to the same value.
 			if (oldValue != newValue)
@@ -191,7 +215,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_cache.DomainDataByFlid.BeginUndoTask(
 					String.Format(DetailControlsStrings.ksUndoSet, m_fieldName),
 					String.Format(DetailControlsStrings.ksRedoSet, m_fieldName));
-				m_cache.DomainDataByFlid.SetInt(Object.Hvo, m_flid, newValue);
+				SetPropValue(newValue);
 				string sideEffectMethod = XmlUtils.GetAttributeValue(m_configurationNode, "sideEffect", null);
 				if (!string.IsNullOrEmpty(sideEffectMethod))
 				{
