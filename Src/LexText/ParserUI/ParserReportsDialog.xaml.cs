@@ -1,6 +1,7 @@
 using SIL.Extensions;
+using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
-using SIL.FieldWorks.WordWorks.Parser;
 using SIL.LCModel;
 using System;
 using System.Collections.ObjectModel;
@@ -76,7 +77,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				if (report.IsSelected)
 				{
-					Mediator.SendMessage("ShowParserReport", report);
+					Publisher.Publish(new PublisherParameterObject(EventConstants.ShowParserReport, report));
 					break;
 				}
 			}
@@ -145,14 +146,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			var diff = parserReport.ParserReport.DiffParserReports(parserReport2.ParserReport);
 			ParserReportViewModel viewModel = new ParserReportViewModel() { ParserReport = diff };
-			Mediator.SendMessage("ShowParserReport", viewModel);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.ShowParserReport, viewModel));
 		}
 		private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
 			if (sender is DataGrid dataGrid)
 			{
 				if(dataGrid.SelectedItem is ParserReportViewModel selectedItem)
-					Mediator.SendMessage("ShowParserReport", selectedItem);
+					Publisher.Publish(new PublisherParameterObject(EventConstants.ShowParserReport, selectedItem));
 			}
 			else
 				Debug.Fail("Type of Contents of DataGrid changed, adjust double click code.");

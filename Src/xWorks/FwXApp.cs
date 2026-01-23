@@ -101,7 +101,9 @@ namespace SIL.FieldWorks.XWorks
 			if (activeWnd != null)
 			{
 				// Refresh it last, so its saved settings get restored.
+				#pragma warning disable 618 // suppress obsolete warning
 				activeWnd.Mediator.BroadcastMessage("RefreshPopupWindows", null);
+				#pragma warning restore 618
 				activeWnd.FinishRefresh();
 				activeWnd.Refresh();
 				activeWnd.Activate();

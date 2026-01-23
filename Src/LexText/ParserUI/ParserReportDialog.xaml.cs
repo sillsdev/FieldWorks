@@ -1,4 +1,5 @@
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.FieldWorks.WordWorks.Parser;
 using SIL.LCModel;
@@ -102,7 +103,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (sender is DataGrid dataGrid)
 			{
 				if (dataGrid.SelectedItem is ParserReportViewModel selectedItem)
-					Mediator.SendMessage("ShowParserReport", selectedItem);
+					Publisher.Publish(new PublisherParameterObject(EventConstants.ShowParserReport, selectedItem));
 			}
 			else
 				Debug.Fail("Type of Contents of DataGrid changed, adjust double click code.");

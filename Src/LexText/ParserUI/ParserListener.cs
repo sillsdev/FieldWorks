@@ -86,6 +86,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_sda.AddNotification(this);
 
 			Subscriber.Subscribe(EventConstants.StopParser, StopParser);
+			Subscriber.Subscribe(EventConstants.RemoveFilters, ShowParserReport);
 		}
 
 		/// <summary>
@@ -365,6 +366,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (disposing)
 			{
 				Subscriber.Unsubscribe(EventConstants.StopParser, StopParser);
+				Subscriber.Unsubscribe(EventConstants.ShowParserReport, ShowParserReport);
 
 				// other clients may now parse
 				// Dispose managed resources here.
@@ -627,7 +629,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					// Write an empty parser report.
 					var parserReport = CreateParserReport();
 					ParserReportViewModel viewModel = AddParserReport(parserReport);
-					OnShowParserReport(viewModel);
+					ShowParserReport(viewModel);
 				}
 			}
 			m_parserConnection.UpdateWordforms(wordforms, priority, checkParser);
@@ -682,7 +684,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				// Convert parse results into ParserReport.
 				var parserReport = CreateParserReport();
 				ParserReportViewModel viewModel = AddParserReport(parserReport);
-				OnShowParserReport(viewModel);
+				ShowParserReport(viewModel);
 			}
 		}
 
@@ -903,8 +905,9 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Display a parser report window.
 		/// </summary>
 		/// <param name="parserReport"></param>
-		public void OnShowParserReport(ParserReportViewModel parserReport)
+		private void ShowParserReport(object obj)
 		{
+			ParserReportViewModel parserReport = obj as ParserReportViewModel;
 			ParserReportDialog dialog = new ParserReportDialog(parserReport, m_mediator, m_cache, m_propertyTable);
 			dialog.Show();
 			m_parserReportDialogs.Add(dialog);
