@@ -291,74 +291,22 @@ namespace SIL.FieldWorks.XWorks
 			for (var i = 0; i < entries.Count; i++)
 			{
 				var entryBatch = entries[i];
-				allPostsSucceeded &= PostEntriesToWebonaryWithRetry(model, view, "post/entry",
-					entryBatch, isReversal, i + 1);
+				try
+				{
+					allPostsSucceeded &= PostEntriesToWebonary(model, view, "post/entry",
+						entryBatch, isReversal);
+				}
+				catch (WebonaryClient.WebonaryException e)
+				{
+					UpdateViewWithWebonaryException(view, e);
+					allPostsSucceeded = false;
+				}
 
 				if (!allPostsSucceeded)
 					break; // Stop on first failure
 			}
 
 			return allPostsSucceeded;
-		}
-
-		/// <summary>
-		///     Posts entries to Webonary with retry logic for 504 Gateway Timeout errors.
-		///     Uses exponential backoff: starting at a half second, doubling the wait time after each retry.
-		/// </summary>
-		private bool PostEntriesToWebonaryWithRetry(UploadToWebonaryModel model,
-			IUploadToWebonaryView view,
-			string apiEndpoint, JContainer postContent, bool isReversal, int batchNumber)
-		{
-			const int maxRetries = 4;
-			var retryDelay = 500; // Start with half second
-
-			for (var attempt = 1; attempt <= maxRetries; attempt++)
-				try
-				{
-					var success = PostEntriesToWebonary(model, view, apiEndpoint, postContent,
-						isReversal);
-					if (success && attempt > 1)
-						view.UpdateStatus(
-							string.Format(xWorksStrings.UploadBatchSucceededAfterRetry,
-								batchNumber, attempt),
-							WebonaryStatusCondition.None);
-					return success;
-				}
-				catch (WebonaryClient.WebonaryException e)
-				{
-					// Only retry on 504 Gateway Timeout or 503 Service Unavailable
-					if (e.StatusCode == HttpStatusCode.GatewayTimeout ||
-						e.StatusCode == HttpStatusCode.ServiceUnavailable)
-					{
-						if (attempt < maxRetries)
-						{
-							view.UpdateStatus(string.Format(xWorksStrings.UploadBatchRetrying,
-									batchNumber,
-									e.StatusCode, attempt, maxRetries, retryDelay / 1000),
-								WebonaryStatusCondition.None);
-
-							Thread.Sleep(retryDelay);
-							retryDelay *= 2; // Exponential backoff
-						}
-						else
-						{
-							// Final attempt failed
-							view.UpdateStatus(string.Format(
-								xWorksStrings.UploadBatchFailedAfterRetries, batchNumber,
-								maxRetries, e.StatusCode), WebonaryStatusCondition.Error);
-							UpdateViewWithWebonaryException(view, e);
-							return false;
-						}
-					}
-					else
-					{
-						// For other errors, don't retry
-						UpdateViewWithWebonaryException(view, e);
-						return false;
-					}
-				}
-
-			return false; // Should never reach here
 		}
 
 		private bool PostEntriesToWebonary(UploadToWebonaryModel model, IUploadToWebonaryView view, string apiEndpoint, JContainer postContent, bool isReversal)
@@ -562,6 +510,12 @@ namespace SIL.FieldWorks.XWorks
 					view.UpdateStatus(xWorksStrings.ksWebonaryUploadSuccessful,
 						WebonaryStatusCondition.Success);
 					TrackingHelper.TrackExport("lexicon", "webonary", ImportExportStep.Succeeded);
+				}
+				else
+				{
+					view.UpdateStatus(xWorksStrings.Webonary_UnexpectedUploadError,
+						WebonaryStatusCondition.Error);
+					TrackingHelper.TrackExport("lexicon", "webonary", ImportExportStep.Failed);
 				}
 			}
 			catch (Exception e)
