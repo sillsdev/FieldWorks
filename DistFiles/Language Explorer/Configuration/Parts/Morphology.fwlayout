@@ -106,7 +106,7 @@
 	<layout class="MoAffixAllomorph" type="detail" name="AsLexemeFormBasic">
 		<part ref="AsLexemeForm" label="Lexeme Form" expansion="expanded">
 			<indent indent="true">
-				<part ref="AllomorphStatus" label="Allomorph Status" visibility="never" />
+				<part ref="AllomorphStatus" label="Allomorph Status" visibility="never" /> <!-- could use 'ifTrue' if we had it -->
 				<part ref="MorphTypeBasic" visibility="ifdata"/>
 				<part ref="PhoneEnvBasic" visibility="ifdata"/>
 				<part ref="AsPosition" visibility="always"/>
@@ -121,7 +121,7 @@
 	<layout class="MoStemAllomorph" type="detail" name="AsLexemeFormBasic">
 		<part ref="AsLexemeForm" label="Lexeme Form" expansion="expanded">
 			<indent indent="true">
-				<part ref="AllomorphStatus" label="Allomorph Status" visibility="never" />
+				<part ref="AllomorphStatus" label="Allomorph Status" visibility="never" /> <!-- could use 'ifTrue' if we had it -->
 				<part ref="MorphTypeBasic" visibility="ifdata"/>
 				<part ref="PhoneEnvBasic" visibility="ifdata"/>
 				<part ref="StemNameForLexemeForm" visibility="ifdata"/>
