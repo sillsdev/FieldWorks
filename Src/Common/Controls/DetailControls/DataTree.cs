@@ -974,6 +974,11 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				return;
 
 			string toolName = m_propertyTable.GetStringProperty("currentContentControl", null);
+			if (root is ILexEntry)
+			{
+				// We are in the Lexicon Edit Popup window
+				toolName = "lexiconEdit";
+			}
 			// Initialize our internal state with the state of the PropertyTable
 			m_fShowAllFields = m_propertyTable.GetBoolProperty("ShowHiddenFields-" + toolName, false, PropertyTable.SettingsGroup.LocalSettings);
 			m_propertyTable.SetPropertyPersistence("ShowHiddenFields-" + toolName, true, PropertyTable.SettingsGroup.LocalSettings);

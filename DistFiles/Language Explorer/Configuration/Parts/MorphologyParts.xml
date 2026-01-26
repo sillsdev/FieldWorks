@@ -238,7 +238,7 @@
       <part id="MoForm-Detail-AllomorphStatus" type="Detail">
         <slice field="IsAbstract" label="IsAbstract" editor="enumComboBox">
           <deParams>
-              <stringList group="AllomorphStatus" ids="Is Elsewhere Form, Is Abstract Form"/>
+              <stringList group="AllomorphStatus" ids="IsElsewhereForm, IsAbstractForm"/>
           </deParams>
         </slice>
        </part>
