@@ -4,6 +4,7 @@
 using System;
 using System.IO;
 using System.Net;
+using System.Threading;
 using Newtonsoft.Json.Linq;
 
 namespace SIL.FieldWorks.XWorks
@@ -96,21 +97,47 @@ namespace SIL.FieldWorks.XWorks
 
 		private string PostToWebonaryApi(string address, string postBody, string extraArgs = "")
 		{
-			try
-			{
-				return UploadString(address + extraArgs, postBody);
-			}
-			catch (WebException ex)
-			{
-				if (ex.Response == null)
-					throw new WebonaryException("WebException with null response stream.", ex);
-				using (var stream = ex.Response.GetResponseStream())
-				using (var reader = new StreamReader(stream))
+			const int maxRetries = 4;
+			var retryDelay = 500; // Start with half second
+
+			for (var attempt = 1; attempt <= maxRetries; attempt++)
+				try
 				{
-					var response = reader.ReadToEnd();
-					throw new WebonaryException(response, ex);
+					return UploadString(address + extraArgs, postBody);
 				}
-			}
+				catch (WebException ex)
+				{
+					if (ex.Response == null)
+						throw new WebonaryException("WebException with null response stream.",
+							ex);
+
+					var statusCode = ((HttpWebResponse)ex.Response).StatusCode;
+
+					// Only retry on 504 Gateway Timeout or 503 Service Unavailable
+					if ((statusCode == HttpStatusCode.GatewayTimeout ||
+						 statusCode == HttpStatusCode.ServiceUnavailable) && attempt < maxRetries)
+					{
+						Thread.Sleep(retryDelay);
+						retryDelay *= 2; // Exponential backoff
+						continue; // Retry
+					}
+
+					// For other errors or final attempt, throw WebonaryException with details
+					using (var stream = ex.Response.GetResponseStream())
+					using (var reader = new StreamReader(stream))
+					{
+						var response = reader.ReadToEnd();
+						var webonaryEx = new WebonaryException(response, ex);
+						// Add retry information to the exception message for better diagnostics
+						if (attempt > 1)
+							webonaryEx.FullResponse = string.Format("[Retried {0} times] {1}",
+								attempt - 1, response);
+						throw webonaryEx;
+					}
+				}
+
+			// Unreachable code, but required to satisfy the compiler
+			throw new WebonaryException("Max retries exceeded", null);
 		}
 
 		protected override WebResponse GetWebResponse(WebRequest request)
