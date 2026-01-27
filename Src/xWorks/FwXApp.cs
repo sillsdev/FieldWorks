@@ -2,15 +2,15 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
-using System.Windows.Forms;
-using System.Diagnostics;
 using Microsoft.Win32;
-using System.Collections.Generic;
-using System.IO;
-using SIL.LCModel;
 using SIL.FieldWorks.Common.Framework;
-using SIL.LCModel.Utils;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
+using SIL.LCModel.Utils;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
+using System.Windows.Forms;
 
 namespace SIL.FieldWorks.XWorks
 {
@@ -101,9 +101,6 @@ namespace SIL.FieldWorks.XWorks
 			if (activeWnd != null)
 			{
 				// Refresh it last, so its saved settings get restored.
-				#pragma warning disable 618 // suppress obsolete warning
-				activeWnd.Mediator.BroadcastMessage("RefreshPopupWindows", null);
-				#pragma warning restore 618
 				activeWnd.FinishRefresh();
 				activeWnd.Refresh();
 				activeWnd.Activate();

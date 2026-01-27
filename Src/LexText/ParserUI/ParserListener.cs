@@ -87,6 +87,7 @@ namespace SIL.FieldWorks.LexText.Controls
 
 			Subscriber.Subscribe(EventConstants.StopParser, StopParser);
 			Subscriber.Subscribe(EventConstants.RemoveFilters, ShowParserReport);
+			Subscriber.Subscribe(EventConstants.RefreshPopupWindows, RefreshPopupWindows);
 		}
 
 		/// <summary>
@@ -367,6 +368,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				Subscriber.Unsubscribe(EventConstants.StopParser, StopParser);
 				Subscriber.Unsubscribe(EventConstants.ShowParserReport, ShowParserReport);
+				Subscriber.Unsubscribe(EventConstants.RefreshPopupWindows, RefreshPopupWindows);
 
 				// other clients may now parse
 				// Dispose managed resources here.
@@ -849,7 +851,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_parserReportsDialog.BringIntoView();
 		}
 
-		public bool OnRefreshPopupWindows(object sender)
+		public void RefreshPopupWindows(object sender)
 		{
 			if (m_parserReportsDialog != null)
 			{
@@ -859,7 +861,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				dialog.SetFont();
 			}
-			return true;
 		}
 
 		private void ParserReportsDialog_Closed(object sender, EventArgs e)
