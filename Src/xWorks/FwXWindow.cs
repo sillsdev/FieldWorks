@@ -1877,7 +1877,7 @@ namespace SIL.FieldWorks.XWorks
 				(m_app as FwXApp).OnMasterRefresh(null);
 
 				// Refresh the fonts on popup windows.
-				Publisher.Publish(new PublisherParameterObject(EventConstants.RefreshPopupWindows, null));
+				Publisher.Publish(new PublisherParameterObject(EventConstants.RefreshPopupWindowFonts, null));
 			}
 			return false;   // refresh already called if needed
 		}

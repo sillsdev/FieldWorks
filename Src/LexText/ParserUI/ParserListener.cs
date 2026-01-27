@@ -86,8 +86,8 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_sda.AddNotification(this);
 
 			Subscriber.Subscribe(EventConstants.StopParser, StopParser);
-			Subscriber.Subscribe(EventConstants.RemoveFilters, ShowParserReport);
-			Subscriber.Subscribe(EventConstants.RefreshPopupWindows, RefreshPopupWindows);
+			Subscriber.Subscribe(EventConstants.ShowParserReport, ShowParserReport);
+			Subscriber.Subscribe(EventConstants.RefreshPopupWindowFonts, RefreshPopupWindowFonts);
 		}
 
 		/// <summary>
@@ -368,7 +368,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				Subscriber.Unsubscribe(EventConstants.StopParser, StopParser);
 				Subscriber.Unsubscribe(EventConstants.ShowParserReport, ShowParserReport);
-				Subscriber.Unsubscribe(EventConstants.RefreshPopupWindows, RefreshPopupWindows);
+				Subscriber.Unsubscribe(EventConstants.RefreshPopupWindowFonts, RefreshPopupWindowFonts);
 
 				// other clients may now parse
 				// Dispose managed resources here.
@@ -851,7 +851,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_parserReportsDialog.BringIntoView();
 		}
 
-		public void RefreshPopupWindows(object sender)
+		public void RefreshPopupWindowFonts(object sender)
 		{
 			if (m_parserReportsDialog != null)
 			{
@@ -905,7 +905,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Display a parser report window.
 		/// </summary>
-		/// <param name="parserReport"></param>
 		private void ShowParserReport(object obj)
 		{
 			ParserReportViewModel parserReport = obj as ParserReportViewModel;
