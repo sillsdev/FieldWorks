@@ -102,6 +102,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 
 		public void Dispose(bool disposeCalled)
 		{
+			System.Diagnostics.Debug.WriteLineIf(!disposeCalled, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
 			Subscriber.Unsubscribe(EventConstants.GetContentControlParameters, GetContentControlParameters);
 		}
 
