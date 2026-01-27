@@ -13,6 +13,7 @@ using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -127,7 +128,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		{
 			var collector = new XmlNode[1];
 			var parameter = new Tuple<string, string, XmlNode[]>("lexicon", tool, collector);
-			m_mediator.SendMessage("GetContentControlParameters", parameter);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.GetContentControlParameters, parameter));
 			var controlNode = collector[0];
 			var parameters = controlNode.SelectSingleNode("parameters");
 			var configureLayouts = XmlUtils.FindNode(parameters, "configureLayouts");
