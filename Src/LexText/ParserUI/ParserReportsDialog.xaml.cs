@@ -28,6 +28,8 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		public LcmCache Cache { get; set; }
 
+		public ParserListener Listener { get; set; }
+
 		public string DefaultComment = null;
 
 		private PropertyTable m_propertyTable;
@@ -37,11 +39,12 @@ namespace SIL.FieldWorks.LexText.Controls
 			InitializeComponent();
 		}
 
-		public ParserReportsDialog(ObservableCollection<ParserReportViewModel> parserReports, Mediator mediator, LcmCache cache, PropertyTable propertyTable, string defaultComment)
+		public ParserReportsDialog(ObservableCollection<ParserReportViewModel> parserReports, ParserListener listener, Mediator mediator, LcmCache cache, PropertyTable propertyTable, string defaultComment)
 		{
 			InitializeComponent();
 			parserReports.Sort((x, y) => y.Timestamp.CompareTo(x.Timestamp));
 			ParserReports = parserReports;
+			Listener = listener;
 			Mediator = mediator;
 			Cache = cache;
 			m_propertyTable = propertyTable;
@@ -77,7 +80,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				if (report.IsSelected)
 				{
-					Publisher.Publish(new PublisherParameterObject(EventConstants.ShowParserReport, report));
+					Listener.ShowParserReport(report);
 					break;
 				}
 			}
@@ -146,14 +149,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			var diff = parserReport.ParserReport.DiffParserReports(parserReport2.ParserReport);
 			ParserReportViewModel viewModel = new ParserReportViewModel() { ParserReport = diff };
-			Publisher.Publish(new PublisherParameterObject(EventConstants.ShowParserReport, viewModel));
+			Listener.ShowParserReport(viewModel);
 		}
 		private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
 			if (sender is DataGrid dataGrid)
 			{
 				if(dataGrid.SelectedItem is ParserReportViewModel selectedItem)
-					Publisher.Publish(new PublisherParameterObject(EventConstants.ShowParserReport, selectedItem));
+					Listener.ShowParserReport(selectedItem);
 			}
 			else
 				Debug.Fail("Type of Contents of DataGrid changed, adjust double click code.");

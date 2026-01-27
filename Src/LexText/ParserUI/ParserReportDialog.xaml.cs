@@ -64,8 +64,17 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		public void ShowWordAnalyses(object sender, RoutedEventArgs e)
 		{
-			var button = sender as Button;
-			var parseReport = button.CommandParameter as ParseReport;
+			ParseReport parseReport = null;
+			if (sender is Button button)
+			{
+				parseReport = button.CommandParameter as ParseReport;
+			}
+			else if (sender is ParseReport report)
+			{
+				parseReport = report;
+			}
+			if (parseReport == null)
+				return;
 			var tsString = TsStringUtils.MakeString(RemoveArrow(parseReport.Word), Cache.DefaultVernWs);
 			IWfiWordform wordform;
 			if (Cache.ServiceLocator.GetInstance<IWfiWordformRepository>().TryGetObject(tsString, out wordform))
@@ -102,8 +111,8 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			if (sender is DataGrid dataGrid)
 			{
-				if (dataGrid.SelectedItem is ParserReportViewModel selectedItem)
-					Publisher.Publish(new PublisherParameterObject(EventConstants.ShowParserReport, selectedItem));
+				if (dataGrid.SelectedItem is ParseReport selectedItem)
+					ShowWordAnalyses(selectedItem, null);
 			}
 			else
 				Debug.Fail("Type of Contents of DataGrid changed, adjust double click code.");

@@ -86,7 +86,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_sda.AddNotification(this);
 
 			Subscriber.Subscribe(EventConstants.StopParser, StopParser);
-			Subscriber.Subscribe(EventConstants.ShowParserReport, ShowParserReport);
 			Subscriber.Subscribe(EventConstants.RefreshPopupWindowFonts, RefreshPopupWindowFonts);
 		}
 
@@ -367,7 +366,6 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (disposing)
 			{
 				Subscriber.Unsubscribe(EventConstants.StopParser, StopParser);
-				Subscriber.Unsubscribe(EventConstants.ShowParserReport, ShowParserReport);
 				Subscriber.Unsubscribe(EventConstants.RefreshPopupWindowFonts, RefreshPopupWindowFonts);
 
 				// other clients may now parse
@@ -844,7 +842,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				ReadParserReports();
 				// Create parser reports window.
-				m_parserReportsDialog = new ParserReportsDialog(m_parserReports, m_mediator, m_cache, m_propertyTable, m_defaultComment);
+				m_parserReportsDialog = new ParserReportsDialog(m_parserReports, this, m_mediator, m_cache, m_propertyTable, m_defaultComment);
 				m_parserReportsDialog.Closed += ParserReportsDialog_Closed;
 			}
 			m_parserReportsDialog.Show(); // Show the dialog but do not block other app access
@@ -905,7 +903,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Display a parser report window.
 		/// </summary>
-		private void ShowParserReport(object obj)
+		public void ShowParserReport(object obj)
 		{
 			ParserReportViewModel parserReport = obj as ParserReportViewModel;
 			ParserReportDialog dialog = new ParserReportDialog(parserReport, m_mediator, m_cache, m_propertyTable);

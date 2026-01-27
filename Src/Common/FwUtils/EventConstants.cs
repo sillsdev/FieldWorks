@@ -37,7 +37,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string SetToolFromName = "SetToolFromName";
 		public const string SFMImport = "SFMImport";
 		public const string ShowNotification = "ShowNotification";
-		public const string ShowParserReport = "ShowParserReport";
 		public const string StopParser = "StopParser";
 		/// <summary>
 		/// Called before opening and after closing UploadToWebonaryDlg to prevent bits of the main window from reloading (comment on LT-21480).
