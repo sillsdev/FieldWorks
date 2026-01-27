@@ -3,6 +3,7 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Filters;
@@ -552,7 +553,7 @@ namespace SIL.FieldWorks.Common.Controls
 				else
 				{
 					// May have some active already. Remove them.
-					OnRemoveFilters(this);
+					RemoveFilters(this);
 					if (currentFilter == null)
 					{
 						return;
@@ -1512,6 +1513,8 @@ namespace SIL.FieldWorks.Common.Controls
 
 			if( disposing )
 			{
+				Subscriber.Unsubscribe(EventConstants.RemoveFilters, RemoveFilters);
+
 				if (m_nodeSpec != null && m_specialCache != null && m_xbv != null && RootObjectHvo != 0)
 					s_selectedCache[new Tuple<XmlNode, int>(m_nodeSpec, RootObjectHvo)] =
 						new Tuple<Dictionary<int, int>, bool>(m_specialCache.SelectedCache, m_specialCache.DefaultSelected);
@@ -3265,6 +3268,7 @@ namespace SIL.FieldWorks.Common.Controls
 			m_xbv.Init(mediator, propertyTable, configurationParameters);
 			m_xbv.AccessibleName = "BrowseViewer";
 			m_mediator = mediator;
+			Subscriber.Subscribe(EventConstants.RemoveFilters, RemoveFilters);
 		}
 		/// <summary>
 		/// Should not be called if disposed.
@@ -3667,9 +3671,8 @@ namespace SIL.FieldWorks.Common.Controls
 		/// <summary>
 		/// Called when [remove filters].
 		/// </summary>
-		/// <param name="sender">The sender.</param>
 		/// ------------------------------------------------------------------------------------
-		public void OnRemoveFilters(object sender)
+		private void RemoveFilters(object _)
 		{
 			CheckDisposed();
 
