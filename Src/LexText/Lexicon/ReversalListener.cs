@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -446,7 +447,7 @@ namespace SIL.FieldWorks.XWorks.LexEd
 					SetOwningObject(newOwningObj, updateAndNotify); // Reloads and sorts the list.
 					m_propertyTable.SetProperty("ActiveClerkOwningObject", newOwningObj, true);
 					m_propertyTable.SetPropertyPersistence("ActiveClerkOwningObject", false);
-					m_mediator.SendMessage("ClerkOwningObjChanged", this);
+					Publisher.Publish(new PublisherParameterObject(EventConstants.ClerkOwningObjChanged, this));
 				}
 				else
 				{

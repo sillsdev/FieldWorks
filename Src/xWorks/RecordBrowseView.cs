@@ -9,6 +9,7 @@ using System.Xml;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
@@ -63,6 +64,8 @@ namespace SIL.FieldWorks.XWorks
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(EventConstants.ClerkOwningObjChanged, ClerkOwningObjChanged);
+
 				if (ExistingClerk != null) // ExistingClerk, *not* Clerk (see doc on ExistingClerk)
 				{
 					PersistSortSequence();
@@ -176,12 +179,12 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		public bool OnClerkOwningObjChanged(object sender)
+		private void ClerkOwningObjChanged(object sender)
 		{
 			CheckDisposed();
 
 			if (Clerk != sender || (m_browseViewer==null))
-				return false;
+				return;
 
 			if (Clerk.OwningObject == null)
 			{
@@ -196,7 +199,6 @@ namespace SIL.FieldWorks.XWorks
 				m_browseViewer.RootObjectHvo = Clerk.OwningObject.Hvo;
 				SetInfoBarText();
 			}
-			return false; //allow others clients of this clerk to know about it as well.
 		}
 
 		/// <summary>
@@ -671,6 +673,8 @@ namespace SIL.FieldWorks.XWorks
 			// ShowRecord() was called in InitBase, but quit without doing anything,
 			// so call it again, since we are ready now.
 			ShowRecord();
+
+			Subscriber.Subscribe(EventConstants.ClerkOwningObjChanged, ClerkOwningObjChanged);
 		}
 
 		private void CheckExpectedListItemsClassInSync()

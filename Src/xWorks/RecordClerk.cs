@@ -1391,7 +1391,7 @@ namespace SIL.FieldWorks.XWorks
 					}
 				}
 				if (old != newObj)
-					m_mediator.SendMessage("ClerkOwningObjChanged", this);
+					Publisher.Publish(new PublisherParameterObject(EventConstants.ClerkOwningObjChanged, this));
 			}
 		}
 
