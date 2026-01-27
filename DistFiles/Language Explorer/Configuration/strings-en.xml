@@ -488,4 +488,8 @@
 	  <string id="EditGramFunc" txt="Edit Grammatical Info."/>
 	</group>
   </group>
+  <group id="AllomorphStatus">
+	<string id="IsElsewhereForm" txt="Is Elsewhere Form"/>
+	<string id="IsAbstractForm" txt="Is Abstract Form"/>
+  </group>
 </strings>

@@ -106,7 +106,7 @@
 	<layout class="MoAffixAllomorph" type="detail" name="AsLexemeFormBasic">
 		<part ref="AsLexemeForm" label="Lexeme Form" expansion="expanded">
 			<indent indent="true">
-				<part ref="IsAbstractBasic" label="Is Abstract Form" visibility="never" /> <!-- could use 'ifTrue' if we had it -->
+				<part ref="AllomorphStatus" label="Allomorph Status" visibility="ifdata" />
 				<part ref="MorphTypeBasic" visibility="ifdata"/>
 				<part ref="PhoneEnvBasic" visibility="ifdata"/>
 				<part ref="AsPosition" visibility="always"/>
@@ -121,7 +121,7 @@
 	<layout class="MoStemAllomorph" type="detail" name="AsLexemeFormBasic">
 		<part ref="AsLexemeForm" label="Lexeme Form" expansion="expanded">
 			<indent indent="true">
-				<part ref="IsAbstractBasic" label="Is Abstract Form" visibility="never" /> <!-- could use 'ifTrue' if we had it -->
+				<part ref="AllomorphStatus" label="Allomorph Status" visibility="ifdata" />
 				<part ref="MorphTypeBasic" visibility="ifdata"/>
 				<part ref="PhoneEnvBasic" visibility="ifdata"/>
 				<part ref="StemNameForLexemeForm" visibility="ifdata"/>
@@ -134,7 +134,7 @@
 	<layout class="MoAffixProcess" type="detail" name="AsLexemeFormBasic">
 		<part ref="AsLexemeForm" shouldNotMerge="true" label="Lexeme Form" expansion="expanded">
 			<indent indent="true">
-				<part ref="IsAbstractBasic" label="Is Abstract Form" visibility="never" /> <!-- could use 'ifTrue' if we had it -->
+				<part ref="IsAbstractBasic" label="Is Abstract Form" visibility="ifdata" />
 				<part ref="MorphTypeBasic" visibility="ifdata"/>
 				<part ref="RuleFormulaBasic" expansion="expanded" label="Affix Process Rule"/>
 				<part ref="InflectionClassesForLexemeForm" visibility="ifdata"/>

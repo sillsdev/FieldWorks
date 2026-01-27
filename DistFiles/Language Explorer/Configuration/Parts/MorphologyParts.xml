@@ -233,8 +233,15 @@
 
       <!-- IsAbstract At Entry section -->
       <part id="MoForm-Detail-IsAbstractBasic" type="Detail">
-			<slice field="IsAbstract" label="IsAbstract" editor="Checkbox"/>
-		</part>
+        <slice field="IsAbstract" label="IsAbstract" editor="Checkbox"/>
+      </part>
+      <part id="MoForm-Detail-AllomorphStatus" type="Detail">
+        <slice field="IsAbstract" label="IsAbstract" editor="enumComboBox">
+          <deParams>
+              <stringList group="AllomorphStatus" ids="IsElsewhereForm, IsAbstractForm"/>
+          </deParams>
+        </slice>
+       </part>
 
       <!-- IsAbstract in Allomorph section -->
       <part id="MoForm-Detail-IsAbstract" type="Detail">
