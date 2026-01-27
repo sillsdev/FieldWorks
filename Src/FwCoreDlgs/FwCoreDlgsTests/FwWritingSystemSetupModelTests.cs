@@ -1462,12 +1462,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			using (var mediator = new Mediator())
 			{
-				var deleteListener = new WSDeletedListener(mediator);
 				var ws = GetOrSetWs("doa");
 				Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create().CitationForm.set_String(ws.Handle, "some data");
 				Cache.ActionHandlerAccessor.EndUndoTask();
 				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, FwWritingSystemSetupModel.ListType.Vernacular,
-					Cache.ServiceLocator.WritingSystemManager, Cache, mediator)
+					Cache.ServiceLocator.WritingSystemManager, Cache)
 				{
 					ViewHiddenWritingSystems = model =>
 						model.Items.Add(new HiddenWSListItemModel(ws, false) { WillDelete = true })
@@ -1477,7 +1476,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				testModel.GetAddMenuItems().First(item => item.MenuText.Contains("View hidden")).ClickHandler(this, EventArgs.Empty);
 				testModel.Save();
 
-				CollectionAssert.AreEqual(new[] {"doa"}, deleteListener.DeletedWSs);
 				Assert.That(WritingSystemServices.FindAllWritingSystemsWithText(Cache), Is.Not.Contains(ws.Handle));
 			}
 		}
@@ -1488,11 +1486,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			using (var mediator = new Mediator())
 			{
-				var deleteListener = new WSDeletedListener(mediator);
 				SetUpProjectWithData();
 				Cache.ActionHandlerAccessor.EndUndoTask();
 				var wasDeleteConfirmed = false;
-				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache, mediator)
+				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache)
 				{
 					ConfirmDeleteWritingSystem = label =>
 					{
@@ -1521,7 +1518,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 					Assert.AreEqual("en", Cache.LangProject.AnalysisWss, "Only English should remain after save");
 					AssertFrenchDataIntact();
 				}
-				CollectionAssert.AreEqual(new[] {wsId}, deleteListener.DeletedWSs);
 				Assert.That(WritingSystemServices.FindAllWritingSystemsWithText(Cache), Is.Not.Contains(GetOrSetWs(wsId).Handle));
 			}
 		}
@@ -1533,7 +1529,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			using (var mediator = new Mediator())
 			{
-				var deleteListener = new WSDeletedListener(mediator);
 				SetupHomographLanguagesInCache();
 				var fr = GetOrSetWs("fr");
 				Cache.LangProject.AnalysisWritingSystems.Add(fr);
@@ -1541,7 +1536,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				entry.Comment.set_String(fr.Handle, "commentary");
 				Cache.ActionHandlerAccessor.EndUndoTask();
 				var wasDeleteConfirmed = false;
-				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache, mediator)
+				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache)
 				{
 					ConfirmDeleteWritingSystem = label =>
 					{
@@ -1557,7 +1552,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 				Assert.False(wasDeleteConfirmed, "shouldn't confirm 'deleting' a WS that will only be hidden");
 				AssertOnlyEnglishInList(type);
-				CollectionAssert.IsEmpty(deleteListener.DeletedWSs);
 				var comment = entry.Comment.get_String(fr.Handle);
 				Assert.AreEqual(fr.Handle, comment.get_WritingSystemAt(0));
 				Assert.AreEqual("commentary", comment.Text);
@@ -1570,10 +1564,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			using (var mediator = new Mediator())
 			{
-				var deleteListener = new WSDeletedListener(mediator);
 				SetUpProjectWithData();
 				Cache.ActionHandlerAccessor.EndUndoTask();
-				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache, mediator);
+				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache);
 				testModel.SelectWs(wsId);
 
 				// SUT: click Hide, then save
@@ -1581,7 +1574,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				testModel.Save();
 
 				AssertOnlyEnglishInList(type);
-				CollectionAssert.IsEmpty(deleteListener.DeletedWSs);
 				AssertProjectDataIntact();
 			}
 		}
@@ -1592,10 +1584,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			using (var mediator = new Mediator())
 			{
-				var deleteListener = new WSDeletedListener(mediator);
 				SetUpProjectWithData();
 				Cache.ActionHandlerAccessor.EndUndoTask();
-				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache, mediator)
+				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache)
 				{
 					AddNewVernacularLanguageWarning = () => true,
 					ConfirmDeleteWritingSystem = label => true,
@@ -1617,7 +1608,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				testModel.Save();
 
 				AssertOnlyEnglishInList(type);
-				CollectionAssert.IsEmpty(deleteListener.DeletedWSs);
 				AssertProjectDataIntact();
 			}
 		}
@@ -1629,10 +1619,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			using (var mediator = new Mediator())
 			{
 				var ws = GetOrSetWs(wsId);
-				var deleteListener = new WSDeletedListener(mediator);
 				SetUpProjectWithData();
 				Cache.ActionHandlerAccessor.EndUndoTask();
-				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache, mediator)
+				var testModel = new FwWritingSystemSetupModel(Cache.LangProject, type, Cache.ServiceLocator.WritingSystemManager, Cache)
 				{
 					AddNewVernacularLanguageWarning = () => true,
 					ConfirmDeleteWritingSystem = label => true,
@@ -1656,7 +1645,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				Assert.AreEqual("en fr", Cache.LangProject.VernWss, "Both should remain after save");
 				Assert.AreEqual("en tpi", Cache.LangProject.CurAnalysisWss, "Both should remain selected after save");
 				Assert.AreEqual("en tpi", Cache.LangProject.AnalysisWss, "Both should remain after save");
-				CollectionAssert.IsEmpty(deleteListener.DeletedWSs);
 				AssertProjectDataIntact();
 			}
 		}
@@ -1906,34 +1894,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			/// Test repo
 			/// </summary>
 			public IWritingSystemRepository Repo { get; set; }
-		}
-
-		private class WSDeletedListener : IxCoreColleague
-		{
-			public List<string> DeletedWSs { get; } = new List<string>();
-
-			public WSDeletedListener(Mediator mediator)
-			{
-				Init(mediator, null, null);
-			}
-
-			public void OnWritingSystemDeleted(object param)
-			{
-				DeletedWSs.AddRange((string[])param);
-			}
-
-			public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
-			{
-				mediator.AddColleague(this);
-			}
-
-			public IxCoreColleague[] GetMessageTargets()
-			{
-				return new IxCoreColleague[] { this };
-			}
-
-			public bool ShouldNotCall => false;
-			public int Priority => (int)ColleaguePriority.High;
 		}
 	}
 }
