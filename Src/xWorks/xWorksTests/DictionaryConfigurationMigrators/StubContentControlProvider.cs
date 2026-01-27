@@ -5,6 +5,8 @@
 using System;
 using System.Xml;
 using NUnit.Framework;
+using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
@@ -14,7 +16,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 	/// tools for testing export functionality.
 	/// </summary>
 	/// <remarks>To use add the following to your TestFixtureSetup: m_mediator.AddColleague(new StubContentControlProvider());</remarks>
-	internal class StubContentControlProvider : IxCoreColleague
+	internal class StubContentControlProvider : IxCoreColleague, IDisposable
 	{
 		private const string m_contentControlDictionary =
 			@"<control>
@@ -63,6 +65,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var reversalDoc = new XmlDocument();
 			reversalDoc.LoadXml(m_contentControlReversal);
 			m_testControlRevNode = reversalDoc.DocumentElement;
+			Subscriber.Subscribe(EventConstants.GetContentControlParameters, GetContentControlParameters);
 		}
 
 		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
@@ -78,18 +81,33 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		/// This is called by reflection through the mediator. We need so that we can migrate through the PreHistoricMigrator.
 		/// </summary>
 		// ReSharper disable once UnusedMember.Local
-		private bool OnGetContentControlParameters(object parameterObj)
+		private void GetContentControlParameters(object parameterObj)
 		{
 			var param = parameterObj as Tuple<string, string, XmlNode[]>;
 			if (param == null)
-				return false;
+				return;
 			var result = param.Item3;
 			Assert.That(param.Item2 == "lexiconDictionary" || param.Item2 == "reversalToolEditComplete", "No params for tool: " + param.Item2);
 			result[0] = param.Item2 == "lexiconDictionary" ? m_testControlDictNode : m_testControlRevNode;
-			return true;
 		}
 
 		public bool ShouldNotCall { get { return false; } }
 		public int Priority { get { return 1; }}
+
+		public void Dispose()
+		{
+			GC.SuppressFinalize(this);
+			Dispose(true);
+		}
+
+		public void Dispose(bool disposeCalled)
+		{
+			Subscriber.Unsubscribe(EventConstants.GetContentControlParameters, GetContentControlParameters);
+		}
+
+		~StubContentControlProvider()
+		{
+			Dispose(false);
+		}
 	}
 }

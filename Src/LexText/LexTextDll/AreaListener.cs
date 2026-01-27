@@ -129,6 +129,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			{
 				Subscriber.Unsubscribe(EventConstants.SetToolFromName, SetToolFromName);
 				Subscriber.Unsubscribe(EventConstants.ReloadAreaTools, ReloadAreaTools);
+				Subscriber.Unsubscribe(EventConstants.GetContentControlParameters, GetContentControlParameters);
 
 				// Dispose managed resources here.
 				if (m_mediator != null)
@@ -153,6 +154,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			m_ccustomLists = 0;
 			Subscriber.Subscribe(EventConstants.SetToolFromName, SetToolFromName);
 			Subscriber.Subscribe(EventConstants.ReloadAreaTools, ReloadAreaTools);
+			Subscriber.Subscribe(EventConstants.GetContentControlParameters, GetContentControlParameters);
 		}
 
 		private DateTime m_lastToolChange = DateTime.MinValue;
@@ -959,15 +961,18 @@ namespace SIL.FieldWorks.XWorks.LexText
 		}
 
 		/// <summary>
-		/// This is designed to be called by reflection through the mediator, when something typically in xWorks needs to get
-		/// the parameter node for a given tool. The last argument is a one-item array used to return the result,
-		/// since I don't think we handle Out parameters in our SendMessage protocol.
+		/// This subscriber is called when the GetContentControlParameters event is published.
+		/// Typically used when something in xWorks needs to get the parameter node for a given tool.
+		/// The last argument is a one-item array used to return the result because we
+		/// don't have return values or out parameters in our Publish/Subscribe protocol.
 		/// </summary>
-		public bool OnGetContentControlParameters(object parameterObj)
+		private void GetContentControlParameters(object parameterObj)
 		{
 			var param = parameterObj as Tuple<string, string, XmlNode[]>;
 			if (param == null)
-				return false; // we sure can't handle it; should we throw?
+			{
+				return; // we sure can't handle it; should we throw?
+			}
 			string area = param.Item1;
 			string tool = param.Item2;
 			XmlNode[] result = param.Item3;
@@ -976,7 +981,6 @@ namespace SIL.FieldWorks.XWorks.LexText
 			{
 				result[0] = node.SelectSingleNode("control");
 			}
-			return true; // whatever happened, we did the best that can be done.
 		}
 
 		protected string GetCurrentAreaName()
