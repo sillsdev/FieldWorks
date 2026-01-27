@@ -17,6 +17,7 @@ using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.DomainServices;
@@ -399,7 +400,7 @@ namespace SIL.FieldWorks.FdoUi
 			try
 			{
 				// Don't postpone PropChanged (cf. LT-22095).
-				mediator?.SendMessage("PostponePropChanged", false);
+				Publisher.Publish(new PublisherParameterObject(EventConstants.PostponePropChanged, false));
 				var cache = propertyTable.GetValue<LcmCache>("cache");
 				switch (classId)
 				{
@@ -419,7 +420,7 @@ namespace SIL.FieldWorks.FdoUi
 			}
 			finally
 			{
-				mediator?.SendMessage("PostponePropChanged", true);
+				Publisher.Publish(new PublisherParameterObject(EventConstants.PostponePropChanged, true));
 			}
 		}
 

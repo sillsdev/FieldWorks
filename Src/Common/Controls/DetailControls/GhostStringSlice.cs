@@ -12,6 +12,7 @@ using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -455,17 +456,15 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				// will typically dispose this and create a new string slice whose key is our own key
 				// followed by the flid of the string property.
 				// To avoid problems, PropChanged must not be postponed (cf. LT-22018).
-				// Copy m_mediator in case 'this' gets disposed.
-				Mediator mediator = m_mediator;
 				int hvoNewObj;
 				try
 				{
-					mediator.SendMessage("PostponePropChanged", false);
+					Publisher.Publish(new PublisherParameterObject(EventConstants.PostponePropChanged, false));
 					hvoNewObj = MakeRealObject(tssTyped);
 				}
 				finally
 				{
-					mediator.SendMessage("PostponePropChanged", true);
+					Publisher.Publish(new PublisherParameterObject(EventConstants.PostponePropChanged, true));
 				}
 
 				// Now try to make a suitable selection in the slice that replaces this.
