@@ -17,6 +17,7 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.FieldWorks.Common.Controls;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
@@ -1349,7 +1350,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					CreateNewEntry();
 					if (DialogResult == DialogResult.Retry)
 					{
-						m_mediator.SendMessage("JumpToPopupLexEntry", m_entry.Hvo);
+						Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToPopupLexEntry, m_entry.Hvo));
 						DialogResult = DialogResult.OK;
 					}
 					break;
