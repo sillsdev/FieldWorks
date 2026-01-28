@@ -60,7 +60,7 @@ namespace LexEdDllTests
 			// SUT
 			Assert.That(GoldEticGuidFixer.ReplacePOSGuidsWithGoldEticGuids(Cache), Is.True);
 			Assert.Throws<KeyNotFoundException>(() => Cache.ServiceLocator.ObjectRepository.GetObject(nonStandardGuid));
-			Assert.NotNull(Cache.ServiceLocator.ObjectRepository.GetObject(goldGuid));
+			Assert.That(Cache.ServiceLocator.ObjectRepository.GetObject(goldGuid), Is.Not.Null);
 		}
 
 		[Test]
@@ -82,7 +82,7 @@ namespace LexEdDllTests
 			// SUT
 			Assert.That(GoldEticGuidFixer.ReplacePOSGuidsWithGoldEticGuids(Cache), Is.True);
 			Assert.Throws<KeyNotFoundException>(() => Cache.ServiceLocator.ObjectRepository.GetObject(nonStandardGuid));
-			Assert.NotNull(Cache.ServiceLocator.ObjectRepository.GetObject(goldGuid));
+			Assert.That(Cache.ServiceLocator.ObjectRepository.GetObject(goldGuid), Is.Not.Null);
 		}
 
 		[Test]
@@ -106,8 +106,8 @@ namespace LexEdDllTests
 			msa.PartOfSpeechRA = myNewPos;
 			// SUT
 			Assert.That(GoldEticGuidFixer.ReplacePOSGuidsWithGoldEticGuids(Cache), Is.True);
-			Assert.NotNull(msa.PartOfSpeechRA);
-			Assert.AreEqual(originalText, msa.PartOfSpeechRA.Name.BestVernacularAnalysisAlternative.Text);
+			Assert.That(msa.PartOfSpeechRA, Is.Not.Null);
+			Assert.That(msa.PartOfSpeechRA.Name.BestVernacularAnalysisAlternative.Text, Is.EqualTo(originalText));
 		}
 
 		[Test]
@@ -121,8 +121,7 @@ namespace LexEdDllTests
 			var myNewPosGuid = myNewPos.Guid;
 			// SUT
 			Assert.That(GoldEticGuidFixer.ReplacePOSGuidsWithGoldEticGuids(Cache), Is.False);
-			Assert.AreEqual(myNewPos, Cache.ServiceLocator.GetObject(myNewPosGuid),
-								"Guid should not have been replaced");
+			Assert.That(Cache.ServiceLocator.GetObject(myNewPosGuid), Is.EqualTo(myNewPos), "Guid should not have been replaced");
 		}
 
 		[Test]

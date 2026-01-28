@@ -166,7 +166,7 @@ namespace SIL.FieldWorks.IText
 				string altCaseForm;
 				ta.SetAlternateCase(0, 0, StringCaseStatus.allLower, out altCaseForm);
 				ta.ReparseParagraph();
-				Assert.AreEqual("xxxpus", altCaseForm);
+				Assert.That(altCaseForm, Is.EqualTo("xxxpus"));
 				exportedDoc = ExportToXml();
 				AssertThatXmlIn.Dom(exportedDoc).HasAtLeastOneMatchForXpath("//word/item[@type=\"txt\" and text()=\"Xxxpus\"]");
 			}

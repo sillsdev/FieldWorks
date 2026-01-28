@@ -120,23 +120,20 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 					continue; // skip internal styles which won't be in menu.
 				}
 				i = m_stylesComboBox.FindStringExact(style.Name);
-				Assert.IsTrue(i > -1);
+				Assert.That(i > -1, Is.True);
 				StyleListItem comboItem = (StyleListItem)m_stylesComboBox.Items[i];
-				Assert.AreEqual(style.Type, comboItem.Type);
-				Assert.IsFalse(comboItem.IsDefaultParaCharsStyle,
-					"Style is Default Paragraph Characters, but should not be");
+				Assert.That(comboItem.Type, Is.EqualTo(style.Type));
+				Assert.That(comboItem.IsDefaultParaCharsStyle, Is.False, "Style is Default Paragraph Characters, but should not be");
 			}
 
 			// Now check for the Default Paragraph Characters psuedo-style style.
 			i = m_stylesComboBox.FindStringExact(StyleUtils.DefaultParaCharsStyleName);
-			Assert.IsTrue(i > -1);
+			Assert.That(i > -1, Is.True);
 			styleCountExpected++; // Add one for this psuedo-style
-			Assert.AreEqual(StyleType.kstCharacter,
-				((StyleListItem)m_stylesComboBox.Items[i]).Type);
-			Assert.IsTrue(((StyleListItem)m_stylesComboBox.Items[i]).IsDefaultParaCharsStyle,
-				"Style is not Default Paragraph Characters, but should be");
+			Assert.That(((StyleListItem)m_stylesComboBox.Items[i]).Type, Is.EqualTo(StyleType.kstCharacter));
+			Assert.That(((StyleListItem)m_stylesComboBox.Items[i]).IsDefaultParaCharsStyle, Is.True, "Style is not Default Paragraph Characters, but should be");
 
-			Assert.AreEqual(styleCountExpected, m_stylesComboBox.Items.Count);
+			Assert.That(m_stylesComboBox.Items.Count, Is.EqualTo(styleCountExpected));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -155,12 +152,11 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			// Initialize the combo box.
 			m_styleListHelper.AddStyles(m_styleSheet);
 
-			Assert.IsTrue(m_stylesComboBox.Items.Count > 0, "Oops! Everything got excluded.");
+			Assert.That(m_stylesComboBox.Items.Count > 0, Is.True, "Oops! Everything got excluded.");
 			foreach (StyleListItem style in m_stylesComboBox.Items)
 			{
 				if (style.Name != "Default Paragraph Characters")
-					Assert.AreEqual(StyleType.kstCharacter, style.Type,
-						"Should have only found character styles in Combo box, but others were found.");
+					Assert.That(style.Type, Is.EqualTo(StyleType.kstCharacter), "Should have only found character styles in Combo box, but others were found.");
 			}
 		}
 
@@ -180,12 +176,11 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			// Initialize the combo box.
 			m_styleListHelper.AddStyles(m_styleSheet);
 
-			Assert.IsTrue(m_stylesComboBox.Items.Count > 0, "Oops! Everything got excluded.");
+			Assert.That(m_stylesComboBox.Items.Count > 0, Is.True, "Oops! Everything got excluded.");
 			foreach (StyleListItem style in m_stylesComboBox.Items)
 			{
 				if (style.Name != "Default Paragraph Characters")
-					Assert.AreEqual(StyleType.kstParagraph, style.Type,
-						"Should have only found paragraph styles in Combo box, but others were found.");
+					Assert.That(style.Type, Is.EqualTo(StyleType.kstParagraph), "Should have only found paragraph styles in Combo box, but others were found.");
 			}
 		}
 
@@ -205,13 +200,12 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			// Initialize the combo box.
 			m_styleListHelper.AddStyles(m_styleSheet);
 
-			Assert.IsTrue(m_stylesComboBox.Items.Count > 0, "Oops! Everything got excluded.");
+			Assert.That(m_stylesComboBox.Items.Count > 0, Is.True, "Oops! Everything got excluded.");
 			foreach (StyleListItem style in m_stylesComboBox.Items)
 			{
 				if (style.Name != "Default Paragraph Characters")
-					Assert.IsTrue(style.Context == ContextValues.Title ||
-						style.Context == ContextValues.Note,
-						"Only Title or Note styles should have been found.");
+					Assert.That(style.Context == ContextValues.Title ||
+						style.Context == ContextValues.Note, Is.True, "Only Title or Note styles should have been found.");
 			}
 
 			// Change the list of included styles to only include Internal Mappable styles.
@@ -220,12 +214,11 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			m_styleListHelper.IncludeStylesWithContext.Add(ContextValues.InternalMappable);
 			m_styleListHelper.Refresh();
 
-			Assert.IsTrue(m_stylesComboBox.Items.Count > 0, "Oops! Everything got excluded.");
+			Assert.That(m_stylesComboBox.Items.Count > 0, Is.True, "Oops! Everything got excluded.");
 			foreach (StyleListItem style in m_stylesComboBox.Items)
 			{
 				if (style.Name != "Default Paragraph Characters")
-					Assert.AreEqual(ContextValues.InternalMappable, style.Context,
-						"Only InternalMappable styles should have been found.");
+					Assert.That(style.Context, Is.EqualTo(ContextValues.InternalMappable), "Only InternalMappable styles should have been found.");
 			}
 		}
 
@@ -244,12 +237,11 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			// Initialize the combo box.
 			m_styleListHelper.AddStyles(m_styleSheet);
 
-			Assert.IsTrue(m_stylesComboBox.Items.Count > 0, "Oops! Everything got excluded.");
+			Assert.That(m_stylesComboBox.Items.Count > 0, Is.True, "Oops! Everything got excluded.");
 			foreach (StyleListItem style in m_stylesComboBox.Items)
 			{
-				Assert.IsTrue(style.Context == ContextValues.Title ||
-					style.Type == StyleType.kstCharacter,
-					"Only Title or character styles should have been found.");
+				Assert.That(style.Context == ContextValues.Title ||
+					style.Type == StyleType.kstCharacter, Is.True, "Only Title or character styles should have been found.");
 			}
 		}
 
@@ -270,13 +262,11 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			// Initialize the combo box.
 			m_styleListHelper.AddStyles(m_styleSheet);
 
-			Assert.IsTrue(m_stylesComboBox.Items.Count > 0, "Oops! Everything got excluded.");
+			Assert.That(m_stylesComboBox.Items.Count > 0, Is.True, "Oops! Everything got excluded.");
 			foreach (StyleListItem style in m_stylesComboBox.Items)
 			{
-				Assert.IsTrue(style.Function != FunctionValues.Chapter,
-					"Chapter style should not have been found.");
-				Assert.IsTrue(style.Function != FunctionValues.Verse,
-					"Verse style should not have been found.");
+				Assert.That(style.Function != FunctionValues.Chapter, Is.True, "Chapter style should not have been found.");
+				Assert.That(style.Function != FunctionValues.Verse, Is.True, "Verse style should not have been found.");
 			}
 
 			// Change the list of excluded styles to only exclude Text styles.
@@ -285,11 +275,10 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			m_styleListHelper.ExcludeStylesWithFunction.Add(FunctionValues.List);
 			m_styleListHelper.Refresh();
 
-			Assert.IsTrue(m_stylesComboBox.Items.Count > 0, "Oops! Everything got excluded.");
+			Assert.That(m_stylesComboBox.Items.Count > 0, Is.True, "Oops! Everything got excluded.");
 			foreach (StyleListItem style in m_stylesComboBox.Items)
 			{
-				Assert.IsTrue(style.Function != FunctionValues.List,
-					"Prose style " + style.Name + " should not have been found.");
+				Assert.That(style.Function != FunctionValues.List, Is.True, "Prose style " + style.Name + " should not have been found.");
 			}
 		}
 
@@ -310,13 +299,11 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			// Initialize the combo box.
 			m_styleListHelper.AddStyles(m_styleSheet);
 
-			Assert.IsTrue(m_stylesComboBox.Items.Count > 0, "Oops! Everything got excluded.");
+			Assert.That(m_stylesComboBox.Items.Count > 0, Is.True, "Oops! Everything got excluded.");
 			foreach (StyleListItem style in m_stylesComboBox.Items)
 			{
-				Assert.IsTrue(style.Context != ContextValues.Title,
-					"Title style should not have been found.");
-				Assert.IsTrue(style.Context != ContextValues.Intro,
-					"Intro style should not have been found.");
+				Assert.That(style.Context != ContextValues.Title, Is.True, "Title style should not have been found.");
+				Assert.That(style.Context != ContextValues.Intro, Is.True, "Intro style should not have been found.");
 			}
 
 			// Change the list of excluded styles to only exclude Text styles.
@@ -325,11 +312,10 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			m_styleListHelper.ExcludeStylesWithContext.Add(ContextValues.Text);
 			m_styleListHelper.Refresh();
 
-			Assert.IsTrue(m_stylesComboBox.Items.Count > 0, "Oops! Everything got excluded.");
+			Assert.That(m_stylesComboBox.Items.Count > 0, Is.True, "Oops! Everything got excluded.");
 			foreach (StyleListItem style in m_stylesComboBox.Items)
 			{
-				Assert.IsTrue(style.Context != ContextValues.Text,
-					"Text style should not have been found.");
+				Assert.That(style.Context != ContextValues.Text, Is.True, "Text style should not have been found.");
 			}
 		}
 
@@ -346,12 +332,11 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			// Initialize the combo box.
 			m_styleListHelper.AddStyles(m_styleSheet);
 
-			Assert.IsTrue(m_stylesComboBox.Items.Count > 0, "Oops! Everything got excluded.");
+			Assert.That(m_stylesComboBox.Items.Count > 0, Is.True, "Oops! Everything got excluded.");
 			foreach (StyleListItem style in m_stylesComboBox.Items)
 			{
 				if (style.Name != "Default Paragraph Characters")
-					Assert.IsTrue(style.Context != ContextValues.General,
-						"General style should not have been found.");
+					Assert.That(style.Context != ContextValues.General, Is.True, "General style should not have been found.");
 			}
 		}
 
@@ -372,28 +357,24 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			// Initialize the combo box.
 			m_styleListHelper.AddStyles(m_styleSheet);
 
-			Assert.IsTrue(m_stylesComboBox.Items.Count > 0, "Oops! Everything got excluded.");
+			Assert.That(m_stylesComboBox.Items.Count > 0, Is.True, "Oops! Everything got excluded.");
 			foreach (StyleListItem style in m_stylesComboBox.Items)
 			{
-				Assert.AreEqual(StyleType.kstCharacter, style.Type,
-					"Should have only found character styles in combo box, but others were found.");
-				Assert.IsTrue(style.Context != ContextValues.Text,
-					"Text style should not have been found.");
+				Assert.That(style.Type, Is.EqualTo(StyleType.kstCharacter), "Should have only found character styles in combo box, but others were found.");
+				Assert.That(style.Context != ContextValues.Text, Is.True, "Text style should not have been found.");
 			}
 
 			// Now show only paragraph styles.
 			m_styleListHelper.ShowOnlyStylesOfType = StyleType.kstParagraph;
 			m_styleListHelper.Refresh();
 
-			Assert.IsTrue(m_stylesComboBox.Items.Count > 0, "Oops! Everything got excluded.");
+			Assert.That(m_stylesComboBox.Items.Count > 0, Is.True, "Oops! Everything got excluded.");
 			foreach (StyleListItem style in m_stylesComboBox.Items)
 			{
 				if (style.Name != "Default Paragraph Characters")
 				{
-					Assert.AreEqual(StyleType.kstParagraph, style.Type,
-						"Should have only found character styles in Combo box, but others were found.");
-					Assert.IsTrue(style.Context != ContextValues.Text,
-						"Text style should not have been found.");
+					Assert.That(style.Type, Is.EqualTo(StyleType.kstParagraph), "Should have only found character styles in Combo box, but others were found.");
+					Assert.That(style.Context != ContextValues.Text, Is.True, "Text style should not have been found.");
 				}
 			}
 		}
@@ -411,14 +392,14 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			m_styleListHelper.MaxStyleLevel = 0;
 			m_styleListHelper.Refresh();
 			foreach (StyleListItem style in m_stylesComboBox.Items)
-				Assert.IsTrue(style.UserLevel <= 0, "Non-basic style was added in basic mode");
+				Assert.That(style.UserLevel <= 0, Is.True, "Non-basic style was added in basic mode");
 
 			// setup for custom styles and make sure the appropriate styles are present.
 			m_styleListHelper.AddStyles(m_styleSheet);
 			m_styleListHelper.MaxStyleLevel = 2;
 			m_styleListHelper.Refresh();
 			foreach (StyleListItem style in m_stylesComboBox.Items)
-				Assert.IsTrue(style.UserLevel <= 2, "Non-custom style was added in basic mode");
+				Assert.That(style.UserLevel <= 2, Is.True, "Non-custom style was added in basic mode");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -433,7 +414,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			// Initialize the combo box.
 			m_styleListHelper.AddStyles(m_styleSheet);
 			m_styleListHelper.SelectedStyleName = "Caption";
-			Assert.AreEqual("Caption", m_stylesComboBox.Text);
+			Assert.That(m_stylesComboBox.Text, Is.EqualTo("Caption"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -449,9 +430,9 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			m_styleListHelper.AddStyles(m_styleSheet);
 			m_styleListHelper.SelectedStyleName = "Normal";
 			ICollection beforeStyles = (ICollection)ReflectionHelper.GetProperty(m_styleListHelper, "Items");
-			Assert.AreEqual("", m_stylesComboBox.Text);
+			Assert.That(m_stylesComboBox.Text, Is.EqualTo(""));
 			ICollection afterStyles = (ICollection)ReflectionHelper.GetProperty(m_styleListHelper, "Items");
-			Assert.AreEqual(beforeStyles.Count, afterStyles.Count, "Selected styles should not change");
+			Assert.That(afterStyles.Count, Is.EqualTo(beforeStyles.Count), "Selected styles should not change");
 		}
 	}
 }

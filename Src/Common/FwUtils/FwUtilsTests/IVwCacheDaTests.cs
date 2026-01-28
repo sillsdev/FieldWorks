@@ -62,15 +62,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void ObjectProp()
 		{
 			int hvo = m_ISilDataAccess.get_ObjectProp(1000, 2000);
-			Assert.AreEqual(0, hvo);
+			Assert.That(hvo, Is.EqualTo(0));
 
 			m_IVwCacheDa.CacheObjProp(1000, 2000, 7777);
 			hvo = m_ISilDataAccess.get_ObjectProp(1000, 2000);
-			Assert.AreEqual(7777, hvo);
+			Assert.That(hvo, Is.EqualTo(7777));
 
 			m_IVwCacheDa.CacheObjProp(1000, 2000, 8888);
 			hvo = m_ISilDataAccess.get_ObjectProp(1000, 2000);
-			Assert.AreEqual(8888, hvo);
+			Assert.That(hvo, Is.EqualTo(8888));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -86,26 +86,26 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				int chvo = 99;
 				m_ISilDataAccess.VecProp(1001, 2001, 10, out chvo, arrayPtr);
-				Assert.AreEqual(0, chvo);
+				Assert.That(chvo, Is.EqualTo(0));
 
 				chvo = m_ISilDataAccess.get_VecSize(1001, 2001);
-				Assert.AreEqual(0, chvo);
+				Assert.That(chvo, Is.EqualTo(0));
 
 				int[] rgHvo = new int[] { 33, 44, 55 };
 				m_IVwCacheDa.CacheVecProp(1001, 2001, rgHvo, rgHvo.Length);
 				m_ISilDataAccess.VecProp(1001, 2001, 10, out chvo, arrayPtr);
 				int[] rgHvoNew = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
-				Assert.AreEqual(rgHvo.Length, rgHvoNew.Length);
+				Assert.That(rgHvoNew.Length, Is.EqualTo(rgHvo.Length));
 				for (int i = 0; i < rgHvoNew.Length; i++)
-					Assert.AreEqual(rgHvo[i], rgHvoNew[i]);
+					Assert.That(rgHvoNew[i], Is.EqualTo(rgHvo[i]));
 
 				int[] rgHvo2 = new int[] { 66, 77, 88, 99 };
 				m_IVwCacheDa.CacheVecProp(1001, 2001, rgHvo2, rgHvo2.Length);
 				m_ISilDataAccess.VecProp(1001, 2001, 10, out chvo, arrayPtr);
 				rgHvoNew = MarshalEx.NativeToArray<int>(arrayPtr, chvo);
-				Assert.AreEqual(rgHvo2.Length, rgHvoNew.Length);
+				Assert.That(rgHvoNew.Length, Is.EqualTo(rgHvo2.Length));
 				for (int i = 0; i < rgHvoNew.Length; i++)
-					Assert.AreEqual(rgHvo2[i], rgHvoNew[i]);
+					Assert.That(rgHvoNew[i], Is.EqualTo(rgHvo2[i]));
 
 				Exception ex = null;
 				try
@@ -117,11 +117,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 					ex = e;
 				}
 				Assert.That(ex, Is.Not.Null);
-				Assert.AreEqual(typeof(ArgumentException), ex.GetType());
+				Assert.That(ex.GetType(), Is.EqualTo(typeof(ArgumentException)));
 
 				// test VecItem
 				int hvo = m_ISilDataAccess.get_VecItem(1001, 2001, 2);
-				Assert.AreEqual(88, hvo);
+				Assert.That(hvo, Is.EqualTo(88));
 
 				ex = null;
 				try
@@ -133,11 +133,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 					ex = e;
 				}
 				Assert.That(ex, Is.Not.Null);
-				Assert.AreEqual(typeof(ArgumentException), ex.GetType());
+				Assert.That(ex.GetType(), Is.EqualTo(typeof(ArgumentException)));
 
 				// test Vector size
 				chvo = m_ISilDataAccess.get_VecSize(1001, 2001);
-				Assert.AreEqual(rgHvo2.Length, chvo);
+				Assert.That(chvo, Is.EqualTo(rgHvo2.Length));
 			}
 		}
 
@@ -153,23 +153,23 @@ namespace SIL.FieldWorks.Common.FwUtils
 			{
 				int chvo = 99;
 				m_ISilDataAccess.BinaryPropRgb(1112, 2221, ArrayPtr.Null, 0, out chvo);
-				Assert.AreEqual(0, chvo);
+				Assert.That(chvo, Is.EqualTo(0));
 
 				byte[] prgb = new byte[] { 3, 4, 5 };
 				m_IVwCacheDa.CacheBinaryProp(1112, 2221, prgb, prgb.Length);
 				m_ISilDataAccess.BinaryPropRgb(1112, 2221, arrayPtr, 10, out chvo);
 				byte[] prgbNew = MarshalEx.NativeToArray<byte>(arrayPtr, chvo);
-				Assert.AreEqual(prgb.Length, prgbNew.Length);
+				Assert.That(prgbNew.Length, Is.EqualTo(prgb.Length));
 				for (int i = 0; i < prgbNew.Length; i++)
-					Assert.AreEqual(prgb[i], prgbNew[i]);
+					Assert.That(prgbNew[i], Is.EqualTo(prgb[i]));
 
 				byte[] prgb2 = new byte[] { 6, 7, 8, 9 };
 				m_IVwCacheDa.CacheBinaryProp(1112, 2221, prgb2, prgb2.Length);
 				m_ISilDataAccess.BinaryPropRgb(1112, 2221, arrayPtr, 10, out chvo);
 				prgbNew = MarshalEx.NativeToArray<byte>(arrayPtr, chvo);
-				Assert.AreEqual(prgb2.Length, prgbNew.Length);
+				Assert.That(prgbNew.Length, Is.EqualTo(prgb2.Length));
 				for (int i = 0; i < prgbNew.Length; i++)
-					Assert.AreEqual(prgb2[i], prgbNew[i]);
+					Assert.That(prgbNew[i], Is.EqualTo(prgb2[i]));
 			}
 		}
 
@@ -203,17 +203,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void GuidProp()
 		{
 			Guid guidNew = m_ISilDataAccess.get_GuidProp(1113, 2223);
-			Assert.AreEqual(Guid.Empty, guidNew);
+			Assert.That(guidNew, Is.EqualTo(Guid.Empty));
 
 			Guid guid = new Guid(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
 			m_IVwCacheDa.CacheGuidProp(1113, 2223, guid);
 			guidNew = m_ISilDataAccess.get_GuidProp(1113, 2223);
-			Assert.AreEqual(guid, guidNew);
+			Assert.That(guidNew, Is.EqualTo(guid));
 
 			Guid guid2 = new Guid(10, 12, 13, 14, 15, 16, 17, 18, 19, 110, 111);
 			m_IVwCacheDa.CacheGuidProp(1113, 2223, guid2);
 			guidNew = m_ISilDataAccess.get_GuidProp(1113, 2223);
-			Assert.AreEqual(guid2, guidNew);
+			Assert.That(guidNew, Is.EqualTo(guid2));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -225,15 +225,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void Int64Prop()
 		{
 			long valNew = m_ISilDataAccess.get_Int64Prop(1114, 2224);
-			Assert.AreEqual(0, valNew);
+			Assert.That(valNew, Is.EqualTo(0));
 
 			m_IVwCacheDa.CacheInt64Prop(1114, 2224, long.MaxValue);
 			valNew = m_ISilDataAccess.get_Int64Prop(1114, 2224);
-			Assert.AreEqual(long.MaxValue, valNew);
+			Assert.That(valNew, Is.EqualTo(long.MaxValue));
 
 			m_IVwCacheDa.CacheInt64Prop(1114, 2224, long.MinValue);
 			valNew = m_ISilDataAccess.get_Int64Prop(1114, 2224);
-			Assert.AreEqual(long.MinValue, valNew);
+			Assert.That(valNew, Is.EqualTo(long.MinValue));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -245,26 +245,26 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void IntProp()
 		{
 			int valNew = m_ISilDataAccess.get_IntProp(1115, 2225);
-			Assert.AreEqual(0, valNew);
+			Assert.That(valNew, Is.EqualTo(0));
 
 			bool f;
 			valNew = m_IVwCacheDa.get_CachedIntProp(1115, 2225, out f);
-			Assert.AreEqual(false, f);
-			Assert.AreEqual(0, valNew);
+			Assert.That(f, Is.EqualTo(false));
+			Assert.That(valNew, Is.EqualTo(0));
 
 			m_IVwCacheDa.CacheIntProp(1115, 2225, int.MaxValue);
 			valNew = m_ISilDataAccess.get_IntProp(1115, 2225);
-			Assert.AreEqual(int.MaxValue, valNew);
+			Assert.That(valNew, Is.EqualTo(int.MaxValue));
 			valNew = m_IVwCacheDa.get_CachedIntProp(1115, 2225, out f);
-			Assert.AreEqual(true, f);
-			Assert.AreEqual(int.MaxValue, valNew);
+			Assert.That(f, Is.EqualTo(true));
+			Assert.That(valNew, Is.EqualTo(int.MaxValue));
 
 			m_IVwCacheDa.CacheIntProp(1115, 2225, int.MinValue);
 			valNew = m_ISilDataAccess.get_IntProp(1115, 2225);
-			Assert.AreEqual(int.MinValue, valNew);
+			Assert.That(valNew, Is.EqualTo(int.MinValue));
 			valNew = m_IVwCacheDa.get_CachedIntProp(1115, 2225, out f);
-			Assert.AreEqual(true, f);
-			Assert.AreEqual(int.MinValue, valNew);
+			Assert.That(f, Is.EqualTo(true));
+			Assert.That(valNew, Is.EqualTo(int.MinValue));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -276,15 +276,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void TimeProp()
 		{
 			long valNew = m_ISilDataAccess.get_TimeProp(1116, 2226);
-			Assert.AreEqual(0, valNew);
+			Assert.That(valNew, Is.EqualTo(0));
 
 			m_IVwCacheDa.CacheTimeProp(1116, 2226, DateTime.MaxValue.Ticks);
 			valNew = m_ISilDataAccess.get_TimeProp(1116, 2226);
-			Assert.AreEqual(DateTime.MaxValue.Ticks, valNew);
+			Assert.That(valNew, Is.EqualTo(DateTime.MaxValue.Ticks));
 
 			m_IVwCacheDa.CacheTimeProp(1116, 2226, DateTime.MinValue.Ticks);
 			valNew = m_ISilDataAccess.get_TimeProp(1116, 2226);
-			Assert.AreEqual(DateTime.MinValue.Ticks, valNew);
+			Assert.That(valNew, Is.EqualTo(DateTime.MinValue.Ticks));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -298,7 +298,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			ITsString tsStringNew = m_ISilDataAccess.get_MultiStringAlt(1117, 2227, 7);
 			Assert.That(tsStringNew, Is.Not.Null);
-			Assert.AreEqual(0, tsStringNew.Length);
+			Assert.That(tsStringNew.Length, Is.EqualTo(0));
 
 			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
@@ -307,17 +307,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 			ITsString tsString = strBldr.GetString();
 			m_IVwCacheDa.CacheStringAlt(1117, 2227, 7, tsString);
 			tsStringNew = m_ISilDataAccess.get_MultiStringAlt(1117, 2227, 7);
-			Assert.AreEqual(tsString, tsStringNew);
+			Assert.That(tsStringNew, Is.EqualTo(tsString));
 
 			strBldr.Replace(0, 0, "SecondTest", propsBldr.GetTextProps());
 			tsString = strBldr.GetString();
 			m_IVwCacheDa.CacheStringAlt(1117, 2227, 7, tsString);
 			tsStringNew = m_ISilDataAccess.get_MultiStringAlt(1117, 2227, 7);
-			Assert.AreEqual(tsString, tsStringNew);
+			Assert.That(tsStringNew, Is.EqualTo(tsString));
 
 			tsStringNew = m_ISilDataAccess.get_MultiStringAlt(1117, 2227, 8);
 			Assert.That(tsStringNew, Is.Not.Null);
-			Assert.AreEqual(0, tsStringNew.Length);
+			Assert.That(tsStringNew.Length, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -331,7 +331,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			// Test StringProp
 			ITsString tsStringNew = m_ISilDataAccess.get_StringProp(1118, 2228);
-			Assert.AreEqual(0, tsStringNew.Length);
+			Assert.That(tsStringNew.Length, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -353,7 +353,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			ITsString tsStringNew = m_ISilDataAccess.get_StringProp(1118, 2228);
 
-			Assert.AreEqual(tsString, tsStringNew);
+			Assert.That(tsStringNew, Is.EqualTo(tsString));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -375,7 +375,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			tsString = strBldr.GetString();
 			m_IVwCacheDa.CacheStringProp(1118, 2228, tsString);
 			ITsString tsStringNew = m_ISilDataAccess.get_StringProp(1118, 2228);
-			Assert.AreEqual(tsString, tsStringNew);
+			Assert.That(tsStringNew, Is.EqualTo(tsString));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -392,12 +392,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 			string str = "UnicodeTest";
 			m_IVwCacheDa.CacheUnicodeProp(1119, 2229, str, str.Length);
 			strNew = m_ISilDataAccess.get_UnicodeProp(1119, 2229);
-			Assert.AreEqual(str, strNew);
+			Assert.That(strNew, Is.EqualTo(str));
 
 			str = "SecondUnicodeTest";
 			m_IVwCacheDa.CacheUnicodeProp(1119, 2229, str, str.Length);
 			strNew = m_ISilDataAccess.get_UnicodeProp(1119, 2229);
-			Assert.AreEqual(str, strNew);
+			Assert.That(strNew, Is.EqualTo(str));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -415,7 +415,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			ITsTextProps ttp = propsBldr.GetTextProps();
 			m_IVwCacheDa.CacheUnknown(1120, 2220, ttp);
 			obj = m_ISilDataAccess.get_UnknownProp(1120, 2220);
-			Assert.AreEqual(ttp, obj);
+			Assert.That(obj, Is.EqualTo(ttp));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -430,47 +430,47 @@ namespace SIL.FieldWorks.Common.FwUtils
 		private void VerifyCache(int hvo, int tag, object[] expValues)
 		{
 			int hvoVal = m_ISilDataAccess.get_ObjectProp(hvo, tag);
-			Assert.AreEqual(expValues[0], hvoVal);
+			Assert.That(hvoVal, Is.EqualTo(expValues[0]));
 
 			int chvo = 99;
 			using (ArrayPtr arrayPtr = MarshalEx.ArrayToNative<int>(10))
 			{
 				m_ISilDataAccess.VecProp(hvo, tag, 10, out chvo, arrayPtr);
 				if (expValues[1] is int[])
-					Assert.AreEqual(((int[])expValues[1]).Length, chvo);
+					Assert.That(chvo, Is.EqualTo(((int[])expValues[1]).Length));
 				else
-					Assert.AreEqual(expValues[1], chvo);
+					Assert.That(chvo, Is.EqualTo(expValues[1]));
 
 				m_ISilDataAccess.BinaryPropRgb(hvo, tag, arrayPtr, 10, out chvo);
 				if (expValues[2] is byte[])
-					Assert.AreEqual(((byte[])expValues[2]).Length, chvo);
+					Assert.That(chvo, Is.EqualTo(((byte[])expValues[2]).Length));
 				else
-					Assert.AreEqual(expValues[2], chvo);
+					Assert.That(chvo, Is.EqualTo(expValues[2]));
 
 				Guid guidNew = m_ISilDataAccess.get_GuidProp(hvo, tag);
-				Assert.AreEqual(expValues[3], guidNew);
+				Assert.That(guidNew, Is.EqualTo(expValues[3]));
 
 				long valLong = m_ISilDataAccess.get_Int64Prop(hvo, tag);
-				Assert.AreEqual(expValues[4], valLong);
+				Assert.That(valLong, Is.EqualTo(expValues[4]));
 
 				// Int64 and TimeProp use the same cache
 				valLong = m_ISilDataAccess.get_TimeProp(hvo, tag);
-				Assert.AreEqual(expValues[4], valLong);
+				Assert.That(valLong, Is.EqualTo(expValues[4]));
 
 				int valInt = m_ISilDataAccess.get_IntProp(hvo, tag);
-				Assert.AreEqual(expValues[5], valInt);
+				Assert.That(valInt, Is.EqualTo(expValues[5]));
 
 				ITsString tsStringNew = m_ISilDataAccess.get_MultiStringAlt(hvo, tag, 12345);
-				Assert.AreEqual(expValues[6], tsStringNew.Text);
+				Assert.That(tsStringNew.Text, Is.EqualTo(expValues[6]));
 
 				tsStringNew = m_ISilDataAccess.get_StringProp(hvo, tag);
-				Assert.AreEqual(expValues[7], tsStringNew.Text);
+				Assert.That(tsStringNew.Text, Is.EqualTo(expValues[7]));
 
 				string strNew = m_ISilDataAccess.get_UnicodeProp(hvo, tag);
-				Assert.AreEqual(expValues[8], strNew);
+				Assert.That(strNew, Is.EqualTo(expValues[8]));
 
 				object obj = m_ISilDataAccess.get_UnknownProp(hvo, tag);
-				Assert.AreEqual(expValues[9], obj);
+				Assert.That(obj, Is.EqualTo(expValues[9]));
 
 				CheckIsPropInCache(hvo, tag, expValues);
 			}
@@ -495,8 +495,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 					case CellarPropertyType.Nil:
 						try
 						{
-							Assert.IsFalse(m_ISilDataAccess.get_IsPropInCache(hvo, tag,
-								(int)cpt, 0));
+							Assert.That(m_ISilDataAccess.get_IsPropInCache(hvo, tag,
+								(int)cpt, 0), Is.False);
 						}
 						catch (ArgumentException)
 						{
@@ -552,8 +552,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					default:
 						continue;
 				}
-				Assert.AreEqual(flag, m_ISilDataAccess.get_IsPropInCache(hvo, tag, (int)cpt, 12345),
-					string.Format("IsPropInCache for property type '{0}' failed;", cpt));
+				Assert.That(m_ISilDataAccess.get_IsPropInCache(hvo, tag, (int)cpt, 12345), Is.EqualTo(flag).Within(string.Format("IsPropInCache for property type '{0}' failed;", cpt)));
 			}
 		}
 
@@ -652,7 +651,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			// Make sure the correct hvo is returned when
 			// trying to create an object from the guid.
-			Assert.AreEqual(objHvo1, m_ISilDataAccess.get_ObjFromGuid(guid));
+			Assert.That(m_ISilDataAccess.get_ObjFromGuid(guid), Is.EqualTo(objHvo1));
 
 			m_IVwCacheDa.ClearAllData();
 
@@ -661,7 +660,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_IVwCacheDa.CacheGuidProp(objHvo1, objFlid, guid);
 
 			// Make sure the same flid is returned when the caching is reversed.
-			Assert.AreEqual(objHvo1, m_ISilDataAccess.get_ObjFromGuid(guid));
+			Assert.That(m_ISilDataAccess.get_ObjFromGuid(guid), Is.EqualTo(objHvo1));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -689,7 +688,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 			// Make sure the correct hvo is returned when
 			// trying to create an object from the guid.
-			Assert.AreEqual(objHvo1, m_ISilDataAccess.get_ObjFromGuid(guid));
+			Assert.That(m_ISilDataAccess.get_ObjFromGuid(guid), Is.EqualTo(objHvo1));
 
 			m_IVwCacheDa.ClearAllData();
 
@@ -698,7 +697,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_ISilDataAccess.SetGuid(objHvo1, objFlid, guid);
 
 			// Make sure the same flid is returned when the saving is reversed.
-			Assert.AreEqual(objHvo1, m_ISilDataAccess.get_ObjFromGuid(guid));
+			Assert.That(m_ISilDataAccess.get_ObjFromGuid(guid), Is.EqualTo(objHvo1));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -726,7 +725,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			// remove the ability to get the object for objHvo1 using the same guid
 			// that was a property for object objHvo2.
 			m_ISilDataAccess.RemoveObjRefs(objHvo2);
-			Assert.AreEqual(objHvo1, m_ISilDataAccess.get_ObjFromGuid(guid));
+			Assert.That(m_ISilDataAccess.get_ObjFromGuid(guid), Is.EqualTo(objHvo1));
 		}
 	}
 }

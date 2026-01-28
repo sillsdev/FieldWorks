@@ -169,7 +169,7 @@ namespace SIL.FieldWorks.XWorks
 				// SUT
 				_controller.AssociatePublication("publicationA", _configurations[0]);
 			}
-			Assert.AreEqual(1, _configurations[0].Publications.Count(pub => pub.Equals("publicationA")), "associated too many times");
+			Assert.That(_configurations[0].Publications.Count(pub => pub.Equals("publicationA")), Is.EqualTo(1), "associated too many times");
 		}
 
 		[Test]
@@ -202,11 +202,11 @@ namespace SIL.FieldWorks.XWorks
 			var oldLabel = selectedConfig.Label;
 
 			// SUT
-			Assert.True(_controller.RenameConfiguration(listViewItem, new LabelEditEventArgs(0, null)), "'Cancel' should complete successfully");
+			Assert.That(_controller.RenameConfiguration(listViewItem, new LabelEditEventArgs(0, null)), Is.True, "'Cancel' should complete successfully");
 
-			Assert.AreEqual(oldLabel, selectedConfig.Label, "Configuration should not have been renamed");
-			Assert.AreEqual(oldLabel, listViewItem.Text, "ListViewItem Text should have been reset");
-			Assert.False(_controller.IsDirty, "No changes; should not be dirty");
+			Assert.That(selectedConfig.Label, Is.EqualTo(oldLabel), "Configuration should not have been renamed");
+			Assert.That(listViewItem.Text, Is.EqualTo(oldLabel), "ListViewItem Text should have been reset");
+			Assert.That(_controller.IsDirty, Is.False, "No changes; should not be dirty");
 		}
 
 		[Test]
@@ -219,10 +219,10 @@ namespace SIL.FieldWorks.XWorks
 			_configurations.Insert(0, configB);
 
 			// SUT
-			Assert.False(_controller.RenameConfiguration(new ListViewItem { Tag = configB }, dupLabelArgs), "Duplicate should return 'incomplete'");
+			Assert.That(_controller.RenameConfiguration(new ListViewItem { Tag = configB }, dupLabelArgs), Is.False, "Duplicate should return 'incomplete'");
 
-			Assert.AreEqual(dupLabelArgs.Label, configA.Label, "The first config should have been given the specified name");
-			Assert.AreNotEqual(dupLabelArgs.Label, configB.Label, "The second config should not have been given the same name");
+			Assert.That(configA.Label, Is.EqualTo(dupLabelArgs.Label), "The first config should have been given the specified name");
+			Assert.That(configB.Label, Is.Not.EqualTo(dupLabelArgs.Label).Within("The second config should not have been given the same name"));
 		}
 
 		[Test]
@@ -232,11 +232,10 @@ namespace SIL.FieldWorks.XWorks
 			var selectedConfig = _configurations[0];
 			selectedConfig.FilePath = null;
 			// SUT
-			Assert.True(_controller.RenameConfiguration(new ListViewItem { Tag = selectedConfig }, new LabelEditEventArgs(0, newLabel)),
-				"Renaming a config to a unique name should complete successfully");
-			Assert.AreEqual(newLabel, selectedConfig.Label, "The configuration should have been renamed");
-			Assert.AreEqual(DictionaryConfigurationManagerController.FormatFilePath(_controller._projectConfigDir, newLabel), selectedConfig.FilePath, "The FilePath should have been generated");
-			Assert.True(_controller.IsDirty, "Made changes; should be dirty");
+			Assert.That(_controller.RenameConfiguration(new ListViewItem { Tag = selectedConfig }, new LabelEditEventArgs(0, newLabel)), Is.True, "Renaming a config to a unique name should complete successfully");
+			Assert.That(selectedConfig.Label, Is.EqualTo(newLabel), "The configuration should have been renamed");
+			Assert.That(selectedConfig.FilePath, Is.EqualTo(DictionaryConfigurationManagerController.FormatFilePath(_controller._projectConfigDir, newLabel)), "The FilePath should have been generated");
+			Assert.That(_controller.IsDirty, Is.True, "Made changes; should be dirty");
 		}
 
 
@@ -287,12 +286,12 @@ namespace SIL.FieldWorks.XWorks
 			DictionaryConfigurationManagerController.GenerateFilePath(_controller._projectConfigDir, _controller._configurations, configToRename);
 
 			var newFilePath = configToRename.FilePath;
-			StringAssert.StartsWith(_projectConfigPath, newFilePath);
-			StringAssert.EndsWith(DictionaryConfigurationModel.FileExtension, newFilePath);
-			Assert.AreEqual(DictionaryConfigurationManagerController.FormatFilePath(_controller._projectConfigDir, "configuration3_3"), configToRename.FilePath, "The file path should be based on the label");
+			Assert.That(newFilePath, Does.StartWith(_projectConfigPath));
+			Assert.That(newFilePath, Does.EndWith(DictionaryConfigurationModel.FileExtension));
+			Assert.That(configToRename.FilePath, Is.EqualTo(DictionaryConfigurationManagerController.FormatFilePath(_controller._projectConfigDir, "configuration3_3")), "The file path should be based on the label");
 			foreach (var config in conflictingConfigs)
 			{
-				Assert.AreNotEqual(Path.GetFileName(newFilePath), Path.GetFileName(config.FilePath), "File name should be unique");
+				Assert.That(Path.GetFileName(config.FilePath), Is.Not.EqualTo(Path.GetFileName(newFilePath)).Within("File name should be unique"));
 			}
 		}
 
@@ -318,19 +317,19 @@ namespace SIL.FieldWorks.XWorks
 		public void FormatFilePath()
 		{
 			var formattedFilePath = DictionaryConfigurationManagerController.FormatFilePath(_controller._projectConfigDir, "\nFile\\Name/With\"Chars<?>"); // SUT
-			StringAssert.StartsWith(_projectConfigPath, formattedFilePath);
-			StringAssert.EndsWith(DictionaryConfigurationModel.FileExtension, formattedFilePath);
-			StringAssert.DoesNotContain("\n", formattedFilePath);
-			StringAssert.DoesNotContain("\\", Path.GetFileName(formattedFilePath));
-			StringAssert.DoesNotContain("/", Path.GetFileName(formattedFilePath));
-			StringAssert.DoesNotContain("\"", formattedFilePath);
-			StringAssert.DoesNotContain("<", formattedFilePath);
-			StringAssert.DoesNotContain("?", formattedFilePath);
-			StringAssert.DoesNotContain(">", formattedFilePath);
-			StringAssert.Contains("File", formattedFilePath);
-			StringAssert.Contains("Name", formattedFilePath);
-			StringAssert.Contains("With", formattedFilePath);
-			StringAssert.Contains("Chars", formattedFilePath);
+			Assert.That(formattedFilePath, Does.StartWith(_projectConfigPath));
+			Assert.That(formattedFilePath, Does.EndWith(DictionaryConfigurationModel.FileExtension));
+			Assert.That(formattedFilePath, Does.Not.Contain("\n"));
+			Assert.That(Path.GetFileName(formattedFilePath), Does.Not.Contain("\\"));
+			Assert.That(Path.GetFileName(formattedFilePath), Does.Not.Contain("/"));
+			Assert.That(formattedFilePath, Does.Not.Contain("\""));
+			Assert.That(formattedFilePath, Does.Not.Contain("<"));
+			Assert.That(formattedFilePath, Does.Not.Contain("?"));
+			Assert.That(formattedFilePath, Does.Not.Contain(">"));
+			Assert.That(formattedFilePath, Does.Contain("File"));
+			Assert.That(formattedFilePath, Does.Contain("Name"));
+			Assert.That(formattedFilePath, Does.Contain("With"));
+			Assert.That(formattedFilePath, Does.Contain("Chars"));
 		}
 
 		[Test]
@@ -350,17 +349,17 @@ namespace SIL.FieldWorks.XWorks
 			// SUT
 			var newConfig = _controller.CopyConfiguration(extantConfigs[0]);
 
-			Assert.AreEqual("Copy of configuration4 (3)", newConfig.Label, "The new label should be based on the original");
-			Assert.Contains(newConfig, _configurations, "The new config should have been added to the list");
-			Assert.AreEqual(1, _configurations.Count(conf => newConfig.Label.Equals(conf.Label)), "The label should be unique");
+			Assert.That(newConfig.Label, Is.EqualTo("Copy of configuration4 (3)"), "The new label should be based on the original");
+			Assert.That(_configurations, Does.Contain(newConfig), "The new config should have been added to the list");
+			Assert.That(_configurations.Count(conf => newConfig.Label.Equals(conf.Label)), Is.EqualTo(1), "The label should be unique");
 
-			Assert.AreEqual(pubs.Count, newConfig.Publications.Count, "Publications were not copied");
+			Assert.That(newConfig.Publications.Count, Is.EqualTo(pubs.Count), "Publications were not copied");
 			for (int i = 0; i < pubs.Count; i++)
 			{
-				Assert.AreEqual(pubs[i], newConfig.Publications[i], "Publications were not copied");
+				Assert.That(newConfig.Publications[i], Is.EqualTo(pubs[i]), "Publications were not copied");
 			}
 			Assert.That(newConfig.FilePath, Is.Null, "Path should be null to signify that it should be generated on rename");
-			Assert.True(_controller.IsDirty, "Made changes; should be dirty");
+			Assert.That(_controller.IsDirty, Is.True, "Made changes; should be dirty");
 		}
 
 		[Test]
@@ -428,7 +427,7 @@ namespace SIL.FieldWorks.XWorks
 
 			Assert.That(FileUtils.FileExists(pathToConfiguration), "The Root configuration file should have been reset to defaults, not deleted.");
 			Assert.That(configurationToDelete.Label, Is.EqualTo("Root-based (complex forms as subentries)"), "The reset should match the shipped defaults.");
-			Assert.Contains(configurationToDelete, _configurations, "The configuration should still be present in the list after being reset.");
+			Assert.That(_configurations, Does.Contain(configurationToDelete), "The configuration should still be present in the list after being reset.");
 			Assert.That(_controller.IsDirty, "Resetting is a change that is saved later; should be dirty");
 
 			// Not asserting that the configurationToDelete.FilePath file contents are reset because that will happen later when it is saved.
@@ -452,7 +451,7 @@ namespace SIL.FieldWorks.XWorks
 			var pathToConfiguration = configurationToDelete.FilePath;
 			FileUtils.WriteStringToFile(pathToConfiguration, "customized file contents", Encoding.UTF8);
 			Assert.That(FileUtils.FileExists(pathToConfiguration), "Unit test not set up right");
-			Assert.IsFalse(FileUtils.FileExists(Path.Combine(_projectConfigPath, allRevFileName)), "Unit test not set up right");
+			Assert.That(FileUtils.FileExists(Path.Combine(_projectConfigPath, allRevFileName)), Is.False, "Unit test not set up right");
 
 			// SUT
 			_controller.DeleteConfiguration(configurationToDelete);
@@ -461,7 +460,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(configurationToDelete.Label, Is.EqualTo("English"), "The label should still be English after a reset.");
 			Assert.That(configurationToDelete.WritingSystem, Is.EqualTo("en"), "The writingsystem should still be en after a reset.");
 			Assert.That(configurationToDelete.IsReversal, Is.True, "The reset configuration files should still be a reversal file.");
-			Assert.Contains(configurationToDelete, _configurations, "The configuration should still be present in the list after being reset.");
+			Assert.That(_configurations, Does.Contain(configurationToDelete), "The configuration should still be present in the list after being reset.");
 			Assert.That(_controller.IsDirty, "Resetting is a change that is saved later; should be dirty");
 
 			// Not asserting that the configurationToDelete.FilePath file contents are reset because that will happen later when it is saved.
@@ -683,7 +682,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// SUT
 			var styleSheetFile = DictionaryConfigurationManagerController.PrepareStylesheetExport(Cache);
-			Assert.False(string.IsNullOrEmpty(styleSheetFile), "No stylesheet data prepared");
+			Assert.That(string.IsNullOrEmpty(styleSheetFile), Is.False, "No stylesheet data prepared");
 			AssertThatXmlIn.File(styleSheetFile).HasSpecifiedNumberOfMatchesForXpath("/Styles/markup", 1);
 			AssertThatXmlIn.File(styleSheetFile).HasSpecifiedNumberOfMatchesForXpath("/Styles/markup/tag[@id='" + _characterTestStyle.Name + "']", 1);
 			var enWsId = Cache.WritingSystemFactory.GetStrFromWs(_characterTestStyle.Usage.AvailableWritingSystemIds[0]);

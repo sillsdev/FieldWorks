@@ -149,19 +149,19 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 				int left, top, right, bottom;
 				vwGraphics.GetClipRect(out left, out top, out right, out bottom);
 
-				Assert.IsTrue(left == rect1.left, "First push failed: left");
-				Assert.IsTrue(right == rect1.right, "First push failed: right");
-				Assert.IsTrue(top == rect1.top, "First push failed: top");
-				Assert.IsTrue(bottom == rect1.bottom, "First push failed: bottom");
+				Assert.That(left == rect1.left, Is.True, "First push failed: left");
+				Assert.That(right == rect1.right, Is.True, "First push failed: right");
+				Assert.That(top == rect1.top, Is.True, "First push failed: top");
+				Assert.That(bottom == rect1.bottom, Is.True, "First push failed: bottom");
 
 				// try a second rectangle
 				vwGraphics.PushClipRect(rect2);
 
 				vwGraphics.GetClipRect(out left, out top, out right, out bottom);
-				Assert.IsTrue(left == rect2.left, "Second push failed: left");
-				Assert.IsTrue(right == rect2.right, "Second push failed: right");
-				Assert.IsTrue(top == rect2.top, "Second push failed: top");
-				Assert.IsTrue(bottom == rect2.bottom, "Second push failed: bottom");
+				Assert.That(left == rect2.left, Is.True, "Second push failed: left");
+				Assert.That(right == rect2.right, Is.True, "Second push failed: right");
+				Assert.That(top == rect2.top, Is.True, "Second push failed: top");
+				Assert.That(bottom == rect2.bottom, Is.True, "Second push failed: bottom");
 
 				vwGraphics.PopClipRect();
 				vwGraphics.PopClipRect();
@@ -190,7 +190,7 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 					gr.Graphics.FillRectangle(blueBrush, new Rectangle(0, 0, 1000, 1000));
 
 					// Check that filling with a blue brush worked.
-					Assert.IsTrue(ColorCompare(gr.Bitmap.GetPixel(500, 500), Color.Blue));
+					Assert.That(ColorCompare(gr.Bitmap.GetPixel(500, 500), Color.Blue), Is.True);
 
 					//
 					// Check that drawing using a VwGraphics works.
@@ -210,7 +210,7 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 					gr.Graphics.Flush();
 
 					// Check that drawing a red rectangle using the VwGraphics Interface worked
-					Assert.IsTrue(ColorCompare(gr.Bitmap.GetPixel(500, 500), Color.Red));
+					Assert.That(ColorCompare(gr.Bitmap.GetPixel(500, 500), Color.Red), Is.True);
 
 					/////
 					// Check that VwGraphics doesn't draw outside its clip rect.
@@ -232,7 +232,7 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 					gr.Graphics.Flush();
 
 					// Check that the green rectangle didn't appear on screen.
-					Assert.IsTrue(!ColorCompare(gr.Bitmap.GetPixel(500, 500), Color.Green));
+					Assert.That(!ColorCompare(gr.Bitmap.GetPixel(500, 500), Color.Green), Is.True);
 				}
 			}
 		}
@@ -257,10 +257,10 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 				vwGraphics.SetClipRect(ref rect);
 				vwGraphics.GetClipRect(out left, out top, out right, out bottom);
 
-				Assert.AreEqual(50, left, "Left doesn't match");
-				Assert.AreEqual(25, top, "Top doesn't match");
-				Assert.AreEqual(1000, right, "Right doesn't match");
-				Assert.AreEqual(1000, bottom, "Bottom doesn't match");
+				Assert.That(left, Is.EqualTo(50), "Left doesn't match");
+				Assert.That(top, Is.EqualTo(25), "Top doesn't match");
+				Assert.That(right, Is.EqualTo(1000), "Right doesn't match");
+				Assert.That(bottom, Is.EqualTo(1000), "Bottom doesn't match");
 			}
 		}
 
@@ -283,31 +283,31 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 
 				vwGraphics.PushClipRect(new Rect(50, 60, 500, 510));
 				vwGraphics.GetClipRect(out left, out top, out right, out bottom);
-				Assert.AreEqual(50, left, "Left doesn't match");
-				Assert.AreEqual(60, top, "Top doesn't match");
-				Assert.AreEqual(500, right, "Right doesn't match");
-				Assert.AreEqual(510, bottom, "Bottom doesn't match");
+				Assert.That(left, Is.EqualTo(50), "Left doesn't match");
+				Assert.That(top, Is.EqualTo(60), "Top doesn't match");
+				Assert.That(right, Is.EqualTo(500), "Right doesn't match");
+				Assert.That(bottom, Is.EqualTo(510), "Bottom doesn't match");
 
 				// Test on a second push
 				vwGraphics.PushClipRect(new Rect(1, 1, 300, 310));
 				vwGraphics.GetClipRect(out left, out top, out right, out bottom);
-				Assert.AreEqual(50, left, "Left doesn't match");
-				Assert.AreEqual(60, top, "Top doesn't match");
-				Assert.AreEqual(300, right, "Right doesn't match");
-				Assert.AreEqual(310, bottom, "Bottom doesn't match");
+				Assert.That(left, Is.EqualTo(50), "Left doesn't match");
+				Assert.That(top, Is.EqualTo(60), "Top doesn't match");
+				Assert.That(right, Is.EqualTo(300), "Right doesn't match");
+				Assert.That(bottom, Is.EqualTo(310), "Bottom doesn't match");
 
 				vwGraphics.PopClipRect();
 				vwGraphics.GetClipRect(out left, out top, out right, out bottom);
-				Assert.AreEqual(50, left, "Left doesn't match");
-				Assert.AreEqual(60, top, "Top doesn't match");
-				Assert.AreEqual(500, right, "Right doesn't match");
-				Assert.AreEqual(510, bottom, "Bottom doesn't match");
+				Assert.That(left, Is.EqualTo(50), "Left doesn't match");
+				Assert.That(top, Is.EqualTo(60), "Top doesn't match");
+				Assert.That(right, Is.EqualTo(500), "Right doesn't match");
+				Assert.That(bottom, Is.EqualTo(510), "Bottom doesn't match");
 				vwGraphics.PopClipRect();
 				vwGraphics.GetClipRect(out left, out top, out right, out bottom);
-				Assert.AreEqual(0, left, "Left doesn't match");
-				Assert.AreEqual(0, top, "Top doesn't match");
-				Assert.AreEqual(1000, right, "Right doesn't match");
-				Assert.AreEqual(1000, bottom, "Bottom doesn't match");
+				Assert.That(left, Is.EqualTo(0), "Left doesn't match");
+				Assert.That(top, Is.EqualTo(0), "Top doesn't match");
+				Assert.That(right, Is.EqualTo(1000), "Right doesn't match");
+				Assert.That(bottom, Is.EqualTo(1000), "Bottom doesn't match");
 
 				vwGraphics.ReleaseDC();
 				gr.Graphics.ReleaseHdc();
@@ -386,8 +386,8 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 				{
 					gr.Graphics.FillRectangle(blueBrush, new Rectangle(0, 0, areaWidth, areaHeight));
 
-					Assert.AreEqual(-1, SearchForBottomMostNonWhitePixel(gr.Bitmap, areaWidth, areaHeight), "Should all be white #1");
-					Assert.AreEqual(-1, SearchForRightMostNonWhitePixel(gr.Bitmap, areaWidth, areaHeight), "Should all be white #2");
+					Assert.That(SearchForBottomMostNonWhitePixel(gr.Bitmap, areaWidth, areaHeight), Is.EqualTo(-1), "Should all be white #1");
+					Assert.That(SearchForRightMostNonWhitePixel(gr.Bitmap, areaWidth, areaHeight), Is.EqualTo(-1), "Should all be white #2");
 
 					vwGraphics.Initialize(gr.Graphics.GetHdc());
 
@@ -500,8 +500,8 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 				{
 					gr.Graphics.FillRectangle(blueBrush, new Rectangle(0, 0, areaWidth, areaHeight));
 
-					Assert.AreEqual(-1, SearchForBottomMostNonWhitePixel(gr.Bitmap, areaWidth, areaHeight), "Should all be white #1");
-					Assert.AreEqual(-1, SearchForRightMostNonWhitePixel(gr.Bitmap, areaWidth, areaHeight), "Should all be white #2");
+					Assert.That(SearchForBottomMostNonWhitePixel(gr.Bitmap, areaWidth, areaHeight), Is.EqualTo(-1), "Should all be white #1");
+					Assert.That(SearchForRightMostNonWhitePixel(gr.Bitmap, areaWidth, areaHeight), Is.EqualTo(-1), "Should all be white #2");
 
 					vwGraphics.Initialize(gr.Graphics.GetHdc());
 
@@ -547,7 +547,7 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 					gr.Graphics.FillRectangle(blueBrush, new Rectangle(0, 0, width, height));
 
 					// Check that filling with a blue brush worked.
-					Assert.IsTrue(ColorCompare(gr.Bitmap.GetPixel(width - 1, height - 1), Color.Blue));
+					Assert.That(ColorCompare(gr.Bitmap.GetPixel(width - 1, height - 1), Color.Blue), Is.True);
 
 					/////
 					// Check that drawing using a VwGraphics works.
@@ -567,7 +567,7 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 					gr.Graphics.Flush();
 
 					// Check that drawing a red rectangle using the VwGraphics Interface worked
-					Assert.IsTrue(ColorCompare(gr.Bitmap.GetPixel(width - 1, height - 1), Color.Red));
+					Assert.That(ColorCompare(gr.Bitmap.GetPixel(width - 1, height - 1), Color.Red), Is.True);
 				}
 			}
 		}

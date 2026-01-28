@@ -20,8 +20,11 @@ using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.FieldWorks.Common.Widgets;
+using SIL.LCModel.Core.KernelInterfaces;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
+using SIL.Utils;
 using XCore;
 
 namespace SIL.FieldWorks.XWorks
@@ -314,7 +317,7 @@ namespace SIL.FieldWorks.XWorks
 				// it messes up our Dictionary when we make something else configurable (like Classified Dictionary).
 				var sProp = XmlUtils.GetAttributeValue(m_xnSpec, "layoutProperty");
 				Debug.Assert(sProp != null, "When making a view configurable you need to put a 'layoutProperty' in the XML configuration.");
-				dlg.SetConfigDlgInfo(m_xnSpec, Cache, (FwStyleSheet)StyleSheet,
+				dlg.SetConfigDlgInfo(m_xnSpec, Cache, (LcmStyleSheet)StyleSheet,
 					FindForm() as IMainWindowDelegateCallbacks, Mediator, m_propertyTable, sProp);
 				if (nodePath != null)
 					dlg.SetActiveNode(nodePath);

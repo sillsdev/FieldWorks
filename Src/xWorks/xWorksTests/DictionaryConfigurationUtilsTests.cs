@@ -33,7 +33,7 @@ namespace SIL.FieldWorks.XWorks
 			var fileListFromResults = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(Cache, configObjectName).Values;
 			var shippedFileList = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"),
 				"*" + DictionaryConfigurationModel.FileExtension);
-			CollectionAssert.AreEquivalent(fileListFromResults, shippedFileList);
+			Assert.That(shippedFileList, Is.EquivalentTo(fileListFromResults));
 		}
 
 		[Test]
@@ -53,9 +53,9 @@ namespace SIL.FieldWorks.XWorks
 				var shippedFileList = Directory.EnumerateFiles(Path.Combine(FwDirectoryFinder.DefaultConfigurations, "Dictionary"),
 					"*" + DictionaryConfigurationModel.FileExtension);
 				// all the shipped configs are in the return list
-				CollectionAssert.IsSubsetOf(shippedFileList, fileListFromResults);
+				Assert.That(shippedFileList, Is.SubsetOf(fileListFromResults));
 				// new user configuration is present in results
-				CollectionAssert.Contains(fileListFromResults, tempConfigFile.Path);
+				Assert.That(tempConfigFile.Path, Does.Contain(fileListFromResults));
 			}
 		}
 
@@ -86,9 +86,8 @@ namespace SIL.FieldWorks.XWorks
 					firstShippedConfigName + "'/>");
 				// SUT
 				var fileListFromResults = DictionaryConfigurationUtils.GatherBuiltInAndUserConfigurations(Cache, configObjectName).Values;
-				CollectionAssert.Contains(fileListFromResults, tempConfigFile.Path);
-				Assert.AreEqual(fileListFromResults.Count, fileList.Count(),
-					"Override was added instead of replacing a shipped config.");
+				Assert.That(tempConfigFile.Path, Does.Contain(fileListFromResults));
+				Assert.That(fileList.Count(), Is.EqualTo(fileListFromResults.Count), "Override was added instead of replacing a shipped config.");
 			}
 		}
 	}

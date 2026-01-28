@@ -5,6 +5,6 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle("Widgets")]
+// [assembly: AssemblyTitle("Widgets")] // Sanitized by convert_generate_assembly_info
 
 [assembly: InternalsVisibleTo("WidgetsTests")]

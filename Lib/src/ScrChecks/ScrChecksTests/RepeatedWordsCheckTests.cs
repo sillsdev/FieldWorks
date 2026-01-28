@@ -58,7 +58,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("monkey friend.",
 				TextType.Verse, false, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(3, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(3));
 
 			CheckError(0, m_dataSource.m_tokens[0].Text, 5, "this", "Repeated word");
 			CheckError(1, m_dataSource.m_tokens[0].Text, 13, "is", "Repeated word");
@@ -80,7 +80,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("moNkEY friend.",
 				TextType.Verse, false, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(3, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(3));
 
 			CheckError(0, m_dataSource.m_tokens[0].Text, 5, "thiS", "Repeated word");
 			CheckError(1, m_dataSource.m_tokens[0].Text, 13, "IS", "Repeated word");
@@ -103,7 +103,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("Some verse text.",
 				TextType.Verse, false, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -124,8 +124,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.Verse, false, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count,
-				"Word at para start is not a repeated word when the section head ends with the same word.");
+			Assert.That(m_errors.Count, Is.EqualTo(0), "Word at para start is not a repeated word when the section head ends with the same word.");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -145,7 +144,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.Verse, false, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 			CheckError(0, m_dataSource.m_tokens[2].Text, 0, "love", "Repeated word");
 		}
 
@@ -160,7 +159,7 @@ namespace SILUBS.ScriptureChecks
 			m_dataSource.m_tokens.Add(new DummyTextToken("I am, am I not?", TextType.Verse, true,
 				false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -179,8 +178,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.Verse, false, false, "Paragraph"));
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
-			Assert.AreEqual(0, m_errors.Count,
-				"Word after caption marker is not a repeated word when the caption ends with the same word.");
+			Assert.That(m_errors.Count, Is.EqualTo(0), "Word after caption marker is not a repeated word when the caption ends with the same word.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -215,7 +213,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.VerseNumber, false, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(1, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(1));
 			CheckError(0, m_dataSource.m_tokens[2].Text, 3, "1", "Repeated word");
 		}
 		#endregion
