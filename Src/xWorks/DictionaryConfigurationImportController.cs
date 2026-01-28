@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -113,17 +114,8 @@ namespace SIL.FieldWorks.XWorks
 
 			ImportCustomFields(_importLiftLocation);
 
-			// REVIEW (Hasso) 2026.01: should this be calculated closer to where it is used?
-			// If the configuration to import has the same label as an existing configuration in the project folder
-			// then overwrite the existing configuration.
-			var existingConfigurationInTheWay = _configurations.FirstOrDefault(config => config.Label == NewConfigToImport.Label &&
-				Path.GetDirectoryName(config.FilePath) == _projectConfigDir);
+			NewConfigToImport.Publications.ForEach(publication => AddPublicationTypeIfNotPresent(publication, _cache));
 
-			NewConfigToImport.Publications.ForEach(
-				publication =>
-				{
-					AddPublicationTypeIfNotPresent(publication, _cache);
-				});
 			try
 			{
 				ImportStyles(_importStylesLocation);
@@ -147,6 +139,10 @@ namespace SIL.FieldWorks.XWorks
 				_view.importButton.Enabled = false;
 			}
 
+			// If the configuration to import has the same label as an existing configuration in the project folder
+			// then overwrite the existing configuration.
+			var existingConfigurationInTheWay = _configurations.FirstOrDefault(config => config.Label == NewConfigToImport.Label &&
+				Path.GetDirectoryName(config.FilePath) == _projectConfigDir);
 			// We have re-loaded the model from disk to preserve custom field state so the Label must be set here
 			NewConfigToImport.FilePath = _temporaryImportConfigLocation;
 			NewConfigToImport.Load(_cache);
@@ -163,7 +159,8 @@ namespace SIL.FieldWorks.XWorks
 				NewConfigToImport.Label = _proposedNewConfigLabel;
 			}
 
-			// Set a filename for the new configuration. Use a unique filename that isn't either registered with another configuration, or existing on disk. Note that in this way, we ignore what the original filename was of the configuration file in the .zip file.
+			// Set a filename for the new configuration. Use a unique filename that isn't either registered with another configuration, or existing on disk.
+			// Note that in this way, we ignore what the original filename was of the configuration file in the .zip file.
 			DictionaryConfigurationManagerController.GenerateFilePath(_projectConfigDir, _configurations, NewConfigToImport);
 
 			var outputConfigPath = existingConfigurationInTheWay != null ? existingConfigurationInTheWay.FilePath : NewConfigToImport.FilePath;
@@ -356,7 +353,6 @@ namespace SIL.FieldWorks.XWorks
 		/// <summary>
 		/// Connect to and show a view for the user to perform an import.
 		/// </summary>
-		/// <param name="dialog"></param>
 		public void DisplayView(DictionaryConfigurationImportDlg dialog)
 		{
 			_view = dialog;
@@ -397,50 +393,46 @@ namespace SIL.FieldWorks.XWorks
 
 		public void RefreshStatusDisplay()
 		{
-			string mainStatus;
-			var publicationStatus = string.Empty;
-			var customFieldStatus = string.Empty;
+			var statusBldr = new StringBuilder();
 			_view.explanationLabel.Text = "";
 
 			if (NewConfigToImport == null)
 			{
-				string invalidConfigFileMsg = string.Empty;
 				if (_isInvalidConfigFile)
 				{
 					var configType = Path.GetFileName(_projectConfigDir) == DictionaryConfigurationListener.DictConfigDirName
-					? xWorksStrings.ReversalIndex : xWorksStrings.Dictionary;
-					invalidConfigFileMsg = string.Format(xWorksStrings.DictionaryConfigurationMismatch, configType)
-						+ Environment.NewLine;
+						? xWorksStrings.ReversalIndex : xWorksStrings.Dictionary;
+					statusBldr.AppendFormat(xWorksStrings.DictionaryConfigurationMismatch, configType).AppendLine();
 				}
-				_view.explanationLabel.Text = invalidConfigFileMsg + xWorksStrings.kstidCannotImport;
+				_view.explanationLabel.Text = statusBldr.Append(xWorksStrings.kstidCannotImport).ToString();
 				return;
 			}
 
 			if (_originalConfigLabel == _proposedNewConfigLabel)
 			{
-				mainStatus = string.Format(xWorksStrings.kstidImportingConfig, NewConfigToImport.Label);
+				statusBldr.AppendFormat(xWorksStrings.kstidImportingConfig, NewConfigToImport.Label).AppendLine();
 			}
 			else
 			{
-				mainStatus = string.Format(NewConfigToImport.Label == _proposedNewConfigLabel
+				statusBldr.AppendFormat(NewConfigToImport.Label == _proposedNewConfigLabel
 						? xWorksStrings.kstidImportingConfigNewName
 						: xWorksStrings.kstidImportingAndOverwritingConfiguration,
-					NewConfigToImport.Label);
+					NewConfigToImport.Label).AppendLine();
 			}
 
 			if (_newPublications != null && _newPublications.Any())
 			{
-				publicationStatus = xWorksStrings.kstidPublicationsWillBeAdded + Environment.NewLine + string.Join(", ", _newPublications);
+				statusBldr.AppendLine().AppendLine(xWorksStrings.kstidPublicationsWillBeAdded).AppendLine(string.Join(", ", _newPublications));
 			}
 
 			if (_customFieldsToImport != null && _customFieldsToImport.Any())
 			{
-				customFieldStatus = xWorksStrings.kstidCustomFieldsWillBeAdded + Environment.NewLine + string.Join(", ", _customFieldsToImport);
+				statusBldr.AppendLine().AppendLine(xWorksStrings.kstidCustomFieldsWillBeAdded).AppendLine(string.Join(", ", _customFieldsToImport));
 			}
-			// TODO (Hasso) 2026-01: WSs
-			_view.explanationLabel.Text = string.Format("{0}{1}{2}{1}{3}{1}{4}",
-				mainStatus, Environment.NewLine + Environment.NewLine, publicationStatus, customFieldStatus,
-				xWorksStrings.DictionaryConfigurationDictionaryConfigurationUser_StyleOverwriteWarning);
+
+			statusBldr.AppendLine().Append(xWorksStrings.DictionaryConfigurationDictionaryConfigurationUser_StyleOverwriteWarning);
+
+			_view.explanationLabel.Text = statusBldr.ToString();
 			_view.Refresh();
 		}
 
