@@ -1,3 +1,17 @@
+<!-- copilot:auto-change-log start -->
+## Change Log (auto)
+
+- Snapshot: HEAD~1
+- Risk: none
+- Files: 0 (code=0, tests=0, resources=0)
+
+### Prompt seeds
+- Update COPILOT.md for Src/LexText/ParserCore. Prioritize Purpose/Architecture sections using planner data.
+- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
+- Finish with verification notes and TODOs for manual testing.
+<!-- copilot:auto-change-log end -->
+
+
 ﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: 47db0e38023bc4ba08f01c91edc6237e54598b77737bc15cad40098f645273a5
