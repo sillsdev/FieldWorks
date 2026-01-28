@@ -357,7 +357,7 @@ namespace SIL.FieldWorks.XWorks
 			_projectConfigDir = DictionaryConfigurationListener.GetProjectConfigurationDirectory(propertyTable, previewEntry);
 			_defaultConfigDir = DictionaryConfigurationListener.GetDefaultConfigurationDirectory(propertyTable, previewEntry);
 			LoadDictionaryConfigurations();
-			LoadLastDictionaryConfiguration();
+			LoadLastDictionaryConfiguration(previewEntry);
 			PopulateTreeView();
 			View.ManageConfigurations += (sender, args) =>
 			{
@@ -583,9 +583,9 @@ namespace SIL.FieldWorks.XWorks
 			}
 		}
 
-		private void LoadLastDictionaryConfiguration()
+		private void LoadLastDictionaryConfiguration(ICmObject obj)
 		{
-			var lastUsedConfiguration = DictionaryConfigurationListener.GetCurrentConfiguration(_propertyTable);
+			var lastUsedConfiguration = DictionaryConfigurationListener.GetCurrentConfiguration(_propertyTable, null, obj);
 			_model = _dictionaryConfigurations.FirstOrDefault(config => config.FilePath == lastUsedConfiguration)
 				?? _dictionaryConfigurations.First();
 		}
