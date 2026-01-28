@@ -314,6 +314,7 @@ namespace SIL.FieldWorks.XWorks
 				m_propertyTable.SetProperty("App", app, true);
 				m_propertyTable.SetPropertyPersistence("App", false);
 			}
+			Subscriber.Subscribe(EventConstants.JumpToPopupLexEntry, JumpToPopupLexEntry);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -440,6 +441,8 @@ namespace SIL.FieldWorks.XWorks
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(EventConstants.JumpToPopupLexEntry, JumpToPopupLexEntry);
+
 				if (m_viewHelper != null)
 					m_viewHelper.Dispose();
 				if (m_app != null)
@@ -1214,7 +1217,7 @@ namespace SIL.FieldWorks.XWorks
 		/// Create a popup window to edit the given lexical entry.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		protected bool OnJumpToPopupLexEntry(object command)
+		private void JumpToPopupLexEntry(object command)
 		{
 			switch (m_propertyTable.GetStringProperty("currentContentControl", null))
 			{
@@ -1224,7 +1227,7 @@ namespace SIL.FieldWorks.XWorks
 					Mediator.BroadcastMessage("JumpToRecord", command);
 					Mediator.BroadcastMessage("FocusFirstPossibleSlice", null);
 #pragma warning restore 618
-					return true;
+					return;
 			}
 
 			XmlNode toolNode;
@@ -1249,7 +1252,6 @@ namespace SIL.FieldWorks.XWorks
 				Mediator.BroadcastMessage("FocusFirstPossibleSlice", null);
 #pragma warning restore 618
 			}
-			return true;
 		}
 
 		/// ------------------------------------------------------------------------------------

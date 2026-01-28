@@ -14,6 +14,7 @@ using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -2591,7 +2592,7 @@ namespace SIL.FieldWorks.IText
 			private void OnSelectEditLexicalEntry(object sender, EventArgs args)
 			{
 				ILexEntry lexEntry = GetLexEntry();
-				m_sandbox.Mediator.SendMessage("JumpToPopupLexEntry", lexEntry.Hvo);
+				Publisher.Publish(new PublisherParameterObject(EventConstants.JumpToPopupLexEntry, lexEntry.Hvo));
 			}
 
 			private ILexEntry GetLexEntry()
