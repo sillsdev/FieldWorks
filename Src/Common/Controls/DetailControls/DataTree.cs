@@ -5,6 +5,7 @@
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework.DetailControls.Resources;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.LCModel.Core.Cellar;
@@ -529,13 +530,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 		}
 
-		public virtual bool OnPostponePropChanged(object commandObject)
+		private void PostponePropChanged(object commandObject)
 		{
 			if ((bool)commandObject == true)
 				m_postponePropChanged = true;
 			else
 				m_postponePropChanged = false;
-			return true;
 		}
 
 		public void PropChanged(int hvo, int tag, int ivMin, int cvIns, int cvDel)
@@ -1253,6 +1253,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			if (disposing)
 			{
+				Subscriber.Unsubscribe(EventConstants.PostponePropChanged, PostponePropChanged);
+
 				// Do this first, before setting m_fDisposing to true.
 				if (m_sda != null)
 					m_sda.RemoveNotification(this);
@@ -3713,6 +3715,8 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			// it will override the persisted value.
 			if (PersistenceProvder != null)
 				RestorePreferences();
+
+			Subscriber.Subscribe(EventConstants.PostponePropChanged, PostponePropChanged);
 		}
 
 		public IxCoreColleague[] GetMessageTargets()
