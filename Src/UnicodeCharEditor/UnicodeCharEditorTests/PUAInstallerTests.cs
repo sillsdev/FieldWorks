@@ -300,9 +300,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 			{
 				try
 				{
-					// Use DistFiles relative to source directory for worktree/dev builds,
-					// not the installed DataDirectory which may point to a different repo.
-					var baseDir = Path.Combine(Path.GetDirectoryName(FwDirectoryFinder.SourceDirectory), "DistFiles");
+					var baseDir = FwDirectoryFinder.DataDirectory;
 					zipIn = new ZipInputStream(File.OpenRead(Path.Combine(baseDir, string.Format("Icu{0}.zip", CustomIcu.Version))));
 				}
 				catch (Exception e1)
