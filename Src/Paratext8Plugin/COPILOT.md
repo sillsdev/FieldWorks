@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: 68897dd419050f2e9c0f59ed91a75f5770ebd5aef2a9185ea42583a6d9d208d9
+last-reviewed-tree: 6a49e787206a05cc0f1f25e52b960410d3922c982f322c92e892575d6216836d
 status: reviewed
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/Paratext8Plugin. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # Paratext8Plugin
 
@@ -98,100 +94,19 @@ C# library (net48) with 7 source files (~546 lines). Implements MEF-based plugin
 - **Installation check**: IsInstalled property checks ParatextInfo.IsParatextInstalled
 
 ## Threading & Performance
-- **UI thread affinity**: Paratext SDK operations likely require UI thread (WinForms-based)
-- **Synchronous operations**: All provider methods synchronous
-  - Project enumeration: ScrTextCollection queries (fast)
-  - Text access: On-demand loading via Paratext SDK
-- **Performance characteristics**:
-  - Initialize(): One-time SDK setup (fast)
-  - RefreshScrTexts(): Re-enumerates projects (fast unless many projects)
-  - ScrTexts(): Returns cached or wrapped ScrText objects (fast)
-  - Text data access: Depends on Paratext SDK caching and file I/O
-- **No manual threading**: Relies on Paratext SDK threading model
-- **Caching**: PT8ParserStateWrapper caches wrapped token lists (wrappedTokenList) for identity checks
-- **MEF loading**: Plugin loaded once per AppDomain when Paratext 8 detected
+Synchronous operations. Relies on Paratext SDK threading model. MEF loads plugin once per AppDomain.
 
 ## Config & Feature Flags
-- **MEF versioning**: ExportMetadata("Version", "8") ensures plugin loaded only for Paratext 8
-  - ScriptureUtils checks installed Paratext version and selects matching plugin
-- **Paratext settings directory**: SettingsDirectory property exposes ScrTextCollection.SettingsDirectory
-  - Default: %LOCALAPPDATA%\SIL\Paratext8Projects (or equivalent)
-- **Project filtering**:
-  - NonEditableTexts: Resource projects, inaccessible projects (read-only)
-  - ScrTextNames: All accessible projects for user
-- **Alert configuration**: Alert.Implementation = ParatextAlert() routes Paratext alerts
-- **Installation detection**: IsInstalled property checks ParatextInfo.IsParatextInstalled
-  - Returns false if Paratext 8 not installed (graceful degradation)
-- **App.config**: Assembly binding redirects for Paratext SDK dependencies
-- **No feature flags**: Behavior entirely determined by Paratext SDK and project properties
+MEF versioning: ExportMetadata("Version", "8") for PT8 only. SettingsDirectory property. Project filtering: NonEditableTexts, ScrTextNames. Alert routing via ParatextAlert().
 
 ## Build Information
-- Project type: C# class library (net48)
-- Build: `msbuild Paratext8Plugin.csproj` or `dotnet build` (from FieldWorks.sln)
-- Output: Paratext8Plugin.dll
-- Dependencies: Paratext.Data (Paratext SDK NuGet or local assembly), PtxUtils, SIL.Scripture, Common/ScriptureUtils, System.ComponentModel.Composition (MEF)
-- Deployment: Loaded dynamically via MEF when Paratext 8 installed and version match detected
-- Config: App.config for assembly binding redirects
+C# library (net48). Build via `msbuild Paratext8Plugin.csproj`. Output: Paratext8Plugin.dll. Loaded via MEF.
 
 ## Interfaces and Data Models
-
-### Interfaces Implemented
-- **IScriptureProvider** (path: Src/Common/ScriptureUtils/)
-  - Purpose: Abstract scripture data access for FLEx↔Paratext integration
-  - Methods: Initialize(), RefreshScrTexts(), ScrTexts(), Get(), MakeScrText(), MakeVerseRef(), GetParserState()
-  - Properties: SettingsDirectory, NonEditableTexts, ScrTextNames, MaximumSupportedVersion, IsInstalled
-  - Notes: MEF [Export] for dynamic plugin loading
-
-- **IScrText** (implemented by PT8ScrTextWrapper)
-  - Purpose: Scripture project data access
-  - Methods: Text access, reference navigation, project properties
-  - Notes: Wraps Paratext.Data.ScrText
-
-- **IVerseRef** (implemented by PT8VerseRefWrapper)
-  - Purpose: Book/chapter/verse reference handling
-  - Methods: Navigation, comparison, formatting
-  - Notes: Wraps Paratext.Data.VerseRef
-
-- **IScriptureProviderParserState** (implemented by PT8ParserStateWrapper)
-  - Purpose: USFM parsing context maintenance
-  - Properties: Token list, parser state
-  - Notes: Wraps Paratext.Data.ScrParserState
-
-### Data Models (Wrappers)
-- **PT8ScrTextWrapper** (path: Src/Paratext8Plugin/PTScrTextWrapper.cs)
-  - Purpose: Adapt Paratext ScrText to FLEx IScrText interface
-  - Shape: Wraps ScrText, exposes project name, text data, references
-  - Consumers: FLEx Send/Receive, ParatextImport
-
-- **PT8VerseRefWrapper** (path: Src/Paratext8Plugin/PT8VerseRefWrapper.cs)
-  - Purpose: Adapt Paratext VerseRef to FLEx IVerseRef interface
-  - Shape: Book (int), Chapter (int), Verse (int), navigation methods
-  - Consumers: Scripture reference navigation in FLEx
-
-- **PT8ParserStateWrapper** (path: Src/Paratext8Plugin/)
-  - Purpose: Maintain USFM parsing state for scripture processing
-  - Shape: ScrParserState wrapper, cached token list
-  - Consumers: USFM import/export operations
+IScriptureProvider implementation via MEF [Export]. Wrappers: PT8ScrTextWrapper (IScrText), PT8VerseRefWrapper (IVerseRef), PT8ParserStateWrapper (parser state).
 
 ## Entry Points
-- **MEF discovery**: ScriptureUtils dynamically loads plugin via MEF
-  - Export: [Export(typeof(IScriptureProvider))]
-  - Metadata filter: [ExportMetadata("Version", "8")] matches Paratext 8 installation
-  - Loading: CompositionContainer.GetExportedValue<IScriptureProvider>() when Paratext 8 detected
-- **Initialization**: Paratext8Provider.Initialize() called by ScriptureUtils
-  - Setup: ParatextData.Initialize(), Alert.Implementation = ParatextAlert()
-  - One-time per AppDomain
-- **Usage pattern** (ScriptureUtils):
-  1. Detect Paratext 8 installation
-  2. Load Paratext8Plugin via MEF
-  3. Call Initialize()
-  4. Access projects via ScrTexts() or Get(projectName)
-  5. Wrap verse references via MakeVerseRef()
-  6. Parse USFM via GetParserState()
-- **Common consumers**:
-  - FLEx Send/Receive: Synchronize back translations with Paratext projects
-  - ParatextImport: Import Paratext books into FLEx scripture data
-  - Scripture reference navigation: Verse lookup in Paratext projects
+MEF discovery via [Export(typeof(IScriptureProvider))] with version "8" metadata. Initialize() called by ScriptureUtils. Used by FLEx Send/Receive and ParatextImport.
 
 ## Test Index
 - **Test project**: ParaText8PluginTests/Paratext8PluginTests.csproj
@@ -244,41 +159,9 @@ C# library (net48) with 7 source files (~546 lines). Implements MEF-based plugin
 - **Related plugins**: FwParatextLexiconPlugin handles lexicon integration separately
 
 ## Related Folders
-- **Common/ScriptureUtils/**: Defines IScriptureProvider interface, loads Paratext8Plugin via MEF
-- **FwParatextLexiconPlugin/**: Separate plugin for Paratext lexicon integration (FLEx→Paratext lexicon export)
-- **ParatextImport/**: Imports Paratext projects/books into FLEx (may use Paratext8Provider)
-- **LexText/**: Scripture text data in FLEx that synchronizes with Paratext
+- **Common/ScriptureUtils/**: IScriptureProvider interface
+- **FwParatextLexiconPlugin/**: Lexicon integration
+- **ParatextImport/**: Import pipeline
 
 ## References
-
-- **Project files**: Paratext8Plugin.csproj, Paratext8PluginTests.csproj
-- **Target frameworks**: net48
-- **Key C# files**: AssemblyInfo.cs, PT8VerseRefWrapper.cs, PTScrTextWrapper.cs, Paratext8Provider.cs, ParatextAlert.cs, ParatextDataIntegrationTests.cs, Pt8VerseWrapper.cs
-- **Source file count**: 7 files
-- **Data file count**: 1 files
-
-## Auto-Generated Project and File References
-- Project files:
-  - Src/Paratext8Plugin/ParaText8PluginTests/Paratext8PluginTests.csproj
-  - Src/Paratext8Plugin/Paratext8Plugin.csproj
-- Key C# files:
-  - Src/Paratext8Plugin/PT8VerseRefWrapper.cs
-  - Src/Paratext8Plugin/PTScrTextWrapper.cs
-  - Src/Paratext8Plugin/ParaText8PluginTests/ParatextDataIntegrationTests.cs
-  - Src/Paratext8Plugin/Paratext8Provider.cs
-  - Src/Paratext8Plugin/ParatextAlert.cs
-  - Src/Paratext8Plugin/Properties/AssemblyInfo.cs
-  - Src/Paratext8Plugin/Pt8VerseWrapper.cs
-- Data contracts/transforms:
-  - Src/Paratext8Plugin/ParaText8PluginTests/App.config
-## Test Information
-- Test project: ParaText8PluginTests
-- Test file: ParatextDataIntegrationTests.cs (includes MockScriptureProvider for test isolation)
-- Run: `dotnet test` or Test Explorer in Visual Studio
-- Test coverage: Provider initialization, project enumeration, text wrapping, verse reference creation, parser state management, Paratext installation detection
-
-## Code Evidence
-*Analysis based on scanning 6 source files*
-
-- **Classes found**: 5 public classes
-- **Namespaces**: Paratext8Plugin
+7 C# files (~546 lines). Key: Paratext8Provider.cs, PT8ScrTextWrapper.cs, PT8VerseRefWrapper.cs. See `.cache/copilot/diff-plan.json` for file listings.

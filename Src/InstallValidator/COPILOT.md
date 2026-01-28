@@ -1,22 +1,18 @@
 ---
 last-reviewed: 2025-10-31
-last-reviewed-tree: 9bb37d4844749c3d47b182f3d986f342994d9876216b65e0d3e2791f9ec96ae5
+last-reviewed-tree: 19c464d2f9bdf9361a01fce5ca6e4b9de824edaf8021eb9aa0571131da250f2d
 status: draft
 ---
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
 
-- Snapshot: HEAD~1
-- Risk: none
-- Files: 0 (code=0, tests=0, resources=0)
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
 
-### Prompt seeds
-- Update COPILOT.md for Src/InstallValidator. Prioritize Purpose/Architecture sections using planner data.
-- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
-- Finish with verification notes and TODOs for manual testing.
+Do not edit this block manually; rerun the scripts above after code or doc updates.
 <!-- copilot:auto-change-log end -->
-
 
 # InstallValidator COPILOT summary
 
@@ -39,99 +35,37 @@ C# console application (.NET Framework 4.8.x) with single source file (InstallVa
 
 ## Technology Stack
 - C# .NET Framework 4.8.x (net8)
-- OutputType: Exe (console application)
-- System.Security.Cryptography for MD5 hashing
-- System.Diagnostics for file version info
-- CSV file I/O
 
 ## Dependencies
-
-### Upstream (consumes)
-- .NET Framework 4.8.x (System.*, minimal dependencies)
-- System.Security.Cryptography: MD5 hashing
-- System.Diagnostics: FileVersionInfo
-
-### Downstream (consumed by)
-- **Installer validation**: Verify FieldWorks installation
-- **QA/Testing**: Installation verification in test scenarios
-- **Users**: Diagnose installation problems
+- Upstream: Core libraries
+- Downstream: Applications
 
 ## Interop & Contracts
-- **Input CSV**: installerTestMetadata.csv
-  - Format: FilePath, MD5, Version (optional), Date (optional)
-  - First line: App version info (e.g., "FieldWorks 9.0.4")
-- **Output CSV**: FlexInstallationReport.{version}.csv
-  - Format: File, Result, Expected Version, Actual Version, Expected Date, Actual Date Modified (UTC)
-- **Command-line**: InstallValidator.exe installerTestMetadata.csv [report_path]
-- **Drag-and-drop**: Drop CSV on EXE to run and open report
+- Input CSV: installerTestMetadata.csv
 
 ## Threading & Performance
-- **Single-threaded**: Sequential file processing
-- **I/O bound**: File reading and MD5 computation
-- **Performance**: Fast for typical installation (hundreds of files)
+- Single-threaded: Sequential file processing
 
 ## Config & Feature Flags
 No configuration. Behavior controlled by input CSV.
 
 ## Build Information
-- **Project file**: InstallValidator.csproj (net48, OutputType=Exe)
-- **Test project**: InstallValidatorTests/
-- **Output**: InstallValidator.exe
-- **Build**: Via top-level FieldWorks.sln or: `msbuild InstallValidator.csproj`
-- **Run tests**: `dotnet test InstallValidatorTests/`
+- Project file: InstallValidator.csproj (net48, OutputType=Exe)
 
 ## Interfaces and Data Models
-
-- **Main()** (InstallValidator.cs)
-  - Purpose: Entry point for installation validation
-  - Inputs: args[0] = installerTestMetadata.csv path, args[1] = optional report output path
-  - Outputs: FlexInstallationReport CSV, exit code 0 (always succeeds; errors in report)
-  - Notes: Drag-and-drop supported (opens report after generation)
-
-- **ComputeMd5Sum()** (InstallValidator.cs)
-  - Purpose: Calculate MD5 checksum of file
-  - Inputs: string filename (full path)
-  - Outputs: string (MD5 checksum as hex string)
-  - Notes: Uses static MD5 Hasher for performance
-
-- **Input CSV format** (installerTestMetadata.csv):
-  - Line 1: App version info (e.g., "FieldWorks 9.0.4")
-  - Subsequent lines: FilePath, MD5, Version (optional), Date (optional)
-  - Example: "FieldWorks.exe, a1b2c3d4..., 9.0.4.0, 2023-01-15"
-
-- **Output CSV format** (FlexInstallationReport):
-  - Line 1: "Installation report for: {app version}"
-  - Line 2: Headers (File, Result, Expected Version, Actual Version, Expected Date, Actual Date Modified)
-  - Data lines: File validation results
-  - Results: "was installed correctly", "is missing", "incorrect file is present"
+See Key Components section above.
 
 ## Entry Points
-- **InstallValidator.exe**: Console executable
-- **Drag-and-drop**: Drop installerTestMetadata.csv on exe
-- **Command-line**: `InstallValidator.exe installerTestMetadata.csv [report_path]`
+- InstallValidator.exe: Console executable
 
 ## Test Index
-- **Test project**: InstallValidatorTests/
-- **Run tests**: `dotnet test InstallValidatorTests/`
-- **Coverage**: CSV processing, MD5 computation, report generation
+- Test project: InstallValidatorTests/
 
 ## Usage Hints
-- **Generate metadata**: Installer creates installerTestMetadata.csv with expected file list, MD5s, versions, dates
-- **Validate installation**: Run InstallValidator.exe after install or drag CSV onto exe
-- **Review report**: FlexInstallationReport CSV shows which files are missing, incorrect, or correct
-- **QA workflow**: Include in automated installation testing
-- **User troubleshooting**: Users can run to diagnose installation issues
-- **Drag-and-drop**: Easiest for non-technical users (report opens automatically)
-- **Unit tests**: Use optional second argument to specify report location
+- Generate metadata: Installer creates installerTestMetadata.csv with expected file list, MD5s, versions, dates
 
 ## Related Folders
-- **FLExInstaller/**: Creates installerTestMetadata.csv during install
-- Installation infrastructure
+- FLExInstaller/: Creates installerTestMetadata.csv during install
 
 ## References
-- **Project files**: InstallValidator.csproj (net48, OutputType=Exe), InstallValidatorTests/
-- **Target frameworks**: .NET Framework 4.8.x
-- **Key C# files**: InstallValidator.cs (120 lines)
-- **Total lines of code**: 120
-- **Output**: InstallValidator.exe (Output/Debug or Output/Release)
-- **Namespace**: SIL.InstallValidator
+See `.cache/copilot/diff-plan.json` for file details.
