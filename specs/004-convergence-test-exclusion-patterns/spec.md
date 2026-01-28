@@ -1,4 +1,4 @@
-﻿# Convergence Path Analysis: Test Exclusion Pattern Standardization
+# Convergence Path Analysis: Test Exclusion Pattern Standardization
 
 **Priority**: ⚠️ **MEDIUM**
 **Divergent Approach**: Three different test exclusion patterns in use
@@ -414,7 +414,7 @@ During SDK conversion, the script didn't generate test exclusions automatically.
   - Ensure new projects follow Pattern A by default by updating the SDK template under `Src/Templates/` (or the canonical scaffolding folder) with the `<ProjectName>Tests/**` block and documenting the expectation in `quickstart.md`.
 
 - [ ] **Task 3.4**: Refresh COPILOT documentation for every touched `Src/**` folder
-  - Update the folder’s `COPILOT.md` to describe the Pattern A expectation and record the new `last-reviewed-tree` reference.
+  - Update the folder’s `AGENTS.md` to describe the Pattern A expectation and record the new `last-reviewed-tree` reference.
   - Run the current COPILOT validation helper (`python .github/check_copilot_docs.py --only-changed --fail`) so repo guidance stays in sync with the code changes.
 
 ### Phase 4: Validation (1 hour)
@@ -669,3 +669,4 @@ python validate_test_exclusions.py
 *Document Version: 1.0*
 *Last Updated: 2025-11-08*
 *Status: Ready for Implementation*
+

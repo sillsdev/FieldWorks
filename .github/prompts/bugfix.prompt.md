@@ -34,4 +34,5 @@ Wait for approval before proceeding.
 ## Handoff checklist
 - [ ] Build and local tests pass
 - [ ] Commit messages conform to gitlint rules
-- [ ] COPILOT.md updated if behavior/contract changed
+- [ ] AGENTS.md updated if behavior/contract changed
+

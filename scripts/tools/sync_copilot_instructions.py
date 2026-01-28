@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Generate short `*.instructions.md` files from large `COPILOT.md` summaries.
+"""Generate short `*.instructions.md` files from large `AGENTS.md` summaries.
 
-This script finds `COPILOT.md` files in `Src/` that exceed a size threshold and
+This script finds `AGENTS.md` files in `Src/` that exceed a size threshold and
 writes concise path-specific instruction files to `.github/instructions/`.
 """
 from __future__ import annotations
@@ -34,7 +34,7 @@ def to_filename(folderpath: Path) -> str:
 def main() -> int:
     INSTRUCTIONS_DIR.mkdir(parents=True, exist_ok=True)
     created = 0
-    for p in sorted(SRC_DIR.rglob("COPILOT.md")):
+    for p in sorted(SRC_DIR.rglob("AGENTS.md")):
         lines = p.read_text(encoding="utf-8", errors="ignore").splitlines()
         if len(lines) < THRESHOLD_LINES:
             continue
@@ -51,7 +51,7 @@ def main() -> int:
             + '.instructions"\n'
         )
         header += (
-            'description: "Auto-generated concise instructions from COPILOT.md for '
+            'description: "Auto-generated concise instructions from AGENTS.md for '
             + rel_dir.name
             + '"\n---\n\n'
         )
@@ -61,7 +61,7 @@ def main() -> int:
             + rel_dir.name
             + " (Concise)\n\n"
             + "## Purpose & Scope\n"
-            + "Summarized key points from COPILOT.md\n\n"
+            + "Summarized key points from AGENTS.md\n\n"
             + "## Key Rules\n"
         )
         # Extract bullet points if present
@@ -84,3 +84,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

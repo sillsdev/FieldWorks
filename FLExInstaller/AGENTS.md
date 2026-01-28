@@ -1,6 +1,6 @@
 # FLExInstaller (WiX 3 default)
 
-This folder contains the WiX 3 installer inputs restored from release/9.3. The default installer build uses the legacy WiX 3 batch pipeline under PatchableInstaller. WiX 3 builds require the **Visual Studio WiX Toolset v3 extension** so `Wix.CA.targets` is available under the MSBuild extensions path. WiX 6 authoring lives under FLExInstaller/wix6/ (see FLExInstaller/wix6/COPILOT.md).
+This folder contains the WiX 3 installer inputs restored from release/9.3. The default installer build uses the legacy WiX 3 batch pipeline under PatchableInstaller. WiX 3 builds require the **Visual Studio WiX Toolset v3 extension** so `Wix.CA.targets` is available under the MSBuild extensions path. WiX 6 authoring lives under FLExInstaller/wix6/ (see FLExInstaller/wix6/AGENTS.md).
 
 ## Build (local)
 
@@ -45,3 +45,4 @@ Common override properties:
 - `*.wxi`: WiX 3 include files used by the legacy pipeline
 - `PatchableInstaller/`: legacy WiX 3 batch pipeline inputs
 - `wix6/`: WiX 6 SDK-style projects and shared authoring
+

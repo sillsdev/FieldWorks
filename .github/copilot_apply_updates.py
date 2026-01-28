@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Apply planner output to refresh auto sections in COPILOT.md files."""
+"""Apply planner output to refresh auto sections in AGENTS.md files."""
 from __future__ import annotations
 
 import argparse
@@ -114,7 +114,7 @@ def apply_auto_block(copath: Path, block: str, dry_run: bool) -> bool:
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="Inject auto change-log sections into COPILOT.md files")
+    ap = argparse.ArgumentParser(description="Inject auto change-log sections into AGENTS.md files")
     ap.add_argument("--root", default=str(Path.cwd()))
     ap.add_argument("--plan", default=".cache/copilot/diff-plan.json")
     ap.add_argument("--folders", nargs="*", help="Subset of folders to update")
@@ -160,3 +160,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

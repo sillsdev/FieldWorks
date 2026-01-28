@@ -22,21 +22,22 @@ Organizational parent folder containing utility subfolders for data repair, enha
 ## Subfolder Map
 | Subfolder | Key Project | Notes |
 |-----------|-------------|-------|
-| FixFwData | FixFwData.csproj | Data repair tool (WinExe) - [FixFwData/COPILOT.md](FixFwData/COPILOT.md) |
-| FixFwDataDll | FixFwDataDll.csproj | Data repair library - [FixFwDataDll/COPILOT.md](FixFwDataDll/COPILOT.md) |
-| MessageBoxExLib | MessageBoxExLib.csproj | Enhanced dialogs - [MessageBoxExLib/COPILOT.md](MessageBoxExLib/COPILOT.md) |
-| Reporting | Reporting.csproj | Error reporting - [Reporting/COPILOT.md](Reporting/COPILOT.md) |
-| SfmStats | SfmStats.csproj | SFM statistics tool - [SfmStats/COPILOT.md](SfmStats/COPILOT.md) |
-| SfmToXml | Sfm2Xml.csproj, ConvertSFM.csproj | SFM→XML converter - [SfmToXml/COPILOT.md](SfmToXml/COPILOT.md) |
-| XMLUtils | XMLUtils.csproj | XML utilities - [XMLUtils/COPILOT.md](XMLUtils/COPILOT.md) |
+| FixFwData | FixFwData.csproj | Data repair tool (WinExe) - [FixFwData/AGENTS.md](FixFwData/AGENTS.md) |
+| FixFwDataDll | FixFwDataDll.csproj | Data repair library - [FixFwDataDll/AGENTS.md](FixFwDataDll/AGENTS.md) |
+| MessageBoxExLib | MessageBoxExLib.csproj | Enhanced dialogs - [MessageBoxExLib/AGENTS.md](MessageBoxExLib/AGENTS.md) |
+| Reporting | Reporting.csproj | Error reporting - [Reporting/AGENTS.md](Reporting/AGENTS.md) |
+| SfmStats | SfmStats.csproj | SFM statistics tool - [SfmStats/AGENTS.md](SfmStats/AGENTS.md) |
+| SfmToXml | Sfm2Xml.csproj, ConvertSFM.csproj | SFM→XML converter - [SfmToXml/AGENTS.md](SfmToXml/AGENTS.md) |
+| XMLUtils | XMLUtils.csproj | XML utilities - [XMLUtils/AGENTS.md](XMLUtils/AGENTS.md) |
 
 ## When Updating This Folder
 1. Run `python .github/plan_copilot_updates.py --folders Src/Utilities`
 2. Run `python .github/copilot_apply_updates.py --folders Src/Utilities`
 3. Update subfolder tables if projects are added/removed
-4. Run `python .github/check_copilot_docs.py --paths Src/Utilities/COPILOT.md`
+4. Run `python .github/check_copilot_docs.py --paths Src/Utilities/AGENTS.md`
 
 ## Related Guidance
-- See `.github/AI_GOVERNANCE.md` for shared expectations and the COPILOT.md baseline
+- See `.github/AI_GOVERNANCE.md` for shared expectations and the AGENTS.md baseline
 - Use the planner output (`.cache/copilot/diff-plan.json`) for the latest project and file references
 - Trigger `.github/prompts/copilot-folder-review.prompt.md` after edits for an automated dry run
+

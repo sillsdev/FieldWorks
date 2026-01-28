@@ -38,10 +38,11 @@ powershell scripts/test_exclusions/assembly_guard.ps1 -Assemblies "Output/Debug/
 - Third command loads each produced assembly and fails if any type name matches `*Test*`; keep the output as part of the manual release sign-off package.
 
 ## 5. Keep Documentation in Sync
-- After each batch, update `.github/instructions/managed.instructions.md`, Directory.Build.props comments, and any affected `Src/**/COPILOT.md` files so guidance matches the new exclusions.
+- After each batch, update `.github/instructions/managed.instructions.md`, Directory.Build.props comments, and any affected `Src/**/AGENTS.md` files so guidance matches the new exclusions.
 - Re-run the COPILOT validation helpers (detect/propose/validate) once the documentation refresh is complete.
 
 ## 6. Rollout Tips
 - Convert 10–15 projects per PR to keep review diffs manageable.
 - Always rerun the audit script after merging to refresh the baseline report.
 - Coordinate with teams owning flagged projects so structural fixes (e.g., splitting test utilities) keep pace with conversions.
+

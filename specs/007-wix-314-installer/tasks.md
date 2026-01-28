@@ -128,7 +128,7 @@
 
 ---
 
-## Phase 7: User Story 5 - Update Copilot Instructions (Priority: P3)
+## Phase 7: User Story 5 - Update Agent Instructions (Priority: P3)
 
 **Goal**: Update all documentation references from WiX 3.11.x to WiX 3.14.x
 
@@ -137,7 +137,7 @@
 ### Implementation for User Story 5
 
 - [X] T022 [US5] Update WiX version reference in `.github/instructions/installer.instructions.md` from "3.11.x" to "3.14.x"
-- [X] T023 [US5] Verify `.github/copilot-instructions.md` already references WiX 3.14.x (confirmed - already says "WiX 3.14.x")
+- [X] T023 [US5] Verify `.github/AGENTS.md` already references WiX 3.14.x (confirmed - already says "WiX 3.14.x")
 - [X] T024 [US5] Search repository for any other "WiX 3.11" references: `git grep -i "wix.*3\.11"`
 - [X] T025 [US5] Update any additional references found (updated: `.serena/memories/project_overview.md`, `Build/Agent/Verify-FwDependencies.ps1`)
 

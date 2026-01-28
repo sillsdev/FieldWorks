@@ -95,8 +95,9 @@ initial_prompt: |
   - Native C++ (Phase 2) must build before managed code (Phases 3+)
   - Build command: .\build.ps1 or msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64 /m
   - Check .github/instructions/*.instructions.md for coding guidelines (managed, native, testing, etc.)
-  - Per-folder COPILOT.md files describe component contracts and dependencies
+  - Per-folder AGENTS.md files describe component contracts and dependencies
 
 # project_name: Intentionally left out so that the folder name will be used and worktrees will not conflict
 excluded_tools: []
 included_optional_tools: []
+

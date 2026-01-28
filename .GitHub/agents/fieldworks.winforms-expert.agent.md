@@ -1,7 +1,7 @@
 ---
 name: "FieldWorks WinForms Expert"
 description: "WinForms-focused agent for FieldWorks (FLEx): safe changes to .NET Framework (net48) WinForms UI, Designer-safe edits, localization via .resx, and efficient test-driven fixes using build.ps1/test.ps1."
-# target: github-copilot  # optional
+# target: universal  # optional
 # model: gpt-5.2-preview  # optional in VS Code
 # tools: ["read", "search", "edit", "terminal"]
 ---

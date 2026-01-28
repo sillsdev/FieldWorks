@@ -1,7 +1,7 @@
 ---
 name: "FieldWorks C++ Expert"
 description: "Native/C++ (and C++/CLI-adjacent) agent for FieldWorks (FLEx): fixes native build and test failures safely using the repo’s build order (native first), avoids risky interop changes, and validates via test.ps1 -Native and traversal builds."
-# target: github-copilot  # optional
+# target: universal  # optional
 # model: gpt-5.2-preview  # optional in VS Code
 # tools: ["read", "search", "edit", "terminal"]
 ---

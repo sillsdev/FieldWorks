@@ -11,7 +11,8 @@
   git diff --check --cached
   ```
 - [ ] Builds/tests pass locally (or I've run the CI-style build via Bash script or MSBuild).
-- [ ] For any `Src/**` folders touched, corresponding `COPILOT.md` files are updated or explicitly confirmed still accurate.
+- [ ] For any `Src/**` folders touched, corresponding `AGENTS.md` files are updated or explicitly confirmed still accurate.
 
 ## Notes for reviewers (optional)
 <!-- Risks, roll-out, docs/tests touched, special validation steps, etc. -->
+

@@ -92,9 +92,9 @@ This repo ships an `mcp.json` plus PowerShell helpers so MCP-aware editors can s
 the GitHub and Serena servers automatically. See [Docs/mcp.md](Docs/mcp.md) for
 requirements and troubleshooting tips.
 
-## Copilot instruction files
+## Agent instruction files
 
-We maintain a human-facing `.github/copilot-instructions.md` plus a small curated set of
+We maintain a human-facing `.github/AGENTS.md` plus a small curated set of
 `*.instructions.md` files under `.github/instructions/` for prescriptive constraints.
 
 See [.github/AI_GOVERNANCE.md](.github/AI_GOVERNANCE.md) for the documentation taxonomy and “source of truth” rules.

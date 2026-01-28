@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""One-time helper to migrate COPILOT.md files to the new auto change-log format."""
+"""One-time helper to migrate AGENTS.md files to the new auto change-log format."""
 from __future__ import annotations
 
 import argparse
@@ -85,28 +85,28 @@ def resolve_folders(root: Path, folders: List[str], include_all: bool) -> List[P
             rel = abs_path.relative_to(root).as_posix()
             targets.add(rel)
     if include_all or not targets:
-        for copilot in root.glob("Src/**/COPILOT.md"):
+        for copilot in root.glob("Src/**/AGENTS.md"):
             targets.add(copilot.parent.relative_to(root).as_posix())
     paths = []
     for rel in sorted(targets):
-        copilot = root / rel / "COPILOT.md"
+        copilot = root / rel / "AGENTS.md"
         if copilot.exists():
             paths.append(copilot)
     return paths
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="Migrate COPILOT.md files to new auto-block format")
+    ap = argparse.ArgumentParser(description="Migrate AGENTS.md files to new auto-block format")
     ap.add_argument("--root", default=str(Path.cwd()))
     ap.add_argument("--folders", nargs="*", default=[], help="Specific Src/<Folder> entries")
-    ap.add_argument("--all", action="store_true", help="Process every COPILOT.md under Src/")
+    ap.add_argument("--all", action="store_true", help="Process every AGENTS.md under Src/")
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
 
     root = Path(args.root).resolve()
     paths = resolve_folders(root, args.folders, args.all)
     if not paths:
-        print("No COPILOT.md files matched the criteria.")
+        print("No AGENTS.md files matched the criteria.")
         return 0
 
     changed = 0
@@ -128,3 +128,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

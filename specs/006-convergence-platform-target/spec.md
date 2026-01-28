@@ -1,4 +1,4 @@
-﻿# Convergence Path Analysis: PlatformTarget Redundancy
+# Convergence Path Analysis: PlatformTarget Redundancy
 
 **Priority**: ⚠️ **LOW**
 **Framework**: Uses [CONVERGENCE-FRAMEWORK.md](CONVERGENCE-FRAMEWORK.md)
@@ -157,7 +157,7 @@ python convergence.py platform-target validate
 1. No projects have explicit x64 (except commented exceptions)
 2. All projects still build to x64 (check output)
 3. Build tools produce AnyCPU correctly (targeted build/smoke test for FwBuildTasks)
-4. Updated `Src/**/COPILOT.md` entries reflect the inheritance policy change or state why no new detail is required
+4. Updated `Src/**/AGENTS.md` entries reflect the inheritance policy change or state why no new detail is required
 
 ---
 
@@ -271,3 +271,4 @@ class PlatformTargetConverter(ConvergenceConverter):
 *Uses: [CONVERGENCE-FRAMEWORK.md](CONVERGENCE-FRAMEWORK.md)*
 *Last Updated: 2025-11-08*
 *Status: Ready for Implementation*
+

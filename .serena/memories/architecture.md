@@ -27,7 +27,7 @@ The `FieldWorks.proj` file orchestrates 21 build phases:
 - **ProjectUnpacker** (`Src/ProjectUnpacker`): Project file handling
 
 ## File Organization
-- `Src/<Component>/` — Source code with per-folder COPILOT.md
+- `Src/<Component>/` — Source code with per-folder AGENTS.md
 - `Src/<Component>.Tests/` — Corresponding test projects
 - `Build/` — MSBuild targets and orchestration
 - `FLExInstaller/` — WiX installer artifacts
@@ -48,3 +48,4 @@ Applications (Phases 11-14)
     ↓ FLEx, utilities
 Test Projects (Phases 15-21)
 ```
+

@@ -22,19 +22,20 @@ Organizational parent folder containing shared UI controls library with reusable
 ## Subfolder Map
 | Subfolder | Key Project | Notes |
 |-----------|-------------|-------|
-| Design | Design.csproj | Design-time components for IDE - [Design/COPILOT.md](Design/COPILOT.md) |
-| DetailControls | DetailControls.csproj | Property editing controls - [DetailControls/COPILOT.md](DetailControls/COPILOT.md) |
-| FwControls | FwControls.csproj | FieldWorks-specific controls - [FwControls/COPILOT.md](FwControls/COPILOT.md) |
-| Widgets | Widgets.csproj | General-purpose widgets - [Widgets/COPILOT.md](Widgets/COPILOT.md) |
-| XMLViews | XMLViews.csproj | XML-driven view composition - [XMLViews/COPILOT.md](XMLViews/COPILOT.md) |
+| Design | Design.csproj | Design-time components for IDE - [Design/AGENTS.md](Design/AGENTS.md) |
+| DetailControls | DetailControls.csproj | Property editing controls - [DetailControls/AGENTS.md](DetailControls/AGENTS.md) |
+| FwControls | FwControls.csproj | FieldWorks-specific controls - [FwControls/AGENTS.md](FwControls/AGENTS.md) |
+| Widgets | Widgets.csproj | General-purpose widgets - [Widgets/AGENTS.md](Widgets/AGENTS.md) |
+| XMLViews | XMLViews.csproj | XML-driven view composition - [XMLViews/AGENTS.md](XMLViews/AGENTS.md) |
 
 ## When Updating This Folder
 1. Run `python .github/plan_copilot_updates.py --folders Src/Common/Controls`
 2. Run `python .github/copilot_apply_updates.py --folders Src/Common/Controls`
 3. Update subfolder tables if projects are added/removed
-4. Run `python .github/check_copilot_docs.py --paths Src/Common/Controls/COPILOT.md`
+4. Run `python .github/check_copilot_docs.py --paths Src/Common/Controls/AGENTS.md`
 
 ## Related Guidance
-- See `.github/AI_GOVERNANCE.md` for shared expectations and the COPILOT.md baseline
+- See `.github/AI_GOVERNANCE.md` for shared expectations and the AGENTS.md baseline
 - Use the planner output (`.cache/copilot/diff-plan.json`) for the latest project and file references
 - Trigger `.github/prompts/copilot-folder-review.prompt.md` after edits for an automated dry run
+

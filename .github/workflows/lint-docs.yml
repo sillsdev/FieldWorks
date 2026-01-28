@@ -18,7 +18,7 @@ jobs:
               with:
                   fetch-depth: 0
 
-            - name: Verify COPILOT.md presence under Src and src-catalog links
+            - name: Verify AGENTS.md presence under Src and src-catalog links
               shell: bash
               run: |
                   set -euo pipefail
@@ -30,10 +30,10 @@ jobs:
                     exit 1
                   fi
 
-                  echo "Scanning immediate subfolders of Src/ for COPILOT.md..."
+                  echo "Scanning immediate subfolders of Src/ for AGENTS.md..."
                   while IFS= read -r -d '' dir; do
                     name=$(basename "$dir")
-                    if [[ ! -f "$dir/COPILOT.md" ]]; then
+                    if [[ ! -f "$dir/AGENTS.md" ]]; then
                       missing+=("$name")
                     fi
                     if ! grep -qi "${name}" .github/src-catalog.md; then
@@ -43,9 +43,9 @@ jobs:
 
                   echo "--- Summary ---"
                   if (( ${#missing[@]} > 0 )); then
-                    printf 'Missing COPILOT.md for: %s\n' "${missing[@]}"
+                    printf 'Missing AGENTS.md for: %s\n' "${missing[@]}"
                   else
-                    echo "All immediate subfolders of Src have COPILOT.md"
+                    echo "All immediate subfolders of Src have AGENTS.md"
                   fi
 
                   if (( ${#not_listed[@]} > 0 )); then
@@ -60,3 +60,4 @@ jobs:
                   fi
 
                   echo "Documentation lint passed."
+

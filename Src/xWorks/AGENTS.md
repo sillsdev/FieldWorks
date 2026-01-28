@@ -107,7 +107,7 @@ Library component. Reference in consuming projects. See Dependencies section for
 - **Source file count**: 181 files
 - **Data file count**: 38 files
 
-## Subfolders (detailed docs in individual COPILOT.md files)
+## Subfolders (detailed docs in individual AGENTS.md files)
 - **xWorksTests/** - Comprehensive test suite
 - **DictionaryConfigurationMigrators/** - Version-specific migration code
 - **DictionaryDetailsView/** - Details view implementations
@@ -124,3 +124,4 @@ Library component. Reference in consuming projects. See Dependencies section for
 - **Classes found**: 20 public classes
 - **Interfaces found**: 15 public interfaces
 - **Namespaces**: SIL.FieldWorks.XWorks, SIL.FieldWorks.XWorks.Archiving, SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators, SIL.FieldWorks.XWorks.DictionaryDetailsView, SIL.FieldWorks.XWorks.LexText
+

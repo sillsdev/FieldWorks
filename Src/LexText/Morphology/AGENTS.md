@@ -64,7 +64,7 @@ C# library (net48, OutputType=Library) with morphology UI components. Slice/cont
 - **AssignFeaturesToPhonemes** (AssignFeaturesToPhonemes.cs, 73 lines): Feature assignment utility
   - Assign phonological features to phonemes
 - **MGA/ subfolder**: Morphology-Grammar Area components
-  - Rule strata, templates, environment choosers (separate COPILOT.md)
+  - Rule strata, templates, environment choosers (separate AGENTS.md)
 - **MEStrings** (MEStrings.Designer.cs, MEStrings.resx, 1.2K lines): Localized strings
   - Designer-generated resource accessor
   - Localized UI strings for morphology/grammar
@@ -128,7 +128,8 @@ MorphologyTests project. Run: `dotnet test MorphologyTests/`.
 Grammar → Inflectional Affix Templates (InflAffixTemplateControl), rule formulas (AffixRuleFormulaControl), phoneme editing, concordance (ConcordanceDlg). MGA/ subfolder contains additional components.
 
 ## Related Folders
-MGA (Morphology-Grammar Area, see MGA/COPILOT.md), LexTextControls, Interlinear, xWorks.
+MGA (Morphology-Grammar Area, see MGA/AGENTS.md), LexTextControls, Interlinear, xWorks.
 
 ## References
 Morphology.csproj (net48), 16.9K lines. Key files: InflAffixTemplateControl.cs (1.3K), MEStrings.Designer.cs (1.2K), ConcordanceDlg.cs (816). See `.cache/copilot/diff-plan.json` for file inventory.
+

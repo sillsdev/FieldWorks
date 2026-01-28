@@ -17,7 +17,7 @@ Do not edit this block manually; rerun the scripts above after code or doc updat
 # XCore
 
 ## Purpose
-Cross-cutting application framework (~9.8K lines in main folder + 4 subfolders) providing plugin architecture, command routing (Mediator), XML-driven UI composition (Inventory, XWindow), and extensibility infrastructure for FieldWorks applications. Implements colleague pattern (IxCoreColleague), UI adapters (IUIAdapter), property propagation (PropertyTable), and choice management. See subfolder COPILOT.md files for xCoreInterfaces/, FlexUIAdapter/, SilSidePane/, xCoreTests/ details.
+Cross-cutting application framework (~9.8K lines in main folder + 4 subfolders) providing plugin architecture, command routing (Mediator), XML-driven UI composition (Inventory, XWindow), and extensibility infrastructure for FieldWorks applications. Implements colleague pattern (IxCoreColleague), UI adapters (IUIAdapter), property propagation (PropertyTable), and choice management. See subfolder AGENTS.md files for xCoreInterfaces/, FlexUIAdapter/, SilSidePane/, xCoreTests/ details.
 
 ## Architecture
 Plugin-based application framework (~9.8K lines main + 4 subfolders) with XML-driven UI composition. Three-tier design: 1) Core framework (Mediator, PropertyTable, Inventory XML processor), 2) UI components (XWindow, CollapsingSplitContainer, MultiPane, RecordBar), 3) Plugin interfaces (IxCoreColleague, IUIAdapter). Implements colleague pattern for extensible command routing and view coordination across all FieldWorks applications.
@@ -91,8 +91,9 @@ Library component. Reference in consuming projects. See Dependencies section for
 ## References
 See `.cache/copilot/diff-plan.json` for file details.
 
-## Subfolders (detailed docs in individual COPILOT.md files)
+## Subfolders (detailed docs in individual AGENTS.md files)
 - xCoreInterfaces/ - Core interfaces: IxCoreColleague, IUIAdapter, IxCoreContentControl, etc.
 
 ## Code Evidence
 *Analysis based on scanning 78 source files*
+

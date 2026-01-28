@@ -18,7 +18,7 @@ jobs:
         permissions:
             contents: read
             pull-requests: write
-            # models: read   # required when using Copilot CLI
+            # models: read   # required when using an agent CLI
         steps:
             - name: Checkout
               uses: actions/checkout@v4
@@ -28,17 +28,17 @@ jobs:
                   echo "This is a stub workflow for Option 3."
                   echo "Intended action: run .github/prompts/test-failure-debug.prompt.md in analysis-only mode"
                   echo "on PR #${{ github.event.pull_request.number }} and post results as a comment."
-                  echo "When enabling Option 3, wire to Copilot CLI/APM as shown in .github/option3-plan.md."
+                  echo "When enabling Option 3, wire to an agent CLI/APM as shown in .github/option3-plan.md."
 
             # Example future step using APM CLI (disabled until Option 3 is enabled)
-            # - name: Run Test Failure Analysis (Copilot CLI via APM)
+            # - name: Run Test Failure Analysis (agent CLI via APM)
             #   uses: danielmeppiel/action-apm-cli@v1
             #   with:
             #     script: copilot-test-failure-debug
             #     parameters: |
             #       { "testLog": "${{ github.event.pull_request.number }}" }
             #   env:
-            #     GITHUB_COPILOT_PAT: ${{ secrets.COPILOT_CLI_PAT }}
+            #     AGENT_CLI_PAT: ${{ secrets.AGENT_CLI_PAT }}
 
             - name: Post stub comment
               uses: marocchino/sticky-pull-request-comment@v2

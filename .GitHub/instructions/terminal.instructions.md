@@ -8,7 +8,7 @@ description: "Terminal command patterns for auto-approval in FieldWorks"
 
 Commands with pipes (`|`), `&&`, or `2>&1` require manual approval. Use `scripts/Agent/` wrappers instead.
 
-**MCP-first:** When the `ps-tools` MCP server is running, prefer MCP tools (`Git-Search`, `Read-FileContent`, `Invoke-AgentTask`, `build`, `test`, Copilot tools) instead of direct terminal commands. Use wrappers only when MCP is unavailable.
+**MCP-first:** When the `ps-tools` MCP server is running, prefer MCP tools (`Git-Search`, `Read-FileContent`, `Invoke-AgentTask`, `build`, `test`, agent tools) instead of direct terminal commands. Use wrappers only when MCP is unavailable.
 
 ## Transformations
 
@@ -28,3 +28,7 @@ Commands with pipes (`|`), `&&`, or `2>&1` require manual approval. Use `scripts
 | `Read-FileContent.ps1` | File reading with filtering |
 
 **Build/test**: Run `.\build.ps1` or `.\test.ps1` directly—they're auto-approvable.
+## Beads CLI (auto-approvable patterns)
+- `br` and `bv --robot-*` commands are auto-approvable **when they do not use pipes, `&&`, or redirection**.
+- Prefer `--json`/`--robot` output and parse in the agent instead of piping to `jq`.
+- `br sync --flush-only` does **not** run git; you must run git commands separately.

@@ -59,7 +59,7 @@
 
 - [ ] Create/update installer build documentation
 - [ ] Update `installer.instructions.md` WiX version references
-- [ ] Update `copilot-instructions.md` WiX version references
+- [ ] Update `AGENTS.md` WiX version references
 - [ ] Review and update any other documentation mentioning WiX versions
 
 ## Files to Modify
@@ -69,7 +69,7 @@
 | `.github/workflows/base-installer-cd.yml` | Remove `choco install wixtoolset --version 3.11.2` step |
 | `.github/workflows/patch-installer-cd.yml` | Remove `choco install wixtoolset --version 3.11.2` step |
 | `.github/instructions/installer.instructions.md` | Update WiX version to 3.14.x |
-| `.github/copilot-instructions.md` | Update WiX version in tooling section |
+| `.github/AGENTS.md` | Update WiX version in tooling section |
 | `Docs/installer-build.md` (new or existing) | Add installer build documentation |
 
 ## Risk Assessment

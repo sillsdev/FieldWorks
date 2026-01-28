@@ -47,5 +47,6 @@ py -3.11 scripts/GenerateAssemblyInfo/validate_generate_assembly_info.py `
 
 ## 4. Finalize and prepare review
 1. Add the generated CSV/JSON reports to the PR under `Output/GenerateAssemblyInfo/` as artifacts.
-2. Update relevant `COPILOT.md` files if project documentation changes.
+2. Update relevant `AGENTS.md` files if project documentation changes.
 3. Capture before/after counts (template-only vs template+custom) in the spec and reference the validation report in the PR description.
+

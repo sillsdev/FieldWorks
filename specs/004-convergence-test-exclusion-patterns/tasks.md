@@ -88,7 +88,7 @@
 - [X] T018 [P] [US3] Implement validation CLI in `scripts/validate_test_exclusions.py` that loads models, compares against policy (no wildcards, missing exclusions, mixed code), and emits machine-readable reports.
 - [X] T019 [US3] Add severity aggregation and summary printing in `scripts/test_exclusions/validator.py`, shared by both the CLI entry point and the PowerShell wrapper.
 - [X] T020 [P] [US3] Create `Build/Agent/validate-test-exclusions.ps1` to wrap the Python validator, integrate with existing Agent task conventions, and expose configurable fail-on-warning behavior.
-- [ ] T021 [US3] Capture the COPILOT refresh workflow for every converted folder (update each `Src/**/COPILOT.md`, rerun the detect/propose/validate helpers, and record the new `last-reviewed-tree`).
+- [ ] T021 [US3] Capture the COPILOT refresh workflow for every converted folder (update each `Src/**/AGENTS.md`, rerun the detect/propose/validate helpers, and record the new `last-reviewed-tree`).
 - [X] T022 [US3] Update the comment block in `Directory.Build.props` describing the required `<Compile Remove="<ProjectName>Tests/**" />` pattern and nested folder guidance.
 - [X] T023 [US3] Extend `.github/instructions/managed.instructions.md` with a "Test Exclusion Validation" checklist referencing the validator script, PowerShell wrapper, and assembly guard.
 - [X] T024 [P] [US3] Expand `quickstart.md` and related docs with a manual validation checklist (validator CLI, MSBuild run, assembly guard) so contributors know exactly how to run the steps by hand.
@@ -162,3 +162,4 @@ Each increment is independently testable; stop after any increment for demo/revi
 - **Independent test criteria**: Documented per user story above
 - **MVP scope**: Phases 1–3 (Setup, Foundational, US1) deliver actionable audit outputs + escalation workflow
 - **Validation**: All tasks follow the required checkbox + ID + story label format
+

@@ -7,7 +7,7 @@ You are an expert FieldWorks engineer. Implement a feature using a spec-first, v
 
 ## Context loading
 1) Read the spec at ${specFile}
-2) Skim `.github/src-catalog.md` and relevant `Src/<Folder>/COPILOT.md` guides
+2) Skim `.github/src-catalog.md` and relevant `Src/<Folder>/AGENTS.md` guides
 3) Check build/test constraints in `.github/instructions/*.instructions.md`
 
 ## Plan
@@ -36,5 +36,6 @@ Wait for approval before proceeding.
 ## Handoff checklist
 - [ ] Code compiles and local build passes
 - [ ] Tests added/updated and pass locally
-- [ ] COPILOT.md updated if architecture meaningfully changed
+- [ ] AGENTS.md updated if architecture meaningfully changed
 - [ ] `.github/src-catalog.md` updated if folder purpose changed
+

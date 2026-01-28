@@ -10,7 +10,7 @@ description: "FieldWorks native (C++/C++-CLI) development guidelines"
 This file outlines conventions and patterns for native C++/C++-CLI code used in FieldWorks, including interop rules and build-specific requirements.
 
 ## Context loading
-- Review `Src/<Folder>/COPILOT.md` for managed/native boundaries and interop contracts.
+- Review `Src/<Folder>/AGENTS.md` for managed/native boundaries and interop contracts.
 - Include/Lib paths are injected by build props/targets; avoid ad-hoc project configs.
 
 ## Deterministic requirements
@@ -66,3 +66,4 @@ std::unique_ptr<MyBuffer> buf = std::make_unique<MyBuffer>(size);
 ## References
 - Build: Use top-level solution/scripts to ensure props/targets are loaded.
 - Interop: Coordinate with corresponding managed components in `Src/`.
+

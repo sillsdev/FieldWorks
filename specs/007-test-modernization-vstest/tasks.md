@@ -312,8 +312,8 @@
 - [x] T019 Update `quickstart.md` with final instructions for running tests via VSTest.
 - [x] T020 Remove any obsolete NUnit console runner artifacts or scripts if no longer needed.
       *Note: NUnit console runner is still used for coverage analysis (`action='cover'`); VSTest replaces it for test execution (`action='test'`).*
-- [x] T021 Update `Src/Common/COPILOT.md` (and other relevant `COPILOT.md` files) to reflect the new test runner infrastructure and VSTest usage.
-      *Updated: `.github/instructions/testing.instructions.md` and `.github/copilot-instructions.md`*
+- [x] T021 Update `Src/Common/AGENTS.md` (and other relevant `AGENTS.md` files) to reflect the new test runner infrastructure and VSTest usage.
+      *Updated: `.github/instructions/testing.instructions.md` and `.github/AGENTS.md`*
 
 ### Phase 6: Build Quality - Treat Warnings as Errors
 *Goal: Enforce warning-free builds across all projects while documenting unavoidable external package warnings.*
@@ -368,3 +368,4 @@
 1.  **MVP**: Complete Phases 1 & 2 to get the build running with VSTest.
 2.  **Validation**: Verify VS Code integration (Phase 3) and Parity (Phase 4).
 3.  **Optional**: Tackle Phase 5 (Native Migration) if time permits or as a separate follow-up.
+

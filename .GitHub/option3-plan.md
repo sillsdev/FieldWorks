@@ -9,10 +9,10 @@ This plan is mothballed for now. It captures the steps to bring our agent workfl
 
 ## Steps
 
-### 1) Copilot CLI and APM scaffold
-- Add `apm.yml` with scripts mapping to our prompts (e.g., `copilot-feature-spec` → feature-spec.prompt.md)
+### 1) Agent CLI and APM scaffold
+- Add `apm.yml` with scripts mapping to our prompts (e.g., `agent-feature-spec` → feature-spec.prompt.md)
 - Include MCP dependencies (e.g., `ghcr.io/github/github-mcp-server`)
-- Document local usage in README: `apm install`, `apm run copilot-feature-spec --param specFile=...`
+- Document local usage in README: `apm install`, `apm run agent-feature-spec --param specFile=...`
 
 ### 2) GitHub Action to run a prompt on PR
 - Create `.github/workflows/agent-workflow.yml`
@@ -26,14 +26,14 @@ This plan is mothballed for now. It captures the steps to bring our agent workfl
 - Maintain a curated list in `.github/context/mcp.servers.md` (to be created when piloting)
 
 ### 4) Security and secrets
-- Use `secrets.COPILOT_CLI_PAT` for Copilot CLI (if needed)
+- Use `secrets.AGENT_CLI_PAT` for agent CLI (if needed)
 - Principle of least privilege for tokens and tool scopes
 - Add a security review checklist for new tools/servers
 
 ### 5) Governance and validation
 - Add a `lint-docs` CI job to verify presence and links for:
   - `.github/instructions/*.instructions.md`
-  - `Src/*/COPILOT.md`
+  - `Src/*/AGENTS.md`
   - `.github/src-catalog.md`
 - Add a `prompt-validate` job: checks frontmatter structure for `.prompt.md`
 
@@ -42,8 +42,9 @@ This plan is mothballed for now. It captures the steps to bring our agent workfl
 - Gather feedback and iterate before enabling write-capable workflows
 
 ## References
-- `.github/copilot-instructions.md` (entry points)
+- `.github/AGENTS.md` (entry points)
 - `.github/prompts/` (agent workflows)
 - `.github/instructions/` (domain rules)
 - `.github/chatmodes/` (role boundaries)
 - `.github/context/` and `.github/memory.md` (signals and decisions)
+

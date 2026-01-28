@@ -9,7 +9,7 @@ List projects, folders, and files to change. Note any interop boundaries.
 ## Tasks
 - [ ] Code changes (by component)
 - [ ] Tests (unit/integration)
-- [ ] Docs updates (COPILOT.md, src-catalog)
+- [ ] Docs updates (AGENTS.md, src-catalog)
 
 ## Validation gates
 - [ ] Plan review approval before code changes
@@ -17,3 +17,4 @@ List projects, folders, and files to change. Note any interop boundaries.
 
 ## Rollback plan
 How to revert safely if needed.
+

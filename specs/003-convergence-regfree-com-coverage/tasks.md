@@ -74,7 +74,7 @@
 - [ ] T020 [US2] Execute `scripts/regfree/run-in-vm.ps1` with both EXEs on the clean VM and append the observed steps/results to `tests/Integration/RegFreeCom/user-tools-vm.md`.
 - [ ] T021 [US2] Perform developer-machine regression runs for both EXEs (with COM registered) to verify manifests take precedence; capture command logs + screenshots in `tests/Integration/RegFreeCom/user-tools-dev.md`.
 - [ ] T022 [US2] Exercise complex-script sample projects (RTL + combining marks) on the clean VM and developer machine, documenting outcomes in `tests/Integration/RegFreeCom/user-tools-i18n.md`.
-- [ ] T023 [US2] Update `Src/LCMBrowser/COPILOT.md` and `Src/UnicodeCharEditor/COPILOT.md` (or add justification notes) to reflect the new manifest wiring and validation artifacts.
+- [ ] T023 [US2] Update `Src/LCMBrowser/AGENTS.md` and `Src/UnicodeCharEditor/AGENTS.md` (or add justification notes) to reflect the new manifest wiring and validation artifacts.
 
 **Checkpoint**: LCMBrowser.exe and UnicodeCharEditor.exe ship with verified manifests and documented clean-VM runs, establishing the MVP.
 
@@ -96,7 +96,7 @@
 - [ ] T029 [US3] Run `validate_regfree_manifests.py` for the utilities (or note NotRequired) and store per-EXE logs inside the artifacts folder.
 - [ ] T030 [US3] Use `scripts/regfree/run-in-vm.ps1` to execute the utilities on the clean VM, capturing output/screenshots within `tests/Integration/RegFreeCom/migration-utilities-vm.md`.
 - [ ] T031 [US3] Perform developer-machine regression + complex-script validation for each manifest-enabled utility, recording outputs in `tests/Integration/RegFreeCom/migration-utilities-dev.md`.
-- [ ] T032 [US3] Update `Src/MigrateSqlDbs/COPILOT.md`, `Src/Utilities/FixFwData/COPILOT.md`, and `Src/FXT/FxtExe/COPILOT.md` to document the manifest status (or NotRequired rationale) with links to the validation evidence.
+- [ ] T032 [US3] Update `Src/MigrateSqlDbs/AGENTS.md`, `Src/Utilities/FixFwData/AGENTS.md`, and `Src/FXT/FxtExe/AGENTS.md` to document the manifest status (or NotRequired rationale) with links to the validation evidence.
 
 **Checkpoint**: Migration utilities either ship with manifests or have documented evidence explaining why they do not require one.
 
@@ -120,7 +120,7 @@
 - [ ] T040 [US4] Update `Docs/64bit-regfree-migration.md` with the completed manifest coverage, clean VM + dev-machine validation steps, and troubleshooting guidance.
 - [ ] T041 [US4] Publish `specs/003-convergence-regfree-com-coverage/artifacts/com_usage_reference.md` summarizing each EXE, manifest status, COM classes, and evidence links.
 - [ ] T042 [US4] Perform developer-machine regression + complex-script validation for supporting utilities/Converter binaries, capturing logs in `tests/Integration/RegFreeCom/supporting-utilities-dev.md`.
-- [ ] T043 [US4] Update `Src/Utilities/SfmToXml/COPILOT.md`, `Src/Utilities/SfmStats/COPILOT.md`, `Lib/src/Converter/Converter/COPILOT.md`, and `Lib/src/Converter/ConvertConsole/COPILOT.md` (or equivalent docs) with the manifest/not-required outcomes.
+- [ ] T043 [US4] Update `Src/Utilities/SfmToXml/AGENTS.md`, `Src/Utilities/SfmStats/AGENTS.md`, `Lib/src/Converter/Converter/AGENTS.md`, and `Lib/src/Converter/ConvertConsole/AGENTS.md` (or equivalent docs) with the manifest/not-required outcomes.
 
 **Checkpoint**: Documentation and installer deliverables reflect complete RegFree COM coverage for all executables.
 
@@ -176,3 +176,4 @@
 - Developer A focuses on scripts/common infrastructure.
 - Developer B handles LCMBrowser/UnicodeCharEditor manifest work while Developer C starts utility manifests once US2 artifacts land.
 - QA/Docs resources tackle US4 once US3 finishes.
+

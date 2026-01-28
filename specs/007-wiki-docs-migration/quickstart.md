@@ -131,7 +131,7 @@ Common issues and solutions.
 # Check for broken links (requires markdown-link-check)
 npx markdown-link-check docs/**/*.md
 
-# Check COPILOT.md files
+# Check AGENTS.md files
 python .github/check_copilot_docs.py --only-changed --fail
 ```
 
@@ -144,3 +144,4 @@ python .github/check_copilot_docs.py --only-changed --fail
 | SC-003: 2-hour contributor test | Manual test with new developer |
 | SC-004: ReadMe links | Check `ReadMe.md` has links to `docs/` |
 | SC-005: Gerrit content updated | Search for "gerrit" in migrated docs |
+

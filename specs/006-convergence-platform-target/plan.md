@@ -7,7 +7,7 @@
 
 ## Summary
 
-Remove redundant `<PlatformTarget>x64</PlatformTarget>` declarations from 110 SDK-style projects so that the global defaults defined in `Directory.Build.props` remain the single source of truth. Retain the single intentional AnyCPU declaration (FwBuildTasks) with an XML comment explaining that it is tooling, and document any future exceptions. Implementation relies on the convergence Python tooling (`convergence.py platform-target *`) to audit, apply, and validate changes while ensuring x64-only enforcement stays intact, followed by targeted builds of FwBuildTasks and COPILOT.md updates wherever project files change.
+Remove redundant `<PlatformTarget>x64</PlatformTarget>` declarations from 110 SDK-style projects so that the global defaults defined in `Directory.Build.props` remain the single source of truth. Retain the single intentional AnyCPU declaration (FwBuildTasks) with an XML comment explaining that it is tooling, and document any future exceptions. Implementation relies on the convergence Python tooling (`convergence.py platform-target *`) to audit, apply, and validate changes while ensuring x64-only enforcement stays intact, followed by targeted builds of FwBuildTasks and AGENTS.md updates wherever project files change.
 
 ## Technical Context
 
@@ -24,7 +24,7 @@ Remove redundant `<PlatformTarget>x64</PlatformTarget>` declarations from 110 SD
 **Target Platform**: Windows x64 developer environments and CI runners
 **Project Type**: Multi-project desktop/CLI suite (FieldWorks mono-repo)
 **Performance Goals**: No regressions to build time; maintain single-pass traversal build
-**Constraints**: Preserve x64-only enforcement, document AnyCPU exceptions with XML comments (specifically `<!-- Must be AnyCPU... -->`) explaining they are build/test tools that never ship in end-user executables, avoid touching unrelated MSBuild properties, and keep every touched `Src/**` folder’s COPILOT.md accurate
+**Constraints**: Preserve x64-only enforcement, document AnyCPU exceptions with XML comments (specifically `<!-- Must be AnyCPU... -->`) explaining they are build/test tools that never ship in end-user executables, avoid touching unrelated MSBuild properties, and keep every touched `Src/**` folder’s AGENTS.md accurate
 **Scale/Scope**: 119 SDK-style projects (110 redundant x64 declarations, 1 justified AnyCPU exception, remainder already inheriting defaults)
 
 ## Constitution Check
@@ -81,3 +81,4 @@ Repository root
 | Violation | Why Needed | Simpler Alternative Rejected Because |
 | --------- | ---------- | ------------------------------------ |
 | _None_    |            |                                      |
+

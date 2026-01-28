@@ -121,7 +121,7 @@ These tools map parameters directly to the PowerShell scripts. Examples:
   "tool": "Copilot-Validate",
   "args": {
     "base": "release/9.3",
-    "paths": "Src/Common/COPILOT.md"
+    "paths": "Src/Common/AGENTS.md"
   }
 }
 ```
@@ -165,3 +165,4 @@ The server calls existing wrapper scripts; host/container routing is preserved a
 2) Ensure `mcp.json` is present (or `.vscode/settings.json` MCP entry) pointing to `http://127.0.0.1:5000/sse`.
 3) From MCP client, run `Git-Search` with `{ "action": "log", "headLines": 5 }` and expect recent commits returned with `exitCode: 0`.
 4) Optionally run `Copilot-Detect` with `{ "out": ".cache/copilot/detect.json" }` to confirm Copilot maintenance wiring.
+

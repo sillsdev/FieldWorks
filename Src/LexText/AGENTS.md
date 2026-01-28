@@ -22,24 +22,25 @@ Organizational parent folder containing lexicon and text analysis components of 
 ## Subfolder Map
 | Subfolder | Key Project | Notes |
 |-----------|-------------|-------|
-| Discourse | Discourse.csproj | Discourse chart analysis - [Discourse/COPILOT.md](Discourse/COPILOT.md) |
-| FlexPathwayPlugin | FlexPathwayPlugin.csproj | Pathway publishing integration - [FlexPathwayPlugin/COPILOT.md](FlexPathwayPlugin/COPILOT.md) |
-| Interlinear | ITextDll.csproj | Interlinear text analysis - [Interlinear/COPILOT.md](Interlinear/COPILOT.md) |
-| LexTextControls | LexTextControls.csproj | Shared UI controls - [LexTextControls/COPILOT.md](LexTextControls/COPILOT.md) |
-| LexTextDll | LexTextDll.csproj | Core business logic - [LexTextDll/COPILOT.md](LexTextDll/COPILOT.md) |
-| Lexicon | LexEdDll.csproj | Lexicon editor UI - [Lexicon/COPILOT.md](Lexicon/COPILOT.md) |
-| Morphology | MorphologyEditorDll.csproj, MGA.csproj | Morphological analysis - [Morphology/COPILOT.md](Morphology/COPILOT.md) |
-| ParserCore | ParserCore.csproj, XAmpleCOMWrapper.vcxproj | Parser engine - [ParserCore/COPILOT.md](ParserCore/COPILOT.md) |
-| ParserUI | ParserUI.csproj | Parser UI - [ParserUI/COPILOT.md](ParserUI/COPILOT.md) |
+| Discourse | Discourse.csproj | Discourse chart analysis - [Discourse/AGENTS.md](Discourse/AGENTS.md) |
+| FlexPathwayPlugin | FlexPathwayPlugin.csproj | Pathway publishing integration - [FlexPathwayPlugin/AGENTS.md](FlexPathwayPlugin/AGENTS.md) |
+| Interlinear | ITextDll.csproj | Interlinear text analysis - [Interlinear/AGENTS.md](Interlinear/AGENTS.md) |
+| LexTextControls | LexTextControls.csproj | Shared UI controls - [LexTextControls/AGENTS.md](LexTextControls/AGENTS.md) |
+| LexTextDll | LexTextDll.csproj | Core business logic - [LexTextDll/AGENTS.md](LexTextDll/AGENTS.md) |
+| Lexicon | LexEdDll.csproj | Lexicon editor UI - [Lexicon/AGENTS.md](Lexicon/AGENTS.md) |
+| Morphology | MorphologyEditorDll.csproj, MGA.csproj | Morphological analysis - [Morphology/AGENTS.md](Morphology/AGENTS.md) |
+| ParserCore | ParserCore.csproj, XAmpleCOMWrapper.vcxproj | Parser engine - [ParserCore/AGENTS.md](ParserCore/AGENTS.md) |
+| ParserUI | ParserUI.csproj | Parser UI - [ParserUI/AGENTS.md](ParserUI/AGENTS.md) |
 | images | - | Shared image resources |
 
 ## When Updating This Folder
 1. Run `python .github/plan_copilot_updates.py --folders Src/LexText`
 2. Run `python .github/copilot_apply_updates.py --folders Src/LexText`
 3. Update subfolder tables if projects are added/removed
-4. Run `python .github/check_copilot_docs.py --paths Src/LexText/COPILOT.md`
+4. Run `python .github/check_copilot_docs.py --paths Src/LexText/AGENTS.md`
 
 ## Related Guidance
-- See `.github/AI_GOVERNANCE.md` for shared expectations and the COPILOT.md baseline
+- See `.github/AI_GOVERNANCE.md` for shared expectations and the AGENTS.md baseline
 - Use the planner output (`.cache/copilot/diff-plan.json`) for the latest project and file references
 - Trigger `.github/prompts/copilot-folder-review.prompt.md` after edits for an automated dry run
+

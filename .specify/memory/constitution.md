@@ -44,7 +44,7 @@ license requirements and third‑party license obligations. Development occurs o
 GitHub following documented coding standards and review practices.
 
 ### VI. Documentation Fidelity
-Architecture and folder documentation (including `Src/**/COPILOT.md`) MUST match released behavior. Unknowns SHOULD be recorded with targeted `FIXME(<topic>)` markers until verified—never replaced by speculation.
+Architecture and folder documentation (including `Src/**/AGENTS.md`) MUST match released behavior. Unknowns SHOULD be recorded with targeted `FIXME(<topic>)` markers until verified—never replaced by speculation.
 
 ## Additional Constraints
 
@@ -56,7 +56,7 @@ Architecture and folder documentation (including `Src/**/COPILOT.md`) MUST match
 
 - All PRs MUST describe risk, cite test evidence (or justify omissions), and state data impact.
 - Changes affecting rendering, migrations, or installers MUST include integration tests or scripted validation steps.
-- Updates touching `Src/**` code MUST either refresh the paired `COPILOT.md` or explain why existing documentation remains accurate.
+- Updates touching `Src/**` code MUST either refresh the paired `AGENTS.md` or explain why existing documentation remains accurate.
 - “Constitution Check” gates in feature plans MUST confirm migration coverage, script/i18n validation, test coverage for risk areas, and licensing compliance for new dependencies.
 
 ## Governance
@@ -78,3 +78,4 @@ Compliance Review:
 - CI SHOULD enforce lint/test gates and block if required evidence is missing.
 
 **Version**: 1.0.0 | **Ratified**: TODO(RATIFICATION_DATE) | **Last Amended**: 2025-10-28
+

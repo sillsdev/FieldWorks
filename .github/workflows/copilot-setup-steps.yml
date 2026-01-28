@@ -1,4 +1,4 @@
-# Reusable workflow to setup Windows build environment for Copilot coding agents
+# Reusable workflow to setup Windows build environment for AI coding agents
 # Optimized for windows-latest which already includes most FieldWorks dependencies.
 #
 # ============================================================================
@@ -34,7 +34,7 @@
 #
 # ============================================================================
 
-name: "Copilot: Windows setup steps"
+name: "Agents: Windows setup steps"
 on:
     workflow_call:
         inputs:
@@ -108,7 +108,7 @@ jobs:
                   .\Build\Agent\Verify-FwDependencies.ps1 -FailOnMissing
 
             # ================================================================
-            # SERENA MCP SETUP - for Copilot coding agent code intelligence
+            # SERENA MCP SETUP - for agent code intelligence
             # ================================================================
             - name: "Serena: Setup and verify"
               if: inputs.skip_serena != true

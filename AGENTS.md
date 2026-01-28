@@ -1,8 +1,8 @@
-# GitHub Copilot Agent Playbook for FieldWorks
+# AI Agent Playbook for FieldWorks
 
-This document explains how Copilot agents (coding and chat modes) should operate inside the FieldWorks mono-repo and how we keep their instructions synchronized.
+This document explains how AI agents (coding and chat modes) should operate inside the FieldWorks mono-repo and how we keep their instructions synchronized.
 
-> **Need IDE-facing guidance?** See `.github/copilot-instructions.md`. For governance/process details refer to `Docs/AI_AGENT_GOVERNANCE.md`.
+> **Need IDE-facing guidance?** See `.github/AGENTS.md`. For governance/process details refer to `Docs/AI_AGENT_GOVERNANCE.md`.
 
 ## Quick Start (All Agents)
 
@@ -20,15 +20,22 @@ This document explains how Copilot agents (coding and chat modes) should operate
 | FieldWorks Native Dev | `.github/chatmodes/native-engineer.chatmode.md` | C++/CLI bridge, core native libs, perf tracing | `.github/instructions/native.instructions.md`, `Build\Src\NativeBuild`, `specs/003-convergence-regfree-com-coverage` |
 | FieldWorks UI (WinForms & future Avalonia) | `.github/chatmodes/fieldworks-ui.chatmode.md` | UI composition, area shells, upcoming Avalonia experiments | `.github/instructions/managed.instructions.md`, `Src/Common/Controls`, `Src/xWorks`, `specs/006-convergence-platform-target` |
 | FieldWorks Installer | `.github/chatmodes/installer-engineer.chatmode.md` | WiX packaging, prerequisite validation | `.github/instructions/installer.instructions.md`, `FLExInstaller/**`, `specs/007-wix-314-installer` |
-| FieldWorks Tech Writer | `.github/chatmodes/technical-writer.chatmode.md` | COPILOT.md upkeep, wiki migrations, specs | `.github/instructions/technical-writer.instructions.md`, `.github/src-catalog.md` |
+| FieldWorks Tech Writer | `.github/chatmodes/technical-writer.chatmode.md` | AGENTS.md upkeep, wiki migrations, specs | `.github/instructions/technical-writer.instructions.md`, `.github/src-catalog.md` |
 | Autonomous Coding Agent | `.github/chatmodes/coding-agent.chatmode.md` | Full-stack changes end-to-end (used in CI agents) | `Docs/AI_AGENT_GOVERNANCE.md`, `.github/instructions/*.md` |
 
 ### Choosing the right agent
 
 1. **Identify the surface** (managed code, native code, installer, docs).
 2. **Pick the matching chatmode** from the table above.
-3. **Load context**: read relevant `COPILOT.md`, `specs/` entries, and instructions referenced in the chatmode.
+3. **Load context**: read relevant `AGENTS.md`, `specs/` entries, and instructions referenced in the chatmode.
 4. **Escalate**: if a task crosses multiple surfaces (e.g., managed ↔ native), coordinate through the coding agent or split the work between specialized agents.
+
+## Beads task tracking (br/bv)
+- This repo uses **beads_rust** (`br`) for dependency-aware, local-first task tracking. Issues live in `.beads/` with SQLite + JSONL (`beads.db`, `issues.jsonl`).
+- **Agent-safe output:** always use `--json` or `--robot` when parsing output (for example, `br ready --json`, `br show <id> --json`).
+- **Lifecycle:** `br create` → `br dep add` (if needed) → `br update <id> --status in_progress` → `br close <id> --reason "..."`.
+- **Git sync is explicit:** `br sync --flush-only`, then **manually** `git add .beads/` + commit + push (br never runs git).
+- **Triage sidecar:** `bv` is optional for graph-aware planning; **never run bare `bv`** in agent contexts—use `bv --robot-*` only.
 
 ## FieldWorks-Specific Agent Rules
 
@@ -38,7 +45,7 @@ This document explains how Copilot agents (coding and chat modes) should operate
 
 ### COM and Registry
 - FieldWorks relies on registration-free COM. Do not register COM components globally or edit the Windows registry unless a spec explicitly directs it.
-- Update manifests through the established build targets (`Build/RegFree.targets`) and document changes in the relevant `COPILOT.md`.
+- Update manifests through the established build targets (`Build/RegFree.targets`) and document changes in the relevant `AGENTS.md`.
 
 ## Governance & Safety
 
@@ -55,7 +62,7 @@ This document explains how Copilot agents (coding and chat modes) should operate
 | `FLExInstaller/**` | `.github/instructions/installer.instructions.md` |
 | `Docs/**/*.md` | `.github/instructions/technical-writer.instructions.md` |
 
-Always review the local `COPILOT.md` before editing a folder—the files summarize architecture, dependencies, and testing requirements.
+Always review the local `AGENTS.md` before editing a folder—the files summarize architecture, dependencies, and testing requirements.
 
 ## Validation Checklist (All Agents)
 
@@ -63,11 +70,12 @@ Always review the local `COPILOT.md` before editing a folder—the files summari
 2. `.\test.ps1` (or targeted variants) pass for affected components.
 3. `.\Build\Agent\check-and-fix-whitespace.ps1` reports clean output.
 4. Commit messages meet repo guidelines (`Build/Agent/commit-messages.ps1`).
-5. Updated documentation (`COPILOT.md`, specs, instructions) where behavior changed.
+5. Updated documentation (`AGENTS.md`, specs, instructions) where behavior changed.
 
 ## Extending or Creating New Agents
 
 1. Draft scope/requirements in `Docs/AI_AGENT_GOVERNANCE.md` (new section).
 2. Add a chatmode under `.github/chatmodes/` following the existing template.
 3. Update the catalog table above with scope, references, and validation steps.
-4. Regenerate any IDE hints (e.g., `.github/copilot-instructions.md` or workspace instructions) if activation steps change.
+4. Regenerate any IDE hints (e.g., `.github/AGENTS.md` or workspace instructions) if activation steps change.
+

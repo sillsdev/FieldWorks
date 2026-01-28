@@ -25,7 +25,7 @@ description: "PowerShell best practices for scripts used in FieldWorks (dev scri
 
 ## Auto-Approval Patterns
 
-**CRITICAL**: Copilot terminal security blocks complex commands. The following require manual approval:
+**CRITICAL**: Agent terminal security blocks complex commands. The following require manual approval:
 - Pipes (`|`)
 - Semicolons (`;`) or `&&`
 - Redirection (`2>&1`)

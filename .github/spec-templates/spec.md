@@ -28,5 +28,6 @@ Enumerate alternatives considered and trade-offs.
 - Any data migration or project conversion concerns
 
 ## Links
-- Affected COPILOT.md to update
+- Affected AGENTS.md to update
 - Relevant `.github/instructions/*.instructions.md`
+

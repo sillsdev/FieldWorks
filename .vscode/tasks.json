@@ -16,7 +16,7 @@
       "default": "3"
     },
     {
-      "id": "copilotFolders",
+      "id": "agentFolders",
       "type": "promptString",
       "description": "Space-separated Src/<Folder> entries to refresh",
       "default": "Src/Common"
@@ -505,12 +505,12 @@
       "problemMatcher": []
     },
 
-    // ==================== COPILOT Documentation ====================
+    // ==================== Agent Documentation ====================
     {
-      "label": "COPILOT: Detect updates needed",
+      "label": "Agent: Detect updates needed",
       "type": "shell",
       "command": "& { . ./Build/Agent/GitHelpers.ps1; $base = Get-DefaultBranchRef; python .github/detect_copilot_needed.py --base $base --strict }",
-      "detail": "Check which COPILOT.md files need updates",
+      "detail": "Check which AGENTS.md files need updates",
       "options": {
         "shell": {
           "executable": "powershell.exe",
@@ -520,10 +520,10 @@
       "problemMatcher": []
     },
     {
-      "label": "COPILOT: Validate docs",
+      "label": "Agent: Validate docs",
       "type": "shell",
       "command": "& { . ./Build/Agent/GitHelpers.ps1; $base = Get-DefaultBranchRef; python .github/check_copilot_docs.py --only-changed --base $base --fail }",
-      "detail": "Validate COPILOT.md files for changed folders",
+      "detail": "Validate AGENTS.md files for changed folders",
       "options": {
         "shell": {
           "executable": "powershell.exe",
@@ -533,7 +533,7 @@
       "problemMatcher": []
     },
     {
-      "label": "COPILOT: Plan all folders",
+      "label": "Agent: Plan all folders",
       "type": "shell",
       "command": "& { . ./Build/Agent/GitHelpers.ps1; $base = Get-DefaultBranchRef; python .github/plan_copilot_updates.py --all --fallback-base $base --out .cache/copilot/diff-plan.json }",
       "detail": "Generate diff plan for all Src folders",
@@ -546,10 +546,10 @@
       "problemMatcher": []
     },
     {
-      "label": "COPILOT: Propose updates",
+      "label": "Agent: Propose updates",
       "type": "shell",
       "command": "& { . ./Build/Agent/GitHelpers.ps1; $base = Get-DefaultBranchRef; python .github/scaffold_copilot_markdown.py --base $base }",
-      "detail": "Generate COPILOT.md updates for changed folders (modifies files)",
+      "detail": "Generate AGENTS.md updates for changed folders (modifies files)",
       "options": {
         "shell": {
           "executable": "powershell.exe",
@@ -559,9 +559,9 @@
       "problemMatcher": []
     },
     {
-      "label": "COPILOT: Apply change-log",
+      "label": "Agent: Apply change-log",
       "type": "shell",
-      "command": "python .github/copilot_apply_updates.py --plan .cache/copilot/diff-plan.json --folders ${input:copilotFolders}",
+      "command": "python .github/copilot_apply_updates.py --plan .cache/copilot/diff-plan.json --folders ${input:agentFolders}",
       "detail": "Apply auto change-log to selected folders (modifies files)",
       "options": {
         "shell": {
@@ -573,3 +573,4 @@
     }
   ]
 }
+
