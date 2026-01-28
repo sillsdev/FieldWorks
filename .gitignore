@@ -192,3 +192,6 @@ TestResults/
 bin/
 FLExInstaller/cabcache/*
 FLExInstaller/wix6/cabcache/*
+
+# bv (beads viewer) local config and caches
+.bv/
