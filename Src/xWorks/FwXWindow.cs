@@ -1875,6 +1875,9 @@ namespace SIL.FieldWorks.XWorks
 			{
 				// Need to refresh to reload the cache.  See LT-6265.
 				(m_app as FwXApp).OnMasterRefresh(null);
+
+				// Refresh the fonts on popup windows.
+				Publisher.Publish(new PublisherParameterObject(EventConstants.RefreshPopupWindowFonts, null));
 			}
 			return false;   // refresh already called if needed
 		}

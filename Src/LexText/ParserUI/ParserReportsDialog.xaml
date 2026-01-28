@@ -39,7 +39,7 @@
 							<Label Content="{x:Static local:ParserUIStrings.ksText}" ToolTip="{x:Static local:ParserUIStrings.ksTextToolTip}"/>
 						</DataGridTextColumn.Header>
 					</DataGridTextColumn>
-					<DataGridTextColumn Binding="{Binding DisplayComment, Mode=OneWay}" Width="100">
+					<DataGridTextColumn Binding="{Binding DisplayComment, Mode=OneWay}">
 						<DataGridTextColumn.Header>
 							<Label Content="{x:Static local:ParserUIStrings.ksComment}" ToolTip="{x:Static local:ParserUIStrings.ksCommentToolTip}"/>
 						</DataGridTextColumn.Header>
@@ -109,23 +109,23 @@
 			</DataGrid>
 		</ScrollViewer>
 
-		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left" Height="40">
+		<StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left">
 			<Button Content="{x:Static local:ParserUIStrings.ksShowReport}"
                     ToolTip="{x:Static local:ParserUIStrings.ksShowReportToolTip}"
                     IsEnabled="{Binding CanShowReport}"
-                    Click="ShowParserReport" Width="100" Margin="5"/>
+                    Click="ShowParserReport" Margin="5"/>
 			<Button Content="{x:Static local:ParserUIStrings.ksSaveReport}"
                     ToolTip="{x:Static local:ParserUIStrings.ksSaveReportToolTip}"
                     IsEnabled="{Binding CanSaveReport}"
-                    Click="SaveParserReport" Width="100" Margin="5"/>
+                    Click="SaveParserReport" Margin="5"/>
 			<Button Content="{x:Static local:ParserUIStrings.ksDiffButton}"
                     ToolTip="{x:Static local:ParserUIStrings.ksDiffButtonToolTip}"
                     IsEnabled="{Binding CanDiffReports}"
-                    Click="DiffParserReports" Width="100" Margin="5" />
+                    Click="DiffParserReports" Margin="5" />
 			<Button Content="{Binding DeleteButtonContent}"
                     ToolTip="{x:Static local:ParserUIStrings.ksDeleteToolTip}"
                     IsEnabled="{Binding CanDeleteReports}"
-                    Click="DeleteParserReport" Width="100" Margin="5" />
+                    Click="DeleteParserReport" Margin="5" />
 		</StackPanel>
 	</Grid>
 </Window>

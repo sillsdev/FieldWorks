@@ -28,6 +28,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public const string PrepareToRefresh = "PrepareToRefresh";
 		public const string RecordNavigation = "RecordNavigation";
 		public const string RefreshCurrentList = "RefreshCurrentList";
+		public const string RefreshPopupWindowFonts = "RefreshPopupWindowFonts";
 		public const string ReloadAreaTools = "ReloadAreaTools";
 		public const string RemoveFilters = "RemoveFilters";
 		public const string RestoreScrollPosition = "RestoreScrollPosition";

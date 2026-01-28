@@ -70,6 +70,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private string m_sourceText = null;
 		private ObservableCollection<ParserReportViewModel> m_parserReports = null;
 		private ParserReportsDialog m_parserReportsDialog = null;
+		private IList<ParserReportDialog> m_parserReportDialogs = new List<ParserReportDialog>();
 		private string m_defaultComment = null;
 
 		public void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters)
@@ -85,6 +86,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			m_sda.AddNotification(this);
 
 			Subscriber.Subscribe(EventConstants.StopParser, StopParser);
+			Subscriber.Subscribe(EventConstants.RefreshPopupWindowFonts, RefreshPopupWindowFonts);
 		}
 
 		/// <summary>
@@ -364,6 +366,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			if (disposing)
 			{
 				Subscriber.Unsubscribe(EventConstants.StopParser, StopParser);
+				Subscriber.Unsubscribe(EventConstants.RefreshPopupWindowFonts, RefreshPopupWindowFonts);
 
 				// other clients may now parse
 				// Dispose managed resources here.
@@ -626,7 +629,7 @@ namespace SIL.FieldWorks.LexText.Controls
 					// Write an empty parser report.
 					var parserReport = CreateParserReport();
 					ParserReportViewModel viewModel = AddParserReport(parserReport);
-					ShowParserReport(viewModel, m_mediator, m_cache);
+					ShowParserReport(viewModel);
 				}
 			}
 			m_parserConnection.UpdateWordforms(wordforms, priority, checkParser);
@@ -681,7 +684,7 @@ namespace SIL.FieldWorks.LexText.Controls
 				// Convert parse results into ParserReport.
 				var parserReport = CreateParserReport();
 				ParserReportViewModel viewModel = AddParserReport(parserReport);
-				ShowParserReport(viewModel, m_mediator, m_cache);
+				ShowParserReport(viewModel);
 			}
 		}
 
@@ -839,11 +842,23 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				ReadParserReports();
 				// Create parser reports window.
-				m_parserReportsDialog = new ParserReportsDialog(m_parserReports, m_mediator, m_cache, m_defaultComment);
+				m_parserReportsDialog = new ParserReportsDialog(m_parserReports, this, m_mediator, m_cache, m_propertyTable, m_defaultComment);
 				m_parserReportsDialog.Closed += ParserReportsDialog_Closed;
 			}
 			m_parserReportsDialog.Show(); // Show the dialog but do not block other app access
 			m_parserReportsDialog.BringIntoView();
+		}
+
+		public void RefreshPopupWindowFonts(object sender)
+		{
+			if (m_parserReportsDialog != null)
+			{
+				m_parserReportsDialog.SetFont();
+			}
+			foreach (ParserReportDialog dialog in m_parserReportDialogs)
+			{
+				dialog.SetFont();
+			}
 		}
 
 		private void ParserReportsDialog_Closed(object sender, EventArgs e)
@@ -888,12 +903,22 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// <summary>
 		/// Display a parser report window.
 		/// </summary>
-		/// <param name="parserReport"></param>
-		/// <param name="mediator">the mediator is used to call TryAWord</param>
-		public static void ShowParserReport(ParserReportViewModel parserReport, Mediator mediator, LcmCache cache)
+		public void ShowParserReport(object obj)
 		{
-			ParserReportDialog dialog = new ParserReportDialog(parserReport, mediator, cache);
+			ParserReportViewModel parserReport = obj as ParserReportViewModel;
+			ParserReportDialog dialog = new ParserReportDialog(parserReport, m_mediator, m_cache, m_propertyTable);
 			dialog.Show();
+			m_parserReportDialogs.Add(dialog);
+			dialog.Closed += ParserReportDialog_Closed;
+		}
+
+		private void ParserReportDialog_Closed(object sender, EventArgs e)
+		{
+			ParserReportDialog dialog = (ParserReportDialog)sender;
+			if (dialog != null)
+			{
+				m_parserReportDialogs.Remove(dialog);
+			}
 		}
 
 		public bool OnParseAllWords(object argument)

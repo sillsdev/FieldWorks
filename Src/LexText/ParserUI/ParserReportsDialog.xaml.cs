@@ -1,9 +1,12 @@
 using SIL.Extensions;
-using SIL.FieldWorks.WordWorks.Parser;
+using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
+using SIL.FieldWorks.Common.Widgets;
 using SIL.LCModel;
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Drawing;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -25,22 +28,39 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		public LcmCache Cache { get; set; }
 
+		public ParserListener Listener { get; set; }
+
 		public string DefaultComment = null;
+
+		private PropertyTable m_propertyTable;
 
 		public ParserReportsDialog()
 		{
 			InitializeComponent();
 		}
 
-		public ParserReportsDialog(ObservableCollection<ParserReportViewModel> parserReports, Mediator mediator, LcmCache cache, string defaultComment)
+		public ParserReportsDialog(ObservableCollection<ParserReportViewModel> parserReports, ParserListener listener, Mediator mediator, LcmCache cache, PropertyTable propertyTable, string defaultComment)
 		{
 			InitializeComponent();
 			parserReports.Sort((x, y) => y.Timestamp.CompareTo(x.Timestamp));
 			ParserReports = parserReports;
+			Listener = listener;
 			Mediator = mediator;
 			Cache = cache;
+			m_propertyTable = propertyTable;
 			DataContext = new ParserReportsViewModel { ParserReports = parserReports };
 			DefaultComment = defaultComment;
+			SetFont();
+		}
+
+		public void SetFont()
+		{
+			Font font = FontHeightAdjuster.GetFontForNormalStyle(Cache.DefaultVernWs, Cache.WritingSystemFactory, m_propertyTable);
+			if (font != null)
+			{
+				FontFamily = new System.Windows.Media.FontFamily(font.FontFamily.Name);
+				FontSize = font.Size;
+			}
 		}
 
 		private void ScrollViewer_PreviewMouseWheel(object sender, MouseWheelEventArgs e)
@@ -60,7 +80,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				if (report.IsSelected)
 				{
-					ParserListener.ShowParserReport(report, Mediator, Cache);
+					Listener.ShowParserReport(report);
 					break;
 				}
 			}
@@ -129,14 +149,14 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 			var diff = parserReport.ParserReport.DiffParserReports(parserReport2.ParserReport);
 			ParserReportViewModel viewModel = new ParserReportViewModel() { ParserReport = diff };
-			ParserListener.ShowParserReport(viewModel, Mediator, Cache);
+			Listener.ShowParserReport(viewModel);
 		}
 		private void DataGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
 		{
 			if (sender is DataGrid dataGrid)
 			{
 				if(dataGrid.SelectedItem is ParserReportViewModel selectedItem)
-					ParserListener.ShowParserReport(selectedItem, Mediator, Cache);
+					Listener.ShowParserReport(selectedItem);
 			}
 			else
 				Debug.Fail("Type of Contents of DataGrid changed, adjust double click code.");
