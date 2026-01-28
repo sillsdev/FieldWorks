@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Sets a unique window color for the current VS Code workspace/worktree.
 .DESCRIPTION

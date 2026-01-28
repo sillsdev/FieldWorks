@@ -75,6 +75,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FwUtils", "Src\Common\FwUti
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FwUtilsTests", "Src\Common\FwUtils\FwUtilsTests\FwUtilsTests.csproj", "{A39B87BF-6846-559A-A01F-6251A0FE856E}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FwAvalonia", "Src\Common\FwAvalonia\FwAvalonia.csproj", "{F86D28FE-781F-4F31-8EF9-9C213879CB23}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FwAvaloniaPreviewHost", "Src\Common\FwAvaloniaPreviewHost\FwAvaloniaPreviewHost.csproj", "{C0D0DB4E-07E8-4C10-9B2F-ADCEB6A0F94F}"
+EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FxtDll", "Src\FXT\FxtDll\FxtDll.csproj", "{DBB982C6-E9E4-5535-ADC2-D0BA1E18F66F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FxtDllTests", "Src\FXT\FxtDll\FxtDllTests\FxtDllTests.csproj", "{3B5B2AE4-53B3-5021-B5CA-15BC94EAB282}"
@@ -102,6 +106,10 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LexTextDll", "Src\LexText\LexTextDll\LexTextDll.csproj", "{44E4C722-DCE1-5A8A-A586-81D329771F66}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LexTextDllTests", "Src\LexText\LexTextDll\LexTextDllTests\LexTextDllTests.csproj", "{D7A0A7EA-6C5A-5953-862B-0CF3B779C34F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdvancedEntry.Avalonia", "Src\LexText\AdvancedEntry.Avalonia\AdvancedEntry.Avalonia.csproj", "{B3149394-D041-40C7-B9DF-B86FBFE7D979}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdvancedEntry.Avalonia.Tests", "Src\LexText\AdvancedEntry.Avalonia\AdvancedEntry.Avalonia.Tests\AdvancedEntry.Avalonia.Tests.csproj", "{FA9122A5-01D3-472E-AF1D-7A2D86226C5F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MGA", "Src\LexText\Morphology\MGA\MGA.csproj", "{1E4C57D6-BB15-56CD-A901-6EC5C0835FBE}"
 EndProject
@@ -450,6 +458,18 @@ Global
 		{A39B87BF-6846-559A-A01F-6251A0FE856E}.Debug|x64.Build.0 = Debug|x64
 		{A39B87BF-6846-559A-A01F-6251A0FE856E}.Release|x64.ActiveCfg = Release|x64
 		{A39B87BF-6846-559A-A01F-6251A0FE856E}.Release|x64.Build.0 = Release|x64
+		{F86D28FE-781F-4F31-8EF9-9C213879CB23}.Bounds|x64.ActiveCfg = Release|x64
+		{F86D28FE-781F-4F31-8EF9-9C213879CB23}.Bounds|x64.Build.0 = Release|x64
+		{F86D28FE-781F-4F31-8EF9-9C213879CB23}.Debug|x64.ActiveCfg = Debug|x64
+		{F86D28FE-781F-4F31-8EF9-9C213879CB23}.Debug|x64.Build.0 = Debug|x64
+		{F86D28FE-781F-4F31-8EF9-9C213879CB23}.Release|x64.ActiveCfg = Release|x64
+		{F86D28FE-781F-4F31-8EF9-9C213879CB23}.Release|x64.Build.0 = Release|x64
+		{C0D0DB4E-07E8-4C10-9B2F-ADCEB6A0F94F}.Bounds|x64.ActiveCfg = Release|x64
+		{C0D0DB4E-07E8-4C10-9B2F-ADCEB6A0F94F}.Bounds|x64.Build.0 = Release|x64
+		{C0D0DB4E-07E8-4C10-9B2F-ADCEB6A0F94F}.Debug|x64.ActiveCfg = Debug|x64
+		{C0D0DB4E-07E8-4C10-9B2F-ADCEB6A0F94F}.Debug|x64.Build.0 = Debug|x64
+		{C0D0DB4E-07E8-4C10-9B2F-ADCEB6A0F94F}.Release|x64.ActiveCfg = Release|x64
+		{C0D0DB4E-07E8-4C10-9B2F-ADCEB6A0F94F}.Release|x64.Build.0 = Release|x64
 		{DBB982C6-E9E4-5535-ADC2-D0BA1E18F66F}.Bounds|x64.ActiveCfg = Release|x64
 		{DBB982C6-E9E4-5535-ADC2-D0BA1E18F66F}.Bounds|x64.Build.0 = Release|x64
 		{DBB982C6-E9E4-5535-ADC2-D0BA1E18F66F}.Debug|x64.ActiveCfg = Debug|x64
@@ -534,6 +554,18 @@ Global
 		{D7A0A7EA-6C5A-5953-862B-0CF3B779C34F}.Debug|x64.Build.0 = Debug|x64
 		{D7A0A7EA-6C5A-5953-862B-0CF3B779C34F}.Release|x64.ActiveCfg = Release|x64
 		{D7A0A7EA-6C5A-5953-862B-0CF3B779C34F}.Release|x64.Build.0 = Release|x64
+		{B3149394-D041-40C7-B9DF-B86FBFE7D979}.Bounds|x64.ActiveCfg = Release|x64
+		{B3149394-D041-40C7-B9DF-B86FBFE7D979}.Bounds|x64.Build.0 = Release|x64
+		{B3149394-D041-40C7-B9DF-B86FBFE7D979}.Debug|x64.ActiveCfg = Debug|x64
+		{B3149394-D041-40C7-B9DF-B86FBFE7D979}.Debug|x64.Build.0 = Debug|x64
+		{B3149394-D041-40C7-B9DF-B86FBFE7D979}.Release|x64.ActiveCfg = Release|x64
+		{B3149394-D041-40C7-B9DF-B86FBFE7D979}.Release|x64.Build.0 = Release|x64
+		{FA9122A5-01D3-472E-AF1D-7A2D86226C5F}.Bounds|x64.ActiveCfg = Release|x64
+		{FA9122A5-01D3-472E-AF1D-7A2D86226C5F}.Bounds|x64.Build.0 = Release|x64
+		{FA9122A5-01D3-472E-AF1D-7A2D86226C5F}.Debug|x64.ActiveCfg = Debug|x64
+		{FA9122A5-01D3-472E-AF1D-7A2D86226C5F}.Debug|x64.Build.0 = Debug|x64
+		{FA9122A5-01D3-472E-AF1D-7A2D86226C5F}.Release|x64.ActiveCfg = Release|x64
+		{FA9122A5-01D3-472E-AF1D-7A2D86226C5F}.Release|x64.Build.0 = Release|x64
 		{1E4C57D6-BB15-56CD-A901-6EC5C0835FBE}.Bounds|x64.ActiveCfg = Release|x64
 		{1E4C57D6-BB15-56CD-A901-6EC5C0835FBE}.Bounds|x64.Build.0 = Release|x64
 		{1E4C57D6-BB15-56CD-A901-6EC5C0835FBE}.Debug|x64.ActiveCfg = Debug|x64

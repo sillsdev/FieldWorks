@@ -1,0 +1,174 @@
+openapi: 3.1.0
+info:
+  title: Advanced New Entry (Internal Module Contract)
+  version: 0.1.0
+  description: Internal contract for view-model operations; not a network API. Serves as boundary for services and tests.
+servers:
+  - url: local-module
+paths:
+  /templates:
+    get:
+      summary: List available template profiles
+      operationId: listTemplates
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TemplateProfile'
+  /advanced-entry/validate:
+    post:
+      summary: Preflight validate EntryModel without committing
+      operationId: validateEntry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntryModel'
+      responses:
+        '200':
+          description: Validation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationResult'
+  /advanced-entry/commit:
+    post:
+      summary: Materialize EntryModel into LCModel in a single transaction
+      operationId: commitEntry
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EntryModel'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommitResult'
+components:
+  schemas:
+    WritingSystemId:
+      type: string
+      description: Project-defined writing system identifier
+    PossibilityRef:
+      type: object
+      properties:
+        id:
+          type: string
+        path:
+          type: string
+    EntryRef:
+      type: object
+      properties:
+        id:
+          type: string
+        headword:
+          type: string
+    TemplateProfile:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    ExampleModel:
+      type: object
+      properties:
+        text:
+          type: object
+          additionalProperties:
+            type: string
+        translation:
+          type: object
+          additionalProperties:
+            type: string
+    SenseModel:
+      type: object
+      properties:
+        gloss:
+          type: object
+          additionalProperties:
+            type: string
+        definition:
+          type: object
+          additionalProperties:
+            type: string
+        examples:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExampleModel'
+        semanticDomain:
+          $ref: '#/components/schemas/PossibilityRef'
+    PronunciationModel:
+      type: object
+      properties:
+        phonetic:
+          type: string
+        audioRef:
+          type: string
+          format: uri
+          nullable: true
+    VariantModel:
+      type: object
+      properties:
+        variantType:
+          $ref: '#/components/schemas/PossibilityRef'
+        targetEntryRef:
+          $ref: '#/components/schemas/EntryRef'
+        form:
+          type: string
+          nullable: true
+    EntryModel:
+      type: object
+      required: [lexicalForms, morphType]
+      properties:
+        lexicalForms:
+          type: object
+          additionalProperties:
+            type: string
+        citationForm:
+          type: string
+          nullable: true
+        morphType:
+          $ref: '#/components/schemas/PossibilityRef'
+        partOfSpeech:
+          $ref: '#/components/schemas/PossibilityRef'
+        senses:
+          type: array
+          items:
+            $ref: '#/components/schemas/SenseModel'
+        pronunciations:
+          type: array
+          items:
+            $ref: '#/components/schemas/PronunciationModel'
+        variants:
+          type: array
+          items:
+            $ref: '#/components/schemas/VariantModel'
+        templateId:
+          type: string
+          nullable: true
+    ValidationResult:
+      type: object
+      properties:
+        isValid:
+          type: boolean
+        errors:
+          type: array
+          items:
+            type: string
+    CommitResult:
+      type: object
+      properties:
+        entryId:
+          type: string
+        summary:
+          type: string

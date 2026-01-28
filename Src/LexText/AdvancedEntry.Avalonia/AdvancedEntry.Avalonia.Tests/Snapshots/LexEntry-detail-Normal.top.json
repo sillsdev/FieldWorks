@@ -1,0 +1,50 @@
+{
+  "Layout": "layout:LexEntry/detail/Normal",
+  "Nodes": [
+    {
+      "Ref": "ChangeHandler",
+      "Kind": "PresentationUnknown",
+      "Label": "ChangeHandler",
+      "Field": null,
+      "Layout": null,
+      "GhostLabel": null,
+      "Visibility": "Always"
+    },
+    {
+      "Ref": "LexemeForm",
+      "Kind": "PresentationObject",
+      "Label": "Lexeme Form",
+      "Field": "LexemeForm",
+      "Layout": "AsLexemeFormBasic",
+      "GhostLabel": "Lexeme Form",
+      "Visibility": "Always"
+    },
+    {
+      "Ref": "CitationFormAllV",
+      "Kind": "PresentationField",
+      "Label": "Citation Form",
+      "Field": "CitationForm",
+      "Layout": null,
+      "GhostLabel": null,
+      "Visibility": "Always"
+    },
+    {
+      "Ref": "Pronunciations",
+      "Kind": "PresentationSequence",
+      "Label": "Pronunciations",
+      "Field": "Pronunciations",
+      "Layout": "Normal",
+      "GhostLabel": "Pronunciation",
+      "Visibility": "IfData"
+    },
+    {
+      "Ref": "Senses",
+      "Kind": "PresentationSequence",
+      "Label": "Senses",
+      "Field": "Senses",
+      "Layout": "Normal",
+      "GhostLabel": null,
+      "Visibility": "Always"
+    }
+  ]
+}

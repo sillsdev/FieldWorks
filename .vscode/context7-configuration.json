@@ -70,6 +70,12 @@
       "description": "Avalonia UI framework documentation for cross-platform .NET applications",
       "reason": "FieldWorks has future plans for Avalonia UI. Essential for upcoming Avalonia development.",
       "autoApprove": true
+    },
+    {
+      "name": "/bodong1987/avalonia.propertygrid",
+      "description": "Avalonia PropertyGrid implementation for Avalonia applications, supporting automatic property analysis and multi-object editing.",
+      "reason": "FieldWorks plans to integrate PropertyGrid UI patterns; adding for future use.",
+      "autoApprove": true
     }
   ],
   "notes": {

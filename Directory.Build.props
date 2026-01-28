@@ -204,7 +204,14 @@
 		<!-- NUnit 3.x - must match version used by SIL.TestUtilities to avoid runtime conflicts -->
 		<!-- When SIL packages upgrade to NUnit 4, update this to 4.x and add global using aliases for ClassicAssert -->
 		<PackageReference Include="NUnit" Version="3.13.3" />
-		<PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+		<!--
+			NUnit3TestAdapter:
+			- Keep net48 on the established adapter version.
+			- Use a newer adapter for .NET (net8+) test projects to avoid VSTest/NUnit engine
+			  initialization issues seen with the older adapter.
+		-->
+		<PackageReference Include="NUnit3TestAdapter" Version="4.5.0" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
+		<PackageReference Include="NUnit3TestAdapter" Version="5.2.0" Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework'" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
 	</ItemGroup>
 

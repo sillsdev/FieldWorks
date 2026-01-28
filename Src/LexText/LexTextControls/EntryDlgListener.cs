@@ -6,6 +6,7 @@
 // Responsibility: Randy Regnier
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Windows.Forms;
 using SIL.LCModel;
 using SIL.LCModel.Infrastructure;
@@ -74,6 +75,72 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 
 		#endregion XCORE Message Handlers
+	}
+
+	/// <summary>
+	/// Listener for launching the Avalonia-based Advanced New Entry experience.
+	/// Current implementation launches the shared net8.0 Avalonia Preview Host as a separate process
+	/// so LexTextControls (netfx) does not need a direct reference to the Avalonia assemblies.
+	/// </summary>
+	public sealed class AdvancedNewEntryListener : DlgListenerBase
+	{
+		protected override string PersistentLabel
+		{
+			get { return "AdvancedNewEntry"; }
+		}
+
+		public bool OnAdvancedNewEntry(object argument)
+		{
+			CheckDisposed();
+
+			try
+			{
+				var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+				var exePath = Path.Combine(baseDir, "FwAvaloniaPreviewHost.exe");
+				var psi = new ProcessStartInfo
+				{
+					FileName = exePath,
+					Arguments = "--module advanced-entry --data empty",
+					UseShellExecute = false,
+					WorkingDirectory = baseDir
+				};
+
+				Process.Start(psi);
+			}
+			catch (Exception ex)
+			{
+				Trace.WriteLine($"Advanced New Entry launch failed: {ex}");
+				MessageBox.Show(Form.ActiveForm, ex.Message, LexTextControls.ksNotice,
+					MessageBoxButtons.OK, MessageBoxIcon.Information);
+			}
+
+			return true;
+		}
+
+		public bool OnDisplayAdvancedNewEntry(object commandObject, ref UIItemDisplayProperties display)
+		{
+			CheckDisposed();
+
+			var enabled = m_propertyTable.GetBoolProperty("AdvancedNewEntryEnabled", true);
+			display.Enabled = display.Visible = enabled && InFriendlyArea;
+			return true;
+		}
+
+		private bool InFriendlyArea
+		{
+			get
+			{
+				string areaChoice = m_propertyTable.GetStringProperty("areaChoice", null);
+				if (areaChoice == null)
+					return false;
+
+				if (areaChoice != "lexicon")
+					return false;
+
+				string tool = m_propertyTable.GetStringProperty("currentContentControl", null);
+				return tool == "lexiconEdit";
+			}
+		}
 	}
 
 	public class MergeEntryDlgListener : DlgListenerBase

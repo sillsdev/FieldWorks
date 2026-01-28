@@ -114,5 +114,3 @@ See `.github/AI_GOVERNANCE.md` for the documentation taxonomy and “source of t
 - [ ] Validate installer/localization changes before PR.
 - [ ] Record uncertainties with `FIXME(<topic>)` and resolve them when evidence is available.
 - [ ] Refer back to this guide whenever you need repo-wide ground truth.
-
-

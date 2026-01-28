@@ -1,4 +1,4 @@
-# Feature Specification: WiX v6 Migration
+﻿# Feature Specification: WiX v6 Migration
 
 **Feature Branch**: 001-wix-v6-migration
 **Created**: 2025-12-11
@@ -160,5 +160,3 @@ Pull these **verbatim** from the `release/9.3` worktree to re-introduce the WiX 
 - Q: How should installer prerequisites (e.g., .NET runtimes) be handled during the build? → A: Yes, via MSBuild Targets (auto-download).
 
 - Q: How should the custom installer UI (Dual Directory selection, etc.) be handled in WiX v6? → A: Port Existing Custom UI.
-
-

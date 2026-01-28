@@ -96,6 +96,7 @@
     <ProjectReference Include="Src\LexText\ParserCore\ParserCore.csproj" />
     <ProjectReference Include="Src\LexText\ParserUI\ParserUI.csproj" />
     <ProjectReference Include="Src\LexText\LexTextControls\LexTextControls.csproj" />
+    <ProjectReference Include="Src\LexText\AdvancedEntry.Avalonia\AdvancedEntry.Avalonia.csproj" />
   </ItemGroup>
 
   <ItemGroup Label="Phase 11: LexText Applications">
@@ -125,6 +126,7 @@
 
   <ItemGroup Label="Phase 14: Utilities and Tools">
     <!-- Standalone utilities -->
+    <ProjectReference Include="Src\Common\FwAvaloniaPreviewHost\FwAvaloniaPreviewHost.csproj" />
     <ProjectReference Include="Src\Utilities\SfmToXml\Sfm2Xml.csproj" />
     <ProjectReference Include="Src\Utilities\SfmToXml\ConvertSFM\ConvertSFM.csproj" Condition="'$(BuildAdditionalApps)'=='true'" />
     <ProjectReference Include="Src\Utilities\FixFwData\FixFwData.csproj" Condition="'$(BuildAdditionalApps)'=='true'" />
@@ -185,6 +187,7 @@
     <ProjectReference Include="Src\LexText\ParserCore\ParserCoreTests\ParserCoreTests.csproj" />
     <ProjectReference Include="Src\LexText\ParserUI\ParserUITests\ParserUITests.csproj" />
     <ProjectReference Include="Src\LexText\LexTextControls\LexTextControlsTests\LexTextControlsTests.csproj" />
+    <ProjectReference Include="Src\LexText\AdvancedEntry.Avalonia\AdvancedEntry.Avalonia.Tests\AdvancedEntry.Avalonia.Tests.csproj" />
     <ProjectReference Include="Src\LexText\Lexicon\LexEdDllTests\LexEdDllTests.csproj" />
     <ProjectReference Include="Src\LexText\Morphology\MGA\MGATests\MGATests.csproj" />
     <ProjectReference Include="Src\LexText\Morphology\MorphologyEditorDllTests\MorphologyEditorDllTests.csproj" />

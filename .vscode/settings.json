@@ -26,6 +26,7 @@
 
     // Read-only PowerShell operations (consolidated with alternation)
     "/^(&\\s+)?(Get-Content|cat|type)\\b(?!.*[;&|<>])/i": true,
+    "/^(&\\s+)?(Get-Process)\\b(?!.*[;&|<>])/i": true,
     "/^(&\\s+)?(Get-ChildItem|ls|dir|tree)\\b(?!.*[;&|<>])/i": true,
     "/^(&\\s+)?(Test-Path|Get-Location|pwd)\\b(?!.*[;&|<>])/i": true,
     "/^(&\\s+)?(Get-Item|Get-ItemProperty)\\b(?!.*[;&|<>])/i": true,
