@@ -53,11 +53,14 @@ OBJ_DIR=$(BUILD_ROOT)\Obj
 INT_DIR=$(OBJ_DIR)\$(BUILD_CONFIG)\$(BUILD_PRODUCT)
 !ENDIF
 
+# COM_OUT_DIR: Configuration-specific path for generated COM artifacts (IDL, TLB, etc.)
+# These files contain preprocessor-conditional code (DEBUG-dependent) and MUST be
+# separated per configuration to avoid stale artifact issues when switching Debug/Release.
 !IF "$(COM_OUT_DIR)"==""
 !IF "$(BUILD_OUTPUT)"==""
-COM_OUT_DIR=$(BUILD_ROOT)\Output\Common
+COM_OUT_DIR=$(BUILD_ROOT)\Output\$(BUILD_CONFIG)\Common
 !ELSE
-COM_OUT_DIR=$(BUILD_OUTPUT)\Common
+COM_OUT_DIR=$(BUILD_OUTPUT)\$(BUILD_CONFIG)\Common
 !ENDIF
 !ENDIF
 
@@ -66,7 +69,7 @@ COM_OUT_DIR_RAW=$(COM_OUT_DIR)\Raw
 !ENDIF
 
 !IF "$(COM_INT_DIR)"==""
-COM_INT_DIR=$(OBJ_DIR)\Common\$(BUILD_PRODUCT)
+COM_INT_DIR=$(OBJ_DIR)\$(BUILD_CONFIG)\Common\$(BUILD_PRODUCT)
 !ENDIF
 
 # Added 27-MAR-2001 TLB: Directory for SBR and BSC files is needed if this
@@ -124,7 +127,7 @@ ECHO=@echo
 COPYFILE=copy
 DELETEFILE=del
 TYPEFILE=type
-# Use native wrapper for Docker container compatibility (mkdir.exe fails with long mount paths)
+# Use native wrapper (mkdir.exe fails with long mount paths)
 MD=$(BUILD_ROOT)\bin\mkdir-wrapper.cmd
 DELNODE=rmdir /s /q
 FIXCOMHEADER=$(BUILD_ROOT)\bin\FixGenComHeaderFile.exe
@@ -189,6 +192,9 @@ LINK_OPTS=$(LINK_OPTS) /out:"$@" /machine:$(LINK_ARCH) /incremental:no\
 !ENDIF
 
 LINK_OPTS_PS=
+
+# Suppress missing PDB noise from prebuilt graphite2 static libs (LNK4099)
+LINK_OPTS=$(LINK_OPTS) /ignore:4099
 
 #LINK_OPTS=$(LINK_OPTS) /base:@$(BUILD_ROOT)\bld\base.txt,$(BUILD_PRODUCT)
 

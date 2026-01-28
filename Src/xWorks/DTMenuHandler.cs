@@ -1496,8 +1496,6 @@ namespace SIL.FieldWorks.XWorks
 			Slice complexFormsSlice = m_dataEntryForm.CurrentSlice;
 			if (complexFormsSlice == null || complexFormsSlice.Object == null || complexFormsSlice.Flid == 0)
 				return true; // already handled - nothing else should be responding to this message
-			bool fEnable = false;
-			bool fChecked = false;
 			// Is this the right slice to handle this command?
 			var command = (Command)commandObject;
 			string className = XmlUtils.GetMandatoryAttributeValue(command.Parameters[0], "className");

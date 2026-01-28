@@ -11,20 +11,12 @@ To build the complete FieldWorks solution including native C++ components:
 .\build.ps1
 ```
 
-**Bash (Git Bash - requires Developer Command Prompt):**
-```bash
-# 1. Open "Developer Command Prompt for VS 2022" from Start Menu
-# 2. Type: bash
-# 3. Navigate to repo: cd /c/path/to/FieldWorks
-# 4. Run: ./build.sh
-```
-
 **Why?** Native components (DebugProcs, GenericLib, FwKernel, Views, graphite2) require:
 - `nmake.exe` (from Visual Studio C++ Build Tools)
 - C++ compiler toolchain
 - Environment variables set by VsDevCmd.bat (VCINSTALLDIR, INCLUDE, LIB, etc.)
 
-**Note:** The PowerShell script (`build.ps1`) automatically initializes the Visual Studio environment using `vswhere.exe`. The Bash script requires you to run from a Developer Command Prompt because Git Bash has issues reliably calling VsDevCmd.bat.
+**Note:** The PowerShell script (`build.ps1`) automatically initializes the Visual Studio environment using `vswhere.exe`.
 
 ### Managed-Only Build (C# projects)
 
@@ -71,7 +63,7 @@ msbuild Build/Src/FwBuildTasks/FwBuildTasks.csproj /t:Restore;Build /p:Configura
 
 ## Build Script Features
 
-Both `build.ps1` and `build.sh` now include:
+`build.ps1` includes:
 
 1. **Automatic FwBuildTasks bootstrap**: Builds build infrastructure before main build
 2. **Environment validation**: Warns if Developer environment is not detected

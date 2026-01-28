@@ -150,7 +150,7 @@ namespace Sfm2Xml
 		/// acts on the input files that it's given - with Convert being the main entry point.
 		///
 		/// </summary>
-		public Converter() : this(new EncConverters())
+		public Converter() : this((EncConverters)null)
 		{
 		}
 
@@ -176,6 +176,11 @@ namespace Sfm2Xml
 			m_autoFieldsUsed = new Hashtable();
 			m_autoFieldsBySFM = new Hashtable();
 			m_topAnalysisWS = "en";
+		}
+
+		private EncConverters EnsureConverters()
+		{
+			return m_converters ?? (m_converters = new EncConverters());
 		}
 
 		// only one entry per class - iow, the key is the classname
@@ -801,7 +806,7 @@ namespace Sfm2Xml
 			{
 				ClsLanguage language = languageEntry.Value as ClsLanguage;
 				// Assign the encoding converter specified in the mapping file:
-				if (language.EncCvtrMap != null && language.EncCvtrMap.Length > 0 && !language.SetConverter(m_converters))
+				if (language.EncCvtrMap != null && language.EncCvtrMap.Length > 0 && !language.SetConverter(EnsureConverters()))
 				{
 					Log.AddFatalError(String.Format(Sfm2XmlStrings.UnknownEncodingConvertersMap0InLanguage1, language.EncCvtrMap, language.KEY));
 				}

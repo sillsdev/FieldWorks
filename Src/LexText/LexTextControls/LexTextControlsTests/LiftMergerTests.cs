@@ -53,6 +53,11 @@ namespace LexTextControlsTests
 		public override void TestSetup()
 		{
 			base.TestSetup();
+			m_customFieldEntryIds.Clear();
+			m_customFieldSenseIds.Clear();
+			m_customFieldAllomorphsIds.Clear();
+			m_customFieldExampleSentencesIds.Clear();
+
 			Cache.LangProject.LexDbOA.ReferencesOA =
 				Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().
 					Create();
@@ -2774,14 +2779,19 @@ namespace LexTextControlsTests
 			SetWritingSystems("fr");
 
 			CreateNeededStyles();
-			var flidCustom = CreateFirstEntryWithConflictingData("Long Text1");
+			var customFieldName = $"LongText_{Guid.NewGuid():N}";
+			var flidCustom = CreateFirstEntryWithConflictingData(customFieldName);
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 			Assert.That(repoEntry.Count, Is.EqualTo(1));
 			Assert.That(repoSense.Count, Is.EqualTo(1));
 
-			var sOrigFile = CreateInputFile(s_LiftData8);
+			var sOrigFile = CreateInputFile(s_LiftData8
+				.Select(line => line
+					.Replace("tag=\"Long Text\"", $"tag=\"{customFieldName}\"")
+					.Replace("type=\"Long Text\"", $"type=\"{customFieldName}\""))
+				.ToArray());
 			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepBoth, 2);
 
 		}
@@ -2798,14 +2808,19 @@ namespace LexTextControlsTests
 			SetWritingSystems("fr");
 
 			CreateNeededStyles();
-			var flidCustom = CreateFirstEntryWithConflictingData("Long Text2");
+			var customFieldName = $"LongText_{Guid.NewGuid():N}";
+			var flidCustom = CreateFirstEntryWithConflictingData(customFieldName);
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 			Assert.That(repoEntry.Count, Is.EqualTo(1));
 			Assert.That(repoSense.Count, Is.EqualTo(1));
 
-			var sOrigFile = CreateInputFile(s_LiftData8);
+			var sOrigFile = CreateInputFile(s_LiftData8
+				.Select(line => line
+					.Replace("tag=\"Long Text\"", $"tag=\"{customFieldName}\"")
+					.Replace("type=\"Long Text\"", $"type=\"{customFieldName}\""))
+				.ToArray());
 			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepOld, 2);
 
 		}
@@ -2816,20 +2831,26 @@ namespace LexTextControlsTests
 		/// using the "Keep New" option.
 		/// </summary>
 		///--------------------------------------------------------------------------------------
-		[Test, Ignore("This fails if another test runs first, but succeeds by itself!")]
+		[Test]
+		[Ignore("This fails if another test runs first, but succeeds by itself!")]
 		public void TestLiftImport9CMergingStTextKeepNew()
 		{
 			SetWritingSystems("fr");
 
 			CreateNeededStyles();
-			var flidCustom = CreateFirstEntryWithConflictingData("Long Text3");
+			var customFieldName = $"LongText_{Guid.NewGuid():N}";
+			var flidCustom = CreateFirstEntryWithConflictingData(customFieldName);
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 			Assert.That(repoEntry.Count, Is.EqualTo(1));
 			Assert.That(repoSense.Count, Is.EqualTo(1));
 
-			var sOrigFile = CreateInputFile(s_LiftData8);
+			var sOrigFile = CreateInputFile(s_LiftData8
+				.Select(line => line
+					.Replace("tag=\"Long Text\"", $"tag=\"{customFieldName}\"")
+					.Replace("type=\"Long Text\"", $"type=\"{customFieldName}\""))
+				.ToArray());
 			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 2);
 
 			Assert.That(repoEntry.Count, Is.EqualTo(2));
@@ -2858,20 +2879,26 @@ namespace LexTextControlsTests
 		/// using the "Keep Only New" option.
 		/// </summary>
 		///--------------------------------------------------------------------------------------
-		[Test, Ignore("This fails if another test runs first, but succeeds by itself!")]
+		[Test]
+		[Ignore("This fails if another test runs first, but succeeds by itself!")]
 		public void TestLiftImport9DMergingStTextKeepOnlyNew()
 		{
 			SetWritingSystems("fr");
 
 			CreateNeededStyles();
-			var flidCustom = CreateFirstEntryWithConflictingData("Long Text4");
+			var customFieldName = $"LongText_{Guid.NewGuid():N}";
+			var flidCustom = CreateFirstEntryWithConflictingData(customFieldName);
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 			Assert.That(repoEntry.Count, Is.EqualTo(1));
 			Assert.That(repoSense.Count, Is.EqualTo(1));
 
-			var sOrigFile = CreateInputFile(s_LiftData8);
+			var sOrigFile = CreateInputFile(s_LiftData8
+				.Select(line => line
+					.Replace("tag=\"Long Text\"", $"tag=\"{customFieldName}\"")
+					.Replace("type=\"Long Text\"", $"type=\"{customFieldName}\""))
+				.ToArray());
 			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
 
 			Assert.That(repoEntry.Count, Is.EqualTo(2));
@@ -3012,9 +3039,17 @@ namespace LexTextControlsTests
 			sense0.Gloss.set_String(Cache.DefaultVernWs, "these");
 			sense0.MorphoSyntaxAnalysisRA = msa;
 
-			var mdc = Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
-			Assert.That(mdc, Is.Not.Null);
-			var flidCustom = mdc.AddCustomField("LexEntry", customFieldName, CellarPropertyType.OwningAtomic, StTextTags.kClassId);
+			var fdNew = new FieldDescription(Cache)
+			{
+				Type = CellarPropertyType.OwningAtomic,
+				Class = LexEntryTags.kClassId,
+				Name = customFieldName,
+				Userlabel = customFieldName,
+				DstCls = StTextTags.kClassId
+			};
+			fdNew.UpdateCustomField();
+			FieldDescription.ClearDataAbout();
+			var flidCustom = fdNew.Id;
 			var hvoText = Cache.DomainDataByFlid.MakeNewObject(StTextTags.kClassId, entry0.Hvo, flidCustom, -2);
 			var text = Cache.ServiceLocator.GetInstance<IStTextRepository>().GetObject(hvoText);
 

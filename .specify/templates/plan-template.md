@@ -31,17 +31,7 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-- Data integrity: If feature touches schemas/models or persisted data, include a migration
-  plan with backup/rollback and tests or scripted validation.
-- Test evidence: For changes to core data, rendering/layout, installers, or public
-  contracts, include new/updated automated tests, or a written rationale if tests are not
-  applicable.
-- I18n/script correctness: If text processing or UI rendering is affected, validate
-  complex scripts and multilingual scenarios; note libraries used (e.g., ICU/Graphite).
-- Licensing: List new dependencies and confirm compliance with LGPL 2.1+ and third‑party
-  licenses.
-- Stability/performance: Call out risks and mitigations (feature flags, staged rollout)
-  when applicable.
+[Gates determined based on constitution file]
 
 ## Project Structure
 
@@ -108,7 +98,7 @@ directories captured above]
 
 > **Fill ONLY if Constitution Check has violations that must be justified**
 
-| Violation                  | Why Needed         | Simpler Alternative Rejected Because |
-| -------------------------- | ------------------ | ------------------------------------ |
-| [e.g., 4th project]        | [current need]     | [why 3 projects insufficient]        |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient]  |
+| Violation | Why Needed | Simpler Alternative Rejected Because |
+|-----------|------------|-------------------------------------|
+| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
+| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |

@@ -586,15 +586,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			CheckDisposed();
 
-			// This is a fall-back if the creator does not have a converters object.
-			// It is generally preferable for the creator to make one and pass it in.
-			// Multiple EncConverters objects are problematical because they don't all get
-			// updated when something changes.
-			// JohnT: note that this ALWAYS happens at least once, because the Load event happens during
-			// the main dialog's InitializeComponent method, before it sets the encConverters
-			// of the control.
-			if (m_encConverters == null)
-				m_encConverters = new EncConverters();
+			// Do not instantiate EncConverters here.
+			// The creator normally supplies the instance after InitializeComponent; creating one
+			// during Load can have undesirable side-effects (registry and repository IO) and can
+			// break unit tests. Methods that truly require EncConverters should create it lazily.
 			cboConverter.Items.Clear();
 			cboConverter.Items.Add(new CnvtrTypeComboItem(AddConverterResources.kstrCc, ConverterType.ktypeCC, EncConverters.strTypeSILcc));
 			if (!m_fOnlyUnicode)
@@ -634,6 +629,12 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				cboConversion.Items.Add(new CnvtrDataComboItem(AddConverterResources.kstrUnicode_to_Unicode,
 					ConvType.Unicode_to_Unicode));
 			}
+		}
+
+		private void EnsureEncConverters()
+		{
+			if (m_encConverters == null)
+				m_encConverters = new EncConverters();
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -731,7 +732,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_selectingMapping = true;
 
 			txtName.Text = mapname;
-			IEncConverter conv = m_encConverters[mapname];
+			IEncConverter conv = null;
+			if (m_encConverters != null)
+				conv = m_encConverters[mapname];
 			ConvType convType;
 			string implType;
 			EncoderInfo undefinedEncoder = null; // in case the current selection is not fully defined
@@ -1018,6 +1021,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void btnModify_Click(object sender, EventArgs e)
 		{
+			EnsureEncConverters();
+
 			// call the v2.2 interface to "AutoConfigure" a converter
 			string strFriendlyName = ConverterName;
 			IEncConverter aEC = m_encConverters[strFriendlyName];
@@ -1125,6 +1130,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		private void AddToCollection(IEncConverter rConverter, string converterName)
 		{
+			EnsureEncConverters();
+
 			// now add it to the 'this' collection
 			// converterName.ToLower(); // this does nothing anyway, so get rid of it
 

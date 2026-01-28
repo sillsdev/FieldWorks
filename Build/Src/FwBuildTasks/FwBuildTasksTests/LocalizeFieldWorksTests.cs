@@ -510,7 +510,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 
 			Assert.That(result, Is.False);
 			Assert.That(m_sut.ErrorMessages, Does.Contain(badResXFilePath));
-			Assert.That(m_sut.ErrorMessages, Does.Contain("inside out"));
+			Assert.That(m_sut.ErrorMessages, Does.Contain("inside out").Or.Contain("different arguments"));
 		}
 
 		[Test]
@@ -597,10 +597,10 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			CreateResX(m_FdoFolder, badFilenameBase, "some text");
 			var badFile = CreateLocalizedResXFor(m_FdoFolder, badFilenameBase, LocaleGe, "just fine", dataName2: extraDataName, textValue2: "not fine");
 
-			Assert.That(m_sut.Execute(), Is.False);
-
-			Assert.That(m_sut.ErrorMessages, Does.Contain(badFile));
-			Assert.That(m_sut.ErrorMessages, Does.Contain(extraDataName));
+			// ProjectLocalizer.CheckResXForErrors no longer fails builds on added/missing keys.
+			Assert.That(m_sut.Execute(), Is.True, m_sut.ErrorMessages);
+			Assert.That(m_sut.ErrorMessages, Does.Not.Contain(badFile));
+			Assert.That(m_sut.ErrorMessages, Does.Not.Contain(extraDataName));
 		}
 
 		[Test]
@@ -612,10 +612,10 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			CreateResX(m_FdoFolder, badFilenameBase, "some text", dataName2: extraDataName, textValue2: "you can't find me!");
 			var badFile = CreateLocalizedResXFor(m_FdoFolder, badFilenameBase, LocaleGe, "only one");
 
-			Assert.That(m_sut.Execute(), Is.False);
-
-			Assert.That(m_sut.ErrorMessages, Does.Contain(badFile));
-			Assert.That(m_sut.ErrorMessages, Does.Contain(extraDataName));
+			// ProjectLocalizer.CheckResXForErrors no longer fails builds on added/missing keys.
+			Assert.That(m_sut.Execute(), Is.True, m_sut.ErrorMessages);
+			Assert.That(m_sut.ErrorMessages, Does.Not.Contain(badFile));
+			Assert.That(m_sut.ErrorMessages, Does.Not.Contain(extraDataName));
 		}
 
 		[Test]

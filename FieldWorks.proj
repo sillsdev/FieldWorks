@@ -207,12 +207,40 @@
     <!-- Tests for utility components -->
     <ProjectReference Include="Src\Utilities\SfmToXml\Sfm2XmlTests\Sfm2XmlTests.csproj" />
     <ProjectReference Include="Src\UnicodeCharEditor\UnicodeCharEditorTests\UnicodeCharEditorTests.csproj" />
+    <ProjectReference Include="Src\InstallValidator\InstallerArtifactsTests\InstallerArtifactsTests.csproj" />
     <!-- InstallValidatorTests excluded: it depends on FwBuildTasks types, which causes circular dependency since FwBuildTasks is bootstrapped before traversal -->
     <!-- <ProjectReference Include="Src\InstallValidator\InstallValidatorTests\InstallValidatorTests.csproj" /> -->
     <ProjectReference Include="Lib\src\ScrChecks\ScrChecksTests\ScrChecksTests.csproj" />
   </ItemGroup>
 
+  <!-- Traversal-native aggregates for managed builds -->
+  <Target Name="AllManaged" DependsOnTargets="Build">
+    <!-- Build target already executes traversal order with BuildTests default (false) -->
+  </Target>
+
+  <Target Name="AllManagedWithTests">
+    <MSBuild Projects="$(MSBuildThisFileFullPath)"
+             Targets="Build"
+             Properties="Configuration=$(Configuration);Platform=$(Platform);BuildTests=true" />
+  </Target>
+
+  <Target Name="allCsharp" DependsOnTargets="AllManagedWithTests" />
+
+  <Target Name="allCsharpNoTests" DependsOnTargets="AllManaged" />
+
   <!-- Import shared build properties if they exist -->
   <!-- <Import Project="Directory.Build.props" Condition="Exists('Directory.Build.props')" /> -->
+
+  <!--
+    Enforce NativeBuild completion before Traversal starts.
+    This ensures that Phase 2 (Native) is fully complete before Phase 3 (ViewsInterfaces) starts,
+    preventing race conditions where ViewsInterfaces tries to generate code before IDL files exist.
+  -->
+  <Target Name="BuildNativeFirst" BeforeTargets="Build;allCsharp;allCsharpNoTests">
+    <Message Text="Phase 2: Building Native C++ Components explicitly..." Importance="high" />
+    <MSBuild Projects="Build\Src\NativeBuild\NativeBuild.csproj"
+             Properties="Configuration=$(Configuration);Platform=$(Platform)"
+             BuildInParallel="true" />
+  </Target>
 
 </Project>

@@ -45,7 +45,9 @@ namespace SIL.Utils
 		private readonly string m_errorText;
 		private readonly string m_emailAddress;
 		private bool m_userChoseToExit;
+#if DEBUG
 		private bool m_showChips;
+#endif
 
 		/// <summary></summary>
 		protected static bool s_isOkToInteractWithUser = true;
@@ -753,7 +755,9 @@ namespace SIL.Utils
 			if (e.KeyCode == Keys.ShiftKey && m_isLethal && Visible && !labelAttemptToContinue.Visible)
 			{
 				labelAttemptToContinue.Visible = true;
+#if DEBUG
 				m_showChips = true;
+#endif
 				Refresh();
 			}
 			base.OnKeyDown(e);
@@ -789,7 +793,9 @@ namespace SIL.Utils
 		{
 			if (e.KeyCode == Keys.ShiftKey && Visible)
 			{
+#if DEBUG
 				m_showChips = false;
+#endif
 				labelAttemptToContinue.Visible = false;
 				Refresh();
 			}

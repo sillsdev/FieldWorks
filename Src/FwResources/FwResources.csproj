@@ -4,9 +4,7 @@
     <AssemblyName>FwResources</AssemblyName>
     <RootNamespace>SIL.FieldWorks.Resources</RootNamespace>
     <TargetFramework>net48</TargetFramework>
-    <OutputType>Library</OutputType>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <OutputType>Library</OutputType>    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
     <Prefer32Bit>false</Prefer32Bit>

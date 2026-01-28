@@ -76,7 +76,7 @@
 		<ManagedComAssemblies Remove="$(OutDir)FwKernel.dll" />
 		<ManagedComAssemblies Remove="$(OutDir)Views.dll" />
 		<!-- Exclude 3rd party DLLs that cause manifest issues and don't need RegFree COM -->
-		<ManagedComAssemblies Remove="$(OutDir)DotNetZip.dll" />
+		<ManagedComAssemblies Remove="$(OutDir)ProDotNetZip.dll" />
 	</ItemGroup>
 
 	<!-- Ensure we don't process managed assemblies as native type libraries in the main manifest -->
@@ -116,25 +116,15 @@
 	</Target>
 	<Target
 		Name="AttachManifest"
-		Condition="'$(OS)'=='Windows_NT' AND '$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'"
+		Condition="'$(OS)'=='Windows_NT'"
 		DependsOnTargets="CreateManifest"
 	>
 		<Exec Command="&quot;$(MtExe)&quot; -nologo -manifest &quot;$(Executable).manifest&quot; -outputresource:&quot;$(Executable);#1&quot;" />
 	</Target>
-	<!-- In containers, mt.exe cannot modify files on mounted volumes due to Windows container limitations.
-	     The manifest is still generated as an external file (.exe.manifest) which Windows will use automatically.
-	     This is sufficient for Debug builds and testing. Release builds are blocked in SetupInclude.targets. -->
-	<Target
-		Name="AttachManifestContainerSkip"
-		Condition="'$(OS)'=='Windows_NT' AND '$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'"
-		DependsOnTargets="CreateManifest"
-	>
-		<Message Text="Container build: Skipping manifest embedding (using external .manifest file instead)" Importance="high" />
-	</Target>
 	<Target
 		Name="RegFree"
 		Condition="'$(OS)'=='Windows_NT'"
-		DependsOnTargets="CreateManifest;AttachManifest;AttachManifestContainerSkip"
+		DependsOnTargets="CreateManifest;AttachManifest"
 	></Target>
 	<Target Name="DebugRegFree" BeforeTargets="CreateManifest">
 		<Message Text="OutDir: $(OutDir)" Importance="high" />

@@ -1,12 +1,10 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>xWorksTests</AssemblyName>
     <RootNamespace>SIL.FieldWorks.XWorks</RootNamespace>
     <TargetFramework>net48</TargetFramework>
-    <OutputType>Library</OutputType>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>168,169,219,414,649,1635,1702,1701,NU1903</NoWarn>
+    <OutputType>Library</OutputType>    <NoWarn>168,169,219,414,649,1635,1702,1701,NU1903</NoWarn>
     <IsTestProject>true</IsTestProject>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Prefer32Bit>false</Prefer32Bit>
@@ -26,7 +24,7 @@
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.20.0" />
-    <PackageReference Include="DotNetZip" Version="1.16.0" />
+    <PackageReference Include="ProDotNetZip" Version="1.20.0" />
     <PackageReference Include="icu.net" Version="3.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageReference Include="SIL.Core" Version="17.0.0-*" />

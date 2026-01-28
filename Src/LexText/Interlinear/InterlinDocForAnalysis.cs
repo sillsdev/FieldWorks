@@ -510,7 +510,6 @@ namespace SIL.FieldWorks.IText
 				{   // try the first (last) segment in the next (previous) paragraph
 					int nextParaIndex = delta + currentPara.IndexInOwner;
 					nextSeg = null;
-					IStTxtPara nextPara = null;
 					if (0 <= nextParaIndex && nextParaIndex < currentText.ParagraphsOS.Count)
 					{   // try to find this paragraph's first (last) segment
 						currentPara = (IStTxtPara)currentText.ParagraphsOS[nextParaIndex];
@@ -612,7 +611,6 @@ namespace SIL.FieldWorks.IText
 			}
 			// What non-word "choice" ie., translation text or note is on this line?
 			int tagTextProp = ConvertTranslationOrNoteFlidToSegmentFlid(annotationFlid, SelectedOccurrence.Segment, ws);
-			int levels;
 			SelLevInfo noteLevel = MakeInnerLevelForFreeformSelection(tagTextProp);
 			var vsli = new SelLevInfo[3];
 			vsli[0] = noteLevel; // note or translation line
@@ -993,7 +991,6 @@ namespace SIL.FieldWorks.IText
 				}
 				if (isUpMove)
 				{   // Need to move up to a real analysis in the same segment
-					IAnalysis nextAnalysis = null;
 					int index = 0;
 					foreach (var an in curSeg.AnalysesRS.Reverse())
 					{	// need to count because an.IndexInOwner == 0 for all an - go figure

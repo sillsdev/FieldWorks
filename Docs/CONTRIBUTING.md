@@ -34,17 +34,25 @@ Required workloads:
 - .NET desktop development
 - Desktop development with C++ (including ATL/MFC)
 
-#### WiX Toolset 3.14.x (for installer building)
+#### WiX Toolset (v6 via NuGet restore) (for installer building)
 
-Run the automated setup script:
+Installer builds use SDK-style `.wixproj` projects and restore WiX v6 tooling via NuGet during the build.
 
 ```powershell
 .\Setup-Developer-Machine.ps1
 ```
 
-Or install manually from [WiX releases](https://github.com/wixtoolset/wix3/releases/tag/wix3141rtm).
-
 See [Installer Build Guide](installer-build-guide.md) for building installers locally.
+
+#### Windows Defender Exclusions (Recommended)
+
+FieldWorks builds can be significantly slowed by Windows Defender real-time scanning. To configure exclusions, run the following in an **Administrator PowerShell**:
+
+```powershell
+.\Build\Agent\Setup-DefenderExclusions.ps1
+```
+
+This adds exclusions for build outputs, NuGet caches and development tools. Use `-DryRun` to preview changes without applying them.
 
 ### 2. Clone the Repository
 
@@ -116,7 +124,7 @@ git config merge.renameLimit 10000
 
 - **Write tests**: For any new functionality and when modifying existing code, write NUnit tests. This helps others not introduce problems and assists in maintaining existing functionality.
 
-- **Follow coding standards**: Please review our [Coding Standards](../.github/instructions/coding-standard.instructions.md). Note that our coding format is different from the default style in Visual Studio.
+- **Follow formatting and commit conventions**: Use `.editorconfig` for formatting and see [commit message guidelines](../.github/commit-guidelines.md) for CI-enforced commit rules.
 
 - **Make sure tests pass**: Ensure all tests pass before submitting. Tests are directly integrated into our build system.
 

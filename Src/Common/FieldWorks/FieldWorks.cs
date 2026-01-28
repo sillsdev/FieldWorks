@@ -155,8 +155,9 @@ namespace SIL.FieldWorks
 			var newPath = $"{pathName}{Path.PathSeparator}{Environment.GetEnvironmentVariable("PATH")}";
 			Environment.SetEnvironmentVariable("PATH", newPath);
 			Icu.Wrapper.ConfineIcuVersions(70);
-			// ICU will be initialized further down (by calling FwUtils.InitializeIcu())
 			FwRegistryHelper.Initialize();
+			// Initialize ICU before anything touches it so icu.net does not warn about missing Init().
+			FwUtils.InitializeIcu();
 
 			try
 			{
@@ -282,8 +283,6 @@ namespace SIL.FieldWorks
 					// in native code do not have icons if we just use this method. This is caused
 					// by a bug in XP.
 					Application.EnableVisualStyles();
-
-					FwUtils.InitializeIcu();
 
 					// initialize the SLDR
 					Sldr.Initialize();
@@ -785,15 +784,9 @@ namespace SIL.FieldWorks
 				startInfo.WorkingDirectory = Path.GetDirectoryName(path) ?? string.Empty;
 				return Process.Start(startInfo);
 			}
-			catch (Exception exception)
+			catch (Exception)
 			{
-#if DEBUG
-				if (Platform.IsMono)
-				{
-					// I (TomH) would rather know about the exception than silently failing. so show exception on Mono least.
-					MessageBox.Show(exception.ToString());
-				}
-#endif
+				// Process start failed - return null to indicate failure
 			}
 
 			// Something went very wrong :(
@@ -2569,7 +2562,7 @@ namespace SIL.FieldWorks
 							retry = (dlg.ShowDialog() == DialogResult.Retry);
 						}
 					}
-					catch (FailedFwRestoreException e)
+					catch (FailedFwRestoreException)
 					{
 						MessageBoxUtils.Show(Properties.Resources.ksRestoringOldFwBackupFailed, Properties.Resources.ksFailed);
 					}
@@ -2806,8 +2799,6 @@ namespace SIL.FieldWorks
 				// not even be one that was migrated. But it will probably work for most users.
 				if (newDir.ToLowerInvariant() != oldDir.ToLowerInvariant())
 					return;
-					// TODO-Linux: Help is not implemented in Mono
-					const string helpTopic = "/User_Interface/Menus/File/Project_Properties/Review_the_location_of_Linked_Files.htm";
 				DialogResult res = MessageBox.Show(Properties.Resources.ksProjectLinksStillOld,
 						Properties.Resources.ksReviewLocationOfLinkedFiles,
 						MessageBoxButtons.YesNo, MessageBoxIcon.None,
@@ -3526,10 +3517,10 @@ namespace SIL.FieldWorks
 
 			KeyboardController.Shutdown();
 
+			GracefullyShutDown();
+
 			if (Sldr.IsInitialized)
 				Sldr.Cleanup();
-
-			GracefullyShutDown();
 
 			if (s_threadHelper != null)
 				s_threadHelper.Dispose();
@@ -3745,7 +3736,7 @@ namespace SIL.FieldWorks
 						HandleLinkRequest(appArgs);
 						return s_projectId;
 					}
-					catch (Exception e)
+					catch (Exception)
 					{
 						//This is not good.
 					}

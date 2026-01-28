@@ -3,221 +3,63 @@ applyTo: "**/*"
 name: "build.instructions"
 description: "FieldWorks build guidelines and inner-loop tips"
 ---
-# Build guidelines and inner-loop tips
+# Build guidelines (FieldWorks)
 
 ## Purpose & Scope
-This file describes the build system and inner-loop tips for developers working on FieldWorks. Use it for top-level build instructions, not for project-specific guidance.
+This file documents the **supported** build workflow for FieldWorks.
 
-> **Note:** FieldWorks is **x64-only**. The x86 (32-bit) platform is no longer supported.
+FieldWorks is **Windows-first** and **x64-only**. Use the repo scripts so build ordering (native before managed) is correct.
 
-## Quick Start
-
-FieldWorks uses the **MSBuild Traversal SDK** for declarative build ordering. All builds use `FieldWorks.proj`.
-
-### Windows (PowerShell)
+## Quick start (PowerShell)
 ```powershell
-# Full build with automatic dependency ordering (x64 only)
+# Full traversal build (Debug/x64 defaults)
 .\build.ps1
-
-# Specific configuration (x64 is the only supported platform)
-.\build.ps1 -Configuration Release
-
-# With parallel builds and detailed logging
-.\build.ps1 -MsBuildArgs @('/m', '/v:detailed')
-```
-
-### Linux/macOS (Bash)
-```bash
-# Full build
-./build.sh
 
 # Release build
-./build.sh -c Release
-
-# With parallel builds
-./build.sh -- /m
-```
-
-**Benefits:**
-- Declarative dependency ordering (110+ projects organized into 21 phases)
-- Automatic parallel builds where safe
-- Better incremental build performance
-- Works with `dotnet build FieldWorks.proj`
-- Clear error messages when prerequisites missing
-
-## Build Architecture
-
-### x64-Only Build
-FieldWorks builds exclusively for 64-bit Windows (x64). The build system hardcodes x64 architecture:
-- All native C++ code is compiled for x64
-- All managed assemblies target AnyCPU but run in 64-bit mode
-- The installer only produces x64 packages
-
-### Traversal Build Phases
-The `FieldWorks.proj` file defines a declarative build order:
-
-1. **Phase 1**: FwBuildTasks (build infrastructure)
-2. **Phase 2**: Native C++ components (via `allCppNoTest` target)
-   - DebugProcs  GenericLib  FwKernel  Views
-   - Generates IDL files: `ViewsTlb.idl`, `FwKernelTlb.json`
-3. **Phase 3**: Code generation
-   - ViewsInterfaces (idlimport: ViewsTlb.idl + FwKernelTlb.json  Views.cs)
-4. **Phases 4-14**: Managed projects in dependency order
-   - Foundation (FwUtils, FwResources, xCore)
-   - UI Components (RootSite, Controls, Widgets)
-   - Applications (xWorks, LexText)
-5. **Phases 15-21**: Test projects
-
-### Dependency Enforcement
-The build will fail with clear errors if prerequisites are missing:
-```
-Error: Cannot generate Views.cs without native artifacts.
-Run: msbuild Build\Src\NativeBuild\NativeBuild.csproj
-```
-
-## Developer environment setup
-
-- On Windows: Use `.\build.ps1` (automatically sets up VS Developer x64 Environment) or open a Developer Command Prompt for Visual Studio (x64) before running manual `msbuild` commands.
-- On Linux/macOS: Use `./build.sh` and ensure `msbuild`, `dotnet`, and native build tools are installed.
-- Environment variables (`fwrt`, `Platform=x64`, etc.) are set by `SetupInclude.targets` during build.
-
-## Deterministic requirements
-
-### Inner loop (Developer Workflow)
-- **First build**: `.\build.ps1` or `./build.sh` (traversal handles automatic ordering)
-- **Incremental**: Only changed projects rebuild (MSBuild tracks `Inputs`/`Outputs`)
-- **Avoid full clean** unless:
-  - Native artifacts corrupted (delete `Output/`, then rebuild native first)
-  - Generated code out of sync (delete `Src/Common/ViewsInterfaces/Views.cs`)
-
-### Choose the right path
-- **Full system build**: `.\build.ps1` or `./build.sh` (uses FieldWorks.proj traversal)
-- **Direct MSBuild**: `msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64 /m`
-- **Dotnet CLI**: `dotnet build FieldWorks.proj` (requires .NET SDK)
-- **Single project**: `msbuild Src/<Path>/<Project>.csproj` (for quick iterations)
-- **Native only**: `msbuild Build\Src\NativeBuild\NativeBuild.csproj` (Phase 2 of traversal)
-- **Installer**: See `Build/Installer.targets` for installer build targets (requires WiX Toolset)
-
-### Configuration Options
-```powershell
-# Debug build (default, includes PDB symbols)
-.\build.ps1 -Configuration Debug
-
-# Release build (optimized, smaller binaries)
 .\build.ps1 -Configuration Release
-
-# Platform selection (x64 is default and recommended)
-.\build.ps1 -Platform x64
 ```
 
-## Troubleshooting
+## Non-negotiable rules
+- Use `.\build.ps1` for builds and `.\test.ps1` for tests.
+- Avoid ad-hoc `msbuild`/`dotnet build` invocations unless you are explicitly debugging build infrastructure.
+- Do not change COM/registry behavior without an explicit plan and tests.
 
-### Native Artifacts Missing
-**Symptom**: ViewsInterfaces fails with "Cannot generate Views.cs"
+## Warnings policy
+- Treat *compiler* warnings as errors by default (fix warnings; don’t suppress them).
+- Keep warning output **visible**. Avoid “make it quiet” changes that hide warnings without resolving the cause.
+- Some MSBuild warnings are expected today due to external dependencies (notably `MSB3277`/`MSB3243` assembly version conflicts). These warnings are documented as informational in `Directory.Build.props`.
+	- Do **not** attempt to suppress these with warning filters; if the dependency landscape changes, update the documentation and reassess.
+- Other MSBuild warnings (for example `MSB3245`/`MSB3246` unresolved references / bad images) are **actionable**: fix the underlying reference or generation issue rather than suppressing the warning.
 
-**Solution**:
+## Why build.ps1
+FieldWorks uses an MSBuild traversal (`FieldWorks.proj`) with ordered phases.
+
+Key ordering constraint:
+- **Native C++ must build first** (Phase 2) because later managed code-generation depends on native artifacts.
+
+## Outputs
+- Build outputs: `Output/<Configuration>/` (for example `Output/Debug/`)
+- Intermediate outputs: `Obj/<ProjectName>/` (centralized; do not rely on per-project `obj/` folders)
+
+## Worktrees and concurrent builds
+This repo supports multiple concurrent builds across git worktrees. Prefer the scripts because they handle environment setup and avoid cross-worktree process conflicts.
+
+## Troubleshooting (common)
+
+### “Native artifacts missing” / code-generation failures
+Re-run the scripted build:
 ```powershell
-# Build native components first
-msbuild Build\Src\NativeBuild\NativeBuild.csproj /p:Configuration=Debug /p:Platform=x64
-
-# Then continue with full build
 .\build.ps1
 ```
+If the failure persists, check the first error (later ones often cascade) and confirm native Phase 2 succeeds.
 
-### Build Order Issues
-**Symptom**: Project X fails because it can't find assembly from project Y
-
-**Solution**: The traversal build handles this automatically through `FieldWorks.proj`:
-- Check that the dependency is listed in an earlier phase than the dependent
-- Verify both projects are included in `FieldWorks.proj`
-- If you find a missing dependency, update `FieldWorks.proj` phase ordering
-
-### Parallel Build Race Conditions
-**Symptom**: Random failures in parallel builds
-
-**Solution**:
-- Traversal SDK respects dependencies and avoids races
-- If you encounter race conditions, reduce parallelism: `.\build.ps1 -MsBuildArgs @('/m:1')`
-- Report race conditions so dependencies can be added to `FieldWorks.proj`
-
-### Clean Build Required
-```powershell
-# Nuclear option: delete all build artifacts
-git clean -dfx Output/ Obj/
-
-# Then rebuild native first
-msbuild Build\Src\NativeBuild\NativeBuild.csproj /p:Configuration=Debug /p:Platform=x64
-
-# Then full build
-.\build.ps1
-```
-
-## Structured output
-- Build output goes to: `Output/<Configuration>/` (e.g., `Output/Debug/`)
-- Intermediate files: `Obj/<Project>/`
-- Build logs: Use `-LogFile` parameter: `.\build.ps1 -UseTraversal -LogFile build.log`
-- Scan for first error in failures; subsequent errors often cascade from the first
-
-## Advanced Usage
-
-### Direct MSBuild Invocation
-```powershell
-# Traversal build with MSBuild
-msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64 /m
-
-# With tests
-msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64 /p:action=test /m
-```
-
-### Building Specific Project Groups
-```powershell
-# Native C++ only (Phase 2 of traversal)
-msbuild Build\Src\NativeBuild\NativeBuild.csproj
-
-# Specific phase from FieldWorks.proj (not typically needed)
-# The traversal build handles ordering automatically
-```
-
-### Dotnet CLI (Traversal Only)
-```powershell
-# Works with FieldWorks.proj
-dotnet build FieldWorks.proj
-
-# Restore packages
-dotnet restore FieldWorks.proj --packages packages/
-```
-
-## Don't modify build files lightly
-- **`FieldWorks.proj`**: Traversal build order; verify changes don't create circular dependencies
-- **`Build/mkall.targets`**: Native C++ build orchestration; changes affect all developers
-- **`Build/SetupInclude.targets`**: Environment setup; touch only when absolutely needed
-- **`Directory.Build.props`**: Shared properties for all projects; changes affect everyone
-
-## Running Tests
-
-### With MSBuild (current method)
-```powershell
-# Run all tests
-msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64 /p:action=test
-
-# Run specific test target
-msbuild Build\FieldWorks.targets /t:CacheLightTests /p:Configuration=Debug /p:Platform=x64 /p:action=test
-```
-
-Test results: `Output/Debug/<ProjectName>.dll-nunit-output.xml`
-
-### With dotnet test (under development)
-```powershell
-# Future simplified approach
-dotnet test FieldWorks.sln --configuration Debug
-```
-
-See `.github/instructions/testing.instructions.md` for detailed test execution guidance.
+### Stale intermediates
+Prefer re-running `.\build.ps1` first (it performs cleanup needed for this repo). If you must do a hard reset, delete `Output/` and `Obj/`, then run `.\build.ps1` again.
 
 ## References
-- **CI/CD**: `.github/workflows/` for CI steps
-- **Build Infrastructure**: `Build/` for targets/props and build infrastructure
-- **Traversal Project**: `FieldWorks.proj` for declarative build order
-- **Shared Properties**: `Directory.Build.props` for all projects
-- **Native Build**: `Build/mkall.targets` for C++ build orchestration
-- **Testing**: `.github/instructions/testing.instructions.md` for test execution
+- Traversal order: `FieldWorks.proj`
+- Build infrastructure: `Build/`
+- Tests: `.github/instructions/testing.instructions.md`
+
+## CLARIFICATIONS_NEEDED
+- Confirm whether any MSBuild warning codes other than `MSB3277`/`MSB3243` are considered acceptable, and under what conditions.

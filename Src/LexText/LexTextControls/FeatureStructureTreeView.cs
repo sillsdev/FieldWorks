@@ -24,7 +24,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		}
 //		private FeatureTreeNode m_lastSelectedTreeNode = null;
 		private System.Windows.Forms.ImageList imageList1;
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 
 		public FeatureStructureTreeView(System.ComponentModel.IContainer container)
 		{

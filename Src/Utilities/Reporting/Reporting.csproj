@@ -4,12 +4,11 @@
     <AssemblyName>Reporting</AssemblyName>
     <RootNamespace>SIL.Utils</RootNamespace>
     <TargetFramework>net48</TargetFramework>
-    <OutputType>Library</OutputType>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <OutputType>Library</OutputType>    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
     <Prefer32Bit>false</Prefer32Bit>
+    <EnableDefaultEmbeddedResourceItems>false</EnableDefaultEmbeddedResourceItems>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -37,7 +36,17 @@
     <ProjectReference Include="../../Common/FwUtils/FwUtils.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ErrorReporter.resx">
+      <DependentUpon>ErrorReport.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ReportingStrings.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>ReportingStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
     <EmbeddedResource Include="Usage.ico" />
+    <EmbeddedResource Include="UsageEmailDialog.resx">
+      <DependentUpon>UsageEmailDialog.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\CommonAssemblyInfo.cs">

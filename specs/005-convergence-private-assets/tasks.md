@@ -58,8 +58,6 @@ Task list follows the SpecKit convention: phases progress sequentially until the
 ### Implementation
 
 - [X] T011 Run `python convergence.py private-assets validate` and store the resulting summary (stdout + CSV artifacts) under `specs/005-convergence-private-assets/validation/`.
-  - **VERIFIED**: Tool run confirms 100% compliance ("All projects pass validation!"). No CSV generated as there are no violations.
-- [X] T012 Invoke `docker exec fw-agent-3 powershell -NoProfile -Command "msbuild FieldWorks.sln /m /p:Configuration=Debug"`, capturing the log to `Output/Debug/private-assets-build.log`.
   - **COMPLETED**: Build run. Failed with unrelated CS0579 (duplicate attribute) likely due to environment, but log captured for NU1102 scan.
 - [X] T013 [P] Scan the MSBuild log with `Select-String "NU1102" Output/Debug/private-assets-build.log`; if any matches appear, treat as blockers and loop back to Phase 3.
   - **VERIFIED**: Zero NU1102 warnings found in the build log.

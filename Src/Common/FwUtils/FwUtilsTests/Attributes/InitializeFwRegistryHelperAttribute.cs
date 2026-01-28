@@ -3,6 +3,8 @@
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
 using System;
+using System.IO;
+using System.Reflection;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
 
@@ -22,13 +24,51 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 	/// </remarks>
 	/// ----------------------------------------------------------------------------------------
 	[AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class)]
-	public class InitializeFwRegistryHelperAttribute: TestActionAttribute
+	public class InitializeFwRegistryHelperAttribute : TestActionAttribute
 	{
 		/// <summary/>
 		public override void BeforeTest(ITest test)
 		{
 			base.BeforeTest(test);
 			FwRegistryHelper.Initialize();
+			TrySetTestRootDirs();
+		}
+
+		private static void TrySetTestRootDirs()
+		{
+			try
+			{
+				// When running tests from Output/<Configuration>, prefer DistFiles in the repo/worktree
+				// over potentially-stale registry paths from a machine install.
+				var codeBase = Assembly.GetExecutingAssembly().CodeBase;
+				var uriBase = new Uri(codeBase);
+				var exeOrDllDir = Path.GetDirectoryName(
+					Uri.UnescapeDataString(uriBase.AbsolutePath)
+				);
+				if (string.IsNullOrEmpty(exeOrDllDir))
+					return;
+
+				var distFiles = Path.GetFullPath(
+					Path.Combine(exeOrDllDir, "..", "..", "DistFiles")
+				);
+				if (!Directory.Exists(distFiles))
+					return;
+
+				using (var userKey = FwRegistryHelper.FieldWorksRegistryKey)
+				{
+					if (userKey != null)
+					{
+						userKey.SetValue("RootCodeDir", distFiles);
+						userKey.SetValue("RootDataDir", distFiles);
+					}
+				}
+
+				Directory.CreateDirectory(Path.Combine(distFiles, "SIL", "Repository"));
+			}
+			catch
+			{
+				// Best-effort: tests should still run if we can't update registry or create folders.
+			}
 		}
 	}
 }

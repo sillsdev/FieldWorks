@@ -19,7 +19,6 @@ namespace SIL.FieldWorks.Common.Widgets
 	class FwTextBoxTests
 	{
 		#region Data Members
-		TestFwStylesheet m_stylesheet;
 		WritingSystemManager m_wsManager;
 		int m_hvoEnglishWs;
 		#endregion

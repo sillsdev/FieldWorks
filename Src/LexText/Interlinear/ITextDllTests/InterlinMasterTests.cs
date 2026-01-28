@@ -165,8 +165,8 @@ namespace SIL.FieldWorks.IText
 			protected override void Dispose(bool disposing)
 			{
 				System.Diagnostics.Debug.WriteLineIf(!disposing, String.Format(
-					"****** Missing Dispose call for a {0} whose current StText's WS is {1}. ******",
-					GetType().Name, Cache.ServiceLocator.WritingSystemManager.Get(m_stText.MainWritingSystem).Id));
+					"****** Missing Dispose call for a {0}. ******",
+					GetType().Name));
 				base.Dispose(disposing);
 			}
 

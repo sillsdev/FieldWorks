@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 		private const string AsmNamespace = "urn:schemas-microsoft-com:asm.v1";
 
 		[Test]
-		public void ProcessManagedAssembly_NestsClrClassUnderFile()
+		public void ProcessManagedAssembly_PlacesClrClassAsChildOfAssembly()
 		{
 			var tempDir = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString("N"));
 			Directory.CreateDirectory(tempDir);
@@ -47,11 +47,14 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 				var fileNode = root.SelectSingleNode("asmv1:file", ns);
 				Assert.That(fileNode, Is.Not.Null, "Managed manifest entries must create a file node.");
 
+				// Windows SxS requires clrClass to be a direct child of assembly, not nested under file.
+				// Nesting under file causes "side-by-side configuration is incorrect" errors at runtime.
+				// See: specs/003-convergence-regfree-com-coverage/REGFREE_BEST_PRACTICES.md
 				var nestedClrClass = fileNode.SelectSingleNode("asmv1:clrClass", ns);
-				Assert.That(nestedClrClass, Is.Not.Null, "clrClass should live under its file element.");
+				Assert.That(nestedClrClass, Is.Null, "clrClass must NOT be nested under file element (causes SxS errors).");
 
-				var orphanClrClass = root.SelectSingleNode("asmv1:clrClass", ns);
-				Assert.That(orphanClrClass, Is.Null, "clrClass elements must not be direct children of the assembly root.");
+				var clrClassUnderAssembly = root.SelectSingleNode("asmv1:clrClass", ns);
+				Assert.That(clrClassUnderAssembly, Is.Not.Null, "clrClass must be a direct child of the assembly element.");
 			}
 			finally
 			{

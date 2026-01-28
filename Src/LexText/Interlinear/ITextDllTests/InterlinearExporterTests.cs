@@ -943,7 +943,6 @@ namespace SIL.FieldWorks.IText
 			}
 
 			[Test]
-			[Ignore("This is a bug that might need to be fixed if users notice it. low priority since the user could just not display lines with same ws")]
 			public void ExportIrrInflVariantTypeInformation_LT7581_gls_multiEngWss()
 			{
 				var wsXkal = Cache.ServiceLocator.WritingSystemManager.Get(QaaXKal);
@@ -974,7 +973,8 @@ namespace SIL.FieldWorks.IText
 				var transformedDocWord = TransformDocXml2Word(exportedDoc);
 				XmlNamespaceManager nsmgr = LoadNsmgrForDoc(transformedDocWord);
 
-				Assert.That(transformedDocWord.SelectNodes("//*[text()='glossgo']", nsmgr), Has.Count.EqualTo(2), "Should only have one LexGloss per line");
+				Assert.That(transformedDocWord.SelectNodes("//*[text()='glossgo']", nsmgr), Has.Count.EqualTo(1),
+					"Duplicate LexGloss line choices (same WS) should not create duplicate LexGloss lines in the export");
 			}
 			private string CombineFilenameWithExportFolders(string filename)
 			{

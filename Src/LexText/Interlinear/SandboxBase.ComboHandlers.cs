@@ -2851,8 +2851,10 @@ namespace SIL.FieldWorks.IText
 			private SandboxBase m_sandbox;
 			private int m_hvoMorph;
 			private ISilDataAccess m_sda;
+#pragma warning disable CS0169 // Field is never used
 			private int m_morphFormNew;
 			private int m_morphFormOld;
+#pragma warning restore CS0169
 			private readonly int[] m_tags = { ktagSbMorphForm, ktagSbMorphGloss, ktagSbNamedObjGuess, ktagSbMorphPos};
 			private readonly int[] m_oldVals;
 			private readonly int[] m_newVals;

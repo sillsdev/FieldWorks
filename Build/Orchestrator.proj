@@ -15,6 +15,7 @@
   <PropertyGroup>
     <Platform Condition="'$(Platform)'==''">x64</Platform>
     <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
+    <InstallerToolset Condition="'$(InstallerToolset)'==''">Wix3</InstallerToolset>
   </PropertyGroup>
 
   <!-- Import build infrastructure -->
@@ -24,7 +25,8 @@
   <Import Project="$(MSBuildThisFileDirectory)mkall.targets"/>
   <Import Project="$(MSBuildThisFileDirectory)Windows.targets"/>
   <Import Project="$(MSBuildThisFileDirectory)RegFree.targets"/>
-  <Import Project="$(MSBuildThisFileDirectory)Installer.targets" Condition="'$(OS)'=='Windows_NT'"/>
+  <Import Project="$(MSBuildThisFileDirectory)Installer.Wix3.targets" Condition="'$(OS)'=='Windows_NT' and '$(InstallerToolset)'=='Wix3'"/>
+  <Import Project="$(MSBuildThisFileDirectory)Installer.targets" Condition="'$(OS)'=='Windows_NT' and '$(InstallerToolset)'=='Wix6'"/>
   <Import Project="$(MSBuildThisFileDirectory)LocalLibrary.targets"/>
 
   <!-- Default Build target: orchestrate full traversal build -->

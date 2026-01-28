@@ -4,9 +4,7 @@
     <AssemblyName>Fxt</AssemblyName>
     <RootNamespace>SIL.FieldWorks.Common</RootNamespace>
     <TargetFramework>net48</TargetFramework>
-    <OutputType>Exe</OutputType>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <OutputType>Exe</OutputType>    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>

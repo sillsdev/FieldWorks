@@ -238,28 +238,26 @@ namespace SIL.FieldWorks.Build.Tasks
 				}
 				else
 				{
-					// Ensure version has 4 parts for manifest compliance (Major.Minor.Build.Revision)
-					// Some assemblies might have 3-part versions (e.g. 1.1.0) which are invalid in manifests.
-					// We also strip any non-numeric suffix if present, though FileVersion is usually clean.
+					// Ensure version has exactly 4 numeric parts for manifest compliance (Major.Minor.Build.Revision)
+					// Some assemblies might have 3-part versions (e.g. 1.1.0) or non-numeric suffixes
+					// (e.g. 9.3.5.local_20260119) which are invalid in SxS manifests.
+					// Always sanitize to extract only the leading digits from each part.
 					var parts = assemblyVersion.Split('.');
-					if (parts.Length != 4)
+					var newParts = new string[4];
+					for (int i = 0; i < 4; i++)
 					{
-						var newParts = new string[4];
-						for (int i = 0; i < 4; i++)
+						// Simple parsing to ensure we only get numbers
+						string part = "0";
+						if (i < parts.Length)
 						{
-							// Simple parsing to ensure we only get numbers
-							string part = "0";
-							if (i < parts.Length)
-							{
-								// Take only the leading digits
-								var digits = new string(parts[i].TakeWhile(char.IsDigit).ToArray());
-								if (!string.IsNullOrEmpty(digits))
-									part = digits;
-							}
-							newParts[i] = part;
+							// Take only the leading digits from each version part
+							var digits = new string(parts[i].TakeWhile(char.IsDigit).ToArray());
+							if (!string.IsNullOrEmpty(digits))
+								part = digits;
 						}
-						assemblyVersion = string.Join(".", newParts);
+						newParts[i] = part;
 					}
+					assemblyVersion = string.Join(".", newParts);
 				}
 
 				XmlElement root = creator.CreateExeInfo(assemblyName, assemblyVersion, Platform);

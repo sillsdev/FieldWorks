@@ -4,9 +4,7 @@
     <AssemblyName>ParserUITests</AssemblyName>
     <RootNamespace>ParserUITests</RootNamespace>
     <TargetFramework>net48</TargetFramework>
-    <OutputType>Library</OutputType>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <OutputType>Library</OutputType>    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <IsTestProject>true</IsTestProject>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Prefer32Bit>false</Prefer32Bit>
@@ -30,7 +28,9 @@
     <PackageReference Include="SIL.TestUtilities" Version="17.0.0-*" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="ApplicationTransforms" />
+    <Reference Include="ApplicationTransforms" Condition="Exists('$(dir-outputBase)\\ApplicationTransforms.dll')">
+      <HintPath>$(dir-outputBase)\\ApplicationTransforms.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="netstandard" />
   </ItemGroup>

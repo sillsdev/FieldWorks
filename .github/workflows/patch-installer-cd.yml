@@ -22,10 +22,6 @@ on:
         description: "Commit-ish for helps repository"
         required: false
         default: "develop"
-      installer_ref:
-        description: "Commit-ish for PatchableInstaller repository"
-        required: false
-        default: "master"
       localizations_ref:
         description: "Commit-ish for localization repository"
         required: false
@@ -92,14 +88,6 @@ jobs:
           fetch-depth: 0
           path: "DistFiles/Helps"
 
-      - name: Checkout PatchableInstaller
-        uses: actions/checkout@v4
-        id: installer-checkout
-        with:
-          repository: "sillsdev/genericinstaller"
-          ref: ${{ github.event.inputs.installer_ref || 'master' }}
-          fetch-depth: 0
-          path: "PatchableInstaller"
 
       - name: Checkout Localizations
         uses: actions/checkout@v4
@@ -175,7 +163,7 @@ jobs:
           Write-Host "Expanded BuildDir.zip -> ./BuildDir"
 
           # Ensure ProcRunner target path exists
-          $procTarget = "PatchableInstaller/ProcRunner/ProcRunner/bin/Release/net48"
+          $procTarget = "FLExInstaller/Shared/ProcRunner/ProcRunner/bin/Release/net48"
           if (-not (Test-Path $procTarget)) {
             New-Item -ItemType Directory -Path $procTarget -Force | Out-Null
           }

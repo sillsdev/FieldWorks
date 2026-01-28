@@ -43,7 +43,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private readonly HelpProvider m_helpProvider;
 
 		private Label m_wordToTryLabel;
-		private IContainer components;
+		private IContainer components = null;
 		private FwTextBox m_wordformTextBox;
 		private Button m_tryItButton;
 		private Button m_closeButton;
@@ -67,7 +67,6 @@ namespace SIL.FieldWorks.LexText.Controls
 		private IAsyncResult m_tryAWordResult;
 
 		private WebPageInteractor m_webPageInteractor;
-		private IParserTrace m_trace;
 
 		private GeneratedHtmlViewer.FindDialog findDialog;
 

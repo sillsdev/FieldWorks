@@ -2,6 +2,18 @@
 
 **Feature**: 007-wix-314-installer | **Date**: December 2, 2025
 
+## Quick Start
+
+Use the installer setup script to validate and configure your environment:
+
+```powershell
+# Validate prerequisites only
+.\Build\Agent\Setup-InstallerBuild.ps1 -ValidateOnly
+
+# Full setup including patch build artifacts
+.\Build\Agent\Setup-InstallerBuild.ps1 -SetupPatch
+```
+
 ## Prerequisites
 
 ### Required Software
@@ -12,7 +24,17 @@
 3. **MSBuild** (included with VS 2022)
 4. **.NET Framework 4.8.1 SDK** (included with VS 2022)
 
-### Repository Setup
+### One-Time Setup
+
+```powershell
+# Install WiX and configure environment
+.\Setup-Developer-Machine.ps1
+
+# Clone installer helper repositories
+.\Setup-Developer-Machine.ps1 -InstallerDeps
+```
+
+### Repository Setup (Manual Alternative)
 
 ```powershell
 # Clone main repository

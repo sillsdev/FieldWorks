@@ -455,7 +455,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// Verify ProjectShared is present in version7Key
 				AssertRegistryValuePresent(version7Key, null, DummyFwRegistryHelper.ProjectShared);
 
-				object projectsSharedValue;
 				// Verify that the version 9 ProjectShared value is missing before migration
 				AssertRegistryValueNotPresent(FwRegistryHelper.FieldWorksRegistryKey, null, DummyFwRegistryHelper.ProjectShared);
 
@@ -480,7 +479,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// Verify ProjectShared is present in version8Key
 				AssertRegistryValuePresent(version8Key, null, DummyFwRegistryHelper.ProjectShared);
 
-				object projectsSharedValue;
 				// Verify that the version 9 ProjectShared key is missing before migration
 				AssertRegistryValueNotPresent(FwRegistryHelper.FieldWorksRegistryKey, null, DummyFwRegistryHelper.ProjectShared);
 
@@ -509,7 +507,6 @@ namespace SIL.FieldWorks.Common.FwUtils
 				// Verify ProjectShared is present in version8Key
 				AssertRegistryValuePresent(version8Key, null, DummyFwRegistryHelper.ProjectShared);
 
-				object projectsSharedValue;
 				// Verify that the version 9 ProjectShared key is missing before migration
 				AssertRegistryValueNotPresent(FwRegistryHelper.FieldWorksRegistryKey, null, DummyFwRegistryHelper.ProjectShared);
 

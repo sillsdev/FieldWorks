@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Include>
+	<!-- Must be paired with an <CustomAction Id='LaunchFile'..> in Overrides.wxi -->
+	<!-- <Custom Action='LaunchFile' After='InstallFinalize'>NOT Installed</Custom> -->
+</Include>

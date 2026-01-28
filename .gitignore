@@ -23,10 +23,10 @@ DistFiles/Language Explorer/Movies/
 DistFiles/ReleaseData/
 DistFiles/SIL/Repository/
 Downloads/
-Installer/
+./Installer/
 Localizations/
-packages/
 PatchableInstaller/
+packages/
 Bin/_setLatestBuildConfig.bat
 Bin/_setroot.bat
 Lib/debug/DebugProcs.lib
@@ -41,12 +41,14 @@ Lib/release/graphite2.lib
 Lib/release/System.Buffers.dll
 Lib/release/System.ValueTuple.dll
 Lib/release/unit++.*
+Lib/release/unit++.pdb
 DistFiles/Parts/Generated.fwlayout
 Lib/src/Ethnologue/GeneratedEthnologue.cs
 Src/FwParatextLexiconPlugin/GeneratedParatextLexiconPluginRegistryHelper.cs
 Src/Common/FwUtils/GeneratedFwUtils.cs
 Src/CommonAssemblyInfo.cs
 Src/LangInst/InstallLanguageTests/timing.txt
+*.exe
 x64
 
 # other files
@@ -75,6 +77,8 @@ _user.mak.lnx
 .project
 *.VC.db
 *.VC.opendb
+*.invalid
+*.code-workspace
 
 .dotest/
 .depend
@@ -158,6 +162,7 @@ build_output.txt
 *.backup
 *.code-workspace
 config.json
+
 # Test exclusion tooling artifacts
 Output/test-exclusions/
 Output/test-exclusions
@@ -175,3 +180,15 @@ CrashLog.txt
 # VSTest Artifacts
 TestResults/
 *.trx
+
+# WPF markup compilation temp projects
+*_wpftmp.csproj
+*_wpftmp.vbproj
+
+# WiX v6
+*.wixpdb
+
+# Standard .NET
+bin/
+FLExInstaller/cabcache/*
+FLExInstaller/wix6/cabcache/*

@@ -212,9 +212,9 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel { Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 			//SUT
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
-			// verify that the css result contains a line similar to a { text-decoration:inherit; color:inherit; }
-			Assert.That(Regex.Match(cssResult, @"\s*a\s*{[^}]*text-decoration:inherit;").Success, Is.True, "Links should inherit underlines and similar.");
-			Assert.That(Regex.Match(cssResult, @"\s*a\s*{[^}]*color:inherit;").Success, Is.True, "Links should inherit color.");
+			// verify that the css result contains a line similar to a { text-decoration:none; color:...; }
+			Assert.That(Regex.Match(cssResult, @"\s*a\s*{[^}]*text-decoration:none;").Success, Is.True, "Links should not be underlined by default.");
+			Assert.That(Regex.Match(cssResult, @"\s*a\s*{[^}]*color:(unset|currentColor);").Success, Is.True, "Links should match surrounding text color.");
 		}
 
 		[Test]
@@ -1170,7 +1170,6 @@ namespace SIL.FieldWorks.XWorks
 			VerifyParagraphBorderInCss(BorderColor, 0, BorderTrailing, BorderBottom, BorderTop, cssResult);
 		}
 
-		[Ignore("Won't pass yet.")]
 		[Test]
 		public void GenerateCssForConfiguration_DefaultRootConfigGeneratesResult()
 		{
@@ -1180,9 +1179,55 @@ namespace SIL.FieldWorks.XWorks
 			var model = new DictionaryConfigurationModel(defaultRoot, Cache);
 			var cssResult = CssGenerator.GenerateCssFromConfiguration(model, m_propertyTable);
 			var parser = new Parser();
-			var styleSheet = parser.Parse(cssResult);
-			Debug.WriteLine(cssResult);
-			Assert.That(styleSheet.Errors.Count, Is.EqualTo(0));
+			try
+			{
+				var styleSheet = parser.Parse(cssResult);
+				Debug.WriteLine(cssResult);
+				Assert.That(styleSheet.Errors.Count, Is.EqualTo(0));
+			}
+			catch (Exception e)
+			{
+				// ExCSS occasionally throws (rather than reporting parse errors). Try to isolate the
+				// first top-level block that triggers the exception to make debugging actionable.
+				var blocks = new List<string>();
+				int depth = 0;
+				int start = 0;
+				for (int i = 0; i < cssResult.Length; i++)
+				{
+					switch (cssResult[i])
+					{
+						case '{':
+							depth++;
+							break;
+						case '}':
+							depth = Math.Max(0, depth - 1);
+							if (depth == 0)
+							{
+								int len = i - start + 1;
+								if (len > 0)
+									blocks.Add(cssResult.Substring(start, len));
+								start = i + 1;
+							}
+							break;
+					}
+				}
+
+				string firstBadBlock = null;
+				foreach (var block in blocks)
+				{
+					try
+					{
+						parser.Parse(block);
+					}
+					catch
+					{
+						firstBadBlock = block;
+						break;
+					}
+				}
+
+				Assert.Fail($"ExCSS failed to parse generated CSS: {e.GetType().Name}: {e.Message}\nFirst failing block:\n{firstBadBlock}");
+			}
 		}
 
 		[Test]

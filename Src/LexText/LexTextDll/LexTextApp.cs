@@ -8,6 +8,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
 using System.ComponentModel;
+using System.Runtime.InteropServices;
 using SIL.FieldWorks.Common.Controls;
 using SIL.FieldWorks.Common.Framework;
 using SIL.FieldWorks.Common.FwUtils;
@@ -31,6 +32,9 @@ namespace SIL.FieldWorks.XWorks.LexText
 	/// <summary>
 	/// Summary description for LexTextApp.
 	/// </summary>
+	[ComVisible(true)]
+	[Guid("E03DB914-31F2-4B9C-8E3A-2E0F1091F5B1")]
+	[ClassInterface(ClassInterfaceType.None)]
 	public class LexTextApp : FwXApp, IApp, IxCoreColleague
 	{
 		protected XMessageBoxExManager m_messageBoxExManager;

@@ -24,18 +24,7 @@ FieldWorks has migrated to **Microsoft.Build.Traversal SDK** for its build syste
 
 ### For Linux/macOS
 
-**Before:**
-```bash
-# Old way - used legacy FieldWorks.proj
-./build.sh
-```
-
-**After:**
-```bash
-# New way - uses traversal (FieldWorks.proj)
-./build.sh
-./build.sh -c Release
-```
+FieldWorks is Windows-first; `build.sh` is not supported in this repo. Use `.\build.ps1`.
 
 ## Build Architecture
 

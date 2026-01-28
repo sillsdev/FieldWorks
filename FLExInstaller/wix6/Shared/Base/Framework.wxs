@@ -1,0 +1,212 @@
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:util="http://wixtoolset.org/schemas/v4/wxs/util">
+
+  <Package Name="$(var.SafeApplicationName)"
+           ProductCode="$(var.ProductCode)"
+           UpgradeCode="$(var.UpgradeCode)"
+           Language="1033"
+           Version="$(var.VersionNumber)"
+           Manufacturer="$(var.Manufacturer)"
+           InstallerVersion="300"
+           Compressed="yes"
+           Scope="perMachine">
+
+    <SummaryInformation Keywords="Installer"
+              Description="$(var.SafeApplicationName) Installer"
+                        Codepage="1252" />
+
+    <MajorUpgrade AllowSameVersionUpgrades="yes"
+            DowngradeErrorMessage="A newer version of $(var.SafeApplicationName) is already installed. Uninstall it first (or run the bundle to replace the existing installation)."
+            Schedule="afterInstallInitialize" />
+
+    <Icon Id="Application_Icon.ico" SourceFile="$(var.ProjectDir)..\..\resources\App.ico" />
+
+    <Property Id="BUNDLE_ID_GUID" Value="DefaultValue"/>
+    <Property Id="FULL_VERSION_NUMBER" Value="$(var.VersionNumber)"/>
+    <Property Id="ARPPRODUCTICON" Value="Application_Icon.ico" />
+    <Property Id="ARPSYSTEMCOMPONENT" Value="1" />
+    <Property Id="DISPLAYNAME" Value="$(var.SafeApplicationName)" />
+
+    <?include ../../Overrides.wxi?>
+    <?include ../../Fonts.wxi?>
+
+    <Binary Id="MyCustomActionsDll" SourceFile="$(var.CustomActions.TargetDir)CustomActions.CA.dll" />
+
+    <CustomAction Id="CheckApplicationPath" Return="check" Execute="immediate" BinaryRef="MyCustomActionsDll" DllEntry="CheckAppPath" />
+    <CustomAction Id="DeleteRegistryVersionNumber" Return="check" Execute="immediate" BinaryRef="MyCustomActionsDll" DllEntry="DeleteVersionNumberFromRegistry" />
+    <Property Id="REGISTRYVERSIONKEY" Value="$(var.SafeApplicationName)\Version" />
+
+    <CustomAction Id="CloseApplications" Return="check" BinaryRef="MyCustomActionsDll" DllEntry="ClosePrompt" />
+    <Property Id="PromptToCloseProcesses" Value="$(var.SafeApplicationName)" />
+    <Property Id="PromptToCloseDisplayNames" Value="$(var.ApplicationName)" />
+
+    <Property Id="DATAFOLDER" Secure="yes">
+      <RegistrySearch Id="RegSearchDataFolder" Root="HKLM" Key="SOFTWARE\[REGISTRYKEY]" Name="[DATAFOLDERREGSZNAME]" Type="raw" />
+    </Property>
+
+    <CustomAction Id="SetDefDataFolder" Property="DEFDATAFOLDER" Value="[CommonAppDataFolder]SIL\$(var.SafeApplicationName)\Projects" />
+    <Property Id="DATAFOLDERFOUND" Value="unset" />
+    <CustomAction Id="VerifyDataPath" Return="check" Execute="immediate" BinaryRef="MyCustomActionsDll" DllEntry="VerifyDataDirPath" />
+
+    <SetProperty Id="REGISTRYKEY" Value="$(var.SafeApplicationName)\$(var.MajorVersion)" Before="AppSearch" Condition="not REGISTRYKEY" />
+    <SetProperty Id="APPFOLDERREGSZNAME" Value="Program_Files_Directory_$(var.SafeApplicationName)" Before="AppSearch" Condition="not APPFOLDERREGSZNAME" />
+    <SetProperty Id="DATAFOLDERREGSZNAME" Value="Settings_Directory" Before="AppSearch" Condition="not DATAFOLDERREGSZNAME" />
+    <SetProperty Id="HARVESTDATAFOLDERREGSZNAME" Value="Data_Directory" Before="AppSearch" Condition="not HARVESTDATAFOLDERREGSZNAME" />
+
+    <CustomAction Id="UseDefDataFolder" Property="DATAFOLDER" Value="[DEFDATAFOLDER]" />
+    <CustomAction Id="UseOvrDataFolder" Property="DATAFOLDER" Value="[OVRDATAFOLDER]" />
+    <CustomAction Id="UseRegDataFolder" Property="DATAFOLDER" Value="[REGDATAFOLDER]" />
+    <CustomAction Id="UseDefHarvestDataFolder" Property="HARVESTDATAFOLDER" Value="[DATAFOLDER]" />
+    <CustomAction Id="UseOvrHarvestDataFolder" Property="HARVESTDATAFOLDER" Value="[OVRHARVESTDATAFOLDER]" />
+
+    <CustomAction Id="CheckUpgradeValue" Property="ISUPGRADE" Value="True" />
+    <CustomAction Id="CheckPatchValue" Property="ISPATCH" Value="True" />
+
+    <InstallExecuteSequence>
+      <Custom Action="CloseApplications" Before="AppSearch" Condition="NOT (REMOVE=&quot;ALL&quot;)" />
+      <Custom Action="DeleteRegistryVersionNumber" Before="RemoveRegistryValues" Condition="(NOT UPGRADINGPRODUCTCODE) AND (REMOVE=&quot;ALL&quot;)" />
+      <Custom Action="CheckPatchValue" Before="CheckUpgradeValue" Condition="PATCHNEWSUMMARYSUBJECT=&quot;Small Update Patch&quot;" />
+      <Custom Action="CheckUpgradeValue" After="InstallFinalize" Condition="WIX_UPGRADE_DETECTED" />
+      <?include ../Common/CustomActionSteps.wxi?>
+    </InstallExecuteSequence>
+
+    <InstallUISequence>
+      <Custom Action="SetDefDataFolder" After="FindRelatedProducts" />
+      <Custom Action="VerifyDataPath" After="SetDefDataFolder" />
+      <Custom Action="UseDefAppFolder" After="AppSearch" Condition="(NOT REGAPPFOLDER) and (NOT OVRAPPFOLDER)" />
+      <Custom Action="UseOvrAppFolder" After="AppSearch" Condition="(NOT REGAPPFOLDER) and (OVRAPPFOLDER)" />
+      <Custom Action="UseRegAppFolder" After="AppSearch" Condition="REGAPPFOLDER" />
+      <Custom Action="UseDefDataFolder" After="AppSearch" Condition="(NOT REGDATAFOLDER) and (NOT OVRDATAFOLDER)" />
+      <Custom Action="UseOvrDataFolder" After="AppSearch" Condition="(NOT REGDATAFOLDER) and (OVRDATAFOLDER)" />
+      <Custom Action="UseRegDataFolder" After="AppSearch" Condition="REGDATAFOLDER" />
+      <Custom Action="UseDefHarvestDataFolder" After="AppSearch" Condition="NOT OVRHARVESTDATAFOLDER" />
+      <Custom Action="UseOvrHarvestDataFolder" After="AppSearch" Condition="OVRHARVESTDATAFOLDER" />
+    </InstallUISequence>
+
+    <?if $(var.FastInstallerBuild) = 1 ?>
+    <MediaTemplate EmbedCab="yes" MaximumUncompressedMediaSize="2" />
+    <?else?>
+    <MediaTemplate EmbedCab="yes" />
+    <?endif?>
+    <Property Id="DiskPrompt" Value="$(var.ApplicationName) $(var.MajorVersion).$(var.MinorVersion) Installation [1]" />
+
+    <WixVariable Id="WixUIBannerBmp" Value="$(var.ProjectDir)Shared\resources\bannrbmp.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="$(var.ProjectDir)Shared\resources\MsiBackground.bmp" />
+
+    <SetProperty Id="DEFAPPFOLDER" Value="[$(var.PFDir)]$(var.SafeApplicationName)$(var.MajorVersion)\" Before="AppSearch" Condition="not DEFAPPFOLDER" />
+    <CustomAction Id="UseDefAppFolder" Property="APPFOLDER" Value="[DEFAPPFOLDER]" />
+    <CustomAction Id="UseOvrAppFolder" Property="APPFOLDER" Value="[OVRAPPFOLDER]" />
+    <CustomAction Id="UseRegAppFolder" Property="APPFOLDER" Value="[REGAPPFOLDER]" />
+
+    <Property Id="REGAPPFOLDER">
+      <RegistrySearch Id="RegistryAppFolder" Root="HKLM" Key="SOFTWARE\[REGISTRYKEY]" Name="[APPFOLDERREGSZNAME]" Type="directory" />
+    </Property>
+    <Property Id="APPFOLDERFOUND" Value="NotFound">
+      <RegistrySearch Id="RegistryAppBool" Root="HKLM" Key="SOFTWARE\[REGISTRYKEY]" Name="[APPFOLDERREGSZNAME]" Type="raw" />
+    </Property>
+
+    <SetProperty Id="EXPLANATIONTEXT" After="AppSearch" Value="Since this is an upgrade of an existing $(var.ApplicationName) $(var.MajorVersion) installation, you can't change the location of the data folder." Condition="DATAFOLDERFOUND = &quot;AlreadyExisting&quot;" />
+
+    <Property Id="WIXUI_INSTALLDIR" Value="APPFOLDER" />
+    <Property Id="WIXUI_PROJECTSDIR" Value="DATAFOLDER" />
+
+    <UI>
+      <UIRef Id="WixUI_DialogFlow" />
+      <UIRef Id="WixUI_ErrorProgressText" />
+    </UI>
+
+    <StandardDirectory Id="TARGETDIR">
+      <Directory Id="DATAFOLDER" Name="[DATAFOLDER]">
+        <Component Id="RegKeySettingsDir" Permanent="yes" Guid="*">
+          <CreateFolder>
+            <util:PermissionEx User="AuthenticatedUser" GenericAll="yes" />
+          </CreateFolder>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\[REGISTRYKEY]" ForceDeleteOnUninstall="yes">
+            <RegistryValue Name="[DATAFOLDERREGSZNAME]" Type="string" Value="[DATAFOLDER]" KeyPath="yes" />
+          </RegistryKey>
+        </Component>
+      </Directory>
+      <Directory Id="HARVESTDATAFOLDER" Name=".">
+        <Component Id="HarvestDataDir" Guid="*">
+          <CreateFolder>
+            <util:PermissionEx User="AuthenticatedUser" GenericAll="yes" />
+          </CreateFolder>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\[REGISTRYKEY]" ForceDeleteOnUninstall="yes">
+            <RegistryValue Name="[HARVESTDATAFOLDERREGSZNAME]" Type="string" Value="[OVRHARVESTDATAFOLDER]" KeyPath="yes" />
+          </RegistryKey>
+        </Component>
+      </Directory>
+    </StandardDirectory>
+
+    <StandardDirectory Id="FontsFolder" />
+
+    <StandardDirectory Id="DesktopFolder">
+      <Component Id="ApplicationShortcutDesktop" Guid="*">
+        <Shortcut Id="ApplicationDesktopShortcut"
+                  Name="$(var.ApplicationName) $(var.MajorVersion)"
+                  Description="$(var.ApplicationName) $(var.MajorVersion)"
+                  Target="[APPFOLDER]$(var.SafeApplicationName).exe"
+                  WorkingDirectory="APPFOLDER"
+                  Icon="Application_Icon.ico" />
+        <RemoveFolder Id="DesktopFolder" On="uninstall" />
+        <RegistryValue Root="HKCU" Key="Software\$(var.SafeApplicationName)$(var.MajorVersion)" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </StandardDirectory>
+
+    <StandardDirectory Id="$(var.PFDir)">
+      <Directory Id="SILFolder" Name="SIL">
+        <Directory Id="APPFOLDER" Name="$(var.ApplicationName) $(var.MajorVersion)">
+          <Component Id="RegKeyValues" Guid="*">
+            <RegistryKey Root="HKLM" Key="SOFTWARE\[REGISTRYKEY]" ForceDeleteOnUninstall="yes">
+              <RegistryValue Name="[APPFOLDERREGSZNAME]" Type="string" Value="[APPFOLDER]" />
+              <RegistryValue Name="$(var.SafeApplicationName)Version" Type="string" Value="$(var.VersionNumber)" />
+            </RegistryKey>
+          </Component>
+          <Component Id="Vapor" Guid="3C4B8E68-6147-482F-B7ED-17C485024AEF" KeyPath="yes" />
+        </Directory>
+      </Directory>
+    </StandardDirectory>
+
+    <StandardDirectory Id="$(var.CFDir)">
+      <Directory Id="CompanyCommonFilesFolder" Name="$(var.SafeManufacturer)">
+        <Component Id="ProcRunner" Guid="*" Permanent="yes" NeverOverwrite="no">
+          <File Id="ProcRunnerFile" Name="ProcRunner_5.0.exe" Source="$(var.ProjectDir)Shared\ProcRunner\ProcRunner\bin\x64\$(var.Configuration)\net48\ProcRunner_5.0.exe" KeyPath="yes" />
+        </Component>
+      </Directory>
+    </StandardDirectory>
+
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Component Id="ApplicationShortcutMenu" Guid="*">
+        <Shortcut Id="ApplicationStartMenuShortcut"
+                  Name="$(var.ApplicationName) $(var.MajorVersion)"
+                  Description="$(var.ApplicationName) $(var.MajorVersion)"
+                  Target="[APPFOLDER]$(var.SafeApplicationName).exe"
+                  WorkingDirectory="APPFOLDER"
+                  Icon="Application_Icon.ico" />
+        <Shortcut Id="UninstallProduct"
+                  Name="Uninstall $(var.ApplicationName)"
+                  Target="[SystemFolder]msiexec.exe"
+                  Arguments="/x [ProductCode]"
+                  Description="Uninstalls $(var.ApplicationName)" />
+        <RegistryValue Root="HKCU" Key="Software\Microsoft\$(var.SafeApplicationName)$(var.MajorVersion)" Name="installed" Type="integer" Value="1" KeyPath="yes" />
+      </Component>
+    </StandardDirectory>
+
+    <?include ../Common/CustomComponents.wxi?>
+
+    <Feature Id="Complete" Title="$(var.ApplicationName) $(var.MajorVersion).$(var.MinorVersion)" Description="The complete package."
+             Display="expand" Level="1" AllowAdvertise="no" InstallDefault="source">
+      <ComponentRef Id="Vapor" />
+      <ComponentGroupRef Id="HarvestedAppFiles" />
+      <ComponentGroupRef Id="HarvestedL10nFiles" />
+      <ComponentGroupRef Id="Fonts" />
+      <ComponentRef Id="RegKeyValues" />
+      <ComponentRef Id="RegKeySettingsDir" />
+      <ComponentRef Id="HarvestDataDir" />
+      <ComponentRef Id="ProcRunner" />
+      <ComponentRef Id="ApplicationShortcutDesktop" />
+      <ComponentRef Id="ApplicationShortcutMenu" />
+      <?include ../Common/CustomFeatures.wxi?>
+    </Feature>
+  </Package>
+</Wix>

@@ -49,19 +49,6 @@ namespace ParatextImport
 		/// ------------------------------------------------------------------------------------
 		public ISCTextEnum TextEnum(BCVRef firstRef, BCVRef lastRef)
 		{
-			try
-			{
-				if (m_encConverters == null)
-					m_encConverters = new EncConverters();
-			}
-			catch (DirectoryNotFoundException ex)
-			{
-				string message = string.Format(ScriptureUtilsException.GetResourceString(
-						"kstidEncConverterInitError"), ex.Message);
-				throw new EncodingConverterException(message,
-					"/Beginning_Tasks/Import_Standard_Format/Unable_to_Import/Encoding_converter_not_found.htm");
-			}
-
 			// get the enumerator that will return text segments
 			return new SCTextEnum(m_settings, m_domain, firstRef, lastRef, m_encConverters);
 		}
