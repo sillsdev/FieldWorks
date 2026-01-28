@@ -634,9 +634,12 @@ namespace SIL.FieldWorks.Common.Framework
 			{   // convert the string to a valid enum case insensitive
 				return (ContextValues)Enum.Parse(typeof(ContextValues), sContext, true);
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
-				throw new Exception($"Unrecognized context attribute for style {styleName} in {ResourceFileName}: {sContext}", ex);
+				throw new Exception(
+					$"Unrecognized context attribute for style {styleName} in {ResourceFileName}: {sContext}",
+					ex
+				);
 			}
 		}
 
