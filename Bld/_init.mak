@@ -6,7 +6,7 @@
 #
 # BUILD_ROOT: Typically "C:\FW-WW"
 # BUILD_TYPE: b, d, r, p
-# BUILD_ARCH: x86, x64
+# BUILD_ARCH: x64 (x64-only build; x86 is no longer supported)
 # BUILD_CONFIG: Bounds, Debug, Release, Profile
 # BUILD_OUTPUT: Typically "C:\FW-WW\Output"
 # BUILD_EXTENSION: exe, dll, lib, ocx, (or empty indicating no main target)
@@ -41,13 +41,9 @@ OUT_DIR=$(BUILD_OUTPUT)\$(BUILD_CONFIG)
 !ENDIF
 !ENDIF
 
-!IF "$(ARCH)"=="x64" || "$(BUILD_ARCH)"=="x64"
+# x64-only build (x86 is no longer supported)
 MIDL_ARCH=x64
 LINK_ARCH=x64
-!ELSE
-MIDL_ARCH=win32
-LINK_ARCH=x86
-!ENDIF
 
 !IF "$(OBJ_DIR)"==""
 OBJ_DIR=$(BUILD_ROOT)\Obj
@@ -128,7 +124,8 @@ ECHO=@echo
 COPYFILE=copy
 DELETEFILE=del
 TYPEFILE=type
-MD=$(BUILD_ROOT)\bin\mkdir.exe -p
+# Use native wrapper for Docker container compatibility (mkdir.exe fails with long mount paths)
+MD=$(BUILD_ROOT)\bin\mkdir-wrapper.cmd
 DELNODE=rmdir /s /q
 FIXCOMHEADER=$(BUILD_ROOT)\bin\FixGenComHeaderFile.exe
 

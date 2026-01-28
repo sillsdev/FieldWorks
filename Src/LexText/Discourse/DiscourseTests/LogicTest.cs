@@ -603,12 +603,12 @@ namespace SIL.FieldWorks.Discourse
 
 		private static void AssertMergeBefore(bool expectedState, IConstituentChartCellPart cellPart, string message)
 		{
-			Assert.That(cellPart.MergesBefore, Is.EqualTo(expectedState).Within(message));
+			Assert.That(cellPart.MergesBefore, Is.EqualTo(expectedState), message);
 		}
 
 		private static void AssertMergeAfter(bool expectedState, IConstituentChartCellPart cellPart, string message)
 		{
-			Assert.That(cellPart.MergesAfter, Is.EqualTo(expectedState).Within(message));
+			Assert.That(cellPart.MergesAfter, Is.EqualTo(expectedState), message);
 		}
 
 		[Test]
@@ -709,7 +709,7 @@ namespace SIL.FieldWorks.Discourse
 		private static void VerifyChangeColumn(IEnumerable<IConstituentChartCellPart> cellPartsToMove, ICmPossibility column, string message)
 		{
 			foreach (var cellPart in cellPartsToMove)
-				Assert.That(cellPart.ColumnRA, Is.EqualTo(column).Within(message));
+				Assert.That(cellPart.ColumnRA, Is.EqualTo(column), message);
 		}
 
 		[Test]
@@ -747,7 +747,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			foreach (var cellPart in cellPartsToMove)
 			{
-				Assert.That(rowDst.CellsOS[ihvoDest].Hvo, Is.EqualTo(cellPart.Hvo).Within(message));
+				Assert.That(rowDst.CellsOS[ihvoDest].Hvo, Is.EqualTo(cellPart.Hvo), message);
 				Assert.That(rowSrc.CellsOS.Contains(cellPart), Is.False);
 				ihvoDest++;
 			}

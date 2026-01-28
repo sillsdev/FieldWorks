@@ -1,3 +1,4 @@
+
 {
   "chat.promptFilesRecommendations": {
     "speckit.constitution": true,
@@ -7,62 +8,74 @@
     "speckit.implement": true
   },
   "chat.tools.terminal.autoApprove": {
-    // Specify scripts
-    ".specify/scripts/bash/": true,
-    ".specify/scripts/powershell/": true,
-    // Read-only operations
-    "Get-Content": true,
-    "cat": true,
-    "type": true,
-    "Get-ChildItem": true,
-    "ls": true,
-    "dir": true,
-    "tree": true,
-    "Test-Path": true,
-    "Get-Location": true,
-    "pwd": true,
-    "Get-Item": true,
-    "Get-ItemProperty": true,
-    // Git operations (read-only)
-    "git status": true,
-    "git checkout": true,
-    "git log": true,
-    "git ls-files": true,
-    "git diff": true,
-    "git show": true,
-    "git branch": true,
-    "git rev-parse": true,
-    "git worktree list": true,
-    // Docker read-only operations
-    "docker ps": true,
-    "docker images": true,
-    "docker logs": true,
-    "docker info": true,
-    "docker inspect": true,
-    // Docker exec - ONLY for agent containers (safe, isolated)
-    "^docker exec fw-agent-.*": true,
-    // scripting
-    "^python scripts/.*": true,
-    "^python -m.*": true,
-    "^.\\scripts\\.*": true,
-    // Build operations (host-based for main repo)
-    "msbuild": true,
-    "dotnet build": true,
-    "dotnet restore": true,
-    ".\\build.ps1": true,
-    ".\\build.sh": true,
-    // Test operations
-    "dotnet test": true,
-    "vstest.console": true,
-    "nunit3-console": true,
-    // Agent workflow scripts
-    ".\\scripts\\spin-up-agents.ps1": true,
-    ".\\scripts\\tear-down-agents.ps1": true,
-    ".\\scripts\\check-agents.ps1": true
+    // ============================================================================
+    // SECURITY NOTE: Commands are matched against the ENTIRE command string.
+    // Chained commands (;, &&, |, &) can bypass autoApprove if ANY approved
+    // pattern matches anywhere in the string. See: github.com/microsoft/vscode/issues/280390
+    //
+    // Defense: Use regex with negative lookahead to reject chains and redirections:
+    //   /^(&\s+)?command(?!.*[;&|<>])/ - approves "command" (optionally invoked with &)
+    //                                    only if NO chaining/redirection operators follow
+    //
+    // COPILOT GUIDANCE: When running multiple commands, prefer separate tool calls
+    // rather than chaining with ; or &. Each command auto-approves individually.
+    // ============================================================================
+
+    // Specify scripts (no chaining allowed)
+    "/^(&\\s+)?\\.specify[\\\\/]scripts[\\\\/][^;&|<>]+$/": true,
+
+    // Read-only PowerShell operations (consolidated with alternation)
+    "/^(&\\s+)?(Get-Content|cat|type)\\b(?!.*[;&|<>])/i": true,
+    "/^(&\\s+)?(Get-ChildItem|ls|dir|tree)\\b(?!.*[;&|<>])/i": true,
+    "/^(&\\s+)?(Test-Path|Get-Location|pwd)\\b(?!.*[;&|<>])/i": true,
+    "/^(&\\s+)?(Get-Item|Get-ItemProperty)\\b(?!.*[;&|<>])/i": true,
+    "/^(&\\s+)?(Select-String|findstr)\\b(?!.*[;&|<>])/i": true,
+    "/^(&\\s+)?(where\\.exe|which|Get-Command)\\b(?!.*[;&|<>])/i": true,
+    "/^(&\\s+)?(Get-Help|Get-Process|Get-Service)\\b(?!.*[;&|<>])/i": true,
+    "/^(&\\s+)?(Get-Variable|Get-Alias|Get-Module|Get-Package)\\b(?!.*[;&|<>])/i": true,
+    "/^(&\\s+)?(Resolve-Path|Split-Path|Join-Path|Convert-Path)\\b(?!.*[;&|<>])/i": true,
+
+    // Git read-only operations (consolidated)
+    "/^(&\\s+)?git\\s+(status|log|ls-files|diff|show|branch|fetch)(?!.*[;&|<>])/": true,
+    "/^(&\\s+)?git\\s+(rev-parse|describe|cat-file|ls-tree|name-rev)(?!.*[;&|<>])/": true,
+    "/^(&\\s+)?git\\s+(worktree\\s+list|remote(\\s+(-v|show))?|config\\s+--get)(?!.*[;&|<>])/": true,
+
+    // Docker read-only operations (consolidated)
+    "/^(&\\s+)?docker\\s+(ps|images|logs|info|inspect)(?!.*[;&|<>])/": true,
+    "/^(&\\s+)?docker\\s+(volume|network)(?!.*[;&|<>])/": true,
+    // Docker lifecycle operations (consolidated)
+    "/^(&\\s+)?docker\\s+(build|start|stop|rm|run)\\b(?!.*[;&|<>])/": true,
+    // Docker exec in agent containers - chaining IS allowed (isolated environment)
+    "/^(&\\s+)?docker\\s+exec\\s+fw-agent-/": true,
+
+    // Python/scripting (consolidated)
+    "/^(&\\s+)?python\\s+(scripts\\/|-m|\\.github\\/)(?!.*[;&|<>])/": true,
+    "/^(&\\s+)?\\.[\\\\/]scripts[\\\\/](?!.*[;&|<>])/": true,
+
+    // Build operations (consolidated)
+    "/^(&\\s+)?(msbuild|nuget)\\b(?!.*[;&|<>])/i": true,
+    "/^(&\\s+)?dotnet\\s+(build|restore|clean|publish|test)(?!.*[;&|<>])/": true,
+    "/^(&\\s+)?\\.[\\\\/]build\\.(ps1|sh)(?!.*[;&|<>])/": true,
+
+    // Test operations (consolidated)
+    "/^(&\\s+)?(vstest\\.console(\\.exe)?|nunit3-console(\\.exe)?)\\b(?!.*[;&|<>])/i": true,
+
+    // Environment/agent scripts (consolidated)
+    "/^(&\\s+)?\\.[\\\\/]Build[\\\\/]Agent[\\\\/](?!.*[;&|<>])/": true,
+
+    // WiX toolset (consolidated)
+    "/^(&\\s+)?(candle|light|heat)(?!.*[;&|<>])/": true
   },
   "cmake.ignoreCMakeListsMissing": true,
   "dotnet.defaultSolution": "FieldWorks.sln",
   "terminal.integrated.env.windows": {
     "PATH": "${workspaceFolder}\\scripts\\toolshims;${env:PATH}"
-  }
+  },
+  // C# Dev Kit test settings
+  "dotnet.unitTests.runSettingsPath": "${workspaceFolder}/Test.runsettings",
+  // Enable VSTest discovery for test explorer
+  "dotnet.unitTests.enableVsTestDiscovery": true,
+  // Auto-build works because Src/Directory.Build.props sets OutputPath to Output/$(Configuration)/
+  // This means dotnet build outputs to the same location as ./build.ps1
+  "dotnet.automaticallyBuildProjects": true
 }

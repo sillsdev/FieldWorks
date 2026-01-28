@@ -21,17 +21,17 @@ jobs:
               uses: actions/checkout@v4
               id: checkout
 
-            - name: Download 461 targeting pack
+            - name: Download 481 targeting pack
               uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9 # 1.6.0
               id: downloadfile # Remember to give an ID if you need the output filename
               with:
-                  url: "https://download.microsoft.com/download/F/1/D/F1DEB8DB-D277-4EF9-9F48-3A65D4D8F965/NDP461-DevPack-KB3105179-ENU.exe"
+                  url: "https://download.microsoft.com/download/8/1/8/81877d8b-a9b2-4153-9ad2-63a6441d11dd/NDP481-DevPack-ENU.exe"
                   target: public/
 
             - name: Install targeting pack
               shell: cmd
               working-directory: public
-              run: NDP461-DevPack-KB3105179-ENU.exe /q
+              run: NDP481-DevPack-ENU.exe /q
 
             - name: Setup dotnet
               uses: actions/setup-dotnet@v4
@@ -44,7 +44,7 @@ jobs:
             - name: Add NETFX tools to PATH
               shell: powershell
               run: |
-                  'C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.6.1 Tools' | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+                  'C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8.1 Tools' | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
             - name: Setup MSBuild
               uses: microsoft/setup-msbuild@v2
             - name: Build Debug and run tests

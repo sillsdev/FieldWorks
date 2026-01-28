@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  VSTest Exit Code Interpretation:
+  ================================
+  Exit code 0: All tests passed, no skipped tests
+  Exit code 1: Tests failed OR tests were skipped (VSTest treats skipped as non-zero)
+  Exit code -1073741819 (0xC0000005): Access violation during cleanup
+    - This is mitigated by InIsolation mode below, but may still occur in edge cases
+    - Check test output for "Passed/Failed/Skipped" counts to determine actual results
+
+  To reliably interpret results:
+  1. Look for "Test Run Successful" or "Test Run Failed" in output
+  2. Count "Passed", "Failed", "Skipped" lines in output
+  3. Exit code 1 with 0 failed is success (just has skipped tests)
+-->
+<RunSettings>
+  <!-- Configurations that affect the Test Framework -->
+  <RunConfiguration>
+    <!-- Use 0 for auto-detect, or specific number of cores -->
+    <MaxCpuCount>0</MaxCpuCount>
+    <!-- x86 or x64 -->
+    <TargetPlatform>x64</TargetPlatform>
+    <!-- Framework version - net48 -->
+    <TargetFrameworkVersion>net48</TargetFrameworkVersion>
+    <!-- Test timeout in milliseconds (10 minutes default for long-running tests) -->
+    <TestSessionTimeout>600000</TestSessionTimeout>
+    <!--
+      InIsolation: Run tests in a separate process.
+      This prevents native COM cleanup crashes from affecting VSTest's exit code.
+      FieldWorks tests use native interop (VwCacheDa, ICU, etc.) that can crash
+      during process shutdown if COM pointers are released after native DLLs unload.
+    -->
+    <InIsolation>true</InIsolation>
+    <!--
+      Environment variables to suppress Windows Error Reporting dialogs.
+      These prevent "XYZ has stopped working" popups when tests crash during cleanup.
+    -->
+    <EnvironmentVariables>
+      <!-- Suppress .NET Framework JIT debugger launch dialog -->
+      <COMPlus_DbgJITDebugLaunchSetting>0</COMPlus_DbgJITDebugLaunchSetting>
+      <!-- Suppress .NET Core/5+ JIT debugger launch dialog -->
+      <DOTNET_DbgJITDebugLaunchSetting>0</DOTNET_DbgJITDebugLaunchSetting>
+      <!-- Disable crash report generation -->
+      <DOTNET_EnableCrashReport>0</DOTNET_EnableCrashReport>
+      <!-- Suppress Windows Error Reporting (WER) dialogs -->
+      <DOTNET_WER>0</DOTNET_WER>
+    </EnvironmentVariables>
+  </RunConfiguration>
+
+  <!-- NUnit adapter settings -->
+  <NUnit>
+    <!-- Use 0 for auto-detect parallel workers -->
+    <NumberOfTestWorkers>0</NumberOfTestWorkers>
+    <!-- Default test timeout in milliseconds (70 seconds to match legacy MSBuild timeouts) -->
+    <DefaultTimeout>70000</DefaultTimeout>
+  </NUnit>
+</RunSettings>

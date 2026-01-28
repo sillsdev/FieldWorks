@@ -409,7 +409,7 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(m_testPresenter.StubConfigDict.Count, Is.EqualTo(cnt), "Should have the same number of items.");
 			DictConfigItem item;
 			m_testPresenter.StubConfigDict.TryGetValue(stest2, out item);
-			Assert.That(item.DispName, Is.Not.EqualTo(newName).Within("Should not have renamed config item."));
+			Assert.That(item.DispName, Is.Not.EqualTo(newName), "Should not have renamed config item.");
 		}
 
 		///--------------------------------------------------------------------------------------

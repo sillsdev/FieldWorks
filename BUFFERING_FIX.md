@@ -1,4 +1,4 @@
-# VwDrawRootBuffered Buffering Fix
+﻿# VwDrawRootBuffered Buffering Fix
 
 ## Problem
 The VwDrawRootBuffered class had a critical bug in its GDI resource management that caused:
@@ -85,7 +85,7 @@ This method already had the correct pattern - it was used as a reference for the
    - For cached DCs (`DrawTheRoot`): Leave the custom bitmap selected; it will be deleted on next draw or in destructor
    - For local DCs (`DrawTheRootRotated`, `DrawTheRootAt`): Restore the stock bitmap before deleting the DC
 
-2. **Resource ownership**: 
+2. **Resource ownership**:
    - `DrawTheRoot`: Keeps the custom bitmap selected in `m_hdcMem` for caching
    - `DrawTheRootRotated`: Uses local DC, restores stock bitmap, deletes custom bitmap and DC
    - `DrawTheRootAt`: Uses local DC, restores stock bitmap, deletes custom bitmap and DC

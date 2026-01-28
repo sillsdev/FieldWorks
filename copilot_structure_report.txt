@@ -1,4 +1,4 @@
-COPILOT.md Structure Verification Report
+﻿COPILOT.md Structure Verification Report
 ================================================================================
 
 Src/AppCore/COPILOT.md
@@ -1139,4 +1139,3 @@ Src/xWorks/COPILOT.md
     ## Dependencies
     ## Interop & Contracts
     ... and 12 more
-

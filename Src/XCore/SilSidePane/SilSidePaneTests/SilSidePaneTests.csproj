@@ -41,6 +41,15 @@
     <EmbeddedResource Include="DefaultIcon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <!-- Copy test resources to output directory for tests that use file paths -->
+    <None Include="whitepixel.bmp">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="DefaultIcon.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="..\..\..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
