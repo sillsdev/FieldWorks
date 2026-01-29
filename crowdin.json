@@ -2,7 +2,7 @@
   "project_identifier": "fieldworks",
   "api_key_env": "CROWDIN_API_KEY",
   "base_path": ".",
-  "branch": "FieldWorks-9.3",
+  "branch": "latest",
   "files": [
     {
       "source": "/DistFiles/Language Explorer/Configuration/strings-en.xml",
