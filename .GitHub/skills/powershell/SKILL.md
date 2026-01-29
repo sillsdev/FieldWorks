@@ -1,25 +1,30 @@
 ---
-applyTo: "**/*.ps1"
-name: "powershell.instructions"
-description: "PowerShell best practices for scripts used in FieldWorks (dev scripts & CI helpers)"
+name: powershell
+description: >
+  PowerShell best practices for scripts used in FieldWorks (dev scripts & CI helpers).
+  Use when writing or modifying PowerShell scripts in scripts/ or Build/Agent/.
+allowed-tools: "Read,Bash(pwsh:*)"
+version: "1.0.0"
 ---
 
-# PowerShell development and script usage
+# PowerShell Development Skill
 
-## Purpose & Scope
-- Provide conventions and safety patterns for PowerShell scripts in `scripts/` and CI.
+Conventions and safety patterns for PowerShell scripts in `scripts/` and CI.
 
 ## Style and Linting
+
 - Use `pwsh`/PowerShell Core syntax where possible and `Set-StrictMode -Version Latest`.
 - Use `Write-Host` sparingly; prefer `Write-Output` and `Write-Error` for correct streams.
 - Use `-ErrorAction Stop` in helper functions when errors should abort execution.
 - **No Unicode icons or emojis** in output messages (e.g., `✓`, `✗`, `⚠`, `🔧`). Use plain ASCII text like `[OK]`, `[FAIL]`, `[WARN]`, `ERROR:` instead. Unicode causes encoding issues in CI logs.
 
 ## Security
+
 - Avoid embedding secrets in scripts; read from env vars and prefer platform secret stores.
 - Do not commit credential tokens in any scripts or docs.
 
 ## Testing and Execution
+
 - Use `pwsh -NoProfile -ExecutionPolicy Bypass -File` in CI wrappers.
 - Add small smoke test steps to validate paths and required tools are present.
 
@@ -32,20 +37,21 @@ description: "PowerShell best practices for scripts used in FieldWorks (dev scri
 
 **ALWAYS use `scripts/Agent/` wrapper scripts for these operations.** Do not attempt raw commands.
 
-See `.github/instructions/terminal.instructions.md` for the complete transformation table.
+See [terminal.instructions.md](../../instructions/terminal.instructions.md) for the complete transformation table.
 
 ## Examples
+
 ```powershell
-# ✅ Good: simple commands auto-approve
+# Good: simple commands auto-approve
 .\build.ps1
 git status
 
-# ✅ Good: use wrapper scripts (ALWAYS for git with pipes)
+# Good: use wrapper scripts (ALWAYS for git with pipes)
 .\scripts\Agent\Git-Search.ps1 -Action show -Ref "release/9.3" -Path "file.h" -HeadLines 20
 .\scripts\Agent\Git-Search.ps1 -Action log -HeadLines 20
 .\scripts\Agent\Read-FileContent.ps1 -Path "file.cs" -HeadLines 50 -LineNumbers
 
-# ❌ BAD: these require manual approval - NEVER USE
+# BAD: these require manual approval - NEVER USE
 # git log --oneline | head -20
 # Get-Content file.cs | Select-Object -First 50
 ```
