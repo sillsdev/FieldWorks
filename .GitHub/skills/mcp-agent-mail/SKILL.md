@@ -396,6 +396,7 @@ uv run python -m mcp_agent_mail.cli config set-port 9000
 | `STORAGE_ROOT` | `~/.mcp_agent_mail_git_mailbox_repo` | Root for repos and SQLite DB |
 | `HTTP_PORT` | `8765` | Server port |
 | `HTTP_BEARER_TOKEN` | — | Static bearer token for auth |
+| `HTTP_ALLOW_LOCALHOST_UNAUTHENTICATED` | `false` | Allow unauthenticated access from localhost only (FieldWorks start script enables this for local dev) |
 | `LLM_ENABLED` | `true` | Enable LLM for summaries/discovery |
 | `CONTACT_ENFORCEMENT_ENABLED` | `true` | Enforce contact policy |
 

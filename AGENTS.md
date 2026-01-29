@@ -30,10 +30,21 @@ This document explains how AI agents (coding and chat modes) should operate insi
 3. **Load context**: read relevant `AGENTS.md`, `specs/` entries, and instructions referenced in the chatmode.
 4. **Escalate**: if a task crosses multiple surfaces (e.g., managed ↔ native), coordinate through the coding agent or split the work between specialized agents.
 
-## Coordination & task tracking
+## Multi-agent Coordination
 
 - **Agent Mail (reservations + messaging):** follow the skill in [.github/skills/mcp-agent-mail/SKILL.md](.github/skills/mcp-agent-mail/SKILL.md).
-- **Beads (issue tracking):** follow the skill in [.github/skills/beads/SKILL.md](.github/skills/beads/SKILL.md).
+
+## Issue Tracking
+
+This project uses **bd (beads)** for issue tracking.
+Run `bd prime` for workflow context.
+
+**Quick reference:**
+- `bd ready` - Find unblocked work
+- `bd create "Title" --type task --priority 2` - Create issue
+- `bd close <id>` - Complete work
+- `bd sync` - Sync with git (run at session end)
+- see [.github/skills/beads/SKILL.md](.github/skills/beads/SKILL.md)
 
 ## Atlassian Skills (Default: Read-only)
 

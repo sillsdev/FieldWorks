@@ -49,7 +49,7 @@ description: "Runtime debugging and tracing guidance for FieldWorks"
 
 ## Dev switch (auto config)
 - FieldWorks now supports a swappable diagnostics config via `FieldWorks.Diagnostics.config`.
-- Default is quiet. `build.ps1` now enables the dev diagnostics config automatically for Debug builds unless you override `/p:UseDevTraceConfig`. You can also force it via `UseDevTraceConfig=true` or by setting environment variable `FW_TRACE_LOG` before the build; the dev diagnostics file is copied as `FieldWorks.Diagnostics.config` in the output.
+- Default is quiet. `build.ps1` now enables the dev diagnostics config automatically for Debug builds unless you override `/p:UseDevTraceConfig`. You can also force it via `UseDevTraceConfig=true`, by setting environment variable `FW_TRACE_LOG` before the build, or by passing `-TraceCrashes` to `build.ps1`; the dev diagnostics file is copied as `FieldWorks.Diagnostics.config` in the output.
 - Dev log location: `Output/Debug/FieldWorks.trace.log` (relative to the app folder) so it’s easy to collect alongside binaries.
 - Dev config logs to `%temp%/FieldWorks.trace.log` and turns on the core switches above. Edit `Src/Common/FieldWorks/FieldWorks.Diagnostics.dev.config` to change log path or switches.
 

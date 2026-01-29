@@ -131,7 +131,13 @@ function Ensure-AgentMailEnv {
     if (Test-Path $envPath) { return $envPath }
 
     $bytes = New-Object byte[] 32
-    [System.Security.Cryptography.RandomNumberGenerator]::Fill($bytes)
+    $rng = [System.Security.Cryptography.RandomNumberGenerator]::Create()
+    try {
+        $rng.GetBytes($bytes)
+    }
+    finally {
+        if ($rng) { $rng.Dispose() }
+    }
     $token = ($bytes | ForEach-Object { $_.ToString("x2") }) -join ""
 
     @(
@@ -164,6 +170,25 @@ function Ensure-AgentMailDependencies {
     }
 }
 
+function Test-AgentMailHttp {
+    param([string]$Url)
+
+    try {
+        $null = Invoke-WebRequest -Uri $Url -Method Get -TimeoutSec 3 -UseBasicParsing -ErrorAction Stop
+        return $true
+    }
+    catch {
+        $response = $_.Exception.Response
+        if ($response -and $response.StatusCode) {
+            $statusCode = [int]$response.StatusCode
+            if ($statusCode -ge 200 -and $statusCode -lt 500) {
+                return $true
+            }
+        }
+        return $false
+    }
+}
+
 if (-not $RepoRoot) {
     $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot "..\\..") ).Path
 }
@@ -184,8 +209,13 @@ $existing = Get-CimInstance Win32_Process | Where-Object {
 
 if ($existing) {
     $pids = ($existing | Select-Object -ExpandProperty ProcessId) -join ", "
-    Write-Status "mcp_agent_mail already running. PID(s): $pids" "OK"
-    exit 0
+    $httpOk = Test-AgentMailHttp -Url "http://127.0.0.1:8765/mail"
+    if ($httpOk) {
+        Write-Status "mcp_agent_mail already running. PID(s): $pids" "OK"
+        exit 0
+    }
+
+    Write-Status "mcp_agent_mail process detected (PID(s): $pids) but HTTP check failed. Attempting start." "WARN"
 }
 
 $bash = Find-GitBash
@@ -198,13 +228,10 @@ if (-not $bash) {
 $serverRepo = Split-Path -Parent (Split-Path -Parent $ServerScriptPath)
 $null = Ensure-AgentMailEnv -RepoPath $serverRepo
 Ensure-AgentMailDependencies -RepoPath $serverRepo
-$serverRepoUnix = Convert-ToGitBashPath -Path $serverRepo
-$scriptUnix = Convert-ToGitBashPath -Path $ServerScriptPath
-
-$launchCommand = "bash '$scriptUnix'"
+$launchCommand = "./scripts/run_server_with_token.sh"
 
 Write-Status "Starting mcp_agent_mail in Git Bash..."
-Start-Process -FilePath $bash -ArgumentList "-lc", "cd '$serverRepoUnix'; $launchCommand; exec bash"
+Start-Process -FilePath $bash -WorkingDirectory $serverRepo -ArgumentList "-lc", "$launchCommand; exec bash"
 Start-Sleep -Seconds 2
 
 $started = Get-CimInstance Win32_Process | Where-Object {

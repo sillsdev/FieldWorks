@@ -37,6 +37,10 @@
     Values: q[uiet], m[inimal], n[ormal], d[etailed], diag[nostic].
     Default is 'minimal'.
 
+.PARAMETER TraceCrashes
+    If set, enables the dev diagnostics config (FieldWorks.Diagnostics.dev.config) so trace logging
+    is written next to the built executable. Useful for crash investigation.
+
 .PARAMETER NodeReuse
     Enables or disables MSBuild node reuse (/nr). Default is true.
 
@@ -114,10 +118,22 @@ param(
     [string]$InstallerToolset = "Wix3",
     [switch]$InstallerOnly,
     [switch]$ForceInstallerOnly,
-    [switch]$SignInstaller
+    [switch]$SignInstaller,
+    [switch]$TraceCrashes
 )
 
 $ErrorActionPreference = "Stop"
+
+if ($Configuration -like "--*") {
+    if ($Configuration -eq "--TraceCrashes" -and -not $TraceCrashes) {
+        $TraceCrashes = $true
+        $Configuration = "Debug"
+        Write-Output "[WARN] Detected '--TraceCrashes' passed without PowerShell switch parsing. Using -TraceCrashes and defaulting Configuration to Debug."
+    }
+    else {
+        throw "Invalid Configuration value '$Configuration'. Use -TraceCrashes (single dash) for the trace option."
+    }
+}
 
 if ($BuildInstaller -and -not $BuildAdditionalApps) {
     $BuildAdditionalApps = $true
@@ -298,6 +314,9 @@ try {
         $finalMsBuildArgs += "/p:Platform=$Platform"
         if ($SkipNative) {
             $finalMsBuildArgs += "/p:SkipNative=true"
+        }
+        if ($TraceCrashes) {
+            $finalMsBuildArgs += "/p:UseDevTraceConfig=true"
         }
         $finalMsBuildArgs += "/p:CL_MPCount=$mpCount"
         if ($env:FW_TRACE_LOG) {
