@@ -1890,10 +1890,6 @@ namespace XCore
 						}
 					}
 					break;
-
-				case "DocumentName":
-					UpdateCaptionBar();
-					break;
 				case "ShowRecordList": // Replaces obsolete "ShowTreeBar".
 					UpdateSidebarAndRecordBarDisplay(true);
 					break;
@@ -2152,7 +2148,7 @@ namespace XCore
 		{
 			Text = String.Format("{0} - {1}",
 				m_propertyTable.GetStringProperty("DocumentName", ""),
-				m_propertyTable.GetStringProperty("applicationName", "application name???")); ;
+				m_propertyTable.GetStringProperty("applicationName", "application name???"));
 		}
 
 		#region Helper methods
