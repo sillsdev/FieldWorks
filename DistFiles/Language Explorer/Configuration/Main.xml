@@ -603,8 +603,6 @@
 			<item command="CmdNewWindow"/>
 		</menu>
 		<menu id="Help" label="_Help">
-			<!--  <item label="Show Help Balloons" boolProperty="ShowBalloonHelp" />
-			<separator />-->
 			<item command="CmdHelpLanguageExplorer"/>
 			<item command="CmdHelpTraining"/>
 			<item command="CmdHelpDemoMovies"/>
@@ -969,9 +967,8 @@ I (RandyR) brought them into this file, just to keep track of them for the time 
 
 		<property name="InitialArea" value="lexicon" settingsGroup="local"/>
 		<property name="DoLog" bool="true" persist="false"/>
-		<!-- ShowBalloonHelp and ShowMorphBundles are no longer supported in GUI, but still in the code.
+		<!-- ShowMorphBundles is no longer supported in GUI, but still in the code.
 		So, add a default value here in order to prevent it from persisting -->
-		<property name="ShowBalloonHelp" bool="false" persist="false"/>
 		<property name="ShowMorphBundles" bool="true" persist="false" settingsGroup="local"/>
 		<!-- Default splitter values -->
 		<!--		<property name="PartsOfSpeech.editBasic.DataTree-Splitter" intValue="200"/>
