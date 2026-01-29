@@ -113,9 +113,10 @@ namespace SIL.FieldWorks.XWorks
 
 					var statusCode = ((HttpWebResponse)ex.Response).StatusCode;
 
-					// Only retry on 504 Gateway Timeout or 503 Service Unavailable
+					// Only retry on 504 Gateway Timeout or 503 Service Unavailable or 502 Bad Gateway (common for server overload)
 					if ((statusCode == HttpStatusCode.GatewayTimeout ||
-						 statusCode == HttpStatusCode.ServiceUnavailable) && attempt < maxRetries)
+						 statusCode == HttpStatusCode.ServiceUnavailable ||
+						 statusCode == HttpStatusCode.BadGateway) && attempt < maxRetries)
 					{
 						Thread.Sleep(retryDelay);
 						retryDelay *= 2; // Exponential backoff
