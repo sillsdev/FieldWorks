@@ -203,20 +203,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			var arl = (AtomicReferenceLauncher)Control;
 			arl.UpdateDisplayFromDatabase();
 		}
-		public override void RegisterWithContextHelper()
-		{
-			CheckDisposed();
-
-			if (Control == null)
-				return;
-
-			string caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
-			var launcher = (AtomicReferenceLauncher)Control;
-			Mediator.SendMessage("RegisterHelpTargetWithId",
-				new object[]{launcher.AtomicRefViewControl, caption, HelpId}, false);
-			Mediator.SendMessage("RegisterHelpTargetWithId",
-				new object[]{launcher.PanelControl, caption, HelpId, "Button"}, false);
-		}
 
 		#region IVwNotifyChange Members
 		/// <summary>
