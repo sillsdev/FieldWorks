@@ -76,6 +76,12 @@
       "type": "promptString",
       "description": "Path to AFTER snapshot JSON",
       "default": ""
+    },
+    {
+      "id": "jiraJql",
+      "type": "promptString",
+      "description": "Jira JQL for export",
+      "default": "assignee = currentUser() AND statusCategory != Done ORDER BY updated DESC"
     }
   ],
   "tasks": [
@@ -190,6 +196,25 @@
       "command": "./scripts/Rename-WorktreeToBranch.ps1 -DryRun",
       "detail": "Dry run: show where the current worktree would be moved (no changes)",
       "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Jira: Export, select, create beads",
+      "type": "shell",
+      "command": "./scripts/Agent/Jira-Beads-FromSelection.ps1",
+      "detail": "Export Jira issues, open selection file, then create beads from chosen items",
+      "options": {
+        "env": {
+          "JIRA_JQL": "${input:jiraJql}"
+        },
         "shell": {
           "executable": "powershell.exe",
           "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
@@ -405,6 +430,19 @@
       "type": "shell",
       "command": ".\\Build\\Agent\\Setup-Serena.ps1",
       "detail": "Verify Serena MCP and language servers",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Setup: MCP Agent Mail",
+      "type": "shell",
+      "command": ".\\scripts\\Agent\\Start-McpAgentMail.ps1",
+      "detail": "Start MCP Agent Mail server if not already running",
       "options": {
         "shell": {
           "executable": "powershell.exe",
