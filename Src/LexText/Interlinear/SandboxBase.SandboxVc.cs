@@ -63,7 +63,6 @@ namespace SIL.FieldWorks.IText
 			// width in millipoints of the arrow picture.
 			int m_dxmpArrowPicWidth;
 			bool m_fIconsForAnalysisChoices;
-			bool m_fShowMorphBundles = true;
 			bool m_fIconForWordGloss = false;
 			bool m_fIsMorphemeFormEditable = true;
 			bool m_fRtl = false;
@@ -243,20 +242,6 @@ namespace SIL.FieldWorks.IText
 					m_fRtl = value;
 					if (m_sandbox.RootBox != null)
 						m_sandbox.RootBox.Reconstruct();
-				}
-			}
-			// Controls whether to display the morpheme bundles.
-			public bool ShowMorphBundles
-			{
-				get
-				{
-					CheckDisposed();
-					return m_fShowMorphBundles;
-				}
-				set
-				{
-					CheckDisposed();
-					m_fShowMorphBundles = value;
 				}
 			}
 
@@ -652,25 +637,22 @@ namespace SIL.FieldWorks.IText
 
 			private void DisplayMorphBundles(IVwEnv vwenv, int hvo)
 			{
-				if (m_fShowMorphBundles)
+				// Don't allow direct editing of the morph bundle lines.
+				MakeNextFlowObjectReadOnly(vwenv);
+				if (vwenv.DataAccess.get_VecSize(hvo, ktagSbWordMorphs) == 0)
 				{
-					// Don't allow direct editing of the morph bundle lines.
-					MakeNextFlowObjectReadOnly(vwenv);
-					if (vwenv.DataAccess.get_VecSize(hvo, ktagSbWordMorphs) == 0)
-					{
-						SetColor(vwenv, m_choices.LabelRGBForEnabled(m_choices.IndexInEnabled(InterlinLineChoices.kflidMorphemes)));
-						vwenv.AddProp(ktagMissingMorphs, this, kfragMissingMorphs);
-						// Blank lines to fill up the gap; LexEntry line
-						vwenv.AddString(m_tssEmptyVern);
-						vwenv.AddString(m_tssEmptyAnalysis); // LexGloss line
-						vwenv.AddString(m_tssEmptyAnalysis); // LexPos line
-					}
-					else
-					{
-						vwenv.OpenParagraph();
-						vwenv.AddObjVec(ktagSbWordMorphs, this, kfragMorph);
-						vwenv.CloseParagraph();
-					}
+					SetColor(vwenv, m_choices.LabelRGBForEnabled(m_choices.IndexInEnabled(InterlinLineChoices.kflidMorphemes)));
+					vwenv.AddProp(ktagMissingMorphs, this, kfragMissingMorphs);
+					// Blank lines to fill up the gap; LexEntry line
+					vwenv.AddString(m_tssEmptyVern);
+					vwenv.AddString(m_tssEmptyAnalysis); // LexGloss line
+					vwenv.AddString(m_tssEmptyAnalysis); // LexPos line
+				}
+				else
+				{
+					vwenv.OpenParagraph();
+					vwenv.AddObjVec(ktagSbWordMorphs, this, kfragMorph);
+					vwenv.CloseParagraph();
 				}
 			}
 

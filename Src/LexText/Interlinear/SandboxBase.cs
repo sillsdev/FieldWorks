@@ -190,8 +190,6 @@ namespace SIL.FieldWorks.IText
 		private bool m_fLockCombo = false;
 		// True to lay out with infinite width, expecting to be fully visible.
 		private bool m_fSizeToContent;
-		// We'd like to just use the VC's copy, but it may not get made in time.
-		private bool m_fShowMorphBundles = true;
 
 		// Flag used to prevent mouse move events from entering CallMouseMoveDrag multiple
 		// times before prior ones have exited.  Otherwise we get lines displayed multiple
@@ -418,8 +416,6 @@ namespace SIL.FieldWorks.IText
 				int cmorphs = MorphCount;
 				if (cmorphs == 0)
 				{
-					//Debug.Assert(!ShowMorphBundles); // if showing should always have one.
-					// JohnT: except when the user turned on morphology while the Sandbox was active...
 					return true;
 				}
 				if (MorphCount == 1)
@@ -575,24 +571,6 @@ namespace SIL.FieldWorks.IText
 			get
 			{
 				return m_vc != null && m_vc.RightToLeft;
-			}
-		}
-
-		// Controls whether to display the morpheme bundles.
-		public bool ShowMorphBundles
-		{
-			get
-			{
-				CheckDisposed();
-				return m_fShowMorphBundles;
-			}
-			set
-			{
-				CheckDisposed();
-
-				m_fShowMorphBundles = value;
-				if (m_vc != null)
-					m_vc.ShowMorphBundles = value;
 			}
 		}
 
@@ -1263,180 +1241,178 @@ namespace SIL.FieldWorks.IText
 					cda.CacheObjProp(hvoSbWord, ktagSbWordPos, hvoWordPos);
 					cda.CacheIntProp(hvoWordPos, ktagSbNamedObjGuess, fGuessing);
 				}
-				if (this.ShowMorphBundles)
+
+				bool hasMf = false;
+				var bldrError = new StringBuilder();
+				foreach (var mb in analysis.MorphBundlesOS)
 				{
-					bool hasMf = false;
-					var bldrError = new StringBuilder();
-					foreach (var mb in analysis.MorphBundlesOS)
+					// Create the corresponding SbMorph.
+					int hvoMbSec = m_caches.DataAccess.MakeNewObject(kclsidSbMorph, hvoSbWord,
+																	 ktagSbWordMorphs, mb.IndexInOwner);
+					m_caches.Map(hvoMbSec, mb.Hvo);
+
+					// Get the real MoForm, if any.
+					var mf = mb.MorphRA;
+					// Get the text we will display on the first line of the morpheme bundle.
+					// Taken from the MoForm if any, otherwise the form of the MB.
+					int hvoMorphForm;
+					string sPrefix = null;
+					string sPostfix = null;
+					if (mf == null)
 					{
-						// Create the corresponding SbMorph.
-						int hvoMbSec = m_caches.DataAccess.MakeNewObject(kclsidSbMorph, hvoSbWord,
-																		 ktagSbWordMorphs, mb.IndexInOwner);
-						m_caches.Map(hvoMbSec, mb.Hvo);
+						// Create the secondary object corresponding to the MoForm. We create one
+						// even though there isn't a real MoForm. It doesn't correspond to anything
+						// in the real database.
+						hvoMorphForm = m_caches.DataAccess.MakeNewObject(kclsidSbNamedObj, mb.Hvo,
+																		 ktagSbMorphForm, -2); // -2 for atomic
+						CopyStringsToSecondary(InterlinLineChoices.kflidMorphemes, sdaMain, mb.Hvo,
+											   WfiMorphBundleTags.kflidForm, cda, hvoMorphForm, ktagSbNamedObjName);
+						// We will slightly adjust the form we display in the default vernacular WS.
+						InterlinLineSpec specMorphemes = m_choices.GetPrimarySpec(InterlinLineChoices.kflidMorphemes);
+						int wsForm;
+						if (specMorphemes == null || !mb.Form.TryWs(specMorphemes.WritingSystem, out wsForm))
+							wsForm = RawWordformWs;
+						ITsString tssForm = sdaMain.get_MultiStringAlt(mb.Hvo,
+																	   WfiMorphBundleTags.kflidForm,
+																	   wsForm);
+						string realForm = tssForm.Text;
+						// currently (unfortunately) Text returns 'null' from COM for empty strings.
+						if (realForm == null)
+							realForm = string.Empty;
 
-						// Get the real MoForm, if any.
-						var mf = mb.MorphRA;
-						// Get the text we will display on the first line of the morpheme bundle.
-						// Taken from the MoForm if any, otherwise the form of the MB.
-						int hvoMorphForm;
-						string sPrefix = null;
-						string sPostfix = null;
-						if (mf == null)
+						// if it's not an empty string, then we can find its form type, and separate the
+						// morpheme markers into separate properties.
+						if (realForm != string.Empty)
 						{
-							// Create the secondary object corresponding to the MoForm. We create one
-							// even though there isn't a real MoForm. It doesn't correspond to anything
-							// in the real database.
-							hvoMorphForm = m_caches.DataAccess.MakeNewObject(kclsidSbNamedObj, mb.Hvo,
-																			 ktagSbMorphForm, -2); // -2 for atomic
-							CopyStringsToSecondary(InterlinLineChoices.kflidMorphemes, sdaMain, mb.Hvo,
-												   WfiMorphBundleTags.kflidForm, cda, hvoMorphForm, ktagSbNamedObjName);
-							// We will slightly adjust the form we display in the default vernacular WS.
-							InterlinLineSpec specMorphemes = m_choices.GetPrimarySpec(InterlinLineChoices.kflidMorphemes);
-							int wsForm;
-							if (specMorphemes == null || !mb.Form.TryWs(specMorphemes.WritingSystem, out wsForm))
-								wsForm = RawWordformWs;
-							ITsString tssForm = sdaMain.get_MultiStringAlt(mb.Hvo,
-																		   WfiMorphBundleTags.kflidForm,
-																		   wsForm);
-							string realForm = tssForm.Text;
-							// currently (unfortunately) Text returns 'null' from COM for empty strings.
-							if (realForm == null)
-								realForm = string.Empty;
-
-							// if it's not an empty string, then we can find its form type, and separate the
-							// morpheme markers into separate properties.
-							if (realForm != string.Empty)
+							IMoMorphType mmt = null;
+							try
 							{
-								IMoMorphType mmt = null;
-								try
-								{
-									int clsidForm;
-									mmt = MorphServices.FindMorphType(m_caches.MainCache, ref realForm, out clsidForm);
-									sPrefix = mmt.Prefix;
-									sPostfix = mmt.Postfix;
-								}
-								catch (Exception e)
-								{
-									bldrError.AppendLine(e.Message);
-								}
+								int clsidForm;
+								mmt = MorphServices.FindMorphType(m_caches.MainCache, ref realForm, out clsidForm);
+								sPrefix = mmt.Prefix;
+								sPostfix = mmt.Postfix;
 							}
-							tssForm = TsStringUtils.MakeString(realForm, RawWordformWs);
-							cda.CacheStringAlt(hvoMorphForm, ktagSbNamedObjName, wsVern, tssForm);
+							catch (Exception e)
+							{
+								bldrError.AppendLine(e.Message);
+							}
+						}
+						tssForm = TsStringUtils.MakeString(realForm, RawWordformWs);
+						cda.CacheStringAlt(hvoMorphForm, ktagSbNamedObjName, wsVern, tssForm);
+					}
+					else
+					{
+						hvoMorphForm = m_caches.FindOrCreateSec(mf.Hvo, kclsidSbNamedObj, hvoSbWord, ktagSbWordDummy);
+						if (IsLexicalPattern(mf.Form))
+							// If mf.Form is a lexical pattern then mb.Form is the guessed root.
+							CopyStringsToSecondary(InterlinLineChoices.kflidMorphemes, sdaMain, mb.Hvo,
+								WfiMorphBundleTags.kflidForm, cda, hvoMorphForm, ktagSbNamedObjName);
+						else
+							CopyStringsToSecondary(InterlinLineChoices.kflidMorphemes, sdaMain, mf.Hvo,
+								MoFormTags.kflidForm, cda, hvoMorphForm, ktagSbNamedObjName);
+						// Store the prefix and postfix markers from the MoMorphType object.
+						int hvoMorphType = sdaMain.get_ObjectProp(mf.Hvo,
+																  MoFormTags.kflidMorphType);
+						if (hvoMorphType != 0)
+						{
+							sPrefix = sdaMain.get_UnicodeProp(hvoMorphType,
+															  MoMorphTypeTags.kflidPrefix);
+							sPostfix = sdaMain.get_UnicodeProp(hvoMorphType,
+															   MoMorphTypeTags.kflidPostfix);
+						}
+					}
+					if (!String.IsNullOrEmpty(sPrefix))
+						cda.CacheStringProp(hvoMbSec, ktagSbMorphPrefix,
+											TsStringUtils.MakeString(sPrefix, wsVern));
+					if (!String.IsNullOrEmpty(sPostfix))
+						cda.CacheStringProp(hvoMbSec, ktagSbMorphPostfix,
+											TsStringUtils.MakeString(sPostfix, wsVern));
+
+					// Link the SbMorph to its form object, noting if it is a guess.
+					cda.CacheObjProp(hvoMbSec, ktagSbMorphForm, hvoMorphForm);
+					cda.CacheIntProp(hvoMorphForm, ktagSbNamedObjGuess, fGuessing);
+
+					// Get the real Sense that supplies the gloss, if any.
+					var senseReal = mb.SenseRA;
+					if (senseReal == null && fGuessing != 0)
+					{
+						// Guess a default
+						senseReal = mb.DefaultSense;
+					}
+					if (senseReal != null) // either all-the-way real, or default.
+					{
+						// Create the corresponding dummy.
+						int hvoLexSenseSec;
+						// Add any irregularly inflected form type info to the LexGloss.
+						ILexEntryRef lerTest;
+						ILexEntry possibleVariant = null;
+						if (mf != null)
+							possibleVariant = mf.Owner as ILexEntry;
+						if (possibleVariant != null && possibleVariant.IsVariantOfSenseOrOwnerEntry(senseReal, out lerTest))
+						{
+							hvoLexSenseSec = m_caches.FindOrCreateSec(senseReal.Hvo, kclsidSbNamedObj, hvoSbWord, ktagSbWordDummy);
+							CacheLexGlossWithInflTypeForAllCurrentWs(possibleVariant, hvoLexSenseSec, wsVern, cda, mb.InflTypeRA);
 						}
 						else
 						{
-							hvoMorphForm = m_caches.FindOrCreateSec(mf.Hvo, kclsidSbNamedObj, hvoSbWord, ktagSbWordDummy);
-							if (IsLexicalPattern(mf.Form))
-								// If mf.Form is a lexical pattern then mb.Form is the guessed root.
-								CopyStringsToSecondary(InterlinLineChoices.kflidMorphemes, sdaMain, mb.Hvo,
-									WfiMorphBundleTags.kflidForm, cda, hvoMorphForm, ktagSbNamedObjName);
-							else
-								CopyStringsToSecondary(InterlinLineChoices.kflidMorphemes, sdaMain, mf.Hvo,
-									MoFormTags.kflidForm, cda, hvoMorphForm, ktagSbNamedObjName);
-							// Store the prefix and postfix markers from the MoMorphType object.
-							int hvoMorphType = sdaMain.get_ObjectProp(mf.Hvo,
-																	  MoFormTags.kflidMorphType);
-							if (hvoMorphType != 0)
-							{
-								sPrefix = sdaMain.get_UnicodeProp(hvoMorphType,
-																  MoMorphTypeTags.kflidPrefix);
-								sPostfix = sdaMain.get_UnicodeProp(hvoMorphType,
-																   MoMorphTypeTags.kflidPostfix);
-							}
+							// add normal LexGloss without variant info
+							hvoLexSenseSec = CreateSecondaryAndCopyStrings(InterlinLineChoices.kflidLexGloss, senseReal.Hvo,
+										 LexSenseTags.kflidGloss, hvoSbWord, sdaMain, cda);
 						}
-						if (!String.IsNullOrEmpty(sPrefix))
-							cda.CacheStringProp(hvoMbSec, ktagSbMorphPrefix,
-												TsStringUtils.MakeString(sPrefix, wsVern));
-						if (!String.IsNullOrEmpty(sPostfix))
-							cda.CacheStringProp(hvoMbSec, ktagSbMorphPostfix,
-												TsStringUtils.MakeString(sPostfix, wsVern));
+						cda.CacheObjProp(hvoMbSec, ktagSbMorphGloss, hvoLexSenseSec);
+						cda.CacheIntProp(hvoLexSenseSec, ktagSbNamedObjGuess, fGuessing);
 
-						// Link the SbMorph to its form object, noting if it is a guess.
-						cda.CacheObjProp(hvoMbSec, ktagSbMorphForm, hvoMorphForm);
-						cda.CacheIntProp(hvoMorphForm, ktagSbNamedObjGuess, fGuessing);
-
-						// Get the real Sense that supplies the gloss, if any.
-						var senseReal = mb.SenseRA;
-						if (senseReal == null && fGuessing != 0)
+						int hvoInflType = 0;
+						if (mb.InflTypeRA != null)
 						{
-							// Guess a default
-							senseReal = mb.DefaultSense;
+							hvoInflType = m_caches.FindOrCreateSec(mb.InflTypeRA.Hvo,
+													 kclsidSbNamedObj, hvoSbWord, ktagSbWordDummy);
 						}
-						if (senseReal != null) // either all-the-way real, or default.
-						{
-							// Create the corresponding dummy.
-							int hvoLexSenseSec;
-							// Add any irregularly inflected form type info to the LexGloss.
-							ILexEntryRef lerTest;
-							ILexEntry possibleVariant = null;
-							if (mf != null)
-								possibleVariant = mf.Owner as ILexEntry;
-							if (possibleVariant != null && possibleVariant.IsVariantOfSenseOrOwnerEntry(senseReal, out lerTest))
-							{
-								hvoLexSenseSec = m_caches.FindOrCreateSec(senseReal.Hvo, kclsidSbNamedObj, hvoSbWord, ktagSbWordDummy);
-								CacheLexGlossWithInflTypeForAllCurrentWs(possibleVariant, hvoLexSenseSec, wsVern, cda, mb.InflTypeRA);
-							}
-							else
-							{
-								// add normal LexGloss without variant info
-								hvoLexSenseSec = CreateSecondaryAndCopyStrings(InterlinLineChoices.kflidLexGloss, senseReal.Hvo,
-											 LexSenseTags.kflidGloss, hvoSbWord, sdaMain, cda);
-							}
-							cda.CacheObjProp(hvoMbSec, ktagSbMorphGloss, hvoLexSenseSec);
-							cda.CacheIntProp(hvoLexSenseSec, ktagSbNamedObjGuess, fGuessing);
-
-							int hvoInflType = 0;
-							if (mb.InflTypeRA != null)
-							{
-								hvoInflType = m_caches.FindOrCreateSec(mb.InflTypeRA.Hvo,
-														 kclsidSbNamedObj, hvoSbWord, ktagSbWordDummy);
-							}
-							cda.CacheObjProp(hvoMbSec, ktagSbNamedObjInflType, hvoInflType);
-						}
-
-						// Get the MSA, if any.
-						var msaReal = mb.MsaRA;
-						if (msaReal != null)
-						{
-							int hvoPos = m_caches.FindOrCreateSec(msaReal.Hvo,
-																  kclsidSbNamedObj, hvoSbWord, ktagSbWordDummy);
-
-							foreach (int ws in m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidLexPos, true))
-							{
-								// Since ws maybe ksFirstAnal/ksFirstVern, we need to get what is actually
-								// used in order to retrieve the data in Vc.Display().  See LT_7976.
-								// Use InterlinAbbrTss to get an appropriate different name for each ws
-								ITsString tssLexPos = msaReal.InterlinAbbrTSS(ws);
-								int wsActual = TsStringUtils.GetWsAtOffset(tssLexPos, 0);
-								cda.CacheStringAlt(hvoPos, ktagSbNamedObjName, wsActual, tssLexPos);
-							}
-							cda.CacheObjProp(hvoMbSec, ktagSbMorphPos, hvoPos);
-							cda.CacheIntProp(hvoPos, ktagSbNamedObjGuess, fGuessing);
-						}
-
-						// If we have a form, we can get its owner and set the info for the Entry
-						// line.
-						// Enhance JohnT: attempt a guess if we have a form but no entry.
-						if (mf != null)
-						{
-							var entryReal = mf.Owner as ILexEntry;
-							// We can assume the owner is a LexEntry as that is the only type of object
-							// that can own MoForms. We don't actually create the LexEntry, to
-							// improve performance. All the relevant data should already have
-							// been loaded while creating the main interlinear view.
-							LoadSecDataForEntry(entryReal, senseReal, hvoSbWord, cda, wsVern, hvoMbSec, fGuessing, sdaMain);
-							hasMf = true;
-						}
+						cda.CacheObjProp(hvoMbSec, ktagSbNamedObjInflType, hvoInflType);
 					}
-					if (hasMf)
-						// Wait until all of the morphemes have been loaded (cf. LT-22235).
-						CopyLexEntryInfoToMonomorphemicWordGlossAndPos();
-					if (bldrError.Length > 0)
+
+					// Get the MSA, if any.
+					var msaReal = mb.MsaRA;
+					if (msaReal != null)
 					{
-						var msg = bldrError.ToString().Trim();
-						var wnd = FindForm() ?? m_propertyTable.GetValue<IWin32Window>("window");
-						MessageBox.Show(wnd, msg, ITextStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+						int hvoPos = m_caches.FindOrCreateSec(msaReal.Hvo,
+															  kclsidSbNamedObj, hvoSbWord, ktagSbWordDummy);
+
+						foreach (int ws in m_choices.EnabledWritingSystemsForFlid(InterlinLineChoices.kflidLexPos, true))
+						{
+							// Since ws maybe ksFirstAnal/ksFirstVern, we need to get what is actually
+							// used in order to retrieve the data in Vc.Display().  See LT_7976.
+							// Use InterlinAbbrTss to get an appropriate different name for each ws
+							ITsString tssLexPos = msaReal.InterlinAbbrTSS(ws);
+							int wsActual = TsStringUtils.GetWsAtOffset(tssLexPos, 0);
+							cda.CacheStringAlt(hvoPos, ktagSbNamedObjName, wsActual, tssLexPos);
+						}
+						cda.CacheObjProp(hvoMbSec, ktagSbMorphPos, hvoPos);
+						cda.CacheIntProp(hvoPos, ktagSbNamedObjGuess, fGuessing);
 					}
+
+					// If we have a form, we can get its owner and set the info for the Entry
+					// line.
+					// Enhance JohnT: attempt a guess if we have a form but no entry.
+					if (mf != null)
+					{
+						var entryReal = mf.Owner as ILexEntry;
+						// We can assume the owner is a LexEntry as that is the only type of object
+						// that can own MoForms. We don't actually create the LexEntry, to
+						// improve performance. All the relevant data should already have
+						// been loaded while creating the main interlinear view.
+						LoadSecDataForEntry(entryReal, senseReal, hvoSbWord, cda, wsVern, hvoMbSec, fGuessing, sdaMain);
+						hasMf = true;
+					}
+				}
+				if (hasMf)
+					// Wait until all of the morphemes have been loaded (cf. LT-22235).
+					CopyLexEntryInfoToMonomorphemicWordGlossAndPos();
+				if (bldrError.Length > 0)
+				{
+					var msg = bldrError.ToString().Trim();
+					var wnd = FindForm() ?? m_propertyTable.GetValue<IWin32Window>("window");
+					MessageBox.Show(wnd, msg, ITextStrings.ksWarning, MessageBoxButtons.OK, MessageBoxIcon.Warning);
 				}
 			}
 			else
@@ -1444,34 +1420,31 @@ namespace SIL.FieldWorks.IText
 				// No analysis, default or otherwise. We immediately, however, fill in a single
 				// dummy morpheme, if showing morphology.
 				fGuessing = 0;	// distinguish between a 'guess' (defaults) and courtesy filler info (cf. LT-5858).
-				if (ShowMorphBundles)
+				int hvoMbSec = m_caches.DataAccess.MakeNewObject(kclsidSbMorph, hvoSbWord,
+					ktagSbWordMorphs, 0);
+				ITsString tssForm = m_caches.DataAccess.get_MultiStringAlt(hvoSbWord, ktagSbWordForm, this.RawWordformWs);
+				// Possibly adjust case of tssForm.
+				if (fAdjustCase && CaseStatus == StringCaseStatus.title &&
+					tssForm != null && tssForm.Length > 0)
 				{
-					int hvoMbSec = m_caches.DataAccess.MakeNewObject(kclsidSbMorph, hvoSbWord,
-						ktagSbWordMorphs, 0);
-					ITsString tssForm = m_caches.DataAccess.get_MultiStringAlt(hvoSbWord, ktagSbWordForm, this.RawWordformWs);
-					// Possibly adjust case of tssForm.
-					if (fAdjustCase && CaseStatus == StringCaseStatus.title &&
-						tssForm != null && tssForm.Length > 0)
-					{
-						tssForm = TsStringUtils.MakeString(cf.ToLower(tssForm.Text), this.RawWordformWs);
-						m_tssWordform = tssForm; // need this to be set in case hvoWordformRef set to zero.
-						// If we adjust the case of the form, we must adjust the hvo as well,
-						// or any analyses created will go to the wrong WfiWordform.
-						CurrentAnalysisTree.Analysis = GetWordform(tssForm);
-						if (CurrentAnalysisTree.Wordform != null)
-							m_fShowAnalysisCombo = CurrentAnalysisTree.Wordform.AnalysesOC.Count > 0;
-					}
-					else
-					{
-						// just use the wfi wordform form for our dummy morph form.
-						tssForm = CurrentAnalysisTree.Wordform.Form.get_String(this.RawWordformWs);
-					}
-					int hvoMorphForm = m_caches.FindOrCreateSec(0, kclsidSbNamedObj,
-						hvoSbWord, ktagSbWordDummy);
-					cda.CacheStringAlt(hvoMorphForm, ktagSbNamedObjName, wsVern, tssForm);
-					cda.CacheObjProp(hvoMbSec, ktagSbMorphForm, hvoMorphForm);
-					cda.CacheIntProp(hvoMorphForm, ktagSbNamedObjGuess, fGuessing);
+					tssForm = TsStringUtils.MakeString(cf.ToLower(tssForm.Text), this.RawWordformWs);
+					m_tssWordform = tssForm; // need this to be set in case hvoWordformRef set to zero.
+					// If we adjust the case of the form, we must adjust the hvo as well,
+					// or any analyses created will go to the wrong WfiWordform.
+					CurrentAnalysisTree.Analysis = GetWordform(tssForm);
+					if (CurrentAnalysisTree.Wordform != null)
+						m_fShowAnalysisCombo = CurrentAnalysisTree.Wordform.AnalysesOC.Count > 0;
 				}
+				else
+				{
+					// just use the wfi wordform form for our dummy morph form.
+					tssForm = CurrentAnalysisTree.Wordform.Form.get_String(this.RawWordformWs);
+				}
+				int hvoMorphForm = m_caches.FindOrCreateSec(0, kclsidSbNamedObj,
+					hvoSbWord, ktagSbWordDummy);
+				cda.CacheStringAlt(hvoMorphForm, ktagSbNamedObjName, wsVern, tssForm);
+				cda.CacheObjProp(hvoMbSec, ktagSbMorphForm, hvoMorphForm);
+				cda.CacheIntProp(hvoMorphForm, ktagSbNamedObjGuess, fGuessing);
 			}
 			return fGuessing != 0;
 		}
@@ -4087,7 +4060,6 @@ namespace SIL.FieldWorks.IText
 			base.MakeRoot();
 
 			m_vc = new SandboxVc(m_caches, m_choices, IconsForAnalysisChoices, this);
-			m_vc.ShowMorphBundles = m_fShowMorphBundles;
 			m_vc.MultipleOptionBGColor = MultipleAnalysisColor;
 			m_vc.BackColor = (int)CmObjectUi.RGB(this.BackColor);
 			m_vc.IsMorphemeFormEditable = IsMorphemeFormEditable; // Pass through value to VC.

@@ -82,7 +82,6 @@
 		<command id="CmdDeleteFreeTrans" label="Delete Free Translation" message="DeleteFreeform"/>
 		<command id="CmdDeleteLitTrans" label="Delete Literal Translation" message="DeleteFreeform"/>
 		<command id="CmdDeleteNote" label="Delete Note" message="DeleteFreeform"/>
-		<!--		<command id="CmdShowMorphBundles" label="Show Morphology" message="ShowMorphBundles" boolProperty="ShowMorphBundles"/> -->
 		<command id="CmdConfigureInterlinear" label="Interlinear..." message="ConfigureInterlinear"/>
 		<command id="CmdExportInterlinear" label="_Export Interlinear..." message="ExportInterlinear"/>
 		<command id="CmdExportDiscourseChart" label="Export Discourse Chart..." message="ExportDiscourse"/>
@@ -315,7 +314,6 @@
 		<menu id="View">
 			<item command="CmdChooseTexts" defaultVisible="false"/>
 			<!--<item command="CmdToggleRawAndInterlinear" defaultVisible="false"/>-->
-			<!--<item label="Show _Morphology" boolProperty="ShowMorphBundles" defaultVisible="false" /> -->
 		</menu>
 
 		<menu id="Data">
