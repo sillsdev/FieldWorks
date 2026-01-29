@@ -263,34 +263,34 @@ namespace SIL.FieldWorks.XWorks
 		[Test]
 		public void DoImport_ImportsStyles()
 		{
-			Assert.IsEmpty(Cache.LangProject.StylesOC);
+			Assert.That(Cache.LangProject.StylesOC, Is.Empty);
 			_controller.PrepareImport(_zipFile);
-			CollectionAssert.IsEmpty(Cache.LangProject.StylesOC);
+			Assert.That(Cache.LangProject.StylesOC, Is.Empty);
 			// SUT
 			_controller.DoImport();
 			var importedTestStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "TestStyle");
-			Assert.NotNull(importedTestStyle, "test style was not imported.");
+			Assert.That(importedTestStyle, Is.Not.Null, "test style was not imported.");
 			Assert.That(importedTestStyle.Usage.BestAnalysisAlternative.Text, Does.Match("Test Style"));
-			Assert.AreEqual(importedTestStyle.Context, ContextValues.InternalConfigureView);
-			Assert.AreEqual(importedTestStyle.Type, StyleType.kstCharacter);
-			Assert.AreEqual(importedTestStyle.UserLevel, 2);
+			Assert.That(ContextValues.InternalConfigureView, Is.EqualTo(importedTestStyle.Context));
+			Assert.That(StyleType.kstCharacter, Is.EqualTo(importedTestStyle.Type));
+			Assert.That(importedTestStyle.UserLevel, Is.EqualTo(2));
 			var importedParaStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Nominal");
-			Assert.NotNull(importedParaStyle, "test style was not imported.");
+			Assert.That(importedParaStyle, Is.Not.Null, "test style was not imported.");
 			int hasColor;
 			var color = importedParaStyle.Rules.GetIntPropValues((int)FwTextPropType.ktptBackColor, out hasColor);
 			Assert.That(hasColor == 0, "Background color should be set");
-			Assert.AreEqual(NamedRedBGR, color, "Background color should be set to Named Red");
+			Assert.That(color, Is.EqualTo(NamedRedBGR), "Background color should be set to Named Red");
 			color = importedParaStyle.Rules.GetIntPropValues((int)FwTextPropType.ktptForeColor, out hasColor);
 			Assert.That(hasColor == 0, "Foreground color should be set");
-			Assert.AreEqual(NamedRedBGR, color, "Foreground color should be set to Named Red");
+			Assert.That(color, Is.EqualTo(NamedRedBGR), "Foreground color should be set to Named Red");
 			importedParaStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Abnormal");
-			Assert.NotNull(importedParaStyle, "test style was not imported.");
+			Assert.That(importedParaStyle, Is.Not.Null, "test style was not imported.");
 			color = importedParaStyle.Rules.GetIntPropValues((int)FwTextPropType.ktptBackColor, out hasColor);
 			Assert.That(hasColor == 0, "Background color should be set");
-			Assert.AreEqual(CustomRedBGR, color, "Background color should be set to Custom Red");
+			Assert.That(color, Is.EqualTo(CustomRedBGR), "Background color should be set to Custom Red");
 			color = importedParaStyle.Rules.GetIntPropValues((int)FwTextPropType.ktptForeColor, out hasColor);
 			Assert.That(hasColor == 0, "Foreground color should be set");
-			Assert.AreEqual(CustomRedBGR, color, "Foreground color should be set to Custom Red");
+			Assert.That(color, Is.EqualTo(CustomRedBGR), "Foreground color should be set to Custom Red");
 		}
 
 		/// <summary>
@@ -329,25 +329,25 @@ namespace SIL.FieldWorks.XWorks
 				bulletStyle.NextRA = nominalStyle;
 			});
 
-			Assert.AreEqual(5, Cache.LangProject.StylesOC.Count, "Setup problem. Unexpected number of styles before doing any import activity.");
+			Assert.That(Cache.LangProject.StylesOC.Count, Is.EqualTo(5), "Setup problem. Unexpected number of styles before doing any import activity.");
 			_controller.PrepareImport(_zipFile);
-			Assert.AreEqual(5, Cache.LangProject.StylesOC.Count, "Setup problem. Should not have changed number of styles from just preparing to import.");
+			Assert.That(Cache.LangProject.StylesOC.Count, Is.EqualTo(5), "Setup problem. Should not have changed number of styles from just preparing to import.");
 			// SUT
 			_controller.DoImport();
-			Assert.AreEqual(9, Cache.LangProject.StylesOC.Count, "This unit test starts with 6 styles. 3 are 'unsupported' and kept. 3 are removed. We import 6 styles: 3 are completely new; 3 are replacements for the 3 that were removed. Resulting in 9 styles after import.");
+			Assert.That(Cache.LangProject.StylesOC.Count, Is.EqualTo(9), "This unit test starts with 6 styles. 3 are 'unsupported' and kept. 3 are removed. We import 6 styles: 3 are completely new; 3 are replacements for the 3 that were removed. Resulting in 9 styles after import.");
 			var importedTestStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "TestStyle");
-			Assert.NotNull(importedTestStyle, "test style was not imported.");
+			Assert.That(importedTestStyle, Is.Not.Null, "test style was not imported.");
 			var importedParaStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Nominal");
-			Assert.NotNull(importedParaStyle, "test style was not imported.");
+			Assert.That(importedParaStyle, Is.Not.Null, "test style was not imported.");
 			var bulletTestStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Bulleted List");
-			Assert.NotNull(bulletTestStyle, "test style was not imported.");
-			Assert.AreEqual(bulletStyle.Guid, bulletTestStyle.Guid);
+			Assert.That(bulletTestStyle, Is.Not.Null, "test style was not imported.");
+			Assert.That(bulletTestStyle.Guid, Is.EqualTo(bulletStyle.Guid));
 			var numberTestStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Numbered List");
-			Assert.NotNull(numberTestStyle, "test style was not imported.");
-			Assert.AreEqual(numberStyle.Guid, numberTestStyle.Guid);
+			Assert.That(numberTestStyle, Is.Not.Null, "test style was not imported.");
+			Assert.That(numberTestStyle.Guid, Is.EqualTo(numberStyle.Guid));
 			var homographTestStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Homograph-Number");
-			Assert.NotNull(homographTestStyle, "test style was not imported.");
-			Assert.AreEqual(homographStyle.Guid, homographTestStyle.Guid);
+			Assert.That(homographTestStyle, Is.Not.Null, "test style was not imported.");
+			Assert.That(homographTestStyle.Guid, Is.EqualTo(homographStyle.Guid));
 
 			var dictionaryHeadwordImportedStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Dictionary-Headword");
 			Assert.That(homographTestStyle.BasedOnRA, Is.EqualTo(dictionaryHeadwordImportedStyle), "Failed to rewire basedon to new Dictionary-Headword style. LT-18267");
@@ -807,8 +807,8 @@ namespace SIL.FieldWorks.XWorks
 					// SUT
 					_controller.PrepareImport(zipFile);
 					// Verify prepare import counted the custom fields
-					CollectionAssert.IsNotEmpty(_controller._customFieldsToImport, "No custom fields found in the lift file by PrepareImport");
-					CollectionAssert.AreEquivalent(_controller._customFieldsToImport, new[] { customFieldLabel, customFieldSameLabel, customFieldWrongType });
+					Assert.That(_controller._customFieldsToImport, Is.Not.Empty, "No custom fields found in the lift file by PrepareImport");
+					Assert.That(new[] { customFieldLabel, customFieldSameLabel, customFieldWrongType }, Is.EquivalentTo(_controller._customFieldsToImport));
 
 					// Make sure the 'wrongType' custom field has been re-introduced by the test with a different type
 					VerifyCustomFieldPresent(customFieldWrongType, LexEntryTags.kClassId, StTextTags.kClassId);
@@ -816,7 +816,7 @@ namespace SIL.FieldWorks.XWorks
 					_controller.DoImport();
 					var configToImport = (DictionaryConfigurationModel)_controller.NewConfigToImport;
 					// Assert that the field which was Enabled or not
-					Assert.IsTrue(configToImport.Parts[1].IsEnabled, "CustomField1 should be enabled");
+					Assert.That(configToImport.Parts[1].IsEnabled, Is.True, "CustomField1 should be enabled");
 					// Assert that the field which was present before the import is still there
 					VerifyCustomFieldPresent(customFieldSameLabel, LexSenseTags.kClassId, StTextTags.kClassId);
 					// Assert that the field which was not present before the import has been added
@@ -833,8 +833,8 @@ namespace SIL.FieldWorks.XWorks
 		{
 			var mdc = Cache.MetaDataCacheAccessor as IFwMetaDataCacheManaged;
 			var flid = mdc.GetFieldId2(classWithCustomField, customFieldLabel, false);
-			Assert.IsTrue(mdc.IsCustom(flid));
-			Assert.AreEqual(mdc.GetDstClsId(flid), expectedType, "The {0} custom field was not the correct type.", customFieldLabel);
+			Assert.That(mdc.IsCustom(flid), Is.True);
+			Assert.That(expectedType, Is.EqualTo(mdc.GetDstClsId(flid)), $"The {customFieldLabel} custom field was not the correct type.");
 		}
 
 		private void VerifyCustomFieldAbsent(string customFieldLabel, int classWithCustomField)
@@ -855,14 +855,14 @@ namespace SIL.FieldWorks.XWorks
 				var styleFactory = Cache.ServiceLocator.GetInstance<IStStyleFactory>();
 				styleFactory.Create(Cache.LangProject.StylesOC, "Dictionary-Sense", ContextValues.InternalConfigureView, StructureValues.Body, FunctionValues.Prose, false, 2, true);
 			});
-			Assert.AreEqual(1, Cache.LangProject.StylesOC.Count, "Setup problem. Unexpected number of styles before doing any import activity.");
+			Assert.That(Cache.LangProject.StylesOC.Count, Is.EqualTo(1), "Setup problem. Unexpected number of styles before doing any import activity.");
 			_controller.PrepareImport(_zipFile);
-			Assert.AreEqual(1, Cache.LangProject.StylesOC.Count, "Setup problem. Should not have changed number of styles from just preparing to import.");
+			Assert.That(Cache.LangProject.StylesOC.Count, Is.EqualTo(1), "Setup problem. Should not have changed number of styles from just preparing to import.");
 			// SUT
 			_controller.DoImport();
-			Assert.AreEqual(6, Cache.LangProject.StylesOC.Count, "Resulting styles count should be 6 after import.");
+			Assert.That(Cache.LangProject.StylesOC.Count, Is.EqualTo(6), "Resulting styles count should be 6 after import.");
 			var importedSenseStyle = Cache.LangProject.StylesOC.FirstOrDefault(style => style.Name == "Dictionary-Sense");
-			Assert.NotNull(importedSenseStyle, "Dictionary-Sense style was not imported.");
+			Assert.That(importedSenseStyle, Is.Not.Null, "Dictionary-Sense style was not imported.");
 		}
 	}
 }

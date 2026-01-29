@@ -156,7 +156,7 @@ namespace SIL.FieldWorks.XWorks
 			if (macro == null)
 				return true; // Paranoia, it should be disabled.
 
-			int ichA, hvoA, flid, ws, ichE, start, length;
+			int flid, ws, start, length;
 			ICmObject obj;
 			if (!SafeToDoMacro(sel, out obj, out flid, out ws, out start, out length) || !macro.Enabled(obj, flid, ws, start, length))
 				return true;
@@ -221,7 +221,7 @@ namespace SIL.FieldWorks.XWorks
 		internal bool DoDisplayMacro(object commandObject, UIItemDisplayProperties display, IVwSelection sel)
 		{
 			var macro = GetMacro(commandObject);
-			int ichA, hvoA, flid, ws, ichE, start, length;
+			int flid, ws, start, length;
 			ICmObject obj;
 			if (macro == null)
 			{

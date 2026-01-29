@@ -202,8 +202,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		public RegistryKey SetupVersion9Settings()
 		{
-			Assert.AreEqual("9", FwRegistryHelper.FieldWorksRegistryKeyName,
-				$"Please update the migration code and tests to handle migration to version {FwRegistryHelper.FieldWorksRegistryKey}");
+			Assert.That(FwRegistryHelper.FieldWorksRegistryKeyName, Is.EqualTo("9"), $"Please update the migration code and tests to handle migration to version {FwRegistryHelper.FieldWorksRegistryKey}");
 			var version9Key = CreateSettingsSubKeyForVersion(FwRegistryHelper.FieldWorksRegistryKeyName);
 
 			version9Key.SetValue(UserWs, "sp");

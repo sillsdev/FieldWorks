@@ -155,8 +155,9 @@ namespace SIL.FieldWorks
 			var newPath = $"{pathName}{Path.PathSeparator}{Environment.GetEnvironmentVariable("PATH")}";
 			Environment.SetEnvironmentVariable("PATH", newPath);
 			Icu.Wrapper.ConfineIcuVersions(70);
-			// ICU will be initialized further down (by calling FwUtils.InitializeIcu())
 			FwRegistryHelper.Initialize();
+			// Initialize ICU before anything touches it so icu.net does not warn about missing Init().
+			FwUtils.InitializeIcu();
 
 			try
 			{
@@ -166,6 +167,10 @@ namespace SIL.FieldWorks
 				if (string.IsNullOrEmpty(firefoxPath))
 				{
 					firefoxPath = Path.Combine(exePath, "Firefox");
+					if (!Directory.Exists(firefoxPath) && Directory.Exists(Path.Combine(exePath, "Firefox64")))
+					{
+						firefoxPath = Path.Combine(exePath, "Firefox64");
+					}
 				}
 				Xpcom.Initialize(firefoxPath);
 				GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
@@ -278,8 +283,6 @@ namespace SIL.FieldWorks
 					// in native code do not have icons if we just use this method. This is caused
 					// by a bug in XP.
 					Application.EnableVisualStyles();
-
-					FwUtils.InitializeIcu();
 
 					// initialize the SLDR
 					Sldr.Initialize();
@@ -781,15 +784,9 @@ namespace SIL.FieldWorks
 				startInfo.WorkingDirectory = Path.GetDirectoryName(path) ?? string.Empty;
 				return Process.Start(startInfo);
 			}
-			catch (Exception exception)
+			catch (Exception)
 			{
-#if DEBUG
-				if (Platform.IsMono)
-				{
-					// I (TomH) would rather know about the exception than silently failing. so show exception on Mono least.
-					MessageBox.Show(exception.ToString());
-				}
-#endif
+				// Process start failed - return null to indicate failure
 			}
 
 			// Something went very wrong :(
@@ -913,7 +910,7 @@ namespace SIL.FieldWorks
 
 		/// <summary>
 		/// Ensure a valid folder for LangProject.LinkedFilesRootDir.  When moving projects
-		/// between systems, the stored value may become hopelessly invalid.  See FWNX-1005
+		/// between systems, the stored value may become hopelessly invalid. See FWNX-1005
 		/// for an example of the havoc than can ensue.
 		/// </summary>
 		/// <remarks>This method gets called when we open the FDO cache.</remarks>
@@ -1270,6 +1267,17 @@ namespace SIL.FieldWorks
 			// Be very, very careful about changing stuff here. Code here MUST not throw exceptions,
 			// even when the application is in a crashed state. For example, error reporting failed
 			// before I added the static registry keys, because getting App.SettingsKey failed somehow.
+#if DEBUG
+			try
+			{
+				File.WriteAllText("CrashLog.txt", error.ToString());
+			}
+			catch
+			{
+				// Ignore failure to write log
+			}
+#endif
+
 			var appKey = FwRegistryHelper.FieldWorksRegistryKey;
 			if (parent?.App != null && parent.App == s_flexApp && s_flexAppKey != null)
 				appKey = s_flexAppKey;
@@ -2554,7 +2562,7 @@ namespace SIL.FieldWorks
 							retry = (dlg.ShowDialog() == DialogResult.Retry);
 						}
 					}
-					catch (FailedFwRestoreException e)
+					catch (FailedFwRestoreException)
 					{
 						MessageBoxUtils.Show(Properties.Resources.ksRestoringOldFwBackupFailed, Properties.Resources.ksFailed);
 					}
@@ -2603,7 +2611,7 @@ namespace SIL.FieldWorks
 				try
 				{
 					var versionInfoProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), false);
-					var backupSettings = new BackupProjectSettings(cache, restoreSettings.Settings,
+					var backupSettings = new LCModel.DomainServices.BackupRestore.BackupProjectSettings(cache, restoreSettings.Settings,
 						FwDirectoryFinder.DefaultBackupDirectory, versionInfoProvider.MajorVersion);
 					backupSettings.DestinationFolder = FwDirectoryFinder.DefaultBackupDirectory;
 
@@ -2791,8 +2799,6 @@ namespace SIL.FieldWorks
 				// not even be one that was migrated. But it will probably work for most users.
 				if (newDir.ToLowerInvariant() != oldDir.ToLowerInvariant())
 					return;
-					// TODO-Linux: Help is not implemented in Mono
-					const string helpTopic = "/User_Interface/Menus/File/Project_Properties/Review_the_location_of_Linked_Files.htm";
 				DialogResult res = MessageBox.Show(Properties.Resources.ksProjectLinksStillOld,
 						Properties.Resources.ksReviewLocationOfLinkedFiles,
 						MessageBoxButtons.YesNo, MessageBoxIcon.None,
@@ -3144,7 +3150,7 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Shutdowns the specified application. The application will be disposed of immediately.
-		/// If no other applications are running, then FieldWorks will also be shutdown.
+		/// If no other applications are running, then FieldWorks will also be shut down.
 		/// </summary>
 		/// <param name="app">The application to shut down.</param>
 		/// <param name="fSaveSettings">True to have the application save its settings,
@@ -3277,7 +3283,7 @@ namespace SIL.FieldWorks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Tries to find an existing FieldWorks process that is running the specified project.
+		/// Tries to find another FieldWorks process that is running the specified project.
 		/// See the class comment on FwLinkArgs for details on how all the parts of hyperlinking work.
 		/// </summary>
 		/// <param name="project">The project we want to conect to.</param>
@@ -3511,10 +3517,10 @@ namespace SIL.FieldWorks
 
 			KeyboardController.Shutdown();
 
+			GracefullyShutDown();
+
 			if (Sldr.IsInitialized)
 				Sldr.Cleanup();
-
-			GracefullyShutDown();
 
 			if (s_threadHelper != null)
 				s_threadHelper.Dispose();
@@ -3730,7 +3736,7 @@ namespace SIL.FieldWorks
 						HandleLinkRequest(appArgs);
 						return s_projectId;
 					}
-					catch (Exception e)
+					catch (Exception)
 					{
 						//This is not good.
 					}

@@ -1,20 +1,39 @@
 // Copyright (c) 2015 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
+// DISABLED: SentenceFinalPunctCapitalizationCheck class no longer exists in ScrChecks
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
 using System.Diagnostics;
 using System.IO;
-using SILUBS.SharedScrUtils;
+using System.Text;
+using NUnit.Framework;
 
 namespace SILUBS.ScriptureChecks
 {
-#if DEBUG
 	[TestFixture]
+	[Ignore("Obsolete: SentenceFinalPunctCapitalizationCheck no longer exists in ScrChecks.")]
 	public class SentenceFinalPunctCapitalizationCheckUnitTest
+	{
+		[Test]
+		public void ObsoleteCheck_Disabled()
+		{
+			Assert.Ignore(
+				"Obsolete: SentenceFinalPunctCapitalizationCheck was removed/refactored; " +
+				"legacy implementation tests remain behind RUN_LW_LEGACY_TESTS."
+			);
+		}
+	}
+
+}
+
+#if RUN_LW_LEGACY_TESTS
+
+namespace SILUBS.ScriptureChecks
+{
+	[TestFixture]
+	public class SentenceFinalPunctCapitalizationCheckUnitTest_Legacy
 	{
 		UnitTestChecksDataSource source = new UnitTestChecksDataSource();
 
@@ -32,11 +51,10 @@ namespace SILUBS.ScriptureChecks
 			List<TextTokenSubstring> tts =
 				check.GetReferences(source.TextTokens(), "");
 
-			Assert.AreEqual(result.GetUpperBound(0)+1, tts.Count,
-				"A different number of results was returned than what was expected." );
+			Assert.That(tts.Count, Is.EqualTo(result.GetUpperBound(0)+1), "A different number of results was returned than what was expected.");
 
 			for (int i = 0; i <= result.GetUpperBound(0); ++i)
-				Assert.AreEqual(result[i], tts[i].InventoryText, "Result number: " + i.ToString());
+				Assert.That(tts[i].InventoryText, Is.EqualTo(result[i]), "Result number: " + i.ToString());
 		}
 
 		[Test]
@@ -124,5 +142,5 @@ namespace SILUBS.ScriptureChecks
 			Test(new string[] { }, @"\p \v 1 The E.U. headquarters.");
 		}
 	}
-#endif
 }
+#endif

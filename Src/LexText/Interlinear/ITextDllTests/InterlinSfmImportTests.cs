@@ -9,9 +9,11 @@ using System.Text;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using NUnit.Framework;
+using Moq;
 using Sfm2Xml;
 using SIL.FieldWorks.LexText.Controls;
 using SilEncConverters40;
+using ECInterfaces;
 using SIL.LCModel.Core.WritingSystems;
 
 namespace SIL.FieldWorks.IText
@@ -165,10 +167,15 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void EncodingConverters()
 		{
-			var encConv = new EncConverters();
-			encConv.AddConversionMap("XXYTestConverter", "1252",
-						ECInterfaces.ConvType.Legacy_to_from_Unicode, "cp", "", "",
-						ECInterfaces.ProcessTypeFlags.CodePageConversion);
+			var mockConverter = new Mock<IEncConverter>();
+			mockConverter
+				.Setup(c => c.ConvertToUnicode(It.IsAny<byte[]>()))
+				.Returns((byte[] bytes) => Encoding.GetEncoding(1252).GetString(bytes));
+
+			var mockEncConverters = new Mock<IEncConverters>();
+			mockEncConverters.Setup(c => c[It.IsAny<string>()]).Returns((IEncConverter)null);
+			mockEncConverters.Setup(c => c["XXYTestConverter"]).Returns(mockConverter.Object);
+
 			var mappings = new List<InterlinearMapping>();
 			mappings.Add(new InterlinearMapping()
 							{
@@ -186,7 +193,7 @@ namespace SIL.FieldWorks.IText
 			});
 			var wsf = GetWsf();
 			var input = new ByteReader("input2", Encoding.GetEncoding(1252).GetBytes(input2));
-			var converter = new Sfm2FlexText();
+			var converter = new Sfm2FlexText(mockEncConverters.Object);
 			var output = converter.Convert(input, mappings, wsf);
 			using (var outputStream = new MemoryStream(output))
 			{
@@ -198,7 +205,6 @@ namespace SIL.FieldWorks.IText
 					var phrase1 = textElt.XPathSelectElement("./paragraphs/paragraph/phrases/phrase");
 					VerifyText(phrase1, new[] { "John", "added", "this\x017D" },
 						new HashSet<string>(), "qaa-x-kal");
-					encConv.Remove("XXYTestConverter");
 				}
 			}
 		}

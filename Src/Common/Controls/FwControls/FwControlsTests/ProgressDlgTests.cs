@@ -173,7 +173,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 			var nProgress = (int) m_dlg.RunTask(false, BackgroundTask);
 
-			Assert.Less(nProgress, 10);
+			Assert.That(nProgress, Is.LessThan(10));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -189,7 +189,7 @@ namespace SIL.FieldWorks.Common.Controls
 		{
 			var nProgress = (int) m_dlg.RunTask(false, BackgroundTask);
 
-			Assert.AreEqual(10, nProgress);
+			Assert.That(nProgress, Is.EqualTo(10));
 		}
 	}
 	#endregion

@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.XWorks
 				logEntryView.Columns[logEntryView.Columns.Count - 1].DefaultCellStyle.WrapMode = DataGridViewTriState.True;
 
 			}
-			catch (Exception ex)
+			catch (Exception)
 			{
 				// Log file not found or empty, just show an empty grid
 			}

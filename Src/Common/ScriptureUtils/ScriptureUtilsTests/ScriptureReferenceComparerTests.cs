@@ -69,9 +69,9 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		[Test]
 		public void CompareVerseStrings()
 		{
-			Assert.Greater(m_comparer.Compare("GEN 1:10", "GEN 1:2"), 0);
-			Assert.Less(m_comparer.Compare("GEN 1:2", "GEN 1:10"), 0);
-			Assert.AreEqual(m_comparer.Compare("GEN 1:10", "GEN 1:10"), 0);
+			Assert.That(m_comparer.Compare("GEN 1:10", "GEN 1:2"), Is.GreaterThan(0));
+			Assert.That(m_comparer.Compare("GEN 1:2", "GEN 1:10"), Is.LessThan(0));
+			Assert.That(m_comparer.Compare("GEN 1:10", "GEN 1:10"), Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		[Test]
 		public void CompareBookStrings()
 		{
-			Assert.Less(m_comparer.Compare("MAT 1:1", "MRK 1:1"), 0);
+			Assert.That(m_comparer.Compare("MAT 1:1", "MRK 1:1"), Is.LessThan(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -93,9 +93,9 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		[Test]
 		public void CompareBCVVerses()
 		{
-			Assert.Greater(m_comparer.Compare(01001010, 01001002), 0); // "GEN 1:10", "GEN 1:2"
-			Assert.Less(m_comparer.Compare(01001002, 01001010), 0); // "GEN 1:2", "GEN 1:10"
-			Assert.AreEqual(m_comparer.Compare(01001001, 01001001), 0); // "GEN 1:1", "GEN 1:1"
+			Assert.That(m_comparer.Compare(01001010, 01001002), Is.GreaterThan(0)); // "GEN 1:10", "GEN 1:2"
+			Assert.That(m_comparer.Compare(01001002, 01001010), Is.LessThan(0)); // "GEN 1:2", "GEN 1:10"
+			Assert.That(m_comparer.Compare(01001001, 01001001), Is.EqualTo(0)); // "GEN 1:1", "GEN 1:1"
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		[Test]
 		public void CompareBCVBooks()
 		{
-			Assert.Less(m_comparer.Compare(01001001, 02001001), 0); // GEN 1:1, EXO 1:1
+			Assert.That(m_comparer.Compare(01001001, 02001001), Is.LessThan(0)); // GEN 1:1, EXO 1:1
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -120,9 +120,9 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			ScrReference gen1_10 = new ScrReference(1, 1, 10, ScrVers.English);
 			ScrReference gen1_2 = new ScrReference(1, 1, 2, ScrVers.English);
 
-			Assert.Greater(m_comparer.Compare(gen1_10, gen1_2), 0);
-			Assert.Less(m_comparer.Compare(gen1_2, gen1_10), 0);
-			Assert.AreEqual(m_comparer.Compare(gen1_10, new ScrReference(01001010, ScrVers.English)), 0);
+			Assert.That(m_comparer.Compare(gen1_10, gen1_2), Is.GreaterThan(0));
+			Assert.That(m_comparer.Compare(gen1_2, gen1_10), Is.LessThan(0));
+			Assert.That(m_comparer.Compare(gen1_10, new ScrReference(01001010, ScrVers.English)), Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -136,7 +136,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			ScrReference gen = new ScrReference(1, 1, 1, ScrVers.English);
 			ScrReference exo = new ScrReference(2, 1, 1, ScrVers.English);
 
-			Assert.Less(m_comparer.Compare(gen, exo), 0);
+			Assert.That(m_comparer.Compare(gen, exo), Is.LessThan(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -149,9 +149,9 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		{
 			ScrReference genesis = new ScrReference(1, 1, 1, ScrVers.English);
 
-			Assert.Less(m_comparer.Compare("GEN 1:1", 02001001), 0);
-			Assert.Greater(m_comparer.Compare("EXO 1:1", genesis), 0);
-			Assert.AreEqual(m_comparer.Compare(01001001, genesis), 0);
+			Assert.That(m_comparer.Compare("GEN 1:1", 02001001), Is.LessThan(0));
+			Assert.That(m_comparer.Compare("EXO 1:1", genesis), Is.GreaterThan(0));
+			Assert.That(m_comparer.Compare(01001001, genesis), Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -165,9 +165,9 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			ScrReference genesis = new ScrReference(1, 0, 0, ScrVers.English);
 			ScrReference exodus = new ScrReference(2, 0, 0, ScrVers.English);
 
-			Assert.AreEqual(m_comparer.Compare(genesis, 1000000), 0);
-			Assert.Greater(m_comparer.Compare(exodus, genesis), 0);
-			Assert.Less(m_comparer.Compare(exodus, 2001001), 0);
+			Assert.That(m_comparer.Compare(genesis, 1000000), Is.EqualTo(0));
+			Assert.That(m_comparer.Compare(exodus, genesis), Is.GreaterThan(0));
+			Assert.That(m_comparer.Compare(exodus, 2001001), Is.LessThan(0));
 		}
 
 		/// ------------------------------------------------------------------------------------

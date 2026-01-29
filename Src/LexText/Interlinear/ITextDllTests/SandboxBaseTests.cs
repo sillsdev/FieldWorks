@@ -709,7 +709,7 @@ namespace SIL.FieldWorks.IText
 				{
 					// wipe out the sense that the morph bundle was based on.
 					sense2.MergeObject(sense, true);
-					Assert.AreEqual(entry.SensesOS[0], sense2);
+					Assert.That(sense2, Is.EqualTo(entry.SensesOS[0]));
 					Assert.DoesNotThrow(()=>
 					{
 						// ReSharper disable once UnusedVariable - Assignment is SUT

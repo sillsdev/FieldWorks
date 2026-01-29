@@ -77,11 +77,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 						sut.Add(one);
 						sut.Add(two);
 
-						Assert.AreEqual(2, sut.Count);
+						Assert.That(sut.Count, Is.EqualTo(2));
 					}
 
-					Assert.IsTrue(one.IsDisposed);
-					Assert.IsTrue(two.IsDisposed);
+					Assert.That(one.IsDisposed, Is.True);
+					Assert.That(two.IsDisposed, Is.True);
 				}
 			}
 		}
@@ -99,11 +99,11 @@ namespace SIL.FieldWorks.Common.FwUtils
 						sut.Add(one);
 						sut.Add(two);
 
-						Assert.AreEqual(2, sut.Count);
+						Assert.That(sut.Count, Is.EqualTo(2));
 					}
 
-					Assert.IsTrue(one.IsDisposed);
-					Assert.IsTrue(two.IsDisposed);
+					Assert.That(one.IsDisposed, Is.True);
+					Assert.That(two.IsDisposed, Is.True);
 				}
 			}
 		}
@@ -121,10 +121,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 					sut.Add(one);
 					sut.Add(two);
 
-					Assert.AreEqual(1, sut.Count);
+					Assert.That(sut.Count, Is.EqualTo(1));
 				}
 
-				Assert.IsTrue(one.IsDisposed);
+				Assert.That(one.IsDisposed, Is.True);
 			}
 		}
 
@@ -142,10 +142,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 					two.Name = "changed";
 					sut.Add(two);
 
-					Assert.AreEqual(1, sut.Count);
+					Assert.That(sut.Count, Is.EqualTo(1));
 				}
 
-				Assert.IsTrue(one.IsDisposed);
+				Assert.That(one.IsDisposed, Is.True);
 			}
 		}
 	}

@@ -13,7 +13,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 	public class MEImages : UserControl
 	{
 		public System.Windows.Forms.ImageList buttonImages;
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 
 		public MEImages()
 		{

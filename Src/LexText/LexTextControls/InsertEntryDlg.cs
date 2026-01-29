@@ -73,7 +73,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private MatchingObjectsBrowser m_matchingObjectsBrowser;
 		private ToolTip m_toolTipSlotCombo;
 		private MSAGroupBox m_msaGroupBox;
-		private IContainer components;
+		private IContainer components = null;
 
 		private string s_helpTopic = "khtpInsertEntry";
 		private LinkLabel m_linkSimilarEntry;

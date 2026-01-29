@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.LCModel.Core.Text;
@@ -438,25 +439,23 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			SelectionHelper helper = ((DummyBasicView)m_vwRootsite).EditingHelper.CurrentSelection;
 			SelLevInfo[] selLevels = helper.GetLevelInfo(SelectionHelper.SelLimitType.Anchor);
-			Assert.AreEqual(1, selLevels.Length);
-			Assert.AreEqual(iPara, selLevels[0].ihvo);
-			Assert.AreEqual(14001, selLevels[0].tag);
-			Assert.AreEqual(iInstancePara, selLevels[0].cpropPrevious);
+			Assert.That(selLevels.Length, Is.EqualTo(1));
+			Assert.That(selLevels[0].ihvo, Is.EqualTo(iPara));
+			Assert.That(selLevels[0].tag, Is.EqualTo(14001));
+			Assert.That(selLevels[0].cpropPrevious, Is.EqualTo(iInstancePara));
 
 			selLevels = helper.GetLevelInfo(SelectionHelper.SelLimitType.End);
-			Assert.AreEqual(1, selLevels.Length);
-			Assert.AreEqual(iPara, selLevels[0].ihvo);
-			Assert.AreEqual(14001, selLevels[0].tag);
-			Assert.AreEqual(iInstancePara, selLevels[0].cpropPrevious);
+			Assert.That(selLevels.Length, Is.EqualTo(1));
+			Assert.That(selLevels[0].ihvo, Is.EqualTo(iPara));
+			Assert.That(selLevels[0].tag, Is.EqualTo(14001));
+			Assert.That(selLevels[0].cpropPrevious, Is.EqualTo(iInstancePara));
 
-			Assert.AreEqual(ichAnchor, helper.IchAnchor);
-			Assert.AreEqual(ichEnd, helper.IchEnd);
-			Assert.AreEqual(16002, helper.GetTextPropId(SelectionHelper.SelLimitType.Anchor));
-			Assert.AreEqual(16002, helper.GetTextPropId(SelectionHelper.SelLimitType.End));
-			Assert.AreEqual(iInstanceString,
-				helper.GetNumberOfPreviousProps(SelectionHelper.SelLimitType.Anchor));
-			Assert.AreEqual(iInstanceString,
-				helper.GetNumberOfPreviousProps(SelectionHelper.SelLimitType.End));
+			Assert.That(helper.IchAnchor, Is.EqualTo(ichAnchor));
+			Assert.That(helper.IchEnd, Is.EqualTo(ichEnd));
+			Assert.That(helper.GetTextPropId(SelectionHelper.SelLimitType.Anchor), Is.EqualTo(16002));
+			Assert.That(helper.GetTextPropId(SelectionHelper.SelLimitType.End), Is.EqualTo(16002));
+			Assert.That(helper.GetNumberOfPreviousProps(SelectionHelper.SelLimitType.Anchor), Is.EqualTo(iInstanceString));
+			Assert.That(helper.GetNumberOfPreviousProps(SelectionHelper.SelLimitType.End), Is.EqualTo(iInstanceString));
 		}
 	}
 	#endregion
@@ -587,6 +586,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// </summary>
 	/// -----------------------------------------------------------------------------------------
 	[TestFixture]
+	[Apartment(ApartmentState.STA)]
 	public class FwFindReplaceDlgTests : FwFindReplaceDlgBaseTests
 	{
 		private CoreWritingSystemDefinition m_wsFr;
@@ -644,11 +644,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			ITsString tss;
 			selInitial.GetSelectionString(out tss, string.Empty);
 			AssertEx.AreTsStringsEqual(tss, m_dlg.FindText);
-			Assert.IsFalse(m_dlg.MatchWsCheckboxChecked);
-			Assert.IsTrue(m_dlg.MatchDiacriticsCheckboxChecked);
-			Assert.IsFalse(m_dlg.MatchWholeWordCheckboxChecked);
-			Assert.IsFalse(m_dlg.MatchCaseCheckboxChecked);
-			Assert.IsFalse(m_dlg.MoreControlsPanelVisible);
+			Assert.That(m_dlg.MatchWsCheckboxChecked, Is.False);
+			Assert.That(m_dlg.MatchDiacriticsCheckboxChecked, Is.True);
+			Assert.That(m_dlg.MatchWholeWordCheckboxChecked, Is.False);
+			Assert.That(m_dlg.MatchCaseCheckboxChecked, Is.False);
+			Assert.That(m_dlg.MoreControlsPanelVisible, Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -664,16 +664,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				null, null, null);
 			m_dlg.PopulateStyleMenu();
 
-			Assert.AreEqual("<no style>", m_dlg.StyleMenu.MenuItems[0].Text);
-			Assert.IsTrue(m_dlg.StyleMenu.MenuItems[0].Checked);
-			Assert.AreEqual("Default Paragraph Characters", m_dlg.StyleMenu.MenuItems[1].Text);
-			Assert.IsFalse(m_dlg.StyleMenu.MenuItems[1].Checked);
-			Assert.AreEqual("CStyle1", m_dlg.StyleMenu.MenuItems[2].Text);
-			Assert.IsFalse(m_dlg.StyleMenu.MenuItems[2].Checked);
-			Assert.AreEqual("CStyle2", m_dlg.StyleMenu.MenuItems[3].Text);
-			Assert.IsFalse(m_dlg.StyleMenu.MenuItems[3].Checked);
-			Assert.AreEqual("CStyle3", m_dlg.StyleMenu.MenuItems[4].Text);
-			Assert.IsFalse(m_dlg.StyleMenu.MenuItems[4].Checked);
+			Assert.That(m_dlg.StyleMenu.MenuItems[0].Text, Is.EqualTo("<no style>"));
+			Assert.That(m_dlg.StyleMenu.MenuItems[0].Checked, Is.True);
+			Assert.That(m_dlg.StyleMenu.MenuItems[1].Text, Is.EqualTo("Default Paragraph Characters"));
+			Assert.That(m_dlg.StyleMenu.MenuItems[1].Checked, Is.False);
+			Assert.That(m_dlg.StyleMenu.MenuItems[2].Text, Is.EqualTo("CStyle1"));
+			Assert.That(m_dlg.StyleMenu.MenuItems[2].Checked, Is.False);
+			Assert.That(m_dlg.StyleMenu.MenuItems[3].Text, Is.EqualTo("CStyle2"));
+			Assert.That(m_dlg.StyleMenu.MenuItems[3].Checked, Is.False);
+			Assert.That(m_dlg.StyleMenu.MenuItems[4].Text, Is.EqualTo("CStyle3"));
+			Assert.That(m_dlg.StyleMenu.MenuItems[4].Checked, Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -694,8 +694,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.ApplyStyle(m_dlg.FindTextControl, "CStyle3");
 			m_dlg.PopulateStyleMenu();
 
-			Assert.AreEqual("CStyle3", m_dlg.StyleMenu.MenuItems[4].Text);
-			Assert.IsTrue(m_dlg.StyleMenu.MenuItems[4].Checked);
+			Assert.That(m_dlg.StyleMenu.MenuItems[4].Text, Is.EqualTo("CStyle3"));
+			Assert.That(m_dlg.StyleMenu.MenuItems[4].Checked, Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -711,21 +711,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// For this test, we have a simple IP in French text, so that WS should be checked.
 			m_dlg.PopulateWritingSystemMenu();
 
-			Assert.AreEqual(6, m_dlg.WritingSystemMenu.MenuItems.Count);
+			Assert.That(m_dlg.WritingSystemMenu.MenuItems.Count, Is.EqualTo(6));
 			int i = 0;
-			Assert.AreEqual("English", m_dlg.WritingSystemMenu.MenuItems[i].Text);
-			Assert.IsFalse(m_dlg.WritingSystemMenu.MenuItems[i++].Checked);
-			Assert.AreEqual("English (Phonetic)", m_dlg.WritingSystemMenu.MenuItems[i].Text);
-			Assert.IsTrue(m_dlg.WritingSystemMenu.MenuItems[i++].Checked);
+			Assert.That(m_dlg.WritingSystemMenu.MenuItems[i].Text, Is.EqualTo("English"));
+			Assert.That(m_dlg.WritingSystemMenu.MenuItems[i++].Checked, Is.False);
+			Assert.That(m_dlg.WritingSystemMenu.MenuItems[i].Text, Is.EqualTo("English (Phonetic)"));
+			Assert.That(m_dlg.WritingSystemMenu.MenuItems[i++].Checked, Is.True);
 			// Depending on the ICU files present on a given machine, we may or may not have an English name for the French WS.
-			Assert.IsTrue(m_dlg.WritingSystemMenu.MenuItems[i].Text == "fr" || m_dlg.WritingSystemMenu.MenuItems[i].Text == "French");
-			Assert.IsFalse(m_dlg.WritingSystemMenu.MenuItems[i++].Checked);
-			Assert.AreEqual("German", m_dlg.WritingSystemMenu.MenuItems[i].Text);
-			Assert.IsFalse(m_dlg.WritingSystemMenu.MenuItems[i++].Checked);
-			Assert.AreEqual("Spanish", m_dlg.WritingSystemMenu.MenuItems[i].Text);
-			Assert.IsFalse(m_dlg.WritingSystemMenu.MenuItems[i++].Checked);
-			Assert.AreEqual("Urdu", m_dlg.WritingSystemMenu.MenuItems[i].Text);
-			Assert.IsFalse(m_dlg.WritingSystemMenu.MenuItems[i].Checked);
+			Assert.That(m_dlg.WritingSystemMenu.MenuItems[i].Text == "fr" || m_dlg.WritingSystemMenu.MenuItems[i].Text == "French", Is.True);
+			Assert.That(m_dlg.WritingSystemMenu.MenuItems[i++].Checked, Is.False);
+			Assert.That(m_dlg.WritingSystemMenu.MenuItems[i].Text, Is.EqualTo("German"));
+			Assert.That(m_dlg.WritingSystemMenu.MenuItems[i++].Checked, Is.False);
+			Assert.That(m_dlg.WritingSystemMenu.MenuItems[i].Text, Is.EqualTo("Spanish"));
+			Assert.That(m_dlg.WritingSystemMenu.MenuItems[i++].Checked, Is.False);
+			Assert.That(m_dlg.WritingSystemMenu.MenuItems[i].Text, Is.EqualTo("Urdu"));
+			Assert.That(m_dlg.WritingSystemMenu.MenuItems[i].Checked, Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -753,9 +753,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				null, null, null);
 			m_dlg.PopulateWritingSystemMenu();
 
-			Assert.AreEqual(6, m_dlg.WritingSystemMenu.MenuItems.Count);
+			Assert.That(m_dlg.WritingSystemMenu.MenuItems.Count, Is.EqualTo(6));
 			foreach (MenuItem mi in m_dlg.WritingSystemMenu.MenuItems)
-				Assert.IsFalse(mi.Checked);
+				Assert.That(mi.Checked, Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -780,9 +780,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SimulateFindButtonClick();
 
 			m_dlg.PopulateWritingSystemMenu();
-			Assert.AreEqual(0, m_dlg.FindText.Length, "Shouldn't have any find text before closing dialog");
-			Assert.IsTrue(m_dlg.MatchWsCheckboxChecked, "WS Checkbox should be checked before closing dialog");
-			Assert.AreEqual("German", m_dlg.FindFormatTextLabel.Text);
+			Assert.That(m_dlg.FindText.Length, Is.EqualTo(0), "Shouldn't have any find text before closing dialog");
+			Assert.That(m_dlg.MatchWsCheckboxChecked, Is.True, "WS Checkbox should be checked before closing dialog");
+			Assert.That(m_dlg.FindFormatTextLabel.Text, Is.EqualTo("German"));
 
 			m_dlg.Hide(); // this is usually done in OnClosing, but for whatever reason that doesn't work in our test
 
@@ -794,15 +794,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				null, null, null);
 
 			m_dlg.PopulateWritingSystemMenu();
-			Assert.AreEqual(0, m_dlg.FindText.Length, "Shouldn't have any find text after reopening dialog");
-			Assert.IsTrue(m_dlg.MatchWsCheckboxChecked, "WS Checkbox should be checked after reopening dialog");
-			Assert.AreEqual("German", m_dlg.FindFormatTextLabel.Text);
+			Assert.That(m_dlg.FindText.Length, Is.EqualTo(0), "Shouldn't have any find text after reopening dialog");
+			Assert.That(m_dlg.MatchWsCheckboxChecked, Is.True, "WS Checkbox should be checked after reopening dialog");
+			Assert.That(m_dlg.FindFormatTextLabel.Text, Is.EqualTo("German"));
 
 			// Match diacritics now defaults to checked (LT-8191)
-			Assert.IsTrue(m_dlg.MatchDiacriticsCheckboxChecked);
-			Assert.IsFalse(m_dlg.MatchWholeWordCheckboxChecked);
-			Assert.IsFalse(m_dlg.MatchCaseCheckboxChecked);
-			Assert.IsFalse(m_dlg.MoreControlsPanelVisible);
+			Assert.That(m_dlg.MatchDiacriticsCheckboxChecked, Is.True);
+			Assert.That(m_dlg.MatchWholeWordCheckboxChecked, Is.False);
+			Assert.That(m_dlg.MatchCaseCheckboxChecked, Is.False);
+			Assert.That(m_dlg.MoreControlsPanelVisible, Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -820,17 +820,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.Show();
 			Application.DoEvents();
 
-			Assert.AreEqual(m_dlg.FindTextControl, m_dlg.LastTextBoxInFocus);
+			Assert.That(m_dlg.LastTextBoxInFocus, Is.EqualTo(m_dlg.FindTextControl));
 
 			// set the focus to the replace box
 			m_dlg.ReplaceTextControl.Focus();
 
-			Assert.AreEqual(m_dlg.FindTextControl, m_dlg.LastTextBoxInFocus);
+			Assert.That(m_dlg.LastTextBoxInFocus, Is.EqualTo(m_dlg.FindTextControl));
 
 			// set the focus to the find box
 			m_dlg.FindTextControl.Focus();
 
-			Assert.AreEqual(m_dlg.ReplaceTextControl, m_dlg.LastTextBoxInFocus);
+			Assert.That(m_dlg.LastTextBoxInFocus, Is.EqualTo(m_dlg.ReplaceTextControl));
 		}
 		#endregion
 
@@ -851,8 +851,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				null, null, null);
 			m_dlg.Show();
 			Application.DoEvents();
-			Assert.IsFalse(m_dlg.FindFormatLabel.Visible);
-			Assert.IsFalse(m_dlg.FindFormatTextLabel.Visible);
+			Assert.That(m_dlg.FindFormatLabel.Visible, Is.False);
+			Assert.That(m_dlg.FindFormatTextLabel.Visible, Is.False);
 
 			m_dlg.ApplyStyle(m_dlg.FindTextControl, "CStyle3");
 
@@ -864,13 +864,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			strBldr.Replace(0, 0, "Blah", propsBldr.GetTextProps());
 			ITsString tssExpected = strBldr.GetString();
 			AssertEx.AreTsStringsEqual(tssExpected, m_dlg.FindTextControl.Tss);
-			Assert.IsTrue(m_dlg.FindFormatLabel.Visible);
-			Assert.IsTrue(m_dlg.FindFormatTextLabel.Visible);
-			Assert.AreEqual("CStyle3", m_dlg.FindFormatTextLabel.Text);
+			Assert.That(m_dlg.FindFormatLabel.Visible, Is.True);
+			Assert.That(m_dlg.FindFormatTextLabel.Visible, Is.True);
+			Assert.That(m_dlg.FindFormatTextLabel.Text, Is.EqualTo("CStyle3"));
 
 			// If we check the match WS checkbox we need to show the writing system
 			m_dlg.MatchWsCheckboxChecked = true;
-			Assert.AreEqual("CStyle3, English (Phonetic)", m_dlg.FindFormatTextLabel.Text);
+			Assert.That(m_dlg.FindFormatTextLabel.Text, Is.EqualTo("CStyle3, English (Phonetic)"));
 			m_dlg.MatchWsCheckboxChecked = false;
 
 			strBldr.SetStrPropValue(0, 4, (int)FwTextPropType.ktptNamedStyle, null);
@@ -882,8 +882,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.ApplyStyle(m_dlg.FindTextControl, "<No Style>");
 
 			AssertEx.AreTsStringsEqual(tssExpected, m_dlg.FindTextControl.Tss);
-			Assert.IsFalse(m_dlg.FindFormatLabel.Visible);
-			Assert.IsFalse(m_dlg.FindFormatTextLabel.Visible);
+			Assert.That(m_dlg.FindFormatLabel.Visible, Is.False);
+			Assert.That(m_dlg.FindFormatTextLabel.Visible, Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -902,8 +902,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				null, null, null);
 			m_dlg.Show();
 			Application.DoEvents();
-			Assert.IsFalse(m_dlg.FindFormatLabel.Visible);
-			Assert.IsFalse(m_dlg.FindFormatTextLabel.Visible);
+			Assert.That(m_dlg.FindFormatLabel.Visible, Is.False);
+			Assert.That(m_dlg.FindFormatTextLabel.Visible, Is.False);
 
 			m_dlg.ApplyWS(m_dlg.FindTextControl, Cache.WritingSystemFactory.GetWsFromStr("de"));
 			m_dlg.FindTextControl.Select(0, 4);
@@ -917,16 +917,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			strBldr.Replace(0, 0, "Blah", StyleUtils.CharStyleTextProps("CStyle3", Cache.WritingSystemFactory.GetWsFromStr("de")));
 			ITsString tssExpected = strBldr.GetString();
 			AssertEx.AreTsStringsEqual(tssExpected, m_dlg.FindTextControl.Tss);
-			Assert.IsTrue(m_dlg.MatchWsCheckboxChecked);
-			Assert.IsTrue(m_dlg.FindFormatLabel.Visible);
-			Assert.IsTrue(m_dlg.FindFormatTextLabel.Visible);
-			Assert.AreEqual("Multiple Styles, German", m_dlg.FindFormatTextLabel.Text);
+			Assert.That(m_dlg.MatchWsCheckboxChecked, Is.True);
+			Assert.That(m_dlg.FindFormatLabel.Visible, Is.True);
+			Assert.That(m_dlg.FindFormatTextLabel.Visible, Is.True);
+			Assert.That(m_dlg.FindFormatTextLabel.Text, Is.EqualTo("Multiple Styles, German"));
 
 			// unchecking the match WS should hide the WS name
 			m_dlg.MatchWsCheckboxChecked = false;
-			Assert.IsTrue(m_dlg.FindFormatLabel.Visible);
-			Assert.IsTrue(m_dlg.FindFormatTextLabel.Visible);
-			Assert.AreEqual("Multiple Styles", m_dlg.FindFormatTextLabel.Text);
+			Assert.That(m_dlg.FindFormatLabel.Visible, Is.True);
+			Assert.That(m_dlg.FindFormatTextLabel.Visible, Is.True);
+			Assert.That(m_dlg.FindFormatTextLabel.Text, Is.EqualTo("Multiple Styles"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -945,8 +945,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				null, null, null);
 			m_dlg.Show();
 			Application.DoEvents();
-			Assert.IsFalse(m_dlg.FindFormatLabel.Visible);
-			Assert.IsFalse(m_dlg.FindFormatTextLabel.Visible);
+			Assert.That(m_dlg.FindFormatLabel.Visible, Is.False);
+			Assert.That(m_dlg.FindFormatTextLabel.Visible, Is.False);
 
 			m_dlg.FindTextControl.Select(4, 6);
 			m_dlg.ApplyStyle(m_dlg.FindTextControl, "CStyle2");
@@ -957,9 +957,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			strBldr.Replace(0, 0, "Blah", StyleUtils.CharStyleTextProps(null, Cache.WritingSystemFactory.GetWsFromStr("en-fonipa-x-etic")));
 			ITsString tssExpected = strBldr.GetString();
 			AssertEx.AreTsStringsEqual(tssExpected, m_dlg.FindTextControl.Tss);
-			Assert.IsTrue(m_dlg.FindFormatLabel.Visible);
-			Assert.IsTrue(m_dlg.FindFormatTextLabel.Visible);
-			Assert.AreEqual("Multiple Styles", m_dlg.FindFormatTextLabel.Text);
+			Assert.That(m_dlg.FindFormatLabel.Visible, Is.True);
+			Assert.That(m_dlg.FindFormatTextLabel.Visible, Is.True);
+			Assert.That(m_dlg.FindFormatTextLabel.Text, Is.EqualTo("Multiple Styles"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -978,12 +978,11 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_dlg.ApplyStyle(m_dlg.FindTextControl, "CStyle3");
 
-			Assert.IsTrue(m_dlg.FindTextControl.Focused,
-				"Focus should have returned to Find text box");
+			Assert.That(m_dlg.FindTextControl.Focused, Is.True, "Focus should have returned to Find text box");
 			ITsString tssFind = m_dlg.FindTextControl.Tss;
-			Assert.AreEqual(1, tssFind.RunCount);
-			Assert.AreEqual("CStyle3", tssFind.get_Properties(0).GetStrPropValue(
-				(int)FwTextPropType.ktptNamedStyle));
+			Assert.That(tssFind.RunCount, Is.EqualTo(1));
+			Assert.That(tssFind.get_Properties(0).GetStrPropValue(
+				(int)FwTextPropType.ktptNamedStyle), Is.EqualTo("CStyle3"));
 		}
 		#endregion
 
@@ -1005,7 +1004,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			Application.DoEvents();
 
 			m_dlg.ApplyWS(m_dlg.FindTextControl, Cache.WritingSystemFactory.GetWsFromStr("de"));
-			Assert.IsTrue(m_dlg.FindTextControl.Focused, "Focus should have returned to Find box");
+			Assert.That(m_dlg.FindTextControl.Focused, Is.True, "Focus should have returned to Find box");
 
 			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs,
@@ -1015,15 +1014,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			strBldr.Replace(0, 0, "Blah", propsBldr.GetTextProps());
 			ITsString tssExpected = strBldr.GetString();
 			AssertEx.AreTsStringsEqual(tssExpected, m_dlg.FindTextControl.Tss);
-			Assert.IsTrue(m_dlg.MatchWsCheckboxChecked);
-			Assert.IsTrue(m_dlg.FindFormatLabel.Visible);
-			Assert.IsTrue(m_dlg.FindFormatTextLabel.Visible);
-			Assert.AreEqual("German", m_dlg.FindFormatTextLabel.Text);
+			Assert.That(m_dlg.MatchWsCheckboxChecked, Is.True);
+			Assert.That(m_dlg.FindFormatLabel.Visible, Is.True);
+			Assert.That(m_dlg.FindFormatTextLabel.Visible, Is.True);
+			Assert.That(m_dlg.FindFormatTextLabel.Text, Is.EqualTo("German"));
 
 			// We should only show the WS information if the match WS check box is checked
 			m_dlg.MatchWsCheckboxChecked = false;
-			Assert.IsFalse(m_dlg.FindFormatLabel.Visible);
-			Assert.IsFalse(m_dlg.FindFormatTextLabel.Visible);
+			Assert.That(m_dlg.FindFormatLabel.Visible, Is.False);
+			Assert.That(m_dlg.FindFormatTextLabel.Visible, Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1047,7 +1046,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.ApplyWS(m_dlg.FindTextControl, Cache.WritingSystemFactory.GetWsFromStr("de"));
 			m_dlg.FindTextControl.Select(4, 6);
 			m_dlg.ApplyWS(m_dlg.FindTextControl, Cache.WritingSystemFactory.GetWsFromStr("en"));
-			Assert.IsTrue(m_dlg.FindTextControl.Focused, "Focus should have returned to Find box");
+			Assert.That(m_dlg.FindTextControl.Focused, Is.True, "Focus should have returned to Find box");
 
 			// make the string backwards...
 			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
@@ -1055,15 +1054,15 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			strBldr.Replace(0, 0, "Blah", StyleUtils.CharStyleTextProps(null, Cache.WritingSystemFactory.GetWsFromStr("de")));
 			ITsString tssExpected = strBldr.GetString();
 			AssertEx.AreTsStringsEqual(tssExpected, m_dlg.FindTextControl.Tss);
-			Assert.IsTrue(m_dlg.MatchWsCheckboxChecked);
-			Assert.IsTrue(m_dlg.FindFormatLabel.Visible);
-			Assert.IsTrue(m_dlg.FindFormatTextLabel.Visible);
-			Assert.AreEqual("Multiple Writing Systems", m_dlg.FindFormatTextLabel.Text);
+			Assert.That(m_dlg.MatchWsCheckboxChecked, Is.True);
+			Assert.That(m_dlg.FindFormatLabel.Visible, Is.True);
+			Assert.That(m_dlg.FindFormatTextLabel.Visible, Is.True);
+			Assert.That(m_dlg.FindFormatTextLabel.Text, Is.EqualTo("Multiple Writing Systems"));
 
 			// We should only show the WS information if the match WS check box is checked
 			m_dlg.MatchWsCheckboxChecked = false;
-			Assert.IsFalse(m_dlg.FindFormatLabel.Visible);
-			Assert.IsFalse(m_dlg.FindFormatTextLabel.Visible);
+			Assert.That(m_dlg.FindFormatLabel.Visible, Is.False);
+			Assert.That(m_dlg.FindFormatTextLabel.Visible, Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1081,21 +1080,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_dlg.ApplyWS(m_dlg.FindTextControl, Cache.WritingSystemFactory.GetWsFromStr("de"));
 
-			Assert.IsTrue(m_dlg.FindTextControl.Focused, "Focus should have returned to Find box");
+			Assert.That(m_dlg.FindTextControl.Focused, Is.True, "Focus should have returned to Find box");
 			ITsString tssFind = m_dlg.FindTextControl.Tss;
-			Assert.AreEqual(1, tssFind.RunCount);
+			Assert.That(tssFind.RunCount, Is.EqualTo(1));
 			int nvar;
-			Assert.AreEqual(Cache.WritingSystemFactory.GetWsFromStr("de"), tssFind.get_Properties(0).GetIntPropValues(
-				(int)FwTextPropType.ktptWs, out nvar));
-			Assert.IsTrue(m_dlg.MatchWsCheckboxChecked);
-			Assert.IsTrue(m_dlg.FindFormatLabel.Visible);
-			Assert.IsTrue(m_dlg.FindFormatTextLabel.Visible);
-			Assert.AreEqual("German", m_dlg.FindFormatTextLabel.Text);
+			Assert.That(tssFind.get_Properties(0).GetIntPropValues(
+				(int)FwTextPropType.ktptWs, out nvar), Is.EqualTo(Cache.WritingSystemFactory.GetWsFromStr("de")));
+			Assert.That(m_dlg.MatchWsCheckboxChecked, Is.True);
+			Assert.That(m_dlg.FindFormatLabel.Visible, Is.True);
+			Assert.That(m_dlg.FindFormatTextLabel.Visible, Is.True);
+			Assert.That(m_dlg.FindFormatTextLabel.Text, Is.EqualTo("German"));
 
 			// We should only show the WS information if the match WS check box is checked
 			m_dlg.MatchWsCheckboxChecked = false;
-			Assert.IsFalse(m_dlg.FindFormatLabel.Visible);
-			Assert.IsFalse(m_dlg.FindFormatTextLabel.Visible);
+			Assert.That(m_dlg.FindFormatLabel.Visible, Is.False);
+			Assert.That(m_dlg.FindFormatTextLabel.Visible, Is.False);
 		}
 		#endregion
 
@@ -1123,7 +1122,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.ApplyWS(m_dlg.FindTextControl, Cache.WritingSystemFactory.GetWsFromStr("de"));
 			m_dlg.FindTextControl.Select(4, 6);
 			m_dlg.ApplyWS(m_dlg.FindTextControl, Cache.WritingSystemFactory.GetWsFromStr("en"));
-			Assert.IsTrue(m_dlg.FindTextControl.Focused, "Focus should have returned to Find box");
+			Assert.That(m_dlg.FindTextControl.Focused, Is.True, "Focus should have returned to Find box");
 
 			// make the string backwards...
 			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
@@ -1131,14 +1130,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			strBldr.Replace(0, 0, "Blah", StyleUtils.CharStyleTextProps("CStyle3", Cache.WritingSystemFactory.GetWsFromStr("de")));
 			ITsString tssExpected = strBldr.GetString();
 			AssertEx.AreTsStringsEqual(tssExpected, m_dlg.FindTextControl.Tss);
-			Assert.IsTrue(m_dlg.MatchWsCheckboxChecked);
-			Assert.IsTrue(m_dlg.FindFormatLabel.Visible);
-			Assert.IsTrue(m_dlg.FindFormatTextLabel.Visible);
-			Assert.AreEqual("CStyle3, Multiple Writing Systems", m_dlg.FindFormatTextLabel.Text);
+			Assert.That(m_dlg.MatchWsCheckboxChecked, Is.True);
+			Assert.That(m_dlg.FindFormatLabel.Visible, Is.True);
+			Assert.That(m_dlg.FindFormatTextLabel.Visible, Is.True);
+			Assert.That(m_dlg.FindFormatTextLabel.Text, Is.EqualTo("CStyle3, Multiple Writing Systems"));
 
 			// When we uncheck the match WS checkbox we should hide the WS information
 			m_dlg.MatchWsCheckboxChecked = false;
-			Assert.AreEqual("CStyle3", m_dlg.FindFormatTextLabel.Text);
+			Assert.That(m_dlg.FindFormatTextLabel.Text, Is.EqualTo("CStyle3"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1166,7 +1165,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.FindTextControl.Select(4, 6);
 			m_dlg.ApplyWS(m_dlg.FindTextControl, Cache.WritingSystemFactory.GetWsFromStr("en"));
 			m_dlg.ApplyStyle(m_dlg.FindTextControl, "CStyle2");
-			Assert.IsTrue(m_dlg.FindTextControl.Focused, "Focus should have returned to Find box");
+			Assert.That(m_dlg.FindTextControl.Focused, Is.True, "Focus should have returned to Find box");
 
 			// make the string backwards...
 			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
@@ -1174,15 +1173,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			strBldr.Replace(0, 0, "Blah", StyleUtils.CharStyleTextProps("CStyle3", Cache.WritingSystemFactory.GetWsFromStr("de")));
 			ITsString tssExpected = strBldr.GetString();
 			AssertEx.AreTsStringsEqual(tssExpected, m_dlg.FindTextControl.Tss);
-			Assert.IsTrue(m_dlg.MatchWsCheckboxChecked);
-			Assert.IsTrue(m_dlg.FindFormatLabel.Visible);
-			Assert.IsTrue(m_dlg.FindFormatTextLabel.Visible);
-			Assert.AreEqual("Multiple Styles, Multiple Writing Systems",
-				m_dlg.FindFormatTextLabel.Text);
+			Assert.That(m_dlg.MatchWsCheckboxChecked, Is.True);
+			Assert.That(m_dlg.FindFormatLabel.Visible, Is.True);
+			Assert.That(m_dlg.FindFormatTextLabel.Visible, Is.True);
+			Assert.That(m_dlg.FindFormatTextLabel.Text, Is.EqualTo("Multiple Styles, Multiple Writing Systems"));
 
 			// When we uncheck the match WS checkbox we should hide the WS information
 			m_dlg.MatchWsCheckboxChecked = false;
-			Assert.AreEqual("Multiple Styles", m_dlg.FindFormatTextLabel.Text);
+			Assert.That(m_dlg.FindFormatTextLabel.Text, Is.EqualTo("Multiple Styles"));
 		}
 		#endregion
 
@@ -1203,7 +1201,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
 			m_dlg.VerifySelection(0, 0, 0, 0, 4);
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1223,7 +1221,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindPrevButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 2, 12, 16);
 		}
 
@@ -1243,8 +1241,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.m_fInvalidRegExDisplayed);
-			Assert.IsFalse(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.m_fInvalidRegExDisplayed, Is.True);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1263,8 +1261,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsFalse(m_dlg.m_fInvalidRegExDisplayed);
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.m_fInvalidRegExDisplayed, Is.False);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 0, 0, 6);
 		}
 
@@ -1286,9 +1284,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SimulateFindButtonClick();
 
 			// Make sure the dialog thinks there were no matches.
-			Assert.IsFalse(m_dlg.FindEnvironment.FoundMatch);
-			Assert.AreEqual(FwFindReplaceDlg.MatchType.NoMatchFound,
-				m_dlg.m_matchNotFoundType);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.False);
+			Assert.That(m_dlg.m_matchNotFoundType, Is.EqualTo(FwFindReplaceDlg.MatchType.NoMatchFound));
 			m_dlg.VerifySelection(0, 0, 0, 0, 0);
 		}
 
@@ -1311,9 +1308,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SimulateFindPrevButtonClick();
 
 			// Make sure the dialog thinks there were no matches.
-			Assert.IsFalse(m_dlg.FindEnvironment.FoundMatch);
-			Assert.AreEqual(FwFindReplaceDlg.MatchType.NoMatchFound,
-				m_dlg.m_matchNotFoundType);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.False);
+			Assert.That(m_dlg.m_matchNotFoundType, Is.EqualTo(FwFindReplaceDlg.MatchType.NoMatchFound));
 			m_dlg.VerifySelection(0, 0, 2, 17, 17);
 		}
 
@@ -1334,9 +1330,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				ihvo = 1,
 				tag = StTextTags.kflidParagraphs
 			};
-			Assert.IsNotNull(m_vwRootsite.RootBox.MakeTextSelection(0, 1, levInfo,
+			Assert.That(m_vwRootsite.RootBox.MakeTextSelection(0, 1, levInfo,
 				StTxtParaTags.kflidContents, 1, 0, 0, Cache.WritingSystemFactory.GetWsFromStr("fr"),
-				false, -1, null, true));
+				false, -1, null, true), Is.Not.Null);
 
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
@@ -1345,7 +1341,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 0, 12, 17);
 		}
 
@@ -1358,8 +1354,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Ignore("Need to finish the find previous for this to work")]
 		public void InitialFindPrevWithMatchAfterWrap()
 		{
-			IStTxtPara para = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
-			m_text.ParagraphsOS.Insert(0, para);
+			IStTxtPara para = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(m_text, 0, "Whatever");
 			AddRunToMockedPara(para, "Waldo", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 			m_vwRootsite.RootBox.Reconstruct();
 			SelLevInfo[] levInfo = new SelLevInfo[1];
@@ -1368,9 +1363,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				ihvo = 0,
 				tag = StTextTags.kflidParagraphs
 			};
-			Assert.IsNotNull(m_vwRootsite.RootBox.MakeTextSelection(0, 1, levInfo,
+			Assert.That(m_vwRootsite.RootBox.MakeTextSelection(0, 1, levInfo,
 				StTxtParaTags.kflidContents, 1, 0, 0, Cache.WritingSystemFactory.GetWsFromStr("fr"),
-				false, -1, null, true));
+				false, -1, null, true), Is.Not.Null);
 
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
@@ -1379,7 +1374,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindPrevButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 1, 2, 12, 17);
 		}
 
@@ -1398,13 +1393,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 0, 12, 17);
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 1, 12, 17);
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 2, 12, 17);
 		}
 
@@ -1429,20 +1424,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 1, 0, 0, 5);
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 1, 1, 0, 5);
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 1, 2, 0, 5);
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsFalse(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.False);
 
 			// Make sure the dialog thinks there were no more matches.
-			Assert.AreEqual(FwFindReplaceDlg.MatchType.NoMoreMatchesFound,
-				m_dlg.m_matchNotFoundType);
+			Assert.That(m_dlg.m_matchNotFoundType, Is.EqualTo(FwFindReplaceDlg.MatchType.NoMoreMatchesFound));
 
 			m_dlg.VerifySelection(0, 1, 2, 0, 5); // Selection shouldn't have moved
 		}
@@ -1468,20 +1462,19 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.FindText = TsStringUtils.MakeString("Blah, ", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 1, 0, 6);
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 2, 0, 6);
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 0, 0, 6);
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsFalse(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.False);
 
 			// Make sure the dialog thinks there were no more matches.
-			Assert.AreEqual(FwFindReplaceDlg.MatchType.NoMoreMatchesFound,
-				m_dlg.m_matchNotFoundType);
+			Assert.That(m_dlg.m_matchNotFoundType, Is.EqualTo(FwFindReplaceDlg.MatchType.NoMoreMatchesFound));
 
 			m_dlg.VerifySelection(0, 0, 0, 0, 6); // Selection shouldn't have moved
 		}
@@ -1504,7 +1497,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 0, 12, 17);
 		}
 
@@ -1528,7 +1521,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.PrevPatternText = null;
 
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 0, 0, 5);
 		}
 
@@ -1555,8 +1548,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.PrevPatternText = null;
 
 			m_dlg.SimulateFindButtonClick();
-			Assert.AreEqual("blah".ToCharArray(), m_dlg.FindText.Text.ToCharArray());
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindText.Text.ToCharArray(), Is.EqualTo("blah".ToCharArray()));
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 0, 0, 4);
 		}
 
@@ -1585,7 +1578,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_vwRootsite.RefreshDisplay();
 
 			int origFootnoteCount = m_genesis.FootnotesOS.Count;
-			Assert.AreEqual(1, origFootnoteCount);
+			Assert.That(origFootnoteCount, Is.EqualTo(1));
 
 			// This destroys the selection
 			m_vwRootsite.RootBox.Reconstruct();
@@ -1599,13 +1592,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.PrevPatternText = null;
 
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.SimulateReplaceButtonClick();
 			string expected = "Blah, blah, text" + StringUtils.kChObject;
-			Assert.AreEqual(expected.ToCharArray(), para.Contents.Text.ToCharArray());
+			Assert.That(para.Contents.Text.ToCharArray(), Is.EqualTo(expected.ToCharArray()));
 
 			// Confirm that the footnote was not deleted.
-			Assert.AreEqual(origFootnoteCount, m_genesis.FootnotesOS.Count);
+			Assert.That(m_genesis.FootnotesOS.Count, Is.EqualTo(origFootnoteCount));
 			m_dlg.VerifySelection(0, 0, 0, 17, 17);
 		}
 		#endregion
@@ -1630,8 +1623,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateReplaceButtonClick();
 			m_dlg.VerifySelection(0, 0, 0, 0, 4);
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
-			Assert.AreEqual(m_kTitleText, m_text[0].Contents.Text);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
+			Assert.That(m_text[0].Contents.Text, Is.EqualTo(m_kTitleText));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1654,8 +1647,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SimulateReplaceButtonClick();
 			m_dlg.SimulateReplaceButtonClick();
 			m_dlg.VerifySelection(0, 0, 0, 13, 17);
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
-			Assert.AreEqual("Monkey feet, blah, blah!", m_text[0].Contents.Text);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
+			Assert.That(m_text[0].Contents.Text, Is.EqualTo("Monkey feet, blah, blah!"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1681,7 +1674,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SimulateReplaceButtonClick();
 			m_dlg.SimulateReplaceButtonClick();
 			m_dlg.VerifySelection(0, 0, 0, 12, 16);
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 
 			bldr = TsStringUtils.MakeStrBldr();
 			bldr.Replace(0, 0, ", blah, blah!", StyleUtils.CharStyleTextProps(null, ipaWs));
@@ -1692,7 +1685,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			AssertEx.AreTsStringsEqual(expectedTssReplace, m_text[0].Contents);
 
 			// the cancel button should say "close"
-			Assert.AreEqual("Close", m_dlg.CloseButton.Text);
+			Assert.That(m_dlg.CloseButton.Text, Is.EqualTo("Close"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1726,7 +1719,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			AssertEx.AreTsStringsEqual(BuildTssWithStyle("CStyle2"), m_text[0].Contents);
 
 			// the cancel button should say "close"
-			Assert.AreEqual("Close", m_dlg.CloseButton.Text);
+			Assert.That(m_dlg.CloseButton.Text, Is.EqualTo("Close"));
 		}
 
 		/// <summary>
@@ -1773,7 +1766,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SimulateReplaceButtonClick();
 			m_dlg.SimulateReplaceButtonClick();
 			m_dlg.VerifySelection(0, 0, 0, 12, 16);
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 
 			// Create string with expected results.
 			bldr = TsStringUtils.MakeStrBldr();
@@ -1785,7 +1778,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			AssertEx.AreTsStringsEqual(expectedTssReplace, m_text[0].Contents);
 
 			// the cancel button should say "close"
-			Assert.AreEqual("Close", m_dlg.CloseButton.Text);
+			Assert.That(m_dlg.CloseButton.Text, Is.EqualTo("Close"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1806,14 +1799,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_vwPattern.MatchOldWritingSystem = true;
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
-			Assert.IsTrue(m_dlg.MatchWsCheckboxChecked);
+			Assert.That(m_dlg.MatchWsCheckboxChecked, Is.True);
 			m_dlg.ApplyWS(m_dlg.FindTextControl, Cache.WritingSystemFactory.GetWsFromStr("de"));
 
 			m_dlg.FindText = TsStringUtils.MakeString(string.Empty, Cache.WritingSystemFactory.GetWsFromStr("de"));
 			// This behavior is what is specified in TE-1658. However, there are some usability
 			// issues with this. See comment on TE-1658 for details.
-			Assert.IsFalse(m_dlg.ReplaceTextControl.Enabled,
-				"Replace Text box should be disabled when searching for a WS without text specified");
+			Assert.That(m_dlg.ReplaceTextControl.Enabled, Is.False, "Replace Text box should be disabled when searching for a WS without text specified");
 
 			// Simulate setting the writing system for the replace string
 			m_dlg.ReplaceText = TsStringUtils.MakeString(string.Empty, Cache.WritingSystemFactory.GetWsFromStr("en-fonipa-x-etic"));
@@ -1823,7 +1815,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SimulateReplaceButtonClick();
 			m_dlg.SimulateReplaceButtonClick();
 			m_dlg.VerifySelection(0, 0, 0, 3, 7);
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 
 			// Create string with expected results
 			bldr = para.Contents.GetBldr();
@@ -1857,10 +1849,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			AssertEx.AreTsStringsEqual(expectedTss, m_text[0].Contents);
 
 			// the cancel button should say "close"
-			Assert.AreEqual("Close", m_dlg.CloseButton.Text);
-			Assert.AreEqual(FwFindReplaceDlg.MatchType.ReplaceAllFinished,
-				m_dlg.m_matchNotFoundType);
-			Assert.AreEqual("Finished searching the document and made 3 replacements.", m_dlg.m_matchMsg);
+			Assert.That(m_dlg.CloseButton.Text, Is.EqualTo("Close"));
+			Assert.That(m_dlg.m_matchNotFoundType, Is.EqualTo(FwFindReplaceDlg.MatchType.ReplaceAllFinished));
+			Assert.That(m_dlg.m_matchMsg, Is.EqualTo("Finished searching the document and made 3 replacements."));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1884,9 +1875,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			AssertEx.AreTsStringsEqual(expectedTss, m_text[0].Contents);
 
 			// TE-4839: Button always says Close after we're finished.
-			Assert.AreEqual(FwFindReplaceDlg.MatchType.NoMatchFound, m_dlg.m_matchNotFoundType);
-			Assert.AreEqual("Finished searching the document. The search item was not found.",
-				m_dlg.m_matchMsg);
+			Assert.That(m_dlg.m_matchNotFoundType, Is.EqualTo(FwFindReplaceDlg.MatchType.NoMatchFound));
+			Assert.That(m_dlg.m_matchMsg, Is.EqualTo("Finished searching the document. The search item was not found."));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1914,9 +1904,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			AssertEx.AreTsStringsEqual(expectedTss, m_text[0].Contents);
 
 			// the cancel button should say "close"
-			Assert.AreEqual("Close", m_dlg.CloseButton.Text);
-			Assert.AreEqual(FwFindReplaceDlg.MatchType.ReplaceAllFinished, m_dlg.m_matchNotFoundType);
-			Assert.AreEqual("Finished searching the document and made 3 replacements.", m_dlg.m_matchMsg);
+			Assert.That(m_dlg.CloseButton.Text, Is.EqualTo("Close"));
+			Assert.That(m_dlg.m_matchNotFoundType, Is.EqualTo(FwFindReplaceDlg.MatchType.ReplaceAllFinished));
+			Assert.That(m_dlg.m_matchMsg, Is.EqualTo("Finished searching the document and made 3 replacements."));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1943,9 +1933,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			AssertEx.AreTsStringsEqual(expectedTss, m_text[0].Contents);
 
 			// the cancel button should say "close"
-			Assert.AreEqual("Close", m_dlg.CloseButton.Text);
-			Assert.AreEqual(FwFindReplaceDlg.MatchType.ReplaceAllFinished, m_dlg.m_matchNotFoundType);
-			Assert.AreEqual("Finished searching the document and made 3 replacements.", m_dlg.m_matchMsg);
+			Assert.That(m_dlg.CloseButton.Text, Is.EqualTo("Close"));
+			Assert.That(m_dlg.m_matchNotFoundType, Is.EqualTo(FwFindReplaceDlg.MatchType.ReplaceAllFinished));
+			Assert.That(m_dlg.m_matchMsg, Is.EqualTo("Finished searching the document and made 3 replacements."));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1966,7 +1956,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			// Add free translations to segments
 			var para = m_text[0];
 			const int numSegs = 3;
-			Assert.AreEqual(numSegs, para.SegmentsOS.Count, "Each sentence should be a segment.");
+			Assert.That(para.SegmentsOS.Count, Is.EqualTo(numSegs), "Each sentence should be a segment.");
 			for(var i = 0; i < numSegs; i++)
 				para.SegmentsOS[i].FreeTranslation.set_String(m_wsEn, TsStringUtils.MakeString(string.Format("{0}th Free Translation.", i), m_wsEn));
 
@@ -1980,21 +1970,21 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			// Verify that free translations have been preserved
 			var segments = m_text[0].SegmentsOS;
-			Assert.AreEqual(numSegs, segments.Count, "Replace All should not have changed the segment count.");
+			Assert.That(segments.Count, Is.EqualTo(numSegs), "Replace All should not have changed the segment count.");
 			for(var i = 0; i < numSegs; i++)
 			{
 				expectedTss = TsStringUtils.MakeString(string.Format("{0}th Free Translation.", i), m_wsEn);
 				int outWs;
 				ITsString actualTss;
-				Assert.True(segments[i].FreeTranslation.TryWs(m_wsEn, out outWs, out actualTss));
-				Assert.AreEqual(m_wsEn, outWs);
+				Assert.That(segments[i].FreeTranslation.TryWs(m_wsEn, out outWs, out actualTss), Is.True);
+				Assert.That(outWs, Is.EqualTo(m_wsEn));
 				AssertEx.AreTsStringsEqual(expectedTss, actualTss);
 			}
 
 			// the cancel button should say "close"
-			Assert.AreEqual("Close", m_dlg.CloseButton.Text);
-			Assert.AreEqual(FwFindReplaceDlg.MatchType.ReplaceAllFinished, m_dlg.m_matchNotFoundType);
-			Assert.AreEqual("Finished searching the document and made 3 replacements.", m_dlg.m_matchMsg);
+			Assert.That(m_dlg.CloseButton.Text, Is.EqualTo("Close"));
+			Assert.That(m_dlg.m_matchNotFoundType, Is.EqualTo(FwFindReplaceDlg.MatchType.ReplaceAllFinished));
+			Assert.That(m_dlg.m_matchMsg, Is.EqualTo("Finished searching the document and made 3 replacements."));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2027,7 +2017,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			AssertEx.AreTsStringsEqual(expectedTss, para.Contents);
 
 			// the cancel button should say "close"
-			Assert.AreEqual("Close", m_dlg.CloseButton.Text);
+			Assert.That(m_dlg.CloseButton.Text, Is.EqualTo("Close"));
 		}
 		#endregion
 
@@ -2051,7 +2041,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.SimulateFindButtonClick();
 
 			m_dlg.VerifySelection(0, 0, 0, 0, 0);
-			Assert.IsFalse(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2077,7 +2067,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.ApplyStyle(m_dlg.FindTextControl, "CStyle3");
 			m_dlg.SimulateFindButtonClick();
 
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 0, 6, 14);
 		}
 
@@ -2110,16 +2100,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.ReplaceTextControl.Tss = TsStringUtils.MakeString(string.Empty, Cache.WritingSystemFactory.GetWsFromStr("fr"));
 			m_dlg.ApplyStyle(m_dlg.ReplaceTextControl, "CStyle2");
 			m_dlg.SimulateReplaceButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 0, 6, 14);
 			m_dlg.SimulateReplaceButtonClick();
-			Assert.IsFalse(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.False);
 			m_dlg.VerifySelection(0, 0, 0, 14, 14);
 
 			AssertEx.AreTsStringsEqual(expectedTss, para.Contents);
 
 			// the cancel button should say "close"
-			Assert.AreEqual("Close", m_dlg.CloseButton.Text);
+			Assert.That(m_dlg.CloseButton.Text, Is.EqualTo("Close"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2152,16 +2142,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.ReplaceTextControl.Tss = TsStringUtils.MakeString(string.Empty, Cache.WritingSystemFactory.GetWsFromStr("fr"));
 			m_dlg.ApplyStyle(m_dlg.ReplaceTextControl, "CStyle2");
 			m_dlg.SimulateReplaceButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 0, 6, 14);
 			m_dlg.SimulateReplaceButtonClick();
-			Assert.IsFalse(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.False);
 			m_dlg.VerifySelection(0, 0, 0, 14, 14);
 
 			AssertEx.AreTsStringsEqual(expectedTss, para.Contents);
 
 			// the cancel button should say "close"
-			Assert.AreEqual("Close", m_dlg.CloseButton.Text);
+			Assert.That(m_dlg.CloseButton.Text, Is.EqualTo("Close"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2196,16 +2186,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.ReplaceTextControl.Tss = TsStringUtils.MakeString(string.Empty, Cache.WritingSystemFactory.GetWsFromStr("fr"));
 			m_dlg.ApplyStyle(m_dlg.ReplaceTextControl, "CStyle2");
 			m_dlg.SimulateReplaceButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 0, 6, 14);
 			m_dlg.SimulateReplaceButtonClick();
-			Assert.IsFalse(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.False);
 			m_dlg.VerifySelection(0, 0, 0, 14, 14);
 
 			AssertEx.AreTsStringsEqual(expectedTss, para.Contents);
 
 			// the cancel button should say "close"
-			Assert.AreEqual("Close", m_dlg.CloseButton.Text);
+			Assert.That(m_dlg.CloseButton.Text, Is.EqualTo("Close"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2238,7 +2228,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.FindText = TsStringUtils.MakeString("blah,", m_wsFr.Handle);
 			m_dlg.ReplaceText = TsStringUtils.MakeString("blah", m_wsFr.Handle);
 			m_dlg.SimulateReplaceButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 0, 0, 6);
 			m_dlg.SimulateReplaceButtonClick();
 
@@ -2275,7 +2265,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.ReplaceTextControl.Tss = TsStringUtils.MakeString("blah", m_wsFr.Handle);
 			m_dlg.ApplyStyle(m_dlg.ReplaceTextControl, "CStyle2");
 			m_dlg.SimulateReplaceButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 0, 0, 6);
 			m_dlg.SimulateReplaceButtonClick();
 
@@ -2301,14 +2291,14 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_vwPattern.MatchOldWritingSystem = true;
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
-			Assert.IsTrue(m_dlg.MatchWsCheckboxChecked);
+			Assert.That(m_dlg.MatchWsCheckboxChecked, Is.True);
 
 			m_dlg.FindText = TsStringUtils.MakeString(",", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 			m_dlg.ApplyWS(m_dlg.FindTextControl, Cache.WritingSystemFactory.GetWsFromStr("de"));
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 0, 4, 5);
 		}
 
@@ -2329,13 +2319,13 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_vwPattern.MatchOldWritingSystem = true;
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
-			Assert.IsTrue(m_dlg.MatchWsCheckboxChecked);
+			Assert.That(m_dlg.MatchWsCheckboxChecked, Is.True);
 
 			m_dlg.ApplyWS(m_dlg.FindTextControl, Cache.WritingSystemFactory.GetWsFromStr("de"));
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 0, 3, 7);
 		}
 
@@ -2357,7 +2347,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_vwPattern.MatchDiacritics = true;
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
-			Assert.IsTrue(m_dlg.MatchDiacriticsCheckboxChecked);
+			Assert.That(m_dlg.MatchDiacriticsCheckboxChecked, Is.True);
 
 			// First, search for a base character with no diacritic. Characters in the text
 			// that do have diacritics should not be found.
@@ -2365,10 +2355,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 0, 2, 3);
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 0, 10, 11);
 
 			// Next, search for a character with a diacritic. Only characters in the text
@@ -2376,17 +2366,17 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.FindText = TsStringUtils.MakeString("a\u0301", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 1, 6, 8);
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 2, 6, 8);
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 0, 6, 8);
 
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsFalse(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2407,16 +2397,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_vwPattern.MatchWholeWord = true;
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
-			Assert.IsTrue(m_dlg.MatchWholeWordCheckboxChecked);
+			Assert.That(m_dlg.MatchWholeWordCheckboxChecked, Is.True);
 
 			m_dlg.FindText = TsStringUtils.MakeString("blah", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 0, 0, 4);
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 0, 16, 20);
 		}
 
@@ -2431,16 +2421,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_vwPattern.MatchCase = true;
 			m_dlg.SetDialogValues(Cache, m_vwPattern, m_vwRootsite, false, false,
 				null, null, null);
-			Assert.IsTrue(m_dlg.MatchCaseCheckboxChecked);
+			Assert.That(m_dlg.MatchCaseCheckboxChecked, Is.True);
 
 			m_dlg.FindText = TsStringUtils.MakeString("Blah", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 0, 0, 4);
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 1, 0, 4);
 		}
 		#endregion
@@ -2492,7 +2482,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
 			m_dlg.VerifySelection(0, 0, 0, 0, 4);
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2515,16 +2505,16 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 0, 0, 17);
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 1, 0, 17);
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 2, 0, 17);
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsFalse(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.False);
 			m_dlg.VerifySelection(0, 0, 2, 0, 17);
 		}
 		#endregion
@@ -2646,25 +2636,25 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 			m_dlg.PrevPatternText = null;
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 0, 0, 17);
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 1, 0, 17);
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(0, 0, 2, 0, 17);
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(1, 0, 0, 0, 17);
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(1, 0, 1, 0, 17);
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsTrue(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.True);
 			m_dlg.VerifySelection(1, 0, 2, 0, 17);
 			m_dlg.SimulateFindButtonClick();
-			Assert.IsFalse(m_dlg.FindEnvironment.FoundMatch);
+			Assert.That(m_dlg.FindEnvironment.FoundMatch, Is.False);
 		}
 		#endregion
 	}

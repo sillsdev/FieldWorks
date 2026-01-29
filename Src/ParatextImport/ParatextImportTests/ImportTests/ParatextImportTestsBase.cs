@@ -374,7 +374,7 @@ namespace ParatextImport.ImportTests
 		{
 			s_strBldr = strBldr;
 
-			Assert.AreEqual(text, s_strBldr.get_RunText(iRun));
+			Assert.That(s_strBldr.get_RunText(iRun), Is.EqualTo(text));
 			ITsTextProps ttpExpected = CharStyleTextProps(charStyleName, wsExpected);
 			ITsTextProps ttpRun = s_strBldr.get_Properties(iRun);
 			string sWhy;
@@ -409,12 +409,12 @@ namespace ParatextImport.ImportTests
 			IStFootnote footnote = GetFootnote(iFootnoteIndex);
 
 			string objData = orcProps.GetStrPropValue((int)FwTextPropType.ktptObjData);
-			Assert.AreEqual((char)(int)FwObjDataTypes.kodtOwnNameGuidHot, objData[0]);
+			Assert.That(objData[0], Is.EqualTo((char)(int)FwObjDataTypes.kodtOwnNameGuidHot));
 			// Send the objData string without the first character because the first character
 			// is the object replacement character and the rest of the string is the GUID.
-			Assert.AreEqual(footnote.Guid, MiscUtils.GetGuidFromObjData(objData.Substring(1)));
+			Assert.That(MiscUtils.GetGuidFromObjData(objData.Substring(1)), Is.EqualTo(footnote.Guid));
 			string sOrc = m_importer.NormalParaStrBldr.get_RunText(iRun);
-			Assert.AreEqual(StringUtils.kChObject, sOrc[0]);
+			Assert.That(sOrc[0], Is.EqualTo(StringUtils.kChObject));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -516,17 +516,17 @@ namespace ParatextImport.ImportTests
 			Debug.Assert(tssPara.RunCount > iRun, "Trying to access run #" + iRun +
 				" when there are only " + tssPara.RunCount + " run(s).");
 			string sOrcRun = tssPara.get_RunText(iRun);
-			Assert.AreEqual(1, sOrcRun.Length);
-			Assert.AreEqual(StringUtils.kChObject, sOrcRun[0]);
+			Assert.That(sOrcRun.Length, Is.EqualTo(1));
+			Assert.That(sOrcRun[0], Is.EqualTo(StringUtils.kChObject));
 			ITsTextProps ttpOrcRun = tssPara.get_Properties(iRun);
 			int nDummy;
 			int wsActual = ttpOrcRun.GetIntPropValues((int)FwTextPropType.ktptWs,
 				out nDummy);
-			Assert.AreEqual(ws, wsActual, "Wrong writing system for footnote marker in text");
+			Assert.That(wsActual, Is.EqualTo(ws), "Wrong writing system for footnote marker in text");
 			string objData = ttpOrcRun.GetStrPropValue((int)FwTextPropType.ktptObjData);
 			FwObjDataTypes orcType = (fBT) ? FwObjDataTypes.kodtNameGuidHot :
 				FwObjDataTypes.kodtOwnNameGuidHot;
-			Assert.AreEqual((char)(int)orcType, objData[0]);
+			Assert.That(objData[0], Is.EqualTo((char)(int)orcType));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -559,24 +559,24 @@ namespace ParatextImport.ImportTests
 				Assert.That(footnote.FootnoteMarker.Text, Is.Null);
 			}
 			ILcmOwningSequence<IStPara> footnoteParas = footnote.ParagraphsOS;
-			Assert.AreEqual(1, footnoteParas.Count);
+			Assert.That(footnoteParas.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)footnoteParas[0];
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps(sParaStyleName), para.StyleRules);
+			Assert.That(para.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps(sParaStyleName)));
 			ITsString tss = para.Contents;
-			Assert.AreEqual(1, tss.RunCount);
+			Assert.That(tss.RunCount, Is.EqualTo(1));
 			AssertEx.RunIsCorrect(tss, 0, sFootnoteSegment, null, m_wsVern);
 			// Check Translation
 			if (sFootnoteTransSegment != null)
 			{
-				Assert.AreEqual(1, para.TranslationsOC.Count);
+				Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 				ICmTranslation trans = para.GetBT();
 				tss = trans.Translation.AnalysisDefaultWritingSystem;
-				Assert.AreEqual(1, tss.RunCount);
+				Assert.That(tss.RunCount, Is.EqualTo(1));
 				AssertEx.RunIsCorrect(tss, 0, sFootnoteTransSegment, null, m_wsAnal);
 			}
 			else
 			{
-				Assert.AreEqual(1, para.TranslationsOC.Count);
+				Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 				Assert.That(para.GetBT().Translation.AnalysisDefaultWritingSystem.Text, Is.Null);
 			}
 		}
@@ -596,8 +596,8 @@ namespace ParatextImport.ImportTests
 		{
 			List<ICmPicture> pictures = para.GetPictures();
 			ICmPicture picture = pictures[iPictureIndex];
-			Assert.AreEqual(sPictureCaption, picture.Caption.VernacularDefaultWritingSystem.Text);
-			Assert.AreEqual(sPictureTransCaption, picture.Caption.AnalysisDefaultWritingSystem.Text);
+			Assert.That(picture.Caption.VernacularDefaultWritingSystem.Text, Is.EqualTo(sPictureCaption));
+			Assert.That(picture.Caption.AnalysisDefaultWritingSystem.Text, Is.EqualTo(sPictureTransCaption));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -611,16 +611,14 @@ namespace ParatextImport.ImportTests
 		/// ------------------------------------------------------------------------------------
 		protected void VerifyNewSectionExists(IScrBook book, int iSection)
 		{
-			Assert.AreEqual(iSection + 1, book.SectionsOS.Count);
+			Assert.That(book.SectionsOS.Count, Is.EqualTo(iSection + 1));
 			if (iSection < 0)
 				return;
 
-			Assert.IsTrue(book.SectionsOS[iSection].HeadingOA.IsValidObject);
-			Assert.AreEqual(book.SectionsOS[iSection].HeadingOA,
-				m_importer.SectionHeading); //empty section heading so far
-			Assert.IsTrue(book.SectionsOS[iSection].ContentOA.IsValidObject);
-			Assert.AreEqual(book.SectionsOS[iSection].ContentOA,
-				m_importer.SectionContent); //empty section contents
+			Assert.That(book.SectionsOS[iSection].HeadingOA.IsValidObject, Is.True);
+			Assert.That(m_importer.SectionHeading, Is.EqualTo(book.SectionsOS[iSection].HeadingOA)); //empty section heading so far
+			Assert.That(book.SectionsOS[iSection].ContentOA.IsValidObject, Is.True);
+			Assert.That(m_importer.SectionContent, Is.EqualTo(book.SectionsOS[iSection].ContentOA)); //empty section contents
 		}
 
 		/// ------------------------------------------------------------------------------------

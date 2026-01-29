@@ -1,35 +1,76 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+	<ItemGroup>
+		<PackageReference
+			Include="SIL.IdlImporter"
+			Version="4.0.0-beta0052"
+			PrivateAssets="All"
+			GeneratePathProperty="true"
+		/>
+	</ItemGroup>
 	<ItemGroup>
 		<UsingNamespaces Include="SIL.LCModel.Core.KernelInterfaces" />
 		<UsingNamespaces Include="SIL.LCModel.Utils" />
 	</ItemGroup>
 	<ItemGroup>
-		<ViewsIdhFiles Include="$([System.IO.Path]::Combine($(MSBuildProjectDirectory), '../../views/Render.idh'))"/>
-		<ViewsIdhFiles Include="$([System.IO.Path]::Combine($(MSBuildProjectDirectory), '../../views/Views.idh'))"/>
+		<ViewsIdhFiles Include="$(MSBuildProjectDirectory)/../../views/Render.idh" />
+		<ViewsIdhFiles Include="$(MSBuildProjectDirectory)/../../views/Views.idh" />
 	</ItemGroup>
 	<ItemGroup>
 		<ViewsInputs Include="@(ViewsIdhFiles)" />
 		<ViewsInputs Include="@(ViewsSources)" />
 	</ItemGroup>
-	<Target Name="ViewsCs" Inputs="@(ViewsInputs);$(OutDir)/../Common/ViewsTlb.idl" Outputs="Views.cs">
+	<!-- Ensure native C++ artifacts exist before code generation -->
+	<Target Name="EnsureNativeArtifacts">
+		<PropertyGroup>
+			<!-- Configuration-aware paths: COM artifacts are now in Output/$(Configuration)/Common/
+			     to prevent stale artifact issues when switching Debug/Release -->
+			<ViewsTlbPath>$(FwOutputBase)Common/ViewsTlb.idl</ViewsTlbPath>
+			<FwKernelJsonPath>$(FwOutputBase)Common/FwKernelTlb.json</FwKernelJsonPath>
+		</PropertyGroup>
+		<Warning
+			Text="Native artifacts missing ($(ViewsTlbPath), $(FwKernelJsonPath)). Please build native C++ projects first using 'msbuild Build\Src\NativeBuild\NativeBuild.csproj' before building ViewsInterfaces."
+			Condition="!Exists('$(ViewsTlbPath)') OR !Exists('$(FwKernelJsonPath)')"
+		/>
+		<Error
+			Text="Cannot generate Views.cs without native artifacts. Run: msbuild Build\Src\NativeBuild\NativeBuild.csproj"
+			Condition="!Exists('$(ViewsTlbPath)') OR !Exists('$(FwKernelJsonPath)')"
+		/>
+	</Target>
+	<Target
+		Name="ViewsCs"
+		BeforeTargets="CoreCompile"
+		DependsOnTargets="EnsureNativeArtifacts"
+		Inputs="@(ViewsInputs);$(FwOutputBase)Common/ViewsTlb.idl"
+		Outputs="Views.cs"
+	>
 		<PropertyGroup>
 			<IdlImpVer>4.0.0-beta0052</IdlImpVer>
-			<ViewsTlbSrc>$([System.IO.Path]::GetFullPath('$(OutDir)/../Common/ViewsTlb.idl'))</ViewsTlbSrc>
-			<ViewsRefsJson>$([System.IO.Path]::GetFullPath('$(OutDir)../Common/FwKernelTlb.json'))</ViewsRefsJson>
-			<IdlImporterXmlPath>$([System.IO.Path]::GetFullPath('$(OutDir)../../packages/SIL.IdlImporter.$(IdlImpVer)/build/IDLImporter.xml'))</IdlImporterXmlPath>
+			<ViewsTlbSrc>$([System.IO.Path]::GetFullPath('$(FwOutputBase)Common/ViewsTlb.idl'))</ViewsTlbSrc>
+			<ViewsRefsJson>$([System.IO.Path]::GetFullPath('$(FwOutputBase)Common/FwKernelTlb.json'))</ViewsRefsJson>
+			<IdlImporterXmlPath>$(PkgSIL_IdlImporter)\build\IDLImporter.xml</IdlImporterXmlPath>
 		</PropertyGroup>
-				<!-- Install our dotnet global tool later used for generating Views.cs in the ViewsInterfaces project -->
-		<Exec Command="dotnet tool update --global SIL.IdlImporter.Tool --version $(IdlImpVer)" />
-		<Exec Command="idlimport /c $(IdlImporterXmlPath) /o $(MSBuildProjectDirectory)\Views.cs /i &quot;@(ViewsIdhFiles)&quot; /n SIL.FieldWorks.Common.ViewsInterfaces /u &quot;@(UsingNamespaces)&quot; /r $(ViewsRefsJson) $(ViewsTlbSrc)" />
+		<!-- Ensure output directory exists -->
+		<MakeDir Directories="$(FwOutputBase)Common" ContinueOnError="true" />
+		<!-- Update the global tool -->
+		<Exec
+			Command="dotnet tool update --global SIL.IdlImporter.Tool --version $(IdlImpVer)"
+			ContinueOnError="true"
+		/>
+		<!-- Run IDL import -->
+		<Exec
+			Command="idlimport /c &quot;$(IdlImporterXmlPath)&quot; /o &quot;$(MSBuildProjectDirectory)\Views.cs&quot; /i &quot;@(ViewsIdhFiles)&quot; /n SIL.FieldWorks.Common.ViewsInterfaces /u &quot;@(UsingNamespaces)&quot; /r &quot;$(ViewsRefsJson)&quot; &quot;$(ViewsTlbSrc)&quot;"
+			Condition="Exists('$(ViewsTlbSrc)') AND Exists('$(ViewsRefsJson)')"
+		/>
+		<ItemGroup>
+			<Compile Include="Views.cs" />
+		</ItemGroup>
 	</Target>
-
-	<Target Name="AfterClean">
-		<Delete Files="@(OutputFiles)" ContinueOnError="true"/>
-		<Delete Files="Views.cs;$(OutDir)/../Common/ViewsTlb.iip;$(OutDir)/../Common/ViewsTlb.json" ContinueOnError="true"/>
-	</Target>
-	<Target Name="BeforeBuild" DependsOnTargets="ViewsCs">
-	</Target>
-	<Target Name="AfterBuild">
+	<Target Name="AfterClean" AfterTargets="Clean">
+		<Delete Files="@(OutputFiles)" ContinueOnError="true" />
+		<Delete
+			Files="Views.cs;$(OutputPath)Common/ViewsTlb.iip;$(OutputPath)Common/ViewsTlb.json"
+			ContinueOnError="true"
+		/>
 	</Target>
 </Project>

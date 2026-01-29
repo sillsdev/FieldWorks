@@ -392,7 +392,6 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			writer.WriteStartElement("lexEntryInflType");
 			writer.WriteEndElement();
 			writer.WriteElementString("alloform", "0");
-			string sNullGloss = null;
 			var sbGloss = new StringBuilder();
 			if (string.IsNullOrEmpty(lexEntryInflType.GlossPrepend.BestAnalysisAlternative.Text))
 			{

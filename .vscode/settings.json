@@ -1,0 +1,129 @@
+{
+  "chat.promptFilesRecommendations": {
+    "speckit.constitution": true,
+    "speckit.specify": true,
+    "speckit.plan": true,
+    "speckit.tasks": true,
+    "speckit.implement": true
+  },
+  "resharper.solution.autoOpenLastSolution": true,
+  "chat.tools.terminal.autoApprove": {
+    // ============================================================================
+    // SECURITY NOTE: Commands are matched against the ENTIRE command string.
+    // Chained commands (;, &&, |, &) can bypass autoApprove if ANY approved
+    // pattern matches anywhere in the string. See: github.com/microsoft/vscode/issues/280390
+    //
+    // Defense: Use regex with negative lookahead to reject chains and redirections:
+    //   /^(&\s+)?command(?!.*[;&|<>])/ - approves "command" (optionally invoked with &)
+    //                                    only if NO chaining/redirection operators follow
+    //
+    // COPILOT GUIDANCE: When running multiple commands, prefer separate tool calls
+    // rather than chaining with ; or &. Each command auto-approves individually.
+    // ============================================================================
+
+    // Specify scripts (no chaining allowed)
+    "/^(&\\s+)?\\.specify[\\\\/]scripts[\\\\/][^;&|<>]+$/": true,
+
+    // Read-only PowerShell operations (consolidated with alternation)
+    "/^(&\\s+)?(Get-Content|cat|type)\\b(?!.*[;&|<>])/i": true,
+    "/^(&\\s+)?(Get-ChildItem|ls|dir|tree)\\b(?!.*[;&|<>])/i": true,
+    "/^(&\\s+)?(Test-Path|Get-Location|pwd)\\b(?!.*[;&|<>])/i": true,
+    "/^(&\\s+)?(Get-Item|Get-ItemProperty)\\b(?!.*[;&|<>])/i": true,
+    "/^(&\\s+)?(Select-String|findstr)\\b(?!.*[;&|<>])/i": true,
+    "/^(&\\s+)?(where\\.exe|which|Get-Command)\\b(?!.*[;&|<>])/i": true,
+    "/^(&\\s+)?(Get-Help|Get-Process|Get-Service)\\b(?!.*[;&|<>])/i": true,
+    "/^(&\\s+)?(Get-Variable|Get-Alias|Get-Module|Get-Package)\\b(?!.*[;&|<>])/i": true,
+    "/^(&\\s+)?(Resolve-Path|Split-Path|Join-Path|Convert-Path)\\b(?!.*[;&|<>])/i": true,
+
+    // Git read-only operations (consolidated)
+    "/^(&\\s+)?git\\s+(status|log|ls-files|diff|show|branch|fetch)(?!.*[;&|<>])/": true,
+    "/^(&\\s+)?git\\s+(rev-parse|describe|cat-file|ls-tree|name-rev)(?!.*[;&|<>])/": true,
+    "/^(&\\s+)?git\\s+(worktree\\s+list|remote(\\s+(-v|show))?|config\\s+--get)(?!.*[;&|<>])/": true,
+
+    // Python/scripting (consolidated)
+    "/^(&\\s+)?python\\s+(scripts\\/|-m|\\.github\\/)(?!.*[;&|<>])/": true,
+    "/^(&\\s+)?\\.[\\\\/]scripts[\\\\/](?!.*[;&|<>])/": true,
+
+    // Agent wrapper scripts - explicitly approved (these are designed for auto-approval)
+    "/^(&\\s+)?(\\.[\\\\/])?scripts[\\\\/]Agent[\\\\/][^;&|<>]+\\.ps1/i": true,
+    // PowerShell invocation of scripts (common pattern for bypassing execution policy)
+    "/^(&\\s+)?powershell\\s+(-NoProfile\\s+)?(-ExecutionPolicy\\s+Bypass\\s+)?-File\\s+(\\.[\\\\/])?scripts[\\\\/]/i": true,
+
+    // Build operations (consolidated)
+    "/^(&\\s+)?(msbuild|nuget)\\b(?!.*[;&|<>])/i": true,
+    "/^(&\\s+)?dotnet\\s+(build|restore|clean|publish|test)(?!.*[;&|<>])/": true,
+    "/^(&\\s+)?\\.[\\\\/]build\\.(ps1|sh)(?!.*[;&|<>])/": true,
+
+    // Test operations (consolidated)
+    "/^(&\\s+)?(vstest\\.console(\\.exe)?|nunit3-console(\\.exe)?)\\b(?!.*[;&|<>])/i": true,
+
+    // Environment/agent scripts (consolidated)
+    "/^(&\\s+)?\\.[\\\\/]Build[\\\\/]Agent[\\\\/](?!.*[;&|<>])/": true,
+
+    // Context7 tools (consolidated - safe documentation lookups)
+    "/^(&\\s+)?context7\\s+(get-library-docs|resolve-library-id|search-code|search-repositories)(?!.*[;&|<>])/i": true,
+    "/^(&\\s+)?context7\\s+(avalonia|wpf|dotnet|csharp|msbuild|wix|powershell|git|nunit|vstest)(?!.*[;&|<>])/i": true
+  },
+  "cmake.ignoreCMakeListsMissing": true,
+  "dotnet.defaultSolution": "FieldWorks.sln",
+  "terminal.integrated.env.windows": {
+    "PATH": "${workspaceFolder}\\scripts\\toolshims;${env:PATH}"
+  },
+  // C# Dev Kit test settings
+  "dotnet.unitTests.runSettingsPath": "${workspaceFolder}/Test.runsettings",
+  // Enable VSTest discovery for test explorer
+  "dotnet.unitTests.enableVsTestDiscovery": true,
+  // Exclude external NuGet package tests (SIL.LCModel.Tests, etc.)
+  // These test liblcm internals, not FieldWorks code, and have dependency conflicts
+  "dotnet.unitTests.testCaseFilter": "FullyQualifiedName!~SIL.LCModel.Tests&FullyQualifiedName!~SIL.LCModel.Core.Tests&FullyQualifiedName!~SIL.LCModel.Utils.Tests",
+  // Auto-build works because Src/Directory.Build.props sets OutputPath to Output/$(Configuration)/
+  // This means dotnet build outputs to the same location as ./build.ps1
+  "dotnet.automaticallyBuildProjects": true,
+  // Git Graph extension settings
+  "git-graph.dialog.merge.noFastForward": false,
+  "git-graph.dialog.merge.squashCommits": false,
+
+  // ============================================================================
+  // TASK AUTO-APPROVAL
+  // Tasks are auto-approved if they match these patterns (by task label).
+  // Tasks not listed require manual confirmation.
+  // ============================================================================
+  "chat.tools.tasks.allowedTasks": [
+    // Build tasks (safe - only produce artifacts)
+    "Build",
+    "Build Release",
+
+    // Test tasks (safe - no external changes)
+    "Test",
+    "Test (no build)",
+
+    // CI parity checks (read-only validation)
+    "CI: Whitespace check",
+    "CI: Commit messages",
+    "CI: Full local check",
+
+    // Git read-only operations
+    "Git: Prune remote branches",
+
+    // COPILOT documentation checks (read-only)
+    "COPILOT: Detect updates needed",
+    "COPILOT: Validate docs",
+    "COPILOT: Validate instructions",
+    "COPILOT: Plan all folders",
+
+    // Environment verification (read-only)
+    "Setup: Verify dependencies",
+    "Setup: Defender exclusions (preview)",
+    "Setup: Serena MCP",
+    "Setup: Full environment check",
+    "Installer: Validate prerequisites",
+  ]
+  // ============================================================================
+  // TASKS REQUIRING MANUAL APPROVAL (not in allowedTasks):
+  // - Test (with filter)           (has user input prompt)
+  // - Test (specific project)      (has user input prompt)
+  // - COPILOT: Propose updates     (modifies files)
+  // - COPILOT: Apply change-log    (modifies files)
+  // - Installer: Setup for patch   (downloads artifacts)
+  // ============================================================================
+}

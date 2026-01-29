@@ -134,7 +134,7 @@ namespace LexTextControlsTests
 
 			Assert.That(firstPos.Guid, Is.Not.Null, "Item in the category should not be null Guid");
 			Assert.That(firstPos.SubPossibilitiesOS[0].Guid, Is.Not.Null, "Sub-Item in the category should not be null Guid");
-			Assert.IsFalse(firstPos.SubPossibilitiesOS[0].Guid == Guid.Empty, "Sub-Item in the category should not be Empty Guid");
+			Assert.That(firstPos.SubPossibilitiesOS[0].Guid == Guid.Empty, Is.False, "Sub-Item in the category should not be Empty Guid");
 		}
 
 		[Test]
@@ -171,12 +171,12 @@ namespace LexTextControlsTests
 			var wsTerm = MasterCategory.GetBestWritingSystemForNamedNode(posNode, "term", WSEn, Cache, out var outTerm);
 			var wsDef = MasterCategory.GetBestWritingSystemForNamedNode(posNode, "def", WSEn, Cache, out var outDef);
 
-			Assert.AreEqual(wsAbbrev, WSFr, "self-closing should fall through");
-			Assert.AreEqual(abbrFr, outAbbrev);
-			Assert.AreEqual(wsTerm, WSFr, "empty should fall through");
-			Assert.AreEqual(nameFr, outTerm);
-			Assert.AreEqual(wsDef, WSEn, "populated should be taken");
-			Assert.AreEqual(defEn, outDef);
+			Assert.That(WSFr, Is.EqualTo(wsAbbrev), "self-closing should fall through");
+			Assert.That(outAbbrev, Is.EqualTo(abbrFr));
+			Assert.That(WSFr, Is.EqualTo(wsTerm), "empty should fall through");
+			Assert.That(outTerm, Is.EqualTo(nameFr));
+			Assert.That(WSEn, Is.EqualTo(wsDef), "populated should be taken");
+			Assert.That(outDef, Is.EqualTo(defEn));
 		}
 
 		[Test]
@@ -218,9 +218,9 @@ namespace LexTextControlsTests
 
 			// Verify the category has been added without French text (French will be added by SUT)
 			var prePOS = CheckPos(guid, posList);
-			CollectionAssert.AreEquivalent(s_wssOnlyEn, prePOS.Abbreviation.AvailableWritingSystemIds, "Abbrev should have only English");
-			CollectionAssert.AreEquivalent(s_wssOnlyEn, prePOS.Name.AvailableWritingSystemIds, "Name should have only English");
-			CollectionAssert.AreEquivalent(s_wssOnlyEn, prePOS.Description.AvailableWritingSystemIds, "Def should have only English");
+			Assert.That(prePOS.Abbreviation.AvailableWritingSystemIds, Is.EquivalentTo(s_wssOnlyEn), "Abbrev should have only English");
+			Assert.That(prePOS.Name.AvailableWritingSystemIds, Is.EquivalentTo(s_wssOnlyEn), "Name should have only English");
+			Assert.That(prePOS.Description.AvailableWritingSystemIds, Is.EquivalentTo(s_wssOnlyEn), "Def should have only English");
 
 			doc.LoadXml(string.Format(inputTemplate, guid, abbrFr, nameFr, defFr));
 			posNode = doc.DocumentElement.ChildNodes[0];
@@ -230,12 +230,12 @@ namespace LexTextControlsTests
 				MasterCategory.UpdatePOSStrings(Cache, posNode, prePOS));
 
 			var pos = CheckPos(guid, posList);
-			Assert.AreEqual(abbrFr, pos.Abbreviation.GetAlternativeOrBestTss(wsIdFr, out var wsActual).Text);
-			Assert.AreEqual(wsIdFr, wsActual, "Abbrev WS");
-			Assert.AreEqual(nameFr, pos.Name.GetAlternativeOrBestTss(wsIdFr, out wsActual).Text);
-			Assert.AreEqual(wsIdFr, wsActual, "Name WS");
-			Assert.AreEqual(defFr, pos.Description.GetAlternativeOrBestTss(wsIdFr, out wsActual).Text);
-			Assert.AreEqual(wsIdFr, wsActual, "Def WS");
+			Assert.That(pos.Abbreviation.GetAlternativeOrBestTss(wsIdFr, out var wsActual).Text, Is.EqualTo(abbrFr));
+			Assert.That(wsActual, Is.EqualTo(wsIdFr), "Abbrev WS");
+			Assert.That(pos.Name.GetAlternativeOrBestTss(wsIdFr, out wsActual).Text, Is.EqualTo(nameFr));
+			Assert.That(wsActual, Is.EqualTo(wsIdFr), "Name WS");
+			Assert.That(pos.Description.GetAlternativeOrBestTss(wsIdFr, out wsActual).Text, Is.EqualTo(defFr));
+			Assert.That(wsActual, Is.EqualTo(wsIdFr), "Def WS");
 		}
 
 		[Test]
@@ -317,7 +317,7 @@ namespace LexTextControlsTests
 			var doc = new XmlDocument();
 			doc.LoadXml(inputOnlyEn);
 			var topLevelNodes = doc.DocumentElement?.ChildNodes;
-			Assert.NotNull(topLevelNodes, "keep ReSharper happy");
+			Assert.That(topLevelNodes, Is.Not.Null, "keep ReSharper happy");
 			var ajNode = topLevelNodes[0];
 			var adNode = topLevelNodes[1];
 			var prepNode = adNode.LastChild.PreviousSibling;
@@ -364,16 +364,14 @@ namespace LexTextControlsTests
 
 		private IPartOfSpeech CheckPos(string guid, ICmObject owner)
 		{
-			Assert.True(Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().TryGetObject(new Guid(guid), out var pos),
-				"expected POS should be created with the right guid");
+			Assert.That(Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().TryGetObject(new Guid(guid), out var pos), Is.True, "expected POS should be created with the right guid");
 			Assert.That(pos.Owner, Is.EqualTo(owner), "POS should be created at the right place in the hierarchy");
 			return pos;
 		}
 
 		private void CheckPosDoesNotExist(string id)
 		{
-			Assert.False(Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().TryGetObject(new Guid(id), out _),
-				"default possibility list should not already contain objects that this test creates");
+			Assert.That(Cache.ServiceLocator.GetInstance<IPartOfSpeechRepository>().TryGetObject(new Guid(id), out _), Is.False, "default possibility list should not already contain objects that this test creates");
 		}
 
 		private IPartOfSpeech CreateCustomPos(string name, string abbrev, string definition, int ws, ICmPossibilityList owner)
@@ -392,19 +390,16 @@ namespace LexTextControlsTests
 
 		private static void CheckPosHasOnlyEnglish(IPartOfSpeech pos)
 		{
-			CollectionAssert.AreEquivalent(s_wssOnlyEn, pos.Abbreviation.AvailableWritingSystemIds,
-				$"Abbrev {pos.Abbreviation.BestAnalysisAlternative} should have only English");
-			CollectionAssert.AreEquivalent(s_wssOnlyEn, pos.Name.AvailableWritingSystemIds,
-				$"Name {pos.Name.BestAnalysisAlternative} should have only English");
-			CollectionAssert.AreEquivalent(s_wssOnlyEn, pos.Description.AvailableWritingSystemIds,
-				$"Def of {pos.Name.BestAnalysisAlternative} should have only English");
+			Assert.That(pos.Abbreviation.AvailableWritingSystemIds, Is.EquivalentTo(s_wssOnlyEn), $"Abbrev {pos.Abbreviation.BestAnalysisAlternative} should have only English");
+			Assert.That(pos.Name.AvailableWritingSystemIds, Is.EquivalentTo(s_wssOnlyEn), $"Name {pos.Name.BestAnalysisAlternative} should have only English");
+			Assert.That(pos.Description.AvailableWritingSystemIds, Is.EquivalentTo(s_wssOnlyEn), $"Def of {pos.Name.BestAnalysisAlternative} should have only English");
 		}
 
 		private static void CheckMSA(string expectedText, int expectedWs, IMultiStringAccessor actual)
 		{
 			var actualText = TsStringUtils.NormalizeToNFC(actual.GetAlternativeOrBestTss(expectedWs, out var actualWs).Text);
-			Assert.AreEqual(expectedText, actualText, $"WS Handle\n{expectedWs} requested\n{actualWs} returned");
-			Assert.AreEqual(expectedWs, actualWs, expectedText);
+			Assert.That(actualText, Is.EqualTo(expectedText), $"WS Handle\n{expectedWs} requested\n{actualWs} returned");
+			Assert.That(actualWs, Is.EqualTo(expectedWs), expectedText);
 		}
 	}
 }

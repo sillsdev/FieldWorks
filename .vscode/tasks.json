@@ -1,39 +1,576 @@
 {
-  // See https://go.microsoft.com/fwlink/?LinkId=733558
-  // for the documentation about the tasks.json format
+  // FieldWorks VS Code Tasks
+  // See: https://go.microsoft.com/fwlink/?LinkId=733558
+  //
+  // Design principles:
+  // - Use ./build.ps1 and ./test.ps1 (they auto-detect worktrees)
+  // - Avoid hardcoded paths that vary by machine
+  // - Tasks with inputs can't be auto-run by agents
+  // - Keep task names concise for easier discovery
   "version": "2.0.0",
-  "tasks": [
+  "inputs": [
     {
-      "label": "build recent",
+      "id": "agentCount",
+      "type": "promptString",
+      "description": "Number of agents to spin up",
+      "default": "3"
+    },
+    {
+      "id": "agentFolders",
+      "type": "promptString",
+      "description": "Space-separated Src/<Folder> entries to refresh",
+      "default": "Src/Common"
+    },
+    {
+      "id": "testFilter",
+      "type": "promptString",
+      "description": "VSTest filter (e.g., 'TestCategory!=Slow' or 'FullyQualifiedName~FwUtils')",
+      "default": ""
+    },
+    {
+      "id": "testConfiguration",
+      "type": "pickString",
+      "description": "Test configuration (matches test.ps1 -Configuration)",
+      "options": ["Debug", "Release"],
+      "default": "Debug"
+    },
+    {
+      "id": "testVerbosity",
+      "type": "pickString",
+      "description": "Test verbosity (matches test.ps1 -Verbosity)",
+      "options": ["quiet", "minimal", "normal", "detailed"],
+      "default": "normal"
+    },
+    {
+      "id": "testProject",
+      "type": "promptString",
+      "description": "Path to test project (e.g., Src/Common/FwUtils/FwUtilsTests)",
+      "default": ""
+    },
+    {
+      "id": "worktreeBranch",
+      "type": "promptString",
+      "description": "Branch name for worktree (e.g., spec/my-branch or release/9.3)",
+      "default": ""
+    },
+    {
+      "id": "installerSnapshotOut",
+      "type": "promptString",
+      "description": "Snapshot output path (file or directory)",
+      "default": "Output/InstallerEvidence/Snapshots"
+    },
+    {
+      "id": "installerSnapshotName",
+      "type": "promptString",
+      "description": "Snapshot name (used in filename when output is a directory)",
+      "default": "manual"
+    },
+    {
+      "id": "installerSnapshotBefore",
+      "type": "promptString",
+      "description": "Path to BEFORE snapshot JSON",
+      "default": ""
+    },
+    {
+      "id": "installerSnapshotAfter",
+      "type": "promptString",
+      "description": "Path to AFTER snapshot JSON",
+      "default": ""
+    }
+  ],
+  "tasks": [
+    // ==================== Setup Tasks ====================
+    {
+      "label": "Setup: Colorize Worktree",
       "type": "shell",
-      "command": "Build/build-recent",
+      "command": "./scripts/Setup-WorktreeColor.ps1 -VSCodeWorkspaceFile \"${workspaceFile}\"",
+      "detail": "Sets a unique window color based on the worktree path",
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": [
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command"
+          ]
+        }
+      },
+      "presentation": {
+        "reveal": "silent",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Worktree: Open (picker)",
+      "type": "shell",
+      "command": "./scripts/Setup-WorktreeColor.ps1 -Action Launch",
+      "detail": "Pick a git worktree and open it in a new VS Code window with colorization",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Worktree: Create/Open from branch",
+      "type": "shell",
+      "command": "./scripts/Worktree-CreateFromBranch.ps1 -BranchName \"${input:worktreeBranch}\"",
+      "detail": "Create/open a worktree under ../<repo>.worktrees/<branch> and open it in a new VS Code window (colorized)",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Worktree: Create/Open from branch (picker in terminal)",
+      "type": "shell",
+      "command": "./scripts/Worktree-CreateFromBranch.ps1",
+      "detail": "Create/open a worktree by selecting a branch in the terminal picker (local first, then origin/*)",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Worktree: Create/Open from branch (dry run)",
+      "type": "shell",
+      "command": "./scripts/Worktree-CreateFromBranch.ps1 -BranchName \"${input:worktreeBranch}\" -DryRun",
+      "detail": "Dry run: show where the worktree would be created/opened (no git changes, no VS Code launch)",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Worktree: Rename to branch",
+      "type": "shell",
+      "command": "./scripts/Rename-WorktreeToBranch.ps1",
+      "detail": "Rename (move) the current worktree folder to ../<repo>.worktrees/<current_branch>",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    {
+      "label": "Worktree: Rename to branch (dry run)",
+      "type": "shell",
+      "command": "./scripts/Rename-WorktreeToBranch.ps1 -DryRun",
+      "detail": "Dry run: show where the current worktree would be moved (no changes)",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      }
+    },
+    // ==================== Build Tasks ====================
+    {
+      "label": "Build",
+      "type": "shell",
+      "command": "./build.ps1",
       "group": {
         "kind": "build",
         "isDefault": true
       },
-      "problemMatcher": [
-        "$msCompile"
-      ]
-    },
-    {
-      "label": "remakefw",
-      "type": "shell",
-      "command": "cd Build && build.bat /t:remakefw",
-      "linux": {
-        "command": ". environ && cd Build && ./build /t:remakefw"
+      "detail": "Build FieldWorks (auto-detects worktree)",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
       },
-      "group": "build",
-      "problemMatcher": [
-        "$msCompile"
-      ]
+      "problemMatcher": "$msCompile"
     },
     {
-      "label": "remakefw + test",
+      "label": "Build Release",
       "type": "shell",
-      "command": "cd Build && build.bat /t:remakefw /p:Action=Test",
-      "linux": {
-        "command": ". environ && cd Build && ./build /t:remakefw /p:Action=Test"
-      }
+      "command": "./build.ps1 -Configuration Release",
+      "group": "build",
+      "detail": "Build FieldWorks in Release configuration",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+
+    // ==================== Test Tasks ====================
+    {
+      "label": "Test",
+      "type": "shell",
+      "command": "./test.ps1",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "detail": "Run all tests (auto-detects worktree). See specs/007-test-modernization-vstest/IGNORED_TESTS.md for the tracked skip/ignore inventory.",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Test (list tests)",
+      "type": "shell",
+      "command": "./test.ps1 -ListTests -NoBuild -Configuration ${input:testConfiguration} -Verbosity ${input:testVerbosity}",
+      "group": "test",
+      "detail": "List tests via test.ps1 (requires existing built test assemblies). For known skips/ignores see specs/007-test-modernization-vstest/IGNORED_TESTS.md.",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Test (with filter)",
+      "type": "shell",
+      "command": "./test.ps1 -TestFilter '${input:testFilter}' -Configuration ${input:testConfiguration} -Verbosity ${input:testVerbosity}",
+      "group": "test",
+      "detail": "Run tests with a filter expression. If failures correspond to known ignores/skips, see specs/007-test-modernization-vstest/IGNORED_TESTS.md.",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Test (specific project)",
+      "type": "shell",
+      "command": "./test.ps1 -TestProject '${input:testProject}' -Configuration ${input:testConfiguration} -Verbosity ${input:testVerbosity}",
+      "group": "test",
+      "detail": "Run tests from a specific project. Track known skips/ignores in specs/007-test-modernization-vstest/IGNORED_TESTS.md.",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Test (no build)",
+      "type": "shell",
+      "command": "./test.ps1 -NoBuild -Configuration ${input:testConfiguration} -Verbosity ${input:testVerbosity}",
+      "group": "test",
+      "detail": "Run tests without rebuilding (uses existing binaries). See specs/007-test-modernization-vstest/IGNORED_TESTS.md for skip/ignore context.",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Test (native)",
+      "type": "shell",
+      "command": "./test.ps1 -Native -Configuration ${input:testConfiguration}",
+      "group": "test",
+      "detail": "Run native tests via test.ps1 (dispatches to scripts/Agent/Invoke-CppTest.ps1)",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Test (native, no build)",
+      "type": "shell",
+      "command": "./test.ps1 -Native -NoBuild -Configuration ${input:testConfiguration}",
+      "group": "test",
+      "detail": "Run native tests via test.ps1 without rebuilding",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
+
+    // ==================== CI Parity Checks ====================
+    {
+      "label": "CI: Whitespace check",
+      "type": "shell",
+      "command": "./Build/Agent/check-and-fix-whitespace.ps1",
+      "detail": "Check and fix whitespace issues (matches CI)",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "CI: Commit messages",
+      "type": "shell",
+      "command": "./Build/Agent/commit-messages.ps1",
+      "detail": "Lint commit messages (matches CI)",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "CI: Full local check",
+      "dependsOn": [
+        "CI: Commit messages",
+        "CI: Whitespace check"
+      ],
+      "dependsOrder": "sequence",
+      "detail": "Run all CI checks locally before pushing"
+    },
+
+    // ==================== Environment Setup ====================
+    {
+      "label": "Setup: Verify dependencies",
+      "type": "shell",
+      "command": ".\\Build\\Agent\\Verify-FwDependencies.ps1 -IncludeOptional",
+      "detail": "Check all required build dependencies (VS, MSBuild, .NET, WiX)",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Setup: Defender exclusions (preview)",
+      "type": "shell",
+      "command": ".\\Build\\Agent\\Setup-DefenderExclusions.ps1 -DryRun",
+      "detail": "Preview Windows Defender exclusions for faster builds",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Setup: Serena MCP",
+      "type": "shell",
+      "command": ".\\Build\\Agent\\Setup-Serena.ps1",
+      "detail": "Verify Serena MCP and language servers",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Setup: Full environment check",
+      "dependsOn": [
+        "Setup: Verify dependencies",
+        "Setup: Serena MCP"
+      ],
+      "dependsOrder": "sequence",
+      "detail": "Run all environment verification steps"
+    },
+
+    // ==================== Installer ====================
+    {
+      "label": "Installer: Validate prerequisites",
+      "type": "shell",
+      "command": ".\\Build\\Agent\\Setup-InstallerBuild.ps1 -ValidateOnly",
+      "detail": "Validate WiX, VS, and helper repos for installer builds",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Installer: Setup for patch builds",
+      "type": "shell",
+      "command": ".\\Build\\Agent\\Setup-InstallerBuild.ps1 -SetupPatch",
+      "detail": "Download base build artifacts for patch installers",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Installer Evidence: Snapshot",
+      "type": "shell",
+      "command": "./scripts/Agent/Collect-InstallerSnapshot.ps1 -OutputPath '${input:installerSnapshotOut}' -Name '${input:installerSnapshotName}'",
+      "detail": "Collect a machine snapshot (registry/files/uninstall entries) for installer evidence",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Installer Evidence: Compare snapshots",
+      "type": "shell",
+      "command": "./scripts/Agent/Compare-InstallerSnapshots.ps1 -BeforeSnapshotPath '${input:installerSnapshotBefore}' -AfterSnapshotPath '${input:installerSnapshotAfter}'",
+      "detail": "Compare two snapshot JSON files and print a diff report",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Installer Check: Bundle (Debug, x64)",
+      "type": "shell",
+      "command": "./scripts/Agent/Invoke-InstallerCheck.ps1 -InstallerType Bundle -Configuration Debug -Platform x64",
+      "detail": "Run snapshot -> install bundle -> snapshot -> diff (writes evidence under Output/InstallerEvidence/<RunId>)",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
+
+    // ==================== Git ====================
+    {
+      "label": "Git: Prune remote branches",
+      "type": "shell",
+      "command": "git fetch --prune",
+      "detail": "Remove stale remote-tracking branches",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
+
+    // ==================== Agent Documentation ====================
+    {
+      "label": "Agent: Detect updates needed",
+      "type": "shell",
+      "command": "& { . ./Build/Agent/GitHelpers.ps1; $base = Get-DefaultBranchRef; python .github/detect_copilot_needed.py --base $base --strict }",
+      "detail": "Check which AGENTS.md files need updates",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Agent: Validate docs",
+      "type": "shell",
+      "command": "& { . ./Build/Agent/GitHelpers.ps1; $base = Get-DefaultBranchRef; python .github/check_copilot_docs.py --only-changed --base $base --fail }",
+      "detail": "Validate AGENTS.md files for changed folders",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Agent: Plan all folders",
+      "type": "shell",
+      "command": "& { . ./Build/Agent/GitHelpers.ps1; $base = Get-DefaultBranchRef; python .github/plan_copilot_updates.py --all --fallback-base $base --out .cache/copilot/diff-plan.json }",
+      "detail": "Generate diff plan for all Src folders",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Agent: Propose updates",
+      "type": "shell",
+      "command": "& { . ./Build/Agent/GitHelpers.ps1; $base = Get-DefaultBranchRef; python .github/scaffold_copilot_markdown.py --base $base }",
+      "detail": "Generate AGENTS.md updates for changed folders (modifies files)",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Agent: Apply change-log",
+      "type": "shell",
+      "command": "python .github/copilot_apply_updates.py --plan .cache/copilot/diff-plan.json --folders ${input:agentFolders}",
+      "detail": "Apply auto change-log to selected folders (modifies files)",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": []
     }
   ]
 }
+

@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		protected System.Windows.Forms.CheckBox optMaintenanceAccess;
 		/// <summary></summary>
 		protected System.Windows.Forms.Label lblSelectFeatures;
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 		#endregion
 
 		#region Other Member Variables

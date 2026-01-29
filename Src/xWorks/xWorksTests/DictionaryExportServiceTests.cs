@@ -83,18 +83,16 @@ namespace SIL.FieldWorks.XWorks
 			ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, mainEntry, complexEntry, false);
 			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, mainEntry, variantEntry, "Dialectal Variant");
 
-			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), "Should be generated once");
-			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo), "Should be generated once");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), Is.True, "Should be generated once");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo), Is.True, "Should be generated once");
 
 			ConfiguredXHTMLGeneratorTests.SetPublishAsMinorEntry(complexEntry, false);
 			ConfiguredXHTMLGeneratorTests.SetPublishAsMinorEntry(variantEntry, false);
 
 			//SUT
-			Assert.False(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo),
-				"Hidden minor entry should not be generated");
-			Assert.False(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo),
-				"Hidden minor entry should not be generated");
-			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, mainEntry.Hvo), "Main entry should still be generated");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), Is.False, "Hidden minor entry should not be generated");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo), Is.False, "Hidden minor entry should not be generated");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, mainEntry.Hvo), Is.True, "Main entry should still be generated");
 		}
 
 		[Test]
@@ -108,23 +106,21 @@ namespace SIL.FieldWorks.XWorks
 			ConfiguredXHTMLGeneratorTests.CreateComplexForm(Cache, mainEntry, complexEntry, false);
 			ConfiguredXHTMLGeneratorTests.CreateVariantForm(Cache, mainEntry, variantEntry, "Dialectal Variant");
 
-			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), "Should be generated once");
-			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo), "Should be generated once");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), Is.True, "Should be generated once");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo), Is.True, "Should be generated once");
 
 			ConfiguredXHTMLGeneratorTests.SetPublishAsMinorEntry(complexEntry, false);
 			ConfiguredXHTMLGeneratorTests.SetPublishAsMinorEntry(variantEntry, false);
 
 			//SUT
-			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo),
-				"Lexeme-based hidden minor entry should still be generated, because Complex Forms are Main Entries");
-			Assert.False(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo),
-				"Lexeme-based hidden minor entry should not be generated, because Variants are always Minor Entries");
-			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, mainEntry.Hvo), "Main entry should still be generated");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), Is.True, "Lexeme-based hidden minor entry should still be generated, because Complex Forms are Main Entries");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, variantEntry.Hvo), Is.False, "Lexeme-based hidden minor entry should not be generated, because Variants are always Minor Entries");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, mainEntry.Hvo), Is.True, "Main entry should still be generated");
 
 			var compoundGuid = "1f6ae209-141a-40db-983c-bee93af0ca3c";
 			var complexOptions = (DictionaryNodeListOptions)configModel.Parts[0].DictionaryNodeOptions;
 			complexOptions.Options.First(option => option.Id == compoundGuid).IsEnabled = false; // Disable Compound
-			Assert.False(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), "Should not be generated");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, complexEntry.Hvo), Is.False, "Should not be generated");
 		}
 
 		[Test]
@@ -138,7 +134,7 @@ namespace SIL.FieldWorks.XWorks
 			var configModel = ConfiguredXHTMLGeneratorTests.CreateInterestingConfigurationModel(Cache);
 
 			// SUT
-			Assert.True(DictionaryExportService.IsGenerated(Cache, configModel, variComplexEntry.Hvo), "Should be generated once");
+			Assert.That(DictionaryExportService.IsGenerated(Cache, configModel, variComplexEntry.Hvo), Is.True, "Should be generated once");
 		}
 
 		/// <summary>
@@ -163,8 +159,8 @@ namespace SIL.FieldWorks.XWorks
 				out var decorator, out var entries);
 
 			// Verify: The entries array should not be null or empty
-			Assert.IsNotNull(entries, "Entries array should not be null");
-			Assert.Greater(entries.Length, 0, "Entries array should contain at least the created entries");
+			Assert.That(entries, Is.Not.Null, "Entries array should not be null");
+			Assert.That(entries.Length, Is.GreaterThan(0), "Entries array should contain at least the created entries");
 
 			// Verify: The created entries should be in the returned array
 			Assert.That(entries, Does.Contain(entry1.Hvo), "Entry1 should be in the returned entries");
@@ -172,8 +168,8 @@ namespace SIL.FieldWorks.XWorks
 			Assert.That(entries, Does.Contain(entry3.Hvo), "Entry3 should be in the returned entries");
 
 			// Verify: Clerk and decorator should not be null
-			Assert.IsNotNull(clerk, "Clerk should not be null");
-			Assert.IsNotNull(decorator, "Decorator should not be null");
+			Assert.That(clerk, Is.Not.Null, "Clerk should not be null");
+			Assert.That(decorator, Is.Not.Null, "Decorator should not be null");
 		}
 
 		/// <summary/>
@@ -191,12 +187,11 @@ namespace SIL.FieldWorks.XWorks
 				out var clerk, out var decorator, out _);
 
 			// Verify: The clerk's ListLoadingSuppressed should be false
-			Assert.IsFalse(clerk.ListLoadingSuppressed,
-				"ListLoadingSuppressed should be false when stopSuppressingListLoading is true");
+			Assert.That(clerk.ListLoadingSuppressed, Is.False, "ListLoadingSuppressed should be false when stopSuppressingListLoading is true");
 
 			// Verify: Clerk and decorator should not be null
-			Assert.IsNotNull(clerk, "Clerk should not be null");
-			Assert.IsNotNull(decorator, "Decorator should not be null");
+			Assert.That(clerk, Is.Not.Null, "Clerk should not be null");
+			Assert.That(decorator, Is.Not.Null, "Decorator should not be null");
 		}
 
 		/// <summary/>
@@ -213,12 +208,11 @@ namespace SIL.FieldWorks.XWorks
 			exportService.GetDictionaryFilteredAndSortedEntries(null, false, out var clerk, out var decorator, out _);
 
 			// Verify: The clerk's ListLoadingSuppressed should remain true (default state for export)
-			Assert.IsTrue(clerk.ListLoadingSuppressed,
-				"ListLoadingSuppressed should remain true when stopSuppressingListLoading is false");
+			Assert.That(clerk.ListLoadingSuppressed, Is.True, "ListLoadingSuppressed should remain true when stopSuppressingListLoading is false");
 
 			// Verify: Clerk and decorator should not be null
-			Assert.IsNotNull(clerk, "Clerk should not be null");
-			Assert.IsNotNull(decorator, "Decorator should not be null");
+			Assert.That(clerk, Is.Not.Null, "Clerk should not be null");
+			Assert.That(decorator, Is.Not.Null, "Decorator should not be null");
 		}
 
 		/// <summary/>
@@ -236,18 +230,17 @@ namespace SIL.FieldWorks.XWorks
 				out var clerk, out var decorator, out var domains);
 
 			// Verify: The domains array should not be null
-			Assert.IsNotNull(domains, "Domains array should not be null");
+			Assert.That(domains, Is.Not.Null, "Domains array should not be null");
 
 			// Verify: Clerk and decorator should not be null
-			Assert.IsNotNull(clerk, "Clerk should not be null");
-			Assert.IsNotNull(decorator, "Decorator should not be null");
+			Assert.That(clerk, Is.Not.Null, "Clerk should not be null");
+			Assert.That(decorator, Is.Not.Null, "Decorator should not be null");
 
 			// Verify: If there are semantic domains in the system, they should be returned
 			// (The default database should have semantic domains loaded)
 			if (Cache.LangProject.SemanticDomainListOA != null &&
 				Cache.LangProject.SemanticDomainListOA.PossibilitiesOS.Count > 0)
-				Assert.Greater(domains.Length, 0,
-					"Domains array should contain semantic domains if they exist in the system");
+				Assert.That(domains.Length, Is.GreaterThan(0), "Domains array should contain semantic domains if they exist in the system");
 		}
 
 		/// <summary/>
@@ -316,8 +309,8 @@ namespace SIL.FieldWorks.XWorks
 					config, clerk);
 
 			// Verify: Should return entries
-			Assert.IsNotNull(entries, "Entries should not be null");
-			Assert.Greater(entries.Length, 0, "Should have at least one entry");
+			Assert.That(entries, Is.Not.Null, "Entries should not be null");
+			Assert.That(entries.Length, Is.GreaterThan(0), "Should have at least one entry");
 
 			// Verify: The created entries should be in the array
 			Assert.That(entries, Does.Contain(enEntry1.Hvo), "Should include first entry");

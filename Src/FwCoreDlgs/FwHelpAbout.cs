@@ -28,7 +28,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	{
 		#region Data members
 
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 
 		private const double BytesPerMiB = 1024 * 1024;
 		private const double BytesPerGiB = 1024 * BytesPerMiB;
@@ -45,7 +45,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Label lblFwVersion;
 		private TextBox txtCopyright;
 
-		/// <summary>The assembly of the product-specific EXE (e.g., TE.exe or FLEx.exe).
+		/// <summary>The assembly of the product-specific EXE (e.g., TE.exe or the unified FieldWorks.exe that now hosts FLEx).
 		/// .Net callers should set this.</summary>
 		public Assembly ProductExecutableAssembly { get; set; }
 		#endregion

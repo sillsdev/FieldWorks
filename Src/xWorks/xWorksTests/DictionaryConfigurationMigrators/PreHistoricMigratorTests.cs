@@ -102,9 +102,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			ConfigurableDictionaryNode configNode = null;
 			var oldNode = new XmlDocConfigureDlg.LayoutTreeNode { After = "]", Between = ",", Before = "["};
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(oldNode));
-			Assert.AreEqual(configNode.After, oldNode.After, "After not migrated");
-			Assert.AreEqual(configNode.Between, oldNode.Between, "Between not migrated");
-			Assert.AreEqual(configNode.Before, oldNode.Before, "Before not migrated");
+			Assert.That(oldNode.After, Is.EqualTo(configNode.After), "After not migrated");
+			Assert.That(oldNode.Between, Is.EqualTo(configNode.Between), "Between not migrated");
+			Assert.That(oldNode.Before, Is.EqualTo(configNode.Before), "Before not migrated");
 		}
 
 		///<summary/>
@@ -175,9 +175,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var model = new DictionaryConfigurationModel { Version = PreHistoricMigrator.VersionPre83, Parts = new List<ConfigurableDictionaryNode> { mainEntryNode } };
 
 			m_migrator.CopyDefaultsIntoConfigNode(model, oldSubsensesNode, newSubsensesNode);
-			Assert.AreEqual(oldSubsensesNode.Children[0].Children[0].Between, ",", "Between not migrated");
-			Assert.AreEqual(oldSubsensesNode.Children[0].Children[0].Before, "@", "Before not migrated");
-			Assert.AreEqual(oldSubsensesNode.Children[0].Children[0].After, "@", "After not migrated");
+			Assert.That(oldSubsensesNode.Children[0].Children[0].Between, Is.EqualTo(","), "Between not migrated");
+			Assert.That(oldSubsensesNode.Children[0].Children[0].Before, Is.EqualTo("@"), "Before not migrated");
+			Assert.That(oldSubsensesNode.Children[0].Children[0].After, Is.EqualTo("@"), "After not migrated");
 		}
 
 		///<summary/>
@@ -267,8 +267,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				m_migrator.CopyDefaultsIntoConfigNode(model, oldSubsensesNode, newSubsensesNode);
 			}
-			Assert.AreEqual(oldSubsensesNode.Children[0].Children[0].FieldDescription, "ExampleSentences", "Defaults not copied in for fields before Subsenses");
-			Assert.AreEqual(oldSubsensesNode.Children[2].FieldDescription, "PostSubsenses", "Defaults not copied into fields following Subsenses");
+			Assert.That(oldSubsensesNode.Children[0].Children[0].FieldDescription, Is.EqualTo("ExampleSentences"), "Defaults not copied in for fields before Subsenses");
+			Assert.That(oldSubsensesNode.Children[2].FieldDescription, Is.EqualTo("PostSubsenses"), "Defaults not copied into fields following Subsenses");
 		}
 
 		///<summary/>
@@ -278,7 +278,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			ConfigurableDictionaryNode configNode = null;
 			var oldNode = new XmlDocConfigureDlg.LayoutTreeNode { StyleName = "Dictionary-Headword"};
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(oldNode));
-			Assert.AreEqual(configNode.Style, oldNode.StyleName, "Style not migrated");
+			Assert.That(oldNode.StyleName, Is.EqualTo(configNode.Style), "Style not migrated");
 		}
 
 		///<summary/>
@@ -289,9 +289,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var oldMinorNode = new XmlDocConfigureDlg.LayoutTreeNode { Label = MinorEntryOldLabel, ClassName = "LexEntry" };
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(oldMainNode));
-			Assert.AreEqual(configNode.Label, oldMainNode.Label, "Label Main Entry root node was not migrated");
+			Assert.That(oldMainNode.Label, Is.EqualTo(configNode.Label), "Label Main Entry root node was not migrated");
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(oldMinorNode));
-			Assert.AreEqual(configNode.Label, oldMinorNode.Label, "Label for Minor Entry root node was not migrated");
+			Assert.That(oldMinorNode.Label, Is.EqualTo(configNode.Label), "Label for Minor Entry root node was not migrated");
 		}
 
 		[Test]
@@ -357,20 +357,20 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			CssGeneratorTests.PopulateFieldsForTesting(currentDefaultModel);
 
 			m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, currentDefaultModel);
-			Assert.IsFalse(convertedModel.IsRootBased, "Lexeme-based should not be Root-based!");
-			Assert.AreEqual(3, convertedModel.Parts.Count, "Number of top-level nodes");
+			Assert.That(convertedModel.IsRootBased, Is.False, "Lexeme-based should not be Root-based!");
+			Assert.That(convertedModel.Parts.Count, Is.EqualTo(3), "Number of top-level nodes");
 			convertedMainNode = convertedModel.Parts[0];
-			Assert.AreEqual("Main Entry", convertedMainNode.Label);
-			Assert.AreEqual("LexEntry", convertedMainNode.FieldDescription, "Main Field");
-			Assert.AreEqual(beforeMainHeadword, convertedMainNode.Children[0].Before, "Before Main Headword");
+			Assert.That(convertedMainNode.Label, Is.EqualTo("Main Entry"));
+			Assert.That(convertedMainNode.FieldDescription, Is.EqualTo("LexEntry"), "Main Field");
+			Assert.That(convertedMainNode.Children[0].Before, Is.EqualTo(beforeMainHeadword), "Before Main Headword");
 			convertedMainNode = convertedModel.Parts[1];
-			Assert.AreEqual(MainEntryComplexLabel, convertedMainNode.Label);
-			Assert.AreEqual("LexEntry", convertedMainNode.FieldDescription, "Main (Complex) Field");
-			Assert.AreEqual(currentDefaultModel.Parts[1].Style, convertedMainNode.Style);
-			Assert.AreEqual(beforeMainHeadword, convertedMainNode.Children[0].Before, "Before Main (Complex) Headword");
+			Assert.That(convertedMainNode.Label, Is.EqualTo(MainEntryComplexLabel));
+			Assert.That(convertedMainNode.FieldDescription, Is.EqualTo("LexEntry"), "Main (Complex) Field");
+			Assert.That(convertedMainNode.Style, Is.EqualTo(currentDefaultModel.Parts[1].Style));
+			Assert.That(convertedMainNode.Children[0].Before, Is.EqualTo(beforeMainHeadword), "Before Main (Complex) Headword");
 			var convertedVariantNode = convertedModel.Parts[2];
-			Assert.AreEqual(MinorEntryVariantLabel, convertedVariantNode.Label);
-			Assert.AreEqual("LexEntry", convertedVariantNode.FieldDescription, "Minor (Variant) Field");
+			Assert.That(convertedVariantNode.Label, Is.EqualTo(MinorEntryVariantLabel));
+			Assert.That(convertedVariantNode.FieldDescription, Is.EqualTo("LexEntry"), "Minor (Variant) Field");
 		}
 
 		[Test]
@@ -423,7 +423,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 			// SUT
 			m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, currentDefaultModel);
-			Assert.AreEqual(PreHistoricMigrator.VersionAlpha1, convertedModel.Version);
+			Assert.That(convertedModel.Version, Is.EqualTo(PreHistoricMigrator.VersionAlpha1));
 		}
 
 		[Test]
@@ -433,9 +433,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var convertedMinorEntryNode = convertedModel.Parts[1];
 			m_migrator.CopyDefaultsIntoMinorEntryNode(convertedModel, convertedMinorEntryNode, BuildCurrentDefaultMinorEntryNodes().Parts[1],
 				DictionaryNodeListOptions.ListIds.Complex);
-			Assert.AreEqual(MinorEntryComplexLabel, convertedMinorEntryNode.Label);
-			Assert.AreEqual(DictionaryNodeListOptions.ListIds.Complex,
-				((DictionaryNodeListOptions)convertedMinorEntryNode.DictionaryNodeOptions).ListId);
+			Assert.That(convertedMinorEntryNode.Label, Is.EqualTo(MinorEntryComplexLabel));
+			Assert.That(((DictionaryNodeListOptions)convertedMinorEntryNode.DictionaryNodeOptions).ListId, Is.EqualTo(DictionaryNodeListOptions.ListIds.Complex));
 		}
 
 		[Test]
@@ -449,7 +448,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				DictionaryNodeListOptions.ListIds.Complex);
 			var options = ((DictionaryNodeListOptions)convertedMinorEntryNode.DictionaryNodeOptions).Options;
 			var complexTypeGuids = m_migrator.AvailableComplexFormTypes;
-			Assert.AreEqual(complexTypeGuids.Count(), options.Count, "All Complex Form Types should be present");
+			Assert.That(options.Count, Is.EqualTo(complexTypeGuids.Count()), "All Complex Form Types should be present");
 			foreach (var option in options)
 			{
 				Assert.That(option.IsEnabled);
@@ -479,12 +478,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				DictionaryNodeListOptions.ListIds.Complex);
 			var resultOptions = ((DictionaryNodeListOptions)convertedMinorEntryNode.DictionaryNodeOptions).Options;
 
-			Assert.AreEqual(expectedOptions.Count, resultOptions.Count);
+			Assert.That(resultOptions.Count, Is.EqualTo(expectedOptions.Count));
 			var j = 0;
 			foreach (var option in expectedOptions)
 			{
-				Assert.AreEqual(option.Id, resultOptions[j].Id);
-				Assert.AreEqual(option.IsEnabled, resultOptions[j++].IsEnabled);
+				Assert.That(resultOptions[j].Id, Is.EqualTo(option.Id));
+				Assert.That(resultOptions[j++].IsEnabled, Is.EqualTo(option.IsEnabled));
 			}
 		}
 
@@ -563,8 +562,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 				}
 			};
 
-			Assert.AreEqual(isUnspecifiedComplexSelected || isSpecifiedComplexSelected, m_migrator.HasComplexFormTypesSelected(options), "Complex");
-			Assert.AreEqual(isUnspecifiedVariantSelected || isSpecifiedVariantSelected, m_migrator.HasVariantTypesSelected(options), "Variant");
+			Assert.That(m_migrator.HasComplexFormTypesSelected(options), Is.EqualTo(isUnspecifiedComplexSelected || isSpecifiedComplexSelected), "Complex");
+			Assert.That(m_migrator.HasVariantTypesSelected(options), Is.EqualTo(isUnspecifiedVariantSelected || isSpecifiedVariantSelected), "Variant");
 		}
 
 		///<summary/>
@@ -575,9 +574,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var untickedNode = new XmlDocConfigureDlg.LayoutTreeNode { Checked = false };
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(tickedNode));
-			Assert.AreEqual(configNode.IsEnabled, tickedNode.Checked, "Checked node in old tree did not set IsEnabled correctly after migration");
+			Assert.That(tickedNode.Checked, Is.EqualTo(configNode.IsEnabled), "Checked node in old tree did not set IsEnabled correctly after migration");
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(untickedNode));
-			Assert.AreEqual(configNode.IsEnabled, untickedNode.Checked, "Unchecked node in old tree did not set IsEnabled correctly after migration");
+			Assert.That(untickedNode.Checked, Is.EqualTo(configNode.IsEnabled), "Unchecked node in old tree did not set IsEnabled correctly after migration");
 		}
 
 		///<summary/>
@@ -587,10 +586,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var nodeWithWs = new XmlDocConfigureDlg.LayoutTreeNode { WsType = "analysis", WsLabel = "analysis"};
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
-			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
-			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
+			Assert.That(configNode.DictionaryNodeOptions, Is.Not.Null, "No DictionaryNodeOptions were created for a treenode with a writing system");
+			Assert.That(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, Is.True, "Writing system options node not created");
 			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis);
+			Assert.That(DictionaryNodeWritingSystemOptions.WritingSystemType.Analysis, Is.EqualTo(wsOpts.WsType));
 			Assert.That(wsOpts.Options, Is.Not.Null, "analysis choice did not result in any options being created.");
 		}
 
@@ -601,10 +600,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var nodeWithWs = new XmlDocConfigureDlg.LayoutTreeNode { WsType = "vernacular", WsLabel = "vernacular" };
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
-			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
-			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
+			Assert.That(configNode.DictionaryNodeOptions, Is.Not.Null, "No DictionaryNodeOptions were created for a treenode with a writing system");
+			Assert.That(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, Is.True, "Writing system options node not created");
 			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular);
+			Assert.That(DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular, Is.EqualTo(wsOpts.WsType));
 			Assert.That(wsOpts.Options, Is.Not.Null, "vernacular choice did not result in any options being created.");
 		}
 
@@ -615,10 +614,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var nodeWithWs = new XmlDocConfigureDlg.LayoutTreeNode { WsType = "vernacular analysis", WsLabel = "vernacular" };
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
-			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
-			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
+			Assert.That(configNode.DictionaryNodeOptions, Is.Not.Null, "No DictionaryNodeOptions were created for a treenode with a writing system");
+			Assert.That(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, Is.True, "Writing system options node not created");
 			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Both);
+			Assert.That(DictionaryNodeWritingSystemOptions.WritingSystemType.Both, Is.EqualTo(wsOpts.WsType));
 			Assert.That(wsOpts.Options, Is.Not.Null, "vernacular analysis choice did not result in any options being created.");
 			Assert.That(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "vernacular"), Is.Not.Null, "vernacular choice was not migrated.");
 		}
@@ -630,10 +629,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var nodeWithWs = new XmlDocConfigureDlg.LayoutTreeNode { WsType = "pronunciation", WsLabel = "pronunciation" };
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
-			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
-			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
+			Assert.That(configNode.DictionaryNodeOptions, Is.Not.Null, "No DictionaryNodeOptions were created for a treenode with a writing system");
+			Assert.That(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, Is.True, "Writing system options node not created");
 			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation);
+			Assert.That(DictionaryNodeWritingSystemOptions.WritingSystemType.Pronunciation, Is.EqualTo(wsOpts.WsType));
 			Assert.That(wsOpts.Options, Is.Not.Null, "pronunciation choice did not result in any options being created.");
 			Assert.That(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "pronunciation"), Is.Not.Null, "pronunciation choice was not migrated.");
 		}
@@ -645,10 +644,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var nodeWithWs = new XmlDocConfigureDlg.LayoutTreeNode { WsType = "analysis vernacular", WsLabel = "analysis" };
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
-			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
-			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
+			Assert.That(configNode.DictionaryNodeOptions, Is.Not.Null, "No DictionaryNodeOptions were created for a treenode with a writing system");
+			Assert.That(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, Is.True, "Writing system options node not created");
 			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Both);
+			Assert.That(DictionaryNodeWritingSystemOptions.WritingSystemType.Both, Is.EqualTo(wsOpts.WsType));
 			Assert.That(wsOpts.Options, Is.Not.Null, "analysis vernacular choice did not result in any options being created.");
 			Assert.That(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "analysis"), Is.Not.Null, "analysis choice was not migrated.");
 		}
@@ -660,10 +659,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var nodeWithWs = new XmlDocConfigureDlg.LayoutTreeNode { WsType = "vernacular", WsLabel = "fr" };
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
-			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
-			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
+			Assert.That(configNode.DictionaryNodeOptions, Is.Not.Null, "No DictionaryNodeOptions were created for a treenode with a writing system");
+			Assert.That(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, Is.True, "Writing system options node not created");
 			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular);
+			Assert.That(DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular, Is.EqualTo(wsOpts.WsType));
 			Assert.That(wsOpts.Options, Is.Not.Null, "French choice did not result in any options being created.");
 			Assert.That(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "fr"), Is.Not.Null, "French choice was not migrated.");
 		}
@@ -675,10 +674,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var nodeWithWs = new XmlDocConfigureDlg.LayoutTreeNode { WsType = "vernacular", WsLabel = "fr, hi" };
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
-			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
-			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
+			Assert.That(configNode.DictionaryNodeOptions, Is.Not.Null, "No DictionaryNodeOptions were created for a treenode with a writing system");
+			Assert.That(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, Is.True, "Writing system options node not created");
 			var wsOpts = configNode.DictionaryNodeOptions as DictionaryNodeWritingSystemOptions;
-			Assert.AreEqual(wsOpts.WsType, DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular);
+			Assert.That(DictionaryNodeWritingSystemOptions.WritingSystemType.Vernacular, Is.EqualTo(wsOpts.WsType));
 			Assert.That(wsOpts.Options, Is.Not.Null, "two languages did not result in ws options being created");
 			Assert.That(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "fr"), Is.Not.Null, "French choice was not migrated.");
 			Assert.That(wsOpts.Options.Find(option => option.IsEnabled && option.Id == "hi"), Is.Not.Null, "hi choice was not migrated.");
@@ -692,15 +691,15 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			ConfigurableDictionaryNode configNode = null;
 
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
-			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a writing system");
-			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Writing system options node not created");
+			Assert.That(configNode.DictionaryNodeOptions, Is.Not.Null, "No DictionaryNodeOptions were created for a treenode with a writing system");
+			Assert.That(configNode.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, Is.True, "Writing system options node not created");
 			var wsOpts = (DictionaryNodeWritingSystemOptions)configNode.DictionaryNodeOptions;
-			Assert.IsTrue(wsOpts.DisplayWritingSystemAbbreviations, "ShowWsLabels true value did not convert into DisplayWritingSystemAbbreviation");
+			Assert.That(wsOpts.DisplayWritingSystemAbbreviations, Is.True, "ShowWsLabels true value did not convert into DisplayWritingSystemAbbreviation");
 			nodeWithWs.ShowWsLabels = false;
 
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithWs));
 			wsOpts = (DictionaryNodeWritingSystemOptions)configNode.DictionaryNodeOptions;
-			Assert.IsFalse(wsOpts.DisplayWritingSystemAbbreviations, "ShowWsLabels false value did not convert into DisplayWritingSystemAbbreviation");
+			Assert.That(wsOpts.DisplayWritingSystemAbbreviations, Is.False, "ShowWsLabels false value did not convert into DisplayWritingSystemAbbreviation");
 		}
 
 		///<summary/>
@@ -712,12 +711,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			ConfigurableDictionaryNode configNode = null;
 
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithSequence));
-			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a LexReferenceInfo");
-			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeListOptions, "List system options node not created");
+			Assert.That(configNode.DictionaryNodeOptions, Is.Not.Null, "No DictionaryNodeOptions were created for a treenode with a LexReferenceInfo");
+			Assert.That(configNode.DictionaryNodeOptions is DictionaryNodeListOptions, Is.True, "List system options node not created");
 			var lexRelationOptions = configNode.DictionaryNodeOptions as DictionaryNodeListOptions;
-			Assert.AreEqual(lexRelationOptions.Options.Count, 1);
-			Assert.AreEqual(lexRelationOptions.Options[0].Id, enabledGuid.Substring(1));
-			Assert.IsTrue(lexRelationOptions.Options[0].IsEnabled);
+			Assert.That(lexRelationOptions.Options.Count, Is.EqualTo(1));
+			Assert.That(enabledGuid.Substring(1), Is.EqualTo(lexRelationOptions.Options[0].Id));
+			Assert.That(lexRelationOptions.Options[0].IsEnabled, Is.True);
 		}
 
 		///<summary/>
@@ -729,12 +728,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			ConfigurableDictionaryNode configNode = null;
 
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithSequence));
-			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a LexReferenceInfo");
-			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeListOptions, "List system options node not created");
+			Assert.That(configNode.DictionaryNodeOptions, Is.Not.Null, "No DictionaryNodeOptions were created for a treenode with a LexReferenceInfo");
+			Assert.That(configNode.DictionaryNodeOptions is DictionaryNodeListOptions, Is.True, "List system options node not created");
 			var lexRelationOptions = configNode.DictionaryNodeOptions as DictionaryNodeListOptions;
-			Assert.AreEqual(lexRelationOptions.Options.Count, 1);
-			Assert.AreEqual(lexRelationOptions.Options[0].Id, disabledGuid.Substring(1));
-			Assert.IsFalse(lexRelationOptions.Options[0].IsEnabled);
+			Assert.That(lexRelationOptions.Options.Count, Is.EqualTo(1));
+			Assert.That(disabledGuid.Substring(1), Is.EqualTo(lexRelationOptions.Options[0].Id));
+			Assert.That(lexRelationOptions.Options[0].IsEnabled, Is.False);
 		}
 
 		///<summary>Test that a list with two guids migrates both items and keeps their order</summary>
@@ -748,14 +747,14 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			ConfigurableDictionaryNode configNode = null;
 
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithSequence));
-			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for a treenode with a LexReferenceInfo");
-			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeListOptions, "List system options node not created");
+			Assert.That(configNode.DictionaryNodeOptions, Is.Not.Null, "No DictionaryNodeOptions were created for a treenode with a LexReferenceInfo");
+			Assert.That(configNode.DictionaryNodeOptions is DictionaryNodeListOptions, Is.True, "List system options node not created");
 			var lexRelationOptions = configNode.DictionaryNodeOptions as DictionaryNodeListOptions;
-			Assert.AreEqual(lexRelationOptions.Options.Count, 2);
-			Assert.AreEqual(lexRelationOptions.Options[0].Id, enabledGuid);
-			Assert.IsTrue(lexRelationOptions.Options[0].IsEnabled);
-			Assert.AreEqual(lexRelationOptions.Options[1].Id, disabledGuid);
-			Assert.IsFalse(lexRelationOptions.Options[1].IsEnabled);
+			Assert.That(lexRelationOptions.Options.Count, Is.EqualTo(2));
+			Assert.That(enabledGuid, Is.EqualTo(lexRelationOptions.Options[0].Id));
+			Assert.That(lexRelationOptions.Options[0].IsEnabled, Is.True);
+			Assert.That(disabledGuid, Is.EqualTo(lexRelationOptions.Options[1].Id));
+			Assert.That(lexRelationOptions.Options[1].IsEnabled, Is.False);
 		}
 
 		///<summary>Subentries node should have "Display .. in a Paragraph" checked (LT-15834).</summary>
@@ -771,11 +770,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 
 			var configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(node);
-			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created");
+			Assert.That(configNode.DictionaryNodeOptions, Is.Not.Null, "No DictionaryNodeOptions were created");
 
-			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeListAndParaOptions, "wrong type");
+			Assert.That(configNode.DictionaryNodeOptions is DictionaryNodeListAndParaOptions, Is.True, "wrong type");
 			var options = (DictionaryNodeListAndParaOptions)configNode.DictionaryNodeOptions;
-			Assert.IsTrue(options.DisplayEachInAParagraph, "Did not set");
+			Assert.That(options.DisplayEachInAParagraph, Is.True, "Did not set");
 		}
 
 		///<summary/>
@@ -787,12 +786,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			ConfigurableDictionaryNode configNode = null;
 
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithSequence));
-			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for the treenode");
-			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeListOptions, "List system options node not created");
+			Assert.That(configNode.DictionaryNodeOptions, Is.Not.Null, "No DictionaryNodeOptions were created for the treenode");
+			Assert.That(configNode.DictionaryNodeOptions is DictionaryNodeListOptions, Is.True, "List system options node not created");
 			var lexRelationOptions = configNode.DictionaryNodeOptions as DictionaryNodeListOptions;
-			Assert.AreEqual(lexRelationOptions.Options.Count, 1);
-			Assert.AreEqual(lexRelationOptions.Options[0].Id, enabledGuid.Substring(1));
-			Assert.IsTrue(lexRelationOptions.Options[0].IsEnabled);
+			Assert.That(lexRelationOptions.Options.Count, Is.EqualTo(1));
+			Assert.That(enabledGuid.Substring(1), Is.EqualTo(lexRelationOptions.Options[0].Id));
+			Assert.That(lexRelationOptions.Options[0].IsEnabled, Is.True);
 		}
 
 		///<summary/>
@@ -804,12 +803,12 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			ConfigurableDictionaryNode configNode = null;
 
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(nodeWithSequence));
-			Assert.NotNull(configNode.DictionaryNodeOptions, "No DictionaryNodeOptions were created for the treenode");
-			Assert.IsTrue(configNode.DictionaryNodeOptions is DictionaryNodeListOptions, "List system options node not created");
+			Assert.That(configNode.DictionaryNodeOptions, Is.Not.Null, "No DictionaryNodeOptions were created for the treenode");
+			Assert.That(configNode.DictionaryNodeOptions is DictionaryNodeListOptions, Is.True, "List system options node not created");
 			var lexRelationOptions = configNode.DictionaryNodeOptions as DictionaryNodeListOptions;
-			Assert.AreEqual(lexRelationOptions.Options.Count, 1);
-			Assert.AreEqual(lexRelationOptions.Options[0].Id, disabledGuid.Substring(1));
-			Assert.IsFalse(lexRelationOptions.Options[0].IsEnabled);
+			Assert.That(lexRelationOptions.Options.Count, Is.EqualTo(1));
+			Assert.That(disabledGuid.Substring(1), Is.EqualTo(lexRelationOptions.Options[0].Id));
+			Assert.That(lexRelationOptions.Options[0].IsEnabled, Is.False);
 		}
 
 		/// <summary>
@@ -821,14 +820,14 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var duplicateNode = new XmlDocConfigureDlg.LayoutTreeNode { DupString = "1", IsDuplicate = true, Label = "A b c (1)" };
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(duplicateNode));
-			Assert.IsTrue(configNode.IsDuplicate, "Duplicate node not marked as duplicate.");
-			Assert.AreEqual(duplicateNode.DupString, configNode.LabelSuffix, "number appended to old duplicates not migrated to label suffix");
+			Assert.That(configNode.IsDuplicate, Is.True, "Duplicate node not marked as duplicate.");
+			Assert.That(configNode.LabelSuffix, Is.EqualTo(duplicateNode.DupString), "number appended to old duplicates not migrated to label suffix");
 			Assert.That(configNode.Label, Is.EqualTo("A b c"), "should not have a suffix on ConfigurableDictionaryNode.Label");
 
 			var originalNode = new XmlDocConfigureDlg.LayoutTreeNode { IsDuplicate = false };
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(originalNode));
-			Assert.IsFalse(configNode.IsDuplicate, "node should not have been marked as a duplicate");
-			Assert.IsTrue(String.IsNullOrEmpty(configNode.LabelSuffix), "suffix should be empty.");
+			Assert.That(configNode.IsDuplicate, Is.False, "node should not have been marked as a duplicate");
+			Assert.That(String.IsNullOrEmpty(configNode.LabelSuffix), Is.True, "suffix should be empty.");
 		}
 
 		/// <summary>
@@ -841,8 +840,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			var duplicateNode = new XmlDocConfigureDlg.LayoutTreeNode { DupString = "1-2", IsDuplicate = true, Label = "A b c (2)" };
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(duplicateNode));
-			Assert.IsTrue(configNode.IsDuplicate, "Duplicate node not marked as duplicate.");
-			Assert.AreEqual("2", configNode.LabelSuffix, "incorrect suffix migrated");
+			Assert.That(configNode.IsDuplicate, Is.True, "Duplicate node not marked as duplicate.");
+			Assert.That(configNode.LabelSuffix, Is.EqualTo("2"), "incorrect suffix migrated");
 			Assert.That(configNode.Label, Is.EqualTo("A b c"), "should not have a suffix on ConfigurableDictionaryNode.Label");
 		}
 
@@ -862,9 +861,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(duplicateNode);
 			}
-			Assert.IsFalse(configNode.IsDuplicate, "Node incorrectly marked as a duplicate.");
+			Assert.That(configNode.IsDuplicate, Is.False, "Node incorrectly marked as a duplicate.");
 			Assert.That(configNode.LabelSuffix, Is.Null.Or.Empty, "suffix incorrectly migrated");
-			Assert.AreEqual("A b c D e f", configNode.Label, "should not have a suffix on ConfigurableDictionaryNode.Label");
+			Assert.That(configNode.Label, Is.EqualTo("A b c D e f"), "should not have a suffix on ConfigurableDictionaryNode.Label");
 		}
 
 		///<summary/>
@@ -877,10 +876,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			ConfigurableDictionaryNode configNode = null;
 
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(parentNode));
-			Assert.AreEqual(configNode.Label, parentNode.Label);
+			Assert.That(parentNode.Label, Is.EqualTo(configNode.Label));
 			Assert.That(configNode.Children, Is.Not.Null);
-			Assert.AreEqual(configNode.Children.Count, 1);
-			Assert.AreEqual(configNode.Children[0].Label, childNode.Label);
+			Assert.That(configNode.Children.Count, Is.EqualTo(1));
+			Assert.That(childNode.Label, Is.EqualTo(configNode.Children[0].Label));
 		}
 
 		///<summary/>
@@ -900,13 +899,13 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.That(senseStyle, Is.Null, "Sense number should not exist before conversion for a valid test.");
 
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
-			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName);
+			Assert.That(styleName, Is.EqualTo(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle));
 			senseStyle = m_styleSheet.FindStyle(styleName);
 			Assert.That(senseStyle, Is.Not.Null, "Sense number should have been created by the migrator.");
 			var usefulStyle = m_styleSheet.Styles[styleName];
-			Assert.IsTrue(usefulStyle.DefaultCharacterStyleInfo.Bold.Value, "bold was not turned on in the created style.");
-			Assert.IsFalse(usefulStyle.DefaultCharacterStyleInfo.Italic.Value, "italic was not turned off in the created style.");
-			Assert.AreEqual(usefulStyle.DefaultCharacterStyleInfo.FontName.Value, "arial", "arial font not used");
+			Assert.That(usefulStyle.DefaultCharacterStyleInfo.Bold.Value, Is.True, "bold was not turned on in the created style.");
+			Assert.That(usefulStyle.DefaultCharacterStyleInfo.Italic.Value, Is.False, "italic was not turned off in the created style.");
+			Assert.That(usefulStyle.DefaultCharacterStyleInfo.FontName.Value, Is.EqualTo("arial"), "arial font not used");
 			DeleteStyleSheet(styleName);
 		}
 
@@ -937,21 +936,21 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.That(senseStyle2, Is.Null, "Second sense number style should not exist before conversion for a valid test.");
 
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
-			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName);
+			Assert.That(styleName, Is.EqualTo(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle));
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode2));
-			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName2);
+			Assert.That(styleName2, Is.EqualTo(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle));
 			senseStyle = m_styleSheet.FindStyle(styleName);
 			senseStyle2 = m_styleSheet.FindStyle(styleName2);
 			Assert.That(senseStyle, Is.Not.Null, "Sense number should have been created by the migrator.");
 			Assert.That(senseStyle2, Is.Not.Null, "Sense number should have been created by the migrator.");
 			var usefulStyle = m_styleSheet.Styles[styleName];
-			Assert.IsTrue(usefulStyle.DefaultCharacterStyleInfo.Bold.Value, "bold was not turned on in the created style.");
-			Assert.IsFalse(usefulStyle.DefaultCharacterStyleInfo.Italic.Value, "italic was not turned off in the created style.");
-			Assert.AreEqual(usefulStyle.DefaultCharacterStyleInfo.FontName.Value, "arial", "arial font not used");
+			Assert.That(usefulStyle.DefaultCharacterStyleInfo.Bold.Value, Is.True, "bold was not turned on in the created style.");
+			Assert.That(usefulStyle.DefaultCharacterStyleInfo.Italic.Value, Is.False, "italic was not turned off in the created style.");
+			Assert.That(usefulStyle.DefaultCharacterStyleInfo.FontName.Value, Is.EqualTo("arial"), "arial font not used");
 			usefulStyle = m_styleSheet.Styles[styleName2];
-			Assert.IsTrue(usefulStyle.DefaultCharacterStyleInfo.Bold.Value, "bold was not turned on in the created style.");
-			Assert.IsFalse(usefulStyle.DefaultCharacterStyleInfo.Italic.ValueIsSet, "italic should not have been set in the created style.");
-			Assert.AreEqual(usefulStyle.DefaultCharacterStyleInfo.FontName.Value, "arial", "arial font not used");
+			Assert.That(usefulStyle.DefaultCharacterStyleInfo.Bold.Value, Is.True, "bold was not turned on in the created style.");
+			Assert.That(usefulStyle.DefaultCharacterStyleInfo.Italic.ValueIsSet, Is.False, "italic should not have been set in the created style.");
+			Assert.That(usefulStyle.DefaultCharacterStyleInfo.FontName.Value, Is.EqualTo("arial"), "arial font not used");
 			DeleteStyleSheet(styleName);
 			DeleteStyleSheet(styleName2);
 		}
@@ -976,13 +975,13 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.That(senseStyle2, Is.Null, "Second sense number style should not exist before conversion for a valid test.");
 
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
-			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName);
+			Assert.That(styleName, Is.EqualTo(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle));
 			foreach(var option in senseNumberOptions)
 			{
 				senseNumberNode.NumStyle = option;
 				Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
 			}
-			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, lastStyleName);
+			Assert.That(lastStyleName, Is.EqualTo(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle));
 			DeleteStyleSheet(styleName);
 			for(var i = 2; i < 2 + senseNumberOptions.Length; i++) // Delete all the created dictionary styles
 				DeleteStyleSheet(String.Format("Dictionary-SenseNumber-{0}", i));
@@ -1042,17 +1041,17 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			Assert.That(senseStyle2, Is.Null, "Second sense number style should not exist before conversion for a valid test.");
 
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
-			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName);
+			Assert.That(styleName, Is.EqualTo(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle));
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode2));
-			Assert.AreEqual(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle, styleName2);
+			Assert.That(styleName2, Is.EqualTo(((DictionaryNodeSenseOptions)configNode.DictionaryNodeOptions).NumberStyle));
 			senseStyle = m_styleSheet.FindStyle(styleName);
 			senseStyle2 = m_styleSheet.FindStyle(styleName2);
 			Assert.That(senseStyle, Is.Not.Null, "Sense number should have been created by the migrator.");
 			Assert.That(senseStyle2, Is.Not.Null, "Sense number should have been created by the migrator.");
 			var usefulStyle = m_styleSheet.Styles[styleName];
-			Assert.AreEqual(usefulStyle.DefaultCharacterStyleInfo.FontName.Value, "arial", "arial font not used");
+			Assert.That(usefulStyle.DefaultCharacterStyleInfo.FontName.Value, Is.EqualTo("arial"), "arial font not used");
 			usefulStyle = m_styleSheet.Styles[styleName2];
-			Assert.AreEqual(usefulStyle.DefaultCharacterStyleInfo.FontName.Value, "notarial", "notarial font not used in second style");
+			Assert.That(usefulStyle.DefaultCharacterStyleInfo.FontName.Value, Is.EqualTo("notarial"), "notarial font not used in second style");
 			DeleteStyleSheet(styleName);
 			DeleteStyleSheet(styleName2);
 		}
@@ -1071,11 +1070,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			ConfigurableDictionaryNode configNode = null;
 			Assert.DoesNotThrow(() => configNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(senseNumberNode));
 			var senseOptions = configNode.DictionaryNodeOptions as DictionaryNodeSenseOptions;
-			Assert.NotNull(senseOptions);
-			Assert.IsTrue(senseOptions.NumberEvenASingleSense);
-			Assert.AreEqual("(", senseOptions.BeforeNumber);
-			Assert.AreEqual(")", senseOptions.AfterNumber);
-			Assert.AreEqual("%O", senseOptions.NumberingStyle);
+			Assert.That(senseOptions, Is.Not.Null);
+			Assert.That(senseOptions.NumberEvenASingleSense, Is.True);
+			Assert.That(senseOptions.BeforeNumber, Is.EqualTo("("));
+			Assert.That(senseOptions.AfterNumber, Is.EqualTo(")"));
+			Assert.That(senseOptions.NumberingStyle, Is.EqualTo("%O"));
 			DeleteStyleSheet("Dictionary-SenseNumber");
 		}
 
@@ -1103,8 +1102,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 
 			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
-			Assert.AreEqual(convertedModel.Parts[0].FieldDescription, parentField, "Field description for parent node not migrated");
-			Assert.AreEqual(convertedModel.Parts[0].Children[0].FieldDescription, childField, "Field description for child not migrated");
+			Assert.That(parentField, Is.EqualTo(convertedModel.Parts[0].FieldDescription), "Field description for parent node not migrated");
+			Assert.That(childField, Is.EqualTo(convertedModel.Parts[0].Children[0].FieldDescription), "Field description for child not migrated");
 		}
 
 		///<summary/>
@@ -1131,8 +1130,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 
 			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
-			Assert.AreEqual(convertedModel.Parts[0].CSSClassNameOverride, parentOverride, "CssClassNameOverride for parent node not migrated");
-			Assert.AreEqual(convertedModel.Parts[0].Children[0].CSSClassNameOverride, childOverride, "CssClassNameOverride for child not migrated");
+			Assert.That(parentOverride, Is.EqualTo(convertedModel.Parts[0].CSSClassNameOverride), "CssClassNameOverride for parent node not migrated");
+			Assert.That(childOverride, Is.EqualTo(convertedModel.Parts[0].Children[0].CSSClassNameOverride), "CssClassNameOverride for child not migrated");
 		}
 
 		///<summary/>
@@ -1163,10 +1162,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 
 			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
-			Assert.AreEqual(parentOverride, convertedModel.Parts[0].StyleType, "StyleType for parent node not filled in from base");
-			Assert.AreEqual(child1Override, convertedModel.Parts[0].Children[0].StyleType, "StyleType for child 1 not filled in from base");
-			Assert.AreEqual(baseStyle, convertedModel.Parts[0].Children[0].Style, "Style for child 1 not filled in from base");
-			Assert.AreEqual(defaultStyleType, convertedModel.Parts[0].Children[1].StyleType, "StyleType for child 2 not set to Default");
+			Assert.That(convertedModel.Parts[0].StyleType, Is.EqualTo(parentOverride), "StyleType for parent node not filled in from base");
+			Assert.That(convertedModel.Parts[0].Children[0].StyleType, Is.EqualTo(child1Override), "StyleType for child 1 not filled in from base");
+			Assert.That(convertedModel.Parts[0].Children[0].Style, Is.EqualTo(baseStyle), "Style for child 1 not filled in from base");
+			Assert.That(convertedModel.Parts[0].Children[1].StyleType, Is.EqualTo(defaultStyleType), "StyleType for child 2 not set to Default");
 		}
 
 		///<summary/>
@@ -1204,10 +1203,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 
 			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
-			Assert.AreEqual(parentStyleType, convertedModel.Parts[0].StyleType, "The parent StyleType was not migrated correctly or was incorrectly overwritten");
-			Assert.AreEqual(parentStyle, convertedModel.Parts[0].Style, "parent Style not migrated");
-			Assert.AreEqual(childStyleType, convertedModel.Parts[0].Children[0].StyleType, "child StyleType not migrated");
-			Assert.AreEqual(childStyle, convertedModel.Parts[0].Children[0].Style, "child Style not migrated");
+			Assert.That(convertedModel.Parts[0].StyleType, Is.EqualTo(parentStyleType), "The parent StyleType was not migrated correctly or was incorrectly overwritten");
+			Assert.That(convertedModel.Parts[0].Style, Is.EqualTo(parentStyle), "parent Style not migrated");
+			Assert.That(convertedModel.Parts[0].Children[0].StyleType, Is.EqualTo(childStyleType), "child StyleType not migrated");
+			Assert.That(convertedModel.Parts[0].Children[0].Style, Is.EqualTo(childStyle), "child Style not migrated");
 		}
 
 		///<summary/>
@@ -1244,8 +1243,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 
 			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
-			Assert.AreEqual(convertedModel.Parts[0].DictionaryNodeOptions, baseModel.Parts[0].DictionaryNodeOptions, "DictionaryNodeOptions for parent node not migrated");
-			Assert.AreEqual(convertedModel.Parts[0].Children[0].DictionaryNodeOptions, baseModel.Parts[0].Children[0].DictionaryNodeOptions, "DictionaryNodeOptions for child not migrated");
+			Assert.That(baseModel.Parts[0].DictionaryNodeOptions, Is.EqualTo(convertedModel.Parts[0].DictionaryNodeOptions), "DictionaryNodeOptions for parent node not migrated");
+			Assert.That(baseModel.Parts[0].Children[0].DictionaryNodeOptions, Is.EqualTo(convertedModel.Parts[0].Children[0].DictionaryNodeOptions), "DictionaryNodeOptions for child not migrated");
 		}
 
 		///<summary/>
@@ -1273,7 +1272,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 
 			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
-			Assert.AreEqual(convertedModel.Parts[0].Children[0].FieldDescription, childField, "Field description for copy of child not migrated");
+			Assert.That(childField, Is.EqualTo(convertedModel.Parts[0].Children[0].FieldDescription), "Field description for copy of child not migrated");
 		}
 
 		///<summary/>
@@ -1302,10 +1301,10 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 
 			Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
-			Assert.AreEqual(convertedModel.Parts[0].Children.Count, 3, "The copied children did not get migrated");
-			Assert.AreEqual(convertedModel.Parts[0].Children[0].FieldDescription, childField, "Field description for copy of child not migrated");
-			Assert.AreEqual(convertedModel.Parts[0].Children[1].FieldDescription, childField, "Field description for copy of child not migrated");
-			Assert.AreEqual(convertedModel.Parts[0].Children[2].FieldDescription, childField, "Field description for copy of child not migrated");
+			Assert.That(convertedModel.Parts[0].Children.Count, Is.EqualTo(3), "The copied children did not get migrated");
+			Assert.That(childField, Is.EqualTo(convertedModel.Parts[0].Children[0].FieldDescription), "Field description for copy of child not migrated");
+			Assert.That(childField, Is.EqualTo(convertedModel.Parts[0].Children[1].FieldDescription), "Field description for copy of child not migrated");
+			Assert.That(childField, Is.EqualTo(convertedModel.Parts[0].Children[2].FieldDescription), "Field description for copy of child not migrated");
 		}
 
 		///<summary/>
@@ -1334,9 +1333,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
 			}
-			Assert.AreEqual(convertedModel.Parts[0].Children.Count, 2, "New node from base was not merged");
-			Assert.AreEqual(convertedModel.Parts[0].Children[0].Label, "Child", "new node inserted out of order");
-			Assert.AreEqual(convertedModel.Parts[0].Children[1].Label, "Child2", "New node from base was not merged properly");
+			Assert.That(convertedModel.Parts[0].Children.Count, Is.EqualTo(2), "New node from base was not merged");
+			Assert.That(convertedModel.Parts[0].Children[0].Label, Is.EqualTo("Child"), "new node inserted out of order");
+			Assert.That(convertedModel.Parts[0].Children[1].Label, Is.EqualTo("Child2"), "New node from base was not merged properly");
 		}
 
 		///<summary/>
@@ -1366,9 +1365,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
 			}
-			Assert.AreEqual(convertedModel.Parts[0].Children.Count, 2, "Nodes incorrectly merged");
-			Assert.AreEqual(convertedModel.Parts[0].Children[0].Label, convertedChildNodeTwo.Label, "order of old model was not retained");
-			Assert.AreEqual(convertedModel.Parts[0].Children[1].Label, convertedChildNode.Label, "Nodes incorrectly merged");
+			Assert.That(convertedModel.Parts[0].Children.Count, Is.EqualTo(2), "Nodes incorrectly merged");
+			Assert.That(convertedChildNodeTwo.Label, Is.EqualTo(convertedModel.Parts[0].Children[0].Label), "order of old model was not retained");
+			Assert.That(convertedChildNode.Label, Is.EqualTo(convertedModel.Parts[0].Children[1].Label), "Nodes incorrectly merged");
 		}
 
 		///<summary/>
@@ -1397,11 +1396,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel);
 			}
-			Assert.AreEqual(convertedModel.Parts[0].Children.Count, 2, "Nodes incorrectly merged");
-			Assert.AreEqual(convertedModel.Parts[0].Children[0].Label, customNode.Label, "order of old model was not retained");
-			Assert.IsFalse(oldChild.IsCustomField, "Child node which is matched should not be a custom field");
-			Assert.IsTrue(customNode.IsCustomField, "The unmatched 'Custom' node should have been marked as a custom field");
-			Assert.AreEqual(customNode.Label, customNode.FieldDescription, "Custom nodes' Labels and Fields should match");
+			Assert.That(convertedModel.Parts[0].Children.Count, Is.EqualTo(2), "Nodes incorrectly merged");
+			Assert.That(customNode.Label, Is.EqualTo(convertedModel.Parts[0].Children[0].Label), "order of old model was not retained");
+			Assert.That(oldChild.IsCustomField, Is.False, "Child node which is matched should not be a custom field");
+			Assert.That(customNode.IsCustomField, Is.True, "The unmatched 'Custom' node should have been marked as a custom field");
+			Assert.That(customNode.FieldDescription, Is.EqualTo(customNode.Label), "Custom nodes' Labels and Fields should match");
 		}
 
 		///<summary/>
@@ -1432,13 +1431,13 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel);
 			}
-			Assert.AreEqual(convertedModel.Parts[0].Children.Count, 2, "Nodes incorrectly merged");
-			Assert.AreEqual(convertedModel.Parts[0].Children[0].Label, customNode.Label, "order of old model was not retained");
-			Assert.IsFalse(oldChild.IsCustomField, "Child node which is matched should not be a custom field");
-			Assert.IsTrue(customNode.IsCustomField, "The unmatched 'Custom' node should have been marked as a custom field");
-			Assert.IsFalse(customChild.IsCustomField, "Children of Custom nodes are not necessarily Custom.");
-			Assert.AreEqual(customNode.Label, customNode.FieldDescription, "Custom nodes' Labels and Fields should match");
-			Assert.AreEqual(customChild.Label, customChild.FieldDescription, "Custom nodes' Labels and Fields should match");
+			Assert.That(convertedModel.Parts[0].Children.Count, Is.EqualTo(2), "Nodes incorrectly merged");
+			Assert.That(customNode.Label, Is.EqualTo(convertedModel.Parts[0].Children[0].Label), "order of old model was not retained");
+			Assert.That(oldChild.IsCustomField, Is.False, "Child node which is matched should not be a custom field");
+			Assert.That(customNode.IsCustomField, Is.True, "The unmatched 'Custom' node should have been marked as a custom field");
+			Assert.That(customChild.IsCustomField, Is.False, "Children of Custom nodes are not necessarily Custom.");
+			Assert.That(customNode.FieldDescription, Is.EqualTo(customNode.Label), "Custom nodes' Labels and Fields should match");
+			Assert.That(customChild.FieldDescription, Is.EqualTo(customChild.Label), "Custom nodes' Labels and Fields should match");
 		}
 
 		///<summary/>
@@ -1471,9 +1470,9 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel);
 			}
-			Assert.AreEqual(convertedModel.Parts[0].Children[0].Label, customNode.Label, "label was not retained");
-			Assert.IsTrue(customNode.IsCustomField, "The unmatched 'Custom' node should have been marked as a custom field");
-			Assert.AreEqual(CustomFieldOriginalName, customNode.FieldDescription, "Custom node's Field should have been loaded from the Cache");
+			Assert.That(customNode.Label, Is.EqualTo(convertedModel.Parts[0].Children[0].Label), "label was not retained");
+			Assert.That(customNode.IsCustomField, Is.True, "The unmatched 'Custom' node should have been marked as a custom field");
+			Assert.That(customNode.FieldDescription, Is.EqualTo(CustomFieldOriginalName), "Custom node's Field should have been loaded from the Cache");
 		}
 
 		///<summary>
@@ -1504,14 +1503,14 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			using (var logger = m_migrator.SetTestLogger = new SimpleLogger())
 			{
 				Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
-				Assert.IsTrue(logger.Content.StartsWith(
-					"Could not match 'Truly Custom' in defaults. It may have been valid in a previous version, but is no longer. It will be removed next time the model is loaded."));
+				Assert.That(logger.Content.StartsWith(
+					"Could not match 'Truly Custom' in defaults. It may have been valid in a previous version, but is no longer. It will be removed next time the model is loaded."), Is.True);
 			}
-			Assert.AreEqual(convertedModel.Parts[0].Children.Count, 2, "Nodes incorrectly merged");
-			Assert.AreEqual(convertedModel.Parts[0].Children[0].Label, customNode.Label, "order of old model was not retained");
-			Assert.IsFalse(oldChild.IsCustomField, "Child node which is matched should not be a custom field");
-			Assert.IsTrue(customNode.IsCustomField, "The unmatched 'Custom' node should have been marked as a custom field");
-			Assert.AreEqual(customNode.Label, customNode.FieldDescription, "Custom nodes' Labels and Fields should match");
+			Assert.That(convertedModel.Parts[0].Children.Count, Is.EqualTo(2), "Nodes incorrectly merged");
+			Assert.That(customNode.Label, Is.EqualTo(convertedModel.Parts[0].Children[0].Label), "order of old model was not retained");
+			Assert.That(oldChild.IsCustomField, Is.False, "Child node which is matched should not be a custom field");
+			Assert.That(customNode.IsCustomField, Is.True, "The unmatched 'Custom' node should have been marked as a custom field");
+			Assert.That(customNode.FieldDescription, Is.EqualTo(customNode.Label), "Custom nodes' Labels and Fields should match");
 		}
 
 		[Test]
@@ -1541,22 +1540,22 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			{
 				Assert.DoesNotThrow(() => m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, baseModel));
 			}
-			Assert.AreEqual(3, convertedModel.Parts[0].Children.Count, "Nodes incorrectly merged");
-			Assert.IsTrue(customPersonNode.IsCustomField, "Custom atomic list reference field should be flagged as custom");
+			Assert.That(convertedModel.Parts[0].Children.Count, Is.EqualTo(3), "Nodes incorrectly merged");
+			Assert.That(customPersonNode.IsCustomField, Is.True, "Custom atomic list reference field should be flagged as custom");
 			Assert.That(customPersonNode.Children, Is.Not.Null, "Custom atomic list reference field should have children (added)");
-			Assert.AreEqual(2, customPersonNode.Children.Count, "Custom atomic list reference field should have two children added");
+			Assert.That(customPersonNode.Children.Count, Is.EqualTo(2), "Custom atomic list reference field should have two children added");
 			for (int i = 0; i < customPersonNode.Children.Count; ++i)
 			{
 				var child = customPersonNode.Children[i];
-				Assert.IsFalse(child.IsCustomField, "Children of customPersonNode should not be flagged as custom (" + i + ")");
+				Assert.That(child.IsCustomField, Is.False, "Children of customPersonNode should not be flagged as custom (" + i + ")");
 				Assert.That(child.DictionaryNodeOptions, Is.Not.Null, "Children of customPersonNode should have a DictionaryNodeOptions object");
-				Assert.IsTrue(child.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, "Children of customPersonNode DictionaryNodeOptions should be a DictionaryNodeWritingSystemOptions object");
+				Assert.That(child.DictionaryNodeOptions is DictionaryNodeWritingSystemOptions, Is.True, "Children of customPersonNode DictionaryNodeOptions should be a DictionaryNodeWritingSystemOptions object");
 			}
-			Assert.AreEqual("Name", customPersonNode.Children[0].Label, "The first child of customPersonNode should be Name");
-			Assert.AreEqual("Abbreviation", customPersonNode.Children[1].Label, "The second child of customPersonNode should be Abbreviation");
+			Assert.That(customPersonNode.Children[0].Label, Is.EqualTo("Name"), "The first child of customPersonNode should be Name");
+			Assert.That(customPersonNode.Children[1].Label, Is.EqualTo("Abbreviation"), "The second child of customPersonNode should be Abbreviation");
 			Assert.That(customPersonNode.DictionaryNodeOptions, Is.Not.Null, "Custom atomic list reference field should have a DictionaryNodeOptions object");
-			Assert.IsTrue(customPersonNode.DictionaryNodeOptions is DictionaryNodeListOptions, "Custom atomic list reference field DictionaryNodeOptions should be a DictionaryNodeListOptions object");
-			Assert.IsTrue(customGenDateNode.IsCustomField, "Custom GenDate field should be flagged as custom");
+			Assert.That(customPersonNode.DictionaryNodeOptions is DictionaryNodeListOptions, Is.True, "Custom atomic list reference field DictionaryNodeOptions should be a DictionaryNodeListOptions object");
+			Assert.That(customGenDateNode.IsCustomField, Is.True, "Custom GenDate field should be flagged as custom");
 			Assert.That(customGenDateNode.Children, Is.Null, "Custom GenDate field should not have any children (added)");
 			Assert.That(customGenDateNode.DictionaryNodeOptions, Is.Null, "Custom GenDate field should not have a DictionaryNodeOptions object");
 
@@ -2072,7 +2071,7 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			};
 			m_migrator.m_configDirSuffixBeingMigrated = DictionaryConfigurationListener.RevIndexConfigDirName;
 			m_migrator.CopyNewDefaultsIntoConvertedModel(oldLayout, model);
-			Assert.AreEqual(newFileName, Path.GetFileNameWithoutExtension(model.FilePath));
+			Assert.That(Path.GetFileNameWithoutExtension(model.FilePath), Is.EqualTo(newFileName));
 		}
 
 		private static DictionaryConfigurationModel BuildConvertedComponentReferencesNodes()
@@ -2446,15 +2445,15 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			oldReversalEntryNode.Nodes.Add(oldRefSensesNode);
 
 			var convertedTopNode = m_migrator.ConvertLayoutTreeNodeToConfigNode(oldReversalEntryNode);
-			Assert.AreEqual("Reversal Entry", convertedTopNode.Label, "Initial conversion should copy the Label attribute verbatim.");
-			Assert.AreEqual(1, convertedTopNode.Children.Count, "Children nodes should be converted");
-			Assert.AreEqual(1, convertedTopNode.Children[0].Children.Count, "Grandchildren nodes should be converted");
-			Assert.AreEqual(3, convertedTopNode.Children[0].Children[0].Children.Count, "Greatgrandchildren should be converted");
+			Assert.That(convertedTopNode.Label, Is.EqualTo("Reversal Entry"), "Initial conversion should copy the Label attribute verbatim.");
+			Assert.That(convertedTopNode.Children.Count, Is.EqualTo(1), "Children nodes should be converted");
+			Assert.That(convertedTopNode.Children[0].Children.Count, Is.EqualTo(1), "Grandchildren nodes should be converted");
+			Assert.That(convertedTopNode.Children[0].Children[0].Children.Count, Is.EqualTo(3), "Greatgrandchildren should be converted");
 			var convertedTypeNode = convertedTopNode.Children[0].Children[0].Children[0];
-			Assert.AreEqual("Type", convertedTypeNode.Label, "Nodes are converted in order");
+			Assert.That(convertedTypeNode.Label, Is.EqualTo("Type"), "Nodes are converted in order");
 			Assert.That(convertedTypeNode.FieldDescription, Is.Null, "Initial conversion should not set FieldDescription for the Type node");
 			var convertedCommentNode = convertedTopNode.Children[0].Children[0].Children[2];
-			Assert.AreEqual("Comment", convertedCommentNode.Label, "Third child converted in order okay");
+			Assert.That(convertedCommentNode.Label, Is.EqualTo("Comment"), "Third child converted in order okay");
 			Assert.That(convertedCommentNode.FieldDescription, Is.Null, "Initial conversion should not set FieldDescription for the Comment node");
 
 			var convertedModel = new DictionaryConfigurationModel
@@ -2553,13 +2552,13 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			DictionaryConfigurationModel.SpecifyParentsAndReferences(currentDefaultModel.Parts);
 
 			m_migrator.CopyNewDefaultsIntoConvertedModel(convertedModel, currentDefaultModel);
-			Assert.AreEqual("ReversalIndexEntry", convertedTopNode.FieldDescription, "Converted top node should have FieldDescription=ReversalIndexEntry");
-			Assert.AreEqual("reversalindexentry", convertedTopNode.CSSClassNameOverride, "Converted top node should have CSSClassNameOverride=reversalindexentry");
-			Assert.AreEqual(ConfigurableDictionaryNode.StyleTypes.Paragraph, convertedTopNode.StyleType, "Converted top node should have StyleType=Paragraph");
-			Assert.AreEqual("Reversal-Normal", convertedTopNode.Style, "Converted top node should have Style=Reversal-Normal");
+			Assert.That(convertedTopNode.FieldDescription, Is.EqualTo("ReversalIndexEntry"), "Converted top node should have FieldDescription=ReversalIndexEntry");
+			Assert.That(convertedTopNode.CSSClassNameOverride, Is.EqualTo("reversalindexentry"), "Converted top node should have CSSClassNameOverride=reversalindexentry");
+			Assert.That(convertedTopNode.StyleType, Is.EqualTo(ConfigurableDictionaryNode.StyleTypes.Paragraph), "Converted top node should have StyleType=Paragraph");
+			Assert.That(convertedTopNode.Style, Is.EqualTo("Reversal-Normal"), "Converted top node should have Style=Reversal-Normal");
 			// Prior to fixing https://jira.sil.org/browse/LT-16896, convertedTypeNode.FieldDescription was set to "Type".
-			Assert.AreEqual("OwningEntry", convertedTypeNode.FieldDescription, "Converted type node should have FieldDescription=OwningEntry");
-			Assert.AreEqual("Summary", convertedCommentNode.FieldDescription, "Converted comment node should have FieldDescription=Summary");
+			Assert.That(convertedTypeNode.FieldDescription, Is.EqualTo("OwningEntry"), "Converted type node should have FieldDescription=OwningEntry");
+			Assert.That(convertedCommentNode.FieldDescription, Is.EqualTo("Summary"), "Converted comment node should have FieldDescription=Summary");
 		}
 
 		[Test]
@@ -2569,16 +2568,16 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			xdoc0.LoadXml("<part ref=\"ScientificName\" label=\"Scientific Name\" before=\" \" after=\"\" visibility=\"ifdata\" css=\"scientific-name\"/>");
 			var oldTypeNode0 = new XmlDocConfigureDlg.LayoutTreeNode(xdoc0.DocumentElement, m_migrator, "LexSense");
 			var newTypeNode0 = m_migrator.ConvertLayoutTreeNodeToConfigNode(oldTypeNode0);
-			Assert.IsFalse(newTypeNode0.IsCustomField, "A normal field should not be marked as custom after conversion");
-			Assert.IsTrue(newTypeNode0.IsEnabled, "A normal field should be enabled properly.");
-			Assert.AreEqual("Scientific Name", newTypeNode0.Label, "A normal field copies its label properly during conversion");
+			Assert.That(newTypeNode0.IsCustomField, Is.False, "A normal field should not be marked as custom after conversion");
+			Assert.That(newTypeNode0.IsEnabled, Is.True, "A normal field should be enabled properly.");
+			Assert.That(newTypeNode0.Label, Is.EqualTo("Scientific Name"), "A normal field copies its label properly during conversion");
 			var xdoc1 = new System.Xml.XmlDocument();
 			xdoc1.LoadXml("<part ref=\"$child\" label=\"Single Sense\" before=\" Custom Field:( \" after=\" )\" visibility=\"ifdata\" originalLabel=\"Single Sense\"><string field=\"Single Sense\" class=\"LexSense\"/></part>");
 			var oldTypeNode1 = new XmlDocConfigureDlg.LayoutTreeNode(xdoc1.DocumentElement, m_migrator, "LexSense");
 			var newTypeNode1 = m_migrator.ConvertLayoutTreeNodeToConfigNode(oldTypeNode1);
-			Assert.IsTrue(newTypeNode1.IsCustomField, "A custom field should be marked as such after conversion");
-			Assert.IsTrue(newTypeNode1.IsEnabled, "A custom field should be enabled properly.");
-			Assert.AreEqual("Single Sense", newTypeNode1.Label, "A custom field copies its label properly during conversion");
+			Assert.That(newTypeNode1.IsCustomField, Is.True, "A custom field should be marked as such after conversion");
+			Assert.That(newTypeNode1.IsEnabled, Is.True, "A custom field should be enabled properly.");
+			Assert.That(newTypeNode1.Label, Is.EqualTo("Single Sense"), "A custom field copies its label properly during conversion");
 		}
 
 		#region Helper

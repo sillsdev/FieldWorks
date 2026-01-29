@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
+  <!--
+    Build Orchestrator: Build orchestration project for FieldWorks
+
+    This project replaces the legacy Build/FieldWorks.proj and provides targets for:
+    - Package restoration (RestorePackages)
+    - Installer builds (BuildBaseInstaller, BuildPatchInstaller)
+    - Full build orchestration
+
+    Uses traditional MSBuild format to avoid SDK package resolution overhead
+    while maintaining clean, modern structure.
+  -->
+
+  <PropertyGroup>
+    <Platform Condition="'$(Platform)'==''">x64</Platform>
+    <Configuration Condition="'$(Configuration)'==''">Debug</Configuration>
+    <InstallerToolset Condition="'$(InstallerToolset)'==''">Wix3</InstallerToolset>
+  </PropertyGroup>
+
+  <!-- Import build infrastructure -->
+  <Import Project="$(MSBuildThisFileDirectory)FwBuildTasks.targets"/>
+  <Import Project="$(MSBuildThisFileDirectory)SetupInclude.targets"/>
+  <Import Project="$(MSBuildThisFileDirectory)Localize.targets"/>
+  <Import Project="$(MSBuildThisFileDirectory)mkall.targets"/>
+  <Import Project="$(MSBuildThisFileDirectory)Windows.targets"/>
+  <Import Project="$(MSBuildThisFileDirectory)RegFree.targets"/>
+  <Import Project="$(MSBuildThisFileDirectory)Installer.Wix3.targets" Condition="'$(OS)'=='Windows_NT' and '$(InstallerToolset)'=='Wix3'"/>
+  <Import Project="$(MSBuildThisFileDirectory)Installer.targets" Condition="'$(OS)'=='Windows_NT' and '$(InstallerToolset)'=='Wix6'"/>
+  <Import Project="$(MSBuildThisFileDirectory)LocalLibrary.targets"/>
+
+  <!-- Default Build target: orchestrate full traversal build -->
+  <Target Name="Build">
+    <Message Text="Building FieldWorks via MSBuild Traversal SDK" Importance="high" />
+    <MSBuild Projects="$(MSBuildThisFileDirectory)..\FieldWorks.proj" Properties="Configuration=$(Configuration);Platform=$(Platform)" />
+  </Target>
+
+  <!-- Installer targets are imported from Installer.targets -->
+  <!-- RestorePackages target is imported from mkall.targets -->
+
+  <!-- Dummy init target for compatibility -->
+  <Target Name="init" DependsOnTargets="initWindows">
+    <Message Text="Build environment initialized" Importance="high" />
+  </Target>
+</Project>

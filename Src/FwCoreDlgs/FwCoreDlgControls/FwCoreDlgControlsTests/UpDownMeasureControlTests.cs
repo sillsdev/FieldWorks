@@ -38,8 +38,8 @@ namespace SIL.FieldWorks.FwCoreDlgControlsTests
 				c.MeasureMin = 0;
 				c.MeasureMax = 10000;
 				c.MeasureValue = 2000;
-				Assert.AreEqual(2000, c.MeasureValue);
-				Assert.AreEqual("2 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(2000));
+				Assert.That(c.Text, Is.EqualTo("2 pt"));
 			}
 		}
 
@@ -58,32 +58,32 @@ namespace SIL.FieldWorks.FwCoreDlgControlsTests
 				c.MeasureMin = -30000;
 				c.MeasureMax = 30000;
 				c.MeasureValue = -2000;
-				Assert.AreEqual(-2000, c.MeasureValue);
-				Assert.AreEqual("-2 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(-2000));
+				Assert.That(c.Text, Is.EqualTo("-2 pt"));
 				c.DisplayAbsoluteValues = true;
-				Assert.AreEqual(-2000, c.MeasureValue);
-				Assert.AreEqual("2 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(-2000));
+				Assert.That(c.Text, Is.EqualTo("2 pt"));
 				c.MeasureValue = 6000;
-				Assert.AreEqual(6000, c.MeasureValue);
-				Assert.AreEqual("6 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(6000));
+				Assert.That(c.Text, Is.EqualTo("6 pt"));
 				c.MeasureValue *= -1;
-				Assert.AreEqual(-6000, c.MeasureValue);
-				Assert.AreEqual("6 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(-6000));
+				Assert.That(c.Text, Is.EqualTo("6 pt"));
 				c.Text = "-1 cm"; // this is illegal, so the value should not change
-				Assert.AreEqual(-6000, c.MeasureValue);
-				Assert.AreEqual("6 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(-6000));
+				Assert.That(c.Text, Is.EqualTo("6 pt"));
 				c.Text = "1 cm";
-				Assert.AreEqual(-28346, c.MeasureValue);
-				Assert.AreEqual("28.35 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(-28346));
+				Assert.That(c.Text, Is.EqualTo("28.35 pt"));
 				c.Text = "-1 in"; // this is illegal, so the value should not change
-				Assert.AreEqual(-28346, c.MeasureValue);
-				Assert.AreEqual("28.35 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(-28346));
+				Assert.That(c.Text, Is.EqualTo("28.35 pt"));
 				c.Text = "1 in";
-				Assert.AreEqual(-30000, c.MeasureValue); // Hit the minimum value
-				Assert.AreEqual("30 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(-30000)); // Hit the minimum value
+				Assert.That(c.Text, Is.EqualTo("30 pt"));
 				c.DisplayAbsoluteValues = false;
-				Assert.AreEqual(-30000, c.MeasureValue);
-				Assert.AreEqual("-30 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(-30000));
+				Assert.That(c.Text, Is.EqualTo("-30 pt"));
 			}
 		}
 
@@ -101,59 +101,59 @@ namespace SIL.FieldWorks.FwCoreDlgControlsTests
 				c.MeasureMin = 0;
 				c.MeasureMax = 1000000;
 				c.Text = "9 cm";
-				Assert.AreEqual(255118, c.MeasureValue);
-				Assert.AreEqual("255.12 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(255118));
+				Assert.That(c.Text, Is.EqualTo("255.12 pt"));
 
 				c.MeasureType = MsrSysType.Cm;
-				Assert.AreEqual(255118, c.MeasureValue);
-				Assert.AreEqual("9 cm", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(255118));
+				Assert.That(c.Text, Is.EqualTo("9 cm"));
 				c.Text = "4.5"; // i.e., 4.5 centimeters
-				Assert.AreEqual(127559, c.MeasureValue);
-				Assert.AreEqual("4.5 cm", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(127559));
+				Assert.That(c.Text, Is.EqualTo("4.5 cm"));
 
 				c.MeasureType = MsrSysType.Point;
-				Assert.AreEqual(127559, c.MeasureValue);
-				Assert.AreEqual("127.56 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(127559));
+				Assert.That(c.Text, Is.EqualTo("127.56 pt"));
 				c.Text = "2 in";
-				Assert.AreEqual(144000, c.MeasureValue);
-				Assert.AreEqual("144 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(144000));
+				Assert.That(c.Text, Is.EqualTo("144 pt"));
 
 				c.MeasureType = MsrSysType.Inch;
-				Assert.AreEqual(144000, c.MeasureValue);
-				Assert.AreEqual("2\"", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(144000));
+				Assert.That(c.Text, Is.EqualTo("2\""));
 				c.Text = "3.2\"";
-				Assert.AreEqual(230400, c.MeasureValue);
-				Assert.AreEqual("3.2\"", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(230400));
+				Assert.That(c.Text, Is.EqualTo("3.2\""));
 				c.Text = "0.05in";
-				Assert.AreEqual(3600, c.MeasureValue);
-				Assert.AreEqual("0.05\"", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(3600));
+				Assert.That(c.Text, Is.EqualTo("0.05\""));
 				c.Text = "3.23";
-				Assert.AreEqual(232560, c.MeasureValue);
-				Assert.AreEqual("3.23\"", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(232560));
+				Assert.That(c.Text, Is.EqualTo("3.23\""));
 
 				c.MeasureType = MsrSysType.Point;
-				Assert.AreEqual(232560, c.MeasureValue);
-				Assert.AreEqual("232.56 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(232560));
+				Assert.That(c.Text, Is.EqualTo("232.56 pt"));
 				c.Text = "65 mm";
-				Assert.AreEqual(184252, c.MeasureValue);
-				Assert.AreEqual("184.25 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(184252));
+				Assert.That(c.Text, Is.EqualTo("184.25 pt"));
 
 				c.MeasureType = MsrSysType.Mm;
-				Assert.AreEqual(184252, c.MeasureValue);
-				Assert.AreEqual("65 mm", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(184252));
+				Assert.That(c.Text, Is.EqualTo("65 mm"));
 				c.Text = "90.001";
-				Assert.AreEqual(255121, c.MeasureValue);
-				Assert.AreEqual("90 mm", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(255121));
+				Assert.That(c.Text, Is.EqualTo("90 mm"));
 				c.Text = "4 \"";
-				Assert.AreEqual(288000, c.MeasureValue);
-				Assert.AreEqual("101.6 mm", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(288000));
+				Assert.That(c.Text, Is.EqualTo("101.6 mm"));
 
 				c.MeasureType = MsrSysType.Point;
-				Assert.AreEqual(288000, c.MeasureValue);
-				Assert.AreEqual("288 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(288000));
+				Assert.That(c.Text, Is.EqualTo("288 pt"));
 				c.Text = "56.8 pt";
-				Assert.AreEqual(56800, c.MeasureValue);
-				Assert.AreEqual("56.8 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(56800));
+				Assert.That(c.Text, Is.EqualTo("56.8 pt"));
 			}
 		}
 
@@ -172,31 +172,31 @@ namespace SIL.FieldWorks.FwCoreDlgControlsTests
 				c.MeasureMax = 1000000;
 				// test weird spaces
 				c.Text = " 9 cm";
-				Assert.AreEqual(255118, c.MeasureValue);
-				Assert.AreEqual("255.12 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(255118));
+				Assert.That(c.Text, Is.EqualTo("255.12 pt"));
 				c.Text = "20mm";
-				Assert.AreEqual(56693, c.MeasureValue);
-				Assert.AreEqual("56.69 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(56693));
+				Assert.That(c.Text, Is.EqualTo("56.69 pt"));
 				c.Text = "2 in ";
-				Assert.AreEqual(144000, c.MeasureValue);
-				Assert.AreEqual("144 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(144000));
+				Assert.That(c.Text, Is.EqualTo("144 pt"));
 
 				// Test bogus stuff
 				c.Text = "--4"; // double negative
-				Assert.AreEqual(144000, c.MeasureValue);
-				Assert.AreEqual("144 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(144000));
+				Assert.That(c.Text, Is.EqualTo("144 pt"));
 				c.Text = "4.5 mc"; // bogus units
-				Assert.AreEqual(144000, c.MeasureValue);
-				Assert.AreEqual("144 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(144000));
+				Assert.That(c.Text, Is.EqualTo("144 pt"));
 				c.Text = "4>4"; // wrong decimal point symbol
-				Assert.AreEqual(144000, c.MeasureValue);
-				Assert.AreEqual("144 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(144000));
+				Assert.That(c.Text, Is.EqualTo("144 pt"));
 				c.Text = "4.0.1"; // too many decimal point symbols
-				Assert.AreEqual(144000, c.MeasureValue);
-				Assert.AreEqual("144 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(144000));
+				Assert.That(c.Text, Is.EqualTo("144 pt"));
 				c.Text = "4 1"; // internal space
-				Assert.AreEqual(144000, c.MeasureValue);
-				Assert.AreEqual("144 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(144000));
+				Assert.That(c.Text, Is.EqualTo("144 pt"));
 			}
 		}
 
@@ -215,74 +215,74 @@ namespace SIL.FieldWorks.FwCoreDlgControlsTests
 				c.MeasureMax = 100000;
 				c.MeasureValue = 2000;
 				c.UpButton();
-				Assert.AreEqual(3000, c.MeasureValue);
-				Assert.AreEqual("3 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(3000));
+				Assert.That(c.Text, Is.EqualTo("3 pt"));
 				c.MeasureValue = 2456;
 				c.UpButton();
-				Assert.AreEqual(3000, c.MeasureValue);
-				Assert.AreEqual("3 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(3000));
+				Assert.That(c.Text, Is.EqualTo("3 pt"));
 				c.MeasureValue = 100000;
 				c.UpButton();
-				Assert.AreEqual(100000, c.MeasureValue);
-				Assert.AreEqual("100 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(100000));
+				Assert.That(c.Text, Is.EqualTo("100 pt"));
 				c.MeasureValue = -3200;
 				c.UpButton();
-				Assert.AreEqual(-3000, c.MeasureValue);
-				Assert.AreEqual("-3 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(-3000));
+				Assert.That(c.Text, Is.EqualTo("-3 pt"));
 
 				c.MeasureType = MsrSysType.Cm;
 				c.Text = "2.8";
 				c.UpButton();
-				Assert.AreEqual(82205, c.MeasureValue);
-				Assert.AreEqual("2.9 cm", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(82205));
+				Assert.That(c.Text, Is.EqualTo("2.9 cm"));
 				c.Text = "2.85";
 				c.UpButton();
-				Assert.AreEqual(82205, c.MeasureValue);
-				Assert.AreEqual("2.9 cm", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(82205));
+				Assert.That(c.Text, Is.EqualTo("2.9 cm"));
 				c.Text = "3.5";
 				c.UpButton();
-				Assert.AreEqual(100000, c.MeasureValue);
-				Assert.AreEqual("3.53 cm", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(100000));
+				Assert.That(c.Text, Is.EqualTo("3.53 cm"));
 				c.Text = "-2";
 				c.UpButton();
-				Assert.AreEqual(-53858, c.MeasureValue);
-				Assert.AreEqual("-1.9 cm", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(-53858));
+				Assert.That(c.Text, Is.EqualTo("-1.9 cm"));
 
 				c.MeasureType = MsrSysType.Inch;
 				c.Text = "1";
 				c.UpButton();
-				Assert.AreEqual(79200, c.MeasureValue);
-				Assert.AreEqual("1.1\"", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(79200));
+				Assert.That(c.Text, Is.EqualTo("1.1\""));
 				c.Text = "1.009";
 				c.UpButton();
-				Assert.AreEqual(79200, c.MeasureValue);
-				Assert.AreEqual("1.1\"", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(79200));
+				Assert.That(c.Text, Is.EqualTo("1.1\""));
 				c.Text = "1.3";
 				c.UpButton();
-				Assert.AreEqual(100000, c.MeasureValue);
-				Assert.AreEqual("1.39\"", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(100000));
+				Assert.That(c.Text, Is.EqualTo("1.39\""));
 				c.Text = "-0.95";
 				c.UpButton();
-				Assert.AreEqual(-64800, c.MeasureValue);
-				Assert.AreEqual("-0.9\"", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(-64800));
+				Assert.That(c.Text, Is.EqualTo("-0.9\""));
 
 				c.MeasureType = MsrSysType.Mm;
 				c.Text = "2";
 				c.UpButton();
-				Assert.AreEqual(8504, c.MeasureValue);
-				Assert.AreEqual("3 mm", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(8504));
+				Assert.That(c.Text, Is.EqualTo("3 mm"));
 				c.Text = "2.72";
 				c.UpButton();
-				Assert.AreEqual(8504, c.MeasureValue);
-				Assert.AreEqual("3 mm", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(8504));
+				Assert.That(c.Text, Is.EqualTo("3 mm"));
 				c.Text = "35";
 				c.UpButton();
-				Assert.AreEqual(100000, c.MeasureValue);
-				Assert.AreEqual("35.28 mm", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(100000));
+				Assert.That(c.Text, Is.EqualTo("35.28 mm"));
 				c.Text = "0";
 				c.UpButton();
-				Assert.AreEqual(2835, c.MeasureValue);
-				Assert.AreEqual("1 mm", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(2835));
+				Assert.That(c.Text, Is.EqualTo("1 mm"));
 			}
 		}
 
@@ -301,74 +301,74 @@ namespace SIL.FieldWorks.FwCoreDlgControlsTests
 				c.MeasureMax = 100000;
 				c.MeasureValue = 2000;
 				c.DownButton();
-				Assert.AreEqual(1000, c.MeasureValue);
-				Assert.AreEqual("1 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(1000));
+				Assert.That(c.Text, Is.EqualTo("1 pt"));
 				c.MeasureValue = 2456;
 				c.DownButton();
-				Assert.AreEqual(2000, c.MeasureValue);
-				Assert.AreEqual("2 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(2000));
+				Assert.That(c.Text, Is.EqualTo("2 pt"));
 				c.MeasureValue = -100000;
 				c.DownButton();
-				Assert.AreEqual(-100000, c.MeasureValue);
-				Assert.AreEqual("-100 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(-100000));
+				Assert.That(c.Text, Is.EqualTo("-100 pt"));
 				c.MeasureValue = -3200;
 				c.DownButton();
-				Assert.AreEqual(-4000, c.MeasureValue);
-				Assert.AreEqual("-4 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(-4000));
+				Assert.That(c.Text, Is.EqualTo("-4 pt"));
 
 				c.MeasureType = MsrSysType.Cm;
 				c.Text = "2.8";
 				c.DownButton();
-				Assert.AreEqual(76535, c.MeasureValue);
-				Assert.AreEqual("2.7 cm", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(76535));
+				Assert.That(c.Text, Is.EqualTo("2.7 cm"));
 				c.Text = "2.85";
 				c.DownButton();
-				Assert.AreEqual(79370, c.MeasureValue);
-				Assert.AreEqual("2.8 cm", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(79370));
+				Assert.That(c.Text, Is.EqualTo("2.8 cm"));
 				c.Text = "-3.5";
 				c.DownButton();
-				Assert.AreEqual(-100000, c.MeasureValue);
-				Assert.AreEqual("-3.53 cm", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(-100000));
+				Assert.That(c.Text, Is.EqualTo("-3.53 cm"));
 				c.Text = "-2";
 				c.DownButton();
-				Assert.AreEqual(-59528, c.MeasureValue);
-				Assert.AreEqual("-2.1 cm", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(-59528));
+				Assert.That(c.Text, Is.EqualTo("-2.1 cm"));
 
 				c.MeasureType = MsrSysType.Inch;
 				c.Text = "1";
 				c.DownButton();
-				Assert.AreEqual(64800, c.MeasureValue);
-				Assert.AreEqual("0.9\"", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(64800));
+				Assert.That(c.Text, Is.EqualTo("0.9\""));
 				c.Text = "0.899";
 				c.DownButton();
-				Assert.AreEqual(57600, c.MeasureValue);
-				Assert.AreEqual("0.8\"", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(57600));
+				Assert.That(c.Text, Is.EqualTo("0.8\""));
 				c.Text = "-1.3";
 				c.DownButton();
-				Assert.AreEqual(-100000, c.MeasureValue);
-				Assert.AreEqual("-1.39\"", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(-100000));
+				Assert.That(c.Text, Is.EqualTo("-1.39\""));
 				c.Text = "-0.95";
 				c.DownButton();
-				Assert.AreEqual(-72000, c.MeasureValue);
-				Assert.AreEqual("-1\"", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(-72000));
+				Assert.That(c.Text, Is.EqualTo("-1\""));
 
 				c.MeasureType = MsrSysType.Mm;
 				c.Text = "2";
 				c.DownButton();
-				Assert.AreEqual(2835, c.MeasureValue);
-				Assert.AreEqual("1 mm", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(2835));
+				Assert.That(c.Text, Is.EqualTo("1 mm"));
 				c.Text = "2.72";
 				c.DownButton();
-				Assert.AreEqual(5669, c.MeasureValue);
-				Assert.AreEqual("2 mm", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(5669));
+				Assert.That(c.Text, Is.EqualTo("2 mm"));
 				c.Text = "-35";
 				c.DownButton();
-				Assert.AreEqual(-100000, c.MeasureValue);
-				Assert.AreEqual("-35.28 mm", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(-100000));
+				Assert.That(c.Text, Is.EqualTo("-35.28 mm"));
 				c.Text = "0";
 				c.DownButton();
-				Assert.AreEqual(-2835, c.MeasureValue);
-				Assert.AreEqual("-1 mm", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(-2835));
+				Assert.That(c.Text, Is.EqualTo("-1 mm"));
 			}
 		}
 
@@ -386,16 +386,16 @@ namespace SIL.FieldWorks.FwCoreDlgControlsTests
 				c.MeasureMin = -20;
 				c.MeasureMax = 10000;
 				c.MeasureValue = 20000;
-				Assert.AreEqual(10000, c.MeasureValue);
-				Assert.AreEqual("10 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(10000));
+				Assert.That(c.Text, Is.EqualTo("10 pt"));
 				c.MeasureMax = 1000;
-				Assert.AreEqual(-20, c.MeasureMin);
-				Assert.AreEqual(1000, c.MeasureValue);
-				Assert.AreEqual("1 pt", c.Text);
+				Assert.That(c.MeasureMin, Is.EqualTo(-20));
+				Assert.That(c.MeasureValue, Is.EqualTo(1000));
+				Assert.That(c.Text, Is.EqualTo("1 pt"));
 				c.MeasureMax = -100;
-				Assert.AreEqual(-100, c.MeasureMin);
-				Assert.AreEqual(-100, c.MeasureValue);
-				Assert.AreEqual("-0.1 pt", c.Text);
+				Assert.That(c.MeasureMin, Is.EqualTo(-100));
+				Assert.That(c.MeasureValue, Is.EqualTo(-100));
+				Assert.That(c.Text, Is.EqualTo("-0.1 pt"));
 			}
 		}
 
@@ -413,16 +413,16 @@ namespace SIL.FieldWorks.FwCoreDlgControlsTests
 				c.MeasureMin = -20;
 				c.MeasureMax = 10000;
 				c.MeasureValue = -50;
-				Assert.AreEqual(-20, c.MeasureValue);
-				Assert.AreEqual("-0.02 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(-20));
+				Assert.That(c.Text, Is.EqualTo("-0.02 pt"));
 				c.MeasureMin = 0;
-				Assert.AreEqual(10000, c.MeasureMax);
-				Assert.AreEqual(0, c.MeasureValue);
-				Assert.AreEqual("0 pt", c.Text);
+				Assert.That(c.MeasureMax, Is.EqualTo(10000));
+				Assert.That(c.MeasureValue, Is.EqualTo(0));
+				Assert.That(c.Text, Is.EqualTo("0 pt"));
 				c.MeasureMin = 150000;
-				Assert.AreEqual(150000, c.MeasureMax);
-				Assert.AreEqual(150000, c.MeasureValue);
-				Assert.AreEqual("150 pt", c.Text);
+				Assert.That(c.MeasureMax, Is.EqualTo(150000));
+				Assert.That(c.MeasureValue, Is.EqualTo(150000));
+				Assert.That(c.Text, Is.EqualTo("150 pt"));
 			}
 		}
 
@@ -442,14 +442,14 @@ namespace SIL.FieldWorks.FwCoreDlgControlsTests
 				c.MeasureMin = -30000;
 				c.MeasureMax = 30000;
 				c.MeasureValue = 0;
-				Assert.AreEqual(0, c.MeasureValue);
-				Assert.AreEqual("0 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(0));
+				Assert.That(c.Text, Is.EqualTo("0 pt"));
 				c.DownButton();
-				Assert.AreEqual(-1000, c.MeasureValue);
-				Assert.AreEqual("1 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(-1000));
+				Assert.That(c.Text, Is.EqualTo("1 pt"));
 				c.DownButton();
-				Assert.AreEqual(-2000, c.MeasureValue);
-				Assert.AreEqual("2 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(-2000));
+				Assert.That(c.Text, Is.EqualTo("2 pt"));
 			}
 		}
 
@@ -469,23 +469,23 @@ namespace SIL.FieldWorks.FwCoreDlgControlsTests
 				c.MeasureValue = 2000;
 				c.MeasureIncrementFactor = 6;
 				c.UpButton();
-				Assert.AreEqual(6000, c.MeasureValue);
-				Assert.AreEqual("6 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(6000));
+				Assert.That(c.Text, Is.EqualTo("6 pt"));
 				c.UpButton();
-				Assert.AreEqual(10000, c.MeasureValue);
-				Assert.AreEqual("10 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(10000));
+				Assert.That(c.Text, Is.EqualTo("10 pt"));
 				c.DownButton();
-				Assert.AreEqual(6000, c.MeasureValue);
-				Assert.AreEqual("6 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(6000));
+				Assert.That(c.Text, Is.EqualTo("6 pt"));
 				c.DownButton();
-				Assert.AreEqual(0, c.MeasureValue);
-				Assert.AreEqual("0 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(0));
+				Assert.That(c.Text, Is.EqualTo("0 pt"));
 				c.DownButton();
-				Assert.AreEqual(-6000, c.MeasureValue);
-				Assert.AreEqual("-6 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(-6000));
+				Assert.That(c.Text, Is.EqualTo("-6 pt"));
 				c.DownButton();
-				Assert.AreEqual(-10000, c.MeasureValue);
-				Assert.AreEqual("-10 pt", c.Text);
+				Assert.That(c.MeasureValue, Is.EqualTo(-10000));
+				Assert.That(c.Text, Is.EqualTo("-10 pt"));
 			}
 		}
 	}

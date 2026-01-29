@@ -121,9 +121,8 @@ namespace LexTextControlsTests
 			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 3);
 			var coldSense = senseRepo.GetObject(new Guid("57f884c0-0df2-43bf-8ba7-c70b2a208cf1"));
 
-			Assert.AreEqual(1, coldSense.LexSenseReferences.Count(), "Too many LexSenseReferences, import has issues.");
-			Assert.AreEqual(2, coldSense.LexSenseReferences.First().TargetsRS.Count,
-								 "Incorrect number of references, part relations not imported correctly.");
+			Assert.That(coldSense.LexSenseReferences.Count(), Is.EqualTo(1), "Too many LexSenseReferences, import has issues.");
+			Assert.That(coldSense.LexSenseReferences.First().TargetsRS.Count, Is.EqualTo(2), "Incorrect number of references, part relations not imported correctly.");
 
 			var sNewFile = CreateInputFile(sequenceLiftData2);
 			TryImport(sNewFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 3);
@@ -131,14 +130,11 @@ namespace LexTextControlsTests
 			var coolerSense = senseRepo.GetObject(new Guid(coolerGuid));
 
 			//There should be 1 LexSenseReference representing the new cool, cooler order.
-			Assert.AreEqual(1, coldSense.LexSenseReferences.Count(), "Too many LexSenseReferences, the relation was not merged.");
-			Assert.AreEqual(2, coldSense.LexSenseReferences.First().TargetsRS.Count,
-								 "Incorrect number of references, part relations not imported correctly.");
-			Assert.AreEqual(coolerGuid, coldSense.LexSenseReferences.First().TargetsRS[1].Guid.ToString(),
-								 "Sequence incorrectly modified.");
-			Assert.AreEqual(1, coolerSense.LexSenseReferences.Count(), "Incorrect number of references in the leg sense.");
-			Assert.AreEqual(2, coolerSense.LexSenseReferences.First().TargetsRS.Count,
-								 "Incorrect number of targets in the leg sense.");
+			Assert.That(coldSense.LexSenseReferences.Count(), Is.EqualTo(1), "Too many LexSenseReferences, the relation was not merged.");
+			Assert.That(coldSense.LexSenseReferences.First().TargetsRS.Count, Is.EqualTo(2), "Incorrect number of references, part relations not imported correctly.");
+			Assert.That(coldSense.LexSenseReferences.First().TargetsRS[1].Guid.ToString(), Is.EqualTo(coolerGuid), "Sequence incorrectly modified.");
+			Assert.That(coolerSense.LexSenseReferences.Count(), Is.EqualTo(1), "Incorrect number of references in the leg sense.");
+			Assert.That(coolerSense.LexSenseReferences.First().TargetsRS.Count, Is.EqualTo(2), "Incorrect number of targets in the leg sense.");
 		}
 
 		private static string[] componentData = new[]
@@ -233,16 +229,14 @@ namespace LexTextControlsTests
 			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 3);
 			var coldEntry = entryRepo.GetObject(new Guid("d76f4068-833e-40a8-b4d5-5f4ba785bf6e"));
 			var ler = coldEntry.LexEntryReferences;
-			Assert.AreEqual(3, coldEntry.LexEntryReferences.ElementAt(0).TargetsRS.Count,
-								 "Incorrect number of component references.");
+			Assert.That(coldEntry.LexEntryReferences.ElementAt(0).TargetsRS.Count, Is.EqualTo(3), "Incorrect number of component references.");
 
 			var sNewFile = CreateInputFile(componentData2);
 			logFile = TryImport(sNewFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 3);
 			const string coolerGuid = "03237d6e-a327-436b-8ae3-b84eed3549fd";
-			Assert.AreEqual(2, coldEntry.LexEntryReferences.ElementAt(0).TargetsRS.Count,
-								 "Incorrect number of component references.");
+			Assert.That(coldEntry.LexEntryReferences.ElementAt(0).TargetsRS.Count, Is.EqualTo(2), "Incorrect number of component references.");
 			var coolerEntry = entryRepo.GetObject(new Guid(coolerGuid));
-			Assert.AreEqual(0, coolerEntry.LexEntryReferences.Count());
+			Assert.That(coolerEntry.LexEntryReferences.Count(), Is.EqualTo(0));
 		}
 
 
@@ -302,8 +296,8 @@ namespace LexTextControlsTests
 			var sOrigFile = CreateInputFile(s_ComponentTest);
 			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 3);
 			var todoEntry = entryRepository.GetObject(new Guid("10af904a-7395-4a37-a195-44001127ae40"));
-			Assert.AreEqual(1, todoEntry.LexEntryReferences.Count());
-			Assert.AreEqual(3, todoEntry.LexEntryReferences.First().TargetsRS.Count);
+			Assert.That(todoEntry.LexEntryReferences.Count(), Is.EqualTo(1));
+			Assert.That(todoEntry.LexEntryReferences.First().TargetsRS.Count, Is.EqualTo(3));
 		}
 
 		private static readonly string[] s_ComponentTest2 = new[]
@@ -373,13 +367,13 @@ namespace LexTextControlsTests
 			var sMergeFile = CreateInputFile(s_ComponentTest2);
 			var logFile = TryImport(sMergeFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 4);
 			var todoEntry = entryRepository.GetObject(new Guid("10af904a-7395-4a37-a195-44001127ae40"));
-			Assert.AreEqual(1, todoEntry.LexEntryReferences.Count());
-			Assert.AreEqual(3, todoEntry.LexEntryReferences.First().TargetsRS.Count);
+			Assert.That(todoEntry.LexEntryReferences.Count(), Is.EqualTo(1));
+			Assert.That(todoEntry.LexEntryReferences.First().TargetsRS.Count, Is.EqualTo(3));
 			using(var stream = new StreamReader(logFile))
 			{
 				string data = stream.ReadToEnd();
 				stream.Close();
-				Assert.IsTrue(data.Contains("Combined Collections"), "Logfile does not show conflict for collection.");
+				Assert.That(data.Contains("Combined Collections"), Is.True, "Logfile does not show conflict for collection.");
 			}
 		}
 
@@ -443,8 +437,8 @@ namespace LexTextControlsTests
 			var todoEntry = entryRepository.GetObject(new Guid("10af904a-7395-4a37-a195-44001127ae40"));
 			//Even though they do not have an order set (due to a now fixed export defect) the two relations in the 'todo' entry
 			//should be collected in the same LexEntryRef
-			Assert.AreEqual(1, todoEntry.ComplexFormEntryRefs.Count());
-			Assert.AreEqual(2, todoEntry.ComplexFormEntryRefs.First().ComponentLexemesRS.Count);
+			Assert.That(todoEntry.ComplexFormEntryRefs.Count(), Is.EqualTo(1));
+			Assert.That(todoEntry.ComplexFormEntryRefs.First().ComponentLexemesRS.Count, Is.EqualTo(2));
 		}
 
 
@@ -512,10 +506,9 @@ namespace LexTextControlsTests
 			var todoEntry = entryRepository.GetObject(new Guid("10af904a-7395-4a37-a195-44001127ae40"));
 			//Even though they do not have an order set (due to a now fixed export defect) the two relations in the 'todo' entry
 			//should be collected in the same LexEntryRef
-			Assert.AreEqual(1, todoEntry.ComplexFormEntryRefs.Count(),
-								 "Too many ComplexFormEntryRefs? Then they were incorrectly split.");
-			Assert.AreEqual(2, todoEntry.ComplexFormEntryRefs.First().ComponentLexemesRS.Count, "Wrong number of Components.");
-			Assert.AreEqual(1, todoEntry.VariantEntryRefs.Count(), "Wrong number of VariantEntryRefs.");
+			Assert.That(todoEntry.ComplexFormEntryRefs.Count(), Is.EqualTo(1), "Too many ComplexFormEntryRefs? Then they were incorrectly split.");
+			Assert.That(todoEntry.ComplexFormEntryRefs.First().ComponentLexemesRS.Count, Is.EqualTo(2), "Wrong number of Components.");
+			Assert.That(todoEntry.VariantEntryRefs.Count(), Is.EqualTo(1), "Wrong number of VariantEntryRefs.");
 		}
 
 		private static readonly string[] mergeTestOld = new[]
@@ -601,10 +594,10 @@ namespace LexTextControlsTests
 
 			//Even though they do not have an order set (due to a now fixed export defect) the two relations in the 'todo' entry
 			//should be collected in the same LexEntryRef
-			Assert.AreEqual(1, todoEntry.ComplexFormEntryRefs.Count(), "Too many ComplexForms, they were incorrectly split.");
-			Assert.AreEqual(1, todoEntry.VariantEntryRefs.Count(), "Wrong number of VariantEntryRefs.");
-			Assert.AreEqual(1, todoEntry.VariantEntryRefs.First().ComponentLexemesRS.Count, "Incorrect number of Variants.");
-			Assert.AreEqual(2, todoEntry.ComplexFormEntryRefs.First().ComponentLexemesRS.Count, "Incorrect number of components.");
+			Assert.That(todoEntry.ComplexFormEntryRefs.Count(), Is.EqualTo(1), "Too many ComplexForms, they were incorrectly split.");
+			Assert.That(todoEntry.VariantEntryRefs.Count(), Is.EqualTo(1), "Wrong number of VariantEntryRefs.");
+			Assert.That(todoEntry.VariantEntryRefs.First().ComponentLexemesRS.Count, Is.EqualTo(1), "Incorrect number of Variants.");
+			Assert.That(todoEntry.ComplexFormEntryRefs.First().ComponentLexemesRS.Count, Is.EqualTo(2), "Incorrect number of components.");
 		}
 
 		private static readonly string[] s_LT12948Test3 = new[]
@@ -706,10 +699,10 @@ namespace LexTextControlsTests
 			var bobEntry = entryRepository.GetObject(new Guid("7e6e4aed-0b2e-4e2b-9c84-4466b8e73ea4"));
 			//Even though they do not have an order set (due to a now fixed export defect) the two relations in the 'todo' entry
 			//should be collected in the same LexEntryRef
-			Assert.AreEqual(1, bungaloSense.LexSenseReferences.Count());
-			Assert.AreEqual(3, bungaloSense.LexSenseReferences.First().TargetsRS.Count);
-			Assert.AreEqual(1, bobEntry.LexEntryReferences.Count());
-			Assert.AreEqual(2, bobEntry.LexEntryReferences.First().TargetsRS.Count);
+			Assert.That(bungaloSense.LexSenseReferences.Count(), Is.EqualTo(1));
+			Assert.That(bungaloSense.LexSenseReferences.First().TargetsRS.Count, Is.EqualTo(3));
+			Assert.That(bobEntry.LexEntryReferences.Count(), Is.EqualTo(1));
+			Assert.That(bobEntry.LexEntryReferences.First().TargetsRS.Count, Is.EqualTo(2));
 		}
 
 		// This data represents a lift file with 3 entries of form 'arm', 'leg', and 'body' with a whole/part relationship between 'arm' and 'body'
@@ -862,25 +855,22 @@ namespace LexTextControlsTests
 			var logFile = TryImport(sOrigFile, CreateInputRangesFile(treeLiftRange, Path.GetDirectoryName(sOrigFile)), FlexLiftMerger.MergeStyle.MsKeepNew, 4);
 			var bodySense = senseRepo.GetObject(new Guid("52c632c2-98ad-4f97-b130-2a32992254e3"));
 
-			Assert.AreEqual(1, bodySense.LexSenseReferences.Count(), "Too many LexSenseReferences, the parts were split.");
-			Assert.AreEqual(2, bodySense.LexSenseReferences.First().TargetsRS.Count,
-								 "Incorrect number of references, part relations not imported correctly.");
+			Assert.That(bodySense.LexSenseReferences.Count(), Is.EqualTo(1), "Too many LexSenseReferences, the parts were split.");
+			Assert.That(bodySense.LexSenseReferences.First().TargetsRS.Count, Is.EqualTo(2), "Incorrect number of references, part relations not imported correctly.");
 
 			var sNewFile = CreateInputFile(treeLiftData2);
 			TryImport(sNewFile, CreateInputRangesFile(treeLiftRange, Path.GetDirectoryName(sNewFile)), FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 4);
 			var legSense = senseRepo.GetObject(new Guid("62c632c2-98ad-4f97-b130-2a32992254e3"));
 			var armSense = senseRepo.GetObject(new Guid("5ca96ad0-cb18-4ddc-be8e-3547fc87221f"));
 			//There should be 1 LexSenseReference for the Whole/Part relationship and each involved sense should share it.
-			Assert.AreEqual(1, bodySense.LexSenseReferences.Count(), "Too many LexSenseReferences, the parts were split.");
-			Assert.AreEqual(3, bodySense.LexSenseReferences.First().TargetsRS.Count,
-								 "Incorrect number of references, part relations not imported correctly.");
-			Assert.AreEqual(1, legSense.LexSenseReferences.Count(), "Incorrect number of references in the leg sense.");
-			Assert.AreEqual(3, legSense.LexSenseReferences.First().TargetsRS.Count,
-								 "Incorrect number of targets in the leg sense.");
+			Assert.That(bodySense.LexSenseReferences.Count(), Is.EqualTo(1), "Too many LexSenseReferences, the parts were split.");
+			Assert.That(bodySense.LexSenseReferences.First().TargetsRS.Count, Is.EqualTo(3), "Incorrect number of references, part relations not imported correctly.");
+			Assert.That(legSense.LexSenseReferences.Count(), Is.EqualTo(1), "Incorrect number of references in the leg sense.");
+			Assert.That(legSense.LexSenseReferences.First().TargetsRS.Count, Is.EqualTo(3), "Incorrect number of targets in the leg sense.");
 			// body and leg both have only one LexReference
-			Assert.AreEqual(bodySense.LexSenseReferences.First(), legSense.LexSenseReferences.First(), "LexReferences of Body and Leg should match.");
+			Assert.That(legSense.LexSenseReferences.First(), Is.EqualTo(bodySense.LexSenseReferences.First()), "LexReferences of Body and Leg should match.");
 			// arm has two LexReferences and leg has one LexReference
-			CollectionAssert.Contains(armSense.LexSenseReferences, legSense.LexSenseReferences.First(), "Arm LexReferences should include the single Leg LexReference");
+			Assert.That(armSense.LexSenseReferences, Does.Contain(legSense.LexSenseReferences.First()), "Arm LexReferences should include the single Leg LexReference");
 		}
 
 		// This lift data contains 'a' 'b' and 'c' entries with 'a' being a whole of 2 parts 'b' and 'c' (whole/part relation)
@@ -993,22 +983,19 @@ namespace LexTextControlsTests
 			var bSense = senseRepo.GetObject(new Guid("52c632c2-98ad-4f97-b130-2a32992254e3"));
 			var cSense = senseRepo.GetObject(new Guid("62c632c2-98ad-4f97-b130-2a32992254e3"));
 
-			Assert.AreEqual(1, aSense.LexSenseReferences.Count(), "Too many LexSenseReferences, the parts were split.");
-			Assert.AreEqual(3, aSense.LexSenseReferences.First().TargetsRS.Count,
-								 "Incorrect number of references, part relations not imported correctly.");
+			Assert.That(aSense.LexSenseReferences.Count(), Is.EqualTo(1), "Too many LexSenseReferences, the parts were split.");
+			Assert.That(aSense.LexSenseReferences.First().TargetsRS.Count, Is.EqualTo(3), "Incorrect number of references, part relations not imported correctly.");
 
 			var sNewFile = CreateInputFile(treeLiftDataReparented);
 			TryImport(sNewFile, CreateInputRangesFile(treeLiftRange, Path.GetDirectoryName(sNewFile)), FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 4);
 			var dSense = senseRepo.GetObject(new Guid("3b3632c2-98ad-4f97-b130-2a32992254e3"));
 			//There should be 1 LexSenseReference for the Whole/Part relationship and each involved sense should share it.
-			Assert.AreEqual(1, aSense.LexSenseReferences.Count(), "Too many LexSenseReferences, the parts were split.");
-			Assert.AreEqual(2, aSense.LexSenseReferences.First().TargetsRS.Count,
-								 "Incorrect number of references, part relations not imported correctly.");
-			Assert.AreEqual(1, cSense.LexSenseReferences.Count(), "Incorrect number of references in the c sense.");
-			Assert.AreEqual(2, cSense.LexSenseReferences.First().TargetsRS.Count,
-								 "Incorrect number of targets in the c senses reference.");
-			Assert.AreEqual(cSense.LexSenseReferences.First(), dSense.LexSenseReferences.First(), "c and d should be in the same relation");
-			Assert.AreEqual(1, dSense.LexSenseReferences.Count(), "dSense picked up a phantom reference.");
+			Assert.That(aSense.LexSenseReferences.Count(), Is.EqualTo(1), "Too many LexSenseReferences, the parts were split.");
+			Assert.That(aSense.LexSenseReferences.First().TargetsRS.Count, Is.EqualTo(2), "Incorrect number of references, part relations not imported correctly.");
+			Assert.That(cSense.LexSenseReferences.Count(), Is.EqualTo(1), "Incorrect number of references in the c sense.");
+			Assert.That(cSense.LexSenseReferences.First().TargetsRS.Count, Is.EqualTo(2), "Incorrect number of targets in the c senses reference.");
+			Assert.That(dSense.LexSenseReferences.First(), Is.EqualTo(cSense.LexSenseReferences.First()), "c and d should be in the same relation");
+			Assert.That(dSense.LexSenseReferences.Count(), Is.EqualTo(1), "dSense picked up a phantom reference.");
 		}
 
 		// Defines a lift file with two entries 'Bother' and 'me'.
@@ -1120,16 +1107,16 @@ namespace LexTextControlsTests
 			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
 			var aSense = senseRepo.GetObject(new Guid("c2b4fe44-a3d9-4a42-a87c-8e174593fb30"));
 			var bSense = senseRepo.GetObject(new Guid("de2fcb48-319a-48cf-bfea-0f25b9f38b31"));
-			Assert.AreEqual(0, aSense.LexSenseReferences.Count(), "Incorrect number of component references.");
-			Assert.AreEqual(0, bSense.LexSenseReferences.Count(), "Incorrect number of component references.");
+			Assert.That(aSense.LexSenseReferences.Count(), Is.EqualTo(0), "Incorrect number of component references.");
+			Assert.That(bSense.LexSenseReferences.Count(), Is.EqualTo(0), "Incorrect number of component references.");
 
 			var sNewFile = CreateInputFile(newWithPair);
 			logFile = TryImport(sNewFile, CreateInputRangesFile(newWithPairRange, Path.GetDirectoryName(sNewFile)), FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
-			Assert.AreEqual(1, aSense.LexSenseReferences.Count(), "Incorrect number of component references.");
-			Assert.AreEqual(1, bSense.LexSenseReferences.Count(), "Incorrect number of component references.");
+			Assert.That(aSense.LexSenseReferences.Count(), Is.EqualTo(1), "Incorrect number of component references.");
+			Assert.That(bSense.LexSenseReferences.Count(), Is.EqualTo(1), "Incorrect number of component references.");
 			Assert.That(aSense.LexSenseReferences.First().TargetsRS.Contains(bSense), "The Twin/Twain relationship failed to contain 'Bother' and 'me'");
 			Assert.That(bSense.LexSenseReferences.First().TargetsRS.Contains(aSense), "The Twin/Twain relationship failed to contain 'Bother' and 'me'");
-			Assert.AreEqual(aSense.LexSenseReferences.First(), bSense.LexSenseReferences.First(), "aSense and bSense should share the same LexSenseReference.");
+			Assert.That(bSense.LexSenseReferences.First(), Is.EqualTo(aSense.LexSenseReferences.First()), "aSense and bSense should share the same LexSenseReference.");
 			Assert.That(aSense.LexSenseReferences.First().TargetsRS[0].Equals(bSense), "Twin item should come before Twain");
 			Assert.That(bSense.LexSenseReferences.First().TargetsRS[0].Equals(bSense), "Twin item should come before Twain");
 		}
@@ -1183,13 +1170,13 @@ namespace LexTextControlsTests
 			var typeRepo = Cache.ServiceLocator.GetInstance<ILexRefTypeRepository>();
 
 			var sOrigFile = CreateInputFile(newWithPair);
-			Assert.AreEqual(0, typeRepo.Count, "Too many types exist before import, bootstrapping has changed?");
+			Assert.That(typeRepo.Count, Is.EqualTo(0), "Too many types exist before import, bootstrapping has changed?");
 			var logFile = TryImport(sOrigFile, CreateInputRangesFile(rangeWithOneCustomAndOneDefault, Path.GetDirectoryName(sOrigFile)), FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
 			var aSense = senseRepo.GetObject(new Guid("c2b4fe44-a3d9-4a42-a87c-8e174593fb30"));
 			var bSense = senseRepo.GetObject(new Guid("de2fcb48-319a-48cf-bfea-0f25b9f38b31"));
-			Assert.AreEqual(1, aSense.LexSenseReferences.Count(), "Incorrect number of component references.");
-			Assert.AreEqual(1, bSense.LexSenseReferences.Count(), "Incorrect number of component references.");
-			Assert.AreEqual(1, typeRepo.Count, "Too many types created during import.");
+			Assert.That(aSense.LexSenseReferences.Count(), Is.EqualTo(1), "Incorrect number of component references.");
+			Assert.That(bSense.LexSenseReferences.Count(), Is.EqualTo(1), "Incorrect number of component references.");
+			Assert.That(typeRepo.Count, Is.EqualTo(1), "Too many types created during import.");
 
 		}
 
@@ -1299,13 +1286,13 @@ namespace LexTextControlsTests
 			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
 			var aSense = senseRepo.GetObject(new Guid("c2b4fe44-a3d9-4a42-a87c-8e174593fb30"));
 			var bSense = senseRepo.GetObject(new Guid("de2fcb48-319a-48cf-bfea-0f25b9f38b31"));
-			Assert.AreEqual(0, aSense.LexSenseReferences.Count(), "Incorrect number of component references.");
-			Assert.AreEqual(0, bSense.LexSenseReferences.Count(), "Incorrect number of component references.");
+			Assert.That(aSense.LexSenseReferences.Count(), Is.EqualTo(0), "Incorrect number of component references.");
+			Assert.That(bSense.LexSenseReferences.Count(), Is.EqualTo(0), "Incorrect number of component references.");
 
 			var sNewFile = CreateInputFile(newWithRelation);
 			logFile = TryImport(sNewFile, CreateInputRangesFile(newWithRelationRange, Path.GetDirectoryName(sNewFile)), FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
-			Assert.AreEqual(1, aSense.LexSenseReferences.Count(), "Incorrect number of component references.");
-			Assert.AreEqual(1, bSense.LexSenseReferences.Count(), "Incorrect number of component references.");
+			Assert.That(aSense.LexSenseReferences.Count(), Is.EqualTo(1), "Incorrect number of component references.");
+			Assert.That(bSense.LexSenseReferences.Count(), Is.EqualTo(1), "Incorrect number of component references.");
 			var queueType = refTypeRepo.AllInstances().FirstOrDefault(refType => refType.Name.BestAnalysisAlternative.Text.Equals("queue"));
 			Assert.That(queueType != null && queueType.MembersOC.Contains(bSense.LexSenseReferences.First()), "Queue incorrectly imported.");
 			Assert.That(queueType.MappingType == (int)LexRefTypeTags.MappingTypes.kmtSenseSequence, "Queue imported with wrong type.");
@@ -1417,17 +1404,17 @@ namespace LexTextControlsTests
 			var aSense = senseRepo.GetObject(new Guid("a2096aa3-6076-47c0-b243-e50d00afaeb5"));
 			var bSense = senseRepo.GetObject(new Guid("70a6973b-787e-4ddc-942f-3a2b2d0c6863"));
 			var cSense = senseRepo.GetObject(new Guid("91eb7dc2-4057-4e7c-88c3-a81536a38c3e"));
-			Assert.AreEqual(1, aSense.LexSenseReferences.Count(), "Incorrect number of component references.");
-			Assert.AreEqual(0, bSense.LexSenseReferences.Count(), "Incorrect number of component references.");
-			Assert.AreEqual(1, cSense.LexSenseReferences.Count(), "Incorrect number of component references.");
+			Assert.That(aSense.LexSenseReferences.Count(), Is.EqualTo(1), "Incorrect number of component references.");
+			Assert.That(bSense.LexSenseReferences.Count(), Is.EqualTo(0), "Incorrect number of component references.");
+			Assert.That(cSense.LexSenseReferences.Count(), Is.EqualTo(1), "Incorrect number of component references.");
 			var synType = refTypeRepo.AllInstances().FirstOrDefault(refType => refType.Name.BestAnalysisAlternative.Text.Equals("Synonyms"));
 			Assert.That(synType != null && synType.MembersOC.Contains(aSense.LexSenseReferences.First()), "Synonym incorrectly imported.");
 
 			var sNewFile = CreateInputFile(nextAntReplaceSyn);
 			logFile = TryImport(sNewFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 3);
-			Assert.AreEqual(0, aSense.LexSenseReferences.Count(), "Incorrect number of component references.");
-			Assert.AreEqual(1, bSense.LexSenseReferences.Count(), "Incorrect number of component references.");
-			Assert.AreEqual(1, cSense.LexSenseReferences.Count(), "Incorrect number of component references.");
+			Assert.That(aSense.LexSenseReferences.Count(), Is.EqualTo(0), "Incorrect number of component references.");
+			Assert.That(bSense.LexSenseReferences.Count(), Is.EqualTo(1), "Incorrect number of component references.");
+			Assert.That(cSense.LexSenseReferences.Count(), Is.EqualTo(1), "Incorrect number of component references.");
 			var antType = refTypeRepo.AllInstances().FirstOrDefault(refType => refType.Name.BestAnalysisAlternative.Text.Equals("Antonym"));
 			Assert.That(antType != null && antType.MembersOC.Contains(bSense.LexSenseReferences.First()), "Antonym incorrectly imported.");
 		}
@@ -1502,8 +1489,8 @@ namespace LexTextControlsTests
 			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
 			var eEntry = entryRepo.GetObject(new Guid("40a9574d-2d13-4d30-9eab-9a6d84bf29f8"));
 			var aEntry = entryRepo.GetObject(new Guid("ac828ef4-9a18-4802-b095-11cca00947db"));
-			Assert.AreEqual(1, eEntry.VariantEntryRefs.Count(), "No VariantEntryRefs found when expected, import of lift data during test setup failed.");
-			Assert.AreEqual(1, aEntry.VariantFormEntries.Count(), "Variant form Entry not found when expected, import of lift data during test setup failed.");
+			Assert.That(eEntry.VariantEntryRefs.Count(), Is.EqualTo(1), "No VariantEntryRefs found when expected, import of lift data during test setup failed.");
+			Assert.That(aEntry.VariantFormEntries.Count(), Is.EqualTo(1), "Variant form Entry not found when expected, import of lift data during test setup failed.");
 
 			var sNewFile = CreateInputFile(twoEntryWithVariantRefRemovedLift);
 			logFile = TryImport(sNewFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
@@ -1511,8 +1498,8 @@ namespace LexTextControlsTests
 			// created. This results in stable lift (doesn't change on round trip), but the fwdata
 			// will change on round trip without real changes. This is not what we prefer, but think
 			// it is OK for now. Nov 2013
-			Assert.AreEqual(1, eEntry.VariantEntryRefs.Count(), "VariantEntryRef should remain after lift import.");
-			Assert.AreEqual(0, aEntry.VariantFormEntries.Count(), "VariantForm Entry was not deleted during lift import."); // The reference was removed so the Entries collection should be empty
+			Assert.That(eEntry.VariantEntryRefs.Count(), Is.EqualTo(1), "VariantEntryRef should remain after lift import.");
+			Assert.That(aEntry.VariantFormEntries.Count(), Is.EqualTo(0), "VariantForm Entry was not deleted during lift import."); // The reference was removed so the Entries collection should be empty
 		}
 
 		private static string[] twoEntryWithVariantRemovedLift = new[]
@@ -1554,13 +1541,13 @@ namespace LexTextControlsTests
 			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
 			var eEntry = entryRepo.GetObject(new Guid("40a9574d-2d13-4d30-9eab-9a6d84bf29f8"));
 			var aEntry = entryRepo.GetObject(new Guid("ac828ef4-9a18-4802-b095-11cca00947db"));
-			Assert.AreEqual(1, eEntry.VariantEntryRefs.Count(), "No VariantEntryRefs found when expected, import of lift data during test setup failed.");
-			Assert.AreEqual(1, aEntry.VariantFormEntries.Count(), "Variant form Entry not found when expected, import of lift data during test setup failed.");
+			Assert.That(eEntry.VariantEntryRefs.Count(), Is.EqualTo(1), "No VariantEntryRefs found when expected, import of lift data during test setup failed.");
+			Assert.That(aEntry.VariantFormEntries.Count(), Is.EqualTo(1), "Variant form Entry not found when expected, import of lift data during test setup failed.");
 
 			var sNewFile = CreateInputFile(twoEntryWithVariantRemovedLift);
 			logFile = TryImport(sNewFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
-			Assert.AreEqual(0, eEntry.VariantEntryRefs.Count(), "VariantEntryRef was not deleted during lift import.");
-			Assert.AreEqual(0, aEntry.VariantFormEntries.Count(), "VariantForm Entry was not deleted during lift import.");
+			Assert.That(eEntry.VariantEntryRefs.Count(), Is.EqualTo(0), "VariantEntryRef was not deleted during lift import.");
+			Assert.That(aEntry.VariantFormEntries.Count(), Is.EqualTo(0), "VariantForm Entry was not deleted during lift import.");
 		}
 
 		private static string[] twoEntryWithVariantComplexFormAndNewItemLift = new[]
@@ -1613,13 +1600,13 @@ namespace LexTextControlsTests
 			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
 			var eEntry = entryRepo.GetObject(new Guid("40a9574d-2d13-4d30-9eab-9a6d84bf29f8"));
 			var aEntry = entryRepo.GetObject(new Guid("ac828ef4-9a18-4802-b095-11cca00947db"));
-			Assert.AreEqual(1, eEntry.VariantEntryRefs.Count(), "No VariantEntryRefs found when expected, import of lift data during test setup failed.");
-			Assert.AreEqual(1, aEntry.VariantFormEntries.Count(), "Variant form Entry not found when expected, import of lift data during test setup failed.");
+			Assert.That(eEntry.VariantEntryRefs.Count(), Is.EqualTo(1), "No VariantEntryRefs found when expected, import of lift data during test setup failed.");
+			Assert.That(aEntry.VariantFormEntries.Count(), Is.EqualTo(1), "Variant form Entry not found when expected, import of lift data during test setup failed.");
 
 			var sNewFile = CreateInputFile(twoEntryWithVariantComplexFormAndNewItemLift);
 			logFile = TryImport(sNewFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 3);
-			Assert.AreEqual(1, eEntry.VariantEntryRefs.Count(), "VariantEntryRef mistakenly deleted during lift import.");
-			Assert.AreEqual(1, aEntry.VariantFormEntries.Count(), "VariantForm Entry was mistakenly deleted during lift import.");
+			Assert.That(eEntry.VariantEntryRefs.Count(), Is.EqualTo(1), "VariantEntryRef mistakenly deleted during lift import.");
+			Assert.That(aEntry.VariantFormEntries.Count(), Is.EqualTo(1), "VariantForm Entry was mistakenly deleted during lift import.");
 		}
 
 		private static string[] twoEntryWithDerivativeComplexFormLift = new[]
@@ -1693,15 +1680,15 @@ namespace LexTextControlsTests
 			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
 			var eEntry = entryRepo.GetObject(new Guid("40a9574d-2d13-4d30-9eab-9a6d84bf29f8"));
 			var aEntry = entryRepo.GetObject(new Guid("ac828ef4-9a18-4802-b095-11cca00947db"));
-			Assert.AreEqual(1, eEntry.ComplexFormEntryRefs.Count(), "No ComplexFormEntryRefs found when expected, import of lift data during test setup failed.");
-			Assert.AreEqual(1, aEntry.ComplexFormEntries.Count(), "No ComplexEntries found when expected, import of lift data during test setup failed.");
+			Assert.That(eEntry.ComplexFormEntryRefs.Count(), Is.EqualTo(1), "No ComplexFormEntryRefs found when expected, import of lift data during test setup failed.");
+			Assert.That(aEntry.ComplexFormEntries.Count(), Is.EqualTo(1), "No ComplexEntries found when expected, import of lift data during test setup failed.");
 
 			var sNewFile = CreateInputFile(twoEntryWithDerivativeComplexFormRemovedLift);
 			logFile = TryImport(sNewFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
-			Assert.AreEqual(0, eEntry.ComplexFormEntryRefs.Count(), "ComplexFormEntryRefs was not deleted during lift import.");
-			Assert.AreEqual(0, aEntry.ComplexFormEntries.Count(), "ComplexFormEntry was not deleted during lift import.");
-			Assert.AreEqual(1, eEntry.VariantEntryRefs.Count(), "An empty VariantEntryRef should have resulted from the import");
-			Assert.AreEqual(0, aEntry.VariantFormEntries.Count(), "An empty VariantEntryRef should have resulted from the import");
+			Assert.That(eEntry.ComplexFormEntryRefs.Count(), Is.EqualTo(0), "ComplexFormEntryRefs was not deleted during lift import.");
+			Assert.That(aEntry.ComplexFormEntries.Count(), Is.EqualTo(0), "ComplexFormEntry was not deleted during lift import.");
+			Assert.That(eEntry.VariantEntryRefs.Count(), Is.EqualTo(1), "An empty VariantEntryRef should have resulted from the import");
+			Assert.That(aEntry.VariantFormEntries.Count(), Is.EqualTo(0), "An empty VariantEntryRef should have resulted from the import");
 		}
 
 		[Test]
@@ -1765,7 +1752,7 @@ namespace LexTextControlsTests
 			var rangeFile = CreateInputRangesFile(liftRangeWithNonAsciiRelation, Path.GetDirectoryName(liftFile));
 			// SUT
 			var logFile = TryImport(liftFile, rangeFile, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 1);
-			Assert.AreEqual(refTypeCountBeforeImport, Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Count, "Relation duplicated on import");
+			Assert.That(Cache.LangProject.LexDbOA.ReferencesOA.PossibilitiesOS.Count, Is.EqualTo(refTypeCountBeforeImport), "Relation duplicated on import");
 		}
 	}
 }

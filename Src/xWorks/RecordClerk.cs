@@ -204,7 +204,14 @@ namespace SIL.FieldWorks.XWorks
 		/// </remarks>
 		~RecordClerk()
 		{
-			Dispose(false);
+			try
+			{
+				Dispose(false);
+			}
+			catch
+			{
+				// Never allow exceptions to escape a finalizer.
+			}
 			// The base class finalizer is called automatically.
 		}
 

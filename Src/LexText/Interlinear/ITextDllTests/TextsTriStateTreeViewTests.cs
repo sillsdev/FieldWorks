@@ -20,9 +20,9 @@ namespace SIL.FieldWorks.IText
 			using (var treeView = CreateViewWithEmptyBook())
 			{
 				treeView.ExpandToBooks();
-				Assert.True(m_bibleNode.IsExpanded, "Bible should be expanded");
-				Assert.True(m_testamentNode.IsExpanded, "Testaments should be expanded");
-				Assert.False(m_bookNode.IsExpanded, "Books should not be expanded");
+				Assert.That(m_bibleNode.IsExpanded, Is.True, "Bible should be expanded");
+				Assert.That(m_testamentNode.IsExpanded, Is.True, "Testaments should be expanded");
+				Assert.That(m_bookNode.IsExpanded, Is.False, "Books should not be expanded");
 			}
 		}
 
@@ -32,11 +32,11 @@ namespace SIL.FieldWorks.IText
 			using (var treeView = CreateViewWithEmptyBook())
 			{
 				treeView.ExpandToBooks();
-				Assert.AreEqual(1, m_bookNode.Nodes.Count, "The only node under Book should be the dummy node");
-				Assert.IsInstanceOf<int>(m_bookNode.Tag, "Placeholder int Tag should not have been replaced");
+				Assert.That(m_bookNode.Nodes.Count, Is.EqualTo(1), "The only node under Book should be the dummy node");
+				Assert.That(m_bookNode.Tag, Is.InstanceOf<int>(), "Placeholder int Tag should not have been replaced");
 				var subNode = m_bookNode.Nodes[0];
-				Assert.AreEqual(TextsTriStateTreeView.ksDummyName, subNode.Text, "Incorrect Text");
-				Assert.AreEqual(TextsTriStateTreeView.ksDummyName, subNode.Name, "Incorrect Name");
+				Assert.That(subNode.Text, Is.EqualTo(TextsTriStateTreeView.ksDummyName), "Incorrect Text");
+				Assert.That(subNode.Name, Is.EqualTo(TextsTriStateTreeView.ksDummyName), "Incorrect Name");
 			}
 		}
 
@@ -46,10 +46,10 @@ namespace SIL.FieldWorks.IText
 			using (CreateViewWithEmptyBook())
 			{
 				m_bookNode.Expand();
-				Assert.AreEqual(2, m_bookNode.Nodes.Count, "Both Verses and Footnote should have been added");
-				Assert.IsInstanceOf<DummyBook>(m_bookNode.Tag, "The Tag should have been replaced with a Book");
-				Assert.AreEqual(ksVersesText, m_bookNode.Nodes[0].Text, "The Verses node should be first");
-				Assert.AreEqual(ksFootnoteText, m_bookNode.Nodes[1].Text, "The Footnote node should be second");
+				Assert.That(m_bookNode.Nodes.Count, Is.EqualTo(2), "Both Verses and Footnote should have been added");
+				Assert.That(m_bookNode.Tag, Is.InstanceOf<DummyBook>(), "The Tag should have been replaced with a Book");
+				Assert.That(m_bookNode.Nodes[0].Text, Is.EqualTo(ksVersesText), "The Verses node should be first");
+				Assert.That(m_bookNode.Nodes[1].Text, Is.EqualTo(ksFootnoteText), "The Footnote node should be second");
 			}
 		}
 
@@ -71,8 +71,8 @@ namespace SIL.FieldWorks.IText
 		/// </remarks>
 		private static void EnableEventHandling(Control control)
 		{
-			Assert.NotNull(control.AccessibilityObject);
-			Assert.True(control.IsHandleCreated, "Handle not created; tests are invalid");
+			Assert.That(control.AccessibilityObject, Is.Not.Null);
+			Assert.That(control.IsHandleCreated, Is.True, "Handle not created; tests are invalid");
 		}
 
 #region private classes

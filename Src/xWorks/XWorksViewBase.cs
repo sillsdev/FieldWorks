@@ -37,7 +37,13 @@ namespace SIL.FieldWorks.XWorks
 	{
 		#region Enumerations
 
-		public enum TreebarAvailability {Required, Optional, NotAllowed, NotMyBusiness};
+		public enum TreebarAvailability
+		{
+			Required,
+			Optional,
+			NotAllowed,
+			NotMyBusiness,
+		};
 
 		#endregion Enumerations
 
@@ -50,35 +56,43 @@ namespace SIL.FieldWorks.XWorks
 		/// Optional information bar above the main control.
 		/// </summary>
 		protected UserControl m_informationBar;
+
 		/// <summary>
 		/// Name of the vector we are editing.
 		/// </summary>
 		protected string m_vectorName;
+
 		/// <summary>
 		///
 		/// </summary>
 		protected int m_fakeFlid; // the list
+
 		/// <summary>
 		/// PropertyTable that passes off messages.
 		/// </summary>
 		protected Mediator m_mediator;
+
 		/// <summary>
 		///
 		/// </summary>
 		protected PropertyTable m_propertyTable;
+
 		/// <summary>
 		/// This is used to keep us from responding to messages that we get while
 		/// we are still trying to get initialized.
 		/// </summary>
 		protected bool m_fullyInitialized;
+
 		/// <summary>
 		/// tell whether the tree bar is required, optional, or not allowed for this view
 		/// </summary>
 		protected TreebarAvailability m_treebarAvailability;
+
 		/// <summary>
 		/// Last known parent that is a MultiPane.
 		/// </summary>
 		private MultiPane m_mpParent;
+
 		///// <summary>
 		///// Right-click menu for deleting Custom lists.
 		///// </summary>
@@ -117,8 +131,7 @@ namespace SIL.FieldWorks.XWorks
 			// This call is required by the Windows.Forms Form Designer.
 			InitializeComponent();
 
-
-			AccNameDefault = "XWorksViewBase";		// default accessibility name
+			AccNameDefault = "XWorksViewBase"; // default accessibility name
 		}
 
 		/// -----------------------------------------------------------------------------------
@@ -129,16 +142,16 @@ namespace SIL.FieldWorks.XWorks
 		/// resources; <c>false</c> to release only unmanaged resources.
 		/// </param>
 		/// -----------------------------------------------------------------------------------
-		protected override void Dispose( bool disposing )
+		protected override void Dispose(bool disposing)
 		{
 			//Debug.WriteLineIf(!disposing, "****************** " + GetType().Name + " 'disposing' is false. ******************");
 			// Must not be run more than once.
 			if (IsDisposed)
 				return;
 
-			if( disposing )
+			if (disposing)
 			{
-				if(components != null)
+				if (components != null)
 					components.Dispose();
 				if (ExistingClerk != null && !m_haveActiveClerk)
 					ExistingClerk.BecomeInactive();
@@ -151,7 +164,7 @@ namespace SIL.FieldWorks.XWorks
 			m_informationBar = null; // Should be disposed automatically, since it is in the Controls collection.
 			m_mpParent = null;
 
-			base.Dispose( disposing );
+			base.Dispose(disposing);
 		}
 
 		#endregion // Consruction and disposal
@@ -163,10 +176,7 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected LcmCache Cache
 		{
-			get
-			{
-				return m_propertyTable.GetValue<LcmCache>("cache");
-			}
+			get { return m_propertyTable.GetValue<LcmCache>("cache"); }
 		}
 
 		/// <summary>
@@ -194,8 +204,18 @@ namespace SIL.FieldWorks.XWorks
 
 		internal RecordClerk CreateClerk(bool loadList)
 		{
-			var clerk = RecordClerkFactory.CreateClerk(m_mediator, m_propertyTable, m_configurationParameters, loadList, true);
-			clerk.Editable = XmlUtils.GetOptionalBooleanAttributeValue(m_configurationParameters, "allowInsertDeleteRecord", true);
+			var clerk = RecordClerkFactory.CreateClerk(
+				m_mediator,
+				m_propertyTable,
+				m_configurationParameters,
+				loadList,
+				true
+			);
+			clerk.Editable = XmlUtils.GetOptionalBooleanAttributeValue(
+				m_configurationParameters,
+				"allowInsertDeleteRecord",
+				true
+			);
 			return clerk;
 		}
 
@@ -206,10 +226,7 @@ namespace SIL.FieldWorks.XWorks
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		public RecordClerk Clerk
 		{
-			get
-			{
-				return m_clerk = ExistingClerk ?? CreateClerk(true);
-			}
+			get { return m_clerk = ExistingClerk ?? CreateClerk(true); }
 			set
 			{
 				// allow parent controls to pass in the Clerk we want this control to use.
@@ -244,7 +261,11 @@ namespace SIL.FieldWorks.XWorks
 
 		#region IxCoreColleague implementation
 
-		public abstract void Init(Mediator mediator, PropertyTable propertyTable, XmlNode configurationParameters);
+		public abstract void Init(
+			Mediator mediator,
+			PropertyTable propertyTable,
+			XmlNode configurationParameters
+		);
 
 		/// <summary>
 		/// return an array of all of the objects which should
@@ -280,9 +301,7 @@ namespace SIL.FieldWorks.XWorks
 		/// subclasses should override if they have more targets, and add to the list.
 		/// </summary>
 		/// <returns></returns>
-		protected virtual void GetMessageAdditionalTargets(List<IxCoreColleague> collector)
-		{
-		}
+		protected virtual void GetMessageAdditionalTargets(List<IxCoreColleague> collector) { }
 
 		/// <summary>
 		/// Should not be called if disposed.
@@ -315,7 +334,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				CheckDisposed();
 
-				return XmlUtils.GetOptionalAttributeValue( m_configurationParameters, "area", "unknown");
+				return XmlUtils.GetOptionalAttributeValue(
+					m_configurationParameters,
+					"area",
+					"unknown"
+				);
 			}
 		}
 
@@ -351,36 +374,36 @@ namespace SIL.FieldWorks.XWorks
 			this.Name = "RecordView";
 			this.Size = new System.Drawing.Size(752, 150);
 			this.ResumeLayout(false);
-
 		}
 		#endregion
 
 		#region Other methods
 
-		protected virtual void AddPaneBar()
-		{
-		}
+		protected virtual void AddPaneBar() { }
 
 		private const string kEllipsis = "...";
+
 		protected string TrimToMaxPixelWidth(int pixelWidthAllowed, string sToTrim)
 		{
 			int sPixelWidth;
 			int charsAllowed;
 
-			if(sToTrim.Length == 0)
+			if (sToTrim.Length == 0)
 				return sToTrim;
 
 			sPixelWidth = GetWidthOfStringInPixels(sToTrim);
 			var avgPxPerChar = sPixelWidth / Convert.ToSingle(sToTrim.Length);
 			charsAllowed = Convert.ToInt32(pixelWidthAllowed / avgPxPerChar);
-			if(charsAllowed < 5)
+			if (charsAllowed < 5)
 				return String.Empty;
-			return sPixelWidth < pixelWidthAllowed ? sToTrim : sToTrim.Substring(0, charsAllowed-4) + kEllipsis;
+			return sPixelWidth < pixelWidthAllowed
+				? sToTrim
+				: sToTrim.Substring(0, charsAllowed - 4) + kEllipsis;
 		}
 
 		private int GetWidthOfStringInPixels(string sInput)
 		{
-			using(var g = Graphics.FromHwnd(Handle))
+			using (var g = Graphics.FromHwnd(Handle))
 			{
 				return Convert.ToInt32(g.MeasureString(sInput, TitleBarFont).Width);
 			}
@@ -399,7 +422,7 @@ namespace SIL.FieldWorks.XWorks
 		protected void ResetSpacer(int spacerWidth, string activeLayoutName)
 		{
 			var bar = TitleBar;
-			if(bar is Panel && bar.Controls.Count > 1)
+			if (bar is Panel && bar.Controls.Count > 1)
 			{
 				var cctrls = bar.Controls.Count;
 				bar.Controls[cctrls - 1].Width = spacerWidth;
@@ -412,24 +435,35 @@ namespace SIL.FieldWorks.XWorks
 		{
 			string titleStr = "";
 			// See if we have an AlternativeTitle string table id for an alternate title.
-			string titleId = XmlUtils.GetAttributeValue(m_configurationParameters,
-																	  "altTitleId");
-			if(titleId != null)
+			string titleId = XmlUtils.GetAttributeValue(m_configurationParameters, "altTitleId");
+			if (titleId != null)
 			{
 				titleStr = StringTable.Table.GetString(titleId, "AlternativeTitles");
-				if(Clerk.OwningObject != null &&
-					XmlUtils.GetBooleanAttributeValue(m_configurationParameters, "ShowOwnerShortname"))
+				if (
+					Clerk.OwningObject != null
+					&& XmlUtils.GetBooleanAttributeValue(
+						m_configurationParameters,
+						"ShowOwnerShortname"
+					)
+				)
 				{
 					// Originally this option was added to enable the Reversal Index title bar to show
 					// which reversal index was being shown.
-					titleStr = string.Format(xWorksStrings.ksXReversalIndex, Clerk.OwningObject.ShortName,
-													 titleStr);
+					titleStr = string.Format(
+						xWorksStrings.ksXReversalIndex,
+						Clerk.OwningObject.ShortName,
+						titleStr
+					);
 				}
 			}
-			else if(Clerk.OwningObject != null)
+			else if (Clerk.OwningObject != null)
 			{
-				if(XmlUtils.GetBooleanAttributeValue(m_configurationParameters,
-																 "ShowOwnerShortname"))
+				if (
+					XmlUtils.GetBooleanAttributeValue(
+						m_configurationParameters,
+						"ShowOwnerShortname"
+					)
+				)
 					titleStr = Clerk.OwningObject.ShortName;
 			}
 			return titleStr;
@@ -441,7 +475,7 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="e"></param>
 		protected override void OnParentChanged(EventArgs e)
 		{
-			base.OnParentChanged (e);
+			base.OnParentChanged(e);
 
 			if (Parent == null)
 				return;
@@ -451,7 +485,11 @@ namespace SIL.FieldWorks.XWorks
 			if (mp == null)
 				return;
 
-			string suppress = XmlUtils.GetOptionalAttributeValue(m_configurationParameters, "suppressInfoBar", "false");
+			string suppress = XmlUtils.GetOptionalAttributeValue(
+				m_configurationParameters,
+				"suppressInfoBar",
+				"false"
+			);
 			if (suppress == "ifNotFirst")
 			{
 				mp.ShowFirstPaneChanged += mp_ShowFirstPaneChanged;
@@ -465,7 +503,9 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		protected virtual void ReadParameters()
 		{
-			XmlNode node = ToolConfiguration.GetClerkNodeFromToolParamsNode(m_configurationParameters);
+			XmlNode node = ToolConfiguration.GetClerkNodeFromToolParamsNode(
+				m_configurationParameters
+			);
 			// Set the clerk id if the parent control hasn't already set it.
 			if (String.IsNullOrEmpty(m_vectorName))
 				m_vectorName = ToolConfiguration.GetIdOfTool(node);
@@ -498,7 +538,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 			else
 			{
-				string emptyTitleId = XmlUtils.GetAttributeValue(m_configurationParameters, "emptyTitleId");
+				string emptyTitleId = XmlUtils.GetAttributeValue(
+					m_configurationParameters,
+					"emptyTitleId"
+				);
 				if (!String.IsNullOrEmpty(emptyTitleId))
 				{
 					string titleStr;
@@ -510,10 +553,10 @@ namespace SIL.FieldWorks.XWorks
 			}
 			// This code:  ((IPaneBar)m_informationBar).Text = className;
 			// causes about 47 of the following exceptions when executed in Flex.
-			// First-chance exception at 0x4ed9b280 in Flex.exe: 0xC0000005: Access violation writing location 0x00f90004.
+			// First-chance exception at 0x4ed9b280 in FieldWorks.exe: 0xC0000005: Access violation writing location 0x00f90004.
 			// The following code doesn't cause the exception, but neither one actually sets the Text to className,
 			// so something needs to be changed somewhere. It doesn't enter "override string Text" in PaneBar.cs
-			((IPaneBar) m_informationBar).Text = className;
+			((IPaneBar)m_informationBar).Text = className;
 		}
 
 		#endregion Other methods
@@ -522,7 +565,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void mp_ShowFirstPaneChanged(object sender, EventArgs e)
 		{
-			var mpSender = (MultiPane) sender;
+			var mpSender = (MultiPane)sender;
 
 			bool fWantInfoBar = (this == mpSender.FirstVisibleControl);
 			if (fWantInfoBar && m_informationBar == null)
@@ -546,24 +589,30 @@ namespace SIL.FieldWorks.XWorks
 
 		private void DoDeleteCustomListCmd(ICmPossibilityList curList)
 		{
-			UndoableUnitOfWorkHelper.Do(xWorksStrings.ksUndoDeleteCustomList, xWorksStrings.ksRedoDeleteCustomList,
-										Cache.ActionHandlerAccessor, () => new DeleteCustomList(Cache).Run(curList));
+			UndoableUnitOfWorkHelper.Do(
+				xWorksStrings.ksUndoDeleteCustomList,
+				xWorksStrings.ksRedoDeleteCustomList,
+				Cache.ActionHandlerAccessor,
+				() => new DeleteCustomList(Cache).Run(curList)
+			);
 		}
 
 		#endregion Event handlers
 
 		#region IxCoreColleague Event handlers
 
-		public bool OnDisplayShowTreeBar(object commandObject, ref UIItemDisplayProperties display)
+		public bool OnDisplayShowTreeBar(
+			object commandObject,
+			ref UIItemDisplayProperties display
+		)
 		{
 			CheckDisposed();
 
 			display.Enabled = (m_treebarAvailability == TreebarAvailability.Optional);
-			return true;//we handled this, no need to ask anyone else.
+			return true; //we handled this, no need to ask anyone else.
 		}
 
-		public bool OnDisplayExport(object commandObject,
-			ref UIItemDisplayProperties display)
+		public bool OnDisplayExport(object commandObject, ref UIItemDisplayProperties display)
 		{
 			CheckDisposed();
 			// In order for this menu to be visible and enabled it has to be in the correct area (lexicon)
@@ -577,11 +626,13 @@ namespace SIL.FieldWorks.XWorks
 			//for specific tools in the various areas of the application.
 			//string toolChoice = m_mediator.PropertyTable.GetStringProperty("ToolForAreaNamed_lexicon", null);
 			//string toolChoice = m_mediator.PropertyTable.GetStringProperty("grammarSketch_grammar", null);
-			bool inFriendlyTerritory = (areaChoice == "lexicon"
+			bool inFriendlyTerritory = (
+				areaChoice == "lexicon"
 				|| areaChoice == "notebook"
 				|| clerk.Id == "concordanceWords"
 				|| areaChoice == "grammar"
-				|| areaChoice == "lists");
+				|| areaChoice == "lists"
+			);
 			if (inFriendlyTerritory)
 				display.Enabled = display.Visible = true;
 			else
@@ -590,7 +641,10 @@ namespace SIL.FieldWorks.XWorks
 			return true;
 		}
 
-		public bool OnDisplayAddCustomField(object commandObject, ref UIItemDisplayProperties display)
+		public bool OnDisplayAddCustomField(
+			object commandObject,
+			ref UIItemDisplayProperties display
+		)
 		{
 			CheckDisposed();
 
@@ -607,20 +661,27 @@ namespace SIL.FieldWorks.XWorks
 			// but in some contexts in switching tools in the Lexicon area, the config file was for the dictionary preview
 			// control, which was set to 'false'. That makes sense, since the view itself isn't editable.
 			// No: if (areaChoice == "lexicon" && fEditable && (m_vectorName == "entries" || m_vectorName == "AllSenses"))
-			string toolChoice = m_propertyTable.GetStringProperty("currentContentControl", string.Empty);
+			string toolChoice = m_propertyTable.GetStringProperty(
+				"currentContentControl",
+				string.Empty
+			);
 			string areaChoice = m_propertyTable.GetStringProperty("areaChoice", string.Empty);
 			bool inFriendlyTerritory = false;
 			switch (areaChoice)
 			{
 				case "lexicon":
-					inFriendlyTerritory = toolChoice == "lexiconEdit" || toolChoice == "bulkEditEntriesOrSenses" ||
-										  toolChoice == "lexiconBrowse";
+					inFriendlyTerritory =
+						toolChoice == "lexiconEdit"
+						|| toolChoice == "bulkEditEntriesOrSenses"
+						|| toolChoice == "lexiconBrowse";
 					break;
 				case "notebook":
-					inFriendlyTerritory = toolChoice == "notebookEdit" || toolChoice == "notebookBrowse";
+					inFriendlyTerritory =
+						toolChoice == "notebookEdit" || toolChoice == "notebookBrowse";
 					break;
 				case "textsWords":
-					inFriendlyTerritory = toolChoice == "interlinearEdit" || toolChoice == "gloss";
+					inFriendlyTerritory =
+						toolChoice == "interlinearEdit" || toolChoice == "gloss";
 					break;
 			}
 
@@ -634,8 +695,13 @@ namespace SIL.FieldWorks.XWorks
 
 			if (SharedBackendServices.AreMultipleApplicationsConnected(Cache))
 			{
-				MessageBoxUtils.Show(ParentForm, xWorksStrings.ksCustomFieldsCanNotBeAddedDueToOtherAppsText,
-					xWorksStrings.ksCustomFieldsCanNotBeAddedDueToOtherAppsCaption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				MessageBoxUtils.Show(
+					ParentForm,
+					xWorksStrings.ksCustomFieldsCanNotBeAddedDueToOtherAppsText,
+					xWorksStrings.ksCustomFieldsCanNotBeAddedDueToOtherAppsCaption,
+					MessageBoxButtons.OK,
+					MessageBoxIcon.Warning
+				);
 				return true;
 			}
 
@@ -659,10 +725,13 @@ namespace SIL.FieldWorks.XWorks
 					dlg.ShowDialog(this);
 			}
 
-			return true;	// handled
+			return true; // handled
 		}
 
-		public bool OnDisplayConfigureList(object commandObject, ref UIItemDisplayProperties display)
+		public bool OnDisplayConfigureList(
+			object commandObject,
+			ref UIItemDisplayProperties display
+		)
 		{
 			CheckDisposed();
 
@@ -684,14 +753,27 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			if (Clerk != null && Clerk.OwningObject != null && (Clerk.OwningObject is ICmPossibilityList))
-				using (var dlg = new ConfigureListDlg(m_mediator, m_propertyTable, (ICmPossibilityList) Clerk.OwningObject))
+			if (
+				Clerk != null
+				&& Clerk.OwningObject != null
+				&& (Clerk.OwningObject is ICmPossibilityList)
+			)
+				using (
+					var dlg = new ConfigureListDlg(
+						m_mediator,
+						m_propertyTable,
+						(ICmPossibilityList)Clerk.OwningObject
+					)
+				)
 					dlg.ShowDialog(this);
 
-			return true;	// handled
+			return true; // handled
 		}
 
-		public bool OnDisplayAddCustomList(object commandObject, ref UIItemDisplayProperties display)
+		public bool OnDisplayAddCustomList(
+			object commandObject,
+			ref UIItemDisplayProperties display
+		)
 		{
 			CheckDisposed();
 
@@ -716,10 +798,13 @@ namespace SIL.FieldWorks.XWorks
 			using (var dlg = new AddListDlg(m_mediator, m_propertyTable))
 				dlg.ShowDialog(this);
 
-			return true;	// handled
+			return true; // handled
 		}
 
-		public bool OnDisplayDeleteCustomList(object commandObject, ref UIItemDisplayProperties display)
+		public bool OnDisplayDeleteCustomList(
+			object commandObject,
+			ref UIItemDisplayProperties display
+		)
 		{
 			CheckDisposed();
 
@@ -730,7 +815,11 @@ namespace SIL.FieldWorks.XWorks
 			{
 				case "lists":
 					// Is currently selected list a Custom list?
-					if (Clerk == null || Clerk.OwningObject == null || !(Clerk.OwningObject is ICmPossibilityList))
+					if (
+						Clerk == null
+						|| Clerk.OwningObject == null
+						|| !(Clerk.OwningObject is ICmPossibilityList)
+					)
 						break; // handled, but not a valid selection
 					var possList = Clerk.OwningObject as ICmPossibilityList;
 					if (possList.Owner == null)
@@ -747,13 +836,17 @@ namespace SIL.FieldWorks.XWorks
 			CheckDisposed();
 
 			// Get currently selected list
-			if (Clerk == null || Clerk.OwningObject == null || !(Clerk.OwningObject is ICmPossibilityList))
+			if (
+				Clerk == null
+				|| Clerk.OwningObject == null
+				|| !(Clerk.OwningObject is ICmPossibilityList)
+			)
 				return true; // handled, but not a valid selection
 			var listToDelete = Clerk.OwningObject as ICmPossibilityList;
 			DoDeleteCustomListCmd(listToDelete);
 			ReloadListsArea(); // Redisplay lists without this one
 
-			return true;	// handled
+			return true; // handled
 		}
 
 		#endregion IxCoreColleague Event handlers

@@ -1,0 +1,225 @@
+<Project>
+	<PropertyGroup>
+
+		<!--
+			MSB3277/MSB3243: External NuGet package version conflicts (ParatextData, SIL.Scripture)
+			These are informational only - binding redirects in App.config handle runtime resolution.
+			Demote from Warning to Message to reduce build noise.
+		-->
+		<MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3277;MSB3243</MSBuildWarningsAsMessages>
+		<!--
+			MSB3568: Duplicate resource name in .resx files
+			Old WinForms designer files have duplicate entries due to localization/designer quirks.
+			MSBuild ignores the duplicates (uses first), so this is harmless noise.
+		-->
+		<MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3568</MSBuildWarningsAsMessages>
+		<!--
+			MSB3026: Copy task retry warnings (transient file locks)
+			Demote to message so first-attempt copy retries don't spam warnings; final failure still errors via MSB3027.
+		-->
+		<MSBuildWarningsAsMessages>$(MSBuildWarningsAsMessages);MSB3026</MSBuildWarningsAsMessages>
+		<!--
+			Global TreatWarningsAsErrors Policy:
+			All C# projects treat warnings as errors to maintain code quality.
+			Projects should NOT override this. If a specific warning is unavoidable,
+			add it to NoWarn above with a comment explaining why.
+
+			Note: Some informational messages still appear during build (demoted from warnings):
+			- LNK4099: Missing PDB for pre-built libraries (graphite2.lib)
+			- "Missing Palaso native files": Optional Windows-only interop DLLs (Keyman, irrKlang)
+			- "xsltc.exe not found": Optional .NET Framework SDK tool
+			These do NOT fail the build and are informational only.
+		-->
+		<TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+		<!-- Default all managed projects to x64 unless explicitly overridden -->
+		<PlatformTarget Condition="'$(PlatformTarget)' == ''">x64</PlatformTarget>
+		<Platforms Condition="'$(Platforms)' == ''">x64</Platforms>
+		<!-- Force 64-bit MSBuild host to avoid crashes loading 64-bit native DLLs in build tasks -->
+		<PreferredToolArchitecture>x64</PreferredToolArchitecture>
+		<!-- Disable determinism to allow wildcard versions in CommonAssemblyInfo.cs -->
+		<Deterministic>false</Deterministic>
+		<!-- Required for projects with non-string resources (images, icons, etc.) in .NET SDK style projects -->
+		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+
+		<!--
+			C# language version policy:
+			- Default .NET Framework TFMs to C# 8 so we can use modern syntax safely.
+			- Keep nullable reference types disabled for now to avoid repo-wide warning churn under TreatWarningsAsErrors.
+			  Projects can opt in explicitly when ready.
+		-->
+		<LangVersion Condition="'$(MSBuildProjectExtension)' == '.csproj' AND '$(LangVersion)' == ''">8.0</LangVersion>
+		<Nullable Condition="'$(MSBuildProjectExtension)' == '.csproj' AND '$(Nullable)' == ''">disable</Nullable>
+	</PropertyGroup>
+
+	<!-- Required for non-string resources (images, icons) in .NET Framework SDK-style projects -->
+	<!-- System.Resources.Extensions 9.0.0 requires net462 or higher - use explicit version check -->
+	<ItemGroup Condition="('$(TargetFramework)' == 'net48' OR '$(TargetFramework)' == 'net472' OR '$(TargetFramework)' == 'net471' OR '$(TargetFramework)' == 'net47' OR '$(TargetFramework)' == 'net462') AND '$(MSBuildProjectExtension)' == '.csproj'">
+		<PackageReference Include="System.Resources.Extensions" Version="9.0.0" />
+		<!--
+			DependencyModel version conflict resolution:
+			- icu.net 3.0.1 (via SIL.LCModel.Core) requires DependencyModel 2.0.4
+			- ParatextData 9.5.0.20 requires DependencyModel 9.0.9
+			- Since FieldWorks uses a shared output directory, all projects must reference
+			  the same version to ensure consistent binding redirects are generated.
+			- Version 9.0.9 is backward compatible with 2.0.4 API surface for ICU.NET usage.
+		-->
+		<PackageReference Include="Microsoft.Extensions.DependencyModel" Version="9.0.9" />
+		<!--
+			System.Memory version conflict resolution:
+			- ParatextData 9.5.0.20 requires System.Memory 4.6.3
+			- Various other packages require different versions (4.5.0 to 4.6.0)
+			- Force consistent version to ensure binding redirects work
+		-->
+		<PackageReference Include="System.Memory" Version="4.6.3" />
+		<!--
+			Microsoft.Bcl.HashCode version conflict resolution:
+			- System.Resources.Extensions 9.0.0 uses BinaryFormat which requires HashCode
+			- Some packages expect version 1.0.0.0, but 6.0.x is available
+			- Force consistent version to ensure binding redirects are generated
+		-->
+		<PackageReference Include="Microsoft.Bcl.HashCode" Version="6.0.0" />
+		<!--
+			Localization package references:
+			These packages contain XLIFF translation files used by Build/Localize.targets.
+			Adding them globally ensures they're restored to packages/ for the build process.
+			ExcludeAssets prevents them from adding compile-time or runtime dependencies.
+		-->
+		<PackageReference Include="SIL.Chorus.L10ns" Version="3.0.1" ExcludeAssets="all" />
+		<PackageReference Include="SIL.LibPalaso.L10ns" Version="17.0.0-*" ExcludeAssets="all" />
+	</ItemGroup>
+	<PropertyGroup Label="AssemblyInfo Policy">
+		<!--
+			CommonAssemblyInfoTemplate Policy:
+			All managed projects must link Src/CommonAssemblyInfo.cs to ensure consistent versioning and metadata.
+			When linking the template, disable SDK auto-generation to prevent CS0579 duplicate attribute errors.
+
+			Usage:
+			<Compile Include="..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+			<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		-->
+	</PropertyGroup>
+	<PropertyGroup Label="Shared Paths for Traversal Build">
+		<!-- Root directory paths -->
+		<FwRoot>$(MSBuildThisFileDirectory)</FwRoot>
+		<FwDistFiles>$(FwRoot)DistFiles\</FwDistFiles>
+		<FwOutput>$(FwRoot)Output\</FwOutput>
+		<FwOutputBase>$(FwOutput)$(Configuration)\</FwOutputBase>
+		<FwObj>$(FwRoot)Obj\</FwObj>
+		<!--
+			Unified Intermediate Output Policy:
+			All SDK-style projects use the root Obj/ folder (gitignored) instead of per-project obj/ folders.
+			Configuration is included in the path to prevent stale artifacts when switching Debug/Release.
+			- Host builds: $(FwRoot)Obj/$(Configuration)/<ProjectName>/
+
+			Note: WPF markup compilation creates temp projects like "ProjectName_abc123_wpftmp".
+			We detect this via the _wpftmp suffix and use the original project's intermediate directory
+			by checking if MSBuildProjectName contains '_wpftmp' and using the parent directory's name instead.
+		-->
+		<_IsWpfTempProject>false</_IsWpfTempProject>
+		<_IsWpfTempProject Condition="$(MSBuildProjectName.Contains('_wpftmp'))">true</_IsWpfTempProject>
+		<!-- For WPF temp projects, derive the real name from the project file path's directory name -->
+		<_RealProjectName Condition="'$(_IsWpfTempProject)' != 'true'">$(MSBuildProjectName)</_RealProjectName>
+		<_RealProjectName Condition="'$(_IsWpfTempProject)' == 'true'">$([System.IO.Path]::GetFileName($([System.IO.Path]::GetDirectoryName($(MSBuildProjectFullPath)))))</_RealProjectName>
+		<BaseIntermediateOutputPath>$(FwRoot)Obj\$(Configuration)\$(_RealProjectName)\</BaseIntermediateOutputPath>
+		<MSBuildProjectExtensionsPath>$(BaseIntermediateOutputPath)</MSBuildProjectExtensionsPath>
+		<RestoreOutputPath>$(BaseIntermediateOutputPath)</RestoreOutputPath>
+		<!--
+			NuGet Package Location Policy: Use nuget.config globalPackagesFolder (packages/)
+			Do NOT set RestorePackagesPath here - it conflicts with the NUGET_PACKAGES env var.
+			The env var takes precedence.
+			See nuget.config for full documentation.
+		-->
+		<!-- LCM artifacts directory -->
+		<DownloadsDir Condition="'$(DownloadsDir)'==''">$(FwRoot)Downloads</DownloadsDir>
+		<LcmArtifactsDir Condition="'$(LcmArtifactsDir)'==''">$(DownloadsDir)</LcmArtifactsDir>
+		<!-- Enable binding redirects for all projects -->
+		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+		<GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Remove="**/*.template.cs" />
+		<!--
+			Test Exclusion Policy (Pattern A):
+			All test code must be explicitly excluded using the pattern:
+			<Compile Remove="<ProjectName>Tests/**" />
+			<None Remove="<ProjectName>Tests/**" />
+
+			Wildcards (e.g. *Tests/**) are NOT allowed.
+			Nested test folders must also be explicitly excluded.
+		-->
+	</ItemGroup>
+
+	<!--
+		Stale obj/ Folder Policy:
+		Since SDK migration, intermediate output uses centralized location: $(FwRoot)Obj/$(Configuration)/<ProjectName>/
+
+		Old per-project obj/ folders (Src/**/obj/) should not exist.
+		If they do, build.ps1 automatically removes them before building.
+
+		IMPORTANT: Do NOT use ItemGroup Remove patterns here to exclude stale files.
+		The SDK's GenerateTargetFrameworkMonikerAttribute target adds files AFTER
+		Directory.Build.props is evaluated, so such patterns are ineffective.
+		The cleanup in build.ps1 is the correct solution.
+
+		If you encounter CS0579 duplicate attribute errors, run:
+		  Get-ChildItem -Path Src -Filter obj -Directory -Recurse | Remove-Item -Recurse -Force
+		Or simply run .\build.ps1 which does this automatically.
+	-->
+	<!--
+		WPF/XAML Compilation Memory Optimization:
+		XAML compilation can cause OOM errors in memory-constrained builds (parallel builds).
+		These settings help reduce memory pressure:
+		- XamlDebuggingInformation: Disable extra debugging info in Release (smaller assemblies)
+		- UseRidGraph: Use RID graph directly instead of creating temp projects
+	-->
+	<PropertyGroup Condition="'$(UseWPF)' == 'true'">
+		<XamlDebuggingInformation Condition="'$(Configuration)' == 'Release'">false</XamlDebuggingInformation>
+		<UseRidGraph>true</UseRidGraph>
+	</PropertyGroup>
+
+	<!-- Modern test infrastructure for all test projects -->
+	<PropertyGroup Condition="'$(IsTestProject)' == 'true'">
+		<!-- For .NET Framework projects, ensure NuGet package assemblies are copied to output directory -->
+		<!-- This is required for dotnet test to discover test adapters -->
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<!--
+			Test Code Warning Suppressions:
+			Legacy test code often has unused variables from copy-paste or stubbed-out tests.
+			Rather than fix every instance in ~40 test projects, suppress these common warnings:
+			- CS0168: Variable is declared but never used (often in catch blocks)
+			- CS0169: Field is never used (test fixtures with unused mock fields)
+			- CS0219: Variable is assigned but its value is never used
+			- CS0414: Field is assigned but its value is never used
+			- CS0649: Field is never assigned to (mock fields set via reflection/DI)
+
+			Use WarningsNotAsErrors instead of NoWarn because individual project files
+			override $(NoWarn) directly. WarningsNotAsErrors allows the warning to be emitted
+			but prevents it from failing the build when TreatWarningsAsErrors=true.
+		-->
+		<WarningsNotAsErrors>$(WarningsNotAsErrors);CS0168;CS0169;CS0219;CS0414;CS0649;168;169;219;414;649</WarningsNotAsErrors>
+	</PropertyGroup>
+
+	<ItemGroup Condition="'$(IsTestProject)' == 'true'">
+		<!-- NUnit 3.x - must match version used by SIL.TestUtilities to avoid runtime conflicts -->
+		<!-- When SIL packages upgrade to NUnit 4, update this to 4.x and add global using aliases for ClassicAssert -->
+		<PackageReference Include="NUnit" Version="3.13.3" />
+		<PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+	</ItemGroup>
+
+	<!--
+		Shared test assembly attributes: SLDR offline mode, ICU initialization, registry redirect, etc.
+		This is applied to all test projects that don't already include the file.
+		The file sets up proper test initialization for FieldWorks components.
+
+		Use AssemblyInfoForTests.cs for UI test projects (most tests).
+		Projects can override by setting <UseUiIndependentTestAssemblyInfo>true</UseUiIndependentTestAssemblyInfo>
+	-->
+	<ItemGroup Condition="'$(IsTestProject)' == 'true' AND '$(UseUiIndependentTestAssemblyInfo)' != 'true'">
+		<Compile Include="$(FwRoot)Src\AssemblyInfoForTests.cs" Link="Properties\AssemblyInfoForTests.cs" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(IsTestProject)' == 'true' AND '$(UseUiIndependentTestAssemblyInfo)' == 'true'">
+		<Compile Include="$(FwRoot)Src\AssemblyInfoForUiIndependentTests.cs" Link="Properties\AssemblyInfoForUiIndependentTests.cs" />
+	</ItemGroup>
+</Project>

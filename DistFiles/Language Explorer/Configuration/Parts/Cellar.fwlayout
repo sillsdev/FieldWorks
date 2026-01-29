@@ -93,4 +93,8 @@
 	<layout class="StTxtPara" type="jtview" name="publishParagraph">
 		<part ref="ContentsAsPara" flowType="para"/>
 	</layout>
+
+	<layout class="CmObject" type="jtview" name="default">
+		<part ref="shortname"/>
+	</layout>
 </LayoutInventory>

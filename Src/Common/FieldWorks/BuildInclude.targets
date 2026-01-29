@@ -3,7 +3,15 @@
 	<PropertyGroup>
 		<Executable>$(OutDir)FieldWorks.exe</Executable>
 	</PropertyGroup>
-	<Import Project="../../../Build/RegFree.targets"/>
-	<Target Name="AfterBuild" DependsOnTargets="RegFree">
-	</Target>
+	<ItemGroup>
+		<!-- Ensure reg-free manifest includes the core managed COM servers used by FieldWorks.exe -->
+		<ManagedComAssemblies Include="$(OutDir)FwUtils.dll" />
+		<ManagedComAssemblies Include="$(OutDir)SimpleRootSite.dll" />
+		<ManagedComAssemblies Include="$(OutDir)ManagedLgIcuCollator.dll" />
+		<ManagedComAssemblies Include="$(OutDir)ManagedVwWindow.dll" />
+		<ManagedComAssemblies Include="$(OutDir)xWorks.dll" />
+		<ManagedComAssemblies Include="$(OutDir)LexTextDll.dll" />
+	</ItemGroup>
+	<Import Project="../../../Build/RegFree.targets" />
+	<Target Name="InvokeRegFree" AfterTargets="Build" DependsOnTargets="RegFree"></Target>
 </Project>

@@ -31,7 +31,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			int hvoNewStyle = stylesheet.MakeNewStyle();
 			stylesheet.PutStyle("FirstStyle", "bls", hvoNewStyle, 0, hvoNewStyle, 0, false,
 				false, null);
-			Assert.AreEqual(hvoNewStyle, stylesheet.get_NthStyle(0));
+			Assert.That(stylesheet.get_NthStyle(0), Is.EqualTo(hvoNewStyle));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -58,10 +58,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 			string sHowDifferent;
 			bool fEqual = TsTextPropsHelper.PropsAreEqual(props2,
 				stylesheet.GetStyleRgch(0, "SecondStyle"), out sHowDifferent);
-			Assert.IsTrue(fEqual, sHowDifferent);
+			Assert.That(fEqual, Is.True, sHowDifferent);
 			fEqual = TsTextPropsHelper.PropsAreEqual(props1,
 				stylesheet.GetStyleRgch(0, "FirstStyle"), out sHowDifferent);
-			Assert.IsTrue(fEqual, sHowDifferent);
+			Assert.That(fEqual, Is.True, sHowDifferent);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -78,7 +78,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			int hvoNewStyle2 = stylesheet.MakeNewStyle();
 			stylesheet.PutStyle("SecondStyle", "bla", hvoNewStyle2, 0, hvoNewStyle1, 0, false,
 				false, null);
-			Assert.AreEqual("FirstStyle", stylesheet.GetNextStyle("SecondStyle"));
+			Assert.That(stylesheet.GetNextStyle("SecondStyle"), Is.EqualTo("FirstStyle"));
 		}
 
 
@@ -96,7 +96,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			int hvoNewStyle2 = stylesheet.MakeNewStyle();
 			stylesheet.PutStyle("SecondStyle", "bla", hvoNewStyle2, hvoNewStyle1, 0, 0, false,
 				false, null);
-			Assert.AreEqual("FirstStyle", stylesheet.GetBasedOn("SecondStyle"));
+			Assert.That(stylesheet.GetBasedOn("SecondStyle"), Is.EqualTo("FirstStyle"));
 		}
 
 
@@ -116,7 +116,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var wsf = new WritingSystemManager();
 			ILgWritingSystem ws = wsf.get_Engine("de");
 			int hvoGermanWs = ws.Handle;
-			Assert.IsTrue(hvoGermanWs > 0, "Should have gotten an hvo for the German WS");
+			Assert.That(hvoGermanWs > 0, Is.True, "Should have gotten an hvo for the German WS");
 
 			// Array of 1 struct, contains writing system and font size to override
 			List<FontOverride> fontOverrides = new List<FontOverride>(1);
@@ -139,7 +139,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			LgCharRenderProps chrps = vwps.get_ChrpFor(ttp);
 			ws.InterpretChrp(ref chrps);
 
-			Assert.AreEqual(48, chrps.dympHeight / 1000);
+			Assert.That(chrps.dympHeight / 1000, Is.EqualTo(48));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -164,19 +164,19 @@ namespace SIL.FieldWorks.Common.FwUtils
 			var wsf = new WritingSystemManager();
 			ILgWritingSystem wsIngles = wsf.get_Engine("en");
 			int hvoInglesWs = wsIngles.Handle;
-			Assert.IsTrue(hvoInglesWs > 0, "Should have gotten an HVO for the English WS");
+			Assert.That(hvoInglesWs > 0, Is.True, "Should have gotten an HVO for the English WS");
 
 			ILgWritingSystem wsFrench = wsf.get_Engine("fr");
 			int hvoFrenchWs = wsFrench.Handle;
-			Assert.IsTrue(hvoFrenchWs > 0, "Should have gotten an HVO for the French WS");
+			Assert.That(hvoFrenchWs > 0, Is.True, "Should have gotten an HVO for the French WS");
 
 			ILgWritingSystem wsGerman = wsf.get_Engine("de");
 			int hvoGermanWs = wsGerman.Handle;
-			Assert.IsTrue(hvoGermanWs > 0, "Should have gotten an HVO for the German WS");
+			Assert.That(hvoGermanWs > 0, Is.True, "Should have gotten an HVO for the German WS");
 
-			Assert.IsTrue(hvoFrenchWs != hvoGermanWs, "Should have gotten different HVOs for each WS");
-			Assert.IsTrue(hvoInglesWs != hvoGermanWs, "Should have gotten different HVOs for each WS");
-			Assert.IsTrue(hvoFrenchWs != hvoInglesWs, "Should have gotten different HVOs for each WS");
+			Assert.That(hvoFrenchWs != hvoGermanWs, Is.True, "Should have gotten different HVOs for each WS");
+			Assert.That(hvoInglesWs != hvoGermanWs, Is.True, "Should have gotten different HVOs for each WS");
+			Assert.That(hvoFrenchWs != hvoInglesWs, Is.True, "Should have gotten different HVOs for each WS");
 
 			// Array of structs, containing writing systems and font sizes to override.
 			var fontOverrides = new List<FontOverride>(2);
@@ -210,9 +210,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 			wsGerman.InterpretChrp(ref chrpsGerman);
 			wsIngles.InterpretChrp(ref chrpsIngles);
 
-			Assert.AreEqual(23, chrpsFrench.dympHeight / 1000);
-			Assert.AreEqual(34, chrpsIngles.dympHeight / 1000);
-			Assert.AreEqual(48, chrpsGerman.dympHeight / 1000);
+			Assert.That(chrpsFrench.dympHeight / 1000, Is.EqualTo(23));
+			Assert.That(chrpsIngles.dympHeight / 1000, Is.EqualTo(34));
+			Assert.That(chrpsGerman.dympHeight / 1000, Is.EqualTo(48));
 		}
 	}
 }

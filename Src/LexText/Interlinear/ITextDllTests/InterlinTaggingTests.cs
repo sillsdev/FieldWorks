@@ -155,7 +155,7 @@ namespace SIL.FieldWorks.IText
 			{
 				Assert.Fail(msgFailure);
 			}
-			Assert.IsNotNull(tag.TagRA, msgFailure);
+			Assert.That(tag.TagRA, Is.Not.Null, msgFailure);
 		}
 
 		private void AssertTagDoesntExist(int hvoTag, string msgFailure)
@@ -186,18 +186,18 @@ namespace SIL.FieldWorks.IText
 										  AnalysisOccurrence point1, AnalysisOccurrence point2)
 		{
 			Assert.That(ttag, Is.Not.Null, "There should be a TextTag object.");
-			Assert.AreEqual(poss.Hvo, ttag.TagRA.Hvo, "Text Tag has wrong possibility Hvo.");
-			Assert.AreEqual(point1.Segment.Hvo, ttag.BeginSegmentRA.Hvo, "Tag has wrong BeginSegment");
-			Assert.AreEqual(point1.Index, ttag.BeginAnalysisIndex, "Tag has wrong BeginAnalysisIndex");
-			Assert.AreEqual(point2.Segment.Hvo, ttag.EndSegmentRA.Hvo, "Tag has wrong EndSegment");
-			Assert.AreEqual(point2.Index, ttag.EndAnalysisIndex, "Tag has wrong EndAnalysisIndex");
+			Assert.That(ttag.TagRA.Hvo, Is.EqualTo(poss.Hvo), "Text Tag has wrong possibility Hvo.");
+			Assert.That(ttag.BeginSegmentRA.Hvo, Is.EqualTo(point1.Segment.Hvo), "Tag has wrong BeginSegment");
+			Assert.That(ttag.BeginAnalysisIndex, Is.EqualTo(point1.Index), "Tag has wrong BeginAnalysisIndex");
+			Assert.That(ttag.EndSegmentRA.Hvo, Is.EqualTo(point2.Segment.Hvo), "Tag has wrong EndSegment");
+			Assert.That(ttag.EndAnalysisIndex, Is.EqualTo(point2.Index), "Tag has wrong EndAnalysisIndex");
 		}
 
 		private static void VerifyMenuItemCheckStatus(ToolStripItem item1, bool fIsChecked)
 		{
 			var item = item1 as ToolStripMenuItem;
 			Assert.That(item, Is.Not.Null, "menu item should be ToolStripMenuItem");
-			Assert.AreEqual(fIsChecked, item.Checked, item.Text + " should be " + (fIsChecked ? "checked" : "unchecked"));
+			Assert.That(item.Checked, Is.EqualTo(fIsChecked), item.Text + " should be " + (fIsChecked ? "checked" : "unchecked"));
 		}
 
 		/// <summary>
@@ -214,7 +214,7 @@ namespace SIL.FieldWorks.IText
 				ToolStripMenuItem item = item1 as ToolStripMenuItem;
 				if (item != null && item.Text == text)
 				{
-					Assert.AreEqual(cItems, item.DropDownItems.Count, "item " + text + " has wrong number of items");
+					Assert.That(item.DropDownItems.Count, Is.EqualTo(cItems), "item " + text + " has wrong number of items");
 					return item;
 				}
 			}
@@ -229,8 +229,7 @@ namespace SIL.FieldWorks.IText
 		/// <param name="menu1">The menu.</param>
 		private static void AssertMenuCheckState(bool[] expectedStates, ToolStripItemCollection menu1)
 		{
-			Assert.AreEqual(expectedStates.Length, menu1.Count,
-							"ExpectedStates array size of " + expectedStates.Length + " is equal to the menu size of " + menu1.Count);
+			Assert.That(menu1.Count, Is.EqualTo(expectedStates.Length), "ExpectedStates array size of " + expectedStates.Length + " is equal to the menu size of " + menu1.Count);
 			for (int i = 0; i < expectedStates.Length; i++)
 			{
 				ToolStripItem item = menu1[i];
@@ -266,7 +265,7 @@ namespace SIL.FieldWorks.IText
 				//		Adjective Phrase(AdjP) [Text in () is Abbreviation]
 
 				// Check the tag list item and subitems
-				Assert.AreEqual(2, strip.Items.Count);
+				Assert.That(strip.Items.Count, Is.EqualTo(2));
 				ToolStripMenuItem itemMDC = AssertHasMenuWithText(strip.Items, kFTO_Syntax, 3);
 				AssertHasMenuWithText(itemMDC.DropDownItems, kFTO_Noun_Phrase, 0);
 				AssertHasMenuWithText(itemMDC.DropDownItems, kFTO_Verb_Phrase, 0);

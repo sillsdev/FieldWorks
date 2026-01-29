@@ -35,7 +35,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private Button btnOK;
 		private Button btnCancel;
 		private GroupBox groupBox1;
-		private IContainer components;
+		private IContainer components = null;
 
 		private LcmCache m_cache;
 		private IHelpTopicProvider m_helpTopicProvider;

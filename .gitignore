@@ -12,6 +12,7 @@ Build/venv
 Build/*.config
 Build/*.dll
 Build/*.pdb
+BuildTools/FwBuildTasks/
 BuildDir/
 Src/Common/ViewsInterfaces/Views.cs
 DistFiles/Data/
@@ -22,10 +23,10 @@ DistFiles/Language Explorer/Movies/
 DistFiles/ReleaseData/
 DistFiles/SIL/Repository/
 Downloads/
-Installer/
+./Installer/
 Localizations/
-packages/
 PatchableInstaller/
+packages/
 Bin/_setLatestBuildConfig.bat
 Bin/_setroot.bat
 Lib/debug/DebugProcs.lib
@@ -40,12 +41,14 @@ Lib/release/graphite2.lib
 Lib/release/System.Buffers.dll
 Lib/release/System.ValueTuple.dll
 Lib/release/unit++.*
+Lib/release/unit++.pdb
 DistFiles/Parts/Generated.fwlayout
 Lib/src/Ethnologue/GeneratedEthnologue.cs
 Src/FwParatextLexiconPlugin/GeneratedParatextLexiconPluginRegistryHelper.cs
 Src/Common/FwUtils/GeneratedFwUtils.cs
 Src/CommonAssemblyInfo.cs
 Src/LangInst/InstallLanguageTests/timing.txt
+*.exe
 x64
 
 # other files
@@ -74,9 +77,12 @@ _user.mak.lnx
 .project
 *.VC.db
 *.VC.opendb
+*.invalid
+*.code-workspace
 
 .dotest/
 .depend
+.nuget/
 [Oo]bj/
 Obj_i686/
 Obj_x86_64/
@@ -94,6 +100,11 @@ Output/
 Output
 Output_i686/
 Output_x86_64/
+__pycache__/
+.venv/
+venv/
+dist/
+*.egg-info/
 Lib/src/unit++/autom4te.cache/
 Lib/src/unit++/configure
 Lib/src/unit++/VS/*/
@@ -122,6 +133,7 @@ Src/DebugProcs/libDebugProcs
 Src/Generic/libGeneric
 Src/Language/libLanguage
 xulrunner/*
+**/bin/Debug
 
 DistFiles/ReleaseData/
 # Locally configurable project to run FieldWorks
@@ -142,3 +154,45 @@ DistFiles/Templates/GOLDEtic.xml
 DistFiles/Templates/NewLangProj.fwdata
 DistFiles/Templates/POS.xml
 DistFiles/Templates/SemDom.xml
+
+Src/Kernel/FwKernelTlb.idl
+Src/Kernel/*.idh
+.github/machine-specific.md
+build_output.txt
+*.backup
+*.code-workspace
+config.json
+
+# Test exclusion tooling artifacts
+Output/test-exclusions/
+Output/test-exclusions
+scripts/tests/fixtures/output/
+
+# Python
+__pycache__/
+.venv/
+venv/
+*.egg-info/
+CrashLog.txt
+.cache/
+.cache/copilot/
+
+# VSTest Artifacts
+TestResults/
+*.trx
+
+# WPF markup compilation temp projects
+*_wpftmp.csproj
+*_wpftmp.vbproj
+
+# WiX v6
+*.wixpdb
+
+# Standard .NET
+bin/
+FLExInstaller/cabcache/*
+FLExInstaller/wix6/cabcache/*
+
+# bv (beads viewer) local config and caches
+.bv/
+.env

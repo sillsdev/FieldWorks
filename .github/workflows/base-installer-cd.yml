@@ -9,294 +9,278 @@ name: Base Installer
 # Note: FW_BUILD_NUMBER is higher than GITHUB_RUN_NUMBER because it needs to be higher than the build number on artifacts from our previous system.
 
 on:
-  schedule:
-    # Runs every Monday at 02:30 UTC (which is 6:30pm PST / 7:30pm PDT Sunday evening)
-    - cron: "30 2 * * 1"
-  workflow_dispatch:
-    inputs:
-      fw_ref:
-        description: 'Commit-ish (branch, tag, SHA) to checkout for the main repository'
-        required: false
-        default: ''
-      helps_ref:
-        description: 'Commit-ish for helps repository'
-        required: false
-        default: 'develop'
-      installer_ref:
-        description: 'Commit-ish for PatchableInstaller repository'
-        required: false
-        default: 'master'
-      localizations_ref:
-        description: 'Commit-ish for localization repository'
-        required: false
-        default: 'develop'
-      lcm_ref:
-        description: 'Commit-ish for liblcm repository'
-        required: false
-        default: 'master'
-      make_release:
-        description: 'Should the build archive a release, false by default, should be set to true on a release build.'
-        required: false
-        default: 'false'
+    schedule:
+        # Runs every Monday at 02:30 UTC (which is 6:30pm PST / 7:30pm PDT Sunday evening)
+        - cron: "30 2 * * 1"
+    workflow_dispatch:
+        inputs:
+            fw_ref:
+                description: "Commit-ish (branch, tag, SHA) to checkout for the main repository"
+                required: false
+                default: ""
+            helps_ref:
+                description: "Commit-ish for helps repository"
+                required: false
+                default: "develop"
+            localizations_ref:
+                description: "Commit-ish for localization repository"
+                required: false
+                default: "develop"
+            lcm_ref:
+                description: "Commit-ish for liblcm repository"
+                required: false
+                default: "master"
+            make_release:
+                description: "Should the build archive a release, false by default, should be set to true on a release build."
+                required: false
+                default: "false"
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
 
 jobs:
-  debug_build_and_test:
-    env:
-      CROWDIN_API_KEY: ${{ secrets.FLEX_CROWDIN_API }}
-      LcmRootDir: ${{ github.workspace }}/Localizations/LCM
-      FILESTOSIGNLATER: ./signExternally
-    name: Build Debug and run Tests
-    runs-on: windows-latest
-    steps:
-      - name: Compute build number
-        id: build_number
-        run: |
-          $lastJenkins = 1100  # The last base build from jenkins, rounded to the next hundred
-          $githubRun = $env:GITHUB_RUN_NUMBER
-          $combined = $lastJenkins + $githubRun
-          echo "Calculated build number: $combined"
-          echo "FW_BUILD_NUMBER=$combined" >> $env:GITHUB_ENV
+    debug_build_and_test:
+        env:
+            CROWDIN_API_KEY: ${{ secrets.FLEX_CROWDIN_API }}
+            LcmRootDir: ${{ github.workspace }}/Localizations/LCM
+            FILESTOSIGNLATER: ./signExternally
+        name: Build Debug and run Tests
+        runs-on: windows-latest
+        steps:
+            - name: Compute build number
+              id: build_number
+              run: |
+                  $lastJenkins = 1100  # The last base build from jenkins, rounded to the next hundred
+                  $githubRun = $env:GITHUB_RUN_NUMBER
+                  $combined = $lastJenkins + $githubRun
+                  echo "Calculated build number: $combined"
+                  echo "FW_BUILD_NUMBER=$combined" >> $env:GITHUB_ENV
 
-      - name: Checkout Files
-        uses: actions/checkout@v4
-        id: checkout
-        with:
-          ref: ${{ github.event.inputs.fw_ref || github.ref }}
-          fetch-depth: 0
+            - name: Checkout Files
+              uses: actions/checkout@v4
+              id: checkout
+              with:
+                  ref: ${{ github.event.inputs.fw_ref || github.ref }}
+                  fetch-depth: 0
 
-      - name: Checkout Helps
-        uses: actions/checkout@v4
-        id: helps-checkout
-        with:
-          repository: 'sillsdev/FwHelps'
-          ref: ${{ github.event.inputs.helps_ref || 'develop' }}
-          fetch-depth: 0
-          path: 'DistFiles/Helps'
+            - name: Checkout Helps
+              uses: actions/checkout@v4
+              id: helps-checkout
+              with:
+                  repository: "sillsdev/FwHelps"
+                  ref: ${{ github.event.inputs.helps_ref || 'develop' }}
+                  fetch-depth: 0
+                  path: "DistFiles/Helps"
 
-      - name: Checkout PatchableInstaller
-        uses: actions/checkout@v4
-        id: installer-checkout
-        with:
-          repository: 'sillsdev/genericinstaller'
-          ref: ${{ github.event.inputs.installer_ref || 'master' }}
-          fetch-depth: 0
-          path: 'PatchableInstaller'
+            - name: Checkout Localizations
+              uses: actions/checkout@v4
+              id: loc-checkout
+              with:
+                  repository: "sillsdev/FwLocalizations"
+                  ref: ${{ github.event.inputs.localizations_ref || 'develop' }}
+                  fetch-depth: 0
+                  path: "Localizations"
+            - name: Checkout liblcm
+              uses: actions/checkout@v4
+              id: liblcm-checkout
+              with:
+                  repository: "sillsdev/liblcm"
+                  ref: ${{ github.event.inputs.lcm_ref || 'master' }}
+                  fetch-depth: 0
+                  path: "Localizations/LCM"
 
-      - name: Checkout Localizations
-        uses: actions/checkout@v4
-        id: loc-checkout
-        with:
-          repository: 'sillsdev/FwLocalizations'
-          ref: ${{ github.event.inputs.localizations_ref || 'develop' }}
-          fetch-depth: 0
-          path: 'Localizations'
-      - name: Checkout liblcm
-        uses: actions/checkout@v4
-        id: liblcm-checkout
-        with:
-          repository: 'sillsdev/liblcm'
-          ref: ${{ github.event.inputs.installer_ref || 'master' }}
-          fetch-depth: 0
-          path: 'Localizations/LCM'
+            - name: Download .NET 481 targeting pack
+              uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9 # 1.6.0
+              id: downloadfile # Remember to give an ID if you need the output filename
+              with:
+                  url: "https://download.microsoft.com/download/8/1/8/81877d8b-a9b2-4153-9ad2-63a6441d11dd/NDP481-DevPack-ENU.exe"
+                  target: public/
 
-      - name: Download .NET 461 targeting pack
-        uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9 # 1.6.0
-        id: downloadfile  # Remember to give an ID if you need the output filename
-        with:
-            url: "https://download.microsoft.com/download/F/1/D/F1DEB8DB-D277-4EF9-9F48-3A65D4D8F965/NDP461-DevPack-KB3105179-ENU.exe"
-            target: public/
+            - name: Install .NET 481 targeting pack
+              shell: cmd
+              working-directory: public
+              run: NDP481-DevPack-ENU.exe /q
 
-      - name: Install .NET 461 targeting pack
-        shell: cmd
-        working-directory: public
-        run: NDP461-DevPack-KB3105179-ENU.exe /q
+            - name: Setup dotnet
+              uses: actions/setup-dotnet@v4
+              with:
+                  dotnet-version: |
+                      3.1.x
+                      5.0.x
 
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: | 
-            3.1.x
-            5.0.x
+            - name: Install Overcrowdin
+              shell: cmd
+              run: |
+                  dotnet tool update -g overcrowdin || dotnet tool install -g overcrowdin
 
-      - name: Install Overcrowdin
-        shell: cmd
-        run: |
-          dotnet tool update -g overcrowdin || dotnet tool install -g overcrowdin
+            - name: Add NETFX tools to PATH
+              shell: powershell
+              run: |
+                  'C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8.1 Tools' | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
-      - name: Downgrade Wix Toolset - remove when runner has 3.14.2
-        run: |
-          choco uninstall wixtoolset
-          choco install wixtoolset --version 3.11.2 --allow-downgrade --force
-          echo "C:\Program Files (x86)\WiX Toolset v3.11\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
-        if: github.event_name != 'pull_request'
+            - name: Setup MSBuild
+              uses: microsoft/setup-msbuild@v2
 
-      - name: Prepare for build
-        shell: cmd
-        working-directory: Build
-        run: build64.bat /t:WriteNonlocalDevelopmentPropertiesFile
+            - name: Build and run tests
+              id: build_installer
+              shell: powershell
+              run: |
+                  $ErrorActionPreference = 'Stop'
+                  # Build base installer (uses traversal build internally via Installer.targets)
+                  msbuild Build/Orchestrator.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64
+                  msbuild Build/Orchestrator.proj /t:BuildBaseInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /p:action=test /p:desktopNotAvailable=true /m /v:d /bl | Tee-Object -FilePath Build/build.log
+                  if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+                  Set-Location BuildDir
+                  md5sum *.exe > md5.txt
 
-      - name: Build and run tests
-        id: build_installer
-        shell: powershell
-        run: |
-          cd Build
-          .\build64.bat /t:BuildBaseInstaller "/property:config=release;action=test;desktopNotAvailable=true" /v:d /bl ^| tee-object -FilePath build.log
-          cd ..
-          cd BuildDir
-          md5sum *.exe > md5.txt
+            - name: Scan Build Output
+              shell: powershell
+              working-directory: Build
+              run: |
+                  $results = Select-String -Path "build.log" -Pattern "^\s*[1-9][0-9]* Error\(s\)"
+                  if ($results) {
+                      foreach ($result in $results) {
+                          Write-Host "Found errors in build.log $($result.LineNumber): $($result.Line)" -ForegroundColor red
+                      }
+                      exit 1
+                  } else {
+                      Write-Host "No errors found" -ForegroundColor green
+                      exit 0
+                  }
 
-      - name: Scan Build Output
-        shell: powershell
-        working-directory: Build
-        run: |
-          $results = Select-String -Path "build.log" -Pattern "^\s*[1-9][0-9]* Error\(s\)"
-          if ($results) {
-              foreach ($result in $results) {
-                  Write-Host "Found errors in build.log $($result.LineNumber): $($result.Line)" -ForegroundColor red 
-              }
-              exit 1
-          } else {
-              Write-Host "No errors found" -ForegroundColor green 
-              exit 0
-          }
+            - name: Move installers to staging folder
+              id: stage_installers
+              shell: pwsh
+              run: |
+                  $staging = Join-Path $pwd "Installers"
+                  if (-not (Test-Path $staging)) { New-Item -ItemType Directory -Path $staging | Out-Null }
 
-      - name: Move installers to staging folder
-        id: stage_installers
-        shell: pwsh
-        run: |
-            $staging = Join-Path $pwd "Installers"
-            if (-not (Test-Path $staging)) { New-Item -ItemType Directory -Path $staging | Out-Null }
+                  $offlineExe = Get-ChildItem -Path BuildDir -Filter "FieldWorks_*_Offline_x64.exe" | Select-Object -First 1
+                  $onlineExe  = Get-ChildItem -Path BuildDir -Filter "FieldWorks_*_Online_x64.exe"  | Select-Object -First 1
 
-            $offlineExe = Get-ChildItem -Path BuildDir -Filter "FieldWorks_*_Offline_x64.exe" | Select-Object -First 1
-            $onlineExe  = Get-ChildItem -Path BuildDir -Filter "FieldWorks_*_Online_x64.exe"  | Select-Object -First 1
+                  if (-not $offlineExe) { throw "FieldWorks_VERSION_Offline_x64.exe not found in BuildDir" }
+                  if (-not $onlineExe)  { throw "FieldWorks_VERSION_Online_x64.exe not found in BuildDir" }
 
-            if (-not $offlineExe) { throw "FieldWorks_VERSION_Offline_x64.exe not found in BuildDir" }
-            if (-not $onlineExe)  { throw "FieldWorks_VERSION_Online_x64.exe not found in BuildDir" }
+                  Move-Item -Path $offlineExe.FullName -Destination $staging
+                  Move-Item -Path $onlineExe.FullName  -Destination $staging
 
-            Move-Item -Path $offlineExe.FullName -Destination $staging
-            Move-Item -Path $onlineExe.FullName  -Destination $staging
+                  $offlinePath = Join-Path $staging $offlineExe.Name
+                  $onlinePath  = Join-Path $staging $onlineExe.Name
 
-            $offlinePath = Join-Path $staging $offlineExe.Name
-            $onlinePath  = Join-Path $staging $onlineExe.Name
+                  "offline_exe=$offlinePath" >> $env:GITHUB_OUTPUT
+                  "online_exe=$onlinePath"   >> $env:GITHUB_OUTPUT
 
-            "offline_exe=$offlinePath" >> $env:GITHUB_OUTPUT
-            "online_exe=$onlinePath"   >> $env:GITHUB_OUTPUT
+            - name: Extract burn engines from bundles
+              shell: cmd
+              working-directory: Installers
+              run: |
+                  insignia -ib "${{ steps.stage_installers.outputs.offline_exe }}" -o offline-engine.exe
+                  insignia -ib "${{ steps.stage_installers.outputs.online_exe }}"  -o online-engine.exe
 
-      - name: Extract burn engines from bundles
-        shell: cmd
-        working-directory: Installers
-        run: |
-            insignia -ib "${{ steps.stage_installers.outputs.offline_exe }}" -o offline-engine.exe
-            insignia -ib "${{ steps.stage_installers.outputs.online_exe }}"  -o online-engine.exe
+            - name: Sign Engines
+              if: github.event_name != 'pull_request'
+              uses: sillsdev/codesign/trusted-signing-action@v3
+              with:
+                  credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
+                  files-folder: Installers
+                  files-folder-filter: "*-engine.exe"
+                  description: "FieldWorks Installer"
+                  description-url: "https://software.sil.org/fieldworks/"
 
-      - name: Sign Engines
-        if: github.event_name != 'pull_request'
-        uses: sillsdev/codesign/trusted-signing-action@v3
-        with:
-            credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
-            files-folder: Installers
-            files-folder-filter: '*-engine.exe'
-            description:  'FieldWorks Installer'
-            description-url: 'https://software.sil.org/fieldworks/'
+            - name: Reattach Engines
+              if: github.event_name != 'pull_request'
+              working-directory: Installers
+              shell: cmd
+              run: |
+                  insignia -ab offline-engine.exe "${{ steps.stage_installers.outputs.offline_exe }}" -o "${{ steps.stage_installers.outputs.offline_exe }}"
+                  insignia -ab online-engine.exe "${{ steps.stage_installers.outputs.online_exe }}" -o "${{ steps.stage_installers.outputs.online_exe }}"
 
-      - name: Reattach Engines
-        if: github.event_name != 'pull_request'
-        working-directory: Installers
-        shell: cmd
-        run: |
-            insignia -ab offline-engine.exe "${{ steps.stage_installers.outputs.offline_exe }}" -o "${{ steps.stage_installers.outputs.offline_exe }}"
-            insignia -ab online-engine.exe "${{ steps.stage_installers.outputs.online_exe }}" -o "${{ steps.stage_installers.outputs.online_exe }}"
+            - name: Sign Bundles
+              if: github.event_name != 'pull_request'
+              uses: sillsdev/codesign/trusted-signing-action@v3
+              with:
+                  credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
+                  files-folder: Installers
+                  files-folder-filter: FieldWorks_*.exe
+                  description: "FieldWorks Installer"
+                  description-url: "https://software.sil.org/fieldworks/"
 
-      - name: Sign Bundles
-        if: github.event_name != 'pull_request'
-        uses: sillsdev/codesign/trusted-signing-action@v3
-        with:
-            credentials: ${{ secrets.TRUSTED_SIGNING_CREDENTIALS }}
-            files-folder: Installers
-            files-folder-filter: FieldWorks_*.exe
-            description:  'FieldWorks Installer'
-            description-url: 'https://software.sil.org/fieldworks/'
+            - name: Configure AWS credentials
+              if: ${{ inputs.make_release == 'true' }}
+              uses: aws-actions/configure-aws-credentials@v4
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: us-east-1
 
-      - name: Configure AWS credentials
-        if: ${{ inputs.make_release == 'true' }}
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+            - name: Upload Installers to S3
+              if: ${{ inputs.make_release == 'true' }}
+              shell: pwsh
+              run: |
+                  $offlineExe = "${{ steps.stage_installers.outputs.offline_exe }}"
+                  $onlineExe = "${{ steps.stage_installers.outputs.online_exe }}"
 
-      - name: Upload Installers to S3
-        if: ${{ inputs.make_release == 'true' }}
-        shell: pwsh
-        run: |
-          $offlineExe = "${{ steps.stage_installers.outputs.offline_exe }}"
-          $onlineExe = "${{ steps.stage_installers.outputs.online_exe }}"
-          
-          if (-not (Test-Path $offlineExe)) {
-            throw "Offline installer not found at $offlineExe"
-          }
-          if (-not (Test-Path $onlineExe)) {
-            throw "Online installer not found at $onlineExe"
-          }
-          
-          $offlineFile = Split-Path $offlineExe -Leaf
-          $onlineFile = Split-Path $onlineExe -Leaf
-          
-          $s3BasePath = "jobs/FieldWorks-Win-all-Release-Base/$($env:FW_BUILD_NUMBER)"
-          $offlineS3Key = "$s3BasePath/$offlineFile"
-          $onlineS3Key = "$s3BasePath/$onlineFile"
-          
-          aws s3 cp $offlineExe "s3://flex-updates/$offlineS3Key"
-          Write-Host "Uploaded offline installer to s3://flex-updates/$offlineS3Key"
-          
-          aws s3 cp $onlineExe "s3://flex-updates/$onlineS3Key"
-          Write-Host "Uploaded online installer to s3://flex-updates/$onlineS3Key"
+                  if (-not (Test-Path $offlineExe)) {
+                    throw "Offline installer not found at $offlineExe"
+                  }
+                  if (-not (Test-Path $onlineExe)) {
+                    throw "Online installer not found at $onlineExe"
+                  }
 
-      - name: Compress Build Artifacts
-        id: compress_artifacts
-        if: ${{ inputs.make_release == 'true' }}
-        run: |
-            [System.IO.Compression.ZipFile]::CreateFromDirectory(
-              "${{ github.workspace }}\BuildDir",
-              "${{ github.workspace }}\BuildDir.zip",
-              [System.IO.Compression.CompressionLevel]::Optimal,
-              $false
-            )
-            [System.IO.Compression.ZipFile]::CreateFromDirectory(
-              "${{ github.workspace }}\PatchableInstaller\ProcRunner\ProcRunner\bin\Release\net48",
-              "${{ github.workspace }}\ProcRunner.zip",
-              [System.IO.Compression.CompressionLevel]::Optimal,
-              $false
-            )
-            Get-ChildItem "${{ github.workspace }}" -Filter "*.zip" | Select-Object Name, Length
-            "build_dir_zip=$(("${{ github.workspace }}/BuildDir.zip") -replace '\\','/')" >> $env:GITHUB_OUTPUT
-            "proc_runner_zip=$(("${{ github.workspace }}/ProcRunner.zip") -replace '\\','/')" >> $env:GITHUB_OUTPUT
+                  $offlineFile = Split-Path $offlineExe -Leaf
+                  $onlineFile = Split-Path $onlineExe -Leaf
 
+                  $s3BasePath = "jobs/FieldWorks-Win-all-Release-Base/$($env:FW_BUILD_NUMBER)"
+                  $offlineS3Key = "$s3BasePath/$offlineFile"
+                  $onlineS3Key = "$s3BasePath/$onlineFile"
 
-      - name: Tag, Create Release, and Upload artifacts
-        if: ${{ inputs.make_release == 'true' }}
-        uses: softprops/action-gh-release@6cbd405e2c4e67a21c47fa9e383d020e4e28b836
-        with:
-            target_commitish: ${{ github.event.inputs.fw_ref || github.ref }}
-            tag_name: build-${{ env.FW_BUILD_NUMBER }}
-            name: "FieldWorks Base Build #${{ env.FW_BUILD_NUMBER }}"
-            draft: false
-            prerelease: true
-            fail_on_unmatched_files: true
-            files: |
-              ${{ steps.compress_artifacts.outputs.build_dir_zip }}
-              ${{ steps.compress_artifacts.outputs.proc_runner_zip }}
+                  aws s3 cp $offlineExe "s3://flex-updates/$offlineS3Key"
+                  Write-Host "Uploaded offline installer to s3://flex-updates/$offlineS3Key"
 
-      - name: Upload Build Logs
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          if-no-files-found: warn
-          name: build-logs
-          path: |
-            Build/*.log
-            Build/*.binlog
+                  aws s3 cp $onlineExe "s3://flex-updates/$onlineS3Key"
+                  Write-Host "Uploaded online installer to s3://flex-updates/$onlineS3Key"
+
+            - name: Compress Build Artifacts
+              id: compress_artifacts
+              if: ${{ inputs.make_release == 'true' }}
+              run: |
+                  [System.IO.Compression.ZipFile]::CreateFromDirectory(
+                    "${{ github.workspace }}\BuildDir",
+                    "${{ github.workspace }}\BuildDir.zip",
+                    [System.IO.Compression.CompressionLevel]::Optimal,
+                    $false
+                  )
+                  [System.IO.Compression.ZipFile]::CreateFromDirectory(
+                    "${{ github.workspace }}\FLExInstaller\Shared\ProcRunner\ProcRunner\bin\Release\net48",
+                    "${{ github.workspace }}\ProcRunner.zip",
+                    [System.IO.Compression.CompressionLevel]::Optimal,
+                    $false
+                  )
+                  Get-ChildItem "${{ github.workspace }}" -Filter "*.zip" | Select-Object Name, Length
+                  "build_dir_zip=$(("${{ github.workspace }}/BuildDir.zip") -replace '\\','/')" >> $env:GITHUB_OUTPUT
+                  "proc_runner_zip=$(("${{ github.workspace }}/ProcRunner.zip") -replace '\\','/')" >> $env:GITHUB_OUTPUT
+
+            - name: Tag, Create Release, and Upload artifacts
+              if: ${{ inputs.make_release == 'true' }}
+              uses: softprops/action-gh-release@6cbd405e2c4e67a21c47fa9e383d020e4e28b836
+              with:
+                  target_commitish: ${{ github.event.inputs.fw_ref || github.ref }}
+	              tag_name: build-${{ env.FW_BUILD_NUMBER }}
+                  name: "FieldWorks Base Build #${{ env.FW_BUILD_NUMBER }}"
+                  draft: false
+                  prerelease: true
+                  fail_on_unmatched_files: true
+                  files: |
+                      ${{ steps.compress_artifacts.outputs.build_dir_zip }}
+                      ${{ steps.compress_artifacts.outputs.proc_runner_zip }}
+
+            - name: Upload Build Logs
+              uses: actions/upload-artifact@v4
+              if: always()
+              with:
+                  if-no-files-found: warn
+                  name: build-logs
+                  path: |
+                      Build/*.log
+                      Build/*.binlog

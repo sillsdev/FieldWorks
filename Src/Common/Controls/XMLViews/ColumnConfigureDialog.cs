@@ -82,7 +82,7 @@ namespace SIL.FieldWorks.Common.Controls
 
 		internal ListView optionsList;
 		private HelpProvider helpProvider;
-		private IContainer components;
+		private IContainer components = null;
 		private ColumnHeader columnHeader1;
 		private PictureBox blkEditIcon;
 		private Label blkEditText;

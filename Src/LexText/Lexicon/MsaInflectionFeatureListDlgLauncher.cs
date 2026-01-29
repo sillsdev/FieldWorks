@@ -244,7 +244,6 @@ namespace SIL.FieldWorks.XWorks.LexEd
 		/// </summary>
 		protected override void HandleChooser()
 		{
-			VectorReferenceLauncher vrl = null;
 			using (FeatureSystemInflectionFeatureListDlg dlg = new FeatureSystemInflectionFeatureListDlg())
 			{
 				IFsFeatStruc originalFs = m_obj as IFsFeatStruc;

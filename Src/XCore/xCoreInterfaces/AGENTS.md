@@ -1,0 +1,101 @@
+---
+last-reviewed: 2025-10-31
+last-reviewed-tree: aabfae3eb78cb8b4b91e19f7ae790467f34a684e9b51255fc952d305a1a96223
+status: reviewed
+---
+
+<!-- copilot:auto-change-log start -->
+## Change Log (auto)
+
+This section is populated by running:
+1. `python .github/plan_copilot_updates.py --folders <Folder>`
+2. `python .github/copilot_apply_updates.py --folders <Folder>`
+
+Do not edit this block manually; rerun the scripts above after code or doc updates.
+<!-- copilot:auto-change-log end -->
+
+# xCoreInterfaces
+
+## Purpose
+Core interface definitions and implementations (~7.8K lines) for XCore framework. Provides Mediator (central message broker), PropertyTable (property storage), IxCoreColleague (colleague pattern), ChoiceGroup/Choice (menu/toolbar definitions), Command (command pattern), IUIAdapter (UI adapter contracts), and IdleQueue (idle-time processing). Foundation for plugin-based extensibility across FieldWorks.
+
+## Architecture
+Core interface definitions (~7.8K lines) for XCore framework. Provides Mediator (message broker), PropertyTable (property storage), IxCoreColleague (plugin interface), ChoiceGroup/Choice (UI definitions), Command (command pattern), IUIAdapter (UI adapter contracts), IdleQueue (idle processing). Foundation for plugin extensibility across FieldWorks.
+
+## Key Components
+
+### Core Patterns
+- **Mediator** (Mediator.cs) - Central command routing and colleague coordination (~2.4K lines)
+  - `BroadcastMessage(string message, object parameter)` - Message broadcast
+  - `SendMessage(string message, object parameter)` - Direct message send
+  - Manages: Colleague registration, property table, idle queue
+- **PropertyTable**, **ReadOnlyPropertyTable** (PropertyTable.cs, ReadOnlyPropertyTable.cs) - Property storage with change notification
+  - `SetProperty(string name, object value, bool doSetPropertyEvents)` - Set property with optional events
+  - `GetValue<T>(string name)` - Strongly-typed property retrieval
+- **IxCoreColleague** (IxCoreColleague.cs) - Colleague pattern interface
+  - `IxCoreContentControl`, `IXCoreUserControl` - Specialized colleague interfaces
+- **Command** (Command.cs) - Command pattern with undo/redo support
+  - `ICommandUndoRedoText` interface for undo text customization
+
+### UI Abstractions
+- **ChoiceGroup**, **Choice**, **ChoiceGroupCollection** (ChoiceGroup.cs, Choice.cs) - Menu/toolbar definitions
+  - XML-driven choice loading from Inventory
+- **IUIAdapter**, **IUIMenuAdapter**, **ITestableUIAdapter** (IUIAdapter.cs) - UI adapter contracts
+  - `IUIAdapterForceRegenerate` - Forces UI regeneration
+  - `AdapterAssemblyFactory` - Creates UI adapters from assemblies
+
+### Supporting Services
+- **IdleQueue** (IdleQueue.cs) - Idle-time work queue
+  - `AddTask(Task task)` - Queue work for idle execution
+- **MessageSequencer** (MessageSequencer.cs) - Message sequencing and filtering
+- **PersistenceProvider**, **IPersistenceProvider** (PersistenceProvider.cs, IPersistenceProvider.cs) - Settings persistence
+- **BaseContextHelper**, **IContextHelper** (BaseContextHelper.cs) - Context-aware help
+- **IFeedbackInfoProvider** (IFeedbackInfoProvider.cs) - User feedback interface
+- **IImageCollection** (IImageCollection.cs) - Image resource access
+- **RecordFilterListProvider** (RecordFilterListProvider.cs) - Record filtering support
+- **IPaneBar** (IPaneBar.cs) - Pane bar interface
+- **IPropertyRetriever** (IPropertyRetriever.cs) - Property access abstraction
+- **List** (List.cs) - Generic list utilities
+
+## Technology Stack
+Language - C#
+
+## Dependencies
+- Upstream: Core libraries
+- Downstream: Applications
+
+## Interop & Contracts
+- Mediator: BroadcastMessage(), SendMessage() for command routing
+
+## Threading & Performance
+TBD - populate from code. See auto-generated hints below.
+
+## Config & Feature Flags
+TBD - populate from code. See auto-generated hints below.
+
+## Build Information
+TBD - populate from code. See auto-generated hints below.
+
+## Interfaces and Data Models
+See Key Components section above.
+
+## Entry Points
+- Framework interface contracts
+
+## Test Index
+Test projects: xCoreInterfacesTests. 3 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.
+
+## Usage Hints
+Library component. Reference in consuming projects. See Dependencies section for integration points.
+
+## Related Folders
+- XCore/ - Framework implementing these interfaces
+
+## References
+See `.cache/copilot/diff-plan.json` for file details.
+
+## Test Infrastructure
+- xCoreInterfacesTests/ subfolder
+
+## Code Evidence
+*Analysis based on scanning 23 source files*

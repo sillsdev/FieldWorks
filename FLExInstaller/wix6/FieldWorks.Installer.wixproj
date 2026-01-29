@@ -1,0 +1,146 @@
+<Project Sdk="WixToolset.Sdk/6.0.2">
+  <PropertyGroup>
+    <OutputName>FieldWorks</OutputName>
+    <OutputType>Package</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+
+    <!-- Prefer explicit package paths when resolving WixExtension items; otherwise MSBuild's ReferencePaths can
+         accidentally bind to older extension DLLs if multiple versions exist under ./packages. -->
+    <WixExtensionSearchPaths>{RawFileName};{HintPathFromItem};$(ReferencePaths)</WixExtensionSearchPaths>
+
+    <!--
+      Installer validation:
+      - Harvested inputs include many versionless resource/data files that trigger ICE60.
+      - We intentionally allow downgrades (single-instance policy), which triggers ICE61.
+    -->
+    <SuppressIces>ICE60;ICE61</SuppressIces>
+  </PropertyGroup>
+
+  <!--
+    Faster Debug builds:
+    - Disable MSI validation (wix msi validate) which can be expensive.
+    - Disable cabinet compression for fast iterative rebuilds.
+    - Enable cabinet caching across builds.
+  -->
+  <PropertyGroup>
+    <FastInstallerBuild Condition="'$(FastInstallerBuild)' == '' and '$(Configuration)' == 'Debug'">1</FastInstallerBuild>
+    <FastInstallerBuild Condition="'$(FastInstallerBuild)' == ''">0</FastInstallerBuild>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(FastInstallerBuild)' == '1'">
+    <DefaultCompressionLevel>none</DefaultCompressionLevel>
+    <SuppressValidation>true</SuppressValidation>
+    <LinkerAdditionalOptions>$(LinkerAdditionalOptions) -cc "$(IntermediateOutputPath)cabcache"</LinkerAdditionalOptions>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <!-- Defaults for local dev, overridden by Installer.targets -->
+    <AppBuildDir Condition="'$(AppBuildDir)' == ''">..\..\BuildDir\FieldWorks_9.3_Build_x64</AppBuildDir>
+    <BinDirSuffix Condition="'$(BinDirSuffix)' == ''">objects\FieldWorks</BinDirSuffix>
+    <DataDirSuffix Condition="'$(DataDirSuffix)' == ''">objects\FieldWorks_Data</DataDirSuffix>
+    <L10nDirSuffix Condition="'$(L10nDirSuffix)' == ''">objects\FieldWorks_L10n</L10nDirSuffix>
+
+    <!-- WiX preprocessor defaults (can be overridden by MSBuild properties) -->
+    <ApplicationName Condition="'$(ApplicationName)' == ''">FieldWorks</ApplicationName>
+    <SafeApplicationName Condition="'$(SafeApplicationName)' == ''">FieldWorks</SafeApplicationName>
+    <Manufacturer Condition="'$(Manufacturer)' == ''">SIL International</Manufacturer>
+    <SafeManufacturer Condition="'$(SafeManufacturer)' == ''">SIL</SafeManufacturer>
+    <MajorVersion Condition="'$(MajorVersion)' == ''">9</MajorVersion>
+    <MinorVersion Condition="'$(MinorVersion)' == ''">3</MinorVersion>
+    <VersionNumber Condition="'$(VersionNumber)' == ''">9.3.0.1</VersionNumber>
+    <UpgradeCode Condition="'$(UpgradeCode)' == ''">1092269F-9EA1-419B-8685-90203F83E254</UpgradeCode>
+    <ProductCode Condition="'$(ProductCode)' == ''">*</ProductCode>
+
+    <!-- StandardDirectory IDs depend on platform; installers are x64-only. -->
+    <PFDir Condition="'$(PFDir)' == '' and '$(Platform)' == 'x64'">ProgramFiles64Folder</PFDir>
+    <PFDir Condition="'$(PFDir)' == ''">ProgramFilesFolder</PFDir>
+    <CFDir Condition="'$(CFDir)' == '' and '$(Platform)' == 'x64'">CommonFiles64Folder</CFDir>
+    <CFDir Condition="'$(CFDir)' == ''">CommonFilesFolder</CFDir>
+
+    <MasterBuildDir>$(AppBuildDir)\$(BinDirSuffix)</MasterBuildDir>
+    <MasterDataDir>$(AppBuildDir)\$(DataDirSuffix)</MasterDataDir>
+    <MasterL10nDir>$(AppBuildDir)\$(L10nDirSuffix)</MasterL10nDir>
+
+    <DefineConstants>ApplicationName=$(ApplicationName);SafeApplicationName=$(SafeApplicationName);Manufacturer=$(Manufacturer);SafeManufacturer=$(SafeManufacturer);MajorVersion=$(MajorVersion);MinorVersion=$(MinorVersion);VersionNumber=$(VersionNumber);ProductCode=$(ProductCode);UpgradeCode=$(UpgradeCode);PFDir=$(PFDir);CFDir=$(CFDir);MASTERBUILDDIR=$(MasterBuildDir);MASTERDATADIR=$(MasterDataDir);MASTERL10NDIR=$(MasterL10nDir);FastInstallerBuild=$(FastInstallerBuild);$(DefineConstants)</DefineConstants>
+
+    <_MasterBuildDirFull>$([MSBuild]::NormalizePath($(MSBuildProjectDirectory), $(MasterBuildDir)))</_MasterBuildDirFull>
+    <_MasterDataDirFull>$([MSBuild]::NormalizePath($(MSBuildProjectDirectory), $(MasterDataDir)))</_MasterDataDirFull>
+    <_MasterL10nDirFull>$([MSBuild]::NormalizePath($(MSBuildProjectDirectory), $(MasterL10nDir)))</_MasterL10nDirFull>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WixToolset.UI.wixext" Version="6.0.2" />
+    <PackageReference Include="WixToolset.Util.wixext" Version="6.0.2" />
+    <PackageReference Include="WixToolset.NetFx.wixext" Version="6.0.2" />
+    <PackageReference Include="WixToolset.Heat" Version="6.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="Shared\Base\Framework.wxs" />
+    <Compile Include="Shared\Base\WixUI_DialogFlow.wxs" />
+    <Compile Include="Shared\Base\GIInstallDirDlg.wxs" />
+    <Compile Include="Shared\Base\GIProgressDlg.wxs" />
+    <Compile Include="Shared\Base\GIWelcomeDlg.wxs" />
+    <Compile Include="Shared\Base\GICustomizeDlg.wxs" />
+    <Compile Include="Shared\Base\GISetupTypeDlg.wxs" />
+    <EmbeddedResource Include="Shared\Base\WixUI_en-us.wxl" />
+  </ItemGroup>
+
+  <ItemGroup>
+  </ItemGroup>
+
+  <Target Name="HarvestAppAndData" BeforeTargets="CoreCompile">
+    <PropertyGroup>
+      <_HarvestDir>$(IntermediateOutputPath)Harvest\</_HarvestDir>
+      <_BaseDir>$(MSBuildProjectDirectory)\Shared\Base</_BaseDir>
+      <!--
+        WiX v6 SDK dependencies are restored into the repo-local ./packages folder in this repo.
+        Use that first so we don't depend on the global NuGet cache layout.
+      -->
+      <_HeatExeFromRepo>$([MSBuild]::NormalizePath($(MSBuildProjectDirectory), ..\..\packages\wixtoolset.heat\6.0.2\tools\net472\x64\heat.exe))</_HeatExeFromRepo>
+      <_HeatExeFromNuGetRoot>$([MSBuild]::NormalizePath($(NuGetPackageRoot), wixtoolset.heat\6.0.2\tools\net472\x64\heat.exe))</_HeatExeFromNuGetRoot>
+      <_HeatExe Condition="Exists('$(_HeatExeFromRepo)')">$(_HeatExeFromRepo)</_HeatExe>
+      <_HeatExe Condition="'$(_HeatExe)' == '' and Exists('$(_HeatExeFromNuGetRoot)')">$(_HeatExeFromNuGetRoot)</_HeatExe>
+    </PropertyGroup>
+
+    <MakeDir Directories="$(_HarvestDir)" />
+
+    <Error
+      Condition="!Exists('$(_HeatExe)')"
+      Text="Heat tool not found. Expected either '$(_HeatExeFromRepo)' or '$(_HeatExeFromNuGetRoot)'. Ensure restore succeeded (WixToolset.Heat 6.0.2)." />
+
+    <!-- Harvest using WiX Toolset Heat from the WiX v6 toolchain (WixToolset.Heat package). -->
+    <Exec
+      WorkingDirectory="$(_BaseDir)"
+      Command="&quot;$(_HeatExe)&quot; dir &quot;$(_MasterBuildDirFull)&quot; -cg HarvestedAppFiles -gg -scom -sreg -sfrag -srd -sw5150 -sw5151 -dr APPFOLDER -var var.MASTERBUILDDIR -t KeyPathFix.xsl -out &quot;$(_HarvestDir)AppHarvest.wxs&quot;"
+    />
+    <Exec
+      WorkingDirectory="$(_BaseDir)"
+      Command="&quot;$(_HeatExe)&quot; dir &quot;$(_MasterDataDirFull)&quot; -cg HarvestedDataFiles -gg -scom -sreg -sfrag -srd -sw5150 -sw5151 -dr HARVESTDATAFOLDER -var var.MASTERDATADIR -t KeyPathFix.xsl -out &quot;$(_HarvestDir)DataHarvest.wxs&quot;"
+    />
+    <Exec
+      Condition="Exists('$(_MasterL10nDirFull)')"
+      WorkingDirectory="$(_BaseDir)"
+      Command="&quot;$(_HeatExe)&quot; dir &quot;$(_MasterL10nDirFull)&quot; -cg HarvestedL10nFiles -gg -scom -sreg -sfrag -srd -sw5150 -sw5151 -dr APPFOLDER -var var.MASTERL10NDIR -t KeyPathFix.xsl -out &quot;$(_HarvestDir)L10nHarvest.wxs&quot;"
+    />
+
+    <ItemGroup>
+      <Compile Include="$(_HarvestDir)AppHarvest.wxs" />
+      <Compile Include="$(_HarvestDir)DataHarvest.wxs" />
+    </ItemGroup>
+
+    <ItemGroup Condition="Exists('$(_HarvestDir)L10nHarvest.wxs')">
+      <Compile Include="$(_HarvestDir)L10nHarvest.wxs" />
+    </ItemGroup>
+  </Target>
+
+  <ItemGroup>
+    <ProjectReference Include="Shared\CustomActions\CustomActions\CustomActions.csproj" />
+    <ProjectReference Include="Shared\ProcRunner\ProcRunner\ProcRunner.csproj" />
+  </ItemGroup>
+
+  <Target Name="SignInstaller" AfterTargets="Build" Condition="'$(SignOutput)'=='true'">
+    <Exec Command="call Shared\Base\signingProxy.bat &quot;$(OutputPath)$(OutputName).msi&quot;" />
+  </Target>
+</Project>

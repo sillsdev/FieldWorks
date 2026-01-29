@@ -9,27 +9,13 @@ using NUnit.Framework;
 namespace Utils.MessageBoxExLib
 {
 	/// <summary>
-	///
+	/// Tests for MessageBoxEx using NUnitForms framework.
+	/// Inherits from NUnitFormTest to access protected ExpectModal method.
 	/// </summary>
 	[TestFixture]
 	[Platform(Exclude = "Linux", Reason = "TODO-Linux: depends on nunitforms which is not cross platform")]
-	public class MessageBoxTests
+	public class MessageBoxTests : NUnitFormTest
 	{
-		private NUnitFormTest m_FormTest;
-
-		[SetUp]
-		public void Setup()
-		{
-			m_FormTest = new NUnitFormTest();
-			m_FormTest.SetUp();
-		}
-
-		[TearDown]
-		public void Teardown()
-		{
-			m_FormTest.TearDown();
-		}
-
 		[OneTimeTearDown]
 		public void FixtureTearDown()
 		{
@@ -50,8 +36,8 @@ namespace Utils.MessageBoxExLib
 				msgBox.Timeout = 10;
 				msgBox.TimeoutResult = TimeoutResult.Timeout;
 
-				m_FormTest.ExpectModal(name, DoNothing, true);//the nunitforms framework freaks out if we show a dialog with out warning it first
-				Assert.AreEqual("Timeout",msgBox.Show());
+				ExpectModal(name, DoNothing, true);//the nunitforms framework freaks out if we show a dialog with out warning it first
+				Assert.That(msgBox.Show(), Is.EqualTo("Timeout"));
 			}
 		}
 
@@ -71,13 +57,13 @@ namespace Utils.MessageBoxExLib
 				msgBox.AllowSaveResponse  = true;
 
 				//click the yes button when the dialog comes up
-				m_FormTest.ExpectModal(name, ConfirmModalByYesAndRemember, true);
+				ExpectModal(name, ConfirmModalByYesAndRemember, true);
 
-				Assert.AreEqual("Yes", msgBox.Show());
+				Assert.That(msgBox.Show(), Is.EqualTo("Yes"));
 
-				m_FormTest.ExpectModal(name, DoNothing, false /*don't expect it, because it should use our saved response*/);
+				ExpectModal(name, DoNothing, false /*don't expect it, because it should use our saved response*/);
 				msgBox.UseSavedResponse = true;
-				Assert.AreEqual("Yes", msgBox.Show());
+				Assert.That(msgBox.Show(), Is.EqualTo("Yes"));
 			}
 		}
 

@@ -23,7 +23,9 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 	{
 		private IVwStylesheet m_stylesheet;
 		private HashSet<ICmObject> m_selectedItems = new HashSet<ICmObject>();
+#pragma warning disable CS0414 // Field is assigned but never used - retained for search icon state tracking
 		private bool m_searchIconSet = true;
+#pragma warning restore CS0414
 		private SearchTimer m_SearchTimer;
 		private ICmSemanticDomainRepository m_semdomRepo;
 		private String m_helpTopic = "khtpSemanticDomainsChooser";

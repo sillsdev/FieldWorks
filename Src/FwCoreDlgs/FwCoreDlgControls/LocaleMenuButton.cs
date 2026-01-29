@@ -23,7 +23,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 	/// </summary>
 	public class LocaleMenuButton : Button
 	{
-		private System.ComponentModel.Container components;
+		private System.ComponentModel.IContainer components = null;
 
 		// Key - language ID.
 		// Value - collection of locales starting with that language id.

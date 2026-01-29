@@ -272,7 +272,7 @@
     <ClInclude Include="RedirectHKCU.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\Output\Common\bldinc.h">
+    <ClInclude Include="..\..\Output\$(Configuration)\Common\bldinc.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

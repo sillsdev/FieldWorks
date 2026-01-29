@@ -2,6 +2,7 @@
 // Terms of use are in the file COPYING
 #include "main.h"
 #include <algorithm>
+#include <stdio.h>
 using namespace std;
 using namespace unitpp;
 
@@ -24,6 +25,7 @@ void unitpp::set_tester(test_runner* tr)
 
 int main(int argc, const char* argv[])
 {
+    printf("DEBUG: unit++ main start\n"); fflush(stdout);
 	options().add("v", new options_utils::opt_flag(verbose));
 	options().alias("verbose", "v");
 	options().add("V", new options_utils::opt_int(verbose_lvl, 1));
@@ -39,9 +41,16 @@ int main(int argc, const char* argv[])
 	plain_runner plain;
 	if (!runner)
 		runner = &plain;
+
+    printf("DEBUG: Calling GlobalSetup\n"); fflush(stdout);
 	GlobalSetup(verbose);
+	printf("DEBUG: Returned from GlobalSetup\n"); fflush(stdout);
+
 	int retval = runner->run_tests(argc, argv) ? 0 : 1;
+
+    printf("DEBUG: Calling GlobalTeardown\n"); fflush(stdout);
 	GlobalTeardown();
+	printf("DEBUG: unit++ main end (retval=%d)\n", retval); fflush(stdout);
 	return retval;
 }
 

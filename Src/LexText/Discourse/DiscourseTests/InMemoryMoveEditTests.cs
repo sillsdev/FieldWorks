@@ -127,8 +127,8 @@ namespace SIL.FieldWorks.Discourse
 			List<IConstituentChartCellPart> list, string message)
 		{
 			var wordGrp = m_logic.CallFindWordGroup(list);
-			Assert.IsNotNull(wordGrp, message);
-			Assert.AreEqual(testWordGrp.Hvo, wordGrp.Hvo, message);
+			Assert.That(wordGrp, Is.Not.Null, message);
+			Assert.That(wordGrp.Hvo, Is.EqualTo(testWordGrp.Hvo), message);
 		}
 
 		/// <summary>
@@ -575,8 +575,7 @@ namespace SIL.FieldWorks.Discourse
 		public void FirstWordGroup()
 		{
 			// Should not crash with empty list.
-			Assert.IsNull(m_logic.CallFindWordGroup(new List<IConstituentChartCellPart>()),
-				"FindFirstWordGroup should find nothing in empty list");
+			Assert.That(m_logic.CallFindWordGroup(new List<IConstituentChartCellPart>()), Is.Null, "FindFirstWordGroup should find nothing in empty list");
 
 			var allParaOccurrences = m_helper.MakeAnalysesUsedN(5);
 			var row0 = m_helper.MakeFirstRow();
@@ -587,8 +586,7 @@ namespace SIL.FieldWorks.Discourse
 
 			var list = new List<IConstituentChartCellPart> {cellPart0_1b};
 
-			Assert.IsNull(m_logic.CallFindWordGroup(list),
-				"FindFirstWordGroup should find nothing in marker-only list");
+			Assert.That(m_logic.CallFindWordGroup(list), Is.Null, "FindFirstWordGroup should find nothing in marker-only list");
 
 			list.Add(cellPart0_1);
 			VerifyFirstWordGroup(cellPart0_1, list, "FindFirstWordGroup should find item not at start");
@@ -736,8 +734,7 @@ namespace SIL.FieldWorks.Discourse
 			VerifyRowContents(0, new IConstituentChartCellPart[] { cellPart0_1b, cellPart0_1, cellPart0_3 }); // Row not left in correct order/state.
 			// First word should move to next column.
 			VerifyWordGroup(0, 1, m_allColumns[2], new List<AnalysisOccurrence> { allParaOccurrences[0] });
-			Assert.AreEqual(m_allColumns[1].Hvo, cellPart0_1b.ColumnRA.Hvo,
-				"Postposed marker should still be in original column.");
+			Assert.That(cellPart0_1b.ColumnRA.Hvo, Is.EqualTo(m_allColumns[1].Hvo), "Postposed marker should still be in original column.");
 		}
 
 		[Test]
@@ -1175,10 +1172,10 @@ namespace SIL.FieldWorks.Discourse
 			VerifyChartRows(m_chart, new [] { row0, newRow, row1 }); // Should have inserted new row
 			VerifyRowNumber("1a", row0, "Should have modified row number");
 			VerifyRowNumber("1b", newRow, "Should have set row number");
-			Assert.IsFalse(row0.EndSentence, "should have transferred end sent and end para features to new row");
-			Assert.IsFalse(row0.EndParagraph, "should have transferred end sent and end para features to new row");
-			Assert.IsTrue(newRow.EndSentence, "should have transferred end sent and end para features to new row");
-			Assert.IsTrue(newRow.EndParagraph, "should have transferred end sent and end para features to new row");
+			Assert.That(row0.EndSentence, Is.False, "should have transferred end sent and end para features to new row");
+			Assert.That(row0.EndParagraph, Is.False, "should have transferred end sent and end para features to new row");
+			Assert.That(newRow.EndSentence, Is.True, "should have transferred end sent and end para features to new row");
+			Assert.That(newRow.EndParagraph, Is.True, "should have transferred end sent and end para features to new row");
 		}
 
 		[Test]
@@ -1280,7 +1277,7 @@ namespace SIL.FieldWorks.Discourse
 
 			// make sure we have restored the words to the ribbon (?)
 			AssertUsedAnalyses(allParaOccurrences, 2);
-			Assert.AreEqual(1, m_mockRibbon.CSelectFirstCalls);
+			Assert.That(m_mockRibbon.CSelectFirstCalls, Is.EqualTo(1));
 		}
 
 		[Test]
@@ -1344,7 +1341,7 @@ namespace SIL.FieldWorks.Discourse
 			VerifyDependentClauseMarker(0, 1, m_allColumns[2], new [] { row1 });
 
 			// make sure we have restored the words to the ribbon
-			Assert.AreEqual(1, m_mockRibbon.CSelectFirstCalls);
+			Assert.That(m_mockRibbon.CSelectFirstCalls, Is.EqualTo(1));
 			AssertUsedAnalyses(allParaOccurrences, 2);
 		}
 
@@ -1382,7 +1379,7 @@ namespace SIL.FieldWorks.Discourse
 			VerifyRowDetails(1, ClauseTypes.Normal, false, false, false, false);
 
 			// make sure we have restored the words to the ribbon (?)
-			Assert.AreEqual(1, m_mockRibbon.CSelectFirstCalls);
+			Assert.That(m_mockRibbon.CSelectFirstCalls, Is.EqualTo(1));
 			AssertUsedAnalyses(allParaOccurrences, 2);
 		}
 
@@ -1410,7 +1407,7 @@ namespace SIL.FieldWorks.Discourse
 			VerifyRowNumber("1", row0, "Should have changed row number");
 
 			// make sure we have restored the words to the ribbon (?)
-			Assert.AreEqual(1, m_mockRibbon.CSelectFirstCalls);
+			Assert.That(m_mockRibbon.CSelectFirstCalls, Is.EqualTo(1));
 			AssertUsedAnalyses(allParaOccurrences, 1);
 		}
 

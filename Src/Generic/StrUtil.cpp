@@ -57,6 +57,32 @@ void InitIcuDataDir()
 #if defined(_WIN32) || defined(_M_X64)
 	if (!pszDir || !*pszDir)
 	{
+		// First honor explicit environment overrides (container/CI friendly)
+		auto SetDirFromEnv = [&](const char * envVar) -> bool
+		{
+			char * envPath = NULL;
+			size_t envSize = 0;
+			if (_dupenv_s(&envPath, &envSize, envVar) == 0 && envPath && *envPath)
+			{
+				strncpy_s(rgchDataDirectory, envPath, sizeof(rgchDataDirectory));
+				free(envPath);
+				u_setDataDirectory(rgchDataDirectory);
+				s_fSilIcuInitCalled = false;
+				pszDir = u_getDataDirectory();
+				return true;
+			}
+			free(envPath);
+			return false;
+		};
+
+		if (SetDirFromEnv("FW_ICU_DATA_DIR") || SetDirFromEnv("ICU_DATA"))
+		{
+			// Environment provided a usable path
+		}
+	}
+
+	if (!pszDir || !*pszDir)
+	{
 		// The ICU Data Directory is not yet set.  Get the root directory from the registry
 		// and set the ICU data directory based on that value.
 		DWORD dwSize = sizeof(rgchDataDirectory);

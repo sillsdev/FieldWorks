@@ -11,6 +11,8 @@ using System.Media;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
+using Icu;
 using Icu.Collation;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
@@ -188,9 +190,51 @@ namespace SIL.FieldWorks.Common.FwUtils
 						Environment.SetEnvironmentVariable("ICU_DATA", dir);
 				}
 			}
+			// If ICU_DATA still isn't set (common on clean dev/test machines), fall back to
+			// the repo/worktree DistFiles ICU payload so tests can run without a machine install.
+			if (string.IsNullOrEmpty(Environment.GetEnvironmentVariable("ICU_DATA")))
+			{
+				var devIcuDir = TryGetDevIcuDataDir();
+				if (!string.IsNullOrEmpty(devIcuDir))
+					Environment.SetEnvironmentVariable("ICU_DATA", devIcuDir);
+			}
 			// ICU_DATA should point to the directory that contains nfc_fw.nrm and nfkc_fw.nrm
 			// (i.e. icudt54l).
 			CustomIcu.InitIcuDataDir();
+
+			var initResult = Wrapper.Init();
+			if (initResult != ErrorCode.ZERO_ERROR && initResult != ErrorCode.NoErrors)
+			{
+				Trace.WriteLine($"ICU initialization returned {initResult}");
+			}
+		}
+
+		private static string TryGetDevIcuDataDir()
+		{
+			try
+			{
+				var assemblyDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+				if (string.IsNullOrEmpty(assemblyDir))
+					return null;
+
+				var ver = CustomIcu.Version.ToString(CultureInfo.InvariantCulture);
+				var distFiles = Path.GetFullPath(Path.Combine(assemblyDir, "..", "..", "DistFiles"));
+				if (!Directory.Exists(distFiles))
+					return null;
+
+				var candidate = Path.Combine(distFiles, $"Icu{ver}", $"icudt{ver}l");
+				if (Directory.Exists(candidate))
+					return candidate;
+
+				candidate = Path.Combine(distFiles, $"icudt{ver}l");
+				if (Directory.Exists(candidate))
+					return candidate;
+			}
+			catch
+			{
+				// Best-effort fallback.
+			}
+			return null;
 		}
 
 		/// <summary>
