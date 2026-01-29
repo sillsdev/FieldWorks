@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SIL.FieldWorks.Common.FwUtils;
+using static SIL.FieldWorks.Common.FwUtils.FwUtils;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel;
@@ -124,7 +125,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				}
 			});
 
-			m_dlg.Mediator.SendMessage("RefreshInterlin", null);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.RefreshInterlin, null));
 
 		}
 

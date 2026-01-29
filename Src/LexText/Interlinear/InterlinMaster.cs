@@ -743,6 +743,8 @@ namespace SIL.FieldWorks.IText
 			InitBase(mediator, propertyTable, configurationParameters);
 			m_fullyInitialized = true;
 			RefreshPaneBar();
+
+			Subscriber.Subscribe(EventConstants.RefreshInterlin, RefreshInterlin);
 		}
 
 		/// <summary>
@@ -880,7 +882,7 @@ namespace SIL.FieldWorks.IText
 			SaveWorkInProgress();
 		}
 
-		public void OnRefreshInterlin(object argument)
+		private void RefreshInterlin(object argument)
 		{
 			// Reset data.
 			RootStText = null;
