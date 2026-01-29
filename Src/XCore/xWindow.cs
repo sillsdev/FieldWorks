@@ -35,8 +35,6 @@ namespace XCore
 		/// when the record list and the main control are both showing.
 		///
 		/// Controlling properties are:
-		/// This is always true.
-		/// property name="ShowSidebar" bool="true" persist="true"
 		/// This is the splitter distance for the sidebar/secondary splitter pair of controls.
 		/// property name="SidebarWidthGlobal" intValue="140" persist="true"
 		/// This property is driven by the needs of the current main control, not the user.
@@ -767,7 +765,7 @@ namespace XCore
 			m_mainSplitContainer.FirstControl = m_sidebar;
 			m_mainSplitContainer.Tag = "SidebarWidthGlobal";
 			m_mainSplitContainer.Panel1MinSize = CollapsingSplitContainer.kCollapsedSize;
-			m_mainSplitContainer.Panel1Collapsed = !m_propertyTable.GetBoolProperty("ShowSidebar", false); // Andy Black wants to collapse it for one of his XCore apps.
+			m_mainSplitContainer.Panel1Collapsed = false;
 			m_mainSplitContainer.Panel2Collapsed = false; // Never collapse the main content control, plus optional record list.
 			int sd = m_propertyTable.GetIntProperty("SidebarWidthGlobal", 140);
 			if (!m_mainSplitContainer.Panel1Collapsed)
@@ -1896,9 +1894,6 @@ namespace XCore
 				case "DocumentName":
 					UpdateCaptionBar();
 					break;
-				// Obsolete case "ShowSidebarControls": // Fall through.
-				case "ShowSidebar": // Fall through.
-				// Obsolete case "ShowTreeBar": // Fall through.
 				case "ShowRecordList": // Replaces obsolete "ShowTreeBar".
 					UpdateSidebarAndRecordBarDisplay(true);
 					break;
@@ -1982,18 +1977,9 @@ namespace XCore
 			if (suspendAndResumeLayout)
 				this.SuspendLayout();
 
-			if (m_propertyTable.GetBoolProperty("ShowSidebar", true))
-			{
-				// Show side bar.
-				if (m_mainSplitContainer.Panel1Collapsed)
-					m_mainSplitContainer.Panel1Collapsed = false;
-			}
-			else
-			{
-				// Get rid of side bar.
-				if (!m_mainSplitContainer.Panel1Collapsed)
-					m_mainSplitContainer.Panel1Collapsed = true;
-			}
+			// Show side bar.
+			if (m_mainSplitContainer.Panel1Collapsed)
+				m_mainSplitContainer.Panel1Collapsed = false;
 
 			if (m_propertyTable.GetBoolProperty("ShowRecordList", false))
 			{
