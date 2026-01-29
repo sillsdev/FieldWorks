@@ -125,7 +125,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			});
 
 			// Interlin display may be affected.
-			m_dlg.Mediator.SendMessage("RefreshInterlin", null);
+			Publisher.Publish(new PublisherParameterObject(EventConstants.RefreshInterlin, null));
 		}
 
 		#endregion IUtility implementation
