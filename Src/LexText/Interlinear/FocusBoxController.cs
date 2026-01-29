@@ -168,7 +168,6 @@ namespace SIL.FieldWorks.IText
 				m_lineChoices, selected, this);
 			sandbox.SizeToContent = true; // Layout will ignore size.
 			//sandbox.Mediator = Mediator;
-			sandbox.ShowMorphBundles = true;
 			sandbox.StyleSheet = m_stylesheet;
 			panelSandbox.Controls.Add(sandbox); // Makes it real and may give it a root box.
 			// Note: adding sandbox to Controls doesn't always MakeRoot(), because OnHandleCreated happens
