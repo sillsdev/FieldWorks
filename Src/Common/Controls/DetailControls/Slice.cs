@@ -519,24 +519,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		#endregion Construction and initialization
 
 		#region Miscellaneous UI methods
-
-		/// <summary></summary>
-		public virtual void RegisterWithContextHelper()
-		{
-			CheckDisposed();
-
-			if (Control != null) //grouping nodes do not have a control
-			{
-				//It's OK to send null as an id
-				if (m_mediator != null) // helpful for robustness and testing.
-				{
-					string caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
-					m_mediator.SendMessage("RegisterHelpTargetWithId",
-						new object[] { Control, caption, HelpId }, false);
-				}
-			}
-		}
-
 		protected virtual string HelpId
 		{
 			get

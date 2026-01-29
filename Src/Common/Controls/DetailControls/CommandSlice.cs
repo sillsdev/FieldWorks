@@ -100,17 +100,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 //			this.Control.BackColor = System.Drawing.SystemColors.Control;
 //		}
 
-		public override void RegisterWithContextHelper()
-		{
-			CheckDisposed();
-			if (Control != null)//grouping nodes do not have a control
-			{
-				Mediator.SendMessage("RegisterHelpTargetWithId",
-					new object[]{Control, ConfigurationNode.Attributes["label"].Value, HelpId},
-					false);
-			}
-		}
-
 		protected override string HelpId
 		{
 			get { return m_command.Id; }

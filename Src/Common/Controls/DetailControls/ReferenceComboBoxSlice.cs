@@ -196,21 +196,5 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 				m_cache.DomainDataByFlid.SetObjProp(Object.Hvo, m_flid, newValue);
 			});
 		}
-
-		/// <summary></summary>
-		public override void RegisterWithContextHelper()
-		{
-			CheckDisposed();
-
-			if (Control != null)
-			{
-				string caption = XmlUtils.GetLocalizedAttributeValue(ConfigurationNode, "label", "");
-				Mediator.SendMessage("RegisterHelpTargetWithId",
-					new object[]{m_combo.Controls[0], caption, HelpId}, false);
-				//balloon was making it hard to actually click this
-				//Mediator.SendMessage("RegisterHelpTargetWithId",
-				//	new object[]{launcher.Controls[1], caption, HelpId, "Button"}, false);
-			}
-		}
 	}
 }
