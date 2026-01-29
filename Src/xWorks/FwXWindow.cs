@@ -1722,6 +1722,11 @@ namespace SIL.FieldWorks.XWorks
 			var cacheCollector = new HashSet<DomainDataByFlidDecoratorBase>();
 			var clerkCollector = new HashSet<RecordClerk>();
 			CollectCachesToRefresh(this, cacheCollector, clerkCollector);
+			if (m_popupLexEntryWindow != null)
+			{
+				foreach (Control child in m_popupLexEntryWindow.Controls)
+					CollectCachesToRefresh(child, cacheCollector, clerkCollector);
+			}
 			foreach (var cache in cacheCollector)
 				cache.Refresh();
 			foreach (var clerk in clerkCollector)
