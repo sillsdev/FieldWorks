@@ -381,106 +381,126 @@ namespace XCore
 			get
 			{
 				CheckDisposed();
-				if(m_configurationNode==null)
+				if (m_configurationNode == null)
 					return Keys.None;
 
 				string sc = XmlUtils.GetAttributeValue(m_configurationNode, "shortcut", "");
-				if (sc != "")
-				{
-					// Note: On a German system, KeysConverter().ConvertFromString, ConvertToString,
-					// ConvertToInvariantString, etc. all use German strings (e.g., Strg for Ctrl)
-					// regardless of using the locale specific calls. So to get things to work, we
-					// need to parse the English shortcut string and reconstruct the internal keys.
-					Keys keys = Keys.None;
-					try
-					{
-						string s;
-						string srest = sc.ToLower();
-						while (srest.Length > 0)
-						{
-							int i = srest.IndexOf('+');
-							if (i < 0)
-							{
-								s = srest;
-								srest = "";
-							}
-							else
-							{
-								s = srest.Substring(0, i);
-								srest = srest.Substring(i + 1);
-							}
-							switch (s)
-							{
-								default:
-									keys |= (Keys)new KeysConverter().ConvertFromString(s.ToUpper());
-									break;
-								case "alt":
-									keys |= Keys.Alt;
-									break;
-								case "back":
-									keys |= Keys.Back;
-									break;
-								case "cancel":
-									keys |= Keys.Cancel;
-									break;
-								case "ctrl":
-									keys |= Keys.Control;
-									break;
-								case "del":
-									keys |= Keys.Delete;
-									break;
-								case "down":
-									keys |= Keys.Down;
-									break;
-								case "end":
-									keys |= Keys.End;
-									break;
-								case "enter":
-									keys |= Keys.Enter;
-									break;
-								case "esc":
-									keys |= Keys.Escape;
-									break;
-								case "home":
-									keys |= Keys.Home;
-									break;
-								case "ins":
-									keys |= Keys.Insert;
-									break;
-								case "left":
-									keys |= Keys.Left;
-									break;
-								case "pgdwn":
-									keys |= Keys.PageDown;
-									break;
-								case "pgup":
-									keys |= Keys.PageUp;
-									break;
-								case "right":
-									keys |= Keys.Right;
-									break;
-								case "shift":
-									keys |= Keys.Shift;
-									break;
-								case "tab":
-									keys |= Keys.Tab;
-									break;
-								case "up":
-									keys |= Keys.Up;
-									break;
-							};
-						};
-					}
-					catch (Exception e)
-					{
-						throw new SIL.Utils.ConfigurationException("The System.Windows.Forms.KeysConverter() did not understand this key description:"
-							+ sc + ".", m_configurationNode, e);
-					}
-					return keys;
-				}
-
-					return Keys.None;
+				return GetShortcutKeys(sc);
 			}
+		}
+
+		public Keys Shortcut2
+		{
+			get
+			{
+				CheckDisposed();
+				if (m_configurationNode == null)
+					return Keys.None;
+
+				string sc = XmlUtils.GetAttributeValue(m_configurationNode, "shortcut2", "");
+				return GetShortcutKeys(sc);
+			}
+		}
+
+		private Keys GetShortcutKeys(string sc)
+		{
+			if (sc != "")
+			{
+				// Note: On a German system, KeysConverter().ConvertFromString, ConvertToString,
+				// ConvertToInvariantString, etc. all use German strings (e.g., Strg for Ctrl)
+				// regardless of using the locale specific calls. So to get things to work, we
+				// need to parse the English shortcut string and reconstruct the internal keys.
+				Keys keys = Keys.None;
+				try
+				{
+					string s;
+					string srest = sc.ToLower();
+					while (srest.Length > 0)
+					{
+						int i = srest.IndexOf('+');
+						if (i < 0)
+						{
+							s = srest;
+							srest = "";
+						}
+						else
+						{
+							s = srest.Substring(0, i);
+							srest = srest.Substring(i + 1);
+						}
+						switch (s)
+						{
+							default:
+								keys |= (Keys)new KeysConverter().ConvertFromString(s.ToUpper());
+								break;
+							case "alt":
+								keys |= Keys.Alt;
+								break;
+							case "back":
+								keys |= Keys.Back;
+								break;
+							case "cancel":
+								keys |= Keys.Cancel;
+								break;
+							case "ctrl":
+								keys |= Keys.Control;
+								break;
+							case "del":
+								keys |= Keys.Delete;
+								break;
+							case "down":
+								keys |= Keys.Down;
+								break;
+							case "end":
+								keys |= Keys.End;
+								break;
+							case "enter":
+								keys |= Keys.Enter;
+								break;
+							case "esc":
+								keys |= Keys.Escape;
+								break;
+							case "home":
+								keys |= Keys.Home;
+								break;
+							case "ins":
+								keys |= Keys.Insert;
+								break;
+							case "left":
+								keys |= Keys.Left;
+								break;
+							case "pgdwn":
+								keys |= Keys.PageDown;
+								break;
+							case "pgup":
+								keys |= Keys.PageUp;
+								break;
+							case "right":
+								keys |= Keys.Right;
+								break;
+							case "shift":
+								keys |= Keys.Shift;
+								break;
+							case "tab":
+								keys |= Keys.Tab;
+								break;
+							case "up":
+								keys |= Keys.Up;
+								break;
+						}
+						;
+					}
+					;
+				}
+				catch (Exception e)
+				{
+					throw new SIL.Utils.ConfigurationException("The System.Windows.Forms.KeysConverter() did not understand this key description:"
+						+ sc + ".", m_configurationNode, e);
+				}
+				return keys;
+			}
+
+			return Keys.None;
 		}
 
 		#endregion

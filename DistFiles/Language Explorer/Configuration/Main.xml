@@ -141,7 +141,7 @@
 		<command id="CmdPasteHyperlink" label="Paste _Hyperlink" message="PasteUrl"/>
 		<command id="CmdInsertLinkToFile" label="L_ink to File..." message="InsertLinkToFile" icon="ExternalLink"/>
 		<command id="CmdSelectAll" label="Select _All" message="EditSelectAll" shortcut="Ctrl+A"/>
-		<command id="CmdFindAndReplaceText" label="Find..." message="FindAndReplaceText" shortcut="Ctrl+Shift+F" icon="findReplaceText"/>
+		<command id="CmdFindAndReplaceText" label="Find..." message="FindAndReplaceText" shortcut="Ctrl+Shift+F" shortcut2="Ctrl+F" icon="findReplaceText"/>
 		<command id="CmdReplaceText" label="Replace..." message="ReplaceText" shortcut="Ctrl+H"/>
 		<command id="CmdHelpAbout" label="_About Language Explorer..." message="HelpAbout"/>
 		<command id="CmdHelpLanguageExplorer" label="_Language Explorer..." message="HelpLanguageExplorer" shortcut="F1"/>
