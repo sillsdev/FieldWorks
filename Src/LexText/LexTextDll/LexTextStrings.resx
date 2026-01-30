@@ -117,9 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ksAreaXLostItsDefaultTool" xml:space="preserve">
-    <value>Your settings have developed a problem in which they don't know what tool is the default for the area {0}. Please report this problem.</value>
-  </data>
   <data name="ksCannotLaunchX" xml:space="preserve">
     <value>Sorry, could not launch {0}.</value>
   </data>
@@ -200,47 +197,11 @@ If you click No, you will see various options for starting work in Language Expl
   <data name="ksChartTemplateWarning" xml:space="preserve">
     <value>This discourse analysis tool has columns preset for SVO languages. If you need to change that order, edit the list called "Text Constituent Chart Templates". The columns are the 3rd level list items. Note that once you have charted some text, you cannot reorder the columns without first clearing the chart.</value>
   </data>
-  <data name="ksNewFeature" xml:space="preserve">
-    <value>New Feature</value>
-  </data>
-  <data name="ksUnderDevelopment" xml:space="preserve">
-    <value>Under Development</value>
-  </data>
-  <data name="ksUpgradeValidCharsWarning" xml:space="preserve">
-    <value>FieldWorks now provides a way for you to specify for each writing system which characters are found in words (word-forming) and which characters are not found in words (punctuation, symbols, spacing).
-
-Before using Text or Concordance tools, we recommend you add word-forming characters so that Language Explorer does not change where it thinks the word boundaries are in your texts. If you use apostrophes, hyphens, zero-width characters, or superscript numbers within words, these should be added and specified as word-forming.
-
-Would you like to do this now?</value>
-  </data>
-  <data name="ksCharsWithinWords" xml:space="preserve">
-    <value>Characters within words</value>
-    <comment>Caption for message box.</comment>
-  </data>
   <data name="ksErrorCannotOpenMovies" xml:space="preserve">
     <value>An error occurred trying to open the movies at the following URL. Try again with your web browser. {0}</value>
   </data>
   <data name="kstidSupportEmail" xml:space="preserve">
     <value>FlexErrors@sil.org</value>
     <comment>Email address for sending bug reports to</comment>
-  </data>
-  <data name="ksDb4oProjectNotShareableTextLine1" xml:space="preserve">
-    <value>This project is in the format that permits sharing over a network, but that format is not compatible with Send/Receive.</value>
-  </data>
-  <data name="ksDb4oProjectNotShareableTitle" xml:space="preserve">
-    <value>Project format not compatible for Send/Receive</value>
-  </data>
-  <data name="ksClickOK" xml:space="preserve">
-    <value>Click OK.</value>
-  </data>
-  <data name="ksDb4oProjectNotShareableTextLine2" xml:space="preserve">
-    <value>To change the format of your projects, use the link below and clear the checkbox labeled 'Share Projects stored on this computer'.</value>
-  </data>
-  <data name="ksWarning" xml:space="preserve">
-    <value>Warning</value>
-    <comment>used for dialog caption when project name has non-Ascii characters</comment>
-  </data>
-  <data name="ksExistingProjectName" xml:space="preserve">
-    <value>That project already exists. You'll need to choose a different name in Project Properties.</value>
   </data>
 </root>

@@ -19,7 +19,7 @@ namespace SIL.FieldWorks.XWorks.LexText {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class LexTextStrings {
@@ -70,15 +70,6 @@ namespace SIL.FieldWorks.XWorks.LexText {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your settings have developed a problem in which they don&apos;t know what tool is the default for the area {0}. Please report this problem..
-        /// </summary>
-        public static string ksAreaXLostItsDefaultTool {
-            get {
-                return ResourceManager.GetString("ksAreaXLostItsDefaultTool", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Sorry, could not launch {0}..
         /// </summary>
         public static string ksCannotLaunchX {
@@ -115,29 +106,11 @@ namespace SIL.FieldWorks.XWorks.LexText {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Characters within words.
-        /// </summary>
-        public static string ksCharsWithinWords {
-            get {
-                return ResourceManager.GetString("ksCharsWithinWords", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to This discourse analysis tool has columns preset for SVO languages. If you need to change that order, edit the list called &quot;Text Constituent Chart Templates&quot;. The columns are the 3rd level list items. Note that once you have charted some text, you cannot reorder the columns without first clearing the chart..
         /// </summary>
         public static string ksChartTemplateWarning {
             get {
                 return ResourceManager.GetString("ksChartTemplateWarning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Click OK..
-        /// </summary>
-        public static string ksClickOK {
-            get {
-                return ResourceManager.GetString("ksClickOK", resourceCulture);
             }
         }
         
@@ -165,33 +138,6 @@ namespace SIL.FieldWorks.XWorks.LexText {
         public static string ksCreatingWindowForX {
             get {
                 return ResourceManager.GetString("ksCreatingWindowForX", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to This project is in the format that permits sharing over a network, but that format is not compatible with Send/Receive..
-        /// </summary>
-        public static string ksDb4oProjectNotShareableTextLine1 {
-            get {
-                return ResourceManager.GetString("ksDb4oProjectNotShareableTextLine1", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to To change the format of your projects, use the link below and clear the checkbox labeled &apos;Share Projects stored on this computer&apos;..
-        /// </summary>
-        public static string ksDb4oProjectNotShareableTextLine2 {
-            get {
-                return ResourceManager.GetString("ksDb4oProjectNotShareableTextLine2", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Project format not compatible for Send/Receive.
-        /// </summary>
-        public static string ksDb4oProjectNotShareableTitle {
-            get {
-                return ResourceManager.GetString("ksDb4oProjectNotShareableTitle", resourceCulture);
             }
         }
         
@@ -242,15 +188,6 @@ namespace SIL.FieldWorks.XWorks.LexText {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to That project already exists. You&apos;ll need to choose a different name in Project Properties..
-        /// </summary>
-        public static string ksExistingProjectName {
-            get {
-                return ResourceManager.GetString("ksExistingProjectName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Information.
         /// </summary>
         public static string ksInformation {
@@ -283,15 +220,6 @@ namespace SIL.FieldWorks.XWorks.LexText {
         public static string ksLoading_ {
             get {
                 return ResourceManager.GetString("ksLoading_", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to New Feature.
-        /// </summary>
-        public static string ksNewFeature {
-            get {
-                return ResourceManager.GetString("ksNewFeature", resourceCulture);
             }
         }
         
@@ -339,40 +267,11 @@ namespace SIL.FieldWorks.XWorks.LexText {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Under Development.
-        /// </summary>
-        public static string ksUnderDevelopment {
-            get {
-                return ResourceManager.GetString("ksUnderDevelopment", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to FieldWorks now provides a way for you to specify for each writing system which characters are found in words (word-forming) and which characters are not found in words (punctuation, symbols, spacing).
-        ///
-        ///Before using Text or Concordance tools, we recommend you add word-forming characters so that Language Explorer does not change where it thinks the word boundaries are in your texts. If you use apostrophes, hyphens, zero-width characters, or superscript numbers within words, these should be added and specifi [rest of string was truncated]&quot;;.
-        /// </summary>
-        public static string ksUpgradeValidCharsWarning {
-            get {
-                return ResourceManager.GetString("ksUpgradeValidCharsWarning", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to This tool is designed for a typist to use during a semantically-based word-collection workshop.  For information on this method, see http://www.rapidwords.net.
         /// </summary>
         public static string ksUsedForSemanticBasedEntry {
             get {
                 return ResourceManager.GetString("ksUsedForSemanticBasedEntry", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Warning.
-        /// </summary>
-        public static string ksWarning {
-            get {
-                return ResourceManager.GetString("ksWarning", resourceCulture);
             }
         }
         
