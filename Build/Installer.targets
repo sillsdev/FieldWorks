@@ -164,6 +164,60 @@
     />
   </Target>
 
+  <!--
+    ValidateCriticalAssemblies: Ensures NuGet-sourced assemblies in staged installer input
+    match the versions from the build output. This catches stale base build artifacts.
+
+    The GAFAWSAnalysis.dll version mismatch (bd-3gt) is a canonical example: the base build
+    contained version 1.0.0.24272 (unsigned) while code referenced 1.0.0.35880 (signed),
+    causing FileLoadException at runtime.
+  -->
+  <Target Name="ValidateCriticalAssemblies" AfterTargets="StageInstallerInputs">
+    <PropertyGroup>
+      <StagedBinDir Condition="'$(StagedBinDir)'==''">$(AppBuildDir)\$(BinDirSuffix)</StagedBinDir>
+    </PropertyGroup>
+
+    <!-- List of assemblies that MUST match between build output and staged installer.
+         These are typically NuGet-sourced assemblies that have caused version mismatch bugs. -->
+    <ItemGroup>
+      <CriticalAssembly Include="GafawsAnalysis.dll" />
+      <CriticalAssembly Include="Newtonsoft.Json.dll" />
+      <!-- Add other critical assemblies here as issues are discovered -->
+    </ItemGroup>
+
+    <!-- Check each critical assembly exists in staged output -->
+    <ItemGroup>
+      <StagedCriticalAssembly Include="@(CriticalAssembly->'$(StagedBinDir)\%(Identity)')" />
+      <BuildCriticalAssembly Include="@(CriticalAssembly->'$(OutputDirForConfig)\%(Identity)')" />
+      <MissingStagedAssembly Include="@(StagedCriticalAssembly)" Condition="!Exists('%(Identity)')" />
+      <MissingBuildAssembly Include="@(BuildCriticalAssembly)" Condition="!Exists('%(Identity)')" />
+    </ItemGroup>
+
+    <Warning
+      Condition="'@(MissingBuildAssembly)' != ''"
+      Text="Critical assembly not found in build output: @(MissingBuildAssembly). Installer may have stale dependencies."
+    />
+
+    <Error
+      Condition="'@(MissingStagedAssembly)' != '' and '@(MissingBuildAssembly)' == ''"
+      Text="Critical assembly missing from staged installer: @(MissingStagedAssembly). The build output has it but staging failed."
+    />
+
+    <!-- Compare versions using PowerShell (GetAssemblyIdentity requires the file to exist) -->
+    <Exec
+      Condition="Exists('$(StagedBinDir)\GafawsAnalysis.dll') and Exists('$(OutputDirForConfig)\GafawsAnalysis.dll')"
+      Command="powershell -NoProfile -Command &quot;$staged = [System.Reflection.AssemblyName]::GetAssemblyName('$(StagedBinDir)\GafawsAnalysis.dll'); $build = [System.Reflection.AssemblyName]::GetAssemblyName('$(OutputDirForConfig)\GafawsAnalysis.dll'); if ($staged.FullName -ne $build.FullName) { Write-Error 'GAFAWSAnalysis.dll version mismatch! Staged: ' + $staged.FullName + ' vs Build: ' + $build.FullName; exit 1 } else { Write-Host 'GAFAWSAnalysis.dll version OK: ' + $build.Version }&quot;"
+      IgnoreExitCode="false"
+    />
+
+    <!-- LT-22382: Newtonsoft.Json uses FileVersion to distinguish 13.0.3 vs 13.0.4 (assembly version is always 13.0.0.0) -->
+    <Exec
+      Condition="Exists('$(StagedBinDir)\Newtonsoft.Json.dll') and Exists('$(OutputDirForConfig)\Newtonsoft.Json.dll')"
+      Command="powershell -NoProfile -Command &quot;$staged = [System.Diagnostics.FileVersionInfo]::GetVersionInfo('$(StagedBinDir)\Newtonsoft.Json.dll').FileVersion; $build = [System.Diagnostics.FileVersionInfo]::GetVersionInfo('$(OutputDirForConfig)\Newtonsoft.Json.dll').FileVersion; if ($staged -ne $build) { Write-Error ('Newtonsoft.Json.dll version mismatch! Staged: {0} vs Build: {1}' -f $staged, $build); exit 1 } else { Write-Host ('Newtonsoft.Json.dll version OK: {0}' -f $build) }&quot;"
+      IgnoreExitCode="false"
+    />
+  </Target>
+
   <Target Name="BuildProcRunner">
     <MSBuild Projects="$(Wix6Root)\Shared\ProcRunner\ProcRunner\ProcRunner.csproj" Targets="Restore;Build" Properties="Configuration=Release" />
   </Target>

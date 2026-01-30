@@ -123,7 +123,7 @@
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="m_btnOK.Location" type="System.Drawing.Point, System.Drawing">
-	<value>282, 512</value>
+	<value>148, 512</value>
   </data>
   <data name="m_btnOK.Size" type="System.Drawing.Size, System.Drawing">
 	<value>80, 25</value>
@@ -146,9 +146,6 @@
   </data>
   <data name="&gt;&gt;m_btnOK.ZOrder" xml:space="preserve">
 	<value>6</value>
-  </data>
-  <data name="m_btnOK.Location" type="System.Drawing.Point, System.Drawing">
-    <value>148, 512</value>
   </data>
   <data name="m_btnCreateAndEdit.Text" xml:space="preserve">
 	<value>&amp;Create and Edit</value>

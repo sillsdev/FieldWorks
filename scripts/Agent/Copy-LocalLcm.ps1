@@ -90,7 +90,7 @@ if (-not $SkipConfirm) {
 if ($BuildLcm) {
     Write-Host ""
     Write-Host "Building liblcm ($Configuration)..." -ForegroundColor Cyan
-    
+
     Push-Location $LcmRoot
     try {
         # liblcm uses build.cmd for building
@@ -98,7 +98,7 @@ if ($BuildLcm) {
         if (-not (Test-Path $buildScript)) {
             throw "build.cmd not found at '$buildScript'. Is '$LcmRoot' a valid liblcm checkout?"
         }
-        
+
         Write-Host "Running: $buildScript" -ForegroundColor Gray
         & cmd /c $buildScript
         if ($LASTEXITCODE -ne 0) {
@@ -147,7 +147,7 @@ $missing = @()
 foreach ($asm in $lcmAssemblies) {
     $sourcePath = Join-Path $lcmBinDir $asm
     $destPath = Join-Path $FwOutputDir $asm
-    
+
     if (Test-Path $sourcePath) {
         if (-not (Test-Path $FwOutputDir)) {
             New-Item -Path $FwOutputDir -ItemType Directory -Force | Out-Null

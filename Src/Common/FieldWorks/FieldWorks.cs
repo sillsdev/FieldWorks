@@ -3508,6 +3508,7 @@ namespace SIL.FieldWorks
 		private static void StaticDispose()
 		{
 			s_appServerMode = false; // Make sure the cache can be cleaned up
+			FwUtils.Cleanup(); // Dispose IdleQueue and other singleton resources
 			LexicalProviderManager.StaticDispose(); // Must be done before disposing the cache
 			if (s_serviceChannel != null)
 			{

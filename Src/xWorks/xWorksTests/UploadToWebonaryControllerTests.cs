@@ -294,6 +294,22 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void UploadToWebonaryDoesNotFlagNoErrorsResponse()
+		{
+			var response = Encoding.UTF8.GetBytes("Upload successful. No errors.");
+			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, response))
+			{
+				var mockView = SetUpView();
+				var model = mockView.Model;
+				model.UserName = "webonary";
+				model.Password = "webonary";
+				//SUT
+				Assert.DoesNotThrow(() => controller.UploadToWebonary(model, mockView));
+				Assert.That(String.IsNullOrEmpty(mockView.StatusStrings.Find(s => s.Contains("Error") || s.Contains("ERROR") || s.Contains("error"))));
+			}
+		}
+
+		[Test]
 		public void IsSupportedWebonaryFile_reportsAccurately()
 		{
 			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.xhtml"), Is.True);

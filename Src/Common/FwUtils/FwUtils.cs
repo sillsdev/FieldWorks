@@ -200,13 +200,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 			}
 			// ICU_DATA should point to the directory that contains nfc_fw.nrm and nfkc_fw.nrm
 			// (i.e. icudt54l).
-			CustomIcu.InitIcuDataDir();
-
+			// Must call Wrapper.Init() before CustomIcu.InitIcuDataDir() to avoid most
+			// "ICU is not initialized" warnings. Some warnings may still appear from icu.net
+			// when loading additional native libraries (icui18n) - these are benign.
 			var initResult = Wrapper.Init();
 			if (initResult != ErrorCode.ZERO_ERROR && initResult != ErrorCode.NoErrors)
 			{
 				Trace.WriteLine($"ICU initialization returned {initResult}");
 			}
+
+			CustomIcu.InitIcuDataDir();
 		}
 
 		private static string TryGetDevIcuDataDir()
@@ -698,6 +701,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// Gets the Singleton IdleQueue.
 		/// </summary>
 		internal static IdleQueue IdleQueue => Singleton.Instance.IdleQueue;
+
+		/// <summary>
+		/// Cleans up singleton resources. Call during application shutdown.
+		/// </summary>
+		public static void Cleanup()
+		{
+			Singleton.Cleanup();
+		}
 	}
 
 	/// <summary>
@@ -709,6 +720,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 			new Lazy<Singleton>(() => new Singleton());
 
 		public static Singleton Instance { get { return lazy.Value; } }
+
+		/// <summary>
+		/// Disposes singleton resources. Safe to call even if Instance was never accessed.
+		/// </summary>
+		internal static void Cleanup()
+		{
+			if (lazy.IsValueCreated)
+			{
+				lazy.Value.IdleQueue?.Dispose();
+			}
+		}
 
 		private Singleton()
 		{

@@ -35,8 +35,12 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <!-- Defaults for local dev, overridden by Installer.targets -->
-    <AppBuildDir Condition="'$(AppBuildDir)' == ''">..\..\BuildDir\FieldWorks_9.3_Build_x64</AppBuildDir>
+    <!--
+      AppBuildDir MUST be provided by the caller (Installer.targets or command line).
+      Do NOT add a fallback default here - it causes stale DLL version mismatches.
+      Use: msbuild Build/Orchestrator.proj /t:BuildInstaller
+      See FieldWorks-lij for the root cause of LT-22382 (Newtonsoft.Json mismatch).
+    -->
     <BinDirSuffix Condition="'$(BinDirSuffix)' == ''">objects\FieldWorks</BinDirSuffix>
     <DataDirSuffix Condition="'$(DataDirSuffix)' == ''">objects\FieldWorks_Data</DataDirSuffix>
     <L10nDirSuffix Condition="'$(L10nDirSuffix)' == ''">objects\FieldWorks_L10n</L10nDirSuffix>
@@ -89,6 +93,22 @@
 
   <ItemGroup>
   </ItemGroup>
+
+  <!--
+    ValidateInstallerInputs: Ensures AppBuildDir is explicitly provided.
+    Building without proper staging causes stale DLL version mismatches.
+    The correct workflow stages fresh files from Output/ to a versioned AppBuildDir.
+  -->
+  <Target Name="ValidateInstallerInputs" BeforeTargets="HarvestAppAndData">
+    <Error
+      Condition="'$(AppBuildDir)' == ''"
+      Text="AppBuildDir must be specified. Do not build this project directly. Use: msbuild Build/Orchestrator.proj /t:BuildInstaller"
+    />
+    <Error
+      Condition="!Exists('$(AppBuildDir)')"
+      Text="AppBuildDir '$(AppBuildDir)' does not exist. Run the full installer build to stage files: msbuild Build/Orchestrator.proj /t:BuildInstaller"
+    />
+  </Target>
 
   <Target Name="HarvestAppAndData" BeforeTargets="CoreCompile">
     <PropertyGroup>

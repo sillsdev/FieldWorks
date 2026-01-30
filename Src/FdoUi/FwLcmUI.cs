@@ -169,9 +169,18 @@ namespace SIL.FieldWorks.FdoUi
 			m_synchronizeInvoke.Invoke(() => ErrorReporter.ReportException(error, null, null, null, isLethal));
 		}
 
+		/// <summary>
+		/// Gets the last time that there was user activity.
+		/// </summary>
+		/// <remarks>
+		/// TODO: Remove defensive null check when LT-22388 is fixed in liblcm.
+		/// The liblcm SaveOnIdle timer can fire after disposal has started, causing
+		/// a NullReferenceException when accessing this property. This defensive
+		/// check returns DateTime.Now if the activity monitor is unavailable.
+		/// </remarks>
 		public DateTime LastActivityTime
 		{
-			get { return m_activityMonitor.LastActivityTime; }
+			get { return m_activityMonitor?.LastActivityTime ?? DateTime.Now; }
 		}
 
 		/// <summary>
