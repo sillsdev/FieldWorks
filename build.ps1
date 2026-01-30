@@ -292,6 +292,14 @@ try {
         # Clean stale per-project obj/ folders
         Remove-StaleObjFolders -RepoRoot $PSScriptRoot
 
+        # LT-22382: Remove stale DLLs that don't match their expected package versions.
+        # MSBuild's SkipUnchangedFiles uses AssemblyVersion, missing FileVersion-only differences.
+        $staleDllScript = Join-Path $PSScriptRoot "Build\Agent\Remove-StaleDlls.ps1"
+        if (Test-Path $staleDllScript) {
+            $outputDir = "Output\$Configuration"
+            & $staleDllScript -OutputDir $outputDir -RepoRoot $PSScriptRoot -Verbose:$VerbosePreference
+        }
+
         # =============================================================================
         # Build Configuration
         # =============================================================================
