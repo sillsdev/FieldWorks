@@ -32,7 +32,7 @@ This document explains how AI agents (coding and chat modes) should operate insi
 
 ## Multi-agent Coordination
 
-- **Agent Mail (reservations + messaging):** follow the skill in [.github/skills/mcp-agent-mail/SKILL.md](.github/skills/mcp-agent-mail/SKILL.md).
+- **Agent Mail (reservations + messaging):** if requested, follow the skill in `.github/skills/mcp-agent-mail/SKILL.md`.
 
 ## Issue Tracking
 

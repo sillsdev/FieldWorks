@@ -23,17 +23,22 @@ Agent Mail solves this with:
 
 ## Starting the Server
 
-```bash
-# Quickest way (alias added during install)
-am
+**VSCode task:** `Setup: MCP Agent Mail`
 
-# Or manually
-cd ~/projects/mcp_agent_mail
-./scripts/run_server_with_token.sh
+**Windows (FieldWorks repo):**
+```powershell
+.\.github\skills\mcp-agent-mail\Start-McpAgentMail.ps1
+```
+
+**Unix/macOS (if mcp_agent_mail installed):**
+```bash
+am  # shell alias added during install
 ```
 
 Default: `http://127.0.0.1:8765`
 Web UI for humans: `http://127.0.0.1:8765/mail`
+
+> **Note:** For full installation options (one-liner installer, Docker, manual setup), see the [upstream repository](https://github.com/Dicklesworthstone/mcp_agent_mail).
 
 ## Core Concepts
 
@@ -376,19 +381,6 @@ Checks: stale locks, database integrity, orphaned records, FTS sync, expired res
 | "CONTACT_BLOCKED" | Use `request_contact` and wait for approval |
 | Empty inbox | Check `since_ts`, `urgent_only`, verify agent name matches exactly |
 
-## Installation
-
-```bash
-# One-liner (recommended)
-curl -fsSL "https://raw.githubusercontent.com/Dicklesworthstone/mcp_agent_mail/main/scripts/install.sh?$(date +%s)" | bash -s -- --yes
-
-# Custom port
-curl -fsSL ... | bash -s -- --port 9000 --yes
-
-# Change port after installation
-uv run python -m mcp_agent_mail.cli config set-port 9000
-```
-
 ## Key Environment Variables
 
 | Variable | Default | Description |
@@ -399,24 +391,3 @@ uv run python -m mcp_agent_mail.cli config set-port 9000
 | `HTTP_ALLOW_LOCALHOST_UNAUTHENTICATED` | `false` | Allow unauthenticated access from localhost only (FieldWorks start script enables this for local dev) |
 | `LLM_ENABLED` | `true` | Enable LLM for summaries/discovery |
 | `CONTACT_ENFORCEMENT_ENABLED` | `true` | Enforce contact policy |
-
-## Docker
-
-```bash
-docker build -t mcp-agent-mail .
-docker run --rm -p 8765:8765 \
-  -e HTTP_HOST=0.0.0.0 \
-  -v agent_mail_data:/data \
-  mcp-agent-mail
-```
-
-## Integration with Flywheel
-
-| Tool | Integration |
-|------|-------------|
-| **NTM** | Agent panes coordinate via mail, dashboard shows inbox |
-| **BV** | Task IDs become thread IDs, robot flags inform task selection |
-| **CASS** | Search mail threads across sessions |
-| **CM** | Extract procedural memory from mail archives |
-| **DCG** | Mail notifies agents of blocked commands |
-| **RU** | Coordinate multi-repo updates via cross-project mail |

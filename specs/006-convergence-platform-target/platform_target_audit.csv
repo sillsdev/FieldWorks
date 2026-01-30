@@ -1,2 +1,0 @@
-ProjectPath,ProjectName,PlatformTarget,OutputType,IsException,Action
-Build\Src\FwBuildTasks\FwBuildTasks.csproj,FwBuildTasks,AnyCPU,Library,True,Keep
