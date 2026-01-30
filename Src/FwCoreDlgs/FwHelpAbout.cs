@@ -128,82 +128,82 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_toolTip = new System.Windows.Forms.ToolTip(this.components);
 			((System.ComponentModel.ISupportInitialize)(fieldWorksIcon)).BeginInit();
 			this.SuspendLayout();
-			// 
+			//
 			// buttonOk
-			// 
+			//
 			buttonOk.BackColor = System.Drawing.SystemColors.Control;
 			buttonOk.DialogResult = System.Windows.Forms.DialogResult.OK;
 			resources.ApplyResources(buttonOk, "buttonOk");
 			buttonOk.Name = "buttonOk";
 			m_toolTip.SetToolTip(buttonOk, resources.GetString("buttonOk.ToolTip"));
 			buttonOk.UseVisualStyleBackColor = true;
-			// 
+			//
 			// lblSILFieldWorks1
-			// 
+			//
 			resources.ApplyResources(lblSILFieldWorks1, "lblSILFieldWorks1");
 			lblSILFieldWorks1.Name = "lblSILFieldWorks1";
-			// 
+			//
 			// fieldWorksIcon
-			// 
+			//
 			resources.ApplyResources(fieldWorksIcon, "fieldWorksIcon");
 			fieldWorksIcon.Name = "fieldWorksIcon";
 			fieldWorksIcon.TabStop = false;
-			// 
+			//
 			// m_toolTip
-			// 
+			//
 			m_toolTip.AutomaticDelay = 100;
 			m_toolTip.AutoPopDelay = 1000;
 			m_toolTip.InitialDelay = 100;
 			m_toolTip.ReshowDelay = 100;
-			// 
+			//
 			// lblAvailableDiskSpace
-			// 
+			//
 			resources.ApplyResources(this.lblAvailableDiskSpace, "lblAvailableDiskSpace");
 			this.lblAvailableDiskSpace.Name = "lblAvailableDiskSpace";
-			// 
+			//
 			// lblAvailableMemory
-			// 
+			//
 			resources.ApplyResources(this.lblAvailableMemory, "lblAvailableMemory");
 			this.lblAvailableMemory.Name = "lblAvailableMemory";
-			// 
+			//
 			// lblName
-			// 
+			//
 			resources.ApplyResources(this.lblName, "lblName");
 			this.lblName.Name = "lblName";
-			// 
+			//
 			// edtAvailableDiskSpace
-			// 
+			//
 			this.edtAvailableDiskSpace.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			resources.ApplyResources(this.edtAvailableDiskSpace, "edtAvailableDiskSpace");
 			this.edtAvailableDiskSpace.Name = "edtAvailableDiskSpace";
-			// 
+			//
 			// edtAvailableMemory
-			// 
+			//
 			this.edtAvailableMemory.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
 			resources.ApplyResources(this.edtAvailableMemory, "edtAvailableMemory");
 			this.edtAvailableMemory.Name = "edtAvailableMemory";
-			// 
+			//
 			// lblAppVersion
-			// 
+			//
 			resources.ApplyResources(this.lblAppVersion, "lblAppVersion");
 			this.lblAppVersion.Name = "lblAppVersion";
-			// 
+			//
 			// lblFwVersion
-			// 
+			//
 			resources.ApplyResources(this.lblFwVersion, "lblFwVersion");
 			this.lblFwVersion.Name = "lblFwVersion";
-			// 
+			//
 			// txtCopyright
-			// 
+			//
 			this.txtCopyright.BackColor = System.Drawing.Color.White;
 			this.txtCopyright.Cursor = System.Windows.Forms.Cursors.SizeAll;
 			resources.ApplyResources(this.txtCopyright, "txtCopyright");
 			this.txtCopyright.Name = "txtCopyright";
 			this.txtCopyright.ReadOnly = true;
 			this.txtCopyright.TabStop = false;
-			// 
+			//
 			// FwHelpAbout
-			// 
+			//
 			this.AcceptButton = buttonOk;
 			resources.ApplyResources(this, "$this");
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -248,17 +248,8 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				lblAppVersion.Text = viProvider.ApplicationVersion;
 				lblFwVersion.Text = viProvider.MajorVersion;
 
-				Dictionary<string, AcknowledgementAttribute> acknowledgements;
-				try
-				{
-					AppDomain.CurrentDomain.AssemblyResolve += ResolveFailedAssemblyLoadsByName;
-					// List the copyright information
-					acknowledgements = AcknowledgementsProvider.CollectAcknowledgements();
-				}
-				finally
-				{
-					AppDomain.CurrentDomain.AssemblyResolve -= ResolveFailedAssemblyLoadsByName;
-				}
+				// List the copyright information
+				var acknowledgements = AcknowledgementsProvider.CollectAcknowledgements();
 				var list = acknowledgements.Keys.ToList();
 				list.Sort();
 				var text = viProvider.CopyrightString + Environment.NewLine + viProvider.LicenseString + Environment.NewLine + viProvider.LicenseURL;
@@ -294,13 +285,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			{
 				Console.WriteLine("HelpAbout ignoring exception: " + ex);
 			}
-		}
-
-		private Assembly ResolveFailedAssemblyLoadsByName(object sender, ResolveEventArgs args)
-		{
-			var assemblyName = args.Name.Split(',')[0];
-			var outputPath = Path.GetDirectoryName(ProductExecutableAssembly.Location);
-			return Assembly.LoadFile(Path.Combine(outputPath, assemblyName) + ".dll");
 		}
 		#endregion
 
