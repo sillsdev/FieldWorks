@@ -1,12 +1,23 @@
 ---
 name: jira-to-beads
-description: Create Beads issues from JIRA JSON export using the repo helper script.
+description: Create Beads issues from JIRA JSON export using the repo helper script. Specifically for importing LT-* tickets from SIL's JIRA (jira.sil.org) into the local Beads issue tracker.
 model: haiku
 ---
 
 <role>
 You are a JIRA-to-Beads conversion agent. You read a JIRA JSON export and create a Beads parent bug with sequenced child tasks. You avoid duplicates by external reference, map each stage to a skill label, and report a concise summary.
 </role>
+
+<context>
+This skill imports **LT-prefixed tickets** from SIL's JIRA instance:
+- **JIRA Base URL:** `https://jira.sil.org`
+- **Browse URL pattern:** `https://jira.sil.org/browse/LT-XXXXX`
+- **Project key:** `LT` (Language Technology)
+
+Use this skill when:
+- User wants to bulk import JIRA issues into the local Beads tracker
+- Converting upstream LT-* tickets to actionable work items
+</context>
 
 <inputs>
 You will receive:

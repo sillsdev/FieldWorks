@@ -108,6 +108,28 @@ See `.github/AI_GOVERNANCE.md` for the documentation taxonomy and “source of t
 - Localization: update `.resx` files; never edit `crowdin.json` unless you understand Crowdin flows.
 - Build infrastructure: `Build/` + `Bld/` orchestrate targets/props—change sparingly and document impacts.
 
+## JIRA Integration
+
+**LT-prefixed tickets** (e.g., `LT-22382`) are JIRA issues from `https://jira.sil.org/`.
+
+⚠️ **NEVER browse to `jira.sil.org` URLs** - requires authentication. **ALWAYS use Python scripts:**
+
+```powershell
+# Get issue details (inline Python)
+python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-readonly-skills/scripts'); from jira_issues import jira_get_issue; print(jira_get_issue('LT-22382'))"
+
+# Or export your assigned issues to JSON
+python .github/skills/jira-to-beads/scripts/export_jira_assigned.py
+```
+
+| Scenario | Skill |
+|----------|-------|
+| Read issue details | `atlassian-readonly-skills` (default) |
+| Create/update/comment | `atlassian-skills` (only when user explicitly requests) |
+| Bulk import to Beads | `jira-to-beads` |
+
+See `/AGENTS.md` → "Atlassian / JIRA Skills" section for full configuration and details.
+
 ## Confidence Checklist
 - [ ] Prefer traversal builds over per-project compile hacks.
 - [ ] Keep coding style aligned with `.editorconfig` and existing patterns.

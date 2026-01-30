@@ -8,6 +8,45 @@ license: Complete terms in LICENSE
 
 Python utilities for Jira, Confluence, and Bitbucket integration, supporting both Cloud and Data Center deployments.
 
+## FieldWorks / SIL JIRA Integration
+
+**LT-prefixed tickets** (e.g., `LT-22382`, `LT-19288`) are JIRA issues from SIL's JIRA instance:
+- **Base URL:** `https://jira.sil.org`
+- **Browse URL:** `https://jira.sil.org/browse/LT-XXXXX`
+- **Project key:** `LT` (Language Technology)
+
+**Trigger patterns:** Use this skill when you see:
+- LT-prefixed identifiers in user queries, code comments, commit messages, or git log output
+- References to `jira.sil.org` URLs
+- Requests to create/update/comment on JIRA tickets
+
+> **Note**: Default to `atlassian-readonly-skills` for read operations. Use this full skill set only when the user explicitly requests create/update/delete operations.
+
+### ⚠️ Critical: Always Use Python Scripts
+
+**NEVER** attempt to:
+- Browse to `jira.sil.org` URLs directly (requires authentication)
+- Use `fetch_webpage` or similar tools on JIRA URLs
+- Use GitHub issue tools for LT-* tickets
+
+**ALWAYS** use these Python modules. The scripts are Python modules (not CLI tools), so use them via inline Python or import:
+
+```powershell
+# Create a new issue
+python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-skills/scripts'); from jira_issues import jira_create_issue; print(jira_create_issue('LT', 'Issue title', 'Bug'))"
+
+# Update an existing issue
+python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-skills/scripts'); from jira_issues import jira_update_issue; print(jira_update_issue('LT-22382', summary='Updated title'))"
+
+# Add a comment
+python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-skills/scripts'); from jira_issues import jira_add_comment; print(jira_add_comment('LT-22382', 'Comment text'))"
+
+# Transition issue status
+python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-skills/scripts'); from jira_workflow import jira_transition_issue; print(jira_transition_issue('LT-22382', 'In Progress'))"
+```
+
+For read-only operations (get issue, search, get comments), use `atlassian-readonly-skills` instead.
+
 ## Configuration
 
 Two configuration modes are supported:
@@ -15,6 +54,15 @@ Two configuration modes are supported:
 ### Mode 1: Environment Variables (Traditional)
 
 Set environment variables based on your deployment type. This mode is used when `credentials` parameter is not provided to skill functions.
+
+#### SIL JIRA (Data Center / PAT Token)
+
+```bash
+# SIL JIRA instance for LT-* tickets
+JIRA_URL=https://jira.sil.org
+# Personal Access Token - generate at: https://jira.sil.org/secure/ViewProfile.jspa → Personal Access Tokens
+JIRA_PAT_TOKEN=your_jira_pat_token_here
+```
 
 #### Cloud (API Token)
 
