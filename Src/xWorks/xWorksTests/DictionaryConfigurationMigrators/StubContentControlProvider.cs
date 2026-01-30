@@ -1,4 +1,4 @@
-// Copyright (c) 2016 SIL International
+// Copyright (c) 2016-2026 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)using System;
 
@@ -91,8 +91,8 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 			result[0] = param.Item2 == "lexiconDictionary" ? m_testControlDictNode : m_testControlRevNode;
 		}
 
-		public bool ShouldNotCall { get { return false; } }
-		public int Priority { get { return 1; }}
+		public bool ShouldNotCall => false;
+		public int Priority => 1;
 
 		public void Dispose()
 		{
@@ -103,7 +103,11 @@ namespace SIL.FieldWorks.XWorks.DictionaryConfigurationMigrators
 		public void Dispose(bool disposeCalled)
 		{
 			System.Diagnostics.Debug.WriteLineIf(!disposeCalled, "****** Missing Dispose() call for " + GetType().Name + ". ****** ");
-			Subscriber.Unsubscribe(EventConstants.GetContentControlParameters, GetContentControlParameters);
+
+			if (disposeCalled)
+			{
+				Subscriber.Unsubscribe(EventConstants.GetContentControlParameters, GetContentControlParameters);
+			}
 		}
 
 		~StubContentControlProvider()
