@@ -172,7 +172,18 @@ namespace SIL.FieldWorks
 						firefoxPath = Path.Combine(exePath, "Firefox64");
 					}
 				}
+				if (!Directory.Exists(firefoxPath))
+				{
+					throw new ApplicationException(
+						$"Cannot find Firefox/XulRunner directory. Checked '{firefoxPath}'. " +
+						"GeckoFx browser support requires the Firefox folder to be present in the application directory.");
+				}
 				Xpcom.Initialize(firefoxPath);
+				if (!Xpcom.IsInitialized)
+				{
+					throw new ApplicationException(
+						$"Xpcom.Initialize succeeded but Xpcom.IsInitialized is false. Firefox path: '{firefoxPath}'");
+				}
 				GeckoPreferences.User["gfx.font_rendering.graphite.enabled"] = true;
 				GeckoPreferences.User["print.show_print_progress"] = false;
 				// Set default browser for XWebBrowser to use GeckoFX.

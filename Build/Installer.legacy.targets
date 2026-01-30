@@ -172,7 +172,7 @@
 	<Target Name="CleanMasterOutputDir">
 		<ForceDelete Files="$(AppBuildMasterDir)" />
 	</Target>
-	<Target Name="MakeInstallBuildFolders">
+	<Target Name="MakeInstallBuildFolders" DependsOnTargets="InstallerVersionNumbers">
 		<MakeDir Directories="$(InstallersBaseDir)" Condition="!Exists('$(InstallersBaseDir)')" />
 		<ForceDelete Files="$(AppBuildDir)" />
 	</Target>
