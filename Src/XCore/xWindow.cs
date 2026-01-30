@@ -2381,7 +2381,7 @@ namespace XCore
 			foreach (System.Collections.DictionaryEntry entry in this.m_mediator.CommandSet)
 			{
 				Command c = (Command)entry.Value;
-				if (e.KeyData == c.Shortcut)
+				if (e.KeyData == c.Shortcut || e.KeyData == c.Shortcut2)
 				{
 					UIItemDisplayProperties display = CommandChoice.QueryDisplayProperties(m_mediator, c, false, "foo");
 
