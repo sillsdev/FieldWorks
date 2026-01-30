@@ -260,23 +260,28 @@ namespace SIL.FieldWorks.FdoUi
 		{
 			if (m_PhonologicalFeatureTreeManager == null)
 			{
-				if (!String.IsNullOrEmpty(m_featDefnAbbr))
-				{
-					// Find the feature definition this editor was created to choose options from
-					var featDefns = from s in m_cache.LangProject.PhFeatureSystemOA.FeaturesOC
-									where s.Abbreviation.BestAnalysisAlternative.Text == m_featDefnAbbr
-									select s;
-					if (featDefns.Any())
-						m_closedFeature = featDefns.First() as IFsClosedFeature;
-				}
-
-				m_PhonologicalFeatureTreeManager = new PhonologicalFeaturePopupTreeManager(m_tree,
-																						   m_cache, false, m_mediator, PropTable,
-																						   PropTable.GetValue<Form>("window"),
-																						   m_displayWs, m_closedFeature);
-				m_PhonologicalFeatureTreeManager.AfterSelect += new TreeViewEventHandler(m_PhonFeaturePopupTreeManager_AfterSelect);
+				CreatePhonologicalFeatureTreeManager();
 			}
 			m_PhonologicalFeatureTreeManager.LoadPopupTree(0);
+		}
+
+		private void CreatePhonologicalFeatureTreeManager()
+		{
+			if (!String.IsNullOrEmpty(m_featDefnAbbr))
+			{
+				// Find the feature definition this editor was created to choose options from
+				var featDefns = from s in m_cache.LangProject.PhFeatureSystemOA.FeaturesOC
+								where s.Abbreviation.BestAnalysisAlternative.Text == m_featDefnAbbr
+								select s;
+				if (featDefns.Any())
+					m_closedFeature = featDefns.First() as IFsClosedFeature;
+			}
+
+			m_PhonologicalFeatureTreeManager = new PhonologicalFeaturePopupTreeManager(m_tree,
+																					   m_cache, false, m_mediator, PropTable,
+																					   PropTable.GetValue<Form>("window"),
+																					   m_displayWs, m_closedFeature);
+			m_PhonologicalFeatureTreeManager.AfterSelect += new TreeViewEventHandler(m_PhonFeaturePopupTreeManager_AfterSelect);
 		}
 
 		private void m_PhonFeaturePopupTreeManager_AfterSelect(object sender, TreeViewEventArgs e)
@@ -422,6 +427,10 @@ namespace SIL.FieldWorks.FdoUi
 			else if (obj is IFsSymFeatVal)
 			{
 				IFsSymFeatVal closedValue = (IFsSymFeatVal) obj;
+				if (m_PhonologicalFeatureTreeManager == null)
+				{
+					CreatePhonologicalFeatureTreeManager();
+				}
 				fsTarget = m_PhonologicalFeatureTreeManager.CreateEmptyFeatureStructureInAnnotation(obj);
 				var fsClosedValue = Cache.ServiceLocator.GetInstance<IFsClosedValueFactory>().Create();
 				fsTarget.FeatureSpecsOC.Add(fsClosedValue);
