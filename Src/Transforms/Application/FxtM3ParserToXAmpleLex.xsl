@@ -1591,7 +1591,7 @@ DoInflAffixMsaStemName
 					</xsl:call-template>
 					<xsl:for-each select="$thisAllomorph">
 						<xsl:call-template name="GenerateAnyNegSECs">
-							<xsl:with-param name="currentAllomorph" select="."/>
+							<xsl:with-param name="currentAllomorph" select="key('AlloID',@dst)"/>
 							<xsl:with-param name="sType" select="$sMorphType"/>
 						</xsl:call-template>
 					</xsl:for-each>
