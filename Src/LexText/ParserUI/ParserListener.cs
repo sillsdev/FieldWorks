@@ -63,6 +63,7 @@ namespace SIL.FieldWorks.LexText.Controls
 		private TryAWordDlg m_dialog;
 		private FormWindowState m_prevWindowState;
 		private ParserConnection m_parserConnection;
+		private int m_wordCount = 0;
 		private Timer m_timer;
 		// Keep track of parse results as we parse wordforms.
 		private Dictionary<IWfiWordform, ParseResult> m_checkParserResults = null;
@@ -270,6 +271,11 @@ namespace SIL.FieldWorks.LexText.Controls
 					low = m_parserConnection.GetQueueSize(ParserPriority.Low).ToString();
 					med = m_parserConnection.GetQueueSize(ParserPriority.Medium).ToString();
 					high = m_parserConnection.GetQueueSize(ParserPriority.High).ToString();
+				}
+				if (low == "0" && med == "0" && high == "0")
+				{
+					// All done.  Report number of words parsed.
+					return string.Format(ParserUIStrings.ksParsedXWords, m_wordCount);
 				}
 
 				return string.Format(ParserUIStrings.ksQueueXYZ, low, med, high);
@@ -504,6 +510,17 @@ namespace SIL.FieldWorks.LexText.Controls
 			return true;    //we handled this.
 		}
 
+		public bool OnDisplayParseUnapprovedWordsInCurrentText(object commandObject, ref UIItemDisplayProperties display)
+		{
+			CheckDisposed();
+
+			bool enable = CurrentText != null;
+			display.Visible = enable;
+			display.Enabled = enable;
+
+			return true;    //we handled this.
+		}
+
 		public bool OnParseWordsInCurrentText(object argument)
 		{
 			CheckDisposed();
@@ -516,6 +533,40 @@ namespace SIL.FieldWorks.LexText.Controls
 			}
 
 			return true;    //we handled this.
+		}
+
+		public bool OnParseUnapprovedWordsInCurrentText(object argument)
+		{
+			CheckDisposed();
+
+			if (CurrentText != null && ConnectToParser())
+			{
+				IStText text = CurrentText;
+				IEnumerable<IWfiWordform> wordforms = GetUnapprovedWordforms(text);
+				UpdateWordforms(wordforms, ParserPriority.Medium);
+			}
+
+			return true;    //we handled this.
+		}
+
+		private IEnumerable<IWfiWordform> GetUnapprovedWordforms(IStText text)
+		{
+			HashSet<IWfiWordform> unapprovedWordforms = new HashSet<IWfiWordform>();
+			foreach (IStTxtPara para in text.ParagraphsOS)
+			{
+				foreach (ISegment seg in para.SegmentsOS)
+				{
+					foreach (IAnalysis analysis in seg.AnalysesRS)
+					{
+						if (analysis is IWfiWordform)
+						{
+							unapprovedWordforms.Add(analysis.Wordform);
+						}
+					}
+				}
+			}
+			return unapprovedWordforms;
+
 		}
 
 		public bool OnCheckParserOnCurrentText(object argument)
@@ -632,11 +683,13 @@ namespace SIL.FieldWorks.LexText.Controls
 					ShowParserReport(viewModel);
 				}
 			}
+			m_wordCount = wordforms.Count();
 			m_parserConnection.UpdateWordforms(wordforms, priority, checkParser);
 		}
 
 		private void UpdateWordform(IWfiWordform wordform, ParserPriority priority)
 		{
+			m_wordCount = 1;
 			m_parserConnection.UpdateWordform(wordform, priority);
 		}
 

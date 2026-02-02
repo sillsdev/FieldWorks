@@ -403,6 +403,15 @@ namespace SIL.FieldWorks.LexText.Controls {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Parsed {0} word(s).
+        /// </summary>
+        public static string ksParsedXWords {
+            get {
+                return ResourceManager.GetString("ksParsedXWords", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Parser Parameters.
         /// </summary>
         public static string ksParserParameters {
