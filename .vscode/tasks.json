@@ -439,20 +439,6 @@
       "problemMatcher": []
     },
     {
-      "label": "Setup: MCP Agent Mail",
-      "type": "shell",
-      "command": ".\\github\\skills\\mcp-agent-mail\\Start-McpAgentMail.ps1",
-      "detail": "Start MCP Agent Mail server if not already running",
-      "options": {
-        "shell": {
-          "executable": "powershell.exe",
-          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
-        },
-        "cwd": "${workspaceFolder}"
-      },
-      "problemMatcher": []
-    },
-    {
       "label": "Setup: Full environment check",
       "dependsOn": [
         "Setup: Verify dependencies",

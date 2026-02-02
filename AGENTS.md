@@ -30,10 +30,6 @@ This document explains how AI agents (coding and chat modes) should operate insi
 3. **Load context**: read relevant `AGENTS.md`, `specs/` entries, and instructions referenced in the chatmode.
 4. **Escalate**: if a task crosses multiple surfaces (e.g., managed ↔ native), coordinate through the coding agent or split the work between specialized agents.
 
-## Multi-agent Coordination
-
-- **Agent Mail (reservations + messaging):** if requested, follow the skill in `.github/skills/mcp-agent-mail/SKILL.md`.
-
 ## Issue Tracking
 
 This project uses **bd (beads)** for issue tracking.

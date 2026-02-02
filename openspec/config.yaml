@@ -1,20 +1,65 @@
 schema: spec-driven
 
-# Project context (optional)
+# Project context
 # This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  ## Tech Stack
+  - **Languages**: C# (.NET Framework 4.8), C++/CLI, XAML
+  - **UI Framework**: Windows Forms (with future Avalonia experiments)
+  - **Build System**: MSBuild Traversal SDK via FieldWorks.proj (21 phases, 110+ projects)
+  - **Build Order**: Native C++ (Phase 2) MUST build before managed code (Phases 3+)
+  - **COM**: Registration-free COM (manifests via Build/RegFree.targets)
+  - **Testing**: NUnit (managed), Google Test (native)
+  - **Installer**: WiX 3.14
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+  ## Conventions
+  - Conventional commits (feat:, fix:, chore:, etc.)
+  - AGENTS.md files describe folder architecture and dependencies
+  - .github/instructions/*.md contain coding guidelines by surface area
+  - Localization via .resx files and Crowdin (crowdin.json)
+
+  ## Domain
+  FieldWorks is a linguistics suite by SIL International for:
+  - Lexicon editing (FLEx - FieldWorks Language Explorer)
+  - Translation and interlinear analysis
+  - Scripture and text corpus management
+
+  ## Critical Paths
+  - Build: .\build.ps1 (never raw msbuild unless you know the phases)
+  - Test: .\test.ps1 (managed), .\test.ps1 -Native (C++)
+  - Src/LexText/** - Main FLEx application
+  - Src/xWorks/** - Core workbench framework
+  - Src/Common/Controls/** - Shared UI components
+  - Build/Src/NativeBuild/** - C++/CLI native layer
+
+  ## Issue Tracking
+  - Primary: Beads (bd) for agent-friendly issue tracking
+  - Legacy: JIRA (LT-* tickets) via .github/skills/atlassian-*
+  - Integration: bd issues link to specs via labels
+
+# Per-artifact rules
+rules:
+  proposal:
+    - Keep proposals under 800 words (this is a large codebase; be specific)
+    - Always include a "Non-goals" section
+    - Reference existing specs/ if touching similar areas
+    - Note whether changes affect native (C++), managed (C#), or both
+
+  specs:
+    - Include file paths that will be affected
+    - Note build phase dependencies (native must build before managed)
+    - Reference AGENTS.md from affected folders for architecture context
+    - Include testing requirements (unit, integration, manual)
+
+  design:
+    - Consider COM manifest implications for native/managed boundary changes
+    - Note any new dependencies (NuGet packages, native libs)
+    - Include migration path if changing data formats
+    - Reference existing patterns from similar components
+
+  tasks:
+    - Break tasks into chunks of max 2 hours
+    - Each task should be independently testable
+    - Include file paths in task descriptions
+    - Mark tasks that require native (C++) vs managed (C#) expertise
+    - Order tasks to respect build phases (native changes first)
