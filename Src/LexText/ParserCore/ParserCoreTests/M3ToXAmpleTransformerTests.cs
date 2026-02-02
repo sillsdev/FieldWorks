@@ -40,6 +40,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		string m_sM3FXTIrregularlyInflectedFormsDump;
 		string m_sM3FXTQuechuaMYLDump;
 		string m_sM3FXTEmiFLExDump;
+		string m_sM3FXTStemFreeFluctuationFLExDump;
 		string m_sM3FXTCompundRulesWithExceptionFeaturesFLExDump;
 		private string m_sAbazaOrderClassPlayDump;
 		readonly Dictionary<string, XPathDocument> m_mapXmlDocs = new Dictionary<string, XPathDocument>();
@@ -88,6 +89,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			m_sAbazaOrderClassPlayDump = Path.Combine(m_sTestPath, "Abaza-OrderclassPlay.xml");
 			m_sM3FXTQuechuaMYLDump = Path.Combine(m_sTestPath, "QuechuaMYLFxtResult.xml");
 			m_sM3FXTEmiFLExDump = Path.Combine(m_sTestPath, "emi-flexFxtResult.xml");
+			m_sM3FXTStemFreeFluctuationFLExDump = Path.Combine(m_sTestPath, "StemFreeFluctuationFLExDump.xml");
 			m_sM3FXTCompundRulesWithExceptionFeaturesFLExDump = Path.Combine(m_sTestPath, "CompundRulesWithExceptionFeatures.xml");
 
 			SetupXmlDocument(m_sM3FXTDump);
@@ -107,6 +109,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			SetupXmlDocument(m_sAbazaOrderClassPlayDump);
 			SetupXmlDocument(m_sM3FXTQuechuaMYLDump);
 			SetupXmlDocument(m_sM3FXTEmiFLExDump);
+			SetupXmlDocument(m_sM3FXTStemFreeFluctuationFLExDump);
 			SetupXmlDocument(m_sM3FXTCompundRulesWithExceptionFeaturesFLExDump);
 		}
 
@@ -168,6 +171,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			ApplyTransform(m_sAbazaOrderClassPlayDump, m_lexTransform, "Abaza-OrderclassPlaylex.txt");
 			ApplyTransform(m_sM3FXTQuechuaMYLDump, m_lexTransform, "QuechuaMYLlex.txt");
 			ApplyTransform(m_sM3FXTEmiFLExDump, m_lexTransform, "emi-flexlex.txt");
+			ApplyTransform(m_sM3FXTStemFreeFluctuationFLExDump, m_lexTransform, "stemFreeFluctuationlex.txt");
 		}
 		/// <summary>
 		/// Test creating the word grammar file

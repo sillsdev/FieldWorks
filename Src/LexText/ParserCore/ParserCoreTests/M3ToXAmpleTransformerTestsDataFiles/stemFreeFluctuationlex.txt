@@ -1,0 +1,33 @@
+
+\lx 3529
+\g give
+\c W
+\wc root
+\mp RootPOS5293
+\a fee {8609} /_#  | /_# 
+		
+\a fe {6564} /_#  | /_# 
+		
+\a feel {6129}  
+ 
+ ~/_#  | ~/_# 
+		  
+ 
+ ~/_#  | ~/_# 
+		
+ 
+\lx 5262
+\g pot
+\c W
+\wc root
+\mp RootPOS6563
+\a paf {1874}
+ 
+\lx 9419
+\g PL
+\c W/W
+\o 2 2 
+\wc 9837
+\a s {5090}
+\eType suffix
+ 
