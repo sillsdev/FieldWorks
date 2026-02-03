@@ -135,12 +135,11 @@ namespace SIL.FieldWorks.Common.Widgets
 			// Get all the sub-folder in the program file's folder.
 			string[] rgsDirs = Directory.GetDirectories(sDllLocation);
 
-			// Go through each sub-folder and if at least one file in a sub-folder ends
-			// with ".resource.dll", we know the folder stores localized resources and the
-			// name of the folder is the culture ID for which the resources apply. The
-			// name of the folder is stripped from the path and used to add a language
-			// to the list.
-			foreach (string dir in rgsDirs.Where(dir => Directory.GetFiles(dir, "*.resources.dll").Length > 0))
+			// Go through each sub-folder and if xCoreStrings.resources.dll exists in a sub-folder,
+			// we know the folder stores localized resources and the name of the folder is the culture ID
+			// for which the resources apply. The name of the folder is stripped from the path and used
+			// to add a language to the list.
+			foreach (string dir in rgsDirs.Where(dir => Directory.GetFiles(dir, "xCoreStrings.resources.dll").Length > 0))
 				AddLanguage(Path.GetFileName(dir));
 		}
 
