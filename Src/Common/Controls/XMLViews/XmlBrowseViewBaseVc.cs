@@ -230,9 +230,11 @@ namespace SIL.FieldWorks.Common.Controls
 
 				foreach (var node in newPossibleColumns)
 				{
-					// add any possible columns that were not in the saved list and are common
-					if (XmlUtils.GetOptionalAttributeValue(node, "common", "false") == "true")
+					// add any possible columns that were not in the saved list and are common (and not custom)
+					if (!IsCustomField(node, out _) && XmlUtils.GetOptionalAttributeValue(node, "common", "false") == "true")
+					{
 						ColumnSpecs.Add(node);
+					}
 				}
 			}
 			m_fakeFlid = fakeFlid;
