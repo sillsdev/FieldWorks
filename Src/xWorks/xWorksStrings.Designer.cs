@@ -223,7 +223,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to These settings affect the current {0} view:{1}{2}.
+        ///   Looks up a localized string similar to These settings affect the current {0} layout:{1}{2}.
         /// </summary>
         internal static string ConfigureHomograph_ConfigDescription {
             get {
@@ -286,7 +286,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete this custom view.
+        ///   Looks up a localized string similar to Delete this custom layout.
         /// </summary>
         internal static string DeleteViewTooltip {
             get {
@@ -366,7 +366,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reversal Views.
+        ///   Looks up a localized string similar to Reversal Layouts.
         /// </summary>
         internal static string DictionaryConfigurationMangager_ReversalConfigurations_GroupLabel {
             get {
@@ -375,7 +375,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error! The file contains a {0} view..
+        ///   Looks up a localized string similar to Error! The file contains a {0} layout..
         /// </summary>
         internal static string DictionaryConfigurationMismatch {
             get {
@@ -411,7 +411,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Duplicate the highlighted view.
+        ///   Looks up a localized string similar to Duplicate the highlighted layout.
         /// </summary>
         internal static string DuplicateViewToolTip {
             get {
@@ -483,7 +483,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Exporting entries for the {0} publication using the {1} view.
+        ///   Looks up a localized string similar to Exporting entries for the {0} publication using the {1} layout.
         /// </summary>
         internal static string ExportingEntriesToWebonary {
             get {
@@ -519,7 +519,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Export the highlighted view.
+        ///   Looks up a localized string similar to Export the highlighted layout.
         /// </summary>
         internal static string ExportSelected {
             get {
@@ -663,7 +663,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Import a view.
+        ///   Looks up a localized string similar to Import a layout.
         /// </summary>
         internal static string ImportView {
             get {
@@ -681,7 +681,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The root node in your configured view is invalid. The field attribute &apos;{0}&apos; must match a class name..
+        ///   Looks up a localized string similar to The root node in your configured layout is invalid. The field attribute &apos;{0}&apos; must match a class name..
         /// </summary>
         internal static string InvalidRootConfigurationNode {
             get {
@@ -854,7 +854,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Click Cancel to stop loading the Dictionary view and move to Lexicon Edit..
+        ///   Looks up a localized string similar to Click Cancel to stop loading the Dictionary layout and move to Lexicon Edit..
         /// </summary>
         internal static string ksCancelingPublicationLabel {
             get {
@@ -953,7 +953,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to That name is already in use by another view..
+        ///   Looks up a localized string similar to That name is already in use by another layout..
         /// </summary>
         internal static string ksChooseAnotherViewName {
             get {
@@ -1016,7 +1016,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Configure {0} View....
+        ///   Looks up a localized string similar to Configure {0} Layout....
         /// </summary>
         internal static string ksConfigure {
             get {
@@ -1025,7 +1025,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Configure {0} in {1} View....
+        ///   Looks up a localized string similar to Configure {0} in {1} Layout....
         /// </summary>
         internal static string ksConfigureIn {
             get {
@@ -1052,7 +1052,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete the {0} View {1}?.
+        ///   Looks up a localized string similar to Are you sure you want to delete the {0} Layout {1}?.
         /// </summary>
         internal static string ksConfirmDelete {
             get {
@@ -1061,7 +1061,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete {0} View.
+        ///   Looks up a localized string similar to Delete {0} Layout.
         /// </summary>
         internal static string ksConfirmDeleteTitle {
             get {
@@ -1205,7 +1205,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Choose dictionary view to configure:.
+        ///   Looks up a localized string similar to Choose dictionary layout to configure:.
         /// </summary>
         internal static string ksDictionaryView {
             get {
@@ -1376,7 +1376,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No view was found..
+        ///   Looks up a localized string similar to No layout was found..
         /// </summary>
         internal static string ksErrorNoViewOnPublication {
             get {
@@ -1701,7 +1701,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The dictionary view has not been set..
+        ///   Looks up a localized string similar to The dictionary layout has not been set..
         /// </summary>
         internal static string ksNoConfiguration {
             get {
@@ -2186,7 +2186,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your list of views was just changed. You must close and reopen this dialog to be able to export..
+        ///   Looks up a localized string similar to Your list of layouts was just changed. You must close and reopen this dialog to be able to export..
         /// </summary>
         internal static string kstidConfigsChanged {
             get {
@@ -2195,7 +2195,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Your list of views was just changed. You must close and reopen this dialog to be able to import..
+        ///   Looks up a localized string similar to Your list of layouts was just changed. You must close and reopen this dialog to be able to import..
         /// </summary>
         internal static string kstidConfigsChangedImport {
             get {
@@ -2231,7 +2231,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Importing and overwriting existing view named &apos;{0}&apos;..
+        ///   Looks up a localized string similar to Importing and overwriting existing layout named &apos;{0}&apos;..
         /// </summary>
         internal static string kstidImportingAndOverwritingConfiguration {
             get {
@@ -2240,7 +2240,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Importing view named &apos;{0}&apos;..
+        ///   Looks up a localized string similar to Importing layout named &apos;{0}&apos;..
         /// </summary>
         internal static string kstidImportingConfig {
             get {
@@ -2249,7 +2249,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Importing view with new name &apos;{0}&apos;..
+        ///   Looks up a localized string similar to Importing layout with new name &apos;{0}&apos;..
         /// </summary>
         internal static string kstidImportingConfigNewName {
             get {
@@ -2258,7 +2258,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Overwrite existing view named {0}.
+        ///   Looks up a localized string similar to Overwrite existing layout named {0}.
         /// </summary>
         internal static string kstidOverwriteConfiguration {
             get {
@@ -2285,7 +2285,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Use new view name {0}.
+        ///   Looks up a localized string similar to Use new layout name {0}.
         /// </summary>
         internal static string kstidUseNewConfigName {
             get {
@@ -2619,7 +2619,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No views match the current publication..
+        ///   Looks up a localized string similar to No layouts match the current publication..
         /// </summary>
         internal static string NoConfigsMatchPub {
             get {
@@ -2809,7 +2809,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Reset this view.
+        ///   Looks up a localized string similar to Reset this layout.
         /// </summary>
         internal static string ResetViewTooltip {
             get {
@@ -2854,7 +2854,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Manage Reversal Index Views.
+        ///   Looks up a localized string similar to Manage Reversal Index Layouts.
         /// </summary>
         internal static string ReversalIndexConfigurationDlgTitle {
             get {
@@ -3088,7 +3088,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Exporting entries for the {0} publication using the {1} view.
+        ///   Looks up a localized string similar to Exporting entries for the {0} publication using the {1} layout.
         /// </summary>
         internal static string UploadToWebonaryController_ExportDictionaryContent_Exporting_entries_for_the__0__publication_using_the__1__configuration {
             get {
@@ -3107,7 +3107,7 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to View.
+        ///   Looks up a localized string similar to Layout.
         /// </summary>
         internal static string View {
             get {
