@@ -148,7 +148,7 @@
     <value>37</value>
   </data>
   <data name="m_txtPubsForConfig.Text" xml:space="preserve">
-    <value>Here are the views</value>
+    <value>Here are the layouts</value>
   </data>
   <data name="&gt;&gt;m_txtPubsForConfig.Name" xml:space="preserve">
     <value>m_txtPubsForConfig</value>
@@ -178,7 +178,7 @@
     <value>36</value>
   </data>
   <data name="m_lblPubsForConfig.Text" xml:space="preserve">
-    <value>Publications affected by this view:</value>
+    <value>Publications affected by this layout:</value>
   </data>
   <data name="&gt;&gt;m_lblPubsForConfig.Name" xml:space="preserve">
     <value>m_lblPubsForConfig</value>
@@ -232,7 +232,7 @@
     <value>34</value>
   </data>
   <data name="m_lblDictConfig.Text" xml:space="preserve">
-    <value>Choose the view to configure:</value>
+    <value>Choose the layout to configure:</value>
   </data>
   <data name="&gt;&gt;m_lblDictConfig.Name" xml:space="preserve">
     <value>m_lblDictConfig</value>
@@ -259,7 +259,7 @@
     <value>35</value>
   </data>
   <data name="m_buttonManageConfigurations.Text" xml:space="preserve">
-    <value>&amp;Manage Views...</value>
+    <value>&amp;Manage Layouts...</value>
   </data>
   <data name="&gt;&gt;m_buttonManageConfigurations.Name" xml:space="preserve">
     <value>m_buttonManageConfigurations</value>
