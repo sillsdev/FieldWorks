@@ -578,7 +578,7 @@ namespace SIL.FieldWorks.IText
 						else
 						{
 							// LT-7733 Warning dialog for Text Chart
-							XMessageBoxExManager.Trigger("TextChartNewFeature");
+							XMessageBoxExManager.Trigger("TextChartTemplateWarning");
 							m_constChartPane.Enabled = true;
 						}
 						//SetConstChartRoot(); should be done above in SetCurrentInterlinearTabControl()

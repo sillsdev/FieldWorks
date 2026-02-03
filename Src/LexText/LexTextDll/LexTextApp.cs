@@ -92,7 +92,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 			if (progressDlg != null)
 				progressDlg.Message = LexTextStrings.ksInitializingMessageDialogs_;
 			m_messageBoxExManager = XMessageBoxExManager.CreateXMessageBoxExManager(ApplicationName);
-			m_messageBoxExManager.DefineMessageBox("TextChartNewFeature",
+			m_messageBoxExManager.DefineMessageBox("TextChartTemplateWarning",
 				LexTextStrings.ksInformation,
 				LexTextStrings.ksChartTemplateWarning, true, "info");
 			m_messageBoxExManager.DefineMessageBox("CategorizedEntry-Intro",
