@@ -38,7 +38,7 @@ The FieldWorks Views system is a sophisticated C++ rendering engine (~66.7K line
 | File | Description |
 |------|-------------|
 | [Views.cs](../../Src/Common/ViewsInterfaces/Views.cs) | 16,561 lines of generated C# interfaces from IDL |
-| [COPILOT.md](../../Src/Common/ViewsInterfaces/COPILOT.md) | Documentation of interfaces |
+| [AGENTS.md](../../Src/Common/ViewsInterfaces/AGENTS.md) | Documentation of interfaces |
 
 ---
 
@@ -770,6 +770,7 @@ Rect VwBox::GetInvalidateRect()
 
 ## References
 
-- [Src/views/COPILOT.md](../../Src/views/COPILOT.md) - Views module documentation
-- [Src/Common/ViewsInterfaces/COPILOT.md](../../Src/Common/ViewsInterfaces/COPILOT.md) - Interface documentation
+- [Src/views/AGENTS.md](../../Src/views/AGENTS.md) - Views module documentation
+- [Src/Common/ViewsInterfaces/AGENTS.md](../../Src/Common/ViewsInterfaces/AGENTS.md) - Interface documentation
 - [presentation-ir-research.md](presentation-ir-research.md) - Presentation IR research (existing)
+

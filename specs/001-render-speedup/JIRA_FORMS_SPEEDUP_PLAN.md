@@ -972,7 +972,7 @@ and prepare for release.
 - [ ] Full test harness passes with all optimizations
 - [ ] Performance targets met (see epic success criteria)
 - [ ] No unexpected interactions between optimizations
-- [ ] COPILOT.md updated for changed modules
+- [ ] AGENTS.md updated for changed modules
 - [ ] Architecture docs updated
 - [ ] Release notes drafted
 - [ ] Feature flags documented
@@ -990,8 +990,8 @@ and prepare for release.
 ## Documentation Updates
 - [ ] FORMS_SPEEDUP_PLAN.md - mark completed items
 - [ ] FAST_FORM_PLAN.md - update with results
-- [ ] Src/Common/Controls/COPILOT.md
-- [ ] Src/LexText/LexTextControls/COPILOT.md
+- [ ] Src/Common/Controls/AGENTS.md
+- [ ] Src/LexText/LexTextControls/AGENTS.md
 - [ ] Release notes
 
 ## Rollback
@@ -1155,3 +1155,4 @@ Summary,Issue Type,Priority,Story Points,Labels,Description
 "PERF-10: XML/Layout Resolution Caching",Story,Medium,3,"performance,xmlviews,low-risk","Enhance LayoutCache with pre-warming..."
 "PERF-11: Integration Validation & Documentation",Story,High,5,"performance,documentation,testing","Validate all optimizations work together..."
 ```
+

@@ -96,8 +96,8 @@
 **Purpose**: Documentation and consistency updates
 
 - [x] T023 [P] Update specs/001-render-speedup/quickstart.md with actual harness usage and output paths
-- [x] T024 [P] Review and update Src/views/COPILOT.md for tracing changes
-- [x] T025 [P] Review and update Src/Common/RootSite/COPILOT.md for new harness/tests
+- [x] T024 [P] Review and update Src/views/AGENTS.md for tracing changes
+- [x] T025 [P] Review and update Src/Common/RootSite/AGENTS.md for new harness/tests
 - [x] T026 [P] Add explicit edge case validations in RenderTimingSuiteTests.cs (no custom fields, no senses, deep nesting variance)
 
 **Checkpoint**: Phase 6 complete - documentation updated, edge case tests added
@@ -161,3 +161,4 @@
 - [P] tasks = different files, no dependencies
 - Each story should be independently completable and testable
 - Keep trace logging file-based and opt-in to avoid measurement distortion
+
