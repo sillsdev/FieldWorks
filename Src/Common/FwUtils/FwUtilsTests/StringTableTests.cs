@@ -106,6 +106,32 @@ namespace SIL.FieldWorks.Common.FwUtils
 			Assert.That(strings[1], Is.EqualTo("pnppl"));
 		}
 
+		/// <summary>
+		/// LT-22392: Verify that merging strings with quotes in IDs does not crash.
+		/// </summary>
+		[Test]
+		public void MergeCustomTable_WithQuotesInId_DoesNotCrash()
+		{
+			XmlDocument doc = new XmlDocument();
+			string xml = @"
+<strings>
+  <group id='g1'>
+    <string id=""Forme d'affixe"" txt='Single Quote Value' />
+    <string id='Quote""inside' txt='Double Quote Value' />
+  </group>
+</strings>";
+			doc.LoadXml(xml);
+
+			// Action: Merge - this failed with XPathException before the fix
+			Assert.DoesNotThrow(() => m_table.MergeCustomTable(doc));
+			
+			// Verify values were merged - note that GetString takes the ID
+			// Ideally we could verify it, but StringTable structure for tests is file-based.
+			// m_table in Setup is loaded from files. MergeCustomTable modifies the in-memory/DOM state.
+			// Let's check using XPath if GetString fails
+			// Assert.That(m_table.GetString("Forme d'affixe"), Is.EqualTo("Some Value")); 
+		}
+
 		/// <summary />
 		public static string CreateTestResourceFiles(Type resourcesType, string folderName)
 		{

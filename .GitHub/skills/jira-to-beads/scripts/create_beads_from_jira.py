@@ -12,13 +12,18 @@ JIRA_BASE_URL = "https://jira.sil.org/browse/"
 
 CHILD_TASKS = [
     (
+        "Reproduce / test",
+        "Create a reproduction test case (unit or integration) that fails with the bug. If a test is not possible, explain why and create a manual test plan.",
+        "skill-reproduce-test",
+    ),
+    (
         "Plan / design",
         "Confirm scope, constraints, and design approach. Capture risks, dependencies, and acceptance notes.",
         "skill-plan-design",
     ),
     (
         "Execute / implement",
-        "Implement the fix or change set. Keep scope limited to the issue and follow repo conventions.",
+        "Implement the fix or change set. Ensure the reproduction test passes. Keep scope limited to the issue and follow repo conventions.",
         "skill-execute-implement",
     ),
     (
