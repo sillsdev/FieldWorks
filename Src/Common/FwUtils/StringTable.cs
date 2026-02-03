@@ -166,7 +166,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			foreach (XmlNode customGroupNode in customGroupNodeList)
 			{
 				string customGroupId = XmlUtils.GetMandatoryAttributeValue(customGroupNode, "id");
-				XmlNode srcMatchingGroupNode = parentNode.SelectSingleNode("group[@id='" + customGroupId + "']");
+				XmlNode srcMatchingGroupNode = parentNode.SelectSingleNode("group[@id=" + GetSafeXPathLiteral(customGroupId) + "]");
 				if (srcMatchingGroupNode == null)
 				{
 					// Import the entire custom node.
@@ -179,7 +179,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					{
 						string customId = XmlUtils.GetMandatoryAttributeValue(customStringNode, "id");
 						string customTxt = GetTxtAtributeValue(customStringNode);
-						XmlNode srcMatchingStringNode = srcMatchingGroupNode.SelectSingleNode("string[@id='" + customId + "']");
+						XmlNode srcMatchingStringNode = srcMatchingGroupNode.SelectSingleNode("string[@id=" + GetSafeXPathLiteral(customId) + "]");
 						if (srcMatchingStringNode == null)
 						{
 							// Import the new string into the extant group.
@@ -345,7 +345,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public string GetStringWithXPath(string id, string groupXPathFragment)
 		{
 			id = id.Trim();
-			XmlNode node = m_document.SelectSingleNode("strings/" + groupXPathFragment + "string[@id='" + id + "']");
+			XmlNode node = m_document.SelectSingleNode("strings/" + groupXPathFragment + "string[@id=" + GetSafeXPathLiteral(id) + "]");
 			if (node == null)
 			{
 				if (m_parent != null)
@@ -422,7 +422,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			string[] names = simplePath.Split('/');
 			foreach(string name in names)
 			{
-				path += "group[@id = '" + name.Trim() + "']/";
+				path += "group[@id = " + GetSafeXPathLiteral(name.Trim()) + "]/";
 			}
 			return path;
 		}
@@ -474,6 +474,29 @@ namespace SIL.FieldWorks.Common.FwUtils
 			if (String.IsNullOrEmpty(sLocValue))
 				return null;
 			return sLocValue == "*" + sId + "*" ? null : sLocValue;
+		}
+
+		/// <summary>
+		/// Return a string valid for use as an XPath literal, handling quotes correctly.
+		/// </summary>
+		private static string GetSafeXPathLiteral(string val)
+		{
+			if (val.IndexOf('\'') < 0)
+				return "'" + val + "'";
+			if (val.IndexOf('"') < 0)
+				return "\"" + val + "\"";
+
+			// Contains both, use concat.
+			System.Text.StringBuilder sb = new System.Text.StringBuilder("concat(");
+			string[] parts = val.Split('\'');
+			for (int i = 0; i < parts.Length; i++)
+			{
+				if (i > 0)
+					sb.Append(", \"'\", ");
+				sb.Append("'" + parts[i] + "'");
+			}
+			sb.Append(")");
+			return sb.ToString();
 		}
 	}
 }
