@@ -2199,7 +2199,7 @@ namespace XCore
 
 		public static bool TryGetToolNode(string areaName, string toolName, PropertyTable propTable, out XmlNode node)
 		{
-			string xpath = GetToolXPath(areaName) + "[@value = '" + XmlUtils.MakeSafeXmlAttribute(toolName) + "']";
+			string xpath = GetToolXPath(areaName) + "[@value = " + StringTable.GetSafeXPathLiteral(toolName) + "]";
 			var windowConfiguration = propTable.GetValue<XmlNode>("WindowConfiguration");
 			node = windowConfiguration.SelectSingleNode(xpath);
 			if (node == null)

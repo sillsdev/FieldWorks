@@ -512,7 +512,7 @@ namespace SIL.FieldWorks.XWorks.LexText
 		private static XmlNode GetClerkRecordListNodeFromToolNode(XmlNode toolNode)
 		{
 			var clerkId = XmlUtils.GetAttributeValue(toolNode.SelectSingleNode("control//parameters[@clerk != '']"), "clerk");
-			var clerkNode = toolNode.SelectSingleNode(GetListClerksXPath() + "/clerk[@id='"+XmlUtils.MakeSafeXmlAttribute(clerkId)+"']");
+			var clerkNode = toolNode.SelectSingleNode(GetListClerksXPath() + "/clerk[@id="+StringTable.GetSafeXPathLiteral(clerkId)+"]");
 			if (clerkNode == null)
 				clerkNode = FindClerkNode(toolNode, clerkId);
 			return clerkNode == null ? null : clerkNode.SelectSingleNode("recordList");

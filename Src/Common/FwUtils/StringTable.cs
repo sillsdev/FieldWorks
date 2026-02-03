@@ -479,7 +479,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <summary>
 		/// Return a string valid for use as an XPath literal, handling quotes correctly.
 		/// </summary>
-		private static string GetSafeXPathLiteral(string val)
+		public static string GetSafeXPathLiteral(string val)
 		{
 			if (val.IndexOf('\'') < 0)
 				return "'" + val + "'";
