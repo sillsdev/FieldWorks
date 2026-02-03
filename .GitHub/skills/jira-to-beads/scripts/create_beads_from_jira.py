@@ -44,26 +44,26 @@ def run(cmd):
 
 
 def br_get_external_ref_map():
-    raw = run(["br", "list", "--format", "csv", "--fields", "id,external_ref", "--all", "--limit", "0"])
+    raw = run(["bd", "list", "--json", "--all", "--limit", "0"])
     ext_map = {}
     if not raw:
         return ext_map
-    lines = raw.splitlines()
-    if not lines:
+    try:
+        issues = json.loads(raw)
+    except json.JSONDecodeError:
+        print("Failed to decode JSON from bd list", file=sys.stderr)
         return ext_map
-    # Skip header row
-    for line in lines[1:]:
-        parts = [p.strip() for p in line.split(",", 1)]
-        if len(parts) != 2:
-            continue
-        issue_id, ext = parts
-        if ext:
+        
+    for issue in issues:
+        issue_id = issue.get("id")
+        ext = issue.get("external_ref")
+        if issue_id and ext:
             ext_map[ext] = issue_id
     return ext_map
 
 
 def br_create_issue(title, issue_type, description, external_ref=None, labels=None, assignee=None, parent=None):
-    cmd = ["br", "create", "--json", "--title", title, "--type", issue_type, "--description", description]
+    cmd = ["bd", "create", "--json", "--title", title, "--type", issue_type, "--description", description]
     if external_ref:
         cmd += ["--external-ref", external_ref]
     if labels:
@@ -77,7 +77,7 @@ def br_create_issue(title, issue_type, description, external_ref=None, labels=No
 
 
 def br_dep_add(issue_id, depends_on_id):
-    run(["br", "dep", "add", str(issue_id), str(depends_on_id)])
+    run(["bd", "dep", "add", str(issue_id), str(depends_on_id)])
 
 
 def is_open_issue(issue):
