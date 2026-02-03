@@ -257,6 +257,20 @@
       },
       "problemMatcher": "$msCompile"
     },
+    {
+      "label": "Build Tests",
+      "type": "shell",
+      "command": "./build.ps1 -BuildTests",
+      "group": "build",
+      "detail": "Build FieldWorks including test projects (required for ReSharper Test Explorer)",
+      "options": {
+        "shell": {
+          "executable": "powershell.exe",
+          "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
+        }
+      },
+      "problemMatcher": "$msCompile"
+    },
 
     // ==================== Test Tasks ====================
     {

@@ -69,16 +69,27 @@
   "terminal.integrated.env.windows": {
     "PATH": "${workspaceFolder}\\scripts\\toolshims;${env:PATH}"
   },
-  // C# Dev Kit test settings
-  "dotnet.unitTests.runSettingsPath": "${workspaceFolder}/Test.runsettings",
-  // Enable VSTest discovery for test explorer
-  "dotnet.unitTests.enableVsTestDiscovery": true,
-  // Exclude external NuGet package tests (SIL.LCModel.Tests, etc.)
-  // These test liblcm internals, not FieldWorks code, and have dependency conflicts
-  "dotnet.unitTests.testCaseFilter": "FullyQualifiedName!~SIL.LCModel.Tests&FullyQualifiedName!~SIL.LCModel.Core.Tests&FullyQualifiedName!~SIL.LCModel.Utils.Tests",
-  // Auto-build works because Src/Directory.Build.props sets OutputPath to Output/$(Configuration)/
-  // This means dotnet build outputs to the same location as ./build.ps1
-  "dotnet.automaticallyBuildProjects": true,
+
+  // ============================================================================
+  // UNIT TESTING (ReSharper)
+  // ============================================================================
+  // ReSharper for VS Code provides unit test support:
+  // - Gutter icons (green/red) appear next to [Test] methods
+  // - Click gutter icons to run individual tests or test classes
+  // - Test Explorer (Flask icon in sidebar) shows discovered tests
+  // - Test output appears in the "Test Results" panel
+  //
+  // IMPORTANT: Tests must be built first! Use one of:
+  //   - .\build.ps1 -BuildTests        (terminal)
+  //   - Task: "Build" with -BuildTests (tasks.json)
+  //   - ReSharper's built-in build (may need "Use ReSharper Build" enabled)
+  //
+  // ReSharper detects NUnit/xUnit/MSTest automatically via NUnit3TestAdapter
+  // and Microsoft.NET.Test.Sdk (added by Directory.Build.props for test projects).
+  // ============================================================================
+
+  // ReSharper build settings (use MSBuild for native C++ compatibility)
+  "resharper.build.useResharperBuild": false,  // Use MSBuild, not ReSharper Build, for native project support
   // Git Graph extension settings
   "git-graph.dialog.merge.noFastForward": false,
   "git-graph.dialog.merge.squashCommits": false,
@@ -92,6 +103,7 @@
     // Build tasks (safe - only produce artifacts)
     "Build",
     "Build Release",
+    "Build Tests",
 
     // Test tasks (safe - no external changes)
     "Test",

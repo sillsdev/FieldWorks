@@ -70,6 +70,27 @@ Referenced as library for advanced root site functionality. Extended by SimpleRo
 ## Test Index
 - **Test project**: RootSiteTests
 
+### Render Benchmark Harness (TestData/RenderBenchmark)
+The RenderBenchmark namespace provides infrastructure for render performance testing and pixel-perfect validation:
+
+- **RenderBenchmarkHarness**: Core harness for cold/warm render timing and bitmap capture
+- **RenderBitmapComparer**: Pixel-perfect comparison with LockBits fast algorithm
+- **RenderBenchmarkResults**: Data models (BenchmarkRun, BenchmarkResult, TraceEvent, AnalysisSummary)
+- **RenderScenarioDataBuilder**: Helpers for creating test scenarios
+- **RenderEnvironmentValidator**: DPI/font/theme hash for environment consistency
+- **RenderTraceParser**: Parse `[RENDER] Stage=X Duration=Y.ZZZms` trace format
+- **RenderDiagnosticsToggle**: Enable/disable Views trace diagnostics
+- **RenderBenchmarkComparer**: Regression detection between benchmark runs
+- **RenderBenchmarkReportWriter**: Generate JSON and Markdown reports
+
+**Test Suites**:
+- `RenderBaselineTests`: Pixel-perfect baseline validation (User Story 1)
+- `RenderTimingSuiteTests`: Five-scenario timing suite with edge case tests (User Story 2)
+
+**Scenario Definitions**: See `TestData/RenderBenchmarkScenarios.json` for 5 test scenarios (simple, medium, complex, deep-nested, custom-field-heavy).
+
+**Usage**: See `specs/001-render-speedup/quickstart.md` for build/run commands.
+
 ## Usage Hints
 - Extend RootSite classes for custom view hosting
 
