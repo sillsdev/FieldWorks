@@ -546,7 +546,7 @@ namespace SIL.FieldWorks.XWorks
 				dialog.Text = xWorksStrings.ReversalIndexConfigurationDlgTitle;
 				dialog.ConfigurationGroupText = xWorksStrings.DictionaryConfigurationMangager_ReversalConfigurations_GroupLabel;
 			}
-			if (DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(_propertyTable) == xWorksStrings.ClassifiedDictionary)
+			else if (DictionaryConfigurationListener.GetDictionaryConfigurationBaseType(_propertyTable) == xWorksStrings.ClassifiedDictionary)
 			{
 				dialog.Text = xWorksStrings.ClassifiedDictionaryConfigurationDlgTitle;
 				dialog.ConfigurationGroupText = xWorksStrings.DictionaryConfigurationMangager_ClassifiedConfigurations_GroupLabel;
