@@ -533,8 +533,7 @@ namespace SIL.FieldWorks.IText
 		public const int kflidFreeTrans = InterlinVc.ktagSegmentFree;
 		public const int kflidLitTrans = InterlinVc.ktagSegmentLit;
 		public const int kflidNote = InterlinVc.ktagSegmentNote;
-		// TODO: is this the right flid to use for media files? Should one be created in InterlinVc?
-		public const int kflidMedia = InterlinVc.ktagMediaFile;//LexPronunciationTags.kflidMediaFiles;
+		public const int kflidMedia = InterlinVc.ktagMediaFile;
 
 		private LineOption[] UpdateFieldNamesFromLines(InterlinMode mode)
 		{

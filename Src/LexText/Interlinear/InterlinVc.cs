@@ -8,7 +8,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using Gecko;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
@@ -20,8 +19,6 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using Gecko.WebIDL;
-using SIL.LCModel.Core.Phonology;
-using System.Diagnostics.Tracing;
 
 namespace SIL.FieldWorks.IText
 {
@@ -137,7 +134,6 @@ namespace SIL.FieldWorks.IText
 		private ITsString m_tssEmptyVern;
 		private ITsString m_tssEmptyPara;
 		private ITsString m_tssSpace;
-		private ITsString m_tssNewLine;
 		private ITsString m_tssCommaSpace;
 		private ITsString m_tssPendingGlossAffix; // LexGloss line GlossAppend or GlossPrepend
 		private int m_mpBundleHeight; // millipoint height of interlinear bundle.
@@ -187,7 +183,6 @@ namespace SIL.FieldWorks.IText
 			m_WsList = new WsListManager(m_cache);
 			m_tssEmptyPara = TsStringUtils.MakeString(ITextStrings.ksEmptyPara, m_wsAnalysis);
 			m_tssSpace = TsStringUtils.MakeString(" ", m_wsAnalysis);
-			m_tssNewLine = TsStringUtils.MakeString("\n", m_wsAnalysis);
 			m_msaVc = new MoMorphSynAnalysisUi.MsaVc(m_cache);
 
 			// This usually gets overridden, but ensures default behavior if not.
