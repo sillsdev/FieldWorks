@@ -2,10 +2,12 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using NAudio.Wave;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
@@ -19,6 +21,7 @@ using SIL.LCModel.Application;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Utils;
+using SIL.Media.Naudio;
 using SIL.PlatformUtilities;
 using XCore;
 
@@ -26,6 +29,12 @@ namespace SIL.FieldWorks.IText
 {
 	public partial class InterlinDocForAnalysis : InterlinDocRootSiteBase
 	{
+		private int m_playingSegmentHvo = -1;
+		private int m_queuedSegmentHvo = -1;
+		private WaveOutEvent m_outputDevice;
+		private AudioFileReader m_audioFile;
+		private TrimWaveStream m_trimWaveStream;
+
 		/// <summary>
 		/// Review(EricP) consider making a subclass of InterlinDocForAnalysis (i.e. InterlinDocForGlossing)
 		/// so we can put all AddWordsToLexicon related code there rather than having this
@@ -2106,7 +2115,45 @@ namespace SIL.FieldWorks.IText
 				ScrollSelectionIntoView(this.RootBox.Selection, VwScrollSelOpts.kssoDefault);
 				return true;
 			}
+			// Play or stop playing a media segment.
+			else if (tagTextProp == SegmentTags.kflidMediaURI)
+			{
+				int itagSeg = -1;
+				for (int i = rgvsli.Length; --i >= 0;)
+				{
+					if (rgvsli[i].tag == StTxtParaTags.kflidSegments)
+					{
+						itagSeg = i;
+						break;
+					}
+				}
+				Debug.Assert(itagSeg >= 0);
+				if (itagSeg >= 0)
+				{
+					int hvoSegment = rgvsli[itagSeg].hvo;
 
+					// Nothing is currently playing, so play the segment.
+					if (m_playingSegmentHvo == -1)
+					{
+						StartMediaPlay(hvoSegment);
+					}
+					// Something is currently playing. If it's the same segment, stop it. If it's a
+					// different segment, queue up the new one and stop the current one.
+					else
+					{
+						// If 'Play' was pressed for a different segment, then queue up the new
+						// segment to play immediately after stopping the current one.
+						if (m_playingSegmentHvo != hvoSegment)
+						{
+							m_queuedSegmentHvo = hvoSegment;
+						}
+
+						// Stop the currently playing segment.
+						StopMediaPlay();
+					}
+				}
+				return true;
+			}
 			// Identify the analysis, and the position in m_rgvsli of the property holding it.
 			// It is also possible that the analysis is the root object.
 			// This is important because although we are currently displaying just an StTxtPara,
@@ -2159,6 +2206,74 @@ namespace SIL.FieldWorks.IText
 
 			return true;
 		}
+
+		/// <summary>
+		/// Begins playback of the audio segment.
+		/// </summary>
+		/// <remarks>If playback is already in progress, this method should not be called until the previous
+		/// playback has stopped.</remarks>
+		/// <param name="hvoSegment">The hvo of the segment to play.</param>
+		private void StartMediaPlay(int hvoSegment)
+		{
+			Debug.Assert(m_outputDevice == null && m_audioFile == null && m_trimWaveStream == null &&
+						 m_playingSegmentHvo == -1);
+
+			var segment = Cache.ServiceLocator.GetObject(hvoSegment) as ISegment;
+			Debug.Assert(segment != null);
+
+			var mediaUri = segment.MediaURIRA?.MediaURI;
+			Uri uri = new Uri(mediaUri);
+			if (uri.IsFile && File.Exists(uri.LocalPath))
+			{
+				m_outputDevice = new WaveOutEvent();
+				m_outputDevice.PlaybackStopped += OnPlaybackStopped;
+				m_audioFile = new AudioFileReader(uri.LocalPath);
+				m_trimWaveStream = new TrimWaveStream(m_audioFile);
+
+				double beginMs = double.Parse(segment.BeginTimeOffset);
+				double endMs = double.Parse(segment.EndTimeOffset);
+				m_trimWaveStream.StartPosition = TimeSpan.FromMilliseconds(beginMs);
+				m_trimWaveStream.EndPosition = TimeSpan.FromMilliseconds(endMs);
+				m_outputDevice.Init(m_trimWaveStream);
+
+				m_outputDevice.Play();
+				m_playingSegmentHvo = hvoSegment;
+			}
+		}
+
+		/// <summary>
+		/// Stops media play, if it is currently playing. This will trigger the PlaybackStopped event,
+		/// which will clean up the audio objects and start playing any queued segment.
+		/// </summary>
+		private void StopMediaPlay()
+		{
+			m_outputDevice?.Stop();
+		}
+
+		/// <summary>
+		/// Handles the event that occurs when audio playback has stopped. After disposing of the
+		/// audio objects, if there is a queued segment to play, starts playing it.
+		/// </summary>
+		private void OnPlaybackStopped(object sender, StoppedEventArgs args)
+		{
+			m_outputDevice.Dispose();
+			m_outputDevice = null;
+			m_trimWaveStream.Dispose();
+			m_trimWaveStream = null;
+			m_audioFile.Dispose();
+			m_audioFile = null;
+			m_playingSegmentHvo = -1;
+
+			if(m_queuedSegmentHvo != -1)
+			{
+				int segmentToPlay = m_queuedSegmentHvo;
+				m_queuedSegmentHvo = -1;
+				StartMediaPlay(segmentToPlay);
+			}
+		}
+
+
+
 
 		#endregion
 
