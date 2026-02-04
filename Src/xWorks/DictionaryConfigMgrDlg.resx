@@ -253,7 +253,7 @@
 	<value>1</value>
   </data>
   <data name="m_dlgText.Text" xml:space="preserve">
-	<value>Select a view to rename, copy or delete it.</value>
+	<value>Select a layout to rename, copy or delete it.</value>
   </data>
   <data name="&gt;&gt;m_dlgText.Name" xml:space="preserve">
 	<value>m_dlgText</value>
@@ -373,7 +373,7 @@
 	<value>477, 335</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
-	<value>Manage {0} Views</value>
+	<value>Manage {0} Layouts</value>
   </data>
   <data name="&gt;&gt;$this.Name" xml:space="preserve">
 	<value>DictionaryConfigMgrDlg</value>

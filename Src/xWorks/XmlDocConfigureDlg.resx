@@ -1330,7 +1330,7 @@
 	<value>13</value>
   </data>
   <data name="m_lblViewType.Text" xml:space="preserve">
-	<value>Choose the view to configure:</value>
+	<value>Choose the layout to configure:</value>
   </data>
   <data name="&gt;&gt;m_lblViewType.Name" xml:space="preserve">
 	<value>m_lblViewType</value>
@@ -1420,7 +1420,7 @@
 	<value>29</value>
   </data>
   <data name="m_linkManageViews.Text" xml:space="preserve">
-	<value>Manage Views</value>
+	<value>Manage Layouts</value>
   </data>
   <data name="&gt;&gt;m_linkManageViews.Name" xml:space="preserve">
 	<value>m_linkManageViews</value>
@@ -1456,7 +1456,7 @@
 	<value>True</value>
   </data>
   <data name="$this.Text" xml:space="preserve">
-	<value>Configure {0} View</value>
+	<value>Configure {0} Layout</value>
   </data>
   <data name="&gt;&gt;columnHeader1.Name" xml:space="preserve">
 	<value>columnHeader1</value>

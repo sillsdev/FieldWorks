@@ -1119,12 +1119,19 @@ See USFM documentation for help.</value>
   <data name="ReversalIndexConfigurationDlgTitle" xml:space="preserve">
     <value>Manage Reversal Index Layouts</value>
   </data>
+  <data name="ClassifiedDictionaryConfigurationDlgTitle" xml:space="preserve">
+    <value>Manage Classified Dictionary Layouts</value>
+  </data>
   <data name="YouAreResettingReversal" xml:space="preserve">
     <value>You are resetting the following to the 'All Reversal Indexes' settings:</value>
   </data>
   <data name="DictionaryConfigurationMangager_ReversalConfigurations_GroupLabel" xml:space="preserve">
     <value>Reversal Layouts</value>
     <comment>Label for the group box which contains the reversal configured layouts</comment>
+  </data>
+  <data name="DictionaryConfigurationMangager_ClassifiedConfigurations_GroupLabel" xml:space="preserve">
+    <value>Classified Dictionary Layouts</value>
+    <comment>Label for the group box which contains the classified dictionary configured layouts</comment>
   </data>
   <data name="InadvisableToShare" xml:space="preserve">
     <value>It is inadvisable to share '{0}' because a shared node with the same field ({1}) already exists ({2}). No changes have been made.</value>

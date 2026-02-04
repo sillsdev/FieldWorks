@@ -187,6 +187,15 @@ namespace SIL.FieldWorks.XWorks {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Manage Classified Dictionary Layouts.
+        /// </summary>
+        internal static string ClassifiedDictionaryConfigurationDlgTitle {
+            get {
+                return ResourceManager.GetString("ClassifiedDictionaryConfigurationDlgTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Click to jump to {0}..
         /// </summary>
         internal static string ClickToJumpTo {
@@ -362,6 +371,15 @@ namespace SIL.FieldWorks.XWorks {
         internal static string DictionaryConfigurationDictionaryConfigurationUser_StyleOverwriteWarning {
             get {
                 return ResourceManager.GetString("DictionaryConfigurationDictionaryConfigurationUser_StyleOverwriteWarning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Classified Dictionary Layouts.
+        /// </summary>
+        internal static string DictionaryConfigurationMangager_ClassifiedConfigurations_GroupLabel {
+            get {
+                return ResourceManager.GetString("DictionaryConfigurationMangager_ClassifiedConfigurations_GroupLabel", resourceCulture);
             }
         }
         
