@@ -533,6 +533,8 @@ namespace SIL.FieldWorks.IText
 		public const int kflidFreeTrans = InterlinVc.ktagSegmentFree;
 		public const int kflidLitTrans = InterlinVc.ktagSegmentLit;
 		public const int kflidNote = InterlinVc.ktagSegmentNote;
+		// TODO: is this the right flid to use for media files? Should one be created in InterlinVc?
+		public const int kflidMedia = InterlinVc.ktagMediaFile;//LexPronunciationTags.kflidMediaFiles;
 
 		private LineOption[] UpdateFieldNamesFromLines(InterlinMode mode)
 		{
@@ -580,7 +582,8 @@ namespace SIL.FieldWorks.IText
 					mode == InterlinMode.GlossAddWordsToLexicon ? ITextStrings.ksLexWordCat : ITextStrings.ksWordCat),
 				 new LineOption(kflidFreeTrans, ITextStrings.ksFreeTranslation),
 				 new LineOption(kflidLitTrans, ITextStrings.ksLiteralTranslation),
-				 new LineOption(kflidNote, ITextStrings.ksNote)
+				 new LineOption(kflidNote, ITextStrings.ksNote),
+				 new LineOption(kflidMedia, ITextStrings.ksMedia)
 			}.Union(customLineOptions).ToArray();
 		}
 
@@ -942,6 +945,11 @@ namespace SIL.FieldWorks.IText
 				case kflidNote:
 					comboContent = ColumnConfigureDialog.WsComboContent.kwccVernAndAnal;
 					ws = m_wsDefAnal;
+					fWordLevel = false;
+					break;
+				case kflidMedia:
+					ws = WritingSystemServices.kwsFirstAnal;
+					comboContent = ColumnConfigureDialog.WsComboContent.kwccBestAnalysis;
 					fWordLevel = false;
 					break;
 				default:

@@ -25,6 +25,7 @@ namespace SIL.FieldWorks.IText
 {
 	public partial class LinguaLinksImport
 	{
+		private const string CustomMediaFieldName = "MediaFile";
 		//this delegate is used for alerting the user of new writing systems found in the import
 		//or a text that is already found.
 		private delegate DialogResult ShowDialogAboveProgressbarDelegate(IThreadedProgress progress,
@@ -509,8 +510,77 @@ namespace SIL.FieldWorks.IText
 				newSegment.EndTimeOffset = phrase.endTimeOffset;
 				newSegment.MediaURIRA = cache.ServiceLocator.ObjectRepository.GetObject(new Guid(phrase.mediaFile)) as ICmMediaURI;
 			}
-		}
 
+			// Create and populate a MediaFile custom field with the Media info imported from ELAN.
+			//CreateCustomMediaFileFieldIfNeeded(cache);
+			//PopulateCustomMediaFileField(cache, phrase, newSegment);
+		}
+		private static void CreateCustomMediaFileFieldIfNeeded(LcmCache cache)
+		{
+			var mdc = (IFwMetaDataCacheManaged)cache.MetaDataCacheAccessor;
+			if (!mdc.FieldExists("Segment", CustomMediaFieldName, false))
+			{
+				// create a custom field for media files
+				var fd = new FieldDescription(cache)
+				{
+					Name = CustomMediaFieldName,
+					Userlabel = "Media File",
+					Class = SegmentTags.kClassId,
+					Type = CellarPropertyType.String,
+					WsSelector = WritingSystemServices.kwsAnal
+
+				};
+				fd.UpdateCustomField();
+				FieldDescription.ClearDataAbout();
+			}
+		}
+		private static void PopulateCustomMediaFileField(LcmCache cache, Phrase phrase, ISegment newSegment)
+		{
+			var ws = cache.DefaultAnalWs;
+
+			// mediaTsString is where we will store the file URI and the begin and end time offsets for display.
+			// Initial value of "No Media" will be displayed if there is no media file to extract info from.
+			var mediaTsString = TsStringUtils.MakeString("No Media", ws);
+
+			// Used to build the string storing media URI and offsets
+			ITsStrBldr displayStrBldr = TsStringUtils.MakeStrBldr();
+
+			var mediaUri = newSegment.MediaURIRA?.MediaURI;
+			var customFlid = cache.MetaDataCacheAccessor.GetFieldId("Segment", CustomMediaFieldName, false);
+
+			if (!string.IsNullOrEmpty(mediaUri))
+			{
+				//TODO: do we actually want to display the filepath, or just the time offsets?
+				//TODO: If we do want to display filepath, changes need to be made to the MediaFile field to allow for multi-paragraph strings. Currently a new line in the string will cause a crash.
+				//displayStrBldr.Append(TsStringUtils.MakeString(mediaUri, ws));
+				//displayStrBldr.Append(TsStringUtils.MakeString("\n", ws));
+
+				// Add begin time offset to the display string builder
+				displayStrBldr.Append(TsStringUtils.MakeString("Begin Time Offset: ", ws));
+				if (!string.IsNullOrEmpty(newSegment.BeginTimeOffset))
+					displayStrBldr.Append(TsStringUtils.MakeString(newSegment.BeginTimeOffset, ws));
+				else
+					displayStrBldr.Append(TsStringUtils.MakeString("None", ws));
+
+				// Add end time offset to the display string builder
+				displayStrBldr.Append(TsStringUtils.MakeString(" End Time Offset: ", ws));
+				if (!string.IsNullOrEmpty(newSegment.EndTimeOffset))
+					displayStrBldr.Append(TsStringUtils.MakeString(newSegment.EndTimeOffset, ws));
+				else
+					displayStrBldr.Append(TsStringUtils.MakeString("None", ws));
+
+				// Add speaker to the display string builder
+				displayStrBldr.Append(TsStringUtils.MakeString(" Speaker: ", ws));
+				if (!string.IsNullOrEmpty(phrase.speaker))
+					displayStrBldr.Append(TsStringUtils.MakeString(phrase.speaker, ws));
+			}
+
+			if (displayStrBldr.Length > 0)
+			{
+				mediaTsString = displayStrBldr.GetString();
+			}
+			cache.MainCacheAccessor.SetString(newSegment.Hvo, customFlid, mediaTsString);
+		}
 		private static ICmPerson FindOrCreateSpeaker(string speaker, LcmCache cache)
 		{
 			if(cache.LanguageProject.PeopleOA != null)

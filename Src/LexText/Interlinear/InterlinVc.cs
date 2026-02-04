@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using Gecko;
 using SIL.LCModel.Core.Cellar;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
@@ -19,6 +20,8 @@ using SIL.LCModel;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
 using Gecko.WebIDL;
+using SIL.LCModel.Core.Phonology;
+using System.Diagnostics.Tracing;
 
 namespace SIL.FieldWorks.IText
 {
@@ -103,6 +106,7 @@ namespace SIL.FieldWorks.IText
 		internal const int ktagSegmentLit = -62;
 		internal const int ktagSegmentNote = -63;
 		internal const int ktagAnalysisStatus = -64;
+		internal const int ktagMediaFile = -65;
 		// flids for paragraph annotation sequences.
 		internal int ktagSegmentForms;
 
@@ -133,6 +137,7 @@ namespace SIL.FieldWorks.IText
 		private ITsString m_tssEmptyVern;
 		private ITsString m_tssEmptyPara;
 		private ITsString m_tssSpace;
+		private ITsString m_tssNewLine;
 		private ITsString m_tssCommaSpace;
 		private ITsString m_tssPendingGlossAffix; // LexGloss line GlossAppend or GlossPrepend
 		private int m_mpBundleHeight; // millipoint height of interlinear bundle.
@@ -182,6 +187,7 @@ namespace SIL.FieldWorks.IText
 			m_WsList = new WsListManager(m_cache);
 			m_tssEmptyPara = TsStringUtils.MakeString(ITextStrings.ksEmptyPara, m_wsAnalysis);
 			m_tssSpace = TsStringUtils.MakeString(" ", m_wsAnalysis);
+			m_tssNewLine = TsStringUtils.MakeString("\n", m_wsAnalysis);
 			m_msaVc = new MoMorphSynAnalysisUi.MsaVc(m_cache);
 
 			// This usually gets overridden, but ensures default behavior if not.
@@ -908,6 +914,115 @@ namespace SIL.FieldWorks.IText
 			vwenv.OpenInnerPile();
 		}
 
+		protected virtual void AddMedia(IVwEnv vwenv, int hvoSeg, int lineChoiceIndex)
+		{
+			// TODO: Add BIDI and multiple writing system support (see AddFreeformComment for an example).
+
+			InterlinearExporter exporter = vwenv as InterlinearExporter;
+			if (exporter != null)
+				exporter.FreeAnnotationType = "media";
+
+			int[] wssAnalysis = m_lineChoices.AdjacentEnabledWssAtIndex(lineChoiceIndex, hvoSeg);
+			if (wssAnalysis.Length == 0)
+				return;
+
+			vwenv.OpenDiv();
+			SetParaDirectionAndAlignment(vwenv, wssAnalysis[0]);
+			vwenv.OpenParagraph();
+
+			string mediaLabel = ITextStrings.ksMedia_;
+			int mediaFlid = SegmentTags.kflidMediaURI;
+			var mediaLabelWidth = 0;
+			int mediaLabelHeight; // unused
+
+			// Build label for the media line (bold, with line index attached)
+			SetNoteLabelProps(vwenv);
+			var tssMediaLabel = MakeUiElementString(
+				mediaLabel,
+				m_cache.DefaultUserWs,
+				propsBldr =>
+				{
+					propsBldr.SetIntPropValues(
+						(int)FwTextPropType.ktptBold,
+						(int)FwTextPropVar.ktpvEnum,
+						(int)FwTextToggleVal.kttvForceOn);
+				});
+			var labelBldr = tssMediaLabel.GetBldr();
+			AddLineIndexProperty(labelBldr, lineChoiceIndex);
+			tssMediaLabel = labelBldr.GetString();
+
+			vwenv.get_StringWidth(tssMediaLabel, null, out mediaLabelWidth, out mediaLabelHeight);
+			var wsVernPara = GetWsForSeg(hvoSeg);
+
+			// Add the media label
+			vwenv.AddString(tssMediaLabel);
+			vwenv.AddString(m_tssSpace);
+
+			//TODO: display button here for media playback
+
+			// End this paragraph and begin a new one so that begin/end time offsets and speaker
+			// will be displayed in a new line, below the media playback button.
+			vwenv.CloseParagraph();
+
+			// Ensure the new paragraph is indented by the width of the media label.
+			vwenv.set_IntProperty((int)FwTextPropType.ktptLeadingIndent,
+				(int)FwTextPropVar.ktpvMilliPoint, mediaLabelWidth);
+			SetParaDirectionAndAlignment(vwenv, wssAnalysis[0]);
+
+			vwenv.OpenParagraph();
+
+			// Build label for the begin time offset.
+			var tssBeginOffsetLabel = MakeUiElementString(
+				ITextStrings.ksBeginTimeOffset_,
+				m_cache.DefaultUserWs,
+				propsBldr =>
+				{
+					propsBldr.SetIntPropValues(
+						(int)FwTextPropType.ktptBold,
+						(int)FwTextPropVar.ktpvEnum,
+						(int)FwTextToggleVal.kttvForceOn);
+				});
+			vwenv.AddString(tssBeginOffsetLabel);
+			// Add begin time offset property, followed by a space.
+			vwenv.AddUnicodeProp(SegmentTags.kflidBeginTimeOffset, wssAnalysis[0], this);
+			vwenv.AddString(m_tssSpace);
+
+			// Build label for the end time offset
+			var tssEndOffsetLabel = MakeUiElementString(
+				ITextStrings.ksEndTimeOffset_,
+				m_cache.DefaultUserWs,
+				propsBldr =>
+				{
+					propsBldr.SetIntPropValues(
+						(int)FwTextPropType.ktptBold,
+						(int)FwTextPropVar.ktpvEnum,
+						(int)FwTextToggleVal.kttvForceOn);
+				});
+			vwenv.AddString(tssEndOffsetLabel);
+			// Add end time offset property, followed by a space.
+			vwenv.AddUnicodeProp(SegmentTags.kflidEndTimeOffset, wssAnalysis[0], this);
+			vwenv.AddString(m_tssSpace);
+
+			// Build speaker label
+			var tssSpeakerLabel = MakeUiElementString(
+				ITextStrings.ksSpeaker_,
+				m_cache.DefaultUserWs,
+				propsBldr =>
+				{
+					propsBldr.SetIntPropValues(
+						(int)FwTextPropType.ktptBold,
+						(int)FwTextPropVar.ktpvEnum,
+						(int)FwTextToggleVal.kttvForceOn);
+				});
+			vwenv.AddString(tssSpeakerLabel);
+
+			// TODO: add speaker property
+			//vwenv.AddObjProp(SegmentTags.kflidSpeaker,this, kfragLineChoices + 1);
+
+			vwenv.CloseParagraph();
+			vwenv.CloseDiv();
+		}
+
 		protected virtual void AddFreeformComment(IVwEnv vwenv, int hvoSeg, int lineChoiceIndex)
 		{
 			int[] wssAnalysis = m_lineChoices.AdjacentEnabledWssAtIndex(lineChoiceIndex, hvoSeg);
@@ -939,6 +1054,12 @@ namespace SIL.FieldWorks.IText
 					flid = NoteTags.kflidContent;
 					if (exporter != null)
 						exporter.FreeAnnotationType = "note";
+					break;
+				case InterlinLineChoices.kflidMedia:
+					label = ITextStrings.ksMedia_;
+					flid = SegmentTags.kflidMediaURI;
+					if (exporter != null)
+						exporter.FreeAnnotationType = "media";
 					break;
 				default:
 					throw new Exception("Unexpected FF annotation type");
@@ -2103,6 +2224,7 @@ namespace SIL.FieldWorks.IText
 				{
 					case InterlinLineChoices.kflidFreeTrans:
 					case InterlinLineChoices.kflidLitTrans:
+					//case InterlinLineChoices.kflidMedia:
 						// These are properties of the current object.
 						AddFreeformComment(vwenv, hvoSeg, ispec);
 						break;
@@ -2110,6 +2232,9 @@ namespace SIL.FieldWorks.IText
 						// There's a sequence of these, we use a trick with the frag to indicate which
 						// index into line choices we want to use to display each of them.
 						vwenv.AddObjVecItems(SegmentTags.kflidNotes, this, kfragSegFfChoices + ispec);
+						break;
+					case InterlinLineChoices.kflidMedia:
+						AddMedia(vwenv, hvoSeg, ispec);
 						break;
 					default:
 						if(((IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor).FieldExists(flid) && ((IFwMetaDataCacheManaged)m_cache.MetaDataCacheAccessor).IsCustom(flid))

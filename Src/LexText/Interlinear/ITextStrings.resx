@@ -341,6 +341,34 @@
     <value>Nt </value>
     <comment>short for Note; there is a trailing space</comment>
   </data>
+  <data name="ksMedia" xml:space="preserve">
+    <value>Media</value>
+  </data>
+  <data name="ksMedia_" xml:space="preserve">
+    <value>Media </value>
+    <comment>there is a trailing space</comment>
+  </data>
+  <data name="ksBeginTimeOffset" xml:space="preserve">
+    <value>Begin time offset</value>
+  </data>
+  <data name="ksBeginTimeOffset_" xml:space="preserve">
+    <value>Begin time offset </value>
+    <comment>there is a trailing space</comment>
+  </data>
+  <data name="ksEndTimeOffset" xml:space="preserve">
+    <value>End time offset</value>
+  </data>
+  <data name="ksEndTimeOffset_" xml:space="preserve">
+    <value>End time offset </value>
+    <comment>there is a trailing space</comment>
+  </data>
+  <data name="ksSpeaker" xml:space="preserve">
+    <value>Speaker</value>
+  </data>
+  <data name="ksSpeaker_" xml:space="preserve">
+    <value>Speaker </value>
+    <comment>there is a trailing space</comment>
+  </data>
   <data name="ksPhaseButton" xml:space="preserve">
     <value>Ph{0} {1}</value>
     <comment>{0} is phase number; {1} is either "Process" or "Import"</comment>
