@@ -1056,7 +1056,11 @@ namespace SIL.FieldWorks.XWorks
 
 		public bool OnJumpToPopupRecord(object argument)
 		{
-			return JumpToRecord(argument, true);
+			if (Id == "entries")
+			{
+				return JumpToRecord(argument, true);
+			}
+			return false;
 		}
 
 		public bool OnJumpToRecord(object argument)
