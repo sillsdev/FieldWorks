@@ -33,7 +33,7 @@
     },
     {
       "source": "Localizations/lists/GOLDEtic.en.xlf",
-      "translation": "/%locale%/Lists/GOLDEtic/GOLDEtic.%locale%.xlf",
+      "translation": "/%locale%/Lists/GOLDEtic/GOLDEtic.%locale%.xlf"
     },
     {
       "source": "Localizations/LCM/**/*.resx",
