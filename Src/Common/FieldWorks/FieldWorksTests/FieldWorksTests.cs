@@ -4,6 +4,7 @@
 
 using System;
 using System.IO;
+using System.Collections.Generic;
 using NUnit.Framework;
 using SIL.LCModel;
 using SIL.LCModel.Utils;
@@ -123,6 +124,14 @@ namespace SIL.FieldWorks
 		}
 
 		#endregion
+
+		[Test]
+		public void SetUICulture_RegistryNeutralLocaleMatchesRegionalResources_UsesRegionalCulture()
+		{
+			var availableLangs = new List<string> { "fr-FR" };
+			var result = (string)ReflectionHelper.GetResult(typeof(FieldWorks), "GetBestAvailableLocale", "fr", availableLangs);
+			Assert.That(result, Is.EqualTo("fr-FR"));
+		}
 
 		/// <summary/>
 		[Test]

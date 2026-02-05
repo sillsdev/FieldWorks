@@ -560,10 +560,12 @@ namespace SIL.FieldWorks
 				if (!rgsLangs.Contains(locale))
 				{
 					var originalLocale = locale;
-					int idx = locale.IndexOf('-');
-					if (idx > 0)
-						locale = locale.Substring(0, idx);
-					if (!rgsLangs.Contains(locale))
+					var resolvedLocale = GetBestAvailableLocale(locale, rgsLangs);
+					if (!string.IsNullOrEmpty(resolvedLocale))
+					{
+						locale = resolvedLocale;
+					}
+					else
 					{
 						if (MessageBox.Show(string.Format(Properties.Resources.kstidFallbackToEnglishUi, originalLocale),
 							Application.ProductName, MessageBoxButtons.YesNo) == DialogResult.No)
@@ -604,6 +606,26 @@ namespace SIL.FieldWorks
 				rgsLangs.Add(locale);
 			}
 			return rgsLangs;
+		}
+
+		private static string GetBestAvailableLocale(string locale, List<string> availableLangs)
+		{
+			if (string.IsNullOrEmpty(locale) || availableLangs == null || availableLangs.Count == 0)
+				return null;
+			if (availableLangs.Contains(locale))
+				return locale;
+			var regionalMatch = availableLangs.FirstOrDefault(lang =>
+				lang.StartsWith(locale + "-", StringComparison.OrdinalIgnoreCase));
+			if (!string.IsNullOrEmpty(regionalMatch))
+				return regionalMatch;
+			int idx = locale.IndexOf('-');
+			if (idx > 0)
+			{
+				var parentLocale = locale.Substring(0, idx);
+				if (availableLangs.Contains(parentLocale))
+					return parentLocale;
+			}
+			return null;
 		}
 
 		/// ------------------------------------------------------------------------------------
