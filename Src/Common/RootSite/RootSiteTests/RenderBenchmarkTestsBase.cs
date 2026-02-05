@@ -237,6 +237,21 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 				case "custom-heavy":
 					CreateCustomHeavyScenario();
 					break;
+				case "many-paragraphs":
+					CreateManyParagraphsScenario();
+					break;
+				case "footnote-heavy":
+					CreateFootnoteHeavyScenario();
+					break;
+				case "mixed-styles":
+					CreateMixedStylesScenario();
+					break;
+				case "long-prose":
+					CreateLongProseScenario();
+					break;
+				case "multi-book":
+					CreateMultiBookScenario();
+					break;
 				default:
 					CreateSimpleScenario();
 					break;
@@ -276,6 +291,67 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 			var book = CreateBook(5); // DEU
 			m_hvoRoot = book.Hvo;
 			AddRichSections(book, 5, versesPerSection: 8, chapterStart: 1);
+		}
+
+		/// <summary>
+		/// Stress: 50 sections, each with a single verse — forces massive paragraph layout overhead.
+		/// </summary>
+		private void CreateManyParagraphsScenario()
+		{
+			var book = CreateBook(6); // JOS
+			m_hvoRoot = book.Hvo;
+			AddRichSections(book, 50, versesPerSection: 1, chapterStart: 1);
+		}
+
+		/// <summary>
+		/// Stress: 8 sections each containing 20 verses plus footnotes on every other verse.
+		/// Forces footnote callers and footnote paragraph creation en masse.
+		/// </summary>
+		private void CreateFootnoteHeavyScenario()
+		{
+			var book = CreateBook(7); // JDG
+			m_hvoRoot = book.Hvo;
+			AddRichSectionsWithFootnotes(book, 8, versesPerSection: 20, chapterStart: 1);
+		}
+
+		/// <summary>
+		/// Stress: Every verse run uses a different character style combination.
+		/// Forces the style resolver to compute many distinct property sets.
+		/// </summary>
+		private void CreateMixedStylesScenario()
+		{
+			var book = CreateBook(8); // RUT
+			m_hvoRoot = book.Hvo;
+			AddMixedStyleSections(book, 6, versesPerSection: 15, chapterStart: 1);
+		}
+
+		/// <summary>
+		/// Stress: 4 sections, each with a single paragraph containing 80 verses — very long
+		/// unbroken paragraph that forces extensive line-breaking and layout computation.
+		/// </summary>
+		private void CreateLongProseScenario()
+		{
+			var book = CreateBook(9); // 1SA
+			m_hvoRoot = book.Hvo;
+			AddRichSections(book, 4, versesPerSection: 80, chapterStart: 1);
+		}
+
+		/// <summary>
+		/// Stress: Creates 3 separate books with sections each, then sets root to the
+		/// first book. Verifies the rendering engine handles large Scripture caches.
+		/// </summary>
+		private void CreateMultiBookScenario()
+		{
+			var book1 = CreateBook(10); // 2SA
+			AddRichSections(book1, 5, versesPerSection: 10, chapterStart: 1);
+
+			var book2 = CreateBook(11); // 1KI
+			AddRichSections(book2, 5, versesPerSection: 10, chapterStart: 1);
+
+			var book3 = CreateBook(12); // 2KI
+			AddRichSections(book3, 5, versesPerSection: 10, chapterStart: 1);
+
+			m_hvoRoot = book1.Hvo; // render the first; the others stress the backing store
 		}
 
 		#region Rich Data Factories
@@ -355,6 +431,179 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 					// Prose text run (cycle through fragments for variety)
 					string prose = proseFragments[(s * versesPerSection + v) % proseFragments.Length];
 					paraBldr.AppendRun(prose, StyleUtils.CharStyleTextProps(null, m_wsEng));
+				}
+
+				paraBldr.CreateParagraph(section.ContentOA);
+			}
+		}
+
+		/// <summary>
+		/// Creates sections with footnotes on every other verse, stressing the footnote
+		/// rendering path (caller markers, footnote paragraph boxes, and layout).
+		/// </summary>
+		protected void AddRichSectionsWithFootnotes(IScrBook book, int sectionCount,
+			int versesPerSection, int chapterStart)
+		{
+			var sectionFactory = Cache.ServiceLocator.GetInstance<IScrSectionFactory>();
+			var stTextFactory = Cache.ServiceLocator.GetInstance<IStTextFactory>();
+			var footnoteFactory = Cache.ServiceLocator.GetInstance<IScrFootnoteFactory>();
+			int chapter = chapterStart;
+
+			string[] proseFragments = new[]
+			{
+				"The Lord is my shepherd, I lack nothing. He makes me lie down in green pastures. ",
+				"He leads me beside quiet waters, he refreshes my soul. He guides me along right paths. ",
+				"Even though I walk through the darkest valley, I will fear no evil, for you are with me. ",
+				"Your rod and your staff, they comfort me. You prepare a table before me. ",
+				"You anoint my head with oil; my cup overflows. Surely your goodness and love will follow me. ",
+				"And I will dwell in the house of the Lord forever. Hear my cry for mercy as I call to you. ",
+			};
+
+			string[] footnoteTexts = new[]
+			{
+				"Or righteousness; Hb. tsedeq",
+				"Some manuscripts add for his name's sake",
+				"Lit. in the valley of deep darkness",
+				"Gk. adds in the presence of my enemies",
+			};
+
+			for (int s = 0; s < sectionCount; s++)
+			{
+				var section = sectionFactory.Create();
+				book.SectionsOS.Add(section);
+
+				section.HeadingOA = stTextFactory.Create();
+				var headingBldr = new StTxtParaBldr(Cache) { ParaStyleName = ScrStyleNames.SectionHead };
+				headingBldr.AppendRun($"Psalm {s + 1}: A Song of Ascents",
+					StyleUtils.CharStyleTextProps(null, m_wsEng));
+				headingBldr.CreateParagraph(section.HeadingOA);
+
+				section.ContentOA = stTextFactory.Create();
+
+				var paraBldr = new StTxtParaBldr(Cache) { ParaStyleName = ScrStyleNames.NormalParagraph };
+
+				if (s == 0 || s % 3 == 0)
+				{
+					paraBldr.AppendRun(chapter.ToString(),
+						StyleUtils.CharStyleTextProps(ScrStyleNames.ChapterNumber, m_wsEng));
+					chapter++;
+				}
+
+				for (int v = 1; v <= versesPerSection; v++)
+				{
+					paraBldr.AppendRun(v.ToString() + "\u00A0",
+						StyleUtils.CharStyleTextProps(ScrStyleNames.VerseNumber, m_wsEng));
+
+					string prose = proseFragments[(s * versesPerSection + v) % proseFragments.Length];
+					paraBldr.AppendRun(prose, StyleUtils.CharStyleTextProps(null, m_wsEng));
+
+					// Add a footnote caller on every other verse
+					if (v % 2 == 0)
+					{
+						var footnote = footnoteFactory.Create();
+						book.FootnotesOS.Add(footnote);
+						var footParaBldr = new StTxtParaBldr(Cache)
+						{
+							ParaStyleName = ScrStyleNames.NormalParagraph
+						};
+						string fnText = footnoteTexts[(s + v) % footnoteTexts.Length];
+						footParaBldr.AppendRun(fnText, StyleUtils.CharStyleTextProps(null, m_wsEng));
+						footParaBldr.CreateParagraph(footnote);
+					}
+				}
+
+				paraBldr.CreateParagraph(section.ContentOA);
+			}
+		}
+
+		/// <summary>
+		/// Creates sections where each verse uses a different combination of character
+		/// formatting (bold, italic, font-size, foreground colour). This forces the style
+		/// resolver and text-properties builder to compute many distinct property sets,
+		/// stressing the rendering property cache.
+		/// </summary>
+		protected void AddMixedStyleSections(IScrBook book, int sectionCount,
+			int versesPerSection, int chapterStart)
+		{
+			var sectionFactory = Cache.ServiceLocator.GetInstance<IScrSectionFactory>();
+			var stTextFactory = Cache.ServiceLocator.GetInstance<IStTextFactory>();
+			int chapter = chapterStart;
+
+			string[] proseFragments = new[]
+			{
+				"Blessed is the one who does not walk in step with the wicked. ",
+				"But whose delight is in the law of the Lord, and who meditates on his law day and night. ",
+				"That person is like a tree planted by streams of water, which yields its fruit in season. ",
+				"Not so the wicked! They are like chaff that the wind blows away. ",
+				"Therefore the wicked will not stand in the judgment, nor sinners in the assembly. ",
+				"For the Lord watches over the way of the righteous, but the way of the wicked leads to destruction. ",
+			};
+
+			// Colour palette for rotating foreground colour
+			int[] colours = new[]
+			{
+				(int)ColorUtil.ConvertColorToBGR(Color.FromArgb(0, 0, 0)),       // black
+				(int)ColorUtil.ConvertColorToBGR(Color.FromArgb(128, 0, 0)),     // maroon
+				(int)ColorUtil.ConvertColorToBGR(Color.FromArgb(0, 0, 128)),     // navy
+				(int)ColorUtil.ConvertColorToBGR(Color.FromArgb(0, 100, 0)),     // dark green
+				(int)ColorUtil.ConvertColorToBGR(Color.FromArgb(128, 0, 128)),   // purple
+				(int)ColorUtil.ConvertColorToBGR(Color.FromArgb(139, 69, 19)),   // saddle brown
+			};
+
+			int[] fontSizes = new[] { 9000, 10000, 11000, 12000, 14000, 16000 }; // millipoints
+
+			for (int s = 0; s < sectionCount; s++)
+			{
+				var section = sectionFactory.Create();
+				book.SectionsOS.Add(section);
+
+				section.HeadingOA = stTextFactory.Create();
+				var headingBldr = new StTxtParaBldr(Cache) { ParaStyleName = ScrStyleNames.SectionHead };
+				headingBldr.AppendRun($"Varied Styles Section {s + 1}",
+					StyleUtils.CharStyleTextProps(null, m_wsEng));
+				headingBldr.CreateParagraph(section.HeadingOA);
+
+				section.ContentOA = stTextFactory.Create();
+
+				var paraBldr = new StTxtParaBldr(Cache) { ParaStyleName = ScrStyleNames.NormalParagraph };
+
+				if (s == 0 || s % 3 == 0)
+				{
+					paraBldr.AppendRun(chapter.ToString(),
+						StyleUtils.CharStyleTextProps(ScrStyleNames.ChapterNumber, m_wsEng));
+					chapter++;
+				}
+
+				for (int v = 1; v <= versesPerSection; v++)
+				{
+					// Verse number
+					paraBldr.AppendRun(v.ToString() + "\u00A0",
+						StyleUtils.CharStyleTextProps(ScrStyleNames.VerseNumber, m_wsEng));
+
+					// Build a custom text props for this verse
+					int idx = (s * versesPerSection + v);
+					var bldr = TsStringUtils.MakePropsBldr();
+					bldr.SetIntPropValues((int)FwTextPropType.ktptWs,
+						(int)FwTextPropVar.ktpvDefault, m_wsEng);
+					bldr.SetIntPropValues((int)FwTextPropType.ktptFontSize,
+						(int)FwTextPropVar.ktpvMilliPoint, fontSizes[idx % fontSizes.Length]);
+					bldr.SetIntPropValues((int)FwTextPropType.ktptForeColor,
+						(int)FwTextPropVar.ktpvDefault, colours[idx % colours.Length]);
+
+					// Alternate bold / italic
+					if (idx % 3 == 0)
+					{
+						bldr.SetIntPropValues((int)FwTextPropType.ktptBold,
+							(int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
+					}
+					if (idx % 4 == 0)
+					{
+						bldr.SetIntPropValues((int)FwTextPropType.ktptItalic,
+							(int)FwTextPropVar.ktpvEnum, (int)FwTextToggleVal.kttvForceOn);
+					}
+
+					string prose = proseFragments[idx % proseFragments.Length];
+					paraBldr.AppendRun(prose, bldr.GetTextProps());
 				}
 
 				paraBldr.CreateParagraph(section.ContentOA);

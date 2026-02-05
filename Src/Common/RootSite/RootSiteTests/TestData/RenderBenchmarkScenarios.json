@@ -29,6 +29,36 @@
       "description": "Scripture book with varied styles and character properties",
       "tags": ["styles", "formatting"],
       "expectedSnapshotPath": "TestData/RenderSnapshots/custom-heavy.png"
+    },
+    {
+      "id": "many-paragraphs",
+      "description": "50 sections with 1 verse each — massive paragraph layout overhead",
+      "tags": ["stress", "layout-stress", "paragraph-count"],
+      "expectedSnapshotPath": "TestData/RenderSnapshots/many-paragraphs.png"
+    },
+    {
+      "id": "footnote-heavy",
+      "description": "8 sections with 20 verses each, footnotes on every other verse",
+      "tags": ["stress", "footnotes", "heavy-footnotes"],
+      "expectedSnapshotPath": "TestData/RenderSnapshots/footnote-heavy.png"
+    },
+    {
+      "id": "mixed-styles",
+      "description": "6 sections with 15 verses, each verse has unique font-size/color/bold/italic",
+      "tags": ["stress", "styles", "property-cache"],
+      "expectedSnapshotPath": "TestData/RenderSnapshots/mixed-styles.png"
+    },
+    {
+      "id": "long-prose",
+      "description": "4 sections with 80 verses each — very long paragraphs for line-break stress",
+      "tags": ["stress", "layout-stress", "line-breaking"],
+      "expectedSnapshotPath": "TestData/RenderSnapshots/long-prose.png"
+    },
+    {
+      "id": "multi-book",
+      "description": "3 separate Scripture books with 5 sections each — large cache stress",
+      "tags": ["stress", "multi-book", "cache-stress"],
+      "expectedSnapshotPath": "TestData/RenderSnapshots/multi-book.png"
     }
   ]
 }

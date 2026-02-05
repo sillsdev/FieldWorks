@@ -199,3 +199,6 @@ FLExInstaller/wix6/cabcache/*
 .bv/
 .env
 .beads/*
+
+# Verify snapshot testing - received files are transient
+*.received.png

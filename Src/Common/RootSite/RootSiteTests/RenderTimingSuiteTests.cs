@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using SIL.FieldWorks.Common.RootSites.RenderBenchmark;
+using SIL.LCModel.Infrastructure;
 
 namespace SIL.FieldWorks.Common.RootSites
 {
@@ -63,8 +64,13 @@ namespace SIL.FieldWorks.Common.RootSites
 
             TestContext.WriteLine($"Running Scenario: {scenarioId} - {scenarioConfig.Description}");
 
-			// Setup Data (creates the Mocked Cache/Book)
-			SetupScenarioData(scenarioId);
+			// Setup Data (creates the Scripture book within a UndoableUnitOfWork)
+			using (var uow = new UndoableUnitOfWorkHelper(Cache.ActionHandlerAccessor,
+				"Setup Scenario", "Undo Setup Scenario"))
+			{
+				SetupScenarioData(scenarioId);
+				uow.RollBack = false;
+			}
 
 			// Configure Scenario
             var scenario = new RenderScenario
