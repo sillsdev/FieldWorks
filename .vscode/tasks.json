@@ -129,7 +129,7 @@
     {
       "label": "Worktree: Create/Open from branch",
       "type": "shell",
-      "command": "./scripts/Worktree-CreateFromBranch.ps1 -BranchName \"${input:worktreeBranch}\"",
+      "command": "./scripts/Worktree-CreateFromBranch.ps1 -BranchName \"${input:worktreeBranch}\" -InitBeads:$true",
       "detail": "Create/open a worktree under ../<repo>.worktrees/<branch> and open it in a new VS Code window (colorized)",
       "options": {
         "shell": {
@@ -145,7 +145,7 @@
     {
       "label": "Worktree: Create/Open from branch (picker in terminal)",
       "type": "shell",
-      "command": "./scripts/Worktree-CreateFromBranch.ps1",
+      "command": "./scripts/Worktree-CreateFromBranch.ps1 -InitBeads:$true",
       "detail": "Create/open a worktree by selecting a branch in the terminal picker (local first, then origin/*)",
       "options": {
         "shell": {
@@ -161,7 +161,7 @@
     {
       "label": "Worktree: Create/Open from branch (dry run)",
       "type": "shell",
-      "command": "./scripts/Worktree-CreateFromBranch.ps1 -BranchName \"${input:worktreeBranch}\" -DryRun",
+      "command": "./scripts/Worktree-CreateFromBranch.ps1 -BranchName \"${input:worktreeBranch}\" -DryRun -InitBeads:$false",
       "detail": "Dry run: show where the worktree would be created/opened (no git changes, no VS Code launch)",
       "options": {
         "shell": {

@@ -6,6 +6,7 @@
     - If invoked from within an existing worktree, path names are based on the main repo root.
     - If the branch already has a worktree (or the folder already exists as a worktree), it opens that.
     - If a VS Code window already appears to be open for that worktree, it attempts to bring it to the foreground.
+	- Initializes a per-worktree beads database unless disabled.
 
     Colorization and workspace generation is delegated to scripts/Setup-WorktreeColor.ps1.
 #>
@@ -14,6 +15,9 @@
 param(
 	[Parameter(Mandatory = $false)]
 	[string]$BranchName = "",
+
+	# Ensure beads is initialized per worktree (isolated .beads).
+	[bool]$InitBeads = $true,
 
 	# Print the actions that would be taken, but do not create/move/open anything.
 	[switch]$DryRun
@@ -24,6 +28,7 @@ $ErrorActionPreference = "Stop"
 
 $scriptRepoRoot = (Get-Item $PSScriptRoot).Parent.FullName
 $colorizeScript = Join-Path $scriptRepoRoot "scripts\Setup-WorktreeColor.ps1"
+$beadsInitScript = Join-Path $scriptRepoRoot "scripts\Setup-WorktreeBeads.ps1"
 
 function ConvertTo-CanonicalBranchName([string]$name) {
 	if ([string]::IsNullOrWhiteSpace($name)) {
@@ -400,6 +405,13 @@ else {
 
 if (-not $DryRun -and -not (Test-Path $targetWorktreePath -PathType Container)) {
 	throw "Target worktree path does not exist: $targetWorktreePath"
+}
+
+if (-not $DryRun -and $InitBeads) {
+	if (-not (Test-Path $beadsInitScript -PathType Leaf)) {
+		throw "Missing beads init script: $beadsInitScript"
+	}
+	& $beadsInitScript -WorktreePath $targetWorktreePath -SetupExclude
 }
 
 # If VS Code is already open for this worktree, try to focus it.

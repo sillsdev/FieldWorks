@@ -197,3 +197,4 @@ FLExInstaller/wix6/cabcache/*
 .bv/
 .env
 .beads/*
+.beads/metadata.json
