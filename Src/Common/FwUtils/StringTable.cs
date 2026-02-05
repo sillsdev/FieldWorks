@@ -166,7 +166,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			foreach (XmlNode customGroupNode in customGroupNodeList)
 			{
 				string customGroupId = XmlUtils.GetMandatoryAttributeValue(customGroupNode, "id");
-				XmlNode srcMatchingGroupNode = parentNode.SelectSingleNode("group[@id=" + GetSafeXPathLiteral(customGroupId) + "]");
+				XmlNode srcMatchingGroupNode = FindChildById(parentNode, "group", customGroupId);
 				if (srcMatchingGroupNode == null)
 				{
 					// Import the entire custom node.
@@ -179,7 +179,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					{
 						string customId = XmlUtils.GetMandatoryAttributeValue(customStringNode, "id");
 						string customTxt = GetTxtAtributeValue(customStringNode);
-						XmlNode srcMatchingStringNode = srcMatchingGroupNode.SelectSingleNode("string[@id=" + GetSafeXPathLiteral(customId) + "]");
+						XmlNode srcMatchingStringNode = FindChildById(srcMatchingGroupNode, "string", customId);
 						if (srcMatchingStringNode == null)
 						{
 							// Import the new string into the extant group.
@@ -201,6 +201,27 @@ namespace SIL.FieldWorks.Common.FwUtils
 					MergeCustomGroups(srcMatchingGroupNode, customGroupNode.SelectNodes("group"));
 				}
 			}
+		}
+
+		/// <summary>
+		/// Find a child element by tag name and id attribute value without XPath,
+		/// avoiding XPathException when IDs contain apostrophes (LT-22392).
+		/// </summary>
+		private static XmlNode FindChildById(XmlNode parentNode, string elementName, string id)
+		{
+			if (parentNode == null || string.IsNullOrEmpty(elementName) || string.IsNullOrEmpty(id))
+				return null;
+
+			foreach (XmlNode node in parentNode.SelectNodes(elementName))
+			{
+				if (node.Attributes == null)
+					continue;
+				var attr = node.Attributes["id"];
+				if (attr != null && string.Equals(attr.Value, id, StringComparison.Ordinal))
+					return node;
+			}
+
+			return null;
 		}
 
 		private string GetTxtAtributeValue(XmlNode node)

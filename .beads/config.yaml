@@ -2,3 +2,5 @@
 # issue_prefix: bd
 # default_priority: 2
 # default_type: task
+
+sync-branch: ""

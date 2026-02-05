@@ -107,29 +107,31 @@ namespace SIL.FieldWorks.Common.FwUtils
 		}
 
 		/// <summary>
-		/// LT-22392: Verify that merging strings with quotes in IDs does not crash.
+		/// LT-22392: Merging French localization strings whose IDs contain
+		/// apostrophes (e.g. "Forme d'affixe") must not throw an XPathException.
+		/// The original code naively wraps IDs in single quotes for XPath,
+		/// so an apostrophe in the ID breaks the XPath predicate.
 		/// </summary>
 		[Test]
-		public void MergeCustomTable_WithQuotesInId_DoesNotCrash()
+		public void MergeCustomTable_WithApostropheInId_DoesNotCrash()
 		{
-			XmlDocument doc = new XmlDocument();
-			string xml = @"
-<strings>
-  <group id='g1'>
-    <string id=""Forme d'affixe"" txt='Single Quote Value' />
-    <string id='Quote""inside' txt='Double Quote Value' />
-  </group>
-</strings>";
-			doc.LoadXml(xml);
+			// First merge: add a group so it exists in the in-memory document.
+			XmlDocument setup = new XmlDocument();
+			setup.LoadXml("<strings><group id='TestGroup'>"
+				+ "<string id='existing' txt='ok'/>"
+				+ "</group></strings>");
+			m_table.MergeCustomTable(setup);
 
-			// Action: Merge - this failed with XPathException before the fix
+			// Second merge: merge a string whose ID has an apostrophe
+			// into the EXISTING group. This forces the code into the
+			// string-level SelectSingleNode path that produces
+			//   string[@id='Forme d'affixe']  -> XPathException
+			XmlDocument doc = new XmlDocument();
+			doc.LoadXml("<strings><group id='TestGroup'>"
+				+ "<string id=\"Forme d'affixe\" txt='Affix Form (fr)' />"
+				+ "</group></strings>");
+
 			Assert.DoesNotThrow(() => m_table.MergeCustomTable(doc));
-			
-			// Verify values were merged - note that GetString takes the ID
-			// Ideally we could verify it, but StringTable structure for tests is file-based.
-			// m_table in Setup is loaded from files. MergeCustomTable modifies the in-memory/DOM state.
-			// Let's check using XPath if GetString fails
-			// Assert.That(m_table.GetString("Forme d'affixe"), Is.EqualTo("Some Value")); 
 		}
 
 		/// <summary />

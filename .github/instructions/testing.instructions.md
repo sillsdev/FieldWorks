@@ -31,6 +31,9 @@ Use `.\test.ps1` for all managed (C#) tests.
 .\test.ps1 -NoBuild -TestProject "FwUtilsTests"
 ```
 
+## Testing Notes
+- If `test.ps1` fails during `RestorePackages` with exit code -1, retry the same command after it finishes restoring packages or run `./build.ps1` first, then re-run `./test.ps1 -TestProject "Src/Common/FwUtils/FwUtilsTests"`.
+
 ## Running Tests (Native C++)
 
 Use `.\test.ps1 -Native` for native (C++) tests. This wraps `scripts/Agent/Invoke-CppTest.ps1`.
