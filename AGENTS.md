@@ -12,6 +12,10 @@ This document explains how AI agents (coding and chat modes) should operate insi
 - Use `scripts/Agent/*.ps1` wrappers whenever a command would normally need pipes/filters (`Git-Search`, `Read-FileContent`, etc.).
 - Keep localization in `.resx` and respect `crowdin.json`; do not introduce new ad-hoc localization flows.
 
+## External Dependencies (LibLcm)
+
+FieldWorks is built upon the `liblcm` (Language & Culture Model) repository, which provides the main data model and FDO (FieldWorks Data Objects) layers used by FieldWorks. The liblcm library is the core FieldWorks model for language and culture data and includes interfaces like `IScrFootnoteFactory` that FieldWorks consumes. If you cannot find a core data model definition within this workspace, ask for access to the `liblcm` repository to reference the source.
+
 ## Agent Catalog
 
 | Agent | Chatmode file | Primary scope | Key refs |

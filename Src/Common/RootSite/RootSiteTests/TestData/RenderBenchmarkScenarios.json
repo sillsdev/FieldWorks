@@ -2,33 +2,33 @@
   "scenarios": [
     {
       "id": "simple",
-      "description": "Minimal lexical entry with one sense, one definition",
+      "description": "Minimal scripture book with one section and one footnote",
       "tags": ["baseline", "minimal"],
       "expectedSnapshotPath": "TestData/RenderSnapshots/simple.png"
     },
     {
       "id": "medium",
-      "description": "Entry with 3 senses, multiple definitions, example sentences",
-      "tags": ["typical", "multi-sense"],
+      "description": "Scripture book with 5 sections and multiple footnotes",
+      "tags": ["typical", "multi-section"],
       "expectedSnapshotPath": "TestData/RenderSnapshots/medium.png"
     },
     {
       "id": "complex",
-      "description": "Entry with 10+ senses, subsenses, extensive cross-references",
-      "tags": ["stress", "multi-sense", "cross-refs"],
+      "description": "Large scripture book with 20 sections, heavy footnotes",
+      "tags": ["stress", "multi-section", "heavy-footnotes"],
       "expectedSnapshotPath": "TestData/RenderSnapshots/complex.png"
     },
     {
       "id": "deep-nested",
-      "description": "Entry with deeply nested subsenses (5+ levels)",
-      "tags": ["nested", "hierarchy", "stress"],
+      "description": "Scripture book with nested levels (if supported) or many small paras",
+      "tags": ["nested", "layout-stress"],
       "expectedSnapshotPath": "TestData/RenderSnapshots/deep-nested.png"
     },
     {
-      "id": "custom-field-heavy",
-      "description": "Entry with many custom fields of various types",
-      "tags": ["custom-fields", "extensibility"],
-      "expectedSnapshotPath": "TestData/RenderSnapshots/custom-field-heavy.png"
+      "id": "custom-heavy",
+      "description": "Scripture book with varied styles and character properties",
+      "tags": ["styles", "formatting"],
+      "expectedSnapshotPath": "TestData/RenderSnapshots/custom-heavy.png"
     }
   ]
 }

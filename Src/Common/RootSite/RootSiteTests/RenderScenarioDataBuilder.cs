@@ -21,9 +21,25 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 		/// <summary>
 		/// Gets the test data directory path.
 		/// </summary>
-		public static string TestDataDirectory => Path.Combine(
-			AppDomain.CurrentDomain.BaseDirectory,
-			"..", "..", "..", "Src", "Common", "RootSite", "RootSiteTests", "TestData");
+		public static string TestDataDirectory
+		{
+			get
+			{
+				// Handle different output path depths (e.g. Output/Debug vs. bin/Debug/net472)
+				var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+
+				// Try 2 levels up (Output/Debug -> Root)
+				var path2 = Path.Combine(baseDir, "..", "..", "Src", "Common", "RootSite", "RootSiteTests", "TestData");
+				if (Directory.Exists(path2)) return Path.GetFullPath(path2);
+
+				// Try 3 levels up (bin/Debug/net -> Root)
+				var path3 = Path.Combine(baseDir, "..", "..", "..", "Src", "Common", "RootSite", "RootSiteTests", "TestData");
+				if (Directory.Exists(path3)) return Path.GetFullPath(path3);
+
+				// Fallback to 2 levels and let it fail with full path for debugging
+				return Path.GetFullPath(path2);
+			}
+		}
 
 		/// <summary>
 		/// Gets the default scenarios file path.

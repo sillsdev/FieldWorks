@@ -18,8 +18,8 @@
 ### Full Five-Scenario Suite
 
 ```powershell
-# Run the complete timing suite
-.\test.ps1 -TestFilter "FullyQualifiedName~RenderTimingSuiteTests.TimingSuite_FiveScenarios"
+# Run the complete timing suite (bootstraps snapshots if missing)
+.\test.ps1 -TestProject "Src/Common/RootSite/RootSiteTests/RootSiteTests.csproj" -TestFilter "FullyQualifiedName~RenderTimingSuiteTests"
 ```
 
 Results will be written to:
@@ -29,23 +29,18 @@ Results will be written to:
 ### Individual Scenario Tests
 
 ```powershell
-# Run baseline tests only
-.\test.ps1 -TestFilter "Category=RenderBenchmark"
-
-# Run a specific scenario
-.\test.ps1 -TestFilter "FullyQualifiedName~TimingSuite_SingleScenario&simple"
+# Run baseline tests (Unit Tests)
+.\test.ps1 -TestProject "Src/Common/RootSite/RootSiteTests/RootSiteTests.csproj" -TestFilter "FullyQualifiedName~RenderBaselineTests"
 ```
 
 ## Generating Baseline Snapshots
 
-Baseline snapshots must be generated before pixel-perfect validation will pass:
+Snapshots are automatically generated (bootstrapped) if they do not exist. To regenerate a snapshot, delete the file in `Src/Common/RootSite/RootSiteTests/TestData/RenderSnapshots/` and run the suite again.
 
 ```powershell
-# Generate all baselines (explicit test - run manually)
-.\test.ps1 -TestFilter "FullyQualifiedName~GenerateAllBaselineSnapshots"
-
-# Generate simple scenario baseline only
-.\test.ps1 -TestFilter "FullyQualifiedName~GenerateBaselineSnapshot_Simple"
+# Example: Regenerate 'simple' snapshot
+rm Src/Common/RootSite/RootSiteTests/TestData/RenderSnapshots/simple.png
+.\test.ps1 -TestFilter "FullyQualifiedName~RenderTimingSuiteTests"
 ```
 
 ## Creating Reproducible Test Data

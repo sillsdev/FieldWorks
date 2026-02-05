@@ -45,6 +45,7 @@
     <ProjectReference Include="../../../XCore/xCoreInterfaces/xCoreInterfaces.csproj" />
     <ProjectReference Include="../../FwUtils/FwUtils.csproj" />
     <ProjectReference Include="../../FwUtils/FwUtilsTests/FwUtilsTests.csproj" />
+    <ProjectReference Include="../../../FwCoreDlgs/FwCoreDlgs.csproj" />
     <ProjectReference Include="../../SimpleRootSite/SimpleRootSite.csproj" />
     <ProjectReference Include="../../ViewsInterfaces/ViewsInterfaces.csproj" />
     <ProjectReference Include="../RootSite.csproj" />

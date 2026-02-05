@@ -73,7 +73,12 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 
 			m_view = CreateView(width, height);
 			m_view.MakeRoot(m_scenario.RootObjectHvo, m_scenario.RootFlid, m_scenario.FragmentId);
-			m_view.CallLayout();
+			PerformOffscreenLayout(width, height);
+
+			if (m_view.RootBox != null && (m_view.RootBox.Width <= 0 || m_view.RootBox.Height <= 0))
+			{
+				throw new InvalidOperationException($"[RenderBenchmarkHarness] RootBox dimensions are zero/negative after layout ({m_view.RootBox.Width}x{m_view.RootBox.Height}). View Size: {m_view.Width}x{m_view.Height}. Capture will be empty.");
+			}
 
 			stopwatch.Stop();
 
@@ -103,7 +108,7 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 
 			// Force a full relayout to simulate warm render
 			m_view.RootBox?.Reconstruct();
-			m_view.CallLayout();
+			PerformOffscreenLayout(m_view.Width, m_view.Height);
 
 			stopwatch.Stop();
 
@@ -116,6 +121,40 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 			};
 
 			return LastTiming;
+		}
+
+		/// <summary>
+		/// Performs layout using an offscreen graphics context matching the target bitmap format.
+		/// This prevents dependency on the Control's window handle or screen DC.
+		/// </summary>
+		private void PerformOffscreenLayout(int width, int height)
+		{
+			if (m_view?.RootBox == null) return;
+
+			// Create a temp bitmap to get a strictly compatible HDC
+			using (var bmp = new Bitmap(width, height, PixelFormat.Format32bppArgb))
+			using (var g = Graphics.FromImage(bmp))
+			{
+				IntPtr hdc = g.GetHdc();
+				try
+				{
+					// Use VwGraphicsWin32 directly to drive the layout
+					IVwGraphics vwGraphics = VwGraphicsWin32Class.Create();
+					((IVwGraphicsWin32)vwGraphics).Initialize(hdc);
+					try
+					{
+						m_view.RootBox.Layout(vwGraphics, width);
+					}
+					finally
+					{
+						vwGraphics.ReleaseDC();
+					}
+				}
+				finally
+				{
+					g.ReleaseHdc(hdc);
+				}
+			}
 		}
 
 		/// <summary>
@@ -211,13 +250,40 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 
 		private DummyBasicView CreateView(int width, int height)
 		{
-			var view = new DummyBasicView(m_scenario.RootObjectHvo, m_scenario.RootFlid)
+			// Host in a Form to ensure valid layout context (handle, client rect, etc.)
+			var form = new Form
+			{
+				FormBorderStyle = FormBorderStyle.None,
+				ShowInTaskbar = false,
+				ClientSize = new Size(width, height)
+			};
+
+			// Use the production-grade StVc via GenericScriptureView for realistic rendering
+			var view = new GenericScriptureView(m_scenario.RootObjectHvo, m_scenario.RootFlid)
 			{
 				Cache = m_cache,
-				Visible = false,
-				Width = width,
-				Height = height
+				Visible = true,
+				Dock = DockStyle.None,
+				Location = Point.Empty,
+				Size = new Size(width, height)
 			};
+			view.RootFragmentId = m_scenario.FragmentId;
+
+			// Ensure styles are available (StVc relies on stylesheet)
+			var ss = new SIL.LCModel.DomainServices.LcmStyleSheet();
+			ss.Init(m_cache, m_cache.LangProject.Hvo, SIL.LCModel.LangProjectTags.kflidStyles);
+			view.StyleSheet = ss;
+
+			form.Controls.Add(view);
+			form.CreateControl(); // Creates form handle and children handles
+
+			// Force handle creation if not yet created (critical for DoLayout)
+			if (!view.IsHandleCreated)
+			{
+				var h = view.Handle;
+			}
+			if (!view.IsHandleCreated)
+				throw new InvalidOperationException("View handle failed to create.");
 
 			return view;
 		}
@@ -226,8 +292,10 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 		{
 			if (m_view != null)
 			{
+				var form = m_view.Parent as Form;
 				m_view.Dispose();
 				m_view = null;
+				form?.Dispose();
 			}
 		}
 

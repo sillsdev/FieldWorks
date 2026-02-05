@@ -43,6 +43,8 @@
 ### Tests & Implementation for User Story 1
 
 - [x] T009 [US1] Implement baseline test in Src/Common/RootSite/RootSiteTests/RenderBaselineTests.cs (uses RenderBenchmarkHarness + RenderBitmapComparer)
+- [ ] T009a [US1] Pivot: Adopt native capture via VwDrawRootBuffered in RenderBenchmarkHarness.cs (fix ClearType/backgrounds)
+- [ ] T009b [US1] Pivot: Replace DummyBasicView with production StVc in RenderBenchmarkTestsBase (enable rich text/styles)
 - [x] T010 [US1] Add baseline snapshot for simple scenario at Src/Common/RootSite/RootSiteTests/TestData/RenderSnapshots/simple.png
 - [x] T011 [US1] Wire environment hash validation into RenderBenchmarkHarness.cs (fail if environment mismatch)
 - [x] T011a [US1] Document DrawToBitmap limitations and skip list in Src/Common/RootSite/RootSiteTests/RenderBenchmarkHarness.cs (ActiveX/RichTextBox handling)
@@ -64,8 +66,8 @@
 - [x] T014 [US2] Add report writer in Src/Common/RootSite/RootSiteTests/RenderBenchmarkReportWriter.cs (summary + top contributors)
 - [x] T015 [US2] Add baseline snapshots for remaining scenarios in Src/Common/RootSite/RootSiteTests/TestData/RenderSnapshots/{medium,complex,deep-nested,custom-field-heavy}.png
 - [x] T016 [US2] Emit results to Output/RenderBenchmarks/results.json and summary to Output/RenderBenchmarks/summary.md from RenderTimingSuiteTests.cs
-- [x] T016a [US2] Implement run comparison in RenderBenchmarkReportWriter.cs using RenderBenchmarkComparer.cs (highlight regressions)
-- [x] T016b [US2] Add reproducible test data guidance in specs/001-render-speedup/quickstart.md (scenario creation steps)
+- [ ] T016a [US2] Implement run comparison in RenderBenchmarkReportWriter.cs using RenderBenchmarkComparer.cs (highlight regressions)
+- [ ] T016b [US2] Add reproducible test data guidance in specs/001-render-speedup/quickstart.md (scenario creation steps)
 
 **Checkpoint**: Five-scenario timing suite produces cold/warm metrics and summary output ✅
 

@@ -1,32 +1,8 @@
 {
   "simple": {
-    "ColdRenderMs": 36.464600000000004,
-    "WarmRenderMs": 1.9483000000000001,
-    "RecordedAt": "2026-01-24T01:36:04.2416806Z",
-    "EnvironmentHash": "qt49GCxzuegy4tQzZtUa/i/gR/9Zsm9CXaRSTyaYyzs="
-  },
-  "medium": {
-    "ColdRenderMs": 2.3571,
-    "WarmRenderMs": 0.09820000000000001,
-    "RecordedAt": "2026-01-24T01:36:04.492467Z",
-    "EnvironmentHash": "qt49GCxzuegy4tQzZtUa/i/gR/9Zsm9CXaRSTyaYyzs="
-  },
-  "complex": {
-    "ColdRenderMs": 2.5064,
-    "WarmRenderMs": 0.09820000000000001,
-    "RecordedAt": "2026-01-24T01:36:04.5025282Z",
-    "EnvironmentHash": "qt49GCxzuegy4tQzZtUa/i/gR/9Zsm9CXaRSTyaYyzs="
-  },
-  "deep-nested": {
-    "ColdRenderMs": 2.1619,
-    "WarmRenderMs": 0.10210000000000001,
-    "RecordedAt": "2026-01-24T01:36:04.5130314Z",
-    "EnvironmentHash": "qt49GCxzuegy4tQzZtUa/i/gR/9Zsm9CXaRSTyaYyzs="
-  },
-  "custom-field-heavy": {
-    "ColdRenderMs": 2.4721,
-    "WarmRenderMs": 0.097200000000000009,
-    "RecordedAt": "2026-01-24T01:36:04.5235421Z",
+    "ColdRenderMs": 283.2391,
+    "WarmRenderMs": 195.5329,
+    "RecordedAt": "2026-02-05T20:12:18.7763183Z",
     "EnvironmentHash": "qt49GCxzuegy4tQzZtUa/i/gR/9Zsm9CXaRSTyaYyzs="
   }
 }

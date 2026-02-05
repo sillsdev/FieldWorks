@@ -172,6 +172,19 @@ namespace SIL.FieldWorks.Common.RootSites
 						m_wsDefault);
 					vwenv.AddString(tss);
 					break;
+				case 20: // Full book (Sections + Footnotes)
+					// Main body (sections)
+					vwenv.AddObjVecItems(ScrBookTags.kflidSections, this, 21);
+					// Footnotes
+					vwenv.OpenDiv();
+					vwenv.AddObjVecItems(ScrBookTags.kflidFootnotes, this, 8);
+					vwenv.CloseDiv();
+					break;
+				case 21: // Function used to display a Section
+					// Just display the content (paragraphs) for now, skipping heading to match test data structure
+					// (The test data setup AddParaToMockedSectionContent puts text in Content, not Heading)
+					vwenv.AddObjProp(ScrSectionTags.kflidContent, this, 3);
+					break;
 				case ScrBookTags.kflidSections:
 					vwenv.AddObjVecItems(ScrBookTags.kflidSections, this,
 						ScrSectionTags.kflidContent);
