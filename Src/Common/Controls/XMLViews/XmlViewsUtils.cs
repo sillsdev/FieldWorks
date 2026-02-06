@@ -460,7 +460,7 @@ namespace SIL.FieldWorks.Common.Controls
 			case "layout":
 				// These are grouping nodes. In general this terminates things. However, if there is only
 				// one thing embedded apart from comments and properties, we can proceed.
-				XmlNode mainChild = FindMainChild(node, hvo, cache);
+				XmlNode mainChild = FindMainChild(node, hvo, cache, sda);
 				if (mainChild == null)
 				{
 					// no single non-trivial child, keep our current object
@@ -483,7 +483,7 @@ namespace SIL.FieldWorks.Common.Controls
 		/// Returns null if there is more than one child.
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
-		static private XmlNode FindMainChild(XmlNode node, int hvo, LcmCache cache)
+		static private XmlNode FindMainChild(XmlNode node, int hvo, LcmCache cache, ISilDataAccess sda)
 		{
 			XmlNode mainChild = null;
 			int count = 0;
@@ -493,21 +493,21 @@ namespace SIL.FieldWorks.Common.Controls
 					continue;
 				if (cache != null && child.Name == "if")
 				{
-					if (!XmlVc.ConditionPasses(child, hvo, cache))
+					if (!XmlVc.ConditionPasses(child, hvo, cache, sda, null))
 					{
 						// Act as if the node is not present.
 						continue;
 					}
-					mainChild = FindMainChild(child, hvo, cache);
+					mainChild = FindMainChild(child, hvo, cache, sda);
 				}
 				else if (cache != null && child.Name == "ifnot")
 				{
-					if (XmlVc.ConditionPasses(child, hvo, cache))
+					if (XmlVc.ConditionPasses(child, hvo, cache, sda, null))
 					{
 						// Act as if the node is not present.
 						continue;
 					}
-					mainChild = FindMainChild(child, hvo, cache);
+					mainChild = FindMainChild(child, hvo, cache, sda);
 				}
 				else
 				{
@@ -1127,7 +1127,7 @@ namespace SIL.FieldWorks.Common.Controls
 			case "concpara":
 			case "innerpile":
 			{
-				XmlNode mainChild = FindMainChild(node,hvo, cache);
+				XmlNode mainChild = FindMainChild(node,hvo, cache, sda);
 				if (mainChild == null)
 					return new NodeDisplayCommand(node); // can't usefully go further.
 				if (collectOuterStructParts != null)
@@ -1155,7 +1155,7 @@ namespace SIL.FieldWorks.Common.Controls
 				// Also, expecially in the case of 'layout', they may result from unification, and be meaningless
 				// except for their children; in any case, the children are all we want to process.
 				// This is the main reason we return a command, not just a node: this case has to return the subclass.
-				XmlNode mainChild = FindMainChild(node, hvo, cache);
+				XmlNode mainChild = FindMainChild(node, hvo, cache, sda);
 				if (mainChild == null)
 					return new NodeChildrenDisplayCommand(node); // can't usefully go further.
 				return GetDisplayCommandForColumn1(bvi, mainChild, cache, mdc, sda, layouts, depth, out hvo, collectOuterStructParts);
@@ -1168,7 +1168,7 @@ namespace SIL.FieldWorks.Common.Controls
 				// Also, expecially in the case of 'layout', they may result from unification, and be meaningless
 				// except for their children; in any case, the children are all we want to process.
 				// This is the main reason we return a command, not just a node: this case has to return the subclass.
-				XmlNode mainChild = FindMainChild(node, hvo, cache);
+				XmlNode mainChild = FindMainChild(node, hvo, cache, sda);
 				if (mainChild == null)
 					return new NodeChildrenDisplayCommand(node); // can't usefully go further.
 				return GetDisplayCommandForColumn1(bvi, mainChild, cache, mdc, sda, layouts, depth, out hvo, collectOuterStructParts);
