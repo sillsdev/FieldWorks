@@ -6,11 +6,12 @@ using SIL.LCModel;
 using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Core.Scripture;
 using SIL.LCModel.Core.Text;
-using SIL.LCModel.Infrastructure;
 using SIL.LCModel.Core.WritingSystems;
+using SIL.LCModel.Infrastructure;
 using SIL.FieldWorks.Common.RootSites.RootSiteTests;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Utils;
+using SIL.WritingSystems;
 
 namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 {
@@ -23,6 +24,8 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 	{
 		protected ILgWritingSystemFactory m_wsf;
 		protected int m_wsEng;
+		protected int m_wsAr;  // Arabic (RTL)
+		protected int m_wsFr;  // French (second analysis WS)
 		protected int m_hvoRoot;
 		protected int m_flidContainingTexts;
 		protected int m_frag = 100; // Default to Book View (100)
@@ -39,6 +42,21 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 			m_wsf = Cache.WritingSystemFactory;
 			m_wsEng = m_wsf.GetWsFromStr("en");
 			if (m_wsEng == 0) throw new Exception("English WS not found");
+
+			// Create Arabic (RTL) writing system for bidirectional layout tests
+			CoreWritingSystemDefinition arabic;
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("ar", out arabic);
+			arabic.RightToLeftScript = true;
+			Cache.ServiceLocator.WritingSystems.VernacularWritingSystems.Add(arabic);
+			Cache.ServiceLocator.WritingSystems.CurrentVernacularWritingSystems.Add(arabic);
+			m_wsAr = arabic.Handle;
+
+			// Create French writing system for multi-WS tests
+			CoreWritingSystemDefinition french;
+			Cache.ServiceLocator.WritingSystemManager.GetOrSet("fr", out french);
+			Cache.ServiceLocator.WritingSystems.AnalysisWritingSystems.Add(french);
+			Cache.ServiceLocator.WritingSystems.CurrentAnalysisWritingSystems.Add(french);
+			m_wsFr = french.Handle;
 
 			// Ensure Scripture exists in the real project
 			if (Cache.LangProject.TranslatedScriptureOA == null)
@@ -252,6 +270,12 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 				case "multi-book":
 					CreateMultiBookScenario();
 					break;
+				case "rtl-script":
+					CreateRtlScriptScenario();
+					break;
+				case "multi-ws":
+					CreateMultiWsScenario();
+					break;
 				default:
 					CreateSimpleScenario();
 					break;
@@ -352,6 +376,30 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 			AddRichSections(book3, 5, versesPerSection: 10, chapterStart: 1);
 
 			m_hvoRoot = book1.Hvo; // render the first; the others stress the backing store
+		}
+
+		/// <summary>
+		/// Stress: Creates sections where all prose text is in Arabic (RTL), exercising
+		/// bidirectional layout, Uniscribe/Graphite RTL shaping, and right-aligned paragraphs.
+		/// Section headings remain English to force bidi mixing within the view.
+		/// </summary>
+		private void CreateRtlScriptScenario()
+		{
+			var book = CreateBook(13); // 1CH
+			m_hvoRoot = book.Hvo;
+			AddRtlSections(book, 4, versesPerSection: 10, chapterStart: 1);
+		}
+
+		/// <summary>
+		/// Stress: Creates sections that alternate between English, Arabic, and French runs
+		/// within the same paragraph, forcing the rendering engine to handle font fallback,
+		/// writing-system switching, and mixed bidi text.
+		/// </summary>
+		private void CreateMultiWsScenario()
+		{
+			var book = CreateBook(14); // 2CH
+			m_hvoRoot = book.Hvo;
+			AddMultiWsSections(book, 5, versesPerSection: 8, chapterStart: 1);
 		}
 
 		#region Rich Data Factories
@@ -604,6 +652,140 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 
 					string prose = proseFragments[idx % proseFragments.Length];
 					paraBldr.AppendRun(prose, bldr.GetTextProps());
+				}
+
+				paraBldr.CreateParagraph(section.ContentOA);
+			}
+		}
+
+		/// <summary>
+		/// Creates sections where all body text is Arabic (RTL). Section headings are
+		/// English to create bidi mixing from the view's perspective. Chapter and verse
+		/// numbers remain LTR (standard Scripture convention).
+		/// </summary>
+		protected void AddRtlSections(IScrBook book, int sectionCount,
+			int versesPerSection, int chapterStart)
+		{
+			var sectionFactory = Cache.ServiceLocator.GetInstance<IScrSectionFactory>();
+			var stTextFactory = Cache.ServiceLocator.GetInstance<IStTextFactory>();
+			int chapter = chapterStart;
+
+			// Arabic prose fragments (Bismillah-style phrases and common Quranic vocabulary)
+			string[] arabicProse = new[]
+			{
+				"\u0628\u0650\u0633\u0652\u0645\u0650 \u0627\u0644\u0644\u0651\u0647\u0650 \u0627\u0644\u0631\u0651\u064E\u062D\u0652\u0645\u0646\u0650 \u0627\u0644\u0631\u0651\u064E\u062D\u064A\u0645\u0650. ",   // Bismillah
+				"\u0627\u0644\u0652\u062D\u064E\u0645\u0652\u062F\u064F \u0644\u0650\u0644\u0651\u0647\u0650 \u0631\u064E\u0628\u0651\u0650 \u0627\u0644\u0652\u0639\u064E\u0627\u0644\u064E\u0645\u064A\u0646\u064E. ",   // Al-hamdu lillahi
+				"\u0645\u064E\u0627\u0644\u0650\u0643\u0650 \u064A\u064E\u0648\u0652\u0645\u0650 \u0627\u0644\u062F\u0651\u064A\u0646\u0650. ",   // Maliki yawm al-din
+				"\u0625\u0650\u064A\u0651\u064E\u0627\u0643\u064E \u0646\u064E\u0639\u0652\u0628\u064F\u062F\u064F \u0648\u064E\u0625\u0650\u064A\u0651\u064E\u0627\u0643\u064E \u0646\u064E\u0633\u0652\u062A\u064E\u0639\u064A\u0646\u064F. ",   // Iyyaka na'budu
+				"\u0627\u0647\u0652\u062F\u0650\u0646\u064E\u0627 \u0627\u0644\u0635\u0651\u0650\u0631\u064E\u0627\u0637\u064E \u0627\u0644\u0652\u0645\u064F\u0633\u0652\u062A\u064E\u0642\u064A\u0645\u064E. ",   // Ihdina al-sirat
+				"\u0635\u0650\u0631\u064E\u0627\u0637\u064E \u0627\u0644\u0651\u064E\u0630\u064A\u0646\u064E \u0623\u064E\u0646\u0652\u0639\u064E\u0645\u0652\u062A\u064E \u0639\u064E\u0644\u064E\u064A\u0652\u0647\u0650\u0645\u0652. ",   // Sirat alladhina
+			};
+
+			for (int s = 0; s < sectionCount; s++)
+			{
+				var section = sectionFactory.Create();
+				book.SectionsOS.Add(section);
+
+				// English heading (LTR in an otherwise RTL view)
+				section.HeadingOA = stTextFactory.Create();
+				var headingBldr = new StTxtParaBldr(Cache) { ParaStyleName = ScrStyleNames.SectionHead };
+				headingBldr.AppendRun($"Section {s + 1}: Arabic Scripture",
+					StyleUtils.CharStyleTextProps(null, m_wsEng));
+				headingBldr.CreateParagraph(section.HeadingOA);
+
+				section.ContentOA = stTextFactory.Create();
+				var paraBldr = new StTxtParaBldr(Cache) { ParaStyleName = ScrStyleNames.NormalParagraph };
+
+				if (s == 0 || s % 3 == 0)
+				{
+					paraBldr.AppendRun(chapter.ToString(),
+						StyleUtils.CharStyleTextProps(ScrStyleNames.ChapterNumber, m_wsEng));
+					chapter++;
+				}
+
+				for (int v = 1; v <= versesPerSection; v++)
+				{
+					paraBldr.AppendRun(v.ToString() + "\u00A0",
+						StyleUtils.CharStyleTextProps(ScrStyleNames.VerseNumber, m_wsEng));
+
+					// Arabic prose (RTL)
+					string prose = arabicProse[(s * versesPerSection + v) % arabicProse.Length];
+					paraBldr.AppendRun(prose, StyleUtils.CharStyleTextProps(null, m_wsAr));
+				}
+
+				paraBldr.CreateParagraph(section.ContentOA);
+			}
+		}
+
+		/// <summary>
+		/// Creates sections where each verse contains runs in three different writing systems
+		/// (English, Arabic, French) within the same paragraph. This forces the rendering
+		/// engine to handle font fallback, writing-system switching, mixed bidi text, and
+		/// line-breaking across WS boundaries.
+		/// </summary>
+		protected void AddMultiWsSections(IScrBook book, int sectionCount,
+			int versesPerSection, int chapterStart)
+		{
+			var sectionFactory = Cache.ServiceLocator.GetInstance<IScrSectionFactory>();
+			var stTextFactory = Cache.ServiceLocator.GetInstance<IStTextFactory>();
+			int chapter = chapterStart;
+
+			string[] englishProse = new[]
+			{
+				"In the beginning was the Word. ",
+				"The light shines in the darkness. ",
+				"Grace and truth came through Him. ",
+			};
+
+			string[] frenchProse = new[]
+			{
+				"Au commencement \u00E9tait la Parole. ",
+				"La lumi\u00E8re brille dans les t\u00E9n\u00E8bres. ",
+				"La gr\u00E2ce et la v\u00E9rit\u00E9 sont venues par Lui. ",
+			};
+
+			string[] arabicProse = new[]
+			{
+				"\u0641\u064A \u0627\u0644\u0628\u062F\u0621 \u0643\u0627\u0646 \u0627\u0644\u0643\u0644\u0645\u0629. ",  // In the beginning was the Word
+				"\u0627\u0644\u0646\u0648\u0631 \u064A\u0636\u064A\u0621 \u0641\u064A \u0627\u0644\u0638\u0644\u0627\u0645. ",  // The light shines in the darkness
+				"\u0627\u0644\u0646\u0639\u0645\u0629 \u0648\u0627\u0644\u062D\u0642 \u0628\u0650\u0647. ",  // Grace and truth through Him
+			};
+
+			for (int s = 0; s < sectionCount; s++)
+			{
+				var section = sectionFactory.Create();
+				book.SectionsOS.Add(section);
+
+				section.HeadingOA = stTextFactory.Create();
+				var headingBldr = new StTxtParaBldr(Cache) { ParaStyleName = ScrStyleNames.SectionHead };
+				headingBldr.AppendRun($"Multi-WS Section {s + 1}",
+					StyleUtils.CharStyleTextProps(null, m_wsEng));
+				headingBldr.CreateParagraph(section.HeadingOA);
+
+				section.ContentOA = stTextFactory.Create();
+				var paraBldr = new StTxtParaBldr(Cache) { ParaStyleName = ScrStyleNames.NormalParagraph };
+
+				if (s == 0 || s % 3 == 0)
+				{
+					paraBldr.AppendRun(chapter.ToString(),
+						StyleUtils.CharStyleTextProps(ScrStyleNames.ChapterNumber, m_wsEng));
+					chapter++;
+				}
+
+				for (int v = 1; v <= versesPerSection; v++)
+				{
+					paraBldr.AppendRun(v.ToString() + "\u00A0",
+						StyleUtils.CharStyleTextProps(ScrStyleNames.VerseNumber, m_wsEng));
+
+					int idx = (s * versesPerSection + v);
+
+					// Rotate: English → Arabic → French within each verse
+					paraBldr.AppendRun(englishProse[idx % englishProse.Length],
+						StyleUtils.CharStyleTextProps(null, m_wsEng));
+					paraBldr.AppendRun(arabicProse[idx % arabicProse.Length],
+						StyleUtils.CharStyleTextProps(null, m_wsAr));
+					paraBldr.AppendRun(frenchProse[idx % frenchProse.Length],
+						StyleUtils.CharStyleTextProps(null, m_wsFr));
 				}
 
 				paraBldr.CreateParagraph(section.ContentOA);

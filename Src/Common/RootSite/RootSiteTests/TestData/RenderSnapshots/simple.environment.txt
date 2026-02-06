@@ -1,4 +1,0 @@
-EnvironmentHash: qt49GCxzuegy4tQzZtUa/i/gR/9Zsm9CXaRSTyaYyzs=
-DPI: 96x96
-Theme: Light
-Generated: 2026-02-05 20:12:18Z

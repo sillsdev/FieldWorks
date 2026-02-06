@@ -59,6 +59,18 @@
       "description": "3 separate Scripture books with 5 sections each — large cache stress",
       "tags": ["stress", "multi-book", "cache-stress"],
       "expectedSnapshotPath": "TestData/RenderSnapshots/multi-book.png"
+    },
+    {
+      "id": "rtl-script",
+      "description": "4 sections with Arabic RTL text — bidirectional layout stress",
+      "tags": ["stress", "bidi", "rtl", "arabic"],
+      "expectedSnapshotPath": "TestData/RenderSnapshots/rtl-script.png"
+    },
+    {
+      "id": "multi-ws",
+      "description": "5 sections with English/Arabic/French runs per verse — WS switching stress",
+      "tags": ["stress", "multi-ws", "bidi", "font-fallback"],
+      "expectedSnapshotPath": "TestData/RenderSnapshots/multi-ws.png"
     }
   ]
 }

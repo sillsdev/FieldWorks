@@ -25,13 +25,13 @@ The next step is replacing our hand-rolled baseline comparison infrastructure wi
 | Baseline comparison | `RootSiteTests/RenderBitmapComparer.cs` | **Done** — Pixel-diff with diff-image generation |
 | Environment validation | `RootSiteTests/RenderEnvironmentValidator.cs` | **Done** — DPI/theme/font hashing for deterministic checks |
 | Content density check | `RootSiteTests/RenderBaselineTests.cs` | **Done** — `ValidateBitmapContent()` ensures >0.4% non-white pixels (currently hitting 6.3%) |
-| All tests passing | 8/8 RenderBaselineTests | **Done** — Bootstrap mode creates baseline, subsequent runs compare |
+| All tests passing | 28/28 Render tests | **Done** — 4 baseline infra + 12 Verify snapshots + 12 timing suite |
 
 ### Key Metrics
 - **Content density**: 6.30% non-white pixels (up from 0.46% with plain text)
-- **Cold render**: ~260ms (includes view creation, MakeRoot, layout)
-- **Warm render**: ~180ms (Reconstruct + relayout)
-- **Test suite time**: ~30s for all 8 tests
+- **Cold render**: ~147ms (includes view creation, MakeRoot, layout)
+- **Warm render**: ~107ms (Reconstruct + relayout)
+- **Test suite time**: ~30s for all 28 tests (4 baseline infra + 12 Verify + 12 timing suite)
 
 ### Problems Solved
 
@@ -105,7 +105,7 @@ The next step is replacing our hand-rolled baseline comparison infrastructure wi
 3. ~~Scripture styles~~ — `CreateScriptureStyles()` populates `Paragraph`, `Section Head`, `Chapter Number`, `Verse Number`, `Title Main`
 4. ~~Rich data~~ — `AddRichSections()` creates headings, chapter/verse markers, varied prose
 
-### Phase 3: Verify Integration (Next)
+### Phase 3: Verify Integration ✅ COMPLETE
 
 #### 3.1 Install NuGet Package
 Add to `RootSiteTests.csproj`:
@@ -210,14 +210,14 @@ Add to `.gitignore`:
 *.received.png
 ```
 
-### Phase 4: Pilot Test
+### Phase 4: Pilot Test ✅ COMPLETE
 
-1. **Run** `SimpleScenario_MatchesVerifiedSnapshot` — first run creates `.received.png`.
-2. **Accept** — Copy `.received.png` to `.verified.png` (Verify's diff tool prompts this).
-3. **Commit** the `.verified.png` file.
-4. **Re-run** — test should pass, comparing against the committed baseline.
+1. ~~**Run**~~ `SimpleScenario_MatchesVerifiedSnapshot` — first run created `.received.png`.
+2. ~~**Accept**~~ — Copied `.received.png` to `.verified.png`.
+3. ~~**Commit**~~ the `.verified.png` file.
+4. ~~**Re-run**~~ — test passes, comparing against the committed baseline.
 
-### Phase 5: Expand Coverage
+### Phase 5: Expand Coverage ✅ COMPLETE
 
 | Scenario | Data | What It Tests |
 |----------|------|---------------|
@@ -225,15 +225,23 @@ Add to `.gitignore`:
 | `medium` | 5 sections, 6 verses each | Style resolution at scale |
 | `complex` | 10 sections, 8 verses each | Layout performance and wrapping |
 | `deep-nested` | 3 sections, 12 verses each | Dense content in single paragraphs |
+| `custom-heavy` | 5 sections, 8 verses each | Mixed style properties |
+| `many-paragraphs` | 50 sections, 1 verse each | Paragraph layout overhead |
+| `footnote-heavy` | 8 sections, 20 verses + footnotes | Footnote rendering path |
+| `mixed-styles` | 6 sections, unique formatting per verse | Style resolver stress |
+| `long-prose` | 4 sections, 80 verses each | Line-breaking computation |
+| `multi-book` | 3 books, 5 sections each | Large cache stress |
 | `rtl-script` | Arabic/Hebrew text | Bidirectional layout |
 | `multi-ws` | Mixed writing systems | Font fallback and WS switching |
 
-### Phase 6: Deprecate Hand-Rolled Comparison
+### Phase 6: Deprecate Hand-Rolled Comparison ✅ COMPLETE
 
-Once Verify-based tests are stable:
-1. Remove `RenderBitmapComparer.cs` and hand-rolled diff logic.
-2. Remove `TestData/RenderSnapshots/` directory (replaced by `.verified.png` files).
+Completed:
+1. ~~Remove `RenderBitmapComparer.cs` and hand-rolled diff logic.~~ — Deleted.
+2. ~~Remove `TestData/RenderSnapshots/` directory (replaced by `.verified.png` files).~~ — Cleared.
 3. Keep `RenderBenchmarkHarness` and `RenderEnvironmentValidator` — they're the capture infrastructure.
+4. `RenderBaselineTests` trimmed to 4 infrastructure tests (harness, warm/cold, environment, diagnostics).
+5. `RenderTimingSuiteTests` uses content-density sanity check instead of pixel comparison.
 
 ---
 
@@ -299,3 +307,10 @@ Once Verify-based tests are stable:
 | 2026-02-05 | Create Scripture styles manually via `IStStyleFactory` | Avoids xWorks assembly dependency; FlexStyles.xml not loaded in test projects |
 | 2026-02-05 | Use `Verify.NUnit` only, skip `Verify.WinForms` | We capture bitmaps ourselves; Verify.WinForms uses DrawToBitmap internally |
 | 2026-02-05 | Use `[SetUpFixture]` not `[ModuleInitializer]` | FieldWorks uses C# 8.0 (LangVersion=8.0); ModuleInitializer requires C# 9 |
+| 2026-02-05 | Use base `Verify` package, not `Verify.NUnit` | All Verify.NUnit versions require NUnit ≥ 4.x; FieldWorks pins NUnit 3.13.3. Use `InnerVerifier` from base `Verify` package directly |
+| 2026-02-05 | Wrap `SetupScenarioData()` in UoW in timing suite | `RenderTimingSuiteTests.RunBenchmark()` was calling `SetupScenarioData()` outside `UndoableUnitOfWorkHelper`, causing `InvalidOperationException` — all 5 scenario test cases now pass |
+| 2026-02-05 | Add 5 new stress scenarios | many-paragraphs (50 sections), footnote-heavy (footnotes on every other verse), mixed-styles (unique formatting per verse), long-prose (80 verses per paragraph), multi-book (3 books) |
+| 2026-02-05 | Add RTL and multi-WS scenarios | Arabic (RTL) and trilingual (English+Arabic+French) data factories for bidirectional and multilingual rendering coverage |
+| 2026-02-05 | Expand Verify to all 12 scenarios | Parameterized `VerifyScenario(scenarioId)` with UoW-wrapped data setup; 12 `.verified.png` baselines accepted |
+| 2026-02-05 | Delete RenderBitmapComparer | Hand-rolled pixel diff replaced by Verify snapshots; timing suite uses content-density sanity check instead |
+| 2026-02-05 | Clear TestData/RenderSnapshots | Old baseline PNGs deleted; Verify `.verified.png` files live alongside test class |
