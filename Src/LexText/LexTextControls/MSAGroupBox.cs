@@ -744,7 +744,7 @@ namespace SIL.FieldWorks.LexText.Controls
 			{
 				// Not called by InsertEntryDlg; need to figure out the morphtype(s)
 				var obj = m_propertyTable.GetValue<ICmObject>("ActiveClerkSelectedObject");
-				if (obj != null && obj is ILexEntry lex)
+				if (obj is ILexEntry lex)
 				{
 					return DomainObjectServices.GetSlots(m_cache, lex, m_selectedMainPOS);
 				}
