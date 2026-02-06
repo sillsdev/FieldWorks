@@ -54,7 +54,7 @@
 				<Shortcut Id="ApplicationStartSubmenuShortcut"
 					Name="$(var.ApplicationName)"
 					Description="$(var.ApplicationName) $(var.MajorVersion)"
-					Target="[APPFOLDER]Flex.exe"
+					Target="[APPFOLDER]FieldWorks.exe"
 					WorkingDirectory="APPFOLDER"
 					Icon="Application_Icon.ico"/>
 				<Shortcut Id="HelpsShortcut"

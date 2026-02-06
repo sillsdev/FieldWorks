@@ -71,6 +71,24 @@
       "description": "5 sections with English/Arabic/French runs per verse — WS switching stress",
       "tags": ["stress", "multi-ws", "bidi", "font-fallback"],
       "expectedSnapshotPath": "TestData/RenderSnapshots/multi-ws.png"
+    },
+    {
+      "id": "lex-shallow",
+      "description": "Lex entry with 3 senses, each having 3 subsenses (depth 2, breadth 3 = 12 senses)",
+      "tags": ["lex-entry", "nested-senses", "baseline"],
+      "viewType": "LexEntry"
+    },
+    {
+      "id": "lex-deep",
+      "description": "Lex entry with senses nested 4 levels deep, 2-wide (depth 4, breadth 2 = 30 senses)",
+      "tags": ["lex-entry", "nested-senses", "exponential-cost"],
+      "viewType": "LexEntry"
+    },
+    {
+      "id": "lex-extreme",
+      "description": "Lex entry with senses nested 6 levels deep, 2-wide (depth 6, breadth 2 = 126 senses)",
+      "tags": ["lex-entry", "nested-senses", "exponential-cost", "stress"],
+      "viewType": "LexEntry"
     }
   ]
 }

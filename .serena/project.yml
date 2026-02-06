@@ -96,8 +96,30 @@ initial_prompt: |
   - Build command: .\build.ps1 or msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64 /m
   - Check .github/instructions/*.instructions.md for coding guidelines (managed, native, testing, etc.)
   - Per-folder AGENTS.md files describe component contracts and dependencies
-
 # project_name: Intentionally left out so that the folder name will be used and worktrees will not conflict
 excluded_tools: []
+
+# list of tools to include that would otherwise be disabled (particularly optional tools that are disabled by default)
 included_optional_tools: []
+
+# list of mode names to that are always to be included in the set of active modes
+# The full set of modes to be activated is base_modes + default_modes.
+# If the setting is undefined, the base_modes from the global configuration (serena_config.yml) apply.
+# Otherwise, this setting overrides the global configuration.
+# Set this to [] to disable base modes for this project.
+# Set this to a list of mode names to always include the respective modes for this project.
+base_modes:
+
+# list of mode names that are to be activated by default.
+# The full set of modes to be activated is base_modes + default_modes.
+# If the setting is undefined, the default_modes from the global configuration (serena_config.yml) apply.
+# Otherwise, this overrides the setting from the global configuration (serena_config.yml).
+# This setting can, in turn, be overridden by CLI parameters (--mode).
+default_modes:
+
+# fixed set of tools to use as the base tool set (if non-empty), replacing Serena's default set of tools.
+# This cannot be combined with non-empty excluded_tools or included_optional_tools.
+fixed_tools: []
+# the name by which the project can be referenced within Serena
+project_name: ui-speed-up
 

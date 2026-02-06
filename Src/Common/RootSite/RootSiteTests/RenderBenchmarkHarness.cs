@@ -258,18 +258,20 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 				ClientSize = new Size(width, height)
 			};
 
-			// Use the production-grade StVc via GenericScriptureView for realistic rendering
-			var view = new GenericScriptureView(m_scenario.RootObjectHvo, m_scenario.RootFlid)
-			{
-				Cache = m_cache,
-				Visible = true,
-				Dock = DockStyle.None,
-				Location = Point.Empty,
-				Size = new Size(width, height)
-			};
-			view.RootFragmentId = m_scenario.FragmentId;
+			DummyBasicView view;
 
-			// Ensure styles are available (StVc relies on stylesheet)
+			switch (m_scenario.ViewType)
+			{
+				case RenderViewType.LexEntry:
+					view = CreateLexEntryView(width, height);
+					break;
+
+				default: // Scripture
+					view = CreateScriptureView(width, height);
+					break;
+			}
+
+			// Ensure styles are available (both StVc and LexEntryVc rely on stylesheet)
 			var ss = new SIL.LCModel.DomainServices.LcmStyleSheet();
 			ss.Init(m_cache, m_cache.LangProject.Hvo, SIL.LCModel.LangProjectTags.kflidStyles);
 			view.StyleSheet = ss;
@@ -285,6 +287,35 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 			if (!view.IsHandleCreated)
 				throw new InvalidOperationException("View handle failed to create.");
 
+			return view;
+		}
+
+		private DummyBasicView CreateScriptureView(int width, int height)
+		{
+			var view = new GenericScriptureView(m_scenario.RootObjectHvo, m_scenario.RootFlid)
+			{
+				Cache = m_cache,
+				Visible = true,
+				Dock = DockStyle.None,
+				Location = Point.Empty,
+				Size = new Size(width, height)
+			};
+			view.RootFragmentId = m_scenario.FragmentId;
+			return view;
+		}
+
+		private DummyBasicView CreateLexEntryView(int width, int height)
+		{
+			var view = new GenericLexEntryView(m_scenario.RootObjectHvo, m_scenario.RootFlid)
+			{
+				Cache = m_cache,
+				Visible = true,
+				Dock = DockStyle.None,
+				Location = Point.Empty,
+				Size = new Size(width, height),
+				SimulateIfDataDoubleRender = m_scenario.SimulateIfDataDoubleRender
+			};
+			view.RootFragmentId = LexEntryVc.kFragEntry;
 			return view;
 		}
 
@@ -347,6 +378,18 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 	}
 
 	/// <summary>
+	/// Specifies which view constructor pipeline a scenario exercises.
+	/// </summary>
+	public enum RenderViewType
+	{
+		/// <summary>Scripture view (StVc / GenericScriptureVc).</summary>
+		Scripture,
+
+		/// <summary>Lexical entry view (LexEntryVc with nested senses).</summary>
+		LexEntry
+	}
+
+	/// <summary>
 	/// Represents a render scenario configuration.
 	/// </summary>
 	public class RenderScenario
@@ -371,5 +414,17 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 
 		/// <summary>Gets or sets category tags for filtering.</summary>
 		public string[] Tags { get; set; } = Array.Empty<string>();
+
+		/// <summary>
+		/// Gets or sets the view type (Scripture or LexEntry).
+		/// Determines which view constructor pipeline is used for rendering.
+		/// </summary>
+		public RenderViewType ViewType { get; set; } = RenderViewType.Scripture;
+
+		/// <summary>
+		/// Gets or sets whether to simulate the XmlVc ifdata double-render pattern.
+		/// Only applies to <see cref="RenderViewType.LexEntry"/> scenarios.
+		/// </summary>
+		public bool SimulateIfDataDoubleRender { get; set; }
 	}
 }

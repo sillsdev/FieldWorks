@@ -80,7 +80,9 @@ namespace SIL.FieldWorks.Common.RootSites
                 Tags = scenarioConfig.Tags,
                 RootObjectHvo = m_hvoRoot,
                 RootFlid = m_flidContainingTexts,
-                FragmentId = m_frag
+                FragmentId = m_frag,
+                ViewType = scenarioConfig.ViewType,
+                SimulateIfDataDoubleRender = scenarioConfig.SimulateIfDataDoubleRender
             };
 
 			using (var harness = new RenderBenchmarkHarness(Cache, scenario, m_environmentValidator))

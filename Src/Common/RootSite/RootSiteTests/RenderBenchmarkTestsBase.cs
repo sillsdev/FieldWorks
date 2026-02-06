@@ -276,6 +276,15 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 				case "multi-ws":
 					CreateMultiWsScenario();
 					break;
+				case "lex-shallow":
+					CreateLexEntryScenario(depth: 2, breadth: 3);
+					break;
+				case "lex-deep":
+					CreateLexEntryScenario(depth: 4, breadth: 2);
+					break;
+				case "lex-extreme":
+					CreateLexEntryScenario(depth: 6, breadth: 2);
+					break;
 				default:
 					CreateSimpleScenario();
 					break;
@@ -789,6 +798,91 @@ namespace SIL.FieldWorks.Common.RootSites.RenderBenchmark
 				}
 
 				paraBldr.CreateParagraph(section.ContentOA);
+			}
+		}
+
+		#endregion
+
+		#region Lex Entry Scenario Data
+
+		/// <summary>
+		/// Creates a lexical entry scenario with nested senses at the specified depth and breadth.
+		/// This is the primary scenario for tracking the exponential rendering overhead in
+		/// XmlVc's <c>visibility="ifdata"</c> double-render pattern.
+		/// </summary>
+		/// <param name="depth">Number of nesting levels (2 = senses with one level of subsenses).</param>
+		/// <param name="breadth">Number of child senses per parent at each level.</param>
+		/// <remarks>
+		/// <para>Total sense count = breadth + breadth^2 + ... + breadth^depth = breadth*(breadth^depth - 1)/(breadth - 1).</para>
+		/// <para>With the ifdata double-render, each level doubles the work, so rendering time
+		/// grows as O(breadth^depth * 2^depth) = O((2*breadth)^depth). Depth 6 with breadth 2
+		/// produces 126 senses and ~4096x the per-sense overhead of depth 1.</para>
+		/// </remarks>
+		private void CreateLexEntryScenario(int depth, int breadth)
+		{
+			// Ensure LexDb exists
+			if (Cache.LangProject.LexDbOA == null)
+			{
+				Cache.ServiceLocator.GetInstance<ILexDbFactory>().Create();
+			}
+
+			var entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
+			var senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
+			var morphFactory = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>();
+
+			// Create the entry with a headword
+			var entry = entryFactory.Create();
+			var morph = morphFactory.Create();
+			entry.LexemeFormOA = morph;
+			morph.Form.set_String(m_wsEng, TsStringUtils.MakeString("benchmark-entry", m_wsEng));
+
+			// Recursively create the sense tree
+			CreateNestedSenses(entry, senseFactory, depth, breadth, "", 1);
+
+			// Set root to entry HVO with LexEntry.Senses as the containing flid
+			m_hvoRoot = entry.Hvo;
+			m_flidContainingTexts = LexEntryTags.kflidSenses;
+			m_frag = LexEntryVc.kFragEntry;
+		}
+
+		/// <summary>
+		/// Recursively creates a tree of senses/subsenses.
+		/// </summary>
+		/// <param name="owner">The owning entry or sense.</param>
+		/// <param name="senseFactory">Factory for creating new senses.</param>
+		/// <param name="remainingDepth">Remaining nesting levels to create.</param>
+		/// <param name="breadth">Number of children at each level.</param>
+		/// <param name="prefix">Hierarchical number prefix (e.g., "1.2.").</param>
+		/// <param name="startNumber">Starting sense number at this level.</param>
+		private void CreateNestedSenses(ICmObject owner, ILexSenseFactory senseFactory,
+			int remainingDepth, int breadth, string prefix, int startNumber)
+		{
+			if (remainingDepth <= 0)
+				return;
+
+			for (int i = 0; i < breadth; i++)
+			{
+				var sense = senseFactory.Create();
+				string senseNum = prefix + (startNumber + i);
+
+				// Add sense to entry or parent sense
+				var entry = owner as ILexEntry;
+				if (entry != null)
+					entry.SensesOS.Add(sense);
+				else
+					((ILexSense)owner).SensesOS.Add(sense);
+
+				// Set gloss and definition
+				string gloss = $"gloss {senseNum}";
+				string definition = $"This is the definition for sense {senseNum}, which demonstrates " +
+					$"nested rendering at depth {remainingDepth} with {breadth}-way branching.";
+
+				sense.Gloss.set_String(m_wsEng, TsStringUtils.MakeString(gloss, m_wsEng));
+				sense.Definition.set_String(m_wsEng, TsStringUtils.MakeString(definition, m_wsEng));
+
+				// Recurse for subsenses
+				CreateNestedSenses(sense, senseFactory, remainingDepth - 1, breadth,
+					senseNum + ".", 1);
 			}
 		}
 

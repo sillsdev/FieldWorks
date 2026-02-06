@@ -25,13 +25,13 @@ The next step is replacing our hand-rolled baseline comparison infrastructure wi
 | Baseline comparison | `RootSiteTests/RenderBitmapComparer.cs` | **Done** — Pixel-diff with diff-image generation |
 | Environment validation | `RootSiteTests/RenderEnvironmentValidator.cs` | **Done** — DPI/theme/font hashing for deterministic checks |
 | Content density check | `RootSiteTests/RenderBaselineTests.cs` | **Done** — `ValidateBitmapContent()` ensures >0.4% non-white pixels (currently hitting 6.3%) |
-| All tests passing | 28/28 Render tests | **Done** — 4 baseline infra + 12 Verify snapshots + 12 timing suite |
+| All tests passing | 34/34 Render tests | **Done** — 4 baseline infra + 15 Verify snapshots + 15 timing suite |
 
 ### Key Metrics
 - **Content density**: 6.30% non-white pixels (up from 0.46% with plain text)
 - **Cold render**: ~147ms (includes view creation, MakeRoot, layout)
 - **Warm render**: ~107ms (Reconstruct + relayout)
-- **Test suite time**: ~30s for all 28 tests (4 baseline infra + 12 Verify + 12 timing suite)
+- **Test suite time**: ~40s for all 34 tests (4 baseline infra + 15 Verify + 15 timing suite)
 
 ### Problems Solved
 
@@ -243,44 +243,180 @@ Completed:
 4. `RenderBaselineTests` trimmed to 4 infrastructure tests (harness, warm/cold, environment, diagnostics).
 5. `RenderTimingSuiteTests` uses content-density sanity check instead of pixel comparison.
 
+### Phase 7: Lexical Entry Benchmarks ✅ COMPLETE
+
+**Motivation**: The primary speed-up target is deeply nested lexical entry rendering. In production, `XmlVc.ProcessPartRef` with `visibility="ifdata"` causes every part to render its entire subtree **twice** — once via `TestCollectorEnv` to check if data exists, then again into the real `IVwEnv`. With recursive `LexSense → Senses → LexSense` layouts and ~15 ifdata parts per sense, this creates O(N·2^d) work. The benchmarks track rendering time at varying nesting depths to quantify speedup from optimizations.
+
+Completed:
+1. Created `GenericLexEntryView.cs` with custom `LexEntryVc : VwBaseVc` — exercises the same recursive nested-field pattern as `XmlVc` with configurable `SimulateIfDataDoubleRender` flag for modeling the ifdata overhead.
+2. Extended `RenderBenchmarkHarness` with `RenderViewType` enum (`Scripture`, `LexEntry`) and split view creation into `CreateScriptureView()` / `CreateLexEntryView()`.
+3. Added 3 lex entry scenarios to `RenderBenchmarkTestsBase` — `lex-shallow` (depth 2, breadth 3 = 12 senses), `lex-deep` (depth 4, breadth 2 = 30 senses), `lex-extreme` (depth 6, breadth 2 = 126 senses).
+4. Added `CreateLexEntryScenario()` and `CreateNestedSenses()` — creates realistic lex entry data with headword, glosses, definitions, and recursively nested subsenses using `ILexEntryFactory`/`ILexSenseFactory`/`IMoStemAllomorphFactory`.
+5. Extended `RenderBenchmarkScenarios.json` with 3 new lex scenarios (with `viewType: "LexEntry"`).
+6. Updated both `RenderTimingSuiteTests` and `RenderVerifyTests` to propagate `ViewType` and `SimulateIfDataDoubleRender` from config.
+7. Accepted 3 new `.verified.png` baselines for lex entry scenarios.
+
+**Lex Entry Rendering Metrics**:
+| Scenario | Senses | Depth | Non-white density |
+|----------|--------|-------|-------------------|
+| `lex-shallow` | 12 | 2 | 5.83% |
+| `lex-deep` | 30 | 4 | 6.78% |
+| `lex-extreme` | 126 | 6 | 6.94% |
+
+### Phase 8: Shared Render Verification Library _(PLANNED)_
+
+**Vision**: Extract the render capture/comparison engine into a shared class library (`RenderVerification`) that any test project can consume. This library does not contain tests itself — it provides the infrastructure to create views, render them to bitmaps, and compare against established baselines. The long-term goal is for significant parts of the FieldWorks view architecture to have unit/integration test verification through this library.
+
+**Location**: `Src/Common/RenderVerification/RenderVerification.csproj` (class library, not test project)
+
+**What moves from RootSiteTests → RenderVerification**:
+- `RenderBenchmarkHarness` — Core bitmap capture via `VwDrawRootBuffered`
+- `RenderEnvironmentValidator` — DPI/theme/font determinism checks
+- `RenderDiagnosticsToggle` — Trace switch management
+- `RenderBenchmarkReportWriter` — Timing report generation
+- `GenericScriptureView` + `GenericScriptureVc` — Scripture rendering path
+- `GenericLexEntryView` + `LexEntryVc` — Views-only lex entry rendering path
+- `RenderScenario`, `RenderTimingResult`, `RenderViewType` — Shared model classes
+- `RenderScenarioDataBuilder` — JSON scenario loading
+- Verify `InnerVerifier` integration wrapper
+
+**What's new in RenderVerification**:
+- `DataTreeRenderHarness` — Creates a `DataTree` with production layout inventories, populates it via `ShowObject()`, captures full-view bitmaps including all WinForms chrome
+- `CompositeViewCapture` — Multi-pass bitmap capture:
+  1. `DrawToBitmap` on the `DataTree` control to capture WinForms chrome (labels, grey backgrounds, splitters, expand/collapse icons, section headers)
+  2. Iterate `ViewSlice` children, render each `RootBox` via `VwDrawRootBuffered` into the correct region
+  3. Composite the Views-rendered text over the WinForms chrome bitmap
+- `RenderViewType.DataTree` enum value — New pipeline for full DataTree/Slice rendering
+- Layout inventory helpers — Load production `.fwlayout` and `*Parts.xml` from `DistFiles/Language Explorer/Configuration/Parts/`
+
+**Dependencies** (RenderVerification.csproj references):
+- `DetailControls.csproj` (brings DataTree, Slice, SliceFactory, ViewSlice, SummarySlice, etc.)
+- `RootSite.csproj` / `SimpleRootSite.csproj` (base view rendering)
+- `ViewsInterfaces.csproj` (IVwRootBox, IVwDrawRootBuffered)
+- `xCore.csproj` + `xCoreInterfaces.csproj` (Mediator, PropertyTable — required by DataTree)
+- `XMLViews.csproj` (XmlVc, LayoutCache, Inventory — required by DataTree)
+- `FwUtils.csproj` (FwDirectoryFinder for locating DistFiles)
+- Verify (31.11.0) NuGet package
+- SIL.LCModel packages
+
+**Consumer pattern** (how test projects use it):
+```csharp
+// In any test project:
+using SIL.FieldWorks.Common.RenderVerification;
+
+// Views-only capture (existing):
+using (var harness = new RenderBenchmarkHarness(cache, scenario))
+{
+    harness.ExecuteColdRender();
+    var bitmap = harness.CaptureViewBitmap();
+}
+
+// Full DataTree capture (new):
+using (var harness = new DataTreeRenderHarness(cache, entry, "Normal"))
+{
+    harness.PopulateSlices();
+    var bitmap = harness.CaptureCompositeBitmap(); // WinForms chrome + Views content
+    // bitmap includes grey labels, icons, expand/collapse, AND rendered text
+}
+```
+
+Steps:
+1. Create `Src/Common/RenderVerification/RenderVerification.csproj` with dependencies
+2. Move existing harness classes from `RootSiteTests` → `RenderVerification`
+3. Update `RootSiteTests.csproj` to reference `RenderVerification` instead of containing the infrastructure directly
+4. Implement `DataTreeRenderHarness` with composite bitmap capture
+5. Implement `CompositeViewCapture` (DrawToBitmap + VwDrawRootBuffered overlay)
+6. Add layout inventory loading from `DistFiles/` production XML
+7. Verify all existing tests still pass after extraction
+
+### Phase 9: DataTree Full-View Verification Tests _(PLANNED)_
+
+**Motivation**: The full lexical entry edit view (as seen in FLEx) includes WinForms UI chrome that is critical to verify: grey field labels ("Lexeme Form", "Citation Form"), writing system indicators ("Frn", "FrIPA"), expand/collapse tree icons, section headers ("Sense 1 — to do - v"), separator lines, indentation of nested senses, "Variants"/"Allomorphs"/"Grammatical Info. Details" sections. These elements are rendered by the `DataTree`/`Slice` system and are part of the rendering pipeline that must be pixel-perfect and fully exercised.
+
+**Location**: New test class(es) in `DetailControlsTests` (already references `DetailControls.csproj`, `xCore`, etc.) OR a new dedicated test project that references `RenderVerification`.
+
+**Test scenarios**:
+| Scenario ID | Description | What it exercises |
+|-------------|-------------|-------------------|
+| `datatree-lex-simple` | Lex entry with 3 senses, default layout | Basic DataTree population + slice chrome |
+| `datatree-lex-deep` | 4-level nested senses, all expanded | Recursive slice indentation + tree lines |
+| `datatree-lex-extreme` | 6-level nesting, 126 senses | Scrollable DataTree stress + slice count |
+| `datatree-lex-collapsed` | All sense sections collapsed | SummarySlice rendering + expand icons |
+| `datatree-lex-expanded` | All sections expanded including Variants, Allomorphs | Full slice set, all chrome visible |
+| `datatree-lex-multiws` | Entry with Frn + FrIPA + Eng writing systems | WS indicator labels, MultiStringSlice layout |
+
+**What's captured per scenario**:
+- Full composite bitmap (WinForms chrome + Views text content)
+- `.verified.png` baseline via Verify for pixel-perfect regression
+- Timing: DataTree population (CreateSlices), layout, composite capture
+- Slice count and type distribution (how many MultiStringSlice, ViewSlice, SummarySlice, etc.)
+
+**What the bitmaps should show** (matching the FLEx screenshot):
+- Blue/grey header bar with "Entry" label _(if contained in DataTree)_
+- Summary line with formatted headword, grammar, sense numbers
+- "Lexeme Form" / "Citation Form" grey labels with WS indicators
+- Sense summary lines ("Sense 1 — to do - v") with expand/collapse buttons
+- Indented subsense sections
+- "Variants" / "Allomorphs" / "Grammatical Info. Details" / "Publication Settings" headers
+- Grey backgrounds, separator lines, tree indentation lines
+
+Steps:
+1. Add `Verify` (31.11.0) NuGet package to `DetailControlsTests.csproj`
+2. Create `DataTreeRenderTests.cs` — Verify snapshot tests for each DataTree scenario
+3. Create `DataTreeTimingTests.cs` — Timing benchmarks measuring DataTree population + rendering
+4. Create shared data factory for lex entries with controlled structure (headword, senses, glosses, variants, allomorphs)
+5. Load production layout inventories from `DistFiles/` for realistic slice generation
+6. Accept initial `.verified.png` baselines
+7. Validate all scenarios produce non-trivial bitmaps (content density check)
+
 ---
 
 ## Architecture Diagram
 
 ```
-┌─────────────────────────────────────────────────────┐
-│                    Test Layer                        │
-│                                                     │
-│  RenderVerifyTests ──→ Verifier.Verify(bitmap)      │
-│        ↓                      ↓                     │
-│  RenderBenchmarkTestsBase   .verified.png           │
-│    (styles + data)          (committed baseline)    │
-│        ↓                                            │
-│  RealDataTestsBase                                  │
-│    (FwNewLangProjectModel)                          │
-└─────────────┬───────────────────────────────────────┘
-              │
-┌─────────────▼───────────────────────────────────────┐
-│              Capture Layer                           │
-│                                                     │
-│  RenderBenchmarkHarness                             │
-│    ├── CreateView() → GenericScriptureView          │
-│    │     └── GenericScriptureVc (extends StVc)      │
-│    ├── ExecuteColdRender() → MakeRoot + Layout      │
-│    │     └── VwGraphicsWin32 offscreen layout       │
-│    └── CaptureViewBitmap()                          │
-│          └── VwDrawRootBuffered.DrawTheRoot()        │
-│               → System.Drawing.Bitmap               │
-└─────────────┬───────────────────────────────────────┘
-              │
-┌─────────────▼───────────────────────────────────────┐
-│           Views Engine (C++ / COM)                   │
-│                                                     │
-│  IVwRootBox → IVwRootSite                           │
-│  StVc (ApplyParagraphStyleProps, InsertParagraphBody)│
-│  IVwStylesheet (LcmStyleSheet)                      │
-│  IVwDrawRootBuffered (GDI HDC → Bitmap)             │
-└─────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                         Test Projects (consumers)                           │
+│                                                                             │
+│  RootSiteTests/                       DetailControlsTests/                  │
+│    RenderVerifyTests                    DataTreeRenderTests (Phase 9)       │
+│    RenderTimingSuiteTests               DataTreeTimingTests (Phase 9)       │
+│    RenderBaselineTests                  DataTreeTests (existing)            │
+│        ↓                                       ↓                            │
+│  RenderBenchmarkTestsBase               (shared data factories)             │
+│    (styles + data)                             ↓                            │
+│        ↓                                       ↓                            │
+│  RealDataTestsBase                             ↓                            │
+│    (FwNewLangProjectModel)                     ↓                            │
+└──────────────┬─────────────────────────────────┼────────────────────────────┘
+               │                                 │
+┌──────────────▼─────────────────────────────────▼────────────────────────────┐
+│              RenderVerification (shared library) (Phase 8)                   │
+│                                                                             │
+│  Views-Only Path:              DataTree Path:                               │
+│    RenderBenchmarkHarness        DataTreeRenderHarness                      │
+│    ├── CreateScriptureView()     ├── DataTree + Inventory.Load()            │
+│    ├── CreateLexEntryView()      ├── ShowObject() → CreateSlices()          │
+│    └── CaptureViewBitmap()       └── CaptureCompositeBitmap()              │
+│         └ VwDrawRootBuffered          ├ DrawToBitmap (WinForms chrome)      │
+│                                       └ VwDrawRootBuffered per ViewSlice    │
+│                                                                             │
+│  Shared Infrastructure:                                                     │
+│    RenderEnvironmentValidator    CompositeViewCapture                        │
+│    RenderDiagnosticsToggle       RenderScenario + RenderViewType            │
+│    RenderBenchmarkReportWriter   Verify InnerVerifier wrapper               │
+└──────────────┬─────────────────────────────────┬────────────────────────────┘
+               │                                 │
+┌──────────────▼─────────────────────────────────▼────────────────────────────┐
+│           Views Engine (C++ / COM)       DataTree / Slice (WinForms)        │
+│                                                                             │
+│  IVwRootBox → IVwRootSite           DataTree : UserControl                  │
+│  StVc, LexEntryVc, XmlVc            ├── Slice (SplitContainer)             │
+│  IVwStylesheet (LcmStyleSheet)       │    ├── SliceTreeNode (grey labels)   │
+│  IVwDrawRootBuffered (HDC→Bitmap)    │    └── Control (editor panel)        │
+│                                      ├── ViewSlice (Views RootSite)         │
+│                                      ├── SummarySlice (sense summaries)     │
+│                                      └── MultiStringSlice (multi-WS)       │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -294,6 +430,10 @@ Completed:
 | 3 | Test data changes break baselines | Medium | Low | Re-accept `.verified.png`; clear separation between data setup and rendering |
 | 4 | GDI handle leaks in long test runs | Low | High | Proven try/finally pattern in harness; monitor in CI |
 | 5 | Charis SIL font not installed on CI | Medium | High | Add font dependency to CI setup or use system default with known metrics |
+| 6 | DataTree composite capture misalignment | Medium | Medium | ViewSlice regions must precisely match DrawToBitmap coordinates; validate with edge-detection in tests |
+| 7 | Production layout XML changes break DataTree snapshots | Medium | Low | Re-accept `.verified.png`; layout inventories loaded from `DistFiles/` track production state |
+| 8 | DataTree initialization requires Mediator/PropertyTable | Low | Medium | Create minimal stubs for test context; existing `DataTreeTests` proves this pattern works |
+| 9 | Shared RenderVerification library increases coupling | Low | Medium | Library is infrastructure only (no tests); consumers decide which capabilities to use |
 
 ---
 
@@ -314,3 +454,7 @@ Completed:
 | 2026-02-05 | Expand Verify to all 12 scenarios | Parameterized `VerifyScenario(scenarioId)` with UoW-wrapped data setup; 12 `.verified.png` baselines accepted |
 | 2026-02-05 | Delete RenderBitmapComparer | Hand-rolled pixel diff replaced by Verify snapshots; timing suite uses content-density sanity check instead |
 | 2026-02-05 | Clear TestData/RenderSnapshots | Old baseline PNGs deleted; Verify `.verified.png` files live alongside test class |
+| 2026-02-06 | Custom LexEntryVc over XmlVc | RootSiteTests can't reference XMLViews (massive dependency chain). Custom `LexEntryVc : VwBaseVc` exercises the same recursive nested-field Views pattern with `SimulateIfDataDoubleRender` flag for modeling ifdata overhead |
+| 2026-02-06 | Add lex-shallow/deep/extreme scenarios | Three nesting depths (2/4/6 levels) to quantify O(N·2^d) rendering overhead from ifdata double-render; primary target for speedup measurement |
+| 2026-02-06 | Plan shared RenderVerification library | Current harness only captures Views engine text, not WinForms chrome (grey labels, icons, section headers). Full DataTree/Slice rendering requires DetailControls dependency chain. Extract harness into shared library reusable across test projects — long-term goal: verification coverage for significant parts of the view architecture |
+| 2026-02-06 | Composite bitmap capture for DataTree | `DrawToBitmap` works for WinForms controls (labels, splitters, backgrounds) but not for Views engine content in ViewSlice. Solution: multi-pass capture (DrawToBitmap for chrome + VwDrawRootBuffered per ViewSlice region) |

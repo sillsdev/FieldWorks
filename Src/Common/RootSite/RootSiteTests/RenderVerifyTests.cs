@@ -55,13 +55,19 @@ namespace SIL.FieldWorks.Common.RootSites
 				uow.RollBack = false;
 			}
 
+			// Load scenario config to get ViewType
+			var allScenarios = RenderScenarioDataBuilder.LoadFromFile();
+			var scenarioConfig = allScenarios.FirstOrDefault(s => s.Id == scenarioId);
+
 			var scenario = new RenderScenario
 			{
 				Id = scenarioId,
 				Description = $"Verify snapshot for {scenarioId}",
 				RootObjectHvo = m_hvoRoot,
 				RootFlid = m_flidContainingTexts,
-				FragmentId = m_frag
+				FragmentId = m_frag,
+				ViewType = scenarioConfig?.ViewType ?? RenderViewType.Scripture,
+				SimulateIfDataDoubleRender = scenarioConfig?.SimulateIfDataDoubleRender ?? false
 			};
 
 			using (var harness = new RenderBenchmarkHarness(Cache, scenario))
