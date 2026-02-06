@@ -93,8 +93,15 @@ namespace SIL.FieldWorks.XWorks
 
 		internal static string GetConfigDialogHelpTopic(PropertyTable propertyTable)
 		{
-			return GetDictionaryConfigurationBaseType(propertyTable) == ReversalType
-				? "khtpConfigureReversalIndex" : "khtpConfigureDictionary";
+			switch (GetDictionaryConfigurationBaseType(propertyTable))
+			{
+				case ReversalType:
+					return "khtpConfigureReversalIndex";
+				case ClassifiedType:
+					return "khtpConfigureClassifiedDictionary";
+				default:
+					return "khtpConfigureDictionary";
+			}
 		}
 
 		/// <summary>
