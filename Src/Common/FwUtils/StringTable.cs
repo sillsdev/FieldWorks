@@ -177,9 +177,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 					// 1. Import new strings, or override extant strings with custom strings.
 					foreach (XmlNode customStringNode in customGroupNode.SelectNodes("string"))
 					{
-						string customId = XmlUtils.GetMandatoryAttributeValue(customStringNode, "id");
-						string customTxt = GetTxtAtributeValue(customStringNode);
-						XmlNode srcMatchingStringNode = srcMatchingGroupNode.SelectSingleNode("string[@id='" + customId + "']");
+						var customId = XmlUtils.GetMandatoryAttributeValue(customStringNode, "id");
+						var customTxt = GetTxtAtributeValue(customStringNode);
+						// escape customId for use in XPath query, in case it contains characters that are not valid in XPath queries.
+						var srcMatchingStringNode = srcMatchingGroupNode.SelectSingleNode("string[@id='" + XmlUtils.MakeSafeXml(customId) + "']");
 						if (srcMatchingStringNode == null)
 						{
 							// Import the new string into the extant group.
