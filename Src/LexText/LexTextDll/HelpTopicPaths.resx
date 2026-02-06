@@ -2739,6 +2739,10 @@
     <value>/User_Interface/Menus/Tools/Configure_Dictionary/Configure_Dictionary.htm</value>
     <comment>Configure Dictionary Dialog box.</comment>
   </data>
+  <data name="khtpConfigureClassifiedDictionary" xml:space="preserve">
+    <value>/User_Interface/Menus/Tools/Configure_Classified_Dictionary/Configure_Classified_Dictionary_View_dlgbox.htm</value>
+    <comment>Configure Classified Dictionary Dialog box.</comment>
+  </data>
   <data name="khtpDictConfigManager" xml:space="preserve">
     <value>/User_Interface/Menus/Tools/Configure_Dictionary/Manage_Dictionary_Views.htm</value>
     <comment>Configure Dictionary Dialog box.</comment>
