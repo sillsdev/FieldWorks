@@ -693,6 +693,19 @@ namespace SIL.FieldWorks.FdoUi
 			EnablePreviewApplyForListChoice();
 		}
 
+		// The currently active bulk edit item (if any).
+		internal BulkEditItem CurrentItem
+		{
+			get
+			{
+				if (m_beItems == null)
+					return null;
+				if (m_itemIndex < 0 || m_itemIndex >= m_beItems.Length)
+					return null;
+				return m_beItems[m_itemIndex];
+			}
+		}
+
 		void BulkEditBarPhonologicalFeatures_EnableTargetFeatureCombo(object sender, TargetFeatureEventArgs e)
 		{
 			TargetCombo.Enabled = e.Enable;
@@ -714,8 +727,8 @@ namespace SIL.FieldWorks.FdoUi
 		{
 			m_bv.BrowseView.Vc.MultiColumnPreview = false;
 			var itemsToChange = ItemsToChange(false);
-			BulkEditItem bei = m_beItems[m_itemIndex];
-			var phonFeatEditor = bei.BulkEditControl as PhonologicalFeatureEditor;
+			BulkEditItem bei = CurrentItem;
+			var phonFeatEditor = bei?.BulkEditControl as PhonologicalFeatureEditor;
 			if (phonFeatEditor == null)
 			{ // User chose to remove the targeted feature
 				bei.BulkEditControl.FakeDoit(itemsToChange, XMLViewsDataCache.ktagAlternateValue,
@@ -775,8 +788,8 @@ namespace SIL.FieldWorks.FdoUi
 		/// </summary>
 		protected override void PreUpdateColumnList()
 		{
-			BulkEditItem bei = m_beItems[m_itemIndex];
-			if (bei.BulkEditControl is PhonologicalFeatureEditor phonFeatEditor)
+			BulkEditItem bei = CurrentItem;
+			if (bei?.BulkEditControl is PhonologicalFeatureEditor phonFeatEditor)
 			{
 				m_currentFeatDefnAbbr = phonFeatEditor.FeatDefnAbbr;
 				m_currentSelectedHvo = phonFeatEditor.SelectedHvo;
@@ -790,8 +803,8 @@ namespace SIL.FieldWorks.FdoUi
 		/// </summary>
 		protected override void PostUpdateColumnList()
 		{
-			BulkEditItem bei = m_beItems[m_itemIndex];
-			if (bei.BulkEditControl is PhonologicalFeatureEditor phonFeatEditor &&
+			BulkEditItem bei = CurrentItem;
+			if (bei?.BulkEditControl is PhonologicalFeatureEditor phonFeatEditor &&
 				phonFeatEditor.FeatDefnAbbr == m_currentFeatDefnAbbr)
 			{
 				phonFeatEditor.SelectedHvo = m_currentSelectedHvo;
