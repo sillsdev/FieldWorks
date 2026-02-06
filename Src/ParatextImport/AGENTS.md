@@ -1,8 +1,26 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: 2238b4c8a61efc848139b07c520cd636cc82e5d7e1f5ee00523e9703755ba5b3
 status: reviewed
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - architecture
+  - key-components
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - referenced-by
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -18,6 +36,10 @@ Do not edit this block manually; rerun the scripts above after code or doc updat
 
 ## Purpose
 Paratext Scripture import pipeline for FieldWorks (~19K lines). Handles USFM parsing, difference detection, book merging, and undo management for importing Paratext project data into FLEx Scripture. Coordinates UI dialogs, import settings, and LCModel updates while preserving existing content through smart merging.
+
+### Referenced By
+
+- [Paratext Integration](../../openspec/specs/integration/external/paratext.md#behavior) — Paratext import workflows
 
 ## Architecture
 C# library (net48) with 22 source files (~19K lines). Complex import pipeline coordinating USFM parsing, difference detection, book merging, and UI dialogs. Three-layer architecture:
@@ -54,6 +76,10 @@ C# (net48). Key libraries: LCModel, LCModel.Core, Common/Controls, Paratext SDK 
   - ClusterType enum: Grouped difference categories
 - **UI contracts**: Dialogs for user review of differences and merge conflicts
 - **Undo contract**: UndoImportManager tracks changes for rollback via LCModel UnitOfWork
+
+### Referenced By
+
+- [External APIs](../../openspec/specs/architecture/interop/external-apis.md#external-integration-patterns) — Paratext adapter contracts
 
 ## Threading & Performance
 UI thread for all operations. Long-running imports wrapped in progress dialog. Difference detection can be slow for heavily edited books.

@@ -1,8 +1,28 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: 2dd2ff2dfc5c4ad0fc418053ca70e45274db5128d86185c5dfefefb2529c5434
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - architecture
+  - key-components
+  - technology-stack
+  - dependencies
+  - upstream-consumes
+  - downstream-consumed-by
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - referenced-by
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -114,6 +134,10 @@ C# .NET Framework 4.8.x (WinExe), Windows Forms, System.Runtime.Serialization, W
 - **ILexicalProvider, ILexicalServiceProvider**: Contracts for lexical data access
 - **COM/P/Invoke**: Windows Installer API via WindowsInstallerQuery
 
+### Referenced By
+
+- [FLExTools Integration](../../../openspec/specs/integration/external/flextools.md#behavior) — Core service contracts for scripting
+
 ## Threading & Performance
 UI thread marshaling via ThreadHelper.InvokeAsync; lifecycle synchronization across FwApp instances; singleton per process.
 
@@ -122,6 +146,10 @@ App.config, BuildInclude.targets; no explicit feature flags detected.
 
 ## Build Information
 Build via FieldWorks.sln or `msbuild FieldWorks.csproj`. Test project: FieldWorksTests. Output: FieldWorks.exe, FieldWorks.xml.
+
+### Referenced By
+
+- [Build Phases](../../../openspec/specs/architecture/build-deploy/build-phases.md#build-ordering) — Traversal build expectations
 
 ## Interfaces and Data Models
 IFieldWorksManager (pass-through facade), IProjectIdentifier (project identity), ProjectId (serializable project ID), ILexicalProvider/ILexicalServiceProvider (lexicon service contracts), PaObjects namespace (Phonology Assistant DTOs), ApplicationBusyDialog (busy indicator), WindowsInstallerQuery (installer checks).

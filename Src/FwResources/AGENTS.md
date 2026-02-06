@@ -1,8 +1,26 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: 4f41c46ca278de62d2a4c3c39279468da088607063910aa2f6c8f6c1e03ee901
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - referenced-by
+  - architecture
+  - key-components
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -18,6 +36,10 @@ Do not edit this block manually; rerun the scripts above after code or doc updat
 
 ## Purpose
 Centralized resource management for FieldWorks applications. Shared images, icons, localized strings, and UI assets used across xWorks, LexText, and other FieldWorks components. ResourceHelper utility class provides file filter specifications, resource string access, and image loading. Localized string resources: FwStrings (general strings), FwTMStrings (task management strings), HelpTopicPaths (help system paths), ToolBarSystemStrings (toolbar text). Images organized by category (Edit/, File/, Format/, Help/, Tools/, View/, Window/). SearchingAnimation for progress indicators. FwFileExtensions defines standard file extensions. Essential for consistent UI appearance and localization across FieldWorks.
+
+### Referenced By
+
+- [Localization](../../openspec/specs/architecture/build-deploy/localization.md#localization-patterns) — Shared resource localization
 
 ## Architecture
 C# class library (.NET Framework 4.8.x) with embedded resources. Resource files (.resx) with auto-generated Designer.cs classes for type-safe access. Images/ folder organized by UI category (Edit, File, Format, Help, Tools, View, Window). ResourceHelper main utility class with FileFilterType enum for standardized file dialog filters. Extensive localization support via .resx files. 7458 lines of C# code plus extensive resource files.

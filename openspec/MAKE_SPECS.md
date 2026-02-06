@@ -232,6 +232,10 @@ status: draft
 
 [One paragraph explaining what this spec covers and why it matters]
 
+## Summary
+
+- [3-5 short lines capturing the key takeaways]
+
 ## User Stories
 
 - As a lexicographer, I want to create a new dictionary entry so that I can document a word's meaning
@@ -257,11 +261,11 @@ status: draft
 
 ## Anti-patterns
 
-[What NOT to do, with explanations]
+[Optional: what NOT to do, with explanations]
 
 ## Open Questions
 
-[Unresolved decisions, tracked for future specs]
+[Optional: unresolved decisions, tracked for future specs]
 ```
 
 ---

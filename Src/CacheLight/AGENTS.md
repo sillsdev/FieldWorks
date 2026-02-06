@@ -1,8 +1,26 @@
----
+﻿---
 last-reviewed: 2025-11-21
 last-reviewed-tree: 895b49e9397474fc7d6d9b82898935d6dceeec75a28198fbba5e2f43f5f73cfa
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - architecture
+  - referenced-by
+  - key-components
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -21,6 +39,11 @@ Provides lightweight, in-memory caching implementation for FieldWorks data acces
 
 ## Architecture
 C# class library (.NET Framework 4.8.x) with two primary cache implementations. MetaDataCache loads model definitions from XML files and provides IFwMetaDataCache interface. RealDataCache provides ISilDataAccess and IVwCacheDa interfaces for storing and retrieving object properties in memory using dictionaries keyed by HVO (object ID) and field ID combinations. Includes test project (CacheLightTests) with comprehensive unit tests.
+
+### Referenced By
+
+- [Layer Model](../../openspec/specs/architecture/layers/layer-model.md#layer-model) — Cache layer responsibilities
+- [LCM Patterns](../../openspec/specs/architecture/data-access/lcm-patterns.md#data-access-patterns) — Data cache patterns
 
 ## Key Components
 - **MetaDataCache** class (MetaDataCache.cs, 990 lines): XML-based metadata cache

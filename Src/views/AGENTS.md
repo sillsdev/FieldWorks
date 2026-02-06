@@ -1,8 +1,40 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: ad7aed3bda62551a83bc3f56b57f0314b51383b65607f0ee3a031e4e26c6d8e4
 status: reviewed
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - architecture
+  - referenced-by
+  - key-components
+  - box-hierarchy-vwsimpleboxesh-vwtextboxesh-vwtableboxh
+  - root-and-environment
+  - selection-and-interaction
+  - text-storage-and-access-vwtextstorecpph-vwtxtsrccpph
+  - property-management-vwpropertystorecpph
+  - rendering-utilities
+  - synchronization-and-notifications
+  - accessibility-windows-specific
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - building-tests
+  - running-tests
+  - test-files-29-test-files
+  - usage-hints
+  - related-folders
+  - references
+  - com-interfaces-idl-files
+  - test-infrastructure
+  - code-evidence
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -21,6 +53,10 @@ Native C++ rendering engine (~66.7K lines) implementing sophisticated box-based 
 
 ## Architecture
 Sophisticated C++ rendering engine (~66.7K lines) implementing box-based layout system. Three-layer hierarchy: 1) Box system (VwBox, VwGroupBox, VwParagraphBox, VwStringBox, VwTableBox), 2) Root/Environment (VwRootBox coordinates layout/paint, VwEnv constructs display), 3) Selection/Interaction (VwSelection, VwTextSelection for editing). Provides accurate multi-script text layout, bidirectional text, complex rendering for all FieldWorks text display.
+
+### Referenced By
+
+- [Views Rendering](../../openspec/specs/architecture/ui-framework/views-rendering.md#rendering-pipeline) — Native rendering engine
 
 ## Key Components
 
@@ -83,6 +119,11 @@ Native C++ with COM interfaces. Uses nmake build system with Visual Studio toolc
 ## Interop & Contracts
 TBD - populate from code. See auto-generated hints below.
 
+### Referenced By
+
+- [COM Registration Patterns](../../openspec/specs/architecture/interop/com-contracts.md#com-registration-patterns) — Registration-free COM contracts overview
+- [Native Boundary](../../openspec/specs/architecture/interop/native-boundary.md#marshaling-patterns) — Managed/native boundary patterns
+
 ## Threading & Performance
 TBD - populate from code. See auto-generated hints below.
 
@@ -100,6 +141,10 @@ See Key Components section above.
 
 ## Test Index
 Test project: `Src/views/Test/` produces `TestViews.exe` using Unit++ framework.
+
+### Referenced By
+
+- [Test Strategy](../../openspec/specs/architecture/testing/test-strategy.md#strategy) — Native test coverage
 
 ### Building Tests
 Requires VS Developer Command Prompt:

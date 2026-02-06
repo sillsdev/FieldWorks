@@ -1,8 +1,26 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: 2d8a7d9e0ef0899cbb02f6011d6f779dfdcded66364eccfb19a7daf1211aec78
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - architecture
+  - referenced-by
+  - key-components
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -21,6 +39,10 @@ Simplified root site implementation providing streamlined API for hosting FieldW
 
 ## Architecture
 C# class library (.NET Framework 4.8.x) with simplified root site implementation (17K+ lines in SimpleRootSite.cs alone). SimpleRootSite base class provides complete view hosting with event handling, keyboard management, accessibility support, printing, selection tracking, and data update coordination. Helper classes separate concerns (EditingHelper for editing, SelectionHelper for selection, ActiveViewHelper for activation). Test project (SimpleRootSiteTests) validates functionality.
+
+### Referenced By
+
+- [Views Rendering](../../../openspec/specs/architecture/ui-framework/views-rendering.md#rendering-pipeline) — Standard root site hosting
 
 ## Key Components
 - **SimpleRootSite** class (SimpleRootSite.cs, massive file): Base view host control

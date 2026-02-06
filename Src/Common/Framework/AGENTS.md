@@ -1,8 +1,28 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: 9e9735ee7ccc66fb16ce0a68066e1b4ec9760f2cd45e7dffee0606822dcc5ad8
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - architecture
+  - referenced-by
+  - key-components
+  - technology-stack
+  - dependencies
+  - upstream-consumes
+  - downstream-consumed-by
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -19,8 +39,17 @@ Do not edit this block manually; rerun the scripts above after code or doc updat
 ## Purpose
 Application framework components providing core infrastructure services for FieldWorks applications. Includes FwApp base class for application coordination, editing helpers (FwEditingHelper for edit operations), publication interfaces (IPublicationView, IPageSetupDialog for printing/publishing), settings management (FwRegistrySettings, ExternalSettingsAccessorBase, SettingsXmlAccessorBase, StylesXmlAccessor), main window coordination (MainWindowDelegate, IFwMainWnd), application manager interface (IFieldWorksManager), status bar progress handling (StatusBarProgressHandler), undo/redo UI (UndoRedoDropDown), and XHTML export utilities (XhtmlHelper). Establishes architectural patterns, lifecycle management, and shared functionality for all FieldWorks applications.
 
+### Referenced By
+
+- [Multi-User Collaboration](../../../openspec/specs/integration/collaboration/multi-user.md#behavior) — Shared collaboration services
+
 ## Architecture
 C# class library (.NET Framework 4.8.x) providing base classes and interfaces for FieldWorks applications. FwApp abstract class serves as application base with cache management, window coordination, and undo/redo infrastructure. Delegate pattern via MainWindowDelegate separates main window concerns. Settings abstraction via SettingsXmlAccessorBase and ExternalSettingsAccessorBase. Test project (FrameworkTests) validates framework components.
+
+### Referenced By
+
+- [Layer Model](../../../openspec/specs/architecture/layers/layer-model.md#layer-model) — Framework layer responsibilities
+- [WinForms Patterns](../../../openspec/specs/architecture/ui-framework/winforms-patterns.md#ui-composition-patterns) — Framework UI composition
 
 ## Key Components
 - **FwApp** class (FwApp.cs): Abstract base class for FieldWorks applications
@@ -61,6 +90,13 @@ C# class library (.NET Framework 4.8.x) providing base classes and interfaces fo
 - **IPageSetupDialog** interface (PublicationInterfaces.cs): Page setup contract
   - Interface for page setup dialogs
 
+### Referenced By
+
+- [Undo/Redo](../../../openspec/specs/architecture/data-access/undo-redo.md#undoredo-flow) — Shared undo/redo controls
+- [Lists](../../../openspec/specs/configuration/lists.md#behavior) — Shared list configuration
+- [Projects](../../../openspec/specs/configuration/projects.md#behavior) — Shared project settings
+- [Text Export Formats](../../../openspec/specs/texts/export/formats.md#behavior) — Publishing interfaces
+
 ## Technology Stack
 - C# .NET Framework 4.8.x (target framework: net48)
 - OutputType: Library (class library DLL)
@@ -68,6 +104,10 @@ C# class library (.NET Framework 4.8.x) providing base classes and interfaces fo
 - Windows Registry access (Microsoft.Win32)
 - XCore for mediator/command pattern
 - SIL.LCModel for data access
+
+### Referenced By
+
+- [Localization](../../../openspec/specs/architecture/build-deploy/localization.md#localization-patterns) — Framework resx usage
 
 ## Dependencies
 
@@ -82,6 +122,12 @@ C# class library (.NET Framework 4.8.x) providing base classes and interfaces fo
 - **XCore**: Command/mediator framework
 - **FwCoreDlgs**: Core dialogs
 - **System.Windows.Forms**: Windows Forms UI
+
+### Referenced By
+
+- [Dependency Graph](../../../openspec/specs/architecture/layers/dependency-graph.md#dependency-rules) — Layer dependency rules
+- [XCore Mediator](../../../openspec/specs/architecture/ui-framework/xcore-mediator.md#mediator-routing) — Mediator dependencies
+- [LCM Patterns](../../../openspec/specs/architecture/data-access/lcm-patterns.md#data-access-patterns) — Data access dependencies
 
 ### Downstream (consumed by)
 - **xWorks/**: Main FLEx application extends FwApp
@@ -104,14 +150,26 @@ FwRegistrySettings (registry), XML settings (SettingsXmlAccessorBase, StylesXmlA
 ## Build Information
 Build via FieldWorks.sln or `msbuild Framework.csproj`. Test project: FrameworkTests. Output: Framework.dll.
 
+### Referenced By
+
+- [Build Phases](../../../openspec/specs/architecture/build-deploy/build-phases.md#build-ordering) — Managed build targets
+
 ## Interfaces and Data Models
 FwApp (application base), IFieldWorksManager (manager contract), IFwMainWnd (main window contract), IRecordListUpdater/Owner/ChangeHandler (list management), IPublicationView/IPageSetupDialog (print/publish), MainWindowDelegate (delegation pattern).
 
 ## Entry Points
 FwApp subclasses instantiated as application entry points. IFieldWorksManager accessed via FieldWorksManager facade.
 
+### Referenced By
+
+- [Entry Points](../../../openspec/specs/architecture/layers/entry-points.md#application-entry-points) — Application lifecycle entry points
+
 ## Test Index
 Test project: FrameworkTests. Run via `dotnet test` or Test Explorer.
+
+### Referenced By
+
+- [Test Strategy](../../../openspec/specs/architecture/testing/test-strategy.md#strategy) — Managed test guidance
 
 ## Usage Hints
 Extend FwApp for applications. Implement IFwMainWnd for main windows. Use IRecordListUpdater for list updates. StatusBarProgressHandler for progress reporting.

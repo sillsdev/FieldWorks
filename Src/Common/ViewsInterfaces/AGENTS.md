@@ -1,8 +1,26 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: 0757bbbaaff5bc9955aa7b4ae78c8dab29ad614626296c6de00f72aade14ff77
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - architecture
+  - referenced-by
+  - key-components
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -21,6 +39,10 @@ Managed interface definitions for the native Views rendering engine, providing t
 
 ## Architecture
 C# interface library (.NET Framework 4.8.x) with COM interop interface definitions. Pure interface declarations matching native Views COM interfaces, plus helper classes for COM marshaling and object lifetime management. No implementations - actual implementations reside in native Views DLL accessed via COM interop.
+
+### Referenced By
+
+- [Views Rendering](../../../openspec/specs/architecture/ui-framework/views-rendering.md#rendering-pipeline) — Managed Views interfaces
 
 ## Key Components
 - **ComWrapper** (ComWrapper.cs): COM object lifetime management
@@ -59,6 +81,10 @@ Consumes: views (native C++ COM server), System.Runtime.InteropServices. Used by
 
 ## Interop & Contracts
 COM interop for native Views. IUnknown lifetime, ComWrapper reference counting, marshaling attributes. Critical bridge for managed-to-native Views.
+
+### Referenced By
+
+- [Native Boundary](../../../openspec/specs/architecture/interop/native-boundary.md#marshaling-patterns) — COM interop boundary
 
 ## Threading & Performance
 COM threading model, STA threads required. ComWrapper ensures proper COM object lifetime.

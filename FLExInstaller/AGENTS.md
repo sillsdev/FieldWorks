@@ -2,6 +2,10 @@
 
 This folder contains the WiX 3 installer inputs restored from release/9.3. The default installer build uses the legacy WiX 3 batch pipeline under PatchableInstaller. WiX 3 builds require the **Visual Studio WiX Toolset v3 extension** so `Wix.CA.targets` is available under the MSBuild extensions path. WiX 6 authoring lives under FLExInstaller/wix6/ (see FLExInstaller/wix6/AGENTS.md).
 
+## Referenced By
+
+- [Installer](../openspec/specs/architecture/build-deploy/installer.md#installer-patterns) — WiX 3 installer pipeline
+
 ## Build (local)
 
 ```powershell

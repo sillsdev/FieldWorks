@@ -16,6 +16,10 @@ Use `@/openspec/AGENTS.md` to learn:
 Keep this managed block so 'openspec update' can refresh the instructions.
 <!-- OPENSPEC:END -->
 
+## Spec Index
+
+- [OpenSpec Index](specs/README.md) — Quick links to all specs by category
+
 ## When to Use Beads vs OpenSpec
 
 | Situation | Tool | Action |
@@ -26,6 +30,40 @@ Keep this managed block so 'openspec update' can refresh the instructions.
 | Discovered issue during work | Beads | `bd create --discovered-from <parent>` |
 | Tracking what's ready to work on | Beads | `bd ready` |
 | Feature complete | OpenSpec | Archive the change |
+
+## Reference Format (Specs <-> AGENTS)
+
+### Forward References (Spec -> AGENTS.md)
+
+End any spec section that references AGENTS.md with a `### References` subsection.
+
+```
+### References
+
+- [Kernel COM implementation](../../Src/Kernel/AGENTS.md#interop--contracts) — Native COM server patterns
+```
+
+### Back-References (AGENTS.md -> Spec)
+
+End any referenced AGENTS.md section with a `### Referenced By` subsection.
+
+```
+### Referenced By
+
+- [COM Registration Patterns](specs/architecture/interop/com-contracts.md#com-registration-patterns) — General COM architecture
+```
+
+### Anchor Rules
+
+- Lowercase
+- Spaces -> hyphens
+- Special characters -> hyphens
+- `&` collapses to `--` in GitHub-style anchors
+
+## Spec Format Notes
+
+- Add a short `## Summary` (3-5 lines) after `## Purpose`.
+- `## Anti-patterns` and `## Open Questions` are optional when there is no content.
 
 ## The Complete Workflow
 

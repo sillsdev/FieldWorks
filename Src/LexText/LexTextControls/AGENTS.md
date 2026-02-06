@@ -1,8 +1,28 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: 34affdd6184eabeef6b25d21286a5b32c28de9afdac3dd3ef907deeafb42ae02
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - referenced-by
+  - architecture
+  - key-components
+  - technology-stack
+  - dependencies
+  - upstream-consumes
+  - downstream-consumed-by
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -82,6 +102,19 @@ C# library (net48, OutputType=Library) organizing lexicon/text UI components for
   - Plugin/extension point interface
 - **IPatternControl** (IPatternControl.cs, 48 lines): Pattern control interface
   - Interface for pattern-based controls
+
+### Referenced By
+
+- [Writing Systems](../../../openspec/specs/configuration/writing-systems.md#behavior) — Writing system controls
+- [Entry Structure](../../../openspec/specs/lexicon/entries/structure.md#behavior) — Entry and sense dialogs
+- [Entry Creation](../../../openspec/specs/lexicon/entries/creation.md#behavior) — Entry creation dialogs
+- [Lexical Relations](../../../openspec/specs/lexicon/entries/relations.md#behavior) — Reference dialogs
+- [SFM Import](../../../openspec/specs/lexicon/import/sfm.md#behavior) — LexImportWizard UI
+- [LIFT Import](../../../openspec/specs/lexicon/import/lift.md#behavior) — LexImportWizard UI
+- [LIFT Export](../../../openspec/specs/lexicon/export/lift.md#behavior) — Export dialogs
+- [Interlinear Annotation](../../../openspec/specs/texts/interlinear/annotation.md#behavior) — Shared entry dialogs
+- [Interlinear Baseline](../../../openspec/specs/texts/interlinear/baseline.md#behavior) — Interlinear configuration dialogs
+- [Interlinear Import](../../../openspec/specs/texts/interlinear/import.md#behavior) — Import configuration dialogs
 
 ## Technology Stack
 - C# .NET Framework 4.8.x (net8)

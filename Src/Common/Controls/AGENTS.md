@@ -1,8 +1,15 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: 5cde600285aadf3960755718098deb2f15e3d908a15a698cc9ad88ef61d5239f
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - referenced-by
+  - subfolder-map
+  - when-updating-this-folder
+  - related-guidance
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -18,6 +25,10 @@ Do not edit this block manually; rerun the scripts above after code or doc updat
 
 ## Purpose
 Organizational parent folder containing shared UI controls library with reusable widgets and XML-driven views for FieldWorks applications.
+
+### Referenced By
+
+- [WinForms Patterns](../../../openspec/specs/architecture/ui-framework/winforms-patterns.md#ui-composition-patterns) — Shared control usage
 
 ## Subfolder Map
 | Subfolder | Key Project | Notes |

@@ -1,8 +1,30 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: 6a49e787206a05cc0f1f25e52b960410d3922c982f322c92e892575d6216836d
 status: reviewed
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - architecture
+  - key-components
+  - paratext-provider
+  - scripture-text-wrappers
+  - parser-state
+  - alert-system
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - referenced-by
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -18,6 +40,10 @@ Do not edit this block manually; rerun the scripts above after code or doc updat
 
 ## Purpose
 Paratext 8 integration adapter implementing IScriptureProvider interface for FLEx↔Paratext data interchange. Wraps Paratext.Data API (Paratext SDK v8) to provide FieldWorks-compatible scripture project access, verse reference handling (PT8VerseRefWrapper), text data wrappers (PT8ScrTextWrapper), and USFM parser state (PT8ParserStateWrapper). Enables Send/Receive synchronization between FLEx back translations and Paratext translation projects, supporting collaborative translation workflows where linguistic analysis (FLEx) informs translation (Paratext8) and vice versa.
+
+### Referenced By
+
+- [Paratext Integration](../../openspec/specs/integration/external/paratext.md#behavior) — Paratext provider plugin
 
 ## Architecture
 C# library (net48) with 7 source files (~546 lines). Implements MEF-based plugin pattern via [Export(typeof(IScriptureProvider))] attribute with [ExportMetadata("Version", "8")] for Paratext 8 API versioning. Wraps Paratext.Data types (ScrText, VerseRef, ScrParserState) with FLEx-compatible interfaces.
@@ -92,6 +118,10 @@ C# library (net48) with 7 source files (~546 lines). Implements MEF-based plugin
   - IScriptureProviderParserState: USFM parser context
 - **Versioning**: ExportMetadata("Version", "8") distinguishes from other Paratext plugin versions
 - **Installation check**: IsInstalled property checks ParatextInfo.IsParatextInstalled
+
+### Referenced By
+
+- [External APIs](../../openspec/specs/architecture/interop/external-apis.md#external-integration-patterns) — Paratext provider integration
 
 ## Threading & Performance
 Synchronous operations. Relies on Paratext SDK threading model. MEF loads plugin once per AppDomain.

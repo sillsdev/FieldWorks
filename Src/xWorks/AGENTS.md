@@ -1,8 +1,31 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: 63ed79fcc6cda62d113b1fb1f808833b752c6d157dcd8c45b715310ebbd26da1
 status: reviewed
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - referenced-by
+  - architecture
+  - key-components
+  - key-classes
+  - key-interfaces
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
+  - subfolders-detailed-docs-in-individual-agentsmd-files
+  - test-infrastructure
+  - code-evidence
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -23,8 +46,17 @@ provides dictionary configuration (DictionaryConfigurationDlg, DictionaryNodeOpt
 data navigation, and shared application services. Serves as the container that brings together
 different FieldWorks tools into an integrated application environment.
 
+### Referenced By
+
+- [Dictionary Export](../../openspec/specs/lexicon/export/dictionary.md#behavior) — Shell export workflows
+- [Multi-User Collaboration](../../openspec/specs/integration/collaboration/multi-user.md#behavior) — Shell collaboration UI
+
 ## Architecture
 C# library with 181 source files. Contains 1 subprojects: xWorks.
+
+### Referenced By
+
+- [Layer Model](../../openspec/specs/architecture/layers/layer-model.md#layer-model) — Application shell layer
 
 ## Key Components
 ### Key Classes
@@ -59,6 +91,11 @@ C# library with 181 source files. Contains 1 subprojects: xWorks.
 - Depends on: XCore (framework), Cellar (data model), Common (UI), FdoUi (data UI), FwCoreDlgs (dialogs), views (rendering)
 - Used by: End users as the main FieldWorks application
 
+### Referenced By
+
+- [Dependency Graph](../../openspec/specs/architecture/layers/dependency-graph.md#dependency-rules) — Shell dependency rules
+- [XCore Mediator](../../openspec/specs/architecture/ui-framework/xcore-mediator.md#mediator-routing) — Mediator integration
+
 ## Interop & Contracts
 Uses COM for cross-boundary calls.
 
@@ -80,6 +117,10 @@ Key interfaces: IDictionaryGroupingOptionsView, IDictionaryListOptionsView, IFra
 - Main application executable
 - Application shell hosting various modules (LexText, etc.)
 - Dictionary and data tree interfaces
+
+### Referenced By
+
+- [Entry Points](../../openspec/specs/architecture/layers/entry-points.md#application-entry-points) — Shell startup
 
 ## Test Index
 Test projects: xWorksTests. 46 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.

@@ -1,8 +1,27 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: 5dbbc7b24d9d7da0683afe68327e42e483e3eeb039f2ad526b2f844fc8921cd6
 status: reviewed
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - architecture
+  - key-components
+  - window-wrapper
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - referenced-by
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -64,6 +83,11 @@ C# library (net48) with 3 source files (~58 lines total). Single class ManagedVw
   - ClientRectangle: WinForms Control.ClientRectangle → Views Rect
 - **Cross-platform bridge**: Connects managed WinForms Control to native Views COM interface
 - **Lifetime**: ManagedVwWindow instance typically matches Control lifetime
+
+### Referenced By
+
+- [Native Boundary](../../openspec/specs/architecture/interop/native-boundary.md#marshaling-patterns) — IVwWindow COM bridge
+- [Views Rendering](../../openspec/specs/architecture/ui-framework/views-rendering.md#rendering-pipeline) — WinForms bridge for Views hosting
 
 ## Threading & Performance
 UI thread only. Minimal overhead (fast HWND lookup, direct property access). Created once per Control, reused.

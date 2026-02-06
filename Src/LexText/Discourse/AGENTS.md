@@ -1,8 +1,26 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: e3e46df34e8bdac011c6510e2b0f6cd2c598a0f7ed1e5561842ec80ddd61ce0c
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - referenced-by
+  - architecture
+  - key-components
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -18,6 +36,10 @@ Do not edit this block manually; rerun the scripts above after code or doc updat
 
 ## Purpose
 Constituent chart analysis tool for discourse/clause-level text organization. Allows users to arrange words/morphemes from interlinear texts into tables where rows represent clauses and columns represent clause constituents (pre-nuclear, nuclear SVO, post-nuclear). Provides visual discourse analysis framework supporting linguistic research into clause structure, topic/comment, reference tracking. Integrates with interlinear text (IText) displaying words in interlinear format within chart cells. Supports chart templates (column configuration), word movement between columns, clause markers, moved text markers, export functionality. Core business logic (ConstituentChartLogic 6.5K lines) separated from UI (ConstituentChart 2K lines). Library (13.3K lines total).
+
+### Referenced By
+
+- [Text Tagging](../../../openspec/specs/texts/analysis/tagging.md#behavior) — Discourse context for tagging
 
 ## Architecture
 C# library (net48, OutputType=Library) with MVC-like separation. ConstituentChart main UI component (inherits InterlinDocChart, implements IHandleBookmark, IxCoreColleague, IStyleSheet). ConstituentChartLogic testable business logic class. ConstChartBody custom control for chart grid. ConstChartVc view constructor for chart rendering. InterlinRibbon displays source text words for dragging into chart. Chart data stored in LCModel (IDsConstChart, IConstChartRow, IConstituentChartCellPart, IConstChartWordGroup). Export support (DiscourseExporter) for sharing/publishing charts.
@@ -76,6 +98,10 @@ C# library (net48, OutputType=Library) with MVC-like separation. ConstituentChar
   - Multi-level column headers (e.g., Nuclear: S/V/O)
 - **MaxStringWidthForChartColumn** (MaxStringWidthForChartColumn.cs, 76 lines): Layout helper
   - Calculate column widths for text content
+
+### Referenced By
+
+- [Discourse Analysis](../../../openspec/specs/texts/analysis/discourse.md#behavior) — Discourse chart workflows
 
 ## Technology Stack
 C# .NET Framework 4.8.x, Windows Forms, LCModel, IText interlinear integration, XCore framework.

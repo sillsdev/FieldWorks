@@ -1,8 +1,29 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: f15feb0cd603130b05a5b4ed86279ca3efb5d796b8c7cedd6061230a7e245306
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - architecture
+  - key-components
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - referenced-by
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - building-tests
+  - running-tests
+  - test-files
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -71,6 +92,10 @@ C++ native library (header-only templates and implementation files). Heavy use o
 
 ## Interop & Contracts
 - **IUnknown**: COM interface base
+
+### Referenced By
+
+- [COM Registration Patterns](../../openspec/specs/architecture/interop/com-contracts.md#com-registration-patterns) — Registration-free COM contracts overview
 
 ## Threading & Performance
 - **COM threading**: Collections and smart pointers follow COM threading rules

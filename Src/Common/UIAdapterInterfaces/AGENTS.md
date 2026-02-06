@@ -1,8 +1,26 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: a6f7b672b53b6c5e4e93be09912da26037f2e287b213af0e06f6da32d6155e27
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - referenced-by
+  - architecture
+  - key-components
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -18,6 +36,10 @@ Do not edit this block manually; rerun the scripts above after code or doc updat
 
 ## Purpose
 UI adapter pattern interfaces for abstraction and testability in FieldWorks applications. Defines contracts ISIBInterface (Side Bar and Information Bar Interface) and ITMInterface (Tool Manager Interface) that allow UI components to be adapted to different implementations or replaced with test doubles for unit testing. Helper classes (SBTabProperties, SBTabItemProperties, ITMAdapter) support adapter implementations. Enables dependency injection, testing of UI-dependent code without actual UI, and flexibility in UI component selection.
+
+### Referenced By
+
+- [WinForms Patterns](../../../openspec/specs/architecture/ui-framework/winforms-patterns.md#ui-composition-patterns) — UI adapter contracts
 
 ## Architecture
 C# interface library (.NET Framework 4.8.x) defining UI adapter contracts. Pure interface definitions with supporting helper classes for property transfer. No implementations in this project - implementations reside in consuming projects (e.g., XCore provides concrete adapters).

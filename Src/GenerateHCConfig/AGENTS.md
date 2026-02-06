@@ -1,8 +1,25 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: 8fa47ada007bed7cb5ba541c2284686df6b9b7a7445f7019eb9b4a44483c5dbb
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - architecture
+  - key-components
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)

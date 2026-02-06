@@ -1,8 +1,28 @@
----
+﻿---
 last-reviewed: 2025-11-01
 last-reviewed-tree: 5c0428af86d4d8c6b7829d245dd8bd3a610718aca9563315255e6c5b43a1e58e
 status: production
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - architecture
+  - key-components
+  - core-classes-2k-lines
+  - supporting-1k-lines
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
+  - code-evidence
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)

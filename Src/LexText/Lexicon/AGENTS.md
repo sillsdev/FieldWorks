@@ -1,8 +1,26 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: 76886450145052a28b3c1f2b54c499cbc0c7f3879390c5affaf3fac0643f832e
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - architecture
+  - key-components
+  - referenced-by
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -18,6 +36,13 @@ Do not edit this block manually; rerun the scripts above after code or doc updat
 
 ## Purpose
 Lexicon editing UI library for FieldWorks Language Explorer (FLEx). Provides specialized controls, handlers, and dialogs for lexical entry editing: entry/sense slices (EntrySequenceReferenceSlice, LexReferencePairSlice, LexReferenceMultiSlice), launchers (EntrySequenceReferenceLauncher, LexReferenceCollectionLauncher), menu handlers (LexEntryMenuHandler), FLExBridge integration (FLExBridgeListener for collaboration), example sentence search (FindExampleSentenceDlg), homograph management (HomographResetter), entry deletion (DeleteEntriesSensesWithoutInterlinearization), and resource files (LexEdStrings localized strings, ImageHolder/LexEntryImages icons). Moderate-sized library (15.7K lines) focusing on lexicon-specific UI and collaboration infrastructure. Project name: LexEdDll.
+
+### Referenced By
+
+- [LIFT Import](../../../openspec/specs/lexicon/import/lift.md#behavior) — Entry structure mapping
+- [Dictionary Export](../../../openspec/specs/lexicon/export/dictionary.md#behavior) — Lexicon configuration
+- [LIFT Export](../../../openspec/specs/lexicon/export/lift.md#behavior) — Export structure mapping
+- [Pathway Export](../../../openspec/specs/lexicon/export/pathway.md#behavior) — Export data preparation
 
 ## Architecture
 C# library (net48, OutputType=Library) with lexicon UI components. Slice/Launcher pattern for entry field editing. LexEntryMenuHandler for context menus. FLExBridgeListener XCore colleague for Send/Receive collaboration. Dialogs for specialized tasks (FindExampleSentenceDlg). Utility classes for data operations (CircularRefBreaker, GoldEticGuidFixer, HomographResetter). Resource files for localization. Integrates with LCModel (ILexEntry, ILexSense, ILexReference), XCore framework, FLExBridge (external collaboration tool).
@@ -69,6 +94,13 @@ C# library (net48, OutputType=Library) with lexicon UI components. Slice/Launche
   - Localized UI strings for lexicon editing
 - **ImageHolder, LexEntryImages** (ImageHolder.cs, LexEntryImages.cs, 100 lines): Icon resources
   - Embedded icons/images for lexicon UI
+
+### Referenced By
+
+- [Entry Structure](../../../openspec/specs/lexicon/entries/structure.md#behavior) — Entry slices and launchers
+- [Entry Creation](../../../openspec/specs/lexicon/entries/creation.md#behavior) — Entry menu handlers
+- [Lexical Relations](../../../openspec/specs/lexicon/entries/relations.md#behavior) — Reference slices and launchers
+- [Send/Receive Collaboration](../../../openspec/specs/integration/collaboration/send-receive.md#behavior) — FLExBridge integration
 
 ## Technology Stack
 C# .NET Framework 4.8.x, Windows Forms, LCModel, XCore, FLExBridge (external process).

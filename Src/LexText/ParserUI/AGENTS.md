@@ -1,8 +1,33 @@
----
+﻿---
 last-reviewed: 2025-11-21
 last-reviewed-tree: ca3afb4763cf119a739ed99e322e35066e1732903f4ea048c315d27aa86c62ff
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - architecture
+  - key-components
+  - try-a-word-dialog
+  - parser-reports
+  - import-word-set
+  - parser-configuration
+  - parser-coordination
+  - trace-display
+  - debugging-tools
+  - referenced-by
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -73,6 +98,11 @@ C# library (net48) with 28 source files (~5.9K lines). Mix of WinForms (TryAWord
 
 ### Debugging Tools
 - **XAmpleWordGrammarDebugger**: Tool for debugging XAmple grammar files (ana, dictOrtho, dictPrefix files). Displays grammar contents for manual inspection.
+
+### Referenced By
+
+- [Parser Configuration](../../../openspec/specs/grammar/parsing/configuration.md#behavior) — Parser settings dialogs
+- [Parser Troubleshooting](../../../openspec/specs/grammar/parsing/troubleshooting.md#behavior) — Try A Word and trace tools
 
 ## Technology Stack
 - **Languages**: C#

@@ -1,8 +1,27 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: bdadc55d0831962324d30020fdc1138f970f046de6b795ce84e404e46dca8ef3
 status: reviewed
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - architecture
+  - key-components
+  - buffered-drawing-engine
+  - memory-buffer-management
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
