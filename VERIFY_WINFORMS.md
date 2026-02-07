@@ -25,7 +25,7 @@ The next step is replacing our hand-rolled baseline comparison infrastructure wi
 | Baseline comparison | `RootSiteTests/RenderBitmapComparer.cs` | **Done** — Pixel-diff with diff-image generation |
 | Environment validation | `RootSiteTests/RenderEnvironmentValidator.cs` | **Done** — DPI/theme/font hashing for deterministic checks |
 | Content density check | `RootSiteTests/RenderBaselineTests.cs` | **Done** — `ValidateBitmapContent()` ensures >0.4% non-white pixels (currently hitting 6.3%) |
-| All tests passing | 34/34 Render tests | **Done** — 4 baseline infra + 15 Verify snapshots + 15 timing suite |
+| All tests passing | 40/40 Render tests | **Done** — 4 baseline infra + 15 Verify snapshots + 15 timing suite + 3 DataTree Verify + 3 DataTree timing |
 
 ### Key Metrics
 - **Content density**: 6.30% non-white pixels (up from 0.46% with plain text)
@@ -263,11 +263,18 @@ Completed:
 | `lex-deep` | 30 | 4 | 6.78% |
 | `lex-extreme` | 126 | 6 | 6.94% |
 
-### Phase 8: Shared Render Verification Library _(PLANNED)_
+### Phase 8: Shared Render Verification Library _(DONE)_
 
-**Vision**: Extract the render capture/comparison engine into a shared class library (`RenderVerification`) that any test project can consume. This library does not contain tests itself — it provides the infrastructure to create views, render them to bitmaps, and compare against established baselines. The long-term goal is for significant parts of the FieldWorks view architecture to have unit/integration test verification through this library.
+**Vision**: Extract the render capture/comparison engine into a shared class library (`RenderVerification`) that any test project can consume. This library does not contain tests itself — it provides the infrastructure to create views, render them to bitmaps, and compare against established baselines.
 
 **Location**: `Src/Common/RenderVerification/RenderVerification.csproj` (class library, not test project)
+
+**What was built**:
+- `RenderVerification.csproj` — SDK-style, net48, references DetailControls + FwUtils
+- `DataTreeRenderHarness` — Creates DataTree with Mediator/PropertyTable, loads layout inventories, calls ShowObject(), captures composite bitmaps, tracks timing
+- `CompositeViewCapture` — Multi-pass capture: DrawToBitmap for WinForms chrome + VwDrawRootBuffered overlay per ViewSlice
+- `DataTreeTimingInfo` — Model class for timing data
+- Added to `FieldWorks.sln`
 
 **What moves from RootSiteTests → RenderVerification**:
 - `RenderBenchmarkHarness` — Core bitmap capture via `VwDrawRootBuffered`
@@ -329,11 +336,21 @@ Steps:
 6. Add layout inventory loading from `DistFiles/` production XML
 7. Verify all existing tests still pass after extraction
 
-### Phase 9: DataTree Full-View Verification Tests _(PLANNED)_
+### Phase 9: DataTree Full-View Verification Tests _(DONE)_
 
-**Motivation**: The full lexical entry edit view (as seen in FLEx) includes WinForms UI chrome that is critical to verify: grey field labels ("Lexeme Form", "Citation Form"), writing system indicators ("Frn", "FrIPA"), expand/collapse tree icons, section headers ("Sense 1 — to do - v"), separator lines, indentation of nested senses, "Variants"/"Allomorphs"/"Grammatical Info. Details" sections. These elements are rendered by the `DataTree`/`Slice` system and are part of the rendering pipeline that must be pixel-perfect and fully exercised.
+**Motivation**: The full lexical entry edit view includes WinForms UI chrome critical to verify: grey field labels, writing system indicators, expand/collapse tree icons, section headers, separator lines, indentation of nested senses.
 
-**Location**: New test class(es) in `DetailControlsTests` (already references `DetailControls.csproj`, `xCore`, etc.) OR a new dedicated test project that references `RenderVerification`.
+**Location**: `DetailControlsTests/DataTreeRenderTests.cs` — 3 Verify snapshot tests + 3 timing benchmarks
+
+**What was built**:
+- `DataTreeRenderTests.cs` with 6 tests:
+  - 3 Verify snapshot tests: simple (3 senses), deep (4-level nesting), extreme (6-level nesting)
+  - 3 timing benchmarks: shallow/deep/extreme with parameterized depth/breadth
+- Data factories: `CreateSimpleEntry()`, `CreateDeepEntry()`, `CreateExtremeEntry()`, `CreateNestedSenses()` (recursive)
+- Content density validation, InnerVerifier integration (2-arg constructor + VerifyStream)
+- Uses test layout inventories (`OptSensesEty` layout) from DetailControlsTests
+- 3 `.verified.png` baselines accepted
+- All 6/6 tests passing
 
 **Test scenarios**:
 | Scenario ID | Description | What it exercises |

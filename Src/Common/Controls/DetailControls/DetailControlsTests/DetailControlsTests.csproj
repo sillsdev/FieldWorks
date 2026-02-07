@@ -29,8 +29,10 @@
     <PackageReference Include="SIL.LCModel.Tests" Version="11.0.0-*" PrivateAssets="All" />
     <PackageReference Include="SIL.LCModel.Utils.Tests" Version="11.0.0-*" PrivateAssets="All" />
     <PackageReference Include="SIL.TestUtilities" Version="17.0.0-*" />
+    <PackageReference Include="Verify" Version="31.11.0" />
   </ItemGroup>
   <ItemGroup>
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="netstandard" />
   </ItemGroup>
@@ -44,6 +46,7 @@
     <ProjectReference Include="../../../SimpleRootSite/SimpleRootSite.csproj" />
     <ProjectReference Include="../../../ViewsInterfaces/ViewsInterfaces.csproj" />
     <ProjectReference Include="../DetailControls.csproj" />
+    <ProjectReference Include="../../../RenderVerification/RenderVerification.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\..\CommonAssemblyInfo.cs">

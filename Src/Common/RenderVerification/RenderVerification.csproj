@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='utf-8'?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>RenderVerification</AssemblyName>
+    <RootNamespace>SIL.FieldWorks.Common.RenderVerification</RootNamespace>
+    <TargetFramework>net48</TargetFramework>
+    <OutputType>Library</OutputType>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <DefineConstants>TRACE</DefineConstants>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>true</Optimize>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
+    <PackageReference Include="SIL.Core" Version="17.0.0-*" />
+    <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
+    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" GeneratePathProperty="true" />
+    <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
+    <PackageReference Include="SIL.WritingSystems" Version="17.0.0-*" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="netstandard" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- DetailControls brings the full DataTree/Slice stack plus transitive deps
+         (XMLViews, xCore, Framework, Widgets, FwControls, RootSite, SimpleRootSite, ViewsInterfaces) -->
+    <ProjectReference Include="../Controls/DetailControls/DetailControls.csproj" />
+    <ProjectReference Include="../FwUtils/FwUtils.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+  </ItemGroup>
+</Project>
