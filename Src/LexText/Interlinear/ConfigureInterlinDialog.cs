@@ -806,6 +806,7 @@ namespace SIL.FieldWorks.IText
 			}
 
 			OrderAllSpecs(m_choices, orderedFlids, newLineSpecsUnordered);
+			Choices.UpdateLineOptions();
 		}
 
 		internal static void OrderAllSpecs(InterlinLineChoices choices, List<int> orderedFlids, List<InterlinLineSpec> newLineSpecsUnordered)
