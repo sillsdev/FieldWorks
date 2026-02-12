@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2016 SIL International
+// Copyright (c) 2016 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -125,10 +125,8 @@ namespace SIL.FieldWorks.XWorks.LexEd
 
 			if (typelessRefs.Any())
 			{
-				var unspecVariantEntryType = (ILexEntryType)m_entry.Cache.LangProject.LexDbOA.VariantEntryTypesOA.PossibilitiesOS
-					.First(lrt => lrt.Guid == LexEntryTypeTags.kguidLexTypeUnspecifiedVar);
-				var unspecComplexEntryType = (ILexEntryType)m_entry.Cache.LangProject.LexDbOA.ComplexEntryTypesOA.PossibilitiesOS
-					.First(lrt => lrt.Guid == LexEntryTypeTags.kguidLexTypeUnspecifiedComplexForm);
+				var unspecVariantEntryType = (ILexEntryType)m_entry.Cache.ServiceLocator.ObjectRepository.GetObject(LexEntryTypeTags.kguidLexTypeUnspecifiedVar);
+				var unspecComplexEntryType = (ILexEntryType)m_entry.Cache.ServiceLocator.ObjectRepository.GetObject(LexEntryTypeTags.kguidLexTypeUnspecifiedComplexForm);
 				NonUndoableUnitOfWorkHelper.DoUsingNewOrCurrentUOW(m_cache.ActionHandlerAccessor, () =>
 				{
 					foreach (var refEntry in typelessRefs)
