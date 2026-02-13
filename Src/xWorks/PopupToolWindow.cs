@@ -71,6 +71,10 @@ namespace SIL.FieldWorks.XWorks
 		private void PopupToolWindow_KeyDown(object sender, KeyEventArgs e)
 		{
 			FwXWindow fwXWindow = Owner as FwXWindow;
+			if (e.KeyCode == Keys.A && e.Control)
+			{
+				fwXWindow?.OnEditSelectAll(m_viewHelper);
+			}
 			if (e.KeyCode == Keys.C && e.Control)
 			{
 				fwXWindow?.OnEditCopy(m_viewHelper);

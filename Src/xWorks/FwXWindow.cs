@@ -840,12 +840,17 @@ namespace SIL.FieldWorks.XWorks
 		{
 			CheckDisposed();
 
-			if (m_viewHelper.ActiveView != null)
+			ActiveViewHelper viewHelper = m_viewHelper;
+			if (arg is ActiveViewHelper helper)
+			{
+				viewHelper = helper;
+			}
+			if (viewHelper.ActiveView != null)
 			{
 				try
 				{
 					EnableBulkLoadingDisableIdleProcessing(true);
-					m_viewHelper.ActiveView.EditingHelper.SelectAll();
+					viewHelper.ActiveView.EditingHelper.SelectAll();
 				}
 				finally
 				{
