@@ -1535,6 +1535,11 @@ namespace XCore
 			base.WndProc(ref m);
 		}
 
+		public void HandleKeyDown(KeyEventArgs e)
+		{
+			OnKeyDown(e);
+		}
+
 		protected override void OnKeyDown(KeyEventArgs e)
 		{
 			if (!e.Handled && e.KeyCode == Keys.Tab && (e.Modifiers & Keys.Control) == Keys.Control)

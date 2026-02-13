@@ -1,3 +1,4 @@
+using SIL.FieldWorks.Common.RootSites;
 using SIL.LCModel;
 using SIL.Utils;
 using System;
@@ -18,6 +19,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private PropertyTable m_propertyTable;
 		private RecordClerk m_recordClerk;
+		protected ActiveViewHelper m_viewHelper;
 
 		public PopupToolWindow()
 		{
@@ -40,6 +42,8 @@ namespace SIL.FieldWorks.XWorks
 			this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Show;
 			this.Text = "Popup Tool Window";
 			this.WindowState = System.Windows.Forms.FormWindowState.Normal;
+			this.KeyPreview = true;
+			this.KeyDown += new KeyEventHandler(PopupToolWindow_KeyDown);
 			this.Deactivate += new System.EventHandler(PopupToolWindow_Deactivate);
 			this.Activated += new System.EventHandler(PopupToolWindow_Activated);
 			this.ResumeLayout(false);
@@ -61,6 +65,28 @@ namespace SIL.FieldWorks.XWorks
 			if (m_recordClerk != null)
 			{
 				m_recordClerk.ActivateUI(false);
+			}
+		}
+
+		private void PopupToolWindow_KeyDown(object sender, KeyEventArgs e)
+		{
+			FwXWindow fwXWindow = Owner as FwXWindow;
+			if (e.KeyCode == Keys.C && e.Control)
+			{
+				fwXWindow?.OnEditCopy(m_viewHelper);
+			}
+			else if (e.KeyCode == Keys.V && e.Control)
+			{
+				fwXWindow?.OnEditPaste(m_viewHelper);
+			}
+			else if (e.KeyCode == Keys.X && e.Control)
+			{
+				fwXWindow?.OnEditCut(m_viewHelper);
+			}
+			else
+			{
+				// e.g. Control-Z.
+				fwXWindow?.HandleKeyDown(e);
 			}
 		}
 
@@ -116,6 +142,8 @@ namespace SIL.FieldWorks.XWorks
 			{
 				this.Text = toolNode.Attributes["label"].Value;
 			}
+			m_viewHelper = new ActiveViewHelper(this);
+
 			this.Show();
 			this.BringToFront();
 			this.Activate();
