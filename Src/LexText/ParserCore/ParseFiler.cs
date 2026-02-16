@@ -64,6 +64,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		#region Data members
 
 		private readonly LcmCache m_cache;
+		private readonly PropertyTable m_propertyTable;
 		private readonly Action<TaskReport> m_taskUpdateHandler;
 		private readonly IdleQueue m_idleQueue;
 		private readonly ICmAgent m_parserAgent;
@@ -88,10 +89,11 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// Initializes a new instance of the <see cref="ParseFiler"/> class.
 		/// </summary>
 		/// <param name="cache">The cache.</param>
+		/// <param name="propertyTable">The property table.</param>
 		/// <param name="taskUpdateHandler">The task update handler.</param>
 		/// <param name="idleQueue">The idle queue.</param>
 		/// <param name="parserAgent">The parser agent.</param>
-		public ParseFiler(LcmCache cache, Action<TaskReport> taskUpdateHandler, IdleQueue idleQueue, ICmAgent parserAgent)
+		public ParseFiler(LcmCache cache, PropertyTable propertyTable, Action<TaskReport> taskUpdateHandler, IdleQueue idleQueue, ICmAgent parserAgent)
 		{
 			Debug.Assert(cache != null);
 			Debug.Assert(taskUpdateHandler != null);
@@ -99,6 +101,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			Debug.Assert(parserAgent != null);
 
 			m_cache = cache;
+			m_propertyTable = propertyTable;
 			m_taskUpdateHandler = taskUpdateHandler;
 			m_idleQueue = idleQueue;
 			m_parserAgent = parserAgent;
@@ -187,9 +190,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 
 			NonUndoableUnitOfWorkHelper.Do(m_cache.ActionHandlerAccessor, () =>
 			{
+				bool updateAnalyses = m_propertyTable == null ? true : m_propertyTable.GetBoolProperty("CheckParserUpdatesAnalyses", true);
 				foreach (WordformUpdateWork work in results)
 				{
-					if (work.CheckParser)
+					if (work.CheckParser && !updateAnalyses)
 					{
 						// This was just a test.  Don't update data.
 						FireWordformUpdated(work.Wordform, work.Priority, work.ParseResult, work.CheckParser);

@@ -44,6 +44,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 	public class ParserWorker : DisposableBase
 	{
 		private readonly LcmCache m_cache;
+		private readonly PropertyTable m_propertyTable;
 		private readonly Action<TaskReport> m_taskUpdateHandler;
 		private readonly ParseFiler m_parseFiler;
 		private int m_numberOfWordForms;
@@ -54,9 +55,10 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		/// Initializes a new instance of the <see cref="ParserWorker"/> class.
 		/// </summary>
 		/// -----------------------------------------------------------------------------------
-		public ParserWorker(LcmCache cache, Action<TaskReport> taskUpdateHandler, IdleQueue idleQueue, string dataDir)
+		public ParserWorker(LcmCache cache, PropertyTable propertyTable, Action<TaskReport> taskUpdateHandler, IdleQueue idleQueue, string dataDir)
 		{
 			m_cache = cache;
+			m_propertyTable = propertyTable;
 			m_taskUpdateHandler = taskUpdateHandler;
 			ICmAgent agent;
 			switch (m_cache.LanguageProject.MorphologicalDataOA.ActiveParser)
@@ -72,7 +74,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				default:
 					throw new InvalidOperationException("The language project is set to use an unrecognized parser.");
 			}
-			m_parseFiler = new ParseFiler(cache, taskUpdateHandler, idleQueue, agent);
+			m_parseFiler = new ParseFiler(cache, propertyTable, taskUpdateHandler, idleQueue, agent);
 		}
 
 		protected override void DisposeManagedResources()

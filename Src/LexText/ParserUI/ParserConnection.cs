@@ -33,10 +33,10 @@ namespace SIL.FieldWorks.LexText.Controls
 		/// Initializes a new instance of the <see cref="ParserConnection"/> class.
 		/// This will attempt to connect to an existing parser or start a new one if necessary.
 		/// </summary>
-		public ParserConnection(LcmCache cache, IdleQueue idleQueue, EventHandler<WordformUpdatedEventArgs> WordformEventHandler = null)
+		public ParserConnection(LcmCache cache, PropertyTable propertyTable, IdleQueue idleQueue, EventHandler<WordformUpdatedEventArgs> WordformEventHandler = null)
 		{
 			m_activity = "";
-			m_scheduler = new ParserScheduler(cache, idleQueue, Path.Combine(FwDirectoryFinder.CodeDirectory, FwDirectoryFinder.ksFlexFolderName));
+			m_scheduler = new ParserScheduler(cache, propertyTable, idleQueue, Path.Combine(FwDirectoryFinder.CodeDirectory, FwDirectoryFinder.ksFlexFolderName));
 			m_scheduler.ParserUpdateVerbose += ParserUpdateHandlerForPolling;
 			if (WordformEventHandler != null)
 				m_scheduler.WordformUpdated += WordformEventHandler;

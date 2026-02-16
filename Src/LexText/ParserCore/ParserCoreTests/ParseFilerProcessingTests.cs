@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			base.FixtureSetup();
 			m_vernacularWS = Cache.ServiceLocator.WritingSystems.DefaultVernacularWritingSystem;
 			m_idleQueue = new IdleQueue {IsPaused = true};
-			m_filer = new ParseFiler(Cache, task => {}, m_idleQueue, Cache.LanguageProject.DefaultParserAgent);
+			m_filer = new ParseFiler(Cache, null, task => {}, m_idleQueue, Cache.LanguageProject.DefaultParserAgent);
 			m_entryFactory = Cache.ServiceLocator.GetInstance<ILexEntryFactory>();
 			m_senseFactory = Cache.ServiceLocator.GetInstance<ILexSenseFactory>();
 			m_stemAlloFactory = Cache.ServiceLocator.GetInstance<IMoStemAllomorphFactory>();

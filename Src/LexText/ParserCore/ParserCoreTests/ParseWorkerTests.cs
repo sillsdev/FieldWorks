@@ -106,7 +106,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		public void TryAWord()
 		{
 			XDocument lowerXDoc = new XDocument(new XComment("cats"));
-			var parserWorker = new ParserWorker(Cache, HandleTaskUpdate, m_idleQueue, null);
+			var parserWorker = new ParserWorker(Cache, null, HandleTaskUpdate, m_idleQueue, null);
 			parserWorker.Parser = new TestParserClass(null, lowerXDoc);
 
 			// SUT
@@ -141,7 +141,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				});
 			});
 
-			var parserWorker = new ParserWorker(Cache, HandleTaskUpdate, m_idleQueue, null);
+			var parserWorker = new ParserWorker(Cache, null, HandleTaskUpdate, m_idleQueue, null);
 			parserWorker.Parser = new TestParserClass(lowerResult, null);
 
 			// SUT
