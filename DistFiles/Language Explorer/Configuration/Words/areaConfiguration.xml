@@ -289,7 +289,7 @@
             <item command="CmdCheckParserOnAll"/>
             <item command="CmdShowParserReports"/>
             <item label="-" translate="do not translate"/>
-            <item label="Updates Analyses" boolProperty="CheckParserUpdatesAnalyses" persist="true" settings="local"/>
+            <item label="Updates Word Analyses" boolProperty="CheckParserUpdatesAnalyses" persist="true" settings="local"/>
           </menu>
 			<menu id="ChooseParserMenu" label="Choose Parser">
 				<item command="CmdChooseXAmpleParser"/>
