@@ -2646,7 +2646,7 @@ namespace SIL.FieldWorks.XWorks
 			{
 				const int subitemFlid = 7004;
 				ICmPossibility original = (ICmPossibility) m_list.CurrentObject;
-				if(original.OwningFlid != subitemFlid && !original.ShortNameTSS.Text.Equals("???")) // Don't duplicate subitems or unnamed items
+				if(original != null && original.OwningFlid != subitemFlid && !original.ShortNameTSS.Text.Equals("???")) // Don't duplicate subitems or unnamed items
 					TreeBarHandlerUtils.Tree_Duplicate(original, 0, Cache);
 			}
 			catch (ApplicationException ae)
