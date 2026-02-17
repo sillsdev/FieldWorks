@@ -2,7 +2,7 @@
 
 ## Prerequisites
 - Windows developer environment with FieldWorks repo checked out in `fw-agent-1` worktree.
-- Visual Studio 2022 build tools + WiX 3.11 per `.github/instructions/build.instructions.md`.
+- Visual Studio 2022 build tools + WiX 3.14.1 per `.github/instructions/build.instructions.md`.
 - Python 3.11 available in the repo environment (`py -3.11`).
 - Ensure `Src/CommonAssemblyInfo.cs` is regenerated via `Build/SetupInclude.targets` before auditing.
 

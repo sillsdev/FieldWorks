@@ -1,5 +1,11 @@
 # Suggested Commands
 
+## Environment Verification
+- `.\Build\Agent\Verify-FwDependencies.ps1 -IncludeOptional` — check all build dependencies are available
+- `.\Build\Agent\Setup-FwBuildEnv.ps1 -Verify` — configure VS/MSBuild environment variables
+- `.\Build\Agent\Setup-Serena.ps1` — verify Serena MCP setup for code intelligence
+
+## Build Commands
 - `.\build.ps1 -Configuration Debug -Platform x64` — canonical traversal build (leverages FieldWorks.proj with MSBuild Traversal SDK).
 - `msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64 /m` — direct traversal build (run from a properly initialized developer environment or via `./build.sh`/`.\build.ps1`).
 - `msbuild Build\Src\NativeBuild\NativeBuild.csproj` — native-only phase build when reg-free codegen prerequisites are missing.

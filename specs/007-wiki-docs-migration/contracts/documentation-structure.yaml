@@ -1,0 +1,167 @@
+# Documentation Structure Contract
+
+## Overview
+
+This contract defines the expected structure and content requirements for migrated documentation.
+
+## Directory Structure Contract
+
+```yaml
+docs:
+  type: directory
+  required: true
+  children:
+    CONTRIBUTING.md:
+      type: file
+      required: true
+      description: Main contributor entry point
+      sections:
+        - Prerequisites
+        - Clone Repository
+        - Build Instructions
+        - Submit Changes
+
+    visual-studio-setup.md:
+      type: file
+      required: true
+      description: Visual Studio 2022 setup guide
+
+    core-developer-setup.md:
+      type: file
+      required: true
+      description: Core developer onboarding
+
+    workflows:
+      type: directory
+      required: true
+      children:
+        pull-request-workflow.md:
+          type: file
+          required: true
+          description: GitHub PR workflow
+
+        release-process.md:
+          type: file
+          required: false
+          markers_allowed: [CONFIRMATION_NEEDED]
+
+    architecture:
+      type: directory
+      required: true
+      children:
+        data-migrations.md:
+          type: file
+          required: true
+          description: FLEx data migration authoring guide
+
+        dependencies.md:
+          type: file
+          required: false
+
+    linux:
+      type: directory
+      required: false
+      markers_allowed: [CONFIRMATION_NEEDED]
+
+    images:
+      type: directory
+      required: false
+      description: Screenshots and diagrams
+```
+
+## Instruction File Contract
+
+New instruction files must follow this schema:
+
+```yaml
+instruction_file:
+  frontmatter:
+    required:
+      - applyTo: string  # Glob pattern
+      - name: string     # File identifier
+      - description: string  # Brief description
+    optional: []
+
+  content:
+    required_sections:
+      - "## Purpose & Scope"
+      - "## Key Rules"
+    optional_sections:
+      - "## Examples"
+      - "## References"
+
+  constraints:
+    max_lines: 200
+    no_owners_field: true
+    no_excludeAgent_field: true
+```
+
+## Link Contract
+
+All documentation must follow these link rules:
+
+```yaml
+links:
+  internal:
+    format: relative
+    must_resolve: true
+    examples:
+      - "[Setup](./visual-studio-setup.md)"
+      - "[Build Instructions](../.github/instructions/build.instructions.md)"
+
+  external:
+    format: absolute
+    must_include_protocol: true
+    examples:
+      - "https://visualstudio.microsoft.com/"
+
+  images:
+    format: relative
+    location: "./images/"
+    examples:
+      - "![Screenshot](./images/vs-setup.png)"
+```
+
+## Content Markers Contract
+
+```yaml
+markers:
+  CONFIRMATION_NEEDED:
+    format: "> ⚠️ **CONFIRMATION_NEEDED**: {description}"
+    allowed_in:
+      - linux/*.md
+      - workflows/release-process.md
+    not_allowed_in:
+      - CONTRIBUTING.md
+      - visual-studio-setup.md
+
+  historical_note:
+    format: "> 📝 **Historical Note**: {description}"
+    purpose: Explain legacy context without preserving obsolete instructions
+```
+
+## Validation Rules
+
+```yaml
+validation:
+  - rule: no_broken_internal_links
+    severity: error
+
+  - rule: no_gerrit_commands
+    severity: error
+    pattern: "git review|gerrit.lsdev.sil.org"
+    exception: historical_note_block
+
+  - rule: no_absolute_windows_paths
+    severity: error
+    pattern: "C:\\\\fwrepo|C:/fwrepo"
+
+  - rule: no_obsolete_build_commands
+    severity: warning
+    pattern: "build.bat|remakefw"
+    message: "Use build.ps1 instead"
+
+  - rule: frontmatter_required
+    severity: error
+    applies_to: ".github/instructions/*.md"
+```

@@ -453,13 +453,13 @@ namespace SIL.FieldWorks.XWorks
 			string comment
 		)
 		{
-			Assert.That(actual.Count(), Is.EqualTo(expected.Count).Within(comment + " count"));
+			Assert.That(actual.Count(), Is.EqualTo(expected.Count), comment + " count");
 			var expectedSet = new HashSet<IStText>(expected);
 			var actualSet = new HashSet<IStText>(actual);
 			var unexpected = actualSet.Except(expectedSet);
-			Assert.That(unexpected.Count(), Is.EqualTo(0).Within(comment + " has extra elements"));
+			Assert.That(unexpected.Count(), Is.EqualTo(0), comment + " has extra elements");
 			var missing = expectedSet.Except(actualSet);
-			Assert.That(missing.Count(), Is.EqualTo(0).Within(comment + " has missing elements"));
+			Assert.That(missing.Count(), Is.EqualTo(0), comment + " has missing elements");
 		}
 
 		private MockTextRepository MakeMockTextRepoWithTwoMockTexts()

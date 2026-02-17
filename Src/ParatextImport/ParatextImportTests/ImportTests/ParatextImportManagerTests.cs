@@ -1401,8 +1401,7 @@ namespace ParatextImport.ImportTests
 		//    IScrBook james = m_scr.FindBook(59);
 		//    Assert.That(m_scr.ScriptureBooksOS.HvoArray[3], Is.EqualTo(james.Hvo), //        "This test is invalid if James isn't the second book in Scripture in the test DB.");
 		//    int cBooksAfterDeletingGenesis = m_scr.ScriptureBooksOS.Count;
-		//    Assert.That(cBooksAfterDeletingGenesis > 4,
-		//        "This test is invalid if the test DB has fewer than 3 books (originally).", Is.True);
+		//    Assert.That(cBooksAfterDeletingGenesis > 4, Is.True, //        "This test is invalid if the test DB has fewer than 3 books (originally).");
 
 		//    // process a \id segment to import an existing book (James)
 		//    MockScrObjWrapper.s_fSimulateCancel = true;

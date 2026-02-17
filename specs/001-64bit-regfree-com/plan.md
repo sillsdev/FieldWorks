@@ -10,7 +10,7 @@ Migrate FieldWorks to 64‑bit only and enable registration‑free COM activatio
 ## Technical Context
 
 **Language/Version**: C# (.NET Framework 4.8) and C++/C++‑CLI (current MSVC toolset)
-**Primary Dependencies**: MSBuild, existing SIL FieldWorks build tasks (RegFree), WiX 3.11.x (existing installer toolchain)
+**Primary Dependencies**: MSBuild, existing SIL FieldWorks build tasks (RegFree), WiX 3.14.1 (existing installer toolchain)
 **Storage**: N/A (no data schema changes)
 **Testing**: Visual Studio Test / NUnit harness with the shared manifest-enabled test host introduced in Phase 6
 **Target Platform**: Windows x64 (Windows 10/11)

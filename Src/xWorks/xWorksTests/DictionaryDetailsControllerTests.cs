@@ -530,7 +530,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			string label;
 			var result = m_staticDDController.GetListItemsAndLabel(listId, out label); // SUT
-			Assert.That(result.Count, Is.EqualTo(expectedCount).Within(String.Format("Incorrect number of {0} Types", listId)));
+			Assert.That(result.Count, Is.EqualTo(expectedCount), $"Incorrect number of {listId} Types");
 			Assert.That(label, Does.Contain(listId.ToString()));
 			return result;
 		}
@@ -922,12 +922,12 @@ namespace SIL.FieldWorks.XWorks
 					{
 						if (innerControl is CheckBox && innerControl.Name == "checkBoxShowGrammarFirst")
 						{
-							Assert.That(innerControl.Enabled && innerControl.Visible, Is.True, "checkBoxShowGrammarFirst should be enabled and visible for {0}", label);
+							Assert.That(innerControl.Enabled && innerControl.Visible, Is.True, $"checkBoxShowGrammarFirst should be enabled and visible for {label}");
 							++innerControls;
 						}
 						else if (innerControl is CheckBox && innerControl.Name == "checkBoxSenseInPara")
 						{
-							Assert.That(innerControl.Enabled && innerControl.Visible, Is.True, "checkBoxSenseInPara should be enabled and visible for {0}", label);
+							Assert.That(innerControl.Enabled && innerControl.Visible, Is.True, $"checkBoxSenseInPara should be enabled and visible for {label}");
 							++innerControls;
 						}
 						else if (innerControl is CheckBox && innerControl.Name == "checkBoxFirstSenseInline")
@@ -939,11 +939,11 @@ namespace SIL.FieldWorks.XWorks
 							++innerControls;
 						}
 					}
-					Assert.That(innerControls, Is.EqualTo(3), "Matched incorrect number of controls within senseStructureVerticalFlow for {0}", label);
+					Assert.That(innerControls, Is.EqualTo(3), $"Matched incorrect number of controls within senseStructureVerticalFlow for {label}");
 					++controlsChecked;
 				}
 			}
-			Assert.That(controlsChecked, Is.EqualTo(2), "Matched incorrect number of controls for {0}", label);
+			Assert.That(controlsChecked, Is.EqualTo(2), $"Matched incorrect number of controls for {label}");
 		}
 
 		[Test]

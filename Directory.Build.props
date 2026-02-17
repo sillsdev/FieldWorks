@@ -10,7 +10,41 @@
 		<PreferredToolArchitecture>x64</PreferredToolArchitecture>
 		<!-- Disable determinism to allow wildcard versions in CommonAssemblyInfo.cs -->
 		<Deterministic>false</Deterministic>
+		<!-- Required for projects with non-string resources (images, icons, etc.) in .NET SDK style projects -->
+		<GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+		<!-- Disable implicit SourceLink/Git in containers - BuildTools doesn't include Microsoft.Build.Tasks.Git SDK.
+		     This only affects embedded source URLs in PDBs; local debugging still works via file paths. -->
+		<SuppressImplicitGitSourceLink Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">true</SuppressImplicitGitSourceLink>
 	</PropertyGroup>
+
+	<!-- Required for non-string resources (images, icons) in .NET Framework SDK-style projects -->
+	<!-- System.Resources.Extensions 9.0.0 requires net462 or higher - use explicit version check -->
+	<ItemGroup Condition="'$(TargetFramework)' == 'net48' OR '$(TargetFramework)' == 'net472' OR '$(TargetFramework)' == 'net471' OR '$(TargetFramework)' == 'net47' OR '$(TargetFramework)' == 'net462'">
+		<PackageReference Include="System.Resources.Extensions" Version="9.0.0" />
+		<!--
+			DependencyModel version conflict resolution:
+			- icu.net 3.0.1 (via SIL.LCModel.Core) requires DependencyModel 2.0.4
+			- ParatextData 9.5.0.20 requires DependencyModel 9.0.9
+			- Since FieldWorks uses a shared output directory, all projects must reference
+			  the same version to ensure consistent binding redirects are generated.
+			- Version 9.0.9 is backward compatible with 2.0.4 API surface for ICU.NET usage.
+		-->
+		<PackageReference Include="Microsoft.Extensions.DependencyModel" Version="9.0.9" />
+		<!--
+			System.Memory version conflict resolution:
+			- ParatextData 9.5.0.20 requires System.Memory 4.6.3
+			- Various other packages require different versions (4.5.0 to 4.6.0)
+			- Force consistent version to ensure binding redirects work
+		-->
+		<PackageReference Include="System.Memory" Version="4.6.3" />
+		<!--
+			Microsoft.Bcl.HashCode version conflict resolution:
+			- System.Resources.Extensions 9.0.0 uses BinaryFormat which requires HashCode
+			- Some packages expect version 1.0.0.0, but 6.0.x is available
+			- Force consistent version to ensure binding redirects are generated
+		-->
+		<PackageReference Include="Microsoft.Bcl.HashCode" Version="6.0.0" />
+	</ItemGroup>
 	<PropertyGroup Label="AssemblyInfo Policy">
 		<!--
 			CommonAssemblyInfoTemplate Policy:
@@ -29,10 +63,27 @@
 		<FwOutput>$(FwRoot)Output\</FwOutput>
 		<FwOutputBase>$(FwOutput)$(Configuration)\</FwOutputBase>
 		<FwObj>$(FwRoot)Obj\</FwObj>
-		<!-- Redirect 'obj' folder to local container storage to bypass Docker volume mount limitations (file locking/renaming failures) during NuGet restore. -->
-		<BaseIntermediateOutputPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">C:\Temp\Obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
-		<MSBuildProjectExtensionsPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">$(BaseIntermediateOutputPath)</MSBuildProjectExtensionsPath>
-		<RestoreOutputPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">$(BaseIntermediateOutputPath)</RestoreOutputPath>
+		<!--
+			Unified Intermediate Output Policy:
+			All SDK-style projects use the root Obj/ folder (gitignored) instead of per-project obj/ folders.
+			This prevents conflicts between host and container builds when worktrees are mounted.
+			- Host builds: $(FwRoot)Obj/<ProjectName>/
+			- Container builds: C:\Temp\Obj/<ProjectName>/ (local storage, not mounted)
+
+			Note: WPF markup compilation creates temp projects like "ProjectName_abc123_wpftmp".
+			We detect this via the _wpftmp suffix and use the original project's intermediate directory
+			by checking if MSBuildProjectName contains '_wpftmp' and using the parent directory's name instead.
+		-->
+		<_IsWpfTempProject>false</_IsWpfTempProject>
+		<_IsWpfTempProject Condition="$(MSBuildProjectName.Contains('_wpftmp'))">true</_IsWpfTempProject>
+		<!-- For WPF temp projects, derive the real name from the project file path's directory name -->
+		<_RealProjectName Condition="'$(_IsWpfTempProject)' != 'true'">$(MSBuildProjectName)</_RealProjectName>
+		<_RealProjectName Condition="'$(_IsWpfTempProject)' == 'true'">$([System.IO.Path]::GetFileName($([System.IO.Path]::GetDirectoryName($(MSBuildProjectFullPath)))))</_RealProjectName>
+		<BaseIntermediateOutputPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'">$(FwRoot)Obj\$(_RealProjectName)\</BaseIntermediateOutputPath>
+		<BaseIntermediateOutputPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">C:\Temp\Obj\$(_RealProjectName)\</BaseIntermediateOutputPath>
+		<MSBuildProjectExtensionsPath>$(BaseIntermediateOutputPath)</MSBuildProjectExtensionsPath>
+		<RestoreOutputPath>$(BaseIntermediateOutputPath)</RestoreOutputPath>
+		<!-- Container-specific: use local package cache to avoid mount I/O issues -->
 		<RestorePackagesPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">C:\Temp\Packages\</RestorePackagesPath>
 		<RestoreNoCache Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">true</RestoreNoCache>
 		<!-- LCM artifacts directory -->
@@ -61,4 +112,27 @@
 		<!-- This is required for dotnet test to discover test adapters -->
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 	</PropertyGroup>
+
+	<ItemGroup Condition="'$(IsTestProject)' == 'true'">
+		<!-- NUnit 3.x - must match version used by SIL.TestUtilities to avoid runtime conflicts -->
+		<!-- When SIL packages upgrade to NUnit 4, update this to 4.x and add global using aliases for ClassicAssert -->
+		<PackageReference Include="NUnit" Version="3.13.3" />
+		<PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+	</ItemGroup>
+
+	<!--
+		Shared test assembly attributes: SLDR offline mode, ICU initialization, registry redirect, etc.
+		This is applied to all test projects that don't already include the file.
+		The file sets up proper test initialization for FieldWorks components.
+
+		Use AssemblyInfoForTests.cs for UI test projects (most tests).
+		Projects can override by setting <UseUiIndependentTestAssemblyInfo>true</UseUiIndependentTestAssemblyInfo>
+	-->
+	<ItemGroup Condition="'$(IsTestProject)' == 'true' AND '$(UseUiIndependentTestAssemblyInfo)' != 'true'">
+		<Compile Include="$(FwRoot)Src\AssemblyInfoForTests.cs" Link="Properties\AssemblyInfoForTests.cs" />
+	</ItemGroup>
+	<ItemGroup Condition="'$(IsTestProject)' == 'true' AND '$(UseUiIndependentTestAssemblyInfo)' == 'true'">
+		<Compile Include="$(FwRoot)Src\AssemblyInfoForUiIndependentTests.cs" Link="Properties\AssemblyInfoForUiIndependentTests.cs" />
+	</ItemGroup>
 </Project>

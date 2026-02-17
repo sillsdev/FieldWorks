@@ -171,3 +171,7 @@ venv/
 CrashLog.txt
 .cache/
 .cache/copilot/
+
+# VSTest Artifacts
+TestResults/
+*.trx

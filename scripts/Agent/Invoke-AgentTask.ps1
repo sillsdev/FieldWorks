@@ -94,10 +94,12 @@ switch ($Action) {
     }
   }
   'Test' {
+    # Container test script uses VSINSTALLDIR env var (set by Post-Install-Setup.ps1) or falls back to hardcoded path
     $testScript = @"
-$testDlls = Get-ChildItem -Recurse -Include *Tests.dll,*Test.dll,*Spec.dll -Path '$containerPath' -ErrorAction SilentlyContinue | Where-Object { $_.FullName -match '\\bin\\(Debug|Release)\\' }
-if ($testDlls) {
-  & 'C:\\BuildTools\\Common7\\IDE\\CommonExtensions\\Microsoft\\TestWindow\\vstest.console.exe' @($testDlls.FullName)
+`$testDlls = Get-ChildItem -Recurse -Include *Tests.dll,*Test.dll,*Spec.dll -Path '$containerPath' -ErrorAction SilentlyContinue | Where-Object { `$_.FullName -match '\\bin\\(Debug|Release)\\' }
+if (`$testDlls) {
+  `$vstestPath = if (`$env:VSINSTALLDIR) { Join-Path `$env:VSINSTALLDIR 'Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe' } else { 'C:\BuildTools\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe' }
+  & `$vstestPath @(`$testDlls.FullName)
 } else {
   Write-Host 'No test DLLs found.'
 }

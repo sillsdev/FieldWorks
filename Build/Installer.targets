@@ -92,9 +92,10 @@
 	/>
 	<Target Name="BuildProduct" DependsOnTargets="CleanInstaller;ProductCompile" />
 	<Target Name="RequirePlatform">
+		<!-- x64-only build (x86 is no longer supported) -->
 		<Error
-			Text="The Platform property must be set on the command line to x86 or x64."
-			Condition="'$(Platform)' == ''"
+			Text="The Platform property must be set to x64. x86 is no longer supported."
+			Condition="'$(Platform)' != 'x64'"
 		/>
 		<Error
 			Text="Installer must be run for release builds [config=$(config)]"
@@ -470,89 +471,53 @@
 		/>
 	</Target>
 	<Target Name="DownloadBundledInstallers" Condition="'$(disableDownloads)'!='true'">
-		<!-- REVIEW (Hasso) 2018.03: how many of these do we really need? -->
+		<!-- x64-only build: only download x64 redistributables -->
 		<PropertyGroup>
 			<WixLibsDir>$(InstallerDir)/libs/</WixLibsDir>
 		</PropertyGroup>
-		<!-- .NET 4.8 -->
+		<!-- .NET 4.8 (universal installer supports both architectures) -->
 		<DownloadFile
 			Address="https://go.microsoft.com/fwlink/?linkid=2088631"
 			LocalFilename="ndp48-x86-x64-allos-enu.exe"
 			Condition="!Exists('$(WixLibsDir)/ndp48-x86-x64-allos-enu.exe')"
 			DownloadsDir="$(WixLibsDir)"
 		/>
-		<!-- 32-bit VC redistributables -->
-		<DownloadFile
-			Address="https://download.microsoft.com/download/5/D/8/5D8C65CB-C849-4025-8E95-C3966CAFD8AE/vcredist_x86.exe"
-			LocalFilename="vcredist_2008_x86.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2008_x86.exe') And $(Platform)!='x64'"
-			DownloadsDir="$(WixLibsDir)"
-		/>
-		<!-- VisualC++ 8 runtime -->
-		<DownloadFile
-			Address="https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe"
-			LocalFilename="vcredist_2010_x86.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2010_x86.exe') And $(Platform)!='x64'"
-			DownloadsDir="$(WixLibsDir)"
-		/>
-		<!-- VisualC++ 10 runtime -->
-		<DownloadFile
-			Address="https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x86.exe"
-			LocalFilename="vcredist_2012_x86.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2012_x86.exe') And $(Platform)!='x64'"
-			DownloadsDir="$(WixLibsDir)"
-		/>
-		<!-- VisualC++ 11 runtime -->
-		<DownloadFile
-			Address="https://download.microsoft.com/download/0/5/6/056dcda9-d667-4e27-8001-8a0c6971d6b1/vcredist_x86.exe"
-			LocalFilename="vcredist_2013_x86.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2013_x86.exe') And $(Platform)!='x64'"
-			DownloadsDir="$(WixLibsDir)"
-		/>
-		<!-- VisualC++ 12 runtime -->
-		<DownloadFile
-			Address="https://download.visualstudio.microsoft.com/download/pr/888b4c07-c602-499a-9efb-411188496ce7/F3A86393234099BEDD558FD35AB538A6E4D9D4F99AD5ADFA13F603D4FF8A42DC/VC_redist.x86.exe"
-			LocalFilename="vcredist_2015-19_x86.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2015-19_x86.exe') And $(Platform)!='x64'"
-			DownloadsDir="$(WixLibsDir)"
-		/>
-		<!-- VisualC++ 14.1 runtime -->
-		<!-- 64-bit VC redistributables -->
+		<!-- 64-bit VC redistributables (x86 no longer needed) -->
 		<DownloadFile
 			Address="https://download.microsoft.com/download/5/D/8/5D8C65CB-C849-4025-8E95-C3966CAFD8AE/vcredist_x64.exe"
 			LocalFilename="vcredist_2008_x64.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2008_x64.exe') And $(Platform)=='x64'"
+			Condition="!Exists('$(WixLibsDir)/vcredist_2008_x64.exe')"
 			DownloadsDir="$(WixLibsDir)"
 		/>
-		<!-- VisualC++ 8 runtime -->
+		<!-- VisualC++ 9 runtime (VS 2008) -->
 		<DownloadFile
 			Address="https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe"
 			LocalFilename="vcredist_2010_x64.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2010_x64.exe') And $(Platform)=='x64'"
+			Condition="!Exists('$(WixLibsDir)/vcredist_2010_x64.exe')"
 			DownloadsDir="$(WixLibsDir)"
 		/>
-		<!-- VisualC++ 10 runtime -->
+		<!-- VisualC++ 10 runtime (VS 2010) -->
 		<DownloadFile
 			Address="https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x64.exe"
 			LocalFilename="vcredist_2012_x64.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2012_x64.exe') And $(Platform)=='x64'"
+			Condition="!Exists('$(WixLibsDir)/vcredist_2012_x64.exe')"
 			DownloadsDir="$(WixLibsDir)"
 		/>
-		<!-- VisualC++ 11 runtime -->
+		<!-- VisualC++ 11 runtime (VS 2012) -->
 		<DownloadFile
 			Address="https://download.microsoft.com/download/0/5/6/056DCDA9-D667-4E27-8001-8A0C6971D6B1/vcredist_x64.exe"
 			LocalFilename="vcredist_2013_x64.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2013_x64.exe') And $(Platform)=='x64'"
+			Condition="!Exists('$(WixLibsDir)/vcredist_2013_x64.exe')"
 			DownloadsDir="$(WixLibsDir)"
 		/>
-		<!-- VisualC++ 12 runtime -->
+		<!-- VisualC++ 12 runtime (VS 2013) -->
 		<DownloadFile
 			Address="https://download.visualstudio.microsoft.com/download/pr/36e45907-8554-4390-ba70-9f6306924167/97CC5066EB3C7246CF89B735AE0F5A5304A7EE33DC087D65D9DFF3A1A73FE803/VC_redist.x64.exe"
 			LocalFilename="vcredist_2015-19_x64.exe"
-			Condition="!Exists('$(WixLibsDir)/vcredist_2015-19_x64.exe') And $(Platform)=='x64'"
+			Condition="!Exists('$(WixLibsDir)/vcredist_2015-19_x64.exe')"
 			DownloadsDir="$(WixLibsDir)"
 		/>
-		<!-- VisualC++ 14.1 runtime -->
+		<!-- VisualC++ 14.1 runtime (VS 2015-2019) -->
 		<!-- FLEx Bridge -->
 		<DownloadFile
 			Address="https://software.sil.org/downloads/r/fieldworks/FlexBridge_Offline_4.2.0.exe"

@@ -77,7 +77,7 @@ namespace SIL.FieldWorks.IText
 			sb.AppendLine(sExpectedResultFile);
 			sb.Append("Actual file was ");
 			sb.AppendLine(sActualResultFile);
-			Assert.That(sActual, Is.EqualTo(sExpected).Within(sb.ToString()));
+			Assert.That(sActual, Is.EqualTo(sExpected), sb.ToString());
 		}
 
 		private string NormalizeXmlString(string xmlString)

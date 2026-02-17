@@ -8797,7 +8797,7 @@ namespace SIL.FieldWorks.XWorks
 				var secondHeadwordLoc = xhtml.IndexOf(secondAHeadword, StringComparison.Ordinal);
 				var thirdHeadwordLoc = xhtml.IndexOf(bHeadword, StringComparison.Ordinal);
 				// The headwords should show up in the xhtml in the given order (firstA, secondA, b)
-				Assert.That(firstHeadwordLoc != -1 && firstHeadwordLoc < secondHeadwordLoc && secondHeadwordLoc < thirdHeadwordLoc, Is.True, "Entries generated out of order: first at {0}, second at {1}, third at {2}", firstHeadwordLoc, secondHeadwordLoc, thirdHeadwordLoc);
+				Assert.That(firstHeadwordLoc != -1 && firstHeadwordLoc < secondHeadwordLoc && secondHeadwordLoc < thirdHeadwordLoc, Is.True, $"Entries generated out of order: first at {firstHeadwordLoc}, second at {secondHeadwordLoc}, third at {thirdHeadwordLoc}");
 			}
 			finally
 			{
@@ -9180,7 +9180,7 @@ namespace SIL.FieldWorks.XWorks
 				{
 					Assert.DoesNotThrow(() => actualPath = LcmXhtmlGenerator.SavePreviewHtmlWithStyles(entries, clerk, null, model, m_propertyTable));
 				}
-				Assert.That(actualPath, Is.Not.EqualTo(preferredPath).Within("Should have saved to a different path."));
+				Assert.That(actualPath, Is.Not.EqualTo(preferredPath), "Should have saved to a different path.");
 			}
 			finally
 			{
@@ -9867,12 +9867,9 @@ namespace SIL.FieldWorks.XWorks
 				var result = ConfiguredLcmGenerator.GenerateContentForEntry(lexentry, mainEntryNode, null, settings).ToString();
 
 				// Test that variantformentrybackref items are in (alphabetical or) virtual order
-				Assert.That(result.IndexOf(headwords[0], StringComparison.InvariantCulture),
-					Is.LessThan(result.IndexOf(headwords[1], StringComparison.InvariantCulture)), "complex form not sorted in expected order\n{0}", result);
-				Assert.That(result.IndexOf(headwords[1], StringComparison.InvariantCulture),
-					Is.LessThan(result.IndexOf(headwords[2], StringComparison.InvariantCulture)), "complex form not sorted in expected order\n{0}", result);
-				Assert.That(result.IndexOf(headwords[2], StringComparison.InvariantCulture),
-					Is.LessThan(result.IndexOf(headwords[3], StringComparison.InvariantCulture)), "complex form not sorted in expected order\n{0}", result);
+				Assert.That(result.IndexOf(headwords[0], StringComparison.InvariantCulture), Is.LessThan(result.IndexOf(headwords[1], StringComparison.InvariantCulture)), $"complex form not sorted in expected order\n{result}");
+				Assert.That(result.IndexOf(headwords[1], StringComparison.InvariantCulture), Is.LessThan(result.IndexOf(headwords[2], StringComparison.InvariantCulture)), $"complex form not sorted in expected order\n{result}");
+				Assert.That(result.IndexOf(headwords[2], StringComparison.InvariantCulture), Is.LessThan(result.IndexOf(headwords[3], StringComparison.InvariantCulture)), $"complex form not sorted in expected order\n{result}");
 			}
 		}
 
@@ -10083,7 +10080,7 @@ namespace SIL.FieldWorks.XWorks
 			var actual = typeof(LcmXhtmlGenerator)
 				.GetMethod("GetIndexLettersOfSortWord", BindingFlags.NonPublic | BindingFlags.Static)
 				.Invoke(null, new object[] { sortWord, onlyFirstLetter });
-			Assert.That(actual, Is.EqualTo(expected).Within($"{onlyFirstLetter} {sortWord}"));
+			Assert.That(actual, Is.EqualTo(expected), $"{onlyFirstLetter} {sortWord}");
 		}
 
 		[Test]

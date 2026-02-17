@@ -1709,7 +1709,7 @@ namespace LexTextControlsTests
 			var filePath = Path.Combine(liftAudioFolder, audioFileName);
 			var failureMsg = String.Format("{0} should {1}have been found after export", filePath,
 													 exists ? "" : "not ");
-			Assert.That(File.Exists(filePath), Is.EqualTo(exists).Within(failureMsg));
+			Assert.That(File.Exists(filePath), Is.EqualTo(exists), failureMsg);
 		}
 
 		private void VerifyPictures(XmlNode xsense, ILexSense sense)

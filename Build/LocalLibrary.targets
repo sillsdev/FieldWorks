@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
+	<!-- x64-only build on Windows (x86 is no longer supported) -->
 	<PropertyGroup>
-		<LiblcmPlatform Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'">x86</LiblcmPlatform>
-		<LiblcmPlatform Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'=='x64'">x64</LiblcmPlatform>
+		<LiblcmPlatform Condition="'$(OS)'=='Windows_NT'">x64</LiblcmPlatform>
 		<LiblcmPlatform Condition="'$(OS)'!='Windows_NT'">x86</LiblcmPlatform>
 		<ChorusPlatform>Any CPU</ChorusPlatform>
 		<ConfigName Condition="'$(OS)'=='Windows_NT'">Debug</ConfigName>

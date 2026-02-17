@@ -24,7 +24,6 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" Exclude="Build,Analyzers" />
-    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="9.0.9" />
     <PackageReference Include="ParatextData" Version="9.5.0.20" />
     <PackageReference Include="SIL.LCModel.Core.Tests" Version="11.0.0-*" PrivateAssets="All" />
     <PackageReference Include="SIL.LCModel.Utils.Tests" Version="11.0.0-*" PrivateAssets="All" />

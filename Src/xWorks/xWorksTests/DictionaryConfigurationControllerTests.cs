@@ -1878,7 +1878,7 @@ namespace SIL.FieldWorks.XWorks
 			};
 			CssGeneratorTests.PopulateFieldsForTesting(DictionaryConfigurationModelTests.CreateSimpleSharingModel(entryNode, subSensesSharedItem));
 			var node = DictionaryConfigurationController.FindConfigNode(entryNode, $"{subsubsensesNode.GetNodeId()}", new List<ConfigurableDictionaryNode>());
-			Assert.That(node, Is.SameAs(subsubsensesNode), "Sense Numbers are configured on the node itself, not its ReferencedOrDirectChildren.{0}Expected: {1}{0}But got:  {2}", Environment.NewLine, DictionaryConfigurationMigrator.BuildPathStringFromNode(subsubsensesNode), DictionaryConfigurationMigrator.BuildPathStringFromNode(node));
+			Assert.That(node, Is.SameAs(subsubsensesNode), $"Sense Numbers are configured on the node itself, not its ReferencedOrDirectChildren.{Environment.NewLine}Expected: {DictionaryConfigurationMigrator.BuildPathStringFromNode(subsubsensesNode)}{Environment.NewLine}But got:  {DictionaryConfigurationMigrator.BuildPathStringFromNode(node)}");
 		}
 
 		[Test]

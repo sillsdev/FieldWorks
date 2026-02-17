@@ -1,4 +1,4 @@
-# COPILOT.md Shortening Plan
+﻿# COPILOT.md Shortening Plan
 
 ## Goals
 1. Reduce duplication across COPILOT.md files
@@ -54,7 +54,7 @@ These folders group subfolders and don't contain code directly:
 
 ### For Leaf Folders with Code (54 folders)
 - Keep essential sections: Purpose, Key Components, Dependencies
-- Remove/condense: 
+- Remove/condense:
   - Threading & Performance (unless non-trivial)
   - Config & Feature Flags (unless meaningful config exists)
   - Build Information (unless special build requirements)
@@ -109,7 +109,7 @@ Process systematically, removing duplication and condensing.
 ### Schema Requirements
 The COPILOT.md validator requires these sections to be present (even if short):
 - Purpose
-- Architecture  
+- Architecture
 - Key Components
 - Technology Stack
 - Dependencies
@@ -139,7 +139,7 @@ Instead of removing sections, condense them:
 ### Phase 1 Results (Organizational Folders)
 Successfully reduced 4 organizational parent folders by 75%:
 - Src/Common: 117 → 45 lines
-- Src/LexText: 230 → 45 lines  
+- Src/LexText: 230 → 45 lines
 - Src/Utilities: 245 → 42 lines
 - Src/Common/Controls: 101 → 43 lines
 

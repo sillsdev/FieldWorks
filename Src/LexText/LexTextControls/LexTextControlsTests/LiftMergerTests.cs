@@ -2680,7 +2680,7 @@ namespace LexTextControlsTests
 			File.Delete(logFile);
 
 			var flidCustom = Cache.MetaDataCacheAccessor.GetFieldId("LexEntry", "Long Text", false);
-			Assert.That(flidCustom, Is.Not.EqualTo(0).Within("The \"Long Text\" custom field should exist for LexEntry objects."));
+			Assert.That(flidCustom, Is.Not.EqualTo(0), "The \"Long Text\" custom field should exist for LexEntry objects.");
 			var type = Cache.MetaDataCacheAccessor.GetFieldType(flidCustom);
 			Assert.That(type, Is.EqualTo((int) CellarPropertyType.OwningAtomic), "The custom field should be an atomic owning field.");
 			var destName = Cache.MetaDataCacheAccessor.GetDstClsName(flidCustom);
@@ -2698,7 +2698,7 @@ namespace LexTextControlsTests
 			Assert.That(new Guid("2759532a-26db-4850-9cba-b3684f0a3f5f"), Is.EqualTo(sense2.Guid));
 
 			var hvo = Cache.DomainDataByFlid.get_ObjectProp(entry2.Hvo, flidCustom);
-			Assert.That(hvo, Is.Not.EqualTo(0).Within("The second entry has a value in the \"Long Text\" custom field."));
+			Assert.That(hvo, Is.Not.EqualTo(0), "The second entry has a value in the \"Long Text\" custom field.");
 			var text = Cache.ServiceLocator.ObjectRepository.GetObject(hvo) as IStText;
 			Assert.That(text, Is.Not.Null);
 			Assert.That(text.ParagraphsOS.Count, Is.EqualTo(3), "The first Long Text field should have three paragraphs.");
@@ -2840,7 +2840,7 @@ namespace LexTextControlsTests
 			ILexEntry entry1;
 			Assert.That(repoEntry.TryGetObject(new Guid("494616cc-2f23-4877-a109-1a6c1db0887e"), out entry1), Is.True);
 			var hvo = Cache.DomainDataByFlid.get_ObjectProp(entry1.Hvo, flidCustom);
-			Assert.That(hvo, Is.Not.EqualTo(0).Within("The first entry has a value in the \"Long Text\" custom field."));
+			Assert.That(hvo, Is.Not.EqualTo(0), "The first entry has a value in the \"Long Text\" custom field.");
 			var text = Cache.ServiceLocator.ObjectRepository.GetObject(hvo) as IStText;
 			Assert.That(text, Is.Not.Null);
 			var para = text.ParagraphsOS[3] as IStTxtPara;
@@ -2945,10 +2945,10 @@ namespace LexTextControlsTests
 			Assert.That(new Guid("3e0ae703-db7f-4687-9cf5-481524095905"), Is.EqualTo(sense1.Guid));
 
 			var hvo = Cache.DomainDataByFlid.get_ObjectProp(entry1.Hvo, flidCustom);
-			Assert.That(hvo, Is.Not.EqualTo(0).Within("The first entry has a value in the \"Long Text\" custom field."));
+			Assert.That(hvo, Is.Not.EqualTo(0), "The first entry has a value in the \"Long Text\" custom field.");
 			var text = Cache.ServiceLocator.ObjectRepository.GetObject(hvo) as IStText;
 			Assert.That(text, Is.Not.Null);
-			Assert.That(text.ParagraphsOS.Count, Is.EqualTo(cpara).Within(String.Format("The first Long Text field should have {0} paragraphs.", cpara)));
+			Assert.That(text.ParagraphsOS.Count, Is.EqualTo(cpara), $"The first Long Text field should have {cpara} paragraphs.");
 			Assert.That(text.ParagraphsOS[0].StyleName, Is.EqualTo("Bulleted List"));
 			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");

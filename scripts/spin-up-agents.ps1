@@ -7,8 +7,9 @@ Prereqs:
 - PowerShell 5+ (Windows)
 
 IMPORTANT: This script NEVER modifies existing worktrees to prevent data loss.
-- Existing worktrees are preserved as-is (skipped)
+- Existing worktrees are preserved as-is (code not changed)
 - New worktrees are created from the specified BaseRef
+- Containers are always ensured to be running (created/started as needed)
 - If you want to reset a worktree, manually delete it first or use tear-down-agents.ps1
 
 Typical use:
@@ -39,7 +40,8 @@ param(
   [switch]$ForceVsCodeSetup,
   [switch]$SkipOpenVSCode,
   [switch]$NoContainer,
-  [string]$ContainerMemory = "4g"
+  # 8GB needed for full managed build; 4GB causes OutOfMemoryException during MSBuild
+  [string]$ContainerMemory = "8g"
 )
 
 Set-StrictMode -Version Latest
@@ -526,10 +528,15 @@ function Write-Tasks {
     $settings = [ordered]@{}
   }
 
+  # Agent-specific settings
   $settings['fw.agent.solutionPath'] = $SolutionRelPath
   $settings['fw.agent.containerName'] = $ContainerName
   $settings['fw.agent.containerPath'] = $ContainerAgentPath
   $settings['fw.agent.repoRoot'] = $RepoRoot
+
+  # Disable C# Dev Kit auto-build - agents build explicitly via docker exec tasks
+  # This prevents the host from trying to build when the container should handle it
+  $settings['dotnet.automaticallyBuildProjects'] = $false
 
   $colorSettings = $null
   if (($settings -is [System.Collections.IDictionary]) -and $settings.Contains('workbench.colorCustomizations')) {
@@ -545,6 +552,8 @@ function Write-Tasks {
   $colorSettings['statusBar.foreground'] = '#ffffff'
   $colorSettings['activityBar.background'] = $Colors.Activity
   $colorSettings['activityBar.foreground'] = '#ffffff'
+  $colorSettings['activityBar.inactiveForeground'] = '#ffffffaa'
+  $colorSettings['activityBar.activeBorder'] = '#ffffff'
   $settings['workbench.colorCustomizations'] = $colorSettings
 
   $workspace = @{
@@ -594,6 +603,48 @@ function Write-AgentConfig {
   Ensure-GitExcludePatterns -GitDir $worktreeGitDir -Patterns @('.fw-agent/','agent-*.code-workspace')
 }
 
+function Update-SerenaProjectName {
+  <#
+  .SYNOPSIS
+  Updates the Serena project.yml to have a unique project_name for this agent worktree.
+  This prevents Serena from confusing multiple worktrees that share the same codebase.
+  #>
+  param(
+    [Parameter(Mandatory=$true)][int]$Index,
+    [Parameter(Mandatory=$true)][string]$AgentPath
+  )
+
+  $projectYml = Join-Path $AgentPath ".serena\project.yml"
+  if (-not (Test-Path -LiteralPath $projectYml)) {
+    Write-Host "No .serena/project.yml found in $AgentPath; skipping Serena config update."
+    return
+  }
+
+  $content = Get-Content -Path $projectYml -Raw
+  $uniqueName = "FieldWorks-Agent-$Index"
+
+  # Check if already has the correct unique name
+  if ($content -match "project_name:\s*[`"']?$([regex]::Escape($uniqueName))[`"']?") {
+    Write-Host "Serena project_name already set to '$uniqueName'"
+    return
+  }
+
+  # Replace project_name line with unique name
+  # Handles: project_name: "FieldWorks", project_name: 'FieldWorks', project_name: FieldWorks
+  $newContent = $content -replace 'project_name:\s*[`"'']?FieldWorks(-Agent-\d+)?[`"'']?', "project_name: `"$uniqueName`""
+
+  if ($newContent -ne $content) {
+    Set-Content -Path $projectYml -Value $newContent -NoNewline
+    Write-Host "Updated Serena project_name to '$uniqueName' in $projectYml"
+
+    # Add to git exclude so this local change doesn't show as modified
+    $worktreeGitDir = Get-GitDirectory -Path $AgentPath
+    Ensure-GitExcludePatterns -GitDir $worktreeGitDir -Patterns @('.serena/project.yml')
+  } else {
+    Write-Warning "Could not find project_name in $projectYml to update"
+  }
+}
+
 Ensure-Image -Tag $ImageTag
 
 $repoVsCodeSettings = Get-RepoVsCodeSettings -RepoRoot $RepoRoot
@@ -603,7 +654,17 @@ for ($i=1; $i -le $Count; $i++) {
   $wt = Ensure-Worktree -Index $i
 
   if ($wt.Skipped) {
-    Write-Host "Agent-$i - Using existing worktree (no changes made)"
+    Write-Host "Agent-$i - Using existing worktree (no changes made to worktree)"
+
+    # Ensure container is running even for existing worktrees
+    $ct = Ensure-Container -Index $i -AgentPath $wt.Path -RepoRoot $RepoRoot -WorktreesRoot $WorktreesRoot
+
+    # Always update VS Code workspace file (inherits settings from main repo)
+    # Use -Force:$ForceVsCodeSetup to control whether tasks.json is overwritten
+    $colors = Get-AgentColors -Index $i
+    if (-not $SkipVsCodeSetup) {
+      Write-Tasks -Index $i -AgentPath $wt.Path -ContainerName $ct.Name -ContainerAgentPath $ct.ContainerPath -SolutionRelPath $SolutionRelPath -Colors $colors -RepoRoot $RepoRoot -Force:$ForceVsCodeSetup -BaseSettings $repoVsCodeSettings
+    }
 
     # Still open VS Code for existing worktrees if requested
     if (-not $SkipOpenVSCode) {
@@ -616,7 +677,7 @@ for ($i=1; $i -le $Count; $i++) {
         Write-Host "VS Code already open for agent-$i; skipping new window launch."
       } else {
         Write-Host "Opening VS Code for existing worktree agent-$i..."
-        Open-AgentVsCodeWindow -Index $i -AgentPath $wt.Path -ContainerName "fw-agent-$i"
+        Open-AgentVsCodeWindow -Index $i -AgentPath $wt.Path -ContainerName $ct.Name
       }
     }
 
@@ -624,15 +685,16 @@ for ($i=1; $i -le $Count; $i++) {
       Index = $i
       Worktree = $wt.Path
       Branch = $wt.Branch
-      Container = "(existing)"
-      Theme = "(preserved)"
-      Status = "Skipped - existing worktree preserved"
+      Container = $ct.Name
+      Theme = $colors.Name
+      Status = "Existing worktree - settings synced"
     }
     continue
   }
 
   $ct = Ensure-Container -Index $i -AgentPath $wt.Path -RepoRoot $RepoRoot -WorktreesRoot $WorktreesRoot
   Write-AgentConfig -AgentPath $wt.Path -SolutionRelPath $SolutionRelPath -Container $ct -RepoRoot $RepoRoot
+  Update-SerenaProjectName -Index $i -AgentPath $wt.Path
   $colors = Get-AgentColors -Index $i
   if (-not $SkipVsCodeSetup) { Write-Tasks -Index $i -AgentPath $wt.Path -ContainerName $ct.Name -ContainerAgentPath $ct.ContainerPath -SolutionRelPath $SolutionRelPath -Colors $colors -RepoRoot $RepoRoot -Force:$ForceVsCodeSetup -BaseSettings $repoVsCodeSettings }
   if (-not $SkipOpenVSCode) {

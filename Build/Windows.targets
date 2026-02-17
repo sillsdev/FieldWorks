@@ -73,14 +73,13 @@
 			Properties="Configuration=$(config-capital)"
 		/>
 	</Target>
-	<!-- Define Encoding Converters files needed for building and running tests -->
+	<!-- Define Encoding Converters files needed for building and running tests (x64 only) -->
 	<PropertyGroup>
 		<ECNugetVersion>0.9.7</ECNugetVersion>
 	</PropertyGroup>
 	<ItemGroup>
 		<ECWindowsFiles Include="CcEC.dll" />
-		<ECWindowsFiles Include="CC32.dll" Condition="'$(arch)'!='x64'" />
-		<ECWindowsFiles Include="Cc64.dll" Condition="'$(arch)'=='x64'" />
+		<ECWindowsFiles Include="Cc64.dll" />
 		<ECWindowsFiles Include="ECInterfaces.dll" />
 		<ECWindowsFiles Include="ECInterfaces.tlb" />
 		<ECWindowsFiles Include="EncConvertersAppDataMover40.exe" />
@@ -98,8 +97,7 @@
 		<ECWindowsFiles Include="SilIndicEncConverters40.tlb" />
 		<ECWindowsFiles Include="TECkit_Compiler_x86.dll" />
 		<ECWindowsFiles Include="TECkit_x86.dll" />
-		<ECWindowsFiles Include="libgcc_s_sjlj-1.dll" Condition="'$(arch)'!='x64'" />
-		<ECWindowsFiles Include="libgcc_s_seh-1.dll" Condition="'$(arch)'=='x64'" />
+		<ECWindowsFiles Include="libgcc_s_seh-1.dll" />
 		<ECWindowsFiles Include="libstdc++-6.dll" />
 		<ECWindowsFiles Include="icudt68.dll" />
 		<ECWindowsFiles Include="icuin68.dll" />
@@ -146,12 +144,12 @@
 			Condition="'$(SkipXsltCompilation)'!='true'"
 		/>
 		<Message
-			Text="Target platform: $(arch), Output: $(dir-outputBase)\ApplicationTransforms.dll"
+			Text="Target platform: x64, Output: $(dir-outputBase)\ApplicationTransforms.dll"
 			Importance="high"
 			Condition="'$(SkipXsltCompilation)'!='true'"
 		/>
 		<Exec
-			Command="&quot;$(XsltcPath)\xsltc.exe&quot; /settings:document /platform:$(arch) /out:$(dir-outputBase)\ApplicationTransforms.dll $(ApplicationTransformsPath)\FxtM3MorphologySketch.xsl $(ApplicationTransformsPath)\FxtM3ParserToGAFAWS.xsl $(ApplicationTransformsPath)\FxtM3ParserToToXAmpleGrammar.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleADCtl.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleLex.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl"
+			Command="&quot;$(XsltcPath)\xsltc.exe&quot; /settings:document /platform:x64 /out:$(dir-outputBase)\ApplicationTransforms.dll $(ApplicationTransformsPath)\FxtM3MorphologySketch.xsl $(ApplicationTransformsPath)\FxtM3ParserToGAFAWS.xsl $(ApplicationTransformsPath)\FxtM3ParserToToXAmpleGrammar.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleADCtl.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleLex.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl"
 			ContinueOnError="ErrorAndContinue"
 			IgnoreExitCode="true"
 			Condition="'$(SkipXsltCompilation)'!='true'"
@@ -172,7 +170,7 @@
 			Condition="'$(SkipXsltCompilation)'!='true'"
 		/>
 		<Exec
-			Command="&quot;$(XsltcPath)\xsltc.exe&quot; /settings:document /platform:$(arch) /out:$(dir-outputBase)\PresentationTransforms.dll $(PresentationTransformsPath)\FormatHCTrace.xsl $(PresentationTransformsPath)\FormatXAmpleParse.xsl $(PresentationTransformsPath)\FormatXAmpleTrace.xsl $(PresentationTransformsPath)\FormatXAmpleWordGrammarDebuggerResult.xsl $(PresentationTransformsPath)\XLingPap1.xsl"
+			Command="&quot;$(XsltcPath)\xsltc.exe&quot; /settings:document /platform:x64 /out:$(dir-outputBase)\PresentationTransforms.dll $(PresentationTransformsPath)\FormatHCTrace.xsl $(PresentationTransformsPath)\FormatXAmpleParse.xsl $(PresentationTransformsPath)\FormatXAmpleTrace.xsl $(PresentationTransformsPath)\FormatXAmpleWordGrammarDebuggerResult.xsl $(PresentationTransformsPath)\XLingPap1.xsl"
 			ContinueOnError="ErrorAndContinue"
 			IgnoreExitCode="true"
 			Condition="'$(SkipXsltCompilation)'!='true'"

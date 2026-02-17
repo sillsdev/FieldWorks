@@ -46,7 +46,7 @@ namespace SIL.FieldWorks.Discourse
 			var item = item1 as ToolStripMenuItem;
 			Assert.That(item, Is.Not.Null, "menu item should be ToolStripMenuItem");
 			Assert.That(item.Text, Is.EqualTo(text));
-			Assert.That(item.Checked, Is.EqualTo(fIsChecked).Within(text + " should be in the expected check state"));
+			Assert.That(item.Checked, Is.EqualTo(fIsChecked), text + " should be in the expected check state");
 		}
 
 		/// <summary>
@@ -100,7 +100,7 @@ namespace SIL.FieldWorks.Discourse
 		private static void AssertMergeItem(ContextMenuStrip strip, string name, bool fExpected, string message)
 		{
 			var fFoundIt = strip.Items.Cast<ToolStripItem>().Any(item => item.Text == name);
-			Assert.That(fFoundIt, Is.EqualTo(fExpected).Within(message));
+			Assert.That(fFoundIt, Is.EqualTo(fExpected), message);
 		}
 
 		#endregion verification helpers

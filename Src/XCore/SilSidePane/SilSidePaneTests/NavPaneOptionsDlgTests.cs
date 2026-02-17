@@ -263,7 +263,7 @@ namespace SIL.SilSidePane
 				dialog.btn_Down.PerformClick();
 
 				for (int i = 0; i < _tabs.Count; i++)
-					Assert.That(dialog.tabListBox.GetItemChecked(i), Is.False, "tab at index {0} should have remained unchecked when tabs are reordered", i);
+					Assert.That(dialog.tabListBox.GetItemChecked(i), Is.False, $"tab at index {i} should have remained unchecked when tabs are reordered");
 			}
 		}
 	}

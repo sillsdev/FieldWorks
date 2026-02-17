@@ -36,6 +36,8 @@
   <ItemGroup>
     <Compile Remove="ViewsInterfacesTests/**" />
     <None Remove="ViewsInterfacesTests/**" />
+    <!-- Views.cs is generated and explicitly added by BuildInclude.targets/ViewsCs target -->
+    <Compile Remove="Views.cs" />
     <Compile Include="..\..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>

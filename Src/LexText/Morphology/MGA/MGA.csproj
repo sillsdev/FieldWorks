@@ -48,4 +48,16 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <!-- Embedded resources for GlossListTreeView tree icons -->
+    <EmbeddedResource Include="CLSDFOLD.BMP" />
+    <EmbeddedResource Include="OPENFOLD.BMP" />
+    <EmbeddedResource Include="CheckBox.bmp" />
+    <EmbeddedResource Include="CheckedBox.bmp" />
+    <EmbeddedResource Include="Complex.bmp" />
+    <EmbeddedResource Include="FSType.bmp" />
+    <EmbeddedResource Include="Radio.bmp" />
+    <EmbeddedResource Include="RadioSelected.bmp" />
+    <EmbeddedResource Include="UserChoice.bmp" />
+  </ItemGroup>
 </Project>

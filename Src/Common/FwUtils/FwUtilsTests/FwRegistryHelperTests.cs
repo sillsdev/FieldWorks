@@ -42,38 +42,38 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private void AssertRegistrySubkeyNotPresent(RegistryKey key, string subKeyName)
 		{
-			Assert.That(RegistryHelper.KeyExists(key, subKeyName), Is.False, "Registry subkey {0} should not be found in {1}.", subKeyName, key.Name);
+			Assert.That(RegistryHelper.KeyExists(key, subKeyName), Is.False, $"Registry subkey {subKeyName} should not be found in {key.Name}.");
 		}
 
 		private void AssertRegistrySubkeyPresent(RegistryKey key, string subKeyName)
 		{
-			Assert.That(key.SubKeyCount, Is.GreaterThan(0), "Registry key {0} does not have any subkeys, can't find {1}", key.Name, subKeyName);
-			Assert.That(RegistryHelper.KeyExists(key, subKeyName), Is.True, "Registry subkey {0} was not found in {1}.", subKeyName, key.Name);
+			Assert.That(key.SubKeyCount, Is.GreaterThan(0), $"Registry key {key.Name} does not have any subkeys, can't find {subKeyName}");
+			Assert.That(RegistryHelper.KeyExists(key, subKeyName), Is.True, $"Registry subkey {subKeyName} was not found in {key.Name}.");
 		}
 
 		private void AssertRegistryValuePresent(RegistryKey key, string subKey, string entryName)
 		{
 			object valueObject;
-			Assert.That(RegistryHelper.RegEntryValueExists(key, subKey, entryName, out valueObject), Is.True, "Expected presence of entry {0} in subkey {1} of key {2}", entryName, subKey, key.Name);
+			Assert.That(RegistryHelper.RegEntryValueExists(key, subKey, entryName, out valueObject), Is.True, $"Expected presence of entry {entryName} in subkey {subKey} of key {key.Name}");
 		}
 
 		private void AssertRegistryValueNotPresent(RegistryKey key, string subKey, string entryName)
 		{
 			object valueObject;
-			Assert.That(RegistryHelper.RegEntryValueExists(key, subKey, entryName, out valueObject), Is.False, "Expected absence of entry {0} in subkey {1} of key {2}", entryName, subKey, key.Name);
+			Assert.That(RegistryHelper.RegEntryValueExists(key, subKey, entryName, out valueObject), Is.False, $"Expected absence of entry {entryName} in subkey {subKey} of key {key.Name}");
 		}
 
 		private void AssertRegistryStringValueEquals(RegistryKey key, string subKey, string entryName, string expectedValue)
 		{
 			object valueObject;
-			Assert.That(RegistryHelper.RegEntryValueExists(key, subKey, entryName, out valueObject), Is.True, "Expected presence of entry {0} in subkey {1} of key {2}", entryName, subKey, key.Name);
+			Assert.That(RegistryHelper.RegEntryValueExists(key, subKey, entryName, out valueObject), Is.True, $"Expected presence of entry {entryName} in subkey {subKey} of key {key.Name}");
 			Assert.That((string)valueObject, Is.EqualTo(expectedValue));
 		}
 
 		private void AssertRegistryIntValueEquals(RegistryKey key, string subKey, string entryName, int expectedValue)
 		{
 			object valueObject;
-			Assert.That(RegistryHelper.RegEntryValueExists(key, subKey, entryName, out valueObject), Is.True, "Expected presence of entry {0} in subkey {1} of key {2}", entryName, subKey, key.Name);
+			Assert.That(RegistryHelper.RegEntryValueExists(key, subKey, entryName, out valueObject), Is.True, $"Expected presence of entry {entryName} in subkey {subKey} of key {key.Name}");
 			Assert.That((int)valueObject, Is.EqualTo(expectedValue));
 		}
 

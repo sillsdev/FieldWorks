@@ -16,6 +16,12 @@ servers automatically:
 | `uvx` (optional)    | Used as a fallback launcher for Serena     | https://github.com/astral-sh/uv                       |
 | PowerShell 5.1+     | Both helper scripts run through PowerShell | Preinstalled on Windows                               |
 
+> **Note**: Serena **auto-downloads** its language servers on first use:
+> - **C# (`csharp`)**: Microsoft.CodeAnalysis.LanguageServer (Roslyn) from Azure NuGet + .NET 9 runtime
+> - **C++ (`cpp`)**: clangd 19.1.2 from GitHub releases (Windows/Mac); Linux requires `apt install clangd`
+>
+> No manual language server installation needed!
+
 Required environment variables:
 
 - `GITHUB_TOKEN`: PAT with at least `repo` scope so the MCP GitHub server can read issues,
@@ -42,11 +48,57 @@ If you want to test outside an MCP-aware editor:
 powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/mcp/start-github-server.ps1
 
 # Serena server (override host/port example)
-powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/mcp/start-serena-server.ps1 -Host localhost -Port 3334
+powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/mcp/start-serena-server.ps1 -BindHost localhost -Port 3334
 ```
 
 The scripts run until you press `Ctrl+C`. When invoked through an MCP host, they automatically
 stop when the client disconnects.
+
+## Multiple Worktrees and Serena Conflicts
+
+When working with multiple git worktrees (e.g., `fw-worktrees/agent-1`, `agent-2`, etc.),
+each worktree contains its own `.serena/project.yml` file (shared via git). This can cause
+issues when Serena auto-discovers projects:
+
+### Symptoms
+- `get_current_config` shows multiple projects named "FieldWorks"
+- Language server errors that don't match your current worktree
+- Serena loads projects from worktrees you're not currently working in
+
+### Cause
+VS Code's user-level MCP config (`%APPDATA%\Code\User\mcp.json`) may have a Serena
+server that auto-discovers projects by scanning for `.serena` folders. Combined with
+workspace-level `mcp.json`, this creates duplicate project registrations.
+
+### Solution
+**Option A: Use only workspace-level Serena (recommended)**
+
+Remove or disable the Serena entry from your user-level MCP config:
+```powershell
+# View current user MCP config
+code "$env:APPDATA\Code\User\mcp.json"
+```
+Remove the `"oraios/serena"` entry. The workspace `mcp.json` will provide Serena
+with explicit project targeting.
+
+**Option B: Use unique project names per worktree (automatic for agents)**
+
+The `spin-up-agents.ps1` script automatically sets unique `project_name` values
+(e.g., `FieldWorks-Agent-1`, `FieldWorks-Agent-2`) in each worktree's `.serena/project.yml`.
+This prevents Serena from confusing the worktrees.
+
+If you manually create worktrees, give each a unique `project_name`:
+```yaml
+# In fw-worktrees/agent-1/.serena/project.yml
+project_name: "FieldWorks-Agent-1"
+```
+The script also adds `.serena/project.yml` to the worktree's git exclude file so this
+local change doesn't appear as a modified file.
+
+**Option C: Add worktree paths to ignored_paths**
+
+In the main repo's `.serena/project.yml`, you cannot ignore sibling directories,
+but you can ensure each worktree's config ignores other worktrees' output directories.
 
 ## Troubleshooting
 
@@ -56,3 +108,9 @@ stop when the client disconnects.
 - **`Unable to locate the Serena CLI`** – install the Serena CLI (via `pipx`, `uv tool install`,
   or ensure `uvx` is available) so the helper can find at least one launcher.
 - **Port already in use** – pass `-Port <number>` to `start-serena-server.ps1` to pick an open port.
+- **Language server download fails (network error)** – Serena auto-downloads C# (Roslyn) and C++ (clangd)
+  language servers on first use. Check network connectivity to Azure NuGet and GitHub releases.
+  The download is cached, so subsequent starts are fast.
+- **Linux: clangd not found** – On Linux, install clangd manually: `sudo apt-get install clangd`
+- **"Language server manager is not initialized"** – restart VS Code; Serena may still be downloading
+  language servers on first startup (can take 1-2 minutes for ~250MB of binaries).

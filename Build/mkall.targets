@@ -65,7 +65,7 @@
 			Makefile="$(fwrt)\Src\DebugProcs\DebugProcs.mak"
 			Configuration="$(config-capital)"
 			BuildRoot="$(fwrt)"
-			BuildArch="'$(Platform)'"
+			BuildArch="x64"
 			WorkingDirectory="$(fwrt)\Src\DebugProcs"
 		/>
 		<Message Text="Finished building DebugProcs." />
@@ -76,7 +76,7 @@
 			Makefile="$(fwrt)\Src\Generic\GenericLib.mak"
 			Configuration="$(config-capital)"
 			BuildRoot="$(fwrt)"
-			BuildArch="'$(Platform)'"
+			BuildArch="x64"
 			WorkingDirectory="$(fwrt)\Src\Generic"
 		/>
 		<Message Text="Finished building GenericLib." />
@@ -91,7 +91,7 @@
 			Makefile="$(fwrt)\Src\Kernel\FwKernel.mak"
 			Configuration="$(config-capital)"
 			BuildRoot="$(fwrt)"
-			BuildArch="'$(Platform)'"
+			BuildArch="x64"
 			WorkingDirectory="$(fwrt)\Src\Kernel"
 		/>
 		<!-- Create stub manifest if needed -->
@@ -129,7 +129,7 @@
 			Makefile="$(fwrt)\Src\views\Views.mak"
 			Configuration="$(config-capital)"
 			BuildRoot="$(fwrt)"
-			BuildArch="'$(Platform)'"
+			BuildArch="x64"
 			WorkingDirectory="$(fwrt)\Src\views"
 		/>
 		<Message
@@ -578,38 +578,31 @@
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
 		/>
-		<!-- Windows dynamically loaded libraries -->
-		<Copy
-			SourceFiles="$(fwrt)/DistFiles/xample32.dll"
-			DestinationFiles="$(dir-outputBase)/xample.dll"
-			SkipUnchangedFiles="true"
-			OverwriteReadOnlyFiles="true"
-			Condition="'$(OS)'=='Windows_NT'  AND '$(arch)'!='x64'"
-		/>
+		<!-- Windows dynamically loaded libraries (x64 only) -->
 		<Copy
 			SourceFiles="$(fwrt)/DistFiles/xample64.dll"
 			DestinationFiles="$(dir-outputBase)/xample.dll"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
-			Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'"
+			Condition="'$(OS)'=='Windows_NT'"
 		/>
-		<!-- ICU libs - copy directly from NuGet packages -->
+		<!-- ICU libs - copy directly from NuGet packages (x64 only) -->
 		<Copy
-			SourceFiles="$(PackagesDir)/icu4c.win.fw.lib/$(IcuNugetVersion)/build/native/lib/win7-$(arch)/icudt.lib"
+			SourceFiles="$(PackagesDir)/icu4c.win.fw.lib/$(IcuNugetVersion)/build/native/lib/win7-x64/icudt.lib"
 			DestinationFolder="$(fwrt)/Lib"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
 			Condition="'$(OS)'=='Windows_NT'"
 		/>
 		<Copy
-			SourceFiles="$(PackagesDir)/icu4c.win.fw.lib/$(IcuNugetVersion)/build/native/lib/win7-$(arch)/icuin.lib"
+			SourceFiles="$(PackagesDir)/icu4c.win.fw.lib/$(IcuNugetVersion)/build/native/lib/win7-x64/icuin.lib"
 			DestinationFolder="$(fwrt)/Lib"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
 			Condition="'$(OS)'=='Windows_NT'"
 		/>
 		<Copy
-			SourceFiles="$(PackagesDir)/icu4c.win.fw.lib/$(IcuNugetVersion)/build/native/lib/win7-$(arch)/icuuc.lib"
+			SourceFiles="$(PackagesDir)/icu4c.win.fw.lib/$(IcuNugetVersion)/build/native/lib/win7-x64/icuuc.lib"
 			DestinationFolder="$(fwrt)/Lib"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
@@ -648,7 +641,7 @@
 			DestinationFolder="$(dir-outputBase)/lib/x64"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
-			Condition="'$(OS)'=='Windows_NT' AND '$(arch)'=='x64'"
+			Condition="'$(OS)'=='Windows_NT'"
 		/>
 		<!-- LCM data files and headers (from contentFiles, not auto-deployed by NuGet) -->
 		<!-- NOTE: LCM DLLs are now handled automatically by PackageReference -->
@@ -748,12 +741,12 @@
 			OverwriteReadOnlyFiles="true"
 			Condition="Exists('$(DownloadsDir)/GeckofxHtmlToPdf.exe.config')"
 		/>
-		<!-- Encoding Converters Files -->
+		<!-- Encoding Converters Files (x64 only) -->
 		<!-- Note: encoding-converters-core package doesn't follow standard NuGet runtime conventions
 		     (has extra EcDistFiles folder), so automatic runtime asset copying doesn't work.
 		     Manual copying required until package structure is fixed. -->
 		<Copy
-			SourceFiles="@(ECWindowsFiles -&gt; '$(PackagesDir)/encoding-converters-core/$(ECNugetVersion)/runtimes/EcDistFiles/win-$(arch)/native/%(Identity)')"
+			SourceFiles="@(ECWindowsFiles -&gt; '$(PackagesDir)/encoding-converters-core/$(ECNugetVersion)/runtimes/EcDistFiles/win-x64/native/%(Identity)')"
 			DestinationFolder="$(dir-outputBase)"
 			SkipUnchangedFiles="true"
 			OverwriteReadOnlyFiles="true"
@@ -768,8 +761,7 @@
 		/>
 		<!-- Native Geckofx package (complex multi-file layout requires manual copying) -->
 		<PropertyGroup>
-			<Architecture Condition="'$(Platform)'=='x64'">64</Architecture>
-			<Architecture Condition="'$(Platform)'!='x64'">32</Architecture>
+			<Architecture>64</Architecture>
 			<GeckoDir Condition="'$(OS)'=='Windows_NT'"
 				>$(PackagesDir)/Geckofx60.$(Architecture).60.0.56</GeckoDir
 			>

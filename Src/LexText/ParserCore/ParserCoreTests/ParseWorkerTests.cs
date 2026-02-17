@@ -44,7 +44,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			IWfiWordform wf = FindOrCreateWordform(form);
 			int actualSize = wf.AnalysesOC.Count;
 			string msg = String.Format("Wrong number of {0} analyses for: {1}", isStarting ? "starting" : "ending", form);
-			Assert.That(actualSize, Is.EqualTo(expectedSize).Within(msg));
+			Assert.That(actualSize, Is.EqualTo(expectedSize), msg);
 			return wf;
 		}
 

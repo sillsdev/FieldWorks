@@ -8,8 +8,8 @@ This guide shows how to build and validate the feature locally.
 ## Prerequisites
 - Visual Studio 2022 with .NET desktop and Desktop C++ workloads
 - Windows x64 (Windows 10/11)
-- WiX 3.11.x (only if building installer)
-- Ensure your Developer environment is initialized before building. On Windows, open a Developer Command Prompt (or use `.\build.ps1` which sets up required env vars); on Linux use `./build.sh`.
+- WiX 3.14.1 (only if building installer)
+- Ensure your Developer environment is initialized before building. On Windows, open a Developer Command Prompt (or use `.\build.ps1` which sets up required env vars).
 
 ## Phases 1-4 Complete: x64-only + Reg-free COM
 

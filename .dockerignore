@@ -62,8 +62,9 @@ Docs/
 # Resources (will copy specific ones if needed)
 resources/
 
-# Scripts (not needed for Docker build)
+# Scripts (not needed for Docker build, except docker-specific scripts)
 scripts/
+!scripts/docker/
 
 # FLExInstaller (not building installer in container)
 FLExInstaller/

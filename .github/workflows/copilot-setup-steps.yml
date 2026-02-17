@@ -1,0 +1,139 @@
+# Reusable workflow to setup Windows build environment for Copilot coding agents
+# Optimized for windows-latest which already includes most FieldWorks dependencies.
+#
+# ============================================================================
+# EXPECTED FROM windows-latest (DO NOT RE-INSTALL):
+# ============================================================================
+# - Visual Studio 2022 Enterprise (with Desktop & C++ workloads)
+# - MSBuild (via VS 2022)
+# - .NET Framework 4.8.1 SDK & Targeting Pack
+# - Windows SDK (10.0.17763+, 19041, 22621, 26100)
+# - WiX Toolset 3.14.x
+# - NuGet CLI
+# - .NET SDK 8.x and 9.x
+# - LLVM/clangd (for Serena C++ language server)
+# - Python 3.x (for Serena)
+# - vcpkg
+# - Git, CMake, Ninja
+#
+# See: https://github.com/actions/runner-images/blob/main/images/windows/Windows2022-Readme.md
+#
+# ============================================================================
+# LOCAL TESTING:
+# ============================================================================
+# The setup scripts can be run locally to verify your environment:
+#
+#   # Verify dependencies
+#   .\Build\Agent\Verify-FwDependencies.ps1 -IncludeOptional
+#
+#   # Setup build environment
+#   .\Build\Agent\Setup-FwBuildEnv.ps1 -Verify
+#
+#   # Setup Serena (optional)
+#   .\Build\Agent\Setup-Serena.ps1 -SkipLanguageServerCheck
+#
+# ============================================================================
+
+name: "Copilot: Windows setup steps"
+on:
+    workflow_call:
+        inputs:
+            msbuild_args:
+                required: false
+                type: string
+                description: 'Arguments to pass to msbuild (e.g., "FieldWorks.sln /t:RunTests /p:Configuration=Debug")'
+            skip_serena:
+                required: false
+                type: boolean
+                default: false
+                description: 'Skip Serena MCP setup (for builds that do not need code intelligence)'
+
+jobs:
+    windows-setup:
+        runs-on: windows-latest
+        outputs:
+            msbuild-path: ${{ steps.setup-env.outputs.msbuild-path }}
+            vs-install-path: ${{ steps.setup-env.outputs.vs-install-path }}
+
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v4
+
+            # ================================================================
+            # CACHING - speeds up repeat runs significantly
+            # ================================================================
+            - name: Cache NuGet packages
+              uses: actions/cache@v4
+              with:
+                  path: ~/.nuget/packages
+                  key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', '**/packages.config', '**/Directory.Packages.props') }}
+                  restore-keys: |
+                      nuget-${{ runner.os }}-
+
+            - name: Cache Serena language servers
+              if: inputs.skip_serena != true
+              uses: actions/cache@v4
+              with:
+                  path: |
+                      ~/.cache/serena
+                      ~/AppData/Local/serena
+                  key: serena-lsp-${{ runner.os }}-v1
+                  restore-keys: |
+                      serena-lsp-${{ runner.os }}-
+
+            # ================================================================
+            # ENVIRONMENT SETUP
+            # Scripts are in Build/Agent/ and can be run locally for testing
+            # ================================================================
+            - name: Setup MSBuild PATH
+              uses: microsoft/setup-msbuild@v2
+
+            - name: Setup uv (Python package manager for Serena)
+              if: inputs.skip_serena != true
+              uses: astral-sh/setup-uv@v4
+              with:
+                  version: "latest"
+
+            - name: Configure FieldWorks build environment
+              id: setup-env
+              shell: pwsh
+              run: |
+                  # Run testable script with GitHub Actions output
+                  .\Build\Agent\Setup-FwBuildEnv.ps1 -OutputGitHubEnv -Verify
+
+            - name: Verify pre-installed dependencies
+              shell: pwsh
+              run: |
+                  # Run testable script with strict checking
+                  .\Build\Agent\Verify-FwDependencies.ps1 -FailOnMissing
+
+            # ================================================================
+            # SERENA MCP SETUP - for Copilot coding agent code intelligence
+            # ================================================================
+            - name: "Serena: Setup and verify"
+              if: inputs.skip_serena != true
+              shell: pwsh
+              timeout-minutes: 10
+              run: |
+                  # Run testable script with GitHub Actions output
+                  .\Build\Agent\Setup-Serena.ps1 -OutputGitHubEnv -SkipLanguageServerCheck
+
+            # ================================================================
+            # BUILD (optional)
+            # ================================================================
+            - name: Initialize VS Developer Environment
+              if: inputs.msbuild_args != '' && inputs.msbuild_args != null
+              uses: ilammy/msvc-dev-cmd@v1
+              with:
+                  arch: x64
+
+            - name: Run msbuild
+              if: inputs.msbuild_args != '' && inputs.msbuild_args != null
+              shell: pwsh
+              run: |
+                  Write-Host "Running: msbuild ${{ inputs.msbuild_args }}" -ForegroundColor Cyan
+                  msbuild ${{ inputs.msbuild_args }}
+                  if ($LASTEXITCODE -ne 0) {
+                      throw "MSBuild failed with exit code $LASTEXITCODE"
+                  }
+                  Write-Host "Build completed successfully!" -ForegroundColor Green

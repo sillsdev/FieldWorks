@@ -47,12 +47,12 @@ namespace SIL.FieldWorks.Common.Widgets
 			CoreWritingSystemDefinition enWs;
 			m_wsManager.GetOrSet("en", out enWs);
 			m_hvoEnglishWs = enWs.Handle;
-			Assert.That(m_hvoEnglishWs > 0, "Should have gotten an hvo for the English WS", Is.True);
+			Assert.That(m_hvoEnglishWs > 0, Is.True, "Should have gotten an hvo for the English WS");
 			// German
 			CoreWritingSystemDefinition deWs;
 			m_wsManager.GetOrSet("de", out deWs);
 			m_hvoGermanWs = deWs.Handle;
-			Assert.That(m_hvoGermanWs > 0, "Should have gotten an hvo for the German WS", Is.True);
+			Assert.That(m_hvoGermanWs > 0, Is.True, "Should have gotten an hvo for the German WS");
 			Assert.That(m_hvoEnglishWs != m_hvoGermanWs, Is.True, "Writing systems should have different IDs");
 
 			// Create a couple of styles

@@ -555,7 +555,7 @@ namespace SIL.FieldWorks.XWorks
 			ICmSemanticDomainRepository repoSemDom = m_cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
 			Assert.That(repoSemDom.Count, Is.EqualTo(11), "The total number of semantic domains");
 			int wsFr = m_cache.WritingSystemFactory.GetWsFromStr("fr");
-			Assert.That(wsFr, Is.Not.EqualTo(0).Within("French (fr) should be defined"));
+			Assert.That(wsFr, Is.Not.EqualTo(0), "French (fr) should be defined");
 
 			List<ICmPossibilityList> lists = new List<ICmPossibilityList> { m_cache.LangProject.SemanticDomainListOA };
 			List<int> wses = new List<int> { wsFr };
@@ -1073,7 +1073,7 @@ namespace SIL.FieldWorks.XWorks
 			ICmSemanticDomainRepository repoSemDom = m_cache.ServiceLocator.GetInstance<ICmSemanticDomainRepository>();
 			Assert.That(repoSemDom.Count, Is.EqualTo(11), "The total number of semantic domains");
 			int wsFr = m_cache.WritingSystemFactory.GetWsFromStr("fr");
-			Assert.That(wsFr, Is.Not.EqualTo(0).Within("French (fr) should be defined"));
+			Assert.That(wsFr, Is.Not.EqualTo(0), "French (fr) should be defined");
 
 			List<ICmPossibilityList> lists = new List<ICmPossibilityList> { m_cache.LangProject.SemanticDomainListOA };
 			List<int> wses = new List<int> { wsFr };
@@ -1214,7 +1214,7 @@ namespace SIL.FieldWorks.XWorks
 		public void ExportTranslatedLists_ExportsReverseNameAndAbbrAndGlossAppend()
 		{
 			var wsFr = m_cache.WritingSystemFactory.GetWsFromStr("fr");
-			Assert.That(wsFr, Is.Not.EqualTo(0).Within("French (fr) should be defined"));
+			Assert.That(wsFr, Is.Not.EqualTo(0), "French (fr) should be defined");
 
 			var wsEn = m_cache.WritingSystemFactory.GetWsFromStr("en");
 

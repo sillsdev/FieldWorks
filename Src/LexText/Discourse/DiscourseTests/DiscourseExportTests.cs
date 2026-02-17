@@ -131,9 +131,9 @@ namespace SIL.FieldWorks.Discourse
 		{
 			var child = parent.ChildNodes[index];
 			Assert.That(child, Is.Not.Null, message);
-			Assert.That(child.ChildNodes.Count, Is.EqualTo(childCount).Within(message));
-			Assert.That(child.Name, Is.EqualTo(name).Within(message));
-			Assert.That(child.Attributes.Count, Is.EqualTo(attrCount).Within(message + " attribute count"));
+			Assert.That(child.ChildNodes.Count, Is.EqualTo(childCount), message);
+			Assert.That(child.Name, Is.EqualTo(name), message);
+			Assert.That(child.Attributes.Count, Is.EqualTo(attrCount), message + " attribute count");
 			return child;
 		}
 
