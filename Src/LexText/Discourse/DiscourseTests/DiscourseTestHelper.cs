@@ -628,7 +628,7 @@ namespace SIL.FieldWorks.Discourse
 			Assert.That(row.Label.Text, Is.Not.Null, "Row has no number!");
 			Assert.That(row.CellsOS.Count, Is.EqualTo(cellParts.Length));
 			for (var i = 0; i < ccellParts; i++)
-				Assert.That(row.CellsOS[i].Hvo, Is.EqualTo(cellParts[i].Hvo), $"Wrong CellPart at index i={i}");
+				Assert.That(row.CellsOS[i].Hvo, Is.EqualTo(cellParts[i].Hvo), string.Format("Wrong CellPart at index i={0}", i));
 		}
 
 		/// <summary>
@@ -754,7 +754,7 @@ namespace SIL.FieldWorks.Discourse
 			Assert.That(cellPart.DependentClausesRS.Count, Is.EqualTo(depClauses.Length), "Clause marker points to wrong number of rows");
 			for (var i = 0; i < depClauses.Length; i++ )
 			{
-				Assert.That(cellPart.DependentClausesRS[i].Hvo, Is.EqualTo(depClauses[i].Hvo), $"Clause array doesn't match at index {i}");
+				Assert.That(cellPart.DependentClausesRS[i].Hvo, Is.EqualTo(depClauses[i].Hvo), String.Format("Clause array doesn't match at index {0}",i));
 			}
 		}
 
@@ -780,7 +780,7 @@ namespace SIL.FieldWorks.Discourse
 		{
 			Assert.That(chartRows.Length, Is.EqualTo(chart.RowsOS.Count), "Chart has wrong number of rows");
 			for (var i = 0; i < chartRows.Length; i++)
-				Assert.That(chart.RowsOS[i].Hvo, Is.EqualTo(chartRows[i].Hvo), $"Chart has unexpected ChartRow object at index = {i}");
+				Assert.That(chart.RowsOS[i].Hvo, Is.EqualTo(chartRows[i].Hvo), string.Format("Chart has unexpected ChartRow object at index = {0}", i));
 		}
 
 		/// <summary>
@@ -791,7 +791,7 @@ namespace SIL.FieldWorks.Discourse
 		public void VerifyDeletedHvos(int[] hvos, string message)
 		{
 			foreach (var hvoDel in hvos)
-				Assert.That(hvoDel, Is.EqualTo((int)SpecialHVOValues.kHvoObjectDeleted), string.Format(message, hvoDel));
+				Assert.That(hvoDel, Is.EqualTo((int)SpecialHVOValues.kHvoObjectDeleted), String.Format(message, hvoDel));
 		}
 
 		/// <summary>

@@ -444,7 +444,7 @@ namespace SIL.FieldWorks.IText
 					Assert.That(comment.get_RunText(0) == "english", Is.True);
 					Assert.That(comment.get_WritingSystem(0) == wsEn, Is.True);
 					Assert.That(comment.Style(0) == null, Is.True);
-					Assert.That(comment.get_RunText(1) == " ");
+					Assert.That(comment.get_RunText(1) == " ", Is.True);
 					Assert.That(comment.Style(1) == null, Is.True);
 					Assert.That(comment.get_RunText(2) == "french", Is.True);
 					Assert.That(comment.get_WritingSystem(2) == wsFr, Is.True);

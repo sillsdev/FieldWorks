@@ -530,7 +530,7 @@ namespace SIL.FieldWorks.XWorks
 		{
 			string label;
 			var result = m_staticDDController.GetListItemsAndLabel(listId, out label); // SUT
-			Assert.That(result.Count, Is.EqualTo(expectedCount), $"Incorrect number of {listId} Types");
+			Assert.That(result.Count, Is.EqualTo(expectedCount), String.Format("Incorrect number of {0} Types", listId));
 			Assert.That(label, Does.Contain(listId.ToString()));
 			return result;
 		}

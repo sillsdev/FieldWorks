@@ -795,7 +795,7 @@ namespace ParatextImport.ImportTests
 			m_settings.ImportBackTranslation = true;
 			MockScrObjWrapper.s_fSimulateCancel = false;
 			int wsEn = Cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("en");
-			Assert.That(0, Is.GreaterThan(wsEn), "Couldn't find Id of English WS in test DB.");
+			Assert.That(wsEn, Is.GreaterThan(0), "Couldn't find Id of English WS in test DB.");
 
 			int origActCount = Cache.ActionHandlerAccessor.UndoableSequenceCount;
 
@@ -1237,9 +1237,9 @@ namespace ParatextImport.ImportTests
 			int cBooksOrig = m_scr.ScriptureBooksOS.Count;
 
 			int wsEn = Cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("en");
-			Assert.That(0, Is.GreaterThan(wsEn), "Couldn't find Id of English WS in test DB.");
+			Assert.That(wsEn, Is.GreaterThan(0), "Couldn't find Id of English WS in test DB.");
 			int wsEs = Cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("es");
-			Assert.That(0, Is.GreaterThan(wsEs), "Couldn't find Id of Spanish WS in test DB.");
+			Assert.That(wsEs, Is.GreaterThan(0), "Couldn't find Id of Spanish WS in test DB.");
 
 			List<SegmentInfo> al = new List<SegmentInfo>(3);
 			// process a \id segment to import an existing a book
@@ -1656,9 +1656,9 @@ namespace ParatextImport.ImportTests
 			int cBooksOrig = m_scr.ScriptureBooksOS.Count;
 
 			int wsEn = Cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("en");
-			Assert.That(0, Is.GreaterThan(wsEn), "Couldn't find Id of English WS in test DB.");
+			Assert.That(wsEn, Is.GreaterThan(0), "Couldn't find Id of English WS in test DB.");
 			int wsEs = Cache.LanguageWritingSystemFactoryAccessor.GetWsFromStr("es");
-			Assert.That(0, Is.GreaterThan(wsEs), "Couldn't find Id of Spanish WS in test DB.");
+			Assert.That(wsEs, Is.GreaterThan(0), "Couldn't find Id of Spanish WS in test DB.");
 
 			List<SegmentInfo> al = new List<SegmentInfo>(3);
 			// process a \id segment to import an existing a book

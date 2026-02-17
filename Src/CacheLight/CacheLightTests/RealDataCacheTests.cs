@@ -586,7 +586,7 @@ namespace SIL.FieldWorks.CacheLightTests
 			SilDataAccess.SetMultiStringAlt(hvo, tag, 2, tss);
 
 			var tsms = SilDataAccess.get_MultiStringProp(hvo, tag);
-			Assert.That(2, Is.EqualTo(tsms.StringCount));
+			Assert.That(tsms.StringCount, Is.EqualTo(2));
 		}
 
 		/// <summary>

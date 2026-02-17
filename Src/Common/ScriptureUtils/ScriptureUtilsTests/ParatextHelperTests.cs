@@ -118,7 +118,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Load the mappings for a Paratext 6/7 project into the specified list. (no-op)
-		/// We never use this method; for tests, we use <c>Moq</c>
+		/// We never use this method; for tests, we use <c>Rhino.Mocks.MockRepository</c>
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public void LoadProjectMappings(IScrImportSet importSettings)
@@ -465,10 +465,8 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			Assert.That(mappingList[@"\c"].IsInUse, Is.True);
 			Assert.That(mappingList[@"\p"].IsInUse, Is.True);
 			Assert.That(mappingList[@"\ipi"].IsInUse, Is.False);
-			Assert.That(mappingList[@"\hahaha"].IsInUse, Is.False,
-				"In-use flag should have been cleared before re-scanning when the P6 project changed.");
-			Assert.That(mappingList[@"\bthahaha"].IsInUse, Is.True,
-				"In-use flag should not have been cleared before re-scanning when the P6 project changed because it was in use by the BT.");
+			Assert.That(mappingList[@"\hahaha"].IsInUse, Is.False, "In-use flag should have been cleared before re-scanning when the P6 project changed.");
+			Assert.That(mappingList[@"\bthahaha"].IsInUse, Is.True, "In-use flag should not have been cleared before re-scanning when the P6 project changed because it was in use by the BT.");
 		}
 
 		/// ------------------------------------------------------------------------------------

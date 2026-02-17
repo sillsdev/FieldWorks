@@ -133,7 +133,7 @@ namespace ParatextImport
 
 			// Subdifferences must exist.
 			Assert.That(diff.SubDiffsForParas, Is.Not.Null, "Subdifferences should have been created.");
-			Assert.That(0, Is.GreaterThan(diff.SubDiffsForParas.Count), "Subdifferences should have been created.");
+			Assert.That(diff.SubDiffsForParas.Count, Is.GreaterThan(0), "Subdifferences should have been created.");
 			Difference firstSubdiff = diff.SubDiffsForParas[0];
 
 			// the Current para stuff should be the same as the start of the first subdiff
@@ -466,7 +466,7 @@ namespace ParatextImport
 		{
 			Assert.That((rootDiff.DiffType & DifferenceType.ParagraphStructureChange) != 0, Is.True);
 			// a ParaAdded/Missing subDiff must not be at index 0 (paragraph reference points must be in that subdiff
-			Assert.That(iSubDiff, Is.LessThanOrEqualTo(1));
+			Assert.That(1, Is.LessThanOrEqualTo(iSubDiff));
 
 			Difference subDiff = rootDiff.SubDiffsForParas[iSubDiff];
 			Assert.That(subDiff.DiffType, Is.EqualTo(subDiffType));

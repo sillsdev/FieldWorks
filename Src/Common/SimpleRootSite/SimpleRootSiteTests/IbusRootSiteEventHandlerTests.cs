@@ -6,8 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using IBusDotNet;
-using Moq;
 using NUnit.Framework;
+using Rhino.Mocks;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel.Core.WritingSystems;
 using SIL.LCModel.Core.KernelInterfaces;
@@ -97,7 +97,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 		{
 			m_dummyIBusCommunicator = ibusCommunicator;
 			var ibusKeyboardRetrievingAdaptor = new IbusKeyboardRetrievingAdaptorDouble(ibusCommunicator);
-			var xklEngineMock = new Mock<IXklEngine>().Object;
+			var xklEngineMock = MockRepository.GenerateStub<IXklEngine>();
 			var xkbKeyboardRetrievingAdaptor = new XkbKeyboardRetrievingAdaptorDouble(xklEngineMock);
 			KeyboardController.Initialize(xkbKeyboardRetrievingAdaptor, ibusKeyboardRetrievingAdaptor);
 			KeyboardController.RegisterControl(m_dummySimpleRootSite, new IbusRootSiteEventHandler(m_dummySimpleRootSite));

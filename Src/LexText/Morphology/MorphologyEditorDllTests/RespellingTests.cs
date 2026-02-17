@@ -9,15 +9,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Moq;
+
 using NUnit.Framework;
-using SIL.FieldWorks.Common.Controls;
+using Rhino.Mocks;
+using SIL.LCModel.Core.Text;
 using SIL.LCModel;
 using SIL.LCModel.Application;
-using SIL.LCModel.Core.KernelInterfaces;
-using SIL.LCModel.Core.Text;
 using SIL.LCModel.DomainServices;
 using SIL.LCModel.Infrastructure;
+using SIL.FieldWorks.Common.Controls;
+using SIL.LCModel.Core.KernelInterfaces;
 using SIL.LCModel.Utils;
 using XCore;
 
@@ -33,15 +34,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public override void FixtureSetup()
 		{
 			base.FixtureSetup();
-			NonUndoableUnitOfWorkHelper.Do(
-				m_actionHandler,
-				() =>
-				{
-					Cache.LanguageProject.TranslatedScriptureOA = Cache
-						.ServiceLocator.GetInstance<IScriptureFactory>()
-						.Create();
-				}
-			);
+			NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
+			{
+				Cache.LanguageProject.TranslatedScriptureOA = Cache.ServiceLocator.GetInstance<IScriptureFactory>().Create();
+			});
 		}
 
 		#region Overrides of FdoTestBase
@@ -102,25 +98,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			const string ksWordToReplace = "we";
 			const string ksNewWord = ksWordToReplace + "Q";
 
-			RespellUndoAction respellUndoaction = SetUpParaAndRespellUndoAction(
-				ksParaText,
-				ksWordToReplace,
-				ksNewWord,
-				false,
-				out para
-			);
+			RespellUndoAction respellUndoaction = SetUpParaAndRespellUndoAction(ksParaText,
+				ksWordToReplace, ksNewWord, false, out para);
 
 			respellUndoaction.AllChanged = false;
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
-			respellUndoaction.DoIt(m_mediator);
+			Mediator mediator = MockRepository.GenerateStub<Mediator>();
+			respellUndoaction.DoIt(mediator);
 
-			Assert.That(
-				para.Contents.Text,
-				Is.EqualTo(ksParaText.Replace(ksWordToReplace, ksNewWord))
-			);
+			Assert.That(para.Contents.Text, Is.EqualTo(ksParaText.Replace(ksWordToReplace, ksNewWord)));
 			Assert.That(m_actionHandler.UndoableSequenceCount, Is.EqualTo(2));
 			Assert.That(m_actionHandler.CanUndo(), Is.True);
 		}
@@ -129,30 +117,21 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public void CanRespellShortenWord()
 		{
 			IStTxtPara para;
-			const string ksParaText =
-				"somelongwords must be short somelongwords. somelongwords are. somelongwords aren't. somelongwords somelongwords";
+			const string ksParaText = "somelongwords must be short somelongwords. somelongwords are. somelongwords aren't. somelongwords somelongwords";
 			const string ksWordToReplace = "somelongwords";
 			const string ksNewWord = "s";
 
-			RespellUndoAction respellUndoaction = SetUpParaAndRespellUndoAction(
-				ksParaText,
-				ksWordToReplace,
-				ksNewWord,
-				false,
-				out para
-			);
+			RespellUndoAction respellUndoaction = SetUpParaAndRespellUndoAction(ksParaText,
+				ksWordToReplace, ksNewWord, false, out para);
 
 			respellUndoaction.AllChanged = false;
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
-			respellUndoaction.DoIt(m_mediator);
+			Mediator mediator = MockRepository.GenerateStub<Mediator>();
+			respellUndoaction.DoIt(mediator);
 
-			Assert.That(
-				para.Contents.Text,
-				Is.EqualTo(ksParaText.Replace(ksWordToReplace, ksNewWord))
-			);
+			Assert.That(para.Contents.Text, Is.EqualTo(ksParaText.Replace(ksWordToReplace, ksNewWord)));
 			Assert.That(m_actionHandler.UndoableSequenceCount, Is.EqualTo(2));
 			Assert.That(m_actionHandler.CanUndo(), Is.True);
 		}
@@ -161,58 +140,29 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public void CanRespellMultiMorphemicWordAndKeepUsages()
 		{
 			IStTxtPara para;
-			const string ksParaText =
-				"somelongwords must be multimorphemic. somelongwords multimorphemic are.";
+			const string ksParaText = "somelongwords must be multimorphemic. somelongwords multimorphemic are.";
 			const string ksWordToReplace = "multimorphemic";
 			const string ksNewWord = "massivemorphemic";
-			var morphs = new[] { "multi", "morphemic" };
+			var morphs = new [] { "multi", "morphemic" };
 
-			RespellUndoAction respellUndoaction = SetUpParaAndRespellUndoAction_MultiMorphemic(
-				ksParaText,
-				ksWordToReplace,
-				ksNewWord,
-				morphs,
-				out para
-			);
+			RespellUndoAction respellUndoaction = SetUpParaAndRespellUndoAction_MultiMorphemic(ksParaText,
+				ksWordToReplace, ksNewWord, morphs, out para);
 
-			Assert.That(
-				para.SegmentsOS[0].AnalysesRS[3].Analysis.MorphBundlesOS.Count,
-				Is.EqualTo(2),
-				"Should have 2 morph bundles before spelling change."
-			);
+			Assert.That(para.SegmentsOS[0].AnalysesRS[3].Analysis.MorphBundlesOS.Count, Is.EqualTo(2), "Should have 2 morph bundles before spelling change.");
 
 			respellUndoaction.AllChanged = true;
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.CopyAnalyses = true; // in the dialog this is always true?
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
-			respellUndoaction.DoIt(m_mediator);
+			Mediator mediator = MockRepository.GenerateStub<Mediator>();
+			respellUndoaction.DoIt(mediator);
 
-			Assert.That(
-				para.SegmentsOS[0].AnalysesRS[2].Analysis.MorphBundlesOS.Count,
-				Is.EqualTo(0),
-				"Unexpected morph bundle contents for 'be'"
-			);
-			Assert.That(
-				para.SegmentsOS[0].AnalysesRS[3].Analysis.MorphBundlesOS.Count,
-				Is.EqualTo(2),
-				"Wrong morph bundle count for 'multimorphemic'"
-			);
-			Assert.That(
-				para.SegmentsOS[1].AnalysesRS[2].Analysis.MorphBundlesOS.Count,
-				Is.EqualTo(0),
-				"Unexpected morph bundle contents for 'are'"
-			);
-			Assert.That(
-				para.SegmentsOS[1].AnalysesRS[1].Analysis.MorphBundlesOS.Count,
-				Is.EqualTo(2),
-				"Wrong morph bundle count for 'multimorphemic'"
-			);
-			Assert.That(
-				para.Contents.Text,
-				Is.EqualTo(ksParaText.Replace(ksWordToReplace, ksNewWord))
-			);
+			Assert.That(para.SegmentsOS[0].AnalysesRS[2].Analysis.MorphBundlesOS.Count, Is.EqualTo(0), "Unexpected morph bundle contents for 'be'");
+			Assert.That(para.SegmentsOS[0].AnalysesRS[3].Analysis.MorphBundlesOS.Count, Is.EqualTo(2), "Wrong morph bundle count for 'multimorphemic'");
+			Assert.That(para.SegmentsOS[1].AnalysesRS[2].Analysis.MorphBundlesOS.Count, Is.EqualTo(0), "Unexpected morph bundle contents for 'are'");
+			Assert.That(para.SegmentsOS[1].AnalysesRS[1].Analysis.MorphBundlesOS.Count, Is.EqualTo(2), "Wrong morph bundle count for 'multimorphemic'");
+			Assert.That(para.Contents.Text, Is.EqualTo(ksParaText.Replace(ksWordToReplace, ksNewWord)));
 			Assert.That(m_actionHandler.UndoableSequenceCount, Is.EqualTo(2));
 			Assert.That(m_actionHandler.CanUndo(), Is.True);
 		}
@@ -227,29 +177,20 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public void CanUndoChangeMultipleOccurrences_InMultipleSegmentsInPara()
 		{
 			IStTxtPara para;
-			const string ksParaText =
-				"If we hope we are nice. Hoping is what we do when we want. Therefore, we are nice, aren't we? Yes.";
+			const string ksParaText = "If we hope we are nice. Hoping is what we do when we want. Therefore, we are nice, aren't we? Yes.";
 			const string ksWordToReplace = "we";
 			const string ksNewWord = ksWordToReplace + "Q";
-			RespellUndoAction respellUndoaction = SetUpParaAndRespellUndoAction(
-				ksParaText,
-				ksWordToReplace,
-				ksNewWord,
-				false,
-				out para
-			);
+			RespellUndoAction respellUndoaction = SetUpParaAndRespellUndoAction(ksParaText,
+				ksWordToReplace, ksNewWord, false, out para);
 
 			respellUndoaction.AllChanged = false;
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
-			respellUndoaction.DoIt(m_mediator);
+			Mediator mediator = MockRepository.GenerateStub<Mediator>();
+			respellUndoaction.DoIt(mediator);
 
-			Assert.That(
-				para.Contents.Text,
-				Is.EqualTo(ksParaText.Replace(ksWordToReplace, ksNewWord))
-			);
+			Assert.That(para.Contents.Text, Is.EqualTo(ksParaText.Replace(ksWordToReplace, ksNewWord)));
 			Assert.That(m_actionHandler.UndoableSequenceCount, Is.EqualTo(2));
 			Assert.That(m_actionHandler.CanUndo(), Is.True);
 		}
@@ -268,25 +209,17 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			const string ksWordToReplace = "we";
 			const string ksNewWord = ksWordToReplace + "Q";
 
-			RespellUndoAction respellUndoaction = SetUpParaAndRespellUndoAction(
-				ksParaText,
-				ksWordToReplace,
-				ksNewWord,
-				true,
-				out para
-			);
+			RespellUndoAction respellUndoaction = SetUpParaAndRespellUndoAction(ksParaText,
+				ksWordToReplace, ksNewWord, true, out para);
 
 			respellUndoaction.AllChanged = false;
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
-			respellUndoaction.DoIt(m_mediator);
+			Mediator mediator = MockRepository.GenerateStub<Mediator>();
+			respellUndoaction.DoIt(mediator);
 
-			Assert.That(
-				para.Contents.Text,
-				Is.EqualTo(ksParaText.Replace(ksWordToReplace, ksNewWord))
-			);
+			Assert.That(para.Contents.Text, Is.EqualTo(ksParaText.Replace(ksWordToReplace, ksNewWord)));
 			Assert.That(para.SegmentsOS[0].AnalysesRS[0] is IWfiGloss, Is.True);
 			Assert.That(para.SegmentsOS[0].AnalysesRS[2] is IWfiGloss, Is.True);
 			Assert.That(para.SegmentsOS[0].AnalysesRS[4] is IWfiGloss, Is.True);
@@ -306,51 +239,32 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		public void CanUndoChangeMultipleOccurrences_InMultipleSegmentsInPara_Glosses()
 		{
 			IStTxtPara para;
-			const string ksParaText =
-				"If we hope we are nice. Hoping is what we do when we want. Therefore, we are nice, aren't we? Yes.";
+			const string ksParaText = "If we hope we are nice. Hoping is what we do when we want. Therefore, we are nice, aren't we? Yes.";
 			const string ksWordToReplace = "we";
 			const string ksNewWord = ksWordToReplace + "Q";
-			RespellUndoAction respellUndoaction = SetUpParaAndRespellUndoAction(
-				ksParaText,
-				ksWordToReplace,
-				ksNewWord,
-				true,
-				out para
-			);
+			RespellUndoAction respellUndoaction = SetUpParaAndRespellUndoAction(ksParaText,
+				ksWordToReplace, ksNewWord, true, out para);
 
-			UndoableUnitOfWorkHelper.Do(
-				"Undo Added BT",
-				"Redo Added BT",
-				m_actionHandler,
-				() =>
-				{
-					int i = 0;
-					foreach (ISegment seg in para.SegmentsOS)
-						seg.FreeTranslation.SetAnalysisDefaultWritingSystem(
-							"Segment " + (i++) + " FT"
-						);
-				}
-			);
+			UndoableUnitOfWorkHelper.Do("Undo Added BT", "Redo Added BT", m_actionHandler, () =>
+			{
+				int i = 0;
+				foreach (ISegment seg in para.SegmentsOS)
+					seg.FreeTranslation.SetAnalysisDefaultWritingSystem("Segment " + (i++) + " FT");
+			});
 
 			respellUndoaction.AllChanged = false;
 			respellUndoaction.KeepAnalyses = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
-			respellUndoaction.DoIt(m_mediator);
+			Mediator mediator = MockRepository.GenerateStub<Mediator>();
+			respellUndoaction.DoIt(mediator);
 
-			Assert.That(
-				para.Contents.Text,
-				Is.EqualTo(ksParaText.Replace(ksWordToReplace, ksNewWord))
-			);
+			Assert.That(para.Contents.Text, Is.EqualTo(ksParaText.Replace(ksWordToReplace, ksNewWord)));
 			Assert.That(para.SegmentsOS[0].AnalysesRS[0] is IWfiGloss, Is.True);
 			Assert.That(para.SegmentsOS[0].AnalysesRS[2] is IWfiGloss, Is.True);
 			Assert.That(para.SegmentsOS[0].AnalysesRS[4] is IWfiGloss, Is.True);
 			Assert.That(para.SegmentsOS[0].AnalysesRS[5] is IWfiGloss, Is.True);
-			Assert.That(
-				para.SegmentsOS[0].FreeTranslation.AnalysisDefaultWritingSystem.Text,
-				Is.EqualTo("Segment 0 FT")
-			);
+			Assert.That(para.SegmentsOS[0].FreeTranslation.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Segment 0 FT"));
 
 			Assert.That(para.SegmentsOS[1].AnalysesRS[0] is IWfiGloss, Is.True);
 			Assert.That(para.SegmentsOS[1].AnalysesRS[1] is IWfiGloss, Is.True);
@@ -358,25 +272,16 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			Assert.That(para.SegmentsOS[1].AnalysesRS[4] is IWfiGloss, Is.True);
 			Assert.That(para.SegmentsOS[1].AnalysesRS[5] is IWfiGloss, Is.True);
 			Assert.That(para.SegmentsOS[1].AnalysesRS[7] is IWfiGloss, Is.True);
-			Assert.That(
-				para.SegmentsOS[1].FreeTranslation.AnalysisDefaultWritingSystem.Text,
-				Is.EqualTo("Segment 1 FT")
-			);
+			Assert.That(para.SegmentsOS[1].FreeTranslation.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Segment 1 FT"));
 
 			Assert.That(para.SegmentsOS[2].AnalysesRS[0] is IWfiGloss, Is.True);
 			Assert.That(para.SegmentsOS[2].AnalysesRS[3] is IWfiGloss, Is.True);
 			Assert.That(para.SegmentsOS[2].AnalysesRS[4] is IWfiGloss, Is.True);
 			Assert.That(para.SegmentsOS[2].AnalysesRS[6] is IWfiGloss, Is.True);
-			Assert.That(
-				para.SegmentsOS[2].FreeTranslation.AnalysisDefaultWritingSystem.Text,
-				Is.EqualTo("Segment 2 FT")
-			);
+			Assert.That(para.SegmentsOS[2].FreeTranslation.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Segment 2 FT"));
 
 			Assert.That(para.SegmentsOS[3].AnalysesRS[0] is IWfiGloss, Is.True);
-			Assert.That(
-				para.SegmentsOS[3].FreeTranslation.AnalysisDefaultWritingSystem.Text,
-				Is.EqualTo("Segment 3 FT")
-			);
+			Assert.That(para.SegmentsOS[3].FreeTranslation.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Segment 3 FT"));
 
 			Assert.That(m_actionHandler.UndoableSequenceCount, Is.EqualTo(3));
 			Assert.That(m_actionHandler.CanUndo(), Is.True);
@@ -396,14 +301,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			const string ksWordToReplace = "hope";
 			const string ksNewWord = ksWordToReplace + "ful";
 
-			RespellUndoAction respellUndoaction = SetUpParaAndRespellUndoAction(
-				ksParaText,
-				ksWordToReplace,
-				ksNewWord,
-				false,
-				StTxtParaTags.kClassId,
-				out para
-			);
+			RespellUndoAction respellUndoaction = SetUpParaAndRespellUndoAction(ksParaText,
+				ksWordToReplace, ksNewWord, false, StTxtParaTags.kClassId, out para);
 
 			respellUndoaction.AllChanged = true;
 			respellUndoaction.CopyAnalyses = false;
@@ -411,13 +310,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			respellUndoaction.PreserveCase = true;
 			respellUndoaction.UpdateLexicalEntries = true;
 
-			// Use the real Mediator from TestSetup instead of mocking (Mediator is sealed)
-			respellUndoaction.DoIt(m_mediator);
+			Mediator mediator = MockRepository.GenerateStub<Mediator>();
+			respellUndoaction.DoIt(mediator);
 
-			Assert.That(
-				para.Contents.Text,
-				Is.EqualTo(ksParaText.Replace(ksWordToReplace, ksNewWord))
-			);
+			Assert.That(para.Contents.Text, Is.EqualTo(ksParaText.Replace(ksWordToReplace, ksNewWord)));
 			Assert.That(m_actionHandler.UndoableSequenceCount, Is.EqualTo(2));
 			Assert.That(m_actionHandler.CanUndo(), Is.True);
 		}
@@ -436,134 +332,69 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <returns>The RespellUndoAction that is actually the workhorse for changing multiple
 		/// occurrences of a word</returns>
 		/// ------------------------------------------------------------------------------------
-		private RespellUndoAction SetUpParaAndRespellUndoAction(
-			string sParaText,
-			string sWordToReplace,
-			string sNewWord,
-			bool fCreateGlosses,
-			out IStTxtPara para
-		)
+		private RespellUndoAction SetUpParaAndRespellUndoAction(string sParaText,
+			string sWordToReplace, string sNewWord, bool fCreateGlosses, out IStTxtPara para)
 		{
-			return SetUpParaAndRespellUndoAction(
-				sParaText,
-				sWordToReplace,
-				sNewWord,
-				fCreateGlosses,
-				ScrTxtParaTags.kClassId,
-				out para
-			);
+			return SetUpParaAndRespellUndoAction(sParaText, sWordToReplace, sNewWord,
+				fCreateGlosses, ScrTxtParaTags.kClassId, out para);
 		}
 
-		private RespellUndoAction SetUpParaAndRespellUndoAction(
-			string sParaText,
-			string sWordToReplace,
-			string sNewWord,
-			bool fCreateGlosses,
-			int clidPara,
-			out IStTxtPara para
-		)
+		private RespellUndoAction SetUpParaAndRespellUndoAction(string sParaText,
+			string sWordToReplace, string sNewWord, bool fCreateGlosses, int clidPara,
+			out IStTxtPara para)
 		{
 			List<IParaFragment> paraFrags = new List<IParaFragment>();
 			IStTxtPara paraT = null;
 			IStText stText = null;
-			UndoableUnitOfWorkHelper.Do(
-				"Undo create book",
-				"Redo create book",
-				m_actionHandler,
-				() =>
+			UndoableUnitOfWorkHelper.Do("Undo create book", "Redo create book", m_actionHandler, () =>
+			{
+				var lp = Cache.LanguageProject;
+				if (clidPara == ScrTxtParaTags.kClassId)
 				{
-					var lp = Cache.LanguageProject;
-					if (clidPara == ScrTxtParaTags.kClassId)
-					{
-						IScrBook book = Cache
-							.ServiceLocator.GetInstance<IScrBookFactory>()
-							.Create(1, out stText);
-						paraT = Cache
-							.ServiceLocator.GetInstance<IScrTxtParaFactory>()
-							.CreateWithStyle(stText, "Monkey");
-						paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
-						object owner = ReflectionHelper.CreateObject(
-							"SIL.LCModel.dll",
-							"SIL.LCModel.Infrastructure.Impl.CmObjectId",
-							BindingFlags.NonPublic,
-							new object[] { book.Guid }
-						);
-						ReflectionHelper.SetField(stText, "m_owner", owner);
-					}
-					else
-					{
-						var proj = Cache.LangProject;
-						var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-						stText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
-						text.ContentsOA = stText;
-						paraT = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
-						stText.ParagraphsOS.Add(paraT);
-						paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
-					}
-					foreach (ISegment seg in paraT.SegmentsOS)
-					{
-						LcmTestHelper.CreateAnalyses(
-							seg,
-							paraT.Contents,
-							seg.BeginOffset,
-							seg.EndOffset,
-							fCreateGlosses
-						);
-						paraFrags.AddRange(GetParaFragmentsInSegmentForWord(seg, sWordToReplace));
-					}
+					IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(1, out stText);
+					paraT = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(stText, "Monkey");
+					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
+					object owner = ReflectionHelper.CreateObject("SIL.LCModel.dll", "SIL.LCModel.Infrastructure.Impl.CmObjectId", BindingFlags.NonPublic,
+						new object[] { book.Guid });
+					ReflectionHelper.SetField(stText, "m_owner", owner);
 				}
-			);
+				else
+				{
+					var proj = Cache.LangProject;
+					var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
+					stText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
+					text.ContentsOA = stText;
+					paraT = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
+					stText.ParagraphsOS.Add(paraT);
+					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
+				}
+				foreach (ISegment seg in paraT.SegmentsOS)
+				{
+					LcmTestHelper.CreateAnalyses(seg, paraT.Contents, seg.BeginOffset, seg.EndOffset, fCreateGlosses);
+					paraFrags.AddRange(GetParaFragmentsInSegmentForWord(seg, sWordToReplace));
+				}
+			});
 
-			var rsda = new RespellingSda(
-				(ISilDataAccessManaged)Cache.MainCacheAccessor,
-				null,
-				Cache.ServiceLocator
-			);
-			var mockTextList = new Mock<InterestingTextList>(
-				m_mediator,
-				m_propertyTable,
-				Cache.ServiceLocator.GetInstance<ITextRepository>(),
-				Cache.ServiceLocator.GetInstance<IStTextRepository>()
-			);
-			InterestingTextList dummyTextList = mockTextList.Object;
+			var rsda = new RespellingSda((ISilDataAccessManaged)Cache.MainCacheAccessor, null, Cache.ServiceLocator);
+			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(m_mediator, m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
+			Cache.ServiceLocator.GetInstance<IStTextRepository>());
 			if (clidPara == ScrTxtParaTags.kClassId)
-				mockTextList.Setup(tl => tl.InterestingTexts).Returns(new IStText[0]);
+				dummyTextList.Stub(tl => tl.InterestingTexts).Return(new IStText[0]);
 			else
-				mockTextList.Setup(t1 => t1.InterestingTexts).Returns(new IStText[1] { stText });
+				dummyTextList.Stub(t1 => t1.InterestingTexts).Return(new IStText[1] { stText });
 			ReflectionHelper.SetField(rsda, "m_interestingTexts", dummyTextList);
 			rsda.SetCache(Cache);
 			rsda.SetOccurrences(0, paraFrags);
 			ObjectListPublisher publisher = new ObjectListPublisher(rsda, kObjectListFlid);
-			var mockXmlCache = new Mock<XMLViewsDataCache>(
-				publisher,
-				true,
-				new Dictionary<int, int>()
-			);
-			XMLViewsDataCache xmlCache = mockXmlCache.Object;
+			XMLViewsDataCache xmlCache = MockRepository.GenerateStub<XMLViewsDataCache>(publisher, true, new Dictionary<int, int>());
 
-			mockXmlCache
-				.Setup(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass))
-				.Returns(ScrTxtParaTags.kClassId);
-			mockXmlCache
-				.Setup(c => c.VecProp(It.IsAny<int>(), It.IsAny<int>()))
-				.Returns((int hvo, int tag) => publisher.VecProp(hvo, tag));
-			xmlCache.MetaDataCache = new RespellingMdc(
-				(IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor
-			);
-			mockXmlCache
-				.Setup(c => c.get_ObjectProp(It.IsAny<int>(), It.IsAny<int>()))
-				.Returns((int hvo, int tag) => publisher.get_ObjectProp(hvo, tag));
-			mockXmlCache
-				.Setup(c => c.get_IntProp(It.IsAny<int>(), It.IsAny<int>()))
-				.Returns((int hvo, int tag) => publisher.get_IntProp(hvo, tag));
+			xmlCache.Stub(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass)).Return(ScrTxtParaTags.kClassId);
+			xmlCache.Stub(c => c.VecProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int[]>(publisher.VecProp));
+			xmlCache.MetaDataCache = new RespellingMdc((IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor);
+			xmlCache.Stub(c => c.get_ObjectProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_ObjectProp));
+			xmlCache.Stub(c => c.get_IntProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_IntProp));
 
-			var respellUndoaction = new RespellUndoAction(
-				xmlCache,
-				Cache,
-				Cache.DefaultVernWs,
-				sWordToReplace,
-				sNewWord
-			);
+			var respellUndoaction = new RespellUndoAction(xmlCache, Cache, Cache.DefaultVernWs, sWordToReplace, sNewWord);
 			foreach (int hvoFake in rsda.VecProp(0, ConcDecorator.kflidConcOccurrences))
 				respellUndoaction.AddOccurrence(hvoFake);
 
@@ -583,139 +414,71 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <returns>The RespellUndoAction that is actually the workhorse for changing multiple
 		/// occurrences of a word</returns>
 		/// ------------------------------------------------------------------------------------
-		private RespellUndoAction SetUpParaAndRespellUndoAction_MultiMorphemic(
-			string sParaText,
-			string sWordToReplace,
-			string sNewWord,
-			string[] morphs,
-			out IStTxtPara para
-		)
+		private RespellUndoAction SetUpParaAndRespellUndoAction_MultiMorphemic(string sParaText,
+			string sWordToReplace, string sNewWord, string[] morphs, out IStTxtPara para)
 		{
-			return SetUpParaAndRespellUndoAction_MultiMorphemic(
-				sParaText,
-				sWordToReplace,
-				sNewWord,
-				morphs,
-				ScrTxtParaTags.kClassId,
-				out para
-			);
+			return SetUpParaAndRespellUndoAction_MultiMorphemic(sParaText, sWordToReplace, sNewWord,
+				morphs, ScrTxtParaTags.kClassId, out para);
 		}
 
-		private RespellUndoAction SetUpParaAndRespellUndoAction_MultiMorphemic(
-			string sParaText,
-			string sWordToReplace,
-			string sNewWord,
-			string[] morphsToCreate,
-			int clidPara,
-			out IStTxtPara para
-		)
+		private RespellUndoAction SetUpParaAndRespellUndoAction_MultiMorphemic(string sParaText,
+			string sWordToReplace, string sNewWord, string[] morphsToCreate, int clidPara,
+			out IStTxtPara para)
 		{
 			List<IParaFragment> paraFrags = new List<IParaFragment>();
 			IStTxtPara paraT = null;
 			IStText stText = null;
-			UndoableUnitOfWorkHelper.Do(
-				"Undo create book",
-				"Redo create book",
-				m_actionHandler,
-				() =>
+			UndoableUnitOfWorkHelper.Do("Undo create book", "Redo create book", m_actionHandler, () =>
+			{
+				var lp = Cache.LanguageProject;
+				if (clidPara == ScrTxtParaTags.kClassId)
 				{
-					var lp = Cache.LanguageProject;
-					if (clidPara == ScrTxtParaTags.kClassId)
-					{
-						IScrBook book = Cache
-							.ServiceLocator.GetInstance<IScrBookFactory>()
-							.Create(1, out stText);
-						paraT = Cache
-							.ServiceLocator.GetInstance<IScrTxtParaFactory>()
-							.CreateWithStyle(stText, "Monkey");
-						paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
-						object owner = ReflectionHelper.CreateObject(
-							"SIL.LCModel.dll",
-							"SIL.LCModel.Infrastructure.Impl.CmObjectId",
-							BindingFlags.NonPublic,
-							new object[] { book.Guid }
-						);
-						ReflectionHelper.SetField(stText, "m_owner", owner);
-					}
-					else
-					{
-						var proj = Cache.LangProject;
-						var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
-						stText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
-						text.ContentsOA = stText;
-						paraT = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
-						stText.ParagraphsOS.Add(paraT);
-						paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
-					}
-					foreach (ISegment seg in paraT.SegmentsOS)
-					{
-						LcmTestHelper.CreateAnalyses(
-							seg,
-							paraT.Contents,
-							seg.BeginOffset,
-							seg.EndOffset,
-							true
-						);
-						var thisSegParaFrags = GetParaFragmentsInSegmentForWord(
-							seg,
-							sWordToReplace
-						);
-						SetMultimorphemicAnalyses(thisSegParaFrags, morphsToCreate);
-						paraFrags.AddRange(thisSegParaFrags);
-					}
+					IScrBook book = Cache.ServiceLocator.GetInstance<IScrBookFactory>().Create(1, out stText);
+					paraT = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(stText, "Monkey");
+					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
+					object owner = ReflectionHelper.CreateObject("SIL.LCModel.dll", "SIL.LCModel.Infrastructure.Impl.CmObjectId", BindingFlags.NonPublic,
+						new object[] { book.Guid });
+					ReflectionHelper.SetField(stText, "m_owner", owner);
 				}
-			);
+				else
+				{
+					var proj = Cache.LangProject;
+					var text = Cache.ServiceLocator.GetInstance<ITextFactory>().Create();
+					stText = Cache.ServiceLocator.GetInstance<IStTextFactory>().Create();
+					text.ContentsOA = stText;
+					paraT = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
+					stText.ParagraphsOS.Add(paraT);
+					paraT.Contents = TsStringUtils.MakeString(sParaText, Cache.DefaultVernWs);
+				}
+				foreach (ISegment seg in paraT.SegmentsOS)
+				{
+					LcmTestHelper.CreateAnalyses(seg, paraT.Contents, seg.BeginOffset, seg.EndOffset, true);
+					var thisSegParaFrags = GetParaFragmentsInSegmentForWord(seg, sWordToReplace);
+					SetMultimorphemicAnalyses(thisSegParaFrags, morphsToCreate);
+					paraFrags.AddRange(thisSegParaFrags);
+				}
+			});
 
-			var rsda = new RespellingSda(
-				(ISilDataAccessManaged)Cache.MainCacheAccessor,
-				null,
-				Cache.ServiceLocator
-			);
-			var mockTextList = new Mock<InterestingTextList>(
-				m_mediator,
-				m_propertyTable,
-				Cache.ServiceLocator.GetInstance<ITextRepository>(),
-				Cache.ServiceLocator.GetInstance<IStTextRepository>()
-			);
-			InterestingTextList dummyTextList = mockTextList.Object;
+			var rsda = new RespellingSda((ISilDataAccessManaged)Cache.MainCacheAccessor, null, Cache.ServiceLocator);
+			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(m_mediator, m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
+			Cache.ServiceLocator.GetInstance<IStTextRepository>());
 			if (clidPara == ScrTxtParaTags.kClassId)
-				mockTextList.Setup(tl => tl.InterestingTexts).Returns(new IStText[0]);
+				dummyTextList.Stub(tl => tl.InterestingTexts).Return(new IStText[0]);
 			else
-				mockTextList.Setup(t1 => t1.InterestingTexts).Returns(new IStText[1] { stText });
+				dummyTextList.Stub(t1 => t1.InterestingTexts).Return(new IStText[1] { stText });
 			ReflectionHelper.SetField(rsda, "m_interestingTexts", dummyTextList);
 			rsda.SetCache(Cache);
 			rsda.SetOccurrences(0, paraFrags);
 			ObjectListPublisher publisher = new ObjectListPublisher(rsda, kObjectListFlid);
-			var mockXmlCache = new Mock<XMLViewsDataCache>(
-				publisher,
-				true,
-				new Dictionary<int, int>()
-			);
-			XMLViewsDataCache xmlCache = mockXmlCache.Object;
+			XMLViewsDataCache xmlCache = MockRepository.GenerateStub<XMLViewsDataCache>(publisher, true, new Dictionary<int, int>());
 
-			mockXmlCache
-				.Setup(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass))
-				.Returns(ScrTxtParaTags.kClassId);
-			mockXmlCache
-				.Setup(c => c.VecProp(It.IsAny<int>(), It.IsAny<int>()))
-				.Returns((int hvo, int tag) => publisher.VecProp(hvo, tag));
-			xmlCache.MetaDataCache = new RespellingMdc(
-				(IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor
-			);
-			mockXmlCache
-				.Setup(c => c.get_ObjectProp(It.IsAny<int>(), It.IsAny<int>()))
-				.Returns((int hvo, int tag) => publisher.get_ObjectProp(hvo, tag));
-			mockXmlCache
-				.Setup(c => c.get_IntProp(It.IsAny<int>(), It.IsAny<int>()))
-				.Returns((int hvo, int tag) => publisher.get_IntProp(hvo, tag));
+			xmlCache.Stub(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass)).Return(ScrTxtParaTags.kClassId);
+			xmlCache.Stub(c => c.VecProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int[]>(publisher.VecProp));
+			xmlCache.MetaDataCache = new RespellingMdc((IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor);
+			xmlCache.Stub(c => c.get_ObjectProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_ObjectProp));
+			xmlCache.Stub(c => c.get_IntProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_IntProp));
 
-			var respellUndoaction = new RespellUndoAction(
-				xmlCache,
-				Cache,
-				Cache.DefaultVernWs,
-				sWordToReplace,
-				sNewWord
-			);
+			var respellUndoaction = new RespellUndoAction(xmlCache, Cache, Cache.DefaultVernWs, sWordToReplace, sNewWord);
 			foreach (int hvoFake in rsda.VecProp(0, ConcDecorator.kflidConcOccurrences))
 				respellUndoaction.AddOccurrence(hvoFake);
 
@@ -723,10 +486,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			return respellUndoaction;
 		}
 
-		private void SetMultimorphemicAnalyses(
-			IEnumerable<IParaFragment> thisSegParaFrags,
-			string[] morphsToCreate
-		)
+		private void SetMultimorphemicAnalyses(IEnumerable<IParaFragment> thisSegParaFrags, string[] morphsToCreate)
 		{
 			var morphFact = Cache.ServiceLocator.GetInstance<IWfiMorphBundleFactory>();
 			// IWfiWordform, IWfiAnalysis, and IWfiGloss objects will have already been created.
@@ -740,10 +500,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 				{
 					var bundle = morphFact.Create();
 					analysis.MorphBundlesOS.Add(bundle);
-					bundle.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(
-						morpheme,
-						Cache.DefaultVernWs
-					);
+					bundle.Form.VernacularDefaultWritingSystem = TsStringUtils.MakeString(morpheme, Cache.DefaultVernWs);
 				}
 			}
 		}
@@ -756,14 +513,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// <param name="seg">The segment.</param>
 		/// <param name="word">The word to find.</param>
 		/// ------------------------------------------------------------------------------------
-		private IEnumerable<IParaFragment> GetParaFragmentsInSegmentForWord(
-			ISegment seg,
-			string word
-		)
+		private IEnumerable<IParaFragment> GetParaFragmentsInSegmentForWord(ISegment seg, string word)
 		{
-			IAnalysis analysis = Cache
-				.ServiceLocator.GetInstance<IWfiWordformRepository>()
-				.GetMatchingWordform(Cache.DefaultVernWs, word);
+			IAnalysis analysis = Cache.ServiceLocator.GetInstance<IWfiWordformRepository>().GetMatchingWordform(Cache.DefaultVernWs, word);
 			int ichStart = 0;
 			int ichWe;
 			while ((ichWe = seg.BaselineText.Text.IndexOf(word, ichStart)) >= 0)
@@ -797,8 +549,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		WfiGloss m_wgChopper; // another.
 		WfiGloss m_wgCut; // word glos of m_wfaCut.
 		WfiAnalysis m_wfaCutIt; // Multimorpheme analysis, ax/cut -x/it
-		WfiAnalysis m_wfaNotRude; // Multimorpheme analysis, a-/not xx/rude
+		WfiAnalysis m_wfaNotRude;	// Multimorpheme analysis, a-/not xx/rude
 		int m_cAnalyses; // count of analyses made on old wordform.
+
 
 		[SetUp]
 		public override void Initialize()
@@ -806,46 +559,44 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			base.Initialize();
 			CreateTestData();
 		}
-
 		protected void CreateTestData()
 		{
 			// Create required virtual properties
 			XmlDocument doc = new XmlDocument();
 			// Subset of Flex virtuals required for parsing paragraphs etc.
 			doc.LoadXml(
-				"<virtuals>"
-					+ "<virtual modelclass=\"StTxtPara\" virtualfield=\"Segments\">"
-					+ "<dynamicloaderinfo assemblyPath=\"ITextDll.dll\" class=\"SIL.FieldWorks.IText.ParagraphSegmentsVirtualHandler\"/>"
-					+ "</virtual>"
-					+ "<virtual modelclass=\"WfiWordform\" virtualfield=\"OccurrencesInTexts\" destinationClass=\"CmBaseAnnotation\">"
-					+ "<dynamicloaderinfo assemblyPath=\"ITextDll.dll\" class=\"SIL.FieldWorks.IText.OccurrencesInTextsVirtualHandler\"/>"
-					+ "</virtual>"
-					+ "<virtual modelclass=\"WfiWordform\" virtualfield=\"HumanApprovedAnalyses\" computeeverytime=\"true\">"
-					+ "<dynamicloaderinfo assemblyPath=\"FDO.dll\" class=\"SIL.FieldWorks.FDO.FDOSequencePropertyVirtualHandler\"/>"
-					+ "</virtual>"
-					+ "<virtual modelclass=\"WfiWordform\" virtualfield=\"HumanNoOpinionParses\" computeeverytime=\"true\" requiresRealParserGeneratedData=\"true\">"
-					+ "<dynamicloaderinfo assemblyPath=\"FDO.dll\" class=\"SIL.FieldWorks.FDO.FDOSequencePropertyVirtualHandler\"/>"
-					+ "</virtual>"
-					+ "<virtual modelclass=\"WfiWordform\" virtualfield=\"HumanDisapprovedParses\" computeeverytime=\"true\">"
-					+ "<dynamicloaderinfo assemblyPath=\"FDO.dll\" class=\"SIL.FieldWorks.FDO.FDOSequencePropertyVirtualHandler\"/>"
-					+ "</virtual>"
-					+ "<virtual modelclass=\"WfiWordform\" virtualfield=\"FullConcordanceCount\" depends=\"OccurrencesInTexts\" computeeverytime=\"true\">"
-					+ "<dynamicloaderinfo assemblyPath=\"FDO.dll\" class=\"SIL.FieldWorks.FDO.IntegerPropertyVirtualHandler\"/>"
-					+ "</virtual>"
-					+ "<virtual modelclass=\"WfiWordform\" virtualfield=\"UserCount\" bulkLoadMethod=\"LoadAllUserCounts\" computeeverytime=\"true\">"
-					+ "<dynamicloaderinfo assemblyPath=\"FDO.dll\" class=\"SIL.FieldWorks.FDO.IntegerPropertyVirtualHandler\"/>"
-					+ "</virtual>"
-					+ "<virtual modelclass=\"WfiWordform\" virtualfield=\"ParserCount\" bulkLoadMethod=\"LoadAllParserCounts\" computeeverytime=\"true\" requiresRealParserGeneratedData=\"true\">"
-					+ "<dynamicloaderinfo assemblyPath=\"FDO.dll\" class=\"SIL.FieldWorks.FDO.IntegerPropertyVirtualHandler\"/>"
-					+ "</virtual>"
-					+ "<virtual modelclass=\"WfiWordform\" virtualfield=\"ConflictCount\" computeeverytime=\"true\" requiresRealParserGeneratedData=\"true\">"
-					+ "<dynamicloaderinfo assemblyPath=\"FDO.dll\" class=\"SIL.FieldWorks.FDO.IntegerPropertyVirtualHandler\"/>"
-					+ "</virtual>"
-					+ "<virtual modelclass=\"WordformInventory\" virtualfield=\"ConcordanceWords\" destinationClass=\"WfiWordform\">"
-					+ "<dynamicloaderinfo assemblyPath=\"ITextDll.dll\" class=\"SIL.FieldWorks.IText.ConcordanceWordsVirtualHandler\"/>"
-					+ "</virtual>"
-					+ "</virtuals>"
-			);
+			"<virtuals>"
+				+"<virtual modelclass=\"StTxtPara\" virtualfield=\"Segments\">"
+				+"<dynamicloaderinfo assemblyPath=\"ITextDll.dll\" class=\"SIL.FieldWorks.IText.ParagraphSegmentsVirtualHandler\"/>"
+				+"</virtual>"
+				+"<virtual modelclass=\"WfiWordform\" virtualfield=\"OccurrencesInTexts\" destinationClass=\"CmBaseAnnotation\">"
+				+"<dynamicloaderinfo assemblyPath=\"ITextDll.dll\" class=\"SIL.FieldWorks.IText.OccurrencesInTextsVirtualHandler\"/>"
+				+"</virtual>"
+				+"<virtual modelclass=\"WfiWordform\" virtualfield=\"HumanApprovedAnalyses\" computeeverytime=\"true\">"
+				+"<dynamicloaderinfo assemblyPath=\"FDO.dll\" class=\"SIL.FieldWorks.FDO.FDOSequencePropertyVirtualHandler\"/>"
+				+"</virtual>"
+				+"<virtual modelclass=\"WfiWordform\" virtualfield=\"HumanNoOpinionParses\" computeeverytime=\"true\" requiresRealParserGeneratedData=\"true\">"
+				+"<dynamicloaderinfo assemblyPath=\"FDO.dll\" class=\"SIL.FieldWorks.FDO.FDOSequencePropertyVirtualHandler\"/>"
+				+"</virtual>"
+				+"<virtual modelclass=\"WfiWordform\" virtualfield=\"HumanDisapprovedParses\" computeeverytime=\"true\">"
+				+"<dynamicloaderinfo assemblyPath=\"FDO.dll\" class=\"SIL.FieldWorks.FDO.FDOSequencePropertyVirtualHandler\"/>"
+				+"</virtual>"
+				+"<virtual modelclass=\"WfiWordform\" virtualfield=\"FullConcordanceCount\" depends=\"OccurrencesInTexts\" computeeverytime=\"true\">"
+				+"<dynamicloaderinfo assemblyPath=\"FDO.dll\" class=\"SIL.FieldWorks.FDO.IntegerPropertyVirtualHandler\"/>"
+				+"</virtual>"
+				+"<virtual modelclass=\"WfiWordform\" virtualfield=\"UserCount\" bulkLoadMethod=\"LoadAllUserCounts\" computeeverytime=\"true\">"
+				+"<dynamicloaderinfo assemblyPath=\"FDO.dll\" class=\"SIL.FieldWorks.FDO.IntegerPropertyVirtualHandler\"/>"
+				+"</virtual>"
+				+"<virtual modelclass=\"WfiWordform\" virtualfield=\"ParserCount\" bulkLoadMethod=\"LoadAllParserCounts\" computeeverytime=\"true\" requiresRealParserGeneratedData=\"true\">"
+				+"<dynamicloaderinfo assemblyPath=\"FDO.dll\" class=\"SIL.FieldWorks.FDO.IntegerPropertyVirtualHandler\"/>"
+				+"</virtual>"
+				+"<virtual modelclass=\"WfiWordform\" virtualfield=\"ConflictCount\" computeeverytime=\"true\" requiresRealParserGeneratedData=\"true\">"
+				+"<dynamicloaderinfo assemblyPath=\"FDO.dll\" class=\"SIL.FieldWorks.FDO.IntegerPropertyVirtualHandler\"/>"
+				+"</virtual>"
+				+"<virtual modelclass=\"WordformInventory\" virtualfield=\"ConcordanceWords\" destinationClass=\"WfiWordform\">"
+				+"<dynamicloaderinfo assemblyPath=\"ITextDll.dll\" class=\"SIL.FieldWorks.IText.ConcordanceWordsVirtualHandler\"/>"
+				+"</virtual>"
+			+"</virtuals>");
 			BaseVirtualHandler.InstallVirtuals(doc.DocumentElement, Cache);
 
 			m_text = new Text();
@@ -857,10 +608,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_text.ContentsOA = m_stText;
 			m_para1 = MakePara(para1);
 			m_para2 = MakePara(para2);
-			m_wfAxx = WfiWordform.CreateFromDBObject(
-				Cache,
-				WfiWordform.FindOrCreateWordform(Cache, "axx", Cache.DefaultVernWs, true)
-			);
+			m_wfAxx = WfiWordform.CreateFromDBObject(Cache,
+				WfiWordform.FindOrCreateWordform(Cache, "axx", Cache.DefaultVernWs, true));
 			// Make one real annotation, which also serves to link the Axx to this.
 			m_cbaAxx = CmBaseAnnotation.CreateUnownedCba(Cache);
 			m_cbaAxx.InstanceOfRA = m_wfAxx;
@@ -871,10 +620,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_cbaAxx.AnnotationTypeRA = CmAnnotationDefn.Twfic(Cache);
 
 			// Make another real annotation, which should get updated during Apply.
-			IWfiWordform wf2 = WfiWordform.CreateFromDBObject(
-				Cache,
-				WfiWordform.FindOrCreateWordform(Cache, "lotxx", Cache.DefaultVernWs, true)
-			);
+			IWfiWordform wf2 = WfiWordform.CreateFromDBObject(Cache,
+				WfiWordform.FindOrCreateWordform(Cache, "lotxx", Cache.DefaultVernWs, true));
 			m_cba2 = CmBaseAnnotation.CreateUnownedCba(Cache);
 			m_cba2.InstanceOfRA = wf2;
 			m_cba2.BeginObjectRA = m_para2;
@@ -883,11 +630,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_cba2.AnnotationTypeRA = CmAnnotationDefn.Twfic(Cache);
 			m_cba2.Flid = (int)StTxtPara.StTxtParaTags.kflidContents;
 
-			ParagraphParser.ConcordTexts(
-				Cache,
-				new int[] { m_stText.Hvo },
-				new NullProgressState()
-			);
+			ParagraphParser.ConcordTexts(Cache, new int[] { m_stText.Hvo }, new NullProgressState());
 			m_axxOccurrences = m_wfAxx.ConcordanceIds;
 			m_para1Occurrences = OccurrencesInPara(m_para1.Hvo, m_axxOccurrences);
 			m_para2Occurrences = OccurrencesInPara(m_para2.Hvo, m_axxOccurrences);
@@ -913,19 +656,11 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		private List<int> OccurrencesInPara(int hvoPara, List<int> allOccurrences)
 		{
 			List<int> result = allOccurrences.FindAll(
-				delegate(int hvoCba)
-				{
-					return Cache.GetObjProperty(hvoCba, kflidBeginObject) == hvoPara;
-				}
-			);
+				delegate(int hvoCba) { return Cache.GetObjProperty(hvoCba, kflidBeginObject) == hvoPara; });
 			result.Sort(
 				delegate(int left, int right)
-				{
-					return Cache
-						.GetIntProperty(left, kflidBeginOffset)
-						.CompareTo(Cache.GetIntProperty(right, kflidBeginOffset));
-				}
-			);
+				{ return Cache.GetIntProperty(left, kflidBeginOffset).CompareTo(
+					Cache.GetIntProperty(right, kflidBeginOffset)); });
 			return result;
 		}
 
@@ -944,332 +679,88 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			RespellUndoAction action = new RespellUndoAction(Cache, "axx", "ayyy");
 			action.AddOccurrence(m_para2Occurrences[1]);
 			action.AddOccurrence(m_para2Occurrences[2]);
-			action.SetupPreviews(
-				tagPrecedingContext,
-				tagPreview,
-				tagAdjustedBegin,
-				tagAdjustedEnd,
-				tagEnabled,
-				m_axxOccurrences
-			);
-			Assert.That(
-				Cache.GetTsStringProperty(m_para1Occurrences[1], tagPrecedingContext).Text,
-				Is.EqualTo(m_para1.Contents.Text),
-				"Unselected occurrences should have unchanged previews"
-			);
-			Assert.That(
-				Cache.GetIntProperty(m_para1Occurrences[0], tagAdjustedBegin),
-				Is.EqualTo(0),
-				"Unselected occurrences should still have adjustedBegin set"
-			);
-			Assert.That(
-				Cache.GetIntProperty(m_para1Occurrences[0], tagAdjustedEnd),
-				Is.EqualTo(3),
-				"Unselected occurrences should still have adjustedEnd set"
-			);
-			AssertTextProp(
-				m_para1Occurrences[0],
-				tagPrecedingContext,
-				0,
-				RespellUndoAction.SecondaryTextProp,
-				-1,
-				"prop should not be set on unchanged occurrence"
-			);
+			action.SetupPreviews(tagPrecedingContext, tagPreview, tagAdjustedBegin, tagAdjustedEnd, tagEnabled, m_axxOccurrences);
+			Assert.That(Cache.GetTsStringProperty(m_para1Occurrences[1], tagPrecedingContext).Text, Is.EqualTo(m_para1.Contents.Text), "Unselected occurrences should have unchanged previews");
+			Assert.That(Cache.GetIntProperty(m_para1Occurrences[0], tagAdjustedBegin), Is.EqualTo(0), "Unselected occurrences should still have adjustedBegin set");
+			Assert.That(Cache.GetIntProperty(m_para1Occurrences[0], tagAdjustedEnd), Is.EqualTo(3), "Unselected occurrences should still have adjustedEnd set");
+			AssertTextProp(m_para1Occurrences[0], tagPrecedingContext, 0, RespellUndoAction.SecondaryTextProp, -1, "prop should not be set on unchanged occurrence");
 
-			Assert.That(
-				Cache.GetTsStringProperty(m_para2Occurrences[1], tagPrecedingContext).Text,
-				Is.EqualTo("axx sentencexx axx"),
-				"First occurrence should have only part of para 2"
-			);
-			Assert.That(
-				Cache.GetIntProperty(m_para2Occurrences[1], tagAdjustedBegin),
-				Is.EqualTo(ich2ndOcc),
-				"First occurrence in para has no begin adjustment"
-			);
-			Assert.That(
-				Cache.GetIntProperty(m_para2Occurrences[1], tagAdjustedEnd),
-				Is.EqualTo(ich2ndOcc + 3),
-				"First occurrence in para has no end adjustment"
-			);
-			Assert.That(
-				Cache.GetTsStringProperty(m_para2Occurrences[1], tagPreview).Text,
-				Is.EqualTo("ayyy havingxx ayyy lotxx ofxx axx"),
-				"First occurrence should have correct following context"
-			);
-			AssertTextProp(
-				m_para2Occurrences[1],
-				tagPrecedingContext,
-				0,
-				RespellUndoAction.SecondaryTextProp,
-				-1,
-				"prop should not be set on unchanged occurrence- 2"
-			);
-			AssertTextProp(
-				m_para2Occurrences[1],
-				tagPrecedingContext,
-				5,
-				RespellUndoAction.SecondaryTextProp,
-				-1,
-				"prop should not be set on other words"
-			);
-			AssertTextProp(
-				m_para2Occurrences[1],
-				tagPreview,
-				"ayyy havingxx ".Length,
-				RespellUndoAction.SecondaryTextProp,
-				RespellUndoAction.SecondaryTextVal,
-				"prop should be set on changed occurrence in Preview"
-			);
-			AssertTextProp(
-				m_para2Occurrences[1],
-				tagPreview,
-				"ayyy havingxx ".Length - 1,
-				RespellUndoAction.SecondaryTextProp,
-				-1,
-				"prop should not be set on other text in Preview"
-			);
-			AssertTextProp(
-				m_para2Occurrences[1],
-				tagPreview,
-				"ayyy havingxx ".Length + 4,
-				RespellUndoAction.SecondaryTextProp,
-				-1,
-				"prop should not be set on other text in Preview"
-			);
-			AssertTextProp(
-				m_para2Occurrences[1],
-				tagPreview,
-				"ayyy havingxx ayyy lotxx ofxx a".Length,
-				RespellUndoAction.SecondaryTextProp,
-				-1,
-				"prop should not be set on unchanged occurrence in Preview"
-			);
-			AssertTextProp(
-				m_para2Occurrences[1],
-				tagPreview,
-				0,
-				(int)FwTextPropType.ktptBold,
-				(int)FwTextToggleVal.kttvForceOn,
-				"bold should be set at start of preview"
-			);
-			AssertTextProp(
-				m_para2Occurrences[1],
-				tagPreview,
-				4,
-				(int)FwTextPropType.ktptBold,
-				-1,
-				"bold should not be set except on changed word"
-			);
+			Assert.That(Cache.GetTsStringProperty(m_para2Occurrences[1], tagPrecedingContext).Text, Is.EqualTo("axx sentencexx axx"), "First occurrence should have only part of para 2");
+			Assert.That(Cache.GetIntProperty(m_para2Occurrences[1], tagAdjustedBegin), Is.EqualTo(ich2ndOcc), "First occurrence in para has no begin adjustment");
+			Assert.That(Cache.GetIntProperty(m_para2Occurrences[1], tagAdjustedEnd), Is.EqualTo(ich2ndOcc + 3), "First occurrence in para has no end adjustment");
+			Assert.That(Cache.GetTsStringProperty(m_para2Occurrences[1], tagPreview).Text, Is.EqualTo("ayyy havingxx ayyy lotxx ofxx axx"), "First occurrence should have correct following context");
+			AssertTextProp(m_para2Occurrences[1], tagPrecedingContext, 0, RespellUndoAction.SecondaryTextProp, -1, "prop should not be set on unchanged occurrence- 2");
+			AssertTextProp(m_para2Occurrences[1], tagPrecedingContext, 5, RespellUndoAction.SecondaryTextProp, -1, "prop should not be set on other words");
+			AssertTextProp(m_para2Occurrences[1], tagPreview, "ayyy havingxx ".Length, RespellUndoAction.SecondaryTextProp,
+				RespellUndoAction.SecondaryTextVal, "prop should be set on changed occurrence in Preview");
+			AssertTextProp(m_para2Occurrences[1], tagPreview, "ayyy havingxx ".Length - 1, RespellUndoAction.SecondaryTextProp,
+				-1, "prop should not be set on other text in Preview");
+			AssertTextProp(m_para2Occurrences[1], tagPreview, "ayyy havingxx ".Length + 4, RespellUndoAction.SecondaryTextProp,
+				-1, "prop should not be set on other text in Preview");
+			AssertTextProp(m_para2Occurrences[1], tagPreview, "ayyy havingxx ayyy lotxx ofxx a".Length, RespellUndoAction.SecondaryTextProp,
+				-1, "prop should not be set on unchanged occurrence in Preview");
+			AssertTextProp(m_para2Occurrences[1], tagPreview, 0, (int)FwTextPropType.ktptBold,
+				(int)FwTextToggleVal.kttvForceOn, "bold should be set at start of preview");
+			AssertTextProp(m_para2Occurrences[1], tagPreview, 4, (int)FwTextPropType.ktptBold,
+				-1, "bold should not be set except on changed word");
 			// no longer action responsibility. Assert.That(Cache.GetIntProperty(m_para2Occurrences[1], tagEnabled) != 0, Is.True);
 
-			Assert.That(
-				Cache.GetTsStringProperty(m_para2Occurrences[2], tagPrecedingContext).Text,
-				Is.EqualTo("axx sentencexx ayyy havingxx axx"),
-				"Second occurrence should have more of para 2 with first occurrence corrected"
-			);
-			Assert.That(
-				Cache.GetIntProperty(m_para2Occurrences[2], tagAdjustedBegin),
-				Is.EqualTo(ich3rdOcc + 1),
-				"Second occurrence in para has begin adjustment"
-			);
-			Assert.That(
-				Cache.GetIntProperty(m_para2Occurrences[2], tagAdjustedEnd),
-				Is.EqualTo(ich3rdOcc + 1 + 3),
-				"Second occurrence in para has end adjustment"
-			);
-			Assert.That(
-				Cache.GetTsStringProperty(m_para2Occurrences[2], tagPreview).Text,
-				Is.EqualTo("ayyy lotxx ofxx axx"),
-				"Second occurrence should have correct following context"
-			);
-			AssertTextProp(
-				m_para2Occurrences[2],
-				tagPrecedingContext,
-				0,
-				RespellUndoAction.SecondaryTextProp,
-				-1,
-				"prop should not be set on unchanged occurrence- 3"
-			);
-			AssertTextProp(
-				m_para2Occurrences[2],
-				tagPrecedingContext,
-				"axx sentencexx a".Length,
-				RespellUndoAction.SecondaryTextProp,
-				RespellUndoAction.SecondaryTextVal,
-				"prop should be set on changed occurrence in preceding context"
-			);
-			AssertTextProp(
-				m_para2Occurrences[2],
-				tagPrecedingContext,
-				"axx sentencexx".Length,
-				RespellUndoAction.SecondaryTextProp,
-				-1,
-				"prop should not be set on other text in preceding context"
-			);
-			AssertTextProp(
-				m_para2Occurrences[2],
-				tagPrecedingContext,
-				"axx sentencexx ayyy".Length,
-				RespellUndoAction.SecondaryTextProp,
-				-1,
-				"prop should not be set on other text in preceding context - 2"
-			);
-			AssertTextProp(
-				m_para2Occurrences[2],
-				tagPreview,
-				0,
-				(int)FwTextPropType.ktptBold,
-				(int)FwTextToggleVal.kttvForceOn,
-				"bold should be set at start of preview - 2"
-			);
-			AssertTextProp(
-				m_para2Occurrences[2],
-				tagPreview,
-				4,
-				(int)FwTextPropType.ktptBold,
-				-1,
-				"bold should not be set except on changed word - 2"
-			);
+			Assert.That(Cache.GetTsStringProperty(m_para2Occurrences[2], tagPrecedingContext).Text, Is.EqualTo("axx sentencexx ayyy havingxx axx"), "Second occurrence should have more of para 2 with first occurrence corrected");
+			Assert.That(Cache.GetIntProperty(m_para2Occurrences[2], tagAdjustedBegin), Is.EqualTo(ich3rdOcc + 1), "Second occurrence in para has begin adjustment");
+			Assert.That(Cache.GetIntProperty(m_para2Occurrences[2], tagAdjustedEnd), Is.EqualTo(ich3rdOcc + 1 + 3), "Second occurrence in para has end adjustment");
+			Assert.That(Cache.GetTsStringProperty(m_para2Occurrences[2], tagPreview).Text, Is.EqualTo("ayyy lotxx ofxx axx"), "Second occurrence should have correct following context");
+			AssertTextProp(m_para2Occurrences[2], tagPrecedingContext, 0, RespellUndoAction.SecondaryTextProp, -1, "prop should not be set on unchanged occurrence- 3");
+			AssertTextProp(m_para2Occurrences[2], tagPrecedingContext, "axx sentencexx a".Length, RespellUndoAction.SecondaryTextProp,
+				RespellUndoAction.SecondaryTextVal, "prop should be set on changed occurrence in preceding context");
+			AssertTextProp(m_para2Occurrences[2], tagPrecedingContext, "axx sentencexx".Length, RespellUndoAction.SecondaryTextProp,
+				-1, "prop should not be set on other text in preceding context");
+			AssertTextProp(m_para2Occurrences[2], tagPrecedingContext, "axx sentencexx ayyy".Length, RespellUndoAction.SecondaryTextProp,
+				-1, "prop should not be set on other text in preceding context - 2");
+			AssertTextProp(m_para2Occurrences[2], tagPreview, 0, (int)FwTextPropType.ktptBold,
+				(int)FwTextToggleVal.kttvForceOn, "bold should be set at start of preview - 2");
+			AssertTextProp(m_para2Occurrences[2], tagPreview, 4, (int)FwTextPropType.ktptBold,
+				-1, "bold should not be set except on changed word - 2");
 
-			Assert.That(
-				Cache.GetTsStringProperty(m_para2Occurrences[3], tagPrecedingContext).Text,
-				Is.EqualTo("axx sentencexx ayyy havingxx ayyy lotxx ofxx axx"),
-				"Unselected occurrences should have full-length preview"
-			);
-			Assert.That(
-				Cache.GetIntProperty(m_para2Occurrences[3], tagAdjustedBegin),
-				Is.EqualTo("axx sentencexx axx havingxx axx lotxx ofxx ".Length + 2),
-				"Unselected occurrences after changed ones should have adjusted begin"
-			);
-			Assert.That(
-				Cache.GetIntProperty(m_para2Occurrences[3], tagAdjustedEnd),
-				Is.EqualTo("axx sentencexx axx havingxx axx lotxx ofxx ".Length + 2 + 3),
-				"Unselected occurrences after changed ones should have adjustedEnd set"
-			);
+			Assert.That(Cache.GetTsStringProperty(m_para2Occurrences[3], tagPrecedingContext).Text, Is.EqualTo("axx sentencexx ayyy havingxx ayyy lotxx ofxx axx"), "Unselected occurrences should have full-length preview");
+			Assert.That(Cache.GetIntProperty(m_para2Occurrences[3], tagAdjustedBegin), Is.EqualTo("axx sentencexx axx havingxx axx lotxx ofxx ".Length + 2), "Unselected occurrences after changed ones should have adjusted begin");
+			Assert.That(Cache.GetIntProperty(m_para2Occurrences[3], tagAdjustedEnd), Is.EqualTo("axx sentencexx axx havingxx axx lotxx ofxx ".Length + 2 + 3), "Unselected occurrences after changed ones should have adjustedEnd set");
 
 			//-----------------------------------------------------------------------------------
 			// This is rather a 'greedy' test, but tests on the real database are expensive.
 			// Now we want to try changing the status of an occurrence to see whether it updates correctly.
 			action.UpdatePreview(m_para2Occurrences[0], true);
-			Assert.That(
-				Cache.GetTsStringProperty(m_para2Occurrences[0], tagPrecedingContext).Text,
-				Is.EqualTo("axx"),
-				"Newly selected item at start of sentence has null preceding context"
-			);
-			Assert.That(
-				Cache.GetTsStringProperty(m_para2Occurrences[0], tagPreview).Text,
-				Is.EqualTo("ayyy sentencexx ayyy havingxx ayyy lotxx ofxx axx"),
-				"After select at start occ(0) should have correct preview"
-			);
-			AssertTextProp(
-				m_para2Occurrences[0],
-				tagPreview,
-				0,
-				(int)FwTextPropType.ktptBold,
-				(int)FwTextToggleVal.kttvForceOn,
-				"After select at start occ(0) bold should be set at start of preview"
-			);
-			AssertTextProp(
-				m_para2Occurrences[0],
-				tagPreview,
-				4,
-				(int)FwTextPropType.ktptBold,
-				-1,
-				"After select at start occ(0) bold should not be set except on changed word"
-			);
+			Assert.That(Cache.GetTsStringProperty(m_para2Occurrences[0], tagPrecedingContext).Text, Is.EqualTo("axx"), "Newly selected item at start of sentence has null preceding context");
+			Assert.That(Cache.GetTsStringProperty(m_para2Occurrences[0], tagPreview).Text, Is.EqualTo("ayyy sentencexx ayyy havingxx ayyy lotxx ofxx axx"), "After select at start occ(0) should have correct preview");
+			AssertTextProp(m_para2Occurrences[0], tagPreview, 0, (int)FwTextPropType.ktptBold,
+				(int)FwTextToggleVal.kttvForceOn, "After select at start occ(0) bold should be set at start of preview");
+			AssertTextProp(m_para2Occurrences[0], tagPreview, 4, (int)FwTextPropType.ktptBold,
+				-1, "After select at start occ(0) bold should not be set except on changed word");
 
-			Assert.That(
-				Cache.GetTsStringProperty(m_para2Occurrences[1], tagPrecedingContext).Text,
-				Is.EqualTo("ayyy sentencexx axx"),
-				"After select at start occ(1) should have new preceding context."
-			);
-			Assert.That(
-				Cache.GetIntProperty(m_para2Occurrences[1], tagAdjustedBegin),
-				Is.EqualTo(ich2ndOcc + 1),
-				"After select at start occ(1) should have changed begin adjustment"
-			);
-			Assert.That(
-				Cache.GetIntProperty(m_para2Occurrences[1], tagAdjustedEnd),
-				Is.EqualTo(ich2ndOcc + 4),
-				"After select at start occ(1) should have changed end adjustment"
-			);
-			Assert.That(
-				Cache.GetTsStringProperty(m_para2Occurrences[1], tagPreview).Text,
-				Is.EqualTo("ayyy havingxx ayyy lotxx ofxx axx"),
-				"After select at start occ(1) should have correct following context"
-			);
-			AssertTextProp(
-				m_para2Occurrences[1],
-				tagPrecedingContext,
-				0,
-				RespellUndoAction.SecondaryTextProp,
-				RespellUndoAction.SecondaryTextVal,
-				"after select at start prop should be set on initial (new) occurrence"
-			);
-			AssertTextProp(
-				m_para2Occurrences[1],
-				tagPrecedingContext,
-				5,
-				RespellUndoAction.SecondaryTextProp,
-				-1,
-				"after select at start prop should not be set on other words"
-			);
-			AssertTextProp(
-				m_para2Occurrences[1],
-				tagPreview,
-				"ayyy havingxx ".Length,
-				RespellUndoAction.SecondaryTextProp,
-				RespellUndoAction.SecondaryTextVal,
-				"after select at start prop should be set on changed occurrence in Preview"
-			);
-			AssertTextProp(
-				m_para2Occurrences[1],
-				tagPreview,
-				"ayyy havingxx ".Length - 1,
-				RespellUndoAction.SecondaryTextProp,
-				-1,
-				"after select at start prop should not be set on other text in Preview"
-			);
+			Assert.That(Cache.GetTsStringProperty(m_para2Occurrences[1], tagPrecedingContext).Text, Is.EqualTo("ayyy sentencexx axx"), "After select at start occ(1) should have new preceding context.");
+			Assert.That(Cache.GetIntProperty(m_para2Occurrences[1], tagAdjustedBegin), Is.EqualTo(ich2ndOcc + 1), "After select at start occ(1) should have changed begin adjustment");
+			Assert.That(Cache.GetIntProperty(m_para2Occurrences[1], tagAdjustedEnd), Is.EqualTo(ich2ndOcc + 4), "After select at start occ(1) should have changed end adjustment");
+			Assert.That(Cache.GetTsStringProperty(m_para2Occurrences[1], tagPreview).Text, Is.EqualTo("ayyy havingxx ayyy lotxx ofxx axx"), "After select at start occ(1) should have correct following context");
+			AssertTextProp(m_para2Occurrences[1], tagPrecedingContext, 0, RespellUndoAction.SecondaryTextProp,
+				RespellUndoAction.SecondaryTextVal, "after select at start prop should be set on initial (new) occurrence");
+			AssertTextProp(m_para2Occurrences[1], tagPrecedingContext, 5, RespellUndoAction.SecondaryTextProp, -1,
+				"after select at start prop should not be set on other words");
+			AssertTextProp(m_para2Occurrences[1], tagPreview, "ayyy havingxx ".Length, RespellUndoAction.SecondaryTextProp,
+				RespellUndoAction.SecondaryTextVal, "after select at start prop should be set on changed occurrence in Preview");
+			AssertTextProp(m_para2Occurrences[1], tagPreview, "ayyy havingxx ".Length - 1, RespellUndoAction.SecondaryTextProp,
+				-1, "after select at start prop should not be set on other text in Preview");
 			// no longer action responsibilty. Assert.That(Cache.GetIntProperty(m_para2Occurrences[1], tagEnabled) != 0, Is.True);
-			Assert.That(
-				Cache.GetIntProperty(m_para2Occurrences[2], tagAdjustedBegin),
-				Is.EqualTo(ich3rdOcc + 2),
-				"After one change occ(2) should have appropriate begin adjustment"
-			);
-			Assert.That(
-				Cache.GetIntProperty(m_para2Occurrences[2], tagAdjustedEnd),
-				Is.EqualTo(ich3rdOcc + 2 + 3),
-				"After one change occ(2) should have appropriate end adjustment"
-			);
+			Assert.That(Cache.GetIntProperty(m_para2Occurrences[2], tagAdjustedBegin), Is.EqualTo(ich3rdOcc + 2), "After one change occ(2) should have appropriate begin adjustment");
+			Assert.That(Cache.GetIntProperty(m_para2Occurrences[2], tagAdjustedEnd), Is.EqualTo(ich3rdOcc + 2 + 3), "After one change occ(2) should have appropriate end adjustment");
 
 			//------------------------------------------------------------------------
 			// And now try turning one off.
 			action.UpdatePreview(m_para2Occurrences[1], false);
-			Assert.That(
-				Cache.GetTsStringProperty(m_para2Occurrences[1], tagPrecedingContext).Text,
-				Is.EqualTo("ayyy sentencexx axx havingxx ayyy lotxx ofxx axx"),
-				"Turned-off occurrence should have full-length preview"
-			);
-			Assert.That(
-				Cache.GetIntProperty(m_para2Occurrences[1], tagAdjustedBegin),
-				Is.EqualTo("ayyy sentencexx ".Length),
-				"Turned-off occurrence should still have adjusted begin"
-			);
-			Assert.That(
-				Cache.GetTsStringProperty(m_para2Occurrences[2], tagPrecedingContext).Text,
-				Is.EqualTo("ayyy sentencexx axx havingxx axx"),
-				"After two changes occ(2) should have appropriate preceding context"
-			);
-			Assert.That(
-				Cache.GetIntProperty(m_para2Occurrences[2], tagAdjustedBegin),
-				Is.EqualTo(ich3rdOcc + 1),
-				"After two changes occ(2) should have appropriate begin adjustment"
-			);
-			Assert.That(
-				Cache.GetIntProperty(m_para2Occurrences[2], tagAdjustedEnd),
-				Is.EqualTo(ich3rdOcc + 1 + 3),
-				"After two changes occ(2) should have appropriate end adjustment"
-			);
+			Assert.That(Cache.GetTsStringProperty(m_para2Occurrences[1], tagPrecedingContext).Text, Is.EqualTo("ayyy sentencexx axx havingxx ayyy lotxx ofxx axx"), "Turned-off occurrence should have full-length preview");
+			Assert.That(Cache.GetIntProperty(m_para2Occurrences[1], tagAdjustedBegin), Is.EqualTo("ayyy sentencexx ".Length), "Turned-off occurrence should still have adjusted begin");
+			Assert.That(Cache.GetTsStringProperty(m_para2Occurrences[2], tagPrecedingContext).Text, Is.EqualTo("ayyy sentencexx axx havingxx axx"), "After two changes occ(2) should have appropriate preceding context");
+			Assert.That(Cache.GetIntProperty(m_para2Occurrences[2], tagAdjustedBegin), Is.EqualTo(ich3rdOcc + 1), "After two changes occ(2) should have appropriate begin adjustment");
+			Assert.That(Cache.GetIntProperty(m_para2Occurrences[2], tagAdjustedEnd), Is.EqualTo(ich3rdOcc + 1 + 3), "After two changes occ(2) should have appropriate end adjustment");
+
 		}
 
 		/// <summary>
@@ -1286,16 +777,10 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			ITsString tss = Cache.GetTsStringProperty(hvoObj, flid);
 			Assert.That(tss.Length > ich, Is.True, "String is too short (" + message + ")");
 			ITsTextProps props = tss.get_PropertiesAt(ich);
-			int valActual,
-				var;
+			int valActual, var;
 			valActual = props.GetIntPropValues(tpt, out var);
-			Assert.That(
-				valActual,
-				Is.EqualTo(val),
-				"String has wrong property value (" + message + ")"
-			);
+			Assert.That(valActual, Is.EqualTo(val), "String has wrong property value (" + message + ")");
 		}
-
 		[Test]
 		public void PreserveCase()
 		{
@@ -1304,36 +789,13 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			RespellUndoAction action = new RespellUndoAction(Cache, "axx", "ayyy");
 			action.AddOccurrence(m_para1Occurrences[0]);
 			action.AddOccurrence(m_para1Occurrences[1]);
-			action.SetupPreviews(
-				tagPrecedingContext,
-				tagPreview,
-				tagAdjustedBegin,
-				tagAdjustedEnd,
-				tagEnabled,
-				m_axxOccurrences
-			);
-			Assert.That(
-				Cache.GetTsStringProperty(m_para1Occurrences[0], tagPrecedingContext).Text,
-				Is.EqualTo("Axx"),
-				"Old value at start without preserve case"
-			);
-			Assert.That(
-				Cache.GetTsStringProperty(m_para1Occurrences[1], tagPrecedingContext).Text,
-				Is.EqualTo("ayyy simplexx testxx withxx axx"),
-				"Preceding context without preserve case has LC"
-			);
+			action.SetupPreviews(tagPrecedingContext, tagPreview, tagAdjustedBegin, tagAdjustedEnd, tagEnabled, m_axxOccurrences);
+			Assert.That(Cache.GetTsStringProperty(m_para1Occurrences[0], tagPrecedingContext).Text, Is.EqualTo("Axx"), "Old value at start without preserve case");
+			Assert.That(Cache.GetTsStringProperty(m_para1Occurrences[1], tagPrecedingContext).Text, Is.EqualTo("ayyy simplexx testxx withxx axx"), "Preceding context without preserve case has LC");
 			action.PreserveCase = true;
 			action.UpdatePreviews();
-			Assert.That(
-				Cache.GetTsStringProperty(m_para1Occurrences[0], tagPrecedingContext).Text,
-				Is.EqualTo("Axx"),
-				"Old value at start with preserver case"
-			);
-			Assert.That(
-				Cache.GetTsStringProperty(m_para1Occurrences[1], tagPrecedingContext).Text,
-				Is.EqualTo("Ayyy simplexx testxx withxx axx"),
-				"Preceding context with preserve case has UC"
-			);
+			Assert.That(Cache.GetTsStringProperty(m_para1Occurrences[0], tagPrecedingContext).Text, Is.EqualTo("Axx"), "Old value at start with preserver case");
+			Assert.That(Cache.GetTsStringProperty(m_para1Occurrences[1], tagPrecedingContext).Text, Is.EqualTo("Ayyy simplexx testxx withxx axx"), "Preceding context with preserve case has UC");
 		}
 
 		/// <summary>
@@ -1362,86 +824,40 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		private void VerifyStartingState()
 		{
 			string text = m_para1.Contents.Text;
-			Assert.That(
-				text,
-				Is.EqualTo("Axx simplexx testxx withxx axx lotxx ofxx wordsxx endingxx inxx xx"),
-				"para 1 changes should be undone"
-			);
+			Assert.That(text, Is.EqualTo("Axx simplexx testxx withxx axx lotxx ofxx wordsxx endingxx inxx xx"), "para 1 changes should be undone");
 			text = m_para2.Contents.Text;
-			Assert.That(
-				text,
-				Is.EqualTo("axx sentencexx axx havingxx axx lotxx ofxx axx"),
-				"para 2 changes should be undone"
-			);
-			VerifyTwfic(
-				m_cba2.Hvo,
-				"axx sentencexx axx havingxx axx ".Length,
-				"axx sentencexx axx havingxx axx lotxx".Length,
-				"following Twfic"
-			);
-			VerifyTwfic(m_para1Occurrences[0], 0, "Axx".Length, "first para 1 Twfic changed");
-			VerifyTwfic(
-				m_para1Occurrences[1],
-				"Axx simplexx testxx withxx ".Length,
-				"Axx simplexx testxx withxx axx".Length,
-				"first para 1 Twfic changed"
-			);
-			VerifyTwfic(m_para2Occurrences[0], 0, "axx".Length, "first Twfic changed");
-			VerifyTwfic(
-				m_para2Occurrences[1],
-				"axx sentencexx ".Length,
-				"axx sentencexx axx".Length,
-				"first Twfic changed"
-			);
-			VerifyTwfic(
-				m_para2Occurrences[2],
-				"axx sentencexx axx havingxx ".Length,
-				"axx sentencexx axx havingxx axx".Length,
-				"second Twfic changed"
-			);
-			VerifyTwfic(
-				m_para2Occurrences[3],
-				"axx sentencexx axx havingxx axx lotxx ofxx ".Length,
-				"axx sentencexx axx havingxx axx lotxx ofxx axx".Length,
-				"final (unchanged) Twfic"
-			);
-			IWfiWordform wf = WfiWordform.CreateFromDBObject(
-				Cache,
-				WfiWordform.FindOrCreateWordform(Cache, "ayyy", Cache.DefaultVernWs, false)
-			);
+			Assert.That(text, Is.EqualTo("axx sentencexx axx havingxx axx lotxx ofxx axx"), "para 2 changes should be undone");
+			VerifyTwfic(m_cba2.Hvo, "axx sentencexx axx havingxx axx ".Length, "axx sentencexx axx havingxx axx lotxx".Length,
+				"following Twfic");
+			VerifyTwfic(m_para1Occurrences[0], 0, "Axx".Length,
+				"first para 1 Twfic changed");
+			VerifyTwfic(m_para1Occurrences[1], "Axx simplexx testxx withxx ".Length, "Axx simplexx testxx withxx axx".Length,
+				"first para 1 Twfic changed");
+			VerifyTwfic(m_para2Occurrences[0], 0, "axx".Length,
+				"first Twfic changed");
+			VerifyTwfic(m_para2Occurrences[1], "axx sentencexx ".Length, "axx sentencexx axx".Length,
+				"first Twfic changed");
+			VerifyTwfic(m_para2Occurrences[2], "axx sentencexx axx havingxx ".Length, "axx sentencexx axx havingxx axx".Length,
+				"second Twfic changed");
+			VerifyTwfic(m_para2Occurrences[3], "axx sentencexx axx havingxx axx lotxx ofxx ".Length, "axx sentencexx axx havingxx axx lotxx ofxx axx".Length,
+				"final (unchanged) Twfic");
+			IWfiWordform wf = WfiWordform.CreateFromDBObject(Cache,
+				WfiWordform.FindOrCreateWordform(Cache, "ayyy", Cache.DefaultVernWs, false));
 			//the wordform becomes real, and that is not undoable.
 			//Assert.That(wf.IsDummyObject, Is.True, "should have deleted the WF");
-			Assert.That(
-				Cache.GetVectorSize(wf.Hvo, (int)WfiWordform.WfiWordformTags.kflidAnalyses),
-				Is.EqualTo(0),
-				"when undone ayyy should have no analyses"
-			);
+			Assert.That(Cache.GetVectorSize(wf.Hvo, (int)WfiWordform.WfiWordformTags.kflidAnalyses), Is.EqualTo(0), "when undone ayyy should have no analyses");
 
-			IWfiWordform wfOld = WfiWordform.CreateFromDBObject(
-				Cache,
-				WfiWordform.FindOrCreateWordform(Cache, "axx", Cache.DefaultVernWs, false)
-			);
+			IWfiWordform wfOld = WfiWordform.CreateFromDBObject(Cache,
+				WfiWordform.FindOrCreateWordform(Cache, "axx", Cache.DefaultVernWs, false));
 			Assert.That(wf.SpellingStatus, Is.EqualTo((int)SpellingStatusStates.undecided));
 
 			if (m_wfaAxe != null)
 			{
-				Assert.That(
-					m_wfaAxe.MorphBundlesOS[0].MorphRA.Form.VernacularDefaultWritingSystem,
-					Is.EqualTo("axx"),
-					"lexicon should be restored(axe)"
-				);
-				Assert.That(
-					m_wfaCut.MorphBundlesOS[0].MorphRA.Form.VernacularDefaultWritingSystem,
-					Is.EqualTo("axx"),
-					"lexicon should be restored(cut)"
-				);
+				Assert.That(m_wfaAxe.MorphBundlesOS[0].MorphRA.Form.VernacularDefaultWritingSystem, Is.EqualTo("axx"), "lexicon should be restored(axe)");
+				Assert.That(m_wfaCut.MorphBundlesOS[0].MorphRA.Form.VernacularDefaultWritingSystem, Is.EqualTo("axx"), "lexicon should be restored(cut)");
 			}
 
-			Assert.That(
-				wfOld.AnalysesOC.Count,
-				Is.EqualTo(m_cAnalyses),
-				"original analyes restored"
-			);
+			Assert.That(wfOld.AnalysesOC.Count, Is.EqualTo(m_cAnalyses), "original analyes restored");
 		}
 
 		/// <summary>
@@ -1453,56 +869,27 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		private void VerifyDoneStateApplyTwo()
 		{
 			string text = m_para2.Contents.Text;
-			Assert.That(
-				text,
-				Is.EqualTo("axx sentencexx ayyy havingxx ayyy lotxx ofxx axx"),
-				"expected text changes should occur"
-			);
-			VerifyTwfic(
-				m_cba2.Hvo,
-				"axx sentencexx ayyy havingxx ayyy ".Length,
-				"axx sentencexx ayyy havingxx ayyy lotxx".Length,
-				"following Twfic"
-			);
-			VerifyTwfic(m_para2Occurrences[0], 0, "axx".Length, "first Twfic changed");
-			VerifyTwfic(
-				m_para2Occurrences[1],
-				"axx sentencexx ".Length,
-				"axx sentencexx ayyy".Length,
-				"first Twfic changed"
-			);
-			VerifyTwfic(
-				m_para2Occurrences[2],
-				"axx sentencexx ayyy havingxx ".Length,
-				"axx sentencexx ayyy havingxx ayyy".Length,
-				"second Twfic changed"
-			);
-			VerifyTwfic(
-				m_para2Occurrences[3],
-				"axx sentencexx ayyy havingxx ayyy lotxx ofxx ".Length,
-				"axx sentencexx ayyy havingxx ayyy lotxx ofxx axx".Length,
-				"final (unchanged) Twfic"
-			);
-			IWfiWordform wf = WfiWordform.CreateFromDBObject(
-				Cache,
-				WfiWordform.FindOrCreateWordform(Cache, "ayyy", Cache.DefaultVernWs, false)
-			);
-			Assert.That(
-				wf.IsDummyObject,
-				Is.False,
-				"should have a real WF to hold spelling status"
-			);
+			Assert.That(text, Is.EqualTo("axx sentencexx ayyy havingxx ayyy lotxx ofxx axx"), "expected text changes should occur");
+			VerifyTwfic(m_cba2.Hvo, "axx sentencexx ayyy havingxx ayyy ".Length, "axx sentencexx ayyy havingxx ayyy lotxx".Length,
+				"following Twfic");
+			VerifyTwfic(m_para2Occurrences[0], 0, "axx".Length,
+				"first Twfic changed");
+			VerifyTwfic(m_para2Occurrences[1], "axx sentencexx ".Length, "axx sentencexx ayyy".Length,
+				"first Twfic changed");
+			VerifyTwfic(m_para2Occurrences[2], "axx sentencexx ayyy havingxx ".Length, "axx sentencexx ayyy havingxx ayyy".Length,
+				"second Twfic changed");
+			VerifyTwfic(m_para2Occurrences[3], "axx sentencexx ayyy havingxx ayyy lotxx ofxx ".Length, "axx sentencexx ayyy havingxx ayyy lotxx ofxx axx".Length,
+				"final (unchanged) Twfic");
+			IWfiWordform wf = WfiWordform.CreateFromDBObject(Cache,
+				WfiWordform.FindOrCreateWordform(Cache, "ayyy", Cache.DefaultVernWs, false));
+			Assert.That(wf.IsDummyObject, Is.False, "should have a real WF to hold spelling status");
 			Assert.That(wf.SpellingStatus, Is.EqualTo((int)SpellingStatusStates.correct));
 		}
 
 		private void VerifyTwfic(int cba, int begin, int end, string message)
 		{
-			Assert.That(
-				m_cache.GetIntProperty(cba, kflidBeginOffset),
-				Is.EqualTo(begin), message + " beginOffset");
-			Assert.That(
-				m_cache.GetIntProperty(cba, kflidEndOffset),
-				Is.EqualTo(end), message + " endOffset");
+			Assert.That(m_cache.GetIntProperty(cba, kflidBeginOffset), Is.EqualTo(begin), message + " beginOffset");
+			Assert.That(m_cache.GetIntProperty(cba, kflidEndOffset), Is.EqualTo(end), message + " endOffset");
 		}
 
 		/// <summary>
@@ -1534,10 +921,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		private void VerifyDoneStateApplyTwoAndCopyAnalyses()
 		{
 			VerifyDoneStateApplyTwo();
-			IWfiWordform wf = WfiWordform.CreateFromDBObject(
-				Cache,
-				WfiWordform.FindOrCreateWordform(Cache, "ayyy", Cache.DefaultVernWs, false)
-			);
+			IWfiWordform wf = WfiWordform.CreateFromDBObject(Cache,
+				WfiWordform.FindOrCreateWordform(Cache, "ayyy", Cache.DefaultVernWs, false));
 			VerifyAnalysis(wf, "axe", 0, "axx", "axe", "first mono");
 			VerifyAnalysis(wf, "chopper", -1, null, null, "second gloss");
 			VerifyAnalysis(wf, "cut", 0, "axx", "cut", "second mono");
@@ -1551,14 +936,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		// which has a word gloss (at index iGloss) equal to wgloss,
 		// and a morph bundle at iMorph with the specified form and gloss.
 		// iGloss or iMorph may be -1 to suppress.
-		private void VerifyAnalysis(
-			IWfiWordform wf,
-			string wgloss,
-			int iMorph,
-			string form,
-			string mgloss,
-			string message
-		)
+		private void VerifyAnalysis(IWfiWordform wf, string wgloss, int iMorph, string form, string mgloss,
+			string message)
 		{
 			foreach (WfiAnalysis analysis in wf.AnalysesOC)
 			{
@@ -1569,12 +948,8 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 						if (iMorph >= 0)
 						{
 							IWfiMorphBundle bundle = analysis.MorphBundlesOS[iMorph];
-							Assert.That(
-								bundle.SenseRA.Gloss.AnalysisDefaultWritingSystem,
-								Is.EqualTo(mgloss), message + " morph gloss");
-							Assert.That(
-								bundle.MorphRA.Form.VernacularDefaultWritingSystem,
-								Is.EqualTo(form), message + " morph form");
+							Assert.That(bundle.SenseRA.Gloss.AnalysisDefaultWritingSystem, Is.EqualTo(mgloss), message + " morph gloss");
+							Assert.That(bundle.MorphRA.Form.VernacularDefaultWritingSystem, Is.EqualTo(form), message + " morph form");
 						}
 						return; // found what we want, mustn't hit the Fail below!
 					}
@@ -1591,18 +966,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			string formLexEntry = "axx";
 			ITsString tssLexEntryForm = Cache.MakeVernTss(formLexEntry);
 			int clsidForm;
-			ILexEntry entry = LexEntry.CreateEntry(
-				Cache,
-				MoMorphType.FindMorphType(
-					Cache,
-					new MoMorphTypeCollection(Cache),
-					ref formLexEntry,
-					out clsidForm
-				),
-				tssLexEntryForm,
-				"axe",
-				null
-			);
+			ILexEntry entry = LexEntry.CreateEntry(Cache,
+					MoMorphType.FindMorphType(Cache, new MoMorphTypeCollection(Cache), ref formLexEntry, out clsidForm), tssLexEntryForm,
+					"axe", null);
 			ILexSense senseAxe = entry.SensesOS[0];
 			IMoForm form = entry.LexemeFormOA;
 
@@ -1621,18 +987,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_wgChopper.Form.AnalysisDefaultWritingSystem = "chopper";
 			m_wfaAxe.SetAgentOpinion(m_cache.LangProject.DefaultUserAgent, Opinions.approves);
 
-			ILexEntry entryCut = LexEntry.CreateEntry(
-				Cache,
-				MoMorphType.FindMorphType(
-					Cache,
-					new MoMorphTypeCollection(Cache),
-					ref formLexEntry,
-					out clsidForm
-				),
-				tssLexEntryForm,
-				"cut",
-				null
-			);
+			ILexEntry entryCut = LexEntry.CreateEntry(Cache,
+					MoMorphType.FindMorphType(Cache, new MoMorphTypeCollection(Cache), ref formLexEntry, out clsidForm), tssLexEntryForm,
+					"cut", null);
 			m_wfaCut = new WfiAnalysis();
 			m_wfAxx.AnalysesOC.Add(m_wfaCut);
 			bundle = m_wfaCut.MorphBundlesOS.Append(new WfiMorphBundle());
@@ -1646,7 +1003,6 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 
 			m_cAnalyses += 2;
 		}
-
 		/// <summary>
 		/// Make (two) multimorphemic analyses on our favorite wordform, connected to four entries.
 		/// </summary>
@@ -1656,12 +1012,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			m_wfaNotRude = Make2BundleAnalysis("a-", "xx", "not", "rude");
 		}
 
-		private WfiAnalysis Make2BundleAnalysis(
-			string form1,
-			string form2,
-			string gloss1,
-			string gloss2
-		)
+		private WfiAnalysis Make2BundleAnalysis(string form1, string form2, string gloss1, string gloss2)
 		{
 			WfiAnalysis result;
 			ILexEntry entry1 = MakeEntry(form1, gloss1);
@@ -1691,18 +1042,9 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			ITsString tssLexEntryForm = Cache.MakeVernTss(form);
 			string form1 = form;
 			int clsidForm;
-			return LexEntry.CreateEntry(
-				Cache,
-				MoMorphType.FindMorphType(
-					Cache,
-					new MoMorphTypeCollection(Cache),
-					ref form1,
-					out clsidForm
-				),
-				tssLexEntryForm,
-				gloss,
-				null
-			);
+			return LexEntry.CreateEntry(Cache,
+					MoMorphType.FindMorphType(Cache, new MoMorphTypeCollection(Cache), ref form1, out clsidForm), tssLexEntryForm,
+					gloss, null);
 		}
 
 		private void AddAllOccurrences(RespellUndoAction action, List<int> occurrences)
@@ -1741,90 +1083,40 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		private void VerifyDoneStateApplyAllAndUpdateLexicon()
 		{
 			string text = m_para1.Contents.Text;
-			Assert.That(
-				text,
-				Is.EqualTo("Ay simplexx testxx withxx ay lotxx ofxx wordsxx endingxx inxx xx"),
-				"expected text changes para 1"
-			);
+			Assert.That(text, Is.EqualTo("Ay simplexx testxx withxx ay lotxx ofxx wordsxx endingxx inxx xx"), "expected text changes para 1");
 			text = m_para2.Contents.Text;
-			Assert.That(
-				text,
-				Is.EqualTo("ay sentencexx ay havingxx ay lotxx ofxx ay"),
-				"expected text changes para 2"
-			);
-			VerifyTwfic(
-				m_cba2.Hvo,
-				"ay sentencexx ay havingxx ay ".Length,
-				"ay sentencexx ay havingxx ay lotxx".Length,
-				"following Twfic"
-			);
-			VerifyTwfic(m_para1Occurrences[0], 0, "Ay".Length, "first para 1 Twfic changed");
-			VerifyTwfic(
-				m_para1Occurrences[1],
-				"Ay simplexx testxx withxx ".Length,
-				"Ay simplexx testxx withxx ay".Length,
-				"first para 1 Twfic changed"
-			);
-			VerifyTwfic(m_para2Occurrences[0], 0, "ay".Length, "first Twfic changed");
-			VerifyTwfic(
-				m_para2Occurrences[1],
-				"ay sentencexx ".Length,
-				"ay sentencexx ay".Length,
-				"first Twfic changed"
-			);
-			VerifyTwfic(
-				m_para2Occurrences[2],
-				"ay sentencexx ay havingxx ".Length,
-				"ay sentencexx ay havingxx ay".Length,
-				"second Twfic changed"
-			);
-			VerifyTwfic(
-				m_para2Occurrences[3],
-				"ay sentencexx ay havingxx ay lotxx ofxx ".Length,
-				"ay sentencexx ay havingxx ay lotxx ofxx ay".Length,
-				"final (unchanged) Twfic"
-			);
-			IWfiWordform wf = WfiWordform.CreateFromDBObject(
-				Cache,
-				WfiWordform.FindOrCreateWordform(Cache, "ay", Cache.DefaultVernWs, false)
-			);
-			Assert.That(
-				wf.IsDummyObject,
-				Is.False,
-				"should have a real WF to hold spelling status"
-			);
+			Assert.That(text, Is.EqualTo("ay sentencexx ay havingxx ay lotxx ofxx ay"), "expected text changes para 2");
+			VerifyTwfic(m_cba2.Hvo, "ay sentencexx ay havingxx ay ".Length, "ay sentencexx ay havingxx ay lotxx".Length,
+				"following Twfic");
+			VerifyTwfic(m_para1Occurrences[0], 0, "Ay".Length,
+				"first para 1 Twfic changed");
+			VerifyTwfic(m_para1Occurrences[1], "Ay simplexx testxx withxx ".Length, "Ay simplexx testxx withxx ay".Length,
+				"first para 1 Twfic changed");
+			VerifyTwfic(m_para2Occurrences[0], 0, "ay".Length,
+				"first Twfic changed");
+			VerifyTwfic(m_para2Occurrences[1], "ay sentencexx ".Length, "ay sentencexx ay".Length,
+				"first Twfic changed");
+			VerifyTwfic(m_para2Occurrences[2], "ay sentencexx ay havingxx ".Length, "ay sentencexx ay havingxx ay".Length,
+				"second Twfic changed");
+			VerifyTwfic(m_para2Occurrences[3], "ay sentencexx ay havingxx ay lotxx ofxx ".Length, "ay sentencexx ay havingxx ay lotxx ofxx ay".Length,
+				"final (unchanged) Twfic");
+			IWfiWordform wf = WfiWordform.CreateFromDBObject(Cache,
+				WfiWordform.FindOrCreateWordform(Cache, "ay", Cache.DefaultVernWs, false));
+			Assert.That(wf.IsDummyObject, Is.False, "should have a real WF to hold spelling status");
 			Assert.That(wf.SpellingStatus, Is.EqualTo((int)SpellingStatusStates.correct));
 
-			IWfiWordform wfOld = WfiWordform.CreateFromDBObject(
-				Cache,
-				WfiWordform.FindOrCreateWordform(Cache, "axx", Cache.DefaultVernWs, false)
-			);
-			Assert.That(
-				wfOld.IsDummyObject,
-				Is.False,
-				"should have a real WF to hold old spelling status"
-			);
+			IWfiWordform wfOld = WfiWordform.CreateFromDBObject(Cache,
+				WfiWordform.FindOrCreateWordform(Cache, "axx", Cache.DefaultVernWs, false));
+			Assert.That(wfOld.IsDummyObject, Is.False, "should have a real WF to hold old spelling status");
 			Assert.That(wfOld.SpellingStatus, Is.EqualTo((int)SpellingStatusStates.incorrect));
 
-			Assert.That(
-				m_wfaAxe.MorphBundlesOS[0].MorphRA.Form.VernacularDefaultWritingSystem,
-				Is.EqualTo("ay"),
-				"lexicon should be updated(axe)"
-			);
-			Assert.That(
-				m_wfaCut.MorphBundlesOS[0].MorphRA.Form.VernacularDefaultWritingSystem,
-				Is.EqualTo("ay"),
-				"lexicon should be updated(cut)"
-			);
+			Assert.That(m_wfaAxe.MorphBundlesOS[0].MorphRA.Form.VernacularDefaultWritingSystem, Is.EqualTo("ay"), "lexicon should be updated(axe)");
+			Assert.That(m_wfaCut.MorphBundlesOS[0].MorphRA.Form.VernacularDefaultWritingSystem, Is.EqualTo("ay"), "lexicon should be updated(cut)");
 
 			Assert.That(wfOld.AnalysesOC.Count, Is.EqualTo(0), "old wordform has no analyses");
 			Assert.That(wf.AnalysesOC.Count, Is.EqualTo(2), "two analyses survived");
 			foreach (WfiAnalysis wa in wf.AnalysesOC)
-				Assert.That(
-					wa.MorphBundlesOS.Count,
-					Is.EqualTo(1),
-					"only monomorphemic analyses survived"
-				);
+				Assert.That(wa.MorphBundlesOS.Count, Is.EqualTo(1), "only monomorphemic analyses survived");
 		}
 
 		/// <summary>
@@ -1855,81 +1147,35 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		private void VerifyDoneStateApplyAllAndKeepAnalyses()
 		{
 			string text = m_para1.Contents.Text;
-			Assert.That(
-				text,
-				Is.EqualTo("byy simplexx testxx withxx byy lotxx ofxx wordsxx endingxx inxx xx"),
-				"expected text changes para 1"
-			);
+			Assert.That(text, Is.EqualTo("byy simplexx testxx withxx byy lotxx ofxx wordsxx endingxx inxx xx"), "expected text changes para 1");
 			text = m_para2.Contents.Text;
-			Assert.That(
-				text,
-				Is.EqualTo("byy sentencexx byy havingxx byy lotxx ofxx byy"),
-				"expected text changes para 2"
-			);
-			VerifyTwfic(
-				m_cba2.Hvo,
-				"byy sentencexx byy havingxx byy ".Length,
-				"byy sentencexx byy havingxx byy lotxx".Length,
-				"following Twfic"
-			);
-			VerifyTwfic(m_para1Occurrences[0], 0, "byy".Length, "first para 1 Twfic changed");
-			VerifyTwfic(
-				m_para1Occurrences[1],
-				"byy simplexx testxx withxx ".Length,
-				"byy simplexx testxx withxx byy".Length,
-				"first para 1 Twfic changed"
-			);
-			VerifyTwfic(m_para2Occurrences[0], 0, "byy".Length, "first Twfic changed");
-			VerifyTwfic(
-				m_para2Occurrences[1],
-				"byy sentencexx ".Length,
-				"byy sentencexx byy".Length,
-				"first Twfic changed"
-			);
-			VerifyTwfic(
-				m_para2Occurrences[2],
-				"byy sentencexx byy havingxx ".Length,
-				"byy sentencexx byy havingxx byy".Length,
-				"second Twfic changed"
-			);
-			VerifyTwfic(
-				m_para2Occurrences[3],
-				"byy sentencexx byy havingxx byy lotxx ofxx ".Length,
-				"byy sentencexx byy havingxx byy lotxx ofxx byy".Length,
-				"final (unchanged) Twfic"
-			);
-			IWfiWordform wf = WfiWordform.CreateFromDBObject(
-				Cache,
-				WfiWordform.FindOrCreateWordform(Cache, "byy", Cache.DefaultVernWs, false)
-			);
-			Assert.That(
-				wf.IsDummyObject,
-				Is.False,
-				"should have a real WF to hold spelling status"
-			);
+			Assert.That(text, Is.EqualTo("byy sentencexx byy havingxx byy lotxx ofxx byy"), "expected text changes para 2");
+			VerifyTwfic(m_cba2.Hvo, "byy sentencexx byy havingxx byy ".Length, "byy sentencexx byy havingxx byy lotxx".Length,
+				"following Twfic");
+			VerifyTwfic(m_para1Occurrences[0], 0, "byy".Length,
+				"first para 1 Twfic changed");
+			VerifyTwfic(m_para1Occurrences[1], "byy simplexx testxx withxx ".Length, "byy simplexx testxx withxx byy".Length,
+				"first para 1 Twfic changed");
+			VerifyTwfic(m_para2Occurrences[0], 0, "byy".Length,
+				"first Twfic changed");
+			VerifyTwfic(m_para2Occurrences[1], "byy sentencexx ".Length, "byy sentencexx byy".Length,
+				"first Twfic changed");
+			VerifyTwfic(m_para2Occurrences[2], "byy sentencexx byy havingxx ".Length, "byy sentencexx byy havingxx byy".Length,
+				"second Twfic changed");
+			VerifyTwfic(m_para2Occurrences[3], "byy sentencexx byy havingxx byy lotxx ofxx ".Length, "byy sentencexx byy havingxx byy lotxx ofxx byy".Length,
+				"final (unchanged) Twfic");
+			IWfiWordform wf = WfiWordform.CreateFromDBObject(Cache,
+				WfiWordform.FindOrCreateWordform(Cache, "byy", Cache.DefaultVernWs, false));
+			Assert.That(wf.IsDummyObject, Is.False, "should have a real WF to hold spelling status");
 			Assert.That(wf.SpellingStatus, Is.EqualTo((int)SpellingStatusStates.correct));
 
-			IWfiWordform wfOld = WfiWordform.CreateFromDBObject(
-				Cache,
-				WfiWordform.FindOrCreateWordform(Cache, "axx", Cache.DefaultVernWs, false)
-			);
-			Assert.That(
-				wfOld.IsDummyObject,
-				Is.False,
-				"should have a real WF to hold old spelling status"
-			);
+			IWfiWordform wfOld = WfiWordform.CreateFromDBObject(Cache,
+				WfiWordform.FindOrCreateWordform(Cache, "axx", Cache.DefaultVernWs, false));
+			Assert.That(wfOld.IsDummyObject, Is.False, "should have a real WF to hold old spelling status");
 			Assert.That(wfOld.SpellingStatus, Is.EqualTo((int)SpellingStatusStates.incorrect));
 
-			Assert.That(
-				m_wfaAxe.MorphBundlesOS[0].MorphRA.Form.VernacularDefaultWritingSystem,
-				Is.EqualTo("axx"),
-				"lexicon should not be updated(axe)"
-			);
-			Assert.That(
-				m_wfaCut.MorphBundlesOS[0].MorphRA.Form.VernacularDefaultWritingSystem,
-				Is.EqualTo("axx"),
-				"lexicon should not be updated(cut)"
-			);
+			Assert.That(m_wfaAxe.MorphBundlesOS[0].MorphRA.Form.VernacularDefaultWritingSystem, Is.EqualTo("axx"), "lexicon should not be updated(axe)");
+			Assert.That(m_wfaCut.MorphBundlesOS[0].MorphRA.Form.VernacularDefaultWritingSystem, Is.EqualTo("axx"), "lexicon should not be updated(cut)");
 
 			Assert.That(wfOld.AnalysesOC.Count, Is.EqualTo(0), "old wordform has no analyses");
 			Assert.That(wf.AnalysesOC.Count, Is.EqualTo(4), "all analyses survived");

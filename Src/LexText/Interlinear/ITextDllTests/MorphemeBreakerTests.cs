@@ -24,18 +24,18 @@ namespace SIL.FieldWorks.IText
 			string baseWord1 = "xxxpus";
 			string baseWord1_morphs1 = "xxxpus";
 			List<string> morphs = SandboxBase.MorphemeBreaker.BreakIntoMorphs(baseWord1_morphs1, baseWord1);
-			Assert.That(morphs.Count, Is.EqualTo(1), $"Unexpected number of morphs in string '{baseWord1_morphs1}' compared to baseWord '{baseWord1}'.");
+			Assert.That(morphs.Count, Is.EqualTo(1), String.Format("Unexpected number of morphs in string '{0}' compared to baseWord '{1}'.", baseWord1_morphs1, baseWord1));
 			Assert.That(morphs[0], Is.EqualTo("xxxpus"));
 
 			string baseWord1_morphs2 = "xxxpu -s";
 			morphs = SandboxBase.MorphemeBreaker.BreakIntoMorphs(baseWord1_morphs2, baseWord1);
-			Assert.That(morphs.Count, Is.EqualTo(2), $"Unexpected number of morphs in string '{baseWord1_morphs2}' compared to baseWord '{baseWord1}'.");
+			Assert.That(morphs.Count, Is.EqualTo(2), String.Format("Unexpected number of morphs in string '{0}' compared to baseWord '{1}'.", baseWord1_morphs2, baseWord1));
 			Assert.That(morphs[0], Is.EqualTo("xxxpu"));
 			Assert.That(morphs[1], Is.EqualTo("-s"));
 
 			string baseWord1_morphs3 = "xxx pu -s";
 			morphs = SandboxBase.MorphemeBreaker.BreakIntoMorphs(baseWord1_morphs3, baseWord1);
-			Assert.That(morphs.Count, Is.EqualTo(3), $"Unexpected number of morphs in string '{baseWord1_morphs3}' compared to baseWord '{baseWord1}'.");
+			Assert.That(morphs.Count, Is.EqualTo(3), String.Format("Unexpected number of morphs in string '{0}' compared to baseWord '{1}'.", baseWord1_morphs3, baseWord1));
 			Assert.That(morphs[0], Is.EqualTo("xxx"));
 			Assert.That(morphs[1], Is.EqualTo("pu"));
 			Assert.That(morphs[2], Is.EqualTo("-s"));
@@ -44,18 +44,18 @@ namespace SIL.FieldWorks.IText
 			string baseWord2 = "xxxpus xxxyalola";
 			string baseWord2_morphs1 = "pus xxxyalola";
 			morphs = SandboxBase.MorphemeBreaker.BreakIntoMorphs(baseWord2_morphs1, baseWord2);
-			Assert.That(morphs.Count, Is.EqualTo(1), $"Unexpected number of morphs in string '{baseWord2_morphs1}' compared to baseWord '{baseWord2}'.");
+			Assert.That(morphs.Count, Is.EqualTo(1), String.Format("Unexpected number of morphs in string '{0}' compared to baseWord '{1}'.", baseWord2_morphs1, baseWord2));
 			Assert.That(morphs[0], Is.EqualTo("pus xxxyalola"));
 
 			string baseWord2_morphs2 = "xxxpus xxxyalo  -la";
 			morphs = SandboxBase.MorphemeBreaker.BreakIntoMorphs(baseWord2_morphs2, baseWord2);
-			Assert.That(morphs.Count, Is.EqualTo(2), $"Unexpected number of morphs in string '{baseWord2_morphs2}' compared to baseWord '{baseWord2}'.");
+			Assert.That(morphs.Count, Is.EqualTo(2), String.Format("Unexpected number of morphs in string '{0}' compared to baseWord '{1}'.", baseWord2_morphs2, baseWord2));
 			Assert.That(morphs[0], Is.EqualTo("xxxpus xxxyalo"));
 			Assert.That(morphs[1], Is.EqualTo("-la"));
 
 			string baseWord2_morphs3 = "xxxpus  xxxyalo  -la";
 			morphs = SandboxBase.MorphemeBreaker.BreakIntoMorphs(baseWord2_morphs3, baseWord2);
-			Assert.That(morphs.Count, Is.EqualTo(3), $"Unexpected number of morphs in string '{baseWord2_morphs3}' compared to baseWord '{baseWord2}'.");
+			Assert.That(morphs.Count, Is.EqualTo(3), String.Format("Unexpected number of morphs in string '{0}' compared to baseWord '{1}'.", baseWord2_morphs3, baseWord2));
 			Assert.That(morphs[0], Is.EqualTo("xxxpus"));
 			Assert.That(morphs[1], Is.EqualTo("xxxyalo"));
 			Assert.That(morphs[2], Is.EqualTo("-la"));
@@ -63,12 +63,12 @@ namespace SIL.FieldWorks.IText
 			string baseWord3 = "xxxnihimbilira xxxpus xxxyalola";
 			string baseWord3_morphs1 = "xxxnihimbilira xxxpus xxxyalola";
 			morphs = SandboxBase.MorphemeBreaker.BreakIntoMorphs(baseWord3_morphs1, baseWord3);
-			Assert.That(morphs.Count, Is.EqualTo(1), $"Unexpected number of morphs in string '{baseWord3_morphs1}' compared to baseWord '{baseWord3}'.");
+			Assert.That(morphs.Count, Is.EqualTo(1), String.Format("Unexpected number of morphs in string '{0}' compared to baseWord '{1}'.", baseWord3_morphs1, baseWord3));
 			Assert.That(morphs[0], Is.EqualTo("xxxnihimbilira xxxpus xxxyalola"));
 
 			string baseWord3_morphs2 = "xxxnihimbili  -ra  xxxpus xxxyalola";
 			morphs = SandboxBase.MorphemeBreaker.BreakIntoMorphs(baseWord3_morphs2, baseWord3);
-			Assert.That(morphs.Count, Is.EqualTo(3), $"Unexpected number of morphs in string '{baseWord3_morphs2}' compared to baseWord '{baseWord3}'.");
+			Assert.That(morphs.Count, Is.EqualTo(3), String.Format("Unexpected number of morphs in string '{0}' compared to baseWord '{1}'.", baseWord3_morphs2, baseWord3));
 			Assert.That(morphs[0], Is.EqualTo("xxxnihimbili"));
 			Assert.That(morphs[1], Is.EqualTo("-ra"));
 			Assert.That(morphs[2], Is.EqualTo("xxxpus xxxyalola"));
@@ -76,19 +76,19 @@ namespace SIL.FieldWorks.IText
 			string baseWord4 = "xxxpus xxxyalola xxxnihimbilira";
 			string baseWord4_morphs1 = "xxxpus xxxyalola xxxnihimbilira";
 			morphs = SandboxBase.MorphemeBreaker.BreakIntoMorphs(baseWord4_morphs1, baseWord4);
-			Assert.That(morphs.Count, Is.EqualTo(1), $"Unexpected number of morphs in string '{baseWord4_morphs1}' compared to baseWord '{baseWord4}'.");
+			Assert.That(morphs.Count, Is.EqualTo(1), String.Format("Unexpected number of morphs in string '{0}' compared to baseWord '{1}'.", baseWord4_morphs1, baseWord4));
 			Assert.That(morphs[0], Is.EqualTo("xxxpus xxxyalola xxxnihimbilira"));
 
 			string baseWord4_morphs2 = "xxxpus  xxxyalola xxxnihimbilira";
 			morphs = SandboxBase.MorphemeBreaker.BreakIntoMorphs(baseWord4_morphs2, baseWord4);
-			Assert.That(morphs.Count, Is.EqualTo(2), $"Unexpected number of morphs in string '{baseWord4_morphs2}' compared to baseWord '{baseWord4}'.");
+			Assert.That(morphs.Count, Is.EqualTo(2), String.Format("Unexpected number of morphs in string '{0}' compared to baseWord '{1}'.", baseWord4_morphs2, baseWord4));
 			Assert.That(morphs[0], Is.EqualTo("xxxpus"));
 			Assert.That(morphs[1], Is.EqualTo("xxxyalola xxxnihimbilira"));
 
 			string baseWord5 = "kicked the bucket";
 			string baseWord5_morphs2 = "kick the bucket  -ed";
 			morphs = SandboxBase.MorphemeBreaker.BreakIntoMorphs(baseWord5_morphs2, baseWord5);
-			Assert.That(morphs.Count, Is.EqualTo(2), $"Unexpected number of morphs in string '{baseWord5_morphs2}' compared to baseWord '{baseWord5}'.");
+			Assert.That(morphs.Count, Is.EqualTo(2), String.Format("Unexpected number of morphs in string '{0}' compared to baseWord '{1}'.", baseWord5_morphs2, baseWord5));
 			Assert.That(morphs[0], Is.EqualTo("kick the bucket"));
 			Assert.That(morphs[1], Is.EqualTo("-ed"));
 		}

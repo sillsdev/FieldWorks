@@ -178,7 +178,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			//		are abbreviated by being truncated to 4 characters.
 			Assert.That((m_dtree.Controls[0] as Slice).Label, Is.EqualTo("CitationForm"));
 			string abbr1 = StringTable.Table.GetString((m_dtree.Controls[0] as Slice).Label, "LabelAbbreviations");
-			Assert.That("*" + (m_dtree.Controls[0] as Slice).Label + "*", Is.EqualTo(abbr1));	// verify it's not in the table.
+			Assert.That(abbr1, Is.EqualTo("*" + (m_dtree.Controls[0] as Slice).Label + "*"));	// verify it's not in the table.
 			Assert.That((m_dtree.Controls[0] as Slice).Abbreviation, Is.EqualTo("Cita"));		// verify truncation took place.
 			// 2) Test that a label in "LabelAbbreviations" defaults to its string table entry.
 			Assert.That((m_dtree.Controls[1] as Slice).Label, Is.EqualTo("Citation Form"));
@@ -187,7 +187,7 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			Assert.That((m_dtree.Controls[1] as Slice).Abbreviation, Is.EqualTo(abbr2));		// should be identical
 			// 3) Test that a label with an "abbr" attribute overrides default abbreviation.
 			Assert.That((m_dtree.Controls[2] as Slice).Label, Is.EqualTo("Citation Form"));
-			Assert.That("!?", Is.EqualTo((m_dtree.Controls[2] as Slice).Abbreviation));
+			Assert.That((m_dtree.Controls[2] as Slice).Abbreviation, Is.EqualTo("!?"));
 			Assert.That(abbr2 == (m_dtree.Controls[2] as Slice).Abbreviation, Is.False);
 		}
 
