@@ -35,11 +35,9 @@
     <DownloadsDir>$(fwrt)/Downloads</DownloadsDir>
     <!-- Don't override LcmArtifactsDir - let mkall.targets set it from the package -->
   </PropertyGroup>
-  <!-- Reference to sil.lcmodel.core package for contentFiles.
-       We don't use GeneratePathProperty because it requires a full restore,
-       so we compute the path manually in mkall.targets using LcmNugetVersion. -->
+  <!-- Reference to sil.lcmodel.core package for contentFiles. -->
   <ItemGroup>
-    <PackageReference Include="SIL.LCModel.Core" Version="$(LcmNugetVersion)">
+    <PackageReference Include="SIL.LCModel.Core" Version="$(LcmNugetVersion)" GeneratePathProperty="true">
       <IncludeAssets>none</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

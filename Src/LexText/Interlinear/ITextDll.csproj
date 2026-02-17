@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='utf-8'?>
+﻿<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>ITextDll</AssemblyName>
@@ -29,7 +29,7 @@
     <PackageReference Include="SIL.Core" Version="17.0.0-*" />
     <PackageReference Include="SIL.DesktopAnalytics" Version="4.0.0" />
     <PackageReference Include="SIL.LCModel" Version="11.0.0-*" />
-    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" />
+    <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" GeneratePathProperty="true" />
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
     <PackageReference Include="SIL.Machine" Version="3.7.4" />
     <PackageReference Include="SIL.ParatextShared" Version="7.4.0.1" />
