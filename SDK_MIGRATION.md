@@ -1,4 +1,4 @@
-# FieldWorks SDK Migration - Comprehensive Summary
+# FieldWorks SDK Migration — Postmortem & Blame Index
 
 **Migration Period**: November 7-21, 2025
 **Base Commit**: `8e508dab484fafafb641298ed9071f03070f7c8b`
@@ -10,49 +10,50 @@
 
 ## Executive Summary
 
-FieldWorks has completed a comprehensive modernization effort migrating from legacy .NET Framework project formats to modern SDK-style projects. This migration encompasses:
+FieldWorks migrated from legacy .NET Framework project formats to modern SDK-style projects (Nov 7–21, 2025). 119 projects converted, 140 legacy files removed, 15+ runtime bugs fixed post-migration. Zero legacy build paths remain.
 
-- **119 project files** converted to SDK-style format
-- **336 C# source files** updated
-- **111 projects** successfully building with new SDK format
-- **64-bit only** architecture enforcement (x86/Win32 removed)
-- **Registration-free COM** implementation (Native + Managed)
-- **Unified launcher**: FieldWorks.exe replaced the historical LexText.exe stub across build, installer, and documentation
-- **MSBuild Traversal SDK** for declarative builds
-- **Test framework modernization** (RhinoMocks → Moq, NUnit 4 ready)
-- **Central Package Management (CPM)** via `Directory.Packages.props`
-- **Unified test runner** (`test.ps1`) for managed and native tests
-- **Stale DLL detection** via single-pass pre-build validation
-- **Installer validation tooling** with snapshot-based evidence collection
-- **Binding redirect cleanup** — eliminated manual `<bindingRedirect>` entries
-- **Developer environment tooling** (Defender exclusions, dependency verification)
-- **AGENTS.md documentation convention** for AI agent and developer onboarding
-- **140 legacy files** removed
+**If something broke after this migration**, start with the Quick Blame Lookup below, then check [Code Fixes and Patterns](#code-fixes-and-patterns) and [Migration Bug Fixes](#migration-bug-fixes-lt-223xx).
 
-**Key Achievement**: Zero legacy build paths remain. Everything uses modern SDK tooling.
+---
+
+## Quick Blame Lookup
+
+*"Did the SDK migration cause this?"* — check here first.
+
+| Symptom | Likely Cause | Fix / Ticket |
+|---------|-------------|---------------|
+| `FileLoadException` or wrong DLL version at runtime | Stale DLLs in `Output/` shadowing NuGet packages | Run `Remove-StaleDlls.ps1`; see LT-22382 |
+| `REGDB_E_CLASSNOTREG` (COM class not registered) | Missing reg-free COM manifest | Rebuild with `RegFree.targets`; check `FieldWorks.exe.manifest` |
+| Black screen / rendering corruption | GDI+ `Bitmap` incompatible with GDI `BitBlt` after SDK switch | Use native GDI DC instead of `System.Drawing.Bitmap` |
+| `InitializeComponent()` not found (CS0103) | WPF project using wrong SDK | Switch to `Microsoft.NET.Sdk.WindowsDesktop` |
+| Duplicate type errors (CS0436) | Test code compiled into production assembly | Add `<Compile Remove="ProjectTests/**" />` |
+| Duplicate `AssemblyInfo` attributes (CS0579) | SDK auto-generates + manual `AssemblyInfo.cs` | Set `GenerateAssemblyInfo=true`; remove manual duplicates |
+| NuGet version conflict (NU1605) | Transitive downgrade across projects | Pin version in `Directory.Packages.props` |
+| Stack overflow on startup | Recursive init path exposed by changed load order | See LT-22384 |
+| Memory leak in tree views | Event handlers not unsubscribed | See LT-22392 |
+| UI button duplicated / dialog missing | Control init order changed subtly | See LT-22378, LT-22395, LT-22414 |
+| `System.Security.Permissions` conflict | `DotNetZip` transitive dependency | Global pin in `Directory.Build.props`; see LT-22394 |
+| XPath failures with apostrophes | Unquoted string literals in XPath predicates | Use `concat()` quoting; see Code Fixes #10 |
 
 ---
 
 ## Table of Contents
 
-1. [Migration Overview](#migration-overview)
-2. [Project Conversions](#project-conversions)
-3. [Build System Modernization](#build-system-modernization)
-4. [Central Package Management (CPM)](#central-package-management-cpm)
-5. [64-bit and Reg-Free COM](#64-bit-and-reg-free-com)
-6. [Test Framework Upgrades](#test-framework-upgrades)
-7. [Unified Test Runner](#unified-test-runner)
+1. [Quick Blame Lookup](#quick-blame-lookup)
+2. [Migration Overview](#migration-overview)
+3. [Project Conversions](#project-conversions)
+4. [Build System Modernization](#build-system-modernization)
+5. [Central Package Management (CPM)](#central-package-management-cpm)
+6. [64-bit and Reg-Free COM](#64-bit-and-reg-free-com)
+7. [Test Framework Upgrades](#test-framework-upgrades)
 8. [Code Fixes and Patterns](#code-fixes-and-patterns)
 9. [Migration Bug Fixes (LT-223xx)](#migration-bug-fixes-lt-223xx)
 10. [Legacy Removal](#legacy-removal)
 11. [Tooling and Automation](#tooling-and-automation)
-12. [Installer Validation Tooling](#installer-validation-tooling)
-13. [Developer Environment Setup](#developer-environment-setup)
-14. [Documentation](#documentation)
-15. [Statistics](#statistics)
-16. [Lessons Learned](#lessons-learned)
-17. [Build Challenges Summary](#build-challenges-summary)
-18. [Validation and Next Steps](#validation-and-next-steps)
+12. [Statistics](#statistics)
+13. [Lessons Learned](#lessons-learned)
+14. [Validation Status](#validation-status)
+15. [Appendix: Related Documents](#appendix-related-documents)
 
 ---
 
@@ -250,25 +251,7 @@ With CPM ensuring all projects resolve to the same package version, most manual 
    - Bridges traversal SDK and native C++ builds
    - Referenced by FieldWorks.proj Phase 2
 
-#### **Build Phases in FieldWorks.proj**
-
-```
-Phase 1:  FwBuildTasks (build infrastructure)
-Phase 2:  Native C++ (via NativeBuild.csproj → mkall.targets)
-Phase 3:  Code Generation (ViewsInterfaces from IDL)
-Phase 4:  Foundation (FwUtils, FwResources, XMLUtils, Reporting)
-Phase 5:  XCore Framework
-Phase 6:  Basic UI (RootSite, SimpleRootSite)
-Phase 7:  Controls (FwControls, Widgets)
-Phase 8:  Advanced UI (Filters, XMLViews, Framework)
-Phase 9:  FDO UI (FdoUi, FwCoreDlgs)
-Phase 10: LexText Core (ParserCore, ParserUI)
-Phase 11: LexText Apps (Lexicon, Morphology, Interlinear)
-Phase 12: xWorks and Applications
-Phase 13: Plugins (Paratext, Pathway)
-Phase 14: Utilities
-Phase 15-21: Test Projects (organized by component layer)
-```
+21 ordered build phases defined in `FieldWorks.proj` — native C++ first (Phase 2), managed code (Phases 3–14), tests last (Phases 15–21). See the file for details.
 
 #### **Build Scripts Modernized**
 
@@ -308,93 +291,9 @@ Phase 15-21: Test Projects (organized by component layer)
 - Handles COM class/typelib/interface entries
 - Integrated with EXE projects via BuildInclude.targets
 
-#### **Build Usage**
-
-**Standard Development**:
-```powershell
-# Windows
-.\build.ps1                           # Debug x64
-.\build.ps1 -Configuration Release    # Release x64
-
-# Direct MSBuild
-msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64 /m
-
-# Dotnet CLI
-dotnet build FieldWorks.proj
-```
-
-**Installer Builds**:
-```powershell
-msbuild Build/Orchestrator.proj /t:RestorePackages
-msbuild Build/Orchestrator.proj /t:BuildBaseInstaller /p:Configuration=Debug /p:Platform=x64
-```
-
-**Native Only**:
-```powershell
-msbuild Build\Src\NativeBuild\NativeBuild.csproj /p:Configuration=Debug /p:Platform=x64
-```
-
-#### **Benefits Achieved**
-
-1. **Declarative Dependencies**: Clear phase ordering vs. scattered targets
-2. **Automatic Parallelism**: Safe parallel builds within phases
-3. **Better Incremental Builds**: MSBuild tracks inputs/outputs per project
-4. **Modern Tooling Support**: Works with dotnet CLI, VS Code, Rider
-5. **Clear Error Messages**: "Cannot generate Views.cs without native artifacts. Run: msbuild Build\Src\NativeBuild\NativeBuild.csproj"
-6. **Simplified Scripts**: Single code path, easier maintenance
+Build commands: see `.github/instructions/build.instructions.md` or `build.ps1 -Help`.
 
 ---
-
-## Unified Test Runner
-
-**Status**: ✅ Complete - `test.ps1` handles all test orchestration
-
-### Overview
-
-`test.ps1` is a 530-line PowerShell script that provides a single entry point for running all FieldWorks tests — managed (NUnit via VSTest) and native (C++ via `Invoke-CppTest.ps1`).
-
-### Usage
-
-```powershell
-# Run all tests (builds first)
-.\test.ps1
-
-# Run tests without building
-.\test.ps1 -NoBuild
-
-# Run tests for a specific project
-.\test.ps1 -ProjectFilter "xWorksTests"
-
-# Run with a test name filter
-.\test.ps1 -TestFilter "TestClassName"
-
-# Run native C++ tests only
-.\test.ps1 -Native
-
-# Run native tests without building
-.\test.ps1 -Native -NoBuild
-
-# List available test projects
-.\test.ps1 -ListTests
-```
-
-### Key Features
-
-1. **VSTest integration**: Uses `dotnet test` with `Test.runsettings` for managed test projects
-2. **Native test support**: Dispatches to `scripts/Agent/Invoke-CppTest.ps1` for C++ googletest/unit++ tests
-3. **Smart filtering**: Filter by project name or test name
-4. **Build-aware**: Optionally builds before testing, respects configuration/platform
-5. **CI-friendly**: Returns proper exit codes, structured output
-
-### Related Scripts
-
-| Script | Purpose |
-|--------|--------|
-| `test.ps1` | Main test orchestrator |
-| `scripts/Agent/Invoke-CppTest.ps1` | Native C++ test runner (519 lines) |
-| `Build/Agent/Run-VsTests.ps1` | VSTest wrapper for managed tests |
-| `Build/Agent/Rebuild-TestProjects.ps1` | Rebuild test projects selectively |
-| `Test.runsettings` | VSTest settings (timeouts, parallelism) |
 
 ## 64-bit and Reg-Free COM
 
@@ -408,32 +307,11 @@ msbuild Build\Src\NativeBuild\NativeBuild.csproj /p:Configuration=Debug /p:Platf
 - **Removed**: Debug|x86, Release|x86, Debug|AnyCPU, Release|AnyCPU, Debug|Win32, Release|Win32
 - **Kept**: Debug|x64, Release|x64
 
-**2. C# Projects** (`Directory.Build.props`):
-```xml
-<PropertyGroup>
-  <PlatformTarget>x64</PlatformTarget>
-  <Platforms>x64</Platforms>
-  <Prefer32Bit>false</Prefer32Bit>
-</PropertyGroup>
-```
+**2. C# Projects**: `<PlatformTarget>x64</PlatformTarget>` + `<Prefer32Bit>false</Prefer32Bit>` in `Directory.Build.props`
 
-**3. Native C++ Projects** (8 VCXPROJ files):
-- Removed Win32 configurations
-- Kept x64 configurations
-- Updated MIDL settings for 64-bit
+**3. Native C++ Projects**: 8 VCXPROJ files — Win32 configurations removed, MIDL updated for 64-bit
 
-**4. CI Enforcement** (`.github/workflows/CI.yml`):
-```yaml
-- name: Build
-  run: ./build.ps1 -Configuration Debug -Platform x64
-```
-
-#### **Benefits**
-
-- **Simpler maintenance**: One platform instead of 2-3
-- **Consistent behavior**: No WOW64 emulation issues
-- **Modern hardware**: All target systems are 64-bit
-- **Smaller solution**: Faster solution loading in VS
+**4. CI Enforcement**: `./build.ps1 -Configuration Debug -Platform x64` in `.github/workflows/CI.yml`
 
 ### Registration-Free COM Implementation
 
@@ -458,43 +336,7 @@ msbuild Build\Src\NativeBuild\NativeBuild.csproj /p:Configuration=Debug /p:Platf
    - Processes all native DLLs and managed assemblies in output directory
    - Generates `<ExeName>.exe.manifest`
 
-#### **Generated Manifests**
-
-**FieldWorks.exe.manifest**:
-- Main application manifest
-- References `FwKernel.X.manifest` and `Views.X.manifest`
-- Includes dependent assembly declarations
-- **New**: Includes managed COM components (e.g., DotNetZip)
-
-**FwKernel.X.manifest**:
-- COM interface proxy stubs
-- Interface registrations for marshaling
-
-**Views.X.manifest**:
-- **27+ COM classes registered**:
-  - VwGraphicsWin32, VwCacheDa, VwRootBox
-  - LgLineBreaker, TsStrFactory, TsPropsFactory
-  - UniscribeEngine, GraphiteEngine
-  - And more...
-
-#### **Installer Integration**
-
-**WiX Changes** (`FLExInstaller/CustomComponents.wxi`):
-- Manifest files added to component tree
-- Manifests co-located with FieldWorks.exe
-- **No COM registration actions** in installer
-
-**Validation**:
-- FieldWorks.exe launches on clean VM without COM registration
-- No `REGDB_E_CLASSNOTREG` errors
-- Fully self-contained installation
-
-#### **Test Infrastructure**
-
-**ComManifestTestHost** (NEW):
-- Test host with reg-free COM manifest
-- Allows running COM-dependent tests without registration
-- Located at `Src/Utilities/ComManifestTestHost/`
+**Generated manifests**: `FieldWorks.exe.manifest` (main app + managed COM), `FwKernel.X.manifest` (proxy stubs), `Views.X.manifest` (27+ COM classes). Installer includes manifests with zero COM registration actions. `ComManifestTestHost` enables reg-free COM testing.
 
 ---
 
@@ -660,102 +502,9 @@ All legacy references updated to point to new paths
 | `Build/Agent/Remove-StaleDlls.ps1` | Pre-build scanner: compares `Output/` DLLs against `Directory.Packages.props` versions |
 | `Build/Agent/Verify-FwDependencies.ps1` | Environment validation (VS, .NET SDK, native toolchain, NuGet) |
 
----
+### Infrastructure Created
 
-## Installer Validation Tooling
-
-**Status**: ✅ Complete - Snapshot-based evidence collection
-
-### Overview
-
-A comprehensive installer validation ecosystem was built to verify that FieldWorks installs correctly on clean machines. This uses a before/after snapshot approach to detect exactly what the installer changes on a system.
-
-### Snapshot-Based Evidence Pipeline
-
-| Script | Purpose |
-|--------|---------|
-| `scripts/Agent/Collect-InstallerSnapshot.ps1` | Capture machine state (registry, files, uninstall entries) as JSON |
-| `scripts/Agent/Compare-InstallerSnapshots.ps1` | Diff two snapshots and produce a change report |
-| `scripts/Agent/Invoke-InstallerCheck.ps1` | End-to-end: snapshot → install → snapshot → diff |
-| `scripts/Agent/Compare-InstallerEvidenceRuns.ps1` | Compare multiple evidence runs |
-
-### Hyper-V Clean-VM Testing
-
-For isolated installer testing on pristine Windows environments:
-
-| Script | Purpose |
-|--------|---------|
-| `scripts/Agent/New-HyperVTestVm.ps1` | Create a new Hyper-V test VM from Windows ISO |
-| `scripts/Agent/New-HyperVCleanBaseline.ps1` | Create a clean baseline checkpoint |
-| `scripts/Agent/Invoke-HyperVInstallerParity.ps1` | Run installer parity tests on Hyper-V VM |
-| `scripts/Agent/Invoke-HyperVInstallerRun.ps1` | Execute installer inside Hyper-V guest |
-| `scripts/Agent/Copy-HyperVParityPayload.ps1` | Copy build artifacts to Hyper-V guest |
-| `scripts/Agent/Remove-FieldWorksAll.ps1` | Complete FieldWorks removal for clean slate |
-
-### WiX 3 / WiX 6 Side-by-Side Support
-
-- `Build/Installer.legacy.targets` — WiX 3 build targets (preserved for parity validation)
-- `Build/Installer.Wix3.targets` — WiX 3-specific target overrides
-- `Build/Installer.targets` — WiX 6 build targets (primary path)
-- `scripts/Agent/New-Wix6ParityFixPlan.ps1` — Generate fix plans for WiX 3→6 parity gaps
-
----
-
-## Developer Environment Setup
-
-**Status**: ✅ Complete - Automated setup and verification
-
-### `Setup-Developer-Machine.ps1`
-
-Comprehensive developer machine setup script (350+ lines) that:
-- Verifies Visual Studio 2022 installation with required workloads
-- Checks .NET Framework 4.8 SDK and targeting pack
-- Validates native build toolchain (MSVC, Windows SDK)
-- Configures build environment variables
-- Verifies NuGet feed access
-
-### `Build/Agent/Setup-DefenderExclusions.ps1`
-
-Windows Defender real-time scanning can add 30-50% to build times. This 390-line script:
-- Adds process exclusions for `msbuild.exe`, `dotnet.exe`, `devenv.exe`, `cl.exe`, `link.exe`
-- Adds path exclusions for `Output/`, `Obj/`, `packages/`, NuGet cache directories
-- Requires elevated permissions; provides a dry-run preview mode
-- Reversible — can remove all exclusions it added
-
-### `Build/Agent/Verify-FwDependencies.ps1`
-
-262-line script that validates the full build environment:
-- Checks VS developer command prompt availability
-- Validates NuGet package restore capability
-- Verifies native toolchain (MIDL, `cl.exe`, Windows SDK headers)
-- Checks for required environment variables
-- Reports pass/fail with actionable fix suggestions
-
-### `Setup-Local-Localization.ps1`
-
-Helper script for reproducing localization-related issues (LT-22391):
-- Generates localized `App.config` files for testing
-- Configures culture-specific resource loading
-
----
-
-## Documentation
-
-The migration produced 125+ markdown files. Key documents:
-
-| Document | Lines | Purpose |
-|----------|------:|--------|
-| `MIGRATION_ANALYSIS.md` | 413 | Detailed error fixes and validation steps |
-| `TRAVERSAL_SDK_IMPLEMENTATION.md` | 327 | 21-phase build architecture |
-| `NON_SDK_ELIMINATION.md` | 121 | Pure SDK achievement |
-| `RHINOMOCKS_TO_MOQ_MIGRATION.md` | 151 | Mock framework conversion patterns |
-| `MIGRATION_FIXES_SUMMARY.md` | 207 | Issue breakdown and patterns |
-| `Docs/traversal-sdk-migration.md` | 239 | Developer migration guide |
-| `Docs/64bit-regfree-migration.md` | 209 | 64-bit/reg-free plan |
-| `.github/instructions/build.instructions.md` | — | Traversal-focused build guide |
-| `specs/001-64bit-regfree-com/` | — | Requirements, plan, tasks, quickstart |
-
-Per-folder `AGENTS.md` files describe architecture, dependencies, and testing for each major `Src/` subfolder. Kept current via `detect_copilot_needed.py` and `scaffold_copilot_markdown.py`.
+Created `test.ps1` (unified managed + native test runner), installer validation pipeline (`scripts/Agent/Invoke-InstallerCheck.ps1` + Hyper-V clean-VM testing), and developer environment automation (`Setup-Developer-Machine.ps1`, `Setup-DefenderExclusions.ps1`, `Verify-FwDependencies.ps1`). WiX 3/6 side-by-side targets maintained for parity validation. VS Code tasks for build, test, installer, worktree management, and multi-agent workflows (`.vscode/tasks.json`).
 
 ---
 
@@ -794,282 +543,40 @@ Per-folder `AGENTS.md` files describe architecture, dependencies, and testing fo
 
 ---
 
+## Validation Status
 
-## Build Challenges Summary
+All validation gates passed: clean/release/incremental builds, installer (base + patch on clean VM), full test suite via `test.ps1`, CI enforcement (x64, manifests, whitespace, commit messages).
 
-Key challenges and lessons from the migration, summarized for reference. See `MIGRATION_ANALYSIS.md` and `MIGRATION_FIXES_SUMMARY.md` for full detail.
+### Known Issues (All Resolved)
 
-| Challenge | Resolution | Lesson |
-|-----------|-----------|--------|
-| Mass conversion of 119 projects | Automated via `convertToSDK.py` (575 lines) | Invest upfront in automation; script handled 95% of cases |
-| Native ↔ managed ordering | Traversal SDK with 21 ordered phases | Declare dependencies explicitly; let MSBuild parallelize |
-| Transitive dependency conflicts (NU1605) | Central Package Management + version pinning | Use `Directory.Packages.props` from the start |
-| Test code in production assemblies (CS0436) | Explicit `<Compile Remove>` for nested test folders | SDK auto-include means you must explicitly exclude tests |
-| XAML codegen failures (CS0103) | Switch to `Microsoft.NET.Sdk.WindowsDesktop` | Check project type during conversion |
-| Stale DLLs after migration | Pre-build scanner (`Remove-StaleDlls.ps1`) | Always validate output directory against declared versions |
-| RegFree COM manifest generation | `RegFree.targets` + installer integration | Start with full EXE audit, not just the main app |
-| GDI+ / GDI rendering regression | Replaced `System.Drawing.Bitmap` with native GDI DC | Test rendering early; pixel-format mismatches are silent |
-| Mock framework migration (RhinoMocks → Moq) | Automated script + manual patterns for complex cases | `GetArgumentsForCallsMadeOn` → `Callback` capture requires manual work |
-| GenerateAssemblyInfo inconsistency | Per-project evaluation; ~40 projects switched to `true` | Evaluate per-project needs upfront, don't blanket-set |
+| Issue | Resolution |
+|-------|------------|
+| Installer testing on clean machines | Built Hyper-V snapshot pipeline (`Invoke-InstallerCheck.ps1`) |
+| Native + managed test orchestration | Created unified `test.ps1` (managed VSTest + native C++) |
+| Reg-free COM in test context | Created `ComManifestTestHost` for manifest-aware test execution |
 
 ---
 
-## Validation and Next Steps
+## Appendix: Related Documents
 
-### Validation Checklist
-
-#### **Build Validation** ✅
-- [x] Clean build completes: `.\build.ps1`
-- [x] Release build completes: `.\build.ps1 -Configuration Release`
-- [x] Linux build: N/A (FieldWorks is Windows-first; `build.sh` is not supported)
-- [x] Incremental builds work correctly
-- [x] Parallel builds safe: `.\build.ps1 -MsBuildArgs @('/m')`
-- [x] Native-only build: `msbuild Build\Src\NativeBuild\NativeBuild.csproj`
-- [x] Individual project builds work
-
-#### **Installer Validation** ✅
-- [x] Base installer builds successfully
-- [x] Patch installer builds successfully
-- [x] Manifests included in installer
-- [x] Clean install works on test VM (via Hyper-V evidence pipeline)
-- [x] FieldWorks.exe launches without COM registration
-
-#### **Test Validation** ✅
-- [x] All test projects build
-- [x] Test suites run successfully via `test.ps1`
-- [x] COM tests work with reg-free manifests
-- [x] No test regressions from framework changes
-
-#### **CI Validation** ✅
-- [x] CI builds pass
-- [x] x64 platform enforced
-- [x] Manifests uploaded as artifacts
-- [x] Commit message checks pass
-- [x] Whitespace checks pass
-
-#### **Documentation Validation** ✅
-- [x] Build instructions accurate
-- [x] Migration guides complete
-- [x] Architecture documentation current
-- [x] All cross-references valid
-- [x] Troubleshooting sections helpful
-
-### Known Issues (Resolved)
-
-#### **Issue 1: Installer Testing** ✅ Resolved
-- **Status**: Validated via Hyper-V evidence pipeline and snapshot-based testing
-- **Resolution**: Created full installer validation tooling suite (see [Installer Validation Tooling](#installer-validation-tooling))
-
-#### **Issue 2: Full Test Suite Run** ✅ Resolved
-- **Status**: Full suite runs via `test.ps1`
-- **Resolution**: Created unified test runner supporting managed (VSTest) and native (C++) tests
-
-#### **Issue 3: Com Manifest Test Host Integration** ✅ Resolved
-- **Status**: Integrated with test infrastructure
-- **Resolution**: `ComManifestTestHost` used in reg-free COM test scenarios
-
-### Next Steps
-
-#### **Immediate** ✅ Completed
-
-1. **Full Test Suite** — Runs via `.\test.ps1`
-2. **Installer Validation** — Built and validated via evidence pipeline
-3. **Performance Baseline** — Build times profiled
-
-#### **Short Term** ✅ Completed
-
-1. **Test Host Integration** — ComManifestTestHost integrated
-2. **Additional Executable Manifests** — FieldWorks.exe manifest validated
-3. **CI Enhancements** — Build, test, whitespace, and commit message checks active
-
-4. **Developer Experience**
-   - VS Code tasks for build, test, installer, worktree management, and multi-agent workflows (`.vscode/tasks.json`)
-   - Add build troubleshooting FAQ
-   - Streamline onboarding documentation
-
-#### **Medium Term (Quarter 1)**
-
-1. **Complete 64-bit Migration**
-   - Remove any remaining x86 references
-   - Audit all native dependencies
-   - Update third-party component handling
-
-2. **Test Suite Stabilization**
-   - Address flaky tests
-   - Improve test performance
-   - Expand code coverage
-
-3. **Build Optimization**
-   - Profile build times
-   - Optimize slow projects
-   - Improve caching strategies
-
-4. **Documentation Maintenance**
-   - Keep migration docs current
-   - Add examples for common scenarios
-   - Create video walkthroughs
-
-#### **Long Term (Year 1)**
-
-1. **Consider .NET Upgrade**
-   - Evaluate .NET 8+ migration path
-   - Assess third-party compatibility
-   - Plan phased approach
-
-2. **Build System Evolution**
-   - Explore additional MSBuild SDK benefits
-   - ✅ Central Package Management — implemented via `Directory.Packages.props`
-   - Evaluate build caching solutions
-
-3. **Automation Expansion**
-   - More build process automation
-   - Automated dependency updates
-   - Continuous integration improvements
-
----
-
-## Appendix: Key References
-
-### Repository Structure
-
-```
-FieldWorks/
-├── Build/                    # Build system
-│   ├── Src/
-│   │   ├── FwBuildTasks/    # Custom MSBuild tasks
-│   │   ├── NativeBuild/     # Native C++ build wrapper (NEW)
-│   │   └── NUnitReport/     # Test reporting
-│   ├── Orchestrator.proj    # Build entry point (NEW, replaces FieldWorks.proj)
-│   ├── mkall.targets        # Native build orchestration (modernized)
-│   ├── Installer.targets    # Installer build (updated)
-│   ├── RegFree.targets      # Reg-free COM manifest generation (NEW)
-│   ├── SetupInclude.targets # Environment setup
-│   └── convertToSDK.py      # Project conversion script (NEW)
-├── Src/                      # All source code
-│   ├── Common/               # Shared components
-│   ├── LexText/              # Lexicon and text components
-│   ├── xWorks/               # xWorks application
-│   ├── FwCoreDlgs/           # Core dialogs
-│   ├── Utilities/            # Utility projects
-│   └── XCore/                # XCore framework
-├── Lib/                      # External libraries
-├── Output/                   # Build output (Debug/, Release/)
-├── Obj/                      # Intermediate build files
-├── .github/                  # CI/CD and documentation
-│   ├── instructions/         # Domain-specific guidelines
-│   ├── workflows/            # GitHub Actions
-│   └── memory.md             # Build system decisions
-├── Docs/                     # Technical documentation
-├── scripts/                  # Automation and agent scripts
-│   └── Agent/                # Build, test, and installer validation scripts
-├── FieldWorks.proj           # Traversal build orchestrator (NEW)
-├── Directory.Build.props     # Global MSBuild properties
-├── Directory.Packages.props  # Central Package Management (NEW)
-├── FieldWorks.sln            # Main solution (x64 only)
-├── build.ps1                 # Windows build script (modernized)
-└── test.ps1                  # Test runner script (NEW)
-```
-
-### Key Files
-
-| File                                       | Purpose                            | Status                               |
-| ------------------------------------------ | ---------------------------------- | ------------------------------------ |
-| `FieldWorks.proj`                          | MSBuild Traversal SDK orchestrator | NEW                                  |
-| `Build/Orchestrator.proj`                  | SDK-style build entry point        | NEW (replaces Build/FieldWorks.proj) |
-| `Build/Src/NativeBuild/NativeBuild.csproj` | Native build wrapper               | NEW                                  |
-| `Build/RegFree.targets`                    | Manifest generation                | NEW                                  |
-| `Directory.Build.props`                    | Global properties (x64, net48)     | Enhanced                             |
-| `Directory.Packages.props`                 | Central Package Management         | NEW                                  |
-| `build.ps1`                                | Windows build script               | Modernized                           |
-| `test.ps1`                                 | Unified test runner                | NEW (530 lines)                      |
-| `Build/Agent/Remove-StaleDlls.ps1`        | Pre-build stale DLL scanner        | NEW                                  |
-| `Build/Agent/Verify-FwDependencies.ps1`   | Environment validation             | NEW                                  |
-| `Build/Agent/Setup-DefenderExclusions.ps1`| Defender exclusion management       | NEW                                  |
-| `scripts/Agent/Migrate-ToCpm.ps1`         | CPM migration automation           | NEW                                  |
-| `scripts/Agent/Invoke-CppTest.ps1`        | Native C++ test runner             | NEW                                  |
-| `scripts/Agent/Invoke-InstallerCheck.ps1` | Installer evidence pipeline        | NEW                                  |
-
-### Migration Documents
-
-| Document                          | Lines | Purpose                    |
-| --------------------------------- | ----- | -------------------------- |
-| `MIGRATION_ANALYSIS.md`           | 413   | Detailed error fixes       |
-| `TRAVERSAL_SDK_IMPLEMENTATION.md` | 327   | Traversal SDK architecture |
-| `NON_SDK_ELIMINATION.md`          | 121   | Pure SDK achievement       |
-| `RHINOMOCKS_TO_MOQ_MIGRATION.md`  | 151   | Test framework conversion  |
-| `MIGRATION_FIXES_SUMMARY.md`      | 207   | Issue breakdown            |
-| `Docs/traversal-sdk-migration.md` | 239   | Developer guide            |
-| `Docs/64bit-regfree-migration.md` | 209   | 64-bit/reg-free plan       |
-| `SDK-MIGRATION.md` (this file)    | ~1050 | Comprehensive summary      |
-
-### Build Commands
-
-```powershell
-# Standard Development
-.\build.ps1                              # Debug x64 build
-.\build.ps1 -Configuration Release       # Release x64 build
-
-# Direct MSBuild
-msbuild FieldWorks.proj /p:Configuration=Debug /p:Platform=x64 /m
-dotnet build FieldWorks.proj
-
-# Testing
-.\test.ps1                               # Run all tests
-.\test.ps1 -NoBuild                      # Run tests without building
-.\test.ps1 -ProjectFilter "xWorksTests"  # Run specific project tests
-.\test.ps1 -TestFilter "ClassName"       # Run by test name
-.\test.ps1 -Native                       # Run native C++ tests
-
-# Installers
-msbuild Build/Orchestrator.proj /t:RestorePackages
-msbuild Build/Orchestrator.proj /t:BuildBaseInstaller /p:config=release
-
-# Native Only
-msbuild Build\Src\NativeBuild\NativeBuild.csproj /p:Configuration=Debug /p:Platform=x64
-
-# Individual Project
-msbuild Src/Common/FwUtils/FwUtils.csproj
-
-# Clean
-git clean -dfx Output/ Obj/
-.\build.ps1
-```
-
-### Contact and Support
-
-For questions about this migration:
-- **Build System**: See `.github/instructions/build.instructions.md`
-- **Project Conversions**: Review `MIGRATION_ANALYSIS.md` for patterns
-- **Test Frameworks**: See `RHINOMOCKS_TO_MOQ_MIGRATION.md`
-- **64-bit/Reg-Free**: See `Docs/64bit-regfree-migration.md`
+| Document | Purpose |
+|----------|--------|
+| `MIGRATION_ANALYSIS.md` | Detailed error fixes and code examples |
+| `TRAVERSAL_SDK_IMPLEMENTATION.md` | 21-phase traversal SDK architecture |
+| `RHINOMOCKS_TO_MOQ_MIGRATION.md` | Mock framework conversion patterns |
+| `MIGRATION_FIXES_SUMMARY.md` | Issue breakdown and patterns |
+| `Docs/traversal-sdk-migration.md` | Developer migration guide |
+| `Docs/64bit-regfree-migration.md` | 64-bit / reg-free COM plan |
+| `.github/instructions/build.instructions.md` | Build commands and usage |
 
 ---
 
 ## Conclusion
 
-The FieldWorks SDK migration represents a comprehensive modernization of a large, complex codebase:
-
-✅ **119 projects** successfully converted to SDK format
-✅ **Zero legacy build paths** - fully modern architecture
-✅ **64-bit only** - simplified platform support
-✅ **Registration-free COM** - self-contained installation
-✅ **MSBuild Traversal SDK** - declarative, maintainable builds
-✅ **Central Package Management** - unified dependency versions
-✅ **Modern test frameworks** - NUnit 4, Moq
-✅ **Unified test runner** - `test.ps1` for managed and native tests
-✅ **Stale DLL detection** - automated pre-build validation
-✅ **Installer validation tooling** - snapshot-based evidence collection
-✅ **Developer environment automation** - setup, Defender exclusions, dependency verification
-✅ **15+ migration bug fixes** - runtime issues discovered and resolved (LT-22378 through LT-22414)
-✅ **140 legacy files removed** - reduced maintenance burden
-✅ **Comprehensive documentation** - knowledge transfer complete
-
-**The migration is operationally complete**. All builds work, all systems function, and the codebase is positioned for future growth.
-
-**Key Takeaway**: A well-planned, systematically executed migration with strong automation and documentation can successfully modernize even large legacy codebases.
+119 projects converted, 140 legacy files removed, 15+ runtime bugs fixed (LT-22378–LT-22414), zero legacy build paths remain. The migration is operationally complete.
 
 ---
 
-*Document Version: 1.1*
+*Document Version: 2.0 — Postmortem / Blame Index*
 *Last Updated: 2026-02-17*
 *Migration Status: ✅ COMPLETE*
