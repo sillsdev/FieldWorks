@@ -4,10 +4,12 @@
     <AssemblyName>InstallValidatorTests</AssemblyName>
     <RootNamespace>SIL.InstallValidator</RootNamespace>
     <TargetFramework>net48</TargetFramework>
-    <OutputType>Library</OutputType>    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <OutputType>Library</OutputType>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <IsTestProject>true</IsTestProject>
     <Prefer32Bit>false</Prefer32Bit>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Nullable>annotations</Nullable>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,18 +23,24 @@
     <DefineConstants>TRACE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="$(FwRoot)Src\AssemblyInfoForTests.cs" />
+    <Compile Remove="$(FwRoot)Src\AssemblyInfoForUiIndependentTests.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="SIL.TestUtilities" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Build.Utilities.v4.0" />
     <Reference Include="netstandard" />
+    <Reference Include="FwBuildTasks">
+      <HintPath>../../../BuildTools/FwBuildTasks/$(Configuration)/FwBuildTasks.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.Build.Utilities.Core">
+      <HintPath>../../../BuildTools/FwBuildTasks/$(Configuration)/Microsoft.Build.Utilities.Core.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="../../../Build/Src/FwBuildTasks/FwBuildTasks.csproj">
-      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
-      <Build>false</Build>
-      <Private>False</Private>
-    </ProjectReference>
     <ProjectReference Include="../InstallValidator.csproj" />
   </ItemGroup>
   <ItemGroup>
