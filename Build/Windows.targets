@@ -23,6 +23,7 @@
 		TaskName="FindXsltcPath"
 		TaskFactory="CodeTaskFactory"
 		AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll"
+		Condition="'$(MSBuildRuntimeType)' != 'Core'"
 	>
 		<ParameterGroup>
 			<CandidatePaths ParameterType="System.String" Required="true" />
@@ -139,9 +140,12 @@
 		<PropertyGroup>
 			<XsltcCandidatePaths>$(WindowsSDK_ExecutablePath_x86);$(ProgramFiles(x86))\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools;$(ProgramFiles(x86))\Windows Kits\NETFXSDK\4.8\bin\NETFX 4.8 Tools</XsltcCandidatePaths>
 		</PropertyGroup>
-		<FindXsltcPath CandidatePaths="$(XsltcCandidatePaths)">
+		<FindXsltcPath CandidatePaths="$(XsltcCandidatePaths)" Condition="'$(MSBuildRuntimeType)' != 'Core'">
 			<Output TaskParameter="XsltcDirectory" PropertyName="XsltcPath" />
 		</FindXsltcPath>
+		<PropertyGroup>
+			<SkipXsltCompilation Condition="'$(MSBuildRuntimeType)'=='Core'">true</SkipXsltCompilation>
+		</PropertyGroup>
 		<PropertyGroup>
 			<SkipXsltCompilation Condition="'$(XsltcPath)'==''">true</SkipXsltCompilation>
 		</PropertyGroup>

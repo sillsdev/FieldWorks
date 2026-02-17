@@ -2,7 +2,7 @@
   // Extension recommendations for working on FieldWorks in VS Code.
   // Install via: Extensions view -> search by id, or use the "Install Recommended Extensions" action.
   "recommendations": [
-    // C# language + unit testing inside VS Code (MSBuild-first friendly)
+    // C# language + test explorer in VS Code (ReSharper-first)
     "jetbrains.resharper-code",
 
     // PowerShell scripts are part of the standard workflow (build.ps1/test.ps1/etc.)
@@ -15,8 +15,7 @@
     "atlassian.atlassian-vscode"
   ],
   "unwantedRecommendations": [
-    // These are great for SDK-style / dotnet-first repos, but FieldWorks is MSBuild + native-heavy.
-    // When enabled here, they tend to drive builds/tests via `dotnet build`, which fails on .vcxproj.
+    // This workspace is ReSharper-first; C# Dev Kit is discouraged.
     "ms-dotnettools.csdevkit"
   ]
 }

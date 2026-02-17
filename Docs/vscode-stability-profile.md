@@ -4,8 +4,8 @@ This repository is a mixed native + managed solution (C++ + .NET Framework `net4
 
 ## Supported inner-loop in VS Code
 
-- Use `ms-dotnettools.csharp` for C# language services (IntelliSense, navigation, diagnostics).
-- Do **not** use C# Dev Kit (`ms-dotnettools.csdevkit`) in this workspace.
+- Use ReSharper for VS Code (`jetbrains.resharper-code`) as the default C# experience in VS Code.
+- C# Dev Kit (`ms-dotnettools.csdevkit`) is discouraged in this workspace.
 - Use `ms-vscode.cpptools` for C/C++ editing and IntelliSense.
 - Build and test through repo scripts/tasks:
   - `./build.ps1`
@@ -13,14 +13,24 @@ This repository is a mixed native + managed solution (C++ + .NET Framework `net4
 
 ## Workspace settings rationale
 
-- `dotnet.preferCSharpExtension=true` ensures .NET Framework projects are handled by the C# extension path.
+- `dotnet.preferCSharpExtension=true` avoids activating C# Dev Kit as the default C# experience.
 - `dotnet.automaticallyBuildProjects=false` avoids background build churn/conflicts in large mixed-language solutions.
 
 ## Test/build authority
 
 - **Authoritative:** `./build.ps1` and `./test.ps1`
-- **VS Code Test UI:** optional/lightweight only.
-- **Visual Studio Test Explorer:** preferred for complex .NET Framework test discovery/debugging.
+- **VS Code Test Explorer (ReSharper):** use for managed test discovery/execution.
+- **Managed test build path:** use MSBuild-backed repo scripts (`./build.ps1 -BuildTests`, `./test.ps1`) for reliable results.
+- **Visual Studio Test Explorer:** fallback for edge-case .NET Framework discovery/debugging issues.
+
+## When to switch to Visual Studio
+
+Use Visual Studio instead of VS Code when you need:
+
+- WinForms designer editing (forms/resources designer workflows).
+- Mixed-mode debugging across managed + native boundaries (interop/COM-heavy scenarios).
+- Advanced native C++ project configuration/debugging not handled well by the VS Code launch profile.
+- Complex legacy .NET Framework project-system behavior where VS Code project load or debugging becomes unreliable.
 
 ## Native toolchain note
 

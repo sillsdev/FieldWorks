@@ -121,9 +121,19 @@ git checkout release/9.3
 
 #### IDE Extensions
 
-Consider installing these Visual Studio extensions:
-- **ReSharper** (if you have a license) - Uses shared settings from `FW.sln.DotSettings`
-- **GitHub Extension for Visual Studio** - For PR management
+Recommended VS Code extensions for daily development:
+- **ReSharper for VS Code** (`jetbrains.resharper-code`) for C# editing, navigation, refactoring, and test explorer
+- **C# Dev Kit** (`ms-dotnettools.csdevkit`) is discouraged in this workspace
+- **C/C++** (`ms-vscode.cpptools`) for native editing/debugging
+- **PowerShell** (`ms-vscode.powershell`) for build/test scripts
+
+Use **Visual Studio 2022** when working on:
+- WinForms designer changes
+- Mixed managed/native debugging across interop boundaries
+- Complex legacy .NET Framework project-system issues
+
+Optional Visual Studio extension:
+- **ReSharper** (if you have a license) for advanced refactoring/navigation
 
 #### Git GUI Tools
 

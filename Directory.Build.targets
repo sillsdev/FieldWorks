@@ -17,7 +17,7 @@
 	-->
 	<Target Name="EnsureTransformsForManagedBuilds"
 		BeforeTargets="ResolveAssemblyReferences"
-		Condition="!$([System.String]::IsNullOrEmpty('$(_TransformRoot)')) and '$(BuildingTransforms)'!='true' and '$(OS)'=='Windows_NT' and $([System.IO.Path]::GetFullPath('$(MSBuildProjectFullPath)'))!='$(_InstallerBuildProj)'">
+		Condition="!$([System.String]::IsNullOrEmpty('$(_TransformRoot)')) and '$(BuildingTransforms)'!='true' and '$(DesignTimeBuild)'!='true' and '$(OS)'=='Windows_NT' and $([System.IO.Path]::GetFullPath('$(MSBuildProjectFullPath)'))!='$(_InstallerBuildProj)'">
 
 		<MSBuild
 			Projects="$(_InstallerBuildProj)"

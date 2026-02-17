@@ -109,6 +109,20 @@ Build FieldWorks using the PowerShell build script:
 
 For more build options, see [.github/instructions/build.instructions.md](../.github/instructions/build.instructions.md).
 
+### 5. VS Code and Visual Studio usage
+
+Default recommendation:
+- Use **VS Code + ReSharper extension** for everyday coding, navigation, and managed test explorer workflows.
+- **C# Dev Kit is discouraged** in this workspace.
+- Use repo scripts/tasks as source of truth for build/test: `./build.ps1` and `./test.ps1`.
+
+Switch to **Visual Studio 2022** when you need:
+- WinForms designer workflows
+- Mixed managed/native debugging across interop boundaries
+- Complex legacy .NET Framework project-system scenarios where VS Code is unreliable
+
+See [VS Code Stability Profile](vscode-stability-profile.md) for current workspace guidance.
+
 #### Git Configuration Tips
 
 It is helpful to increase the rename limits for Git to properly detect renames in large commits:

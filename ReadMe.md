@@ -3,6 +3,7 @@
 New to FieldWorks development? Start here:
 
 - **[Contributing Guide](docs/CONTRIBUTING.md)** - How to set up your development environment and contribute code
+- **[VS Code Stability Profile](Docs/vscode-stability-profile.md)** - ReSharper-first VS Code setup and when to switch to Visual Studio
 - **[Visual Studio Setup](docs/visual-studio-setup.md)** - Detailed VS 2022 configuration
 - **[Core Developer Setup](docs/core-developer-setup.md)** - Additional setup for team members
 

@@ -6,7 +6,6 @@
     "speckit.tasks": true,
     "speckit.implement": true
   },
-  "resharper.solution.autoOpenLastSolution": true,
   "chat.tools.terminal.autoApprove": {
     // ============================================================================
     // SECURITY NOTE: Commands are matched against the ENTIRE command string.
@@ -70,17 +69,11 @@
   "terminal.integrated.env.windows": {
     "PATH": "${workspaceFolder}\\scripts\\toolshims;${env:PATH}"
   },
-  // C# Dev Kit test settings
-  "dotnet.unitTests.runSettingsPath": "${workspaceFolder}/Test.runsettings",
-  // Enable VSTest discovery for test explorer
-  "dotnet.unitTests.enableVsTestDiscovery": true,
-  // Exclude external NuGet package tests (SIL.LCModel.Tests, etc.)
-  // These test liblcm internals, not FieldWorks code, and have dependency conflicts
-  "dotnet.unitTests.testCaseFilter": "FullyQualifiedName!~SIL.LCModel.Tests&FullyQualifiedName!~SIL.LCModel.Core.Tests&FullyQualifiedName!~SIL.LCModel.Utils.Tests",
-  // FieldWorks is mixed native/managed and uses scripted build orchestration.
-  // Keep C# extension active for language services, but avoid background auto-build churn.
+  // ReSharper is the default C# experience in this workspace.
+  // C# Dev Kit is discouraged because this repo is MSBuild-first and mixed native/managed.
   "dotnet.preferCSharpExtension": true,
   "dotnet.automaticallyBuildProjects": false,
+  "resharper.solution.autoOpenLastSolution": true,
   // Git Graph extension settings
   "git-graph.dialog.merge.noFastForward": false,
   "git-graph.dialog.merge.squashCommits": false,
