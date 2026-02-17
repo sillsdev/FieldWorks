@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <AssemblyName>FieldWorks</AssemblyName>
@@ -10,8 +10,10 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Deterministic>false</Deterministic>
     <ApplicationIcon>Branding\LT.ico</ApplicationIcon>
+    <NoWin32Manifest>true</NoWin32Manifest>
     <EnableRegFreeCom>true</EnableRegFreeCom>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <UseDevTraceConfig Condition="'$(UseDevTraceConfig)'=='' and '$(FW_TRACE_LOG)'!=''">true</UseDevTraceConfig>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -61,6 +63,7 @@
     <ProjectReference Include="../../FdoUi/FdoUi.csproj" />
     <ProjectReference Include="../../FwCoreDlgs/FwCoreDlgs.csproj" />
     <ProjectReference Include="../../FwResources/FwResources.csproj" />
+    <ProjectReference Include="../../LexText/LexTextDll/LexTextDll.csproj" />
     <ProjectReference Include="../../Utilities/Reporting/Reporting.csproj" />
     <ProjectReference Include="../../Utilities/XMLUtils/XMLUtils.csproj" />
     <ProjectReference Include="../../XCore/xCoreInterfaces/xCoreInterfaces.csproj" />
@@ -87,6 +90,13 @@
     <None Include="Branding\LT.png" />
     <None Include="Branding\LT64.png" />
     <None Include="Branding\LT128.png" />
+    <None Include="FieldWorks.Diagnostics.config" Condition="'$(UseDevTraceConfig)'!='true'">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="FieldWorks.Diagnostics.dev.config" Condition="'$(UseDevTraceConfig)'=='true'">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <TargetPath>FieldWorks.Diagnostics.config</TargetPath>
+    </None>
   </ItemGroup>
   <Import Project="BuildInclude.targets" />
   <ItemGroup>
