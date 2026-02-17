@@ -1,5 +1,27 @@
-<?xml version='1.0' encoding='utf-8'?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="Current">
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  TestViews - Native C++ Unit Tests for Views Library
+
+  This is a true MSBuild C++ project (not a Makefile wrapper).
+  Converted from nmake-based build to enable:
+  - Direct VS/VS Code builds without VsDevCmd.bat
+  - vcpkg integration for GoogleTest
+  - IntelliSense support
+
+  ARCHITECTURE NOTE (2025-12-06):
+  TestViews links directly against individual .obj files from the Views project's
+  intermediate directory. This was chosen over creating a Views.lib because:
+  - Views is planned for sunset in 2025
+  - Minimizes changes to Views.vcxproj (which remains a Makefile wrapper)
+  - Maintains parity with existing makefile behavior
+
+  See specs/007-test-modernization-vstest/cpp-build-modernization.md for full rationale.
+
+  Original Makefile wrapper backed up as TestViews.vcxproj.makefile.bak
+-->
+<Project DefaultTargets="Build" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- Build configurations -->
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
       <Configuration>Debug</Configuration>
@@ -10,72 +32,348 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+
+  <!-- Project identity -->
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1D4CC42D-BC16-4EC3-A89B-173798828F56}</ProjectGuid>
+    <ProjectName>TestViews</ProjectName>
     <RootNamespace>TestViews</RootNamespace>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccProvider>
-    </SccProvider>
-    <Keyword>MakeFileProj</Keyword>
+    <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <!-- vcpkg integration (when vcpkg.json manifest is present) -->
+    <VcpkgEnabled>true</VcpkgEnabled>
+    <VcpkgEnableManifest>true</VcpkgEnableManifest>
   </PropertyGroup>
+
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Makefile</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
-  </PropertyGroup>
+
+  <!-- Configuration type: Console Application (EXE) -->
+  <!-- CharacterSet is NotSet because common.h defines _UNICODE and UNICODE itself -->
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Makefile</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+    <UseDebugLibraries>true</UseDebugLibraries>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+
+  <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
   </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
+
+  <PropertyGroup Label="UserMacros">
+    <!-- Repository root for include/lib paths -->
+    <FwRoot>$(ProjectDir)..\..\..</FwRoot>
+    <!-- Path to Views .obj files (from Views makefile build) -->
+    <ViewsObjDir>$(FwRoot)\Obj\$(Configuration)\Views\autopch\</ViewsObjDir>
+  </PropertyGroup>
+
+  <!-- Output directories -->
   <PropertyGroup>
-    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">nmake /nologo BUILD_CONFIG=Debug BUILD_TYPE=d BUILD_ROOT=$(ProjectDir)..\..\..\  BUILD_ARCH=x64 /f testViews.mak</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">nmake /nologo BUILD_CONFIG=Debug BUILD_TYPE=d BUILD_ROOT=$(ProjectDir)..\..\..\  BUILD_ARCH=x64 /f testViews.mak clean all</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">nmake /nologo BUILD_CONFIG=Debug BUILD_TYPE=d BUILD_ROOT=$(ProjectDir)..\..\..\  BUILD_ARCH=x64 /f testViews.mak clean</NMakeCleanCommandLine>
-    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)..\..\..\Output\Debug\TestViews.exe</NMakeOutput>
-    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">WIN64;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)..\..\..\Src\views;$(ProjectDir)..\..\Views;$(ProjectDir)..\..\Views\Lib;$(ProjectDir)..\..\Kernel;$(ProjectDir)..\..\Generic;$(ProjectDir)..\..\..\Lib\src\unit++;$(ProjectDir)..\..\..\Output\Common;$(ProjectDir)..\..\..\Output\Common\Raw;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
-    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
-    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
-    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
-    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">TestViews.exe</NMakeOutput>
-    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
-    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
-    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
-    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
+    <OutDir>$(FwRoot)\Output\$(Configuration)\</OutDir>
+    <IntDir>$(FwRoot)\Obj\$(Configuration)\$(ProjectName)\</IntDir>
+    <TargetName>TestViews</TargetName>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>..\..\Kernel\test;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>..\..\Kernel\test;$(IncludePath)</IncludePath>
-  </PropertyGroup>
-  <ItemDefinitionGroup>
+
+  <!-- Debug configuration compiler/linker settings -->
+  <!-- From testViews.mak: DEFS=$(DEFS) /DGR_FW /DVIEWSDLL /DGRAPHITE2_STATIC -->
+  <!-- Matches settings from Bld/_init.mak: /W4 /WX /EHa /GR /GF /Zm400 /MDd /RTC1 /Zi /Od -->
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>
+        $(FwRoot)\Include\unit++;
+        $(FwRoot)\Include;
+        $(FwRoot)\Src\Views;
+        $(FwRoot)\Src\Views\Lib;
+        $(FwRoot)\Src\Views\Test;
+        $(FwRoot)\Src\Generic;
+        $(FwRoot)\Src\AppCore;
+        $(FwRoot)\Src\DebugProcs;
+        $(FwRoot)\Lib\src\xmlparse;
+        $(FwRoot)\Lib\src\graphite2\include;
+        $(FwRoot)\Output\$(Configuration);
+        $(FwRoot)\Output\$(Configuration)\Common;
+        $(FwRoot)\Output\$(Configuration)\Common\Raw;
+        $(IntDir);
+        %(AdditionalIncludeDirectories)
+      </AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>
+        WIN32=1;
+        _DEBUG=1;
+        DEBUG=1;
+        _WINDOWS=1;
+        _AFXDLL=1;
+        _WIN32_WINNT=0x0A00;
+        GR_FW=1;
+        VIEWSDLL=1;
+        GRAPHITE2_STATIC=1;
+        %(PreprocessorDefinitions)
+      </PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <WarningLevel>Level4</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <StringPooling>true</StringPooling>
+    </ClCompile>
+    <Manifest>
+      <AdditionalManifestFiles>$(ProjectDir)..\..\..\scripts\regfree\FieldWorks.regfree.manifest;%(AdditionalManifestFiles)</AdditionalManifestFiles>
+    </Manifest>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
+      <AdditionalLibraryDirectories>
+        $(FwRoot)\Lib\$(Configuration);
+        $(FwRoot)\Lib;
+        $(FwRoot)\Output\$(Configuration)\lib\x64;
+        %(AdditionalLibraryDirectories)
+      </AdditionalLibraryDirectories>
+      <!-- From testViews.mak: LINK_LIBS=$(CPPUNIT_LIBS) Generic.lib xmlparse.lib Usp10.lib graphite2.lib -->
+      <!-- Plus all Views .obj files -->
+      <AdditionalDependencies>
+        unit++.lib;
+        Generic.lib;
+        DebugProcs.lib;
+        Usp10.lib;
+        graphite2.lib;
+        icuin.lib;
+        icudt.lib;
+        icuuc.lib;
+        uuid.lib;
+        advapi32.lib;
+        kernel32.lib;
+        ole32.lib;
+        oleaut32.lib;
+        gdi32.lib;
+        comctl32.lib;
+        comdlg32.lib;
+        shell32.lib;
+        imm32.lib;
+        ImageHlp.lib;
+        Version.lib;
+        winspool.lib;
+        $(ViewsObjDir)VwAccessRoot.obj;
+        $(ViewsObjDir)VwOverlay.obj;
+        $(ViewsObjDir)VwPropertyStore.obj;
+        $(ViewsObjDir)ExplicitInstantiation.obj;
+        $(ViewsObjDir)VwSimpleBoxes.obj;
+        $(ViewsObjDir)VwTextBoxes.obj;
+        $(ViewsObjDir)VwRootBox.obj;
+        $(ViewsObjDir)VwEnv.obj;
+        $(ViewsObjDir)VwNotifier.obj;
+        $(ViewsObjDir)VwSelection.obj;
+        $(ViewsObjDir)VwTableBox.obj;
+        $(ViewsObjDir)VwGraphics.obj;
+        $(ViewsObjDir)VwTxtSrc.obj;
+        $(ViewsObjDir)AfColorTable.obj;
+        $(ViewsObjDir)AfGfx.obj;
+        $(ViewsObjDir)VwPrintContext.obj;
+        $(ViewsObjDir)VwBaseDataAccess.obj;
+        $(ViewsObjDir)VwCacheDa.obj;
+        $(ViewsObjDir)ActionHandler.obj;
+        $(ViewsObjDir)VwUndo.obj;
+        $(ViewsObjDir)VwBaseVirtualHandler.obj;
+        $(ViewsObjDir)VwLazyBox.obj;
+        $(ViewsObjDir)VwPattern.obj;
+        $(ViewsObjDir)FwStyledText.obj;
+        $(ViewsObjDir)VwSynchronizer.obj;
+        $(ViewsObjDir)VwTextStore.obj;
+        $(ViewsObjDir)VwLayoutStream.obj;
+        $(ViewsObjDir)UniscribeEngine.obj;
+        $(ViewsObjDir)UniscribeSegment.obj;
+        $(ViewsObjDir)GraphiteEngine.obj;
+        $(ViewsObjDir)GraphiteSegment.obj;
+        $(ViewsObjDir)LgLineBreaker.obj;
+        $(ViewsObjDir)LgUnicodeCollater.obj;
+        $(ViewsObjDir)ViewsGlobals.obj;
+        $(ViewsObjDir)TsString.obj;
+        $(ViewsObjDir)TsTextProps.obj;
+        $(ViewsObjDir)TsStrFactory.obj;
+        $(ViewsObjDir)TsPropsFactory.obj;
+        $(ViewsObjDir)TextServ.obj;
+        $(ViewsObjDir)TextProps1.obj;
+        %(AdditionalDependencies)
+      </AdditionalDependencies>
+    </Link>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
   </ItemDefinitionGroup>
+
+  <!-- Release configuration compiler/linker settings -->
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>OnlyExplicitInline</InlineFunctionExpansion>
+      <AdditionalIncludeDirectories>
+        $(FwRoot)\Include\unit++;
+        $(FwRoot)\Include;
+        $(FwRoot)\Src\Views;
+        $(FwRoot)\Src\Views\Lib;
+        $(FwRoot)\Src\Views\Test;
+        $(FwRoot)\Src\Generic;
+        $(FwRoot)\Src\AppCore;
+        $(FwRoot)\Src\DebugProcs;
+        $(FwRoot)\Lib\src\xmlparse;
+        $(FwRoot)\Lib\src\graphite2\include;
+        $(FwRoot)\Output\$(Configuration);
+        $(FwRoot)\Output\$(Configuration)\Common;
+        $(FwRoot)\Output\$(Configuration)\Common\Raw;
+        $(IntDir);
+        %(AdditionalIncludeDirectories)
+      </AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>
+        WIN32=1;
+        NDEBUG=1;
+        _WINDOWS=1;
+        _AFXDLL=1;
+        _WIN32_WINNT=0x0A00;
+        GR_FW=1;
+        VIEWSDLL=1;
+        GRAPHITE2_STATIC=1;
+        %(PreprocessorDefinitions)
+      </PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <WarningLevel>Level4</WarningLevel>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <ExceptionHandling>Async</ExceptionHandling>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <StringPooling>true</StringPooling>
+    </ClCompile>
+    <Manifest>
+      <AdditionalManifestFiles>$(ProjectDir)..\..\..\scripts\regfree\FieldWorks.regfree.manifest;%(AdditionalManifestFiles)</AdditionalManifestFiles>
+    </Manifest>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <IgnoreSpecificDefaultLibraries>LIBCMT</IgnoreSpecificDefaultLibraries>
+      <AdditionalLibraryDirectories>
+        $(FwRoot)\Lib\$(Configuration);
+        $(FwRoot)\Lib;
+        $(FwRoot)\Output\$(Configuration)\lib\x64;
+        %(AdditionalLibraryDirectories)
+      </AdditionalLibraryDirectories>
+      <AdditionalDependencies>
+        unit++.lib;
+        Generic.lib;
+        DebugProcs.lib;
+        Usp10.lib;
+        graphite2.lib;
+        icuin.lib;
+        icudt.lib;
+        icuuc.lib;
+        uuid.lib;
+        advapi32.lib;
+        kernel32.lib;
+        ole32.lib;
+        oleaut32.lib;
+        gdi32.lib;
+        comctl32.lib;
+        comdlg32.lib;
+        shell32.lib;
+        imm32.lib;
+        ImageHlp.lib;
+        Version.lib;
+        winspool.lib;
+        $(ViewsObjDir)VwAccessRoot.obj;
+        $(ViewsObjDir)VwOverlay.obj;
+        $(ViewsObjDir)VwPropertyStore.obj;
+        $(ViewsObjDir)ExplicitInstantiation.obj;
+        $(ViewsObjDir)VwSimpleBoxes.obj;
+        $(ViewsObjDir)VwTextBoxes.obj;
+        $(ViewsObjDir)VwRootBox.obj;
+        $(ViewsObjDir)VwEnv.obj;
+        $(ViewsObjDir)VwNotifier.obj;
+        $(ViewsObjDir)VwSelection.obj;
+        $(ViewsObjDir)VwTableBox.obj;
+        $(ViewsObjDir)VwGraphics.obj;
+        $(ViewsObjDir)VwTxtSrc.obj;
+        $(ViewsObjDir)AfColorTable.obj;
+        $(ViewsObjDir)AfGfx.obj;
+        $(ViewsObjDir)VwPrintContext.obj;
+        $(ViewsObjDir)VwBaseDataAccess.obj;
+        $(ViewsObjDir)VwCacheDa.obj;
+        $(ViewsObjDir)ActionHandler.obj;
+        $(ViewsObjDir)VwUndo.obj;
+        $(ViewsObjDir)VwBaseVirtualHandler.obj;
+        $(ViewsObjDir)VwLazyBox.obj;
+        $(ViewsObjDir)VwPattern.obj;
+        $(ViewsObjDir)FwStyledText.obj;
+        $(ViewsObjDir)VwSynchronizer.obj;
+        $(ViewsObjDir)VwTextStore.obj;
+        $(ViewsObjDir)VwLayoutStream.obj;
+        $(ViewsObjDir)UniscribeEngine.obj;
+        $(ViewsObjDir)UniscribeSegment.obj;
+        $(ViewsObjDir)GraphiteEngine.obj;
+        $(ViewsObjDir)GraphiteSegment.obj;
+        $(ViewsObjDir)LgLineBreaker.obj;
+        $(ViewsObjDir)LgUnicodeCollater.obj;
+        $(ViewsObjDir)ViewsGlobals.obj;
+        $(ViewsObjDir)TsString.obj;
+        $(ViewsObjDir)TsTextProps.obj;
+        $(ViewsObjDir)TsStrFactory.obj;
+        $(ViewsObjDir)TsPropsFactory.obj;
+        $(ViewsObjDir)TextServ.obj;
+        $(ViewsObjDir)TextProps1.obj;
+        %(AdditionalDependencies)
+      </AdditionalDependencies>
+    </Link>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ResourceCompile>
+  </ItemDefinitionGroup>
+
+  <!-- Source files -->
   <ItemGroup>
-    <ClCompile Include="Collection.cpp" />
+    <!-- Main test entry point and collection -->
+    <ClCompile Include="early_log.cpp" />
     <ClCompile Include="testViews.cpp" />
+    <ClCompile Include="Collection.cpp" />
+    <!-- expat (xmlparse) sources compiled directly to avoid missing xmlparse.lib in Debug -->
+    <ClCompile Include="..\..\..\Lib\src\xmlparse\xmlparse.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <DisableSpecificWarnings>4100;4127;4244;4431</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Lib\src\xmlparse\xmlrole.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <DisableSpecificWarnings>4100;4127;4244;4431</DisableSpecificWarnings>
+    </ClCompile>
+    <ClCompile Include="..\..\..\Lib\src\xmlparse\xmltok.c">
+      <CompileAs>CompileAsC</CompileAs>
+      <WarningLevel>Level3</WarningLevel>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <DisableSpecificWarnings>4100;4127;4244;4431</DisableSpecificWarnings>
+    </ClCompile>
+    <!-- ModuleEntry from Generic (needed for DLL initialization) -->
+    <ClCompile Include="..\..\Generic\ModuleEntry.cpp" />
   </ItemGroup>
+
+  <!-- Header files -->
   <ItemGroup>
     <ClInclude Include="BasicVc.h" />
     <ClInclude Include="DummyBaseVc.h" />
@@ -92,12 +390,12 @@
     <ClInclude Include="TestLazyBox.h" />
     <ClInclude Include="TestLgCollatingEngine.h" />
     <ClInclude Include="TestLgLineBreaker.h" />
+    <ClInclude Include="TestNotifier.h" />
     <ClInclude Include="TestTsPropsBldr.h" />
     <ClInclude Include="TestTsStrBldr.h" />
     <ClInclude Include="TestTsString.h" />
     <ClInclude Include="TestTsTextProps.h" />
     <ClInclude Include="TestUndoStack.h" />
-    <ClInclude Include="TestNotifier.h" />
     <ClInclude Include="TestUniscribeEngine.h" />
     <ClInclude Include="testViews.h" />
     <ClInclude Include="TestVirtualHandlers.h" />
@@ -115,15 +413,29 @@
     <ClInclude Include="TestVwTxtSrc.h" />
     <ClInclude Include="TestVwUndoDa.h" />
   </ItemGroup>
+
+  <!-- Build tool reference files -->
   <ItemGroup>
-    <None Include="Makefile" />
-    <None Include="NiceGuy.bmp" />
     <None Include="testViews.mak" />
+    <None Include="NiceGuy.bmp" />
   </ItemGroup>
+
+  <!-- Resource file -->
   <ItemGroup>
     <ResourceCompile Include="TestViews.rc" />
   </ItemGroup>
+
+  <!-- Pre-build: Generate Collection.cpp from test headers (same as makefile) -->
+  <Target Name="GenerateCollection" BeforeTargets="ClCompile"
+          Inputs="testViews.h;DummyBaseVc.h;DummyRootsite.h;MockLgWritingSystemFactory.h;MockLgWritingSystem.h;TestNotifier.h;TestUndoStack.h;TestLayoutPage.h;TestLgCollatingEngine.h;TestVirtualHandlers.h;TestVwTxtSrc.h;TestVwParagraph.h;TestVwPattern.h;TestVwSync.h;TestVwEnv.h;TestVwOverlay.h;TestLazyBox.h;TestVwRootBox.h;TestVwSelection.h;TestInsertDiffPara.h;TestVwTextStore.h;TestVwGraphics.h;TestVwTextBoxes.h;TestVwTableBox.h;TestLgLineBreaker.h;TestUniscribeEngine.h;TestGraphiteEngine.h;RenderEngineTestBase.h;MockRenderEngineFactory.h;TestTsStrBldr.h;TestTsString.h;TestTsPropsBldr.h;TestTsTextProps.h"
+          Outputs="Collection.cpp">
+    <Message Text="Generating Collection.cpp from test headers..." Importance="high" />
+    <Exec Command="$(FwRoot)\Bin\CollectUnit++Tests.cmd Views testViews.h DummyBaseVc.h DummyRootsite.h MockLgWritingSystemFactory.h MockLgWritingSystem.h TestNotifier.h TestUndoStack.h TestLayoutPage.h TestLgCollatingEngine.h TestVirtualHandlers.h TestVwTxtSrc.h TestVwParagraph.h TestVwPattern.h TestVwSync.h TestVwEnv.h TestVwOverlay.h TestLazyBox.h TestVwRootBox.h TestVwSelection.h TestInsertDiffPara.h TestVwTextStore.h TestVwGraphics.h TestVwTextBoxes.h TestVwTableBox.h TestLgLineBreaker.h TestUniscribeEngine.h TestGraphiteEngine.h RenderEngineTestBase.h MockRenderEngineFactory.h TestTsStrBldr.h TestTsString.h TestTsPropsBldr.h TestTsTextProps.h Collection.cpp"
+          WorkingDirectory="$(ProjectDir)" />
+  </Target>
+
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+
 </Project>

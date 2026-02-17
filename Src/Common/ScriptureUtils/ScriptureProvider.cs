@@ -19,6 +19,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 	/// </summary>
 	public class ScriptureProvider
 	{
+		internal const string TestProviderDataKey = "ScriptureProvider.TestProvider";
 #pragma warning disable 0649 // [ImportMany] *is* the initialization
 		[ImportMany]
 		private IEnumerable<Lazy<IScriptureProvider, IScriptureProviderMetadata>> _potentialScriptureProviders;
@@ -36,33 +37,85 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// </summary>
 		static ScriptureProvider()
 		{
-			var scriptureProvider = new ScriptureProvider();
-			var catalog = new AggregateCatalog();
-			//Adds all the parts found in the same assembly as the ScriptureProvider class
-			catalog.Catalogs.Add(new AssemblyCatalog(typeof(ScriptureProvider).Assembly));
-			//Adds all the parts found in assemblies ending in Plugin.dll that reside in the FLExExe path
-			var extensionPath = Path.Combine(Path.GetDirectoryName(FwDirectoryFinder.FlexExe));
-			catalog.Catalogs.Add(new DirectoryCatalog(extensionPath, "*Plugin.dll"));
-			//Create the CompositionContainer with the parts in the catalog
-			var container = new CompositionContainer(catalog);
-			container.SatisfyImportsOnce(scriptureProvider);
-
-			// Choose the ScriptureProvider that reports the newest version
-			// (If both Paratext 7 and 8 are installed, the plugin handling 8 will be used)
-			foreach (var provider in scriptureProvider._potentialScriptureProviders)
+			var overrideProvider = AppDomain.CurrentDomain.GetData(TestProviderDataKey) as IScriptureProvider;
+			if (overrideProvider != null)
 			{
-				if (_scriptureProvider == null || provider.Value.MaximumSupportedVersion > _scriptureProvider.MaximumSupportedVersion)
+				_scriptureProvider = overrideProvider;
+				_isInitialized = overrideProvider.IsInstalled;
+				return;
+			}
+
+			try
+			{
+				var scriptureProvider = new ScriptureProvider();
+				var catalog = new AggregateCatalog();
+				//Adds all the parts found in the same assembly as the ScriptureProvider class
+				catalog.Catalogs.Add(new AssemblyCatalog(typeof(ScriptureProvider).Assembly));
+				//Adds all the parts found in assemblies ending in Plugin.dll that reside in the FLExExe path
+				var extensionPath = Path.Combine(Path.GetDirectoryName(FwDirectoryFinder.FlexExe));
+				catalog.Catalogs.Add(new DirectoryCatalog(extensionPath, "*Plugin.dll"));
+				//Create the CompositionContainer with the parts in the catalog
+				var container = new CompositionContainer(catalog);
+				container.SatisfyImportsOnce(scriptureProvider);
+
+				// Choose the ScriptureProvider that reports the newest version
+				// (If both Paratext 7 and 8 are installed, the plugin handling 8 will be used)
+				foreach (var provider in scriptureProvider._potentialScriptureProviders)
 				{
-					_scriptureProvider = provider.Value;
+					if (_scriptureProvider == null || provider.Value.MaximumSupportedVersion > _scriptureProvider.MaximumSupportedVersion)
+					{
+						_scriptureProvider = provider.Value;
+					}
 				}
 			}
-#if DEBUG
-			if (_scriptureProvider == null)
+			catch
 			{
-				throw new ApplicationException("No scripture providers discovered by MEF");
+				_scriptureProvider = new FallbackScriptureProvider();
 			}
-#endif // DEBUG
+
 			InitializeIfNeeded();
+		}
+
+		private class FallbackScriptureProvider : IScriptureProvider
+		{
+			public string SettingsDirectory => string.Empty;
+			public IEnumerable<string> NonEditableTexts => Enumerable.Empty<string>();
+			public IEnumerable<string> ScrTextNames => Enumerable.Empty<string>();
+			public void Initialize()
+			{
+			}
+
+			public void RefreshScrTexts()
+			{
+			}
+
+			public IEnumerable<IScrText> ScrTexts()
+			{
+				return Enumerable.Empty<IScrText>();
+			}
+
+			public IScrText Get(string project)
+			{
+				return null;
+			}
+
+			public IScrText MakeScrText(string paratextProjectId)
+			{
+				return null;
+			}
+
+			public IScriptureProviderParserState GetParserState(IScrText ptProjectText, IVerseRef ptCurrBook)
+			{
+				return null;
+			}
+
+			public IVerseRef MakeVerseRef(int bookNum, int i, int i1)
+			{
+				return null;
+			}
+
+			public Version MaximumSupportedVersion => new Version(7, 0);
+			public bool IsInstalled => true;
 		}
 
 		private static void InitializeIfNeeded()

@@ -54,10 +54,7 @@ specs/007-wiki-docs-migration/
 ```text
 FieldWorks/
 ├── .github/
-│   └── instructions/           # Existing + new instruction files
-│       ├── coding-standard.instructions.md  # NEW
-│       ├── code-review.instructions.md      # NEW
-│       └── dispose.instructions.md          # NEW
+│   └── instructions/           # Curated, minimal instruction files (no new files required for this feature)
 │
 ├── docs/                       # NEW directory
 │   ├── CONTRIBUTING.md         # Main entry point
@@ -71,10 +68,6 @@ FieldWorks/
 │   ├── architecture/           # Technical architecture
 │   │   ├── data-migrations.md  # From wiki
 │   │   └── dependencies.md     # From wiki
-│   │
-│   ├── linux/                  # Cross-platform docs
-│   │   ├── build-linux.md      # From wiki
-│   │   └── vagrant.md          # From wiki
 │   │
 │   └── images/                 # Documentation images
 │
@@ -111,9 +104,9 @@ FieldWorks/
    - Branch naming conventions
    - PR creation and review process
    - Merge requirements
-2. Create `.github/instructions/code-review.instructions.md`
-   - Extract principles from wiki "Code Reviews" page
-   - Remove Gerrit-specific UI references
+2. Ensure code review expectations are documented in GitHub-native places
+   - `docs/workflows/pull-request-workflow.md`
+   - `.github/pull_request_template.md`
 3. Migrate "Release Workflow Steps" → `docs/workflows/release-process.md`
    - Mark with CONFIRMATION_NEEDED where uncertain
 
@@ -127,11 +120,9 @@ FieldWorks/
 1. Migrate "Data Migrations" → `docs/architecture/data-migrations.md`
    - Verify file paths against current codebase
    - Update class/namespace references if changed
-2. Create `.github/instructions/coding-standard.instructions.md`
-   - Merge wiki content with existing `.editorconfig`
-   - Reference existing managed.instructions.md where appropriate
-3. Create `.github/instructions/dispose.instructions.md`
-   - IDisposable patterns from wiki
+2. Ensure coding/formatting and commit conventions are discoverable
+   - `.editorconfig` for formatting
+   - `.github/commit-guidelines.md` for commit rules
 4. Migrate "Dependencies on Other Repos" → `docs/architecture/dependencies.md`
    - Remove TeamCity references
    - Update for GitHub Actions

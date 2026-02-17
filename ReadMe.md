@@ -17,9 +17,24 @@ For first-time setup on a Windows development machine:
 .\Setup-Developer-Machine.ps1
 ```
 
-This installs WiX Toolset, LLVM/clangd, OmniSharp, and configures PATH. Prerequisites:
+This configures a dev machine for builds and tests (verifies prerequisites and configures PATH). Prerequisites:
 - Visual Studio 2022 with .NET desktop and C++ desktop workloads
 - Git for Windows
+
+Installer builds default to **WiX 3** (legacy batch pipeline) using inputs in `FLExInstaller/` and `PatchableInstaller/`. The **Visual Studio WiX Toolset v3 extension** is required so `Wix.CA.targets` is available under the MSBuild extensions path. Use `-InstallerToolset Wix6` to opt into the WiX 6 SDK-style path (restored via NuGet).
+
+### WiX 3.14 setup (required for WiX 3 installer builds)
+
+We expect the WiX 3.14 toolset to be installed under:
+
+- `%LOCALAPPDATA%\FieldWorksTools\Wix314`
+
+Required:
+
+- Ensure `candle.exe`, `light.exe`, `heat.exe`, and `insignia.exe` are available. The WiX 3.14 tools are in the **root** of that folder (not a `bin` subfolder).
+- Set the `WIX` environment variable to the toolset root (e.g., `%LOCALAPPDATA%\FieldWorksTools\Wix314`).
+- Add the toolset root to `PATH` (or rerun `Setup-Developer-Machine.ps1` to do it for you).
+- Install the **Visual Studio WiX Toolset v3 extension** so `Wix.CA.targets` is available to MSBuild.
 
 ## Building FieldWorks
 
@@ -31,13 +46,45 @@ FieldWorks uses the **MSBuild Traversal SDK** for declarative, dependency-ordere
 .\build.ps1 -Configuration Release
 ```
 
-**Linux/macOS (Bash):**
-```bash
-./build.sh                     # Debug build
-./build.sh -c Release
+For detailed build instructions, see [.github/instructions/build.instructions.md](.github/instructions/build.instructions.md).
+
+## Building Installers (WiX 3 default, WiX 6 opt-in)
+
+Installer builds include the additional utilities (UnicodeCharEditor, LCMBrowser, MigrateSqlDbs, etc.).
+To skip them, pass `-BuildAdditionalApps:$false`.
+
+```powershell
+# Build the installer (Debug, WiX 3 default)
+.\build.ps1 -BuildInstaller
+
+# Build the installer (Debug, WiX 6)
+.\build.ps1 -BuildInstaller -InstallerToolset Wix6
+
+# Build the installer (Release, WiX 3 default)
+.\build.ps1 -BuildInstaller -Configuration Release
+
+# Build the installer (Release, WiX 6)
+.\build.ps1 -BuildInstaller -Configuration Release -InstallerToolset Wix6
 ```
 
-For detailed build instructions, see [.github/instructions/build.instructions.md](.github/instructions/build.instructions.md).
+WiX 3 artifacts are produced under `FLExInstaller/bin/x64/<Config>/` (MSI under `en-US/`).
+
+WiX 6 artifacts are produced under `FLExInstaller/wix6/bin/x64/<Config>/` (MSI under `en-US/`).
+
+For more details, see [specs/001-wix-v6-migration/quickstart.md](specs/001-wix-v6-migration/quickstart.md).
+
+### Code signing for local installer builds
+
+Signing is optional for local builds. By default, local installer builds do not sign and instead record files to sign later.
+
+To enable signing for a local installer build, pass `-SignInstaller` to build.ps1.
+
+Required for signing:
+
+- Either `sign` (SIL signing tool) **or** `signtool.exe` on `PATH`.
+- If using `signtool.exe`, set `CERTPATH` (PFX path) and `CERTPASS` (password) in the environment.
+
+If you want to control the capture file, set `FILESTOSIGNLATER` to a file path before building. The build will append files needing signatures to that file.
 
 ## Model Context Protocol helpers
 
@@ -47,10 +94,10 @@ requirements and troubleshooting tips.
 
 ## Copilot instruction files
 
-We maintain both a human-facing `.github/copilot-instructions.md` and a set of
-short `*.instructions.md` files under `.github/instructions/` for Copilot code review.
-Use `scripts/tools/validate_instructions.py` locally or the `Validate instructions` CI job
-to ensure instruction files follow conventions.
+We maintain a human-facing `.github/copilot-instructions.md` plus a small curated set of
+`*.instructions.md` files under `.github/instructions/` for prescriptive constraints.
+
+See [.github/AI_GOVERNANCE.md](.github/AI_GOVERNANCE.md) for the documentation taxonomy and “source of truth” rules.
 
 ## Recent Changes
 

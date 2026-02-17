@@ -31,6 +31,7 @@ void TransFuncDump( unsigned int u, EXCEPTION_POINTERS * pExp);
 class StackDumper
 {
 public:
+	friend void DumpStackHere(SDCHAR * pchMsg);
 	static void ShowStack( HANDLE hThread, CONTEXT& c, SDCHAR * pszHdr = NULL); // dump a stack
 	static void InitDump(SDCHAR * pszHdr);
 	static void AppendShowStack( HANDLE hThread, CONTEXT& c);
@@ -42,6 +43,7 @@ public:
 protected:
 	int FindStartOfFrame(int ichStart);
 	void ShowStackCore( HANDLE hThread, CONTEXT& c );
+	void ShowStackCoreInternal( HANDLE hThread, CONTEXT& c );
 
 	// Buffer we will dump into.
 	StrAnsiBufHuge * m_pstaDump;

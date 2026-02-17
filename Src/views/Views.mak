@@ -37,7 +37,9 @@ PATH=$(COM_OUT_DIR);$(PATH)
 RCFILE=Views.rc
 DEFFILE=Views.def
 LINK_LIBS= Generic.lib Usp10.lib xmlparse-utf16.lib graphite2.lib $(LINK_LIBS)
-PS_OBJ_DEPS= $(OBJ_DIR)\Common\FwKernel\FwKernelPs_p.obj $(OBJ_DIR)\Common\FwKernel\FwKernelPs_i.obj
+# PS_OBJ_DEPS: Dependencies on FwKernel proxy/stub objects.
+# Note: Must use configuration-aware path since COM_INT_DIR is now $(OBJ_DIR)\$(BUILD_CONFIG)\Common\$(BUILD_PRODUCT)
+PS_OBJ_DEPS= $(OBJ_DIR)\$(BUILD_CONFIG)\Common\FwKernel\FwKernelPs_p.obj $(OBJ_DIR)\$(BUILD_CONFIG)\Common\FwKernel\FwKernelPs_i.obj
 
 # === Object Lists ===
 

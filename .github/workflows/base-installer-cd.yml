@@ -22,10 +22,6 @@ on:
                 description: "Commit-ish for helps repository"
                 required: false
                 default: "develop"
-            installer_ref:
-                description: "Commit-ish for PatchableInstaller repository"
-                required: false
-                default: "master"
             localizations_ref:
                 description: "Commit-ish for localization repository"
                 required: false
@@ -77,15 +73,6 @@ jobs:
                   fetch-depth: 0
                   path: "DistFiles/Helps"
 
-            - name: Checkout PatchableInstaller
-              uses: actions/checkout@v4
-              id: installer-checkout
-              with:
-                  repository: "sillsdev/genericinstaller"
-                  ref: ${{ github.event.inputs.installer_ref || 'master' }}
-                  fetch-depth: 0
-                  path: "PatchableInstaller"
-
             - name: Checkout Localizations
               uses: actions/checkout@v4
               id: loc-checkout
@@ -99,7 +86,7 @@ jobs:
               id: liblcm-checkout
               with:
                   repository: "sillsdev/liblcm"
-                  ref: ${{ github.event.inputs.installer_ref || 'master' }}
+                  ref: ${{ github.event.inputs.lcm_ref || 'master' }}
                   fetch-depth: 0
                   path: "Localizations/LCM"
 
@@ -265,7 +252,7 @@ jobs:
                     $false
                   )
                   [System.IO.Compression.ZipFile]::CreateFromDirectory(
-                    "${{ github.workspace }}\PatchableInstaller\ProcRunner\ProcRunner\bin\Release\net48",
+                    "${{ github.workspace }}\FLExInstaller\Shared\ProcRunner\ProcRunner\bin\Release\net48",
                     "${{ github.workspace }}\ProcRunner.zip",
                     [System.IO.Compression.CompressionLevel]::Optimal,
                     $false

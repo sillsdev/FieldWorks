@@ -870,7 +870,7 @@ namespace LexTextControlsTests
 			// body and leg both have only one LexReference
 			Assert.That(legSense.LexSenseReferences.First(), Is.EqualTo(bodySense.LexSenseReferences.First()), "LexReferences of Body and Leg should match.");
 			// arm has two LexReferences and leg has one LexReference
-			Assert.That(legSense.LexSenseReferences.First(), Does.Contain(armSense.LexSenseReferences), "Arm LexReferences should include the single Leg LexReference");
+			Assert.That(armSense.LexSenseReferences, Does.Contain(legSense.LexSenseReferences.First()), "Arm LexReferences should include the single Leg LexReference");
 		}
 
 		// This lift data contains 'a' 'b' and 'c' entries with 'a' being a whole of 2 parts 'b' and 'c' (whole/part relation)

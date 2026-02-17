@@ -19,7 +19,6 @@ namespace SIL.FieldWorks.Common.Widgets
 	public class FwListBoxTests
 	{
 		#region Data Members
-		TestFwStylesheet m_stylesheet;
 		WritingSystemManager m_wsManager;
 		int m_hvoEnglishWs;
 		#endregion

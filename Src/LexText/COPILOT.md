@@ -40,6 +40,6 @@ Organizational parent folder containing lexicon and text analysis components of 
 4. Run `python .github/check_copilot_docs.py --paths Src/LexText/COPILOT.md`
 
 ## Related Guidance
-- Reference `.github/instructions/organizational-folders.instructions.md` for shared expectations
+- See `.github/AI_GOVERNANCE.md` for shared expectations and the COPILOT.md baseline
 - Use the planner output (`.cache/copilot/diff-plan.json`) for the latest project and file references
 - Trigger `.github/prompts/copilot-folder-review.prompt.md` after edits for an automated dry run

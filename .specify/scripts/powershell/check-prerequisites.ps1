@@ -53,8 +53,8 @@ EXAMPLES:
 	exit 0
 }
 
-# Source common functions
-. "$PSScriptRoot/common.ps1"
+# Source FieldWorks common (includes upstream common + FW extensions)
+. "$PSScriptRoot/fw-common.ps1"
 
 # Get feature paths and validate branch
 $paths = Get-FeaturePathsEnv

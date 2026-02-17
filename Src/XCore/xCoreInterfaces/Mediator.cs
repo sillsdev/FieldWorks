@@ -229,14 +229,7 @@ namespace XCore
 
 		#endregion
 		private long m_SavedCalls;	// number of calls to Type.GetMethod that are saved (just informational).
-		private long m_MethodsCount;	// max depth on the methods of all colleagues
-#if DEBUG
-		private long m_MethodChecks;	// total number of calls to the IsMethodNOTonColleague method
-#endif
 
-
-		/// <summary>keeps a list of classes (colleagues) and the methods that it doesn't contain</summary>
-		private Dictionary<string, HashSet<string>> m_MethodsNOTonColleagues;	// key=colleague.ToString(), value=Set of methods of methods
 		/// <summary>Set of method names that are implemented by any colleague</summary>
 		private HashSet<string> m_MethodsOnAnyColleague;
 

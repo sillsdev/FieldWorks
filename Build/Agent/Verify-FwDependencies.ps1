@@ -11,7 +11,7 @@
     - MSBuild
     - .NET Framework 4.8.1 SDK & Targeting Pack
     - Windows SDK
-    - WiX Toolset 3.x
+    - WiX Toolset v6 (installer builds restore via NuGet)
     - NuGet CLI
     - .NET SDK 8.x+
 
@@ -151,24 +151,21 @@ $results += Test-Dependency -Name ".NET SDK" -Check {
     throw "dotnet.exe not found in PATH"
 }
 
-# WiX Toolset
-$results += Test-Dependency -Name "WiX Toolset" -Required "Optional" -Check {
-    # Check if candle.exe is in PATH
-    $candle = Get-Command candle.exe -ErrorAction SilentlyContinue
-    if ($candle) {
-        return "candle.exe found in PATH"
+# WiX Toolset (v6)
+# Installer projects use WixToolset.Sdk via NuGet restore; no global WiX 3.x install is required.
+$results += Test-Dependency -Name "WiX Toolset (v6 via NuGet)" -Required "Optional" -Check {
+    $repoRoot = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+    $wixProj = Join-Path $repoRoot "FLExInstaller\wix6\FieldWorks.Installer.wixproj"
+    if (-not (Test-Path $wixProj)) {
+        throw "Installer project not found: $wixProj"
     }
-    # Check common installation paths (prefer 3.14.x, fallback to 3.11.x for backward compatibility)
-    $wixPaths = @(
-        "${env:ProgramFiles(x86)}\WiX Toolset v3.14\bin\candle.exe",
-        "${env:ProgramFiles(x86)}\WiX Toolset v3.11\bin\candle.exe"
-    )
-    foreach ($p in $wixPaths) {
-        if (Test-Path $p) {
-            return "Found at $p (not in PATH)"
-        }
+
+    $wixProjText = Get-Content -LiteralPath $wixProj -Raw
+    if ($wixProjText -match "WixToolset\\.Sdk") {
+        return "Configured in $wixProj (restored during build)"
     }
-    throw "WiX Toolset not found"
+
+    throw "WixToolset.Sdk not referenced in $wixProj"
 }
 
 # ----------------------------------------------------------------------------
@@ -228,7 +225,6 @@ Write-Host "=== Summary ===" -ForegroundColor Cyan
 $required = $results | Where-Object { $_.Required -ne $false }
 $missing = $required | Where-Object { -not $_.Found }
 $optional = $results | Where-Object { $_.Required -eq $false }
-$optionalMissing = $optional | Where-Object { -not $_.Found }
 
 $totalRequired = ($required | Measure-Object).Count
 $foundRequired = ($required | Where-Object { $_.Found } | Measure-Object).Count

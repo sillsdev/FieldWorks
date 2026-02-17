@@ -26,7 +26,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	{
 		#region Data members
 		private bool m_fCreateNew = true;
+#pragma warning disable CS0649 // Field is never assigned to - used by Project property, assignment may be planned for future use
 		private ProjectInfo m_projInfo;
+#pragma warning restore CS0649
 		private readonly WritingSystemManager m_wsManager;
 		private IHelpTopicProvider m_helpTopicProvider;
 		private string m_dbFile;

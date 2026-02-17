@@ -724,30 +724,199 @@ namespace SIL.Utils
 			var transform = new XslCompiledTransform(Platform.IsMono);
 			if (Platform.IsDotNet)
 			{
-				// Assumes the XSL has been precompiled.  xslName is the name of the precompiled class
-				Type type = Type.GetType(xslName + "," + assemblyName);
-				Debug.Assert(type != null);
-				transform.Load(type);
+				if (TryLoadPrecompiledTransform(xslName, assemblyName, transform))
+					return transform;
+
+				if (TryLoadTransformFromFiles(xslName, assemblyName, transform))
+					return transform;
+
+				throw new FileNotFoundException($"Could not load transform '{xslName}' for assembly '{assemblyName}'.");
 			}
-			else
+
+			if (TryLoadTransformFromAssemblyResources(xslName, assemblyName, transform))
+				return transform;
+
+			if (TryLoadTransformFromFiles(xslName, assemblyName, transform))
+				return transform;
+
+			throw new FileNotFoundException($"Could not load transform '{xslName}' for assembly '{assemblyName}'.");
+		}
+
+		private static bool TryLoadPrecompiledTransform(string xslName, string assemblyName, XslCompiledTransform transform)
+		{
+			Type type = null;
+			try
 			{
-				var resolver = GetResourceResolver(assemblyName);
-				var transformAssembly = ((XmlResourceResolver)resolver).Assembly;
-				using (var stream = transformAssembly.GetManifestResourceStream(xslName + ".xsl"))
+				type = Type.GetType(xslName + "," + assemblyName);
+			}
+			catch (FileNotFoundException)
+			{
+				// Assembly not available.
+			}
+			catch (FileLoadException)
+			{
+				// Assembly present but failed to load.
+			}
+			catch (BadImageFormatException)
+			{
+				// Assembly exists but is invalid for the current architecture.
+			}
+
+			if (type == null)
+				return false;
+
+			transform.Load(type);
+			return true;
+		}
+
+		private static bool TryLoadTransformFromAssemblyResources(string xslName, string assemblyName, XslCompiledTransform transform)
+		{
+			if (!TryGetResourceResolver(assemblyName, out var resolver) || resolver == null)
+				return false;
+
+			if (resolver is XmlResourceResolver resourceResolver)
+			{
+				using (var stream = resourceResolver.Assembly.GetManifestResourceStream(xslName + ".xsl"))
 				{
-					Debug.Assert(stream != null);
+					if (stream == null)
+						return false;
+
 					using (var reader = XmlReader.Create(stream))
+					{
 						transform.Load(reader, new XsltSettings(true, false), resolver);
+						return true;
+					}
 				}
 			}
-			return transform;
+
+			return false;
+		}
+
+		private static bool TryLoadTransformFromFiles(string xslName, string assemblyName, XslCompiledTransform transform)
+		{
+			var transformFile = GetTransformFilePath(xslName, assemblyName);
+			if (string.IsNullOrEmpty(transformFile) || !File.Exists(transformFile))
+				return false;
+
+			using (var reader = XmlReader.Create(transformFile))
+			{
+				transform.Load(reader, new XsltSettings(true, false), new FileTransformResolver(Path.GetDirectoryName(transformFile)));
+			}
+
+			return true;
+		}
+
+		private static string GetTransformFilePath(string xslName, string assemblyName)
+		{
+			var transformsDirectory = GetTransformDirectory(assemblyName);
+			if (!string.IsNullOrEmpty(transformsDirectory))
+			{
+				var candidate = Path.Combine(transformsDirectory, xslName + ".xsl");
+				if (File.Exists(candidate))
+					return candidate;
+			}
+
+			return string.Empty;
 		}
 
 		public static XmlResolver GetResourceResolver(string assemblyName)
 		{
+			if (TryGetResourceResolver(assemblyName, out var resolver) && resolver != null)
+				return resolver;
+
+			throw new FileNotFoundException($"Could not locate transform assembly '{assemblyName}.dll' or transform folder.");
+		}
+
+		private static bool TryGetResourceResolver(string assemblyName, out XmlResolver resolver)
+		{
+			resolver = null;
 			var libPath = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
-			var transformAssembly = Assembly.LoadFrom(Path.Combine(libPath, assemblyName + ".dll"));
-			return new XmlResourceResolver(transformAssembly);
+			if (!string.IsNullOrEmpty(libPath))
+			{
+				var assemblyPath = Path.Combine(libPath, assemblyName + ".dll");
+				if (File.Exists(assemblyPath))
+				{
+					resolver = new XmlResourceResolver(Assembly.LoadFrom(assemblyPath));
+					return true;
+				}
+			}
+
+			var transformDirectory = GetTransformDirectory(assemblyName);
+			if (!string.IsNullOrEmpty(transformDirectory) && Directory.Exists(transformDirectory))
+			{
+				resolver = new FileTransformResolver(transformDirectory);
+				return true;
+			}
+
+			return false;
+		}
+
+		private static string GetTransformDirectory(string assemblyName)
+		{
+			var libPath = Path.GetDirectoryName(FileUtils.StripFilePrefix(Assembly.GetExecutingAssembly().CodeBase));
+			var candidateFolders = new List<string>();
+			if (!string.IsNullOrEmpty(libPath))
+			{
+				var transformsRoot = Path.Combine(libPath, "Transforms");
+				var subfolder = GetTransformSubfolder(assemblyName);
+				candidateFolders.Add(Path.Combine(transformsRoot, subfolder));
+				candidateFolders.Add(Path.Combine(transformsRoot, assemblyName));
+			}
+
+			foreach (var folder in candidateFolders)
+			{
+				if (Directory.Exists(folder))
+					return folder;
+			}
+
+			return string.Empty;
+		}
+
+		private static string GetTransformSubfolder(string assemblyName)
+		{
+			const string transformsSuffix = "Transforms";
+			if (assemblyName.EndsWith(transformsSuffix, StringComparison.Ordinal) && assemblyName.Length > transformsSuffix.Length)
+				return assemblyName.Substring(0, assemblyName.Length - transformsSuffix.Length);
+
+			return assemblyName;
+		}
+
+		private class FileTransformResolver : XmlUrlResolver
+		{
+			private readonly string m_baseDirectory;
+
+			public FileTransformResolver(string baseDirectory)
+			{
+				m_baseDirectory = baseDirectory ?? string.Empty;
+			}
+
+			public override Uri ResolveUri(Uri baseUri, string relativeUri)
+			{
+				// If the include/import already specifies an absolute URI, honor it.
+				if (!string.IsNullOrEmpty(relativeUri) && Uri.TryCreate(relativeUri, UriKind.Absolute, out var absoluteUri))
+					return absoluteUri;
+
+				// If the include/import is an absolute file path (e.g., C:\foo\bar.xsl), normalize it.
+				if (!string.IsNullOrEmpty(relativeUri) && Path.IsPathRooted(relativeUri))
+					return new Uri(Path.GetFullPath(relativeUri));
+
+				if (!string.IsNullOrEmpty(m_baseDirectory) && (baseUri == null || !baseUri.IsAbsoluteUri))
+				{
+					var combined = Path.Combine(m_baseDirectory, relativeUri ?? string.Empty);
+					try
+					{
+						var normalized = Path.GetFullPath(combined);
+						return new Uri(normalized);
+					}
+					catch (NotSupportedException)
+					{
+						// Fall back to default resolution if the combined path isn't a valid filesystem path.
+						return base.ResolveUri(baseUri, relativeUri);
+					}
+				}
+
+				return base.ResolveUri(baseUri, relativeUri);
+			}
 		}
 
 		private class XmlResourceResolver : XmlUrlResolver

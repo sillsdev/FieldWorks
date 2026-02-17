@@ -10,7 +10,7 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 		/// Required designer variable.
 		/// </summary>
 // ReSharper disable InconsistentNaming
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 // ReSharper restore InconsistentNaming
 
 		/// <summary>

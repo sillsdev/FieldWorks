@@ -337,9 +337,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 					fwCurrentArchKey.DeleteSubKeyTree(TranslationEditor, false);
 				}
 			}
-			catch (SecurityException se)
+			catch (SecurityException)
 			{
-				// What to do here? Punt!
+				// Security exception during registry migration - punt.
 			}
 			return migratedAnything;
 		}

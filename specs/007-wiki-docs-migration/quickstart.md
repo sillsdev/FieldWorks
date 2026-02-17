@@ -15,11 +15,10 @@
 
 | Content Type | Location | Example |
 |--------------|----------|---------|
-| Code guidance (Copilot) | `.github/instructions/` | `coding-standard.instructions.md` |
+| Code guidance (Copilot) | `.github/instructions/` | `managed.instructions.md` |
 | Onboarding tutorials | `docs/` | `CONTRIBUTING.md` |
 | Workflow guides | `docs/workflows/` | `pull-request-workflow.md` |
 | Architecture docs | `docs/architecture/` | `data-migrations.md` |
-| Linux/Platform docs | `docs/linux/` | `build-linux.md` |
 
 ### Migration Status Markers
 
@@ -55,17 +54,16 @@
 ### Phase 2: Workflows (P2)
 - [ ] Create `docs/workflows/pull-request-workflow.md` (new content)
 - [ ] Create `docs/workflows/release-process.md` from wiki (with CONFIRMATION_NEEDED)
-- [ ] Create `.github/instructions/code-review.instructions.md`
+- [ ] Ensure PR workflow doc covers review expectations and test evidence
 
 ### Phase 3: Architecture (P3)
 - [ ] Create `docs/architecture/data-migrations.md` from wiki
 - [ ] Create `docs/architecture/dependencies.md` from wiki
-- [ ] Create `.github/instructions/coding-standard.instructions.md`
-- [ ] Create `.github/instructions/dispose.instructions.md`
+- [ ] Ensure docs reference `.editorconfig` and `.github/commit-guidelines.md`
 
 ### Phase 4: Platform Docs (P3)
-- [ ] Create `docs/linux/build-linux.md` from wiki (with CONFIRMATION_NEEDED)
-- [ ] Create `docs/linux/vagrant.md` from wiki (with CONFIRMATION_NEEDED)
+- [x] Create `docs/linux/build-linux.md` from wiki (No)
+- [x] Create `docs/linux/vagrant.md` from wiki (No)
 
 ### Phase 5: Validation
 - [ ] Run link checker on all docs
@@ -124,7 +122,7 @@ Common issues and solutions.
 ## See Also
 
 - [Related Doc](./related.md)
-- [Instruction File](../.github/instructions/related.instructions.md)
+- [Copilot guidance governance](../../.github/AI_GOVERNANCE.md)
 ```
 
 ## Validation Commands
@@ -132,9 +130,6 @@ Common issues and solutions.
 ```powershell
 # Check for broken links (requires markdown-link-check)
 npx markdown-link-check docs/**/*.md
-
-# Verify instruction file format
-python scripts/tools/validate_instructions.py
 
 # Check COPILOT.md files
 python .github/check_copilot_docs.py --only-changed --fail

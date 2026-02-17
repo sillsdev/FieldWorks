@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<?if $(sys.BUILDARCH) = x64 ?>
-<?define EncodingConvertersPath = "..\..\packages\Encoding-Converters-Core.0.2.28\MergeModules\x64" ?>
+<?if $(var.BuildArch) = x64 ?>
+<?define EncodingConvertersPath = "..\..\packages\encoding-converters-core\0.9.7\runtimes\EcDistFiles\MergeModules\x64\Release" ?>
 <?else?>
-<?define EncodingConvertersPath = "..\..\packages\Encoding-Converters-Core.0.2.28\MergeModules\x86" ?>
+<?define EncodingConvertersPath = "..\..\packages\encoding-converters-core\0.9.7\runtimes\EcDistFiles\MergeModules\x86\Release" ?>
 <?endif?>
 <!-- REVIEW (Hasso) 2018.07: if this file gets too long, it can be split into separate files for MergeModules, L10n, and possibly others. -->
 <Include>
@@ -54,7 +54,7 @@
 				<Shortcut Id="ApplicationStartSubmenuShortcut"
 					Name="$(var.ApplicationName)"
 					Description="$(var.ApplicationName) $(var.MajorVersion)"
-					Target="[APPFOLDER]FieldWorks.exe"
+					Target="[APPFOLDER]Flex.exe"
 					WorkingDirectory="APPFOLDER"
 					Icon="Application_Icon.ico"/>
 				<Shortcut Id="HelpsShortcut"
@@ -110,7 +110,7 @@
 	</ComponentGroup>
 
 	<DirectoryRef  Id='APPFOLDER'>
-		<?if $(sys.BUILDARCH) = x64 ?>
+		<?if $(var.BuildArch) = x64 ?>
 		<Merge Id="CC_DLL" Language="1033" SourceFile="$(var.EncodingConvertersPath)\CcDLLs64bitMM.msm" DiskId="1"/>
 		<Merge Id="EncConverters_Common" Language="1033" SourceFile="$(var.EncodingConvertersPath)\EC_40_64bit_MM.msm" DiskId="1"/>
 		<Merge Id="PerlEC" Language="1033" SourceFile="$(var.EncodingConvertersPath)\PerlEc64bitMM.msm" DiskId="1"/>
@@ -129,7 +129,6 @@
 			<File Id="FieldWorks.exe.manifest" Name="FieldWorks.exe.manifest" Source="!(wix.RootObjectsDir)\FieldWorks.exe.manifest" ReadOnly="yes" Checksum="yes" />
 			<File Id="FwKernel.X.manifest" Name="FwKernel.X.manifest" Source="!(wix.RootObjectsDir)\FwKernel.X.manifest" ReadOnly="yes" Checksum="yes" />
 			<File Id="Views.X.manifest" Name="Views.X.manifest" Source="!(wix.RootObjectsDir)\Views.X.manifest" ReadOnly="yes" Checksum="yes" />
-			<RemoveFile Id="RemoveFlexExe" Name="Flex.exe" On="both" />
 			<ProgId Id="FwBackupFile" Icon="FieldWorks.exe" Description="FieldWorks Backup">
 				<Extension Id="fwbackup" >
 					<Verb Id="open" Command="&amp;Restore" Argument="&quot;%1&quot;" TargetFile="FieldWorks.exe" />

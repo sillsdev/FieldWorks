@@ -65,7 +65,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private System.Windows.Forms.ToolTip toolTipInputFile;
 		private Button convertButton;
 		private Button saveFileButton;
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 
 		/// <summary>
 		/// Check to see if the object has been disposed.

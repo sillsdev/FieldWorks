@@ -11,7 +11,7 @@ using System.Linq;
 using System.Reflection;
 
 using NUnit.Framework;
-using Rhino.Mocks;
+using Moq;
 using SIL.LCModel.Core.Text;
 using SIL.LCModel;
 using SIL.LCModel.Application;
@@ -376,25 +376,25 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			});
 
 			var rsda = new RespellingSda((ISilDataAccessManaged)Cache.MainCacheAccessor, null, Cache.ServiceLocator);
-			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(m_mediator, m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
+			var dummyTextListMock = new Mock<InterestingTextList>(m_mediator, m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
 			Cache.ServiceLocator.GetInstance<IStTextRepository>());
 			if (clidPara == ScrTxtParaTags.kClassId)
-				dummyTextList.Stub(tl => tl.InterestingTexts).Return(new IStText[0]);
+				dummyTextListMock.Setup(tl => tl.InterestingTexts).Returns(new IStText[0]);
 			else
-				dummyTextList.Stub(t1 => t1.InterestingTexts).Return(new IStText[1] { stText });
-			ReflectionHelper.SetField(rsda, "m_interestingTexts", dummyTextList);
+				dummyTextListMock.Setup(t1 => t1.InterestingTexts).Returns(new IStText[1] { stText });
+			ReflectionHelper.SetField(rsda, "m_interestingTexts", dummyTextListMock.Object);
 			rsda.SetCache(Cache);
 			rsda.SetOccurrences(0, paraFrags);
 			ObjectListPublisher publisher = new ObjectListPublisher(rsda, kObjectListFlid);
-			XMLViewsDataCache xmlCache = MockRepository.GenerateStub<XMLViewsDataCache>(publisher, true, new Dictionary<int, int>());
+			var xmlCacheMock = new Mock<XMLViewsDataCache>(publisher, true, new Dictionary<int, int>());
 
-			xmlCache.Stub(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass)).Return(ScrTxtParaTags.kClassId);
-			xmlCache.Stub(c => c.VecProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int[]>(publisher.VecProp));
-			xmlCache.MetaDataCache = new RespellingMdc((IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor);
-			xmlCache.Stub(c => c.get_ObjectProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_ObjectProp));
-			xmlCache.Stub(c => c.get_IntProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_IntProp));
+			xmlCacheMock.Setup(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass)).Returns(ScrTxtParaTags.kClassId);
+			xmlCacheMock.Setup(c => c.VecProp(It.IsAny<int>(), It.IsAny<int>())).Returns((int hvo, int tag) => publisher.VecProp(hvo, tag));
+			xmlCacheMock.Object.MetaDataCache = new RespellingMdc((IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor);
+			xmlCacheMock.Setup(c => c.get_ObjectProp(It.IsAny<int>(), It.IsAny<int>())).Returns((int hvo, int tag) => publisher.get_ObjectProp(hvo, tag));
+			xmlCacheMock.Setup(c => c.get_IntProp(It.IsAny<int>(), It.IsAny<int>())).Returns((int hvo, int tag) => publisher.get_IntProp(hvo, tag));
 
-			var respellUndoaction = new RespellUndoAction(xmlCache, Cache, Cache.DefaultVernWs, sWordToReplace, sNewWord);
+			var respellUndoaction = new RespellUndoAction(xmlCacheMock.Object, Cache, Cache.DefaultVernWs, sWordToReplace, sNewWord);
 			foreach (int hvoFake in rsda.VecProp(0, ConcDecorator.kflidConcOccurrences))
 				respellUndoaction.AddOccurrence(hvoFake);
 
@@ -460,25 +460,25 @@ namespace SIL.FieldWorks.XWorks.MorphologyEditor
 			});
 
 			var rsda = new RespellingSda((ISilDataAccessManaged)Cache.MainCacheAccessor, null, Cache.ServiceLocator);
-			InterestingTextList dummyTextList = MockRepository.GenerateStub<InterestingTextList>(m_mediator, m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
+			var dummyTextListMock = new Mock<InterestingTextList>(m_mediator, m_propertyTable, Cache.ServiceLocator.GetInstance<ITextRepository>(),
 			Cache.ServiceLocator.GetInstance<IStTextRepository>());
 			if (clidPara == ScrTxtParaTags.kClassId)
-				dummyTextList.Stub(tl => tl.InterestingTexts).Return(new IStText[0]);
+				dummyTextListMock.Setup(tl => tl.InterestingTexts).Returns(new IStText[0]);
 			else
-				dummyTextList.Stub(t1 => t1.InterestingTexts).Return(new IStText[1] { stText });
-			ReflectionHelper.SetField(rsda, "m_interestingTexts", dummyTextList);
+				dummyTextListMock.Setup(t1 => t1.InterestingTexts).Returns(new IStText[1] { stText });
+			ReflectionHelper.SetField(rsda, "m_interestingTexts", dummyTextListMock.Object);
 			rsda.SetCache(Cache);
 			rsda.SetOccurrences(0, paraFrags);
 			ObjectListPublisher publisher = new ObjectListPublisher(rsda, kObjectListFlid);
-			XMLViewsDataCache xmlCache = MockRepository.GenerateStub<XMLViewsDataCache>(publisher, true, new Dictionary<int, int>());
+			var xmlCacheMock = new Mock<XMLViewsDataCache>(publisher, true, new Dictionary<int, int>());
 
-			xmlCache.Stub(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass)).Return(ScrTxtParaTags.kClassId);
-			xmlCache.Stub(c => c.VecProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int[]>(publisher.VecProp));
-			xmlCache.MetaDataCache = new RespellingMdc((IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor);
-			xmlCache.Stub(c => c.get_ObjectProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_ObjectProp));
-			xmlCache.Stub(c => c.get_IntProp(Arg<int>.Is.Anything, Arg<int>.Is.Anything)).Do(new Func<int, int, int>(publisher.get_IntProp));
+			xmlCacheMock.Setup(c => c.get_IntProp(paraT.Hvo, CmObjectTags.kflidClass)).Returns(ScrTxtParaTags.kClassId);
+			xmlCacheMock.Setup(c => c.VecProp(It.IsAny<int>(), It.IsAny<int>())).Returns((int hvo, int tag) => publisher.VecProp(hvo, tag));
+			xmlCacheMock.Object.MetaDataCache = new RespellingMdc((IFwMetaDataCacheManaged)Cache.MetaDataCacheAccessor);
+			xmlCacheMock.Setup(c => c.get_ObjectProp(It.IsAny<int>(), It.IsAny<int>())).Returns((int hvo, int tag) => publisher.get_ObjectProp(hvo, tag));
+			xmlCacheMock.Setup(c => c.get_IntProp(It.IsAny<int>(), It.IsAny<int>())).Returns((int hvo, int tag) => publisher.get_IntProp(hvo, tag));
 
-			var respellUndoaction = new RespellUndoAction(xmlCache, Cache, Cache.DefaultVernWs, sWordToReplace, sNewWord);
+			var respellUndoaction = new RespellUndoAction(xmlCacheMock.Object, Cache, Cache.DefaultVernWs, sWordToReplace, sNewWord);
 			foreach (int hvoFake in rsda.VecProp(0, ConcDecorator.kflidConcOccurrences))
 				respellUndoaction.AddOccurrence(hvoFake);
 

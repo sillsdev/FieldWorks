@@ -57,6 +57,18 @@ TRX result files are output to: `Output/<Configuration>/TestResults/<ProjectName
 2.  **Discover**: The extension uses `Test.runsettings` settings (configured in `.vscode/settings.json`).
 3.  **Run/Debug**: Click the "Run" (Play) or "Debug" (Bug) icon next to any test or class.
 
+**Note**: External NuGet package tests (`SIL.LCModel.Tests`, etc.) are automatically filtered out via `.vscode/settings.json`.
+
+## Running Tests in Visual Studio
+
+1.  **Configure runsettings**: Test → Configure Run Settings → Select Solution Wide runsettings File → choose `Test.runsettings`
+2.  **Open Test Explorer**: Test → Test Explorer (Ctrl+E, T)
+3.  **Filter out external tests**: In Test Explorer, use the search box or trait filters to exclude `SIL.LCModel` tests:
+    - Search: `-Trait:"Namespace" (SIL.LCModel)` or
+    - Right-click → Group By → Namespace, then collapse/ignore SIL.LCModel namespaces
+
+**Note**: Visual Studio doesn't support automatic test filtering in `.runsettings`. Use the Test Explorer UI to filter.
+
 ## Configuration
 
 Global settings are defined in `Test.runsettings` at the repository root:
@@ -83,6 +95,7 @@ Legacy NUnit category exclusions are translated to VSTest filter syntax automati
 *   **Platform mismatch warning?** Ensure the `TargetPlatform` in `Test.runsettings` matches your build configuration (x64).
 *   **Exit code 1 but no failures?** This means tests were skipped. VSTest returns 1 for skipped tests. Check output for actual results.
 *   **Exit code 0xC0000005 (Access Violation)?** The `InIsolation` setting in `Test.runsettings` should prevent this. If it occurs, the tests likely passed but cleanup crashed. Check output for actual results.
+*   **2,488 external tests failing (SIL.LCModel.Tests)?** These are tests FROM the SIL.LCModel NuGet packages, not FieldWorks tests. They're excluded automatically via `.vscode/settings.json` test filter. If running VSTest manually, add: `/TestCaseFilter:"FullyQualifiedName!~SIL.LCModel.Tests"`
 
 ---
 

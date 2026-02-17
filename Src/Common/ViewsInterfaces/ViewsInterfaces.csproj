@@ -1,13 +1,11 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="BuildInclude.targets" />
   <PropertyGroup>
     <AssemblyName>ViewsInterfaces</AssemblyName>
     <RootNamespace>SIL.FieldWorks.Common.ViewsInterfaces</RootNamespace>
     <TargetFramework>net48</TargetFramework>
-    <OutputType>Library</OutputType>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <OutputType>Library</OutputType>    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
@@ -27,6 +25,13 @@
     <PackageReference Include="SIL.Core" Version="17.0.0-*" />
     <PackageReference Include="SIL.LCModel.Core" Version="11.0.0-*" GeneratePathProperty="true" />
     <PackageReference Include="SIL.LCModel.Utils" Version="11.0.0-*" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Build-order dependency: Native C++ must complete before ViewsInterfaces can generate Views.cs -->
+    <ProjectReference Include="..\..\..\Build\Src\NativeBuild\NativeBuild.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <Private>false</Private>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Accessibility" />

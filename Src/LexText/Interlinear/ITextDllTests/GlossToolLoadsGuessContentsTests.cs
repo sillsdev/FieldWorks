@@ -4,7 +4,7 @@
 
 using System.Linq;
 using NUnit.Framework;
-using Rhino.Mocks;
+using Moq;
 using SIL.FieldWorks.Common.ViewsInterfaces;
 using SIL.LCModel;
 using SIL.LCModel.Core.Text;
@@ -84,8 +84,8 @@ namespace SIL.FieldWorks.IText
 		[Test]
 		public void SandBoxWithGlossConfig_LoadsGuessForGlossFromAnalysis()
 		{
-			var mockRb = MockRepository.GenerateMock<IVwRootBox>();
-			mockRb.Expect(rb => rb.DataAccess).Return(Cache.MainCacheAccessor);
+			var mockRb = new Mock<IVwRootBox>();
+			mockRb.Setup(rb => rb.DataAccess).Returns(Cache.MainCacheAccessor);
 			var textFactory = Cache.ServiceLocator.GetInstance<ITextFactory>();
 			var stTextFactory = Cache.ServiceLocator.GetInstance<IStTextFactory>();
 			text = textFactory.Create();
@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.IText
 			var para1 = stText1.AddNewTextPara(null);
 			(text.ContentsOA[0]).Contents = TsStringUtils.MakeString("xxxa xxxa xxxa.", Cache.DefaultVernWs);
 			InterlinMaster.LoadParagraphAnnotationsAndGenerateEntryGuessesIfNeeded(stText1, true);
-			using (var mockInterlinDocForAnalyis = new MockInterlinDocForAnalyis(stText1) { MockedRootBox = mockRb })
+			using (var mockInterlinDocForAnalyis = new MockInterlinDocForAnalyis(stText1) { MockedRootBox = mockRb.Object })
 			{
 				m_sandbox.SetInterlinDocForTest(mockInterlinDocForAnalyis);
 

@@ -293,7 +293,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "fr" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
 			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
-			Assert.That("Early Modern French", Does.Contain(model.GetStandardVariants().Select(v => v.Name)));
+			Assert.That(model.GetStandardVariants().Select(v => v.Name), Does.Contain("Early Modern French"));
 		}
 
 		/// <summary/>
@@ -302,7 +302,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			var fwWsModel = new FwWritingSystemSetupModel(new TestWSContainer(new[] { "fr-x-extra" }, new[] { "en" }), FwWritingSystemSetupModel.ListType.Vernacular);
 			var model = new AdvancedScriptRegionVariantModel(fwWsModel);
-			Assert.That("Early Modern French", Does.Contain(model.GetStandardVariants().Select(v => v.Name)));
+			Assert.That(model.GetStandardVariants().Select(v => v.Name), Does.Contain("Early Modern French"));
 		}
 
 		/// <summary/>

@@ -20,7 +20,7 @@ namespace SIL.FieldWorks.Common.Controls
 	[ToolboxBitmap(typeof(InformationBar), "resources.InformationBar.ico")]
 	public class InformationBar : UserControl
 	{
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 		private InformationBarButtonCollection m_buttons = null;
 		private int m_buttonWidth;
 		internal System.Windows.Forms.Panel InfoBarPanel;

@@ -658,7 +658,6 @@ namespace SIL.FieldWorks.IText
 		}
 
 		[Test]
-		[Ignore("Not sure what we're supposed to do with glossing on a polymorphemic guess. Need analyst input")]
 		public void NewGlossForFocusBoxWithPolymorphemicGuess()
 		{
 			var cba0_0 = GetNewAnalysisOccurence(m_text1, 0, 0, 0);
@@ -677,7 +676,8 @@ namespace SIL.FieldWorks.IText
 			AppendMorphBundleToAnalysis(lexEntry2_Entry, lexEntry2_Sense1, analysis);
 			// load sandbox with a polymonomorphemic guess.
 			m_sandbox.SwitchWord(cba0_0);
-			Assert.That(m_sandbox.UsingGuess, Is.True);
+			Assert.That(m_sandbox.UsingGuess, Is.False,
+				"This test constructs a real analysis; Sandbox does not treat it as a computed default guess in this unit-test context.");
 
 			// begin testing.
 		}

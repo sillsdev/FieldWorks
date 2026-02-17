@@ -131,7 +131,7 @@ If native C++ components fail to build:
 1. Ensure you have the C++ workload installed
 2. Try building from the command line first:
    ```powershell
-   msbuild Build\Src\NativeBuild\NativeBuild.csproj /p:Configuration=Debug /p:Platform=x64
+   .\build.ps1
    ```
 
 ### Solution Won't Load All Projects
@@ -142,4 +142,4 @@ This is expected - Visual Studio may not load all 100+ projects correctly. Use t
 
 - [CONTRIBUTING.md](CONTRIBUTING.md) - Getting started guide
 - [Build Instructions](../.github/instructions/build.instructions.md) - Detailed build system documentation
-- [Coding Standards](../.github/instructions/coding-standard.instructions.md) - Code style guidelines
+- [Commit message guidelines](../.github/commit-guidelines.md) - CI-enforced commit rules

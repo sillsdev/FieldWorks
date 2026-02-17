@@ -890,10 +890,35 @@ namespace XCore
 		/// Test the various versions of SetPropertyPersistence.
 		/// </summary>
 		[Test]
-		[Ignore("Need to write.")]
 		public void SetPropertyPersistence()
 		{
+			var settingsFolder = Path.Combine(Path.GetTempPath(), "PropertyTableTests", Guid.NewGuid().ToString("N"));
+			Directory.CreateDirectory(settingsFolder);
+			m_propertyTable.UserSettingDirectory = settingsFolder;
+			m_propertyTable.RemoveLocalAndGlobalSettings();
 
+			const string propName = "MyLocalProperty";
+			m_propertyTable.SetProperty(propName, "myvalue", PropertyTable.SettingsGroup.LocalSettings, false);
+
+			// Default is persisted.
+			m_propertyTable.SaveLocalSettings();
+			var localPath = m_propertyTable.SettingsPath(m_propertyTable.LocalSettingsId);
+			var localXml = File.ReadAllText(localPath);
+			Assert.That(localXml, Does.Contain("db$" + m_propertyTable.LocalSettingsId + "$" + propName));
+
+			// Make non-persistent and confirm it no longer serializes.
+			m_propertyTable.SetPropertyPersistence(propName, false, PropertyTable.SettingsGroup.LocalSettings);
+			m_propertyTable.SaveLocalSettings();
+			localXml = File.ReadAllText(localPath);
+			Assert.That(localXml, Does.Not.Contain("db$" + m_propertyTable.LocalSettingsId + "$" + propName));
+
+			// And back to persistent.
+			m_propertyTable.SetPropertyPersistence(propName, true);
+			m_propertyTable.SaveLocalSettings();
+			localXml = File.ReadAllText(localPath);
+			Assert.That(localXml, Does.Contain("db$" + m_propertyTable.LocalSettingsId + "$" + propName));
+
+			Assert.That(() => m_propertyTable.SetPropertyPersistence("NoSuchProperty", true), Throws.Exception);
 		}
 
 

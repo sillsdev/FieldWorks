@@ -50,10 +50,7 @@ Logical grouping for navigation and organization.
 ```
 FieldWorks/
 ├── .github/
-│   └── instructions/           # Copilot-facing code guidance
-│       ├── coding-standard.instructions.md  # NEW: From wiki
-│       ├── code-review.instructions.md      # NEW: From wiki
-│       └── dispose.instructions.md          # NEW: From wiki
+│   └── instructions/           # Copilot-facing code guidance (curated, minimal)
 │
 ├── docs/                       # Human-facing documentation (NEW)
 │   ├── CONTRIBUTING.md         # Main entry point
@@ -67,10 +64,6 @@ FieldWorks/
 │   ├── architecture/           # Technical architecture
 │   │   ├── data-migrations.md
 │   │   └── dependencies.md
-│   │
-│   ├── linux/                  # Cross-platform docs
-│   │   ├── build-linux.md
-│   │   └── vagrant.md
 │   │
 │   └── images/                 # Documentation images
 │       └── (screenshots from wiki)

@@ -69,7 +69,7 @@ namespace SIL.FieldWorks.Common.Controls
 		///
 		/// </summary>
 		protected Control m_listChoiceControl;
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 
 		Mediator m_mediator;
 		PropertyTable m_propertyTable;

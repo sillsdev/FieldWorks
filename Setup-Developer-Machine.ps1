@@ -92,22 +92,11 @@ if (-not (Test-Path $toolsBase)) {
 }
 
 # Check what's already installed
-$wixInstalled = (Test-Path 'C:\Wix314') -or (Test-Path "$toolsBase\Wix314") -or (Get-Command candle.exe -ErrorAction SilentlyContinue)
 
-# WiX Toolset 3.14.1
-if ($wixInstalled -and -not $Force) {
-    Write-Host "[OK] WiX Toolset already installed" -ForegroundColor Green
-} else {
-    if ($PSCmdlet.ShouldProcess("WiX Toolset 3.14.1", "Install")) {
-        Write-Host "Installing WiX Toolset 3.14.1..." -ForegroundColor Cyan
-        $wixPath = "$toolsBase\Wix314"
-        $tempZip = "$env:TEMP\wix314.zip"
-        Invoke-WebRequest -Uri 'https://github.com/wixtoolset/wix3/releases/download/wix3141rtm/wix314-binaries.zip' -OutFile $tempZip
-        Expand-Archive -LiteralPath $tempZip -DestinationPath $wixPath -Force
-        Remove-Item $tempZip -Force
-        Write-Host "[OK] WiX Toolset installed to $wixPath" -ForegroundColor Green
-    }
-}
+# WiX Toolset
+# This worktree builds installers with WiX v6 via NuGet PackageReference (restored during build).
+# No separate WiX 3.x installation (candle/light) is required.
+Write-Host "[INFO] WiX Toolset v6 is restored via NuGet during build (no WiX 3 install needed)" -ForegroundColor Gray
 
 # Note: Serena MCP language servers auto-download on first use:
 # - C# (csharp): Microsoft.CodeAnalysis.LanguageServer (Roslyn) from Azure NuGet
@@ -141,7 +130,6 @@ if ($InstallerDeps) {
     # Helper repo definitions: name, git URL, target subdirectory in FW repo
     $helperRepos = @(
         @{ Name = "FwHelps"; Url = "https://github.com/sillsdev/FwHelps.git"; SubDir = "DistFiles/Helps" },
-        @{ Name = "PatchableInstaller"; Url = "https://github.com/sillsdev/genericinstaller.git"; SubDir = "PatchableInstaller" },
         @{ Name = "FwLocalizations"; Url = "https://github.com/sillsdev/FwLocalizations.git"; SubDir = "Localizations" }
     )
 
@@ -255,10 +243,6 @@ Write-Host "`n--- Configuring PATH ---" -ForegroundColor Yellow
 
 $pathsToAdd = @()
 
-# WiX
-$wixPath = if (Test-Path 'C:\Wix314') { 'C:\Wix314' } elseif (Test-Path "$toolsBase\Wix314") { "$toolsBase\Wix314" } else { $null }
-if ($wixPath) { $pathsToAdd += $wixPath }
-
 # VSTest (Visual Studio 2022)
 $vsWhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
 if (Test-Path $vsWhere) {
@@ -298,18 +282,7 @@ if ($PSCmdlet.ShouldProcess("$pathScope PATH", "Save changes")) {
 
 Write-Host "`n--- Configuring Environment Variables ---" -ForegroundColor Yellow
 
-if ($wixPath) {
-    $currentWix = [Environment]::GetEnvironmentVariable('WIX', $pathScope)
-    if ($currentWix -ne $wixPath) {
-        if ($PSCmdlet.ShouldProcess("WIX environment variable", "Set to $wixPath")) {
-            [Environment]::SetEnvironmentVariable('WIX', $wixPath, $pathScope)
-            $env:WIX = $wixPath
-            Write-Host "[SET] WIX = $wixPath" -ForegroundColor Cyan
-        }
-    } else {
-        Write-Host "[OK] WIX already set" -ForegroundColor Green
-    }
-}
+Write-Host "[INFO] WIX env var is not required for WiX v6 SDK builds" -ForegroundColor Gray
 
 #endregion
 
@@ -322,14 +295,8 @@ $env:PATH = [Environment]::GetEnvironmentVariable('PATH', 'Machine') + ';' + [En
 
 $allGood = $true
 
-# Check WiX
-$candle = Get-Command candle.exe -ErrorAction SilentlyContinue
-if ($candle) {
-    Write-Host "[OK] WiX (candle.exe): found" -ForegroundColor Green
-} else {
-    Write-Host "[WARN] WiX (candle.exe) not found in PATH - restart terminal and try again" -ForegroundColor Yellow
-    $allGood = $false
-}
+# WiX (v6) is acquired via NuGet restore; no PATH verification needed.
+Write-Host "[OK] WiX v6: acquired via NuGet restore during build" -ForegroundColor Green
 
 #endregion
 

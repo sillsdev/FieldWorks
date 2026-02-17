@@ -15,6 +15,7 @@ Last reviewed:
 #pragma once
 
 #include "testViews.h"
+#include "ActionHandler.h"
 
 namespace TestViews
 {
@@ -1900,7 +1901,7 @@ namespace TestViews
 			// Default: replace the selected part of the anchor string, but our routine should
 			// be called.
 			IActionHandlerPtr qah; // need an action handler to handle complex range properly
-			qah.CreateInstance(CLSID_ActionHandler);
+			ActionHandler::CreateCom(NULL, __uuidof(IActionHandler), (void **)&qah);
 			m_qrootb->GetDataAccess()->SetActionHandler(qah);
 			m_qdrs->SimulateBeginUnitOfWork();
 			ComBool fWasComplex;
@@ -2292,7 +2293,7 @@ namespace TestViews
 			// To handle deleting a complex selection we need an action handler.
 
 			IActionHandlerPtr qah;
-			qah.CreateInstance(CLSID_ActionHandler);
+			ActionHandler::CreateCom(NULL, __uuidof(IActionHandler), (void **)&qah);
 			m_qrootb->GetDataAccess()->SetActionHandler(qah);
 			// Default: replace the range by merging the paragraphs; OnProblemDeletion should
 			// not be called.

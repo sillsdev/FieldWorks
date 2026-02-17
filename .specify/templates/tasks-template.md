@@ -71,13 +71,6 @@ Examples of foundational tasks (adjust based on your project):
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
-**Constitution Alignment**
-
-- Add migration tasks whenever stored data/models change; include backup/rollback steps
-  and validation tests/scripts.
-- Add i18n/script validation tasks for features that touch text rendering or processing.
-- Include licensing review tasks when introducing new dependencies.
-
 ---
 
 ## Phase 3: User Story 1 - [Title] (Priority: P1) 🎯 MVP

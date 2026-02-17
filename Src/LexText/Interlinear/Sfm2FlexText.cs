@@ -5,6 +5,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ECInterfaces;
 using SIL.LCModel.Core.Text;
 using SIL.FieldWorks.LexText.Controls;
 using SIL.LCModel.DomainServices;
@@ -30,6 +31,11 @@ namespace SIL.FieldWorks.IText
 
 		internal Sfm2FlexText() : base (new List<string>(new [] { "document", "interlinear-text",
 			"paragraphs", "paragraph", "phrases", "phrase", "words", "word" }))
+		{
+		}
+
+		internal Sfm2FlexText(IEncConverters encConverters) : base(new List<string>(new[] { "document", "interlinear-text",
+			"paragraphs", "paragraph", "phrases", "phrase", "words", "word" }), encConverters)
 		{
 		}
 

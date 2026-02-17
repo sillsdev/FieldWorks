@@ -26,9 +26,9 @@ using System.Runtime.InteropServices;
 // Note: the BuildNumber should not have a default value in this file (because it is not in the substitutions file)
 // Format: Major.Minor.Revision.BuildNumber
 [assembly: AssemblyFileVersion("$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.$BUILDNUMBER")]
-// Format: Major.Minor.Revision.BuildNumber Day Alpha/Beta/RC
+// Format: Major.Minor.Revision.BuildLabel Day Alpha/Beta/RC
 [assembly: AssemblyInformationalVersion(
-	"$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.$BUILDNUMBER $NUMBEROFDAYS $!FWBETAVERSION"
+	"$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.$BUILDLABEL $NUMBEROFDAYS $!FWBETAVERSION"
 )]
 // Format: Major.Minor.Revision.BuildNumber?
 [assembly: AssemblyVersion("$!{FWMAJOR:0}.$!{FWMINOR:0}.$!{FWREVISION:0}.0")]

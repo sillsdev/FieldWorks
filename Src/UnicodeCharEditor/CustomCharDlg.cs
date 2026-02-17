@@ -22,7 +22,7 @@ namespace SIL.FieldWorks.UnicodeCharEditor
 	{
 		# region member variables
 
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 		/// <summary></summary>
 		protected TextBox m_txtUpperEquiv;
 		/// <summary></summary>

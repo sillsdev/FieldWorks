@@ -27,7 +27,9 @@ namespace SIL.FieldWorks.LexText.Controls
 
 		#region Data members
 
+#pragma warning disable CS0414 // Field is assigned but never used - retained for potential future use
 		private bool m_skipCheck = false;
+#pragma warning restore CS0414
 		private IHelpTopicProvider m_helpTopicProvider;
 		private LcmCache m_cache;
 		private ILexEntry m_le;

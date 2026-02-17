@@ -49,7 +49,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private Persistence m_persistence;
 		/// <summary></summary>
 		protected Label lblInfo;
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 
 		#endregion
 

@@ -1178,15 +1178,38 @@ namespace SIL.FieldWorks.Build.Tasks.FwBuildTasksTests
 			const string testTargetLanguage = "de";
 
 			// clean and create the output directory
-			const string outputDir = @"C:\WorkingFiles\XliffTestOutput";
+			var outputDir = Path.Combine(Path.GetTempPath(), "FieldWorks", "LocalizeListsTests", Guid.NewGuid().ToString("N"));
 			TaskTestUtils.RecreateDirectory(outputDir);
 
+			var sourceXmlPath = Path.Combine(outputDir, "TranslatedListOutput.xml");
+			File.WriteAllText(sourceXmlPath,
+				$@"<Lists>
+					<List owner='LangProject' field='AnthroList' itemClass='CmAnthroItem'>
+						<Possibilities>
+							<CmAnthroItem guid='{Guid.NewGuid():D}'>
+								<Name>
+									<AUni ws='en'>Sample name</AUni>
+								</Name>
+								<Description>
+									<AStr ws='{testTargetLanguage}'>
+										<Run ws='{testTargetLanguage}'>Beispielbeschreibung</Run>
+									</AStr>
+								</Description>
+							</CmAnthroItem>
+						</Possibilities>
+					</List>
+				</Lists>", Encoding.UTF8);
+
 			// convert from XML to XLIFF
-			LocalizeLists.SplitSourceLists(@"C:\WorkingFiles\TranslatedListOutput.xml", outputDir, testTargetLanguage);
+			LocalizeLists.SplitSourceLists(
+				sourceXmlPath,
+				outputDir,
+				testTargetLanguage,
+				new List<string> { LocalizeLists.AnthropologyCategories });
 
 			// convert from XLIFF to XML
 			var files = Directory.GetFiles(outputDir, "*.xlf").ToList();
-			const string roundTrippedFilepath = @"C:\WorkingFiles\RoundTripped.xml";
+			var roundTrippedFilepath = Path.Combine(outputDir, "RoundTripped.xml");
 			LocalizeLists.CombineXliffFiles(files, roundTrippedFilepath);
 
 			// Test that the language was preserved.

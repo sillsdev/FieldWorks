@@ -45,7 +45,7 @@ namespace Utils.MessageBoxExLib
 
 		#region Fields
 
-		private System.ComponentModel.IContainer components;
+		private System.ComponentModel.IContainer components = null;
 		private System.Windows.Forms.CheckBox chbSaveResponse;
 		private System.Windows.Forms.ImageList imageListIcons;
 		private System.Windows.Forms.ToolTip buttonToolTip;

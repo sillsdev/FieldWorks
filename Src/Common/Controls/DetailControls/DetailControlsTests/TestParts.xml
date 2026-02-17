@@ -1,6 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <PartInventory>
 	<bin>
+		<part id="LexEntry-Detail-CitationForm">
+			<slice label="CitationForm" editor="multistring" field="CitationForm" ws="vernacular"/>
+		</part>
+		<part id="LexEntry-Detail-Bibliography">
+			<slice label="Bibliography" editor="multistring" field="Bibliography" ws="analysis"/>
+		</part>
+		<part id="LexEntry-Detail-Senses">
+			<seq field="Senses" />
+		</part>
+		<part id="LexEntry-Detail-Etymology">
+			<seq field="Etymology" />
+		</part>
+		<part id="LexSense-Detail-Gloss" type="Detail">
+			<slice field="Gloss" label="Gloss" editor="multistring" ws="analysis" />
+		</part>
+		<part id="LexSense-Detail-ScientificName" type="Detail">
+			<slice field="ScientificName" label="ScientificName" editor="string" ws="analysis" />
+		</part>
+		<part id="LexEtymology-Detail-Form" type="Detail">
+			<slice field="Form" label="Form" editor="multistring" ws="vernacular" menu="mnuDataTree-Help" />
+		</part>
 		<part id="LexEntry-Detail-Nested-Collapsed">
 			<slice label="Header">
 				<slice label="Citation form" editor="string" field="CitationForm" ws="vernacular"/>

@@ -26,6 +26,25 @@ namespace FwBuildTasks
 			}
 			Directory.CreateDirectory(path);
 		}
+
+		public static string FindExistingFileInAncestorDirectories(string startingDirectory, string relativePath)
+		{
+			if (string.IsNullOrWhiteSpace(startingDirectory))
+				throw new ArgumentException("Starting directory must be provided.", nameof(startingDirectory));
+			if (string.IsNullOrWhiteSpace(relativePath))
+				throw new ArgumentException("Relative path must be provided.", nameof(relativePath));
+
+			var current = new DirectoryInfo(startingDirectory);
+			while (current != null)
+			{
+				var candidate = Path.Combine(current.FullName, relativePath);
+				if (File.Exists(candidate))
+					return Path.GetFullPath(candidate);
+				current = current.Parent;
+			}
+
+			throw new FileNotFoundException($"Could not find '{relativePath}' in '{startingDirectory}' or any parent directory.");
+		}
 	}
 
 	internal class TestBuildEngine : IBuildEngine

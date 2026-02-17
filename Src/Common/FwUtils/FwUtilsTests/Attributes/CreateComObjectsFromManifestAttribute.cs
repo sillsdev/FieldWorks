@@ -52,7 +52,7 @@ namespace SIL.FieldWorks.Common.FwUtils.Attributes
 							IntPtr.Zero);
 					}
 				}
-				catch (Exception e)
+				catch (Exception)
 				{
 					// just ignore any errors we get
 				}

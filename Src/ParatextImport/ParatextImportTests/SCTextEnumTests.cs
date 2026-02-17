@@ -1528,77 +1528,82 @@ namespace ParatextImport
 		[Platform(Exclude = "Linux", Reason = "TODO-Linux FWNX-611: fix this unit test on Linux 64-bit.")]
 		public void ConvertAsciiToUnicode()
 		{
-			string encFileName = Path.Combine(Path.GetTempPath(), "test.map");
-			try
-			{
-				using (Stream stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("ParatextImport.EncTest.map"))
+			const string converterName = "MyConverter";
+			var mockConverter = new Mock<IEncConverter>();
+			mockConverter.SetupProperty(c => c.CodePageInput);
+			mockConverter.SetupGet(c => c.Name).Returns(converterName);
+			mockConverter
+				.Setup(c => c.Convert(It.IsAny<string>()))
+				.Returns((string source) =>
 				{
-					Assert.That(stream, Is.Not.Null);
-
-					// Define an encoding converter
-					using (StreamReader reader = new StreamReader(stream))
+					var map = new Dictionary<char, char>
 					{
-						using (StreamWriter writer = new StreamWriter(encFileName))
-						{
-							writer.Write(reader.ReadToEnd());
-						}
-					}
-				}
+						['0'] = '\u0966',
+						['1'] = '\u0967',
+						['2'] = '\u0968',
+						['3'] = '\u0969',
+						['4'] = '\u096a',
+						['5'] = '\u096b',
+						['6'] = '\u096c',
+						['7'] = '\u096d',
+						['8'] = '\u096e',
+						['9'] = '\u096f',
+						['\u0081'] = '\u0492',
+						['\u009a'] = '\u043a',
+						['\u0096'] = '\u2013',
+						['\u00b5'] = '\u04e9',
+					};
 
-				m_converters = new EncConverters();
-				m_converters.Add("MyConverter", encFileName, ConvType.Legacy_to_from_Unicode, string.Empty,
-					string.Empty, ProcessTypeFlags.UnicodeEncodingConversion);
-				Assert.That(m_converters["MyConverter"], Is.Not.Null, "MyConverter didn't get added");
+					var builder = new StringBuilder(source.Length);
+					foreach (var ch in source)
+						builder.Append(map.TryGetValue(ch, out var mapped) ? mapped : ch);
+					return builder.ToString();
+				});
 
-				string filename = m_fileOs.MakeSfFile(Encoding.GetEncoding(EncodingConstants.kMagicCodePage),
-					false, "ROM",
-					@"\mt 0123456789",
-					"\\s \u0081\u009a\u0096\u00b5",
-					@"\c 1",
-					@"\v 1");
-				m_settings.AddFile(filename, ImportDomain.Main, null, null);
+			var mockConverters = new Mock<IEncConverters>();
+			mockConverters.Setup(c => c[It.IsAny<string>()]).Returns((IEncConverter)null);
+			mockConverters.Setup(c => c[converterName]).Returns(mockConverter.Object);
+			m_converters = mockConverters.Object;
 
-				// Set the vernacular WS to use the MyConverter encoder
-				VernacularWs.LegacyMapping = "MyConverter";
+			string filename = m_fileOs.MakeSfFile(Encoding.GetEncoding(EncodingConstants.kMagicCodePage),
+				false, "ROM",
+				@"\mt 0123456789",
+				"\\s \u0081\u009a\u0096\u00b5",
+				@"\c 1",
+				@"\v 1");
+			m_settings.AddFile(filename, ImportDomain.Main, null, null);
 
-				ISCTextEnum textEnum = GetTextEnum(ImportDomain.Main,
-					new ScrReference(45, 0, 0, ScrVers.English),
-					new ScrReference(45, 1, 1, ScrVers.English));
+			// Set the vernacular WS to use the converter.
+			VernacularWs.LegacyMapping = converterName;
 
-				ISCTextSegment textSeg = textEnum.Next();
-				Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
-				Assert.That(textSeg.Marker, Is.EqualTo(@"\id"));
-				Assert.That(textSeg.Text, Is.EqualTo("ROM "));
+			ISCTextEnum textEnum = GetTextEnum(ImportDomain.Main,
+				new ScrReference(45, 0, 0, ScrVers.English),
+				new ScrReference(45, 1, 1, ScrVers.English));
 
-				textSeg = textEnum.Next();
-				Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
-				Assert.That(textSeg.Marker, Is.EqualTo(@"\mt"));
-				Assert.That(textSeg.Text, Is.EqualTo("\u0966\u0967\u0968\u0969\u096a\u096b\u096c\u096d\u096e\u096f "));
+			ISCTextSegment textSeg = textEnum.Next();
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
+			Assert.That(textSeg.Marker, Is.EqualTo(@"\id"));
+			Assert.That(textSeg.Text, Is.EqualTo("ROM "));
 
-				textSeg = textEnum.Next();
-				Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
-				Assert.That(textSeg.Marker, Is.EqualTo(@"\s"));
-				Assert.That(textSeg.Text, Is.EqualTo("\u0492\u043a\u2013\u04e9 "));
+			textSeg = textEnum.Next();
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
+			Assert.That(textSeg.Marker, Is.EqualTo(@"\mt"));
+			Assert.That(textSeg.Text, Is.EqualTo("\u0966\u0967\u0968\u0969\u096a\u096b\u096c\u096d\u096e\u096f "));
 
-				textSeg = textEnum.Next();
-				Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
-				Assert.That(textSeg.Marker, Is.EqualTo(@"\c"));
-				Assert.That(textSeg.Text, Is.EqualTo(@" "));
+			textSeg = textEnum.Next();
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
+			Assert.That(textSeg.Marker, Is.EqualTo(@"\s"));
+			Assert.That(textSeg.Text, Is.EqualTo("\u0492\u043a\u2013\u04e9 "));
 
-				textSeg = textEnum.Next();
-				Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
-				Assert.That(textSeg.Marker, Is.EqualTo(@"\v"));
-				Assert.That(textSeg.Text, Is.EqualTo(@" "));
-			}
-			finally
-			{
-				m_converters.Remove("MyConverter");
-				try
-				{
-					FileUtils.Delete(encFileName);
-				}
-				catch { }
-			}
+			textSeg = textEnum.Next();
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
+			Assert.That(textSeg.Marker, Is.EqualTo(@"\c"));
+			Assert.That(textSeg.Text, Is.EqualTo(@" "));
+
+			textSeg = textEnum.Next();
+			Assert.That(textSeg, Is.Not.Null, "Unable to read segment");
+			Assert.That(textSeg.Marker, Is.EqualTo(@"\v"));
+			Assert.That(textSeg.Text, Is.EqualTo(@" "));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1609,8 +1614,9 @@ namespace ParatextImport
 		[Test]
 		public void MissingEncodingConverter()
 		{
-			string encFileName = string.Empty;
-			IEncConverters converters = new EncConverters();
+			var mockConverters = new Mock<IEncConverters>();
+			mockConverters.Setup(c => c[It.IsAny<string>()]).Returns((IEncConverter)null);
+			m_converters = mockConverters.Object;
 
 			string filename = m_fileOs.MakeSfFile(Encoding.GetEncoding(EncodingConstants.kMagicCodePage), false, "ROM",
 				@"\mt 0123456789",

@@ -49,6 +49,31 @@
 
 ---
 
+## Phase 3.5: Local Build Validation (Priority: P1)
+
+**Goal**: Validate installer builds locally before relying on CI
+
+**Independent Test**: Successfully build base and patch installers locally with WiX 3.14.x
+
+### Setup Script Created
+
+- [X] T006a [US2/US3] Create `Build/Agent/Setup-InstallerBuild.ps1` - validates prerequisites and sets up patch build artifacts
+
+### Local Validation Steps
+
+- [ ] T006b [US2/US3] Run `.\Build\Agent\Setup-InstallerBuild.ps1 -ValidateOnly` to check prerequisites
+- [ ] T006c [US2/US3] Open VS Developer Command Prompt: `Launch-VsDevShell.ps1 -Arch amd64`
+- [ ] T006d [US2] Run `msbuild Build/Orchestrator.proj /t:RestorePackages /p:Configuration=Debug /p:Platform=x64`
+- [ ] T006e [US2] Build base installer: `msbuild Build/Orchestrator.proj /t:BuildBaseInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /m /v:n`
+- [ ] T006f [US2] Verify `BuildDir/FieldWorks_*_Offline_x64.exe` created
+- [ ] T006g [US3] Run `.\Build\Agent\Setup-InstallerBuild.ps1 -SetupPatch` to download base artifacts
+- [ ] T006h [US3] Build patch installer: `msbuild Build/Orchestrator.proj /t:BuildPatchInstaller /p:Configuration=Debug /p:Platform=x64 /p:config=release /m /v:n`
+- [ ] T006i [US3] Verify `BuildDir/FieldWorks_*.msp` created
+
+**Checkpoint**: Both base and patch installers build locally with WiX 3.14.x
+
+---
+
 ## Phase 4: User Story 2 - Validate Base Installer Build (Priority: P1)
 
 **Goal**: Confirm base installer builds and installs correctly with WiX 3.14.x

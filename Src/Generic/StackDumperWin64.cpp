@@ -70,7 +70,30 @@ bool EnumAndLoadModuleSymbols(HANDLE hProcess, DWORD pid)
 	return true;
 }
 
+/*----------------------------------------------------------------------------------------------
+	Public entry point for stack walking. Wraps the internal implementation in SEH protection
+	to prevent crashes in dbghelp.dll from bringing down the process.
+----------------------------------------------------------------------------------------------*/
 void StackDumper::ShowStackCore(HANDLE hThread, CONTEXT &c)
+{
+	__try
+	{
+		ShowStackCoreInternal(hThread, c);
+	}
+	__except(EXCEPTION_EXECUTE_HANDLER)
+	{
+		// If stack walking crashes, just append an error message and continue.
+		// This is better than crashing the whole process.
+		if (m_pstaDump)
+		{
+			m_pstaDump->Append("\r\n[Stack walk failed due to exception in dbghelp]\r\n");
+		}
+	}
+}
+
+// Internal implementation that does the actual stack walking.
+// This is called from ShowStackCore which wraps it in SEH protection.
+void StackDumper::ShowStackCoreInternal(HANDLE hThread, CONTEXT &c)
 {
 	// This build is x64 only, so always use the AMD64 machine type when walking the stack.
 	DWORD imageType = IMAGE_FILE_MACHINE_AMD64;

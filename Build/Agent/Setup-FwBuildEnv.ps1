@@ -97,6 +97,15 @@ Write-Host "OutputGitHubEnv: $OutputGitHubEnv"
 Write-Host "Verify: $Verify"
 Write-Host ""
 
+$scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
+$repoRoot = Resolve-Path "$scriptDir\..\.."
+
+# Set FW_ROOT_CODE_DIR and FW_ROOT_DATA_DIR for DirectoryFinder fallback
+# This avoids registry dependencies in CI
+$distFiles = Join-Path $repoRoot "DistFiles"
+Set-EnvVar -Name "FW_ROOT_CODE_DIR" -Value $distFiles
+Set-EnvVar -Name "FW_ROOT_DATA_DIR" -Value $distFiles
+
 $results = @{
     VSPath = $null
     MSBuildPath = $null
@@ -195,16 +204,36 @@ Write-Host ""
 Write-Host "--- Locating VSTest ---" -ForegroundColor Cyan
 
 $vstestPath = $null
+$vstestCandidates = @()
+
+# Check VS installation paths first
 if ($results.VSPath) {
-    $potentialPath = Join-Path $results.VSPath 'Common7\IDE\CommonExtensions\Microsoft\TestWindow'
-    if (Test-Path (Join-Path $potentialPath 'vstest.console.exe')) {
-        $vstestPath = $potentialPath
+    $vstestCandidates += Join-Path $results.VSPath 'Common7\IDE\CommonExtensions\Microsoft\TestWindow'
+}
+
+# Add known installation paths (BuildTools, TestAgent, etc.)
+$vstestCandidates += @(
+    'C:\BuildTools\Common7\IDE\CommonExtensions\Microsoft\TestWindow',
+    "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\BuildTools\Common7\IDE\CommonExtensions\Microsoft\TestWindow",
+    "${env:ProgramFiles(x86)}\Microsoft Visual Studio\2022\TestAgent\Common7\IDE\CommonExtensions\Microsoft\TestWindow",
+    "${env:ProgramFiles}\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\TestWindow",
+    "${env:ProgramFiles}\Microsoft Visual Studio\2022\Professional\Common7\IDE\CommonExtensions\Microsoft\TestWindow",
+    "${env:ProgramFiles}\Microsoft Visual Studio\2022\Community\Common7\IDE\CommonExtensions\Microsoft\TestWindow"
+)
+
+foreach ($candidate in $vstestCandidates) {
+    if ($candidate -and (Test-Path (Join-Path $candidate 'vstest.console.exe'))) {
+        $vstestPath = $candidate
         Add-ToPath -Path $vstestPath | Out-Null
+        break
     }
 }
 
 if (-not $vstestPath) {
     Write-Status "vstest.console.exe not found" -Status "WARN"
+}
+else {
+    Write-Status "VSTest: $vstestPath" -Status "OK"
 }
 
 # ----------------------------------------------------------------------------

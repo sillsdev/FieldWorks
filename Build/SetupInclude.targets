@@ -4,21 +4,8 @@
 	xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
 	ToolsVersion="Current"
 >
-	<!--
-		Container Build Restrictions:
-		Release builds are blocked in containers because:
-		1. mt.exe cannot embed manifests into EXEs on mounted volumes (Windows container limitation)
-		2. Clouseau IDisposable validation is skipped to avoid file locking issues
-		3. Container builds use external manifests which may not match installer expectations
-		4. Official releases should be built on host machines or CI with full toolchain access
-		Debug builds work fine in containers for development and testing.
-	-->
-	<Target Name="BlockContainerReleaseBuilds"
-		BeforeTargets="Setup"
-		Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true' AND ('$(Configuration)' == 'Release' OR '$(config)' == 'Release' OR '$(config-capital)' == 'Release')">
-		<Error Text="Release builds are not supported in Docker containers.%0A%0AReason: Windows containers cannot embed manifests into executables on mounted volumes,%0Aand container builds skip Clouseau validation. This could result in:%0A  - Missing embedded manifests (RegFree COM may fail)%0A  - Unvalidated IDisposable patterns (potential memory leaks)%0A%0ASolutions:%0A  1. Use Debug configuration for container builds: /p:Configuration=Debug%0A  2. Build releases on the host machine or CI runner%0A  3. Use the installer build pipeline for official releases" />
-	</Target>
 	<PropertyGroup>
+		<!-- FwBuildTasks is bootstrapped by build.ps1 into BuildTools/FwBuildTasks/<Configuration>/ regardless of host -->
 		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'==''"
 			>$(MSBuildThisFileDirectory)..\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll</FwBuildTasksAssembly
 		>
@@ -34,6 +21,38 @@
 		>
 		<fwrt Condition="'$(fwrt)' == ''">$(MSBuildThisFileDirectory)..</fwrt>
 	</PropertyGroup>
+	<!--
+		Configuration Synchronization:
+		There are two configuration properties that must stay in sync:
+		- Configuration: Standard MSBuild property used by .NET/managed projects (Debug, Release)
+		- config: Legacy property used by native C++ makefiles (debug, release, bounds, profile)
+
+		To prevent mismatches (e.g., Configuration=Debug with config=release), we:
+		1. Default config from Configuration if not explicitly set
+		2. Validate they match when both are specified
+	-->
+	<PropertyGroup>
+		<!-- If config is not set, derive it from Configuration (default to Debug if neither set) -->
+		<config Condition="'$(config)' == '' AND '$(Configuration)' != ''"
+			>$(Configuration)</config
+		>
+		<config Condition="'$(config)' == ''">Debug</config>
+	</PropertyGroup>
+	<Target
+		Name="ValidateConfigurationSync"
+		BeforeTargets="Setup"
+		Condition="'$(Configuration)' != '' AND '$(config)' != ''"
+	>
+		<!-- Normalize both to compare (handle case differences) -->
+		<PropertyGroup>
+			<_ConfigLower>$(Configuration.ToLowerInvariant())</_ConfigLower>
+			<_configLower>$(config.ToLowerInvariant())</_configLower>
+		</PropertyGroup>
+		<Error
+			Condition="'$(_ConfigLower)' != '$(_configLower)'"
+			Text="Configuration mismatch detected!%0A%0A  Configuration = $(Configuration)%0A  config = $(config)%0A%0AThese must match to ensure managed and native builds use the same output paths.%0A%0ASolutions:%0A  1. Use only /p:Configuration=Release (config will be derived automatically)%0A  2. Or explicitly set both to match: /p:Configuration=Release /p:config=Release"
+		/>
+	</Target>
 	<!-- config is generally either Debug or Release, but might be Bounds or Profile. -->
 	<!-- if the user gives it lowercase, fix it to be capitalized -->
 	<Choose>
@@ -101,37 +120,60 @@
 			</PropertyGroup>
 		</Otherwise>
 	</Choose>
-	<Target Name="Setup">
+	<ItemGroup>
+		<!-- Use the current directory path combined with .git -->
+		<GitInfo Include="$(fwrt)\.git" />
+	</ItemGroup>
+	<!-- Target to evaluate the GitInfo item -->
+	<Target Name="CheckGitType" BeforeTargets="Setup">
+		<PropertyGroup>
+			<!-- Check if the item exists AND if it is a file -->
+			<IsInWorkTree Condition="Exists('@(GitInfo)') And '%(GitInfo.IsFile)' == 'true'"
+				>true</IsInWorkTree
+			>
+		</PropertyGroup>
+		<Message Text="Is in Git Worktree (File check): $(IsInWorkTree)" Importance="high" />
+	</Target>
+	<Target
+		Name="Setup"
+		DependsOnTargets="CheckGitType"
+		Condition="'$(SkipSetupTargets)' != 'true'"
+	>
+		<PropertyGroup
+			Condition="!Exists('$(FwBuildTasksAssembly)') AND '$(MSBuildProjectName)' != 'FwBuildTasks' AND '$(SkipFwBuildTasksAssemblyCheck)' != 'true'"
+		>
+			<FwBuildTasksProject>$(fwrt)\Build\Src\FwBuildTasks\FwBuildTasks.csproj</FwBuildTasksProject>
+			<FwBuildTasksOutputPath>$(fwrt)\BuildTools\FwBuildTasks\$(Configuration)</FwBuildTasksOutputPath>
+		</PropertyGroup>
+		<Exec
+			Command="msbuild &quot;$(FwBuildTasksProject)&quot; /restore /t:Build /p:Configuration=$(Configuration) /p:FwBuildTasksOutputPath=&quot;$(FwBuildTasksOutputPath)&quot; /p:SkipSetupTargets=true /p:SkipFwBuildTasksAssemblyCheck=true /p:BuildingTransforms=true /m:1 /nr:false"
+			Condition="!Exists('$(FwBuildTasksAssembly)') AND '$(MSBuildProjectName)' != 'FwBuildTasks' AND '$(SkipFwBuildTasksAssemblyCheck)' != 'true'"
+		/>
 		<Error
-			Condition="!Exists('$(FwBuildTasksAssembly)')"
+			Condition="!Exists('$(FwBuildTasksAssembly)') AND '$(MSBuildProjectName)' != 'FwBuildTasks' AND '$(SkipFwBuildTasksAssemblyCheck)' != 'true'"
 			Text="Missing FieldWorks build tasks assembly: $(FwBuildTasksAssembly). Build Build/Src/FwBuildTasks/FwBuildTasks.csproj first."
 		/>
-		<!-- Block Release builds in containers to prevent accidental official releases -->
+		<!-- Block Release builds in worktrees - the Localizations and Patch installer repos are not present. -->
 		<Error
-			Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true' AND '$(Configuration)' == 'Release'"
-			Text="Release builds are not supported in containers. Container builds are for development and testing only. Reason: (1) mt.exe cannot embed manifests into executables on mounted volumes, (2) container builds use external manifests which are not suitable for distribution, (3) official releases must be built on the host machine or CI to ensure proper signing and packaging. Use Configuration=Debug for container builds."
+			Condition="'$(IsInWorkTree)' == 'true' AND '$(Configuration)' == 'Release'"
+			Text="Release builds are not supported in worktrees. Worktree builds are for development and testing only. Reason: (1) mt.exe cannot embed manifests into executables on mounted volumes, (2) worktree builds use external manifests which are not suitable for distribution, (3) official releases must be built on the host machine or CI to ensure proper signing and packaging. Use Configuration=Debug for worktree builds."
 		/>
-		<!-- cannot depend on GenerateVersionFiles, because that creates a file in Output/Common which CleanAll deletes -->
+		<!-- cannot depend on GenerateVersionFiles, because that creates a file in Output/$(Configuration)/Common which CleanAll deletes -->
 		<!-- This is less pretty then I would like since xbuild doesn't support relational operators in conditions -->
 		<PropertyGroup Condition="'$(OS)'=='Windows_NT'">
 			<ToolsVersion>Current</ToolsVersion>
 		</PropertyGroup>
 		<!-- refresh the FieldWorks.targets file that gets loaded -->
-		<GenerateFwTargets ToolsVersion="$(ToolsVersion)" />
+		<GenerateFwTargets
+			ToolsVersion="$(ToolsVersion)"
+			FwRoot="$(fwrt)"
+			Condition="'$(SkipGenerateFwTargets)' != 'true'"
+		/>
 		<CpuArchitecture>
 			<Output TaskParameter="Value" PropertyName="arch" />
 		</CpuArchitecture>
-		<!-- Use local storage for intermediate files in containers to avoid mount I/O conflicts -->
-		<CreateProperty Condition="'$(OS)'=='Windows_NT' AND '$(DOTNET_RUNNING_IN_CONTAINER)' != 'true'" Value="$(fwrt)\Obj">
+		<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="$(fwrt)\Obj">
 			<Output TaskParameter="Value" PropertyName="dir-fwobj" />
-		</CreateProperty>
-		<CreateProperty Condition="'$(OS)'=='Windows_NT' AND '$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'" Value="C:\Temp\Obj">
-			<Output TaskParameter="Value" PropertyName="dir-fwobj" />
-		</CreateProperty>
-		<!-- Skip Clouseau in containers: Assembly.LoadFrom locks DLLs, causing copy failures in parallel builds.
-		     Clouseau validation still runs on host builds and CI. -->
-		<CreateProperty Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'" Value="true">
-			<Output TaskParameter="Value" PropertyName="SkipClouseau" />
 		</CreateProperty>
 		<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="$(fwrt)\Output">
 			<Output TaskParameter="Value" PropertyName="dir-fwoutput" />
@@ -139,7 +181,10 @@
 		<PathCombine BasePath="$(dir-fwoutput)" SubPath="$(config-capital)">
 			<Output TaskParameter="Value" PropertyName="dir-outputBase" />
 		</PathCombine>
-		<PathCombine BasePath="$(dir-fwoutput)" SubPath="Common">
+		<!-- dir-fwoutputCommon: Configuration-specific path for generated COM artifacts.
+		     These files contain preprocessor-conditional code (DEBUG-dependent) and MUST be
+		     separated per configuration to avoid stale artifact issues when switching Debug/Release. -->
+		<PathCombine BasePath="$(dir-outputBase)" SubPath="Common">
 			<Output TaskParameter="Value" PropertyName="dir-fwoutputCommon" />
 		</PathCombine>
 		<CreateProperty Value="$(dir-outputBase)">
@@ -233,9 +278,13 @@
 			<Output TaskParameter="Value" PropertyName="excludedCategories" />
 		</CreateProperty>
 		<PropertyGroup>
-			<VSTestTestCaseFilter Condition="'$(excludedCategories)' != ''">TestCategory!=$([System.String]::Copy('$(excludedCategories)').Replace(',', '&amp;TestCategory!='))</VSTestTestCaseFilter>
+			<VSTestTestCaseFilter Condition="'$(excludedCategories)' != ''"
+				>TestCategory!=$([System.String]::Copy('$(excludedCategories)').Replace(',', '&amp;TestCategory!='))</VSTestTestCaseFilter
+			>
 			<!-- Optional: Enable code coverage by passing /p:EnableCoverage=true -->
-			<VSTestCoverageArg Condition="'$(EnableCoverage)' == 'true'"> /EnableCodeCoverage</VSTestCoverageArg>
+			<VSTestCoverageArg Condition="'$(EnableCoverage)' == 'true'"
+				> /EnableCodeCoverage</VSTestCoverageArg
+			>
 			<VSTestCoverageArg Condition="'$(EnableCoverage)' != 'true'"></VSTestCoverageArg>
 		</PropertyGroup>
 		<!-- Set some environment variables needed by make (or nmake) -->
@@ -268,13 +317,15 @@
 		<MakeDir Directories="$(dir-fwobj);$(dir-outputBase);$(dir-fwoutputCommon)" />
 	</Target>
 	<!-- Generate Src/CommonAssemblyInfo.cs from Src/CommonAssemblyInfoTemplate.cs and Src/MasterVersionInfo.txt -->
-	<!-- Generate Output/Common/bldinc.h from Src/bldinc.h and Src/MasterVersionInfo.txt -->
+	<!-- Generate Output/$(Configuration)/Common/bldinc.h from Src/bldinc.h and Src/MasterVersionInfo.txt -->
 	<ItemGroup>
 		<VersionTemplate Include="$(fwrt)\Src\CommonAssemblyInfoTemplate.cs" />
 		<VersionSymbols Include="$(fwrt)\Src\MasterVersionInfo.txt" />
 		<VersionOutput Include="$(fwrt)\Src\CommonAssemblyInfo.cs" />
 		<BldIncTemplate Include="$(fwrt)\Src\bldinc.h" />
-		<BldIncOutput Include="$(fwrt)\Output\Common\bldinc.h" />
+		<!-- Note: Cannot use $(dir-fwoutputCommon) here because it's set in Setup target (runtime),
+		     but ItemGroups are evaluated at parse time. Use expanded path instead. -->
+		<BldIncOutput Include="$(fwrt)\Output\$(Configuration)\Common\bldinc.h" />
 		<GlobalIncludeTemplate Include="$(MSBuildThisFileDirectory)GlobalInclude.properties.template" />
 		<GlobalIncludeOutput Include="$(MSBuildThisFileDirectory)GlobalInclude.properties" />
 		<FwParatextLexiconPluginTemplate Include="$(fwrt)\Src\FwParatextLexiconPlugin\ParatextLexiconPluginRegistryHelper.template.cs" />

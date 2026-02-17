@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?if $(sys.BUILDARCH) = x64 ?>
+<?define EncodingConvertersPath = "..\..\packages\Encoding-Converters-Core.0.2.28\MergeModules\x64" ?>
+<?else?>
+<?define EncodingConvertersPath = "..\..\packages\Encoding-Converters-Core.0.2.28\MergeModules\x86" ?>
+<?endif?>
+<!-- REVIEW (Hasso) 2018.07: if this file gets too long, it can be split into separate files for MergeModules, L10n, and possibly others. -->
+<Include>
+	<?ifdef MASTERBUILDDIR?>
+	<WixVariable Id="RootObjectsDir" Value="$(var.MASTERBUILDDIR)\.."/>
+	<?else?>
+	<WixVariable Id="RootObjectsDir" Value="$(var.UPDATEBUILDDIR)\.."/>
+	<?endif?>
+
+	<DirectoryRef Id="$(var.CFDir)">
+		<Directory Id="SIL" Name="SIL">
+			<Component Id="vs_piaredist.exe" Guid="69E34503-AFF1-455d-8B02-38EC1EC156C2">
+				<File Id="vs_piaredist.exe" Name="vs_piaredist.exe" ReadOnly="yes" Source="!(wix.RootObjectsDir)\vs_piaredist.exe"/>
+			</Component>
+			<?if $(sys.BUILDARCH) = x64 ?>
+			<Merge Id="TECkit_DLLs" Language="1033" SourceFile="$(var.EncodingConvertersPath)\TECkit64bitDllsMM.msm" DiskId="1"/>
+			<?else?>
+			<Merge Id="TECkit_DLLs" Language="1033" SourceFile="$(var.EncodingConvertersPath)\TECkitDLLsMM.msm" DiskId="1"/>
+			<?endif?>
+		</Directory>
+	</DirectoryRef>
+
+	<DirectoryRef Id="TARGETDIR">
+		<Component Id="FwPath" Guid="53E0A9D8-9477-423a-89A9-F6BC3FAC4F40">
+			<Environment Id="FwPath" Name="PATH" Action="set" System="yes" Part="first" Value="[APPFOLDER]" />
+		</Component>
+		<Component Id="FwInstallDir" Guid="A7FB26F2-4219-4C79-A16A-811DEAB111FE">
+			<Environment Id="FwInstallDir" Name="FIELDWORKSDIR" Action="set" System="yes" Value="[APPFOLDER]" />
+		</Component>
+		<Component Id="FwIcuData" Guid="34CB7CF2-6D44-488D-A497-E3EE42C95290">
+			<!-- When this value is updated, update the value passed to UnicodeCharEditor in the post-install step in Overrides.wxi, too -->
+			<Environment Id="FwIcuData" Name="ICU_DATA" Action="set" System="yes" Value="[OVRHARVESTDATAFOLDER]\Icu70" />
+		</Component>
+		<Component Id="WebonaryApiToggle" Guid="27CAE356-14F7-4908-91C1-DD897B166A6D">
+			<!-- Enable the cloud api upload. Remove it or set it to nothing to disable it. -->
+			<Environment Id="WebonaryApiToggle" Name="WEBONARY_API" Action="set" System="yes" Value="true" />
+		</Component>
+	</DirectoryRef>
+	<ComponentGroup Id="FwEnvironmentVars">
+		<ComponentRef Id="FwPath"/>
+		<ComponentRef Id="FwInstallDir"/>
+		<ComponentRef Id="FwIcuData"/>
+		<ComponentRef Id="WebonaryApiToggle"/>
+	</ComponentGroup>
+
+	<DirectoryRef Id="ProgramMenuFolder">
+		<Directory Id="FLExProgramMenuFolder" Name="$(var.ApplicationName) $(var.MajorVersion)">
+			<Component Id="StartMenuFLExShortcuts" Guid="EE2CF3EF-30C2-48AC-8151-7B55191A1E59">
+				<Shortcut Id="ApplicationStartSubmenuShortcut"
+					Name="$(var.ApplicationName)"
+					Description="$(var.ApplicationName) $(var.MajorVersion)"
+					Target="[APPFOLDER]FieldWorks.exe"
+					WorkingDirectory="APPFOLDER"
+					Icon="Application_Icon.ico"/>
+				<Shortcut Id="HelpsShortcut"
+					Name="$(var.ApplicationName) Help"
+					Description="$(var.ApplicationName) Help"
+					Target="[APPFOLDER]Helps\FieldWorks_Language_Explorer_Help.chm"/>
+				<Shortcut Id="MorphologyIntroShortcut"
+					Name="Morphology Introduction"
+					Description="A Conceptual Introduction to Morphological Parsing for Stage 1 of the FieldWorks Language Explorer"
+					Target="[APPFOLDER]Helps\WW-ConceptualIntro\ConceptualIntroduction.htm"/>
+				<Shortcut Id="UnicodeCharEditorShortcut"
+					Name="Unicode Character Editor"
+					Description="Unicode Character Editor"
+					Target="[APPFOLDER]UnicodeCharEditor.exe"
+					WorkingDirectory="APPFOLDER"/>
+				<Shortcut Id="EULAShortcut"
+					Name="View the End User License Agreement"
+					Description="$(var.ApplicationName) License"
+					Target="[APPFOLDER]License.htm"/>
+				<Shortcut Id="UninstallProductSubmenu"
+					Name="Uninstall $(var.ApplicationName)"
+					Target="[SystemFolder]msiexec.exe"
+					Arguments="/x [ProductCode]"
+					Description="Uninstalls $(var.ApplicationName)"/>
+				<RemoveFolder Id="RemoveFLExProgramMenuFolder" Directory="FLExProgramMenuFolder" On="uninstall"/>
+				<!-- The KeyPath for this component is required to be a registry key under HKCU -->
+				<RegistryValue Root="HKCU" Key="Software\Microsoft\$(var.SafeApplicationName)$(var.MajorVersion)" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+			</Component>
+		</Directory>
+		<Directory Id="SILProgramMenuFolder" Name="SIL">
+			<Component Id="StartMenuFontsShortcut" Guid="C3300D43-CBD9-4244-AFBE-35B9FF3C01BA">
+				<Shortcut Id="AndikaDocShortcut"
+					Name="Andika Documentation"
+					Target="[APPFOLDER]Fonts\Andika-6.101\README.txt"/>
+				<Shortcut Id="CharisSILDocShortcut"
+					Name="Charis SIL Documentation"
+					Target="[APPFOLDER]Fonts\CharisSIL-6.101\README.txt"/>
+				<Shortcut Id="DoulosSILDocShortcut"
+					Name="Doulos SIL Documentation"
+					Target="[APPFOLDER]Fonts\DoulosSIL-6.101\README.txt"/>
+				<Shortcut Id="GentiumPlusDocShortcut"
+					Name="Gentium Plus Documentation"
+					Target="[APPFOLDER]Fonts\GentiumPlus-6.101\README.txt"/>
+				<RemoveFolder Id="RemoveSILProgramMenuFolder" Directory="SILProgramMenuFolder" On="uninstall"/>
+				<!-- The KeyPath for this component is required to be a registry key under HKCU -->
+				<RegistryValue Root="HKCU" Key="Software\Microsoft\$(var.SafeApplicationName)$(var.MajorVersion)FontDocu" Name="installed" Type="integer" Value="1" KeyPath="yes"/>
+			</Component>
+		</Directory>
+	</DirectoryRef>
+	<ComponentGroup Id="StartMenuShortcuts">
+		<ComponentRef Id="StartMenuFLExShortcuts"/>
+		<ComponentRef Id="StartMenuFontsShortcut"/>
+	</ComponentGroup>
+
+	<DirectoryRef  Id='APPFOLDER'>
+		<?if $(sys.BUILDARCH) = x64 ?>
+		<Merge Id="CC_DLL" Language="1033" SourceFile="$(var.EncodingConvertersPath)\CcDLLs64bitMM.msm" DiskId="1"/>
+		<Merge Id="EncConverters_Common" Language="1033" SourceFile="$(var.EncodingConvertersPath)\EC_40_64bit_MM.msm" DiskId="1"/>
+		<Merge Id="PerlEC" Language="1033" SourceFile="$(var.EncodingConvertersPath)\PerlEc64bitMM.msm" DiskId="1"/>
+		<Merge Id="PythonEC" Language="1033" SourceFile="$(var.EncodingConvertersPath)\PythonEc64bitMM.msm" DiskId="1"/>
+		<?else?>
+		<Merge Id="CC_DLL" Language="1033" SourceFile="$(var.EncodingConvertersPath)\CcDLLsMM.msm" DiskId="1"/>
+		<Merge Id="EncConverters_Common" Language="1033" SourceFile="$(var.EncodingConvertersPath)\EC_40_MM.msm" DiskId="1"/>
+		<Merge Id="PerlEC" Language="1033" SourceFile="$(var.EncodingConvertersPath)\PerlEcMM.msm" DiskId="1"/>
+		<Merge Id="PythonEC" Language="1033" SourceFile="$(var.EncodingConvertersPath)\PythonEcMM.msm" DiskId="1"/>
+		<?endif?>
+
+		<Component Id="FieldWorks.exe" Guid="95461FE1-FA63-4D76-B32B-89A478EDA5C6">
+			<File Id="FieldWorks.exe" Name="FieldWorks.exe" Source="!(wix.RootObjectsDir)\FieldWorks.exe" ReadOnly="yes" Checksum="yes" KeyPath="yes" Assembly=".net" AssemblyApplication="FieldWorks.exe" AssemblyManifest="FieldWorks.exe">
+				<fire:FirewallException Id="FieldWorks.exe" Name="FieldWorks" IgnoreFailure="yes" Scope="any" xmlns:fire="http://schemas.microsoft.com/wix/FirewallExtension"/>
+			</File>
+			<File Id="FieldWorks.exe.manifest" Name="FieldWorks.exe.manifest" Source="!(wix.RootObjectsDir)\FieldWorks.exe.manifest" ReadOnly="yes" Checksum="yes" />
+			<File Id="FwKernel.X.manifest" Name="FwKernel.X.manifest" Source="!(wix.RootObjectsDir)\FwKernel.X.manifest" ReadOnly="yes" Checksum="yes" />
+			<File Id="Views.X.manifest" Name="Views.X.manifest" Source="!(wix.RootObjectsDir)\Views.X.manifest" ReadOnly="yes" Checksum="yes" />
+			<RemoveFile Id="RemoveFlexExe" Name="Flex.exe" On="both" />
+			<ProgId Id="FwBackupFile" Icon="FieldWorks.exe" Description="FieldWorks Backup">
+				<Extension Id="fwbackup" >
+					<Verb Id="open" Command="&amp;Restore" Argument="&quot;%1&quot;" TargetFile="FieldWorks.exe" />
+				</Extension>
+			</ProgId>
+			<ProgId Id="FwDataFile" Icon="FieldWorks.exe" Description="FieldWorks Data File">
+				<Extension Id="fwdata" >
+					<Verb Id="open" Command="&amp;Open" Argument="&quot;%1&quot;" TargetFile="FieldWorks.exe" />
+				</Extension>
+			</ProgId>
+			<RegistryValue Id="RegHyperLinksProtocol" Root="HKCR" Key="silfw" Name="URL Protocol" Value="" Type="string" />
+			<RegistryValue Id="RegHyperLinksCmd" Root="HKCR" Key="silfw\shell\open\command" Type="string" Value='"[#FieldWorks.exe]" %1' />
+			<RegistryValue Id="RegHyperLinksSilfw" Root="HKCR" Key="silfw" Type="string" Value="URL:SILFW Protocol" />
+		</Component>
+
+		<!-- Harvested localizations are installed in the following directories -->
+		<!-- If you change this list, you must also update those listed at $(fwrt)\Localizations\ReadMe.md -->
+		<Directory Id="arL10NFOLDER" Name="ar"/>
+		<Directory Id="azL10NFOLDER" Name="az"/>
+		<Directory Id="bnL10NFOLDER" Name="bn"/>
+		<Directory Id="deL10NFOLDER" Name="de"/>
+		<Directory Id="esL10NFOLDER" Name="es"/>
+		<Directory Id="faL10NFOLDER" Name="fa"/>
+		<Directory Id="frL10NFOLDER" Name="fr"/>
+		<Directory Id="hiL10NFOLDER" Name="hi"/>
+		<Directory Id="huL10NFOLDER" Name="hu"/>
+		<Directory Id="idL10NFOLDER" Name="id"/>
+		<Directory Id="kmL10NFOLDER" Name="km"/>
+		<Directory Id="koL10NFOLDER" Name="ko"/>
+		<Directory Id="neL10NFOLDER" Name="ne"/>
+		<Directory Id="msL10NFOLDER" Name="ms"/>
+		<Directory Id="myL10NFOLDER" Name="my"/>
+		<Directory Id="ptL10NFOLDER" Name="pt"/>
+		<Directory Id="ruL10NFOLDER" Name="ru"/>
+		<Directory Id="rwL10NFOLDER" Name="rw"/>
+		<Directory Id="swL10NFOLDER" Name="sw"/>
+		<Directory Id="taL10NFOLDER" Name="ta"/>
+		<Directory Id="teL10NFOLDER" Name="te"/>
+		<Directory Id="thL10NFOLDER" Name="th"/>
+		<Directory Id="trL10NFOLDER" Name="tr"/>
+		<Directory Id="urL10NFOLDER" Name="ur"/>
+		<Directory Id="viL10NFOLDER" Name="vi"/>
+		<Directory Id="zhL10NFOLDER" Name="zh-CN"/>
+		<Directory Id="zlmL10NFOLDER" Name="zlm"/>
+	</DirectoryRef>
+
+	<DirectoryRef Id='HARVESTDATAFOLDER'>
+		<Component Id="RegisterICUFolder" Guid="FD94075E-CB26-4C7A-ADF4-B920FC1B25D1">
+			<RegistryValue Name="ICU54DataDir" Root="HKLM"  Key="Software\SIL" Type="string" KeyPath="yes" Value="[OVRHARVESTDATAFOLDER]\Icu54" />
+		</Component>
+		<!-- Paratext is currently only a 32-bit application. Because FieldWorks is available as a 64-bit application,
+			write these folder locations to both registry spaces so that Paratext can find them. -->
+		<?if $(sys.BUILDARCH) = x64 ?>
+		<Component Id='RegKeys32' Guid='5B50B537-2A4A-47AC-9041-F296E9B3E310'>
+			<RegistryKey Root='HKLM' Key='SOFTWARE\WOW6432Node\[REGISTRYKEY]' ForceDeleteOnUninstall='yes'>
+				<RegistryValue Name="[DATAFOLDERREGSZNAME]" Type='string' Value='[DATAFOLDER]' KeyPath='yes'/>
+				<RegistryValue Name="[HARVESTDATAFOLDERREGSZNAME]" Type='string' Value='[OVRHARVESTDATAFOLDER]'/>
+				<RegistryValue Name="[APPFOLDERREGSZNAME]" Type='string' Value='[APPFOLDER]'/>
+			</RegistryKey>
+		</Component>
+		<?endif?>
+	</DirectoryRef>
+
+
+	<ComponentGroup Id="Miscelanea">
+		<ComponentRef Id="vs_piaredist.exe"/>
+		<ComponentRef Id="RegisterICUFolder"/>
+		<?if $(sys.BUILDARCH) = x64 ?>
+		<ComponentRef Id='RegKeys32'/>
+		<?endif?>
+	</ComponentGroup>
+
+	<!-- These WixVariables insert the source directory into the harvest files (because Heat apparently can't) -->
+	<?ifdef MASTERBUILDDIR?>
+	<WixVariable Id="MASTERarL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\ar"/>
+	<WixVariable Id="MASTERazL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\az"/>
+	<WixVariable Id="MASTERbnL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\bn"/>
+	<WixVariable Id="MASTERdeL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\de"/>
+	<WixVariable Id="MASTEResL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\es"/>
+	<WixVariable Id="MASTERfaL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\fa"/>
+	<WixVariable Id="MASTERfrL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\fr"/>
+	<WixVariable Id="MASTERhiL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\hi"/>
+	<WixVariable Id="MASTERhuL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\hu"/>
+	<WixVariable Id="MASTERidL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\id"/>
+	<WixVariable Id="MASTERkmL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\km"/>
+	<WixVariable Id="MASTERkoL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\ko"/>
+	<WixVariable Id="MASTERmsL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\ms"/>
+	<WixVariable Id="MASTERmyL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\my"/>
+	<WixVariable Id="MASTERneL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\ne"/>
+	<WixVariable Id="MASTERptL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\pt"/>
+	<WixVariable Id="MASTERruL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\ru"/>
+	<WixVariable Id="MASTERrwL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\rw"/>
+	<WixVariable Id="MASTERswL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\sw"/>
+	<WixVariable Id="MASTERtaL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\ta"/>
+	<WixVariable Id="MASTERteL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\te"/>
+	<WixVariable Id="MASTERthL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\th"/>
+	<WixVariable Id="MASTERtrL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\tr"/>
+	<WixVariable Id="MASTERurL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\ur"/>
+	<WixVariable Id="MASTERviL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\vi"/>
+	<WixVariable Id="MASTERzhL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\zh-CN"/>
+	<WixVariable Id="MASTERzlmL10NDIR" Value="$(var.MASTERBUILDDIR)_L10n\zlm"/>
+	<WixVariable Id="MASTERFONTDIR" Value="$(var.MASTERBUILDDIR)_Font"/>
+	<?define HarvestWxiDir = .\master?>
+	<?else?>
+	<WixVariable Id="UPDATEarL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\ar"/>
+	<WixVariable Id="UPDATEazL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\az"/>
+	<WixVariable Id="UPDATEbnL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\bn"/>
+	<WixVariable Id="UPDATEdeL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\de"/>
+	<WixVariable Id="UPDATEesL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\es"/>
+	<WixVariable Id="UPDATEfaL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\fa"/>
+	<WixVariable Id="UPDATEfrL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\fr"/>
+	<WixVariable Id="UPDATEhiL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\hi"/>
+	<WixVariable Id="UPDATEhuL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\hu"/>
+	<WixVariable Id="UPDATEidL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\id"/>
+	<WixVariable Id="UPDATEkmL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\km"/>
+	<WixVariable Id="UPDATEkoL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\ko"/>
+	<WixVariable Id="UPDATEmsL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\ms"/>
+	<WixVariable Id="UPDATEmyL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\my"/>
+	<WixVariable Id="UPDATEneL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\ne"/>
+	<WixVariable Id="UPDATEptL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\pt"/>
+	<WixVariable Id="UPDATEruL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\ru"/>
+	<WixVariable Id="UPDATErwL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\rw"/>
+	<WixVariable Id="UPDATEswL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\sw"/>
+	<WixVariable Id="UPDATEtaL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\ta"/>
+	<WixVariable Id="UPDATEteL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\te"/>
+	<WixVariable Id="UPDATEthL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\th"/>
+	<WixVariable Id="UPDATEtrL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\tr"/>
+	<WixVariable Id="UPDATEurL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\ur"/>
+	<WixVariable Id="UPDATEviL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\vi"/>
+	<WixVariable Id="UPDATEzhL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\zh-CN"/>
+	<WixVariable Id="UPDATEzlmL10NDIR" Value="$(var.UPDATEBUILDDIR)_L10n\zlm"/>
+	<WixVariable Id="UPDATEFONTDIR" Value="$(var.UPDATEBUILDDIR)_Font"/>
+	<?define HarvestWxiDir = .\update?>
+	<?endif?>
+
+	<?include $(var.HarvestWxiDir)\arHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\azHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\bnHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\deHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\esHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\faHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\frHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\hiHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\huHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\idHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\kmHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\koHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\msHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\myHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\neHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\ptHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\ruHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\rwHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\swHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\taHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\teHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\thHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\trHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\urHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\viHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\zhHarvest.wxi?>
+	<?include $(var.HarvestWxiDir)\zlmHarvest.wxi?>
+	<?include Fonts.wxi?>
+</Include>

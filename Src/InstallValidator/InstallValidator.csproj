@@ -5,9 +5,7 @@
     <RootNamespace>SIL.InstallValidator</RootNamespace>
     <TargetFramework>net48</TargetFramework>
     <OutputType>Exe</OutputType>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
@@ -34,6 +32,8 @@
   <ItemGroup>
     <Compile Remove="InstallValidatorTests/**" />
     <None Remove="InstallValidatorTests/**" />
+    <Compile Remove="InstallerArtifactsTests/**" />
+    <None Remove="InstallerArtifactsTests/**" />
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>

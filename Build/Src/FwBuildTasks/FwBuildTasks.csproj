@@ -5,7 +5,14 @@
     <Description>Additional msbuild tasks for FieldWorks</Description>
     <Product>FwBuildTasks</Product>
     <TargetFramework>net48</TargetFramework>
-    <OutputPath>$(FwRoot)BuildTools\FwBuildTasks\$(Configuration)\</OutputPath>
+    <!--
+      Output policy:
+      - By default, build outputs to the project bin folder.
+        This avoids file-lock conflicts when the build tasks assembly is already loaded by MSBuild nodes
+        (common when building the full solution in an IDE).
+      - build.ps1 bootstrapping passes FwBuildTasksOutputPath to publish the tasks into BuildTools.
+    -->
+    <OutputPath Condition="'$(FwBuildTasksOutputPath)' != ''">$(FwBuildTasksOutputPath)</OutputPath>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <DefaultItemExcludes>$(DefaultItemExcludes);obj\**</DefaultItemExcludes>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -14,8 +21,8 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="17.14.8" />
-    <PackageReference Include="NUnit" Version="4.4.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.Build.Utilities.Core" Version="18.0.2" />
+    <PackageReference Include="NUnit" Version="3.13.3" PrivateAssets="All" />
     <PackageReference Include="NUnit3TestAdapter" Version="5.2.0" PrivateAssets="All" />
     <PackageReference Include="SIL.BuildTasks" Version="3.1.2-beta0012" />
     <PackageReference Include="SIL.TestUtilities" Version="12.0.0-*" PrivateAssets="All" />

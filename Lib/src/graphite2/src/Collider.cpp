@@ -29,6 +29,7 @@ of the License or (at your option) any later version.
 #include <cmath>
 #include <string>
 #include <functional>
+#include <cstdint>
 #include "inc/Collider.h"
 #include "inc/Segment.h"
 #include "inc/Slot.h"
@@ -519,7 +520,7 @@ bool ShiftCollider::mergeSlot(Segment *seg, Slot *slot, const SlotCollision *csl
 
 #if !defined GRAPHITE2_NTRACING
                     if (dbgout)
-                        dbgout->setenv(1, reinterpret_cast<void *>(j));
+                        dbgout->setenv(1, reinterpret_cast<void *>(static_cast<std::intptr_t>(j)));
 #endif
                     if (omin > otmax)
                         _ranges[i].weightedAxis(i, vmin - lmargin, vmax + lmargin, 0, 0, 0, 0, 0,
@@ -538,7 +539,7 @@ bool ShiftCollider::mergeSlot(Segment *seg, Slot *slot, const SlotCollision *csl
             {
 #if !defined GRAPHITE2_NTRACING
                     if (dbgout)
-                        dbgout->setenv(1, reinterpret_cast<void *>(-1));
+                        dbgout->setenv(1, reinterpret_cast<void *>(static_cast<std::intptr_t>(-1)));
 #endif
                 isCol = true;
                 if (omin > otmax)

@@ -74,18 +74,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 
 			m_layouts = GenerateLayouts();
 			m_parts = GenerateParts();
-			m_customField = new CustomFieldForTest(Cache, "testField", "testField", LexEntryTags.kClassId, CellarPropertyType.String, Guid.Empty);
-
-
-				NonUndoableUnitOfWorkHelper.Do(m_actionHandler, () =>
-			{
-				m_entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
-				m_entry.CitationForm.VernacularDefaultWritingSystem = TsStringUtils.MakeString("rubbish", Cache.DefaultVernWs);
-				// We set both alternatives because currently the default part for Bibliography uses vernacular,
-				// but I think this will probably get fixed. Anyway, this way the test is robust.
-				m_entry.Bibliography.SetAnalysisDefaultWritingSystem("My rubbishy bibliography");
-				m_entry.Bibliography.SetVernacularDefaultWritingSystem("My rubbishy bibliography");
-			});
 		}
 		#endregion
 
@@ -98,6 +86,17 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		public override void TestSetup()
 		{
 			base.TestSetup();
+
+			m_customField = new CustomFieldForTest(Cache, "testField", "testField", LexEntryTags.kClassId,
+				CellarPropertyType.String, Guid.Empty);
+			// base.TestSetup() may already start a unit-of-work; avoid nesting NonUndoable tasks.
+			m_entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
+			m_entry.CitationForm.VernacularDefaultWritingSystem = TsStringUtils.MakeString("rubbish", Cache.DefaultVernWs);
+			// We set both alternatives because currently the default part for Bibliography uses vernacular,
+			// but I think this will probably get fixed. Anyway, this way the test is robust.
+			m_entry.Bibliography.SetAnalysisDefaultWritingSystem("My rubbishy bibliography");
+			m_entry.Bibliography.SetVernacularDefaultWritingSystem("My rubbishy bibliography");
+
 			m_dtree = new DataTree();
 			m_mediator = new Mediator();
 			m_propertyTable = new PropertyTable(m_mediator);
@@ -113,6 +112,12 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 		/// ------------------------------------------------------------------------------------
 		public override void TestTearDown()
 		{
+			if (m_customField != null && Cache != null && Cache.MainCacheAccessor.MetaDataCache != null)
+			{
+				m_customField.Dispose();
+				m_customField = null;
+			}
+
 			// m_dtree gets disposed from m_parent because it's part of its Controls
 			if (m_parent != null)
 			{
@@ -131,13 +136,6 @@ namespace SIL.FieldWorks.Common.Framework.DetailControls
 			}
 
 			base.TestTearDown();
-		}
-
-		public override void FixtureTeardown()
-		{
-			base.FixtureTeardown();
-			if(Cache != null && Cache.MainCacheAccessor.MetaDataCache != null)
-				m_customField.Dispose();
 		}
 		#endregion
 

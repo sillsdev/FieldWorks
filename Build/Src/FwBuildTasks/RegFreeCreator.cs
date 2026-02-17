@@ -430,6 +430,8 @@ namespace SIL.FieldWorks.Build.Tasks
 						{
 							fileNode = GetOrCreateFileNode(parent, fileName);
 						}
+						// clrClass must be a direct child of assembly, not of file
+						// See: specs/003-convergence-regfree-com-coverage/REGFREE_BEST_PRACTICES.md
 						AddOrReplaceClrClass(
 							parent,
 							clsId,
@@ -899,9 +901,15 @@ namespace SIL.FieldWorks.Build.Tasks
 
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
-		/// Adds a clrClass element.
+		/// Adds a clrClass element as a direct child of the assembly element.
 		/// </summary>
-		/// <param name="assemblyNode">The assembly element.</param>
+		/// <remarks>
+		/// Windows SxS requires clrClass elements to be direct children of the assembly element,
+		/// not nested inside file elements. Nesting under file causes "side-by-side configuration
+		/// is incorrect" errors at runtime.
+		/// See: specs/003-convergence-regfree-com-coverage/REGFREE_BEST_PRACTICES.md
+		/// </remarks>
+		/// <param name="assemblyNode">The assembly element (must be the root assembly, not a file element).</param>
 		/// <param name="clsId">The CLSID string.</param>
 		/// <param name="threadingModel">The threading model.</param>
 		/// <param name="name">The full name of the class.</param>

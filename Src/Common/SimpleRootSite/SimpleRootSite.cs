@@ -187,7 +187,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// set to null we don't keep a rootsite around.
 		/// </summary>
 		private static WeakReference g_focusRootSite = new WeakReference(null);
-		private IContainer components;
+		private IContainer components = null;
 		/// <summary>True to allow layouts to take place, false otherwise (We use this instead
 		/// of SuspendLayout because SuspendLayout didn't work)</summary>
 		protected bool m_fAllowLayout = true;
@@ -294,7 +294,10 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// message with the previous language value when we want to set our own that we know.
 		/// If the user causes this message, we do want to change language/keyboard, but not
 		/// if OnGotFocus causes the message.</summary>
+		/// <remarks>Field is assigned in OnSetFocus but not yet read - reserved for future use.</remarks>
+#pragma warning disable CS0414 // Field is assigned but never read
 		private bool m_fHandlingOnGotFocus = false;
+#pragma warning restore CS0414
 
 		/// <summary>
 		/// This tells the rootsite whether to attempt to construct the rootbox automatically
@@ -4686,6 +4689,20 @@ namespace SIL.FieldWorks.Common.RootSites
 			CheckDisposed();
 			if (DesignMode || m_rootb == null)
 				return;
+
+			// Ensure we no longer receive PropChanged notifications after disposal.
+			// In some test scenarios (and occasionally during shutdown), notifications can arrive
+			// after the control has been disposed unless we explicitly unregister.
+			try
+			{
+				var notifyChange = this as IVwNotifyChange;
+				if (notifyChange != null)
+					(m_rootb.DataAccess as ISilDataAccess)?.RemoveNotification(notifyChange);
+			}
+			catch
+			{
+				// Best-effort: shutdown paths can be fragile and we don't want to throw during Dispose.
+			}
 
 			if (m_Timer != null)
 				m_Timer.Stop();

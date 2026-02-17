@@ -125,7 +125,6 @@ def index_repo_files(root: Path):
             "Obj",
             "Output",
             "Downloads",
-            "vagrant",
         }:
             continue
         for f in filenames:

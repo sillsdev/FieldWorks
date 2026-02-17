@@ -44,8 +44,31 @@
       <DOTNET_EnableCrashReport>0</DOTNET_EnableCrashReport>
       <!-- Suppress Windows Error Reporting (WER) dialogs -->
       <DOTNET_WER>0</DOTNET_WER>
+
+      <!-- Suppress FieldWorks assertion dialogs (native + managed) -->
+      <AssertUiEnabled>false</AssertUiEnabled>
+
+      <!-- Prefer a failing test over a modal dialog or silent continue -->
+      <AssertExceptionEnabled>true</AssertExceptionEnabled>
     </EnvironmentVariables>
   </RunConfiguration>
+
+  <!--
+    IMPORTANT: External NuGet Package Test Exclusion
+    ================================================
+    The SIL.LCModel.Tests, SIL.LCModel.Core.Tests, and SIL.LCModel.Utils.Tests NuGet
+    packages contain liblcm's own unit tests (2,488 tests total). These should NOT
+    be run as part of FieldWorks testing because:
+    1. They test liblcm internals, not FieldWorks code
+    2. They have dependency version conflicts (DependencyModel 2.0.4 vs FW's 9.0.9)
+    3. They're already tested in liblcm CI
+
+    The FieldWorks.targets MSBuild file already specifies exact test DLLs to run.
+    If using vstest.console.exe directly, exclude these assemblies:
+      vstest.console.exe *.Tests.dll /TestCaseFilter:"FullyQualifiedName!~SIL.LCModel.Tests&FullyQualifiedName!~SIL.LCModel.Core.Tests"
+
+    See: https://jira.sil.org/browse/LT-XXXXX for upstream fix request
+  -->
 
   <!-- NUnit adapter settings -->
   <NUnit>

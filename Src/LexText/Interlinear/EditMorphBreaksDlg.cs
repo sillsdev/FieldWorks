@@ -28,7 +28,9 @@ namespace SIL.FieldWorks.IText
 		/// <summary>
 		/// Required designer variable.
 		/// </summary>
+#pragma warning disable CS0649 // Field is never assigned to (WinForms designer field)
 		private Container m_components;
+#pragma warning restore CS0649
 		private Label m_lblWord;
 		private GroupBox m_groupBox2BreakCharacters;
 		private GroupBox m_groupBox1Examples;

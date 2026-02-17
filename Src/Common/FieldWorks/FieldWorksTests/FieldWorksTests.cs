@@ -20,7 +20,7 @@ namespace SIL.FieldWorks
 	{
 		// Use rooted paths in tests to avoid FwDirectoryFinder.ProjectsDirectory registry lookup.
 		// ProjectId.CleanUpNameForType only looks up ProjectsDirectory for non-rooted paths.
-		// Use Path.Combine with temp path for cross-platform compatibility (Windows, Linux/Docker).
+		// Use Path.Combine with temp path for cross-platform compatibility (Windows, Linux).
 		private static readonly string TestProjectPath =
 			Path.Combine(Path.GetTempPath(), "FwTests", "monkey", "monkey.fwdata");
 		private static readonly string OtherProjectPath =

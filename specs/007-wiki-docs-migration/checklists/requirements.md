@@ -48,9 +48,10 @@
 - ~~`docs/linux/vagrant.md`~~ — N/A
 
 **Instructions (`.github/instructions/`)**:
-- [x] `code-review.instructions.md` - Code review principles
-- [x] `coding-standard.instructions.md` - Coding standards
-- [x] `dispose.instructions.md` - IDisposable patterns
+_No new instruction files created (repo uses a curated minimal set)._ Guidance is referenced from:
+- `.editorconfig` - Formatting rules
+- `.github/commit-guidelines.md` - Commit rules
+- Existing `.github/instructions/managed.instructions.md` - C# patterns (including IDisposable guidance as needed)
 
 **Modified Files**:
 - [x] `ReadMe.md` - Updated with links to new docs
@@ -62,7 +63,7 @@
 | SC-001: Single repository source | ✅ Verified | All docs in `docs/` and `.github/instructions/` |
 | SC-002: GitHub-native workflows | ✅ Verified | No Gerrit references in new docs |
 | SC-003: Clear onboarding path | ✅ Verified | `docs/CONTRIBUTING.md` provides complete path |
-| SC-004: Discoverable Copilot guidance | ✅ Verified | 3 new instruction files with proper frontmatter |
+| SC-004: Discoverable Copilot guidance | ✅ Verified | Guidance consolidated via `.github/AI_GOVERNANCE.md` + curated `.github/instructions/` |
 | SC-005: No obsolete content | ✅ Verified | Pattern search found no obsolete terms |
 
 ### Validation Tasks

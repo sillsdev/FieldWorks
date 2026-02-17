@@ -12,7 +12,6 @@ namespace SIL.FieldWorks.XWorks.DictionaryDetailsView
 	/// </summary>
 	public partial class GroupingOptionsView : UserControl, IDictionaryGroupingOptionsView
 	{
-		private Control m_panelContents;
 		private readonly ToolTip m_tt = new ToolTip();
 
 		public GroupingOptionsView()

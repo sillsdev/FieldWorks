@@ -45,7 +45,7 @@ namespace XCore
 		public event EventHandler ShowFirstPaneChanged;
 
 		// When its superclass gets switched to the new SplitContainer class. it has to implement IXCoreUserControl itself.
-		private IContainer components;
+		private IContainer components = null;
 		private Mediator m_mediator;
 		private PropertyTable m_propertyTable;
 		private bool m_prioritySecond; // true to give second pane first chance at broadcast messages.

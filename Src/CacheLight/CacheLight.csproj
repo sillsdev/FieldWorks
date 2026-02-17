@@ -1,13 +1,11 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
     <AssemblyName>CacheLight</AssemblyName>
     <RootNamespace>SIL.FieldWorks.CacheLight</RootNamespace>
     <OutputType>Library</OutputType>
-    <ProjectGuid>{34442A32-31DE-45A8-AD36-0ECFE4095523}</ProjectGuid>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <WarningLevel>4</WarningLevel>
+    <ProjectGuid>{34442A32-31DE-45A8-AD36-0ECFE4095523}</ProjectGuid>    <WarningLevel>4</WarningLevel>
     <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>

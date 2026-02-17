@@ -174,4 +174,4 @@ File types: *.cs; *.xml
 ## See Also
 
 - [Dependencies on Other Repos](dependencies.md) - Related repository information
-- [Coding Standards](../../.github/instructions/coding-standard.instructions.md) - Code style guidelines
+- [Commit message guidelines](../../.github/commit-guidelines.md) - CI-enforced commit rules

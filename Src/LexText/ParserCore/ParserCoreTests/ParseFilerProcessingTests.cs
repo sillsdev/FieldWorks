@@ -222,14 +222,14 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		}
 
 		[Test]
-		[Ignore("Is it ever possible for a parser to return more than one wordform parse?")]
 		public void TwoWordforms()
 		{
 			IWfiWordform snake = CheckAnalysisSize("snakeTEST", 0, true);
 			IWfiWordform bull = CheckAnalysisSize("bullTEST", 0, true);
 			ILexDb ldb = Cache.LanguageProject.LexDbOA;
 
-			ParseResult result = null;
+			ParseResult snakeResult = null;
+			ParseResult bullResult = null;
 			UndoableUnitOfWorkHelper.Do("Undo stuff", "Redo stuff", m_actionHandler, () =>
 			{
 				// Snake
@@ -248,12 +248,15 @@ namespace SIL.FieldWorks.WordWorks.Parser
 				IMoStemMsa bullNMsa = m_stemMsaFactory.Create();
 				bullN.MorphoSyntaxAnalysesOC.Add(bullNMsa);
 
-				result = new ParseResult(new[]
+				snakeResult = new ParseResult(new[]
 					{
 						new ParseAnalysis(new[]
 							{
 								new ParseMorph(snakeNForm, snakeNMsa)
-							}),
+							})
+					});
+				bullResult = new ParseResult(new[]
+					{
 						new ParseAnalysis(new[]
 							{
 								new ParseMorph(bullNForm, bullNMsa)
@@ -261,7 +264,8 @@ namespace SIL.FieldWorks.WordWorks.Parser
 					});
 			});
 
-			m_filer.ProcessParse(snake, ParserPriority.Low, result);
+			m_filer.ProcessParse(snake, ParserPriority.Low, snakeResult);
+			m_filer.ProcessParse(bull, ParserPriority.Low, bullResult);
 			ExecuteIdleQueue();
 			CheckAnalysisSize("snakeTEST", 1, false);
 			CheckAnalysisSize("bullTEST", 1, false);

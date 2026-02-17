@@ -31,7 +31,6 @@
    python convergence.py private-assets validate
    # Output: ✅ All projects pass validation!
 
-   docker exec fw-agent-3 powershell -NoProfile -Command "msbuild FieldWorks.sln /m /p:Configuration=Debug" > Output/Debug/private-assets-build.log
    ```
    - Validation confirms every `SIL.LCModel.*.Tests` reference now specifies `PrivateAssets="All"`.
    - The MSBuild run should ideally succeed. If it fails with unrelated errors (e.g. CS0579), verify absence of NU1102 warnings:

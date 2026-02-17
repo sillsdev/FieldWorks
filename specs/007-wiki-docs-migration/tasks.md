@@ -43,7 +43,7 @@
 - [x] T014 [P] Fetch wiki page: "Build FieldWorks (Linux)" from `https://github.com/sillsdev/FwDocumentation/wiki/Build-FieldWorks-%28Linux%29`
 - [x] T015 [P] Fetch wiki page: "Using Vagrant" from `https://github.com/sillsdev/FwDocumentation/wiki/Using-Vagrant`
 - [x] T015a [P] Fetch wiki page: "Release Workflow Steps" from `https://github.com/sillsdev/FwDocumentation/wiki/Release-Workflow-Steps`
-- [x] T016 Verify existing instruction files in `.github/instructions/` to avoid content duplication (build, testing, managed, native, security, csharp)
+- [x] T016 Verify existing instruction files in `.github/instructions/` to avoid content duplication (build, testing, managed, native, security)
 
 **Checkpoint**: All source content fetched and analyzed ✅
 
@@ -93,11 +93,9 @@
   - Code review expectations
   - Merge requirements (approvals, CI passing)
   - Link to existing `PULL_REQUEST_TEMPLATE.md` if exists
-- [x] T022 [P] [US2] Create `.github/instructions/code-review.instructions.md` from wiki "Code Reviews"
-  - Extract review principles (what to look for)
-  - Remove Gerrit UI references ("Change page", "+2 review")
-  - Add applyTo frontmatter for `**/*.cs` and `**/*.cpp`
-  - Reference existing `managed.instructions.md` and `native.instructions.md`
+- [x] T022 [P] [US2] Document code review expectations in GitHub-native places
+  - `docs/workflows/pull-request-workflow.md`
+  - `.github/pull_request_template.md`
 - [x] T023 [US2] Create `docs/workflows/release-process.md` from wiki "Release Workflow Steps"
   - Mark with `CONFIRMATION_NEEDED` for steps that cannot be verified
   - Remove Jenkins/TeamCity references
@@ -140,16 +138,11 @@
 
 ### Implementation for User Story 4
 
-- [x] T026 [US4] Create `.github/instructions/coding-standard.instructions.md` from wiki "Coding Standard"
-  - Add applyTo frontmatter for `**/*.cs, **/*.cpp, **/*.h`
-  - Verify consistency with existing `.editorconfig`
-  - Reference commit message conventions (gitlint integration)
-  - Link to Palaso Coding Standards (external Google Doc)
-- [x] T027 [P] [US4] Create `.github/instructions/dispose.instructions.md` from wiki "Dispose"
-  - Add applyTo frontmatter for `**/*.cs`
-  - IDisposable patterns and best practices
-  - Reference `FwDisposableBase` if still exists in codebase
-  - Link to existing `managed.instructions.md`
+- [x] T026 [US4] Ensure coding/formatting and commit conventions are discoverable
+  - `.editorconfig` for formatting
+  - `.github/commit-guidelines.md` for commit rules
+- [x] T027 [P] [US4] Ensure IDisposable guidance is discoverable
+  - `.github/instructions/managed.instructions.md` (as needed)
 
 **Checkpoint**: User Story 4 complete - coding standards accessible ✅
 

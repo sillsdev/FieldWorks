@@ -160,8 +160,10 @@ namespace SIL.FieldWorks
 		public void CleanUpNameForType_Default_onlyName()
 		{
 			m_defaultBepType = BackendProviderType.kXML;
-			string expectedPath = Path.Combine(Path.Combine(FwDirectoryFinder.ProjectsDirectory, "ape"),
-				LcmFileHelper.GetXmlDataFileName("ape"));
+			string expectedPath = Path.Combine(
+				Path.Combine(FwDirectoryFinder.ProjectsDirectory, "ape"),
+				LcmFileHelper.GetXmlDataFileName("ape")
+			);
 			m_mockFileOs.AddExistingFile(expectedPath);
 
 			ProjectId proj = new ProjectId("ape");
@@ -180,7 +182,10 @@ namespace SIL.FieldWorks
 		[Test]
 		public void CleanUpNameForType_Default_NameWithPeriod_Exists()
 		{
-			string expectedPath = Path.Combine(Path.Combine(FwDirectoryFinder.ProjectsDirectory, "my.monkey"), "my.monkey");
+			string expectedPath = Path.Combine(
+				Path.Combine(FwDirectoryFinder.ProjectsDirectory, "my.monkey"),
+				"my.monkey"
+			);
 			m_mockFileOs.AddExistingFile(expectedPath);
 
 			ProjectId proj = new ProjectId("my.monkey");
@@ -199,8 +204,14 @@ namespace SIL.FieldWorks
 		[Test]
 		public void CleanUpNameForType_XML_NameWithPeriod_FilesWithAndWithoutExtensionExist()
 		{
-			string myMonkeyProjectFolder = Path.Combine(FwDirectoryFinder.ProjectsDirectory, "my.monkey");
-			string expectedPath = Path.Combine(myMonkeyProjectFolder, LcmFileHelper.GetXmlDataFileName("my.monkey"));
+			string myMonkeyProjectFolder = Path.Combine(
+				FwDirectoryFinder.ProjectsDirectory,
+				"my.monkey"
+			);
+			string expectedPath = Path.Combine(
+				myMonkeyProjectFolder,
+				LcmFileHelper.GetXmlDataFileName("my.monkey")
+			);
 			m_mockFileOs.AddExistingFile(expectedPath);
 			m_mockFileOs.AddExistingFile(Path.Combine(myMonkeyProjectFolder, "my.monkey"));
 
@@ -275,7 +286,10 @@ namespace SIL.FieldWorks
 		[Test]
 		public void CleanUpNameForType_XML_FullPath()
 		{
-			string expectedPath = Path.Combine(FwDirectoryFinder.ProjectsDirectory, LcmFileHelper.GetXmlDataFileName("monkey"));
+			string expectedPath = Path.Combine(
+				FwDirectoryFinder.ProjectsDirectory,
+				LcmFileHelper.GetXmlDataFileName("monkey")
+			);
 			m_mockFileOs.AddExistingFile(expectedPath);
 
 			var proj = new ProjectId(expectedPath);
@@ -294,7 +308,10 @@ namespace SIL.FieldWorks
 		[Ignore("Not sure what this would be useful for or if this would be the desired behavior.")]
 		public void CleanUpNameForType_XML_RelativePath()
 		{
-			string relativePath = Path.Combine("primate", LcmFileHelper.GetXmlDataFileName("monkey"));
+			string relativePath = Path.Combine(
+				"primate",
+				LcmFileHelper.GetXmlDataFileName("monkey")
+			);
 			string expectedPath = Path.Combine(FwDirectoryFinder.ProjectsDirectory, relativePath);
 			m_mockFileOs.AddExistingFile(expectedPath);
 
@@ -372,7 +389,10 @@ namespace SIL.FieldWorks
 		[Test]
 		public void AssertValid_InvalidProjectType()
 		{
-			var proj = new ProjectId(BackendProviderType.kInvalid, LcmFileHelper.GetXmlDataFileName("invalid"));
+			var proj = new ProjectId(
+				BackendProviderType.kInvalid,
+				LcmFileHelper.GetXmlDataFileName("invalid")
+			);
 			try
 			{
 				proj.AssertValid();
@@ -393,7 +413,10 @@ namespace SIL.FieldWorks
 		[Test]
 		public void AssertValid_Invalid_SharedFolderNotFound()
 		{
-			var proj = new ProjectId(LcmFileHelper.GetXmlDataFileName("monkey"), FwLinkArgs.kLocalHost);
+			var proj = new ProjectId(
+				LcmFileHelper.GetXmlDataFileName("monkey"),
+				FwLinkArgs.kLocalHost
+			);
 			try
 			{
 				proj.AssertValid();
@@ -415,9 +438,17 @@ namespace SIL.FieldWorks
 		[Test]
 		public void NameAndPath()
 		{
-			string myProjectFolder = Path.Combine(FwDirectoryFinder.ProjectsDirectory, "My.Project");
+			string myProjectFolder = Path.Combine(
+				FwDirectoryFinder.ProjectsDirectory,
+				"My.Project"
+			);
 			ProjectId projId = new ProjectId(BackendProviderType.kXML, "My.Project");
-			Assert.That(projId.Path, Is.EqualTo(Path.Combine(myProjectFolder, LcmFileHelper.GetXmlDataFileName("My.Project"))));
+			Assert.That(
+				projId.Path,
+				Is.EqualTo(
+					Path.Combine(myProjectFolder, LcmFileHelper.GetXmlDataFileName("My.Project"))
+				)
+			);
 			Assert.That(projId.Name, Is.EqualTo("My.Project"));
 		}
 
@@ -433,8 +464,10 @@ namespace SIL.FieldWorks
 		/// ------------------------------------------------------------------------------------
 		public static string GetXmlProjectFilename(string projectName)
 		{
-			return Path.Combine(Path.Combine(FwDirectoryFinder.ProjectsDirectory, projectName),
-				LcmFileHelper.GetXmlDataFileName(projectName));
+			return Path.Combine(
+				Path.Combine(FwDirectoryFinder.ProjectsDirectory, projectName),
+				LcmFileHelper.GetXmlDataFileName(projectName)
+			);
 		}
 		#endregion
 	}

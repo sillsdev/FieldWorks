@@ -28,14 +28,26 @@
 
 ### Phase 1: Remove WiX Downgrade Workaround
 
+- [x] Create `Build/Agent/Setup-InstallerBuild.ps1` to validate prerequisites
 - [ ] Test base installer build locally with WiX 3.14.x (without downgrade)
 - [ ] Test patch installer build locally with WiX 3.14.x (without downgrade)
 - [ ] Verify `insignia` tool works correctly with WiX 3.14.x
-- [ ] Remove downgrade step from `base-installer-cd.yml`
-- [ ] Remove downgrade step from `patch-installer-cd.yml`
+- [x] Remove downgrade step from `base-installer-cd.yml`
+- [x] Remove downgrade step from `patch-installer-cd.yml`
 - [ ] Push changes and verify CI builds succeed
 
-### Phase 2: Validation Testing
+### Phase 2: Local Validation (before CI)
+
+- [ ] Run `.\Build\Agent\Setup-InstallerBuild.ps1 -ValidateOnly`
+- [ ] Open VS Developer Command Prompt: `Launch-VsDevShell.ps1 -Arch amd64`
+- [ ] Run `msbuild Build/Orchestrator.proj /t:RestorePackages`
+- [ ] Build base installer locally with WiX 3.14.x
+- [ ] Verify `BuildDir/FieldWorks_*_Offline_x64.exe` created
+- [ ] Run `.\Build\Agent\Setup-InstallerBuild.ps1 -SetupPatch`
+- [ ] Build patch installer locally with WiX 3.14.x
+- [ ] Verify `BuildDir/FieldWorks_*.msp` created
+
+### Phase 3: CI Validation Testing
 
 - [ ] Build base installer (online variant) and test installation on Windows 10
 - [ ] Build base installer (offline variant) and test installation on Windows 11

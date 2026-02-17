@@ -337,7 +337,9 @@ namespace SIL.FieldWorks.IText.FlexInterlinModel
 
 		private bool analysisStatusFieldSpecified;
 
+#pragma warning disable CS0169 // Field is never used (generated code)
 		private string valueField;
+#pragma warning restore CS0169
 
 		/// <remarks/>
 		[System.Xml.Serialization.XmlElementAttribute("run", Form = System.Xml.Schema.XmlSchemaForm.Unqualified)]

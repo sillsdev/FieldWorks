@@ -343,7 +343,6 @@ namespace SIL.FieldWorks.Filters
 	/// ----------------------------------------------------------------------------------------
 	[TestFixture]
 	[SetCulture("de-DE")]
-	[Ignore("This test demonstrates FWR-2942")]
 	public class DateTimeMatcherTests_German
 	{
 		///--------------------------------------------------------------------------------------

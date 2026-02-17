@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
+  <PropertyGroup>
+    <config Condition="'$(config)'==''">release</config>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildThisFileDirectory)Installer.legacy.targets" />
+
+  <Target Name="VerifyWix3Inputs">
+    <PropertyGroup>
+      <_Wix3InputDir>$([MSBuild]::NormalizePath($(MSBuildThisFileDirectory), ..\FLExInstaller))</_Wix3InputDir>
+    </PropertyGroup>
+
+    <Exec
+      Command="findstr /n /i /c:&quot;http://wixtoolset.org/schemas/v4&quot; /c:&quot;http://wixtoolset.org/schemas/v4/wxs&quot; &quot;$(_Wix3InputDir)\*.wxi&quot;"
+      IgnoreExitCode="true"
+      ConsoleToMSBuild="true">
+      <Output TaskParameter="ExitCode" PropertyName="Wix3SchemaScanExitCode" />
+      <Output TaskParameter="ConsoleOutput" ItemName="Wix3SchemaScanOutput" />
+    </Exec>
+
+    <Error
+      Condition="'$(Wix3SchemaScanExitCode)' == '0'"
+      Text="WiX 6 schema detected in WiX 3 inputs under $(_Wix3InputDir)\*.wxi. Keep WiX 3 includes isolated from WiX 6. Matches: @(Wix3SchemaScanOutput)" />
+    <Error
+      Condition="'$(Wix3SchemaScanExitCode)' == '2'"
+      Text="WiX 3 input scan failed. Ensure findstr is available and the input path exists: $(_Wix3InputDir)\*.wxi" />
+  </Target>
+
+  <Target Name="BuildInstaller" DependsOnTargets="VerifyWix3Inputs;BuildBaseInstaller" />
+  <Target Name="BuildInstallerWix3" DependsOnTargets="VerifyWix3Inputs;BuildBaseInstaller" />
+</Project>

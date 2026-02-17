@@ -71,7 +71,7 @@ server that auto-discovers projects by scanning for `.serena` folders. Combined 
 workspace-level `mcp.json`, this creates duplicate project registrations.
 
 ### Solution
-**Option A: Use only workspace-level Serena (recommended)**
+**Use only workspace-level Serena**
 
 Remove or disable the Serena entry from your user-level MCP config:
 ```powershell
@@ -80,25 +80,6 @@ code "$env:APPDATA\Code\User\mcp.json"
 ```
 Remove the `"oraios/serena"` entry. The workspace `mcp.json` will provide Serena
 with explicit project targeting.
-
-**Option B: Use unique project names per worktree (automatic for agents)**
-
-The `spin-up-agents.ps1` script automatically sets unique `project_name` values
-(e.g., `FieldWorks-Agent-1`, `FieldWorks-Agent-2`) in each worktree's `.serena/project.yml`.
-This prevents Serena from confusing the worktrees.
-
-If you manually create worktrees, give each a unique `project_name`:
-```yaml
-# In fw-worktrees/agent-1/.serena/project.yml
-project_name: "FieldWorks-Agent-1"
-```
-The script also adds `.serena/project.yml` to the worktree's git exclude file so this
-local change doesn't appear as a modified file.
-
-**Option C: Add worktree paths to ignored_paths**
-
-In the main repo's `.serena/project.yml`, you cannot ignore sibling directories,
-but you can ensure each worktree's config ignores other worktrees' output directories.
 
 ## Troubleshooting
 

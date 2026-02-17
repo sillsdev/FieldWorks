@@ -19,7 +19,7 @@ A new developer wants to contribute to FieldWorks. They visit the repository and
 
 1. **Given** a developer visits the FieldWorks repo, **When** they look for setup instructions, **Then** they find a clear link from `ReadMe.md` to `docs/CONTRIBUTING.md`
 2. **Given** a developer follows the contributing guide, **When** they complete the prerequisite steps, **Then** they can run `.\build.ps1` successfully
-3. **Given** a developer needs platform-specific instructions, **When** they check the contributing guide, **Then** they find both Windows and Linux setup paths
+3. **Given** a developer needs platform-specific instructions, **When** they check the contributing guide, **Then** they find the supported Windows setup path (and any legacy/non-supported platforms are clearly marked)
 
 ---
 
@@ -64,7 +64,7 @@ A developer wants to ensure their code follows FieldWorks conventions. They find
 
 **Acceptance Scenarios**:
 
-1. **Given** a developer writes new code, **When** they check for coding standards, **Then** they find `.github/instructions/coding-standard.instructions.md`
+1. **Given** a developer writes new code, **When** they check for coding/formatting and commit conventions, **Then** they find `.editorconfig` and `.github/commit-guidelines.md`
 2. **Given** the coding standards exist, **When** they are compared to `.editorconfig`, **Then** they are consistent and complementary
 
 ---
@@ -83,12 +83,12 @@ A developer wants to ensure their code follows FieldWorks conventions. They find
 - **FR-002**: `ReadMe.md` MUST link to the main developer documentation entry point
 - **FR-003**: Documentation MUST include a contributor setup guide covering Windows prerequisites and build steps
 - **FR-004**: Documentation MUST include a git workflow guide updated for GitHub (replacing Gerrit references)
-- **FR-005**: Documentation MUST include coding standards in `.github/instructions/coding-standard.instructions.md`, aligned with existing `.editorconfig` and other instruction files
+- **FR-005**: Documentation MUST make coding/formatting and commit conventions discoverable via `.editorconfig` and `.github/commit-guidelines.md` (and MUST avoid duplicating guidance across multiple sources)
 - **FR-006**: Documentation MUST include data migration authoring guide with current file paths and procedures
 - **FR-007**: Documentation MUST NOT contain broken internal links
 - **FR-008**: Documentation MUST use relative links for in-repo references
 - **FR-009**: Each migrated item MUST be validated against codebase: confirmed active → migrate with GitHub equivalent; confirmed obsolete → remove; uncertain → mark with `CONFIRMATION_NEEDED` annotation
-- **FR-010**: Linux-specific documentation MUST be preserved for cross-platform developers
+- **FR-010**: Platform-specific documentation MUST be evaluated against current repo reality (active → migrate; obsolete → remove; uncertain → mark with `CONFIRMATION_NEEDED`)
 
 ### Key Entities
 

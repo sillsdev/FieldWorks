@@ -27,7 +27,7 @@ Analysis of the FwDocumentation wiki identified ~50 pages across 5 major categor
 | Detailed Description of the Workflow | OBSOLETE | N/A | Gerrit-centric; replace entirely |
 | Workflow Step by Step | OBSOLETE | `docs/workflows/pull-request-workflow.md` | Rewrite for GitHub PRs |
 | Release Workflow Steps | CONFIRMATION_NEEDED | `docs/workflows/release-process.md` | May still be relevant for release managers |
-| Code Reviews | PARTIALLY OBSOLETE | `.github/instructions/code-review.instructions.md` | Gerrit UI obsolete; review principles still valid |
+| Code Reviews | PARTIALLY OBSOLETE | `docs/workflows/pull-request-workflow.md` | Gerrit UI obsolete; review principles still valid |
 
 **Decision**: Create new GitHub-native workflow docs. Preserve code review principles. Mark release workflow for `CONFIRMATION_NEEDED`.
 
@@ -35,10 +35,10 @@ Analysis of the FwDocumentation wiki identified ~50 pages across 5 major categor
 
 | Wiki Page | Status | Target Location | Notes |
 |-----------|--------|-----------------|-------|
-| Coding Standard | ACTIVE | `.github/instructions/coding-standard.instructions.md` | Commit message and whitespace rules still enforced |
+| Coding Standard | ACTIVE | `.editorconfig` + `.github/commit-guidelines.md` | Commit message and whitespace rules still enforced |
 | Palaso Coding Standards (linked) | EXTERNAL | Link only | External doc; preserve link |
 
-**Decision**: Migrate to instruction file. Merge with existing `.editorconfig` guidance.
+**Decision**: Keep formatting in `.editorconfig` and commit rules in `.github/commit-guidelines.md`; avoid adding new instruction files for this.
 
 ### Category 4: Architecture (Priority: P3) ✅ MIGRATE
 
@@ -46,7 +46,7 @@ Analysis of the FwDocumentation wiki identified ~50 pages across 5 major categor
 |-----------|--------|-----------------|-------|
 | Data Migrations | ACTIVE | `docs/architecture/data-migrations.md` | Critical for FLEx developers; file paths need verification |
 | Dependencies on Other Repos | PARTIALLY ACTIVE | `docs/architecture/dependencies.md` | TeamCity references obsolete; dependency concepts valid |
-| Dispose | ACTIVE | `.github/instructions/dispose.instructions.md` | IDisposable patterns still relevant |
+| Dispose | ACTIVE | `.github/instructions/managed.instructions.md` | IDisposable patterns still relevant |
 
 **Decision**: Migrate Data Migrations as high priority. Verify file paths in current codebase.
 
@@ -179,7 +179,7 @@ The following topics already have instruction files - wiki content should refere
 - `managed.instructions.md` - C# development
 - `native.instructions.md` - C++ development
 - `security.instructions.md` - Security practices
-- `csharp.instructions.md` - C# coding guidelines
+- `terminal.instructions.md` - Terminal command restrictions and safe wrappers
 
 ## Dependencies
 

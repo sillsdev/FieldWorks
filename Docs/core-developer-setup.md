@@ -23,25 +23,21 @@ Install with these workloads:
 
 See [Visual Studio Setup](visual-studio-setup.md) for detailed component list.
 
-### WiX Toolset 3.14.1
+### WiX Toolset (v6 via NuGet restore)
 
-Required for building the installer:
+Installer builds use SDK-style `.wixproj` projects and restore WiX v6 tools via NuGet during the build. No separate WiX 3.x installation is required.
 
 ```powershell
-# Run Setup-Developer-Machine.ps1 to install automatically
+# Standard developer machine setup
 .\Setup-Developer-Machine.ps1
 
-# Or install manually:
-# Download from https://github.com/wixtoolset/wix3/releases/tag/wix3141rtm
-# Extract to C:\Wix314 or another location
-# Add to PATH and set WIX environment variable
+# Optional: set up installer helper repositories
+.\Setup-Developer-Machine.ps1 -InstallerDeps
 ```
 
 ### Environment Variables
 
-After installing WiX:
-- `WIX` = Path to WiX installation (e.g., `C:\Wix314`)
-- Ensure WiX is in your `PATH`
+No WiX-specific environment variables are required for WiX v6 SDK builds.
 
 ### Verification
 
@@ -51,11 +47,11 @@ Run these commands to verify your environment:
 # Check Visual Studio
 & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" -latest
 
-# Check WiX
-candle.exe -?
-
 # Check Git
 git --version
+
+# Verify installer build prerequisites
+.\Build\Agent\Setup-InstallerBuild.ps1 -ValidateOnly
 ```
 
 ## Additional Setup

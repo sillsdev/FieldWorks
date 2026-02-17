@@ -58,7 +58,21 @@ namespace SIL.FieldWorks.Common.FwUtils
 			m_ISilDataAccess = cda;
 			ILgWritingSystemFactory wsf = new WritingSystemManager();
 			m_ISilDataAccess.WritingSystemFactory = wsf;
+			wsf.UserWs = EnsureWs("en");
 			m_IVwCacheDa = cda;
+		}
+
+		private int EnsureWs(string wsId)
+		{
+			var wsf = m_ISilDataAccess.WritingSystemFactory;
+			var ws = wsf.GetWsFromStr(wsId);
+			if (ws < 1)
+			{
+				wsf.get_Engine(wsId);
+				ws = wsf.GetWsFromStr(wsId);
+			}
+			Assert.That(ws, Is.GreaterThan(0), $"Failed to initialize writing system '{wsId}'.");
+			return ws;
 		}
 
 		/// <summary/>
@@ -320,29 +334,32 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Ignore("Writing System 'missing' problem that I decline to track down just yet.")]
 		public void MultiStringAlt()
 		{
-			ITsString tsStringNew = m_ISilDataAccess.get_MultiStringAlt(1117, 2227, 7);
+			var wsVern = EnsureWs("en");
+			var wsAnal = EnsureWs("fr");
+
+			ITsString tsStringNew = m_ISilDataAccess.get_MultiStringAlt(1117, 2227, wsVern);
 			Assert.That(tsStringNew, Is.Not.Null);
 			Assert.That(tsStringNew.Length, Is.EqualTo(0));
 
 			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Verse");
+			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, wsVern);
 			strBldr.Replace(0, 0, "Test", propsBldr.GetTextProps());
 			ITsString tsString = strBldr.GetString();
-			m_IVwCacheDa.CacheStringAlt(1117, 2227, 7, tsString);
-			tsStringNew = m_ISilDataAccess.get_MultiStringAlt(1117, 2227, 7);
+			m_IVwCacheDa.CacheStringAlt(1117, 2227, wsVern, tsString);
+			tsStringNew = m_ISilDataAccess.get_MultiStringAlt(1117, 2227, wsVern);
 			Assert.That(tsStringNew, Is.EqualTo(tsString));
 
 			strBldr.Replace(0, 0, "SecondTest", propsBldr.GetTextProps());
 			tsString = strBldr.GetString();
-			m_IVwCacheDa.CacheStringAlt(1117, 2227, 7, tsString);
-			tsStringNew = m_ISilDataAccess.get_MultiStringAlt(1117, 2227, 7);
+			m_IVwCacheDa.CacheStringAlt(1117, 2227, wsVern, tsString);
+			tsStringNew = m_ISilDataAccess.get_MultiStringAlt(1117, 2227, wsVern);
 			Assert.That(tsStringNew, Is.EqualTo(tsString));
 
-			tsStringNew = m_ISilDataAccess.get_MultiStringAlt(1117, 2227, 8);
+			tsStringNew = m_ISilDataAccess.get_MultiStringAlt(1117, 2227, wsAnal);
 			Assert.That(tsStringNew, Is.Not.Null);
 			Assert.That(tsStringNew.Length, Is.EqualTo(0));
 		}
@@ -353,10 +370,10 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Ignore("Writing System 'missing' problem that I decline to track down just yet.")]
 		public void StringProp_EmptyString()
 		{
 			// Test StringProp
+			EnsureWs("en");
 			ITsString tsStringNew = m_ISilDataAccess.get_StringProp(1118, 2228);
 			Assert.That(tsStringNew.Length, Is.EqualTo(0));
 		}
@@ -367,13 +384,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Ignore("Writing System 'missing' problem that I decline to track down just yet.")]
 		public void StringProp_SimpleString()
 		{
 			// Test StringProp
+			var ws = EnsureWs("en");
 			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Verse");
+			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, ws);
 			strBldr.Replace(0, 0, "StringPropTest", propsBldr.GetTextProps());
 			ITsString tsString = strBldr.GetString();
 			m_IVwCacheDa.CacheStringProp(1118, 2228, tsString);
@@ -389,12 +407,13 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Ignore("Writing System 'missing' problem that I decline to track down just yet.")]
 		public void StringProp_ReplaceStringInCache()
 		{
+			var ws = EnsureWs("en");
 			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Verse");
+			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, ws);
 			strBldr.Replace(0, 0, "StringPropTest", propsBldr.GetTextProps());
 			ITsString tsString = strBldr.GetString();
 			m_IVwCacheDa.CacheStringProp(1118, 2228, tsString);
@@ -454,7 +473,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="tag">tag part of the key</param>
 		/// <param name="expValues">Expected values</param>
 		/// ------------------------------------------------------------------------------------
-		private void VerifyCache(int hvo, int tag, object[] expValues)
+		private void VerifyCache(int hvo, int tag, int multiWs, object[] expValues)
 		{
 			int hvoVal = m_ISilDataAccess.get_ObjectProp(hvo, tag);
 			Assert.That(hvoVal, Is.EqualTo(expValues[0]));
@@ -487,7 +506,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				int valInt = m_ISilDataAccess.get_IntProp(hvo, tag);
 				Assert.That(valInt, Is.EqualTo(expValues[5]));
 
-				ITsString tsStringNew = m_ISilDataAccess.get_MultiStringAlt(hvo, tag, 12345);
+				ITsString tsStringNew = m_ISilDataAccess.get_MultiStringAlt(hvo, tag, multiWs);
 				Assert.That(tsStringNew.Text, Is.EqualTo(expValues[6]));
 
 				tsStringNew = m_ISilDataAccess.get_StringProp(hvo, tag);
@@ -499,7 +518,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				object obj = m_ISilDataAccess.get_UnknownProp(hvo, tag);
 				Assert.That(obj, Is.EqualTo(expValues[9]));
 
-				CheckIsPropInCache(hvo, tag, expValues);
+				CheckIsPropInCache(hvo, tag, multiWs, expValues);
 			}
 		}
 
@@ -511,7 +530,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// <param name="tag">tag part of the key</param>
 		/// <param name="expValues">Expected values</param>
 		/// ------------------------------------------------------------------------------------
-		private void CheckIsPropInCache(int hvo, int tag, object[] expValues)
+		private void CheckIsPropInCache(int hvo, int tag, int multiWs, object[] expValues)
 		{
 			for (CellarPropertyType cpt = CellarPropertyType.Nil;
 				cpt <= CellarPropertyType.ReferenceSequence; cpt++)
@@ -579,7 +598,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 					default:
 						continue;
 				}
-				Assert.That(m_ISilDataAccess.get_IsPropInCache(hvo, tag, (int)cpt, 12345), Is.EqualTo(flag), string.Format("IsPropInCache for property type '{0}' failed;", cpt));
+				Assert.That(m_ISilDataAccess.get_IsPropInCache(hvo, tag, (int)cpt, multiWs), Is.EqualTo(flag), string.Format("IsPropInCache for property type '{0}' failed;", cpt));
 			}
 		}
 
@@ -591,65 +610,66 @@ namespace SIL.FieldWorks.Common.FwUtils
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		[Test]
-		[Ignore("Writing System 'missing' problem that I decline to track down just yet.")]
 		public void KeyCheck()
 		{
+			var wsMulti = EnsureWs("en");
 			m_IVwCacheDa.CacheObjProp(1121, 2221, 7777);
-			VerifyCache(1121, 2221,
+			VerifyCache(1121, 2221, wsMulti,
 				new object[] { 7777, 0, 0, Guid.Empty, 0, 0, null, null, null, null });
 
 			int[] rgHvo = new int[] { 33, 44, 55 };
 			m_IVwCacheDa.CacheVecProp(1122, 2222, rgHvo, rgHvo.Length);
-			VerifyCache(1122, 2222,
+			VerifyCache(1122, 2222, wsMulti,
 				new object[] { 0, rgHvo, 0, Guid.Empty, 0, 0, null, null, null, null });
 
 			byte[] prgb = new byte[] { 3, 4, 5 };
 			m_IVwCacheDa.CacheBinaryProp(1123, 2223, prgb, prgb.Length);
-			VerifyCache(1123, 2223,
+			VerifyCache(1123, 2223, wsMulti,
 				new object[] { 0, 0, prgb, Guid.Empty, 0, 0, null, null, null, null });
 
 			Guid guid = new Guid(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11);
 			m_IVwCacheDa.CacheGuidProp(1124, 2224, guid);
-			VerifyCache(1124, 2224,
+			VerifyCache(1124, 2224, wsMulti,
 				new object[] { 0, 0, 0, guid, 0, 0, null, null, null, null });
 
 			m_IVwCacheDa.CacheInt64Prop(1125, 2225, 123456789);
-			VerifyCache(1125, 2225,
+			VerifyCache(1125, 2225, wsMulti,
 				new object[] { 0, 0, 0, Guid.Empty, 123456789, 0, null, null, null, null });
 
 			// TimeProp uses the same cache as Int64
 			long ticks = DateTime.Now.Ticks;
 			m_IVwCacheDa.CacheTimeProp(1127, 2227, ticks);
-			VerifyCache(1127, 2227,
+			VerifyCache(1127, 2227, wsMulti,
 				new object[] { 0, 0, 0, Guid.Empty, ticks, 0, null, null, null, null });
 
 			m_IVwCacheDa.CacheIntProp(1126, 2226, 987654);
-			VerifyCache(1126, 2226,
+			VerifyCache(1126, 2226, wsMulti,
 				new object[] { 0, 0, 0, Guid.Empty, 0, 987654, null, null, null, null });
 
 			ITsPropsBldr propsBldr = TsStringUtils.MakePropsBldr();
 			ITsStrBldr strBldr = TsStringUtils.MakeStrBldr();
 			propsBldr.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Verse");
+			propsBldr.SetIntPropValues((int)FwTextPropType.ktptWs, (int)FwTextPropVar.ktpvDefault, wsMulti);
 			strBldr.Replace(0, 0, "KeyTestMulti", propsBldr.GetTextProps());
 			ITsString tsString = strBldr.GetString();
-			m_IVwCacheDa.CacheStringAlt(1128, 2228, 12345, tsString);
-			VerifyCache(1128, 2228,
+			m_IVwCacheDa.CacheStringAlt(1128, 2228, wsMulti, tsString);
+			VerifyCache(1128, 2228, wsMulti,
 				new object[] { 0, 0, 0, Guid.Empty, 0, 0, tsString.Text, null, null, null });
 
 			strBldr.Replace(0, 0, "String", propsBldr.GetTextProps());
 			tsString = strBldr.GetString();
 			m_IVwCacheDa.CacheStringProp(1129, 2229, tsString);
-			VerifyCache(1129, 2229,
+			VerifyCache(1129, 2229, wsMulti,
 				new object[] { 0, 0, 0, Guid.Empty, 0, 0, null, tsString.Text, null, null });
 
 			string str = "KeyTestUnicode";
 			m_IVwCacheDa.CacheUnicodeProp(1130, 2230, str, str.Length);
-			VerifyCache(1130, 2230,
+			VerifyCache(1130, 2230, wsMulti,
 				new object[] { 0, 0, 0, Guid.Empty, 0, 0, null, null, str, null });
 
 			ITsTextProps ttp = propsBldr.GetTextProps();
 			m_IVwCacheDa.CacheUnknown(1131, 2230, ttp);
-			VerifyCache(1131, 2230,
+			VerifyCache(1131, 2230, wsMulti,
 				new object[] { 0, 0, 0, Guid.Empty, 0, 0, null, null, null, ttp});
 		}
 

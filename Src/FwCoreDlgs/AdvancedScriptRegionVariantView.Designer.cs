@@ -40,77 +40,77 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.tableLayoutPanel1.SuspendLayout();
 			this.tableLayoutPanel2.SuspendLayout();
 			this.SuspendLayout();
-			// 
+			//
 			// _scriptChooser
-			// 
+			//
 			this._scriptChooser.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._scriptChooser.DropDownWidth = 200;
 			this._scriptChooser.FormattingEnabled = true;
 			resources.ApplyResources(this._scriptChooser, "_scriptChooser");
 			this._scriptChooser.Name = "_scriptChooser";
-			// 
+			//
 			// _scriptCodeTextBox
-			// 
+			//
 			resources.ApplyResources(this._scriptCodeTextBox, "_scriptCodeTextBox");
 			this._scriptCodeTextBox.Name = "_scriptCodeTextBox";
-			// 
+			//
 			// _scriptNameTextbox
-			// 
+			//
 			resources.ApplyResources(this._scriptNameTextbox, "_scriptNameTextbox");
 			this._scriptNameTextbox.Name = "_scriptNameTextbox";
-			// 
+			//
 			// _regionNameTextBox
-			// 
+			//
 			resources.ApplyResources(this._regionNameTextBox, "_regionNameTextBox");
 			this._regionNameTextBox.Name = "_regionNameTextBox";
-			// 
+			//
 			// _regionCodeTextbox
-			// 
+			//
 			resources.ApplyResources(this._regionCodeTextbox, "_regionCodeTextbox");
 			this._regionCodeTextbox.Name = "_regionCodeTextbox";
-			// 
+			//
 			// _regionChooser
-			// 
+			//
 			this._regionChooser.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._regionChooser.DropDownWidth = 185;
 			this._regionChooser.FormattingEnabled = true;
 			resources.ApplyResources(this._regionChooser, "_regionChooser");
 			this._regionChooser.Name = "_regionChooser";
-			// 
+			//
 			// _variantsTextBox
-			// 
+			//
 			resources.ApplyResources(this._variantsTextBox, "_variantsTextBox");
 			this._variantsTextBox.Name = "_variantsTextBox";
-			// 
+			//
 			// _ietftagTextBox
-			// 
+			//
 			resources.ApplyResources(this._ietftagTextBox, "_ietftagTextBox");
 			this._ietftagTextBox.Name = "_ietftagTextBox";
-			// 
+			//
 			// _standardVariantCombo
-			// 
+			//
 			this._standardVariantCombo.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._standardVariantCombo.DropDownWidth = 180;
 			this._standardVariantCombo.FormattingEnabled = true;
 			resources.ApplyResources(this._standardVariantCombo, "_standardVariantCombo");
 			this._standardVariantCombo.Name = "_standardVariantCombo";
-			// 
+			//
 			// _abbreviation
-			// 
+			//
 			resources.ApplyResources(this._abbreviation, "_abbreviation");
 			this._abbreviation.Name = "_abbreviation";
-			// 
+			//
 			// _specialTypeComboBox
-			// 
+			//
 			this._specialTypeComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this._specialTypeComboBox.FormattingEnabled = true;
 			this._specialTypeComboBox.Items.AddRange(new object[] {
             resources.GetString("_specialTypeComboBox.Items")});
 			resources.ApplyResources(this._specialTypeComboBox, "_specialTypeComboBox");
 			this._specialTypeComboBox.Name = "_specialTypeComboBox";
-			// 
+			//
 			// _specialLabel
-			// 
+			//
 			resources.ApplyResources(this._specialLabel, "_specialLabel");
 			this._specialLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this._specialLabel.ForeColor = System.Drawing.SystemColors.ControlText;
@@ -118,9 +118,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._specialLabel.Name = "_specialLabel";
 			this._specialLabel.ReadOnly = true;
 			this._specialLabel.TabStop = false;
-			// 
+			//
 			// _abbrLabel
-			// 
+			//
 			resources.ApplyResources(this._abbrLabel, "_abbrLabel");
 			this._abbrLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this._abbrLabel.ForeColor = System.Drawing.SystemColors.ControlText;
@@ -128,9 +128,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._abbrLabel.Name = "_abbrLabel";
 			this._abbrLabel.ReadOnly = true;
 			this._abbrLabel.TabStop = false;
-			// 
+			//
 			// _scriptLabel
-			// 
+			//
 			resources.ApplyResources(this._scriptLabel, "_scriptLabel");
 			this._scriptLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this._scriptLabel.ForeColor = System.Drawing.SystemColors.ControlText;
@@ -138,9 +138,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._scriptLabel.Name = "_scriptLabel";
 			this._scriptLabel.ReadOnly = true;
 			this._scriptLabel.TabStop = false;
-			// 
+			//
 			// _regionLabel
-			// 
+			//
 			resources.ApplyResources(this._regionLabel, "_regionLabel");
 			this._regionLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this._regionLabel.ForeColor = System.Drawing.SystemColors.ControlText;
@@ -148,9 +148,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._regionLabel.Name = "_regionLabel";
 			this._regionLabel.ReadOnly = true;
 			this._regionLabel.TabStop = false;
-			// 
+			//
 			// _standardVariantLabel
-			// 
+			//
 			resources.ApplyResources(this._standardVariantLabel, "_standardVariantLabel");
 			this._standardVariantLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this._standardVariantLabel.ForeColor = System.Drawing.SystemColors.ControlText;
@@ -158,9 +158,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._standardVariantLabel.Name = "_standardVariantLabel";
 			this._standardVariantLabel.ReadOnly = true;
 			this._standardVariantLabel.TabStop = false;
-			// 
+			//
 			// _bcp47Label
-			// 
+			//
 			resources.ApplyResources(this._bcp47Label, "_bcp47Label");
 			this._bcp47Label.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this._bcp47Label.ForeColor = System.Drawing.SystemColors.ControlText;
@@ -168,9 +168,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._bcp47Label.Name = "_bcp47Label";
 			this._bcp47Label.ReadOnly = true;
 			this._bcp47Label.TabStop = false;
-			// 
+			//
 			// _customScriptNameLabel
-			// 
+			//
 			resources.ApplyResources(this._customScriptNameLabel, "_customScriptNameLabel");
 			this._customScriptNameLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this._customScriptNameLabel.ForeColor = System.Drawing.SystemColors.ControlText;
@@ -178,9 +178,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._customScriptNameLabel.Name = "_customScriptNameLabel";
 			this._customScriptNameLabel.ReadOnly = true;
 			this._customScriptNameLabel.TabStop = false;
-			// 
+			//
 			// _customRegionNameLabel
-			// 
+			//
 			resources.ApplyResources(this._customRegionNameLabel, "_customRegionNameLabel");
 			this._customRegionNameLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this._customRegionNameLabel.ForeColor = System.Drawing.SystemColors.ControlText;
@@ -188,9 +188,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._customRegionNameLabel.Name = "_customRegionNameLabel";
 			this._customRegionNameLabel.ReadOnly = true;
 			this._customRegionNameLabel.TabStop = false;
-			// 
+			//
 			// _otherVariantsLabel
-			// 
+			//
 			resources.ApplyResources(this._otherVariantsLabel, "_otherVariantsLabel");
 			this._otherVariantsLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this._otherVariantsLabel.ForeColor = System.Drawing.SystemColors.ControlText;
@@ -198,9 +198,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._otherVariantsLabel.Name = "_otherVariantsLabel";
 			this._otherVariantsLabel.ReadOnly = true;
 			this._otherVariantsLabel.TabStop = false;
-			// 
+			//
 			// _scriptCodeLabel
-			// 
+			//
 			resources.ApplyResources(this._scriptCodeLabel, "_scriptCodeLabel");
 			this._scriptCodeLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this._scriptCodeLabel.ForeColor = System.Drawing.SystemColors.ControlText;
@@ -208,9 +208,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._scriptCodeLabel.Name = "_scriptCodeLabel";
 			this._scriptCodeLabel.ReadOnly = true;
 			this._scriptCodeLabel.TabStop = false;
-			// 
+			//
 			// _regionCodeLabel
-			// 
+			//
 			resources.ApplyResources(this._regionCodeLabel, "_regionCodeLabel");
 			this._regionCodeLabel.BorderStyle = System.Windows.Forms.BorderStyle.None;
 			this._regionCodeLabel.ForeColor = System.Drawing.SystemColors.ControlText;
@@ -218,9 +218,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this._regionCodeLabel.Name = "_regionCodeLabel";
 			this._regionCodeLabel.ReadOnly = true;
 			this._regionCodeLabel.TabStop = false;
-			// 
+			//
 			// tableLayoutPanel1
-			// 
+			//
 			resources.ApplyResources(this.tableLayoutPanel1, "tableLayoutPanel1");
 			this.tableLayoutPanel1.Controls.Add(this._scriptLabel, 0, 0);
 			this.tableLayoutPanel1.Controls.Add(this._regionCodeLabel, 4, 1);
@@ -235,9 +235,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.tableLayoutPanel1.Controls.Add(this._scriptCodeTextBox, 5, 0);
 			this.tableLayoutPanel1.Controls.Add(this._regionCodeTextbox, 5, 1);
 			this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-			// 
+			//
 			// tableLayoutPanel2
-			// 
+			//
 			resources.ApplyResources(this.tableLayoutPanel2, "tableLayoutPanel2");
 			this.tableLayoutPanel2.Controls.Add(this._standardVariantLabel, 0, 0);
 			this.tableLayoutPanel2.Controls.Add(this._bcp47Label, 0, 1);
@@ -246,9 +246,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			this.tableLayoutPanel2.Controls.Add(this._ietftagTextBox, 1, 1);
 			this.tableLayoutPanel2.Controls.Add(this._variantsTextBox, 3, 0);
 			this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-			// 
+			//
 			// AdvancedScriptRegionVariantView
-			// 
+			//
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.Controls.Add(this.tableLayoutPanel2);
 			this.Controls.Add(this.tableLayoutPanel1);
@@ -267,9 +267,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 
 		}
 
-		private bool _updatingFromModel;
-		private IContainer components;
-		private TextBox nonStandardLanguageName;
+		private IContainer components = null;
 		private ComboBox _scriptChooser;
 		private TextBox _scriptCodeTextBox;
 		private TextBox _scriptNameTextbox;
@@ -292,7 +290,6 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		private BetterLabel _otherVariantsLabel;
 		private BetterLabel _scriptCodeLabel;
 		private BetterLabel _regionCodeLabel;
-		private BetterLabel betterLabel2;
 		private TableLayoutPanel tableLayoutPanel1;
 		private TableLayoutPanel tableLayoutPanel2;
 	}

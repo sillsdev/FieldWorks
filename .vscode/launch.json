@@ -9,7 +9,6 @@
       "cwd": "${workspaceFolder}\\Output\\Debug",
       "console": "externalTerminal",
       "justMyCode": false,
-      "preLaunchTask": "Build Debug"
     },
     {
       "name": "Debug NUnit Tests",

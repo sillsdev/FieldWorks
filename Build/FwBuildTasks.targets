@@ -8,48 +8,49 @@
 			>$(MSBuildThisFileDirectory)..\packages\SIL.BuildTasks.3.1.2-beta0012\tools\SIL.BuildTasks.dll</SILBuildTasksAssembly
 		>
 	</PropertyGroup>
-	<UsingTask TaskName="CatenateFiles" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<UsingTask TaskName="Clouseau" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<UsingTask TaskName="ComputerName" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<UsingTask TaskName="CpuArchitecture" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<UsingTask TaskName="DownloadFile" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<UsingTask TaskName="DownloadFilesFromTeamCity" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<UsingTask TaskName="ForceDelete" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<UsingTask TaskName="GenerateFwTargets" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<UsingTask TaskName="GenerateNUnitReports" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<UsingTask TaskName="GenerateTestCoverageReport" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<UsingTask TaskName="GetSpecialFolderPath" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<UsingTask TaskName="LogMetadata" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<UsingTask TaskName="Make" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<UsingTask TaskName="Md5Checksum" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<UsingTask TaskName="NUnit3" AssemblyFile="$(SILBuildTasksAssembly)" />
-	<UsingTask TaskName="ParentDirectory" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<UsingTask TaskName="ParseVersionNumbers" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<UsingTask TaskName="PathCombine" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="CatenateFiles" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
+	<UsingTask TaskName="Clouseau" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
+	<UsingTask TaskName="ComputerName" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
+	<UsingTask TaskName="CpuArchitecture" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
+	<UsingTask TaskName="DownloadFile" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
+	<UsingTask TaskName="DownloadFilesFromTeamCity" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
+	<UsingTask TaskName="ForceDelete" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
+	<UsingTask TaskName="GenerateFwTargets" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
+	<UsingTask TaskName="GenerateNUnitReports" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
+	<UsingTask TaskName="GenerateTestCoverageReport" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
+	<UsingTask TaskName="GetSpecialFolderPath" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
+	<UsingTask TaskName="LogMetadata" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
+	<UsingTask TaskName="Make" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
+	<UsingTask TaskName="Md5Checksum" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
+	<UsingTask TaskName="NUnit3" AssemblyFile="$(SILBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
+	<UsingTask TaskName="ParentDirectory" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
+	<UsingTask TaskName="ParseVersionNumbers" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
+	<UsingTask TaskName="PathCombine" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
 	<!-- RegFree must run in 64-bit process to load 64-bit native DLLs (FwKernel.dll, Views.dll) -->
 	<UsingTask
 		TaskName="RegFree"
 		AssemblyFile="$(FwBuildTasksAssembly)"
 		Runtime="CLR4"
 		Architecture="x64"
+		Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'"
 	/>
-	<UsingTask TaskName="RegisterForTests" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<UsingTask TaskName="SetEnvVar" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<UsingTask TaskName="Substitute" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<UsingTask TaskName="Unitpp" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<UsingTask TaskName="Unzip" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<UsingTask TaskName="VerifyFilesIdentical" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<UsingTask TaskName="WriteRegistry" AssemblyFile="$(FwBuildTasksAssembly)" />
-	<UsingTask TaskName="Zip" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask TaskName="RegisterForTests" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
+	<UsingTask TaskName="SetEnvVar" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
+	<UsingTask TaskName="Substitute" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
+	<UsingTask TaskName="Unitpp" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
+	<UsingTask TaskName="Unzip" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
+	<UsingTask TaskName="VerifyFilesIdentical" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
+	<UsingTask TaskName="WriteRegistry" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
+	<UsingTask TaskName="Zip" AssemblyFile="$(FwBuildTasksAssembly)" Condition="'$(SkipFwBuildTasksUsingTask)' != 'true'" />
 	<UsingTask
 		TaskName="CheckAdminPrivilege"
 		AssemblyFile="$(FwBuildTasksAssembly)"
-		Condition="'$(OS)'=='Windows_NT'"
+		Condition="'$(OS)'=='Windows_NT' AND '$(SkipFwBuildTasksUsingTask)' != 'true'"
 	/>
 	<!-- REVIEW (Hasso) 2022.11: replaceable by SIL.BuildTasks.MakeWixForDirTree? -->
 	<UsingTask
 		TaskName="WxsToWxi"
 		AssemblyFile="$(FwBuildTasksAssembly)"
-		Condition="'$(OS)'=='Windows_NT'"
+		Condition="'$(OS)'=='Windows_NT' AND '$(SkipFwBuildTasksUsingTask)' != 'true'"
 	/>
 </Project>

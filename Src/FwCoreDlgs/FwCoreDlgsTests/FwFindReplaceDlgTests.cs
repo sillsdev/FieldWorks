@@ -5,6 +5,7 @@
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Windows.Forms;
 using NUnit.Framework;
 using SIL.LCModel.Core.Text;
@@ -585,6 +586,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 	/// </summary>
 	/// -----------------------------------------------------------------------------------------
 	[TestFixture]
+	[Apartment(ApartmentState.STA)]
 	public class FwFindReplaceDlgTests : FwFindReplaceDlgBaseTests
 	{
 		private CoreWritingSystemDefinition m_wsFr;
@@ -1352,8 +1354,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		[Ignore("Need to finish the find previous for this to work")]
 		public void InitialFindPrevWithMatchAfterWrap()
 		{
-			IStTxtPara para = Cache.ServiceLocator.GetInstance<IStTxtParaFactory>().Create();
-			m_text.ParagraphsOS.Insert(0, para);
+			IStTxtPara para = Cache.ServiceLocator.GetInstance<IScrTxtParaFactory>().CreateWithStyle(m_text, 0, "Whatever");
 			AddRunToMockedPara(para, "Waldo", Cache.WritingSystemFactory.GetWsFromStr("fr"));
 			m_vwRootsite.RootBox.Reconstruct();
 			SelLevInfo[] levInfo = new SelLevInfo[1];

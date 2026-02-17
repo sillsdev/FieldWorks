@@ -357,7 +357,6 @@ namespace SIL.FieldWorks.XWorks
 		/// </summary>
 		///--------------------------------------------------------------------------------------
 		[Test]
-		[Ignore("This is now checked before the edit is allowed! Nevermind!")]
 		public void RenameConfigItem_Protected()
 		{
 			// Setup

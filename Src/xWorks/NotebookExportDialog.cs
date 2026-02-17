@@ -210,7 +210,6 @@ namespace SIL.FieldWorks.XWorks
 			foreach (CoreWritingSystemDefinition wsLocal in manager.WritingSystems)
 			{
 				string tag = wsLocal.Id;
-				ILgWritingSystem lgws = null;
 				int ws = m_cache.WritingSystemFactory.GetWsFromStr(tag);
 				if (ws <= 0)
 					continue;
@@ -567,7 +566,6 @@ namespace SIL.FieldWorks.XWorks
 				string fieldName = m_mdc.GetFieldName(flid);
 				bool fHandled = false;
 				ITsString tss;
-				string s;
 				CellarPropertyType cpt = (CellarPropertyType)m_mdc.GetFieldType(flid);
 				switch (cpt)
 				{
@@ -865,7 +863,6 @@ namespace SIL.FieldWorks.XWorks
 		{
 			if (cmo is IRnGenericRec) // this ought to be the case
 			{
-				var hvoRoot = -1;
 				// Need to find the main notebook object.
 				var notebk = m_cache.LanguageProject.ResearchNotebookOA;
 				clidRoot = notebk.ClassID;
