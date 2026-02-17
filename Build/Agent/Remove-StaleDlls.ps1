@@ -1,71 +1,126 @@
 <#
 .SYNOPSIS
-    Removes staged DLLs that don't match their expected package versions.
+    Single-pass detection and removal of stale DLLs from a FieldWorks output directory.
 
 .DESCRIPTION
-    LT-22382: MSBuild's SkipUnchangedFiles uses AssemblyVersion for comparison. Some packages
-    (like Newtonsoft.Json) keep the same AssemblyVersion across releases but change FileVersion.
-    This causes stale DLLs to persist in the output folder even after package updates.
+    Performs two complementary checks in one pass over every DLL in the target directory:
 
-    This script reads desired versions from .csproj PackageReference elements, then checks if
-    each staged DLL's FileVersion matches the expected version. If not, the DLL is removed so
-    the build will copy the correct one.
+    1. NuGet-package version check (LT-22382)
+       If a DLL's filename matches a NuGet PackageReference, its FileVersion must start with
+       the declared package version.  MSBuild's SkipUnchangedFiles compares by AssemblyVersion
+       which misses FileVersion-only bumps (e.g. Newtonsoft.Json 13.0.3 → 13.0.4).
+
+    2. Product major-version check
+       For every managed DLL that is NOT a recognised third-party assembly, its AssemblyVersion
+       major component must match FWMAJOR from Src/MasterVersionInfo.txt.  This catches stale
+       first-party DLLs left behind from a different FW version (e.g. 6.0.0.0 in a 9.x tree).
+
+    Any DLL that fails either check is removed so MSBuild re-copies the correct version.
+
+    Use -ValidateOnly to report mismatches as errors without deleting (used by installer staging
+    validation targets).
+
+    Use -ReferenceDir to additionally verify that every managed DLL in OutputDir has the same
+    assembly identity as its counterpart in another directory (catches staged-vs-build drift).
 
 .PARAMETER OutputDir
-    The output directory to check (e.g., Output\Debug or Output\Release).
+    The directory to scan (e.g., Output\Debug, or a staged installer bin dir).
 
 .PARAMETER RepoRoot
-    The root of the repository. Defaults to the parent of this script's folder.
+    Repository root. Defaults to two levels above this script.
+
+.PARAMETER ValidateOnly
+    Report mismatches as errors (exit 1) instead of deleting files.  Suitable for MSBuild
+    post-staging validation.
+
+.PARAMETER ReferenceDir
+    Optional second directory. When provided, every DLL present in both OutputDir and
+    ReferenceDir is compared by AssemblyName.FullName and FileVersion.  Mismatches are
+    reported (or cause deletion from OutputDir when -ValidateOnly is not set).
 
 .EXAMPLE
     .\Remove-StaleDlls.ps1 -OutputDir "Output\Debug"
+    Pre-build clean pass: removes stale NuGet and product DLLs from the output directory.
 
 .EXAMPLE
     .\Remove-StaleDlls.ps1 -OutputDir "Output\Release" -WhatIf
+    Shows what would be removed without deleting.
+
+.EXAMPLE
+    .\Remove-StaleDlls.ps1 -OutputDir "BuildDir\...\objects\FieldWorks" -ReferenceDir "Output\Release" -ValidateOnly
+    Installer post-staging validation: fails the build if any staged DLL doesn't match the build output.
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param(
     [Parameter(Mandatory)]
     [string]$OutputDir,
 
-    [string]$RepoRoot = (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent)
+    [string]$RepoRoot = (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent),
+
+    [switch]$ValidateOnly,
+
+    [string]$ReferenceDir
 )
 
 $ErrorActionPreference = 'Stop'
 
-# Resolve output path
-$outputPath = if ([System.IO.Path]::IsPathRooted($OutputDir)) { $OutputDir } else { Join-Path $RepoRoot $OutputDir }
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
 
+function Resolve-DirPath ([string]$dir) {
+    if ([System.IO.Path]::IsPathRooted($dir)) { return $dir }
+    return Join-Path $RepoRoot $dir
+}
+
+$outputPath = Resolve-DirPath $OutputDir
 if (-not (Test-Path $outputPath)) {
     Write-Verbose "Output directory does not exist: $outputPath"
     return
 }
 
-# =============================================================================
-# Step 1: Build map of package name -> desired version from .csproj files
-# =============================================================================
-
-Write-Verbose "Scanning .csproj files for PackageReference elements..."
-$desiredVersions = @{}
-
-# Scan all .csproj files for PackageReference elements
-Get-ChildItem (Join-Path $RepoRoot "Src") -Filter "*.csproj" -Recurse -ErrorAction SilentlyContinue | ForEach-Object {
-    try {
-        [xml]$csproj = Get-Content $_.FullName -Raw
-        $csproj.SelectNodes("//PackageReference") | ForEach-Object {
-            $id = $_.GetAttribute("Include")
-            $version = $_.GetAttribute("Version")
-            if ($id -and $version) {
-                # Later entries override earlier ones (allows for project-specific overrides)
-                $desiredVersions[$id.ToLowerInvariant()] = $version
-            }
-        }
-    } catch {
-        Write-Verbose "Could not parse $($_.FullName): $_"
+$referencePath = $null
+if ($ReferenceDir) {
+    $referencePath = Resolve-DirPath $ReferenceDir
+    if (-not (Test-Path $referencePath)) {
+        Write-Verbose "Reference directory does not exist: $referencePath"
+        $referencePath = $null
     }
 }
 
-# Also check packages.config for legacy references (lower priority than PackageReference)
+# =============================================================================
+# Step 1: Build lookup tables (done once, used for every DLL)
+# =============================================================================
+
+# --- 1a. NuGet package-name → desired version map ---
+Write-Verbose "Scanning .csproj files for PackageReference elements..."
+$desiredVersions = @{}
+$packageNames = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+
+$srcDir = Join-Path $RepoRoot "Src"
+if (Test-Path $srcDir) {
+    Get-ChildItem $srcDir -Filter "*.csproj" -Recurse -ErrorAction SilentlyContinue | ForEach-Object {
+        try {
+            [xml]$csproj = Get-Content $_.FullName -Raw
+            $csproj.SelectNodes("//PackageReference") | ForEach-Object {
+                $id = $_.GetAttribute("Include")
+                $version = $_.GetAttribute("Version")
+                if ($id) {
+                    [void]$packageNames.Add($id)
+                    if ($version) {
+                        # Later entries override earlier ones (project-specific overrides win)
+                        $desiredVersions[$id.ToLowerInvariant()] = $version
+                    }
+                }
+            }
+        }
+        catch {
+            Write-Verbose "Could not parse $($_.FullName): $_"
+        }
+    }
+}
+
+# Also check packages.config for legacy references (lower priority)
 $packagesConfigPath = Join-Path $RepoRoot "Build\nuget-common\packages.config"
 if (Test-Path $packagesConfigPath) {
     try {
@@ -74,59 +129,178 @@ if (Test-Path $packagesConfigPath) {
             $id = $_.GetAttribute("id")
             $version = $_.GetAttribute("version")
             if ($id -and $version) {
+                [void]$packageNames.Add($id)
                 $key = $id.ToLowerInvariant()
-                # Only add if not already set by PackageReference
                 if (-not $desiredVersions.ContainsKey($key)) {
                     $desiredVersions[$key] = $version
                 }
             }
         }
-    } catch {
+    }
+    catch {
         Write-Verbose "Could not parse packages.config: $_"
     }
 }
 
 Write-Verbose "Found $($desiredVersions.Count) package version specifications"
 
+# --- 1b. Expected product major version from MasterVersionInfo.txt ---
+$expectedMajor = $null
+$versionInfoPath = Join-Path $RepoRoot "Src\MasterVersionInfo.txt"
+if (Test-Path $versionInfoPath) {
+    Get-Content $versionInfoPath | ForEach-Object {
+        if ($_ -match '^FWMAJOR=(\d+)') {
+            $expectedMajor = [int]$Matches[1]
+        }
+    }
+}
+if ($null -eq $expectedMajor) {
+    Write-Warning "Could not determine FWMAJOR from MasterVersionInfo.txt. Product-version check disabled."
+}
+else {
+    Write-Verbose "Expected product major version: $expectedMajor"
+}
+
+# --- 1c. Known third-party DLL basenames that legitimately have their own versioning ---
+# These are DLLs from DistFiles/, Lib/, or Downloads/ that are not NuGet-tracked but are
+# also not first-party FW assemblies.
+$knownThirdParty = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+foreach ($name in @(
+    'LinqBridge', 'log4net', 'Interop.ResourceDriver',
+    'xample', 'ParatextShared', 'NetLoc', 'FormattedEditor',
+    'HelpSystem', 'HtmlEditor', 'Utilities'
+)) {
+    [void]$knownThirdParty.Add($name)
+}
+
 # =============================================================================
-# Step 2: Check each staged DLL's FileVersion against expected package version
+# Step 2: Single pass over every DLL
 # =============================================================================
 
-$mismatchCount = 0
-$checkedCount = 0
+$problems = [System.Collections.Generic.List[string]]::new()
+$removedCount = 0
+$checkedPackage = 0
+$checkedProduct = 0
 
 Get-ChildItem "$outputPath\*.dll" -ErrorAction SilentlyContinue | ForEach-Object {
-    $stagedDll = $_
-    # Derive package name from DLL name (e.g., Newtonsoft.Json.dll -> newtonsoft.json)
-    $packageName = [System.IO.Path]::GetFileNameWithoutExtension($_.Name).ToLowerInvariant()
+    $dll = $_
+    $baseName = [System.IO.Path]::GetFileNameWithoutExtension($dll.Name)
+    $baseNameLower = $baseName.ToLowerInvariant()
+    $isThirdParty = $packageNames.Contains($baseName) -or $knownThirdParty.Contains($baseName)
 
-    # Check if we have a desired version for this package
-    $desiredVersion = $desiredVersions[$packageName]
-    if (-not $desiredVersion) {
-        return  # Not a tracked package, skip
+    # --- Check A: NuGet FileVersion match ---
+    $desiredVersion = $desiredVersions[$baseNameLower]
+    if ($desiredVersion) {
+        $checkedPackage++
+        $fileVersion = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($dll.FullName).FileVersion
+        $normalizedDesired = $desiredVersion -replace '-.*$', ''
+
+        if (-not $fileVersion.StartsWith("$normalizedDesired.")) {
+            $msg = "$($dll.Name): FileVersion=$fileVersion, expected $normalizedDesired.* (NuGet)"
+            $problems.Add($msg)
+            if (-not $ValidateOnly) {
+                if ($PSCmdlet.ShouldProcess($dll.Name, "Remove (NuGet version mismatch: FileVersion=$fileVersion, expected=$normalizedDesired.*)")) {
+                    Remove-Item $dll.FullName -Force
+                    $removedCount++
+                    Write-Host "  Removed $msg" -ForegroundColor Yellow
+                }
+            }
+            return  # Already flagged/removed, skip further checks
+        }
     }
 
-    $checkedCount++
+    # --- Check B: Product major-version match (first-party DLLs only) ---
+    if (($null -ne $expectedMajor) -and (-not $isThirdParty)) {
+        try {
+            $asmName = [System.Reflection.AssemblyName]::GetAssemblyName($dll.FullName)
+            $asmVersion = $asmName.Version
+        }
+        catch {
+            # Not a managed assembly (native DLL) — skip
+            Write-Verbose "Skipping non-managed: $($dll.Name)"
+            return
+        }
 
-    # Get FileVersion from staged DLL
-    $fileVersion = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($stagedDll.FullName).FileVersion
+        # Skip assemblies with version 0.0.0.0 (auto-generated or unversioned)
+        if ($asmVersion.Major -eq 0 -and $asmVersion.Minor -eq 0) {
+            return
+        }
 
-    # Normalize desired version (strip prerelease suffix like -beta0001)
-    $normalizedDesired = $desiredVersion -replace '-.*$', ''
+        $checkedProduct++
 
-    # Check if FileVersion starts with the expected version
-    # e.g., FileVersion "13.0.4.30916" should match desired "13.0.4"
-    if (-not $fileVersion.StartsWith("$normalizedDesired.")) {
-        $mismatchCount++
-        if ($PSCmdlet.ShouldProcess($stagedDll.Name, "Remove mismatched DLL (FileVersion=$fileVersion, expected=$desiredVersion.*)")) {
-            Remove-Item $stagedDll.FullName -Force
-            Write-Host "Removed $($stagedDll.Name) (was $fileVersion, expected $normalizedDesired.*)" -ForegroundColor Yellow
+        if ($asmVersion.Major -ne $expectedMajor) {
+            $msg = "$($dll.Name): AssemblyVersion=$asmVersion, expected major=$expectedMajor (product)"
+            $problems.Add($msg)
+            if (-not $ValidateOnly) {
+                if ($PSCmdlet.ShouldProcess($dll.Name, "Remove (wrong product version: AssemblyVersion=$asmVersion, expected major=$expectedMajor)")) {
+                    Remove-Item $dll.FullName -Force
+                    $removedCount++
+                    Write-Host "  Removed $msg" -ForegroundColor Yellow
+                }
+            }
+            return
+        }
+    }
+
+    # --- Check C: Staged-vs-reference comparison (when -ReferenceDir provided) ---
+    if ($referencePath) {
+        $refDll = Join-Path $referencePath $dll.Name
+        if (Test-Path $refDll) {
+            # Compare AssemblyName.FullName (catches strong-name/version mismatches)
+            try {
+                $stagedAsm = [System.Reflection.AssemblyName]::GetAssemblyName($dll.FullName)
+                $refAsm    = [System.Reflection.AssemblyName]::GetAssemblyName($refDll)
+                if ($stagedAsm.FullName -ne $refAsm.FullName) {
+                    $msg = "$($dll.Name): staged=$($stagedAsm.FullName), build=$($refAsm.FullName) (assembly mismatch)"
+                    $problems.Add($msg)
+                    if (-not $ValidateOnly) {
+                        if ($PSCmdlet.ShouldProcess($dll.Name, "Remove (staged/build assembly mismatch)")) {
+                            Remove-Item $dll.FullName -Force
+                            $removedCount++
+                            Write-Host "  Removed $msg" -ForegroundColor Yellow
+                        }
+                    }
+                    return
+                }
+            }
+            catch {
+                # One or both are native — fall through to FileVersion check
+            }
+
+            # Compare FileVersion (catches same-AssemblyVersion NuGet bumps like Newtonsoft.Json)
+            $stagedFV = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($dll.FullName).FileVersion
+            $refFV    = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($refDll).FileVersion
+            if ($stagedFV -ne $refFV) {
+                $msg = "$($dll.Name): staged FileVersion=$stagedFV, build FileVersion=$refFV (drift)"
+                $problems.Add($msg)
+                if (-not $ValidateOnly) {
+                    if ($PSCmdlet.ShouldProcess($dll.Name, "Remove (staged/build FileVersion drift)")) {
+                        Remove-Item $dll.FullName -Force
+                        $removedCount++
+                        Write-Host "  Removed $msg" -ForegroundColor Yellow
+                    }
+                }
+            }
         }
     }
 }
 
-if ($mismatchCount -eq 0) {
-    Write-Verbose "No mismatched DLLs found (checked $checkedCount)"
-} else {
-    Write-Host "Removed $mismatchCount mismatched DLL(s)" -ForegroundColor Yellow
+# =============================================================================
+# Step 3: Report results
+# =============================================================================
+
+$totalChecked = $checkedPackage + $checkedProduct
+if ($problems.Count -eq 0) {
+    Write-Verbose "No stale DLLs found (NuGet-checked=$checkedPackage, product-checked=$checkedProduct)"
+}
+elseif ($ValidateOnly) {
+    Write-Host ""
+    Write-Host "Stale DLL validation failed — $($problems.Count) problem(s):" -ForegroundColor Red
+    foreach ($p in $problems) {
+        Write-Host "  $p" -ForegroundColor Red
+    }
+    exit 1
+}
+else {
+    Write-Host "Removed $removedCount stale DLL(s) (NuGet-checked=$checkedPackage, product-checked=$checkedProduct)" -ForegroundColor Yellow
 }
