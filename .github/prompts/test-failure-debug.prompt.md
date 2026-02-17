@@ -7,7 +7,7 @@ You are an expert at triaging FieldWorks test failures. Parse the failure, locat
 
 ## Steps
 1) Parse the test failure summary/log and identify the failing test(s)
-2) Map each failure to the component(s) via `.github/src-catalog.md` and COPILOT.md
+2) Map each failure to the component(s) via `.github/src-catalog.md` and AGENTS.md
 3) Propose 1–3 minimal fix strategies per failure with trade-offs
 4) Point to suspected code locations (files, functions) using semantic search or patterns
 5) Propose exact test updates to validate the fix; prefer deterministic data
@@ -19,3 +19,4 @@ Provide:
 - Exact files/lines to inspect
 - Proposed test changes
 - Any managed/native boundary or installer considerations
+

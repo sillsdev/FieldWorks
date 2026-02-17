@@ -97,7 +97,7 @@ description: "Ready-to-use prompts for comprehensive .NET framework upgrade anal
     prompt: "Recommend when and how to use: `.NET Upgrade Assistant`, `dotnet list package --outdated`, `dotnet migrate`, and `graph.json` dependency visualization."
 
   - name: "Analysis Script Generation"
-    prompt: "Generate scripts or prompts for analyzing dependency graphs before upgrading. Propose AI-assisted prompts for Copilot to identify upgrade issues automatically."
+    prompt: "Generate scripts or prompts for analyzing dependency graphs before upgrading. Propose AI-assisted prompts for agents to identify upgrade issues automatically."
 
   - name: "Multi-Repository Validation"
     prompt: "Suggest how to validate automation output across multiple repositories. Create standardized validation workflows for enterprise-scale upgrades."

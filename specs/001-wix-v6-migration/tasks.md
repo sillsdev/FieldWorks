@@ -27,7 +27,7 @@
 - [x] T084 Add `InstallerToolset=Wix3|Wix6` selection to `build.ps1` and `Build/Orchestrator.proj` (default **Wix3**)
 - [x] T085 Add explicit targets `BuildInstallerWix3` and `BuildInstallerWix6` with `BuildInstaller` routed to Wix3 by default
 - [x] T086 Ensure WiX 3 and WiX 6 include paths are isolated (root vs `FLExInstaller/wix6/Shared/`)
-- [x] T087 Update documentation for dual builds (ReadMe, quickstart, `FLExInstaller/COPILOT.md`) and call out default Wix3
+- [x] T087 Update documentation for dual builds (ReadMe, quickstart, `FLExInstaller/AGENTS.md`) and call out default Wix3
 - [x] T088 Update CI to build Wix3 by default and add an opt-in Wix6 lane
 - [x] T089 Add guardrails that fail the Wix3 build if WiX 6 namespaces/refs leak into Wix3 inputs
 - [x] T090 Define MSBuild override properties for installer customization (FR-008) and document them for both toolsets
@@ -134,7 +134,7 @@
 
 - [x] T030 Remove `PatchableInstaller` directory
 - [x] T031 Remove `genericinstaller` submodule reference from `.gitmodules`
-- [x] T032 Update `FLExInstaller/COPILOT.md` with new build instructions
+- [x] T032 Update `FLExInstaller/AGENTS.md` with new build instructions
 - [x] T033 Update `ReadMe.md` with new build instructions
 - [x] T039 Create WiX 3.x → WiX 6 parity audit report (`specs/001-wix-v6-migration/wix3-to-wix6-audit.md`)
 
@@ -193,3 +193,4 @@
 2.  **CI Integration**: Complete Phase 4.
 3.  **Validation**: Complete Phases 5 and 6 to ensure end-user scenarios work.
 4.  **Cleanup**: Complete Phase 7.
+

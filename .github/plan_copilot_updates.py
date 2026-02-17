@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Plan focused COPILOT.md refreshes using cached diffs."""
+"""Plan focused AGENTS.md refreshes using cached diffs."""
 from __future__ import annotations
 
 import argparse
@@ -190,7 +190,7 @@ def build_prompts(folder: str, counts: Dict[str, int], risk: str) -> Dict[str, L
     )
     return {
         "doc-refresh": [
-            f"Update COPILOT.md for {folder}. Prioritize Purpose/Architecture sections using planner data.",
+            f"Update AGENTS.md for {folder}. Prioritize Purpose/Architecture sections using planner data.",
             f"Highlight API or UI updates, then confirm Usage/Test sections reflect {summary}",
             "Finish with verification notes and TODOs for manual testing.",
         ]
@@ -209,7 +209,7 @@ def build_plan_entry(
     folder_path = root / folder_rel
     if not folder_path.exists():
         return None
-    copilot_path = folder_path / "COPILOT.md"
+    copilot_path = folder_path / "AGENTS.md"
     fm, _ = parse_frontmatter(copilot_path)
     if fm is None:
         fm = {}
@@ -293,18 +293,18 @@ def resolve_folders(
             if folder and status != "OK":
                 targets.add(str(folder))
     if include_all:
-        for path in sorted(root.glob("Src/**/COPILOT.md")):
+        for path in sorted(root.glob("Src/**/AGENTS.md")):
             targets.add(path.parent.relative_to(root).as_posix())
     return sorted(targets)
 
 
 def main() -> int:
-    ap = argparse.ArgumentParser(description="Plan COPILOT.md updates with cached diffs")
+    ap = argparse.ArgumentParser(description="Plan AGENTS.md updates with cached diffs")
     ap.add_argument("--root", default=str(Path.cwd()))
     ap.add_argument("--head", default="HEAD")
     ap.add_argument("--detect-json", help="Path to detect_copilot_needed --json output")
     ap.add_argument("--folders", nargs="*", help="Explicit Src/<Folder> paths")
-    ap.add_argument("--all", action="store_true", help="Plan for every COPILOT.md folder")
+    ap.add_argument("--all", action="store_true", help="Plan for every AGENTS.md folder")
     ap.add_argument("--out", default=".cache/copilot/diff-plan.json")
     ap.add_argument("--fallback-base", help="Fallback git ref if recorded hash commit is unknown")
     ap.add_argument("--refresh-cache", action="store_true")
@@ -355,3 +355,4 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

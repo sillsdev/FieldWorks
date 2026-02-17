@@ -1,8 +1,8 @@
-﻿# FieldWorks Src/ Folder Catalog
+# FieldWorks Src/ Folder Catalog
 
-This catalog provides brief descriptions of each folder under `Src/`. For detailed information about any folder, see its `COPILOT.md` file.
+This catalog provides brief descriptions of each folder under `Src/`. For detailed information about any folder, see its `AGENTS.md` file.
 
-Editorial note: See `Docs/copilot-refresh.md` for how to update and maintain these per-folder summaries (including frontmatter expectations and review cadence).
+Editorial note: See `Docs/agent-docs-refresh.md` for how to update and maintain these per-folder summaries (including frontmatter expectations and review cadence).
 
 ## Folder Descriptions
 
@@ -199,3 +199,4 @@ Core mediator, property-table, command, choice, and UI-adapter interfaces that f
 
 ### XCore/xCoreTests
 Automated tests covering mediator routing, property tables, inventory XML loading, and override mechanics to ensure the framework stays stable.
+

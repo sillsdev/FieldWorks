@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-check_copilot_docs.py — Validate Src/**/COPILOT.md against the canonical skeleton
+check_copilot_docs.py — Validate Src/**/AGENTS.md against the canonical skeleton
 
 Checks:
 - Frontmatter: last-reviewed, last-reviewed-tree, status
@@ -301,12 +301,12 @@ def main():
     ap.add_argument(
         "--only-changed",
         action="store_true",
-        help="Validate only changed COPILOT.md files",
+        help="Validate only changed AGENTS.md files",
     )
     ap.add_argument(
         "--paths",
         nargs="*",
-        help="Specific COPILOT.md paths to validate (relative to repo root)",
+        help="Specific AGENTS.md paths to validate (relative to repo root)",
     )
     ap.add_argument(
         "--base",
@@ -339,10 +339,10 @@ def main():
             root, base=args.base, head=args.head, since=args.since
         )
         for p in changed:
-            if p.endswith("/COPILOT.md") and p.startswith("Src/"):
+            if p.endswith("/AGENTS.md") and p.startswith("Src/"):
                 paths_to_check.append(root / p)
     if not paths_to_check:
-        paths_to_check = list(src.rglob("COPILOT.md"))
+        paths_to_check = list(src.rglob("AGENTS.md"))
 
     results = []
     for copath in paths_to_check:
@@ -379,7 +379,7 @@ def main():
                 r["ok"] = False
 
     failures = [r for r in results if not r["ok"]]
-    print(f"Checked {len(results)} COPILOT.md files. Failures: {len(failures)}")
+    print(f"Checked {len(results)} AGENTS.md files. Failures: {len(failures)}")
     for r in failures:
         print(f"- {r['path']}")
         if r["frontmatter"]["missing"]:
@@ -411,3 +411,4 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
+

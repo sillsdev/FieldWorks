@@ -42,7 +42,7 @@ Pull these **verbatim** from the `release/9.3` worktree to restore WiX 3 support
 - Add explicit targets: `BuildInstallerWix3` and `BuildInstallerWix6` (with `BuildInstaller` routing to Wix3 by default).
 - Move WiX 6 assets to `FLExInstaller/wix6/` (projects + shared authoring) and keep WiX 3 in root.
 - Split WiX 3 vs WiX 6 include paths (root vs `FLExInstaller/wix6/Shared/`) to avoid toolset conflicts.
-- Update docs (`ReadMe.md`, `specs/001-wix-v6-migration/quickstart.md`, `FLExInstaller/COPILOT.md`) to describe both build paths.
+- Update docs (`ReadMe.md`, `specs/001-wix-v6-migration/quickstart.md`, `FLExInstaller/AGENTS.md`) to describe both build paths.
 - Update CI to build Wix3 by default, plus an opt-in Wix6 job or flag.
 
 ## Technical Context
@@ -66,7 +66,7 @@ Pull these **verbatim** from the `release/9.3` worktree to restore WiX 3 support
 - **III. Internationalization**: Installer must support multiple locales (FR-005).
 - **IV. User-Centered Stability**: Offline installation support is critical (FR-004).
 - **V. Licensing**: WiX is open source (MS-RL/MIT).
-- **VI. Documentation Fidelity**: COPILOT.md in FLExInstaller and PatchableInstaller must be updated.
+- **VI. Documentation Fidelity**: AGENTS.md in FLExInstaller and PatchableInstaller must be updated.
 
 ## Project Structure
 
@@ -114,3 +114,4 @@ N/A - No constitution violations.
 ## Installer Verification: Local Development PC Only
 
 Installer validation will be performed on the **local development PC** without sandboxing or Hyper-V. Evidence capture follows the same log collection conventions (bundle/MSI logs and screenshots where needed) but is executed directly on the developer machine.
+

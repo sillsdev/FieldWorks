@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Verify COPILOT.md files follow condensed structure.
+Verify AGENTS.md files follow condensed structure.
 Extracts section headings and checks line counts to identify files that need condensing.
 """
 
@@ -59,22 +59,22 @@ def is_condensed(headings: List[str], line_count: int, is_organizational: bool) 
         return True, f"Leaf: {line_count} lines (likely condensed)"
 
 def find_copilot_files(src_dir: Path) -> List[Path]:
-    """Find all COPILOT.md files in Src/ directory."""
+    """Find all AGENTS.md files in Src/ directory."""
     copilot_files = []
     for root, dirs, files in os.walk(src_dir):
-        if 'COPILOT.md' in files:
-            copilot_files.append(Path(root) / 'COPILOT.md')
+        if 'AGENTS.md' in files:
+            copilot_files.append(Path(root) / 'AGENTS.md')
     return sorted(copilot_files)
 
 def is_organizational_folder(file_path: Path) -> bool:
-    """Determine if a COPILOT.md is in an organizational folder."""
-    # Check if the folder has subfolders with their own COPILOT.md files
+    """Determine if a AGENTS.md is in an organizational folder."""
+    # Check if the folder has subfolders with their own AGENTS.md files
     parent_dir = file_path.parent
     subfolders_with_copilot = []
     
     for item in parent_dir.iterdir():
         if item.is_dir():
-            copilot_path = item / 'COPILOT.md'
+            copilot_path = item / 'AGENTS.md'
             if copilot_path.exists():
                 subfolders_with_copilot.append(item.name)
     
@@ -89,7 +89,7 @@ def main():
         return
     
     copilot_files = find_copilot_files(src_dir)
-    print(f"Found {len(copilot_files)} COPILOT.md files\n")
+    print(f"Found {len(copilot_files)} AGENTS.md files\n")
     
     results = {}
     needs_condensing = []
@@ -138,7 +138,7 @@ def main():
     # Print detailed results to file
     output_file = repo_root / 'copilot_structure_report.txt'
     with open(output_file, 'w', encoding='utf-8') as f:
-        f.write("COPILOT.md Structure Verification Report\n")
+        f.write("AGENTS.md Structure Verification Report\n")
         f.write("=" * 80 + "\n\n")
         
         for file_path in sorted(results.keys()):
@@ -162,3 +162,4 @@ def main():
 
 if __name__ == '__main__':
     exit(main())
+

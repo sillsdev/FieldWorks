@@ -77,7 +77,7 @@
 | File | Current Reference | Required Change |
 |------|-------------------|-----------------|
 | `.github/instructions/installer.instructions.md` | "confirm WiX 3.11.x tooling" | Update to "WiX 3.14.x" |
-| `.github/copilot-instructions.md` | "WiX 3.14.x" | Already correct ✅ |
+| `.github/AGENTS.md` | "WiX 3.14.x" | Already correct ✅ |
 
 **New Documentation Needed**:
 - `Docs/installer-build-guide.md`: Step-by-step guide for local installer builds

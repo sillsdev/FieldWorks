@@ -55,7 +55,7 @@ specs/007-wix-314-installer/
 └── installer.instructions.md  # Update WiX version reference
 
 .github/
-└── copilot-instructions.md    # Already references 3.14.x (no change needed)
+└── AGENTS.md    # Already references 3.14.x (no change needed)
 
 # Files to create/update for documentation
 Docs/

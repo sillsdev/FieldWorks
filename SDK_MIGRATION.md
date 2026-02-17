@@ -1017,7 +1017,7 @@ python Build/convert_nunit.py Src
    - Pitfalls and solutions
    - Build system evolution
 
-3. **`.github/copilot-instructions.md`** - Enhanced
+3. **`.github/AGENTS.md`** - Enhanced
    - SDK-specific guidance
    - Agent onboarding
    - Build workflows

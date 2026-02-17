@@ -2,7 +2,7 @@
 """Utility helpers for computing deterministic Src/<Folder> tree hashes.
 
 The goal is to capture the set of tracked files under a folder (excluding the
-folder's COPILOT.md) and produce a stable digest that represents the code/data
+folder's AGENTS.md) and produce a stable digest that represents the code/data
 state that documentation was written against.
 
 We hash the list of files paired with their git blob SHAs at the specified ref
@@ -35,7 +35,7 @@ def list_tracked_blobs(
     """Yield (relative_path, blob_sha) for tracked files under ``folder``.
 
     ``ref`` defaults to ``HEAD``. ``folder`` must be inside ``root``.
-    ``COPILOT.md`` is excluded by design so the hash reflects code/data only.
+    ``AGENTS.md`` is excluded by design so the hash reflects code/data only.
     """
 
     rel = folder.relative_to(root).as_posix()
@@ -68,7 +68,7 @@ def list_tracked_blobs(
         if obj_type != "blob":
             continue
         path = rest[-1]
-        if path.endswith("/COPILOT.md") or path == "COPILOT.md":
+        if path.endswith("/AGENTS.md") or path == "AGENTS.md":
             continue
         yield path, blob_sha
 
@@ -78,8 +78,8 @@ def compute_folder_tree_hash(root: Path, folder: Path, ref: str = "HEAD") -> str
 
     The digest is the sha256 of ``"{relative_path}:{blob_sha}\n"`` for each
     tracked file (sorted lexicographically) underneath ``folder`` excluding the
-    COPILOT.md documentation. When a folder has no tracked files besides
-    COPILOT.md the digest is the sha256 of the empty string.
+    AGENTS.md documentation. When a folder has no tracked files besides
+    AGENTS.md the digest is the sha256 of the empty string.
     """
 
     items = sorted(list_tracked_blobs(root, folder, ref))
@@ -87,3 +87,4 @@ def compute_folder_tree_hash(root: Path, folder: Path, ref: str = "HEAD") -> str
     for rel_path, blob_sha in items:
         digest.update(f"{rel_path}:{blob_sha}\n".encode("utf-8"))
     return digest.hexdigest()
+

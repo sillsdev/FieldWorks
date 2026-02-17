@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-detect_copilot_needed.py — Identify folders with code/config changes that likely require COPILOT.md updates.
+detect_copilot_needed.py — Identify folders with code/config changes that likely require AGENTS.md updates.
 
 Intended for CI (advisory or failing), and for local pre-commit checks.
 
@@ -9,13 +9,13 @@ Logic:
 - Consider only changes under Src/** that match code/config extensions.
 - Group by top-level folder: Src/<Folder>/...
 - For each impacted folder, compare the folder's current git tree hash to the
-    `last-reviewed-tree` recorded in COPILOT.md and track whether the doc changed.
+    `last-reviewed-tree` recorded in AGENTS.md and track whether the doc changed.
 - Report folders whose hashes no longer match or whose docs are missing.
-- Optionally validate changed COPILOT.md files with check_copilot_docs.py.
+- Optionally validate changed AGENTS.md files with check_copilot_docs.py.
 
 Exit codes:
-  0 = no issues (either no impacted folders or all have COPILOT.md changes, and validations passed)
-  1 = advisory warnings (impacted folders without COPILOT.md updated), when --strict not set
+  0 = no issues (either no impacted folders or all have AGENTS.md changes, and validations passed)
+  1 = advisory warnings (impacted folders without AGENTS.md updated), when --strict not set
   2 = strict failure when --strict is set and there are issues, or validation fails
 
 Examples:
@@ -127,7 +127,7 @@ def main():
     ap.add_argument(
         "--validate-changed",
         action="store_true",
-        help="Validate changed COPILOT.md with check_copilot_docs.py",
+        help="Validate changed AGENTS.md with check_copilot_docs.py",
     )
     ap.add_argument("--strict", action="store_true", help="Exit non-zero on issues")
     args = ap.parse_args()
@@ -138,12 +138,12 @@ def main():
     impacted: Dict[str, set] = {}
     copilot_changed = set()
     for p in changed:
-        if p.endswith("/COPILOT.md"):
+        if p.endswith("/AGENTS.md"):
             copilot_changed.add(p)
         # Only care about Src/** files that look like code/config
         if not p.startswith("Src/"):
             continue
-        if p.endswith("/COPILOT.md"):
+        if p.endswith("/AGENTS.md"):
             continue
         _, ext = os.path.splitext(p)
         if ext.lower() not in CODE_EXTS:
@@ -155,7 +155,7 @@ def main():
     results = []
     issues = 0
     for folder, files in sorted(impacted.items()):
-        copath_rel = f"{folder}/COPILOT.md"
+        copath_rel = f"{folder}/AGENTS.md"
         copath = root / copath_rel
         folder_path = root / folder
         doc_changed = copath_rel in copilot_changed
@@ -163,7 +163,7 @@ def main():
         recorded_hash: Optional[str] = None
         fm, _ = parse_frontmatter(copath)
         if not copath.exists():
-            reasons.append("COPILOT.md missing")
+            reasons.append("AGENTS.md missing")
         elif not fm:
             reasons.append("frontmatter missing")
         else:
@@ -194,7 +194,7 @@ def main():
                 reasons.append("tree hash mismatch")
             if not doc_changed and not reasons:
                 # Defensive catch-all
-                reasons.append("COPILOT.md not updated")
+                reasons.append("AGENTS.md not updated")
 
         entry = {
             "folder": folder,
@@ -214,7 +214,7 @@ def main():
             issues += 1
         results.append(entry)
 
-    # Optional validation for changed COPILOT.md files
+    # Optional validation for changed AGENTS.md files
     validation_failures = []
     if args.validate_changed and copilot_changed:
         try:
@@ -256,3 +256,4 @@ def main():
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

@@ -1,7 +1,7 @@
 ---
 name: "FieldWorks C# Expert"
 description: "Specialized C#/.NET (net48) agent for FieldWorks (FLEx): fixes managed test failures efficiently using build.ps1/test.ps1, follows repo conventions, and avoids dotnet build pitfalls in mixed native/managed solutions."
-# target: github-copilot  # optional: enable if you only want this on GitHub
+# target: universal  # optional: enable if you want a tool-specific target
 # model: gpt-5.2-preview  # optional in VS Code; pick from autocomplete if desired
 # tools: ["read", "search", "edit", "terminal"]
 ---
@@ -39,7 +39,7 @@ Your top priorities:
 ## Code and API design guidance (FieldWorks flavor)
 - Prefer internal/private. Avoid widening visibility to satisfy tests.
 - Don’t introduce new abstraction layers unless they clearly reduce duplication and are used immediately.
-- Follow existing patterns in the folder/component (read that folder’s `COPILOT.md` if present).
+- Follow existing patterns in the folder/component (read that folder’s `AGENTS.md` if present).
 - Avoid touching auto-generated code (`*.g.cs`, `*.Designer.cs` unless explicitly required and safe).
 
 ## Common FieldWorks constraints to respect
@@ -66,3 +66,4 @@ Your top priorities:
 - Root cause summary.
 - What changed and why.
 - Tests executed (scoped) and their results.
+

@@ -14,7 +14,7 @@ This file describes conventions, deterministic requirements, and best practices 
 - **Mono is deprecated**: Mono/Linux support was removed. When you encounter `Platform.IsMono` checks, `TODO-Linux` comments, or other Mono-specific code, remove it when practical. Do not add new Mono-specific code paths.
 
 ## Context loading
-- Review `.github/src-catalog.md` and `Src/<Folder>/COPILOT.md` for component responsibilities and entry points.
+- Review `.github/src-catalog.md` and `Src/<Folder>/AGENTS.md` for component responsibilities and entry points.
 - Follow localization patterns (use .resx resources; avoid hardcoded UI strings). Crowdin sync is configured via `crowdin.json`.
 
 ## Deterministic requirements
@@ -59,7 +59,7 @@ This file describes conventions, deterministic requirements, and best practices 
 		<None Remove="FrameworkTests/**" />
 	</ItemGroup>
 	```
-- After each batch, rerun the audit command so `patternType` values and `ValidationIssue` records stay current, then update `Directory.Build.props` comments and any affected `Src/**/COPILOT.md` files to reflect the new pattern.
+- After each batch, rerun the audit command so `patternType` values and `ValidationIssue` records stay current, then update `Directory.Build.props` comments and any affected `Src/**/AGENTS.md` files to reflect the new pattern.
 
 ## Mixed-code escalation workflow
 - Use `scripts/test_exclusions/escalation_writer.py` outputs (stored under `Output/test-exclusions/escalations/`) to open the pre-filled GitHub issue template for each project. Attach:
@@ -102,3 +102,4 @@ public Bar Convert(Foo f) { ... }
 - Build: `msbuild FieldWorks.sln /m /p:Configuration=Debug`
 - Tests: Use Test Explorer or `dotnet test` for SDK-style; NUnit console for .NET Framework assemblies.
 - Localization: See `DistFiles/CommonLocalizations/` and `crowdin.json`.
+

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Normalize COPILOT.md files so Copilot agents receive predictable structure.
+"""Normalize AGENTS.md files so Copilot agents receive predictable structure.
 
 Key behaviors (aligned with the detect → plan → draft workflow):
 
@@ -228,7 +228,7 @@ class CopilotDoc:
 def ensure_copilot_doc(
     root: Path, folder: Path, status: str, ref: str
 ) -> Tuple[str, Optional[str]]:
-    copath = folder / "COPILOT.md"
+    copath = folder / "AGENTS.md"
     if copath.exists():
         original = copath.read_text(encoding="utf-8", errors="replace")
     else:
@@ -267,7 +267,7 @@ def main() -> int:
     ap.add_argument(
         "--all",
         action="store_true",
-        help="Normalize every COPILOT.md under Src/ regardless of git changes",
+        help="Normalize every AGENTS.md under Src/ regardless of git changes",
     )
     args = ap.parse_args()
 
@@ -282,7 +282,7 @@ def main() -> int:
             folders.append(candidate)
     else:
         if args.all:
-            folders = sorted((path.parent for path in root.glob("Src/**/COPILOT.md")))
+            folders = sorted((path.parent for path in root.glob("Src/**/AGENTS.md")))
         else:
             changed = git_changed_files(
                 root, base=args.base, head=args.head, since=args.since
@@ -291,7 +291,7 @@ def main() -> int:
             for path in changed:
                 if not path.startswith("Src/"):
                     continue
-                if path.endswith("/COPILOT.md"):
+                if path.endswith("/AGENTS.md"):
                     continue
                 parts = path.split("/")
                 if len(parts) >= 2:
@@ -304,15 +304,16 @@ def main() -> int:
         if not folder.exists():
             continue
         content, tree_hash = ensure_copilot_doc(root, folder, args.status, ref)
-        copath = folder / "COPILOT.md"
+        copath = folder / "AGENTS.md"
         copath.write_text(content, encoding="utf-8")
         suffix = f" (tree {tree_hash})" if tree_hash else ""
         print(f"Prepared {copath}{suffix}")
         updated += 1
 
-    print(f"Prepared/updated {updated} COPILOT.md files.")
+    print(f"Prepared/updated {updated} AGENTS.md files.")
     return 0
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
+

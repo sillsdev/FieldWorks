@@ -56,8 +56,8 @@
 - [x] T014 [US2] Update `specs/006-convergence-platform-target/plan.md` (Constraints / Constitution sections) to reference the comment requirement and AnyCPU tooling rationale.
 - [x] T015 [P] [US2] Extend `specs/006-convergence-platform-target/research.md` with pointers to the exact csproj line numbers and justification for each exception.
 - [x] T016 [US2] Capture the `git grep "<PlatformTarget>AnyCPU" Build Src -n` output inside `specs/006-convergence-platform-target/platform_target_decisions.csv` (new evidence column) to prove only the documented FwBuildTasks exception remains.
-- [x] T017 [US2] Update each affected `Src/**/COPILOT.md` (matching csproj paths listed under `Action=Remove` in `platform_target_decisions.csv`) so the inheritance policy change or the "no additional detail" reasoning is captured per folder.
-  - *Note: No COPILOT.md files contained specific build property details, so no updates were required.*
+- [x] T017 [US2] Update each affected `Src/**/AGENTS.md` (matching csproj paths listed under `Action=Remove` in `platform_target_decisions.csv`) so the inheritance policy change or the "no additional detail" reasoning is captured per folder.
+  - *Note: No AGENTS.md files contained specific build property details, so no updates were required.*
 
 **Checkpoint**: Exceptions are documented in-code and in design docs, and audits can flag regressions instantly.
 
@@ -93,3 +93,4 @@
 - **Incremental Delivery**: After MVP, finish US2 to lock down AnyCPU exceptions, then close with the polish phase for reviewer aids.
 - **Testing Cadence**: Invoke `python convergence.py platform-target validate` after conversions, `msbuild FieldWorks.proj` for integration, and `git grep "<PlatformTarget>AnyCPU" Build Src -n` to prove only the documented tools remain.
 - **Regression Guards**: Keep `platform_target_audit.csv`, `platform_target_decisions.csv`, and the updated contract file under source control so future audits can diff against them quickly.
+

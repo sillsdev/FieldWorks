@@ -37,6 +37,10 @@
     Values: q[uiet], m[inimal], n[ormal], d[etailed], diag[nostic].
     Default is 'minimal'.
 
+.PARAMETER TraceCrashes
+    If set, enables the dev diagnostics config (FieldWorks.Diagnostics.dev.config) so trace logging
+    is written next to the built executable. Useful for crash investigation.
+
 .PARAMETER NodeReuse
     Enables or disables MSBuild node reuse (/nr). Default is true.
 
@@ -64,6 +68,15 @@
     differs from the last full-build stamp, or when there are uncommitted changes outside FLExInstaller/.
     Use only when you are sure the current Output/<Configuration> binaries are still what you want to package.
 
+.PARAMETER UseLocalLcm
+    If set, builds liblcm from a local checkout (default: ../liblcm) after the FieldWorks build
+    and copies the resulting DLLs into the output directory, overwriting the NuGet package versions.
+    Use this to test local liblcm fixes without publishing a NuGet package.
+
+.PARAMETER LocalLcmPath
+    Path to the local liblcm repository. Defaults to ../liblcm relative to the FieldWorks repo root.
+    Only used when -UseLocalLcm is specified.
+
 .PARAMETER LogFile
     Path to a file where the build output should be logged.
 
@@ -87,6 +100,10 @@
 .EXAMPLE
     .\build.ps1 -Serial -Verbosity detailed
     Builds Debug x64 serially with detailed logging.
+
+.EXAMPLE
+    .\build.ps1 -UseLocalLcm
+    Builds FieldWorks, then builds liblcm from ../liblcm and copies DLLs into Output.
 
 .NOTES
     FieldWorks is x64-only. The x86 platform is no longer supported.
@@ -114,10 +131,24 @@ param(
     [string]$InstallerToolset = "Wix3",
     [switch]$InstallerOnly,
     [switch]$ForceInstallerOnly,
-    [switch]$SignInstaller
+    [switch]$SignInstaller,
+    [switch]$TraceCrashes,
+    [switch]$UseLocalLcm,
+    [string]$LocalLcmPath
 )
 
 $ErrorActionPreference = "Stop"
+
+if ($Configuration -like "--*") {
+    if ($Configuration -eq "--TraceCrashes" -and -not $TraceCrashes) {
+        $TraceCrashes = $true
+        $Configuration = "Debug"
+        Write-Output "[WARN] Detected '--TraceCrashes' passed without PowerShell switch parsing. Using -TraceCrashes and defaulting Configuration to Debug."
+    }
+    else {
+        throw "Invalid Configuration value '$Configuration'. Use -TraceCrashes (single dash) for the trace option."
+    }
+}
 
 if ($BuildInstaller -and -not $BuildAdditionalApps) {
     $BuildAdditionalApps = $true
@@ -299,6 +330,9 @@ try {
         if ($SkipNative) {
             $finalMsBuildArgs += "/p:SkipNative=true"
         }
+        if ($TraceCrashes) {
+            $finalMsBuildArgs += "/p:UseDevTraceConfig=true"
+        }
         $finalMsBuildArgs += "/p:CL_MPCount=$mpCount"
         if ($env:FW_TRACE_LOG) {
             $finalMsBuildArgs += "/p:FW_TRACE_LOG=`"$($env:FW_TRACE_LOG)`""
@@ -412,6 +446,27 @@ try {
             Write-Host ""
             Write-Host "[OK] Build complete!" -ForegroundColor Green
             Write-Host "Output: Output\$Configuration" -ForegroundColor Cyan
+        }
+
+        # Copy local LCM assemblies if requested
+        if ($UseLocalLcm) {
+            Write-Host ""
+            Write-Host "Applying local LCM assemblies..." -ForegroundColor Cyan
+
+            $lcmCopyScript = Join-Path $PSScriptRoot "scripts\Agent\Copy-LocalLcm.ps1"
+            $lcmArgs = @{
+                Configuration = $Configuration
+                BuildLcm = $true
+                SkipConfirm = $true
+            }
+            if ($LocalLcmPath) {
+                $lcmArgs['LcmRoot'] = $LocalLcmPath
+            }
+
+            & $lcmCopyScript @lcmArgs
+            if ($LASTEXITCODE -ne 0) {
+                throw "Failed to copy local LCM assemblies."
+            }
         }
 
         if ($BuildInstaller) {

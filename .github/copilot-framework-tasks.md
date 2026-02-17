@@ -19,7 +19,7 @@ This checklist tracks repository updates that improve AI workflows using agentic
   - [x] .github/context/codebase.context.md
   - [x] .github/memory.md
 - [x] Reference these entry points from onboarding:
-  - [x] Link instructions, chat modes, and context in .github/copilot-instructions.md
+  - [x] Link instructions, chat modes, and context in .github/AGENTS.md
 
 ## Option 2 — Agentic workflows + spec-first flow (moderate effort)
 
@@ -35,18 +35,18 @@ This checklist tracks repository updates that improve AI workflows using agentic
 
 ## Option 3 — Outer-loop automation + MCP integration (higher effort)
 
-- [ ] Copilot CLI/APM scaffolding:
+- [ ] Agent CLI/APM scaffolding:
   - [ ] apm.yml: map scripts to prompts and declare MCP dependencies
-  - [ ] Document local usage: `apm install`, `apm run copilot-feature-spec --param specFile=...`
+  - [ ] Document local usage: `apm install`, `apm run agent-feature-spec --param specFile=...`
   - [ ] GH Action to run chosen prompt on PR, post summary/comments
 - [ ] MCP servers & boundaries:
   - [ ] Add GitHub MCP server and Filesystem MCP (pilot set); restrict by chat mode
   - [ ] Capture list and policies in `.github/context/mcp.servers.md`
 - [ ] CI governance:
-  - [ ] lint-docs job to verify COPILOT.md presence/links and src-catalog consistency
+  - [ ] lint-docs job to verify AGENTS.md presence/links and src-catalog consistency
   - [ ] prompt validation job to parse `.prompt.md` frontmatter/structure
 - [ ] Security & secrets:
-  - [ ] Use least-privilege tokens (e.g., `secrets.COPILOT_CLI_PAT`)
+  - [ ] Use least-privilege tokens (e.g., `secrets.AGENT_CLI_PAT`)
   - [ ] Add a security review checklist for enabling new tools/servers
 - [ ] Rollout strategy:
   - [ ] Pilot a no-write prompt (`test-failure-debug.prompt.md`) on PRs
@@ -56,12 +56,12 @@ See: `.github/option3-plan.md` for details.
 
 ## Notes
 - Keep instructions concise and domain-scoped (use `applyTo` when appropriate).
-- Follow the canonical COPILOT skeleton described in `Docs/copilot-refresh.md` (detect → plan → validate workflow) and remove scaffold leftovers when editing docs.
+- Follow the canonical agent-doc skeleton described in `Docs/agent-docs-refresh.md` (detect → plan → validate workflow) and remove scaffold leftovers when editing docs.
 - Prefer fast inner-loop build/test paths for agents; reserve installer builds for when necessary.
 
 
 ## small but high-impact extras
 - [ ] Add mermaid diagrams in .github/docs/architecture.md showing component relationships (Cellar/Common/XCore/xWorks), so agents can parse text-based diagrams.
 - [ ] Create tests.index.md that maps each major component to its test assemblies and common scenarios (fast lookup for agents).
-- [ ] Enrich each COPILOT.md with section headers that match your instructions architecture: Responsibilities, Entry points, Dependencies, Tests, Pitfalls, Extension points. Agents recognize consistent structures quickly.
-- [ ] Link your CI checks in the instructions: we already added commit/whitespace/build rules and a PR template—keep those links at the top of copilot-instructions.md.
+- [ ] Enrich each AGENTS.md with section headers that match your instructions architecture: Responsibilities, Entry points, Dependencies, Tests, Pitfalls, Extension points. Agents recognize consistent structures quickly.
+- [ ] Link your CI checks in the instructions: we already added commit/whitespace/build rules and a PR template—keep those links at the top of AGENTS.md.

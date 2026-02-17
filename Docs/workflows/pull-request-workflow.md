@@ -41,7 +41,7 @@ git checkout -b feature/my-feature-name
 
 ### Step 2: Make Your Changes
 
-1. Write your code following `.editorconfig` and the repo conventions in `.github/copilot-instructions.md`
+1. Write your code following `.editorconfig` and the repo conventions in `.github/AGENTS.md`
 2. Write or update tests for your changes
 3. Ensure all tests pass locally
 4. Commit with clear, descriptive messages

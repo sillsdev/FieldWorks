@@ -92,19 +92,19 @@ As a developer, I need clear documentation on how to build installers locally an
 
 ---
 
-### User Story 5 - Update Copilot Instructions (Priority: P3)
+### User Story 5 - Update Agent Instructions (Priority: P3)
 
-As a Copilot agent or developer, I need accurate instructions that reflect the current WiX version (3.14.x), so that guidance is consistent with the actual build infrastructure.
+As an AI agent or developer, I need accurate instructions that reflect the current WiX version (3.14.x), so that guidance is consistent with the actual build infrastructure.
 
 **Why this priority**: Incorrect documentation causes confusion and wasted time. While lower priority than functional changes, it's important for ongoing maintenance.
 
-**Independent Test**: Review all Copilot instructions and verify WiX version references are accurate.
+**Independent Test**: Review all agent instructions and verify WiX version references are accurate.
 
 **Acceptance Scenarios**:
 
 1. **Given** the `installer.instructions.md` file, **When** it references WiX tooling, **Then** it specifies version 3.14.x (not 3.11.x).
 
-2. **Given** the `copilot-instructions.md` file, **When** it mentions WiX prerequisites, **Then** it accurately reflects the current required version.
+2. **Given** the `AGENTS.md` file, **When** it mentions WiX prerequisites, **Then** it accurately reflects the current required version.
 
 ---
 

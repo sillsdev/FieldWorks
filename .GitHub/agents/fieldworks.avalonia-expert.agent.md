@@ -1,7 +1,7 @@
 ---
 name: "FieldWorks Avalonia UI Expert"
 description: "Avalonia UI specialist agent (XAML + .NET) with a strong bias toward using Context7 for up-to-date Avalonia APIs and patterns. Designed for FieldWorks-style repo constraints: minimal diffs, strong testing discipline, and localization-first UI strings."
-# target: github-copilot  # optional
+# target: universal  # optional
 # model: gpt-5.2-preview  # optional in VS Code
 # tools: ["read", "search", "edit", "terminal", "mcp_io_github_ups_resolve-library-id", "mcp_io_github_ups_get-library-docs"]
 ---

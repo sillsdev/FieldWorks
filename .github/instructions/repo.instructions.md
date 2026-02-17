@@ -1,13 +1,13 @@
 ---
 applyTo: "**/*"
 name: "repo.instructions"
-description: "High-level repository rules that assist Copilot coding agent and Copilot code review."
+description: "High-level repository rules that assist AI coding agents and automated code review."
 ---
 
 # FieldWorks: Repo-wide Guidance (short)
 
 ## Purpose & Scope
-Provide clear, concise, and enforceable rules that help Copilot code review and coding agents offer relevant suggestions and reviews.
+Provide clear, concise, and enforceable rules that help AI coding agents and automated code review offer relevant suggestions and reviews.
 
 ## Rules (high-impact, short)
 - Prefer the repository top-level build (`.\build.ps1`) and solution (`FieldWorks.sln`) for full builds.

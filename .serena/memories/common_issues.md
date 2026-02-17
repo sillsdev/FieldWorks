@@ -38,13 +38,13 @@ msbuild Build\Src\NativeBuild\NativeBuild.csproj /p:Configuration=Debug /p:Platf
 
 ## Documentation Issues
 
-### COPILOT.md Validation Fails
+### AGENTS.md Validation Fails
 **Symptom**: `check_copilot_docs.py` reports missing sections
 **Cause**: Document doesn't match expected template
 **Solution**:
 ```powershell
 python .github/scaffold_copilot_markdown.py --folders Src/<Folder>
-python .github/check_copilot_docs.py --paths Src/<Folder>/COPILOT.md
+python .github/check_copilot_docs.py --paths Src/<Folder>/AGENTS.md
 ```
 
 ## Environment Issues
@@ -80,3 +80,4 @@ Expand-Archive "$env:TEMP\omnisharp.zip" -DestinationPath "C:\OmniSharp" -Force
 **Symptom**: Installer build fails with candle/light errors
 **Cause**: WiX Toolset 3.14.1 not installed
 **Solution**: Install WiX Toolset from https://wixtoolset.org/
+

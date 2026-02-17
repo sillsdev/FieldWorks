@@ -1,4 +1,4 @@
-name: COPILOT docs detection
+name: Agent docs detection
 
 on:
     pull_request:
@@ -16,17 +16,17 @@ jobs:
                 uses: actions/setup-python@v5
                 with:
                     python-version: "3.x"
-            - name: Detect folders needing COPILOT updates
+            - name: Detect folders needing agent-doc updates
                 shell: pwsh
                 run: |
                     python .github/detect_copilot_needed.py --base "origin/$env:GITHUB_BASE_REF" --strict
-            - name: Scaffold changed COPILOT docs (advisory)
+            - name: Scaffold changed agent docs (advisory)
                 if: ${{ always() }}
                 shell: pwsh
                 run: |
                     python .github/scaffold_copilot_markdown.py --base "origin/$env:GITHUB_BASE_REF"
                 continue-on-error: true
-            - name: Validate COPILOT structure (optional)
+            - name: Validate agent-doc structure (optional)
                 if: ${{ always() }}
                 shell: pwsh
                 run: |
