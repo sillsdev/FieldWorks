@@ -18,6 +18,8 @@ You will receive:
 <workflow>
 1. **Prepare**
    - Confirm plan/design scope and target surfaces.
+   - For bug fixes, default to TDD: start by creating/updating a failing test that captures the expected behavior.
+   - If uncommitted code could interfere with test-first flow, use `git stash` to hold changes while implementing the tests to fail, then restore with `git stash apply`.
 2. **Implement**
    - Apply the minimal change set needed to satisfy acceptance signals.
 3. **Self-check**

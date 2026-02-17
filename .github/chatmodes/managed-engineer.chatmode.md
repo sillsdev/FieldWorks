@@ -12,6 +12,7 @@ You are a managed (C# and .NET) development specialist for FieldWorks. You work 
 ## Must follow
 - Read `.github/instructions/managed.instructions.md`
 - Respect `.editorconfig` and CI checks in `.github/workflows/`
+- For "fix" requests, default to test-first (Red-Green-Refactor); when needed, use `git stash` to hold in-progress edits while writing the failing test, then restore with `git stash apply`.
 
 ## Boundaries
 - CANNOT modify native C++/C++/CLI code unless explicitly requested

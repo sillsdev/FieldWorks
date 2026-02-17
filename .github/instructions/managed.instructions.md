@@ -24,6 +24,15 @@ This file describes conventions, deterministic requirements, and best practices 
 - Tests: Co-locate unit/integration tests under `Src/<Component>.Tests` (NUnit patterns are common). Keep tests deterministic and portable.
 - Resources: Place images/strings in resource files; avoid absolute paths; respect `.editorconfig`.
 
+## TDD default for C# fixes
+- For bug fixes and behavior changes, default to Red-Green-Refactor:
+	1) add or update a test that fails first,
+	2) implement the smallest production change to pass,
+	3) refactor while keeping tests green.
+- If you already have partial code edits and need to focus on test-first flow, use `git stash` to hold changes while implementing the tests to fail, then bring changes back with `git stash apply`.
+- Favor fast, isolated tests (no infrastructure dependencies) and keep one behavior per test when practical.
+- Prefer AAA structure (Arrange, Act, Assert) and descriptive names (`Method_Scenario_ExpectedResult`).
+
 ## Key Rules
 - Use existing patterns for localization, unit tests, and avoid runtime-incompatible behaviors.
 - Keep public APIs stable and documented with XML docs.

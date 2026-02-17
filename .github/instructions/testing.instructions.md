@@ -75,6 +75,15 @@ The testing infrastructure relies on shared PowerShell modules for consistency:
 -   **Native**: Use Unit++. See `Src/Generic/Test/TestGeneric` for examples.
 -   **Determinism**: Tests must be hermetic. Avoid external state.
 
+## TDD workflow for "fix it" requests
+-   Prefer Red-Green-Refactor for managed fixes:
+	1) write the failing test,
+	2) make the minimal code change to pass,
+	3) refactor with tests green.
+-   If working tree changes are in progress, use `git stash` to hold changes while implementing the tests to fail, then restore with `git stash apply`.
+-   Keep tests fast, isolated, repeatable, and self-checking; avoid infrastructure in unit tests.
+-   Use one Act per test when practical, and prefer parameterized tests over loops/conditionals inside tests.
+
 ## Troubleshooting
 -   **"File not found"**: Ensure you built with `-BuildTests` (or let `test.ps1` do it).
 -   **Native Crash**: Native tests are fragile. Use `printf` debugging if the debugger is unavailable.

@@ -15,6 +15,8 @@ See `.github/AI_GOVERNANCE.md` for the documentation taxonomy and “source of t
 ## Core Rules
 - Prefer `./build.ps1`; avoid ad-hoc project builds that skip traversal ordering.
 - Run tests relevant to your change before pushing; do not assume CI coverage.
+- For bug fixes, default to TDD (Red-Green-Refactor): write a failing test first, then implement the minimal fix.
+- If you need to pause current edits to stay test-first, use `git stash` to hold changes while implementing the tests to fail, then restore with `git stash apply`.
 - Keep localization via `.resx` and respect `crowdin.json`; never hardcode translatable strings.
 - Avoid COM/registry edits without a test plan.
 - Stay within documented tooling—no surprise dependencies or scripts without updating instructions.

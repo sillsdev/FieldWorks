@@ -39,6 +39,7 @@
     "/^(&\\s+)?git\\s+(status|log|ls-files|diff|show|branch|fetch)(?!.*[;&|<>])/": true,
     "/^(&\\s+)?git\\s+(rev-parse|describe|cat-file|ls-tree|name-rev)(?!.*[;&|<>])/": true,
     "/^(&\\s+)?git\\s+(worktree\\s+list|remote(\\s+(-v|show))?|config\\s+--get)(?!.*[;&|<>])/": true,
+    "/^(&\\s+)?git\\s+stash(\\s+(push|apply|pop|list|show|drop|branch)(\\s+[^;&|<>]+)*)?(?!.*[;&|<>])/": true,
 
     // Python/scripting (consolidated)
     "/^(&\\s+)?python\\s+(scripts\\/|-m|\\.github\\/)(?!.*[;&|<>])/": true,
