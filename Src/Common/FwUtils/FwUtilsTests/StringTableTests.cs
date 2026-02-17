@@ -98,13 +98,46 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void StringListXmlNode()
 		{
-			XmlDocument doc =  new XmlDocument();
+			XmlDocument doc = new XmlDocument();
 			doc.LoadXml(@"<stringList group='InPng/InMyYard' ids='   MyPapaya, MyPineapple  '/>");
 			XmlNode node = doc.FirstChild;
 			string[] strings = m_table.GetStringsFromStringListNode(node);
 			Assert.That(strings.Length, Is.EqualTo(2));
 			Assert.That(strings[1], Is.EqualTo("pnppl"));
 		}
+
+		/// <summary>
+		/// LT-22392: Merging French localization strings whose IDs contain
+		/// apostrophes (e.g. "Forme d'affixe") must not throw an XPathException.
+		/// The original code naively wraps IDs in single quotes for XPath,
+		/// so an apostrophe in the ID breaks the XPath predicate.
+		/// </summary>
+		[Test]
+		public void MergeCustomTable_WithApostropheInId_DoesNotCrash()
+		{
+			// First merge: add a group so it exists in the in-memory document.
+			XmlDocument setup = new XmlDocument();
+			setup.LoadXml(
+				"<strings><group id='TestGroup'>"
+					+ "<string id='existing' txt='ok'/>"
+					+ "</group></strings>"
+			);
+			m_table.MergeCustomTable(setup);
+
+			// Second merge: merge a string whose ID has an apostrophe
+			// into the EXISTING group. This forces the code into the
+			// string-level SelectSingleNode path that produces
+			//   string[@id='Forme d'affixe']  -> XPathException
+			XmlDocument doc = new XmlDocument();
+			doc.LoadXml(
+				"<strings><group id='TestGroup'>"
+					+ "<string id=\"Forme d'affixe\" txt='Affix Form (fr)' />"
+					+ "</group></strings>"
+			);
+
+			Assert.DoesNotThrow(() => m_table.MergeCustomTable(doc));
+		}
+
 
 		/// <summary />
 		public static string CreateTestResourceFiles(Type resourcesType, string folderName)

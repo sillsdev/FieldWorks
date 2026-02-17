@@ -1,8 +1,26 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: 40947eb2517b52a47348601f466166915ba1c66369b07378d44191e713efc61a
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - architecture
+  - key-components
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - referenced-by
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -18,6 +36,10 @@ Do not edit this block manually; rerun the scripts above after code or doc updat
 
 ## Purpose
 Integration plugin enabling Paratext to access FieldWorks lexicon data. Implements Paratext.LexicalContracts interfaces (LexiconPlugin, LexiconPluginV2) allowing Paratext users to query and utilize FLEx lexicons during translation work. FwLexiconPlugin main class provides bidirectional access between Paratext and FieldWorks lexical data. FdoLexicon exposes lexicon as Lexicon/LexiconV2 interface. Supporting classes handle project selection (ChooseFdoProjectForm), data structures (FdoLexEntryLexeme, FdoWordAnalysis), and UI integration. Enables translators to leverage rich FLEx lexical resources within Paratext workflow.
+
+### Referenced By
+
+- [Paratext Integration](../../openspec/specs/integration/external/paratext.md#behavior) — Lexicon integration
 
 ## Architecture
 C# class library (.NET Framework 4.8.x) implementing Paratext plugin contracts. FwLexiconPlugin (attributed with [LexiconPlugin]) is main plugin class maintaining lexicon cache (FdoLexiconCollection) and LCM cache (LcmCacheCollection). COM activation context management for FDO interop. ILRepack merges dependencies into single plugin DLL. Test project FwParatextLexiconPluginTests validates functionality. 4026 lines total.
@@ -65,6 +87,10 @@ C# .NET Framework 4.8.x, Paratext.LexicalContracts, COM activation context, ILRe
 
 ## Interop & Contracts
 [LexiconPlugin] attribute for discovery, LexiconPlugin/V2 interfaces, COM activation context required for FDO, Events (LexemeAdded, SenseAdded, GlossAdded).
+
+### Referenced By
+
+- [External APIs](../../openspec/specs/architecture/interop/external-apis.md#external-integration-patterns) — Lexicon plugin integration
 
 ## Threading & Performance
 Thread-safe (m_syncRoot), CacheSize=5 for lexicons/caches, cache hits avoid project reloading.

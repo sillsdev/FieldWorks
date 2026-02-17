@@ -1,8 +1,30 @@
----
+﻿---
 last-reviewed: 2025-11-01
 last-reviewed-tree: 45264aa52a130d0ada04e62bc7c52a5fca0e5e5cc7994855047cd3f4b2067c7e
 status: production
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - referenced-by
+  - architecture
+  - key-components
+  - xmlutilscs-600-lines
+  - dynamicloadercs-400-lines
+  - supporting-classes-500-lines
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
+  - code-evidence
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -18,6 +40,11 @@ Do not edit this block manually; rerun the scripts above after code or doc updat
 
 ## Purpose
 XML processing utilities and helper functions. Provides XmlUtils static helpers (GetMandatoryAttributeValue, AppendAttribute, etc.), DynamicLoader for XML-configured assembly loading, SimpleResolver for XML entity resolution, and Configuration exceptions. Used throughout FieldWorks for XML-based configuration, data files, and dynamic plugin loading.
+
+### Referenced By
+
+- [FLExTools Integration](../../../openspec/specs/integration/external/flextools.md#behavior) — XML configuration helpers
+- [Encoding Integration](../../../openspec/specs/integration/external/encoding.md#behavior) — XML configuration helpers
 
 ## Architecture
 Core XML utility library with 1) XmlUtils (~600 lines) static helpers for XML manipulation, 2) DynamicLoader (~400 lines) for XML-configured object instantiation, 3) Supporting classes (~500 lines) including SimpleResolver, ConfigurationException, IPersistAsXml. Foundation for XML-based configuration and plugin loading across FieldWorks.

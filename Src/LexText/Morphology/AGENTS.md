@@ -1,8 +1,26 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: bc58db0bdef56c69ed19c8cd2613479a8dd45cfc84dfe07c67e02fe96a7fab2b
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - referenced-by
+  - architecture
+  - key-components
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -18,6 +36,10 @@ Do not edit this block manually; rerun the scripts above after code or doc updat
 
 ## Purpose
 Morphological analysis UI library for FieldWorks Language Explorer (FLEx). Provides specialized controls, slices, and dialogs for morphology features: inflectional affix templates (InflAffixTemplateControl, InflAffixTemplateSlice), affix rule formulas (AffixRuleFormulaControl, AffixRuleFormulaVc), phoneme/feature editing (PhonemeWithAllophonesSlice, BasicIPASymbolSlice), phonological environments (PhEnvReferenceSlice, SegmentSequenceSlice), morpheme analysis (AnalysisInterlinearRS, MorphemeContextCtrl), concordance (ConcordanceDlg), and morphology-grammar area (MGA/ subfolder with rule strata, templates). Master list listeners (MasterCatDlgListener, MasterDlgListener, MasterInflFeatDlgListener, MasterPhonFeatDlgListener) handle list editing coordination. Moderate-sized library (16.9K lines) supporting FLEx morphology/grammar features. Project name: Morphology.csproj.
+
+### Referenced By
+
+- [Grammar Sketch Generation](../../../openspec/specs/grammar/sketch/generation.md#behavior) — Morphology data sources
 
 ## Architecture
 C# library (net48, OutputType=Library) with morphology UI components. Slice/control pattern for data entry fields. View constructors (InflAffixTemplateVc, AffixRuleFormulaVc, PhoneEnvReferenceVc) for custom rendering. Master list listeners as XCore colleagues. MGA/ subfolder for morphology-grammar area components (rule strata, templates, environment choosers). Resource files for localization (MEStrings.resx) and images (ImageHolder.resx, MEImages.resx). Integrates with LCModel (IMoAffixAllomorph, IMoInflAffixTemplate, IPhEnvironment, IPhoneme), Views rendering, XCore framework.
@@ -70,6 +92,14 @@ C# library (net48, OutputType=Library) with morphology UI components. Slice/cont
   - Localized UI strings for morphology/grammar
 - **ImageHolder, MEImages** (ImageHolder.cs, MEImages.cs, 250 lines): Icon resources
   - Embedded icons/images for morphology UI
+
+### Referenced By
+
+- [Lexical Relations](../../../openspec/specs/lexicon/entries/relations.md#behavior) — Morphology relation editors
+- [Concordance](../../../openspec/specs/texts/analysis/concordance.md#behavior) — Concordance dialogs
+- [Morphology Categories](../../../openspec/specs/grammar/morphology/categories.md#behavior) — Category editors
+- [Morphological Affixes](../../../openspec/specs/grammar/morphology/affixes.md#behavior) — Affix templates and rules
+- [Allomorphs](../../../openspec/specs/grammar/morphology/allomorphs.md#behavior) — Allomorph editors
 
 ## Technology Stack
 C# .NET Framework 4.8.x, Windows Forms, LCModel, Views (rendering), XCore.

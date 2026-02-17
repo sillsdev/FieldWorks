@@ -37,4 +37,5 @@
     <Compile Remove="ScrChecksTests/**" />
     <None Remove="ScrChecksTests/**" />
   </ItemGroup>
+  <Import Project="BuildInclude.targets" />
 </Project>

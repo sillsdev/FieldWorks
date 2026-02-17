@@ -1,8 +1,29 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: 7429723c263755549ddf40ff3f313eec90f6ba20928a4451597ffe4e28116b78
 status: reviewed
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - architecture
+  - key-components
+  - migration-entry-point
+  - user-dialogs
+  - migration-logic-importfrom60
+  - ldml-writing-system-migration
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)

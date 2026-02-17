@@ -1,8 +1,26 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: 0b46a07bacc1ebfb88a3f7245988715314fcbb60b0bad599b15fb69ae99807b8
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - referenced-by
+  - architecture
+  - key-components
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -18,6 +36,10 @@ Do not edit this block manually; rerun the scripts above after code or doc updat
 
 ## Purpose
 Integration plugin connecting FieldWorks FLEx with SIL Pathway publishing solution. Implements IUtility interface allowing FLEx users to export lexicon/dictionary data via Pathway for print/digital publication. Appears as "Pathway" option in FLEx Tools → Configure menu. Handles data export to Pathway-compatible formats, folder management, and Pathway process launching. Provides seamless publishing workflow from FLEx to final output (PDF, ePub, etc.). Small focused plugin (595 lines) bridging FLEx and external Pathway publishing system.
+
+### Referenced By
+
+- [Pathway Export](../../../openspec/specs/lexicon/export/pathway.md#behavior) — Pathway publishing workflow
 
 ## Architecture
 C# library (net48, OutputType=Library) implementing IUtility and IFeedbackInfoProvider interfaces. FlexPathwayPlugin main class handles export dialog integration, data preparation, and Pathway invocation. MyFolders static utility class for folder operations (copy, create, naming). Integrates with FwCoreDlgs UtilityDlg framework. Discovered/loaded by FLEx Tools menu via IUtility interface pattern.

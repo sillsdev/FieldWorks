@@ -6,7 +6,7 @@ This document explains how AI agents (coding and chat modes) should operate insi
 
 ## Quick Start (All Agents)
 
-- Run on Windows (`windows-latest` runners or local VS Code worktrees).
+- Run on Windows (`windows-latest` runners or local VS Code workspaces). Do not create new worktrees or branches unless explicitly requested.
 - Always build through the traversal script: `.\build.ps1` (sets configuration, cleans stale obj, enforces native-first order).
 - Always test through `.\test.ps1` (dispatches managed/natives tests, applies VS test settings).
 - Use `scripts/Agent/*.ps1` wrappers whenever a command would normally need pipes/filters (`Git-Search`, `Read-FileContent`, etc.).
@@ -30,10 +30,6 @@ This document explains how AI agents (coding and chat modes) should operate insi
 3. **Load context**: read relevant `AGENTS.md`, `specs/` entries, and instructions referenced in the chatmode.
 4. **Escalate**: if a task crosses multiple surfaces (e.g., managed ↔ native), coordinate through the coding agent or split the work between specialized agents.
 
-## Multi-agent Coordination
-
-- **Agent Mail (reservations + messaging):** follow the skill in [.github/skills/mcp-agent-mail/SKILL.md](.github/skills/mcp-agent-mail/SKILL.md).
-
 ## Issue Tracking
 
 This project uses **bd (beads)** for issue tracking.
@@ -46,12 +42,69 @@ Run `bd prime` for workflow context.
 - `bd sync` - Sync with git (run at session end)
 - see [.github/skills/beads/SKILL.md](.github/skills/beads/SKILL.md)
 
-## Atlassian Skills (Default: Read-only)
+## Atlassian / JIRA Skills
 
-- Default to the read-only skill set in [.github/skills/atlassian-readonly-skills/SKILL.md](.github/skills/atlassian-readonly-skills/SKILL.md).
-- Only use the full-write skill set in [.github/skills/atlassian-skills/SKILL.md](.github/skills/atlassian-skills/SKILL.md) when the user **explicitly** requests create/update/delete.
-- Configure via environment variables or agent credentials; see the example template in
-  [.github/skills/atlassian-readonly-skills/.env.example](.github/skills/atlassian-readonly-skills/.env.example).
+### Recognizing JIRA Tickets
+
+**LT-prefixed tickets** (e.g., `LT-22382`, `LT-19288`) are JIRA issues from SIL's JIRA instance:
+- **Base URL:** `https://jira.sil.org/`
+- **Browse URL pattern:** `https://jira.sil.org/browse/LT-XXXXX`
+- **Project key:** `LT` (Language Technology)
+
+When you encounter an LT-prefixed identifier in:
+- User queries (e.g., "look up LT-22382")
+- Code comments (e.g., `// See LT-18363`)
+- Commit messages or PR descriptions
+- Git log output
+
+**→ Use the Atlassian skill Python scripts** to fetch issue details.
+
+### ⚠️ Critical: Always Use Python Scripts
+
+**NEVER** attempt to:
+- Browse to `jira.sil.org` URLs directly (requires authentication)
+- Use `fetch_webpage` or similar tools on JIRA URLs
+- Use GitHub issue tools for LT-* tickets
+
+**ALWAYS** use the Python scripts from the Atlassian skills:
+
+```powershell
+# Get a single issue
+python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-readonly-skills/scripts'); from jira_issues import jira_get_issue; print(jira_get_issue('LT-22382'))"
+
+# Search for issues
+python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-readonly-skills/scripts'); from jira_search import jira_search; print(jira_search('project = LT AND status = Open'))"
+```
+
+Or use the helper scripts in `jira-to-beads` which have CLI entry points:
+
+```powershell
+# Export your assigned issues to JSON
+python .github/skills/jira-to-beads/scripts/export_jira_assigned.py
+
+# Then read the JSON file
+Get-Content .cache/jira_assigned.json | ConvertFrom-Json
+```
+
+### When to Use Which Skill
+
+| Scenario | Skill |
+|----------|-------|
+| Read issue details | [atlassian-readonly-skills](.github/skills/atlassian-readonly-skills/SKILL.md) |
+| Search issues | [atlassian-readonly-skills](.github/skills/atlassian-readonly-skills/SKILL.md) |
+| Create/update issues | [atlassian-skills](.github/skills/atlassian-skills/SKILL.md) (only when user explicitly requests) |
+| Bulk import to Beads | [jira-to-beads](.github/skills/jira-to-beads/SKILL.md) |
+
+### Configuration
+
+Configure via environment variables or agent credentials; see the example template in
+[.github/skills/atlassian-readonly-skills/.env.example](.github/skills/atlassian-readonly-skills/.env.example).
+
+**SIL JIRA configuration (data center):**
+```bash
+JIRA_URL=https://jira.sil.org
+JIRA_PAT_TOKEN=<your-personal-access-token>
+```
 
 
 ## FieldWorks-Specific Agent Rules

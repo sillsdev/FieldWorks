@@ -294,6 +294,25 @@ namespace SIL.FieldWorks.XWorks
 		}
 
 		[Test]
+		public void UploadToWebonaryDoesNotFlagNoErrorsResponse()
+		{
+			var response = Encoding.UTF8.GetBytes("Upload successful. No errors.");
+			using (var controller = new MockUploadToWebonaryController(Cache, m_propertyTable, m_mediator, null, response))
+			{
+				var mockView = SetUpView();
+				var model = mockView.Model;
+				model.UserName = "webonary";
+				model.Password = "webonary";
+				//SUT
+				Assert.DoesNotThrow(() => controller.UploadToWebonary(model, mockView));
+				Assert.That(!mockView.StatusConditions.Contains(WebonaryStatusCondition.Error),
+					"Unexpected error status was reported. Status log:\r\n" + string.Join("\r\n", mockView.StatusStrings));
+				Assert.That(mockView.StatusConditions.Contains(WebonaryStatusCondition.Success),
+					"Expected a success status for 'Upload successful. No errors.'. Status log:\r\n" + string.Join("\r\n", mockView.StatusStrings));
+			}
+		}
+
+		[Test]
 		public void IsSupportedWebonaryFile_reportsAccurately()
 		{
 			Assert.That(UploadToWebonaryController.IsSupportedWebonaryFile("foo.xhtml"), Is.True);
@@ -430,9 +449,11 @@ namespace SIL.FieldWorks.XWorks
 		{
 			// Collect the status messages that are generated during the export
 			public List<string> StatusStrings = new List<string>();
+			public List<WebonaryStatusCondition> StatusConditions = new List<WebonaryStatusCondition>();
 			public void UpdateStatus(string statusString, WebonaryStatusCondition condition)
 			{
 				StatusStrings.Add(statusString);
+				StatusConditions.Add(condition);
 			}
 
 			public void UploadCompleted()

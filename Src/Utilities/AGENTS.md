@@ -1,8 +1,14 @@
----
+﻿---
 last-reviewed: 2025-11-21
 last-reviewed-tree: df6e92d11431aa3b0f6927f91f8cf7479733e6936e68cf34a24824a1e9b0a730
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - subfolder-map
+  - when-updating-this-folder
+  - related-guidance
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)

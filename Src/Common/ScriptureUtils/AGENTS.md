@@ -1,8 +1,26 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: 6eff5a0c5e237f35fa511195a7cf7a5bb7ec4c9cf3b6dec768ded6e91032b3f8
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - referenced-by
+  - architecture
+  - key-components
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -18,6 +36,11 @@ Do not edit this block manually; rerun the scripts above after code or doc updat
 
 ## Purpose
 Scripture-specific utilities and Paratext integration support for bidirectional data exchange between FieldWorks and Paratext projects. Provides ParatextHelper (IParatextHelper) for Paratext project discovery and management, PT7ScrTextWrapper for Paratext 7 project text access, Paratext7Provider for data provider implementation, ScriptureProvider for scripture text access, and reference comparison utilities (ScrReferencePositionComparer, ScriptureReferenceComparer). Enables importing scripture from Paratext, synchronizing changes, and accessing Paratext stylesheets and parser information.
+
+### Referenced By
+
+- [Send/Receive Collaboration](../../../openspec/specs/integration/collaboration/send-receive.md#behavior) — Paratext integration helpers
+- [Paratext Integration](../../../openspec/specs/integration/external/paratext.md#behavior) — Paratext adapter helpers
 
 ## Architecture
 C# class library (.NET Framework 4.8.x) with Paratext integration components. Implements provider pattern for scripture access (ScriptureProvider, Paratext7Provider). Wrapper classes (PT7ScrTextWrapper) adapt Paratext objects to FieldWorks interfaces (IScrText). Comparers for scripture reference ordering and positioning.

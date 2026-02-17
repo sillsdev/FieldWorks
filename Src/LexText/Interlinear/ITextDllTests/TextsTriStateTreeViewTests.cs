@@ -2,8 +2,11 @@
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
+using System.Reflection;
 using System.Windows.Forms;
 using NUnit.Framework;
+using SIL.LCModel;
+using SIL.LCModel.Infrastructure;
 
 #pragma warning disable 1591 // no XML comments needed in tests
 namespace SIL.FieldWorks.IText
@@ -89,5 +92,37 @@ namespace SIL.FieldWorks.IText
 
 		private class DummyBook {} // Didn't feel like implementing or even mocking IScrBook
 #endregion private classes
+	}
+
+	[TestFixture]
+	public class TextsTriStateTreeViewDisposeTests : MemoryOnlyBackendProviderTestBase
+	{
+		[Test]
+		public void Dispose_ClearsCacheReferences()
+		{
+			var view = new TextsTriStateTreeView();
+			NonUndoableUnitOfWorkHelper.Do(Cache.ActionHandlerAccessor, () =>
+				Cache.LanguageProject.TranslatedScriptureOA = Cache.ServiceLocator
+					.GetInstance<IScriptureFactory>()
+					.Create());
+			view.Cache = Cache;
+
+			var cacheField = typeof(TextsTriStateTreeView).GetField("m_cache",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			var stylesheetField = typeof(TextsTriStateTreeView).GetField("m_scriptureStylesheet",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+			var scrField = typeof(TextsTriStateTreeView).GetField("m_scr",
+				BindingFlags.Instance | BindingFlags.NonPublic);
+
+			Assert.That(cacheField?.GetValue(view), Is.Not.Null, "Expected cache to be set.");
+			Assert.That(stylesheetField?.GetValue(view), Is.Not.Null, "Expected stylesheet to be set.");
+			Assert.That(scrField?.GetValue(view), Is.Not.Null, "Expected scripture to be set.");
+
+			view.Dispose();
+
+			Assert.That(cacheField?.GetValue(view), Is.Null, "Expected cache to be cleared.");
+			Assert.That(stylesheetField?.GetValue(view), Is.Null, "Expected stylesheet to be cleared.");
+			Assert.That(scrField?.GetValue(view), Is.Null, "Expected scripture to be cleared.");
+		}
 	}
 }

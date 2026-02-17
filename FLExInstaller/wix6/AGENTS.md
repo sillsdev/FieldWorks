@@ -2,6 +2,10 @@
 
 This folder contains the WiX Toolset v6 installer sources for FieldWorks (FLEx).
 
+## Referenced By
+
+- [Installer](../../openspec/specs/architecture/build-deploy/installer.md#installer-patterns) — WiX 6 installer pipeline
+
 ## Build (local)
 
 Preferred entrypoint:

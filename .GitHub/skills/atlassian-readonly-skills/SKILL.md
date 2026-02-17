@@ -10,6 +10,45 @@ Read-only Python utilities for Jira, Confluence, and Bitbucket integration, supp
 
 > **Note**: This is a read-only variant that excludes all write operations (create, update, delete). For full functionality including write operations, use `atlassian-skills`.
 
+## FieldWorks / SIL JIRA Integration
+
+**LT-prefixed tickets** (e.g., `LT-22382`, `LT-19288`) are JIRA issues from SIL's JIRA instance:
+- **Base URL:** `https://jira.sil.org`
+- **Browse URL:** `https://jira.sil.org/browse/LT-XXXXX`
+- **Project key:** `LT` (Language Technology)
+
+**Trigger patterns:** Use this skill when you see:
+- LT-prefixed identifiers in user queries, code comments, commit messages, or git log output
+- References to `jira.sil.org` URLs
+- Requests to "look up" or "check" a JIRA ticket
+
+### ⚠️ Critical: Always Use Python Scripts
+
+**NEVER** attempt to:
+- Browse to `jira.sil.org` URLs directly (requires authentication)
+- Use `fetch_webpage` or similar tools on JIRA URLs
+- Use GitHub issue tools for LT-* tickets
+
+**ALWAYS** use these Python modules. The scripts are Python modules (not CLI tools), so use them via inline Python or import:
+
+```powershell
+# Get a single issue (inline Python one-liner)
+python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-readonly-skills/scripts'); from jira_issues import jira_get_issue; print(jira_get_issue('LT-22382'))"
+
+# Search for issues (JQL query)
+python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-readonly-skills/scripts'); from jira_search import jira_search; print(jira_search('project = LT AND status = Open'))"
+
+# Get issue workflow transitions
+python -c "import sys; sys.path.insert(0, '.github/skills/atlassian-readonly-skills/scripts'); from jira_workflow import jira_get_transitions; print(jira_get_transitions('LT-22382'))"
+```
+
+Alternatively, use the CLI helper in `jira-to-beads` skill:
+
+```powershell
+# Export your assigned issues to .cache/jira_assigned.json
+python .github/skills/jira-to-beads/scripts/export_jira_assigned.py
+```
+
 ## Configuration
 
 Two configuration modes are supported:
@@ -17,6 +56,15 @@ Two configuration modes are supported:
 ### Mode 1: Environment Variables (Traditional)
 
 Set environment variables based on your deployment type. This mode is used when `credentials` parameter is not provided to skill functions.
+
+#### SIL JIRA (Data Center / PAT Token)
+
+```bash
+# SIL JIRA instance for LT-* tickets
+JIRA_URL=https://jira.sil.org
+# Personal Access Token - generate at: https://jira.sil.org/secure/ViewProfile.jspa → Personal Access Tokens
+JIRA_PAT_TOKEN=your_jira_pat_token_here
+```
 
 #### Cloud (API Token)
 

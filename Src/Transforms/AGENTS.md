@@ -1,8 +1,28 @@
----
+﻿---
 last-reviewed: 2025-11-21
 last-reviewed-tree: 5fe2afbb8cb54bb9264efdb2cf2de46021c9343855105809e6ea6ee5be4ad9ee
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - architecture
+  - key-components
+  - application-parser-integration---12-xslt-files
+  - presentation-display-formatting---7-xslt-files
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - referenced-by
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -18,6 +38,10 @@ Do not edit this block manually; rerun the scripts above after code or doc updat
 
 ## Purpose
 Collection of 19 XSLT 1.0 stylesheets organized in Application/ and Presentation/ subdirectories. Provides data transforms for parser integration (XAmple, HermitCrab, GAFAWS), morphology export, trace formatting, and linguistic publishing (XLingPap). Used by FXT tool and export features throughout FieldWorks.
+
+### Referenced By
+
+- [FLExTools Integration](../../openspec/specs/integration/external/flextools.md#behavior) — Shared transform pipeline
 
 ## Architecture
 Pure XSLT 1.0 stylesheet collection (no code compilation). Two subdirectories:
@@ -50,6 +74,12 @@ No executable components; XSLTs loaded at runtime by .NET System.Xml.Xsl process
 - **FormatCommon.xsl** - Shared formatting templates and CSS generation (imported by other presentation transforms)
 - **JSFunctions.xsl** - Generates JavaScript functions for interactive HTML features (expand/collapse, highlighting)
 - **XLingPap1.xsl** - Transforms linguistic data to XLingPap format for publication-quality papers
+
+### Referenced By
+
+- [Parsing Rules](../../openspec/specs/grammar/parsing/rules.md#behavior) — Parser rule transforms
+- [Parser Troubleshooting](../../openspec/specs/grammar/parsing/troubleshooting.md#behavior) — Trace formatting transforms
+- [Grammar Sketch Generation](../../openspec/specs/grammar/sketch/generation.md#behavior) — Morphology sketch transforms
 
 ## Technology Stack
 - **Language**: XSLT 1.0 (W3C Recommendation)
@@ -138,6 +168,10 @@ Input: M3Dump XML (LCModel export). Output: XAmple formats (.lex, .ana, .adctl),
 - **Test data**: 18+ XML test files in ParserCoreTests cover various morphological scenarios
   - Circumfixes, infixes, reduplication, irregular forms, stem names, clitics
 - **No automated XSLT unit tests**: Would require XSLT test framework (not in place)
+
+### Referenced By
+
+- [Fixtures](../../openspec/specs/architecture/testing/fixtures.md#fixture-patterns) — Transform fixtures and reference outputs
 
 ## Usage Hints
 FXT XDumper exports M3 XML and applies transforms. Edit .xsl files directly (no compilation). Use xsl:key for performance. View traces via Tools→Parser→Try A Word.

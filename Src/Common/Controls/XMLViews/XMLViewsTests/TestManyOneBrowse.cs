@@ -169,18 +169,19 @@ namespace XMLViewsTests
 		{
 			ArrayList list = new ArrayList();
 			XmlNode column = m_columnList[0];
-			XmlViewsUtils.CollectBrowseItems(1, column, list, m_mdc, m_sda, m_layouts);
+			XmlViewsUtils.CollectBrowseItems(1, column, list, null, m_mdc, m_sda, m_layouts);
 			Assert.That(list.Count, Is.EqualTo(1), "got one item for lexeme obj 1");
 			IManyOnePathSortItem bv = list[0] as IManyOnePathSortItem;
 			Assert.That(bv.KeyObject, Is.EqualTo(1));
 			Assert.That(bv.PathLength, Is.EqualTo(0));
 			list.Clear();
-			XmlViewsUtils.CollectBrowseItems(4, column, list, m_mdc, m_sda, m_layouts);
+			XmlViewsUtils.CollectBrowseItems(4, column, list, null, m_mdc, m_sda, m_layouts);
 			Assert.That(list.Count, Is.EqualTo(1), "got one item for lexeme obj 4");
 			list.Clear();
-			XmlViewsUtils.CollectBrowseItems(6, column, list, m_mdc, m_sda, m_layouts);
+			XmlViewsUtils.CollectBrowseItems(6, column, list, null, m_mdc, m_sda, m_layouts);
 			Assert.That(list.Count, Is.EqualTo(1), "got one item for lexeme obj 6");
 			bv = list[0] as IManyOnePathSortItem;
+
 			Assert.That(bv.KeyObject, Is.EqualTo(6));
 			Assert.That(bv.PathLength, Is.EqualTo(0));
 		}
@@ -193,7 +194,7 @@ namespace XMLViewsTests
 		{
 			ArrayList list = new ArrayList();
 			XmlNode column = m_columnList[1]; // Etymology
-			XmlViewsUtils.CollectBrowseItems(1, column, list, m_mdc, m_sda, m_layouts);
+			XmlViewsUtils.CollectBrowseItems(1, column, list, null, m_mdc, m_sda, m_layouts);
 			Assert.That(list.Count, Is.EqualTo(1), "got one item for etymology obj 1");
 			IManyOnePathSortItem bv = list[0] as IManyOnePathSortItem;
 			Assert.That(bv.KeyObject, Is.EqualTo(60));
@@ -201,10 +202,10 @@ namespace XMLViewsTests
 			Assert.That(bv.PathObject(0), Is.EqualTo(1));
 			Assert.That(bv.PathFlid(0), Is.EqualTo(2011));
 			list.Clear();
-			XmlViewsUtils.CollectBrowseItems(4, column, list, m_mdc, m_sda, m_layouts);
+			XmlViewsUtils.CollectBrowseItems(4, column, list, null, m_mdc, m_sda, m_layouts);
 			Assert.That(list.Count, Is.EqualTo(1), "got one item for etymology obj 4");
 			list.Clear();
-			XmlViewsUtils.CollectBrowseItems(6, column, list, m_mdc, m_sda, m_layouts);
+			XmlViewsUtils.CollectBrowseItems(6, column, list, null, m_mdc, m_sda, m_layouts);
 			Assert.That(list.Count, Is.EqualTo(1), "got one item for etymology obj 6");
 			bv = list[0] as IManyOnePathSortItem;
 			Assert.That(bv.KeyObject, Is.EqualTo(61));
@@ -221,10 +222,10 @@ namespace XMLViewsTests
 		{
 			ArrayList list = new ArrayList();
 			XmlNode column = m_columnList[3]; // Glosses
-			XmlViewsUtils.CollectBrowseItems(1, column, list, m_mdc, m_sda, m_layouts);
+			XmlViewsUtils.CollectBrowseItems(1, column, list, null, m_mdc, m_sda, m_layouts);
 			Assert.That(list.Count, Is.EqualTo(1), "got one items for glosses obj 1");
 			list.Clear();
-			XmlViewsUtils.CollectBrowseItems(4, column, list, m_mdc, m_sda, m_layouts);
+			XmlViewsUtils.CollectBrowseItems(4, column, list, null, m_mdc, m_sda, m_layouts);
 			Assert.That(list.Count, Is.EqualTo(1), "got one item for glosses obj 4");
 			IManyOnePathSortItem bv = list[0] as IManyOnePathSortItem;
 			Assert.That(bv.KeyObject, Is.EqualTo(5));
@@ -232,7 +233,7 @@ namespace XMLViewsTests
 			Assert.That(bv.PathObject(0), Is.EqualTo(4));
 			Assert.That(bv.PathFlid(0), Is.EqualTo(2010));
 			list.Clear();
-			XmlViewsUtils.CollectBrowseItems(6, column, list, m_mdc, m_sda, m_layouts);
+			XmlViewsUtils.CollectBrowseItems(6, column, list, null, m_mdc, m_sda, m_layouts);
 			Assert.That(list.Count, Is.EqualTo(3), "got three items for glosses obj 6");
 			int[] keys = new int[] {7, 8, 9};
 			for (int i = 0; i < keys.Length; i++)
@@ -254,14 +255,14 @@ namespace XMLViewsTests
 			ArrayList list = new ArrayList();
 			IManyOnePathSortItem bv;
 			XmlNode column = m_columnList[5]; // Semantic domains
-			XmlViewsUtils.CollectBrowseItems(1, column, list, m_mdc, m_sda, m_layouts);
+			XmlViewsUtils.CollectBrowseItems(1, column, list, null, m_mdc, m_sda, m_layouts);
 			Assert.That(list.Count, Is.EqualTo(1), "got one item for SD obj 1"); // no senses!
 			list.Clear();
-			XmlViewsUtils.CollectBrowseItems(4, column, list, m_mdc, m_sda, m_layouts);
+			XmlViewsUtils.CollectBrowseItems(4, column, list, null, m_mdc, m_sda, m_layouts);
 			Assert.That(list.Count, Is.EqualTo(1), "got one item for SD obj 4"); // sense 5 has no SDs
 			list.Clear();
 			// Senses 7, 8, 9, having SDs 7->30, 8->31, and 9->30, 31, 32
-			XmlViewsUtils.CollectBrowseItems(6, column, list, m_mdc, m_sda, m_layouts);
+			XmlViewsUtils.CollectBrowseItems(6, column, list, null, m_mdc, m_sda, m_layouts);
 			Assert.That(list.Count, Is.EqualTo(5), "got five items for SD obj 6");
 			int[] keys = new int[] {30, 31, 30, 31, 32};
 			int[] keys2 = new int[] {7, 8, 9, 9, 9};
@@ -292,7 +293,7 @@ namespace XMLViewsTests
 			// but we still dig inside the span
 			int useHvo;
 			List<XmlNode> collectStructNodes = new List<XmlNode>();
-			XmlNode useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[0],
+			XmlNode useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[0], null,
 				m_mdc, m_sda, m_layouts, out useHvo, collectStructNodes);
 			Assert.That(useHvo, Is.EqualTo(1));
 			CheckDebugId(useNode, "LexemeCf");
@@ -301,7 +302,7 @@ namespace XMLViewsTests
 
 			// Try on another column. Again we get original object, and dig inside span
 			collectStructNodes.Clear();
-			useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[1],
+			useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[1], null,
 				m_mdc, m_sda, m_layouts, out useHvo, collectStructNodes);
 			Assert.That(useHvo, Is.EqualTo(1));
 			CheckDebugId(useNode, "EtymologyObj");
@@ -311,7 +312,7 @@ namespace XMLViewsTests
 
 			// Try on a column involving a lookup. This affects the node output.
 			collectStructNodes.Clear();
-			useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[2],
+			useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[2], null,
 				m_mdc, m_sda, m_layouts, out useHvo, collectStructNodes);
 			Assert.That(useHvo, Is.EqualTo(1));
 			CheckDebugId(useNode, "EntryMsaSeq");
@@ -333,6 +334,8 @@ namespace XMLViewsTests
 		{
 			ArrayList list = new ArrayList();
 			XmlNode column = m_columnList[1];
+			// This call was already patched manually in my previous "failed" attempt that likely partially succeeded or I need to check?
+			// Wait, I only patched Generate* methods. So this call needs patching.
 			XmlViewsUtils.CollectBrowseItems(1, column, list, null, m_mdc, m_sda, m_layouts);
 			IManyOnePathSortItem bvi = list[0] as IManyOnePathSortItem;
 
@@ -340,7 +343,7 @@ namespace XMLViewsTests
 			// the span.
 			int useHvo;
 			List<XmlNode> collectStructNodes = new List<XmlNode>();
-			XmlNode useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[0],
+			XmlNode useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[0], null,
 				m_mdc, m_sda, m_layouts, out useHvo, collectStructNodes);
 			Assert.That(useHvo, Is.EqualTo(1));
 			CheckDebugId(useNode, "LexemeCf");
@@ -349,7 +352,7 @@ namespace XMLViewsTests
 
 			// Try on matching column.
 			collectStructNodes.Clear();
-			useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[1],
+			useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[1], null,
 				m_mdc, m_sda, m_layouts, out useHvo, collectStructNodes);
 			Assert.That(useHvo, Is.EqualTo(bvi.KeyObject));
 			CheckDebugId(useNode, "EtymologyComment");
@@ -359,7 +362,7 @@ namespace XMLViewsTests
 
 			// Try on a column involving a lookup. This affects the node output.
 			collectStructNodes.Clear();
-			useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[2],
+			useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[2], null,
 				m_mdc, m_sda, m_layouts, out useHvo, collectStructNodes);
 			Assert.That(useHvo, Is.EqualTo(1));
 			CheckDebugId(useNode, "EntryMsaSeq");
@@ -369,7 +372,7 @@ namespace XMLViewsTests
 
 			// On a different view of the Etymology, we should still get the Etymology object.
 			collectStructNodes.Clear();
-			useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[6],
+			useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[6], null,
 				m_mdc, m_sda, m_layouts, out useHvo, collectStructNodes);
 			Assert.That(useHvo, Is.EqualTo(bvi.KeyObject));
 			CheckDebugId(useNode,"EtymologyComment2");
@@ -392,7 +395,7 @@ namespace XMLViewsTests
 			// the span.
 			int useHvo;
 			List<XmlNode> collectStructNodes = new List<XmlNode>();
-			XmlNode useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[0],
+			XmlNode useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[0], null,
 				m_mdc, m_sda, m_layouts, out useHvo, collectStructNodes);
 			Assert.That(useHvo, Is.EqualTo(6));
 			CheckDebugId(useNode, "LexemeCf");
@@ -401,7 +404,7 @@ namespace XMLViewsTests
 
 			// Try on etymology column. Has an <obj>, but doens't match
 			collectStructNodes.Clear();
-			useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[1],
+			useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[1], null,
 				m_mdc, m_sda, m_layouts, out useHvo, collectStructNodes);
 			Assert.That(useHvo, Is.EqualTo(6));
 			CheckDebugId(useNode, "EtymologyObj");
@@ -411,7 +414,7 @@ namespace XMLViewsTests
 
 			// Try on a column involving a lookup. This affects the node output.
 			collectStructNodes.Clear();
-			useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[2],
+			useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[2], null,
 				m_mdc, m_sda, m_layouts, out useHvo, collectStructNodes);
 			Assert.That(useHvo, Is.EqualTo(6));
 			CheckDebugId(useNode, "EntryMsaSeq");
@@ -421,7 +424,7 @@ namespace XMLViewsTests
 
 			// On the matching column, we should get the leaf object
 			collectStructNodes.Clear();
-			useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[5],
+			useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[5], null,
 				m_mdc, m_sda, m_layouts, out useHvo, collectStructNodes);
 			Assert.That(useHvo, Is.EqualTo(bvi.KeyObject));
 			CheckDebugId(useNode,"PACN_Para");
@@ -431,7 +434,7 @@ namespace XMLViewsTests
 
 			// On the gloss column, we get the sense.
 			collectStructNodes.Clear();
-			useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[3],
+			useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[3], null,
 				m_mdc, m_sda, m_layouts, out useHvo, collectStructNodes);
 			Assert.That(useHvo, Is.EqualTo(7)); // the first sense
 			CheckDebugId(useNode,"SenseGloss");
@@ -442,7 +445,7 @@ namespace XMLViewsTests
 			// Make sure that for later Bvis, we get later senses
 			collectStructNodes.Clear();
 			bvi = list[3] as IManyOnePathSortItem;
-			useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[3],
+			useNode = XmlViewsUtils.GetNodeToUseForColumn(bvi, m_columnList[3], null,
 				m_mdc, m_sda, m_layouts, out useHvo, collectStructNodes);
 			Assert.That(useHvo, Is.EqualTo(9)); // the third sense, in which context we display the 4th SD
 		}

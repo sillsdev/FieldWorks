@@ -79,6 +79,15 @@
 		-->
 		<PackageReference Include="Microsoft.Bcl.HashCode" Version="6.0.0" />
 		<!--
+			System.Security.Permissions version conflict resolution (LT-22394):
+			- ProDotNetZip 1.20.0 requires System.Security.Permissions >= 8.0.0
+			- System.Security.AccessControl 6.0.0 (transitive) requires >= 6.0.0
+			- Without a global pin, projects resolve different versions and the
+			  last-writer to the shared Output dir wins, causing assembly mismatch
+			  crashes at runtime (especially in Release/installer builds).
+		-->
+		<PackageReference Include="System.Security.Permissions" Version="9.0.9" />
+		<!--
 			Localization package references:
 			These packages contain XLIFF translation files used by Build/Localize.targets.
 			Adding them globally ensures they're restored to packages/ for the build process.

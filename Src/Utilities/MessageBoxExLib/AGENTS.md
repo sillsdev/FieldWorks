@@ -1,8 +1,31 @@
----
+﻿---
 last-reviewed: 2025-11-01
 last-reviewed-tree: 0e6c1fb90b9acd157bd784e82d4850c6ae2209a41ebb28982ba1d71c0e51be99
 status: production
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - architecture
+  - key-components
+  - messageboxexcs-200-lines
+  - messageboxexformcs-700-lines
+  - supporting-types-50-lines-total
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - classes
+  - enums
+  - structs
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)

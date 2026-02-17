@@ -1,8 +1,26 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: c8147e4135449a80e746c376e1cf2012eec0bd4845459fff1a1cd3e89825bf9b
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - architecture
+  - key-components
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - referenced-by
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -55,6 +73,10 @@ C++ header files with generated constants and minimal COM infrastructure (121 to
 
 ## Interop & Contracts
 - CellarConstants enum: Contract for class and field identifiers
+
+### Referenced By
+
+- [COM Registration Patterns](../../openspec/specs/architecture/interop/com-contracts.md#com-registration-patterns) — Registration-free COM contracts overview
 
 ## Threading & Performance
 - Constants: Compile-time; zero runtime overhead

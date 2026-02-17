@@ -1,8 +1,26 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: 69fbeb49f36d20492fc9c2122ebc9465c11383be6a10ef3914ebe13cbcadbb21
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - referenced-by
+  - architecture
+  - key-components
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -18,6 +36,10 @@ Do not edit this block manually; rerun the scripts above after code or doc updat
 
 ## Purpose
 Provides XML parsing helpers for FieldWorks-specific XML string representations using the Expat parser. Specifically handles parsing of formatted text strings with runs, text properties (integer-valued, string-valued, and GUID-valued), and embedded objects/pictures. These utilities support the serialization and deserialization of rich text data in FieldWorks' XML format.
+
+### Referenced By
+
+- [LCM Patterns](../../openspec/specs/architecture/data-access/lcm-patterns.md#data-access-patterns) — XML parsing utilities
 
 ## Architecture
 C++ native header-only library with inline implementation files. The code is designed to be included into consumer projects rather than built as a standalone library. FwXml.h declares data structures (BasicRunInfo, TextGuidValuedProp, RunPropInfo) and parsing functions. FwXmlString.cpp is designed to be `#include`d in master C++ files and depends on the FwXmlImportData class defined by the consuming code.

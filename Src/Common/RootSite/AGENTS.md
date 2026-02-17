@@ -1,8 +1,26 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: 3505d6ce9dc81bc145584c626f003ba9184ecfa0a9d451b2d288a4edf8c64500
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - architecture
+  - referenced-by
+  - key-components
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -21,6 +39,10 @@ Root-level site management infrastructure for hosting FieldWorks views with adva
 
 ## Architecture
 C# class library (.NET Framework 4.8.x) with root site infrastructure. CollectorEnv base class and subclasses implement IVwEnv interface for view collection without actual rendering (testing, string extraction, measurement). Provides abstract RootSite base classes extended by SimpleRootSite. Test project (RootSiteTests) validates root site behavior.
+
+### Referenced By
+
+- [Views Rendering](../../../openspec/specs/architecture/ui-framework/views-rendering.md#rendering-pipeline) — Advanced root site hosting
 
 ## Key Components
 - **CollectorEnv** class (CollectorEnv.cs): Base for IVwEnv implementations
@@ -51,6 +73,11 @@ C# class library (.NET Framework 4.8.x) with root site infrastructure. Collector
 
 ## Interop & Contracts
 - **IVwEnv**: Environment interface for view construction
+
+### Referenced By
+
+- [COM Registration Patterns](../../../openspec/specs/architecture/interop/com-contracts.md#com-registration-patterns) — Registration-free COM contracts overview
+- [Native Boundary](../../../openspec/specs/architecture/interop/native-boundary.md#marshaling-patterns) — Managed/native boundary patterns
 
 ## Threading & Performance
 - UI thread requirements for view operations

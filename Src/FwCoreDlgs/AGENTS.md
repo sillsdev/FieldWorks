@@ -1,8 +1,26 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: 686f899291d7c6b63b4532a7d7d32a41b409d3198444a91f4ba68020df7a99ac
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - architecture
+  - key-components
+  - referenced-by
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -42,6 +60,12 @@ C# class library (.NET Framework 4.8.x) with Windows Forms dialogs and controls.
 - **CheckBoxColumnHeaderHandler**: Checkbox header for grid columns
 - **Numerous specialized dialogs**: AddNewVernLangWarningDlg, AdvancedEncProps, and many more
 
+### Referenced By
+
+- [Writing Systems](../../openspec/specs/configuration/writing-systems.md#behavior) — Shared writing system dialogs
+- [Lists](../../openspec/specs/configuration/lists.md#behavior) — Shared configuration dialogs
+- [Projects](../../openspec/specs/configuration/projects.md#behavior) — Project dialogs and backup/restore flows
+
 ## Technology Stack
 - C# .NET Framework 4.8.x (net8)
 
@@ -51,6 +75,10 @@ C# class library (.NET Framework 4.8.x) with Windows Forms dialogs and controls.
 
 ## Interop & Contracts
 - Many dialogs implement standard Windows Forms patterns (ShowDialog, DialogResult)
+
+### Referenced By
+
+- [COM Registration Patterns](../../openspec/specs/architecture/interop/com-contracts.md#com-registration-patterns) — Registration-free COM contracts overview
 
 ## Threading & Performance
 - **UI thread required**: All dialog operations

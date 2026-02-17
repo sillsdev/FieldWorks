@@ -169,6 +169,9 @@ namespace SIL.FieldWorks.FdoUi
 			m_synchronizeInvoke.Invoke(() => ErrorReporter.ReportException(error, null, null, null, isLethal));
 		}
 
+		/// <summary>
+		/// Gets the last time that there was user activity.
+		/// </summary>
 		public DateTime LastActivityTime
 		{
 			get { return m_activityMonitor.LastActivityTime; }

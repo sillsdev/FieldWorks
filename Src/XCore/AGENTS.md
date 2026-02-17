@@ -1,8 +1,31 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: 502aff976dc0df125c9c0a36a8ec3d95a2bb1f3d898e43c8cca93afe2b01fd03
 status: reviewed
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - architecture
+  - referenced-by
+  - key-components
+  - core-framework-main-folder
+  - ui-components
+  - supporting-infrastructure
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
+  - subfolders-detailed-docs-in-individual-agentsmd-files
+  - code-evidence
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -21,6 +44,11 @@ Cross-cutting application framework (~9.8K lines in main folder + 4 subfolders) 
 
 ## Architecture
 Plugin-based application framework (~9.8K lines main + 4 subfolders) with XML-driven UI composition. Three-tier design: 1) Core framework (Mediator, PropertyTable, Inventory XML processor), 2) UI components (XWindow, CollapsingSplitContainer, MultiPane, RecordBar), 3) Plugin interfaces (IxCoreColleague, IUIAdapter). Implements colleague pattern for extensible command routing and view coordination across all FieldWorks applications.
+
+### Referenced By
+
+- [XCore Mediator](../../openspec/specs/architecture/ui-framework/xcore-mediator.md#mediator-routing) — Mediator patterns
+- [WinForms Patterns](../../openspec/specs/architecture/ui-framework/winforms-patterns.md#ui-composition-patterns) — UI composition patterns
 
 ## Key Components
 
@@ -61,6 +89,10 @@ Language - C#
 - Upstream: Core libraries
 - Downstream: Applications
 
+### Referenced By
+
+- [Dependency Graph](../../openspec/specs/architecture/layers/dependency-graph.md#dependency-rules) — Mediator dependency rules
+
 ## Interop & Contracts
 - IxCoreColleague: Plugin interface for command handling and property access
 
@@ -78,6 +110,10 @@ IxCoreColleague, IxWindow, IUIAdapter, PropertyTable, Mediator, Command.
 
 ## Entry Points
 - Provides framework base classes for applications
+
+### Referenced By
+
+- [Entry Points](../../openspec/specs/architecture/layers/entry-points.md#application-entry-points) — Mediator entry points
 
 ## Test Index
 Test projects: xCoreTests, xCoreInterfacesTests, SilSidePaneTests. 11 test files. Run via: `dotnet test` or Test Explorer in Visual Studio.

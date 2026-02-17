@@ -166,7 +166,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			foreach (XmlNode customGroupNode in customGroupNodeList)
 			{
 				string customGroupId = XmlUtils.GetMandatoryAttributeValue(customGroupNode, "id");
-				XmlNode srcMatchingGroupNode = parentNode.SelectSingleNode("group[@id='" + customGroupId + "']");
+				XmlNode srcMatchingGroupNode = parentNode.SelectSingleNode("group[@id=" + XmlUtils.MakeSafeXml(customGroupId) + "]");
 				if (srcMatchingGroupNode == null)
 				{
 					// Import the entire custom node.
@@ -346,7 +346,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public string GetStringWithXPath(string id, string groupXPathFragment)
 		{
 			id = id.Trim();
-			XmlNode node = m_document.SelectSingleNode("strings/" + groupXPathFragment + "string[@id='" + id + "']");
+			XmlNode node = m_document.SelectSingleNode("strings/" + groupXPathFragment + "string[@id=" + XmlUtils.MakeSafeXml(id) + "]");
 			if (node == null)
 			{
 				if (m_parent != null)
@@ -423,7 +423,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			string[] names = simplePath.Split('/');
 			foreach(string name in names)
 			{
-				path += "group[@id = '" + name.Trim() + "']/";
+				path += "group[@id = " + XmlUtils.MakeSafeXml(name.Trim()) + "]/";
 			}
 			return path;
 		}

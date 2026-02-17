@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -601,7 +601,7 @@
     <value>m_inflFeatsTreeView</value>
   </data>
   <data name="&gt;&gt;m_inflFeatsTreeView.Type" xml:space="preserve">
-    <value>Aga.Controls.Tree.TreeViewAdv, Aga.Controls, Version=1.7.0.0, Culture=neutral, PublicKeyToken=fcc90fbf924463a3</value>
+    <value>Aga.Controls.Tree.TreeViewAdv, Aga.Controls, Version=1.7.7.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_inflFeatsTreeView.Parent" xml:space="preserve">
     <value>groupBox5</value>
@@ -649,7 +649,7 @@
     <value>m_inflFeatsTreeView</value>
   </data>
   <data name="&gt;&gt;m_inflFeatsTreeView.Type" xml:space="preserve">
-    <value>Aga.Controls.Tree.TreeViewAdv, Aga.Controls, Version=1.7.0.0, Culture=neutral, PublicKeyToken=fcc90fbf924463a3</value>
+    <value>Aga.Controls.Tree.TreeViewAdv, Aga.Controls, Version=1.7.7.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_inflFeatsTreeView.Parent" xml:space="preserve">
     <value>groupBox5</value>
@@ -756,43 +756,43 @@
     <value>m_featureColumn</value>
   </data>
   <data name="&gt;&gt;m_featureColumn.Type" xml:space="preserve">
-    <value>Aga.Controls.Tree.TreeColumn, Aga.Controls, Version=1.7.0.0, Culture=neutral, PublicKeyToken=fcc90fbf924463a3</value>
+    <value>Aga.Controls.Tree.TreeColumn, Aga.Controls, Version=1.7.7.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_notColumn.Name" xml:space="preserve">
     <value>m_notColumn</value>
   </data>
   <data name="&gt;&gt;m_notColumn.Type" xml:space="preserve">
-    <value>Aga.Controls.Tree.TreeColumn, Aga.Controls, Version=1.7.0.0, Culture=neutral, PublicKeyToken=fcc90fbf924463a3</value>
+    <value>Aga.Controls.Tree.TreeColumn, Aga.Controls, Version=1.7.7.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_valueColumn.Name" xml:space="preserve">
     <value>m_valueColumn</value>
   </data>
   <data name="&gt;&gt;m_valueColumn.Type" xml:space="preserve">
-    <value>Aga.Controls.Tree.TreeColumn, Aga.Controls, Version=1.7.0.0, Culture=neutral, PublicKeyToken=fcc90fbf924463a3</value>
+    <value>Aga.Controls.Tree.TreeColumn, Aga.Controls, Version=1.7.7.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_featureIcon.Name" xml:space="preserve">
     <value>m_featureIcon</value>
   </data>
   <data name="&gt;&gt;m_featureIcon.Type" xml:space="preserve">
-    <value>Aga.Controls.Tree.NodeControls.NodeIcon, Aga.Controls, Version=1.7.0.0, Culture=neutral, PublicKeyToken=fcc90fbf924463a3</value>
+    <value>Aga.Controls.Tree.NodeControls.NodeIcon, Aga.Controls, Version=1.7.7.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_featureTextBox.Name" xml:space="preserve">
     <value>m_featureTextBox</value>
   </data>
   <data name="&gt;&gt;m_featureTextBox.Type" xml:space="preserve">
-    <value>Aga.Controls.Tree.NodeControls.NodeTextBox, Aga.Controls, Version=1.7.0.0, Culture=neutral, PublicKeyToken=fcc90fbf924463a3</value>
+    <value>Aga.Controls.Tree.NodeControls.NodeTextBox, Aga.Controls, Version=1.7.7.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_valueComboBox.Name" xml:space="preserve">
     <value>m_valueComboBox</value>
   </data>
   <data name="&gt;&gt;m_valueComboBox.Type" xml:space="preserve">
-    <value>Aga.Controls.Tree.NodeControls.NodeComboBox, Aga.Controls, Version=1.7.0.0, Culture=neutral, PublicKeyToken=fcc90fbf924463a3</value>
+    <value>Aga.Controls.Tree.NodeControls.NodeComboBox, Aga.Controls, Version=1.7.7.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_inflNotCheckBox.Name" xml:space="preserve">
     <value>m_inflNotCheckBox</value>
   </data>
   <data name="&gt;&gt;m_inflNotCheckBox.Type" xml:space="preserve">
-    <value>Aga.Controls.Tree.NodeControls.NodeCheckBox, Aga.Controls, Version=1.7.0.0, Culture=neutral, PublicKeyToken=fcc90fbf924463a3</value>
+    <value>Aga.Controls.Tree.NodeControls.NodeCheckBox, Aga.Controls, Version=1.7.7.0, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_imageList.Name" xml:space="preserve">
     <value>m_imageList</value>

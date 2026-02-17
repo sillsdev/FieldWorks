@@ -1,8 +1,15 @@
----
+﻿---
 last-reviewed: 2025-11-21
 last-reviewed-tree: b5c173866485988d8044821e9c191a7d4cb529916ee3706b99a10ad83af2d895
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - referenced-by
+  - subfolder-map
+  - when-updating-this-folder
+  - related-guidance
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -18,6 +25,10 @@ Do not edit this block manually; rerun the scripts above after code or doc updat
 
 ## Purpose
 Organizational parent folder containing lexicon and text analysis components of FieldWorks Language Explorer (FLEx). Houses lexicon management, interlinear text analysis, discourse charting, morphological parsing, and Pathway publishing integration.
+
+### Referenced By
+
+- [Entry Structure](../../openspec/specs/lexicon/entries/structure.md#behavior) — Lexicon module context
 
 ## Subfolder Map
 | Subfolder | Key Project | Notes |

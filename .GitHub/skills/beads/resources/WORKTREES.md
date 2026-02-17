@@ -8,7 +8,7 @@
 
 | Scenario | Worktree? | Why |
 |----------|-----------|-----|
-| Parallel agent work | Yes | Each agent gets isolated working directory |
+| Parallel agent work | No | Stick to current branch unless user asks otherwise |
 | Long-running feature | Yes | Avoids stash/switch dance for interruptions |
 | Quick branch switch | No | `git switch` is simpler |
 | PR review isolation | Yes | Review without disturbing main work |

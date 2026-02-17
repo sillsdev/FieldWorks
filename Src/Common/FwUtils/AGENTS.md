@@ -1,8 +1,26 @@
----
+﻿---
 last-reviewed: 2025-10-31
 last-reviewed-tree: d38944223cf9964a8fc9472851eaee46494f187d59d185c55d16e79acc66ee66
 status: draft
 ---
+anchors:
+  - change-log-auto
+  - purpose
+  - referenced-by
+  - architecture
+  - key-components
+  - technology-stack
+  - dependencies
+  - interop--contracts
+  - threading--performance
+  - config--feature-flags
+  - build-information
+  - interfaces-and-data-models
+  - entry-points
+  - test-index
+  - usage-hints
+  - related-folders
+  - references
 
 <!-- copilot:auto-change-log start -->
 ## Change Log (auto)
@@ -45,6 +63,11 @@ C# class library (.NET Framework 4.8.x) with ~80 utility classes covering divers
 - **DriveUtil**: Drive and file system utilities
 - **DownloadClient**: Download functionality
 - **FwUtilsException, InstallationException**: Exception types
+
+### Referenced By
+
+- [Projects](../../../openspec/specs/configuration/projects.md#behavior) — Directory and settings utilities
+- [Encoding Integration](../../../openspec/specs/integration/external/encoding.md#behavior) — Utility helpers and registry settings
 
 ## Technology Stack
 - C# .NET Framework 4.8.x (net8)
