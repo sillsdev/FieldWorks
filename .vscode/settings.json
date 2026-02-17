@@ -106,11 +106,10 @@
     // Git read-only operations
     "Git: Prune remote branches",
 
-    // COPILOT documentation checks (read-only)
-    "COPILOT: Detect updates needed",
-    "COPILOT: Validate docs",
-    "COPILOT: Validate instructions",
-    "COPILOT: Plan all folders",
+    // Agent documentation checks (read-only)
+    "Agent: Detect updates needed",
+    "Agent: Validate docs",
+    "Agent: Plan all folders",
 
     // Environment verification (read-only)
     "Setup: Verify dependencies",
@@ -123,8 +122,8 @@
   // TASKS REQUIRING MANUAL APPROVAL (not in allowedTasks):
   // - Test (with filter)           (has user input prompt)
   // - Test (specific project)      (has user input prompt)
-  // - COPILOT: Propose updates     (modifies files)
-  // - COPILOT: Apply change-log    (modifies files)
+  // - Agent: Propose updates       (modifies files)
+  // - Agent: Apply change-log      (modifies files)
   // - Installer: Setup for patch   (downloads artifacts)
   // ============================================================================
 }

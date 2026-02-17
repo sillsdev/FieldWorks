@@ -1,20 +1,18 @@
 # Model Context Protocol helpers
 
-FieldWorks ships a small `mcp.json` so Model Context Protocol clients can spin up two
+FieldWorks ships a small workspace `mcp.json` so Model Context Protocol clients can spin up two
 servers automatically:
 
-- **GitHub server** via `@modelcontextprotocol/server-github` for read/write access to
-  `sillsdev/FieldWorks`.
+- **GitHub server** via the hosted GitHub MCP endpoint (`https://api.githubcopilot.com/mcp/`).
 - **Serena server** for accelerated navigation of this large mono-repo.
 
 ## Prerequisites
 
-| Component           | Purpose                                    | Install guidance                                      |
-| ------------------- | ------------------------------------------ | ----------------------------------------------------- |
-| Node.js 18+ (`npx`) | Launches the GitHub MCP server package     | https://nodejs.org                                    |
-| Serena CLI          | Provides Serena search/navigation          | `pipx install serena-cli` or `uv tool install serena` |
-| `uvx` (optional)    | Used as a fallback launcher for Serena     | https://github.com/astral-sh/uv                       |
-| PowerShell 5.1+     | Both helper scripts run through PowerShell | Preinstalled on Windows                               |
+| Component      | Purpose                                   | Install guidance                                      |
+| -------------- | ----------------------------------------- | ----------------------------------------------------- |
+| VS Code 1.101+ | Remote MCP + OAuth support               | https://code.visualstudio.com                         |
+| Serena CLI     | Provides Serena search/navigation        | `pipx install serena-cli` or `uv tool install serena` |
+| `uvx`          | Launches Serena from workspace `mcp.json` | https://github.com/astral-sh/uv                       |
 
 > **Note**: Serena **auto-downloads** its language servers on first use:
 > - **C# (`csharp`)**: Microsoft.CodeAnalysis.LanguageServer (Roslyn) from Azure NuGet + .NET 9 runtime
@@ -22,37 +20,31 @@ servers automatically:
 >
 > No manual language server installation needed!
 
-Required environment variables:
+Authentication:
 
-- `GITHUB_TOKEN`: PAT with at least `repo` scope so the MCP GitHub server can read issues,
-  pull requests, and apply patches.
-- `SERENA_API_KEY` (optional): Needed when your Serena deployment requires authentication.
+- GitHub MCP uses OAuth through your normal VS Code GitHub/Copilot sign-in.
+- `SERENA_API_KEY` remains optional and is only needed when your Serena deployment requires it.
 
 ## How it works
 
-1. `mcp.json` points at two helper scripts under `scripts/mcp/`.
-2. `start-github-server.ps1` validates `GITHUB_TOKEN`, confirms `npx` is available, and
-   executes `npx --yes @modelcontextprotocol/server-github --repo sillsdev/FieldWorks`.
-3. `start-serena-server.ps1` locates the Serena CLI (`serena`, `uvx serena`, or `uv run serena`),
-   then runs `serena serve --project .serena/project.yml` so MCP clients can issue Serena searches.
-
-Because the scripts perform their own validation, failures are easier to diagnose than if the
-MCP client invoked the raw binaries.
+1. `mcp.json` defines a hosted GitHub MCP server and a local Serena stdio server.
+2. GitHub MCP uses VS Code OAuth authentication for repository operations.
+3. Serena starts from `uvx oraios-serena --project-root ${workspaceFolder}`.
+4. In chat, use tool sets / tool picker to keep active tool counts low and focused.
 
 ## Running the servers manually
 
 If you want to test outside an MCP-aware editor:
 
 ```powershell
-# GitHub server
-powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/mcp/start-github-server.ps1
+# GitHub server is hosted; test by adding it to VS Code MCP and invoking a GitHub tool.
 
-# Serena server (override host/port example)
-powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/mcp/start-serena-server.ps1 -BindHost localhost -Port 3334
+# Serena server
+uvx oraios-serena --project-root .
 ```
 
-The scripts run until you press `Ctrl+C`. When invoked through an MCP host, they automatically
-stop when the client disconnects.
+The Serena process runs until you press `Ctrl+C`. When invoked through an MCP host, it stops
+when the client disconnects.
 
 ## Multiple Worktrees and Serena Conflicts
 
@@ -78,20 +70,32 @@ Remove or disable the Serena entry from your user-level MCP config:
 # View current user MCP config
 code "$env:APPDATA\Code\User\mcp.json"
 ```
-Remove the `"oraios/serena"` entry. The workspace `mcp.json` will provide Serena
+Remove the `"oraios/serena"` entry. The workspace `mcp.json` provides Serena
 with explicit project targeting.
+
+## Best-practice profile for this repo
+
+- Keep repo-level MCP servers minimal: `github` + `serena` only.
+- Keep workflow/task conventions in skills/prompt files, not additional MCP servers.
+- Enable extra MCP servers only per-task via the tool picker, then disable again.
+- If tool list feels noisy, reset cached tools with **MCP: Reset Cached Tools**.
+
+## Worktree best practices
+
+- Open one VS Code window per worktree; let that window use its own workspace `mcp.json`.
+- Keep only one Serena server definition active (workspace-level), and remove user-level Serena.
+- Keep Serena pinned to the active workspace via `--project-root ${workspaceFolder}` (already configured).
+- After switching worktrees, run **MCP: Reset Cached Tools** if tool lists or capabilities look stale.
+- No extra GitHub MCP worktree settings are required beyond OAuth sign-in.
 
 ## Troubleshooting
 
-- **`GITHUB_TOKEN is not set`** – export a PAT (`setx GITHUB_TOKEN <token>` or use a
-  secrets manager) before starting the GitHub server.
-- **`npx was not found on PATH`** – install Node.js and reopen your shell.
-- **`Unable to locate the Serena CLI`** – install the Serena CLI (via `pipx`, `uv tool install`,
-  or ensure `uvx` is available) so the helper can find at least one launcher.
-- **Port already in use** – pass `-Port <number>` to `start-serena-server.ps1` to pick an open port.
+- **GitHub tools fail with auth errors** – sign out/in of GitHub in VS Code and restart MCP servers.
+- **`uvx` was not found on PATH** – install `uv` and reopen your shell.
+- **Unable to locate Serena CLI** – install Serena CLI (via `pipx`/`uv tool install`) so `oraios-serena` resolves.
 - **Language server download fails (network error)** – Serena auto-downloads C# (Roslyn) and C++ (clangd)
   language servers on first use. Check network connectivity to Azure NuGet and GitHub releases.
   The download is cached, so subsequent starts are fast.
-- **Linux: clangd not found** – On Linux, install clangd manually: `sudo apt-get install clangd`
+- **Linux: clangd not found** – on Linux, install clangd manually: `sudo apt-get install clangd`
 - **"Language server manager is not initialized"** – restart VS Code; Serena may still be downloading
   language servers on first startup (can take 1-2 minutes for ~250MB of binaries).

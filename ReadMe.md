@@ -88,7 +88,7 @@ If you want to control the capture file, set `FILESTOSIGNLATER` to a file path b
 
 ## Model Context Protocol helpers
 
-This repo ships an `mcp.json` plus PowerShell helpers so MCP-aware editors can spin up
+This repo ships an `mcp.json` workspace configuration so MCP-aware editors can spin up
 the GitHub and Serena servers automatically. See [Docs/mcp.md](Docs/mcp.md) for
 requirements and troubleshooting tips.
 
