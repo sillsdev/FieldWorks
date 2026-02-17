@@ -2561,14 +2561,18 @@ namespace SIL.FieldWorks.XWorks
 		/// <param name="numberingPart">Part of the Word doc where bullet and numbering data is stored.</param>
 		internal static void GenerateBulletAndNumberingData(ParagraphElement styleElement, NumberingDefinitionsPart numberingPart)
 		{
-			if (!styleElement.BulletInfo.HasValue)
+			// In most situations we are not expecting BulletAndNumberingUniqueId to be null if BulletInfo
+			// is not null. If that happens, and a bulleted or numbered list is not being displayed correctly
+			// in Word, then most likely either there is another place where we need to call AddBulletAndNumberingData()
+			// or some check in AddBulletAndNumberingData() is preventing BulletAndNumberingUniqueId from being set.
+			//
+			// Note: If the 'Bullet and Numbering' for the 'Normal' paragraph style is set to 'Number',
+			// then we will get in this method when BulletInfo has a value but BulletAndNumberingUniqueId
+			// does not (LT-22344).
+			if (!styleElement.BulletInfo.HasValue || !styleElement.BulletAndNumberingUniqueId.HasValue)
 			{
 				return;
 			}
-
-			// Not expecting this to be null if BulletInfo is not null. If we hit this assert then
-			// most likely there is another place where we need to call AddBulletAndNumberingData().
-			Debug.Assert(styleElement.BulletAndNumberingUniqueId.HasValue);
 
 			var bulletInfo = styleElement.BulletInfo.Value;
 			var bulletUniqueId = styleElement.BulletAndNumberingUniqueId.Value;
