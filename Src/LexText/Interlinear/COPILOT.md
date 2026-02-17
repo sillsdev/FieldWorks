@@ -4,6 +4,20 @@ last-reviewed-tree: 2418c5ec78dacbf805d1e7269d8997de3795a0d63ee38eb26939fb716035
 status: draft
 ---
 
+<!-- copilot:auto-change-log start -->
+## Change Log (auto)
+
+- Snapshot: HEAD~1
+- Risk: none
+- Files: 0 (code=0, tests=0, resources=0)
+
+### Prompt seeds
+- Update COPILOT.md for Src/LexText/Interlinear. Prioritize Purpose/Architecture sections using planner data.
+- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
+- Finish with verification notes and TODOs for manual testing.
+<!-- copilot:auto-change-log end -->
+
+
 # Interlinear (ITextDll) COPILOT summary
 
 ## Purpose

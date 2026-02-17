@@ -1,3 +1,17 @@
+<!-- copilot:auto-change-log start -->
+## Change Log (auto)
+
+- Snapshot: HEAD~1
+- Risk: none
+- Files: 0 (code=0, tests=0, resources=0)
+
+### Prompt seeds
+- Update COPILOT.md for Src/Utilities/FixFwData. Prioritize Purpose/Architecture sections using planner data.
+- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
+- Finish with verification notes and TODOs for manual testing.
+<!-- copilot:auto-change-log end -->
+
+
 ﻿---
 last-reviewed: 2025-11-01
 last-reviewed-tree: 6cf055af735fcf5f893126f0d5bf31ba037b8c3ff5eef360f62a7319ca5d5f0e

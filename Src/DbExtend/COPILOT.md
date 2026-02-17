@@ -4,6 +4,20 @@ last-reviewed-tree: 4449cc39e6af5c0398802ed39fc79f9aa35da59d3efb1ae3fddbb2af71dd
 status: draft
 ---
 
+<!-- copilot:auto-change-log start -->
+## Change Log (auto)
+
+- Snapshot: c96db7f3409e8bc98f35a0b04383da12e405e394
+- Risk: none
+- Files: 0 (code=0, tests=0, resources=0)
+
+### Prompt seeds
+- Update COPILOT.md for Src/DbExtend. Prioritize Purpose/Architecture sections using planner data.
+- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
+- Finish with verification notes and TODOs for manual testing.
+<!-- copilot:auto-change-log end -->
+
+
 # DbExtend COPILOT summary
 
 ## Purpose

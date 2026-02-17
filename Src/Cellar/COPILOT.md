@@ -4,6 +4,20 @@ last-reviewed-tree: 69fbeb49f36d20492fc9c2122ebc9465c11383be6a10ef3914ebe13cbcad
 status: draft
 ---
 
+<!-- copilot:auto-change-log start -->
+## Change Log (auto)
+
+- Snapshot: c96db7f3409e8bc98f35a0b04383da12e405e394
+- Risk: none
+- Files: 0 (code=0, tests=0, resources=0)
+
+### Prompt seeds
+- Update COPILOT.md for Src/Cellar. Prioritize Purpose/Architecture sections using planner data.
+- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
+- Finish with verification notes and TODOs for manual testing.
+<!-- copilot:auto-change-log end -->
+
+
 # Cellar COPILOT summary
 
 ## Purpose

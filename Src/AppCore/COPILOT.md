@@ -4,6 +4,20 @@ last-reviewed-tree: d533214a333e8de29f0eaa52ed6bbffd80815cfb0f1f3fac15cd08b96aaf
 status: draft
 ---
 
+<!-- copilot:auto-change-log start -->
+## Change Log (auto)
+
+- Snapshot: c96db7f3409e8bc98f35a0b04383da12e405e394
+- Risk: none
+- Files: 0 (code=0, tests=0, resources=0)
+
+### Prompt seeds
+- Update COPILOT.md for Src/AppCore. Prioritize Purpose/Architecture sections using planner data.
+- Highlight API or UI updates, then confirm Usage/Test sections reflect 0 files changed (code=0, tests=0, resources=0); risk=none.
+- Finish with verification notes and TODOs for manual testing.
+<!-- copilot:auto-change-log end -->
+
+
 # AppCore COPILOT summary
 
 ## Purpose
