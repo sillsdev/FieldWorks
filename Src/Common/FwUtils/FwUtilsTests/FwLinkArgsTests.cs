@@ -1,4 +1,4 @@
-// Copyright (c) 2010-2017 SIL International
+﻿﻿// Copyright (c) 2010-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -27,7 +27,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			Guid newGuid = Guid.NewGuid();
 			FwLinkArgs args1 = new FwLinkArgs("myTool", newGuid, "myTag");
-			Assert.IsTrue(args1.Equals(new FwLinkArgs("myTool", newGuid, "myTag")));
+			Assert.That(args1.Equals(new FwLinkArgs("myTool", newGuid, "myTag")), Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			Guid newGuid = Guid.NewGuid();
 			FwLinkArgs args1 = new FwLinkArgs("myTool", newGuid, "myTag");
-			Assert.IsTrue(args1.Equals(args1));
+			Assert.That(args1.Equals(args1), Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -53,7 +53,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			Guid newGuid = Guid.NewGuid();
 			FwLinkArgs args1 = new FwLinkArgs("myTool", newGuid, "myTag");
-			Assert.IsFalse(args1.Equals(null));
+			Assert.That(args1.Equals(null), Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			Guid newGuid = Guid.NewGuid();
 			FwLinkArgs args1 = new FwLinkArgs("myTool", newGuid, "myTag");
-			Assert.IsFalse(args1.Equals(new FwLinkArgs("myOtherTool", newGuid, "myTag")));
+			Assert.That(args1.Equals(new FwLinkArgs("myOtherTool", newGuid, "myTag")), Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			Guid newGuid = Guid.NewGuid();
 			FwLinkArgs args1 = new FwLinkArgs("MyTool", newGuid, "myTag");
-			Assert.IsFalse(args1.Equals(new FwLinkArgs("mytool", newGuid, "myTag")));
+			Assert.That(args1.Equals(new FwLinkArgs("mytool", newGuid, "myTag")), Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void Equals_DiffereByGuid()
 		{
 			FwLinkArgs args1 = new FwLinkArgs("myTool", Guid.NewGuid(), "myTag");
-			Assert.IsFalse(args1.Equals(new FwLinkArgs("myTool", Guid.NewGuid(), "myTag")));
+			Assert.That(args1.Equals(new FwLinkArgs("myTool", Guid.NewGuid(), "myTag")), Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -108,7 +108,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			Guid newGuid = Guid.NewGuid();
 			FwLinkArgs args1 = new FwLinkArgs("myTool", newGuid, "myTag");
-			Assert.IsFalse(args1.Equals(new FwLinkArgs("myTool", newGuid, string.Empty)));
+			Assert.That(args1.Equals(new FwLinkArgs("myTool", newGuid, string.Empty)), Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -122,7 +122,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			Guid newGuid = Guid.NewGuid();
 			FwLinkArgs args1 = new FwLinkArgs("myTool", newGuid, string.Empty);
-			Assert.IsFalse(args1.Equals(new FwLinkArgs("myTool", newGuid, "myTag")));
+			Assert.That(args1.Equals(new FwLinkArgs("myTool", newGuid, "myTag")), Is.False);
 		}
 		#endregion
 
@@ -138,7 +138,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			Guid newGuid = Guid.NewGuid();
 			FwLinkArgs args1 = new FwLinkArgs("myTool", newGuid, "myTag");
-			Assert.IsTrue(args1.EssentiallyEquals(new FwLinkArgs("myTool", newGuid, "myTag")));
+			Assert.That(args1.EssentiallyEquals(new FwLinkArgs("myTool", newGuid, "myTag")), Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -151,7 +151,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			Guid newGuid = Guid.NewGuid();
 			FwLinkArgs args1 = new FwLinkArgs("myTool", newGuid, "myTag");
-			Assert.IsTrue(args1.EssentiallyEquals(args1));
+			Assert.That(args1.EssentiallyEquals(args1), Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -164,7 +164,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			Guid newGuid = Guid.NewGuid();
 			FwLinkArgs args1 = new FwLinkArgs("myTool", newGuid, "myTag");
-			Assert.IsFalse(args1.EssentiallyEquals(null));
+			Assert.That(args1.EssentiallyEquals(null), Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -178,7 +178,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			Guid newGuid = Guid.NewGuid();
 			FwLinkArgs args1 = new FwLinkArgs("myTool", newGuid, "myTag");
-			Assert.IsFalse(args1.EssentiallyEquals(new FwLinkArgs("myOtherTool", newGuid, "myTag")));
+			Assert.That(args1.EssentiallyEquals(new FwLinkArgs("myOtherTool", newGuid, "myTag")), Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -192,7 +192,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			Guid newGuid = Guid.NewGuid();
 			FwLinkArgs args1 = new FwLinkArgs("MyTool", newGuid, "myTag");
-			Assert.IsFalse(args1.EssentiallyEquals(new FwLinkArgs("mytool", newGuid, "myTag")));
+			Assert.That(args1.EssentiallyEquals(new FwLinkArgs("mytool", newGuid, "myTag")), Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -205,7 +205,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void EssentiallyEquals_DiffereByGuid()
 		{
 			FwLinkArgs args1 = new FwLinkArgs("myTool", Guid.NewGuid(), "myTag");
-			Assert.IsFalse(args1.EssentiallyEquals(new FwLinkArgs("myTool", Guid.NewGuid(), "myTag")));
+			Assert.That(args1.EssentiallyEquals(new FwLinkArgs("myTool", Guid.NewGuid(), "myTag")), Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -219,7 +219,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			Guid newGuid = Guid.NewGuid();
 			FwLinkArgs args1 = new FwLinkArgs("myTool", newGuid, "myTag");
-			Assert.IsTrue(args1.EssentiallyEquals(new FwLinkArgs("myTool", newGuid, string.Empty)));
+			Assert.That(args1.EssentiallyEquals(new FwLinkArgs("myTool", newGuid, string.Empty)), Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -233,7 +233,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			Guid newGuid = Guid.NewGuid();
 			FwLinkArgs args1 = new FwLinkArgs("myTool", newGuid, string.Empty);
-			Assert.IsTrue(args1.EssentiallyEquals(new FwLinkArgs("myTool", newGuid, "myTag")));
+			Assert.That(args1.EssentiallyEquals(new FwLinkArgs("myTool", newGuid, "myTag")), Is.True);
 		}
 		#endregion
 
@@ -248,16 +248,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			FwAppArgs args = new FwAppArgs("silfw://localhost/link?&database=primate" +
 				"&tool=default&guid=F48AC2E4-27E3-404e-965D-9672337E0AAF&tag=");
-			Assert.AreEqual("primate", args.Database);
-			Assert.AreEqual(String.Empty, args.Tag);
-			Assert.AreEqual(new Guid("F48AC2E4-27E3-404e-965D-9672337E0AAF"), args.TargetGuid);
-			Assert.AreEqual("default", args.ToolName);
-			Assert.IsTrue(args.HasLinkInformation);
-			Assert.AreEqual(string.Empty, args.ConfigFile);
-			Assert.AreEqual(string.Empty, args.DatabaseType);
-			Assert.AreEqual(string.Empty, args.Locale);
-			Assert.IsFalse(args.ShowHelp);
-			Assert.AreEqual(0, args.PropertyTableEntries.Count);
+			Assert.That(args.Database, Is.EqualTo("primate"));
+			Assert.That(args.Tag, Is.EqualTo(String.Empty));
+			Assert.That(args.TargetGuid, Is.EqualTo(new Guid("F48AC2E4-27E3-404e-965D-9672337E0AAF")));
+			Assert.That(args.ToolName, Is.EqualTo("default"));
+			Assert.That(args.HasLinkInformation, Is.True);
+			Assert.That(args.ConfigFile, Is.EqualTo(string.Empty));
+			Assert.That(args.DatabaseType, Is.EqualTo(string.Empty));
+			Assert.That(args.Locale, Is.EqualTo(string.Empty));
+			Assert.That(args.ShowHelp, Is.False);
+			Assert.That(args.PropertyTableEntries.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -271,16 +271,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 			FwAppArgs args = new FwAppArgs("-db", "monkey",
 				"-link", "silfw://localhost/link?&database=primate" +
 				"&tool=default&guid=F48AC2E4-27E3-404e-965D-9672337E0AAF&tag=front");
-			Assert.AreEqual("primate", args.Database);
-			Assert.AreEqual("front", args.Tag);
-			Assert.AreEqual(new Guid("F48AC2E4-27E3-404e-965D-9672337E0AAF"), args.TargetGuid);
-			Assert.AreEqual("default", args.ToolName);
-			Assert.IsTrue(args.HasLinkInformation);
-			Assert.AreEqual(string.Empty, args.ConfigFile);
-			Assert.AreEqual(string.Empty, args.DatabaseType);
-			Assert.AreEqual(string.Empty, args.Locale);
-			Assert.IsFalse(args.ShowHelp);
-			Assert.AreEqual(0, args.PropertyTableEntries.Count);
+			Assert.That(args.Database, Is.EqualTo("primate"));
+			Assert.That(args.Tag, Is.EqualTo("front"));
+			Assert.That(args.TargetGuid, Is.EqualTo(new Guid("F48AC2E4-27E3-404e-965D-9672337E0AAF")));
+			Assert.That(args.ToolName, Is.EqualTo("default"));
+			Assert.That(args.HasLinkInformation, Is.True);
+			Assert.That(args.ConfigFile, Is.EqualTo(string.Empty));
+			Assert.That(args.DatabaseType, Is.EqualTo(string.Empty));
+			Assert.That(args.Locale, Is.EqualTo(string.Empty));
+			Assert.That(args.ShowHelp, Is.False);
+			Assert.That(args.PropertyTableEntries.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -293,7 +293,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		{
 			FwAppArgs args = new FwAppArgs("silfw://localhost/link?" +
 				"&tool=default&guid=F48AC2E4-27E3-404e-965D-9672337E0AAF&tag=");
-			Assert.IsTrue(args.ShowHelp, "Bad arguments should set ShowHelp to true");
+			Assert.That(args.ShowHelp, Is.True, "Bad arguments should set ShowHelp to true");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -305,17 +305,17 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void CreateFwAppArgs_Normal()
 		{
 			FwAppArgs args = new FwAppArgs("-db", "monkey");
-			Assert.AreEqual("monkey", args.Database);
-			Assert.AreEqual(string.Empty, args.ConfigFile);
-			Assert.AreEqual(string.Empty, args.DatabaseType);
-			Assert.AreEqual(string.Empty, args.Locale);
-			Assert.IsFalse(args.ShowHelp);
-			Assert.AreEqual(0, args.PropertyTableEntries.Count);
-			Assert.AreEqual(string.Empty, args.Tag);
-			Assert.AreEqual(Guid.Empty, args.TargetGuid);
-			Assert.AreEqual(string.Empty, args.ToolName);
-			Assert.IsFalse(args.HasLinkInformation);
-			StringAssert.Contains("database%3dmonkey%26", args.ToString(), "missing & after project.");
+			Assert.That(args.Database, Is.EqualTo("monkey"));
+			Assert.That(args.ConfigFile, Is.EqualTo(string.Empty));
+			Assert.That(args.DatabaseType, Is.EqualTo(string.Empty));
+			Assert.That(args.Locale, Is.EqualTo(string.Empty));
+			Assert.That(args.ShowHelp, Is.False);
+			Assert.That(args.PropertyTableEntries.Count, Is.EqualTo(0));
+			Assert.That(args.Tag, Is.EqualTo(string.Empty));
+			Assert.That(args.TargetGuid, Is.EqualTo(Guid.Empty));
+			Assert.That(args.ToolName, Is.EqualTo(string.Empty));
+			Assert.That(args.HasLinkInformation, Is.False);
+			Assert.That(args.ToString(), Does.Contain("database%3dmonkey%26"), "missing & after project.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -328,18 +328,18 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void CreateFwAppArgs_UnknownSwitch()
 		{
 			FwAppArgs args = new FwAppArgs("-init", "DN");
-			Assert.AreEqual(1, args.PropertyTableEntries.Count);
-			Assert.AreEqual("init", args.PropertyTableEntries[0].name);
-			Assert.AreEqual("DN", args.PropertyTableEntries[0].value);
-			Assert.AreEqual(string.Empty, args.Database);
-			Assert.AreEqual(string.Empty, args.ConfigFile);
-			Assert.AreEqual(string.Empty, args.DatabaseType);
-			Assert.AreEqual(string.Empty, args.Locale);
-			Assert.IsFalse(args.ShowHelp);
-			Assert.AreEqual(string.Empty, args.Tag);
-			Assert.AreEqual(Guid.Empty, args.TargetGuid);
-			Assert.AreEqual(string.Empty, args.ToolName);
-			Assert.IsFalse(args.HasLinkInformation);
+			Assert.That(args.PropertyTableEntries.Count, Is.EqualTo(1));
+			Assert.That(args.PropertyTableEntries[0].name, Is.EqualTo("init"));
+			Assert.That(args.PropertyTableEntries[0].value, Is.EqualTo("DN"));
+			Assert.That(args.Database, Is.EqualTo(string.Empty));
+			Assert.That(args.ConfigFile, Is.EqualTo(string.Empty));
+			Assert.That(args.DatabaseType, Is.EqualTo(string.Empty));
+			Assert.That(args.Locale, Is.EqualTo(string.Empty));
+			Assert.That(args.ShowHelp, Is.False);
+			Assert.That(args.Tag, Is.EqualTo(string.Empty));
+			Assert.That(args.TargetGuid, Is.EqualTo(Guid.Empty));
+			Assert.That(args.ToolName, Is.EqualTo(string.Empty));
+			Assert.That(args.HasLinkInformation, Is.False);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -351,7 +351,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void CreateFwAppArgs_DbAndProjSame()
 		{
 			FwAppArgs args = new FwAppArgs("-db", "tim", "-proj", "monkey");
-			Assert.IsTrue(args.ShowHelp, "Bad arguments should set ShowHelp to true");
+			Assert.That(args.ShowHelp, Is.True, "Bad arguments should set ShowHelp to true");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -363,15 +363,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void CreateFwAppArgs_RunTogether()
 		{
 			FwAppArgs args = new FwAppArgs("-projmonkey", "-typexml");
-			Assert.AreEqual("monkey", args.Database);
-			Assert.AreEqual(string.Empty, args.ConfigFile);
-			Assert.AreEqual(string.Empty, args.Locale);
-			Assert.IsFalse(args.ShowHelp);
-			Assert.AreEqual(1, args.PropertyTableEntries.Count);
-			Assert.AreEqual(string.Empty, args.Tag);
-			Assert.AreEqual(Guid.Empty, args.TargetGuid);
-			Assert.AreEqual(string.Empty, args.ToolName);
-			Assert.IsFalse(args.HasLinkInformation);
+			Assert.That(args.Database, Is.EqualTo("monkey"));
+			Assert.That(args.ConfigFile, Is.EqualTo(string.Empty));
+			Assert.That(args.Locale, Is.EqualTo(string.Empty));
+			Assert.That(args.ShowHelp, Is.False);
+			Assert.That(args.PropertyTableEntries.Count, Is.EqualTo(1));
+			Assert.That(args.Tag, Is.EqualTo(string.Empty));
+			Assert.That(args.TargetGuid, Is.EqualTo(Guid.Empty));
+			Assert.That(args.ToolName, Is.EqualTo(string.Empty));
+			Assert.That(args.HasLinkInformation, Is.False);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -383,40 +383,40 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void CreateFwAppArgs_Help()
 		{
 			FwAppArgs args = new FwAppArgs("-?", "-db", "monkey");
-			Assert.IsTrue(args.ShowHelp);
-			Assert.AreEqual(string.Empty, args.Database, "Showing help should ignore all other parameters");
-			Assert.AreEqual(string.Empty, args.DatabaseType, "Showing help should ignore all other parameters");
-			Assert.AreEqual(string.Empty, args.ConfigFile);
-			Assert.AreEqual(string.Empty, args.Locale);
-			Assert.AreEqual(0, args.PropertyTableEntries.Count);
-			Assert.AreEqual(string.Empty, args.Tag);
-			Assert.AreEqual(Guid.Empty, args.TargetGuid);
-			Assert.AreEqual(string.Empty, args.ToolName);
-			Assert.IsFalse(args.HasLinkInformation);
+			Assert.That(args.ShowHelp, Is.True);
+			Assert.That(args.Database, Is.EqualTo(string.Empty), "Showing help should ignore all other parameters");
+			Assert.That(args.DatabaseType, Is.EqualTo(string.Empty), "Showing help should ignore all other parameters");
+			Assert.That(args.ConfigFile, Is.EqualTo(string.Empty));
+			Assert.That(args.Locale, Is.EqualTo(string.Empty));
+			Assert.That(args.PropertyTableEntries.Count, Is.EqualTo(0));
+			Assert.That(args.Tag, Is.EqualTo(string.Empty));
+			Assert.That(args.TargetGuid, Is.EqualTo(Guid.Empty));
+			Assert.That(args.ToolName, Is.EqualTo(string.Empty));
+			Assert.That(args.HasLinkInformation, Is.False);
 
 			args = new FwAppArgs(new[] { "-h" });
-			Assert.IsTrue(args.ShowHelp);
-			Assert.AreEqual(string.Empty, args.Database);
-			Assert.AreEqual(string.Empty, args.DatabaseType);
-			Assert.AreEqual(string.Empty, args.ConfigFile);
-			Assert.AreEqual(string.Empty, args.Locale);
-			Assert.AreEqual(0, args.PropertyTableEntries.Count);
-			Assert.AreEqual(string.Empty, args.Tag);
-			Assert.AreEqual(Guid.Empty, args.TargetGuid);
-			Assert.AreEqual(string.Empty, args.ToolName);
-			Assert.IsFalse(args.HasLinkInformation);
+			Assert.That(args.ShowHelp, Is.True);
+			Assert.That(args.Database, Is.EqualTo(string.Empty));
+			Assert.That(args.DatabaseType, Is.EqualTo(string.Empty));
+			Assert.That(args.ConfigFile, Is.EqualTo(string.Empty));
+			Assert.That(args.Locale, Is.EqualTo(string.Empty));
+			Assert.That(args.PropertyTableEntries.Count, Is.EqualTo(0));
+			Assert.That(args.Tag, Is.EqualTo(string.Empty));
+			Assert.That(args.TargetGuid, Is.EqualTo(Guid.Empty));
+			Assert.That(args.ToolName, Is.EqualTo(string.Empty));
+			Assert.That(args.HasLinkInformation, Is.False);
 
 			args = new FwAppArgs(new[] { "-help" });
-			Assert.IsTrue(args.ShowHelp);
-			Assert.AreEqual(string.Empty, args.Database);
-			Assert.AreEqual(string.Empty, args.DatabaseType);
-			Assert.AreEqual(string.Empty, args.ConfigFile);
-			Assert.AreEqual(string.Empty, args.Locale);
-			Assert.AreEqual(0, args.PropertyTableEntries.Count);
-			Assert.AreEqual(string.Empty, args.Tag);
-			Assert.AreEqual(Guid.Empty, args.TargetGuid);
-			Assert.AreEqual(string.Empty, args.ToolName);
-			Assert.IsFalse(args.HasLinkInformation);
+			Assert.That(args.ShowHelp, Is.True);
+			Assert.That(args.Database, Is.EqualTo(string.Empty));
+			Assert.That(args.DatabaseType, Is.EqualTo(string.Empty));
+			Assert.That(args.ConfigFile, Is.EqualTo(string.Empty));
+			Assert.That(args.Locale, Is.EqualTo(string.Empty));
+			Assert.That(args.PropertyTableEntries.Count, Is.EqualTo(0));
+			Assert.That(args.Tag, Is.EqualTo(string.Empty));
+			Assert.That(args.TargetGuid, Is.EqualTo(Guid.Empty));
+			Assert.That(args.ToolName, Is.EqualTo(string.Empty));
+			Assert.That(args.HasLinkInformation, Is.False);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -429,16 +429,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void CreateFwAppArgs_MultiWordQuotedValue()
 		{
 			FwAppArgs args = new FwAppArgs("-db", "monkey on a string.fwdata");
-			Assert.AreEqual("monkey on a string.fwdata", args.Database);
-			Assert.AreEqual(string.Empty, args.DatabaseType);
-			Assert.AreEqual(string.Empty, args.ConfigFile);
-			Assert.AreEqual(string.Empty, args.Locale);
-			Assert.IsFalse(args.ShowHelp);
-			Assert.AreEqual(0, args.PropertyTableEntries.Count);
-			Assert.AreEqual(string.Empty, args.Tag);
-			Assert.AreEqual(Guid.Empty, args.TargetGuid);
-			Assert.AreEqual(string.Empty, args.ToolName);
-			Assert.IsFalse(args.HasLinkInformation);
+			Assert.That(args.Database, Is.EqualTo("monkey on a string.fwdata"));
+			Assert.That(args.DatabaseType, Is.EqualTo(string.Empty));
+			Assert.That(args.ConfigFile, Is.EqualTo(string.Empty));
+			Assert.That(args.Locale, Is.EqualTo(string.Empty));
+			Assert.That(args.ShowHelp, Is.False);
+			Assert.That(args.PropertyTableEntries.Count, Is.EqualTo(0));
+			Assert.That(args.Tag, Is.EqualTo(string.Empty));
+			Assert.That(args.TargetGuid, Is.EqualTo(Guid.Empty));
+			Assert.That(args.ToolName, Is.EqualTo(string.Empty));
+			Assert.That(args.HasLinkInformation, Is.False);
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -451,16 +451,16 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void CreateFwAppArgs_DbAbsolutePath_Linux()
 		{
 			FwAppArgs args = new FwAppArgs("-db", "/database.fwdata");
-			Assert.AreEqual("/database.fwdata", args.Database, "Should be able to open up database by absolute path");
-			Assert.AreEqual(string.Empty, args.ConfigFile);
-			Assert.AreEqual(string.Empty, args.DatabaseType);
-			Assert.AreEqual(string.Empty, args.Locale);
-			Assert.IsFalse(args.ShowHelp);
-			Assert.AreEqual(0, args.PropertyTableEntries.Count);
-			Assert.AreEqual(string.Empty, args.Tag);
-			Assert.AreEqual(Guid.Empty, args.TargetGuid);
-			Assert.AreEqual(string.Empty, args.ToolName);
-			Assert.IsFalse(args.HasLinkInformation);
+			Assert.That(args.Database, Is.EqualTo("/database.fwdata"), "Should be able to open up database by absolute path");
+			Assert.That(args.ConfigFile, Is.EqualTo(string.Empty));
+			Assert.That(args.DatabaseType, Is.EqualTo(string.Empty));
+			Assert.That(args.Locale, Is.EqualTo(string.Empty));
+			Assert.That(args.ShowHelp, Is.False);
+			Assert.That(args.PropertyTableEntries.Count, Is.EqualTo(0));
+			Assert.That(args.Tag, Is.EqualTo(string.Empty));
+			Assert.That(args.TargetGuid, Is.EqualTo(Guid.Empty));
+			Assert.That(args.ToolName, Is.EqualTo(string.Empty));
+			Assert.That(args.HasLinkInformation, Is.False);
 		}
 		#endregion
 	}

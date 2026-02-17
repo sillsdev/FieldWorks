@@ -57,11 +57,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.CallAddSingleCharacter(m_dlg.ManualCharEntryTextBox);
 
 			m_dlg.ValidCharsGridMngr.VerifyCharacters(new[] { "A" });
-			Assert.AreEqual(String.Empty, m_dlg.ManualCharEntryTextBox.Text,
-				"The manual entry text box should be cleared after adding the character.");
-			Assert.AreEqual(0, m_dlg.MessageBoxText.Count,
-				"No message boxes should have been displayed");
-			Assert.AreEqual(0, m_dlg.BeepCount);
+			Assert.That(m_dlg.ManualCharEntryTextBox.Text, Is.EqualTo(String.Empty), "The manual entry text box should be cleared after adding the character.");
+			Assert.That(m_dlg.MessageBoxText.Count, Is.EqualTo(0), "No message boxes should have been displayed");
+			Assert.That(m_dlg.BeepCount, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -75,11 +73,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			m_dlg.ManualCharEntryTextBox.Text = "\u0301";
 
-			Assert.AreEqual(String.Empty, m_dlg.ManualCharEntryTextBox.Text,
-				"The manual entry text box should be cleared.");
-			Assert.AreEqual(1, m_dlg.MessageBoxText.Count, "One message box should have been displayed");
-			Assert.AreEqual(FwCoreDlgs.kstidLoneDiacriticNotValid, m_dlg.MessageBoxText[0]);
-			Assert.AreEqual(0, m_dlg.BeepCount);
+			Assert.That(m_dlg.ManualCharEntryTextBox.Text, Is.EqualTo(String.Empty), "The manual entry text box should be cleared.");
+			Assert.That(m_dlg.MessageBoxText.Count, Is.EqualTo(1), "One message box should have been displayed");
+			Assert.That(m_dlg.MessageBoxText[0], Is.EqualTo(FwCoreDlgs.kstidLoneDiacriticNotValid));
+			Assert.That(m_dlg.BeepCount, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -94,11 +91,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			m_dlg.ManualCharEntryTextBox.Text = " \u0301";
 
-			Assert.AreEqual(String.Empty, m_dlg.ManualCharEntryTextBox.Text,
-				"The manual entry text box should be cleared.");
-			Assert.AreEqual(1, m_dlg.MessageBoxText.Count, "One message box should have been displayed");
-			Assert.AreEqual(FwCoreDlgs.kstidLoneDiacriticNotValid, m_dlg.MessageBoxText[0]);
-			Assert.AreEqual(0, m_dlg.BeepCount);
+			Assert.That(m_dlg.ManualCharEntryTextBox.Text, Is.EqualTo(String.Empty), "The manual entry text box should be cleared.");
+			Assert.That(m_dlg.MessageBoxText.Count, Is.EqualTo(1), "One message box should have been displayed");
+			Assert.That(m_dlg.MessageBoxText[0], Is.EqualTo(FwCoreDlgs.kstidLoneDiacriticNotValid));
+			Assert.That(m_dlg.BeepCount, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -112,10 +108,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			m_dlg.ManualCharEntryTextBox.Text = "  ";
 
-			Assert.AreEqual(String.Empty, m_dlg.ManualCharEntryTextBox.Text,
-				"The manual entry text box should be cleared.");
-			Assert.AreEqual(0, m_dlg.MessageBoxText.Count, "No message boxes should have been displayed");
-			Assert.AreEqual(1, m_dlg.BeepCount);
+			Assert.That(m_dlg.ManualCharEntryTextBox.Text, Is.EqualTo(String.Empty), "The manual entry text box should be cleared.");
+			Assert.That(m_dlg.MessageBoxText.Count, Is.EqualTo(0), "No message boxes should have been displayed");
+			Assert.That(m_dlg.BeepCount, Is.EqualTo(1));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -129,11 +124,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		{
 			m_dlg.ManualCharEntryTextBox.Text = "\u2065";
 
-			Assert.AreEqual(String.Empty, m_dlg.ManualCharEntryTextBox.Text,
-				"The manual entry text box should be cleared.");
-			Assert.AreEqual(1, m_dlg.BeepCount, "One beep should have been issued");
-			Assert.AreEqual(0, m_dlg.MessageBoxText.Count, "No message boxes should have been displayed");
-			Assert.AreEqual(1, m_dlg.BeepCount);
+			Assert.That(m_dlg.ManualCharEntryTextBox.Text, Is.EqualTo(String.Empty), "The manual entry text box should be cleared.");
+			Assert.That(m_dlg.BeepCount, Is.EqualTo(1), "One beep should have been issued");
+			Assert.That(m_dlg.MessageBoxText.Count, Is.EqualTo(0), "No message boxes should have been displayed");
+			Assert.That(m_dlg.BeepCount, Is.EqualTo(1));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -148,10 +142,9 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.CallAddSingleCharacter(m_dlg.UnicodeValueTextBox);
 			m_dlg.ValidCharsGridMngr.VerifyCharacters(new[] { "g" });
 
-			Assert.AreEqual(String.Empty, m_dlg.UnicodeValueTextBox.Text,
-				"The Unicode text box should be cleared after adding the character.");
-			Assert.AreEqual(0, m_dlg.MessageBoxText.Count, "No message boxes should have been displayed");
-			Assert.AreEqual(0, m_dlg.BeepCount);
+			Assert.That(m_dlg.UnicodeValueTextBox.Text, Is.EqualTo(String.Empty), "The Unicode text box should be cleared after adding the character.");
+			Assert.That(m_dlg.MessageBoxText.Count, Is.EqualTo(0), "No message boxes should have been displayed");
+			Assert.That(m_dlg.BeepCount, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -167,11 +160,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.CallAddSingleCharacter(m_dlg.UnicodeValueTextBox);
 			m_dlg.ValidCharsGridMngr.VerifyCharacters(new string[] {  });
 
-			Assert.AreEqual("0301", m_dlg.UnicodeValueTextBox.Text,
-				"The Unicode text box should not be cleared to give the user a chance to correct the problem.");
-			Assert.AreEqual(1, m_dlg.MessageBoxText.Count, "One message box should have been displayed");
-			Assert.AreEqual(FwCoreDlgs.kstidLoneDiacriticNotValid, m_dlg.MessageBoxText[0]);
-			Assert.AreEqual(0, m_dlg.BeepCount);
+			Assert.That(m_dlg.UnicodeValueTextBox.Text, Is.EqualTo("0301"), "The Unicode text box should not be cleared to give the user a chance to correct the problem.");
+			Assert.That(m_dlg.MessageBoxText.Count, Is.EqualTo(1), "One message box should have been displayed");
+			Assert.That(m_dlg.MessageBoxText[0], Is.EqualTo(FwCoreDlgs.kstidLoneDiacriticNotValid));
+			Assert.That(m_dlg.BeepCount, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -187,12 +179,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 			m_dlg.CallAddSingleCharacter(m_dlg.UnicodeValueTextBox);
 			m_dlg.ValidCharsGridMngr.VerifyCharacters(new string[] {  });
 
-			Assert.AreEqual("5678", m_dlg.UnicodeValueTextBox.Text,
-				"The Unicode text box should not be cleared to give the user a chance to correct the problem.");
-			Assert.AreEqual(1, m_dlg.MessageBoxText.Count, "One message box should have been displayed");
-			Assert.AreEqual(ResourceHelper.GetResourceString("kstidUndefinedCharacterMsg"),
-				m_dlg.MessageBoxText[0]);
-			Assert.AreEqual(0, m_dlg.BeepCount);
+			Assert.That(m_dlg.UnicodeValueTextBox.Text, Is.EqualTo("5678"), "The Unicode text box should not be cleared to give the user a chance to correct the problem.");
+			Assert.That(m_dlg.MessageBoxText.Count, Is.EqualTo(1), "One message box should have been displayed");
+			Assert.That(m_dlg.MessageBoxText[0], Is.EqualTo(ResourceHelper.GetResourceString("kstidUndefinedCharacterMsg")));
+			Assert.That(m_dlg.BeepCount, Is.EqualTo(0));
 		}
 
 		private class Fwr3660ValidCharactersDlg : ValidCharactersDlg
@@ -219,7 +209,7 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				new[] {ws}, Enumerable.Empty<CoreWritingSystemDefinition>()) {DefaultVernacularWritingSystem = ws};
 			using (var dlg = new Fwr3660ValidCharactersDlg(null, wsContainer, ws))
 			{
-				Assert.NotNull(dlg);
+				Assert.That(dlg, Is.Not.Null);
 			}
 		}
 	}
@@ -349,12 +339,10 @@ namespace SIL.FieldWorks.FwCoreDlgs
 		/// ------------------------------------------------------------------------------------
 		public void VerifyCharacters(string[] expectedChars)
 		{
-			Assert.AreEqual(expectedChars.Length, m_charsInGrid.Count,
-				"Expected number of characters in ValidCharsGridsManager does not match actual");
+			Assert.That(m_charsInGrid.Count, Is.EqualTo(expectedChars.Length), "Expected number of characters in ValidCharsGridsManager does not match actual");
 			foreach (string character in expectedChars)
 			{
-				Assert.IsTrue(m_charsInGrid.Contains(character),
-					character + " had not been added to the ValidCharsGridsManager");
+				Assert.That(m_charsInGrid.Contains(character), Is.True, character + " had not been added to the ValidCharsGridsManager");
 			}
 		}
 	}

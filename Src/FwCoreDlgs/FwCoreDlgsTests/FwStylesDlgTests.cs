@@ -154,18 +154,18 @@ namespace SIL.FieldWorks.FwCoreDlgs
 				dlg.CallSaveRenamedStyle("my funny style", "my recurring style");
 
 				// Check the deleted styles set
-				Assert.AreEqual(5, deletedStyles.Count);
-				Assert.IsTrue(deletedStyles.Contains("style 1"));
-				Assert.IsTrue(deletedStyles.Contains("out of style"));
-				Assert.IsTrue(deletedStyles.Contains("no style"));
-				Assert.IsTrue(deletedStyles.Contains("deleted style"));
-				Assert.IsTrue(deletedStyles.Contains("my recurring style"));
+				Assert.That(deletedStyles.Count, Is.EqualTo(5));
+				Assert.That(deletedStyles.Contains("style 1"), Is.True);
+				Assert.That(deletedStyles.Contains("out of style"), Is.True);
+				Assert.That(deletedStyles.Contains("no style"), Is.True);
+				Assert.That(deletedStyles.Contains("deleted style"), Is.True);
+				Assert.That(deletedStyles.Contains("my recurring style"), Is.True);
 
 				// Check the renamed styles list
-				Assert.AreEqual(3, renamedStyles.Count);
-				Assert.AreEqual("name 1", renamedStyles["name 3"]);
-				Assert.AreEqual("my style", renamedStyles["your style"]);
-				Assert.AreEqual("my funny style", renamedStyles["my recurring style"]);
+				Assert.That(renamedStyles.Count, Is.EqualTo(3));
+				Assert.That(renamedStyles["name 3"], Is.EqualTo("name 1"));
+				Assert.That(renamedStyles["your style"], Is.EqualTo("my style"));
+				Assert.That(renamedStyles["my recurring style"], Is.EqualTo("my funny style"));
 			}
 		}
 

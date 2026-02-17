@@ -88,7 +88,7 @@ namespace SIL.FieldWorks.Common.Widgets
 			var dataSource = new DummyFwMultilingualPropViewDataSource();
 			using (var control = new FwMultilingualPropView(dataSource))
 			{
-				Assert.AreNotEqual(IntPtr.Zero, control.Handle);
+				Assert.That(control.Handle, Is.Not.EqualTo(IntPtr.Zero));
 			}
 		}
 

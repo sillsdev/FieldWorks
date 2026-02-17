@@ -5,7 +5,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle("Xml-specified Views")]
+// [assembly: AssemblyTitle("Xml-specified Views")] // Sanitized by convert_generate_assembly_info
 
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("xWorksTests")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("XMLViewsTests")]

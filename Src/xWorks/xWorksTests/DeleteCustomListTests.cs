@@ -180,8 +180,7 @@ namespace SIL.FieldWorks.XWorks
 			m_helper.Run(m_testList);
 
 			// Verify
-			Assert.AreEqual(clists - 1, m_listRepo.Count,
-				"List should have been deleted.");
+			Assert.That(m_listRepo.Count, Is.EqualTo(clists - 1), "List should have been deleted.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -200,8 +199,7 @@ namespace SIL.FieldWorks.XWorks
 			m_helper.Run(annDefList);
 
 			// Verify
-			Assert.AreEqual(clists, m_listRepo.Count,
-				"Should not delete an owned list.");
+			Assert.That(m_listRepo.Count, Is.EqualTo(clists), "Should not delete an owned list.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -222,8 +220,7 @@ namespace SIL.FieldWorks.XWorks
 			m_helper.Run(m_testList);
 
 			// Verify
-			Assert.AreEqual(clists - 1, m_listRepo.Count,
-				"Possibility not referenced by anything. Should just delete the list.");
+			Assert.That(m_listRepo.Count, Is.EqualTo(clists - 1), "Possibility not referenced by anything. Should just delete the list.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -249,10 +246,8 @@ namespace SIL.FieldWorks.XWorks
 			m_helper.Run(m_testList);
 
 			// Verify
-			Assert.AreEqual(clists, m_listRepo.Count,
-				"'User' responded 'No'. Should not delete the list.");
-			Assert.AreEqual(newPossName, m_helper.PossNameInDlg,
-				"Name of possibility found is not the one we put in there!");
+			Assert.That(m_listRepo.Count, Is.EqualTo(clists), "'User' responded 'No'. Should not delete the list.");
+			Assert.That(m_helper.PossNameInDlg, Is.EqualTo(newPossName), "Name of possibility found is not the one we put in there!");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -278,10 +273,8 @@ namespace SIL.FieldWorks.XWorks
 			m_helper.Run(m_testList);
 
 			// Verify
-			Assert.AreEqual(clists - 1, m_listRepo.Count,
-				"'User' responded 'Yes'. Should have deleted the list.");
-			Assert.AreEqual(newPossName, m_helper.PossNameInDlg,
-				"Name of possibility found is not the one we put in there!");
+			Assert.That(m_listRepo.Count, Is.EqualTo(clists - 1), "'User' responded 'Yes'. Should have deleted the list.");
+			Assert.That(m_helper.PossNameInDlg, Is.EqualTo(newPossName), "Name of possibility found is not the one we put in there!");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -312,12 +305,9 @@ namespace SIL.FieldWorks.XWorks
 			m_helper.Run(m_testList);
 
 			// Verify
-			Assert.AreEqual(clists - 1, m_listRepo.Count,
-				"'User' responded 'Yes'. Should have deleted the list.");
-			Assert.AreEqual(cfields, Cache.MetaDataCacheAccessor.FieldCount,
-				"Custom Field should get deleted.");
-			Assert.AreEqual(newPossName, m_helper.PossNameInDlg,
-				"Name of possibility found is not the one we put in there!");
+			Assert.That(m_listRepo.Count, Is.EqualTo(clists - 1), "'User' responded 'Yes'. Should have deleted the list.");
+			Assert.That(Cache.MetaDataCacheAccessor.FieldCount, Is.EqualTo(cfields), "Custom Field should get deleted.");
+			Assert.That(m_helper.PossNameInDlg, Is.EqualTo(newPossName), "Name of possibility found is not the one we put in there!");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -350,17 +340,14 @@ namespace SIL.FieldWorks.XWorks
 			// apparently the delete field and delete list need to be separate tasks
 			// in order to make the bug appear (LT-12251)
 			Cache.ActionHandlerAccessor.BeginUndoTask("UndoDeleteList", "RedoDeleteList");
-			Assert.AreEqual(cfields, Cache.MetaDataCacheAccessor.FieldCount,
-				"Custom Field should have been deleted.");
+			Assert.That(Cache.MetaDataCacheAccessor.FieldCount, Is.EqualTo(cfields), "Custom Field should have been deleted.");
 
 			// SUT
 			m_helper.Run(m_testList);
 
 			// Verify
-			Assert.AreEqual(clists - 1, m_listRepo.Count,
-				"'User' responded 'Yes'. Should have deleted the list.");
-			Assert.AreEqual(String.Empty, m_helper.PossNameInDlg,
-				"This test shouldn't go through the dialog.");
+			Assert.That(m_listRepo.Count, Is.EqualTo(clists - 1), "'User' responded 'Yes'. Should have deleted the list.");
+			Assert.That(m_helper.PossNameInDlg, Is.EqualTo(String.Empty), "This test shouldn't go through the dialog.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -393,17 +380,14 @@ namespace SIL.FieldWorks.XWorks
 			// apparently the delete field and delete list need to be separate tasks
 			// in order to make the bug appear (LT-12251)
 			Cache.ActionHandlerAccessor.BeginUndoTask("UndoDeleteList", "RedoDeleteList");
-			Assert.AreEqual(cfields, Cache.MetaDataCacheAccessor.FieldCount,
-				"Custom Field should have been deleted.");
+			Assert.That(Cache.MetaDataCacheAccessor.FieldCount, Is.EqualTo(cfields), "Custom Field should have been deleted.");
 
 			// SUT
 			m_helper.Run(m_testList);
 
 			// Verify
-			Assert.AreEqual(clists - 1, m_listRepo.Count,
-				"'User' responded 'Yes'. Should have deleted the list.");
-			Assert.AreEqual(String.Empty, m_helper.PossNameInDlg,
-				"This test shouldn't go through the dialog.");
+			Assert.That(m_listRepo.Count, Is.EqualTo(clists - 1), "'User' responded 'Yes'. Should have deleted the list.");
+			Assert.That(m_helper.PossNameInDlg, Is.EqualTo(String.Empty), "This test shouldn't go through the dialog.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -434,12 +418,9 @@ namespace SIL.FieldWorks.XWorks
 			m_helper.Run(m_testList);
 
 			// Verify
-			Assert.AreEqual(clists, m_listRepo.Count,
-				"'User' responded 'No'. Should not have deleted the list.");
-			Assert.AreEqual(cfields + 1, Cache.MetaDataCacheAccessor.FieldCount,
-				"Custom Field should not get deleted.");
-			Assert.AreEqual(newPossName, m_helper.PossNameInDlg,
-				"Name of possibility found is not the one we put in there!");
+			Assert.That(m_listRepo.Count, Is.EqualTo(clists), "'User' responded 'No'. Should not have deleted the list.");
+			Assert.That(Cache.MetaDataCacheAccessor.FieldCount, Is.EqualTo(cfields + 1), "Custom Field should not get deleted.");
+			Assert.That(m_helper.PossNameInDlg, Is.EqualTo(newPossName), "Name of possibility found is not the one we put in there!");
 			// Remove field from mdc so it doesn't mess up other tests!
 			fd.MarkForDeletion = true;
 			fd.UpdateCustomField();
@@ -475,10 +456,8 @@ namespace SIL.FieldWorks.XWorks
 			m_helper.Run(m_testList);
 
 			// Verify
-			Assert.AreEqual(clists - 1, m_listRepo.Count,
-				"'User' responded 'Yes'. Should have deleted the list.");
-			Assert.AreEqual(newPossName + "1", m_helper.PossNameInDlg,
-				"Name of possibility found is not the one we put in there!");
+			Assert.That(m_listRepo.Count, Is.EqualTo(clists - 1), "'User' responded 'Yes'. Should have deleted the list.");
+			Assert.That(m_helper.PossNameInDlg, Is.EqualTo(newPossName + "1"), "Name of possibility found is not the one we put in there!");
 		}
 	}
 

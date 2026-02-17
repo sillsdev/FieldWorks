@@ -340,7 +340,7 @@
 	<value>m_converterTest</value>
   </data>
   <data name="&gt;&gt;m_converterTest.Type" xml:space="preserve">
-	<value>SIL.FieldWorks.FwCoreDlgs.ConverterTest, FwCoreDlgs, Version=7.0.6.26928, Culture=neutral, PublicKeyToken=null</value>
+	<value>SIL.FieldWorks.FwCoreDlgs.ConverterTester, FwCoreDlgs, Version=7.0.6.26928, Culture=neutral, PublicKeyToken=null</value>
   </data>
   <data name="&gt;&gt;m_converterTest.Parent" xml:space="preserve">
 	<value>testTab</value>

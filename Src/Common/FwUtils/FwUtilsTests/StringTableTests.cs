@@ -47,15 +47,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Test]
 		public void InBaseFile()
 		{
-			Assert.AreEqual("orng", m_table.GetString("orange"));
+			Assert.That(m_table.GetString("orange"), Is.EqualTo("orng"));
 		}
 
 		/// <summary />
 		[Test]
 		public void InParentFile()
 		{
-			Assert.AreEqual("pssnfrt", m_table.GetString("passion fruit"));
-			Assert.AreEqual("ppy", m_table.GetString("papaya"));
+			Assert.That(m_table.GetString("passion fruit"), Is.EqualTo("pssnfrt"));
+			Assert.That(m_table.GetString("papaya"), Is.EqualTo("ppy"));
 		}
 
 		/// <summary />
@@ -65,14 +65,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 			/* 		<!-- this one demonstrates that omiting the txt attribute just means that we should return the id value -->
 					<string id="Banana"/>
 			*/
-			Assert.AreEqual("Banana", m_table.GetString("Banana"));
+			Assert.That(m_table.GetString("Banana"), Is.EqualTo("Banana"));
 		}
 
 		/// <summary />
 		[Test]
 		public void WithPath()
 		{
-			Assert.AreEqual(m_table.GetString("MyPineapple", "InPng/InMyYard"), "pnppl");
+			Assert.That("pnppl", Is.EqualTo(m_table.GetString("MyPineapple", "InPng/InMyYard")));
 		}
 
 		/// <summary />
@@ -83,7 +83,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			//the leading '/' here will lead to a double slash,
 			//	something like strings//group,
 			//meaning that this can be found in any group.
-			Assert.AreEqual(m_table.GetStringWithXPath("MyPineapple", "/group/"), "pnppl");
+			Assert.That("pnppl", Is.EqualTo(m_table.GetStringWithXPath("MyPineapple", "/group/")));
 		}
 
 		/// <summary />
@@ -91,7 +91,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void WithRootXPathFragment()
 		{
 			// Give the path of groups explicitly in a compact form.
-			Assert.AreEqual(m_table.GetString("MyPineapple", "InPng/InMyYard"), "pnppl");
+			Assert.That("pnppl", Is.EqualTo(m_table.GetString("MyPineapple", "InPng/InMyYard")));
 		}
 
 		/// <summary />
@@ -102,8 +102,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			doc.LoadXml(@"<stringList group='InPng/InMyYard' ids='   MyPapaya, MyPineapple  '/>");
 			XmlNode node = doc.FirstChild;
 			string[] strings = m_table.GetStringsFromStringListNode(node);
-			Assert.AreEqual(2, strings.Length);
-			Assert.AreEqual(strings[1], "pnppl");
+			Assert.That(strings.Length, Is.EqualTo(2));
+			Assert.That("pnppl", Is.EqualTo(strings[1]));
 		}
 
 		/// <summary />

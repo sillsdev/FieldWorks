@@ -41,7 +41,7 @@ namespace SIL.FieldWorks.Common.RootSites
 		/// ------------------------------------------------------------------------------------
 		public override void AddString(ITsString tss)
 		{
-			Assert.AreEqual(m_expectedStringContents[m_index++], tss.Text);
+			Assert.That(tss.Text, Is.EqualTo(m_expectedStringContents[m_index++]));
 		}
 	}
 

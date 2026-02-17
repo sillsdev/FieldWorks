@@ -32,8 +32,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			m_site.ScrollSelectionIntoView(m_selection, VwScrollSelOpts.kssoDefault);
 
-			Assert.AreEqual(new Point(0,- 950), m_site.ScrollPosition,
-				"Scroll position should not change if IP is already visible");
+			Assert.That(m_site.ScrollPosition, Is.EqualTo(new Point(0,- 950)), "Scroll position should not change if IP is already visible");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -50,7 +49,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_site.ScrollSelectionIntoView(m_selection, VwScrollSelOpts.kssoDefault);
 
 			// We expect the IP to be somewhere inside of the client window.
-			Assert.IsTrue(IsInClientWindow(5000));
+			Assert.That(IsInClientWindow(5000), Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -67,7 +66,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_site.ScrollSelectionIntoView(m_selection, VwScrollSelOpts.kssoDefault);
 
 			// We expect the IP to be somewhere inside of the client window.
-			Assert.IsTrue(IsInClientWindow(5000));
+			Assert.That(IsInClientWindow(5000), Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -84,7 +83,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_site.ScrollSelectionIntoView(m_selection, VwScrollSelOpts.kssoDefault);
 
 			// We expect the IP to be somewhere inside of the client window.
-			Assert.IsTrue(IsInClientWindow(5000));
+			Assert.That(IsInClientWindow(5000), Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -101,7 +100,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_site.ScrollSelectionIntoView(m_selection, VwScrollSelOpts.kssoDefault);
 
 			// We expect the IP to be somewhere inside of the client window.
-			Assert.IsTrue(IsInClientWindow(1000));
+			Assert.That(IsInClientWindow(1000), Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -118,7 +117,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_site.ScrollSelectionIntoView(m_selection, VwScrollSelOpts.kssoDefault);
 
 			// We expect the IP to be somewhere inside of the client window.
-			Assert.IsTrue(IsInClientWindow(1000));
+			Assert.That(IsInClientWindow(1000), Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -135,7 +134,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_site.ScrollSelectionIntoView(m_selection, VwScrollSelOpts.kssoDefault);
 
 			// We expect the IP to be somewhere inside of the client window.
-			Assert.IsTrue(IsInClientWindow(1000));
+			Assert.That(IsInClientWindow(1000), Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -150,8 +149,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			m_site.ScrollSelectionIntoView(m_selection, VwScrollSelOpts.kssoDefault);
 
-			Assert.AreEqual(new Point(0, -1000), m_site.ScrollPosition,
-				"Scroll position should not change if selection is already visible");
+			Assert.That(m_site.ScrollPosition, Is.EqualTo(new Point(0, -1000)), "Scroll position should not change if selection is already visible");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -168,7 +166,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_site.ScrollSelectionIntoView(m_selection, VwScrollSelOpts.kssoDefault);
 
 			// We expect the end of the selection to be somewhere inside of the client window
-			Assert.IsTrue(IsInClientWindow(1100));
+			Assert.That(IsInClientWindow(1100), Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -185,7 +183,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_site.ScrollSelectionIntoView(m_selection, VwScrollSelOpts.kssoDefault);
 
 			// We expect the end of the selection to be somewhere inside of the client window
-			Assert.IsTrue(IsInClientWindow(1020));
+			Assert.That(IsInClientWindow(1020), Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -201,8 +199,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			m_site.ScrollSelectionIntoView(m_selection, VwScrollSelOpts.kssoDefault);
 
-			Assert.AreEqual(new Point(0, -1000), m_site.ScrollPosition,
-				"Scroll position should not change if end of selection is already visible");
+			Assert.That(m_site.ScrollPosition, Is.EqualTo(new Point(0, -1000)), "Scroll position should not change if end of selection is already visible");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -219,7 +216,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_site.ScrollSelectionIntoView(m_selection, VwScrollSelOpts.kssoDefault);
 
 			// We expect the end of the selection to be somewhere inside of the client window
-			Assert.IsTrue(IsInClientWindow(900));
+			Assert.That(IsInClientWindow(900), Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -236,7 +233,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_site.ScrollSelectionIntoView(m_selection, VwScrollSelOpts.kssoDefault);
 
 			// We expect the end of the selection to be somewhere inside of the client window.
-			Assert.IsTrue(IsInClientWindow(900));
+			Assert.That(IsInClientWindow(900), Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -254,7 +251,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_site.ScrollSelectionIntoView(m_selection, VwScrollSelOpts.kssoDefault);
 
 			// We expect the end of the selection to be somewhere inside of the client window.
-			Assert.IsTrue(IsInClientWindow(900));
+			Assert.That(IsInClientWindow(900), Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -270,8 +267,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 
 			m_site.ScrollSelectionIntoView(m_selection, VwScrollSelOpts.kssoDefault);
 
-			Assert.AreEqual(new Point(0, -850), m_site.ScrollPosition,
-				"Scroll position should not change if end of selection is already visible");
+			Assert.That(m_site.ScrollPosition, Is.EqualTo(new Point(0, -850)), "Scroll position should not change if end of selection is already visible");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -289,7 +285,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_site.ScrollSelectionIntoView(m_selection, VwScrollSelOpts.kssoDefault);
 
 			// We expect the end of the selection to be somewhere inside of the client window
-			Assert.IsTrue(IsInClientWindow(900));
+			Assert.That(IsInClientWindow(900), Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -306,7 +302,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_site.ScrollSelectionIntoView(m_selection, VwScrollSelOpts.kssoDefault);
 
 			// We expect the end of the selection to be somewhere inside of the client window
-			Assert.IsTrue(IsInClientWindow(1100));
+			Assert.That(IsInClientWindow(1100), Is.True);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -323,7 +319,7 @@ namespace SIL.FieldWorks.Common.RootSites.SimpleRootSiteTests
 			m_site.ScrollSelectionIntoView(m_selection, VwScrollSelOpts.kssoDefault);
 
 			// We expect the end of the selection to be somewhere inside of the client window
-			Assert.IsTrue(IsInClientWindow(1300));
+			Assert.That(IsInClientWindow(1300), Is.True);
 		}
 	}
 	#endregion MakeSelectionVisibleTests

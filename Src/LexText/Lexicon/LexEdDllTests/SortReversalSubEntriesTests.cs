@@ -26,7 +26,7 @@ namespace LexEdDllTests
 		public void SortReversalSubEntries_NoReversalIndexesDoesNotThrow()
 		{
 			// verify test conditions
-			Assert.AreEqual(m_revIndexRepo.Count, 0, "Test setup is broken, should be no RIs");
+			Assert.That(m_revIndexRepo.Count, Is.EqualTo(0), "Test setup is broken, should be no RIs");
 			Assert.DoesNotThrow(()=>SortReversalSubEntries.SortReversalSubEntriesInPlace(Cache));
 		}
 
@@ -38,10 +38,10 @@ namespace LexEdDllTests
 			var subEntryB = CreateReversalIndexSubEntry("b", reversalMainEntry);
 			var subEntryA = CreateReversalIndexSubEntry("a", reversalMainEntry);
 			// Verify initial incorrect order
-			CollectionAssert.AreEqual(reversalMainEntry.SubentriesOS, new [] { subEntryZ, subEntryB, subEntryA});
+			Assert.That(new [] { subEntryZ, subEntryB, subEntryA}, Is.EqualTo(reversalMainEntry.SubentriesOS));
 			// SUT
 			SortReversalSubEntries.SortReversalSubEntriesInPlace(Cache);
-			CollectionAssert.AreEqual(reversalMainEntry.SubentriesOS, new[] { subEntryA, subEntryB, subEntryZ });
+			Assert.That(new[] { subEntryA, subEntryB, subEntryZ }, Is.EqualTo(reversalMainEntry.SubentriesOS));
 		}
 
 		[Test]
@@ -55,10 +55,10 @@ namespace LexEdDllTests
 			var subEntryB = CreateReversalIndexSubEntry("b", reversalMainEntry);
 			var subEntryA = CreateReversalIndexSubEntry("a", reversalMainEntry);
 			// Verify initial incorrect order
-			CollectionAssert.AreEqual(reversalMainEntry.SubentriesOS, new[] { subEntryZ, subEntryB, subEntryA });
+			Assert.That(new[] { subEntryZ, subEntryB, subEntryA }, Is.EqualTo(reversalMainEntry.SubentriesOS));
 			// SUT
 			SortReversalSubEntries.SortReversalSubEntriesInPlace(Cache);
-			CollectionAssert.AreEqual(reversalMainEntry.SubentriesOS, new[] { subEntryA, subEntryB, subEntryZ });
+			Assert.That(new[] { subEntryA, subEntryB, subEntryZ }, Is.EqualTo(reversalMainEntry.SubentriesOS));
 		}
 
 	  protected IReversalIndexEntry CreateReversalIndexEntry(string riForm)

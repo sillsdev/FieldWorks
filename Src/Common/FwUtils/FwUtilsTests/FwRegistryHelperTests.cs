@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2018 SIL International
+﻿// Copyright (c) 2003-2018 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -42,45 +42,39 @@ namespace SIL.FieldWorks.Common.FwUtils
 
 		private void AssertRegistrySubkeyNotPresent(RegistryKey key, string subKeyName)
 		{
-			Assert.IsFalse(RegistryHelper.KeyExists(key, subKeyName),
-				"Registry subkey {0} should not be found in {1}.", subKeyName, key.Name);
+			Assert.That(RegistryHelper.KeyExists(key, subKeyName), Is.False, "Registry subkey {0} should not be found in {1}.", subKeyName, key.Name);
 		}
 
 		private void AssertRegistrySubkeyPresent(RegistryKey key, string subKeyName)
 		{
-			Assert.Greater(key.SubKeyCount, 0, "Registry key {0} does not have any subkeys, can't find {1}", key.Name, subKeyName);
-			Assert.IsTrue(RegistryHelper.KeyExists(key, subKeyName),
-				"Registry subkey {0} was not found in {1}.", subKeyName, key.Name);
+			Assert.That(key.SubKeyCount, Is.GreaterThan(0), "Registry key {0} does not have any subkeys, can't find {1}", key.Name, subKeyName);
+			Assert.That(RegistryHelper.KeyExists(key, subKeyName), Is.True, "Registry subkey {0} was not found in {1}.", subKeyName, key.Name);
 		}
 
 		private void AssertRegistryValuePresent(RegistryKey key, string subKey, string entryName)
 		{
 			object valueObject;
-			Assert.IsTrue(RegistryHelper.RegEntryValueExists(key, subKey, entryName, out valueObject),
-				"Expected presence of entry {0} in subkey {1} of key {2}", entryName, subKey, key.Name);
+			Assert.That(RegistryHelper.RegEntryValueExists(key, subKey, entryName, out valueObject), Is.True, "Expected presence of entry {0} in subkey {1} of key {2}", entryName, subKey, key.Name);
 		}
 
 		private void AssertRegistryValueNotPresent(RegistryKey key, string subKey, string entryName)
 		{
 			object valueObject;
-			Assert.IsFalse(RegistryHelper.RegEntryValueExists(key, subKey, entryName, out valueObject),
-				"Expected absence of entry {0} in subkey {1} of key {2}", entryName, subKey, key.Name);
+			Assert.That(RegistryHelper.RegEntryValueExists(key, subKey, entryName, out valueObject), Is.False, "Expected absence of entry {0} in subkey {1} of key {2}", entryName, subKey, key.Name);
 		}
 
 		private void AssertRegistryStringValueEquals(RegistryKey key, string subKey, string entryName, string expectedValue)
 		{
 			object valueObject;
-			Assert.IsTrue(RegistryHelper.RegEntryValueExists(key, subKey, entryName, out valueObject),
-				"Expected presence of entry {0} in subkey {1} of key {2}", entryName, subKey, key.Name);
-			Assert.AreEqual(expectedValue, (string)valueObject);
+			Assert.That(RegistryHelper.RegEntryValueExists(key, subKey, entryName, out valueObject), Is.True, "Expected presence of entry {0} in subkey {1} of key {2}", entryName, subKey, key.Name);
+			Assert.That((string)valueObject, Is.EqualTo(expectedValue));
 		}
 
 		private void AssertRegistryIntValueEquals(RegistryKey key, string subKey, string entryName, int expectedValue)
 		{
 			object valueObject;
-			Assert.IsTrue(RegistryHelper.RegEntryValueExists(key, subKey, entryName, out valueObject),
-				"Expected presence of entry {0} in subkey {1} of key {2}", entryName, subKey, key.Name);
-			Assert.AreEqual(expectedValue, (int)valueObject);
+			Assert.That(RegistryHelper.RegEntryValueExists(key, subKey, entryName, out valueObject), Is.True, "Expected presence of entry {0} in subkey {1} of key {2}", entryName, subKey, key.Name);
+			Assert.That((int)valueObject, Is.EqualTo(expectedValue));
 		}
 
 		private void VerifyExpectedMigrationResults(RegistryKey version9Key)
@@ -90,9 +84,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 				DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.ValueName3, DummyFwRegistryHelper.Value3);
 			AssertRegistryStringValueEquals(version9Key,
 				DummyFwRegistryHelper.FlexKeyName, DummyFwRegistryHelper.ValueName4, DummyFwRegistryHelper.Value4);
-			Assert.IsTrue(version9Key.GetValueNames().Contains(DummyFwRegistryHelper.DirName));
+			Assert.That(version9Key.GetValueNames().Contains(DummyFwRegistryHelper.DirName), Is.True);
 			var dirNameFromKey = version9Key.GetValue(DummyFwRegistryHelper.DirName);
-			Assert.AreEqual(DummyFwRegistryHelper.DirNameValue, dirNameFromKey);
+			Assert.That(dirNameFromKey, Is.EqualTo(DummyFwRegistryHelper.DirNameValue));
 		}
 
 		#endregion
@@ -104,14 +98,14 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void UpgradeUserSettingsIfNeeded_NotNeeded()
 		{
 			// SUT
-			Assert.IsFalse(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
+			Assert.That(FwRegistryHelper.UpgradeUserSettingsIfNeeded(), Is.False);
 
 			// Verification
 			// The above upgrade shouldn't have done anything; verify at least that the version 9 key is empty.
 			using (var version9Key = FwRegistryHelper.FieldWorksRegistryKey)
 			{
-				Assert.AreEqual(0, version9Key.SubKeyCount, "There was nothing to migrate, so no subkeys should have been created");
-				Assert.AreEqual(0, version9Key.ValueCount, "There was nothing to migrate, so no values should have been created");
+				Assert.That(version9Key.SubKeyCount, Is.EqualTo(0), "There was nothing to migrate, so no subkeys should have been created");
+				Assert.That(version9Key.ValueCount, Is.EqualTo(0), "There was nothing to migrate, so no values should have been created");
 			}
 		}
 
@@ -124,12 +118,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 			using (m_helper.SetupVersion7Settings())
 			{
 				// SUT
-				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
+				Assert.That(FwRegistryHelper.UpgradeUserSettingsIfNeeded(), Is.True);
 
 				using (var version9Key = m_helper.FieldWorksRegistryKey)
 				{
 					VerifyExpectedMigrationResults(version9Key);
-					Assert.AreEqual(DummyFwRegistryHelper.UserWsValue, version9Key.GetValue(DummyFwRegistryHelper.UserWs));
+					Assert.That(version9Key.GetValue(DummyFwRegistryHelper.UserWs), Is.EqualTo(DummyFwRegistryHelper.UserWsValue));
 				}
 			}
 		}
@@ -143,12 +137,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 			using (m_helper.SetupVersion8Settings())
 			{
 				// SUT
-				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
+				Assert.That(FwRegistryHelper.UpgradeUserSettingsIfNeeded(), Is.True);
 
 				using (var version9Key = m_helper.FieldWorksRegistryKey)
 				{
 					VerifyExpectedMigrationResults(version9Key);
-					Assert.AreEqual("fr", version9Key.GetValue(DummyFwRegistryHelper.UserWs));
+					Assert.That(version9Key.GetValue(DummyFwRegistryHelper.UserWs), Is.EqualTo("fr"));
 				}
 			}
 		}
@@ -163,12 +157,12 @@ namespace SIL.FieldWorks.Common.FwUtils
 			using (m_helper.SetupVersion8Settings())
 			{
 				// SUT
-				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
+				Assert.That(FwRegistryHelper.UpgradeUserSettingsIfNeeded(), Is.True);
 
 				using (var version9Key = m_helper.FieldWorksRegistryKey)
 				{
 					VerifyExpectedMigrationResults(version9Key);
-					Assert.AreEqual("fr", version9Key.GetValue(DummyFwRegistryHelper.UserWs));
+					Assert.That(version9Key.GetValue(DummyFwRegistryHelper.UserWs), Is.EqualTo("fr"));
 				}
 			}
 		}
@@ -183,16 +177,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 			using (m_helper.SetupVersion9Settings())
 			{
 				// SUT
-				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
+				Assert.That(FwRegistryHelper.UpgradeUserSettingsIfNeeded(), Is.True);
 
 				// Is the version 7 key gone?
-				Assert.IsFalse(RegistryHelper.KeyExists(FwRegistryHelper.FieldWorksVersionlessRegistryKey,
-					FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion7),
-					"Old version 7.0 subkey tree didn't get wiped out.");
+				Assert.That(RegistryHelper.KeyExists(FwRegistryHelper.FieldWorksVersionlessRegistryKey,
+					FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion7), Is.False, "Old version 7.0 subkey tree didn't get wiped out.");
 
 				using (var version9Key = m_helper.FieldWorksRegistryKey)
 				{
-					Assert.AreEqual("sp", version9Key.GetValue(DummyFwRegistryHelper.UserWs));
+					Assert.That(version9Key.GetValue(DummyFwRegistryHelper.UserWs), Is.EqualTo("sp"));
 				}
 			}
 		}
@@ -207,16 +200,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 			using (m_helper.SetupVersion9Settings())
 			{
 				// SUT
-				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
+				Assert.That(FwRegistryHelper.UpgradeUserSettingsIfNeeded(), Is.True);
 
 				// Is the version 8 key gone?
-				Assert.IsFalse(RegistryHelper.KeyExists(FwRegistryHelper.FieldWorksVersionlessRegistryKey,
-						FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion8),
-					"Old version 8 subkey tree didn't get wiped out.");
+				Assert.That(RegistryHelper.KeyExists(FwRegistryHelper.FieldWorksVersionlessRegistryKey,
+						FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion8), Is.False, "Old version 8 subkey tree didn't get wiped out.");
 
 				using (var version9Key = m_helper.FieldWorksRegistryKey)
 				{
-					Assert.AreEqual("sp", version9Key.GetValue(DummyFwRegistryHelper.UserWs));
+					Assert.That(version9Key.GetValue(DummyFwRegistryHelper.UserWs), Is.EqualTo("sp"));
 				}
 			}
 		}
@@ -232,22 +224,20 @@ namespace SIL.FieldWorks.Common.FwUtils
 			using (m_helper.SetupVersion9Settings())
 			{
 				// SUT
-				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
+				Assert.That(FwRegistryHelper.UpgradeUserSettingsIfNeeded(), Is.True);
 
 				// Is the version 7 key gone?
-				Assert.IsFalse(RegistryHelper.KeyExists(FwRegistryHelper.FieldWorksVersionlessRegistryKey,
-					FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion7),
-					"Old version 7.0 subkey tree didn't get wiped out.");
+				Assert.That(RegistryHelper.KeyExists(FwRegistryHelper.FieldWorksVersionlessRegistryKey,
+					FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion7), Is.False, "Old version 7.0 subkey tree didn't get wiped out.");
 
 				// Is the version 8 key gone?
-				Assert.IsFalse(RegistryHelper.KeyExists(FwRegistryHelper.FieldWorksVersionlessRegistryKey,
-					FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion8),
-					"Old version 8 subkey tree didn't get wiped out.");
+				Assert.That(RegistryHelper.KeyExists(FwRegistryHelper.FieldWorksVersionlessRegistryKey,
+					FwRegistryHelper.OldFieldWorksRegistryKeyNameVersion8), Is.False, "Old version 8 subkey tree didn't get wiped out.");
 
 				using (var version9Key = m_helper.FieldWorksRegistryKey)
 				{
 					VerifyExpectedMigrationResults(version9Key);
-					Assert.AreEqual("sp", version9Key.GetValue(DummyFwRegistryHelper.UserWs));
+					Assert.That(version9Key.GetValue(DummyFwRegistryHelper.UserWs), Is.EqualTo("sp"));
 				}
 			}
 		}
@@ -262,17 +252,15 @@ namespace SIL.FieldWorks.Common.FwUtils
 			using (m_helper.SetupVersion9Old32BitSettings())
 			{
 				// SUT
-				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
+				Assert.That(FwRegistryHelper.UpgradeUserSettingsIfNeeded(), Is.True);
 
 				// Is the key under WOW6432Node gone?
 				Assert.That(FwRegistryHelper.FieldWorksVersionlessOld32BitRegistryKey, Is.Null, "Old 32-bit key tree didn't get wiped out.");
 
 				using (var version9Key = m_helper.FieldWorksRegistryKey)
 				{
-					Assert.AreEqual(DummyFwRegistryHelper.UserWsValue, version9Key.GetValue(DummyFwRegistryHelper.UserWs),
-						"Values from 32-bit version 9 did not get migrated");
-					Assert.AreEqual("From32Bit8", version9Key.GetValue(DummyFwRegistryHelper.ExtraValue),
-						"Values from 32-bit version 8 did not get migrated");
+					Assert.That(version9Key.GetValue(DummyFwRegistryHelper.UserWs), Is.EqualTo(DummyFwRegistryHelper.UserWsValue), "Values from 32-bit version 9 did not get migrated");
+					Assert.That(version9Key.GetValue(DummyFwRegistryHelper.ExtraValue), Is.EqualTo("From32Bit8"), "Values from 32-bit version 8 did not get migrated");
 					VerifyExpectedMigrationResults(version9Key);
 				}
 			}
@@ -292,7 +280,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			using (m_helper.SetupVersion9Settings())
 			{
 				// SUT
-				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
+				Assert.That(FwRegistryHelper.UpgradeUserSettingsIfNeeded(), Is.True);
 
 				// Verification
 				// Check for version 9 key
@@ -321,7 +309,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			using (m_helper.SetupVersion9Settings())
 			{
 				// SUT
-				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
+				Assert.That(FwRegistryHelper.UpgradeUserSettingsIfNeeded(), Is.True);
 
 				// Verification
 				// Check for version 9 key
@@ -351,7 +339,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 			using (m_helper.SetupVersion9Settings())
 			{
 				// SUT
-				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
+				Assert.That(FwRegistryHelper.UpgradeUserSettingsIfNeeded(), Is.True);
 
 				// Verification
 				using (var versionlessKey = FwRegistryHelper.FieldWorksVersionlessRegistryKey)
@@ -381,7 +369,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				AssertRegistrySubkeyNotPresent(version9Key, DummyFwRegistryHelper.FlexKeyName);
 
 				// SUT
-				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
+				Assert.That(FwRegistryHelper.UpgradeUserSettingsIfNeeded(), Is.True);
 
 				using (var newVersion9Key = m_helper.SetupVersion9Settings())
 				{
@@ -410,7 +398,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				AssertRegistrySubkeyNotPresent(version9Key, DummyFwRegistryHelper.FlexKeyName);
 
 				// SUT
-				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
+				Assert.That(FwRegistryHelper.UpgradeUserSettingsIfNeeded(), Is.True);
 
 				using (var newVersion9Key = m_helper.SetupVersion9Settings())
 				{
@@ -443,7 +431,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				AssertRegistrySubkeyNotPresent(version9Key, DummyFwRegistryHelper.FlexKeyName);
 
 				// SUT
-				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
+				Assert.That(FwRegistryHelper.UpgradeUserSettingsIfNeeded(), Is.True);
 
 				using (var newVersion9Key = m_helper.FieldWorksRegistryKey)
 				{
@@ -472,7 +460,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				AssertRegistryValueNotPresent(FwRegistryHelper.FieldWorksRegistryKey, null, DummyFwRegistryHelper.ProjectShared);
 
 				// SUT
-				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
+				Assert.That(FwRegistryHelper.UpgradeUserSettingsIfNeeded(), Is.True);
 
 				// Verification
 				// Verify that the version 9 ProjectShared key is still missing after migration.
@@ -497,7 +485,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				AssertRegistryValueNotPresent(FwRegistryHelper.FieldWorksRegistryKey, null, DummyFwRegistryHelper.ProjectShared);
 
 				//SUT
-				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
+				Assert.That(FwRegistryHelper.UpgradeUserSettingsIfNeeded(), Is.True);
 
 				// Verification
 				// Verify that the version 9 ProjectShared key is still missing after migration.
@@ -526,7 +514,7 @@ namespace SIL.FieldWorks.Common.FwUtils
 				AssertRegistryValueNotPresent(FwRegistryHelper.FieldWorksRegistryKey, null, DummyFwRegistryHelper.ProjectShared);
 
 				// SUT
-				Assert.IsTrue(FwRegistryHelper.UpgradeUserSettingsIfNeeded());
+				Assert.That(FwRegistryHelper.UpgradeUserSettingsIfNeeded(), Is.True);
 
 				// Verification
 				// Verify that the version 9 ProjectShared key is still missing after migration.

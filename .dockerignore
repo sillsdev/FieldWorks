@@ -1,0 +1,87 @@
+# Build outputs
+Output/
+Obj/
+bin/
+obj/
+*.user
+
+# Test results
+TestResults/
+
+# NuGet packages
+packages/
+.nuget/
+
+# Git
+.git/
+.github/
+.gitignore
+.gitattributes
+
+# Visual Studio
+.vs/
+*.suo
+*.sln.docstates
+
+# Documentation and analysis files
+*.md
+!ReadMe.md
+COPILOT.md
+*.prompt.md
+BUILD_CHALLENGES_ANALYSIS.md
+CLARIFICATIONS-NEEDED.md
+COMPREHENSIVE_COMMIT_ANALYSIS.md
+CONVERGENCE-FRAMEWORK.md
+CONVERGENCE-STATUS.md
+DEEP_COMMIT_ANALYSIS.md
+DLL_MODERNIZATION_PLAN.md
+LEGACY_REMOVAL_SUMMARY.md
+MIGRATION_DOCS_INDEX.md
+MIGRATION_FIXES_SUMMARY.md
+MIGRATION_SUMMARY_BY_PHASE.md
+NON_SDK_ELIMINATION.md
+NUNIT4_CONVERSION_SUMMARY.md
+PACKAGE_MANAGEMENT_QUICKSTART.md
+RHINOMOCKS_TO_MOQ_MIGRATION.md
+SDK-MIGRATION.md
+TRAVERSAL_SDK_IMPLEMENTATION.md
+
+# Test projects and data
+TestLangProj/
+specs/
+
+# Vagrant
+vagrant/
+
+# Python scripts (not needed in container)
+*.py
+
+# Docs
+Docs/
+
+# Resources (will copy specific ones if needed)
+resources/
+
+# Scripts (not needed for Docker build)
+scripts/
+
+# FLExInstaller (not building installer in container)
+FLExInstaller/
+
+# Sample/test code
+Samples/
+
+# Large binary files
+*.exe
+!DistFiles/**/*.exe
+*.dll
+!DistFiles/**/*.dll
+*.pdb
+*.lib
+*.exp
+
+# Temporary files
+*.tmp
+*.log
+*.bak
+*~

@@ -4,7 +4,3 @@
 // --------------------------------------------------------------------------------------------
 using System.Reflection;
 using System.Runtime.CompilerServices;
-
-[assembly: AssemblyTitle("MGA")]
-
-[assembly: System.Runtime.InteropServices.ComVisible(false)]

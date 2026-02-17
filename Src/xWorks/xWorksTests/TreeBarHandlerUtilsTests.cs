@@ -31,14 +31,14 @@ namespace SIL.FieldWorks.XWorks
 
 			//SUT
 			TreeBarHandlerUtils.Tree_Duplicate(testListItem, 0, Cache);
-			Assert.AreEqual(testList.PossibilitiesOS[1].Name.UiString, "testing (Copy) (1)");
-			Assert.AreEqual(testList.PossibilitiesOS[1].ConfidenceRA.Name.UiString, "confidence");
-			Assert.AreEqual(testList.PossibilitiesOS.Count, 2); //Make sure item was duplicated once and its subitems were added as subitems and not siblings
-			Assert.AreEqual(testList.PossibilitiesOS[1].SubPossibilitiesOS[0].Name.UiString, "testing child");
-			Assert.AreEqual(testList.PossibilitiesOS[1].SubPossibilitiesOS.Count, 1);
-			Assert.AreEqual(testList.PossibilitiesOS[1].SubPossibilitiesOS[0].SubPossibilitiesOS[0].Name.UiString, "testing grandchild");
-			Assert.AreEqual(testList.PossibilitiesOS[1].SubPossibilitiesOS[0].SubPossibilitiesOS.Count, 1);
-			Assert.AreEqual(testList.PossibilitiesOS[1].SubPossibilitiesOS[0].SubPossibilitiesOS[0].Description.UiString, "young");
+			Assert.That(testList.PossibilitiesOS[1].Name.UiString, Is.EqualTo("testing (Copy) (1)"));
+			Assert.That(testList.PossibilitiesOS[1].ConfidenceRA.Name.UiString, Is.EqualTo("confidence"));
+			Assert.That(testList.PossibilitiesOS.Count, Is.EqualTo(2)); //Make sure item was duplicated once and its subitems were added as subitems and not siblings
+			Assert.That(testList.PossibilitiesOS[1].SubPossibilitiesOS[0].Name.UiString, Is.EqualTo("testing child"));
+			Assert.That(testList.PossibilitiesOS[1].SubPossibilitiesOS.Count, Is.EqualTo(1));
+			Assert.That(testList.PossibilitiesOS[1].SubPossibilitiesOS[0].SubPossibilitiesOS[0].Name.UiString, Is.EqualTo("testing grandchild"));
+			Assert.That(testList.PossibilitiesOS[1].SubPossibilitiesOS[0].SubPossibilitiesOS.Count, Is.EqualTo(1));
+			Assert.That(testList.PossibilitiesOS[1].SubPossibilitiesOS[0].SubPossibilitiesOS[0].Description.UiString, Is.EqualTo("young"));
 
 		}
 	}

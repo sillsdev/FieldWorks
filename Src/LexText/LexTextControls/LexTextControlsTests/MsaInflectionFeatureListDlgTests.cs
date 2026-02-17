@@ -122,24 +122,24 @@ namespace SIL.FieldWorks.LexText.Controls
 				// load some feature system values into treeview
 				FeatureStructureTreeView tv = dlg.TreeView;
 
-				Assert.AreEqual(2, tv.Nodes.Count, "Count of top level nodes in tree view");
+				Assert.That(tv.Nodes.Count, Is.EqualTo(2), "Count of top level nodes in tree view");
 				TreeNodeCollection col = tv.Nodes[0].Nodes;
-				Assert.AreEqual(4, col.Count, "Count of first level nodes in tree view");
+				Assert.That(col.Count, Is.EqualTo(4), "Count of first level nodes in tree view");
 			}
 		}
 
 		private void TestFeatureStructureContent(IFsFeatStruc featStruct)
 		{
 			ILcmOwningCollection<IFsFeatureSpecification> specCol = featStruct.FeatureSpecsOC;
-			Assert.AreEqual(1, specCol.Count, "Count of top level feature specs");
+			Assert.That(specCol.Count, Is.EqualTo(1), "Count of top level feature specs");
 			foreach (IFsFeatureSpecification spec in specCol)
 			{
 				IFsComplexValue complex = spec as IFsComplexValue;
 				Assert.That(complex, Is.Not.Null, "complex feature value is null and should not be");
-				Assert.AreEqual("subject agreement", complex.FeatureRA.Name.AnalysisDefaultWritingSystem.Text, "Expected complex feature name");
+				Assert.That(complex.FeatureRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("subject agreement"), "Expected complex feature name");
 				IFsFeatStruc fsNested = complex.ValueOA as IFsFeatStruc;
 				ILcmOwningCollection<IFsFeatureSpecification> fsNestedCol = fsNested.FeatureSpecsOC;
-				Assert.AreEqual(2, fsNestedCol.Count, "Nested fs has one feature");
+				Assert.That(fsNestedCol.Count, Is.EqualTo(2), "Nested fs has one feature");
 				foreach (IFsFeatureSpecification specNested in fsNestedCol)
 				{
 					IFsClosedValue closed = specNested as IFsClosedValue;
@@ -172,16 +172,16 @@ namespace SIL.FieldWorks.LexText.Controls
 		{
 			TreeNodeCollection col;
 			tv.PopulateTreeFromFeatureStructure(featStruct);
-			Assert.AreEqual(1, tv.Nodes.Count, "Count of top level after feature structure");
+			Assert.That(tv.Nodes.Count, Is.EqualTo(1), "Count of top level after feature structure");
 			col = tv.Nodes[0].Nodes;
-			Assert.AreEqual(2, col.Count, "Count of first level nodes in tree view");
+			Assert.That(col.Count, Is.EqualTo(2), "Count of first level nodes in tree view");
 			foreach (TreeNode node in col)
 			{
 				TreeNodeCollection col2 = node.Nodes;
 				if (node.Text == "gender")
-					Assert.AreEqual(3, col2.Count, "Count of second level nodes in tree view");
+					Assert.That(col2.Count, Is.EqualTo(3), "Count of second level nodes in tree view");
 				if (node.Text == "person")
-					Assert.AreEqual(1, col2.Count, "Count of second level nodes in tree view");
+					Assert.That(col2.Count, Is.EqualTo(1), "Count of second level nodes in tree view");
 			}
 		}
 
@@ -192,13 +192,13 @@ namespace SIL.FieldWorks.LexText.Controls
 			IPartOfSpeech pos = lp.PartsOfSpeechOA.PossibilitiesOS[0] as IPartOfSpeech;
 			FeatureStructureTreeView tv = new FeatureStructureTreeView();
 			tv.PopulateTreeFromInflectableFeats(pos.InflectableFeatsRC);
-			Assert.AreEqual(1, tv.Nodes.Count, "Count of top level nodes in tree view");
+			Assert.That(tv.Nodes.Count, Is.EqualTo(1), "Count of top level nodes in tree view");
 			TreeNodeCollection col = tv.Nodes[0].Nodes;
-			Assert.AreEqual(1, col.Count, "Count of first level nodes in tree view");
+			Assert.That(col.Count, Is.EqualTo(1), "Count of first level nodes in tree view");
 			foreach (TreeNode node in col)
 			{
 				TreeNodeCollection col2 = node.Nodes;
-				Assert.AreEqual(3, col2.Count, "Count of second level nodes in tree view");
+				Assert.That(col2.Count, Is.EqualTo(3), "Count of second level nodes in tree view");
 				if (node.PrevNode == null)
 					node.Checked = true;
 			}

@@ -7,6 +7,6 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("LCMBrowser")]
+// [assembly: AssemblyTitle("LCMBrowser")] // Sanitized by convert_generate_assembly_info
 
-[assembly: ComVisible(false)]
+// [assembly: ComVisible(false)] // Sanitized by convert_generate_assembly_info

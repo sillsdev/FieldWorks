@@ -7,7 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Resources;
 
-[assembly: AssemblyTitle("FlexDePlugin")]
-[assembly: AssemblyDescription("FLEx utility for converting XHTML to ODT or PDF")]
+// [assembly: AssemblyTitle("FlexDePlugin")] // Sanitized by convert_generate_assembly_info
+// [assembly: AssemblyDescription("FLEx utility for converting XHTML to ODT or PDF")] // Sanitized by convert_generate_assembly_info
 
-[assembly: ComVisible(false)]
+// [assembly: ComVisible(false)] // Sanitized by convert_generate_assembly_info

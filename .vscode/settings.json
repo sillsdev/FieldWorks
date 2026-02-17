@@ -1,0 +1,68 @@
+{
+  "chat.promptFilesRecommendations": {
+    "speckit.constitution": true,
+    "speckit.specify": true,
+    "speckit.plan": true,
+    "speckit.tasks": true,
+    "speckit.implement": true
+  },
+  "chat.tools.terminal.autoApprove": {
+    // Specify scripts
+    ".specify/scripts/bash/": true,
+    ".specify/scripts/powershell/": true,
+    // Read-only operations
+    "Get-Content": true,
+    "cat": true,
+    "type": true,
+    "Get-ChildItem": true,
+    "ls": true,
+    "dir": true,
+    "tree": true,
+    "Test-Path": true,
+    "Get-Location": true,
+    "pwd": true,
+    "Get-Item": true,
+    "Get-ItemProperty": true,
+    // Git operations (read-only)
+    "git status": true,
+    "git checkout": true,
+    "git log": true,
+    "git ls-files": true,
+    "git diff": true,
+    "git show": true,
+    "git branch": true,
+    "git rev-parse": true,
+    "git worktree list": true,
+    // Docker read-only operations
+    "docker ps": true,
+    "docker images": true,
+    "docker logs": true,
+    "docker info": true,
+    "docker inspect": true,
+    // Docker exec - ONLY for agent containers (safe, isolated)
+    "^docker exec fw-agent-.*": true,
+    // scripting
+    "^python scripts/.*": true,
+    "^python -m.*": true,
+    "^.\\scripts\\.*": true,
+    // Build operations (host-based for main repo)
+    "msbuild": true,
+    "dotnet build": true,
+    "dotnet restore": true,
+    ".\\build.ps1": true,
+    ".\\build.sh": true,
+    // Test operations
+    "dotnet test": true,
+    "vstest.console": true,
+    "nunit3-console": true,
+    // Agent workflow scripts
+    ".\\scripts\\spin-up-agents.ps1": true,
+    ".\\scripts\\tear-down-agents.ps1": true,
+    ".\\scripts\\check-agents.ps1": true
+  },
+  "cmake.ignoreCMakeListsMissing": true,
+  "dotnet.defaultSolution": "FieldWorks.sln",
+  "terminal.integrated.env.windows": {
+    "PATH": "${workspaceFolder}\\scripts\\toolshims;${env:PATH}"
+  }
+}

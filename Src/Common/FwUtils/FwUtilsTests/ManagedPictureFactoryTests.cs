@@ -35,9 +35,9 @@ namespace SIL.FieldWorks.Common.FwUtils
 					{
 						pic.ReferenceOwnedByNative = false;
 					// Test the result.
-					Assert.NotNull(pic, "ImageFromBytes returned null");
-					Assert.AreEqual(new HiMetric(width, pic.DpiX).Value, pic.Width);
-					Assert.AreEqual(new HiMetric(height, pic.DpiY).Value, pic.Height);
+					Assert.That(pic, Is.Not.Null, "ImageFromBytes returned null");
+					Assert.That(pic.Width, Is.EqualTo(new HiMetric(width, pic.DpiX).Value));
+					Assert.That(pic.Height, Is.EqualTo(new HiMetric(height, pic.DpiY).Value));
 				}
 			}
 		}

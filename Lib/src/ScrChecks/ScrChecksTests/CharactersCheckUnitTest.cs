@@ -54,7 +54,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(4, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(4));
 			CheckError(0, m_dataSource.m_tokens[0].Text, 0, "g", "Invalid or unknown character");
 			CheckError(1, m_dataSource.m_tokens[0].Text, 1, "h", "Invalid or unknown character");
 			CheckError(2, m_dataSource.m_tokens[0].Text, 8, "f", "Invalid or unknown character");
@@ -74,7 +74,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(5, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(5));
 			CheckError(0, m_dataSource.m_tokens[0].Text, 0, "e", "Invalid or unknown character");
 			CheckError(1, m_dataSource.m_tokens[0].Text, 1, "j", "Invalid or unknown character");
 			CheckError(2, m_dataSource.m_tokens[0].Text, 6, "7", "Invalid or unknown character");
@@ -99,7 +99,7 @@ namespace SILUBS.ScriptureChecks
 				TextType.Verse, true, false, "Paragraph"));
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(2, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(2));
 			CheckError(0, m_dataSource.m_tokens[0].Text, 7, "a\u0302",
 				"Invalid or unknown character diacritic combination"); // invalid character
 			CheckError(1, m_dataSource.m_tokens[0].Text, 9, "e\u0303",
@@ -129,7 +129,7 @@ namespace SILUBS.ScriptureChecks
 
 			m_check.Check(m_dataSource.TextTokens(), RecordError);
 
-			Assert.AreEqual(3, m_errors.Count);
+			Assert.That(m_errors.Count, Is.EqualTo(3));
 			CheckError(0, m_dataSource.m_tokens[0].Text, 7, "h", "Invalid or unknown character");
 			CheckError(1, m_dataSource.m_tokens[1].Text, 7, "o", "Invalid or unknown character");
 			CheckError(2, m_dataSource.m_tokens[2].Text, 0, "a", "Invalid or unknown character");
@@ -150,7 +150,7 @@ namespace SILUBS.ScriptureChecks
 			List<TextTokenSubstring> refs =
 				CheckInventory.GetReferences(m_dataSource.TextTokens(), string.Empty);
 
-			Assert.AreEqual(8, refs.Count);
+			Assert.That(refs.Count, Is.EqualTo(8));
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -171,7 +171,7 @@ namespace SILUBS.ScriptureChecks
 
 			// We requested only the default vernacular.
 			// Should only get references from the second token.
-			Assert.AreEqual(31, refs.Count);
+			Assert.That(refs.Count, Is.EqualTo(31));
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -199,11 +199,11 @@ namespace SILUBS.ScriptureChecks
 				parsedChars.Add(character);
 
 			// Confirm that we have four characters with the expected contents.
-			Assert.AreEqual(4, parsedChars.Count, "We expected four characters");
-			Assert.AreEqual("\u0627\u0653", parsedChars[0]);
-			Assert.AreEqual(" ", parsedChars[1]);
-			Assert.AreEqual("\u064A\u0654", parsedChars[2]);
-			Assert.AreEqual("\u0632", parsedChars[3]);
+			Assert.That(parsedChars.Count, Is.EqualTo(4), "We expected four characters");
+			Assert.That(parsedChars[0], Is.EqualTo("\u0627\u0653"));
+			Assert.That(parsedChars[1], Is.EqualTo(" "));
+			Assert.That(parsedChars[2], Is.EqualTo("\u064A\u0654"));
+			Assert.That(parsedChars[3], Is.EqualTo("\u0632"));
 		}
 		#endregion
 	}
@@ -231,11 +231,10 @@ namespace SILUBS.ScriptureChecks
 			List<TextTokenSubstring> tts =
 				check.GetReferences(m_UsfmDataSource.TextTokens(), desiredKey);
 
-			Assert.AreEqual(result.GetUpperBound(0)+1, tts.Count,
-				"A different number of results was returned than what was expected." );
+			Assert.That(tts.Count, Is.EqualTo(result.GetUpperBound(0)+1), "A different number of results was returned than what was expected.");
 
 			for (int i = 0; i <= result.GetUpperBound(0); ++i)
-				Assert.AreEqual(result[i], tts[i].InventoryText, "Result number: " + i.ToString());
+				Assert.That(tts[i].InventoryText, Is.EqualTo(result[i]), "Result number: " + i.ToString());
 		}
 
 		#region Tests

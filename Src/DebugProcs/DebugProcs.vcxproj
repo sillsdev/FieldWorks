@@ -1,133 +1,87 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x64">
-      <Configuration>Release</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-  </ItemGroup>
-  <PropertyGroup Label="Globals">
-    <ProjectGuid>{E76E8661-15FF-4E9D-AA76-66C4669E5164}</ProjectGuid>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccProvider>
-    </SccProvider>
-    <Keyword>MakeFileProj</Keyword>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Makefile</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Makefile</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>Makefile</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Makefile</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
-  </PropertyGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-  <ImportGroup Label="ExtensionSettings">
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ImportGroup>
-  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
-  </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
-  <PropertyGroup>
-    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Debug\</IntDir>
-	<OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|X64'">Debug\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|X64'">Debug\</IntDir>
-    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\mkdp</NMakeBuildCommandLine>
-    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\bin\mkdp</NMakeBuildCommandLine>
-    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\mkdp cc</NMakeReBuildCommandLine>
-    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\bin\mkdp cc</NMakeReBuildCommandLine>
-    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\bin\mkdp ec</NMakeCleanCommandLine>
-    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\bin\mkdp ec</NMakeCleanCommandLine>
-    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">DebugProcs.dll</NMakeOutput>
-    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">DebugProcs.dll</NMakeOutput>
-    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">WIN32;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">WIN64;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
-    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
-    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
-    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
-    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
-    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
-    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
-    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Release\</IntDir>
-	<OutDir Condition="'$(Configuration)|$(Platform)'=='Release|X64'">Release\</OutDir>
-    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|X64'">Release\</IntDir>
-    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
-    <NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
-    <NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
-    <NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
-    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">DebugProcs.exe</NMakeOutput>
-    <NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">DebugProcs.exe</NMakeOutput>
-    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
-    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
-    <NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
-    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
-    <NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeForcedIncludes)</NMakeForcedIncludes>
-    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
-    <NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeAssemblySearchPath)</NMakeAssemblySearchPath>
-    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
-    <NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeForcedUsingAssemblies)</NMakeForcedUsingAssemblies>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ExecutablePath>$(VC_ExecutablePath_x64);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(FxCopDir);$(PATH)</ExecutablePath>
-    <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_ExecutablePath);;$(NETFXKitsDir)Lib\um\x64</LibraryPath>
-  </PropertyGroup>
-  <ItemDefinitionGroup>
-  </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="DebugProcs.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="DebugProcs.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="DebugProcs.mak" />
-  </ItemGroup>
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-  </ImportGroup>
-</Project>
+<?xml version='1.0' encoding='utf-8'?>
+<ns0:Project xmlns:ns0="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Build" ToolsVersion="Current">
+  <ns0:ItemGroup Label="ProjectConfigurations">
+    <ns0:ProjectConfiguration Include="Debug|x64">
+      <ns0:Configuration>Debug</ns0:Configuration>
+      <ns0:Platform>x64</ns0:Platform>
+    </ns0:ProjectConfiguration>
+    <ns0:ProjectConfiguration Include="Release|x64">
+      <ns0:Configuration>Release</ns0:Configuration>
+      <ns0:Platform>x64</ns0:Platform>
+    </ns0:ProjectConfiguration>
+  </ns0:ItemGroup>
+  <ns0:PropertyGroup Label="Globals">
+    <ns0:ProjectGuid>{E76E8661-15FF-4E9D-AA76-66C4669E5164}</ns0:ProjectGuid>
+    <ns0:SccProjectName>
+    </ns0:SccProjectName>
+    <ns0:SccLocalPath>
+    </ns0:SccLocalPath>
+    <ns0:SccProvider>
+    </ns0:SccProvider>
+    <ns0:Keyword>MakeFileProj</ns0:Keyword>
+  </ns0:PropertyGroup>
+  <ns0:Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <ns0:PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ns0:ConfigurationType>Makefile</ns0:ConfigurationType>
+    <ns0:PlatformToolset>v143</ns0:PlatformToolset>
+  </ns0:PropertyGroup>
+  <ns0:PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ns0:ConfigurationType>Makefile</ns0:ConfigurationType>
+    <ns0:PlatformToolset>v143</ns0:PlatformToolset>
+  </ns0:PropertyGroup>
+  <ns0:Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ns0:ImportGroup Label="ExtensionSettings">
+  </ns0:ImportGroup>
+  <ns0:ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <ns0:Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <ns0:Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ns0:ImportGroup>
+  <ns0:ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <ns0:Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <ns0:Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ns0:ImportGroup>
+  <ns0:PropertyGroup Label="UserMacros" />
+  <ns0:PropertyGroup>
+    <ns0:_ProjectFileVersion>10.0.30319.1</ns0:_ProjectFileVersion>
+    <ns0:OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|X64'">Debug\</ns0:OutDir>
+    <ns0:IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|X64'">Debug\</ns0:IntDir>
+    <ns0:NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\bin\mkdp</ns0:NMakeBuildCommandLine>
+    <ns0:NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\bin\mkdp cc</ns0:NMakeReBuildCommandLine>
+    <ns0:NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">..\..\bin\mkdp ec</ns0:NMakeCleanCommandLine>
+    <ns0:NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">DebugProcs.dll</ns0:NMakeOutput>
+    <ns0:NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">WIN64;$(NMakePreprocessorDefinitions)</ns0:NMakePreprocessorDefinitions>
+    <ns0:NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeIncludeSearchPath)</ns0:NMakeIncludeSearchPath>
+    <ns0:NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeForcedIncludes)</ns0:NMakeForcedIncludes>
+    <ns0:NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeAssemblySearchPath)</ns0:NMakeAssemblySearchPath>
+    <ns0:NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(NMakeForcedUsingAssemblies)</ns0:NMakeForcedUsingAssemblies>
+    <ns0:OutDir Condition="'$(Configuration)|$(Platform)'=='Release|X64'">Release\</ns0:OutDir>
+    <ns0:IntDir Condition="'$(Configuration)|$(Platform)'=='Release|X64'">Release\</ns0:IntDir>
+    <ns0:NMakeBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <ns0:NMakeReBuildCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <ns0:NMakeCleanCommandLine Condition="'$(Configuration)|$(Platform)'=='Release|x64'" />
+    <ns0:NMakeOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">DebugProcs.exe</ns0:NMakeOutput>
+    <ns0:NMakePreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakePreprocessorDefinitions)</ns0:NMakePreprocessorDefinitions>
+    <ns0:NMakeIncludeSearchPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeIncludeSearchPath)</ns0:NMakeIncludeSearchPath>
+    <ns0:NMakeForcedIncludes Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeForcedIncludes)</ns0:NMakeForcedIncludes>
+    <ns0:NMakeAssemblySearchPath Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeAssemblySearchPath)</ns0:NMakeAssemblySearchPath>
+    <ns0:NMakeForcedUsingAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(NMakeForcedUsingAssemblies)</ns0:NMakeForcedUsingAssemblies>
+  </ns0:PropertyGroup>
+  <ns0:PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ns0:ExecutablePath>$(VC_ExecutablePath_x64);$(WindowsSDK_ExecutablePath);$(VS_ExecutablePath);$(MSBuild_ExecutablePath);$(FxCopDir);$(PATH)</ns0:ExecutablePath>
+    <ns0:LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_ExecutablePath);;$(NETFXKitsDir)Lib\um\x64</ns0:LibraryPath>
+  </ns0:PropertyGroup>
+  <ns0:ItemDefinitionGroup>
+  </ns0:ItemDefinitionGroup>
+  <ns0:ItemGroup>
+    <ns0:ClCompile Include="DebugProcs.cpp" />
+  </ns0:ItemGroup>
+  <ns0:ItemGroup>
+    <ns0:ClInclude Include="DebugProcs.h" />
+  </ns0:ItemGroup>
+  <ns0:ItemGroup>
+    <ns0:None Include="DebugProcs.mak" />
+  </ns0:ItemGroup>
+  <ns0:Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ns0:ImportGroup Label="ExtensionTargets">
+  </ns0:ImportGroup>
+</ns0:Project>

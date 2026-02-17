@@ -41,84 +41,84 @@ namespace SIL.FieldWorks.Filters
 			matchBefore.HandleGenDate = true;
 
 			bool fMatch = matchBefore.Matches(TsStringUtils.MakeString("January 18, 1990", WsDummy));
-			Assert.IsFalse(fMatch, "1/18/90 not before 1/17/90");
+			Assert.That(fMatch, Is.False, "1/18/90 not before 1/17/90");
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("January 17, 1990", WsDummy));
-			Assert.IsTrue(fMatch, "1/17/90 before (or on) 1/17/90");
+			Assert.That(fMatch, Is.True, "1/17/90 before (or on) 1/17/90");
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("January 16, 1990", WsDummy));
-			Assert.IsTrue(fMatch, "1/16/90 before 1/17/90");
+			Assert.That(fMatch, Is.True, "1/16/90 before 1/17/90");
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("February, 1990", WsDummy));
-			Assert.IsFalse(fMatch, "2/90 not before 1/17/90");
+			Assert.That(fMatch, Is.False, "2/90 not before 1/17/90");
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("1990", WsDummy));
-			Assert.IsFalse(fMatch, "1990 not before 1/17/90");
+			Assert.That(fMatch, Is.False, "1990 not before 1/17/90");
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("About 1990", WsDummy));
-			Assert.IsFalse(fMatch, "About 1990 not before 1/17/90");
+			Assert.That(fMatch, Is.False, "About 1990 not before 1/17/90");
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("Before 1990", WsDummy));
-			Assert.IsTrue(fMatch, "Before 1990 before 1/17/90");
+			Assert.That(fMatch, Is.True, "Before 1990 before 1/17/90");
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("After 1990", WsDummy));
-			Assert.IsFalse(fMatch, "After 1990 not before 1/17/90");
+			Assert.That(fMatch, Is.False, "After 1990 not before 1/17/90");
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("Before 1991", WsDummy));
-			Assert.IsFalse(fMatch, "Before 1991 not before 1/17/90");
+			Assert.That(fMatch, Is.False, "Before 1991 not before 1/17/90");
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("January, 1990", WsDummy));
-			Assert.IsFalse(fMatch, "January, 1990 not before 1/17/90");
+			Assert.That(fMatch, Is.False, "January, 1990 not before 1/17/90");
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("Before January, 1990", WsDummy));
-			Assert.IsTrue(fMatch, "Before January, 1990 before 1/17/90");
+			Assert.That(fMatch, Is.True, "Before January, 1990 before 1/17/90");
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("Before 2001", WsDummy));
-			Assert.IsFalse(fMatch, "Before 2001 not before 1/17/90");
+			Assert.That(fMatch, Is.False, "Before 2001 not before 1/17/90");
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("After 1900", WsDummy));
-			Assert.IsFalse(fMatch, "After 1900 not (necessarily) before 1/17/90");
+			Assert.That(fMatch, Is.False, "After 1900 not (necessarily) before 1/17/90");
 
 			matchBefore.UnspecificMatching = true;
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("January 18, 1990", WsDummy));
-			Assert.IsFalse(fMatch, "1/18/90 not before 1/17/90");
+			Assert.That(fMatch, Is.False, "1/18/90 not before 1/17/90");
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("January 17, 1990", WsDummy));
-			Assert.IsTrue(fMatch, "1/17/90 before (or on) 1/17/90");
+			Assert.That(fMatch, Is.True, "1/17/90 before (or on) 1/17/90");
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("January 16, 1990", WsDummy));
-			Assert.IsTrue(fMatch, "1/16/90 before 1/17/90");
+			Assert.That(fMatch, Is.True, "1/16/90 before 1/17/90");
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("February, 1990", WsDummy));
-			Assert.IsFalse(fMatch, "2/90 not before 1/17/90");
+			Assert.That(fMatch, Is.False, "2/90 not before 1/17/90");
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("1990", WsDummy));
-			Assert.IsTrue(fMatch, "1990 possibly before 1/17/90");
+			Assert.That(fMatch, Is.True, "1990 possibly before 1/17/90");
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("About 1990", WsDummy));
-			Assert.IsTrue(fMatch, "About 1990 possibly before 1/17/90");
+			Assert.That(fMatch, Is.True, "About 1990 possibly before 1/17/90");
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("Before 1990", WsDummy));
-			Assert.IsTrue(fMatch, "Before 1990 before 1/17/90");
+			Assert.That(fMatch, Is.True, "Before 1990 before 1/17/90");
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("After 1990", WsDummy));
-			Assert.IsFalse(fMatch, "After 1990 not before 1/17/90");
+			Assert.That(fMatch, Is.False, "After 1990 not before 1/17/90");
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("Before 1991", WsDummy));
-			Assert.IsTrue(fMatch, "Before 1991 possibly before 1/17/90");
+			Assert.That(fMatch, Is.True, "Before 1991 possibly before 1/17/90");
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("January, 1990", WsDummy));
-			Assert.IsTrue(fMatch, "January, 1990 possibly before 1/17/90");
+			Assert.That(fMatch, Is.True, "January, 1990 possibly before 1/17/90");
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("Before January, 1990", WsDummy));
-			Assert.IsTrue(fMatch, "Before January, 1990 before 1/17/90");
+			Assert.That(fMatch, Is.True, "Before January, 1990 before 1/17/90");
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("Before 2001", WsDummy));
-			Assert.IsTrue(fMatch, "Before 2001 possibly before 1/17/90");
+			Assert.That(fMatch, Is.True, "Before 2001 possibly before 1/17/90");
 
 			fMatch = matchBefore.Matches(TsStringUtils.MakeString("After 1900", WsDummy));
-			Assert.IsTrue(fMatch, "After 1900 possibly before 1/17/90");
+			Assert.That(fMatch, Is.True, "After 1900 possibly before 1/17/90");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -134,84 +134,84 @@ namespace SIL.FieldWorks.Filters
 			matchAfter.HandleGenDate = true;
 
 			bool fMatch = matchAfter.Matches(TsStringUtils.MakeString("January 18, 1990", WsDummy));
-			Assert.IsTrue(fMatch, "1/18/90 after 1/17/90");
+			Assert.That(fMatch, Is.True, "1/18/90 after 1/17/90");
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("January 17, 1990", WsDummy));
-			Assert.IsTrue(fMatch, "1/17/90 after (or on) 1/17/90");
+			Assert.That(fMatch, Is.True, "1/17/90 after (or on) 1/17/90");
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("January 16, 1990", WsDummy));
-			Assert.IsFalse(fMatch, "1/16/90 not after 1/17/90");
+			Assert.That(fMatch, Is.False, "1/16/90 not after 1/17/90");
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("February, 1990", WsDummy));
-			Assert.IsTrue(fMatch, "2/90 after 1/17/90");
+			Assert.That(fMatch, Is.True, "2/90 after 1/17/90");
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("1990", WsDummy));
-			Assert.IsFalse(fMatch, "1990 not after 1/17/90");
+			Assert.That(fMatch, Is.False, "1990 not after 1/17/90");
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("About 1990", WsDummy));
-			Assert.IsFalse(fMatch, "About 1990 not after 1/17/90");
+			Assert.That(fMatch, Is.False, "About 1990 not after 1/17/90");
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("Before 1990", WsDummy));
-			Assert.IsFalse(fMatch, "Before 1990 not after 1/17/90");
+			Assert.That(fMatch, Is.False, "Before 1990 not after 1/17/90");
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("After 1990", WsDummy));
-			Assert.IsTrue(fMatch, "After 1990 after 1/17/90");
+			Assert.That(fMatch, Is.True, "After 1990 after 1/17/90");
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("Before 1991", WsDummy));
-			Assert.IsFalse(fMatch, "Before 1991 not (necessarily) after 1/17/90");
+			Assert.That(fMatch, Is.False, "Before 1991 not (necessarily) after 1/17/90");
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("January, 1990", WsDummy));
-			Assert.IsFalse(fMatch, "January, 1990 not after 1/17/90");
+			Assert.That(fMatch, Is.False, "January, 1990 not after 1/17/90");
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("Before January, 1990", WsDummy));
-			Assert.IsFalse(fMatch, "Before January, 1990 not after 1/17/90");
+			Assert.That(fMatch, Is.False, "Before January, 1990 not after 1/17/90");
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("Before 2001", WsDummy));
-			Assert.IsFalse(fMatch, "Before 2001 not (necessarily) after 1/17/90");
+			Assert.That(fMatch, Is.False, "Before 2001 not (necessarily) after 1/17/90");
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("After 1900", WsDummy));
-			Assert.IsFalse(fMatch, "After 1900 not (necessarily) after 1/17/90");
+			Assert.That(fMatch, Is.False, "After 1900 not (necessarily) after 1/17/90");
 
 			matchAfter.UnspecificMatching = true;
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("January 18, 1990", WsDummy));
-			Assert.IsTrue(fMatch, "1/18/90 after 1/17/90");
+			Assert.That(fMatch, Is.True, "1/18/90 after 1/17/90");
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("January 17, 1990", WsDummy));
-			Assert.IsTrue(fMatch, "1/17/90 after (or on) 1/17/90");
+			Assert.That(fMatch, Is.True, "1/17/90 after (or on) 1/17/90");
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("January 16, 1990", WsDummy));
-			Assert.IsFalse(fMatch, "1/16/90 not after 1/17/90");
+			Assert.That(fMatch, Is.False, "1/16/90 not after 1/17/90");
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("February, 1990", WsDummy));
-			Assert.IsTrue(fMatch, "2/90 after 1/17/90");
+			Assert.That(fMatch, Is.True, "2/90 after 1/17/90");
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("1990", WsDummy));
-			Assert.IsTrue(fMatch, "1990 possibly after 1/17/90");
+			Assert.That(fMatch, Is.True, "1990 possibly after 1/17/90");
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("About 1990", WsDummy));
-			Assert.IsTrue(fMatch, "About 1990 possibly after 1/17/90");
+			Assert.That(fMatch, Is.True, "About 1990 possibly after 1/17/90");
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("Before 1990", WsDummy));
-			Assert.IsFalse(fMatch, "Before 1990 not after 1/17/90");
+			Assert.That(fMatch, Is.False, "Before 1990 not after 1/17/90");
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("After 1990", WsDummy));
-			Assert.IsTrue(fMatch, "After 1990 after 1/17/90");
+			Assert.That(fMatch, Is.True, "After 1990 after 1/17/90");
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("Before 1991", WsDummy));
-			Assert.IsTrue(fMatch, "Before 1991 possibly after 1/17/90");
+			Assert.That(fMatch, Is.True, "Before 1991 possibly after 1/17/90");
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("January, 1990", WsDummy));
-			Assert.IsTrue(fMatch, "January, 1990 possibly after 1/17/90");
+			Assert.That(fMatch, Is.True, "January, 1990 possibly after 1/17/90");
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("Before January, 1990", WsDummy));
-			Assert.IsFalse(fMatch, "Before January, 1990 not after 1/17/90");
+			Assert.That(fMatch, Is.False, "Before January, 1990 not after 1/17/90");
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("Before 2001", WsDummy));
-			Assert.IsTrue(fMatch, "Before 2001 possibly after 1/17/90");
+			Assert.That(fMatch, Is.True, "Before 2001 possibly after 1/17/90");
 
 			fMatch = matchAfter.Matches(TsStringUtils.MakeString("After 1900", WsDummy));
-			Assert.IsTrue(fMatch, "After 1900 possibly after 1/17/90");
+			Assert.That(fMatch, Is.True, "After 1900 possibly after 1/17/90");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -234,102 +234,102 @@ namespace SIL.FieldWorks.Filters
 			matchRange.HandleGenDate = true;
 
 			bool fMatch = matchRange.Matches(TsStringUtils.MakeString("February 16, 1990", WsDummy));
-			Assert.IsTrue(fMatch, "Feb 16, 1990 between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.True, "Feb 16, 1990 between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("March, 1990", WsDummy));
-			Assert.IsTrue(fMatch, "Mar 1990 between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.True, "Mar 1990 between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("1991", WsDummy));
-			Assert.IsTrue(fMatch, "1991 between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.True, "1991 between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("February 14, 1990", WsDummy));
-			Assert.IsFalse(fMatch, "Feb 14, 1990 not between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.False, "Feb 14, 1990 not between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("January, 1990", WsDummy));
-			Assert.IsFalse(fMatch, "Jan 1990 not between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.False, "Jan 1990 not between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("1989", WsDummy));
-			Assert.IsFalse(fMatch, "1989 not between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.False, "1989 not between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("1993", WsDummy));
-			Assert.IsFalse(fMatch, "1993 not between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.False, "1993 not between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("Before 1990", WsDummy));
-			Assert.IsFalse(fMatch, "Before 1990 not between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.False, "Before 1990 not between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("After 1992", WsDummy));
-			Assert.IsFalse(fMatch, "After 1992 not between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.False, "After 1992 not between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("February, 1990", WsDummy));
-			Assert.IsFalse(fMatch, "Feb 1990 not (necessarily) between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.False, "Feb 1990 not (necessarily) between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("February, 1992", WsDummy));
-			Assert.IsFalse(fMatch, "Feb 1992 not (necessarily) between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.False, "Feb 1992 not (necessarily) between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("1990", WsDummy));
-			Assert.IsFalse(fMatch, "1990 not (necessarily) between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.False, "1990 not (necessarily) between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("1992", WsDummy));
-			Assert.IsFalse(fMatch, "1992 not (necessarily) between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.False, "1992 not (necessarily) between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("Before 1992", WsDummy));
-			Assert.IsFalse(fMatch, "Before 1992 not (necessarily) between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.False, "Before 1992 not (necessarily) between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("Before 2001", WsDummy));
-			Assert.IsFalse(fMatch, "Before 2001 not (necessarily) between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.False, "Before 2001 not (necessarily) between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("After 1900", WsDummy));
-			Assert.IsFalse(fMatch, "After 1900 not (necessarily) between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.False, "After 1900 not (necessarily) between 2/15/90 and 2/17/92");
 
 			matchRange.UnspecificMatching = true;
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("February 16, 1990", WsDummy));
-			Assert.IsTrue(fMatch, "Feb 16, 1990 between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.True, "Feb 16, 1990 between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("March, 1990", WsDummy));
-			Assert.IsTrue(fMatch, "Mar 1990 between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.True, "Mar 1990 between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("1991", WsDummy));
-			Assert.IsTrue(fMatch, "1991 between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.True, "1991 between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("February 14, 1990", WsDummy));
-			Assert.IsFalse(fMatch, "Feb 14, 1990 not between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.False, "Feb 14, 1990 not between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("January, 1990", WsDummy));
-			Assert.IsFalse(fMatch, "Jan 1990 not between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.False, "Jan 1990 not between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("1989", WsDummy));
-			Assert.IsFalse(fMatch, "1989 not between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.False, "1989 not between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("1993", WsDummy));
-			Assert.IsFalse(fMatch, "1993 not between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.False, "1993 not between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("Before 1990", WsDummy));
-			Assert.IsFalse(fMatch, "Before 1990 not between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.False, "Before 1990 not between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("After 1992", WsDummy));
-			Assert.IsFalse(fMatch, "After 1992 not between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.False, "After 1992 not between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("February, 1990", WsDummy));
-			Assert.IsTrue(fMatch, "Feb 1990 possibly between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.True, "Feb 1990 possibly between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("February, 1992", WsDummy));
-			Assert.IsTrue(fMatch, "Feb 1992 possibly between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.True, "Feb 1992 possibly between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("1990", WsDummy));
-			Assert.IsTrue(fMatch, "1990 possibly between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.True, "1990 possibly between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("1992", WsDummy));
-			Assert.IsTrue(fMatch, "1992 possibly between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.True, "1992 possibly between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("Before 1992", WsDummy));
-			Assert.IsTrue(fMatch, "Before 1992 possibly between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.True, "Before 1992 possibly between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("Before 2001", WsDummy));
-			Assert.IsTrue(fMatch, "Before 2001 possibly between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.True, "Before 2001 possibly between 2/15/90 and 2/17/92");
 
 			fMatch = matchRange.Matches(TsStringUtils.MakeString("After 1900", WsDummy));
-			Assert.IsTrue(fMatch, "After 1900 possibly between 2/15/90 and 2/17/92");
+			Assert.That(fMatch, Is.True, "After 1900 possibly between 2/15/90 and 2/17/92");
 		}
 	}
 
@@ -360,7 +360,7 @@ namespace SIL.FieldWorks.Filters
 				{ HandleGenDate = true };
 
 			var fMatch = matchBefore.Matches(TsStringUtils.MakeString("January, 1990", DateTimeMatcherTests.WsDummy));
-			Assert.IsFalse(fMatch, "January, 1990 not before 1/17/90");
+			Assert.That(fMatch, Is.False, "January, 1990 not before 1/17/90");
 		}
 	}
 }

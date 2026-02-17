@@ -1,0 +1,174 @@
+openapi: 3.1.0
+info:
+  title: FieldWorks Test Exclusion Automation API
+  version: 0.1.0
+  description: >-
+    Conceptual contract for future automation that audits, converts, and validates
+    SDK-style test exclusion patterns across FieldWorks projects.
+servers:
+  - url: https://fieldworks.local/api
+paths:
+  /projects/exclusions:
+    get:
+      summary: List projects and their current exclusion patterns
+      parameters:
+        - name: status
+          in: query
+          description: Optional filter (Pending, Converted, Flagged)
+          required: false
+          schema:
+            type: string
+        - name: patternType
+          in: query
+          description: Optional filter (A, B, C, None)
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Collection of project exclusion summaries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProjectSummary'
+  /projects/{projectName}/convert:
+    post:
+      summary: Convert a project to Pattern A and record a ConversionJob
+      parameters:
+        - name: projectName
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConversionRequest'
+      responses:
+        '202':
+          description: Conversion job accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConversionJob'
+        '409':
+          description: Project flagged for mixed test code; conversion aborted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationIssue'
+  /validation/run:
+    post:
+      summary: Run validation across all projects and return issues
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                failOnWarning:
+                  type: boolean
+                  default: false
+      responses:
+        '200':
+          description: Validation results
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationReport'
+components:
+  schemas:
+    ProjectSummary:
+      type: object
+      properties:
+        name:
+          type: string
+        relativePath:
+          type: string
+        patternType:
+          type: string
+        status:
+          type: string
+        hasMixedCode:
+          type: boolean
+        lastValidated:
+          type: string
+          format: date-time
+    ConversionRequest:
+      type: object
+      properties:
+        initiator:
+          type: string
+        scriptVersion:
+          type: string
+        dryRun:
+          type: boolean
+          default: false
+    ConversionJob:
+      type: object
+      properties:
+        jobId:
+          type: string
+        initiatedBy:
+          type: string
+        projectList:
+          type: array
+          items:
+            type: string
+        scriptVersion:
+          type: string
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        result:
+          type: string
+          enum: [Success, Partial, Failed]
+    ValidationIssue:
+      type: object
+      properties:
+        id:
+          type: string
+        projectName:
+          type: string
+        issueType:
+          type: string
+          enum: [MissingExclusion, MixedCode, WildcardDetected, ScriptError]
+        severity:
+          type: string
+          enum: [Warning, Error]
+        details:
+          type: string
+        detectedOn:
+          type: string
+          format: date-time
+        resolved:
+          type: boolean
+    ValidationReport:
+      type: object
+      properties:
+        generatedAt:
+          type: string
+          format: date-time
+        summary:
+          type: object
+          properties:
+            totalProjects:
+              type: integer
+            passing:
+              type: integer
+            warnings:
+              type: integer
+            errors:
+              type: integer
+        issues:
+          type: array
+          items:
+            $ref: '#/components/schemas/ValidationIssue'

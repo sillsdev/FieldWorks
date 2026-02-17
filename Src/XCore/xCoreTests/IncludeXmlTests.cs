@@ -44,7 +44,7 @@ namespace XCore
 			Dictionary<string, XmlDocument> cachedDoms = new Dictionary<string, XmlDocument>();
 			m_includer.ReplaceNode(cachedDoms, doc.SelectSingleNode("//include"));
 			Assert.That(doc.SelectSingleNode("include"), Is.Null);
-			Assert.AreEqual(2, doc.SelectNodes("blah/name").Count);
+			Assert.That(doc.SelectNodes("blah/name").Count, Is.EqualTo(2));
 		}
 
 		[Test]
@@ -55,7 +55,7 @@ namespace XCore
 
 			m_includer.ProcessDom("TestMainFile", doc);
 			Assert.That(doc.SelectSingleNode("include"), Is.Null);
-			Assert.AreEqual(2, doc.SelectNodes("blah/name").Count);
+			Assert.That(doc.SelectNodes("blah/name").Count, Is.EqualTo(2));
 		}
 
 		/// <summary>
@@ -70,7 +70,7 @@ namespace XCore
 			m_includer.ProcessDom("TestMainFile", doc);
 			Assert.That(doc.SelectSingleNode("//includeBase"), Is.Null, "the processor should remove the <includeBase/>");
 			Assert.That(doc.SelectSingleNode("include"), Is.Null);
-			Assert.AreEqual(2, doc.SelectNodes("blah/drinks/soda/name").Count);//should be two sodas
+			Assert.That(doc.SelectNodes("blah/drinks/soda/name").Count, Is.EqualTo(2));//should be two sodas
 		}
 
 		/// <summary>
@@ -85,7 +85,7 @@ namespace XCore
 			m_includer.ProcessDom("TestMainFile", doc);
 			Assert.That(doc.SelectSingleNode("//includeBase"), Is.Null, "the processor should remove the <includeBase/>");
 			Assert.That(doc.SelectSingleNode("include"), Is.Null);
-			Assert.AreEqual(2, doc.SelectNodes("blah/drinks/soda/name").Count);//should be two sodas
+			Assert.That(doc.SelectNodes("blah/drinks/soda/name").Count, Is.EqualTo(2));//should be two sodas
 		}
 
 		/// <summary>
@@ -114,21 +114,21 @@ namespace XCore
 			Assert.That(doc.SelectSingleNode("//includeBase"), Is.Null, "the processor should remove the <includeBase/>");
 			Assert.That(doc.SelectSingleNode("include"), Is.Null);
 			Assert.That(doc.SelectSingleNode("overrides"), Is.Null);
-			Assert.AreEqual(3, doc.SelectNodes("blah/meats/name").Count);
-			Assert.AreEqual(3, doc.SelectSingleNode("blah/meats/name[@txt='pork']").Attributes.Count);
+			Assert.That(doc.SelectNodes("blah/meats/name").Count, Is.EqualTo(3));
+			Assert.That(doc.SelectSingleNode("blah/meats/name[@txt='pork']").Attributes.Count, Is.EqualTo(3));
 			// make sure existing attribute didn't change
-			Assert.AreEqual("PilgrimsPride", doc.SelectSingleNode("blah/meats/name[@txt='pork']").Attributes["brand"].Value);
+			Assert.That(doc.SelectSingleNode("blah/meats/name[@txt='pork']").Attributes["brand"].Value, Is.EqualTo("PilgrimsPride"));
 			// ensure new attribute was created
-			Assert.AreEqual("pig", doc.SelectSingleNode("blah/meats/name[@txt='pork']").Attributes["animal"].Value);
+			Assert.That(doc.SelectSingleNode("blah/meats/name[@txt='pork']").Attributes["animal"].Value, Is.EqualTo("pig"));
 			// ensure attribute was modified.
-			Assert.AreEqual(2, doc.SelectSingleNode("blah/meats/name[@txt='chicken']").Attributes.Count);
-			Assert.AreEqual("Swanson", doc.SelectSingleNode("blah/meats/name[@txt='chicken']").Attributes["brand"].Value);
-			Assert.AreEqual(1, doc.SelectSingleNode("blah/meats/name[@txt='chicken']").ChildNodes.Count);
-			Assert.AreEqual(2, doc.SelectSingleNode("blah/meats/name[@txt='chicken']").ChildNodes[0].ChildNodes.Count);
+			Assert.That(doc.SelectSingleNode("blah/meats/name[@txt='chicken']").Attributes.Count, Is.EqualTo(2));
+			Assert.That(doc.SelectSingleNode("blah/meats/name[@txt='chicken']").Attributes["brand"].Value, Is.EqualTo("Swanson"));
+			Assert.That(doc.SelectSingleNode("blah/meats/name[@txt='chicken']").ChildNodes.Count, Is.EqualTo(1));
+			Assert.That(doc.SelectSingleNode("blah/meats/name[@txt='chicken']").ChildNodes[0].ChildNodes.Count, Is.EqualTo(2));
 			// ensure entire node was replaced
-			Assert.AreEqual(1, doc.SelectSingleNode("blah/meats/name[@txt='beef']").Attributes.Count);
-			Assert.AreEqual(1, doc.SelectSingleNode("blah/meats/name[@txt='beef']").ChildNodes.Count);
-			Assert.AreEqual(1, doc.SelectSingleNode("blah/meats/name[@txt='beef']").ChildNodes[0].ChildNodes.Count);
+			Assert.That(doc.SelectSingleNode("blah/meats/name[@txt='beef']").Attributes.Count, Is.EqualTo(1));
+			Assert.That(doc.SelectSingleNode("blah/meats/name[@txt='beef']").ChildNodes.Count, Is.EqualTo(1));
+			Assert.That(doc.SelectSingleNode("blah/meats/name[@txt='beef']").ChildNodes[0].ChildNodes.Count, Is.EqualTo(1));
 		}
 
 		[Test]
@@ -141,7 +141,7 @@ namespace XCore
 			m_includer.ProcessDom("TestMainFile", doc);
 			Assert.That(doc.SelectSingleNode("//includeBase"), Is.Null, "the processor should remove the <includeBase/>");
 			Assert.That(doc.SelectSingleNode("include"), Is.Null);
-			Assert.AreEqual(2, doc.SelectNodes("blah/veggies/name").Count);//should be two vegetables
+			Assert.That(doc.SelectNodes("blah/veggies/name").Count, Is.EqualTo(2));//should be two vegetables
 		}
 
 		[Test]
@@ -154,7 +154,7 @@ namespace XCore
 			m_includer.ProcessDom("TestMainFile", doc);
 			Assert.That(doc.SelectSingleNode("//includeBase"), Is.Null, "the processor should remove the <includeBase/>");
 			Assert.That(doc.SelectSingleNode("include"), Is.Null);
-			Assert.AreEqual(2, doc.SelectNodes("blah/veggies/thing").Count);//should be tomato and cooking banana
+			Assert.That(doc.SelectNodes("blah/veggies/thing").Count, Is.EqualTo(2));//should be tomato and cooking banana
 		}
 	}
 }

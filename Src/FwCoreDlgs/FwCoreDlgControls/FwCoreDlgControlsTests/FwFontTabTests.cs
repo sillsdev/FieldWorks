@@ -78,9 +78,8 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			Assert.That(cboFontNames, Is.Not.Null);
 			cboFontNames.AdjustedSelectedIndex = 1;
 			// Make sure we successfully set the font for this user-defined character style.
-			Assert.IsTrue(charStyleInfo.FontInfoForWs(-1).m_fontName.IsExplicit);
-			Assert.AreEqual("<default font>", charStyleInfo.FontInfoForWs(-1).m_fontName.Value,
-				"The font should have been set to the default font.");
+			Assert.That(charStyleInfo.FontInfoForWs(-1).m_fontName.IsExplicit, Is.True);
+			Assert.That(charStyleInfo.FontInfoForWs(-1).m_fontName.Value, Is.EqualTo("<default font>"), "The font should have been set to the default font.");
 		}
 
 		/// ----------------------------------------------------------------------------------------
@@ -98,7 +97,7 @@ namespace SIL.FieldWorks.FwCoreDlgControls
 			for (int i = firstActualFontNameInListLocation; i + 1 < fontNames.Count; i++)
 			{
 				// Check that each font in the list is alphabetically before the next font in the list
-				Assert.LessOrEqual(fontNames[i] as string, fontNames[i+1] as string, "Font names not alphabetically sorted.");
+				Assert.That(fontNames[i] as string, Is.LessThanOrEqualTo(fontNames[i+1] as string), "Font names not alphabetically sorted.");
 			}
 		}
 	}

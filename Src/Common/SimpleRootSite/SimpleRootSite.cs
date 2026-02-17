@@ -35,6 +35,7 @@ namespace SIL.FieldWorks.Common.RootSites
 	/// Base class for hosting a view in an application.
 	/// </summary>
 	/// ----------------------------------------------------------------------------------------
+	[ComVisible(true)]
 	public class SimpleRootSite : UserControl, IVwRootSite, IRootSite, IxCoreColleague,
 		IEditingCallbacks, IReceiveSequentialMessages, IMessageFilter
 	{
@@ -2600,6 +2601,9 @@ namespace SIL.FieldWorks.Common.RootSites
 			if (vwsel == null || !vwsel.IsValid)
 				return false; // can't work with an invalid selection
 
+			if (ClientRectangle.Width <= 0 || ClientRectangle.Height <= 0)
+				return false;
+
 			if (fWantOneLineSpace && ClientHeight < LineHeight * 3)
 			{
 				// The view is too short to have a line at the top and/or bottom of the line
@@ -4323,6 +4327,12 @@ namespace SIL.FieldWorks.Common.RootSites
 		{
 			CheckDisposed();
 
+			if (Height <= 0 || Width <= 0)
+			{
+				base.OnSizeChanged(e);
+				return;
+			}
+
 			// Ignore if our size didn't really change, also if we're in the middle of a paint.
 			// (But, don't ignore if not previously laid out successfully...this can suppress
 			// a necessary Layout after the root box is made.)
@@ -4390,7 +4400,7 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			// REVIEW: We don't think it makes sense to do anything more if our width is 0.
 			// Is this right?
-			if (m_sizeLast.Width <= 0)
+			if (m_sizeLast.Width <= 0 || m_sizeLast.Height <= 0)
 				return;
 
 
@@ -4645,10 +4655,17 @@ namespace SIL.FieldWorks.Common.RootSites
 
 			SetAccessibleName(Name);
 
-			// Managed object on Linux
-			m_vdrb = Platform.IsMono
-				? new SIL.FieldWorks.Views.VwDrawRootBuffered()
-				: (IVwDrawRootBuffered)VwDrawRootBufferedClass.Create();
+			// Try to use the native COM object first, as the managed port might have issues (e.g. crash in PrepareToDraw).
+			// However, keep the fallback or the direct instantiation if COM fails (RegFree COM issues).
+			try
+			{
+				m_vdrb = VwDrawRootBufferedClass.Create();
+			}
+			catch (Exception)
+			{
+				// Managed object on Linux or fallback
+				m_vdrb = (IVwDrawRootBuffered)new SIL.FieldWorks.Views.VwDrawRootBuffered();
+			}
 
 			m_rootb = VwRootBoxClass.Create();
 			m_rootb.RenderEngineFactory = SingletonsContainer.Get<RenderEngineFactory>();

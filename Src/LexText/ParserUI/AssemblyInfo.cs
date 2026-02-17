@@ -5,4 +5,4 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle("UI components for FW parser")]
+// [assembly: AssemblyTitle("UI components for FW parser")] // Sanitized by convert_generate_assembly_info

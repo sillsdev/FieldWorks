@@ -7,7 +7,7 @@
 
 BUILD_PRODUCT=Views
 BUILD_EXTENSION=dll
-BUILD_REGSVR=1
+# BUILD_REGSVR removed - using registration-free COM (manifests) instead of regsvr32
 
 DEFS=$(DEFS) /DGRAPHITE2_STATIC /DGR_FW /DVIEWSDLL /D_MERGE_PROXYSTUB /I"$(COM_OUT_DIR)" /I"$(COM_OUT_DIR_RAW)"
 

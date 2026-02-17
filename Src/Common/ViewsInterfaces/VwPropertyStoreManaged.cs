@@ -6,6 +6,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading;
 using SIL.LCModel.Core.KernelInterfaces;
+using LgCharRenderProps = SIL.LCModel.Core.KernelInterfaces.LgCharRenderProps;
 
 namespace SIL.FieldWorks.Common.ViewsInterfaces
 {
@@ -29,19 +30,13 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 		/// <summary/>
 		public IVwStylesheet Stylesheet
 		{
-			set
-			{
-				VwPropertyStore_Stylesheet(pVwPropStore, value);
-			}
+			set { VwPropertyStore_Stylesheet(pVwPropStore, value); }
 		}
 
 		/// <summary/>
 		public ILgWritingSystemFactory WritingSystemFactory
 		{
-			set
-			{
-				VwPropertyStore_WritingSystemFactory(pVwPropStore, value);
-			}
+			set { VwPropertyStore_WritingSystemFactory(pVwPropStore, value); }
 		}
 
 		/// <summary/>
@@ -53,7 +48,10 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 
 		#region Disposable stuff
 		/// <summary/>
-		~VwPropertyStoreManaged() => Dispose(false);
+		~VwPropertyStoreManaged()
+		{
+			Dispose(false);
+		}
 
 		/// <summary/>
 		public void Dispose()
@@ -67,10 +65,13 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 		{
 			if (Interlocked.CompareExchange(ref _isDisposed, 1, 0) == 0)
 			{
+				System.Diagnostics.Debug.WriteLineIf(
+					!disposing,
+					"****** Missing Dispose() call for " + GetType().Name + " ******"
+				);
+
 				// Dispose managed resources (if there are any).
-				if (disposing)
-				{
-				}
+				if (disposing) { }
 
 				// Dispose unmanaged resources.
 				VwPropertyStore_Delete(pVwPropStore);
@@ -86,16 +87,22 @@ namespace SIL.FieldWorks.Common.ViewsInterfaces
 		private static extern void VwPropertyStore_Delete(IntPtr pVwPropStore);
 
 		[DllImport(_viewsDllPath, CallingConvention = CallingConvention.Cdecl)]
-		private static extern void VwPropertyStore_Stylesheet(IntPtr pVwPropStore,
-			[MarshalAs(UnmanagedType.Interface)] IVwStylesheet pss);
+		private static extern void VwPropertyStore_Stylesheet(
+			IntPtr pVwPropStore,
+			[MarshalAs(UnmanagedType.Interface)] IVwStylesheet pss
+		);
 
 		[DllImport(_viewsDllPath, CallingConvention = CallingConvention.Cdecl)]
-		private static extern void VwPropertyStore_WritingSystemFactory(IntPtr pVwPropStore,
-			[MarshalAs(UnmanagedType.Interface)] ILgWritingSystemFactory pwsf);
+		private static extern void VwPropertyStore_WritingSystemFactory(
+			IntPtr pVwPropStore,
+			[MarshalAs(UnmanagedType.Interface)] ILgWritingSystemFactory pwsf
+		);
 
 		[DllImport(_viewsDllPath, CallingConvention = CallingConvention.Cdecl)]
-		private static extern IntPtr VwPropertyStore_get_ChrpFor(IntPtr pVwPropStore,
-			[MarshalAs(UnmanagedType.Interface)] ITsTextProps _ttp);
+		private static extern IntPtr VwPropertyStore_get_ChrpFor(
+			IntPtr pVwPropStore,
+			[MarshalAs(UnmanagedType.Interface)] ITsTextProps _ttp
+		);
 		#endregion
 	}
 }

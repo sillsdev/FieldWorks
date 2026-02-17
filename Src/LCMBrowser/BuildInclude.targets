@@ -4,6 +4,6 @@
 		<Executable>$(OutDir)LCMBrowser.exe</Executable>
 	</PropertyGroup>
 	<Import Project="../../Build/RegFree.targets"/>
-	<Target Name="AfterBuild" DependsOnTargets="RegFree">
+	<Target Name="RunRegFree" AfterTargets="Build" DependsOnTargets="RegFree">
 	</Target>
 </Project>

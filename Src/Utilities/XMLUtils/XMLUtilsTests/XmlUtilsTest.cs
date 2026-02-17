@@ -36,10 +36,10 @@ namespace SIL.Utils
 		public void MakeSafeXmlAttributeTest()
 		{
 			string sFixed = XmlUtils.MakeSafeXmlAttribute("abc&def<ghi>jkl\"mno'pqr&stu");
-			Assert.AreEqual("abc&amp;def&lt;ghi&gt;jkl&quot;mno&apos;pqr&amp;stu", sFixed, "First Test of MakeSafeXmlAttribute");
+			Assert.That(sFixed, Is.EqualTo("abc&amp;def&lt;ghi&gt;jkl&quot;mno&apos;pqr&amp;stu"), "First Test of MakeSafeXmlAttribute");
 
 			sFixed = XmlUtils.MakeSafeXmlAttribute("abc&def\r\nghi\u001Fjkl\u007F\u009Fmno");
-			Assert.AreEqual("abc&amp;def&#xD;&#xA;ghi&#x1F;jkl&#x7F;&#x9F;mno", sFixed, "Second Test of MakeSafeXmlAttribute");
+			Assert.That(sFixed, Is.EqualTo("abc&amp;def&#xD;&#xA;ghi&#x1F;jkl&#x7F;&#x9F;mno"), "Second Test of MakeSafeXmlAttribute");
 		}
 	}
 

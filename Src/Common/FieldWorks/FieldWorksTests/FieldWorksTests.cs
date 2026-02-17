@@ -31,9 +31,9 @@ namespace SIL.FieldWorks
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_projectId",
 				new ProjectId(BackendProviderType.kXML, "monkey"));
 
-			Assert.AreEqual(ProjectMatch.ItsMyProject, ReflectionHelper.GetResult(
+			Assert.That(ReflectionHelper.GetResult(
 				typeof(FieldWorks), "GetProjectMatchStatus",
-				new ProjectId(BackendProviderType.kXML, "monkey")));
+				new ProjectId(BackendProviderType.kXML, "monkey")), Is.EqualTo(ProjectMatch.ItsMyProject));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -49,9 +49,9 @@ namespace SIL.FieldWorks
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_projectId",
 				new ProjectId(BackendProviderType.kXML, "primate"));
 
-			Assert.AreEqual(ProjectMatch.ItsNotMyProject, ReflectionHelper.GetResult(
+			Assert.That(ReflectionHelper.GetResult(
 				typeof(FieldWorks), "GetProjectMatchStatus",
-				new ProjectId(BackendProviderType.kXML, "monkey")));
+				new ProjectId(BackendProviderType.kXML, "monkey")), Is.EqualTo(ProjectMatch.ItsNotMyProject));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -67,9 +67,9 @@ namespace SIL.FieldWorks
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_fWaitingForUserOrOtherFw", false);
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_projectId", null);
 
-			Assert.AreEqual(ProjectMatch.DontKnowYet, ReflectionHelper.GetResult(
+			Assert.That(ReflectionHelper.GetResult(
 				typeof(FieldWorks), "GetProjectMatchStatus",
-				new ProjectId(BackendProviderType.kXML, "monkey")));
+				new ProjectId(BackendProviderType.kXML, "monkey")), Is.EqualTo(ProjectMatch.DontKnowYet));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -86,9 +86,9 @@ namespace SIL.FieldWorks
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_projectId",
 				new ProjectId(BackendProviderType.kXML, "monkey"));
 
-			Assert.AreEqual(ProjectMatch.WaitingForUserOrOtherFw, ReflectionHelper.GetResult(
+			Assert.That(ReflectionHelper.GetResult(
 				typeof(FieldWorks), "GetProjectMatchStatus",
-				new ProjectId(BackendProviderType.kXML, "monkey")));
+				new ProjectId(BackendProviderType.kXML, "monkey")), Is.EqualTo(ProjectMatch.WaitingForUserOrOtherFw));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -104,9 +104,9 @@ namespace SIL.FieldWorks
 			ReflectionHelper.SetField(typeof(FieldWorks), "s_projectId",
 				new ProjectId(BackendProviderType.kXML, "monkey"));
 
-			Assert.AreEqual(ProjectMatch.SingleProcessMode, ReflectionHelper.GetResult(
+			Assert.That(ReflectionHelper.GetResult(
 				typeof(FieldWorks), "GetProjectMatchStatus",
-				new ProjectId(BackendProviderType.kXML, "monkey")));
+				new ProjectId(BackendProviderType.kXML, "monkey")), Is.EqualTo(ProjectMatch.SingleProcessMode));
 		}
 
 		#endregion

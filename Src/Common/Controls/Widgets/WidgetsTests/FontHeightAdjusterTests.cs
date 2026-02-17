@@ -47,13 +47,13 @@ namespace SIL.FieldWorks.Common.Widgets
 			CoreWritingSystemDefinition enWs;
 			m_wsManager.GetOrSet("en", out enWs);
 			m_hvoEnglishWs = enWs.Handle;
-			Assert.IsTrue(m_hvoEnglishWs > 0, "Should have gotten an hvo for the English WS");
+			Assert.That(m_hvoEnglishWs > 0, "Should have gotten an hvo for the English WS", Is.True);
 			// German
 			CoreWritingSystemDefinition deWs;
 			m_wsManager.GetOrSet("de", out deWs);
 			m_hvoGermanWs = deWs.Handle;
-			Assert.IsTrue(m_hvoGermanWs > 0, "Should have gotten an hvo for the German WS");
-			Assert.IsTrue(m_hvoEnglishWs != m_hvoGermanWs, "Writing systems should have different IDs");
+			Assert.That(m_hvoGermanWs > 0, "Should have gotten an hvo for the German WS", Is.True);
+			Assert.That(m_hvoEnglishWs != m_hvoGermanWs, Is.True, "Writing systems should have different IDs");
 
 			// Create a couple of styles
 			int hvoStyle = m_stylesheet.MakeNewStyle();
@@ -96,14 +96,14 @@ namespace SIL.FieldWorks.Common.Widgets
 		[Test]
 		public void TestGetFontHeightForStyle()
 		{
-			Assert.AreEqual(13000, FontHeightAdjuster.GetFontHeightForStyle("StyleA",
-				m_stylesheet, m_hvoGermanWs, m_wsManager));
-			Assert.AreEqual(21000, FontHeightAdjuster.GetFontHeightForStyle("StyleA",
-				m_stylesheet, m_hvoEnglishWs, m_wsManager));
-			Assert.AreEqual(56000, FontHeightAdjuster.GetFontHeightForStyle("StyleB",
-				m_stylesheet, m_hvoGermanWs, m_wsManager));
-			Assert.AreEqual(20000, FontHeightAdjuster.GetFontHeightForStyle("StyleB",
-				m_stylesheet, m_hvoEnglishWs, m_wsManager));
+			Assert.That(FontHeightAdjuster.GetFontHeightForStyle("StyleA",
+				m_stylesheet, m_hvoGermanWs, m_wsManager), Is.EqualTo(13000));
+			Assert.That(FontHeightAdjuster.GetFontHeightForStyle("StyleA",
+				m_stylesheet, m_hvoEnglishWs, m_wsManager), Is.EqualTo(21000));
+			Assert.That(FontHeightAdjuster.GetFontHeightForStyle("StyleB",
+				m_stylesheet, m_hvoGermanWs, m_wsManager), Is.EqualTo(56000));
+			Assert.That(FontHeightAdjuster.GetFontHeightForStyle("StyleB",
+				m_stylesheet, m_hvoEnglishWs, m_wsManager), Is.EqualTo(20000));
 		}
 
 		private static int GetUbuntuVersion()

@@ -5,8 +5,8 @@
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("FieldWorks Core Dialogs")]
+// [assembly: AssemblyTitle("FieldWorks Core Dialogs")] // Sanitized by convert_generate_assembly_info
 
-[assembly: ComVisible(false)]
+// [assembly: ComVisible(false)] // Sanitized by convert_generate_assembly_info
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("FwCoreDlgControlsTests")]
 [assembly: System.Runtime.CompilerServices.InternalsVisibleTo("FwCoreDlgs")]

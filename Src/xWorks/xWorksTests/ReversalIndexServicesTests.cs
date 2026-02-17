@@ -67,24 +67,23 @@ namespace SIL.FieldWorks.XWorks
 					projectsDir, projectName);
 
 				Assert.That(File.Exists(crazyFilename), crazyFilename + " should not have been deleted");
-				Assert.AreEqual(analWss[0], GetWsFromFile(crazyFilename), "WS in custom-named file should not have been changed");
+				Assert.That(GetWsFromFile(crazyFilename), Is.EqualTo(analWss[0]), "WS in custom-named file should not have been changed");
 				Assert.That(!File.Exists(nonExtantWsFilename));
 				Assert.That(File.Exists(wrongWsFilename));
-				Assert.AreEqual(analWss[1], GetWsFromFile(wrongWsFilename),
-					"WS in wrong ws-named file should have been changed (we think)");
+				Assert.That(GetWsFromFile(wrongWsFilename), Is.EqualTo(analWss[1]), "WS in wrong ws-named file should have been changed (we think)");
 				Assert.That(File.Exists(allReversalsFilename));
-				Assert.AreEqual(string.Empty, GetWsFromFile(allReversalsFilename), "All reversals should not have a writing system");
+				Assert.That(GetWsFromFile(allReversalsFilename), Is.EqualTo(string.Empty), "All reversals should not have a writing system");
 				foreach (var ws in analWss)
 				{
 					var filename = GetFilenameForWs(riConfigDir, ws);
 					Assert.That(File.Exists(filename), "No file for WS: " + ws);
-					Assert.AreEqual(ws, GetWsFromFile(filename), "Incorrect WS attribute in file");
+					Assert.That(GetWsFromFile(filename), Is.EqualTo(ws), "Incorrect WS attribute in file");
 				}
 				XAttribute modifiedAtt;
 				GetLastModifiedAttributeFromFile(normalFilename, out modifiedAtt);
-				Assert.AreEqual(normalFileModified, modifiedAtt.Value, "File with proper name and WS should not have been modified");
+				Assert.That(modifiedAtt.Value, Is.EqualTo(normalFileModified), "File with proper name and WS should not have been modified");
 				var enWsLabel = WSMgr.Get(analWss[0]).DisplayLabel;
-				Assert.AreEqual(enWsLabel, "English", "English WS should have name English");
+				Assert.That("English", Is.EqualTo(enWsLabel), "English WS should have name English");
 			}
 		}
 

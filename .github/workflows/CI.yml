@@ -1,85 +1,108 @@
 name: Flex CI
 on:
-  push:
-    branches: ["release/**", "main", "feature/PubSub"]
-  pull_request:
-    branches: ["release/**", "main", "feature/PubSub"]
-  workflow_dispatch:
+    push:
+        branches: ["release/**", "main", "feature/PubSub"]
+    pull_request:
+        branches: ["release/**", "main", "feature/PubSub"]
+    workflow_dispatch:
 
 concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: true
+    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+    cancel-in-progress: true
 
 jobs:
-  debug_build_and_test:
-    env:
-      CROWDIN_API_KEY: ${{ secrets.FLEX_CROWDIN_API }}
-    name: Build Debug and run Tests
-    runs-on: windows-latest
-    steps:
-      - name: Checkout Files
-        uses: actions/checkout@v4
-        id: checkout
+    debug_build_and_test:
+        env:
+            CROWDIN_API_KEY: ${{ secrets.FLEX_CROWDIN_API }}
+        name: Build Debug and run Tests (x64 only)
+        runs-on: windows-latest
+        steps:
+            - name: Checkout Files
+              uses: actions/checkout@v4
+              id: checkout
 
-      - name: Download 461 targeting pack
-        uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9 # 1.6.0
-        id: downloadfile  # Remember to give an ID if you need the output filename
-        with:
-            url: "https://download.microsoft.com/download/F/1/D/F1DEB8DB-D277-4EF9-9F48-3A65D4D8F965/NDP461-DevPack-KB3105179-ENU.exe"
-            target: public/
-                
-      - name: Install targeting pack
-        shell: cmd
-        working-directory: public
-        run: NDP461-DevPack-KB3105179-ENU.exe /q
+            - name: Download 461 targeting pack
+              uses: suisei-cn/actions-download-file@818d6b7dc8fe73f2f924b6241f2b1134ca1377d9 # 1.6.0
+              id: downloadfile # Remember to give an ID if you need the output filename
+              with:
+                  url: "https://download.microsoft.com/download/F/1/D/F1DEB8DB-D277-4EF9-9F48-3A65D4D8F965/NDP461-DevPack-KB3105179-ENU.exe"
+                  target: public/
 
-      - name: Setup dotnet
-        uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: | 
-            2.1.x
-            3.1.x
-            5.0.x
-          
-      - name: Prepare for build
-        shell: cmd
-        working-directory: Build
-        run: build64.bat /t:WriteNonlocalDevelopmentPropertiesFile
+            - name: Install targeting pack
+              shell: cmd
+              working-directory: public
+              run: NDP461-DevPack-KB3105179-ENU.exe /q
 
-      - name: Build Debug and run tests
-        id: build_and_test
-        shell: powershell
-        run: |
-          cd Build
-          .\build64.bat /t:remakefw-jenkins /p:action=test /p:desktopNotAvailable=true ^| tee-object -FilePath build.log
-      
-      - name: Scan Debug Build Output
-        shell: powershell
-        working-directory: Build
-        run: |
-          $results = Select-String -Path "build.log" -Pattern "^\s*[1-9][0-9]* Error\(s\)"
-          if ($results) {
-              foreach ($result in $results) {
-                  Write-Host "Found errors in build.log $($result.LineNumber): $($result.Line)" -ForegroundColor red 
-              }
-              exit 1
-          } else {
-              Write-Host "No errors found" -ForegroundColor green 
-              exit 0
-          }
+            - name: Setup dotnet
+              uses: actions/setup-dotnet@v4
+              with:
+                  dotnet-version: |
+                      2.1.x
+                      3.1.x
+                      5.0.x
 
-      - name: Capture Test Results
-        shell: powershell
-        working-directory: Build
-        run: .\NUnitReport /a ^| tee-object -FilePath test-results.log
+            - name: Add NETFX tools to PATH
+              shell: powershell
+              run: |
+                  'C:\Program Files (x86)\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.6.1 Tools' | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+            - name: Setup MSBuild
+              uses: microsoft/setup-msbuild@v2
+            - name: Build Debug and run tests
+              id: build_and_test
+              shell: powershell
+              run: |
+                  $ErrorActionPreference = 'Stop'
+                  ./build.ps1 -Configuration Debug -Platform x64 -MsBuildArgs @('/m', '/p:action=test', '/p:desktopNotAvailable=true') -LogFile Build/build.log
 
-      - name: Report Test Results
-        uses: sillsdev/fw-nunitreport-action@v2.0.0
-        with:
-          log-path: Build/test-results.log
-          token: ${{ secrets.GITHUB_TOKEN }}
+            - name: Scan Debug Build Output
+              shell: powershell
+              working-directory: Build
+              run: |
+                  $results = Select-String -Path "build.log" -Pattern "^\s*[1-9][0-9]* Error\(s\)"
+                  if ($results) {
+                      foreach ($result in $results) {
+                          Write-Host "Found errors in build.log $($result.LineNumber): $($result.Line)" -ForegroundColor red
+                      }
+                      exit 1
+                  } else {
+                      Write-Host "No errors found" -ForegroundColor green
+                      exit 0
+                  }
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: build-logs
-          path: Build/*.log
+            - name: Capture Test Results
+              shell: powershell
+              working-directory: Build
+              run: .\NUnitReport /a ^| tee-object -FilePath test-results.log
+
+            - name: Report Test Results
+              uses: sillsdev/fw-nunitreport-action@v2.0.0
+              with:
+                  log-path: Build/test-results.log
+                  token: ${{ secrets.GITHUB_TOKEN }}
+
+            # Upload build and test artifacts
+            - uses: actions/upload-artifact@v4
+              with:
+                  name: build-logs
+                  path: Build/*.log
+
+            # Upload generated manifests for inspection (registration-free COM)
+            - uses: actions/upload-artifact@v4
+              with:
+                  name: regfree-manifests
+                  path: |
+                      Output/Debug/FieldWorks.exe.manifest
+                  if-no-files-found: warn
+
+            # Smoke test: Verify registration-free COM activation (no registry writes)
+            - name: Smoke test - Reg-free COM activation
+              shell: powershell
+              run: |
+                  Write-Host "Testing registration-free COM activation..." -ForegroundColor Cyan
+                  $exitCode = & "Output\Debug\ComManifestTestHost.exe"
+                  if ($LASTEXITCODE -ne 0) {
+                      Write-Host "❌ COM activation test failed with exit code $LASTEXITCODE" -ForegroundColor Red
+                      exit $LASTEXITCODE
+                  } else {
+                      Write-Host "✅ COM activation test passed" -ForegroundColor Green
+                  }

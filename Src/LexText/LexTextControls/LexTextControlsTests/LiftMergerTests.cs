@@ -105,7 +105,7 @@ namespace LexTextControlsTests
 
 		private static string CreateInputRangesFile(IList<string> data, string liftFolder)
 		{
-			Assert.True(Directory.Exists(liftFolder));
+			Assert.That(Directory.Exists(liftFolder), Is.True);
 			var path = Path.Combine(liftFolder, "LiftTest.lift-ranges");
 			CreateLiftInputFile(path, data);
 			return path;
@@ -151,7 +151,7 @@ namespace LexTextControlsTests
 				flexImporter.LoadLiftRanges(sOrigRangesFile);
 			var cEntries = parser.ReadLiftFile(sFilename);
 
-			Assert.AreEqual(expectedCount, cEntries);
+			Assert.That(cEntries, Is.EqualTo(expectedCount));
 			if (fMigrationNeeded)
 				File.Delete(sFilename);
 			flexImporter.ProcessPendingRelations(progressDlg);
@@ -289,8 +289,8 @@ namespace LexTextControlsTests
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			Assert.AreEqual(0, repoEntry.Count);
-			Assert.AreEqual(0, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(0));
+			Assert.That(repoSense.Count, Is.EqualTo(0));
 
 			var sOrigFile = CreateInputFile(s_LiftData1);
 			var liftFolder = Path.GetDirectoryName(sOrigFile);
@@ -306,37 +306,37 @@ namespace LexTextControlsTests
 			File.Delete(sOrigFile);
 			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
-			Assert.AreEqual(4, repoEntry.Count);
-			Assert.AreEqual(4, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(4));
+			Assert.That(repoSense.Count, Is.EqualTo(4));
 
 			Assert.That(messageCapture.Messages, Has.Count.EqualTo(0), "we should not message about an empty-string ref in <relation>");
 
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("ecfbe958-36a1-4b82-bb69-ca5210355400"), out var entry));
-			Assert.AreEqual(1, entry.SensesOS.Count);
+			Assert.That(repoEntry.TryGetObject(new Guid("ecfbe958-36a1-4b82-bb69-ca5210355400"), out var entry), Is.True);
+			Assert.That(entry.SensesOS.Count, Is.EqualTo(1));
 			var sense0 = entry.SensesOS[0];
-			Assert.AreEqual(sense0.Guid, new Guid("f63f1ccf-3d50-417e-8024-035d999d48bc"));
+			Assert.That(new Guid("f63f1ccf-3d50-417e-8024-035d999d48bc"), Is.EqualTo(sense0.Guid));
 			Assert.That(entry.LexemeFormOA, Is.Not.Null);
 			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
-			Assert.AreEqual("root", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("hombre", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
-			Assert.AreEqual("hombre634407358826681759.wav", entry.LexemeFormOA.Form.get_String(m_audioWsCode).Text);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("root"));
+			Assert.That(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("hombre"));
+			Assert.That(entry.LexemeFormOA.Form.get_String(m_audioWsCode).Text, Is.EqualTo("hombre634407358826681759.wav"));
 			Assert.That(sense0.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
 			Assert.That(((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
-			Assert.AreEqual("Noun", ((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("man", sense0.Gloss.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("male adult human link", sense0.Definition.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("male adult634407358826681760.wav", sense0.Definition.get_String(m_audioWsCode).Text);
-			Assert.AreEqual(2, sense0.SemanticDomainsRC.Count);
+			Assert.That(((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Noun"));
+			Assert.That(sense0.Gloss.AnalysisDefaultWritingSystem.Text, Is.EqualTo("man"));
+			Assert.That(sense0.Definition.AnalysisDefaultWritingSystem.Text, Is.EqualTo("male adult human link"));
+			Assert.That(sense0.Definition.get_String(m_audioWsCode).Text, Is.EqualTo("male adult634407358826681760.wav"));
+			Assert.That(sense0.SemanticDomainsRC.Count, Is.EqualTo(2));
 			foreach (var sem in sense0.SemanticDomainsRC)
 			{
 				if (sem.Abbreviation.AnalysisDefaultWritingSystem.Text == "2.6.4.4 Adult")
 				{
-					Assert.AreEqual("2.6.4.4 Adult", sem.Name.AnalysisDefaultWritingSystem.Text);
+					Assert.That(sem.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("2.6.4.4 Adult"));
 				}
 				else
 				{
-					Assert.AreEqual("2.6.5.1 Man", sem.Abbreviation.AnalysisDefaultWritingSystem.Text);
-					Assert.AreEqual("2.6.5.1 Man", sem.Name.AnalysisDefaultWritingSystem.Text);
+					Assert.That(sem.Abbreviation.AnalysisDefaultWritingSystem.Text, Is.EqualTo("2.6.5.1 Man"));
+					Assert.That(sem.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("2.6.5.1 Man"));
 				}
 			}
 
@@ -354,85 +354,85 @@ namespace LexTextControlsTests
 			VerifyLinkedFileExists(LcmFileHelper.ksMediaDir, "male adult634407358826681760.wav");
 			VerifyLinkedFileExists(LcmFileHelper.ksOtherLinkedFilesDir, "SomeFile.txt");
 
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("766aaee2-34b6-4e28-a883-5c2186125a2f"), out entry));
-			Assert.AreEqual(1, entry.SensesOS.Count);
+			Assert.That(repoEntry.TryGetObject(new Guid("766aaee2-34b6-4e28-a883-5c2186125a2f"), out entry), Is.True);
+			Assert.That(entry.SensesOS.Count, Is.EqualTo(1));
 			sense0 = entry.SensesOS[0];
-			Assert.AreEqual(sense0.Guid, new Guid("cf6680cc-faeb-4bd2-90ec-0be5dcdcc6af"));
+			Assert.That(new Guid("cf6680cc-faeb-4bd2-90ec-0be5dcdcc6af"), Is.EqualTo(sense0.Guid));
 			Assert.That(entry.LexemeFormOA, Is.Not.Null);
 			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
-			Assert.AreEqual("root", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("mujer", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("root"));
+			Assert.That(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("mujer"));
 			Assert.That(sense0.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
 			Assert.That(((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
-			Assert.AreEqual("Noun", ((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("woman", sense0.Gloss.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("female adult human", sense0.Definition.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual(2, sense0.SemanticDomainsRC.Count);
+			Assert.That(((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Noun"));
+			Assert.That(sense0.Gloss.AnalysisDefaultWritingSystem.Text, Is.EqualTo("woman"));
+			Assert.That(sense0.Definition.AnalysisDefaultWritingSystem.Text, Is.EqualTo("female adult human"));
+			Assert.That(sense0.SemanticDomainsRC.Count, Is.EqualTo(2));
 			foreach (var sem in sense0.SemanticDomainsRC)
 			{
 				if (sem.Abbreviation.AnalysisDefaultWritingSystem.Text == "2.6.4.4 Adult")
 				{
-					Assert.AreEqual("2.6.4.4 Adult", sem.Name.AnalysisDefaultWritingSystem.Text);
+					Assert.That(sem.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("2.6.4.4 Adult"));
 				}
 				else
 				{
-					Assert.AreEqual("2.6.5.2 Woman", sem.Abbreviation.AnalysisDefaultWritingSystem.Text);
-					Assert.AreEqual("2.6.5.2 Woman", sem.Name.AnalysisDefaultWritingSystem.Text);
+					Assert.That(sem.Abbreviation.AnalysisDefaultWritingSystem.Text, Is.EqualTo("2.6.5.2 Woman"));
+					Assert.That(sem.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("2.6.5.2 Woman"));
 				}
 			}
 
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("1767c76d-e35f-495a-9203-6b31fd82ad72"), out entry));
-			Assert.AreEqual(1, entry.SensesOS.Count);
+			Assert.That(repoEntry.TryGetObject(new Guid("1767c76d-e35f-495a-9203-6b31fd82ad72"), out entry), Is.True);
+			Assert.That(entry.SensesOS.Count, Is.EqualTo(1));
 			sense0 = entry.SensesOS[0];
-			Assert.AreEqual(sense0.Guid, new Guid("04545fa2-e24c-446e-928c-2a13710359b3"));
+			Assert.That(new Guid("04545fa2-e24c-446e-928c-2a13710359b3"), Is.EqualTo(sense0.Guid));
 			Assert.That(entry.LexemeFormOA, Is.Not.Null);
 			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
-			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("niño".Normalize(NormalizationForm.FormD), entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("stem"));
+			Assert.That(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("niño".Normalize(NormalizationForm.FormD)));
 			Assert.That(sense0.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
 			Assert.That(((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
-			Assert.AreEqual("Noun", ((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("boy", sense0.Gloss.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("male human child", sense0.Definition.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual(2, sense0.SemanticDomainsRC.Count);
+			Assert.That(((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Noun"));
+			Assert.That(sense0.Gloss.AnalysisDefaultWritingSystem.Text, Is.EqualTo("boy"));
+			Assert.That(sense0.Definition.AnalysisDefaultWritingSystem.Text, Is.EqualTo("male human child"));
+			Assert.That(sense0.SemanticDomainsRC.Count, Is.EqualTo(2));
 			foreach (var sem in sense0.SemanticDomainsRC)
 			{
 				if (sem.Abbreviation.AnalysisDefaultWritingSystem.Text == "2.6.4.2 Child")
 				{
-					Assert.AreEqual("2.6.4.2 Child", sem.Name.AnalysisDefaultWritingSystem.Text);
+					Assert.That(sem.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("2.6.4.2 Child"));
 				}
 				else
 				{
-					Assert.AreEqual("2.6.5.1 Man", sem.Abbreviation.AnalysisDefaultWritingSystem.Text);
-					Assert.AreEqual("2.6.5.1 Man", sem.Name.AnalysisDefaultWritingSystem.Text);
+					Assert.That(sem.Abbreviation.AnalysisDefaultWritingSystem.Text, Is.EqualTo("2.6.5.1 Man"));
+					Assert.That(sem.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("2.6.5.1 Man"));
 				}
 			}
 
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("185c528d-aeb1-4e32-8aac-2420322020d2"), out entry));
-			Assert.AreEqual(1, entry.SensesOS.Count);
+			Assert.That(repoEntry.TryGetObject(new Guid("185c528d-aeb1-4e32-8aac-2420322020d2"), out entry), Is.True);
+			Assert.That(entry.SensesOS.Count, Is.EqualTo(1));
 			sense0 = entry.SensesOS[0];
-			Assert.AreEqual(sense0.Guid, new Guid("db9d3790-2f5c-4d99-b9fc-3b21b47fa505"));
+			Assert.That(new Guid("db9d3790-2f5c-4d99-b9fc-3b21b47fa505"), Is.EqualTo(sense0.Guid));
 			Assert.That(entry.LexemeFormOA, Is.Not.Null);
 			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
-			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("niña".Normalize(NormalizationForm.FormD), entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("stem"));
+			Assert.That(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("niña".Normalize(NormalizationForm.FormD)));
 			Assert.That(sense0.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
 			var pos = ((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA;
 			Assert.That(pos, Is.Not.Null);
-			Assert.AreEqual("Noun", pos.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("girl", sense0.Gloss.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("female human child", sense0.Definition.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual(2, sense0.SemanticDomainsRC.Count);
+			Assert.That(pos.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Noun"));
+			Assert.That(sense0.Gloss.AnalysisDefaultWritingSystem.Text, Is.EqualTo("girl"));
+			Assert.That(sense0.Definition.AnalysisDefaultWritingSystem.Text, Is.EqualTo("female human child"));
+			Assert.That(sense0.SemanticDomainsRC.Count, Is.EqualTo(2));
 			foreach (var sem in sense0.SemanticDomainsRC)
 			{
 				if (sem.Abbreviation.AnalysisDefaultWritingSystem.Text == "2.6.4.2 Child")
 				{
-					Assert.AreEqual("2.6.4.2 Child", sem.Name.AnalysisDefaultWritingSystem.Text);
+					Assert.That(sem.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("2.6.4.2 Child"));
 				}
 				else
 				{
-					Assert.AreEqual("2.6.5.2 Woman", sem.Abbreviation.AnalysisDefaultWritingSystem.Text);
-					Assert.AreEqual("2.6.5.2 Woman", sem.Name.AnalysisDefaultWritingSystem.Text);
+					Assert.That(sem.Abbreviation.AnalysisDefaultWritingSystem.Text, Is.EqualTo("2.6.5.2 Woman"));
+					Assert.That(sem.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("2.6.5.2 Woman"));
 				}
 			}
 		}
@@ -542,120 +542,120 @@ namespace LexTextControlsTests
 		[Test]
 		public void TestLiftImport2()
 		{
-			Assert.AreEqual("en", Cache.LangProject.CurAnalysisWss);
-			Assert.AreEqual("fr", Cache.LangProject.CurVernWss);
+			Assert.That(Cache.LangProject.CurAnalysisWss, Is.EqualTo("en"));
+			Assert.That(Cache.LangProject.CurVernWss, Is.EqualTo("fr"));
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			Assert.AreEqual(0, repoEntry.Count);
-			Assert.AreEqual(0, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(0));
+			Assert.That(repoSense.Count, Is.EqualTo(0));
 
 			var sOrigFile = CreateInputFile(s_LiftData2);
 			var logFile = TryImport(sOrigFile, 4);
 			File.Delete(sOrigFile);
 			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
-			Assert.AreEqual(4, repoEntry.Count);
-			Assert.AreEqual(3, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(4));
+			Assert.That(repoSense.Count, Is.EqualTo(3));
 
 			ILexEntry entry;
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("69ccc807-f3d1-44cb-b79a-e8d416b0d7c1"), out entry));
-			Assert.AreEqual(1, entry.SensesOS.Count);
+			Assert.That(repoEntry.TryGetObject(new Guid("69ccc807-f3d1-44cb-b79a-e8d416b0d7c1"), out entry), Is.True);
+			Assert.That(entry.SensesOS.Count, Is.EqualTo(1));
 			var sense = entry.SensesOS[0];
-			Assert.AreEqual(sense.Guid, new Guid("f722992a-cfdc-41ec-9c46-f927f02d68ef"));
+			Assert.That(new Guid("f722992a-cfdc-41ec-9c46-f927f02d68ef"), Is.EqualTo(sense.Guid));
 			Assert.That(entry.LexemeFormOA, Is.Not.Null);
 			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
-			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("house", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("stem"));
+			Assert.That(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("house"));
 			Assert.That(sense.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
 			Assert.That(((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
-			Assert.AreEqual("Noun", ((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("house", sense.Gloss.AnalysisDefaultWritingSystem.Text);
+			Assert.That(((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Noun"));
+			Assert.That(sense.Gloss.AnalysisDefaultWritingSystem.Text, Is.EqualTo("house"));
 			Assert.That(sense.Definition.AnalysisDefaultWritingSystem.Text, Is.Null);
-			Assert.AreEqual(0, sense.SemanticDomainsRC.Count);
-			Assert.AreEqual(1, entry.AlternateFormsOS.Count);
+			Assert.That(sense.SemanticDomainsRC.Count, Is.EqualTo(0));
+			Assert.That(entry.AlternateFormsOS.Count, Is.EqualTo(1));
 			var allo = entry.AlternateFormsOS[0] as IMoStemAllomorph;
 			Assert.That(allo, Is.Not.Null);
-			Assert.AreEqual("ouse", allo.Form.VernacularDefaultWritingSystem.Text);
-			Assert.AreEqual("stem", allo.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual(1, allo.PhoneEnvRC.Count);
+			Assert.That(allo.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("ouse"));
+			Assert.That(allo.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("stem"));
+			Assert.That(allo.PhoneEnvRC.Count, Is.EqualTo(1));
 			IPhEnvironment env = null;
 			foreach (var x in allo.PhoneEnvRC)
 				env = x;
 			Assert.That(env, Is.Not.Null);
-			Assert.AreEqual("/[C]_", env.StringRepresentation.Text);
-			Assert.AreEqual(0, entry.EntryRefsOS.Count);
+			Assert.That(env.StringRepresentation.Text, Is.EqualTo("/[C]_"));
+			Assert.That(entry.EntryRefsOS.Count, Is.EqualTo(0));
 
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("67940acb-9252-4941-bfb3-3ace4e1bda7a"), out entry));
-			Assert.AreEqual(1, entry.SensesOS.Count);
+			Assert.That(repoEntry.TryGetObject(new Guid("67940acb-9252-4941-bfb3-3ace4e1bda7a"), out entry), Is.True);
+			Assert.That(entry.SensesOS.Count, Is.EqualTo(1));
 			sense = entry.SensesOS[0];
-			Assert.AreEqual(sense.Guid, new Guid("d3ed09c5-8757-41cb-849d-a24e6200caf4"));
+			Assert.That(new Guid("d3ed09c5-8757-41cb-849d-a24e6200caf4"), Is.EqualTo(sense.Guid));
 			Assert.That(entry.LexemeFormOA, Is.Not.Null);
 			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
-			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("green", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("stem"));
+			Assert.That(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("green"));
 			Assert.That(sense.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
 			Assert.That(((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
-			Assert.AreEqual("Adjective", ((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("green", sense.Gloss.AnalysisDefaultWritingSystem.Text);
+			Assert.That(((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Adjective"));
+			Assert.That(sense.Gloss.AnalysisDefaultWritingSystem.Text, Is.EqualTo("green"));
 			Assert.That(sense.Definition.AnalysisDefaultWritingSystem.Text, Is.Null);
-			Assert.AreEqual(0, sense.SemanticDomainsRC.Count);
-			Assert.AreEqual(0, entry.EntryRefsOS.Count);
+			Assert.That(sense.SemanticDomainsRC.Count, Is.EqualTo(0));
+			Assert.That(entry.EntryRefsOS.Count, Is.EqualTo(0));
 
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("67113a7f-e448-43e7-87cf-6d3a46ee10ec"), out entry));
-			Assert.AreEqual(1, entry.SensesOS.Count);
+			Assert.That(repoEntry.TryGetObject(new Guid("67113a7f-e448-43e7-87cf-6d3a46ee10ec"), out entry), Is.True);
+			Assert.That(entry.SensesOS.Count, Is.EqualTo(1));
 			sense = entry.SensesOS[0];
-			Assert.AreEqual(sense.Guid, new Guid("cf2ac6f4-01d8-47ed-9b41-25b6e727097f"));
+			Assert.That(new Guid("cf2ac6f4-01d8-47ed-9b41-25b6e727097f"), Is.EqualTo(sense.Guid));
 			Assert.That(entry.LexemeFormOA, Is.Not.Null);
 			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
-			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("greenhouse", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("stem"));
+			Assert.That(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("greenhouse"));
 			Assert.That(sense.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
 			Assert.That(((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
-			Assert.AreEqual("Noun", ((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
+			Assert.That(((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Noun"));
 			Assert.That(sense.Gloss.AnalysisDefaultWritingSystem.Text, Is.Null);
 			Assert.That(sense.Definition.AnalysisDefaultWritingSystem.Text, Is.Null);
-			Assert.AreEqual(0, sense.SemanticDomainsRC.Count);
-			Assert.AreEqual(2, entry.EntryRefsOS.Count);
+			Assert.That(sense.SemanticDomainsRC.Count, Is.EqualTo(0));
+			Assert.That(entry.EntryRefsOS.Count, Is.EqualTo(2));
 			var lexref = entry.EntryRefsOS[0];
-			Assert.AreEqual(LexEntryRefTags.krtComplexForm, lexref.RefType);
-			Assert.AreEqual(1, lexref.ComplexEntryTypesRS.Count);
+			Assert.That(lexref.RefType, Is.EqualTo(LexEntryRefTags.krtComplexForm));
+			Assert.That(lexref.ComplexEntryTypesRS.Count, Is.EqualTo(1));
 			var reftype = lexref.ComplexEntryTypesRS[0];
-			Assert.AreEqual("Compound", reftype.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual(0, lexref.VariantEntryTypesRS.Count);
-			Assert.AreEqual(2, lexref.ComponentLexemesRS.Count);
-			Assert.AreEqual(new Guid("67940acb-9252-4941-bfb3-3ace4e1bda7a"), lexref.ComponentLexemesRS[0].Guid);
-			Assert.AreEqual(new Guid("69ccc807-f3d1-44cb-b79a-e8d416b0d7c1"), lexref.ComponentLexemesRS[1].Guid);
-			Assert.AreEqual(2, lexref.PrimaryLexemesRS.Count);
-			Assert.AreEqual(new Guid("67940acb-9252-4941-bfb3-3ace4e1bda7a"), lexref.PrimaryLexemesRS[0].Guid);
-			Assert.AreEqual(new Guid("69ccc807-f3d1-44cb-b79a-e8d416b0d7c1"), lexref.PrimaryLexemesRS[1].Guid);
+			Assert.That(reftype.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Compound"));
+			Assert.That(lexref.VariantEntryTypesRS.Count, Is.EqualTo(0));
+			Assert.That(lexref.ComponentLexemesRS.Count, Is.EqualTo(2));
+			Assert.That(lexref.ComponentLexemesRS[0].Guid, Is.EqualTo(new Guid("67940acb-9252-4941-bfb3-3ace4e1bda7a")));
+			Assert.That(lexref.ComponentLexemesRS[1].Guid, Is.EqualTo(new Guid("69ccc807-f3d1-44cb-b79a-e8d416b0d7c1")));
+			Assert.That(lexref.PrimaryLexemesRS.Count, Is.EqualTo(2));
+			Assert.That(lexref.PrimaryLexemesRS[0].Guid, Is.EqualTo(new Guid("67940acb-9252-4941-bfb3-3ace4e1bda7a")));
+			Assert.That(lexref.PrimaryLexemesRS[1].Guid, Is.EqualTo(new Guid("69ccc807-f3d1-44cb-b79a-e8d416b0d7c1")));
 
 			lexref = entry.EntryRefsOS[1];
-			Assert.AreEqual(LexEntryRefTags.krtComplexForm, lexref.RefType);
-			Assert.AreEqual(1, lexref.ComplexEntryTypesRS.Count);
+			Assert.That(lexref.RefType, Is.EqualTo(LexEntryRefTags.krtComplexForm));
+			Assert.That(lexref.ComplexEntryTypesRS.Count, Is.EqualTo(1));
 			reftype = lexref.ComplexEntryTypesRS[0];
-			Assert.AreEqual("BaseForm", reftype.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual(0, lexref.VariantEntryTypesRS.Count);
-			Assert.AreEqual(1, lexref.ComponentLexemesRS.Count);
-			Assert.AreEqual(new Guid("67940acb-9252-4941-bfb3-3ace4e1bda7a"), lexref.ComponentLexemesRS[0].Guid);
-			Assert.AreEqual(1, lexref.PrimaryLexemesRS.Count);
-			Assert.AreEqual(new Guid("67940acb-9252-4941-bfb3-3ace4e1bda7a"), lexref.PrimaryLexemesRS[0].Guid);
+			Assert.That(reftype.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("BaseForm"));
+			Assert.That(lexref.VariantEntryTypesRS.Count, Is.EqualTo(0));
+			Assert.That(lexref.ComponentLexemesRS.Count, Is.EqualTo(1));
+			Assert.That(lexref.ComponentLexemesRS[0].Guid, Is.EqualTo(new Guid("67940acb-9252-4941-bfb3-3ace4e1bda7a")));
+			Assert.That(lexref.PrimaryLexemesRS.Count, Is.EqualTo(1));
+			Assert.That(lexref.PrimaryLexemesRS[0].Guid, Is.EqualTo(new Guid("67940acb-9252-4941-bfb3-3ace4e1bda7a")));
 
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("58f978d2-2cb2-4506-9a47-63c5454f0065"), out entry));
-			Assert.AreEqual(0, entry.SensesOS.Count);
+			Assert.That(repoEntry.TryGetObject(new Guid("58f978d2-2cb2-4506-9a47-63c5454f0065"), out entry), Is.True);
+			Assert.That(entry.SensesOS.Count, Is.EqualTo(0));
 			Assert.That(entry.LexemeFormOA, Is.Not.Null);
 			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
-			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("hoose", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
-			Assert.AreEqual(1, entry.EntryRefsOS.Count);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("stem"));
+			Assert.That(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("hoose"));
+			Assert.That(entry.EntryRefsOS.Count, Is.EqualTo(1));
 			lexref = entry.EntryRefsOS[0];
-			Assert.AreEqual(LexEntryRefTags.krtVariant, lexref.RefType);
-			Assert.AreEqual(1, lexref.VariantEntryTypesRS.Count);
+			Assert.That(lexref.RefType, Is.EqualTo(LexEntryRefTags.krtVariant));
+			Assert.That(lexref.VariantEntryTypesRS.Count, Is.EqualTo(1));
 			reftype = lexref.VariantEntryTypesRS[0];
-			Assert.AreEqual("Dialectal Variant", reftype.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual(0, lexref.ComplexEntryTypesRS.Count);
-			Assert.AreEqual(1, lexref.ComponentLexemesRS.Count);
-			Assert.AreEqual(new Guid("69ccc807-f3d1-44cb-b79a-e8d416b0d7c1"), lexref.ComponentLexemesRS[0].Guid);
-			Assert.AreEqual(0, lexref.PrimaryLexemesRS.Count);
+			Assert.That(reftype.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Dialectal Variant"));
+			Assert.That(lexref.ComplexEntryTypesRS.Count, Is.EqualTo(0));
+			Assert.That(lexref.ComponentLexemesRS.Count, Is.EqualTo(1));
+			Assert.That(lexref.ComponentLexemesRS[0].Guid, Is.EqualTo(new Guid("69ccc807-f3d1-44cb-b79a-e8d416b0d7c1")));
+			Assert.That(lexref.PrimaryLexemesRS.Count, Is.EqualTo(0));
 		}
 
 		private static readonly string[] s_outOfOrderRelation = {
@@ -694,18 +694,18 @@ namespace LexTextControlsTests
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 			var repoLrType = Cache.ServiceLocator.GetInstance<ILexRefTypeRepository>();
-			Assert.AreEqual(0, repoEntry.Count);
-			Assert.AreEqual(0, repoSense.Count);
-			Assert.AreEqual(0, repoLrType.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(0));
+			Assert.That(repoSense.Count, Is.EqualTo(0));
+			Assert.That(repoLrType.Count, Is.EqualTo(0));
 
 			var sOrigFile = CreateInputFile(s_outOfOrderRelation);
 			var logFile = TryImport(sOrigFile, 1);
 			File.Delete(sOrigFile);
 			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
-			Assert.AreEqual(1, repoEntry.Count);
-			Assert.AreEqual(2, repoSense.Count);
-			Assert.AreEqual(1, repoLrType.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(1));
+			Assert.That(repoSense.Count, Is.EqualTo(2));
+			Assert.That(repoLrType.Count, Is.EqualTo(1));
 			var lexEntry = repoEntry.AllInstances().First();
 			var sense1 = lexEntry.SensesOS[0];
 			var lrType = repoLrType.AllInstances().First();
@@ -787,99 +787,99 @@ namespace LexTextControlsTests
 		[Test]
 		public void TestLiftImport3()
 		{
-			Assert.AreEqual("en", Cache.LangProject.CurAnalysisWss);
-			Assert.AreEqual("fr", Cache.LangProject.CurVernWss);
+			Assert.That(Cache.LangProject.CurAnalysisWss, Is.EqualTo("en"));
+			Assert.That(Cache.LangProject.CurVernWss, Is.EqualTo("fr"));
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			Assert.AreEqual(0, repoEntry.Count);
-			Assert.AreEqual(0, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(0));
+			Assert.That(repoSense.Count, Is.EqualTo(0));
 
 			var sOrigFile = CreateInputFile(GetLift3Strings("2011-03-01T22:28:00Z"));
 			var logFile = TryImport(sOrigFile, 4);
 			File.Delete(sOrigFile);
 			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
-			Assert.AreEqual(4, repoEntry.Count);
-			Assert.AreEqual(3, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(4));
+			Assert.That(repoSense.Count, Is.EqualTo(3));
 
 			ILexEntry entry;
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("69ccc807-f3d1-44cb-b79a-e8d416b0d7c1"), out entry));
-			Assert.AreEqual(1, entry.SensesOS.Count);
+			Assert.That(repoEntry.TryGetObject(new Guid("69ccc807-f3d1-44cb-b79a-e8d416b0d7c1"), out entry), Is.True);
+			Assert.That(entry.SensesOS.Count, Is.EqualTo(1));
 			var sense = entry.SensesOS[0];
-			Assert.AreEqual(sense.Guid, new Guid("f722992a-cfdc-41ec-9c46-f927f02d68ef"));
+			Assert.That(new Guid("f722992a-cfdc-41ec-9c46-f927f02d68ef"), Is.EqualTo(sense.Guid));
 			Assert.That(entry.LexemeFormOA, Is.Not.Null);
 			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
-			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("house", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("stem"));
+			Assert.That(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("house"));
 			Assert.That(sense.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
 			Assert.That(((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
-			Assert.AreEqual("Noun", ((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("house", sense.Gloss.AnalysisDefaultWritingSystem.Text);
+			Assert.That(((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Noun"));
+			Assert.That(sense.Gloss.AnalysisDefaultWritingSystem.Text, Is.EqualTo("house"));
 			Assert.That(sense.Definition.AnalysisDefaultWritingSystem.Text, Is.Null);
-			Assert.AreEqual(0, sense.SemanticDomainsRC.Count);
-			Assert.AreEqual(1, entry.AlternateFormsOS.Count);
+			Assert.That(sense.SemanticDomainsRC.Count, Is.EqualTo(0));
+			Assert.That(entry.AlternateFormsOS.Count, Is.EqualTo(1));
 			var allo = entry.AlternateFormsOS[0] as IMoStemAllomorph;
 			Assert.That(allo, Is.Not.Null);
-			Assert.AreEqual("ouse", allo.Form.VernacularDefaultWritingSystem.Text);
+			Assert.That(allo.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("ouse"));
 			Assert.That(allo.MorphTypeRA, Is.Null);
-			Assert.AreEqual(0, allo.PhoneEnvRC.Count);
-			Assert.AreEqual("<lift-residue><trait name=\"paradigm\" value=\"sing\" />" + Environment.NewLine + "</lift-residue>", allo.LiftResidue);
-			Assert.AreEqual(0, entry.EntryRefsOS.Count);
+			Assert.That(allo.PhoneEnvRC.Count, Is.EqualTo(0));
+			Assert.That(allo.LiftResidue, Is.EqualTo("<lift-residue><trait name=\"paradigm\" value=\"sing\" />" + Environment.NewLine + "</lift-residue>"));
+			Assert.That(entry.EntryRefsOS.Count, Is.EqualTo(0));
 
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("67940acb-9252-4941-bfb3-3ace4e1bda7a"), out entry));
-			Assert.AreEqual(1, entry.SensesOS.Count);
+			Assert.That(repoEntry.TryGetObject(new Guid("67940acb-9252-4941-bfb3-3ace4e1bda7a"), out entry), Is.True);
+			Assert.That(entry.SensesOS.Count, Is.EqualTo(1));
 			sense = entry.SensesOS[0];
-			Assert.AreEqual(sense.Guid, new Guid("d3ed09c5-8757-41cb-849d-a24e6200caf4"));
+			Assert.That(new Guid("d3ed09c5-8757-41cb-849d-a24e6200caf4"), Is.EqualTo(sense.Guid));
 			Assert.That(entry.LexemeFormOA, Is.Not.Null);
 			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
-			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("green", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("stem"));
+			Assert.That(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("green"));
 			Assert.That(sense.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
 			Assert.That(((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
-			Assert.AreEqual("Adjective", ((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("green", sense.Gloss.AnalysisDefaultWritingSystem.Text);
+			Assert.That(((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Adjective"));
+			Assert.That(sense.Gloss.AnalysisDefaultWritingSystem.Text, Is.EqualTo("green"));
 			Assert.That(sense.Definition.AnalysisDefaultWritingSystem.Text, Is.Null);
-			Assert.AreEqual(0, sense.SemanticDomainsRC.Count);
-			Assert.AreEqual(0, entry.EntryRefsOS.Count);
+			Assert.That(sense.SemanticDomainsRC.Count, Is.EqualTo(0));
+			Assert.That(entry.EntryRefsOS.Count, Is.EqualTo(0));
 
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("67113a7f-e448-43e7-87cf-6d3a46ee10ec"), out entry));
-			Assert.AreEqual(1, entry.SensesOS.Count);
+			Assert.That(repoEntry.TryGetObject(new Guid("67113a7f-e448-43e7-87cf-6d3a46ee10ec"), out entry), Is.True);
+			Assert.That(entry.SensesOS.Count, Is.EqualTo(1));
 			sense = entry.SensesOS[0];
-			Assert.AreEqual(sense.Guid, new Guid("cf2ac6f4-01d8-47ed-9b41-25b6e727097f"));
+			Assert.That(new Guid("cf2ac6f4-01d8-47ed-9b41-25b6e727097f"), Is.EqualTo(sense.Guid));
 			Assert.That(entry.LexemeFormOA, Is.Not.Null);
 			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
-			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("greenhouse", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("stem"));
+			Assert.That(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("greenhouse"));
 			Assert.That(sense.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
 			Assert.That(((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA, Is.Not.Null);
-			Assert.AreEqual("Noun", ((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text);
+			Assert.That(((IMoStemMsa)sense.MorphoSyntaxAnalysisRA).PartOfSpeechRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Noun"));
 			Assert.That(sense.Gloss.AnalysisDefaultWritingSystem.Text, Is.Null);
 			Assert.That(sense.Definition.AnalysisDefaultWritingSystem.Text, Is.Null);
-			Assert.AreEqual(0, sense.SemanticDomainsRC.Count);
-			Assert.AreEqual(1, entry.EntryRefsOS.Count);
+			Assert.That(sense.SemanticDomainsRC.Count, Is.EqualTo(0));
+			Assert.That(entry.EntryRefsOS.Count, Is.EqualTo(1));
 			var lexref = entry.EntryRefsOS[0];
-			Assert.AreEqual(LexEntryRefTags.krtVariant, lexref.RefType);
-			Assert.AreEqual(0, lexref.ComplexEntryTypesRS.Count);
-			Assert.AreEqual(0, lexref.VariantEntryTypesRS.Count);
-			Assert.AreEqual(2, lexref.ComponentLexemesRS.Count);
-			Assert.AreEqual(new Guid("67940acb-9252-4941-bfb3-3ace4e1bda7a"), lexref.ComponentLexemesRS[0].Guid);
-			Assert.AreEqual(new Guid("69ccc807-f3d1-44cb-b79a-e8d416b0d7c1"), lexref.ComponentLexemesRS[1].Guid);
-			Assert.AreEqual(0, lexref.PrimaryLexemesRS.Count);
+			Assert.That(lexref.RefType, Is.EqualTo(LexEntryRefTags.krtVariant));
+			Assert.That(lexref.ComplexEntryTypesRS.Count, Is.EqualTo(0));
+			Assert.That(lexref.VariantEntryTypesRS.Count, Is.EqualTo(0));
+			Assert.That(lexref.ComponentLexemesRS.Count, Is.EqualTo(2));
+			Assert.That(lexref.ComponentLexemesRS[0].Guid, Is.EqualTo(new Guid("67940acb-9252-4941-bfb3-3ace4e1bda7a")));
+			Assert.That(lexref.ComponentLexemesRS[1].Guid, Is.EqualTo(new Guid("69ccc807-f3d1-44cb-b79a-e8d416b0d7c1")));
+			Assert.That(lexref.PrimaryLexemesRS.Count, Is.EqualTo(0));
 
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("58f978d2-2cb2-4506-9a47-63c5454f0065"), out entry));
-			Assert.AreEqual(0, entry.SensesOS.Count);
+			Assert.That(repoEntry.TryGetObject(new Guid("58f978d2-2cb2-4506-9a47-63c5454f0065"), out entry), Is.True);
+			Assert.That(entry.SensesOS.Count, Is.EqualTo(0));
 			Assert.That(entry.LexemeFormOA, Is.Not.Null);
 			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
-			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("hoose", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
-			Assert.AreEqual(1, entry.EntryRefsOS.Count);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("stem"));
+			Assert.That(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("hoose"));
+			Assert.That(entry.EntryRefsOS.Count, Is.EqualTo(1));
 			lexref = entry.EntryRefsOS[0];
-			Assert.AreEqual(LexEntryRefTags.krtVariant, lexref.RefType);
-			Assert.AreEqual(0, lexref.VariantEntryTypesRS.Count);
-			Assert.AreEqual(0, lexref.ComplexEntryTypesRS.Count);
-			Assert.AreEqual(1, lexref.ComponentLexemesRS.Count);
-			Assert.AreEqual(new Guid("69ccc807-f3d1-44cb-b79a-e8d416b0d7c1"), lexref.ComponentLexemesRS[0].Guid);
-			Assert.AreEqual(0, lexref.PrimaryLexemesRS.Count);
+			Assert.That(lexref.RefType, Is.EqualTo(LexEntryRefTags.krtVariant));
+			Assert.That(lexref.VariantEntryTypesRS.Count, Is.EqualTo(0));
+			Assert.That(lexref.ComplexEntryTypesRS.Count, Is.EqualTo(0));
+			Assert.That(lexref.ComponentLexemesRS.Count, Is.EqualTo(1));
+			Assert.That(lexref.ComponentLexemesRS[0].Guid, Is.EqualTo(new Guid("69ccc807-f3d1-44cb-b79a-e8d416b0d7c1")));
+			Assert.That(lexref.PrimaryLexemesRS.Count, Is.EqualTo(0));
 		}
 
 		private string[] GetLift3Strings(string date)
@@ -928,7 +928,7 @@ namespace LexTextControlsTests
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			ILexEntry entry;
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("ecfbe958-36a1-4b82-bb69-ca5210355401"), out entry));
+			Assert.That(repoEntry.TryGetObject(new Guid("ecfbe958-36a1-4b82-bb69-ca5210355401"), out entry), Is.True);
 			Assert.That(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("hombre"));
 
 			Assert.That(entry.SensesOS[0].Gloss.AnalysisDefaultWritingSystem.Text, Is.EqualTo("  man"));
@@ -975,7 +975,7 @@ namespace LexTextControlsTests
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			ILexEntry entry;
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("ecfbe958-36a1-4b82-bb69-ca5210355401"), out entry));
+			Assert.That(repoEntry.TryGetObject(new Guid("ecfbe958-36a1-4b82-bb69-ca5210355401"), out entry), Is.True);
 			Assert.That(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("hombre"));
 			Assert.That(entry.PronunciationsOS[0].MediaFilesOS[0].MediaFileRA.AbsoluteInternalPath, Is.SamePath(Path.Combine(Cache.LangProject.LinkedFilesRootDir, "AudioVisual", "Sleep Away.mp3")));
 		}
@@ -983,12 +983,12 @@ namespace LexTextControlsTests
 		[Test]
 		public void LiftDataImportDoesNotDuplicateVariants()
 		{
-			Assert.AreEqual("en", Cache.LangProject.CurAnalysisWss);
-			Assert.AreEqual("fr", Cache.LangProject.CurVernWss);
+			Assert.That(Cache.LangProject.CurAnalysisWss, Is.EqualTo("en"));
+			Assert.That(Cache.LangProject.CurVernWss, Is.EqualTo("fr"));
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			Assert.AreEqual(0, repoEntry.Count);
-			Assert.AreEqual(0, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(0));
+			Assert.That(repoSense.Count, Is.EqualTo(0));
 
 			var sOrigFile = CreateInputFile(GetLift3Strings("2011-03-01T22:28:00Z"));
 			var logFile = TryImport(sOrigFile, 4);
@@ -997,8 +997,8 @@ namespace LexTextControlsTests
 			File.Delete(sOrigFile);
 
 			ILexEntry entry;
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("67113a7f-e448-43e7-87cf-6d3a46ee10ec"), out entry));
-			Assert.AreEqual(1, entry.EntryRefsOS.Count);
+			Assert.That(repoEntry.TryGetObject(new Guid("67113a7f-e448-43e7-87cf-6d3a46ee10ec"), out entry), Is.True);
+			Assert.That(entry.EntryRefsOS.Count, Is.EqualTo(1));
 
 			var temp = entry.EntryRefsOS[0];
 			Assert.That(logFile, Is.Not.Null);
@@ -1010,11 +1010,11 @@ namespace LexTextControlsTests
 			File.Delete(logFile);
 			File.Delete(sOrigFile);
 
-			Assert.AreEqual(4, repoEntry.Count);
-			Assert.AreEqual(3, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(4));
+			Assert.That(repoSense.Count, Is.EqualTo(3));
 
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("67113a7f-e448-43e7-87cf-6d3a46ee10ec"), out entry));
-			Assert.AreEqual(1, entry.EntryRefsOS.Count);
+			Assert.That(repoEntry.TryGetObject(new Guid("67113a7f-e448-43e7-87cf-6d3a46ee10ec"), out entry), Is.True);
+			Assert.That(entry.EntryRefsOS.Count, Is.EqualTo(1));
 
 		}
 
@@ -1075,8 +1075,8 @@ namespace LexTextControlsTests
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			Assert.AreEqual(0, repoEntry.Count);
-			Assert.AreEqual(0, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(0));
+			Assert.That(repoSense.Count, Is.EqualTo(0));
 
 			// Put data in LIFT string
 			const int idxModifiedLine = 19;
@@ -1089,26 +1089,26 @@ namespace LexTextControlsTests
 			File.Delete(sOrigFile);
 			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
-			Assert.AreEqual(1, repoEntry.Count);
-			Assert.AreEqual(1, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(1));
+			Assert.That(repoSense.Count, Is.EqualTo(1));
 
 			Assert.That(messageCapture.Messages[0], Does.Contain("nonsence_object_ID"), "inability to link up bad ref should be reported in message box");
 
 			ILexEntry entry;
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("ecfbe958-36a1-4b82-bb69-ca5210355400"), out entry));
-			Assert.AreEqual(1, entry.SensesOS.Count);
-			Assert.AreEqual(entry.SensesOS[0].Guid, new Guid("f63f1ccf-3d50-417e-8024-035d999d48bc"));
+			Assert.That(repoEntry.TryGetObject(new Guid("ecfbe958-36a1-4b82-bb69-ca5210355400"), out entry), Is.True);
+			Assert.That(entry.SensesOS.Count, Is.EqualTo(1));
+			Assert.That(new Guid("f63f1ccf-3d50-417e-8024-035d999d48bc"), Is.EqualTo(entry.SensesOS[0].Guid));
 			Assert.That(entry.LexemeFormOA, Is.Not.Null);
 			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
-			Assert.AreEqual("root", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("hombre", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("root"));
+			Assert.That(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("hombre"));
 			var actualDefn = entry.SensesOS[0].Definition.AnalysisDefaultWritingSystem.Text;
 			var expectedXmlDefn = String.Format(fmtString, LINE_SEPARATOR, LINE_SEPARATOR, LINE_SEPARATOR);
 			var doc = new XmlDocument();
 			doc.LoadXml(expectedXmlDefn);
 			var expectedDefn = doc.SelectSingleNode("form/text");
 			Assert.That(expectedDefn, Is.Not.Null);
-			Assert.AreEqual(expectedDefn.InnerText, actualDefn, "Mismatched definition.");
+			Assert.That(actualDefn, Is.EqualTo(expectedDefn.InnerText), "Mismatched definition.");
 		}
 
 		private static readonly string[] s_LiftData5 = {
@@ -1233,8 +1233,8 @@ namespace LexTextControlsTests
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			Assert.AreEqual(0, repoEntry.Count);
-			Assert.AreEqual(0, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(0));
+			Assert.That(repoSense.Count, Is.EqualTo(0));
 			// One custom field is defined in FW but not in the file
 			var fdNew = new FieldDescription(Cache)
 			{
@@ -1255,14 +1255,14 @@ namespace LexTextControlsTests
 			File.Delete(sOrigFile);
 			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
-			Assert.AreEqual(2, repoEntry.Count);
-			Assert.AreEqual(2, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(2));
+			Assert.That(repoSense.Count, Is.EqualTo(2));
 
 			ILexEntry entry;
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("7e4e4484-d691-4ffa-8fb1-10cf4941ac14"), out entry));
-			Assert.AreEqual(1, entry.SensesOS.Count);
+			Assert.That(repoEntry.TryGetObject(new Guid("7e4e4484-d691-4ffa-8fb1-10cf4941ac14"), out entry), Is.True);
+			Assert.That(entry.SensesOS.Count, Is.EqualTo(1));
 			var sense0 = entry.SensesOS[0];
-			Assert.AreEqual(sense0.Guid, new Guid("29b7913f-0d28-4ee9-a57e-177f68a96654"));
+			Assert.That(new Guid("29b7913f-0d28-4ee9-a57e-177f68a96654"), Is.EqualTo(sense0.Guid));
 			var customData = new CustomFieldData()
 								{
 									CustomFieldname = "CustomFldSense",
@@ -1276,13 +1276,13 @@ namespace LexTextControlsTests
 			//===================================================================================
 			Assert.That(entry.LexemeFormOA, Is.Not.Null);
 			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
-			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("Babababa", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("stem"));
+			Assert.That(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("Babababa"));
 			Assert.That(sense0.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
 			var pos = ((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA;
 			Assert.That(pos, Is.Not.Null);
-			Assert.AreEqual("Noun", pos.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("Papi", sense0.Gloss.AnalysisDefaultWritingSystem.Text);
+			Assert.That(pos.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Noun"));
+			Assert.That(sense0.Gloss.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Papi"));
 			m_customFieldEntryIds = GetCustomFlidsOfObject(entry);
 			customData = new CustomFieldData()
 							{
@@ -1478,8 +1478,8 @@ namespace LexTextControlsTests
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			Assert.AreEqual(0, repoEntry.Count);
-			Assert.AreEqual(0, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(0));
+			Assert.That(repoSense.Count, Is.EqualTo(0));
 
 			var sOrigFile = CreateInputFile(s_LiftData6);
 
@@ -1487,25 +1487,25 @@ namespace LexTextControlsTests
 			File.Delete(sOrigFile);
 			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
-			Assert.AreEqual(1, repoEntry.Count);
-			Assert.AreEqual(1, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(1));
+			Assert.That(repoSense.Count, Is.EqualTo(1));
 
 			ILexEntry entry;
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("c78f68b9-79d0-4ce9-8b76-baa68a5c8444"), out entry));
-			Assert.AreEqual(1, entry.SensesOS.Count);
+			Assert.That(repoEntry.TryGetObject(new Guid("c78f68b9-79d0-4ce9-8b76-baa68a5c8444"), out entry), Is.True);
+			Assert.That(entry.SensesOS.Count, Is.EqualTo(1));
 			var sense0 = entry.SensesOS[0];
-			Assert.AreEqual(sense0.Guid, new Guid("9d6c600b-192a-4eec-980b-a605173ba5e3"));
+			Assert.That(new Guid("9d6c600b-192a-4eec-980b-a605173ba5e3"), Is.EqualTo(sense0.Guid));
 
 			//===================================================================================
 			Assert.That(entry.LexemeFormOA, Is.Not.Null);
 			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
-			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("Baba", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("stem"));
+			Assert.That(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("Baba"));
 			Assert.That(sense0.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
 			var pos = ((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA;
 			Assert.That(pos, Is.Not.Null);
-			Assert.AreEqual("NounPerson", pos.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("Pops", sense0.Gloss.AnalysisDefaultWritingSystem.Text);
+			Assert.That(pos.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("NounPerson"));
+			Assert.That(sense0.Gloss.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Pops"));
 
 			//===================================================================================
 			VerifyCustomFieldsEntry(entry);
@@ -1623,10 +1623,10 @@ namespace LexTextControlsTests
 			Assert.That(sda, Is.Not.Null);
 
 			var fieldName = mdc.GetFieldName(flid);
-			Assert.AreEqual(fieldData.CustomFieldname, fieldName);
+			Assert.That(fieldName, Is.EqualTo(fieldData.CustomFieldname));
 
 			var type = (CellarPropertyType)mdc.GetFieldType(flid);
-			Assert.AreEqual(fieldData.CustomFieldType, type);
+			Assert.That(type, Is.EqualTo(fieldData.CustomFieldType));
 
 			int ws;
 			ITsString tssString;
@@ -1640,13 +1640,13 @@ namespace LexTextControlsTests
 					//</field>
 					var tssMultiString = Cache.DomainDataByFlid.get_MultiStringProp(obj.Hvo, flid);
 					Assert.That(tssMultiString, Is.Not.Null);
-					//Assert.IsTrue(tssMultiString.StringCount >0);
+					//Assert.That(tssMultiString.StringCount >0, Is.True);
 
 						for (var i = 0; i < tssMultiString.StringCount; ++i)
 						{
 							tssString = tssMultiString.GetStringFromIndex(i, out ws);
-							Assert.AreEqual(fieldData.MultiUnicodeStrings[i], tssString.Text);
-							Assert.AreEqual(fieldData.MultiUnicodeWss[i], Cache.WritingSystemFactory.GetStrFromWs(ws));
+							Assert.That(tssString.Text, Is.EqualTo(fieldData.MultiUnicodeStrings[i]));
+							Assert.That(Cache.WritingSystemFactory.GetStrFromWs(ws), Is.EqualTo(fieldData.MultiUnicodeWss[i]));
 						}
 						Assert.That(tssMultiString.StringCount, Is.EqualTo(fieldData.MultiUnicodeStrings.Count));
 					break;
@@ -1663,7 +1663,7 @@ namespace LexTextControlsTests
 						if (possibilityHvo == 0)
 							return;
 						var tss = GetPossibilityBestAlternative(possibilityHvo, Cache);
-						Assert.AreEqual(fieldData.cmPossibilityNameRA, tss.ToString());
+						Assert.That(tss.ToString(), Is.EqualTo(fieldData.cmPossibilityNameRA));
 					}
 					break;
 				case CellarPropertyType.ReferenceCollection:
@@ -1672,11 +1672,11 @@ namespace LexTextControlsTests
 					//"<trait name=\"CustomFld ListMulti\" value=\"Sun\"/>",
 					var hvos = sda.VecProp(obj.Hvo, flid);
 					int count = hvos.Length;
-					Assert.AreEqual(fieldData.cmPossibilityNamesRS.Count, count);
+					Assert.That(count, Is.EqualTo(fieldData.cmPossibilityNamesRS.Count));
 					foreach (var hvo in hvos)
 					{
 						var tss = GetPossibilityBestAlternative(hvo, Cache);
-						Assert.True(fieldData.cmPossibilityNamesRS.Contains(tss.ToString()));
+						Assert.That(fieldData.cmPossibilityNamesRS.Contains(tss.ToString()), Is.True);
 					}
 					break;
 				case CellarPropertyType.String:
@@ -1686,9 +1686,9 @@ namespace LexTextControlsTests
 					//</form>
 					//</field>
 					tssString = Cache.DomainDataByFlid.get_StringProp(obj.Hvo, flid);
-					Assert.AreEqual(fieldData.StringFieldText, tssString.Text);
+					Assert.That(tssString.Text, Is.EqualTo(fieldData.StringFieldText));
 					ws = tssString.get_WritingSystem(0);
-					Assert.AreEqual(fieldData.StringFieldWs, Cache.WritingSystemFactory.GetStrFromWs(ws));
+					Assert.That(Cache.WritingSystemFactory.GetStrFromWs(ws), Is.EqualTo(fieldData.StringFieldWs));
 					break;
 				case CellarPropertyType.GenDate:
 					//"<trait name=\"CustomFldEntry GenDate\" value=\"201105232\"/>",
@@ -1699,7 +1699,7 @@ namespace LexTextControlsTests
 					//<trait name="CustomField2-LexSense Integer" value="5"></trait>
 					var intVal = Cache.DomainDataByFlid.get_IntProp(obj.Hvo, flid);
 					if (intVal != 0)
-						Assert.AreEqual(fieldData.IntegerValue, intVal);
+						Assert.That(intVal, Is.EqualTo(fieldData.IntegerValue));
 					break;
 				default:
 					break;
@@ -1713,11 +1713,11 @@ namespace LexTextControlsTests
 			var sValue = fieldData.GenDateLiftFormat;
 			Assert.That(sValue, Is.Not.Null);
 			var liftGenDate = LiftExporter.GetGenDateFromInt(Convert.ToInt32(sValue));
-			Assert.AreEqual(liftGenDate.Precision, genDate.Precision);
-			Assert.AreEqual(liftGenDate.IsAD, genDate.IsAD);
-			Assert.AreEqual(liftGenDate.Year, genDate.Year);
-			Assert.AreEqual(liftGenDate.Month, genDate.Month);
-			Assert.AreEqual(liftGenDate.Day, genDate.Day);
+			Assert.That(genDate.Precision, Is.EqualTo(liftGenDate.Precision));
+			Assert.That(genDate.IsAD, Is.EqualTo(liftGenDate.IsAD));
+			Assert.That(genDate.Year, Is.EqualTo(liftGenDate.Year));
+			Assert.That(genDate.Month, Is.EqualTo(liftGenDate.Month));
+			Assert.That(genDate.Day, Is.EqualTo(liftGenDate.Day));
 		}
 
 		private static readonly string[] s_LiftRangeData7 = {
@@ -1955,8 +1955,8 @@ namespace LexTextControlsTests
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
 			Cache.LangProject.StatusOA = Cache.ServiceLocator.GetInstance<ICmPossibilityListFactory>().Create();
-			Assert.AreEqual(0, repoEntry.Count);
-			Assert.AreEqual(0, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(0));
+			Assert.That(repoSense.Count, Is.EqualTo(0));
 
 			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(s_LiftData7);
@@ -1968,28 +1968,28 @@ namespace LexTextControlsTests
 			File.Delete(sOrigRangesFile);
 			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
-			Assert.AreEqual(1, repoEntry.Count);
-			Assert.AreEqual(1, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(1));
+			Assert.That(repoSense.Count, Is.EqualTo(1));
 
 			ILexEntry entry;
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("aef5e807-c841-4f35-9591-c8a998dc2465"), out entry));
-			Assert.AreEqual(1, entry.SensesOS.Count);
+			Assert.That(repoEntry.TryGetObject(new Guid("aef5e807-c841-4f35-9591-c8a998dc2465"), out entry), Is.True);
+			Assert.That(entry.SensesOS.Count, Is.EqualTo(1));
 			var sense0 = entry.SensesOS[0];
-			Assert.AreEqual(sense0.Guid, new Guid("5741255b-0563-49e0-8839-98bdb8c73f48"));
+			Assert.That(new Guid("5741255b-0563-49e0-8839-98bdb8c73f48"), Is.EqualTo(sense0.Guid));
 
 			//===================================================================================
 			Assert.That(entry.LexemeFormOA, Is.Not.Null);
 			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
-			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("Baba", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("stem"));
+			Assert.That(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("Baba"));
 			Assert.That(sense0.MorphoSyntaxAnalysisRA, Is.AssignableTo<IMoStemMsa>());
 			var pos = ((IMoStemMsa)sense0.MorphoSyntaxAnalysisRA).PartOfSpeechRA;
 			Assert.That(pos, Is.Not.Null);
-			Assert.AreEqual("NounFamily", pos.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("Papi", sense0.Gloss.AnalysisDefaultWritingSystem.Text);
+			Assert.That(pos.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("NounFamily"));
+			Assert.That(sense0.Gloss.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Papi"));
 
 			// Verify example was imported
-			Assert.AreEqual(1, sense0.ExamplesOS.Count, "Example not imported correctly.");
+			Assert.That(sense0.ExamplesOS.Count, Is.EqualTo(1), "Example not imported correctly.");
 
 			VerifyCmPossibilityLists();
 			VerifyCmPossibilityCustomFields(entry);
@@ -2054,8 +2054,8 @@ namespace LexTextControlsTests
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			Assert.AreEqual(0, repoEntry.Count);
-			Assert.AreEqual(0, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(0));
+			Assert.That(repoSense.Count, Is.EqualTo(0));
 
 			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(inflectionLiftData);
@@ -2068,11 +2068,11 @@ namespace LexTextControlsTests
 			//Verify that no errors were encountered loading the inflection features range
 			AssertThatXmlIn.File(logFile).HasNoMatchForXpath("//*[contains(., 'Error encountered processing ranges')]");
 			File.Delete(logFile);
-			Assert.AreEqual(1, repoEntry.Count);
-			Assert.AreEqual(1, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(1));
+			Assert.That(repoSense.Count, Is.EqualTo(1));
 
 			ILexEntry entry;
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("aef5e807-c841-4f35-9591-c8a998dc2465"), out entry));
+			Assert.That(repoEntry.TryGetObject(new Guid("aef5e807-c841-4f35-9591-c8a998dc2465"), out entry), Is.True);
 		}
 
 		/// <summary>
@@ -2105,8 +2105,8 @@ namespace LexTextControlsTests
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			Assert.AreEqual(0, repoEntry.Count);
-			Assert.AreEqual(0, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(0));
+			Assert.That(repoSense.Count, Is.EqualTo(0));
 			Assert.That(Cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().Count, Is.EqualTo(0));
 
 			//Create the LIFT data file
@@ -2117,10 +2117,10 @@ namespace LexTextControlsTests
 			//Verify that no errors were encountered loading the inflection features range
 			AssertThatXmlIn.File(logFile).HasNoMatchForXpath("//*[contains(., 'Error encountered processing ranges')]");
 			File.Delete(logFile);
-			Assert.AreEqual(1, repoEntry.Count);
-			Assert.AreEqual(1, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(1));
+			Assert.That(repoSense.Count, Is.EqualTo(1));
 			ILexSense sense;
-			Assert.IsTrue(repoSense.TryGetObject(new Guid("b4de1476-b432-46b6-97e3-c993ff0a2ff9"), out sense));
+			Assert.That(repoSense.TryGetObject(new Guid("b4de1476-b432-46b6-97e3-c993ff0a2ff9"), out sense), Is.True);
 			Assert.That(sense.ReferringReversalIndexEntries.Count, Is.EqualTo(0), "Empty reversal should not have been imported.");
 			Assert.That(Cache.ServiceLocator.GetInstance<IReversalIndexEntryRepository>().Count, Is.EqualTo(0));
 		}
@@ -2157,8 +2157,8 @@ namespace LexTextControlsTests
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			Assert.AreEqual(0, repoEntry.Count);
-			Assert.AreEqual(0, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(0));
+			Assert.That(repoSense.Count, Is.EqualTo(0));
 
 			//Create the LIFT data file
 			var liftFileWithOneEmptyAndOneNonEmptyReversal = CreateInputFile(liftDataWithOneEmptyAndOneNonEmptyReversal);
@@ -2166,10 +2166,10 @@ namespace LexTextControlsTests
 			var logFile = TryImport(liftFileWithOneEmptyAndOneNonEmptyReversal, null, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
 			File.Delete(liftFileWithOneEmptyAndOneNonEmptyReversal);
 			File.Delete(logFile);
-			Assert.AreEqual(1, repoEntry.Count);
-			Assert.AreEqual(1, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(1));
+			Assert.That(repoSense.Count, Is.EqualTo(1));
 			ILexSense sense;
-			Assert.IsTrue(repoSense.TryGetObject(new Guid("b4de1476-b432-46b6-97e3-c993ff0a2ff9"), out sense));
+			Assert.That(repoSense.TryGetObject(new Guid("b4de1476-b432-46b6-97e3-c993ff0a2ff9"), out sense), Is.True);
 			Assert.That(sense.ReferringReversalIndexEntries.Count, Is.EqualTo(1), "Empty reversal should not have been imported but non empty should.");
 		}
 
@@ -2208,8 +2208,8 @@ namespace LexTextControlsTests
 			@"</entry>",
 			@"</lift>"
 			};
-			Assert.AreEqual(1, repoEntry.Count);
-			Assert.AreEqual(1, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(1));
+			Assert.That(repoSense.Count, Is.EqualTo(1));
 
 			//Create the LIFT data file
 			var testLiftFile = CreateInputFile(basicLiftEntry);
@@ -2217,10 +2217,10 @@ namespace LexTextControlsTests
 			var logFile = TryImport(testLiftFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 1, false);
 			File.Delete(testLiftFile);
 			File.Delete(logFile);
-			Assert.AreEqual(1, repoEntry.Count);
-			Assert.AreEqual(1, repoSense.Count);
-			Assert.AreEqual(entry.DateCreated.Millisecond, entryCreationMs, "Creation Date lost milliseconds on a 'no-op' merge");
-			Assert.AreEqual(entry.DateModified.Millisecond, entryModifiedMs, "Modification time lost milliseconds on a 'no-op' merge");
+			Assert.That(repoEntry.Count, Is.EqualTo(1));
+			Assert.That(repoSense.Count, Is.EqualTo(1));
+			Assert.That(entryCreationMs, Is.EqualTo(entry.DateCreated.Millisecond), "Creation Date lost milliseconds on a 'no-op' merge");
+			Assert.That(entryModifiedMs, Is.EqualTo(entry.DateModified.Millisecond), "Modification time lost milliseconds on a 'no-op' merge");
 		}
 
 		/// <summary>
@@ -2249,9 +2249,9 @@ namespace LexTextControlsTests
 			SetWritingSystems("fr");
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
-			Assert.AreEqual(0, repoEntry.Count);
-			Assert.AreEqual(Cache.LangProject.CurrentPronunciationWritingSystems.Count, 0);
-			Assert.AreEqual(Cache.LangProject.VernacularWritingSystems.Count, 1);
+			Assert.That(repoEntry.Count, Is.EqualTo(0));
+			Assert.That(Cache.LangProject.CurrentPronunciationWritingSystems.Count, Is.EqualTo(0));
+			Assert.That(Cache.LangProject.VernacularWritingSystems.Count, Is.EqualTo(1));
 
 			//Create the LIFT data file
 			var liftFileWithIpaPronunciation = CreateInputFile(liftDataWithIpaPronunciation);
@@ -2261,9 +2261,9 @@ namespace LexTextControlsTests
 			//Verify that the writing system was reported as added
 			AssertThatXmlIn.File(logFile).HasSpecifiedNumberOfMatchesForXpath("//li[contains(., 'Naxi (International Phonetic Alphabet) (nbf-fonipa)')]", 1);
 			File.Delete(logFile);
-			Assert.AreEqual(1, repoEntry.Count);
-			Assert.AreEqual(Cache.LangProject.CurrentPronunciationWritingSystems.Count, 1, "IPA from pronunciation was not added to pronunciation writing systems");
-			Assert.AreEqual(Cache.LangProject.VernacularWritingSystems.Count, 2, "IPA from pronunciation was not added to vernacular writing systems");
+			Assert.That(repoEntry.Count, Is.EqualTo(1));
+			Assert.That(Cache.LangProject.CurrentPronunciationWritingSystems.Count, Is.EqualTo(1), "IPA from pronunciation was not added to pronunciation writing systems");
+			Assert.That(Cache.LangProject.VernacularWritingSystems.Count, Is.EqualTo(2), "IPA from pronunciation was not added to vernacular writing systems");
 		}
 
 		private void VerifyCmPossibilityLists()
@@ -2273,12 +2273,12 @@ namespace LexTextControlsTests
 			var semanticDomainsList = Cache.LanguageProject.SemanticDomainListOA;
 			var item = semanticDomainsList.FindOrCreatePossibility("Universe, creation", Cache.DefaultAnalWs);
 			Assert.That(item, Is.Not.Null);
-			Assert.AreEqual("63403699-07c1-43f3-a47c-069d6e4316e5", item.Guid.ToString());
+			Assert.That(item.Guid.ToString(), Is.EqualTo("63403699-07c1-43f3-a47c-069d6e4316e5"));
 
 			item = semanticDomainsList.FindOrCreatePossibility("Universe, creation" + StringUtils.kszObject + "Sky",
 				Cache.DefaultAnalWs);
 			Assert.That(item, Is.Not.Null);
-			Assert.AreEqual("999581c4-1611-4acb-ae1b-5e6c1dfe6f0c", item.Guid.ToString());
+			Assert.That(item.Guid.ToString(), Is.EqualTo("999581c4-1611-4acb-ae1b-5e6c1dfe6f0c"));
 
 			//FLEX does not allow users to add new morph-types.  However LIFT import will add new morph-types if
 			//they are found in the LIFT ranges file.
@@ -2286,9 +2286,9 @@ namespace LexTextControlsTests
 			var morphTylesList = Cache.LanguageProject.LexDbOA.MorphTypesOA;
 			var morphType = morphTylesList.FindOrCreatePossibility("klingongtype", Cache.DefaultAnalWs);
 			Assert.That(morphType, Is.Not.Null);
-			Assert.AreEqual("49343092-A48B-4c73-92B5-7603DF372D8B".ToLowerInvariant(), morphType.Guid.ToString().ToLowerInvariant());
-			Assert.AreEqual("Does this thing kling or clingy thingy.", morphType.Description.BestAnalysisVernacularAlternative.Text);
-			Assert.AreEqual("spok", morphType.Abbreviation.BestAnalysisVernacularAlternative.Text);
+			Assert.That(morphType.Guid.ToString().ToLowerInvariant(), Is.EqualTo("49343092-A48B-4c73-92B5-7603DF372D8B".ToLowerInvariant()));
+			Assert.That(morphType.Description.BestAnalysisVernacularAlternative.Text, Is.EqualTo("Does this thing kling or clingy thingy."));
+			Assert.That(morphType.Abbreviation.BestAnalysisVernacularAlternative.Text, Is.EqualTo("spok"));
 
 			var repo = Cache.ServiceLocator.GetInstance<ICmPossibilityListRepository>();
 			foreach (var list in repo.AllInstances())
@@ -2296,7 +2296,7 @@ namespace LexTextControlsTests
 				if (list.OwningFlid == 0 &&
 					list.Name.BestAnalysisVernacularAlternative.Text == "CustomCmPossibiltyList")
 				{
-					Assert.IsTrue(list.PossibilitiesOS.Count == 3);
+					Assert.That(list.PossibilitiesOS.Count == 3, Is.True);
 					VerifyListItem(list.PossibilitiesOS[0], "list item 1", "66705e7a-d7db-47c6-964c-973d5830566c",
 						"***", "description of item 1");
 					VerifyListItem(list.PossibilitiesOS[1], "list item 2", "8af65c9d-2e79-4d6a-8164-854aab89d068",
@@ -2308,7 +2308,7 @@ namespace LexTextControlsTests
 				else if (list.OwningFlid == 0 &&
 					list.Name.BestAnalysisVernacularAlternative.Text == "CustomList Number2 ")
 				{
-					Assert.IsTrue(list.PossibilitiesOS.Count == 2);
+					Assert.That(list.PossibilitiesOS.Count == 2, Is.True);
 					VerifyListItem(list.PossibilitiesOS[0], "cstm list item 1", "aea3e48f-de0c-4315-8a35-f3b844070e94",
 								   "labr1", "***");
 					VerifyListItem(list.PossibilitiesOS[1], "cstm list item 2", "164fc705-c8fd-46af-a3a8-5f0f62565d96",
@@ -2320,10 +2320,10 @@ namespace LexTextControlsTests
 		private void VerifyListItem(ICmPossibility listItem, string itemName, string itemGuid, string itemAbbrev,
 			string itemDesc)
 		{
-			Assert.AreEqual(itemName, listItem.Name.BestAnalysisVernacularAlternative.Text);
-			Assert.AreEqual(itemGuid.ToLowerInvariant(), listItem.Guid.ToString().ToLowerInvariant());
-			Assert.AreEqual(itemAbbrev, listItem.Abbreviation.BestAnalysisVernacularAlternative.Text);
-			Assert.AreEqual(itemDesc, listItem.Description.BestAnalysisVernacularAlternative.Text);
+			Assert.That(listItem.Name.BestAnalysisVernacularAlternative.Text, Is.EqualTo(itemName));
+			Assert.That(listItem.Guid.ToString().ToLowerInvariant(), Is.EqualTo(itemGuid.ToLowerInvariant()));
+			Assert.That(listItem.Abbreviation.BestAnalysisVernacularAlternative.Text, Is.EqualTo(itemAbbrev));
+			Assert.That(listItem.Description.BestAnalysisVernacularAlternative.Text, Is.EqualTo(itemDesc));
 		}
 
 		//All custom CmPossibility lists names and Guids
@@ -2379,10 +2379,10 @@ namespace LexTextControlsTests
 		{
 			var custFieldType = (CellarPropertyType)m_mdc.GetFieldType(flid);
 			var custFieldListGuid = m_mdc.GetFieldListRoot(flid);
-			Assert.AreEqual(type, custFieldType);
+			Assert.That(custFieldType, Is.EqualTo(type));
 			Guid lstGuid = Guid.Empty;
 			m_customListNamesAndGuids.TryGetValue(possListName, out lstGuid);
-			Assert.AreEqual(custFieldListGuid, lstGuid);
+			Assert.That(lstGuid, Is.EqualTo(custFieldListGuid));
 		}
 
 		private void VerifyCmPossibilityCustomFieldsData(ILexEntry entry)
@@ -2568,8 +2568,8 @@ namespace LexTextControlsTests
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			Assert.AreEqual(0, repoEntry.Count);
-			Assert.AreEqual(0, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(0));
+			Assert.That(repoSense.Count, Is.EqualTo(0));
 
 			//Create the LIFT data file
 			var sOrigFile = CreateInputFile(s_LiftDataLocations);
@@ -2581,8 +2581,8 @@ namespace LexTextControlsTests
 			File.Delete(sOrigRangesFile);
 			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
-			Assert.AreEqual(1, repoEntry.Count);
-			Assert.AreEqual(1, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(1));
+			Assert.That(repoSense.Count, Is.EqualTo(1));
 
 			var locations = Cache.LangProject.LocationsOA;
 			Assert.That(locations.PossibilitiesOS.Count, Is.EqualTo(2), "should have imported one locations and matched another");
@@ -2669,8 +2669,8 @@ namespace LexTextControlsTests
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			Assert.AreEqual(0, repoEntry.Count);
-			Assert.AreEqual(0, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(0));
+			Assert.That(repoSense.Count, Is.EqualTo(0));
 
 			var sOrigFile = CreateInputFile(s_LiftData8);
 
@@ -2680,28 +2680,28 @@ namespace LexTextControlsTests
 			File.Delete(logFile);
 
 			var flidCustom = Cache.MetaDataCacheAccessor.GetFieldId("LexEntry", "Long Text", false);
-			Assert.AreNotEqual(0, flidCustom, "The \"Long Text\" custom field should exist for LexEntry objects.");
+			Assert.That(flidCustom, Is.Not.EqualTo(0).Within("The \"Long Text\" custom field should exist for LexEntry objects."));
 			var type = Cache.MetaDataCacheAccessor.GetFieldType(flidCustom);
-			Assert.AreEqual((int) CellarPropertyType.OwningAtomic, type, "The custom field should be an atomic owning field.");
+			Assert.That(type, Is.EqualTo((int) CellarPropertyType.OwningAtomic), "The custom field should be an atomic owning field.");
 			var destName = Cache.MetaDataCacheAccessor.GetDstClsName(flidCustom);
-			Assert.AreEqual("StText", destName, "The custom field should own an StText object.");
+			Assert.That(destName, Is.EqualTo("StText"), "The custom field should own an StText object.");
 
-			Assert.AreEqual(2, repoEntry.Count);
-			Assert.AreEqual(2, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(2));
+			Assert.That(repoSense.Count, Is.EqualTo(2));
 
 			VerifyFirstEntryStTextDataImportExact(repoEntry, 3, flidCustom);
 
 			ILexEntry entry2;
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("241cffca-3062-4b1c-8f9f-ab8ed07eb7bd"), out entry2));
-			Assert.AreEqual(1, entry2.SensesOS.Count);
+			Assert.That(repoEntry.TryGetObject(new Guid("241cffca-3062-4b1c-8f9f-ab8ed07eb7bd"), out entry2), Is.True);
+			Assert.That(entry2.SensesOS.Count, Is.EqualTo(1));
 			var sense2 = entry2.SensesOS[0];
-			Assert.AreEqual(sense2.Guid, new Guid("2759532a-26db-4850-9cba-b3684f0a3f5f"));
+			Assert.That(new Guid("2759532a-26db-4850-9cba-b3684f0a3f5f"), Is.EqualTo(sense2.Guid));
 
 			var hvo = Cache.DomainDataByFlid.get_ObjectProp(entry2.Hvo, flidCustom);
-			Assert.AreNotEqual(0, hvo, "The second entry has a value in the \"Long Text\" custom field.");
+			Assert.That(hvo, Is.Not.EqualTo(0).Within("The second entry has a value in the \"Long Text\" custom field."));
 			var text = Cache.ServiceLocator.ObjectRepository.GetObject(hvo) as IStText;
 			Assert.That(text, Is.Not.Null);
-			Assert.AreEqual(3, text.ParagraphsOS.Count, "The first Long Text field should have three paragraphs.");
+			Assert.That(text.ParagraphsOS.Count, Is.EqualTo(3), "The first Long Text field should have three paragraphs.");
 
 			Assert.That(text.ParagraphsOS[0].StyleName, Is.Null);
 			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
@@ -2713,8 +2713,8 @@ namespace LexTextControlsTests
 			tisb.ClearProps();
 			var para = text.ParagraphsOS[0] as IStTxtPara;
 			Assert.That(para, Is.Not.Null);
-			Assert.AreEqual(tss.Text, para.Contents.Text);
-			Assert.IsTrue(tss.Equals(para.Contents), "The first paragraph (second entry) contents should have all its formatting.");
+			Assert.That(para.Contents.Text, Is.EqualTo(tss.Text));
+			Assert.That(tss.Equals(para.Contents), Is.True, "The first paragraph (second entry) contents should have all its formatting.");
 
 			Assert.That(text.ParagraphsOS[1].StyleName, Is.Null);
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsEn);
@@ -2732,10 +2732,10 @@ namespace LexTextControlsTests
 			tisb.ClearProps();
 			para = text.ParagraphsOS[1] as IStTxtPara;
 			Assert.That(para, Is.Not.Null);
-			Assert.AreEqual(tss.Text, para.Contents.Text);
-			Assert.IsTrue(tss.Equals(para.Contents), "The second paragraph (second entry) contents should have all its formatting.");
+			Assert.That(para.Contents.Text, Is.EqualTo(tss.Text));
+			Assert.That(tss.Equals(para.Contents), Is.True, "The second paragraph (second entry) contents should have all its formatting.");
 
-			Assert.AreEqual("Block Quote", text.ParagraphsOS[2].StyleName);
+			Assert.That(text.ParagraphsOS[2].StyleName, Is.EqualTo("Block Quote"));
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsEn);
 			tisb.Append("This paragraph has a paragraph style applied.");
 			tss = tisb.GetString();
@@ -2743,8 +2743,8 @@ namespace LexTextControlsTests
 			tisb.ClearProps();
 			para = text.ParagraphsOS[2] as IStTxtPara;
 			Assert.That(para, Is.Not.Null);
-			Assert.AreEqual(tss.Text, para.Contents.Text);
-			Assert.IsTrue(tss.Equals(para.Contents), "The third paragraph (second entry) contents should have all its formatting.");
+			Assert.That(para.Contents.Text, Is.EqualTo(tss.Text));
+			Assert.That(tss.Equals(para.Contents), Is.True, "The third paragraph (second entry) contents should have all its formatting.");
 		}
 
 		private void CreateNeededStyles()
@@ -2778,8 +2778,8 @@ namespace LexTextControlsTests
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			Assert.AreEqual(1, repoEntry.Count);
-			Assert.AreEqual(1, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(1));
+			Assert.That(repoSense.Count, Is.EqualTo(1));
 
 			var sOrigFile = CreateInputFile(s_LiftData8);
 			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepBoth, 2);
@@ -2802,8 +2802,8 @@ namespace LexTextControlsTests
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			Assert.AreEqual(1, repoEntry.Count);
-			Assert.AreEqual(1, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(1));
+			Assert.That(repoSense.Count, Is.EqualTo(1));
 
 			var sOrigFile = CreateInputFile(s_LiftData8);
 			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepOld, 2);
@@ -2826,30 +2826,30 @@ namespace LexTextControlsTests
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			Assert.AreEqual(1, repoEntry.Count);
-			Assert.AreEqual(1, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(1));
+			Assert.That(repoSense.Count, Is.EqualTo(1));
 
 			var sOrigFile = CreateInputFile(s_LiftData8);
 			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 2);
 
-			Assert.AreEqual(2, repoEntry.Count);
-			Assert.AreEqual(2, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(2));
+			Assert.That(repoSense.Count, Is.EqualTo(2));
 
 			VerifyFirstEntryStTextDataImportExact(repoEntry, 4, flidCustom);
 			// Now check the fourth paragraph.
 			ILexEntry entry1;
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("494616cc-2f23-4877-a109-1a6c1db0887e"), out entry1));
+			Assert.That(repoEntry.TryGetObject(new Guid("494616cc-2f23-4877-a109-1a6c1db0887e"), out entry1), Is.True);
 			var hvo = Cache.DomainDataByFlid.get_ObjectProp(entry1.Hvo, flidCustom);
-			Assert.AreNotEqual(0, hvo, "The first entry has a value in the \"Long Text\" custom field.");
+			Assert.That(hvo, Is.Not.EqualTo(0).Within("The first entry has a value in the \"Long Text\" custom field."));
 			var text = Cache.ServiceLocator.ObjectRepository.GetObject(hvo) as IStText;
 			Assert.That(text, Is.Not.Null);
 			var para = text.ParagraphsOS[3] as IStTxtPara;
 			Assert.That(para, Is.Not.Null);
-			Assert.AreEqual("Numbered List", para.StyleName);
+			Assert.That(para.StyleName, Is.EqualTo("Numbered List"));
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			var tss = TsStringUtils.MakeString("This is the fourth paragraph.", wsEn);
-			Assert.AreEqual(tss.Text, para.Contents.Text);
-			Assert.IsTrue(tss.Equals(para.Contents), "The fourth paragraph contents should not have changed.");
+			Assert.That(para.Contents.Text, Is.EqualTo(tss.Text));
+			Assert.That(tss.Equals(para.Contents), Is.True, "The fourth paragraph contents should not have changed.");
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -2868,14 +2868,14 @@ namespace LexTextControlsTests
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			Assert.AreEqual(1, repoEntry.Count);
-			Assert.AreEqual(1, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(1));
+			Assert.That(repoSense.Count, Is.EqualTo(1));
 
 			var sOrigFile = CreateInputFile(s_LiftData8);
 			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepOnlyNew, 2);
 
-			Assert.AreEqual(2, repoEntry.Count);
-			Assert.AreEqual(2, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(2));
+			Assert.That(repoSense.Count, Is.EqualTo(2));
 
 			VerifyFirstEntryStTextDataImportExact(repoEntry, 3, flidCustom);
 		}
@@ -2925,33 +2925,31 @@ namespace LexTextControlsTests
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			Assert.AreEqual(0, repoEntry.Count);
-			Assert.AreEqual(0, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(0));
+			Assert.That(repoSense.Count, Is.EqualTo(0));
 
 			var sOrigFile = CreateInputFile(s_LiftData9);
 			var logFile = TryImport(sOrigFile, null, FlexLiftMerger.MergeStyle.MsKeepNew, 1);
-			Assert.AreEqual(1, repoEntry.Count);
-			Assert.AreEqual(1, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(1));
+			Assert.That(repoSense.Count, Is.EqualTo(1));
 			var todoEntry = repoEntry.GetObject(new Guid("f8506500-d17c-4c1b-b05d-ea57f562cb1c"));
-			Assert.AreEqual("Noun", todoEntry.SensesOS[0].MorphoSyntaxAnalysisRA.LongName,
-				"MSA should NOT have any Inflection Feature stuff on it.");
+			Assert.That(todoEntry.SensesOS[0].MorphoSyntaxAnalysisRA.LongName, Is.EqualTo("Noun"), "MSA should NOT have any Inflection Feature stuff on it.");
 		}
 
 		private void VerifyFirstEntryStTextDataImportExact(ILexEntryRepository repoEntry, int cpara, int flidCustom)
 		{
 			ILexEntry entry1;
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("494616cc-2f23-4877-a109-1a6c1db0887e"), out entry1));
-			Assert.AreEqual(1, entry1.SensesOS.Count);
+			Assert.That(repoEntry.TryGetObject(new Guid("494616cc-2f23-4877-a109-1a6c1db0887e"), out entry1), Is.True);
+			Assert.That(entry1.SensesOS.Count, Is.EqualTo(1));
 			var sense1 = entry1.SensesOS[0];
-			Assert.AreEqual(sense1.Guid, new Guid("3e0ae703-db7f-4687-9cf5-481524095905"));
+			Assert.That(new Guid("3e0ae703-db7f-4687-9cf5-481524095905"), Is.EqualTo(sense1.Guid));
 
 			var hvo = Cache.DomainDataByFlid.get_ObjectProp(entry1.Hvo, flidCustom);
-			Assert.AreNotEqual(0, hvo, "The first entry has a value in the \"Long Text\" custom field.");
+			Assert.That(hvo, Is.Not.EqualTo(0).Within("The first entry has a value in the \"Long Text\" custom field."));
 			var text = Cache.ServiceLocator.ObjectRepository.GetObject(hvo) as IStText;
 			Assert.That(text, Is.Not.Null);
-			Assert.AreEqual(cpara, text.ParagraphsOS.Count,
-				String.Format("The first Long Text field should have {0} paragraphs.", cpara));
-			Assert.AreEqual("Bulleted List", text.ParagraphsOS[0].StyleName);
+			Assert.That(text.ParagraphsOS.Count, Is.EqualTo(cpara).Within(String.Format("The first Long Text field should have {0} paragraphs.", cpara)));
+			Assert.That(text.ParagraphsOS[0].StyleName, Is.EqualTo("Bulleted List"));
 			ITsIncStrBldr tisb = TsStringUtils.MakeIncStrBldr();
 			var wsEn = Cache.WritingSystemFactory.GetWsFromStr("en");
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsEn);
@@ -2965,10 +2963,10 @@ namespace LexTextControlsTests
 			tisb.ClearProps();
 			var para = text.ParagraphsOS[0] as IStTxtPara;
 			Assert.That(para, Is.Not.Null);
-			Assert.AreEqual(tss.Text, para.Contents.Text);
-			Assert.IsTrue(tss.Equals(para.Contents), "The first paragraph contents should have all its formatting.");
+			Assert.That(para.Contents.Text, Is.EqualTo(tss.Text));
+			Assert.That(tss.Equals(para.Contents), Is.True, "The first paragraph contents should have all its formatting.");
 
-			Assert.AreEqual("Bulleted List", text.ParagraphsOS[1].StyleName);
+			Assert.That(text.ParagraphsOS[1].StyleName, Is.EqualTo("Bulleted List"));
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsEn);
 			tisb.Append("For example, this is the second paragraph already.");
 			tss = tisb.GetString();
@@ -2976,10 +2974,10 @@ namespace LexTextControlsTests
 			tisb.ClearProps();
 			para = text.ParagraphsOS[1] as IStTxtPara;
 			Assert.That(para, Is.Not.Null);
-			Assert.AreEqual(tss.Text, para.Contents.Text);
-			Assert.IsTrue(tss.Equals(para.Contents), "The second paragraph contents should have all its formatting.");
+			Assert.That(para.Contents.Text, Is.EqualTo(tss.Text));
+			Assert.That(tss.Equals(para.Contents), Is.True, "The second paragraph contents should have all its formatting.");
 
-			Assert.AreEqual("Normal", text.ParagraphsOS[2].StyleName);
+			Assert.That(text.ParagraphsOS[2].StyleName, Is.EqualTo("Normal"));
 			tisb.SetIntPropValues((int)FwTextPropType.ktptWs, 0, wsEn);
 			tisb.Append("This third paragraph is back in the normal (default) paragraph style, and some character ");
 			tisb.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Emphasized Text");
@@ -2995,8 +2993,8 @@ namespace LexTextControlsTests
 			tisb.ClearProps();
 			para = text.ParagraphsOS[2] as IStTxtPara;
 			Assert.That(para, Is.Not.Null);
-			Assert.AreEqual(tss.Text, para.Contents.Text);
-			Assert.IsTrue(tss.Equals(para.Contents), "The third paragraph contents should have all its formatting.");
+			Assert.That(para.Contents.Text, Is.EqualTo(tss.Text));
+			Assert.That(tss.Equals(para.Contents), Is.True, "The third paragraph contents should have all its formatting.");
 		}
 
 		private int CreateFirstEntryWithConflictingData(string customFieldName)
@@ -3138,17 +3136,17 @@ namespace LexTextControlsTests
 				{
 					attr = form.Attribute("lang");
 					Assert.That(attr, Is.Not.Null);
-					Assert.IsTrue(attr.Value.Equals("en"));
+					Assert.That(attr.Value.Equals("en"), Is.True);
 					text = form.XPathSelectElement("text");
-					Assert.IsTrue(text.Value.Equals("anatomy"));
+					Assert.That(text.Value.Equals("anatomy"), Is.True);
 				}
 				if (i == 1)
 				{
 					attr = form.Attribute("lang");
 					Assert.That(attr, Is.Not.Null);
-					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
+					Assert.That(attr.Value.Equals("qaa-x-kal"), Is.True);
 					text = form.XPathSelectElement("text");
-					Assert.IsTrue(text.Value.Equals("Kalaba anatomy"));
+					Assert.That(text.Value.Equals("Kalaba anatomy"), Is.True);
 				}
 				i++;
 			}
@@ -3161,17 +3159,17 @@ namespace LexTextControlsTests
 				{
 					attr = form.Attribute("lang");
 					Assert.That(attr, Is.Not.Null);
-					Assert.IsTrue(attr.Value.Equals("en"));
+					Assert.That(attr.Value.Equals("en"), Is.True);
 					text = form.XPathSelectElement("text");
-					Assert.IsTrue(text.Value.Equals("Anat"));
+					Assert.That(text.Value.Equals("Anat"), Is.True);
 				}
 				if (i == 1)
 				{
 					attr = form.Attribute("lang");
 					Assert.That(attr, Is.Not.Null);
-					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
+					Assert.That(attr.Value.Equals("qaa-x-kal"), Is.True);
 					text = form.XPathSelectElement("text");
-					Assert.IsTrue(text.Value.Equals("Kalaba Anat"));
+					Assert.That(text.Value.Equals("Kalaba Anat"), Is.True);
 				}
 				i++;
 			}
@@ -3183,9 +3181,9 @@ namespace LexTextControlsTests
 				{
 					attr = form.Attribute("lang");
 					Assert.That(attr, Is.Not.Null);
-					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
+					Assert.That(attr.Value.Equals("qaa-x-kal"), Is.True);
 					text = form.XPathSelectElement("text");
-					Assert.IsTrue(text.Value.Equals("Kalaba anatomy definition"));
+					Assert.That(text.Value.Equals("Kalaba anatomy definition"), Is.True);
 				}
 				i++;
 			}
@@ -3206,7 +3204,7 @@ namespace LexTextControlsTests
 			var lexUnitForm = entry.XPathSelectElement("lexical-unit/form");
 			var attr = lexUnitForm.Attribute("lang");
 			Assert.That(attr, Is.Not.Null); //lang
-			Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
+			Assert.That(attr.Value.Equals("qaa-x-kal"), Is.True);
 
 			var definition = entry.XPathSelectElement("sense/definition");
 			XElement text;
@@ -3218,25 +3216,25 @@ namespace LexTextControlsTests
 				{
 					attr = form.Attribute("lang");
 					Assert.That(attr, Is.Not.Null);
-					Assert.IsTrue(attr.Value.Equals("en"));
+					Assert.That(attr.Value.Equals("en"), Is.True);
 					span = form.XPathSelectElement("text/span");
 					attr = span.Attribute("lang");
 					Assert.That(attr, Is.Not.Null); //qaa-x-kal
-					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
+					Assert.That(attr.Value.Equals("qaa-x-kal"), Is.True);
 				}
 				else if (i == 1)
 				{
 					attr = form.Attribute("lang"); Assert.That(attr, Is.Not.Null); //qaa-x-kal
-					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
+					Assert.That(attr.Value.Equals("qaa-x-kal"), Is.True);
 					span = form.XPathSelectElement("text/span");
 					attr = span.Attribute("lang");
 					Assert.That(attr, Is.Not.Null);
-					Assert.IsTrue(attr.Value.Equals("en"));
+					Assert.That(attr.Value.Equals("en"), Is.True);
 				}
 				else if (i == 2)
 				{
 					attr = form.Attribute("lang"); Assert.That(attr, Is.Not.Null); //es
-					Assert.IsTrue(attr.Value.Equals("es"));
+					Assert.That(attr.Value.Equals("es"), Is.True);
 				}
 				i++;
 			}
@@ -3256,12 +3254,12 @@ namespace LexTextControlsTests
 				{
 					attr = form.Attribute("lang");
 					Assert.That(attr, Is.Not.Null); //en
-					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
+					Assert.That(attr.Value.Equals("qaa-x-kal"), Is.True);
 				}
 				if (i == 1)
 				{
 					attr = form.Attribute("lang"); Assert.That(attr, Is.Not.Null); //qaa-x-kal
-					Assert.IsTrue(attr.Value.Equals("qaa-fonipa-x-kal"));
+					Assert.That(attr.Value.Equals("qaa-fonipa-x-kal"), Is.True);
 				}
 				i++;
 			}
@@ -3274,23 +3272,23 @@ namespace LexTextControlsTests
 				if (i == 0)
 				{
 					attr = gloss.Attribute("lang"); Assert.That(attr, Is.Not.Null); //qaa-x-kal
-					Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
+					Assert.That(attr.Value.Equals("qaa-x-kal"), Is.True);
 					glossText = gloss.XPathSelectElement("text");Assert.That(glossText, Is.Not.Null);
-					Assert.IsTrue(glossText.Value.Equals("KalabaGloss"));
+					Assert.That(glossText.Value.Equals("KalabaGloss"), Is.True);
 				}
 				if (i == 1)
 				{
 					attr = gloss.Attribute("lang"); Assert.That(attr, Is.Not.Null);
-					Assert.IsTrue(attr.Value.Equals("en"));
+					Assert.That(attr.Value.Equals("en"), Is.True);
 					glossText = gloss.XPathSelectElement("text"); Assert.That(glossText, Is.Not.Null);
-					Assert.IsTrue(glossText.Value.Equals("EnglishGLoss"));
+					Assert.That(glossText.Value.Equals("EnglishGLoss"), Is.True);
 				}
 				if (i == 2)
 				{
 					attr = gloss.Attribute("lang"); Assert.That(attr, Is.Not.Null);
-					Assert.IsTrue(attr.Value.Equals("es"));
+					Assert.That(attr.Value.Equals("es"), Is.True);
 					glossText = gloss.XPathSelectElement("text"); Assert.That(glossText, Is.Not.Null);
-					Assert.IsTrue(glossText.Value.Equals("SpanishGloss"));
+					Assert.That(glossText.Value.Equals("SpanishGloss"), Is.True);
 				}
 				i++;
 			}
@@ -3298,7 +3296,7 @@ namespace LexTextControlsTests
 			var definitionForm = entry.XPathSelectElement("sense/definition/form");
 			attr = definitionForm.Attribute("lang");
 					Assert.That(attr, Is.Not.Null);
-			Assert.IsTrue(attr.Value.Equals("qaa-x-kal"));
+			Assert.That(attr.Value.Equals("qaa-x-kal"), Is.True);
 			var definitionText = entry.XPathSelectElement("sense/definition/form/text");
 			i = 0;
 			foreach (var spanInDefn in definitionText.XPathSelectElements("span"))
@@ -3307,43 +3305,43 @@ namespace LexTextControlsTests
 				{
 					attr = spanInDefn.Attribute("lang");
 					Assert.That(attr, Is.Not.Null);
-					Assert.IsTrue(attr.Value.Equals("qaa-fonipa-x-kal"));
-					Assert.IsTrue(spanInDefn.Value.Equals("KalabaIPAspan"));
+					Assert.That(attr.Value.Equals("qaa-fonipa-x-kal"), Is.True);
+					Assert.That(spanInDefn.Value.Equals("KalabaIPAspan"), Is.True);
 				}
 				else if (i == 1)
 				{
 					attr = spanInDefn.Attribute("lang");
 					Assert.That(attr, Is.Not.Null);
-					Assert.IsTrue(attr.Value.Equals("en"));
-					Assert.IsTrue(spanInDefn.Value.Equals("EnglishSpan"));
+					Assert.That(attr.Value.Equals("en"), Is.True);
+					Assert.That(spanInDefn.Value.Equals("EnglishSpan"), Is.True);
 				}
 				else if (i == 2)
 				{
 					attr = spanInDefn.Attribute("lang");
 					Assert.That(attr, Is.Not.Null);
-					Assert.IsTrue(attr.Value.Equals("es"));
-					Assert.IsTrue(spanInDefn.Value.Equals("SpanishSpan"));
+					Assert.That(attr.Value.Equals("es"), Is.True);
+					Assert.That(spanInDefn.Value.Equals("SpanishSpan"), Is.True);
 				}
 				else if (i == 3)
 				{
 					attr = spanInDefn.Attribute("lang");
 					Assert.That(attr, Is.Not.Null);
-					Assert.IsTrue(attr.Value.Equals("qaa-fonipa-x-kal-emic"));
-					Assert.IsTrue(spanInDefn.Value.Equals("KalabaPhonemic"));
+					Assert.That(attr.Value.Equals("qaa-fonipa-x-kal-emic"), Is.True);
+					Assert.That(spanInDefn.Value.Equals("KalabaPhonemic"), Is.True);
 				}
 				else if (i == 4)
 				{
 					attr = spanInDefn.Attribute("lang");
 					Assert.That(attr, Is.Not.Null);
-					Assert.IsTrue(attr.Value.Equals("qaa-x-Lomwe"));
-					Assert.IsTrue(spanInDefn.Value.Equals("Lomwe Span"));
+					Assert.That(attr.Value.Equals("qaa-x-Lomwe"), Is.True);
+					Assert.That(spanInDefn.Value.Equals("Lomwe Span"), Is.True);
 				}
 				else if (i == 5)
 				{
 					attr = spanInDefn.Attribute("lang");
 					Assert.That(attr, Is.Not.Null);
-					Assert.IsTrue(attr.Value.Equals("qaa-x-AveryLon"));
-					Assert.IsTrue(spanInDefn.Value.Equals("AveryLongWSName span"));
+					Assert.That(attr.Value.Equals("qaa-x-AveryLon"), Is.True);
+					Assert.That(spanInDefn.Value.Equals("AveryLongWSName span"), Is.True);
 				}
 				i++;
 			}
@@ -3358,12 +3356,12 @@ namespace LexTextControlsTests
 			var language = data.XPathSelectElement("//*[name()='language']");
 			var attr = language.Attribute("type");
 			Assert.That(attr, Is.Not.Null, "The ldml file for Kalaba should have a language element with at type");
-			Assert.IsTrue(attr.Value.Equals("qaa"), "Language type attribute should be 'qaa'.");
+			Assert.That(attr.Value.Equals("qaa"), Is.True, "Language type attribute should be 'qaa'.");
 
 			var variant = data.XPathSelectElement("//*[name()='variant']");
 			attr = variant.Attribute("type");
 			Assert.That(attr, Is.Not.Null, "The ldml file for Kalaba should have a language element with at type");
-			Assert.IsTrue(attr.Value.Equals("x-kal"), "Variante type attribute should be 'x-kal'.");
+			Assert.That(attr.Value.Equals("x-kal"), Is.True, "Variante type attribute should be 'x-kal'.");
 		}
 
 		private static readonly string[] s_PublicationLiftRangeData = {
@@ -3456,8 +3454,8 @@ namespace LexTextControlsTests
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			Assert.AreEqual(0, repoEntry.Count);
-			Assert.AreEqual(0, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(0));
+			Assert.That(repoSense.Count, Is.EqualTo(0));
 
 			// This one should always be there (and the merging one has a different guid!)
 			var originalMainDictPubGuid = Cache.LangProject.LexDbOA.PublicationTypesOA.PossibilitiesOS[0].Guid;
@@ -3476,43 +3474,36 @@ namespace LexTextControlsTests
 			// Verification
 			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
-			Assert.AreEqual(1, repoEntry.Count);
-			Assert.AreEqual(1, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(1));
+			Assert.That(repoSense.Count, Is.EqualTo(1));
 
 			ILexEntry entry;
-			Assert.IsTrue(repoEntry.TryGetObject(new Guid("f8506500-d17c-4c1b-b05d-ea57f562cb1c"), out entry));
-			Assert.AreEqual(1, entry.SensesOS.Count);
+			Assert.That(repoEntry.TryGetObject(new Guid("f8506500-d17c-4c1b-b05d-ea57f562cb1c"), out entry), Is.True);
+			Assert.That(entry.SensesOS.Count, Is.EqualTo(1));
 			var sense0 = entry.SensesOS[0];
-			Assert.AreEqual(sense0.Guid, new Guid("62fc5222-aa72-40bb-b3f1-24569bb94042"));
-			Assert.AreEqual(1, sense0.ExamplesOS.Count);
+			Assert.That(new Guid("62fc5222-aa72-40bb-b3f1-24569bb94042"), Is.EqualTo(sense0.Guid));
+			Assert.That(sense0.ExamplesOS.Count, Is.EqualTo(1));
 			var example0 = sense0.ExamplesOS[0];
 
 			Assert.That(entry.LexemeFormOA, Is.Not.Null);
 			Assert.That(entry.LexemeFormOA.MorphTypeRA, Is.Not.Null);
-			Assert.AreEqual("stem", entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text);
-			Assert.AreEqual("baba", entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text);
+			Assert.That(entry.LexemeFormOA.MorphTypeRA.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("stem"));
+			Assert.That(entry.LexemeFormOA.Form.VernacularDefaultWritingSystem.Text, Is.EqualTo("baba"));
 
 			// Verify specific Publication stuff
-			Assert.AreEqual(1, entry.DoNotPublishInRC.Count,
-				"Entry has wrong number of Publication settings");
+			Assert.That(entry.DoNotPublishInRC.Count, Is.EqualTo(1), "Entry has wrong number of Publication settings");
 			var mainDictPub = entry.DoNotPublishInRC.First();
-			Assert.AreEqual("Main Dictionary", mainDictPub.Name.AnalysisDefaultWritingSystem.Text,
-				"Entry has wrong Publish In setting");
-			Assert.AreEqual(originalMainDictPubGuid, mainDictPub.Guid,
-				"Entry has Main Dictionary, but not the one we started out with (different Guid)!");
-			Assert.AreEqual(1, sense0.DoNotPublishInRC.Count,
-				"Sense has wrong number of Publication settings");
+			Assert.That(mainDictPub.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Main Dictionary"), "Entry has wrong Publish In setting");
+			Assert.That(mainDictPub.Guid, Is.EqualTo(originalMainDictPubGuid), "Entry has Main Dictionary, but not the one we started out with (different Guid)!");
+			Assert.That(sense0.DoNotPublishInRC.Count, Is.EqualTo(1), "Sense has wrong number of Publication settings");
 			var sensePub = sense0.DoNotPublishInRC.First();
-			Assert.AreEqual("Pocket", sensePub.Name.AnalysisDefaultWritingSystem.Text,
-				"Sense has wrong Publish In setting");
-			Assert.AreEqual(importedPocketPubGuid, sensePub.Guid,
-				"Sense Publish In setting has wrong guid");
-			Assert.AreEqual(2, example0.DoNotPublishInRC.Count,
-				"Example has wrong number of Publication settings");
+			Assert.That(sensePub.Name.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Pocket"), "Sense has wrong Publish In setting");
+			Assert.That(sensePub.Guid, Is.EqualTo(importedPocketPubGuid), "Sense Publish In setting has wrong guid");
+			Assert.That(example0.DoNotPublishInRC.Count, Is.EqualTo(2), "Example has wrong number of Publication settings");
 			var examplePublications = (from pub in example0.DoNotPublishInRC
 										  select pub.Name.AnalysisDefaultWritingSystem.Text).ToList();
-			Assert.IsTrue(examplePublications.Contains("Main Dictionary"));
-			Assert.IsTrue(examplePublications.Contains("Pocket"));
+			Assert.That(examplePublications.Contains("Main Dictionary"), Is.True);
+			Assert.That(examplePublications.Contains("Pocket"), Is.True);
 			Assert.That(example0.LiftResidue, Does.Not.Contain("do-not-publish-in"));
 		}
 
@@ -3578,10 +3569,10 @@ namespace LexTextControlsTests
 			File.Delete(logFile);
 
 			var customList = Cache.ServiceLocator.ObjectRepository.GetObject(new Guid(customListGuid)) as ICmPossibilityList;
-			Assert.NotNull(customList);
+			Assert.That(customList, Is.Not.Null);
 			var customListItem = Cache.ServiceLocator.ObjectRepository.GetObject(new Guid(customListItemGuid));
-			Assert.NotNull(customListItem);
-			Assert.IsTrue(customListItem is ICmCustomItem);
+			Assert.That(customListItem, Is.Not.Null);
+			Assert.That(customListItem is ICmCustomItem, Is.True);
 		}
 
 		private static readonly string[] s_BadMorphTypeTestData = {
@@ -3625,8 +3616,8 @@ namespace LexTextControlsTests
 
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			Assert.AreEqual(0, repoEntry.Count);
-			Assert.AreEqual(0, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(0));
+			Assert.That(repoSense.Count, Is.EqualTo(0));
 
 			// The entry should already be present.
 			var entry = Cache.ServiceLocator.GetInstance<ILexEntryFactory>().Create();
@@ -3655,8 +3646,8 @@ namespace LexTextControlsTests
 			// Verification
 			Assert.That(logFile, Is.Not.Null);
 			File.Delete(logFile);
-			Assert.AreEqual(1, repoEntry.Count);
-			Assert.AreEqual(1, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(1));
+			Assert.That(repoSense.Count, Is.EqualTo(1));
 
 			Assert.That(entry.AlternateFormsOS, Has.Count.EqualTo(1), "should still have exactly one allomorph");
 			Assert.That(entry.AlternateFormsOS.First(), Is.InstanceOf(typeof(IMoStemAllomorph)), "affix should be changed to stem");
@@ -3865,8 +3856,8 @@ namespace LexTextControlsTests
 			var wsEs = Cache.WritingSystemFactory.GetWsFromStr("es");
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			Assert.AreEqual(0, repoEntry.Count);
-			Assert.AreEqual(0, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(0));
+			Assert.That(repoSense.Count, Is.EqualTo(0));
 
 			// Setup: Create first entry with multiple pronunciations
 			var entry1 = CreateSimpleStemEntry("503d3478-3545-4213-9f6b-1f087464e140", "test");
@@ -3928,12 +3919,12 @@ namespace LexTextControlsTests
 			File.Delete(sOrigFile);
 
 			// Verify overall counts
-			Assert.AreEqual(2, repoEntry.Count, "Should have exactly 2 entries");
-			Assert.AreEqual(0, repoSense.Count, "Should not create any senses");
+			Assert.That(repoEntry.Count, Is.EqualTo(2), "Should have exactly 2 entries");
+			Assert.That(repoSense.Count, Is.EqualTo(0), "Should not create any senses");
 
 			var repoPronunciation =
 				Cache.ServiceLocator.GetInstance<ILexPronunciationRepository>();
-			Assert.AreEqual(7, repoPronunciation.Count, "Should have 7 total pronunciations");
+			Assert.That(repoPronunciation.Count, Is.EqualTo(7), "Should have 7 total pronunciations");
 
 			// Verify entry1: Should have 5 pronunciations after merge
 			// - 'pronunciation' in 'fr' (merged)
@@ -4411,13 +4402,13 @@ namespace LexTextControlsTests
 			"</lift>"
 			};
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			Assert.AreEqual(0, repoSense.Count);
+			Assert.That(repoSense.Count, Is.EqualTo(0));
 			var file = CreateInputFile(lifDataWithExampleWithUnnkownTrait);
 			// SUT
 			TryImport(file, null, FlexLiftMerger.MergeStyle.MsKeepBoth, 1);
-			Assert.AreEqual(1, repoSense.Count);
+			Assert.That(repoSense.Count, Is.EqualTo(1));
 			var sense = repoSense.AllInstances().First();
-			Assert.AreEqual(1, sense.ExamplesOS.Count);
+			Assert.That(sense.ExamplesOS.Count, Is.EqualTo(1));
 			var example = sense.ExamplesOS[0];
 			// Important assertion
 			Assert.That(example.LiftResidue, Does.Contain("totallyunknowntrait"));
@@ -4554,16 +4545,16 @@ namespace LexTextControlsTests
 			exampleNew.UpdateCustomField();
 			var repoEntry = Cache.ServiceLocator.GetInstance<ILexEntryRepository>();
 			var repoSense = Cache.ServiceLocator.GetInstance<ILexSenseRepository>();
-			Assert.AreEqual(0, repoEntry.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(0));
 			var rangeFile = CreateInputFile(rangesWithStatusList);
 			var pendingLiftFile = CreateInputFile(lifDataWithExampleWithPendingStatus);
 			// Verify basic import of custom field data matching existing custom list and items
 			TryImport(pendingLiftFile, rangeFile, FlexLiftMerger.MergeStyle.MsKeepBoth, 1);
-			Assert.AreEqual(1, repoEntry.Count);
-			Assert.AreEqual(1, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(1));
+			Assert.That(repoSense.Count, Is.EqualTo(1));
 			var entry = repoEntry.AllInstances().First();
 			var sense = repoSense.AllInstances().First();
-			Assert.AreEqual(1, sense.ExamplesOS.Count);
+			Assert.That(sense.ExamplesOS.Count, Is.EqualTo(1));
 			var example = sense.ExamplesOS[0];
 			var entryCustomData = new CustomFieldData()
 			{
@@ -4584,12 +4575,12 @@ namespace LexTextControlsTests
 			TryImport(confirmedLiftFile, rangeFile, FlexLiftMerger.MergeStyle.MsKeepBoth, 1);
 			entry = repoEntry.AllInstances().First();
 			sense = repoSense.AllInstances().First();
-			Assert.AreEqual(1, sense.ExamplesOS.Count);
+			Assert.That(sense.ExamplesOS.Count, Is.EqualTo(1));
 			example = sense.ExamplesOS[0];
 			entryCustomData.cmPossibilityNameRA = "Confirmed";
 			exampleCustomData.cmPossibilityNameRA = "Confirmed";
-			Assert.AreEqual(1, repoEntry.Count);
-			Assert.AreEqual(1, repoSense.Count);
+			Assert.That(repoEntry.Count, Is.EqualTo(1));
+			Assert.That(repoSense.Count, Is.EqualTo(1));
 			VerifyCustomField(entry, entryCustomData, entryNew.Id);
 			VerifyCustomField(example, exampleCustomData, exampleNew.Id);
 		}

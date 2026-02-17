@@ -1,0 +1,604 @@
+{
+  "IFwMetaDataCache": {
+    "guid": "{EDBB1DED-7065-4B56-A262-746453835451}",
+    "type": "Interface",
+    "dll": "FwKernel.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "ILgWritingSystemFactory": {
+    "guid": "{CC2BD14F-ACCE-4246-9192-9C29441A5A09}",
+    "type": "Interface",
+    "dll": "FwKernel.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "ITsMultiString": {
+    "guid": "{DD409520-C212-11D3-9BB7-00400541F9E9}",
+    "type": "Interface",
+    "dll": "FwKernel.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "ITsString": {
+    "guid": "{321B7BB3-29AF-41D1-93DE-4A11BF386C82}",
+    "type": "Interface",
+    "dll": "FwKernel.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "ITsTextProps": {
+    "guid": "{9B804BE2-0F75-4182-AC97-77F477546AB0}",
+    "type": "Interface",
+    "dll": "FwKernel.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IVwStylesheet": {
+    "guid": "{D77C0DBC-C7BC-441D-9587-1E3664E1BCD3}",
+    "type": "Interface",
+    "dll": "FwKernel.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "ISimpleInit": {
+    "guid": "{6433D19E-2DA2-4041-B202-DB118EE1694D}",
+    "type": "Interface",
+    "dll": "FwKernel.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "ICheckWord": {
+    "guid": "{69F4D944-C786-47EC-94F7-15193EED6758}",
+    "type": "Interface",
+    "dll": "FwKernel.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IGetSpellChecker": {
+    "guid": "{F0A60670-D280-45EA-A5C5-F0B84C027EFC}",
+    "type": "Interface",
+    "dll": "FwKernel.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IVwNotifyChange": {
+    "guid": "{6C456541-C2B6-11D3-8078-0000C0FB81B5}",
+    "type": "Interface",
+    "dll": "FwKernel.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IUndoAction": {
+    "guid": "{B831F535-0D5F-42C8-BF9F-7F5ECA2C4657}",
+    "type": "Interface",
+    "dll": "FwKernel.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IActionHandler": {
+    "guid": "{7E8BC421-4CB2-4CF9-8C4C-73A5FD87CA7A}",
+    "type": "Interface",
+    "dll": "FwKernel.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "ActionHandler": {
+    "guid": "{CF0F1C0B-0E44-4C1E-9912-2048ED12C2B4}",
+    "type": "Class",
+    "dll": "FwKernel.dll",
+    "progid": "SIL.Views.ActionHandler",
+    "threadingModel": "Apartment"
+  },
+  "ISilDataAccess": {
+    "guid": "{26E6E70E-53EB-4372-96F1-0F4707CCD1EB}",
+    "type": "Interface",
+    "dll": "FwKernel.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IStructuredTextDataAccess": {
+    "guid": "{A2A4F9FA-D4E8-4BFB-B6B7-5F45DAF2DC0C}",
+    "type": "Interface",
+    "dll": "FwKernel.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IDebugReportSink": {
+    "guid": "{DD9CE7AD-6ECC-4E0C-BBFC-1DC52E053354}",
+    "type": "Interface",
+    "dll": "FwKernel.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IDebugReport": {
+    "guid": "{3D6A0880-D17D-4E4A-9DE9-861A85CA4046}",
+    "type": "Interface",
+    "dll": "FwKernel.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IComDisposable": {
+    "guid": "{CA9AAF91-4C34-4C6A-8E07-97C1A7B3486A}",
+    "type": "Interface",
+    "dll": "FwKernel.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "ITsStrFactory": {
+    "guid": "{721A8D21-9900-4CB0-B4C0-9380A23140E3}",
+    "type": "Interface",
+    "dll": "FwKernel.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "ITsPropsFactory": {
+    "guid": "{FF3D947F-1D35-487B-A769-5B6C68722054}",
+    "type": "Interface",
+    "dll": "FwKernel.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "ITsStrBldr": {
+    "guid": "{35C5278D-2A52-4B54-AB13-B6E346B301BA}",
+    "type": "Interface",
+    "dll": "FwKernel.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "ITsIncStrBldr": {
+    "guid": "{87ECD3CD-6011-485F-8651-DBA0B79245AF}",
+    "type": "Interface",
+    "dll": "FwKernel.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "ITsPropsBldr": {
+    "guid": "{F1EF76E8-BE04-11D3-8D9A-005004DEFEC4}",
+    "type": "Interface",
+    "dll": "FwKernel.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "ILgWritingSystem": {
+    "guid": "{9C0513AB-1AB9-4741-9C49-FA65FA83B7CC}",
+    "type": "Interface",
+    "dll": "FwKernel.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IVwGraphics": {
+    "guid": "{F7233278-EA87-4FC9-83E2-CB7CC45DEBE7}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IJustifyingRenderer": {
+    "guid": "{1141174B-923F-4C43-BA43-8A326B76A3F2}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IRenderEngineFactory": {
+    "guid": "{97D3D3E7-042B-4790-AB70-8D6C3A677576}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "ILgLineBreaker": {
+    "guid": "{F8D5FDE9-9695-4D63-8843-E27FD880BFF0}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IVwGraphicsWin32": {
+    "guid": "{C955E295-A259-47D4-8158-4C7A3539D35E}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "VwGraphicsWin32": {
+    "guid": "{D888DB98-83A9-4592-AAD2-F18F6F74AB87}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "SIL.Text.VwGraphicsWin32",
+    "threadingModel": "Apartment"
+  },
+  "IVwTextSource": {
+    "guid": "{6C0465AC-17C5-4C9C-8AF3-62221F2F7707}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IVwJustifier": {
+    "guid": "{22D5E030-5239-4924-BF1B-6B4F2CBBABA5}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "ILgSegment": {
+    "guid": "{3818E245-6A0B-45A7-A5D6-52694931279E}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IRenderEngine": {
+    "guid": "{B8998799-3C5F-47D3-BC14-10AA10AEC691}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "LgLineBreaker": {
+    "guid": "{94FBFA34-21E5-4A1E-B576-BA5D76CC051A}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "SIL.Language1.LgLineBreaker",
+    "threadingModel": "Apartment"
+  },
+  "UniscribeEngine": {
+    "guid": "{1287735C-3CAD-41CD-986C-39D7C0DF0314}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "SIL.Language1.UniscribeEngine",
+    "threadingModel": "Apartment"
+  },
+  "GraphiteEngine": {
+    "guid": "{62EBEEBF-14EA-43D9-A27A-EF013E14145A}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "SIL.Language1.GraphiteEngine",
+    "threadingModel": "Apartment"
+  },
+  "IRenderingFeatures": {
+    "guid": "{75AFE861-3C17-4F16-851F-A36F5FFABCC6}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IVwSelection": {
+    "guid": "{4F8B678D-C5BA-4A2F-B9B3-2780956E3616}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IVwEmbeddedWindow": {
+    "guid": "{F6D10646-C00C-11D2-8078-0000C0FB81B5}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IVwEnv": {
+    "guid": "{92B462E8-75D5-42C1-8B63-84878E8964C0}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IVwViewConstructor": {
+    "guid": "{5B1A08F6-9AF9-46F9-9FD7-1011A3039191}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IVwRootSite": {
+    "guid": "{C999413C-28C8-481C-9543-B06C92B812D1}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IVwCacheDa": {
+    "guid": "{FECFCBC9-4CD2-4DB3-ADBE-1F628B2DAA33}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IVwRootBox": {
+    "guid": "{06DAA10B-F69A-4000-8C8B-3F725C3FC368}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IVwPropertyStore": {
+    "guid": "{3D4847FE-EA2D-4255-A496-770059A134CC}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IVwOverlay": {
+    "guid": "{7D9089C1-3BB9-11D4-8078-0000C0FB81B5}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IVwPrintContext": {
+    "guid": "{FF2E1DC2-95A8-41C6-85F4-FFCA3A64216A}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IVwSearchKiller": {
+    "guid": "{D83E25D9-C2E9-42E4-A822-2E97A11D0B91}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IVwSynchronizer": {
+    "guid": "{C5C1E9DC-5880-4EE3-B3CD-EBDD132A6294}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IVwVirtualHandler": {
+    "guid": "{581E3FE0-F0C0-42A7-96C7-76B23B8BE580}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IVwLayoutStream": {
+    "guid": "{5DB26616-2741-4688-BC53-24C2A13ACB9A}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IVwLayoutManager": {
+    "guid": "{13F3A421-4915-455B-B57F-AFD4073CFFA0}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "VwCacheDa": {
+    "guid": "{81EE73B1-BE31-49CF-BC02-6030113AC56F}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "SIL.Views.VwCacheDa",
+    "threadingModel": "Apartment"
+  },
+  "VwUndoDa": {
+    "guid": "{5BEEFFC6-E88C-4258-A269-D58390A1F2C9}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "SIL.Views.VwUndoDa",
+    "threadingModel": "Apartment"
+  },
+  "VwRootBox": {
+    "guid": "{7C0C6A3C-38B3-4266-AF94-A3A1CBAAD1FC}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "SIL.Views.VwRootBox",
+    "threadingModel": "Apartment"
+  },
+  "VwInvertedRootBox": {
+    "guid": "{73BCAB14-2537-4B7D-B1C7-7E3DD7A089AD}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "SIL.Views.VwInvertedRootBox",
+    "threadingModel": "Apartment"
+  },
+  "VwPropertyStore": {
+    "guid": "{CB59916A-C532-4A57-8CB4-6E1508B4DEC1}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "SIL.Views.VwPropertyStore",
+    "threadingModel": "Apartment"
+  },
+  "VwOverlay": {
+    "guid": "{73F5DB01-3D2A-11D4-8078-0000C0FB81B5}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "SIL.Views.VwOverlay",
+    "threadingModel": "Apartment"
+  },
+  "VwPrintContextWin32": {
+    "guid": "{5E9FB977-66AE-4C16-A036-1D40E7713573}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "SIL.Views.VwPrintContext",
+    "threadingModel": "Apartment"
+  },
+  "IVwPattern": {
+    "guid": "{EFEBBD00-D418-4157-A730-C648BFFF3D8D}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "VwPattern": {
+    "guid": "{6C659C76-3991-48DD-93F7-DA65847D4863}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "SIL.Views.VwPattern",
+    "threadingModel": "Apartment"
+  },
+  "IVwTxtSrcInit2": {
+    "guid": "{8E3EFDB9-4721-4F17-AA50-48DF65078680}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "VwMappedTxtSrc": {
+    "guid": "{01D1C8A7-1222-49C9-BFE6-30A84CE76A40}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "SIL.Views.VwMappedTxtSrc",
+    "threadingModel": "Apartment"
+  },
+  "IVwTxtSrcInit": {
+    "guid": "{1AB3C970-3EC1-4D97-A7B8-122642AF6333}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "VwStringTextSource": {
+    "guid": "{DAF01E81-3026-4480-8783-EEA04CD2EC80}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "SIL.Views.VwStringTextSource",
+    "threadingModel": "Apartment"
+  },
+  "VwSearchKiller": {
+    "guid": "{4ADA9157-67F8-499B-88CE-D63DF918DF83}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "SIL.Views.VwSearchKiller",
+    "threadingModel": "Apartment"
+  },
+  "IVwDrawRootBuffered": {
+    "guid": "{D9E9D65F-E81F-439E-8010-5B22BAEBB92D}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "VwDrawRootBuffered": {
+    "guid": "{97199458-10C7-49DA-B3AE-EA922EA64859}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "SIL.Views.VwDrawRootBuffered",
+    "threadingModel": "Apartment"
+  },
+  "VwSynchronizer": {
+    "guid": "{5E149A49-CAEE-4823-97F7-BB9DED2A62BC}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "SIL.Views.VwSynchronizer",
+    "threadingModel": "Apartment"
+  },
+  "ILgCollatingEngine": {
+    "guid": "{D27A3D8C-D3FE-4E25-9097-8F4A1FB30361}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "LgUnicodeCollater": {
+    "guid": "{0D9900D2-1693-481F-AA70-7EA64F264EC4}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "SIL.Language1.LgUnicodeCollater",
+    "threadingModel": "Apartment"
+  },
+  "VwLayoutStream": {
+    "guid": "{1CD09E06-6978-4969-A1FC-462723587C32}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "SIL.Views.VwLayoutStream",
+    "threadingModel": "Apartment"
+  },
+  "IPictureFactory": {
+    "guid": "{110B7E88-2968-11E0-B493-0019DBF4566E}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "PictureFactory": {
+    "guid": "{17A2E876-2968-11E0-8046-0019DBF4566E}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "SIL.FieldWorks.Common.FwUtils.ManagedPictureFactory",
+    "threadingModel": "Both"
+  },
+  "IVwWindow": {
+    "guid": "{8856396C-63A9-4BC7-AD47-87EC8B6EF5A4}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "IViewInputMgr": {
+    "guid": "{E41668F7-D506-4C8A-A5D7-FEAE5630797E}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "VwStylesheet": {
+    "guid": "{CCE2A7ED-464C-4EC7-A0B0-E3C1F6B94C5A}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "SIL.Views.VwStylesheet",
+    "threadingModel": "Apartment"
+  },
+  "TsStrFactory": {
+    "guid": "{F3359BD1-EFA1-49E6-A82E-E55893FE63E0}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "FieldWorks.TsStrFactory",
+    "threadingModel": "Both"
+  },
+  "TsPropsFactory": {
+    "guid": "{396D737F-3BFD-4BDA-A8CA-8242098EF798}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "FieldWorks.TsPropsFactory",
+    "threadingModel": "Both"
+  },
+  "TsStrBldr": {
+    "guid": "{426038D4-2E52-4329-B697-FB926FF7538C}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "FieldWorks.TsStrBldr",
+    "threadingModel": "Both"
+  },
+  "TsIncStrBldr": {
+    "guid": "{BD8EFD5A-2ACC-40AC-B73B-051344525B5B}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "FieldWorks.TsIncStrBldr",
+    "threadingModel": "Both"
+  },
+  "TsPropsBldr": {
+    "guid": "{F1EF76ED-BE04-11D3-8D9A-005004DEFEC4}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "FieldWorks.TsPropsBldr",
+    "threadingModel": "Both"
+  },
+  "DebugReport": {
+    "guid": "{24636FD1-DB8D-4B2C-B4C0-44C2592CA482}",
+    "type": "Class",
+    "dll": "Views.dll",
+    "progid": "SIL.Kernel.DebugReport",
+    "threadingModel": "Apartment"
+  },
+  "ITsStringRaw": {
+    "guid": "{2AC0CB90-B14B-11D2-B81D-00400541F9DA}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  },
+  "ITsTextPropsRaw": {
+    "guid": "{31BDA5F0-D286-11D3-9BBC-00400541F9E9}",
+    "type": "Interface",
+    "dll": "Views.dll",
+    "progid": null,
+    "threadingModel": "Apartment"
+  }
+}

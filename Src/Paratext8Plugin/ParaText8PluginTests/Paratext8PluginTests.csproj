@@ -1,122 +1,58 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="Current" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<?xml version='1.0' encoding='utf-8'?>
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{66D824E1-7982-4128-8C9F-338967AEE8F9}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Paratext8PluginTests</RootNamespace>
     <AssemblyName>Paratext8PluginTests</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <NoWarn>649</NoWarn>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\..\Output\Debug</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>full</DebugType>
-    <NoWarn>649</NoWarn>
-    <Optimize>true</Optimize>
-    <OutputPath>..\..\..\Output\Release</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <RootNamespace>Paratext8PluginTests</RootNamespace>
+    <TargetFramework>net48</TargetFramework>
+    <OutputType>Library</OutputType>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <NoWarn>168,169,219,414,649,1635,1702,1701</NoWarn>
+    <IsTestProject>true</IsTestProject>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <NoWarn>649</NoWarn>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\Output\Debug</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
-    <DebugType>full</DebugType>
-    <NoWarn>649</NoWarn>
+    <DebugType>portable</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\..\Output\Release</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FwUtils, Version=9.0.0.24999, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\FwUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="FwUtilsTests, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\FwUtilsTests.dll</HintPath>
-    </Reference>
-    <Reference Include="nunit.framework">
-      <HintPath>..\..\..\packages\NUnit.3.13.3\lib\net45\nunit.framework.dll</HintPath>
-    </Reference>
-    <Reference Include="ParatextData">
-      <HintPath>..\..\..\Output\Debug\ParatextData.dll</HintPath>
-    </Reference>
-    <Reference Include="PtxUtils">
-      <HintPath>..\..\..\Output\Debug\PtxUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="ScriptureUtils">
-      <HintPath>..\..\..\Output\Debug\ScriptureUtils.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.LCModel.Core.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\SIL.LCModel.Core.Tests.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.LCModel.Utils.Tests, Version=9.0.0.0, Culture=neutral, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\SIL.LCModel.Utils.Tests.dll</HintPath>
-    </Reference>
-    <Reference Include="SIL.TestUtilities, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cab3c8c5232dfcf2, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Output\Debug\SIL.TestUtilities.dll</HintPath>
-    </Reference>
-    <Reference Include="netstandard" />
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel.Composition" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\System.ValueTuple.4.5.0\lib\net461\System.ValueTuple.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Xml" />
+    <PackageReference Include="Microsoft.Extensions.DependencyModel" Version="9.0.9" />
+    <PackageReference Include="ParatextData" Version="9.5.0.20" />
+    <PackageReference Include="SIL.LCModel.Core.Tests" Version="11.0.0-*" PrivateAssets="All" />
+    <PackageReference Include="SIL.LCModel.Utils.Tests" Version="11.0.0-*" PrivateAssets="All" />
+    <PackageReference Include="SIL.TestUtilities" Version="17.0.0-*" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="System.ValueTuple" Version="4.6.1" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ParatextDataIntegrationTests.cs" />
-    <Compile Include="..\..\AssemblyInfoForTests.cs">
-      <Link>AssemblyInforForTests.cs</Link>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="PtxUtils" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="netstandard" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../Common/FwUtils/FwUtils.csproj" />
+    <ProjectReference Include="../../Common/FwUtils/FwUtilsTests/FwUtilsTests.csproj" />
+    <ProjectReference Include="../../Common/ScriptureUtils/ScriptureUtils.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="../../AppForTests.config" Link="App.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="../../AssemblyInfoForTests.cs" Link="Properties/AssemblyInfoForTests.cs" />
+    <Compile Include="..\..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

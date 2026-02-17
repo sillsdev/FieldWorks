@@ -107,7 +107,7 @@ namespace ParatextImport
 				Cache);
 
 			// Verify the list size
-			Assert.AreEqual(8, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(8));
 
 			// Verify cluster 0: Current section 0 matches Revision section 0
 			VerifySectionCluster(clusterList[0],
@@ -184,7 +184,7 @@ namespace ParatextImport
 				Cache);
 
 			// Verify the list size
-			Assert.AreEqual(8, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(8));
 
 			// Verify cluster 0: Current section 0 matches Revision section 0
 			VerifySectionCluster(clusterList[0],
@@ -249,7 +249,7 @@ namespace ParatextImport
 				Cache);
 
 			// Verify the list size
-			Assert.AreEqual(3, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(3));
 
 			// Verify cluster 0: Current section 0 matches Revision section 0
 			VerifySectionCluster(clusterList[0],
@@ -296,7 +296,7 @@ namespace ParatextImport
 				Cache);
 
 			// Verify the list size
-			Assert.AreEqual(5, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(5));
 
 			// Verify cluster 0: Current section 0 is added, Revision section missing
 			VerifySectionCluster(clusterList[0],
@@ -351,7 +351,7 @@ namespace ParatextImport
 				Cache);
 
 			// Verify the list size
-			Assert.AreEqual(5, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(5));
 
 			// Verify cluster 1: Current section missing, Revision section 0 is added
 			VerifySectionCluster(clusterList[0],
@@ -405,7 +405,7 @@ namespace ParatextImport
 				Cache);
 
 			// Verify the list size
-			Assert.AreEqual(2, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(2));
 
 			// Verify cluster 0: Revision section 0 has been split into Current sections 0 & 1
 			List<IScrSection> expectedItemsCur =
@@ -458,7 +458,7 @@ namespace ParatextImport
 				Cache);
 
 			// Verify the list size
-			Assert.AreEqual(1, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(1));
 
 			// Verify cluster 0: all Current sections overlap all Revision sections
 			List<IScrSection> expectedItemsCur =
@@ -500,7 +500,7 @@ namespace ParatextImport
 				Cache);
 
 			// Verify the list size
-			Assert.AreEqual(3, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(3));
 
 			// Verify cluster 0: Current section 0 matches Revision section 0
 			VerifySectionCluster(clusterList[0],
@@ -545,7 +545,7 @@ namespace ParatextImport
 				Cache);
 
 			// Verify the list size
-			Assert.AreEqual(1, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(1));
 
 			// Verify cluster 0: all Current sections overlap all Revision sections
 			List<IScrSection> expectedItemsCur =
@@ -618,7 +618,7 @@ namespace ParatextImport
 				Cache);
 
 			// Verify the list size
-			Assert.AreEqual(1, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(1));
 
 			// Verify cluster
 			VerifySectionCluster(clusterList[0],
@@ -687,7 +687,7 @@ namespace ParatextImport
 				Cache);
 
 			// Verify the list size
-			Assert.AreEqual(1, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(1));
 
 			// Verify cluster
 			VerifySectionCluster(clusterList[0],
@@ -724,7 +724,7 @@ namespace ParatextImport
 			// Make  the multiple-overlap cluster
 			List<Cluster> clusterOverlapList = ClusterListHelper.DetermineSectionOverlapClusters(m_genesis, m_genesisRevision,
 				Cache);
-			Assert.AreEqual(1, clusterOverlapList.Count);
+			Assert.That(clusterOverlapList.Count, Is.EqualTo(1));
 			// check the details before we proceed
 			List<IScrSection> expectedItemsCur =
 				new List<IScrSection>(new IScrSection[] { section0Cur, section1Cur, section2Cur });
@@ -738,7 +738,7 @@ namespace ParatextImport
 				SectionHeadCorrelationHelper.DetermineSectionHeadCorrelationClusters(clusterOverlapList[0]);
 
 			// Verify the section head correlations
-			Assert.AreEqual(3, correlationList.Count);
+			Assert.That(correlationList.Count, Is.EqualTo(3));
 			// we expect three pairs, even though section1Curr has two possible correlations
 			VerifySectionCluster(correlationList[0],
 				01001001, 01001007, ClusterType.MatchedItems, section0Cur, section0Rev);
@@ -773,7 +773,7 @@ namespace ParatextImport
 			// Make  the multiple-overlap cluster
 			List<Cluster> clusterOverlapList = ClusterListHelper.DetermineSectionOverlapClusters(m_genesis, m_genesisRevision,
 				Cache);
-			Assert.AreEqual(1, clusterOverlapList.Count);
+			Assert.That(clusterOverlapList.Count, Is.EqualTo(1));
 			// check the details before we proceed
 			List<IScrSection> expectedItemsCur =
 				new List<IScrSection>(new IScrSection[] { section0Cur, section1Cur });
@@ -787,7 +787,7 @@ namespace ParatextImport
 				SectionHeadCorrelationHelper.DetermineSectionHeadCorrelationClusters(clusterOverlapList[0]);
 
 			// Verify the section head correlations
-			Assert.AreEqual(3, correlationList.Count);
+			Assert.That(correlationList.Count, Is.EqualTo(3));
 			// we expect three pairs, even though section1Curr has two possible correlations
 			VerifySectionCluster(correlationList[0],
 				01001001, 01001010, ClusterType.MissingInCurrent, null, section0Rev, -1);
@@ -827,7 +827,7 @@ namespace ParatextImport
 			List<Cluster> clusterOverlapList =
 				ClusterListHelper.DetermineSectionOverlapClusters(m_genesis, m_genesisRevision,
 					Cache);
-			Assert.AreEqual(1, clusterOverlapList.Count);
+			Assert.That(clusterOverlapList.Count, Is.EqualTo(1));
 			// check the details before we proceed
 			List<IScrSection> expectedItemsCur =
 				new List<IScrSection>(new IScrSection[] { section0Cur, section1Cur, section2Cur });
@@ -841,7 +841,7 @@ namespace ParatextImport
 				SectionHeadCorrelationHelper.DetermineSectionHeadCorrelationClusters(clusterOverlapList[0]);
 
 			// Verify the section head correlations
-			Assert.AreEqual(3, correlationList.Count);
+			Assert.That(correlationList.Count, Is.EqualTo(3));
 			// we expect three pairs, even though section1Curr has two possible correlations
 			VerifySectionCluster(correlationList[0],
 				01001001, 01001020, ClusterType.MatchedItems, section0Cur, section0Rev);
@@ -887,7 +887,7 @@ namespace ParatextImport
 				scrVersesCurr, scrVersesRev, Cache);
 
 			// Verify the list size
-			Assert.AreEqual(5, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(5));
 
 			// Verify cluster 0: Current ScrVerse 0 is added, Revision ScrVerse missing
 			VerifyScrVerseCluster(clusterList[0],
@@ -944,7 +944,7 @@ namespace ParatextImport
 				scrVersesCur, scrVersesRev, Cache);
 
 			// Verify the list size
-			Assert.AreEqual(5, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(5));
 
 			// Verify cluster 0: Current ScrVerse missing, Revision ScrVerse 0 is added
 			VerifyScrVerseCluster(clusterList[0],
@@ -1005,7 +1005,7 @@ namespace ParatextImport
 				scrVersesCur, scrVersesRev, Cache);
 
 			// Verify the list size
-			Assert.AreEqual(7, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(7));
 
 			// Verify cluster 0: Current ScrVerse 0 matches Revision ScrVerse 0
 			VerifyScrVerseCluster(clusterList[0],
@@ -1075,7 +1075,7 @@ namespace ParatextImport
 				scrVersesCur, scrVersesRev, Cache);
 
 			// Verify the list size
-			Assert.AreEqual(7, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(7));
 
 			// Verify cluster 0: Current ScrVerse 0 matches Revision ScrVerse 0
 			VerifyScrVerseCluster(clusterList[0],
@@ -1143,7 +1143,7 @@ namespace ParatextImport
 				scrVersesCur, scrVersesRev, Cache);
 
 			// Verify the list size
-			Assert.AreEqual(8, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(8));
 
 			// Verify cluster 0: Current ScrVerse missing, Revision ScrVerse 0 added
 			VerifyScrVerseCluster(clusterList[0],
@@ -1215,7 +1215,7 @@ namespace ParatextImport
 				scrVersesCur, scrVersesRev, Cache);
 
 			// Verify the list size
-			Assert.AreEqual(8, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(8));
 
 			// Verify cluster 0: Current ScrVerse 0 added, Revision missing
 			VerifyScrVerseCluster(clusterList[0],
@@ -1283,7 +1283,7 @@ namespace ParatextImport
 				scrVersesCur, scrVersesRev, Cache);
 
 			// Verify the list size
-			Assert.AreEqual(4, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(4));
 
 			// Verify cluster 0: Current ScrVerse 0 added
 			VerifyScrVerseCluster(clusterList[0],
@@ -1335,7 +1335,7 @@ namespace ParatextImport
 				scrVersesCur, scrVersesRev, Cache);
 
 			// Verify the list size
-			Assert.AreEqual(4, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(4));
 
 			// Verify cluster 0: Current ScrVerse 0 added, Revision missing
 			VerifyScrVerseCluster(clusterList[0],
@@ -1389,7 +1389,7 @@ namespace ParatextImport
 				scrVersesCur, scrVersesRev, Cache);
 
 			// Verify the list size
-			Assert.AreEqual(4, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(4));
 
 			// Verify cluster 0: Current ScrVerse 0 matches Revision ScrVerse 0
 			VerifyScrVerseCluster(clusterList[0],
@@ -1442,7 +1442,7 @@ namespace ParatextImport
 				scrVersesCur, scrVersesRev, Cache);
 
 			// Verify the list size
-			Assert.AreEqual(4, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(4));
 
 			// Verify cluster 0: Current ScrVerse 0 matches Revision ScrVerse 0
 			VerifyScrVerseCluster(clusterList[0],
@@ -1500,7 +1500,7 @@ namespace ParatextImport
 				scrVersesCur, scrVersesRev, Cache);
 
 			// Verify the list size
-			Assert.AreEqual(5, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(5));
 
 			// Verify cluster 0: Current ScrVerse 0 matches Revision ScrVerse 0
 			VerifyScrVerseCluster(clusterList[0],
@@ -1560,7 +1560,7 @@ namespace ParatextImport
 				scrVersesCur, scrVersesRev, Cache);
 
 			// Verify the list size
-			Assert.AreEqual(5, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(5));
 
 			// Verify cluster 0: Current ScrVerse 0 matches Revision ScrVerse 0
 			VerifyScrVerseCluster(clusterList[0],
@@ -1616,7 +1616,7 @@ namespace ParatextImport
 				scrVersesCur, scrVersesRev, Cache);
 
 			// Verify the list size
-			Assert.AreEqual(4, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(4));
 
 			// Verify cluster 0: Revision ScrVerse 0 missing in Current
 			VerifyScrVerseCluster(clusterList[0],
@@ -1670,7 +1670,7 @@ namespace ParatextImport
 				scrVersesCur, scrVersesRev, Cache);
 
 			// Verify the list size
-			Assert.AreEqual(4, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(4));
 
 			// Verify cluster 0: Current ScrVerse 0 matches Revision ScrVerse 0
 			VerifyScrVerseCluster(clusterList[0],
@@ -1719,7 +1719,7 @@ namespace ParatextImport
 				scrVersesCur, scrVersesRev, Cache);
 
 			// Verify the list size
-			Assert.AreEqual(3, clusterList.Count);
+			Assert.That(clusterList.Count, Is.EqualTo(3));
 
 			// Verify cluster 0: Current ScrVerse 0 matches Revision ScrVerse 0
 			VerifyScrVerseCluster(clusterList[0],
@@ -1800,36 +1800,36 @@ namespace ParatextImport
 			switch (type)
 			{
 				case ClusterType.MatchedItems:
-					Assert.IsTrue(expectedItemsCurr is ScrVerse);
-					Assert.IsTrue(expectedItemsRev is ScrVerse);
+					Assert.That(expectedItemsCurr is ScrVerse, Is.True);
+					Assert.That(expectedItemsRev is ScrVerse, Is.True);
 					break;
 				case ClusterType.MissingInCurrent:
 					Assert.That(expectedItemsCurr, Is.Null);
-					Assert.IsTrue(expectedItemsRev is ScrVerse);
+					Assert.That(expectedItemsRev is ScrVerse, Is.True);
 					break;
 				case ClusterType.OrphansInRevision:
 					Assert.That(expectedItemsCurr, Is.Null);
-					Assert.IsTrue(expectedItemsRev is List<ScrVerse>);
+					Assert.That(expectedItemsRev is List<ScrVerse>, Is.True);
 					break;
 				case ClusterType.AddedToCurrent:
-					Assert.IsTrue(expectedItemsCurr is ScrVerse);
+					Assert.That(expectedItemsCurr is ScrVerse, Is.True);
 					Assert.That(expectedItemsRev, Is.Null);
 					break;
 				case ClusterType.OrphansInCurrent:
-					Assert.IsTrue(expectedItemsCurr is List<ScrVerse>);
+					Assert.That(expectedItemsCurr is List<ScrVerse>, Is.True);
 					Assert.That(expectedItemsRev, Is.Null);
 					break;
 				case ClusterType.MultipleInBoth:
-					Assert.IsTrue(expectedItemsCurr is List<ScrVerse>);
-					Assert.IsTrue(expectedItemsRev is List<ScrVerse>);
+					Assert.That(expectedItemsCurr is List<ScrVerse>, Is.True);
+					Assert.That(expectedItemsRev is List<ScrVerse>, Is.True);
 					break;
 				case ClusterType.SplitInCurrent:
-					Assert.IsTrue(expectedItemsCurr is List<ScrVerse>);
-					Assert.IsTrue(expectedItemsRev is List<ScrVerse>);
+					Assert.That(expectedItemsCurr is List<ScrVerse>, Is.True);
+					Assert.That(expectedItemsRev is List<ScrVerse>, Is.True);
 					break;
 				case ClusterType.MergedInCurrent:
-					Assert.IsTrue(expectedItemsCurr is List<ScrVerse>);
-					Assert.IsTrue(expectedItemsRev is List<ScrVerse>);
+					Assert.That(expectedItemsCurr is List<ScrVerse>, Is.True);
+					Assert.That(expectedItemsRev is List<ScrVerse>, Is.True);
 					break;
 				default:
 					Assert.Fail("invalid type expected");
@@ -1850,9 +1850,8 @@ namespace ParatextImport
 		private void VerifyScrVerseCluster(Cluster cluster, int refMin, int refMax, ClusterType type,
 			object expectedItemsCurr, object expectedItemsRev)
 		{
-			Assert.IsTrue(cluster.clusterType != ClusterType.MissingInCurrent &&
-				cluster.clusterType != ClusterType.AddedToCurrent,
-				"Missing/Added clusters must be verified by passing in the indexToInsertAtInOther parameter.");
+			Assert.That(cluster.clusterType != ClusterType.MissingInCurrent &&
+				cluster.clusterType != ClusterType.AddedToCurrent, Is.True, "Missing/Added clusters must be verified by passing in the indexToInsertAtInOther parameter.");
 
 			// verify the details
 			VerifyScrVerseCluster(cluster, refMin, refMax, type, expectedItemsCurr, expectedItemsRev, -1);
@@ -1881,28 +1880,28 @@ namespace ParatextImport
 			switch (type)
 			{
 				case ClusterType.MatchedItems:
-					Assert.IsTrue(expectedItemsCurr is IScrSection || expectedItemsCurr is IScrTxtPara);
-					Assert.IsTrue(expectedItemsRev is IScrSection || expectedItemsRev is IScrTxtPara);
+					Assert.That(expectedItemsCurr is IScrSection || expectedItemsCurr is IScrTxtPara, Is.True);
+					Assert.That(expectedItemsRev is IScrSection || expectedItemsRev is IScrTxtPara, Is.True);
 					break;
 				case ClusterType.MissingInCurrent:
 					Assert.That(expectedItemsCurr, Is.Null);
-					Assert.IsTrue(expectedItemsRev is IScrSection || expectedItemsRev is IScrTxtPara);
+					Assert.That(expectedItemsRev is IScrSection || expectedItemsRev is IScrTxtPara, Is.True);
 					break;
 				case ClusterType.AddedToCurrent:
-					Assert.IsTrue(expectedItemsCurr is IScrSection || expectedItemsCurr is IScrTxtPara);
+					Assert.That(expectedItemsCurr is IScrSection || expectedItemsCurr is IScrTxtPara, Is.True);
 					Assert.That(expectedItemsRev, Is.Null);
 					break;
 				case ClusterType.MultipleInBoth:
-					Assert.IsTrue(expectedItemsCurr is List<IScrSection>);
-					Assert.IsTrue(expectedItemsRev is List<IScrSection>);
+					Assert.That(expectedItemsCurr is List<IScrSection>, Is.True);
+					Assert.That(expectedItemsRev is List<IScrSection>, Is.True);
 					break;
 				case ClusterType.SplitInCurrent:
-					Assert.IsTrue(expectedItemsCurr is List<IScrSection>);
-					Assert.IsTrue(expectedItemsRev is List<IScrSection>);
+					Assert.That(expectedItemsCurr is List<IScrSection>, Is.True);
+					Assert.That(expectedItemsRev is List<IScrSection>, Is.True);
 					break;
 				case ClusterType.MergedInCurrent:
-					Assert.IsTrue(expectedItemsCurr is List<IScrSection>);
-					Assert.IsTrue(expectedItemsRev is List<IScrSection>);
+					Assert.That(expectedItemsCurr is List<IScrSection>, Is.True);
+					Assert.That(expectedItemsRev is List<IScrSection>, Is.True);
 					break;
 				default:
 					Assert.Fail("invalid type expected");
@@ -1923,9 +1922,8 @@ namespace ParatextImport
 		private void VerifySectionCluster(Cluster cluster, int refMin, int refMax, ClusterType type,
 			object expectedItemsCurr, object expectedItemsRev)
 		{
-			Assert.IsTrue(cluster.clusterType != ClusterType.MissingInCurrent &&
-				cluster.clusterType != ClusterType.AddedToCurrent,
-				"Missing/Added clusters must be verified by passing in the indexToInsertAtInOther parameter.");
+			Assert.That(cluster.clusterType != ClusterType.MissingInCurrent &&
+				cluster.clusterType != ClusterType.AddedToCurrent, Is.True, "Missing/Added clusters must be verified by passing in the indexToInsertAtInOther parameter.");
 
 			// verify the details
 			VerifySectionCluster(cluster, refMin, refMax, type, expectedItemsCurr, expectedItemsRev, -1);
@@ -1949,12 +1947,12 @@ namespace ParatextImport
 		{
 			if (expectedItems == null)
 			{
-				Assert.AreEqual(0, clusterItems.Count);
+				Assert.That(clusterItems.Count, Is.EqualTo(0));
 			}
 			else if (expectedItems is List<IScrSection>)
 			{
 				List<IScrSection> expectedList = (List<IScrSection>)expectedItems; //make local var with type info, to reduce code clutter
-				Assert.AreEqual(expectedList.Count, clusterItems.Count);
+				Assert.That(clusterItems.Count, Is.EqualTo(expectedList.Count));
 				for (int i = 0; i < expectedList.Count; i++)
 				{
 					VerifyClusterItem(expectedList[i], clusterItems[i]);
@@ -1963,7 +1961,7 @@ namespace ParatextImport
 			else if (expectedItems is List<IScrTxtPara>)
 			{
 				List<IScrTxtPara> expectedList = (List<IScrTxtPara>)expectedItems; //make local var with type info, to reduce code clutter
-				Assert.AreEqual(expectedList.Count, clusterItems.Count);
+				Assert.That(clusterItems.Count, Is.EqualTo(expectedList.Count));
 				for (int i = 0; i < expectedList.Count; i++)
 				{
 					VerifyClusterItem(expectedList[i], clusterItems[i]);
@@ -1971,16 +1969,14 @@ namespace ParatextImport
 			}
 			else
 			{	// single object is expected
-				Assert.AreEqual(1, clusterItems.Count);
+				Assert.That(clusterItems.Count, Is.EqualTo(1));
 				switch (kindOfCluster)
 				{
 					case ClusterKind.ScrSection:
-						Assert.IsTrue(expectedItems is IScrSection || expectedItems is IScrTxtPara,
-							"expected item should be of type IScrSection or IScrTxtPara");
+						Assert.That(expectedItems is IScrSection || expectedItems is IScrTxtPara, Is.True, "expected item should be of type IScrSection or IScrTxtPara");
 						break;
 					case ClusterKind.ScrVerse:
-						Assert.IsTrue(expectedItems is ScrVerse,
-							"expected item should be of type ScrVerse");
+						Assert.That(expectedItems is ScrVerse, Is.True, "expected item should be of type ScrVerse");
 						break;
 				}
 				VerifyClusterItem(expectedItems, clusterItems[0]);
@@ -2005,12 +2001,12 @@ namespace ParatextImport
 		{
 			if (expectedItems == null)
 			{
-				Assert.AreEqual(0, clusterItems.Count);
+				Assert.That(clusterItems.Count, Is.EqualTo(0));
 			}
 			else if (expectedItems is List<ScrVerse>)
 			{
 				List<ScrVerse> expectedList = (List<ScrVerse>)expectedItems; //make local var with type info, to reduce code clutter
-				Assert.AreEqual(expectedList.Count, clusterItems.Count);
+				Assert.That(clusterItems.Count, Is.EqualTo(expectedList.Count));
 				for (int i = 0; i < expectedList.Count; i++)
 				{
 					VerifyClusterItem(expectedList[i], clusterItems[i]);
@@ -2018,8 +2014,8 @@ namespace ParatextImport
 			}
 			else
 			{	// single object is expected
-				Assert.AreEqual(1, clusterItems.Count);
-				Assert.IsTrue(expectedItems is ScrVerse, "expected item should be of type ScrVerse");
+				Assert.That(clusterItems.Count, Is.EqualTo(1));
+				Assert.That(expectedItems is ScrVerse, Is.True, "expected item should be of type ScrVerse");
 				VerifyClusterItem(expectedItems, clusterItems[0]);
 			}
 		}
@@ -2043,9 +2039,9 @@ namespace ParatextImport
 				ICmObject cmObjExpected = (ICmObject)objExpected;
 
 				// check the index
-				Assert.AreEqual(cmObjExpected.IndexInOwner, oiActual.indexInOwner);
+				Assert.That(oiActual.indexInOwner, Is.EqualTo(cmObjExpected.IndexInOwner));
 				// check hvo too
-				Assert.AreEqual(cmObjExpected, oiActual.myObj);
+				Assert.That(oiActual.myObj, Is.EqualTo(cmObjExpected));
 
 				// for good measure, if a section, check section refs too
 				if (cmObjExpected is IScrSection)

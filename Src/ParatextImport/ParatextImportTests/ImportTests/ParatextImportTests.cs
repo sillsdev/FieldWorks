@@ -573,19 +573,17 @@ namespace ParatextImport.ImportTests
 		public void VerifyAnnotationText(IStText text, string fieldName,
 			string expectedContents, int expectedWs)
 		{
-			Assert.AreEqual(1, text.ParagraphsOS.Count, fieldName + " should have 1 para");
+			Assert.That(text.ParagraphsOS.Count, Is.EqualTo(1), fieldName + " should have 1 para");
 			IStTxtPara para = (IStTxtPara)text.ParagraphsOS[0];
-			Assert.IsNotNull(para.StyleRules, fieldName + " should have a para style.");
+			Assert.That(para.StyleRules, Is.Not.Null, fieldName + " should have a para style.");
 			// We do not care about style for annotations because they get changed when displayed.
-			//Assert.AreEqual(ScrStyleNames.Remark,
-			//    para.StyleRules.GetStrPropValue((int)FwTextPropType.ktptNamedStyle),
-			//    fieldName + " should use Remark style.");
+			//Assert.That(//    para.StyleRules.GetStrPropValue((int)FwTextPropType.ktptNamedStyle), Is.EqualTo(ScrStyleNames.Remark), //    fieldName + " should use Remark style.");
 			if (expectedContents == null)
-				Assert.IsNull(para.Contents.Text, fieldName + " should have 1 empty para.");
+				Assert.That(para.Contents.Text, Is.Null, fieldName + " should have 1 empty para.");
 			else
 			{
 				ITsString tss = para.Contents;
-				Assert.AreEqual(1, tss.RunCount);
+				Assert.That(tss.RunCount, Is.EqualTo(1));
 				AssertEx.RunIsCorrect(tss, 0, expectedContents, null, expectedWs);
 			}
 		}
@@ -623,11 +621,11 @@ namespace ParatextImport.ImportTests
 				}
 			}
 			ILcmOwningSequence<IStPara> footnoteParas = footnote.ParagraphsOS;
-			Assert.AreEqual(1, footnoteParas.Count);
+			Assert.That(footnoteParas.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)footnoteParas[0];
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps(sParaStyleName), para.StyleRules);
+			Assert.That(para.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps(sParaStyleName)));
 			ITsString tss = para.Contents;
-			Assert.AreEqual(runCount, tss.RunCount);
+			Assert.That(tss.RunCount, Is.EqualTo(runCount));
 			AssertEx.RunIsCorrect(tss, 0, sFootnoteSegment, null, m_wsVern);
 			return tss;
 		}
@@ -664,7 +662,7 @@ namespace ParatextImport.ImportTests
 			CheckDisposed();
 
 			ILcmOwningSequence<IScrFootnote> footnotes = ScrBook.FootnotesOS;
-			Assert.IsTrue(iFootnoteIndex < footnotes.Count, "iFootnoteIndex is out of range");
+			Assert.That(iFootnoteIndex < footnotes.Count, Is.True, "iFootnoteIndex is out of range");
 			return footnotes[iFootnoteIndex];
 		}
 
@@ -1080,9 +1078,9 @@ namespace ParatextImport.ImportTests
 			int wsExpected = Cache.ServiceLocator.WritingSystemManager.GetWsFromStr("de");
 			m_importer.AddImportStyleProxyForMapping(mapping, m_importer.HtStyleProxy);
 			ImportStyleProxy proxy = m_importer.HtStyleProxy[@"\hello"];
-			Assert.AreEqual(StyleType.kstParagraph, proxy.StyleType);
-			Assert.AreEqual(ScrStyleNames.MainBookTitle, proxy.StyleId);
-			Assert.AreEqual(wsExpected, proxy.TsTextProps.GetWs());
+			Assert.That(proxy.StyleType, Is.EqualTo(StyleType.kstParagraph));
+			Assert.That(proxy.StyleId, Is.EqualTo(ScrStyleNames.MainBookTitle));
+			Assert.That(proxy.TsTextProps.GetWs(), Is.EqualTo(wsExpected));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1099,8 +1097,8 @@ namespace ParatextImport.ImportTests
 				ScrStyleNames.MainBookTitle, "blah", null);
 			m_importer.AddImportStyleProxyForMapping(mapping, m_importer.HtStyleProxy);
 			ImportStyleProxy proxy = m_importer.HtStyleProxy[@"\bye"];
-			Assert.AreEqual(ScrStyleNames.MainBookTitle, proxy.StyleId);
-			Assert.AreEqual(m_wsAnal, proxy.TsTextProps.GetWs());
+			Assert.That(proxy.StyleId, Is.EqualTo(ScrStyleNames.MainBookTitle));
+			Assert.That(proxy.TsTextProps.GetWs(), Is.EqualTo(m_wsAnal));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1117,7 +1115,7 @@ namespace ParatextImport.ImportTests
 			int wsExpected = Cache.ServiceLocator.WritingSystemManager.GetWsFromStr("de");
 			m_importer.AddImportStyleProxyForMapping(mapping, m_importer.HtStyleProxy);
 			ImportStyleProxy proxy = ((ImportStyleProxy)m_importer.HtStyleProxy[mapping.BeginMarker]);
-			Assert.AreEqual(StyleType.kstCharacter, proxy.StyleType);
+			Assert.That(proxy.StyleType, Is.EqualTo(StyleType.kstCharacter));
 			ITsTextProps proxyTextProps = proxy.TsTextProps;
 			string sHowDifferent;
 			if (!TsTextPropsHelper.PropsAreEqual(StyleUtils.CharStyleTextProps("Really bold text", wsExpected),
@@ -1125,7 +1123,7 @@ namespace ParatextImport.ImportTests
 			{
 				Assert.Fail(sHowDifferent);
 			}
-			Assert.AreEqual(ContextValues.General, m_styleSheet.FindStyle("Really bold text").Context);
+			Assert.That(m_styleSheet.FindStyle("Really bold text").Context, Is.EqualTo(ContextValues.General));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1140,19 +1138,19 @@ namespace ParatextImport.ImportTests
 			ITsPropsBldr props = TsStringUtils.MakePropsBldr();
 
 			// This will do nothing except make sure it doesn't throw an exception
-			Assert.IsFalse(m_importer.PrevRunIsVerseNumber(null));
-			Assert.IsFalse(m_importer.PrevRunIsVerseNumber(bldr));
+			Assert.That(m_importer.PrevRunIsVerseNumber(null), Is.False);
+			Assert.That(m_importer.PrevRunIsVerseNumber(bldr), Is.False);
 
 			// Last marker is Verse Number. Should return true for previous run.
 			props.SetStrPropValue((int)FwTextPropType.ktptNamedStyle, "Verse Number");
 			bldr.Replace(0, 0, "Run 1", props.GetTextProps());
-			Assert.IsTrue(m_importer.PrevRunIsVerseNumber(bldr));
+			Assert.That(m_importer.PrevRunIsVerseNumber(bldr), Is.True);
 
 			// Second marker is not Verse Number. Should return false for previous run.
 			props.SetStrPropValue((int)FwTextPropType.ktptNamedStyle,
 				ScrStyleNames.NormalParagraph);
 			bldr.Replace(5, 5, "Run 2", props.GetTextProps());
-			Assert.IsFalse(m_importer.PrevRunIsVerseNumber(bldr));
+			Assert.That(m_importer.PrevRunIsVerseNumber(bldr), Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1165,22 +1163,18 @@ namespace ParatextImport.ImportTests
 		{
 			// First run
 			m_importer.AddTextToPara("What do we want to add?", m_ttpAnalWS);
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount,
-				"There should only be one run.");
-			Assert.AreEqual("What do we want to add?", m_importer.NormalParaStrBldr.get_RunText(0));
-			Assert.AreEqual(m_ttpAnalWS, m_importer.NormalParaStrBldr.get_Properties(0),
-				"First run should be anal.");
-			Assert.AreEqual(23, m_importer.ParaBldrLength);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1), "There should only be one run.");
+			Assert.That(m_importer.NormalParaStrBldr.get_RunText(0), Is.EqualTo("What do we want to add?"));
+			Assert.That(m_importer.NormalParaStrBldr.get_Properties(0), Is.EqualTo(m_ttpAnalWS), "First run should be anal.");
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(23));
 
 			// Add a second run
 			m_importer.AddTextToPara("Some vernacular penguins", m_ttpVernWS);
-			Assert.AreEqual(2, m_importer.NormalParaStrBldr.RunCount,
-				"There should be two runs.");
-			Assert.AreEqual("What do we want to add?", m_importer.NormalParaStrBldr.get_RunText(0));
-			Assert.AreEqual("Some vernacular penguins", m_importer.NormalParaStrBldr.get_RunText(1));
-			Assert.AreEqual(m_ttpVernWS, m_importer.NormalParaStrBldr.get_Properties(1),
-				"Second run should be vern.");
-			Assert.AreEqual(47, m_importer.ParaBldrLength);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(2), "There should be two runs.");
+			Assert.That(m_importer.NormalParaStrBldr.get_RunText(0), Is.EqualTo("What do we want to add?"));
+			Assert.That(m_importer.NormalParaStrBldr.get_RunText(1), Is.EqualTo("Some vernacular penguins"));
+			Assert.That(m_importer.NormalParaStrBldr.get_Properties(1), Is.EqualTo(m_ttpVernWS), "Second run should be vern.");
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(47));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1195,23 +1189,23 @@ namespace ParatextImport.ImportTests
 			// These values are arbitrary.
 			m_importer.TextSegment.FirstReference = new BCVRef(3, 4, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(3, 4, 0);
-			Assert.AreEqual("0", m_importer.GetVerseRefAsString(Cache.DefaultAnalWs));
+			Assert.That(m_importer.GetVerseRefAsString(Cache.DefaultAnalWs), Is.EqualTo("0"));
 
 			m_importer.TextSegment.FirstReference = new BCVRef(3, 4, 1);
 			m_importer.TextSegment.LastReference = new BCVRef(3, 4, 1);
-			Assert.AreEqual("1", m_importer.GetVerseRefAsString(Cache.DefaultAnalWs));
+			Assert.That(m_importer.GetVerseRefAsString(Cache.DefaultAnalWs), Is.EqualTo("1"));
 
 			m_importer.TextSegment.FirstReference = new BCVRef(3, 4, 12);
 			m_importer.TextSegment.LastReference = new BCVRef(3, 4, 13);
-			Assert.AreEqual("12-13", m_importer.GetVerseRefAsString(Cache.DefaultAnalWs));
+			Assert.That(m_importer.GetVerseRefAsString(Cache.DefaultAnalWs), Is.EqualTo("12-13"));
 
 			m_importer.TextSegment.FirstReference = new BCVRef(3, 4, 14, 2);
 			m_importer.TextSegment.LastReference = new BCVRef(3, 4, 14, 2);
-			Assert.AreEqual("14b", m_importer.GetVerseRefAsString(Cache.DefaultAnalWs));
+			Assert.That(m_importer.GetVerseRefAsString(Cache.DefaultAnalWs), Is.EqualTo("14b"));
 
 			m_importer.TextSegment.FirstReference = new BCVRef(3, 4, 15, 3);
 			m_importer.TextSegment.LastReference = new BCVRef(3, 4, 17, 4);
-			Assert.AreEqual("15c-17d", m_importer.GetVerseRefAsString(Cache.DefaultAnalWs));
+			Assert.That(m_importer.GetVerseRefAsString(Cache.DefaultAnalWs), Is.EqualTo("15c-17d"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1228,15 +1222,15 @@ namespace ParatextImport.ImportTests
 
 			m_importer.TextSegment.FirstReference = new BCVRef(3, 4, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(3, 4, 0);
-			Assert.AreEqual("\u0c66", m_importer.GetVerseRefAsString(0));
+			Assert.That(m_importer.GetVerseRefAsString(0), Is.EqualTo("\u0c66"));
 
 			m_importer.TextSegment.FirstReference = new BCVRef(3, 4, 1);
 			m_importer.TextSegment.LastReference = new BCVRef(3, 4, 1);
-			Assert.AreEqual("\u0c67", m_importer.GetVerseRefAsString(0));
+			Assert.That(m_importer.GetVerseRefAsString(0), Is.EqualTo("\u0c67"));
 
 			m_importer.TextSegment.FirstReference = new BCVRef(3, 4, 12);
 			m_importer.TextSegment.LastReference = new BCVRef(3, 4, 13);
-			Assert.AreEqual("\u0c67\u0c68-\u0c67\u0c69", m_importer.GetVerseRefAsString(0));
+			Assert.That(m_importer.GetVerseRefAsString(0), Is.EqualTo("\u0c67\u0c68-\u0c67\u0c69"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1256,7 +1250,7 @@ namespace ParatextImport.ImportTests
 			IStTxtPara para = m_importer.FindCorrespondingVernParaForSegment(
 				m_styleSheet.FindStyle(ScrStyleNames.NormalParagraph),
 				new BCVRef(2, 1, 7), lastSection.ContentOA.ParagraphsOS.Count - 1);
-			Assert.AreEqual(hvoLastPara, para.Hvo);
+			Assert.That(para.Hvo, Is.EqualTo(hvoLastPara));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1270,12 +1264,12 @@ namespace ParatextImport.ImportTests
 			string s = "abcd" + '\u001e';
 			string result = (string)ReflectionHelper.CallStaticMethod("ParatextImport.dll", "ParatextImport.ParatextSfmImporter", "RemoveControlCharacters",
 				new object[]{s});
-			Assert.AreEqual("abcd", result);
+			Assert.That(result, Is.EqualTo("abcd"));
 
 			s = "abcd" + '\u0009';
 			result = (string)ReflectionHelper.CallStaticMethod("ParatextImport.dll", "ParatextImport.ParatextSfmImporter", "RemoveControlCharacters",
 				new object[] { s });
-			Assert.AreEqual("abcd ", result);
+			Assert.That(result, Is.EqualTo("abcd "));
 		}
 
 		#region Tests of EnsurePictureFilePathIsRooted method
@@ -1290,9 +1284,8 @@ namespace ParatextImport.ImportTests
 		{
 			string fileName = Platform.IsUnix ? "P0|/tmp/mypic.jpg|P2|P3|P4"
 				: @"P0|c:\temp\mypic.jpg|P2|P3|P4";
-			Assert.AreEqual(fileName,
-				ReflectionHelper.GetStrResult(m_importer, "EnsurePictureFilePathIsRooted",
-				fileName));
+			Assert.That(ReflectionHelper.GetStrResult(m_importer, "EnsurePictureFilePathIsRooted",
+				fileName), Is.EqualTo(fileName));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1304,8 +1297,7 @@ namespace ParatextImport.ImportTests
 		[Test]
 		public void EnsurePictureFilePathIsRooted_BogusTextRep_NoLeadingVerticalBar()
 		{
-			Assert.AreEqual(Path.Combine(Path.GetTempPath(), "Bogus"),
-				ReflectionHelper.GetStrResult(m_importer, "EnsurePictureFilePathIsRooted", "Bogus"));
+			Assert.That(ReflectionHelper.GetStrResult(m_importer, "EnsurePictureFilePathIsRooted", "Bogus"), Is.EqualTo(Path.Combine(Path.GetTempPath(), "Bogus")));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1317,8 +1309,7 @@ namespace ParatextImport.ImportTests
 		[Test]
 		public void EnsurePictureFilePathIsRooted_BogusTextRep_NoTrailingVerticalBar()
 		{
-			Assert.AreEqual("|Bogus.jpg",
-				ReflectionHelper.GetStrResult(m_importer, "EnsurePictureFilePathIsRooted", "|Bogus.jpg"));
+			Assert.That(ReflectionHelper.GetStrResult(m_importer, "EnsurePictureFilePathIsRooted", "|Bogus.jpg"), Is.EqualTo("|Bogus.jpg"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -1336,9 +1327,8 @@ namespace ParatextImport.ImportTests
 
 			using (DummyFileMaker filemaker = new DummyFileMaker("junk.jpg", true))
 			{
-				Assert.IsTrue(Path.IsPathRooted(filemaker.Filename));
-				Assert.AreEqual("P0|" + filemaker.Filename + "|P2|P3|P4",
-					ReflectionHelper.GetStrResult(m_importer, "EnsurePictureFilePathIsRooted", "P0|junk.jpg|P2|P3|P4"));
+				Assert.That(Path.IsPathRooted(filemaker.Filename), Is.True);
+				Assert.That(ReflectionHelper.GetStrResult(m_importer, "EnsurePictureFilePathIsRooted", "P0|junk.jpg|P2|P3|P4"), Is.EqualTo("P0|" + filemaker.Filename + "|P2|P3|P4"));
 			}
 		}
 
@@ -1362,9 +1352,8 @@ namespace ParatextImport.ImportTests
 
 			using (DummyFileMaker filemaker = new DummyFileMaker(Path.Combine(sow.ExternalPictureFolders[1], "j~u~n~k.jpg"), false))
 			{
-				Assert.IsTrue(Path.IsPathRooted(filemaker.Filename));
-				Assert.AreEqual("P0|" + filemaker.Filename + "|P2|P3|P4",
-					ReflectionHelper.GetStrResult(m_importer, "EnsurePictureFilePathIsRooted", "P0|j~u~n~k.jpg|P2|P3|P4"));
+				Assert.That(Path.IsPathRooted(filemaker.Filename), Is.True);
+				Assert.That(ReflectionHelper.GetStrResult(m_importer, "EnsurePictureFilePathIsRooted", "P0|j~u~n~k.jpg|P2|P3|P4"), Is.EqualTo("P0|" + filemaker.Filename + "|P2|P3|P4"));
 			}
 		}
 
@@ -1388,7 +1377,7 @@ namespace ParatextImport.ImportTests
 				{
 					String str1 = "P0|" + filemaker.Filename + "|P2|P3|P4";
 					String str2 = ReflectionHelper.GetStrResult(m_importer, "EnsurePictureFilePathIsRooted", @"P0|\j~u~n~k.jpg|P2|P3|P4");
-					Assert.AreEqual(str1.ToLowerInvariant(), str2.ToLowerInvariant());
+					Assert.That(str2.ToLowerInvariant(), Is.EqualTo(str1.ToLowerInvariant()));
 				}
 			}
 			catch(System.UnauthorizedAccessException)
@@ -1413,7 +1402,7 @@ namespace ParatextImport.ImportTests
 
 			using (DummyFileMaker filemaker = new DummyFileMaker("junk.jpg", true))
 			{
-				Assert.AreEqual("P0|" + filemaker.Filename + "|P2|P3|P4", ReflectionHelper.GetStrResult(m_importer, "EnsurePictureFilePathIsRooted", @"P0|\junk.jpg|P2|P3|P4"));
+				Assert.That(ReflectionHelper.GetStrResult(m_importer, "EnsurePictureFilePathIsRooted", @"P0|\junk.jpg|P2|P3|P4"), Is.EqualTo("P0|" + filemaker.Filename + "|P2|P3|P4"));
 			}
 		}
 
@@ -1433,11 +1422,10 @@ namespace ParatextImport.ImportTests
 			foreach (string sFolder in sow.ExternalPictureFolders)
 			{
 				string sPath = Path.Combine(sFolder, "wunkybunkymunky.xyz");
-				Assert.IsFalse(FileUtils.FileExists(sPath), "Test is invalid because " + sPath + "exists.");
+				Assert.That(FileUtils.FileExists(sPath), Is.False, "Test is invalid because " + sPath + "exists.");
 			}
 
-			Assert.AreEqual("P0|" + Path.Combine(sow.ExternalPictureFolders[0], "wunkybunkymunky.xyz") + "|P2|P3|P4",
-					ReflectionHelper.GetStrResult(m_importer, "EnsurePictureFilePathIsRooted", "P0|wunkybunkymunky.xyz|P2|P3|P4"));
+			Assert.That(ReflectionHelper.GetStrResult(m_importer, "EnsurePictureFilePathIsRooted", "P0|wunkybunkymunky.xyz|P2|P3|P4"), Is.EqualTo("P0|" + Path.Combine(sow.ExternalPictureFolders[0], "wunkybunkymunky.xyz") + "|P2|P3|P4"));
 		}
 		#endregion
 		#endregion
@@ -1460,7 +1448,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
 			m_importer.ProcessSegment("This is an English para", @"\p");
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			int wsExpected = Cache.ServiceLocator.WritingSystemManager.GetWsFromStr("qaa-x-kal");
 			VerifyBldrRun(0, "This is an English para", null, wsExpected);
 		}
@@ -1484,38 +1472,38 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("EXO", @"\id");
-			Assert.AreEqual(2, m_importer.BookNumber);
-			Assert.AreEqual(1, m_importer.ScrBook.TitleOA.ParagraphsOS.Count);
-			Assert.AreEqual(0, m_importer.ScrBook.SectionsOS.Count);
-			Assert.IsTrue(m_importer.HvoTitle > 0);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
+			Assert.That(m_importer.ScrBook.TitleOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(m_importer.ScrBook.SectionsOS.Count, Is.EqualTo(0));
+			Assert.That(m_importer.HvoTitle > 0, Is.True);
 			// verify that a new book was added to the DB
 			IScrBook book = m_importer.ScrBook;
-			Assert.AreEqual(string.Empty, book.IdText);
-			Assert.IsTrue(book.TitleOA.IsValidObject); //empty title
-			Assert.AreEqual(book.TitleOA.Hvo, m_importer.HvoTitle);
-			Assert.AreEqual(1, book.TitleOA.ParagraphsOS.Count);
-			Assert.AreEqual(0, book.SectionsOS.Count); // empty seq of sections
-			Assert.AreEqual("EXO", book.BookId);
-			//	Assert.AreEqual(2, book.CanonOrd);
+			Assert.That(book.IdText, Is.EqualTo(string.Empty));
+			Assert.That(book.TitleOA.IsValidObject, Is.True); //empty title
+			Assert.That(m_importer.HvoTitle, Is.EqualTo(book.TitleOA.Hvo));
+			Assert.That(book.TitleOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(book.SectionsOS.Count, Is.EqualTo(0)); // empty seq of sections
+			Assert.That(book.BookId, Is.EqualTo("EXO"));
+			//	Assert.That(book.CanonOrd, Is.EqualTo(2));
 
 			// ************** process a main title *********************
 			m_importer.ProcessSegment("Main Title!", @"\mt");
-			Assert.AreEqual("Main Title!", m_importer.ScrBook.Name.VernacularDefaultWritingSystem.Text);
+			Assert.That(m_importer.ScrBook.Name.VernacularDefaultWritingSystem.Text, Is.EqualTo("Main Title!"));
 
 			// begin first section (intro material)
 			// ************** process an intro section head, test MakeSection() method ************
 			m_importer.ProcessSegment("Background Material", @"\is");
-			Assert.AreEqual(2, m_importer.BookNumber);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
 			Assert.That(m_importer.CurrentSection, Is.Not.Null);
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			VerifyBldrRun(0, "Background Material", null);
-			Assert.AreEqual(19, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(19));
 			// verify completed title was added to the DB
-			Assert.AreEqual(1, book.TitleOA.ParagraphsOS.Count);
+			Assert.That(book.TitleOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara title = (IStTxtPara)book.TitleOA.ParagraphsOS[0];
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps(ScrStyleNames.MainBookTitle), title.StyleRules);
-			Assert.AreEqual(1, title.Contents.RunCount);
+			Assert.That(title.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps(ScrStyleNames.MainBookTitle)));
+			Assert.That(title.Contents.RunCount, Is.EqualTo(1));
 			AssertEx.RunIsCorrect(title.Contents, 0, "Main Title!", null, DefaultVernWs);
 			// verify that a new section was added to the DB
 			VerifyNewSectionExists(book, 0);
@@ -1523,16 +1511,15 @@ namespace ParatextImport.ImportTests
 			// ************** process an intro paragraph, test MakeParagraph() method **********
 			m_importer.ProcessSegment("Intro paragraph text", @"\ip");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			VerifyBldrRun(0, "Intro paragraph text", null);
-			Assert.AreEqual(20, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(20));
 			// verify completed intro section head was added to DB
-			Assert.AreEqual(1, book.SectionsOS.Count);
-			Assert.AreEqual(1, book.SectionsOS[0].HeadingOA.ParagraphsOS.Count);
+			Assert.That(book.SectionsOS.Count, Is.EqualTo(1));
+			Assert.That(book.SectionsOS[0].HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara heading = (IStTxtPara)book.SectionsOS[0].HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Intro Section Head"),
-				heading.StyleRules);
-			Assert.AreEqual(1, heading.Contents.RunCount);
+			Assert.That(heading.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Intro Section Head")));
+			Assert.That(heading.Contents.RunCount, Is.EqualTo(1));
 			AssertEx.RunIsCorrect(heading.Contents, 0, "Background Material", null, DefaultVernWs);
 
 			// begin second section (scripture text)
@@ -1543,39 +1530,39 @@ namespace ParatextImport.ImportTests
 			// note: new section and para are established, but chapter number is not put in
 			//  para now (it's saved for drop-cap location later)
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(0, m_importer.ParaBldrLength);
-			Assert.AreEqual(1, m_importer.Chapter);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(0));
+			Assert.That(m_importer.Chapter, Is.EqualTo(1));
 			// verify contents of completed paragraph
-			Assert.AreEqual(1, book.SectionsOS[0].ContentOA.ParagraphsOS.Count);
+			Assert.That(book.SectionsOS[0].ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)book.SectionsOS[0].ContentOA.ParagraphsOS[0];
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Intro Paragraph"), para.StyleRules);
-			Assert.AreEqual(1, para.Contents.RunCount);
+			Assert.That(para.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Intro Paragraph")));
+			Assert.That(para.Contents.RunCount, Is.EqualTo(1));
 			AssertEx.RunIsCorrect(para.Contents, 0, "Intro paragraph text", null, DefaultVernWs);
 			// verify refs of completed section
-			Assert.AreEqual(2001000, book.SectionsOS[0].VerseRefMin);
-			Assert.AreEqual(2001000, book.SectionsOS[0].VerseRefMax);
+			Assert.That(book.SectionsOS[0].VerseRefMin, Is.EqualTo(2001000));
+			Assert.That(book.SectionsOS[0].VerseRefMax, Is.EqualTo(2001000));
 			// verify that a new section was added to the DB
 			VerifyNewSectionExists(book, 1);
 
 			// ************** process a section head (for 1:1-4) *********************
 			m_importer.ProcessSegment("Section Head One", @"\s");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			VerifyBldrRun(0, "Section Head One", null);
-			Assert.AreEqual(16, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(16));
 
 			// ************** process second line of section head *********************
 			m_importer.ProcessSegment("Yadda yadda Line two!", @"\s");
 			// verify state of NormalParaStrBldr
 			char sBrkChar = StringUtils.kChHardLB;
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			VerifyBldrRun(0, "Section Head One" + sBrkChar + "Yadda yadda Line two!", null);
-			Assert.AreEqual(38, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(38));
 
 			// ************** process a section head reference *********************
 			m_importer.ProcessSegment("Section Head Ref Line", @"\r");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			VerifyBldrRun(0, "Section Head Ref Line", null);
 
 			// in second section (1:1-4), begin first content paragraph
@@ -1584,22 +1571,22 @@ namespace ParatextImport.ImportTests
 			// note: chapter number should be inserted now
 			int expectedBldrLength = 1; // The chapter number takes one character
 			int expectedRunCount = 1;
-			Assert.AreEqual(expectedRunCount, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(expectedRunCount));
 			VerifyBldrRun(0, "1", "Chapter Number");
-			Assert.AreEqual(expectedBldrLength, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(expectedBldrLength));
 			// verify completed section head was added to DB (for 1:1-4)
-			Assert.AreEqual(2, book.SectionsOS.Count);
-			Assert.AreEqual(2, book.SectionsOS[1].HeadingOA.ParagraphsOS.Count);
+			Assert.That(book.SectionsOS.Count, Is.EqualTo(2));
+			Assert.That(book.SectionsOS[1].HeadingOA.ParagraphsOS.Count, Is.EqualTo(2));
 			// Check 1st heading para
 			heading = (IStTxtPara)book.SectionsOS[1].HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Section Head"), heading.StyleRules);
-			Assert.AreEqual(1, heading.Contents.RunCount);
+			Assert.That(heading.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Section Head")));
+			Assert.That(heading.Contents.RunCount, Is.EqualTo(1));
 			AssertEx.RunIsCorrect(heading.Contents, 0, "Section Head One" +
 				sBrkChar + "Yadda yadda Line two!", null, DefaultVernWs);
 			// Check 2nd heading para
 			heading = (IStTxtPara)book.SectionsOS[1].HeadingOA.ParagraphsOS[1];
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Parallel Passage Reference"), heading.StyleRules);
-			Assert.AreEqual(1, heading.Contents.RunCount);
+			Assert.That(heading.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Parallel Passage Reference")));
+			Assert.That(heading.Contents.RunCount, Is.EqualTo(1));
 			AssertEx.RunIsCorrect(heading.Contents, 0, "Section Head Ref Line", null, DefaultVernWs);
 
 			// ************** process verse text *********************
@@ -1610,11 +1597,11 @@ namespace ParatextImport.ImportTests
 			expectedRunCount += 2;
 			m_importer.ProcessSegment(sSegmentText, @"\v");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(expectedRunCount, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(expectedRunCount));
 			VerifyBldrRun(0, "1", "Chapter Number");
 			VerifyBldrRun(1, "1", "Verse Number");
 			VerifyBldrRun(2, sSegmentText, null);
-			Assert.AreEqual(expectedBldrLength, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(expectedBldrLength));
 
 			// ************** process verse text with character style *********************
 			sSegmentText = " text with char style";
@@ -1622,9 +1609,9 @@ namespace ParatextImport.ImportTests
 			expectedRunCount++;
 			m_importer.ProcessSegment(sSegmentText, @"\kw");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(expectedRunCount, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(expectedRunCount));
 			VerifyBldrRun(expectedRunCount - 1, sSegmentText, "Key Word");
-			Assert.AreEqual(expectedBldrLength, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(expectedBldrLength));
 
 			// ************** process text after the character style *********************
 			sSegmentText = " text after char style";
@@ -1632,9 +1619,9 @@ namespace ParatextImport.ImportTests
 			expectedRunCount++;
 			m_importer.ProcessSegment(sSegmentText, @"\kw*");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(expectedRunCount, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(expectedRunCount));
 			VerifyBldrRun(expectedRunCount - 1, sSegmentText, null);
-			Assert.AreEqual(expectedBldrLength, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(expectedBldrLength));
 
 			// ********** process a footnote (use default Scripture settings) *************
 			string sFootnoteSegment = "My footnote text";
@@ -1642,11 +1629,11 @@ namespace ParatextImport.ImportTests
 			expectedRunCount++;
 			m_importer.ProcessSegment(sFootnoteSegment, @"\f");
 			// verify state of FootnoteParaStrBldr
-			Assert.AreEqual(1, m_importer.FootnoteParaStrBldr.RunCount);
+			Assert.That(m_importer.FootnoteParaStrBldr.RunCount, Is.EqualTo(1));
 
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(expectedRunCount, m_importer.NormalParaStrBldr.RunCount);
-			Assert.AreEqual(expectedBldrLength, m_importer.ParaBldrLength);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(expectedRunCount));
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(expectedBldrLength));
 			// check the ORC (Object Replacement Character)
 			VerifyBldrFootnoteOrcRun(expectedRunCount - 1, 0);
 
@@ -1656,9 +1643,9 @@ namespace ParatextImport.ImportTests
 			expectedRunCount++;
 			m_importer.ProcessSegment(sSegmentText, @"\vt");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(expectedRunCount, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(expectedRunCount));
 			VerifyBldrRun(expectedRunCount - 1, sSegmentText, null);
-			Assert.AreEqual(expectedBldrLength, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(expectedBldrLength));
 			// Verify creation of footnote object
 			VerifySimpleFootnote(0, sFootnoteSegment);
 
@@ -1671,10 +1658,10 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment(sSegmentText, @"\v");
 			// verify state of NormalParaStrBldr
 			//TODO: when ready, modify these lines to verify that chapter number was properly added to para
-			Assert.AreEqual(expectedRunCount, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(expectedRunCount));
 			VerifyBldrRun(expectedRunCount - 2, "2-3", "Verse Number");
 			VerifyBldrRun(expectedRunCount - 1, sSegmentText, null);
-			Assert.AreEqual(expectedBldrLength, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(expectedBldrLength));
 
 			// in second section (verse text), begin second paragraph
 			// ************** process a \q paragraph marker with text *********************
@@ -1684,19 +1671,19 @@ namespace ParatextImport.ImportTests
 			expectedBldrLength = sSegmentText.Length;
 			m_importer.ProcessSegment(sSegmentText, @"\q");
 
-			Assert.AreEqual(2, m_importer.BookNumber);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
 
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(expectedRunCount, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(expectedRunCount));
 			VerifyBldrRun(expectedRunCount - 1, sSegmentText, null);
-			Assert.AreEqual(expectedBldrLength, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(expectedBldrLength));
 
 			// verify that the verse text first paragraph is in the db correctly
-			Assert.AreEqual(2, book.SectionsOS.Count);
-			Assert.AreEqual(1, book.SectionsOS[1].ContentOA.ParagraphsOS.Count);
+			Assert.That(book.SectionsOS.Count, Is.EqualTo(2));
+			Assert.That(book.SectionsOS[1].ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 			para = (IStTxtPara)book.SectionsOS[1].ContentOA.ParagraphsOS[0]; //first para
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Paragraph"), para.StyleRules);
-			Assert.AreEqual(expectedParaRunCount, para.Contents.RunCount);
+			Assert.That(para.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Paragraph")));
+			Assert.That(para.Contents.RunCount, Is.EqualTo(expectedParaRunCount));
 			AssertEx.RunIsCorrect(para.Contents, 0, "1", "Chapter Number", DefaultVernWs);
 			AssertEx.RunIsCorrect(para.Contents, 1, "1", "Verse Number", DefaultVernWs);
 			AssertEx.RunIsCorrect(para.Contents, 2, "Verse one text", null, DefaultVernWs);
@@ -1712,15 +1699,15 @@ namespace ParatextImport.ImportTests
 			// ************** process a \q2 paragraph marker (for a new verse) ****************
 			expectedParaRunCount = expectedRunCount;
 			m_importer.ProcessSegment("", @"\q2");
-			Assert.AreEqual(2, m_importer.BookNumber);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(0, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(0));
 			// verify that the verse text second paragraph is in the db correctly
-			Assert.AreEqual(2, book.SectionsOS.Count);
-			Assert.AreEqual(2, book.SectionsOS[1].ContentOA.ParagraphsOS.Count);
+			Assert.That(book.SectionsOS.Count, Is.EqualTo(2));
+			Assert.That(book.SectionsOS[1].ContentOA.ParagraphsOS.Count, Is.EqualTo(2));
 			para = (IStTxtPara)book.SectionsOS[1].ContentOA.ParagraphsOS[1]; //second para
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Line1"), para.StyleRules);
-			Assert.AreEqual(expectedParaRunCount, para.Contents.RunCount);
+			Assert.That(para.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Line1")));
+			Assert.That(para.Contents.RunCount, Is.EqualTo(expectedParaRunCount));
 			AssertEx.RunIsCorrect(para.Contents, 0, sSegmentText, null, DefaultVernWs);
 
 			// ************** process verse four text *********************
@@ -1731,10 +1718,10 @@ namespace ParatextImport.ImportTests
 			expectedRunCount = 2;
 			m_importer.ProcessSegment(sSegmentText, @"\v");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(expectedRunCount, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(expectedRunCount));
 			VerifyBldrRun(expectedRunCount - 2, "4", "Verse Number");
 			VerifyBldrRun(expectedRunCount - 1, sSegmentText, null);
-			Assert.AreEqual(expectedBldrLength, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(expectedBldrLength));
 
 			// ************** process a chapter *********************
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 2, 1);
@@ -1743,30 +1730,30 @@ namespace ParatextImport.ImportTests
 			// note: new para is established, but chapter number is not put in
 			// para now (it's saved for drop-cap location later)
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(expectedBldrLength, m_importer.ParaBldrLength, "nothing should have been added");
-			Assert.AreEqual(2, m_importer.Chapter);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(expectedBldrLength), "nothing should have been added");
+			Assert.That(m_importer.Chapter, Is.EqualTo(2));
 			// verify that we have not yet established a third section
-			Assert.AreEqual(2, book.SectionsOS.Count);
+			Assert.That(book.SectionsOS.Count, Is.EqualTo(2));
 
 			// begin third section
 			// ************** process a section head (for 2:1-10) *********************
 			m_importer.ProcessSegment("Section Head Two", @"\s");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			VerifyBldrRun(0, "Section Head Two", null);
-			Assert.AreEqual(16, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(16));
 
 			// verify that the second section third paragraph is in the db correctly
-			Assert.AreEqual(3, book.SectionsOS[1].ContentOA.ParagraphsOS.Count);
+			Assert.That(book.SectionsOS[1].ContentOA.ParagraphsOS.Count, Is.EqualTo(3));
 			para = (IStTxtPara)book.SectionsOS[1].ContentOA.ParagraphsOS[2]; //third para
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Line2"), para.StyleRules);
-			Assert.AreEqual(2, para.Contents.RunCount);
+			Assert.That(para.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Line2")));
+			Assert.That(para.Contents.RunCount, Is.EqualTo(2));
 			AssertEx.RunIsCorrect(para.Contents, 0, "4", "Verse Number", DefaultVernWs);
 			AssertEx.RunIsCorrect(para.Contents, 1, "second line of poetry", null, DefaultVernWs);
 
 			// verify refs of completed scripture text section (1:1-4)
-			Assert.AreEqual(2001001, book.SectionsOS[1].VerseRefMin);
-			Assert.AreEqual(2001004, book.SectionsOS[1].VerseRefMax);
+			Assert.That(book.SectionsOS[1].VerseRefMin, Is.EqualTo(2001001));
+			Assert.That(book.SectionsOS[1].VerseRefMax, Is.EqualTo(2001004));
 			// verify that a new section was added to the DB
 			VerifyNewSectionExists(book, 2);
 
@@ -1774,15 +1761,15 @@ namespace ParatextImport.ImportTests
 			// ************** process a \q paragraph marker (for a new verse) ****************
 			m_importer.ProcessSegment("", @"\q");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			VerifyBldrRun(0, "2", "Chapter Number");
-			Assert.AreEqual(1, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(1));
 			// verify completed section head was added to DB
-			Assert.AreEqual(3, book.SectionsOS.Count);
-			Assert.AreEqual(1, book.SectionsOS[2].HeadingOA.ParagraphsOS.Count);
+			Assert.That(book.SectionsOS.Count, Is.EqualTo(3));
+			Assert.That(book.SectionsOS[2].HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 			heading = (IStTxtPara)book.SectionsOS[2].HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Section Head"), heading.StyleRules);
-			Assert.AreEqual(1, heading.Contents.RunCount);
+			Assert.That(heading.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Section Head")));
+			Assert.That(heading.Contents.RunCount, Is.EqualTo(1));
 			AssertEx.RunIsCorrect(heading.Contents, 0, "Section Head Two", null, DefaultVernWs);
 
 			// ************** process verse 5-10 text *********************
@@ -1790,30 +1777,30 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(2, 2, 10);
 			m_importer.ProcessSegment("verse one to ten text", @"\v");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(3, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(3));
 			VerifyBldrRun(1, "1-10", "Verse Number");
 			VerifyBldrRun(2, "verse one to ten text", null);
-			Assert.AreEqual(26, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(26));
 
 			// begin fourth section
 			// ************** process a section head (for 2:11) *********************
 			m_importer.ProcessSegment("Section Head Four", @"\s");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			VerifyBldrRun(0, "Section Head Four", null);
-			Assert.AreEqual(17, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(17));
 			// verify that the third section first paragraph is in the db correctly
-			Assert.AreEqual(4, book.SectionsOS.Count);
-			Assert.AreEqual(1, book.SectionsOS[2].ContentOA.ParagraphsOS.Count);
+			Assert.That(book.SectionsOS.Count, Is.EqualTo(4));
+			Assert.That(book.SectionsOS[2].ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 			para = (IStTxtPara)book.SectionsOS[2].ContentOA.ParagraphsOS[0]; //first para
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Line1"), para.StyleRules);
-			Assert.AreEqual(3, para.Contents.RunCount);
+			Assert.That(para.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Line1")));
+			Assert.That(para.Contents.RunCount, Is.EqualTo(3));
 			AssertEx.RunIsCorrect(para.Contents, 0, "2", "Chapter Number", DefaultVernWs);
 			AssertEx.RunIsCorrect(para.Contents, 1, "1-10", "Verse Number", DefaultVernWs);
 			AssertEx.RunIsCorrect(para.Contents, 2, "verse one to ten text", null, DefaultVernWs);
 			// verify refs of completed scripture text section (2:5-10)
-			Assert.AreEqual(2002001, book.SectionsOS[2].VerseRefMin);
-			Assert.AreEqual(2002010, book.SectionsOS[2].VerseRefMax);
+			Assert.That(book.SectionsOS[2].VerseRefMin, Is.EqualTo(2002001));
+			Assert.That(book.SectionsOS[2].VerseRefMax, Is.EqualTo(2002010));
 			// verify that a new section was added to the DB
 			VerifyNewSectionExists(book, 3);
 
@@ -1821,7 +1808,7 @@ namespace ParatextImport.ImportTests
 
 			// ************** finalize **************
 			m_importer.FinalizeImport();
-			Assert.AreEqual(2, m_importer.BookNumber);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
 		}
 		#endregion
 
@@ -1877,14 +1864,14 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("", @"\v");
 
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(expectedRunCount, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(expectedRunCount));
 			VerifyBldrRun(0, "1", "Chapter Number");
 			VerifyBldrRun(1, "1", "Verse Number");
 			VerifyBldrRun(2, " ", null);
 			VerifyBldrRun(3, "2", "Verse Number");
 			VerifyBldrRun(4, " ", null);
 			VerifyBldrRun(5, "3", "Verse Number");
-			Assert.AreEqual(expectedBldrLength, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(expectedBldrLength));
 
 			// ************** finalize **************
 			m_importer.FinalizeImport();
@@ -1924,10 +1911,10 @@ namespace ParatextImport.ImportTests
 
 			IScrSection section = m_importer.ScrBook.SectionsOS[0];
 
-			Assert.AreEqual(2001002, section.VerseRefMin);
-			Assert.AreEqual(2001010, section.VerseRefMax);
-			Assert.AreEqual(2001010, section.VerseRefStart);
-			Assert.AreEqual(2001002, section.VerseRefEnd);
+			Assert.That(section.VerseRefMin, Is.EqualTo(2001002));
+			Assert.That(section.VerseRefMax, Is.EqualTo(2001010));
+			Assert.That(section.VerseRefStart, Is.EqualTo(2001010));
+			Assert.That(section.VerseRefEnd, Is.EqualTo(2001002));
 
 		}
 		#endregion
@@ -1974,7 +1961,7 @@ namespace ParatextImport.ImportTests
 			IScrBook book = m_importer.ScrBook;
 			IScrSection section = book.SectionsOS[0];
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11 2", para.Contents.Text, "No verse text should get imported");
+			Assert.That(para.Contents.Text, Is.EqualTo("11 2"), "No verse text should get imported");
 		}
 		#endregion
 
@@ -2000,22 +1987,22 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("This is a header  ", @"\h");
 			// verify header was added to DB
 			IScrBook book = m_importer.ScrBook;
-			Assert.AreEqual("This is a header", book.Name.VernacularDefaultWritingSystem.Text);
+			Assert.That(book.Name.VernacularDefaultWritingSystem.Text, Is.EqualTo("This is a header"));
 
 			// ************** process a subtitle (mt2) *********************
 			m_importer.ProcessSegment("The Gospel According to", @"\mt2");
-			Assert.AreEqual("This is a header", book.Name.VernacularDefaultWritingSystem.Text);
-			Assert.AreEqual(0, book.SectionsOS.Count);
+			Assert.That(book.Name.VernacularDefaultWritingSystem.Text, Is.EqualTo("This is a header"));
+			Assert.That(book.SectionsOS.Count, Is.EqualTo(0));
 
 			// ************** process a main title (mt) *********************
 			m_importer.ProcessSegment("Waldo", @"\mt");
-			Assert.AreEqual("This is a header", m_importer.ScrBook.Name.VernacularDefaultWritingSystem.Text);
-			Assert.AreEqual(0, book.SectionsOS.Count);
+			Assert.That(m_importer.ScrBook.Name.VernacularDefaultWritingSystem.Text, Is.EqualTo("This is a header"));
+			Assert.That(book.SectionsOS.Count, Is.EqualTo(0));
 
 			// ************** process a subtitle (st3) *********************
 			m_importer.ProcessSegment("Dude!", @"\st3");
-			Assert.AreEqual("This is a header", m_importer.ScrBook.Name.VernacularDefaultWritingSystem.Text);
-			Assert.AreEqual(0, book.SectionsOS.Count);
+			Assert.That(m_importer.ScrBook.Name.VernacularDefaultWritingSystem.Text, Is.EqualTo("This is a header"));
+			Assert.That(book.SectionsOS.Count, Is.EqualTo(0));
 
 			// begin first section (scripture text)
 			// ************** process a chapter *********************
@@ -2025,14 +2012,14 @@ namespace ParatextImport.ImportTests
 			VerifyNewSectionExists(book, 0);
 			// note: chapter number is not put in para now (it's saved for drop-cap location later)
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(0, m_importer.ParaBldrLength);
-			Assert.AreEqual(1, m_importer.Chapter);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(0));
+			Assert.That(m_importer.Chapter, Is.EqualTo(1));
 
 			// verify completed title was added to the DB
-			Assert.AreEqual(1, book.TitleOA.ParagraphsOS.Count);
+			Assert.That(book.TitleOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara title = (IStTxtPara)book.TitleOA.ParagraphsOS[0];
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps(ScrStyleNames.MainBookTitle), title.StyleRules);
-			Assert.AreEqual(3, title.Contents.RunCount);
+			Assert.That(title.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps(ScrStyleNames.MainBookTitle)));
+			Assert.That(title.Contents.RunCount, Is.EqualTo(3));
 			AssertEx.RunIsCorrect(title.Contents, 0, "The Gospel According to", "Title Secondary", DefaultVernWs);
 			char sBrkChar = StringUtils.kChHardLB;
 			AssertEx.RunIsCorrect(title.Contents, 1, sBrkChar + "Waldo" + sBrkChar, null, DefaultVernWs);
@@ -2041,9 +2028,9 @@ namespace ParatextImport.ImportTests
 			// ************** process a section head (for 1:5-10) *********************
 			m_importer.ProcessSegment("Section Head One", @"\s");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			VerifyBldrRun(0, "Section Head One", null);
-			Assert.AreEqual(16, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(16));
 			// verify that a new section was added to the DB
 			VerifyNewSectionExists(book, 0);
 
@@ -2052,15 +2039,15 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("", @"\q");
 			// note: chapter number should be inserted now
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			VerifyBldrRun(0, "1", "Chapter Number");
-			Assert.AreEqual(1, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(1));
 			// verify completed section head was added to DB
 			//book = (ScrBook)ScrBook.CreateFromDBObject(Cache, m_importer.ScrBook.Hvo, true); //refresh cache
-			Assert.AreEqual(1, book.SectionsOS[0].HeadingOA.ParagraphsOS.Count);
+			Assert.That(book.SectionsOS[0].HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara heading = (IStTxtPara)book.SectionsOS[0].HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Section Head"), heading.StyleRules);
-			Assert.AreEqual(1, heading.Contents.RunCount);
+			Assert.That(heading.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Section Head")));
+			Assert.That(heading.Contents.RunCount, Is.EqualTo(1));
 			AssertEx.RunIsCorrect(heading.Contents, 0, "Section Head One", null, DefaultVernWs);
 
 			// ************** process verse 5-10 text *********************
@@ -2068,31 +2055,31 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(2, 1, 10);
 			m_importer.ProcessSegment("verse five to ten text", @"\v");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(3, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(3));
 			VerifyBldrRun(1, "5-10", "Verse Number");
 			VerifyBldrRun(2, "verse five to ten text", null);
-			Assert.AreEqual(27, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(27));
 
 			// begin second section
 			// ************** process a section head (for 1:10-2:6) *********************
 			m_importer.ProcessSegment("Section Head Two", @"\s");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			VerifyBldrRun(0, "Section Head Two", null);
-			Assert.AreEqual(16, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(16));
 			// verify that the first section first paragraph is in the db correctly
 			//book = (ScrBook)ScrBook.CreateFromDBObject(Cache, m_importer.ScrBook.Hvo, true); //refresh cache
 			IScrSection prevSection = book.SectionsOS[0];
-			Assert.AreEqual(1, prevSection.ContentOA.ParagraphsOS.Count);
+			Assert.That(prevSection.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)prevSection.ContentOA.ParagraphsOS[0]; //first para
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Line1"), para.StyleRules);
-			Assert.AreEqual(3, para.Contents.RunCount);
+			Assert.That(para.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Line1")));
+			Assert.That(para.Contents.RunCount, Is.EqualTo(3));
 			AssertEx.RunIsCorrect(para.Contents, 0, "1", "Chapter Number", DefaultVernWs);
 			AssertEx.RunIsCorrect(para.Contents, 1, "5-10", "Verse Number", DefaultVernWs);
 			AssertEx.RunIsCorrect(para.Contents, 2, "verse five to ten text", null, DefaultVernWs);
 			// verify refs of completed scripture text section (2:5-10)
-			Assert.AreEqual(2001005, prevSection.VerseRefMin);
-			Assert.AreEqual(2001010, prevSection.VerseRefMax);
+			Assert.That(prevSection.VerseRefMin, Is.EqualTo(2001005));
+			Assert.That(prevSection.VerseRefMax, Is.EqualTo(2001010));
 			// verify that a new section was added to the DB
 			VerifyNewSectionExists(book, 1);
 
@@ -2100,23 +2087,23 @@ namespace ParatextImport.ImportTests
 			// ************** process a \bogus marker *********************
 			m_importer.ProcessSegment("Exclude me, dude!", @"\bogus");
 			// Nothing should have changed
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			VerifyBldrRun(0, "Section Head Two", null);
-			Assert.AreEqual(16, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(16));
 
 			// in second section (1:10-2:6), begin first content paragraph
 			// ************** process a \p paragraph marker *********************
 			m_importer.ProcessSegment("End of verse 10", @"\p");
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			VerifyBldrRun(0, "End of verse 10", null);
-			Assert.AreEqual(15, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(15));
 
 			// verify completed section head was added to DB
-			Assert.AreEqual(2, book.SectionsOS.Count);
-			Assert.AreEqual(1, book.SectionsOS[1].HeadingOA.ParagraphsOS.Count);
+			Assert.That(book.SectionsOS.Count, Is.EqualTo(2));
+			Assert.That(book.SectionsOS[1].HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 			heading = (IStTxtPara)book.SectionsOS[1].HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Section Head"), heading.StyleRules);
-			Assert.AreEqual(1, heading.Contents.RunCount);
+			Assert.That(heading.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Section Head")));
+			Assert.That(heading.Contents.RunCount, Is.EqualTo(1));
 			AssertEx.RunIsCorrect(heading.Contents, 0, "Section Head Two", null, DefaultVernWs);
 
 			// ************** process verse text *********************
@@ -2124,17 +2111,17 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(2, 1, 12);
 			m_importer.ProcessSegment("Verse twelve text", @"\v");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(3, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(3));
 			VerifyBldrRun(0, "End of verse 10", null);
 			VerifyBldrRun(1, "12", "Verse Number");
 			VerifyBldrRun(2, "Verse twelve text", null);
-			Assert.AreEqual(34, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(34));
 
 			// TODO:  c2 p v6
 
 			// ************** finalize **************
 			m_importer.FinalizeImport();
-			Assert.AreEqual(2, m_importer.BookNumber);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2176,18 +2163,18 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment(sContents, @"\v");
 
 			// Chapter break should have caused a forced paragraph break.
-			Assert.AreEqual(3, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(3));
 			VerifyBldrRun(0, "2", ScrStyleNames.ChapterNumber);
 			VerifyBldrRun(1, "1", ScrStyleNames.VerseNumber);
 			VerifyBldrRun(2, sContents, null);
-			Assert.AreEqual(1002, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(1002));
 			// verify completed paragraph was added to DB
 			IScrBook book = m_importer.ScrBook;
 			IScrSection section = book.SectionsOS[0];
-			Assert.AreEqual(1, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0]; //first para
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Line1"), para.StyleRules);
-			Assert.AreEqual(13, para.Contents.RunCount);
+			Assert.That(para.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Line1")));
+			Assert.That(para.Contents.RunCount, Is.EqualTo(13));
 			AssertEx.RunIsCorrect(para.Contents, 0, "1", "Chapter Number", DefaultVernWs);
 			for (int verse = 1; verse <= 6; verse++)
 			{
@@ -2197,9 +2184,9 @@ namespace ParatextImport.ImportTests
 
 			// ************** finalize **************
 			m_importer.FinalizeImport();
-			Assert.AreEqual(2, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(2));
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[1]; //second para
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Line1"), para.StyleRules);
+			Assert.That(para.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Line1")));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2235,17 +2222,17 @@ namespace ParatextImport.ImportTests
 			}
 
 			// Last verse break should have caused a forced paragraph break.
-			Assert.AreEqual(2, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(2));
 			VerifyBldrRun(0, "21", ScrStyleNames.VerseNumber);
 			VerifyBldrRun(1, sContents, null);
-			Assert.AreEqual(1002, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(1002));
 			// verify completed paragraph (with first 19 verses) was added to DB
 			IScrBook book = m_importer.ScrBook;
 			IScrSection section = book.SectionsOS[0];
-			Assert.AreEqual(1, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0]; //first para
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Line1"), para.StyleRules);
-			Assert.AreEqual(41, para.Contents.RunCount);
+			Assert.That(para.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Line1")));
+			Assert.That(para.Contents.RunCount, Is.EqualTo(41));
 			AssertEx.RunIsCorrect(para.Contents, 0, "1", "Chapter Number", DefaultVernWs);
 			for (int verse = 1; verse <= 20; verse++)
 			{
@@ -2255,9 +2242,9 @@ namespace ParatextImport.ImportTests
 
 			// ************** finalize **************
 			m_importer.FinalizeImport();
-			Assert.AreEqual(2, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(2));
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[1]; //second para
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Line1"), para.StyleRules);
+			Assert.That(para.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Line1")));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2297,13 +2284,13 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("The first verse", @"\v");
 
 			IScrBook book = m_importer.ScrBook;
-			Assert.AreEqual(1, book.SectionsOS.Count, "Should only have one section");
+			Assert.That(book.SectionsOS.Count, Is.EqualTo(1), "Should only have one section");
 			IScrSection section = book.SectionsOS[0];
-			Assert.AreEqual(4, section.HeadingOA.ParagraphsOS.Count, "Heading should have 4 paragraphs");
+			Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(4), "Heading should have 4 paragraphs");
 
 			// ************** finalize **************
 			m_importer.FinalizeImport();
-			Assert.AreEqual(1, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2334,23 +2321,23 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment(sPara1 + sPara2, @"\q");
 
 			// Period should have caused a forced paragraph break.
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			VerifyBldrRun(0, sPara2, null);
 			// verify completed paragraph was added to DB
 			IScrBook book = m_importer.ScrBook;
 			IScrSection section = book.SectionsOS[0];
-			Assert.AreEqual(1, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0]; //first para
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Line1"), para.StyleRules);
-			Assert.AreEqual(2, para.Contents.RunCount);
+			Assert.That(para.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Line1")));
+			Assert.That(para.Contents.RunCount, Is.EqualTo(2));
 			AssertEx.RunIsCorrect(para.Contents, 0, "1", "Chapter Number", DefaultVernWs);
 			AssertEx.RunIsCorrect(para.Contents, 1, sPara1, null, DefaultVernWs);
 
 			// ************** finalize **************
 			m_importer.FinalizeImport();
-			Assert.AreEqual(2, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(2));
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[1]; //second para
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Line1"), para.StyleRules);
+			Assert.That(para.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Line1")));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2513,13 +2500,13 @@ namespace ParatextImport.ImportTests
 
 			// Now check stuff
 			IScrBook book = m_importer.ScrBook;
-			Assert.AreEqual(2, book.SectionsOS.Count);
+			Assert.That(book.SectionsOS.Count, Is.EqualTo(2));
 			IScrSection section1 = book.SectionsOS[0];
-			Assert.AreEqual(02001000, section1.VerseRefMin);
-			Assert.AreEqual(02001000, section1.VerseRefMax);
+			Assert.That(section1.VerseRefMin, Is.EqualTo(02001000));
+			Assert.That(section1.VerseRefMax, Is.EqualTo(02001000));
 			IScrSection section2 = book.SectionsOS[1];
-			Assert.AreEqual(02001001, section2.VerseRefMin);
-			Assert.AreEqual(02001002, section2.VerseRefMax);
+			Assert.That(section2.VerseRefMin, Is.EqualTo(02001001));
+			Assert.That(section2.VerseRefMax, Is.EqualTo(02001002));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2544,19 +2531,19 @@ namespace ParatextImport.ImportTests
 
 			// Now check stuff
 			IScrBook book = m_importer.ScrBook;
-			Assert.AreEqual(1, book.TitleOA.ParagraphsOS.Count);
-			Assert.AreEqual(0, book.TitleOA[0].Contents.Length);
-			Assert.AreEqual(ScrStyleNames.MainBookTitle, book.TitleOA[0].StyleName);
-			Assert.AreEqual(1, book.SectionsOS.Count);
+			Assert.That(book.TitleOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(book.TitleOA[0].Contents.Length, Is.EqualTo(0));
+			Assert.That(book.TitleOA[0].StyleName, Is.EqualTo(ScrStyleNames.MainBookTitle));
+			Assert.That(book.SectionsOS.Count, Is.EqualTo(1));
 			IScrSection section1 = book.SectionsOS[0];
-			Assert.AreEqual(02001000, section1.VerseRefMin);
-			Assert.AreEqual(02001000, section1.VerseRefMax);
-			Assert.AreEqual(1, section1.HeadingOA.ParagraphsOS.Count);
-			Assert.AreEqual(0, section1.HeadingOA[0].Contents.Length);
-			Assert.AreEqual(ScrStyleNames.IntroSectionHead, section1.HeadingOA[0].StyleName);
-			Assert.AreEqual(1, section1.ContentOA.ParagraphsOS.Count);
-			Assert.AreEqual(0, section1.ContentOA[0].Contents.Length);
-			Assert.AreEqual(ScrStyleNames.IntroParagraph, section1.ContentOA[0].StyleName);
+			Assert.That(section1.VerseRefMin, Is.EqualTo(02001000));
+			Assert.That(section1.VerseRefMax, Is.EqualTo(02001000));
+			Assert.That(section1.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(section1.HeadingOA[0].Contents.Length, Is.EqualTo(0));
+			Assert.That(section1.HeadingOA[0].StyleName, Is.EqualTo(ScrStyleNames.IntroSectionHead));
+			Assert.That(section1.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(section1.ContentOA[0].Contents.Length, Is.EqualTo(0));
+			Assert.That(section1.ContentOA[0].StyleName, Is.EqualTo(ScrStyleNames.IntroParagraph));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2584,34 +2571,34 @@ namespace ParatextImport.ImportTests
 
 			// Now check stuff
 			IScrBook exodus = m_importer.UndoInfo.ImportedVersion.BooksOS[0];
-			Assert.AreEqual(1, exodus.TitleOA.ParagraphsOS.Count);
-			Assert.AreEqual(0, exodus.TitleOA[0].Contents.Length);
-			Assert.AreEqual(ScrStyleNames.MainBookTitle, exodus.TitleOA[0].StyleName);
-			Assert.AreEqual(1, exodus.SectionsOS.Count);
+			Assert.That(exodus.TitleOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(exodus.TitleOA[0].Contents.Length, Is.EqualTo(0));
+			Assert.That(exodus.TitleOA[0].StyleName, Is.EqualTo(ScrStyleNames.MainBookTitle));
+			Assert.That(exodus.SectionsOS.Count, Is.EqualTo(1));
 			IScrSection section1 = exodus.SectionsOS[0];
-			Assert.AreEqual(02001000, section1.VerseRefMin);
-			Assert.AreEqual(02001000, section1.VerseRefMax);
-			Assert.AreEqual(1, section1.HeadingOA.ParagraphsOS.Count);
-			Assert.AreEqual(0, section1.HeadingOA[0].Contents.Length);
-			Assert.AreEqual(ScrStyleNames.IntroSectionHead, section1.HeadingOA[0].StyleName);
-			Assert.AreEqual(1, section1.ContentOA.ParagraphsOS.Count);
-			Assert.AreEqual(0, section1.ContentOA[0].Contents.Length);
-			Assert.AreEqual(ScrStyleNames.IntroParagraph, section1.ContentOA[0].StyleName);
+			Assert.That(section1.VerseRefMin, Is.EqualTo(02001000));
+			Assert.That(section1.VerseRefMax, Is.EqualTo(02001000));
+			Assert.That(section1.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(section1.HeadingOA[0].Contents.Length, Is.EqualTo(0));
+			Assert.That(section1.HeadingOA[0].StyleName, Is.EqualTo(ScrStyleNames.IntroSectionHead));
+			Assert.That(section1.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(section1.ContentOA[0].Contents.Length, Is.EqualTo(0));
+			Assert.That(section1.ContentOA[0].StyleName, Is.EqualTo(ScrStyleNames.IntroParagraph));
 
 			IScrBook leviticus = m_importer.ScrBook;
-			Assert.AreEqual(1, leviticus.TitleOA.ParagraphsOS.Count);
-			Assert.AreEqual(0, leviticus.TitleOA[0].Contents.Length);
-			Assert.AreEqual(ScrStyleNames.MainBookTitle, leviticus.TitleOA[0].StyleName);
-			Assert.AreEqual(1, leviticus.SectionsOS.Count);
+			Assert.That(leviticus.TitleOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(leviticus.TitleOA[0].Contents.Length, Is.EqualTo(0));
+			Assert.That(leviticus.TitleOA[0].StyleName, Is.EqualTo(ScrStyleNames.MainBookTitle));
+			Assert.That(leviticus.SectionsOS.Count, Is.EqualTo(1));
 			section1 = leviticus.SectionsOS[0];
-			Assert.AreEqual(03001000, section1.VerseRefMin);
-			Assert.AreEqual(03001000, section1.VerseRefMax);
-			Assert.AreEqual(1, section1.HeadingOA.ParagraphsOS.Count);
-			Assert.AreEqual(0, section1.HeadingOA[0].Contents.Length);
-			Assert.AreEqual(ScrStyleNames.IntroSectionHead, section1.HeadingOA[0].StyleName);
-			Assert.AreEqual(1, section1.ContentOA.ParagraphsOS.Count);
-			Assert.AreEqual(0, section1.ContentOA[0].Contents.Length);
-			Assert.AreEqual(ScrStyleNames.IntroParagraph, section1.ContentOA[0].StyleName);
+			Assert.That(section1.VerseRefMin, Is.EqualTo(03001000));
+			Assert.That(section1.VerseRefMax, Is.EqualTo(03001000));
+			Assert.That(section1.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(section1.HeadingOA[0].Contents.Length, Is.EqualTo(0));
+			Assert.That(section1.HeadingOA[0].StyleName, Is.EqualTo(ScrStyleNames.IntroSectionHead));
+			Assert.That(section1.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(section1.ContentOA[0].Contents.Length, Is.EqualTo(0));
+			Assert.That(section1.ContentOA[0].StyleName, Is.EqualTo(ScrStyleNames.IntroParagraph));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2639,19 +2626,19 @@ namespace ParatextImport.ImportTests
 
 			// Now check stuff
 			IScrBook book = m_importer.ScrBook;
-			Assert.AreEqual(1, book.TitleOA.ParagraphsOS.Count);
-			Assert.AreEqual("Exodus", book.TitleOA[0].Contents.Text);
-			Assert.AreEqual(ScrStyleNames.MainBookTitle, book.TitleOA[0].StyleName);
-			Assert.AreEqual(1, book.SectionsOS.Count);
+			Assert.That(book.TitleOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(book.TitleOA[0].Contents.Text, Is.EqualTo("Exodus"));
+			Assert.That(book.TitleOA[0].StyleName, Is.EqualTo(ScrStyleNames.MainBookTitle));
+			Assert.That(book.SectionsOS.Count, Is.EqualTo(1));
 			IScrSection section1 = book.SectionsOS[0];
-			Assert.AreEqual(02001000, section1.VerseRefMin);
-			Assert.AreEqual(02001000, section1.VerseRefMax);
-			Assert.AreEqual(1, section1.HeadingOA.ParagraphsOS.Count);
-			Assert.AreEqual(0, section1.HeadingOA[0].Contents.Length);
-			Assert.AreEqual(ScrStyleNames.IntroSectionHead, section1.HeadingOA[0].StyleName);
-			Assert.AreEqual(1, section1.ContentOA.ParagraphsOS.Count);
-			Assert.AreEqual(0, section1.ContentOA[0].Contents.Length);
-			Assert.AreEqual(ScrStyleNames.IntroParagraph, section1.ContentOA[0].StyleName);
+			Assert.That(section1.VerseRefMin, Is.EqualTo(02001000));
+			Assert.That(section1.VerseRefMax, Is.EqualTo(02001000));
+			Assert.That(section1.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(section1.HeadingOA[0].Contents.Length, Is.EqualTo(0));
+			Assert.That(section1.HeadingOA[0].StyleName, Is.EqualTo(ScrStyleNames.IntroSectionHead));
+			Assert.That(section1.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(section1.ContentOA[0].Contents.Length, Is.EqualTo(0));
+			Assert.That(section1.ContentOA[0].StyleName, Is.EqualTo(ScrStyleNames.IntroParagraph));
 		}
 		#endregion
 
@@ -2682,15 +2669,14 @@ namespace ParatextImport.ImportTests
 			// ************** process an intro paragraph, test MakeParagraph() method **********
 			m_importer.ProcessSegment("Intro paragraph text", @"\ipnew");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			VerifyBldrRun(0, "Intro paragraph text", null);
-			Assert.AreEqual(20, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(20));
 			// verify completed intro section head was added to DB
-			Assert.AreEqual(1, book.SectionsOS[0].HeadingOA.ParagraphsOS.Count);
+			Assert.That(book.SectionsOS[0].HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara heading = (IStTxtPara)book.SectionsOS[0].HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Intro Section Head"),
-				heading.StyleRules);
-			Assert.AreEqual(1, heading.Contents.RunCount);
+			Assert.That(heading.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Intro Section Head")));
+			Assert.That(heading.Contents.RunCount, Is.EqualTo(1));
 			AssertEx.RunIsCorrect(heading.Contents, 0, "Intro Section Head", null, DefaultVernWs);
 
 			// begin second section (scripture text)
@@ -2700,27 +2686,27 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("", @"\c");
 			// note: chapter number is not put in para now (it's saved for drop-cap location later)
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(0, m_importer.ParaBldrLength);
-			Assert.AreEqual(1, m_importer.Chapter);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(0));
+			Assert.That(m_importer.Chapter, Is.EqualTo(1));
 
 			// Make sure previous segment was added properly
-			Assert.AreEqual(1, book.SectionsOS[0].ContentOA.ParagraphsOS.Count);
+			Assert.That(book.SectionsOS[0].ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara content = (IStTxtPara)book.SectionsOS[0].ContentOA.ParagraphsOS[0];
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("\\ipnew"), content.StyleRules);
-			Assert.AreEqual(1, content.Contents.RunCount);
+			Assert.That(content.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("\\ipnew")));
+			Assert.That(content.Contents.RunCount, Is.EqualTo(1));
 			AssertEx.RunIsCorrect(content.Contents, 0, "Intro paragraph text", null, DefaultVernWs);
 
 			// ************** process a section head (for 1:1) *********************
 			m_importer.ProcessSegment("Section Head One", @"\s");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			VerifyBldrRun(0, "Section Head One", null);
 			// verify that a new section was added to the DB
 			VerifyNewSectionExists(book, 1);
 
 			// verify refs of completed non-Scripture text section (1:0)
-			Assert.AreEqual(2001000, book.SectionsOS[0].VerseRefMin);
-			Assert.AreEqual(2001000, book.SectionsOS[0].VerseRefMax);
+			Assert.That(book.SectionsOS[0].VerseRefMin, Is.EqualTo(2001000));
+			Assert.That(book.SectionsOS[0].VerseRefMax, Is.EqualTo(2001000));
 
 			// in first section (1:1), begin first content paragraph
 			// ************** process a \p (for 1:1) *********************
@@ -2731,54 +2717,54 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(2, 1, 1);
 			m_importer.ProcessSegment("verse one text", @"\v");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(3, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(3));
 			VerifyBldrRun(0, "1", "Chapter Number");
 			VerifyBldrRun(1, "1", "Verse Number");
 			VerifyBldrRun(2, "verse one text", null);
-			Assert.AreEqual(16, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(16));
 
 			// in first section (1:1), begin second (empty) content paragraph
 			// ************** process a \pempty  *********************
 			m_importer.ProcessSegment("", @"\pempty");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(0, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(0));
 			// Make sure new style was not added
 			foreach (IStStyle style in m_scr.StylesOC)
 			{
-				Assert.IsTrue(style.Name != "pempty");
+				Assert.That(style.Name != "pempty", Is.True);
 			}
 			// verify completed paragraph was added to DB
 			//IScrBook book = (IScrBook)CmObject.CreateFromDBObject(Cache, m_importer.ScrBook.Hvo, true); //refresh cache
-			Assert.AreEqual(1, book.SectionsOS[1].ContentOA.ParagraphsOS.Count);
+			Assert.That(book.SectionsOS[1].ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 			content = (IStTxtPara)book.SectionsOS[1].ContentOA.ParagraphsOS[0];
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Paragraph"), content.StyleRules);
-			Assert.AreEqual(3, content.Contents.RunCount);
+			Assert.That(content.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Paragraph")));
+			Assert.That(content.Contents.RunCount, Is.EqualTo(3));
 
 			// in first section (1:1), begin another content paragraph
 			// ************** process a \pempty  *********************
 			m_importer.ProcessSegment("some text", @"\pnew");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
-			Assert.AreEqual(9, m_importer.ParaBldrLength);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(9));
 			// verify previous paragraph was discarded because it was empty
 			//IScrBook book = (IScrBook)CmObject.CreateFromDBObject(Cache, m_importer.ScrBook.Hvo, true); //refresh cache
-			Assert.AreEqual(1, book.SectionsOS[1].ContentOA.ParagraphsOS.Count);
+			Assert.That(book.SectionsOS[1].ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 
 			// ************** finalize **************
 			m_importer.FinalizeImport();
 
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(0, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(0));
 			// verify previous paragraph was added to the DB
 			//IScrBook book = (IScrBook)CmObject.CreateFromDBObject(Cache, m_importer.ScrBook.Hvo, true); //refresh cache
-			Assert.AreEqual(2, book.SectionsOS[1].ContentOA.ParagraphsOS.Count);
+			Assert.That(book.SectionsOS[1].ContentOA.ParagraphsOS.Count, Is.EqualTo(2));
 			content = (IStTxtPara)book.SectionsOS[1].ContentOA.ParagraphsOS[1];
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("\\pnew"), content.StyleRules);
-			Assert.AreEqual(1, content.Contents.RunCount);
+			Assert.That(content.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("\\pnew")));
+			Assert.That(content.Contents.RunCount, Is.EqualTo(1));
 
 			// verify refs of completed scripture text section (1:1)
-			Assert.AreEqual(2001001, book.SectionsOS[1].VerseRefMin);
-			Assert.AreEqual(2001001, book.SectionsOS[1].VerseRefMax);
+			Assert.That(book.SectionsOS[1].VerseRefMin, Is.EqualTo(2001001));
+			Assert.That(book.SectionsOS[1].VerseRefMax, Is.EqualTo(2001001));
 		}
 		#endregion
 
@@ -2814,8 +2800,8 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(2, 1, 1);
 			m_importer.ProcessSegment("", @"\c");
 			// verify state of NormalParaStrBldr
-			//			Assert.AreEqual(1, m_importer.ParaBldrLength);
-			Assert.AreEqual(1, m_importer.Chapter);
+			//			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(1));
+			Assert.That(m_importer.Chapter, Is.EqualTo(1));
 //			VerifyBldrRun(0, "1", "Chapter Number");
 
 			// ************** process verse 1 text *********************
@@ -2823,7 +2809,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(2, 1, 1);
 			m_importer.ProcessSegment("one", @"\v");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(3, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(3));
 			VerifyBldrRun(0, "1", "Chapter Number");
 			VerifyBldrRun(1, "1", "Verse Number");
 			VerifyBldrRun(2, "one", null);
@@ -2834,10 +2820,10 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 2, 1);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 2, 1);
 			m_importer.ProcessSegment("", @"\c");
-			Assert.AreEqual(2, m_importer.Chapter);
+			Assert.That(m_importer.Chapter, Is.EqualTo(2));
 			IScrBook book = m_importer.ScrBook;
 			IScrSection section = book.SectionsOS[0];
-			Assert.AreEqual(0, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(0));
 
 			// ************** process verse 1 text *********************
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 2, 1);
@@ -2845,7 +2831,7 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("two ", @"\v");
 
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(cchBldr + 7, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(cchBldr + 7));
 			VerifyBldrRun(2, "one ", null);
 			VerifyBldrRun(3, "2", "Chapter Number");
 			VerifyBldrRun(4, "1", "Verse Number");
@@ -2857,7 +2843,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 3, 1);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 3, 1);
 			m_importer.ProcessSegment("", @"\c");
-			Assert.AreEqual(3, m_importer.Chapter);
+			Assert.That(m_importer.Chapter, Is.EqualTo(3));
 
 			// ************** process verse 1 text *********************
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 3, 1);
@@ -2865,7 +2851,7 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("three", @"\v");
 
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(cchBldr + 7, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(cchBldr + 7));
 			VerifyBldrRun(5, "two ", null);
 			VerifyBldrRun(6, "3", "Chapter Number");
 			VerifyBldrRun(7, "1", "Verse Number");
@@ -2875,11 +2861,11 @@ namespace ParatextImport.ImportTests
 			m_importer.FinalizeImport();
 
 			section = book.SectionsOS[0];
-			Assert.AreEqual(1, section.ContentOA.ParagraphsOS.Count);
-			Assert.AreEqual(02001001, section.VerseRefMin);
-			Assert.AreEqual(02003001, section.VerseRefMax);
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(section.VerseRefMin, Is.EqualTo(02001001));
+			Assert.That(section.VerseRefMax, Is.EqualTo(02003001));
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11one 21two 31three", para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("11one 21two 31three"));
 			// test c3 v9 s v11 -missing p's should not cause a problem
 
 			// test c1 v4 c2 s q v5-10 -section ref should be 2:5-10
@@ -2907,8 +2893,8 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("EXO This is the book of Exodus", @"\id");
 
 			Assert.That(m_importer.ScrBook, Is.Not.Null);
-			Assert.AreEqual(2, m_importer.ScrBook.CanonicalNum);
-			Assert.AreEqual("This is the book of Exodus", m_importer.ScrBook.IdText);
+			Assert.That(m_importer.ScrBook.CanonicalNum, Is.EqualTo(2));
+			Assert.That(m_importer.ScrBook.IdText, Is.EqualTo("This is the book of Exodus"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -2923,18 +2909,18 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(2, m_importer.BookNumber);
-			Assert.AreEqual(1, m_importer.ScrBook.TitleOA.ParagraphsOS.Count);
-			Assert.AreEqual(0, m_importer.ScrBook.SectionsOS.Count);
-			Assert.IsTrue(m_importer.HvoTitle > 0);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
+			Assert.That(m_importer.ScrBook.TitleOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(m_importer.ScrBook.SectionsOS.Count, Is.EqualTo(0));
+			Assert.That(m_importer.HvoTitle > 0, Is.True);
 			// verify that a new book was added to the DB
 			IScrBook book = m_importer.ScrBook;
-			Assert.IsTrue(book.TitleOA.IsValidObject); //empty title
-			Assert.AreEqual(book.TitleOA.Hvo, m_importer.HvoTitle);
-			Assert.AreEqual(1, book.TitleOA.ParagraphsOS.Count);
-			Assert.AreEqual(0, book.SectionsOS.Count); // empty seq of sections
-			Assert.AreEqual("EXO", book.BookId);
-			//	Assert.AreEqual(2, book.CanonOrd);
+			Assert.That(book.TitleOA.IsValidObject, Is.True); //empty title
+			Assert.That(m_importer.HvoTitle, Is.EqualTo(book.TitleOA.Hvo));
+			Assert.That(book.TitleOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(book.SectionsOS.Count, Is.EqualTo(0)); // empty seq of sections
+			Assert.That(book.BookId, Is.EqualTo("EXO"));
+			//	Assert.That(book.CanonOrd, Is.EqualTo(2));
 
 			// ************** process a main title *********************
 			m_importer.ProcessSegment("", @"\mt");
@@ -2942,9 +2928,9 @@ namespace ParatextImport.ImportTests
 			// begin first section (intro material)
 			// ************** process an intro section head, test MakeSection() method ************
 			m_importer.ProcessSegment("Background Material", @"\is");
-			Assert.AreEqual(null, m_importer.ScrBook.Name.VernacularDefaultWritingSystem.Text);
-			Assert.AreEqual(1, m_importer.ScrBook.TitleOA.ParagraphsOS.Count);
-			Assert.AreEqual(2, m_importer.BookNumber);
+			Assert.That(m_importer.ScrBook.Name.VernacularDefaultWritingSystem.Text, Is.EqualTo(null));
+			Assert.That(m_importer.ScrBook.TitleOA.ParagraphsOS.Count, Is.EqualTo(1));
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
 			Assert.That(m_importer.CurrentSection, Is.Not.Null);
 		}
 
@@ -2971,10 +2957,10 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("text with char style", @"\kw");
 			m_importer.ProcessSegment("text with another char style", @"\gls");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(2, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(2));
 			VerifyBldrRun(0, "text with char style", "Key Word");
 			VerifyBldrRun(1, "text with another char style", "Gloss");
-			Assert.AreEqual(48, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(48));
 
 			// ******** test a character style, no end marker, terminated by text marked
 			//  with the same char style
@@ -2982,10 +2968,10 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("text with char style", @"\kw");
 			m_importer.ProcessSegment(" text marked with same char style", @"\kw");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			VerifyBldrRun(0, "text with char style text marked with same char style",
 				"Key Word");
-			Assert.AreEqual(53, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(53));
 
 			// ******** test a character style, no end marker, terminated by a footnote
 			m_importer.ProcessSegment("", @"\p");
@@ -2994,7 +2980,7 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment(sFootnoteSegment, @"\f");
 			m_importer.ProcessSegment(" ", @"\vt");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(3, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(3));
 			VerifyBldrRun(0, "text with char style", "Key Word");
 
 			VerifySimpleFootnote(0, sFootnoteSegment);
@@ -3006,11 +2992,11 @@ namespace ParatextImport.ImportTests
 			// verify the first paragraph, from the db
 			IStText text = m_importer.SectionContent;
 			IStTxtPara para = (IStTxtPara)text.ParagraphsOS[text.ParagraphsOS.Count - 1];
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Paragraph"), para.StyleRules);
-			Assert.AreEqual(1, para.Contents.RunCount);
+			Assert.That(para.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Paragraph")));
+			Assert.That(para.Contents.RunCount, Is.EqualTo(1));
 			AssertEx.RunIsCorrect(para.Contents, 0, "text with char style", "Key Word", DefaultVernWs);
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			VerifyBldrRun(0, "text in next para", null);
 
 			// ******** test a character style, no end marker, terminated by a section head
@@ -3021,11 +3007,11 @@ namespace ParatextImport.ImportTests
 			// use StText var "text" from prior section, since we just made a new section
 			//text = new StText(Cache, m_importer.HvoSectionContent); //no!
 			para = (IStTxtPara)text.ParagraphsOS[text.ParagraphsOS.Count - 1];
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Paragraph"), para.StyleRules);
-			Assert.AreEqual(1, para.Contents.RunCount);
+			Assert.That(para.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Paragraph")));
+			Assert.That(para.Contents.RunCount, Is.EqualTo(1));
 			AssertEx.RunIsCorrect(para.Contents, 0, "text with char style", "Key Word", DefaultVernWs);
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			VerifyBldrRun(0, "Section Head", null);
 
 			// ******** test a character style, no end marker, terminated by a chapter
@@ -3034,16 +3020,16 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 5, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 5, 0);
 			m_importer.ProcessSegment("", @"\c");
-			Assert.AreEqual(5, m_importer.Chapter);
+			Assert.That(m_importer.Chapter, Is.EqualTo(5));
 			m_importer.ProcessSegment("", @"\p");
 			// verify the first paragraph, from the db
 			text = m_importer.SectionContent;
 			para = (IStTxtPara)text.ParagraphsOS[text.ParagraphsOS.Count - 1];
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Paragraph"), para.StyleRules);
-			Assert.AreEqual(1, para.Contents.RunCount);
+			Assert.That(para.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Paragraph")));
+			Assert.That(para.Contents.RunCount, Is.EqualTo(1));
 			AssertEx.RunIsCorrect(para.Contents, 0, "text with char style", "Key Word", DefaultVernWs);
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(1, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(1));
 
 			// ******** test a character style, no end marker, terminated by a verse
 			m_importer.ProcessSegment("text with char style", @"\kw");
@@ -3051,7 +3037,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.LastReference = new BCVRef(2, 5, 10);
 			m_importer.ProcessSegment("verse text", @"\v");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(4, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(4));
 			VerifyBldrRun(0, "5", "Chapter Number");
 			VerifyBldrRun(1, "text with char style", "Key Word");
 			VerifyBldrRun(2, "8-10", "Verse Number");
@@ -3084,7 +3070,7 @@ namespace ParatextImport.ImportTests
 			VerifySimpleFootnote(0, "footnote text");
 			VerifySimpleFootnote(1, "another footnote text");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(4, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(4));
 			VerifyBldrRun(0, "poetry text", null);
 			VerifyBldrFootnoteOrcRun(1, 0);
 			VerifyBldrFootnoteOrcRun(2, 1);
@@ -3099,16 +3085,16 @@ namespace ParatextImport.ImportTests
 			// verify the first paragraph, from the db
 			IStText text = m_importer.SectionContent;
 			IStTxtPara para = (IStTxtPara)text.ParagraphsOS[text.ParagraphsOS.Count - 1];
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Line1"), para.StyleRules);
+			Assert.That(para.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Line1")));
 			ITsString tssPara = para.Contents;
-			Assert.AreEqual(2, tssPara.RunCount);
+			Assert.That(tssPara.RunCount, Is.EqualTo(2));
 			AssertEx.RunIsCorrect(tssPara, 0, "poetry text", null, DefaultVernWs);
 			// Verify the Orc in para run 1
 			VerifyFootnoteMarkerOrcRun(tssPara, 1);
 			//verify the footnote, from the db
 			VerifySimpleFootnote(2, "footnote text 2");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			VerifyBldrRun(0, "this is a paragraph ", null);
 
 			// ******** test a footnote, no end marker, terminated by a section head
@@ -3119,16 +3105,16 @@ namespace ParatextImport.ImportTests
 			// use StText var "text" from prior section, since we just made a new section
 			//text = new StText(Cache, m_importer.HvoSectionContent); //no!
 			para = (IStTxtPara)text.ParagraphsOS[text.ParagraphsOS.Count - 1];
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Line1"), para.StyleRules);
+			Assert.That(para.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Line1")));
 			tssPara = para.Contents;
-			Assert.AreEqual(2, tssPara.RunCount);
+			Assert.That(tssPara.RunCount, Is.EqualTo(2));
 			AssertEx.RunIsCorrect(tssPara, 0, "poetry text", null, DefaultVernWs);
 			// Verify the Orc in para run 1
 			VerifyFootnoteMarkerOrcRun(tssPara, 1);
 			//verify the footnote, from the db
 			VerifySimpleFootnote(3, "fishnote text");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			VerifyBldrRun(0, "so long and thanks for all the fish", null);
 
 			// ******** test a footnote, no end marker, terminated by a chapter
@@ -3137,21 +3123,21 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 6, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 6, 0);
 			m_importer.ProcessSegment("", @"\c");
-			Assert.AreEqual(6, m_importer.Chapter);
+			Assert.That(m_importer.Chapter, Is.EqualTo(6));
 			m_importer.ProcessSegment("poetry text", @"\q");
 			// verify the previous paragraph, from the db
 			text = m_importer.SectionContent;
 			para = (IStTxtPara)text.ParagraphsOS[text.ParagraphsOS.Count - 1];
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Line1"), para.StyleRules);
+			Assert.That(para.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Line1")));
 			tssPara = para.Contents;
-			Assert.AreEqual(2, tssPara.RunCount);
+			Assert.That(tssPara.RunCount, Is.EqualTo(2));
 			AssertEx.RunIsCorrect(tssPara, 0, "poetry text", null, DefaultVernWs);
 			// Verify the Orc in para run 1
 			VerifyFootnoteMarkerOrcRun(tssPara, 1);
 			//verify the footnote, from the db
 			VerifySimpleFootnote(4, "footnote text 4");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(12, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(12));
 
 			// ******** test a character style, no end marker, terminated by a verse
 			m_importer.ProcessSegment("footnote text 5", @"\f");
@@ -3161,7 +3147,7 @@ namespace ParatextImport.ImportTests
 			//verify the footnote, from the db
 			VerifySimpleFootnote(5, "footnote text 5");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(5, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(5));
 			VerifyBldrRun(0, "6", "Chapter Number");
 			VerifyBldrRun(1, "poetry text", null);
 			VerifyBldrFootnoteOrcRun(2, 5);
@@ -3175,7 +3161,7 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("remainder of footnote ", @"\kw*");
 			m_importer.ProcessSegment(" ", @"\vt");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(3, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(3));
 			VerifyBldrRun(0, "poetry text", null);
 			int iFootnoteIndex = 6;
 			VerifyBldrFootnoteOrcRun(1, iFootnoteIndex);
@@ -3185,12 +3171,10 @@ namespace ParatextImport.ImportTests
 			AssertEx.RunIsCorrect(footnote.FootnoteMarker, 0,
 				"g", ScrStyleNames.FootnoteMarker, m_wsVern);
 			ILcmOwningSequence<IStPara> footnoteParas = footnote.ParagraphsOS;
-			Assert.AreEqual(1, footnoteParas.Count);
+			Assert.That(footnoteParas.Count, Is.EqualTo(1));
 			para = (IStTxtPara)footnote.ParagraphsOS[0];
-			Assert.AreEqual
-				(StyleUtils.ParaStyleTextProps(ScrStyleNames.NormalFootnoteParagraph),
-				para.StyleRules);
-			Assert.AreEqual(3, para.Contents.RunCount);
+			Assert.That(para.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps(ScrStyleNames.NormalFootnoteParagraph)));
+			Assert.That(para.Contents.RunCount, Is.EqualTo(3));
 			AssertEx.RunIsCorrect(((IStTxtPara)footnoteParas[0]).Contents, 0,
 				"beginning of footnote", null, m_wsVern);
 			AssertEx.RunIsCorrect(((IStTxtPara)footnoteParas[0]).Contents, 1,
@@ -3249,27 +3233,27 @@ namespace ParatextImport.ImportTests
 			// Verify the imported data
 			mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
 			Assert.That(mark, Is.Not.Null, "Book not created");
-			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
-			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
+			Assert.That(mark.SectionsOS.Count, Is.EqualTo(1), "section count is not correct");
+			Assert.That(mark.FootnotesOS.Count, Is.EqualTo(1), "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
 
 			// verify the footnote text
 			IStFootnote footnote = mark.FootnotesOS[0];
 			IStTxtPara para = (IStTxtPara)footnote.ParagraphsOS[0];
-			Assert.AreEqual("footnote1", para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("footnote1"));
 
 			// verify the section content text
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11verse one text", para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("11verse one text"));
 
 			// verify the section head text
 			para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("section" + StringUtils.kChObject, para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("section" + StringUtils.kChObject));
 
 			// verify the BT text
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation trans = para.GetBT();
-			Assert.AreEqual("BT for section", trans.Translation.AnalysisDefaultWritingSystem.Text);
+			Assert.That(trans.Translation.AnalysisDefaultWritingSystem.Text, Is.EqualTo("BT for section"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3317,31 +3301,31 @@ namespace ParatextImport.ImportTests
 			// Verify the imported data
 			mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
 			Assert.That(mark, Is.Not.Null, "Book not created");
-			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
-			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
+			Assert.That(mark.SectionsOS.Count, Is.EqualTo(1), "section count is not correct");
+			Assert.That(mark.FootnotesOS.Count, Is.EqualTo(1), "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
 
 			// verify the footnote text
 			IStFootnote footnote = mark.FootnotesOS[0];
-			Assert.AreEqual(1, footnote.ParagraphsOS.Count);
+			Assert.That(footnote.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)footnote.ParagraphsOS[0];
-			Assert.AreEqual("footnote1", para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("footnote1"));
 
 			// verify the section head text
-			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
+			Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 			para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("section" + StringUtils.kChObject, para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("section" + StringUtils.kChObject));
 
 			// verify the section content text
-			Assert.AreEqual(1, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11verse one text", para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("11verse one text"));
 
 			// verify the BT text for the section head
 			para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual(1, para.TranslationsOC.Count);
+			Assert.That(para.TranslationsOC.Count, Is.EqualTo(1));
 			ICmTranslation trans = para.GetBT();
-			Assert.AreEqual("BT for section", trans.Translation.AnalysisDefaultWritingSystem.Text);
+			Assert.That(trans.Translation.AnalysisDefaultWritingSystem.Text, Is.EqualTo("BT for section"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3393,25 +3377,25 @@ namespace ParatextImport.ImportTests
 			// Verify the imported data
 			mark = m_importer.UndoInfo.ImportedVersion.FindBook(41);
 			Assert.That(mark, Is.Not.Null, "Book not created");
-			Assert.AreEqual(1, mark.SectionsOS.Count, "section count is not correct");
-			Assert.AreEqual(1, mark.FootnotesOS.Count, "Footnote count is not correct");
+			Assert.That(mark.SectionsOS.Count, Is.EqualTo(1), "section count is not correct");
+			Assert.That(mark.FootnotesOS.Count, Is.EqualTo(1), "Footnote count is not correct");
 			IScrSection section = mark.SectionsOS[0];
 
 			// verify the footnote text
 			IStFootnote footnote = mark.FootnotesOS[0];
-			Assert.AreEqual(1, footnote.ParagraphsOS.Count);
+			Assert.That(footnote.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)footnote.ParagraphsOS[0];
-			Assert.AreEqual("this is a footnote", para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("this is a footnote"));
 
 			// verify the section head text
-			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
+			Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 			para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("section", para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("section"));
 
 			// verify the section content text
-			Assert.AreEqual(1, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11verse one text." + StringUtils.kChObject + "some more verse text emphasis done", para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("11verse one text." + StringUtils.kChObject + "some more verse text emphasis done"));
 		}
 		#endregion
 
@@ -3434,30 +3418,30 @@ namespace ParatextImport.ImportTests
 			// ******** test a character style
 			m_importer.ProcessSegment("text", @"\quot");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			VerifyBldrRun(0, "text", "Quoted Text");
-			Assert.AreEqual(4, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(4));
 			// ******** terminate character run by returning to default paragraph characters
 			m_importer.ProcessSegment(" continuation", @"\vt");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(2, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(2));
 			VerifyBldrRun(1, " continuation", string.Empty);
-			Assert.AreEqual(17, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(17));
 
 			// ******** Now send a paragraph marker to force finalizing the previous
 			// ********  paragraph and make sure everything's kosher.
 			m_importer.ProcessSegment("An intro paragraph", @"\ip");
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(1, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(1));
 			VerifyBldrRun(0, "An intro paragraph", string.Empty);
-			Assert.AreEqual(18, m_importer.ParaBldrLength);
+			Assert.That(m_importer.ParaBldrLength, Is.EqualTo(18));
 
 			// verify the first paragraph, from the db
 			IStText text = m_importer.SectionContent;
-			Assert.AreEqual(1, text.ParagraphsOS.Count);
+			Assert.That(text.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)text.ParagraphsOS[0];
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Intro Paragraph"), para.StyleRules);
-			Assert.AreEqual(2, para.Contents.RunCount);
+			Assert.That(para.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Intro Paragraph")));
+			Assert.That(para.Contents.RunCount, Is.EqualTo(2));
 			AssertEx.RunIsCorrect(para.Contents, 0, "text", "Quoted Text", DefaultVernWs);
 			AssertEx.RunIsCorrect(para.Contents, 1, " continuation", null, DefaultVernWs);
 		}
@@ -3556,9 +3540,9 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(19, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(19, 0, 0);
 			m_importer.ProcessSegment("PSA", @"\id");
-			Assert.AreEqual(19, m_importer.BookNumber);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(19));
 			IScrBook book = m_importer.ScrBook;
-			Assert.AreEqual("PSA", book.BookId);
+			Assert.That(book.BookId, Is.EqualTo("PSA"));
 
 			// ************** process Chapter *********************
 			m_importer.TextSegment.FirstReference = new BCVRef(19, 1, 0);
@@ -3595,13 +3579,12 @@ namespace ParatextImport.ImportTests
 			// ************** finalize **************
 			m_importer.FinalizeImport();
 
-			Assert.AreEqual(1, book.SectionsOS.Count);
+			Assert.That(book.SectionsOS.Count, Is.EqualTo(1));
 			IScrSection section = book.SectionsOS[0];
-			Assert.AreEqual(9, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(9));
 			IStTxtPara stanzaBreakPara = (IStTxtPara)section.ContentOA.ParagraphsOS[4];
 			Assert.That(stanzaBreakPara.Contents.Text, Is.Null);
-			Assert.AreEqual("Stanza Break",
-				stanzaBreakPara.StyleRules.GetStrPropValue((int)FwTextPropType.ktptNamedStyle));
+			Assert.That(stanzaBreakPara.StyleRules.GetStrPropValue((int)FwTextPropType.ktptNamedStyle), Is.EqualTo("Stanza Break"));
 		}
 		#endregion
 
@@ -3622,20 +3605,19 @@ namespace ParatextImport.ImportTests
 			m_importer.Settings.ImportBookIntros = true;
 			m_importer.CallFinalizePrevSection(section, ImportDomain.Main, false);
 
-			Assert.AreEqual(1, gen.SectionsOS.Count);
-			Assert.IsTrue(section.IsIntro);
-			Assert.AreEqual(new ScrReference(1, 1, 0, m_scr.Versification),
-				ReflectionHelper.GetField(m_importer, "m_firstImportedRef") as ScrReference);
+			Assert.That(gen.SectionsOS.Count, Is.EqualTo(1));
+			Assert.That(section.IsIntro, Is.True);
+			Assert.That(ReflectionHelper.GetField(m_importer, "m_firstImportedRef") as ScrReference, Is.EqualTo(new ScrReference(1, 1, 0, m_scr.Versification)));
 
 			ITsString tssExpected = TsStringUtils.EmptyString(m_wsVern);
 
 			// Verify the section head
-			Assert.AreEqual(1, section.HeadingOA.ParagraphsOS.Count);
+			Assert.That(section.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
 			AssertEx.AreTsStringsEqual(tssExpected, para.Contents);
 
 			// Verify the first paragraph in the section
-			Assert.AreEqual(1, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
 			AssertEx.AreTsStringsEqual(tssExpected, para.Contents);
 		}
@@ -3681,22 +3663,21 @@ namespace ParatextImport.ImportTests
 			IScrBook book = m_importer.ScrBook;
 
 			// Look to see how many sections were created in the book
-			Assert.AreEqual(1, book.SectionsOS.Count);
+			Assert.That(book.SectionsOS.Count, Is.EqualTo(1));
 
 			// Verify the title secondary (TE-6716) and book title
 			IStTxtPara para = (IStTxtPara)book.TitleOA.ParagraphsOS[0];
-			Assert.AreEqual("The exciting Exodus exit\u2028Exodus",
-				para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("The exciting Exodus exit\u2028Exodus"));
 
 			// Verify the section head
 			IScrSection section = book.SectionsOS[0];
 			para = (IStTxtPara)section.HeadingOA.ParagraphsOS[0];
-			Assert.AreEqual("My First Section", para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("My First Section"));
 
 			// Look at the text of the first paragraph in the section
-			Assert.AreEqual(1, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 			para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11Some verse one text. Emphasis more text", para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("11Some verse one text. Emphasis more text"));
 		}
 		#endregion
 
@@ -3797,7 +3778,7 @@ namespace ParatextImport.ImportTests
 
 			// verify the run of text with the footnote marker in it
 			string expected = "11before" + StringUtils.kChObject + " after ";
-			Assert.AreEqual(expected, m_importer.NormalParaStrBldr.Text);
+			Assert.That(m_importer.NormalParaStrBldr.Text, Is.EqualTo(expected));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3829,7 +3810,7 @@ namespace ParatextImport.ImportTests
 
 			// verify the run of text with the footnote marker in it
 			string expected = "11before" + StringUtils.kChObject + " after ";
-			Assert.AreEqual(expected, m_importer.NormalParaStrBldr.Text);
+			Assert.That(m_importer.NormalParaStrBldr.Text, Is.EqualTo(expected));
 			VerifySimpleFootnote(0, "footnote text emphasis regular trailing text",
 			1, "a", "Note General Paragraph", 3);
 		}
@@ -3857,12 +3838,10 @@ namespace ParatextImport.ImportTests
 			IScrBook exodus = m_importer.UndoInfo.ImportedVersion.BooksOS[0];
 			IScrSection section = exodus.SectionsOS[0];
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("poetry text" + StringUtils.kChObject.ToString(),
-				para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("poetry text" + StringUtils.kChObject.ToString()));
 			ITsString tss = VerifyComplexFootnote(0, "footnote text", 2);
-			Assert.AreEqual("keyword in footnote", tss.get_RunText(1));
-			Assert.AreEqual("Key Word",
-				tss.get_Properties(1).GetStrPropValue((int)FwTextPropType.ktptNamedStyle));
+			Assert.That(tss.get_RunText(1), Is.EqualTo("keyword in footnote"));
+			Assert.That(tss.get_Properties(1).GetStrPropValue((int)FwTextPropType.ktptNamedStyle), Is.EqualTo("Key Word"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -3898,8 +3877,7 @@ namespace ParatextImport.ImportTests
 			IScrBook exodus = m_importer.UndoInfo.ImportedVersion.BooksOS[0];
 			IScrSection section = exodus.SectionsOS[0];
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11too" + StringUtils.kChObject.ToString() + " more",
-				para.Contents.Text, "TE-2431: Space should follow footnote marker");
+			Assert.That(para.Contents.Text, Is.EqualTo("11too" + StringUtils.kChObject.ToString() + " more"), "TE-2431: Space should follow footnote marker");
 			VerifySimpleFootnote(0, "footynote", "a");
 		}
 
@@ -3935,8 +3913,7 @@ namespace ParatextImport.ImportTests
 			IScrBook exodus = m_importer.UndoInfo.ImportedVersion.BooksOS[0];
 			IScrSection section = exodus.SectionsOS[0];
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11too" + StringUtils.kChObject.ToString() + " more",
-				para.Contents.Text, "TE-2431: Space should follow footnote marker");
+			Assert.That(para.Contents.Text, Is.EqualTo("11too" + StringUtils.kChObject.ToString() + " more"), "TE-2431: Space should follow footnote marker");
 			VerifySimpleFootnote(0, "footynote", "a");
 		}
 
@@ -3969,8 +3946,7 @@ namespace ParatextImport.ImportTests
 			IScrBook exodus = m_importer.UndoInfo.ImportedVersion.BooksOS[0];
 			IScrSection section = exodus.SectionsOS[0];
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11Some" + StringUtils.kChObject.ToString() + " more verse text.",
-				para.Contents.Text, "TE-2431: Space should follow footnote marker");
+			Assert.That(para.Contents.Text, Is.EqualTo("11Some" + StringUtils.kChObject.ToString() + " more verse text."), "TE-2431: Space should follow footnote marker");
 			VerifySimpleFootnote(0, "footynote", "a");
 		}
 
@@ -4003,8 +3979,8 @@ namespace ParatextImport.ImportTests
 			IScrSection section = exodus.SectionsOS[0];
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
 			ITsString tssPara = para.Contents;
-			Assert.AreEqual(4, tssPara.RunCount);
-			Assert.AreEqual(1, exodus.FootnotesOS.Count);
+			Assert.That(tssPara.RunCount, Is.EqualTo(4));
+			Assert.That(exodus.FootnotesOS.Count, Is.EqualTo(1));
 			AssertEx.RunIsCorrect(tssPara, 0, "1", ScrStyleNames.ChapterNumber, m_wsVern);
 			AssertEx.RunIsCorrect(tssPara, 1, "1", ScrStyleNames.VerseNumber, m_wsVern);
 			VerifyFootnote(exodus.FootnotesOS[0], para, 2);
@@ -4043,8 +4019,8 @@ namespace ParatextImport.ImportTests
 			IScrSection section = exodus.SectionsOS[0];
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
 			ITsString tssPara = para.Contents;
-			Assert.AreEqual(5, tssPara.RunCount);
-			Assert.AreEqual(1, exodus.FootnotesOS.Count);
+			Assert.That(tssPara.RunCount, Is.EqualTo(5));
+			Assert.That(exodus.FootnotesOS.Count, Is.EqualTo(1));
 			AssertEx.RunIsCorrect(tssPara, 0, "1", ScrStyleNames.ChapterNumber, m_wsVern);
 			AssertEx.RunIsCorrect(tssPara, 1, "1", ScrStyleNames.VerseNumber, m_wsVern);
 			AssertEx.RunIsCorrect(tssPara, 2, "Some", null, m_wsVern);
@@ -4084,8 +4060,7 @@ namespace ParatextImport.ImportTests
 			IScrBook exodus = m_importer.UndoInfo.ImportedVersion.BooksOS[0];
 			IScrSection section = exodus.SectionsOS[0];
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11too" + StringUtils.kChObject.ToString() + " more",
-				para.Contents.Text, "TE-4877: Footnote text should not be stuck in Scripture");
+			Assert.That(para.Contents.Text, Is.EqualTo("11too" + StringUtils.kChObject.ToString() + " more"), "TE-4877: Footnote text should not be stuck in Scripture");
 			VerifySimpleFootnote(0, "Lev. 1:2", "a");
 		}
 
@@ -4125,14 +4100,13 @@ namespace ParatextImport.ImportTests
 			IScrBook exodus = m_importer.UndoInfo.ImportedVersion.BooksOS[0];
 			IScrSection section = exodus.SectionsOS[0];
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
-			Assert.AreEqual("11tambien" + StringUtils.kChObject.ToString() + " mas",
-				para.Contents.Text, "TE-4877: Footnote text should not be stuck in Scripture");
+			Assert.That(para.Contents.Text, Is.EqualTo("11tambien" + StringUtils.kChObject.ToString() + " mas"), "TE-4877: Footnote text should not be stuck in Scripture");
 			VerifySimpleFootnote(0, "Palabras", "a");
 
 			// Verify BT text
 			ICmTranslation trans = para.GetBT();
 			ITsString tssBT = trans.Translation.AnalysisDefaultWritingSystem;
-			Assert.AreEqual(5, tssBT.RunCount);
+			Assert.That(tssBT.RunCount, Is.EqualTo(5));
 			AssertEx.RunIsCorrect(tssBT, 0, "1", ScrStyleNames.ChapterNumber, m_wsAnal);
 			AssertEx.RunIsCorrect(tssBT, 1, "1", ScrStyleNames.VerseNumber, m_wsAnal);
 			AssertEx.RunIsCorrect(tssBT, 2, "too", null, m_wsAnal);
@@ -4143,7 +4117,7 @@ namespace ParatextImport.ImportTests
 			IStTxtPara footnotePara = (IStTxtPara)GetFootnote(0).ParagraphsOS[0];
 			ICmTranslation footnoteBT = footnotePara.GetBT();
 			ITsString tssFootnoteBT = footnoteBT.Translation.get_String(m_wsAnal);
-			Assert.AreEqual(1, tssFootnoteBT.RunCount);
+			Assert.That(tssFootnoteBT.RunCount, Is.EqualTo(1));
 			AssertEx.RunIsCorrect(tssFootnoteBT, 0, "Words", null, m_wsAnal);
 		}
 
@@ -4168,10 +4142,10 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(2, m_importer.BookNumber);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
 			// verify that a new book was added to the DB
 			IScrBook book = m_importer.ScrBook;
-			Assert.AreEqual("EXO", book.BookId);
+			Assert.That(book.BookId, Is.EqualTo("EXO"));
 
 			// ************** process a chapter *********************
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 0);
@@ -4198,13 +4172,13 @@ namespace ParatextImport.ImportTests
 
 			IScrSection section = book.SectionsOS[0];
 
-			Assert.AreEqual(1, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 
 			// *************** Verify first paragraph ***************
 			// verify that the verse text of the first scripture para is in the db correctly
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0]; //first para
-			Assert.AreEqual(StyleUtils.ParaStyleTextProps("Paragraph"), para.StyleRules);
-			Assert.AreEqual(5, para.Contents.RunCount);
+			Assert.That(para.StyleRules, Is.EqualTo(StyleUtils.ParaStyleTextProps("Paragraph")));
+			Assert.That(para.Contents.RunCount, Is.EqualTo(5));
 			ITsString tssPara = para.Contents;
 			AssertEx.RunIsCorrect(tssPara, 0, "1", "Chapter Number", DefaultVernWs);
 			AssertEx.RunIsCorrect(tssPara, 1, "1", "Verse Number", DefaultVernWs);
@@ -4231,18 +4205,13 @@ namespace ParatextImport.ImportTests
 			footnote = Cache.ServiceLocator.GetInstance<IScrFootnoteFactory>().Create();
 			m_importer.CurrParaFootnotes.Add(new FootnoteInfo(footnote, "Note Cross-Reference Paragraph"));
 			List<FootnoteInfo> footnotes = m_importer.CurrParaFootnotes;
-			Assert.AreEqual(((FootnoteInfo)footnotes[0]).footnote,
-				m_importer.FindCorrespondingFootnote(3456, ScrStyleNames.NormalFootnoteParagraph));
-			Assert.AreEqual(((FootnoteInfo)footnotes[0]).footnote,
-				m_importer.FindCorrespondingFootnote(7890, ScrStyleNames.NormalFootnoteParagraph));
+			Assert.That(m_importer.FindCorrespondingFootnote(3456, ScrStyleNames.NormalFootnoteParagraph), Is.EqualTo(((FootnoteInfo)footnotes[0]).footnote));
+			Assert.That(m_importer.FindCorrespondingFootnote(7890, ScrStyleNames.NormalFootnoteParagraph), Is.EqualTo(((FootnoteInfo)footnotes[0]).footnote));
 			Assert.That(m_importer.FindCorrespondingFootnote(3456, "Note Cross-Reference Paragraph"), Is.Null);
-			Assert.AreEqual(((FootnoteInfo)footnotes[1]).footnote,
-				m_importer.FindCorrespondingFootnote(3456, ScrStyleNames.NormalFootnoteParagraph));
-			Assert.AreEqual(((FootnoteInfo)footnotes[2]).footnote,
-				m_importer.FindCorrespondingFootnote(3456, "Note Cross-Reference Paragraph"));
+			Assert.That(m_importer.FindCorrespondingFootnote(3456, ScrStyleNames.NormalFootnoteParagraph), Is.EqualTo(((FootnoteInfo)footnotes[1]).footnote));
+			Assert.That(m_importer.FindCorrespondingFootnote(3456, "Note Cross-Reference Paragraph"), Is.EqualTo(((FootnoteInfo)footnotes[2]).footnote));
 			Assert.That(m_importer.FindCorrespondingFootnote(3456, "Note Cross-Reference Paragraph"), Is.Null);
-			Assert.AreEqual(((FootnoteInfo)footnotes[1]).footnote,
-				m_importer.FindCorrespondingFootnote(7890, ScrStyleNames.NormalFootnoteParagraph));
+			Assert.That(m_importer.FindCorrespondingFootnote(7890, ScrStyleNames.NormalFootnoteParagraph), Is.EqualTo(((FootnoteInfo)footnotes[1]).footnote));
 		}
 		#endregion
 
@@ -4275,19 +4244,18 @@ namespace ParatextImport.ImportTests
 			IScrSection section = exodus.SectionsOS[0];
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
 
-			Assert.AreEqual("1" + StringUtils.kChObject.ToString(),
-				para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("1" + StringUtils.kChObject.ToString()));
 			ITsString tss = para.Contents;
-			Assert.AreEqual(2, tss.RunCount);
+			Assert.That(tss.RunCount, Is.EqualTo(2));
 			string sObjData = tss.get_Properties(1).GetStrPropValue((int)FwTextPropType.ktptObjData);
 			Guid guid = MiscUtils.GetGuidFromObjData(sObjData.Substring(1));
 			ICmPicture picture = Cache.ServiceLocator.GetInstance<ICmPictureRepository>().GetObject(guid);
 
-			Assert.AreEqual("Caption for junk.jpg", picture.Caption.VernacularDefaultWritingSystem.Text);
-			Assert.AreEqual(fileName, picture.PictureFileRA.InternalPath);
-			Assert.AreEqual(picture.PictureFileRA.InternalPath, picture.PictureFileRA.AbsoluteInternalPath);
+			Assert.That(picture.Caption.VernacularDefaultWritingSystem.Text, Is.EqualTo("Caption for junk.jpg"));
+			Assert.That(picture.PictureFileRA.InternalPath, Is.EqualTo(fileName));
+			Assert.That(picture.PictureFileRA.AbsoluteInternalPath, Is.EqualTo(picture.PictureFileRA.InternalPath));
 			byte odt = Convert.ToByte(sObjData[0]);
-			Assert.AreEqual((byte)FwObjDataTypes.kodtGuidMoveableObjDisp, odt);
+			Assert.That(odt, Is.EqualTo((byte)FwObjDataTypes.kodtGuidMoveableObjDisp));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -4319,21 +4287,20 @@ namespace ParatextImport.ImportTests
 				IScrSection section = exodus.SectionsOS[0];
 				IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
 
-				Assert.AreEqual("1" + StringUtils.kChObject.ToString(),
-					para.Contents.Text);
+				Assert.That(para.Contents.Text, Is.EqualTo("1" + StringUtils.kChObject.ToString()));
 				ITsString tss = para.Contents;
-				Assert.AreEqual(2, tss.RunCount);
+				Assert.That(tss.RunCount, Is.EqualTo(2));
 				string sObjData = tss.get_Properties(1).GetStrPropValue((int)FwTextPropType.ktptObjData);
 				Guid guid = MiscUtils.GetGuidFromObjData(sObjData.Substring(1));
 				ICmPicture picture = Cache.ServiceLocator.GetInstance<ICmPictureRepository>().GetObject(guid);
 				try
 				{
-					Assert.AreEqual("Caption for junk.jpg", picture.Caption.VernacularDefaultWritingSystem.Text);
-					Assert.IsTrue(picture.PictureFileRA.InternalPath == picture.PictureFileRA.AbsoluteInternalPath);
-					Assert.IsTrue(picture.PictureFileRA.InternalPath.IndexOf("junk") >= 0);
-					Assert.IsTrue(picture.PictureFileRA.InternalPath.EndsWith(".jpg"));
+					Assert.That(picture.Caption.VernacularDefaultWritingSystem.Text, Is.EqualTo("Caption for junk.jpg"));
+					Assert.That(picture.PictureFileRA.InternalPath == picture.PictureFileRA.AbsoluteInternalPath, Is.True);
+					Assert.That(picture.PictureFileRA.InternalPath.IndexOf("junk") >= 0, Is.True);
+					Assert.That(picture.PictureFileRA.InternalPath.EndsWith(".jpg"), Is.True);
 					byte odt = Convert.ToByte(sObjData[0]);
-					Assert.AreEqual((byte)FwObjDataTypes.kodtGuidMoveableObjDisp, odt);
+					Assert.That(odt, Is.EqualTo((byte)FwObjDataTypes.kodtGuidMoveableObjDisp));
 				}
 				finally
 				{
@@ -4385,28 +4352,27 @@ namespace ParatextImport.ImportTests
 				IScrSection section = exodus.SectionsOS[0];
 				IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
 
-				Assert.AreEqual("1" + StringUtils.kChObject.ToString(),
-					para.Contents.Text);
+				Assert.That(para.Contents.Text, Is.EqualTo("1" + StringUtils.kChObject.ToString()));
 				ITsString tss = para.Contents;
-				Assert.AreEqual(2, tss.RunCount);
+				Assert.That(tss.RunCount, Is.EqualTo(2));
 				string sObjData = tss.get_Properties(1).GetStrPropValue((int)FwTextPropType.ktptObjData);
 				Guid guid = MiscUtils.GetGuidFromObjData(sObjData.Substring(1));
 				ICmPicture picture = Cache.ServiceLocator.GetInstance<ICmPictureRepository>().GetObject(guid);
 				try
 				{
-					Assert.AreEqual("Caption for junk.jpg", picture.Caption.VernacularDefaultWritingSystem.Text);
-					Assert.IsTrue(picture.PictureFileRA.InternalPath == picture.PictureFileRA.AbsoluteInternalPath);
-					Assert.IsTrue(picture.PictureFileRA.InternalPath.IndexOf("junk") >= 0);
-					Assert.IsTrue(picture.PictureFileRA.InternalPath.EndsWith(".jpg"));
+					Assert.That(picture.Caption.VernacularDefaultWritingSystem.Text, Is.EqualTo("Caption for junk.jpg"));
+					Assert.That(picture.PictureFileRA.InternalPath == picture.PictureFileRA.AbsoluteInternalPath, Is.True);
+					Assert.That(picture.PictureFileRA.InternalPath.IndexOf("junk") >= 0, Is.True);
+					Assert.That(picture.PictureFileRA.InternalPath.EndsWith(".jpg"), Is.True);
 					byte odt = Convert.ToByte(sObjData[0]);
-					Assert.AreEqual((byte)FwObjDataTypes.kodtGuidMoveableObjDisp, odt);
-					Assert.AreEqual("Picture of baby Moses in a basket", picture.Description.AnalysisDefaultWritingSystem.Text);
-					Assert.AreEqual(PictureLayoutPosition.CenterOnPage, picture.LayoutPos);
-					Assert.AreEqual(56, picture.ScaleFactor);
-					Assert.AreEqual(PictureLocationRangeType.ReferenceRange, picture.LocationRangeType);
-					Assert.AreEqual(02001001, picture.LocationMin);
-					Assert.AreEqual(02001022, picture.LocationMax);
-					Assert.AreEqual("Copyright 1995, David C. Cook.", picture.PictureFileRA.Copyright.VernacularDefaultWritingSystem.Text);
+					Assert.That(odt, Is.EqualTo((byte)FwObjDataTypes.kodtGuidMoveableObjDisp));
+					Assert.That(picture.Description.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Picture of baby Moses in a basket"));
+					Assert.That(picture.LayoutPos, Is.EqualTo(PictureLayoutPosition.CenterOnPage));
+					Assert.That(picture.ScaleFactor, Is.EqualTo(56));
+					Assert.That(picture.LocationRangeType, Is.EqualTo(PictureLocationRangeType.ReferenceRange));
+					Assert.That(picture.LocationMin, Is.EqualTo(02001001));
+					Assert.That(picture.LocationMax, Is.EqualTo(02001022));
+					Assert.That(picture.PictureFileRA.Copyright.VernacularDefaultWritingSystem.Text, Is.EqualTo("Copyright 1995, David C. Cook."));
 				}
 				finally
 				{
@@ -4456,26 +4422,25 @@ namespace ParatextImport.ImportTests
 				IScrSection section = exodus.SectionsOS[0];
 				IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
 
-				Assert.AreEqual("1" + StringUtils.kChObject.ToString() + "2Verse two",
-					para.Contents.Text);
+				Assert.That(para.Contents.Text, Is.EqualTo("1" + StringUtils.kChObject.ToString() + "2Verse two"));
 				ITsString tss = para.Contents;
-				Assert.AreEqual(4, tss.RunCount);
+				Assert.That(tss.RunCount, Is.EqualTo(4));
 				string sObjData = tss.get_Properties(1).GetStrPropValue((int)FwTextPropType.ktptObjData);
 				Guid guid = MiscUtils.GetGuidFromObjData(sObjData.Substring(1));
 				ICmPicture picture = Cache.ServiceLocator.GetInstance<ICmPictureRepository>().GetObject(guid);
 				try
 				{
 					Assert.That(picture.Caption.VernacularDefaultWritingSystem.Text, Is.Null);
-					Assert.IsTrue(picture.PictureFileRA.InternalPath == picture.PictureFileRA.AbsoluteInternalPath);
-					Assert.IsTrue(picture.PictureFileRA.InternalPath.IndexOf("junk") >= 0);
-					Assert.IsTrue(picture.PictureFileRA.InternalPath.EndsWith(".jpg"));
+					Assert.That(picture.PictureFileRA.InternalPath == picture.PictureFileRA.AbsoluteInternalPath, Is.True);
+					Assert.That(picture.PictureFileRA.InternalPath.IndexOf("junk") >= 0, Is.True);
+					Assert.That(picture.PictureFileRA.InternalPath.EndsWith(".jpg"), Is.True);
 					byte odt = Convert.ToByte(sObjData[0]);
-					Assert.AreEqual((byte)FwObjDataTypes.kodtGuidMoveableObjDisp, odt);
-					Assert.AreEqual("Picture of baby Moses in a basket", picture.Description.AnalysisDefaultWritingSystem.Text);
-					Assert.AreEqual(PictureLayoutPosition.CenterInColumn, picture.LayoutPos);
-					Assert.AreEqual(56, picture.ScaleFactor);
-					Assert.AreEqual(PictureLocationRangeType.AfterAnchor, picture.LocationRangeType);
-					Assert.AreEqual("Copyright 1995, David C. Cook.", picture.PictureFileRA.Copyright.VernacularDefaultWritingSystem.Text);
+					Assert.That(odt, Is.EqualTo((byte)FwObjDataTypes.kodtGuidMoveableObjDisp));
+					Assert.That(picture.Description.AnalysisDefaultWritingSystem.Text, Is.EqualTo("Picture of baby Moses in a basket"));
+					Assert.That(picture.LayoutPos, Is.EqualTo(PictureLayoutPosition.CenterInColumn));
+					Assert.That(picture.ScaleFactor, Is.EqualTo(56));
+					Assert.That(picture.LocationRangeType, Is.EqualTo(PictureLocationRangeType.AfterAnchor));
+					Assert.That(picture.PictureFileRA.Copyright.VernacularDefaultWritingSystem.Text, Is.EqualTo("Copyright 1995, David C. Cook."));
 				}
 				finally
 				{
@@ -4518,25 +4483,24 @@ namespace ParatextImport.ImportTests
 				IScrSection section = exodus.SectionsOS[0];
 				IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
 
-				Assert.AreEqual("1" + StringUtils.kChObject.ToString() + StringUtils.kChObject.ToString(),
-					para.Contents.Text);
+				Assert.That(para.Contents.Text, Is.EqualTo("1" + StringUtils.kChObject.ToString() + StringUtils.kChObject.ToString()));
 				ITsString tss = para.Contents;
-				Assert.AreEqual(3, tss.RunCount);
+				Assert.That(tss.RunCount, Is.EqualTo(3));
 				string sObjData = tss.get_Properties(1).GetStrPropValue((int)FwTextPropType.ktptObjData);
 				Guid guid = MiscUtils.GetGuidFromObjData(sObjData.Substring(1));
 				ICmPicture picture = Cache.ServiceLocator.GetInstance<ICmPictureRepository>().GetObject(guid);
 				try
 				{
 					Assert.That(picture.Caption.VernacularDefaultWritingSystem.Text, Is.Null);
-					Assert.IsTrue(picture.PictureFileRA.InternalPath == picture.PictureFileRA.AbsoluteInternalPath);
-					Assert.IsTrue(picture.PictureFileRA.InternalPath.IndexOf("junk") >= 0);
-					Assert.IsTrue(picture.PictureFileRA.InternalPath.EndsWith(".jpg"));
+					Assert.That(picture.PictureFileRA.InternalPath == picture.PictureFileRA.AbsoluteInternalPath, Is.True);
+					Assert.That(picture.PictureFileRA.InternalPath.IndexOf("junk") >= 0, Is.True);
+					Assert.That(picture.PictureFileRA.InternalPath.EndsWith(".jpg"), Is.True);
 					byte odt = Convert.ToByte(sObjData[0]);
-					Assert.AreEqual((byte)FwObjDataTypes.kodtGuidMoveableObjDisp, odt);
+					Assert.That(odt, Is.EqualTo((byte)FwObjDataTypes.kodtGuidMoveableObjDisp));
 					Assert.That(picture.Description.AnalysisDefaultWritingSystem.Text, Is.Null);
-					Assert.AreEqual(PictureLayoutPosition.CenterInColumn, picture.LayoutPos);
-					Assert.AreEqual(100, picture.ScaleFactor);
-					Assert.AreEqual(PictureLocationRangeType.AfterAnchor, picture.LocationRangeType);
+					Assert.That(picture.LayoutPos, Is.EqualTo(PictureLayoutPosition.CenterInColumn));
+					Assert.That(picture.ScaleFactor, Is.EqualTo(100));
+					Assert.That(picture.LocationRangeType, Is.EqualTo(PictureLocationRangeType.AfterAnchor));
 					Assert.That(picture.PictureFileRA.Copyright.VernacularDefaultWritingSystem.Text, Is.Null);
 				}
 				finally
@@ -4552,13 +4516,13 @@ namespace ParatextImport.ImportTests
 				guid = MiscUtils.GetGuidFromObjData(sObjData.Substring(1));
 				picture = Cache.ServiceLocator.GetInstance<ICmPictureRepository>().GetObject(guid);
 				Assert.That(picture.Caption.VernacularDefaultWritingSystem.Text, Is.Null);
-				Assert.IsTrue(picture.PictureFileRA.InternalPath == picture.PictureFileRA.AbsoluteInternalPath);
-				Assert.AreEqual(fileName, picture.PictureFileRA.InternalPath);
-				Assert.AreEqual((byte)FwObjDataTypes.kodtGuidMoveableObjDisp, Convert.ToByte(sObjData[0]));
+				Assert.That(picture.PictureFileRA.InternalPath == picture.PictureFileRA.AbsoluteInternalPath, Is.True);
+				Assert.That(picture.PictureFileRA.InternalPath, Is.EqualTo(fileName));
+				Assert.That(Convert.ToByte(sObjData[0]), Is.EqualTo((byte)FwObjDataTypes.kodtGuidMoveableObjDisp));
 				Assert.That(picture.Description.AnalysisDefaultWritingSystem.Text, Is.Null);
-				Assert.AreEqual(PictureLayoutPosition.CenterInColumn, picture.LayoutPos);
-				Assert.AreEqual(100, picture.ScaleFactor);
-				Assert.AreEqual(PictureLocationRangeType.AfterAnchor, picture.LocationRangeType);
+				Assert.That(picture.LayoutPos, Is.EqualTo(PictureLayoutPosition.CenterInColumn));
+				Assert.That(picture.ScaleFactor, Is.EqualTo(100));
+				Assert.That(picture.LocationRangeType, Is.EqualTo(PictureLocationRangeType.AfterAnchor));
 				Assert.That(picture.PictureFileRA.Copyright.VernacularDefaultWritingSystem.Text, Is.Null);
 			}
 		}
@@ -4620,35 +4584,34 @@ namespace ParatextImport.ImportTests
 			IScrSection section = exodus.SectionsOS[0];
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
 
-			Assert.AreEqual("1" + StringUtils.kChObject.ToString() + StringUtils.kChObject.ToString(),
-				para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("1" + StringUtils.kChObject.ToString() + StringUtils.kChObject.ToString()));
 			ITsString tss = para.Contents;
-			Assert.AreEqual(3, tss.RunCount);
+			Assert.That(tss.RunCount, Is.EqualTo(3));
 			string sObjData = tss.get_Properties(1).GetStrPropValue((int)FwTextPropType.ktptObjData);
 			Guid guid = MiscUtils.GetGuidFromObjData(sObjData.Substring(1));
 			ICmPicture picture = Cache.ServiceLocator.GetInstance<ICmPictureRepository>().GetObject(guid);
 
-			Assert.AreEqual("Caption for missing picture 1", picture.Caption.VernacularDefaultWritingSystem.Text);
-			Assert.AreEqual("MissingPictureInImport.bmp", picture.PictureFileRA.InternalPath);
+			Assert.That(picture.Caption.VernacularDefaultWritingSystem.Text, Is.EqualTo("Caption for missing picture 1"));
+			Assert.That(picture.PictureFileRA.InternalPath, Is.EqualTo("MissingPictureInImport.bmp"));
 			byte odt = Convert.ToByte(sObjData[0]);
-			Assert.AreEqual((byte)FwObjDataTypes.kodtGuidMoveableObjDisp, odt);
+			Assert.That(odt, Is.EqualTo((byte)FwObjDataTypes.kodtGuidMoveableObjDisp));
 			Assert.That(picture.Description.AnalysisDefaultWritingSystem.Text, Is.Null);
-			Assert.AreEqual(PictureLayoutPosition.CenterInColumn, picture.LayoutPos);
-			Assert.AreEqual(100, picture.ScaleFactor);
-			Assert.AreEqual(PictureLocationRangeType.AfterAnchor, picture.LocationRangeType);
+			Assert.That(picture.LayoutPos, Is.EqualTo(PictureLayoutPosition.CenterInColumn));
+			Assert.That(picture.ScaleFactor, Is.EqualTo(100));
+			Assert.That(picture.LocationRangeType, Is.EqualTo(PictureLocationRangeType.AfterAnchor));
 			Assert.That(picture.PictureFileRA.Copyright.VernacularDefaultWritingSystem.Text, Is.Null);
 
 			// Make sure the second picture (also missing) is okay
 			sObjData = tss.get_Properties(2).GetStrPropValue((int)FwTextPropType.ktptObjData);
 			guid = MiscUtils.GetGuidFromObjData(sObjData.Substring(1));
 			picture = Cache.ServiceLocator.GetInstance<ICmPictureRepository>().GetObject(guid);
-			Assert.AreEqual("Caption for missing picture 2", picture.Caption.VernacularDefaultWritingSystem.Text);
-			Assert.AreEqual("MissingPictureInImport.bmp", picture.PictureFileRA.InternalPath);
-			Assert.AreEqual((byte)FwObjDataTypes.kodtGuidMoveableObjDisp, Convert.ToByte(sObjData[0]));
+			Assert.That(picture.Caption.VernacularDefaultWritingSystem.Text, Is.EqualTo("Caption for missing picture 2"));
+			Assert.That(picture.PictureFileRA.InternalPath, Is.EqualTo("MissingPictureInImport.bmp"));
+			Assert.That(Convert.ToByte(sObjData[0]), Is.EqualTo((byte)FwObjDataTypes.kodtGuidMoveableObjDisp));
 			Assert.That(picture.Description.AnalysisDefaultWritingSystem.Text, Is.Null);
-			Assert.AreEqual(PictureLayoutPosition.CenterInColumn, picture.LayoutPos);
-			Assert.AreEqual(100, picture.ScaleFactor);
-			Assert.AreEqual(PictureLocationRangeType.AfterAnchor, picture.LocationRangeType);
+			Assert.That(picture.LayoutPos, Is.EqualTo(PictureLayoutPosition.CenterInColumn));
+			Assert.That(picture.ScaleFactor, Is.EqualTo(100));
+			Assert.That(picture.LocationRangeType, Is.EqualTo(PictureLocationRangeType.AfterAnchor));
 			Assert.That(picture.PictureFileRA.Copyright.VernacularDefaultWritingSystem.Text, Is.Null);
 		}
 
@@ -4683,22 +4646,21 @@ namespace ParatextImport.ImportTests
 				IScrSection section = exodus.SectionsOS[0];
 				IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
 
-				Assert.AreEqual("1" + StringUtils.kChObject.ToString(),
-					para.Contents.Text);
+				Assert.That(para.Contents.Text, Is.EqualTo("1" + StringUtils.kChObject.ToString()));
 				ITsString tss = para.Contents;
-				Assert.AreEqual(2, tss.RunCount);
+				Assert.That(tss.RunCount, Is.EqualTo(2));
 				string sObjData = tss.get_Properties(1).GetStrPropValue((int)FwTextPropType.ktptObjData);
 				Guid guid = MiscUtils.GetGuidFromObjData(sObjData.Substring(1));
 				ICmPicture picture = Cache.ServiceLocator.GetInstance<ICmPictureRepository>().GetObject(guid);
 				try
 				{
-					Assert.AreEqual("Caption for junk.jpg", picture.Caption.VernacularDefaultWritingSystem.Text);
-					Assert.IsTrue(picture.PictureFileRA.AbsoluteInternalPath == picture.PictureFileRA.InternalPath);
-					Assert.IsTrue(picture.PictureFileRA.InternalPath.IndexOf("junk") >= 0);
-					Assert.IsTrue(picture.PictureFileRA.InternalPath.EndsWith(".jpg"));
-					Assert.AreEqual(sFilePath, picture.PictureFileRA.InternalPath);
+					Assert.That(picture.Caption.VernacularDefaultWritingSystem.Text, Is.EqualTo("Caption for junk.jpg"));
+					Assert.That(picture.PictureFileRA.AbsoluteInternalPath == picture.PictureFileRA.InternalPath, Is.True);
+					Assert.That(picture.PictureFileRA.InternalPath.IndexOf("junk") >= 0, Is.True);
+					Assert.That(picture.PictureFileRA.InternalPath.EndsWith(".jpg"), Is.True);
+					Assert.That(picture.PictureFileRA.InternalPath, Is.EqualTo(sFilePath));
 					byte odt = Convert.ToByte(sObjData[0]);
-					Assert.AreEqual((byte)FwObjDataTypes.kodtGuidMoveableObjDisp, odt);
+					Assert.That(odt, Is.EqualTo((byte)FwObjDataTypes.kodtGuidMoveableObjDisp));
 				}
 				finally
 				{
@@ -4743,23 +4705,21 @@ namespace ParatextImport.ImportTests
 				IScrSection section = exodus.SectionsOS[0];
 				IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
 
-				Assert.AreEqual("1" + StringUtils.kChObject.ToString(),
-					para.Contents.Text);
+				Assert.That(para.Contents.Text, Is.EqualTo("1" + StringUtils.kChObject.ToString()));
 				ITsString tss = para.Contents;
-				Assert.AreEqual(2, tss.RunCount);
+				Assert.That(tss.RunCount, Is.EqualTo(2));
 				string sObjData = tss.get_Properties(1).GetStrPropValue((int)FwTextPropType.ktptObjData);
 				Guid guid = MiscUtils.GetGuidFromObjData(sObjData.Substring(1));
 				ICmPicture picture = Cache.ServiceLocator.GetInstance<ICmPictureRepository>().GetObject(guid);
 				try
 				{
-					Assert.AreEqual("Caption for junk.jpg", picture.Caption.VernacularDefaultWritingSystem.Text);
-					Assert.IsTrue(picture.PictureFileRA.InternalPath == picture.PictureFileRA.AbsoluteInternalPath);
-					Assert.IsTrue(picture.PictureFileRA.InternalPath.IndexOf("junk") >= 0);
-					Assert.IsTrue(picture.PictureFileRA.InternalPath.EndsWith(".jpg"));
+					Assert.That(picture.Caption.VernacularDefaultWritingSystem.Text, Is.EqualTo("Caption for junk.jpg"));
+					Assert.That(picture.PictureFileRA.InternalPath == picture.PictureFileRA.AbsoluteInternalPath, Is.True);
+					Assert.That(picture.PictureFileRA.InternalPath.IndexOf("junk") >= 0, Is.True);
+					Assert.That(picture.PictureFileRA.InternalPath.EndsWith(".jpg"), Is.True);
 					byte odt = Convert.ToByte(sObjData[0]);
-					Assert.AreEqual((byte)FwObjDataTypes.kodtGuidMoveableObjDisp, odt);
-					Assert.AreEqual(Path.Combine(Path.GetTempPath(), "back translation for junk.jpg"),
-						picture.Caption.get_String(DefaultAnalWs).Text);
+					Assert.That(odt, Is.EqualTo((byte)FwObjDataTypes.kodtGuidMoveableObjDisp));
+					Assert.That(picture.Caption.get_String(DefaultAnalWs).Text, Is.EqualTo(Path.Combine(Path.GetTempPath(), "back translation for junk.jpg")));
 				}
 				finally
 				{
@@ -4790,7 +4750,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 1, 0);
 			m_importer.ProcessSegment("Exodus", @"\h");
-			Assert.AreEqual("Exodus", m_importer.ScrBook.Name.VernacularDefaultWritingSystem.Text);
+			Assert.That(m_importer.ScrBook.Name.VernacularDefaultWritingSystem.Text, Is.EqualTo("Exodus"));
 
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 1);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 1, 1);
@@ -4798,7 +4758,7 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("This is verse text", @"\v");
 
 			// verify state of NormalParaStrBldr
-			Assert.AreEqual(2, m_importer.NormalParaStrBldr.RunCount);
+			Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(2));
 			VerifyBldrRun(0, "1", "Verse Number");
 			VerifyBldrRun(1, "This is verse text", null);
 		}
@@ -4849,27 +4809,27 @@ namespace ParatextImport.ImportTests
 
 			style = m_styleSheet.FindStyle("Title Main");
 			Assert.That(style, Is.Not.Null, "Title Main was not found!");
-			Assert.AreEqual(0, style.UserLevel, "should stay 0");
+			Assert.That(style.UserLevel, Is.EqualTo(0), "should stay 0");
 
 			style = m_styleSheet.FindStyle("Section Head");
 			Assert.That(style, Is.Not.Null, "Section Head was not found!");
-			Assert.AreEqual(0, style.UserLevel, "should stay 0");
+			Assert.That(style.UserLevel, Is.EqualTo(0), "should stay 0");
 
 			style = m_styleSheet.FindStyle("Line3");
 			Assert.That(style, Is.Not.Null, "Line3 was not found!");
-			Assert.AreEqual(-2, style.UserLevel, "should be changed to being used");
+			Assert.That(style.UserLevel, Is.EqualTo(-2), "should be changed to being used");
 
 			style = m_styleSheet.FindStyle("Doxology");
 			Assert.That(style, Is.Not.Null, "Doxology was not found!");
-			Assert.AreEqual(-3, style.UserLevel, "should stay as being used");
+			Assert.That(style.UserLevel, Is.EqualTo(-3), "should stay as being used");
 
 			style = m_styleSheet.FindStyle("List Item3");
 			Assert.That(style, Is.Not.Null, "List Item3 was not found!");
-			Assert.AreEqual(-4, style.UserLevel, "should be changed to being used");
+			Assert.That(style.UserLevel, Is.EqualTo(-4), "should be changed to being used");
 
 			style = m_styleSheet.FindStyle("Intro Paragraph");
 			Assert.That(style, Is.Not.Null, "Intro Paragraph was not found!");
-			Assert.AreEqual(2, style.UserLevel, "should not be changed to being used");
+			Assert.That(style.UserLevel, Is.EqualTo(2), "should not be changed to being used");
 		}
 		#endregion
 
@@ -4902,7 +4862,7 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment(" nice test. ", @"\gls*");
 
 			// verify state of NormalParaStrBldr
-			//Assert.AreEqual(7, m_importer.NormalParaStrBldr.RunCount);
+			//Assert.That(m_importer.NormalParaStrBldr.RunCount, Is.EqualTo(7));
 			VerifyBldrRun(0, "1", ScrStyleNames.ChapterNumber);
 			VerifyBldrRun(1, "1", ScrStyleNames.VerseNumber);
 			VerifyBldrRun(2, "This ", null);
@@ -4930,10 +4890,10 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(2, m_importer.BookNumber);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
 			// verify that a new book was added to the DB
 			IScrBook book = m_importer.ScrBook;
-			Assert.AreEqual("EXO", book.BookId);
+			Assert.That(book.BookId, Is.EqualTo("EXO"));
 
 			// ************** process a chapter *********************
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 0);
@@ -4973,7 +4933,7 @@ namespace ParatextImport.ImportTests
 
 			IScrSection section = book.SectionsOS[0];
 			// verify that the verse text of the first scripture para is in the db correctly
-			Assert.AreEqual(2, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(2));
 			int paraHvo = section.ContentOA.ParagraphsOS[1].Hvo;
 			VerifySimpleAnnotation(paraHvo, 2001002, "This is an annotation", NoteType.Translator);
 		}
@@ -4994,10 +4954,10 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(2, m_importer.BookNumber);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
 			// verify that a new book was added to the DB
 			IScrBook book = m_importer.ScrBook;
-			Assert.AreEqual("EXO", book.BookId);
+			Assert.That(book.BookId, Is.EqualTo("EXO"));
 
 			// ************** process a chapter *********************
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 0);
@@ -5037,7 +4997,7 @@ namespace ParatextImport.ImportTests
 
 			IScrSection section = book.SectionsOS[0];
 			// verify that the verse text of the first scripture para is in the db correctly
-			Assert.AreEqual(2, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(2));
 			int paraHvo = section.ContentOA.ParagraphsOS[1].Hvo;
 			VerifySimpleAnnotation(paraHvo, 2001002, 2001003, "This is an annotation", NoteType.Translator);
 		}
@@ -5060,10 +5020,10 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(2, m_importer.BookNumber);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
 			// verify that a new book was added to the DB
 			IScrBook book = m_importer.ScrBook;
-			Assert.AreEqual("EXO", book.BookId);
+			Assert.That(book.BookId, Is.EqualTo("EXO"));
 
 			// ************** process a chapter *********************
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 0);
@@ -5098,7 +5058,7 @@ namespace ParatextImport.ImportTests
 
 			IScrSection section = book.SectionsOS[0];
 			// verify that the verse text of the first scripture para is in the db correctly
-			Assert.AreEqual(2, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(2));
 			int paraHvo = section.ContentOA.ParagraphsOS[1].Hvo;
 			VerifySimpleAnnotation(paraHvo, 2001002, "This is an annotation", NoteType.Consultant);
 		}
@@ -5127,10 +5087,10 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(2, m_importer.BookNumber);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
 			// verify that a new book was added to the DB
 			IScrBook book = m_importer.ScrBook;
-			Assert.AreEqual("EXO", book.BookId);
+			Assert.That(book.BookId, Is.EqualTo("EXO"));
 
 			// ************** process a chapter *********************
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 0);
@@ -5157,7 +5117,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(2, m_importer.BookNumber);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
 
 			// ************** process a chapter *********************
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 0);
@@ -5179,7 +5139,7 @@ namespace ParatextImport.ImportTests
 
 			IScrSection section = book.SectionsOS[0];
 			// verify that the verse text of the first scripture para is in the db correctly
-			Assert.AreEqual(1, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 			int paraHvo = section.ContentOA.ParagraphsOS[0].Hvo;
 			VerifySimpleAnnotation(paraHvo, 2001001, "Non-interleaved annotation", NoteType.Consultant);
 		}
@@ -5210,7 +5170,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(2, m_importer.BookNumber);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
 			// verify that a new book was added to the DB
 			Assert.That(m_scr.FindBook(2), Is.Null);
 
@@ -5233,7 +5193,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(2, m_importer.BookNumber);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
 
 			// ************** process a chapter *********************
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 0);
@@ -5297,7 +5257,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(1, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(1, 0, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(1, m_importer.BookNumber);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(1));
 			// verify that a new book was added to the DB
 			Assert.That(m_scr.FindBook(1), Is.Not.Null);
 
@@ -5319,7 +5279,7 @@ namespace ParatextImport.ImportTests
 
 			// We expect that we have one annotation now.
 			// verify that the note got created
-			Assert.AreEqual(1, m_scr.BookAnnotationsOS[0].NotesOS.Count, "There should be one annotation.");
+			Assert.That(m_scr.BookAnnotationsOS[0].NotesOS.Count, Is.EqualTo(1), "There should be one annotation.");
 			VerifySimpleAnnotation(para.Hvo, 1001001, "Annotation for verse 1 ", NoteType.Consultant);
 		}
 
@@ -5353,26 +5313,26 @@ namespace ParatextImport.ImportTests
 			int endScrRef, string sText, NoteType type)
 		{
 			int iBook = BCVRef.GetBookFromBcv(startScrRef) - 1;
-			 Assert.AreEqual(1, m_scr.BookAnnotationsOS[iBook].NotesOS.Count);
+			 Assert.That(m_scr.BookAnnotationsOS[iBook].NotesOS.Count, Is.EqualTo(1));
 			IScrScriptureNote annotation = m_scr.BookAnnotationsOS[iBook].NotesOS[0];
 			if (objhvo != 0)
 			{
-				Assert.AreEqual(objhvo, annotation.BeginObjectRA.Hvo);
-				Assert.AreEqual(objhvo, annotation.EndObjectRA.Hvo);
+				Assert.That(annotation.BeginObjectRA.Hvo, Is.EqualTo(objhvo));
+				Assert.That(annotation.EndObjectRA.Hvo, Is.EqualTo(objhvo));
 			}
 			else
 			{
 				Assert.That(annotation.BeginObjectRA, Is.Null);
 				Assert.That(annotation.EndObjectRA, Is.Null);
 			}
-			Assert.AreEqual(startScrRef, annotation.BeginRef);
-			Assert.AreEqual(endScrRef, annotation.EndRef);
-			Assert.AreEqual(type, annotation.AnnotationType);
+			Assert.That(annotation.BeginRef, Is.EqualTo(startScrRef));
+			Assert.That(annotation.EndRef, Is.EqualTo(endScrRef));
+			Assert.That(annotation.AnnotationType, Is.EqualTo(type));
 			m_importer.VerifyAnnotationText(annotation.DiscussionOA, "Discussion", sText, m_wsAnal);
 			m_importer.VerifyInitializedNoteText(annotation.QuoteOA, "Quote");
 			m_importer.VerifyInitializedNoteText(annotation.RecommendationOA, "Recommendation");
 			m_importer.VerifyInitializedNoteText(annotation.ResolutionOA, "Resolution");
-			Assert.AreEqual(0, annotation.ResponsesOS.Count);
+			Assert.That(annotation.ResponsesOS.Count, Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -5419,10 +5379,10 @@ namespace ParatextImport.ImportTests
 			IScrBook book = m_importer.ScrBook;
 			IScrSection section = book.SectionsOS[0];
 			// verify that the verse text of the first scripture para is in the db correctly
-			Assert.AreEqual(1, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
 			int paraHvo = para.Hvo;
-			Assert.AreEqual("11first verse 2second verse", para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("11first verse 2second verse"));
 			VerifySimpleAnnotation(paraHvo, 2001001, "This is an annotation", NoteType.Translator);
 		}
 
@@ -5490,7 +5450,7 @@ namespace ParatextImport.ImportTests
 			m_importer.FinalizeImport();
 
 			// Verify that the original note on verse 1 still exists and that the duplicate was not added.
-			Assert.AreEqual(3, m_scr.BookAnnotationsOS[1].NotesOS.Count);
+			Assert.That(m_scr.BookAnnotationsOS[1].NotesOS.Count, Is.EqualTo(3));
 			IScrScriptureNote verse1Note = null;
 			IScrScriptureNote verse2Note = null;
 			int numVerse1Notes = 0;
@@ -5508,13 +5468,11 @@ namespace ParatextImport.ImportTests
 				}
 			}
 			Assert.That(verse1Note, Is.Not.Null, "Note for verse 1 not found.");
-			Assert.AreEqual(1, numVerse1Notes, "There should be exactly one note for verse 1");
-			Assert.AreEqual(origNote1.Hvo, verse1Note.Hvo,
-				"The original note should still be the only note on verse 1");
+			Assert.That(numVerse1Notes, Is.EqualTo(1), "There should be exactly one note for verse 1");
+			Assert.That(verse1Note.Hvo, Is.EqualTo(origNote1.Hvo), "The original note should still be the only note on verse 1");
 
 			Assert.That(verse2Note, Is.Not.Null, "Note for verse 2 not found.");
-			Assert.AreEqual(origNote2.Hvo, verse2Note.Hvo,
-				"The original note should still be the only note on verse 2");
+			Assert.That(verse2Note.Hvo, Is.EqualTo(origNote2.Hvo), "The original note should still be the only note on verse 2");
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -5562,10 +5520,10 @@ namespace ParatextImport.ImportTests
 			IScrBook book = m_importer.ScrBook;
 			IScrSection section = book.SectionsOS[0];
 			// verify that the verse text of the first scripture para is in the db correctly
-			Assert.AreEqual(1, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
 			int paraHvo = para.Hvo;
-			Assert.AreEqual("11first verse 2second verse", para.Contents.Text);
+			Assert.That(para.Contents.Text, Is.EqualTo("11first verse 2second verse"));
 			VerifySimpleAnnotation(book.Hvo, 2001000, "This is an annotation", NoteType.Translator);
 		}
 
@@ -5609,12 +5567,12 @@ namespace ParatextImport.ImportTests
 			m_importer.ProcessSegment("in verse 2? ", @"\rt");
 			m_importer.FinalizeImport();
 			IScrBook exodus = m_importer.UndoInfo.ImportedVersion.BooksOS[0];
-			Assert.AreEqual(1, exodus.SectionsOS.Count);
+			Assert.That(exodus.SectionsOS.Count, Is.EqualTo(1));
 			IScrSection section = exodus.SectionsOS[0];
-			Assert.AreEqual(1, section.ContentOA.ParagraphsOS.Count);
+			Assert.That(section.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 			IStTxtPara para = (IStTxtPara)section.ContentOA.ParagraphsOS[0];
 			ITsString tss = para.Contents;
-			Assert.AreEqual(7, tss.RunCount);
+			Assert.That(tss.RunCount, Is.EqualTo(7));
 			AssertEx.RunIsCorrect(tss, 0, "1", ScrStyleNames.ChapterNumber, m_wsVern);
 			AssertEx.RunIsCorrect(tss, 1, "1", ScrStyleNames.VerseNumber, m_wsVern);
 			AssertEx.RunIsCorrect(tss, 2, "Primer versiculo, ", null, m_wsVern);
@@ -5625,38 +5583,37 @@ namespace ParatextImport.ImportTests
 			VerifySimpleFootnote(0, "My footnote hurts");
 
 			ILcmOwningSequence<IScrScriptureNote> notes = m_scr.BookAnnotationsOS[1].NotesOS;
-			Assert.AreEqual(2, notes.Count);
+			Assert.That(notes.Count, Is.EqualTo(2));
 
 			// verify the annotations
 
 			foreach (IScrScriptureNote annotation in notes)
 			{
-				Assert.AreEqual(para.Hvo, annotation.BeginObjectRA.Hvo);
-				Assert.AreEqual(para.Hvo, annotation.EndObjectRA.Hvo);
-				Assert.AreEqual(annotation.BeginRef, annotation.EndRef);
+				Assert.That(annotation.BeginObjectRA.Hvo, Is.EqualTo(para.Hvo));
+				Assert.That(annotation.EndObjectRA.Hvo, Is.EqualTo(para.Hvo));
+				Assert.That(annotation.EndRef, Is.EqualTo(annotation.BeginRef));
 				Assert.That(annotation.DiscussionOA, Is.Not.Null, "Should have an StText");
-				Assert.AreEqual(1, annotation.DiscussionOA.ParagraphsOS.Count);
+				Assert.That(annotation.DiscussionOA.ParagraphsOS.Count, Is.EqualTo(1));
 				IStTxtPara annPara = (IStTxtPara)annotation.DiscussionOA.ParagraphsOS[0];
 				Assert.That(annPara.StyleRules, Is.Not.Null, "should have a paragraph style");
-				Assert.AreEqual(ScrStyleNames.Remark,
-					annPara.StyleRules.GetStrPropValue(
-					(int)FwTextPropType.ktptNamedStyle));
-				Assert.AreEqual(NoteType.Translator, annotation.AnnotationType);
+				Assert.That(annPara.StyleRules.GetStrPropValue(
+					(int)FwTextPropType.ktptNamedStyle), Is.EqualTo(ScrStyleNames.Remark));
+				Assert.That(annotation.AnnotationType, Is.EqualTo(NoteType.Translator));
 			}
 			IScrScriptureNote note = notes[0];
 			ITsString tssAnn = ((IStTxtPara)note.DiscussionOA.ParagraphsOS[0]).Contents;
-			Assert.AreEqual(2, tssAnn.RunCount);
+			Assert.That(tssAnn.RunCount, Is.EqualTo(2));
 			AssertEx.RunIsCorrect(tssAnn, 0, "First annotation, ", null, m_wsAnal);
 			AssertEx.RunIsCorrect(tssAnn, 1, "cool!", "Emphasis", m_wsAnal);
-			Assert.AreEqual(2001001, note.BeginRef);
+			Assert.That(note.BeginRef, Is.EqualTo(2001001));
 
 			note = notes[1];
 			tssAnn = ((IStTxtPara)note.DiscussionOA.ParagraphsOS[0]).Contents;
-			Assert.AreEqual(3, tssAnn.RunCount);
+			Assert.That(tssAnn.RunCount, Is.EqualTo(3));
 			AssertEx.RunIsCorrect(tssAnn, 0, "Why did you say ", null, m_wsAnal);
 			AssertEx.RunIsCorrect(tssAnn, 1, "tercer ", null, m_wsVern);
 			AssertEx.RunIsCorrect(tssAnn, 2, "in verse 2?", null, m_wsAnal);
-			Assert.AreEqual(2001002, note.BeginRef);
+			Assert.That(note.BeginRef, Is.EqualTo(2001002));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -5676,7 +5633,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(2, m_importer.BookNumber);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
 			// *** process a sequence of Scripture markers, including chapter and verse ***
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 1, 0);
@@ -5722,7 +5679,7 @@ namespace ParatextImport.ImportTests
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 0, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 0, 0);
 			m_importer.ProcessSegment("", @"\id"); // no text provided in segment, just the refs
-			Assert.AreEqual(2, m_importer.BookNumber);
+			Assert.That(m_importer.BookNumber, Is.EqualTo(2));
 			// *** process a sequence of Scripture markers, including chapter and verse ***
 			m_importer.TextSegment.FirstReference = new BCVRef(2, 1, 0);
 			m_importer.TextSegment.LastReference = new BCVRef(2, 1, 0);
@@ -5778,9 +5735,9 @@ namespace ParatextImport.ImportTests
 			Assert.That(m_importer.UndoInfo, Is.Not.Null);
 			Assert.That(m_importer.CurrentSection, Is.Not.Null);
 			Assert.That(m_importer.CurrentSection.HeadingOA, Is.Not.Null);
-			Assert.AreEqual(1, m_importer.CurrentSection.HeadingOA.ParagraphsOS.Count);
+			Assert.That(m_importer.CurrentSection.HeadingOA.ParagraphsOS.Count, Is.EqualTo(1));
 			Assert.That(m_importer.CurrentSection.ContentOA, Is.Not.Null);
-			Assert.AreEqual(1, m_importer.CurrentSection.ContentOA.ParagraphsOS.Count);
+			Assert.That(m_importer.CurrentSection.ContentOA.ParagraphsOS.Count, Is.EqualTo(1));
 		}
 		#endregion
 	}

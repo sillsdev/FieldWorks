@@ -1,0 +1,64 @@
+<Project>
+	<PropertyGroup>
+		<!-- Suppress NU1903 security warning for DotNetZip -->
+		<!-- This is a known issue with an old version; upgrade not currently feasible -->
+		<NoWarn>$(NoWarn);NU1903</NoWarn>
+		<!-- Default all managed projects to x64 unless explicitly overridden -->
+		<PlatformTarget Condition="'$(PlatformTarget)' == ''">x64</PlatformTarget>
+		<Platforms Condition="'$(Platforms)' == ''">x64</Platforms>
+		<!-- Force 64-bit MSBuild host to avoid crashes loading 64-bit native DLLs in build tasks -->
+		<PreferredToolArchitecture>x64</PreferredToolArchitecture>
+		<!-- Disable determinism to allow wildcard versions in CommonAssemblyInfo.cs -->
+		<Deterministic>false</Deterministic>
+	</PropertyGroup>
+	<PropertyGroup Label="AssemblyInfo Policy">
+		<!--
+			CommonAssemblyInfoTemplate Policy:
+			All managed projects must link Src/CommonAssemblyInfo.cs to ensure consistent versioning and metadata.
+			When linking the template, disable SDK auto-generation to prevent CS0579 duplicate attribute errors.
+
+			Usage:
+			<Compile Include="..\..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+			<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+		-->
+	</PropertyGroup>
+	<PropertyGroup Label="Shared Paths for Traversal Build">
+		<!-- Root directory paths -->
+		<FwRoot>$(MSBuildThisFileDirectory)</FwRoot>
+		<FwDistFiles>$(FwRoot)DistFiles\</FwDistFiles>
+		<FwOutput>$(FwRoot)Output\</FwOutput>
+		<FwOutputBase>$(FwOutput)$(Configuration)\</FwOutputBase>
+		<FwObj>$(FwRoot)Obj\</FwObj>
+		<!-- Redirect 'obj' folder to local container storage to bypass Docker volume mount limitations (file locking/renaming failures) during NuGet restore. -->
+		<BaseIntermediateOutputPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">C:\Temp\Obj\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+		<MSBuildProjectExtensionsPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">$(BaseIntermediateOutputPath)</MSBuildProjectExtensionsPath>
+		<RestoreOutputPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">$(BaseIntermediateOutputPath)</RestoreOutputPath>
+		<RestorePackagesPath Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">C:\Temp\Packages\</RestorePackagesPath>
+		<RestoreNoCache Condition="'$(DOTNET_RUNNING_IN_CONTAINER)' == 'true'">true</RestoreNoCache>
+		<!-- LCM artifacts directory -->
+		<DownloadsDir Condition="'$(DownloadsDir)'==''">$(FwRoot)Downloads</DownloadsDir>
+		<LcmArtifactsDir Condition="'$(LcmArtifactsDir)'==''">$(DownloadsDir)</LcmArtifactsDir>
+		<!-- Enable binding redirects for all projects -->
+		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+		<GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Compile Remove="**/*.template.cs" />
+		<!--
+			Test Exclusion Policy (Pattern A):
+			All test code must be explicitly excluded using the pattern:
+			<Compile Remove="<ProjectName>Tests/**" />
+			<None Remove="<ProjectName>Tests/**" />
+
+			Wildcards (e.g. *Tests/**) are NOT allowed.
+			Nested test folders must also be explicitly excluded.
+		-->
+	</ItemGroup>
+	<!-- Modern test infrastructure for all test projects -->
+	<PropertyGroup Condition="'$(IsTestProject)' == 'true'">
+		<!-- For .NET Framework projects, ensure NuGet package assemblies are copied to output directory -->
+		<!-- This is required for dotnet test to discover test adapters -->
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+	</PropertyGroup>
+</Project>

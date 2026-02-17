@@ -330,7 +330,7 @@ namespace SIL.FieldWorks.XWorks
 				XHTMLWriter.Flush();
 				const string letterHeaderToMatch = "//div[@class='letHead']/span[@class='letter' and @lang='en' and text()='R r']";
 				AssertThatXmlIn.String(XHTMLStringBuilder.ToString()).HasSpecifiedNumberOfMatchesForXpath(letterHeaderToMatch, 1);
-				Assert.AreEqual("r", last, "should have updated the last letter header");
+				Assert.That(last, Is.EqualTo("r"), "should have updated the last letter header");
 			}
 		}
 

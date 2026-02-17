@@ -118,7 +118,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		/// ------------------------------------------------------------------------------------
 		/// <summary>
 		/// Load the mappings for a Paratext 6/7 project into the specified list. (no-op)
-		/// We never use this method; for tests, we use <c>Rhino.Mocks.MockRepository</c>
+		/// We never use this method; for tests, we use <c>Moq</c>
 		/// </summary>
 		/// ------------------------------------------------------------------------------------
 		public void LoadProjectMappings(IScrImportSet importSettings)
@@ -291,7 +291,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			m_ptHelper.AddProject("GRK", "Levington");
 			m_ptHelper.AddProject("Mony", "Money");
 			IScrText found = ParatextHelper.GetAssociatedProject(new TestProjectId(BackendProviderType.kXML, "Monkey Soup"));
-			Assert.AreEqual("SOUP", found.Name);
+			Assert.That(found.Name, Is.EqualTo("SOUP"));
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -332,12 +332,12 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			m_ptHelper.AddProject("Mony", null, null, true, true);
 			m_ptHelper.AddProject("Grk7"); // Considered a source language text so should be ignored
 
-			Assert.IsTrue(ParatextHelper.IsProjectWritable("MNKY"));
-			Assert.IsFalse(ParatextHelper.IsProjectWritable("SOUP"));
-			Assert.IsFalse(ParatextHelper.IsProjectWritable("TWNS"));
-			Assert.IsFalse(ParatextHelper.IsProjectWritable("LNDN"));
-			Assert.IsFalse(ParatextHelper.IsProjectWritable("Mony"));
-			Assert.IsFalse(ParatextHelper.IsProjectWritable("Grk7"));
+			Assert.That(ParatextHelper.IsProjectWritable("MNKY"), Is.True);
+			Assert.That(ParatextHelper.IsProjectWritable("SOUP"), Is.False);
+			Assert.That(ParatextHelper.IsProjectWritable("TWNS"), Is.False);
+			Assert.That(ParatextHelper.IsProjectWritable("LNDN"), Is.False);
+			Assert.That(ParatextHelper.IsProjectWritable("Mony"), Is.False);
+			Assert.That(ParatextHelper.IsProjectWritable("Grk7"), Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -369,8 +369,8 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		{
 			List<T> expectedValueList = new List<T>(expectedValues);
 			foreach (T value in enumerable)
-				Assert.IsTrue(expectedValueList.Remove(value), "Got unexpected value in enumerable: " + value);
-			Assert.AreEqual(0, expectedValueList.Count);
+				Assert.That(expectedValueList.Remove(value), Is.True, "Got unexpected value in enumerable: " + value);
+			Assert.That(expectedValueList.Count, Is.EqualTo(0));
 		}
 		#endregion
 	}
@@ -421,13 +421,13 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			ScrMappingList mappingList = importSettings.GetMappingListForDomain(ImportDomain.Main);
 			Assert.That(mappingList, Is.Not.Null, "Setup Failure, no mapping list returned for the domain.");
 			// Test to see that the projects are set correctly
-			Assert.AreEqual(44, mappingList.Count);
+			Assert.That(mappingList.Count, Is.EqualTo(44));
 
-			Assert.AreEqual(MarkerDomain.Default, mappingList[@"\c"].Domain);
-			Assert.AreEqual(MarkerDomain.Default, mappingList[@"\v"].Domain);
-			Assert.AreEqual(@"\f*", mappingList[@"\f"].EndMarker);
-			Assert.IsTrue(mappingList[@"\p"].IsInUse);
-			Assert.IsFalse(mappingList[@"\tb2"].IsInUse);
+			Assert.That(mappingList[@"\c"].Domain, Is.EqualTo(MarkerDomain.Default));
+			Assert.That(mappingList[@"\v"].Domain, Is.EqualTo(MarkerDomain.Default));
+			Assert.That(mappingList[@"\f"].EndMarker, Is.EqualTo(@"\f*"));
+			Assert.That(mappingList[@"\p"].IsInUse, Is.True);
+			Assert.That(mappingList[@"\tb2"].IsInUse, Is.False);
 		}
 
 		/// ------------------------------------------------------------------------------------
@@ -450,7 +450,7 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 			Cache.LangProject.TranslatedScriptureOA.ImportSettingsOC.Add(importSettings);
 			importSettings.ParatextScrProj = "TEV";
 			ScrMappingList mappingList = importSettings.GetMappingListForDomain(ImportDomain.Main);
-			Assert.NotNull(mappingList, "Setup Failure, no mapping list returned for the domain.");
+			Assert.That(mappingList, Is.Not.Null, "Setup Failure, no mapping list returned for the domain.");
 			mappingList.Add(new ImportMappingInfo(@"\hahaha", @"\*hahaha", false,
 				MappingTargetType.TEStyle, MarkerDomain.Default, "laughing",
 				null, null, true, ImportDomain.Main));
@@ -462,12 +462,12 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 
 			ParatextHelper.LoadProjectMappings(importSettings);
 
-			Assert.IsTrue(mappingList[@"\c"].IsInUse);
-			Assert.IsTrue(mappingList[@"\p"].IsInUse);
-			Assert.IsFalse(mappingList[@"\ipi"].IsInUse);
-			Assert.IsFalse(mappingList[@"\hahaha"].IsInUse,
+			Assert.That(mappingList[@"\c"].IsInUse, Is.True);
+			Assert.That(mappingList[@"\p"].IsInUse, Is.True);
+			Assert.That(mappingList[@"\ipi"].IsInUse, Is.False);
+			Assert.That(mappingList[@"\hahaha"].IsInUse, Is.False,
 				"In-use flag should have been cleared before re-scanning when the P6 project changed.");
-			Assert.IsTrue(mappingList[@"\bthahaha"].IsInUse,
+			Assert.That(mappingList[@"\bthahaha"].IsInUse, Is.True,
 				"In-use flag should not have been cleared before re-scanning when the P6 project changed because it was in use by the BT.");
 		}
 

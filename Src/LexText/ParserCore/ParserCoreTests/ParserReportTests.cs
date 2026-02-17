@@ -55,26 +55,26 @@ namespace SIL.FieldWorks.WordWorks.Parser
 		private void CheckParseReport(ParseReport report, int numAnalyses = 0, int numApprovedMissing = 0,
 			int numDisapproved = 0, int numNoOpinion = 0, int parseTime = 0, string errorMessage = null)
 		{
-			Assert.AreEqual(numAnalyses, report.NumAnalyses);
-			Assert.AreEqual(numDisapproved, report.NumUserDisapprovedAnalyses);
-			Assert.AreEqual(numApprovedMissing, report.NumUserApprovedAnalysesMissing);
-			Assert.AreEqual(numNoOpinion, report.NumUserNoOpinionAnalyses);
-			Assert.AreEqual(parseTime, report.ParseTime);
-			Assert.AreEqual(errorMessage, report.ErrorMessage);
+			Assert.That(report.NumAnalyses, Is.EqualTo(numAnalyses));
+			Assert.That(report.NumUserDisapprovedAnalyses, Is.EqualTo(numDisapproved));
+			Assert.That(report.NumUserApprovedAnalysesMissing, Is.EqualTo(numApprovedMissing));
+			Assert.That(report.NumUserNoOpinionAnalyses, Is.EqualTo(numNoOpinion));
+			Assert.That(report.ParseTime, Is.EqualTo(parseTime));
+			Assert.That(report.ErrorMessage, Is.EqualTo(errorMessage));
 		}
 
 		private void CheckParserReport(ParserReport report, int numParseErrors = 0, int numWords = 0,
 			int numZeroParses = 0, int totalAnalyses = 0, int totalApprovedMissing = 0,
 			int totalDisapproved = 0, int totalNoOpinion = 0,int totalParseTime = 0)
 		{
-			Assert.AreEqual(totalAnalyses, report.TotalAnalyses);
-			Assert.AreEqual(totalDisapproved, report.TotalUserDisapprovedAnalyses);
-			Assert.AreEqual(totalApprovedMissing, report.TotalUserApprovedAnalysesMissing);
-			Assert.AreEqual(totalNoOpinion, report.TotalUserNoOpinionAnalyses);
-			Assert.AreEqual(numParseErrors, report.NumParseErrors);
-			Assert.AreEqual(numWords, report.NumWords);
-			Assert.AreEqual(numZeroParses, report.NumZeroParses);
-			Assert.AreEqual(totalParseTime, report.TotalParseTime);
+			Assert.That(report.TotalAnalyses, Is.EqualTo(totalAnalyses));
+			Assert.That(report.TotalUserDisapprovedAnalyses, Is.EqualTo(totalDisapproved));
+			Assert.That(report.TotalUserApprovedAnalysesMissing, Is.EqualTo(totalApprovedMissing));
+			Assert.That(report.TotalUserNoOpinionAnalyses, Is.EqualTo(totalNoOpinion));
+			Assert.That(report.NumParseErrors, Is.EqualTo(numParseErrors));
+			Assert.That(report.NumWords, Is.EqualTo(numWords));
+			Assert.That(report.NumZeroParses, Is.EqualTo(numZeroParses));
+			Assert.That(report.TotalParseTime, Is.EqualTo(totalParseTime));
 		}
 		#endregion // Non-tests
 
@@ -196,7 +196,7 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			parserReport.AddParseReport("cat", parseReport);
 			parserReport.AddParseReport("error", errorReport);
 			parserReport.AddParseReport("zero", zeroReport);
-			Assert.IsTrue(parserReport.ParseReports.ContainsKey("cat"));
+			Assert.That(parserReport.ParseReports.ContainsKey("cat"), Is.True);
 			CheckParserReport(parserReport, numParseErrors: 1, numWords: 3,
 				numZeroParses: 2, totalAnalyses: 4, totalApprovedMissing: 3,
 				totalDisapproved: 1, totalNoOpinion: 2, totalParseTime: 13);
@@ -237,13 +237,13 @@ namespace SIL.FieldWorks.WordWorks.Parser
 			parserReport2.AddParseReport("cat", parseReport);
 			parserReport2.AddParseReport("extra", zeroReport);
 			var diff = parserReport2.DiffParserReports(parserReport);
-			Assert.IsTrue(diff.ParseReports.ContainsKey("extra"));
+			Assert.That(diff.ParseReports.ContainsKey("extra"), Is.True);
 			CheckParseReport(diff.ParseReports["extra"], parseTime: 2);
-			Assert.AreEqual(diff.ParseReports["extra"].Word, " => zero");
-			Assert.IsTrue(diff.ParseReports.ContainsKey("zero"));
+			Assert.That(diff.ParseReports["extra"].Word, Is.EqualTo(" => zero"));
+			Assert.That(diff.ParseReports.ContainsKey("zero"), Is.True);
 			CheckParseReport(diff.ParseReports["zero"], parseTime: -2);
-			Assert.AreEqual(diff.ParseReports["zero"].Word, "zero => ");
-			Assert.IsTrue(diff.ParseReports.ContainsKey("cat"));
+			Assert.That(diff.ParseReports["zero"].Word, Is.EqualTo("zero => "));
+			Assert.That(diff.ParseReports.ContainsKey("cat"), Is.True);
 			CheckParseReport(diff.ParseReports["cat"]);
 		}
 

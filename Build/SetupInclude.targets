@@ -1,13 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Project InitialTargets="Setup" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
-
+<Project
+	InitialTargets="Setup"
+	xmlns="http://schemas.microsoft.com/developer/msbuild/2003"
+	ToolsVersion="Current"
+>
+	<PropertyGroup>
+		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'==''"
+			>$(MSBuildThisFileDirectory)..\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll</FwBuildTasksAssembly
+		>
+	</PropertyGroup>
+	<PropertyGroup>
+		<FwBuildTasksProject>$(MSBuildThisFileDirectory)Src\FwBuildTasks\FwBuildTasks.csproj</FwBuildTasksProject>
+	</PropertyGroup>
 	<PropertyGroup>
 		<IcuVersion>70</IcuVersion>
-
-		<fwrt>$([System.IO.Directory]::GetParent($(MSBuildProjectDirectory)))</fwrt>
+		<!-- Only compute fwrt if not already set (e.g., by NativeBuild.csproj) -->
+		<fwrt Condition="'$(fwrt)' == ''"
+			>$([System.IO.Directory]::GetParent($(MSBuildProjectDirectory)))</fwrt
+		>
 		<fwrt Condition="'$(fwrt)' == ''">$(MSBuildThisFileDirectory)..</fwrt>
 	</PropertyGroup>
-
 	<!-- config is generally either Debug or Release, but might be Bounds or Profile. -->
 	<!-- if the user gives it lowercase, fix it to be capitalized -->
 	<Choose>
@@ -75,253 +87,267 @@
 			</PropertyGroup>
 		</Otherwise>
 	</Choose>
-
-
-  <Target Name="Setup" Condition="Exists('FwBuildTasks.dll')"><!-- cannot depend on GenerateVersionFiles, because that creates a file in Output/Common which CleanAll deletes -->
-	<!-- This is less pretty then I would like since xbuild doesn't support relational operators in conditions -->
-	<PropertyGroup Condition="'$(OS)'=='Windows_NT'">
-		<ToolsVersion>Current</ToolsVersion>
-	</PropertyGroup>
-
-	<!-- refresh the FieldWorks.targets file that gets loaded -->
-	<GenerateFwTargets ToolsVersion="$(ToolsVersion)" />
-
-	<CpuArchitecture>
-	  <Output TaskParameter="Value" PropertyName="arch"/>
-	</CpuArchitecture>
-
-	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="$(fwrt)\Obj">
-	  <Output TaskParameter="Value" PropertyName="dir-fwobj"/>
-	</CreateProperty>
-
-	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="$(fwrt)\Output">
-	  <Output TaskParameter="Value" PropertyName="dir-fwoutput"/>
-	</CreateProperty>
-
-	<PathCombine BasePath="$(dir-fwoutput)" SubPath="$(config-capital)">
-	  <Output TaskParameter="Value" PropertyName="dir-outputBase"/>
-	</PathCombine>
-
-	<PathCombine BasePath="$(dir-fwoutput)" SubPath="Common">
-	  <Output TaskParameter="Value" PropertyName="dir-fwoutputCommon"/>
-	</PathCombine>
-
-	<CreateProperty Value="$(dir-outputBase)">
-	  <Output TaskParameter="Value" PropertyName="dir-buildOutputInterop"/>
-	</CreateProperty>
-
-	<PathCombine BasePath="$(fwrt)" SubPath="Lib">
-	  <Output TaskParameter="Value" PropertyName="dir-fwoutputlib"/>
-	</PathCombine>
-
-	<PathCombine BasePath="$(dir-fwoutputlib)" SubPath="$(config-capital)">
-	  <Output TaskParameter="Value" PropertyName="dir-fwoutputlibBase"/>
-	</PathCombine>
-
-	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="$(dir-fwoutputlib)\windows">
-	  <Output TaskParameter="Value" PropertyName="dir-fwoutputlibPlatform"/>
-	</CreateProperty>
-
-	<PathCombine BasePath="$(dir-fwoutputlibPlatform)" SubPath="$(config-capital)">
-	  <Output TaskParameter="Value" PropertyName="dir-fwoutputlibPlatformBase"/>
-	</PathCombine>
-
-	<PathCombine BasePath="$(dir-fwoutput)" SubPath="install">
-	  <Output TaskParameter="Value" PropertyName="dir-fwinstall"/>
-	</PathCombine>
-
-	<PathCombine BasePath="$(fwrt)" SubPath="DistFiles">
-	  <Output TaskParameter="Value" PropertyName="dir-fwdistfiles"/>
-	</PathCombine>
-
-	<PathCombine BasePath="$(dir-fwdistfiles)" SubPath="Projects">
-	  <Output TaskParameter="Value" PropertyName="dir-fwdistfiles-data"/>
-	</PathCombine>
-
-	<PathCombine BasePath="$(dir-fwdistfiles)" SubPath="Icu$(IcuVersion)">
-	  <Output TaskParameter="Value" PropertyName="dir-icuData"/>
-	</PathCombine>
-
-	<PathCombine BasePath="$(fwrt)" SubPath="buildarchive">
-	  <Output TaskParameter="Value" PropertyName="dir-buildarchive"/>
-	</PathCombine>
-
-	<PathCombine BasePath="$(dir-fwobj)" SubPath="NAntBuild">
-	  <Output TaskParameter="Value" PropertyName="dir-nantbuild"/>
-	</PathCombine>
-
-	<PathCombine BasePath="$(dir-fwoutput)" SubPath="XMI">
-	  <Output TaskParameter="Value" PropertyName="dir-xmiOutput"/>
-	</PathCombine>
-
-	<PathCombine BasePath="$(dir-fwoutput)" SubPath="SampleData">
-	  <Output TaskParameter="Value" PropertyName="dir-SampleData"/>
-	</PathCombine>
-
-	<ComputerName>
-	  <Output TaskParameter="Value" PropertyName="computername"/>
-	</ComputerName>
-
-	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="$(dir-SampleData)">
-	  <Output TaskParameter="Value" PropertyName="dir-safecopy"/>
-	</CreateProperty>
-
-	<!-- needed by the next property -->
-	<ParentDirectory CurrentDirectory="$(fwrt)">
-	  <Output TaskParameter="Value" PropertyName="fwrt-parent"/>
-	</ParentDirectory>
-
-	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="">
-	  <Output TaskParameter="Value" PropertyName="com_dir"/>
-	</CreateProperty>
-
-	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="">
-	  <Output TaskParameter="Value" PropertyName="com_lib"/>
-	</CreateProperty>
-
-	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="">
-	  <Output TaskParameter="Value" PropertyName="icu_lib"/>
-	</CreateProperty>
-
-	<!-- Area of filesystem where FieldWorks and its dependencies are being installed. This
+	<Target Name="Setup">
+		<Error
+			Condition="!Exists('$(FwBuildTasksAssembly)')"
+			Text="Missing FieldWorks build tasks assembly: $(FwBuildTasksAssembly). Build Build/Src/FwBuildTasks/FwBuildTasks.csproj first."
+		/>
+		<!-- cannot depend on GenerateVersionFiles, because that creates a file in Output/Common which CleanAll deletes -->
+		<!-- This is less pretty then I would like since xbuild doesn't support relational operators in conditions -->
+		<PropertyGroup Condition="'$(OS)'=='Windows_NT'">
+			<ToolsVersion>Current</ToolsVersion>
+		</PropertyGroup>
+		<!-- refresh the FieldWorks.targets file that gets loaded -->
+		<GenerateFwTargets ToolsVersion="$(ToolsVersion)" />
+		<CpuArchitecture>
+			<Output TaskParameter="Value" PropertyName="arch" />
+		</CpuArchitecture>
+		<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="$(fwrt)\Obj">
+			<Output TaskParameter="Value" PropertyName="dir-fwobj" />
+		</CreateProperty>
+		<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="$(fwrt)\Output">
+			<Output TaskParameter="Value" PropertyName="dir-fwoutput" />
+		</CreateProperty>
+		<PathCombine BasePath="$(dir-fwoutput)" SubPath="$(config-capital)">
+			<Output TaskParameter="Value" PropertyName="dir-outputBase" />
+		</PathCombine>
+		<PathCombine BasePath="$(dir-fwoutput)" SubPath="Common">
+			<Output TaskParameter="Value" PropertyName="dir-fwoutputCommon" />
+		</PathCombine>
+		<CreateProperty Value="$(dir-outputBase)">
+			<Output TaskParameter="Value" PropertyName="dir-buildOutputInterop" />
+		</CreateProperty>
+		<PathCombine BasePath="$(fwrt)" SubPath="Lib">
+			<Output TaskParameter="Value" PropertyName="dir-fwoutputlib" />
+		</PathCombine>
+		<PathCombine BasePath="$(dir-fwoutputlib)" SubPath="$(config-capital)">
+			<Output TaskParameter="Value" PropertyName="dir-fwoutputlibBase" />
+		</PathCombine>
+		<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="$(dir-fwoutputlib)\windows">
+			<Output TaskParameter="Value" PropertyName="dir-fwoutputlibPlatform" />
+		</CreateProperty>
+		<PathCombine BasePath="$(dir-fwoutputlibPlatform)" SubPath="$(config-capital)">
+			<Output TaskParameter="Value" PropertyName="dir-fwoutputlibPlatformBase" />
+		</PathCombine>
+		<PathCombine BasePath="$(dir-fwoutput)" SubPath="install">
+			<Output TaskParameter="Value" PropertyName="dir-fwinstall" />
+		</PathCombine>
+		<PathCombine BasePath="$(fwrt)" SubPath="DistFiles">
+			<Output TaskParameter="Value" PropertyName="dir-fwdistfiles" />
+		</PathCombine>
+		<PathCombine BasePath="$(dir-fwdistfiles)" SubPath="Projects">
+			<Output TaskParameter="Value" PropertyName="dir-fwdistfiles-data" />
+		</PathCombine>
+		<PathCombine BasePath="$(dir-fwdistfiles)" SubPath="Icu$(IcuVersion)">
+			<Output TaskParameter="Value" PropertyName="dir-icuData" />
+		</PathCombine>
+		<PathCombine BasePath="$(fwrt)" SubPath="buildarchive">
+			<Output TaskParameter="Value" PropertyName="dir-buildarchive" />
+		</PathCombine>
+		<PathCombine BasePath="$(dir-fwobj)" SubPath="NAntBuild">
+			<Output TaskParameter="Value" PropertyName="dir-nantbuild" />
+		</PathCombine>
+		<PathCombine BasePath="$(dir-fwoutput)" SubPath="XMI">
+			<Output TaskParameter="Value" PropertyName="dir-xmiOutput" />
+		</PathCombine>
+		<PathCombine BasePath="$(dir-fwoutput)" SubPath="SampleData">
+			<Output TaskParameter="Value" PropertyName="dir-SampleData" />
+		</PathCombine>
+		<ComputerName>
+			<Output TaskParameter="Value" PropertyName="computername" />
+		</ComputerName>
+		<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="$(dir-SampleData)">
+			<Output TaskParameter="Value" PropertyName="dir-safecopy" />
+		</CreateProperty>
+		<!-- needed by the next property -->
+		<ParentDirectory CurrentDirectory="$(fwrt)">
+			<Output TaskParameter="Value" PropertyName="fwrt-parent" />
+		</ParentDirectory>
+		<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="">
+			<Output TaskParameter="Value" PropertyName="com_dir" />
+		</CreateProperty>
+		<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="">
+			<Output TaskParameter="Value" PropertyName="com_lib" />
+		</CreateProperty>
+		<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="">
+			<Output TaskParameter="Value" PropertyName="icu_lib" />
+		</CreateProperty>
+		<!-- Area of filesystem where FieldWorks and its dependencies are being installed. This
 	is /usr when installed from a .deb package, or /app when using flatpak. -->
-	<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="">
-	  <Output TaskParameter="Value" PropertyName="installation_prefix"/>
-	</CreateProperty>
-
-<!--<if test="${not property::exists('dir.nunitreport')}">-->
-<!--	<property name="dir.nunitreport" value="${nant::get-base-directory()}/extensions/common/neutral/FwTasks/NUnit.Report"/>-->
-<!--</if>-->
-	<CreateProperty Value="Not Applicable!">
-	  <Output TaskParameter="Value" PropertyName="dir-nunitreport"/>
-	</CreateProperty>
-
-	<CreateProperty Value="Configuration=$(config-capital);ReferencePath=$(dir-outputBase);ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch=None">
-	  <Output TaskParameter="Value" PropertyName="msbuild-props"/>
-	</CreateProperty>
-
-	<CreateProperty Value="LongRunning,ByHand,SmokeTest" Condition="'$(runAllTests)'==''">
-	  <Output TaskParameter="Value" PropertyName="excludedCategories"/>
-	</CreateProperty>
-	<CreateProperty Value="$(excludedCategories),DesktopRequired" Condition="'$(desktopNotAvailable)'=='true'">
-	  <Output TaskParameter="Value" PropertyName="excludedCategories"/>
-	</CreateProperty>
-	<CreateProperty Value="ByHand,SmokeTest" Condition="'$(runAllTests)'!=''">
-	  <Output TaskParameter="Value" PropertyName="excludedCategories"/>
-	</CreateProperty>
-	<CreateProperty Value="$(excludedCategories),ExcludeOnLinux64" Condition="'$(arch)'=='x86_64'">
-	  <Output TaskParameter="Value" PropertyName="excludedCategories"/>
-	</CreateProperty>
-
-	<!-- Set some environment variables needed by make (or nmake) -->
-	<SetEnvVar Variable="PATH" Value="$(dir-outputBase);$(PATH);$(dir-outputBase)/lib/$(Arch)" Condition="'$(OS)'=='Windows_NT'"/>
-	<SetEnvVar Variable="BUILD_TYPE" Value="$(build-type)"/>
-	<SetEnvVar Variable="BUILD_CONFIG" Value="$(config-capital)" />
-	<SetEnvVar Variable="BUILD_ROOT" Value="$(fwrt)" />
-	<SetEnvVar Variable="ICU_DATA" Value="$(fwrt)/DistFiles/Icu$(IcuVersion)" />
-
-	<!-- Create the output directories if they don't already exist -->
-
-	<Message Text="msbuild-target='$(msbuild-target)'; msbuild-props='$(msbuild-props)'"/>
-
-  </Target>
-  <Target Name="DeleteTestFiles">
-	<CreateItem Include="$(dir-outputBase)\*-nunit-output.xml">
-	  <Output TaskParameter="Include" ItemName="TestFilesToDelete"/>
-	</CreateItem>
-	<Delete Files="@(TestFilesToDelete)" />
-	<Message Text="Finished deleting NUnit report files." Importance="normal" />
-  </Target>
-
-  <Target Name="Initialize" DependsOnTargets="MakeDirs;GenerateVersionFiles"/>
-
-  <Target Name="MakeDirs" DependsOnTargets="Setup;DeleteTestFiles" Condition="'$(action)'!='clean'">
-	<MakeDir Directories="$(dir-fwobj);$(dir-outputBase);$(dir-fwoutputCommon)"/>
-  </Target>
-
-  <!-- Generate Src/CommonAssemblyInfo.cs from Src/CommonAssemblyInfoTemplate.cs and Src/MasterVersionInfo.txt -->
-  <!-- Generate Output/Common/bldinc.h from Src/bldinc.h and Src/MasterVersionInfo.txt -->
-  <ItemGroup>
-	  <VersionTemplate Include="../Src/CommonAssemblyInfoTemplate.cs"/>
-	  <VersionSymbols Include="../Src/MasterVersionInfo.txt"/>
-	  <VersionOutput Include="../Src/CommonAssemblyInfo.cs"/>
-	  <BldIncTemplate Include="../Src/bldinc.h"/>
-	  <BldIncOutput Include="../Output/Common/bldinc.h"/>
-	  <GlobalIncludeTemplate Include="GlobalInclude.properties.template"/>
-	  <GlobalIncludeOutput Include="GlobalInclude.properties"/>
-	  <FwParatextLexiconPluginTemplate Include="../Src/FwParatextLexiconPlugin/ParatextLexiconPluginRegistryHelper.template.cs"/>
-	  <FwParatextLexiconPluginOutput Include="../Src/FwParatextLexiconPlugin/GeneratedParatextLexiconPluginRegistryHelper.cs"/>
-	  <FwUtilsTemplate Include="../Src/Common/FwUtils/FwUtils.template.cs"/>
-	  <FwUtilsOutput Include="../Src/Common/FwUtils/GeneratedFwUtils.cs"/>
-  </ItemGroup>
-  <!--
+		<CreateProperty Condition="'$(OS)'=='Windows_NT'" Value="">
+			<Output TaskParameter="Value" PropertyName="installation_prefix" />
+		</CreateProperty>
+		<!--<if test="${not property::exists('dir.nunitreport')}">-->
+		<!--	<property name="dir.nunitreport" value="${nant::get-base-directory()}/extensions/common/neutral/FwTasks/NUnit.Report"/>-->
+		<!--</if>-->
+		<CreateProperty Value="Not Applicable!">
+			<Output TaskParameter="Value" PropertyName="dir-nunitreport" />
+		</CreateProperty>
+		<CreateProperty Value="Configuration=$(config-capital);ReferencePath=$(dir-outputBase);ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch=None">
+			<Output TaskParameter="Value" PropertyName="msbuild-props" />
+		</CreateProperty>
+		<CreateProperty Value="LongRunning,ByHand,SmokeTest" Condition="'$(runAllTests)'==''">
+			<Output TaskParameter="Value" PropertyName="excludedCategories" />
+		</CreateProperty>
+		<CreateProperty
+			Value="$(excludedCategories),DesktopRequired"
+			Condition="'$(desktopNotAvailable)'=='true'"
+		>
+			<Output TaskParameter="Value" PropertyName="excludedCategories" />
+		</CreateProperty>
+		<CreateProperty Value="ByHand,SmokeTest" Condition="'$(runAllTests)'!=''">
+			<Output TaskParameter="Value" PropertyName="excludedCategories" />
+		</CreateProperty>
+		<CreateProperty
+			Value="$(excludedCategories),ExcludeOnLinux64"
+			Condition="'$(arch)'=='x86_64'"
+		>
+			<Output TaskParameter="Value" PropertyName="excludedCategories" />
+		</CreateProperty>
+		<!-- Set some environment variables needed by make (or nmake) -->
+		<SetEnvVar
+			Variable="PATH"
+			Value="$(dir-outputBase);$(PATH);$(dir-outputBase)/lib/$(Arch)"
+			Condition="'$(OS)'=='Windows_NT'"
+		/>
+		<SetEnvVar Variable="OAPERUSERTLIBREG" Value="1" Condition="'$(OS)'=='Windows_NT'" />
+		<SetEnvVar Variable="BUILD_TYPE" Value="$(build-type)" />
+		<SetEnvVar Variable="BUILD_CONFIG" Value="$(config-capital)" />
+		<SetEnvVar Variable="BUILD_ROOT" Value="$(fwrt)" />
+		<SetEnvVar Variable="ICU_DATA" Value="$(fwrt)/DistFiles/Icu$(IcuVersion)" />
+		<!-- Create the output directories if they don't already exist -->
+		<Message Text="msbuild-target='$(msbuild-target)'; msbuild-props='$(msbuild-props)'" />
+	</Target>
+	<Target Name="DeleteTestFiles">
+		<CreateItem Include="$(dir-outputBase)\*-nunit-output.xml">
+			<Output TaskParameter="Include" ItemName="TestFilesToDelete" />
+		</CreateItem>
+		<Delete Files="@(TestFilesToDelete)" />
+		<Message Text="Finished deleting NUnit report files." Importance="normal" />
+	</Target>
+	<Target Name="Initialize" DependsOnTargets="MakeDirs;GenerateVersionFiles" />
+	<Target
+		Name="MakeDirs"
+		DependsOnTargets="Setup;DeleteTestFiles"
+		Condition="'$(action)'!='clean'"
+	>
+		<MakeDir Directories="$(dir-fwobj);$(dir-outputBase);$(dir-fwoutputCommon)" />
+	</Target>
+	<!-- Generate Src/CommonAssemblyInfo.cs from Src/CommonAssemblyInfoTemplate.cs and Src/MasterVersionInfo.txt -->
+	<!-- Generate Output/Common/bldinc.h from Src/bldinc.h and Src/MasterVersionInfo.txt -->
+	<ItemGroup>
+		<VersionTemplate Include="$(fwrt)\Src\CommonAssemblyInfoTemplate.cs" />
+		<VersionSymbols Include="$(fwrt)\Src\MasterVersionInfo.txt" />
+		<VersionOutput Include="$(fwrt)\Src\CommonAssemblyInfo.cs" />
+		<BldIncTemplate Include="$(fwrt)\Src\bldinc.h" />
+		<BldIncOutput Include="$(fwrt)\Output\Common\bldinc.h" />
+		<GlobalIncludeTemplate Include="$(MSBuildThisFileDirectory)GlobalInclude.properties.template" />
+		<GlobalIncludeOutput Include="$(MSBuildThisFileDirectory)GlobalInclude.properties" />
+		<FwParatextLexiconPluginTemplate Include="$(fwrt)\Src\FwParatextLexiconPlugin\ParatextLexiconPluginRegistryHelper.template.cs" />
+		<FwParatextLexiconPluginOutput Include="$(fwrt)\Src\FwParatextLexiconPlugin\GeneratedParatextLexiconPluginRegistryHelper.cs" />
+		<FwUtilsTemplate Include="$(fwrt)\Src\Common\FwUtils\FwUtils.template.cs" />
+		<FwUtilsOutput Include="$(fwrt)\Src\Common\FwUtils\GeneratedFwUtils.cs" />
+	</ItemGroup>
+	<!--
 	  Don't use Inputs and Outputs on the GenerateVersionFiles Target.  (Substitute won't
 	  write the file if it hasn't changed, but the AssemblyFileVersion datestamp field should
 	  change once a day.)
   -->
-  <Target Name="GenerateVersionFiles" DependsOnTargets="MakeDirs">
-	  <Substitute Template="@(VersionTemplate)" Symbols="@(VersionSymbols)" Output="@(VersionOutput)" Condition="'$(action)'!='clean'"/>
-	  <Substitute Template="@(BldIncTemplate)" Symbols="@(VersionSymbols)" Output="@(BldIncOutput)" Condition="'$(action)'!='clean' And Exists('../Output/Common')"/>
-	  <Substitute Template="@(GlobalIncludeTemplate)" Symbols="@(VersionSymbols)" Output="@(GlobalIncludeOutput)" Condition="'$(action)'!='clean'"/>
-	  <Substitute Template="@(FwParatextLexiconPluginTemplate)" Symbols="@(VersionSymbols)" Output="@(FwParatextLexiconPluginOutput)" Condition="'$(action)'!='clean'"/>
-	  <Substitute Template="@(FwUtilsTemplate)" Symbols="@(VersionSymbols)" Output="@(FwUtilsOutput)" Condition="'$(action)'!='clean'"/>
-
-	  <Message Text="Updated CommonAssemblyInfo.cs, bldinc.h and GlobalInclude.properties (if needed)."/>
-  </Target>
-
-  <Target Name="GeneratePartsAndLayoutFiles" DependsOnTargets="GenerateCellarConstants">
-	  <XslTransformation OutputPaths="$(fwrt)/DistFiles/Parts/GeneratedParts.xml" XmlInputPaths="$(LcmArtifactsDir)/MasterLCModel.xml" XslInputPath="$(fwrt)/Src/Common/Controls/DetailControls/PartGenerator/PartGenerate.xslt"/>
-	  <XslTransformation OutputPaths="$(fwrt)/DistFiles/Parts/Generated.fwlayout" XmlInputPaths="$(LcmArtifactsDir)/MasterLCModel.xml" XslInputPath="$(fwrt)/Src/Common/Controls/DetailControls/PartGenerator/LayoutGenerate.xslt"/>
-
-	  <Message Text="Updated GeneratedParts.xml and Generated.fwlayout (if needed)."/>
-  </Target>
-
-  <PropertyGroup>
-	<fwrt>$([System.IO.Path]::GetFullPath(&quot;$(MSBuildProjectDirectory)/..&quot;))</fwrt>
-	<BUILD_LEVEL Condition="'$(BUILD_LEVEL)'==''">9</BUILD_LEVEL>
-	<!-- action is one of the following: build test clean register unregister -->
-	<action Condition="'$(action)'==''">build</action>
-	<!-- target is one of the targets in the build system. -->
-	<target Condition="'$(target)'==''">all</target>
-	<platform Condition="'$(platform)'=='' And '$(OS)'=='Windows_NT'">WIN32</platform>
-	<verbose Condition="'$(verbose)'==''">false</verbose>
-	<buildtlb Condition="'$(buildtlb)'==''">false</buildtlb>
-	<!-- Gendarme rule set. See Build/Gendarme.MsBuild/fw-gendarme-rules.xml for possible values. -->
-	<verifyset Condition="'$(verifyset)'==''">dispose</verifyset>
-	<verifyset-test Condition="'$(verifyset-test)'==''">dispose-test</verifyset-test>
-	<verifyfail Condition="'$(verifyfail)'==''">true</verifyfail>
-	<autoUpdateIgnores Condition="'$(autoUpdateIgnores)'==''">false</autoUpdateIgnores>
-	<warningsAsErrors Condition="'$(warningsAsErrors)'==''">TreatWarningsAsErrors=true</warningsAsErrors>
-	<timeoutFudgeFactor Condition="'$(timeoutFudgeFactor)'==''">1</timeoutFudgeFactor>
-  </PropertyGroup>
-
-  <Choose>
-	<When Condition="'$(action)'=='build'">
-	  <PropertyGroup>
-		<msbuild-target>Build</msbuild-target>
-		<make-target>all</make-target>
-	  </PropertyGroup>
-	</When>
-	<When Condition="'$(action)'=='clean'">
-	  <PropertyGroup>
-		<msbuild-target>Clean</msbuild-target>
-		<make-target>clean</make-target>
-	  </PropertyGroup>
-	</When>
-	<When Condition="'$(action)'=='rebuild'">
-	  <PropertyGroup>
-		<msbuild-target>Rebuild</msbuild-target>
-		<make-target>clean all</make-target>
-	  </PropertyGroup>
-	</When>
-	<Otherwise>
-	  <PropertyGroup>
-		<msbuild-target>Build</msbuild-target>
-		<make-target>all</make-target>
-	  </PropertyGroup>
-	</Otherwise>
-  </Choose>
-
+	<Target Name="GenerateVersionFiles" DependsOnTargets="MakeDirs">
+		<Substitute
+			Template="@(VersionTemplate)"
+			Symbols="@(VersionSymbols)"
+			Output="@(VersionOutput)"
+			Condition="'$(action)'!='clean'"
+		/>
+		<Substitute
+			Template="@(BldIncTemplate)"
+			Symbols="@(VersionSymbols)"
+			Output="@(BldIncOutput)"
+			Condition="'$(action)'!='clean'"
+		/>
+		<Substitute
+			Template="@(GlobalIncludeTemplate)"
+			Symbols="@(VersionSymbols)"
+			Output="@(GlobalIncludeOutput)"
+			Condition="'$(action)'!='clean'"
+		/>
+		<Substitute
+			Template="@(FwParatextLexiconPluginTemplate)"
+			Symbols="@(VersionSymbols)"
+			Output="@(FwParatextLexiconPluginOutput)"
+			Condition="'$(action)'!='clean'"
+		/>
+		<Substitute
+			Template="@(FwUtilsTemplate)"
+			Symbols="@(VersionSymbols)"
+			Output="@(FwUtilsOutput)"
+			Condition="'$(action)'!='clean'"
+		/>
+		<Message Text="Updated CommonAssemblyInfo.cs, bldinc.h and GlobalInclude.properties (if needed)." />
+	</Target>
+	<Target Name="GeneratePartsAndLayoutFiles" DependsOnTargets="GenerateCellarConstants">
+		<XslTransformation
+			OutputPaths="$(fwrt)/DistFiles/Parts/GeneratedParts.xml"
+			XmlInputPaths="$(LcmModelArtifactsDir)/MasterLCModel.xml"
+			XslInputPath="$(fwrt)/Src/Common/Controls/DetailControls/PartGenerator/PartGenerate.xslt"
+		/>
+		<XslTransformation
+			OutputPaths="$(fwrt)/DistFiles/Parts/Generated.fwlayout"
+			XmlInputPaths="$(LcmModelArtifactsDir)/MasterLCModel.xml"
+			XslInputPath="$(fwrt)/Src/Common/Controls/DetailControls/PartGenerator/LayoutGenerate.xslt"
+		/>
+		<Message Text="Updated GeneratedParts.xml and Generated.fwlayout (if needed)." />
+	</Target>
+	<PropertyGroup>
+		<!-- Only compute fwrt if not already set (e.g., by NativeBuild.csproj) -->
+		<fwrt Condition="'$(fwrt)'==''"
+			>$([System.IO.Path]::GetFullPath("$(MSBuildProjectDirectory)/.."))</fwrt
+		>
+		<BUILD_LEVEL Condition="'$(BUILD_LEVEL)'==''">9</BUILD_LEVEL>
+		<!-- action is one of the following: build test clean register unregister -->
+		<action Condition="'$(action)'==''">build</action>
+		<!-- target is one of the targets in the build system. -->
+		<target Condition="'$(target)'==''">all</target>
+		<platform Condition="'$(platform)'=='' And '$(OS)'=='Windows_NT'">WIN32</platform>
+		<verbose Condition="'$(verbose)'==''">false</verbose>
+		<buildtlb Condition="'$(buildtlb)'==''">false</buildtlb>
+		<!-- Gendarme rule set. See Build/Gendarme.MsBuild/fw-gendarme-rules.xml for possible values. -->
+		<verifyset Condition="'$(verifyset)'==''">dispose</verifyset>
+		<verifyset-test Condition="'$(verifyset-test)'==''">dispose-test</verifyset-test>
+		<verifyfail Condition="'$(verifyfail)'==''">true</verifyfail>
+		<autoUpdateIgnores Condition="'$(autoUpdateIgnores)'==''">false</autoUpdateIgnores>
+		<warningsAsErrors Condition="'$(warningsAsErrors)'==''"
+			>TreatWarningsAsErrors=true</warningsAsErrors
+		>
+		<timeoutFudgeFactor Condition="'$(timeoutFudgeFactor)'==''">1</timeoutFudgeFactor>
+	</PropertyGroup>
+	<Choose>
+		<When Condition="'$(action)'=='build'">
+			<PropertyGroup>
+				<msbuild-target>Build</msbuild-target>
+				<make-target>all</make-target>
+			</PropertyGroup>
+		</When>
+		<When Condition="'$(action)'=='clean'">
+			<PropertyGroup>
+				<msbuild-target>Clean</msbuild-target>
+				<make-target>clean</make-target>
+			</PropertyGroup>
+		</When>
+		<When Condition="'$(action)'=='rebuild'">
+			<PropertyGroup>
+				<msbuild-target>Rebuild</msbuild-target>
+				<make-target>clean all</make-target>
+			</PropertyGroup>
+		</When>
+		<Otherwise>
+			<PropertyGroup>
+				<msbuild-target>Build</msbuild-target>
+				<make-target>all</make-target>
+			</PropertyGroup>
+		</Otherwise>
+	</Choose>
 	<Choose>
 		<When Condition="'$(config-lower)'=='release'">
 			<PropertyGroup>
@@ -334,20 +360,18 @@
 			</PropertyGroup>
 		</Otherwise>
 	</Choose>
-
-  <Choose>
-	<When Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'">
-	  <PropertyGroup>
-		<useNUnit-x86>true</useNUnit-x86>
-	  </PropertyGroup>
-	</When>
-	<Otherwise>
-	  <PropertyGroup>
-		<useNUnit-x86>false</useNUnit-x86>
-	  </PropertyGroup>
-	</Otherwise>
-  </Choose>
-
+	<Choose>
+		<When Condition="'$(OS)'=='Windows_NT' AND '$(Platform)'!='x64'">
+			<PropertyGroup>
+				<useNUnit-x86>true</useNUnit-x86>
+			</PropertyGroup>
+		</When>
+		<Otherwise>
+			<PropertyGroup>
+				<useNUnit-x86>false</useNUnit-x86>
+			</PropertyGroup>
+		</Otherwise>
+	</Choose>
 	<PropertyGroup>
 		<!--
 			Property for running on build agents. The environment variable BUILDAGENT_SUBKEY
@@ -355,7 +379,8 @@
 			The strings need to be in sync with BasicUtilsTests/Attributes/RedirectHKCU.cs and
 			Generic/RedirectHKCU.h
 		-->
-		<BUILDAGENT_HKCU Condition="'$(BUILDAGENT_SUBKEY)' != ''">Software\SIL\BuildAgents\$(BUILDAGENT_SUBKEY)\HKCU\</BUILDAGENT_HKCU>
+		<BUILDAGENT_HKCU Condition="'$(BUILDAGENT_SUBKEY)' != ''"
+			>Software\SIL\BuildAgents\$(BUILDAGENT_SUBKEY)\HKCU\</BUILDAGENT_HKCU
+		>
 	</PropertyGroup>
-
 </Project>

@@ -9,19 +9,19 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("LexEdDllTests")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("LexEdDllTests")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2013")]
-[assembly: AssemblyTrademark("")]
-[assembly: AssemblyCulture("")]
+// [assembly: AssemblyTitle("LexEdDllTests")] // Sanitized by convert_generate_assembly_info
+// [assembly: AssemblyDescription("")] // Sanitized by convert_generate_assembly_info
+// [assembly: AssemblyConfiguration("")] // Sanitized by convert_generate_assembly_info
+// [assembly: AssemblyCompany("Microsoft")] // Sanitized by convert_generate_assembly_info
+// [assembly: AssemblyProduct("LexEdDllTests")] // Sanitized by convert_generate_assembly_info
+// [assembly: AssemblyCopyright("Copyright © Microsoft 2013")] // Sanitized by convert_generate_assembly_info
+// [assembly: AssemblyTrademark("")] // Sanitized by convert_generate_assembly_info
+// [assembly: AssemblyCulture("")] // Sanitized by convert_generate_assembly_info
 
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from
 // COM, set the ComVisible attribute to true on that type.
-[assembly: ComVisible(false)]
+// [assembly: ComVisible(false)] // Sanitized by convert_generate_assembly_info
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("33eba8c1-5aab-4ffc-8aa6-36c22177834d")]
@@ -36,5 +36,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+// [assembly: AssemblyVersion("1.0.0.0")] // Sanitized by convert_generate_assembly_info
+// [assembly: AssemblyFileVersion("1.0.0.0")] // Sanitized by convert_generate_assembly_info

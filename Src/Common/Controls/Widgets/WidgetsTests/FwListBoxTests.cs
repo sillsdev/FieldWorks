@@ -51,8 +51,8 @@ namespace SIL.FieldWorks.Common.Widgets
 					// The Test
 					collection.Add(testString);
 
-					Assert.AreEqual(1, collection.Count);
-					Assert.IsTrue(collection.Contains(testString));
+					Assert.That(collection.Count, Is.EqualTo(1));
+					Assert.That(collection.Contains(testString), Is.True);
 				}
 			}
 	}
@@ -70,8 +70,8 @@ namespace SIL.FieldWorks.Common.Widgets
 					// The Test
 					collection.Remove(testString);
 
-					Assert.AreEqual(0, collection.Count);
-					Assert.IsFalse(collection.Contains(testString));
+					Assert.That(collection.Count, Is.EqualTo(0));
+					Assert.That(collection.Contains(testString), Is.False);
 				}
 			}
 		}
@@ -88,8 +88,8 @@ namespace SIL.FieldWorks.Common.Widgets
 					// The Test
 					collection.Clear();
 
-					Assert.AreEqual(0, collection.Count);
-					Assert.IsFalse(collection.Contains(testString));
+					Assert.That(collection.Count, Is.EqualTo(0));
+					Assert.That(collection.Contains(testString), Is.False);
 				}
 			}
 		}
@@ -108,9 +108,9 @@ namespace SIL.FieldWorks.Common.Widgets
 					// The Test
 					collection[0] = testString2;
 
-					Assert.AreEqual(1, collection.Count);
-					Assert.IsFalse(collection.Contains(testString1));
-					Assert.IsTrue(collection.Contains(testString2));
+					Assert.That(collection.Count, Is.EqualTo(1));
+					Assert.That(collection.Contains(testString1), Is.False);
+					Assert.That(collection.Contains(testString2), Is.True);
 				}
 			}
 		}
@@ -126,7 +126,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				using (var innerFwListBox = new InnerFwListBox(listBox))
 				{
 					// The Test
-					Assert.GreaterOrEqual(innerFwListBox.WritingSystemCode, 0);
+					Assert.That(innerFwListBox.WritingSystemCode, Is.GreaterThanOrEqualTo(0));
 				}
 			}
 		}
@@ -139,7 +139,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				using (var innerFwListBox = new InnerFwListBox(listBox))
 				{
 					// The Test
-					Assert.AreEqual(true, innerFwListBox.ShowHighlight);
+					Assert.That(innerFwListBox.ShowHighlight, Is.EqualTo(true));
 				}
 			}
 		}
@@ -153,7 +153,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				{
 					// The Test
 					innerFwListBox.ShowHighlight = false;
-					Assert.AreEqual(false, innerFwListBox.ShowHighlight);
+					Assert.That(innerFwListBox.ShowHighlight, Is.EqualTo(false));
 				}
 			}
 		}
@@ -166,7 +166,7 @@ namespace SIL.FieldWorks.Common.Widgets
 				using (var innerFwListBox = new InnerFwListBox(listBox))
 				{
 					// The Test
-					Assert.AreEqual(false, innerFwListBox.IsHighlighted(0));
+					Assert.That(innerFwListBox.IsHighlighted(0), Is.EqualTo(false));
 				}
 			}
 		}
@@ -184,7 +184,7 @@ namespace SIL.FieldWorks.Common.Widgets
 						listBox.HighlightedIndex = 0;
 
 						// The Test
-						Assert.AreEqual(true, innerFwListBox.IsHighlighted(0));
+						Assert.That(innerFwListBox.IsHighlighted(0), Is.EqualTo(true));
 					}
 			}
 		}

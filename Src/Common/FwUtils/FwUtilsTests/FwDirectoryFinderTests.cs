@@ -1,4 +1,4 @@
-// Copyright (c) 2008-2017 SIL International
+﻿// Copyright (c) 2008-2017 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 
@@ -107,8 +107,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 			using (var fwHKCU = FwRegistryHelper.FieldWorksRegistryKey)
 			using (var fwHKLM = FwRegistryHelper.FieldWorksRegistryKeyLocalMachine)
 			{
-				Assert.Null(fwHKCU.GetValue("ProjectsDir"));
-				Assert.NotNull(fwHKLM.GetValue("ProjectsDir"));
+				Assert.That(fwHKCU.GetValue("ProjectsDir"), Is.Null);
+				Assert.That(fwHKLM.GetValue("ProjectsDir"), Is.Not.Null);
 			}
 		}
 
@@ -219,8 +219,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		[Platform(Exclude="Linux", Reason="Test is Windows specific")]
 		public void DefaultBackupDirectory_Windows()
 		{
-			Assert.AreEqual(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-				Path.Combine("My FieldWorks", "Backups")), FwDirectoryFinder.DefaultBackupDirectory);
+			Assert.That(FwDirectoryFinder.DefaultBackupDirectory, Is.EqualTo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+				Path.Combine("My FieldWorks", "Backups"))));
 		}
 
 		/// <summary>
@@ -231,8 +231,8 @@ namespace SIL.FieldWorks.Common.FwUtils
 		public void DefaultBackupDirectory_Linux()
 		{
 			// SpecialFolder.MyDocuments returns $HOME on Linux!
-			Assert.AreEqual(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
-				"Documents/fieldworks/backups"), FwDirectoryFinder.DefaultBackupDirectory);
+			Assert.That(FwDirectoryFinder.DefaultBackupDirectory, Is.EqualTo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+				"Documents/fieldworks/backups")));
 		}
 	}
 }

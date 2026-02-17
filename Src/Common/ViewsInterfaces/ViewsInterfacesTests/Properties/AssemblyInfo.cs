@@ -6,9 +6,9 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("ViewsInterfacesTests")]
-[assembly: AssemblyCompany("SIL")]
-[assembly: AssemblyProduct("SIL FieldWorks")]
-[assembly: AssemblyCopyright("Copyright (c) 2005-2013 SIL International")]
+// [assembly: AssemblyTitle("ViewsInterfacesTests")] // Sanitized by convert_generate_assembly_info
+// [assembly: AssemblyCompany("SIL")] // Sanitized by convert_generate_assembly_info
+// [assembly: AssemblyProduct("SIL FieldWorks")] // Sanitized by convert_generate_assembly_info
+// [assembly: AssemblyCopyright("Copyright (c) 2005-2013 SIL International")] // Sanitized by convert_generate_assembly_info
 
-[assembly: ComVisible(false)]
+// [assembly: ComVisible(false)] // Sanitized by convert_generate_assembly_info

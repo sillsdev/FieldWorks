@@ -5,7 +5,7 @@
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
-[assembly: AssemblyTitle("Unit tests for xCoreInterfaces")]
-[assembly: AssemblyCompany("SIL")]
-[assembly: AssemblyProduct("SIL FieldWorks")]
-[assembly: AssemblyCopyright("Copyright © SIL 2006")]
+// [assembly: AssemblyTitle("Unit tests for xCoreInterfaces")] // Sanitized by convert_generate_assembly_info
+// [assembly: AssemblyCompany("SIL")] // Sanitized by convert_generate_assembly_info
+// [assembly: AssemblyProduct("SIL FieldWorks")] // Sanitized by convert_generate_assembly_info
+// [assembly: AssemblyCopyright("Copyright © SIL 2006")] // Sanitized by convert_generate_assembly_info

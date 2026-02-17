@@ -40,10 +40,10 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		public void CompareRefPos_DifferentVerse()
 		{
 			// Verse references are different.
-			Assert.Greater(m_comparer.Compare(new ReferencePositionType(01001010, 0, 0, 15),
-				new ReferencePositionType(01001002, 0, 0, 0)), 0);
-			Assert.Less(m_comparer.Compare(new ReferencePositionType(01001002, 0, 0, 0),
-				new ReferencePositionType(01001010, 0, 0, 15)), 0);
+			Assert.That(m_comparer.Compare(new ReferencePositionType(01001010, 0, 0, 15),
+				new ReferencePositionType(01001002, 0, 0, 0)), Is.GreaterThan(0));
+			Assert.That(m_comparer.Compare(new ReferencePositionType(01001002, 0, 0, 0),
+				new ReferencePositionType(01001010, 0, 0, 15)), Is.LessThan(0));
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -56,10 +56,10 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		public void CompareRefPosStrings_SameVerseDiffIch()
 		{
 			// Verse references are the same, but the character offset is different.
-			Assert.Greater(m_comparer.Compare(new ReferencePositionType(01001010, 0, 0, 15),
-				new ReferencePositionType(01001010, 0, 0, 0)), 0);
-			Assert.Less(m_comparer.Compare(new ReferencePositionType(01001010, 0, 0, 0),
-				new ReferencePositionType(01001010, 0, 0, 15)), 0);
+			Assert.That(m_comparer.Compare(new ReferencePositionType(01001010, 0, 0, 15),
+				new ReferencePositionType(01001010, 0, 0, 0)), Is.GreaterThan(0));
+			Assert.That(m_comparer.Compare(new ReferencePositionType(01001010, 0, 0, 0),
+				new ReferencePositionType(01001010, 0, 0, 15)), Is.LessThan(0));
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -72,10 +72,10 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		public void CompareRefPosStrings_SameVerseDiffPara()
 		{
 			// Verse references are the same but different paragraph indices.
-			Assert.Greater(m_comparer.Compare(new ReferencePositionType(01001010, 0, 1, 0),
-				new ReferencePositionType(01001010, 0, 0, 15)), 0);
-			Assert.Less(m_comparer.Compare(new ReferencePositionType(01001010, 0, 0, 15),
-				new ReferencePositionType(01001010, 0, 1, 0)), 0);
+			Assert.That(m_comparer.Compare(new ReferencePositionType(01001010, 0, 1, 0),
+				new ReferencePositionType(01001010, 0, 0, 15)), Is.GreaterThan(0));
+			Assert.That(m_comparer.Compare(new ReferencePositionType(01001010, 0, 0, 15),
+				new ReferencePositionType(01001010, 0, 1, 0)), Is.LessThan(0));
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -88,10 +88,10 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		public void CompareRefPosStrings_SameVerseDiffSection()
 		{
 			// Verse references are the same but different section indices.
-			Assert.Greater(m_comparer.Compare(new ReferencePositionType(01001010, 1, 0, 0),
-				new ReferencePositionType(01001010, 0, 2, 15)), 0);
-			Assert.Less(m_comparer.Compare(new ReferencePositionType(01001010, 0, 2, 15),
-				new ReferencePositionType(01001010, 1, 0, 0)), 0);
+			Assert.That(m_comparer.Compare(new ReferencePositionType(01001010, 1, 0, 0),
+				new ReferencePositionType(01001010, 0, 2, 15)), Is.GreaterThan(0));
+			Assert.That(m_comparer.Compare(new ReferencePositionType(01001010, 0, 2, 15),
+				new ReferencePositionType(01001010, 1, 0, 0)), Is.LessThan(0));
 		}
 
 		///--------------------------------------------------------------------------------------
@@ -103,8 +103,8 @@ namespace SIL.FieldWorks.Common.ScriptureUtils
 		[Test]
 		public void CompareRefPosStrings_Same()
 		{
-			Assert.AreEqual(m_comparer.Compare(new ReferencePositionType(01001010, 3, 2, 15),
-				new ReferencePositionType(01001010, 3, 2, 15)), 0);
+			Assert.That(m_comparer.Compare(new ReferencePositionType(01001010, 3, 2, 15),
+				new ReferencePositionType(01001010, 3, 2, 15)), Is.EqualTo(0));
 		}
 
 		/// ------------------------------------------------------------------------------------

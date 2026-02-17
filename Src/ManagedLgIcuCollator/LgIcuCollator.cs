@@ -17,6 +17,7 @@ namespace SIL.FieldWorks.Language
 	/// Direct port of the C++ class LgIcuCollator
 	/// </summary>
 	[Serializable]
+	[ComVisible(true)]
 	[ClassInterface(ClassInterfaceType.None)]
 	[Guid("e771361c-ff54-4120-9525-98a0b7a9accf")]
 	public class ManagedLgIcuCollator : ILgCollatingEngine, IDisposable

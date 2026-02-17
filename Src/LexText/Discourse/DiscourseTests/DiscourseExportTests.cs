@@ -130,10 +130,10 @@ namespace SIL.FieldWorks.Discourse
 		private static XmlNode VerifyNode(string message, XmlNode parent, int index, string name, int childCount, int attrCount)
 		{
 			var child = parent.ChildNodes[index];
-			Assert.IsNotNull(child, message);
-			Assert.AreEqual(childCount, child.ChildNodes.Count, message);
-			Assert.AreEqual(name, child.Name, message);
-			Assert.AreEqual(attrCount, child.Attributes.Count, message + " attribute count");
+			Assert.That(child, Is.Not.Null, message);
+			Assert.That(child.ChildNodes.Count, Is.EqualTo(childCount).Within(message));
+			Assert.That(child.Name, Is.EqualTo(name).Within(message));
+			Assert.That(child.Attributes.Count, Is.EqualTo(attrCount).Within(message + " attribute count"));
 			return child;
 		}
 
@@ -143,7 +143,7 @@ namespace SIL.FieldWorks.Discourse
 			var attr = node.Attributes[attname];
 			Assert.That(attr, Is.Not.Null, "Expected node " + node.Name + " to have attribute " + attname);
 			if (attval != null)
-				Assert.AreEqual(attval, attr.Value, "Expected attr " + attname + " of " + node.Name + " to have value " + attval);
+				Assert.That(attr.Value, Is.EqualTo(attval), "Expected attr " + attname + " of " + node.Name + " to have value " + attval);
 		}
 
 		#region tests
@@ -170,7 +170,7 @@ namespace SIL.FieldWorks.Discourse
 					var doc = new XmlDocument();
 					doc.LoadXml(result);
 					var docNode = doc.DocumentElement;
-					Assert.AreEqual("document", docNode.Name);
+					Assert.That(docNode.Name, Is.EqualTo("document"));
 					var chartNode = VerifyNode("chart", docNode, 0, "chart", 7, 0);
 					VerifyColumnGroupTitleRow(chartNode, 2, isNotesOnRight, isRtl);
 					VerifyColumnTitleRow(chartNode, 2, isNotesOnRight, isRtl);
@@ -211,7 +211,7 @@ namespace SIL.FieldWorks.Discourse
 					var doc = new XmlDocument();
 					doc.LoadXml(result);
 					var docNode = doc.DocumentElement;
-					Assert.AreEqual("document", docNode.Name);
+					Assert.That(docNode.Name, Is.EqualTo("document"));
 					var chartNode = VerifyNode("chart", docNode, 0, "chart", 6, 0);
 					VerifyColumnTitleRow(chartNode, 1, true, false);
 					VerifyFirstDataRow(chartNode, 1, true, false);
@@ -251,7 +251,7 @@ namespace SIL.FieldWorks.Discourse
 					var doc = new XmlDocument();
 					doc.LoadXml(result);
 					var docNode = doc.DocumentElement;
-					Assert.AreEqual("document", docNode.Name);
+					Assert.That(docNode.Name, Is.EqualTo("document"));
 					var chartNode = VerifyNode("chart", docNode, 0, "chart", 8, 0);
 					VerifyStoryHeaderRow(chartNode, 3);
 					VerifyColumnGroupTitleRow(chartNode, 3, true, false);
@@ -301,7 +301,7 @@ namespace SIL.FieldWorks.Discourse
 					var doc = new XmlDocument();
 					doc.LoadXml(result);
 					var docNode = doc.DocumentElement;
-					Assert.AreEqual("document", docNode.Name);
+					Assert.That(docNode.Name, Is.EqualTo("document"));
 					var chartNode = VerifyNode("chart", docNode, 0, "chart", 5, 0);
 					VerifyFirstDataRow(chartNode, 0, true, false);
 					VerifySecondDataRow(chartNode, 0, true, false);
@@ -351,7 +351,7 @@ namespace SIL.FieldWorks.Discourse
 			var glosses1 = VerifyNode("glosses cell 1/2", cell1, 1, "glosses", 2, 0);
 			var gloss1_1 = VerifyNode("second gloss in 1/2", glosses1, 1, "gloss", 1, 1);
 			AssertAttr(gloss1_1, "lang", "en");
-			Assert.AreEqual("oneGloss22", gloss1_1.InnerText);
+			Assert.That(gloss1_1.InnerText, Is.EqualTo("oneGloss22"));
 			//    <cell cols="1">
 			//        <main>
 			//            <word moved="true" lang="fr">It</word>
@@ -366,7 +366,7 @@ namespace SIL.FieldWorks.Discourse
 			var glosses2 = VerifyNode("glosses cell 2/2", cell2, 1, "glosses", 1, 0);
 			var gloss2_0 = VerifyNode("gloss in 2/2", glosses2, 0, "gloss", 1, 1);
 			AssertAttr(gloss2_0, "lang", "en");
-			Assert.AreEqual("ItGloss26", gloss2_0.InnerText);
+			Assert.That(gloss2_0.InnerText, Is.EqualTo("ItGloss26"));
 			//    <cell cols="1">
 			//        <main>
 			//            <moveMkr lang="en">Preposed</moveMkr>
@@ -481,7 +481,7 @@ namespace SIL.FieldWorks.Discourse
 			var child = VerifyNode("cell main child", main, index, name, 1, attrs.Length);
 			for (var i = 0; i < attrs.Length; i++)
 				AssertAttr(child, attrs[i], vals[i]);
-			Assert.AreEqual(inner, child.InnerText);
+			Assert.That(child.InnerText, Is.EqualTo(inner));
 		}
 
 		/// <summary>
@@ -630,7 +630,7 @@ namespace SIL.FieldWorks.Discourse
 			if (cchild != 0)
 			{
 				var innerNode = VerifyNode("first child in main in cell", main, 0, firstChildName, 1, 1); // text counts as one child
-				Assert.AreEqual(inner, innerNode.InnerText);
+				Assert.That(innerNode.InnerText, Is.EqualTo(inner));
 				AssertAttr(innerNode, "lang", lang);
 			}
 			if (glosses != null && glosses.Length != 0)
@@ -640,7 +640,7 @@ namespace SIL.FieldWorks.Discourse
 				{
 					var item = VerifyNode("gloss in glosses", glossesNode, i, "gloss", 1, 1);
 					AssertAttr(item, "lang", "en");
-					Assert.AreEqual(glosses[i], item.InnerText);
+					Assert.That(item.InnerText, Is.EqualTo(glosses[i]));
 				}
 			}
 			return cell;

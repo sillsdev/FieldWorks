@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2010-2013 SIL International
+// Copyright (c) 2010-2013 SIL International
 // This software is licensed under the LGPL, version 2.1 or later
 // (http://www.gnu.org/licenses/lgpl-2.1.html)
 //
@@ -79,7 +79,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		internal bool FileNameProblems(Form messageBoxOwner)
 		{
 			var versionInfoProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), false);
-			var settings = new BackupProjectSettings(m_cache, m_backupProjectView, FwDirectoryFinder.DefaultBackupDirectory,
+			var settings = new LCModel.DomainServices.BackupRestore.BackupProjectSettings(m_cache, m_backupProjectView, FwDirectoryFinder.DefaultBackupDirectory,
 				versionInfoProvider.MajorVersion);
 			settings.DestinationFolder = m_backupProjectView.DestinationFolder;
 			if (settings.AdjustedComment.Trim() != settings.Comment.TrimEnd())
@@ -116,7 +116,7 @@ namespace SIL.FieldWorks.FwCoreDlgs.BackupRestore
 		internal string BackupProject(IThreadedProgress progressDlg)
 		{
 			var versionInfoProvider = new VersionInfoProvider(Assembly.GetExecutingAssembly(), false);
-			var settings = new BackupProjectSettings(m_cache, m_backupProjectView, FwDirectoryFinder.DefaultBackupDirectory,
+			var settings = new LCModel.DomainServices.BackupRestore.BackupProjectSettings(m_cache, m_backupProjectView, FwDirectoryFinder.DefaultBackupDirectory,
 				versionInfoProvider.MajorVersion);
 			settings.DestinationFolder = m_backupProjectView.DestinationFolder;
 

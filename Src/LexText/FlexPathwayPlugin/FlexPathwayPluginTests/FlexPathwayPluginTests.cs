@@ -10,13 +10,22 @@ using System;
 using System.IO;
 using System.Xml;
 using NUnit.Framework;
-using NMock;
 using SIL.FieldWorks.FwCoreDlgs;
 using SIL.PublishingSolution;
 using SIL.FieldWorks.Common.FwUtils;
 
 namespace FlexDePluginTests
 {
+	/// <summary>
+	/// Simple mock implementation of IHelpTopicProvider for testing
+	/// </summary>
+	internal class MockHelpTopicProvider : IHelpTopicProvider
+	{
+		public string HelpFile => string.Empty;
+		public string GetHelpString(string stid) => string.Empty;
+		public void ShowHelpTopic(string helpTopicKey) { }
+	}
+
 	/// <summary>
 	///This is a test class for FlexDePluginTest and is intended
 	///to contain all FlexDePluginTest Unit Tests
@@ -25,7 +34,7 @@ namespace FlexDePluginTests
 	public class FlexPathwayPluginTest : FlexPathwayPlugin
 	{
 		/// <summary>Mock help provider</summary>
-		private IMock helpProvider;
+		private MockHelpTopicProvider helpProvider;
 
 		/// <summary>Location of test files</summary>
 		protected string _TestPath;
@@ -51,7 +60,7 @@ namespace FlexDePluginTests
 			FlexPathwayPlugin target = new FlexPathwayPlugin();
 			string actual;
 			actual = target.Label;
-			Assert.AreEqual("Pathway", actual);
+			Assert.That(actual, Is.EqualTo("Pathway"));
 		}
 
 		/// <summary>
@@ -61,8 +70,8 @@ namespace FlexDePluginTests
 		public void DialogTest()
 		{
 			FlexPathwayPlugin target = new FlexPathwayPlugin();
-			helpProvider = new DynamicMock(typeof (IHelpTopicProvider));
-			using (UtilityDlg expected = new UtilityDlg((IHelpTopicProvider)helpProvider.MockInstance))
+			helpProvider = new MockHelpTopicProvider();
+			using (UtilityDlg expected = new UtilityDlg(helpProvider))
 				target.Dialog = expected;
 		}
 
@@ -106,7 +115,7 @@ namespace FlexDePluginTests
 			string expected = "Pathway";
 			string actual;
 			actual = target.ToString();
-			Assert.AreEqual(expected, actual);
+			Assert.That(actual, Is.EqualTo(expected));
 		}
 
 		/// <summary>
@@ -116,8 +125,8 @@ namespace FlexDePluginTests
 		public void OnSelectionTest()
 		{
 			FlexPathwayPlugin target = new FlexPathwayPlugin();
-			helpProvider = new DynamicMock(typeof(IHelpTopicProvider));
-			using (UtilityDlg exportDialog = new UtilityDlg((IHelpTopicProvider)helpProvider.MockInstance))
+			helpProvider = new MockHelpTopicProvider();
+			using (UtilityDlg exportDialog = new UtilityDlg(helpProvider))
 			{
 				target.Dialog = exportDialog;
 				target.OnSelection();
@@ -132,8 +141,8 @@ namespace FlexDePluginTests
 		public void LoadUtilitiesTest()
 		{
 			FlexPathwayPlugin target = new FlexPathwayPlugin();
-			helpProvider = new DynamicMock(typeof(IHelpTopicProvider));
-			using (UtilityDlg exportDialog = new UtilityDlg((IHelpTopicProvider)helpProvider.MockInstance))
+			helpProvider = new MockHelpTopicProvider();
+			using (UtilityDlg exportDialog = new UtilityDlg(helpProvider))
 			{
 				target.Dialog = exportDialog;
 				target.LoadUtilities();
@@ -148,8 +157,8 @@ namespace FlexDePluginTests
 		public void ExportToolTest()
 		{
 			FlexPathwayPlugin target = new FlexPathwayPlugin();
-			helpProvider = new DynamicMock(typeof(IHelpTopicProvider));
-			using (UtilityDlg exportDialog = new UtilityDlg((IHelpTopicProvider)helpProvider.MockInstance))
+			helpProvider = new MockHelpTopicProvider();
+			using (UtilityDlg exportDialog = new UtilityDlg(helpProvider))
 			{
 				target.Dialog = exportDialog;
 				string areaChoice = "lexicon";

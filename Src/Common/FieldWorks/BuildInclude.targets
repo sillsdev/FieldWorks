@@ -3,7 +3,6 @@
 	<PropertyGroup>
 		<Executable>$(OutDir)FieldWorks.exe</Executable>
 	</PropertyGroup>
-	<Import Project="../../../Build/RegFree.targets"/>
-	<Target Name="AfterBuild" DependsOnTargets="RegFree">
-	</Target>
+	<Import Project="../../../Build/RegFree.targets" />
+	<Target Name="InvokeRegFree" AfterTargets="Build" DependsOnTargets="RegFree"></Target>
 </Project>

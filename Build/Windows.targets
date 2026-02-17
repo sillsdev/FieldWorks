@@ -1,36 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
-
-	<UsingTask TaskName="CheckAdminPrivilege" AssemblyFile="FwBuildTasks.dll" Condition="'$(OS)'=='Windows_NT'"/>
-	<UsingTask TaskName="RegFree" AssemblyFile="FwBuildTasks.dll"/>
-
+	<PropertyGroup>
+		<FwBuildTasksAssembly Condition="'$(FwBuildTasksAssembly)'==''"
+			>$(MSBuildThisFileDirectory)..\BuildTools\FwBuildTasks\$(Configuration)\FwBuildTasks.dll</FwBuildTasksAssembly
+		>
+	</PropertyGroup>
+	<UsingTask
+		TaskName="CheckAdminPrivilege"
+		AssemblyFile="$(FwBuildTasksAssembly)"
+		Condition="'$(OS)'=='Windows_NT'"
+	/>
+	<UsingTask TaskName="RegFree" AssemblyFile="$(FwBuildTasksAssembly)" />
+	<UsingTask
+		TaskName="FindXsltcPath"
+		TaskFactory="CodeTaskFactory"
+		AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll"
+	>
+		<ParameterGroup>
+			<CandidatePaths ParameterType="System.String" Required="true" />
+			<XsltcDirectory ParameterType="System.String" Output="true" />
+		</ParameterGroup>
+		<Task>
+			<Reference Include="System" />
+			<Reference Include="System.Core" />
+			<Using Namespace="System" />
+			<Using Namespace="System.IO" />
+			<Code Type="Fragment" Language="cs">
+				<![CDATA[
+				var separators = new[] { ';' };
+				foreach (var raw in CandidatePaths.Split(separators, StringSplitOptions.RemoveEmptyEntries))
+				{
+					var candidate = raw == null ? string.Empty : raw.Trim();
+					if (string.IsNullOrEmpty(candidate))
+					{
+						continue;
+					}
+					var normalized = candidate.TrimEnd('\\', '/');
+					var exePath = Path.Combine(normalized, "xsltc.exe");
+					if (File.Exists(exePath))
+					{
+						XsltcDirectory = normalized;
+						return true;
+					}
+				}
+				return true;
+			]]>
+			</Code>
+		</Task>
+	</UsingTask>
 	<!-- call preparatory Windows targets -->
-	<Target Name="initWindows" Condition="'$(OS)'=='Windows_NT'"
-			DependsOnTargets="Initialize;BuildWindowsXslAssemblies;graphite2Windows;Unit++">
-	</Target>
-
-	<Target Name="cleanWindows" Condition="'$(OS)'=='Windows_NT'" DependsOnTargets="clean-graphite2Windows">
-	</Target>
-
+	<Target
+		Name="initWindows"
+		Condition="'$(OS)'=='Windows_NT'"
+		DependsOnTargets="Initialize;BuildWindowsXslAssemblies;graphite2Windows;Unit++"
+	></Target>
+	<Target
+		Name="cleanWindows"
+		Condition="'$(OS)'=='Windows_NT'"
+		DependsOnTargets="clean-graphite2Windows"
+	></Target>
 	<ItemGroup>
-		<UnitSources Include="$(fwrt)\Lib\src\unit++\*.*" Condition="'$(OS)'=='Windows_NT'"/>
+		<UnitSources Include="$(fwrt)\Lib\src\unit++\*.*" Condition="'$(OS)'=='Windows_NT'" />
 	</ItemGroup>
-	<Target Name="Unit++" Inputs="@(UnitSources)" Outputs="$(fwrt)\Lib\$(config-lower)\unit++.lib" Condition="'$(OS)'=='Windows_NT'">
-		<MSBuild Projects="$(fwrt)\Lib\src\unit++\VS\unit++.vcxproj"
-			Properties="Configuration=$(config-capital)"/>
+	<Target
+		Name="Unit++"
+		Inputs="@(UnitSources)"
+		Outputs="$(fwrt)\Lib\$(config-lower)\unit++.lib"
+		Condition="'$(OS)'=='Windows_NT'"
+	>
+		<MSBuild
+			Projects="$(fwrt)\Lib\src\unit++\VS\unit++.vcxproj"
+			Properties="Configuration=$(config-capital)"
+		/>
 	</Target>
 	<!-- Define Encoding Converters files needed for building and running tests -->
 	<PropertyGroup>
-		<ECNugetVersion>0.2.28</ECNugetVersion>
+		<ECNugetVersion>0.9.7</ECNugetVersion>
 	</PropertyGroup>
 	<ItemGroup>
 		<ECWindowsFiles Include="CcEC.dll" />
-		<ECWindowsFiles Include="CC32.dll" Condition="'$(arch)'!='x64'"/>
-		<ECWindowsFiles Include="Cc64.dll" Condition="'$(arch)'=='x64'"/>
+		<ECWindowsFiles Include="CC32.dll" Condition="'$(arch)'!='x64'" />
+		<ECWindowsFiles Include="Cc64.dll" Condition="'$(arch)'=='x64'" />
 		<ECWindowsFiles Include="ECInterfaces.dll" />
 		<ECWindowsFiles Include="ECInterfaces.tlb" />
 		<ECWindowsFiles Include="EncConvertersAppDataMover40.exe" />
-		<ECWindowsFiles Include="ECDriver.dll"/>
+		<ECWindowsFiles Include="ECDriver.dll" />
 		<ECWindowsFiles Include="IcuConvEC.dll" />
 		<ECWindowsFiles Include="IcuEC.dll" />
 		<ECWindowsFiles Include="IcuRegexEC.dll" />
@@ -44,13 +98,12 @@
 		<ECWindowsFiles Include="SilIndicEncConverters40.tlb" />
 		<ECWindowsFiles Include="TECkit_Compiler_x86.dll" />
 		<ECWindowsFiles Include="TECkit_x86.dll" />
-		<ECWindowsFiles Include="libgcc_s_sjlj-1.dll" Condition="'$(arch)'!='x64'"/>
-		<ECWindowsFiles Include="libgcc_s_seh-1.dll" Condition="'$(arch)'=='x64'"/>
+		<ECWindowsFiles Include="libgcc_s_sjlj-1.dll" Condition="'$(arch)'!='x64'" />
+		<ECWindowsFiles Include="libgcc_s_seh-1.dll" Condition="'$(arch)'=='x64'" />
 		<ECWindowsFiles Include="libstdc++-6.dll" />
 		<ECWindowsFiles Include="icudt68.dll" />
 		<ECWindowsFiles Include="icuin68.dll" />
 		<ECWindowsFiles Include="icuuc68.dll" />
-
 		<ECPlugins Include="CC 4.0.0.0 Plugin Details.xml" />
 		<ECPlugins Include="EC 4.0.0.0 Plugin Details.xml" />
 		<ECPlugins Include="IcuEC 4.0.0.0 Plugin Details.xml" />
@@ -58,7 +111,6 @@
 		<ECPlugins Include="PythonEC 4.0.0.0 Plugin Details.xml" />
 		<ECPlugins Include="SIEC 4.0.0.0 Plugin Details.xml" />
 	</ItemGroup>
-
 	<!-- Only Windows has the xsltc tool for compiling XSLs -->
 	<PropertyGroup>
 		<ApplicationTransformsPath>$(fwrt)\Src\Transforms\Application</ApplicationTransformsPath>
@@ -68,28 +120,99 @@
 		<ApplicationTransforms Include="$(ApplicationTransformsPath)\*.xsl" />
 		<PresentationTransforms Include="$(PresentationTransformsPath)\*.xsl" />
 	</ItemGroup>
-	<Target Name="BuildWindowsXslAssemblies" Inputs="@(ApplicationTransforms);@(PresentationTransforms)" Outputs="$(dir-outputBase)\ApplicationTransforms.dll;$(dir-outputBase)\PresentationTransforms.dll" Condition="'$(action)'!='clean'">
-	<!-- The WindowsSDK_ExecutablePath_x64 does not contain the xsltc executable, but the x86 path contains one that can build a 64bit assembly -->
-		<Exec Command="&quot;$(WindowsSDK_ExecutablePath_x86)\xsltc.exe&quot; /settings:document /platform:$(arch) /out:$(dir-outputBase)\ApplicationTransforms.dll $(ApplicationTransformsPath)\FxtM3MorphologySketch.xsl $(ApplicationTransformsPath)\FxtM3ParserToGAFAWS.xsl $(ApplicationTransformsPath)\FxtM3ParserToToXAmpleGrammar.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleADCtl.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleLex.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl" />
-		<Exec Command="&quot;$(WindowsSDK_ExecutablePath_x86)\xsltc.exe&quot; /settings:document /platform:$(arch) /out:$(dir-outputBase)\PresentationTransforms.dll $(PresentationTransformsPath)\FormatHCTrace.xsl $(PresentationTransformsPath)\FormatXAmpleParse.xsl $(PresentationTransformsPath)\FormatXAmpleTrace.xsl $(PresentationTransformsPath)\FormatXAmpleWordGrammarDebuggerResult.xsl $(PresentationTransformsPath)\XLingPap1.xsl" />
+	<Target
+		Name="BuildWindowsXslAssemblies"
+		Inputs="@(ApplicationTransforms);@(PresentationTransforms)"
+		Outputs="$(dir-outputBase)\ApplicationTransforms.dll;$(dir-outputBase)\PresentationTransforms.dll"
+		Condition="'$(action)'!='clean'"
+	>
+		<!-- Locate xsltc.exe from the Windows SDK / .NET Framework SDK toolchains -->
+		<PropertyGroup>
+			<XsltcCandidatePaths>$(WindowsSDK_ExecutablePath_x86);$(ProgramFiles(x86))\Microsoft SDKs\Windows\v10.0A\bin\NETFX 4.8 Tools;$(ProgramFiles(x86))\Windows Kits\NETFXSDK\4.8\bin\NETFX 4.8 Tools</XsltcCandidatePaths>
+		</PropertyGroup>
+		<FindXsltcPath CandidatePaths="$(XsltcCandidatePaths)">
+			<Output TaskParameter="XsltcDirectory" PropertyName="XsltcPath" />
+		</FindXsltcPath>
+		<PropertyGroup>
+			<SkipXsltCompilation Condition="'$(XsltcPath)'==''">true</SkipXsltCompilation>
+		</PropertyGroup>
+		<Warning
+			Text="xsltc.exe not found in candidate paths: $(XsltcCandidatePaths). XSL assemblies will be skipped. Install the .NET Framework 4.8 SDK (includes xsltc.exe)."
+			Condition="'$(SkipXsltCompilation)'=='true'"
+		/>
+		<Message
+			Text="Building ApplicationTransforms.dll using xsltc.exe from $(XsltcPath)"
+			Importance="high"
+			Condition="'$(SkipXsltCompilation)'!='true'"
+		/>
+		<Message
+			Text="Target platform: $(arch), Output: $(dir-outputBase)\ApplicationTransforms.dll"
+			Importance="high"
+			Condition="'$(SkipXsltCompilation)'!='true'"
+		/>
+		<Exec
+			Command="&quot;$(XsltcPath)\xsltc.exe&quot; /settings:document /platform:$(arch) /out:$(dir-outputBase)\ApplicationTransforms.dll $(ApplicationTransformsPath)\FxtM3MorphologySketch.xsl $(ApplicationTransformsPath)\FxtM3ParserToGAFAWS.xsl $(ApplicationTransformsPath)\FxtM3ParserToToXAmpleGrammar.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleADCtl.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleLex.xsl $(ApplicationTransformsPath)\FxtM3ParserToXAmpleWordGrammarDebuggingXSLT.xsl"
+			ContinueOnError="ErrorAndContinue"
+			IgnoreExitCode="true"
+			Condition="'$(SkipXsltCompilation)'!='true'"
+		>
+			<Output TaskParameter="ExitCode" PropertyName="XsltcExitCode1" />
+		</Exec>
+		<Error
+			Text="xsltc.exe crashed (exit code $(XsltcExitCode1) = 0x$([System.Convert]::ToString($(XsltcExitCode1), 16))) while building ApplicationTransforms.dll. This may indicate a problem with the Windows SDK XSLT compiler or the input XSLT files."
+			Condition="'$(SkipXsltCompilation)'!='true' AND '$(XsltcExitCode1)' == '-1073741819'"
+		/>
+		<Error
+			Text="xsltc.exe failed with exit code $(XsltcExitCode1) while building ApplicationTransforms.dll"
+			Condition="'$(SkipXsltCompilation)'!='true' AND '$(XsltcExitCode1)' != '0' AND '$(XsltcExitCode1)' != '-1073741819'"
+		/>
+		<Message
+			Text="Building PresentationTransforms.dll using xsltc.exe"
+			Importance="high"
+			Condition="'$(SkipXsltCompilation)'!='true'"
+		/>
+		<Exec
+			Command="&quot;$(XsltcPath)\xsltc.exe&quot; /settings:document /platform:$(arch) /out:$(dir-outputBase)\PresentationTransforms.dll $(PresentationTransformsPath)\FormatHCTrace.xsl $(PresentationTransformsPath)\FormatXAmpleParse.xsl $(PresentationTransformsPath)\FormatXAmpleTrace.xsl $(PresentationTransformsPath)\FormatXAmpleWordGrammarDebuggerResult.xsl $(PresentationTransformsPath)\XLingPap1.xsl"
+			ContinueOnError="ErrorAndContinue"
+			IgnoreExitCode="true"
+			Condition="'$(SkipXsltCompilation)'!='true'"
+		>
+			<Output TaskParameter="ExitCode" PropertyName="XsltcExitCode2" />
+		</Exec>
+		<Error
+			Text="xsltc.exe crashed (exit code $(XsltcExitCode2) = 0x$([System.Convert]::ToString($(XsltcExitCode2), 16))) while building PresentationTransforms.dll. This may indicate a problem with the Windows SDK XSLT compiler or the input XSLT files."
+			Condition="'$(SkipXsltCompilation)'!='true' AND '$(XsltcExitCode2)' == '-1073741819'"
+		/>
+		<Error
+			Text="xsltc.exe failed with exit code $(XsltcExitCode2) while building PresentationTransforms.dll"
+			Condition="'$(SkipXsltCompilation)'!='true' AND '$(XsltcExitCode2)' != '0' AND '$(XsltcExitCode2)' != '-1073741819'"
+		/>
 	</Target>
-
 	<ItemGroup>
 		<Graphite2Sources Include="$(fwrt)\Lib\src\graphite2\src\*.*" />
 	</ItemGroup>
-	<Target Name="graphite2Windows" Inputs="@(Graphite2Sources)" Outputs="$(fwrt)\Lib\$(config-lower)\graphite2.lib" Condition="'$(action)'!='clean'">
-		<Make Makefile="$(fwrt)\Lib\src\graphite2\graphite2.mak"
-				Configuration="$(config-capital)"
-				BuildRoot="$(fwrt)"
-				WorkingDirectory="$(fwrt)\Lib\src\graphite2"/>
-		<Message Text="Finished building graphite2."/>
+	<Target
+		Name="graphite2Windows"
+		Inputs="@(Graphite2Sources)"
+		Outputs="$(fwrt)\Lib\$(config-lower)\graphite2.lib"
+		Condition="'$(action)'!='clean'"
+	>
+		<Make
+			Makefile="$(fwrt)\Lib\src\graphite2\graphite2.mak"
+			Configuration="$(config-capital)"
+			BuildRoot="$(fwrt)"
+			WorkingDirectory="$(fwrt)\Lib\src\graphite2"
+		/>
+		<Message Text="Finished building graphite2." />
 	</Target>
 	<Target Name="clean-graphite2Windows">
-		<Make Makefile="$(fwrt)\Lib\src\graphite2\graphite2.mak"
-				Configuration="$(config-capital)"
-				BuildRoot="$(fwrt)"
-				Target="clean"
-				WorkingDirectory="$(fwrt)\Lib\src\graphite2"/>
-		<Message Text="Finished building graphite2."/>
+		<Make
+			Makefile="$(fwrt)\Lib\src\graphite2\graphite2.mak"
+			Configuration="$(config-capital)"
+			BuildRoot="$(fwrt)"
+			Target="clean"
+			WorkingDirectory="$(fwrt)\Lib\src\graphite2"
+		/>
+		<Message Text="Finished building graphite2." />
 	</Target>
 </Project>

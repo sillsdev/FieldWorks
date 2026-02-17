@@ -561,7 +561,7 @@ namespace SIL.FieldWorks.XWorks
 
 		private void SetupFactoriesAndRepositories()
 		{
-			Assert.True(Cache != null, "No cache yet!?");
+			Assert.That(Cache != null, Is.True, "No cache yet!?");
 			var servLoc = Cache.ServiceLocator;
 			m_possFact = servLoc.GetInstance<ICmPossibilityFactory>();
 			m_possRepo = servLoc.GetInstance<ICmPossibilityRepository>();
@@ -738,8 +738,8 @@ namespace SIL.FieldWorks.XWorks
 		protected IPartOfSpeech GetGrammaticalCategoryOrCreateOne(string catName, ICmPossibilityList owningList,
 			IPartOfSpeech owningCategory)
 		{
-			Assert.True(m_posFact != null, "Fixture Initialization is not complete.");
-			Assert.True(m_window != null, "No window.");
+			Assert.That(m_posFact != null, Is.True, "Fixture Initialization is not complete.");
+			Assert.That(m_window != null, Is.True, "No window.");
 			var category = m_posRepo.AllInstances().Where(
 				someposs => someposs.Name.AnalysisDefaultWritingSystem.Text == catName).FirstOrDefault();
 			if (category != null)
