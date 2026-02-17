@@ -77,9 +77,10 @@
   // Exclude external NuGet package tests (SIL.LCModel.Tests, etc.)
   // These test liblcm internals, not FieldWorks code, and have dependency conflicts
   "dotnet.unitTests.testCaseFilter": "FullyQualifiedName!~SIL.LCModel.Tests&FullyQualifiedName!~SIL.LCModel.Core.Tests&FullyQualifiedName!~SIL.LCModel.Utils.Tests",
-  // Auto-build works because Src/Directory.Build.props sets OutputPath to Output/$(Configuration)/
-  // This means dotnet build outputs to the same location as ./build.ps1
-  "dotnet.automaticallyBuildProjects": true,
+  // FieldWorks is mixed native/managed and uses scripted build orchestration.
+  // Keep C# extension active for language services, but avoid background auto-build churn.
+  "dotnet.preferCSharpExtension": true,
+  "dotnet.automaticallyBuildProjects": false,
   // Git Graph extension settings
   "git-graph.dialog.merge.noFastForward": false,
   "git-graph.dialog.merge.squashCommits": false,
