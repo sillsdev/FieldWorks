@@ -131,14 +131,14 @@ $results += Test-Dependency -Name "MSBuild" -Check {
     throw "MSBuild not found in PATH or VS installation"
 }
 
-# NuGet CLI
-$results += Test-Dependency -Name "NuGet CLI" -Check {
+# NuGet CLI (legacy — build uses dotnet restore since CPM migration)
+$results += Test-Dependency -Name "NuGet CLI (legacy)" -Required "Optional" -Check {
     $nuget = Get-Command nuget.exe -ErrorAction SilentlyContinue
     if ($nuget) {
         $version = (& nuget.exe help 2>&1 | Select-Object -First 1)
         return $version
     }
-    throw "nuget.exe not found in PATH"
+    throw "nuget.exe not found in PATH (no longer required; build uses dotnet restore)"
 }
 
 # .NET SDK
