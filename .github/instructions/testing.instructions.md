@@ -33,7 +33,7 @@ Use `.\test.ps1` for all managed (C#) tests.
 
 ## Running Tests (Native C++)
 
-Use `.\test.ps1 -Native` for native (C++) tests. This wraps `scripts/Agent/Invoke-CppTest.ps1`.
+Use `.\test.ps1 -Native` for native (C++) tests. This wraps `Build/scripts/Invoke-CppTest.ps1`.
 
 ```powershell
 # Build and run TestGeneric (default)
@@ -55,14 +55,14 @@ Tests are built automatically by `test.ps1`. To build explicitly without running
 .\build.ps1 -BuildTests
 
 # Build native tests (via Invoke-CppTest backend)
-.\scripts\Agent\Invoke-CppTest.ps1 -Action Build -TestProject TestViews
+.\Build\scripts\Invoke-CppTest.ps1 -Action Build -TestProject TestViews
 ```
 
 ## Script Architecture
 
 The testing infrastructure relies on shared PowerShell modules for consistency:
 -   **`test.ps1`**: Main entry point. Dispatches to VSTest (managed) or `Invoke-CppTest.ps1` (native).
--   **`scripts/Agent/Invoke-CppTest.ps1`**: Backend for native C++ tests (MSBuild/NMake).
+-   **`Build/scripts/Invoke-CppTest.ps1`**: Backend for native C++ tests (MSBuild/NMake).
 -   **`Build/Agent/FwBuildHelpers.psm1`**: Shared logic for VS environment, and process cleanup.
 
 ## Debugging & Logs

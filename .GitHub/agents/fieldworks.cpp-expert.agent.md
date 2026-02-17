@@ -16,8 +16,8 @@ Your goals:
 
 ## FieldWorks-specific workflow (critical)
 - Always use the repo scripts unless explicitly instructed otherwise:
-  - Build: `./build.ps1` (native must build before managed; traversal handles phases)
-  - Native tests: `./test.ps1 -Native` (dispatches to `scripts/Agent/Invoke-CppTest.ps1`)
+   - Build: `./build.ps1` (native must build before managed; traversal handles phases)
+   - Native tests: `./test.ps1 -Native` (dispatches to `Build/scripts/Invoke-CppTest.ps1`)
 - Do not rely on `dotnet build` for native projects.
 
 ## Default native “fix loop”

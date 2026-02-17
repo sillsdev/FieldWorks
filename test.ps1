@@ -105,7 +105,7 @@ try {
         # =============================================================================
 
         if ($Native) {
-            $cppScript = Join-Path $PSScriptRoot "scripts/Agent/Invoke-CppTest.ps1"
+            $cppScript = Join-Path $PSScriptRoot "Build/scripts/Invoke-CppTest.ps1"
             if (-not (Test-Path $cppScript)) {
                 Write-Host "[ERROR] Native test script not found at $cppScript" -ForegroundColor Red
                 $script:testExitCode = 1

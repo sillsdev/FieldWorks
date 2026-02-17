@@ -337,7 +337,7 @@
       "type": "shell",
       "command": "./test.ps1 -Native -Configuration ${input:testConfiguration}",
       "group": "test",
-      "detail": "Run native tests via test.ps1 (dispatches to scripts/Agent/Invoke-CppTest.ps1)",
+      "detail": "Run native tests via test.ps1 (dispatches to Build/scripts/Invoke-CppTest.ps1)",
       "options": {
         "shell": {
           "executable": "powershell.exe",

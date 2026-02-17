@@ -111,7 +111,7 @@ JIRA_PAT_TOKEN=<your-personal-access-token>
 
 ### Build & Test ordering
 - Native C++ (Phase 2 of `FieldWorks.proj`) must succeed before managed assemblies build. Let `.\build.ps1` enforce this.
-- Managed tests come from NUnit/VSTest. Native tests are driven via `scripts/Agent/Invoke-CppTest.ps1`; use `.\test.ps1 -Native` to stay consistent.
+- Managed tests come from NUnit/VSTest. Native tests are driven via `Build/scripts/Invoke-CppTest.ps1`; use `.\test.ps1 -Native` to stay consistent.
 
 ### COM and Registry
 - FieldWorks relies on registration-free COM. Do not register COM components globally or edit the Windows registry unless a spec explicitly directs it.

@@ -65,7 +65,7 @@ $script:LastLocalOutDir = $null
 # Import Shared Module
 # =============================================================================
 
-$helpersPath = Join-Path $PSScriptRoot "../../Build/Agent/FwBuildHelpers.psm1"
+$helpersPath = Join-Path $PSScriptRoot "../Agent/FwBuildHelpers.psm1"
 if (-not (Test-Path $helpersPath)) {
     Write-Host "[ERROR] FwBuildHelpers.psm1 not found at $helpersPath" -ForegroundColor Red
     exit 1
@@ -148,7 +148,7 @@ function Build-FwBuildTasks {
         '/p:Platform=x64',
         '/nologo'
     )
-    $cmd = "cd /d `"$WorktreePath`" && $msbuild $($args -join ' ')"
+    $cmd = "cd /d `\"$WorktreePath`\" && $msbuild $($args -join ' ')"
     cmd /c $cmd
     if ($LASTEXITCODE -ne 0) { throw "FwBuildTasks build failed with exit code $LASTEXITCODE" }
 }
@@ -165,7 +165,7 @@ function Build-NativeArtifacts {
         '/nologo',
         '/m'
     )
-    $cmd = "cd /d `"$WorktreePath`" && $msbuild $($args -join ' ')"
+    $cmd = "cd /d `\"$WorktreePath`\" && $msbuild $($args -join ' ')"
     cmd /c $cmd
     if ($LASTEXITCODE -ne 0) { throw "Native build failed with exit code $LASTEXITCODE" }
 }
@@ -182,7 +182,7 @@ function Build-ViewsInterfacesArtifacts {
         '/nologo',
         '/v:minimal'
     )
-    $cmd = "cd /d `"$WorktreePath`" && $msbuild $($args -join ' ')"
+    $cmd = "cd /d `\"$WorktreePath`\" && $msbuild $($args -join ' ')"
     cmd /c $cmd
     if ($LASTEXITCODE -ne 0) { throw "ViewsInterfaces build failed with exit code $LASTEXITCODE" }
 }
@@ -251,7 +251,7 @@ function Invoke-Build {
         $msbuildCmd = "$msbuild $($msbuildArgs -join ' ')"
         Write-Host "(cd $WorktreePath) $msbuildCmd" -ForegroundColor Gray
 
-        $cmdLine = "cd /d `"$WorktreePath`" && $msbuildCmd"
+        $cmdLine = "cd /d `\"$WorktreePath`\" && $msbuildCmd"
         cmd /c $cmdLine
         if ($LASTEXITCODE -ne 0) { throw "MSBuild failed with exit code $LASTEXITCODE" }
 
@@ -307,8 +307,8 @@ function Invoke-Build {
 
         # VsDevCmd is already initialized by Initialize-VsDevEnvironment
 
-        $cmd = "cd /d `"$makeDir`" && nmake /nologo BUILD_CONFIG=$Configuration BUILD_TYPE=$buildType BUILD_ROOT=$WorktreePath\ BUILD_ARCH=x64 /f $makefile"
-        Write-Host "cmd /c `"$cmd`"" -ForegroundColor Gray
+        $cmd = "cd /d `\"$makeDir`\" && nmake /nologo BUILD_CONFIG=$Configuration BUILD_TYPE=$buildType BUILD_ROOT=$WorktreePath\ BUILD_ARCH=x64 /f $makefile"
+        Write-Host "cmd /c `\"$cmd`\"" -ForegroundColor Gray
         cmd /c $cmd
         if ($LASTEXITCODE -ne 0) { throw "NMake failed with exit code $LASTEXITCODE" }
     }

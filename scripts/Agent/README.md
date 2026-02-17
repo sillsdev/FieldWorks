@@ -24,3 +24,5 @@ PowerShell scripts for Copilot auto-approval. Use these instead of commands with
 ```powershell
 Get-Help .\scripts\Agent\Git-Search.ps1 -Full
 ```
+
+Native C++ tests are dispatched by `test.ps1` to `Build/scripts/Invoke-CppTest.ps1`.

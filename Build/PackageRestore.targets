@@ -28,6 +28,8 @@
 	<Import Project="$(MSBuildThisFileDirectory)SilVersions.props" />
 	<PropertyGroup>
 		<DownloadsDir>$(fwrt)/Downloads</DownloadsDir>
+		<!-- GeckofxHtmlToPdf: download from GitHub release (https://github.com/sillsdev/geckofxHtmlToPdf/releases) -->
+		<GeckofxHtmlToPdfVersion>1.1.0</GeckofxHtmlToPdfVersion>
 		<!-- PackagesDir: Use local packages folder. -->
 		<PackagesDir>$(fwrt)/packages</PackagesDir>
 	</PropertyGroup>
@@ -261,11 +263,24 @@
 			Condition="'$(UseLocalLibraries)'=='Y'"
 		/>
 		<!-- ExCss.dll is now provided by the SIL.ExCSS NuGet package (no TeamCity download needed). -->
-		<!-- GeckofxHtmlToPdf binaries must be pre-populated in Downloads/ (TeamCity server decommissioned).
-		     Build from https://github.com/sillsdev/geckofxHtmlToPdf and place output in Downloads directory. -->
-		<Warning
-			Text="GeckofxHtmlToPdf.exe not found in $(DownloadsDir) - PDF export will not work. Build from https://github.com/sillsdev/geckofxHtmlToPdf and place output in Downloads directory."
+		<!-- GeckofxHtmlToPdf binaries downloaded from GitHub release (replaces decommissioned TeamCity server). -->
+		<DownloadFile
+			Address="https://github.com/sillsdev/geckofxHtmlToPdf/releases/download/$(GeckofxHtmlToPdfVersion)/GeckofxHtmlToPdf.exe"
+			LocalFilename="GeckofxHtmlToPdf.exe"
+			DownloadsDir="$(DownloadsDir)"
 			Condition="'$(OS)'=='Windows_NT' AND !Exists('$(DownloadsDir)/GeckofxHtmlToPdf.exe')"
+		/>
+		<DownloadFile
+			Address="https://github.com/sillsdev/geckofxHtmlToPdf/releases/download/$(GeckofxHtmlToPdfVersion)/GeckofxHtmlToPdf.exe.config"
+			LocalFilename="GeckofxHtmlToPdf.exe.config"
+			DownloadsDir="$(DownloadsDir)"
+			Condition="'$(OS)'=='Windows_NT' AND !Exists('$(DownloadsDir)/GeckofxHtmlToPdf.exe.config')"
+		/>
+		<DownloadFile
+			Address="https://github.com/sillsdev/geckofxHtmlToPdf/releases/download/$(GeckofxHtmlToPdfVersion)/Args.dll"
+			LocalFilename="Args.dll"
+			DownloadsDir="$(DownloadsDir)"
+			Condition="'$(OS)'=='Windows_NT' AND !Exists('$(DownloadsDir)/Args.dll')"
 		/>
 	</Target>
 
