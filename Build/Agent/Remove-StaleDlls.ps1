@@ -3,25 +3,25 @@
     Single-pass detection and removal of stale DLLs from a FieldWorks output directory.
 
 .DESCRIPTION
-    Performs two complementary checks in one pass over every DLL in the target directory:
+    Performs up to two checks in one pass over every DLL in the target directory:
 
-    1. NuGet-package version check (LT-22382)
-       If a DLL's filename matches a NuGet PackageReference, its FileVersion must start with
-       the declared package version.  MSBuild's SkipUnchangedFiles compares by AssemblyVersion
-       which misses FileVersion-only bumps (e.g. Newtonsoft.Json 13.0.3 → 13.0.4).
+    1. Product major-version check (first-party whitelist)
+       Builds a positive list of first-party assembly names from Src/**/*.csproj project names
+       and <AssemblyName> overrides.  For every DLL whose basename is in this whitelist, its
+       AssemblyVersion major component must match FWMAJOR from Src/MasterVersionInfo.txt.
+       This catches stale first-party DLLs left behind from a different FW version
+       (e.g. 6.0.0.0 in a 9.x tree).
 
-    2. Product major-version check
-       For every managed DLL that is NOT a recognised third-party assembly, its AssemblyVersion
-       major component must match FWMAJOR from Src/MasterVersionInfo.txt.  This catches stale
-       first-party DLLs left behind from a different FW version (e.g. 6.0.0.0 in a 9.x tree).
+    2. Staged-vs-reference comparison (when -ReferenceDir is provided)
+       Every DLL present in both OutputDir and ReferenceDir is compared by
+       AssemblyName.FullName and FileVersion.  This is the most reliable check and catches
+       NuGet version drift (LT-22382, e.g. Newtonsoft.Json 13.0.3 vs 13.0.4) as well as
+       any configuration-switch staleness.
 
     Any DLL that fails either check is removed so MSBuild re-copies the correct version.
 
     Use -ValidateOnly to report mismatches as errors without deleting (used by installer staging
     validation targets).
-
-    Use -ReferenceDir to additionally verify that every managed DLL in OutputDir has the same
-    assembly identity as its counterpart in another directory (catches staged-vs-build drift).
 
 .PARAMETER OutputDir
     The directory to scan (e.g., Output\Debug, or a staged installer bin dir).
@@ -40,7 +40,7 @@
 
 .EXAMPLE
     .\Remove-StaleDlls.ps1 -OutputDir "Output\Debug"
-    Pre-build clean pass: removes stale NuGet and product DLLs from the output directory.
+    Pre-build clean pass: removes stale first-party DLLs from the output directory.
 
 .EXAMPLE
     .\Remove-StaleDlls.ps1 -OutputDir "Output\Release" -WhatIf
@@ -92,26 +92,23 @@ if ($ReferenceDir) {
 # Step 1: Build lookup tables (done once, used for every DLL)
 # =============================================================================
 
-# --- 1a. NuGet package-name → desired version map ---
-Write-Verbose "Scanning .csproj files for PackageReference elements..."
-$desiredVersions = @{}
-$packageNames = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
+# --- 1a. First-party assembly names (whitelist from Src/**/*.csproj) ---
+Write-Verbose "Scanning .csproj files for first-party assembly names..."
+$firstPartyNames = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
 
 $srcDir = Join-Path $RepoRoot "Src"
 if (Test-Path $srcDir) {
     Get-ChildItem $srcDir -Filter "*.csproj" -Recurse -ErrorAction SilentlyContinue | ForEach-Object {
+        # Default assembly name = project filename without extension
+        $projName = [System.IO.Path]::GetFileNameWithoutExtension($_.Name)
+        [void]$firstPartyNames.Add($projName)
+
         try {
             [xml]$csproj = Get-Content $_.FullName -Raw
-            $csproj.SelectNodes("//PackageReference") | ForEach-Object {
-                $id = $_.GetAttribute("Include")
-                $version = $_.GetAttribute("Version")
-                if ($id) {
-                    [void]$packageNames.Add($id)
-                    if ($version) {
-                        # Later entries override earlier ones (project-specific overrides win)
-                        $desiredVersions[$id.ToLowerInvariant()] = $version
-                    }
-                }
+            # Check for <AssemblyName> override
+            $asmNameNode = $csproj.SelectSingleNode("//AssemblyName")
+            if ($asmNameNode -and $asmNameNode.InnerText) {
+                [void]$firstPartyNames.Add($asmNameNode.InnerText)
             }
         }
         catch {
@@ -120,29 +117,7 @@ if (Test-Path $srcDir) {
     }
 }
 
-# Also check packages.config for legacy references (lower priority)
-$packagesConfigPath = Join-Path $RepoRoot "Build\nuget-common\packages.config"
-if (Test-Path $packagesConfigPath) {
-    try {
-        [xml]$packagesConfig = Get-Content $packagesConfigPath -Raw
-        $packagesConfig.SelectNodes("//package") | ForEach-Object {
-            $id = $_.GetAttribute("id")
-            $version = $_.GetAttribute("version")
-            if ($id -and $version) {
-                [void]$packageNames.Add($id)
-                $key = $id.ToLowerInvariant()
-                if (-not $desiredVersions.ContainsKey($key)) {
-                    $desiredVersions[$key] = $version
-                }
-            }
-        }
-    }
-    catch {
-        Write-Verbose "Could not parse packages.config: $_"
-    }
-}
-
-Write-Verbose "Found $($desiredVersions.Count) package version specifications"
+Write-Verbose "Found $($firstPartyNames.Count) first-party assembly names"
 
 # --- 1b. Expected product major version from MasterVersionInfo.txt ---
 $expectedMajor = $null
@@ -161,56 +136,20 @@ else {
     Write-Verbose "Expected product major version: $expectedMajor"
 }
 
-# --- 1c. Known third-party DLL basenames that legitimately have their own versioning ---
-# These are DLLs from DistFiles/, Lib/, or Downloads/ that are not NuGet-tracked but are
-# also not first-party FW assemblies.
-$knownThirdParty = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
-foreach ($name in @(
-    'LinqBridge', 'log4net', 'Interop.ResourceDriver',
-    'xample', 'ParatextShared', 'NetLoc', 'FormattedEditor',
-    'HelpSystem', 'HtmlEditor', 'Utilities'
-)) {
-    [void]$knownThirdParty.Add($name)
-}
-
 # =============================================================================
 # Step 2: Single pass over every DLL
 # =============================================================================
 
 $problems = [System.Collections.Generic.List[string]]::new()
 $removedCount = 0
-$checkedPackage = 0
 $checkedProduct = 0
 
 Get-ChildItem "$outputPath\*.dll" -ErrorAction SilentlyContinue | ForEach-Object {
     $dll = $_
     $baseName = [System.IO.Path]::GetFileNameWithoutExtension($dll.Name)
-    $baseNameLower = $baseName.ToLowerInvariant()
-    $isThirdParty = $packageNames.Contains($baseName) -or $knownThirdParty.Contains($baseName)
 
-    # --- Check A: NuGet FileVersion match ---
-    $desiredVersion = $desiredVersions[$baseNameLower]
-    if ($desiredVersion) {
-        $checkedPackage++
-        $fileVersion = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($dll.FullName).FileVersion
-        $normalizedDesired = $desiredVersion -replace '-.*$', ''
-
-        if (-not $fileVersion.StartsWith("$normalizedDesired.")) {
-            $msg = "$($dll.Name): FileVersion=$fileVersion, expected $normalizedDesired.* (NuGet)"
-            $problems.Add($msg)
-            if (-not $ValidateOnly) {
-                if ($PSCmdlet.ShouldProcess($dll.Name, "Remove (NuGet version mismatch: FileVersion=$fileVersion, expected=$normalizedDesired.*)")) {
-                    Remove-Item $dll.FullName -Force
-                    $removedCount++
-                    Write-Host "  Removed $msg" -ForegroundColor Yellow
-                }
-            }
-            return  # Already flagged/removed, skip further checks
-        }
-    }
-
-    # --- Check B: Product major-version match (first-party DLLs only) ---
-    if (($null -ne $expectedMajor) -and (-not $isThirdParty)) {
+    # --- Check A: Product major-version match (first-party DLLs only) ---
+    if (($null -ne $expectedMajor) -and $firstPartyNames.Contains($baseName)) {
         try {
             $asmName = [System.Reflection.AssemblyName]::GetAssemblyName($dll.FullName)
             $asmVersion = $asmName.Version
@@ -242,7 +181,7 @@ Get-ChildItem "$outputPath\*.dll" -ErrorAction SilentlyContinue | ForEach-Object
         }
     }
 
-    # --- Check C: Staged-vs-reference comparison (when -ReferenceDir provided) ---
+    # --- Check B: Staged-vs-reference comparison (when -ReferenceDir provided) ---
     if ($referencePath) {
         $refDll = Join-Path $referencePath $dll.Name
         if (Test-Path $refDll) {
@@ -289,18 +228,18 @@ Get-ChildItem "$outputPath\*.dll" -ErrorAction SilentlyContinue | ForEach-Object
 # Step 3: Report results
 # =============================================================================
 
-$totalChecked = $checkedPackage + $checkedProduct
+$totalChecked = $checkedProduct
 if ($problems.Count -eq 0) {
-    Write-Verbose "No stale DLLs found (NuGet-checked=$checkedPackage, product-checked=$checkedProduct)"
+    Write-Verbose ("No stale DLLs found (first-party checked={0})" -f $checkedProduct)
 }
 elseif ($ValidateOnly) {
     Write-Host ""
-    Write-Host "Stale DLL validation failed — $($problems.Count) problem(s):" -ForegroundColor Red
+    Write-Host ("Stale DLL validation failed - {0} problem(s):" -f $problems.Count) -ForegroundColor Red
     foreach ($p in $problems) {
         Write-Host "  $p" -ForegroundColor Red
     }
     exit 1
 }
 else {
-    Write-Host "Removed $removedCount stale DLL(s) (NuGet-checked=$checkedPackage, product-checked=$checkedProduct)" -ForegroundColor Yellow
+    Write-Host ("Removed {0} stale DLL(s) (first-party checked={1})" -f $removedCount, $checkedProduct) -ForegroundColor Yellow
 }

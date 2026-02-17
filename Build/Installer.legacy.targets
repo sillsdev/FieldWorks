@@ -398,14 +398,13 @@
 	</Target>
 	<!--
 		ValidateStagedAssemblies: Comprehensive single-pass validation of all staged DLLs.
-		Replaces the legacy ValidateCriticalAssemblies (hardcoded 2 DLLs) and
-		ValidateProductAssemblyVersions (major-version only) with one unified check.
 
 		Runs the shared Remove-StaleDlls.ps1 in -ValidateOnly mode and with -ReferenceDir
 		pointing at the build output.  This catches:
-		  - NuGet-sourced DLLs with wrong FileVersion (LT-22382, e.g. Newtonsoft.Json)
 		  - First-party DLLs with wrong product major version (e.g. 6.0.0.0 in a 9.x tree)
-		  - Any staged DLL whose assembly identity or FileVersion drifts from the build output
+		    identified via a whitelist built from Src/**/*.csproj assembly names
+		  - Any staged DLL whose assembly identity or FileVersion drifts from the build
+		    output (catches NuGet version mismatches like LT-22382 Newtonsoft.Json)
 	-->
 	<Target Name="ValidateStagedAssemblies" AfterTargets="CopyFilesToInstall">
 		<PropertyGroup>

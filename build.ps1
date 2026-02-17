@@ -292,9 +292,9 @@ try {
         # Clean stale per-project obj/ folders
         Remove-StaleObjFolders -RepoRoot $PSScriptRoot
 
-        # LT-22382: Remove stale DLLs from the output directory before building.
-        # Single-pass check covers NuGet FileVersion mismatches AND wrong-major-version
-        # first-party assemblies.  See Build\Agent\Remove-StaleDlls.ps1.
+        # LT-22382: Remove stale first-party DLLs from the output directory before building.
+        # Uses a whitelist of assembly names from Src/**/*.csproj to identify FW assemblies
+        # and checks their major version against FWMAJOR.  See Build\Agent\Remove-StaleDlls.ps1.
         $staleDllScript = Join-Path $PSScriptRoot "Build\Agent\Remove-StaleDlls.ps1"
         if (Test-Path $staleDllScript) {
             $outputDir = "Output\$Configuration"
